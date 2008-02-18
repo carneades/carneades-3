@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="../../schemas/lkif.rnc" type="compact"?>
+
+<lkif>
+    <s id="s19668" summary="(isSpecialAcquirer Acquirer)" src="">isSpecialAcquirer Acquirer </s>
+    <s id="s19677" summary="(areNewMeansOfTransport Goods)" src="">areNewMeansOfTransport Goods </s>
+    <s id="s19662" summary="(isTaxablePersonInAMemberState Vendor)" src="">isTaxablePersonInAMemberState Vendor </s>
+    <s id="s19661" summary="(isDistanceSelling Selling)" src="">isDistanceSelling Selling </s>
+    <s id="s19669" summary="(notTransportedBy Acquirer Selling)" src="">notTransportedBy Acquirer Selling </s>
+    <s id="s19679" summary="(eval #f (eq? (quote Hungary) (quote Austria)))" src="">eval #f <s>eq? <s>quote Hungary </s><s>quote Austria </s></s></s>
+    <s id="s19670" summary="(areSpecialGoods Goods)" src="">areSpecialGoods Goods </s>
+    <s id="s19678" summary="(areGoodsIntendedForInstallationOrAssembly Goods)" src="">areGoodsIntendedForInstallationOrAssembly Goods </s>
+    <s id="s19664" summary="(acquirerOf Selling Acquirer)" src="">acquirerOf Selling Acquirer </s>
+    <s id="s19671" summary="(equals Hungary Austria)" src="">equals Hungary Austria </s>
+    <s id="s19681" summary="(eval #f (eq? (quote Transporter) (quote Acquirer)))" src="">eval #f <s>eq? <s>quote Transporter </s><s>quote Acquirer </s></s></s>
+    <s id="s19674" summary="(actsOnBehalfOf Vendor Transporter)" src="">actsOnBehalfOf Vendor Transporter </s>
+    <s id="s19663" summary="(hasEuropeanTaxNumber Vendor)" src="">hasEuropeanTaxNumber Vendor </s>
+    <s id="s19659" summary="(isLiableForPayingVATFor Selling Vendor)" src="">isLiableForPayingVATFor Selling Vendor </s>
+    <s id="s19673" summary="(transporterOf Selling Transporter)" src="">transporterOf Selling Transporter </s>
+    <s id="s19680" summary="(eval #f (eq? (quote Transporter) (quote Vendor)))" src="">eval #f <s>eq? <s>quote Transporter </s><s>quote Vendor </s></s></s>
+    <s id="s19667" summary="(memberStateOf Acquirer Austria)" src="">memberStateOf Acquirer Austria </s>
+    <s id="s19672" summary="(isTaxablePersonInAMemberState Acquirer)" src="">isTaxablePersonInAMemberState Acquirer </s>
+    <s id="s19666" summary="(memberStateOf Vendor Hungary)" src="">memberStateOf Vendor Hungary </s>
+    <s id="s19676" summary="(equals Transporter Acquirer)" src="">equals Transporter Acquirer </s>
+    <s id="s19665" summary="(goodsOf Selling Goods)" src="">goodsOf Selling Goods </s>
+    <s id="s19660" summary="(vendorOf Selling Vendor)" src="">vendorOf Selling Vendor </s>
+    <s id="s19675" summary="(equals Transporter Vendor)" src="">equals Transporter Vendor </s>
+    <argument-graph>
+        <argument id="a19103" scheme="vendorIsLiableForPayingVAT" direction="pro">
+            <premise role="false" polarity="positive" statement="s19660"/>
+            <premise role="false" polarity="positive" statement="s19661"/>
+            <premise role="false" polarity="positive" statement="s19662"/>
+            <premise role="false" polarity="positive" statement="s19663"/>
+            <conclusion statement="s19659"/>
+        </argument>
+        <argument id="a19104" scheme="fact_1" direction="pro">
+            <conclusion statement="s19660"/>
+        </argument>
+        <argument id="a19120" scheme="isDistanceSelling" direction="pro">
+            <premise role="false" polarity="positive" statement="s19660"/>
+            <premise role="false" polarity="positive" statement="s19664"/>
+            <premise role="false" polarity="positive" statement="s19665"/>
+            <premise role="false" polarity="positive" statement="s19666"/>
+            <premise role="false" polarity="positive" statement="s19667"/>
+            <premise role="false" polarity="positive" statement="s19668"/>
+            <premise role="false" polarity="positive" statement="s19669"/>
+            <premise role="false" polarity="negative" statement="s19670"/>
+            <premise role="false" polarity="negative" statement="s19671"/>
+            <conclusion statement="s19661"/>
+        </argument>
+        <argument id="a19123" scheme="fact_3" direction="pro">
+            <conclusion statement="s19662"/>
+        </argument>
+        <argument id="a19150" scheme="fact_4" direction="pro">
+            <conclusion statement="s19663"/>
+        </argument>
+        <argument id="a19176" scheme="fact_1" direction="pro">
+            <conclusion statement="s19660"/>
+        </argument>
+        <argument id="a19201" scheme="fact_5" direction="pro">
+            <conclusion statement="s19664"/>
+        </argument>
+        <argument id="a19224" scheme="fact_6" direction="pro">
+            <conclusion statement="s19665"/>
+        </argument>
+        <argument id="a19245" scheme="fact_7" direction="pro">
+            <conclusion statement="s19666"/>
+        </argument>
+        <argument id="a19265" scheme="fact_8" direction="pro">
+            <conclusion statement="s19667"/>
+        </argument>
+        <argument id="a19286" scheme="isSpecialAcquirer_1" direction="pro">
+            <premise role="false" polarity="negative" statement="s19672"/>
+            <conclusion statement="s19668"/>
+        </argument>
+        <argument id="a19306" scheme="notTransportedBy_2" direction="pro">
+            <premise role="false" polarity="positive" statement="s19660"/>
+            <premise role="false" polarity="positive" statement="s19664"/>
+            <premise role="false" polarity="positive" statement="s19673"/>
+            <premise role="false" polarity="positive" statement="s19674"/>
+            <premise role="false" polarity="negative" statement="s19675"/>
+            <premise role="false" polarity="negative" statement="s19676"/>
+            <conclusion statement="s19669"/>
+        </argument>
+        <argument id="a19320" scheme="not_AreSpecialGoods" direction="con">
+            <premise role="false" polarity="negative" statement="s19677"/>
+            <premise role="false" polarity="negative" statement="s19678"/>
+            <conclusion statement="s19670"/>
+        </argument>
+        <argument id="a19345" scheme="not_equals" direction="con">
+            <premise role="false" polarity="positive" statement="s19679"/>
+            <conclusion statement="s19671"/>
+        </argument>
+        <argument id="a19363" scheme="fact_13" direction="con">
+            <conclusion statement="s19672"/>
+        </argument>
+        <argument id="a19381" scheme="fact_1" direction="pro">
+            <conclusion statement="s19660"/>
+        </argument>
+        <argument id="a19398" scheme="fact_5" direction="pro">
+            <conclusion statement="s19664"/>
+        </argument>
+        <argument id="a19414" scheme="fact_16" direction="pro">
+            <conclusion statement="s19673"/>
+        </argument>
+        <argument id="a19429" scheme="fact_17" direction="pro">
+            <conclusion statement="s19674"/>
+        </argument>
+        <argument id="a19447" scheme="not_equals" direction="con">
+            <premise role="false" polarity="positive" statement="s19680"/>
+            <conclusion statement="s19675"/>
+        </argument>
+        <argument id="a19460" scheme="not_equals" direction="con">
+            <premise role="false" polarity="positive" statement="s19681"/>
+            <conclusion statement="s19676"/>
+        </argument>
+        <argument id="a19464" scheme="fact_24" direction="con">
+            <conclusion statement="s19677"/>
+        </argument>
+        <argument id="a19467" scheme="fact_25" direction="con">
+            <conclusion statement="s19678"/>
+        </argument>
+        <argument id="a19469" scheme="builtin: eval" direction="pro">
+            <conclusion statement="s19679"/>
+        </argument>
+        <argument id="a19471" scheme="builtin: eval" direction="pro">
+            <conclusion statement="s19680"/>
+        </argument>
+        <argument id="a19473" scheme="builtin: eval" direction="pro">
+            <conclusion statement="s19681"/>
+        </argument>
+    </argument-graph>
+</lkif>

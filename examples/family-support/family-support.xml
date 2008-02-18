@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="../../schemas/LKIF.rnc" type="compact"?>
+<?xml-stylesheet type="text/css" href="../../../../../../../../Applications/oxygen%209/samples/css/sample1.css"?>
+<?xml-stylesheet type="text/css" href="../../schemas/LKIF.css"?>
+<lkif>
+    <!--     
+    <rule id="facts" strict="yes">
+        <s>father Dustin Tom</s>
+        <s>mother Tom Gloria</s>
+        <s>needy Gloria</s>
+        <not><s>capacity-to-provide-support Dustin</s></not>
+
+        <s>has-already-provided-much-support</s>
+    </rule>
+    
+    -->
+    <rule id="r1" strict="yes">
+        <body><s>ancestor ?x ?y</s></body>
+        <head><s>relative ?x ?y</s></head>
+    </rule>
+    <rule id="r4" strict="yes">
+        <body><s>parent ?x ?y</s></body>
+        <head><s>ancestor ?x ?y</s></head>
+    </rule>
+    <rule id="r2" strict="yes">
+        <body><s>parent ?x ?z</s>
+            <s>ancestor ?z ?y</s></body>
+        <head><s>ancestor ?x ?y</s></head>
+    </rule>
+    <rule id="r3" strict="yes">
+        <body><s>ancestor ?x ?y</s></body>
+        <head><s>descendent ?y ?x</s></head>
+    </rule>
+    <rule id="r5" strict="yes">
+        <body><s>mother ?x ?y</s></body>
+        <head><s>parent ?x ?y</s></head>
+    </rule>
+    <rule id="r6" strict="yes">
+        <body><s>father ?x ?y</s></body>
+        <head><s>parent ?x ?y</s></head>
+    </rule>
+    <rule id="r7" strict="yes">
+        <body><s>sibling ?x ?y</s></body>
+        <head><s>relative ?x ?y</s></head>
+    </rule>
+    <rule id="r8" strict="yes">
+        <body><s>brother ?x ?y</s></body>
+        <head><s>sibling ?x ?y</s></head>
+    </rule>
+    <rule id="r9" strict="yes">
+        <body><s>sister ?x ?y</s></body>
+        <head><s>sibling ?x ?y</s></head>
+    </rule>
+    <rule id="r10" strict="yes">
+        <body><s>parent ?x ?z</s>
+            <s>parent ?z ?y</s></body>
+        <head><s>grandparent ?x ?y</s></head>
+    </rule>
+    <rule id="s1601-BGB">
+        <body><s>direct-lineage ?x ?y</s></body>
+        <head><s>obligated-to-support ?x ?y</s></head>
+    </rule>
+    <rule id="s1589a-BGB">
+        <body><s>ancestor ?x ?y</s></body>
+        <head><s>direct-lineage ?x ?y</s></head>
+    </rule>
+    <rule id="s1589b-BGB">
+        <body><s>descendent ?x ?y</s></body>
+        <head><s>direct-lineage ?x ?y</s></head>
+    </rule>
+    <rule id="s1741-BGB">
+        <body><s>adopted-by ?x ?y</s></body>
+        <head><s>ancestor ?x ?y</s></head>
+    </rule>
+    <rule id="s1590-BGB">
+        <body><s>relative-of-spouse ?x ?y</s></body>
+        <head><not><s>obligated-to-support ?x ?y</s></not></head>
+    </rule>
+    <rule id="s1602a-BGB">
+        <body><not><s>needy ?x</s></not></body>
+        <head><not><s>obligated-to-support ?y ?x</s></not></head>
+    </rule>
+    <rule id="s1602b-BGB">
+        <body><not><s>able-to-support-self ?x</s></not></body>
+        <head><s>needy ?x</s></head>
+    </rule>
+    <rule id="s1602c-BGB">
+        <body><s>able-to-support-self ?x</s></body>
+        <head><not><s>needy ?x</s></not></head>
+    </rule>
+    <rule id="s1603-BGB">
+        <body><not><s>capacity-to-provide-support ?x</s></not></body>
+        <head><not><s>obligated-to-support ?x ?y</s></not></head>
+    </rule>
+    <rule id="s1611a-BGB">
+        <body><s>neediness-caused-by-own-immoral-behavior ?x</s></body>
+        <head><s>excluded s1601-BGB <s>obligated-to-support ?y ?x</s></s></head>
+    </rule>
+    <rule id="s91-BSHG">
+        <body><s>undue-hardship ?x <s>obligated-to-support ?x ?y</s></s></body>
+        <head><s>excluded s1601-BGB <s>obligated-to-support ?x ?y</s></s></head>
+    </rule>
+</lkif>

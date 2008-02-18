@@ -1,0 +1,30 @@
+
+1. Prerequisites
+
+- PLT Scheme (http://www.plt-scheme.org)
+- GraphViz (http://www.graphviz.org/)
+
+Both are free software, available in Mac/Unix/Windows versions.
+
+2. Installation
+
+- Unpack the attached carneades.zip file in some directory/folder of your choice. This will create a directory named "dist", with the following subdirectories:
+
+	- src: The Scheme source files
+	- examples:  Some examples
+
+3. Configuration
+
+In the src directory, edit the config.scm file to select your preferred graphics format for displaying 
+argument graphs (png, ps, or svg) and specify the full path to some application for viewing graphics in 
+this format.  The config.scm file includes some examples for both Windows and Mac OS X.
+
+4. Trying it out
+
+- Start PLT Scheme
+- In the "examples" directory, open the "rule-tests.scm" file
+- Click on the "Run" button in the upper-right corner of the window to run some tests
+- Try out the example commands commented out near the end of the file, to see how to ask queries and 
+  show a diagram of the arguments found.
+
+Note: You will need to quit the graphics application to return control to PLT Scheme.

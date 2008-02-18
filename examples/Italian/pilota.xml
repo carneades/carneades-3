@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="LKIF.rnc" type="compact"?>
+<lkif>
+
+    <s id="establishment" summary="Alfabank is established in Italy."/>
+    <s id="residence" summary="Alfabank makes a payment to Mr. Brown who is resident in an other member State."/>
+    <s id="debt-interests" summary="Alfabank has a debt producing interests."/>
+    <s id="beneficial-owner" summary="Mr. Brown is a beneficial owner."/>
+    <s id="individual" summary="Mr. Brown is an individual"/>
+    <s id="receives" summary="Mr. Brown receives, as final recipient, an interest payment coming from government securities"/>
+    <s id="payment-interests" summary="The payment concerns interests related to the credit of Mr. Brown."/>
+    <s id="government-securities" summary="The credit of Mr. Brown comes from government securities."/>
+    <s id="paying-agent" summary="Alfabank is a paying agent."/>
+	   <s id="communication" summary="A communication of  the interest payment shall be made."/>
+    
+	    
+    <argument-graph>
+        <argument id="a1" direction="pro">
+            <premise statement="establishment"/>
+            <premise statement="residence"/>
+            <assumption statement="paying-agent"/>
+            <conclusion statement="communication"/>
+        </argument>    
+        
+        <argument id="a2" direction="pro">
+            <premise statement="residence"/>
+            <premise statement="payment-interests" />
+            <conclusion statement="paying-agent" />
+        </argument>
+
+	<argument id="a3" direction="pro">
+            <premise statement="government-securities"/>            
+            <conclusion statement="payment-interests" />
+        </argument>
+
+        <argument id="a4" direction="pro">
+            <premise statement="debt-interests"/>    
+            <premise statement="beneficial-owner"/>            
+            <conclusion statement="residence"/>
+        </argument>     
+
+	<argument id="a5" direction="pro">
+            <premise statement="individual"/>    
+            <premise statement="receives"/>            
+            <conclusion statement="beneficial-owner"/>
+        </argument>         
+        
+    </argument-graph>
+</lkif>

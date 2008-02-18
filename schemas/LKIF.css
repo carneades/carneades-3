@@ -1,0 +1,82 @@
+
+
+lkif {
+    display:block;
+    font-size: medium;
+    font-family: Arial, Sans-serif;
+}
+
+
+rule:before {
+    content: "Rule ";
+    font-weight: bold;
+}
+
+rule {
+    content: attr(id);
+    margin-bottom: 2em;
+    display: block;
+}
+
+head:before {
+    content: "conclusions ";
+    font-weight: bold;
+    display: block;
+    margin-left: 1em;
+}
+
+head {
+    display: block;
+    margin-left: 2em;
+}
+
+body:before {
+    content: "conditions";
+    font-weight: bold;
+    display: block;
+    margin-left: 1em;
+}
+
+body {
+    margin-left: 2em;
+    display: block;
+}
+
+
+s, not {
+    quotes: '"' '"' "'" "'";
+    font-style: italic;
+    display: block;
+    margin-lef: 2em;
+    content: "- ";
+}
+
+not > s {
+    display: inline;
+    content: "";
+}
+
+
+s > s {
+    display: inline;
+    content: ""
+}
+
+s > s:before { content: open-quote }
+s > s:after { content: close-quote }
+
+v {
+    text-decoration: underline;
+}
+
+c {
+    font-style: normal;
+}
+
+not:after {
+    content: " is not true";
+    font-weight: bold;
+}
+
+    
+    

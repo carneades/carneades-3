@@ -1,0 +1,34 @@
+datatypes xsd = "http://www.w3.org/2001/XMLSchema-datatypes"
+
+grammar {
+    start = element lkif { Statement*, ArgumentGraph* }    
+    
+    ArgumentGraph = element argument-graph { 
+        attribute id { xsd:ID }?, 
+        attribute issue { xsd:ID}?,    
+        Argument* 
+    }
+ 
+    Statement = element s { 
+        attribute id { xsd:ID }?,
+        attribute summary { xsd:string }?,
+        attribute src { xsd:anyURI }?,
+        ((text* &  Statement*)*)? }
+    
+    Argument = element argument { 
+    	attribute id { xsd:ID },
+        attribute scheme { text }?,    
+        Premise*, Conclusion 
+    }
+    
+    Premise = element premise { attribute polarity { "positive" | "negative" }?,
+                                (attribute statement { xsd:IDREF } | Statement) } 
+            | element exception { attribute polarity { "positive" | "negative" }?,
+                                  (attribute statement { xsd:IDREF } | Statement) }
+            | element assumption { attribute polarity { "positive" | "negative" }?,
+                                  (attribute statement { xsd:IDREF } | Statement) }
+                  
+    Conclusion = element conclusion { 
+        attribute statement { xsd:IDREF } | Statement 
+    }
+}

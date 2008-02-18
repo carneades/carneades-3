@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="../../schemas/LKIF2.rnc" type="compact"?>
+<?xml-stylesheet type="text/css" href="../../schemas/LKIF.css"?>
+<lkif>
+    <rule id="facts" strict="yes">
+        <s><c>Tom</c> is the father of <c>Dustin</c></s>
+        <s><c>Gloria</c> is the mother of <c>Tom</c></s>
+        <s><c>Gloria</c> is needy</s>
+        <not><s><c>Dustin</c> has the capacity to provide support </s></not>
+    </rule>
+    <rule id="r1" strict="yes">
+        <body>
+            <s><v>Person1</v> is an ancestor of <v>Person2</v></s>
+        </body>
+        <head>
+            <s><v>Person1</v> is a relative of <v>Person2</v></s>
+        </head>
+    </rule>
+    <rule id="r4" strict="yes">
+        <body>
+            <s><v>Person1</v> is a parent <v>Person2</v></s>
+        </body>
+        <head>
+            <s><v>Person1</v> is an ancestor of <v>Person2</v></s>
+        </head>
+    </rule>
+    <rule id="r2" strict="yes">
+        <body>
+            <s><v>Person1</v> is a parent of <v>Person2</v></s>
+            <s><v>Person2</v> is an ancestor of <v>Person3</v></s>
+        </body>
+        <head>
+            <s><v>Person1</v> is an ancestor <v>Person3</v></s>
+        </head>
+    </rule>
+    <rule id="r3" strict="yes">
+        <body>
+            <s><v>Person1</v> is an ancestor of <v>Person2</v></s>
+        </body>
+        <head>
+            <s><v>Person2</v> is a descendent of <v>Person1</v></s>
+        </head>
+    </rule>
+    <rule id="r5" strict="yes">
+        <body>
+            <s><v>Person1</v> is the mother of <v>Person2</v></s>
+        </body>
+        <head>
+            <s><v>Person1</v> is a parent of <v>Person2</v></s>
+        </head>
+    </rule>
+    <rule id="r6" strict="yes">
+        <body>
+            <s><v>Person1</v> is the father of <v>Person2</v></s>
+        </body>
+        <head>
+            <s><v>Person1</v> is a parent of <v>Person2</v></s>
+        </head>
+    </rule>
+    <rule id="r7" strict="yes">
+        <body>
+            <s><v>Person1</v> is a sibling of <v>Person2</v></s>
+        </body>
+        <head>
+            <s><v>Person1</v> is a relative of <v>Person2</v></s>
+        </head>
+    </rule>
+    <rule id="r8" strict="yes">
+        <body>
+            <s><v>Person1</v> is a brother of <v>Person2</v></s>
+        </body>
+        <head>
+            <s><v>Person1</v> is a sibling of <v>Person2</v></s>
+        </head>
+    </rule>
+    <rule id="r9" strict="yes">
+        <body>
+            <s><v>Person1</v> is a sister of <v>Person2</v></s>
+        </body>
+        <head>
+            <s><v>Person1</v> is a sibling of <v>Person2</v></s>
+        </head>
+    </rule>
+    <rule id="r10" strict="yes">
+        <body>
+            <s><v>Person1</v> is a parent of Person2</s>
+            <s><v>Person2</v> is a parent <v>Person3</v></s>
+        </body>
+        <head>
+            <s><v>Person1</v> is a grandparent of <v>Person3</v></s>
+        </head>
+    </rule>
+    <rule id="s1601-BGB">
+        <body>
+            <s><v>Person1</v> is in direct lineage to <v>Person2</v></s>
+        </body>
+        <head>
+            <s><v>Person1</v> is obligated to support <v>Person2</v></s>
+        </head>
+    </rule>
+    <rule id="s1589a-BGB">
+        <body>
+            <s><v>Person1</v> is an ancestor of <v>Person2</v></s>
+        </body>
+        <head>
+            <s><v>Person1</v> is in direct lineage to <v>Person2</v></s>
+        </head>
+    </rule>
+    <rule id="s1589b-BGB">
+        <body>
+            <s><v>Person1</v> is a descendent of <v>Person2</v>
+            </s>
+        </body>
+        <head>
+            <s><v>Person1</v> is in direct lineage to <v>Person2</v></s>
+        </head>
+    </rule>
+    <rule id="s1741-BGB">
+        <body>
+            <s><v>Person1</v> was adopted by Person2</s>
+        </body>
+        <head>
+            <s><v>Person2</v> is an ancestor <v>Person1</v></s>
+        </head>
+    </rule>
+    <rule id="s1590-BGB">
+        <body>
+            <s><v>Person1</v> is a relative of the spouse of <v>Person2</v></s>
+        </body>
+        <head>
+            <not><s><v>Person2</v> is obligated to support <v>Person2</v></s></not>
+        </head>
+    </rule>
+    <rule id="s1602a-BGB">
+        <body>
+            <not><s><v>Person1</v> is needy </s></not>
+        </body>
+        <head>
+            <not><s><v>Person2</v> is obligated to support <v>Person1</v></s></not>
+        </head>
+    </rule>
+    <rule id="s1602b-BGB">
+        <body>
+            <not><s><v>Person1</v> is able to support himself</s></not>
+        </body>
+        <head>
+            <s><v>Person1</v> is needy</s>
+        </head>
+    </rule>
+    <rule id="s1602c-BGB">
+        <body>
+            <s><v>Person1</v> is able to support to himself</s>
+        </body>
+        <head>
+            <not><s><v>Person1</v> is needy</s></not>
+        </head>
+    </rule>
+    <rule id="s1603-BGB">
+        <body>
+            <not><s><v>Person1</v> has the capacity to provide support</s></not>
+        </body>
+        <head>
+            <not><s><v>Person1</v> is obligated to support <v>Person2</v></s></not>
+        </head>
+    </rule>
+    <rule id="s1611a-BGB">
+        <body>
+            <s><v>Person1</v> is needy due to his own immoral behavior</s>
+        </body>
+        <head>
+            <s>
+                <c>s1601-BGB</c> excludes <s><v>Person2</v> is obligated to support
+                <v>Person1</v></s>
+            </s>
+        </head>
+    </rule>
+    <rule id="s91-BSHG">
+        <body>
+            <s><s><v>Person1</v> is obligated to support <v>Person2</v></s> would cause
+                <v>Person1</v> undue hardship</s>
+        </body>
+        <head>
+            <s>
+                <c>s1601-BGB</c>  excludes <s><v>Person1</v> is obligated to support
+                <v>Person2</v></s></s>
+        </head>
+    </rule>
+</lkif>

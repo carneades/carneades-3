@@ -1,0 +1,912 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:/Users/tgo/Documents/Projects/Carneades/dist/schemas/lkif.rnc" type="compact"?>
+<lkif>
+    <s id="k639" summary="permanent establish- ment situated in MS"/>
+    <s id="k581" summary="one company"/>
+    <s id="k465" summary="company isn´t dissolved"/>
+    <s id="k523" summary="one company"/>
+    <s id="k291" summary="computation like trans-ferring company"/>
+    <s id="k1" summary="rights and obligations under the directive"/>
+    <s id="k582" summary="company isn´t dissolved"/>
+    <s id="k466" summary="transfer"/>
+    <s id="k408" summary="at least one company"/>
+    <s id="k292" summary="no exemption"/>
+    <s id="k524" summary="correct moment"/>
+    <s id="k640" summary="losses not exhausted for tax purposes"/>
+    <s id="k583" summary="transfer"/>
+    <s id="k467" summary="transfer to at least 1 existing or new comp."/>
+    <s id="k409" summary="correct moment"/>
+    <s id="k525" summary="companies are dissolved"/>
+    <s id="k641" summary="shareholder does not attribute higher value"/>
+    <s id="k584" summary="transfer all or at least 1 branch of activities"/>
+    <s id="k468" summary="transfer of at least 1 branch of activities"/>
+    <s id="k410" summary="companies are dissolved"/>
+    <s id="k526" summary="no liquidation"/>
+    <s id="k642" summary="shareholder does not attribute higher value"/>
+    <s id="k585" summary="transfer to at least 1 existing or new comp."/>
+    <s id="k527" summary="all assets transfered"/>
+    <s id="k411" summary="no liquidation"/>
+    <s id="k643" summary="cash payment"/>
+    <s id="k586" summary="counterperformance: secur. of receiv. com."/>
+    <s id="k470" summary="counterperformance"/>
+    <s id="k412" summary="transfer to existing company"/>
+    <s id="k528" summary="all assets"/>
+    <s id="k587" summary="allotment of securities - capital gains"/>
+    <s id="k471" summary="pro rata issue of shareholders"/>
+    <s id="k413" summary="all assets transfered"/>
+    <s id="k297" summary="Art. 4 Abs. 4"/>
+    <s id="k529" summary="all liabilities"/>
+    <s id="k645" summary="allotment of securities"/>
+    <s id="k646" summary="capital of receiving company"/>
+    <s id="k472" summary="cash payment"/>
+    <s id="k414" summary="all assets"/>
+    <s id="k298" summary="no taxation to gains accruing, Art. 7"/>
+    <s id="k530" summary="transfer to company holding all securities"/>
+    <s id="k589" summary="no exemption"/>
+    <s id="k473" summary="max. 10% of nominal value"/>
+    <s id="k415" summary="all liabilities"/>
+    <s id="k299" summary="restructuring"/>
+    <s id="k531" summary="division"/>
+    <s id="k647" summary="capital of acuiring company"/>
+    <s id="k648" summary="allotment to a shareholder"/>
+    <s id="k474" summary="max. 10% of account. par value of securities"/>
+    <s id="k416" summary="counterperformance"/>
+    <s id="k300" summary="holding in capital of transferring company"/>
+    <s id="k532" summary="one company"/>
+    <s id="k649" summary="shareholder of transferring company"/>
+    <s id="k533" summary="correct moment"/>
+    <s id="k417" summary="issue of shareholders to shareholders"/>
+    <s id="k301" summary="gains on the cancella-tion of its holding"/>
+    <s id="k650" summary="shareholder of acquired company"/>
+    <s id="k476" summary="one company"/>
+    <s id="k418" summary="cash payment"/>
+    <s id="k302" summary="at least 15% holding percentage"/>
+    <s id="k534" summary="companies are dissolved"/>
+    <s id="k651" summary="in exchange for secu-rities of latter compan."/>
+    <s id="k477" summary="company isn´t dissolved"/>
+    <s id="k419" summary="max. 10% of nominal value"/>
+    <s id="k535" summary="no liquidation"/>
+    <s id="k652" summary="allotment of securities - capital gains"/>
+    <s id="k536" summary="all assets transfered"/>
+    <s id="k420" summary="max. 10% of account. par value of securities"/>
+    <s id="k246" summary="transfer to company that they form"/>
+    <s id="k595" summary="value for taxation purposes"/>
+    <s id="k479" summary="transfer"/>
+    <s id="k537" summary="all assets"/>
+    <s id="k653" summary="allotment of securities of receiving company"/>
+    <s id="k596" summary="real values of transferr-ed asstes &amp; liabilities"/>
+    <s id="k480" summary="transfer all or at least 1 branch of activities"/>
+    <s id="k422" summary="at least two companies"/>
+    <s id="k538" summary="all liabilities"/>
+    <s id="k654" summary="allotment to a sh. of transferring company"/>
+    <s id="k597" summary="difference between these two values"/>
+    <s id="k481" summary="transfer to at least 1 existing or new comp."/>
+    <s id="k423" summary="all assets transfered"/>
+    <s id="k249" summary="transfer to a company holding all securities"/>
+    <s id="k539" summary="transfer to at least 2 extisting or new comp."/>
+    <s id="k655" summary="no other reason giv-ing rise to taxation"/>
+    <s id="k540" summary="counterperformance"/>
+    <s id="k424" summary="transfer to company that they form"/>
+    <s id="k541" summary="pro rata issue of shareholders"/>
+    <s id="k425" summary="correct moment"/>
+    <s id="k542" summary="cash payment"/>
+    <s id="k426" summary="counterperformance"/>
+    <s id="k543" summary="max. 10% of nominal value"/>
+    <s id="k369" summary="deferral of taxation in case of office transfer"/>
+    <s id="k427" summary="companies are dissolved"/>
+    <s id="k602" summary="Art. 8 I"/>
+    <s id="k544" summary="max. 10% of account. par value of securities"/>
+    <s id="k370" summary="applicability in case of transfer/cessation"/>
+    <s id="k428" summary="no liquidation"/>
+    <s id="k603" summary="Art. 8 II"/>
+    <s id="k487" summary="counterperformance: secur. of receiv. com."/>
+    <s id="k429" summary="issue of shareholders to shareholders"/>
+    <s id="k545" summary="partial division"/>
+    <s id="k371" summary="transfer of registred office of SE or SCE"/>
+    <s id="k488" summary="capital gains of companies, Art 4"/>
+    <s id="k430" summary="cash payment"/>
+    <s id="k256" summary="division"/>
+    <s id="k605" summary="non-resident receiving or acquiring company"/>
+    <s id="k431" summary="max. 10% of nominal value"/>
+    <s id="k606" summary="company considered to be fisc. transparent"/>
+    <s id="k490" summary="capital gains of shareholders, Art. 8"/>
+    <s id="k374" summary="cessation of residence"/>
+    <s id="k432" summary="max. 10% of account. par value of securities"/>
+    <s id="k607" summary="Art. 10a I"/>
+    <s id="k492" summary="restructuring"/>
+    <s id="k434" summary="all assets"/>
+    <s id="k609" summary="non-resident receiving or acquired company"/>
+    <s id="k493" summary="merger"/>
+    <s id="k435" summary="all liabilities"/>
+    <s id="k610" summary="company considered to be fisc. transparent"/>
+    <s id="k494" summary="transfer to existing company"/>
+    <s id="k436" summary="one company"/>
+    <s id="k611" summary="MS chooses not to apply directive"/>
+    <s id="k495" summary="at least one company"/>
+    <s id="k612" summary="MS chooses not to apply directive"/>
+    <s id="k496" summary="correct moment"/>
+    <s id="k380" summary="preconditions for deferral of taxation"/>
+    <s id="k438" summary="correct moment"/>
+    <s id="k497" summary="companies are dissolved"/>
+    <s id="k381" summary="capital gains persuant Art. 10b I"/>
+    <s id="k439" summary="companies are dissolved"/>
+    <s id="k614" summary="gains generate profit and losses of old MS"/>
+    <s id="k498" summary="no liquidation"/>
+    <s id="k382" summary="balancing like without transfer/ cessation"/>
+    <s id="k440" summary="no liquidation"/>
+    <s id="k615" summary="Art. 5"/>
+    <s id="k499" summary="all assets transfered"/>
+    <s id="k441" summary="all assets transfered"/>
+    <s id="k616" summary="Art. 10c"/>
+    <s id="k500" summary="all assets"/>
+    <s id="k442" summary="all assets"/>
+    <s id="k617" summary="provisions or reserves properly constituted"/>
+    <s id="k501" summary="all liabilities"/>
+    <s id="k443" summary="all liabilities"/>
+    <s id="k211" summary="obligations of member states"/>
+    <s id="k269" summary="partial division"/>
+    <s id="k618" summary="respective tax exemp- tions differ betw. MS"/>
+    <s id="k502" summary="transfer to existing company"/>
+    <s id="k444" summary="transfer to company holding all securities"/>
+    <s id="k212" summary="obligat. in accordance to council directive"/>
+    <s id="k619" summary="respective tax exemp--tions differ betw. MS"/>
+    <s id="k503" summary="counterperformance"/>
+    <s id="k561" summary="one company"/>
+    <s id="k213" summary="prelim. deferral of the taxation of the capital"/>
+    <s id="k620" summary="transfer or cessation"/>
+    <s id="k504" summary="issue of shareholders to shareholders"/>
+    <s id="k562" summary="company isn´t dissolved"/>
+    <s id="k214" summary="deferral of taxation in case of restructuring"/>
+    <s id="k621" summary="transfer of registred office of SE or SCE"/>
+    <s id="k505" summary="cash payment"/>
+    <s id="k447" summary="one company"/>
+    <s id="k563" summary="transfer"/>
+    <s id="k215" summary="applicability in case of restructuring"/>
+    <s id="k622" summary="cessation of residence"/>
+    <s id="k506" summary="max. 10% of nominal value"/>
+    <s id="k448" summary="correct moment"/>
+    <s id="k564" summary="transfer of at least 1 branch of activities"/>
+    <s id="k216" summary="obligated Member State"/>
+    <s id="k623" summary="capital gains of companies, Art 10b"/>
+    <s id="k507" summary="max. 10% of account. par value of securities"/>
+    <s id="k449" summary="all assets transfered"/>
+    <s id="k565" summary="transfer to at least 1 existing or new comp."/>
+    <s id="k624" summary="capital gains of shareholders, Art 10d"/>
+    <s id="k508" summary="transfer to company that they form"/>
+    <s id="k450" summary="counterperformance"/>
+    <s id="k334" summary="Art. 10 III"/>
+    <s id="k218" summary="perm. establishment in this Member State"/>
+    <s id="k566" summary="counterperformance"/>
+    <s id="k625" summary="transfer of registred office of an SE/SCE"/>
+    <s id="k509" summary="at least two companies"/>
+    <s id="k451" summary="companies are dissolved"/>
+    <s id="k567" summary="pro rata issue of shareholders"/>
+    <s id="k626" summary="no other reason for taxation but transferral"/>
+    <s id="k510" summary="correct moment"/>
+    <s id="k452" summary="no liquidation"/>
+    <s id="k394" summary="maintanance of tax exemptions"/>
+    <s id="k220" summary="involvment of 2 or more Member States"/>
+    <s id="k568" summary="cash payment"/>
+    <s id="k627" summary="other community law that is equivalent"/>
+    <s id="k511" summary="companies are dissolved"/>
+    <s id="k569" summary="max. 10% of nominal value"/>
+    <s id="k395" summary="provisions or reserves properly constituted"/>
+    <s id="k221" summary="company from a member state"/>
+    <s id="k628" summary="other community law applicable"/>
+    <s id="k570" summary="max. 10% of account. par value of securities"/>
+    <s id="k454" summary="all assets"/>
+    <s id="k512" summary="no liquidation"/>
+    <s id="k222" summary="com. takes one of the forms listed in Annex"/>
+    <s id="k629" summary="member state persuant to Annex"/>
+    <s id="k571" summary="transfer of assets"/>
+    <s id="k455" summary="all liabilities"/>
+    <s id="k513" summary="all assets transfered"/>
+    <s id="k223" summary="resident in Member State acc. to tax laws"/>
+    <s id="k281" summary="transfer of assets"/>
+    <s id="k630" summary="merger of serveral companies in one MS"/>
+    <s id="k514" summary="all assets"/>
+    <s id="k456" summary="transfer to at least 2 extisting or new comp."/>
+    <s id="k224" summary="resident in acc. to tax laws of Member State"/>
+    <s id="k631" summary="application of provi- sion for take over of losses"/>
+    <s id="k515" summary="all liabilities"/>
+    <s id="k225" summary="no dobble taxation agreement"/>
+    <s id="k632" summary="losses of permanent establishment"/>
+    <s id="k458" summary="pro rata issue of shareholders"/>
+    <s id="k516" summary="transfer to company that they form"/>
+    <s id="k226" summary="is subject to listed tax-es without exemption"/>
+    <s id="k400" summary="extension of provision for taxation of losses"/>
+    <s id="k633" summary="rights of member states"/>
+    <s id="k459" summary="cash payment"/>
+    <s id="k517" summary="counterperformance"/>
+    <s id="k227" summary="two or more Member States"/>
+    <s id="k401" summary="no reasons for withdrawal, Art. 11"/>
+    <s id="k634" summary="beneficiary"/>
+    <s id="k460" summary="max. 10% of nominal value"/>
+    <s id="k518" summary="issue of shareholders to shareholders"/>
+    <s id="k228" summary="preconditions for deferral of taxation"/>
+    <s id="k402" summary="tax evasion/ tax avoidance"/>
+    <s id="k635" summary="preconditions for extension"/>
+    <s id="k461" summary="max. 10% of account. par value of securities"/>
+    <s id="k519" summary="cash payment"/>
+    <s id="k229" summary="no taxation of capital gains"/>
+    <s id="k403" summary="representing of emplo-yers not warranted"/>
+    <s id="k636" summary="losses"/>
+    <s id="k520" summary="max. 10% of nominal value"/>
+    <s id="k404" summary="analysing state is Member State"/>
+    <s id="k230" summary="restructuring"/>
+    <s id="k637" summary="losses not exhausted for receiving company"/>
+    <s id="k521" summary="max. 10% of account. par value of securities"/>
+    <s id="k231" summary="merger"/>
+    <s id="k638" summary="take over of losses by acquiring company"/>
+    <s id="k464" summary="one company"/>
+    <s id="k406" summary="involvment in accor- dance with Directive"/>
+    <s id="k232" summary="transfer to existing company"/>
+    <s id="k290" summary="capital gains persuant Art. 4 Abs. 1"/>
+    <s id="k522" summary="transfer to a company holding all securities"/>
+    <argument-graph>
+        <argument id="a1">
+            <premise statement="k211"/>
+            <conclusion statement="k1"/>
+        </argument>
+        <argument id="a2">
+            <premise statement="k633"/>
+            <conclusion statement="k1"/>
+        </argument>
+        <argument id="a3">
+            <premise statement="k468"/>
+            <premise statement="k467"/>
+            <conclusion statement="k466"/>
+        </argument>
+        <argument id="a4">
+            <premise polarity="negative" statement="k297"/>
+            <conclusion statement="k292"/>
+        </argument>
+        <argument id="a5">
+            <premise polarity="negative" statement="k607"/>
+            <conclusion statement="k292"/>
+        </argument>
+        <argument id="a6">
+            <premise statement="k525"/>
+            <premise statement="k526"/>
+            <conclusion statement="k524"/>
+        </argument>
+        <argument id="a7">
+            <premise statement="k584"/>
+            <premise statement="k585"/>
+            <conclusion statement="k583"/>
+        </argument>
+        <argument id="a8">
+            <premise statement="k410"/>
+            <premise statement="k411"/>
+            <conclusion statement="k409"/>
+        </argument>
+        <argument id="a9">
+            <premise statement="k528"/>
+            <premise statement="k529"/>
+            <premise statement="k530"/>
+            <conclusion statement="k527"/>
+        </argument>
+        <argument id="a10">
+            <premise statement="k471"/>
+            <conclusion statement="k470"/>
+        </argument>
+        <argument id="a11">
+            <premise statement="k472"/>
+            <conclusion statement="k470"/>
+        </argument>
+        <argument id="a12">
+            <premise statement="k645"/>
+            <premise statement="k648"/>
+            <premise statement="k651"/>
+            <conclusion statement="k587"/>
+        </argument>
+        <argument id="a13">
+            <premise statement="k414"/>
+            <premise statement="k415"/>
+            <premise statement="k412"/>
+            <conclusion statement="k413"/>
+        </argument>
+        <argument id="a14">
+            <premise statement="k646"/>
+            <conclusion statement="k645"/>
+        </argument>
+        <argument id="a15">
+            <premise statement="k647"/>
+            <conclusion statement="k645"/>
+        </argument>
+        <argument id="a16">
+            <premise statement="k473"/>
+            <conclusion statement="k472"/>
+        </argument>
+        <argument id="a17">
+            <premise statement="k474"/>
+            <conclusion statement="k472"/>
+        </argument>
+        <argument id="a18">
+            <premise statement="k299"/>
+            <premise statement="k300"/>
+            <premise statement="k301"/>
+            <premise statement="k302"/>
+            <conclusion statement="k298"/>
+        </argument>
+        <argument id="a19">
+            <premise polarity="negative" statement="k334"/>
+            <conclusion statement="k589"/>
+        </argument>
+        <argument id="a20">
+            <premise polarity="negative" statement="k643"/>
+            <conclusion statement="k589"/>
+        </argument>
+        <argument id="a21">
+            <premise statement="k256"/>
+            <conclusion statement="k299"/>
+        </argument>
+        <argument id="a22">
+            <premise statement="k231"/>
+            <conclusion statement="k299"/>
+        </argument>
+        <argument id="a23">
+            <premise statement="k269"/>
+            <conclusion statement="k299"/>
+        </argument>
+        <argument id="a24">
+            <premise statement="k532"/>
+            <premise statement="k533"/>
+            <premise statement="k536"/>
+            <premise statement="k540"/>
+            <conclusion statement="k531"/>
+        </argument>
+        <argument id="a25">
+            <premise statement="k649"/>
+            <conclusion statement="k648"/>
+        </argument>
+        <argument id="a26">
+            <premise statement="k650"/>
+            <conclusion statement="k648"/>
+        </argument>
+        <argument id="a27">
+            <premise statement="k417"/>
+            <conclusion statement="k416"/>
+        </argument>
+        <argument id="a28">
+            <premise statement="k418"/>
+            <conclusion statement="k416"/>
+        </argument>
+        <argument id="a29">
+            <premise statement="k534"/>
+            <premise statement="k535"/>
+            <conclusion statement="k533"/>
+        </argument>
+        <argument id="a30">
+            <premise statement="k419"/>
+            <conclusion statement="k418"/>
+        </argument>
+        <argument id="a31">
+            <premise statement="k420"/>
+            <conclusion statement="k418"/>
+        </argument>
+        <argument id="a32">
+            <premise statement="k653"/>
+            <premise statement="k654"/>
+            <premise statement="k655"/>
+            <conclusion statement="k652"/>
+        </argument>
+        <argument id="a33">
+            <premise statement="k537"/>
+            <premise statement="k538"/>
+            <premise statement="k539"/>
+            <conclusion statement="k536"/>
+        </argument>
+        <argument id="a34">
+            <premise statement="k422"/>
+            <premise statement="k425"/>
+            <premise statement="k423"/>
+            <premise statement="k426"/>
+            <conclusion statement="k246"/>
+        </argument>
+        <argument id="a35">
+            <premise statement="k480"/>
+            <premise statement="k481"/>
+            <conclusion statement="k479"/>
+        </argument>
+        <argument id="a36">
+            <premise statement="k434"/>
+            <premise statement="k435"/>
+            <premise statement="k424"/>
+            <conclusion statement="k423"/>
+        </argument>
+        <argument id="a37">
+            <premise statement="k436"/>
+            <premise statement="k438"/>
+            <premise statement="k441"/>
+            <conclusion statement="k249"/>
+        </argument>
+        <argument id="a38">
+            <premise statement="k541"/>
+            <conclusion statement="k540"/>
+        </argument>
+        <argument id="a39">
+            <premise statement="k542"/>
+            <conclusion statement="k540"/>
+        </argument>
+        <argument id="a40">
+            <premise statement="k427"/>
+            <premise statement="k428"/>
+            <conclusion statement="k425"/>
+        </argument>
+        <argument id="a41">
+            <premise statement="k543"/>
+            <conclusion statement="k542"/>
+        </argument>
+        <argument id="a42">
+            <premise statement="k544"/>
+            <conclusion statement="k542"/>
+        </argument>
+        <argument id="a43">
+            <premise statement="k429"/>
+            <conclusion statement="k426"/>
+        </argument>
+        <argument id="a44">
+            <premise statement="k430"/>
+            <conclusion statement="k426"/>
+        </argument>
+        <argument id="a45">
+            <premise statement="k370"/>
+            <premise statement="k380"/>
+            <conclusion statement="k369"/>
+        </argument>
+        <argument id="a46">
+            <premise statement="k492"/>
+            <premise statement="k587"/>
+            <premise statement="k641"/>
+            <premise statement="k589"/>
+            <conclusion statement="k602"/>
+        </argument>
+        <argument id="a47">
+            <premise statement="k371"/>
+            <conclusion statement="k370"/>
+        </argument>
+        <argument id="a48">
+            <premise statement="k374"/>
+            <conclusion statement="k370"/>
+        </argument>
+        <argument id="a49">
+            <premise statement="k545"/>
+            <premise statement="k652"/>
+            <premise statement="k642"/>
+            <premise statement="k589"/>
+            <conclusion statement="k603"/>
+        </argument>
+        <argument id="a50">
+            <premise statement="k561"/>
+            <premise statement="k562"/>
+            <premise statement="k563"/>
+            <premise statement="k566"/>
+            <conclusion statement="k545"/>
+        </argument>
+        <argument id="a51">
+            <premise statement="k230"/>
+            <premise statement="k290"/>
+            <premise statement="k291"/>
+            <premise statement="k292"/>
+            <conclusion statement="k488"/>
+        </argument>
+        <argument id="a52">
+            <premise statement="k431"/>
+            <conclusion statement="k430"/>
+        </argument>
+        <argument id="a53">
+            <premise statement="k432"/>
+            <conclusion statement="k430"/>
+        </argument>
+        <argument id="a54">
+            <premise statement="k447"/>
+            <premise statement="k448"/>
+            <premise statement="k449"/>
+            <premise statement="k450"/>
+            <conclusion statement="k256"/>
+        </argument>
+        <argument id="a55">
+            <premise statement="k602"/>
+            <conclusion statement="k490"/>
+        </argument>
+        <argument id="a56">
+            <premise statement="k603"/>
+            <conclusion statement="k490"/>
+        </argument>
+        <argument id="a57">
+            <premise statement="k609"/>
+            <premise statement="k610"/>
+            <premise statement="k611"/>
+            <conclusion statement="k607"/>
+        </argument>
+        <argument id="a58">
+            <premise statement="k493"/>
+            <conclusion statement="k492"/>
+        </argument>
+        <argument id="a59">
+            <premise statement="k531"/>
+            <conclusion statement="k492"/>
+        </argument>
+        <argument id="a60">
+            <premise statement="k571"/>
+            <conclusion statement="k492"/>
+        </argument>
+        <argument id="a61">
+            <premise statement="k494"/>
+            <conclusion statement="k493"/>
+        </argument>
+        <argument id="a62">
+            <premise statement="k508"/>
+            <conclusion statement="k493"/>
+        </argument>
+        <argument id="a63">
+            <premise statement="k522"/>
+            <conclusion statement="k493"/>
+        </argument>
+        <argument id="a64">
+            <premise statement="k495"/>
+            <premise statement="k496"/>
+            <premise statement="k499"/>
+            <premise statement="k503"/>
+            <conclusion statement="k494"/>
+        </argument>
+        <argument id="a65">
+            <premise statement="k497"/>
+            <premise statement="k498"/>
+            <conclusion statement="k496"/>
+        </argument>
+        <argument id="a66">
+            <premise statement="k623"/>
+            <conclusion statement="k380"/>
+        </argument>
+        <argument id="a67">
+            <premise statement="k624"/>
+            <conclusion statement="k380"/>
+        </argument>
+        <argument id="a68">
+            <premise statement="k439"/>
+            <premise statement="k440"/>
+            <conclusion statement="k438"/>
+        </argument>
+        <argument id="a69">
+            <premise statement="k290"/>
+            <premise statement="k614"/>
+            <conclusion statement="k381"/>
+        </argument>
+        <argument id="a70">
+            <premise statement="k230"/>
+            <premise statement="k395"/>
+            <premise statement="k619"/>
+            <conclusion statement="k615"/>
+        </argument>
+        <argument id="a71">
+            <premise statement="k500"/>
+            <premise statement="k501"/>
+            <premise statement="k502"/>
+            <conclusion statement="k499"/>
+        </argument>
+        <argument id="a72">
+            <premise statement="k442"/>
+            <premise statement="k443"/>
+            <premise statement="k444"/>
+            <conclusion statement="k441"/>
+        </argument>
+        <argument id="a73">
+            <premise statement="k620"/>
+            <premise statement="k617"/>
+            <premise statement="k618"/>
+            <conclusion statement="k616"/>
+        </argument>
+        <argument id="a74">
+            <premise statement="k212"/>
+            <premise statement="k401"/>
+            <conclusion statement="k211"/>
+        </argument>
+        <argument id="a75">
+            <premise statement="k464"/>
+            <premise statement="k465"/>
+            <premise statement="k466"/>
+            <premise statement="k470"/>
+            <conclusion statement="k269"/>
+        </argument>
+        <argument id="a76">
+            <premise statement="k213"/>
+            <conclusion statement="k212"/>
+        </argument>
+        <argument id="a77">
+            <premise statement="k394"/>
+            <conclusion statement="k212"/>
+        </argument>
+        <argument id="a78">
+            <premise statement="k504"/>
+            <conclusion statement="k503"/>
+        </argument>
+        <argument id="a79">
+            <premise statement="k505"/>
+            <conclusion statement="k503"/>
+        </argument>
+        <argument id="a80">
+            <premise statement="k214"/>
+            <conclusion statement="k213"/>
+        </argument>
+        <argument id="a81">
+            <premise statement="k369"/>
+            <conclusion statement="k213"/>
+        </argument>
+        <argument id="a82">
+            <premise statement="k621"/>
+            <conclusion statement="k620"/>
+        </argument>
+        <argument id="a83">
+            <premise statement="k622"/>
+            <conclusion statement="k620"/>
+        </argument>
+        <argument id="a84">
+            <premise statement="k215"/>
+            <premise statement="k228"/>
+            <conclusion statement="k214"/>
+        </argument>
+        <argument id="a85">
+            <premise statement="k506"/>
+            <conclusion statement="k505"/>
+        </argument>
+        <argument id="a86">
+            <premise statement="k507"/>
+            <conclusion statement="k505"/>
+        </argument>
+        <argument id="a87">
+            <premise statement="k564"/>
+            <premise statement="k565"/>
+            <conclusion statement="k563"/>
+        </argument>
+        <argument id="a88">
+            <premise statement="k216"/>
+            <premise statement="k220"/>
+            <conclusion statement="k215"/>
+        </argument>
+        <argument id="a89">
+            <premise statement="k451"/>
+            <premise statement="k452"/>
+            <conclusion statement="k448"/>
+        </argument>
+        <argument id="a90">
+            <premise statement="k404"/>
+            <premise statement="k218"/>
+            <conclusion statement="k216"/>
+        </argument>
+        <argument id="a91">
+            <premise statement="k381"/>
+            <premise statement="k382"/>
+            <conclusion statement="k623"/>
+        </argument>
+        <argument id="a92">
+            <premise statement="k454"/>
+            <premise statement="k455"/>
+            <premise statement="k456"/>
+            <conclusion statement="k449"/>
+        </argument>
+        <argument id="a93">
+            <premise statement="k625"/>
+            <premise statement="k626"/>
+            <conclusion statement="k624"/>
+        </argument>
+        <argument id="a94">
+            <premise statement="k509"/>
+            <premise statement="k510"/>
+            <premise statement="k513"/>
+            <premise statement="k517"/>
+            <conclusion statement="k508"/>
+        </argument>
+        <argument id="a95">
+            <premise statement="k458"/>
+            <conclusion statement="k450"/>
+        </argument>
+        <argument id="a96">
+            <premise statement="k459"/>
+            <conclusion statement="k450"/>
+        </argument>
+        <argument id="a97">
+            <premise statement="k605"/>
+            <premise statement="k606"/>
+            <premise statement="k612"/>
+            <conclusion statement="k334"/>
+        </argument>
+        <argument id="a98">
+            <premise statement="k567"/>
+            <conclusion statement="k566"/>
+        </argument>
+        <argument id="a99">
+            <premise statement="k568"/>
+            <conclusion statement="k566"/>
+        </argument>
+        <argument id="a100">
+            <premise statement="k511"/>
+            <premise statement="k512"/>
+            <conclusion statement="k510"/>
+        </argument>
+        <argument id="a101">
+            <premise statement="k615"/>
+            <conclusion statement="k394"/>
+        </argument>
+        <argument id="a102">
+            <premise statement="k616"/>
+            <conclusion statement="k394"/>
+        </argument>
+        <argument id="a103">
+            <premise statement="k221"/>
+            <premise statement="k227"/>
+            <premise statement="k406"/>
+            <conclusion statement="k220"/>
+        </argument>
+        <argument id="a104">
+            <premise statement="k569"/>
+            <conclusion statement="k568"/>
+        </argument>
+        <argument id="a105">
+            <premise statement="k570"/>
+            <conclusion statement="k568"/>
+        </argument>
+        <argument id="a106">
+            <premise statement="k222"/>
+            <premise statement="k223"/>
+            <premise statement="k226"/>
+            <conclusion statement="k221"/>
+        </argument>
+        <argument id="a107">
+            <premise statement="k581"/>
+            <premise statement="k582"/>
+            <premise statement="k583"/>
+            <premise statement="k586"/>
+            <conclusion statement="k571"/>
+        </argument>
+        <argument id="a108">
+            <premise statement="k514"/>
+            <premise statement="k515"/>
+            <premise statement="k516"/>
+            <conclusion statement="k513"/>
+        </argument>
+        <argument id="a109">
+            <premise statement="k224"/>
+            <premise statement="k225"/>
+            <conclusion statement="k223"/>
+        </argument>
+        <argument id="a110">
+            <premise statement="k476"/>
+            <premise statement="k477"/>
+            <premise statement="k479"/>
+            <premise statement="k487"/>
+            <conclusion statement="k281"/>
+        </argument>
+        <argument id="a111">
+            <premise statement="k636"/>
+            <premise statement="k637"/>
+            <premise statement="k638"/>
+            <conclusion statement="k631"/>
+        </argument>
+        <argument id="a112">
+            <premise statement="k639"/>
+            <premise statement="k640"/>
+            <conclusion statement="k632"/>
+        </argument>
+        <argument id="a113">
+            <premise statement="k634"/>
+            <premise statement="k635"/>
+            <conclusion statement="k400"/>
+        </argument>
+        <argument id="a114">
+            <premise statement="k400"/>
+            <conclusion statement="k633"/>
+        </argument>
+        <argument id="a115">
+            <premise statement="k460"/>
+            <conclusion statement="k459"/>
+        </argument>
+        <argument id="a116">
+            <premise statement="k461"/>
+            <conclusion statement="k459"/>
+        </argument>
+        <argument id="a117">
+            <premise statement="k518"/>
+            <conclusion statement="k517"/>
+        </argument>
+        <argument id="a118">
+            <premise statement="k519"/>
+            <conclusion statement="k517"/>
+        </argument>
+        <argument id="a119">
+            <premise polarity="negative" statement="k402"/>
+            <conclusion statement="k401"/>
+        </argument>
+        <argument id="a120">
+            <premise polarity="negative" statement="k403"/>
+            <conclusion statement="k401"/>
+        </argument>
+        <argument id="a121">
+            <premise statement="k629"/>
+            <conclusion statement="k634"/>
+        </argument>
+        <argument id="a122">
+            <premise statement="k229"/>
+            <conclusion statement="k228"/>
+        </argument>
+        <argument id="a123">
+            <premise statement="k298"/>
+            <conclusion statement="k228"/>
+        </argument>
+        <argument id="a124">
+            <premise statement="k630"/>
+            <premise statement="k631"/>
+            <premise statement="k632"/>
+            <conclusion statement="k635"/>
+        </argument>
+        <argument id="a125">
+            <premise statement="k520"/>
+            <conclusion statement="k519"/>
+        </argument>
+        <argument id="a126">
+            <premise statement="k521"/>
+            <conclusion statement="k519"/>
+        </argument>
+        <argument id="a127">
+            <premise statement="k488"/>
+            <conclusion statement="k229"/>
+        </argument>
+        <argument id="a128">
+            <premise statement="k490"/>
+            <conclusion statement="k229"/>
+        </argument>
+        <argument id="a129">
+            <premise polarity="negative" statement="k627"/>
+            <premise polarity="negative" statement="k628"/>
+            <conclusion statement="k403"/>
+        </argument>
+        <argument id="a130">
+            <premise statement="k231"/>
+            <conclusion statement="k230"/>
+        </argument>
+        <argument id="a131">
+            <premise statement="k256"/>
+            <conclusion statement="k230"/>
+        </argument>
+        <argument id="a132">
+            <premise statement="k269"/>
+            <conclusion statement="k230"/>
+        </argument>
+        <argument id="a133">
+            <premise statement="k281"/>
+            <conclusion statement="k230"/>
+        </argument>
+        <argument id="a134">
+            <premise statement="k232"/>
+            <conclusion statement="k231"/>
+        </argument>
+        <argument id="a135">
+            <premise statement="k246"/>
+            <conclusion statement="k231"/>
+        </argument>
+        <argument id="a136">
+            <premise statement="k249"/>
+            <conclusion statement="k231"/>
+        </argument>
+        <argument id="a137">
+            <premise statement="k408"/>
+            <premise statement="k409"/>
+            <premise statement="k413"/>
+            <premise statement="k416"/>
+            <conclusion statement="k232"/>
+        </argument>
+        <argument id="a138">
+            <premise statement="k595"/>
+            <premise statement="k596"/>
+            <premise statement="k597"/>
+            <conclusion statement="k290"/>
+        </argument>
+        <argument id="a139">
+            <premise statement="k523"/>
+            <premise statement="k524"/>
+            <premise statement="k527"/>
+            <conclusion statement="k522"/>
+        </argument>
+    </argument-graph>
+</lkif>

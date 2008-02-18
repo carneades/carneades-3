@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="../../schemas/LKIF.rnc" type="compact"?>
+<lkif xmlns:foo="http://www.estrellaproject.org/foo#">
+    
+    <rule id="facts">
+        <s>foo:Movable g1</s>
+        <s>Money g1</s>
+    </rule>
+    
+    <rule id="s-109-h">
+        <head><s>Goods ?c</s></head>
+        <body><s>foo:Movable ?c</s> 
+              <unless><s>Money ?c</s></unless></body>
+    </rule>
+    
+    <rule id="lex-posterior">
+        <head><s>prior ?r2 ?r1</s></head>
+        <body><s>enacted ?r1 ?d1</s>
+              <s>enacted ?r2 ?d2</s></body>
+    </rule>
+  
+    <rule id="s-109-h-i">
+        <body><s>Money ?c</s></body>
+        <head><s>excluded s-109-5-h <s>Goods ?c</s></s></head>
+    </rule>
+    
+    <rule id="repeal">
+        <body><s>repealed ?r1</s></body>
+        <head><not><s>valid ?r1</s></not></head>
+    </rule>
+    
+    <rule id="s-9-306-1">
+        <body>
+            <s>Goods ?s ?c</s>
+            <s>consideration ?s ?p</s>
+            <s>collateral ?si ?c</s>
+            <s>holds <s>perfected ?si ?c</s> ?e</s>
+            <unless><s>applies s-9-306-3-2 <s>perfected ?si ?p</s></s></unless>
+        </body>
+        <head>
+            <s>hold <s>perfected ?si ?c</s> ?e</s>
+        </head>
+    </rule>
+    
+    <rule id="s-9-306-2a">
+        <body>
+            <s>goods ?t ?c</s>
+            <s>collateral ?s ?c</s>
+        </body>
+        <head>
+            <not><s>terminates ?t <s>SecurityInterest ?s</s></s></not>
+        </head>
+    </rule>
+ 
+</lkif>

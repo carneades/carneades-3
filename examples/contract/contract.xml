@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="../../schemas/LKIF.rnc" type="compact"?>
+<lkif>
+
+    <s id="contract" summary="There is a contract."/>
+    <s id="writing" summary="The agreement is in writing."/>
+    <s id="real-estate" summary="The agreement is for the sale of real estate."/>
+    <s id="agreement" summary="There is an agreement."/>
+    <s id="minor" summary="One of the parties is a minor."/>
+    <s id="email" summary="The agreement was by email."/>
+    <s id="deed" summary="There is a deed."/>
+    
+    <argument-graph>
+        <argument id="a1" direction="pro">
+            <premise statement="agreement"/>
+            <exception statement="minor"/>
+            <conclusion statement="contract"/>
+        </argument>    
+        
+        <argument id="a2" direction="con">
+            <premise statement="writing" polarity="negative"/>
+            <premise statement="real-estate" />
+            <conclusion statement="contract" />
+        </argument>
+        
+        <argument id="a3" direction="con">
+            <premise statement="email"/>
+            <conclusion statement="writing"/>
+        </argument>
+        
+        <argument id="a4" direction="pro">
+            <premise statement="deed" />
+            <conclusion statement="agreement"/>
+        </argument>    
+        
+        <argument id="a5" direction="pro">
+            <assumption statement="deed"/>
+            <conclusion statement="real-estate"/>
+        </argument>
+    </argument-graph>
+
+</lkif>

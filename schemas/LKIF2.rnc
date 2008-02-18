@@ -1,0 +1,57 @@
+datatypes xsd = "http://www.w3.org/2001/XMLSchema-datatypes"
+
+grammar {
+    start = element lkif { (Statement | Rule | ArgumentGraph)* }
+    
+    Rule = element rule { 
+        attribute id { xsd:ID }?, 
+        attribute strict { "no" | "yes" }?,
+        (Literal+ | Implies)
+    }
+        
+    Literal = Statement | Not
+    Statement = element s { 
+        attribute id { xsd:ID }?,
+        attribute summary { xsd:string }?,
+        attribute src { xsd:anyURI }?,
+        ((text* & Variable* & Constant* & Statement*)*)? }
+    Variable = element v { text }
+    Constant = element c { text }
+
+    Not = element not { Statement }
+    Implies = (Head, Body) | (Body, Head) 
+    Head = element head { Literal+ }
+    Body = element body { Or | Condition+ }
+    Or = element or { (Condition | And)+ }
+    And = element and { Condition+ }
+    Condition = Literal 
+             | element if { attribute role { text }?, Literal }
+             | element unless { attribute role { text }?, Literal } 
+             | element assuming { attribute role { text }?, Literal } 
+    
+    ArgumentGraph = element argument-graph { 
+        attribute id { xsd:ID }?, 
+        attribute issue { xsd:ID}?,
+        Argument* 
+    }
+    
+    Argument = element argument { 
+    	attribute id { xsd:ID },
+        attribute direction { "pro" | "con" }?,
+        attribute scheme { text }?,
+        attribute src { xsd:anyURI }?,
+        Premise*, Conclusion 
+    }
+    
+    Premise = element premise { attribute polarity { "positive" | "negative" }?,
+                                attribute role { text }?,
+                                (attribute statement { xsd:IDREF } | Statement) } 
+            | element exception { attribute polarity { "positive" | "negative" }?,
+                                  attribute role { text }?,
+                                  (attribute statement { xsd:IDREF } | Statement) }
+            | element assumption { attribute polarity { "positive" | "negative" }?,
+                                  attribute role { text }?,
+                                  (attribute statement { xsd:IDREF } | Statement) }
+                  
+    Conclusion = element conclusion { attribute statement { xsd:IDREF } | Statement }
+}

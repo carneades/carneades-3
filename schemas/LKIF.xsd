@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="lkif">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="s"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="rule"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="argument-graph"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="rule">
+    <xs:complexType>
+      <xs:choice>
+        <xs:element maxOccurs="unbounded" ref="Literal"/>
+        <xs:group ref="Implies"/>
+      </xs:choice>
+      <xs:attribute name="id" type="xs:ID"/>
+      <xs:attribute name="strict">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="no"/>
+            <xs:enumeration value="yes"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Literal" abstract="true" substitutionGroup="Condition"/>
+  <xs:element name="s" substitutionGroup="Literal">
+    <xs:complexType mixed="true">
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="s"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:ID"/>
+      <xs:attribute name="summary" type="xs:string"/>
+      <xs:attribute name="src" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="not" substitutionGroup="Literal">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="s"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:group name="Implies">
+    <xs:choice>
+      <xs:sequence>
+        <xs:element ref="head"/>
+        <xs:element ref="body"/>
+      </xs:sequence>
+      <xs:sequence>
+        <xs:element ref="body"/>
+        <xs:element ref="head"/>
+      </xs:sequence>
+    </xs:choice>
+  </xs:group>
+  <xs:element name="head">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="Literal"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="body">
+    <xs:complexType>
+      <xs:choice>
+        <xs:element ref="or"/>
+        <xs:element ref="and"/>
+        <xs:element maxOccurs="unbounded" ref="Condition"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="or">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element ref="Condition"/>
+        <xs:element ref="and"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="and">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="Condition"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Condition" abstract="true"/>
+  <xs:element name="if" substitutionGroup="Condition">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Literal"/>
+      </xs:sequence>
+      <xs:attribute name="role"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="unless" substitutionGroup="Condition">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Literal"/>
+      </xs:sequence>
+      <xs:attribute name="role"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="assuming" substitutionGroup="Condition">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Literal"/>
+      </xs:sequence>
+      <xs:attribute name="role"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="argument-graph">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="argument"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:ID"/>
+      <xs:attribute name="issue" type="xs:ID"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="argument">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="Premise"/>
+        <xs:element ref="conclusion"/>
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:ID"/>
+      <xs:attribute name="direction">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="pro"/>
+            <xs:enumeration value="con"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="scheme"/>
+      <xs:attribute name="src" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Premise" abstract="true">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="s"/>
+      </xs:sequence>
+      <xs:attribute name="polarity">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="positive"/>
+            <xs:enumeration value="negative"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="role"/>
+      <xs:attribute name="statement" type="xs:IDREF"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="premise" substitutionGroup="Premise"/>
+  <xs:element name="exception" substitutionGroup="Premise"/>
+  <xs:element name="assumption" substitutionGroup="Premise"/>
+  <xs:element name="conclusion">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="s"/>
+      </xs:sequence>
+      <xs:attribute name="statement" type="xs:IDREF"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
