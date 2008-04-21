@@ -1,7 +1,7 @@
 (module ancestor mzscheme
   
-  (require "../src/rule.scm")
-  (require "../src/shell.scm")
+  (require (lib "rule.scm" "carneades"))
+  (require (lib "shell.scm" "carneades"))
   (require (planet "test.ss" ("schematics" "schemeunit.plt" 2 4)))
   (require (planet "text-ui.ss" ("schematics" "schemeunit.plt" 2)))
   

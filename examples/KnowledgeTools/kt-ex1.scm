@@ -1,14 +1,14 @@
 (module kt-ex1 mzscheme
   
-  (require (prefix lkif: "../../src/lkif.scm"))
-  (require "../../src/statement.scm")
-  (require "../../src/shell.scm")
-  (require "../../src/stream.scm")
-  (require "../../src/argument-search.scm")
-  (require (prefix argument: "../../src/argument.scm"))
-  (require (prefix e: "../../src/evidence.scm"))
-  (require "../../src/argument-diagram.scm")
-  (require "../../src/argument-from-arguments.scm")
+  (require (prefix lkif: (lib "lkif.scm" "carneades")))
+  (require (lib "statement.scm" "carneades"))
+  (require (lib "shell.scm" "carneades"))
+  (require (lib "stream.scm" "carneades"))
+  (require (lib "argument-search.scm" "carneades"))
+  (require (prefix argument: (lib "argument.scm" "carneades")))
+  (require (prefix e: (lib "evidence.scm" "carneades")))
+  (require (lib "argument-diagram.scm" "carneades"))
+  (require (lib "argument-from-arguments.scm" "carneades"))
   (require (planet "test.ss" ("schematics" "schemeunit.plt")))
   (require (planet "text-ui.ss" ("schematics" "schemeunit.plt")))
   

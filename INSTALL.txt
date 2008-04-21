@@ -1,30 +1,75 @@
 
 1. Prerequisites
 
-- PLT Scheme (http://www.plt-scheme.org)
-- GraphViz (http://www.graphviz.org/)
+- PLT Scheme <http://www.plt-scheme.org>
+- GraphViz <http://www.graphviz.org/>
 
 Both are free software, available in Mac/Unix/Windows versions.
 
-2. Installation
+2. Downloading Carneades
 
-- Unpack the attached carneades.zip file in some directory/folder of your choice. This will create a directory named "dist", with the following subdirectories:
+Carneades is available for downloading as a compressed (.zip) file from
+<http://carneades.berlios.de>.  Alternatively, the sources can be
+downloaded using the SVN source code management system, following the
+instructions avaiable here
+<http://developer.berlios.de/svn/?group_id=9385>.
 
-	- src: The Scheme source files
-	- examples:  Some examples
+3. Installation
 
-3. Configuration
+- If you downloaded the .zip file distribution of Carneades, first
+unpack this .zip file in the directory/folder of your choice.  If you
+used SVN to download Carneades, you will have downloaded them into a
+directory.   No matter which method you used, in the following we will
+refer to the directory containing the Carneades sources as
+"CARNEADES_HOME".  (You do not need to create an environment variable
+with this name.)
 
-In the src directory, edit the config.scm file to select your preferred graphics format for displaying 
-argument graphs (png, ps, or svg) and specify the full path to some application for viewing graphics in 
-this format.  The config.scm file includes some examples for both Windows and Mac OS X.
+The CARNEADES_HOME directory should contain these files and directories:
 
-4. Trying it out
+- CHANGES.txt 
+- INSTALL.txt 
+- examples 
+- lib 
+- schemas
 
-- Start PLT Scheme
-- In the "examples" directory, open the "rule-tests.scm" file
-- Click on the "Run" button in the upper-right corner of the window to run some tests
-- Try out the example commands commented out near the end of the file, to see how to ask queries and 
-  show a diagram of the arguments found.
+The Scheme source files of Carneades are in the "lib/carneades"
+directory.
 
-Note: You will need to quit the graphics application to return control to PLT Scheme.
+Define an environment variable named "PLTCOLLECTS" listing the directory
+paths that PLT Scheme should search when looking for libraries.  For example, 
+if the CARNEADES_HOME directory is "/usr/local/share/carneades" and the only 
+other directory to be searched is PLT Scheme's default collections direction, 
+PLTCOLLECTS should be set equal to ":/usr/local/share/carneades/lib".  Using 
+the "bash" shell, this can be done by adding the following line to the 
+.bash_profile file in your home directory:
+
+	typeset -x PLTCOLLECTS=:/usr/local/share/carneades/lib
+
+4. Configuration
+
+- In the lib/carneades directory, edit the config.scm file to select your
+preferred graphics format for displaying argument graphs (png, ps, or
+svg) and specify the full path to some application for viewing graphics
+in this format.  The config.scm file includes some examples for both
+Windows and Mac OS X.
+
+
+5. Trying it out
+
+- Start PLT Scheme.  Warning: You may need to start PLT Scheme from a 
+  terminal program in order for the PLTCOLLECTS variable to
+  be defined in the environment used by PLT Scheme.  If the Carneades
+  source files are not found when running the examples, this may be the 
+  problem.  Evaluate the following Scheme expression in PLT Scheme to 
+  check whether PLTCOLLECTS includes the carneades/lib directory:
+  	
+  	(getenv "PLTCOLLECTS")
+  		
+- In the "examples" directory, open the "rule-tests.scm" file 
+- Click on the "Run" button in the upper-right corner of the window 
+  to run some tests 
+- Try out the example commands commented out near the end of the file, 
+  to see how to ask queries and show a diagram of the arguments found.
+
+Note: You will need to quit the graphics application to return control
+to PLT Scheme.

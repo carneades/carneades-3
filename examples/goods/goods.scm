@@ -1,9 +1,9 @@
 (module goods mzscheme
     
-  (require (prefix lkif: "../../src/lkif.scm"))
-  (require "../../src/shell.scm")
-  (require "../../src/argument-builtins.scm") 
-  (require "../../src/rule.scm")
+  (require (prefix lkif: (lib "lkif.scm" "carneades")))
+  (require (lib "shell.scm" "carneades"))
+  (require (lib "argument-builtins.scm" "carneades"))
+  (require (lib "rule.scm" "carneades"))
   (require (planet "test.ss" ("schematics" "schemeunit.plt" 2 4)))
   (require (planet "text-ui.ss" ("schematics" "schemeunit.plt" 2)))
   

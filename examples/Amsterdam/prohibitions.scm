@@ -1,8 +1,8 @@
 (module prohibitions mzscheme
   
-  (require "../../src/shell.scm")
-  (require "../../src/argument-builtins.scm") 
-  (require "../../src/rule.scm")
+  (require (lib "shell.scm" "carneades"))
+  (require (lib "argument-builtins.scm" "carneades"))
+  (require (lib "rule.scm" "carneades"))
   
   (define rb1 
     (rulebase

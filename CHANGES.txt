@@ -1,63 +1,78 @@
 
 Carneades Changelog
 
+Version 0.1.1
+
+- Reorganized the directories to make it easier to include the Carneades 
+  source files in a list of directory paths containing Scheme libraries.
+- Modified all the examples to import Carneades files from the Carneades 
+  library, rather than using path names relative to the directory of the 
+  source file of the example.  
+- Added a new example, mccarty.scm, with some standard benchmarks from the
+  nonmontonic logic literature.
+
 Version of 12 February, 2008
 
-- Commented out search for rebuttals or questioning assumptions in make-successor-state of argument-search.scm,
-  to reduce the search space and improve performance, but at the expense of completeness.  Shouldn't negatively affect
-  any of the pilot applications in ESTRELLA.
-- Changed question, accept, reject, assert, update in argument.scm to take a fixed number
-  of arguments instead, with the last argument being a list.
+- Commented out search for rebuttals or questioning assumptions in
+  make-successor-state of argument-search.scm, to reduce the search space
+  and improve performance, but at the expense of completeness.  Shouldn't
+  negatively affect any of the pilot applications in ESTRELLA.
+- Changed question, accept, reject, assert, update in argument.scm to 
+  take a fixed number of arguments instead, with the last argument being a list.
 - Fixed a bug in the LKIF importer: all imported rules were strict.
 
 Version of 7 February, 2008
 
 - Fixed a bug in the LKIF exporter (improper <and> element)
-- Add a "shell" module, to make it easier to construct inference engines and query knowledge bases. 
-  The examples have been modified to illustrate the use of this module.
+- Add a "shell" module, to make it easier to construct inference engines 
+  and query knowledge bases. The examples have been modified to illustrate 
+  the use of this module.
 
 Version of 4 February, 2008
 
-- Fixed bug in rule.scm which checks whether a rule has already been tried.  This reduces the
-  size of the search space and avoids (some) duplication of arguments.
+- Fixed bug in rule.scm which checks whether a rule has already been tried.  
+  This reduces the size of the search space and avoids (some) duplication of 
+  arguments.
 - Refactored code and consolidated argument-state.scm into argument-search.scm
 - Redefined the type of argument generators in argument-search.scm
-  to: statement state -> (stream-of response), where a response encapsulates an argument
-  and a set of substitutions
+  to: statement state -> (stream-of response), where a response encapsulates 
+  an argument and a set of substitutions
 - Modified all argument generators to match the new type for generators.
 
 Version of January 31, 2008
 
-- Fixed bug in add-rule of rule.scm which caused a rule to be indexed multiple times for
-  rules with several concluions with the same predicate.  This bug enlarged the search space
-  and duplicated solutions for some queries.
-- Fixed a serious bug in the rules module, rule.scm, which affected completeness and efficiency.
-- Fixed more bugs in the LKIF importer and exporter and also cleaned up the code some.
+- Fixed bug in add-rule of rule.scm which caused a rule to be indexed multiple 
+  times for rules with several concluions with the same predicate.  This bug 
+  enlarged the search space and duplicated solutions for some queries.
+- Fixed a serious bug in the rules module, rule.scm, which affected 
+  completeness and efficiency.
+- Fixed more bugs in the LKIF importer and exporter and also cleaned up 
+  the code some.
 
 Version of January 17, 2008
 
 - Fixed some bugs in the LKIF exporter.
 - Extended the LKIF exporter to generate ids and summarizes for the statements 
-of premises and conclusions in argument graphs.
+  of premises and conclusions in argument graphs.
 - Added a summarize function to the statements module, for generating 
-a default string representation of statements.
+  a default string representation of statements.
 
 
 Version of January 15, 2008
 
 - Fixed bug in LKIF.scm
 - Added an instantiated-arguments procedure to argument-state.scm, which
-returns the argument graph of the state with its variables instantiated 
-with their values in the substitutions of the state. Useful for exporting 
-arguments graphs found using argument-search to LKIF.
+  returns the argument graph of the state with its variables instantiated 
+  with their values in the substitutions of the state. Useful for exporting 
+  arguments graphs found using argument-search to LKIF.
 
 Version of January 14, 2008
 
 - Modified the CBR module (cases.scm) to conform more closely to the 
-specifications of the University of Liverpool, as published in the 
-Jurix 2007 paper of Adam Wyner and Trevor Bench-Capon.
+  specifications of the University of Liverpool, as published in the 
+  Jurix 2007 paper of Adam Wyner and Trevor Bench-Capon.
 - Updated the CBR example in the examples/Liverpool to include more 
-CATO factors and more cases from the CATO/HYPO casebase.
+  CATO factors and more cases from the CATO/HYPO casebase.
 
 Version of January 8, 2008
 

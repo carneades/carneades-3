@@ -1,9 +1,8 @@
 
 (module Tweety mzscheme
   
-  (require "../src/statement.scm")
-  (require "../src/argument.scm")
-  (require "../src/argument-diagram.scm")
+  (require (lib "argument.scm" "carneades"))
+  (require (lib "argument-diagram.scm" "carneades"))
 
   (define birds-fly 
     "Birds normally fly.") 

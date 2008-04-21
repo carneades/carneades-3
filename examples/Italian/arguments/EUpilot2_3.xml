@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="LKIF.rnc" type="compact"?>
+<lkif>
+
+<s id="Opaying-agent" summary="Omega is a paying agent."/>
+<s id="Apaying-agent" summary="Alfabank is a paying agent."/>
+<s id="sweden" summary="Omega is handelsbolag (HB) ET kommanditbolag (KB)."/>        
+<s id="finland" summary="Omega is a avoin yhtiö (Ay) ET kommandiittiyhtiö (Ky)/öppet bolag ET kommanditbolag."/>    
+<s id="receives" summary="Omega receives from Alfabank an interest payment for the benefit of Mr. Brown who is the final recipient "/>
+<s id="payment" summary="Alfabank makes a payment to Omega."/>
+<s id="economic-operator" summary="Alfabank is an economic operator"/>    
+<s id="taxed" summary="Alfabank has reason to believe that Omega is taxed under the general arrangements for business taxation."/>
+<s id="ucits" summary="Alfabank has reason to believe that Omega is an UCITS."/>
+<s id="legal-person-for-the-directive" summary="Alfabank has reason to believe that Omega is a legal person for the scope of Directive"/>
+<s id="legal-person" summary="Alfabank has reason to believe that Omega is a legal person"/>
+   
+   <s id="communication_byA" summary="Alfabank shall communicate the name and the address of Omega."/>
+   <s id="communication_byO" summary="Omega shall communicate the name and the address of Mr. Brown."/>   
+	    
+    <argument-graph>
+        <argument id="a1" direction="pro">           
+            <assumption statement="Opaying-agent"/>
+            <assumption statement="Apaying-agent"/>
+           
+            <conclusion statement="communication_byA"/>
+        </argument>  
+        
+        <argument id="a2" direction="pro">           
+            <premise statement="economic-operator"/>
+            <premise statement="payment"/>
+            <conclusion statement="Apaying-agent"/>
+        </argument>  
+        
+        
+        <argument id="a3" direction="pro">
+            <premise statement="receives"/>        
+            <premise statement="payment"/>
+            <premise statement="economic-operator" />
+            <exception statement="legal-person-for-the-directive"/>
+            <exception statement="taxed"/>
+            <exception statement="ucits"/>
+            <conclusion statement="Opaying-agent" />
+        </argument>
+        
+        <argument id="a4" direction="pro">
+        <premise statement="legal-person" />
+           <exception statement="sweden"/>
+           <exception statement="finland"/>
+           <conclusion statement="legal-person-for-the-directive"/>
+        </argument>
+
+<argument id="a5" direction="pro">           
+            <assumption statement="Opaying-agent"/>           
+            <conclusion statement="communication_byO"/>
+        </argument>  
+
+        
+    </argument-graph>
+</lkif>

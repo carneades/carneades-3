@@ -1,8 +1,8 @@
 (module uva-model mzscheme
   
-  (require "../../src/argument-builtins.scm") 
-  (require "../../src/rule.scm")
-  (require "../../src/shell.scm")
+  (require (lib "argument-builtins.scm" "carneades"))
+  (require (lib "rule.scm" "carneades"))
+  (require (lib "shell.scm" "carneades"))
   
   (define rb1 
     (rulebase

@@ -1,8 +1,8 @@
 (module rule-tests mzscheme
   
-  (require "../src/argument-builtins.scm") 
-  (require "../src/rule.scm")
-  (require "../src/shell.scm")
+  (require (lib "argument-builtins.scm" "carneades"))
+  (require (lib "rule.scm" "carneades"))
+  (require (lib "shell.scm" "carneades"))
   (require (planet "test.ss" ("schematics" "schemeunit.plt")))
   (require (planet "text-ui.ss" ("schematics" "schemeunit.plt")))
   

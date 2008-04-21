@@ -1,6 +1,6 @@
 
 (module 8puzzle mzscheme
-  (require "../src/search.scm")
+  (require (lib "search.scm" "carneades"))
   (require (lib "match.ss"))
   (require (lib "compare.ss" "srfi" "67"))
   (require (lib "stream.ss" "srfi" "40"))

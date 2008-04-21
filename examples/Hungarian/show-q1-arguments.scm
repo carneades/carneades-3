@@ -1,9 +1,9 @@
 (module show-q1-arguments mzscheme
     
-  (require (prefix lkif: "../../src/lkif.scm"))
-  (require "../../src/statement.scm")
-  (require "../../src/argument.scm")
-  (require "../../src/argument-diagram.scm")
+  (require (prefix lkif: (lib "lkif.scm" "carneades")))
+  (require (lib "statement.scm" "carneades"))
+  (require (lib "argument.scm" "carneades"))
+  (require (lib "argument-diagram.scm" "carneades"))
   (require (prefix list: (lib "list.ss" "srfi" "1")))
   
   (define imports (lkif:import "q1-arguments.xml"))
