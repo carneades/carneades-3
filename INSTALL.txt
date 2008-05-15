@@ -35,15 +35,25 @@ The CARNEADES_HOME directory should contain these files and directories:
 The Scheme source files of Carneades are in the "lib/carneades"
 directory.
 
-Define an environment variable named "PLTCOLLECTS" listing the directory
-paths that PLT Scheme should search when looking for libraries.  For example, 
-if the CARNEADES_HOME directory is "/usr/local/share/carneades" and the only 
-other directory to be searched is PLT Scheme's default collections direction, 
-PLTCOLLECTS should be set equal to ":/usr/local/share/carneades/lib".  Using 
-the "bash" shell, this can be done by adding the following line to the 
-.bash_profile file in your home directory:
+Start DrScheme and excecute the following command to find out the full
+paths of the directories searched for collections (i.e. libraries):
 
-	typeset -x PLTCOLLECTS=:/usr/local/share/carneades/lib
+> (current-library-collection-paths )
+
+Create a symbolic link in one of the directories listed to the directory
+containing the source code of the Carneades.  For example, using a Unix
+operating system this can be done as follows from a Unix shell, such as Bash.
+Let COLLECTS be the path of a directory in the current library collections path.
+
+$ cd COLLECTS
+$ ln -s CARNEADES_HOME/lib/carneades carneades
+
+Be sure to replace "COLLECTS" and "CARNEADES_HOME" with the full path names
+of the actual directories.
+
+Warning: You may need to repeat this installation procedure if you later 
+upgrade your installation of PLT to a new version, since each version of PLT 
+Scheme has its own directories for storing collections.
 
 4. Configuration
 
@@ -56,15 +66,7 @@ Windows and Mac OS X.
 
 5. Trying it out
 
-- Start PLT Scheme.  Warning: You may need to start PLT Scheme from a 
-  terminal program in order for the PLTCOLLECTS variable to
-  be defined in the environment used by PLT Scheme.  If the Carneades
-  source files are not found when running the examples, this may be the 
-  problem.  Evaluate the following Scheme expression in PLT Scheme to 
-  check whether PLTCOLLECTS includes the carneades/lib directory:
-  	
-  	(getenv "PLTCOLLECTS")
-  		
+- Start DrScheme 
 - In the "examples" directory, open the "rule-tests.scm" file 
 - Click on the "Run" button in the upper-right corner of the window 
   to run some tests 

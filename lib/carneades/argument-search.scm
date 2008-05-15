@@ -216,7 +216,7 @@
                                (strategy r))))
   
   
-  ; find-best-arguments: resource-limited-stredegy r int state (list-of generator) ->
+  ; find-best-arguments: resource-limited-strategy r int state (list-of generator) ->
   ;                       (stream-of state)
   ; find the best arguments for *both* viewpoints, starting with the viewpoint of the
   ; initial state. An argument is "best" if it survives all possible attacks from arguments 

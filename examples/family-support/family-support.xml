@@ -31,6 +31,7 @@
         <body><s>ancestor ?x ?y</s></body>
         <head><s>descendent ?y ?x</s></head>
     </rule>
+    
     <rule id="r5" strict="yes">
         <body><s>mother ?x ?y</s></body>
         <head><s>parent ?x ?y</s></head>

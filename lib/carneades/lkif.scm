@@ -13,7 +13,7 @@
   (require (lib "list.ss"))                                ;; filter, foldl, foldr, find
   (require (lib "string.ss"))                              ;; regexp-split
   ;; SXML
-  (require (planet "sxml.ss" ("lizorkin" "sxml.plt" 1 4)))
+  (require (planet "sxml.ss" ("lizorkin" "sxml.plt" 2 0)))
   
   (provide import export)
   

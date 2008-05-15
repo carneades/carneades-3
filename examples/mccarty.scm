@@ -2,14 +2,27 @@
   
   ; Examples from "The Case for Explicit Exceptions", by L. Thorne McCarty and William W. Cohen
   
+  (require (lib "argument.scm" "carneades"))
   (require (lib "argument-builtins.scm" "carneades"))
   (require (lib "rule.scm" "carneades"))
   (require (lib "shell.scm" "carneades"))
   (require (planet "test.ss" ("schematics" "schemeunit.plt")))
   (require (planet "text-ui.ss" ("schematics" "schemeunit.plt")))
   
+  ; type question = excluded | priority | valid
+  
+  
+  ; engine integer integer (list-of statement) (list-of symbol) -> statement -> (stream-of argument-state)
+  (define (engine max-nodes max-turns assumptions critical-questions)
+    (make-engine* max-nodes max-turns 
+                  (accept default-context assumptions)
+                  (list (generate-arguments-from-rules rb1 critical-questions) builtins)))
+  
+  
   (define rb1 
     (rulebase
+     
+     ; Royal Elephants Benchmark
      
      (rule r1 
            (if (and (elephant ?x)
@@ -20,6 +33,15 @@
            (if (and (elephant ?x)
                     (royal ?x))
                (not (gray ?x))))
+     
+     (rule* elephant-facts 
+            (elephant clyde)
+            (african clyde)
+            (royal clyde)
+            (elephant dumbo)
+            (african dumbo))
+      
+     ; Pennsylvania Dutch Benchmark
      
      (rule r3
            (if (native-speaker ?x Pa-Dutch)
@@ -33,6 +55,12 @@
      (rule r5 
            (if (native-speaker ?x Pa-Dutch)
                (native-speaker ?x German)))
+     
+     (rule* pa-dutch-facts 
+            (native-speaker Herman Pa-Dutch)
+            (native-speaker Fritz German))
+     
+     ; Gullible Citizens Benchmark
      
      (rule r6 (if (and (citizen ?x)
                        (crook ?y))
@@ -49,39 +77,134 @@
                        (crook ?y)
                        (elected ?y))
                   (excluded r6 (not (like ?x ?y)))))
-                  
-     (rule* facts 
-            (elephant clyde)
-            (african clyde)
-            (royal clyde)
-            (elephant dumbo)
-            (african dumbo)
-            (native-speaker Herman Pa-Dutch)
-            (native-speaker Fritz German)
+     
+     (rule* gullible-citizen-facts 
             (citizen Fred)
             (citizen John)
             (gullible Fred)
             (crook Dick)
-            (elected Dick)
-            )
+            (elected Dick))
+
+     ; Blocks World Benchmark
      
+     (rule r8 
+           (if (and (block ?x)
+                    (heavy ?x))
+               (on ?x table)))
+     
+     (rule r9 
+           (if (on A table)
+               (excluded r8 (on B table))))
+     
+     (rule r10 
+           (if (on B table)
+               (excluded r8 (on A table))))  
+     
+     (rule blocks-world-facts
+           (block A)
+           (block B)
+           (block C)
+           (heavy A)
+           (heavy B)
+           (heavy C)
+           (not (on B table)))
+     
+       
+     ; Ballerina Benchmark
+    
+;     (rule r11
+;           (if (dancer ?x)
+;               (not (ballerina ?x))))
+     
+     (rule r12
+           (if (dancer ?x)
+               (graceful ?x)))
+     
+     (rule r13
+           (if (and (dancer ?x)
+                    (graceful ?x))
+               (ballerina ?x)))
+
+;     Rule r11 is problematical. The intention is to express 
+;     that dancers are not normally or usually ballerinas.  
+;     But can one construct an argument for someone not being a
+;     ballerina by showing that she is a dancer?  Does her being a dancer 
+;     give us a *reason* to believe she is not a ballerina?
+;     If someone has put forward an argument for someone being a ballerina,
+;     should it be possible to rebut this argument by proving she is a dancer?
+;     In particular, if one has use r12 to argue that she is a ballerina, by
+;     proving she is a graceful dancer, should it be possible to rebut this
+;     argument by showing she is a dancer?  In my view, r11 illustrates two
+;     different interpretations of defeasible rules:  1) as expressions of 
+;     normality conditions (e.g. dancers are not normally ballerinas) and 
+;     2) as inference rules or argumentation schemes for guiding reasoning 
+;     (e.g. to argue that someone is a ballerina, prove she is a graceful 
+;     dancer.)  Carneades is designed only for this second purpose, 
+;     representing argumentation schemes.
+     
+;     Also, r12 and r13 alone hardly make sense as an expression
+;     of reasoning policy.  With just these two rules, all dancers
+;     are presumably ballerinas.  The second condition of r13 serves
+;     no purpose.  They would make a bit more sense if there were
+;     some exceptions to r12, such as the following:
+     
+     (rule r14 
+           (if (or (rock-and-roller ?x)
+                   (square-dancer ?x))
+               (excluded r12 (graceful ?x))))
+    
+     
+     (rule r15
+           (if (square-dancer ?x)
+               (dancer ?x)))
+     
+     (rule r16
+           (if (rock-and-roller ?x)
+               (dancer ?x)))
+     
+     ; The policy issue is whether it is better to presume that 
+     ; someone is graceful, knowing that he or she is a dancer.  
+     ; What are the risks and benefits of acting on the 
+     ; presumption that someone is graceful when she is not, 
+     ; and vice versa?  It is not possible to evaluate the quality
+     ; of these rules without such information.
+     
+     (rule ballerina-facts
+           (dancer Naomi)
+           (dancer Mikhail)
+           (rock-and-roller Norbert)
+           (square-dancer Sally))
+
      )) ; end of rule base
   
-  ; type question = excluded | priority | valid
+;  (define blocks-world-facts 
+;    '((block A)
+;      (block B)
+;      (block C)
+;      (heavy A)
+;      (heavy B)
+;      (heavy C)
+;      (not (on B table))))
+;     
+;  (define blocks-world-engine (engine 20 2 blocks-world-facts '(excluded)))
   
-  ; engine integer integer (list-of symbol) -> statement -> (stream-of argument-state)
-  (define (engine max-nodes max-turns critical-questions)
-    (make-engine max-nodes max-turns 
-                 (list (generate-arguments-from-rules rb1 critical-questions) builtins)))
+  ;  (ask '(on ?x table) blocks-world-engine)
+
   
-;  (define tests
-;    (test-suite
-;     "rule tests"
-;     (test-true "fact" (all-acceptable? '(bird Tweety) (engine 20 1 null)))
-; 
-;     ))
-;  
-;   (test/text-ui tests)
+  ; Note: the above query fails because of the (known) bug which prevents goals from matching rejected and accepted
+  ; statements of the context.
+  
+  ; Note: the (ballerina Sally) test below fails due to some unknown bug.  Also the query (ballerina ?x) should
+  ; succeed with x=Mikhail and x=Naomi, but it succeeds, incorrectly, with x=Sally.
+  
+  (define tests
+    (test-suite
+     "McCarty tests"
+     (test-true "ballerina" (failure? '(ballerina Sally) (engine 50 2 null '(excluded)))
+ 
+     )))
+  
+   (test/text-ui tests)
   
   ; Example commands
   ; (ask '(goods item2) (engine 20 2 null))
