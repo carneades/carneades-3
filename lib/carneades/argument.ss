@@ -3,7 +3,7 @@
   (require (prefix compare: (lib "67.ss" "srfi"))) 
   (require (prefix table: (planet "table.ss" ("soegaard" "galore.plt" 3)))) ; 3 4
   (require (lib "match.ss"))
-  (require "statement.scm")
+  (require "statement.ss")
   
   (provide make-ordinary-premise make-exception make-assumption   
            premise? ordinary-premise? exception? assumption?

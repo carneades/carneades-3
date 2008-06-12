@@ -5,10 +5,10 @@
   ; Essentially this generator interprets arguments as propositional implications ("rules") 
   ; and uses defeasible modus ponens to generate arguments from these implications.
   
-  (require "stream.scm")
-  (require "argument.scm")
-  (require "statement.scm")
-  (require "argument-search.scm")
+  (require "stream.ss")
+  (require "argument.ss")
+  (require "statement.ss")
+  (require "argument-search.ss")
   
   (provide generate-arguments-from-argument-graph)
   

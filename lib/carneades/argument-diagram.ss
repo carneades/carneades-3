@@ -1,11 +1,11 @@
 (module argument-diagram mzscheme
-  (require "statement.scm")
-  (require "argument.scm")
-  (require "stream.scm")
-  (require (prefix unify: "unify.scm"))
-  (require (prefix config: "config.scm"))
+  (require "statement.ss")
+  (require "argument.ss")
+  (require "stream.ss")
+  (require (prefix unify: "unify.ss"))
+  (require (prefix config: "config.ss"))
   (require (lib "string.ss" "srfi" "13"))
-  (require (prefix stream: "stream.scm"))
+  (require (prefix stream: "stream.ss"))
   (require (lib "file.ss"))
   (require (lib "process.ss"))
   

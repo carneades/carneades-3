@@ -1,10 +1,10 @@
 (module argument-builtins mzscheme
-  (require "stream.scm") 
-  (require "unify.scm")
+  (require "stream.ss") 
+  (require "unify.ss")
   (require (lib "match.ss"))
-  (require "rule.scm")
-  (require "argument-search.scm")
-  (require (prefix argument: "argument.scm"))
+  (require "rule.ss")
+  (require "argument-search.ss")
+  (require (prefix argument: "argument.ss"))
   
   (provide builtins)
   

@@ -5,9 +5,9 @@
   ;;    * register non empty statements!!!!!
   
   ;; Carneades
-  (require "rule.scm")
-  (require "argument.scm")
-  (require "statement.scm")
+  (require "rule.ss")
+  (require "argument.ss")
+  (require "statement.ss")
   ;; PLT
   (require (lib "match.ss"))                               ;; match
   (require (lib "list.ss"))                                ;; filter, foldl, foldr, find

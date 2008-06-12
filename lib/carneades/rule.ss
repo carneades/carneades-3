@@ -10,11 +10,11 @@
   ; hold at some time, using fluents in the event calculus. 
   ; And we need to reason about the applicability of rules to statements.
   
-  (require "statement.scm")
-  (require "unify.scm")
-  (require (prefix argument: "argument.scm"))
-  (require "stream.scm") 
-  (require "argument-search.scm")
+  (require "statement.ss")
+  (require "unify.ss")
+  (require (prefix argument: "argument.ss"))
+  (require "stream.ss") 
+  (require "argument-search.ss")
   (require (lib "match.ss"))
   (require (prefix list: (lib "list.ss" "srfi" "1")))
   (require (prefix compare: (lib "67.ss" "srfi"))) 

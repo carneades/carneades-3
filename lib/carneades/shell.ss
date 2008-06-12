@@ -2,12 +2,12 @@
   
   ;; shell: procedures for querying knowledge bases
   
-  (require "argument.scm")
-  (require "argument-search.scm")
-  (require "stream.scm")
-  (require "argument-diagram.scm")
-  (require "statement.scm")
-  (require (prefix search: "search.scm"))
+  (require "argument.ss")
+  (require "argument-search.ss")
+  (require "stream.ss")
+  (require "argument-diagram.ss")
+  (require "statement.ss")
+  (require (prefix search: "search.ss"))
   
   (provide (all-defined))
   

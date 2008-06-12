@@ -4,11 +4,11 @@
   ; which some topic statement is either acceptable or not acceptable, depending on the 
   ; viewpoint. 
   
-  (require (prefix search: "search.scm"))
-  (require "argument.scm")
-  (require "unify.scm")
-  (require "stream.scm")
-  (require "statement.scm")
+  (require (prefix search: "search.ss"))
+  (require "argument.ss")
+  (require "unify.ss")
+  (require "stream.ss")
+  (require "statement.ss")
   (require (prefix compare: (lib "67.ss" "srfi"))) 
   (require (lib "pretty.ss"))
   (require (prefix list: (lib "list.ss" "srfi" "1")))

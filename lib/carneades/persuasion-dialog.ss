@@ -1,7 +1,7 @@
 (module persuasion-dialog mzscheme
   (require "atom.scm")
-  (require "argument.scm")
-  (require "commitment-store.scm")
+  (require "argument.ss")
+  (require "commitment-store.ss")
   (require "proof-standards.scm")
   (require (lib "datatype.ss" "eopl"))
   

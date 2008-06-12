@@ -2,11 +2,11 @@
   
   ; generator for arguments from cases
   
-  (require "stream.scm")
-  (require "argument.scm")
-  (require "argument-search.scm")
-  (require "statement.scm")
-  (require "unify.scm")
+  (require "stream.ss")
+  (require "argument.ss")
+  (require "argument-search.ss")
+  (require "statement.ss")
+  (require "unify.ss")
   (require (lib "match.ss"))
   (require (prefix list: (lib "list.ss" "srfi" "1")))
   (require (prefix set: (planet "set.ss" ("soegaard" "galore.plt" 3))))

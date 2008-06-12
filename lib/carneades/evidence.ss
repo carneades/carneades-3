@@ -15,11 +15,11 @@
   ; - addition data types for questions, in particular dates.
   ; - extend LKIF.scm to support the importing and exporting of forms, questions and answers.
   
-  (require "stream.scm")
-  (require "unify.scm")
-  (require "statement.scm")
-  (require "argument-search.scm")
-  (require (prefix argument: "argument.scm"))
+  (require "stream.ss")
+  (require "unify.ss")
+  (require "statement.ss")
+  (require "argument-search.ss")
+  (require (prefix argument: "argument.ss"))
   (require (prefix list: (lib "list.ss" "srfi" "1")))
   (require (lib "match.ss"))
   

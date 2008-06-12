@@ -1,6 +1,6 @@
 (module search mzscheme
   
-  (require "stream.scm")
+  (require "stream.ss")
   (require (prefix heap: (planet "heap.scm" ("soegaard" "galore.plt" 2))))
  
   (provide (all-defined-except expand-node))
