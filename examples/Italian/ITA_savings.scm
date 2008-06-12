@@ -1,8 +1,8 @@
 (module ITA_savings mzscheme
   
-  (require (lib "shell.scm" "carneades"))
-  (require (lib "argument-builtins.scm" "carneades"))
-  (require (lib "rule.scm" "carneades"))
+  (require (lib "shell.ss" "carneades"))
+  (require (lib "argument-builtins.ss" "carneades"))
+  (require (lib "rule.ss" "carneades"))
   (require (planet "test.ss" ("schematics" "schemeunit.plt" 2 4)))
   (require (planet "text-ui.ss" ("schematics" "schemeunit.plt" 2)))
   

@@ -1,9 +1,9 @@
 
 (module PiersonPost mzscheme
   
-  (require (lib "statement.scm" "carneades"))
-  (require (lib "argument.scm" "carneades"))
-  (require (lib "argument-diagram.scm" "carneades"))
+  (require (lib "statement.ss" "carneades"))
+  (require (lib "argument.ss" "carneades"))
+  (require (lib "argument-diagram.ss" "carneades"))
   (require (prefix table: (planet "table.ss" ("soegaard" "galore.plt" 3 4))))
 
   ; The Pierson vs. Post case.  Used to illustrate the use of

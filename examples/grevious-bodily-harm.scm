@@ -1,7 +1,7 @@
 
 (module grevious-bodily-harm mzscheme
-  (require (lib "argument.scm" "carneades"))
-  (require (lib "argument-diagram.scm" "carneades"))
+  (require (lib "argument.ss" "carneades"))
+  (require (lib "argument-diagram.ss" "carneades"))
   
   (define 8-years 
 "The accused is punishable

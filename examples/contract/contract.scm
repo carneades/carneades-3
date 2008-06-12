@@ -1,9 +1,9 @@
 (module contract mzscheme
     
-  (require (prefix lkif: (lib "lkif.scm" "carneades")))
-  (require (lib "statement.scm" "carneades"))
-  (require (lib "argument.scm" "carneades"))
-  (require (lib "argument-diagram.scm" "carneades"))
+  (require (prefix lkif: (lib "lkif.ss" "carneades")))
+  (require (lib "statement.ss" "carneades"))
+  (require (lib "argument.ss" "carneades"))
+  (require (lib "argument-diagram.ss" "carneades"))
   (require (prefix list: (lib "list.ss" "srfi" "1")))
   
   (define imports (lkif:import "contract.xml"))

@@ -1,9 +1,9 @@
 (module EUpilot2_3 mzscheme
     
-  (require (prefix lkif: "../../../src/lkif.scm"))
-  (require "../../../src/statement.scm")
-  (require "../../../src/argument.scm")
-  (require "../../../src/argument-diagram.scm")
+  (require (prefix lkif: (lib "lkif.ss" "carneades")))
+  (require (lib "statement.ss" "carneades"))
+  (require (lib "argument.ss" "carneades"))
+  (require (lib "argument-diagram.ss" "carneades"))
   (require (prefix list: (lib "list.ss" "srfi" "1")))
   
   (define imports (lkif:import "EUpilot2_3.xml"))

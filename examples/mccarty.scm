@@ -2,10 +2,10 @@
   
   ; Examples from "The Case for Explicit Exceptions", by L. Thorne McCarty and William W. Cohen
   
-  (require (lib "argument.scm" "carneades"))
-  (require (lib "argument-builtins.scm" "carneades"))
-  (require (lib "rule.scm" "carneades"))
-  (require (lib "shell.scm" "carneades"))
+  (require (lib "argument.ss" "carneades"))
+  (require (lib "argument-builtins.ss" "carneades"))
+  (require (lib "rule.ss" "carneades"))
+  (require (lib "shell.ss" "carneades"))
   (require (planet "test.ss" ("schematics" "schemeunit.plt")))
   (require (planet "text-ui.ss" ("schematics" "schemeunit.plt")))
   

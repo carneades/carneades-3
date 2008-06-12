@@ -1,9 +1,9 @@
 
 (module experts mzscheme
   
-  (require (lib "statement.scm" "carneades"))
-  (require (lib "argument.scm" "carneades"))
-  (require (lib "argument-diagram.scm" "carneades"))
+  (require (lib "statement.ss" "carneades"))
+  (require (lib "argument.ss" "carneades"))
+  (require (lib "argument-diagram.ss" "carneades"))
   
   (define s "S")
   
