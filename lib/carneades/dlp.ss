@@ -4,7 +4,7 @@
          
          (export)
          (import (rnrs)
-                 (carneades AS-match)
+                 (carneades match)
                  (carneades rule)
                  )
          
