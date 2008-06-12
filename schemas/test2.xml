@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="LKIF2.rnc" type="compact"?>
+<?xml-stylesheet type="text/css" href="LKIF2.css"?>
+<lkif xmlns:family="http:://fokus.fraunhofer.de/elan/estrella/family.owl"
+    xmlns:foods="http:://fokus.fraunhofer.de/elan/estrella/food.owl"
+    xmlns:smith="http:://fokus.fraunhofer.de/elan/estrella/smith.owl">
+    <sources>
+        <source element="s1" uri="http://www.foo.de/foo"/>
+        <source element="s2" uri="http://www.bar.com"/>
+    </sources>
+    <theory id="rb1">
+        <rules>
+            <rule id="r1">
+                <head>
+                    <s pred="family:relative"><v>x</v> has a relative <v>y</v>.</s>
+                </head>
+                <body>
+                    <s pred="family:ancestor"><v>x</v> has an ancestor <v>y</v>.</s>
+                </body>
+            </rule>
+            <rule id="r2">
+                <head>
+                    <s>P</s>
+                </head>
+                <body>
+                    <or>
+                        <and>
+                            <s>R</s>
+                            <if>
+                                <s>S</s>
+                                <s>W</s>
+                            </if>
+                        </and>
+                        <and>
+                            <not>
+                                <iff>
+                                    <s>T</s>
+                                    <s>Z</s>
+                                </iff>
+                            </not>
+                            <s>U</s>
+                        </and>
+                    </or>
+                </body>
+            </rule>
+        </rules>
+    </theory>
+    <argument-graph>
+        <statements>
+            <s id="s1">All men are mortal.</s>
+            <s id="s2">Socrates is a man.</s>
+            <s id="s3">Socrates is mortal.</s>
+            <s id="s4">Tweety is a bird.</s>
+            <s id="s5">Birds normally fly.</s>
+            <s id="s6">Tweety is a normal bird.</s>
+            <s id="s7">Tweety flies.</s>
+        </statements>
+        <arguments>
+            <argument id="arg1">
+                <conclusion statement="s3"/>
+                <premises>
+                    <premise statement="s1"/>
+                    <premise statement="s2"/>
+                </premises>
+            </argument>
+            <argument id="arg2">
+                <conclusion statement="s7"/>
+                <premises>
+                    <premise statement="s4"/>
+                    <premise statement="s5"/>
+                    <premise statement="s6"/>
+                </premises>
+            </argument>
+        </arguments>
+    </argument-graph>
+</lkif>

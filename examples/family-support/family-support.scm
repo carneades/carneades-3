@@ -1,12 +1,12 @@
 (module family-support mzscheme
     
-  (require (prefix lkif: (lib "lkif.scm" "carneades")))
-  (require (prefix argument: (lib "argument.scm" "carneades")))
-  (require (lib "argument-builtins.scm" "carneades"))
-  (require (lib "rule.scm" "carneades"))
-  (require (lib "evidence.scm" "carneades"))
-  (require (lib "case.scm" "carneades"))
-  (require (lib "shell.scm" "carneades")) 
+  (require (prefix lkif: (lib "lkif.ss" "carneades")))
+  (require (prefix argument: (lib "argument.ss" "carneades")))
+  (require (lib "argument-builtins.ss" "carneades"))
+  (require (lib "rule.ss" "carneades"))
+  (require (lib "evidence.ss" "carneades"))
+  (require (lib "case.ss" "carneades"))
+  (require (lib "shell.ss" "carneades")) 
 
   (define family-support 
     (add-rules empty-rulebase 

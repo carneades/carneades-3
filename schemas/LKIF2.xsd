@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="lkif">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="sources"/>
+        <xs:element minOccurs="0" ref="theory"/>
+        <xs:element minOccurs="0" ref="argument-graph"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="sources">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="source"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="source">
+    <xs:complexType>
+      <xs:attribute name="element" use="required" type="xs:anyURI"/>
+      <xs:attribute name="uri" use="required" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  <!--
+    Facts and other axioms can be imported from RDF and OWL files. 
+    The rules are inference rules.   Other theories, represented in 
+    LKIF XML, can also be imported.  The resulting theory is the 
+    union of the axioms and inference rules in the transitive closure
+    of the theory and, recursively, all imported theories.
+  -->
+  <xs:element name="theory">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="import"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="rule"/>
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:ID"/>
+    </xs:complexType>
+  </xs:element>
+  <!--
+    Import: the uri should refer to an RDF file or an LKIF theory.
+    OWL files in RDF format can also be imported, to include the 
+    axioms of an ontology as well as any facts about instances in the 
+    A-Box.
+  -->
+  <xs:element name="import">
+    <xs:complexType>
+      <xs:attribute name="uri" use="required" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="argument-graphs">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="argument-graph"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="rule">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="head"/>
+        <xs:element minOccurs="0" ref="body"/>
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:ID"/>
+      <xs:attribute name="strict" type="xs:boolean"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="head">
+    <xs:complexType>
+      <xs:group maxOccurs="unbounded" ref="Wff"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="body">
+    <xs:complexType>
+      <xs:group maxOccurs="unbounded" ref="Wff"/>
+    </xs:complexType>
+  </xs:element>
+  <!--
+    Atomic formulas. Propositional logic letters are represented by 
+    omitting the (optional) predicate attribute.  The "s" tag
+    is used for backwards compatibility and because it is probably
+    more intuitive and mnemonic for most users.
+    An assumable atom is assumed when an argument having this atom
+    as a premise is put forward into an argument graph, unless there is already
+    an issue for this atom (i.e. an atom with the same id), in which case
+    the value of the assumption attribute of the issue for this atom is 
+  -->
+  <xs:element name="s">
+    <xs:complexType mixed="true">
+      <xs:group minOccurs="0" maxOccurs="unbounded" ref="Term"/>
+      <xs:attribute name="id" type="xs:ID"/>
+      <xs:attribute name="pred">
+        <xs:simpleType>
+          <xs:union memberTypes="xs:anyURI xs:Name"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="assumable" type="xs:boolean"/>
+    </xs:complexType>
+  </xs:element>
+  <!--
+    Wffs are well-formed formulas of predicate logic, extended with exceptions and assumptions
+    Free variables are schema variables, i.e. inference rule variables; 
+    bound variables, using Exists or All, are first-order logic variables.
+  -->
+  <xs:group name="Wff">
+    <xs:choice>
+      <xs:element ref="s"/>
+      <xs:element ref="or"/>
+      <xs:element ref="and"/>
+      <xs:element ref="not"/>
+      <xs:element ref="if"/>
+      <xs:element ref="iff"/>
+      <xs:element ref="all"/>
+      <xs:element ref="exists"/>
+    </xs:choice>
+  </xs:group>
+  <xs:element name="or">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:group ref="Wff"/>
+        <xs:group maxOccurs="unbounded" ref="Wff"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:ID"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="and">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:group ref="Wff"/>
+        <xs:group maxOccurs="unbounded" ref="Wff"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:ID"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="not">
+    <xs:complexType>
+      <xs:group ref="Wff"/>
+      <xs:attribute name="id" type="xs:ID"/>
+      <xs:attribute name="exception" type="xs:boolean"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="if">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:group ref="Wff"/>
+        <xs:group ref="Wff"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:ID"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="iff">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:group ref="Wff"/>
+        <xs:group ref="Wff"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:ID"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="all">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="v"/>
+        <xs:group ref="Wff"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:ID"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="exists">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="v"/>
+        <xs:group ref="Wff"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:ID"/>
+    </xs:complexType>
+  </xs:element>
+  <!-- Terms include statements, to support meta-level statements -->
+  <xs:group name="Term">
+    <xs:choice>
+      <xs:element ref="v"/>
+      <xs:element ref="i"/>
+      <xs:element ref="c"/>
+      <xs:element ref="expr"/>
+      <xs:element ref="s"/>
+    </xs:choice>
+  </xs:group>
+  <xs:element name="v" type="xs:Name"/>
+  <xs:element name="i">
+    <xs:complexType mixed="true">
+      <xs:attribute name="value" use="required" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="c">
+    <xs:simpleType>
+      <xs:union memberTypes="xs:Name xs:anyURI xs:string xs:boolean xs:integer xs:float"/>
+    </xs:simpleType>
+  </xs:element>
+  <!--
+    The functors and constants of expressions are represented by
+    URIs. Thus libraries of functions and operators can be
+    declared in OWL ontologies.  Standard LKIF functions and operators
+    could be part of the ontology of basic legal concepts.
+  -->
+  <xs:element name="expr">
+    <xs:complexType>
+      <xs:group minOccurs="0" maxOccurs="unbounded" ref="Term"/>
+      <xs:attribute name="functor" use="required" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  <!--
+    In addition to a set of arguments, argument graphs can now include the status
+    of issues, applicable proof standards and relative argument strengths.
+  -->
+  <xs:element name="argument-graph">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="issue"/>
+        <xs:element minOccurs="0" ref="strengths"/>
+        <xs:element ref="statements"/>
+        <xs:element ref="arguments"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:ID"/>
+      <xs:attribute name="main-issue" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="statements">
+    <xs:complexType>
+      <xs:group minOccurs="0" maxOccurs="unbounded" ref="Wff"/>
+    </xs:complexType>
+  </xs:element>
+  <!--
+    Issues labeled accepted and rejected are (assumed) to be true or false, respectively.  
+    status is now modelled as follows: stated if assumption=true & value=unknown; 
+    questioned if assumption=false; accepted if value=true & assumption=false; 
+    rejected if value=false & assumption=false; The new model allows us in 
+    addition to assume the value to be false (value=false & assumption=true) or true
+    (value=true & assumption=true).  Assumptions are now made globablly, in the
+    scope of an argument graph, rather than on a premise by premise basis.
+  -->
+  <xs:element name="issue">
+    <xs:complexType>
+      <xs:attribute name="statement" use="required" type="xs:anyURI"/>
+      <xs:attribute name="value" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="unknown"/>
+            <xs:enumeration value="true"/>
+            <xs:enumeration value="false"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="assumption" type="xs:boolean"/>
+      <xs:attribute name="standard">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="DV"/>
+            <xs:enumeration value="SE"/>
+            <xs:enumeration value="BA"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="strengths">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="stronger"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="stronger">
+    <xs:complexType>
+      <xs:attribute name="arg1" use="required" type="xs:IDREF"/>
+      <xs:attribute name="arg2" use="required" type="xs:IDREF"/>
+    </xs:complexType>
+  </xs:element>
+  <!--
+    Schemes and premise roles are referenced using URIs.  They can be modeled
+    as instances in an OWL ontology.
+  -->
+  <xs:element name="arguments">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="argument"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="argument">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="conclusion"/>
+        <xs:element ref="premises"/>
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:ID"/>
+      <xs:attribute name="direction">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="pro"/>
+            <xs:enumeration value="con"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="scheme" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="premises">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="premise"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="premise">
+    <xs:complexType>
+      <xs:attribute name="polarity">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="positive"/>
+            <xs:enumeration value="negative"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="exception" type="xs:boolean"/>
+      <xs:attribute name="role" type="xs:anyURI"/>
+      <xs:attribute name="statement" use="required" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="conclusion">
+    <xs:complexType>
+      <xs:attribute name="statement" use="required" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

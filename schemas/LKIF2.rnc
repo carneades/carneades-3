@@ -1,57 +1,154 @@
 datatypes xsd = "http://www.w3.org/2001/XMLSchema-datatypes"
 
 grammar {
-    start = element lkif { (Statement | Rule | ArgumentGraph)* }
+    start = element lkif { Sources?, Theory?, ArgumentGraph* }
+    
+    Sources = element sources { Source+ }
+    
+    Source = element source { attribute element { xsd:anyURI },
+                              attribute uri { xsd:anyURI } }
+    
+    # RDF, OWL and LKIF files can be imported.  See below. 
+    # The rules are inference rules. The resulting theory is 
+    # the transitive closure of the axioms deduced using the rules.
+    Theory = element theory { 
+        attribute id { xsd:ID },
+        Import*, Axioms?, Rules?
+    }
+
+    Axioms = element axioms { Wff+ }
+    Rules = element rules { Rule+ }
+    
+    # Import: the uri can refer to an RDF file, including OWL files in RDF format, 
+    # an LKIF theory, an LKIF argument graph, or an entire LKIF file, in which case both the 
+    # theory and the argument graph in the file are imported. 
+    # When importing OWL files, not only the axioms of the ontology  
+    # are imported but also any assertions about instances, the ABox. 
+
+    Import = element import { attribute uri { xsd:anyURI } }
+    
+    ArgumentGraphs = element argument-graphs { ArgumentGraph* }
     
     Rule = element rule { 
-        attribute id { xsd:ID }?, 
-        attribute strict { "no" | "yes" }?,
-        (Literal+ | Implies)
+        attribute id { xsd:ID }, 
+        attribute strict { xsd:boolean }?, # default: false
+        Head, Body?
     }
-        
-    Literal = Statement | Not
-    Statement = element s { 
-        attribute id { xsd:ID }?,
-        attribute summary { xsd:string }?,
-        attribute src { xsd:anyURI }?,
-        ((text* & Variable* & Constant* & Statement*)*)? }
-    Variable = element v { text }
-    Constant = element c { text }
-
-    Not = element not { Statement }
-    Implies = (Head, Body) | (Body, Head) 
-    Head = element head { Literal+ }
-    Body = element body { Or | Condition+ }
-    Or = element or { (Condition | And)+ }
-    And = element and { Condition+ }
-    Condition = Literal 
-             | element if { attribute role { text }?, Literal }
-             | element unless { attribute role { text }?, Literal } 
-             | element assuming { attribute role { text }?, Literal } 
     
+    Head = element head { Wff+ }
+    Body = element body { Wff+ }
+    
+    # Atomic formulas. Propositional logic letters are represented by 
+    # omitting the (optional) predicate attribute.  The "s" tag
+    # is used for backwards compatibility and because it is probably
+    # more intuitive and mnemonic for most users.
+    # An assumable atom is assumed when an argument having this atom
+    # as a premise is put forward into an argument graph, unless there is already
+    # an issue for this atom (i.e. an atom with the same id), in which case
+    # the value of the assumption attribute of the issue for this atom is 
+    Atom = element s { 
+        attribute id { xsd:ID }?,
+        attribute pred { xsd:anyURI | xsd:Name }?,
+        attribute assumable { xsd:boolean}?,  # default: false
+        ((text | Term)*) 
+    }
+    
+    # Wffs are well-formed formulas of predicate logic, extended with exceptions and assumptions
+    # Free variables are schema variables, i.e. inference rule variables; 
+    # bound variables, using Exists or All, are first-order logic variables.
+    Wff = Atom | Or | And | Not | If | Iff | All | Exists
+    Or = element or { attribute id { xsd:ID }?, Wff, Wff+ }
+    And = element and { attribute id { xsd:ID }?, Wff, Wff+ }
+    Not = element not { 
+        attribute id { xsd:ID }?,
+        attribute exception { xsd:boolean }?,  # default: false
+        attribute assumable { xsd:boolean }?,  # default: false 
+        Wff }            
+    If = element if { attribute id { xsd:ID }?, Wff, Wff }
+    Iff = element iff { attribute id { xsd:ID }?, Wff, Wff }
+    All = element all { attribute id { xsd:ID }?, Variable+, Wff }
+    Exists = element exists { attribute id { xsd:ID }?, Variable+, Wff }
+    
+    # Terms include statements, to support meta-level statements
+    Term = Variable | Individual | Constant | Expression | Atom
+    
+    Variable = element v { xsd:Name }
+    
+    Individual = element i { 
+        attribute value { xsd:anyURI },
+        text
+    }
+    
+    Constant = element c { 
+        # attribute value { xsd:anySimpleType }
+        xsd:Name | xsd:anyURI | xsd:string | xsd:boolean | xsd:integer | xsd:float 
+     }
+    
+    # The functors and constants of expressions are represented by
+    # URIs. Thus libraries of functions and operators can be
+    # declared in OWL ontologies.  Standard LKIF functions and operators
+    # could be part of the ontology of basic legal concepts.
+    Expression = element expr { 
+        attribute functor { xsd:anyURI },
+        Term*  
+    }
+    
+    # In addition to a set of arguments, argument graphs can now include the status
+    # of issues, applicable proof standards and relative argument strengths.
     ArgumentGraph = element argument-graph { 
         attribute id { xsd:ID }?, 
-        attribute issue { xsd:ID}?,
-        Argument* 
+        attribute main-issue { xsd:anyURI }?, 
+        Issues?, Strengths?, Statements, Arguments
     }
     
+    Statements = element statements { Wff* }
+    
+    # Issues labeled accepted and rejected are (assumed) to be true or false, respectively.  
+    # The previous status of statements can be reconstructed as follows: 
+    #	stated: value=unknown & assumption=true 
+    #   questioned: value=unknown & assumption=false
+    #   accepted: value=true & assumption=false
+    #   rejected: value=false & assumption=false
+    # The new model allows us in 
+    # addition to assume the value to be false (value=false & assumption=true) or true
+    # (value=true & assumption=true).  Assumptions are now made globablly, in the
+    # scope of an argument graph, rather than on a premise by premise basis.
+
+    Issues = element issue { 
+        attribute statement { xsd:anyURI },
+        attribute value { "unknown" | "true" | "false" },  # default: unknown
+        attribute assumption { xsd:boolean }?, # default: false
+        attribute standard { "DV" | "SE" | "BA" }? # default: DV
+    }
+        
+    Strengths = element strengths { Stronger* }
+    
+    Stronger = element stronger {
+        attribute arg1 { xsd:IDREF },
+        attribute arg2 { xsd:IDREF }
+    }
+    
+    # Schemes and premise roles are referenced using URIs.  They can be modeled
+    # as instances in an OWL ontology.
+    
+    Arguments = element arguments { Argument* }
     Argument = element argument { 
     	attribute id { xsd:ID },
         attribute direction { "pro" | "con" }?,
-        attribute scheme { text }?,
-        attribute src { xsd:anyURI }?,
-        Premise*, Conclusion 
+        attribute scheme { xsd:anyURI }?,
+        Conclusion, Premises
     }
     
-    Premise = element premise { attribute polarity { "positive" | "negative" }?,
-                                attribute role { text }?,
-                                (attribute statement { xsd:IDREF } | Statement) } 
-            | element exception { attribute polarity { "positive" | "negative" }?,
-                                  attribute role { text }?,
-                                  (attribute statement { xsd:IDREF } | Statement) }
-            | element assumption { attribute polarity { "positive" | "negative" }?,
-                                  attribute role { text }?,
-                                  (attribute statement { xsd:IDREF } | Statement) }
+    Premises = element premises { Premise* }
+    
+    Premise = element premise { 
+        attribute polarity { "positive" | "negative" }?, # default: positive
+        # premise types: assumptions are now global, in the scope of an argument graph,
+        # and represent as an attribute of issues.
+        attribute exception { xsd:boolean }?,  # default: false, i.e. ordinary premise
+        attribute role { xsd:anyURI }?,
+        attribute statement { xsd:anyURI } 
+     } 
                   
-    Conclusion = element conclusion { attribute statement { xsd:IDREF } | Statement }
+    Conclusion = element conclusion { attribute statement { xsd:anyURI }  }
 }

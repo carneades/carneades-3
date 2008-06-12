@@ -29,7 +29,7 @@ grammar {
     
     ArgumentGraph = element argument-graph { 
         attribute id { xsd:ID }?, 
-        attribute issue { xsd:ID}?,
+        attribute issue { xsd:IDREF}?,
         Argument* 
     }
     
