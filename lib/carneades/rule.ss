@@ -16,13 +16,14 @@
   (require "stream.ss") 
   (require "argument-search.ss")
   (require (lib "match.ss"))
+  (require "dnf.ss")
   (require (prefix list: (lib "list.ss" "srfi" "1")))
   (require (prefix compare: (lib "67.ss" "srfi"))) 
   (require (prefix table: (planet "table.ss" ("soegaard" "galore.plt" 3))))
   ; (require (prefix heap: (planet "heap.scm" ("soegaard" "galore.plt" 2))))
   ; (require (lib "pretty.ss")) 
   
-  (provide rule rule* make-rule rule? rule-id rule-strict rule-head rule-body 
+  (provide rule rule* make-rule make-rule-body make-rule-head rule? add-rule add-rules rule-id rule-strict rule-head rule-body 
            rule-critical-questions empty-rulebase rulebase rulebase? 
            add-rules rulebase-rules generate-arguments-from-rules rule->datum
            rulebase->datum %rulebase-table)
@@ -105,7 +106,8 @@
   (define rule-id %rule-id)
   (define rule-head %rule-head)
   (define rule-body %rule-body)
-    
+  
+     
   (define (rule-predicates r)
     (map predicate (rule-head r)))
   
@@ -120,19 +122,23 @@
   
   ; make-body: expr -> (list-of clause)
   (define (make-body expr)
-    ; process-disjunct: expression -> clause
-    (define (process-disjunct expr)
-      (if (list? expr) 
-          (if (eq? (car expr) 'and)
-              (cdr expr)
-              (list expr))
-          (list expr)))
-    (cond ((and (list? expr) (eq? (car expr) 'and))
-           (list (cdr expr)))
-          ((and (list? expr) (eq? (car expr) 'or))
-           (map process-disjunct (cdr expr)))
-          (else (list (list expr))))) ; single condition
-           
+    (let ((expr (to-dnf expr)))
+      ; process-disjunct: expression -> clause
+      (define (process-disjunct expr)
+        (if (list? expr) 
+            (if (eq? (car expr) 'and)
+                (cdr expr)
+                (list expr))
+            (list expr)))
+      (cond ((and (list? expr) (eq? (car expr) 'and))
+             (list (cdr expr)))
+            ((and (list? expr) (eq? (car expr) 'or))
+             (map process-disjunct (cdr expr)))
+            (else (list (list expr)))))) ; single condition
+        
+  (define make-rule-body make-body)
+  (define make-rule-head make-head)
+  
   (define-syntax rule
     (syntax-rules (if)
       ((_ id (if conditions conclusions))
