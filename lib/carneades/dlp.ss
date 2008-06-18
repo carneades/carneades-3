@@ -137,10 +137,17 @@
          
          (define symbolcounter 0)
          
+         (define ontologycounter 0)
+         
          (define newsym
            (lambda ()
              (set! symbolcounter (+ symbolcounter 1))
              (string->symbol (string-append "?x" (number->string symbolcounter)))))
+         
+         (define newont
+           (lambda (n)
+             (set! ontologycounter (+ ontologycounter 1))
+             (string->symbol (string-append (symbol->string n) (number->string ontologycounter)))))
 
          (define (notsyntax s)
            (and
@@ -666,14 +673,45 @@
                    (let ((h (rulerewrite (cadr r))))
                      (list 'rule (cadr h) (list 'and (caddr h) (caddr r))))
                    r)
-               (begin
-                 (display "no rule: ")
-                 (display r)
-                 (list 'rule))))
+               (if (rules*? r)
+                   (map rulerewrite r)
+                   (begin
+                     (display "no rule: ")
+                     (display r)
+                     (list 'rule)))))
          
          ; ----------------------------
          ; ontology-syntax
          
          (define (ontology oname ont)
-           oname)
+           (if (dlp? ont)
+               (let ((r (rulerewrite (to-rule ont))))
+                 (define make-ontology
+                   (lambda (n r)
+                     (if (= (length r) 3)
+                         (make-rule oname
+                                    #f
+                                    (make-head (cadr r))
+                                    (make-body (caddr r)))
+                         (make-rule oname
+                                    #f
+                                    (make-head (cadr r))
+                                    '()))))
+                 (if (dlprule? r)
+                     (make-ontology oname r)
+                     (if (dlprules*? r)
+                         (map (lambda (r) (make-ontolgy (newont oname) r)) r)
+                         (begin
+                           (display "error: no good conversion: ")
+                           (display r)
+                           (newline)
+                           '()))))
+               (begin
+                 (display "error: no valid dlp ontology: ")
+                 (display ont)
+                 (newline)
+                 '())))
+                 
+                     
+                     
 )
