@@ -5,7 +5,7 @@
       <xs:sequence>
         <xs:element minOccurs="0" ref="sources"/>
         <xs:element minOccurs="0" ref="theory"/>
-        <xs:element minOccurs="0" ref="argument-graph"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="argument-graph"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -23,26 +23,38 @@
     </xs:complexType>
   </xs:element>
   <!--
-    Facts and other axioms can be imported from RDF and OWL files. 
-    The rules are inference rules.   Other theories, represented in 
-    LKIF XML, can also be imported.  The resulting theory is the 
-    union of the axioms and inference rules in the transitive closure
-    of the theory and, recursively, all imported theories.
+    RDF, OWL and LKIF files can be imported.  See below. 
+    The rules are inference rules. The resulting theory is 
+    the transitive closure of the axioms deduced using the rules.
   -->
   <xs:element name="theory">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="import"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="rule"/>
+        <xs:element minOccurs="0" ref="axioms"/>
+        <xs:element minOccurs="0" ref="rules"/>
       </xs:sequence>
       <xs:attribute name="id" use="required" type="xs:ID"/>
     </xs:complexType>
   </xs:element>
+  <xs:element name="axioms">
+    <xs:complexType>
+      <xs:group maxOccurs="unbounded" ref="Wff"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="rules">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="rule"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
   <!--
-    Import: the uri should refer to an RDF file or an LKIF theory.
-    OWL files in RDF format can also be imported, to include the 
-    axioms of an ontology as well as any facts about instances in the 
-    A-Box.
+    Import: the uri can refer to an RDF file, including OWL files in RDF format, 
+    an LKIF theory, an LKIF argument graph, or an entire LKIF file, in which case both the 
+    theory and the argument graph in the file are imported. 
+    When importing OWL files, not only the axioms of the ontology  
+    are imported but also any assertions about instances, the ABox. 
   -->
   <xs:element name="import">
     <xs:complexType>
@@ -122,6 +134,7 @@
         <xs:group maxOccurs="unbounded" ref="Wff"/>
       </xs:sequence>
       <xs:attribute name="id" type="xs:ID"/>
+      <xs:attribute name="assumable" use="required" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="and">
@@ -131,6 +144,7 @@
         <xs:group maxOccurs="unbounded" ref="Wff"/>
       </xs:sequence>
       <xs:attribute name="id" type="xs:ID"/>
+      <xs:attribute name="assumable" use="required" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="not">
@@ -138,6 +152,7 @@
       <xs:group ref="Wff"/>
       <xs:attribute name="id" type="xs:ID"/>
       <xs:attribute name="exception" type="xs:boolean"/>
+      <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="if">
@@ -147,6 +162,7 @@
         <xs:group ref="Wff"/>
       </xs:sequence>
       <xs:attribute name="id" type="xs:ID"/>
+      <xs:attribute name="assumable" use="required" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="iff">
@@ -156,6 +172,7 @@
         <xs:group ref="Wff"/>
       </xs:sequence>
       <xs:attribute name="id" type="xs:ID"/>
+      <xs:attribute name="assumable" use="required" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="all">
@@ -165,6 +182,7 @@
         <xs:group ref="Wff"/>
       </xs:sequence>
       <xs:attribute name="id" type="xs:ID"/>
+      <xs:attribute name="assumable" use="required" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="exists">
@@ -174,6 +192,7 @@
         <xs:group ref="Wff"/>
       </xs:sequence>
       <xs:attribute name="id" type="xs:ID"/>
+      <xs:attribute name="assumable" use="required" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <!-- Terms include statements, to support meta-level statements -->
@@ -232,9 +251,12 @@
   </xs:element>
   <!--
     Issues labeled accepted and rejected are (assumed) to be true or false, respectively.  
-    status is now modelled as follows: stated if assumption=true & value=unknown; 
-    questioned if assumption=false; accepted if value=true & assumption=false; 
-    rejected if value=false & assumption=false; The new model allows us in 
+    The previous status of statements can be reconstructed as follows: 
+    	stated: value=unknown & assumption=true 
+      questioned: value=unknown & assumption=false
+      accepted: value=true & assumption=false
+      rejected: value=false & assumption=false
+    The new model allows us in 
     addition to assume the value to be false (value=false & assumption=true) or true
     (value=true & assumption=true).  Assumptions are now made globablly, in the
     scope of an argument graph, rather than on a premise by premise basis.

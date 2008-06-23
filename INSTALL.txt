@@ -29,10 +29,10 @@ The CARNEADES_HOME directory should contain these files and directories:
 - CHANGES.txt 
 - INSTALL.txt 
 - examples 
-- lib 
+- src 
 - schemas
 
-The Scheme source files of Carneades are in the "lib/carneades"
+The Scheme source files of Carneades are in the "src/carneades"
 directory.
 
 Start DrScheme and excecute the following command to find out the full
@@ -46,7 +46,7 @@ operating system this can be done as follows from a Unix shell, such as Bash.
 Let COLLECTS be the path of a directory in the current library collections path.
 
 $ cd COLLECTS
-$ ln -s CARNEADES_HOME/lib/carneades carneades
+$ ln -s CARNEADES_HOME/src/carneades carneades
 
 Be sure to replace "COLLECTS" and "CARNEADES_HOME" with the full path names
 of the actual directories.
@@ -57,7 +57,7 @@ Scheme has its own directories for storing collections.
 
 4. Configuration
 
-- In the lib/carneades directory, edit the config.scm file to select your
+- In the src/carneades directory, edit the config.scm file to select your
 preferred graphics format for displaying argument graphs (png, ps, or
 svg) and specify the full path to some application for viewing graphics
 in this format.  The config.scm file includes some examples for both

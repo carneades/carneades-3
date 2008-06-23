@@ -1,6 +1,12 @@
 
 Carneades Changelog
 
+Version 0.1.3
+
+- Began renaming Scheme source files to use the .ss suffix.
+- Renamed the "lib" directory to the more usual "src".
+- Added the GNU LGPL license and copyright notices
+
 Version 0.1.2
 
 - corrected bug in shell.scm: Failing to find a proof of P is not the same as

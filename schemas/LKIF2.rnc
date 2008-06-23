@@ -57,17 +57,29 @@ grammar {
     # Free variables are schema variables, i.e. inference rule variables; 
     # bound variables, using Exists or All, are first-order logic variables.
     Wff = Atom | Or | And | Not | If | Iff | All | Exists
-    Or = element or { attribute id { xsd:ID }?, Wff, Wff+ }
-    And = element and { attribute id { xsd:ID }?, Wff, Wff+ }
+    Or = element or { attribute id { xsd:ID }?, 
+                      attribute assumable { xsd:boolean },  #default: false
+                      Wff, Wff+ }
+    And = element and { attribute id { xsd:ID }?, 
+                        attribute assumable { xsd:boolean },  #default: false
+                        Wff, Wff+ }
     Not = element not { 
         attribute id { xsd:ID }?,
         attribute exception { xsd:boolean }?,  # default: false
         attribute assumable { xsd:boolean }?,  # default: false 
         Wff }            
-    If = element if { attribute id { xsd:ID }?, Wff, Wff }
-    Iff = element iff { attribute id { xsd:ID }?, Wff, Wff }
-    All = element all { attribute id { xsd:ID }?, Variable+, Wff }
-    Exists = element exists { attribute id { xsd:ID }?, Variable+, Wff }
+    If = element if { attribute id { xsd:ID }?, 
+                      attribute assumable { xsd:boolean },  #default: false
+                      Wff, Wff }
+    Iff = element iff { attribute id { xsd:ID }?, 
+                        attribute assumable { xsd:boolean },  #default: false
+                        Wff, Wff }
+    All = element all { attribute id { xsd:ID }?, 
+                        attribute assumable { xsd:boolean },  #default: false
+                        Variable+, Wff }
+    Exists = element exists { attribute id { xsd:ID }?, 
+                              attribute assumable { xsd:boolean },  #default: false,
+                              Variable+, Wff }
     
     # Terms include statements, to support meta-level statements
     Term = Variable | Individual | Constant | Expression | Atom

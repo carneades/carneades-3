@@ -1,0 +1,30 @@
+
+;;; run ikarus --compile-dependencies compile-all
+;;; after you put the carneades folder in your ikarus 
+;;; libraries location.
+
+(import
+  (only (carneades srfi and-let))
+  (only (carneades srfi args-fold))
+  (only (carneades srfi case-lambda))
+  (only (carneades srfi char-set))
+  (only (carneades srfi compare))
+  (only (carneades srfi eager-comprehensions))
+  (only (carneades srfi error-reporting))
+  (only (carneades srfi feature-expand))
+  (only (carneades srfi format))
+  (only (carneades srfi let-values))
+  (only (carneades srfi lightweight-testing))
+  (only (carneades srfi lists))
+  (only (carneades srfi parameters))
+  (only (carneades srfi random))
+  (only (carneades srfi rec))
+  (only (carneades srfi receive))
+  (only (carneades srfi records))
+  (only (carneades srfi sharing))
+  (only (carneades srfi specialize-procedures))
+  (only (carneades srfi streams))
+  (only (carneades srfi string-ports))
+  (only (carneades srfi strings))
+  (only (carneades srfi time))
+  (only (carneades srfi vectors)))
