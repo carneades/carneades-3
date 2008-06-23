@@ -13,14 +13,12 @@
 ;;; You should have received a copy of the GNU Lesser General Public License
 ;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(module argument mzscheme
-  (require (prefix list: (lib "list.ss" "srfi" "1")))
-  (require (prefix compare: (lib "67.ss" "srfi"))) 
-  (require (prefix table: (planet "table.ss" ("soegaard" "galore.plt" 3)))) ; 3 4
-  (require (lib "match.ss"))
-  (require "statement.ss")
-  
-  (provide make-ordinary-premise make-exception make-assumption   
+#!r6rs
+
+(library 
+ (argument)
+ 
+  (export make-ordinary-premise make-exception make-assumption   
            premise? ordinary-premise? exception? assumption?
            premise-atom premise-polarity premise-role premise-statement 
            pr am ex premise=? negative-premise? positive-premise? 
@@ -37,6 +35,12 @@
            node? node-statement node-pro node-con get-node get-argument
            list->argument-graph instantiate-argument-graph)
   
+  (import (carneades statement)
+          (carneades match match)
+          (prefix (srfi/1 list) list:)
+          (prefix (srfi/67 compare) compare:)
+          (prefix (planet "table.ss" ("soegaard" "galore.plt" 3)) table:))
+          
   (define-struct premise 
     (atom      ; an atomic statement
      polarity  ; boolean, #t => positive premise | #f => negative premise
@@ -123,7 +127,8 @@
   ; argument->datum: argument -> datum
   ; represents an argument as a s-expression
   (define (argument->datum arg)
-    `(argument (@ (id ,(argument-id arg))
+    `(argument (,(string->symbol "@") ; workaround PLT Scheme bug
+                 (id ,(argument-id arg))
                   (direction ,(argument-direction arg))
                   (scheme ,(argument-scheme arg)))
                ,@(map premise->datum (argument-premises arg))
