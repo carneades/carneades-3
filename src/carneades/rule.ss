@@ -30,7 +30,7 @@
  (export rule rule* make-rule rule? rule-id rule-strict rule-head rule-body 
          rule-critical-questions empty-rulebase rulebase rulebase? 
          add-rules rulebase-rules generate-arguments-from-rules rule->datum
-         rulebase->datum)
+         rulebase->datum (rename (make-head make-rule-head) (make-body make-rule-body)))
  
  (import (rnrs)
          (rnrs lists)
@@ -136,6 +136,7 @@
     (if (and (list? expr) (eq? (car expr) 'and))
         (cdr expr)
         (list expr)))
+ 
   
   ; make-body: expr -> (list-of clause)
   (define (make-body expr)

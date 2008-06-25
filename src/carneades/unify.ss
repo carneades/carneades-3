@@ -145,7 +145,7 @@
  (define (rename-variables tbl trm)
    (cond ((variable? trm) 
           (if (hashtable-contains? tbl trm)
-              (hashtable-ref tbl trm)
+              (hashtable-ref tbl trm #f)
               (let ((v (genvar)))
                 (hashtable-set! tbl trm v)
                 v)))
