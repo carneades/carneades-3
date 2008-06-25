@@ -13,21 +13,30 @@
 ;;; You should have received a copy of the GNU Lesser General Public License
 ;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(module case mzscheme
-  
-  ; generator for arguments from cases
-  
-  (require "stream.ss")
-  (require "argument.ss")
-  (require "argument-search.ss")
-  (require "statement.ss")
-  (require "unify.ss")
-  (require (lib "match.ss"))
-  (require (prefix list: (lib "list.ss" "srfi" "1")))
-  (require (prefix set: (planet "set.ss" ("soegaard" "galore.plt" 3))))
-  
-  (provide (all-defined))
-  
+#!r6rs
+
+(library 
+ (carneades case)   ; generator for arguments from cases
+ 
+ (export other-party make-factor factor? factor-statement factor-favors factor-parent
+         make-factors make-case case? case-name case-pfactors case-dfactors case-winner
+         make-casebase casebase? casebase-issue casebase-factors casebase-cases
+         list-cases get-case partition1 partition2 partition3 partition4 partition5 partition6
+         partition7 more-on-point as-on-point common-parent? decided-for-other-party current-case
+         generate-arguments-from-cases)
+         
+ (import (rnrs)
+         (rnrs records syntactic)
+         (only (rnrs lists) partition)
+         (carneades gensym)
+         (carneades stream)
+         (prefix (carneades argument) arg:)
+         (carneades argument-search)
+         (carneades statement)
+         (carneades unify)
+         (carneades lib match)
+         (prefix (carneades set) set:))
+         
   (define *debug* #f)
   
   ; TO DO: critical questions, e.g. about the applicability of the precedent due to, e.g.
@@ -41,26 +50,26 @@
       ((plaintiff) 'defendant)
       (else (error "not a party" party))))
   
-  (define-struct factor 
-    (statement   ; the statement expressed by the factor
-     favors      ; a party
-     parent))    ; a factor or #f if there is none    
+  (define-record-type factor 
+    (fields statement   ; the statement expressed by the factor
+            favors      ; a party
+            parent))    ; a factor or #f if there is none    
   
   ;; type factors = (set-of factor)
   
   ; make-factors: (list-of factor) -> factors
   (define (make-factors factors) (set:list->eq factors))
   
-  (define-struct %case
-    (name        ; string, "current" if the current case
-     pfactors    ; a set of factors
-     dfactors    ; a set of factors
-     winner))    ; the winning party or 'undecided, if the current case
+  (define-record-type %case
+    (fields name        ; string, "current" if the current case
+            pfactors    ; a set of factors
+            dfactors    ; a set of factors
+            winner))    ; the winning party or 'undecided, if the current case
   
   ; make-case: string party (list-of factors) -> case
   (define (make-case name winner factors)
     (let-values (((pfactors dfactors) 
-                  (list:partition (lambda (f) (eq? (factor-favors f) 'plaintiff)) factors)))
+                  (partition (lambda (f) (eq? (factor-favors f) 'plaintiff)) factors)))
       (make-%case name (set:list->eq pfactors) (set:list->eq dfactors) winner)))
   
   (define case? %case?)
@@ -78,10 +87,10 @@
   (define (case-statements c)
     (map factor-statement (set:elements (case-factors c))))
   
-  (define-struct %casebase
-    (issue      ; a statement, the plaintiff's claim
-     factors    ; the sef of all factors in the casebase
-     cases))    ; a set of cases
+  (define-record-type %casebase
+    (fields issue      ; a statement, the plaintiff's claim
+            factors    ; the sef of all factors in the casebase
+            cases))    ; a set of cases
   
   (define casebase? %casebase?)
   
@@ -252,8 +261,8 @@
       (make-case "current" 
                  'undecided 
                  (set:elements (set:filter (lambda (factor)
-                                             (or (accepted? c (factor-statement factor))
-                                                 (acceptable? ag c (factor-statement factor))))
+                                             (or (arg:accepted? c (factor-statement factor))
+                                                 (arg:acceptable? ag c (factor-statement factor))))
                                            (casebase-factors cb))))))
   
   
@@ -265,12 +274,12 @@
       (let ((subs (state-substitutions state))
             (args (state-arguments state)))
       ; dispatch: statement casebase  -> generator | #f
-      (if *debug* (printf "cbr debug: goal is ~v~n" goal))
+      ; (if *debug* (printf "cbr debug: goal is ~v~n" goal))
       (match goal
         (('factors-favor p i)
          ; scheme: cite on-point precedent 
          ; AS2 ("preference from precedent") of [Wyner & Bench-Capon, 2007]
-         (if *debug* (printf "cbr debug, factors-favor~n"))
+         ; (if *debug* (printf "cbr debug, factors-favor~n"))
          (let ((party (subs p))
                (issue (subs i)))
            ; (printf "debug: factors-favor ~v ~v~n" party issue)
@@ -283,7 +292,7 @@
                           (set:union (partition1 cc precedent)    ; factors in common for plaintiff
                                      (partition2 cc precedent)))  ; factors in common for defendant
                          (scheme (string-append "AS2. cite: \"" (case-name precedent) "\""))
-                         (previous-schemes (schemes-applied (state-arguments state) 
+                         (previous-schemes (arg:schemes-applied (state-arguments state) 
                                                             (statement-atom goal))))
                     (if (and (not (set:empty? common-factors))
                              (eq? (case-winner precedent) party)
@@ -291,7 +300,7 @@
                         ; cc and pc have pfactors in common and pc was decided in favor of plaintiff
                         (stream (make-response
                                  subs ; no new subs
-                                 (make-argument
+                                 (arg:make-argument
                                   ; id
                                   (gensym 'a)
                                   ; direction:
@@ -299,12 +308,12 @@
                                   ; conclusion: 
                                   goal
                                   ; premises
-                                  (append (map pr 
+                                  (append (map arg:pr 
                                                (map factor-statement 
                                                     (set:elements common-factors)))
                                           
                                           ; exceptions
-                                          (map ex 
+                                          (map arg:ex 
                                                (list `(has-counterexample ,(other-party party) ,(case-name precedent))
                                                      `(distinguishable ,(other-party party) ,(case-name precedent))
                                                      )))
@@ -312,7 +321,7 @@
                                   scheme)))
                         ; else fail
                         (stream))))
-                (apply stream (set:elements (casebase-cases cb))))))) 
+                (list->stream (set:elements (casebase-cases cb))))))) 
         
         (('has-counterexample p cn)
                  
@@ -320,7 +329,7 @@
          ; with more pfactors and dfactors in common with cc than the cited case that went the other
          ; way. 
          
-         (if *debug* (printf "cbr debug, has-counterexample~n"))
+         ; (if *debug* (printf "cbr debug, has-counterexample~n"))
 
          (let* ((party (subs p))
                 (cname (subs cn))
@@ -333,14 +342,14 @@
                   (lambda (new-precedent)
                     (let* ((diff (more-on-point new-precedent previous-precedent cc))
                            (scheme (string-append "counterexample: \"" (case-name new-precedent) "\""))
-                           (previous-schemes (schemes-applied (state-arguments state)
+                           (previous-schemes (arg:schemes-applied (state-arguments state)
                                                               (statement-atom goal))))
                       (if (and (not (set:empty? diff))
                                (decided-for-other-party new-precedent previous-precedent)
                                (not (member scheme previous-schemes)))
                           (stream (make-response 
                                    subs ; no new subs
-                                   (make-argument
+                                   (arg:make-argument
                                     ; id
                                     (gensym 'a)
                                     ; direction
@@ -350,16 +359,16 @@
                                     ; premises 
                                     (append 
                                      ; ordinary premises
-                                     (map pr (map factor-statement (set:elements diff)))
+                                     (map arg:pr (map factor-statement (set:elements diff)))
                                      ; exceptions
-                                     (map ex (list  `(has-counterexample ,(other-party party) ,(case-name new-precedent))
+                                     (map arg:ex (list  `(has-counterexample ,(other-party party) ,(case-name new-precedent))
                                                     `(distinguishable ,(other-party party) ,(case-name new-precedent))
                                                     )))
                                     ; scheme: 
                                     scheme)))
                           ; else fail
                           (stream))))
-                  (apply stream (set:elements (casebase-cases cb)))))))) 
+                  (list->stream (set:elements (casebase-cases cb)))))))) 
         
         (('distinguishable p cn)
          ; scheme: distinguish with pfactors in PC not in CC
@@ -367,7 +376,7 @@
          ; arguments for defedant as well as plaintiff. The scheme looks for 
          ; arguments favoring the given party.
          
-         (if *debug* (printf "cbr debug, distinguishable~n"))
+         ; (if *debug* (printf "cbr debug, distinguishable~n"))
                   
          (let* ((party (subs p))
                 (cname (subs cn))
@@ -393,7 +402,7 @@
                  (stream-append 
                   ; AS3: PC Stronger
                   (let* ((scheme "AS3. precedent stronger")
-                         (previous-schemes (schemes-applied (state-arguments state) 
+                         (previous-schemes (arg:schemes-applied (state-arguments state) 
                                                             (statement-atom goal))))
                     (if (or (set:empty? stronger-pc-factors)
                             (member scheme previous-schemes))
@@ -401,7 +410,7 @@
                         ; else 
                         (stream (make-response
                                  subs ; no new subs
-                                 (make-argument
+                                 (arg:make-argument
                                   ; id
                                   (gensym 'a)
                                   ; direction
@@ -409,13 +418,13 @@
                                   ; conclusion:
                                   goal
                                   ; premises
-                                  (map ex (append (map factor-statement (set:elements stronger-pc-factors))
+                                  (map arg:ex (append (map factor-statement (set:elements stronger-pc-factors))
                                                   (list `(downplay precedent-stronger ,(other-party party) ,cname))))
                                   ; scheme: 
                                   scheme)))))
                   ; AS4: CC Weaker
                   (let* ((scheme "AS4. current case weaker")
-                         (previous-schemes (schemes-applied (state-arguments state)
+                         (previous-schemes (arg:schemes-applied (state-arguments state)
                                                             (statement-atom goal))))
                     (if (or (set:empty? weaker-cc-factors)
                             (member scheme previous-schemes))
@@ -423,7 +432,7 @@
                         ; else 
                         (stream (make-response 
                                  subs ; no new subs
-                                 (make-argument
+                                 (arg:make-argument
                                   ; id
                                   (gensym 'a)
                                   ; direction
@@ -433,9 +442,9 @@
                                   ; premises
                                   (append 
                                    ; ordinary premises 
-                                   (map pr (map factor-statement (set:elements weaker-cc-factors)))
+                                   (map arg:pr (map factor-statement (set:elements weaker-cc-factors)))
                                    ; exceptions
-                                   (list (ex `(downplay current-case-weaker ,(other-party party) ,cname))))
+                                   (list (arg:ex `(downplay current-case-weaker ,(other-party party) ,cname))))
                                   
                                   ; scheme: 
                                   scheme))))))
@@ -447,7 +456,7 @@
          ; substitute or cancel factors. See [Wyner & Bench-Capon, 2007].
          ; distinction-type: 'precedent-stronger | 'current-case-weaker
          
-         (if *debug* (printf "cbr debug, downplay~n"))
+         ; (if *debug* (printf "cbr debug, downplay~n"))
 
                   
          (let* ((distinction-type (subs dt))
@@ -496,13 +505,13 @@
                                         (and (eq? distinction-type 'current-case-weaker)
                                              (not (set:empty? p4-downplayed)))))
                       (scheme "downplay")
-                      (previous-schemes (schemes-applied (state-arguments state)
+                      (previous-schemes (arg:schemes-applied (state-arguments state)
                                                          (statement-atom goal))))
                  (if (and (not (set:empty? (set:union p3-downplayed p4-downplayed)))
                           (not (member scheme previous-schemes)))
                      (stream (make-response 
                               subs ; no new subs
-                              (make-argument 
+                              (arg:make-argument 
                                ; id:
                                (gensym 'a)
                                ; direction:
@@ -510,7 +519,7 @@
                                ; conclusion:
                                goal
                                ; premises -- the downplayed factors
-                               (map pr (append (map factor-statement (set:elements p3-downplayed))
+                               (map arg:pr (append (map factor-statement (set:elements p3-downplayed))
                                                (map statement-complement 
                                                     (map factor-statement 
                                                          (set:elements p4-downplayed)))))
@@ -523,10 +532,10 @@
         (_ (match goal 
              (('not statement)
               
-              (if *debug* (printf "cbr debug, AS1, negative goal~v~n" (subs goal)))
+              ; (if *debug* (printf "cbr debug, AS1, negative goal~v~n" (subs goal)))
 
               (let* ((scheme (string-append "AS1. factor comparison"))
-                     (previous-schemes (schemes-applied (state-arguments state) 
+                     (previous-schemes (arg:schemes-applied (state-arguments state) 
                                                         (statement-atom goal))))
                 ; complementary version of AS1 for negated goals
                 (if (and (eq? (subs statement)
@@ -534,7 +543,7 @@
                          (not (member scheme previous-schemes)))
                     (stream (make-response 
                              subs ; no new subs
-                             (make-argument 
+                             (arg:make-argument 
                               ; id:
                               (gensym 'a)
                               ; direction:
@@ -542,7 +551,7 @@
                               ; conclusion:
                               statement
                               ; premises 
-                              (list (pr `(factors-favor defendant ,(casebase-issue cb))))
+                              (list (arg:pr `(factors-favor defendant ,(casebase-issue cb))))
                               ; scheme: 
                               scheme)))
                     (stream)))) ; fail
@@ -556,9 +565,9 @@
                     ; argument context. Deriving the factors using rules or other schemes will also work, so long
                     ; as care is taken to assure the required factors are acceptable in the argument graph 
                     (let* ((scheme (string-append "AS1. factor comparison"))
-                           (previous-schemes (schemes-applied (state-arguments state) 
+                           (previous-schemes (arg:schemes-applied (state-arguments state) 
                                                               (statement-atom goal))))
-                      (if *debug* (printf "cbr debug, AS1, positive goal ~v~n" (subs goal)))
+                      ; (if *debug* (printf "cbr debug, AS1, positive goal ~v~n" (subs goal)))
                       (if (and (eq? (subs goal)
                                     (casebase-issue cb))
                                (not (member scheme previous-schemes)))
@@ -567,7 +576,7 @@
                             ; (printf "cbrd debug, AS1 success~n")
                             (stream (make-response 
                                      subs ; no new subs
-                                     (make-argument 
+                                     (arg:make-argument 
                                       ; id:
                                       (gensym 'a)
                                       ; direction:
@@ -575,16 +584,16 @@
                                       ; conclusion:
                                       goal
                                       ; premises 
-                                      (list (pr `(factors-favor plaintiff ,(casebase-issue cb))))
+                                      (list (arg:pr `(factors-favor plaintiff ,(casebase-issue cb))))
                                       ; scheme: 
                                       scheme))))
                           (begin
                             ; (printf "cbr debug, AS1 fail~n")
                             (stream))))
                     (begin 
-                      (if *debug* (printf "cbr debug, AS1, goal ~v does not equal issue ~v~n" 
-                                          (subs goal) 
-                                          (casebase-issue cb)))
+;                      (if *debug* (printf "cbr debug, AS1, goal ~v does not equal issue ~v~n" 
+;                                          (subs goal) 
+;                                          (casebase-issue cb)))
                       (stream)))))) ; fail
         )))) ; end of generate-arguments-from-cases
   

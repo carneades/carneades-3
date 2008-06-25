@@ -13,8 +13,10 @@
 ;;; You should have received a copy of the GNU Lesser General Public License
 ;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(module rule mzscheme
-  
+#!r6rs
+
+(library
+ (rule)
   ; This is an implementation of the argumentation scheme for
   ; for arguments from defeasible rules.  Rules may have multiple
   ; conclusions, as in SWRL, and be subject to exceptions. Priorities are used
@@ -25,25 +27,27 @@
   ; hold at some time, using fluents in the event calculus. 
   ; And we need to reason about the applicability of rules to statements.
   
-  (require "statement.ss")
-  (require "unify.ss")
-  (require (prefix argument: "argument.ss"))
-  (require "stream.ss") 
-  (require "argument-search.ss")
-  (require (lib "match.ss"))
-  (require (prefix list: (lib "list.ss" "srfi" "1")))
-  (require (prefix compare: (lib "67.ss" "srfi"))) 
-  (require (prefix table: (planet "table.ss" ("soegaard" "galore.plt" 3))))
-  ; (require (prefix heap: (planet "heap.scm" ("soegaard" "galore.plt" 2))))
-  ; (require (lib "pretty.ss")) 
-  
-  (provide rule rule* make-rule rule? rule-id rule-strict rule-head rule-body 
-           rule-critical-questions empty-rulebase rulebase rulebase? 
-           add-rules rulebase-rules generate-arguments-from-rules rule->datum
-           rulebase->datum %rulebase-table)
+ (export rule rule* make-rule rule? rule-id rule-strict rule-head rule-body 
+         rule-critical-questions empty-rulebase rulebase rulebase? 
+         add-rules rulebase-rules generate-arguments-from-rules rule->datum
+         rulebase->datum)
+ 
+ (import (rnrs)
+         (rnrs lists)
+         (rnrs hashtables)
+         (carneades gensym)
+         (carneades statement)
+         (carneades unify)
+         (prefix (carneades lib srfi lists) list:)
+         (prefix (carneades argument) argument:)
+         (carneades stream)
+         (carneades argument-search)
+         (carneades lib match)
+         (prefix (carneades table) table:))
   
   (define *debug* #f)
   
+  (define null '())
  
   
   ; Negation, exceptions and assumptions. Statements of the form (not P), (unless P)
@@ -108,11 +112,11 @@
   
   ; Note: Renamed this structure from "rule" to "%rule" to avoid a name conflict with
   ; the "rule" macro.
-  (define-struct %rule
-    (id      ; symbol
-     strict  ; boolean, critical questions apply only if this is #f
-     head    ; (list-of statement), allow multiple conclusions
-     body))  ; (list-of clause) ; disjunction of conjunctions, i.e. disjunctive normal form
+  (define-record-type %rule
+    (fields id      ; symbol
+            strict  ; boolean, critical questions apply only if this is #f
+            head    ; (list-of statement), allow multiple conclusions
+            body))  ; (list-of clause) ; disjunction of conjunctions, i.e. disjunctive normal form
   
   (define make-rule make-%rule)
   (define rule? %rule?)
@@ -208,52 +212,51 @@
   ; The exceptions in a clause
   (define (clause-exceptions cl)
     (map condition-statement
-         (list:filter (lambda (s) 
-                        (match s
-                          (('unless a) #t)
-                          (_ #f)))
-                      cl))) 
+         (filter (lambda (s) 
+                   (match s
+                     (('unless a) #t)
+                     (_ #f)))
+                 cl))) 
   
   ; clause-assumptions: clause -> (list-of statement)
   ; The assumptions in a clause
   (define (clause-assumptions cl)
     (map condition-statement
-         (list:filter (lambda (s) 
-                        (match s
-                          (('assuming a) #t)
-                          (_ #f)))
-                      cl)))
-    
+         (filter (lambda (s) 
+                   (match s
+                     (('assuming a) #t)
+                     (_ #f)))
+                 cl)))
+  
   ; clause-antecedents: clause context -> (list-of statement)
   ; The statements in clause, as 
   ; well as all assumptions which are questioned in the context.
   (define (clause-antecedents cl c)
-    (list:filter (lambda (s) 
-                   (match s
-                     (('unless a) #f)
-                     (('assuming a) (argument:questioned? c a))
-                     (_ #t))) ; atomic and negated statements
-                 cl))
+    (filter (lambda (s) 
+              (match s
+                (('unless a) #f)
+                (('assuming a) (argument:questioned? c a))
+                (_ #t))) ; atomic and negated statements
+            cl))
   
 
-  
   ; rename-rule-variables: rule -> rule
   (define (rename-rule-variables r)
-    (let ((tbl (make-hash-table)))
+    (let ((tbl (make-eq-hashtable)))
       (make-%rule (rule-id r) 
                  (rule-strict r)
                  (rename-variables tbl (rule-head r))
                  (rename-variables tbl (rule-body r)))))
   
-  (define-struct %rulebase 
-    (table    ; finite map from a predicate symbol to a list of rules about the predicate
-     rules))  ; list of the rules
+  (define-record-type %rulebase 
+    (fields table    ; finite map from a predicate symbol to a list of rules about the predicate
+            rules))  ; list of the rules
 
   (define rulebase? %rulebase?)
   (define rulebase-rules %rulebase-rules)
   
   (define empty-rulebase
-    (make-%rulebase (table:make-ordered compare:default-compare) null))
+    (make-%rulebase (table:make-table) null))
   
   ; add-rule:  rulebase rule -> rulebase
   ; Add a rule to the rule base, for each conclusion of the rule,
@@ -262,21 +265,21 @@
   ; is an optimization, so that we don't have to iterate over the conclusions when
   ; trying to unify some goal with the conclusion of the rule with some goal.
   (define (add-rule rb1 r)
-    (list:fold-right (lambda (conclusion rb2)
-                       (let* ((pred (predicate conclusion))
-                              (tbl (%rulebase-table rb2))
-                              (current-rules (table:lookup pred tbl (lambda () null)))
-                              (new-rules (if (not (memq r current-rules))
-                                     (cons r current-rules)
-                                     current-rules)))
-                         (make-%rulebase (table:insert pred new-rules tbl)
-                                         (cons r (%rulebase-rules rb1)))))
-                     rb1
-                     (rule-head r)))
+    (fold-right (lambda (conclusion rb2)
+                  (let* ((pred (predicate conclusion))
+                         (tbl (%rulebase-table rb2))
+                         (current-rules (table:lookup tbl pred null))
+                         (new-rules (if (not (memq r current-rules))
+                                        (cons r current-rules)
+                                        current-rules)))
+                    (make-%rulebase (table:insert tbl pred new-rules)
+                                    (cons r (%rulebase-rules rb1)))))
+                rb1
+                (rule-head r)))
   
   ; add-rules: rulebase (list-of any)) -> rulebase
   (define (add-rules rb1 l)
-    (list:fold-right 
+    (fold-right 
      (lambda (r rb) (if (rule? r) (add-rule rb r) rb)) 
      rb1 
      l))
@@ -297,20 +300,20 @@
   ; will be applied to the goal. 
   (define (get-rules args rb1 goal)
     (let* ((pred (predicate goal))
-           (applicable-rules (table:lookup pred 
-                                           (%rulebase-table rb1) 
-                                           (lambda () null)))
+           (applicable-rules (table:lookup (%rulebase-table rb1)
+                                           pred 
+                                           null)) 
            (applied-rules (map string->symbol (argument:schemes-applied args (statement-atom goal))))
-           (remaining-rules (list:filter (lambda (r) (not (member (rule-id r) applied-rules)))
-                                         applicable-rules)))
-      (if *debug*
-          (begin
-            (printf "goal: ~s~n" goal)
-            (printf "predicate: ~s~n" pred)
-            (printf "applicable rules: ~s~n" (map rule-id applicable-rules))
-            (printf "applied rules: ~s~n" applied-rules)
-            (printf "remaining rules: ~s~n~n" (map rule-id remaining-rules))
-            ))
+           (remaining-rules (filter (lambda (r) (not (member (rule-id r) applied-rules)))
+                                    applicable-rules)))
+;      (if *debug*
+;          (begin
+;            (printf "goal: ~s~n" goal)
+;            (printf "predicate: ~s~n" pred)
+;            (printf "applicable rules: ~s~n" (map rule-id applicable-rules))
+;            (printf "applied rules: ~s~n" applied-rules)
+;            (printf "remaining rules: ~s~n~n" (map rule-id remaining-rules))
+;            ))
       remaining-rules
       ))
   
@@ -391,9 +394,9 @@
                                            ; scheme:
                                            (symbol->string (rule-id rule))) ))))
           
-          (list:filter response? (map apply-for-conclusion (rule-head rule))))
+          (filter response? (map apply-for-conclusion (rule-head rule))))
         
-        (apply stream (flatmap (lambda (rule) 
+        (list->stream (flatmap (lambda (rule) 
                                  ; (printf "applying rule ~s~n" (rule-id rule)) ; debug
                                  (if (null? (rule-body rule))  ; empty body, i.e. "facts"
                                      (apply-clause null rule)

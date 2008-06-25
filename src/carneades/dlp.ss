@@ -20,7 +20,7 @@
  
  (export)
  (import (rnrs)
-         (carneades match match)
+         (carneades lib match)
          (carneades rule)
          )
  

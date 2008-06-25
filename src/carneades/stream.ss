@@ -17,30 +17,39 @@
 #!r6rs
 
 (library 
- (streams)
+ (carneades stream)
 
- (export stream-append stream-interleave stream-accumulate
-         stream-flatten stream-flatmap stream->list)
+ (export stream-interleave stream-accumulate stream-flatten stream-flatmap
+         
+         ; from srfi 41
+         define-stream stream stream-null stream-null? stream-cons stream? stream-pair? stream-car
+         stream-cdr stream-lambda port->stream stream stream->list list->stream
+         stream-append stream-concat stream-drop stream-drop-while
+         stream-filter stream-fold stream-for-each stream-from
+         stream-iterate stream-length stream-let stream-map stream-match
+         stream-of stream-range stream-ref stream-reverse stream-scan
+         stream-take stream-take-while stream-unfold stream-unfolds
+         stream-zip)
+         
  
  (import
   (rnrs base)
-  (only (rnrs r5rs (6)) delay)
-  (srfi/41 streams))
+  (carneades lib srfi streams))
 
  
  (define (stream-interleave s1 s2)
    (if (stream-null? s1)
        s2
        (stream-cons (stream-car s1)
-                    (delay (stream-interleave s2 (delay (stream-cdr s1)))))))
+                    (stream-interleave s2 (stream-cdr s1)))))
  
  (define (stream-accumulate combiner initial-value stream)
    (if (stream-null? stream)
        initial-value
        (combiner (stream-car stream)
-                 (delay (stream-accumulate combiner
-                                                  initial-value
-                                                  (delay (stream-cdr stream)))))))
+                 (stream-accumulate combiner
+                                    initial-value
+                                    (stream-cdr stream)))))
  
  (define (stream-flatten stream)
    (stream-accumulate stream-interleave stream-null stream))

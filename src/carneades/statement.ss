@@ -16,7 +16,7 @@
 #!r6rs
 
 (library 
- (statement)
+ (carneades statement)
  
  (export make-text text? text-id text-statement text-src text-summary
          statement-equal? statement-compare statement-positive?

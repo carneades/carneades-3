@@ -17,7 +17,7 @@
 #!r6rs
 
 (library 
- (unify)
+ (carneades unify)
  
  (export variable? identity unify* unify genvar rename-variables ground?)
  (import (rnrs base)
