@@ -19,7 +19,7 @@
 (library
  (dlp) ; description logic programming
  
- (export ontology knowledgebase generate-arguments-from-ontologies add-ontology add-ontologies dlp?)
+ (export ontology knowledgebase generate-arguments-from-ontologies dlp?)
  (import (rnrs)
          (carneades lib match)
          (carneades rule)
@@ -633,6 +633,7 @@
  ; ----------------------------
  ; assertion- & statement-mapping
  
+ ; to-rule: dlp -> dlprule
  (define (to-rule l)
    (cond (
           (dlpconcinstance? l)                               ; <dlpconcinstance> 
@@ -684,6 +685,7 @@
  ; ----------------------------
  ; rule-rewriting
  
+ ; rulerewrite: dlprule -> dlprule | dlprules* -> dlprules*
  (define (rulerewrite r)
    (if (dlprule? r)
        (if (dlprule? (cadr r))
@@ -697,6 +699,7 @@
  ; ----------------------------
  ; ontology-syntax
  
+ ; %ontology: symbol symbol -> (list-of ontology)
  (define (%ontology oname ont)
    (if (dlp? ont)
        (let ((r (rulerewrite (to-rule ont))))
@@ -723,18 +726,22 @@
      (syntax-case x ()
        ((_ oname ont) #'(%ontology (quote oname) (quote ont))))))
  
+ ;empty-knowledgebase; -> knowledgebase
  (define empty-knowledgebase empty-rulebase)
  
- (define add-ontology add-rules)
+ ; (define add-ontology add-rules)
   
  
+ ; TODO: FIX
+ ; add-ontologies: knowledgebase (list-of (list-of ontology)) -> knowledgebase
  (define (add-ontologies kb o*)
    (add-rules kb (fold-right append '() o*)))
  
+ ; knowledgebase: (list-of ontology) ... -> knowledgebase
  (define (knowledgebase . l)
    (add-rules empty-knowledgebase (fold-right append '() l)))
  
- 
+ ; generate-arguments-from-ontologies: knowledgebase (list-of question-types) -> generator
  (define generate-arguments-from-ontologies generate-arguments-from-rules)
  
  

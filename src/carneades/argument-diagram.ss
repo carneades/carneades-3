@@ -113,8 +113,7 @@
                       config:preferred-graphic-format))
           (tmp-dot (make-temporary-file "mztmp~a.dot")))    
      (call-with-output-file tmp-dot
-       (lambda (port) (diagram* ag c subs statement->string port))
-       'truncate)
+       (lambda (port) (diagram* ag c subs statement->string port)))
      (if (equal? format "dot")
          (begin (system (string-append config:viewer " " (path->string tmp-dot)))
                 (delete-file tmp-dot))
