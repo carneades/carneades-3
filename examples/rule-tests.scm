@@ -102,7 +102,7 @@
     (make-engine max-nodes max-turns 
                  (list (generate-arguments-from-rules rb1 critical-questions) builtins)))
   
-  (define tests
+  (test/text-ui
     (test-suite
      "rule tests"
      (test-true "fact" (all-acceptable? '(bird Tweety) (engine 20 1 null)))
@@ -129,7 +129,7 @@
      ; to do: event calculus tests
      ))
   
-   (test/text-ui tests)
+   ; (test/text-ui tests)
   
   ; Example commands
   ; (ask '(goods item2) (engine 20 2 null))
