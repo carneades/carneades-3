@@ -13,8 +13,11 @@
 ;;; You should have received a copy of the GNU Lesser General Public License
 ;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(module evidence mzscheme
-  
+#!r6rs
+
+(library
+ (carneades evidence)
+ 
   ; Implementation of an argumentation scheme for arguments from evidence, in particular testimonial evidence.
   ; Questions and answers represent statements of the form (<predicate> <subject> <object>), i.e. triples as in RDF.
   ; The <predicate> and <subject> must be instantiated when asking the question.  The only information 
@@ -29,7 +32,12 @@
   ; - default values for questions, possibly
   ; - addition data types for questions, in particular dates.
   ; - extend LKIF.scm to support the importing and exporting of forms, questions and answers.
-  
+
+ (export make-witness witness-name make-question question-predicate question-type
+         question-cardinality question-text make-form form-questions form-help
+         make-testimony testimony-witness testimony-forms testimony-answers 
+         generate-argument-from-testimony)
+         
   (require "stream.ss")
   (require "unify.ss")
   (require "statement.ss")

@@ -126,7 +126,9 @@ grammar {
     # (value=true & assumption=true).  Assumptions are now made globablly, in the
     # scope of an argument graph, rather than on a premise by premise basis.
 
-    Issues = element issue { 
+    Issues = element issues { Issue* }
+    
+    Issue = element issue { 
         attribute statement { xsd:anyURI },
         attribute value { "unknown" | "true" | "false" },  # default: unknown
         attribute assumption { xsd:boolean }?, # default: false
