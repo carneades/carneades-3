@@ -8,7 +8,7 @@
  (import (rnrs) 
          (carneades rule)
          (carneades shell)
-         (srfi/78 check))
+         (carneades lib srfi lightweight-testing))
  
  (define rb1 
    (rulebase
@@ -62,7 +62,7 @@
  ; engine integer integer  -> statement -> (stream-of argument-state)
  (define (engine max-nodes max-turns)
    (make-engine max-nodes max-turns 
-                (list (generate-arguments-from-rules rb3 '()))))
+                (list (generate-arguments-from-rules rb1 '()))))
  
  (define e1 (engine 50 1))
  

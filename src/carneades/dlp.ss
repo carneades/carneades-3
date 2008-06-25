@@ -19,7 +19,7 @@
 (library
  (dlp) ; description logic programming
  
- (export ontology knowledgebase generate-arguments-from-ontologies dlp?)
+ (export ontology axiom generate-arguments-from-ontologies dlp?)
  (import (rnrs)
          (carneades lib match)
          (carneades rule)
@@ -721,7 +721,7 @@
                  (error "ontology" "no good conversion" r))))
        (assertion-violation "ontology" "error: no valid dlp ontology" ont)))
  
- (define-syntax ontology
+ (define-syntax axiom
    (lambda (x)
      (syntax-case x ()
        ((_ oname ont) #'(%ontology (quote oname) (quote ont))))))
@@ -737,8 +737,8 @@
  (define (add-ontologies kb o*)
    (add-rules kb (fold-right append '() o*)))
  
- ; knowledgebase: (list-of ontology) ... -> knowledgebase
- (define (knowledgebase . l)
+ ; ontology (list-of ontology) ... -> knowledgebase
+ (define (ontology . l)
    (add-rules empty-knowledgebase (fold-right append '() l)))
  
  ; generate-arguments-from-ontologies: knowledgebase (list-of question-types) -> generator

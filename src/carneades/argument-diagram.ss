@@ -30,7 +30,7 @@
          (carneades stream)
          (prefix (carneades unify) unify:)
          (prefix (carneades config) config:)
-         (only (carneades system) system path->string make-temporary-file)
+         (carneades system)
          (carneades gensym))
  
  ; (require (lib "string.ss" "srfi" "13"))
@@ -42,20 +42,20 @@
  ; The identifers are suitable for naming nodes and arrows 
  ; in the DOT language, for use with GraphViz
  (define (get-id tbl d)
-   (hashtable-ref tbl 
-                  d 
-                  (lambda () 
-                    (let ((v (gensym "g")))
-                      (hashtable-set! tbl d v) v))))
+   (if (hashtable-contains? tbl d)
+       (hashtable-ref tbl d #f)
+       (let ((v (gensym "g")))
+         (hashtable-set! tbl d v)
+         v)))
  
  ; diagram*: argument-graph context substitutions
  ;           (-> statement string) output-port -> void
  (define (diagram* ag context subs statement->string port)
    (let ((tbl (make-eqv-hashtable)))
-     (display "digraph g {\n    rankdir = \"RL\";\n" port)
+     (display "digraph g {~%    rankdir = \"RL\";~%" port)
      (print-statements ag context subs tbl (statements ag) statement->string  port)
      (print-arguments ag context subs tbl (list-arguments ag) port)
-     (display "}\n" port)))
+     (display "}~%" port)))
  
  
  ; print-statements: argument-graph context substitutions 
@@ -63,7 +63,7 @@
  (define (print-statements ag c subs tbl statements statement->string port)
    (define (print-statement n)
      (let ((id (get-id tbl n)))
-       (format port "    ~A [shape=box, label=~S, style=~S];\n"
+       (format port "    ~A [shape=box, label=~S, style=~S];~%"
                 id
                 (statement->string (subs n))
                 (if (or (and (acceptable? ag c n)
@@ -77,19 +77,19 @@
  ;                  hash-table (list-of argument) output-port -> void
  (define (print-arguments ag c subs tbl args port)
    (define (print-argument arg)
-     (format port "    ~A [shape=ellipse, label=~S, style=~S];\n"
+     (format port "    ~A [shape=ellipse, label=~S, style=~S];~%"
               (get-id tbl (argument-id arg))
               (if (and (argument-scheme arg)
                        (< 0 (string-length (argument-scheme arg))))
                   (argument-scheme arg)
                   (symbol->string (argument-id arg)))
               (if (all-premises-hold? ag c arg) "filled" ""))
-     (format port "    ~A -> ~A~A;\n" 
+     (format port "    ~A -> ~A~A;~%" 
               (get-id tbl (argument-id arg))
               (get-id tbl (argument-conclusion arg))
               (if (eq? (argument-direction arg) 'con) " [arrowhead=\"onormal\"]" ""))
      (for-each (lambda (p) 
-                 (format port "    ~A -> ~A [arrowhead=\"~A~A\"];\n" 
+                 (format port "    ~A -> ~A [arrowhead=\"~A~A\"];~%" 
                           (get-id tbl (premise-atom p))
                           (get-id tbl (argument-id arg))
                           (cond ((assumption? p) "dot")
@@ -111,19 +111,22 @@
           (format (if (equal? config:preferred-graphic-format "ps") 
                       "ps2" 
                       config:preferred-graphic-format))
-          (tmp-dot (make-temporary-file "mztmp~a.dot")))    
+          (tmp-dot (string-append config:tmpdir
+                                  (symbol->string (gensym "carneades-")) ".dot")))
      (call-with-output-file tmp-dot
        (lambda (port) (diagram* ag c subs statement->string port)))
      (if (equal? format "dot")
-         (begin (system (string-append config:viewer " " (path->string tmp-dot)))
+         (begin (system* config:viewer tmp-dot)
                 (delete-file tmp-dot))
-         (let ((tmp-output (make-temporary-file (string-append "mztmp~a." suffix))))
-           (system (string-append config:dot 
-                                  (string-append " -T" format " ")
-                                  (path->string tmp-dot) 
-                                  " -o " 
-                                  (path->string tmp-output)))
-           (system (string-append config:viewer " " (path->string tmp-output)))
+         (let ((tmp-output (string-append config:tmpdir
+                                          (symbol->string (gensym "carneades-")) "." suffix)))
+           (system* config:dot 
+                   " -T" 
+                   format
+                   tmp-dot
+                   " -o " 
+                   tmp-output)
+           (system* config:viewer tmp-output)
            (delete-file tmp-dot)
            (delete-file tmp-output)))))
  

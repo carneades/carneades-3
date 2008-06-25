@@ -18,9 +18,7 @@
 (library
  (carneades system)
  
- (export system make-temporary-file path->string)
+ (export system* system)
  
- (import (only (scheme base) path->string)
-         (scheme system) 
-         (scheme file))
+ (import (only (scheme system) system system*))
  )

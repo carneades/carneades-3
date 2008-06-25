@@ -19,7 +19,7 @@
 (library 
  (config)
  
- (export dot preferred-graphic-format viewer)
+ (export dot preferred-graphic-format viewer tmpdir)
  (import (rnrs base))
  
  ; global configuration parameters
@@ -55,4 +55,7 @@
  ; (define viewer "\"C:\\Program Files\\Mozilla Firefox\\firefox.exe\"")
  ; (define viewer "java -jar C:\\Batik\\batik-squiggle.jar")
  
+ ; tmpdir: filename of a directory for temporary files.  Be sure to include the 
+ ; final pathname separation character, '/' (Unix) or '\\' (Windows)
+ (define tmpdir "/tmp/")
  )
