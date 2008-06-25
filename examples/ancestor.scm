@@ -19,38 +19,53 @@
            (parent Dustin Tom)
            (parent Dustin Ines)
            (parent Tom Gloria)
-           (parent Ines Hildegard))
+           (parent Ines Hildegard)
+           (Male Tom)
+           (Parent Tom)
+           (Female Ines)
+           (Parent Ines)
+           )
     
     (rule* r1 
            (if (parent ?x ?y)
                (ancestor ?x ?y)))   
     
     (rule* r2 
-           (if (and (parent ?x ?z) 
+           (if (and (ancestor ?x ?z) 
                     (ancestor ?z ?y))
                (ancestor ?x ?y)))
     
+    (rule* r3
+           (if (and (Parent ?x)
+                    (Male ?x))
+               (Father ?x)))
+    (rule* r4
+           (if (Father ?x)
+               (and
+                (Male ?x)
+                (Parent ?x))))
+    
+    (rule* r5
+           (if (and (Female ?x)
+                    (Parent ?x))
+               (Mother ?x)))
+    
+    (rule* r6
+           (if (Mother ?x)
+               (and (Female)
+                    (Parent))))
+                
+    
     )) ; rulebase
+ 
  
  ; engine integer integer  -> statement -> (stream-of argument-state)
  (define (engine max-nodes max-turns)
    (make-engine max-nodes max-turns 
-                (list (generate-arguments-from-rules rb1 '()))))
+                (list (generate-arguments-from-rules rb3 '()))))
  
  (define e1 (engine 50 1))
  
- 
- #;(test/text-ui
-    (test-suite
-     "Tests for ancestor.scm"
-     (test-true "test 1" (all-acceptable? '(parent ?x ?y) e1))
-     (test-true "test 2" (all-acceptable? '(ancestor ?x ?y) e1))
-     (test-true "test 3" (all-acceptable? '(ancestor Caroline ?y) e1))
-     (test-true "test 4" (all-acceptable? '(ancestor Caroline Tom) e1))
-     (test-true "test 5" (failure? '(parent Hildegard Tom) e1))
-     (test-true "test 6" (all-acceptable? '(ancestor Caroline Gloria) e1))
-     (test-true "test 7" (all-acceptable? '(applies ?r (parent ?x ?y)) e1))
-     (test-true "test 8" (all-acceptable? '(applies facts (parent Caroline Tom)) e1))))
  
  (check (all-acceptable? '(parent ?x ?y) e1) => #t)
  (check (all-acceptable? '(ancestor ?x ?y) e1) => #t)
@@ -60,6 +75,8 @@
  (check (all-acceptable? '(ancestor Caroline Gloria) e1) => #t)
  (check (all-acceptable? '(applies ?r (parent ?x ?y)) e1) => #t)
  (check (all-acceptable? '(applies facts (parent Caroline Tom)) e1) => #t)
+ (check (all-acceptable? '(Father Tom) e1) => #t)
+ (check (all-acceptable? '(Mother Ines) e1) => #t)
  
  
  ; (test/text-ui tests)
