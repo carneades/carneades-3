@@ -81,7 +81,7 @@
                         (if (acceptable? (state-arguments s)
                                          (state-context s)
                                          query)
-                            (printf "~v~n" ((state-substitutions s) query))))
+                            (printf "~A~%" ((state-substitutions s) query))))
                       str)))
  
  ; ask1: statement (statement -> (stream-of argument-state)) -> void
@@ -95,7 +95,7 @@
            (if (acceptable? (state-arguments s)
                             (state-context s)
                             query)
-               (printf "~v~n" ((state-substitutions s) query)))))))
+               (printf "~A~%" ((state-substitutions s) query)))))))
  
  ; success? : statement -> engine -> boolean
  ; A query is successful iff the given inference engine finds one or more argument states
