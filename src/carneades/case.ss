@@ -19,7 +19,7 @@
  (carneades case)   ; generator for arguments from cases
  
  (export other-party make-factor factor? factor-statement factor-favors factor-parent
-         make-factors make-case case? case-name case-pfactors case-dfactors case-winner
+         make-factors make-case case? case-name case-pfactors case-dfactors case-winner case-statements
          make-casebase casebase? casebase-issue casebase-factors casebase-cases
          list-cases get-case partition1 partition2 partition3 partition4 partition5 partition6
          partition7 more-on-point as-on-point common-parent? decided-for-other-party current-case

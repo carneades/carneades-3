@@ -1,19 +1,19 @@
-(module kt-ex1 mzscheme
-  
-  (require (prefix lkif: (lib "lkif.ss" "carneades")))
-  (require (lib "statement.ss" "carneades"))
-  (require (lib "shell.ss" "carneades"))
-  (require (lib "stream.ss" "carneades"))
-  (require (lib "argument-search.ss" "carneades"))
-  (require (prefix argument: (lib "argument.ss" "carneades")))
-  (require (prefix e: (lib "evidence.ss" "carneades")))
-  (require (lib "argument-diagram.ss" "carneades"))
-  (require (lib "argument-from-arguments.ss" "carneades"))
-  (require (planet "test.ss" ("schematics" "schemeunit.plt")))
-  (require (planet "text-ui.ss" ("schematics" "schemeunit.plt")))
-  
-  
-  (require (prefix list: (lib "list.ss" "srfi" "1")))
+#!r6rs
+
+(import (rnrs base)
+        (prefix (rnrs lists) list:)
+        (prefix (carneades lkif) lkif:)
+        (carneades statement)
+        (carneades shell)
+        (carneades stream)
+        (carneades argument-search)
+        (prefix (carneades argument) argument:)
+        (prefix (carneades evidence) e:)
+        (carneades argument-diagram)
+        (carneades argument-from-arguments)
+        (carneades lib srfi lightweight-testing))
+
+(define null '())
   
   (define imports (lkif:import "kt-ex1.xml"))
   (define texts (index-by-id (list:filter text? imports)))  
@@ -57,22 +57,16 @@
                        (if (and txt (not (equal? (text-summary txt) "")))
                            (text-summary txt)
                            stmt))))))))
-  
-  (define tests
-    (test-suite
-     "arguments from argument graphs"
-     (test-true "q1" (all-acceptable? 'k473 e1))  ; max 10% of nominal value   
-     (test-true "q2" (all-acceptable? 'k472 e1))  ; cash payment
-     (test-true "q3" (all-acceptable? 'k470 e1))  ; counter-performance
-     ))
-  
-   (test/text-ui tests)
+ 
+  (check (all-acceptable? 'k473 e1) => #t)  ; max 10% of nominal value   
+  (check (all-acceptable? 'k472 e1) => #t)  ; cash payment
+  (check (all-acceptable? 'k470 e1) => #t)  ; counter-performance
+  (check-report)
+
   
   ; Answers to provide to questions asked:
   ; 1. Max 10% of nominal value?
   ; Answer: (all #t)
   
-  
   ; (view1 'k470 e1) 
   
-  ) ; module end

@@ -57,32 +57,34 @@
          (subs (state-substitutions state)))
      (match stmt
        (('eval term expr) 
-        (with-exception-handler
-         ; fail if any exception is raised
-         (lambda (exn) (stream))
-         (lambda ()
-           (let* ((result (eval (subs expr))) ; to do: eval in a safer namespace
-                  (subs2 (unify* term
-                                 result 
-                                 subs 
-                                 (lambda (t) t) 
-                                 (lambda (msg) #f) 
-                                 #f)))
-             (if (not subs2)
-                 (stream) ; not unifiable, so fail by returning the empty stream
-                 (stream 
-                  (make-response 
-                   subs2
-                   (argument:make-argument 
-                    (gensym 'a) ; id
-                    ; direction:
-                    'pro
-                    ; conclusion:
-                    stmt
-                    ; premises:
-                    null
-                    ; scheme:
-                    "builtin: eval"))))))))
+        (call/cc (lambda (escape)
+                   (with-exception-handler
+                    ; fail if any exception is raised
+                    (lambda (exn) (escape (stream)))
+                    (lambda ()
+                      (let* ((result (eval (subs expr) 
+                                           (environment '(rnrs)))) ; to do: use safer namespace
+                             (subs2 (unify* term
+                                            result 
+                                            subs 
+                                            (lambda (t) t) 
+                                            (lambda (msg) #f) 
+                                            #f)))
+                        (if (not subs2)
+                            (stream) ; not unifiable, so fail by returning the empty stream
+                            (stream 
+                             (make-response 
+                              subs2
+                              (argument:make-argument 
+                               (gensym 'a) ; id
+                               ; direction:
+                               'pro
+                               ; conclusion:
+                               stmt
+                               ; premises:
+                               null
+                               ; scheme:
+                               "builtin: eval"))))))))))
        (_ (stream))))) ; fail
  
  ; builtins: statement argument-graph substitutions -> 

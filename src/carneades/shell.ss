@@ -18,7 +18,7 @@
 (library
  (carneades shell) ;; utility procedures for querying knowledge bases
  
- (export make-engine make-engine show-state show show1 ask ask1
+ (export make-engine make-engine* show-state show show1 ask ask1
          all-acceptable? some-acceptable? success? failure?)
  
  (import (except (rnrs base) assert)
