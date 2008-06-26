@@ -27,7 +27,7 @@
          (carneades statement)
          (carneades lib match)
          (only (carneades lib pregexp) pregexp-split)
-         (carneades lib sxml))
+         (carneades lib xml sxml))
  
  
  ;; TODO: 
