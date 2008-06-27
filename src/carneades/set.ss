@@ -1,5 +1,5 @@
 ;;;;
-;;;; Sets, given an equality predicate on elements.
+;;;; Functional, immutable sets, given an equality predicate on elements.
 ;;;;
 ;;;; Represented as an unordered list without duplicates.
 ;;;;
@@ -8,14 +8,27 @@
 ;;;; Darius Bacon <darius@accesscom.com>
 ;;;; http://www.accesscom.com/~darius
 ;;;; 
+;;;; Ported to R6RS by Stefan Ballnat.
 
 #!r6rs
 
 (library
  (carneades set)
  
- (export list->eq union elements empty? select intersection difference
-         subset? make-eq (rename (set-filter filter) (set-any? any?) (set-every? every?)))
+ (export singleton list->set set->list empty? select
+         (rename (set-filter filter) 
+                 (set-any? any?) 
+                 (set-every? every?)
+                 (set/finder finder)
+                 (set/foldl fold-left)
+                 (set-empty empty-set)
+                 (set-adjoin adjoin)
+                 (set-union union)
+                 (set-intersection intersection)
+                 (set-disjoint? disjoint?)
+                 (set-difference difference)
+                 (set-subset? subset?)))
+ 
  
  (import (rnrs))
  
@@ -43,10 +56,7 @@
  
  
  ;; The empty set.
- (define set-empty '())
- 
- ;; Return true iff X is in XS.
- (define member? set/finder)
+ (define set-empty (lambda (=?) '()))
  
  ;; Return a set containing one element, X.
  (define singleton
@@ -59,10 +69,7 @@
    (lambda (=?)
      (let ((adjoin (set-adjoin =?)))
        (lambda (x-list)
-         (set/foldl adjoin set-empty x-list)))))
- 
- (define (list->eq l)
-   ((list->set eq?) l))
+         (set/foldl adjoin (set-empty =?) x-list)))))
  
  ;; The set containing X and the elements of XS.
  (define set-adjoin
@@ -95,8 +102,6 @@
                     '()
                     xs)))))
  
- (define (intersection s1 s2)
-   ((set-intersection eq?) s1 s2))
  
  ;; Return true iff XS and YS have no elements in common.
  (define set-disjoint?
@@ -120,9 +125,6 @@
                     '()
                     xs)))))
  
- (define (difference s1 s2)
-   ((set-difference eq?) s1 s2))
- 
  ;; Return true iff XS is a subset of YS.
  (define set-subset?
    (lambda (=?)
@@ -131,9 +133,6 @@
          (set-every? (lambda (x) (mem= x ys))
                      xs)))))
  
- (define (subset? s1 s2)
-   ((set-subset? eq?) s1 s2))
-   
  
  ;; Return true iff (TEST? X) is true for some X in XS.
  (define set-any?
@@ -144,7 +143,7 @@
            (or (test? (car xs))
                (checking (cdr xs)))))))
  
-  
+ 
  ;; Return true iff (TEST? X) is true for every X in XS.
  (define set-every?
    (lambda (test? xs)
@@ -158,8 +157,6 @@
  (define set->list
    (lambda (xs) xs))
  
- (define elements set->list)
- 
  (define set-filter filter)
  
  (define (empty? s)
@@ -170,13 +167,13 @@
        (error 'select "empty list!")
        (car s)))
  
- (define-syntax make-eq
-   (lambda (x)
-     (syntax-case x ()
-       ((_) #'set-empty)
-       ((_ elem) #'((singleton eq?) elem))
-       ((_ e1 e2) #'(list->eq (list e1 e2)))
-       ((_ e1 e2 ...) #'(list->eq (list e1 e2 ...))))))
+ ; (define-syntax make-eq
+ ;   (lambda (x)
+ ;     (syntax-case x ()
+ ;       ((_) #'set-empty)
+ ;       ((_ elem) #'((singleton eq?) elem))
+ ;       ((_ e1 e2) #'(list->eq (list e1 e2)))
+ ;       ((_ e1 e2 ...) #'(list->eq (list e1 e2 ...))))))
  
  
  ) ; end of set

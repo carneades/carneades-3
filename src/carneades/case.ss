@@ -19,8 +19,8 @@
  (carneades case)   ; generator for arguments from cases
  
  (export other-party make-factor factor? factor-statement factor-favors factor-parent
-         make-factors make-case case? case-name case-pfactors case-dfactors case-winner case-statements
-         make-casebase casebase? casebase-issue casebase-factors casebase-cases
+         make-factors make-case case? case-name case-pfactors case-dfactors case-factors
+         case-winner case-statements make-casebase casebase? casebase-issue casebase-factors casebase-cases
          list-cases get-case partition1 partition2 partition3 partition4 partition5 partition6
          partition7 more-on-point as-on-point common-parent? decided-for-other-party current-case
          generate-arguments-from-cases)
@@ -38,6 +38,16 @@
          (prefix (carneades set) set:))
          
   (define *debug* #f)
+  
+  ; specialize set operations
+  (define empty-set (set:empty-set eq?))
+  (define list->set (set:list->set eq?))
+  (define union (set:union eq?))
+  (define intersection (set:intersection eq?))
+  (define difference (set:difference eq?))
+  (define subset? (set:subset? eq?))
+    
+  
   
   ; TO DO: critical questions, e.g. about the applicability of the precedent due to, e.g.
   ; being from another jurisdiction.
@@ -58,7 +68,7 @@
   ;; type factors = (set-of factor)
   
   ; make-factors: (list-of factor) -> factors
-  (define (make-factors factors) (set:list->eq factors))
+  (define (make-factors factors) ((set:list->set eq?) (list factors)))
   
   (define-record-type %case
     (fields name        ; string, "current" if the current case
@@ -70,7 +80,10 @@
   (define (make-case name winner factors)
     (let-values (((pfactors dfactors) 
                   (partition (lambda (f) (eq? (factor-favors f) 'plaintiff)) factors)))
-      (make-%case name (set:list->eq pfactors) (set:list->eq dfactors) winner)))
+      (make-%case name 
+                  (list->set pfactors)
+                  (list->set dfactors)
+                  winner)))
   
   (define case? %case?)
   (define case-name %case-name)
@@ -81,11 +94,11 @@
   ; case-factors: case -> (set-of factors)
   ; the union of the pfactors and dfactors of the case
   (define (case-factors c)
-    (set:union (case-pfactors c) (case-dfactors c)))
+    (union (case-pfactors c) (case-dfactors c)))
   
   ; case-statement: case -> (list-of statement)
   (define (case-statements c)
-    (map factor-statement (set:elements (case-factors c))))
+    (map factor-statement (set:set->list (case-factors c))))
   
   (define-record-type %casebase
     (fields issue      ; a statement, the plaintiff's claim
@@ -97,8 +110,8 @@
   ; make-casebase: statement (list-of factors) (list-of case) -> casebase
   (define (make-casebase issue factors cases)
     (make-%casebase issue 
-                    (set:list->eq factors) 
-                    (set:list->eq cases)))
+                    (list->set factors)
+                    (list->set cases)))
   
   ; casebase-issue: casebase -> statement
   (define (casebase-issue cb) (%casebase-issue cb))
@@ -110,7 +123,7 @@
   (define (casebase-cases cb) (%casebase-cases cb))
   
   ; list-cases: casebase -> (list-of case)
-  (define (list-cases cb) (set:elements (%casebase-cases cb)))
+  (define (list-cases cb) (set:set->list (%casebase-cases cb)))
   
   ; get-case: casebase string
   ; Retrieves a case in the case base with the given name.  
@@ -129,39 +142,39 @@
   ; partition1: case case -> (set-of factors)
   ; plaintiff factors in common
   (define (partition1 cc pc)
-    (set:intersection (case-pfactors cc) (case-pfactors pc)))
+    (intersection (case-pfactors cc) (case-pfactors pc)))
   
   ; partition2: case case -> (set-of factors)
   ; defendant factors in common
   (define (partition2 cc pc)
-    (set:intersection (case-dfactors cc) (case-dfactors pc)))
+    (intersection (case-dfactors cc) (case-dfactors pc)))
   
   ; partition3: case case -> (set-of factors)
   ; plaintiff factors in cc but not in pc
   (define (partition3 cc pc)
-    (set:difference (case-pfactors cc) (case-pfactors pc)))
+    (difference (case-pfactors cc) (case-pfactors pc)))
   
   ; partition4: case case -> (set-of factors)
   ; defendant factors in pc but not in cc
   (define (partition4 cc pc)
-    (set:difference (case-dfactors pc) (case-dfactors cc)))
+    (difference (case-dfactors pc) (case-dfactors cc)))
   
   ; partition5: case case -> (set-of factors)
   ; defendant factors in cc but not in pc
   (define (partition5 cc pc)
-    (set:difference (case-dfactors cc) (case-dfactors pc)))
+    (difference (case-dfactors cc) (case-dfactors pc)))
   
   ; partition6: case case -> (set-of factors)
   ; plaintiff factors in pc but not in cc
   (define (partition6 cc pc)
-    (set:difference (case-pfactors pc) (case-pfactors cc)))
+    (difference (case-pfactors pc) (case-pfactors cc)))
   
   ; partition7: casebase case case -> (set-of factors)
   ; factors of the casebase which are not in either the cc or the pc
   (define (partition7 cb cc pc)
-    (set:difference (casebase-factors cb)
-                    (set:union (case-factors cc) 
-                               (case-factors pc))))
+    (difference (casebase-factors cb)
+                    (union (case-factors cc) 
+                           (case-factors pc))))
   
   
   ; more-on-point: case case case -> (set-of factor)
@@ -175,13 +188,13 @@
            (p1-pc2 (partition1 cc pc2))   ; pfactors in common with pc2
            (p2-pc1 (partition2 cc pc1))   ; dfactors in common with pc1
            (p2-pc2 (partition2 cc pc2))   ; dfactors in common with pc2
-           (s1 (set:union p1-pc1 p2-pc1))
-           (s2 (set:union p1-pc2 p2-pc2)))
-      (if (and (set:subset? s2 s1)
-               (not (set:subset? s1 s2)))
-          (set:difference s1 s2)
+           (s1 (union p1-pc1 p2-pc1))
+           (s2 (union p1-pc2 p2-pc2)))
+      (if (and (subset? s2 s1)
+               (not (subset? s1 s2)))
+          (difference s1 s2)
           ; else return an empty set
-          (set:make-eq))))
+          empty-set)))
   
   ; as-point-point: case case case -> (set-of factor)
   ; same as more-on-point, except the factors of pc1 need only to be a superset,
@@ -191,12 +204,12 @@
            (p1-pc2 (partition1 cc pc2))   ; pfactors in common with pc2
            (p2-pc1 (partition2 cc pc1))   ; dfactors in common with pc1
            (p2-pc2 (partition2 cc pc2))   ; dfactors in common with pc2
-           (s1 (set:union p1-pc1 p2-pc1))
-           (s2 (set:union p1-pc2 p2-pc2)))
-      (if (set:subset? s2 s1)
-          (set:difference s1 s2)
+           (s1 (union p1-pc1 p2-pc1))
+           (s2 (union p1-pc2 p2-pc2)))
+      (if (subset? s2 s1)
+          (difference s1 s2)
           ; else return an empty set
-          (set:make-eq))))
+          empty-set)))
   
   ; NOTE: The code for common-ancestor below is useless, since it ignores reverses in the party
   ; favored by a factor, from child to parent
@@ -207,9 +220,9 @@
   ;  (define (ancestors f)
   ;    (let ((parent (factor-parent f)))
   ;      (if parent
-  ;          (set:union (set:make-eq parent) (ancestors parent))
+  ;          (union ((set:list->set eq?) (list parent)) (ancestors parent))
   ;          ; else the empty set
-  ;          (set:list->eq null)))) 
+  ;          empty-set))) 
   ;  
   ;  ; common-ancestor?: factor factor -> boolean
   ;  (define (common-ancestor? f1 f2)
@@ -233,7 +246,7 @@
   ;    (let ((f2 (factor-with-common-ancestor f1 case)))
   ;      (if (not f2)
   ;          #f ; there is no factor in the case with an ancestor in common with some ancestor of f1
-  ;          (let ((candidates (set:intersection (ancestors f1) (ancestors f2))))
+  ;          (let ((candidates (intersection (ancestors f1) (ancestors f2))))
   ;            (if (set:empty? candidates) ; should never be the case
   ;                #f
   ;                (set:select candidates))))))
@@ -260,7 +273,7 @@
           (c (state-context state)))
       (make-case "current" 
                  'undecided 
-                 (set:elements (set:filter (lambda (factor)
+                 (set:set->list (set:filter (lambda (factor)
                                              (or (arg:accepted? c (factor-statement factor))
                                                  (arg:acceptable? ag c (factor-statement factor))))
                                            (casebase-factors cb))))))
@@ -289,8 +302,8 @@
                 (lambda (precedent)
                   (let* ((cc (current-case state cb))
                          (common-factors 
-                          (set:union (partition1 cc precedent)    ; factors in common for plaintiff
-                                     (partition2 cc precedent)))  ; factors in common for defendant
+                          (union (partition1 cc precedent)    ; factors in common for plaintiff
+                                 (partition2 cc precedent)))  ; factors in common for defendant
                          (scheme (string-append "AS2. cite: \"" (case-name precedent) "\""))
                          (previous-schemes (arg:schemes-applied (state-arguments state) 
                                                             (statement-atom goal))))
@@ -310,7 +323,7 @@
                                   ; premises
                                   (append (map arg:pr 
                                                (map factor-statement 
-                                                    (set:elements common-factors)))
+                                                    (set:set->list common-factors)))
                                           
                                           ; exceptions
                                           (map arg:ex 
@@ -321,7 +334,7 @@
                                   scheme)))
                         ; else fail
                         (stream))))
-                (list->stream (set:elements (casebase-cases cb))))))) 
+                (list->stream (set:set->list (casebase-cases cb))))))) 
         
         (('has-counterexample p cn)
                  
@@ -359,7 +372,7 @@
                                     ; premises 
                                     (append 
                                      ; ordinary premises
-                                     (map arg:pr (map factor-statement (set:elements diff)))
+                                     (map arg:pr (map factor-statement (set:set->list diff)))
                                      ; exceptions
                                      (map arg:ex (list  `(has-counterexample ,(other-party party) ,(case-name new-precedent))
                                                     `(distinguishable ,(other-party party) ,(case-name new-precedent))
@@ -368,7 +381,7 @@
                                     scheme)))
                           ; else fail
                           (stream))))
-                  (list->stream (set:elements (casebase-cases cb)))))))) 
+                  (list->stream (set:set->list (casebase-cases cb)))))))) 
         
         (('distinguishable p cn)
          ; scheme: distinguish with pfactors in PC not in CC
@@ -418,7 +431,7 @@
                                   ; conclusion:
                                   goal
                                   ; premises
-                                  (map arg:ex (append (map factor-statement (set:elements stronger-pc-factors))
+                                  (map arg:ex (append (map factor-statement (set:set->list stronger-pc-factors))
                                                   (list `(downplay precedent-stronger ,(other-party party) ,cname))))
                                   ; scheme: 
                                   scheme)))))
@@ -442,7 +455,7 @@
                                   ; premises
                                   (append 
                                    ; ordinary premises 
-                                   (map arg:pr (map factor-statement (set:elements weaker-cc-factors)))
+                                   (map arg:pr (map factor-statement (set:set->list weaker-cc-factors)))
                                    ; exceptions
                                    (list (arg:ex `(downplay current-case-weaker ,(other-party party) ,cname))))
                                   
@@ -507,7 +520,7 @@
                       (scheme "downplay")
                       (previous-schemes (arg:schemes-applied (state-arguments state)
                                                          (statement-atom goal))))
-                 (if (and (not (set:empty? (set:union p3-downplayed p4-downplayed)))
+                 (if (and (not (set:empty? (union p3-downplayed p4-downplayed)))
                           (not (member scheme previous-schemes)))
                      (stream (make-response 
                               subs ; no new subs
@@ -519,10 +532,10 @@
                                ; conclusion:
                                goal
                                ; premises -- the downplayed factors
-                               (map arg:pr (append (map factor-statement (set:elements p3-downplayed))
+                               (map arg:pr (append (map factor-statement (set:set->list p3-downplayed))
                                                (map statement-complement 
                                                     (map factor-statement 
-                                                         (set:elements p4-downplayed)))))
+                                                         (set:set->list p4-downplayed)))))
                                ; scheme: 
                                scheme)))
                      ; else fail
