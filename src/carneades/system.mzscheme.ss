@@ -18,7 +18,8 @@
 (library
  (carneades system)
  
- (export system* system)
+ (export system* system exit)
  
- (import (only (scheme system) system system*))
+ (import (only (scheme system) system system*)
+         (only (scheme base) exit))
  )
