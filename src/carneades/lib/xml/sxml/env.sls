@@ -5,6 +5,8 @@
 
 ;; FIXME this should all go away. RPR
 
+#!r6rs
+
 (library
  (carneades lib xml sxml env)
  

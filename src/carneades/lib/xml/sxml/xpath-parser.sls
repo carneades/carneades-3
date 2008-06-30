@@ -1,3 +1,5 @@
+#!r6rs
+
 (library
   (carneades lib xml sxml xpath-parser)
 
@@ -15,7 +17,7 @@
          display write newline)
    (only (rnrs lists)
          assq filter memv member)
-   (only (rl3 env prelude) 
+   (only (carneades lib prelude) 
 	 and-let*)
    (only (carneades lib xml sxml env)
          cerr nl))

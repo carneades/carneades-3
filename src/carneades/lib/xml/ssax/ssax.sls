@@ -1,3 +1,5 @@
+#!r6rs
+
 (library
  (carneades lib xml ssax ssax)
  
@@ -11,7 +13,7 @@
  (import
   (rnrs base)
 
-  (only (rl3 env prelude)
+  (only (carneades lib prelude)
         add1 begin0 cons*)
   
   (only (rnrs unicode)        
@@ -30,7 +32,7 @@
   (only (rnrs control)
         when)
   
-  (only (rl3 types strings)
+  (only (carneades lib srfi strings)
         string-null? string-index
         string-concatenate-reverse/shared
         string-concatenate/shared)

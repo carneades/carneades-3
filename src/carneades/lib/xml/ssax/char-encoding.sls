@@ -23,6 +23,8 @@
 ;; standard R6RS libraries for Chars, as well as unicode support. RPR
 ;;;
 
+#!r6rs
+
 (library
   (carneades lib xml ssax char-encoding)
   

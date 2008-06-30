@@ -1,3 +1,5 @@
+#!r6rs
+
 (library 
   (carneades lib xml ssax util)
   
@@ -16,10 +18,9 @@
 	 set-cdr!)
    (only (rnrs io simple)
 	 eof-object? input-port? read-char)
-   (only (rl3 types strings) 
+   (only (carneades lib srfi strings) 
 	 string-contains string-index-right string-null?)
-   (only (rl3 env prelude) 
-	 add1))
+   (only (carneades lib prelude) add1))
   
   ;;(require "common.ss")
   ;;(require "myenv.ss")

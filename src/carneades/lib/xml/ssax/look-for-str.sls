@@ -1,3 +1,5 @@
+#!r6rs
+
 
 (library
  (carneades lib xml ssax look-for-str)
@@ -11,7 +13,7 @@
   (only (rnrs io simple)
         peek-char read-char eof-object?)
   
-  (only (rl3 env prelude)
+  (only (carneades lib prelude)
         add1))
 
  ;;  -- Function: find-string-from-port? STR IN-PORT MAX-NO-CHARS

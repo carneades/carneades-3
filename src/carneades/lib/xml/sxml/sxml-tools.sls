@@ -26,6 +26,8 @@ present.
 
 |#
 
+#!r6rs
+
 (library
  (carneades lib xml sxml sxml-tools)
 
@@ -41,7 +43,7 @@ present.
 	set-car! set-cdr!)
   (only (rnrs lists)
 	assq assv assoc filter memq)
-  (only (rl3 sys system)
+  (only (carneades system)
 	exit)
   (only (carneades lib xml sxml env)
 	cerr nl)
@@ -95,7 +97,7 @@ present.
     ((sxml:attr-list-node obj)
      => list)
     ((sxml:aux-list-node obj)
-     '((@)))
+     '((*)))
     (else '())))
 
 
@@ -509,9 +511,9 @@ present.
    `(,(sxml:name obj) 
      ,@(cond 
 	(new-attrlist
-	 `((@ ,@new-attrlist)))
+	 `((* ,@new-attrlist)))
 	((sxml:aux-list-node obj)
-	 '((@)))
+	 '((*)))
 	(else `()))
      ,@(sxml:aux-as-list obj)
      ,@(sxml:content obj)))
@@ -524,9 +526,9 @@ present.
 	     `(
 	       ,@(cond 
 		  (new-attrlist
-		   `((@ ,@new-attrlist)))
+		   `((* ,@new-attrlist)))
 		  ((sxml:aux-list-node obj)
-		   '((@)))
+		   '((*)))
 		  (else `()))
 	       ,@(sxml:aux-as-list obj)
 	       ,@(sxml:content obj))))
@@ -549,7 +551,7 @@ present.
      (if (assq (car attr) attr-list) 
 	 #f
 	 `(,(sxml:name obj)
-	   (@ ,@(cons attr attr-list))
+	   (* ,@(cons attr attr-list))
 	   ,@(sxml:aux-as-list obj)
 	   ,@(sxml:content obj)))))
 
@@ -564,7 +566,7 @@ present.
 	 (begin
 	   (set-cdr! obj 
 		     `(
-		       (@ ,@(cons attr attr-list))
+		       (* ,@(cons attr attr-list))
 		       ,@(sxml:aux-as-list obj)
 		       ,@(sxml:content obj)))
 	   obj))))
@@ -581,7 +583,7 @@ present.
 	  ((assv (car attr) attr-list) 
 	   => (lambda (y)
 		`(,(sxml:name obj)
-		  (@ ,@(map
+		  (* ,@(map
 			(lambda(at)
 			  (if
 			   (eq? at y)
@@ -613,7 +615,7 @@ present.
       ((assv (car attr) attr-list) 
        => (lambda (y)
 	    `(,(sxml:name obj)
-	      (@ ,@(map
+	      (* ,@(map
 		    (lambda(at)
 		      (if
 		       (eq? at y)
@@ -625,7 +627,7 @@ present.
 	      )))
       (else 
        `(,(sxml:name obj)
-	 (@ ,@(cons attr attr-list)) 
+	 (* ,@(cons attr attr-list)) 
 	 ,@(sxml:aux-as-list obj)
 	 ,@(sxml:content obj))))
      ))
@@ -638,7 +640,7 @@ present.
       ((assv (car attr) attr-list) 
        => (lambda (x) (set-cdr! x (cdr attr))))
       (else (set-cdr! obj
-		      `((@ ,@(cons attr attr-list)) 
+		      `((* ,@(cons attr attr-list)) 
 			,@(sxml:aux-as-list obj)
 			,@(sxml:content obj))))
       )))
@@ -646,16 +648,16 @@ present.
  ;; Returns SXML element <obj> with an auxiliary node <aux-node> added 
  (define (sxml:add-aux obj aux-node)
    `(,(sxml:name obj)
-     (@ ,@(sxml:attr-list obj))
-     (@@ ,@(cons aux-node (sxml:aux-list obj)))
+     (* ,@(sxml:attr-list obj))
+     (** ,@(cons aux-node (sxml:aux-list obj)))
      ,@(sxml:content obj)))
 
  ;; Add an auxiliary node <aux-node> for an element <obj>
  (define (sxml:add-aux! obj aux-node)
    (set-cdr! obj 
 	     `(
-	       (@ ,@(sxml:attr-list obj))
-	       (@@ ,@(cons aux-node (sxml:aux-list obj)))
+	       (* ,@(sxml:attr-list obj))
+	       (** ,@(cons aux-node (sxml:aux-list obj)))
 	       ,@(sxml:content obj)))
    obj)
 

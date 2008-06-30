@@ -29,6 +29,8 @@
 ;; the problem.
 ;;
 
+#!r6rs
+
 (library
   (carneades lib xml ssax input-parse)
   
@@ -53,7 +55,7 @@
                 current-input-port peek-char)
           (only (rnrs mutable-strings)
                 string-set!)
-          (only (rl3 env prelude)
+          (only (carneades lib prelude)
                 sub1 add1)
           (only (carneades lib xml ssax parser-error)
                 parser-error))  

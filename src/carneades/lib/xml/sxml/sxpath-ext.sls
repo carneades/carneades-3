@@ -1,3 +1,5 @@
+#!r6rs
+
 (library
   (carneades lib xml sxml sxpath-ext)
 

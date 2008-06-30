@@ -1,3 +1,7 @@
+#!r6rs
+
+#!r6rs
+
 (library
   (carneades lib xml sxml sxpathlib)
 
@@ -13,11 +17,9 @@
    (rnrs io simple) ;; debug only delete me.
    (only (rnrs lists)
          memq)
-   (only (rl3 env prelude)
-         sub1)
-   (only (rl3 types strings)
+   (only (carneades lib srfi strings)
          string-prefix? string-index-right)
-   (only (rl3 io print)
+   (only (scheme pretty)
 	 pretty-print)
    (only (carneades lib xml sxml env)
          cout nl))
@@ -237,7 +239,7 @@
        ((negative? n) ((node-pos (+ n 1 (length nodelist))) nodelist))
        (else
         (assert (positive? n))
-        ((node-pos (sub1 n)) (cdr nodelist))))))
+        ((node-pos (- n 1)) (cdr nodelist))))))
 
   ;; filter:: Converter -> Converter
   ;; A filter applicator, which introduces a filtering context. The argument

@@ -1,3 +1,5 @@
+#!r6rs
+
 (library
   (carneades lib xml sxml txpath)
 
@@ -13,9 +15,9 @@
    (rnrs io simple) ;; debugging only, delete this.
    (only (rnrs unicode)
          string-ci=?)
-   (only (rl3 sys system)
+   (only (carneades system)
 	 exit)
-   (only (rl3 types strings)
+   (only (carneades lib srfi strings)
          string-index-right string-prefix? string-prefix-ci?)
    (only (carneades lib xml sxml env)
          cerr nl)
