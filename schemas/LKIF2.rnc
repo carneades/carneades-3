@@ -13,9 +13,10 @@ grammar {
     # the transitive closure of the axioms deduced using the rules.
     Theory = element theory { 
         attribute id { xsd:ID },
-        Import*, Axioms?, Rules?
+        Imports?, Axioms?, Rules?
     }
 
+    Imports = element imports { Import* }
     Axioms = element axioms { Wff+ }
     Rules = element rules { Rule+ }
     
@@ -58,10 +59,10 @@ grammar {
     # bound variables, using Exists or All, are first-order logic variables.
     Wff = Atom | Or | And | Not | If | Iff | All | Exists
     Or = element or { attribute id { xsd:ID }?, 
-                      attribute assumable { xsd:boolean },  #default: false
+                      attribute assumable { xsd:boolean }?,  #default: false
                       Wff, Wff+ }
     And = element and { attribute id { xsd:ID }?, 
-                        attribute assumable { xsd:boolean },  #default: false
+                        attribute assumable { xsd:boolean }?,  #default: false
                         Wff, Wff+ }
     Not = element not { 
         attribute id { xsd:ID }?,
@@ -69,16 +70,16 @@ grammar {
         attribute assumable { xsd:boolean }?,  # default: false 
         Wff }            
     If = element if { attribute id { xsd:ID }?, 
-                      attribute assumable { xsd:boolean },  #default: false
+                      attribute assumable { xsd:boolean }?,  #default: false
                       Wff, Wff }
     Iff = element iff { attribute id { xsd:ID }?, 
-                        attribute assumable { xsd:boolean },  #default: false
+                        attribute assumable { xsd:boolean }?,  #default: false
                         Wff, Wff }
     All = element all { attribute id { xsd:ID }?, 
-                        attribute assumable { xsd:boolean },  #default: false
+                        attribute assumable { xsd:boolean }?,  #default: false
                         Variable+, Wff }
     Exists = element exists { attribute id { xsd:ID }?, 
-                              attribute assumable { xsd:boolean },  #default: false,
+                              attribute assumable { xsd:boolean }?,  #default: false,
                               Variable+, Wff }
     
     # Terms include statements, to support meta-level statements

@@ -30,11 +30,18 @@
   <xs:element name="theory">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="import"/>
+        <xs:element minOccurs="0" ref="imports"/>
         <xs:element minOccurs="0" ref="axioms"/>
         <xs:element minOccurs="0" ref="rules"/>
       </xs:sequence>
       <xs:attribute name="id" use="required" type="xs:ID"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="imports">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="import"/>
+      </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="axioms">
@@ -134,7 +141,7 @@
         <xs:group maxOccurs="unbounded" ref="Wff"/>
       </xs:sequence>
       <xs:attribute name="id" type="xs:ID"/>
-      <xs:attribute name="assumable" use="required" type="xs:boolean"/>
+      <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="and">
@@ -144,7 +151,7 @@
         <xs:group maxOccurs="unbounded" ref="Wff"/>
       </xs:sequence>
       <xs:attribute name="id" type="xs:ID"/>
-      <xs:attribute name="assumable" use="required" type="xs:boolean"/>
+      <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="not">
@@ -162,7 +169,7 @@
         <xs:group ref="Wff"/>
       </xs:sequence>
       <xs:attribute name="id" type="xs:ID"/>
-      <xs:attribute name="assumable" use="required" type="xs:boolean"/>
+      <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="iff">
@@ -172,7 +179,7 @@
         <xs:group ref="Wff"/>
       </xs:sequence>
       <xs:attribute name="id" type="xs:ID"/>
-      <xs:attribute name="assumable" use="required" type="xs:boolean"/>
+      <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="all">
@@ -182,7 +189,7 @@
         <xs:group ref="Wff"/>
       </xs:sequence>
       <xs:attribute name="id" type="xs:ID"/>
-      <xs:attribute name="assumable" use="required" type="xs:boolean"/>
+      <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="exists">
@@ -192,7 +199,7 @@
         <xs:group ref="Wff"/>
       </xs:sequence>
       <xs:attribute name="id" type="xs:ID"/>
-      <xs:attribute name="assumable" use="required" type="xs:boolean"/>
+      <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <!-- Terms include statements, to support meta-level statements -->
@@ -235,7 +242,7 @@
   <xs:element name="argument-graph">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" ref="issue"/>
+        <xs:element minOccurs="0" ref="issues"/>
         <xs:element minOccurs="0" ref="strengths"/>
         <xs:element ref="statements"/>
         <xs:element ref="arguments"/>
@@ -261,6 +268,13 @@
     (value=true & assumption=true).  Assumptions are now made globablly, in the
     scope of an argument graph, rather than on a premise by premise basis.
   -->
+  <xs:element name="issues">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="issue"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="issue">
     <xs:complexType>
       <xs:attribute name="statement" use="required" type="xs:anyURI"/>

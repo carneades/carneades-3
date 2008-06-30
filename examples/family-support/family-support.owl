@@ -1,0 +1,185 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE Ontology [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY owl2 "http://www.w3.org/2006/12/owl2#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY owl2xml "http://www.w3.org/2006/12/owl2-xml#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY family "http://fokus.fraunhofer.de/elan/estrella/family.owl#" >
+    <!ENTITY action "http://www.estrellaproject.org/lkif-core/action.owl#" >
+    <!ENTITY lkif-rules "http://www.estrellaproject.org/lkif-core/lkif-rules.owl#" >
+    <!ENTITY family-support "http://fokus.fraunhofer.de/elan/estrella/family-support.owl#" >
+]>
+
+
+
+
+
+<!-- Axioms: 40 -->
+
+<Ontology xmlns="http://www.w3.org/2006/12/owl2-xml#"
+     xml:base="http://www.w3.org/2006/12/owl2-xml#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl2xml="http://www.w3.org/2006/12/owl2-xml#"
+     xmlns:family="http://fokus.fraunhofer.de/elan/estrella/family.owl#"
+     xmlns:action="http://www.estrellaproject.org/lkif-core/action.owl#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:family-support="http://fokus.fraunhofer.de/elan/estrella/family-support.owl#"
+     xmlns:owl2="http://www.w3.org/2006/12/owl2#"
+     xmlns:lkif-rules="http://www.estrellaproject.org/lkif-core/lkif-rules.owl#"
+     URI="http://fokus.fraunhofer.de/elan/estrella/family-support.owl">
+    <Imports
+        >http://www.estrellaproject.org/lkif-core/lkif-rules.owl</Imports>
+    <Imports
+        >http://www.estrellaproject.org/lkif-core/lkif-rules.owl</Imports>
+    <SubClassOf>
+        <OWLClass URI="&family-support;AbleToSupportSelf"/>
+        <OWLClass URI="&action;Person"/>
+    </SubClassOf>
+    <Declaration>
+        <OWLClass URI="&family-support;AbleToSupportSelf"/>
+    </Declaration>
+    <SubClassOf>
+        <OWLClass URI="&family-support;HasCapacityToSupport"/>
+        <OWLClass URI="&action;Person"/>
+    </SubClassOf>
+    <Declaration>
+        <OWLClass URI="&family-support;HasCapacityToSupport"/>
+    </Declaration>
+    <SubClassOf>
+        <OWLClass URI="&family-support;Needy"/>
+        <OWLClass URI="&action;Person"/>
+    </SubClassOf>
+    <Declaration>
+        <OWLClass URI="&family-support;Needy"/>
+    </Declaration>
+    <SubClassOf>
+        <OWLClass URI="&family-support;NeedyDueToImmoralBehavior"/>
+        <OWLClass URI="&family-support;Needy"/>
+    </SubClassOf>
+    <Declaration>
+        <OWLClass URI="&family-support;NeedyDueToImmoralBehavior"/>
+    </Declaration>
+    <ObjectPropertyDomain>
+        <ObjectProperty URI="&family-support;adoptedBy"/>
+        <OWLClass URI="&action;Person"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyRange>
+        <ObjectProperty URI="&family-support;adoptedBy"/>
+        <OWLClass URI="&action;Person"/>
+    </ObjectPropertyRange>
+    <Declaration>
+        <ObjectProperty URI="&family-support;adoptedBy"/>
+    </Declaration>
+    <ObjectPropertyDomain>
+        <ObjectProperty URI="&family-support;directLineage"/>
+        <OWLClass URI="&action;Person"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyRange>
+        <ObjectProperty URI="&family-support;directLineage"/>
+        <OWLClass URI="&action;Person"/>
+    </ObjectPropertyRange>
+    <Declaration>
+        <ObjectProperty URI="&family-support;directLineage"/>
+    </Declaration>
+    <SubObjectPropertyOf>
+        <ObjectProperty URI="&family-support;grandparent"/>
+        <ObjectProperty URI="&family;ancestor"/>
+    </SubObjectPropertyOf>
+    <ObjectPropertyDomain>
+        <ObjectProperty URI="&family-support;grandparent"/>
+        <OWLClass URI="&action;Person"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyRange>
+        <ObjectProperty URI="&family-support;grandparent"/>
+        <OWLClass URI="&action;Person"/>
+    </ObjectPropertyRange>
+    <Declaration>
+        <ObjectProperty URI="&family-support;grandparent"/>
+    </Declaration>
+    <ObjectPropertyDomain>
+        <ObjectProperty URI="&family-support;obligatedToSupport"/>
+        <OWLClass URI="&action;Person"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyRange>
+        <ObjectProperty URI="&family-support;obligatedToSupport"/>
+        <OWLClass URI="&action;Person"/>
+    </ObjectPropertyRange>
+    <Declaration>
+        <ObjectProperty URI="&family-support;obligatedToSupport"/>
+    </Declaration>
+    <ObjectPropertyDomain>
+        <ObjectProperty URI="&family-support;relativeOfSpouse"/>
+        <OWLClass URI="&action;Person"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyRange>
+        <ObjectProperty URI="&family-support;relativeOfSpouse"/>
+        <OWLClass URI="&action;Person"/>
+    </ObjectPropertyRange>
+    <Declaration>
+        <ObjectProperty URI="&family-support;relativeOfSpouse"/>
+    </Declaration>
+    <ObjectPropertyDomain>
+        <ObjectProperty URI="&family-support;undueHardship"/>
+        <OWLClass URI="&lkif-rules;Atom"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyRange>
+        <ObjectProperty URI="&family-support;undueHardship"/>
+        <OWLClass URI="&action;Person"/>
+    </ObjectPropertyRange>
+    <Declaration>
+        <ObjectProperty URI="&family-support;undueHardship"/>
+    </Declaration>
+    <SubObjectPropertyOf>
+        <ObjectProperty URI="&family;ancestor"/>
+        <ObjectProperty URI="&family;relative"/>
+    </SubObjectPropertyOf>
+    <TransitiveObjectProperty>
+        <ObjectProperty URI="&family;ancestor"/>
+    </TransitiveObjectProperty>
+    <SubObjectPropertyOf>
+        <ObjectProperty URI="&family;brother"/>
+        <ObjectProperty URI="&family;sibling"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty URI="&family;descendent"/>
+        <ObjectProperty URI="&family;relative"/>
+    </SubObjectPropertyOf>
+    <InverseObjectProperties>
+        <ObjectProperty URI="&family;descendent"/>
+        <ObjectProperty URI="&family;ancestor"/>
+    </InverseObjectProperties>
+    <SubObjectPropertyOf>
+        <ObjectProperty URI="&family;father"/>
+        <ObjectProperty URI="&family;parent"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty URI="&family;mother"/>
+        <ObjectProperty URI="&family;parent"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty URI="&family;parent"/>
+        <ObjectProperty URI="&family;ancestor"/>
+    </SubObjectPropertyOf>
+    <ObjectPropertyDomain>
+        <ObjectProperty URI="&family;relative"/>
+        <OWLClass URI="&action;Person"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyRange>
+        <ObjectProperty URI="&family;relative"/>
+        <OWLClass URI="&action;Person"/>
+    </ObjectPropertyRange>
+    <SubObjectPropertyOf>
+        <ObjectProperty URI="&family;sibling"/>
+        <ObjectProperty URI="&family;relative"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty URI="&family;sister"/>
+        <ObjectProperty URI="&family;sibling"/>
+    </SubObjectPropertyOf>
+</Ontology>
