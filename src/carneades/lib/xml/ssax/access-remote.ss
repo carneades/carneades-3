@@ -29,7 +29,8 @@
          (carneades lib xml ssax myenv)
          (carneades lib xml ssax http)
          (carneades lib xml ssax srfi-12)
-         (carneades lib xml ssax util))
+         (carneades lib xml ssax util)
+         (only (carneades lib srfi strings) string-prefix? string-index))
  
  ;; Uniform access to local and remote resources
  ;; Resolution for relative URIs in accordance with RFC 2396

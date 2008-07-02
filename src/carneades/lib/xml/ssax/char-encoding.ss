@@ -9,6 +9,7 @@
  (carneades lib xml ssax char-encoding)
  
  (export ucscode->char
+         ascii->char
          char-return
          char-tab
          char-newline
@@ -43,7 +44,10 @@
  ; return a character whose ASCII code is INT
  ; Note, because ascii->char is injective (there are more characters than
  ; ASCII characters), the inverse transformation is not defined.
- (cond-expand
+ 
+ (define ascii->char integer->char)
+ 
+ #;(cond-expand
   (scheme48  #f)		; ascii->char is built into Scheme48
   (scsh #f)			; ascii->char is built into Scheme48
   (else

@@ -19,6 +19,7 @@
  (import (rnrs))
  
  
+ ; already in r6rs
  #;(define (command-line)
    (cons "plt" (vector->list (current-command-line-arguments)
                              ;	argv
@@ -32,9 +33,10 @@
  ;  (fun outs)
  ;  (get-output-string outs)))
  
+ ; no get-output-string function in r6rs
  ;(define close-output-string get-output-string)
  
- ;
+ ; already in r6rs
  #;(define (filter pred lis)			
    (let rpt ((l lis))		
      (if (null? l) 
