@@ -1,0 +1,8 @@
+JavaFX Open Questions and Issues
+--------------------------------
+
+* The 'select' syntax is unclear from old and new versions of the documentation. It seems as if it would have been substituted by the for ... in ... where ... construction.
+
+* When binding to a function, the variables that shall trigger the event must be passed to the function as parameters, even when they are otherwise accessible to the function. If the value is not passed, its replacement does not trigger an update. This somewhat contradicts Jim Weaver's circle drawing example in the old version.
+
+* Bind chaining does not work, meaning that if x = bind y and y = bind z, then a change of z's value will not trigger a change in x. This feels strange as the compiler takes it, but this results in basically nothing as the only way to trigger a replace of x would be to assign something OTHER THAN THE BINDING to y, which would throw an exception. Only absolute paths work. Posted a comparison workaround in the OpenJFX forum.

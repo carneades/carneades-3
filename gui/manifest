@@ -1,0 +1,3 @@
+Manifest-Version: 1.0 
+Main-Class: GraphSketch1.Control.GraphSketch
+Class-Path: lib/javafxc.jar lib/javafxrt.jar lib/Scenario.jar lib/javafxgui.jar lib/jmc-swing.jar lib/jing.jar
