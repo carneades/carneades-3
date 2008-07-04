@@ -23,8 +23,8 @@ import java.lang.Object;
 import GraphSketch1.Graph.GC;
 
 abstract public class ProofStandard {
-	attribute negated: Boolean = false;
-	attribute complement: Boolean = false;
+	private attribute negated: Boolean = false;
+	private attribute complement: Boolean = false;
 	abstract function test (ag: ArgumentGraph, 
 	               pro: Argument[], 
 	               con: Argument[]): Boolean;
@@ -35,79 +35,46 @@ abstract public class ProofStandard {
 		var r = if (not complement) 
 					test(ag, pro, con) 
 		        else 
-					test(ag, con, pro);
+					test(ag, con, pro);	
 		if (negated) not r else r;
 	}
 }
 
 public class Statement {
-	attribute id: String;                 // key or label
-	attribute wff: String;            // is a URI
-										// Is URI referring inside the document, then do not resolve link
-										// If it refers to something inside the document, otherwise give the wff in xml form.
-										// Label is always the ID!
-	attribute value: String = "unknown";  // "true", "false", "unknown"
-	attribute assumption: Boolean = false;
-	attribute standard: ProofStandard = BestArgument {};
+	public attribute id: String;  // key or label
+	public attribute wff: String; // is a URI
+   // Is URI referring inside the document, then do not resolve link
+   // If it refers to something inside the document, otherwise give 
+   // the wff in xml form. Label is always the ID!
+	private attribute value: String = "unknown";  // "true", "false", "unknown"
+	private attribute assumption: Boolean = false;
+	private attribute standard: ProofStandard = BestArgument {};
 	private attribute ok: Boolean = false;
 	private attribute updated : Boolean = false;
-	function acceptable () : Boolean { ok };
+	public function acceptable () : Boolean { ok };
 
-	function state () :  Void {
-		value = "unknown";
-		assumption = true;
-	}
-	
-	function stated () : Boolean {
+	public function stated () : Boolean {
 		value == "unknown" and assumption == true;
 	}
-	
-	function question () : Void {
-    	value = "unknown";
-    	assumption = false;
-    }
     
-	function questioned () : Boolean {
+	public function questioned () : Boolean {
 		value == "unknown" and assumption == false;
     }
     
-	function accept () : Void {
-		value = "true";
-		assumption = false;
-	}
-    
-    function accepted () : Boolean {
+    public function accepted () : Boolean {
     	(value == "true") and (assumption == false);
     }
     
-    function reject () : Void {
-    	value = "false";
-    	assumption = false;
-    }
-    
-    function rejected () : Boolean {
+    public function rejected () : Boolean {
     	(value == "false") and (assumption == false);
     }
     
-	// Attribute modification functions
 	public function getStatus(): String {
 		return {	if (stated()) "stated"
 					else if (questioned()) "questioned"
 					else if (rejected()) "rejected"
 					else if (accepted()) "accepted"
 					else ""};
-	}
-
-	public function negateAssumption(): Void {
-		assumption = { if (assumption) false else true };
-	}
-
-	public function setValue(v: String): Void {
-		value = v;
-	}
-
-	public function setProofStandard(s: ProofStandard): Void {
-		standard = s;
 	}
 }
 
@@ -148,6 +115,53 @@ public class ArgumentGraph {
 	private attribute statements: Statement[];
     private attribute arguments: Argument[];
  
+ 	function state (s: Statement) :  Void {
+		s.value = "unknown";
+		s.assumption = true;
+		update();
+	}
+	
+	function question (s: Statement) : Void {
+    	s.value = "unknown";
+    	s.assumption = false;
+    	update();
+    }
+    
+    function accept (s: Statement) : Void {
+		s.value = "true";
+		s.assumption = false;
+		update();
+	}
+	
+	function reject (s: Statement) : Void {
+    	s.value = "false";
+    	s.assumption = false;
+    	update();
+    }
+    
+    function assume (s: Statement, v: String) : Void {
+    	s.value = v;
+    	s.assumption = true;
+    	update();
+    }
+    
+    function setProofStandard (s: Statement, p: ProofStandard) : Void {
+    	s.standard = p;
+    	update();
+    }
+    
+    
+    function negateProofStandard (s: Statement) : Void {
+    	s.standard.negated = not s.standard.negated;
+    	update();
+    }
+    
+    function complementProofStandard (s: Statement) : Void {
+    	s.standard.complement = not s.standard.complement;
+    	update();
+    }
+    
+	
     // Issues of XML format not needed, since the 
     // statements here have all the attributes of issues.
 
@@ -172,7 +186,6 @@ public class ArgumentGraph {
 		false
 	}
 	
-
 	function insertStatement (s: Statement): Number {
 		var result: Number = GC.AG_OK;
 
@@ -233,19 +246,19 @@ public class ArgumentGraph {
 	function addPremise (p: Premise, a: Argument) : Number {
 		insert p into a.premises;
 		insert p.statement into statements;
-		
+		update();
 		return GC.AG_OK;
 	}
 
 	function appendPremise (p: Premise, a: Argument) : Number {
 		insert p into a.premises;
-		
+		update();
 		return GC.AG_OK;
 	}
 
 	function deletePremise (p: Premise, a: Argument) : Number {
 		delete p from a.premises;
-		
+		update();
 		return GC.AG_OK;
 	}
 	
@@ -274,7 +287,7 @@ public class ArgumentGraph {
 	// statements or arguments in the graph, but are used by the update
 	// function which does.
 	
-	function acceptable (s: Statement) : Boolean {
+	public function acceptable (s: Statement) : Boolean {
 		if (s.updated) {
 			s.ok;
 		} else {
@@ -290,7 +303,7 @@ public class ArgumentGraph {
 		}
 	}
 
-	function allPremisesHold (a: Argument): Boolean {
+	public function allPremisesHold (a: Argument): Boolean {
 		if (a.updated == true) {
 			a.ok;
 		} else {
@@ -306,7 +319,8 @@ public class ArgumentGraph {
 		}
 	}
 
-	function holds (p: Premise): Boolean {
+	public function holds (p: Premise): Boolean {
+		acceptable(p.statement);  // check and update if necessary
 		if (not p.exception) {
 			// ordinary premise
 			(p.statement.value == "true" and not p.negative) or
@@ -322,7 +336,8 @@ public class ArgumentGraph {
 
 	// function to tell whether a statement has been brought forth in an argument
 	public function broughtForth(s: Statement): Boolean {
-		// return true if the statement has been brought forth in an argument or connected in a premise
+		// return true if the statement has been brought forth in an 
+		// argument or connected in a premise
 		var argued = false;
 		for (a in arguments) {
 			if (a.conclusion == s) {
