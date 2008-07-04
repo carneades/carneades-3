@@ -1,28 +1,11 @@
-<!--
-Carneades Argumentation Library and Tools.
-Copyright (C) 2008 Thomas F. Gordon, Fraunhofer FOKUS, Berlin
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License version 3 (LGPL-3)
-as published by the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
-
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
   <xs:element name="lkif">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" ref="sources"/>
-        <xs:element minOccurs="0" ref="theory"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="argument-graph"/>
+        <xs:element minOccurs="0" ref="rules"/>
+        <xs:element minOccurs="0" ref="argument-graph"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -39,46 +22,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <xs:attribute name="uri" use="required" type="xs:anyURI"/>
     </xs:complexType>
   </xs:element>
-  <!--
-    RDF, OWL and LKIF files can be imported.  See below. 
-    The rules are inference rules. The resulting theory is 
-    the transitive closure of the axioms deduced using the rules.
-  -->
-  <xs:element name="theory">
+  <!-- The facts of a theory are axioms. The rules are inference rules. -->
+  <xs:element name="rules">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" ref="imports"/>
-        <xs:element minOccurs="0" ref="axioms"/>
-        <xs:element minOccurs="0" ref="rules"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="import"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="rule"/>
       </xs:sequence>
       <xs:attribute name="id" use="required" type="xs:ID"/>
     </xs:complexType>
   </xs:element>
-  <xs:element name="imports">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="import"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="axioms">
-    <xs:complexType>
-      <xs:group maxOccurs="unbounded" ref="Wff"/>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="rules">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element maxOccurs="unbounded" ref="rule"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
   <!--
-    Import: the uri can refer to an RDF file, including OWL files in RDF format, 
-    an LKIF theory, an LKIF argument graph, or an entire LKIF file, in which case both the 
-    theory and the argument graph in the file are imported. 
-    When importing OWL files, not only the axioms of the ontology  
-    are imported but also any assertions about instances, the ABox. 
+    Import: the uri should refer to either an OWL ontology or an LKIF theory
+    Facts can also be imported from an OWL file, i.e. the A-Box.
   -->
   <xs:element name="import">
     <xs:complexType>
@@ -99,28 +55,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <xs:element minOccurs="0" ref="body"/>
       </xs:sequence>
       <xs:attribute name="id" use="required" type="xs:ID"/>
-      <xs:attribute name="strict" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="head">
     <xs:complexType>
-      <xs:group maxOccurs="unbounded" ref="Wff"/>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="fact"/>
+      </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="body">
     <xs:complexType>
-      <xs:group maxOccurs="unbounded" ref="Wff"/>
+      <xs:group ref="Wff"/>
+    </xs:complexType>
+  </xs:element>
+  <!-- Facts are literals, i.e. positive or negative atomic formulas -->
+  <xs:element name="fact">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="s"/>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:ID"/>
+      <xs:attribute name="value" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <!--
-    Atomic formulas. Propositional logic letters are represented by 
-    omitting the (optional) predicate attribute.  The "s" tag
-    is used for backwards compatibility and because it is probably
-    more intuitive and mnemonic for most users.
-    An assumable atom is assumed when an argument having this atom
-    as a premise is put forward into an argument graph, unless there is already
-    an issue for this atom (i.e. an atom with the same id), in which case
-    the value of the assumption attribute of the issue for this atom is 
+    Statements are atomic formulas.  Statements is propositional 
+    logic are represented by omitting the (optional) predicate attribute.
   -->
   <xs:element name="s">
     <xs:complexType mixed="true">
@@ -131,34 +92,46 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <xs:union memberTypes="xs:anyURI xs:Name"/>
         </xs:simpleType>
       </xs:attribute>
-      <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <!--
     Wffs are well-formed formulas of predicate logic, extended with exceptions and assumptions
-    Free variables are schema variables, i.e. inference rule variables; 
-    bound variables, using Exists or All, are first-order logic variables.
+    As in Horn claus logic, variables are implicitly universally quantified,
+    if they also appear in the head of the rule, otherwise they are implicitly 
+    existentially quantified.
   -->
   <xs:group name="Wff">
     <xs:choice>
       <xs:element ref="s"/>
+      <xs:element ref="unless"/>
+      <xs:element ref="assuming"/>
       <xs:element ref="or"/>
       <xs:element ref="and"/>
       <xs:element ref="not"/>
       <xs:element ref="if"/>
       <xs:element ref="iff"/>
-      <xs:element ref="all"/>
-      <xs:element ref="exists"/>
     </xs:choice>
   </xs:group>
+  <xs:element name="unless">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="fact"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="assuming">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="fact"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="or">
     <xs:complexType>
       <xs:sequence>
         <xs:group ref="Wff"/>
         <xs:group maxOccurs="unbounded" ref="Wff"/>
       </xs:sequence>
-      <xs:attribute name="id" type="xs:ID"/>
-      <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="and">
@@ -167,16 +140,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <xs:group ref="Wff"/>
         <xs:group maxOccurs="unbounded" ref="Wff"/>
       </xs:sequence>
-      <xs:attribute name="id" type="xs:ID"/>
-      <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="not">
     <xs:complexType>
       <xs:group ref="Wff"/>
-      <xs:attribute name="id" type="xs:ID"/>
-      <xs:attribute name="exception" type="xs:boolean"/>
-      <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="if">
@@ -185,8 +153,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <xs:group ref="Wff"/>
         <xs:group ref="Wff"/>
       </xs:sequence>
-      <xs:attribute name="id" type="xs:ID"/>
-      <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="iff">
@@ -195,28 +161,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <xs:group ref="Wff"/>
         <xs:group ref="Wff"/>
       </xs:sequence>
-      <xs:attribute name="id" type="xs:ID"/>
-      <xs:attribute name="assumable" type="xs:boolean"/>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="all">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element maxOccurs="unbounded" ref="v"/>
-        <xs:group ref="Wff"/>
-      </xs:sequence>
-      <xs:attribute name="id" type="xs:ID"/>
-      <xs:attribute name="assumable" type="xs:boolean"/>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="exists">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element maxOccurs="unbounded" ref="v"/>
-        <xs:group ref="Wff"/>
-      </xs:sequence>
-      <xs:attribute name="id" type="xs:ID"/>
-      <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <!-- Terms include statements, to support meta-level statements -->
@@ -259,7 +203,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <xs:element name="argument-graph">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" ref="issues"/>
+        <xs:element minOccurs="0" ref="issue"/>
         <xs:element minOccurs="0" ref="strengths"/>
         <xs:element ref="statements"/>
         <xs:element ref="arguments"/>
@@ -270,41 +214,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </xs:element>
   <xs:element name="statements">
     <xs:complexType>
-      <xs:group minOccurs="0" maxOccurs="unbounded" ref="Wff"/>
-    </xs:complexType>
-  </xs:element>
-  <!--
-    Issues labeled accepted and rejected are (assumed) to be true or false, respectively.  
-    The previous status of statements can be reconstructed as follows: 
-    	stated: value=unknown & assumption=true 
-      questioned: value=unknown & assumption=false
-      accepted: value=true & assumption=false
-      rejected: value=false & assumption=false
-    The new model allows us in 
-    addition to assume the value to be false (value=false & assumption=true) or true
-    (value=true & assumption=true).  Assumptions are now made globablly, in the
-    scope of an argument graph, rather than on a premise by premise basis.
-  -->
-  <xs:element name="issues">
-    <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="issue"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="s"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <!--
+    Issues labeled accepted and rejected are (assumed) to be true or false,
+    respectively.  
+  -->
   <xs:element name="issue">
     <xs:complexType>
       <xs:attribute name="statement" use="required" type="xs:anyURI"/>
-      <xs:attribute name="value" use="required">
+      <xs:attribute name="status">
         <xs:simpleType>
           <xs:restriction base="xs:token">
-            <xs:enumeration value="unknown"/>
-            <xs:enumeration value="true"/>
-            <xs:enumeration value="false"/>
+            <xs:enumeration value="stated"/>
+            <xs:enumeration value="questioned"/>
+            <xs:enumeration value="accepted"/>
+            <xs:enumeration value="rejected"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
-      <xs:attribute name="assumption" type="xs:boolean"/>
       <xs:attribute name="standard">
         <xs:simpleType>
           <xs:restriction base="xs:token">
@@ -375,7 +306,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
-      <xs:attribute name="exception" type="xs:boolean"/>
+      <xs:attribute name="type">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="ordinary"/>
+            <xs:enumeration value="exception"/>
+            <xs:enumeration value="assumption"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="role" type="xs:anyURI"/>
       <xs:attribute name="statement" use="required" type="xs:anyURI"/>
     </xs:complexType>

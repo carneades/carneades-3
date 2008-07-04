@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<lkif>
+  <argument-graph id="SocratesGraph">
+    <issues>
+      <issue assumption="true" standard="BA" statement="mortality" value="unknown"/>
+      <issue assumption="false" standard="BA" statement="Socrates" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="everyoneDies" value="unknown"/>
+      <issue assumption="false" standard="BA" statement="apeException" value="true"/>
+    </issues>
+    <statements>
+      <s id="SocratesMortality">Socrates is mortal.</s>
+      <s id="mortality">Humans are mortal.</s>
+      <s id="Socrates">Socrates is human.</s>
+      <s id="humanHands">Humans have hands.</s>
+      <s id="SocratesHands">Socrates has hands.</s>
+      <s id="everyoneDies">No man has lived forever.</s>
+      <s id="apeException">Apes have hands but are no humans.</s>
+      <s id="SocratesNoApe">Socrates is no ape.</s>
+    </statements>
+    <arguments>
+      <argument direction="pro" id="a1" scheme="">
+        <conclusion statement="SocratesMortality"/>
+        <premises>
+          <premise exception="false" polarity="positive" role="" statement="mortality"/>
+          <premise exception="false" polarity="positive" role="" statement="Socrates"/>
+        </premises>
+      </argument>
+      <argument direction="pro" id="a2" scheme="">
+        <conclusion statement="Socrates"/>
+        <premises>
+          <premise exception="false" polarity="positive" role="" statement="humanHands"/>
+          <premise exception="false" polarity="positive" role="" statement="SocratesHands"/>
+          <premise exception="false" polarity="positive" role="" statement="apeException"/>
+        </premises>
+      </argument>
+      <argument direction="pro" id="a3" scheme="">
+        <conclusion statement="mortality"/>
+        <premises>
+          <premise exception="false" polarity="positive" role="" statement="everyoneDies"/>
+        </premises>
+      </argument>
+      <argument direction="con" id="a4" scheme="">
+        <conclusion statement="apeException"/>
+        <premises>
+          <premise exception="false" polarity="positive" role="" statement="SocratesNoApe"/>
+        </premises>
+      </argument>
+    </arguments>
+  </argument-graph>
+</lkif>

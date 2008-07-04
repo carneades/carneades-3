@@ -1,0 +1,498 @@
+/*
+Carneades Argumentation Library and Tools.
+Copyright (C) 2008 Thomas Gordon and Matthias Grabmair
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License version 3 (GPL-3)
+as published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for details.
+ 
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+package GraphSketch1.Argument;
+
+// import object for cycle checking
+import java.lang.Object;
+// import constants
+import GraphSketch1.Graph.GC;
+
+abstract public class ProofStandard {
+	attribute negated: Boolean = false;
+	attribute complement: Boolean = false;
+	abstract function test (ag: ArgumentGraph, 
+	               pro: Argument[], 
+	               con: Argument[]): Boolean;
+
+	function satisfied (ag: ArgumentGraph, 
+	                    pro: Argument[], 
+	                    con: Argument[]) : Boolean {
+		var r = if (not complement) 
+					test(ag, pro, con) 
+		        else 
+					test(ag, con, pro);
+		if (negated) not r else r;
+	}
+}
+
+public class Statement {
+	attribute id: String;                 // key or label
+	attribute wff: String;            // is a URI
+										// Is URI referring inside the document, then do not resolve link
+										// If it refers to something inside the document, otherwise give the wff in xml form.
+										// Label is always the ID!
+	attribute value: String = "unknown";  // "true", "false", "unknown"
+	attribute assumption: Boolean = false;
+	attribute standard: ProofStandard = BestArgument {};
+	private attribute ok: Boolean = false;
+	private attribute updated : Boolean = false;
+	function acceptable () : Boolean { ok };
+
+	function state () :  Void {
+		value = "unknown";
+		assumption = true;
+	}
+	
+	function stated () : Boolean {
+		value == "unknown" and assumption == true;
+	}
+	
+	function question () : Void {
+    	value = "unknown";
+    	assumption = false;
+    }
+    
+	function questioned () : Boolean {
+		value == "unknown" and assumption == false;
+    }
+    
+	function accept () : Void {
+		value = "true";
+		assumption = false;
+	}
+    
+    function accepted () : Boolean {
+    	(value == "true") and (assumption == false);
+    }
+    
+    function reject () : Void {
+    	value = "false";
+    	assumption = false;
+    }
+    
+    function rejected () : Boolean {
+    	(value == "false") and (assumption == false);
+    }
+    
+	// Attribute modification functions
+	public function getStatus(): String {
+		return {	if (stated()) "stated"
+					else if (questioned()) "questioned"
+					else if (rejected()) "rejected"
+					else if (accepted()) "accepted"
+					else ""};
+	}
+
+	public function negateAssumption(): Void {
+		assumption = { if (assumption) false else true };
+	}
+
+	public function setValue(v: String): Void {
+		value = v;
+	}
+
+	public function setProofStandard(s: ProofStandard): Void {
+		standard = s;
+	}
+}
+
+public class Premise {
+	attribute statement: Statement;
+	attribute role: String = "";
+	attribute negative: Boolean = false;
+	attribute exception: Boolean = false;
+
+	public function switchType(): Void {
+		if (exception) { exception = false; } else { exception = true; }
+	}
+}
+
+public class Scheme {
+	attribute id: String;   // could be URI
+	// to do: possibly other attributes
+}
+
+public class Argument {
+	attribute id: String;
+	attribute scheme: Scheme;
+	attribute premises: Premise[];  
+	attribute pro: Boolean = true;
+	attribute conclusion: Statement;
+	private attribute ok: Boolean = false;  
+	private attribute updated : Boolean = false;
+	function allPremisesHold () : Boolean { ok }  // i.e "defensible"
+
+	public function switchDirection(): Void {
+		pro = not pro;
+	}
+}
+
+public class ArgumentGraph {
+	attribute id: String = "NewGraph";
+	attribute mainIssue: Statement; 
+	private attribute statements: Statement[];
+    private attribute arguments: Argument[];
+ 
+    // Issues of XML format not needed, since the 
+    // statements here have all the attributes of issues.
+
+	// to do: attribute for some data structure representing
+	// the relative strength of arguments, with the following API
+	
+	function putStronger (a1: Argument, a2: Argument) : Void {
+		// to do
+    }
+
+	function putAsStrong (a1: Argument, a2: Argument) : Void {
+		// to do
+	}
+	
+	function stronger (a1: Argument, a2: Argument) : Boolean {
+		// to do
+		false
+	}
+	
+	function atLeastAsStrong (a1: Argument, a2: Argument) : Boolean {
+		// to do
+		false
+	}
+	
+
+	function insertStatement (s: Statement): Number {
+		var result: Number = GC.AG_OK;
+
+		// check for double ids
+		if ((idTaken(s.id)) == false) {
+			insert s into statements;
+		} else {
+			result = GC.AG_DOUBLE_ID;
+		}
+
+		update();
+		return result;
+	}
+
+	function deleteStatement (s: Statement) : Void {
+		delete s from statements;
+
+		// todo: remove possible premises leading to the statement.
+		// todo: put the statement into the "trash" and allow a final deletion later.
+		update();
+	}
+
+	function insertArgument (arg: Argument) : Number {
+		var result: Number = GC.AG_OK;
+		
+		// check for and prohibit cycles.
+		if (noCycles()) {	
+			insert arg into arguments;
+			// add the statement of each premise to the
+			// the statements of the graph, if not already present
+			for (p in arg.premises) {
+				if (0 == sizeof(statements[s | s == p.statement])) {
+					insert p.statement into statements;
+				}
+			}
+			// add the conclusion of the argument to statements of
+			// the graph, if not already present
+			if (0 == sizeof(statements[s | s == arg.conclusion])) {
+				insert arg.conclusion into statements;
+			}
+			update();
+		} else {
+			result = GC.AG_CYCLE;
+		}
+
+		return result;
+    }
+
+	function deleteArgument (arg: Argument) : Void {
+		delete arg from arguments;
+		// to do: what should happen to statements not used 
+		// in other arguments?  Should they be deleted from
+		// the graph?  How can this be efficiently determined?
+		// Reference counting?
+		update();
+	}
+
+	function addPremise (p: Premise, a: Argument) : Number {
+		insert p into a.premises;
+		insert p.statement into statements;
+		
+		return GC.AG_OK;
+	}
+
+	function appendPremise (p: Premise, a: Argument) : Number {
+		insert p into a.premises;
+		
+		return GC.AG_OK;
+	}
+
+	function deletePremise (p: Premise, a: Argument) : Number {
+		delete p from a.premises;
+		
+		return GC.AG_OK;
+	}
+	
+	// update the acceptability and defensibility of statements
+	// and arguments respectively.
+	public function update () : Void {
+	    // first set all statements and arguments to not updated
+		for (s in statements) {	s.updated = false; }
+		for (arg in arguments) { arg.updated = false; }
+		
+		// update the statements and arguments
+		for (s in statements) { acceptable(s); }
+		for (arg in arguments) { allPremisesHold(arg); }
+	}
+	
+	function pro (s: Statement) : Argument[] {
+		arguments[arg | arg.conclusion == s and arg.pro];
+	}
+	
+	function con (s: Statement) : Argument[] {
+		arguments[arg | arg.conclusion == s and not arg.pro];
+	}
+	
+	// The acceptable, allPremisesHold and holds functions below
+	// are side-effect free.  They do not themselves update the state of
+	// statements or arguments in the graph, but are used by the update
+	// function which does.
+	
+	function acceptable (s: Statement) : Boolean {
+		if (s.updated) {
+			s.ok;
+		} else {
+			if (s.standard.satisfied(this,pro(s),con(s))) {
+				s.ok = true;
+				s.updated = true;
+				true;
+			} else {
+				s.ok = false;
+				s.updated = true;
+				false;
+			}
+		}
+	}
+
+	function allPremisesHold (a: Argument): Boolean {
+		if (a.updated == true) {
+			a.ok;
+		} else {
+			if (sizeof(a.premises[p | not holds(p)]) == 0) {
+				a.updated = true;
+				a.ok = true;
+				true;
+			} else {
+				a.updated = true;
+				a.ok = false;
+				false;
+			}
+		}
+	}
+
+	function holds (p: Premise): Boolean {
+		if (not p.exception) {
+			// ordinary premise
+			(p.statement.value == "true" and not p.negative) or
+			(p.statement.value == "false" and p.negative)
+		} else {
+			// exception
+			(p.statement.value <> "true" and not p.negative) or
+			(p.statement.value <> "false" and p.negative)
+		}
+	}
+
+	// INFORMATION GATHERING FUNCTIONS
+
+	// function to tell whether a statement has been brought forth in an argument
+	public function broughtForth(s: Statement): Boolean {
+		// return true if the statement has been brought forth in an argument or connected in a premise
+		var argued = false;
+		for (a in arguments) {
+			if (a.conclusion == s) {
+				argued = true;
+			}
+		}
+		return argued;
+	}
+
+	// function to tell whether a statement is a premise of an argument
+	public function isPremise(s: Statement): Boolean {
+		var premised: Boolean = false;
+		for (a in arguments) {
+			for (p in a.premises) {
+				if (p.statement == s) {
+					premised = true;
+				}
+			}
+		}
+		return premised;
+	}
+
+	// CYCLE CHECKING
+
+	private function noCycles(): Boolean {
+		var result: Boolean = true;
+		// checking is done for all statement nodes
+		var roots: Statement[] = [statements];
+		for (r in roots) {
+			if (noCyclesRec(r, [r]) == false) { result = false; }
+		}
+		return result
+	}
+	
+	// Recursive private function for cycle checking
+	private function noCyclesRec(root: Object, marked: Object[]): Boolean {
+		var result = true;
+		
+		if (root instanceof Argument) {
+			//System.out.println("premises to check: " + sizeof (root as Argument).premises);
+			for (p in (root as Argument).premises) {
+				//GC.p("checking " + p.statement.id);
+				// check whether the premise statement has been marked before
+				if (contains(marked, p.statement)) { 
+					//GC.p("returning false");
+					result = false;
+				} 
+				else {
+					// if not, do the recursive call
+					//GC.p("Adding " + p.statement.id);
+					if (noCyclesRec(p.statement, [marked, p.statement]) == false ) { result = false; } ;
+				}
+			}
+		} else if (root instanceof Statement) {
+			// check whether there is an argument with a matching conclusion
+			for (a in arguments) {
+				// does the conclusion match
+				if (a.conclusion == root) {
+					// has the argument already been marked
+					//GC.p("checking " + a.id);
+					if (contains(marked, a)) {
+						//GC.p("returning false");
+						result = false;
+					} else {
+					// do the recursive call
+						//GC.p("Adding " + a.id);
+						if (noCyclesRec(a, [marked, a]) == false) { result = false; };
+					}
+				}
+			}
+		}
+
+		// base case: no premises and no further arguments
+		return result;
+	}
+
+	// DOUBLE ID CHECKING
+	private function idTaken(id: String): Boolean {
+		for (s in statements) {
+			if (s.id == id) { return true; }
+		}
+		for (a in arguments) {
+			if (a.id == id) { return true; }
+		}
+		return false;
+	}
+
+	public function getNewStatementId(): String {
+		var admissible: Boolean = true;
+		var id: String = "s";
+		var number: Integer = 1;
+
+		while ( idTaken(id + number.toString()) ) { number ++; }
+
+		return id + number.toString();
+	}
+
+	public function getNewArgumentId(): String {
+		var admissible: Boolean = true;
+		var id: String = "a";
+		var number: Integer = 1;
+
+		while ( idTaken(id + number.toString()) ) { number ++; }
+
+		return id + number.toString();
+	}
+
+	public function noDoubleIDs(newId: String): Boolean {
+		var ids: String[];
+
+		for (s in statements) {
+			if (contains(ids, s.id)) { return false; } else { insert s.id into ids; }
+		}
+		for (a in arguments) {
+			if (contains(ids, a.id)) { return false; } else { insert a.id into ids; }
+		}
+		if (contains(ids, newId)) { return false; } 
+
+		return true;
+	}
+
+	// HELPER FUNCTIONS
+	private function contains(list: Object[], element: Object): Boolean {
+		for (i in list) {
+			if (i == element) { return true; }
+		}
+		return false;
+	}
+}
+
+// Proof Standards
+
+// The proof standard assigned to each statement in an argument 
+// graph is an instance of some proof standard class, to allow
+// the "negated" and "complement" attributes of the standard to 
+// be modified on a statement by statement basis, if desired.  
+// Alternatively, several statements could share an instance of some
+// proof standard.  The user interfaces needs to make clear whether
+// a proof standard is being modified for only a single statement or a 
+// set of statements.
+
+public class Scintilla extends ProofStandard {
+	function test (ag: ArgumentGraph, 
+	               pro: Argument[], 
+	               con: Argument[]): Boolean {
+	       sizeof(pro[p | p.allPremisesHold()]) > 0;               
+	}
+}
+
+public class DialecticalValidity extends ProofStandard {
+	function test (ag: ArgumentGraph, 
+	               pro: Argument[], 
+	               con: Argument[]): Boolean {
+	       sizeof(pro[arg | arg.allPremisesHold()]) > 0 and
+	       sizeof(con[arg | arg.allPremisesHold()]) == 0;
+	}
+}
+
+public class BestArgument extends ProofStandard {
+	function test (ag: ArgumentGraph, 
+	               pro: Argument[], 
+	               con: Argument[]): Boolean {
+	       var okPro = pro [ arg | arg.allPremisesHold() ];
+	       var okCon = con [ arg | arg.allPremisesHold() ];
+	       // there is at least one ok pro argument, and
+	       sizeof(okPro) > 0 and
+	       // there is no ok con argument which is at least
+	       // as strong as every ok pro argument
+	       0 == sizeof(okCon [ conArg | 
+	       			0 < sizeof(okPro [ proArg | 
+	       				ag.atLeastAsStrong(conArg,proArg) ]) ]);
+	}
+}
