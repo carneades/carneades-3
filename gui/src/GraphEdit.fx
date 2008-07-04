@@ -466,7 +466,7 @@ class StatusField extends LimitedTextField {
 	override attribute choices = ["stated", "accepted", "rejected", "questioned"];
 
 	public function update(): Void {
-		text = statement.getStatus();
+		text = statement.status();
 	}
 }
 
