@@ -2,10 +2,10 @@
 <lkif>
   <argument-graph id="SocratesGraph">
     <issues>
-      <issue assumption="true" standard="BA" statement="mortality" value="unknown"/>
-      <issue assumption="false" standard="BA" statement="Socrates" value="unknown"/>
-      <issue assumption="true" standard="BA" statement="everyoneDies" value="unknown"/>
-      <issue assumption="false" standard="BA" statement="apeException" value="true"/>
+      <issue assumption="true" statement="mortality" value="unknown"/>
+      <issue assumption="false" statement="Socrates" value="unknown"/>
+      <issue assumption="true" statement="everyoneDies" value="unknown"/>
+      <issue assumption="false" statement="apeException" value="unknown"/>
     </issues>
     <statements>
       <s id="SocratesMortality">Socrates is mortal.</s>
