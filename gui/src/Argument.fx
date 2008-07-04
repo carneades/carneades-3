@@ -51,6 +51,7 @@ public class Statement {
 	private attribute standard: ProofStandard = BestArgument {};
 	private attribute ok: Boolean = false;
 	private attribute updated : Boolean = false;
+
 	public function acceptable () : Boolean { ok };
 
 	public function stated () : Boolean {
@@ -69,7 +70,11 @@ public class Statement {
     	(value == "false") and (assumption == false);
     }
     
-	public function getStatus(): String {
+    public function truthValue () : String { value }
+    public function truthValueAssumed () : Boolean { assumption }
+    public function proofStandard () : ProofStandard { standard }
+    
+	public function status(): String {
 		return {	if (stated()) "stated"
 					else if (questioned()) "questioned"
 					else if (rejected()) "rejected"
@@ -97,16 +102,13 @@ public class Scheme {
 public class Argument {
 	attribute id: String;
 	attribute scheme: Scheme;
-	attribute premises: Premise[];  
-	attribute pro: Boolean = true;
-	attribute conclusion: Statement;
+	private attribute premises: Premise[];  
+	private attribute pro: Boolean = true;
+	private attribute conclusion: Statement;
 	private attribute ok: Boolean = false;  
 	private attribute updated : Boolean = false;
 	function allPremisesHold () : Boolean { ok }  // i.e "defensible"
 
-	public function switchDirection(): Void {
-		pro = not pro;
-	}
 }
 
 public class ArgumentGraph {
@@ -115,52 +117,65 @@ public class ArgumentGraph {
 	private attribute statements: Statement[];
     private attribute arguments: Argument[];
  
- 	function state (s: Statement) :  Void {
+ 	public function state (s: Statement) :  Void {
 		s.value = "unknown";
 		s.assumption = true;
 		update();
 	}
 	
-	function question (s: Statement) : Void {
+	public function question (s: Statement) : Void {
     	s.value = "unknown";
     	s.assumption = false;
     	update();
     }
     
-    function accept (s: Statement) : Void {
+    public function accept (s: Statement) : Void {
 		s.value = "true";
 		s.assumption = false;
 		update();
 	}
 	
-	function reject (s: Statement) : Void {
+	public function reject (s: Statement) : Void {
     	s.value = "false";
     	s.assumption = false;
     	update();
     }
     
-    function assume (s: Statement, v: String) : Void {
+    // set the truth value of a statement to "true", "false" or "unknown"
+    public function setTruthValue (s: Statement, v: String) : Void {
+    	s.value = v;
+    	update();
+    }
+    
+    public function setTruthValueAssumed (s: Statement, v: Boolean) : Void {
+    	s.assumption = v;
+    	update();
+    }
+    
+    // assume the truth value of a statement to be "true", "false" or "unknown"
+    public function assume (s: Statement, v: String) : Void {
     	s.value = v;
     	s.assumption = true;
     	update();
     }
     
-    function setProofStandard (s: Statement, p: ProofStandard) : Void {
+    public function setProofStandard (s: Statement, p: ProofStandard) : Void {
     	s.standard = p;
     	update();
     }
     
     
-    function negateProofStandard (s: Statement) : Void {
+    public function negateProofStandard (s: Statement) : Void {
     	s.standard.negated = not s.standard.negated;
     	update();
     }
     
-    function complementProofStandard (s: Statement) : Void {
+    public function complementProofStandard (s: Statement) : Void {
     	s.standard.complement = not s.standard.complement;
     	update();
     }
     
+
 	
     // Issues of XML format not needed, since the 
     // statements here have all the attributes of issues.
@@ -168,25 +183,25 @@ public class ArgumentGraph {
 	// to do: attribute for some data structure representing
 	// the relative strength of arguments, with the following API
 	
-	function putStronger (a1: Argument, a2: Argument) : Void {
+	public function putStronger (a1: Argument, a2: Argument) : Void {
 		// to do
     }
 
-	function putAsStrong (a1: Argument, a2: Argument) : Void {
+	public function putAsStrong (a1: Argument, a2: Argument) : Void {
 		// to do
 	}
 	
-	function stronger (a1: Argument, a2: Argument) : Boolean {
-		// to do
-		false
-	}
-	
-	function atLeastAsStrong (a1: Argument, a2: Argument) : Boolean {
+	public function stronger (a1: Argument, a2: Argument) : Boolean {
 		// to do
 		false
 	}
 	
-	function insertStatement (s: Statement): Number {
+	public function atLeastAsStrong (a1: Argument, a2: Argument) : Boolean {
+		// to do
+		false
+	}
+	
+	public function insertStatement (s: Statement): Number {
 		var result: Number = GC.AG_OK;
 
 		// check for double ids
@@ -200,7 +215,7 @@ public class ArgumentGraph {
 		return result;
 	}
 
-	function deleteStatement (s: Statement) : Void {
+	public function deleteStatement (s: Statement) : Void {
 		delete s from statements;
 
 		// todo: remove possible premises leading to the statement.
@@ -208,7 +223,7 @@ public class ArgumentGraph {
 		update();
 	}
 
-	function insertArgument (arg: Argument) : Number {
+	public function insertArgument (arg: Argument) : Number {
 		var result: Number = GC.AG_OK;
 		
 		// check for and prohibit cycles.
@@ -234,7 +249,7 @@ public class ArgumentGraph {
 		return result;
     }
 
-	function deleteArgument (arg: Argument) : Void {
+	public function deleteArgument (arg: Argument) : Void {
 		delete arg from arguments;
 		// to do: what should happen to statements not used 
 		// in other arguments?  Should they be deleted from
@@ -243,20 +258,30 @@ public class ArgumentGraph {
 		update();
 	}
 
-	function addPremise (p: Premise, a: Argument) : Number {
+    public function switchDirection (arg: Argument): Void {
+		arg.pro = not arg.pro;
+		update();
+	}
+	
+	public function setConclusion (arg: Argument, s: Statement) : Void {
+		arg.conclusion = s;
+		update();
+	}
+	
+	public function addPremise (p: Premise, a: Argument) : Number {
 		insert p into a.premises;
 		insert p.statement into statements;
 		update();
 		return GC.AG_OK;
 	}
 
-	function appendPremise (p: Premise, a: Argument) : Number {
+	public function appendPremise (p: Premise, a: Argument) : Number {
 		insert p into a.premises;
 		update();
 		return GC.AG_OK;
 	}
 
-	function deletePremise (p: Premise, a: Argument) : Number {
+	public function deletePremise (p: Premise, a: Argument) : Number {
 		delete p from a.premises;
 		update();
 		return GC.AG_OK;
@@ -264,7 +289,7 @@ public class ArgumentGraph {
 	
 	// update the acceptability and defensibility of statements
 	// and arguments respectively.
-	public function update () : Void {
+	private function update () : Void {
 	    // first set all statements and arguments to not updated
 		for (s in statements) {	s.updated = false; }
 		for (arg in arguments) { arg.updated = false; }
@@ -281,11 +306,6 @@ public class ArgumentGraph {
 	function con (s: Statement) : Argument[] {
 		arguments[arg | arg.conclusion == s and not arg.pro];
 	}
-	
-	// The acceptable, allPremisesHold and holds functions below
-	// are side-effect free.  They do not themselves update the state of
-	// statements or arguments in the graph, but are used by the update
-	// function which does.
 	
 	public function acceptable (s: Statement) : Boolean {
 		if (s.updated) {
@@ -304,7 +324,7 @@ public class ArgumentGraph {
 	}
 
 	public function allPremisesHold (a: Argument): Boolean {
-		if (a.updated == true) {
+		if (a.updated) {
 			a.ok;
 		} else {
 			if (sizeof(a.premises[p | not holds(p)]) == 0) {
