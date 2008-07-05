@@ -17,8 +17,6 @@ Current Line of Work:
 	- Add final delete
 	- add load/save to extra file
 
-* Transfer to new library version
-
 * Solve the xml conformity problem with whitespaces in ids. Use a RE here.
 
 * Only show ids in search field and replace the TextField by a TextArea in the edit component when available in the SDK.
@@ -45,8 +43,6 @@ Matthias Grabmair:
 * add a logging feature
 
 * Add outline-checking in the layout algorithm for more compact horizontal positioning.
-
-* Add .jar build target and global target to ant file for one-time call job
 
 * Maybe too much: Protocol changes to a Graph in a (loadable) log so that debugging from externals gets easier
 		-> This is essential to debug Undo/Redo as well as new layouts
@@ -127,6 +123,18 @@ The model-view-controller (MVC) architecture has been used as follows. The progr
 
 Version history:
 
+0.0.5
+
+Added/modified features:
+* Transferred to new compiler and library version.
+* Moved update calls to model for cleaner architecture.
+* Application runs from .jar now and is hence portable.
+
+Fixed Bugs/Issues:
+* Cleaned up public/private/protected attributes and functions due to new compiler version.
+* File save works correctly now.
+
+-
 
 0.0.4
 Transfer to new argument model.
@@ -136,6 +144,7 @@ Undo/Redo working.
 Dragging working.
 Added edit panel.
 
+-
 
 0.0.3
 Implemented features:
@@ -145,10 +154,12 @@ Open an argument graph from and XML file.
 Add/delete arguments from the graph
 Change the type of a premise (ordinary, exception, assumption)	
 
+-
 
 0.0.2
 Basic Tree editing functionality.
 
+-
 
 0.0.1
 Basic Tree Preview.

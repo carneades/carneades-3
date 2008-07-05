@@ -18,11 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package GraphSketch1.Graph;
 
-//import javafx.ext.swing.*;
-//import javafx.input.*;
-//import javafx.scene.geometry.*;
-//import javafx.scene.paint.*;
-import javafx.gui.*;
+import javafx.ext.swing.*;
+import javafx.input.*;
+import javafx.scene.geometry.*;
+import javafx.scene.paint.*;
 import GraphSketch1.Graph.*;
 import java.lang.System;
 
@@ -30,7 +29,7 @@ import java.lang.System;
 import GraphSketch1.Control.AbstractGraphControl;
 
 public class GraphView extends Canvas {
-	attribute graph: Graph;
+	public attribute graph: Graph;
 	attribute layout: GraphLayout;
 	attribute control: AbstractGraphControl;
 

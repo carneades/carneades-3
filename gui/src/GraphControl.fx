@@ -44,7 +44,7 @@ public class GraphControl extends AbstractGraphControl {
 	attribute frame: GraphFrame;
 	attribute edit: GraphEdit = bind frame.edit;
 	attribute view: GraphView;
-	attribute graph: Graph = bind frame.graph;
+	public attribute graph: Graph = bind frame.graph;
 
 	private attribute commands: CommandControl = CommandControl {}
 	private attribute selectedModels: Object[];
@@ -55,13 +55,13 @@ public class GraphControl extends AbstractGraphControl {
 	override attribute possibleToAddPremise = bind selectedModels[0] instanceof Argument;
 
 	private function singleArgumentLinkSelected(s: GraphElement[]): Boolean {
-		return { if (sizeof s <> 1) false else (s instanceof ArgumentLink) } 
+		return { if (sizeof s != 1) false else (s instanceof ArgumentLink) } 
 	}
 	private function singlePremiseSelected(s: GraphElement[]): Boolean {
-		return { if (sizeof s <> 1) false else (s instanceof PremiseLink) } 
+		return { if (sizeof s != 1) false else (s instanceof PremiseLink) } 
 	}
 	private function premiseSelected(s: GraphElement[]): Boolean {
-		return { if (sizeof s <> 1) false else (s instanceof PremiseLink) } 
+		return { if (sizeof s != 1) false else (s instanceof PremiseLink) } 
 	}
 	private function singleSomethingSelected(s: GraphElement[]): Boolean {
 		return { (sizeof s == 1) } 
@@ -72,7 +72,7 @@ public class GraphControl extends AbstractGraphControl {
 		// update graph selection
 		graph.selected =  [for (v in graph.vertices where v.selected) { v }, for (e in graph.edges where e.selected) { e }];
 
-		if (frame.list.list.selectedItem <> null) {
+		if (frame.list.list.selectedItem != null) {
 			// 1. The list is selected
 			// update model selection
 			selectedModels = [];
@@ -152,7 +152,7 @@ public class GraphControl extends AbstractGraphControl {
 		if (dragging) {
 			dragging = false;
 			// Were we dragging over something?
-			if (draggingOver <> null) { 
+			if (draggingOver != null) { 
 				dragEndsAt(draggingOver as ArgumentElement);
 				draggingOver = null;
 			}
@@ -172,7 +172,7 @@ public class GraphControl extends AbstractGraphControl {
 					var premiseLink: PremiseLink;
 					var premise: Premise;
 
-					if (temp <> []) {
+					if (temp != []) {
 						premiseLink = temp[0] as PremiseLink;
 						premise = premiseLink.premise;
 					}
@@ -326,7 +326,7 @@ public class GraphControl extends AbstractGraphControl {
 								argumentGraph: argumentGraph
 								statement: s as Statement
 							}
-						) <> GC.AG_OK) { 
+						) != GC.AG_OK) { 
 						//frame.alert("Argument cannot be inserted here.\nThe Graph would become cyclic.");
 					}
 				}
@@ -460,7 +460,7 @@ public class GraphControl extends AbstractGraphControl {
 
 	public function changeStatementAssumption(s: Statement, v: String): Void {
 		var value = { if (v == "true") true else false };
-		if (s.assumption <> value) {
+		if (s.assumption != value) {
 			commands.do(
 				NegateStatementAssumptionCommand {
 					argumentGraph: argumentGraph
@@ -570,7 +570,7 @@ public class GraphControl extends AbstractGraphControl {
 
 	public function changeArgumentDirection(a: Argument, value: String): Void {
 		var newValue: Boolean = { if (value == "pro") true else false };
-		if (newValue <> a.pro) {
+		if (newValue != a.pro) {
 			commands.do(
 				ChangeArgumentDirectionCommand {
 					argumentGraph: argumentGraph
@@ -627,7 +627,7 @@ public class GraphControl extends AbstractGraphControl {
 
 	public function changePremiseType(p: Premise, value: String): Void {
 		var newValue: Boolean = { if (value == "exception") true else false };
-		if (newValue <> p.exception) {
+		if (newValue != p.exception) {
 			commands.do(
 				ChangePremiseTypeCommand {
 					argumentGraph: argumentGraph
@@ -653,7 +653,7 @@ public class GraphControl extends AbstractGraphControl {
 	// Load / Save / New Options
 
 	public function newGraph(): Void {
-		ArgumentControl.newGraph(argumentGraph);
+		argumentGraph = ArgumentGraph {};
 
 		commands.reset();
 		updateAll();

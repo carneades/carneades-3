@@ -18,7 +18,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package GraphSketch1.Graph.Elements;
 
-import javafx.gui.*;
+import javafx.scene.geometry.*;
+import javafx.scene.paint.*;
+import javafx.scene.transform.*;
+import javafx.scene.text.*;
+import javafx.scene.*;
+import javafx.input.*;
+
 import java.lang.System;
 import java.lang.Math;
 
@@ -90,7 +96,7 @@ public abstract class ArgumentElement extends Vertex {
 }
 
 public class ArgumentBox extends ArgumentElement {
-	attribute argument: Argument;
+	public attribute argument: Argument;
 	override attribute caption = bind argument.id;
 	override attribute fill = bind {if (argument.ok) Color.LIGHTGREY else Color.WHITE};
 
@@ -109,7 +115,7 @@ public class ArgumentBox extends ArgumentElement {
 }
 
 public class StatementBox extends ArgumentElement {
-	attribute statement: Statement;
+	public attribute statement: Statement;
 	override attribute caption = bind statement.id;
 	override attribute fill = bind {if (statement.assumption 
 										or statement.ok 
@@ -173,21 +179,21 @@ public class ProArgumentLink extends ArgumentLink {
 }
 
 public class PremiseLink extends Edge {
+	public attribute premise: Premise;
 	attribute radius: Number = 5;
 	attribute negWidth: Number = 10;
 	attribute negStrokeWidth: Number = 2;
-	attribute premise: Premise;
 
-	private attribute negated: Boolean = false;
+	public attribute negated: Boolean = false;
 	override attribute turnHead = bind negated;
 	
 	override attribute yHeadShift = bind radius;
 
 	attribute negation: Line = Line {
-					x1: bind x2 - Math.max(yHeadShift * 2, negWidth)
-					y1: bind y2 - (negWidth / 2) 
-					x2: bind x2 - Math.max(yHeadShift * 2, negWidth)
-					y2: bind y2 + (negWidth / 2)
+					startX: bind x2 - Math.max(yHeadShift * 2, negWidth)
+					startY: bind y2 - (negWidth / 2) 
+					endX: bind x2 - Math.max(yHeadShift * 2, negWidth)
+					endY: bind y2 + (negWidth / 2)
 					transform: bind [Transform.rotate(angle, x2, y2)]
 					stroke: bind stroke
 					strokeWidth: bind negStrokeWidth

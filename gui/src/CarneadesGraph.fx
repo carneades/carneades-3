@@ -18,9 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package GraphSketch1.Graph;
 
 // General imports
-//import javafx.ext.swing.*;
-//import javafx.scene.*;
-import javafx.gui.*;
+import javafx.ext.swing.*;
+import javafx.scene.*;
 
 // import the rest of the graph package
 import GraphSketch1.Graph.Elements.Elements.*;
@@ -33,7 +32,7 @@ public class CarneadesGraph extends Graph {
 
 	
 	// this attribute is the binding to the model
-	attribute argumentGraph: ArgumentGraph;
+	public attribute argumentGraph: ArgumentGraph;
 
 	// the invisible root node
 	attribute root: Vertex = Vertex {
@@ -41,9 +40,9 @@ public class CarneadesGraph extends Graph {
 		visible: false
 	}
 	
-	override attribute vertices = [];//[ root, toVertices(argumentGraph.statements, argumentGraph.arguments)];
+	override attribute vertices = [];
 
-	override attribute edges = [];//toEdges(argumentGraph.statements, argumentGraph.arguments);
+	override attribute edges = [];
 
 	// CONVERSION FUNCTIONS
 
@@ -98,7 +97,7 @@ public function update(): Void {
 			}
 			if (sizeof found > 0) {
 				s.parentVertex = found [0];
-			} else if (s <> root) {
+			} else if (s != root) {
 				s.parentVertex = root;
 				insert s into root.children;
 			}
@@ -114,7 +113,7 @@ public function update(): Void {
 			}
 			if (sizeof found > 0) {
 				a.parentVertex = found [0];
-			} else if (a <> root) {
+			} else if (a != root) {
 				a.parentVertex = root;
 				insert a into root.children;
 			}
@@ -128,7 +127,7 @@ public function update(): Void {
 		var links: Edge[];
 
 		// 1. argument links
-		for (a in arguments where (a.conclusion <> null)) {
+		for (a in arguments where (a.conclusion != null)) {
 			var link: Edge;
 			var producer: ArgumentBox[] = (for (v in vertices where 
 											((v instanceof ArgumentBox) 

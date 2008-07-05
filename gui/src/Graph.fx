@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package GraphSketch1.Graph;
 
-import javafx.gui.*;
+import javafx.scene.*;
 import GraphSketch1.Graph.Vertex;
 import GraphSketch1.Graph.Elements.Elements.*;
 import java.lang.System;
@@ -26,10 +26,10 @@ import java.lang.System;
 import GraphSketch1.Control.AbstractGraphControl;
 
 public class Graph extends CustomNode {
-	attribute control: AbstractGraphControl;
-	attribute vertices: Vertex[];
-	attribute edges: Edge[];
-	attribute selected: GraphElement[] = [];
+	public attribute control: AbstractGraphControl;
+	public attribute vertices: Vertex[];
+	public attribute edges: Edge[];
+	public attribute selected: GraphElement[] = [];
 	public function update(): Void {}
 
 	public function create():Node {

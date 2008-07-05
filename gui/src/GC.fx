@@ -18,10 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package GraphSketch1.Graph;
 
-//import javafx.ext.swing.*;
-
-import javafx.gui.*;
-//import javafx.scene.paint.*;
+import javafx.scene.paint.*;
 import java.lang.System;
 
 // Class for Constants

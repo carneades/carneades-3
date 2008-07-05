@@ -18,10 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package GraphSketch1.Graph;
 
-//import javafx.ext.swing.*;
-//import javafx.scene.paint.*;
-//import javafx.scene.*;
-import javafx.gui.*;
+import javafx.ext.swing.*;
+import javafx.scene.paint.*;
+import javafx.scene.*;
+
 import java.lang.System;
 import java.io.File;
 
@@ -44,7 +44,7 @@ public class GraphEdit extends Panel {
 	override attribute preferredSize = [GC.editWidth, GC.editHeight];
 	override attribute visible = true;
 
-	private attribute control: AbstractGraphControl;
+	public attribute control: AbstractGraphControl;
 	public attribute argumentGraph: ArgumentGraph;
 
 	private attribute statementPanel = StatementEditPanel { control: bind control, argumentGraph: bind argumentGraph }
@@ -54,7 +54,7 @@ public class GraphEdit extends Panel {
 	override attribute content = bind [statementPanel, argumentPanel, premisePanel];
 
 	public function update(): Void {
-		if (control.getSelectedModel() <> []) {
+		if (control.getSelectedModel() != []) {
 			if (control.getSelectedModel()[0] instanceof Argument) {
 				statementPanel.visible = false;
 				argumentPanel.visible = true;

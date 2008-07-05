@@ -19,7 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package GraphSketch1.Graph;
 
 import java.lang.Math;
-import javafx.gui.*;
+import javafx.scene.*;
+import javafx.scene.geometry.*;
+import javafx.scene.text.*;
+import javafx.scene.paint.*;
 import GraphSketch1.Graph.*;
 import java.lang.System;
 import GraphSketch1.Control.AbstractGraphControl;
@@ -77,13 +80,5 @@ public class Vertex extends GraphElement {
 		} // Group
 	} // composeNode
 
-	public function print():Void {
-		System.out.println(content + ":");
-		System.out.println(content + " level: " + level);
-		System.out.println(content + " x/y shift: " + xShift +" / " + yShift);
-		//System.out.println(content + " children: " + children);
-		System.out.println(content + " priority: " + priority);
-		System.out.println(content + " X Sub Tree Size: " + xSubTreeSize);
-	}
 }
 
