@@ -23,10 +23,10 @@ import java.lang.System;
 
 public abstract class GraphLayout {
 	// This would normally be a Graph object, but the inverse bind forces the classes to exactly match.
-	attribute graph: Graph;
+	public attribute graph: Graph;
 	
-	attribute width: Number;
-	attribute height: Number;
+	public attribute width: Number;
+	public attribute height: Number;
 	attribute xOffset: Number = GC.xOffset;
 	attribute yOffset: Number = GC.yOffset;
 	attribute d: Boolean = false; // debug messages?

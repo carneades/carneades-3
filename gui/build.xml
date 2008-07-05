@@ -1,234 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <project default ="full">
+		<property environment="env"/>
+		<property name="javafxc.home" value="${env.JAVAFXHOME}"/>
+		<property name="javafxc.class.path" 
+				value="${javafxc.home}/lib/javafxc.jar:${javafxc.home}/lib/javafxrt.jar:${javafxc.home}/lib/Scenario.jar"/>
+        <taskdef resource="javafxc-ant-task.properties" classpath="${javafxc.class.path}"/>
+
+		<path id="project.class.path">
+				<pathelement location="lib/javafx-xml.jar"/>
+				<pathelement location="lib/javafxgui.jar"/>
+				<pathelement location="lib/javafx-swing.jar"/>
+				<pathelement location="lib/javafxrt.jar"/>
+				<pathelement location="lib/javafxc.jar"/>
+				<pathelement location="lib/jmc.jar"/>
+				<pathelement location="lib/Scenario.jar"/>
+		</path>
 		
 		<target name="constants">
-				<echo message="Constants Class" />
-				<exec executable="javafxc">
-						<arg value="src/GC.fx" />
-						<arg value="-sourcepath src" />
-						<arg value="-extdirs lib" />
-						<arg value="-cp build" />
-						<arg value="-target 1.5" />
-						<arg value="-d build" />
-				</exec>
 		</target>
 		<target name="argument">
-				<echo message="Argument Model Class" />
-				<exec executable="javafxc">
-						<arg value="src/Argument.fx" />
-						<arg value="-sourcepath src" />
-						<arg value="-extdirs lib" />
-						<arg value="-cp build" />
-						<arg value="-target 1.5" />
-						<arg value="-d build" />
-				</exec>
 		</target>
 		<target name="argcontrol">
-				<echo message="Argument Control Class" />
-				<exec executable="javafxc">
-						<arg value="src/ArgumentControl.fx" />
-						<arg value="-sourcepath src" />
-						<arg value="-extdirs lib" />
-						<arg value="-cp build" />
-						<arg value="-target 1.5" />
-						<arg value="-d build" />
-				</exec>
 		</target>
 		<target name="gelement">
-				<echo message="Graph Element Class" />
-				<exec executable="javafxc">
-						<arg value="src/GraphElement.fx" />
-						<arg value="-sourcepath src" />
-						<arg value="-extdirs lib" />
-						<arg value="-cp build" />
-						<arg value="-target 1.5" />
-						<arg value="-d build" />
-				</exec>
 		</target>
 		<target name="vertex">
-				<echo message="Vertex Class" />
-				<exec executable="javafxc">
-						<arg value="src/Vertex.fx" />
-						<arg value="-sourcepath src" />
-						<arg value="-extdirs lib" />
-						<arg value="-cp build" />
-						<arg value="-target 1.5" />
-						<arg value="-d build" />
-				</exec>
 		</target>
 		<target name="edge">
-				<echo message="Edge Class" />
-				<exec executable="javafxc">
-						<arg value="src/Edge.fx" />
-						<arg value="-sourcepath src" />
-						<arg value="-extdirs lib" />
-						<arg value="-cp build" />
-						<arg value="-target 1.5" />
-						<arg value="-d build" />
-				</exec>
 		</target>
 		<target name="graph">
-				<echo message="Graph Class" />
-				<exec executable="javafxc">
-						<arg value="src/Graph.fx" />
-						<arg value="-sourcepath src" />
-						<arg value="-extdirs lib" />
-						<arg value="-cp build" />
-						<arg value="-target 1.5" />
-						<arg value="-d build" />
-				</exec>
 		</target>
 		<target name="cgraph">
-				<echo message="Carneades Graph Class" />
-				<exec executable="javafxc">
-						<arg value="src/CarneadesGraph.fx" />
-						<arg value="-sourcepath src" />
-						<arg value="-extdirs lib" />
-						<arg value="-cp build" />
-						<arg value="-target 1.5" />
-						<arg value="-d build" />
-				</exec>
 		</target>
 		<target name="layout">
-				<echo message="Layout Class" />
-				<exec executable="javafxc">
-						<arg value="src/GraphLayout.fx" />
-						<arg value="-sourcepath src" />
-						<arg value="-extdirs lib" />
-						<arg value="-cp build" />
-						<arg value="-target 1.5" />
-						<arg value="-d build" />
-				</exec>
 		</target>
 		<target name="treelayout">
-				<echo message="Tree Layout Class" />
-				<exec executable="javafxc">
-						<arg value="src/TreeLayout.fx" />
-						<arg value="-sourcepath src" />
-						<arg value="-extdirs lib" />
-						<arg value="-cp build" />
-						<arg value="-target 1.5" />
-						<arg value="-d build" />
-				</exec>
 		</target>
 		<target name="frame">
-				<echo message="Graph Frame Class" />
-				<exec executable="javafxc">
-						<arg value="src/GraphFrame.fx" />
-						<arg value="-sourcepath src" />
-						<arg value="-extdirs lib" />
-						<arg value="-cp build" />
-						<arg value="-target 1.5" />
-						<arg value="-d build" />
-				</exec>
 		</target>
 		<target name="edit">
-				<echo message="Graph Edit Class" />
-				<exec executable="javafxc">
-						<arg value="src/GraphEdit.fx" />
-						<arg value="-sourcepath src" />
-						<arg value="-extdirs lib" />
-						<arg value="-cp build" />
-						<arg value="-target 1.5" />
-						<arg value="-d build" />
-				</exec>
 		</target>
 		<target name="list">
-				<echo message="Graph List Class" />
-				<exec executable="javafxc">
-						<arg value="src/GraphList.fx" />
-						<arg value="-sourcepath src" />
-						<arg value="-extdirs lib" />
-						<arg value="-cp build" />
-						<arg value="-target 1.5" />
-						<arg value="-d build" />
-				</exec>
 		</target>
 		<target name="view">
-				<echo message="Graph View Class" />
-				<exec executable="javafxc">
-						<arg value="src/GraphView.fx" />
-						<arg value="-sourcepath src" />
-						<arg value="-extdirs lib" />
-						<arg value="-cp build" />
-						<arg value="-target 1.5" />
-						<arg value="-d build" />
-				</exec>
 		</target>
 		<target name="elements">
-				<echo message="Argument Element Classes" />
-				<exec executable="javafxc">
-						<arg value="src/Elements.fx" />
-						<arg value="-sourcepath src" />
-						<arg value="-extdirs lib" />
-						<arg value="-cp build" />
-						<arg value="-target 1.5" />
-						<arg value="-d build" />
-				</exec>
 		</target>
 		<target name="acontrol">
-				<echo message="Abstract Graph Control Class" />
-				<exec executable="javafxc">
-						<arg value="src/AbstractGraphControl.fx" />
-						<arg value="-sourcepath src" />
-						<arg value="-extdirs lib" />
-						<arg value="-cp build" />
-						<arg value="-target 1.5" />
-						<arg value="-d build" />
-				</exec>
 		</target>
 		<target name="control">
-				<echo message="Graph Control Class" />
-				<exec executable="javafxc">
-						<arg value="src/GraphControl.fx" />
-						<arg value="-sourcepath src" />
-						<arg value="-extdirs lib" />
-						<arg value="-cp build" />
-						<arg value="-target 1.5" />
-						<arg value="-d build" />
-				</exec>
 		</target>
 		<target name="commands">
-				<echo message="Command Classes" />
-				<exec executable="javafxc">
-						<arg value="src/Commands.fx" />
-						<arg value="-sourcepath src" />
-						<arg value="-extdirs lib" />
-						<arg value="-cp build" />
-						<arg value="-target 1.5" />
-						<arg value="-d build" />
-				</exec>
 		</target>
 		<target name="file">
-				<echo message="Argument File Class" />
-				<exec executable="javafxc">
-						<arg value="src/ArgumentFile.fx" />
-						<arg value="-sourcepath src" />
-						<arg value="-extdirs lib" />
-						<arg value="-cp build" />
-						<arg value="-target 1.5" />
-						<arg value="-d build" />
-				</exec>
 		</target>
-
-		
 		<target name="main">
-				<echo message="Compiling main JavaFX script ..." />
-				<exec executable="javafxc">
-						<arg value="src/GraphSketch.fx" />
-						<arg value="-sourcepath src" />
-						<arg value="-extdirs lib" />
-						<arg value="-cp build" />
-						<arg value="-target 1.5" />
-						<arg value="-d build" />
-				</exec>
 		</target>
 
-		<target name="compile" depends="constants, argument, argcontrol, file, acontrol, gelement, vertex, edge, elements, graph, cgraph, layout, treelayout, view, edit, list, frame, commands, control, main">
-				<echo message="JavaFX classes compiled." />
+		<target name="compile">
+				<javafxc 
+						srcdir="src"
+						destdir="build" 
+						includes="**/*.fx"
+						compilerclasspath="${javafxc.class.path}">
+						<classpath refid="project.class.path"/>
+				</javafxc>
 		</target>
 
 		<target name="jar" depends="">
+				<echo message="Packing jar ..." />
     			<jar destfile="GraphSketch1.jar"
          		basedir="build"
 				includes="**/*.class"
@@ -237,15 +78,10 @@
   		</target>
 
 		<target name="full" depends="compile, r">
-				<echo message="Full compilation." />
 		</target>
 
 		<target name="r" depends="jar">
 				<echo message="Executing ..." />
-				<exec executable="javafx">
-						<arg value="-jar" />
-						<arg value="GraphSketch1.jar" />
-						<arg value="GraphSketch1.Control.GraphSketch" />
-				</exec>
+				<java jar="GraphSketch1.jar" fork="true"/>
 		</target>
 </project>

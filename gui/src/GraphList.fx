@@ -18,10 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package GraphSketch1.Graph;
 
-//import javafx.ext.swing.*;
-//import javafx.scene.*;
-//import javafx.scene.paint.*;
-import javafx.gui.*;
+import javafx.ext.swing.*;
+import javafx.scene.*;
+import javafx.scene.paint.*;
 import java.lang.System;
 import java.io.File;
 
@@ -49,7 +48,7 @@ public class GraphList extends FlowPanel {
 		visible: true
 	}
 
-	attribute list: StatementList = StatementList {
+	public attribute list: StatementList = StatementList {
 		control: bind control
 		preferredSize: bind [this.width-10, this.height - 60]
 		visible: true
@@ -59,7 +58,7 @@ public class GraphList extends FlowPanel {
 
 	attribute addArgumentButton: Button = Button {
 		text: "add argument"
-		enabled: bind list.selectedItem <> null
+		enabled: bind list.selectedItem != null
 		action: function(): Void {
 			control.addArgumentToSelected();
 		}
@@ -72,11 +71,11 @@ public class GraphList extends FlowPanel {
 }
 
 public class StatementList extends List {
-	attribute control: AbstractGraphControl;
+	public attribute control: AbstractGraphControl;
 	attribute filter: String = "";
 
 	override attribute selectedItem = null on replace {
-		if (selectedItem <> null) {
+		if (selectedItem != null) {
 			control.unSelectGraph();
 			control.processSelection();
 		}
@@ -105,6 +104,6 @@ public class StatementList extends List {
 }
 
 public class StatementItem extends ListItem {
-	attribute statement: Statement;
+	public attribute statement: Statement;
 	attribute visible: Boolean = true;
 }

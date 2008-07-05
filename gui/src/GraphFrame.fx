@@ -18,9 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package GraphSketch1.Graph;
 
-//import javafx.ext.swing.*;
-//import javafx.scene.paint.*;
-import javafx.gui.*;
+import javafx.ext.swing.*;
+import javafx.scene.paint.*;
 import java.lang.System;
 import javax.swing.JFileChooser;
 import java.io.File;
@@ -38,10 +37,10 @@ import GraphSketch1.Control.AbstractGraphControl;
 
 public class GraphFrame extends Frame {
 	
-	attribute graph: Graph;
-	attribute layout: GraphLayout;
-	attribute control: AbstractGraphControl;
-	attribute argumentGraph: ArgumentGraph;
+	public attribute graph: Graph;
+	public attribute layout: GraphLayout;
+	public attribute control: AbstractGraphControl;
+	public attribute argumentGraph: ArgumentGraph;
 
 	private attribute showAlert: Boolean = false;
 	private attribute alertText: String = "";
@@ -53,7 +52,7 @@ public class GraphFrame extends Frame {
 	override attribute height = GC.appHeight;
 	override attribute background = Color.WHITE;
 
-	attribute view: GraphView = bind GraphView {
+	public attribute view: GraphView = bind GraphView {
 							graph: bind graph
 							layout: bind layout
 							visible: true
@@ -61,14 +60,14 @@ public class GraphFrame extends Frame {
 							//preferredSize: [scroll.width, scroll.height]
 					}
 
-	attribute edit: GraphEdit = GraphEdit {
+	public attribute edit: GraphEdit = GraphEdit {
 		visible: true
 		control: bind control
 		argumentGraph: bind argumentGraph
 		preferredSize: bind [GC.editWidth, this.height /2]
 	}
 
-	attribute list: GraphList = GraphList {
+	public attribute list: GraphList = GraphList {
 		visible: true
 		control: bind control
 		argumentGraph: bind argumentGraph

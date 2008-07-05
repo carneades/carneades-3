@@ -18,13 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package GraphSketch1.Graph;
 
-//import javafx.ext.swing.*;
-//import javafx.scene.*;
-import javafx.gui.*;
+import javafx.scene.CustomNode;
 import GraphSketch1.Graph.*;
 
 public abstract class GraphElement extends CustomNode {
-	attribute selected: Boolean = false;
+	public attribute selected: Boolean = false;
 	public static attribute currentIndex: Integer = 0;
 	public attribute index: Integer = newIndex();
 

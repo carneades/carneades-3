@@ -23,8 +23,8 @@ import java.lang.Object;
 import GraphSketch1.Graph.GC;
 
 abstract public class ProofStandard {
-	private attribute negated: Boolean = false;
-	private attribute complement: Boolean = false;
+	/*private*/ public attribute negated: Boolean = false;
+	/*private*/ public attribute complement: Boolean = false;
 	abstract function test (ag: ArgumentGraph, 
 	               pro: Argument[], 
 	               con: Argument[]): Boolean;
@@ -46,11 +46,11 @@ public class Statement {
    // Is URI referring inside the document, then do not resolve link
    // If it refers to something inside the document, otherwise give 
    // the wff in xml form. Label is always the ID!
-	private attribute value: String = "unknown";  // "true", "false", "unknown"
-	private attribute assumption: Boolean = false;
-	private attribute standard: ProofStandard = BestArgument {};
-	private attribute ok: Boolean = false;
-	private attribute updated : Boolean = false;
+	/*private*/ public attribute value: String = "unknown";  // "true", "false", "unknown"
+	/*private*/ public attribute assumption: Boolean = false;
+	/*private*/ public attribute standard: ProofStandard = BestArgument {};
+	/*private*/ public attribute ok: Boolean = false;
+	/*private*/ public attribute updated : Boolean = false;
 
 	public function acceptable () : Boolean { ok };
 
@@ -84,14 +84,10 @@ public class Statement {
 }
 
 public class Premise {
-	attribute statement: Statement;
-	attribute role: String = "";
-	attribute negative: Boolean = false;
-	attribute exception: Boolean = false;
-
-	public function switchType(): Void {
-		if (exception) { exception = false; } else { exception = true; }
-	}
+	public attribute statement: Statement;
+	public attribute role: String = "";
+	public attribute negative: Boolean = false;
+	public attribute exception: Boolean = false;
 }
 
 public class Scheme {
@@ -100,22 +96,22 @@ public class Scheme {
 }
 
 public class Argument {
-	attribute id: String;
-	attribute scheme: Scheme;
-	private attribute premises: Premise[];  
-	private attribute pro: Boolean = true;
-	private attribute conclusion: Statement;
-	private attribute ok: Boolean = false;  
-	private attribute updated : Boolean = false;
-	function allPremisesHold () : Boolean { ok }  // i.e "defensible"
+	public attribute id: String;
+	public attribute scheme: Scheme;
+	/*private*/ public attribute premises: Premise[];  
+	/*private*/ public attribute pro: Boolean = true;
+	/*private*/ public attribute conclusion: Statement;
+	/*private*/ public attribute ok: Boolean = false;  
+	/*private*/ public attribute updated : Boolean = false;
+	public function allPremisesHold () : Boolean { ok }  // i.e "defensible"
 
 }
 
 public class ArgumentGraph {
-	attribute id: String = "NewGraph";
-	attribute mainIssue: Statement; 
-	private attribute statements: Statement[];
-    private attribute arguments: Argument[];
+	public attribute id: String = "NewGraph";
+	public attribute mainIssue: Statement; 
+	/*private*/ public attribute statements: Statement[];
+    /*private*/ public attribute arguments: Argument[];
  
  	public function state (s: Statement) :  Void {
 		s.value = "unknown";
@@ -141,6 +137,35 @@ public class ArgumentGraph {
     	update();
     }
     
+	// set the id of statements and arguments
+	public function setStatementId(s: Statement, id: String): Void {
+		s.id = id;
+	}
+	
+	public function setArgumentId(a: Argument, id: String): Void {
+		a.id = id;
+	}
+
+	// set the wff of statements and arguments
+	public function setStatementWff(s: Statement, wff: String): Void {
+		s.wff = wff;
+	}
+
+	// set the role of premises
+	public function setPremiseRole(p: Premise, role: String): Void {
+		p.role = role;
+	}
+
+	// switch a premise's type
+	public function switchPremiseType(p: Premise): Void {
+		if (p.exception) { p.exception = false; } else { p.exception = true; }
+	}
+
+	// negate a premise
+	public function negatePremise(p: Premise): Void {
+		if (p.negative) { p.negative = false; } else { p.negative = true; }
+	}
+	
     // set the truth value of a statement to "true", "false" or "unknown"
     public function setTruthValue (s: Statement, v: String) : Void {
     	s.value = v;
@@ -347,8 +372,8 @@ public class ArgumentGraph {
 			(p.statement.value == "false" and p.negative)
 		} else {
 			// exception
-			(p.statement.value <> "true" and not p.negative) or
-			(p.statement.value <> "false" and p.negative)
+			(p.statement.value != "true" and not p.negative) or
+			(p.statement.value != "false" and p.negative)
 		}
 	}
 
@@ -382,7 +407,7 @@ public class ArgumentGraph {
 
 	// CYCLE CHECKING
 
-	private function noCycles(): Boolean {
+	public function noCycles(): Boolean {
 		var result: Boolean = true;
 		// checking is done for all statement nodes
 		var roots: Statement[] = [statements];

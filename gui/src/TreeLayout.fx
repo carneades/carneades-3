@@ -18,9 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package GraphSketch1.Graph;
 
-//import javafx.ext.swing.*;
-//import javafx.scene.paint.*;
-import javafx.gui.*;
+import javafx.ext.swing.*;
+import javafx.scene.paint.*;
 import GraphSketch1.Graph.*;
 import java.lang.System;
 import java.lang.Math;
@@ -46,7 +45,7 @@ public class TreeLayout extends GraphLayout {
 	private function setPriorities(v: Vertex):Void {
 		// Set child node drawing priorities
 		// right now: Simple child array index duplication
-		if (v.children <> null) {
+		if (v.children != null) {
 			for (i in [0 .. (sizeof v.children-1)]) {
 				v.children[i].priority = i;
 				setPriorities(v.children[i]);
@@ -57,7 +56,7 @@ public class TreeLayout extends GraphLayout {
 	private function getBottomLeft(v: Vertex):Vertex {
 		// to do: check for empty graph
 		var bottomLeft: Vertex = v;
-		while (bottomLeft.children <> null ) {
+		while (bottomLeft.children != null ) {
 			var next: Vertex;
 			for	(i in bottomLeft.children) {
 				if (i.priority == 0) {
@@ -93,7 +92,7 @@ public class TreeLayout extends GraphLayout {
 			} else {
 				if (d) debug("No sibling found ...");
 				// else do the parent if there is one
-				if (v.parentVertex <> null) {
+				if (v.parentVertex != null) {
 					if (d) debug("Attempting to size parent");
 					treeSize(v.parentVertex, true);
 				}
@@ -128,7 +127,7 @@ public class TreeLayout extends GraphLayout {
 				} else {
 					if (d) debug("No sibling found ...");
 					// else do the parent if there is one
-					if (v.parentVertex <> null) {
+					if (v.parentVertex != null) {
 						if (d) debug("Attempting to size parent");
 						treeSize(v.parentVertex, true);
 					}

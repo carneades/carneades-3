@@ -30,11 +30,6 @@ import java.net.URI;
 import GraphSketch1.Argument.Argument;
 import GraphSketch1.Argument.Argument.*;
 
-// XML validation imports
-import javax.xml.validation.Schema;
-import com.thaiopensource.relaxng.SchemaFactory;
-import org.xml.sax.InputSource;
-
 // helper issue class for file loading
 class Issue {
 	attribute statementId: String;
@@ -74,7 +69,7 @@ public class ArgumentFile {
 						name: "issues"
 						document: document
 						children: [
-							for (s in argumentGraph.statements where ((s.value <> "unknown") or 
+							for (s in argumentGraph.statements where ((s.value != "unknown") or 
 																		(s.assumption) or 
 																		not (s.standard instanceof DialecticalValidity))) {
 								Element {
@@ -211,8 +206,6 @@ public class ArgumentFile {
 		writer.write(output);
 
 		writer.close();
-
-
 
 		System.out.println(document);
 		

@@ -19,9 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package GraphSketch1.Control;
 
 // General Imports
-//import javafx.ext.swing.*;
-//import javafx.scene.paint.*;
-import javafx.gui.*;
+import javafx.ext.swing.*;
+import javafx.scene.paint.*;
 import java.lang.System;
 import java.io.File;
 
