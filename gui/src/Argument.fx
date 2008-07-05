@@ -159,11 +159,13 @@ public class ArgumentGraph {
 	// switch a premise's type
 	public function switchPremiseType(p: Premise): Void {
 		if (p.exception) { p.exception = false; } else { p.exception = true; }
+		update();
 	}
 
 	// negate a premise
 	public function negatePremise(p: Premise): Void {
 		if (p.negative) { p.negative = false; } else { p.negative = true; }
+		update();
 	}
 	
     // set the truth value of a statement to "true", "false" or "unknown"
