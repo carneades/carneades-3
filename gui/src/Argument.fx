@@ -311,7 +311,6 @@ public class ArgumentGraph {
 	// update the acceptability and defensibility of statements
 	// and arguments respectively.
 	private function update () : Void {
-		// System.out.println("update started");
 		var n = 2; // number of passes
 		// to do: not clear why multiple passes are needed
 		// one should be enough, but isn't
