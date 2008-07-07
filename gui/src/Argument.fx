@@ -24,8 +24,18 @@ import GraphSketch1.Graph.GC;
 import java.lang.System;
 
 abstract public class ProofStandard {
-	/*private*/ public attribute negated: Boolean = false;
-	/*private*/ public attribute complement: Boolean = false;
+	public attribute statement : Statement;  // backwards reference
+
+	public attribute negated: Boolean = false 
+		on replace {
+			statement.graph.update();
+		};
+
+	public attribute complement: Boolean = false
+		on replace {
+			statement.graph.update();
+		};
+		
 	abstract function test (ag: ArgumentGraph, 
 	               pro: Argument[], 
 	               con: Argument[]): Boolean;
@@ -42,16 +52,32 @@ abstract public class ProofStandard {
 }
 
 public class Statement {
-	public attribute id: String;  // key or label
-	public attribute wff: String; // is a URI
-   // Is URI referring inside the document, then do not resolve link
-   // If it refers to something inside the document, otherwise give 
-   // the wff in xml form. Label is always the ID!
-	/*private*/ public attribute value: String = "unknown";  // "true", "false", "unknown"
-	/*private*/ public attribute assumption: Boolean = false;
-	/*private*/ public attribute standard: ProofStandard = BestArgument {};
-	/*private*/ public attribute ok: Boolean = false;
-	/*private*/ public attribute updated : Boolean = false;
+	public attribute id: String;  // xsd:ID
+	public attribute wff: String; // The content model of the wff XML element
+	public attribute graph: ArgumentGraph; // backwards reference
+	
+	// value = "true", "false" or "unknown
+    public attribute value: String = "unknown"  
+    	on replace {
+    		graph.update();
+    	};
+    	
+	public attribute assumption: Boolean = false
+		on replace {
+			graph.update();
+		}
+		
+	public attribute standard: ProofStandard = BestArgument {}
+		on replace {
+			graph.update();
+		}
+	
+	// ok should be read only for other objects.  But we can't
+	// make it private because views need to bind to this variable
+	// and track changes to its value.
+	public attribute ok: Boolean = false;
+	
+	public attribute updated : Boolean = false;
 
 	public function acceptable () : Boolean { ok };
 
@@ -63,32 +89,78 @@ public class Statement {
 		value == "unknown" and assumption == false;
     }
     
+    public function assumedTrue () : Boolean {
+    	value == "true" and assumption == true;
+    }
+    
+    public function assumedFalse () : Boolean {
+    	value == "false" and assumption == true;
+    }
+    
     public function accepted () : Boolean {
-    	(value == "true") and (assumption == false);
+    	value == "true" and assumption == false;
     }
     
     public function rejected () : Boolean {
-    	(value == "false") and (assumption == false);
+    	value == "false" and assumption == false;
     }
-    
-    public function truthValue () : String { value }
-    public function truthValueAssumed () : Boolean { assumption }
-    public function proofStandard () : ProofStandard { standard }
     
 	public function status(): String {
 		if (stated()) "stated"
 		else if (questioned()) "questioned"
+		else if (assumedTrue()) "assumed true"
+		else if (assumedFalse()) "assumed false"
 		else if (rejected()) "rejected"
 		else if (accepted()) "accepted"
 		else "";
 	}
+	
+	public function state ():  Void {
+		value = "unknown";
+		assumption = true;
+	}
+	
+	public function question () : Void {
+    	value = "unknown";
+    	assumption = false;
+    }
+    
+    public function assume (v: Boolean) : Void {
+    	value = if (v) "true" else "false";
+    	assumption = true;
+    }
+    
+    public function decide (v: Boolean) : Void {
+    	value = if (v) "true" else "false";
+    	assumption = false;
+    }
+    
+    public function accept () : Void {
+		decide(true);
+	}
+	
+	public function reject () : Void {
+		decide(false);
+    }
 }
 
 public class Premise {
-	public attribute statement: Statement;
+	public attribute statement: Statement 
+		on replace {
+			statement.graph.update();
+		};
+		
 	public attribute role: String = "";
-	public attribute negative: Boolean = false;
-	public attribute exception: Boolean = false;
+	
+	public attribute negative: Boolean = false 
+		on replace {
+			statement.graph.update();
+		};
+		
+	public attribute exception: Boolean = false
+		on replace {
+			statement.graph.update();
+		};
 }
 
 public class Scheme {
@@ -98,113 +170,47 @@ public class Scheme {
 
 public class Argument {
 	public attribute id: String;
+	public attribute graph : ArgumentGraph;  
 	public attribute scheme: Scheme;
-	/*private*/ public attribute premises: Premise[];  
-	/*private*/ public attribute pro: Boolean = true;
-	/*private*/ public attribute conclusion: Statement;
-	/*private*/ public attribute ok: Boolean = false;  
-	/*private*/ public attribute updated : Boolean = false;
-	public function allPremisesHold () : Boolean { ok }  // i.e "defensible"
-
+    public attribute premises: Premise[] 
+    	on replace {
+    		graph.update();
+    	};
+    	
+	public attribute pro: Boolean = true 
+		on replace {
+			graph.update();
+		};
+	
+	public attribute conclusion: Statement 
+		on replace {	
+			graph.update();
+		}
+	
+	// ok should be read only for other objects.  But we can't
+	// make it private because views need to bind to this variable
+	// and track changes to its value.
+	public attribute ok: Boolean = false;  
+	
+	public attribute updated : Boolean = false;
+	public function allPremisesHold () : Boolean { ok } 
+	public function defensible () : Boolean { allPremisesHold(); }
 }
 
 public class ArgumentGraph {
-	public attribute id: String = "NewGraph";
-	public attribute mainIssue: Statement; 
-	/*private*/ public attribute statements: Statement[];
-    /*private*/ public attribute arguments: Argument[];
- 
- 	public function state (s: Statement) :  Void {
-		s.value = "unknown";
-		s.assumption = true;
-		update();
-	}
-	
-	public function question (s: Statement) : Void {
-    	s.value = "unknown";
-    	s.assumption = false;
-    	update();
-    }
-    
-    public function accept (s: Statement) : Void {
-		s.value = "true";
-		s.assumption = false;
-		update();
-	}
-	
-	public function reject (s: Statement) : Void {
-    	s.value = "false";
-    	s.assumption = false;
-    	update();
-    }
-    
-	// set the id of statements and arguments
-	public function setStatementId(s: Statement, id: String): Void {
-		s.id = id;
-	}
-	
-	public function setArgumentId(a: Argument, id: String): Void {
-		a.id = id;
-	}
+	 public attribute id: String = "NewGraph";
+	 public attribute mainIssue: Statement; 
+	 
+	 public attribute statements: Statement[] 
+	 	on replace {
+	 		update();
+	 	};
 
-	// set the wff of statements and arguments
-	public function setStatementWff(s: Statement, wff: String): Void {
-		s.wff = wff;
-	}
+     public attribute arguments: Argument[]
+     	on replace {
+     		update();
+     	};
 
-	// set the role of premises
-	public function setPremiseRole(p: Premise, role: String): Void {
-		p.role = role;
-	}
-
-	// switch a premise's type
-	public function switchPremiseType(p: Premise): Void {
-		if (p.exception) { p.exception = false; } else { p.exception = true; }
-		update();
-	}
-
-	// negate a premise
-	public function negatePremise(p: Premise): Void {
-		if (p.negative) { p.negative = false; } else { p.negative = true; }
-		update();
-	}
-	
-    // set the truth value of a statement to "true", "false" or "unknown"
-    public function setTruthValue (s: Statement, v: String) : Void {
-    	s.value = v;
-    	update();
-    }
-    
-    public function setTruthValueAssumed (s: Statement, v: Boolean) : Void {
-    	s.assumption = v;
-    	update();
-    }
-    
-    // assume the truth value of a statement to be "true", "false" or "unknown"
-    public function assume (s: Statement, v: String) : Void {
-    	s.value = v;
-    	s.assumption = true;
-    	update();
-    }
-    
-    public function setProofStandard (s: Statement, p: ProofStandard) : Void {
-    	s.standard = p;
-    	update();
-    }
-    
-    
-    public function negateProofStandard (s: Statement) : Void {
-    	s.standard.negated = not s.standard.negated;
-    	update();
-    }
-    
-    public function complementProofStandard (s: Statement) : Void {
-    	s.standard.complement = not s.standard.complement;
-    	update();
-    }
-    
-
-	
     // Issues of XML format not needed, since the 
     // statements here have all the attributes of issues.
 
@@ -239,7 +245,6 @@ public class ArgumentGraph {
 			result = GC.AG_DOUBLE_ID;
 		}
 
-		update();
 		return result;
 	}
 
@@ -248,7 +253,6 @@ public class ArgumentGraph {
 
 		// todo: remove possible premises leading to the statement.
 		// todo: put the statement into the "trash" and allow a final deletion later.
-		update();
 	}
 
 	public function insertArgument (arg: Argument) : Number {
@@ -269,7 +273,6 @@ public class ArgumentGraph {
 			if (0 == sizeof(statements[s | s == arg.conclusion])) {
 				insert arg.conclusion into statements;
 			}
-			update();
 		} else {
 			result = GC.AG_CYCLE;
 		}
@@ -279,39 +282,29 @@ public class ArgumentGraph {
 
 	public function deleteArgument (arg: Argument) : Void {
 		delete arg from arguments;
-		// to do: what should happen to statements not used 
-		// in other arguments?  Should they be deleted from
-		// the graph?  How can this be efficiently determined?
-		// Reference counting?
-		update();
 	}
 
     public function switchDirection (arg: Argument): Void {
 		arg.pro = not arg.pro;
-		update();
 	}
 	
 	public function setConclusion (arg: Argument, s: Statement) : Void {
 		arg.conclusion = s;
-		update();
 	}
 	
 	public function addPremise (p: Premise, a: Argument) : Number {
 		insert p into a.premises;
 		insert p.statement into statements;
-		update();
 		return GC.AG_OK;
 	}
 
 	public function appendPremise (p: Premise, a: Argument) : Number {
 		insert p into a.premises;
-		update();
 		return GC.AG_OK;
 	}
 
 	public function deletePremise (p: Premise, a: Argument) : Number {
 		delete p from a.premises;
-		update();
 		return GC.AG_OK;
 	}
 	
