@@ -362,7 +362,7 @@ public class ArgumentFile {
 							var statement: Statement;
 							var negative: Boolean = false;
 							var role: String = "";
-							var type: String = "ordinary";
+							var exception: Boolean = false;
 
 							for (i in (p as Element).attributes) {
 								if (i.name == "polarity") {
@@ -374,7 +374,7 @@ public class ArgumentFile {
 									var temp = for (s in argumentGraph.statements where s.id == i.value) { s };
 									statement = temp[0];
 								}
-								if (i.name == "type") { type = i.name; }
+								if (i.name == "exception") { if (i.value == "true") { exception = true } else { exception = false; } }
 							} // attributes
 							
 							var newPremise: Premise;
@@ -383,6 +383,7 @@ public class ArgumentFile {
 								statement: statement
 								negative: negative
 								role: role
+								exception: exception
 							}
 
 							insert newPremise into premises;

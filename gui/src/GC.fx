@@ -56,7 +56,7 @@ public class GC {
 
 	// Application constants
 	public static attribute appWidth = 1000;
-	public static attribute appHeight = 650;
+	public static attribute appHeight = 700;
 
 	// Layout constants
 	public static attribute xOffset = appWidth / 2;
@@ -79,9 +79,9 @@ public class GC {
 
 	// Edit window constants
 	public static attribute editWidth: Integer = 300;
-	public static attribute editHeight: Integer = 350;
+	public static attribute editHeight: Integer = 380;
 	public static attribute listHeight: Integer = 300;
-	public static attribute editLabelWidth: Integer = 80;
+	public static attribute editLabelWidth: Integer = 100;
 
 
 	public static function p(s: String) { System.out.println(s)}
