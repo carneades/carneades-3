@@ -179,13 +179,13 @@ public class AddPremiseCommand extends UndoableCommand {
 	}
 
 	public function do(): Number {
-		argumentGraph.addPremise(premise, argument);
+		argument.addPremise(premise);
 		return GC.C_OK;
 	}
 
 	public function undo(): Number {
 		argumentGraph.deleteStatement(premise.statement);
-		argumentGraph.deletePremise(premise, argument);
+		argument.deletePremise(premise);
 		return GC.C_OK;
 	}
 }
@@ -227,14 +227,14 @@ public class DeleteConclusionCommand extends UndoableCommand {
 	public attribute childArguments: Argument[];
 	
 	public function do(): Number {
-		argumentGraph.deletePremise(premise, motherArgument);
+		motherArgument.deletePremise(premise);
 		for (c in childArguments) argumentGraph.deleteArgument(c);
 		return GC.C_OK;
 	}
 
 	public function undo(): Number {
 		for (c in childArguments) argumentGraph.insertArgument(c);
-		argumentGraph.addPremise(premise, motherArgument);
+		motherArgument.addPremise(premise);
 		return GC.C_OK;
 	}
 }
@@ -244,12 +244,12 @@ public class DeletePremiseCommand extends UndoableCommand {
 	public attribute argument: Argument;
 
 	public function do(): Number {	
-		argumentGraph.deletePremise(premise, argument);
+		argument.deletePremise(premise);
 		return GC.C_OK;
 	}
 
 	public function undo(): Number {
-		argumentGraph.addPremise(premise, argument);
+		argument.addPremise(premise);
 		return GC.C_OK;
 	}
 }
@@ -261,17 +261,17 @@ public class MovePremiseCommand extends UndoableCommand {
 
 	public function do(): Number {
 		// 1. remove premise from argument
-		argumentGraph.deletePremise(premise, oldArgument);
+		oldArgument.deletePremise(premise);
 		// 2. add premise to new node
-		argumentGraph.appendPremise(premise, newArgument);
+		newArgument.appendPremise(premise);
 		return GC.C_OK;
 	}
 
 	public function undo(): Number {
 		// 1. remove premise from argument
-		argumentGraph.deletePremise(premise, newArgument);
+		newArgument.deletePremise(premise);
 		// 2. add premise to old node
-		argumentGraph.appendPremise(premise, oldArgument);
+		oldArgument.appendPremise(premise);
 		return GC.C_OK;
 	}
 }
@@ -296,6 +296,9 @@ public class MoveArgumentCommand extends UndoableCommand {
 // ATTRIBUTE MODIFICATION COMMANDS
 
 // for statements
+
+/*
+// The two commands below are potentially obsolete ...
 
 public class NegateStatementAssumptionCommand extends UndoableCommand {
 
@@ -329,10 +332,12 @@ public class ChangeStatementValueCommand extends UndoableCommand {
 	}
 
 	public function undo(): Number {
-		argumentGraph.setTruthValue(statement,oldValue);
+		argumentGraph.setTruthValue(statement,oldValue3);
 		return GC.C_OK;
 	}
 }
+
+*/
 
 public class ChangeStatementStatusCommand extends UndoableCommand {
 
@@ -344,26 +349,34 @@ public class ChangeStatementStatusCommand extends UndoableCommand {
 		
 		oldStatus = statement.status();
 		if (newStatus == "stated") { 
-			argumentGraph.state(statement); 
+			statement.state();
 		} else if (newStatus == "questioned") { 
-			argumentGraph.question(statement); 
+			statement.question();
 		} else if (newStatus == "rejected") { 
-			argumentGraph.reject(statement); 
+			statement.reject();
 		} else if (newStatus == "accepted") { 
-			argumentGraph.accept(statement); 
+			statement.accept();
+		} else if (newStatus == "assumed true") { 
+			statement.assume(true); 
+		} else if (newStatus == "assumed false") { 
+			statement.assume(false); 
 		}
 		return GC.C_OK;
 	}
 
 	public function undo(): Number {
 		if (oldStatus == "stated") { 
-			argumentGraph.state(statement); 
+			statement.state();
 		} else if (oldStatus == "questioned") { 
-			argumentGraph.question(statement); 
+			statement.question();
 		} else if (oldStatus == "rejected") { 
-			argumentGraph.reject(statement); 
+			statement.reject();
 		} else if (oldStatus == "accepted") { 
-			argumentGraph.accept(statement); 
+			statement.accept();
+		} else if (oldStatus == "assumed true") { 
+			statement.assume(true); 
+		} else if (oldStatus == "assumed false") { 
+			statement.assume(false);
 		}
 		return GC.C_OK;
 	}
@@ -377,12 +390,14 @@ public class ChangeStatementIdCommand extends UndoableCommand {
 
 	public function do(): Number {
 		oldId = statement.id;
-		argumentGraph.setStatementId(statement, id);
+		statement.id = id;
+		//argumentGraph.setStatementId(statement, id);
 		return GC.C_OK;
 	}
 
 	public function undo(): Number {
-		argumentGraph.setStatementId(statement, oldId);
+		statement.id = oldId;
+		//argumentGraph.setStatementId(statement, oldId);
 		return GC.C_OK;
 	}
 }
@@ -395,12 +410,14 @@ public class ChangeStatementWffCommand extends UndoableCommand {
 
 	public function do(): Number {
 		oldWff = statement.wff;
-		argumentGraph.setStatementWff(statement, wff);
+		statement.wff = wff;
+		//argumentGraph.setStatementWff(statement, wff);
 		return GC.C_OK;
 	}
 
 	public function undo(): Number {
-		argumentGraph.setStatementWff(statement, oldWff);
+		//argumentGraph.setStatementWff(statement, oldWff);
+		statement.wff = oldWff;
 		return GC.C_OK;
 	}
 }
@@ -430,12 +447,14 @@ public class ChangeStatementStandardCommand extends UndoableCommand {
 			};
 		}
 		// Set new Standard
-		argumentGraph.setProofStandard(statement, standard);
+		statement.standard = standard;
+		//argumentGraph.setProofStandard(statement, standard);
 		return GC.C_OK;
 	}
 
 	public function undo(): Number {
-		argumentGraph.setProofStandard(statement,oldStandard);
+		//argumentGraph.setProofStandard(statement,oldStandard);
+		statement.standard = oldStandard;
 		return GC.C_OK;
 	}
 }
@@ -450,12 +469,14 @@ public class ChangeArgumentIdCommand extends UndoableCommand {
 
 	public function do(): Number {
 		oldId = argument.id;
-		argumentGraph.setArgumentId(argument, id);
+		argument.id = id;
+		//argumentGraph.setArgumentId(argument, id);
 		return GC.C_OK;
 	}
 
 	public function undo(): Number {
-		argumentGraph.setArgumentId(argument, oldId);
+		//argumentGraph.setArgumentId(argument, oldId);
+		argument.id = oldId;
 		return GC.C_OK;
 	}
 }
@@ -465,12 +486,12 @@ public class ChangeArgumentDirectionCommand extends UndoableCommand {
 	public attribute argument: Argument;
 
 	public function do(): Number {
-		argumentGraph.switchDirection(argument);
+		argument.switchDirection();
 		return GC.C_OK;
 	}
 
 	public function undo(): Number {
-		argumentGraph.switchDirection(argument);
+		argument.switchDirection();
 		return GC.C_OK;
 	}
 }
@@ -485,12 +506,14 @@ public class ChangePremiseRoleCommand extends UndoableCommand {
 
 	public function do(): Number {
 		oldRole = premise.role;
-		argumentGraph.setPremiseRole(premise, role);
+		premise.role = role;
+		//argumentGraph.setPremiseRole(premise, role);
 		return GC.C_OK;
 	}
 
 	public function undo(): Number {
-		argumentGraph.setPremiseRole(premise, oldRole);
+		//argumentGraph.setPremiseRole(premise, oldRole);
+		premise.role = oldRole;
 		return GC.C_OK;
 	}
 }
@@ -500,12 +523,14 @@ public class NegatePremiseCommand extends UndoableCommand {
 	public attribute premise: Premise;
 
 	public function do(): Number {
-		argumentGraph.negatePremise(premise);
+		//argumentGraph.negatePremise(premise);
+		if (premise.negative) { premise.negative = false } else { premise.negative = true }
 		return GC.C_OK;
 	}
 
 	public function undo(): Number {
-		argumentGraph.negatePremise(premise);
+		//argumentGraph.negatePremise(premise);
+		if (premise.negative) { premise.negative = false } else { premise.negative = true }
 		return GC.C_OK;
 	}
 }
@@ -515,12 +540,13 @@ public class ChangePremiseTypeCommand extends UndoableCommand {
 	public attribute premise: Premise;
 
 	public function do(): Number {
-		argumentGraph.switchPremiseType(premise);
+		if (premise.exception) { premise.exception = false } else { premise.exception = true }
+		//argumentGraph.switchPremiseType(premise);
 		return GC.C_OK;
 	}
 
 	public function undo(): Number {
-		argumentGraph.switchPremiseType(premise);
+		//argumentGraph.switchPremiseType(premise);
 		return GC.C_OK;
 	}
 }

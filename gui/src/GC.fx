@@ -78,9 +78,10 @@ public class GC {
 	public static attribute C_LATEST_COMMAND: Number = 3;
 
 	// Edit window constants
-	public static attribute editWidth: Integer = 200;
+	public static attribute editWidth: Integer = 300;
 	public static attribute editHeight: Integer = 300;
 	public static attribute listHeight: Integer = 300;
+	public static attribute editLabelWidth: Integer = 80;
 
 
 	public static function p(s: String) { System.out.println(s)}

@@ -53,7 +53,7 @@ public class GraphList extends FlowPanel {
 		preferredSize: bind [this.width-10, this.height - 60]
 		visible: true
 		statements: bind argumentGraph.statements
-		filter: bind input.text
+		filter: bind input.text.toLowerCase()
 	}
 
 	attribute addArgumentButton: Button = Button {
@@ -84,7 +84,7 @@ public class StatementList extends List {
 	attribute statements: Statement[];
 
 	override attribute items = bind [ 
-									for (s in statements where (matches(filter, s.id) or matches(filter, s.wff))) {
+									for (s in statements where (matches(filter, s.id.toLowerCase()) or matches(filter, s.wff.toLowerCase()))) {
 									 	StatementItem {
 											statement: s
 											text: bind "{s.id}"

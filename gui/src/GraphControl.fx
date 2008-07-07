@@ -457,20 +457,6 @@ public class GraphControl extends AbstractGraphControl {
 
 	// for statements
 
-
-	public function changeStatementAssumption(s: Statement, v: String): Void {
-		var value = { if (v == "true") true else false };
-		if (s.assumption != value) {
-			commands.do(
-				NegateStatementAssumptionCommand {
-					argumentGraph: argumentGraph
-					statement: s
-				}
-			);
-		}
-		updateAll();
-	}
-
 	public function changeStatementId(s: Statement, id: String): Void {
 		var admissible: Boolean = true;
 
@@ -521,19 +507,6 @@ public class GraphControl extends AbstractGraphControl {
 				newStatus: v
 			}
 		);
-		updateAll();
-	};
-
-	public function changeStatementValue(s: Statement, v: String): Void {
-		if (v == "true" or v == "false" or v == "unknown") {
-			commands.do(
-				ChangeStatementValueCommand {
-					argumentGraph: argumentGraph
-					statement: s
-					newValue: v
-				}
-			);
-		}
 		updateAll();
 	};
 

@@ -117,8 +117,7 @@ public class ArgumentBox extends ArgumentElement {
 public class StatementBox extends ArgumentElement {
 	public attribute statement: Statement;
 	override attribute caption = bind statement.id;
-	override attribute fill = bind {if (statement.assumption 
-										or statement.ok 
+	override attribute fill = bind {if ( statement.ok 
 										or statement.value == "true") Color.LIGHTGREY else Color.WHITE};
 	
 	public function create():Node {
