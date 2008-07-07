@@ -132,41 +132,6 @@ public class StatementEditPanel extends EditPanel {
 		}
 	}
 
-	public attribute assumptionBox: BooleanField = BooleanField {
-		action: function(): Void {
-			if (assumptionBox.verified) { 
-				control.changeStatementAssumption(statement, assumptionBox.text); 
-				// update the other two fields.
-				statusBox.update();
-				valueBox.text = statement.value;
-			}
-		}
-	}
-
-	public attribute valueBox: ValueField = ValueField {
-		preferredSize: [100, 20]
-		action: function(): Void {
-			if (valueBox.verified) { 
-				control.changeStatementValue(statement, valueBox.text); 
-				// update the other two fields.
-				statusBox.update();
-				assumptionBox.text = {if (statement.assumption) "true" else "false"};
-			}
-		}
-	}
-
-	public attribute statusBox: StatusField = StatusField {
-		preferredSize: [120, 20];
-		action: function(): Void {
-			if (statusBox.verified) { 
-				control.changeStatementStatus(statement, statusBox.text); 
-				// update the other two fields.
-				valueBox.text = statement.value;
-				assumptionBox.text = {if (statement.assumption) "true" else "false"};
-			}
-		}
-	}
-
 	public attribute acceptableLabel: Label = Label {
 		text: bind {if (statement.ok) "true" else "false" }
 		foreground: bind {if (statement.ok) Color.DARKGREEN else Color.DARKRED }
@@ -176,6 +141,39 @@ public class StatementEditPanel extends EditPanel {
 		action: function(): Void {
 			submitStandard();
 		}
+	}
+	
+	private attribute statusGroup: ToggleGroup = ToggleGroup {};
+
+	private attribute statedButton: RadioButton = RadioButton {
+		text: "stated"
+		toggleGroup: statusGroup
+		preferredSize: [ GC.editWidth - GC.editLabelWidth - 10, 20 ]
+	}
+	private attribute questionedButton: RadioButton = RadioButton {
+		text: "questioned"
+		toggleGroup: statusGroup
+		preferredSize: [ GC.editWidth - GC.editLabelWidth - 10, 20 ]
+	}
+	private attribute assumedTrueButton: RadioButton = RadioButton {
+		text: "assumed true"
+		toggleGroup: statusGroup
+		preferredSize: [ GC.editWidth - GC.editLabelWidth - 10, 20 ]
+	}
+	private attribute assumedFalseButton: RadioButton = RadioButton {
+		text: "assumed false"
+		toggleGroup: statusGroup
+		preferredSize: [ GC.editWidth - GC.editLabelWidth - 10, 20 ]
+	}
+	private attribute acceptedButton: RadioButton = RadioButton {
+		text: "accepted"
+		toggleGroup: statusGroup
+		preferredSize: [ GC.editWidth - GC.editLabelWidth - 10, 20 ]
+	}
+	private attribute rejectedButton: RadioButton = RadioButton {
+		text: "rejected"
+		toggleGroup: statusGroup
+		preferredSize: [ GC.editWidth - GC.editLabelWidth - 10, 20 ]
 	}
 
 	// temporary function to submit a new Proof Standard
@@ -191,9 +189,12 @@ public class StatementEditPanel extends EditPanel {
 	override attribute content = bind [ 
 										Label { text: "id: " }, idField, 
 										Label { text: "wff: " }, contentField,
-										Label { text: "Value: " }, valueBox,
-										Label { text: "Assumption: " }, assumptionBox,
-										Label { text: "Status: " }, statusBox,
+										Label { text: "status ", preferredSize: [GC.editLabelWidth, 20] }, statedButton, 
+										Label { text: "", preferredSize: [GC.editLabelWidth, 20] }, questionedButton, 
+										Label { text: "", preferredSize: [GC.editLabelWidth, 20] }, assumedTrueButton, 
+										Label { text: "", preferredSize: [GC.editLabelWidth, 20] }, assumedFalseButton, 
+										Label { text: "", preferredSize: [GC.editLabelWidth, 20] }, acceptedButton, 
+										Label { text: "", preferredSize: [GC.editLabelWidth, 20] }, rejectedButton, 
 										Label { text: "Acceptable: " }, acceptableLabel,
 										Label { text: "Standard of Proof:       "},
 										Label { text: "Standard: " }, proofStandardBox,
@@ -207,13 +208,6 @@ public class StatementEditPanel extends EditPanel {
 		statement = s;
 		idField.text = s.id;
 		contentField.text = s.wff;
-		//valueBox.value = s.value;
-		valueBox.text = s.value;
-		//assumptionBox.value = s.assumption;
-		assumptionBox.text = {if (s.assumption) "true" else "false"};
-		//statusBox.statement = s;
-		statusBox.statement = s;
-		statusBox.update();
 		negatedBox.text = {if (s.standard.negated) "true" else "false"};
 		complementBox.text = {if (s.standard.complement) "true" else "false"};
 		proofStandardBox.text = { 	if (s.standard instanceof DialecticalValidity) "DV"
@@ -484,7 +478,4 @@ class DirectionField extends LimitedTextField {
 	override attribute preferredSize = [100, 20];
 	override attribute choices = [ "pro", "con" ];
 }
-
-
-
 
