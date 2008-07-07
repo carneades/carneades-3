@@ -1,36 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <lkif>
-  <argument-graph id="SocratesGraph">
+  <argument-graph id="NewGraph">
     <issues>
-      <issue assumption="true" statement="mortality" value="unknown"/>
-      <issue assumption="false" statement="Socrates" value="unknown"/>
-      <issue assumption="true" statement="everyoneDies" value="unknown"/>
-      <issue assumption="false" statement="apeException" value="unknown"/>
+      <issue assumption="false" standard="BA" statement="SocratesMortality" value="unknown"/>
+      <issue assumption="false" standard="BA" statement="mortality" value="unknown"/>
+      <issue assumption="false" standard="BA" statement="SocratesHuman" value="unknown"/>
+      <issue assumption="false" standard="BA" statement="humanHands" value="unknown"/>
+      <issue assumption="false" standard="BA" statement="SocratesHands" value="unknown"/>
+      <issue assumption="false" standard="BA" statement="everyoneDies" value="unknown"/>
+      <issue assumption="false" standard="BA" statement="apeException" value="unknown"/>
+      <issue assumption="false" standard="BA" statement="SocratesApe" value="unknown"/>
     </issues>
     <statements>
       <s id="SocratesMortality">Socrates is mortal.</s>
       <s id="mortality">Humans are mortal.</s>
-      <s id="Socrates">Socrates is human.</s>
+      <s id="SocratesHuman">Socrates is human.</s>
       <s id="humanHands">Humans have hands.</s>
       <s id="SocratesHands">Socrates has hands.</s>
       <s id="everyoneDies">No man has lived forever.</s>
-      <s id="apeException">Apes have hands but are no humans.</s>
-      <s id="SocratesNoApe">Socrates is no ape.</s>
+      <s id="apeException">Apes have hands but are not humans.</s>
+      <s id="SocratesApe">Socrates is an ape.</s>
     </statements>
     <arguments>
       <argument direction="pro" id="a1" scheme="">
         <conclusion statement="SocratesMortality"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="mortality"/>
-          <premise exception="false" polarity="positive" role="" statement="Socrates"/>
+          <premise exception="false" polarity="positive" role="" statement="SocratesHuman"/>
         </premises>
       </argument>
       <argument direction="pro" id="a2" scheme="">
-        <conclusion statement="Socrates"/>
+        <conclusion statement="SocratesHuman"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="humanHands"/>
           <premise exception="false" polarity="positive" role="" statement="SocratesHands"/>
-          <premise exception="false" polarity="positive" role="" statement="apeException"/>
+          <premise exception="true" polarity="positive" role="" statement="apeException"/>
         </premises>
       </argument>
       <argument direction="pro" id="a3" scheme="">
@@ -42,7 +46,7 @@
       <argument direction="con" id="a4" scheme="">
         <conclusion statement="apeException"/>
         <premises>
-          <premise exception="false" polarity="positive" role="" statement="SocratesNoApe"/>
+          <premise exception="false" polarity="positive" role="" statement="SocratesApe"/>
         </premises>
       </argument>
     </arguments>

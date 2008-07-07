@@ -21,6 +21,7 @@ package GraphSketch1.Argument;
 import java.lang.Object;
 // import constants
 import GraphSketch1.Graph.GC;
+import java.lang.System;
 
 abstract public class ProofStandard {
 	/*private*/ public attribute negated: Boolean = false;
@@ -75,11 +76,11 @@ public class Statement {
     public function proofStandard () : ProofStandard { standard }
     
 	public function status(): String {
-		return {	if (stated()) "stated"
-					else if (questioned()) "questioned"
-					else if (rejected()) "rejected"
-					else if (accepted()) "accepted"
-					else ""};
+		if (stated()) "stated"
+		else if (questioned()) "questioned"
+		else if (rejected()) "rejected"
+		else if (accepted()) "accepted"
+		else "";
 	}
 }
 
@@ -317,13 +318,18 @@ public class ArgumentGraph {
 	// update the acceptability and defensibility of statements
 	// and arguments respectively.
 	private function update () : Void {
-	    // first set all statements and arguments to not updated
-		for (s in statements) {	s.updated = false; }
-		for (arg in arguments) { arg.updated = false; }
+		var n = 2; // number of passes
+		// to do: not clear why multiple passes are needed
+		// one should be enough, but isn't
+		for (i in [1..n]) {
+	    	// first set all statements and arguments to not updated
+			for (s in statements) {	s.updated = false; }
+			for (arg in arguments) { arg.updated = false; }
 		
-		// update the statements and arguments
-		for (s in statements) { acceptable(s); }
-		for (arg in arguments) { allPremisesHold(arg); }
+			// update the statements and arguments
+			for (s in statements) { acceptable(s); }
+			for (arg in arguments) { allPremisesHold(arg); }
+		}
 	}
 	
 	function pro (s: Statement) : Argument[] {
@@ -349,6 +355,15 @@ public class ArgumentGraph {
 			}
 		}
 	}
+	
+	// Check whether the complement of a statement would be acceptable,
+	// which is the case if its proof standard is satisfied when 
+	// the roles of the pro and con arguments are reversed.  Unlike 
+	// acceptable(), this function is side-effect free.  It doesn't
+	// update the statement.
+	public function complementAcceptable (s: Statement) : Boolean {
+		s.standard.satisfied(this,con(s),pro(s)) 
+	}
 
 	public function allPremisesHold (a: Argument): Boolean {
 		if (a.updated) {
@@ -367,15 +382,27 @@ public class ArgumentGraph {
 	}
 
 	public function holds (p: Premise): Boolean {
-		acceptable(p.statement);  // check and update if necessary
-		if (not p.exception) {
-			// ordinary premise
-			(p.statement.value == "true" and not p.negative) or
-			(p.statement.value == "false" and p.negative)
+		if (not p.exception) {    // ordinary premise
+			if (not p.negative) { // positive premise
+				p.statement.value == "true" or
+				(p.statement.value == "unknown" and
+				acceptable(p.statement))
+			} else {             // negative premise
+				p.statement.value == "false" or
+				(p.statement.value == "unknown" and 
+				complementAcceptable(p.statement))
+			}
 		} else {
 			// exception
-			(p.statement.value != "true" and not p.negative) or
-			(p.statement.value != "false" and p.negative)
+			if (not p.negative) { // positive exception
+				p.statement.value == "false" or
+				(p.statement.value == "unknown" and
+				 not acceptable(p.statement))
+			} else {              // negative exception
+				p.statement.value == "true" or
+				(p.statement.value == "unknown" and
+				 not complementAcceptable(p.statement))
+			}
 		}
 	}
 
