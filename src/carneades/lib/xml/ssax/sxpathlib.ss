@@ -48,7 +48,6 @@
          (carneades lib xml ssax common)
          (carneades lib xml ssax myenv)
          (carneades lib xml ssax util)
-         (carneades lib xml ssax atcomp)
          (only (carneades lib srfi strings) string-prefix?)
          (only (carneades system) pretty-print))
  
@@ -168,7 +167,7 @@
         (not (memq (car obj) 
                    ; '(@ @@ *PI* *COMMENT* *ENTITY* *NAMESPACES*)
                    ; the line above is a workaround for old SXML
-                   `(,(at) ,(dat) *PI* *COMMENT* *ENTITY*)))))
+                   `(^ ^^ *PI* *COMMENT* *ENTITY*)))))
  
  ; The function ntype-names?? takes a list of acceptable node names as a
  ; criterion and returns a function, which, when applied to a node,
@@ -214,7 +213,7 @@
    (lambda (node)
      (and (pair? node)
           (not (memq (car node) 
-                     `(,(at) ,(dat) *PI* *COMMENT* *ENTITY*)))
+                     `(^ ^^ *PI* *COMMENT* *ENTITY*)))
           (let ((nm (symbol->string (car node))))
             (cond 
               ((string-rindex nm #\:)	   
@@ -477,7 +476,7 @@
  (define (sxml:node? node)
    (not (and 
          (pair? node)
-         (memq (car node) (list (at) (dat))))))
+         (memq (car node) '(^ ^^)))))
  
  ; Returns the list of attributes for a given SXML node
  ; Empty list is returned if the given node os not an element,
@@ -486,7 +485,7 @@
    (if (and  (sxml:element? obj) 
              (not (null? (cdr obj)))
              (pair? (cadr obj)) 
-             (eq? (at) (caadr obj)))
+             (eq? '^ (caadr obj)))
        (cdadr obj)
        '()))
  

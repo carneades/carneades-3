@@ -71,7 +71,6 @@
          (carneades lib xml ssax input-parse)
          (carneades lib xml ssax look-for-str)
          (carneades lib xml ssax char-encoding)
-         (carneades lib xml ssax atcomp)
          (only (carneades lib srfi strings)
                string-index
                string-concatenate/shared
@@ -798,7 +797,7 @@
                                                   (RES-NAME->SXML elem-gi))
                                               (if (null? attrs)
                                                   seed 
-                                                  (cons (cons (at) attrs) seed)))
+                                                  (cons (cons '^ attrs) seed)))
                                         parent-seed)))
                               CHAR-DATA-HANDLER
                               (lambda (string1 string2 seed)
@@ -820,7 +819,7 @@
                              port (quote ())))))
        (cons (quote *TOP*) (if (null? namespace-prefix-assig)
                                result
-                               (cons (list (at)
+                               (cons (list '^
                                            (cons (quote *NAMESPACES*)
                                                  (map (lambda (ns)
                                                         (list (car ns) (cdr ns)))

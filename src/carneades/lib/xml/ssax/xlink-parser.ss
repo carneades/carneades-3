@@ -92,7 +92,7 @@
          (carneades lib xml ssax util)
          (carneades lib xml ssax access-remote)
          (carneades lib xml ssax sxpathlib)
-         (carneades lib xml ssax atcomp))
+         )
  
  ;; Parser for XML documents that contain XLink elements
  ;
@@ -676,7 +676,7 @@
  ;  namespace-uri - a string
  ; An 'xlink-values' datatype is returned
  (define (xlink:read-SXML-attributes element ns-prefixes)
-   (let ((attr-node ((select-kids (ntype?? (at))) element)))
+   (let ((attr-node ((select-kids (ntype?? '^)) element)))
      (if
       (null? attr-node)  ; no attributes
       (xlink:construct-xlink-values #f #f #f #f #f #f #f #f #f #f)
@@ -1083,7 +1083,7 @@
  ; #f is returned if there is no "@@/uri" subtree in the document
  (define (xlink:get-uri doc)
    (let ((nodeset ((select-kids (ntype?? 'uri))
-                   ((select-kids (ntype?? (dat))) doc))))
+                   ((select-kids (ntype?? '^^)) doc))))
      (if (null? nodeset)  ; there is no "@@/uri" subtree
          #f
          (cadar nodeset))))
@@ -1280,7 +1280,7 @@
                      (xlink:none-end seed new-seed node))))))))))
      (let* ((ns-prefixes
              (let ((ns-node ((select-kids (ntype?? '*NAMESPACES*))
-                             ((select-kids (ntype?? (dat))) document))))
+                             ((select-kids (ntype?? '^^)) document))))
                (if (null? ns-node)
                    '()
                    (cdar ns-node))))
@@ -1292,7 +1292,7 @@
             (uri (xlink:get-uri document)))
        (xlink:append-branch
         document
-        `(,(dat) sxlink declared-here)
+        '(^^ sxlink declared-here)
         (if uri  ; URI for the document supplied
             (xlink:set-uri-for-sxlink-arcs uri sxlink-arcs)
             sxlink-arcs)))))
@@ -1312,7 +1312,7 @@
                 '()  ; it is not an <A> element
                 (let ((href ((select-kids (ntype?? '*text*))
                              ((select-kids (ntype?? 'href))
-                              ((select-kids (ntype?? (at))) node)))))
+                              ((select-kids (ntype?? '^)) node)))))
                   (if
                    (null? href)  ; <A> doesn't contain href attribute
                    '()
@@ -1361,7 +1361,7 @@
            (uri (xlink:get-uri document)))
        (xlink:append-branch
         document
-        `((dat) sxlink declared-here)
+        '(^^ sxlink declared-here)
         (if uri  ; URI for the document supplied
             (xlink:set-uri-for-sxlink-arcs uri sxlink-arcs)
             sxlink-arcs)))))

@@ -31,7 +31,6 @@
          (carneades lib xml ssax ssax-prim)
          (carneades lib xml ssax id)
          (carneades lib xml ssax xlink-parser)
-         (carneades lib xml ssax atcomp)
          (only (carneades lib srfi strings) string-null?))
  
  ;; SSAX multi parser
@@ -81,7 +80,7 @@
                                   attrs children)  
    (let ((head ((car parent:seed))))
      (append head
-             (list (cons (at) attrs))
+             (list (cons '^ attrs))
              children)))
  
  #;(cond-expand
@@ -90,7 +89,7 @@
                                      attrs children)  
      (let ((head ((car parent:seed))))
        (append head
-               (list (cons (at) attrs))
+               (list (cons '^ attrs))
                children)))
    )
   (else
@@ -101,8 +100,8 @@
           (head ((car parent:seed))))
        (set-cdr!
         head
-        (cons* (cons (at) attrs)
-               `(,(dat) (*PARENT* ,parent-ptr))
+        (cons* (cons '^ attrs)
+               `(^ (*PARENT* ,parent-ptr))
                children))
        head))
    ))
@@ -190,7 +189,7 @@
                      (let((result (reverse (get-sxml-seed seed)))
                           (aux (list (id:ending-action (get-id-seed seed)))))
                        (cons* '*TOP*
-                              (cons (dat) aux)
+                              (cons '^^ aux)
                               result))))
                   ((and with-id? with-xlink?)   ; with-id, with-xlink
                    (lambda (seed)
@@ -198,7 +197,7 @@
                           (aux (list (xlink:ending-action (get-xlink-seed seed))
                                      (id:ending-action (get-id-seed seed)))))
                        (cons* '*TOP*
-                              (cons (dat) aux)
+                              (cons '^^ aux)
                               result))))
                   (else
                    (cerr "ending-actions NIY: " with-parent? with-id? with-xlink? nl)
@@ -283,7 +282,7 @@
                           (if (symbol? elem-gi) elem-gi
                               (RES-NAME->SXML elem-gi))
                           (if (null? attrs) children
-                              (cons (cons (at) attrs) children)))
+                              (cons (cons '^ attrs) children)))
                          (get-sxml-seed parent-seed))))))
                   ((and with-parent? (not (or with-id? with-xlink?)))  ; parent
                    (lambda (elem-gi attributes namespaces parent-seed seed)
@@ -324,7 +323,7 @@
                                  (RES-NAME->SXML elem-gi))
                               (if(null? attrs) 
                                  children
-                                 (cons (cons (at) attrs) children)))))
+                                 (cons (cons '^ attrs) children)))))
                          (list ; make-seed
                           (cons element (get-sxml-seed parent-seed))
                           (id:finish-element-handler
@@ -368,7 +367,7 @@
                                  (RES-NAME->SXML elem-gi))
                               (if(null? attrs) 
                                  children
-                                 (cons (cons (at) attrs) children)))))
+                                 (cons (cons '^ attrs) children)))))
                          (list ; make-seed
                           (cons element (get-sxml-seed parent-seed))
                           (id:finish-element-handler
