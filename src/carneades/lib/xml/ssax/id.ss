@@ -45,7 +45,7 @@
          (carneades lib xml ssax myenv)
          (carneades lib xml ssax access-remote)
          (carneades lib xml ssax sxpathlib)
-         (carneades lib xml ssax atcomp))
+         )
  
  ;; Creation and manipulation of the ID-index
  ;; Provides the DTD parser for extracting ID attribute declarations
@@ -465,7 +465,7 @@
  ; remain unchanged.
  (define (SXML->SXML+id document id-attrs)
    (let((aux-subtrees
-         (let((aux ((select-kids (ntype?? (dat))) document)))
+         (let((aux ((select-kids (ntype?? '^^)) document)))
            (if(null? aux)
               '()
               (let rpt ((res '())
@@ -480,10 +480,10 @@
        (if(null? nodeset)
           (let((kids ((select-kids
                        (lambda (node)
-                         (not (and (pair? node) (equal? (car node) (dat))))))
+                         (not (and (pair? node) (equal? (car node) '^^)))))
                       document)))
             (cons* '*TOP*
-                   (cons* (dat)
+                   (cons* '^^
                           (cons 'id-index id-index)
                           aux-subtrees)
                    kids))         
@@ -498,7 +498,7 @@
                        ((select-kids (lambda (x) #t))
                         ((sxml:filter (lambda (x) (member (car x) (cdr lst))))
                          ((select-kids (lambda (x) #t))
-                          ((select-kids (ntype?? (at))) cur-node))))))
+                          ((select-kids (ntype?? '^)) cur-node))))))
                    (loop
                     (append 
                      ((select-kids (ntype?? '*)) (car nodeset))
