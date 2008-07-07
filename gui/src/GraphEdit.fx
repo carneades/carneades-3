@@ -281,6 +281,8 @@ public class StatementEditPanel extends EditPanel {
 		else if (statement.standard instanceof Scintilla) { SEButton.selected = true; }
 		else /*if (statement.standard instanceof Scintilla)*/ { BAButton.selected = true; }
 		
+		if (statement.standard.negated) { negatedBox.selected = true; } else { negatedBox.selected = false; }
+		if (statement.standard.complement) { complementBox.selected = true; } else { complementBox.selected = false; }
 
 		negatedBox.text = {if (s.standard.negated) "true" else "false"};
 		complementBox.text = {if (s.standard.complement) "true" else "false"};
