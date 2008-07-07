@@ -602,18 +602,28 @@
             (case s
               ((accepted) (positive-premise? p))
               ((rejected) (negative-premise? p))
-              ((questioned stated) (acceptable? ag c (premise-statement p)))))
+              ((questioned stated) 
+               (if (positive-premise? p)
+                   (acceptable? ag c (premise-statement p))
+                   (acceptable? ag c (statement-complement (premise-statement p)))))))
            ((assumption? p)
             (case s
-              ((stated) #t)
+              ((stated) #t) ; whether the premise is positive or negative 
               ((accepted) (positive-premise? p))
               ((rejected) (negative-premise? p))
-              ((questioned) (acceptable? ag c (premise-statement p)))))
+              ((questioned) 
+               (if (positive-premise? p)
+                   (acceptable? ag c (premise-statement p))
+                   (acceptable? ag c (statement-complement (premise-statement p)))))))
            ((exception? p)
             (case s
               ((accepted) (negative-premise? p))
               ((rejected) (positive-premise? p))
-              ((stated questioned) (not (acceptable? ag c (premise-statement p))))))
+              ((stated questioned) 
+               (if (positive-premise? p)
+                   (not (acceptable? ag c (premise-statement p)))
+                   (not (acceptable? ag c (statement-complement (premise-statement p)))))
+               )))
            (else (error "holds: not a premise." p)))))
  
  ; all-premises-hold?: argument-graph context argument -> boolean
