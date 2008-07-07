@@ -304,6 +304,7 @@ public class ArgumentFile {
 			}
 
 			var newStatement: Statement = Statement {
+				graph: argumentGraph
 				id: id
 				wff: wff
 			}
@@ -313,9 +314,17 @@ public class ArgumentFile {
 				newStatement.value = i.value;
 				newStatement.assumption = i.assumption;
 				newStatement.standard = { 
-											if (i.standard == "SE") Scintilla {} 
-											else if (i.standard == "DV") DialecticalValidity {}
-											else /*(i.standard == "BA")*/ BestArgument {} };
+					if (i.standard == "SE") 
+						Scintilla {	statement: newStatement } 
+					else if (i.standard == "DV") 
+						DialecticalValidity {
+							statement: newStatement
+						}
+					else 
+						BestArgument {
+							statement: newStatement
+						} 
+				};
 			}
 			insert newStatement into argumentGraph.statements;
 		}
@@ -392,6 +401,7 @@ public class ArgumentFile {
 
 			var newArgument: Argument = Argument {
 				id: id
+				graph: argumentGraph
 				scheme: scheme
 				premises: premises  
 				pro: pro

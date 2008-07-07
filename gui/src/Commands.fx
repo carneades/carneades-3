@@ -124,6 +124,7 @@ public class AddArgumentCommand extends UndoableCommand {
 
 	postinit {
 		argument = Argument {
+			graph: argumentGraph;
 			id: argumentGraph.getNewArgumentId();
 			conclusion: statement
 		}
@@ -149,7 +150,8 @@ public class AddStatementCommand extends UndoableCommand {
 		if (statement == null){
 			statement = Statement {
 				id: argumentGraph.getNewStatementId();
-				wff: "New Statement"
+				wff: "New Statement";
+				graph: argumentGraph
 			}
 		}
 		argumentGraph.insertStatement(statement);
@@ -171,7 +173,8 @@ public class AddPremiseCommand extends UndoableCommand {
 	postinit {
 		statement = Statement {
 			id: argumentGraph.getNewStatementId();
-			wff: "Premise Statement"
+			wff: "Premise Statement";
+			graph: argumentGraph
 		}
 		premise = Premise {
 			statement: statement
@@ -448,6 +451,7 @@ public class ChangeStatementStandardCommand extends UndoableCommand {
 		}
 		// Set new Standard
 		statement.standard = standard;
+		standard.statement = statement;
 		//argumentGraph.setProofStandard(statement, standard);
 		return GC.C_OK;
 	}
