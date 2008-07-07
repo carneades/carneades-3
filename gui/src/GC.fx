@@ -56,7 +56,7 @@ public class GC {
 
 	// Application constants
 	public static attribute appWidth = 1000;
-	public static attribute appHeight = 600;
+	public static attribute appHeight = 650;
 
 	// Layout constants
 	public static attribute xOffset = appWidth / 2;
@@ -79,7 +79,7 @@ public class GC {
 
 	// Edit window constants
 	public static attribute editWidth: Integer = 300;
-	public static attribute editHeight: Integer = 300;
+	public static attribute editHeight: Integer = 350;
 	public static attribute listHeight: Integer = 300;
 	public static attribute editLabelWidth: Integer = 80;
 

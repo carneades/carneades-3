@@ -64,7 +64,7 @@ public class GraphFrame extends Frame {
 		visible: true
 		control: bind control
 		argumentGraph: bind argumentGraph
-		preferredSize: bind [GC.editWidth, this.height /2]
+		preferredSize: bind [GC.editWidth, this.height /2 ]
 	}
 
 	public attribute list: GraphList = GraphList {

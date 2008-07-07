@@ -103,41 +103,46 @@ public class EditPanel extends FlowPanel {
 
 public class StatementEditPanel extends EditPanel {
 	attribute statement: Statement;
+	private attribute editLabelWidth = bind GC.editLabelWidth;
 	
 	// Components
 
 	public attribute idField: IdField = IdField {
+		preferredSize: [ GC.editWidth - GC.editLabelWidth - 10, 20 ]
 		action: function(): Void {
 			control.changeStatementId(statement, idField.text);
 		}
 	}
 	
 	public attribute contentField: ContentField = ContentField {
+		preferredSize: [ GC.editWidth - GC.editLabelWidth - 10, 20 ]
 		action: function(): Void {
 			control.changeStatementWff(statement, contentField.text);
 		}
 	}
 
 	public attribute negatedBox: BooleanField = BooleanField {
-		preferredSize: [100, 20]
+		preferredSize: [ GC.editWidth - GC.editLabelWidth - 10, 20 ]
 		action: function(): Void {
 			submitStandard();
 		}
 	}
 
 	public attribute complementBox: BooleanField = BooleanField {
-		preferredSize: [100, 20]
+		preferredSize: [ GC.editWidth - GC.editLabelWidth - 10, 20 ]
 		action: function(): Void {
 			submitStandard();
 		}
 	}
 
 	public attribute acceptableLabel: Label = Label {
+		preferredSize: [ GC.editWidth - GC.editLabelWidth - 10, 20 ]
 		text: bind {if (statement.ok) "true" else "false" }
 		foreground: bind {if (statement.ok) Color.DARKGREEN else Color.DARKRED }
 	}
 
 	public attribute proofStandardBox: ProofStandardField = ProofStandardField {
+		preferredSize: [ GC.editWidth - GC.editLabelWidth - 10, 20 ]
 		action: function(): Void {
 			submitStandard();
 		}
@@ -149,31 +154,49 @@ public class StatementEditPanel extends EditPanel {
 		text: "stated"
 		toggleGroup: statusGroup
 		preferredSize: [ GC.editWidth - GC.editLabelWidth - 10, 20 ]
+		action: function() {
+			control.changeStatementStatus(statement, statedButton.text);
+		}
 	}
 	private attribute questionedButton: RadioButton = RadioButton {
 		text: "questioned"
 		toggleGroup: statusGroup
 		preferredSize: [ GC.editWidth - GC.editLabelWidth - 10, 20 ]
+		action: function() {
+			control.changeStatementStatus(statement, questionedButton.text);
+		}
 	}
 	private attribute assumedTrueButton: RadioButton = RadioButton {
 		text: "assumed true"
 		toggleGroup: statusGroup
 		preferredSize: [ GC.editWidth - GC.editLabelWidth - 10, 20 ]
+		action: function() {
+			control.changeStatementStatus(statement, assumedTrueButton.text);
+		}
 	}
 	private attribute assumedFalseButton: RadioButton = RadioButton {
 		text: "assumed false"
 		toggleGroup: statusGroup
 		preferredSize: [ GC.editWidth - GC.editLabelWidth - 10, 20 ]
+		action: function() {
+			control.changeStatementStatus(statement, assumedFalseButton.text);
+		}
 	}
 	private attribute acceptedButton: RadioButton = RadioButton {
 		text: "accepted"
 		toggleGroup: statusGroup
 		preferredSize: [ GC.editWidth - GC.editLabelWidth - 10, 20 ]
+		action: function() {
+			control.changeStatementStatus(statement, acceptedButton.text);
+		}
 	}
 	private attribute rejectedButton: RadioButton = RadioButton {
 		text: "rejected"
 		toggleGroup: statusGroup
 		preferredSize: [ GC.editWidth - GC.editLabelWidth - 10, 20 ]
+		action: function() {
+			control.changeStatementStatus(statement, rejectedButton.text);
+		}
 	}
 
 	// temporary function to submit a new Proof Standard
@@ -187,19 +210,19 @@ public class StatementEditPanel extends EditPanel {
 	}
 
 	override attribute content = bind [ 
-										Label { text: "id: " }, idField, 
-										Label { text: "wff: " }, contentField,
+										Label { text: "id ", preferredSize: [editLabelWidth, 20] }, idField, 
+										Label { text: "wff ", preferredSize: [editLabelWidth, 20] }, contentField,
 										Label { text: "status ", preferredSize: [GC.editLabelWidth, 20] }, statedButton, 
-										Label { text: "", preferredSize: [GC.editLabelWidth, 20] }, questionedButton, 
-										Label { text: "", preferredSize: [GC.editLabelWidth, 20] }, assumedTrueButton, 
-										Label { text: "", preferredSize: [GC.editLabelWidth, 20] }, assumedFalseButton, 
-										Label { text: "", preferredSize: [GC.editLabelWidth, 20] }, acceptedButton, 
-										Label { text: "", preferredSize: [GC.editLabelWidth, 20] }, rejectedButton, 
-										Label { text: "Acceptable: " }, acceptableLabel,
-										Label { text: "Standard of Proof:       "},
-										Label { text: "Standard: " }, proofStandardBox,
-										Label { text: "Negated: " }, negatedBox,
-										Label { text: "Complement: " }, complementBox,
+										Label { text: "", preferredSize: [editLabelWidth, 20] }, questionedButton, 
+										Label { text: "", preferredSize: [editLabelWidth, 20] }, assumedTrueButton, 
+										Label { text: "", preferredSize: [editLabelWidth, 20] }, assumedFalseButton, 
+										Label { text: "", preferredSize: [editLabelWidth, 20] }, acceptedButton, 
+										Label { text: "", preferredSize: [editLabelWidth, 20] }, rejectedButton, 
+										Label { text: "Acceptable ", preferredSize: [editLabelWidth, 20] }, acceptableLabel,
+										Label { text: "Standard of Proof", preferredSize: [GC.editWidth, 20]},
+										Label { text: "Standard ", preferredSize: [editLabelWidth, 20] }, proofStandardBox,
+										Label { text: "Negated ", preferredSize: [editLabelWidth, 20] }, negatedBox,
+										Label { text: "Complement ", preferredSize: [editLabelWidth, 20] }, complementBox,
 										];
 
 	// Functions
@@ -208,6 +231,12 @@ public class StatementEditPanel extends EditPanel {
 		statement = s;
 		idField.text = s.id;
 		contentField.text = s.wff;
+		if (statement.stated()) { statedButton.selected = true }
+		if (statement.questioned()) { questionedButton.selected = true }
+		if (statement.assumedTrue()) { assumedTrueButton.selected = true }
+		if (statement.assumedFalse()) { assumedFalseButton.selected = true }
+		if (statement.accepted()) { acceptedButton.selected = true }
+		if (statement.rejected()) { rejectedButton.selected = true }
 		negatedBox.text = {if (s.standard.negated) "true" else "false"};
 		complementBox.text = {if (s.standard.complement) "true" else "false"};
 		proofStandardBox.text = { 	if (s.standard instanceof DialecticalValidity) "DV"
