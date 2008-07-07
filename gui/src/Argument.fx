@@ -69,6 +69,7 @@ public class Statement {
 		
 	public attribute standard: ProofStandard = BestArgument {}
 		on replace {
+			standard.statement = this;
 			graph.update();
 		}
 	
@@ -193,8 +194,29 @@ public class Argument {
 	public attribute ok: Boolean = false;  
 	
 	public attribute updated : Boolean = false;
+	
 	public function allPremisesHold () : Boolean { ok } 
 	public function defensible () : Boolean { allPremisesHold(); }
+	
+    public function switchDirection (): Void {
+		pro = not pro;
+	}
+	
+	public function addPremise (p: Premise) : Number {
+		insert p into premises;
+		insert p.statement into graph.statements;
+		return GC.AG_OK;
+	}
+
+	public function appendPremise (p: Premise) : Number {
+		insert p into premises;
+		return GC.AG_OK;
+	}
+
+	public function deletePremise (p: Premise) : Number {
+		delete p from premises;
+		return GC.AG_OK;
+	}
 }
 
 public class ArgumentGraph {
@@ -245,6 +267,7 @@ public class ArgumentGraph {
 			result = GC.AG_DOUBLE_ID;
 		}
 
+		s.graph = this;
 		return result;
 	}
 
@@ -277,35 +300,12 @@ public class ArgumentGraph {
 			result = GC.AG_CYCLE;
 		}
 
+		arg.graph = this;
 		return result;
     }
 
 	public function deleteArgument (arg: Argument) : Void {
 		delete arg from arguments;
-	}
-
-    public function switchDirection (arg: Argument): Void {
-		arg.pro = not arg.pro;
-	}
-	
-	public function setConclusion (arg: Argument, s: Statement) : Void {
-		arg.conclusion = s;
-	}
-	
-	public function addPremise (p: Premise, a: Argument) : Number {
-		insert p into a.premises;
-		insert p.statement into statements;
-		return GC.AG_OK;
-	}
-
-	public function appendPremise (p: Premise, a: Argument) : Number {
-		insert p into a.premises;
-		return GC.AG_OK;
-	}
-
-	public function deletePremise (p: Premise, a: Argument) : Number {
-		delete p from a.premises;
-		return GC.AG_OK;
 	}
 	
 	// update the acceptability and defensibility of statements
