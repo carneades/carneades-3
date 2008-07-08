@@ -34,7 +34,7 @@ import GraphSketch1.Graph.*;
 import GraphSketch1.Graph.Elements.Elements.*;
 
 // Abstract Controller Class for Interaction
-import GraphSketch1.Control.AbstractGraphControl;
+import GraphSketch1.Control.GraphControl;
 
 
 public class GraphEdit extends Panel {
@@ -43,7 +43,7 @@ public class GraphEdit extends Panel {
 	override attribute y = 0;
 	override attribute visible = true;
 
-	public attribute control: AbstractGraphControl;
+	public attribute control: GraphControl;
 	public attribute argumentGraph: ArgumentGraph;
 
 	private attribute statementPanel = StatementEditPanel { control: bind control, argumentGraph: bind argumentGraph }
@@ -92,13 +92,16 @@ public class GraphEdit extends Panel {
 }
 
 public class EditPanel extends FlowPanel {
+	override attribute background = GC.panelBackground;
 	override attribute alignment = HorizontalAlignment.LEFT;
 	override attribute width = GC.editWidth;
 	override attribute height = GC.editHeight;
 	override attribute visible = false;
-	protected attribute control: AbstractGraphControl;
+	protected attribute control: GraphControl;
 	public attribute argumentGraph: ArgumentGraph;
-	private attribute editLabelWidth = bind GC.editLabelWidth;
+	protected attribute editLabelWidth = bind GC.editLabelWidth;
+	protected attribute editComponentWidth = bind GC.editWidth - editLabelWidth - 30;
+
 }
 
 public class StatementEditPanel extends EditPanel {
@@ -114,14 +117,14 @@ public class StatementEditPanel extends EditPanel {
 	}
 	
 	private attribute contentField: ContentField = ContentField {
-		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
+		preferredSize: [ editComponentWidth, 20 ]
 		action: function(): Void {
 			control.changeStatementWff(statement, contentField.text);
 		}
 	}
 
 
-	private attribute acceptableBox: CheckBox = CheckBox {
+	private attribute acceptableBox: CheckBox = CCheckBox {
 		enabled: false
 		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
 		selected: bind statement.ok
@@ -129,24 +132,24 @@ public class StatementEditPanel extends EditPanel {
 
 	// Proof Standard Components
 
-	private attribute negatedBox: CheckBox = CheckBox {
+	private attribute negatedBox: CheckBox = CCheckBox {
 		text: "negated"
-		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
+		preferredSize: [ editComponentWidth, 20 ]
 		action: function(): Void {
 			submitStandard();
 		}
 	}
 
-	private attribute complementBox: CheckBox = CheckBox {
+	private attribute complementBox: CheckBox = CCheckBox {
 		text: "complement"
-		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
+		preferredSize: [ editComponentWidth - 30, 20 ]
 		action: function(): Void {
 			submitStandard();
 		}
 	}
 
 	private attribute proofStandardBox: ProofStandardField = ProofStandardField {
-		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
+		preferredSize: [ editComponentWidth - 30, 20 ]
 		action: function(): Void {
 			submitStandard();
 		}
@@ -164,28 +167,28 @@ public class StatementEditPanel extends EditPanel {
 
 	private attribute selectedStandard: String = bind (if (BAButton.selected) "BA" else if (SEButton.selected) "SE" else "DV");
 
-	private attribute BAButton: RadioButton = RadioButton {
+	private attribute BAButton: RadioButton = CRadioButton {
 		toggleGroup: standardGroup
 		text: "best argument"
-		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
+		preferredSize: [ editComponentWidth, 20 ]
 		action: function(): Void {
 			submitStandard();
 		}
 	}
 
-	private attribute SEButton: RadioButton = RadioButton {
+	private attribute SEButton: RadioButton = CRadioButton {
 		toggleGroup: standardGroup
 		text: "scintilla of evidence"
-		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
+		preferredSize: [ editComponentWidth, 20 ]
 		action: function(): Void {
 			submitStandard();
 		}
 	}
 
-	private attribute DVButton: RadioButton = RadioButton {
+	private attribute DVButton: RadioButton = CRadioButton {
 		toggleGroup: standardGroup
 		text: "dialectical validity"
-		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
+		preferredSize: [ editComponentWidth - 30, 20 ]
 		action: function(): Void {
 			submitStandard();
 		}
@@ -195,50 +198,50 @@ public class StatementEditPanel extends EditPanel {
 	
 	private attribute statusGroup: ToggleGroup = ToggleGroup {};
 
-	private attribute statedButton: RadioButton = RadioButton {
+	private attribute statedButton: RadioButton = CRadioButton {
 		text: "stated"
 		toggleGroup: statusGroup
-		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
+		preferredSize: [ editComponentWidth, 20 ]
 		action: function() {
 			control.changeStatementStatus(statement, statedButton.text);
 		}
 	}
-	private attribute questionedButton: RadioButton = RadioButton {
+	private attribute questionedButton: RadioButton = CRadioButton {
 		text: "questioned"
 		toggleGroup: statusGroup
-		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
+		preferredSize: [ editComponentWidth, 20 ]
 		action: function() {
 			control.changeStatementStatus(statement, questionedButton.text);
 		}
 	}
-	private attribute assumedTrueButton: RadioButton = RadioButton {
+	private attribute assumedTrueButton: RadioButton = CRadioButton {
 		text: "assumed true"
 		toggleGroup: statusGroup
-		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
+		preferredSize: [ editComponentWidth, 20 ]
 		action: function() {
 			control.changeStatementStatus(statement, assumedTrueButton.text);
 		}
 	}
-	private attribute assumedFalseButton: RadioButton = RadioButton {
+	private attribute assumedFalseButton: RadioButton = CRadioButton {
 		text: "assumed false"
 		toggleGroup: statusGroup
-		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
+		preferredSize: [ editComponentWidth, 20 ]
 		action: function() {
 			control.changeStatementStatus(statement, assumedFalseButton.text);
 		}
 	}
-	private attribute acceptedButton: RadioButton = RadioButton {
+	private attribute acceptedButton: RadioButton = CRadioButton {
 		text: "accepted"
 		toggleGroup: statusGroup
-		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
+		preferredSize: [ editComponentWidth, 20 ]
 		action: function() {
 			control.changeStatementStatus(statement, acceptedButton.text);
 		}
 	}
-	private attribute rejectedButton: RadioButton = RadioButton {
+	private attribute rejectedButton: RadioButton = CRadioButton {
 		text: "rejected"
 		toggleGroup: statusGroup
-		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
+		preferredSize: [ editComponentWidth, 20 ]
 		action: function() {
 			control.changeStatementStatus(statement, rejectedButton.text);
 		}
@@ -293,27 +296,35 @@ public class ArgumentEditPanel extends EditPanel {
 	// Components
 
 	public attribute idField: IdField = IdField {
-		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
+		preferredSize: [ editComponentWidth - 30, 20 ]
 		editable: true
 		action: function(): Void {
 			control.changeArgumentId(argument, idField.text);
 		}
 	}
 	
-	public attribute defensibleBox: CheckBox = CheckBox {
+	public attribute defensibleBox: CheckBox = CCheckBox {
+		enabled: false
 		selected: bind argument.ok
 	}
 
 	private attribute directionGroup: ToggleGroup = ToggleGroup {};
 
-	private attribute proButton: RadioButton = RadioButton {
+	private attribute proButton: RadioButton = CRadioButton {
 		toggleGroup: directionGroup
 		text: "pro"
+		action: function(): Void {
+			control.changeArgumentDirection(argument, "pro");
+		}
 	}
 
-	private attribute conButton: RadioButton = RadioButton {
+	private attribute conButton: RadioButton = CRadioButton {
 		toggleGroup: directionGroup
 		text: "con"
+		action: function(): Void {
+			control.changeArgumentDirection(argument, "con");
+		}
+
 	}
 
 	override attribute content = bind [ 
@@ -342,21 +353,24 @@ public class PremiseEditPanel extends EditPanel {
 	attribute premise: Premise;
 
 	// Components
-
-	public attribute premiseBox: PremiseField = PremiseField {
-		action: function(): Void {
-			if (premiseBox.verified) { control.changePremiseType(premise, premiseBox.text); }
-		}
-	}
-	
 	public attribute roleField: RoleField = RoleField {
+		preferredSize: [ editComponentWidth, 20 ]
 		editable: true
 		action: function(): Void {
 			control.changePremiseRole(premise, roleField.text);
 		}
 	}
 
-	public attribute negationCheckBox: CheckBox = CheckBox {
+	public attribute exceptionBox: CheckBox = CCheckBox {
+		preferredSize: [ editComponentWidth, 20 ]
+		selected: premise.exception
+		action: function(): Void {
+			control.changePremiseType(premise, exceptionBox.selected);
+		}
+	}
+
+	public attribute negationBox: CheckBox = CCheckBox {
+		preferredSize: [ editComponentWidth, 20 ]
 		selected: premise.negative
 		action: function(): Void {
 			control.negatePremise(premise);
@@ -364,18 +378,18 @@ public class PremiseEditPanel extends EditPanel {
 	}
 
 	override attribute content = bind [ 
-										Label { text: "Role: " }, roleField, 
-										Label { text: "Type: " }, premiseBox,
-										Label { text: "Negated: " }, negationCheckBox,
+										Label { text: "role ", preferredSize: [editLabelWidth, 20] }, roleField, 
+										Label { text: "exception ", preferredSize: [editLabelWidth, 20] }, exceptionBox,
+										Label { text: "negated ", preferredSize: [editLabelWidth, 20] }, negationBox,
 										];
 
 	// Functions
 
 	public function loadPremise(p: Premise): Void {
 		premise = p;
-		premiseBox.text = { if (p.exception) "exception" else "ordinary" };
 		roleField.text = p.role;
-		negationCheckBox.selected = p.negative;
+		negationBox.selected = p.negative;
+		exceptionBox.selected = p.exception;
 	}
 
 }
@@ -527,3 +541,10 @@ class DirectionField extends LimitedTextField {
 	override attribute choices = [ "pro", "con" ];
 }
 
+class CCheckBox extends CheckBox {
+	override attribute background = GC.panelBackground;
+}
+
+class CRadioButton extends RadioButton {
+	override attribute background = GC.panelBackground;
+}

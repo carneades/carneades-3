@@ -25,7 +25,7 @@ import javafx.scene.text.*;
 import javafx.scene.paint.*;
 import GraphSketch1.Graph.*;
 import java.lang.System;
-import GraphSketch1.Control.AbstractGraphControl;
+import GraphSketch1.Control.GraphControl;
 
 public class Vertex extends GraphElement {
 	// The content object that is represented by the vertex
@@ -50,7 +50,7 @@ public class Vertex extends GraphElement {
 	attribute leftSTOutline: Number;
 	attribute rightSTOutline: Number;
 
-	attribute control: AbstractGraphControl;
+	attribute control: GraphControl;
 	
 	attribute text: Text = Text {
 					content: bind caption

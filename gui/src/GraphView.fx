@@ -26,12 +26,12 @@ import GraphSketch1.Graph.*;
 import java.lang.System;
 
 // Abstract Controller Class for Interaction
-import GraphSketch1.Control.AbstractGraphControl;
+import GraphSketch1.Control.GraphControl;
 
 public class GraphView extends Canvas {
 	public attribute graph: Graph;
 	attribute layout: GraphLayout;
-	attribute control: AbstractGraphControl;
+	attribute control: GraphControl;
 
 	attribute backSensor = Rectangle {
 		x: 0
@@ -62,7 +62,7 @@ public class GraphView extends Canvas {
 		visible: bind control.dragging
 	}
 
-	override attribute background = Color.GREY;
+	override attribute background = GC.viewBackground;
 	override attribute content = bind [ backSensor, graph, dragSymbol ];
 
 }

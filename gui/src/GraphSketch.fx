@@ -50,35 +50,6 @@ var argumentGraph: ArgumentGraph = ArgumentGraph { id: "testgraph" }
 
 argumentGraph = ArgumentFile.getGraphFromFile(new File("data/socrates.xml"));
 
-// Statements
-/*
-var s1: Statement = Statement { id: "Conclusion", wff: "Socrates is mortal." }
-var s2: Statement = Statement { id: "Mortality", wff: "Humans are mortal.", standard: BestArgument {} }
-var s3: Statement = Statement { id: "Socrates", wff: "Socrates is human.", standard: Scintilla {}, assumption: true }
-insert s1 into argumentGraph.statements;
-insert s2 into argumentGraph.statements;
-insert s3 into argumentGraph.statements;
-
-// Premises
-var p1: Premise = Premise { statement: s2, exception: true }
-var p2: Premise = Premise { statement: s3 }
-
-// Arguments
-var a1: Argument = Argument { 
-	id: "a1"
-	conclusion: s1
-}
-var a2: Argument = Argument { 
-	id: "a2"
-	conclusion: s3
-}
-
-insert p1 into a1.premises;
-insert p2 into a1.premises;
-
-insert a1 into argumentGraph.arguments;
-insert a2 into argumentGraph.arguments;*/
-
 // 2. DECLARE VIEW AND CONTROL COMPONENTS
 
 var layout: GraphLayout;

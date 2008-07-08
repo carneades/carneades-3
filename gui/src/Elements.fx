@@ -36,7 +36,7 @@ import GraphSketch1.Argument.Argument.*;
 import GraphSketch1.Graph.*;
 
 // Abstract Controller Import
-import GraphSketch1.Control.AbstractGraphControl;
+import GraphSketch1.Control.GraphControl;
 
 public abstract class ArgumentElement extends Vertex {
 	attribute fill: Color = Color.WHITE;

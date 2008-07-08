@@ -33,13 +33,13 @@ import GraphSketch1.Graph.*;
 import GraphSketch1.Graph.Elements.Elements.*;
 
 // Abstract Controller Class for Interaction
-import GraphSketch1.Control.AbstractGraphControl;
+import GraphSketch1.Control.GraphControl;
 
 public class GraphFrame extends Frame {
 	
 	public attribute graph: Graph;
 	public attribute layout: GraphLayout;
-	public attribute control: AbstractGraphControl;
+	public attribute control: GraphControl;
 	public attribute argumentGraph: ArgumentGraph;
 
 	private attribute showAlert: Boolean = false;
@@ -85,18 +85,13 @@ public class GraphFrame extends Frame {
 
 	// content
 	attribute rightPanel: BorderPanel = bind BorderPanel {
+		background: GC.panelBackground
 		preferredSize: bind [ GC.editWidth, this.height ]
 		top: bind list
 		bottom: bind ScrollPane {
 			view: bind edit
 		}
 		visible: true
-	}
-
-	override attribute content = bind BorderPanel {
-		left: bind scroll
-		right: bind rightPanel
-		center: null
 	}
 
 	// Alert Box
@@ -120,6 +115,19 @@ public class GraphFrame extends Frame {
 		this.showAlert = true; 
 	}
 
+	private attribute toolPanel: Panel = FlowPanel {
+		preferredSize: [ this.width, 50 ]
+		background: GC.toolPanelBackground
+		visible: true
+	}
+
+	override attribute content = bind BorderPanel {
+		top: bind toolPanel
+		left: bind scroll
+		right: bind rightPanel
+		center: null
+	}
+	
 	// Menus
 	override attribute menus = [
 				Menu {
@@ -161,7 +169,7 @@ public class GraphFrame extends Frame {
 							}
 						}*/
 						, MenuItem {
-							text: "Exit"
+							text: "Quit Carneades"
 							action: function() {
 								System.exit(0);
 							}
