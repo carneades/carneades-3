@@ -44,6 +44,7 @@ public class Edge extends GraphElement {
 	attribute direction: Number = GC.BOTTOM; // it is assumed the premise hits the node on its bottom side
 	attribute stroke: Color = Color.BLACK;
 	attribute strokeWidth: Number = GC.edgeStrokeWidth;
+	attribute dashed: Boolean = false;
 
 	attribute control: GraphControl;
 
@@ -59,6 +60,8 @@ public class Edge extends GraphElement {
 					endY: bind y2
 					stroke: bind stroke
 					strokeWidth: bind strokeWidth
+					strokeDashArray: bind { if (dashed) [5.0, 5.0] else [1.0] }
+					strokeDashOffset: bind { if (dashed) 0.0 else 0.0 }
 				}
 	
 	// invisible wider line for easier selection
