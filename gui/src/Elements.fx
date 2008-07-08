@@ -43,7 +43,7 @@ public abstract class ArgumentElement extends Vertex {
 	attribute mainRect: Rectangle = Rectangle {
 					x: bind x - (width / 2).intValue()
 					y: bind y
-					width: bind width
+					width: bind width 
 					height: bind height
 					fill: bind fill
 					stroke: Color.BLACK
@@ -97,6 +97,8 @@ public abstract class ArgumentElement extends Vertex {
 
 public class ArgumentBox extends ArgumentElement {
 	public attribute argument: Argument;
+	override attribute scaleWithText = false;
+	override attribute defaultWidth = GC.argumentBoxDefaultWidth;
 	override attribute caption = bind argument.id;
 	override attribute fill = bind {if (argument.ok) Color.LIGHTGREY else Color.WHITE};
 
@@ -116,7 +118,10 @@ public class ArgumentBox extends ArgumentElement {
 
 public class StatementBox extends ArgumentElement {
 	public attribute statement: Statement;
-	override attribute caption = bind statement.id;
+	override attribute scaleWithText = false;
+	override attribute defaultWidth = GC.statementBoxDefaultWidth;
+	override attribute caption = bind { if (statement.wff.length() < GC.numDisplayedChars) statement.wff
+										else "{statement.wff.substring(0, GC.numDisplayedChars-1)}..."};
 	override attribute fill = bind {if ( statement.ok 
 										or statement.value == "true") Color.LIGHTGREY else Color.WHITE};
 	
@@ -182,6 +187,7 @@ public class PremiseLink extends Edge {
 	attribute radius: Number = 5;
 	attribute negWidth: Number = 10;
 	attribute negStrokeWidth: Number = 2;
+	override attribute dashed = bind premise.exception;
 
 	public attribute negated: Boolean = false;
 	override attribute turnHead = bind negated;
@@ -199,6 +205,7 @@ public class PremiseLink extends Edge {
 					visible : bind negated
 				}
 
+	// exceptionhead currently not in content because of dashed lines
 	attribute exceptionHead: Circle = Circle {
    				     centerX: bind x2
    				     centerY: bind y2
@@ -219,7 +226,7 @@ public class PremiseLink extends Edge {
 	public function create():Node {
 		Group {
 			content: [
-				line, negation, exceptionHead
+				line, negation
 			] // content
 		} // Group
 	} // composeNode

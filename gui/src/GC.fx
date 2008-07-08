@@ -58,6 +58,17 @@ public class GC {
 	public static attribute edgeSelectionWidth = 5;
 	public static attribute selectedEdgeWidth = 2;
 
+	// General Vertex Constants
+	public static attribute scaleVerticesWithText = false;
+	public static attribute vertexDefaultWidth = 50;
+
+	// Statement Boxes
+	public static attribute numDisplayedChars = 15;
+	public static attribute statementBoxDefaultWidth = 120;
+
+	// Argument Boxes
+	public static attribute argumentBoxDefaultWidth = 60;
+
 	// Application constants
 	public static attribute appWidth = 1000;
 	public static attribute appHeight = 700;

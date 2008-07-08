@@ -542,9 +542,9 @@ class DirectionField extends LimitedTextField {
 }
 
 class CCheckBox extends CheckBox {
-	override attribute background = GC.panelBackground;
+	//override attribute background = GC.panelBackground;
 }
 
 class CRadioButton extends RadioButton {
-	override attribute background = GC.panelBackground;
+	//override attribute background = GC.panelBackground;
 }

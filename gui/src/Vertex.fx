@@ -38,7 +38,11 @@ public class Vertex extends GraphElement {
 	attribute yShift: Number = 0; 
 	attribute x: Number = bind parentVertex.x + xShift; // the absolute coordinates
 	attribute y: Number = bind parentVertex.y + yShift; // in case of the root vertex, it gets assigned 0 by default
-	attribute width: Number = Math.max(50, text.getWidth() + 10); // default display dimensions
+
+	attribute defaultWidth: Number = GC.vertexDefaultWidth;
+	attribute scaleWithText: Boolean = GC.scaleVerticesWithText;
+	attribute width: Number = { if (scaleWithText) Math.max(50, text.getWidth() + 10) else defaultWidth };
+
 	attribute height: Number = 50;
 	attribute children: Vertex[];
 	attribute level: Number = 0; // The depth level of the vertex, where the root vertex has level 0

@@ -230,7 +230,11 @@ public class TreeLayout extends GraphLayout {
 		// update box widths
 		// This is a very poor workaround, but I see no way to trigger an update event in here...
 		for (v in graph.vertices) {
-			v.width = Math.max(50, v.text.getWidth() + 10);
+			if (v.scaleWithText) { 
+				v.width = Math.max(50, v.text.getWidth() + 10);
+			} else {
+				v.width = v.defaultWidth;
+			}
 		}
 
 		var roots: Vertex[];
