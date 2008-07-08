@@ -166,7 +166,7 @@ public class StatementEditPanel extends EditPanel {
 
 	private attribute BAButton: RadioButton = RadioButton {
 		toggleGroup: standardGroup
-		text: "BestArgument"
+		text: "best argument"
 		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
 		action: function(): Void {
 			submitStandard();
@@ -175,7 +175,7 @@ public class StatementEditPanel extends EditPanel {
 
 	private attribute SEButton: RadioButton = RadioButton {
 		toggleGroup: standardGroup
-		text: "Scintilla of Evidence"
+		text: "scintilla of evidence"
 		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
 		action: function(): Void {
 			submitStandard();
@@ -184,7 +184,7 @@ public class StatementEditPanel extends EditPanel {
 
 	private attribute DVButton: RadioButton = RadioButton {
 		toggleGroup: standardGroup
-		text: "Dialectical Validity"
+		text: "dialectical validity"
 		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
 		action: function(): Void {
 			submitStandard();
@@ -255,12 +255,12 @@ public class StatementEditPanel extends EditPanel {
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, assumedFalseButton, 
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, acceptedButton, 
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, rejectedButton, 
-										Label { text: "Acceptable ", preferredSize: [editLabelWidth, 20] }, acceptableBox,
-										Label { text: "Proof Standard", preferredSize: [editLabelWidth, 20] }, SEButton,
+										Label { text: "acceptable ", preferredSize: [editLabelWidth, 20] }, acceptableBox,
+										Label { text: "proof standard", preferredSize: [editLabelWidth, 20] }, SEButton,
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, DVButton, 
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, BAButton, 
-										Label { text: "Negated ", preferredSize: [editLabelWidth, 20] }, negatedBox,
-										Label { text: "Complement ", preferredSize: [editLabelWidth, 20] }, complementBox,
+										Label { text: "", preferredSize: [editLabelWidth, 20] }, negatedBox,
+										Label { text: "", preferredSize: [editLabelWidth, 20] }, complementBox,
 										];
 
 	// Functions
@@ -284,8 +284,6 @@ public class StatementEditPanel extends EditPanel {
 		if (statement.standard.negated) { negatedBox.selected = true; } else { negatedBox.selected = false; }
 		if (statement.standard.complement) { complementBox.selected = true; } else { complementBox.selected = false; }
 
-		negatedBox.text = {if (s.standard.negated) "true" else "false"};
-		complementBox.text = {if (s.standard.complement) "true" else "false"};
 	}
 }
 

@@ -90,9 +90,11 @@ public class ArgumentFile {
 										}
 										, Attribute {
 											name: "standard"
-											value: { if (s.standard instanceof Scintilla) "SE" 
+											value: { {if (s.standard.negated) "N" else ""} + 
+													 {if (s.standard.complement) "C" else ""} +
+													{if (s.standard instanceof Scintilla) "SE"
 													else if (s.standard instanceof BestArgument) "BA"
-													else /*if (s.standard instanceof DialecticalValidity)*/ "DV"}
+													else /*if (s.standard instanceof DialecticalValidity)*/ "DV"}}
 										}
 									] // attributes
 								} // element
@@ -313,16 +315,41 @@ public class ArgumentFile {
 			for (i in loadedIssues where i.statementId == newStatement.id) {
 				newStatement.value = i.value;
 				newStatement.assumption = i.assumption;
-				newStatement.standard = { 
-					if (i.standard == "SE") 
-						Scintilla {	statement: newStatement } 
-					else if (i.standard == "DV") 
+
+				var negated: Boolean = false;
+				var complement: Boolean = false;
+				var extractedStandard: String = i.standard;
+
+				// extract negated
+				if (extractedStandard.startsWith("N")) {
+					negated = true;
+					extractedStandard = extractedStandard.substring(1);
+				}
+				
+				// extract complement
+				if (extractedStandard.startsWith("C")) {
+					complement = true;
+					extractedStandard = extractedStandard.substring(1);
+				}
+				
+				newStatement.standard = {
+					if (extractedStandard == "SE") 
+						Scintilla {
+							statement: newStatement
+							negated: negated
+							complement: complement
+						}
+					else if (extractedStandard == "DV") 
 						DialecticalValidity {
 							statement: newStatement
+							negated: negated
+							complement: complement
 						}
 					else 
 						BestArgument {
 							statement: newStatement
+							negated: negated
+							complement: complement
 						} 
 				};
 			}
