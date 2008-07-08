@@ -285,7 +285,6 @@ public class MoveArgumentCommand extends UndoableCommand {
 	public attribute newStatement: Statement;
 
 	public function do(): Number {
-		// todo: put this into the model
 		argument.conclusion = newStatement;
 		return GC.C_OK;
 	}
