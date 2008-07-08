@@ -38,6 +38,7 @@ import GraphSketch1.Control.GraphControl;
 
 public class GraphList extends FlowPanel {
 
+	override attribute background = GC.panelBackground;
 	override attribute alignment = HorizontalAlignment.LEFT;
 
 	attribute control: GraphControl;
@@ -64,7 +65,7 @@ public class GraphList extends FlowPanel {
 		}
 	}
 
-	override attribute content = bind [ Label {text: "Search: "}, input, 
+	override attribute content = bind [ Label {text: "search "}, input, 
 										list,
 										addArgumentButton]
 
@@ -87,7 +88,7 @@ public class StatementList extends List {
 									for (s in statements where (matches(filter, s.id.toLowerCase()) or matches(filter, s.wff.toLowerCase()))) {
 									 	StatementItem {
 											statement: s
-											text: bind "{s.id}"
+											text: bind "{s.wff}"
 										}
 									} 
 								];

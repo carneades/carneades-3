@@ -20,6 +20,7 @@ package GraphSketch1.Graph;
 
 import javafx.ext.swing.*;
 import javafx.scene.paint.*;
+import javafx.scene.image.*;
 import java.lang.System;
 import javax.swing.JFileChooser;
 import java.io.File;
@@ -64,14 +65,14 @@ public class GraphFrame extends Frame {
 		visible: true
 		control: bind control
 		argumentGraph: bind argumentGraph
-		preferredSize: bind [GC.editWidth, this.height / 2]
+		preferredSize: bind [GC.editWidth, (this.height / 2)]
 	}
 
 	public attribute list: GraphList = GraphList {
 		visible: true
 		control: bind control
 		argumentGraph: bind argumentGraph
-		preferredSize: bind [GC.editWidth, this.height /2 - 50]
+		preferredSize: bind [GC.editWidth, (this.height /3)]
 	}
 
 	attribute scroll: ScrollPane = ScrollPane {
@@ -88,9 +89,7 @@ public class GraphFrame extends Frame {
 		background: GC.panelBackground
 		preferredSize: bind [ GC.editWidth, this.height ]
 		top: bind list
-		bottom: bind ScrollPane {
-			view: bind edit
-		}
+		bottom: bind edit
 		visible: true
 	}
 
@@ -116,9 +115,21 @@ public class GraphFrame extends Frame {
 	}
 
 	private attribute toolPanel: Panel = FlowPanel {
-		preferredSize: [ this.width, 50 ]
+		preferredSize: [ this.width, GC.toolBarHeight ]
 		background: GC.toolPanelBackground
 		visible: true
+		/*
+		content: [
+			ToolBarButton {
+				icon: Icon {
+					image: Image {
+						height: 40
+						width: 40
+					}
+				}
+			}
+		]
+		*/
 	}
 
 	override attribute content = bind BorderPanel {
@@ -230,4 +241,8 @@ public class GraphFrame extends Frame {
 				} // menu*/
 	]; // override default
 
+}
+
+class ToolBarButton extends Button {
+	override attribute preferredSize = [GC.toolBarHeight, GC.toolBarHeight];
 }

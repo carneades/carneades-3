@@ -86,6 +86,7 @@ public class GC {
 	public static attribute editHeight: Integer = 380;
 	public static attribute listHeight: Integer = 300;
 	public static attribute editLabelWidth: Integer = 100;
+	public static attribute toolBarHeight: Integer = 50;
 
 	public static function p(s: String) { System.out.println(s)}
 }
