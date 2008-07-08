@@ -251,7 +251,7 @@ public class StatementEditPanel extends EditPanel {
 
 	override attribute content = bind [ 
 										Label { text: "id ", preferredSize: [editLabelWidth, 20] }, idField, 
-										Label { text: "wff ", preferredSize: [editLabelWidth, 20] }, contentField,
+										Label { text: "content ", preferredSize: [editLabelWidth, 20] }, contentField,
 										Label { text: "status ", preferredSize: [GC.editLabelWidth, 20] }, statedButton, 
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, questionedButton, 
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, assumedTrueButton, 
