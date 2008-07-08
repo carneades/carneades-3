@@ -98,22 +98,22 @@ public class EditPanel extends FlowPanel {
 	override attribute visible = false;
 	protected attribute control: AbstractGraphControl;
 	public attribute argumentGraph: ArgumentGraph;
+	private attribute editLabelWidth = bind GC.editLabelWidth;
 }
 
 public class StatementEditPanel extends EditPanel {
 	attribute statement: Statement;
-	private attribute editLabelWidth = bind GC.editLabelWidth;
 	
 	// General Components
 
-	public attribute idField: IdField = IdField {
+	private attribute idField: IdField = IdField {
 		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
 		action: function(): Void {
 			control.changeStatementId(statement, idField.text);
 		}
 	}
 	
-	public attribute contentField: ContentField = ContentField {
+	private attribute contentField: ContentField = ContentField {
 		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
 		action: function(): Void {
 			control.changeStatementWff(statement, contentField.text);
@@ -129,7 +129,7 @@ public class StatementEditPanel extends EditPanel {
 
 	// Proof Standard Components
 
-	public attribute negatedBox: CheckBox = CheckBox {
+	private attribute negatedBox: CheckBox = CheckBox {
 		text: "negated"
 		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
 		action: function(): Void {
@@ -137,7 +137,7 @@ public class StatementEditPanel extends EditPanel {
 		}
 	}
 
-	public attribute complementBox: CheckBox = CheckBox {
+	private attribute complementBox: CheckBox = CheckBox {
 		text: "complement"
 		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
 		action: function(): Void {
@@ -145,7 +145,7 @@ public class StatementEditPanel extends EditPanel {
 		}
 	}
 
-	public attribute proofStandardBox: ProofStandardField = ProofStandardField {
+	private attribute proofStandardBox: ProofStandardField = ProofStandardField {
 		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
 		action: function(): Void {
 			submitStandard();
@@ -293,27 +293,33 @@ public class ArgumentEditPanel extends EditPanel {
 	// Components
 
 	public attribute idField: IdField = IdField {
+		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
 		editable: true
 		action: function(): Void {
 			control.changeArgumentId(argument, idField.text);
 		}
 	}
 	
-	public attribute directionBox: DirectionField = DirectionField {
-		action: function(): Void {
-			if (directionBox.verified) { control.changeArgumentDirection(argument, directionBox.text); }
-		}
+	public attribute defensibleBox: CheckBox = CheckBox {
+		selected: bind argument.ok
 	}
 
-	public attribute defensibleLabel: Label = Label {
-		text: bind { if (argument.ok) "true" else "false" }
-		foreground: bind { if (argument.ok) Color.DARKGREEN else Color.DARKRED }
+	private attribute directionGroup: ToggleGroup = ToggleGroup {};
+
+	private attribute proButton: RadioButton = RadioButton {
+		toggleGroup: directionGroup
+		text: "pro"
+	}
+
+	private attribute conButton: RadioButton = RadioButton {
+		toggleGroup: directionGroup
+		text: "con"
 	}
 
 	override attribute content = bind [ 
-										Label { text: "id: " }, idField, 
-										Label { text: "Direction: " }, directionBox,
-										Label { text: "Defensible: " }, defensibleLabel
+										Label { text: "id: " preferredSize: [editLabelWidth, 20]}, idField, 
+										Label { text: "Direction: ", preferredSize: [editLabelWidth, 20]}, proButton, conButton,
+										Label { text: "Defensible: ", preferredSize: [editLabelWidth, 20]}, defensibleBox
 										];
 
 	// Functions
@@ -321,8 +327,14 @@ public class ArgumentEditPanel extends EditPanel {
 	public function loadArgument(a: Argument): Void {
 		argument = a;
 		idField.text = argument.id;
-		directionBox.text = { if (argument.pro) "pro" else "con" }
-		defensibleLabel.text = { if (argument.allPremisesHold()) "true" else "false" };
+
+		if (a.pro) { 
+			proButton.selected = true;
+			conButton.selected = false;
+		} else {
+			proButton.selected = false;
+			conButton.selected = true;
+		}
 	}
 }
 
