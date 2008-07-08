@@ -33,14 +33,14 @@ import GraphSketch1.Graph.*;
 import GraphSketch1.Graph.Elements.Elements.*;
 
 // Abstract Controller Class for Interaction
-import GraphSketch1.Control.AbstractGraphControl;
+import GraphSketch1.Control.GraphControl;
 
 
 public class GraphList extends FlowPanel {
 
 	override attribute alignment = HorizontalAlignment.LEFT;
 
-	attribute control: AbstractGraphControl;
+	attribute control: GraphControl;
 	attribute argumentGraph: ArgumentGraph;
 
 	attribute input: TextField = TextField {
@@ -71,7 +71,7 @@ public class GraphList extends FlowPanel {
 }
 
 public class StatementList extends List {
-	public attribute control: AbstractGraphControl;
+	public attribute control: GraphControl;
 	attribute filter: String = "";
 
 	override attribute selectedItem = null on replace {

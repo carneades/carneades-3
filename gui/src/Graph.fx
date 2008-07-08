@@ -23,10 +23,10 @@ import GraphSketch1.Graph.Vertex;
 import GraphSketch1.Graph.Elements.Elements.*;
 import java.lang.System;
 
-import GraphSketch1.Control.AbstractGraphControl;
+import GraphSketch1.Control.GraphControl;
 
 public class Graph extends CustomNode {
-	public attribute control: AbstractGraphControl;
+	public attribute control: GraphControl;
 	public attribute vertices: Vertex[];
 	public attribute edges: Edge[];
 	public attribute selected: GraphElement[] = [];

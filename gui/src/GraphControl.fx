@@ -598,9 +598,8 @@ public class GraphControl extends AbstractGraphControl {
 		updateAll();
 	}
 
-	public function changePremiseType(p: Premise, value: String): Void {
-		var newValue: Boolean = { if (value == "exception") true else false };
-		if (newValue != p.exception) {
+	public function changePremiseType(p: Premise, exception: Boolean): Void {
+		if (exception != p.exception) {
 			commands.do(
 				ChangePremiseTypeCommand {
 					argumentGraph: argumentGraph

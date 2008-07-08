@@ -26,7 +26,7 @@ import javafx.scene.geometry.*;
 import GraphSketch1.Graph.*;
 import java.lang.System;
 import java.lang.Math;
-import GraphSketch1.Control.AbstractGraphControl;
+import GraphSketch1.Control.GraphControl;
 
 public class Edge extends GraphElement {
 	public attribute producer: Vertex; // The vertex from which the directed edge is originating ...
@@ -45,7 +45,7 @@ public class Edge extends GraphElement {
 	attribute stroke: Color = Color.BLACK;
 	attribute strokeWidth: Number = GC.edgeStrokeWidth;
 
-	attribute control: AbstractGraphControl;
+	attribute control: GraphControl;
 
 	// attributes for optional heads
 	attribute turnHead: Boolean = false;

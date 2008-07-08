@@ -33,6 +33,10 @@ public class GC {
 	public static attribute LEFT: Number = 4;
 
 	// Drawing constants
+	public static attribute viewBackground: Color = Color.rgb(178, 195, 218);
+	public static attribute toolPanelBackground: Color = Color.rgb(124, 141, 172);
+	public static attribute panelBackground: Color = Color.rgb(223, 226, 229);
+
 	public static attribute edgeStrokeWidth: Number = 1;
 	public static attribute selectionColor: Color = Color.BLUE;
 	public static attribute hoverColor: Color = Color.ORANGE;
@@ -83,7 +87,5 @@ public class GC {
 	public static attribute listHeight: Integer = 300;
 	public static attribute editLabelWidth: Integer = 100;
 
-
 	public static function p(s: String) { System.out.println(s)}
-
 }
