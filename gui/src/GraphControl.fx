@@ -37,7 +37,7 @@ import GraphSketch1.Graph.Elements.Elements.*;
 // Other Control Imports
 import GraphSketch1.Control.Commands.*;
 
-public class GraphControl extends AbstractGraphControl {
+public class GraphControl {
 
 	attribute argumentGraph: ArgumentGraph;
 	attribute layout: GraphLayout;
@@ -49,10 +49,35 @@ public class GraphControl extends AbstractGraphControl {
 	private attribute commands: CommandControl = CommandControl {}
 	private attribute selectedModels: Object[];
 
+	// View configuration attributes
+	public attribute possibleToAddConclusion: Boolean = true;
+
+	public attribute possibleToInverseArgument: Boolean = false;
+	public attribute possibleToNegatePremise: Boolean = false;
+
+	public attribute possibleToChangeToOrdPremise: Boolean = false;
+	public attribute possibleToChangeToException: Boolean = false;
+	public attribute possibleToChangeToAssumption: Boolean = false;
+
+	public attribute possibleToDelete: Boolean = false ;
+	
+	public attribute possibleToUndo: Boolean = false;
+	public attribute possibleToRedo: Boolean = false;
+	
+	public attribute dragging: Boolean = false;
+
+	public attribute selectedArgumentEditable: Boolean = false;
+	public attribute selectedStatementEditable: Boolean = false;
+	public attribute selectedPremiseEditable: Boolean = false;
+
+	public attribute draggingOver = null;
+
+	public function setDraggingOver(thing): Void { draggingOver = thing; };
+
 	// SELECTION FUNCTIONS
 
-	override attribute possibleToAddArgument = bind selectedModels[0] instanceof Statement;
-	override attribute possibleToAddPremise = bind selectedModels[0] instanceof Argument;
+	public attribute possibleToAddArgument = bind selectedModels[0] instanceof Statement;
+	public attribute possibleToAddPremise = bind selectedModels[0] instanceof Argument;
 
 	private function singleArgumentLinkSelected(s: GraphElement[]): Boolean {
 		return { if (sizeof s != 1) false else (s instanceof ArgumentLink) } 
