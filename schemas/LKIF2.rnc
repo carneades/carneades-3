@@ -148,7 +148,9 @@ grammar {
         attribute statement { xsd:anyURI },
         attribute value { "unknown" | "true" | "false" },  # default: unknown
         attribute assumption { xsd:boolean }?, # default: false
-        attribute standard { "DV" | "SE" | "BA" }? # default: DV
+        attribute standard { "SE" | "CSE" | "NSE" | "NCSE" | 
+                             "DV" | "CDV" | "NDV" | "NCDV" | 
+                             "BA" | "CBA" | "NBA" | "NCBA"  }? # default: BA
     }
         
     Strengths = element strengths { Stronger* }
