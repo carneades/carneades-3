@@ -48,7 +48,7 @@ import Carneades.Control.*;
 
 var argumentGraph: ArgumentGraph = ArgumentGraph { id: "testgraph" }
 
-argumentGraph = ArgumentFile.getGraphFromFile(new File("data/socrates.xml"));
+//argumentGraph = ArgumentFile.getGraphFromFile(new File("data/socrates.xml"));
 
 // 2. DECLARE VIEW AND CONTROL COMPONENTS
 

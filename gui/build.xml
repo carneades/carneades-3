@@ -12,6 +12,8 @@
 				value="${javafxc.home}/lib/javafxc.jar:${javafxc.home}/lib/javafxrt.jar:${javafxc.home}/lib/Scenario.jar"/>
         <taskdef resource="javafxc-ant-task.properties" classpath="${javafxc.class.path}"/>
 
+		<import file="./lib/one-jar-ant-task.xml"/> 
+
 		<path id="project.class.path">
 				<pathelement location="lib/javafx-xml.jar"/>
 				<pathelement location="lib/javafxgui.jar"/>
@@ -234,12 +236,23 @@
 
 		<target name="jar" depends="">
 				<echo message="Packing jar ..." />
-    			<jar destfile="Carneades.jar"
+				<jar destfile="build/main/main.jar"
          		basedir="build"
 				includes="**/*.class"
-				manifest="manifest"
+				manifest="coremanifest"
+				update="true"
          		/>
-  		</target>
+		</target>
+
+		<target name="pack" depends="jar">
+				<one-jar destfile="Carneades.jar">
+						<main jar="build/main/main.jar">
+            		</main>
+           				<lib>
+							<fileset dir="lib/" />
+           				</lib>
+        		</one-jar> 
+		</target>
 
 		<target name="full" depends="compile, r">
 		</target>
