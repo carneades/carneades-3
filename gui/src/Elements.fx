@@ -106,6 +106,7 @@ public abstract class ArgumentElement extends Vertex {
 public class ArgumentBox extends ArgumentElement {
 	public attribute argument: Argument;
 	override attribute height = GC.argumentCircleDefaultRadius;
+	override attribute defaultWidth = GC.argumentCircleDefaultRadius;
 	override attribute scaleWithText = false;
 	override attribute caption = bind argument.id;
 	override attribute fill = bind {if (argument.ok) Color.LIGHTGREY else Color.WHITE};
@@ -116,6 +117,7 @@ public class ArgumentBox extends ArgumentElement {
 		radius: bind GC.argumentCircleDefaultRadius
 		fill: bind Color.WHITE;
 		stroke: Color.BLACK
+		blocksMouse: true
 
 		onMouseClicked: function(e: MouseEvent) {
 			control.unSelectAll();
