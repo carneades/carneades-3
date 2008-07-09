@@ -234,7 +234,7 @@
 				</javafxc>
 		</target>
 
-		<target name="jar" depends="">
+		<target name="corejar" depends="">
 				<echo message="Packing jar ..." />
 				<jar destfile="build/main/main.jar"
          		basedir="build"
@@ -244,7 +244,7 @@
          		/>
 		</target>
 
-		<target name="pack" depends="jar">
+		<target name="jar" depends="corejar">
 				<one-jar destfile="Carneades.jar">
 						<main jar="build/main/main.jar">
             		</main>
@@ -257,7 +257,7 @@
 		<target name="full" depends="compile, r">
 		</target>
 
-		<target name="r" depends="pack">
+		<target name="r" depends="jar">
 				<echo message="Executing ..." />
 				<java jar="Carneades.jar" fork="true"/>
 		</target>
