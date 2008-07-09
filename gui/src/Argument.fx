@@ -106,6 +106,19 @@ public class Statement {
     	value == "false" and assumption == false;
     }
     
+	// this function is a workaround as there is a bug 
+	// in the compiler with regard to calling bound 
+	// functions from non-bound contexts
+	public bound function getBoundStatus(): String {
+		if (stated()) "stated"
+		else if (questioned()) "questioned"
+		else if (assumedTrue()) "assumed true"
+		else if (assumedFalse()) "assumed false"
+		else if (rejected()) "rejected"
+		else if (accepted()) "accepted"
+		else "";
+	}
+
 	public function status(): String {
 		if (stated()) "stated"
 		else if (questioned()) "questioned"

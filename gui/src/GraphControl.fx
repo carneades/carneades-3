@@ -26,7 +26,6 @@ import java.io.File;
 
 // Model imports
 import Carneades.Argument.*;
-import Carneades.Argument.Argument;
 import Carneades.Argument.Argument.*;
 
 // View imports
