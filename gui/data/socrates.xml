@@ -5,11 +5,12 @@
       <issue assumption="false" standard="BA" statement="SocratesMortality" value="unknown"/>
       <issue assumption="false" standard="BA" statement="mortality" value="unknown"/>
       <issue assumption="false" standard="BA" statement="SocratesHuman" value="unknown"/>
-      <issue assumption="false" standard="BA" statement="humanHands" value="unknown"/>
-      <issue assumption="false" standard="BA" statement="SocratesHands" value="unknown"/>
-      <issue assumption="false" standard="BA" statement="everyoneDies" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="humanHands" value="true"/>
+      <issue assumption="true" standard="BA" statement="SocratesHands" value="true"/>
+      <issue assumption="false" standard="BA" statement="everyoneDies" value="true"/>
       <issue assumption="false" standard="BA" statement="apeException" value="unknown"/>
       <issue assumption="false" standard="BA" statement="SocratesApe" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="s1" value="true"/>
     </issues>
     <statements>
       <s id="SocratesMortality">Socrates is mortal.</s>
@@ -20,6 +21,7 @@
       <s id="everyoneDies">No man has lived forever.</s>
       <s id="apeException">Apes have hands but are not humans.</s>
       <s id="SocratesApe">Socrates is an ape.</s>
+      <s id="s1">Jesus was human.</s>
     </statements>
     <arguments>
       <argument direction="pro" id="a1" scheme="">
@@ -47,6 +49,12 @@
         <conclusion statement="apeException"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="SocratesApe"/>
+        </premises>
+      </argument>
+      <argument direction="con" id="a5" scheme="">
+        <conclusion statement="mortality"/>
+        <premises>
+          <premise exception="false" polarity="positive" role="" statement="s1"/>
         </premises>
       </argument>
     </arguments>

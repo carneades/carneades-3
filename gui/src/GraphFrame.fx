@@ -48,7 +48,7 @@ public class GraphFrame extends Frame {
 
 	attribute chooser: JFileChooser = new JFileChooser();
 
-	override attribute title = "Graph Layout Sketch 1";
+	override attribute title = "Argument Graph";
 	override attribute width = GC.appWidth;
 	override attribute height = GC.appHeight;
 	override attribute background = Color.WHITE;
