@@ -152,7 +152,7 @@ grammar {
                              "DV" | "CDV" | "NDV" | "NCDV" | 
                              "BA" | "CBA" | "NBA" | "NCBA"  }? # default: BA
     }
-        
+         
     
     # Schemes and premise roles are referenced using URIs.  They can be modeled
     # as instances in an OWL ontology.
