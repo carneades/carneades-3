@@ -126,7 +126,7 @@ grammar {
     ArgumentGraph = element argument-graph { 
         attribute id { xsd:ID }?, 
         attribute main-issue { xsd:anyURI }?, 
-        Issues?, Strengths?, Statements, Arguments
+        Issues?, Statements, Arguments
     }
     
     Statements = element statements { Wff* }
@@ -153,12 +153,6 @@ grammar {
                              "BA" | "CBA" | "NBA" | "NCBA"  }? # default: BA
     }
         
-    Strengths = element strengths { Stronger* }
-    
-    Stronger = element stronger {
-        attribute arg1 { xsd:IDREF },
-        attribute arg2 { xsd:IDREF }
-    }
     
     # Schemes and premise roles are referenced using URIs.  They can be modeled
     # as instances in an OWL ontology.
@@ -168,6 +162,7 @@ grammar {
     	attribute id { xsd:ID },
         attribute direction { "pro" | "con" }?,
         attribute scheme { xsd:anyURI }?,
+        attribute weight { xsd:float }?,  # range: 0.0 bis 1.0; default: 0.5
         Conclusion, Premises
     }
     
