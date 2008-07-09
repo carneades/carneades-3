@@ -257,7 +257,7 @@
 		<target name="full" depends="compile, r">
 		</target>
 
-		<target name="r" depends="jar">
+		<target name="r" depends="pack">
 				<echo message="Executing ..." />
 				<java jar="Carneades.jar" fork="true"/>
 		</target>
