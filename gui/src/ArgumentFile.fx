@@ -24,6 +24,7 @@ import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.lang.System;
+import java.lang.Float;
 import java.net.URI;
 
 // other Argument imports
@@ -137,6 +138,10 @@ public class ArgumentFile {
 											name: "id"
 											value: a.id
 										}, 
+										Attribute {
+											name: "weight"
+											value: a.weight.toString()
+										},
 										Attribute {
 											name: "direction"
 											value: { if (a.pro) "pro" else "con" }
@@ -365,6 +370,7 @@ public class ArgumentFile {
 			var premises: Premise[];  
 			var pro: Boolean = true;
 			var conclusion: Statement;
+			var weight: Number = 0.0;
 
 			// set variables from attributes
 
@@ -379,6 +385,7 @@ public class ArgumentFile {
 						id: i.value
 					}
 				}
+				if (i.name == "weight") { weight = Float.valueOf(i.value); }
 			}
 			
 			// fetch premises
@@ -434,6 +441,7 @@ public class ArgumentFile {
 				premises: premises  
 				pro: pro
 				conclusion: conclusion
+				weight: weight
 			}
 
 			insert newArgument into argumentGraph.arguments;
