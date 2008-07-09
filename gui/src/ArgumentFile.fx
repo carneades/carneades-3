@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package GraphSketch1.Argument;
+package Carneades.Argument;
 
 // General imports
 import javafx.xml.*;
@@ -27,8 +27,8 @@ import java.lang.System;
 import java.net.URI;
 
 // other Argument imports
-import GraphSketch1.Argument.Argument;
-import GraphSketch1.Argument.Argument.*;
+import Carneades.Argument.Argument;
+import Carneades.Argument.Argument.*;
 
 // helper issue class for file loading
 class Issue {

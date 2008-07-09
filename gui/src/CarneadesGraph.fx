@@ -15,18 +15,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package GraphSketch1.Graph;
+package Carneades.Graph;
 
 // General imports
 import javafx.ext.swing.*;
 import javafx.scene.*;
 
 // import the rest of the graph package
-import GraphSketch1.Graph.Elements.Elements.*;
+import Carneades.Graph.Elements.Elements.*;
 
 // import the necessary parts of the model
-import GraphSketch1.Argument.Argument;
-import GraphSketch1.Argument.Argument.*;
+import Carneades.Argument.Argument;
+import Carneades.Argument.Argument.*;
 
 public class CarneadesGraph extends Graph {
 

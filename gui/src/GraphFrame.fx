@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-package GraphSketch1.Graph;
+package Carneades.Graph;
 
 import javafx.ext.swing.*;
 import javafx.scene.paint.*;
@@ -26,15 +26,15 @@ import javax.swing.JFileChooser;
 import java.io.File;
 
 // Model Classes
-import GraphSketch1.Argument.Argument;
-import GraphSketch1.Argument.Argument.*;
+import Carneades.Argument.Argument;
+import Carneades.Argument.Argument.*;
 
 // Other View Classes
-import GraphSketch1.Graph.*;
-import GraphSketch1.Graph.Elements.Elements.*;
+import Carneades.Graph.*;
+import Carneades.Graph.Elements.Elements.*;
 
 // Abstract Controller Class for Interaction
-import GraphSketch1.Control.GraphControl;
+import Carneades.Control.GraphControl;
 
 public class GraphFrame extends Frame {
 	

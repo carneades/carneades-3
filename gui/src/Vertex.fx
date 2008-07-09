@@ -16,16 +16,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-package GraphSketch1.Graph;
+package Carneades.Graph;
 
 import java.lang.Math;
 import javafx.scene.*;
 import javafx.scene.geometry.*;
 import javafx.scene.text.*;
 import javafx.scene.paint.*;
-import GraphSketch1.Graph.*;
+import Carneades.Graph.*;
 import java.lang.System;
-import GraphSketch1.Control.GraphControl;
+import Carneades.Control.GraphControl;
 
 public class Vertex extends GraphElement {
 	// The content object that is represented by the vertex

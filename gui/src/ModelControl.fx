@@ -1,16 +1,16 @@
-package GraphSketch1.GraphControl;
+package Carneades.GraphControl;
 
 // General Imports
 import java.lang.System;
 import javafx.animation.*;
 
 // Model imports
-import GraphSketch1.Argument.Argument;
-import GraphSketch1.Argument.Argument.*;
+import Carneades.Argument.Argument;
+import Carneades.Argument.Argument.*;
 
 // View imports
-import GraphSketch1.Graph.*;
-import GraphSketch1.Graph.Elements.Elements.*;
+import Carneades.Graph.*;
+import Carneades.Graph.Elements.Elements.*;
 
 public class ModelControl {
 

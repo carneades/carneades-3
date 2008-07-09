@@ -15,12 +15,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package GraphSketch1.Argument;
+package Carneades.Argument;
 
 // import object for cycle checking
 import java.lang.Object;
 // import constants
-import GraphSketch1.Graph.GC;
+import Carneades.Graph.GC;
 import java.lang.System;
 
 abstract public class ProofStandard {
