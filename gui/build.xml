@@ -2,6 +2,11 @@
 
 <project default ="full">
 		<property environment="env"/>
+
+		<property name="project.target" value="1.5"/>
+		<property name="project.srcdir" value="src"/>
+		<property name="project.builddir" value="build"/>
+
 		<property name="javafxc.home" value="${env.JAVAFXHOME}"/>
 		<property name="javafxc.class.path" 
 				value="${javafxc.home}/lib/javafxc.jar:${javafxc.home}/lib/javafxrt.jar:${javafxc.home}/lib/Scenario.jar"/>
@@ -18,51 +23,202 @@
 		</path>
 		
 		<target name="constants">
+				<javafxc 
+						srcdir="${project.srcdir}"
+						destdir="${project.builddir}" 
+						includes="GC.fx"
+						target="${project.target}"
+						compilerclasspath="${javafxc.class.path}">
+						<classpath refid="project.class.path"/>
+				</javafxc>
 		</target>
 		<target name="argument">
-		</target>
-		<target name="argcontrol">
+				<javafxc 
+						srcdir="${project.srcdir}"
+						destdir="${project.builddir}" 
+						includes="Argument.fx"
+						target="${project.target}"
+						compilerclasspath="${javafxc.class.path}">
+						<classpath refid="project.class.path"/>
+				</javafxc>
 		</target>
 		<target name="gelement">
+				<javafxc 
+						srcdir="${project.srcdir}"
+						destdir="${project.builddir}" 
+						includes="GraphElement.fx"
+						target="${project.target}"
+						compilerclasspath="${javafxc.class.path}">
+						<classpath refid="project.class.path"/>
+				</javafxc>
 		</target>
 		<target name="vertex">
+				<javafxc 
+						srcdir="${project.srcdir}"
+						destdir="${project.builddir}" 
+						includes="Vertex.fx"
+						target="${project.target}"
+						compilerclasspath="${javafxc.class.path}">
+						<classpath refid="project.class.path"/>
+				</javafxc>
 		</target>
 		<target name="edge">
+				<javafxc 
+						srcdir="${project.srcdir}"
+						destdir="${project.builddir}" 
+						includes="Edge.fx"
+						target="${project.target}"
+						compilerclasspath="${javafxc.class.path}">
+						<classpath refid="project.class.path"/>
+				</javafxc>
 		</target>
 		<target name="graph">
+				<javafxc 
+						srcdir="${project.srcdir}"
+						destdir="${project.builddir}" 
+						includes="Graph.fx"
+						target="${project.target}"
+						compilerclasspath="${javafxc.class.path}">
+						<classpath refid="project.class.path"/>
+				</javafxc>
 		</target>
 		<target name="cgraph">
+				<javafxc 
+						srcdir="${project.srcdir}"
+						destdir="${project.builddir}" 
+						includes="CarneadesGraph.fx"
+						target="${project.target}"
+						compilerclasspath="${javafxc.class.path}">
+						<classpath refid="project.class.path"/>
+				</javafxc>
 		</target>
 		<target name="layout">
+				<javafxc 
+						srcdir="${project.srcdir}"
+						destdir="${project.builddir}" 
+						includes="Layout.fx"
+						target="${project.target}"
+						compilerclasspath="${javafxc.class.path}">
+						<classpath refid="project.class.path"/>
+				</javafxc>
 		</target>
 		<target name="treelayout">
+				<javafxc 
+						srcdir="${project.srcdir}"
+						destdir="${project.builddir}" 
+						includes="TreeLayout.fx"
+						target="${project.target}"
+						compilerclasspath="${javafxc.class.path}">
+						<classpath refid="project.class.path"/>
+				</javafxc>
 		</target>
 		<target name="frame">
+				<javafxc 
+						srcdir="${project.srcdir}"
+						destdir="${project.builddir}" 
+						includes="GraphFrame.fx"
+						target="${project.target}"
+						compilerclasspath="${javafxc.class.path}">
+						<classpath refid="project.class.path"/>
+				</javafxc>
 		</target>
 		<target name="edit">
+				<javafxc 
+						srcdir="${project.srcdir}"
+						destdir="${project.builddir}" 
+						includes="GraphEdit.fx"
+						target="${project.target}"
+						compilerclasspath="${javafxc.class.path}">
+						<classpath refid="project.class.path"/>
+				</javafxc>
 		</target>
 		<target name="list">
+				<javafxc 
+						srcdir="${project.srcdir}"
+						destdir="${project.builddir}" 
+						includes="GraphList.fx"
+						target="${project.target}"
+						compilerclasspath="${javafxc.class.path}">
+						<classpath refid="project.class.path"/>
+				</javafxc>
 		</target>
 		<target name="view">
+				<javafxc 
+						srcdir="${project.srcdir}"
+						destdir="${project.builddir}" 
+						includes="GraphView.fx"
+						target="${project.target}"
+						compilerclasspath="${javafxc.class.path}">
+						<classpath refid="project.class.path"/>
+				</javafxc>
 		</target>
 		<target name="elements">
+				<javafxc 
+						srcdir="${project.srcdir}"
+						destdir="${project.builddir}" 
+						includes="Elements.fx"
+						target="${project.target}"
+						compilerclasspath="${javafxc.class.path}">
+						<classpath refid="project.class.path"/>
+				</javafxc>
 		</target>
 		<target name="acontrol">
+				<javafxc 
+						srcdir="${project.srcdir}"
+						destdir="${project.builddir}" 
+						includes="AbstractControl.fx"
+						target="${project.target}"
+						compilerclasspath="${javafxc.class.path}">
+						<classpath refid="project.class.path"/>
+				</javafxc>
 		</target>
 		<target name="control">
+				<javafxc 
+						srcdir="${project.srcdir}"
+						destdir="${project.builddir}" 
+						includes="GraphControl.fx"
+						target="${project.target}"
+						compilerclasspath="${javafxc.class.path}">
+						<classpath refid="project.class.path"/>
+				</javafxc>
 		</target>
 		<target name="commands">
+				<javafxc 
+						srcdir="${project.srcdir}"
+						destdir="${project.builddir}" 
+						includes="Commands.fx"
+						target="${project.target}"
+						compilerclasspath="${javafxc.class.path}">
+						<classpath refid="project.class.path"/>
+				</javafxc>
 		</target>
 		<target name="file">
+				<javafxc 
+						srcdir="${project.srcdir}"
+						destdir="${project.builddir}" 
+						includes="ArgumentFile.fx"
+						target="${project.target}"
+						compilerclasspath="${javafxc.class.path}">
+						<classpath refid="project.class.path"/>
+				</javafxc>
 		</target>
 		<target name="main">
+				<javafxc 
+						srcdir="${project.srcdir}"
+						destdir="${project.builddir}" 
+						includes="GraphSketch.fx"
+						target="${project.target}"
+						compilerclasspath="${javafxc.class.path}">
+						<classpath refid="project.class.path"/>
+				</javafxc>
 		</target>
 
 		<target name="compile">
 				<javafxc 
-						srcdir="src"
-						destdir="build" 
+						srcdir="${project.srcdir}"
+						destdir="${project.builddir}" 
 						includes="**/*.fx"
+						target="${project.target}"
 						compilerclasspath="${javafxc.class.path}">
 						<classpath refid="project.class.path"/>
 				</javafxc>

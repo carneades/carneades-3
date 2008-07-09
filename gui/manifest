@@ -1,4 +1,4 @@
 Manifest-Version: 1.0 
-Main-Class: GraphSketch1.Control.GraphSketch
+Main-Class: Carneades.Control.CarneadesMain
 Class-Path: lib/javafxc.jar lib/javafxrt.jar lib/Scenario.jar lib/javafxgui.jar lib/jmc.jar lib/javafx-xml.jar lib/javafx-swing.jar
 
