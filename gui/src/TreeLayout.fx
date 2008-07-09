@@ -203,8 +203,8 @@ public class TreeLayout extends GraphLayout {
 				i.y1Shift = i.producer.height;
 			} else {
 				// edge comes bottom up
-				i.y2Shift = i.recipient.height;
-				i.y1Shift = i.producer.height / 2;
+				i.y2Shift = i.recipient.height / 2;
+				i.y1Shift = - i.producer.height / 2;
 			}
 		}
 

@@ -33,7 +33,7 @@ public class GC {
 	public static attribute LEFT: Number = 4;
 
 	// Drawing constants
-	public static attribute drawDebug = true;
+	public static attribute drawDebug = false;
 	public static attribute viewBackground: Color = Color.rgb(178, 195, 218);
 	public static attribute toolPanelBackground: Color = Color.rgb(124, 141, 172);
 	public static attribute panelBackground: Color = Color.rgb(223, 226, 229);

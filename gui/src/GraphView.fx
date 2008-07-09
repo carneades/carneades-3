@@ -63,6 +63,6 @@ public class GraphView extends Canvas {
 	}
 
 	override attribute background = GC.viewBackground;
-	override attribute content = bind [ backSensor, graph, dragSymbol ];
+	override attribute content = bind [graph, backSensor, dragSymbol ];
 
 }

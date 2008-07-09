@@ -35,7 +35,7 @@ public class Graph extends CustomNode {
 	public function create():Node {
 		Group {
 			content: bind [
-				vertices, edges
+				edges, vertices
 				]// bind
 		} // Group
 	} // composeNode
