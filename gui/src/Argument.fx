@@ -172,6 +172,12 @@ public class Scheme {
 public class Argument {
 	public attribute id: String;
 	public attribute graph : ArgumentGraph;  
+
+	public attribute weight: Number = 0.5 // range: 0.0 to 1.0
+		on replace {
+			graph.update();
+		}
+		
 	public attribute scheme: Scheme;
     public attribute premises: Premise[] 
     	on replace {
@@ -235,26 +241,13 @@ public class ArgumentGraph {
 
     // Issues of XML format not needed, since the 
     // statements here have all the attributes of issues.
-
-	// to do: attribute for some data structure representing
-	// the relative strength of arguments, with the following API
-	
-	public function putStronger (a1: Argument, a2: Argument) : Void {
-		// to do
-    }
-
-	public function putAsStrong (a1: Argument, a2: Argument) : Void {
-		// to do
-	}
 	
 	public function stronger (a1: Argument, a2: Argument) : Boolean {
-		// to do
-		false
+		a1.weight > a2.weight;
 	}
 	
 	public function atLeastAsStrong (a1: Argument, a2: Argument) : Boolean {
-		// to do
-		false
+		a1.weight >= a2.weight;
 	}
 	
 	public function insertStatement (s: Statement): Number {
