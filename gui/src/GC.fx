@@ -33,17 +33,18 @@ public class GC {
 	public static attribute LEFT: Number = 4;
 
 	// Drawing constants
+	public static attribute drawDebug = true;
 	public static attribute viewBackground: Color = Color.rgb(178, 195, 218);
 	public static attribute toolPanelBackground: Color = Color.rgb(124, 141, 172);
 	public static attribute panelBackground: Color = Color.rgb(223, 226, 229);
 
 	public static attribute edgeStrokeWidth: Number = 1;
-	public static attribute selectionColor: Color = Color.BLUE;
+	public static attribute selectionColor: Color = Color.RED;
 	public static attribute hoverColor: Color = Color.ORANGE;
 	public static attribute dragColor: Color = Color {
-													red: 0
+													red: 0.5
 													green: 0
-													blue: 0.5
+													blue: 0
 													opacity: 0.5
 													};
 	public static attribute possibleColor: Color = Color.GREEN;

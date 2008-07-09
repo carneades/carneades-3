@@ -68,8 +68,8 @@ public class Vertex extends GraphElement {
 		Group {
 			content: [
 				Rectangle {
-					x: bind x - (width / 2).intValue()
-					y: bind y
+					x: bind x - (width/2)
+					y: bind y - (height/2)
 					width: bind width
 					height: bind height
 					fill: Color.WHITE

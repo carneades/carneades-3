@@ -171,7 +171,7 @@ public class TreeLayout extends GraphLayout {
 	private function adjust():Void {
 		// adjust vertical alignment
 		for (i:Vertex in graph.vertices) {
-			i.yShift = i.height + yDistance;
+			i.yShift = (i.height/2) + (i.parentVertex.height / 2) + yDistance;
 		}
 		
 		// adjust horizontal alignment of the root
@@ -203,7 +203,8 @@ public class TreeLayout extends GraphLayout {
 				i.y1Shift = i.producer.height;
 			} else {
 				// edge comes bottom up
-				i.y2Shift = i.recipient.height
+				i.y2Shift = i.recipient.height;
+				i.y1Shift = i.producer.height / 2;
 			}
 		}
 

@@ -41,8 +41,8 @@ import GraphSketch1.Control.GraphControl;
 public abstract class ArgumentElement extends Vertex {
 	attribute fill: Color = Color.WHITE;
 	attribute mainRect: Rectangle = Rectangle {
-					x: bind x - (width / 2).intValue()
-					y: bind y
+					x: bind x - (width / 2)
+					y: bind y - (height / 2)
 					width: bind width 
 					height: bind height
 					fill: bind fill
@@ -80,38 +80,82 @@ public abstract class ArgumentElement extends Vertex {
 					verticalAlignment: VerticalAlignment.TOP
 					horizontalAlignment: HorizontalAlignment.CENTER
 					x: bind x
-					y: bind y + (height / 2)
+					y: bind y
 				} // Text
 
-	attribute selection: Rectangle = Rectangle {
+	attribute selection: Node = Rectangle {
 					x: bind x - (width / 2) - 5
-					y: bind y - 5
+					y: bind y - (height / 2) - 5
 					width: bind width + 10
 					height: bind height + 10
 					stroke: bind {if (control.dragging) GC.dragColor else GC.selectionColor};
 					strokeWidth: 2
 					visible: bind selected
 				} // selection rect
+	
+	attribute middlePoint: Circle = Circle {
+		centerX: bind x
+		centerY: bind y
+		radius: 3
+		fill: Color.RED
+		visible: bind GC.drawDebug
+	}
 
 }
 
 public class ArgumentBox extends ArgumentElement {
 	public attribute argument: Argument;
+	override attribute height = GC.argumentCircleDefaultRadius;
 	override attribute scaleWithText = false;
 	override attribute caption = bind argument.id;
 	override attribute fill = bind {if (argument.ok) Color.LIGHTGREY else Color.WHITE};
 
 	private attribute mainCircle: Circle = Circle {
-		centerX: bind x 
-		centerY: bind y + GC.argumentCircleDefaultRadius
+		centerX: bind x
+		centerY: bind y
 		radius: bind GC.argumentCircleDefaultRadius
+		fill: bind Color.WHITE;
+		stroke: Color.BLACK
+
+		onMouseClicked: function(e: MouseEvent) {
+			control.unSelectAll();
+			selected = true;
+			control.processSelection();
+		}
+
+		onMouseDragged: function(e: MouseEvent) {
+			if (this.selected) { control.startDrag(); }
+		}	
+
+		onMouseReleased: function(e: MouseEvent) {
+			if (control.dragging) {	control.endDrag(); }
+		}
+
+		onMouseEntered: function(e: MouseEvent) {
+			if (control.dragging) { control.setDraggingOver(this); }
+		}
+
+		onMouseExited: function(e: MouseEvent) {
+			if (control.dragging) { control.setDraggingOver(null); }
+		}
 	}
+
+	override attribute selection = Circle {
+		centerX: bind x 
+		centerY: bind y
+		radius: GC.argumentCircleDefaultRadius + 5
+		stroke: bind {if (control.dragging) GC.dragColor else GC.selectionColor};
+		strokeWidth: 2
+		visible: bind selected
+	} // selection circle
+
 
 	public function create():Node {
 		Group {
 			content: [
 				mainCircle
-				, selection
+				, selection,
+				middlePoint
 			] // content
 		} // Group
 	} // composeNode
@@ -131,7 +175,8 @@ public class StatementBox extends ArgumentElement {
 			content: [
 				mainRect
 				, selection
-				, text
+				, text,
+				middlePoint
 			] // content
 		} // Group
 	} // composeNode
@@ -193,7 +238,7 @@ public class PremiseLink extends Edge {
 	public attribute negated: Boolean = false;
 	override attribute turnHead = bind negated;
 	
-	override attribute yHeadShift = bind radius;
+	//override attribute yHeadShift = bind radius;
 
 	attribute negation: Line = Line {
 					startX: bind x2 - Math.max(yHeadShift * 2, negWidth)
