@@ -16,11 +16,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-package GraphSketch1.Graph;
+package Carneades.Graph;
 
 import javafx.ext.swing.*;
 import javafx.scene.paint.*;
-import GraphSketch1.Graph.*;
+import Carneades.Graph.*;
 import java.lang.System;
 import java.lang.Math;
 

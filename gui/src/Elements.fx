@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-package GraphSketch1.Graph.Elements;
+package Carneades.Graph.Elements;
 
 import javafx.scene.geometry.*;
 import javafx.scene.paint.*;
@@ -29,14 +29,14 @@ import java.lang.System;
 import java.lang.Math;
 
 // import the necessary parts of the model
-import GraphSketch1.Argument.Argument;
-import GraphSketch1.Argument.Argument.*;
+import Carneades.Argument.Argument;
+import Carneades.Argument.Argument.*;
 
 // Other View Imports
-import GraphSketch1.Graph.*;
+import Carneades.Graph.*;
 
 // Abstract Controller Import
-import GraphSketch1.Control.GraphControl;
+import Carneades.Control.GraphControl;
 
 public abstract class ArgumentElement extends Vertex {
 	attribute fill: Color = Color.WHITE;

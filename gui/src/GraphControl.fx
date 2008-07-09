@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-package GraphSketch1.Control;
+package Carneades.Control;
 
 // General Imports
 import java.lang.System;
@@ -25,17 +25,17 @@ import javafx.animation.*;
 import java.io.File;
 
 // Model imports
-import GraphSketch1.Argument.*;
-import GraphSketch1.Argument.Argument;
-import GraphSketch1.Argument.Argument.*;
+import Carneades.Argument.*;
+import Carneades.Argument.Argument;
+import Carneades.Argument.Argument.*;
 
 // View imports
-import GraphSketch1.Graph.*;
-import GraphSketch1.Graph.GraphList.*;
-import GraphSketch1.Graph.Elements.Elements.*;
+import Carneades.Graph.*;
+import Carneades.Graph.GraphList.*;
+import Carneades.Graph.Elements.Elements.*;
 
 // Other Control Imports
-import GraphSketch1.Control.Commands.*;
+import Carneades.Control.Commands.*;
 
 public class GraphControl {
 

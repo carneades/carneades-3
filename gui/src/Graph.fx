@@ -16,14 +16,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-package GraphSketch1.Graph;
+package Carneades.Graph;
 
 import javafx.scene.*;
-import GraphSketch1.Graph.Vertex;
-import GraphSketch1.Graph.Elements.Elements.*;
+import Carneades.Graph.Vertex;
+import Carneades.Graph.Elements.Elements.*;
 import java.lang.System;
 
-import GraphSketch1.Control.GraphControl;
+import Carneades.Control.GraphControl;
 
 public class Graph extends CustomNode {
 	public attribute control: GraphControl;

@@ -16,17 +16,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-package GraphSketch1.Graph;
+package Carneades.Graph;
 
 import javafx.ext.swing.*;
 import javafx.input.*;
 import javafx.scene.geometry.*;
 import javafx.scene.paint.*;
-import GraphSketch1.Graph.*;
+import Carneades.Graph.*;
 import java.lang.System;
 
 // Abstract Controller Class for Interaction
-import GraphSketch1.Control.GraphControl;
+import Carneades.Control.GraphControl;
 
 public class GraphView extends Canvas {
 	public attribute graph: Graph;

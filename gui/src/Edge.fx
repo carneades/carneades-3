@@ -16,17 +16,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-package GraphSketch1.Graph;
+package Carneades.Graph;
 
 import javafx.input.*;
 import javafx.scene.*;
 import javafx.scene.paint.*;
 import javafx.scene.geometry.*;
 
-import GraphSketch1.Graph.*;
+import Carneades.Graph.*;
 import java.lang.System;
 import java.lang.Math;
-import GraphSketch1.Control.GraphControl;
+import Carneades.Control.GraphControl;
 
 public class Edge extends GraphElement {
 	public attribute producer: Vertex; // The vertex from which the directed edge is originating ...
