@@ -19,34 +19,66 @@ source {
     content: attr(element)": " attr(uri)
 }
 
+theory:before {
+    font-weight: bold;
+    content: "theory "
+}
+
+theory {
+    display: block;
+    content: attr(id) ". ";
+}
+
+imports:before {
+   font-weight: bold;
+   content: "imports ";
+}
+
+imports {
+    margin-left: 2em;
+    margin-bottom: 2em;
+    display: block;
+}   
+
+axioms:before {
+    font-weight: bold;
+    content: "axioms ";
+}
+
+axioms {
+    margin-left: 2em;
+    margin-bottom: 2em;
+    display: block;
+}
+
+axioms > or, if, iff, exists, all, not, and, s {
+    margin-left: 2em;
+    display: block;
+}
+ 
 rules:before {
     font-weight: bold;
     content: "rules ";
 }
-   
-rules {
-  /*  content: attr(id) */
-}
 
-import:before {
+rules {
     display: block;
+    margin-left: 2em;
+    margin-bottom: 2em;
+}
+   
+import:before {
     font-weight: bold;
     margin-left: 2em;
-    content: "import"
+    content: "import ";
 }
 
 import {
-    content: attr(uri)
+    content: attr(uri);
+    margin-left: 2em;
+    display: block;
 }
 
-c {
-   /* content: attr(value) */
-}
-
-fact[value="false"]:before {
-   content: "not: ";
-   font-weight: bold;
-}
 
 rule:before {
     content: "rule ";
@@ -56,6 +88,7 @@ rule:before {
 rule {
     content: attr(id) ". ";
     margin-left: 2em;
+    margin-bottom: 2em;
     display: block;
 }
 
@@ -90,12 +123,12 @@ s {
 
 or > s {
     display: block;
-    margin-left: 2em;
+    margin-left: 1em;
 }
 
 and > s {
     display: block;
-    margin-left: 2em;
+    margin-left: 1em;
 }
 
 unless:before {
@@ -109,13 +142,13 @@ assuming:before {
 }
 
 or:before { 
-    content: "if at least one of the following is true:";
+    content: "at least one of the following is true:";
     display: block;
 }
 
 or {
     display: block;
-    margin-left: 2em;
+    margin-left: 1em;
 }
 
 
@@ -136,13 +169,13 @@ iff > s+s:before {
 }
 
 and:before { 
-    content: "if all of the following are true:";
+    content: "all of the following are true:";
     display: block;
 }
 
 and {
     display: block;
-    margin-left: 2em;
+    margin-left: 1em;
 }
 
 not:before {
@@ -154,6 +187,7 @@ not {
     display: block;
     margin-left: 2em;
 }
+
 
 s > s {
     display: inline;

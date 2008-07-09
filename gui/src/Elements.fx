@@ -111,11 +111,27 @@ public class ArgumentBox extends ArgumentElement {
 	override attribute caption = bind argument.id;
 	override attribute fill = bind {if (argument.ok) Color.LIGHTGREY else Color.WHITE};
 
+
+private attribute backCircle: Circle = Circle {
+		centerX: bind x
+		centerY: bind y
+		radius: bind GC.argumentCircleDefaultRadius
+
+		fill: bind Color.WHITE
+	}
+
 	private attribute mainCircle: Circle = Circle {
 		centerX: bind x
 		centerY: bind y
 		radius: bind GC.argumentCircleDefaultRadius
-		fill: bind Color.WHITE;
+
+		fill: bind {
+			if (not argument.ok) Color.WHITE
+			else Color.rgb(	GC.defensibleStrengthColorRed, 
+							GC.defensibleStrengthColorGreen, 
+							GC.defensibleStrengthColorBlue, argument.weight/100)
+		};
+		
 		stroke: Color.BLACK
 		blocksMouse: true
 
@@ -155,7 +171,8 @@ public class ArgumentBox extends ArgumentElement {
 	public function create():Node {
 		Group {
 			content: [
-				mainCircle
+				backCircle
+				, mainCircle
 				, selection,
 				middlePoint
 			] // content
@@ -169,9 +186,17 @@ public class StatementBox extends ArgumentElement {
 	override attribute defaultWidth = GC.statementBoxDefaultWidth;
 	override attribute caption = bind { if (statement.wff.length() < GC.numDisplayedChars) statement.wff
 										else "{statement.wff.substring(0, GC.numDisplayedChars-1)}..."};
-	override attribute fill = bind {if ( statement.ok 
-										or statement.value == "true") Color.LIGHTGREY else Color.WHITE};
-	
+	private attribute status: String = bind statement.getBoundStatus();
+	override attribute fill = bind { 
+		if (status == "accepted") GC.statusAcceptedColor
+		else if (statement.ok) GC.statusAcceptableColor
+		else if (status == "stated") GC.statusStatedColor
+		else if (status == "assumed true") GC.statusAssumedTrueColor
+		else if (status == "assumed false") GC.statusAssumedFalseColor
+		else if (status == "rejected") GC.statusRejectedColor
+		else /*if (status == "questioned")*/ GC.statusQuestionedColor
+	}
+
 	public function create():Node {
 		Group {
 			content: [

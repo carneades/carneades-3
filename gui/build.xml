@@ -206,6 +206,14 @@
 				<javafxc 
 						srcdir="${project.srcdir}"
 						destdir="${project.builddir}" 
+						includes="CarneadesMain.fx"
+						target="${project.target}"
+						compilerclasspath="${javafxc.class.path}">
+						<classpath refid="project.class.path"/>
+				</javafxc>
+				<javafxc 
+						srcdir="${project.srcdir}"
+						destdir="${project.builddir}" 
 						includes="GraphSketch.fx"
 						target="${project.target}"
 						compilerclasspath="${javafxc.class.path}">

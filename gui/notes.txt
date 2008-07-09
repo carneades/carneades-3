@@ -9,6 +9,8 @@ Date: July 2, 2008
 
 Current Line of Work: 
 
+* Delete AbstractGraphControl class.
+
 * Save/Load Graph to/from file - Done except for:
 	- variable values need to be read as well -> Add property to model class and adjust File load/save
 	- use use Jing to validate the file.
@@ -23,37 +25,40 @@ Current Line of Work:
 
 -----
 
-General to do:
+To Do:
 
+// This is personal for Matthias. The main list is at our launchpad site: http://launchpad.net/carneades
 
 Matthias Grabmair:
-
-* Connect to changing commands once the library provides for an action-attribute in ComboBoxes.
-
-* Why did they get rid of the table-component? -> supposedly to come
-
-* Drag and drop for non-canvas-components are pending.
 
 * Add a scrollbar to the edit and list panels on the right of the window.
 
 * Where are the negated and complement variables in the XML grammar?
-
-* Make it possible to add a statement as a premise to more than one Argument. Figure out a way to do this.
-
-* add a logging feature
-
-* Add outline-checking in the layout algorithm for more compact horizontal positioning.
 
 * Maybe too much: Protocol changes to a Graph in a (loadable) log so that debugging from externals gets easier
 		-> This is essential to debug Undo/Redo as well as new layouts
 
 Tom Gordon:
 
-	- Set the status of a statement (stated, questioned, accepted, rejected)
-	- Set the proof standard applicable to a statement (DV, BA, SE)
-	- Visualize the acceptabilty of statements in the graph, given this information.
-	- Assign argumentation schemes to arguments and roles to premises.
-	- Use argumentation schemes as templates when creating new arguments.
+- The lines/arcs linking the statements of premises to arguments do not contect with the circle representing the argument.  There is a gap.  Is this intentional?
+
+- As I mentioned yesterday, scroll bars should be visible whenever some part of an argument graph is not visible.  This isn't always the case.
+
+	5. Draw a fine line around the standard, negated and complement fields, with a "proof standard" label, to make it clear that the negated and complement fields are properites of the proof standard, not the statement.  (Nitpick: I prefer "proof standard" to "standard of proof", since it is more compact and also more idiomatic.)
+
+- Similarly, for the argument inspector panel:
+
+	1.  Use radio buttons to allow the user to select between pro and con arguments.
+
+	2. 	As for statement acceptability, use a check box to display whether the argument  is defensible, checked if defensible=true, but greyed out to indicate that this value cannot be changed by the user.
+
+- Idea: replace "negated" and "complement" controls for proof standards with burden of proof controls:  questioning: proponent or opponent; production: proposonent or opponent; persuasion: proponent or opponent.  These controls should then adjust the proof standard behind the scenes accordingly.  Needs further discussion.
+
+- The inspector panels should have a fixed size and not be scrollable.
+
+- The search results lists could be shorter, to make more room for the inspectors.  4-5 results, srollable to view more, should suffice.
+
+- Rename "Exit" to "Quit Carneades" in the File menu.
 
 -----
 
@@ -61,25 +66,15 @@ Issues to take care of in existing code:
 
 * Refactor GraphControl to better make use of the selectedModels sequence.
 
-* Transfer the do/undo of MoveArgumentCommand into the model.
-
-* Fix window resize problem.
-
 * Add a double id check validation function because otherwise the file loader will get the premise links wrong. Currently this is no problem if the program only opens files that have been created using it because of the fact that id's are not editable and their automatic creation prevents double occurances.
 
 * If GraphEdit.reset() is enabled, a double click on any ArgumentElement hides the edit menu. Fix this.
 
 * The visibility of the EditPanels is currently not bound but updated manually due to an exception happening when selecting the same element twice. Technically this is impossible because there is no bound value involved. Try to fix this at some point.
 
-* The Scrollpane does not support the mouse wheel
-
-* Currently, arguments with conclusion == null are allowed, thereby being non-conform with the grammar.
-
 * Find a way to avoid the Vertex width update in the beginning of the layout.compose() function. Right now it is necessary because the event cannot be triggered.
 
 * Find a better and more universal solution for where to put the invisible tree root. Graph class or CarneadesGraph class? Work over Treelayout accordingly.
-
-* Once a new compiler version comes out, check whether the control.update.start() timeline workaround can be substituted by do {...} blocks.
 
 * Find a way to assign 0 to the x/y coordinated for the root vertex because they are currently bound to a null pointer object. This is no problem right now because it ends up being zero by default, but this is unclean and might change in future versions of the runtime and/or compiler.
 
@@ -93,13 +88,6 @@ Issues to take care of in existing code:
 
 Known Bugs:
 
-* Sometimes added arguments produce premise links to the upper left corner. Find some time to reproduce and fix it.
-
-* The edit window sometimes appears only partially when it is closed, some element is selected and then the window is brought to front again.
-
-* When resizing the window, the canvas view component does not scale properly.
-
-* Still, concurrentModificationExceptions appear at startup.
 
 -----
 
@@ -122,6 +110,16 @@ The model-view-controller (MVC) architecture has been used as follows. The progr
 ------
 
 Version history:
+
+0.0.6
+Added/modified features:
+* Statement search text field is no longer case sensitive.
+* Statement edit panel has been worked into new format and outfitted with ne components.
+
+Fixed Bugs/Issues:
+* reappered file save bug fixed again.
+
+-
 
 0.0.5
 
