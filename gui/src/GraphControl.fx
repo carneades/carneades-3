@@ -580,6 +580,18 @@ public class GraphControl {
 		updateAll();
 	}
 
+	public function changeArgumentWeight(a: Argument, v: Number): Void {
+		commands.do(
+			ChangeArgumentWeightCommand {
+				argumentGraph: argumentGraph
+				argument: a
+				weight: v
+			}
+		);
+		// no new layout needed, so only update the view
+		updateView();
+	}
+
 	public function changeArgumentId(a: Argument, id: String): Void {
 		var admissible: Boolean = true;
 

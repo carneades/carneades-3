@@ -98,19 +98,20 @@ public abstract class ArgumentElement extends Vertex {
 public class ArgumentBox extends ArgumentElement {
 	public attribute argument: Argument;
 	override attribute scaleWithText = false;
-	override attribute defaultWidth = GC.argumentBoxDefaultWidth;
 	override attribute caption = bind argument.id;
 	override attribute fill = bind {if (argument.ok) Color.LIGHTGREY else Color.WHITE};
 
-	public function create():Node {
-		mainRect.arcWidth = height;
-		mainRect.arcHeight = height;
+	private attribute mainCircle: Circle = Circle {
+		centerX: bind x 
+		centerY: bind y + GC.argumentCircleDefaultRadius
+		radius: bind GC.argumentCircleDefaultRadius
+	}
 
+	public function create():Node {
 		Group {
 			content: [
-				mainRect
+				mainCircle
 				, selection
-				, text
 			] // content
 		} // Group
 	} // composeNode
