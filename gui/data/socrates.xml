@@ -4,13 +4,13 @@
     <issues>
       <issue assumption="false" standard="BA" statement="SocratesMortality" value="unknown"/>
       <issue assumption="false" standard="BA" statement="mortality" value="unknown"/>
-      <issue assumption="false" standard="BA" statement="SocratesHuman" value="unknown"/>
-      <issue assumption="true" standard="BA" statement="humanHands" value="true"/>
-      <issue assumption="true" standard="BA" statement="SocratesHands" value="true"/>
+      <issue assumption="true" standard="BA" statement="SocratesHuman" value="unknown"/>
+      <issue assumption="false" standard="BA" statement="humanHands" value="true"/>
+      <issue assumption="false" standard="BA" statement="SocratesHands" value="true"/>
       <issue assumption="false" standard="BA" statement="everyoneDies" value="true"/>
       <issue assumption="false" standard="BA" statement="apeException" value="unknown"/>
-      <issue assumption="false" standard="BA" statement="SocratesApe" value="unknown"/>
-      <issue assumption="true" standard="BA" statement="s1" value="true"/>
+      <issue assumption="false" standard="BA" statement="SocratesApe" value="false"/>
+      <issue assumption="false" standard="BA" statement="s1" value="true"/>
     </issues>
     <statements>
       <s id="SocratesMortality">Socrates is mortal.</s>
@@ -19,9 +19,9 @@
       <s id="humanHands">Humans have hands.</s>
       <s id="SocratesHands">Socrates has hands.</s>
       <s id="everyoneDies">No man has lived forever.</s>
-      <s id="apeException">Apes have hands but are not humans.</s>
-      <s id="SocratesApe">Socrates is an ape.</s>
-      <s id="s1">Jesus was human.</s>
+      <s id="apeException">Socrates is an ape,</s>
+      <s id="SocratesApe">Socrates is hairy.</s>
+      <s id="s1">Jesus is human.</s>
     </statements>
     <arguments>
       <argument direction="pro" id="a1" scheme="">
@@ -48,7 +48,7 @@
       <argument direction="con" id="a4" scheme="">
         <conclusion statement="apeException"/>
         <premises>
-          <premise exception="false" polarity="positive" role="" statement="SocratesApe"/>
+          <premise exception="false" polarity="negative" role="" statement="SocratesApe"/>
         </premises>
       </argument>
       <argument direction="con" id="a5" scheme="">
