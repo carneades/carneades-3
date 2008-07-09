@@ -173,7 +173,7 @@ public class Argument {
 	public attribute id: String;
 	public attribute graph : ArgumentGraph;  
 
-	public attribute weight: Number = 0.5 // range: 0.0 to 1.0
+	public attribute weight: Number = 50 // range: 0.0 to 1.0
 		on replace {
 			graph.update();
 		}

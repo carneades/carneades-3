@@ -296,7 +296,7 @@ public class ArgumentEditPanel extends EditPanel {
 	// Components
 
 	public attribute idField: IdField = IdField {
-		preferredSize: [ editComponentWidth - 30, 20 ]
+		preferredSize: [ editComponentWidth, 20 ]
 		editable: true
 		action: function(): Void {
 			control.changeArgumentId(argument, idField.text);
@@ -304,6 +304,7 @@ public class ArgumentEditPanel extends EditPanel {
 	}
 	
 	public attribute defensibleBox: CheckBox = CCheckBox {
+		preferredSize: [ editComponentWidth, 20 ]
 		enabled: false
 		selected: bind argument.ok
 	}
@@ -327,10 +328,25 @@ public class ArgumentEditPanel extends EditPanel {
 
 	}
 
+	private attribute weightSlider: WeightSlider = WeightSlider {
+		argument: bind argument
+		control: bind control
+		preferredSize: [ editComponentWidth-35, 20 ]
+		maximum: 100
+		minimum: 0
+	}
+
+	private attribute weightNumber: TextField = TextField {
+		preferredSize: [ 30, 20 ]
+		editable: false
+		text: bind (weightSlider.value as Number).toString()
+	}
+
 	override attribute content = bind [ 
-										Label { text: "id: " preferredSize: [editLabelWidth, 20]}, idField, 
-										Label { text: "Direction: ", preferredSize: [editLabelWidth, 20]}, proButton, conButton,
-										Label { text: "Defensible: ", preferredSize: [editLabelWidth, 20]}, defensibleBox
+										Label { text: "id " preferredSize: [editLabelWidth, 20]}, idField, 
+										Label { text: "direction ", preferredSize: [editLabelWidth, 20]}, proButton, conButton,
+										Label { text: "defensible ", preferredSize: [editLabelWidth, 20]}, defensibleBox,
+										Label { text: "weight ", preferredSize: [editLabelWidth, 20]}, weightSlider, weightNumber
 										];
 
 	// Functions
@@ -346,6 +362,8 @@ public class ArgumentEditPanel extends EditPanel {
 			proButton.selected = false;
 			conButton.selected = true;
 		}
+
+		weightSlider.setValue(argument.weight as Integer);
 	}
 }
 
@@ -539,6 +557,26 @@ class PremiseField extends LimitedTextField {
 class DirectionField extends LimitedTextField {
 	override attribute preferredSize = [100, 20];
 	override attribute choices = [ "pro", "con" ];
+}
+
+class WeightSlider extends Slider {
+	public attribute argument: Argument = Argument {} on replace { value = (argument.weight) as Integer; }
+	private attribute updateChange: Boolean = true; // needs to be true to avoid inital command dispatch from on replace value
+	override attribute value = (argument.weight) as Integer on replace { submitWeight(); }
+	public attribute control: GraphControl;
+
+	function setValue(v: Integer) {
+		updateChange = true;
+		value = v;
+	}
+
+	function submitWeight(): Void {
+		if (not updateChange) { 
+			control.changeArgumentWeight(argument, value); 
+		} else {
+			updateChange = false;
+		}
+	}
 }
 
 class CCheckBox extends CheckBox {

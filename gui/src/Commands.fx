@@ -36,11 +36,16 @@ import GraphSketch1.Graph.*;
 public abstract class Command {
 
 	public attribute argumentGraph: ArgumentGraph;
+	public attribute commandControl: CommandControl;
+	public attribute merges: Boolean = false;
 
 	public function do(): Number {
 		return GC.C_OK;
 	}
+	
+	public function mergeable(c: Command): Boolean {false}
 
+	public function merge(c: Command): Number { GC.C_OK }
 }
 
 public class UndoableCommand extends Command {
@@ -83,8 +88,18 @@ public class CommandControl {
 
 		// do the command
 		bookmark = 0;
-		insert c into commands;
-		return c.do();
+		c.commandControl = this;
+
+		// get the instance of the top command
+		var topCommand: Command = commands [size-1];
+
+		if ( c.merges and (c.getClass() == topCommand.getClass()) and c.mergeable(topCommand)) {
+			return c.merge(topCommand);
+		}
+		else { 
+			insert c into commands; 
+			return c.do();
+		}
 	}
 
 	public function undo(): Number {
@@ -480,6 +495,35 @@ public class ChangeArgumentIdCommand extends UndoableCommand {
 	public function undo(): Number {
 		//argumentGraph.setArgumentId(argument, oldId);
 		argument.id = oldId;
+		return GC.C_OK;
+	}
+}
+
+public class ChangeArgumentWeightCommand extends UndoableCommand {
+
+	public attribute argument: Argument;
+	public attribute weight: Number;
+	public attribute oldWeight: Number;
+	override attribute merges = true;
+
+	public function do(): Number {
+		oldWeight = argument.weight;
+		argument.weight = weight;
+		return GC.C_OK;
+	}
+
+	public function mergeable(c: Command): Boolean {
+		return argument == (c as ChangeArgumentWeightCommand).argument;
+	}
+
+	public function merge(c: Command): Number {
+		(c as ChangeArgumentWeightCommand).weight = weight;
+		argument.weight = weight;
+		return GC.C_OK;
+	}
+
+	public function undo(): Number {
+		argument.weight = oldWeight;
 		return GC.C_OK;
 	}
 }

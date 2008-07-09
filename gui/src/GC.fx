@@ -64,10 +64,11 @@ public class GC {
 
 	// Statement Boxes
 	public static attribute numDisplayedChars = 15;
-	public static attribute statementBoxDefaultWidth = 120;
+	public static attribute statementBoxDefaultWidth = 170;
 
 	// Argument Boxes
 	public static attribute argumentBoxDefaultWidth = 60;
+	public static attribute argumentCircleDefaultRadius = 15;
 
 	// Application constants
 	public static attribute appWidth = 1000;
