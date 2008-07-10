@@ -118,7 +118,7 @@ public class GC {
 
 	// Version administration constants
 	private static attribute version: String = "debug";
-	public static attribute releaseVersion: Boolean = bind version == "release";
+	public static attribute release: Boolean = bind version == "release";
 	public static attribute debug: Boolean = bind version == "debug";
 
 	// helper functions

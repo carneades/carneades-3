@@ -23,6 +23,8 @@ import javafx.scene.paint.*;
 import javafx.scene.image.*;
 import java.lang.System;
 import javax.swing.JFileChooser;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import java.io.File;
 
 // Model Classes
@@ -44,8 +46,6 @@ public class GraphFrame extends Frame {
 	public attribute argumentGraph: ArgumentGraph;
 
 	private attribute showCredits: Boolean = false;
-	private attribute showAlert: Boolean = false;
-	private attribute alertText: String = "";
 
 	attribute chooser: JFileChooser = new JFileChooser();
 
@@ -98,43 +98,21 @@ public class GraphFrame extends Frame {
 		visible: true
 	}
 
-	// Alert Box
-	private attribute alertFrame: Frame = Frame {
-		title: "Alert!"
-		height: 100
-		visible: bind this.showAlert
-		content: BorderPanel {
-			top: Label { text: bind alertText }
-			bottom: Button {
-				text: "Ok"
-				action: function() {
-					this.showAlert = false;
-				}
-			}
-		}
-	}
-
 	private attribute creditsFrame: Frame = Frame {
 		title: "About Carneades"
-		height: 120
+		height: 140
+		resizable: false
 		visible: bind this.showCredits
 		content: BorderPanel {
 			top: GridPanel {
 				columns: 1
-				rows: 4
+				rows: 5
 				content: [
-					Label {
-						text: "Carneades GUI Alpha"
-					},
-					Label {
-						text: "Version 0.0.6"
-					},
-					Label {
-						text: "Copyright 2008, T. Gordon & M. Grabmair"
-					},
-					Label {
-						text: "http://carneades.berlios.de"
-					}
+					Label { text: "Carneades GUI Alpha" },
+					Label { text: "Version 0.0.6" },
+					Label { text: "Copyright 2008, T. Gordon & M. Grabmair"	},
+					Label { text: "to be published under the GPL" },
+					Label { text: "http://carneades.berlios.de" }
 				]
 			}
 			bottom: Button {
@@ -146,9 +124,12 @@ public class GraphFrame extends Frame {
 		}
 	}
 
-	public function alert(message: String) { 
-		this.alertText = message;
-		this.showAlert = true; 
+	public function alert(message: String): Void { 
+		JOptionPane.showMessageDialog(null,
+    		message,
+    		"Error!",
+    		JOptionPane.ERROR_MESSAGE
+		);
 	}
 
 	private attribute toolPanel: Panel = FlowPanel {
@@ -185,8 +166,22 @@ public class GraphFrame extends Frame {
 							enabled: true;
 							text: "New"
 							action: function() {
-								control.newGraph();
-							}
+								if (control.fileChanged) {
+									var choice = JOptionPane.showOptionDialog(
+										null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?", 
+										JOptionPane.YES_NO_CANCEL_OPTION, 
+										JOptionPane.QUESTION_MESSAGE, null, 
+										["Yes", "No", "Cancel"], null
+									);
+									if (choice == JOptionPane.YES_OPTION) {
+										save();	
+									} else if (choice == JOptionPane.NO_OPTION) {
+										control.newGraph();
+									}
+								} else {
+									control.newGraph();
+								}
+							} // action
 						}
 						, MenuItem {
 							text: "Open"
@@ -201,37 +196,33 @@ public class GraphFrame extends Frame {
 							enabled: bind control.fileChanged
 							text: "Save"
 							action: function() {
-								if (control.fileLoaded) {
-									control.saveGraphToFile(control.currentFile);
-								} else {
-									var returnval = chooser.showSaveDialog(null);
-									if (returnval == JFileChooser.APPROVE_OPTION) {
-										control.saveAsGraphToFile(chooser.getSelectedFile());
-									}
-								}
+								save();
 							}
 						}
 						, MenuItem {
 							text: "Save as"
 							action: function() {
-								var returnval = chooser.showSaveDialog(null);
-								if (returnval == JFileChooser.APPROVE_OPTION) {
-									control.saveAsGraphToFile(chooser.getSelectedFile());
-								}
+								saveAs();	
 							}
 						}
-						/*,
-						MenuItem {
-							enabled: true;
-							text: "Update"
-							action: function() {
-								control.updateAll();
-							}
-						}*/
 						, MenuItem {
 							text: "Quit Carneades"
 							action: function() {
-								System.exit(0);
+								if (control.fileChanged) {
+									var choice = JOptionPane.showOptionDialog(
+										null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?", 
+										JOptionPane.YES_NO_CANCEL_OPTION, 
+										JOptionPane.QUESTION_MESSAGE, null, 
+										["Yes", "No", "Cancel"], null
+									);
+									if (choice == JOptionPane.YES_OPTION) {
+										save();	
+									} else if (choice == JOptionPane.NO_OPTION) {
+										System.exit(0);
+									}
+								} else {
+									System.exit(0);
+								}
 							}
 						}
 						] // content
@@ -297,7 +288,32 @@ public class GraphFrame extends Frame {
 	]; // override default
 
 	postinit {
-		if (GC.releaseVersion) showCredits = true;
+		if (GC.release) showCredits = true;
+	}
+
+	private function save() {
+		if (control.fileLoaded) {
+			control.saveGraphToFile(control.currentFile);
+		} else {
+			// do the same as save-as
+			saveAs();
+		} // if loaded
+	} // function
+
+	private function saveAs() {
+		var returnval = chooser.showSaveDialog(null);
+		if (returnval == JFileChooser.APPROVE_OPTION) {
+			var file: File = chooser.getSelectedFile();
+				if (file.exists()) {
+					var overwrite = JOptionPane.showOptionDialog(
+						null, "The file already exists.\nDo you want to overwrite it?" , "Overwrite existing file?", 
+						JOptionPane.YES_NO_OPTION, 
+						JOptionPane.QUESTION_MESSAGE, null,
+						["Yes", "No"], null
+					);
+				if (overwrite == JOptionPane.OK_OPTION) { control.saveAsGraphToFile(file); }
+			} else { control.saveAsGraphToFile(file); }
+		}		
 	}
 
 }
