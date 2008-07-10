@@ -249,7 +249,10 @@
 						<main jar="build/main/main.jar">
             		</main>
            				<lib>
-							<fileset dir="lib/" />
+								<fileset dir="lib/"
+								excludes="javafxdoc.jar, one-jar-ant-task-0.96.jar, one-jar-ant-task.xml"
+								>
+								</fileset>
            				</lib>
         		</one-jar> 
 		</target>

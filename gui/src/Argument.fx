@@ -62,7 +62,7 @@ public class Statement {
     		graph.update();
     	};
     	
-	public attribute assumption: Boolean = false
+	public attribute assumption: Boolean = true
 		on replace {
 			graph.update();
 		}

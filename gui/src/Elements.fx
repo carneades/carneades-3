@@ -52,9 +52,11 @@ public abstract class ArgumentElement extends Vertex {
 					onMouseClicked: function(e: MouseEvent) {
 						control.unSelectAll();
 						selected = true;
-						//GC.p("Clicked: " + caption + " x/y: " + x + " / " + y + " P: " + parentVertex.caption+ " L: " + level + " #C: " + sizeof children);
-						//GC.p("Width: " + width + " Height: " + height + " Index: " + index );
 						control.processSelection();
+						
+						if (GC.debug) {
+							print();
+						}
 					}
 
 					onMouseDragged: function(e: MouseEvent) {
@@ -105,8 +107,8 @@ public abstract class ArgumentElement extends Vertex {
 
 public class ArgumentBox extends ArgumentElement {
 	public attribute argument: Argument;
-	override attribute height = GC.argumentCircleDefaultRadius;
-	override attribute defaultWidth = GC.argumentCircleDefaultRadius;
+	override attribute height = GC.argumentCircleDefaultRadius * 2;
+	override attribute defaultWidth = GC.argumentCircleDefaultRadius * 2;
 	override attribute scaleWithText = false;
 	override attribute caption = bind argument.id;
 	override attribute fill = bind {if (argument.ok) Color.LIGHTGREY else Color.WHITE};
@@ -139,6 +141,10 @@ private attribute backCircle: Circle = Circle {
 			control.unSelectAll();
 			selected = true;
 			control.processSelection();
+
+			if (GC.debug) {
+				print();
+			}
 		}
 
 		onMouseDragged: function(e: MouseEvent) {

@@ -2,8 +2,8 @@ Development Notes for GraphSketch1
 
 (Preliminary Work for the Carneades GUI)
 
-Current version: 0.0.4.2
-Date: July 2, 2008
+Current version: 0.0.6
+Date: July 10, 2008
 
 -----
 

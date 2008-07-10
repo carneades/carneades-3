@@ -146,6 +146,7 @@ public class TreeLayout extends GraphLayout {
 	private function position(v: Vertex):Void {
 
 		if (sizeof v.children > 1) {
+			// if there is more than one child, position them one at a time using a "cursor"
 			// Layout children of passed node
 			var cursor: Number = (- v.xSubTreeSize / 2) + (pickChild(v, 0).xSubTreeSize / 2);
 	
@@ -160,6 +161,7 @@ public class TreeLayout extends GraphLayout {
 			for (i in v.children) position(i);
 
 		} else {
+			// if there is only one child, position it straight below
 			if (sizeof v.children == 1) {
 				v.children[0].xShift = 0;
 				position(v.children[0]);

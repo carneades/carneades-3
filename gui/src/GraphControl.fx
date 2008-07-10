@@ -714,10 +714,10 @@ public class GraphControl {
 		System.out.println("Graph selected:" + frame.graph.selected); 
 	}
 
-}
-
-public static function defaultGraph(): ArgumentGraph {
-	var s1: Statement = Statement {
+	public static function defaultGraph(): ArgumentGraph {
+		var argumentGraph = ArgumentGraph {};
+		
+		var s1: Statement = Statement {
 			id: "s1"
 			wff: "Conclusion"
 		}
@@ -726,21 +726,23 @@ public static function defaultGraph(): ArgumentGraph {
 			id: "s2"
 			wff: "Premise"
 		}
-		
-		return ArgumentGraph {
-			id: "NewGraph"
-			statements: [s1, s2]
-			arguments: [
-				Argument {
-					id: "a1"
-					conclusion: s1
-					premises: [
-						Premise {
-							statement: s2
-						}
-					]
-				}
-			]
-		};
 
+		var a1: Argument = Argument {
+			id: "a1"
+			conclusion: s1
+		}
+
+		var p: Premise = Premise {
+			statement: s2
+		}
+
+		a1.addPremise(p);
+		
+		argumentGraph.insertStatement(s1);
+		argumentGraph.insertStatement(s2);
+		argumentGraph.insertArgument(a1);
+		
+		return argumentGraph;
+	}
 }
+

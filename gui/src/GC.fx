@@ -33,7 +33,7 @@ public class GC {
 	public static attribute LEFT: Number = 4;
 
 	// Drawing constants
-	public static attribute drawDebug = false;
+	public static attribute drawDebug = bind debug;
 	public static attribute viewBackground: Color = Color.rgb(178, 195, 218);
 	public static attribute toolPanelBackground: Color = Color.rgb(124, 141, 172);
 	public static attribute panelBackground: Color = Color.rgb(223, 226, 229);
@@ -112,5 +112,14 @@ public class GC {
 	public static attribute editLabelWidth: Integer = 100;
 	public static attribute toolBarHeight: Integer = 50;
 
+	// User interaction constants
+	public static attribute idsEditable: Boolean = false;
+
+	// Version administration constants
+	private static attribute version: String = "release";
+	public static attribute releaseVersion: Boolean = bind version == "release";
+	public static attribute debug: Boolean = bind version == "debug";
+
+	// helper functions
 	public static function p(s: String) { System.out.println(s)}
 }
