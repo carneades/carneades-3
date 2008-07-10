@@ -29,7 +29,7 @@ public abstract class GraphLayout {
 	public attribute height: Number;
 	attribute xOffset: Number = GC.xOffset;
 	attribute yOffset: Number = GC.yOffset;
-	attribute d: Boolean = false; // debug messages?
+	attribute d: Boolean = bind GC.debug; // debug messages?
 
 	public function compose():Graph { graph }
 

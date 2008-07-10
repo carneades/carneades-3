@@ -72,6 +72,8 @@ public class Edge extends GraphElement {
 					endY: bind y2
 					stroke: bind GC.transparent
 					strokeWidth: bind strokeWidth + GC.edgeSelectionWidth;
+					strokeDashArray: bind { if (dashed) [5.0, 5.0] else [1.0] }
+					strokeDashOffset: bind { if (dashed) 0.0 else 0.0 }
 
 					onMouseClicked: function(e: MouseEvent) {
 						control.unSelectAll();

@@ -66,12 +66,6 @@ graph = CarneadesGraph {
 	control: bind control
 } 
 
-layout = TreeLayout {
-	graph: graph
-	width: GC.appWidth
-	height: GC.appHeight
-}
-
 frame = GraphFrame {
 	graph: bind graph
 	argumentGraph: bind argumentGraph
@@ -89,7 +83,6 @@ control = GraphControl {
 	// we need to inverse-bind the graph to the controller.
 	argumentGraph: bind argumentGraph with inverse
 	frame: bind frame
-	layout: bind layout
 }
 
 // FINAL DISPLAY
