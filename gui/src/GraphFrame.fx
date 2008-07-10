@@ -43,6 +43,7 @@ public class GraphFrame extends Frame {
 	public attribute control: GraphControl;
 	public attribute argumentGraph: ArgumentGraph;
 
+	private attribute showCredits: Boolean = false;
 	private attribute showAlert: Boolean = false;
 	private attribute alertText: String = "";
 
@@ -84,7 +85,6 @@ public class GraphFrame extends Frame {
 		preferredSize: bind [this.width - GC.editWidth-10, this.height]
 	}
 
-
 	override attribute closeAction = function(): Void {
 		System.exit(0);
 	}
@@ -109,6 +109,38 @@ public class GraphFrame extends Frame {
 				text: "Ok"
 				action: function() {
 					this.showAlert = false;
+				}
+			}
+		}
+	}
+
+	private attribute creditsFrame: Frame = Frame {
+		title: "About Carneades"
+		height: 120
+		visible: bind this.showCredits
+		content: BorderPanel {
+			top: GridPanel {
+				columns: 1
+				rows: 4
+				content: [
+					Label {
+						text: "Carneades GUI Alpha"
+					},
+					Label {
+						text: "Version 0.0.6"
+					},
+					Label {
+						text: "Copyright 2008, T. Gordon & M. Grabmair"
+					},
+					Label {
+						text: "http://carneades.berlios.de"
+					}
+				]
+			}
+			bottom: Button {
+				text: "Ok"
+				action: function() {
+					this.showCredits = false;
 				}
 			}
 		}
@@ -251,12 +283,22 @@ public class GraphFrame extends Frame {
 						}
 					] // items
 				} // menu
-				/*, Menu {
-					text: "View"
+				, Menu {
+					text: "Help"
 					items: [
+					MenuItem {
+						text: "about Carneades"
+						action: function() {
+							this.showCredits = true;
+						}
+					}
 					] // items
-				} // menu*/
+				} // menu
 	]; // override default
+
+	postinit {
+		if (GC.releaseVersion) showCredits = true;
+	}
 
 }
 

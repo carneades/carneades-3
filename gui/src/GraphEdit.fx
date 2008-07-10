@@ -108,6 +108,7 @@ public class StatementEditPanel extends EditPanel {
 	// General Components
 
 	private attribute idField: IdField = IdField {
+		editable: bind GC.idsEditable
 		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
 		action: function(): Void {
 			control.changeStatementId(statement, idField.text);
@@ -295,7 +296,7 @@ public class ArgumentEditPanel extends EditPanel {
 
 	public attribute idField: IdField = IdField {
 		preferredSize: [ editComponentWidth, 20 ]
-		editable: true
+		editable: bind GC.idsEditable
 		action: function(): Void {
 			control.changeArgumentId(argument, idField.text);
 		}

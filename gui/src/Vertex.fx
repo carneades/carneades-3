@@ -83,6 +83,11 @@ public class Vertex extends GraphElement {
 			] // content
 		} // Group
 	} // composeNode
+	
+	public function print(): Void {
+		GC.p("Clicked: " + caption + " x/y: " + x + " / " + y + " P: " + parentVertex.caption+ " L: " + level + " #C: " + sizeof children);
+		GC.p("Width: " + width + " Height: " + height + " Index: " + index );
+	}
 
 }
 
