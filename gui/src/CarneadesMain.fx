@@ -19,9 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package Carneades.Control;
 
 // General Imports
+import java.lang.System;
 import javafx.ext.swing.*;
 import javafx.scene.paint.*;
-import java.lang.System;
 import java.io.File;
 
 // View Imports
@@ -37,6 +37,8 @@ import Carneades.Argument.ArgumentFile;
 // Other Control Imports
 import Carneades.Control.*;
 
+//System.setProperty("apple.laf.useScreenMenuBar", "true");
+
 //--------------------------------
 
 // 1. CONSTRUCT ARGUMENT GRAPH
@@ -46,7 +48,7 @@ import Carneades.Control.*;
 //var argumentGraph: ArgumentGraph = ArgumentFile.getGraphFromFile("data/test2.xml");
 
 
-var argumentGraph: ArgumentGraph = ArgumentGraph { id: "testgraph" }
+var argumentGraph: ArgumentGraph = GraphControl.defaultGraph();
 
 //argumentGraph = ArgumentFile.getGraphFromFile(new File("data/socrates.xml"));
 
@@ -93,8 +95,6 @@ control = GraphControl {
 // FINAL DISPLAY
 
 control.updateAll(); // update the control and view
-
-
 
 frame;
 

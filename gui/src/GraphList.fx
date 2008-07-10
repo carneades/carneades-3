@@ -38,7 +38,7 @@ import Carneades.Control.GraphControl;
 
 public class GraphList extends FlowPanel {
 
-	override attribute background = GC.panelBackground;
+	//override attribute background = GC.panelBackground;
 	override attribute alignment = HorizontalAlignment.LEFT;
 
 	attribute control: GraphControl;
@@ -51,7 +51,7 @@ public class GraphList extends FlowPanel {
 
 	public attribute list: StatementList = StatementList {
 		control: bind control
-		preferredSize: bind [this.width-10, this.height - 60]
+		preferredSize: bind [this.width-15, this.height - 70]
 		visible: true
 		statements: bind argumentGraph.statements
 		filter: bind input.text.toLowerCase()
@@ -59,7 +59,7 @@ public class GraphList extends FlowPanel {
 
 	attribute addArgumentButton: Button = Button {
 		text: "add argument"
-		enabled: bind list.selectedItem != null
+		enabled: bind control.possibleToAddArgument;
 		action: function(): Void {
 			control.addArgumentToSelected();
 		}

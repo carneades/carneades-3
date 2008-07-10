@@ -48,12 +48,15 @@ public class GraphFrame extends Frame {
 
 	attribute chooser: JFileChooser = new JFileChooser();
 
-	override attribute title = "Argument Graph";
+	override attribute title = "Carneades";
 	override attribute width = GC.appWidth;
 	override attribute height = GC.appHeight;
 	override attribute background = Color.WHITE;
 
 	public attribute view: GraphView = bind GraphView {
+							x: 0
+							y: 0
+							//preferredSize: bind [this.width-GC.editWidth-20, 100]
 							graph: bind graph
 							layout: bind layout
 							visible: true
@@ -75,10 +78,12 @@ public class GraphFrame extends Frame {
 		preferredSize: bind [GC.editWidth, (this.height /3)]
 	}
 
+
 	attribute scroll: ScrollPane = ScrollPane {
 		view: bind view
-		preferredSize: bind [this.width - GC.editWidth, this.height]
+		preferredSize: bind [this.width - GC.editWidth-10, this.height]
 	}
+
 
 	override attribute closeAction = function(): Void {
 		System.exit(0);
@@ -86,7 +91,7 @@ public class GraphFrame extends Frame {
 
 	// content
 	attribute rightPanel: BorderPanel = bind BorderPanel {
-		background: GC.panelBackground
+		//background: GC.panelBackground
 		preferredSize: bind [ GC.editWidth, this.height ]
 		top: bind list
 		bottom: bind edit
@@ -161,13 +166,25 @@ public class GraphFrame extends Frame {
 							}
 						}
 						, MenuItem {
+							enabled: bind control.fileChanged
 							text: "Save"
 							action: function() {
-								//control.saveGraphToFile(new File("Desktop/files_tom/test_matthias.xml"));
-								
+								if (control.fileLoaded) {
+									control.saveGraphToFile(control.currentFile);
+								} else {
+									var returnval = chooser.showSaveDialog(null);
+									if (returnval == JFileChooser.APPROVE_OPTION) {
+										control.saveAsGraphToFile(chooser.getSelectedFile());
+									}
+								}
+							}
+						}
+						, MenuItem {
+							text: "Save as"
+							action: function() {
 								var returnval = chooser.showSaveDialog(null);
 								if (returnval == JFileChooser.APPROVE_OPTION) {
-									control.saveGraphToFile(chooser.getSelectedFile());
+									control.saveAsGraphToFile(chooser.getSelectedFile());
 								}
 							}
 						}

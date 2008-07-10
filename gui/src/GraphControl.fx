@@ -45,7 +45,10 @@ public class GraphControl {
 	attribute view: GraphView;
 	public attribute graph: Graph = bind frame.graph;
 
-	private attribute commands: CommandControl = CommandControl {}
+	private attribute commands: CommandControl = CommandControl {
+		control: this
+	}
+
 	private attribute selectedModels: Object[];
 
 	// View configuration attributes
@@ -70,6 +73,10 @@ public class GraphControl {
 	public attribute selectedPremiseEditable: Boolean = false;
 
 	public attribute draggingOver = null;
+
+	public attribute currentFile: File = null;
+	public attribute fileChanged: Boolean = true;
+	public attribute fileLoaded: Boolean = bind currentFile != null;
 
 	public function setDraggingOver(thing): Void { draggingOver = thing; };
 
@@ -661,14 +668,24 @@ public class GraphControl {
 	// Load / Save / New Options
 
 	public function newGraph(): Void {
-		argumentGraph = ArgumentGraph {};
+		argumentGraph = GraphControl.defaultGraph();
+		
+		frame.title = "Carneades";
 
 		commands.reset();
+		unSelectAll();
+		edit.reset();
 		updateAll();
 	}
 
 	public function loadGraphFromFile(f: File): Void {
+		// set the current file
+		currentFile = f;
+
+		// load the graph
 		argumentGraph = ArgumentFile.getGraphFromFile(f);
+
+		frame.title = "Carneades - { f.getAbsolutePath() }";
 
 		commands.reset();
 		updateAll();
@@ -676,6 +693,19 @@ public class GraphControl {
 
 	public function saveGraphToFile(f: File): Void {
 		ArgumentFile.saveGraphToFile(argumentGraph, f);
+		currentFile = f;
+		frame.title = "Carneades - { f.getAbsolutePath() }";
+		fileChanged = false;
+	}
+
+	public function saveAsGraphToFile(f: File): Void {
+
+		//Check for overwrite
+
+		ArgumentFile.saveGraphToFile(argumentGraph, f);
+		currentFile = f;
+		frame.title = "Carneades - { f.getAbsolutePath() }";
+		fileChanged = false;
 	}
 
 	// DEBUG FUNCTIONS
@@ -686,3 +716,31 @@ public class GraphControl {
 
 }
 
+public static function defaultGraph(): ArgumentGraph {
+	var s1: Statement = Statement {
+			id: "s1"
+			wff: "Conclusion"
+		}
+		
+		var s2: Statement = Statement {
+			id: "s2"
+			wff: "Premise"
+		}
+		
+		return ArgumentGraph {
+			id: "NewGraph"
+			statements: [s1, s2]
+			arguments: [
+				Argument {
+					id: "a1"
+					conclusion: s1
+					premises: [
+						Premise {
+							statement: s2
+						}
+					]
+				}
+			]
+		};
+
+}
