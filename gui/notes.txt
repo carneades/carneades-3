@@ -88,8 +88,6 @@ Issues to take care of in existing code:
 
 Known Bugs:
 
-* Empty graph -> add statement -> add argument ->add argument -> layout error
-
 -----
 
 General Information:

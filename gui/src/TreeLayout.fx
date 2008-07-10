@@ -144,17 +144,37 @@ public class TreeLayout extends GraphLayout {
 	// SECOND TRAVERSAL: Assign horizontal positions
 	// parameter is the ROOT node of the tree
 	private function position(v: Vertex):Void {
-
+		
+		// determine whether the parent is wider than all its child subtrees together
+		var childSum: Number = 0;
+		for (c in v.children) { childSum += c.xSubTreeSize; } // add up children
+		childSum += xDistance * (sizeof v.children - 1); // add gaps
+		var parentWider: Boolean = (v.xSubTreeSize > childSum);
+		
 		if (sizeof v.children > 1) {
 			// if there is more than one child, position them one at a time using a "cursor"
 			// Layout children of passed node
-			var cursor: Number = (- v.xSubTreeSize / 2) + (pickChild(v, 0).xSubTreeSize / 2);
+			
+			if (not parentWider) {
+				var cursor: Number = (- v.xSubTreeSize / 2) + (pickChild(v, 0).xSubTreeSize / 2);
+		
+				for (i in [0 .. (sizeof v.children-1)]) {
+					var current: Vertex = pickChild(v, i);
+					current.xShift = cursor;			
+					cursor += (current.xSubTreeSize / 2) + xDistance;
 	
-			for (i in [0 .. (sizeof v.children-1)]) {
-				var current: Vertex = pickChild(v, i);
-				current.xShift = cursor;
-				cursor += (current.xSubTreeSize / 2) + xDistance;
-				if (i < (sizeof v.children-1)) cursor += (pickChild(v, i+1).xSubTreeSize / 2);
+					if (i < (sizeof v.children-1)) cursor += (pickChild(v, i+1).xSubTreeSize / 2);
+				}
+			} else {
+				var cursor: Number = (- childSum / 2) + (pickChild(v, 0).xSubTreeSize / 2);
+		
+				for (i in [0 .. (sizeof v.children-1)]) {
+					var current: Vertex = pickChild(v, i);
+					current.xShift = cursor;			
+					cursor += (current.xSubTreeSize / 2) + xDistance;
+	
+					if (i < (sizeof v.children-1)) cursor += (pickChild(v, i+1).xSubTreeSize / 2);
+				}				
 			}
 
 			// position the children's children recursively
@@ -178,7 +198,7 @@ public class TreeLayout extends GraphLayout {
 		
 		// adjust horizontal alignment of the root
 		for (v in graph.vertices where v.parentVertex == null) {
-			v.xShift = xOffset;
+			v.xShift = width / 2;
 			v.yShift = yOffset;
 		}
 	}
@@ -219,8 +239,8 @@ public class TreeLayout extends GraphLayout {
 
 			} else {
 				// edge comes bottom up
-				i.x2Shift = - (i.recipient.width / 2) // move to lower left corner of the bottom edge
-							+ (i.recipient.width / (sizeof i.recipient.children + 1)) * (i.producer.priority + 1);
+				i.x2Shift = - ((i.recipient.width-GC.statementBoxBottomBrink) / 2) // move to lower left corner of the bottom edge
+							+ ((i.recipient.width-GC.statementBoxBottomBrink) / (sizeof i.recipient.children + 1)) * (i.producer.priority + 1);
 			}
 		}
 

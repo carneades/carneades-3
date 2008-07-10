@@ -39,11 +39,18 @@ import Carneades.Control.Commands.*;
 public class GraphControl {
 
 	attribute argumentGraph: ArgumentGraph;
-	attribute layout: GraphLayout;
+
 	attribute frame: GraphFrame;
 	attribute edit: GraphEdit = bind frame.edit;
-	attribute view: GraphView;
+	attribute view: GraphView = bind frame.view;
 	public attribute graph: Graph = bind frame.graph;
+
+	attribute layout: GraphLayout = TreeLayout {
+		graph: bind graph
+		// todo: this positioning is dirty! Find a better way once hand-dragging is in there.
+		width: bind frame.width - GC.editWidth - 20
+		height: bind frame.height - GC.toolBarHeight - 30
+	};
 
 	private attribute commands: CommandControl = CommandControl {
 		control: this

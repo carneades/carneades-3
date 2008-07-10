@@ -66,6 +66,7 @@ public class GC {
 	// Statement Boxes
 	public static attribute numDisplayedChars = 15;
 	public static attribute statementBoxDefaultWidth = 170;
+	public static attribute statementBoxBottomBrink = 50;
 
 	public static attribute statusAcceptedColor: Color = Color.rgb(45, 193, 56);
 	public static attribute statusRejectedColor: Color = Color.rgb(255, 82, 85);
@@ -116,7 +117,7 @@ public class GC {
 	public static attribute idsEditable: Boolean = false;
 
 	// Version administration constants
-	private static attribute version: String = "release";
+	private static attribute version: String = "debug";
 	public static attribute releaseVersion: Boolean = bind version == "release";
 	public static attribute debug: Boolean = bind version == "debug";
 
