@@ -239,7 +239,7 @@
 				<jar destfile="build/main/main.jar"
          		basedir="build"
 				includes="**/*.class"
-				manifest="coremanifest"
+				manifest="manifests/coremanifest"
 				update="true"
          		/>
 		</target>
@@ -263,5 +263,10 @@
 		<target name="r" depends="jar">
 				<echo message="Executing ..." />
 				<java jar="Carneades.jar" fork="true"/>
+		</target>
+
+		<target name="deploy" depends="jar">
+				<echo message="Deploying MS Windows package ..."/>
+				
 		</target>
 </project>

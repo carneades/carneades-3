@@ -17,11 +17,10 @@ Current Line of Work:
 
 * Search List
 	- Add final delete
-	- add load/save to extra file
 
 * Solve the xml conformity problem with whitespaces in ids. Use a RE here.
 
-* customize one-jar accordingly
+* customize one-jar to get rid of the main-folder in "build"
 
 -----
 
@@ -31,10 +30,6 @@ To Do:
 
 Matthias Grabmair:
 
-* Add a scrollbar to the edit and list panels on the right of the window.
-
-* Where are the negated and complement variables in the XML grammar?
-
 * Maybe too much: Protocol changes to a Graph in a (loadable) log so that debugging from externals gets easier
 		-> This is essential to debug Undo/Redo as well as new layouts
 
@@ -42,23 +37,11 @@ Tom Gordon:
 
 - The lines/arcs linking the statements of premises to arguments do not contect with the circle representing the argument.  There is a gap.  Is this intentional?
 
-- As I mentioned yesterday, scroll bars should be visible whenever some part of an argument graph is not visible.  This isn't always the case.
+- scroll bars should be visible whenever some part of an argument graph is not visible.  This isn't always the case.
 
 	5. Draw a fine line around the standard, negated and complement fields, with a "proof standard" label, to make it clear that the negated and complement fields are properites of the proof standard, not the statement.  (Nitpick: I prefer "proof standard" to "standard of proof", since it is more compact and also more idiomatic.)
 
-- Similarly, for the argument inspector panel:
-
-	1.  Use radio buttons to allow the user to select between pro and con arguments.
-
-	2. 	As for statement acceptability, use a check box to display whether the argument  is defensible, checked if defensible=true, but greyed out to indicate that this value cannot be changed by the user.
-
 - Idea: replace "negated" and "complement" controls for proof standards with burden of proof controls:  questioning: proponent or opponent; production: proposonent or opponent; persuasion: proponent or opponent.  These controls should then adjust the proof standard behind the scenes accordingly.  Needs further discussion.
-
-- The inspector panels should have a fixed size and not be scrollable.
-
-- The search results lists could be shorter, to make more room for the inspectors.  4-5 results, srollable to view more, should suffice.
-
-- Rename "Exit" to "Quit Carneades" in the File menu.
 
 -----
 
@@ -66,9 +49,7 @@ Issues to take care of in existing code:
 
 * Refactor GraphControl to better make use of the selectedModels sequence.
 
-* Add a double id check validation function because otherwise the file loader will get the premise links wrong. Currently this is no problem if the program only opens files that have been created using it because of the fact that id's are not editable and their automatic creation prevents double occurances.
-
-* If GraphEdit.reset() is enabled, a double click on any ArgumentElement hides the edit menu. Fix this.
+* Add a double id check validation on file load because otherwise the file loader will get the premise links wrong. Currently this is no problem if the program only opens files that have been created using it because of the fact that id's are not editable and their automatic creation prevents double occurances.
 
 * The visibility of the EditPanels is currently not bound but updated manually due to an exception happening when selecting the same element twice. Technically this is impossible because there is no bound value involved. Try to fix this at some point.
 
@@ -103,8 +84,7 @@ Improving Walker's algorithm to run in linear time. In Proc. Graph Drawing (GD),
 
 Implementation of the MVC approach:
 
-The model-view-controller (MVC) architecture has been used as follows. The program is divided into three major packages: Argument, Graph and Controller. The argument package contains the model, the graph package the view and the controller package is self-explanatory. Classes in both the controller and graph packages import the argument package to be able to retrieve data to display (graph) and call for alterations (controller). Specifically, the top class "CarneadesGraph" in the graph package binds the ArgumentGraph it contains, thereby updating itself whenever the model changes. Moreover, the controller imports the view package to be able to configure it and maintain the limits of user interactions (e.g. depending on what is selected in the view). As JavaFX does not supply event listeners by default, the basic graph, layout and controller packages contain "abstract" subpackages, which consist of skeleton-like abstract versions of the main classes with empty methods that the non-abstract classes overide. Hence, the model has an abstract view object whose methods it calls to update the layout. Also, the view has an abstract controller object to which it passes the user interaction. This way, event-based interaction can be substituted by introducing abstract classes and binding them to their respective context. 
-
+The model-view-controller (MVC) architecture has been used as follows. The program is divided into three major packages: Argument, Graph and Controller. The argument package contains the model, the graph package the view and the controller package is self-explanatory. Classes in both the controller and graph packages import the argument package to be able to retrieve data to display (graph) and call for alterations (controller). Specifically, the top class "CarneadesGraph" in the graph package binds the ArgumentGraph it contains, thereby updating itself whenever the model changes. Moreover, the controller imports the view package to be able to configure it and maintain the limits of user interactions (e.g. depending on what is selected in the view). 
 
 ------
 
@@ -114,9 +94,17 @@ Version history:
 Added/modified features:
 * Statement search text field is no longer case sensitive.
 * Statement edit panel has been worked into new format and outfitted with ne components.
+* implemented Color scheme.
+* Credits frame added.
+* File save/saveAs added.
+* Blank toolbar inserted.
+* Centered graph upon display.
+* 
 
 Fixed Bugs/Issues:
 * reappered file save bug fixed again.
+* Layout bug fixed in case a single node is wider than the sum of its subtrees.
+* Windows platform display bug fixed.
 
 -
 
