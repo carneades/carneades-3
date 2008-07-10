@@ -154,14 +154,14 @@ grammar {
     }
          
     
-    # Schemes and premise roles are referenced using URIs.  They can be modeled
+    # Schemes and premise roles can be referenced using URIs.  They can be modeled
     # as instances in an OWL ontology.
     
     Arguments = element arguments { Argument* }
     Argument = element argument { 
     	attribute id { xsd:ID },
         attribute direction { "pro" | "con" }?,
-        attribute scheme { xsd:anyURI }?,
+        attribute scheme { xsd:anyURI | xsd:string }?,
         attribute weight { xsd:float }?,  # range: 0.0 bis 1.0; default: 0.5
         Conclusion, Premises
     }
@@ -173,7 +173,7 @@ grammar {
         # premise types: assumptions are now global, in the scope of an argument graph,
         # and represent as an attribute of issues.
         attribute exception { xsd:boolean }?,  # default: false, i.e. ordinary premise
-        attribute role { xsd:anyURI }?,
+        attribute role { xsd:anyURI | xsd:string }?,
         attribute statement { xsd:anyURI } 
      } 
                   
