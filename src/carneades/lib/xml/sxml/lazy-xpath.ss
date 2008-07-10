@@ -1,13 +1,130 @@
 ; Module header is generated automatically
-#cs(module lazy-xpath mzscheme
-(require (lib "string.ss" "srfi/13"))
-(require (planet "ssax.ss" ("lizorkin" "ssax.plt" 2 0)))
-(require "sxml-tools.ss")
-(require "sxpath-ext.ss")
-(require "xpath-parser.ss")
-(require "txpath.ss")
-(require "xpath-ast.ss")
-(require "xpath-context_xlink.ss")
+;#cs(module lazy-xpath mzscheme
+;(require (lib "string.ss" "srfi/13"))
+;(require (planet "ssax.ss" ("lizorkin" "ssax.plt" 2 0)))
+;(require "sxml-tools.ss")
+;(require "sxpath-ext.ss")
+;(require "xpath-parser.ss")
+;(require "txpath.ss")
+;(require "xpath-ast.ss")
+;(require "xpath-context_xlink.ss")
+
+#!r6rs
+
+(library
+ 
+ (carneades lib xml sxml lazy-xpath)
+ 
+ (export lazy:or
+         lazy:promise?
+         lazy:null?
+         lazy:map
+         lazy:filter
+         lazy:car
+         lazy:cdr
+         lazy:length
+         lazy:result->list
+         lazy:node->sxml
+         lazy:reach-root
+         lazy:contextset->nodeset
+         lazy:recover-contextset
+         lazy:find-proper-context
+         lazy:output-siblings
+         lazy:find-foll-siblings
+         lazy:find-prec-siblings
+         lazy:ancestor
+         lazy:ancestor-or-self
+         lazy:attribute
+         lazy:child
+         lazy:descendant
+         lazy:descendant-or-self
+         lazy:following
+         lazy:following-sibling
+         lazy:namespace
+         lazy:parent
+         lazy:preceding
+         lazy:preceding-sibling
+         lazy:self
+         lazy:axis-consume-nodeset
+         lazy:string
+         lazy:boolean
+         lazy:number
+         lazy:string-value
+         lazy:equality-cmp
+         lazy:equal?
+         lazy:not-equal?
+         lazy:relational-cmp
+         lazy:core-last
+         lazy:core-position
+         lazy:core-count
+         lazy:core-id
+         lazy:core-local-name
+         lazy:core-namespace-uri
+         lazy:core-name
+         lazy:core-string
+         lazy:core-concat
+         lazy:core-starts-with
+         lazy:core-contains
+         lazy:core-substring-before
+         lazy:core-substring-after
+         lazy:core-substring
+         lazy:core-string-length
+         lazy:core-normalize-space
+         lazy:core-translate
+         lazy:core-boolean
+         lazy:core-not
+         lazy:core-true
+         lazy:core-false
+         lazy:core-lang
+         lazy:core-number
+         lazy:core-sum
+         lazy:core-floor
+         lazy:core-ceiling
+         lazy:core-round
+         lazy:ast-axis-specifier
+         lazy:ast-location-path
+         lazy:ast-absolute-location-path
+         lazy:ast-relative-location-path
+         lazy:ast-step 
+         lazy:ast-step-list
+         lazy:ast-predicate
+         lazy:ast-predicate-list
+         lazy:ast-expr
+         lazy:ast-or-expr
+         lazy:ast-and-expr
+         lazy:ast-equality-expr
+         lazy:ast-relational-expr
+         lazy:ast-additive-expr
+         lazy:ast-multiplicative-expr
+         lazy:ast-union-expr
+         lazy:ast-path-expr
+         lazy:ast-filter-expr
+         lazy:ast-variable-reference
+         lazy:ast-literal
+         lazy:ast-number
+         lazy:ast-function-call
+         lazy:ast-function-arguments
+         lazy:api-helper
+         lazy:txpath
+         lazy:xpath-expr
+         lazy:sxpath
+         )
+ 
+ (import (rnrs)
+         (carneades lib xml sxml sxml-tools)
+         (carneades lib xml sxml sxpath-ext)
+         (carneades lib xml sxml xpath-parser)
+         (carneades lib xml sxml txpath)
+         (carneades lib xml sxml xpath-ast)
+         (carneades lib xml sxml xpath-context_xlink)
+         (carneades lib xml sxml force-delay)
+         (carneades lib xml ssax myenv)
+         (carneades lib xml ssax sxpathlib)
+         (carneades lib xml ssax util)
+         (carneades lib xml ssax common)
+         (only (carneades system) promise?)
+         (only (carneades lib srfi strings) string-prefix? string-prefix-ci?))
+        
 
 ;; This module implements lazy SXPath evaluation over lazy SXML documents
 ;
@@ -42,7 +159,7 @@
 ; Misc helpers for working with a lazy nodeset
 
 ; Escaping the ## for some Scheme implementations
-(cond-expand
+#;(cond-expand
  (gambit
   ; The following macro constructs Gambit-specific ids on the fly
   ; Borrowed from "http.scm"
@@ -63,7 +180,7 @@
 ; Predicate for detecting a promise
 ; There is no such a predicate in R5RS, so different Scheme implementations
 ; use different names for this functionality
-(define lazy:promise?
+#;(define lazy:promise?
   (cond-expand
    (plt promise?)
    (bigloo
@@ -81,6 +198,8 @@
     (lambda (obj) #f)   ; ATTENTION: just makes the approach applicable for
                         ; conventional SXML documents
    )))
+
+(define lazy:promise? promise?)
 
 ;-------------------------------------------------
 ; Lazy analogues for common list operations
@@ -479,7 +598,7 @@
                 (append (as-nodeset (force (car nodeset)))
                         (cdr nodeset))))
               ; (car nodeset) an ordinary node
-              (((ntype?? '@) (car nodeset))
+              (((ntype?? '^) (car nodeset))
                (car nodeset))
               (else #f)))))
       (lambda (node)  ; not a nodeset
@@ -664,7 +783,7 @@
       (lazy:filter
        (lambda (context)
          (test-pred? (sxml:context->node context)))
-       ((lazy:sxpath '(@@ *NAMESPACES* *) num-anc) node)))))
+       ((lazy:sxpath '(^^ *NAMESPACES* *) num-anc) node)))))
 
 ; Parent axis
 ; It should be noted that the parent of the context node is already forced
@@ -870,7 +989,7 @@
                            (lazy:string-value (lazy:car object))))
     ((number? object)
      (if (and (rational? object) (not (integer? object)))  ; like 1/2
-         (number->string (exact->inexact object))
+         (number->string (inexact object))
          (number->string object)))
     ((boolean? object) (if object "true" "false"))
     (else   ; Unknown type -> empty string.  
@@ -929,7 +1048,7 @@
              lazy:string-value
              (let ((frst (lazy:car (cdr node))))
                (if
-                (and (pair? frst) (eq? '@ (car frst)))  ; attribute node
+                (and (pair? frst) (eq? '^ (car frst)))  ; attribute node
                 (lazy:cdr (cdr node))
                 (cdr node)))))))))
                 
@@ -1098,7 +1217,7 @@
     (let* ((root-node (list (lazy:car
                              (lazy:reach-root nodeset))))
            (id-nset ((sxml:child (ntype?? 'id-index))
-                     ((sxml:child (ntype?? '@@)) root-node))))
+                     ((sxml:child (ntype?? '^^)) root-node))))
       (if
        (null? id-nset)  ; no id-index
        '()  ; ID function returns an empty nodeset
@@ -1300,7 +1419,7 @@
                      (lazy:contextset->nodeset
                       (arg-func2 nodeset position+size var-binding)))))
           (let ((len (string-length str))
-                (start (- (inexact->exact (round num1)) 1)))
+                (start (- (exact (round num1)) 1)))
             (if (> start len)
                 ""
                 (substring str (if (< start 0) 0 start) len)))))
@@ -1316,8 +1435,8 @@
                        (lazy:contextset->nodeset
                         (arg-func3 nodeset position+size var-binding)))))
             (let* ((len (string-length str))
-                   (start (- (inexact->exact (round num1)) 1))
-                   (fin (+ start (inexact->exact (round num2)))))
+                   (start (- (exact (round num1)) 1))
+                   (fin (+ start (exact (round num2)))))
               (if (or (> start len) (< fin 0) (< fin start))
                   ""
                   (substring str
@@ -1486,7 +1605,7 @@
 ; floor(number)
 (define (lazy:core-floor num-anc arg-func)
   (lambda (nodeset position+size var-binding)
-    (inexact->exact
+    (exact
      (floor (lazy:number
              (lazy:contextset->nodeset
               (arg-func nodeset position+size var-binding)))))))
@@ -1494,7 +1613,7 @@
 ; ceiling(number)
 (define (lazy:core-ceiling num-anc arg-func)
   (lambda (nodeset position+size var-binding)
-    (inexact->exact
+    (exact
      (ceiling (lazy:number
                (lazy:contextset->nodeset
                 (arg-func nodeset position+size var-binding)))))))
@@ -1502,7 +1621,7 @@
 ; round(number)
 (define (lazy:core-round num-anc arg-func)
   (lambda (nodeset position+size var-binding)
-    (inexact->exact
+    (exact
      (round (lazy:number
              (lazy:contextset->nodeset
               (arg-func nodeset position+size var-binding)))))))
@@ -2321,4 +2440,4 @@
 ; Support for native sxpath syntax
 (define lazy:sxpath (lazy:api-helper txp:sxpath->ast lazy:ast-expr))
 
-(provide (all-defined)))
+)
