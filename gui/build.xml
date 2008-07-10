@@ -3,7 +3,7 @@
 <project default ="full">
 		<property environment="env"/>
 
-		<property name="project.target" value="1.5"/>
+		<property name="project.target" value="1.6"/>
 		<property name="project.srcdir" value="src"/>
 		<property name="project.builddir" value="build"/>
 
@@ -11,6 +11,9 @@
 		<property name="javafxc.class.path" 
 				value="${javafxc.home}/lib/javafxc.jar:${javafxc.home}/lib/javafxrt.jar:${javafxc.home}/lib/Scenario.jar"/>
         <taskdef resource="javafxc-ant-task.properties" classpath="${javafxc.class.path}"/>
+
+		<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" 
+			classpath="lib/jarbundler-2.0.0.jar" onerror="report"/>
 
 		<import file="./lib/one-jar-ant-task.xml"/> 
 
@@ -236,7 +239,7 @@
 
 		<target name="corejar" depends="">
 				<echo message="Packing jar ..." />
-				<jar destfile="build/main/main.jar"
+				<jar destfile="build/CarneadesCore.jar"
          		basedir="build"
 				includes="**/*.class"
 				manifest="manifests/coremanifest"
@@ -245,8 +248,8 @@
 		</target>
 
 		<target name="jar" depends="corejar">
-				<one-jar destfile="Carneades.jar">
-						<main jar="build/main/main.jar">
+				<one-jar destfile="Carneades.jar" manifest="manifests/packmanifest">
+						<main jar="build/CarneadesCore.jar">
             		</main>
            				<lib>
 								<fileset dir="lib/"
@@ -265,8 +268,18 @@
 				<java jar="Carneades.jar" fork="true"/>
 		</target>
 
-		<target name="deploy" depends="jar">
+		<target name="deploywin" depends="jar">
 				<echo message="Deploying MS Windows package ..."/>
-				
+				<zip destfile="CarneadesWindows.zip"
+						basedir="deployment"
+						update="true"
+						>
+						<zipfileset dir=".">
+								<include name="Carneades.jar"/>
+						</zipfileset>
+						<zipfileset dir="deployment">
+								<include name="StartCarneades.bat"/>
+						</zipfileset>
+				</zip>
 		</target>
 </project>
