@@ -57,6 +57,7 @@ public class UndoableCommand extends Command {
 
 public class CommandControl {
 
+	public attribute control: GraphControl;
 	private attribute commands: Command[] = [];
 	private attribute size: Integer = bind sizeof commands;
 
@@ -81,6 +82,9 @@ public class CommandControl {
 	}
 
 	public function do(c: Command): Number {
+		// tell control the file has changed
+		control.fileChanged = true;
+
 		// throw away everything beyond the bookmark
 		for (i in [1 .. bookmark]) {
 			delete commands[size-1];

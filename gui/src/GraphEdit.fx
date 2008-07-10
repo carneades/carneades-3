@@ -81,18 +81,16 @@ public class GraphEdit extends Panel {
 		}
 	}
 
-	public function reset(): Void {/*
-		toDo: If this is enabled, a double click on any ArgumentElement hides the edit menu. Fix this.
-
+	public function reset(): Void {
 		statementPanel.visible = false;
 		argumentPanel.visible = false;
 		premisePanel.visible = false;
-		*/
+		
 	}
 }
 
 public class EditPanel extends FlowPanel {
-	override attribute background = GC.panelBackground;
+	//override attribute background = GC.panelBackground;
 	override attribute alignment = HorizontalAlignment.LEFT;
 	override attribute width = GC.editWidth;
 	override attribute height = GC.editHeight;
