@@ -21,7 +21,7 @@ Current Line of Work:
 
 * Solve the xml conformity problem with whitespaces in ids. Use a RE here.
 
-* Only show ids in search field and replace the TextField by a TextArea in the edit component when available in the SDK.
+* customize one-jar accordingly
 
 -----
 
@@ -88,6 +88,7 @@ Issues to take care of in existing code:
 
 Known Bugs:
 
+* Empty graph -> add statement -> add argument ->add argument -> layout error
 
 -----
 
