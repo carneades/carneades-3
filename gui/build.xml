@@ -19,12 +19,12 @@
 
 		<path id="project.class.path">
 				<pathelement location="lib/javafx-xml.jar"/>
-				<pathelement location="lib/javafxgui.jar"/>
-				<pathelement location="lib/javafx-swing.jar"/>
-				<pathelement location="lib/javafxrt.jar"/>
-				<pathelement location="lib/javafxc.jar"/>
-				<pathelement location="lib/jmc.jar"/>
-				<pathelement location="lib/Scenario.jar"/>
+				<pathelement location="${javafxc.home}/lib/javafxgui.jar"/>
+				<pathelement location="${javafxc.home}/lib/javafx-swing.jar"/>
+				<pathelement location="${javafxc.home}/lib/javafxrt.jar"/>
+				<pathelement location="${javafxc.home}/lib/javafxc.jar"/>
+				<pathelement location="${javafxc.home}/lib/jmc.jar"/>
+				<pathelement location="${javafxc.home}/lib/Scenario.jar"/>
 		</path>
 		
 		<target name="constants">
@@ -252,8 +252,12 @@
 						<main jar="build/CarneadesCore.jar">
             		</main>
            				<lib>
+								<fileset dir="${javafxc.home}/lib/"
+								includes="javafxc.jar, javafxrt.jar, Scenario.jar, jmc.jar, javafxgui.jar, javafx-swing.jar"
+								>
+								</fileset>
 								<fileset dir="lib/"
-								excludes="javafxdoc.jar, one-jar-ant-task-0.96.jar, one-jar-ant-task.xml"
+								includes="javafx-xml.jar"
 								>
 								</fileset>
            				</lib>

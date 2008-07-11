@@ -38,7 +38,7 @@ import Carneades.Graph.Elements.Elements.*;
 // Abstract Controller Class for Interaction
 import Carneades.Control.GraphControl;
 
-public class GraphFrame extends Frame {
+public class GraphFrame extends SwingFrame {
 	
 	public attribute graph: Graph;
 	public attribute layout: GraphLayout;
@@ -98,7 +98,7 @@ public class GraphFrame extends Frame {
 		visible: true
 	}
 
-	private attribute creditsFrame: Frame = Frame {
+	private attribute creditsFrame: SwingFrame = SwingFrame {
 		title: "About Carneades"
 		height: 140
 		resizable: false
