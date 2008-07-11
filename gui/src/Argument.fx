@@ -84,11 +84,25 @@ public class Statement {
 	public function acceptable () : Boolean { 
 		var pro = arguments[arg | arg.conclusion == this and arg.pro];
 		var con = arguments[arg | arg.conclusion == this and not arg.pro];
-		standard.satisfied(graph,pro,con);
+		if (standard.satisfied(graph,pro,con)) {
+			System.out.println("{id}: acceptable");
+			true;
+		} else {
+			System.out.println("{id}: not acceptable");
+			false;
+		}
 	}
 
+	public function complementAcceptable () : Boolean {
+		var pro = arguments[arg | arg.conclusion == this and arg.pro];
+		var con = arguments[arg | arg.conclusion == this and not arg.pro];
+		standard.satisfied(graph,con,pro);
+	}
+	
+	
     private function update () : Void {
     	ok = acceptable();
+    	// System.out.println("updating {id}");
     	for (arg in arguments) arg.update();
     }
     
@@ -142,29 +156,35 @@ public class Statement {
 	public function state ():  Void {
 		value = "unknown";
 		assumption = true;
+		update();
 	}
 	
 	public function question () : Void {
     	value = "unknown";
     	assumption = false;
+    	update();
     }
     
     public function assume (v: Boolean) : Void {
     	value = if (v) "true" else "false";
     	assumption = true;
+    	update();
     }
     
     public function decide (v: Boolean) : Void {
     	value = if (v) "true" else "false";
     	assumption = false;
+    	update();
     }
     
     public function accept () : Void {
 		decide(true);
+		update();
 	}
 	
 	public function reject () : Void {
 		decide(false);
+		update();
     }
 }
 
@@ -256,18 +276,12 @@ public class Argument {
 }
 
 public class ArgumentGraph {
-	 public attribute id: String = "NewGraph";
-	 public attribute mainIssue: Statement; 
-	 
-	 public attribute statements: Statement[] 
-	 	on replace {
-	 		update();
-	 	};
+	public attribute id: String = "NewGraph";
+	public attribute mainIssue: Statement; 
 
-     public attribute arguments: Argument[]
-     	on replace {
-     		update();
-     	};
+	// statements and arguments should be "read-only"
+	public attribute statements: Statement[];
+    public attribute arguments: Argument[];
 
     // Issues of XML format not needed, since the 
     // statements here have all the attributes of issues.
@@ -307,13 +321,13 @@ public class ArgumentGraph {
 		// check for and prohibit cycles.
 		if (noCycles()) {	
 			insert arg into arguments;
-
+	
 			// add the statement of each premise to the
 			// the statements of the graph, if not already present
 			for (p in arg.premises) {
+				insert arg into p.statement.arguments;
 				if (0 == sizeof(statements[s | s == p.statement])) {
 					insert p.statement into statements;
-					insert arg into p.statement.arguments;
 				}
 			}
 			// add the conclusion of the argument to statements of
@@ -321,6 +335,9 @@ public class ArgumentGraph {
 			if (0 == sizeof(statements[s | s == arg.conclusion])) {
 				insert arg.conclusion into statements;
 			}
+			
+			arg.update();
+
 		} else {
 			result = GC.AG_CYCLE;
 		}
@@ -331,6 +348,7 @@ public class ArgumentGraph {
 
 	public function deleteArgument (arg: Argument) : Void {
 		delete arg from arguments;
+		arg.conclusion.update();
 		for (p in arg.premises) { delete arg from p.statement.arguments; }
 	}
 	
@@ -342,45 +360,34 @@ public class ArgumentGraph {
 	function con (s: Statement) : Argument[] {
 		arguments[arg | arg.conclusion == s and not arg.pro];
 	}
-	
-	public function acceptable (s: Statement) : Boolean {
-		s.acceptable();
-	}
-	
-	// Check whether the complement of a statement would be acceptable,
-	// which is the case if its proof standard is satisfied when 
-	// the roles of the pro and con arguments are reversed.  Unlike 
-	// acceptable(), this function is side-effect free.  It doesn't
-	// update the statement.
-	public function complementAcceptable (s: Statement) : Boolean {
-		s.standard.satisfied(this,con(s),pro(s)) 
-	}
 
+	/*
 	public function allPremisesHold (a: Argument): Boolean {
 		a.allPremisesHold();
 	}
+	*/
 
 	public function holds (p: Premise): Boolean {
 		if (not p.exception) {    // ordinary premise
 			if (not p.negative) { // positive premise
 				p.statement.value == "true" or
 				(p.statement.value == "unknown" and
-				acceptable(p.statement))
+				p.statement.acceptable())
 			} else {             // negative premise
 				p.statement.value == "false" or
 				(p.statement.value == "unknown" and 
-				complementAcceptable(p.statement))
+				p.statement.complementAcceptable())
 			}
 		} else {
 			// exception
 			if (not p.negative) { // positive exception
 				p.statement.value == "false" or
 				(p.statement.value == "unknown" and
-				 not acceptable(p.statement))
+				 not p.statement.acceptable())
 			} else {              // negative exception
 				p.statement.value == "true" or
 				(p.statement.value == "unknown" and
-				 not complementAcceptable(p.statement))
+				 not p.statement.complementAcceptable())
 			}
 		}
 	}
