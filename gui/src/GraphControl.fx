@@ -48,8 +48,8 @@ public class GraphControl {
 	attribute layout: GraphLayout = TreeLayout {
 		graph: bind graph
 		// todo: this positioning is dirty! Find a better way once hand-dragging is in there.
-		width: bind frame.width - GC.editWidth - 20
-		height: bind frame.height - GC.toolBarHeight - 30
+		width: frame.width - GC.editWidth - 20
+		height: frame.height - GC.toolBarHeight - 30
 	};
 
 	private attribute commands: CommandControl = CommandControl {
@@ -144,7 +144,6 @@ public class GraphControl {
 			}
 		}
 
-				System.out.println("iteration");
 		// These calls and their functions can be united into a bind once chained bindings work.
 		updateView();
 	}
@@ -812,11 +811,16 @@ public class GraphControl {
 	}
 
 	// DEBUG PRINT FUNCTIONS
+
 	public function printSelected(): Void {
 		System.out.println("vertices: " + graph.selected);
 		System.out.println("models: " + graph.selected);
 		System.out.println("list:" + frame.list.list.selectedItem);
-
 	}
+
+	public function printSizes(): Void {
+		System.out.println("view: " + view.width);
+	}
+
 }
 

@@ -253,14 +253,12 @@
             		</main>
            				<lib>
 								<fileset dir="${javafxc.home}/lib/"
-								includes="javafxc.jar, javafxrt.jar, Scenario.jar, jmc.jar, javafxgui.jar, javafx-swing.jar"
-								>
-								</fileset>
+								includes="javafxc.jar, javafxrt.jar, Scenario.jar, jmc.jar, javafxgui.jar, javafx-swing.jar"/>
 								<fileset dir="lib/"
-								includes="javafx-xml.jar"
-								>
-								</fileset>
+								includes="javafx-xml.jar"/>
            				</lib>
+								<fileset file="data/aboutcarneades.png"/>
+
         		</one-jar> 
 		</target>
 

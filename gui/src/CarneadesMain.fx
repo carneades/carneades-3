@@ -48,9 +48,9 @@ import Carneades.Control.*;
 //var argumentGraph: ArgumentGraph = ArgumentFile.getGraphFromFile("data/test2.xml");
 
 
-var argumentGraph: ArgumentGraph = GraphControl.defaultGraph();
+//var argumentGraph: ArgumentGraph = ArgumentGraph { id: "testgraph" }
 
-//argumentGraph = ArgumentFile.getGraphFromFile(new File("data/socrates.xml"));
+var argumentGraph = ArgumentFile.getGraphFromFile(new File("data/socrates.xml"));
 
 // 2. DECLARE VIEW AND CONTROL COMPONENTS
 
@@ -65,6 +65,12 @@ graph = CarneadesGraph {
 	argumentGraph: bind argumentGraph
 	control: bind control
 } 
+
+layout = TreeLayout {
+	graph: graph
+	width: GC.appWidth
+	height: GC.appHeight
+}
 
 frame = GraphFrame {
 	graph: bind graph
@@ -83,6 +89,7 @@ control = GraphControl {
 	// we need to inverse-bind the graph to the controller.
 	argumentGraph: bind argumentGraph with inverse
 	frame: bind frame
+	layout: bind layout
 }
 
 // FINAL DISPLAY

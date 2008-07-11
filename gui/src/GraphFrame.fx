@@ -57,6 +57,7 @@ public class GraphFrame extends SwingFrame {
 	public attribute view: GraphView = bind GraphView {
 							x: 0
 							y: 0
+							//width: bind layout.width as Integer
 							//preferredSize: bind [this.width-GC.editWidth-20, 100]
 							graph: bind graph
 							layout: bind layout
@@ -98,44 +99,25 @@ public class GraphFrame extends SwingFrame {
 		visible: true
 	}
 
-	private attribute old_creditsFrame: SwingFrame = SwingFrame {
-		title: "About Carneades"
-		height: 140
-		resizable: false
-		visible: bind this.showCredits
-		content: BorderPanel {
-			top: GridPanel {
-				columns: 1
-				rows: 5
-				content: [
-					Label { text: "Carneades GUI Alpha" },
-					Label { text: "Version 0.0.6" },
-					Label { text: "Copyright 2008, T. Gordon & M. Grabmair"	},
-					Label { text: "to be published under the GPL" },
-					Label { text: "http://carneades.berlios.de" }
-				]
-			}
-		}
-		closeAction: function() {
-			showCredits = false;
-		}
-	}
-
 	private attribute creditsFrame: SwingFrame = SwingFrame {
 		visible: bind this.showCredits
-		height: 100
-		width: 100
-		/*content: Canvas {
+		height: 393
+		width: 617
+		resizable: false
+		content: Canvas {
 			content: [
 				ImageView {
 					width: bind creditsFrame.width
 					height: bind creditsFrame.height
 					image: Image {
-						url: "data/aboutcarneades.png"
+						url: bind "file:data/aboutcarneades.png"
 					}
 				}
 			]
-		}*/
+		}
+		closeAction: function() {
+			showCredits = false;
+		}
 	}
 
 	public function alert(message: String): Void { 
@@ -317,7 +299,14 @@ public class GraphFrame extends SwingFrame {
 							action: function() {
 								control.unSelectAll();
 							}
+						},
+						MenuItem {
+							text: "print sizes"
+							action: function() {
+								control.printSizes();
+							}
 						}
+
 					]
 				}
 	]; // override default
@@ -370,3 +359,4 @@ public class GraphFrame extends SwingFrame {
 class ToolBarButton extends Button {
 	override attribute preferredSize = [GC.toolBarHeight, GC.toolBarHeight];
 }
+
