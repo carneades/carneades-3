@@ -58,7 +58,7 @@ public class GraphList extends FlowPanel {
 	}
 
 	attribute addArgumentButton: Button = Button {
-		text: "add argument"
+		text: "insert argument"
 		enabled: bind control.possibleToAddArgument;
 		action: function(): Void {
 			control.addArgumentToSelected();

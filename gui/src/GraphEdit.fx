@@ -122,7 +122,6 @@ public class StatementEditPanel extends EditPanel {
 		}
 	}
 
-
 	private attribute acceptableBox: CheckBox = CCheckBox {
 		enabled: false
 		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
@@ -308,6 +307,13 @@ public class ArgumentEditPanel extends EditPanel {
 		selected: bind argument.ok
 	}
 
+	private attribute schemeField: SchemeField = SchemeField {
+		preferredSize: [ editComponentWidth, 20 ]
+		action: function(): Void {
+			control.changeArgumentScheme(argument, schemeField.text);
+		}
+	}
+
 	private attribute directionGroup: ToggleGroup = ToggleGroup {};
 
 	private attribute proButton: RadioButton = CRadioButton {
@@ -345,7 +351,8 @@ public class ArgumentEditPanel extends EditPanel {
 										Label { text: "id " preferredSize: [editLabelWidth, 20]}, idField, 
 										Label { text: "direction ", preferredSize: [editLabelWidth, 20]}, proButton, conButton,
 										Label { text: "defensible ", preferredSize: [editLabelWidth, 20]}, defensibleBox,
-										Label { text: "weight ", preferredSize: [editLabelWidth, 20]}, weightSlider, weightNumber
+										Label { text: "weight ", preferredSize: [editLabelWidth, 20]}, weightSlider, weightNumber,
+										Label { text: "scheme ", preferredSize: [editLabelWidth, 20] }, schemeField,
 										];
 
 	// Functions
@@ -418,15 +425,18 @@ class IdField extends TextField {
 	override attribute preferredSize = [GC.editWidth - 50, 20];
 }
 
+class SchemeField extends TextField {
+	override attribute visible = true;
+	override attribute preferredSize = [GC.editWidth - 50, 20];
+}
+
 class ContentField extends TextField {
 	override attribute editable = true;
-	override attribute visible = true;
 	override attribute preferredSize = [GC.editWidth - 80, 20];
 }
 
 class RoleField extends TextField {
 	override attribute editable = false;
-	override attribute visible = true;
 	override attribute preferredSize = [GC.editWidth - 40, 20];
 }
 

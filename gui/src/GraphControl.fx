@@ -360,7 +360,7 @@ public class GraphControl {
 			for (s in selected) {
 				if (s instanceof Statement) {
 					if (commands.do(
-							AddArgumentCommand {
+							AddArgumentAndPremiseCommand {
 								argumentGraph: argumentGraph
 								statement: s as Statement
 							}
@@ -605,6 +605,17 @@ public class GraphControl {
 		updateView();
 	}
 
+	public function changeArgumentScheme(a: Argument, c: String): Void {
+		commands.do(
+			ChangeArgumentSchemeCommand {
+				argumentGraph: argumentGraph
+				argument: a
+				scheme: c
+			}
+		);
+		updateAll();
+	};
+
 	public function changeArgumentId(a: Argument, id: String): Void {
 		var admissible: Boolean = true;
 
@@ -617,7 +628,6 @@ public class GraphControl {
 			frame.alert("id may not be empty.");
 			admissible = false;
 		}
-
 		if (id.matches("^*[:alnum:][:space:]*[:alnum:]$")) {
 			frame.alert("id may not contain whitespaces.");
 			admissible = false;

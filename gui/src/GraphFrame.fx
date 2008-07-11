@@ -115,12 +115,9 @@ public class GraphFrame extends SwingFrame {
 					Label { text: "http://carneades.berlios.de" }
 				]
 			}
-			bottom: Button {
-				text: "Ok"
-				action: function() {
-					this.showCredits = false;
-				}
-			}
+		}
+		closeAction: function() {
+			showCredits = false;
 		}
 	}
 
@@ -163,6 +160,12 @@ public class GraphFrame extends SwingFrame {
 					text: "File"
 					items: [
 						MenuItem {
+							text: "about Carneades"
+								action: function() {
+								this.showCredits = true;
+							}
+						},
+						MenuItem {
 							enabled: true;
 							text: "New"
 							action: function() {
@@ -174,7 +177,7 @@ public class GraphFrame extends SwingFrame {
 										["Yes", "No", "Cancel"], null
 									);
 									if (choice == JOptionPane.YES_OPTION) {
-										save();	
+										saveAs();	
 									} else if (choice == JOptionPane.NO_OPTION) {
 										control.newGraph();
 									}
@@ -186,9 +189,26 @@ public class GraphFrame extends SwingFrame {
 						, MenuItem {
 							text: "Open"
 							action: function() {
-								var returnval = chooser.showOpenDialog(null);
-								if (returnval == JFileChooser.APPROVE_OPTION) {
-									control.loadGraphFromFile(chooser.getSelectedFile());
+								if (control.fileChanged) {
+									var choice = JOptionPane.showOptionDialog(
+										null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?", 
+										JOptionPane.YES_NO_CANCEL_OPTION, 
+										JOptionPane.QUESTION_MESSAGE, null, 
+										["Yes", "No", "Cancel"], null
+									);
+									if (choice == JOptionPane.YES_OPTION) {
+										save();	
+									} else if (choice == JOptionPane.NO_OPTION) {
+										var returnval = chooser.showOpenDialog(null);
+										if (returnval == JFileChooser.APPROVE_OPTION) {
+											control.loadGraphFromFile(chooser.getSelectedFile());
+										}
+									}
+								} else {
+									var returnval = chooser.showOpenDialog(null);
+									if (returnval == JFileChooser.APPROVE_OPTION) {
+										control.loadGraphFromFile(chooser.getSelectedFile());
+									}
 								}
 							}
 						}
@@ -274,22 +294,7 @@ public class GraphFrame extends SwingFrame {
 						}
 					] // items
 				} // menu
-				, Menu {
-					text: "Help"
-					items: [
-					MenuItem {
-						text: "about Carneades"
-						action: function() {
-							this.showCredits = true;
-						}
-					}
-					] // items
-				} // menu
 	]; // override default
-
-	postinit {
-		if (GC.release) showCredits = true;
-	}
 
 	private function save() {
 		if (control.fileLoaded) {
