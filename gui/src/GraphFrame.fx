@@ -101,18 +101,38 @@ public class GraphFrame extends SwingFrame {
 
 	private attribute creditsFrame: SwingFrame = SwingFrame {
 		visible: bind this.showCredits
-		height: 200
-		width: 400
-		background: Color.WHITE
+		title: "about Carneades"
+		height: 250
+		width: 450
 		resizable: false
-		content: 
+		content: bind
 			FlowPanel {
-				content: [
+				background: Color.WHITE
+				width: creditsFrame.width
+				height: creditsFrame.height
+				content: bind [
 					Label {
-						preferredSize: [creditsFrame.width -10, 20]
+						preferredSize: [creditsFrame.width -10, 15]
 						text: "Carneades"
 					},
-				
+					for (t in [
+						"",
+						"Version 0.0.6", 
+						"License: GPL v3", 
+						"Copyright © 2008", 
+						"Thomas F. Gordon (1) and Matthias Grabmair (2)",
+						"",
+						"(1) Fraunhofer Institute for Open Communication Systems (FOKUS), Berlin",
+						"(2) University of Pittsburgh, Intelligent Systems Program",
+						"",
+						"http://carneades.berlios.de"
+
+					]) { 
+						Label {
+							preferredSize: [creditsFrame.width -10, 15]
+							text: t
+						}
+					}
 				]
 			}
 		/*Canvas {
