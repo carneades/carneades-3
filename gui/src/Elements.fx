@@ -21,6 +21,7 @@ package Carneades.Graph.Elements;
 import javafx.scene.geometry.*;
 import javafx.scene.paint.*;
 import javafx.scene.transform.*;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.text.*;
 import javafx.scene.*;
 import javafx.input.*;
@@ -48,6 +49,13 @@ public abstract class ArgumentElement extends Vertex {
 					fill: bind fill
 					stroke: Color.BLACK
 					strokeWidth: 1
+
+					effect: DropShadow {
+						color: bind GC.shadowColor
+						offsetX: bind GC.xShadowShift
+						offsetY: bind GC.yShadowShift
+						radius: bind GC.shadowBlurRadius
+					}
 				
 					onMouseClicked: function(e: MouseEvent) {
 						control.unSelectAll();
@@ -73,8 +81,7 @@ public abstract class ArgumentElement extends Vertex {
 
 					onMouseExited: function(e: MouseEvent) {
 						if (control.dragging) { control.setDraggingOver(null); }
-					}
-
+					}	
 				} // main rect
 
 	override attribute text = Text {
@@ -121,6 +128,12 @@ private attribute backCircle: Circle = Circle {
 		radius: bind GC.argumentCircleDefaultRadius
 
 		fill: bind Color.WHITE
+		effect: DropShadow {
+						color: bind GC.shadowColor
+						offsetX: bind GC.xShadowShift
+						offsetY: bind GC.yShadowShift
+						radius: bind GC.shadowBlurRadius
+					}
 	}
 
 	private attribute mainCircle: Circle = Circle {
@@ -205,10 +218,22 @@ public class StatementBox extends ArgumentElement {
 		else /*if (status == "questioned")*/ GC.statusQuestionedColor
 	}
 
+	private attribute shadow: Rectangle = Rectangle {
+		x: bind x - (width / 2) + GC.xShadowShift
+		y: bind y - (height / 2) + GC.yShadowShift
+		width: bind width 
+		height: bind height
+		fill: bind GC.shadowColor
+		stroke: Color.BLACK
+		strokeWidth: 0
+		visible: bind GC.drawShadows
+	} // shadow rect
+
 	public function create():Node {
 		Group {
 			content: [
-				mainRect
+				shadow
+				, mainRect
 				, selection
 				, text,
 				middlePoint
