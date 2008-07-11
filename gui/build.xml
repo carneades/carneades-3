@@ -282,6 +282,7 @@
 				<echo message="Deploying Mac OS package ..."/>
 	
 				<delete dir="${project.distdir}/Carneades"/>
+				<delete ="${project.distdir}/Carneades.tar"/>
 				<mkdir dir="${project.distdir}/Carneades"/>
 				<copy todir="${project.distdir}/Carneades">
 						<fileset dir="deployment/"
@@ -312,8 +313,6 @@
 
 		<target name="examples">
 				<echo message="Updating example files ..."/>
-				<delete dir="deployment/examples"/>
-				<mkdir dir="deployment/examples"/>
 				<copy todir="deployment/examples">
 						<fileset dir="examples/"/>
 				</copy>
