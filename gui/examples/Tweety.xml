@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<lkif>
+  <argument-graph id="NewGraph">
+    <issues>
+      <issue assumption="true" standard="BA" statement="s1" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="s2" value="true"/>
+      <issue assumption="true" standard="BA" statement="s3" value="true"/>
+      <issue assumption="true" standard="BA" statement="s4" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="s5" value="true"/>
+    </issues>
+    <statements>
+      <s id="s1">Tweety can fly.</s>
+      <s id="s2">Tweety is a bird.</s>
+      <s id="s3">Birds normally fly.</s>
+      <s id="s4">Tweety is an abnormal bird.</s>
+      <s id="s5">Tweety is a penguin.</s>
+    </statements>
+    <arguments>
+      <argument direction="pro" id="a1" scheme="" weight="50.0">
+        <conclusion statement="s1"/>
+        <premises>
+          <premise exception="false" polarity="positive" role="" statement="s2"/>
+          <premise exception="false" polarity="positive" role="" statement="s3"/>
+          <premise exception="true" polarity="positive" role="" statement="s4"/>
+        </premises>
+      </argument>
+      <argument direction="pro" id="a2" scheme="" weight="50.0">
+        <conclusion statement="s4"/>
+        <premises>
+          <premise exception="false" polarity="positive" role="" statement="s5"/>
+        </premises>
+      </argument>
+    </arguments>
+  </argument-graph>
+</lkif>
