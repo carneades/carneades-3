@@ -20,6 +20,8 @@ package Carneades.Graph;
 
 import javafx.ext.swing.*;
 import javafx.scene.paint.*;
+import javafx.scene.Font;
+import javafx.scene.FontStyle;
 import javafx.scene.image.*;
 import java.lang.System;
 import javax.swing.JFileChooser;
@@ -103,7 +105,7 @@ public class GraphFrame extends SwingFrame {
 		visible: bind this.showCredits
 		title: "about Carneades"
 		height: 250
-		width: 450
+		width: 480
 		resizable: false
 		content: bind
 			FlowPanel {
@@ -113,14 +115,17 @@ public class GraphFrame extends SwingFrame {
 				content: bind [
 					Label {
 						preferredSize: [creditsFrame.width -10, 15]
+						font: Font {
+							size: 20
+							style: FontStyle.BOLD
+						}
 						text: "Carneades"
 					},
 					for (t in [
 						"",
 						"Version 0.0.6", 
 						"License: GPL v3", 
-						"Copyright © 2008", 
-						"Thomas F. Gordon (1) and Matthias Grabmair (2)",
+						"Copyright © 2008 Thomas F. Gordon (1) and Matthias Grabmair (2)",
 						"",
 						"(1) Fraunhofer Institute for Open Communication Systems (FOKUS), Berlin",
 						"(2) University of Pittsburgh, Intelligent Systems Program",
