@@ -261,9 +261,6 @@
         		</one-jar> 
 		</target>
 
-		<target name="full" depends="compile, r">
-		</target>
-
 		<target name="r" depends="jar">
 				<echo message="Executing ..." />
 				<java jar="deployment/lib/Carneades.jar" fork="true"/>
@@ -323,5 +320,8 @@
 		</target>
 
 		<target name="deploy" depends="examples, deploymac, deploywin"/>
+
+		<target name="full" depends="compile, deploy">
+		</target>
 
 </project>
