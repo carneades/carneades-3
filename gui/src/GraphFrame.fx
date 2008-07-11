@@ -103,22 +103,17 @@ public class GraphFrame extends SwingFrame {
 		visible: bind this.showCredits
 		height: 200
 		width: 400
-		background = Color.WHITE;
+		background: Color.WHITE
 		resizable: false
 		content: 
 			FlowPanel {
-				Label {
-					preferredSize: [creditsFrame.width -10, 20]
-					text: "Carneades"
-				},
-				Label {
-					preferredSize: [creditsFrame.width -10, 20]
-					text: ""
-				},
-				Label {
-					preferredSize: [creditsFrame.width -10, 20]
-					text: ""
-				},
+				content: [
+					Label {
+						preferredSize: [creditsFrame.width -10, 20]
+						text: "Carneades"
+					},
+				
+				]
 			}
 		/*Canvas {
 			content: [
