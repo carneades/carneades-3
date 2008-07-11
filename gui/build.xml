@@ -5,6 +5,7 @@
 
 		<property name="project.target" value="1.6"/>
 		<property name="project.srcdir" value="src"/>
+		<property name="project.distdir" value="dist"/>
 		<property name="project.builddir" value="build"/>
 
 		<property name="javafxc.home" value="${env.JAVAFXHOME}"/>
@@ -248,7 +249,7 @@
 		</target>
 
 		<target name="jar" depends="corejar">
-				<one-jar destfile="Carneades.jar" manifest="manifests/packmanifest">
+				<one-jar destfile="deployment/lib/Carneades.jar" manifest="manifests/packmanifest">
 						<main jar="build/CarneadesCore.jar">
             		</main>
            				<lib>
@@ -265,34 +266,62 @@
 
 		<target name="r" depends="jar">
 				<echo message="Executing ..." />
-				<java jar="Carneades.jar" fork="true"/>
+				<java jar="deployment/lib/Carneades.jar" fork="true"/>
 		</target>
 
 		<target name="deploywin" depends="jar">
-				<echo message="Deploying MS Windows package ..."/>
-				<zip destfile="CarneadesWindows.zip"
+				<echo message="Creating MS Windows package ..."/>
+				<delete file="${project.distdir}/Carneades.zip"/>
+				<zip destfile="${project.distdir}/Carneades.zip"
 						basedir="deployment"
-						update="true"
+						keepcompression="true"
+						compress="true"
 						>
-						<zipfileset dir=".">
-								<include name="Carneades.jar"/>
-						</zipfileset>
-						<zipfileset dir="deployment">
-								<include name="StartCarneades.bat"/>
-						</zipfileset>
+						<zipfileset dir="deployment/" excludes="bin/deploymac.sh"/>
 				</zip>
 		</target>
 
 		<target name="deploymac" depends="jar">
 				<echo message="Deploying Mac OS package ..."/>
 	
-				<jarbundler dir="."
+				<delete dir="${project.distdir}/Carneades"/>
+				<mkdir dir="${project.distdir}/Carneades"/>
+				<copy todir="${project.distdir}/Carneades">
+						<fileset dir="deployment/"
+								excludes="bin/Carneades.bat, lib/Carneades.jar, bin/deploymac.sh"
+								/>
+				</copy>
+
+				<jarbundler dir="${project.distdir}/Carneades/bin"
     		        name="Carneades"
         		    mainclass="com.simontuffs.onejar.Boot" 
-					jar="Carneades.jar" 
+					jar="deployment/lib/Carneades.jar"
 					vmoptions=" -Xdock:name='Carneades'"/>
+
+			<exec executable="sh" dir=".">
+					<arg value="deployment/bin/deploymac.sh"/>
+			</exec>
+
+				<!-- This beautiful ant task ruins our application, however
+				<tar destfile="${project.distdir}/Carneades.tar"
+						basedir="${project.distdir}/CarneadesMac"
+						defaultexcludes="false"
+						>
+						<tarfileset dir="${project.distdir}/CarneadesMac/">
+						</tarfileset>
+				</tar>-->
+			<delete dir="${project.distdir}/Carneades"/>
 		</target>
 
-		<target name="deploy" depends="deploymac, deploywin"/>
+		<target name="examples">
+				<echo message="Updating example files ..."/>
+				<delete dir="deployment/examples"/>
+				<mkdir dir="deployment/examples"/>
+				<copy todir="deployment/examples">
+						<fileset dir="examples/"/>
+				</copy>
+		</target>
+
+		<target name="deploy" depends="examples, deploymac, deploywin"/>
 
 </project>
