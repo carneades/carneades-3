@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<lkif>
+  <argument-graph id="NewGraph">
+    <issues>
+      <issue assumption="true" standard="BA" statement="s1" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="s2" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="s3" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="s4" value="unknown"/>
+    </issues>
+    <statements>
+      <s id="s1">The object is red.</s>
+      <s id="s2">The object looks red.</s>
+      <s id="s3">Things which look red are normally red.</s>
+      <s id="s4">The object is illuminated by a red light.</s>
+    </statements>
+    <arguments>
+      <argument direction="pro" id="a1" scheme="" weight="50.0">
+        <conclusion statement="s1"/>
+        <premises>
+          <premise exception="false" polarity="positive" role="" statement="s2"/>
+          <premise exception="false" polarity="positive" role="" statement="s3"/>
+          <premise exception="true" polarity="positive" role="" statement="s4"/>
+        </premises>
+      </argument>
+    </arguments>
+  </argument-graph>
+</lkif>
