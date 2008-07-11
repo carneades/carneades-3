@@ -112,6 +112,7 @@ public class ArgumentBox extends ArgumentElement {
 	override attribute scaleWithText = false;
 	override attribute caption = bind argument.id;
 	override attribute fill = bind {if (argument.ok) Color.LIGHTGREY else Color.WHITE};
+	override attribute bottomBrink = GC.argumentBoxBottomBrink;
 
 
 private attribute backCircle: Circle = Circle {
@@ -190,6 +191,7 @@ public class StatementBox extends ArgumentElement {
 	public attribute statement: Statement;
 	override attribute scaleWithText = false;
 	override attribute defaultWidth = GC.statementBoxDefaultWidth;
+	override attribute bottomBrink = GC.statementBoxBottomBrink;
 	override attribute caption = bind { if (statement.wff.length() < GC.numDisplayedChars) statement.wff
 										else "{statement.wff.substring(0, GC.numDisplayedChars-1)}..."};
 	private attribute status: String = bind statement.getBoundStatus();

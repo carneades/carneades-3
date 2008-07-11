@@ -68,6 +68,7 @@ public class GraphControl {
 	public attribute possibleToChangeToException: Boolean = false;
 	public attribute possibleToChangeToAssumption: Boolean = false;
 
+	public attribute possibleToRemove: Boolean = false ;
 	public attribute possibleToDelete: Boolean = false ;
 	
 	public attribute possibleToUndo: Boolean = false;
@@ -102,7 +103,7 @@ public class GraphControl {
 		return { if (sizeof s != 1) false else (s instanceof PremiseLink) } 
 	}
 	private function singleSomethingSelected(s: GraphElement[]): Boolean {
-		return { (sizeof s == 1) } 
+		return { (sizeof graph.selected == 1) } 
 	}
 
 	public function processSelection(): Void {
@@ -322,7 +323,9 @@ public class GraphControl {
 		possibleToUndo = commands.possibleToUndo();
 		possibleToRedo = commands.possibleToRedo();
 	 	possibleToInverseArgument = singleArgumentLinkSelected(frame.view.graph.selected);
-		possibleToDelete = singleSomethingSelected(frame.view.graph.selected);
+		possibleToRemove = singleSomethingSelected(frame.view.graph.selected);
+		var s = frame.list.getSelectedStatement();
+		possibleToDelete = { ((s != null) and (not argumentGraph.broughtForth(s))) };
 
 		edit.update();
 	}
@@ -392,9 +395,9 @@ public class GraphControl {
 
 	// DELETION FUNCTIONS
 
-	public function deleteArgumentFromBox(a: ArgumentBox): Void {
+	public function removeArgumentFromBox(a: ArgumentBox): Void {
 		commands.do(
-			DeleteArgumentCommand {
+			RemoveArgumentCommand {
 				argumentGraph: argumentGraph
 				argument: a.argument
 			}
@@ -404,7 +407,7 @@ public class GraphControl {
 		updateAll();
 	}
 
-	public function deleteStatementFromBox(s: StatementBox): Void {
+	public function removeStatementFromBox(s: StatementBox): Void {
 		// get the statement's premise and mother argument if present
 		var tempArgument: Argument;
 		var tempPremise: Premise;
@@ -417,7 +420,7 @@ public class GraphControl {
 			}
 		}
 		
-		if (argumentGraph.broughtForth(s.statement)) {
+		if (argumentGraph.isConclusion(s.statement)) {
 		// if the statement is the conclusion of an argument, delete the premise as well as the arguments leading to it
 			commands.do(
 				DeleteConclusionCommand {
@@ -443,9 +446,22 @@ public class GraphControl {
 		updateAll();
 	}
 
-	public function deleteArgumentFromLink(l: ArgumentLink): Void {
+	public function deleteStatementFromList(): Void {
+		var s: Statement = frame.list.getSelectedStatement();
+		if (s != null) {
+			commands.do(
+				DeleteStatementCommand {
+					argumentGraph: argumentGraph
+					statement: s
+				}
+			);
+		}
+		edit.update();
+	}
+
+	public function removeArgumentFromLink(l: ArgumentLink): Void {
 		commands.do(
-			DeleteArgumentCommand {
+			RemoveArgumentCommand {
 				argumentGraph: argumentGraph
 				argument: (l.producer as ArgumentBox).argument
 			}
@@ -471,17 +487,17 @@ public class GraphControl {
 		}
 	}
 
-	public function deleteSelected(): Void {
+	public function removeSelected(): Void {
 		var s = getSelected();
 		for (e in s) {
 			if (e instanceof ArgumentBox) {
-				deleteArgumentFromBox(e as ArgumentBox);
+				removeArgumentFromBox(e as ArgumentBox);
 			}
 			if (e instanceof StatementBox) {
-				deleteStatementFromBox(e as StatementBox);
+				removeStatementFromBox(e as StatementBox);
 			}
 			if (e instanceof ArgumentLink) {
-				deleteArgumentFromLink(e as ArgumentLink);
+				removeArgumentFromLink(e as ArgumentLink);
 			}
 			if (e instanceof PremiseLink) {
 				deletePremiseFromLink(e as PremiseLink);
@@ -726,11 +742,6 @@ public class GraphControl {
 	}
 
 	// DEBUG FUNCTIONS
-
-	public function printSelected():Void { 
-		System.out.println("Graph selected:" + frame.graph.selected); 
-	}
-
 	public static function defaultGraph(): ArgumentGraph {
 		var argumentGraph = ArgumentGraph {};
 		
@@ -760,6 +771,14 @@ public class GraphControl {
 		argumentGraph.insertArgument(a1);
 		
 		return argumentGraph;
+	}
+
+	// DEBUG PRINT FUNCTIONS
+	public function printSelected(): Void {
+		System.out.println("vertices: " + graph.selected);
+		System.out.println("models: " + graph.selected);
+		System.out.println("list:" + frame.list.list.selectedItem);
+
 	}
 }
 

@@ -43,6 +43,7 @@ public class Graph extends CustomNode {
 	public function unSelectAll(): Void {
 		for (i in vertices) i.selected = false;
 		for (i in edges) i.selected = false;
+		selected = [];
 	}
 
 } // Graph

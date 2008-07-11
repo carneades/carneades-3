@@ -58,16 +58,28 @@ public class GraphList extends FlowPanel {
 	}
 
 	attribute addArgumentButton: Button = Button {
-		text: "insert argument"
+		text: "new argument"
 		enabled: bind control.possibleToAddArgument;
 		action: function(): Void {
 			control.addArgumentToSelected();
 		}
 	}
 
+	attribute deleteButton: Button = Button {
+		text: "delete"
+		enabled: bind control.possibleToDelete;
+		action: function(): Void {
+			control.deleteStatementFromList();
+		}
+	}
+
 	override attribute content = bind [ Label {text: "search "}, input, 
 										list,
-										addArgumentButton]
+										addArgumentButton, deleteButton];
+
+	public function getSelectedStatement(): Statement {
+		return list.getSelectedStatement();
+	}
 
 }
 
@@ -92,6 +104,14 @@ public class StatementList extends List {
 										}
 									} 
 								];
+
+	public function getSelectedStatement(): Statement {
+		if (selectedItem != null) {
+			return (selectedItem as StatementItem).statement;
+		} else {
+			return null;
+		}
+	}
 
 	private function matches(filter: String, text: String): Boolean {
 		var result: Boolean = false;

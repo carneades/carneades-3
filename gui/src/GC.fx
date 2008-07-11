@@ -20,6 +20,7 @@ package Carneades.Graph;
 
 import javafx.scene.paint.*;
 import java.lang.System;
+import java.lang.Object;
 
 // Class for Constants
 
@@ -78,6 +79,7 @@ public class GC {
 
 	// Argument Boxes
 	public static attribute argumentBoxDefaultWidth = 60;
+	public static attribute argumentBoxBottomBrink = 3;
 	public static attribute argumentCircleDefaultRadius = 15;
 	public static attribute defensibleStrengthColorRed: Number = 41;
 	public static attribute defensibleStrengthColorGreen: Number = 206;
@@ -117,10 +119,18 @@ public class GC {
 	public static attribute idsEditable: Boolean = false;
 
 	// Version administration constants
-	private static attribute version: String = "release";
+	private static attribute version: String = "debug";
 	public static attribute release: Boolean = bind version == "release";
 	public static attribute debug: Boolean = bind version == "debug";
 
 	// helper functions
 	public static function p(s: String) { System.out.println(s)}
+
+	// HELPER FUNCTIONS
+	public static function contains(list: Object[], element: Object): Boolean {
+		for (i in list) {
+			if (i == element) { return true; }
+		}
+		return false;
+	}
 }

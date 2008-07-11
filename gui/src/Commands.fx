@@ -250,7 +250,7 @@ public class AddArgumentAndPremiseCommand extends UndoableCommand {
 	}
 }
 
-public class DeleteArgumentCommand extends UndoableCommand {
+public class RemoveArgumentCommand extends UndoableCommand {
 	
 	public attribute argument: Argument;
 	
@@ -309,7 +309,7 @@ public class DeletePremiseCommand extends UndoableCommand {
 	}
 
 	public function undo(): Number {
-		argument.addPremise(premise);
+		argument.appendPremise(premise);
 		return GC.C_OK;
 	}
 }
@@ -351,52 +351,6 @@ public class MoveArgumentCommand extends UndoableCommand {
 		return GC.C_OK;
 	}
 }
-
-// ATTRIBUTE MODIFICATION COMMANDS
-
-// for statements
-
-/*
-// The two commands below are potentially obsolete ...
-
-public class NegateStatementAssumptionCommand extends UndoableCommand {
-
-	public attribute statement: Statement;
-
-	public function do(): Number {
-		argumentGraph.setTruthValueAssumed
-			(statement, 
-			 not statement.truthValueAssumed());
-		return GC.C_OK;
-	}
-
-	public function undo(): Number {
-		argumentGraph.setTruthValueAssumed
-			(statement, 
-			 not statement.truthValueAssumed());
-		return GC.C_OK;
-	}
-}
-
-public class ChangeStatementValueCommand extends UndoableCommand {
-
-	public attribute statement: Statement;
-	public attribute oldValue: String;
-	public attribute newValue: String;
-
-	public function do(): Number {
-		oldValue = statement.value;
-		argumentGraph.setTruthValue(statement,newValue);
-		return GC.C_OK;
-	}
-
-	public function undo(): Number {
-		argumentGraph.setTruthValue(statement,oldValue3);
-		return GC.C_OK;
-	}
-}
-
-*/
 
 public class ChangeStatementStatusCommand extends UndoableCommand {
 
