@@ -326,8 +326,14 @@ public class GraphControl {
 		possibleToRemove = singleSomethingSelected(frame.view.graph.selected);
 		var s = frame.list.getSelectedStatement();
 		possibleToDelete = { ((s != null) and (not argumentGraph.broughtForth(s))) };
+		
+		if (sizeof getSelectedModel() == 0) {
+			frame.list.reset();
+			edit.reset();
+		}
 
 		edit.update();
+		frame.list.update()
 	}
 
 	public function updateAll() {
@@ -407,6 +413,18 @@ public class GraphControl {
 		updateAll();
 	}
 
+	public function removeArgument(a: Argument): Void {
+		commands.do(
+			RemoveArgumentCommand {
+				argumentGraph: argumentGraph
+				argument: a
+			}
+		);
+
+		unSelectAll();
+		updateAll();
+	}
+
 	public function removeStatementFromBox(s: StatementBox): Void {
 		// get the statement's premise and mother argument if present
 		var tempArgument: Argument;
@@ -456,7 +474,7 @@ public class GraphControl {
 				}
 			);
 		}
-		edit.update();
+		updateView();
 	}
 
 	public function removeArgumentFromLink(l: ArgumentLink): Void {
@@ -475,6 +493,23 @@ public class GraphControl {
 		for (a in argumentGraph.arguments) {
 			for (p in a.premises) {
 				if (p == l.premise) {
+					commands.do(
+						DeletePremiseCommand {
+							argumentGraph: argumentGraph
+							argument: a
+							premise: p
+						}
+					);
+				}
+			}
+		}
+	}
+
+	public function deletePremise(pr: Premise): Void {
+		for (a in argumentGraph.arguments) {
+			for (p in a.premises) {
+				if (p == pr) {
+					// todo: bug here: Should be one command for all of them
 					commands.do(
 						DeletePremiseCommand {
 							argumentGraph: argumentGraph

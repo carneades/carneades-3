@@ -119,7 +119,7 @@ public class GC {
 	public static attribute idsEditable: Boolean = false;
 
 	// Version administration constants
-	private static attribute version: String = "debug";
+	private static attribute version: String = "release";
 	public static attribute release: Boolean = bind version == "release";
 	public static attribute debug: Boolean = bind version == "debug";
 
