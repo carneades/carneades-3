@@ -27,6 +27,7 @@ import java.lang.Math;
 public class TreeLayout extends GraphLayout {
 	attribute xDistance: Number = GC.xDistance;
 	attribute yDistance: Number = GC.yDistance;
+	attribute root: Vertex;
 	
 	// helper function for debugging
 	public function debug(s: String):Void {
@@ -191,6 +192,9 @@ public class TreeLayout extends GraphLayout {
 
 
 	private function adjust():Void {
+		// set the overall tree width
+		this.width = root.xSubTreeSize;
+
 		// adjust vertical alignment
 		for (i:Vertex in graph.vertices) {
 			i.yShift = (i.height/2) + (i.parentVertex.height / 2) + yDistance;
@@ -266,13 +270,16 @@ public class TreeLayout extends GraphLayout {
 		for (v in graph.vertices) {
 			if (v.parentVertex == null) { insert v into roots; }
 		}
+
+		root = roots [0];
 			
 		// set graph priorities for drawing the nodes in order
-		for (r in roots) { setPriorities(r); }
+		//for (r in roots) { setPriorities(r); }
+		setPriorities(root);
 			
 		// do the main tree vertex layout
-		for (r in roots) { treeSize(getBottomLeft(r)); }
-		for (r in roots) { position(r); }
+		treeSize(getBottomLeft(root));
+		position(root);
 			
 		// adjust layout according to the offset
 		adjust();
