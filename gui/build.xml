@@ -282,4 +282,17 @@
 						</zipfileset>
 				</zip>
 		</target>
+
+		<target name="deploymac" depends="jar">
+				<echo message="Deploying Mac OS package ..."/>
+	
+				<jarbundler dir="."
+    		        name="Carneades"
+        		    mainclass="com.simontuffs.onejar.Boot" 
+					jar="Carneades.jar" 
+					vmoptions=" -Xdock:name='Carneades'"/>
+		</target>
+
+		<target name="deploy" depends="deploymac, deploywin"/>
+
 </project>
