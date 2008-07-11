@@ -28,12 +28,12 @@ abstract public class ProofStandard {
 
 	public attribute negated: Boolean = false 
 		on replace {
-			statement.graph.update();
+			statement.update();
 		};
 
 	public attribute complement: Boolean = false
 		on replace {
-			statement.graph.update();
+			statement.update();
 		};
 		
 	abstract function test (ag: ArgumentGraph, 
@@ -56,21 +56,24 @@ public class Statement {
 	public attribute wff: String; // The content model of the wff XML element
 	public attribute graph: ArgumentGraph; // backwards reference
 	
+	// arguments in which this statement is a premise
+	public attribute arguments: Argument[]; 
+
 	// value = "true", "false" or "unknown
     public attribute value: String = "unknown"  
     	on replace {
-    		graph.update();
+    		update();
     	};
     	
 	public attribute assumption: Boolean = true
 		on replace {
-			graph.update();
+			update();
 		}
 		
 	public attribute standard: ProofStandard = BestArgument {}
 		on replace {
 			standard.statement = this;
-			graph.update();
+			update();
 		}
 	
 	// ok should be read only for other objects.  But we can't
@@ -78,10 +81,17 @@ public class Statement {
 	// and track changes to its value.
 	public attribute ok: Boolean = false;
 	
-	public attribute updated : Boolean = false;
+	public function acceptable () : Boolean { 
+		var pro = arguments[arg | arg.conclusion == this and arg.pro];
+		var con = arguments[arg | arg.conclusion == this and not arg.pro];
+		standard.satisfied(graph,pro,con);
+	}
 
-	public function acceptable () : Boolean { ok };
-
+    private function update () : Void {
+    	ok = acceptable();
+    	for (arg in arguments) arg.update();
+    }
+    
 	public function stated () : Boolean {
 		value == "unknown" and assumption == true;
 	}
@@ -161,19 +171,19 @@ public class Statement {
 public class Premise {
 	public attribute statement: Statement 
 		on replace {
-			statement.graph.update();
+			statement.update();
 		};
 		
 	public attribute role: String = "";
 	
 	public attribute negative: Boolean = false 
 		on replace {
-			statement.graph.update();
+			statement.update();
 		};
 		
 	public attribute exception: Boolean = false
 		on replace {
-			statement.graph.update();
+			statement.update();
 		};
 }
 
@@ -188,23 +198,24 @@ public class Argument {
 
 	public attribute weight: Number = 50 // range: 0.0 to 1.0
 		on replace {
-			graph.update();
+			update();
 		}
 		
 	public attribute scheme: Scheme;
+	
     public attribute premises: Premise[] 
     	on replace {
-    		graph.update();
+    		update();
     	};
     	
 	public attribute pro: Boolean = true 
 		on replace {
-			graph.update();
+			update();
 		};
 	
 	public attribute conclusion: Statement 
 		on replace {	
-			graph.update();
+			conclusion.update();
 		}
 	
 	// ok should be read only for other objects.  But we can't
@@ -212,9 +223,15 @@ public class Argument {
 	// and track changes to its value.
 	public attribute ok: Boolean = false;  
 	
-	public attribute updated : Boolean = false;
+	public function allPremisesHold () : Boolean { 
+		0 == sizeof(premises[p | not graph.holds(p)]);
+	} 
 	
-	public function allPremisesHold () : Boolean { ok } 
+	private function update () : Void {
+		ok = allPremisesHold();
+		conclusion.update();
+	}
+	
 	public function defensible () : Boolean { allPremisesHold(); }
 	
     public function switchDirection (): Void {
@@ -290,11 +307,13 @@ public class ArgumentGraph {
 		// check for and prohibit cycles.
 		if (noCycles()) {	
 			insert arg into arguments;
+
 			// add the statement of each premise to the
 			// the statements of the graph, if not already present
 			for (p in arg.premises) {
 				if (0 == sizeof(statements[s | s == p.statement])) {
 					insert p.statement into statements;
+					insert arg into p.statement.arguments;
 				}
 			}
 			// add the conclusion of the argument to statements of
@@ -312,24 +331,9 @@ public class ArgumentGraph {
 
 	public function deleteArgument (arg: Argument) : Void {
 		delete arg from arguments;
+		for (p in arg.premises) { delete arg from p.statement.arguments; }
 	}
 	
-	// update the acceptability and defensibility of statements
-	// and arguments respectively.
-	private function update () : Void {
-		var n = 2; // number of passes
-		// to do: not clear why multiple passes are needed
-		// one should be enough, but isn't
-		for (i in [1..n]) {
-	    	// first set all statements and arguments to not updated
-			for (s in statements) {	s.updated = false; }
-			for (arg in arguments) { arg.updated = false; }
-		
-			// update the statements and arguments
-			for (s in statements) { acceptable(s); }
-			for (arg in arguments) { allPremisesHold(arg); }
-		}
-	}
 	
 	function pro (s: Statement) : Argument[] {
 		arguments[arg | arg.conclusion == s and arg.pro];
@@ -340,19 +344,7 @@ public class ArgumentGraph {
 	}
 	
 	public function acceptable (s: Statement) : Boolean {
-		if (s.updated) {
-			s.ok;
-		} else {
-			if (s.standard.satisfied(this,pro(s),con(s))) {
-				s.ok = true;
-				s.updated = true;
-				true;
-			} else {
-				s.ok = false;
-				s.updated = true;
-				false;
-			}
-		}
+		s.acceptable();
 	}
 	
 	// Check whether the complement of a statement would be acceptable,
@@ -365,19 +357,7 @@ public class ArgumentGraph {
 	}
 
 	public function allPremisesHold (a: Argument): Boolean {
-		if (a.updated) {
-			a.ok;
-		} else {
-			if (sizeof(a.premises[p | not holds(p)]) == 0) {
-				a.updated = true;
-				a.ok = true;
-				true;
-			} else {
-				a.updated = true;
-				a.ok = false;
-				false;
-			}
-		}
+		a.allPremisesHold();
 	}
 
 	public function holds (p: Premise): Boolean {
