@@ -3,10 +3,10 @@
   <argument-graph id="NewGraph">
     <issues>
       <issue assumption="true" standard="BA" statement="s1" value="unknown"/>
-      <issue assumption="true" standard="BA" statement="s2" value="true"/>
-      <issue assumption="true" standard="BA" statement="s3" value="true"/>
+      <issue assumption="true" standard="BA" statement="s2" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="s3" value="unknown"/>
       <issue assumption="true" standard="BA" statement="s4" value="unknown"/>
-      <issue assumption="true" standard="BA" statement="s5" value="true"/>
+      <issue assumption="true" standard="BA" statement="s5" value="unknown"/>
     </issues>
     <statements>
       <s id="s1">Tweety can fly.</s>
