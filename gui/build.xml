@@ -257,8 +257,6 @@
 								<fileset dir="lib/"
 								includes="javafx-xml.jar"/>
            				</lib>
-								<fileset file="data/aboutcarneades.png"/>
-
         		</one-jar> 
 		</target>
 
