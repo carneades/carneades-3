@@ -780,7 +780,7 @@ public class GraphControl {
 
 	// DEBUG FUNCTIONS
 	public static function defaultGraph(): ArgumentGraph {
-		var argumentGraph = ArgumentGraph {};
+		var argumentGraph = ArgumentGraph { id: "TestGraph"};
 		
 		var s1: Statement = Statement {
 			id: "s1"
@@ -820,6 +820,7 @@ public class GraphControl {
 
 	public function printSizes(): Void {
 		System.out.println("view: " + view.width);
+		System.out.println("layout: " + layout.width);
 	}
 
 }

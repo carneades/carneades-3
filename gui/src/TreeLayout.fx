@@ -193,7 +193,7 @@ public class TreeLayout extends GraphLayout {
 
 	private function adjust():Void {
 		// set the overall tree width
-		this.width = root.xSubTreeSize;
+		this.width = Math.max(GC.appWidth - GC.editWidth, root.xSubTreeSize);
 
 		// adjust vertical alignment
 		for (i:Vertex in graph.vertices) {
