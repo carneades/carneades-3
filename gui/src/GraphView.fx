@@ -30,6 +30,7 @@ import Carneades.Control.GraphControl;
 
 public class GraphView extends Canvas {
 	public attribute graph: Graph;
+	override attribute width;
 	attribute layout: GraphLayout;
 	attribute control: GraphControl;
 

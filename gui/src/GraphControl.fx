@@ -242,6 +242,15 @@ public class GraphControl {
 			frame.list.reset();
 		}
 
+		// rescale canvas
+		if (layout.width != view.width) {
+			view.width = layout.width as Integer;
+		}
+
+		if (layout.height != view.height) {
+			view.height = layout.height as Integer;
+		}
+
 		edit.update();
 		frame.list.update()
 	}

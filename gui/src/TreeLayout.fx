@@ -193,12 +193,17 @@ public class TreeLayout extends GraphLayout {
 
 	private function adjust():Void {
 		// set the overall tree width
-		this.width = Math.max(GC.appWidth - GC.editWidth, root.xSubTreeSize);
+		this.width = Math.max(GC.appWidth - GC.editWidth - 30, root.xSubTreeSize);
 
-		// adjust vertical alignment
+		// adjust vertical alignment and dynamically determined deepest node
+		var bottom: Integer = 0;
 		for (i:Vertex in graph.vertices) {
 			i.yShift = (i.height/2) + (i.parentVertex.height / 2) + yDistance;
+			bottom = Math.max(bottom, (i.yShift + (i.height/2)) as Integer);
 		}
+
+		// adjust overall tree height
+		this.height = Math.max( GC.appHeight - GC.toolBarHeight - 50 , bottom + yDistance);
 		
 		// adjust horizontal alignment of the root
 		for (v in graph.vertices where v.parentVertex == null) {
