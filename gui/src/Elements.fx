@@ -218,22 +218,10 @@ public class StatementBox extends ArgumentElement {
 		else /*if (status == "questioned")*/ GC.statusQuestionedColor
 	}
 
-	private attribute shadow: Rectangle = Rectangle {
-		x: bind x - (width / 2) + GC.xShadowShift
-		y: bind y - (height / 2) + GC.yShadowShift
-		width: bind width 
-		height: bind height
-		fill: bind GC.shadowColor
-		stroke: Color.BLACK
-		strokeWidth: 0
-		visible: bind GC.drawShadows
-	} // shadow rect
-
 	public function create():Node {
 		Group {
 			content: [
-				shadow
-				, mainRect
+				mainRect
 				, selection
 				, text,
 				middlePoint
