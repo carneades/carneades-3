@@ -46,9 +46,10 @@ public class GraphEdit extends Panel {
 	public attribute control: GraphControl;
 	public attribute argumentGraph: ArgumentGraph;
 
-	private attribute statementPanel = StatementEditPanel { control: bind control, argumentGraph: bind argumentGraph }
-	private attribute argumentPanel = ArgumentEditPanel { control: bind control, argumentGraph: bind argumentGraph }
-	private attribute premisePanel = PremiseEditPanel { control: bind control, argumentGraph: bind argumentGraph }
+	private attribute statementPanel = StatementEditPanel { control: bind control, argumentGraph: bind argumentGraph };
+	private attribute argumentPanel = ArgumentEditPanel { control: bind control, argumentGraph: bind argumentGraph };
+	private attribute premisePanel = PremiseEditPanel { control: bind control, argumentGraph: bind argumentGraph };
+	private attribute emptyPanel = EditPanel {};
 
 	override attribute content = bind [statementPanel, argumentPanel, premisePanel];
 
@@ -58,6 +59,7 @@ public class GraphEdit extends Panel {
 				statementPanel.visible = false;
 				argumentPanel.visible = true;
 				premisePanel.visible = false;
+				emptyPanel.visible = false;
 	
 				var selected = control.getSelectedModel() [0];
 				argumentPanel.loadArgument(selected as Argument);
@@ -67,6 +69,7 @@ public class GraphEdit extends Panel {
 				statementPanel.visible = true;
 				argumentPanel.visible = false;
 				premisePanel.visible = false;
+				emptyPanel.visible = false;
 	
 				statementPanel.loadStatement(control.getSelectedModel() [0] as Statement);
 			}
@@ -74,18 +77,16 @@ public class GraphEdit extends Panel {
 				statementPanel.visible = false;
 				argumentPanel.visible = false;
 				premisePanel.visible = true;
+				emptyPanel.visible = false;
 	
 				premisePanel.loadPremise(control.getSelectedModel() [0] as Premise);
 			} else {
+				statementPanel.visible = false;
+				argumentPanel.visible = false;
+				premisePanel.visible = false;
+				emptyPanel.visible = true;
 			}
 		}
-	}
-
-	public function reset(): Void {
-		statementPanel.visible = false;
-		argumentPanel.visible = false;
-		premisePanel.visible = false;
-		
 	}
 }
 

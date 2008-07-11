@@ -98,7 +98,7 @@ public class GraphFrame extends SwingFrame {
 		visible: true
 	}
 
-	private attribute creditsFrame: SwingFrame = SwingFrame {
+	private attribute old_creditsFrame: SwingFrame = SwingFrame {
 		title: "About Carneades"
 		height: 140
 		resizable: false
@@ -119,6 +119,23 @@ public class GraphFrame extends SwingFrame {
 		closeAction: function() {
 			showCredits = false;
 		}
+	}
+
+	private attribute creditsFrame: SwingFrame = SwingFrame {
+		visible: bind this.showCredits
+		height: 100
+		width: 100
+		/*content: Canvas {
+			content: [
+				ImageView {
+					width: bind creditsFrame.width
+					height: bind creditsFrame.height
+					image: Image {
+						url: "data/aboutcarneades.png"
+					}
+				}
+			]
+		}*/
 	}
 
 	public function alert(message: String): Void { 
