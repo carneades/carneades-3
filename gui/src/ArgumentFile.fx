@@ -279,7 +279,7 @@ public class ArgumentFile {
 			for (a in i.attributes) {
 				if (a.name == "statement") { id = a.value; }
 				if (a.name == "standard") { standard = a.value; }
-				if (a.name == "assumption") { if (a.value == "true") true else false; }
+				if (a.name == "assumption") { assumption = { if (a.value == "true") true else false }; }
 				if (a.name == "value") { value = a.value; }
 			}
 

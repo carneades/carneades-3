@@ -178,7 +178,7 @@ public class Premise {
 }
 
 public class Scheme {
-	attribute id: String;   // could be URI
+	public attribute id: String;   // could be URI
 	// to do: possibly other attributes
 }
 

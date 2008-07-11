@@ -213,6 +213,43 @@ public class AddPremiseCommand extends UndoableCommand {
 	}
 }
 
+public class AddArgumentAndPremiseCommand extends UndoableCommand {
+
+	public attribute statement: Statement;
+	public attribute argument: Argument;
+	public attribute premise: Premise;
+	public attribute pstatement: Statement;
+
+	postinit {
+		pstatement = Statement {
+			id: argumentGraph.getNewStatementId();
+			wff: "Premise Statement";
+			graph: argumentGraph
+		}
+		premise = Premise {
+			statement: pstatement
+		}
+		argument = Argument {
+			conclusion: statement
+			id: argumentGraph.getNewArgumentId();
+			graph: argumentGraph
+		}
+	}
+
+	public function do(): Number {
+		argument.addPremise(premise);
+		argumentGraph.insertArgument(argument);
+		return GC.C_OK;
+	}
+
+	public function undo(): Number {
+		argumentGraph.deleteStatement(premise.statement);
+		argument.deletePremise(premise);
+		argumentGraph.deleteArgument(argument);
+		return GC.C_OK;
+	}
+}
+
 public class DeleteArgumentCommand extends UndoableCommand {
 	
 	public attribute argument: Argument;
@@ -440,6 +477,24 @@ public class ChangeStatementWffCommand extends UndoableCommand {
 	public function undo(): Number {
 		//argumentGraph.setStatementWff(statement, oldWff);
 		statement.wff = oldWff;
+		return GC.C_OK;
+	}
+}
+
+public class ChangeArgumentSchemeCommand extends UndoableCommand {
+
+	public attribute argument: Argument;
+	public attribute scheme: String;
+	public attribute oldScheme: String;
+
+	public function do(): Number {
+		oldScheme = argument.scheme.id;
+		argument.scheme.id = scheme;
+		return GC.C_OK;
+	}
+
+	public function undo(): Number {
+		argument.scheme.id = oldScheme;
 		return GC.C_OK;
 	}
 }
