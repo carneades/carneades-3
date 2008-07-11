@@ -107,7 +107,7 @@ public class GraphList extends FlowPanel {
 					control.addPremiseToSelected();
 				}
 				// delete button
-				deleteButtonText = "remove";
+				deleteButtonText = "delete";
 				deleteButton.enabled = true;
 				deleteButton.action = { 
 					function(): Void { control.removeArgument(model as Argument); }
@@ -117,7 +117,7 @@ public class GraphList extends FlowPanel {
 				// add button
 				// - nothing
 				// delete button
-				deleteButtonText = "remove";
+				deleteButtonText = "delete";
 				deleteButton.enabled = true;
 				deleteButton.action = { function(): Void { control.deletePremise(model as Premise); } };
 			}

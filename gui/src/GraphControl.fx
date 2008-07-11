@@ -144,6 +144,7 @@ public class GraphControl {
 			}
 		}
 
+				System.out.println("iteration");
 		// These calls and their functions can be united into a bind once chained bindings work.
 		updateView();
 	}
@@ -178,6 +179,91 @@ public class GraphControl {
 	public function selectModel(m: Object) {
 		insert m into selectedModels;
 	}
+
+	
+	// UPDATE FUNCTIONS
+	
+	private attribute update: Timeline = Timeline {
+	// This is the central workaround for the Scenegraph threading problem.
+	// Fix this once the do {...} code works again in later versions of the compiler.
+    	keyFrames:  KeyFrame {
+       		time: 0.01s
+       		action: function() {
+
+				// 1. Rendering update
+				graph.update();
+				layout.compose();
+
+				// 2. Restore Selection
+				for (m in selectedModels) {
+					// restore arguments
+					if (m instanceof Argument) {
+						for (v in graph.vertices where (v instanceof ArgumentBox and (v as ArgumentBox).argument == (m as Argument))) {
+							v.selected = true;
+						}
+					}
+					// restore statements
+					if (m instanceof Statement) {
+						for (v in graph.vertices where (v instanceof StatementBox and (v as StatementBox).statement == (m as Statement))) {
+							v.selected = true;
+						}
+					}
+					// restore premises
+					if (m instanceof Premise) {
+						for (v in graph.edges where (v instanceof PremiseLink and (v as PremiseLink).premise == (m as Premise))) {
+							v.selected = true;
+						}
+					}	
+					// process it
+					processSelection();
+				}
+
+				// 3. Update the view
+				updateView();
+
+				// close the thread
+           		update.stop();
+
+       		} 
+    	} 
+    	repeatCount: java.lang.Double.POSITIVE_INFINITY
+	}
+
+	private function updateView(): Void {
+		// function to update the view component influencing booleans
+		possibleToUndo = commands.possibleToUndo();
+		possibleToRedo = commands.possibleToRedo();
+	 	possibleToInverseArgument = singleArgumentLinkSelected(frame.view.graph.selected);
+		possibleToRemove = singleSomethingSelected(frame.view.graph.selected);
+		var s = frame.list.getSelectedStatement();
+		possibleToDelete = { ((s != null) and (not argumentGraph.broughtForth(s))) };
+		
+		
+		if (sizeof getSelectedModel() == 0) {
+			frame.list.reset();
+		}
+
+		edit.update();
+		frame.list.update()
+	}
+
+	public function updateAll() {
+		update.start();
+	}
+
+	public function undo(): Number {
+		var result = commands.undo();
+		updateAll();
+		return result;
+	}
+	
+	public function redo(): Number {
+		var result = commands.redo();
+		updateAll();
+		return result;
+	}
+
+	// MODEL MANIPULATION FUNCTIONS
 
 	// DRAGGING FUNCTIONS
 	
@@ -270,89 +356,6 @@ public class GraphControl {
 		updateAll();
 	}
 
-	// MODEL MANIPULATION FUNCTIONS
-	
-	private attribute update: Timeline = Timeline {
-	// This is the central workaround for the Scenegraph threading problem.
-	// Fix this once the do {...} code works again in later versions of the compiler.
-    	keyFrames:  KeyFrame {
-       		time: 0.01s
-       		action: function() {
-
-				// 1. Rendering update
-				graph.update();
-				layout.compose();
-
-				// 2. Restore Selection
-				for (m in selectedModels) {
-					// restore arguments
-					if (m instanceof Argument) {
-						for (v in graph.vertices where (v instanceof ArgumentBox and (v as ArgumentBox).argument == (m as Argument))) {
-							v.selected = true;
-						}
-					}
-					// restore statements
-					if (m instanceof Statement) {
-						for (v in graph.vertices where (v instanceof StatementBox and (v as StatementBox).statement == (m as Statement))) {
-							v.selected = true;
-						}
-					}
-					// restore premises
-					if (m instanceof Premise) {
-						for (v in graph.edges where (v instanceof PremiseLink and (v as PremiseLink).premise == (m as Premise))) {
-							v.selected = true;
-						}
-					}	
-					// process it
-					processSelection();
-				}
-
-				// 3. Update the view
-				updateView();
-
-				// close the thread
-           		update.stop();
-
-       		} 
-    	} 
-    	repeatCount: java.lang.Double.POSITIVE_INFINITY
-	}
-
-	private function updateView(): Void {
-		// function to update the view component influencing booleans
-		possibleToUndo = commands.possibleToUndo();
-		possibleToRedo = commands.possibleToRedo();
-	 	possibleToInverseArgument = singleArgumentLinkSelected(frame.view.graph.selected);
-		possibleToRemove = singleSomethingSelected(frame.view.graph.selected);
-		var s = frame.list.getSelectedStatement();
-		possibleToDelete = { ((s != null) and (not argumentGraph.broughtForth(s))) };
-		
-		if (sizeof getSelectedModel() == 0) {
-			frame.list.reset();
-			edit.reset();
-		}
-
-		edit.update();
-		frame.list.update()
-	}
-
-	public function updateAll() {
-		update.start();
-	}
-
-	public function undo(): Number {
-		var result = commands.undo();
-		updateAll();
-		return result;
-	}
-	
-	public function redo(): Number {
-		var result = commands.redo();
-		updateAll();
-		return result;
-	}
-
-	// MODEL MANIPULATION FUNCTIONS
 
 	public function addStatement(): Void {
 		commands.do(
@@ -739,10 +742,10 @@ public class GraphControl {
 		argumentGraph = GraphControl.defaultGraph();
 		
 		frame.title = "Carneades";
+		currentFile = null;
 
 		commands.reset();
 		unSelectAll();
-		edit.reset();
 		updateAll();
 	}
 
