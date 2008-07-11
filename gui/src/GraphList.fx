@@ -40,6 +40,8 @@ public class GraphList extends FlowPanel {
 
 	//override attribute background = GC.panelBackground;
 	override attribute alignment = HorizontalAlignment.LEFT;
+	private attribute addButtonText: String = "";
+	private attribute deleteButtonText: String = "";
 
 	attribute control: GraphControl;
 	attribute argumentGraph: ArgumentGraph;
@@ -57,30 +59,77 @@ public class GraphList extends FlowPanel {
 		filter: bind input.text.toLowerCase()
 	}
 
-	attribute addArgumentButton: Button = Button {
-		text: "new argument"
-		enabled: bind control.possibleToAddArgument;
-		action: function(): Void {
-			control.addArgumentToSelected();
-		}
+	attribute addButton: Button = Button {
+		text: bind addButtonText
+		enabled: false
+		preferredSize: [140, 20]
 	}
 
 	attribute deleteButton: Button = Button {
-		text: "delete"
-		enabled: bind control.possibleToDelete;
-		action: function(): Void {
-			control.deleteStatementFromList();
-		}
+		text: bind deleteButtonText
+		enabled: false
+		preferredSize: [140, 20]
 	}
 
 	override attribute content = bind [ Label {text: "search "}, input, 
 										list,
-										addArgumentButton, deleteButton];
+										addButton, deleteButton];
 
 	public function getSelectedStatement(): Statement {
 		return list.getSelectedStatement();
 	}
 
+	public function update() {
+		//is a model selected
+		if (sizeof control.getSelectedModel() > 0) {
+			var model = control.getSelectedModel()[0];
+			if (model instanceof Statement) {
+				// add button
+				addButtonText = "add argument";
+				addButton.enabled = true;
+				addButton.action = function(): Void {
+					control.addArgumentToSelected();
+				}
+				// delete button
+				deleteButtonText = { if (control.possibleToDelete) "delete" else "remove" };
+				deleteButton.enabled = true;
+				deleteButton.action = { 
+					if (control.possibleToDelete) 
+						function(): Void { control.deleteStatementFromList(); }
+					else
+						function(): Void { control.removeSelected(); }
+				};
+			} else if (model instanceof Argument) {
+				// add button
+				addButtonText = "add premise";
+				addButton.enabled = true;
+				addButton.action = function(): Void {
+					control.addPremiseToSelected();
+				}
+				// delete button
+				deleteButtonText = "remove";
+				deleteButton.enabled = true;
+				deleteButton.action = { 
+					function(): Void { control.removeArgument(model as Argument); }
+				};
+
+			} else /*premise*/ {
+				// add button
+				// - nothing
+				// delete button
+				deleteButtonText = "remove";
+				deleteButton.enabled = true;
+				deleteButton.action = { function(): Void { control.deletePremise(model as Premise); } };
+			}
+		}
+	}
+
+	public function reset() {
+		addButtonText = "";
+		addButton.enabled = false;
+		deleteButtonText = "";
+		deleteButton.enabled = false;
+	}
 }
 
 public class StatementList extends List {

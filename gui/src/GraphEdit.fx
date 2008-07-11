@@ -344,7 +344,7 @@ public class ArgumentEditPanel extends EditPanel {
 	private attribute weightNumber: TextField = TextField {
 		preferredSize: [ 30, 20 ]
 		editable: false
-		text: bind (weightSlider.value as Number).toString()
+		text: bind (weightSlider.value).toString()
 	}
 
 	override attribute content = bind [ 
