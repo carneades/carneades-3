@@ -101,10 +101,26 @@ public class GraphFrame extends SwingFrame {
 
 	private attribute creditsFrame: SwingFrame = SwingFrame {
 		visible: bind this.showCredits
-		height: 393
-		width: 617
+		height: 200
+		width: 400
+		background = Color.WHITE;
 		resizable: false
-		content: Canvas {
+		content: 
+			FlowPanel {
+				Label {
+					preferredSize: [creditsFrame.width -10, 20]
+					text: "Carneades"
+				},
+				Label {
+					preferredSize: [creditsFrame.width -10, 20]
+					text: ""
+				},
+				Label {
+					preferredSize: [creditsFrame.width -10, 20]
+					text: ""
+				},
+			}
+		/*Canvas {
 			content: [
 				ImageView {
 					width: bind creditsFrame.width
@@ -114,7 +130,7 @@ public class GraphFrame extends SwingFrame {
 					}
 				}
 			]
-		}
+		}*/
 		closeAction: function() {
 			showCredits = false;
 		}
@@ -173,7 +189,7 @@ public class GraphFrame extends SwingFrame {
 										null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?", 
 										JOptionPane.YES_NO_CANCEL_OPTION, 
 										JOptionPane.QUESTION_MESSAGE, null, 
-										["Yes", "No", "Cancel"], null
+										["Save", "Don't Save", "Cancel"], null
 									);
 									if (choice == JOptionPane.YES_OPTION) {
 										saveAs();	
@@ -193,7 +209,7 @@ public class GraphFrame extends SwingFrame {
 										null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?", 
 										JOptionPane.YES_NO_CANCEL_OPTION, 
 										JOptionPane.QUESTION_MESSAGE, null, 
-										["Yes", "No", "Cancel"], null
+										["Save", "Don't Save", "Cancel"], null
 									);
 									if (choice == JOptionPane.YES_OPTION) {
 										saveAs();	
@@ -317,7 +333,7 @@ public class GraphFrame extends SwingFrame {
 				null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?", 
 				JOptionPane.YES_NO_CANCEL_OPTION, 
 				JOptionPane.QUESTION_MESSAGE, null, 
-				["Yes", "No", "Cancel"], null
+				["Save", "Don't Save", "Cancel"], null
 			);
 			if (choice == JOptionPane.YES_OPTION) {
 				saveAs();	
