@@ -94,8 +94,9 @@ public class CommandControl {
 		bookmark = 0;
 		c.commandControl = this;
 
-		// get the instance of the top command
-		var topCommand: Command = commands [size-1];
+		// get the instance of the top command in case it works
+		var topCommand: Command;
+		if (sizeof commands > 0) { topCommand = commands [size-1]; }
 
 		if ( c.merges and (c.getClass() == topCommand.getClass()) and c.mergeable(topCommand)) {
 			return c.merge(topCommand);
