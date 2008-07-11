@@ -239,8 +239,8 @@ public class TreeLayout extends GraphLayout {
 
 			} else {
 				// edge comes bottom up
-				i.x2Shift = - ((i.recipient.width-GC.statementBoxBottomBrink) / 2) // move to lower left corner of the bottom edge
-							+ ((i.recipient.width-GC.statementBoxBottomBrink) / (sizeof i.recipient.children + 1)) * (i.producer.priority + 1);
+				i.x2Shift = - ((i.recipient.width-i.recipient.bottomBrink) / 2) // move to lower left corner of the bottom edge
+							+ ((i.recipient.width-i.recipient.bottomBrink) / (sizeof i.recipient.children + 1)) * (i.producer.priority + 1);
 			}
 		}
 

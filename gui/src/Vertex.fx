@@ -53,6 +53,7 @@ public class Vertex extends GraphElement {
 	attribute ySubTreeSize: Number;
 	attribute leftSTOutline: Number;
 	attribute rightSTOutline: Number;
+	attribute bottomBrink: Number = 0;
 
 	attribute control: GraphControl;
 	

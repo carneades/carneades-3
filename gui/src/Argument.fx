@@ -409,8 +409,11 @@ public class ArgumentGraph {
 
 	// function to tell whether a statement has been brought forth in an argument
 	public function broughtForth(s: Statement): Boolean {
-		// return true if the statement has been brought forth in an 
-		// argument or connected in a premise
+		return (isConclusion(s) or isPremise(s));
+	}
+
+	// function returning true if the statement is used as a conclusion
+	public function isConclusion(s: Statement): Boolean {
 		var argued = false;
 		for (a in arguments) {
 			if (a.conclusion == s) {
@@ -454,7 +457,7 @@ public class ArgumentGraph {
 			for (p in (root as Argument).premises) {
 				//GC.p("checking " + p.statement.id);
 				// check whether the premise statement has been marked before
-				if (contains(marked, p.statement)) { 
+				if (GC.contains(marked, p.statement)) { 
 					//GC.p("returning false");
 					result = false;
 				} 
@@ -471,7 +474,7 @@ public class ArgumentGraph {
 				if (a.conclusion == root) {
 					// has the argument already been marked
 					//GC.p("checking " + a.id);
-					if (contains(marked, a)) {
+					if (GC.contains(marked, a)) {
 						//GC.p("returning false");
 						result = false;
 					} else {
@@ -522,22 +525,14 @@ public class ArgumentGraph {
 		var ids: String[];
 
 		for (s in statements) {
-			if (contains(ids, s.id)) { return false; } else { insert s.id into ids; }
+			if (GC.contains(ids, s.id)) { return false; } else { insert s.id into ids; }
 		}
 		for (a in arguments) {
-			if (contains(ids, a.id)) { return false; } else { insert a.id into ids; }
+			if (GC.contains(ids, a.id)) { return false; } else { insert a.id into ids; }
 		}
-		if (contains(ids, newId)) { return false; } 
+		if (GC.contains(ids, newId)) { return false; } 
 
 		return true;
-	}
-
-	// HELPER FUNCTIONS
-	private function contains(list: Object[], element: Object): Boolean {
-		for (i in list) {
-			if (i == element) { return true; }
-		}
-		return false;
 	}
 }
 

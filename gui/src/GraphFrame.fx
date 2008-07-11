@@ -86,7 +86,7 @@ public class GraphFrame extends SwingFrame {
 	}
 
 	override attribute closeAction = function(): Void {
-		System.exit(0);
+		quit();
 	}
 
 	// content
@@ -197,7 +197,7 @@ public class GraphFrame extends SwingFrame {
 										["Yes", "No", "Cancel"], null
 									);
 									if (choice == JOptionPane.YES_OPTION) {
-										save();	
+										saveAs();	
 									} else if (choice == JOptionPane.NO_OPTION) {
 										var returnval = chooser.showOpenDialog(null);
 										if (returnval == JFileChooser.APPROVE_OPTION) {
@@ -228,21 +228,7 @@ public class GraphFrame extends SwingFrame {
 						, MenuItem {
 							text: "Quit Carneades"
 							action: function() {
-								if (control.fileChanged) {
-									var choice = JOptionPane.showOptionDialog(
-										null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?", 
-										JOptionPane.YES_NO_CANCEL_OPTION, 
-										JOptionPane.QUESTION_MESSAGE, null, 
-										["Yes", "No", "Cancel"], null
-									);
-									if (choice == JOptionPane.YES_OPTION) {
-										save();	
-									} else if (choice == JOptionPane.NO_OPTION) {
-										System.exit(0);
-									}
-								} else {
-									System.exit(0);
-								}
+								quit();
 							}
 						}
 						] // content
@@ -265,38 +251,79 @@ public class GraphFrame extends SwingFrame {
 							}
 						} // menuitem
 						, MenuItem {
-							text: "New Statement"
+							text: "Remove"
+							enabled: bind control.possibleToRemove;
+							action: function() {
+								control.removeSelected();
+							}
+						}
+					] // items
+				} // menu
+				, Menu {
+					text: "Insert"
+					items: [
+						MenuItem {
+							text: "Statement"
 							enabled: bind control.possibleToAddConclusion;
 							action: function() {
 								control.addStatement();
 							}
 						} // menuitem
 						, MenuItem {
-							text: "Add Premise"
+							text: "Premise"
 							enabled: bind control.possibleToAddPremise;
 							action: function() {
 								control.addPremiseToSelected();
 							}
 						} // menuitem
 						, MenuItem {
-							text: "Add Argument"
+							text: "Argument"
 							enabled: bind control.possibleToAddArgument;
 							action: function() {
 								control.addArgumentToSelected();
 							}
 						} // menuitem
-						, MenuItem {
-							text: "Delete"
-							enabled: bind control.possibleToDelete;
+					]
+				} // menu
+				, Menu {
+					text: "debug"
+					visible: bind GC.debug
+					items: [
+						MenuItem {
+							text: "Print selection"
 							action: function() {
-								control.deleteSelected();
+								control.printSelected();
+							}
+						},
+						MenuItem {
+							text: "unselect all"
+							action: function() {
+								control.unSelectAll();
 							}
 						}
-					] // items
-				} // menu
+					]
+				}
 	]; // override default
 
-	private function save() {
+	private function quit(): Void {
+		if (control.fileChanged) {
+			var choice = JOptionPane.showOptionDialog(
+				null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?", 
+				JOptionPane.YES_NO_CANCEL_OPTION, 
+				JOptionPane.QUESTION_MESSAGE, null, 
+				["Yes", "No", "Cancel"], null
+			);
+			if (choice == JOptionPane.YES_OPTION) {
+				saveAs();	
+				} else if (choice == JOptionPane.NO_OPTION) {
+					System.exit(0);
+				}
+			} else {
+			System.exit(0);
+		}
+	}
+
+	private function save(): Void {
 		if (control.fileLoaded) {
 			control.saveGraphToFile(control.currentFile);
 		} else {
@@ -305,7 +332,7 @@ public class GraphFrame extends SwingFrame {
 		} // if loaded
 	} // function
 
-	private function saveAs() {
+	private function saveAs(): Void {
 		var returnval = chooser.showSaveDialog(null);
 		if (returnval == JFileChooser.APPROVE_OPTION) {
 			var file: File = chooser.getSelectedFile();
