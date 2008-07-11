@@ -269,24 +269,33 @@
 		<target name="deploywin" depends="jar">
 				<echo message="Creating MS Windows package ..."/>
 				<delete file="${project.distdir}/Carneades.zip"/>
-				<zip destfile="${project.distdir}/Carneades.zip"
-						basedir="deployment"
-						keepcompression="true"
-						compress="true"
-						>
-						<zipfileset dir="deployment/" excludes="bin/deploymac.sh"/>
-				</zip>
+
+				<delete dir="${project.distdir}/Carneades"/>
+				<delete file="${project.distdir}/Carneades.zip"/>
+				<mkdir dir="${project.distdir}/Carneades"/>
+				<copy todir="${project.distdir}/Carneades">
+						<fileset dir="deployment/"
+								excludes="bin/deploymac.sh, bin/deploywin.sh"
+								/>
+				</copy>
+
+				<exec executable="sh" dir=".">
+					<arg value="deployment/bin/deploywin.sh"/>
+				</exec>
+				
+				<delete dir="${project.distdir}/Carneades"/>
+
 		</target>
 
 		<target name="deploymac" depends="jar">
 				<echo message="Deploying Mac OS package ..."/>
 	
 				<delete dir="${project.distdir}/Carneades"/>
-				<delete ="${project.distdir}/Carneades.tar"/>
+				<delete file="${project.distdir}/Carneades.tar"/>
 				<mkdir dir="${project.distdir}/Carneades"/>
 				<copy todir="${project.distdir}/Carneades">
 						<fileset dir="deployment/"
-								excludes="bin/Carneades.bat, lib/Carneades.jar, bin/deploymac.sh"
+								excludes="bin/Carneades.bat, lib/Carneades.jar, bin/deploymac.sh, bin/deploywin.sh"
 								/>
 				</copy>
 
@@ -300,14 +309,6 @@
 					<arg value="deployment/bin/deploymac.sh"/>
 			</exec>
 
-				<!-- This beautiful ant task ruins our application, however
-				<tar destfile="${project.distdir}/Carneades.tar"
-						basedir="${project.distdir}/CarneadesMac"
-						defaultexcludes="false"
-						>
-						<tarfileset dir="${project.distdir}/CarneadesMac/">
-						</tarfileset>
-				</tar>-->
 			<delete dir="${project.distdir}/Carneades"/>
 		</target>
 
