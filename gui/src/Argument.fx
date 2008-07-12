@@ -58,17 +58,13 @@ public class Statement {
 	
 	// arguments in which this statement is a premise
 	public attribute arguments: Argument[]; 
+	
+	// read-only: value, assumption
+	// use the methods below to alter state
 
 	// value = "true", "false" or "unknown
-    public attribute value: String = "unknown"  
-    	on replace {
-    		update();
-    	};
-    	
-	public attribute assumption: Boolean = true
-		on replace {
-			update();
-		}
+    public attribute value: String = "unknown";      	
+	public attribute assumption: Boolean = true;
 		
 	public attribute standard: ProofStandard = BestArgument {}
 		on replace {
@@ -79,31 +75,36 @@ public class Statement {
 	// ok should be read only for other objects.  But we can't
 	// make it private because views need to bind to this variable
 	// and track changes to its value.
-	public attribute ok: Boolean = false;
+	public attribute ok: Boolean = false 
+		on replace {
+			for (arg in arguments) arg.update(); // propogate changes
+		}
+		
+	// read-only
+	public attribute complementOk: Boolean = true 
+		on replace {
+			for (arg in arguments) arg.update();
+		}
 	
 	public function acceptable () : Boolean { 
-		var pro = arguments[arg | arg.conclusion == this and arg.pro];
-		var con = arguments[arg | arg.conclusion == this and not arg.pro];
-		if (standard.satisfied(graph,pro,con)) {
-			System.out.println("{id}: acceptable");
-			true;
-		} else {
-			System.out.println("{id}: not acceptable");
-			false;
-		}
+		// System.out.println("{id}: checking acceptability");
+		var pro = graph.arguments[arg | arg.conclusion == this and arg.pro];
+		var con = graph.arguments[arg | arg.conclusion == this and not arg.pro];
+		standard.satisfied(graph,pro,con); 
 	}
-
+	
 	public function complementAcceptable () : Boolean {
-		var pro = arguments[arg | arg.conclusion == this and arg.pro];
-		var con = arguments[arg | arg.conclusion == this and not arg.pro];
+		var pro = graph.arguments[arg | arg.conclusion == this and arg.pro];
+		var con = graph.arguments[arg | arg.conclusion == this and not arg.pro];
 		standard.satisfied(graph,con,pro);
 	}
 	
-	
     private function update () : Void {
-    	ok = acceptable();
-    	// System.out.println("updating {id}");
-    	for (arg in arguments) arg.update();
+    	ok = value == "true" or
+    	     (value == "unknown" and acceptable());
+    	complementOk = value == "false" or
+			(value == "unknown" and complementAcceptable());
+    	// System.out.println("{id} is { if (ok) "ok" else "not ok" }");
     }
     
 	public function stated () : Boolean {
@@ -179,12 +180,10 @@ public class Statement {
     
     public function accept () : Void {
 		decide(true);
-		update();
 	}
 	
 	public function reject () : Void {
 		decide(false);
-		update();
     }
 }
 
@@ -205,6 +204,20 @@ public class Premise {
 		on replace {
 			statement.update();
 		};
+		
+	public function holds (): Boolean {
+		if (not exception)     // ordinary premise
+			if (not negative)  // positive premise
+				statement.ok
+			else               // negative premise
+				statement.complementOk
+		else
+			// exception
+			if (not negative)  // positive exception
+				not statement.ok
+			else               // negative exception
+				not statement.complementOk
+	}
 }
 
 public class Scheme {
@@ -218,7 +231,7 @@ public class Argument {
 
 	public attribute weight: Number = 50 // range: 0.0 to 1.0
 		on replace {
-			update();
+			conclusion.update();
 		}
 		
 	public attribute scheme: Scheme;
@@ -226,11 +239,12 @@ public class Argument {
     public attribute premises: Premise[] 
     	on replace {
     		update();
+    		conclusion.update();
     	};
     	
 	public attribute pro: Boolean = true 
 		on replace {
-			update();
+			conclusion.update();
 		};
 	
 	public attribute conclusion: Statement 
@@ -241,18 +255,21 @@ public class Argument {
 	// ok should be read only for other objects.  But we can't
 	// make it private because views need to bind to this variable
 	// and track changes to its value.
-	public attribute ok: Boolean = false;  
+	public attribute ok: Boolean = false 
+		on replace {
+			conclusion.update();  // propogate changes
+		}
 	
 	public function allPremisesHold () : Boolean { 
-		0 == sizeof(premises[p | not graph.holds(p)]);
+		0 == sizeof(premises[p | not p.holds()]);
 	} 
 	
 	private function update () : Void {
 		ok = allPremisesHold();
-		conclusion.update();
+		// System.out.println("{id} is {if (ok) "ok" else "not ok"}");
 	}
 	
-	public function defensible () : Boolean { allPremisesHold(); }
+	public function defensible () : Boolean { allPremisesHold() }
 	
     public function switchDirection (): Void {
 		pro = not pro;
@@ -261,16 +278,19 @@ public class Argument {
 	public function addPremise (p: Premise) : Number {
 		insert p into premises;
 		insert p.statement into graph.statements;
+		insert this into p.statement.arguments;
 		return GC.AG_OK;
 	}
 
 	public function appendPremise (p: Premise) : Number {
 		insert p into premises;
+		insert this into p.statement.arguments;
 		return GC.AG_OK;
 	}
 
 	public function deletePremise (p: Premise) : Number {
 		delete p from premises;
+		delete this from p.statement.arguments;
 		return GC.AG_OK;
 	}
 }
@@ -336,13 +356,13 @@ public class ArgumentGraph {
 				insert arg.conclusion into statements;
 			}
 			
-			arg.update();
+			arg.graph = this;
+			// arg.update();
 
 		} else {
 			result = GC.AG_CYCLE;
 		}
 
-		arg.graph = this;
 		return result;
     }
 
@@ -361,36 +381,6 @@ public class ArgumentGraph {
 		arguments[arg | arg.conclusion == s and not arg.pro];
 	}
 
-	/*
-	public function allPremisesHold (a: Argument): Boolean {
-		a.allPremisesHold();
-	}
-	*/
-
-	public function holds (p: Premise): Boolean {
-		if (not p.exception) {    // ordinary premise
-			if (not p.negative) { // positive premise
-				p.statement.value == "true" or
-				(p.statement.value == "unknown" and
-				p.statement.acceptable())
-			} else {             // negative premise
-				p.statement.value == "false" or
-				(p.statement.value == "unknown" and 
-				p.statement.complementAcceptable())
-			}
-		} else {
-			// exception
-			if (not p.negative) { // positive exception
-				p.statement.value == "false" or
-				(p.statement.value == "unknown" and
-				 not p.statement.acceptable())
-			} else {              // negative exception
-				p.statement.value == "true" or
-				(p.statement.value == "unknown" and
-				 not p.statement.complementAcceptable())
-			}
-		}
-	}
 
 	// INFORMATION GATHERING FUNCTIONS
 
@@ -402,24 +392,19 @@ public class ArgumentGraph {
 	// function returning true if the statement is used as a conclusion
 	public function isConclusion(s: Statement): Boolean {
 		var argued = false;
-		for (a in arguments) {
-			if (a.conclusion == s) {
+		for (a in arguments) 
+			if (a.conclusion == s) 
 				argued = true;
-			}
-		}
 		return argued;
 	}
 
 	// function to tell whether a statement is a premise of an argument
 	public function isPremise(s: Statement): Boolean {
 		var premised: Boolean = false;
-		for (a in arguments) {
-			for (p in a.premises) {
-				if (p.statement == s) {
+		for (a in arguments) 
+			for (p in a.premises) 
+				if (p.statement == s) 
 					premised = true;
-				}
-			}
-		}
 		return premised;
 	}
 
@@ -429,9 +414,8 @@ public class ArgumentGraph {
 		var result: Boolean = true;
 		// checking is done for all statement nodes
 		var roots: Statement[] = [statements];
-		for (r in roots) {
-			if (noCyclesRec(r, [r]) == false) { result = false; }
-		}
+		for (r in roots)
+			if (noCyclesRec(r, [r]) == false) result = false;
 		return result
 	}
 	

@@ -7,6 +7,7 @@
 		<property name="project.srcdir" value="src"/>
 		<property name="project.distdir" value="dist"/>
 		<property name="project.builddir" value="build"/>
+		<property name="version" value="0.0.6"/>
 
 		<property name="javafxc.home" value="${env.JAVAFXHOME}"/>
 		<property name="javafxc.class.path" 
@@ -268,10 +269,9 @@
 
 		<target name="deploywin" depends="jar">
 				<echo message="Creating MS Windows package ..."/>
-				<delete file="${project.distdir}/Carneades.zip"/>
 
 				<delete dir="${project.distdir}/Carneades"/>
-				<delete file="${project.distdir}/Carneades.zip"/>
+				<delete file="${project.distdir}/carneades-win-${version}.zip"/>
 				<mkdir dir="${project.distdir}/Carneades"/>
 				<copy todir="${project.distdir}/Carneades">
 						<fileset dir="deployment/"
@@ -291,7 +291,7 @@
 				<echo message="Deploying Mac OS package ..."/>
 	
 				<delete dir="${project.distdir}/Carneades"/>
-				<delete file="${project.distdir}/Carneades.tar"/>
+				<delete file="${project.distdir}/carneades-mac-${version}.zip"/>
 				<mkdir dir="${project.distdir}/Carneades"/>
 				<copy todir="${project.distdir}/Carneades">
 						<fileset dir="deployment/"

@@ -375,16 +375,15 @@ public class ArgumentFile {
 			// set variables from attributes
 
 			for (i in a.attributes) {
-				if (i.name == "id") { id = i.value; }
+				if (i.name == "id") id = { i.value; }
 				if (i.name == "direction") {
 					if (i.value == "pro") { pro = true; }
 					else /*(i.value == "con")*/ { pro = false; }
 				}
-				if (i.name == "scheme") {
+				if (i.name == "scheme") 
 					scheme = Scheme {
 						id: i.value
 					}
-				}
 				if (i.name == "weight") { weight = Float.valueOf(i.value); }
 			}
 			
@@ -445,6 +444,9 @@ public class ArgumentFile {
 			}
 
 			insert newArgument into argumentGraph.arguments;
+			for (p in newArgument.premises) {
+				insert newArgument into p.statement.arguments;
+			}
 		} // fetch arguments
 		
 		return argumentGraph;
