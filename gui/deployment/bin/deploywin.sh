@@ -1,5 +1,5 @@
 #!/bin/bash
 
 cd dist/
-zip -r Carneades.zip Carneades/ 
+zip -r carneades-win.0.0.6.zip Carneades/ 
 
