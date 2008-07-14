@@ -21,13 +21,21 @@
  (export import export)
  
  (import (except (rnrs base) assert)
-         (only (rnrs lists) filter fold-right)
+         (only (rnrs lists) filter fold-right member assq)
+         ;(rnrs hashtables)
+         (rnrs io ports)
+         (rnrs io simple)
+         (prefix (carneades table) table:)
          (carneades rule)
          (carneades argument)
          (carneades statement)
          (carneades lib match)
+         (carneades gensym)
          (only (carneades lib pregexp) pregexp-split)
-         (carneades lib xml sxml))
+         (carneades lib xml sxml xpath-context_xlink)
+         (carneades lib xml sxml serializer)
+         ;(carneades lib xml sxml)
+         )
  
  
  ;; TODO: 
@@ -35,13 +43,15 @@
  ;;    * condition attribute role is not parsed!
  ;;    * register non empty statements!!!!!
  
- (define amp (string->symbol "@"))
  
  ; *texts*: table mapping sexpressions to statement texts (see statement.scm)
- (define *texts* (make-hash-table 'equal))
+ ;(define *texts* (make-hash-table 'equal))
+ ;(define *texts* (make-eqv-hashtable))
+ (define *texts* (table:make-table))
  
  ; *statements* : (symbol -> statement) table
- (define *statements* (make-hash-table))
+ ;(define *statements* (make-hash-table))
+ (define *statements* (table:make-table))
  
  ; type lkif-object: statement | rule | argument-graph
  
@@ -54,14 +64,12 @@
  ; does not overwrite path
  (define (export l . path)    
    (let* ((objects (map object->sxml l))
-          (statements (map object->sxml (hash-table-map 
-                                         *texts*
-                                         (lambda (key value) value))))
+          (statements (map object->sxml (table:values *texts*)))
           (sxml-obj `(lkif ,@(append statements objects))))
      ; (display "debug: ") (display sxml-obj) (newline)
      (apply srl:sxml->xml (cons sxml-obj path)))) 
  
- (define (sexp->sxml sexp)
+ #;(define (sexp->sxml sexp)
    (cond ((pair? sexp)
           (cons 's (map sexp->sxml sexp)))
          ((symbol? sexp)
@@ -71,14 +79,26 @@
             (display sexp sp)
             (string-append (get-output-string sp) " ")))))
  
+ (define (sexp->sxml sexp)
+   (cond ((pair? sexp)
+          (cons 's (map sexp->sxml sexp)))
+         ((symbol? sexp)
+          (string-append (symbol->string sexp) " "))
+         (else
+          (call-with-values open-string-output-port
+                            (lambda (port extractproc)
+                              (display sexp port)
+                              (string-append (extractproc) " "))))))
+
+ 
  ; sexp->text: s-expression -> text
  ; converts an s-expression into a statement text
  (define (sexp->text sexp)
-   (hash-table-get *texts* sexp 
+   (table:lookup *texts* sexp 
                    (lambda () 
                      (let* ((id (gensym 's))
                             (txt (make-text id sexp (summarize sexp) "")))
-                       (hash-table-put! *texts* sexp txt)
+                       (set! *texts* (table:insert *texts* sexp txt))
                        txt))))
  
  
@@ -86,7 +106,7 @@
  ; converts an statement text into an sxml representation of 
  ; an LKIF statement 
  (define (text->statement-in-sxml txt)
-   `(s (,amp (id ,(symbol->string (text-id txt)))
+   `(s (^ (id ,(symbol->string (text-id txt)))
              (summary ,(text-summary txt))
              (src ,(text-src txt)))
        ,@(map sexp->sxml 
@@ -125,13 +145,13 @@
  (define (rule->sxml rule)
    (let ((name (symbol->string (rule-id rule)))
          (head (map sexp->sxml (rule-head rule)))
-         (body (cond ((= 0 (length (rule-body rule))) null)
+         (body (cond ((= 0 (length (rule-body rule))) '())
                      ((< 1 (length (rule-body rule)))
                       (list (cons 'or (map clause->sexp (rule-body rule)))))
                      (else (map condition->sexp (car (rule-body rule)))))))
      (if (null? (rule-body rule))
-         `(rule (,amp (id ,name)) ,@head)
-         `(rule (,amp (id ,name))
+         `(rule (^ (id ,name)) ,@head)
+         `(rule (^ (id ,name))
                 (head ,@head)
                 ; (body ,(body->sexp (rule-body rule))))))) 
                 (body ,@body)))))
@@ -145,15 +165,15 @@
          (role     (role->string (premise-role prem))))
      (cond 
        ((ordinary-premise? prem)
-        `(premise (,amp  (role ,role)
+        `(premise (^  (role ,role)
                          (polarity ,polarity)
                          (statement ,(symbol->string (text-id (sexp->text atom)))))))
        ((exception? prem)
-        `(exception (,amp (role ,role) 
+        `(exception (^ (role ,role) 
                           (polarity ,polarity)
                           (statement ,(symbol->string (text-id (sexp->text atom)))))))
        ((assumption? prem)
-        `(assumption (,amp (role ,role) 
+        `(assumption (^ (role ,role) 
                            (polarity ,polarity)
                            (statement ,(symbol->string (text-id (sexp->text atom)))))))
        (else (error "unknown premise")))))
@@ -164,10 +184,10 @@
          (direction  (symbol->string (argument-direction arg)))
          (conclusion (sexp->text (argument-conclusion arg)))
          (premises   (map premises->sexp (argument-premises arg))))
-     `(argument (,amp (id ,id) (scheme ,scheme) (direction ,direction))
+     `(argument (^ (id ,id) (scheme ,scheme) (direction ,direction))
                 ,@premises
                 ;; FIXME: statements as attributes
-                (conclusion (,amp (statement ,(symbol->string (text-id conclusion))))))))
+                (conclusion (^ (statement ,(symbol->string (text-id conclusion))))))))
  
  
  ;; checks type of lkif object and call 
@@ -221,7 +241,7 @@
                         (create-body body)))
            ;; ELSE: literal rule
            (let ((head (map create-statement rest))
-                 (body null))
+                 (body '()))
              (make-rule name-value
                         (if (string=? strict-value "yes") #t #f)
                         (map create-statement head) 
@@ -256,7 +276,7 @@
  (define (create-statement tree)
    (define (remove-attributes x)
      (not (and (pair? x)
-               (eq? (car x) ,amp))))
+               (eq? (car x) '^))))
    
    (define (split-string x)
      (if (string? x)
@@ -267,7 +287,7 @@
    (define (minimize-tree e l)
      (if (and (pair? e) (string? (car e)))
          ; (append (map string->symbol e) l)
-         (append (map (lambda (s) (read (open-input-string s))) e)
+         (append (map (lambda (s) (read (open-string-input-port s))) e)
                  l)
          (if (eq? e 's)
              l
@@ -275,7 +295,7 @@
    
    
    (match tree
-     [('s (,amp . attributes) . rest)
+     [('s ('^ . attributes) . rest)
       (let* ((idv (attr-value attributes
                               'id 
                               #f))
@@ -288,7 +308,7 @@
                                              (map split-string rest)))
                             rest)))
         ;; register statement
-        (if (not (null? statement)) (hash-table-put! *statements* id statement))
+        (if (not (null? statement)) (set! *statements* (table:insert *statements* id statement)))
         (make-text id statement summary src))]
      [_  (if (pair? tree)
              (map create-statement 
@@ -305,7 +325,7 @@
    (let ((id (string->symbol (attr-value attributes 'statement #f))))
      (if id
          ; use the id as a propositional letter if no statement is associated with the id.
-         (let ((s (hash-table-get *statements* id (lambda () id))))
+         (let ((s (table:lookup *statements* id (lambda () id))))
            ; (printf "debug: id=~v~n" id)
            ; (printf "debug: statement=~v~n" s)
            s)
@@ -378,7 +398,7 @@
  (define (attr-value attr-list name . default)
    ;;(display "attr-value")(write default)(newline)
    (let ((alist (match attr-list
-                  [(,amp . rest) rest] 
+                  [('^ . rest) rest] 
                   [((a . b) ...) attr-list]
                   [_                   '()])))
      (if (assq name alist)
