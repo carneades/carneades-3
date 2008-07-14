@@ -12,7 +12,7 @@
 
 (library
  
- (carneades lib xml sxml xpath-context_xlinks)
+ (carneades lib xml sxml xpath-context_xlink)
  
  (export sxml:context-u? 
          sxml:context?
