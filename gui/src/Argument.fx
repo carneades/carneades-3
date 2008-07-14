@@ -544,9 +544,12 @@ public class BestArgument extends ProofStandard {
 	       // there is at least one ok pro argument, and
 	       sizeof(okPro) > 0 and
 	       // there is no ok con argument which is at least
-	       // as strong as every ok pro argument
-	       0 == sizeof(okCon [ conArg | 
-	       			0 < sizeof(okPro [ proArg | 
-	       				ag.atLeastAsStrong(conArg,proArg) ]) ]);
+	       // as strong as every ok pro argument, that is
+	       // there is an ok pro argument which is strictly 
+	       // stronger than every ok con argument.
+	       0 < sizeof(okPro [ proArg |	
+	       		0 == sizeof (okCon [ conArg | 	
+	       				ag.stronger(conArg,proArg) ]) ]);
+
 	}
 }
