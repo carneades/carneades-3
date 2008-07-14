@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<lkif>
+  <argument-graph id="NewGraph">
+    <issues>
+      <issue assumption="true" standard="BA" statement="s1" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="s2" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="s3" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="s4" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="s5" value="unknown"/>
+    </issues>
+    <statements>
+      <s id="s1">The press need not keep quiet about Simon Jone's private life.</s>
+      <s id="s2">Simon Jones is a Member of Parliament.</s>
+      <s id="s3">The press need not keep quiet the private life of Members of Parliament.</s>
+      <s id="s4">Simon Jones just resigned from the House of Commons.</s>
+      <s id="s5">Persons who resign from the House of Commons are no longer Members of Parliament. </s>
+    </statements>
+    <arguments>
+      <argument direction="pro" id="a1" scheme="" weight="50.0">
+        <conclusion statement="s1"/>
+        <premises>
+          <premise exception="false" polarity="positive" role="" statement="s2"/>
+          <premise exception="false" polarity="positive" role="" statement="s3"/>
+        </premises>
+      </argument>
+      <argument direction="con" id="a2" scheme="" weight="50.0">
+        <conclusion statement="s2"/>
+        <premises>
+          <premise exception="false" polarity="positive" role="" statement="s4"/>
+          <premise exception="false" polarity="positive" role="" statement="s5"/>
+        </premises>
+      </argument>
+    </arguments>
+  </argument-graph>
+</lkif>
