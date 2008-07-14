@@ -1,1 +1,1 @@
-java -jar ../bin/Carneades.jar
+java -jar ../lib/Carneades.jar

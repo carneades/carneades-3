@@ -34,6 +34,7 @@ public class GC {
 	public static attribute LEFT: Number = 4;
 
 	// Drawing constants
+	public static attribute defaultBoxFill = Color.WHITE;
 	public static attribute drawDebug = bind debug;
 	public static attribute viewBackground: Color = Color.rgb(178, 195, 218);
 	public static attribute toolPanelBackground: Color = Color.rgb(124, 141, 172);
@@ -72,9 +73,10 @@ public class GC {
 
 	// Statement Boxes
 	public static attribute numDisplayedChars = 15;
-	public static attribute statementBoxDefaultWidth = 170;
+	public static attribute statementBoxDefaultWidth = 150;
 	public static attribute statementBoxBottomBrink = 50;
 
+	public static attribute fillStatements = false;
 	public static attribute statusAcceptedColor: Color = Color.rgb(45, 193, 56);
 	public static attribute statusRejectedColor: Color = Color.rgb(255, 82, 85);
 	public static attribute statusAssumedTrueColor: Color = Color.rgb(106, 255, 121);
@@ -98,7 +100,7 @@ public class GC {
 	// Layout constants
 	public static attribute xOffset = appWidth / 2;
 	public static attribute yOffset = 0;
-	public static attribute xDistance = 10;
+	public static attribute xDistance = 30;
 	public static attribute yDistance = 50;
 
 	public static attribute drawNonArguedStatements = false;
