@@ -195,7 +195,7 @@ public class GraphFrame extends SwingFrame {
 					text: "File"
 					items: [
 						MenuItem {
-							text: "about Carneades"
+							text: "About Carneades"
 								action: function() {
 								this.showCredits = true;
 							}

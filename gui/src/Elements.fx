@@ -41,49 +41,6 @@ import Carneades.Control.GraphControl;
 
 public abstract class ArgumentElement extends Vertex {
 	attribute fill: Color = Color.WHITE;
-	attribute mainRect: Rectangle = Rectangle {
-					x: bind x - (width / 2)
-					y: bind y - (height / 2)
-					width: bind width 
-					height: bind height
-					fill: bind fill
-					stroke: Color.BLACK
-					strokeWidth: 1
-
-					effect: DropShadow {
-						color: bind GC.shadowColor
-						offsetX: bind GC.xShadowShift
-						offsetY: bind GC.yShadowShift
-						radius: bind GC.shadowBlurRadius
-					}
-				
-					onMouseClicked: function(e: MouseEvent) {
-						control.unSelectAll();
-						selected = true;
-						control.processSelection();
-						
-						if (GC.debug) {
-							print();
-						}
-					}
-
-					onMouseDragged: function(e: MouseEvent) {
-						if (this.selected) { control.startDrag(); }
-					}	
-
-					onMouseReleased: function(e: MouseEvent) {
-						if (control.dragging) {	control.endDrag(); }
-					}
-
-					onMouseEntered: function(e: MouseEvent) {
-						if (control.dragging) { control.setDraggingOver(this); }
-					}
-
-					onMouseExited: function(e: MouseEvent) {
-						if (control.dragging) { control.setDraggingOver(null); }
-					}	
-				} // main rect
-
 	override attribute text = Text {
 					content: bind caption
 					verticalAlignment: VerticalAlignment.TOP
@@ -208,14 +165,61 @@ public class StatementBox extends ArgumentElement {
 	override attribute caption = bind { if (statement.wff.length() < GC.numDisplayedChars) statement.wff
 										else "{statement.wff.substring(0, GC.numDisplayedChars-1)}..."};
 	private attribute status: String = bind statement.getBoundStatus();
-	override attribute fill = bind { 
-		if (status == "accepted") GC.statusAcceptedColor
-		else if (statement.ok) GC.statusAcceptableColor
+	private attribute statusColor = bind { 
+		if (statement.ok) GC.statusAcceptableColor
 		else if (status == "stated") GC.statusStatedColor
 		else if (status == "assumed true") GC.statusAssumedTrueColor
 		else if (status == "assumed false") GC.statusAssumedFalseColor
 		else if (status == "rejected") GC.statusRejectedColor
 		else /*if (status == "questioned")*/ GC.statusQuestionedColor
+	}
+
+	attribute mainRect: Rectangle = Rectangle {
+					x: bind x - (width / 2)
+					y: bind y - (height / 2)
+					width: bind width 
+					height: bind height
+					fill: bind { if (GC.fillStatements) statusColor else GC.defaultBoxFill }
+					stroke: bind { if (GC.fillStatements) Color.BLACK else statusColor }
+					strokeWidth: 3
+
+					effect: DropShadow {
+						color: bind GC.shadowColor
+						offsetX: bind GC.xShadowShift
+						offsetY: bind GC.yShadowShift
+						radius: bind GC.shadowBlurRadius
+					}
+				
+					onMouseClicked: function(e: MouseEvent) {
+						control.unSelectAll();
+						selected = true;
+						control.processSelection();
+						
+						if (GC.debug) {
+							print();
+						}
+					}
+
+					onMouseDragged: function(e: MouseEvent) {
+						if (this.selected) { control.startDrag(); }
+					}	
+
+					onMouseReleased: function(e: MouseEvent) {
+						if (control.dragging) {	control.endDrag(); }
+					}
+
+					onMouseEntered: function(e: MouseEvent) {
+						if (control.dragging) { control.setDraggingOver(this); }
+					}
+
+					onMouseExited: function(e: MouseEvent) {
+						if (control.dragging) { control.setDraggingOver(null); }
+					}	
+				} // main rect
+
+	attribute acceptableCircle: Circle = Circle {
+		centerX: 
+		centerY:
 	}
 
 	public function create():Node {

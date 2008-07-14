@@ -351,7 +351,7 @@ public class ArgumentEditPanel extends EditPanel {
 	override attribute content = bind [ 
 										Label { text: "id " preferredSize: [editLabelWidth, 20]}, idField, 
 										Label { text: "direction ", preferredSize: [editLabelWidth, 20]}, proButton, conButton,
-										Label { text: "defensible ", preferredSize: [editLabelWidth, 20]}, defensibleBox,
+										Label { text: "premises hold", preferredSize: [editLabelWidth, 20]}, defensibleBox,
 										Label { text: "weight ", preferredSize: [editLabelWidth, 20]}, weightSlider, weightNumber,
 										Label { text: "scheme ", preferredSize: [editLabelWidth, 20] }, schemeField,
 										];
