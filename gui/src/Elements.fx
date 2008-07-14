@@ -181,7 +181,7 @@ public class StatementBox extends ArgumentElement {
 					height: bind height
 					fill: bind { if (GC.fillStatements) statusColor else GC.defaultBoxFill }
 					stroke: bind { if (GC.fillStatements) Color.BLACK else statusColor }
-					strokeWidth: 3
+					strokeWidth: 1
 
 					effect: DropShadow {
 						color: bind GC.shadowColor
@@ -217,10 +217,10 @@ public class StatementBox extends ArgumentElement {
 					}	
 				} // main rect
 
-	attribute acceptableCircle: Circle = Circle {
-		centerX: 
+	/*attribute acceptableCircle: Circle = Circle {
+		centerX: bind x 
 		centerY:
-	}
+	}*/
 
 	public function create():Node {
 		Group {

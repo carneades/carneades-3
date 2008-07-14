@@ -76,7 +76,7 @@ public class GC {
 	public static attribute statementBoxDefaultWidth = 150;
 	public static attribute statementBoxBottomBrink = 50;
 
-	public static attribute fillStatements = false;
+	public static attribute fillStatements = true;
 	public static attribute statusAcceptedColor: Color = Color.rgb(45, 193, 56);
 	public static attribute statusRejectedColor: Color = Color.rgb(255, 82, 85);
 	public static attribute statusAssumedTrueColor: Color = Color.rgb(106, 255, 121);
