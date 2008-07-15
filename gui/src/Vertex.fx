@@ -41,9 +41,9 @@ public class Vertex extends GraphElement {
 
 	attribute defaultWidth: Number = GC.vertexDefaultWidth;
 	attribute scaleWithText: Boolean = GC.scaleVerticesWithText;
-	attribute width: Number = { if (scaleWithText) Math.max(50, text.getWidth() + 10) else defaultWidth };
+	public attribute width: Number = { if (scaleWithText) Math.max(50, text.getWidth() + 10) else defaultWidth };
 
-	attribute height: Number = 50;
+	public attribute height: Number = GC.vertexDefaultHeight;
 	attribute children: Vertex[];
 	attribute level: Number = 0; // The depth level of the vertex, where the root vertex has level 0
 
