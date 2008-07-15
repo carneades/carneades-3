@@ -52,10 +52,10 @@
  ;           (-> statement string) output-port -> void
  (define (diagram* ag context subs statement->string port)
    (let ((tbl (make-eqv-hashtable)))
-     (display "digraph g {~%    rankdir = \"RL\";~%" port)
+     (format port "digraph g {~%    rankdir = \"RL\";~%")
      (print-statements ag context subs tbl (statements ag) statement->string  port)
      (print-arguments ag context subs tbl (list-arguments ag) port)
-     (display "}~%" port)))
+     (format port "}~%")))
  
  
  ; print-statements: argument-graph context substitutions 
