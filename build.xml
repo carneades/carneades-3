@@ -1,344 +1,153 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project default ="full">
-		<property environment="env"/>
+  <property environment="env"/>
+  
+  <property name="gui.target" value="1.5"/>
+  <property name="gui.srcdir" value="gui/src"/>
+  <property name="gui.basedir" value="gui/"/>
+  <property name="gui.distdir" value="dist"/>
+  <property name="gui.deploydir" value="deployment"/>
+  <property name="gui.manifestdir" value="gui/manifests"/>
+  <property name="gui.builddir" value="gui/build"/>
+  <property name="gui.version" value="0.0.6"/>
+  
+  <property name="javafxc.home" value="${env.JAVAFXHOME}"/>
+  <property name="javafxc.class.path" 
+			value="${javafxc.home}/lib/javafxc.jar:${javafxc.home}/lib/javafxrt.jar:${javafxc.home}/lib/Scenario.jar"/>
+  <taskdef resource="javafxc-ant-task.properties" classpath="${javafxc.class.path}"/>
+  
+  <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" 
+		   classpath="${gui.basedir}/lib/jarbundler-2.0.0.jar" onerror="report"/>
+  
+  <property name="one-jar.version" value="0.96"/>
+  <taskdef name="one-jar" classname="com.simontuffs.onejar.ant.OneJarTask" 
+		   classpath="${gui.basedir}/lib/one-jar-ant-task-${one-jar.version}.jar" onerror="report"/>
 
-		<property name="project.target" value="1.5"/>
-		<property name="project.srcdir" value="src"/>
-		<property name="project.distdir" value="dist"/>
-		<property name="gui.deploydir" value="deployment"/>
-		<property name="project.builddir" value="build"/>
-		<property name="version" value="0.0.6"/>
+  <import file="webstart.xml" optional="true"/>
 
-		<property name="javafxc.home" value="${env.JAVAFXHOME}"/>
-		<property name="javafxc.class.path" 
-				value="${javafxc.home}/lib/javafxc.jar:${javafxc.home}/lib/javafxrt.jar:${javafxc.home}/lib/Scenario.jar"/>
-        <taskdef resource="javafxc-ant-task.properties" classpath="${javafxc.class.path}"/>
+  <path id="gui.class.path">
+	<pathelement location="${gui.basedir}/lib/javafx-xml.jar"/>
+	<pathelement location="${javafxc.home}/lib/javafxgui.jar"/>
+	<pathelement location="${javafxc.home}/lib/javafx-swing.jar"/>
+	<pathelement location="${javafxc.home}/lib/javafxrt.jar"/>
+	<pathelement location="${javafxc.home}/lib/javafxc.jar"/>
+	<pathelement location="${javafxc.home}/lib/jmc.jar"/>
+	<pathelement location="${javafxc.home}/lib/Scenario.jar"/>
+  </path>
+  
+  <target name="compile">
+	<javafxc 
+		srcdir="${gui.srcdir}"
+		destdir="${gui.builddir}" 
+		includes="**/*.fx"
+		target="${gui.target}"
+		compilerclasspath="${javafxc.class.path}">
+	  <classpath refid="gui.class.path"/>
+	</javafxc>
+  </target>
+  
+  <target name="corejar" depends="">
+	<echo message="Packing jar ..." />
+	<jar destfile="${gui.builddir}/CarneadesCore.jar"
+		 basedir="${gui.builddir}"
+		 includes="**/*.class"
+		 manifest="${gui.manifestdir}/coremanifest"
+		 update="true"
+		 />
+  </target>
+  
+  <target name="jar" depends="corejar">
+	<one-jar destfile="${gui.deploydir}/lib/Carneades.jar" manifest="${gui.manifestdir}/packmanifest">
+	  <main jar="${gui.builddir}/CarneadesCore.jar">
+	  </main>
+	  <lib>
+		<fileset dir="${javafxc.home}/lib/"
+				 includes="javafxc.jar, javafxrt.jar, Scenario.jar, jmc.jar, javafxgui.jar, javafx-swing.jar"/>
+		<fileset dir="${gui.basedir}/lib/"
+				 includes="javafx-xml.jar"/>
+	  </lib>
+	</one-jar> 
+  </target>
+  
+  <target name="r" depends="jar">
+	<echo message="Executing ..." />
+	<java jar="${gui.deploydir}/lib/Carneades.jar" fork="true"/>
+  </target>
+  
+  <target name="deploywin" depends="jar">
+	<echo message="Creating MS Windows package ..."/>
+	<delete dir="${gui.distdir}/Carneades"/>
+	<delete file="${gui.distdir}/carneades-win-${version}.zip"/>
+	<mkdir dir="${gui.distdir}/Carneades"/>
+	<copy todir="${gui.distdir}/Carneades">
+	  <fileset dir="${gui.deploydir}/"
+			   excludes="bin/deploymac.sh, bin/deploywin.sh"/>
+	</copy>
+	<exec executable="sh" dir=".">
+	  <arg value="${gui.deploydir}/bin/deploywin.sh"/>
+	</exec>
+	<delete dir="${gui.distdir}/Carneades"/>	
+  </target>
+  
+  <target name="webstart.fail" unless="webstartfile.loaded">
+	<echo message="File webstart.xml not found. Modify the template and rename it."/>
+  </target>
 
-		<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" 
-			classpath="lib/jarbundler-2.0.0.jar" onerror="report"/>
+  <target name="webstart.run" depends="corejar" if="webstartfile.loaded">
+	<delete dir="${gui.distdir}/webstart"/>
+	<mkdir dir="${gui.distdir}/webstart"/>
+	<mkdir dir="${gui.distdir}/webstart/lib"/>
+	<copy todir="${gui.distdir}/webstart">
+	  <fileset dir="${gui.deploydir}/webstart" includes="*/**"/>
+	</copy>
+	<copy file="${gui.builddir}/CarneadesCore.jar" tofile="${gui.distdir}/webstart/Carneades.jar"/>
+	<copy todir="${gui.distdir}/webstart/lib/">
+	  <fileset dir="${javafxc.home}/lib/"
+			   includes="javafxc.jar, javafxrt.jar, Scenario.jar, jmc.jar, javafxgui.jar, javafx-swing.jar"/>
+	  <fileset dir="${gui.basedir}/lib/" includes="javafx-xml.jar"/>
+	</copy>
+	<signjar jar="${webstart.jartosign}" alias="${webstart.alias}" storepass="${webstart.storepass}"/>
+  </target>
 
-		<import file="./lib/one-jar-ant-task.xml"/> 
+  <target name="webstart" depends="webstart.run, webstart.fail"/>
 
-		<path id="project.class.path">
-				<pathelement location="lib/javafx-xml.jar"/>
-				<pathelement location="${javafxc.home}/lib/javafxgui.jar"/>
-				<pathelement location="${javafxc.home}/lib/javafx-swing.jar"/>
-				<pathelement location="${javafxc.home}/lib/javafxrt.jar"/>
-				<pathelement location="${javafxc.home}/lib/javafxc.jar"/>
-				<pathelement location="${javafxc.home}/lib/jmc.jar"/>
-				<pathelement location="${javafxc.home}/lib/Scenario.jar"/>
-		</path>
-		
-		<target name="constants">
-				<javafxc 
-						srcdir="${project.srcdir}"
-						destdir="${project.builddir}" 
-						includes="GC.fx"
-						target="${project.target}"
-						compilerclasspath="${javafxc.class.path}">
-						<classpath refid="project.class.path"/>
-				</javafxc>
-		</target>
-		<target name="argument">
-				<javafxc 
-						srcdir="${project.srcdir}"
-						destdir="${project.builddir}" 
-						includes="Argument.fx"
-						target="${project.target}"
-						compilerclasspath="${javafxc.class.path}">
-						<classpath refid="project.class.path"/>
-				</javafxc>
-		</target>
-		<target name="gelement">
-				<javafxc 
-						srcdir="${project.srcdir}"
-						destdir="${project.builddir}" 
-						includes="GraphElement.fx"
-						target="${project.target}"
-						compilerclasspath="${javafxc.class.path}">
-						<classpath refid="project.class.path"/>
-				</javafxc>
-		</target>
-		<target name="vertex">
-				<javafxc 
-						srcdir="${project.srcdir}"
-						destdir="${project.builddir}" 
-						includes="Vertex.fx"
-						target="${project.target}"
-						compilerclasspath="${javafxc.class.path}">
-						<classpath refid="project.class.path"/>
-				</javafxc>
-		</target>
-		<target name="edge">
-				<javafxc 
-						srcdir="${project.srcdir}"
-						destdir="${project.builddir}" 
-						includes="Edge.fx"
-						target="${project.target}"
-						compilerclasspath="${javafxc.class.path}">
-						<classpath refid="project.class.path"/>
-				</javafxc>
-		</target>
-		<target name="graph">
-				<javafxc 
-						srcdir="${project.srcdir}"
-						destdir="${project.builddir}" 
-						includes="Graph.fx"
-						target="${project.target}"
-						compilerclasspath="${javafxc.class.path}">
-						<classpath refid="project.class.path"/>
-				</javafxc>
-		</target>
-		<target name="cgraph">
-				<javafxc 
-						srcdir="${project.srcdir}"
-						destdir="${project.builddir}" 
-						includes="CarneadesGraph.fx"
-						target="${project.target}"
-						compilerclasspath="${javafxc.class.path}">
-						<classpath refid="project.class.path"/>
-				</javafxc>
-		</target>
-		<target name="layout">
-				<javafxc 
-						srcdir="${project.srcdir}"
-						destdir="${project.builddir}" 
-						includes="Layout.fx"
-						target="${project.target}"
-						compilerclasspath="${javafxc.class.path}">
-						<classpath refid="project.class.path"/>
-				</javafxc>
-		</target>
-		<target name="treelayout">
-				<javafxc 
-						srcdir="${project.srcdir}"
-						destdir="${project.builddir}" 
-						includes="TreeLayout.fx"
-						target="${project.target}"
-						compilerclasspath="${javafxc.class.path}">
-						<classpath refid="project.class.path"/>
-				</javafxc>
-		</target>
-		<target name="frame">
-				<javafxc 
-						srcdir="${project.srcdir}"
-						destdir="${project.builddir}" 
-						includes="GraphFrame.fx"
-						target="${project.target}"
-						compilerclasspath="${javafxc.class.path}">
-						<classpath refid="project.class.path"/>
-				</javafxc>
-		</target>
-		<target name="edit">
-				<javafxc 
-						srcdir="${project.srcdir}"
-						destdir="${project.builddir}" 
-						includes="GraphEdit.fx"
-						target="${project.target}"
-						compilerclasspath="${javafxc.class.path}">
-						<classpath refid="project.class.path"/>
-				</javafxc>
-		</target>
-		<target name="list">
-				<javafxc 
-						srcdir="${project.srcdir}"
-						destdir="${project.builddir}" 
-						includes="GraphList.fx"
-						target="${project.target}"
-						compilerclasspath="${javafxc.class.path}">
-						<classpath refid="project.class.path"/>
-				</javafxc>
-		</target>
-		<target name="view">
-				<javafxc 
-						srcdir="${project.srcdir}"
-						destdir="${project.builddir}" 
-						includes="GraphView.fx"
-						target="${project.target}"
-						compilerclasspath="${javafxc.class.path}">
-						<classpath refid="project.class.path"/>
-				</javafxc>
-		</target>
-		<target name="elements">
-				<javafxc 
-						srcdir="${project.srcdir}"
-						destdir="${project.builddir}" 
-						includes="Elements.fx"
-						target="${project.target}"
-						compilerclasspath="${javafxc.class.path}">
-						<classpath refid="project.class.path"/>
-				</javafxc>
-		</target>
-		<target name="acontrol">
-				<javafxc 
-						srcdir="${project.srcdir}"
-						destdir="${project.builddir}" 
-						includes="AbstractControl.fx"
-						target="${project.target}"
-						compilerclasspath="${javafxc.class.path}">
-						<classpath refid="project.class.path"/>
-				</javafxc>
-		</target>
-		<target name="control">
-				<javafxc 
-						srcdir="${project.srcdir}"
-						destdir="${project.builddir}" 
-						includes="GraphControl.fx"
-						target="${project.target}"
-						compilerclasspath="${javafxc.class.path}">
-						<classpath refid="project.class.path"/>
-				</javafxc>
-		</target>
-		<target name="commands">
-				<javafxc 
-						srcdir="${project.srcdir}"
-						destdir="${project.builddir}" 
-						includes="Commands.fx"
-						target="${project.target}"
-						compilerclasspath="${javafxc.class.path}">
-						<classpath refid="project.class.path"/>
-				</javafxc>
-		</target>
-		<target name="file">
-				<javafxc 
-						srcdir="${project.srcdir}"
-						destdir="${project.builddir}" 
-						includes="ArgumentFile.fx"
-						target="${project.target}"
-						compilerclasspath="${javafxc.class.path}">
-						<classpath refid="project.class.path"/>
-				</javafxc>
-		</target>
-		<target name="main">
-				<javafxc 
-						srcdir="${project.srcdir}"
-						destdir="${project.builddir}" 
-						includes="CarneadesMain.fx"
-						target="${project.target}"
-						compilerclasspath="${javafxc.class.path}">
-						<classpath refid="project.class.path"/>
-				</javafxc>
-				<javafxc 
-						srcdir="${project.srcdir}"
-						destdir="${project.builddir}" 
-						includes="GraphSketch.fx"
-						target="${project.target}"
-						compilerclasspath="${javafxc.class.path}">
-						<classpath refid="project.class.path"/>
-				</javafxc>
-		</target>
-
-		<target name="compile">
-				<javafxc 
-						srcdir="${project.srcdir}"
-						destdir="${project.builddir}" 
-						includes="**/*.fx"
-						target="${project.target}"
-						compilerclasspath="${javafxc.class.path}">
-						<classpath refid="project.class.path"/>
-				</javafxc>
-		</target>
-
-		<target name="corejar" depends="">
-				<echo message="Packing jar ..." />
-				<jar destfile="build/CarneadesCore.jar"
-         		basedir="build"
-				includes="**/*.class"
-				manifest="manifests/coremanifest"
-				update="true"
-         		/>
-		</target>
-
-		<target name="jar" depends="corejar">
-				<one-jar destfile="deployment/lib/Carneades.jar" manifest="manifests/packmanifest">
-						<main jar="build/CarneadesCore.jar">
-            		</main>
-           				<lib>
-								<fileset dir="${javafxc.home}/lib/"
-								includes="javafxc.jar, javafxrt.jar, Scenario.jar, jmc.jar, javafxgui.jar, javafx-swing.jar"/>
-								<fileset dir="lib/"
-								includes="javafx-xml.jar"/>
-           				</lib>
-        		</one-jar> 
-		</target>
-
-		<target name="r" depends="jar">
-				<echo message="Executing ..." />
-				<java jar="deployment/lib/Carneades.jar" fork="true"/>
-		</target>
-
-		<target name="deploywin" depends="jar">
-				<echo message="Creating MS Windows package ..."/>
-
-				<delete dir="${project.distdir}/Carneades"/>
-				<delete file="${project.distdir}/carneades-win-${version}.zip"/>
-				<mkdir dir="${project.distdir}/Carneades"/>
-				<copy todir="${project.distdir}/Carneades">
-						<fileset dir="deployment/"
-								excludes="bin/deploymac.sh, bin/deploywin.sh"
-								/>
-				</copy>
-
-				<exec executable="sh" dir=".">
-					<arg value="deployment/bin/deploywin.sh"/>
-				</exec>
-				
-				<delete dir="${project.distdir}/Carneades"/>
-
-		</target>
-
-		<target name="webstart" depends="corejar">
-		  <delete dir="${project.distdir}/webstart"/>
-		  <mkdir dir="${project.distdir}/webstart"/>
-		  <mkdir dir="${project.distdir}/webstart/lib"/>
-		  <copy todir="${project.distdir}/webstart">
-			<fileset dir="${gui.deploydir}/webstart" includes="*/**"/>
-		  </copy>
-		  <copy file="build/CarneadesCore.jar" tofile="${project.distdir}/webstart/Carneades.jar"/>
-		  <copy todir="${project.distdir}/webstart/lib/">
-			<fileset dir="${javafxc.home}/lib/"
-					 includes="javafxc.jar, javafxrt.jar, Scenario.jar, jmc.jar, javafxgui.jar, javafx-swing.jar"/>
-			<fileset dir="lib/" includes="javafx-xml.jar"/>
-		  </copy>
-		  <signjar jar="${project.distdir}/webstart/Carneades.jar" alias="thomas.gordon" storepass="secret"/>
-		</target>
-
-		<target name="deploymac" depends="jar">
-				<echo message="Deploying Mac OS package ..."/>
+  <target name="deploymac" depends="jar">
+	<echo message="Deploying Mac OS package ..."/>
 	
-				<delete dir="${project.distdir}/Carneades"/>
-				<delete file="${project.distdir}/carneades-mac-${version}.zip"/>
-				<mkdir dir="${project.distdir}/Carneades"/>
-				<copy todir="${project.distdir}/Carneades">
-						<fileset dir="deployment/"
-								excludes="bin/Carneades.bat, lib/Carneades.jar, bin/deploymac.sh, bin/deploywin.sh"
-								/>
-				</copy>
-
-				<jarbundler dir="${project.distdir}/Carneades/bin"
-    		        name="Carneades"
-        		    mainclass="com.simontuffs.onejar.Boot" 
-					Jar="deployment/lib/Carneades.jar"
-					vmoptions=" -Xdock:name='Carneades'"/>
-
-			<exec executable="sh" dir=".">
-					<arg value="deployment/bin/deploymac.sh"/>
-			</exec>
-
-			<delete dir="${project.distdir}/Carneades"/>
-		</target>
-
-		<target name="examples">
-				<echo message="Updating example files ..."/>
-				<copy todir="deployment/examples">
-						<fileset dir="examples/"/>
-				</copy>
-		</target>
-
-		<target name="deploy" depends="examples, deploymac, deploywin"/>
-
-		<target name="full" depends="compile, deploy">
-		</target>
-
+	<delete dir="${gui.distdir}/Carneades"/>
+	<delete file="${gui.distdir}/carneades-mac-${version}.zip"/>
+	<mkdir dir="${gui.distdir}/Carneades"/>
+	<copy todir="${gui.distdir}/Carneades">
+	  <fileset dir="deployment/"
+			   excludes="${gui.basedir}bin/Carneades.bat, ${gui.basedir}lib/Carneades.jar, ${gui.basedir}bin/deploymac.sh, ${gui.basedir}bin/deploywin.sh"
+			   />
+	</copy>
+	
+	<jarbundler dir="${gui.distdir}/Carneades/bin"
+				name="Carneades"
+				mainclass="com.simontuffs.onejar.Boot" 
+				Jar="${gui.deploydir}/lib/Carneades.jar"
+				vmoptions=" -Xdock:name='Carneades'"/>
+	
+	<exec executable="sh" dir=".">
+	  <arg value="${gui.deploydir}/bin/deploymac.sh"/>
+	</exec>
+	
+	<delete dir="${gui.distdir}/Carneades"/>
+  </target>
+  
+  <target name="examples">
+	<echo message="Updating example files ..."/>
+	<copy todir="${gui.deploydir}/examples">
+	  <fileset dir="${gui.deploydir}/examples/"/>
+	</copy>
+  </target>
+  
+  <target name="deploy" depends="examples, deploymac, deploywin"/>
+  
+  <target name="full" depends="compile, deploy">
+  </target>
+  
 </project>
+	  
