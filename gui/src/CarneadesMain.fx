@@ -50,7 +50,7 @@ import Carneades.Control.*;
 
 var argumentGraph: ArgumentGraph = GraphControl.defaultGraph();
 
-//var argumentGraph = ArgumentFile.getGraphFromFile(new File("examples/Tweety.xml"));
+//var argumentGraph = ArgumentFile.getGraphFromFile(new File("examples/PiersonPost.xml"));
 
 // 2. DECLARE VIEW AND CONTROL COMPONENTS
 

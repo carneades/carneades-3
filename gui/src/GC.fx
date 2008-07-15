@@ -61,7 +61,7 @@ public class GC {
 	public static attribute edgeSelectionWidth = 5;
 	public static attribute selectedEdgeWidth = 2;
 
-	//public static attribute drawShadows: Boolean = false;
+	public static attribute drawShadows: Boolean = true;
 	public static attribute shadowColor: Color = Color.rgb(0, 0, 0, 0.7 );
 	public static attribute shadowBlurRadius: Integer = 4;
 	public static attribute xShadowShift: Integer = 4;
@@ -70,6 +70,7 @@ public class GC {
 	// General Vertex Constants
 	public static attribute scaleVerticesWithText = false;
 	public static attribute vertexDefaultWidth = 50;
+	public static attribute vertexDefaultHeight = 50;
 
 	// Statement Boxes
 	public static attribute numDisplayedChars = 15;
@@ -84,6 +85,10 @@ public class GC {
 	public static attribute statusStatedColor: Color = Color.WHITE;
 	public static attribute statusQuestionedColor: Color = Color.rgb(255, 251, 144);
 	public static attribute statusAcceptableColor: Color = Color.rgb(194, 255, 173);
+
+	public static attribute displayAcceptableCircles: Boolean = true;
+	public static attribute acceptableCircleWidth: Integer = 15;
+	public static attribute acceptableCirclePadding: Integer = 5;
 
 	// Argument Boxes
 	public static attribute argumentBoxDefaultWidth = 60;
@@ -100,7 +105,7 @@ public class GC {
 	// Layout constants
 	public static attribute xOffset = appWidth / 2;
 	public static attribute yOffset = 0;
-	public static attribute xDistance = 30;
+	public static attribute xDistance = bind acceptableCircleWidth + (2 * acceptableCirclePadding) + 10;
 	public static attribute yDistance = 50;
 
 	public static attribute drawNonArguedStatements = false;
@@ -127,7 +132,7 @@ public class GC {
 	public static attribute idsEditable: Boolean = false;
 
 	// Version administration constants
-	private static attribute version: String = "release";
+	private static attribute version: String = "debug";
 	public static attribute release: Boolean = bind version == "release";
 	public static attribute debug: Boolean = bind version == "debug";
 

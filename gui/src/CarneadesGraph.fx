@@ -20,6 +20,7 @@ package Carneades.Graph;
 // General imports
 import javafx.ext.swing.*;
 import javafx.scene.*;
+import java.lang.System;
 
 // import the rest of the graph package
 import Carneades.Graph.Elements.Elements.*;
@@ -46,12 +47,13 @@ public class CarneadesGraph extends Graph {
 
 	// CONVERSION FUNCTIONS
 
-public function update(): Void {
+	public function update(): Void {
 
 		// This function is there because whenever something other than the cardinality of the
 		// argument and statement sequences of the model change, no event gets thrown back that
 		// triggers the binding reset which is necessary to trigger the new graph to be forwarded
 		// to the layout object.
+		if(GC.debug) { System.out.println("CarneadesGraph.update()"); }
 		root.children = [];
 		vertices = [root, toVertices(argumentGraph.statements, argumentGraph.arguments)];
 		edges = toEdges(argumentGraph.statements, argumentGraph.arguments);

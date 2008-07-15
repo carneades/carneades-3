@@ -188,6 +188,7 @@ public class GraphControl {
     	keyFrames:  KeyFrame {
        		time: 0.01s
        		action: function() {
+				if (GC.debug) { System.out.println("Control.update.start()"); }
 
 				// 1. Rendering update
 				graph.update();
@@ -242,7 +243,7 @@ public class GraphControl {
 		if (sizeof getSelectedModel() == 0) {
 			frame.list.reset();
 		}
-
+		
 		// rescale canvas
 		if (layout.width != view.width) {
 			view.width = layout.width as Integer;

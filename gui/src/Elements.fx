@@ -56,6 +56,8 @@ public abstract class ArgumentElement extends Vertex {
 					height: bind height + 10
 					stroke: bind {if (control.dragging) GC.dragColor else GC.selectionColor};
 					strokeWidth: 2
+					// todo: the line below causes the Pierson v Post example to crash performance.
+					// This must be a runtime issue.
 					visible: bind selected
 				} // selection rect
 	
@@ -85,12 +87,17 @@ private attribute backCircle: Circle = Circle {
 		radius: bind GC.argumentCircleDefaultRadius
 
 		fill: bind Color.WHITE
-		effect: DropShadow {
-						color: bind GC.shadowColor
-						offsetX: bind GC.xShadowShift
-						offsetY: bind GC.yShadowShift
-						radius: bind GC.shadowBlurRadius
-					}
+	   
+	   	effect: { 
+			if (GC.drawShadows) {
+				DropShadow {
+					color: bind GC.shadowColor
+					offsetX: bind GC.xShadowShift
+					offsetY: bind GC.yShadowShift
+					radius: bind GC.shadowBlurRadius
+				}
+			} else null
+		}
 	}
 
 	private attribute mainCircle: Circle = Circle {
@@ -148,9 +155,9 @@ private attribute backCircle: Circle = Circle {
 	public function create():Node {
 		Group {
 			content: [
-				backCircle
-				, mainCircle
-				, selection,
+				backCircle, 
+				mainCircle, 
+				selection,
 				middlePoint
 			] // content
 		} // Group
@@ -183,11 +190,15 @@ public class StatementBox extends ArgumentElement {
 					stroke: bind { if (GC.fillStatements) Color.BLACK else statusColor }
 					strokeWidth: 1
 
-					effect: DropShadow {
-						color: bind GC.shadowColor
-						offsetX: bind GC.xShadowShift
-						offsetY: bind GC.yShadowShift
-						radius: bind GC.shadowBlurRadius
+					effect: { 
+						if (GC.drawShadows) {
+							DropShadow {
+								color: bind GC.shadowColor
+								offsetX: bind GC.xShadowShift
+								offsetY: bind GC.yShadowShift
+								radius: bind GC.shadowBlurRadius
+							}
+						} else null
 					}
 				
 					onMouseClicked: function(e: MouseEvent) {
@@ -217,17 +228,53 @@ public class StatementBox extends ArgumentElement {
 					}	
 				} // main rect
 
-	/*attribute acceptableCircle: Circle = Circle {
-		centerX: bind x 
-		centerY:
-	}*/
+	private attribute acceptableCircle: Circle = Circle {
+		centerX: bind x + (this.width / 2) + GC.acceptableCirclePadding + (GC.acceptableCircleWidth / 2)
+		centerY: bind y - (GC.acceptableCirclePadding / 2) - (GC.acceptableCircleWidth / 2)
+		radius: bind (GC.acceptableCircleWidth / 2)
+		fill: bind { if (statement.ok) GC.statusAcceptedColor else null }
+		strokeWidth: 1
+		stroke: Color.BLACK
+
+		effect: { 
+			if (GC.drawShadows) {
+				DropShadow {
+					color: bind GC.shadowColor
+					offsetX: bind GC.xShadowShift
+					offsetY: bind GC.yShadowShift
+					radius: bind GC.shadowBlurRadius
+				}
+			} else null
+		}
+	}
+
+	private attribute acceptableCompCircle: Circle = Circle {
+		centerX: bind x + (this.width / 2) + GC.acceptableCirclePadding + (GC.acceptableCircleWidth / 2)
+		centerY: bind y + (GC.acceptableCirclePadding / 2) + (GC.acceptableCircleWidth / 2)
+		radius: bind (GC.acceptableCircleWidth / 2)
+		fill: bind { if (statement.complementOk) GC.statusRejectedColor else null }
+		strokeWidth: 1
+		stroke: Color.BLACK
+		effect: { 
+				if (GC.drawShadows) {
+					DropShadow {
+					color: bind GC.shadowColor
+					offsetX: bind GC.xShadowShift
+					offsetY: bind GC.yShadowShift
+					radius: bind GC.shadowBlurRadius
+				}
+			} else null
+		}
+	}
 
 	public function create():Node {
 		Group {
 			content: [
-				mainRect
-				, selection
-				, text,
+				mainRect,
+			    selection,
+				text,
+				acceptableCircle,
+				acceptableCompCircle,
 				middlePoint
 			] // content
 		} // Group
@@ -269,13 +316,11 @@ public class ArgumentLink extends Arrow {
 }
 
 public class ConArgumentLink extends ArgumentLink {
-	//override attribute xHeadShift = bind headSize / 2;
 	override attribute yHeadShift = bind headSize / 3;
 	override attribute fill = Color.WHITE
 }
 
 public class ProArgumentLink extends ArgumentLink {
-	//override attribute xHeadShift = bind headSize / 2;
 	override attribute yHeadShift = bind headSize / 3;
 	override attribute fill = Color.BLACK
 }
@@ -290,8 +335,6 @@ public class PremiseLink extends Edge {
 	public attribute negated: Boolean = false;
 	override attribute turnHead = bind negated;
 	
-	//override attribute yHeadShift = bind radius;
-
 	attribute negation: Line = Line {
 					startX: bind x2 - Math.max(yHeadShift * 2, negWidth)
 					startY: bind y2 - (negWidth / 2) 
