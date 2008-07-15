@@ -6,11 +6,12 @@
   <property name="gui.target" value="1.5"/>
   <property name="gui.srcdir" value="gui/src"/>
   <property name="gui.basedir" value="gui/"/>
+  <property name="distdir" value="dist"/>
   <property name="gui.distdir" value="dist"/>
   <property name="gui.deploydir" value="deployment"/>
   <property name="gui.manifestdir" value="gui/manifests"/>
   <property name="gui.builddir" value="gui/build"/>
-  <property name="gui.version" value="0.0.6"/>
+  <property name="gui.version" value="0.0.7"/>
   
   <property name="javafxc.home" value="${env.JAVAFXHOME}"/>
   <property name="javafxc.class.path" 
@@ -86,6 +87,7 @@
 	</copy>
 	<exec executable="sh" dir=".">
 	  <arg value="${gui.deploydir}/bin/deploywin.sh"/>
+	  <arg value="${gui.version}"/>
 	</exec>
 	<delete dir="${gui.distdir}/Carneades"/>	
   </target>
@@ -120,8 +122,7 @@
 	<mkdir dir="${gui.distdir}/Carneades"/>
 	<copy todir="${gui.distdir}/Carneades">
 	  <fileset dir="deployment/"
-			   excludes="${gui.basedir}bin/Carneades.bat, ${gui.basedir}lib/Carneades.jar, ${gui.basedir}bin/deploymac.sh, ${gui.basedir}bin/deploywin.sh"
-			   />
+			   excludes="${gui.basedir}bin/Carneades.bat, ${gui.basedir}lib/Carneades.jar, ${gui.basedir}bin/deploymac.sh, ${gui.basedir}bin/deploywin.sh"/>
 	</copy>
 	
 	<jarbundler dir="${gui.distdir}/Carneades/bin"
@@ -132,6 +133,7 @@
 	
 	<exec executable="sh" dir=".">
 	  <arg value="${gui.deploydir}/bin/deploymac.sh"/>
+	  <arg value="${gui.version}"/>
 	</exec>
 	
 	<delete dir="${gui.distdir}/Carneades"/>
@@ -143,8 +145,13 @@
 	  <fileset dir="${gui.deploydir}/examples/"/>
 	</copy>
   </target>
+
+  <target name="sources">
+	<delete file="${distdir}/carneades-src-${gui.version}.jar"/>
+	<jar destfile="${distdir}/carneades-src-${gui.version}.jar" basedir="." excludes="**/*.class, **/Carneades.jar, **/CarneadesCore.jar, **/dist/**"/>
+  </target>
   
-  <target name="deploy" depends="examples, deploymac, deploywin"/>
+  <target name="deploy" depends="examples, deploymac, deploywin, sources"/>
   
   <target name="full" depends="compile, deploy">
   </target>
