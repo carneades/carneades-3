@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project default ="webstart">
+  
+  <!-- PASSWORD FOR KEY FILE -->
+  <property name="gui.storepass" value="PASSWORD"/>
+
+  <property environment="env"/>
+  <property name="project.target" value="1.5"/>
+  <property name="project.srcdir" value="src"/>
+  <property name="project.distdir" value="dist"/>
+  <property name="gui.deploydir" value="deployment"/>
+  <property name="project.builddir" value="build"/>
+  <property name="version" value="0.0.6"/>
+  
+  <property name="javafxc.home" value="${env.JAVAFXHOME}"/>
+  <property name="javafxc.class.path" 
+			value="${javafxc.home}/lib/javafxc.jar:${javafxc.home}/lib/javafxrt.jar:${javafxc.home}/lib/Scenario.jar"/>
+  <taskdef resource="javafxc-ant-task.properties" classpath="${javafxc.class.path}"/>
+  
+  <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" 
+		   classpath="lib/jarbundler-2.0.0.jar" onerror="report"/>
+  
+  <import file="./lib/one-jar-ant-task.xml"/> 
+  
+  <path id="project.class.path">
+	<pathelement location="lib/javafx-xml.jar"/>
+	<pathelement location="${javafxc.home}/lib/javafxgui.jar"/>
+	<pathelement location="${javafxc.home}/lib/javafx-swing.jar"/>
+	<pathelement location="${javafxc.home}/lib/javafxrt.jar"/>
+	<pathelement location="${javafxc.home}/lib/javafxc.jar"/>
+	<pathelement location="${javafxc.home}/lib/jmc.jar"/>
+	<pathelement location="${javafxc.home}/lib/Scenario.jar"/>
+  </path>
+  
+  <target name="corejar" depends="">
+	<echo message="Packing jar ..." />
+	<jar destfile="build/CarneadesCore.jar"
+		 basedir="build"
+		 includes="**/*.class"
+		 manifest="manifests/coremanifest"
+		 update="true"
+		 />
+  </target>
+  
+  <target name="jar" depends="corejar">
+	<one-jar destfile="deployment/lib/Carneades.jar" manifest="manifests/packmanifest">
+	  <main jar="build/CarneadesCore.jar">
+	  </main>
+	  <lib>
+		<fileset dir="${javafxc.home}/lib/"
+				 includes="javafxc.jar, javafxrt.jar, Scenario.jar, jmc.jar, javafxgui.jar, javafx-swing.jar"/>
+		<fileset dir="lib/"
+				 includes="javafx-xml.jar"/>
+	  </lib>
+	</one-jar> 
+  </target>
+  
+  <target name="webstart" depends="corejar">
+	<delete dir="${project.distdir}/webstart"/>
+	<mkdir dir="${project.distdir}/webstart"/>
+	<mkdir dir="${project.distdir}/webstart/lib"/>
+	<copy todir="${project.distdir}/webstart">
+	  <fileset dir="${gui.deploydir}/webstart" includes="*/**"/>
+	</copy>
+	<copy file="build/CarneadesCore.jar" tofile="${project.distdir}/webstart/Carneades.jar"/>
+	<copy todir="${project.distdir}/webstart/lib/">
+	  <fileset dir="${javafxc.home}/lib/"
+			   includes="javafxc.jar, javafxrt.jar, Scenario.jar, jmc.jar, javafxgui.jar, javafx-swing.jar"/>
+	  <fileset dir="lib/" includes="javafx-xml.jar"/>
+	</copy>
+	<signjar jar="${project.distdir}/webstart/Carneades.jar" alias="thomas.gordon" storepass="${gui.storepass}"/>
+  </target>
+  
+</project>
