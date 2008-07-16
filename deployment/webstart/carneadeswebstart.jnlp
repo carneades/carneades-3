@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.5+"
+      codebase="http://carneades.plainreasoning.com/webstart/"
+      href="carneadeswebstart.jnlp">
+   
+    <information>
+    <title>Carneades Web Start</title>
+        <vendor>T.F. Gordon, M. Grabmair</vendor>
+        <homepage href="http://carneades.plainreasoning.com/webstart/"/>
+        <DESCRIPTION>Carneades GUI</description>
+        <offline-allowed/>
+    </information>
+    
+    <security> 
+	<all-permissions/>   
+    </security> 
+
+    <resources>
+        <j2se version="1.5+" href="http://java.sun.com/products/autodl/j2se">
+        </j2se>
+
+        <jar href="Carneades.jar" main="true"/>          
+        <jar href="lib/javafxc.jar" main="false"/>          
+        <jar href="lib/javafxrt.jar" main="false"/>          
+        <jar href="lib/javafx-swing.jar" main="false"/>          
+        <jar href="lib/javafxgui.jar" main="false"/>          
+        <jar href="lib/javafx-xml.jar" main="false"/>          
+        <jar href="lib/Scenario.jar" main="false"/>          
+    </resources>
+    
+    <application-desc main-class="Carneades.Control.CarneadesMain">
+    </application-desc>
+</jnlp>
