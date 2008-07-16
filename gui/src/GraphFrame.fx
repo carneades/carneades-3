@@ -215,6 +215,7 @@ public class GraphFrame extends SwingFrame {
 										saveAs();	
 									} else if (choice == JOptionPane.NO_OPTION) {
 										control.newGraph();
+									}
 								} else {
 									control.newGraph();
 								}
@@ -237,7 +238,7 @@ public class GraphFrame extends SwingFrame {
 										if (returnval == JFileChooser.APPROVE_OPTION) {
 											control.loadGraphFromFile(chooser.getSelectedFile());
 										}
-										}*/
+									}
 								} else {
 									var returnval = chooser.showOpenDialog(null);
 									if (returnval == JFileChooser.APPROVE_OPTION) {
