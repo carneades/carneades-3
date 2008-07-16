@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<lkif>
+  <argument-graph id="NewGraph">
+    <issues>
+      <issue assumption="true" standard="BA" statement="s1" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="s2" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="s3" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="s4" value="true"/>
+      <issue assumption="true" standard="BA" statement="s5" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="s6" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="s7" value="true"/>
+      <issue assumption="true" standard="BA" statement="s8" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="s9" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="s10" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="s11" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="s12" value="unknown"/>
+    </issues>
+    <statements>
+      <s id="s1">murder</s>
+      <s id="s2">killing</s>
+      <s id="s3">malice</s>
+      <s id="s4">Section 187 of the Criminal Code</s>
+      <s id="s5">Section 187 is excluded.</s>
+      <s id="s6">self defense</s>
+      <s id="s7">Section 197 of the Criminal Code</s>
+      <s id="s8">Section 197 is excluded.</s>
+      <s id="s9">W1's testimony</s>
+      <s id="s10">W1 is not credible.</s>
+      <s id="s11">W2's testimony</s>
+      <s id="s12">W2 is not credible.</s>
+    </statements>
+    <arguments>
+      <argument direction="pro" id="a1" scheme="" weight="50.0">
+        <conclusion statement="s1"/>
+        <premises>
+          <premise exception="false" polarity="positive" role="" statement="s2"/>
+          <premise exception="false" polarity="positive" role="" statement="s3"/>
+          <premise exception="false" polarity="positive" role="" statement="s4"/>
+          <premise exception="true" polarity="positive" role="" statement="s5"/>
+        </premises>
+      </argument>
+      <argument direction="pro" id="a2" scheme="" weight="50.0">
+        <conclusion statement="s5"/>
+        <premises>
+          <premise exception="false" polarity="positive" role="" statement="s6"/>
+          <premise exception="false" polarity="positive" role="" statement="s7"/>
+          <premise exception="true" polarity="positive" role="" statement="s8"/>
+        </premises>
+      </argument>
+      <argument direction="pro" id="a3" scheme="" weight="50.0">
+        <conclusion statement="s6"/>
+        <premises>
+          <premise exception="false" polarity="positive" role="" statement="s9"/>
+          <premise exception="true" polarity="positive" role="" statement="s10"/>
+        </premises>
+      </argument>
+      <argument direction="con" id="a4" scheme="" weight="50.0">
+        <conclusion statement="s6"/>
+        <premises>
+          <premise exception="false" polarity="positive" role="" statement="s11"/>
+          <premise exception="true" polarity="positive" role="" statement="s12"/>
+        </premises>
+      </argument>
+    </arguments>
+  </argument-graph>
+</lkif>
