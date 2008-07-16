@@ -72,14 +72,14 @@ public class GraphFrame extends SwingFrame {
 		visible: true
 		control: bind control
 		argumentGraph: bind argumentGraph
-		preferredSize: bind [GC.editWidth, (this.height / 2)]
+		preferredSize: bind [GC.editWidth, (this.height / 2) + 45]
 	}
 
 	public attribute list: GraphList = GraphList {
 		visible: true
 		control: bind control
 		argumentGraph: bind argumentGraph
-		preferredSize: bind [GC.editWidth, (this.height /3)]
+		preferredSize: bind [GC.editWidth, (this.height /3) - 20]
 	}
 
 
