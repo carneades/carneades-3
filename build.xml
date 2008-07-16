@@ -36,7 +36,8 @@
 	<pathelement location="${javafxc.home}/lib/javafxrt.jar"/>
 	<pathelement location="${javafxc.home}/lib/javafxc.jar"/>
 	<pathelement location="${javafxc.home}/lib/jmc.jar"/>
-	<pathelement location="${javafxc.home}/lib/Scenario.jar"/>
+	<Pathelement location="${javafxc.home}/lib/Scenario.jar"/>
+	<pathelement location="${gui.basedir}/lib/nimbus.jar"/>
   </path>
   
   <!-- single build targets for individual files -->
@@ -57,6 +58,17 @@
 		srcdir="${gui.srcdir}"
 		destdir="${gui.builddir}" 
 		includes="GC.fx"
+		target="${gui.target}"
+		compilerclasspath="${javafxc.class.path}">
+	  <classpath refid="gui.class.path"/>
+	</javafxc>
+  </target>
+
+  <target name="main">
+	<javafxc 
+		srcdir="${gui.srcdir}"
+		destdir="${gui.builddir}" 
+		includes="CarneadesMain.fx"
 		target="${gui.target}"
 		compilerclasspath="${javafxc.class.path}">
 	  <classpath refid="gui.class.path"/>
@@ -115,7 +127,7 @@
 		<fileset dir="${javafxc.home}/lib/"
 				 includes="javafxc.jar, javafxrt.jar, Scenario.jar, jmc.jar, javafxgui.jar, javafx-swing.jar"/>
 		<fileset dir="${gui.basedir}/lib/"
-				 includes="javafx-xml.jar"/>
+				 includes="javafx-xml.jar, nimbus.jar"/>
 	  </lib>
 	</one-jar> 
   </target>
@@ -147,7 +159,7 @@
 						 jmc.jar, 
 						 javafxgui.jar, 
 						 javafx-swing.jar"/>
-	  <fileset dir="${gui.basedir}/lib/" includes="javafx-xml.jar"/>
+	  <fileset dir="${gui.basedir}/lib/" includes="javafx-xml.jar, nimbus.jar"/>
 	</copy>
 	<signjar alias="${webstart.alias}" storepass="${webstart.storepass}">
 	  <fileset dir="${distdir}/webstart/">

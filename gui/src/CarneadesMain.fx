@@ -23,6 +23,8 @@ import java.lang.System;
 import javafx.ext.swing.*;
 import javafx.scene.paint.*;
 import java.io.File;
+import javax.swing.UIManager;
+import com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel;
 
 // View Imports
 import Carneades.*;
@@ -47,6 +49,7 @@ import Carneades.Control.*;
 
 //var argumentGraph: ArgumentGraph = ArgumentFile.getGraphFromFile("data/test2.xml");
 
+UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
 
 var argumentGraph: ArgumentGraph = GraphControl.defaultGraph();
 
