@@ -77,13 +77,13 @@ public class Statement {
 	// and track changes to its value.
 	public attribute ok: Boolean = false 
 		on replace {
-			for (arg in arguments) arg.update(); // propogate changes
+			updateArgs(); // propogate changes
 		}
 		
 	// read-only
 	public attribute complementOk: Boolean = true 
 		on replace {
-			for (arg in arguments) arg.update();
+			updateArgs();
 		}
 	
 	public function acceptable () : Boolean { 
@@ -98,13 +98,15 @@ public class Statement {
 		var con = graph.arguments[arg | arg.conclusion == this and not arg.pro];
 		standard.satisfied(graph,con,pro);
 	}
-	
+
     private function update () : Void {
-    	ok = value == "true" or
-    	     (value == "unknown" and acceptable());
-    	complementOk = value == "false" or
-			(value == "unknown" and complementAcceptable());
-    	// System.out.println("{id} is { if (ok) "ok" else "not ok" }");
+    	ok = acceptable();
+    	complementOk = complementAcceptable();
+    	updateArgs();
+    }
+    
+    private function updateArgs () : Void {
+    	for (arg in arguments) arg.update();
     }
     
 	public function stated () : Boolean {
@@ -206,17 +208,20 @@ public class Premise {
 		};
 		
 	public function holds (): Boolean {
-		if (not exception)     // ordinary premise
-			if (not negative)  // positive premise
-				statement.ok
-			else               // negative premise
-				statement.complementOk
-		else
-			// exception
+		var statementOk = statement.value == "true" or
+    	                  statement.ok;
+    	var complementOk = statement.value == "false" or
+			               statement.complementOk;
+		if (not exception)    
+			if (not negative)  // positive ordinary premise
+				statementOk
+			else               // negative ordinary premise
+				complementOk
+		else                   
 			if (not negative)  // positive exception
-				not statement.ok
+				not statementOk
 			else               // negative exception
-				not statement.complementOk
+				not complementOk
 	}
 }
 
