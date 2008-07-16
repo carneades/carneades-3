@@ -66,7 +66,7 @@
  ;   in the ISO/IEC 10646 character set, for example one not directly
  ;   accessible from available input devices.]"
  
- (define (ucscode->char code)
+ #;(define (ucscode->char code)
    (cond-expand
     (bigloo
      (ucs2->char (integer->ucs2 code)))
@@ -74,6 +74,8 @@
      (ascii->char code))
     (else
      (integer->char code))))
+ 
+ (define ucscode->char integer->char)
  
  ; Commonly used control characters
  
