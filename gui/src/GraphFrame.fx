@@ -205,7 +205,6 @@ public class GraphFrame extends SwingFrame {
 							text: "New"
 							action: function() {
 								if (control.fileChanged) {
-									/*
 									var choice = JOptionPane.showOptionDialog(
 										null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?", 
 										JOptionPane.YES_NO_CANCEL_OPTION, 
@@ -216,7 +215,6 @@ public class GraphFrame extends SwingFrame {
 										saveAs();	
 									} else if (choice == JOptionPane.NO_OPTION) {
 										control.newGraph();
-									}*/
 								} else {
 									control.newGraph();
 								}
@@ -226,7 +224,6 @@ public class GraphFrame extends SwingFrame {
 							text: "Open"
 							action: function() {
 								if (control.fileChanged) {
-									/*
 									var choice = JOptionPane.showOptionDialog(
 										null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?", 
 										JOptionPane.YES_NO_CANCEL_OPTION, 
@@ -242,12 +239,10 @@ public class GraphFrame extends SwingFrame {
 										}
 										}*/
 								} else {
-									/*
 									var returnval = chooser.showOpenDialog(null);
 									if (returnval == JFileChooser.APPROVE_OPTION) {
 										control.loadGraphFromFile(chooser.getSelectedFile());
 									}
-									*/
 								}
 							}
 						}
@@ -352,7 +347,6 @@ public class GraphFrame extends SwingFrame {
 	]; // override default
 
 	private function quit(): Void {
-		/*
 		if (control.fileChanged) {
 			var choice = JOptionPane.showOptionDialog(
 				null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?", 
@@ -368,7 +362,6 @@ public class GraphFrame extends SwingFrame {
 			} else {
 			System.exit(0);
 		}
-		*/
 	}
 
 	private function save(): Void {
@@ -381,7 +374,6 @@ public class GraphFrame extends SwingFrame {
 	} // function
 
 	private function saveAs(): Void {
-		/*
 		var returnval = chooser.showSaveDialog(null);
 		if (returnval == JFileChooser.APPROVE_OPTION) {
 			var file: File = chooser.getSelectedFile();
@@ -394,8 +386,7 @@ public class GraphFrame extends SwingFrame {
 					);
 				if (overwrite == JOptionPane.OK_OPTION) { control.saveAsGraphToFile(file); }
 			} else { control.saveAsGraphToFile(file); }
-		}
-		*/		
+		}		
 	}
 
 }
