@@ -94,9 +94,8 @@ public class GC {
 	public static attribute argumentBoxDefaultWidth = 60;
 	public static attribute argumentBoxBottomBrink = 3;
 	public static attribute argumentCircleDefaultRadius = 15;
-	public static attribute defensibleStrengthColorRed: Number = 41;
-	public static attribute defensibleStrengthColorGreen: Number = 206;
-	public static attribute defensibleStrengthColorBlue: Number = 51;
+	public static attribute argumentConColor = Color.rgb(255, 0, 0);
+	public static attribute argumentProColor = Color.rgb(43, 163, 0);
 
 	// Application constants
 	public static attribute appWidth = 1000;
@@ -132,9 +131,7 @@ public class GC {
 	public static attribute idsEditable: Boolean = false;
 
 	// Version administration constants
-	private static attribute version: String = "debug";
-	public static attribute release: Boolean = bind version == "release";
-	public static attribute debug: Boolean = bind version == "debug";
+	public static attribute debug: Boolean = true;
 
 	// helper functions
 	public static function p(s: String) { System.out.println(s)}

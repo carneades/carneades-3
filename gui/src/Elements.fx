@@ -80,15 +80,30 @@ public class ArgumentBox extends ArgumentElement {
 	override attribute fill = bind {if (argument.ok) Color.LIGHTGREY else Color.WHITE};
 	override attribute bottomBrink = GC.argumentBoxBottomBrink;
 
+	override attribute text = Text {
+					content: "+20"
+					verticalAlignment: VerticalAlignment.TOP
+					horizontalAlignment: HorizontalAlignment.CENTER
+					x: bind x
+					y: bind y
+				} // Text
 
-private attribute backCircle: Circle = Circle {
+	private attribute mainCircle: Circle = Circle {
 		centerX: bind x
 		centerY: bind y
 		radius: bind GC.argumentCircleDefaultRadius
 
-		fill: bind Color.WHITE
-	   
-	   	effect: { 
+		fill: bind {
+			if (not argument.ok) Color.WHITE
+			else {
+				if (argument.pro) GC.argumentConColor else GC.argumentProColor
+			}
+		};
+		
+		stroke: Color.BLACK
+		blocksMouse: true
+
+		effect: { 
 			if (GC.drawShadows) {
 				DropShadow {
 					color: bind GC.shadowColor
@@ -98,22 +113,6 @@ private attribute backCircle: Circle = Circle {
 				}
 			} else null
 		}
-	}
-
-	private attribute mainCircle: Circle = Circle {
-		centerX: bind x
-		centerY: bind y
-		radius: bind GC.argumentCircleDefaultRadius
-
-		fill: bind {
-			if (not argument.ok) Color.WHITE
-			else Color.rgb(	GC.defensibleStrengthColorRed, 
-							GC.defensibleStrengthColorGreen, 
-							GC.defensibleStrengthColorBlue, argument.weight/100)
-		};
-		
-		stroke: Color.BLACK
-		blocksMouse: true
 
 		onMouseClicked: function(e: MouseEvent) {
 			control.unSelectAll();
@@ -155,9 +154,9 @@ private attribute backCircle: Circle = Circle {
 	public function create():Node {
 		Group {
 			content: [
-				backCircle, 
 				mainCircle, 
 				selection,
+				text,
 				middlePoint
 			] // content
 		} // Group
@@ -177,6 +176,7 @@ public class StatementBox extends ArgumentElement {
 		else if (status == "assumed true") GC.statusAssumedTrueColor
 		else if (status == "assumed false") GC.statusAssumedFalseColor
 		else if (status == "rejected") GC.statusRejectedColor
+		else if (status == "accepted") GC.statusAcceptedColor
 		else /*if (status == "questioned")*/ GC.statusQuestionedColor
 	}
 

@@ -15,7 +15,9 @@
   
   <property name="javafxc.home" value="${env.JAVAFXHOME}"/>
   <property name="javafxc.class.path" 
-			value="${javafxc.home}/lib/javafxc.jar:${javafxc.home}/lib/javafxrt.jar:${javafxc.home}/lib/Scenario.jar"/>
+			value="${javafxc.home}/lib/javafxc.jar:
+				   ${javafxc.home}/lib/javafxrt.jar:
+				   ${javafxc.home}/lib/Scenario.jar"/>
   <taskdef resource="javafxc-ant-task.properties" classpath="${javafxc.class.path}"/>
   
   <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" 
@@ -37,6 +39,32 @@
 	<pathelement location="${javafxc.home}/lib/Scenario.jar"/>
   </path>
   
+  <!-- single build targets for individual files -->
+
+  <target name="elements">
+	<javafxc 
+		srcdir="${gui.srcdir}"
+		destdir="${gui.builddir}" 
+		includes="Elements.fx"
+		target="${gui.target}"
+		compilerclasspath="${javafxc.class.path}">
+	  <classpath refid="gui.class.path"/>
+	</javafxc>
+  </target>
+
+  <target name="constants">
+	<javafxc 
+		srcdir="${gui.srcdir}"
+		destdir="${gui.builddir}" 
+		includes="GC.fx"
+		target="${gui.target}"
+		compilerclasspath="${javafxc.class.path}">
+	  <classpath refid="gui.class.path"/>
+	</javafxc>
+  </target>
+
+  <!-- targets affecting the full build -->
+
   <target name="compile">
 	<javafxc 
 		srcdir="${gui.srcdir}"
@@ -54,8 +82,7 @@
 		 basedir="${gui.builddir}"
 		 includes="**/*.class"
 		 manifest="${gui.manifestdir}/coremanifest"
-		 update="true"
-		 />
+		 update="true"/>
   </target>
   
   <target name="jar" depends="corejar">
@@ -76,21 +103,7 @@
 	<java jar="${gui.deploydir}/lib/Carneades.jar" fork="true"/>
   </target>
   
-  <target name="deploywin" depends="jar">
-	<echo message="Creating MS Windows package ..."/>
-	<delete dir="${gui.distdir}/Carneades"/>
-	<delete file="${gui.distdir}/carneades-win-${version}.zip"/>
-	<mkdir dir="${gui.distdir}/Carneades"/>
-	<copy todir="${gui.distdir}/Carneades">
-	  <fileset dir="${gui.deploydir}/"
-			   excludes="bin/deploymac.sh, bin/deploywin.sh, **/webstart/**"/>
-	</copy>
-	<exec executable="sh" dir=".">
-	  <arg value="${gui.deploydir}/bin/deploywin.sh"/>
-	  <arg value="${gui.version}"/>
-	</exec>
-	<delete dir="${gui.distdir}/Carneades"/>	
-  </target>
+  <!-- webstart deployment target -->
   
   <target name="webstart.fail" unless="webstartfile.loaded">
 	<echo message="File webstart.xml not found. Modify the template and rename it."/>
@@ -106,7 +119,12 @@
 	<copy file="${gui.builddir}/CarneadesCore.jar" tofile="${gui.distdir}/webstart/Carneades.jar"/>
 	<copy todir="${gui.distdir}/webstart/lib/">
 	  <fileset dir="${javafxc.home}/lib/"
-			   includes="javafxc.jar, javafxrt.jar, Scenario.jar, jmc.jar, javafxgui.jar, javafx-swing.jar"/>
+			   includes="javafxc.jar, 
+						 javafxrt.jar, 
+						 Scenario.jar, 
+						 jmc.jar, 
+						 javafxgui.jar, 
+						 javafx-swing.jar"/>
 	  <fileset dir="${gui.basedir}/lib/" includes="javafx-xml.jar"/>
 	</copy>
 	<signjar alias="${webstart.alias}" storepass="${webstart.storepass}">
@@ -118,31 +136,53 @@
 
   <target name="webstart" depends="webstart.run, webstart.fail"/>
 
+  <!-- platform distribution build targets -->
+
+  <target name="deploywin" depends="jar">
+	<echo message="Creating MS Windows package ..."/>
+	<delete dir="${gui.distdir}/Carneades"/>
+	<delete file="${gui.distdir}/carneades-win-${version}.zip"/>
+	<mkdir dir="${gui.distdir}/Carneades"/>
+	<copy todir="${gui.distdir}/Carneades">
+	  <fileset dir="${gui.deploydir}/"
+			   excludes="bin/deploymac.sh,
+						 bin/deploywin.sh, 
+						 **/webstart/**"/>
+	</copy>
+	<exec executable="sh" dir=".">
+	  <arg value="${gui.deploydir}/bin/deploywin.sh"/>
+	  <arg value="${gui.version}"/>
+	</exec>
+	<delete dir="${gui.distdir}/Carneades"/>	
+  </target>
+
   <target name="deploymac" depends="jar">
 	<echo message="Deploying Mac OS package ..."/>
-	
 	<delete dir="${gui.distdir}/Carneades"/>
 	<delete file="${gui.distdir}/carneades-mac-${version}.zip"/>
 	<mkdir dir="${gui.distdir}/Carneades"/>
 	<copy todir="${gui.distdir}/Carneades">
 	  <fileset dir="${gui.deploydir}/"
-			   excludes="${gui.basedir}bin/Carneades.bat, ${gui.basedir}lib/Carneades.jar, ${gui.basedir}bin/deploymac.sh, ${gui.basedir}bin/deploywin.sh, **/webstart/**"/>
+			   excludes="${gui.basedir}bin/Carneades.bat, 
+						 ${gui.basedir}lib/Carneades.jar, 
+						 ${gui.basedir}bin/deploymac.sh, 
+						 ${gui.basedir}bin/deploywin.sh, 
+						 **/webstart/**"/>
 	</copy>
-	
 	<jarbundler dir="${gui.distdir}/Carneades/bin"
 				name="Carneades"
 				mainclass="com.simontuffs.onejar.Boot" 
 				Jar="${gui.deploydir}/lib/Carneades.jar"
 				vmoptions=" -Xdock:name='Carneades'"/>
-	
 	<exec executable="sh" dir=".">
 	  <arg value="${gui.deploydir}/bin/deploymac.sh"/>
 	  <arg value="${gui.version}"/>
 	</exec>
-	
 	<delete dir="${gui.distdir}/Carneades"/>
   </target>
   
+  <!-- additional targets -->
+
   <target name="examples">
 	<echo message="Updating example files ..."/>
 	<copy todir="${gui.deploydir}/examples">
@@ -152,7 +192,9 @@
 
   <target name="sources">
 	<delete file="${distdir}/carneades-src-${gui.version}.jar"/>
-	<jar destfile="${distdir}/carneades-src-${gui.version}.jar" basedir="." excludes="**/*.class, **/Carneades.jar, **/CarneadesCore.jar, **/dist/**"/>
+	<jar destfile="${distdir}/carneades-src-${gui.version}.jar" 
+		 basedir="." 
+		 excludes="**/*.class, **/Carneades.jar, **/CarneadesCore.jar, **/dist/**"/>
   </target>
   
   <target name="deploy" depends="examples, deploymac, deploywin, sources"/>
