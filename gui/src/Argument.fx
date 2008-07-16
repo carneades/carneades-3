@@ -315,7 +315,7 @@ public class ArgumentGraph {
 		a1.weight > a2.weight;
 	}
 	
-	public function atLeastAsStrong (a1: Argument, a2: Argument) : Boolean {
+	public function asStrong (a1: Argument, a2: Argument) : Boolean {
 		a1.weight >= a2.weight;
 	}
 	
@@ -554,7 +554,7 @@ public class BestArgument extends ProofStandard {
 	       // stronger than every ok con argument.
 	       0 < sizeof(okPro [ proArg |	
 	       		0 == sizeof (okCon [ conArg | 	
-	       				ag.stronger(conArg,proArg) ]) ]);
+	       				ag.asStrong(conArg,proArg) ]) ]);
 
 	}
 }
