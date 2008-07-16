@@ -173,8 +173,7 @@ public class StatementBox extends ArgumentElement {
 										else "{statement.wff.substring(0, GC.numDisplayedChars-1)}..."};
 	private attribute status: String = bind statement.getBoundStatus();
 	private attribute statusColor = bind { 
-		if (statement.ok) GC.statusAcceptableColor
-		else if (status == "stated") GC.statusStatedColor
+		if (status == "stated") GC.statusStatedColor
 		else if (status == "assumed true") GC.statusAssumedTrueColor
 		else if (status == "assumed false") GC.statusAssumedFalseColor
 		else if (status == "rejected") GC.statusRejectedColor
