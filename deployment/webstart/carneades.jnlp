@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <jnlp spec="1.5+"
-      codebase="http://carneades.plainreasoning.com/webstart/"
-      href="carneadeswebstart.jnlp">
+      codebase="http://carneades.berlios.de/webstart/"
+      href="carneades.jnlp">
    
     <information>
     <title>Carneades Web Start</title>
         <vendor>T.F. Gordon, M. Grabmair</vendor>
-        <homepage href="http://carneades.plainreasoning.com/webstart/"/>
-        <DESCRIPTION>Carneades GUI</description>
+        <homepage href="http://carneades.berlios.de/webstart/"/>
+        <DESCRIPTION>Carneades Argumentation Tools</description>
         <offline-allowed/>
     </information>
     
