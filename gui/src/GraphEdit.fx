@@ -124,9 +124,17 @@ public class StatementEditPanel extends EditPanel {
 	}
 
 	private attribute acceptableBox: CheckBox = CCheckBox {
+		text: "statement"
 		enabled: false
 		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
 		selected: bind statement.ok
+	}
+
+	private attribute compAcceptableBox: CheckBox = CCheckBox {
+		text: "complement"
+		enabled: false
+		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
+		selected: bind statement.complementOk
 	}
 
 	// Proof Standard Components
@@ -258,6 +266,7 @@ public class StatementEditPanel extends EditPanel {
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, acceptedButton, 
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, rejectedButton, 
 										Label { text: "acceptable ", preferredSize: [editLabelWidth, 20] }, acceptableBox,
+										Label { text: "", preferredSize: [editLabelWidth, 20] }, compAcceptableBox,
 										Label { text: "proof standard", preferredSize: [editLabelWidth, 20] }, SEButton,
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, DVButton, 
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, BAButton, 
