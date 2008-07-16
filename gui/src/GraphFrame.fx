@@ -24,7 +24,7 @@ import javafx.scene.Font;
 import javafx.scene.FontStyle;
 import javafx.scene.image.*;
 import java.lang.System;
-//import javax.swing.JFileChooser;
+import javax.swing.JFileChooser;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import java.io.File;
@@ -49,7 +49,7 @@ public class GraphFrame extends SwingFrame {
 
 	private attribute showCredits: Boolean = false;
 
-	//	attribute chooser: JFileChooser = new JFileChooser();
+	attribute chooser: JFileChooser = new JFileChooser();
 
 	override attribute title = "Carneades";
 	override attribute width = GC.appWidth;
