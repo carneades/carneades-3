@@ -109,7 +109,11 @@
 			   includes="javafxc.jar, javafxrt.jar, Scenario.jar, jmc.jar, javafxgui.jar, javafx-swing.jar"/>
 	  <fileset dir="${gui.basedir}/lib/" includes="javafx-xml.jar"/>
 	</copy>
-	<signjar jar="${webstart.jartosign}" alias="${webstart.alias}" storepass="${webstart.storepass}"/>
+	<signjar alias="${webstart.alias}" storepass="${webstart.storepass}">
+	  <fileset dir="${distdir}/webstart/">
+		<include name="**/*.jar"/>
+	  </fileset>
+	</signjar>
   </target>
 
   <target name="webstart" depends="webstart.run, webstart.fail"/>
