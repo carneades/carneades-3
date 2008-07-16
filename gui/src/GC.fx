@@ -34,6 +34,7 @@ public class GC {
 	public static attribute LEFT: Number = 4;
 
 	// Drawing constants
+	public static attribute canvasFontSize: Integer = 8; 
 	public static attribute defaultBoxFill = Color.WHITE;
 	public static attribute drawDebug = bind debug;
 	public static attribute viewBackground: Color = Color.rgb(178, 195, 218);
