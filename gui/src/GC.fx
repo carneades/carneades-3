@@ -84,7 +84,6 @@ public class GC {
 	public static attribute statusAssumedFalseColor: Color = Color.rgb(193, 160, 164);
 	public static attribute statusStatedColor: Color = Color.WHITE;
 	public static attribute statusQuestionedColor: Color = Color.rgb(255, 251, 144);
-	public static attribute statusAcceptableColor: Color = Color.rgb(194, 255, 173);
 
 	public static attribute displayAcceptableCircles: Boolean = true;
 	public static attribute acceptableCircleWidth: Integer = 15;
@@ -93,9 +92,9 @@ public class GC {
 	// Argument Boxes
 	public static attribute argumentBoxDefaultWidth = 60;
 	public static attribute argumentBoxBottomBrink = 3;
-	public static attribute argumentCircleDefaultRadius = 15;
-	public static attribute argumentConColor = Color.rgb(255, 0, 0);
-	public static attribute argumentProColor = Color.rgb(43, 163, 0);
+	public static attribute argumentCircleDefaultRadius = 20;
+	public static attribute argumentConColor = statusRejectedColor;
+	public static attribute argumentProColor = statusAcceptedColor;
 
 	// Application constants
 	public static attribute appWidth = 1000;
@@ -131,7 +130,7 @@ public class GC {
 	public static attribute idsEditable: Boolean = false;
 
 	// Version administration constants
-	public static attribute debug: Boolean = true;
+	public static attribute debug: Boolean = false;
 
 	// helper functions
 	public static function p(s: String) { System.out.println(s)}

@@ -81,11 +81,16 @@ public class ArgumentBox extends ArgumentElement {
 	override attribute bottomBrink = GC.argumentBoxBottomBrink;
 
 	override attribute text = Text {
-					content: "+20"
+					content: bind "{if (argument.pro) '+' else '-'}.{argument.weight as Integer}"
 					verticalAlignment: VerticalAlignment.TOP
 					horizontalAlignment: HorizontalAlignment.CENTER
 					x: bind x
-					y: bind y
+					// The text Y coordinate positioning is dirty as the text currently lacks a currentheight attribute
+					y: bind y + (text.font.size / 3)
+					font: Font {
+						style: FontStyle.BOLD
+					}
+					visible: bind (argument.conclusion.standard) instanceof BestArgument
 				} // Text
 
 	private attribute mainCircle: Circle = Circle {
@@ -96,7 +101,7 @@ public class ArgumentBox extends ArgumentElement {
 		fill: bind {
 			if (not argument.ok) Color.WHITE
 			else {
-				if (argument.pro) GC.argumentConColor else GC.argumentProColor
+				if (not argument.pro) GC.argumentConColor else GC.argumentProColor
 			}
 		};
 		
