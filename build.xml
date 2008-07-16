@@ -83,7 +83,7 @@
 	<mkdir dir="${gui.distdir}/Carneades"/>
 	<copy todir="${gui.distdir}/Carneades">
 	  <fileset dir="${gui.deploydir}/"
-			   excludes="bin/deploymac.sh, bin/deploywin.sh"/>
+			   excludes="bin/deploymac.sh, bin/deploywin.sh, **/webstart/**"/>
 	</copy>
 	<exec executable="sh" dir=".">
 	  <arg value="${gui.deploydir}/bin/deploywin.sh"/>
@@ -121,8 +121,8 @@
 	<delete file="${gui.distdir}/carneades-mac-${version}.zip"/>
 	<mkdir dir="${gui.distdir}/Carneades"/>
 	<copy todir="${gui.distdir}/Carneades">
-	  <fileset dir="deployment/"
-			   excludes="${gui.basedir}bin/Carneades.bat, ${gui.basedir}lib/Carneades.jar, ${gui.basedir}bin/deploymac.sh, ${gui.basedir}bin/deploywin.sh"/>
+	  <fileset dir="${gui.deploydir}/"
+			   excludes="${gui.basedir}bin/Carneades.bat, ${gui.basedir}lib/Carneades.jar, ${gui.basedir}bin/deploymac.sh, ${gui.basedir}bin/deploywin.sh, **/webstart/**"/>
 	</copy>
 	
 	<jarbundler dir="${gui.distdir}/Carneades/bin"
