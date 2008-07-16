@@ -985,7 +985,7 @@
  
  ; Returns posiotion of a port
  ; NOTE: Specific for different Scheme implementations
- (define (xlink:get-port-position port)
+ #;(define (xlink:get-port-position port)
    (cond-expand         
     (bigloo
      (string-append "position " (number->string (input-port-position port))))
@@ -1002,6 +1002,9 @@
     (plt
      (string-append "position " (number->string (port-position port))))
     (else "unknown")))
+ 
+ (define (xlink:get-port-position port)
+   (string-append "position " (number->string (port-position port))))
  
  ; This function displays an error message. #t is returned
  ;  position - position within a file
