@@ -47,7 +47,7 @@ public class GraphList extends FlowPanel {
 	attribute argumentGraph: ArgumentGraph;
 
 	attribute input: TextField = TextField {
-		preferredSize: bind [GC.editWidth-65, 20]
+		preferredSize: bind [GC.editWidth-65, GC.textFieldHeight]
 		visible: true
 	}
 

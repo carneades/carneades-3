@@ -46,9 +46,18 @@ public class GraphEdit extends Panel {
 	public attribute control: GraphControl;
 	public attribute argumentGraph: ArgumentGraph;
 
-	private attribute statementPanel = StatementEditPanel { control: bind control, argumentGraph: bind argumentGraph };
-	private attribute argumentPanel = ArgumentEditPanel { control: bind control, argumentGraph: bind argumentGraph };
-	private attribute premisePanel = PremiseEditPanel { control: bind control, argumentGraph: bind argumentGraph };
+	private attribute statementPanel = StatementEditPanel { 
+		control: bind control, argumentGraph: bind argumentGraph 
+		preferredSize: bind this.preferredSize
+	};
+	private attribute argumentPanel = ArgumentEditPanel { 
+		control: bind control, argumentGraph: bind argumentGraph 
+		preferredSize: bind this.preferredSize
+	};
+	private attribute premisePanel = PremiseEditPanel {
+		control: bind control, argumentGraph: bind argumentGraph 
+		preferredSize: bind this.preferredSize
+	};
 	private attribute emptyPanel = EditPanel {};
 
 	override attribute content = bind [statementPanel, argumentPanel, premisePanel];
@@ -110,14 +119,14 @@ public class StatementEditPanel extends EditPanel {
 
 	private attribute idField: IdField = IdField {
 		editable: bind GC.idsEditable
-		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
+		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, GC.textFieldHeight ]
 		action: function(): Void {
 			control.changeStatementId(statement, idField.text);
 		}
 	}
 	
 	private attribute contentField: ContentField = ContentField {
-		preferredSize: [ editComponentWidth, 20 ]
+		preferredSize: [ editComponentWidth, GC.textFieldHeight ]
 		action: function(): Void {
 			control.changeStatementWff(statement, contentField.text);
 		}
@@ -304,7 +313,7 @@ public class ArgumentEditPanel extends EditPanel {
 	// Components
 
 	public attribute idField: IdField = IdField {
-		preferredSize: [ editComponentWidth, 20 ]
+		preferredSize: [ editComponentWidth, GC.textFieldHeight ]
 		editable: bind GC.idsEditable
 		action: function(): Void {
 			control.changeArgumentId(argument, idField.text);
@@ -318,7 +327,7 @@ public class ArgumentEditPanel extends EditPanel {
 	}
 
 	private attribute schemeField: SchemeField = SchemeField {
-		preferredSize: [ editComponentWidth, 20 ]
+		preferredSize: [ editComponentWidth, GC.textFieldHeight ]
 		action: function(): Void {
 			control.changeArgumentScheme(argument, schemeField.text);
 		}
@@ -352,9 +361,9 @@ public class ArgumentEditPanel extends EditPanel {
 	}
 
 	private attribute weightNumber: TextField = TextField {
-		preferredSize: [ 30, 20 ]
+		preferredSize: [ 30, GC.textFieldHeight ]
 		editable: false
-		text: bind (weightSlider.value).toString()
+		text: bind ".{(weightSlider.value).toString()}"
 	}
 
 	override attribute content = bind [ 
@@ -388,7 +397,7 @@ public class PremiseEditPanel extends EditPanel {
 
 	// Components
 	public attribute roleField: RoleField = RoleField {
-		preferredSize: [ editComponentWidth, 20 ]
+		preferredSize: [ editComponentWidth, GC.textFieldHeight ]
 		editable: true
 		action: function(): Void {
 			control.changePremiseRole(premise, roleField.text);
