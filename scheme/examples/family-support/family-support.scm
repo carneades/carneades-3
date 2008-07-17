@@ -51,15 +51,15 @@
 (define form1 
   (make-form 
    ; questions
-   (list (make-question 'mother 'symbol 'one "Who is ~v's mother?")
-         (make-question 'father 'symbol 'one "Who is ~v's father?"))
+   (list (make-question 'mother 'symbol 'one "Who is ~a's mother?")
+         (make-question 'father 'symbol 'one "Who is ~a's father?"))
    ; help text, in SXML format
    '()))
 
 (define form2
   (make-form
    ; questions
-   (list (make-question 'needy 'boolean 'one "Is ~v needy?"))
+   (list (make-question 'needy 'boolean 'one "Is ~a needy?"))
    ; help text
    '()))
 
@@ -70,7 +70,7 @@
           'capacity-to-provide-support 
           'boolean 
           'one 
-          "Does ~v have the capacity to provide support?"))
+          "Does ~a have the capacity to provide support?"))
    ; help text
    '()))
 
