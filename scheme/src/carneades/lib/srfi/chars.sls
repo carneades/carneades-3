@@ -124,8 +124,11 @@
  (define char-set?
    (record-predicate char-set-rtd))
  
+; (define char-set:s
+;   (record-accessor char-set-rtd 's))
+ 
  (define char-set:s
-   (record-accessor char-set-rtd 's))
+   (record-accessor char-set-rtd 0))
  
  (define-syntax check-arg
    (syntax-rules ()
