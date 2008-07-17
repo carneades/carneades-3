@@ -208,7 +208,7 @@
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  
  (define (get-lkif-body root)
-   (match root [('*TOP* ('*PI* . p) ___ ('lkif . b)) b]))
+   (match root [('*TOP* ('*PI* . p) ... ('lkif . b)) b]))
  
  ;; calls create-(rule,string,ag) for every rule object
  (define (create-objects object)
