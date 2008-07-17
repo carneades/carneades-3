@@ -72,14 +72,14 @@ public class GraphFrame extends SwingFrame {
 		visible: true
 		control: bind control
 		argumentGraph: bind argumentGraph
-		preferredSize: bind [GC.editWidth, (this.height / 2) + 45]
+		preferredSize: bind [GC.editWidth, (this.height / 2) + 60]
 	}
 
 	public attribute list: GraphList = GraphList {
 		visible: true
 		control: bind control
 		argumentGraph: bind argumentGraph
-		preferredSize: bind [GC.editWidth, (this.height /3) - 20]
+		preferredSize: bind [GC.editWidth, (this.height /3) - 40]
 	}
 
 
@@ -103,7 +103,7 @@ public class GraphFrame extends SwingFrame {
 
 	private attribute creditsFrame: SwingFrame = SwingFrame {
 		visible: bind this.showCredits
-		title: "about Carneades"
+		title: "About Carneades"
 		height: 250
 		width: 480
 		resizable: false
