@@ -132,6 +132,7 @@
 ; issue of undue hardship
 
 (define e1 (make-engine 50 2 argument-generators))
+
 (show1 '(obligated-to-support Max ?y) e1)
 
 ; Answers to provide to questions asked:

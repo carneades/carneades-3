@@ -9,8 +9,8 @@
       <issue assumption="true" standard="BA" statement="s5" value="unknown"/>
       <issue assumption="true" standard="BA" statement="s6" value="unknown"/>
       <issue assumption="true" standard="BA" statement="s7" value="unknown"/>
-      <issue assumption="true" standard="BA" statement="s8" value="unknown"/>
-      <issue assumption="true" standard="BA" statement="s9" value="unknown"/>
+      <issue assumption="true" standard="BA" statement="s8" value="true"/>
+      <issue assumption="true" standard="BA" statement="s9" value="true"/>
     </issues>
     <statements>
       <s id="s1">Which Car?</s>
@@ -60,13 +60,13 @@
           <premise exception="false" polarity="positive" role="" statement="s7"/>
         </premises>
       </argument>
-      <argument direction="pro" id="a7" scheme="" weight="50.0">
+      <argument direction="pro" id="a7" scheme="" weight="52.0">
         <conclusion statement="s4"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="s8"/>
         </premises>
       </argument>
-      <argument direction="pro" id="a8" scheme="" weight="50.0">
+      <argument direction="con" id="a8" scheme="" weight="50.0">
         <conclusion statement="s4"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="s9"/>

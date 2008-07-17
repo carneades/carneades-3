@@ -1,6 +1,7 @@
 #!r6rs
 
 (import (rnrs base)
+        (rnrs hashtables)
         (prefix (rnrs lists) list:)
         (prefix (carneades lkif) lkif:)
         (carneades statement)
@@ -53,7 +54,7 @@
                    (state-context s)
                    (lambda (x) x)
                    (lambda (stmt)
-                     (let ((txt (hash-table-get texts stmt (lambda () #f))))
+                     (let ((txt (hashtable-ref texts stmt #f)))
                        (if (and txt (not (equal? (text-summary txt) "")))
                            (text-summary txt)
                            stmt))))))))
