@@ -238,7 +238,7 @@ public class GraphControl {
 		var s = frame.list.getSelectedStatement();
 		possibleToDelete = { ((s != null) and (not argumentGraph.broughtForth(s))) };
 		
-		System.out.println("update view iteration");
+		// System.out.println("update view iteration");
 
 		if (sizeof getSelectedModel() == 0) {
 			frame.list.reset();

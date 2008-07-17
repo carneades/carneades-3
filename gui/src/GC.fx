@@ -34,7 +34,8 @@ public class GC {
 	public static attribute LEFT: Number = 4;
 
 	// Drawing constants
-	public static attribute canvasFontSize: Integer = 8; 
+	public static attribute canvasFontSize: Integer = 8;
+	public static attribute textFieldHeight: Integer = 25;
 	public static attribute defaultBoxFill = Color.WHITE;
 	public static attribute drawDebug = bind debug;
 	public static attribute viewBackground: Color = Color.rgb(178, 195, 218);
@@ -122,7 +123,7 @@ public class GC {
 
 	// Edit window constants
 	public static attribute editWidth: Integer = 300;
-	public static attribute editHeight: Integer = 380;
+	public static attribute editHeight: Integer = 400;
 	public static attribute listHeight: Integer = 300;
 	public static attribute editLabelWidth: Integer = 100;
 	public static attribute toolBarHeight: Integer = 50;
