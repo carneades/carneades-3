@@ -385,7 +385,7 @@
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  
  (define (create-argument-graph ag)
-   (let ((arguments (map create-argument (match ag [(('argument . rest) ___ ) rest]))))
+   (let ((arguments (map create-argument (match ag [(('argument . rest) ... ) rest]))))
      (assert empty-argument-graph arguments)))
  
  
