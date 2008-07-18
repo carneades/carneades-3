@@ -94,7 +94,7 @@
  #| index-by-statement: (list-of text) -> (hashtable-of datum text)
             assumption: the statement of each text in the list is unique.  |#
  (define (index-by-statement texts)
-   (let ((tbl (make-hashtable 'equal)))
+   (let ((tbl (make-eqv-hashtable)))
      (for-each (lambda (txt) 
                  (if (text-statement txt)
                      (hashtable-set! tbl (text-statement txt) txt)))
