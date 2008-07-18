@@ -11,27 +11,27 @@
          (carneades argument-builtins)
          (carneades lib srfi lightweight-testing))
  
- (define kb1
-   (ontology
-    
-    (axiom fact1 (related Caroline Tom parent))
-    (axiom fact2 (related Caroline Ines parent))
-    (axiom fact3 (related Dustin Tom parent))
-    (axiom fact4 (related Dustin Ines parent))
-    (axiom fact5 (related Tom Gloria parent))
-    (axiom fact6 (related Ines Hildegard parent))
-    (axiom fact7 (instance Tom Male))
-    (axiom fact8 (instance Tom Parent))
-    (axiom fact9 (instance Ines Female))
-    (axiom fact10 (instance Ines Parent))
-    
-    (axiom o1 (define-primitive-role parent ancestor))
-    
-    (axiom o2 (define-concept Father (and Male Parent)))
-    
-    (axiom o3 (define-concept Mother (and Female Parent)))
-    
-    (axiom o4 (define-primitive-role (transitive-closure ancestor) ancestor))))
+ 
+ (ontology kb1
+           
+           (related Caroline Tom parent)
+           (related Caroline Ines parent)
+           (related Dustin Tom parent)
+           (related Dustin Ines parent)
+           (related Tom Gloria parent)
+           (related Ines Hildegard parent)
+           (instance Tom Male)
+           (instance Tom Parent)
+           (instance Ines Female)
+           (instance Ines Parent)
+           
+           (define-primitive-role parent ancestor)
+           
+           (define-concept Father (and Male Parent))
+           
+           (define-concept Mother (and Female Parent))
+           
+           (define-primitive-role (transitive-closure ancestor) ancestor))
  
 
  ;(define kb2 (add-ontologies kb1 (list (axiom fact9 (instance Ines Female))
