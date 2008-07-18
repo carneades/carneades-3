@@ -23,6 +23,7 @@
  (import (rnrs)
          (carneades lib match)
          (carneades rule)
+         (carneades gensym)
          )
  
  ;----------------------
@@ -699,8 +700,8 @@
  ; ----------------------------
  ; ontology-syntax
  
- ; %ontology: symbol symbol -> (list-of ontology)
- (define (%ontology oname ont)
+ ; %axiom: symbol symbol -> (list-of ontology)
+ (define (%axiom oname ont)
    (if (dlp? ont)
        (let ((r (rulerewrite (to-rule ont))))
          (define make-ontology
@@ -726,7 +727,7 @@
      (syntax-case x ()
        ((_ oname ont) #'(%ontology (quote oname) (quote ont))))))
  
- ;empty-knowledgebase; -> knowledgebase
+ ;empty-knowledgebase: -> knowledgebase
  (define empty-knowledgebase empty-rulebase)
  
  ; (define add-ontology add-rules)
@@ -734,12 +735,23 @@
  
  ; TODO: FIX
  ; add-ontologies: knowledgebase (list-of (list-of ontology)) -> knowledgebase
- (define (add-ontologies kb o*)
+ (define (add-axioms kb o*)
    (add-rules kb (fold-right append '() o*)))
  
- ; ontology (list-of ontology) ... -> knowledgebase
- (define (ontology . l)
+ ; %ontology: ontology (list-of ontology) ... -> knowledgebase
+ (define (%ontology l)
+   (display l)
+   (newline)
    (add-rules empty-knowledgebase (fold-right append '() l)))
+ 
+ (define-syntax ontology
+   (syntax-rules ()
+     ((_ oname axiom1 ...) (define oname
+                      (%ontology (map (lambda (x)
+                                        (display x)
+                                        (newline)
+                                        (%axiom (gensym (string-append (symbol->string (quote oname)) "-axiom-")) x))
+                                      (list (quote axiom1) ...)))))))
  
  ; generate-arguments-from-ontologies: knowledgebase (list-of question-types) -> generator
  (define generate-arguments-from-ontologies generate-arguments-from-rules)
