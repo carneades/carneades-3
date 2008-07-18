@@ -2,10 +2,13 @@
 
 (import (rnrs base)
         (prefix (carneades lkif) lkif:)
-        (prefix (carenades evidence) e:)
+        (prefix (carneades evidence) e:)
         (carneades argument-builtins)
         (carneades rule)
+        (carneades shell)
         (carneades lib srfi lightweight-testing))
+
+(define null '())
 
 (define vat
   (add-rules empty-rulebase 
@@ -16,8 +19,8 @@
 (define form1 
   (e:make-form 
    ; questions
-   (list (e:make-question '_placeOfPayingVATFor 'symbol 'one "In which country did \"~v\" take place?")
-         (e:make-question 'priceOf 'number 'one "What price was paid in the \"~v\" transaction?"))
+   (list (e:make-question '_placeOfPayingVATFor 'symbol 'one "In which country did \"~A\" take place?")
+         (e:make-question 'priceOf 'number 'one "What price was paid in the \"~A\" transaction?"))
    ; help text, in SXML format
    null))
 
@@ -44,5 +47,5 @@
 ; Answer: (all 100)
 
 ;  (ask '(amountOfVATFor Selling ?x) (engine 100 1 null))
-;  (show1 '(isLiableForPayingVATFor Selling Vendor) (engine 100 1 null))
+(show1 '(isLiableForPayingVATFor Selling Vendor) (engine 100 1 null))
 
