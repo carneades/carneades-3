@@ -2,6 +2,7 @@
 
 (import (except (rnrs base) assert)
         (prefix (rnrs lists) list:)
+        (rnrs hashtables)
         (prefix (carneades lkif) lkif:)
         (carneades statement)
         (carneades argument)
@@ -13,7 +14,7 @@
 
 (define ag1 (car (list:filter argument-graph? imports)))
 
-(define c1 (accept default-context ()))
+(define c1 (accept default-context '()))
 ; (define c2 (reject c1 'email))
 
 (define (show ag context)
@@ -21,7 +22,7 @@
          context 
          (lambda (x) x)
          (lambda (s) 
-           (let ((txt (hash-table-get texts s (lambda (x) #f))))
+           (let ((txt (hashtable-ref texts s #f)))
              (if (and txt (not (equal? (text-summary txt) "")))
                  (text-summary txt)
                  s)))))
