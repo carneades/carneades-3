@@ -1,8 +1,9 @@
 #!r6rs
 
-(import (rnrs)
+(import (except (rnrs base) assert)
         (prefix (rnrs lists) list:)
-        (carneades lkif)
+        (rnrs hashtables)
+        (prefix (carneades lkif) lkif:)
         (carneades statement)
         (carneades argument)
         (carneades argument-diagram))
@@ -22,7 +23,7 @@
          context 
          (lambda (x) x)
          (lambda (s) 
-           (let ((txt (hash-table-get texts s (lambda () #f))))
+           (let ((txt (hashtable-ref texts s #f)))
              (if (and txt (not (equal? (text-summary txt) "")))
                  (text-summary txt)
                  s)))))
