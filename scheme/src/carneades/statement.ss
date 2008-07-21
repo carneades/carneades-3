@@ -104,7 +104,7 @@
  #| index-by-id: (list-of text) -> (hashtable-of symbol text)
             assumption: the id of each text in the list is unique. |#
  (define (index-by-id texts)
-   (let ((tbl (make-hashtable)))
+   (let ((tbl (make-eq-hashtable)))
      (for-each (lambda (txt) 
                  (hashtable-set! tbl (text-id txt) txt))
                texts)
