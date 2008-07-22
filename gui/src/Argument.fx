@@ -234,7 +234,7 @@ public class Argument {
 	public attribute id: String;
 	public attribute graph : ArgumentGraph;  
 
-	public attribute weight: Number = 50 // range: 0.0 to 1.0
+	public attribute weight: Number = 0.5 // range: 0.0 to 1.0
 		on replace {
 			conclusion.update();
 		}
@@ -558,3 +558,41 @@ public class BestArgument extends ProofStandard {
 
 	}
 }
+
+public class Preponderance extends ProofStandard {
+	function test (ag: ArgumentGraph, 
+	               pro: Argument[], 
+	               con: Argument[]): Boolean {
+	       var okPro = pro [ arg | arg.allPremisesHold() ];
+	       var okCon = con [ arg | arg.allPremisesHold() ];
+	       
+	       var sumPro = 0.0; 
+	       for (arg in okPro) sumPro = sumPro + arg.weight;
+	       var avgPro = sumPro / sizeof(okPro);
+	       
+	       var sumCon = 0.0;
+	       for (arg in okCon) sumCon = sumCon + arg.weight;
+	       var avgCon = sumCon / sizeof(okCon);
+	       
+	       return avgPro > avgCon;
+	}
+}
+
+public class BeyondReasonableDoubt extends ProofStandard {
+	function test (ag: ArgumentGraph, 
+	               pro: Argument[], 
+	               con: Argument[]): Boolean {
+	      var okCon = con [ arg | arg.allPremisesHold() ];
+	      var threshold = 0.30; 
+	      
+   	      var strongestCon = 0.0;
+	      for (arg in okCon) 
+	      	if (arg.weight > strongestCon) 
+	      		strongestCon = arg.weight;
+	      
+	      var p = Preponderance {}; 
+	      return strongestCon < threshold and
+	             p.test(ag,pro,con); 
+	}
+}
+
