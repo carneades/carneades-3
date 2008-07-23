@@ -58,7 +58,22 @@
           
           (define-primitive-role mereology:part)
           
+          ;-------------------------------
+          
           (define-primitive-role action:actor :domain action:Action :range action:Action :parents( process:participant))
+          
+          ; :domain and :range aren't in the KRSS-Syntax as described in http://dl.kr.org/krss-spec.ps
+          ; but one can define the range and domain of an role with <dlprange> <dlpdomain> syntax
+          ; as illustrated in the two following axioms
+          
+          ; <dlprange>
+          (define-primitive-concept TOP (all action:actor action:Action))
+          
+          ; <dlpdomain>
+          (define-primitive-concept TOP (all (inverse action:actor) action:Action))
+          
+          ;------------------------------
+          
           
           (define-primitive-role action:actor_in :domain action:Agent :range action:Agent :parents( process:participant_in))
           
@@ -67,6 +82,7 @@
  (ontology facts
 ;           (related Caroline Tom parent)
            (instance p1 action:Personal_Plan)
+           (related a1 a2 action:actor)
 )
 
 (define (engine max-nodes max-turns)
@@ -77,7 +93,10 @@
 (define e1 (engine 100 10))
 
 (check (all-acceptable? '(action:Plan ?x) e1) => #t)
+(check (all-acceptable? '(action:Action a1) e1) => #t)
+(check (all-acceptable? '(action:Action a2) e1) => #t)
 
 (check-report)
 
 ; (show '(action:Plan ?x) e1)
+; (show '(action:Action a1) e1)

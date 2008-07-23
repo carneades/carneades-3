@@ -2,7 +2,9 @@
 
 (import (rnrs)
         (carneades dlp)
-        (carneades system))
+        (carneades shell)
+        (carneades argument-builtins)
+        (carneades lib srfi lightweight-testing))
 
 (ontology expression
           
