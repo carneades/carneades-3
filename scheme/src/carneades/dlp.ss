@@ -17,13 +17,14 @@
 #!r6rs
 
 (library
- (dlp) ; description logic programming
+ (carneades dlp-changed) ; description logic programming
  
- (export ontology axiom generate-arguments-from-ontologies dlp?)
+ (export ontology axiom generate-arguments-from-ontologies dlp? to-rule dlprule? dlprules*? rulerewrite)
  (import (rnrs)
          (carneades lib match)
          (carneades rule)
          (carneades gensym)
+         (carneades system)
          )
  
  ;----------------------
@@ -42,29 +43,29 @@
  ;                 | <cdisjunction> | <univrestriction> | <existrestriction>
  ; <cconjunction> = (and <concept> <concept>+)
  ; <cdisjunction> = (or <concept> <concept>+)
- ; <univrestriction> = (all <rolen> <concept>)
+ ; <univrestriction> = (all <role> <concept>)
  ; <existrestriction> = (some <role> <concept>)
  ;
  ;
  ; Lh - concepts from Lh can be mapped into the head of LP rules:
  ;
  ; <lhclass> = <conceptname> | <lhconjunction> | <lhunivrestrict>
- ; <lhconjunction> = (and <lhclass> <lhclass>)
+ ; <lhconjunction> = (and <lhclass> <lhclass>+)
  ; <lhunivrestrict> = (all <rolename> <lhclass>
  ;
  ;
  ; Lb - concepts from Lb can be mapped into the body of LP rules:
  ;
  ; <lbclass> = <conceptname> | <lbconjunction> | <lbdisjunction> | <lbexistrestrict>
- ; <lbconjunction> = (and <lbclass> <lbclass>)
- ; <lbdisjunction> = (or <lbclass> <lbclass>)
+ ; <lbconjunction> = (and <lbclass> <lbclass>+)
+ ; <lbdisjunction> = (or <lbclass> <lbclass>+)
  ; <lbexistrestrict> = (some <rolename> <lbclass>)
  ;
  ;
  ; L  - L is the intersection of Lh and Lb:
  ;
  ; <lclass> = <conceptname> | <lconjunction>
- ; <lconjunction> = (and <lclass> <lclass>)
+ ; <lconjunction> = (and <lclass> <lclass>+)
  ;
  ;----------------------
  ; Individuals:
@@ -72,12 +73,12 @@
  ; <individual> = <individualname> | <string> | <integer>
  ;
  ;----------------------
- ; Standard-statements:
+ ; Standard-statements: (statements with top or TOP as 2nd argument can also be written as unary statements)
  ;
- ; <requivalence> = (define-role <rolename> <role>)
- ; <rinclusion> = (define-primitive-role <rolename> <role>)
- ; <cequivalence> = (define-concept <conceptname> <concept>)
- ; <cinclusion> = (define-primitive-concept <conceptname> <concept>)
+ ; <requivalence> = (define-role <rolename> <role>) | (define-role <rolename>)
+ ; <rinclusion> = (define-primitive-role <rolename> <role>) | (define-primitive-role <rolename>)
+ ; <cequivalence> = (define-concept <conceptname> <concept>) | (define-concept <conceptname>)
+ ; <cinclusion> = (define-primitive-concept <conceptname> <concept>) | (define-primitive-concept <conceptname>)
  ;
  ;
  ;----------------------
@@ -93,9 +94,9 @@
  ; <dlp> = <dlpcinclusion> | <dlpcequivalence> | <dlprange> | <dlpdomain> 
  ;                         | <dlprinclusion> | <dlprequivalence> | <dlpinverse>
  ;                         | <dlptransitivity> | <dlpassertion>
- ; <dlpcinclusion> = (define-primitive-concept <lbclass> <lhclass>)
- ; <dlpcequivalence> = (define-concept <lclass> <lclass>)
- ; <dlprange> = (define-primitive-concept TOP <lhunivrestrict>)
+ ; <dlpcinclusion> = (define-primitive-concept <lbclass> <lhclass>) | (define-primitive-concept <lbclass>)
+ ; <dlpcequivalence> = (define-concept <lclass> <lclass>) | (define-concept <lclass>)
+ ; <dlprange> = (define-primitive-concept TOP <lhunivrestrict>) 
  ; <ldpdomain> = (define-primitive-concept TOP (all <rinverse> <lhclass>))
  ; <dlprinclusion> = <rinclusion>
  ; <dlprequivalence> = <requivalence>
@@ -133,15 +134,15 @@
  ; Body-Mapping (Tb):
  ;
  ; <conceptname>     (Tb (C x)) := (C x)
- ; <lbconjunction>   (Tb ((and C1 C2) x)) := (and (Tb (C1 x)) (Tb (C2 x)))
- ; <lbdisjunction>   (Tb ((or C1 C2) x)) := (or (Tb (C1 x)) (Tb (C2 x)))
+ ; <lbconjunction>   (Tb ((and C1 C2 ...) x)) := (and (Tb (C1 x)) (Tb (C2 x)) ...)
+ ; <lbdisjunction>   (Tb ((or C1 C2 ...) x)) := (or (Tb (C1 x)) (Tb (C2 x)) ...)
  ; <lbexistrestrict> (Tb ((some R C) x)) := (and (R x y) (Tb (C y)))
  ;
  ;----------------------
  ; Head-Mapping (Th):
  ;
  ; <conceptname>    (Th (C x)) := (C x)
- ; <lhconjunction>  (Th ((and C1 C2) x)) := (and (Th (C1 x)) (Th (C2 x)))
+ ; <lhconjunction>  (Th ((and C1 C2 ...) x)) := (and (Th (C1 x)) (Th (C2 x)) ...)
  ; <lhunivrestrict> (Th ((all R C) x)) := (rule (Th (C y)) (R x y))
  ;
  ;----------------------
@@ -153,19 +154,44 @@
  ;
  ;----------------------
  
- (define symbolcounter 0)
- 
- (define ontologycounter 0)
+ (define symbolcounter 0) 
+ (define axiomcounter 0)
+ (define errorcounter 0)
+ (define successcounter 0)
  
  (define newsym
    (lambda ()
      (set! symbolcounter (+ symbolcounter 1))
      (string->symbol (string-append "?xgen" (number->string symbolcounter)))))
  
- (define newont
+ (define newaxiom
    (lambda (n)
-     (set! ontologycounter (+ ontologycounter 1))
-     (string->symbol (string-append (symbol->string n) "gen" (number->string ontologycounter)))))
+     (set! axiomcounter (+ axiomcounter 1))
+     (string->symbol (string-append (symbol->string n) "-" (number->string axiomcounter)))))
+ 
+ 
+ (define initerror
+   (lambda ()
+     (set! errorcounter 0)))
+  
+ (define initsuccess
+   (lambda ()
+     (set! successcounter 0)))
+ 
+ (define initaxiom
+   (lambda ()
+     (set! axiomcounter 0)))
+ 
+ 
+ (define adderror
+   (lambda ()
+     (set! errorcounter (+ errorcounter 1))))
+ 
+ (define addsuccess
+   (lambda ()
+     (set! successcounter (+ successcounter 1))))
+ 
+ 
  
  (define (notsyntax s)
    (and
@@ -181,10 +207,10 @@
     (not (eq? s 'define-primitive-concept))
     (not (eq? s 'instance))
     (not (eq? s 'related))
-    (not (eq? s 'top))
-    (not (eq? s 'bottom))
-    (not (eq? s 'TOP))
-    (not (eq? s 'BOTTOM))
+    ;(not (eq? s 'top))
+    ;(not (eq? s 'bottom))
+    ;(not (eq? s 'TOP))
+    ;(not (eq? s 'BOTTOM))
     (not (eq? s 'rule))))
  
  ; ----------------------------
@@ -291,15 +317,23 @@
    (or
     (conceptname? c)
     (lhconjunction? c)
-    (lhunivrestrict? c)))
+    (lhunivrestrict? c))) 
+  
+ (define (lhclasses*? c*)
+   (if (pair? c*)
+       (if (lhclass? (car c*))
+           (lhclasses*? (cdr c*))
+           #f)
+       (if (list? c*)
+           #t
+           (lhclass? c*))))
  
  (define (lhconjunction? c)
    (and
     (pair? c)
-    (= (length c) 3)
+    (>= (length c) 3)
     (eq? (car c) 'and)
-    (lhclass? (cadr c))
-    (lhclass? (caddr c))))
+    (lhclasses*? (cdr c))))
  
  (define (lhunivrestrict? c)
    (and
@@ -319,21 +353,28 @@
     (lbdisjunction? c)
     (lbexistrestrict? c)))
  
+ (define (lbclasses*? c*)
+   (if (pair? c*)
+       (if (lbclass? (car c*))
+           (lbclasses*? (cdr c*))
+           #f)
+       (if (list? c*)
+           #t
+           (lbclass? c*))))
+ 
  (define (lbconjunction? c)
    (and
     (pair? c)
-    (= (length c) 3)
+    (>= (length c) 3)
     (eq? (car c) 'and)
-    (lbclass? (cadr c))
-    (lbclass? (caddr c))))
+    (lbclasses*? (cdr c))))
  
  (define (lbdisjunction? c)
    (and
     (pair? c)
-    (= (length c) 3)
+    (>= (length c) 3)
     (eq? (car c) 'or)
-    (lbclass? (cadr c))
-    (lbclass? (caddr c))))
+    (lbclasses*? (cdr c))))
  
  (define (lbexistrestrict? c)
    (and
@@ -351,13 +392,21 @@
     (conceptname? c)
     (lconjunction? c)))
  
+ (define (lclasses*? c*)
+   (if (pair? c*)
+       (if (lclass? (car c*))
+           (lclasses*? (cdr c*))
+           #f)
+       (if (list? c*)
+           #t
+           (lclass? c*))))
+ 
  (define (lconjunction? c)
    (and
     (pair? c)
-    (= (length c) 3)
+    (>= (length c) 3)
     (eq? (car c) 'and)
-    (lclass? (cadr c))
-    (lclass? (caddr c))))
+    (lclasses*? (cdr c))))
  
  
  ; ----------------------------
@@ -379,36 +428,60 @@
  ; standard-statement syntax
  
  (define (requivalence? s)
-   (and
-    (pair? s)
-    (= (length s) 3)
-    (eq? (car s) 'define-role)
-    (rolename? (cadr s))
-    (role? (caddr s))))
+   (or
+    (and
+     (pair? s)
+     (= (length s) 3)
+     (eq? (car s) 'define-role)
+     (rolename? (cadr s))
+     (role? (caddr s)))
+    (and
+     (pair? s)
+     (= (length s) 2)
+     (eq? (car s) 'define-role)
+     (rolename? (cadr s)))))
  
  (define (rinclusion? s)
-   (and
-    (pair? s)
-    (= (length s) 3)
-    (eq? (car s) 'define-primitive-role)
-    (rolename? (cadr s))
-    (role? (caddr s))))
+   (or
+    (and
+     (pair? s)
+     (= (length s) 3)
+     (eq? (car s) 'define-primitive-role)
+     (rolename? (cadr s))
+     (role? (caddr s)))
+    (and
+     (pair? s)
+     (= (length s) 2)
+     (eq? (car s) 'define-primitive-role)
+     (rolename? (cadr s)))))
  
  (define (cequivalence? s)
-   (and
-    (pair? s)
-    (= (length s) 3)
-    (eq? (car s) 'define-concept)
-    (conceptname? (cadr s))
-    (concept? (caddr s))))
+   (or
+    (and
+     (pair? s)
+     (= (length s) 3)
+     (eq? (car s) 'define-concept)
+     (conceptname? (cadr s))
+     (concept? (caddr s)))
+    (and
+     (pair? s)
+     (= (length s) 2)
+     (eq? (car s) 'define-concept)
+     (conceptname? (cadr s)))))
  
  (define (cinclusion? s)
-   (and
-    (pair? s)
-    (= (length s) 3)
-    (eq? (car s) 'define-primitive-concept)
-    (conceptname? (cadr s))
-    (concept? (caddr s))))
+   (or
+    (and
+     (pair? s)
+     (= (length s) 3)
+     (eq? (car s) 'define-primitive-concept)
+     (conceptname? (cadr s))
+     (concept? (caddr s)))
+    (and
+     (pair? s)
+     (= (length s) 2)
+     (eq? (car s) 'define-primitive-concept)
+     (conceptname? (cadr s)))))
  
  (define (statement? s)
    (or
@@ -459,21 +532,33 @@
     (dlpassertion? s)))
  
  (define (dlpcinclusion? s)
-   (and
-    (pair? s)
-    (= (length s) 3)
-    (eq? (car s) 'define-primitive-concept)
-    (lbclass? (cadr s))
-    (lhclass? (caddr s))))
+   (or
+    (and
+     (pair? s)
+     (= (length s) 3)
+     (eq? (car s) 'define-primitive-concept)
+     (lbclass? (cadr s))
+     (lhclass? (caddr s)))
+    (and
+     (pair? s)
+     (= (length s) 2)
+     (eq? (car s) 'define-primitive-concept)
+     (lbclass? (cadr s)))))
  
  (define (dlpcequivalence? s)
-   (and
-    (pair? s)
-    (= (length s) 3)
-    (eq? (car s) 'define-concept)
-    (lclass? (cadr s))
-    (lclass? (caddr s))))
- 
+   (or
+    (and
+     (pair? s)
+     (= (length s) 3)
+     (eq? (car s) 'define-concept)
+     (lclass? (cadr s))
+     (lclass? (caddr s)))
+    (and
+     (pair? s)
+     (= (length s) 2)
+     (eq? (car s) 'define-concept)
+     (lclass? (cadr s)))))
+   
  (define (dlprange? s)
    (and
     (pair? s)
@@ -576,13 +661,13 @@
            (symbol? (cadr lh)))
           lh)
          (                           ; <lhconjunction>
-          (and                       ; (Th ((and C1 C2) ?x)) := (and (Th (C1 ?x)) (Th (C2 ?x)))
+          (and                       ; (Th ((and C1 C2 ...) ?x)) := (and (Th (C1 ?x)) (Th (C2 ?x)) ...)
            (pair? lh)
            (= (length lh) 2)
            (lhconjunction? (car lh))
            (symbol? (cadr lh)))
           (let ((x (cadr lh)) (c (car lh)))
-            (list 'and (to-head (list (cadr c) x)) (to-head (list (caddr c) x)))))
+            (cons 'and (map to-head (map (lambda (y) (list y x)) (cdr c))))))
          (
           (and                       ; <lhunivrestrict>
            (pair? lh)                ; (Th ((all R C),x)) := (rule (Th (C,y)) (R x y))
@@ -612,7 +697,7 @@
            (lbconjunction? (car lb))
            (symbol? (cadr lb)))
           (let ((x (cadr lb)) (c (car lb)))
-            (list 'and (to-body (list (cadr c) x)) (to-body (list (caddr c) x)))))
+            (cons 'and (map to-body (map (lambda (y) (list y x)) (cdr c))))))
          (                           
           (and                       ; <lbdisjunction>
            (pair? lb)                ; (Tb ((or C1 C2) ?x)) := (or (Tb (C1 ?x)) (Tb (C2 ?x)))
@@ -620,7 +705,7 @@
            (lbdisjunction? (car lb))
            (symbol? (cadr lb)))
           (let ((x (cadr lb)) (c (car lb)))
-            (list 'or (to-body (list (cadr c) x)) (to-body (list (caddr c) x)))))
+            (cons 'or (map to-body (map (lambda (y) (list y x)) (cdr c))))))
          (
           (and                       ; <lbexistrestrict>
            (pair? lb)                ; (Th ((all R C),x)) := (rule (Th (C,y)) (R x y))
@@ -644,13 +729,18 @@
           (list 'rule (list (cadddr l) (cadr l) (caddr l)))) ; T(related i1 i2 R) := (rule (R i1 i2))
          (
           (dlpcequivalence? l)                               ; <dlpcequivalence>
-          (list                                              ; (T (define-concept C1 C2)) := 
-           (to-rule (list 'define-primitive-concept (cadr l) (caddr l)))   ; (T (define-primitive-concept C1 C2)) +
-           (to-rule (list 'define-primitive-concept (caddr l) (cadr l))))) ; (T(define-primitive-concept C2 C1))
+          (if (= (length l) 3)
+              (list                                          ; (T (define-concept C1 C2)) := 
+               (to-rule (list 'define-primitive-concept (cadr l) (caddr l)))  ; (T (define-primitive-concept C1 C2)) +
+               (to-rule (list 'define-primitive-concept (caddr l) (cadr l)))) ; (T(define-primitive-concept C2 C1))
+              (to-rule (append l '(TOP)))))
+          
          (
           (dlpcinclusion? l)                                 ; <dlpcinclusion>
-          (let ((x (newsym)))                                ; (T (define-primitive-concept C1 C2)) := 
-            (list 'rule (to-head (list (caddr l) x)) (to-body (list (cadr l) x))))) ; (rule (Th (C2 y)) (Tb (C1 y)))
+          (if (= (length l) 3)
+              (let ((x (newsym)))                                ; (T (define-primitive-concept C1 C2)) := 
+                (list 'rule (to-head (list (caddr l) x)) (to-body (list (cadr l) x)))) ; (rule (Th (C2 y)) (Tb (C1 y)))
+              (to-rule (append l '(TOP)))))
          (
           (dlprange? l)                                      ; <dlprange>
           (let ((x (newsym)) (y (newsym)))                   ; (T (define-primitive-concept TOP (all R C))) := 
@@ -661,15 +751,19 @@
             (list 'rule (to-head (list (caddr (caddr l)) x)) (list (cadr (caddr l)) x y)))) ; (rule (Th (C x)) (R x y))
          (
           (dlprinclusion? l)                                 ; <dlprinclusion>
-          (let ((x (newsym)) (y (newsym)))                   ; (T (define-primtive-role R1 R2)) := 
-            (list 'rule (list (caddr l) x y) (list (cadr l) x y)))) ; (rule (R2 x y) (R1 x y))
+          (if (= (length l) 3)
+              (let ((x (newsym)) (y (newsym)))                   ; (T (define-primtive-role R1 R2)) := 
+                (list 'rule (list (caddr l) x y) (list (cadr l) x y))) ; (rule (R2 x y) (R1 x y))
+              (to-rule (append l '(top)))))
          (
           (dlprequivalence? l)                               ; <dlprequivalence>
-          (list                                              ; (T (define-role R1 R2) := 
-           (let ((x (newsym)) (y (newsym)))
-             (list 'rule (list (caddr l) x y) (list (cadr l) x y)))   ; (rule (R2 x y) (R1 x y)) + 
-           (let ((x (newsym)) (y (newsym)))
-             (list 'rule (list (cadr l) x y) (list (caddr l) x y))))) ; (rule (R1 x y) (R2 x y))
+          (if (= (length l) 3)
+              (list                                              ; (T (define-role R1 R2) := 
+               (let ((x (newsym)) (y (newsym)))
+                 (list 'rule (list (caddr l) x y) (list (cadr l) x y)))   ; (rule (R2 x y) (R1 x y)) + 
+               (let ((x (newsym)) (y (newsym)))
+                 (list 'rule (list (cadr l) x y) (list (caddr l) x y)))) ; (rule (R1 x y) (R2 x y))
+              (to-rule (append l '(top)))))
          (
           (dlpinverse? l)                                    ; <dlpinverse>
           (list                                              ; (define-role R1 (inverse R2))) := 
@@ -704,23 +798,31 @@
  (define (%axiom oname ont)
    (if (dlp? ont)
        (let ((r (rulerewrite (to-rule ont))))
-         (define make-ontology
-           (lambda (n r)
-             (if (= (length r) 3)
-                 (make-rule n
-                            #f
-                            (make-rule-head (cadr r))
-                            (make-rule-body (caddr r)))
-                 (make-rule n
-                            #f
-                            (make-rule-head (cadr r))
-                            '()))))
-         (if (dlprule? r)
-             (list (make-ontology oname r))
-             (if (dlprules*? r)
-                 (map (lambda (r) (make-ontology (newont oname) r)) r)
-                 (error "ontology" "no good conversion" r))))
-       (assertion-violation "ontology" "error: no valid dlp ontology" ont)))
+         (begin
+           (define make-ontology
+             (lambda (n r)
+               (if (= (length r) 3)
+                   (make-rule n
+                              #f
+                              (make-rule-head (cadr r))
+                              (make-rule-body (caddr r)))
+                   (make-rule n
+                              #f
+                              (make-rule-head (cadr r))
+                              '()))))
+           (addsuccess)
+           (if (dlprule? r)
+               (list (make-ontology oname r))
+               (if (dlprules*? r)
+                   (map (lambda (r) (make-ontology (newaxiom oname) r)) r)
+                   (error "ontology" "no good conversion" r)))))
+       ;(assertion-violation "ontology" "error: no valid dlp ontology" ont)))
+       (begin
+         (adderror)
+         (pretty-print "ontology-error - no valid dlp ontology: ")
+         (pretty-print ont)
+         (newline)
+         '())))
  
  (define-syntax axiom
    (lambda (x)
@@ -740,18 +842,28 @@
  
  ; %ontology: ontology (list-of ontology) ... -> knowledgebase
  (define (%ontology l)
-   (display l)
+   ;(display l)
+   (newline)
+   (display "Nr. of axioms read: ")
+   (display successcounter)
+   (newline)
+   (display "Nr. of non dlp axioms: ")
+   (display errorcounter)
    (newline)
    (add-rules empty-knowledgebase (fold-right append '() l)))
  
  (define-syntax ontology
    (syntax-rules ()
-     ((_ oname axiom1 ...) (define oname
-                      (%ontology (map (lambda (x)
-                                        (display x)
-                                        (newline)
-                                        (%axiom (gensym (string-append (symbol->string (quote oname)) "-axiom-")) x))
-                                      (list (quote axiom1) ...)))))))
+     ((_ oname axiom1 ...) (begin
+                             (initerror)
+                             (initsuccess)
+                             (initaxiom)
+                             (define oname
+                               (%ontology (map (lambda (x)
+                                                 ;(display x)
+                                                 ;(newline)
+                                                 (%axiom (gensym (string-append (symbol->string (quote oname)) "-axiom-")) x))
+                                               (list (quote axiom1) ...))))))))
  
  ; generate-arguments-from-ontologies: knowledgebase (list-of question-types) -> generator
  (define generate-arguments-from-ontologies generate-arguments-from-rules)
