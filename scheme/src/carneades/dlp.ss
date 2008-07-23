@@ -23,7 +23,6 @@
  (import (rnrs)
          (carneades lib match)
          (carneades rule)
-         (carneades gensym)
          (carneades system)
          )
  
@@ -97,7 +96,7 @@
  ; <dlpcinclusion> = (define-primitive-concept <lbclass> <lhclass>) | (define-primitive-concept <lbclass>)
  ; <dlpcequivalence> = (define-concept <lclass> <lclass>) | (define-concept <lclass>)
  ; <dlprange> = (define-primitive-concept TOP <lhunivrestrict>) 
- ; <ldpdomain> = (define-primitive-concept TOP (all <rinverse> <lhclass>))
+ ; <dlpdomain> = (define-primitive-concept TOP (all <rinverse> <lhclass>))
  ; <dlprinclusion> = <rinclusion>
  ; <dlprequivalence> = <requivalence>
  ; <dlpinverse> = (define-role <rolename> <rinverse>)
@@ -124,8 +123,8 @@
  ; <dlpcequivalence> (T (define-concept C1 C2)) := (T (define-primitive-concept C1 C2)) + (T(define-primitive-concept C2 C1))
  ; <dlpcinclusion>   (T (define-primitive-concept C1 C2)) := (rule (Th (C2 y)) (Tb (C1 y)))
  ; <dlprange>        (T (define-primitive-concept TOP (all R C))) := (rule (Th (C y)) (R x y))
- ; <dlpdomain>       (T (define-primtive-concept TOP (all (inverse R) C))) := (rule (Th (C x)) (R x y))
- ; <dlprinclusion>   (T (define-primtive-role R1 R2)) := (rule (R2 x y) (R1 x y))
+ ; <dlpdomain>       (T (define-primitive-concept TOP (all (inverse R) C))) := (rule (Th (C x)) (R x y))
+ ; <dlprinclusion>   (T (define-primitive-role R1 R2)) := (rule (R2 x y) (R1 x y))
  ; <dlprequivalence> (T (define-role R1 R2) := (rule (R2 x y) (R1 x y)) + (rule (R1 x y) (R2 x y))
  ; <dlpinverse>      (T (define-role R1 (inverse R2))) := (rule (R2 x y) (R1 y x)) + (rule (R1 y x) (R2 x y))
  ; <dlptransitivity> (T (define-role (transitive-closure R) R) := (rule (R x z) (and (R x y) (R y z)))
@@ -173,7 +172,7 @@
  (define initerror
    (lambda ()
      (set! errorcounter 0)))
-  
+ 
  (define initsuccess
    (lambda ()
      (set! successcounter 0)))
@@ -318,7 +317,7 @@
     (conceptname? c)
     (lhconjunction? c)
     (lhunivrestrict? c))) 
-  
+ 
  (define (lhclasses*? c*)
    (if (pair? c*)
        (if (lhclass? (car c*))
@@ -340,7 +339,7 @@
     (pair? c)
     (= (length c) 3)
     (eq? (car c) 'all)
-    (role? (cadr c))
+    (rolename? (cadr c))
     (lhclass? (caddr c))))
  
  ; ----------------------------
@@ -558,12 +557,12 @@
      (= (length s) 2)
      (eq? (car s) 'define-concept)
      (lclass? (cadr s)))))
-   
+ 
  (define (dlprange? s)
    (and
     (pair? s)
     (= (length s) 3)
-    (eq? (car s) 'define-primtive-concept)
+    (eq? (car s) 'define-primitive-concept)
     (eq? (cadr s) 'TOP)
     (lhunivrestrict? (caddr s))))
  
@@ -722,6 +721,14 @@
  ; to-rule: dlp -> dlprule
  (define (to-rule l)
    (cond (
+          (dlpdomain? l)                                     ; <dldomain>
+          (let ((x (newsym)) (y (newsym)))                   ; (T (define-primitive-concept TOP (all (inverse R) C))) := 
+            (list 'rule (to-head (list (caddr (caddr l)) x)) (list (cadr (cadr (caddr l))) x y)))) ; (rule (Th (C x)) (R x y))
+         (
+          (dlprange? l)                                      ; <dlprange>
+          (let ((x (newsym)) (y (newsym)))                   ; (T (define-primitive-concept TOP (all R C))) := 
+            (list 'rule (to-head (list (caddr (caddr l)) y)) (list (cadr (caddr l)) x y)))) ; (rule (Th (C y)) (R x y))
+         (
           (dlpconcinstance? l)                               ; <dlpconcinstance> 
           (list 'rule (to-head (list (caddr l) (cadr l)))))  ; T(instance i C) := (rule Th(C i))
          (
@@ -734,36 +741,13 @@
                (to-rule (list 'define-primitive-concept (cadr l) (caddr l)))  ; (T (define-primitive-concept C1 C2)) +
                (to-rule (list 'define-primitive-concept (caddr l) (cadr l)))) ; (T(define-primitive-concept C2 C1))
               (to-rule (append l '(TOP)))))
-          
+         
          (
           (dlpcinclusion? l)                                 ; <dlpcinclusion>
           (if (= (length l) 3)
               (let ((x (newsym)))                                ; (T (define-primitive-concept C1 C2)) := 
                 (list 'rule (to-head (list (caddr l) x)) (to-body (list (cadr l) x)))) ; (rule (Th (C2 y)) (Tb (C1 y)))
-              (to-rule (append l '(TOP)))))
-         (
-          (dlprange? l)                                      ; <dlprange>
-          (let ((x (newsym)) (y (newsym)))                   ; (T (define-primitive-concept TOP (all R C))) := 
-            (list 'rule (to-head (list (caddr (caddr l)) y)) (list (cadr (caddr l)) x y)))) ; (rule (Th (C y)) (R x y))
-         (
-          (dlpdomain? l)                                     ; <dldomain>
-          (let ((x (newsym)) (y (newsym)))                   ; (T (define-primitive-concept TOP (all (inverse R) C))) := 
-            (list 'rule (to-head (list (caddr (caddr l)) x)) (list (cadr (caddr l)) x y)))) ; (rule (Th (C x)) (R x y))
-         (
-          (dlprinclusion? l)                                 ; <dlprinclusion>
-          (if (= (length l) 3)
-              (let ((x (newsym)) (y (newsym)))                   ; (T (define-primtive-role R1 R2)) := 
-                (list 'rule (list (caddr l) x y) (list (cadr l) x y))) ; (rule (R2 x y) (R1 x y))
-              (to-rule (append l '(top)))))
-         (
-          (dlprequivalence? l)                               ; <dlprequivalence>
-          (if (= (length l) 3)
-              (list                                              ; (T (define-role R1 R2) := 
-               (let ((x (newsym)) (y (newsym)))
-                 (list 'rule (list (caddr l) x y) (list (cadr l) x y)))   ; (rule (R2 x y) (R1 x y)) + 
-               (let ((x (newsym)) (y (newsym)))
-                 (list 'rule (list (cadr l) x y) (list (caddr l) x y)))) ; (rule (R1 x y) (R2 x y))
-              (to-rule (append l '(top)))))
+              (to-rule (append l '(TOP))))) 
          (
           (dlpinverse? l)                                    ; <dlpinverse>
           (list                                              ; (define-role R1 (inverse R2))) := 
@@ -775,6 +759,21 @@
           (dlptransitivity? l)                               ; <dlptransitivity>
           (let ((x (newsym)) (y (newsym)) (z (newsym)) (r (caddr l))) ; (T (define-role (transitive-closure R) R) :=
             (list 'rule (list r x z) (list 'and (list r x y) (list r y z))))) ;  (rule (R x z) (and (R x y) (R y z)))
+         (
+          (dlprinclusion? l)                                 ; <dlprinclusion>
+          (if (= (length l) 3)
+              (let ((x (newsym)) (y (newsym)))                   ; (T (define-primitive-role R1 R2)) := 
+                (list 'rule (list (caddr l) x y) (list (cadr l) x y))) ; (rule (R2 x y) (R1 x y))
+              (to-rule (append l '(top)))))
+         (
+          (dlprequivalence? l)                               ; <dlprequivalence>
+          (if (= (length l) 3)
+              (list                                              ; (T (define-role R1 R2) := 
+               (let ((x (newsym)) (y (newsym)))
+                 (list 'rule (list (caddr l) x y) (list (cadr l) x y)))   ; (rule (R2 x y) (R1 x y)) + 
+               (let ((x (newsym)) (y (newsym)))
+                 (list 'rule (list (cadr l) x y) (list (caddr l) x y)))) ; (rule (R1 x y) (R2 x y))
+              (to-rule (append l '(top))))) 
          ))
  
  ; ----------------------------
@@ -812,14 +811,14 @@
                               '()))))
            (addsuccess)
            (if (dlprule? r)
-               (list (make-ontology oname r))
+               (list (make-ontology (newaxiom oname) r))
                (if (dlprules*? r)
                    (map (lambda (r) (make-ontology (newaxiom oname) r)) r)
                    (error "ontology" "no good conversion" r)))))
        ;(assertion-violation "ontology" "error: no valid dlp ontology" ont)))
        (begin
          (adderror)
-         (pretty-print "ontology-error - no valid dlp ontology: ")
+         (pretty-print "ontology-error - no valid dlp ontology:")
          (pretty-print ont)
          (newline)
          '())))
@@ -833,7 +832,7 @@
  (define empty-knowledgebase empty-rulebase)
  
  ; (define add-ontology add-rules)
-  
+ 
  
  ; TODO: FIX
  ; add-ontologies: knowledgebase (list-of (list-of ontology)) -> knowledgebase
@@ -862,7 +861,7 @@
                                (%ontology (map (lambda (x)
                                                  ;(display x)
                                                  ;(newline)
-                                                 (%axiom (gensym (string-append (symbol->string (quote oname)) "-axiom-")) x))
+                                                 (%axiom (string->symbol (string-append (symbol->string (quote oname)) "-axiom")) x))
                                                (list (quote axiom1) ...))))))))
  
  ; generate-arguments-from-ontologies: knowledgebase (list-of question-types) -> generator
