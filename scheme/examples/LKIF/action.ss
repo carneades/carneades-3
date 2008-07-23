@@ -8,7 +8,9 @@
 
 (ontology action
           
-          (define-primitive-concept action:Transaction (and action:Collaborative_Plan(and (all mereology:direct_part action:Action) (exactly 2 mereology:direct_part))))
+          (define-primitive-concept action:Transaction (and action:Collaborative_Plan 
+                (and (all mereology:direct_part action:Action) 
+                           (exactly 2 mereology:direct_part))))
           
           (define-primitive-concept action:Personal_Plan  action:Plan)
           
@@ -80,9 +82,10 @@
           )
 
  (ontology facts
-;           (related Caroline Tom parent)
            (instance p1 action:Personal_Plan)
            (related a1 a2 action:actor)
+           (related o1 p2 mereology:member)
+           (instance p2 action:Person)
 )
 
 (define (engine max-nodes max-turns)
@@ -95,6 +98,7 @@
 (check (all-acceptable? '(action:Plan ?x) e1) => #t)
 (check (all-acceptable? '(action:Action a1) e1) => #t)
 (check (all-acceptable? '(action:Action a2) e1) => #t)
+(check (all-acceptable? '(action:Organisation p2) e1) => #t)
 
 (check-report)
 
