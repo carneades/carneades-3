@@ -24,13 +24,15 @@
           
           (define-primitive-concept process:Change )
           
-          (define-concept action:Plan (some mereology:part action:Action))
+          ; (define-concept action:Plan (some mereology:part action:Action)
+          (define-primitive-concept (some mereology:part action:Action) action:Plan )
           
           (define-primitive-concept owl:Thing )
           
           (define-concept action:Action (exactly 1 action:actor))
           
-          (define-concept action:Organisation (some mereology:member action:Person))
+          ; (define-concept action:Organisation (some mereology:member action:Person))
+          (define-primitive-concept (some mereology:member action:Person) action:Organisation)
           
           (define-primitive-concept process:Process )
           
@@ -98,7 +100,7 @@
 (check (all-acceptable? '(action:Plan ?x) e1) => #t)
 (check (all-acceptable? '(action:Action a1) e1) => #t)
 (check (all-acceptable? '(action:Action a2) e1) => #t)
-(check (all-acceptable? '(action:Organisation p2) e1) => #t)
+(check (all-acceptable? '(action:Organisation o1) e1) => #t)
 
 (check-report)
 
