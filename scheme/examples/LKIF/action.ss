@@ -1,7 +1,10 @@
 #!r6rs
 
 (import (rnrs)
-        (carneades dlp))
+        (carneades dlp)
+        (carneades shell)
+        (carneades argument-builtins)
+        (carneades lib srfi lightweight-testing))
 
 (ontology action
           
@@ -60,3 +63,21 @@
           (define-primitive-role action:actor_in :domain action:Agent :range action:Agent :parents( process:participant_in))
           
           )
+
+ (ontology facts
+;           (related Caroline Tom parent)
+           (instance p1 action:Personal_Plan)
+)
+
+(define (engine max-nodes max-turns)
+  (make-engine max-nodes max-turns 
+               (list (generate-arguments-from-ontologies facts '())
+                     (generate-arguments-from-ontologies action '()))))
+
+(define e1 (engine 100 10))
+
+(check (all-acceptable? '(action:Plan ?x) e1) => #t)
+
+(check-report)
+
+; (show '(action:Plan ?x) e1)
