@@ -59,13 +59,13 @@ public class GraphFrame extends SwingFrame {
 	public attribute view: GraphView = bind GraphView {
 							x: 0
 							y: 0
-							//width: bind layout.width as Integer
-							//preferredSize: bind [this.width-GC.editWidth-20, 100]
+							width: this.width - GC.editWidth - 5
+							height: this.height - GC.toolBarHeight - 20
+							preferredSize: bind [this.width-GC.editWidth - 20, this.height - 150]
 							graph: bind graph
 							layout: bind layout
 							visible: true
 							control: bind control
-							//preferredSize: [scroll.width, scroll.height]
 					}
 
 	public attribute edit: GraphEdit = GraphEdit {
@@ -84,7 +84,7 @@ public class GraphFrame extends SwingFrame {
 
 
 	attribute scroll: ScrollPane = ScrollPane {
-		view: bind view
+		//view: bind view
 		preferredSize: bind [this.width - GC.editWidth-10, this.height]
 	}
 
@@ -140,17 +140,7 @@ public class GraphFrame extends SwingFrame {
 					}
 				]
 			}
-		/*Canvas {
-			content: [
-				ImageView {
-					width: bind creditsFrame.width
-					height: bind creditsFrame.height
-					image: Image {
-						url: bind "file:data/aboutcarneades.png"
-					}
-				}
-			]
-		}*/
+
 		closeAction: function() {
 			showCredits = false;
 		}
@@ -184,7 +174,7 @@ public class GraphFrame extends SwingFrame {
 
 	override attribute content = bind BorderPanel {
 		top: bind toolPanel
-		left: bind scroll
+		left: bind view
 		right: bind rightPanel
 		center: null
 	}

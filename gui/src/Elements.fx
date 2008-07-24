@@ -125,6 +125,7 @@ public class ArgumentBox extends ArgumentElement {
 				}
 			} else null
 		}
+		
 
 		onMouseClicked: function(e: MouseEvent) {
 			control.unSelectAll();
@@ -211,7 +212,7 @@ public class StatementBox extends ArgumentElement {
 							}
 						} else null
 					}
-				
+					
 					onMouseClicked: function(e: MouseEvent) {
 						control.unSelectAll();
 						selected = true;
