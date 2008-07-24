@@ -258,6 +258,7 @@ public class TreeLayout extends GraphLayout {
 
 
 	public function compose():Graph {
+		//System.out.println("layout started!");
 
 		// update box widths
 		// This is a very poor workaround, but I see no way to trigger an update event in here...
@@ -283,7 +284,11 @@ public class TreeLayout extends GraphLayout {
 		setPriorities(root);
 			
 		// do the main tree vertex layout
+		// First Traversal: determine tree sizes
+		//System.out.println("First Traversal");
 		treeSize(getBottomLeft(root));
+		// Second Traversal: Position things
+		//System.out.println("Second Traversal");
 		position(root);
 			
 		// adjust layout according to the offset
@@ -298,6 +303,8 @@ public class TreeLayout extends GraphLayout {
 		//} // if (d)
 
 		//GC.p("Yet another layout ...");
+
+		//System.out.println("Layout finished");
 		
 		return graph;
 	}

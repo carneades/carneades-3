@@ -462,20 +462,15 @@ public class ChangeStatementStandardCommand extends UndoableCommand {
 	public function do(): Number {
 		// backup old standard via deep copy
 		if (statement.standard instanceof Scintilla) {
-			oldStandard = Scintilla {
-				negated: statement.standard.negated
-				complement: statement.standard.complement
-			};
+			oldStandard = Scintilla {};
 		} else if (statement.standard instanceof DialecticalValidity) {
-			oldStandard = DialecticalValidity {
-				negated: statement.standard.negated
-				complement: statement.standard.complement
-			};
+			oldStandard = DialecticalValidity {};
 		} else if (statement.standard instanceof BestArgument) {
-			oldStandard = BestArgument {
-				negated: statement.standard.negated
-				complement: statement.standard.complement
-			};
+			oldStandard = BestArgument {};
+		} else if (statement.standard instanceof Preponderance) {
+			oldStandard = Preponderance {};
+		} else if (statement.standard instanceof BeyondReasonableDoubt) {
+			oldStandard = BeyondReasonableDoubt {};
 		}
 		// Set new Standard
 		statement.standard = standard;

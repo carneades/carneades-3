@@ -14,7 +14,7 @@
       <s id="s4">The object is illuminated by a red light.</s>
     </statements>
     <arguments>
-      <argument direction="pro" id="a1" scheme="" weight="50.0">
+      <argument direction="pro" id="a1" scheme="" weight="0.5">
         <conclusion statement="s1"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="s2"/>

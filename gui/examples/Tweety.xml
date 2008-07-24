@@ -16,7 +16,7 @@
       <s id="s5">Tweety is a penguin.</s>
     </statements>
     <arguments>
-      <argument direction="pro" id="a1" scheme="" weight="50.0">
+      <argument direction="pro" id="a1" scheme="" weight="0.5">
         <conclusion statement="s1"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="s2"/>
@@ -24,7 +24,7 @@
           <premise exception="true" polarity="positive" role="" statement="s4"/>
         </premises>
       </argument>
-      <argument direction="pro" id="a2" scheme="" weight="50.0">
+      <argument direction="pro" id="a2" scheme="" weight="0.5">
         <conclusion statement="s4"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="s5"/>
