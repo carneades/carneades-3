@@ -20,7 +20,7 @@
       <s id="s7">Persons who become American citizens are no longer British subjects.</s>
     </statements>
     <arguments>
-      <argument direction="pro" id="a1" scheme="" weight="50.0">
+      <argument direction="pro" id="a1" scheme="" weight="0.5">
         <conclusion statement="s1"/>
         <premises>
           <premise exception="false" polarity="positive" role="datum" statement="s2"/>
@@ -28,13 +28,13 @@
           <premise exception="true" polarity="positive" role="" statement="s5"/>
         </premises>
       </argument>
-      <argument direction="pro" id="a2" scheme="" weight="50.0">
+      <argument direction="pro" id="a2" scheme="" weight="0.5">
         <conclusion statement="s3"/>
         <premises>
           <premise exception="false" polarity="positive" role="backing" statement="s4"/>
         </premises>
       </argument>
-      <argument direction="pro" id="a3" scheme="" weight="50.0">
+      <argument direction="pro" id="a3" scheme="" weight="0.5">
         <conclusion statement="s5"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="s6"/>

@@ -30,57 +30,57 @@
       <s id="s13">Case 2 is more on point than Case 1.</s>
     </statements>
     <arguments>
-      <argument direction="pro" id="a1" scheme="" weight="50.0">
+      <argument direction="pro" id="a1" scheme="" weight="0.5">
         <conclusion statement="s1"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="s2"/>
           <premise exception="false" polarity="positive" role="" statement="s3"/>
         </premises>
       </argument>
-      <argument direction="pro" id="a2" scheme="" weight="50.0">
+      <argument direction="pro" id="a2" scheme="" weight="0.5">
         <conclusion statement="s2"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="s4"/>
         </premises>
       </argument>
-      <argument direction="pro" id="a3" scheme="" weight="50.0">
+      <argument direction="pro" id="a3" scheme="" weight="0.5">
         <conclusion statement="s3"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="s5"/>
         </premises>
       </argument>
-      <argument direction="con" id="a4" scheme="" weight="50.0">
+      <argument direction="con" id="a4" scheme="" weight="0.5">
         <conclusion statement="s3"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="s6"/>
         </premises>
       </argument>
-      <argument direction="con" id="a5" scheme="" weight="50.0">
+      <argument direction="con" id="a5" scheme="" weight="0.5">
         <conclusion statement="s3"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="s7"/>
         </premises>
       </argument>
-      <argument direction="con" id="a6" scheme="" weight="50.0">
+      <argument direction="con" id="a6" scheme="" weight="0.5">
         <conclusion statement="s6"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="s8"/>
         </premises>
       </argument>
-      <argument direction="pro" id="a7" scheme="" weight="50.0">
+      <argument direction="pro" id="a7" scheme="" weight="0.5">
         <conclusion statement="s7"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="s9"/>
           <premise exception="true" polarity="positive" role="" statement="s13"/>
         </premises>
       </argument>
-      <argument direction="pro" id="a8" scheme="" weight="50.0">
+      <argument direction="pro" id="a8" scheme="" weight="0.5">
         <conclusion statement="s7"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="s11"/>
         </premises>
       </argument>
-      <argument direction="pro" id="a9" scheme="" weight="50.0">
+      <argument direction="pro" id="a9" scheme="" weight="0.5">
         <conclusion statement="s11"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="s12"/>

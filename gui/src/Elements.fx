@@ -83,7 +83,7 @@ public class ArgumentBox extends ArgumentElement {
 	override attribute text = Text {
 					content: bind { 
 						if ((argument.conclusion.standard) instanceof BestArgument)
-							"{if (argument.pro) '+' else '-'}.{argument.weight as Integer}" 
+							"{if (argument.pro) '+' else '-'}.{(argument.weight * 100) as Integer}" 
 							else "{if (argument.pro) '+' else '-'}"}
 					verticalAlignment: VerticalAlignment.TOP
 					horizontalAlignment: HorizontalAlignment.CENTER

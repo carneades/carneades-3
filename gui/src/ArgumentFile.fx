@@ -91,11 +91,11 @@ public class ArgumentFile {
 										}
 										, Attribute {
 											name: "standard"
-											value: { {if (s.standard.negated) "N" else ""} + 
-													 {if (s.standard.complement) "C" else ""} +
-													{if (s.standard instanceof Scintilla) "SE"
+											value: {if (s.standard instanceof Scintilla) "SE"
 													else if (s.standard instanceof BestArgument) "BA"
-													else /*if (s.standard instanceof DialecticalValidity)*/ "DV"}}
+													else if (s.standard instanceof BeyondReasonableDoubt) "BRD"
+													else if (s.standard instanceof Preponderance) "PE"
+													else /*if (s.standard instanceof DialecticalValidity)*/ "DV"}
 										}
 									] // attributes
 								} // element
@@ -325,37 +325,12 @@ public class ArgumentFile {
 				var complement: Boolean = false;
 				var extractedStandard: String = i.standard;
 
-				// extract negated
-				if (extractedStandard.startsWith("N")) {
-					negated = true;
-					extractedStandard = extractedStandard.substring(1);
-				}
-				
-				// extract complement
-				if (extractedStandard.startsWith("C")) {
-					complement = true;
-					extractedStandard = extractedStandard.substring(1);
-				}
-				
 				newStatement.standard = {
-					if (extractedStandard == "SE") 
-						Scintilla {
-							statement: newStatement
-							negated: negated
-							complement: complement
-						}
-					else if (extractedStandard == "DV") 
-						DialecticalValidity {
-							statement: newStatement
-							negated: negated
-							complement: complement
-						}
-					else 
-						BestArgument {
-							statement: newStatement
-							negated: negated
-							complement: complement
-						} 
+					if (extractedStandard == "SE") Scintilla { statement: newStatement }
+					else if (extractedStandard == "DV") DialecticalValidity { statement: newStatement }
+					else if (extractedStandard == "PE") Preponderance { statement: newStatement }
+					else if (extractedStandard == "BRD") BeyondReasonableDoubt { statement: newStatement }
+					else BestArgument { statement: newStatement } 
 				};
 			}
 			insert newStatement into argumentGraph.statements;
@@ -385,6 +360,8 @@ public class ArgumentFile {
 						id: i.value
 					}
 				if (i.name == "weight") { weight = Float.valueOf(i.value); }
+				// correct weight for older files
+				if (weight > 1.0) { weight = weight / 100; }
 			}
 			
 			// fetch premises

@@ -108,7 +108,7 @@ public class EditPanel extends FlowPanel {
 	protected attribute control: GraphControl;
 	public attribute argumentGraph: ArgumentGraph;
 	protected attribute editLabelWidth = bind GC.editLabelWidth;
-	protected attribute editComponentWidth = bind GC.editWidth - editLabelWidth - 30;
+	protected attribute editComponentWidth = bind GC.editWidth - editLabelWidth - 20;
 
 }
 
@@ -119,7 +119,7 @@ public class StatementEditPanel extends EditPanel {
 
 	private attribute idField: IdField = IdField {
 		editable: bind GC.idsEditable
-		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, GC.textFieldHeight ]
+		preferredSize: [editComponentWidth, GC.textFieldHeight ]
 		action: function(): Void {
 			control.changeStatementId(statement, idField.text);
 		}
@@ -148,22 +148,6 @@ public class StatementEditPanel extends EditPanel {
 
 	// Proof Standard Components
 
-	private attribute negatedBox: CheckBox = CCheckBox {
-		text: "negated"
-		preferredSize: [ editComponentWidth, 20 ]
-		action: function(): Void {
-			submitStandard();
-		}
-	}
-
-	private attribute complementBox: CheckBox = CCheckBox {
-		text: "complement"
-		preferredSize: [ editComponentWidth - 30, 20 ]
-		action: function(): Void {
-			submitStandard();
-		}
-	}
-
 	private attribute proofStandardBox: ProofStandardField = ProofStandardField {
 		preferredSize: [ editComponentWidth - 30, 20 ]
 		action: function(): Void {
@@ -174,14 +158,12 @@ public class StatementEditPanel extends EditPanel {
 	// temporary function to submit a new Proof Standard
 	private function submitStandard(): Void {
 		control.changeStatementProofStandard( statement,
-											selectedStandard,
-											{ if (negatedBox.selected) true else false },
-											{ if (complementBox.selected) true else false });
+											  selectedStandard);
 	}
 
 	private attribute standardGroup: ToggleGroup = ToggleGroup {};
 
-	private attribute selectedStandard: String = bind (if (BAButton.selected) "BA" else if (SEButton.selected) "SE" else "DV");
+	private attribute selectedStandard: String = bind (if (BAButton.selected) "BA" else if (SEButton.selected) "SE" else if (DVButton.selected) "DV" else if (BRDButton.selected) "BRD" else "PE");
 
 	private attribute BAButton: RadioButton = CRadioButton {
 		toggleGroup: standardGroup
@@ -204,7 +186,25 @@ public class StatementEditPanel extends EditPanel {
 	private attribute DVButton: RadioButton = CRadioButton {
 		toggleGroup: standardGroup
 		text: "dialectical validity"
-		preferredSize: [ editComponentWidth - 30, 20 ]
+		preferredSize: [ editComponentWidth, 20 ]
+		action: function(): Void {
+			submitStandard();
+		}
+	}
+
+	private attribute PEButton: RadioButton = CRadioButton {
+		toggleGroup: standardGroup
+		text: "preponderance of evidence"
+		preferredSize: [ editComponentWidth, 20 ]
+		action: function(): Void {
+			submitStandard();
+		}
+	}
+
+	private attribute BRDButton: RadioButton = CRadioButton {
+		toggleGroup: standardGroup
+		text: "beyond reasonable doubt"
+		preferredSize: [ editComponentWidth, 20 ]
 		action: function(): Void {
 			submitStandard();
 		}
@@ -279,8 +279,8 @@ public class StatementEditPanel extends EditPanel {
 										Label { text: "proof standard", preferredSize: [editLabelWidth, 20] }, SEButton,
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, DVButton, 
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, BAButton, 
-										Label { text: "", preferredSize: [editLabelWidth, 20] }, negatedBox,
-										Label { text: "", preferredSize: [editLabelWidth, 20] }, complementBox,
+										Label { text: "", preferredSize: [editLabelWidth, 20] }, PEButton, 
+										Label { text: "", preferredSize: [editLabelWidth, 20] }, BRDButton, 
 										];
 
 	// Functions
@@ -299,11 +299,10 @@ public class StatementEditPanel extends EditPanel {
 		
 		if (statement.standard instanceof DialecticalValidity) { DVButton.selected = true; }
 		else if (statement.standard instanceof Scintilla) { SEButton.selected = true; }
-		else /*if (statement.standard instanceof Scintilla)*/ { BAButton.selected = true; }
+		else if (statement.standard instanceof BeyondReasonableDoubt) { BRDButton.selected = true; }
+		else if (statement.standard instanceof Preponderance) { PEButton.selected = true; }
+		else /*if (statement.standard instanceof BestArgument)*/ { BAButton.selected = true; }
 		
-		if (statement.standard.negated) { negatedBox.selected = true; } else { negatedBox.selected = false; }
-		if (statement.standard.complement) { complementBox.selected = true; } else { complementBox.selected = false; }
-
 	}
 }
 
@@ -336,6 +335,7 @@ public class ArgumentEditPanel extends EditPanel {
 	private attribute directionGroup: ToggleGroup = ToggleGroup {};
 
 	private attribute proButton: RadioButton = CRadioButton {
+		preferredSize: [editComponentWidth / 2, 20]
 		toggleGroup: directionGroup
 		text: "pro"
 		action: function(): Void {
@@ -344,6 +344,7 @@ public class ArgumentEditPanel extends EditPanel {
 	}
 
 	private attribute conButton: RadioButton = CRadioButton {
+		preferredSize: [editComponentWidth / 2, 20]
 		toggleGroup: directionGroup
 		text: "con"
 		action: function(): Void {
@@ -355,13 +356,13 @@ public class ArgumentEditPanel extends EditPanel {
 	private attribute weightSlider: WeightSlider = WeightSlider {
 		argument: bind argument
 		control: bind control
-		preferredSize: [ editComponentWidth-35, 20 ]
+		preferredSize: [ editComponentWidth-45, 20 ]
 		maximum: 100
 		minimum: 0
 	}
 
 	private attribute weightNumber: TextField = TextField {
-		preferredSize: [ 30, GC.textFieldHeight ]
+		preferredSize: [ 40, GC.textFieldHeight ]
 		editable: false
 		text: bind ".{(weightSlider.value).toString()}"
 	}
@@ -388,7 +389,7 @@ public class ArgumentEditPanel extends EditPanel {
 			conButton.selected = true;
 		}
 
-		weightSlider.setValue(argument.weight as Integer);
+		weightSlider.setValue((argument.weight * 100) as Integer);
 	}
 }
 
@@ -588,7 +589,7 @@ class DirectionField extends LimitedTextField {
 }
 
 class WeightSlider extends Slider {
-	public attribute argument: Argument = Argument {} on replace { value = (argument.weight) as Integer; }
+	public attribute argument: Argument = Argument {} on replace { value = (argument.weight * 100) as Integer; }
 	private attribute updateChange: Boolean = true; // needs to be true to avoid inital command dispatch from on replace value
 	override attribute value = (argument.weight) as Integer on replace { submitWeight(); }
 	public attribute control: GraphControl;
@@ -600,7 +601,7 @@ class WeightSlider extends Slider {
 
 	function submitWeight(): Void {
 		if (not updateChange) { 
-			control.changeArgumentWeight(argument, value); 
+			control.changeArgumentWeight(argument, (value as Number) / 100); 
 		} else {
 			updateChange = false;
 		}
