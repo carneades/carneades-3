@@ -148,9 +148,7 @@ grammar {
         attribute statement { xsd:anyURI },
         attribute value { "unknown" | "true" | "false" },  # default: unknown
         attribute assumption { xsd:boolean }?, # default: false
-        attribute standard { "SE" | "CSE" | "NSE" | "NCSE" | 
-                             "DV" | "CDV" | "NDV" | "NCDV" | 
-                             "BA" | "CBA" | "NBA" | "NCBA"  }? # default: BA
+        attribute standard { "SE" | "DV" | "BA" | "PE" | "BRD" }? # default: BA
     }
          
     
