@@ -60,8 +60,8 @@ public class GC {
 						opacity: 0
 					}
 	
-	public static attribute edgeSelectionWidth = 5;
-	public static attribute selectedEdgeWidth = 2;
+	public static attribute edgeSelectionWidth: Integer = 5;
+	public static attribute selectedEdgeWidth: Integer = 2;
 
 	public static attribute drawShadows: Boolean = true;
 	public static attribute shadowColor: Color = Color.rgb(0, 0, 0, 0.7 );
@@ -71,13 +71,13 @@ public class GC {
 
 	// General Vertex Constants
 	public static attribute scaleVerticesWithText = false;
-	public static attribute vertexDefaultWidth = 50;
-	public static attribute vertexDefaultHeight = 50;
+	public static attribute vertexDefaultWidth: Integer = 50;
+	public static attribute vertexDefaultHeight: Integer = 50;
 
 	// Statement Boxes
 	public static attribute numDisplayedChars = 15;
-	public static attribute statementBoxDefaultWidth = 150;
-	public static attribute statementBoxBottomBrink = 50;
+	public static attribute statementBoxDefaultWidth: Integer = 150;
+	public static attribute statementBoxBottomBrink: Integer = 50;
 
 	public static attribute fillStatements = true;
 	public static attribute statusAcceptedColor: Color = Color.rgb(45, 193, 56);
@@ -92,21 +92,21 @@ public class GC {
 	public static attribute acceptableCirclePadding: Integer = 5;
 
 	// Argument Boxes
-	public static attribute argumentBoxDefaultWidth = 60;
-	public static attribute argumentBoxBottomBrink = 3;
-	public static attribute argumentCircleDefaultRadius = 20;
+	public static attribute argumentBoxDefaultWidth: Integer = 60;
+	public static attribute argumentBoxBottomBrink: Integer = 3;
+	public static attribute argumentCircleDefaultRadius: Integer = 20;
 	public static attribute argumentConColor = statusRejectedColor;
 	public static attribute argumentProColor = statusAcceptedColor;
 
 	// Application constants
-	public static attribute appWidth = 1000;
-	public static attribute appHeight = 700;
+	public static attribute appWidth: Integer = 1000;
+	public static attribute appHeight: Integer = 700;
 
 	// Layout constants
-	public static attribute xOffset = appWidth / 2;
-	public static attribute yOffset = 0;
-	public static attribute xDistance = bind acceptableCircleWidth + (2 * acceptableCirclePadding) + 10;
-	public static attribute yDistance = 50;
+	public static attribute xOffset: Integer = appWidth / 2;
+	public static attribute yOffset: Integer = 0;
+	public static attribute xDistance: Integer = bind acceptableCircleWidth + (2 * acceptableCirclePadding) + 10;
+	public static attribute yDistance: Integer = 50;
 
 	public static attribute drawNonArguedStatements = false;
 

@@ -41,6 +41,8 @@ public class Graph extends CustomNode {
 		} // Group
 	} // composeNode
 
+	public attribute root: Vertex;
+
 	public function unSelectAll(): Void {
 		for (i in vertices) i.selected = false;
 		for (i in edges) i.selected = false;
