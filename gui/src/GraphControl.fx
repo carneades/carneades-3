@@ -43,7 +43,7 @@ public class GraphControl {
 	attribute frame: GraphFrame;
 	attribute edit: GraphEdit = bind frame.edit;
 	attribute view: GraphView = bind frame.view;
-	public attribute graph: Graph = bind frame.graph;
+	public attribute graph: Graph;
 
 	attribute layout: GraphLayout = TreeLayout {
 		graph: bind graph
@@ -146,6 +146,8 @@ public class GraphControl {
 
 		// These calls and their functions can be united into a bind once chained bindings work.
 		updateView();
+		
+		if (graph.selected != []) { focusOnSelected(); }
 	}
 	
 	public function unSelectAll(): Void { 
@@ -179,6 +181,13 @@ public class GraphControl {
 		insert m into selectedModels;
 	}
 
+	public function focusOnSelected() {
+		var selected: GraphElement = getSelected()[0] as GraphElement;
+		if (selected instanceof Vertex) {
+			view.focusOn((selected as Vertex).x, (selected as Vertex).y);
+		}
+	}
+
 	
 	// UPDATE FUNCTIONS
 	
@@ -198,19 +207,22 @@ public class GraphControl {
 				for (m in selectedModels) {
 					// restore arguments
 					if (m instanceof Argument) {
-						for (v in graph.vertices where (v instanceof ArgumentBox and (v as ArgumentBox).argument == (m as Argument))) {
+						for (v in graph.vertices where (v instanceof ArgumentBox 
+														and (v as ArgumentBox).argument == (m as Argument))) {
 							v.selected = true;
 						}
 					}
 					// restore statements
 					if (m instanceof Statement) {
-						for (v in graph.vertices where (v instanceof StatementBox and (v as StatementBox).statement == (m as Statement))) {
+						for (v in graph.vertices where (v instanceof StatementBox 
+														and (v as StatementBox).statement == (m as Statement))) {
 							v.selected = true;
 						}
 					}
 					// restore premises
 					if (m instanceof Premise) {
-						for (v in graph.edges where (v instanceof PremiseLink and (v as PremiseLink).premise == (m as Premise))) {
+						for (v in graph.edges where (v instanceof PremiseLink 
+													 and (v as PremiseLink).premise == (m as Premise))) {
 							v.selected = true;
 						}
 					}	
@@ -242,15 +254,6 @@ public class GraphControl {
 
 		if (sizeof getSelectedModel() == 0) {
 			frame.list.reset();
-		}
-		
-		// rescale canvas
-		if (layout.width != view.width) {
-			view.width = layout.width as Integer;
-		}
-
-		if (layout.height != view.height) {
-			view.height = layout.height as Integer;
 		}
 
 		edit.update();
@@ -773,6 +776,7 @@ public class GraphControl {
 		commands.reset();
 		unSelectAll();
 		updateAll();
+		view.reset();
 	}
 
 	public function loadGraphFromFile(f: File): Void {

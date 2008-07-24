@@ -36,8 +36,8 @@ public class Vertex extends GraphElement {
 	attribute parentVertex: Vertex = null;
 	attribute xShift: Number = 0; // display coordinates relative to the parent node
 	attribute yShift: Number = 0; 
-	attribute x: Number = bind parentVertex.x + xShift; // the absolute coordinates
-	attribute y: Number = bind parentVertex.y + yShift; // in case of the root vertex, it gets assigned 0 by default
+	attribute x: Number = bind parentVertex.x + xShift; 
+	attribute y: Number = bind parentVertex.y + yShift;
 
 	attribute defaultWidth: Number = GC.vertexDefaultWidth;
 	attribute scaleWithText: Boolean = GC.scaleVerticesWithText;

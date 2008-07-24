@@ -36,8 +36,10 @@ public class CarneadesGraph extends Graph {
 	public attribute argumentGraph: ArgumentGraph;
 
 	// the invisible root node
-	attribute root: Vertex = Vertex {
+	override attribute root = Vertex {
 		caption: "root"
+		x: bind root.xShift
+		y: bind root.yShift
 		visible: false
 	}
 	
@@ -53,7 +55,19 @@ public class CarneadesGraph extends Graph {
 		// argument and statement sequences of the model change, no event gets thrown back that
 		// triggers the binding reset which is necessary to trigger the new graph to be forwarded
 		// to the layout object.
-		if(GC.debug) { System.out.println("CarneadesGraph.update()"); }
+		if (GC.debug) { System.out.println("CarneadesGraph.update()"); }
+		
+		// destroy the vertex array to allow the garbage collection to clean up
+		for (v in vertices) {
+			v.parentVertex = null;
+			v.children = null;
+		}
+		// destroy the edge array to allow the garbage collection to clean up
+		for (e in edges) {
+			e.producer = null;
+			e.recipient = null;
+		}
+		
 		root.children = [];
 		vertices = [root, toVertices(argumentGraph.statements, argumentGraph.arguments)];
 		edges = toEdges(argumentGraph.statements, argumentGraph.arguments);
@@ -141,14 +155,14 @@ public class CarneadesGraph extends Graph {
 												{ v as StatementBox });
 			if (a.pro) {
 			link = ProArgumentLink {
-				producer: bind producer[0]
-				recipient: bind recipient[0]
+				producer: producer[0]
+				recipient: recipient[0]
 				control: bind control
 				}
 			} else
 			link = ConArgumentLink {
-				producer: bind producer[0]
-				recipient: bind recipient[0]
+				producer: producer[0]
+				recipient: recipient[0]
 				control: bind control
 			}
 			insert link into links;
@@ -168,8 +182,8 @@ public class CarneadesGraph extends Graph {
 													{ v as StatementBox });
 				link = PremiseLink {
 					premise: bind p
-					producer: bind producer[0]
-					recipient: bind recipient[0]
+					producer: producer[0]
+					recipient: recipient[0]
 					negated: bind p.negative
 					control: bind control
 				}	

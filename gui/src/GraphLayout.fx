@@ -25,10 +25,10 @@ public abstract class GraphLayout {
 	// This would normally be a Graph object, but the inverse bind forces the classes to exactly match.
 	public attribute graph: Graph;
 	
-	public attribute width: Number;
-	public attribute height: Number;
-	attribute xOffset: Number = GC.xOffset;
-	attribute yOffset: Number = GC.yOffset;
+	public attribute width: Integer;
+	public attribute height: Integer;
+	attribute xOffset: Integer = GC.xOffset;
+	attribute yOffset: Integer = GC.yOffset;
 	attribute d: Boolean = bind GC.debug; // debug messages?
 
 	public function compose():Graph { graph }

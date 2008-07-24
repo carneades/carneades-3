@@ -20,6 +20,7 @@ package Carneades.Graph;
 
 import javafx.ext.swing.*;
 import javafx.input.*;
+import javafx.animation.*;
 import javafx.scene.geometry.*;
 import javafx.scene.paint.*;
 import Carneades.Graph.*;
@@ -29,6 +30,11 @@ import java.lang.System;
 import Carneades.Control.GraphControl;
 
 public class GraphView extends Canvas {
+	public attribute focusX: Number = middleX;
+	public attribute focusY: Number = middleY;
+	public attribute middleX: Number = bind this.width/2;
+	public attribute middleY: Number = bind this.height/3;
+	
 	public attribute graph: Graph;
 	override attribute width;
 	attribute layout: GraphLayout;
@@ -66,4 +72,34 @@ public class GraphView extends Canvas {
 	override attribute background = GC.viewBackground;
 	override attribute content = bind [graph, backSensor, dragSymbol ];
 
+	public function reset(): Void {
+		graph.root.xShift = middleX;
+		graph.root.yShift = middleY - GC.yDistance - GC.vertexDefaultHeight;
+	}
+
+	public function focusOn(x: Number, y: Number): Void {
+		focusX = x - graph.root.xShift;
+		focusY = y - graph.root.yShift;
+
+		var t: Timeline = Timeline {
+			repeatCount: 1
+			keyFrames: [ 
+						KeyFrame {
+							time: 0s
+							values: [
+									 graph.root.xShift => graph.root.xShift tween Interpolator.EASEBOTH,
+									 graph.root.yShift => graph.root.yShift tween Interpolator.EASEBOTH
+							]
+						},
+						KeyFrame {
+							time: 0.5s
+							values: [
+									 graph.root.xShift => (middleX - focusX) tween Interpolator.EASEBOTH,
+									 graph.root.yShift => (middleY - focusY) tween Interpolator.EASEBOTH
+							]
+						}
+			]
+		} // timeline
+		t.start();
+	}
 }

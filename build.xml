@@ -42,6 +42,28 @@
   
   <!-- single build targets for individual files -->
 
+  <target name="view">
+	<javafxc 
+		srcdir="${gui.srcdir}"
+		destdir="${gui.builddir}" 
+		includes="GraphView.fx"
+		target="${gui.target}"
+		compilerclasspath="${javafxc.class.path}">
+	  <classpath refid="gui.class.path"/>
+	</javafxc>
+  </target>
+
+  <target name="cgraph">
+	<javafxc 
+		srcdir="${gui.srcdir}"
+		destdir="${gui.builddir}" 
+		includes="CarneadesGraph.fx"
+		target="${gui.target}"
+		compilerclasspath="${javafxc.class.path}">
+	  <classpath refid="gui.class.path"/>
+	</javafxc>
+  </target>
+
   <target name="file">
 	<javafxc 
 		srcdir="${gui.srcdir}"

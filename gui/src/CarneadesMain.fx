@@ -51,7 +51,7 @@ import Carneades.Control.*;
 
 UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
 
-var argumentGraph: ArgumentGraph = GraphControl.defaultGraph();
+var argumentGraph: ArgumentGraph;
 
 //var argumentGraph = ArgumentFile.getGraphFromFile(new File("examples/PiersonPost.xml"));
 
@@ -91,11 +91,14 @@ control = GraphControl {
 	// As long as the model does not provide its own full alteration methods, 
 	// we need to inverse-bind the graph to the controller.
 	argumentGraph: bind argumentGraph with inverse
+	graph: bind graph with inverse
 	frame: bind frame
 	layout: bind layout
 }
 
 // FINAL DISPLAY
+
+control.newGraph();
 
 control.updateAll(); // update the control and view
 
