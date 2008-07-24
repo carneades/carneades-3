@@ -188,7 +188,7 @@ public class GraphControl {
     	keyFrames:  KeyFrame {
        		time: 0.01s
        		action: function() {
-				if (GC.debug) { System.out.println("Control.update.start()"); }
+				//System.out.println("Control.update.start()");
 
 				// 1. Rendering update
 				graph.update();
@@ -612,13 +612,13 @@ public class GraphControl {
 		updateAll();
 	};
 
-	public function changeStatementProofStandard(s: Statement, st: String, negated: Boolean, complement: Boolean): Void {
+	public function changeStatementProofStandard(s: Statement, st: String): Void {
 			if (st == "SE") {
 				commands.do(
 					ChangeStatementStandardCommand {
 						argumentGraph: argumentGraph
 						statement: s
-						standard: Scintilla { negated: negated, complement: complement }
+						standard: Scintilla {}
 					}
 				);
 			} else if (st == "DV") {
@@ -626,7 +626,7 @@ public class GraphControl {
 					ChangeStatementStandardCommand {
 						argumentGraph: argumentGraph
 						statement: s
-						standard: DialecticalValidity { negated: negated, complement: complement }
+						standard: DialecticalValidity {}
 					}
 				);
 			} else if (st == "BA") {
@@ -634,7 +634,23 @@ public class GraphControl {
 					ChangeStatementStandardCommand {
 						argumentGraph: argumentGraph
 						statement: s
-						standard: BestArgument { negated: negated, complement: complement }
+						standard: BestArgument {}
+					}
+				);
+			} else if (st == "PE") {
+				commands.do(
+					ChangeStatementStandardCommand {
+						argumentGraph: argumentGraph
+						statement: s
+						standard: Preponderance {}
+					}
+				);
+			} else if (st == "BRD") {
+				commands.do(
+					ChangeStatementStandardCommand {
+						argumentGraph: argumentGraph
+						statement: s
+						standard: BeyondReasonableDoubt {}
 					}
 				);
 			}

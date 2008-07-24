@@ -42,6 +42,61 @@
   
   <!-- single build targets for individual files -->
 
+  <target name="file">
+	<javafxc 
+		srcdir="${gui.srcdir}"
+		destdir="${gui.builddir}" 
+		includes="ArgumentFile.fx"
+		target="${gui.target}"
+		compilerclasspath="${javafxc.class.path}">
+	  <classpath refid="gui.class.path"/>
+	</javafxc>
+  </target>
+
+  <target name="commands">
+	<javafxc 
+		srcdir="${gui.srcdir}"
+		destdir="${gui.builddir}" 
+		includes="Commands.fx"
+		target="${gui.target}"
+		compilerclasspath="${javafxc.class.path}">
+	  <classpath refid="gui.class.path"/>
+	</javafxc>
+  </target>
+
+  <target name="treelayout">
+	<javafxc 
+		srcdir="${gui.srcdir}"
+		destdir="${gui.builddir}" 
+		includes="TreeLayout.fx"
+		target="${gui.target}"
+		compilerclasspath="${javafxc.class.path}">
+	  <classpath refid="gui.class.path"/>
+	</javafxc>
+  </target>
+
+  <target name="argument">
+	<javafxc 
+		srcdir="${gui.srcdir}"
+		destdir="${gui.builddir}" 
+		includes="Argument.fx"
+		target="${gui.target}"
+		compilerclasspath="${javafxc.class.path}">
+	  <classpath refid="gui.class.path"/>
+	</javafxc>
+  </target>
+
+  <target name="control">
+	<javafxc 
+		srcdir="${gui.srcdir}"
+		destdir="${gui.builddir}" 
+		includes="GraphControl.fx"
+		target="${gui.target}"
+		compilerclasspath="${javafxc.class.path}">
+	  <classpath refid="gui.class.path"/>
+	</javafxc>
+  </target>
+
   <target name="elements">
 	<javafxc 
 		srcdir="${gui.srcdir}"

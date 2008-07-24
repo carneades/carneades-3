@@ -30,7 +30,7 @@
       <s id="s12">W2 is not credible.</s>
     </statements>
     <arguments>
-      <argument direction="pro" id="a1" scheme="" weight="50.0">
+      <argument direction="pro" id="a1" scheme="" weight="0.5">
         <conclusion statement="s1"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="s2"/>
@@ -39,7 +39,7 @@
           <premise exception="true" polarity="positive" role="" statement="s5"/>
         </premises>
       </argument>
-      <argument direction="pro" id="a2" scheme="" weight="50.0">
+      <argument direction="pro" id="a2" scheme="" weight="0.5">
         <conclusion statement="s5"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="s6"/>
@@ -47,14 +47,14 @@
           <premise exception="true" polarity="positive" role="" statement="s8"/>
         </premises>
       </argument>
-      <argument direction="pro" id="a3" scheme="" weight="50.0">
+      <argument direction="pro" id="a3" scheme="" weight="0.5">
         <conclusion statement="s6"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="s9"/>
           <premise exception="true" polarity="positive" role="" statement="s10"/>
         </premises>
       </argument>
-      <argument direction="con" id="a4" scheme="" weight="50.0">
+      <argument direction="con" id="a4" scheme="" weight="0.5">
         <conclusion statement="s6"/>
         <premises>
           <premise exception="false" polarity="positive" role="" statement="s11"/>
