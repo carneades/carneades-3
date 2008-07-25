@@ -34,13 +34,16 @@ public class GraphView extends Canvas {
 	public attribute focusY: Number = middleY;
 	public attribute middleX: Number = bind this.width/2;
 	public attribute middleY: Number = bind this.height/3;
+	private attribute tempX: Number = 0;
+	private attribute tempY: Number = 0;
 	
 	public attribute graph: Graph;
 	override attribute width;
 	attribute layout: GraphLayout;
 	attribute control: GraphControl;
 
-	attribute backSensor = Rectangle {
+	// sensor object to detect mouse events outside of nodes.
+	attribute backSensor: Rectangle = Rectangle {
 		x: 0
 		y: 0
 		height: bind this.height
@@ -49,14 +52,41 @@ public class GraphView extends Canvas {
 		visible: true
 
 		onMouseClicked: function(e: MouseEvent): Void {
+			// unselect if right mouse button pressed
 			if (e.getButton() == 3) {
 				control.unSelectAll();
 			}
 		}
 
+		onMousePressed: function(e: MouseEvent): Void {
+			// If we are dragging the view, backup the press location.
+			if (not control.dragging and e.getButton() == 1 and e.isShiftDown()) {
+				tempX = graph.root.xShift;
+				tempY = graph.root.yShift;
+			}
+		}
+
+		onMouseReleased: function(e: MouseEvent): Void {
+			// reset drag variables
+			tempX = 0;
+			tempY = 0;
+		}
+
 		onMouseDragged: function(e: MouseEvent): Void {
-			dragSymbol.x = e.getCanvasX() - 10;
-			dragSymbol.y = e.getCanvasY() - 6;
+			if (control.dragging and e.getButton() == 1) {
+				dragSymbol.x = e.getCanvasX() - 10;
+				dragSymbol.y = e.getCanvasY() - 6;
+			// If we are dragging the view, set the new focus to the 
+			// respective coordinates relative to the backup values.
+			} else if (not control.dragging and e.getButton() == 1 and e.isShiftDown()) {
+				graph.root.xShift = tempX + e.getDragX();
+				graph.root.yShift = tempY + e.getDragY();
+				// do bounds check
+				if (graph.root.xShift > (layout.width / 2) + middleX) { graph.root.xShift = (layout.width / 2) + middleX}
+				if (graph.root.xShift < (-layout.width / 2) + middleX) { graph.root.xShift = (-layout.width / 2) + middleX}
+				if (graph.root.yShift > (layout.height / 2) + middleY) { graph.root.yShift = (layout.height / 2) + middleY}
+				if (graph.root.yShift < (-layout.height / 2) + middleY) { graph.root.yShift = (-layout.height / 2) + middleY}
+			}
 		}
 	}
 
