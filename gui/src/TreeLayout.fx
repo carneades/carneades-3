@@ -305,6 +305,7 @@ public class TreeLayout extends GraphLayout {
 		//GC.p("Yet another layout ...");
 
 		//System.out.println("Layout finished");
+		//System.out.println("Graph Width: " + graph.width + " / Graph height: " + graph.height);
 		
 		return graph;
 	}
