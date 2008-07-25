@@ -42,7 +42,7 @@ public class CarneadesGraph extends Graph {
 		y: bind root.yShift
 		visible: false
 	}
-	
+
 	override attribute vertices = [];
 
 	override attribute edges = [];
