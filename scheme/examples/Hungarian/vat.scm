@@ -47,5 +47,5 @@
 ; Answer: (all 100)
 
 ;  (ask '(amountOfVATFor Selling ?x) (engine 100 1 null))
-(show1 '(isLiableForPayingVATFor Selling Vendor) (engine 100 1 null))
+; (show1 '(isLiableForPayingVATFor Selling Vendor) (engine 100 1 null))
 

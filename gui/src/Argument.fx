@@ -559,6 +559,21 @@ public class BestArgument extends ProofStandard {
 	}
 }
 
+// According to Clermont and Sherman, in the US "Everyone agrees .. the
+// establishment of the truth of facts in adjudication is typically a 
+// a matter of probabilities, falling short of absolute certainty".  The 
+// different proof standards are interpreted as setting different 
+// probability thresholds.  preponderance: > 0.5,  clear and convincing
+// evidence: > 0.7 (my estimate, no number stated in at the article), 
+// beyond a reasonable doubt:  0.95 (again, my estimate.  Described
+// in the article only as "virtual certainty.)
+
+// The alternative model of these standards below is not based on 
+// probability theory.  They will thus need to be justified carefully
+// in an article comparing argumentation theory with probability theory
+// and explaining the inapplicability of probability theory to the
+// problem of aggregating evidence in legal cases.
+
 public class Preponderance extends ProofStandard {
 	function test (ag: ArgumentGraph, 
 	               pro: Argument[], 
@@ -595,4 +610,6 @@ public class BeyondReasonableDoubt extends ProofStandard {
 	             p.test(ag,pro,con); 
 	}
 }
+
+// to do: clear and convincing evidence: "much more likely than not"
 
