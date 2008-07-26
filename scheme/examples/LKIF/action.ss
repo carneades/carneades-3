@@ -106,3 +106,4 @@
 
 ; (show '(action:Plan ?x) e1)
 ; (show '(action:Action a1) e1)
+; (show '(action:Organisation o1) e1)
