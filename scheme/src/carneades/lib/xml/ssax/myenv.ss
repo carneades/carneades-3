@@ -10,7 +10,7 @@
  
  (export myenv:error
          assure
-         identify-error
+         ; identify-error
          cout
          cerr
          nl
@@ -21,13 +21,12 @@
          assv-def
          assoc-def
          call-with-input-string
-         with-input-from-string
+         ; with-input-from-string
          inc
          dec
          )
  
- (import (rnrs)
-         (only (carneades system) parameterize))
+ (import (rnrs))
  
  ;; $Id: myenv.ss,v 1.14 2002/03/28 22:23:06 nwv Exp $
  ;; $Source: /home/nwv/cvsroot/projects/ssax-plt/myenv.ss,v $
@@ -135,23 +134,23 @@
  ;(define (identify-error msg args . disposition-msgs)
  ;  (##identify-error "ERROR" #f #f msg args disposition-msgs))
  
- (define identify-error
-   (let ((display-list (lambda (lst)
-                         (for-each (lambda (arg)
-                                     (display " ")
-                                     (display arg))
-                                   lst))))
-     (lambda (msg args . disposition-msgs)
-       (parameterize ((current-output-port (current-error-port)))
-         (newline)
-         (display "ERROR: ")
-         (display msg)
-         (display-list args)
-         (unless (null? disposition-msgs)
-           (newline)
-           (display "ERROR DISPOSITION:")
-           (display-list disposition-msgs))
-         (newline)))))
+; (define identify-error
+;   (let ((display-list (lambda (lst)
+;                         (for-each (lambda (arg)
+;                                     (display " ")
+;                                     (display arg))
+;                                   lst))))
+;     (lambda (msg args . disposition-msgs)
+;       (parameterize ((current-output-port (current-error-port)))
+;         (newline)
+;         (display "ERROR: ")
+;         (display msg)
+;         (display-list args)
+;         (unless (null? disposition-msgs)
+;           (newline)
+;           (display "ERROR DISPOSITION:")
+;           (display-list disposition-msgs))
+;         (newline)))))
  
  ; like cout << arguments << args
  ; where argument can be any Scheme object. If it's a procedure
@@ -434,9 +433,9 @@
  ;            ((char=? chr (string-ref str i)) i)
  ;            (else                            (search (+ i 1)))))))
  
- (define (with-input-from-string str thunk)
-   (parameterize ((current-input-port (open-string-input-port str)))
-     (thunk)))
+; (define (with-input-from-string str thunk)
+;   (parameterize ((current-input-port (open-string-input-port str)))
+;     (thunk)))
  
  ;; [ssax-plt] End misc. other definitions needed by other modules.
  

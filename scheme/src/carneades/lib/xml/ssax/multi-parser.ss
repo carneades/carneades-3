@@ -128,7 +128,7 @@
  ; Handler for attempts to access an absent seed.
  (define (bad-accessor type)
    (lambda x
-     (cerr nl "MURDER!!!  -> " type nl x nl) (exit -1)))
+     (cerr nl "MURDER!!!  -> " type nl x nl) (exit #f)))
  
  ; Seed constructor. #f seeds will be omitted.
  (define (make-seed . seeds)

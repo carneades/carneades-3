@@ -17,7 +17,6 @@
          
          
  (import (rnrs)
-         (only (carneades system) read-line)
          (only (carneades lib srfi strings) string-index)
          (carneades lib xml ssax common)
          (carneades lib xml ssax myenv)
@@ -153,7 +152,7 @@
                     (if (eqv? delim #\:)
                         (begin (read-char http-port)
                                (skip-while '(#\space #\tab) http-port)
-                               (read-line http-port))
+                               (get-line http-port))
                         #f)))
               (if (string? header-value)
                   (check-cont http-port resp-headers
@@ -168,7 +167,7 @@
        (let ((c (peek-char http-port)))
          (cond
            ((or (eqv? c #\space) (eqv? c #\tab))	; it continues
-            (let ((cont-value (read-line http-port)))
+            (let ((cont-value (get-line http-port)))
               (check-cont http-port resp-headers
                           header-name (string-append header-value cont-value))))
            (else

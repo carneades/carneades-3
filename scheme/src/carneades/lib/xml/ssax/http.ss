@@ -20,10 +20,10 @@
          (carneades lib xml ssax common)
          (carneades lib xml ssax myenv)
          (carneades lib xml ssax mime)
-         (carneades lib xml ssax srfi-12)
+        ;  (carneades lib xml ssax srfi-12)
          (carneades lib xml ssax util)
          (only (carneades lib srfi strings) string-index string-prefix?)
-         (only (carneades system) abort tcp-connect read-line))
+         (only (carneades system) tcp-connect))
  
  ;************************************************************************
  ;
@@ -208,18 +208,20 @@
    
    (define CRLF (string (integer->char 13) (integer->char 10)))
    
+   (define-record-type (&http-condition make-http-condition http-condition?)
+     (parent &condition)
+     (fields name reason headers))
+     
    (define (die reason headers port)
      (if port (close-output-port port))
-     (abort (make-property-condition 'HTTP-TRANSACTION
-                                     'REASON reason 'HEADERS headers)))
+     (raise-continuable (make-http-condition 'HTTP-TRANSACTION reason headers)))
    
    ; re-throw the exception exc as a HTTP-TRANSACTION exception
    (define (die-again exc reason headers port)
      (if port (close-output-port port))
-     (abort (make-composite-condition
-             (make-property-condition
-              'HTTP-TRANSACTION 'REASON reason 'HEADERS headers)
-             exc)))
+     (raise-continuable (condition
+                         (make-http-condition 'HTTP-TRANSACTION reason headers)
+                         exc)))
    
    ; Open a connection, send the request, and if successful,
    ; invoke the read-resp-status-line on the opened http-port.
@@ -277,7 +279,7 @@
    ;		'(HTTP-RESPONSE . the-whole-response-line)
    ; or raise an exception if the response line is absent or invalid
    (define (read-resp-status-line http-port)
-     (let* ((resp-line (read-line http-port))
+     (let* ((resp-line (get-line http-port))
             (dummy (logger http-port "Got response :" resp-line)) 
             (resp-headers (list (cons 'HTTP-RESPONSE resp-line))))
        (cond

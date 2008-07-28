@@ -18,11 +18,9 @@
 (library
  (carneades system)
  
- (export system* system exit read-line read-string begin0 pretty-print abort tcp-connect parameterize)
+ (export system* system pretty-print tcp-connect)
  
  (import (only (scheme system) system system*)
-         (only (scheme base) exit read-line read-string begin0 parameterize)
          (only (scheme pretty) pretty-print)
-         (only (scheme control) abort)
          (only (scheme tcp) tcp-connect))
  )
