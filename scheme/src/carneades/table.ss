@@ -26,7 +26,8 @@
          filter-keys filter-values 
          (rename (table-filter filter)))
  
- (import (except (rnrs) values))
+ (import (except (rnrs) values)
+         (prefix (carneades set) set:))
  
  (define-record-type table 
    (fields pairs) ; alist of (key,value) pairs
@@ -46,15 +47,18 @@
      (if p (cdr p) v)))
  
  (define (keys t1) 
-   (map car (table-pairs t1)))
+   ; use list->set to remove duplicate keys
+   (set:set->list ((set:list->set equal?) (map car (table-pairs t1)))))
  
  ; values: table -> (list-of datum)
  (define (values t1)
-   (map cdr (table-pairs t1)))
+   (map (lambda (k) (lookup t1 k #f)) (keys t1)))
  
  ; filter: table (-> (pair-of key value) boolean) -> (list-of (pair-of key value))
  (define (table-filter tbl pred) 
-   (filter pred (table-pairs tbl)))
+   (filter pred (map (lambda (k)
+                       (cons k (lookup tbl k #f)))
+                     (keys tbl))))
  
  (define (filter-keys pred table)
    (map car (table-filter pred table)))
