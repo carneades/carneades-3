@@ -28,7 +28,7 @@
          (carneades lib xml ssax common)
          (carneades lib xml ssax myenv)
          (carneades lib xml ssax http)
-         (carneades lib xml ssax srfi-12)
+         ; (carneades lib xml ssax srfi-12)
          (carneades lib xml ssax util)
          (only (carneades lib srfi strings) string-prefix? string-index))
  
@@ -71,7 +71,8 @@
  (define (open-input-resource req-uri)
    (with-exception-handler
     (lambda (x)
-      (cerr nl req-uri ": " ((condition-property-accessor 'exn 'message) x) nl)
+      ; (cerr nl req-uri ": " ((condition-property-accessor 'exn 'message) x) nl)
+      (cerr nl req-uri ": " (condition-message x) nl)
       #f)
     (lambda ()
       (cond

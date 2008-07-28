@@ -116,7 +116,7 @@
  ; a sub-expression which caused an XPath/XPointer runtime error.
  (define (sxml:xpointer-runtime-error . text)
    (apply cerr (append (list "XPath/XPointer runtime error: ") text (list nl)))
-   (exit -1))
+   (exit #f))
  
  
  ;--------------------------------------------------------------------------

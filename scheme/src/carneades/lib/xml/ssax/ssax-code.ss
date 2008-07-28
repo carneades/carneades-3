@@ -76,7 +76,7 @@
                string-concatenate/shared
                string-null?
                string-concatenate-reverse/shared)
-         (only (carneades system) read-string begin0))
+         )
  
  
  (define-syntax run-test
@@ -141,9 +141,9 @@
  
  ; already in r6rs
  #;(define (fold-right kons knil lis1)
-   (let recur ((lis lis1)) (if (null? lis)
-                               knil 
-                               (let ((head (car lis))) (kons head (recur (cdr lis)))))))
+     (let recur ((lis lis1)) (if (null? lis)
+                                 knil 
+                                 (let ((head (car lis))) (kons head (recur (cdr lis)))))))
  
  (define (fold kons knil lis1)
    (let lp ((lis lis1) (ans knil)) (if (null? lis)
@@ -201,15 +201,15 @@
        (if (not (find-string-from-port? "-->" port)) (parser-error port "XML [15], no -->"))
        (make-xml-token (quote COMMENT) #f))
      (define (read-cdata port)
-       (assert (string=? "CDATA[" (read-string 6 port)))
+       (assert (string=? "CDATA[" (get-string-n port 6)))
        (make-xml-token (quote CDSECT) #f))
      (lambda (port)
        (assert-curr-char (quote (#\<)) "start of the token" port)
        (case (peek-char port)
-         ((#\/) (read-char port) (begin0
-                                   (make-xml-token (quote END) (ssax:read-QName port))
+         ((#\/) (read-char port) (let ((result (make-xml-token (quote END) (ssax:read-QName port))))
                                    (ssax:skip-S port)
-                                   (assert-curr-char (quote (#\>)) "XML [42]" port)))
+                                   (assert-curr-char (quote (#\>)) "XML [42]" port)
+                                   result))
          ((#\?) (read-char port) (make-xml-token (quote PI) (ssax:read-NCName port)))
          ((#\!) (case (peek-next-char port) 
                   ((#\-) (read-char port) (skip-comment port))
@@ -288,9 +288,10 @@
                                                 (lambda (port) 
                                                   (content-handler port new-entities seed))))
                        ((procedure? ent-body) (let ((port (ent-body)))
-                                                (begin0 
-                                                  (content-handler port new-entities seed)
-                                                  (close-input-port port))))
+                                                (let ((result 
+                                                       (content-handler port new-entities seed)))
+                                                  (close-input-port port)
+                                                  result)))
                        (else (parser-error port "[norecursion] broken for " name))))))
          ((assq name ssax:predefined-parsed-entities)
           => (lambda (decl-entity) (str-handler (cdr decl-entity) "" seed)))
@@ -470,9 +471,11 @@
      (assert-curr-char ssax:S-chars "space after SYSTEM or PUBLIC" port)
      (ssax:skip-S port)
      (let ((delimiter (assert-curr-char (quote (#\' #\")) "XML [11], XML [12]" port)))
-       (cond ((eq? discriminator (string->symbol "SYSTEM")) (begin0
-                                                              (next-token (quote ()) (list delimiter) "XML [11]" port)
-                                                              (read-char port)))
+       (cond ((eq? discriminator (string->symbol "SYSTEM")) 
+              (let ((result
+                     (next-token (quote ()) (list delimiter) "XML [11]" port)))
+                (read-char port)
+                result))
              ((eq? discriminator (string->symbol "PUBLIC")) 
               (skip-until (list delimiter) port)
               (assert-curr-char ssax:S-chars "space after PubidLiteral" port)

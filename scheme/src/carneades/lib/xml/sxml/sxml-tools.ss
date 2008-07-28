@@ -179,7 +179,7 @@
    (cerr nl "SXML ERROR: ")
    (apply cerr messages)
    (cerr nl)
-   (exit -1))
+   (exit #f))
  
  ;==============================================================================
  ; Predicates
