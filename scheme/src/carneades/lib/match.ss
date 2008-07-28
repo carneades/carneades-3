@@ -42,7 +42,7 @@
 ;; 2006/12/01 - non-linear patterns, shared variables in OR, get!/set!
 
 (library 
- (match)
+ (carneades lib match)
 
  (export match match-let match-let* match-letrec match-lambda match-lambda*)
 

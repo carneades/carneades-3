@@ -22,7 +22,7 @@
  (export stream-interleave stream-accumulate stream-flatten stream-flatmap
          
          ; from srfi 41
-         define-stream stream stream-null stream-null? stream-cons stream? stream-pair? stream-car
+         define-stream stream-null stream-null? stream-cons stream? stream-pair? stream-car
          stream-cdr stream-lambda port->stream stream stream->list list->stream
          stream-append stream-concat stream-drop stream-drop-while
          stream-filter stream-fold stream-for-each stream-from
