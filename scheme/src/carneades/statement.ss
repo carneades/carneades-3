@@ -28,7 +28,7 @@
          (rnrs io ports)
          (rnrs records syntactic (6))
          (rnrs hashtables (6))
-         (srfi/67 compare))
+         (prefix (carneades lib srfi compare) compare:))
   
  ; <atom> := <datum>
  ; <statement> := <atom> | (not <atom>)
@@ -50,7 +50,7 @@
  
 
  ; statement-compare: statement statement -> {-1,0,1}
- (define statement-compare default-compare)
+ (define statement-compare compare:default-compare)
  
  (define (statement-positive? s1)
    (or (not (pair? s1))
