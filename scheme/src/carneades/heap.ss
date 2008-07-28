@@ -18,7 +18,7 @@
 #!r6rs
 
 (library
- (heap)
+ (carneades heap)
 
  (export make-empty empty? singleton list->heap find-min merge insert 
          merge-heap-pairs delete-min)

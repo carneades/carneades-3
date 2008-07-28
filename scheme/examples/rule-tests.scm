@@ -4,7 +4,8 @@
         (carneades shell)
         (carneades argument-builtins)
         (carneades rule)
-        (carneades lib srfi lightweight-testing))
+        (carneades lib srfi lightweight-testing)
+        )
 
 (define null '())
 
@@ -104,6 +105,7 @@
   (make-engine max-nodes max-turns 
                (list (generate-arguments-from-rules rb1 critical-questions) builtins)))
 
+
 (check (all-acceptable? '(bird Tweety) (engine 20 1 null)) => #t)
 (check (all-acceptable? '(bird ?x) (engine 20 1 null)) => #t)
 (check (all-acceptable? '(money item1) (engine 20 1 null)) => #t) ; coins are money
@@ -126,10 +128,10 @@
 (check (all-acceptable? '(taxable-income Sam ?x) (engine 20 1 null)) => #t) ; calculations
 ; to do: test assumptions -- a statement is questioned by making an argument pro or con the statement
 ; to do: event calculus tests
-(check-report)
+ (check-report)
 
 ; Example commands
-; (ask '(goods item2) (engine 20 2 null))
-; (show '(goods item2) (engine 20 2 '(priority)))
+; (ask '(goods ?x) (engine 20 2 null))
+; (show '(goods ?x) (engine 20 2 '(priority)))
 
 

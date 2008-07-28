@@ -16,7 +16,7 @@
 #!r6rs
 
 (library
- (rule)
+ (carneades rule)
   ; This is an implementation of the argumentation scheme for
   ; for arguments from defeasible rules.  Rules may have multiple
   ; conclusions, as in SWRL, and be subject to exceptions. Priorities are used

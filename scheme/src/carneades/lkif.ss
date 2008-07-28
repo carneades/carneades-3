@@ -22,7 +22,6 @@
  
  (import (except (rnrs base) assert)
          (only (rnrs lists) filter fold-right member assq)
-         ;(rnrs hashtables)
          (rnrs io ports)
          (rnrs io simple)
          (prefix (carneades table) table:)
@@ -45,8 +44,6 @@
  
  
  ; *texts*: table mapping sexpressions to statement texts (see statement.scm)
- ;(define *texts* (make-hash-table 'equal))
- ;(define *texts* (make-eqv-hashtable))
  (define *texts* (table:make-table))
  
  ; *statements* : (symbol -> statement) table

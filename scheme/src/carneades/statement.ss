@@ -27,7 +27,8 @@
          (rnrs io simple)
          (rnrs io ports)
          (rnrs records syntactic (6))
-         (rnrs hashtables (6))
+         ; (rnrs hashtables (6))
+         (prefix (carneades table) table:)
          (prefix (carneades lib srfi compare) compare:))
   
  ; <atom> := <datum>
@@ -94,19 +95,19 @@
  #| index-by-statement: (list-of text) -> (hashtable-of datum text)
             assumption: the statement of each text in the list is unique.  |#
  (define (index-by-statement texts)
-   (let ((tbl (make-eqv-hashtable)))
+   (let ((tbl (table:make-table)))
      (for-each (lambda (txt) 
                  (if (text-statement txt)
-                     (hashtable-set! tbl (text-statement txt) txt)))
+                     (set! tbl (table:insert tbl (text-statement txt) txt))))
                texts)
      tbl))
  
  #| index-by-id: (list-of text) -> (hashtable-of symbol text)
             assumption: the id of each text in the list is unique. |#
  (define (index-by-id texts)
-   (let ((tbl (make-eq-hashtable)))
+   (let ((tbl (table:make-table)))
      (for-each (lambda (txt) 
-                 (hashtable-set! tbl (text-id txt) txt))
+                 (set! tbl (table:insert tbl (text-id txt) txt)))
                texts)
      tbl))
  
