@@ -22,47 +22,47 @@
  
  (import (except (rnrs base) assert)
          (rnrs files)
-         (rnrs hashtables)
+         ; (rnrs hashtables)
          (rnrs io simple)
          (carneades lib srfi format)
          (carneades statement)
          (carneades argument)
          (carneades stream)
+         (prefix (carneades table) table:)
          (prefix (carneades unify) unify:)
          (prefix (carneades config) config:)
          (carneades system)
-         (carneades gensym))
+         (carneades gensym)) 
  
- ; (require (lib "string.ss" "srfi" "13"))
+ (define ids (table:make-table))
  
- 
- ; get-id: hash-table datum -> symbol
+ ; get-id: datum -> symbol
  ; get the symbol used to identify some datum, generating
  ; one if the datum does not yet have an identifier.
  ; The identifers are suitable for naming nodes and arrows 
  ; in the DOT language, for use with GraphViz
- (define (get-id tbl d)
-   (if (hashtable-contains? tbl d)
-       (hashtable-ref tbl d #f)
-       (let ((v (gensym "g")))
-         (hashtable-set! tbl d v)
-         v)))
+ (define (get-id d)
+   (let ((v1 (table:lookup ids d #f)))
+     (or v1 
+         (let ((v2 (gensym "g")))
+           (set! ids (table:insert ids d v2))
+           v2))))
  
  ; diagram*: argument-graph context substitutions
  ;           (-> statement string) output-port -> void
  (define (diagram* ag context subs statement->string port)
-   (let ((tbl (make-eqv-hashtable)))
-     (format port "digraph g {~%    rankdir = \"RL\";~%")
-     (print-statements ag context subs tbl (statements ag) statement->string  port)
-     (print-arguments ag context subs tbl (list-arguments ag) port)
-     (format port "}~%")))
+   (set! ids (table:make-table)) ; re-initialize
+   (format port "digraph g {~%    rankdir = \"RL\";~%")
+   (print-statements ag context subs (statements ag) statement->string  port)
+   (print-arguments ag context subs (list-arguments ag) port)
+   (format port "}~%"))
  
  
  ; print-statements: argument-graph context substitutions 
- ;              hash-table (list-of statement) (-> statement string) output-port -> void
- (define (print-statements ag c subs tbl statements statement->string port)
+ ;               (list-of statement) (-> statement string) output-port -> void
+ (define (print-statements ag c subs statements statement->string port)
    (define (print-statement n)
-     (let ((id (get-id tbl n)))
+     (let ((id (get-id n)))
        (format port "    ~A [shape=box, label=~S, style=~S];~%"
                 id
                 (statement->string (subs n))
@@ -74,24 +74,24 @@
    (for-each print-statement statements))
  
  ; print-arguments: argument-graph context substitutions
- ;                  hash-table (list-of argument) output-port -> void
- (define (print-arguments ag c subs tbl args port)
+ ;                  (list-of argument) output-port -> void
+ (define (print-arguments ag c subs args port)
    (define (print-argument arg)
      (format port "    ~A [shape=ellipse, label=~S, style=~S];~%"
-              (get-id tbl (argument-id arg))
+              (get-id (argument-id arg))
               (if (and (argument-scheme arg)
                        (< 0 (string-length (argument-scheme arg))))
                   (argument-scheme arg)
                   (symbol->string (argument-id arg)))
               (if (all-premises-hold? ag c arg) "filled" ""))
      (format port "    ~A -> ~A~A;~%" 
-              (get-id tbl (argument-id arg))
-              (get-id tbl (argument-conclusion arg))
+              (get-id (argument-id arg))
+              (get-id (argument-conclusion arg))
               (if (eq? (argument-direction arg) 'con) " [arrowhead=\"onormal\"]" ""))
      (for-each (lambda (p) 
                  (format port "    ~A -> ~A [arrowhead=\"~A~A\"];~%" 
-                          (get-id tbl (premise-atom p))
-                          (get-id tbl (argument-id arg))
+                          (get-id (premise-atom p))
+                          (get-id (argument-id arg))
                           (cond ((assumption? p) "dot")
                                 ((exception? p) "odot") 
                                 (else "none"))
