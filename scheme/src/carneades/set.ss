@@ -8,13 +8,13 @@
 ;;;; Darius Bacon <darius@accesscom.com>
 ;;;; http://www.accesscom.com/~darius
 ;;;; 
-;;;; Ported to R6RS by Stefan Ballnat.
+;;;; Ported to R6RS by Stefan Ballnat and Tom Gordon
 
 #!r6rs
 
 (library
  (carneades set)
- 
+
  (export singleton list->set set->list empty? select
          (rename (set-filter filter) 
                  (set-any? any?) 
@@ -32,7 +32,16 @@
  
  (import (rnrs))
  
- ;; Return an equivalent of MEMBER that compares using =?.
+; (define-record-type set 
+;   (fields eq       ; (-> (datum datum) boolean)
+;           members) ; (list-of datum)
+;   (protocol (lambda (new) 
+;               (case-lambda 
+;                 (() (new equal? '()))
+;                 ((pred) (new pred '()))
+;                 ((pred l) (new pred l))))))
+ 
+;; Return an equivalent of MEMBER that compares using =?.
  (define set/finder
    (lambda (=?)
      (cond ((eq? =? eq?) memq)
@@ -174,6 +183,7 @@
  ;       ((_ elem) #'((singleton eq?) elem))
  ;       ((_ e1 e2) #'(list->eq (list e1 e2)))
  ;       ((_ e1 e2 ...) #'(list->eq (list e1 e2 ...))))))
+ 
  
  
  ) ; end of set
