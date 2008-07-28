@@ -170,6 +170,7 @@
          )
  
  (import (rnrs)
+         (carneades lib util)
          (carneades lib xml sxml sxml-tools)
          (carneades lib xml sxml sxpath-ext)
          (carneades lib xml sxml xpath-parser)

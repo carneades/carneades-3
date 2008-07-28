@@ -43,7 +43,7 @@
          (carneades lib match)
          (prefix (carneades table) table:)
          (prefix (only (carneades lib srfi lists) lset-union any every) list:)
-         (prefix (srfi/67 compare) compare:)
+         (prefix (carneades lib srfi compare) compare:)
          )
  
  
