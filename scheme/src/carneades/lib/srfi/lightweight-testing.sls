@@ -45,7 +45,9 @@
 (library 
  (carneades lib srfi lightweight-testing)
  
- (export check check-ec check-report check-set-mode! check-reset! check-passed?
+ (export check check-ec check-report
+         check-set-mode! check-reset! 
+         check-passed?
          do-ec list-ec append-ec string-ec string-append-ec vector-ec 
          vector-of-length-ec sum-ec product-ec min-ec max-ec any?-ec 
          every?-ec first-ec last-ec fold-ec fold3-ec : :list :string 
@@ -90,7 +92,7 @@
  
  (define (check-reset!)
    (set! check:correct 0)
-   (set! check:failed   '()))
+   (set! check:failed '()))
  
  (define (check:add-correct!)
    (set! check:correct (+ check:correct 1)))

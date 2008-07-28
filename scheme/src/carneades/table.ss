@@ -17,46 +17,44 @@
 #!r6rs
 
 (library 
- (carneades table)  ;; immutable, functional tables.  Keys compared with eqv?
+ (carneades table)  
+ 
+ ;; Immutable, functional tables. Simple implementation using association lists. 
+ ;; Keys compared with equal?
  
  (export make-table table? insert lookup keys values  
          filter-keys filter-values 
          (rename (table-filter filter)))
  
- (import (except (rnrs) values)
-         (rnrs hashtables))
+ (import (except (rnrs) values))
  
- 
- (define make-table make-eqv-hashtable)
- (define table? hashtable?)
+ (define-record-type table 
+   (fields pairs) ; alist of (key,value) pairs
+   (protocol (lambda (new) 
+               (case-lambda 
+                (() (new '()))
+                ((alist) (new alist))))))
+                           
  
  ; insert: table key value -> table
  (define (insert t1 k v) 
-   (let ((t2 (hashtable-copy t1 #t)))
-     (hashtable-set! t2 k v)
-     (hashtable-copy t2)))
+   (make-table (cons (cons k v) (table-pairs t1))))
  
  ; lookup: table key default -> value 
- (define lookup hashtable-ref)
+ (define (lookup t1 k v) 
+   (let ((p (assoc k (table-pairs t1))))
+     (if p (cdr p) v)))
  
- (define keys hashtable-keys)
+ (define (keys t1) 
+   (map car (table-pairs t1)))
  
  ; values: table -> (list-of datum)
- (define (values t)
-   (let-values (((ks vs) (hashtable-entries t)))
-     (vector->list vs)))
+ (define (values t1)
+   (map cdr (table-pairs t1)))
  
  ; filter: table (-> (pair-of key value) boolean) -> (list-of (pair-of key value))
  (define (table-filter tbl pred) 
-   (fold-right (lambda (k l)
-                 (if (hashtable-contains? tbl k)
-                     (let ((v (hashtable-ref tbl k #f)))
-                       (if (pred (cons k v))
-                           (cons (cons k v) l)
-                           l))
-                     l))
-               '()
-               (vector->list (hashtable-keys tbl))))
+   (filter pred (table-pairs tbl)))
  
  (define (filter-keys pred table)
    (map car (table-filter pred table)))
