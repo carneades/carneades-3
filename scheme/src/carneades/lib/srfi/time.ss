@@ -88,7 +88,7 @@
 
 (library
  
- (carneades lib srfi test)
+ (carneades lib srfi time)
  
  (export time make-time time? time-type time-nanosecond time-second
          date make-date date? date-nanosecond date-second date-minute 

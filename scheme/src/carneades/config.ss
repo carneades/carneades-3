@@ -17,7 +17,7 @@
 #!r6rs
 
 (library 
- (config)
+ (carneades config)
  
  (export dot preferred-graphic-format viewer tmpdir)
  (import (rnrs base))
