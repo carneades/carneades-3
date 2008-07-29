@@ -192,3 +192,5 @@ and noxious beast.")
 
 (define fig4-args (assert empty-argument-graph (list a9 a10 a11)))
 (define fig5-args (assert empty-argument-graph (list a12 a13)))
+
+(diagram both c2)

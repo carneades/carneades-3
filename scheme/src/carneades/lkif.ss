@@ -29,7 +29,7 @@
          (carneades argument)
          (carneades statement)
          (carneades lib match)
-         (carneades gensym)
+         (only (carneades system) gensym)
          (only (carneades lib pregexp) pregexp-split)
          (carneades lib xml sxml xpath-context_xlink)
          (carneades lib xml sxml serializer)

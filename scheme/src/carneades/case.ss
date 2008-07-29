@@ -28,7 +28,7 @@
  (import (rnrs)
          (rnrs records syntactic)
          (only (rnrs lists) partition)
-         (carneades gensym)
+         (only (carneades system) gensym)
          (carneades stream)
          (prefix (carneades argument) arg:)
          (carneades argument-search)
