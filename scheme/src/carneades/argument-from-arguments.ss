@@ -26,7 +26,7 @@
  
  (import (except (rnrs base) assert)
          (carneades statement)
-         (carneades gensym)
+         (only (carneades system) gensym)
          (carneades stream)
          (carneades argument)
          (carneades argument-search))

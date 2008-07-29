@@ -48,7 +48,7 @@
          (carneades lib srfi format)
          (prefix (carneades lib srfi lists) list:)
          (carneades lib match)
-         (carneades gensym))
+         (only (carneades system) gensym))
  
  (define (printf format-string . args)
    (apply format `(,(current-output-port)  ,format-string ,@args)))

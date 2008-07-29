@@ -22,7 +22,7 @@
  (export variable? identity unify* unify genvar rename-variables ground?)
  (import (rnrs base)
          (rnrs hashtables)
-         (carneades gensym))
+         (only (carneades system) gensym))
  
  ; Based on the implementation of the unification algorithm from
  ; the book "The Scheme Programming Language", by Kent Dybvig.
