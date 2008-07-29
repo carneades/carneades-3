@@ -227,7 +227,7 @@ public class GraphControl {
 						}
 					}	
 					// process it
-					processSelection();
+					//processSelection();
 				}
 
 				// 3. Update the view
