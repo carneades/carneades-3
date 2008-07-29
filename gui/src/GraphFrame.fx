@@ -157,18 +157,11 @@ public class GraphFrame extends SwingFrame {
 		preferredSize: [ this.width, GC.toolBarHeight ]
 		background: GC.toolPanelBackground
 		visible: true
-		/*
 		content: [
-			ToolBarButton {
-				icon: Icon {
-					image: Image {
-						height: 40
-						width: 40
-					}
-				}
+			Label {
+				text: bind {"Zoom Factor: {(view.zoomFactor * 100) as Integer}%"}
 			}
 		]
-		*/
 	}
 
 	override attribute content = bind BorderPanel {

@@ -62,12 +62,16 @@ public class GC {
 	
 	public static attribute edgeSelectionWidth: Integer = 5;
 	public static attribute selectedEdgeWidth: Integer = 2;
-
+	
+	// shadows
 	public static attribute drawShadows: Boolean = true;
 	public static attribute shadowColor: Color = Color.rgb(0, 0, 0, 0.7 );
 	public static attribute shadowBlurRadius: Integer = 4;
 	public static attribute xShadowShift: Integer = 4;
 	public static attribute yShadowShift: Integer = 6;
+
+	// animations
+	public static attribute zoomTime: Number = 4.0; // in seconds
 
 	// General Vertex Constants
 	public static attribute scaleVerticesWithText = false;

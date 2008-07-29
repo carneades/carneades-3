@@ -44,6 +44,13 @@ public class GraphView extends CustomNode {
 	public attribute layout: GraphLayout;
 	public attribute control: GraphControl;
 
+	public attribute zoomFactor: Number = 1.0 on replace {
+		if (zoomFactor < 0.1) { zoomFactor = 0.1 }
+		if (zoomFactor > 2.0) { zoomFactor = 2.0 }
+		graph.scaleX = zoomFactor;
+		graph.scaleY = zoomFactor;
+	};
+
 	// background layer
 	attribute background: Rectangle = Rectangle {
 		x: 0
@@ -94,7 +101,7 @@ public class GraphView extends CustomNode {
 				graph.root.xShift = tempX + e.getDragX();
 				graph.root.yShift = tempY + e.getDragY();
 				// do bounds check
-				/*
+				
 				if (graph.root.xShift > (layout.width / 2) + 200) 
 					{ graph.root.xShift = (layout.width / 2) + 200}
 				if (graph.root.xShift < (-layout.width / 2) - 200) 
@@ -103,19 +110,12 @@ public class GraphView extends CustomNode {
 					{ graph.root.yShift = (layout.height / 2) + 200}
 				if (graph.root.yShift < (-layout.height / 2) - 200) 
 					{ graph.root.yShift = (-layout.height / 2) - 200}
-				*/
+				
 			}
 		}
 
 		onMouseWheelMoved: function(e: MouseEvent): Void {
-			graph.scaleX -= (e.getWheelRotation() / 20);
-			graph.scaleY -= (e.getWheelRotation() / 20);
-			
-			// check bounds
-			if (graph.scaleX < 0.1) { graph.scaleX = 0.1 }
-			if (graph.scaleX > 2.0) { graph.scaleX = 2.0 }
-			if (graph.scaleY < 0.1) { graph.scaleY = 0.1 }
-			if (graph.scaleY > 2.0) { graph.scaleY = 2.0 }
+			zoomFactor -= (e.getWheelRotation() / 20);
 		}
 	}
 
@@ -142,6 +142,7 @@ public class GraphView extends CustomNode {
 	public function focusOn(x: Number, y: Number): Void {
 		var oldXShift: Number = graph.root.xShift;
 		var oldYShift: Number = graph.root.yShift;
+		var oldZoom: Number = zoomFactor;
 		focusX = x; 
 		focusY = y;
 
@@ -153,24 +154,21 @@ public class GraphView extends CustomNode {
 							values: [
 									 graph.root.xShift => oldXShift tween Interpolator.EASEBOTH,
 									 graph.root.yShift => oldYShift tween Interpolator.EASEBOTH,
-									 graph.scaleX => graph.scaleX tween Interpolator.EASEBOTH,
-									 graph.scaleY => graph.scaleY tween Interpolator.EASEBOTH,
+									 zoomFactor => oldZoom tween Interpolator.EASEBOTH,
 							]
 						},
 						KeyFrame {
-							time: 0.25s
+							time: (GC.zoomTime) * 0.5s
 							values: [
-									 graph.scaleX => 0.8 tween Interpolator.EASEBOTH,
-									 graph.scaleY => 0.8 tween Interpolator.EASEBOTH,
+									 zoomFactor => (0.7 * oldZoom) tween Interpolator.EASEBOTH,
 							]
 						},
 						KeyFrame {
-							time: 0.5s
+							time: (GC.zoomTime) * 1.0s
 							values: [
 									 graph.root.xShift => (oldXShift - focusX) tween Interpolator.EASEBOTH,
 									 graph.root.yShift => (oldYShift - focusY) tween Interpolator.EASEBOTH,
-									 graph.scaleX => 1.0 tween Interpolator.EASEBOTH,
-									 graph.scaleY => 1.0 tween Interpolator.EASEBOTH,
+									 zoomFactor => oldZoom tween Interpolator.EASEBOTH,
 							]
 						}
 			]
