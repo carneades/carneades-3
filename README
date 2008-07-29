@@ -1,0 +1,16 @@
+These are the source files of the Carneades argumentation system.
+
+This software is licensed under the GNU General Public Licence (GLP, v3) and 
+the GNU Lesser General Public License (LGPL, v3).  Which license applies 
+is specified in the header of each source file.  The licenses are in the 
+licenses directory.
+
+The software consists of two main parts: 1) a graphical user interface,
+implementated in Java FX; and 2) a collection of R6RS Scheme libraries.  The
+source code for these parts are in the gui and scheme directories, respectively.
+
+The installation instructions for the Scheme library are in the INSTALL.txt 
+file in the scheme directory.
+
+For further information see <http://carneades.berlios.de>.
+

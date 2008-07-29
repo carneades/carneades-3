@@ -2,7 +2,8 @@
 
 (import (except (rnrs base) assert)
         (prefix (rnrs lists) list:)
-        (rnrs hashtables)
+        (rnrs io simple)
+        (prefix (carneades table) table:)
         (prefix (carneades lkif) lkif:)
         (carneades statement)
         (carneades argument)
@@ -18,14 +19,15 @@
 ; (define c2 (reject c1 'email))
 
 (define (show ag context)
-  (view* ag 
+  (diagram* ag 
          context 
          (lambda (x) x)
          (lambda (s) 
-           (let ((txt (hashtable-ref texts s #f)))
+           (let ((txt (table:lookup texts s #f)))
              (if (and txt (not (equal? (text-summary txt) "")))
                  (text-summary txt)
-                 s)))))
+                 s)))
+         (current-output-port)))
 
 (show ag1 c1)
 ; (show ag1 c2)

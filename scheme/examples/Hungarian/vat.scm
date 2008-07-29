@@ -35,10 +35,10 @@
                      builtins)))
 
 
-(check (all-acceptable? '(isLiableForPayingVATFor Selling Vendor) (engine 100 1 null)) => #t)
-(check (all-acceptable? '(placeOfPayingVATFor Selling Austria) (engine 100 1 null)) => #t)
-(check (all-acceptable? '(amountOfVATFor Selling ?x) (engine 100 1 null)) => #t)
-(check-report)
+;(check (all-acceptable? '(isLiableForPayingVATFor Selling Vendor) (engine 100 1 null)) => #t)
+;(check (all-acceptable? '(placeOfPayingVATFor Selling Austria) (engine 100 1 null)) => #t)
+;(check (all-acceptable? '(amountOfVATFor Selling ?x) (engine 100 1 null)) => #t)
+;(check-report)
 
 ; For q3, provide these answers to the questions asked:
 ; 1. In which country did "Selling" take place? 
@@ -46,6 +46,5 @@
 ; 2. What price was paid in the "Selling" transaction? 
 ; Answer: (all 100)
 
-;  (ask '(amountOfVATFor Selling ?x) (engine 100 1 null))
-; (show1 '(isLiableForPayingVATFor Selling Vendor) (engine 100 1 null))
-
+; (ask '(amountOfVATFor Selling ?x) (engine 100 1 null))
+(ask '(isLiableForPayingVATFor Selling Vendor) (engine 100 1 null))

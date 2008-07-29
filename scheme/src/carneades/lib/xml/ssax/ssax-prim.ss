@@ -6,7 +6,7 @@
 
 (library
  
- (carneades lib xml ssax ssax-prime)
+ (carneades lib xml ssax ssax-prim)
  
  (export RES-NAME->SXML
          reverse-collect-str
