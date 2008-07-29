@@ -46,7 +46,7 @@ public class GraphList extends FlowPanel {
 	attribute control: GraphControl;
 	attribute argumentGraph: ArgumentGraph;
 
-	attribute input: TextField = TextField {
+	attribute input: SwingTextField = SwingTextField {
 		preferredSize: bind [GC.editWidth-65, GC.textFieldHeight]
 		visible: true
 	}
@@ -59,13 +59,13 @@ public class GraphList extends FlowPanel {
 		filter: bind input.text.toLowerCase()
 	}
 
-	attribute addButton: Button = Button {
+	attribute addButton: SwingButton = SwingButton {
 		text: bind addButtonText
 		enabled: false
 		preferredSize: [140, 20]
 	}
 
-	attribute deleteButton: Button = Button {
+	attribute deleteButton: SwingButton = SwingButton {
 		text: bind deleteButtonText
 		enabled: false
 		preferredSize: [140, 20]

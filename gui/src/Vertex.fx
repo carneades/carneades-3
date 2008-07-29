@@ -33,9 +33,9 @@ public class Vertex extends GraphElement {
 	// Right now String for debugging purposes
 	attribute caption = "";
 	// It is called "parentVertex" since "parent" is taken by JavaFX internally.
-	attribute parentVertex: Vertex = null;
-	attribute xShift: Number = 0; // display coordinates relative to the parent node
-	attribute yShift: Number = 0; 
+	public attribute parentVertex: Vertex = null;
+	public attribute xShift: Number = 0; // display coordinates relative to the parent node
+	public attribute yShift: Number = 0; 
 	public attribute x: Number = bind parentVertex.x + xShift; 
 	public attribute y: Number = bind parentVertex.y + yShift;
 

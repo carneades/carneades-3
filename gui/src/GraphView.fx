@@ -23,24 +23,36 @@ import javafx.input.*;
 import javafx.animation.*;
 import javafx.scene.geometry.*;
 import javafx.scene.paint.*;
+import javafx.scene.*;
 import Carneades.Graph.*;
 import java.lang.System;
 
 // Abstract Controller Class for Interaction
 import Carneades.Control.GraphControl;
 
-public class GraphView extends Canvas {
+public class GraphView extends CustomNode {
 	public attribute focusX: Number = middleX;
 	public attribute focusY: Number = middleY;
 	public attribute middleX: Number = bind this.width/2;
-	public attribute middleY: Number = bind this.height/3;
+	public attribute middleY: Number = bind this.height/2;
 	private attribute tempX: Number = 0;
 	private attribute tempY: Number = 0;
 	
 	public attribute graph: Graph;
-	override attribute width;
-	attribute layout: GraphLayout;
-	attribute control: GraphControl;
+	public attribute width: Number;
+	public attribute height: Number;
+	public attribute layout: GraphLayout;
+	public attribute control: GraphControl;
+
+	// background layer
+	attribute background: Rectangle = Rectangle {
+		x: 0
+		y: 0
+		height: bind this.height
+		width: bind this.width
+		fill: GC.viewBackground
+		visible: true
+	}
 
 	// sensor object to detect mouse events outside of nodes.
 	attribute backSensor: Rectangle = Rectangle {
@@ -74,19 +86,36 @@ public class GraphView extends Canvas {
 
 		onMouseDragged: function(e: MouseEvent): Void {
 			if (control.dragging and e.getButton() == 1) {
-				dragSymbol.x = e.getCanvasX() - 10;
-				dragSymbol.y = e.getCanvasY() - 6;
+				dragSymbol.x = e.getStageX() - 10;
+				dragSymbol.y = e.getStageY() - 6;
 			// If we are dragging the view, set the new focus to the 
 			// respective coordinates relative to the backup values.
 			} else if (not control.dragging and e.getButton() == 1 and e.isShiftDown()) {
 				graph.root.xShift = tempX + e.getDragX();
 				graph.root.yShift = tempY + e.getDragY();
 				// do bounds check
-				if (graph.root.xShift > (layout.width / 2) + middleX) { graph.root.xShift = (layout.width / 2) + middleX}
-				if (graph.root.xShift < (-layout.width / 2) + middleX) { graph.root.xShift = (-layout.width / 2) + middleX}
-				if (graph.root.yShift > (layout.height / 2) + middleY) { graph.root.yShift = (layout.height / 2) + middleY}
-				if (graph.root.yShift < (-layout.height / 2) + middleY) { graph.root.yShift = (-layout.height / 2) + middleY}
+				/*
+				if (graph.root.xShift > (layout.width / 2) + 200) 
+					{ graph.root.xShift = (layout.width / 2) + 200}
+				if (graph.root.xShift < (-layout.width / 2) - 200) 
+					{ graph.root.xShift = (-layout.width / 2) - 200}
+				if (graph.root.yShift > (layout.height / 2) + 200) 
+					{ graph.root.yShift = (layout.height / 2) + 200}
+				if (graph.root.yShift < (-layout.height / 2) - 200) 
+					{ graph.root.yShift = (-layout.height / 2) - 200}
+				*/
 			}
+		}
+
+		onMouseWheelMoved: function(e: MouseEvent): Void {
+			graph.scaleX -= (e.getWheelRotation() / 20);
+			graph.scaleY -= (e.getWheelRotation() / 20);
+			
+			// check bounds
+			if (graph.scaleX < 0.1) { graph.scaleX = 0.1 }
+			if (graph.scaleX > 2.0) { graph.scaleX = 2.0 }
+			if (graph.scaleY < 0.1) { graph.scaleY = 0.1 }
+			if (graph.scaleY > 2.0) { graph.scaleY = 2.0 }
 		}
 	}
 
@@ -99,17 +128,22 @@ public class GraphView extends Canvas {
 		visible: bind control.dragging
 	}
 
-	override attribute background = GC.viewBackground;
-	override attribute content = bind [graph, backSensor, dragSymbol ];
+	public function create(): Node {
+		return Group {
+			content: bind [ background, graph, backSensor, dragSymbol ]
+		}
+	}
 
 	public function reset(): Void {
-		graph.root.xShift = middleX;
-		graph.root.yShift = middleY - GC.yDistance - GC.vertexDefaultHeight;
+		graph.translateX = middleX;
+		graph.translateY = middleY;
 	}
 
 	public function focusOn(x: Number, y: Number): Void {
-		focusX = x - graph.root.xShift;
-		focusY = y - graph.root.yShift;
+		var oldXShift: Number = graph.root.xShift;
+		var oldYShift: Number = graph.root.yShift;
+		focusX = x; 
+		focusY = y;
 
 		var t: Timeline = Timeline {
 			repeatCount: 1
@@ -117,15 +151,26 @@ public class GraphView extends Canvas {
 						KeyFrame {
 							time: 0s
 							values: [
-									 graph.root.xShift => graph.root.xShift tween Interpolator.EASEBOTH,
-									 graph.root.yShift => graph.root.yShift tween Interpolator.EASEBOTH
+									 graph.root.xShift => oldXShift tween Interpolator.EASEBOTH,
+									 graph.root.yShift => oldYShift tween Interpolator.EASEBOTH,
+									 graph.scaleX => graph.scaleX tween Interpolator.EASEBOTH,
+									 graph.scaleY => graph.scaleY tween Interpolator.EASEBOTH,
+							]
+						},
+						KeyFrame {
+							time: 0.25s
+							values: [
+									 graph.scaleX => 0.8 tween Interpolator.EASEBOTH,
+									 graph.scaleY => 0.8 tween Interpolator.EASEBOTH,
 							]
 						},
 						KeyFrame {
 							time: 0.5s
 							values: [
-									 graph.root.xShift => (middleX - focusX) tween Interpolator.EASEBOTH,
-									 graph.root.yShift => (middleY - focusY) tween Interpolator.EASEBOTH
+									 graph.root.xShift => (oldXShift - focusX) tween Interpolator.EASEBOTH,
+									 graph.root.yShift => (oldYShift - focusY) tween Interpolator.EASEBOTH,
+									 graph.scaleX => 1.0 tween Interpolator.EASEBOTH,
+									 graph.scaleY => 1.0 tween Interpolator.EASEBOTH,
 							]
 						}
 			]

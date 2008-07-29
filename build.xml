@@ -141,6 +141,17 @@
 	</javafxc>
   </target>
 
+  <target name="list">
+	<javafxc 
+		srcdir="${gui.srcdir}"
+		destdir="${gui.builddir}" 
+		includes="GraphList.fx"
+		target="${gui.target}"
+		compilerclasspath="${javafxc.class.path}">
+	  <classpath refid="gui.class.path"/>
+	</javafxc>
+  </target>
+
   <target name="main">
 	<javafxc 
 		srcdir="${gui.srcdir}"
@@ -181,6 +192,7 @@
 		srcdir="${gui.srcdir}"
 		destdir="${gui.builddir}" 
 		includes="**/*.fx"
+		excludes="**/*_old.fx"
 		target="${gui.target}"
 		compilerclasspath="${javafxc.class.path}">
 	  <classpath refid="gui.class.path"/>
@@ -193,7 +205,7 @@
 		 basedir="${gui.builddir}"
 		 includes="**/*.class"
 		 manifest="${gui.manifestdir}/coremanifest"
-		 update="true"/>
+		 />
   </target>
   
   <target name="jar" depends="corejar">
@@ -209,10 +221,23 @@
 	</one-jar> 
   </target>
   
-  <target name="r" depends="jar">
-	<echo message="Executing ..." />
+  <!-- Run targets -->
+
+  <target name="rjar" depends="jar">
+	<echo message="Executing from all-in-one-jar ..." />
 	<java jar="${gui.deploydir}/lib/Carneades.jar" fork="true"/>
   </target>
+
+  <target name="rclass">
+        <echo message="Executing from class files ..." />
+        <exec executable="javafx">
+          <arg value="-cp"/>
+          <arg value="${gui.builddir}"/>
+          <arg value="Carneades.Control.CarneadesMain"/>
+        </exec>
+  </target>
+
+  <target name="r" depends="rjar"/>
   
   <!-- webstart deployment target -->
   
