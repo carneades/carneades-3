@@ -52,23 +52,26 @@ public class GraphFrame extends SwingFrame {
 	attribute chooser: JFileChooser = new JFileChooser();
 
 	override attribute title = "Carneades";
-	override attribute width = GC.appWidth;
-	override attribute height = GC.appHeight;
-	override attribute background = Color.WHITE;
+	override attribute width = GC.appWidth on replace { if (width < GC.appWidth) width = GC.appWidth; };
+	override attribute height = GC.appHeight on replace { if (height < GC.appWidth) height = GC.appHeight; };
+	override attribute background = GC.panelBackground;
 
 	public attribute view: GraphView = bind GraphView {
-							x: 0
-							y: 0
 							width: this.width - GC.editWidth - 5
 							height: this.height - GC.toolBarHeight - 20
-							preferredSize: bind [this.width-GC.editWidth - 20, this.height - 150]
 							graph: bind graph
 							layout: bind layout
 							visible: true
 							control: bind control
 					}
+	
+	public attribute viewCanvas: Canvas = Canvas {
+		preferredSize: bind [this.width-GC.editWidth - 5, this.height - GC.toolBarHeight]
+		content: bind view
+	}
 
 	public attribute edit: GraphEdit = GraphEdit {
+		background: GC.panelBackground
 		visible: true
 		control: bind control
 		argumentGraph: bind argumentGraph
@@ -76,6 +79,7 @@ public class GraphFrame extends SwingFrame {
 	}
 
 	public attribute list: GraphList = GraphList {
+		background: GC.panelBackground
 		visible: true
 		control: bind control
 		argumentGraph: bind argumentGraph
@@ -83,18 +87,13 @@ public class GraphFrame extends SwingFrame {
 	}
 
 
-	attribute scroll: ScrollPane = ScrollPane {
-		//view: bind view
-		preferredSize: bind [this.width - GC.editWidth-10, this.height]
-	}
-
 	override attribute closeAction = function(): Void {
 		quit();
 	}
 
 	// content
 	attribute rightPanel: BorderPanel = bind BorderPanel {
-		//background: GC.panelBackground
+		background: GC.panelBackground
 		preferredSize: bind [ GC.editWidth, this.height ]
 		top: bind list
 		bottom: bind edit
@@ -154,7 +153,7 @@ public class GraphFrame extends SwingFrame {
 		);
 	}
 
-	private attribute toolPanel: Panel = FlowPanel {
+	private attribute toolPanel: FlowPanel = FlowPanel {
 		preferredSize: [ this.width, GC.toolBarHeight ]
 		background: GC.toolPanelBackground
 		visible: true
@@ -174,7 +173,7 @@ public class GraphFrame extends SwingFrame {
 
 	override attribute content = bind BorderPanel {
 		top: bind toolPanel
-		left: bind view
+		left: bind viewCanvas
 		right: bind rightPanel
 		center: null
 	}
@@ -382,7 +381,7 @@ public class GraphFrame extends SwingFrame {
 
 }
 
-class ToolBarButton extends Button {
+class ToolBarButton extends SwingButton {
 	override attribute preferredSize = [GC.toolBarHeight, GC.toolBarHeight];
 }
 

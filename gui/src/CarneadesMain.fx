@@ -19,15 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package Carneades.Control;
 
 // General Imports
-import java.lang.System;
 import javafx.ext.swing.*;
-import javafx.scene.paint.*;
 import java.io.File;
+import java.lang.System;
 import javax.swing.UIManager;
 // import com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel;
 
 // View Imports
-import Carneades.*;
 import Carneades.Graph.*;
 import Carneades.Graph.Elements.Elements.*;
 
@@ -36,10 +34,10 @@ import Carneades.Argument.Argument;
 import Carneades.Argument.Argument.*;
 import Carneades.Argument.ArgumentFile;
 
+
 // Other Control Imports
 import Carneades.Control.*;
 
-//System.setProperty("apple.laf.useScreenMenuBar", "true");
 
 //--------------------------------
 
@@ -47,17 +45,17 @@ import Carneades.Control.*;
 
 // Argument Graph
 
-//var argumentGraph: ArgumentGraph = ArgumentFile.getGraphFromFile("data/test2.xml");
+//UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
 
-// UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
-var argumentGraph: ArgumentGraph;
+//var argumentGraph: ArgumentGraph;
 
 //var argumentGraph = ArgumentFile.getGraphFromFile(new File("examples/PiersonPost.xml"));
 
 // 2. DECLARE VIEW AND CONTROL COMPONENTS
 
+var argumentGraph: ArgumentGraph;
 var layout: GraphLayout;
 var graph: Graph;
 var control: GraphControl;
@@ -68,7 +66,7 @@ var frame: GraphFrame;
 graph = CarneadesGraph {
 	argumentGraph: bind argumentGraph
 	control: bind control
-} 
+}
 
 layout = TreeLayout {
 	graph: graph
@@ -80,8 +78,6 @@ frame = GraphFrame {
 	graph: bind graph
 	argumentGraph: bind argumentGraph
 	layout: bind layout
-	width: GC.appWidth
-	height: GC.appHeight
 	control: bind control
 	visible: true
 }
@@ -102,6 +98,4 @@ control = GraphControl {
 control.newGraph();
 
 control.updateAll(); // update the control and view
-
-frame;
 
