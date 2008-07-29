@@ -191,8 +191,10 @@
      ((check expr => expected)
       (check expr (=> equal?) expected))
      ((check expr (=> equal) expected)
-      (if (>= check:mode 1)
-          (check:proc 'expr (lambda () expr) equal expected)))))
+      ; (if (>= check:mode 1)  ; commented out to work with Ikarus
+          (check:proc 'expr (lambda () expr) equal expected)
+      ;   )
+      )))
  
  ; -- parametric checks --
  

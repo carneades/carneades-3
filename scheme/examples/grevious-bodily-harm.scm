@@ -77,4 +77,5 @@ ribs, with complications.")
 (define ag1 (assert empty-argument-graph (list a1 a2 a3 a4 a5 a6 a7 a8 a9)))
 (define c1 (accept default-context  (list ten-witnesses hospital-report lex-specialis)))
 
-(view ag1 c1)
+; (view ag1 c1)
+(diagram ag1 c1)

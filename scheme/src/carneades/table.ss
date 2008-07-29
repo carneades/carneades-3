@@ -55,7 +55,7 @@
    (map (lambda (k) (lookup t1 k #f)) (keys t1)))
  
  ; filter: table (-> (pair-of key value) boolean) -> (list-of (pair-of key value))
- (define (table-filter tbl pred) 
+ (define (table-filter pred tbl) 
    (filter pred (map (lambda (k)
                        (cons k (lookup tbl k #f)))
                      (keys tbl))))

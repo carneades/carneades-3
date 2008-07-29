@@ -19,9 +19,10 @@
   (make-engine max-nodes max-turns 
                (list (generate-arguments-from-rules goods critical-questions)
                      builtins)))
+
 (check (all-acceptable? '(Goods g1) (engine 20 1 null)) => #t)
 (check (not (all-acceptable? '(Goods g1) (engine 20 2 null))) => #t)
 (check-report)
 
-(ask '(Goods g1) (engine 20 2 null))
+; (ask1 '(Goods ?x) (engine 20 1 null))
 
