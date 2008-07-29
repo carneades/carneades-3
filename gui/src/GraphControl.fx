@@ -116,7 +116,7 @@ public class GraphControl {
 			// update model selection
 			selectedModels = [];
 			insert (frame.list.list.selectedItem as StatementItem).statement into selectedModels;
-			// update graph selection
+			// update graph selection - is only done for StatementBoxes as of now
 			for (v in graph.vertices) {
 				if (v instanceof StatementBox 
 					and (v as StatementBox).statement == (frame.list.list.selectedItem as StatementItem).statement) {
@@ -147,7 +147,18 @@ public class GraphControl {
 		// These calls and their functions can be united into a bind once chained bindings work.
 		updateView();
 		
-		if (graph.selected != []) { focusOnSelected(); }
+		if (graph.selected != [] and not isVisible(graph.selected[0])) { focusOnSelected(); }
+	}
+
+	public function isVisible(e: GraphElement): Boolean {
+		var visible: Boolean = true;
+		if (e instanceof StatementBox) {
+			if ((e as Vertex).x > view.width / 2) visible = false;
+			if ((e as Vertex).x < -view.width / 2) visible = false;
+			if ((e as Vertex).y > view.height / 2) visible = false;
+			if ((e as Vertex).y < -view.height / 2) visible = false;
+		}
+		return visible;
 	}
 	
 	public function unSelectAll(): Void { 
