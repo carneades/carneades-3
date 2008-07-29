@@ -27,4 +27,4 @@
                  s)))))
 
 ; (show ag1 c1)
-(show ag1 c2)
+(diagram ag1 c2)

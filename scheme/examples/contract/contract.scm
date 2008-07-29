@@ -28,5 +28,5 @@
                  (text-summary txt)
                  s)))))
 
-(show ag1 c1)
-;  (show ag1 c2)
+; (view ag1 c1)
+(diagram ag1 c2)

@@ -59,15 +59,15 @@
                          (text-summary txt)
                          stmt))))))))
 
-(check (all-acceptable? 'k473 e1) => #t)  ; max 10% of nominal value   
-(check (all-acceptable? 'k472 e1) => #t)  ; cash payment
-(check (all-acceptable? 'k470 e1) => #t)  ; counter-performance
-(check-report)
+;(check (all-acceptable? 'k473 e1) => #t)  ; max 10% of nominal value   
+;(check (all-acceptable? 'k472 e1) => #t)  ; cash payment
+;(check (all-acceptable? 'k470 e1) => #t)  ; counter-performance
+;(check-report)
 
 
 ; Answers to provide to questions asked:
 ; 1. Max 10% of nominal value?
 ; Answer: (all #t)
 
-; (view1 'k470 e1) 
+(ask1 'k470 e1) 
 

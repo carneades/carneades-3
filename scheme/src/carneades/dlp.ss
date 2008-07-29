@@ -17,7 +17,7 @@
 #!r6rs
 
 (library
- (carneades dlp-changed) ; description logic programming
+ (carneades dlp) ; description logic programming
  
  (export ontology axiom generate-arguments-from-ontologies dlp? to-rule dlprule? dlprules*? rulerewrite)
  (import (rnrs)

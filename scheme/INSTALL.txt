@@ -1,59 +1,52 @@
+These installation instructions are for the Carneades inference engine,
+implemented in the Scheme programming language, not for the graphical user
+interface implemented in JavaFX.
 
 1. Prerequisites
 
-- PLT Scheme <http://www.plt-scheme.org>
+- An implementation of Scheme complying with the latest R6RS 
+  standard <http://www.r6rs.org>.
 - GraphViz <http://www.graphviz.org/>
 
-Both are free software, available in Mac/Unix/Windows versions.
+Carneades has been tested thus far using PLT Scheme, version 4.x 
+	<http://www.plt-scheme.org> 
+and Ikarus Scheme 
+	<http://www.cs.indiana.edu/~aghuloum/ikarus/index.html>
 
 2. Downloading Carneades
 
-Carneades is available for downloading as a compressed (.zip) file from
-<http://carneades.berlios.de>.  Alternatively, the sources can be
-downloaded using the SVN source code management system, following the
-instructions avaiable here
-<http://developer.berlios.de/svn/?group_id=9385>.
+Carneades is available for downloading from
+	<http://carneades.berlios.de>  
+
+Alternatively, the sources can be downloaded using the SVN source 
+code management system, following the instructions available here 
+
+	<http://developer.berlios.de/svn/?group_id=9385>.
 
 3. Installation
 
-- If you downloaded the .zip file distribution of Carneades, first
-unpack this .zip file in the directory/folder of your choice.  If you
-used SVN to download Carneades, you will have downloaded them into a
-directory.   No matter which method you used, in the following we will
-refer to the directory containing the Carneades sources as
-"CARNEADES_HOME".  (You do not need to create an environment variable
-with this name.)
+- First create a directory for the sources.  We'll refer to this
+directory below as CARNEADES_HOME.  (You do not need to create an 
+environment variable with this name.)
 
-The CARNEADES_HOME directory should contain these files and directories:
+- Move the .zip file containing the sources you downloaded above to 
+CARNEADES_HOME. 
 
-- CHANGES.txt 
-- INSTALL.txt 
-- examples 
-- src 
-- schemas
+- Change directories to CARNEADES_HOME.
 
-The Scheme source files of Carneades are in the "src/carneades"
+- Unpack the zip file in this directory.
+
+The Scheme source files of Carneades should now be in 
+the "scheme/src/carneades" directory inside the CARNEADES_HOME directory.
+
+- The .zip file can now be deleted.
+
+- Install the Scheme libraries in CARNEADES_HOME/scheme/src 
+so that they will be available  to the implementation of R6RS Scheme you 
+are using.  The procedure for doing this varies from implementation to 
+implementation.  Using Ikarus, for example, the shell variable
+named IKARUS_LIBRARY_PATH should be set to include the CARNEADES_HOME/scheme/src
 directory.
-
-Start DrScheme and excecute the following command to find out the full
-paths of the directories searched for collections (i.e. libraries):
-
-> (current-library-collection-paths )
-
-Create a symbolic link in one of the directories listed to the directory
-containing the source code of the Carneades.  For example, using a Unix
-operating system this can be done as follows from a Unix shell, such as Bash.
-Let COLLECTS be the path of a directory in the current library collections path.
-
-$ cd COLLECTS
-$ ln -s CARNEADES_HOME/src/carneades carneades
-
-Be sure to replace "COLLECTS" and "CARNEADES_HOME" with the full path names
-of the actual directories.
-
-Warning: You may need to repeat this installation procedure if you later 
-upgrade your installation of PLT to a new version, since each version of PLT 
-Scheme has its own directories for storing collections.
 
 4. Configuration
 
@@ -63,15 +56,23 @@ svg) and specify the full path to some application for viewing graphics
 in this format.  The config.scm file includes some examples for both
 Windows and Mac OS X.
 
-
 5. Trying it out
 
-- Start DrScheme 
-- In the "examples" directory, open the "rule-tests.scm" file 
-- Click on the "Run" button in the upper-right corner of the window 
-  to run some tests 
-- Try out the example commands commented out near the end of the file, 
-  to see how to ask queries and show a diagram of the arguments found.
+- The examples directory and its subdirectories contains numerous
+Scheme programs illustrating the Carneades library.
+  
+- The way to execute these programs depends on the implementation of 
+R6RS Scheme you are using.  For exmaple, to run the experts.scm 
+example using Ikarus, execute:
 
-Note: You will need to quit the graphics application to return control
-to PLT Scheme.
+$ scheme-script experts.scm | dot -Tpdf > experts.pdf
+
+The experts.scm program produces an argument diagram in dot format.  
+The command above pipes this dot file to the dot program, which is part of 
+the GraphViz package, producing a nice PDF file containing the diagram.
+
+Here's how to run the same program using version 4.x of PLT Scheme:
+
+$ plt-r6rs ++path CARNEADES_HOME/scheme/src experts.scm | dot -Tpdf > experts.pdf
+
+

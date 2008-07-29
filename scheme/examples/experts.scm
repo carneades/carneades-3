@@ -47,4 +47,5 @@ because he is biased.")
 (define c3 (accept c2 (list s1 s2 s3 s4 s5 s6)))
 
 
-(view ag1 c3)
+; (view ag1 c3)
+(diagram ag1 c3)

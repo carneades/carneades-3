@@ -1,6 +1,14 @@
 
 Carneades Changelog
 
+Version 0.1.4  (July 29, 2008)
+
+- Ported the whole system to R6RS Scheme.  (Expect more bugs than usual.)
+- The distribution now includes the JavaFX sources of the beginnings 
+  of a graphical user interface for Carneades
+- Now includes an argument generator for Description Logic Programs  
+  represented in the KRSS language.
+
 Version 0.1.3
 
 - Began renaming Scheme source files to use the .ss suffix.

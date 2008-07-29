@@ -161,6 +161,6 @@
 ; if the undue hardship exception now applies.
 
 (define e2 (make-engine* 50 4 c2 argument-generators))
-(show1 '(obligated-to-support Max ?y) e2)
+(ask1 '(obligated-to-support Max ?y) e2)
 
 ; end of file
