@@ -11,7 +11,7 @@
   <property name="gui.deploydir" value="deployment"/>
   <property name="gui.manifestdir" value="gui/manifests"/>
   <property name="gui.builddir" value="gui/build"/>
-  <property name="gui.version" value="0.0.7"/>
+  <property name="version" value="0.1.4"/>
   
   <property name="javafxc.home" value="${env.JAVAFXHOME}"/>
   <property name="javafxc.class.path" 
@@ -270,7 +270,7 @@
 	</signjar>
   </target>
 
-  <target name="webstart" depends="webstart.run, webstart.fail"/>
+  <target name="webstart" depends="corejar, webstart.run, webstart.fail"/>
 
   <!-- platform distribution build targets -->
 
@@ -287,7 +287,7 @@
 	</copy>
 	<exec executable="sh" dir=".">
 	  <arg value="${gui.deploydir}/bin/deploywin.sh"/>
-	  <arg value="${gui.version}"/>
+	  <arg value="${version}"/>
 	</exec>
 	<delete dir="${gui.distdir}/Carneades"/>	
   </target>
@@ -312,7 +312,7 @@
 				vmoptions=" -Xdock:name='Carneades'"/>
 	<exec executable="sh" dir=".">
 	  <arg value="${gui.deploydir}/bin/deploymac.sh"/>
-	  <arg value="${gui.version}"/>
+	  <arg value="${version}"/>
 	</exec>
 	<delete dir="${gui.distdir}/Carneades"/>
   </target>
@@ -327,15 +327,15 @@
   </target>
 
   <target name="sources">
-	<delete file="${distdir}/carneades-src-${gui.version}.jar"/>
-	<jar destfile="${distdir}/carneades-src-${gui.version}.jar" 
+	<delete file="${distdir}/carneades-src-${version}.zip"/>
+	<jar destfile="${distdir}/carneades-src-${version}.zip" 
 		 basedir="." 
-		 excludes="**/*.class, **/Carneades.jar, **/CarneadesCore.jar, **/dist/**"/>
+		 excludes="webstart.xml, **/*.class, **/Carneades.jar, **/CarneadesCore.jar, **/dist/**"/>
   </target>
   
   <target name="deploy" depends="examples, deploymac, deploywin, sources"/>
   
-  <target name="full" depends="compile, deploy">
+  <target name="full" depends="compile, webstart">
   </target>
   
 </project>
