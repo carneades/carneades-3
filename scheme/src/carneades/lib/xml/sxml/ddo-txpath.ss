@@ -99,7 +99,7 @@
          (carneades lib xml ssax sxpathlib)
          (carneades lib xml ssax common)
          (carneades lib xml ssax util)
-         (carneades gensym)
+         (only (carneades system) gensym)
          )
  
  ;; XPath implementation with distinct document order support

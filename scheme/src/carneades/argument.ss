@@ -38,7 +38,7 @@
  (import (except (rnrs) assert)
          (rnrs records syntactic)
          (rnrs lists)
-         (carneades gensym)
+         (only (carneades system) gensym)
          (carneades statement)
          (carneades lib match)
          (prefix (carneades table) table:)

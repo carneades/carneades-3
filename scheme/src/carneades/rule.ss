@@ -35,7 +35,7 @@
  (import (rnrs)
          (rnrs lists)
          (rnrs hashtables)
-         (carneades gensym)
+         (only (carneades system) gensym)
          (carneades statement)
          (carneades unify)
          (prefix (carneades lib srfi lists) list:)

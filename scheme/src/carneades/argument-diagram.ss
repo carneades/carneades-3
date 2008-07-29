@@ -31,8 +31,7 @@
          (prefix (carneades table) table:)
          (prefix (carneades unify) unify:)
          (prefix (carneades config) config:)
-         (carneades system)
-         (carneades gensym)) 
+         (carneades system)) 
  
  (define ids (table:make-table))
  

@@ -30,7 +30,7 @@
          (carneades lib match)
          (carneades rule)
          (carneades argument-search)
-         (carneades gensym)
+         (only (carneades system) gensym)
          (prefix (carneades argument) argument:))
  
  (define null '())
