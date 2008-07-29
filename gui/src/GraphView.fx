@@ -33,8 +33,8 @@ import Carneades.Control.GraphControl;
 public class GraphView extends CustomNode {
 	public attribute focusX: Number = middleX;
 	public attribute focusY: Number = middleY;
-	public attribute middleX: Number = bind this.width/2;
-	public attribute middleY: Number = bind this.height/2;
+	public attribute middleX: Number = bind this.width/2 on replace { graph.translateX = middleX };
+	public attribute middleY: Number = bind this.height/2 on replace { graph.translateY = middleY };
 	private attribute tempX: Number = 0;
 	private attribute tempY: Number = 0;
 	
@@ -100,17 +100,16 @@ public class GraphView extends CustomNode {
 			} else if (not control.dragging and e.getButton() == 1 and e.isShiftDown()) {
 				graph.root.xShift = tempX + e.getDragX();
 				graph.root.yShift = tempY + e.getDragY();
-				// do bounds check
-				
-				if (graph.root.xShift > (layout.width / 2) + 200) 
-					{ graph.root.xShift = (layout.width / 2) + 200}
-				if (graph.root.xShift < (-layout.width / 2) - 200) 
-					{ graph.root.xShift = (-layout.width / 2) - 200}
-				if (graph.root.yShift > (layout.height / 2) + 200) 
-					{ graph.root.yShift = (layout.height / 2) + 200}
-				if (graph.root.yShift < (-layout.height / 2) - 200) 
-					{ graph.root.yShift = (-layout.height / 2) - 200}
-				
+
+				// do bounds check - the vertical check only works for the treelayout as of now.
+				if (graph.root.xShift > (layout.width / 2)) 
+					{ graph.root.xShift = (layout.width / 2)}
+				if (graph.root.xShift < (-layout.width / 2)) 
+					{ graph.root.xShift = (-layout.width / 2)}
+				if (graph.root.yShift + layout.height < - this.height / 2) 
+					{ graph.root.yShift = - layout.height - this.height / 2}
+				if (graph.root.yShift + GC.yDistance + GC.vertexDefaultHeight > (this.height / 2)) 
+					{ graph.root.yShift = (this.height / 2) + GC.yDistance + GC.vertexDefaultHeight}
 			}
 		}
 
@@ -128,9 +127,17 @@ public class GraphView extends CustomNode {
 		visible: bind control.dragging
 	}
 
+	attribute middlePoint = Circle {
+		centerX: bind middleX
+		centerY: bind middleY
+		radius: 5
+		fill: Color.BLUE
+		visible: bind GC.debug
+	}
+
 	public function create(): Node {
 		return Group {
-			content: bind [ background, graph, backSensor, dragSymbol ]
+			content: bind [ background, graph, backSensor, dragSymbol, middlePoint ]
 		}
 	}
 

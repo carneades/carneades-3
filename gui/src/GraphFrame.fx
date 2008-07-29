@@ -53,12 +53,12 @@ public class GraphFrame extends SwingFrame {
 
 	override attribute title = "Carneades";
 	override attribute width = GC.appWidth on replace { if (width < GC.appWidth) width = GC.appWidth; };
-	override attribute height = GC.appHeight on replace { if (height < GC.appWidth) height = GC.appHeight; };
+	override attribute height = GC.appHeight on replace { if (height < GC.appHeight) height = GC.appHeight; };
 	override attribute background = GC.panelBackground;
 
 	public attribute view: GraphView = bind GraphView {
-							width: this.width - GC.editWidth - 5
-							height: this.height - GC.toolBarHeight - 20
+							width: bind viewCanvas.width
+							height: bind viewCanvas.height
 							graph: bind graph
 							layout: bind layout
 							visible: true
