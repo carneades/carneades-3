@@ -77,35 +77,21 @@ public class Statement {
 	// and track changes to its value.
 	public attribute ok: Boolean = false 
 		on replace {
-			updateArgs(); // propogate changes
+			for (arg in arguments) arg.update(); // propogate changes
 		}
 		
 	// read-only
 	public attribute complementOk: Boolean = true 
 		on replace {
-			updateArgs();
+			for (arg in arguments) arg.update();
 		}
 	
-	public function acceptable () : Boolean { 
-		// System.out.println("{id}: checking acceptability");
-		var pro = graph.arguments[arg | arg.conclusion == this and arg.pro];
-		var con = graph.arguments[arg | arg.conclusion == this and not arg.pro];
-		standard.satisfied(graph,pro,con); 
-	}
-	
-	public function complementAcceptable () : Boolean {
-		var pro = graph.arguments[arg | arg.conclusion == this and arg.pro];
-		var con = graph.arguments[arg | arg.conclusion == this and not arg.pro];
-		standard.satisfied(graph,con,pro);
-	}
 
     private function update () : Void {
-    	ok = acceptable();
-    	complementOk = complementAcceptable();
-    	updateArgs();
-    }
-    
-    private function updateArgs () : Void {
+    	var pro = graph.arguments[arg | arg.conclusion == this and arg.pro];
+		var con = graph.arguments[arg | arg.conclusion == this and not arg.pro];
+    	ok = standard.satisfied(graph,pro,con);
+    	complementOk = standard.satisfied(graph,con,pro);
     	for (arg in arguments) arg.update();
     }
     
@@ -271,7 +257,6 @@ public class Argument {
 	
 	private function update () : Void {
 		ok = allPremisesHold();
-		// System.out.println("{id} is {if (ok) "ok" else "not ok"}");
 	}
 	
 	public function defensible () : Boolean { allPremisesHold() }
