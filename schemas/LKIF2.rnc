@@ -16,7 +16,7 @@
 datatypes xsd = "http://www.w3.org/2001/XMLSchema-datatypes"
 
 grammar {
-    start = element lkif { Sources?, Theory?, ArgumentGraph* }
+    start = element lkif { Sources?, Theory?, ArgumentGraphs? }
     
     Sources = element sources { Source+ }
     
@@ -43,7 +43,7 @@ grammar {
 
     Import = element import { attribute uri { xsd:anyURI } }
     
-    ArgumentGraphs = element argument-graphs { ArgumentGraph* }
+    ArgumentGraphs = element argument-graphs { ArgumentGraph+ }
     
     Rule = element rule { 
         attribute id { xsd:ID }, 
