@@ -21,7 +21,7 @@
       <xs:sequence>
         <xs:element minOccurs="0" ref="sources"/>
         <xs:element minOccurs="0" ref="theory"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="argument-graph"/>
+        <xs:element minOccurs="0" ref="argument-graphs"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -56,7 +56,7 @@
   <xs:element name="imports">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="import"/>
+        <xs:element maxOccurs="unbounded" ref="import"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -87,7 +87,7 @@
   <xs:element name="argument-graphs">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="argument-graph"/>
+        <xs:element maxOccurs="unbounded" ref="argument-graph"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -286,7 +286,7 @@
   <xs:element name="issues">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="issue"/>
+        <xs:element maxOccurs="unbounded" ref="issue"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
