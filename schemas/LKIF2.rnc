@@ -142,7 +142,7 @@ grammar {
     # (value=true & assumption=true).  Assumptions are now made globablly, in the
     # scope of an argument graph, rather than on a premise by premise basis.
 
-    Issues = element issues { Issue* }
+    Issues = element issues { Issue+ }
     
     Issue = element issue { 
         attribute statement { xsd:anyURI },
