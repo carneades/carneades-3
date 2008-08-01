@@ -31,7 +31,7 @@ grammar {
         Imports?, Axioms?, Rules?
     }
 
-    Imports = element imports { Import* }
+    Imports = element imports { Import+ }
     Axioms = element axioms { Wff+ }
     Rules = element rules { Rule+ }
     
