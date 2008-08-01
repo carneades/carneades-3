@@ -18,9 +18,9 @@
 (library
  (carneades system)
  
- (export system* system pretty-print tcp-connect gensym)
+ (export system pretty-print tcp-connect gensym)
  
- (import (only (scheme system) system system*)
+ (import (only (scheme system) system)
          (only (scheme pretty) pretty-print)
          (only (scheme tcp) tcp-connect)
          (only (scheme base) gensym))

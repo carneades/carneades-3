@@ -115,17 +115,20 @@
      (call-with-output-file tmp-dot
        (lambda (port) (diagram* ag c subs statement->string port)))
      (if (equal? format "dot")
-         (begin (system* config:viewer tmp-dot)
+         (begin (system (string-append config:viewer " " tmp-dot))
                 (delete-file tmp-dot))
          (let ((tmp-output (string-append config:tmpdir
                                           (symbol->string (gensym "carneades-")) "." suffix)))
-           (system* config:dot 
-                   " -T" 
+
+           (system (string-append 
+                    config:dot 
+                   " -T " 
                    format
+                   " "
                    tmp-dot
                    " -o " 
-                   tmp-output)
-           (system* config:viewer tmp-output)
+                   tmp-output))
+           (system (string-append config:viewer " " tmp-output))
            (delete-file tmp-dot)
            (delete-file tmp-output)))))
  
