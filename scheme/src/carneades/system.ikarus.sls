@@ -18,17 +18,14 @@
 (library
  (carneades system)
  
- (export system* system pretty-print tcp-connect gensym)
+ (export system pretty-print tcp-connect gensym)
  
  (import (rnrs)
          (prefix (ikarus) ikarus:))
  
  (define (system cmd) 
    (raise-continuable (make-message-condition "system procedure not yet implemented")))
- 
- (define (system* . args) 
-   (raise-continuable (make-message-condition "system* procedure not yet implemented")))
- 
+  
  (define pretty-print ikarus:pretty-print)
  
  ; tcp-connect: string integer -> input-port
