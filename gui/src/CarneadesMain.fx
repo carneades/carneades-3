@@ -46,52 +46,13 @@ import Carneades.Control.*;
 // Argument Graph
 
 //UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-
 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-
-//var argumentGraph: ArgumentGraph;
-
-//var argumentGraph = ArgumentFile.getGraphFromFile(new File("examples/PiersonPost.xml"));
 
 // 2. DECLARE VIEW AND CONTROL COMPONENTS
 
-var argumentGraph: ArgumentGraph;
-var layout: GraphLayout;
-var graph: Graph;
 var control: GraphControl;
-var frame: GraphFrame;
 
-// 3. SET UP VIEW
-
-graph = CarneadesGraph {
-	argumentGraph: bind argumentGraph
-	control: bind control
-}
-
-layout = TreeLayout {
-	graph: graph
-	width: GC.appWidth
-	height: GC.appHeight
-}
-
-frame = GraphFrame {
-	graph: bind graph
-	argumentGraph: bind argumentGraph
-	layout: bind layout
-	control: bind control
-	visible: true
-}
-
-// 4. SET UP CONTROL
-
-control = GraphControl {
-	// As long as the model does not provide its own full alteration methods, 
-	// we need to inverse-bind the graph to the controller.
-	argumentGraph: bind argumentGraph with inverse
-	graph: bind graph with inverse
-	frame: bind frame
-	layout: bind layout
-}
+control = GraphControl {}
 
 // FINAL DISPLAY
 
@@ -99,3 +60,4 @@ control.newGraph();
 
 control.updateAll(); // update the control and view
 
+control.frame;

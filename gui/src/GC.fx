@@ -34,6 +34,7 @@ public class GC {
 	public static attribute LEFT: Number = 4;
 
 	// Drawing constants
+	public static attribute drawAllStatements: Boolean = true;
 	public static attribute canvasFontSize: Integer = 8;
 	public static attribute textFieldHeight: Integer = 25;
 	public static attribute defaultBoxFill = Color.WHITE;
@@ -136,7 +137,7 @@ public class GC {
 	public static attribute idsEditable: Boolean = false;
 
 	// Version administration constants
-	public static attribute debug: Boolean = false;
+	public static attribute debug: Boolean = true;
 
 	// helper functions
 	public static function p(s: String) { System.out.println(s)}

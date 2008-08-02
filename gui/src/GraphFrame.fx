@@ -20,7 +20,10 @@ package Carneades.Graph;
 
 import javafx.ext.swing.*;
 import javafx.scene.paint.*;
+import javafx.scene.geometry.*;
+import javafx.scene.effect.*;
 import javafx.scene.Font;
+import javafx.scene.text.*;
 import javafx.scene.FontStyle;
 import javafx.scene.image.*;
 import java.lang.System;
@@ -43,7 +46,6 @@ import Carneades.Control.GraphControl;
 public class GraphFrame extends SwingFrame {
 	
 	public attribute graph: Graph;
-	public attribute layout: GraphLayout;
 	public attribute control: GraphControl;
 	public attribute argumentGraph: ArgumentGraph;
 
@@ -60,7 +62,6 @@ public class GraphFrame extends SwingFrame {
 							width: bind viewCanvas.width
 							height: bind viewCanvas.height
 							graph: bind graph
-							layout: bind layout
 							visible: true
 							control: bind control
 					}
@@ -103,11 +104,63 @@ public class GraphFrame extends SwingFrame {
 	private attribute creditsFrame: SwingFrame = SwingFrame {
 		visible: bind this.showCredits
 		title: "About Carneades"
-		height: 250
-		width: 480
+		height: 300
+		width: 620
 		resizable: false
-		content: bind
-			FlowPanel {
+		content: bind Canvas {
+			visible: true
+			background: Color.WHITE
+			width: creditsFrame.width
+			height: creditsFrame.height
+			content: [
+				Rectangle {
+					x: 10
+					y: 10
+					width: creditsFrame.width - 20
+					height: creditsFrame.height - 45
+					fill: Color.WHITE
+					stroke: Color.BLACK
+					strokeWidth: 1
+					effect: { 
+						if (GC.drawShadows) {
+							DropShadow {
+								color: bind GC.shadowColor
+								offsetX: bind GC.xShadowShift
+								offsetY: bind GC.yShadowShift
+								radius: bind GC.shadowBlurRadius
+							}
+						} else null
+					}
+				},
+				ImageView {
+					x: 20
+					y: 20
+					width: bind creditsFrame.width
+					height: bind creditsFrame.height
+					image: Image {
+						url: "{__DIR__}images/carneades.jpg"
+						size: creditsFrame.height - 65
+					},
+				},
+				Text {
+					x: 200
+					y: 40
+					font: Font {
+						size: 16
+					}
+					content: "Carneades"
+				},
+				Text { x: 200, y: 70, content: "Version 0.0.6" },
+				Text { x: 200, y: 100, content: "License: GPL v3" },
+				Text { x: 200, y: 130, content: "Copyright © 2008" },
+				Text { x: 200, y: 150, content: "Thomas F. Gordon" },
+				Text { x: 200, y: 165, content: "Fraunhofer Institute for Open Communication Systems (FOKUS), Berlin" },
+				Text { x: 200, y: 185, content: "Matthias Grabmair" },
+				Text { x: 200, y: 200, content: "Intelligent Systems Program, University of Pittsburgh" },
+				Text { x: 200, y: 230, content: "http://carneades.berlios.de" },
+			]
+		}
+		/*FlowPanel {
 				background: Color.WHITE
 				width: creditsFrame.width
 				height: creditsFrame.height
@@ -138,9 +191,10 @@ public class GraphFrame extends SwingFrame {
 						}
 					}
 				]
-			}
+		}*/
 
 		closeAction: function() {
+			System.out.println("{__DIR__}");
 			showCredits = false;
 		}
 	}
@@ -322,6 +376,13 @@ public class GraphFrame extends SwingFrame {
 							text: "print sizes"
 							action: function() {
 								control.printSizes();
+							}
+						},
+						MenuItem {
+							text: "print vertices"
+							action: function() {
+								System.out.println("# of vertices: " + sizeof graph.vertices);
+								graph.print();
 							}
 						}
 
