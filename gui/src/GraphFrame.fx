@@ -31,6 +31,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import java.io.File;
+import java.net.URL;
+import java.util.Scanner;
 
 // Model Classes
 import Carneades.Argument.Argument;
@@ -44,6 +46,8 @@ import Carneades.Graph.Elements.Elements.*;
 import Carneades.Control.GraphControl;
 
 public class GraphFrame extends SwingFrame {
+
+	private attribute version: String = "";
 	
 	public attribute graph: Graph;
 	public attribute control: GraphControl;
@@ -93,7 +97,7 @@ public class GraphFrame extends SwingFrame {
 	}
 
 	// content
-	attribute rightPanel: BorderPanel = bind BorderPanel {
+	private attribute rightPanel: BorderPanel = bind BorderPanel {
 		background: GC.panelBackground
 		preferredSize: bind [ GC.editWidth, this.height ]
 		top: bind list
@@ -150,7 +154,7 @@ public class GraphFrame extends SwingFrame {
 					}
 					content: "Carneades"
 				},
-				Text { x: 200, y: 70, content: "Version 0.0.6" },
+				Text { x: 200, y: 70, content: bind "Build {version}" },
 				Text { x: 200, y: 100, content: "License: GPL v3" },
 				Text { x: 200, y: 130, content: "Copyright © 2008" },
 				Text { x: 200, y: 150, content: "Thomas F. Gordon" },
@@ -160,41 +164,8 @@ public class GraphFrame extends SwingFrame {
 				Text { x: 200, y: 230, content: "http://carneades.berlios.de" },
 			]
 		}
-		/*FlowPanel {
-				background: Color.WHITE
-				width: creditsFrame.width
-				height: creditsFrame.height
-				content: bind [
-					Label {
-						preferredSize: [creditsFrame.width -10, 15]
-						font: Font {
-							size: 20
-							style: FontStyle.BOLD
-						}
-						text: "Carneades"
-					},
-					for (t in [
-						"",
-						"Version 0.0.6", 
-						"License: GPL v3", 
-						"Copyright © 2008 Thomas F. Gordon (1) and Matthias Grabmair (2)",
-						"",
-						"(1) Fraunhofer Institute for Open Communication Systems (FOKUS), Berlin",
-						"(2) University of Pittsburgh, Intelligent Systems Program",
-						"",
-						"http://carneades.berlios.de"
-
-					]) { 
-						Label {
-							preferredSize: [creditsFrame.width -10, 15]
-							text: t
-						}
-					}
-				]
-		}*/
 
 		closeAction: function() {
-			System.out.println("{__DIR__}");
 			showCredits = false;
 		}
 	}
@@ -390,6 +361,10 @@ public class GraphFrame extends SwingFrame {
 				}
 	]; // override default
 
+	postinit {
+		loadVersionNumber();
+	}
+
 	private function quit(): Void {
 		if (control.fileChanged) {
 			var choice = JOptionPane.showOptionDialog(
@@ -431,6 +406,17 @@ public class GraphFrame extends SwingFrame {
 				if (overwrite == JOptionPane.OK_OPTION) { control.saveAsGraphToFile(file); }
 			} else { control.saveAsGraphToFile(file); }
 		}		
+	}
+
+	private function loadVersionNumber(): Void {
+		var file: File = new File ("version.txt");
+		if (file.canRead()) {
+			var s: Scanner = new Scanner(file);
+			this.version = s.next();
+			s.close();
+		} else {
+			System.out.println("Version file not found.");
+		}
 	}
 
 }

@@ -137,7 +137,7 @@ public class GC {
 	public static attribute idsEditable: Boolean = false;
 
 	// Version administration constants
-	public static attribute debug: Boolean = true;
+	public static attribute debug: Boolean = false;
 
 	// helper functions
 	public static function p(s: String) { System.out.println(s)}
