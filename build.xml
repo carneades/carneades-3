@@ -11,7 +11,6 @@
   <property name="gui.deploydir" value="deployment"/>
   <property name="gui.manifestdir" value="gui/manifests"/>
   <property name="gui.builddir" value="gui/build"/>
-  <property name="version" value=""/>
   
   <property name="javafxc.home" value="${env.JAVAFXHOME}"/>
   <property name="javafxc.class.path" 
@@ -40,8 +39,6 @@
   <property name="one-jar.version" value="0.96"/>
   <taskdef name="one-jar" classname="com.simontuffs.onejar.ant.OneJarTask" 
 		   classpath="${gui.basedir}/lib/one-jar-ant-task-${one-jar.version}.jar" onerror="report"/>
-
-  <taskdef resource="svntask.properties" classpathref="gui.class.path"/>
 
   <import file="webstart.xml" optional="true"/>
   
@@ -204,9 +201,22 @@
   <!-- targets affecting the full build -->
 
   <target name="version">
-	<svn javahl="false">
-	<status path="." revisionProperty="version"/>
-	</svn>
+	<typedef resource="com/googlecode/svntask/svntask.xml">
+	  <classpath>
+		<fileset dir="${gui.basedir}/lib">
+		  <include name="svnkit.jar"/>
+		  <include name="svntask.jar"/>
+		</fileset>
+	  </classpath>
+	</typedef>
+	
+	<!-- Do an update first to make sure you have the latest version -->
+	<svn><update path="." force="true" recursive="true" /></svn>
+	
+	<svn><info path="." revisionProperty="revisionVersion" /></svn>
+	<property name="version" value="${revisionVersion}" />
+
+	<echo message="${version}" file="${gui.deploydir}/webstart/version.txt"/>
   </target>
 
   <target name="compile">
@@ -230,7 +240,7 @@
 	<echo message="Packing core jar ..." />
 	<jar destfile="${gui.builddir}/CarneadesCore.jar"
 		 basedir="${gui.builddir}"
-		 includes="**/*.class, **/*.jpg, **/*.png"
+		 includes="**/*.class, **/*.jpg, **/*.png, **/*.txt"
 		 manifest="${gui.manifestdir}/coremanifest"
 		 />
   </target>
