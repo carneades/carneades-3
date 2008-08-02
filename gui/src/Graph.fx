@@ -30,7 +30,9 @@ public class Graph extends CustomNode {
 	public attribute vertices: Vertex[];
 	public attribute edges: Edge[];
 	public attribute selected: GraphElement[] = [];
-	public function update(): Void {}
+	public attribute layout: GraphLayout;
+
+	public function update() {}
 
 	public function create():Node {
 		Group {
@@ -47,6 +49,12 @@ public class Graph extends CustomNode {
 		for (i in vertices) i.selected = false;
 		for (i in edges) i.selected = false;
 		selected = [];
+	}
+
+	public function print() {
+		for (v in vertices) {
+			v.print();;
+		}
 	}
 
 } // Graph

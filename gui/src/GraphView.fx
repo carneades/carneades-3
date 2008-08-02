@@ -25,6 +25,7 @@ import javafx.scene.geometry.*;
 import javafx.scene.paint.*;
 import javafx.scene.*;
 import Carneades.Graph.*;
+import Carneades.Graph.Elements.Elements.*;
 import java.lang.System;
 
 // Abstract Controller Class for Interaction
@@ -41,7 +42,7 @@ public class GraphView extends CustomNode {
 	public attribute graph: Graph;
 	public attribute width: Number;
 	public attribute height: Number;
-	public attribute layout: GraphLayout;
+	public attribute layout: GraphLayout = bind graph.layout;
 	public attribute control: GraphControl;
 
 	public attribute zoomFactor: Number = 1.0 on replace {
@@ -143,7 +144,7 @@ public class GraphView extends CustomNode {
 
 	public function reset(): Void {
 		graph.translateX = middleX;
-		graph.translateY = middleY;
+		graph.translateY = middleY - GC.yDistance;
 	}
 
 	public function focusOn(x: Number, y: Number): Void {
@@ -181,5 +182,16 @@ public class GraphView extends CustomNode {
 			]
 		} // timeline
 		t.start();
+	}
+
+	public function isVisible(e: GraphElement): Boolean {
+		var visible: Boolean = true;
+		if (e instanceof StatementBox) {
+			if ((e as Vertex).x > (this.width / zoomFactor) / 2) visible = false;
+			if ((e as Vertex).x < -(this.width / zoomFactor) / 2) visible = false;
+			if ((e as Vertex).y > (this.height / zoomFactor) / 2) visible = false;
+			if ((e as Vertex).y < -(this.height / zoomFactor) / 2) visible = false;
+		}
+		return visible;
 	}
 }

@@ -79,8 +79,8 @@ public class CarneadesGraph extends Graph {
 		var argumentBoxes: ArgumentBox[];
 		// 1. create bound vertices
 		// for statements
-		for (s in statements) {	
-			if (argumentGraph.broughtForth(s) or argumentGraph.isPremise(s)) {
+		for (s in statements) {
+			if (GC.drawAllStatements or (argumentGraph.broughtForth(s) or argumentGraph.isPremise(s))) {
 				var statementBox: StatementBox = StatementBox {
 					statement: bind s
 					level: bind { statementBox.parentVertex.level + 1}

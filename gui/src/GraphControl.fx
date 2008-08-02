@@ -40,16 +40,26 @@ public class GraphControl {
 
 	attribute argumentGraph: ArgumentGraph;
 
-	attribute frame: GraphFrame;
+	attribute frame: GraphFrame = GraphFrame {
+		visible: true
+		graph: bind graph
+		argumentGraph: bind argumentGraph
+		control: bind this
+	};
+
 	attribute edit: GraphEdit = bind frame.edit;
 	attribute view: GraphView = bind frame.view;
-	public attribute graph: Graph;
 
-	attribute layout: GraphLayout = TreeLayout {
-		graph: bind graph
-		// todo: this positioning is dirty! Find a better way once hand-dragging is in there.
-		width: frame.width - GC.editWidth - 20
-		height: frame.height - GC.toolBarHeight - 30
+	public attribute graph: Graph = CarneadesGraph {
+		visible: true
+		control: bind this
+		argumentGraph: bind argumentGraph
+		layout: TreeLayout {
+			graph: bind graph
+			// todo: this positioning is dirty! Find a better way once hand-dragging is in there.
+			width: frame.width - GC.editWidth - 20
+			height: frame.height - GC.toolBarHeight - 30
+		}
 	};
 
 	private attribute commands: CommandControl = CommandControl {
@@ -147,20 +157,9 @@ public class GraphControl {
 		// These calls and their functions can be united into a bind once chained bindings work.
 		updateView();
 		
-		if (graph.selected != [] and not isVisible(graph.selected[0])) { focusOnSelected(); }
+		if (graph.selected != [] and not view.isVisible(graph.selected[0])) { focusOnSelected(); }
 	}
 
-	public function isVisible(e: GraphElement): Boolean {
-		var visible: Boolean = true;
-		if (e instanceof StatementBox) {
-			if ((e as Vertex).x > view.width / 2) visible = false;
-			if ((e as Vertex).x < -view.width / 2) visible = false;
-			if ((e as Vertex).y > view.height / 2) visible = false;
-			if ((e as Vertex).y < -view.height / 2) visible = false;
-		}
-		return visible;
-	}
-	
 	public function unSelectAll(): Void { 
 		frame.list.list.selectedItem = null;
 		unSelectGraph();
@@ -212,7 +211,7 @@ public class GraphControl {
 
 				// 1. Rendering update
 				graph.update();
-				layout.compose();
+				graph.layout.compose();
 
 				// 2. Restore Selection
 				for (m in selectedModels) {
@@ -862,7 +861,7 @@ public class GraphControl {
 
 	public function printSizes(): Void {
 		System.out.println("view: " + view.width);
-		System.out.println("layout: " + layout.width);
+		System.out.println("layout: " + graph.layout.width);
 	}
 
 }
