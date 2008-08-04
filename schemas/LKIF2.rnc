@@ -125,6 +125,7 @@ grammar {
     # of issues, applicable proof standards and relative argument strengths.
     ArgumentGraph = element argument-graph { 
         attribute id { xsd:ID }?, 
+        attribute title { xsd:string }?,
         attribute main-issue { xsd:anyURI }?, 
         Statements, Arguments
     }
@@ -145,6 +146,7 @@ grammar {
     Arguments = element arguments { Argument* }
     Argument = element argument { 
     	attribute id { xsd:ID },
+    	attribute title { xsd:string }?,
         attribute direction { "pro" | "con" }?,
         attribute scheme { xsd:anyURI | xsd:string }?,
         attribute weight { xsd:float }?,  # range: 0.0 bis 1.0; default: 0.5

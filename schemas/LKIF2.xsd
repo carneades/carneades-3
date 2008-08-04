@@ -262,6 +262,7 @@
         <xs:element ref="arguments"/>
       </xs:sequence>
       <xs:attribute name="id" type="xs:ID"/>
+      <xs:attribute name="title" type="xs:string"/>
       <xs:attribute name="main-issue" type="xs:anyURI"/>
     </xs:complexType>
   </xs:element>
@@ -316,6 +317,7 @@
         <xs:element ref="premises"/>
       </xs:sequence>
       <xs:attribute name="id" use="required" type="xs:ID"/>
+      <xs:attribute name="title" type="xs:string"/>
       <xs:attribute name="direction">
         <xs:simpleType>
           <xs:restriction base="xs:token">
