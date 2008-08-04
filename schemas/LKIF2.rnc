@@ -126,26 +126,13 @@ grammar {
     ArgumentGraph = element argument-graph { 
         attribute id { xsd:ID }?, 
         attribute main-issue { xsd:anyURI }?, 
-        Issues?, Statements, Arguments
+        Statements, Arguments
     }
     
-    Statements = element statements { Wff* }
+    Statements = element statements { Statement+ }
     
-    # Issues labeled accepted and rejected are (assumed) to be true or false, respectively.  
-    # The previous status of statements can be reconstructed as follows: 
-    #	stated: value=unknown & assumption=true 
-    #   questioned: value=unknown & assumption=false
-    #   accepted: value=true & assumption=false
-    #   rejected: value=false & assumption=false
-    # The new model allows us in 
-    # addition to assume the value to be false (value=false & assumption=true) or true
-    # (value=true & assumption=true).  Assumptions are now made globablly, in the
-    # scope of an argument graph, rather than on a premise by premise basis.
-
-    Issues = element issues { Issue+ }
-    
-    Issue = element issue { 
-        attribute statement { xsd:anyURI },
+    Statement = element statement { 
+        attribute wff { Wff },
         attribute value { "unknown" | "true" | "false" },  # default: unknown
         attribute assumption { xsd:boolean }?, # default: false
         attribute standard { "SE" | "DV" | "BA" | "PE" | "BRD" }? # default: BA

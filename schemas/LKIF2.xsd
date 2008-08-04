@@ -258,7 +258,6 @@
   <xs:element name="argument-graph">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" ref="issues"/>
         <xs:element ref="statements"/>
         <xs:element ref="arguments"/>
       </xs:sequence>
@@ -268,31 +267,14 @@
   </xs:element>
   <xs:element name="statements">
     <xs:complexType>
-      <xs:group minOccurs="0" maxOccurs="unbounded" ref="Wff"/>
-    </xs:complexType>
-  </xs:element>
-  <!--
-    Issues labeled accepted and rejected are (assumed) to be true or false, respectively.  
-    The previous status of statements can be reconstructed as follows: 
-    	stated: value=unknown & assumption=true 
-      questioned: value=unknown & assumption=false
-      accepted: value=true & assumption=false
-      rejected: value=false & assumption=false
-    The new model allows us in 
-    addition to assume the value to be false (value=false & assumption=true) or true
-    (value=true & assumption=true).  Assumptions are now made globablly, in the
-    scope of an argument graph, rather than on a premise by premise basis.
-  -->
-  <xs:element name="issues">
-    <xs:complexType>
       <xs:sequence>
-        <xs:element maxOccurs="unbounded" ref="issue"/>
+        <xs:element maxOccurs="unbounded" ref="statement"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="issue">
+  <xs:element name="statement">
     <xs:complexType>
-      <xs:attribute name="statement" use="required" type="xs:anyURI"/>
+      <xs:attribute name="wff" use="required"/>
       <xs:attribute name="value" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:token">
