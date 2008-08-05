@@ -62,7 +62,9 @@
   </xs:element>
   <xs:element name="axioms">
     <xs:complexType>
-      <xs:group maxOccurs="unbounded" ref="Wff"/>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="axiom"/>
+      </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="rules">
@@ -82,6 +84,12 @@
   <xs:element name="import">
     <xs:complexType>
       <xs:attribute name="uri" use="required" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="axiom">
+    <xs:complexType>
+      <xs:group ref="Wff"/>
+      <xs:attribute name="id" use="required" type="xs:ID"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="argument-graphs">
@@ -118,13 +126,12 @@
     more intuitive and mnemonic for most users.
     An assumable atom is assumed when an argument having this atom
     as a premise is put forward into an argument graph, unless there is already
-    an issue for this atom (i.e. an atom with the same id), in which case
-    the value of the assumption attribute of the issue for this atom is 
+    an issue for this atom in which case the value of the assumption attribute of 
+    the issue for this atom is 
   -->
   <xs:element name="s">
     <xs:complexType mixed="true">
       <xs:group minOccurs="0" maxOccurs="unbounded" ref="Term"/>
-      <xs:attribute name="id" type="xs:ID"/>
       <xs:attribute name="pred">
         <xs:simpleType>
           <xs:union memberTypes="xs:anyURI xs:Name"/>
@@ -156,7 +163,6 @@
         <xs:group ref="Wff"/>
         <xs:group maxOccurs="unbounded" ref="Wff"/>
       </xs:sequence>
-      <xs:attribute name="id" type="xs:ID"/>
       <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
@@ -166,14 +172,12 @@
         <xs:group ref="Wff"/>
         <xs:group maxOccurs="unbounded" ref="Wff"/>
       </xs:sequence>
-      <xs:attribute name="id" type="xs:ID"/>
       <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="not">
     <xs:complexType>
       <xs:group ref="Wff"/>
-      <xs:attribute name="id" type="xs:ID"/>
       <xs:attribute name="exception" type="xs:boolean"/>
       <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
@@ -184,7 +188,6 @@
         <xs:group ref="Wff"/>
         <xs:group ref="Wff"/>
       </xs:sequence>
-      <xs:attribute name="id" type="xs:ID"/>
       <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
@@ -194,7 +197,6 @@
         <xs:group ref="Wff"/>
         <xs:group ref="Wff"/>
       </xs:sequence>
-      <xs:attribute name="id" type="xs:ID"/>
       <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
@@ -204,7 +206,6 @@
         <xs:element maxOccurs="unbounded" ref="v"/>
         <xs:group ref="Wff"/>
       </xs:sequence>
-      <xs:attribute name="id" type="xs:ID"/>
       <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
@@ -214,7 +215,6 @@
         <xs:element maxOccurs="unbounded" ref="v"/>
         <xs:group ref="Wff"/>
       </xs:sequence>
-      <xs:attribute name="id" type="xs:ID"/>
       <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
@@ -275,7 +275,10 @@
   </xs:element>
   <xs:element name="statement">
     <xs:complexType>
-      <xs:attribute name="wff" use="required"/>
+      <xs:sequence>
+        <xs:element ref="s"/>
+      </xs:sequence>
+      <xs:attribute name="id" use="required" type="xs:ID"/>
       <xs:attribute name="value" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:token">
