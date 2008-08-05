@@ -578,6 +578,36 @@ public class Preponderance extends ProofStandard {
 	}
 }
 
+// Clear and Convincing Evidence: met if preponderance is met 
+// and the difference between the average weight of the pro arguments
+// and the average weight of the con arguments is greater than
+// some threshold.
+public class ClearAndConvincingEvidence extends ProofStandard {
+	function test (ag: ArgumentGraph, 
+	               pro: Argument[], 
+	               con: Argument[]): Boolean {
+
+	       var okPro = pro [ arg | arg.allPremisesHold() ];
+	       var okCon = con [ arg | arg.allPremisesHold() ];
+	       
+	       var sumPro = 0.0; 
+	       for (arg in okPro) sumPro = sumPro + arg.weight;
+	       var avgPro = sumPro / sizeof(okPro);
+	       
+	       var sumCon = 0.0;
+	       for (arg in okCon) sumCon = sumCon + arg.weight;
+	       var avgCon = sumCon / sizeof(okCon);
+	       
+	       var threshold = 0.3;
+	       
+	       return (avgPro > avgCon) and 
+	              (avgPro - avgCon > threshold);
+	}
+}
+
+// Beyond a Reasonable Doubt: met if preponderance is met 
+// and the weight of the strongest con argument is below
+// a given threshold.
 public class BeyondReasonableDoubt extends ProofStandard {
 	function test (ag: ArgumentGraph, 
 	               pro: Argument[], 
@@ -596,5 +626,5 @@ public class BeyondReasonableDoubt extends ProofStandard {
 	}
 }
 
-// to do: clear and convincing evidence: "much more likely than not"
+
 
