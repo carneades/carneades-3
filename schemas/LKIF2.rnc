@@ -32,7 +32,7 @@ grammar {
     }
 
     Imports = element imports { Import+ }
-    Axioms = element axioms { Wff+ }
+    Axioms = element axioms { Axiom+ }
     Rules = element rules { Rule+ }
     
     # Import: the uri can refer to an RDF file, including OWL files in RDF format, 
@@ -42,6 +42,11 @@ grammar {
     # are imported but also any assertions about instances, the ABox. 
 
     Import = element import { attribute uri { xsd:anyURI } }
+    
+    Axiom = element axiom { 
+        attribute id { xsd:ID }, 
+        Wff
+    }
     
     ArgumentGraphs = element argument-graphs { ArgumentGraph+ }
     
@@ -60,10 +65,9 @@ grammar {
     # more intuitive and mnemonic for most users.
     # An assumable atom is assumed when an argument having this atom
     # as a premise is put forward into an argument graph, unless there is already
-    # an issue for this atom (i.e. an atom with the same id), in which case
-    # the value of the assumption attribute of the issue for this atom is 
+    # an issue for this atom in which case the value of the assumption attribute of 
+    # the issue for this atom is 
     Atom = element s { 
-        attribute id { xsd:ID }?,
         attribute pred { xsd:anyURI | xsd:Name }?,
         attribute assumable { xsd:boolean}?,  # default: false
         ((text | Term)*) 
@@ -73,29 +77,35 @@ grammar {
     # Free variables are schema variables, i.e. inference rule variables; 
     # bound variables, using Exists or All, are first-order logic variables.
     Wff = Atom | Or | And | Not | If | Iff | All | Exists
-    Or = element or { attribute id { xsd:ID }?, 
-                      attribute assumable { xsd:boolean }?,  #default: false
+    Or = element or { attribute assumable { xsd:boolean }?,  #default: false
                       Wff, Wff+ }
-    And = element and { attribute id { xsd:ID }?, 
-                        attribute assumable { xsd:boolean }?,  #default: false
+    And = element and { attribute assumable { xsd:boolean }?,  #default: false
                         Wff, Wff+ }
     Not = element not { 
-        attribute id { xsd:ID }?,
         attribute exception { xsd:boolean }?,  # default: false
         attribute assumable { xsd:boolean }?,  # default: false 
-        Wff }            
-    If = element if { attribute id { xsd:ID }?, 
-                      attribute assumable { xsd:boolean }?,  #default: false
-                      Wff, Wff }
-    Iff = element iff { attribute id { xsd:ID }?, 
-                        attribute assumable { xsd:boolean }?,  #default: false
-                        Wff, Wff }
-    All = element all { attribute id { xsd:ID }?, 
-                        attribute assumable { xsd:boolean }?,  #default: false
-                        Variable+, Wff }
-    Exists = element exists { attribute id { xsd:ID }?, 
-                              attribute assumable { xsd:boolean }?,  #default: false,
-                              Variable+, Wff }
+        Wff 
+    }     
+        
+    If = element if { 
+        attribute assumable { xsd:boolean }?,  #default: false
+        Wff, Wff 
+     }
+                      
+    Iff = element iff { 
+        attribute assumable { xsd:boolean }?,  #default: false
+        Wff, Wff 
+    }
+                        
+    All = element all { 
+        attribute assumable { xsd:boolean }?,  #default: false
+        Variable+, Wff 
+    }
+                        
+    Exists = element exists { 
+        attribute assumable { xsd:boolean }?,  #default: false,
+        Variable+, Wff 
+     }
     
     # Terms include statements, to support meta-level statements
     Term = Variable | Individual | Constant | Expression | Atom
@@ -133,10 +143,11 @@ grammar {
     Statements = element statements { Statement+ }
     
     Statement = element statement { 
-        attribute wff { Wff },
+        attribute id { xsd:ID },
         attribute value { "unknown" | "true" | "false" },  # default: unknown
         attribute assumption { xsd:boolean }?, # default: false
-        attribute standard { "SE" | "DV" | "BA" | "PE" | "BRD" }? # default: BA
+        attribute standard { "SE" | "DV" | "BA" | "PE" | "BRD" }?, # default: BA
+        Atom
     }
          
     
