@@ -13,10 +13,15 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# Version:  2.0.4
+
 datatypes xsd = "http://www.w3.org/2001/XMLSchema-datatypes"
 
 grammar {
-    start = element lkif { Sources?, Theory?, ArgumentGraphs? }
+    start = element lkif { 
+        attribute version { xsd:string }?,  # version of the LKIF schema
+        Sources?, Theory?, ArgumentGraphs? 
+    }
     
     Sources = element sources { Source+ }
     
