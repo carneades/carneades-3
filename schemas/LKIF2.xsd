@@ -15,6 +15,7 @@
   You should have received a copy of the GNU Lesser General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
+<!-- Version:  2.0.4 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
   <xs:element name="lkif">
     <xs:complexType>
@@ -23,6 +24,7 @@
         <xs:element minOccurs="0" ref="theory"/>
         <xs:element minOccurs="0" ref="argument-graphs"/>
       </xs:sequence>
+      <xs:attribute name="version" type="xs:string"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="sources">
