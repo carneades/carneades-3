@@ -128,7 +128,7 @@ public class GC {
 
 	// window layout onstants
 	public static attribute graphListWidth: Integer = 100;
-	public static attribute editWidth: Integer = 325;
+	public static attribute editWidth: Integer = 330;
 	public static attribute editHeight: Integer = 410;
 	public static attribute listHeight: Integer = 300;
 	public static attribute editLabelWidth: Integer = 100;

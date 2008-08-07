@@ -226,7 +226,7 @@ public class StatementEditPanel extends EditPanel {
 
 	private attribute CCEButton: SwingRadioButton = CRadioButton {
 		toggleGroup: standardGroup
-		text: "clear & convincing ev."
+		text: "clear & convincing evidence"
 		preferredSize: [ editComponentWidth, 20 ]
 		action: function(): Void {
 			submitStandard();
