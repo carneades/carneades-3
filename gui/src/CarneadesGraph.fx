@@ -29,8 +29,14 @@ import Carneades.Graph.Elements.Elements.*;
 import Carneades.Argument.Argument;
 import Carneades.Argument.Argument.*;
 
+// import needed control packages
+import Carneades.Control.Commands.CommandControl;
+
 public class CarneadesGraph extends Graph {
 
+	public attribute commands: CommandControl = CommandControl {
+		control: bind control
+	}
 	
 	// this attribute is the binding to the model
 	public attribute argumentGraph: ArgumentGraph;

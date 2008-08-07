@@ -218,6 +218,7 @@ public class Scheme {
 
 public class Argument {
 	public attribute id: String;
+	public attribute title: String;
 	public attribute graph : ArgumentGraph;  
 
 	public attribute weight: Number = 0.5 // range: 0.0 to 1.0 coming as soon as JavaFX does it right
@@ -287,6 +288,7 @@ public class Argument {
 
 public class ArgumentGraph {
 	public attribute id: String = "NewGraph";
+	public attribute title: String = "New Graph";
 	public attribute mainIssue: Statement; 
 
 	// statements and arguments should be "read-only"
@@ -466,9 +468,7 @@ public class ArgumentGraph {
 		var admissible: Boolean = true;
 		var id: String = "s";
 		var number: Integer = 1;
-
 		while ( idTaken(id + number.toString()) ) { number ++; }
-
 		return id + number.toString();
 	}
 
@@ -476,9 +476,7 @@ public class ArgumentGraph {
 		var admissible: Boolean = true;
 		var id: String = "a";
 		var number: Integer = 1;
-
 		while ( idTaken(id + number.toString()) ) { number ++; }
-
 		return id + number.toString();
 	}
 

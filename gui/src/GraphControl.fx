@@ -30,43 +30,63 @@ import Carneades.Argument.Argument.*;
 
 // View imports
 import Carneades.Graph.*;
-import Carneades.Graph.GraphList.*;
+import Carneades.Graph.ElementList.*;
 import Carneades.Graph.Elements.Elements.*;
 
 // Other Control Imports
 import Carneades.Control.Commands.*;
 
+/**
+ * Central control class for the Carneades application. It instantiates the needed view and model objects
+ */
+
 public class GraphControl {
 
-	attribute argumentGraph: ArgumentGraph;
+	/**
+	 * The array of currently loaded model argument graphs. Read-Only.
+	 */
+	public attribute argumentGraphs: ArgumentGraph[] = bind for (g in graphs) {g.argumentGraph};
 
-	attribute frame: GraphFrame = GraphFrame {
+	/**
+	 * The current model argument graph that is to be displayed. Read-Only.
+	 */
+	public attribute argumentGraph: ArgumentGraph = bind graph.argumentGraph;
+
+	/**
+	 * The application frame.
+	 */	
+	public attribute frame: GraphFrame = GraphFrame {
 		visible: true
 		graph: bind graph
 		argumentGraph: bind argumentGraph
+		argumentGraphs: bind argumentGraphs
 		control: bind this
 	};
 
-	attribute edit: GraphEdit = bind frame.edit;
-	attribute view: GraphView = bind frame.view;
+	/**
+	 * The application's inspector panel.
+	 */
+	public attribute edit: GraphEdit = bind frame.edit;
 
-	public attribute graph: Graph = CarneadesGraph {
-		visible: true
-		control: bind this
-		argumentGraph: bind argumentGraph
-		layout: TreeLayout {
-			graph: bind graph
-			// todo: this positioning is dirty! Find a better way once hand-dragging is in there.
-			width: frame.width - GC.editWidth - 20
-			height: frame.height - GC.toolBarHeight - 30
-		}
-	};
+	/**
+	 * The application's view.
+	 */
+	public attribute view: GraphView = bind frame.view;
 
-	private attribute commands: CommandControl = CommandControl {
-		control: this
-	}
+	/**
+	 * The array of graph objects that correspond to the model graphs.
+	 */
+	public attribute graphs: CarneadesGraph[] = [];
 
-	private attribute selectedModels: Object[];
+	/**
+	 * The view graph object currently displayed.
+	 */
+	public attribute graph: CarneadesGraph;
+
+	private attribute commands: CommandControl = bind graph.commands;
+
+	// !!! -> This should be moved into the graph class!
+	//private attribute selectedModels: Object[];
 
 	// View configuration attributes
 	public attribute possibleToAddConclusion: Boolean = true;
@@ -79,12 +99,12 @@ public class GraphControl {
 	public attribute possibleToChangeToAssumption: Boolean = false;
 
 	public attribute possibleToRemove: Boolean = false ;
-	public attribute possibleToDelete: Boolean = false ;
 	
 	public attribute possibleToUndo: Boolean = false;
 	public attribute possibleToRedo: Boolean = false;
 	
 	public attribute dragging: Boolean = false;
+	public attribute dragView: Boolean = false;
 
 	public attribute selectedArgumentEditable: Boolean = false;
 	public attribute selectedStatementEditable: Boolean = false;
@@ -100,8 +120,8 @@ public class GraphControl {
 
 	// SELECTION FUNCTIONS
 
-	public attribute possibleToAddArgument = bind selectedModels[0] instanceof Statement;
-	public attribute possibleToAddPremise = bind selectedModels[0] instanceof Argument;
+	public attribute possibleToAddArgument = bind graph.selectedModels[0] instanceof Statement;
+	public attribute possibleToAddPremise = bind graph.selectedModels[0] instanceof Argument;
 
 	private function singleArgumentLinkSelected(s: GraphElement[]): Boolean {
 		return { if (sizeof s != 1) false else (s instanceof ArgumentLink) } 
@@ -124,8 +144,8 @@ public class GraphControl {
 		if (frame.list.list.selectedItem != null) {
 			// 1. The list is selected
 			// update model selection
-			selectedModels = [];
-			insert (frame.list.list.selectedItem as StatementItem).statement into selectedModels;
+			graph.selectedModels = [];
+			insert (frame.list.list.selectedItem as StatementItem).statement into graph.selectedModels;
 			// update graph selection - is only done for StatementBoxes as of now
 			for (v in graph.vertices) {
 				if (v instanceof StatementBox 
@@ -134,22 +154,25 @@ public class GraphControl {
 						insert v into graph.selected;
 					} 
 			}
+		} else if (frame.graphList.list.selectedItem != null) {
+			// 2. The graph list is selected
+			// do nothing meaningful and leave it as it is ... (for now)
 		} else {
-			// 2. The graph is selected
+			// 3. The graph is selected
 			// update model selection
-			selectedModels = [];
+			graph.selectedModels = [];
 			for (s in graph.selected) {
 				if (s instanceof ArgumentBox) {
-					insert (s as ArgumentBox).argument into selectedModels;
+					insert (s as ArgumentBox).argument into graph.selectedModels;
 				}
 				else if (s instanceof ArgumentLink) {
-					insert ((s as ArgumentLink).producer as ArgumentBox).argument into selectedModels;
+					insert ((s as ArgumentLink).producer as ArgumentBox).argument into graph.selectedModels;
 				}
 				else if (s instanceof StatementBox) {
-					insert (s as StatementBox).statement into selectedModels;
+					insert (s as StatementBox).statement into graph.selectedModels;
 				}
 				else if (s instanceof PremiseLink) {
-					insert (s as PremiseLink).premise into selectedModels;
+					insert (s as PremiseLink).premise into graph.selectedModels;
 				}
 			}
 		}
@@ -163,18 +186,24 @@ public class GraphControl {
 	public function unSelectAll(): Void { 
 		frame.list.list.selectedItem = null;
 		unSelectGraph();
-		selectedModels = [];
+		unSelectGraphList();
+		graph.selectedModels = [];
 		updateView();
 	}
 
 	public function unSelectGraph(): Void {
 		frame.graph.unSelectAll();
-		selectedModels = [];
+		graph.selectedModels = [];
 	}
 
 	public function unSelectList(): Void {
 		frame.list.list.selectedItem = null;
-		selectedModels = [];
+		graph.selectedModels = [];
+	}
+
+	public function unSelectGraphList(): Void {
+		frame.graphList.list.selectedItem = null;
+		graph.selectedModels = [];
 	}
 
 	public function getSelected(): Object[] {
@@ -184,11 +213,11 @@ public class GraphControl {
 
 	public function getSelectedModel(): Object[] {
 		// update Graph selection
-		return selectedModels;
+		return graph.selectedModels;
 	}
 
 	public function selectModel(m: Object) {
-		insert m into selectedModels;
+		insert m into graph.selectedModels;
 	}
 
 	public function focusOnSelected() {
@@ -197,7 +226,12 @@ public class GraphControl {
 			view.focusOn((selected as Vertex).x, (selected as Vertex).y);
 		}
 	}
-
+	
+	public function switchToGraph(a: ArgumentGraph) {
+		System.out.println("called");
+		graph = (for (g in graphs where (g as CarneadesGraph).argumentGraph == a) { g }) [0];
+		updateView();
+	}
 	
 	// UPDATE FUNCTIONS
 	
@@ -214,7 +248,7 @@ public class GraphControl {
 				graph.layout.compose();
 
 				// 2. Restore Selection
-				for (m in selectedModels) {
+				for (m in graph.selectedModels) {
 					// restore arguments
 					if (m instanceof Argument) {
 						for (v in graph.vertices where (v instanceof ArgumentBox 
@@ -257,8 +291,6 @@ public class GraphControl {
 		possibleToRedo = commands.possibleToRedo();
 	 	possibleToInverseArgument = singleArgumentLinkSelected(frame.view.graph.selected);
 		possibleToRemove = singleSomethingSelected(frame.view.graph.selected);
-		var s = frame.list.getSelectedStatement();
-		possibleToDelete = { ((s != null) and (not argumentGraph.broughtForth(s))) };
 		
 		// System.out.println("update view iteration");
 
@@ -465,7 +497,8 @@ public class GraphControl {
 		}
 		
 		if (argumentGraph.isConclusion(s.statement)) {
-		// if the statement is the conclusion of an argument, delete the premise as well as the arguments leading to it
+		// If the statement is the conclusion of an argument, 
+		// delete the premise as well as the arguments leading to it.
 			commands.do(
 				DeleteConclusionCommand {
 					argumentGraph: argumentGraph
@@ -475,13 +508,21 @@ public class GraphControl {
 					childArguments: argumentGraph.arguments[a | a.conclusion == s.statement ]
 				}
 			);
-		} else {
-		// if not, delete only the premise
+		} else if (argumentGraph.isPremise(s.statement)){
+		// If it is a premise, delete both statement and premise.
 			commands.do(
-				DeletePremiseCommand {
+				DeletePremiseStatementCommand {
 					argumentGraph: argumentGraph
 					argument: tempArgument
 					premise: tempPremise
+				}
+			);
+		} else {
+		// Otherwise, delete the statement only.
+			commands.do(
+				DeleteStatementCommand {
+					argumentGraph: argumentGraph
+					statement: s.statement
 				}
 			);
 		}
@@ -500,6 +541,8 @@ public class GraphControl {
 				}
 			);
 		}
+		unSelectAll();
+		updateAll();
 		updateView();
 	}
 
@@ -614,6 +657,16 @@ public class GraphControl {
 		updateAll();
 	};
 
+	public function changeGraphTitle(t: String, g: ArgumentGraph ): Void {
+		commands.do(
+			ChangeGraphTitleCommand {
+				argumentGraph: g
+				title: t
+			}
+		);
+		updateAll();
+	};
+
 	public function changeStatementStatus(s: Statement, v: String): Void {
 		commands.do(
 			ChangeStatementStatusCommand {
@@ -656,6 +709,14 @@ public class GraphControl {
 						argumentGraph: argumentGraph
 						statement: s
 						standard: Preponderance {}
+					}
+				);
+			} else if (st == "CCE") {
+				commands.do(
+					ChangeStatementStandardCommand {
+						argumentGraph: argumentGraph
+						statement: s
+						standard: ClearAndConvincingEvidence {}
 					}
 				);
 			} else if (st == "BRD") {
@@ -706,8 +767,17 @@ public class GraphControl {
 				scheme: c
 			}
 		);
-		updateAll();
+		updateView();
 	};
+
+	public function changeArgumentTitle(t: String, a: Argument): Void {
+		commands.do(
+			ChangeArgumentTitleCommand {
+				argument: a
+				title: t
+			}
+		);
+	}
 
 	public function changeArgumentId(a: Argument, id: String): Void {
 		var admissible: Boolean = true;
@@ -777,8 +847,25 @@ public class GraphControl {
 
 	// Load / Save / New Options
 
+	private function graphIdTaken(id: String): Boolean {
+		for (a in argumentGraphs) {
+			if (a.id == id) { return true; }
+		}
+		return false;
+	}
+
+	private function getNewGraphId(): String {
+		var admissible: Boolean = true;
+		var id: String = "g";
+		var number: Integer = 1;
+		while ( graphIdTaken(id + number.toString()) ) { number ++; }
+		return id + number.toString();
+	}
+
 	public function newGraph(): Void {
-		argumentGraph = GraphControl.defaultGraph();
+		graphs = [];
+		addArgumentGraph();
+		graph = graphs[0];
 		
 		frame.title = "Carneades";
 		currentFile = null;
@@ -788,22 +875,60 @@ public class GraphControl {
 		updateAll();
 		view.reset();
 	}
+	
+	public function addArgumentGraph(): Void {
+		var newArgGraph = GraphControl.defaultGraph();
+		var graph: CarneadesGraph = CarneadesGraph {
+			visible: true
+			control: bind this
+			argumentGraph: newArgGraph
+			layout: TreeLayout {
+				graph: bind graph
+			}
+		};
+		graph.translateX = view.middleX;
+		graph.translateY = view.middleY - GC.yDistance;
+		graph.update();
+		insert graph into graphs;
+		graph.layout.compose();
+	}
+	
+	public function addArgumentGraph(newArgGraph: ArgumentGraph): Void {
+		var graph: CarneadesGraph = CarneadesGraph {
+			visible: true
+			control: bind this
+			argumentGraph: newArgGraph
+			layout: TreeLayout {
+				graph: bind graph
+			}
+		};
+		graph.translateX = view.middleX;
+		graph.translateY = view.middleY - GC.yDistance;
+		graph.update();
+		insert graph into graphs;
+		graph.layout.compose();
+	}
 
 	public function loadGraphFromFile(f: File): Void {
+		graphs = [];
+
 		// set the current file
 		currentFile = f;
 
 		// load the graph
-		argumentGraph = ArgumentFile.getGraphFromFile(f);
+		var newArgGraphs: ArgumentGraph[] = ArgumentFile.getGraphFromFile(f);
+		
+		for (g in newArgGraphs) addArgumentGraph(g);
 
 		frame.title = "Carneades - { f.getAbsolutePath() }";
 
+		graph = graphs[0];
 		commands.reset();
 		updateAll();
 	}
 
 	public function saveGraphToFile(f: File): Void {
-		ArgumentFile.saveGraphToFile(argumentGraph, f);
+		ArgumentFile.saveGraphToFile(argumentGraphs, f);
 		currentFile = f;
 		frame.title = "Carneades - { f.getAbsolutePath() }";
 		fileChanged = false;
@@ -811,17 +936,17 @@ public class GraphControl {
 
 	public function saveAsGraphToFile(f: File): Void {
 
-		//Check for overwrite
+		// todo: Check for overwrite
 
-		ArgumentFile.saveGraphToFile(argumentGraph, f);
+		ArgumentFile.saveGraphToFile(argumentGraphs, f);
 		currentFile = f;
 		frame.title = "Carneades - { f.getAbsolutePath() }";
 		fileChanged = false;
 	}
 
 	// DEBUG FUNCTIONS
-	public static function defaultGraph(): ArgumentGraph {
-		var argumentGraph = ArgumentGraph { id: "TestGraph"};
+	public function defaultGraph(): ArgumentGraph {
+		var argumentGraph = ArgumentGraph { id: getNewGraphId() };
 		
 		var s1: Statement = Statement {
 			id: "s1"

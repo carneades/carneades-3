@@ -32,8 +32,8 @@ import java.lang.System;
 import Carneades.Control.GraphControl;
 
 public class GraphView extends CustomNode {
-	public attribute focusX: Number = middleX;
-	public attribute focusY: Number = middleY;
+	private attribute focusX: Number = middleX;
+	private attribute focusY: Number = middleY;
 	public attribute middleX: Number = bind this.width/2 on replace { graph.translateX = middleX };
 	public attribute middleY: Number = bind this.height/2 on replace { graph.translateY = middleY };
 	private attribute tempX: Number = 0;
@@ -80,7 +80,7 @@ public class GraphView extends CustomNode {
 
 		onMousePressed: function(e: MouseEvent): Void {
 			// If we are dragging the view, backup the press location.
-			if (not control.dragging and e.getButton() == 1 and e.isShiftDown()) {
+			if (not control.dragging and e.getButton() == 1 and (e.isShiftDown() or control.dragView) ) {
 				tempX = graph.root.xShift;
 				tempY = graph.root.yShift;
 			}
@@ -98,7 +98,7 @@ public class GraphView extends CustomNode {
 				dragSymbol.y = e.getStageY() - 6;
 			// If we are dragging the view, set the new focus to the 
 			// respective coordinates relative to the backup values.
-			} else if (not control.dragging and e.getButton() == 1 and e.isShiftDown()) {
+			} else if (not control.dragging and e.getButton() == 1 and (e.isShiftDown() or control.dragView)) {
 				graph.root.xShift = tempX + e.getDragX();
 				graph.root.yShift = tempY + e.getDragY();
 
@@ -140,6 +140,10 @@ public class GraphView extends CustomNode {
 		return Group {
 			content: bind [ background, graph, backSensor, dragSymbol, middlePoint ]
 		}
+	}
+
+	public function zoom(steps: Number): Void {
+		zoomFactor -= (steps / 20);
 	}
 
 	public function reset(): Void {

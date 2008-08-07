@@ -151,7 +151,7 @@ grammar {
         attribute id { xsd:ID },
         attribute value { "unknown" | "true" | "false" },  # default: unknown
         attribute assumption { xsd:boolean }?, # default: false
-        attribute standard { "SE" | "DV" | "BA" | "PE" | "BRD" }?, # default: BA
+        attribute standard { "SE" | "DV" | "BA" | "PE" | "BRD" | "CCE" }?, # default: BA
         Atom
     }
          
