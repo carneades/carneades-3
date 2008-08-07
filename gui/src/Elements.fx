@@ -84,6 +84,7 @@ public class ArgumentBox extends ArgumentElement {
 					content: bind { 
 						if ((argument.conclusion.standard) instanceof BestArgument
 							or (argument.conclusion.standard) instanceof Preponderance
+							or (argument.conclusion.standard) instanceof ClearAndConvincingEvidence
 							or (argument.conclusion.standard) instanceof BeyondReasonableDoubt
 							)
 							"{if (argument.pro) '+' else '-'}.{(argument.weight * 100) as Integer}" 
