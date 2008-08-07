@@ -22,6 +22,7 @@ import javafx.scene.*;
 import Carneades.Graph.Vertex;
 import Carneades.Graph.Elements.Elements.*;
 import java.lang.System;
+import java.lang.Object;
 
 import Carneades.Control.GraphControl;
 
@@ -29,6 +30,7 @@ public class Graph extends CustomNode {
 	public attribute control: GraphControl;
 	public attribute vertices: Vertex[];
 	public attribute edges: Edge[];
+	public attribute selectedModels: Object[] = [];
 	public attribute selected: GraphElement[] = [];
 	public attribute layout: GraphLayout;
 

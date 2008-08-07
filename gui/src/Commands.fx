@@ -287,14 +287,16 @@ public class DeleteConclusionCommand extends UndoableCommand {
 	public attribute childArguments: Argument[];
 	
 	public function do(): Number {
-		motherArgument.deletePremise(premise);
-		for (c in childArguments) argumentGraph.deleteArgument(c);
+		argumentGraph.deleteStatement(conclusion);
+		delete premise from motherArgument.premises;
+		for (c in childArguments) delete c from argumentGraph.arguments;
 		return GC.C_OK;
 	}
 
 	public function undo(): Number {
-		for (c in childArguments) argumentGraph.insertArgument(c);
-		motherArgument.addPremise(premise);
+		argumentGraph.insertStatement(conclusion);
+		for (c in childArguments) insert c into argumentGraph.arguments;
+		insert premise into motherArgument.premises;
 		return GC.C_OK;
 	}
 }
@@ -310,6 +312,25 @@ public class DeletePremiseCommand extends UndoableCommand {
 
 	public function undo(): Number {
 		argument.appendPremise(premise);
+		return GC.C_OK;
+	}
+}
+
+public class DeletePremiseStatementCommand extends UndoableCommand {
+	public attribute premise: Premise;
+	public attribute argument: Argument;
+
+	public function do(): Number {	
+		delete premise from argument.premises;
+		delete argument from premise.statement.arguments;
+		delete premise.statement from argumentGraph.statements;
+		return GC.C_OK;
+	}
+
+	public function undo(): Number {
+		insert premise into argument.premises;
+		insert argument into premise.statement.arguments;
+		insert premise.statement into argumentGraph.statements;
 		return GC.C_OK;
 	}
 }
@@ -424,13 +445,28 @@ public class ChangeStatementWffCommand extends UndoableCommand {
 	public function do(): Number {
 		oldWff = statement.wff;
 		statement.wff = wff;
-		//argumentGraph.setStatementWff(statement, wff);
 		return GC.C_OK;
 	}
 
 	public function undo(): Number {
-		//argumentGraph.setStatementWff(statement, oldWff);
 		statement.wff = oldWff;
+		return GC.C_OK;
+	}
+}
+
+public class ChangeGraphTitleCommand extends UndoableCommand {
+
+	public attribute title: String;
+	public attribute oldTitle: String;
+
+	public function do(): Number {
+		oldTitle = argumentGraph.title;
+		argumentGraph.title = title;
+		return GC.C_OK;
+	}
+
+	public function undo(): Number {
+		argumentGraph.title = oldTitle;
 		return GC.C_OK;
 	}
 }
@@ -469,6 +505,8 @@ public class ChangeStatementStandardCommand extends UndoableCommand {
 			oldStandard = BestArgument {};
 		} else if (statement.standard instanceof Preponderance) {
 			oldStandard = Preponderance {};
+		} else if (statement.standard instanceof ClearAndConvincingEvidence) {
+			oldStandard = ClearAndConvincingEvidence {};
 		} else if (statement.standard instanceof BeyondReasonableDoubt) {
 			oldStandard = BeyondReasonableDoubt {};
 		}
@@ -497,13 +535,29 @@ public class ChangeArgumentIdCommand extends UndoableCommand {
 	public function do(): Number {
 		oldId = argument.id;
 		argument.id = id;
-		//argumentGraph.setArgumentId(argument, id);
 		return GC.C_OK;
 	}
 
 	public function undo(): Number {
-		//argumentGraph.setArgumentId(argument, oldId);
 		argument.id = oldId;
+		return GC.C_OK;
+	}
+}
+
+public class ChangeArgumentTitleCommand extends UndoableCommand {
+
+	public attribute argument: Argument;
+	public attribute title: String;
+	public attribute oldTitle: String;
+
+	public function do(): Number {
+		oldTitle = argument.title;
+		argument.title = title;
+		return GC.C_OK;
+	}
+
+	public function undo(): Number {
+		argument.title = oldTitle;
 		return GC.C_OK;
 	}
 }
