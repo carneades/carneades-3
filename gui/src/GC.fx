@@ -105,7 +105,7 @@ public class GC {
 
 	// Application constants
 	public static attribute appWidth: Integer = 1000;
-	public static attribute appHeight: Integer = 700;
+	public static attribute appHeight: Integer = 720;
 
 	// Layout constants
 	public static attribute xOffset: Integer = appWidth / 2;
@@ -126,12 +126,16 @@ public class GC {
 	public static attribute C_NO_UNDO: Number = 2;
 	public static attribute C_LATEST_COMMAND: Number = 3;
 
-	// Edit window constants
+	// window layout onstants
+	public static attribute graphListWidth: Integer = 100;
 	public static attribute editWidth: Integer = 325;
-	public static attribute editHeight: Integer = 400;
+	public static attribute editHeight: Integer = 410;
 	public static attribute listHeight: Integer = 300;
 	public static attribute editLabelWidth: Integer = 100;
 	public static attribute toolBarHeight: Integer = 50;
+
+	public static attribute toolBarButtonHeight: Integer = 50;
+	public static attribute toolBarButtonWidth: Integer = 50;
 
 	// User interaction constants
 	public static attribute idsEditable: Boolean = false;

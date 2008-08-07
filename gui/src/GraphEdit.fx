@@ -58,17 +58,22 @@ public class GraphEdit extends SwingPanel {
 		control: bind control, argumentGraph: bind argumentGraph 
 		preferredSize: bind this.preferredSize
 	};
-	private attribute emptyPanel = EditPanel {};
+	private attribute graphPanel = GraphEditPanel {
+		control: bind control, argumentGraph: bind argumentGraph 
+		preferredSize: bind this.preferredSize
+	};
 
-	override attribute content = bind [statementPanel, argumentPanel, premisePanel];
+	private attribute panelEmpty = true;
+	override attribute content = bind { if (not panelEmpty) [graphPanel, statementPanel, argumentPanel, premisePanel] else []};
 
 	public function update(): Void {
+		panelEmpty = false;
 		if (control.getSelectedModel() != []) {
 			if (control.getSelectedModel()[0] instanceof Argument) {
 				statementPanel.visible = false;
 				argumentPanel.visible = true;
 				premisePanel.visible = false;
-				emptyPanel.visible = false;
+				graphPanel.visible = false;
 	
 				var selected = control.getSelectedModel() [0];
 				argumentPanel.loadArgument(selected as Argument);
@@ -78,7 +83,7 @@ public class GraphEdit extends SwingPanel {
 				statementPanel.visible = true;
 				argumentPanel.visible = false;
 				premisePanel.visible = false;
-				emptyPanel.visible = false;
+				graphPanel.visible = false;
 	
 				statementPanel.loadStatement(control.getSelectedModel() [0] as Statement);
 			}
@@ -86,15 +91,19 @@ public class GraphEdit extends SwingPanel {
 				statementPanel.visible = false;
 				argumentPanel.visible = false;
 				premisePanel.visible = true;
-				emptyPanel.visible = false;
+				graphPanel.visible = false;
 	
 				premisePanel.loadPremise(control.getSelectedModel() [0] as Premise);
-			} else {
+			} else if (control.getSelectedModel()[0] instanceof ArgumentGraph) {
 				statementPanel.visible = false;
 				argumentPanel.visible = false;
 				premisePanel.visible = false;
-				emptyPanel.visible = true;
+				graphPanel.visible = true;
+
+				graphPanel.loadGraph(control.getSelectedModel() [0] as ArgumentGraph);
 			}
+		} else {
+			panelEmpty = true;
 		}
 	}
 }
@@ -163,7 +172,12 @@ public class StatementEditPanel extends EditPanel {
 
 	private attribute standardGroup: SwingToggleGroup = SwingToggleGroup {};
 
-	private attribute selectedStandard: String = bind (if (BAButton.selected) "BA" else if (SEButton.selected) "SE" else if (DVButton.selected) "DV" else if (BRDButton.selected) "BRD" else "PE");
+	private attribute selectedStandard: String = bind (if (BAButton.selected) "BA" 
+														else if (SEButton.selected) "SE" 
+														else if (DVButton.selected) "DV" 
+														else if (BRDButton.selected) "BRD" 
+														else if (CCEButton.selected) "CCE" 
+														else "PE");
 
 	private attribute BAButton: SwingRadioButton = CRadioButton {
 		toggleGroup: standardGroup
@@ -204,6 +218,15 @@ public class StatementEditPanel extends EditPanel {
 	private attribute BRDButton: SwingRadioButton = CRadioButton {
 		toggleGroup: standardGroup
 		text: "beyond reasonable doubt"
+		preferredSize: [ editComponentWidth, 20 ]
+		action: function(): Void {
+			submitStandard();
+		}
+	}
+
+	private attribute CCEButton: SwingRadioButton = CRadioButton {
+		toggleGroup: standardGroup
+		text: "clear & convincing ev."
 		preferredSize: [ editComponentWidth, 20 ]
 		action: function(): Void {
 			submitStandard();
@@ -263,8 +286,6 @@ public class StatementEditPanel extends EditPanel {
 		}
 	}
 
-
-
 	override attribute content = bind [ 
 										Label { text: "id ", preferredSize: [editLabelWidth, 20] }, idField, 
 										Label { text: "content ", preferredSize: [editLabelWidth, 20] }, contentField,
@@ -280,6 +301,7 @@ public class StatementEditPanel extends EditPanel {
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, DVButton, 
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, BAButton, 
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, PEButton, 
+										Label { text: "", preferredSize: [editLabelWidth, 20] }, CCEButton, 
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, BRDButton, 
 										];
 
@@ -301,6 +323,7 @@ public class StatementEditPanel extends EditPanel {
 		else if (statement.standard instanceof Scintilla) { SEButton.selected = true; }
 		else if (statement.standard instanceof BeyondReasonableDoubt) { BRDButton.selected = true; }
 		else if (statement.standard instanceof Preponderance) { PEButton.selected = true; }
+		else if (statement.standard instanceof ClearAndConvincingEvidence) { CCEButton.selected = true; }
 		else /*if (statement.standard instanceof BestArgument)*/ { BAButton.selected = true; }
 		
 	}
@@ -319,6 +342,13 @@ public class ArgumentEditPanel extends EditPanel {
 		}
 	}
 	
+	private attribute titleField: ContentField = ContentField {
+		preferredSize: [ editComponentWidth, GC.textFieldHeight ]
+		action: function(): Void {
+			control.changeArgumentTitle(titleField.text, argument);
+		}
+	}
+
 	public attribute defensibleBox: SwingCheckBox = CCheckBox {
 		preferredSize: [ editComponentWidth, 20 ]
 		enabled: false
@@ -350,7 +380,6 @@ public class ArgumentEditPanel extends EditPanel {
 		action: function(): Void {
 			control.changeArgumentDirection(argument, "con");
 		}
-
 	}
 
 	private attribute weightSlider: WeightSlider = WeightSlider {
@@ -369,6 +398,7 @@ public class ArgumentEditPanel extends EditPanel {
 
 	override attribute content = bind [ 
 										Label { text: "id " preferredSize: [editLabelWidth, 20]}, idField, 
+										Label { text: "title " preferredSize: [editLabelWidth, 20]}, titleField, 
 										Label { text: "direction ", preferredSize: [editLabelWidth, 20]}, proButton, conButton,
 										Label { text: "premises hold", preferredSize: [editLabelWidth, 20]}, defensibleBox,
 										Label { text: "weight ", preferredSize: [editLabelWidth, 20]}, weightSlider, weightNumber,
@@ -380,6 +410,7 @@ public class ArgumentEditPanel extends EditPanel {
 	public function loadArgument(a: Argument): Void {
 		argument = a;
 		idField.text = argument.id;
+		titleField.text = argument.title;
 
 		if (a.pro) { 
 			proButton.selected = true;
@@ -427,21 +458,46 @@ public class PremiseEditPanel extends EditPanel {
 										Label { text: "negated ", preferredSize: [editLabelWidth, 20] }, negationBox,
 										];
 
-	// Functions
-
 	public function loadPremise(p: Premise): Void {
 		premise = p;
 		roleField.text = p.role;
 		negationBox.selected = p.negative;
 		exceptionBox.selected = p.exception;
 	}
+}
 
+public class GraphEditPanel extends EditPanel {
+
+	// Components
+	private attribute idField: IdField = IdField {
+		editable: bind GC.idsEditable
+		preferredSize: [editComponentWidth, GC.textFieldHeight ]
+	}
+	
+	private attribute titleField: ContentField = ContentField {
+		preferredSize: [ editComponentWidth, GC.textFieldHeight ]
+		action: function(): Void {
+			control.changeGraphTitle(titleField.text, argumentGraph);
+		}
+	}
+
+	override attribute content = bind [ 
+										Label { text: "id ", preferredSize: [editLabelWidth, 20] }, idField, 
+										Label { text: "title ", preferredSize: [editLabelWidth, 20] }, titleField,
+										];
+
+	public function loadGraph(g: ArgumentGraph): Void {
+		argumentGraph = g;
+		idField.text = g.id;
+		titleField.text = g.title;
+	}
 }
 
 // INTERMEDIATE COMPONENT CLASSES
 
 class IdField extends SwingTextField {
 	override attribute visible = true;
+	override attribute editable = false;
 	override attribute preferredSize = [GC.editWidth - 50, 20];
 }
 

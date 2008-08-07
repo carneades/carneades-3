@@ -121,6 +121,17 @@
 	</javafxc>
   </target>
 
+  <target name="elist">
+	<javafxc 
+		srcdir="${gui.srcdir}"
+		destdir="${gui.builddir}" 
+		includes="ElementList.fx"
+		target="${gui.target}"
+		compilerclasspath="${javafxc.class.path}">
+	  <classpath refid="gui.class.path"/>
+	</javafxc>
+  </target>
+
   <target name="elements">
 	<javafxc 
 		srcdir="${gui.srcdir}"
@@ -210,7 +221,7 @@
 	  </classpath>
 	</typedef>
 	
-	<!-- Do an update first to make sure you have the latest version -->
+	<echo message="Updating to latest revision version ..."/>
 	<svn><update path="." force="true" recursive="true" /></svn>
 	
 	<svn><info path="." revisionProperty="revisionVersion" /></svn>
@@ -364,6 +375,15 @@
   
   <!-- additional targets -->
 
+  <target name="doc">
+	<echo message="Generating documentation ..."/>
+	<exec executable="javafxdoc">
+	  <arg value="gui/src/*"/>
+	  <arg value="-quiet"/>
+	  <arg value="-d dist/guidoc"/>
+	</exec>
+  </target>
+
   <target name="examples">
 	<echo message="Updating example files ..."/>
 	<copy todir="${gui.deploydir}/examples">
@@ -380,7 +400,7 @@
   
   <target name="deploy" depends="version, examples, webstart, websign, sources"/>
   
-  <target name="full" depends="compile, deploy">
+  <target name="full" depends="compile, deploy, doc">
   </target>
   
 </project>

@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package Carneades.Graph;
 
 import javafx.ext.swing.*;
+import javafx.scene.*;
 import javafx.scene.paint.*;
 import javafx.scene.geometry.*;
 import javafx.scene.effect.*;
@@ -40,6 +41,7 @@ import Carneades.Argument.Argument.*;
 
 // Other View Classes
 import Carneades.Graph.*;
+import Carneades.Graph.GraphList.*;
 import Carneades.Graph.Elements.Elements.*;
 
 // Abstract Controller Class for Interaction
@@ -51,6 +53,7 @@ public class GraphFrame extends SwingFrame {
 	
 	public attribute graph: Graph;
 	public attribute control: GraphControl;
+	public attribute argumentGraphs: ArgumentGraph[];
 	public attribute argumentGraph: ArgumentGraph;
 
 	private attribute showCredits: Boolean = false;
@@ -71,7 +74,7 @@ public class GraphFrame extends SwingFrame {
 					}
 	
 	public attribute viewCanvas: Canvas = Canvas {
-		preferredSize: bind [this.width-GC.editWidth - 5, this.height - GC.toolBarHeight]
+		preferredSize: bind [this.width-GC.editWidth - GC.graphListWidth - 5, this.height - GC.toolBarHeight]
 		content: bind view
 	}
 
@@ -83,7 +86,7 @@ public class GraphFrame extends SwingFrame {
 		preferredSize: bind [GC.editWidth, (this.height / 2) + 60]
 	}
 
-	public attribute list: GraphList = GraphList {
+	public attribute list: ElementList = ElementList {
 		background: GC.panelBackground
 		visible: true
 		control: bind control
@@ -96,13 +99,276 @@ public class GraphFrame extends SwingFrame {
 		quit();
 	}
 
-	// content
 	private attribute rightPanel: BorderPanel = bind BorderPanel {
 		background: GC.panelBackground
 		preferredSize: bind [ GC.editWidth, this.height ]
 		top: bind list
 		bottom: bind edit
 		visible: true
+	}
+
+	public attribute graphList: GraphListPanel = GraphListPanel {
+		argumentGraphs: bind argumentGraphs
+		control: bind control
+		preferredSize: [GC.graphListWidth, this.height - GC.toolBarHeight]
+	}
+
+	override attribute content = bind BorderPanel {
+		top: bind toolPanel
+		left: bind graphList
+		center: bind viewCanvas
+		right: bind rightPanel
+	}
+	
+	private attribute toolPanel: FlowPanel = FlowPanel {
+		alignment: HorizontalAlignment.LEFT
+		preferredSize: [ this.width, GC.toolBarHeight ]
+		background: GC.toolPanelBackground
+		visible: true
+		content: [
+			SwingButton {
+				width: GC.toolBarButtonWidth
+				height: GC.toolBarButtonHeight
+				icon: Icon { image: bind Image { url: "{__DIR__}images/icon-new.png" } }
+				action: function() { newDocument(); }
+			},
+			SwingButton {
+				width: GC.toolBarButtonWidth
+				height: GC.toolBarButtonHeight
+				icon: Icon { image: bind Image { url: "{__DIR__}images/icon-open.png" } }
+				action: function() { open(); }
+			},
+			SwingButton {
+				enabled: bind control.fileChanged
+				width: GC.toolBarButtonWidth
+				height: GC.toolBarButtonHeight
+				icon: Icon { image: bind Image { url: "{__DIR__}images/icon-save.png" } }
+				action: function() { save(); }
+			},
+			SpacerPanel {},
+			SpacerPanel {},
+			SwingButton {
+				enabled: bind control.dragView
+				width: GC.toolBarButtonWidth
+				height: GC.toolBarButtonHeight
+				icon: Icon { image: bind Image { url: "{__DIR__}images/icon-pointer.png" } }
+				action: function() { control.dragView = false; }
+			},
+			SwingButton {
+				enabled: bind not control.dragView
+				width: GC.toolBarButtonWidth
+				height: GC.toolBarButtonHeight
+				icon: Icon { image: bind Image { url: "{__DIR__}images/icon-dragview.png" } }
+				action: function() { control.dragView = true; }
+			},
+			SpacerPanel {},
+			SpacerPanel {},
+			GridPanel {
+				background: GC.toolPanelBackground
+				height: GC.toolBarHeight
+				width: 60
+				rows: 2
+				columns: 1
+				hgap: 2
+				content: [
+						  Label { text: "Zoom:"
+								  foreground: Color.WHITE
+								  horizontalAlignment: HorizontalAlignment.CENTER 
+						  },
+						  Label { text: bind {"{(view.zoomFactor * 100) as Integer}%"},
+								  foreground: Color.WHITE 
+								  horizontalAlignment: HorizontalAlignment.CENTER 
+						  },
+				]
+			},
+			GridPanel {
+				background: GC.toolPanelBackground
+				height: GC.toolBarHeight
+				width: 60
+				rows: 2
+				columns: 1
+				hgap: 0
+				content: [
+						  SwingButton {
+							  width: GC.toolBarHeight / 2
+							  height: GC.toolBarHeight / 2
+							  icon: Icon { image: bind Image { url: "{__DIR__}images/icon-plus.png", size: 8 } }
+							  action: function() { view.zoom(1.0); }
+						  },
+						  SwingButton {
+							  width: GC.toolBarHeight / 2
+							  height: GC.toolBarHeight / 2
+							  icon: Icon { image: bind Image { url: "{__DIR__}images/icon-minus.png", size: 8 } }
+							  action: function() { view.zoom(-1.0); }
+						  },
+				]
+			},
+			SpacerPanel {},
+			SpacerPanel {},
+			SwingButton {
+				enabled: bind control.possibleToUndo
+				width: GC.toolBarButtonWidth
+				height: GC.toolBarButtonHeight
+				icon: Icon { image: bind Image { url: "{__DIR__}images/icon-undo.png" } }
+				action: function() { control.undo(); }
+			},
+			SwingButton {
+				enabled: bind control.possibleToRedo
+				width: GC.toolBarButtonWidth
+				height: GC.toolBarButtonHeight
+				icon: Icon { image: bind Image { url: "{__DIR__}images/icon-redo.png" } }
+				action: function() { control.redo(); }
+			},
+			SpacerPanel {},
+			SpacerPanel {},
+			SwingButton {
+				width: GC.toolBarButtonWidth
+				height: GC.toolBarButtonHeight
+				icon: Icon { image: bind Image { url: "{__DIR__}images/icon-quit.png" } }
+				action: function() { quit(); }
+			},
+		]
+	}
+
+	// Menus
+	override attribute menus = [
+				Menu {
+					text: "File"
+					items: [
+						MenuItem {
+							text: "About Carneades"
+								action: function() {
+								this.showCredits = true;
+							}
+						},
+						MenuItem {
+							enabled: true;
+							text: "New"
+							action: function() {
+								newDocument();
+							} // action
+						}
+						, MenuItem {
+							text: "Open"
+							action: function() {
+								open();
+							}
+						}
+						, MenuItem {
+							enabled: bind control.fileChanged
+							text: "Save"
+							action: function() {
+								save();
+							}
+						}
+						, MenuItem {
+							text: "Save as"
+							action: function() {
+								saveAs();	
+							}
+						}
+						, MenuItem {
+							text: "Quit Carneades"
+							action: function() {
+								quit();
+							}
+						}
+						] // content
+					} // menu
+				, Menu {
+					text: "Edit"
+					items: [
+						MenuItem {
+							text: "Undo"
+							enabled: bind control.possibleToUndo;
+							action: function() {
+								control.undo();
+							}
+						} // menuitem
+						, MenuItem {
+							text: "Redo"
+							enabled: bind control.possibleToRedo;
+							action: function() {
+								control.redo();
+							}
+						} // menuitem
+						, MenuItem {
+							text: "Remove"
+							enabled: bind control.possibleToRemove;
+							action: function() {
+								control.removeSelected();
+							}
+						}
+					] // items
+				} // menu
+				, Menu {
+					text: "Insert"
+					items: [
+						MenuItem {
+							text: "Argument Graph"
+							action: function() {
+								control.addArgumentGraph();
+							}
+						} // menuitem
+						, MenuItem {
+							text: "Statement"
+							enabled: bind control.possibleToAddConclusion;
+							action: function() {
+								control.addStatement();
+							}
+						} // menuitem
+						, MenuItem {
+							text: "Premise"
+							enabled: bind control.possibleToAddPremise;
+							action: function() {
+								control.addPremiseToSelected();
+							}
+						} // menuitem
+						, MenuItem {
+							text: "Argument"
+							enabled: bind control.possibleToAddArgument;
+							action: function() {
+								control.addArgumentToSelected();
+							}
+						} // menuitem
+					]
+				} // menu
+				, Menu {
+					text: "debug"
+					visible: bind GC.debug
+					items: [
+						MenuItem {
+							text: "Print selection"
+							action: function() {
+								control.printSelected();
+							}
+						},
+						MenuItem {
+							text: "unselect all"
+							action: function() {
+								control.unSelectAll();
+							}
+						},
+						MenuItem {
+							text: "print sizes"
+							action: function() {
+								control.printSizes();
+							}
+						},
+						MenuItem {
+							text: "print vertices"
+							action: function() {
+								System.out.println("# of vertices: " + sizeof graph.vertices);
+								graph.print();
+							}
+						}
+
+					]
+				}
+	]; // override default
+
+	postinit {
+		loadVersionNumber();
 	}
 
 	private attribute creditsFrame: SwingFrame = SwingFrame {
@@ -178,193 +444,6 @@ public class GraphFrame extends SwingFrame {
 		);
 	}
 
-	private attribute toolPanel: FlowPanel = FlowPanel {
-		preferredSize: [ this.width, GC.toolBarHeight ]
-		background: GC.toolPanelBackground
-		visible: true
-		content: [
-			Label {
-				text: bind {"Zoom Factor: {(view.zoomFactor * 100) as Integer}%"}
-			}
-		]
-	}
-
-	override attribute content = bind BorderPanel {
-		top: bind toolPanel
-		left: bind viewCanvas
-		right: bind rightPanel
-		center: null
-	}
-	
-	// Menus
-	override attribute menus = [
-				Menu {
-					text: "File"
-					items: [
-						MenuItem {
-							text: "About Carneades"
-								action: function() {
-								this.showCredits = true;
-							}
-						},
-						MenuItem {
-							enabled: true;
-							text: "New"
-							action: function() {
-								if (control.fileChanged) {
-									var choice = JOptionPane.showOptionDialog(
-										null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?", 
-										JOptionPane.YES_NO_CANCEL_OPTION, 
-										JOptionPane.QUESTION_MESSAGE, null, 
-										["Save", "Don't Save", "Cancel"], null
-									);
-									if (choice == JOptionPane.YES_OPTION) {
-										saveAs();	
-									} else if (choice == JOptionPane.NO_OPTION) {
-										control.newGraph();
-									}
-								} else {
-									control.newGraph();
-								}
-							} // action
-						}
-						, MenuItem {
-							text: "Open"
-							action: function() {
-								if (control.fileChanged) {
-									var choice = JOptionPane.showOptionDialog(
-										null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?", 
-										JOptionPane.YES_NO_CANCEL_OPTION, 
-										JOptionPane.QUESTION_MESSAGE, null, 
-										["Save", "Don't Save", "Cancel"], null
-									);
-									if (choice == JOptionPane.YES_OPTION) {
-										saveAs();	
-									} else if (choice == JOptionPane.NO_OPTION) {
-										var returnval = chooser.showOpenDialog(null);
-										if (returnval == JFileChooser.APPROVE_OPTION) {
-											control.loadGraphFromFile(chooser.getSelectedFile());
-										}
-									}
-								} else {
-									var returnval = chooser.showOpenDialog(null);
-									if (returnval == JFileChooser.APPROVE_OPTION) {
-										control.loadGraphFromFile(chooser.getSelectedFile());
-									}
-								}
-							}
-						}
-						, MenuItem {
-							enabled: bind control.fileChanged
-							text: "Save"
-							action: function() {
-								save();
-							}
-						}
-						, MenuItem {
-							text: "Save as"
-							action: function() {
-								saveAs();	
-							}
-						}
-						, MenuItem {
-							text: "Quit Carneades"
-							action: function() {
-								quit();
-							}
-						}
-						] // content
-					} // menu
-				, Menu {
-					text: "Edit"
-					items: [
-						MenuItem {
-							text: "Undo"
-							enabled: bind control.possibleToUndo;
-							action: function() {
-								control.undo();
-							}
-						} // menuitem
-						, MenuItem {
-							text: "Redo"
-							enabled: bind control.possibleToRedo;
-							action: function() {
-								control.redo();
-							}
-						} // menuitem
-						, MenuItem {
-							text: "Remove"
-							enabled: bind control.possibleToRemove;
-							action: function() {
-								control.removeSelected();
-							}
-						}
-					] // items
-				} // menu
-				, Menu {
-					text: "Insert"
-					items: [
-						MenuItem {
-							text: "Statement"
-							enabled: bind control.possibleToAddConclusion;
-							action: function() {
-								control.addStatement();
-							}
-						} // menuitem
-						, MenuItem {
-							text: "Premise"
-							enabled: bind control.possibleToAddPremise;
-							action: function() {
-								control.addPremiseToSelected();
-							}
-						} // menuitem
-						, MenuItem {
-							text: "Argument"
-							enabled: bind control.possibleToAddArgument;
-							action: function() {
-								control.addArgumentToSelected();
-							}
-						} // menuitem
-					]
-				} // menu
-				, Menu {
-					text: "debug"
-					visible: bind GC.debug
-					items: [
-						MenuItem {
-							text: "Print selection"
-							action: function() {
-								control.printSelected();
-							}
-						},
-						MenuItem {
-							text: "unselect all"
-							action: function() {
-								control.unSelectAll();
-							}
-						},
-						MenuItem {
-							text: "print sizes"
-							action: function() {
-								control.printSizes();
-							}
-						},
-						MenuItem {
-							text: "print vertices"
-							action: function() {
-								System.out.println("# of vertices: " + sizeof graph.vertices);
-								graph.print();
-							}
-						}
-
-					]
-				}
-	]; // override default
-
-	postinit {
-		loadVersionNumber();
-	}
-
 	private function quit(): Void {
 		if (control.fileChanged) {
 			var choice = JOptionPane.showOptionDialog(
@@ -380,6 +459,48 @@ public class GraphFrame extends SwingFrame {
 				}
 			} else {
 			System.exit(0);
+		}
+	}
+
+	private function newDocument(): Void {
+		if (control.fileChanged) {
+			var choice = JOptionPane.showOptionDialog(
+					  null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?", 
+					  JOptionPane.YES_NO_CANCEL_OPTION, 
+					  JOptionPane.QUESTION_MESSAGE, null, 
+					  ["Save", "Don't Save", "Cancel"], null
+				  );
+			if (choice == JOptionPane.YES_OPTION) {
+				saveAs();	
+			} else if (choice == JOptionPane.NO_OPTION) {
+				control.newGraph();
+			}
+		} else {
+			control.newGraph();
+		}
+	}
+
+	private function open(): Void {
+		if (control.fileChanged) {
+			var choice = JOptionPane.showOptionDialog(
+								  null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?", 
+								  JOptionPane.YES_NO_CANCEL_OPTION, 
+								  JOptionPane.QUESTION_MESSAGE, null, 
+								  ["Save", "Don't Save", "Cancel"], null
+							  );
+			if (choice == JOptionPane.YES_OPTION) {
+				saveAs();	
+			} else if (choice == JOptionPane.NO_OPTION) {
+				var returnval = chooser.showOpenDialog(null);
+				if (returnval == JFileChooser.APPROVE_OPTION) {
+					control.loadGraphFromFile(chooser.getSelectedFile());
+				}
+			}
+		} else {
+			var returnval = chooser.showOpenDialog(null);
+			if (returnval == JFileChooser.APPROVE_OPTION) {
+				control.loadGraphFromFile(chooser.getSelectedFile());
+			}
 		}
 	}
 
@@ -425,3 +546,9 @@ class ToolBarButton extends SwingButton {
 	override attribute preferredSize = [GC.toolBarHeight, GC.toolBarHeight];
 }
 
+class SpacerPanel extends SwingPanel {
+	override attribute visible = true;
+	override attribute width = 10;
+	override attribute height = 10;
+	override attribute background = Color.rgb(0,0,0,0);
+}
