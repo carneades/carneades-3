@@ -193,13 +193,13 @@ public class GraphFrame extends SwingFrame {
 							  width: GC.toolBarHeight / 2
 							  height: GC.toolBarHeight / 2
 							  icon: Icon { image: bind Image { url: "{__DIR__}images/icon-plus.png", size: 8 } }
-							  action: function() { view.zoom(1.0); }
+							  action: function() { view.zoom(-1.0); }
 						  },
 						  SwingButton {
 							  width: GC.toolBarHeight / 2
 							  height: GC.toolBarHeight / 2
 							  icon: Icon { image: bind Image { url: "{__DIR__}images/icon-minus.png", size: 8 } }
-							  action: function() { view.zoom(-1.0); }
+							  action: function() { view.zoom(1.0); }
 						  },
 				]
 			},

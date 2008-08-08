@@ -248,7 +248,7 @@ public class ArgumentFile {
 			
 			for (c: Node in agraph.children) {
 				if (c.name == "statements") {
-					statements = for (i in c.children where i.name == "s") { i as Element };
+					statements = for (i in c.children where i.name == "statement") { i as Element };
 				}
 				if (c.name == "arguments") {
 					arguments = for (i in c.children where i.name == "argument") { i as Element };
