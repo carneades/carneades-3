@@ -576,6 +576,7 @@ public class Preponderance extends ProofStandard {
 	}
 }
 
+
 // Clear and Convincing Evidence: met if preponderance is met 
 // and the difference between the average weight of the pro arguments
 // and the average weight of the con arguments is greater than
@@ -585,6 +586,7 @@ public class ClearAndConvincingEvidence extends ProofStandard {
 	               pro: Argument[], 
 	               con: Argument[]): Boolean {
 
+		   var threshold = 0.3;
 	       var okPro = pro [ arg | arg.allPremisesHold() ];
 	       var okCon = con [ arg | arg.allPremisesHold() ];
 	       
@@ -596,31 +598,39 @@ public class ClearAndConvincingEvidence extends ProofStandard {
 	       for (arg in okCon) sumCon = sumCon + arg.weight;
 	       var avgCon = sumCon / sizeof(okCon);
 	       
-	       var threshold = 0.3;
-	       
 	       return (avgPro > avgCon) and 
 	              (avgPro - avgCon > threshold);
 	}
 }
 
-// Beyond a Reasonable Doubt: met if preponderance is met 
-// and the weight of the strongest con argument is below
-// a given threshold.
+// Beyond a Reasonable Doubt: met if the clear and convincing evidece
+// test is met and the weight of the strongest con argument is below
+// the threshold.
 public class BeyondReasonableDoubt extends ProofStandard {
 	function test (ag: ArgumentGraph, 
 	               pro: Argument[], 
 	               con: Argument[]): Boolean {
+	      var threshold = 0.3;
+
+	      var okPro = pro [ arg | arg.allPremisesHold() ];
 	      var okCon = con [ arg | arg.allPremisesHold() ];
-	      var threshold = 0.30; 
-	      
+
    	      var strongestCon = 0.0;
 	      for (arg in okCon) 
 	      	if (arg.weight > strongestCon) 
 	      		strongestCon = arg.weight;
-	      
-	      var p = Preponderance {}; 
-	      return strongestCon < threshold and
-	             p.test(ag,pro,con); 
+	       
+	      var sumPro = 0.0; 
+	      for (arg in okPro) sumPro = sumPro + arg.weight;
+	      var avgPro = sumPro / sizeof(okPro);
+	       
+	      var sumCon = 0.0;
+	      for (arg in okCon) sumCon = sumCon + arg.weight;
+	      var avgCon = sumCon / sizeof(okCon);
+	     
+	      return (avgPro > avgCon) and 
+	             (avgPro - avgCon > threshold) and
+	             strongestCon < threshold;
 	}
 }
 
