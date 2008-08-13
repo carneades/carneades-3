@@ -36,6 +36,7 @@
          (rnrs lists)
          (rnrs hashtables)
          (only (carneades system) gensym)
+         (carneades dnf)
          (carneades statement)
          (carneades unify)
          (prefix (carneades lib srfi lists) list:)
@@ -147,11 +148,12 @@
               (cdr expr)
               (list expr))
           (list expr)))
-    (cond ((and (list? expr) (eq? (car expr) 'and))
-           (list (cdr expr)))
-          ((and (list? expr) (eq? (car expr) 'or))
-           (map process-disjunct (cdr expr)))
-          (else (list (list expr))))) ; single condition
+    (let ((expr (to-dnf expr)))
+      (cond ((and (list? expr) (eq? (car expr) 'and))
+             (list (cdr expr)))
+            ((and (list? expr) (eq? (car expr) 'or))
+             (map process-disjunct (cdr expr)))
+            (else (list (list expr)))))) ; single condition
            
   (define-syntax rule
     (syntax-rules (if)

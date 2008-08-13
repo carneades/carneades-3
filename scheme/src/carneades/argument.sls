@@ -19,7 +19,7 @@
  (carneades argument)
  
  (export make-ordinary-premise make-exception make-assumption   
-         premise? ordinary-premise? exception? assumption?
+         make-premise premise? ordinary-premise? exception? assumption?
          premise-atom premise-polarity premise-role premise-statement 
          pr am ex premise=? negative-premise? positive-premise? 
          make-argument argument? argument-id argument-direction 
@@ -28,7 +28,7 @@
          complementary-proof-standard make-context default-context
          context? question accept reject assign-standard schemes-applied 
          status proof-standard prior decided? accepted? rejected?
-         questioned? stated? issue? empty-argument-graph argument-graph? assert* assert 
+         questioned? stated? issue? empty-argument-graph argument-graph? put-argument assert* assert 
          update questions facts statements accepted-statements rejected-statements 
          stated-statements relevant-statements list-arguments issues relevant?   
          satisfies? acceptable? holds? all-premises-hold? in? out? 

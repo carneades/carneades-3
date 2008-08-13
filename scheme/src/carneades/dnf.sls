@@ -429,7 +429,8 @@
                    formula)
                (begin
                  (newline)
-                 (display "Fehler: eingegebene Liste ist kein gültiger formula")
+                 (display "Error: no valid formula - ")
+                 (display formula)
                  (newline)
                  '())))
          
@@ -603,7 +604,7 @@
                      b
                      f)))
            
-           ; <atom>n x <boolean>n x <formula> -> >formula>
+           ; <atom>n x <boolean>n x <formula> -> <formula>
            ; given a list of atoms and a list of boolean, every atom is
            ; substituted by the corresponding boolean value
            (define (substitute-all a* b* f)
