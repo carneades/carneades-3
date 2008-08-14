@@ -118,7 +118,7 @@
    (if p "positive" "negative"))
  
  (define (role->string r)
-   (if r (symbol->string r) "false"))
+   (or r "false"))
  
  
  ; condition->sexp: condition -> expression

@@ -1,51 +1,59 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<lkif>
-  <argument-graph id="NewGraph">
-    <issues>
-      <issue assumption="true" standard="BA" statement="s1" value="unknown"/>
-      <issue assumption="true" standard="BA" statement="s2" value="unknown"/>
-      <issue assumption="true" standard="BA" statement="s3" value="unknown"/>
-      <issue assumption="true" standard="BA" statement="s4" value="unknown"/>
-      <issue assumption="true" standard="BA" statement="s5" value="unknown"/>
-      <issue assumption="true" standard="BA" statement="s6" value="unknown"/>
-      <issue assumption="true" standard="BA" statement="s7" value="unknown"/>
-    </issues>
-    <statements>
-      <s id="s1">contract</s>
-      <s id="s2">agreement</s>
-      <s id="s3">minor</s>
-      <s id="s4">writing</s>
-      <s id="s5">real estate</s>
-      <s id="s6">email</s>
-      <s id="s7">deed</s>
-    </statements>
-    <arguments>
-      <argument direction="pro" id="a1" scheme="" weight="0.5">
-        <conclusion statement="s1"/>
-        <premises>
-          <premise exception="false" polarity="positive" role="" statement="s2"/>
-          <premise exception="true" polarity="positive" role="" statement="s3"/>
-        </premises>
-      </argument>
-      <argument direction="con" id="a2" scheme="" weight="0.5">
-        <conclusion statement="s1"/>
-        <premises>
-          <premise exception="false" polarity="negative" role="" statement="s4"/>
-          <premise exception="false" polarity="positive" role="" statement="s5"/>
-        </premises>
-      </argument>
-      <argument direction="con" id="a3" scheme="" weight="0.5">
-        <conclusion statement="s4"/>
-        <premises>
-          <premise exception="false" polarity="positive" role="" statement="s6"/>
-        </premises>
-      </argument>
-      <argument direction="pro" id="a4" scheme="" weight="0.5">
-        <conclusion statement="s2"/>
-        <premises>
-          <premise exception="false" polarity="positive" role="" statement="s7"/>
-        </premises>
-      </argument>
-    </arguments>
-  </argument-graph>
+<?oxygen RNGSchema="../../schemas/LKIF2.rnc" type="compact"?>
+<lkif version="2.0.4">
+  <argument-graphs>
+    <argument-graph id="NewGraph" title="New Graph">
+      <statements>
+        <statement assumption="true" id="s1" standard="BA" value="unknown">
+          <s>contract</s>
+        </statement>
+        <statement assumption="true" id="s2" standard="BA" value="unknown">
+          <s>agreement</s>
+        </statement>
+        <statement assumption="true" id="s3" standard="BA" value="unknown">
+          <s>minor</s>
+        </statement>
+        <statement assumption="true" id="s4" standard="BA" value="unknown">
+          <s>writing</s>
+        </statement>
+        <statement assumption="true" id="s5" standard="BA" value="unknown">
+          <s>real estate</s>
+        </statement>
+        <statement assumption="true" id="s6" standard="BA" value="unknown">
+          <s>email</s>
+        </statement>
+        <statement assumption="true" id="s7" standard="BA" value="unknown">
+          <s>deed</s>
+        </statement>
+      </statements>
+      <arguments>
+        <argument direction="pro" id="a1" scheme="" weight="0.5">
+          <conclusion statement="s1"/>
+          <premises>
+            <premise exception="false" polarity="positive" role="" statement="s2"/>
+            <premise exception="true" polarity="positive" role="" statement="s3"/>
+          </premises>
+        </argument>
+        <argument direction="con" id="a2" scheme="" weight="0.5">
+          <conclusion statement="s1"/>
+          <premises>
+            <premise exception="false" polarity="negative" role="" statement="s4"/>
+            <premise exception="false" polarity="positive" role="" statement="s5"/>
+          </premises>
+        </argument>
+        <argument direction="con" id="a3" scheme="" weight="0.5">
+          <conclusion statement="s4"/>
+          <premises>
+            <premise exception="false" polarity="positive" role="" statement="s6"/>
+          </premises>
+        </argument>
+        <argument direction="pro" id="a4" scheme="" weight="0.5">
+          <conclusion statement="s2"/>
+          <premises>
+            <premise exception="false" polarity="positive" role="" statement="s7"/>
+          </premises>
+        </argument>
+      </arguments>
+    </argument-graph>
+  </argument-graphs>
 </lkif>
