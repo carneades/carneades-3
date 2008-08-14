@@ -31,8 +31,8 @@
          (prefix (carneades table) table:)
          (prefix (carneades lib srfi compare) compare:))
   
- ; <atom> := <datum>
- ; <statement> := <atom> | (not <atom>)
+ ; <atom> := <symbol> | <list> | <string>
+ ; <statement> := <atom> | (not <atom>)   ;; i.e. literals
 
  (define-record-type text
    (fields
