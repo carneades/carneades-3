@@ -88,7 +88,15 @@
  ; Import functions 
  
  
- 
+ (define (import path)
+   (let ((lkif-body (get-lkif (get-document path))))
+     (let ((sources (read-sources lkif-body))
+           (theory (read-theory lkif-body))
+           (arg-graphs (read-argument-graphs lkif-body)))
+       (let ((context (lkif-axioms->context (theory-axioms theory)))
+             (argument-generator (lkif-rules->generator (theory-rules theory) '()))
+             (stages (map argument-graph->stage arg-graphs)))
+         (make-lkif-import context argument-generator stages)))))
  
  
  ; --------------------------------
@@ -190,7 +198,7 @@
          (exception (get-attribute-value (get-attribute p 'exception) "false"))
          (role (get-attribute-value (get-attribute p 'role) ""))
          (sid (get-attribute-value (get-attribute p 'statement) "")))
-     (let ((s (get-statement sid tbl))
+     (let ((s (statement->sexpr (get-statement sid tbl)))
            (p (string=? polarity "true")))   
        (argument:make-premise s p role))))
  
@@ -201,7 +209,7 @@
          (direction (string->symbol (get-attribute-value (get-attribute a 'direction) "pro")))
          (scheme (string->symbol (get-attribute-value (get-attribute a 'scheme) "")))
          (weight (string->symbol (get-attribute-value (get-attribute a 'weight) "0.5")))
-         (conclusion (get-conclusion-statement (cdr (get-element a 'conclusion)) tbl))
+         (conclusion (statement->sexpr (get-conclusion-statement (cdr (get-element a 'conclusion)) tbl)))
          (premises (map (lambda (x) (premise-to-record x tbl)) (get-elements (get-element a 'premises) 'premise))))
      (argument:make-argument id direction conclusion premises scheme)))
  
@@ -277,7 +285,7 @@
                                    (list 'assuming (string->symbol (car text))))
                                (if pred
                                    (cons (string->symbol pred) (map lkif-term->sexpr terms))
-                                   (string->symbol (car text)))))))))
+                                   (car text))))))))
  
  (define (lkif-or->sexpr o)
    (let ((assumable (get-attribute-value (get-attribute o 'assumable) #f)))
@@ -400,40 +408,67 @@
  (define (statement->sexpr s)
    (lkif-atom->sexpr (statement-atom s)))
  
+ ; statements->context: (list-of struct:statement) -> context
+ (define (statements->context statements)
+   (let ((scontext (fold-left (lambda (c s)
+                                (cond 
+                                  ((string=? (statement-value s) "unknown") (argument:state c (list (statement->sexpr s))))
+                                  ((string=? (statement-value s) "true") (argument:accept c (list (statement->sexpr s))))
+                                  ((string=? (statement-value s) "false") (argument:reject c (list (statement->sexpr s))))))
+                              argument:default-context
+                              statements)))
+     (display scontext)
+     (newline)
+     (fold-left (lambda (c s)
+                  (argument:assign-standard c (string->symbol (statement-standard s)) (list (statement->sexpr s))))
+                scontext
+                statements)))
+ 
  
  ; argument-graph-conversion
  
  ; lkif-argument-graph->argument-graph: struct:lkif-argument-graph -> (struct:argument-graph context)
  (define (lkif-argument-graph->argument-graph/context ag)
-   (let ((tbl (statements->table (argument-graph-statements ag))))
-     (let ((arguments (map (lambda (x) (argument-to-record x tbl)) (argument-graph-arguments ag))))
-       (fold-right argument:put-argument argument:empty-argument-graph arguments))))
+   (let ((statements (argument-graph-statements ag)))
+     (let ((tbl (statements->table statements)))
+       (let ((arguments (map (lambda (x) (argument-to-record x tbl)) (argument-graph-arguments ag))))
+         (values (fold-left argument:put-argument argument:empty-argument-graph arguments)
+                 (statements->context statements))))))
+ 
+ ; argument-graph->stage: struct:lkif-argument-graph -> struct:stage
+ (define (argument-graph->stage ag)
+   (call-with-values (lambda () (lkif-argument-graph->argument-graph/context ag))
+                     (lambda (a c)
+                       (make-stage a c))))
+         
  
  
  
  ; ---------------------------
  ; Testing Code
 
- (define doc (get-document "C:\\test2.xml"))
+; (define doc (get-document "C:\\test2.xml"))
+; 
+; (define lb (get-lkif doc))
+; 
+; (define srcs (read-sources lb))
+; 
+; (define t (read-theory lb))
+;  
+; (define arggraphs (read-argument-graphs lb))
+;
+; (define rule-gen (lkif-rules->generator (theory-rules t) '()))
+; 
+; (define c (lkif-axioms->context (theory-axioms t)))
+; 
+; (define graph1 (car arggraphs))
+; 
+; (define stage1 (argument-graph->stage graph1))
+;  
+; (define tbl (statements->table (argument-graph-statements graph1)))
+; 
+; (define args (map (lambda (x) (argument-to-record x tbl)) (argument-graph-arguments graph1))) 
  
- (define lb (get-lkif doc))
- 
- (define srcs (read-sources lb))
- 
- (define t (read-theory lb))
-  
- (define arggraphs (read-argument-graphs lb))
-
- (define rule-gen (lkif-rules->generator (theory-rules t) '()))
- 
- (define c (lkif-axioms->context (theory-axioms t)))
- 
- (define graph1 (car arggraphs))
- 
- (define stage1 (lkif-argument-graph->argument-graph/context graph1))
-  
- (define tbl (statements->table (argument-graph-statements graph1)))
- 
- (define args (map (lambda (x) (argument-to-record x tbl)) (argument-graph-arguments graph1))) 
+ (define i (import "C:\\test2.xml"))
  
  )
