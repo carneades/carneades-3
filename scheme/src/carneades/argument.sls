@@ -26,7 +26,7 @@
          argument-conclusion argument-premises argument-scheme pro con
          define-argument argument->datum datum->argument add-premise status? proof-standard? 
          complementary-proof-standard make-context default-context
-         context? question accept reject assign-standard schemes-applied 
+         context? state question accept reject assign-standard schemes-applied 
          status proof-standard prior decided? accepted? rejected?
          questioned? stated? issue? empty-argument-graph argument-graph? put-argument assert* assert 
          update questions facts statements accepted-statements rejected-statements 
@@ -252,6 +252,19 @@
  
  ; prior: context argument argument -> boolean
  (define (prior c a1 a2) (= ((context-compare c) a1 a2) 1))
+ 
+ 
+  ; state: context (list-of statement) -> context
+ (define (state context statements)
+   (fold-right (lambda (s c) 
+                 (make-context (table:insert (context-status c) 
+                                             (statement-atom s) 
+                                             'stated)
+                               (context-standard c) 
+                               (context-compare c)))
+               context 
+               statements))
+ 
  
  ; question: context (list-of statement) -> context
  (define (question context statements)
