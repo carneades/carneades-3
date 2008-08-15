@@ -7,12 +7,10 @@
             <import uri="http://fokus.fraunhofer.de/elan/estrella/family.owl"/>
         </imports>
         <axioms>
-            <s id="f1" pred="family:father"><c>Tom</c> is the father of <c>Dustin</c></s>
-            <s id="f2" pred="family:mother"><c>Gloria</c> is the mother of <c>Tom</c></s>
-            <s id="f3"><c>Gloria</c> is needy</s>
-            <not id="f4">
-                <s><c>Dustin</c> has the capacity to provide support</s>
-            </not>
+            <axiom id="f1"><s pred="family:father"><c>Tom</c> is the father of <c>Dustin</c></s></axiom>
+            <axiom id="f2"><s pred="family:mother"><c>Gloria</c> is the mother of <c>Tom</c></s></axiom>
+            <axiom id="f3"><s pred="family:needy"><c>Gloria</c> is needy</s></axiom>
+            <axiom id="f4"><not><s><c>Dustin</c> has the capacity to provide support</s></not></axiom>
         </axioms>
         <rules>
             <rule id="r1" strict="true">
