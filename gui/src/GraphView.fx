@@ -93,12 +93,13 @@ public class GraphView extends CustomNode {
 		}
 
 		onMouseDragged: function(e: MouseEvent): Void {
-			if (control.dragging and e.getButton() == 1) {
+			if (control.dragging /*and e.getButton() == 1*/) {
 				dragSymbol.x = e.getStageX() - 10;
 				dragSymbol.y = e.getStageY() - 6;
 			// If we are dragging the view, set the new focus to the 
 			// respective coordinates relative to the backup values.
-			} else if (not control.dragging and e.getButton() == 1 and (e.isShiftDown() or control.dragView)) {
+			} 
+			if (not control.dragging /*and e.getButton() == 1*/ and (e.isShiftDown() or control.dragView)) {
 				graph.root.xShift = tempX + e.getDragX();
 				graph.root.yShift = tempY + e.getDragY();
 
