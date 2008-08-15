@@ -23,9 +23,9 @@ import javafx.scene.*;
 import javafx.scene.paint.*;
 import javafx.scene.geometry.*;
 import javafx.scene.effect.*;
-import javafx.scene.Font;
+import javafx.scene.text.Font;
 import javafx.scene.text.*;
-import javafx.scene.FontStyle;
+import javafx.scene.text.FontStyle;
 import javafx.scene.image.*;
 import java.lang.System;
 import javax.swing.JFileChooser;
@@ -41,30 +41,56 @@ import Carneades.Argument.Argument.*;
 
 // Other View Classes
 import Carneades.Graph.*;
+import Carneades.Graph.GC.*;
 import Carneades.Graph.GraphList.*;
 import Carneades.Graph.Elements.Elements.*;
 
 // Abstract Controller Class for Interaction
 import Carneades.Control.GraphControl;
 
+/**
+ * The Carneades application frame and top-level gui component.
+ */
+
 public class GraphFrame extends SwingFrame {
 
+	/**
+	 * The version to be displayed in the about-box. Currently being unsuccessfully extracted from the ant environmen.t
+	 */
 	private attribute version: String = "";
 	
+	/**
+	 * The view graph object currently displayed in the canvas.
+	 */
 	public attribute graph: Graph;
+
+	/**
+	 * The control object.
+	 */
 	public attribute control: GraphControl;
+
+	/**
+	 * The model argument graph array.
+	 */
 	public attribute argumentGraphs: ArgumentGraph[];
+
+	/**
+	 * The model argument graph whose graphical representation is currently displayed in the canvas.
+	 */
 	public attribute argumentGraph: ArgumentGraph;
 
 	private attribute showCredits: Boolean = false;
 
-	attribute chooser: JFileChooser = new JFileChooser();
+	private attribute chooser: JFileChooser = new JFileChooser();
 
 	override attribute title = "Carneades";
-	override attribute width = GC.appWidth on replace { if (width < GC.appWidth) width = GC.appWidth; };
-	override attribute height = GC.appHeight on replace { if (height < GC.appHeight) height = GC.appHeight; };
-	override attribute background = GC.panelBackground;
+	override attribute width = appWidth on replace { if (width < appWidth) width = appWidth; };
+	override attribute height = appHeight on replace { if (height < appHeight) height = appHeight; };
+	override attribute background = panelBackground;
 
+	/**
+	 * The view component as the top scenegraph node which is displayed on the viewCanvas.
+	 */
 	public attribute view: GraphView = bind GraphView {
 							width: bind viewCanvas.width
 							height: bind viewCanvas.height
@@ -73,44 +99,55 @@ public class GraphFrame extends SwingFrame {
 							control: bind control
 					}
 	
+	/**
+	 * The canvas on the lower left of the frame in which the graph is shown.
+	 */
 	public attribute viewCanvas: Canvas = Canvas {
-		preferredSize: bind [this.width-GC.editWidth - GC.graphListWidth - 5, this.height - GC.toolBarHeight]
+		preferredSize: bind [this.width-editWidth - graphListWidth - 5, this.height - toolBarHeight]
 		content: bind view
 	}
 
+	/**
+	 * The inspector panel to the lower right of the frame which allows for the modification of the attributes of an argument element.
+	 */
 	public attribute edit: GraphEdit = GraphEdit {
-		background: GC.panelBackground
+		background: panelBackground
 		visible: true
 		control: bind control
 		argumentGraph: bind argumentGraph
-		preferredSize: bind [GC.editWidth, (this.height / 2) + 60]
+		preferredSize: bind [editWidth, (this.height / 2) + 60]
 	}
 
+	/**
+	 * The list of statements on the upper right of the frame.
+	 */
 	public attribute list: ElementList = ElementList {
-		background: GC.panelBackground
+		background: panelBackground
 		visible: true
 		control: bind control
 		argumentGraph: bind argumentGraph
-		preferredSize: bind [GC.editWidth, (this.height /3) - 40]
+		preferredSize: bind [editWidth, (this.height /3) - 40]
 	}
-
 
 	override attribute closeAction = function(): Void {
 		quit();
 	}
 
 	private attribute rightPanel: BorderPanel = bind BorderPanel {
-		background: GC.panelBackground
-		preferredSize: bind [ GC.editWidth, this.height ]
+		background: panelBackground
+		preferredSize: bind [ editWidth, this.height ]
 		top: bind list
 		bottom: bind edit
 		visible: true
 	}
 
+	/**
+	 * The graph list panel at the left edge of the frame.
+	 */
 	public attribute graphList: GraphListPanel = GraphListPanel {
 		argumentGraphs: bind argumentGraphs
 		control: bind control
-		preferredSize: [GC.graphListWidth, this.height - GC.toolBarHeight]
+		preferredSize: [graphListWidth, this.height - toolBarHeight]
 	}
 
 	override attribute content = bind BorderPanel {
@@ -122,26 +159,28 @@ public class GraphFrame extends SwingFrame {
 	
 	private attribute toolPanel: FlowPanel = FlowPanel {
 		alignment: HorizontalAlignment.LEFT
-		preferredSize: [ this.width, GC.toolBarHeight ]
-		background: GC.toolPanelBackground
+		preferredSize: [ this.width, toolBarHeight ]
+		background: toolPanelBackground
+		hgap: 0
+		vgap: 0
 		visible: true
 		content: [
 			SwingButton {
-				width: GC.toolBarButtonWidth
-				height: GC.toolBarButtonHeight
+				width: toolBarButtonWidth
+				height: toolBarButtonHeight
 				icon: Icon { image: bind Image { url: "{__DIR__}images/icon-new.png" } }
 				action: function() { newDocument(); }
 			},
 			SwingButton {
-				width: GC.toolBarButtonWidth
-				height: GC.toolBarButtonHeight
+				width: toolBarButtonWidth
+				height: toolBarButtonHeight
 				icon: Icon { image: bind Image { url: "{__DIR__}images/icon-open.png" } }
 				action: function() { open(); }
 			},
 			SwingButton {
 				enabled: bind control.fileChanged
-				width: GC.toolBarButtonWidth
-				height: GC.toolBarButtonHeight
+				width: toolBarButtonWidth
+				height: toolBarButtonHeight
 				icon: Icon { image: bind Image { url: "{__DIR__}images/icon-save.png" } }
 				action: function() { save(); }
 			},
@@ -149,23 +188,23 @@ public class GraphFrame extends SwingFrame {
 			SpacerPanel {},
 			SwingButton {
 				enabled: bind control.dragView
-				width: GC.toolBarButtonWidth
-				height: GC.toolBarButtonHeight
+				width: toolBarButtonWidth
+				height: toolBarButtonHeight
 				icon: Icon { image: bind Image { url: "{__DIR__}images/icon-pointer.png" } }
 				action: function() { control.dragView = false; }
 			},
 			SwingButton {
 				enabled: bind not control.dragView
-				width: GC.toolBarButtonWidth
-				height: GC.toolBarButtonHeight
+				width: toolBarButtonWidth
+				height: toolBarButtonHeight
 				icon: Icon { image: bind Image { url: "{__DIR__}images/icon-dragview.png" } }
 				action: function() { control.dragView = true; }
 			},
 			SpacerPanel {},
 			SpacerPanel {},
 			GridPanel {
-				background: GC.toolPanelBackground
-				height: GC.toolBarHeight
+				background: toolPanelBackground
+				height: toolBarHeight
 				width: 60
 				rows: 2
 				columns: 1
@@ -182,23 +221,25 @@ public class GraphFrame extends SwingFrame {
 				]
 			},
 			GridPanel {
-				background: GC.toolPanelBackground
-				height: GC.toolBarHeight
+				background: toolPanelBackground
+				height: toolBarHeight
 				width: 60
 				rows: 2
 				columns: 1
 				hgap: 0
 				content: [
 						  SwingButton {
-							  width: GC.toolBarHeight / 2
-							  height: GC.toolBarHeight / 2
-							  icon: Icon { image: bind Image { url: "{__DIR__}images/icon-plus.png", size: 8 } }
+							  width: toolBarHeight / 2
+							  height: toolBarHeight / 2
+							  text: "+"
+							  //icon: Icon { image: bind Image { url: "{__DIR__}images/icon-plus.png", size: 8 } }
 							  action: function() { view.zoom(-1.0); }
 						  },
 						  SwingButton {
-							  width: GC.toolBarHeight / 2
-							  height: GC.toolBarHeight / 2
-							  icon: Icon { image: bind Image { url: "{__DIR__}images/icon-minus.png", size: 8 } }
+							  width: toolBarHeight / 2
+							  height: toolBarHeight / 2
+							  text: "-"
+							  //icon: Icon { image: bind Image { url: "{__DIR__}images/icon-minus.png", size: 8 } }
 							  action: function() { view.zoom(1.0); }
 						  },
 				]
@@ -207,23 +248,23 @@ public class GraphFrame extends SwingFrame {
 			SpacerPanel {},
 			SwingButton {
 				enabled: bind control.possibleToUndo
-				width: GC.toolBarButtonWidth
-				height: GC.toolBarButtonHeight
+				width: toolBarButtonWidth
+				height: toolBarButtonHeight
 				icon: Icon { image: bind Image { url: "{__DIR__}images/icon-undo.png" } }
 				action: function() { control.undo(); }
 			},
 			SwingButton {
 				enabled: bind control.possibleToRedo
-				width: GC.toolBarButtonWidth
-				height: GC.toolBarButtonHeight
+				width: toolBarButtonWidth
+				height: toolBarButtonHeight
 				icon: Icon { image: bind Image { url: "{__DIR__}images/icon-redo.png" } }
 				action: function() { control.redo(); }
 			},
 			SpacerPanel {},
 			SpacerPanel {},
 			SwingButton {
-				width: GC.toolBarButtonWidth
-				height: GC.toolBarButtonHeight
+				width: toolBarButtonWidth
+				height: toolBarButtonHeight
 				icon: Icon { image: bind Image { url: "{__DIR__}images/icon-quit.png" } }
 				action: function() { quit(); }
 			},
@@ -335,7 +376,7 @@ public class GraphFrame extends SwingFrame {
 				} // menu
 				, Menu {
 					text: "debug"
-					visible: bind GC.debug
+					visible: bind debug
 					items: [
 						MenuItem {
 							text: "Print selection"
@@ -358,7 +399,7 @@ public class GraphFrame extends SwingFrame {
 						MenuItem {
 							text: "print vertices"
 							action: function() {
-								System.out.println("# of vertices: " + sizeof graph.vertices);
+								System.out.println("# of vertices: {sizeof graph.vertices}");
 								graph.print();
 							}
 						}
@@ -392,12 +433,12 @@ public class GraphFrame extends SwingFrame {
 					stroke: Color.BLACK
 					strokeWidth: 1
 					effect: { 
-						if (GC.drawShadows) {
+						if (drawShadows) {
 							DropShadow {
-								color: bind GC.shadowColor
-								offsetX: bind GC.xShadowShift
-								offsetY: bind GC.yShadowShift
-								radius: bind GC.shadowBlurRadius
+								color: bind shadowColor
+								offsetX: bind xShadowShift
+								offsetY: bind yShadowShift
+								radius: bind shadowBlurRadius
 							}
 						} else null
 					}
@@ -436,6 +477,9 @@ public class GraphFrame extends SwingFrame {
 		}
 	}
 
+	/**
+	 * Display a string in an alert dialog box.
+	 */
 	public function alert(message: String): Void { 
 		JOptionPane.showMessageDialog(null,
     		message,
@@ -543,7 +587,7 @@ public class GraphFrame extends SwingFrame {
 }
 
 class ToolBarButton extends SwingButton {
-	override attribute preferredSize = [GC.toolBarHeight, GC.toolBarHeight];
+	override attribute preferredSize = [toolBarHeight, toolBarHeight];
 }
 
 class SpacerPanel extends SwingPanel {

@@ -25,6 +25,7 @@ import javafx.scene.geometry.*;
 import javafx.scene.paint.*;
 import javafx.scene.*;
 import Carneades.Graph.*;
+import Carneades.Graph.GC.*;
 import Carneades.Graph.Elements.Elements.*;
 import java.lang.System;
 
@@ -58,7 +59,7 @@ public class GraphView extends CustomNode {
 		y: 0
 		height: bind this.height
 		width: bind this.width
-		fill: GC.viewBackground
+		fill: viewBackground
 		visible: true
 	}
 
@@ -68,7 +69,7 @@ public class GraphView extends CustomNode {
 		y: 0
 		height: bind this.height
 		width: bind this.width
-		fill: GC.transparent
+		fill: transparent
 		visible: true
 
 		onMouseClicked: function(e: MouseEvent): Void {
@@ -110,8 +111,8 @@ public class GraphView extends CustomNode {
 					{ graph.root.xShift = (-layout.width / 2)}
 				if (graph.root.yShift + layout.height < - this.height / 2) 
 					{ graph.root.yShift = - layout.height - this.height / 2}
-				if (graph.root.yShift + GC.yDistance + GC.vertexDefaultHeight > (this.height / 2)) 
-					{ graph.root.yShift = (this.height / 2) + GC.yDistance + GC.vertexDefaultHeight}
+				if (graph.root.yShift + yDistance + vertexDefaultHeight > (this.height / 2)) 
+					{ graph.root.yShift = (this.height / 2) + yDistance + vertexDefaultHeight}
 			}
 		}
 
@@ -125,7 +126,7 @@ public class GraphView extends CustomNode {
 		y: 0
 		width: 20
 		height: 12
-		fill: GC.dragColor
+		fill: dragColor
 		visible: bind control.dragging
 	}
 
@@ -134,10 +135,10 @@ public class GraphView extends CustomNode {
 		centerY: bind middleY
 		radius: 5
 		fill: Color.BLUE
-		visible: bind GC.debug
+		visible: bind debug
 	}
 
-	public function create(): Node {
+	override function create(): Node {
 		return Group {
 			content: bind [ background, graph, backSensor, dragSymbol, middlePoint ]
 		}
@@ -149,7 +150,7 @@ public class GraphView extends CustomNode {
 
 	public function reset(): Void {
 		graph.translateX = middleX;
-		graph.translateY = middleY - GC.yDistance;
+		graph.translateY = middleY - yDistance;
 	}
 
 	public function focusOn(x: Number, y: Number): Void {
@@ -171,13 +172,13 @@ public class GraphView extends CustomNode {
 							]
 						},
 						KeyFrame {
-							time: (GC.zoomTime) * 0.5s
+							time: (zoomTime) * 0.5s
 							values: [
 									 zoomFactor => (0.7 * oldZoom) tween Interpolator.EASEBOTH,
 							]
 						},
 						KeyFrame {
-							time: (GC.zoomTime) * 1.0s
+							time: (zoomTime) * 1.0s
 							values: [
 									 graph.root.xShift => (oldXShift - focusX) tween Interpolator.EASEBOTH,
 									 graph.root.yShift => (oldYShift - focusY) tween Interpolator.EASEBOTH,

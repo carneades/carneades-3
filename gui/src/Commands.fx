@@ -30,6 +30,7 @@ import Carneades.Argument.Argument.*;
 
 // View imports
 import Carneades.Graph.*;
+import Carneades.Graph.GC.*;
 
 // GENERAL CLASSES
 
@@ -40,18 +41,18 @@ public abstract class Command {
 	public attribute merges: Boolean = false;
 
 	public function do(): Number {
-		return GC.C_OK;
+		return C_OK;
 	}
 	
 	public function mergeable(c: Command): Boolean {false}
 
-	public function merge(c: Command): Number { GC.C_OK }
+	public function merge(c: Command): Number { C_OK }
 }
 
 public class UndoableCommand extends Command {
 
 	public function undo(): Number {
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -108,7 +109,7 @@ public class CommandControl {
 	}
 
 	public function undo(): Number {
-		var result: Number = GC.C_NO_UNDO;
+		var result: Number = C_NO_UNDO;
 
 		if (commands[size - bookmark - 1] instanceof UndoableCommand) {
 			result = (commands[size - bookmark - 1] as UndoableCommand).undo();
@@ -119,7 +120,7 @@ public class CommandControl {
 	}
 
 	public function redo(): Number {
-		var result: Number = GC.C_LATEST_COMMAND;
+		var result: Number = C_LATEST_COMMAND;
 
 		if (bookmark > 0 and bookmark <= size) {
 			result = commands[size - bookmark].do();
@@ -150,14 +151,14 @@ public class AddArgumentCommand extends UndoableCommand {
 		}
 	}
 
-	public function do(): Number {
+	override function do(): Number {
 		argumentGraph.insertArgument(argument);
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		argumentGraph.deleteArgument(argument);
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -165,7 +166,7 @@ public class AddStatementCommand extends UndoableCommand {
 
 	public attribute statement: Statement;
 
-	public function do(): Number {
+	override function do(): Number {
 		// set a default value in case no statement has been passed
 		if (statement == null){
 			statement = Statement {
@@ -175,12 +176,12 @@ public class AddStatementCommand extends UndoableCommand {
 			}
 		}
 		argumentGraph.insertStatement(statement);
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		argumentGraph.deleteStatement(statement);
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -201,15 +202,15 @@ public class AddPremiseCommand extends UndoableCommand {
 		}
 	}
 
-	public function do(): Number {
+	override function do(): Number {
 		argument.addPremise(premise);
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		argumentGraph.deleteStatement(premise.statement);
 		argument.deletePremise(premise);
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -236,17 +237,17 @@ public class AddArgumentAndPremiseCommand extends UndoableCommand {
 		}
 	}
 
-	public function do(): Number {
+	override function do(): Number {
 		argument.addPremise(premise);
 		argumentGraph.insertArgument(argument);
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		argumentGraph.deleteStatement(premise.statement);
 		argument.deletePremise(premise);
 		argumentGraph.deleteArgument(argument);
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -254,28 +255,28 @@ public class RemoveArgumentCommand extends UndoableCommand {
 	
 	public attribute argument: Argument;
 	
-	public function do(): Number {
+	override function do(): Number {
 		argumentGraph.deleteArgument(argument);
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		argumentGraph.insertArgument(argument);
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
 public class DeleteStatementCommand extends UndoableCommand {
 	public attribute statement: Statement;
 	
-	public function do(): Number {
+	override function do(): Number {
 		argumentGraph.deleteStatement(statement);
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		argumentGraph.insertStatement(statement);
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -286,18 +287,18 @@ public class DeleteConclusionCommand extends UndoableCommand {
 	public attribute premise: Premise;
 	public attribute childArguments: Argument[];
 	
-	public function do(): Number {
+	override function do(): Number {
 		argumentGraph.deleteStatement(conclusion);
 		delete premise from motherArgument.premises;
 		for (c in childArguments) delete c from argumentGraph.arguments;
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		argumentGraph.insertStatement(conclusion);
 		for (c in childArguments) insert c into argumentGraph.arguments;
 		insert premise into motherArgument.premises;
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -305,14 +306,14 @@ public class DeletePremiseCommand extends UndoableCommand {
 	public attribute premise: Premise;
 	public attribute argument: Argument;
 
-	public function do(): Number {	
+	override function do(): Number {	
 		argument.deletePremise(premise);
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		argument.appendPremise(premise);
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -320,18 +321,18 @@ public class DeletePremiseStatementCommand extends UndoableCommand {
 	public attribute premise: Premise;
 	public attribute argument: Argument;
 
-	public function do(): Number {	
+	override function do(): Number {	
 		delete premise from argument.premises;
 		delete argument from premise.statement.arguments;
 		delete premise.statement from argumentGraph.statements;
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		insert premise into argument.premises;
 		insert argument into premise.statement.arguments;
 		insert premise.statement into argumentGraph.statements;
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -340,20 +341,20 @@ public class MovePremiseCommand extends UndoableCommand {
 	public attribute oldArgument: Argument;
 	public attribute newArgument: Argument;
 
-	public function do(): Number {
+	override function do(): Number {
 		// 1. remove premise from argument
 		oldArgument.deletePremise(premise);
 		// 2. add premise to new node
 		newArgument.appendPremise(premise);
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		// 1. remove premise from argument
 		newArgument.deletePremise(premise);
 		// 2. add premise to old node
 		oldArgument.appendPremise(premise);
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -362,14 +363,14 @@ public class MoveArgumentCommand extends UndoableCommand {
 	public attribute oldStatement: Statement;
 	public attribute newStatement: Statement;
 
-	public function do(): Number {
+	override function do(): Number {
 		argument.conclusion = newStatement;
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		argument.conclusion = oldStatement;
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -379,7 +380,7 @@ public class ChangeStatementStatusCommand extends UndoableCommand {
 	public attribute oldStatus: String;
 	public attribute newStatus: String;
 
-	public function do(): Number {
+	override function do(): Number {
 		
 		oldStatus = statement.status();
 		if (newStatus == "stated") { 
@@ -395,10 +396,10 @@ public class ChangeStatementStatusCommand extends UndoableCommand {
 		} else if (newStatus == "assumed false") { 
 			statement.assume(false); 
 		}
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		if (oldStatus == "stated") { 
 			statement.state();
 		} else if (oldStatus == "questioned") { 
@@ -412,7 +413,7 @@ public class ChangeStatementStatusCommand extends UndoableCommand {
 		} else if (oldStatus == "assumed false") { 
 			statement.assume(false);
 		}
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -422,17 +423,17 @@ public class ChangeStatementIdCommand extends UndoableCommand {
 	public attribute id: String;
 	public attribute oldId: String;
 
-	public function do(): Number {
+	override function do(): Number {
 		oldId = statement.id;
 		statement.id = id;
 		//argumentGraph.setStatementId(statement, id);
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		statement.id = oldId;
 		//argumentGraph.setStatementId(statement, oldId);
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -442,15 +443,15 @@ public class ChangeStatementWffCommand extends UndoableCommand {
 	public attribute wff: String;
 	public attribute oldWff: String;
 
-	public function do(): Number {
+	override function do(): Number {
 		oldWff = statement.wff;
 		statement.wff = wff;
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		statement.wff = oldWff;
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -459,15 +460,15 @@ public class ChangeGraphTitleCommand extends UndoableCommand {
 	public attribute title: String;
 	public attribute oldTitle: String;
 
-	public function do(): Number {
+	override function do(): Number {
 		oldTitle = argumentGraph.title;
 		argumentGraph.title = title;
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		argumentGraph.title = oldTitle;
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -477,15 +478,15 @@ public class ChangeArgumentSchemeCommand extends UndoableCommand {
 	public attribute scheme: String;
 	public attribute oldScheme: String;
 
-	public function do(): Number {
+	override function do(): Number {
 		oldScheme = argument.scheme.id;
 		argument.scheme.id = scheme;
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		argument.scheme.id = oldScheme;
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -495,7 +496,7 @@ public class ChangeStatementStandardCommand extends UndoableCommand {
 	public attribute standard: ProofStandard;
 	public attribute oldStandard: ProofStandard;
 
-	public function do(): Number {
+	override function do(): Number {
 		// backup old standard via deep copy
 		if (statement.standard instanceof Scintilla) {
 			oldStandard = Scintilla {};
@@ -514,13 +515,13 @@ public class ChangeStatementStandardCommand extends UndoableCommand {
 		statement.standard = standard;
 		standard.statement = statement;
 		//argumentGraph.setProofStandard(statement, standard);
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		//argumentGraph.setProofStandard(statement,oldStandard);
 		statement.standard = oldStandard;
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -532,15 +533,15 @@ public class ChangeArgumentIdCommand extends UndoableCommand {
 	public attribute id: String;
 	public attribute oldId: String;
 
-	public function do(): Number {
+	override function do(): Number {
 		oldId = argument.id;
 		argument.id = id;
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		argument.id = oldId;
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -550,15 +551,15 @@ public class ChangeArgumentTitleCommand extends UndoableCommand {
 	public attribute title: String;
 	public attribute oldTitle: String;
 
-	public function do(): Number {
+	override function do(): Number {
 		oldTitle = argument.title;
 		argument.title = title;
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		argument.title = oldTitle;
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -569,25 +570,25 @@ public class ChangeArgumentWeightCommand extends UndoableCommand {
 	public attribute oldWeight: Number;
 	override attribute merges = true;
 
-	public function do(): Number {
+	override function do(): Number {
 		oldWeight = argument.weight;
 		argument.weight = weight;
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function mergeable(c: Command): Boolean {
+	override function mergeable(c: Command): Boolean {
 		return argument == (c as ChangeArgumentWeightCommand).argument;
 	}
 
-	public function merge(c: Command): Number {
+	override function merge(c: Command): Number {
 		(c as ChangeArgumentWeightCommand).weight = weight;
 		argument.weight = weight;
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		argument.weight = oldWeight;
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -595,14 +596,14 @@ public class ChangeArgumentDirectionCommand extends UndoableCommand {
 
 	public attribute argument: Argument;
 
-	public function do(): Number {
+	override function do(): Number {
 		argument.switchDirection();
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		argument.switchDirection();
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -614,17 +615,17 @@ public class ChangePremiseRoleCommand extends UndoableCommand {
 	public attribute role: String;
 	public attribute oldRole: String;
 
-	public function do(): Number {
+	override function do(): Number {
 		oldRole = premise.role;
 		premise.role = role;
 		//argumentGraph.setPremiseRole(premise, role);
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		//argumentGraph.setPremiseRole(premise, oldRole);
 		premise.role = oldRole;
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -632,16 +633,16 @@ public class NegatePremiseCommand extends UndoableCommand {
 	
 	public attribute premise: Premise;
 
-	public function do(): Number {
+	override function do(): Number {
 		//argumentGraph.negatePremise(premise);
 		if (premise.negative) { premise.negative = false } else { premise.negative = true }
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		//argumentGraph.negatePremise(premise);
 		if (premise.negative) { premise.negative = false } else { premise.negative = true }
-		return GC.C_OK;
+		return C_OK;
 	}
 }
 
@@ -649,14 +650,14 @@ public class ChangePremiseTypeCommand extends UndoableCommand {
 	
 	public attribute premise: Premise;
 
-	public function do(): Number {
+	override function do(): Number {
 		if (premise.exception) { premise.exception = false } else { premise.exception = true }
 		//argumentGraph.switchPremiseType(premise);
-		return GC.C_OK;
+		return C_OK;
 	}
 
-	public function undo(): Number {
+	override function undo(): Number {
 		//argumentGraph.switchPremiseType(premise);
-		return GC.C_OK;
+		return C_OK;
 	}
 }

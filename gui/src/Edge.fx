@@ -24,6 +24,7 @@ import javafx.scene.paint.*;
 import javafx.scene.geometry.*;
 
 import Carneades.Graph.*;
+import Carneades.Graph.GC.*;
 import java.lang.System;
 import java.lang.Math;
 import Carneades.Control.GraphControl;
@@ -41,9 +42,9 @@ public class Edge extends GraphElement {
 	attribute y1: Number = bind producer.y + y1Shift on replace { if (turnHead) setAngle() };
 	attribute x2: Number = bind recipient.x + x2Shift + xHeadShift on replace { if (turnHead) setAngle() };
 	attribute y2: Number = bind recipient.y + y2Shift + yHeadShift on replace { if (turnHead) setAngle() };
-	attribute direction: Number = GC.BOTTOM; // it is assumed the premise hits the node on its bottom side
+	attribute direction: Number = BOTTOM; // it is assumed the premise hits the node on its bottom side
 	attribute stroke: Color = Color.BLACK;
-	attribute strokeWidth: Number = GC.edgeStrokeWidth;
+	attribute strokeWidth: Number = edgeStrokeWidth;
 	attribute dashed: Boolean = false;
 
 	attribute control: GraphControl;
@@ -70,8 +71,8 @@ public class Edge extends GraphElement {
 					startY: bind y1
 					endX: bind x2
 					endY: bind y2
-					stroke: bind GC.transparent
-					strokeWidth: bind strokeWidth + GC.edgeSelectionWidth;
+					stroke: bind transparent
+					strokeWidth: bind strokeWidth + edgeSelectionWidth;
 
 					onMouseClicked: function(e: MouseEvent) {
 						control.unSelectAll();
@@ -86,8 +87,8 @@ public class Edge extends GraphElement {
 					startY: bind y1
 					endX: bind x2
 					endY: bind y2
-					stroke: bind GC.selectionColor
-					strokeWidth: bind GC.selectedEdgeWidth;
+					stroke: bind selectionColor
+					strokeWidth: bind selectedEdgeWidth;
 					visible: bind selected
 					strokeDashArray: bind { if (dashed) [5.0, 5.0] else [1.0] }
 					strokeDashOffset: bind { if (dashed) 0.0 else 0.0 }
@@ -129,7 +130,7 @@ public class Edge extends GraphElement {
 		}
 	}
 
-	public function create():Node {
+	override function create():Node {
 		Group {
 			content: [
 				line,	

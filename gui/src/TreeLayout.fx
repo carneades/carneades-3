@@ -21,12 +21,11 @@ package Carneades.Graph;
 import javafx.ext.swing.*;
 import javafx.scene.paint.*;
 import Carneades.Graph.*;
+import Carneades.Graph.GC.*;
 import java.lang.System;
 import java.lang.Math;
 
 public class TreeLayout extends GraphLayout {
-	attribute xDistance: Number = GC.xDistance;
-	attribute yDistance: Number = GC.yDistance;
 	attribute root: Vertex;
 	
 	// helper function for debugging
@@ -77,7 +76,7 @@ public class TreeLayout extends GraphLayout {
 	// parameter is the "BOTTOM LEFT" node of the tree
 	private function treeSize(v: Vertex, complete: Boolean):Void {
 		
-		if (d) debug("sizing " + v.caption);
+		if (d) debug("sizing {v.caption}");
 		if (v.children == null) { // It is a leaf node
 			if (d) debug("... it is a leaf node");
 
@@ -193,7 +192,7 @@ public class TreeLayout extends GraphLayout {
 
 	private function adjust():Void {
 		// set the overall tree width
-		this.width = Math.max(GC.appWidth - GC.editWidth - 30, root.xSubTreeSize).intValue();
+		this.width = Math.max(appWidth - editWidth - 30, root.xSubTreeSize).intValue();
 
 		// adjust vertical alignment
 		for (i:Vertex in graph.vertices where i.level > 0) {
@@ -207,7 +206,7 @@ public class TreeLayout extends GraphLayout {
 		}
 
 		// adjust overall tree height
-		this.height = Math.max( GC.appHeight - GC.toolBarHeight - 50 , bottom).intValue();
+		this.height = Math.max( appHeight - toolBarHeight - 50 , bottom).intValue();
 	}
 
 	private function layoutEdges():Void {
@@ -217,10 +216,10 @@ public class TreeLayout extends GraphLayout {
 		for ( i in graph.edges) {
 			if (i.producer.level < i.recipient.level) {
 				// edge comes top down
-				i.direction = GC.TOP;
+				i.direction = TOP;
 			} else {
 				// edge comes bottom up
-				i.direction = GC.BOTTOM;
+				i.direction = BOTTOM;
 			}
 		}
 
@@ -255,7 +254,7 @@ public class TreeLayout extends GraphLayout {
 	}
 
 
-	public function compose():Graph {
+	override function compose():Graph {
 		//System.out.println("layout started!");
 
 		// update box widths
@@ -297,10 +296,10 @@ public class TreeLayout extends GraphLayout {
 		// Debug sandbox ...
 		//
 		//if (d) {
-		//for (i in graph.vertices) GC.p(i.caption + " width: " + i.width);
+		//for (i in graph.vertices) p(i.caption + " width: " + i.width);
 		//} // if (d)
 
-		//GC.p("Yet another layout ...");
+		//p("Yet another layout ...");
 
 		//System.out.println("Layout finished");
 		//System.out.println("Graph Width: " + graph.width + " / Graph height: " + graph.height);

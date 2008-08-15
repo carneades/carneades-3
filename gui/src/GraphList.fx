@@ -31,11 +31,14 @@ import Carneades.Argument.Argument.*;
 
 // Other View Classes
 import Carneades.Graph.*;
+import Carneades.Graph.GC.*;
 
 // Abstract Controller Class for Interaction
 import Carneades.Control.GraphControl;
 
-
+/**
+ * 
+ */
 public class GraphListPanel extends SwingPanel {
 	public attribute argumentGraphs: ArgumentGraph[] = [];
 	public attribute control: GraphControl;
@@ -61,11 +64,12 @@ public class GraphListPanel extends SwingPanel {
 			horizontalAlignment: HorizontalAlignment.LEFT
 		},
 		SwingButton {
-			x: this.width - 30
+			x: this.width - 53
 			y: 2
-			width: 25
+			width: 55
 			height: 25
-			icon: Icon { image: bind Image { url: "{__DIR__}images/icon-plus.png", size: 8 } }
+			text: "+"
+			//icon: Icon { image: bind Image { url: "{__DIR__}images/icon-plus.png", size: 8 } }
 			action: function() { control.addArgumentGraph(); }
 		},
 		list
