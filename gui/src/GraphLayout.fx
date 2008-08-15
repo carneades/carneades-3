@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package Carneades.Graph;
 
 import Carneades.Graph.*;
+import Carneades.Graph.GC.*;
 import java.lang.System;
 
 public abstract class GraphLayout {
@@ -27,9 +28,9 @@ public abstract class GraphLayout {
 	
 	public attribute width: Integer;
 	public attribute height: Integer;
-	attribute xOffset: Integer = GC.xOffset;
-	attribute yOffset: Integer = GC.yOffset;
-	attribute d: Boolean = bind GC.debug; // debug messages?
+	attribute xOffset: Integer = xOffset;
+	attribute yOffset: Integer = yOffset;
+	attribute d: Boolean = bind debug; // debug messages?
 
 	public function compose():Graph { graph }
 

@@ -20,7 +20,7 @@ package Carneades.Argument;
 // import object for cycle checking
 import java.lang.Object;
 // import constants
-import Carneades.Graph.GC;
+import Carneades.Graph.GC.*;
 import java.lang.System;
 
 abstract public class ProofStandard {
@@ -270,19 +270,19 @@ public class Argument {
 		insert p into premises;
 		insert p.statement into graph.statements;
 		insert this into p.statement.arguments;
-		return GC.AG_OK;
+		return AG_OK;
 	}
 
 	public function appendPremise (p: Premise) : Number {
 		insert p into premises;
 		insert this into p.statement.arguments;
-		return GC.AG_OK;
+		return AG_OK;
 	}
 
 	public function deletePremise (p: Premise) : Number {
 		delete p from premises;
 		delete this from p.statement.arguments;
-		return GC.AG_OK;
+		return AG_OK;
 	}
 }
 
@@ -307,13 +307,13 @@ public class ArgumentGraph {
 	}
 	
 	public function insertStatement (s: Statement): Number {
-		var result: Number = GC.AG_OK;
+		var result: Number = AG_OK;
 
 		// check for double ids
 		if ((idTaken(s.id)) == false) {
 			insert s into statements;
 		} else {
-			result = GC.AG_DOUBLE_ID;
+			result = AG_DOUBLE_ID;
 		}
 
 		s.graph = this;
@@ -328,7 +328,7 @@ public class ArgumentGraph {
 	}
 
 	public function insertArgument (arg: Argument) : Number {
-		var result: Number = GC.AG_OK;
+		var result: Number = AG_OK;
 		
 		// check for and prohibit cycles.
 		if (noCycles()) {	
@@ -352,7 +352,7 @@ public class ArgumentGraph {
 			// arg.update();
 
 		} else {
-			result = GC.AG_CYCLE;
+			result = AG_CYCLE;
 		}
 
 		return result;
@@ -418,15 +418,15 @@ public class ArgumentGraph {
 		if (root instanceof Argument) {
 			//System.out.println("premises to check: " + sizeof (root as Argument).premises);
 			for (p in (root as Argument).premises) {
-				//GC.p("checking " + p.statement.id);
+				//p("checking " + p.statement.id);
 				// check whether the premise statement has been marked before
-				if (GC.contains(marked, p.statement)) { 
-					//GC.p("returning false");
+				if (contains(marked, p.statement)) { 
+					//p("returning false");
 					result = false;
 				} 
 				else {
 					// if not, do the recursive call
-					//GC.p("Adding " + p.statement.id);
+					//p("Adding " + p.statement.id);
 					if (noCyclesRec(p.statement, [marked, p.statement]) == false ) { result = false; } ;
 				}
 			}
@@ -436,13 +436,13 @@ public class ArgumentGraph {
 				// does the conclusion match
 				if (a.conclusion == root) {
 					// has the argument already been marked
-					//GC.p("checking " + a.id);
-					if (GC.contains(marked, a)) {
-						//GC.p("returning false");
+					//p("checking " + a.id);
+					if (contains(marked, a)) {
+						//p("returning false");
 						result = false;
 					} else {
 					// do the recursive call
-						//GC.p("Adding " + a.id);
+						//p("Adding " + a.id);
 						if (noCyclesRec(a, [marked, a]) == false) { result = false; };
 					}
 				}
@@ -468,28 +468,28 @@ public class ArgumentGraph {
 		var admissible: Boolean = true;
 		var id: String = "s";
 		var number: Integer = 1;
-		while ( idTaken(id + number.toString()) ) { number ++; }
-		return id + number.toString();
+		while ( idTaken("{id}{number.toString()}") ) { number ++; }
+		return "{id}{number.toString()}";
 	}
 
 	public function getNewArgumentId(): String {
 		var admissible: Boolean = true;
 		var id: String = "a";
 		var number: Integer = 1;
-		while ( idTaken(id + number.toString()) ) { number ++; }
-		return id + number.toString();
+		while ( idTaken("{id}{number.toString()}") ) { number ++; }
+		return "{id}{number.toString()}";
 	}
 
 	public function noDoubleIDs(newId: String): Boolean {
 		var ids: String[];
 
 		for (s in statements) {
-			if (GC.contains(ids, s.id)) { return false; } else { insert s.id into ids; }
+			if (contains(ids, s.id)) { return false; } else { insert s.id into ids; }
 		}
 		for (a in arguments) {
-			if (GC.contains(ids, a.id)) { return false; } else { insert a.id into ids; }
+			if (contains(ids, a.id)) { return false; } else { insert a.id into ids; }
 		}
-		if (GC.contains(ids, newId)) { return false; } 
+		if (contains(ids, newId)) { return false; } 
 
 		return true;
 	}
@@ -507,7 +507,7 @@ public class ArgumentGraph {
 // set of statements.
 
 public class Scintilla extends ProofStandard {
-	function test (ag: ArgumentGraph, 
+	override function test (ag: ArgumentGraph, 
 	               pro: Argument[], 
 	               con: Argument[]): Boolean {
 	       sizeof(pro[p | p.allPremisesHold()]) > 0;               
@@ -515,7 +515,7 @@ public class Scintilla extends ProofStandard {
 }
 
 public class DialecticalValidity extends ProofStandard {
-	function test (ag: ArgumentGraph, 
+	override function test (ag: ArgumentGraph, 
 	               pro: Argument[], 
 	               con: Argument[]): Boolean {
 	       sizeof(pro[arg | arg.allPremisesHold()]) > 0 and
@@ -524,7 +524,7 @@ public class DialecticalValidity extends ProofStandard {
 }
 
 public class BestArgument extends ProofStandard {
-	function test (ag: ArgumentGraph, 
+	override function test (ag: ArgumentGraph, 
 	               pro: Argument[], 
 	               con: Argument[]): Boolean {
 	       var okPro = pro [ arg | arg.allPremisesHold() ];
@@ -558,7 +558,7 @@ public class BestArgument extends ProofStandard {
 // problem of aggregating evidence in legal cases.
 
 public class Preponderance extends ProofStandard {
-	function test (ag: ArgumentGraph, 
+	override function test (ag: ArgumentGraph, 
 	               pro: Argument[], 
 	               con: Argument[]): Boolean {
 	       var okPro = pro [ arg | arg.allPremisesHold() ];
@@ -582,7 +582,7 @@ public class Preponderance extends ProofStandard {
 // and the average weight of the con arguments is greater than
 // some threshold.
 public class ClearAndConvincingEvidence extends ProofStandard {
-	function test (ag: ArgumentGraph, 
+	override function test (ag: ArgumentGraph, 
 	               pro: Argument[], 
 	               con: Argument[]): Boolean {
 
@@ -607,7 +607,7 @@ public class ClearAndConvincingEvidence extends ProofStandard {
 // test is met and the weight of the strongest con argument is below
 // the threshold.
 public class BeyondReasonableDoubt extends ProofStandard {
-	function test (ag: ArgumentGraph, 
+	override function test (ag: ArgumentGraph, 
 	               pro: Argument[], 
 	               con: Argument[]): Boolean {
 	      var threshold = 0.3;

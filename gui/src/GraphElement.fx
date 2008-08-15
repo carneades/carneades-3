@@ -21,9 +21,10 @@ package Carneades.Graph;
 import javafx.scene.CustomNode;
 import Carneades.Graph.*;
 
+public var currentIndex: Integer = 0;
+
 public abstract class GraphElement extends CustomNode {
 	public attribute selected: Boolean = false;
-	public static attribute currentIndex: Integer = 0;
 	public attribute index: Integer = newIndex();
 
 	protected function newIndex(): Integer {
