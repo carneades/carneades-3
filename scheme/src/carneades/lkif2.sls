@@ -4,9 +4,10 @@
  
  (carneades lkif2)
  
- (export get-document get-lkif
-         read-theory theory? make-theory theory-id theory-imports theory-axioms theory-rules
-         lkif-rule->rule)
+ (export lkif-import
+         make-lkif-data lkif-data? lkif-data-context
+         lkif-data-rulebase lkif-data-stages
+         make-stage stage? stage-argument-graph stage-context)
  
  (import (rnrs)
          (carneades rule)
@@ -22,9 +23,9 @@
  
  ; lkif-import is the datastructure that is supposed to
  ; be returned by the import function
- (define-record-type lkif-import
+ (define-record-type lkif-data
    (fields context            ; context build by axioms
-           argument-generator ; argument-generator from rules
+           rulebase ; argument-generator from rules
            stages))           ; (list-of stages)
 
  (define-record-type stage
@@ -88,15 +89,16 @@
  ; Import functions 
  
  
- (define (import path)
+ ; lkif-import: file-path -> struct:lkif-import
+ (define (lkif-import path)
    (let ((lkif-body (get-lkif (get-document path))))
      (let ((sources (read-sources lkif-body))
            (theory (read-theory lkif-body))
            (arg-graphs (read-argument-graphs lkif-body)))
        (let ((context (lkif-axioms->context (theory-axioms theory)))
-             (argument-generator (lkif-rules->generator (theory-rules theory) '()))
+             (rb (lkif-rules->rulebase (theory-rules theory)))
              (stages (map argument-graph->stage arg-graphs)))
-         (make-lkif-import context argument-generator stages)))))
+         (make-lkif-data context rb stages)))))
  
  
  ; --------------------------------
@@ -199,15 +201,20 @@
          (role (get-attribute-value (get-attribute p 'role) ""))
          (sid (get-attribute-value (get-attribute p 'statement) "")))
      (let ((s (statement->sexpr (get-statement sid tbl)))
-           (p (string=? polarity "true")))   
-       (argument:make-premise s p role))))
+           (p (string=? polarity "positive")))
+       (if (string=? exception "true")
+           (argument:make-exception s p role)
+           (if (and (pair? s)
+                    (eq? (car s) 'assumable))
+               (argument:make-assumption (cadr s) p role)
+               (argument:make-ordinary-premise s p role))))))
  
  ; argument-to-record: lkif-argument table -> struct:argument
  (define (argument-to-record a tbl)
    (let ((id (string->symbol (get-attribute-value (get-attribute a 'id) "")))
          (title (string->symbol (get-attribute-value (get-attribute a 'title) "")))
          (direction (string->symbol (get-attribute-value (get-attribute a 'direction) "pro")))
-         (scheme (string->symbol (get-attribute-value (get-attribute a 'scheme) "")))
+         (scheme (get-attribute-value (get-attribute a 'scheme) ""))
          (weight (string->symbol (get-attribute-value (get-attribute a 'weight) "0.5")))
          (conclusion (statement->sexpr (get-conclusion-statement (cdr (get-element a 'conclusion)) tbl)))
          (premises (map (lambda (x) (premise-to-record x tbl)) (get-elements (get-element a 'premises) 'premise))))
@@ -307,7 +314,7 @@
    (let ((exception (get-attribute-value (get-attribute n 'exception) "false"))
          (assumable (get-attribute-value (get-attribute n 'assumable) "false")))
      (if (string=? exception "true")
-         (list 'unless (list 'not (lkif-wff->sexpr (car (list-tail n (- (length n) 1))))))
+         (list 'unless (lkif-wff->sexpr (car (list-tail n (- (length n) 1)))))
          (if (string=? assumable "true")
              (list 'assuming (list 'not (lkif-wff->sexpr (car (list-tail n (- (length n) 1))))))
              (list 'not (lkif-wff->sexpr (car (list-tail n (- (length n) 1)))))))))
@@ -381,8 +388,8 @@
                             (else (make-rule-body (cons 'or to-body)))))))))
 
  
- (define (lkif-rules->generator rules qs)
-   (generate-arguments-from-rules (rulebase (map lkif-rule->rule rules)) qs))
+ (define (lkif-rules->rulebase rules)
+   (add-rules empty-rulebase (map lkif-rule->rule rules)))
  
  
  ; axiom conversion
@@ -411,16 +418,19 @@
  ; statements->context: (list-of struct:statement) -> context
  (define (statements->context statements)
    (let ((scontext (fold-left (lambda (c s)
-                                (cond 
-                                  ((string=? (statement-value s) "unknown") (argument:state c (list (statement->sexpr s))))
-                                  ((string=? (statement-value s) "true") (argument:accept c (list (statement->sexpr s))))
-                                  ((string=? (statement-value s) "false") (argument:reject c (list (statement->sexpr s))))))
+                                (if (string=? (statement-assumption s) "true")
+                                    (cond 
+                                      ((string=? (statement-value s) "unknown") (argument:state c (list (statement->sexpr s))))
+                                      ((string=? (statement-value s) "true") (argument:accept c (list (statement->sexpr s))))
+                                      ((string=? (statement-value s) "false") (argument:reject c (list (statement->sexpr s)))))
+                                    (cond 
+                                      ((string=? (statement-value s) "unknown") (argument:question c (list (statement->sexpr s))))
+                                      ((string=? (statement-value s) "true") (argument:accept c (list (statement->sexpr s))))
+                                      ((string=? (statement-value s) "false") (argument:reject c (list (statement->sexpr s)))))))
                               argument:default-context
                               statements)))
-     (display scontext)
-     (newline)
      (fold-left (lambda (c s)
-                  (argument:assign-standard c (string->symbol (statement-standard s)) (list (statement->sexpr s))))
+                  (argument:assign-standard c (string->symbol (string-downcase (statement-standard s))) (list (statement->sexpr s))))
                 scontext
                 statements)))
  
@@ -432,7 +442,7 @@
    (let ((statements (argument-graph-statements ag)))
      (let ((tbl (statements->table statements)))
        (let ((arguments (map (lambda (x) (argument-to-record x tbl)) (argument-graph-arguments ag))))
-         (values (fold-left argument:put-argument argument:empty-argument-graph arguments)
+         (values (argument:assert argument:empty-argument-graph arguments)
                  (statements->context statements))))))
  
  ; argument-graph->stage: struct:lkif-argument-graph -> struct:stage
@@ -447,17 +457,17 @@
  ; ---------------------------
  ; Testing Code
 
-; (define doc (get-document "C:\\test2.xml"))
+ (define doc (get-document "C:\\lkif-test.xml"))
 ; 
-; (define lb (get-lkif doc))
+ (define lb (get-lkif doc))
 ; 
 ; (define srcs (read-sources lb))
 ; 
-; (define t (read-theory lb))
+ (define t (read-theory lb))
 ;  
 ; (define arggraphs (read-argument-graphs lb))
 ;
-; (define rule-gen (lkif-rules->generator (theory-rules t) '()))
+ (define rb (lkif-rules->rulebase (theory-rules t)))
 ; 
 ; (define c (lkif-axioms->context (theory-axioms t)))
 ; 
@@ -468,7 +478,7 @@
 ; (define tbl (statements->table (argument-graph-statements graph1)))
 ; 
 ; (define args (map (lambda (x) (argument-to-record x tbl)) (argument-graph-arguments graph1))) 
- 
- (define i (import "C:\\test2.xml"))
+; 
+; (define i (import "C:\\test2.xml"))
  
  )
