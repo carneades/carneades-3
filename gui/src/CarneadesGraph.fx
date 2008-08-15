@@ -23,6 +23,7 @@ import javafx.scene.*;
 import java.lang.System;
 
 // import the rest of the graph package
+import Carneades.Graph.GC.*;
 import Carneades.Graph.Elements.Elements.*;
 
 // import the necessary parts of the model
@@ -55,13 +56,13 @@ public class CarneadesGraph extends Graph {
 
 	// CONVERSION FUNCTIONS
 
-	public function update(): Void {
+	override function update(): Void {
 
 		// This function is there because whenever something other than the cardinality of the
 		// argument and statement sequences of the model change, no event gets thrown back that
 		// triggers the binding reset which is necessary to trigger the new graph to be forwarded
 		// to the layout object.
-		if (GC.debug) { System.out.println("CarneadesGraph.update()"); }
+		if (debug) { System.out.println("CarneadesGraph.update()"); }
 		
 		// destroy the vertex array to allow the garbage collection to clean up
 		for (v in vertices) {
@@ -86,7 +87,7 @@ public class CarneadesGraph extends Graph {
 		// 1. create bound vertices
 		// for statements
 		for (s in statements) {
-			if (GC.drawAllStatements or (argumentGraph.broughtForth(s) or argumentGraph.isPremise(s))) {
+			if (drawAllStatements or (argumentGraph.broughtForth(s) or argumentGraph.isPremise(s))) {
 				var statementBox: StatementBox = StatementBox {
 					statement: bind s
 					level: bind { statementBox.parentVertex.level + 1}
@@ -140,8 +141,8 @@ public class CarneadesGraph extends Graph {
 				insert a into root.children;
 			}
 		}
-		//GC.p("Done updating nodes.");
-		//GC.p("# rootchildren: " + sizeof root.children);
+		//p("Done updating nodes.");
+		//p("# rootchildren: " + sizeof root.children);
 		return [argumentBoxes, statementBoxes];
 	}
 	

@@ -31,6 +31,9 @@ import java.net.URI;
 import Carneades.Argument.Argument;
 import Carneades.Argument.Argument.*;
 
+// import Constants
+import Carneades.Graph.GC.*;
+
 // helper issue class for file loading
 class Issue {
 	attribute statementId: String;
@@ -39,15 +42,13 @@ class Issue {
 	attribute standard: String;
 }
 
-public class ArgumentFile {
+var builder: DocumentBuilder = DocumentBuilder {
+	namespaceAware: true
+	validating: true
+	ignoringComments: false
+}
 
-	static attribute builder: DocumentBuilder = DocumentBuilder {
-		namespaceAware: true
-		validating: true
-		ignoringComments: false
-	}
-
-	public static function saveGraphToFile(argumentGraphs: ArgumentGraph[], file: File): Void {
+public var saveGraphToFile = function(argumentGraphs: ArgumentGraph[], file: File): Void {
 
 		var document = builder.createDocument();
 		
@@ -223,10 +224,10 @@ public class ArgumentFile {
 	}
 
 
-	/**
-	 * Load an array of model argument graphs from a file.
-	 */
-	public static function getGraphFromFile(file: File): ArgumentGraph[] {
+/**
+ * Load an array of model argument graphs from a file.
+ */
+public var getGraphFromFile = function(file: File): ArgumentGraph[] {
 
 		// Preliminary: Parse file and do some safety checking. Currently none yet.
 		var document = builder.parseFile(file);
@@ -404,10 +405,10 @@ public class ArgumentFile {
 		return argumentGraphs;
 	}
 
-	/**
-	 * Load graph from issue-based LKIF document.
-	 */
-	private static function getGraphFromLkifV1Document(document: Document): ArgumentGraph[] { 
+/**
+ * Load graph from issue-based LKIF document.
+ */
+var getGraphFromLkifV1Document = function(document: Document): ArgumentGraph[] { 
 		var argumentGraph: ArgumentGraph = ArgumentGraph {};
 		var agraph: Element = document.getElementsByTagName("argument-graph") [0];
 		var statements: Element[];
@@ -587,4 +588,4 @@ public class ArgumentFile {
 		return [argumentGraph];
 	}
 
-}
+

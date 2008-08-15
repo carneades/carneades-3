@@ -277,7 +277,12 @@
   </target>
 
   <target name="rwebstart" depends="jar, webstart">
-	<echo message="Executing from webstart jar ..." />
+	<echo message="Executing from unsigned webstart jar ..." />
+	<java jar="${gui.distdir}/webstart/Carneades.jar" fork="true"/>
+  </target>
+
+	  <target name="rwebstart_signed" depends="jar, webstart, websign">
+	<echo message="Executing from signed webstart jar ..." />
 	<java jar="${gui.distdir}/webstart/Carneades.jar" fork="true"/>
   </target>
 
@@ -290,7 +295,8 @@
         </exec>
   </target>
 
-  <target name="r" depends="rwebstart"/>
+  <target name="r" depends="rwebstart_signed"/>
+  <target name="rp" depends="rwebstart"/>
   
   <!-- webstart deployment target -->
   

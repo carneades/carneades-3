@@ -32,6 +32,7 @@ import Carneades.Argument.Argument.*;
 import Carneades.Graph.*;
 import Carneades.Graph.ElementList.*;
 import Carneades.Graph.Elements.Elements.*;
+import Carneades.Graph.GC.*;
 
 // Other Control Imports
 import Carneades.Control.Commands.*;
@@ -431,7 +432,7 @@ public class GraphControl {
 								argumentGraph: argumentGraph
 								statement: s as Statement
 							}
-						) != GC.AG_OK) { 
+						) != AG_OK) { 
 						//frame.alert("Argument cannot be inserted here.\nThe Graph would become cyclic.");
 					}
 				}
@@ -858,8 +859,8 @@ public class GraphControl {
 		var admissible: Boolean = true;
 		var id: String = "g";
 		var number: Integer = 1;
-		while ( graphIdTaken(id + number.toString()) ) { number ++; }
-		return id + number.toString();
+		while ( graphIdTaken("{id}{number.toString()}") ) { number ++; }
+		return "{id}{number.toString()}";
 	}
 
 	public function newGraph(): Void {
@@ -887,7 +888,7 @@ public class GraphControl {
 			}
 		};
 		graph.translateX = view.middleX;
-		graph.translateY = view.middleY - GC.yDistance;
+		graph.translateY = view.middleY - yDistance;
 		graph.update();
 		insert graph into graphs;
 		graph.layout.compose();
@@ -903,7 +904,7 @@ public class GraphControl {
 			}
 		};
 		graph.translateX = view.middleX;
-		graph.translateY = view.middleY - GC.yDistance;
+		graph.translateY = view.middleY - yDistance;
 		graph.update();
 		insert graph into graphs;
 		graph.layout.compose();
@@ -979,14 +980,14 @@ public class GraphControl {
 	// DEBUG PRINT FUNCTIONS
 
 	public function printSelected(): Void {
-		System.out.println("vertices: " + graph.selected);
-		System.out.println("models: " + graph.selected);
-		System.out.println("list:" + frame.list.list.selectedItem);
+		System.out.println("vertices: {graph.selected}");
+		System.out.println("models: {graph.selectedModels}");
+		System.out.println("list: {frame.list.list.selectedItem}");
 	}
 
 	public function printSizes(): Void {
-		System.out.println("view: " + view.width);
-		System.out.println("layout: " + graph.layout.width);
+		System.out.println("view: {view.width}");
+		System.out.println("layout: {graph.layout.width}");
 	}
 
 }

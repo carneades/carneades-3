@@ -31,6 +31,7 @@ import Carneades.Argument.Argument.*;
 
 // Other View Classes
 import Carneades.Graph.*;
+import Carneades.Graph.GC.*;
 import Carneades.Graph.Elements.Elements.*;
 
 // Abstract Controller Class for Interaction
@@ -109,15 +110,14 @@ public class GraphEdit extends SwingPanel {
 }
 
 public class EditPanel extends FlowPanel {
-	//override attribute background = GC.panelBackground;
+	//override attribute background = panelBackground;
 	override attribute alignment = HorizontalAlignment.LEFT;
-	override attribute width = GC.editWidth;
-	override attribute height = GC.editHeight;
+	override attribute width = editWidth;
+	override attribute height = editHeight;
 	override attribute visible = false;
 	protected attribute control: GraphControl;
 	public attribute argumentGraph: ArgumentGraph;
-	protected attribute editLabelWidth = bind GC.editLabelWidth;
-	protected attribute editComponentWidth = bind GC.editWidth - editLabelWidth - 20;
+	protected attribute editComponentWidth = bind editWidth - editLabelWidth - 20;
 
 }
 
@@ -127,15 +127,15 @@ public class StatementEditPanel extends EditPanel {
 	// General Components
 
 	private attribute idField: IdField = IdField {
-		editable: bind GC.idsEditable
-		preferredSize: [editComponentWidth, GC.textFieldHeight ]
+		editable: bind idsEditable
+		preferredSize: [editComponentWidth, textFieldHeight ]
 		action: function(): Void {
 			control.changeStatementId(statement, idField.text);
 		}
 	}
 	
 	private attribute contentField: ContentField = ContentField {
-		preferredSize: [ editComponentWidth, GC.textFieldHeight ]
+		preferredSize: [ editComponentWidth, textFieldHeight ]
 		action: function(): Void {
 			control.changeStatementWff(statement, contentField.text);
 		}
@@ -144,14 +144,14 @@ public class StatementEditPanel extends EditPanel {
 	private attribute acceptableBox: SwingCheckBox = CCheckBox {
 		text: "statement"
 		enabled: false
-		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
+		preferredSize: [ editWidth - editLabelWidth - 30, 20 ]
 		selected: bind statement.ok
 	}
 
 	private attribute compAcceptableBox: SwingCheckBox = CCheckBox {
 		text: "complement"
 		enabled: false
-		preferredSize: [ GC.editWidth - GC.editLabelWidth - 30, 20 ]
+		preferredSize: [ editWidth - editLabelWidth - 30, 20 ]
 		selected: bind statement.complementOk
 	}
 
@@ -289,7 +289,7 @@ public class StatementEditPanel extends EditPanel {
 	override attribute content = bind [ 
 										Label { text: "id ", preferredSize: [editLabelWidth, 20] }, idField, 
 										Label { text: "content ", preferredSize: [editLabelWidth, 20] }, contentField,
-										Label { text: "status ", preferredSize: [GC.editLabelWidth, 20] }, statedButton, 
+										Label { text: "status ", preferredSize: [editLabelWidth, 20] }, statedButton, 
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, questionedButton, 
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, assumedTrueButton, 
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, assumedFalseButton, 
@@ -335,15 +335,15 @@ public class ArgumentEditPanel extends EditPanel {
 	// Components
 
 	public attribute idField: IdField = IdField {
-		preferredSize: [ editComponentWidth, GC.textFieldHeight ]
-		editable: bind GC.idsEditable
+		preferredSize: [ editComponentWidth, textFieldHeight ]
+		editable: bind idsEditable
 		action: function(): Void {
 			control.changeArgumentId(argument, idField.text);
 		}
 	}
 	
 	private attribute titleField: ContentField = ContentField {
-		preferredSize: [ editComponentWidth, GC.textFieldHeight ]
+		preferredSize: [ editComponentWidth, textFieldHeight ]
 		action: function(): Void {
 			control.changeArgumentTitle(titleField.text, argument);
 		}
@@ -356,7 +356,7 @@ public class ArgumentEditPanel extends EditPanel {
 	}
 
 	private attribute schemeField: SchemeField = SchemeField {
-		preferredSize: [ editComponentWidth, GC.textFieldHeight ]
+		preferredSize: [ editComponentWidth, textFieldHeight ]
 		action: function(): Void {
 			control.changeArgumentScheme(argument, schemeField.text);
 		}
@@ -391,7 +391,7 @@ public class ArgumentEditPanel extends EditPanel {
 	}
 
 	private attribute weightNumber: SwingTextField = SwingTextField {
-		preferredSize: [ 40, GC.textFieldHeight ]
+		preferredSize: [ 40, textFieldHeight ]
 		editable: false
 		text: bind ".{(weightSlider.value).toString()}"
 	}
@@ -429,7 +429,7 @@ public class PremiseEditPanel extends EditPanel {
 
 	// Components
 	public attribute roleField: RoleField = RoleField {
-		preferredSize: [ editComponentWidth, GC.textFieldHeight ]
+		preferredSize: [ editComponentWidth, textFieldHeight ]
 		editable: true
 		action: function(): Void {
 			control.changePremiseRole(premise, roleField.text);
@@ -470,12 +470,12 @@ public class GraphEditPanel extends EditPanel {
 
 	// Components
 	private attribute idField: IdField = IdField {
-		editable: bind GC.idsEditable
-		preferredSize: [editComponentWidth, GC.textFieldHeight ]
+		editable: bind idsEditable
+		preferredSize: [editComponentWidth, textFieldHeight ]
 	}
 	
 	private attribute titleField: ContentField = ContentField {
-		preferredSize: [ editComponentWidth, GC.textFieldHeight ]
+		preferredSize: [ editComponentWidth, textFieldHeight ]
 		action: function(): Void {
 			control.changeGraphTitle(titleField.text, argumentGraph);
 		}
@@ -498,22 +498,22 @@ public class GraphEditPanel extends EditPanel {
 class IdField extends SwingTextField {
 	override attribute visible = true;
 	override attribute editable = false;
-	override attribute preferredSize = [GC.editWidth - 50, 20];
+	override attribute preferredSize = [editWidth - 50, 20];
 }
 
 class SchemeField extends SwingTextField {
 	override attribute visible = true;
-	override attribute preferredSize = [GC.editWidth - 50, 20];
+	override attribute preferredSize = [editWidth - 50, 20];
 }
 
 class ContentField extends SwingTextField {
 	override attribute editable = true;
-	override attribute preferredSize = [GC.editWidth - 80, 20];
+	override attribute preferredSize = [editWidth - 80, 20];
 }
 
 class RoleField extends SwingTextField {
 	override attribute editable = false;
-	override attribute preferredSize = [GC.editWidth - 40, 20];
+	override attribute preferredSize = [editWidth - 40, 20];
 }
 
 class BooleanBox extends ComboBox {
@@ -665,9 +665,9 @@ class WeightSlider extends SwingSlider {
 }
 
 class CCheckBox extends SwingCheckBox {
-	//override attribute background = GC.panelBackground;
+	//override attribute background = panelBackground;
 }
 
 class CRadioButton extends SwingRadioButton {
-	//override attribute background = GC.panelBackground;
+	//override attribute background = panelBackground;
 }

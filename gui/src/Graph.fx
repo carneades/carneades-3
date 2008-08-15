@@ -36,7 +36,7 @@ public class Graph extends CustomNode {
 
 	public function update() {}
 
-	public function create():Node {
+	override function create():Node {
 		Group {
 			content: bind [
 				vertices, 

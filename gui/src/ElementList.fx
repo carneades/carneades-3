@@ -30,6 +30,7 @@ import Carneades.Argument.Argument.*;
 
 // Other View Classes
 import Carneades.Graph.*;
+import Carneades.Graph.GC.*;
 import Carneades.Graph.Elements.Elements.*;
 
 // Abstract Controller Class for Interaction
@@ -38,7 +39,7 @@ import Carneades.Control.GraphControl;
 
 public class ElementList extends FlowPanel {
 
-	//override attribute background = GC.panelBackground;
+	//override attribute background = panelBackground;
 	override attribute alignment = HorizontalAlignment.LEFT;
 	private attribute addButtonText: String = "";
 	private attribute deleteButtonText: String = "";
@@ -47,7 +48,7 @@ public class ElementList extends FlowPanel {
 	attribute argumentGraph: ArgumentGraph;
 
 	attribute input: SwingTextField = SwingTextField {
-		preferredSize: bind [GC.editWidth-65, GC.textFieldHeight]
+		preferredSize: bind [editWidth-65, textFieldHeight]
 		visible: true
 	}
 

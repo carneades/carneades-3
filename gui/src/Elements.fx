@@ -35,6 +35,7 @@ import Carneades.Argument.Argument.*;
 
 // Other View Imports
 import Carneades.Graph.*;
+import Carneades.Graph.GC.*;
 
 // Abstract Controller Import
 import Carneades.Control.GraphControl;
@@ -54,7 +55,7 @@ public abstract class ArgumentElement extends Vertex {
 					y: bind y - (height / 2) - 5
 					width: bind width + 10
 					height: bind height + 10
-					stroke: bind {if (control.dragging) GC.dragColor else GC.selectionColor};
+					stroke: bind {if (control.dragging) dragColor else selectionColor};
 					strokeWidth: 2
 					// todo: the line below causes the Pierson v Post example to crash performance.
 					// This must be a runtime issue.
@@ -66,19 +67,19 @@ public abstract class ArgumentElement extends Vertex {
 		centerY: bind y
 		radius: 3
 		fill: Color.RED
-		visible: bind GC.drawDebug
+		visible: bind drawDebug
 	}
 
 }
 
 public class ArgumentBox extends ArgumentElement {
 	public attribute argument: Argument;
-	override attribute height = GC.argumentCircleDefaultRadius * 2;
-	override attribute defaultWidth = GC.argumentCircleDefaultRadius * 2;
+	override attribute height = argumentCircleDefaultRadius * 2;
+	override attribute defaultWidth = argumentCircleDefaultRadius * 2;
 	override attribute scaleWithText = false;
 	override attribute caption = bind argument.id;
 	override attribute fill = bind {if (argument.ok) Color.LIGHTGREY else Color.WHITE};
-	override attribute bottomBrink = GC.argumentBoxBottomBrink;
+	override attribute bottomBrink = argumentBoxBottomBrink;
 
 	override attribute text = Text {
 					content: bind { 
@@ -95,8 +96,8 @@ public class ArgumentBox extends ArgumentElement {
 					// The text Y coordinate positioning is dirty as the text currently lacks a currentheight attribute
 					y: bind y + (text.font.size / 3)
 					font: Font {
-			/*size: { if ((argument.conclusion.standard) instanceof BestArgument) GC.canvasFontSize 
-			  else (GC.canvasFontSize + 10) }*/
+			/*size: { if ((argument.conclusion.standard) instanceof BestArgument) canvasFontSize 
+			  else (canvasFontSize + 10) }*/
 						style: FontStyle.BOLD
 					}
 				} // Text
@@ -104,12 +105,12 @@ public class ArgumentBox extends ArgumentElement {
 	private attribute mainCircle: Circle = Circle {
 		centerX: bind x
 		centerY: bind y
-		radius: bind GC.argumentCircleDefaultRadius
+		radius: bind argumentCircleDefaultRadius
 
 		fill: bind {
 			if (not argument.ok) Color.WHITE
 			else {
-				if (not argument.pro) GC.argumentConColor else GC.argumentProColor
+				if (not argument.pro) argumentConColor else argumentProColor
 			}
 		}; 
 		
@@ -117,12 +118,12 @@ public class ArgumentBox extends ArgumentElement {
 		blocksMouse: true
 
 		effect: { 
-			if (GC.drawShadows) {
+			if (drawShadows) {
 				DropShadow {
-					color: bind GC.shadowColor
-					offsetX: bind GC.xShadowShift
-					offsetY: bind GC.yShadowShift
-					radius: bind GC.shadowBlurRadius
+					color: bind shadowColor
+					offsetX: bind xShadowShift
+					offsetY: bind yShadowShift
+					radius: bind shadowBlurRadius
 				}
 			} else null
 		}
@@ -133,7 +134,7 @@ public class ArgumentBox extends ArgumentElement {
 			selected = true;
 			control.processSelection();
 
-			if (GC.debug) {
+			if (debug) {
 				print();
 			}
 		}
@@ -158,14 +159,14 @@ public class ArgumentBox extends ArgumentElement {
 	override attribute selection = Circle {
 		centerX: bind x 
 		centerY: bind y
-		radius: GC.argumentCircleDefaultRadius + 5
-		stroke: bind {if (control.dragging) GC.dragColor else GC.selectionColor};
+		radius: argumentCircleDefaultRadius + 5
+		stroke: bind {if (control.dragging) dragColor else selectionColor};
 		strokeWidth: 2
 		visible: bind selected
 	} // selection circle
 
 
-	public function create():Node {
+	override function create():Node {
 		Group {
 			content: [
 				mainCircle, 
@@ -180,18 +181,18 @@ public class ArgumentBox extends ArgumentElement {
 public class StatementBox extends ArgumentElement {
 	public attribute statement: Statement;
 	override attribute scaleWithText = false;
-	override attribute defaultWidth = GC.statementBoxDefaultWidth;
-	override attribute bottomBrink = GC.statementBoxBottomBrink;
-	override attribute caption = bind { if (statement.wff.length() < GC.numDisplayedChars) statement.wff
-										else "{statement.wff.substring(0, GC.numDisplayedChars-1)}..."};
+	override attribute defaultWidth = statementBoxDefaultWidth;
+	override attribute bottomBrink = statementBoxBottomBrink;
+	override attribute caption = bind { if (statement.wff.length() < numDisplayedChars) statement.wff
+										else "{statement.wff.substring(0, numDisplayedChars-1)}..."};
 	private attribute status: String = bind statement.getBoundStatus();
 	private attribute statusColor = bind { 
-		if (status == "stated") GC.statusStatedColor
-		else if (status == "assumed true") GC.statusAssumedTrueColor
-		else if (status == "assumed false") GC.statusAssumedFalseColor
-		else if (status == "rejected") GC.statusRejectedColor
-		else if (status == "accepted") GC.statusAcceptedColor
-		else /*if (status == "questioned")*/ GC.statusQuestionedColor
+		if (status == "stated") statusStatedColor
+		else if (status == "assumed true") statusAssumedTrueColor
+		else if (status == "assumed false") statusAssumedFalseColor
+		else if (status == "rejected") statusRejectedColor
+		else if (status == "accepted") statusAcceptedColor
+		else /*if (status == "questioned")*/ statusQuestionedColor
 	}
 
 	attribute mainRect: Rectangle = Rectangle {
@@ -199,17 +200,17 @@ public class StatementBox extends ArgumentElement {
 					y: bind y - (height / 2)
 					width: bind width 
 					height: bind height
-					fill: bind { if (GC.fillStatements) statusColor else GC.defaultBoxFill }
-					stroke: bind { if (GC.fillStatements) Color.BLACK else statusColor }
+					fill: bind { if (fillStatements) statusColor else defaultBoxFill }
+					stroke: bind { if (fillStatements) Color.BLACK else statusColor }
 					strokeWidth: 1
 
 					effect: { 
-						if (GC.drawShadows) {
+						if (drawShadows) {
 							DropShadow {
-								color: bind GC.shadowColor
-								offsetX: bind GC.xShadowShift
-								offsetY: bind GC.yShadowShift
-								radius: bind GC.shadowBlurRadius
+								color: bind shadowColor
+								offsetX: bind xShadowShift
+								offsetY: bind yShadowShift
+								radius: bind shadowBlurRadius
 							}
 						} else null
 					}
@@ -219,7 +220,7 @@ public class StatementBox extends ArgumentElement {
 						selected = true;
 						control.processSelection();
 						
-						if (GC.debug) {
+						if (debug) {
 							print();
 						}
 					}
@@ -242,45 +243,45 @@ public class StatementBox extends ArgumentElement {
 				} // main rect
 
 	private attribute acceptableCircle: Circle = Circle {
-		centerX: bind x + (this.width / 2) + GC.acceptableCirclePadding + (GC.acceptableCircleWidth / 2)
-		centerY: bind y - (GC.acceptableCirclePadding / 2) - (GC.acceptableCircleWidth / 2)
-		radius: bind (GC.acceptableCircleWidth / 2)
-		fill: bind { if (statement.ok) GC.statusAcceptedColor else null }
+		centerX: bind x + (this.width / 2) + acceptableCirclePadding + (acceptableCircleWidth / 2)
+		centerY: bind y - (acceptableCirclePadding / 2) - (acceptableCircleWidth / 2)
+		radius: bind (acceptableCircleWidth / 2)
+		fill: bind { if (statement.ok) statusAcceptedColor else null }
 		strokeWidth: 1
 		stroke: Color.BLACK
 
 		effect: { 
-			if (GC.drawShadows) {
+			if (drawShadows) {
 				DropShadow {
-					color: bind GC.shadowColor
-					offsetX: bind GC.xShadowShift
-					offsetY: bind GC.yShadowShift
-					radius: bind GC.shadowBlurRadius
+					color: bind shadowColor
+					offsetX: bind xShadowShift
+					offsetY: bind yShadowShift
+					radius: bind shadowBlurRadius
 				}
 			} else null
 		}
 	}
 
 	private attribute acceptableCompCircle: Circle = Circle {
-		centerX: bind x + (this.width / 2) + GC.acceptableCirclePadding + (GC.acceptableCircleWidth / 2)
-		centerY: bind y + (GC.acceptableCirclePadding / 2) + (GC.acceptableCircleWidth / 2)
-		radius: bind (GC.acceptableCircleWidth / 2)
-		fill: bind { if (statement.complementOk) GC.statusRejectedColor else null }
+		centerX: bind x + (this.width / 2) + acceptableCirclePadding + (acceptableCircleWidth / 2)
+		centerY: bind y + (acceptableCirclePadding / 2) + (acceptableCircleWidth / 2)
+		radius: bind (acceptableCircleWidth / 2)
+		fill: bind { if (statement.complementOk) statusRejectedColor else null }
 		strokeWidth: 1
 		stroke: Color.BLACK
 		effect: { 
-				if (GC.drawShadows) {
+				if (drawShadows) {
 					DropShadow {
-					color: bind GC.shadowColor
-					offsetX: bind GC.xShadowShift
-					offsetY: bind GC.yShadowShift
-					radius: bind GC.shadowBlurRadius
+					color: bind shadowColor
+					offsetX: bind xShadowShift
+					offsetY: bind yShadowShift
+					radius: bind shadowBlurRadius
 				}
 			} else null
 		}
 	}
 
-	public function create():Node {
+	override function create():Node {
 		Group {
 			content: [
 				mainRect,
@@ -305,7 +306,7 @@ public class Arrow extends Edge {
 		setAngle();
 	}
 
-	public function create():Node {
+	override function create():Node {
 		Group {
 			content: [
 				line,
@@ -377,7 +378,7 @@ public class PremiseLink extends Edge {
 		}
 	}
 
-	public function create():Node {
+	override function create():Node {
 		Group {
 			content: [
 				line, negation
