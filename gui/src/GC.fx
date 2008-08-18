@@ -92,7 +92,7 @@ public var displayAcceptableCircles: Boolean = true;
 public var acceptableCircleWidth: Integer = 15;
 public var acceptableCirclePadding: Integer = 5;
 
-// Argument Boxes
+// Argument Boxes. They were originally boxes, hence the name.
 public var argumentBoxDefaultWidth: Integer = 60;
 public var argumentBoxBottomBrink: Integer = 3;
 public var argumentCircleDefaultRadius: Integer = 20;
@@ -104,22 +104,54 @@ public var appWidth: Integer = 1000;
 public var appHeight: Integer = 720;
 
 // Layout constants
-public var xOffset: Integer = appWidth / 2;
-public var yOffset: Integer = 0;
+
+/**
+ * The horizontal distance between neighboring tree nodes.
+ */
 public var xDistance: Integer = bind acceptableCircleWidth + (2 * acceptableCirclePadding) + 10;
+
+/**
+ * The vertical distance between the layers of the tree.
+ */
 public var yDistance: Integer = 50;
 
-var drawNonArguedStatements = false;
-
 // Graph validation constants
+
+/**
+ * Constant for functions to return if their operation performed valid.
+ */
 public var AG_OK: Number = 1;
+
+/**
+ * Constant for validation functions to return if graph contains a cycle.
+ */
 public var AG_CYCLE: Number = 2;
+
+/**
+ * Constants for validation functions to return if graph contains a double id.
+ */
 public var AG_DOUBLE_ID: Number = 3;
 
 // Command execution constants
+
+/**
+ * Constant for commands to return if their execution was successful.
+ */
 public var C_OK: Number = 0;
+
+/**
+ * Constant for commands to return if their execution was not successful.
+ */
 public var C_ERROR: Number = 1;
+
+/**
+ * Constant for commands to return if no undo is possible.
+ */
 public var C_NO_UNDO: Number = 2;
+
+/**
+ * Constants for commands if no further redo is possible.
+ */
 public var C_LATEST_COMMAND: Number = 3;
 
 // window layout onstants
@@ -140,9 +172,15 @@ public var idsEditable: Boolean = false;
 public var debug: Boolean = false;
 
 // helper functions
+
+/**
+ * Shortcut print function for debug purposes.
+ */
 public var p = function(s: String) { System.out.println(s)}
 
-// HELPER FUNCTIONS plus public variables
+/**
+ * Function returning true if a certain element is contained in the list or not. This function checks for equality by comparing the pointers to the objects, not the object content itself.
+ */
 public var contains = function(list: Object[], element: Object): Boolean {
 	for (i in list) {
 		if (i == element) { return true; }

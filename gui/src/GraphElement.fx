@@ -21,12 +21,29 @@ package Carneades.Graph;
 import javafx.scene.CustomNode;
 import Carneades.Graph.*;
 
+/**
+ * Static variable counting all GraphElement instances so there are unique indices distributed.
+ */
 public var currentIndex: Integer = 0;
 
+/**
+ * Base class for every view element that is involved in drawing the view argument graph.
+ */
 public abstract class GraphElement extends CustomNode {
+
+	/**
+	 * Has the element been selected by the user?
+	 */
 	public attribute selected: Boolean = false;
+
+	/**
+	 * Unique index of the element.
+	 */
 	public attribute index: Integer = newIndex();
 
+	/**
+	 * Produce a new index value for the component. Should be made static.
+	 */
 	protected function newIndex(): Integer {
 		currentIndex++;
 		return currentIndex;

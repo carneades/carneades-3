@@ -26,14 +26,49 @@ import java.lang.Object;
 
 import Carneades.Control.GraphControl;
 
+/**
+ * The base class for view graphs.
+ */
 public class Graph extends CustomNode {
+
+	/**
+	 * The corresponding control object of the application.
+	 */
 	public attribute control: GraphControl;
+
+	/**
+	 * The sequence of vertices that make up the graph.
+	 */
 	public attribute vertices: Vertex[];
+
+	/**
+	 * The graph's root vertex. Note that this usually is an invisible node and does not correspond to a model object.
+	 */
+	public attribute root: Vertex;
+
+	/**
+	 * The edges connecting the vertices.
+	 */
 	public attribute edges: Edge[];
+
+	/**
+	 * The sequence of selected model objects.
+	 */
 	public attribute selectedModels: Object[] = [];
+
+	/**
+	 * The sequence of selected view objects.
+	 */
 	public attribute selected: GraphElement[] = [];
+
+	/**
+	 * The layout which is used to display the graph.
+	 */
 	public attribute layout: GraphLayout;
 
+	/**
+	 * The function which is called to create a view graph from a model graph.
+	 */
 	public function update() {}
 
 	override function create():Node {
@@ -45,14 +80,18 @@ public class Graph extends CustomNode {
 		} // Group
 	} // composeNode
 
-	public attribute root: Vertex;
-
+	/**
+	 * Unselects all model and view objects.
+	 */
 	public function unSelectAll(): Void {
 		for (i in vertices) i.selected = false;
 		for (i in edges) i.selected = false;
 		selected = [];
 	}
 
+	/**
+	 * Print all vertex information to the console.
+	 */
 	public function print() {
 		for (v in vertices) {
 			v.print();;
