@@ -18,34 +18,79 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package Carneades.Graph;
 
+// general imports
 import javafx.ext.swing.*;
 import javafx.input.*;
 import javafx.animation.*;
 import javafx.scene.geometry.*;
 import javafx.scene.paint.*;
 import javafx.scene.*;
+import java.lang.System;
+
+// view imports
 import Carneades.Graph.*;
 import Carneades.Graph.GC.*;
 import Carneades.Graph.Elements.Elements.*;
-import java.lang.System;
 
-// Abstract Controller Class for Interaction
+// control imports
 import Carneades.Control.GraphControl;
 
+/**
+ * The top node class for the scenegraph-based display of the graphs.
+ */
 public class GraphView extends CustomNode {
+
+	/**
+	 * The X coordinate of the point on which the view focuses during shifting and zooming.
+	 */
 	private attribute focusX: Number = middleX;
+
+	/**
+	 * The Y coordinate of the point on which the view focuses during shifting and zooming.
+	 */
 	private attribute focusY: Number = middleY;
+
+	/**
+	 * The canvas middle point X coordinate.
+	 */
 	public attribute middleX: Number = bind this.width/2 on replace { graph.translateX = middleX };
+
+	/**
+	 * The canvas middle point Y coordinate.
+	 */
 	public attribute middleY: Number = bind this.height/2 on replace { graph.translateY = middleY };
+
 	private attribute tempX: Number = 0;
 	private attribute tempY: Number = 0;
 	
+	/**
+	 * The currently displayed view graph object.
+	 */
 	public attribute graph: Graph;
+
+	/**
+	 * The width of the view.
+	 */
 	public attribute width: Number;
+
+	/**
+	 * The height of the view.
+	 */
 	public attribute height: Number;
+
+	/**
+	 * The layout of the graph. Bound and read-only.
+	 */
 	public attribute layout: GraphLayout = bind graph.layout;
+
+	/**
+	 * The application's control object.
+	 */
 	public attribute control: GraphControl;
 
+	/**
+	 * The current zoom factor. It has a replace trigger on it that checks for bounds (current limits 0.1-2.0) and dynamically zooms the view by scaling the view graph.
+	 */
 	public attribute zoomFactor: Number = 1.0 on replace {
 		if (zoomFactor < 0.1) { zoomFactor = 0.1 }
 		if (zoomFactor > 2.0) { zoomFactor = 2.0 }
@@ -144,15 +189,24 @@ public class GraphView extends CustomNode {
 		}
 	}
 
+	/**
+	 * Zoom function for the mouse that takes a parameter in mouse wheel steps.
+	 */
 	public function zoom(steps: Number): Void {
 		zoomFactor -= (steps / 20);
 	}
 
+	/**
+	 * Recalculates the middle point of the canvas. Is called upon resizing the frame.
+	 */
 	public function reset(): Void {
 		graph.translateX = middleX;
 		graph.translateY = middleY - yDistance;
 	}
 
+	/**
+	 * Shifts the focus to by a certain number of points on the X and Y axis, respectively. It does a google-earth type zooming shift to it. The used time can be influenced by setting the zoomTime constant in GC.fx.
+	 */
 	public function focusOn(x: Number, y: Number): Void {
 		var oldXShift: Number = graph.root.xShift;
 		var oldYShift: Number = graph.root.yShift;
@@ -190,6 +244,9 @@ public class GraphView extends CustomNode {
 		t.start();
 	}
 
+	/**
+	 * Returns true if a certain graph element is currently visible in the view area. The relevant factor here is the middle point of the element.
+	 */
 	public function isVisible(e: GraphElement): Boolean {
 		var visible: Boolean = true;
 		if (e instanceof StatementBox) {

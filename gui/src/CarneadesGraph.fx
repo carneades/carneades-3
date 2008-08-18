@@ -33,13 +33,21 @@ import Carneades.Argument.Argument.*;
 // import needed control packages
 import Carneades.Control.Commands.CommandControl;
 
+/**
+ * The view graph class displaying a model graph object.
+ */
 public class CarneadesGraph extends Graph {
 
+	/**
+	 * The command control and stack object associated with the graph. Each graph has its own commands object so that each graph can have its own undo history.
+	 */
 	public attribute commands: CommandControl = CommandControl {
 		control: bind control
 	}
 	
-	// this attribute is the binding to the model
+	/**
+	 * The model graph object displayed through the CarneadesGraph object.
+	 */
 	public attribute argumentGraph: ArgumentGraph;
 
 	// the invisible root node
@@ -199,8 +207,4 @@ public class CarneadesGraph extends Graph {
 		}
 		return links;
 	}
-
-
-	// OTHER FUNCTIONS
-
 }
