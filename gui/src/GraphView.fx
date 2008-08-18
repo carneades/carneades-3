@@ -99,7 +99,7 @@ public class GraphView extends CustomNode {
 	};
 
 	// background layer
-	attribute background: Rectangle = Rectangle {
+	private attribute background: Rectangle = Rectangle {
 		x: 0
 		y: 0
 		height: bind this.height
@@ -109,7 +109,7 @@ public class GraphView extends CustomNode {
 	}
 
 	// sensor object to detect mouse events outside of nodes.
-	attribute backSensor: Rectangle = Rectangle {
+	private attribute backSensor: Rectangle = Rectangle {
 		x: 0
 		y: 0
 		height: bind this.height
@@ -149,7 +149,7 @@ public class GraphView extends CustomNode {
 				graph.root.xShift = tempX + e.getDragX();
 				graph.root.yShift = tempY + e.getDragY();
 
-				// do bounds check - the vertical check only works for the treelayout as of now.
+				// do bounds check - the vertical check only works for the treelayout as of now. This should actually go into the layout classes.
 				if (graph.root.xShift > (layout.width / 2)) 
 					{ graph.root.xShift = (layout.width / 2)}
 				if (graph.root.xShift < (-layout.width / 2)) 
@@ -166,7 +166,7 @@ public class GraphView extends CustomNode {
 		}
 	}
 
-	attribute dragSymbol = Rectangle {
+	private attribute dragSymbol = Rectangle {
 		x: 0
 		y: 0
 		width: 20
@@ -175,7 +175,7 @@ public class GraphView extends CustomNode {
 		visible: bind control.dragging
 	}
 
-	attribute middlePoint = Circle {
+	private attribute middlePoint = Circle {
 		centerX: bind middleX
 		centerY: bind middleY
 		radius: 5

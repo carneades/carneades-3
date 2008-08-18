@@ -37,11 +37,19 @@ import Carneades.Argument.Argument.*;
 import Carneades.Graph.*;
 import Carneades.Graph.GC.*;
 
-// Abstract Controller Import
+// control import
 import Carneades.Control.GraphControl;
 
+/**
+ * Base class for model-specific graph vertices.
+ */
 public abstract class ArgumentElement extends Vertex {
+
+	/**
+	 * The filler color.
+	 */
 	attribute fill: Color = Color.WHITE;
+
 	override attribute text = Text {
 					content: bind caption
 					verticalAlignment: VerticalAlignment.TOP
@@ -50,7 +58,7 @@ public abstract class ArgumentElement extends Vertex {
 					y: bind y
 				} // Text
 
-	attribute selection: Node = Rectangle {
+	private attribute selection: Node = Rectangle {
 					x: bind x - (width / 2) - 5
 					y: bind y - (height / 2) - 5
 					width: bind width + 10
@@ -62,7 +70,7 @@ public abstract class ArgumentElement extends Vertex {
 					visible: bind selected
 				} // selection rect
 	
-	attribute middlePoint: Circle = Circle {
+	private attribute middlePoint: Circle = Circle {
 		centerX: bind x
 		centerY: bind y
 		radius: 3
@@ -72,8 +80,16 @@ public abstract class ArgumentElement extends Vertex {
 
 }
 
+/**
+ * The argument view object. Currently it is a circle, but it used to be a box, hence the name.
+ */
 public class ArgumentBox extends ArgumentElement {
+
+	/**
+	 * The represented model argument object.
+	 */
 	public attribute argument: Argument;
+
 	override attribute height = argumentCircleDefaultRadius * 2;
 	override attribute defaultWidth = argumentCircleDefaultRadius * 2;
 	override attribute scaleWithText = false;
@@ -178,8 +194,16 @@ public class ArgumentBox extends ArgumentElement {
 	} // composeNode
 }
 
+/**
+ * The statement view object.
+ */
 public class StatementBox extends ArgumentElement {
+
+	/**
+	 * The represented model statement.
+	 */
 	public attribute statement: Statement;
+
 	override attribute scaleWithText = false;
 	override attribute defaultWidth = statementBoxDefaultWidth;
 	override attribute bottomBrink = statementBoxBottomBrink;
@@ -195,7 +219,7 @@ public class StatementBox extends ArgumentElement {
 		else /*if (status == "questioned")*/ statusQuestionedColor
 	}
 
-	attribute mainRect: Rectangle = Rectangle {
+	private attribute mainRect: Rectangle = Rectangle {
 					x: bind x - (width / 2)
 					y: bind y - (height / 2)
 					width: bind width 
@@ -295,10 +319,26 @@ public class StatementBox extends ArgumentElement {
 	} // composeNode
 }
 
+/**
+ * Class for edges that have arrow heads.
+ */
 public class Arrow extends Edge {
-	attribute headSize: Number = 10;
-	attribute heading: Number = 0; // 0 means it points right, 1 it points left, straight up or down does not matter
-	attribute fill: Color = Color.BLACK;
+
+	/**
+	 * The size of the arrowhead in side length pixels.
+	 */
+	public attribute headSize: Number = 10;
+
+	/**
+	 * 0 means it points right, 1 it points left, straight up or down does not matter
+	 */
+	public attribute heading: Number = 0; 
+
+	/**
+	 * The color to fill the arrowhead with.
+	 */
+	public attribute fill: Color = Color.BLACK;
+
 	override attribute stroke = Color.BLACK;
 	override attribute turnHead = true;
 
@@ -325,31 +365,64 @@ public class Arrow extends Edge {
 	}
 }
 
+/**
+ * Argument link specific arrow class to set base attributes.
+ */
 public class ArgumentLink extends Arrow {
 	override attribute headSize = 10;
 }
 
+/**
+ * Contra argument link specific arrow class to set base attributes.
+ */
 public class ConArgumentLink extends ArgumentLink {
 	override attribute yHeadShift = bind headSize / 3;
 	override attribute fill = Color.WHITE
 }
 
+/**
+ * Pro argument link specific arrow class to set base attributes.
+ */
 public class ProArgumentLink extends ArgumentLink {
 	override attribute yHeadShift = bind headSize / 3;
 	override attribute fill = Color.BLACK
 }
 
+/**
+ * Class for premise link edges.
+ */
 public class PremiseLink extends Edge {
+
+	/**
+	 * The represented model premise object.
+	 */
 	public attribute premise: Premise;
-	attribute radius: Number = 5;
-	attribute negWidth: Number = 10;
+
+	/**
+	 * The radius of the head at the edges end. Deprecated! Was used in older design of assumptions and exceptions.
+	 */
+	public attribute radius: Number = 5;
+
+	/**
+	 * The width of the negation bar.
+	 */
+	public attribute negWidth: Number = 10;
+
+	/**
+	 * The stroke width of the negation bar.
+	 */
 	attribute negStrokeWidth: Number = 2;
+
 	override attribute dashed = bind premise.exception;
 
+	/**
+	 * Shall the negation bar be drawn?
+	 */
 	public attribute negated: Boolean = false;
+
 	override attribute turnHead = bind negated;
 	
-	attribute negation: Line = Line {
+	private attribute negation: Line = Line {
 					startX: bind x2 - Math.max(yHeadShift * 2, negWidth)
 					startY: bind y2 - (negWidth / 2) 
 					endX: bind x2 - Math.max(yHeadShift * 2, negWidth)
@@ -361,7 +434,7 @@ public class PremiseLink extends Edge {
 				}
 
 	// exceptionhead currently not in content because of dashed lines
-	attribute exceptionHead: Circle = Circle {
+	private attribute exceptionHead: Circle = Circle {
    				     centerX: bind x2
    				     centerY: bind y2
    	    			 radius: bind radius
@@ -370,6 +443,9 @@ public class PremiseLink extends Edge {
 					 visible: bind premise.exception
     			}
 
+	/**
+	 * Switches the negation bar on and off. Used to update the view more efficiently as the tree layout does not need to be updated.
+	 */
 	public function negate() {
 		if (negated) {
 			negated = false;
