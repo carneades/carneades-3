@@ -37,11 +37,23 @@ import Carneades.Graph.GC.*;
 import Carneades.Control.GraphControl;
 
 /**
- * 
+ * The panel containing the argument graph list on the left side of the application.
  */
 public class GraphListPanel extends SwingPanel {
+
+	/**
+	 * The sequence of model argument graphs to list.
+	 */
 	public attribute argumentGraphs: ArgumentGraph[] = [];
+
+	/**
+	 * The application's control object.
+	 */
 	public attribute control: GraphControl;
+
+	/**
+	 * The actual list component.
+	 */
 	public attribute list: GraphList = GraphList {
 		x: 5
 		y: 30
@@ -76,9 +88,20 @@ public class GraphListPanel extends SwingPanel {
 	]
 }
 
+/**
+ * Swing list subclass to display the list of available argument graphs.
+ */
 public class GraphList extends List {
+	/**
+	 * The sequence of argument graphs to be listed.
+	 */
 	public attribute argumentGraphs: ArgumentGraph[] = [];
+
+	/**
+	 * The application's control object.
+	 */
 	public attribute control: GraphControl;
+
 	override attribute selectedItem = null on replace { 
 		if (selectedItem != null) {
 			control.switchToGraph((selectedItem as ArgumentGraphItem).argumentGraph); 
@@ -90,7 +113,15 @@ public class GraphList extends List {
 	};
 }
 
+/**
+ * Class for the items of the graph list.
+ */
 class ArgumentGraphItem extends ListItem {
+	
+	/**
+	 * The model argument graph represented by the item.
+	 */
 	public attribute argumentGraph: ArgumentGraph;
+
 	override attribute text = bind { if (argumentGraph.title != "") argumentGraph.title else argumentGraph.id };
 }
