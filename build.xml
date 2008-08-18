@@ -404,7 +404,7 @@
 		 excludes="webstart.xml, **/*.class, **/Carneades.jar, **/CarneadesCore.jar, **/dist/**"/>
   </target>
   
-  <target name="deploy" depends="version, examples, webstart, websign, sources"/>
+  <target name="deploy" depends="jar, version, examples, webstart, websign, sources"/>
   
   <target name="full" depends="compile, deploy, doc">
   </target>

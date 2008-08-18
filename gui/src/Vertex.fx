@@ -41,6 +41,11 @@ import Carneades.Graph.GC.*;
 public class Vertex extends GraphElement {
 
 	/**
+	 * The application's control object.
+	 */
+	public attribute control: GraphControl;
+
+	/**
 	 * The title of the vertex, if displayed.
 	 */
 	attribute caption = "";
@@ -107,8 +112,6 @@ public class Vertex extends GraphElement {
 	attribute leftSTOutline: Number;
 	attribute rightSTOutline: Number;
 	attribute bottomBrink: Number = 0;
-
-	attribute control: GraphControl;
 	
 	attribute text: Text = Text {
 					content: bind caption
