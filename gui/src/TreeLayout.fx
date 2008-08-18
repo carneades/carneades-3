@@ -25,6 +25,9 @@ import Carneades.Graph.GC.*;
 import java.lang.System;
 import java.lang.Math;
 
+/**
+ * A graph layout that displays the argument graph as an ordinary top-down tree.
+ */
 public class TreeLayout extends GraphLayout {
 	attribute root: Vertex;
 	
@@ -277,15 +280,11 @@ public class TreeLayout extends GraphLayout {
 		root = roots [0];
 			
 		// set graph priorities for drawing the nodes in order
-		//for (r in roots) { setPriorities(r); }
 		setPriorities(root);
 			
 		// do the main tree vertex layout
 		// First Traversal: determine tree sizes
-		//System.out.println("First Traversal");
 		treeSize(getBottomLeft(root));
-		// Second Traversal: Position things
-		//System.out.println("Second Traversal");
 		position(root);
 			
 		// adjust layout according to the offset
@@ -293,17 +292,6 @@ public class TreeLayout extends GraphLayout {
 						
 		layoutEdges();
 				
-		// Debug sandbox ...
-		//
-		//if (d) {
-		//for (i in graph.vertices) p(i.caption + " width: " + i.width);
-		//} // if (d)
-
-		//p("Yet another layout ...");
-
-		//System.out.println("Layout finished");
-		//System.out.println("Graph Width: " + graph.width + " / Graph height: " + graph.height);
-		
 		return graph;
 	}
 }

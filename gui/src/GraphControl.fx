@@ -84,6 +84,9 @@ public class GraphControl {
 	 */
 	public attribute graph: CarneadesGraph;
 
+	/**
+	 * The command administering unit of the currently displayed graph.
+	 */
 	private attribute commands: CommandControl = bind graph.commands;
 
 	// !!! -> This should be moved into the graph class!
@@ -111,12 +114,18 @@ public class GraphControl {
 	public attribute selectedStatementEditable: Boolean = false;
 	public attribute selectedPremiseEditable: Boolean = false;
 
+	/**
+	 * Is the user just dragging something over something else?
+	 */
 	public attribute draggingOver = null;
 
 	public attribute currentFile: File = null;
 	public attribute fileChanged: Boolean = true;
 	public attribute fileLoaded: Boolean = bind currentFile != null;
 
+	/**
+	 * Set the object the users currently drags something over. Should be called by all view obects receiving dragging actions in their onMouseEnter/onMouseLeave methods.
+	 */
 	public function setDraggingOver(thing): Void { draggingOver = thing; };
 
 	// SELECTION FUNCTIONS
@@ -137,6 +146,9 @@ public class GraphControl {
 		return { (sizeof graph.selected == 1) } 
 	}
 
+	/**
+	 * Centrally computes the user action and updates all needed values, sequences and view components. Should be called whenever some selection has taken place.
+	 */
 	public function processSelection(): Void {
 		
 		// update graph selection
@@ -184,6 +196,9 @@ public class GraphControl {
 		if (graph.selected != [] and not view.isVisible(graph.selected[0])) { focusOnSelected(); }
 	}
 
+	/**
+	 * Unselects view and lists.
+	 */
 	public function unSelectAll(): Void { 
 		frame.list.list.selectedItem = null;
 		unSelectGraph();
@@ -192,35 +207,56 @@ public class GraphControl {
 		updateView();
 	}
 
+	/**
+	 * Unselects the graph view only.
+	 */
 	public function unSelectGraph(): Void {
 		frame.graph.unSelectAll();
 		graph.selectedModels = [];
 	}
 
+	/**
+	 * Unselects the statement list.
+	 */
 	public function unSelectList(): Void {
 		frame.list.list.selectedItem = null;
 		graph.selectedModels = [];
 	}
 
+	/**
+	 * Unselects the graph list.
+	 */
 	public function unSelectGraphList(): Void {
 		frame.graphList.list.selectedItem = null;
 		graph.selectedModels = [];
 	}
 
+	/**
+	 * Returns the selected view object.
+	 */
 	public function getSelected(): Object[] {
 		// update Graph selection
 		return graph.selected;
 	}
 
+	/**
+	 * Returns the selected model object.
+	 */
 	public function getSelectedModel(): Object[] {
 		// update Graph selection
 		return graph.selectedModels;
 	}
 
+	/**
+	 * Selects a certain model object. No automatic unselect is being done before.
+	 */
 	public function selectModel(m: Object) {
 		insert m into graph.selectedModels;
 	}
 
+	/**
+	 * Focus the view on the selected view object.
+	 */
 	public function focusOnSelected() {
 		var selected: GraphElement = getSelected()[0] as GraphElement;
 		if (selected instanceof Vertex) {
@@ -228,6 +264,9 @@ public class GraphControl {
 		}
 	}
 	
+	/**
+	 * Switch the view to another argument graph.
+	 */
 	public function switchToGraph(a: ArgumentGraph) {
 		System.out.println("called");
 		graph = (for (g in graphs where (g as CarneadesGraph).argumentGraph == a) { g }) [0];
@@ -303,16 +342,25 @@ public class GraphControl {
 		frame.list.update()
 	}
 
+	/**
+	 * Do a global view and controls update.
+	 */
 	public function updateAll() {
 		update.start();
 	}
 
+	/**
+	 * Perform an undo action.
+	 */
 	public function undo(): Number {
 		var result = commands.undo();
 		updateAll();
 		return result;
 	}
 	
+	/**
+	 * Perform a redo action.
+	 */
 	public function redo(): Number {
 		var result = commands.redo();
 		updateAll();
@@ -323,12 +371,21 @@ public class GraphControl {
 
 	// DRAGGING FUNCTIONS
 	
+	/**
+	 * Is a dragging action in progress.
+	 */
 	override attribute dragging = false;
 
+	/**
+	 * Processes the start of a dragging action. Should be called whenever a dragging action starts.
+	 */
 	public function startDrag(): Void {
 		dragging = true;
 	}
 
+	/**
+	 * Processes the end of a dragging action. Should be called when a dragging action ends.
+	 */
 	public function endDrag(): Void {
 		if (dragging) {
 			dragging = false;
@@ -340,7 +397,7 @@ public class GraphControl {
 		}
 	}
 
-	public function dragEndsAt(target): Void {
+	private function dragEndsAt(target): Void {
 		var selected = getSelected();
 		for (s in selected) {
 			if (s instanceof StatementBox) {
@@ -412,7 +469,9 @@ public class GraphControl {
 		updateAll();
 	}
 
-
+	/**
+	 * Adds a blank statement to the graph.
+	 */
 	public function addStatement(): Void {
 		commands.do(
 			AddStatementCommand {
@@ -422,6 +481,9 @@ public class GraphControl {
 		updateAll();
 	}
 
+	/**
+	 * Append an argument to the selected statement.
+	 */
 	public function addArgumentToSelected(): Void {
 		var selected = getSelectedModel();
 		if (sizeof selected > 0) {
@@ -442,6 +504,9 @@ public class GraphControl {
 		updateAll();
 	}
 
+	/**
+	 * Append a premise to the selected argument.
+	 */
 	public function addPremiseToSelected(): Void {
 		var selected = getSelected();
 		for (a in selected where a instanceof ArgumentBox) {
@@ -459,7 +524,9 @@ public class GraphControl {
 	}
 
 	// DELETION FUNCTIONS
-
+	/**
+	 * Removes an argument from a marked view argument node.
+	 */
 	public function removeArgumentFromBox(a: ArgumentBox): Void {
 		commands.do(
 			RemoveArgumentCommand {
@@ -472,6 +539,9 @@ public class GraphControl {
 		updateAll();
 	}
 
+	/**
+	 * Removes an argument from a selected model argument (e.g. off a list).
+	 */
 	public function removeArgument(a: Argument): Void {
 		commands.do(
 			RemoveArgumentCommand {
@@ -484,6 +554,9 @@ public class GraphControl {
 		updateAll();
 	}
 
+	/**
+	 * Remove a statement from whose view object has been selected.
+	 */
 	public function removeStatementFromBox(s: StatementBox): Void {
 		// get the statement's premise and mother argument if present
 		var tempArgument: Argument;
@@ -532,6 +605,9 @@ public class GraphControl {
 		updateAll();
 	}
 
+	/**
+	 * Remove a statement that has been selected in the statement list.
+	 */
 	public function deleteStatementFromList(): Void {
 		var s: Statement = frame.list.getSelectedStatement();
 		if (s != null) {
@@ -547,6 +623,10 @@ public class GraphControl {
 		updateView();
 	}
 
+
+	/**
+	 * Remove an argument from its selected link.
+	 */
 	public function removeArgumentFromLink(l: ArgumentLink): Void {
 		commands.do(
 			RemoveArgumentCommand {
@@ -559,6 +639,9 @@ public class GraphControl {
 		updateAll();
 	}
 
+	/**
+	 * Delete a premise from its selected graphic link.
+	 */
 	public function deletePremiseFromLink(l: PremiseLink): Void {
 		for (a in argumentGraph.arguments) {
 			for (p in a.premises) {
@@ -575,6 +658,9 @@ public class GraphControl {
 		}
 	}
 
+	/**
+	 * Delete the premise from its model object.
+	 */
 	public function deletePremise(pr: Premise): Void {
 		for (a in argumentGraph.arguments) {
 			for (p in a.premises) {
@@ -592,6 +678,9 @@ public class GraphControl {
 		}
 	}
 
+	/**
+	 * Remove the currently selected view object irrespective of its nature.
+	 */
 	public function removeSelected(): Void {
 		var s = getSelected();
 		for (e in s) {
@@ -613,6 +702,7 @@ public class GraphControl {
 	}
 
 	// Attribute Modification Functions
+	// Hopefully self-explanatory
 
 	// for statements
 

@@ -34,7 +34,7 @@ import Carneades.Argument.Argument.*;
 // import Constants
 import Carneades.Graph.GC.*;
 
-// helper issue class for file loading
+// helper issue class for file loading in older LKIF format
 class Issue {
 	attribute statementId: String;
 	attribute value: String;
@@ -48,6 +48,9 @@ var builder: DocumentBuilder = DocumentBuilder {
 	ignoringComments: false
 }
 
+/**
+ * Saves a set of graphs to a file in the current LKIF format.
+ */
 public var saveGraphToFile = function(argumentGraphs: ArgumentGraph[], file: File): Void {
 
 		var document = builder.createDocument();
@@ -406,7 +409,7 @@ public var getGraphFromFile = function(file: File): ArgumentGraph[] {
 	}
 
 /**
- * Load graph from issue-based LKIF document.
+ * Load graph from old-format, issue-based LKIF document.
  */
 var getGraphFromLkifV1Document = function(document: Document): ArgumentGraph[] { 
 		var argumentGraph: ArgumentGraph = ArgumentGraph {};

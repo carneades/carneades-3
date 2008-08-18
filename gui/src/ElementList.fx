@@ -36,22 +36,33 @@ import Carneades.Graph.Elements.Elements.*;
 // Abstract Controller Class for Interaction
 import Carneades.Control.GraphControl;
 
-
+/**
+ * The panel containing the list component in the upper right above the inspector panel listing the statements. It includes the two context-sensitive buttons below the list as well.
+ */
 public class ElementList extends FlowPanel {
 
-	//override attribute background = panelBackground;
 	override attribute alignment = HorizontalAlignment.LEFT;
+
+	// text displayed by the (left) addButton
 	private attribute addButtonText: String = "";
+
+	// text displayed by the (right) deleteButton
 	private attribute deleteButtonText: String = "";
 
 	attribute control: GraphControl;
 	attribute argumentGraph: ArgumentGraph;
 
-	attribute input: SwingTextField = SwingTextField {
+	/**
+	 * The search string input field.
+	 */
+	private attribute input: SwingTextField = SwingTextField {
 		preferredSize: bind [editWidth-65, textFieldHeight]
 		visible: true
 	}
 
+	/**
+	 * The embedded custom list component.
+	 */
 	public attribute list: StatementList = StatementList {
 		control: bind control
 		preferredSize: bind [this.width-15, this.height - 70]
@@ -76,12 +87,18 @@ public class ElementList extends FlowPanel {
 										list,
 										addButton, deleteButton];
 
+	/**
+	 * Returns the selected statement from the list.
+	 */
 	public function getSelectedStatement(): Statement {
 		return list.getSelectedStatement();
 	}
 
+	/**
+	 * Refreshes the list display. Should be called after every alteration of the statements vector or a switching between graphs.
+	 */
 	public function update() {
-		//is a model selected
+		// is a model selected?
 		if (sizeof control.getSelectedModel() > 0) {
 			var model = control.getSelectedModel()[0];
 			if (model instanceof Statement) {
@@ -120,6 +137,9 @@ public class ElementList extends FlowPanel {
 		}
 	}
 
+	/**
+	 * Resets the buttons to blank and diables them.
+	 */
 	public function reset() {
 		addButtonText = "";
 		addButton.enabled = false;
@@ -128,9 +148,20 @@ public class ElementList extends FlowPanel {
 	}
 }
 
+/**
+ * The actual list component for the statement list to be embedded in the ElementList panel.
+ */
 public class StatementList extends List {
+	
+	/**
+	 * The associated control component.
+	 */
 	public attribute control: GraphControl;
-	attribute filter: String = "";
+	
+	/**
+	 * The display filter string for the statement list.
+	 */
+	public attribute filter: String = "";
 
 	override attribute selectedItem = null on replace {
 		if (selectedItem != null) {
@@ -139,7 +170,10 @@ public class StatementList extends List {
 		}
 	};
 
-	attribute statements: Statement[];
+	/**
+	 * The sequence of statements to be displayed in the list.
+	 */
+	public attribute statements: Statement[];
 
 	override attribute items = bind [ 
 									for (s in statements 
@@ -152,6 +186,9 @@ public class StatementList extends List {
 									} 
 								];
 
+	/**
+	 * Returns the selected statement in the list.
+	 */
 	public function getSelectedStatement(): Statement {
 		if (selectedItem != null) {
 			return (selectedItem as StatementItem).statement;
@@ -171,7 +208,14 @@ public class StatementList extends List {
 	}
 }
 
+/**
+ * The list item class for the statement list.
+ */
 public class StatementItem extends ListItem {
+
+	/**
+	 * The model statement represented by the list item.
+	 */
 	public attribute statement: Statement;
 	attribute visible: Boolean = true;
 }

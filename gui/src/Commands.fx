@@ -34,47 +34,89 @@ import Carneades.Graph.GC.*;
 
 // GENERAL CLASSES
 
+/**
+ * Base class for a command.
+ */
 public abstract class Command {
 
+	/**
+	 * The model argument graph associated with the administering CommandControl object.
+	 */
 	public attribute argumentGraph: ArgumentGraph;
+
+	/**
+	 * The administering CommandControl object.
+	 */
 	public attribute commandControl: CommandControl;
+
+	/**
+	 * Does this command have the ability to merge with other commands?
+	 */
 	public attribute merges: Boolean = false;
 
+	/**
+	 * Execute the command.
+	 */
 	public function do(): Number {
 		return C_OK;
 	}
 	
+	/**
+	 * Function computing whether a certain command can be merged with the previous command to a single one.
+	 */
 	public function mergeable(c: Command): Boolean {false}
 
+	/**
+	 * Merge the command with the previous one, that is the one below it on the command stack.
+	 */
 	public function merge(c: Command): Number { C_OK }
 }
 
+/**
+ * Base class for undoable commands.
+ */
 public class UndoableCommand extends Command {
 
+	/**
+	 * Undo the command.
+	 */
 	public function undo(): Number {
 		return C_OK;
 	}
 }
 
+/** * The control object administering a command stack.
+ */
 public class CommandControl {
 
+	/**
+	 * The application's control object.
+	 */
 	public attribute control: GraphControl;
+
+	/**
+	 * The command stack.
+	 */
 	private attribute commands: Command[] = [];
+
+	/**
+	 * The size of the command stack for easy handling. Bound and read-only.
+	 */
 	private attribute size: Integer = bind sizeof commands;
 
-	// The bookmark determines where we are in the undo-stack. It usually is 0, meaning
-	// that we have undone 0 commands. Whenever an undo is called, it increases by one.
-	// Hence, a redo decreases it by one.
+	/**
+	 * The bookmark determines where we are in the undo-stack. It usually is 0, meaning that we have undone 0 commands. Whenever an undo is called, it increases by one. Hence, a redo decreases it by one.
+	 */
 	private attribute bookmark: Integer = 0;
 	
 	public function possibleToUndo(): Boolean { return (size - bookmark > 0); }
 
 	public function possibleToRedo(): Boolean { return (bookmark > 0); }
 	
+	/**
+	 * Pops off the topmost elements until the bookmark. The function is void and serves the purpose to allow for an auto-undo in case of e.g. cyclic graphs
+	 */
 	public function pop(): Void {
-		// pops off the topmost elements until the bookmark.
-		// The function is void and serves the purpose to allow for an auto-undo in case of e.g. cyclic graphs
-
 		// throw away everything beyond the bookmark
 		for (i in [1 .. bookmark]) {
 			delete commands[size-1];
@@ -82,6 +124,9 @@ public class CommandControl {
 		bookmark = 0;
 	}
 
+	/**
+	 * Execute the passed command.
+	 */
 	public function do(c: Command): Number {
 		// tell control the file has changed
 		control.fileChanged = true;
@@ -108,6 +153,9 @@ public class CommandControl {
 		}
 	}
 
+	/**
+	 * Undo the last command before the bookmark.
+	 */
 	public function undo(): Number {
 		var result: Number = C_NO_UNDO;
 
@@ -119,6 +167,9 @@ public class CommandControl {
 		return result;
 	}
 
+	/**
+	 * Redo the command after the bookmark.
+	 */
 	public function redo(): Number {
 		var result: Number = C_LATEST_COMMAND;
 
@@ -129,6 +180,9 @@ public class CommandControl {
 		return result;
 	}
 
+	/**
+	 * Empty the command stack and reset the bookmark.
+	 */
 	public function reset(): Void {
 		commands = [];
 		bookmark = 0;
@@ -136,7 +190,8 @@ public class CommandControl {
 
 }
 
-// SPECIFIC CLASSES
+// SPECIFIC COMMANDS
+// Hopefully self-explanatory. A detailed description will be coming.
 
 public class AddArgumentCommand extends UndoableCommand {
 

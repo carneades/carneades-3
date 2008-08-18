@@ -83,7 +83,7 @@ public class Vertex extends GraphElement {
 	/**
 	 * The width of the vertex. Should not be set statically (use defaultWidth instead), but rather is set by a function that chooses between defaultWidth or a wider size depending on the text contained in the vertex.
 	 */
-	attribute width: Number = { if (scaleWithText) Math.max(50, text.getWidth() + 10) else defaultWidth };
+	public attribute width: Number = { if (scaleWithText) Math.max(50, text.getWidth() + 10) else defaultWidth };
 
 	/**
 	 * The height of the vertex.
