@@ -42,7 +42,7 @@ class Issue {
 	attribute standard: String;
 }
 
-var builder: DocumentBuilder = DocumentBuilder {
+public var builder: DocumentBuilder = DocumentBuilder {
 	namespaceAware: true
 	validating: true
 	ignoringComments: false
