@@ -12,6 +12,8 @@
 
 (define i (lkif-import "lkif-test.xml"))
 
+(define sources (lkif-data-sources i))
+
 (define axioms (lkif-data-context i))
 
 (define rb (lkif-data-rulebase i))
