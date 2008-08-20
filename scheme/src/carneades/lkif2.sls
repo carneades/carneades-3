@@ -5,9 +5,10 @@
  (carneades lkif2)
  
  (export lkif-import
-         make-lkif-data lkif-data? lkif-data-context
+         make-lkif-data lkif-data? lkif-data-sources lkif-data-context
          lkif-data-rulebase lkif-data-stages
-         make-stage stage? stage-argument-graph stage-context)
+         make-stage stage? stage-argument-graph stage-context
+         make-source source? source-element source-uri)
  
  (import (rnrs)
          (carneades rule)
@@ -24,9 +25,10 @@
  ; lkif-import is the datastructure that is supposed to
  ; be returned by the import function
  (define-record-type lkif-data
-   (fields context            ; context build by axioms
-           rulebase ; argument-generator from rules
-           stages))           ; (list-of stages)
+   (fields sources            ; list of sources
+           context            ; context build by theory axioms
+           rulebase           ; rulebase build by theory rules
+           stages))           ; list of stages
 
  (define-record-type stage
    (fields argument-graph     ; argument-graph
@@ -36,6 +38,10 @@
  (define-record-type source
    (fields element
            uri))
+ 
+ 
+ ;---------
+ ; records for internal use
  
  ; theory in lkif2
  (define-record-type theory
@@ -98,7 +104,7 @@
        (let ((context (lkif-axioms->context (theory-axioms theory)))
              (rb (lkif-rules->rulebase (theory-rules theory)))
              (stages (map argument-graph->stage arg-graphs)))
-         (make-lkif-data context rb stages)))))
+         (make-lkif-data sources context rb stages)))))
  
  
  ; --------------------------------
@@ -205,7 +211,7 @@
        (if (string=? exception "true")
            (argument:make-exception s p role)
            (if (and (pair? s)
-                    (eq? (car s) 'assumable))
+                    (eq? (car s) 'assuming))
                (argument:make-assumption (cadr s) p role)
                (argument:make-ordinary-premise s p role))))))
  
@@ -289,7 +295,7 @@
                            (if (string=? assumable "true")
                                (if pred
                                    (list 'assuming (cons (string->symbol pred) (map lkif-term->sexpr terms)))
-                                   (list 'assuming (string->symbol (car text))))
+                                   (list 'assuming (car text)))
                                (if pred
                                    (cons (string->symbol pred) (map lkif-term->sexpr terms))
                                    (car text))))))))
@@ -418,22 +424,35 @@
  ; statements->context: (list-of struct:statement) -> context
  (define (statements->context statements)
    (let ((scontext (fold-left (lambda (c s)
+                                (let ((sexpr (statement->sexpr s)))
+                                  (let ((st (if (and (pair? sexpr)
+                                                     (eq? (car sexpr) 'assuming))
+                                                (cadr sexpr)
+                                                sexpr)))
                                 (if (string=? (statement-assumption s) "true")
                                     (cond 
-                                      ((string=? (statement-value s) "unknown") (argument:state c (list (statement->sexpr s))))
-                                      ((string=? (statement-value s) "true") (argument:accept c (list (statement->sexpr s))))
-                                      ((string=? (statement-value s) "false") (argument:reject c (list (statement->sexpr s)))))
+                                      ((string=? (statement-value s) "unknown") (argument:state c (list st)))
+                                      ((string=? (statement-value s) "true") (argument:accept c (list st)))
+                                      ((string=? (statement-value s) "false") (argument:reject c (list st))))
                                     (cond 
-                                      ((string=? (statement-value s) "unknown") (argument:question c (list (statement->sexpr s))))
-                                      ((string=? (statement-value s) "true") (argument:accept c (list (statement->sexpr s))))
-                                      ((string=? (statement-value s) "false") (argument:reject c (list (statement->sexpr s)))))))
+                                      ((string=? (statement-value s) "unknown") (argument:question c (list st)))
+                                      ((string=? (statement-value s) "true") (argument:accept c (list st)))
+                                      ((string=? (statement-value s) "false") (argument:reject c (list st))))))))
                               argument:default-context
                               statements)))
      (fold-left (lambda (c s)
-                  (argument:assign-standard c (string->symbol (string-downcase (statement-standard s))) (list (statement->sexpr s))))
+                  (let ((sexpr (statement->sexpr s)))
+                    (let ((st (if (and (pair? sexpr)
+                                       (eq? (car sexpr) 'assuming))
+                                  (cadr sexpr)
+                                  sexpr)))
+                      (argument:assign-standard
+                       c
+                       (string->symbol (string-downcase (statement-standard s)))
+                       (list st)))))
                 scontext
                 statements)))
- 
+     
  
  ; argument-graph-conversion
  
