@@ -472,32 +472,6 @@
          
  
  
- 
- ; ---------------------------
- ; Testing Code
 
- (define doc (get-document "C:\\lkif-test.xml"))
-; 
- (define lb (get-lkif doc))
-; 
-; (define srcs (read-sources lb))
-; 
- (define t (read-theory lb))
-;  
-; (define arggraphs (read-argument-graphs lb))
-;
- (define rb (lkif-rules->rulebase (theory-rules t)))
-; 
-; (define c (lkif-axioms->context (theory-axioms t)))
-; 
-; (define graph1 (car arggraphs))
-; 
-; (define stage1 (argument-graph->stage graph1))
-;  
-; (define tbl (statements->table (argument-graph-statements graph1)))
-; 
-; (define args (map (lambda (x) (argument-to-record x tbl)) (argument-graph-arguments graph1))) 
-; 
-; (define i (import "C:\\test2.xml"))
- 
+
  )
