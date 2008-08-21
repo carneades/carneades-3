@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="LKIF2.rnc" type="compact"?>
-<?xml-stylesheet type="text/css" href="LKIF2.css"?>
+<?oxygen RNGSchema="../../../schemas/LKIF2.rnc" type="compact"?>
+<?xml-stylesheet type="text/css" href="../../../schemas/LKIF2.css"?>
 <lkif xmlns:family="http:://fokus.fraunhofer.de/elan/estrella/family.owl"
     xmlns:foods="http:://fokus.fraunhofer.de/elan/estrella/food.owl"
     xmlns:smith="http:://fokus.fraunhofer.de/elan/estrella/smith.owl">
@@ -20,7 +20,7 @@
         <rules>
             <rule id="r1">
                 <head>
-                    <s pred="goods"><v>c</v></s>
+                    <s pred="goods"><v>c</v> is goods.</s>
                 </head>
                 <body>
 					<and>
