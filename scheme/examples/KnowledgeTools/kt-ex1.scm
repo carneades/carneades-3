@@ -70,4 +70,4 @@
 ; Answer: (all #t)
 
 (ask1 'k470 e1) 
-
+; (view1 'k470 e1) 
