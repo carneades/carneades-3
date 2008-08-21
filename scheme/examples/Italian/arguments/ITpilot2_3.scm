@@ -29,5 +29,7 @@
                  s)))
          (current-output-port)))
 
-(show ag1 c1)
+; (show ag1 c1)
 ; (show ag1 c2)
+
+(view ag1 c1)
