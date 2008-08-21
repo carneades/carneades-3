@@ -1,0 +1,1691 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:/Users/tgo/Documents/Projects/Carneades/dist/schemas/lkif.rnc" type="compact"?>
+<lkif>
+
+	<argument-graphs>
+	
+		<argument-graph>
+		
+			<statements>
+			
+			    <statement id="k639" value="unknown" assumption="true">
+					<s>permanent establish- ment situated in MS</s>
+				</statement>
+			    <statement id="k581" value="unknown" assumption="true">
+					<s>one company</s>
+				</statement>
+			    <statement id="k465" value="unknown" assumption="true">
+					<s>company isn´t dissolved</s>
+				</statement>
+			    <statement id="k523" value="unknown" assumption="true">
+					<s>one company</s>
+				</statement>
+			    <statement id="k291" value="unknown" assumption="true">
+					<s>computation like trans-ferring company</s>
+				</statement>
+			    <statement id="k1" value="unknown" assumption="true">
+					<s>rights and obligations under the directive</s>
+				</statement>
+			    <statement id="k582" value="unknown" assumption="true">
+					<s>company isn´t dissolved</s>
+				</statement>
+			    <statement id="k466" value="unknown" assumption="true">
+					<s>transfer</s>
+				</statement>
+			    <statement id="k408" value="unknown" assumption="true">
+					<s>at least one company</s>
+				</statement>
+			    <statement id="k292" value="unknown" assumption="true">
+					<s>no exemption</s>
+				</statement>
+			    <statement id="k524" value="unknown" assumption="true">
+					<s>correct moment</s>
+				</statement>
+			    <statement id="k640" value="unknown" assumption="true">
+					<s>losses not exhausted for tax purposes</s>
+				</statement>
+			    <statement id="k583" value="unknown" assumption="true">
+					<s>transfer</s>
+				</statement>
+			    <statement id="k467" value="unknown" assumption="true">
+					<s>transfer to at least 1 existing or new comp.</s>
+				</statement>
+			    <statement id="k409" value="unknown" assumption="true">
+					<s>correct moment</s>
+				</statement>
+			    <statement id="k525" value="unknown" assumption="true">
+					<s>companies are dissolved</s>
+				</statement>
+			    <statement id="k641" value="unknown" assumption="true">
+					<s>shareholder does not attribute higher value</s>
+				</statement>
+			    <statement id="k584" value="unknown" assumption="true">
+					<s>transfer all or at least 1 branch of activities</s>
+				</statement>
+			    <statement id="k468" value="unknown" assumption="true">
+					<s>transfer of at least 1 branch of activities</s>
+				</statement>
+			    <statement id="k410" value="unknown" assumption="true">
+					<s>companies are dissolved</s>
+				</statement>
+			    <statement id="k526" value="unknown" assumption="true">
+					<s>no liquidation</s>
+				</statement>
+			    <statement id="k642" value="unknown" assumption="true">
+					<s>shareholder does not attribute higher value</s>
+				</statement>
+			    <statement id="k585" value="unknown" assumption="true">
+					<s>transfer to at least 1 existing or new comp.</s>
+				</statement>
+			    <statement id="k527" value="unknown" assumption="true">
+					<s>all assets transfered</s>
+				</statement>
+			    <statement id="k411" value="unknown" assumption="true">
+					<s>no liquidation</s>
+				</statement>
+			    <statement id="k643" value="unknown" assumption="true">
+					<s>cash payment</s>
+				</statement>
+			    <statement id="k586" value="unknown" assumption="true">
+					<s>counterperformance: secur. of receiv. com.</s>
+				</statement>
+			    <statement id="k470" value="unknown" assumption="true">
+					<s>counterperformance</s>
+				</statement>
+			    <statement id="k412" value="unknown" assumption="true">
+					<s>transfer to existing company</s>
+				</statement>
+			    <statement id="k528" value="unknown" assumption="true">
+					<s>all assets</s>
+				</statement>
+			    <statement id="k587" value="unknown" assumption="true">
+					<s>allotment of securities - capital gains</s>
+				</statement>
+			    <statement id="k471" value="unknown" assumption="true">
+					<s>pro rata issue of shareholders</s>
+				</statement>
+			    <statement id="k413" value="unknown" assumption="true">
+					<s>all assets transfered</s>
+				</statement>
+			    <statement id="k297" value="unknown" assumption="true">
+					<s>Art. 4 Abs. 4</s>
+				</statement>
+			    <statement id="k529" value="unknown" assumption="true">
+					<s>all liabilities</s>
+				</statement>
+			    <statement id="k645" value="unknown" assumption="true">
+					<s>allotment of securities</s>
+				</statement>
+			    <statement id="k646" value="unknown" assumption="true">
+					<s>capital of receiving company</s>
+				</statement>
+			    <statement id="k472" value="unknown" assumption="true">
+					<s>cash payment</s>
+				</statement>
+			    <statement id="k414" value="unknown" assumption="true">
+					<s>all assets</s>
+				</statement>
+			    <statement id="k298" value="unknown" assumption="true">
+					<s>no taxation to gains accruing, Art. 7</s>
+				</statement>
+			    <statement id="k530" value="unknown" assumption="true">
+					<s>transfer to company holding all securities</s>
+				</statement>
+			    <statement id="k589" value="unknown" assumption="true">
+					<s>no exemption</s>
+				</statement>
+			    <statement id="k473" value="unknown" assumption="true">
+					<s>max. 10% of nominal value</s>
+				</statement>
+			    <statement id="k415" value="unknown" assumption="true">
+					<s>all liabilities</s>
+				</statement>
+			    <statement id="k299" value="unknown" assumption="true">
+					<s>restructuring</s>
+				</statement>
+			    <statement id="k531" value="unknown" assumption="true">
+					<s>division</s>
+				</statement>
+			    <statement id="k647" value="unknown" assumption="true">
+					<s>capital of acuiring company</s>
+				</statement>
+			    <statement id="k648" value="unknown" assumption="true">
+					<s>allotment to a shareholder</s>
+				</statement>
+			    <statement id="k474" value="unknown" assumption="true">
+					<s>max. 10% of account. par value of securities</s>
+				</statement>
+			    <statement id="k416" value="unknown" assumption="true">
+					<s>counterperformance</s>
+				</statement>
+			    <statement id="k300" value="unknown" assumption="true">
+					<s>holding in capital of transferring company</s>
+				</statement>
+			    <statement id="k532" value="unknown" assumption="true">
+					<s>one company</s>
+				</statement>
+			    <statement id="k649" value="unknown" assumption="true">
+					<s>shareholder of transferring company</s>
+				</statement>
+			    <statement id="k533" value="unknown" assumption="true">
+					<s>correct moment</s>
+				</statement>
+			    <statement id="k417" value="unknown" assumption="true">
+					<s>issue of shareholders to shareholders</s>
+				</statement>
+			    <statement id="k301" value="unknown" assumption="true">
+					<s>gains on the cancella-tion of its holding</s>
+				</statement>
+			    <statement id="k650" value="unknown" assumption="true">
+					<s>shareholder of acquired company</s>
+				</statement>
+			    <statement id="k476" value="unknown" assumption="true">
+					<s>one company</s>
+				</statement>
+			    <statement id="k418" value="unknown" assumption="true">
+					<s>cash payment</s>
+				</statement>
+			    <statement id="k302" value="unknown" assumption="true">
+					<s>at least 15% holding percentage</s>
+				</statement>
+			    <statement id="k534" value="unknown" assumption="true">
+					<s>companies are dissolved</s>
+				</statement>
+			    <statement id="k651" value="unknown" assumption="true">
+					<s>in exchange for secu-rities of latter compan.</s>
+				</statement>
+			    <statement id="k477" value="unknown" assumption="true">
+					<s>company isn´t dissolved</s>
+				</statement>
+			    <statement id="k419" value="unknown" assumption="true">
+					<s>max. 10% of nominal value</s>
+				</statement>
+			    <statement id="k535" value="unknown" assumption="true">
+					<s>no liquidation</s>
+				</statement>
+			    <statement id="k652" value="unknown" assumption="true">
+					<s>allotment of securities - capital gains</s>
+				</statement>
+			    <statement id="k536" value="unknown" assumption="true">
+					<s>all assets transfered</s>
+				</statement>
+			    <statement id="k420" value="unknown" assumption="true">
+					<s>max. 10% of account. par value of securities</s>
+				</statement>
+			    <statement id="k246" value="unknown" assumption="true">
+					<s>transfer to company that they form</s>
+				</statement>
+			    <statement id="k595" value="unknown" assumption="true">
+					<s>value for taxation purposes</s>
+				</statement>
+			    <statement id="k479" value="unknown" assumption="true">
+					<s>transfer</s>
+				</statement>
+			    <statement id="k537" value="unknown" assumption="true">
+					<s>all assets</s>
+				</statement>
+			    <statement id="k653" value="unknown" assumption="true">
+					<s>allotment of securities of receiving company</s>
+				</statement>
+			    <statement id="k596" value="unknown" assumption="true">
+					<s>real values of transferr-ed asstes &amp; liabilities</s>
+				</statement>
+			    <statement id="k480" value="unknown" assumption="true">
+					<s>transfer all or at least 1 branch of activities</s>
+				</statement>
+			    <statement id="k422" value="unknown" assumption="true">
+					<s>at least two companies</s>
+				</statement>
+			    <statement id="k538" value="unknown" assumption="true">
+					<s>all liabilities</s>
+				</statement>
+			    <statement id="k654" value="unknown" assumption="true">
+					<s>allotment to a sh. of transferring company</s>
+				</statement>
+			    <statement id="k597" value="unknown" assumption="true">
+					<s>difference between these two values</s>
+				</statement>
+			    <statement id="k481" value="unknown" assumption="true">
+					<s>transfer to at least 1 existing or new comp.</s>
+				</statement>
+			    <statement id="k423" value="unknown" assumption="true">
+					<s>all assets transfered</s>
+				</statement>
+			    <statement id="k249" value="unknown" assumption="true">
+					<s>transfer to a company holding all securities</s>
+				</statement>
+			    <statement id="k539" value="unknown" assumption="true">
+					<s>transfer to at least 2 extisting or new comp.</s>
+				</statement>
+			    <statement id="k655" value="unknown" assumption="true">
+					<s>no other reason giv-ing rise to taxation</s>
+				</statement>
+			    <statement id="k540" value="unknown" assumption="true">
+					<s>counterperformance</s>
+				</statement>
+			    <statement id="k424" value="unknown" assumption="true">
+					<s>transfer to company that they form</s>
+				</statement>
+			    <statement id="k541" value="unknown" assumption="true">
+					<s>pro rata issue of shareholders</s>
+				</statement>
+			    <statement id="k425" value="unknown" assumption="true">
+					<s>correct moment</s>
+				</statement>
+			    <statement id="k542" value="unknown" assumption="true">
+					<s>cash payment</s>
+				</statement>
+			    <statement id="k426" value="unknown" assumption="true">
+					<s>counterperformance</s>
+				</statement>
+			    <statement id="k543" value="unknown" assumption="true">
+					<s>max. 10% of nominal value</s>
+				</statement>
+			    <statement id="k369" value="unknown" assumption="true">
+					<s>deferral of taxation in case of office transfer</s>
+				</statement>
+			    <statement id="k427" value="unknown" assumption="true">
+					<s>companies are dissolved</s>
+				</statement>
+			    <statement id="k602" value="unknown" assumption="true">
+					<s>Art. 8 I</s>
+				</statement>
+			    <statement id="k544" value="unknown" assumption="true">
+					<s>max. 10% of account. par value of securities</s>
+				</statement>
+			    <statement id="k370" value="unknown" assumption="true">
+					<s>applicability in case of transfer/cessation</s>
+				</statement>
+			    <statement id="k428" value="unknown" assumption="true">
+					<s>no liquidation</s>
+				</statement>
+			    <statement id="k603" value="unknown" assumption="true">
+					<s>Art. 8 II</s>
+				</statement>
+			    <statement id="k487" value="unknown" assumption="true">
+					<s>counterperformance: secur. of receiv. com.</s>
+				</statement>
+			    <statement id="k429" value="unknown" assumption="true">
+					<s>issue of shareholders to shareholders</s>
+				</statement>
+			    <statement id="k545" value="unknown" assumption="true">
+					<s>partial division</s>
+				</statement>
+			    <statement id="k371" value="unknown" assumption="true">
+					<s>transfer of registred office of SE or SCE</s>
+				</statement>
+			    <statement id="k488" value="unknown" assumption="true">
+					<s>capital gains of companies, Art 4</s>
+				</statement>
+			    <statement id="k430" value="unknown" assumption="true">
+					<s>cash payment</s>
+				</statement>
+			    <statement id="k256" value="unknown" assumption="true">
+					<s>division</s>
+				</statement>
+			    <statement id="k605" value="unknown" assumption="true">
+					<s>non-resident receiving or acquiring company</s>
+				</statement>
+			    <statement id="k431" value="unknown" assumption="true">
+					<s>max. 10% of nominal value</s>
+				</statement>
+			    <statement id="k606" value="unknown" assumption="true">
+					<s>company considered to be fisc. transparent</s>
+				</statement>
+			    <statement id="k490" value="unknown" assumption="true">
+					<s>capital gains of shareholders, Art. 8</s>
+				</statement>
+			    <statement id="k374" value="unknown" assumption="true">
+					<s>cessation of residence</s>
+				</statement>
+			    <statement id="k432" value="unknown" assumption="true">
+					<s>max. 10% of account. par value of securities</s>
+				</statement>
+			    <statement id="k607" value="unknown" assumption="true">
+					<s>Art. 10a I</s>
+				</statement>
+			    <statement id="k492" value="unknown" assumption="true">
+					<s>restructuring</s>
+				</statement>
+			    <statement id="k434" value="unknown" assumption="true">
+					<s>all assets</s>
+				</statement>
+			    <statement id="k609" value="unknown" assumption="true">
+					<s>non-resident receiving or acquired company</s>
+				</statement>
+			    <statement id="k493" value="unknown" assumption="true">
+					<s>merger</s>
+				</statement>
+			    <statement id="k435" value="unknown" assumption="true">
+					<s>all liabilities</s>
+				</statement>
+			    <statement id="k610" value="unknown" assumption="true">
+					<s>company considered to be fisc. transparent</s>
+				</statement>
+			    <statement id="k494" value="unknown" assumption="true">
+					<s>transfer to existing company</s>
+				</statement>
+			    <statement id="k436" value="unknown" assumption="true">
+					<s>one company</s>
+				</statement>
+			    <statement id="k611" value="unknown" assumption="true">
+					<s>MS chooses not to apply directive</s>
+				</statement>
+			    <statement id="k495" value="unknown" assumption="true">
+					<s>at least one company</s>
+				</statement>
+			    <statement id="k612" value="unknown" assumption="true">
+					<s>MS chooses not to apply directive</s>
+				</statement>
+			    <statement id="k496" value="unknown" assumption="true">
+					<s>correct moment</s>
+				</statement>
+			    <statement id="k380" value="unknown" assumption="true">
+					<s>preconditions for deferral of taxation</s>
+				</statement>
+			    <statement id="k438" value="unknown" assumption="true">
+					<s>correct moment</s>
+				</statement>
+			    <statement id="k497" value="unknown" assumption="true">
+					<s>companies are dissolved</s>
+				</statement>
+			    <statement id="k381" value="unknown" assumption="true">
+					<s>capital gains persuant Art. 10b I</s>
+				</statement>
+			    <statement id="k439" value="unknown" assumption="true">
+					<s>companies are dissolved</s>
+				</statement>
+			    <statement id="k614" value="unknown" assumption="true">
+					<s>gains generate profit and losses of old MS</s>
+				</statement>
+			    <statement id="k498" value="unknown" assumption="true">
+					<s>no liquidation</s>
+				</statement>
+			    <statement id="k382" value="unknown" assumption="true">
+					<s>balancing like without transfer/ cessation</s>
+				</statement>
+			    <statement id="k440" value="unknown" assumption="true">
+					<s>no liquidation</s>
+				</statement>
+			    <statement id="k615" value="unknown" assumption="true">
+					<s>Art. 5</s>
+				</statement>
+			    <statement id="k499" value="unknown" assumption="true">
+					<s>all assets transfered</s>
+				</statement>
+			    <statement id="k441" value="unknown" assumption="true">
+					<s>all assets transfered</s>
+				</statement>
+			    <statement id="k616" value="unknown" assumption="true">
+					<s>Art. 10c</s>
+				</statement>
+			    <statement id="k500" value="unknown" assumption="true">
+					<s>all assets</s>
+				</statement>
+			    <statement id="k442" value="unknown" assumption="true">
+					<s>all assets</s>
+				</statement>
+			    <statement id="k617" value="unknown" assumption="true">
+					<s>provisions or reserves properly constituted</s>
+				</statement>
+			    <statement id="k501" value="unknown" assumption="true">
+					<s>all liabilities</s>
+				</statement>
+			    <statement id="k443" value="unknown" assumption="true">
+					<s>all liabilities</s>
+				</statement>
+			    <statement id="k211" value="unknown" assumption="true">
+					<s>obligations of member states</s>
+				</statement>
+			    <statement id="k269" value="unknown" assumption="true">
+					<s>partial division</s>
+				</statement>
+			    <statement id="k618" value="unknown" assumption="true">
+					<s>respective tax exemp- tions differ betw. MS</s>
+				</statement>
+			    <statement id="k502" value="unknown" assumption="true">
+					<s>transfer to existing company</s>
+				</statement>
+			    <statement id="k444" value="unknown" assumption="true">
+					<s>transfer to company holding all securities</s>
+				</statement>
+			    <statement id="k212" value="unknown" assumption="true">
+					<s>obligat. in accordance to council directive</s>
+				</statement>
+			    <statement id="k619" value="unknown" assumption="true">
+					<s>respective tax exemp--tions differ betw. MS</s>
+				</statement>
+			    <statement id="k503" value="unknown" assumption="true">
+					<s>counterperformance</s>
+				</statement>
+			    <statement id="k561" value="unknown" assumption="true">
+					<s>one company</s>
+				</statement>
+			    <statement id="k213" value="unknown" assumption="true">
+					<s>prelim. deferral of the taxation of the capital</s>
+				</statement>
+			    <statement id="k620" value="unknown" assumption="true">
+					<s>transfer or cessation</s>
+				</statement>
+			    <statement id="k504" value="unknown" assumption="true">
+					<s>issue of shareholders to shareholders</s>
+				</statement>
+			    <statement id="k562" value="unknown" assumption="true">
+					<s>company isn´t dissolved</s>
+				</statement>
+			    <statement id="k214" value="unknown" assumption="true">
+					<s>deferral of taxation in case of restructuring</s>
+				</statement>
+			    <statement id="k621" value="unknown" assumption="true">
+					<s>transfer of registred office of SE or SCE</s>
+				</statement>
+			    <statement id="k505" value="unknown" assumption="true">
+					<s>cash payment</s>
+				</statement>
+			    <statement id="k447" value="unknown" assumption="true">
+					<s>one company</s>
+				</statement>
+			    <statement id="k563" value="unknown" assumption="true">
+					<s>transfer</s>
+				</statement>
+			    <statement id="k215" value="unknown" assumption="true">
+					<s>applicability in case of restructuring</s>
+				</statement>
+			    <statement id="k622" value="unknown" assumption="true">
+					<s>cessation of residence</s>
+				</statement>
+			    <statement id="k506" value="unknown" assumption="true">
+					<s>max. 10% of nominal value</s>
+				</statement>
+			    <statement id="k448" value="unknown" assumption="true">
+					<s>correct moment</s>
+				</statement>
+			    <statement id="k564" value="unknown" assumption="true">
+					<s>transfer of at least 1 branch of activities</s>
+				</statement>
+			    <statement id="k216" value="unknown" assumption="true">
+					<s>obligated Member State</s>
+				</statement>
+			    <statement id="k623" value="unknown" assumption="true">
+					<s>capital gains of companies, Art 10b</s>
+				</statement>
+			    <statement id="k507" value="unknown" assumption="true">
+					<s>max. 10% of account. par value of securities</s>
+				</statement>
+			    <statement id="k449" value="unknown" assumption="true">
+					<s>all assets transfered</s>
+				</statement>
+			    <statement id="k565" value="unknown" assumption="true">
+					<s>transfer to at least 1 existing or new comp.</s>
+				</statement>
+			    <statement id="k624" value="unknown" assumption="true">
+					<s>capital gains of shareholders, Art 10d</s>
+				</statement>
+			    <statement id="k508" value="unknown" assumption="true">
+					<s>transfer to company that they form</s>
+				</statement>
+			    <statement id="k450" value="unknown" assumption="true">
+					<s>counterperformance</s>
+				</statement>
+			    <statement id="k334" value="unknown" assumption="true">
+					<s>Art. 10 III</s>
+				</statement>
+			    <statement id="k218" value="unknown" assumption="true">
+					<s>perm. establishment in this Member State</s>
+				</statement>
+			    <statement id="k566" value="unknown" assumption="true">
+					<s>counterperformance</s>
+				</statement>
+			    <statement id="k625" value="unknown" assumption="true">
+					<s>transfer of registred office of an SE/SCE</s>
+				</statement>
+			    <statement id="k509" value="unknown" assumption="true">
+					<s>at least two companies</s>
+				</statement>
+			    <statement id="k451" value="unknown" assumption="true">
+					<s>companies are dissolved</s>
+				</statement>
+			    <statement id="k567" value="unknown" assumption="true">
+					<s>pro rata issue of shareholders</s>
+				</statement>
+			    <statement id="k626" value="unknown" assumption="true">
+					<s>no other reason for taxation but transferral</s>
+				</statement>
+			    <statement id="k510" value="unknown" assumption="true">
+					<s>correct moment</s>
+				</statement>
+			    <statement id="k452" value="unknown" assumption="true">
+					<s>no liquidation</s>
+				</statement>
+			    <statement id="k394" value="unknown" assumption="true">
+					<s>maintanance of tax exemptions</s>
+				</statement>
+			    <statement id="k220" value="unknown" assumption="true">
+					<s>involvment of 2 or more Member States</s>
+				</statement>
+			    <statement id="k568" value="unknown" assumption="true">
+					<s>cash payment</s>
+				</statement>
+			    <statement id="k627" value="unknown" assumption="true">
+					<s>other community law that is equivalent</s>
+				</statement>
+			    <statement id="k511" value="unknown" assumption="true">
+					<s>companies are dissolved</s>
+				</statement>
+			    <statement id="k569" value="unknown" assumption="true">
+					<s>max. 10% of nominal value</s>
+				</statement>
+			    <statement id="k395" value="unknown" assumption="true">
+					<s>provisions or reserves properly constituted</s>
+				</statement>
+			    <statement id="k221" value="unknown" assumption="true">
+					<s>company from a member state</s>
+				</statement>
+			    <statement id="k628" value="unknown" assumption="true">
+					<s>other community law applicable</s>
+				</statement>
+			    <statement id="k570" value="unknown" assumption="true">
+					<s>max. 10% of account. par value of securities</s>
+				</statement>
+			    <statement id="k454" value="unknown" assumption="true">
+					<s>all assets</s>
+				</statement>
+			    <statement id="k512" value="unknown" assumption="true">
+					<s>no liquidation</s>
+				</statement>
+			    <statement id="k222" value="unknown" assumption="true">
+					<s>com. takes one of the forms listed in Annex</s>
+				</statement>
+			    <statement id="k629" value="unknown" assumption="true">
+					<s>member state persuant to Annex</s>
+				</statement>
+			    <statement id="k571" value="unknown" assumption="true">
+					<s>transfer of assets</s>
+				</statement>
+			    <statement id="k455" value="unknown" assumption="true">
+					<s>all liabilities</s>
+				</statement>
+			    <statement id="k513" value="unknown" assumption="true">
+					<s>all assets transfered</s>
+				</statement>
+			    <statement id="k223" value="unknown" assumption="true">
+					<s>resident in Member State acc. to tax laws</s>
+				</statement>
+			    <statement id="k281" value="unknown" assumption="true">
+					<s>transfer of assets</s>
+				</statement>
+			    <statement id="k630" value="unknown" assumption="true">
+					<s>merger of serveral companies in one MS</s>
+				</statement>
+			    <statement id="k514" value="unknown" assumption="true">
+					<s>all assets</s>
+				</statement>
+			    <statement id="k456" value="unknown" assumption="true">
+					<s>transfer to at least 2 extisting or new comp.</s>
+				</statement>
+			    <statement id="k224" value="unknown" assumption="true">
+					<s>resident in acc. to tax laws of Member State</s>
+				</statement>
+			    <statement id="k631" value="unknown" assumption="true">
+					<s>application of provi- sion for take over of losses</s>
+				</statement>
+			    <statement id="k515" value="unknown" assumption="true">
+					<s>all liabilities</s>
+				</statement>
+			    <statement id="k225" value="unknown" assumption="true">
+					<s>no dobble taxation agreement</s>
+				</statement>
+			    <statement id="k632" value="unknown" assumption="true">
+					<s>losses of permanent establishment</s>
+				</statement>
+			    <statement id="k458" value="unknown" assumption="true">
+					<s>pro rata issue of shareholders</s>
+				</statement>
+			    <statement id="k516" value="unknown" assumption="true">
+					<s>transfer to company that they form</s>
+				</statement>
+			    <statement id="k226" value="unknown" assumption="true">
+					<s>is subject to listed tax-es without exemption</s>
+				</statement>
+			    <statement id="k400" value="unknown" assumption="true">
+					<s>extension of provision for taxation of losses</s>
+				</statement>
+			    <statement id="k633" value="unknown" assumption="true">
+					<s>rights of member states</s>
+				</statement>
+			    <statement id="k459" value="unknown" assumption="true">
+					<s>cash payment</s>
+				</statement>
+			    <statement id="k517" value="unknown" assumption="true">
+					<s>counterperformance</s>
+				</statement>
+			    <statement id="k227" value="unknown" assumption="true">
+					<s>two or more Member States</s>
+				</statement>
+			    <statement id="k401" value="unknown" assumption="true">
+					<s>no reasons for withdrawal, Art. 11</s>
+				</statement>
+			    <statement id="k634" value="unknown" assumption="true">
+					<s>beneficiary</s>
+				</statement>
+			    <statement id="k460" value="unknown" assumption="true">
+					<s>max. 10% of nominal value</s>
+				</statement>
+			    <statement id="k518" value="unknown" assumption="true">
+					<s>issue of shareholders to shareholders</s>
+				</statement>
+			    <statement id="k228" value="unknown" assumption="true">
+					<s>preconditions for deferral of taxation</s>
+				</statement>
+			    <statement id="k402" value="unknown" assumption="true">
+					<s>tax evasion/ tax avoidance</s>
+				</statement>
+			    <statement id="k635" value="unknown" assumption="true">
+					<s>preconditions for extension</s>
+				</statement>
+			    <statement id="k461" value="unknown" assumption="true">
+					<s>max. 10% of account. par value of securities</s>
+				</statement>
+			    <statement id="k519" value="unknown" assumption="true">
+					<s>cash payment</s>
+				</statement>
+			    <statement id="k229" value="unknown" assumption="true">
+					<s>no taxation of capital gains</s>
+				</statement>
+			    <statement id="k403" value="unknown" assumption="true">
+					<s>representing of emplo-yers not warranted</s>
+				</statement>
+			    <statement id="k636" value="unknown" assumption="true">
+					<s>losses</s>
+				</statement>
+			    <statement id="k520" value="unknown" assumption="true">
+					<s>max. 10% of nominal value</s>
+				</statement>
+			    <statement id="k404" value="unknown" assumption="true">
+					<s>analysing state is Member State</s>
+				</statement>
+			    <statement id="k230" value="unknown" assumption="true">
+					<s>restructuring</s>
+				</statement>
+			    <statement id="k637" value="unknown" assumption="true">
+					<s>losses not exhausted for receiving company</s>
+				</statement>
+			    <statement id="k521" value="unknown" assumption="true">
+					<s>max. 10% of account. par value of securities</s>
+				</statement>
+			    <statement id="k231" value="unknown" assumption="true">
+					<s>merger</s>
+				</statement>
+			    <statement id="k638" value="unknown" assumption="true">
+					<s>take over of losses by acquiring company</s>
+				</statement>
+			    <statement id="k464" value="unknown" assumption="true">
+					<s>one company</s>
+				</statement>
+			    <statement id="k406" value="unknown" assumption="true">
+					<s>involvment in accor- dance with Directive</s>
+				</statement>
+			    <statement id="k232" value="unknown" assumption="true">
+					<s>transfer to existing company</s>
+				</statement>
+			    <statement id="k290" value="unknown" assumption="true">
+					<s>capital gains persuant Art. 4 Abs. 1</s>
+				</statement>
+			    <statement id="k522" value="unknown" assumption="true">
+					<s>transfer to a company holding all securities</s>
+				</statement>
+				
+			</statements>
+					
+			<arguments>
+			
+				<argument id="a1">
+					<premises>
+							<premise statement="k211"/>
+		            </premises>
+					<conclusion statement="k1"/>
+		        </argument>
+		        <argument id="a2">
+					<premises>
+						<premise statement="k633"/>
+		            </premises>
+					<conclusion statement="k1"/>
+		        </argument>
+		        <argument id="a3">
+					<premises>
+						<premise statement="k468"/>
+		            	<premise statement="k467"/>
+		            </premises>
+					<conclusion statement="k466"/>
+		        </argument>
+		        <argument id="a4">
+					<premises>
+						<premise polarity="negative" statement="k297"/>
+		            </premises>
+					<conclusion statement="k292"/>
+		        </argument>
+		        <argument id="a5">
+					<premises>
+						<premise polarity="negative" statement="k607"/>
+		            </premises>
+					<conclusion statement="k292"/>
+		        </argument>
+		        <argument id="a6">
+					<premises>
+						<premise statement="k525"/>
+		            	<premise statement="k526"/>
+		            </premises>
+					<conclusion statement="k524"/>
+		        </argument>
+		        <argument id="a7">
+					<premises>
+						<premise statement="k584"/>
+		            	<premise statement="k585"/>
+		            </premises>
+					<conclusion statement="k583"/>
+		        </argument>
+		        <argument id="a8">
+					<premises>
+						<premise statement="k410"/>
+		            	<premise statement="k411"/>
+		            </premises>
+					<conclusion statement="k409"/>
+		        </argument>
+		        <argument id="a9">
+					<premises>
+						<premise statement="k528"/>
+		            	<premise statement="k529"/>
+		            	<premise statement="k530"/>
+		            </premises>
+					<conclusion statement="k527"/>
+		        </argument>
+		        <argument id="a10">
+					<premises>
+						<premise statement="k471"/>
+		            </premises>
+					<conclusion statement="k470"/>
+		        </argument>
+		        <argument id="a11">
+					<premises>
+						<premise statement="k472"/>
+		            </premises>
+					<conclusion statement="k470"/>
+		        </argument>
+		        <argument id="a12">
+					<premises>
+						<premise statement="k645"/>
+		            	<premise statement="k648"/>
+		            	<premise statement="k651"/>
+		            </premises>
+					<conclusion statement="k587"/>
+		        </argument>
+		        <argument id="a13">
+					<premises>
+						<premise statement="k414"/>
+		            	<premise statement="k415"/>
+		            	<premise statement="k412"/>
+		            </premises>
+					<conclusion statement="k413"/>
+		        </argument>
+		        <argument id="a14">
+					<premises>
+						<premise statement="k646"/>
+		            </premises>
+					<conclusion statement="k645"/>
+		        </argument>
+		        <argument id="a15">
+					<premises>
+						<premise statement="k647"/>
+		            </premises>
+					<conclusion statement="k645"/>
+		        </argument>
+		        <argument id="a16">
+					<premises>
+						<premise statement="k473"/>
+		            </premises>
+					<conclusion statement="k472"/>
+		        </argument>
+		        <argument id="a17">
+					<premises>
+						<premise statement="k474"/>
+		            </premises>
+					<conclusion statement="k472"/>
+		        </argument>
+		        <argument id="a18">
+					<premises>
+						<premise statement="k299"/>
+		            	<premise statement="k300"/>
+		            	<premise statement="k301"/>
+		            	<premise statement="k302"/>
+		            </premises>
+					<conclusion statement="k298"/>
+		        </argument>
+		        <argument id="a19">
+					<premises>
+						<premise polarity="negative" statement="k334"/>
+		            </premises>
+					<conclusion statement="k589"/>
+		        </argument>
+		        <argument id="a20">
+					<premises>
+						<premise polarity="negative" statement="k643"/>
+		            </premises>
+					<conclusion statement="k589"/>
+		        </argument>
+		        <argument id="a21">
+					<premises>
+						<premise statement="k256"/>
+		            </premises>
+					<conclusion statement="k299"/>
+		        </argument>
+		        <argument id="a22">
+					<premises>
+						<premise statement="k231"/>
+		            </premises>
+					<conclusion statement="k299"/>
+		        </argument>
+		        <argument id="a23">
+					<premises>
+						<premise statement="k269"/>
+		            </premises>
+					<conclusion statement="k299"/>
+		        </argument>
+		        <argument id="a24">
+					<premises>
+						<premise statement="k532"/>
+		            	<premise statement="k533"/>
+		            	<premise statement="k536"/>
+		            	<premise statement="k540"/>
+		            </premises>
+					<conclusion statement="k531"/>
+		        </argument>
+		        <argument id="a25">
+					<premises>
+						<premise statement="k649"/>
+		            </premises>
+					<conclusion statement="k648"/>
+		        </argument>
+		        <argument id="a26">
+					<premises>
+						<premise statement="k650"/>
+		            </premises>
+					<conclusion statement="k648"/>
+		        </argument>
+		        <argument id="a27">
+					<premises>
+						<premise statement="k417"/>
+		            </premises>
+					<conclusion statement="k416"/>
+		        </argument>
+		        <argument id="a28">
+					<premises>
+						<premise statement="k418"/>
+		            </premises>
+					<conclusion statement="k416"/>
+		        </argument>
+		        <argument id="a29">
+					<premises>
+						<premise statement="k534"/>
+		            	<premise statement="k535"/>
+		            </premises>
+					<conclusion statement="k533"/>
+		        </argument>
+		        <argument id="a30">
+					<premises>
+						<premise statement="k419"/>
+		            </premises>
+					<conclusion statement="k418"/>
+		        </argument>
+		        <argument id="a31">
+					<premises>
+						<premise statement="k420"/>
+		            </premises>
+					<conclusion statement="k418"/>
+		        </argument>
+		        <argument id="a32">
+					<premises>
+						<premise statement="k653"/>
+		            	<premise statement="k654"/>
+		            	<premise statement="k655"/>
+		            </premises>
+					<conclusion statement="k652"/>
+		        </argument>
+		        <argument id="a33">
+					<premises>
+						<premise statement="k537"/>
+		            	<premise statement="k538"/>
+		            	<premise statement="k539"/>
+		            </premises>
+					<conclusion statement="k536"/>
+		        </argument>
+		        <argument id="a34">
+					<premises>
+						<premise statement="k422"/>
+		            	<premise statement="k425"/>
+		            	<premise statement="k423"/>
+		            	<premise statement="k426"/>
+		            </premises>
+					<conclusion statement="k246"/>
+		        </argument>
+		        <argument id="a35">
+					<premises>
+						<premise statement="k480"/>
+		            	<premise statement="k481"/>
+		            </premises>
+					<conclusion statement="k479"/>
+		        </argument>
+		        <argument id="a36">
+					<premises>
+						<premise statement="k434"/>
+		            	<premise statement="k435"/>
+		            	<premise statement="k424"/>
+		            </premises>
+					<conclusion statement="k423"/>
+		        </argument>
+		        <argument id="a37">
+					<premises>
+						<premise statement="k436"/>
+		            	<premise statement="k438"/>
+		            	<premise statement="k441"/>
+		            </premises>
+					<conclusion statement="k249"/>
+		        </argument>
+		        <argument id="a38">
+					<premises>
+						<premise statement="k541"/>
+		            </premises>
+					<conclusion statement="k540"/>
+		        </argument>
+		        <argument id="a39">
+					<premises>
+						<premise statement="k542"/>
+		            </premises>
+					<conclusion statement="k540"/>
+		        </argument>
+		        <argument id="a40">
+					<premises>
+						<premise statement="k427"/>
+		            	<premise statement="k428"/>
+		            </premises>
+					<conclusion statement="k425"/>
+		        </argument>
+		        <argument id="a41">
+					<premises>
+						<premise statement="k543"/>
+		            </premises>
+					<conclusion statement="k542"/>
+		        </argument>
+		        <argument id="a42">
+					<premises>
+						<premise statement="k544"/>
+		            </premises>
+					<conclusion statement="k542"/>
+		        </argument>
+		        <argument id="a43">
+					<premises>
+						<premise statement="k429"/>
+		            </premises>
+					<conclusion statement="k426"/>
+		        </argument>
+		        <argument id="a44">
+					<premises>
+						<premise statement="k430"/>
+		            </premises>
+					<conclusion statement="k426"/>
+		        </argument>
+		        <argument id="a45">
+					<premises>
+						<premise statement="k370"/>
+		            	<premise statement="k380"/>
+		            </premises>
+					<conclusion statement="k369"/>
+		        </argument>
+		        <argument id="a46">
+					<premises>
+						<premise statement="k492"/>
+		            	<premise statement="k587"/>
+		            	<premise statement="k641"/>
+		            	<premise statement="k589"/>
+		            </premises>
+					<conclusion statement="k602"/>
+		        </argument>
+		        <argument id="a47">
+					<premises>
+						<premise statement="k371"/>
+		            </premises>
+					<conclusion statement="k370"/>
+		        </argument>
+		        <argument id="a48">
+					<premises>
+						<premise statement="k374"/>
+		            </premises>
+					<conclusion statement="k370"/>
+		        </argument>
+		        <argument id="a49">
+					<premises>
+						<premise statement="k545"/>
+		            	<premise statement="k652"/>
+		            	<premise statement="k642"/>
+		            	<premise statement="k589"/>
+		            </premises>
+					<conclusion statement="k603"/>
+		        </argument>
+		        <argument id="a50">
+					<premises>
+						<premise statement="k561"/>
+		            	<premise statement="k562"/>
+		            	<premise statement="k563"/>
+		            	<premise statement="k566"/>
+		            </premises>
+					<conclusion statement="k545"/>
+		        </argument>
+		        <argument id="a51">
+					<premises>
+						<premise statement="k230"/>
+		            	<premise statement="k290"/>
+		            	<premise statement="k291"/>
+		            	<premise statement="k292"/>
+		            </premises>
+					<conclusion statement="k488"/>
+		        </argument>
+		        <argument id="a52">
+					<premises>
+						<premise statement="k431"/>
+		            </premises>
+					<conclusion statement="k430"/>
+		        </argument>
+		        <argument id="a53">
+					<premises>
+						<premise statement="k432"/>
+		            </premises>
+					<conclusion statement="k430"/>
+		        </argument>
+		        <argument id="a54">
+					<premises>
+						<premise statement="k447"/>
+		            	<premise statement="k448"/>
+		            	<premise statement="k449"/>
+		            	<premise statement="k450"/>
+		            </premises>
+					<conclusion statement="k256"/>
+		        </argument>
+		        <argument id="a55">
+					<premises>
+						<premise statement="k602"/>
+		            </premises>
+					<conclusion statement="k490"/>
+		        </argument>
+		        <argument id="a56">
+					<premises>
+						<premise statement="k603"/>
+		            </premises>
+					<conclusion statement="k490"/>
+		        </argument>
+		        <argument id="a57">
+					<premises>
+						<premise statement="k609"/>
+		            	<premise statement="k610"/>
+		            	<premise statement="k611"/>
+		            </premises>
+					<conclusion statement="k607"/>
+		        </argument>
+		        <argument id="a58">
+					<premises>
+						<premise statement="k493"/>
+		            </premises>
+					<conclusion statement="k492"/>
+		        </argument>
+		        <argument id="a59">
+					<premises>
+						<premise statement="k531"/>
+		            </premises>
+					<conclusion statement="k492"/>
+		        </argument>
+		        <argument id="a60">
+					<premises>
+						<premise statement="k571"/>
+		            </premises>
+					<conclusion statement="k492"/>
+		        </argument>
+		        <argument id="a61">
+					<premises>
+						<premise statement="k494"/>
+		            </premises>
+					<conclusion statement="k493"/>
+		        </argument>
+		        <argument id="a62">
+					<premises>
+						<premise statement="k508"/>
+		            </premises>
+					<conclusion statement="k493"/>
+		        </argument>
+		        <argument id="a63">
+					<premises>
+						<premise statement="k522"/>
+		            </premises>
+					<conclusion statement="k493"/>
+		        </argument>
+		        <argument id="a64">
+					<premises>
+						<premise statement="k495"/>
+		            	<premise statement="k496"/>
+		            	<premise statement="k499"/>
+		            	<premise statement="k503"/>
+		            </premises>
+					<conclusion statement="k494"/>
+		        </argument>
+		        <argument id="a65">
+					<premises>
+						<premise statement="k497"/>
+		            	<premise statement="k498"/>
+		            </premises>
+					<conclusion statement="k496"/>
+		        </argument>
+		        <argument id="a66">
+					<premises>
+						<premise statement="k623"/>
+		            </premises>
+					<conclusion statement="k380"/>
+		        </argument>
+		        <argument id="a67">
+					<premises>
+						<premise statement="k624"/>
+		            </premises>
+					<conclusion statement="k380"/>
+		        </argument>
+		        <argument id="a68">
+					<premises>
+						<premise statement="k439"/>
+		            	<premise statement="k440"/>
+		            </premises>
+					<conclusion statement="k438"/>
+		        </argument>
+		        <argument id="a69">
+					<premises>
+						<premise statement="k290"/>
+		            	<premise statement="k614"/>
+		            </premises>
+					<conclusion statement="k381"/>
+		        </argument>
+		        <argument id="a70">
+					<premises>
+						<premise statement="k230"/>
+		            	<premise statement="k395"/>
+		            	<premise statement="k619"/>
+		            </premises>
+					<conclusion statement="k615"/>
+		        </argument>
+		        <argument id="a71">
+					<premises>
+						<premise statement="k500"/>
+		            	<premise statement="k501"/>
+		            	<premise statement="k502"/>
+		            </premises>
+					<conclusion statement="k499"/>
+		        </argument>
+		        <argument id="a72">
+					<premises>
+						<premise statement="k442"/>
+		            	<premise statement="k443"/>
+		            	<premise statement="k444"/>
+		            </premises>
+					<conclusion statement="k441"/>
+		        </argument>
+		        <argument id="a73">
+					<premises>
+						<premise statement="k620"/>
+		            	<premise statement="k617"/>
+		            	<premise statement="k618"/>
+		            </premises>
+					<conclusion statement="k616"/>
+		        </argument>
+		        <argument id="a74">
+					<premises>
+						<premise statement="k212"/>
+		            	<premise statement="k401"/>
+		            </premises>
+					<conclusion statement="k211"/>
+		        </argument>
+		        <argument id="a75">
+					<premises>
+						<premise statement="k464"/>
+		            	<premise statement="k465"/>
+		            	<premise statement="k466"/>
+		            	<premise statement="k470"/>
+		            </premises>
+					<conclusion statement="k269"/>
+		        </argument>
+		        <argument id="a76">
+					<premises>
+						<premise statement="k213"/>
+		            </premises>
+					<conclusion statement="k212"/>
+		        </argument>
+		        <argument id="a77">
+					<premises>
+						<premise statement="k394"/>
+		            </premises>
+					<conclusion statement="k212"/>
+		        </argument>
+		        <argument id="a78">
+					<premises>
+						<premise statement="k504"/>
+		            </premises>
+					<conclusion statement="k503"/>
+		        </argument>
+		        <argument id="a79">
+					<premises>
+						<premise statement="k505"/>
+		            </premises>
+					<conclusion statement="k503"/>
+		        </argument>
+		        <argument id="a80">
+					<premises>
+						<premise statement="k214"/>
+		            </premises>
+					<conclusion statement="k213"/>
+		        </argument>
+		        <argument id="a81">
+					<premises>
+						<premise statement="k369"/>
+		            </premises>
+					<conclusion statement="k213"/>
+		        </argument>
+		        <argument id="a82">
+					<premises>
+						<premise statement="k621"/>
+		            </premises>
+					<conclusion statement="k620"/>
+		        </argument>
+		        <argument id="a83">
+					<premises>
+						<premise statement="k622"/>
+		            </premises>
+					<conclusion statement="k620"/>
+		        </argument>
+		        <argument id="a84">
+					<premises>
+						<premise statement="k215"/>
+		            	<premise statement="k228"/>
+		            </premises>
+					<conclusion statement="k214"/>
+		        </argument>
+		        <argument id="a85">
+					<premises>
+						<premise statement="k506"/>
+		            </premises>
+					<conclusion statement="k505"/>
+		        </argument>
+		        <argument id="a86">
+					<premises>
+						<premise statement="k507"/>
+		            </premises>
+					<conclusion statement="k505"/>
+		        </argument>
+		        <argument id="a87">
+					<premises>
+						<premise statement="k564"/>
+		            	<premise statement="k565"/>
+		            </premises>
+					<conclusion statement="k563"/>
+		        </argument>
+		        <argument id="a88">
+					<premises>
+						<premise statement="k216"/>
+		            	<premise statement="k220"/>
+		            </premises>
+					<conclusion statement="k215"/>
+		        </argument>
+		        <argument id="a89">
+					<premises>
+						<premise statement="k451"/>
+		            	<premise statement="k452"/>
+		            </premises>
+					<conclusion statement="k448"/>
+		        </argument>
+		        <argument id="a90">
+					<premises>
+						<premise statement="k404"/>
+		            	<premise statement="k218"/>
+		            </premises>
+					<conclusion statement="k216"/>
+		        </argument>
+		        <argument id="a91">
+					<premises>
+						<premise statement="k381"/>
+		            	<premise statement="k382"/>
+		            </premises>
+					<conclusion statement="k623"/>
+		        </argument>
+		        <argument id="a92">
+					<premises>
+						<premise statement="k454"/>
+		            	<premise statement="k455"/>
+		            	<premise statement="k456"/>
+		            </premises>
+					<conclusion statement="k449"/>
+		        </argument>
+		        <argument id="a93">
+					<premises>
+						<premise statement="k625"/>
+		            	<premise statement="k626"/>
+		            </premises>
+					<conclusion statement="k624"/>
+		        </argument>
+		        <argument id="a94">
+					<premises>
+						<premise statement="k509"/>
+		            	<premise statement="k510"/>
+		            	<premise statement="k513"/>
+		            	<premise statement="k517"/>
+		            </premises>
+					<conclusion statement="k508"/>
+		        </argument>
+		        <argument id="a95">
+					<premises>
+						<premise statement="k458"/>
+		            </premises>
+					<conclusion statement="k450"/>
+		        </argument>
+		        <argument id="a96">
+					<premises>
+						<premise statement="k459"/>
+		            </premises>
+					<conclusion statement="k450"/>
+		        </argument>
+		        <argument id="a97">
+					<premises>
+						<premise statement="k605"/>
+		            	<premise statement="k606"/>
+		            	<premise statement="k612"/>
+		            </premises>
+					<conclusion statement="k334"/>
+		        </argument>
+		        <argument id="a98">
+					<premises>
+						<premise statement="k567"/>
+		            </premises>
+					<conclusion statement="k566"/>
+		        </argument>
+		        <argument id="a99">
+					<premises>
+						<premise statement="k568"/>
+		            </premises>
+					<conclusion statement="k566"/>
+		        </argument>
+		        <argument id="a100">
+					<premises>
+						<premise statement="k511"/>
+		            	<premise statement="k512"/>
+		            </premises>
+					<conclusion statement="k510"/>
+		        </argument>
+		        <argument id="a101">
+					<premises>
+						<premise statement="k615"/>
+		            </premises>
+					<conclusion statement="k394"/>
+		        </argument>
+		        <argument id="a102">
+					<premises>
+						<premise statement="k616"/>
+		            </premises>
+					<conclusion statement="k394"/>
+		        </argument>
+		        <argument id="a103">
+					<premises>
+						<premise statement="k221"/>
+		            	<premise statement="k227"/>
+		            	<premise statement="k406"/>
+		            </premises>
+					<conclusion statement="k220"/>
+		        </argument>
+		        <argument id="a104">
+					<premises>
+						<premise statement="k569"/>
+		            </premises>
+					<conclusion statement="k568"/>
+		        </argument>
+		        <argument id="a105">
+					<premises>
+						<premise statement="k570"/>
+		            </premises>
+					<conclusion statement="k568"/>
+		        </argument>
+		        <argument id="a106">
+					<premises>
+						<premise statement="k222"/>
+		            	<premise statement="k223"/>
+		            	<premise statement="k226"/>
+		            </premises>
+					<conclusion statement="k221"/>
+		        </argument>
+		        <argument id="a107">
+					<premises>
+						<premise statement="k581"/>
+		            	<premise statement="k582"/>
+		            	<premise statement="k583"/>
+		            	<premise statement="k586"/>
+		            </premises>
+					<conclusion statement="k571"/>
+		        </argument>
+		        <argument id="a108">
+					<premises>
+						<premise statement="k514"/>
+		            	<premise statement="k515"/>
+		            	<premise statement="k516"/>
+		            </premises>
+					<conclusion statement="k513"/>
+		        </argument>
+		        <argument id="a109">
+					<premises>
+						<premise statement="k224"/>
+		            	<premise statement="k225"/>
+		            </premises>
+					<conclusion statement="k223"/>
+		        </argument>
+		        <argument id="a110">
+					<premises>
+						<premise statement="k476"/>
+		            	<premise statement="k477"/>
+		            	<premise statement="k479"/>
+		            	<premise statement="k487"/>
+		            </premises>
+					<conclusion statement="k281"/>
+		        </argument>
+		        <argument id="a111">
+					<premises>
+						<premise statement="k636"/>
+		            	<premise statement="k637"/>
+		            	<premise statement="k638"/>
+		            </premises>
+					<conclusion statement="k631"/>
+		        </argument>
+		        <argument id="a112">
+					<premises>
+						<premise statement="k639"/>
+		            	<premise statement="k640"/>
+		            </premises>
+					<conclusion statement="k632"/>
+		        </argument>
+		        <argument id="a113">
+					<premises>
+						<premise statement="k634"/>
+		            	<premise statement="k635"/>
+		            </premises>
+					<conclusion statement="k400"/>
+		        </argument>
+		        <argument id="a114">
+					<premises>
+						<premise statement="k400"/>
+		            </premises>
+					<conclusion statement="k633"/>
+		        </argument>
+		        <argument id="a115">
+					<premises>
+						<premise statement="k460"/>
+		            </premises>
+					<conclusion statement="k459"/>
+		        </argument>
+		        <argument id="a116">
+					<premises>
+						<premise statement="k461"/>
+		            </premises>
+					<conclusion statement="k459"/>
+		        </argument>
+		        <argument id="a117">
+					<premises>
+						<premise statement="k518"/>
+		            </premises>
+					<conclusion statement="k517"/>
+		        </argument>
+		        <argument id="a118">
+					<premises>
+						<premise statement="k519"/>
+		            </premises>
+					<conclusion statement="k517"/>
+		        </argument>
+		        <argument id="a119">
+					<premises>
+						<premise polarity="negative" statement="k402"/>
+		            </premises>
+					<conclusion statement="k401"/>
+		        </argument>
+		        <argument id="a120">
+					<premises>
+						<premise polarity="negative" statement="k403"/>
+		            </premises>
+					<conclusion statement="k401"/>
+		        </argument>
+		        <argument id="a121">
+					<premises>
+						<premise statement="k629"/>
+		            </premises>
+					<conclusion statement="k634"/>
+		        </argument>
+		        <argument id="a122">
+					<premises>
+						<premise statement="k229"/>
+		            </premises>
+					<conclusion statement="k228"/>
+		        </argument>
+		        <argument id="a123">
+					<premises>
+						<premise statement="k298"/>
+		            </premises>
+					<conclusion statement="k228"/>
+		        </argument>
+		        <argument id="a124">
+					<premises>
+						<premise statement="k630"/>
+		            	<premise statement="k631"/>
+		            	<premise statement="k632"/>
+		            </premises>
+					<conclusion statement="k635"/>
+		        </argument>
+		        <argument id="a125">
+					<premises>
+						<premise statement="k520"/>
+		            </premises>
+					<conclusion statement="k519"/>
+		        </argument>
+		        <argument id="a126">
+					<premises>
+						<premise statement="k521"/>
+		            </premises>
+					<conclusion statement="k519"/>
+		        </argument>
+		        <argument id="a127">
+					<premises>
+						<premise statement="k488"/>
+		            </premises>
+					<conclusion statement="k229"/>
+		        </argument>
+		        <argument id="a128">
+					<premises>
+						<premise statement="k490"/>
+		            </premises>
+					<conclusion statement="k229"/>
+		        </argument>
+		        <argument id="a129">
+					<premises>
+						<premise polarity="negative" statement="k627"/>
+						<premise polarity="negative" statement="k628"/>
+		            </premises>
+					<conclusion statement="k403"/>
+		        </argument>
+		        <argument id="a130">
+					<premises>
+						<premise statement="k231"/>
+		            </premises>
+					<conclusion statement="k230"/>
+		        </argument>
+		        <argument id="a131">
+					<premises>
+						<premise statement="k256"/>
+		            </premises>
+					<conclusion statement="k230"/>
+		        </argument>
+		        <argument id="a132">
+					<premises>
+						<premise statement="k269"/>
+		            </premises>
+					<conclusion statement="k230"/>
+		        </argument>
+		        <argument id="a133">
+					<premises>
+						<premise statement="k281"/>
+		            </premises>
+					<conclusion statement="k230"/>
+		        </argument>
+		        <argument id="a134">
+					<premises>
+						<premise statement="k232"/>
+		            </premises>
+					<conclusion statement="k231"/>
+		        </argument>
+		        <argument id="a135">
+					<premises>
+						<premise statement="k246"/>
+		            </premises>
+					<conclusion statement="k231"/>
+		        </argument>
+		        <argument id="a136">
+					<premises>
+						<premise statement="k249"/>
+		            </premises>
+					<conclusion statement="k231"/>
+		        </argument>
+		        <argument id="a137">
+					<premises>
+						<premise statement="k408"/>
+		            	<premise statement="k409"/>
+		            	<premise statement="k413"/>
+		            	<premise statement="k416"/>
+		            </premises>
+					<conclusion statement="k232"/>
+		        </argument>
+		        <argument id="a138">
+					<premises>
+						<premise statement="k595"/>
+		            	<premise statement="k596"/>
+		            	<premise statement="k597"/>
+		            </premises>
+					<conclusion statement="k290"/>
+		        </argument>
+		        <argument id="a139">
+					<premises>
+						<premise statement="k523"/>
+		            	<premise statement="k524"/>
+		            	<premise statement="k527"/>
+		            </premises>
+					<conclusion statement="k522"/>
+		        </argument>
+		
+			</arguments>
+		
+		</argument-graph>
+    
+	</argument-graphs>
+	
+</lkif>
