@@ -222,7 +222,11 @@
          (direction (string->symbol (get-attribute-value (get-attribute a 'direction) "pro")))
          (scheme (get-attribute-value (get-attribute a 'scheme) ""))
          (weight (string->symbol (get-attribute-value (get-attribute a 'weight) "0.5")))
-         (conclusion (statement->sexpr (get-conclusion-statement (cdr (get-element a 'conclusion)) tbl)))
+         (conclusion (let ((c (statement->sexpr (get-conclusion-statement (cdr (get-element a 'conclusion)) tbl))))
+                       (if (and (pair? c)
+                                (eq? (car c) 'assuming))
+                           (cadr c)
+                           c)))
          (premises (map (lambda (x) (premise-to-record x tbl)) (get-elements (get-element a 'premises) 'premise))))
      (argument:make-argument id direction conclusion premises scheme)))
  
