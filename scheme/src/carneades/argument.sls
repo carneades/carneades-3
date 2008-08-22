@@ -25,7 +25,7 @@
          make-argument argument? argument-id argument-direction 
          argument-conclusion argument-premises argument-scheme pro con
          define-argument argument->datum datum->argument add-premise status? proof-standard? 
-         complementary-proof-standard make-context default-context
+         complementary-proof-standard make-context context-status context-standard context-compare default-context
          context? state question accept reject assign-standard schemes-applied 
          status proof-standard prior decided? accepted? rejected?
          questioned? stated? issue? empty-argument-graph argument-graph? put-argument assert* assert 
