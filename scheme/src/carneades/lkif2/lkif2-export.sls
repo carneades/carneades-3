@@ -138,10 +138,11 @@
  ;       - can constants be strings?
  ;       - and if, is a string a text or a constant?
  (define (text/term->sxml t)
-   (cond ((string? t) t)
+   (cond ((number? t) (list 'c t))
+         ((string? t) t)
          ((variable? t) (let ((s (symbol->string t)))
                           (element->sxml 'v (substring s 1 (string-length s)))))
-         ((symbol? t) (list 'c t))
+         ((symbol? t) (list 'c (symbol->string t)))
          ((pair? t) (let ((p (car t)))
                       (cond ((functor? p) (append (element->sxml 'expr
                                                       (elements->attributes (list (element->sxml 'functor (symbol->string p)))))
@@ -163,18 +164,28 @@
  ; TODO: - if list-length = 1 in body than don't use 'or / 'and
  ;       - what about conjunction in head?
  (define (rule->sxml r)
-   (list 'rule
-         (elements->attributes (list (element->sxml 'id (symbol->string (rule-id r)))
-                                     (element->sxml 'strict (if (rule-strict r)
-                                                                "true"
-                                                                "false"))))
-         (cons 'head (map wff->sxml (rule-head r)))      
-         (let ((l (map (lambda (l) (if (= (length l) 1)
-                                       (map wff->sxml l)
-                                       (cons 'and (map wff->sxml l)))) (rule-body r))))
-           (if (= (length l) 1)
-               (cons 'body (car l))
-               (list 'body (cons 'or l))))))
+   (let ((attributes (elements->attributes (list (element->sxml 'id (symbol->string (rule-id r)))
+                                                 (element->sxml 'strict (if (rule-strict r)
+                                                                            "true"
+                                                                            "false")))))
+         (head (cons 'head (map wff->sxml (rule-head r))))
+         (body (if (null? (rule-body r))
+                   '()
+                   (let ((l (map (lambda (l) (if (= (length l) 1)
+                                             (map wff->sxml l)
+                                             (cons 'and (map wff->sxml l)))) (rule-body r))))
+                     (if (= (length l) 1)
+                         (cons 'body (car l))
+                         (list 'body (cons 'or l)))))))
+     (if (null? body)
+         (list 'rule
+               attributes
+               head)
+         (list 'rule
+               attributes
+               head
+               body))))
+         
                                      
      
  ; lkif-data->argument-graphs: struct:lkif-data -> sxml
@@ -185,7 +196,7 @@
  ; ----------------------------------
  ; Testing Code
  
- (define import-data (lkif-import "C:\\test2.xml")) 
+ (define import-data (lkif-import "C:\\test.xml")) 
  
  (define s (lkif-data->sources import-data)) 
  
