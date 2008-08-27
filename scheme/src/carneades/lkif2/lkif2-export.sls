@@ -50,7 +50,7 @@
  ; lkif-export: struct:lkif-data file-path -> void
  (define (lkif-export export-data path)
    (let ((sxml-obj (lkif-data->sxml export-data)))
-     (apply srl:sxml->xml (cons sxml-obj path))))
+     (srl:sxml->xml sxml-obj path)))
  
  
  ; --------------------------------
@@ -68,8 +68,8 @@
  ; lkif-data->sxml: struct:lkif-data -> sxml
  (define (lkif-data->sxml data)
    (let ((sxml (list (lkif-data->sources data) 
-                     (lkif-data->theory data) 
-                     (lkif-data->argument-graphs data))))
+                     (lkif-data->theory data) )))
+                     ;(lkif-data->argument-graphs data))))
      (cons 'lkif sxml))) 
  
  ; lkif-data->sources: struct:lkif-data -> sxml
@@ -105,7 +105,8 @@
    (cond ((string? f) (list 's f))
          ((symbol? f) (list 's f))
          ((pair? f) (case (car f)
-                      ((not and or if iff) (list (car f) (map wff->sxml (cdr f))))
+                      ((not) (list 'not (wff->sxml (cadr f))))
+                      ((and or if iff) (list (car f) (map wff->sxml (cdr f))))
                       ((assuming) (let ((s (wff->sxml (cadr f))))
                                     (list (car s)
                                           (elements->attributes (list (element->sxml 'assumable "true")))
@@ -167,13 +168,18 @@
                                      (element->sxml 'strict (if (rule-strict r)
                                                                 "true"
                                                                 "false"))))
-         (cons 'head (map wff->sxml (rule-head r)))
-         (cons 'body (cons 'or (map (lambda (l) (cons 'and (map wff->sxml l))) (rule-body r))))))
+         (cons 'head (map wff->sxml (rule-head r)))      
+         (let ((l (map (lambda (l) (if (= (length l) 1)
+                                       (map wff->sxml l)
+                                       (cons 'and (map wff->sxml l)))) (rule-body r))))
+           (if (= (length l) 1)
+               (cons 'body (car l))
+               (list 'body (cons 'or l))))))
                                      
      
  ; lkif-data->argument-graphs: struct:lkif-data -> sxml
  (define (lkif-data->argument-graphs data)
-   data)
+   '())
  
  
  ; ----------------------------------
