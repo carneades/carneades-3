@@ -24,11 +24,13 @@
          pr am ex premise=? negative-premise? positive-premise? 
          make-argument argument? argument-id argument-direction 
          argument-conclusion argument-premises argument-scheme pro con
-         define-argument argument->datum datum->argument add-premise status? proof-standard? 
-         complementary-proof-standard make-context context-status context-standard context-compare default-context
+         define-argument argument->datum datum->argument add-premise status?
+         proof-standard? complementary-proof-standard make-context
+         context-status context-standard context-compare default-context
          context? state question accept reject assign-standard schemes-applied 
          status proof-standard prior decided? accepted? rejected?
-         questioned? stated? issue? empty-argument-graph argument-graph? put-argument assert* assert 
+         questioned? stated? issue? empty-argument-graph argument-graph?
+         argument-graph-nodes argument-graph-arguments put-argument assert* assert 
          update questions facts statements accepted-statements rejected-statements 
          stated-statements relevant-statements list-arguments issues relevant?   
          satisfies? acceptable? holds? all-premises-hold? in? out? 
@@ -325,7 +327,7 @@
  
  (define-record-type argument-graph
    (fields nodes        ; table: statement -> node
-           arguments))  ; table: argument id -> argument 
+           arguments))  ; table: argument-id -> argument 
  
  (define empty-argument-graph 
    (make-argument-graph (table:make-table)

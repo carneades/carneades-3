@@ -38,14 +38,6 @@
            statements
            arguments))
  
- ; statement in lkif2
- (define-record-type statement
-   (fields id
-           value
-           assumption
-           standard
-           atom))
- 
 
  ; --------------------------------
  ; Type checkers 

@@ -4,14 +4,14 @@
  
  (carneades lkif2 lkif2-export)
  
- (export)
+ (export lkif-export)
  
  (import (rnrs)         
          (carneades lkif2 lkif2-base)
          
          (carneades lkif2 lkif2-import) ; only for testing
          
-         (prefix (carneades argument) argument:)
+         (except (carneades argument) assert)
          (carneades rule)
          (prefix (carneades table) table:)
          (carneades unify)
@@ -68,8 +68,8 @@
  ; lkif-data->sxml: struct:lkif-data -> sxml
  (define (lkif-data->sxml data)
    (let ((sxml (list (lkif-data->sources data) 
-                     (lkif-data->theory data) )))
-                     ;(lkif-data->argument-graphs data))))
+                     (lkif-data->theory data)
+                     (lkif-data->argument-graphs data))))
      (cons 'lkif sxml))) 
  
  ; lkif-data->sources: struct:lkif-data -> sxml
@@ -85,13 +85,14 @@
  
  ; lkif-data->theory: struct:lkif-data -> sxml
  (define (lkif-data->theory data)
-   (let ((axioms (context->axioms (lkif-data-context data)))
+   (let ((attributes (elements->attributes (list (element->sxml 'id (new-id "theory")))))
+         (axioms (context->axioms (lkif-data-context data)))
          (rules (rulebase->rules (lkif-data-rulebase data))))
-     (list 'theory axioms rules)))
+     (list 'theory attributes axioms rules)))
  
  ; context->axioms: context -> sxml
  (define (context->axioms context)
-   (let ((axioms (table:keys (argument:context-status context))))
+   (let ((axioms (table:keys (context-status context))))
      (cons 'axioms (map axiom->sxml axioms))))
  
  ; axiom->sxml: axiom -> sxml
@@ -106,7 +107,7 @@
          ((symbol? f) (list 's f))
          ((pair? f) (case (car f)
                       ((not) (list 'not (wff->sxml (cadr f))))
-                      ((and or if iff) (list (car f) (map wff->sxml (cdr f))))
+                      ((and or if iff) (cons (car f) (map wff->sxml (cdr f))))
                       ((assuming) (let ((s (wff->sxml (cadr f))))
                                     (list (car s)
                                           (elements->attributes (list (element->sxml 'assumable "true")))
@@ -161,36 +162,164 @@
    (cons 'rules (map rule->sxml (rulebase-rules rb))))
  
  ; rule->sxml: struct:rule -> sxml
- ; TODO: - if list-length = 1 in body than don't use 'or / 'and
- ;       - what about conjunction in head?
  (define (rule->sxml r)
-   (let ((attributes (elements->attributes (list (element->sxml 'id (symbol->string (rule-id r)))
-                                                 (element->sxml 'strict (if (rule-strict r)
-                                                                            "true"
-                                                                            "false")))))
-         (head (cons 'head (map wff->sxml (rule-head r))))
-         (body (if (null? (rule-body r))
-                   '()
-                   (let ((l (map (lambda (l) (if (= (length l) 1)
-                                             (map wff->sxml l)
-                                             (cons 'and (map wff->sxml l)))) (rule-body r))))
-                     (if (= (length l) 1)
-                         (cons 'body (car l))
-                         (list 'body (cons 'or l)))))))
-     (if (null? body)
-         (list 'rule
-               attributes
-               head)
-         (list 'rule
-               attributes
-               head
-               body))))
+   (let ((conj->sxml (lambda (c) (if (= (length c) 1)
+                                           (wff->sxml (car c))
+                                           (cons 'and (map wff->sxml c))))))
+     (let ((attributes (elements->attributes (list (element->sxml 'id (symbol->string (rule-id r)))
+                                                   (element->sxml 'strict (if (rule-strict r)
+                                                                              "true"
+                                                                              "false")))))
+           (head (list 'head (conj->sxml (rule-head r))))
+           (body (let ((b (rule-body r)))
+                   (if (null? b)
+                       '()
+                       (if (= (length b) 1)
+                           (list 'body (conj->sxml (car b)))
+                           (list 'body (cons 'or (map conj->sxml b))))))))
+       (if (null? body)
+           (list 'rule
+                 attributes
+                 head)
+           (list 'rule
+                 attributes
+                 head
+                 body)))))
          
                                      
      
  ; lkif-data->argument-graphs: struct:lkif-data -> sxml
  (define (lkif-data->argument-graphs data)
-   '())
+   (let ((stages (lkif-data-stages data)))
+     (cons 'argument-graphs (map stage->sxml stages))))
+ 
+ ; stage->sxml: struct:stage -> sxml
+  (define (stage->sxml s)
+   (let ((ag (stage-argument-graph s))
+         (c (stage-context s)))
+     (let ((statements-table (nodes->table (argument-graph-nodes ag))))
+       (let ((id (new-id "ag"))
+             (title "")
+             (main-issue "")
+             (statements (apply-context c statements-table))
+             (arguments (arguments->sxml (table:values (argument-graph-arguments ag)) statements-table)))
+         (list 'argument-graph
+               (elements->attributes (list (element->sxml 'id id)
+                                           (element->sxml 'title title)
+                                           (element->sxml 'main-issue main-issue)
+                                           ))
+               statements
+               arguments)))))
+  
+  ; nodes->table: table:statement->node -> table:atom->struct:statement
+  (define (nodes->table n)
+    (fold-left insert-statement (table:make-table) (table:keys n)))
+  
+  ; insert-statement: table statement -> table
+  (define (insert-statement tbl s)
+    (let ((statement (statement->record s)))
+      (table:insert tbl (statement-atom statement) statement)))
+  
+  ; statement->record: statement -> struct:statement
+  (define (statement->record s)
+    (let ((id (new-id "s"))
+          (value "unknown")
+          (assumption "false")
+          (standard "BA")
+          (atom s))
+      (make-statement id
+                      value
+                      assumption
+                      standard
+                      atom)))
+  
+  ; status->value: 'stated|'questioned|'accepted|'rejected -> "unknown"|"true" |"false"
+  (define (status->value st)
+    (case st
+      ((stated questioned) "unknown")
+      ((accepted) "true")
+      ((rejected) "false")
+      (else "unknown")))
+  
+  ; status->assumption: 'stated|'questioned|'accepted|'rejected -> "true" |"false"
+  (define (status->assumption st)
+    (case st
+      ((stated) "true")
+      (else "false")))
+  
+  ; atom->sxml: atom -> sxml
+  (define (atom->sxml a)
+    (cond ((string? a) (list 's a))
+          ((symbol? a) (list 's (symbol->string a)))
+          ((pair? a) (if (eq? (car a) 'assuming)
+                         (let ((s (atom->sxml (cadr a))))
+                           (if (and (pair? (cadr s))
+                                    (eq? (caadr s) '^))
+                               (append (list (car s) ; s already has attributes
+                                             (append (cadr s) (list (element->sxml 'assumption "true"))))
+                                       (cddr s))
+                               (list (car s)
+                                     (elements->attributes (list (element->sxml 'assumption "true")))
+                                     (cadr s))))
+                         (append (list 's
+                                       (elements->attributes (list (element->sxml 'pred (symbol->string (car a))))))
+                                 (map text/term->sxml (cdr a)))))
+          (else (display "Error: unknown atom - ")
+                (display a)
+                (newline)
+                '())))
+  
+  ; apply-context: context table:atom->struct:statement -> sxml
+  (define (apply-context c t)
+    (let ((statement->sxml (lambda (a)
+                             (let ((s (table:lookup t a #f))
+                                   (st (status c a)))
+                               (list 'statement
+                                     (elements->attributes 
+                                      (list (element->sxml 'id (statement-id s))
+                                            (element->sxml 'value (status->value st))
+                                            (element->sxml 'assumption (status->assumption st))
+                                            (element->sxml 'standard (string-upcase (symbol->string (proof-standard c a))))))
+                                     (atom->sxml a))))))
+      (cons 'statements (map statement->sxml (table:keys t)))))
+  
+  ; arguments->sxml: (list-of argument) table:atom->struct:statement -> sxml
+  (define (arguments->sxml args t)
+    (let ((premise->sxml (lambda (p)
+                           (let ((polarity (if (positive-premise? p)
+                                               "positive"
+                                               "negative"))
+                                 (exception (if (exception? p)
+                                                "true"
+                                                "false"))
+                                 (role (premise-role p))
+                                 (statement (statement-id (table:lookup t (premise-atom p)))))
+                             (list 'premise
+                                   (elements->attributes
+                                    (list (element->sxml 'polarity polarity)
+                                          (element->sxml 'exception exception)
+                                          (element->sxml 'role role)
+                                          (element->sxml 'statement statement))))))))
+      (let ((argument->sxml (lambda (a)
+                              (let ((conclusion (list 'conclusion
+                                                      (elements->attributes 
+                                                       (list (element->sxml 'statement
+                                                                            (statement-id (table:lookup
+                                                                                           t 
+                                                                                           (argument-conclusion a)
+                                                                                           #f)))))))
+                                    (premises (cons 'premises
+                                                    (map premise->sxml (argument-premises a)))))
+                                (list 'argument
+                                      (elements->attributes
+                                       (list (element->sxml 'id (symbol->string (argument-id a)))
+                                             (element->sxml 'title "")
+                                             (element->sxml 'direction (symbol->string (argument-direction a)))
+                                             (element->sxml 'scheme (argument-scheme a))
+                                             (element->sxml 'weight 0.5)))
+                                      conclusion
+                                      premises)))))                                           
+        (cons 'arguments (map argument->sxml args)))))
  
  
  ; ----------------------------------
