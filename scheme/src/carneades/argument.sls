@@ -314,7 +314,8 @@
                                (lambda (s2) 
                                  (if (statement-equal? (statement-atom s1) s2)
                                      ps
-                                     ((context-standard c) s1)))
+                               ;      ((context-standard c) s1)))
+                                     ((context-standard c) s2)))
                                (context-compare c)))
                context
                statements))

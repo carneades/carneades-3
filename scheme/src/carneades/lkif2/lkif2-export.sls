@@ -12,6 +12,7 @@
          (carneades lkif2 lkif2-import) ; only for testing
          
          (except (carneades argument) assert)
+         (only (carneades statement) statement-equal?)
          (carneades rule)
          (prefix (carneades table) table:)
          (carneades unify)
@@ -201,7 +202,7 @@
        (let ((id (new-id "ag"))
              (title "")
              (main-issue "")
-             (statements (apply-context c statements-table))
+             (statements (apply-context c statements-table (table:values (argument-graph-arguments ag))))
              (arguments (arguments->sxml (table:values (argument-graph-arguments ag)) statements-table)))
          (list 'argument-graph
                (elements->attributes (list (element->sxml 'id id)
@@ -213,7 +214,10 @@
   
   ; nodes->table: table:statement->node -> table:atom->struct:statement
   (define (nodes->table n)
-    (fold-left insert-statement (table:make-table) (table:keys n)))
+    (fold-left (lambda (t s)
+                 (insert-statement t s))
+               (table:make-table)
+               (table:keys n)))
   
   ; insert-statement: table statement -> table
   (define (insert-statement tbl s)
@@ -247,30 +251,45 @@
       ((stated) "true")
       (else "false")))
   
-  ; atom->sxml: atom -> sxml
-  (define (atom->sxml a)
-    (cond ((string? a) (list 's a))
-          ((symbol? a) (list 's (symbol->string a)))
-          ((pair? a) (if (eq? (car a) 'assuming)
-                         (let ((s (atom->sxml (cadr a))))
-                           (if (and (pair? (cadr s))
-                                    (eq? (caadr s) '^))
-                               (append (list (car s) ; s already has attributes
-                                             (append (cadr s) (list (element->sxml 'assumption "true"))))
-                                       (cddr s))
-                               (list (car s)
-                                     (elements->attributes (list (element->sxml 'assumption "true")))
-                                     (cadr s))))
+  ; checks if the statement s is used as an assumption in any argument of args
+  ; assumption-premise?: statement (list-of struct:argument) -> bool
+  (define (assumption-premise? s args)
+    (find (lambda (a)
+            (let ((premises (argument-premises a)))
+              (let ((prm (find (lambda (p)
+                                 (statement-equal? (premise-statement p) s))
+                               premises)))
+                (and prm (assumption? prm)))))
+          args)) 
+  
+  ; atom->sxml: atom (list-of struct:argument) -> sxml
+  (define (atom->sxml a args)
+    (cond ((string? a) (if (assumption-premise? a args)
+                           (list 's
+                                 (elements->attributes (list (element->sxml 'assumable "true")))
+                                 a)
+                           (list 's a)))
+          ((symbol? a) (if (assumption-premise? a args)
+                           (list 's
+                                 (elements->attributes (list (element->sxml 'assumable "true")))
+                                 (symbol->string a))                           
+                           (list 's (symbol->string a))))
+          ((pair? a) (if (assumption-premise? a args)
                          (append (list 's
-                                       (elements->attributes (list (element->sxml 'pred (symbol->string (car a))))))
+                                       (elements->attributes (list (element->sxml 'pred (car a))
+                                                                   (element->sxml 'assumable "true"))))
+                                 (map text/term->sxml (cdr a)))
+                         (append (list 's
+                                       (elements->attributes (list (element->sxml 'pred (car a)))))
                                  (map text/term->sxml (cdr a)))))
+                               
           (else (display "Error: unknown atom - ")
                 (display a)
                 (newline)
                 '())))
   
-  ; apply-context: context table:atom->struct:statement -> sxml
-  (define (apply-context c t)
+  ; apply-context: context table:atom->struct:statement (list-of struct:argument) -> sxml
+  (define (apply-context c t args)
     (let ((statement->sxml (lambda (a)
                              (let ((s (table:lookup t a #f))
                                    (st (status c a)))
@@ -280,7 +299,7 @@
                                             (element->sxml 'value (status->value st))
                                             (element->sxml 'assumption (status->assumption st))
                                             (element->sxml 'standard (string-upcase (symbol->string (proof-standard c a))))))
-                                     (atom->sxml a))))))
+                                     (atom->sxml a args))))))
       (cons 'statements (map statement->sxml (table:keys t)))))
   
   ; arguments->sxml: (list-of argument) table:atom->struct:statement -> sxml
@@ -325,15 +344,15 @@
  ; ----------------------------------
  ; Testing Code
  
- (define import-data (lkif-import "C:\\test.xml")) 
- 
- (define s (lkif-data->sources import-data)) 
- 
- (define c (lkif-data-context import-data))
- 
- (define a (context->axioms c))
- 
- (define r (rulebase->rules (lkif-data-rulebase import-data)))
+; (define import-data (lkif-import "C:\\test.xml")) 
+; 
+; (define s (lkif-data->sources import-data)) 
+; 
+; (define c (lkif-data-context import-data))
+; 
+; (define a (context->axioms c))
+; 
+; (define r (rulebase->rules (lkif-data-rulebase import-data)))
  
  )
      
