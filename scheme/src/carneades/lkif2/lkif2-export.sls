@@ -71,7 +71,7 @@
    (let ((sxml (list (lkif-data->sources data) 
                      (lkif-data->theory data)
                      (lkif-data->argument-graphs data))))
-     (write sxml) (newline)
+     ;(write sxml) (newline)
      (cons 'lkif sxml))) 
  
  ; lkif-data->sources: struct:lkif-data -> sxml
