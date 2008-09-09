@@ -1,0 +1,1035 @@
+<lkif>
+  <sources/>
+  <theory id="theory120111">
+    <axioms/>
+    <rules>
+      <rule id="vendorIsLiableForPayingVAT" strict="false">
+        <head>
+          <s pred="isLiableForPayingVATFor">
+            <v>Selling</v>
+            <v>Vendor</v>
+          </s>
+        </head>
+        <body>
+          <and>
+            <s pred="vendorOf">
+              <v>Selling</v>
+              <v>Vendor</v>
+            </s>
+            <s pred="isDistanceSelling">
+              <v>Selling</v>
+            </s>
+            <s pred="isTaxablePersonInAMemberState">
+              <v>Vendor</v>
+            </s>
+            <s pred="hasEuropeanTaxNumber">
+              <v>Vendor</v>
+            </s>
+          </and>
+        </body>
+      </rule>
+      <rule id="fact_1" strict="false">
+        <head>
+          <s pred="vendorOf">
+            <c>Selling</c>
+            <c>Vendor</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact_3" strict="false">
+        <head>
+          <s pred="isTaxablePersonInAMemberState">
+            <c>Vendor</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact_4" strict="false">
+        <head>
+          <s pred="hasEuropeanTaxNumber">
+            <c>Vendor</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="isDistanceSelling" strict="false">
+        <head>
+          <s pred="isDistanceSelling">
+            <v>Selling</v>
+          </s>
+        </head>
+        <body>
+          <and>
+            <s pred="vendorOf">
+              <v>Selling</v>
+              <v>Vendor</v>
+            </s>
+            <s pred="acquirerOf">
+              <v>Selling</v>
+              <v>Acquirer</v>
+            </s>
+            <s pred="goodsOf">
+              <v>Selling</v>
+              <v>Goods</v>
+            </s>
+            <s pred="memberStateOf">
+              <v>Vendor</v>
+              <v>SourceCountry</v>
+            </s>
+            <s pred="memberStateOf">
+              <v>Acquirer</v>
+              <v>TargetCountry</v>
+            </s>
+            <s pred="isSpecialAcquirer">
+              <v>Acquirer</v>
+            </s>
+            <s pred="notTransportedBy">
+              <v>Acquirer</v>
+              <v>Selling</v>
+            </s>
+            <not>
+              <s pred="areSpecialGoods">
+                <v>Goods</v>
+              </s>
+            </not>
+            <not>
+              <s pred="equals">
+                <v>SourceCountry</v>
+                <v>TargetCountry</v>
+              </s>
+            </not>
+          </and>
+        </body>
+      </rule>
+      <rule id="fact_5" strict="false">
+        <head>
+          <s pred="acquirerOf">
+            <c>Selling</c>
+            <c>Acquirer</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact_6" strict="false">
+        <head>
+          <s pred="goodsOf Selling">
+            <c>Goods</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact_7" strict="false">
+        <head>
+          <s pred="memberStateOf">
+            <c>Vendor</c>
+            <c>Hungary</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact_8" strict="false">
+        <head>
+          <s pred="memberStateOf">
+            <c>Acquirer</c>
+            <c>Austria</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="equals" strict="false">
+        <head>
+          <s pred="equals">
+            <v>x</v>
+            <v>y</v>
+          </s>
+        </head>
+        <body>
+          <s pred="eval">
+            <c>true</c>
+            <s pred="eq?">
+              <s pred="quote">
+                <v>x</v>
+              </s>
+              <s pred="quote">
+                <v>y</v>
+              </s>
+            </s>
+          </s>
+        </body>
+      </rule>
+      <rule id="not_equals" strict="false">
+        <head>
+          <not>
+            <s pred="equals">
+              <v>x</v>
+              <v>y</v>
+            </s>
+          </not>
+        </head>
+        <body>
+          <s pred="eval">
+            <c>false</c>
+            <s pred="eq?">
+              <s pred="quote">
+                <v>x</v>
+              </s>
+              <s pred="quote">
+                <v>y</v>
+              </s>
+            </s>
+          </s>
+        </body>
+      </rule>
+      <rule id="isSpecialAcquirer_1" strict="false">
+        <head>
+          <s pred="isSpecialAcquirer">
+            <v>Acquirer</v>
+          </s>
+        </head>
+        <body>
+          <not>
+            <s pred="isTaxablePersonInAMemberState">
+              <v>Acquirer</v>
+            </s>
+          </not>
+        </body>
+      </rule>
+      <rule id="fact_13" strict="false">
+        <head>
+          <not>
+            <s pred="isTaxablePersonInAMemberState">
+              <c>Acquirer</c>
+            </s>
+          </not>
+        </head>
+      </rule>
+      <rule id="isSpecialAcquirer_2" strict="false">
+        <head>
+          <s pred="isSpecialAcquirer">
+            <v>Acquirer</v>
+          </s>
+        </head>
+        <body>
+          <s pred="isSpecialTaxablePerson">
+            <v>Acquirer</v>
+          </s>
+        </body>
+      </rule>
+      <rule id="notTransportedBy_2" strict="false">
+        <head>
+          <s pred="notTransportedBy">
+            <v>Acquirer</v>
+            <v>Selling</v>
+          </s>
+        </head>
+        <body>
+          <and>
+            <s pred="vendorOf">
+              <v>Selling</v>
+              <v>Vendor</v>
+            </s>
+            <s pred="acquirerOf">
+              <v>Selling</v>
+              <v>Acquirer</v>
+            </s>
+            <s pred="transporterOf">
+              <v>Selling</v>
+              <v>Transporter</v>
+            </s>
+            <s pred="actsOnBehalfOf">
+              <v>Vendor</v>
+              <v>Transporter</v>
+            </s>
+            <not>
+              <s pred="equals">
+                <v>Transporter</v>
+                <v>Vendor</v>
+              </s>
+            </not>
+            <not>
+              <s pred="equals">
+                <v>Transporter</v>
+                <v>Acquirer</v>
+              </s>
+            </not>
+          </and>
+        </body>
+      </rule>
+      <rule id="fact_16" strict="false">
+        <head>
+          <s pred="transporterOf">
+            <c>Selling</c>
+            <c>Transporter</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact_17" strict="false">
+        <head>
+          <s pred="actsOnBehalfOf">
+            <c>Vendor</c>
+            <c>Transporter</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="isSpecialTaxablePerson_1" strict="false">
+        <head>
+          <s pred="isSpecialTaxablePerson">
+            <v>Person</v>
+          </s>
+        </head>
+        <body>
+          <s pred="carriesOutOnlyTheSellingOrServicesThatAreNotDeductible">
+            <v>Person</v>
+          </s>
+        </body>
+      </rule>
+      <rule id="fact_20" strict="false">
+        <head>
+          <s pred="carriesOutOnlyTheSellingOrServicesThatAreNotDeductible">
+            <c>Acquirer</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="isSpecialTaxablePerson_2" strict="false">
+        <head>
+          <s pred="isSpecialTaxablePerson">
+            <v>Person</v>
+          </s>
+        </head>
+        <body>
+          <s pred="isEngagedInAgriculturalActivitiesAndIsEntitledToSpecialLegalStatusIfAcquiringTheGoodsForSuchActivities">
+            <v>Person</v>
+          </s>
+        </body>
+      </rule>
+      <rule id="fact_21" strict="false">
+        <head>
+          <s pred="isEngagedInAgriculturalActivitiesAndIsEntitledToSpecialLegalStatusIfAcquiringTheGoodsForSuchActivities">
+            <c>Acquirer</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="isSpecialTaxablePerson_3" strict="false">
+        <head>
+          <s pred="isSpecialTaxablePerson">
+            <v>Person</v>
+          </s>
+        </head>
+        <body>
+          <s pred="isNon-taxableLegalPerson">
+            <v>Person</v>
+          </s>
+        </body>
+      </rule>
+      <rule id="fact_22" strict="false">
+        <head>
+          <s pred="isNon-taxableLegalPerson">
+            <c>Acquirer</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="isSpecialTaxablePerson_4" strict="false">
+        <head>
+          <s pred="isSpecialTaxablePerson">
+            <v>Person</v>
+          </s>
+        </head>
+        <body>
+          <s pred="isEligibleForIndividualTaxExemption">
+            <v>Person</v>
+          </s>
+        </body>
+      </rule>
+      <rule id="fact_23" strict="false">
+        <head>
+          <s pred="isEligibleForIndividualTaxExemption">
+            <c>Acquirer</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="areSpecialGoods_1" strict="false">
+        <head>
+          <s pred="areSpecialGoods">
+            <v>Goods</v>
+          </s>
+        </head>
+        <body>
+          <s pred="areNewMeansOfTransport">
+            <v>Goods</v>
+          </s>
+        </body>
+      </rule>
+      <rule id="areSpecialGoods_2" strict="false">
+        <head>
+          <s pred="areSpecialGoods">
+            <v>Goods</v>
+          </s>
+        </head>
+        <body>
+          <s pred="areGoodsIntendedForInstallationOrAssembly">
+            <v>Goods</v>
+          </s>
+        </body>
+      </rule>
+      <rule id="not_AreSpecialGoods" strict="false">
+        <head>
+          <not>
+            <s pred="areSpecialGoods">
+              <v>Goods</v>
+            </s>
+          </not>
+        </head>
+        <body>
+          <and>
+            <not>
+              <s pred="areNewMeansOfTransport">
+                <v>Goods</v>
+              </s>
+            </not>
+            <not>
+              <s pred="areGoodsIntendedForInstallationOrAssembly">
+                <v>Goods</v>
+              </s>
+            </not>
+          </and>
+        </body>
+      </rule>
+      <rule id="fact_24" strict="false">
+        <head>
+          <not>
+            <s pred="areNewMeansOfTransport">
+              <c>Goods</c>
+            </s>
+          </not>
+        </head>
+      </rule>
+      <rule id="fact_25" strict="false">
+        <head>
+          <not>
+            <s pred="areGoodsIntendedForInstallationOrAssembly">
+              <c>Goods</c>
+            </s>
+          </not>
+        </head>
+      </rule>
+      <rule id="_isLiableForPayingVATFor" strict="false">
+        <head>
+          <s pred="_isLiableForPayingVATFor">
+            <c>Selling</c>
+            <c>Vendor</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="placeOfPayingVAT_targetCountry_1" strict="false">
+        <head>
+          <s pred="placeOfPayingVATFor">
+            <v>Selling</v>
+            <v>TargetCountry</v>
+          </s>
+        </head>
+        <body>
+          <and>
+            <s pred="vendorOf">
+              <v>Selling</v>
+              <v>Vendor</v>
+            </s>
+            <s pred="acquirerOf">
+              <v>Selling</v>
+              <v>Acquirer</v>
+            </s>
+            <s pred="memberStateOf">
+              <v>Acquirer</v>
+              <v>TargetCountry</v>
+            </s>
+            <s pred="_isLiableForPayingVATFor">
+              <v>Selling</v>
+              <v>Vendor</v>
+            </s>
+            <s pred="isRegisteredIn">
+              <v>TargetCountry</v>
+              <v>Vendor</v>
+            </s>
+          </and>
+        </body>
+      </rule>
+      <rule id="placeOfPayingVAT_targetCountry_2" strict="false">
+        <head>
+          <s pred="placeOfPayingVATFor">
+            <v>Selling</v>
+            <v>TargetCountry</v>
+          </s>
+        </head>
+        <body>
+          <and>
+            <s pred="vendorOf">
+              <v>Selling</v>
+              <v>Vendor</v>
+            </s>
+            <s pred="acquirerOf">
+              <v>Selling</v>
+              <v>Acquirer</v>
+            </s>
+            <s pred="memberStateOf">
+              <v>Acquirer</v>
+              <v>TargetCountry</v>
+            </s>
+            <s pred="totalSellingsOf">
+              <v>Vendor</v>
+              <v>TotalSellings</v>
+            </s>
+            <s pred="thresholdIn">
+              <v>TargetCountry</v>
+              <v>Threshold</v>
+            </s>
+            <s pred="_isLiableForPayingVATFor">
+              <v>Selling</v>
+              <v>Vendor</v>
+            </s>
+            <s pred="greaterOrEquals">
+              <v>TotalSellings</v>
+              <v>Threshold</v>
+            </s>
+          </and>
+        </body>
+      </rule>
+      <rule id="fact_27" strict="false">
+        <head>
+          <s pred="totalSellingsOf">
+            <c>Vendor</c>
+            <c>120000</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="greaterOrEquals" strict="false">
+        <head>
+          <s pred="greaterOrEquals">
+            <v>x</v>
+            <v>y</v>
+          </s>
+        </head>
+        <body>
+          <s pred="eval">
+            <c>true</c>
+            <s pred="&gt;=">
+              <v>x</v>
+              <v>y</v>
+            </s>
+          </s>
+        </body>
+      </rule>
+      <rule id="not_greaterOrEquals" strict="false">
+        <head>
+          <not>
+            <s pred="greaterOrEquals">
+              <v>x</v>
+              <v>y</v>
+            </s>
+          </not>
+        </head>
+        <body>
+          <s pred="eval">
+            <c>false</c>
+            <s pred="&gt;=">
+              <v>x</v>
+              <v>y</v>
+            </s>
+          </s>
+        </body>
+      </rule>
+      <rule id="placeOfPayingVAT_sourceCountry" strict="false">
+        <head>
+          <s pred="placeOfPayingVATFor">
+            <v>Selling</v>
+            <v>SourceCountry</v>
+          </s>
+        </head>
+        <body>
+          <and>
+            <s pred="vendorOf">
+              <v>Selling</v>
+              <v>Vendor</v>
+            </s>
+            <s pred="acquirerOf">
+              <v>Selling</v>
+              <v>Acquirer</v>
+            </s>
+            <s pred="memberStateOf">
+              <v>Acquirer</v>
+              <v>TargetCountry</v>
+            </s>
+            <s pred="memberStateOf">
+              <v>Vendor</v>
+              <v>SourceCountry</v>
+            </s>
+            <s pred="totalSellingsOf">
+              <v>Vendor</v>
+              <v>TotalSellings</v>
+            </s>
+            <s pred="thresholdIn">
+              <v>TargetCountry</v>
+              <v>Threshold</v>
+            </s>
+            <s pred="_isLiableForPayingVATFor">
+              <v>Selling</v>
+              <v>Vendor</v>
+            </s>
+            <not>
+              <s pred="isRegisteredIn">
+                <v>TargetCountry</v>
+                <v>Vendor</v>
+              </s>
+            </not>
+            <not>
+              <s pred="greaterOrEquals">
+                <v>TotalSellings</v>
+                <v>Threshold</v>
+              </s>
+            </not>
+          </and>
+        </body>
+      </rule>
+      <rule id="threshold_Austria" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Austria</c>
+            <c>100000</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_Belgium" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Belgium</c>
+            <c>5000</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_Ciprus" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Ciprus</c>
+            <c>34220</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_CzechRepublic" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>CzechRepublic</c>
+            <c>35000</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_Denmark" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Denmark</c>
+            <c>37528</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_Estonia" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Estonia</c>
+            <c>35150</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_Finland" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Finland</c>
+            <c>35000</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_France" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>France</c>
+            <c>100000</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_Germany" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Germany</c>
+            <c>100000</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_GreatBritain" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>GreatBritain</c>
+            <c>109598</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_Greece" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Greece</c>
+            <c>35000</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_Hungary" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Hungary</c>
+            <c>35000</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_Ireland" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Ireland</c>
+            <c>35000</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_Italy" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Italy</c>
+            <c>27889</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_Latvia" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Latvia</c>
+            <c>36952</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_Lithuania" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Lithuania</c>
+            <c>36207</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_Luxemburg" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Luxemburg</c>
+            <c>100000</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_Malta" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Malta</c>
+            <c>35000</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_Netherlands" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Netherlands</c>
+            <c>100000</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_Poland" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Poland</c>
+            <c>35000</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_Portugal" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Portugal</c>
+            <c>31424</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_Slovakia" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Slovakia</c>
+            <c>35000</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_Slovenia" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Slovenia</c>
+            <c>35000</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_Spain" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Spain</c>
+            <c>35000</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="threshold_Sweden" strict="false">
+        <head>
+          <s pred="thresholdIn">
+            <c>Sweden</c>
+            <c>35809</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="amountOfVAT" strict="false">
+        <head>
+          <s pred="amountOfVATFor">
+            <v>Selling</v>
+            <v>Amount</v>
+          </s>
+        </head>
+        <body>
+          <and>
+            <s pred="_placeOfPayingVATFor">
+              <v>Selling</v>
+              <v>Country</v>
+            </s>
+            <s pred="rateOfVATIn">
+              <v>Country</v>
+              <v>Rate</v>
+            </s>
+            <s pred="priceOf">
+              <v>Selling</v>
+              <v>Price</v>
+            </s>
+            <s pred="eval">
+              <v>Amount</v>
+              <expr functor="*">
+                <v>Rate</v>
+                <v>Price</v>
+              </expr>
+            </s>
+          </and>
+        </body>
+      </rule>
+      <rule id="rate_Austria" strict="false">
+        <head>
+          <s pred="rateOfVATIn">
+            <c>Austria</c>
+            <c>0.2</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Belgium" strict="false">
+        <head>
+          <s pred="rateOfVATIn">
+            <c>Belgium</c>
+            <c>0.21</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Bulgaria" strict="false">
+        <head>
+          <s pred="rateOfVATIn">
+            <c>Bulgaria</c>
+            <c>0.2</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Ciprus" strict="false">
+        <head>
+          <s pred="rateOfVATIn">
+            <c>Ciprus</c>
+            <c>0.15</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_CzechRepublic" strict="false">
+        <head>
+          <s pred="rateOfVATIn">
+            <c>CzechRepublic</c>
+            <c>0.19</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Germany" strict="false">
+        <head>
+          <s pred="rateOfVATIn">
+            <c>Germany</c>
+            <c>0.19</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Denmark" strict="false">
+        <head>
+          <s pred="rateOFVATIn">
+            <c>Denmark</c>
+            <c>0.25</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Spain" strict="false">
+        <head>
+          <s pred="rateOFVATIn">
+            <c>Spain</c>
+            <c>0.16</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Estonia" strict="false">
+        <head>
+          <s pred="rateOFVATIn">
+            <c>Estonia</c>
+            <c>0.18</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_France" strict="false">
+        <head>
+          <s pred="rateOFVATIn">
+            <c>France</c>
+            <c>0.096</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Finnland" strict="false">
+        <head>
+          <s pred="rateOFVATIn">
+            <c>Finnland</c>
+            <c>0.22</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_GreatBritain" strict="false">
+        <head>
+          <s pred="rateOFVATIn">
+            <c>GreatBritain</c>
+            <c>0.175</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Greece" strict="false">
+        <head>
+          <s pred="rateOFVATIn">
+            <c>Greece</c>
+            <c>0.19</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Hungary" strict="false">
+        <head>
+          <s pred="rateOFVATIn">
+            <c>Hungary</c>
+            <c>0.2</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Italy" strict="false">
+        <head>
+          <s pred="rateOFVATIn">
+            <c>Italy</c>
+            <c>0.2</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Ireland" strict="false">
+        <head>
+          <s pred="rateOFVATIn">
+            <c>Ireland</c>
+            <c>0.21</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Luxembourg" strict="false">
+        <head>
+          <s pred="rateOFVATIn">
+            <c>Luxembourg</c>
+            <c>0.15</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Lithuania" strict="false">
+        <head>
+          <s pred="rateOFVATIn">
+            <c>Lithuania</c>
+            <c>0.18</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Latvia" strict="false">
+        <head>
+          <s pred="rateOFVATIn">
+            <c>Latvia</c>
+            <c>0.18</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Malta" strict="false">
+        <head>
+          <s pred="rateOFVATIn">
+            <c>Malta</c>
+            <c>0.18</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Netherlands" strict="false">
+        <head>
+          <s pred="rateOFVATIn">
+            <c>Netherlands</c>
+            <c>0.19</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Portugal" strict="false">
+        <head>
+          <s pred="rateOFVATIn">
+            <c>Portugal</c>
+            <c>0.21</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Poland" strict="false">
+        <head>
+          <s pred="rateOFVATIn">
+            <c>Poland</c>
+            <c>0.22</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Rumania" strict="false">
+        <head>
+          <s pred="rateOFVATIn">
+            <c>Rumania</c>
+            <c>0.19</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Sweden" strict="false">
+        <head>
+          <s pred="rateOFVATIn">
+            <c>Sweden</c>
+            <c>0.25</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Slovakia" strict="false">
+        <head>
+          <s pred="rateOFVATIn">
+            <c>Slovakia</c>
+            <c>0.19</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="rate_Slovenia" strict="false">
+        <head>
+          <s pred="rateOFVATIn">
+            <c>Slovenia</c>
+            <c>0.2</c>
+          </s>
+        </head>
+      </rule>
+    </rules>
+  </theory>
+  <argument-graphs/>
+</lkif>
