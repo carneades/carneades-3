@@ -10,7 +10,14 @@
             <axiom id="f1"><s pred="family:father"><c>Tom</c> is the father of <c>Dustin</c></s></axiom>
             <axiom id="f2"><s pred="family:mother"><c>Gloria</c> is the mother of <c>Tom</c></s></axiom>
             <axiom id="f3"><s pred="family:needy"><c>Gloria</c> is needy</s></axiom>
-            <axiom id="f4"><not><s><c>Dustin</c> has the capacity to provide support</s></not></axiom>
+            <axiom id="f4">
+				<not>
+					<s pred="family:hasCapacityToSupport">
+						<c>Dustin</c>
+						has the capacity to provide support
+					</s>
+				</not>
+			</axiom>
         </axioms>
         <rules>
             <rule id="r1" strict="true">
@@ -137,12 +144,26 @@
             <rule id="s91-BSHG">
                 <head>
                     <s pred="rule:excluded">
-                        <c>s1601-BGB</c> excludes <s pred="family:obligatedToSupport"><v>Person1</v>
-                            is obligated to support <v>Person2</v></s></s>
+                        <c>s1601-BGB</c>
+						excludes 
+						<s pred="family:obligatedToSupport">
+							<v>Person1</v>
+                            is obligated to support
+							<v>Person2</v>
+						</s>
+					</s>
                 </head>
                 <body>
-                    <s pred="family:undueHardship"><s pred="family:obligatedToSupport"><v>Person1</v> is obligated to support <v>Person2</v></s> would cause
-                            <v>Person1</v> undue hardship</s>
+                    <s pred="family:undueHardship">
+						<s pred="family:obligatedToSupport">
+							<v>Person1</v> 
+							is obligated to support 
+							<v>Person2</v>
+						</s> 
+						would cause
+                        <v>Person1</v>
+						undue hardship
+					</s>
                 </body>
             </rule>
         </rules>
