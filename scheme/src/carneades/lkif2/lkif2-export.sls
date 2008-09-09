@@ -71,6 +71,7 @@
    (let ((sxml (list (lkif-data->sources data) 
                      (lkif-data->theory data)
                      (lkif-data->argument-graphs data))))
+     (write sxml) (newline)
      (cons 'lkif sxml))) 
  
  ; lkif-data->sources: struct:lkif-data -> sxml
@@ -94,13 +95,17 @@
  ; context->axioms: context -> sxml
  (define (context->axioms context)
    (let ((axioms (table:keys (context-status context))))
-     (cons 'axioms (map axiom->sxml axioms))))
+     (cons 'axioms (map (lambda (a) (axiom->sxml a (context-status context))) axioms))))
  
- ; axiom->sxml: axiom -> sxml
- (define (axiom->sxml a)
-   (list 'axiom
-         (elements->attributes (list (element->sxml 'id (new-id "a"))))
-         (wff->sxml a)))
+ ; axiom->sxml: axiom table:statement->status -> sxml
+ (define (axiom->sxml a t)
+   (let ((attributes (elements->attributes (list (element->sxml 'id (new-id "a")))))
+         (wff (if (eq? (table:lookup t a 'accepted) 'rejected)
+                  (list 'not (wff->sxml a))
+                  (wff->sxml a))))
+     (list 'axiom
+           attributes
+           wff)))
  
  ; wff->sxml: wff -> sxml
  (define (wff->sxml f)
@@ -140,7 +145,8 @@
  ;       - can constants be strings?
  ;       - and if, is a string a text or a constant?
  (define (text/term->sxml t)
-   (cond ((number? t) (list 'c t))
+   (cond ((boolean? t) (list 'c (if t "true" "false")))
+         ((number? t) (list 'c t))
          ((string? t) t)
          ((variable? t) (let ((s (symbol->string t)))
                           (element->sxml 'v (substring s 1 (string-length s)))))
@@ -276,11 +282,11 @@
                            (list 's (symbol->string a))))
           ((pair? a) (if (assumption-premise? a args)
                          (append (list 's
-                                       (elements->attributes (list (element->sxml 'pred (car a))
+                                       (elements->attributes (list (element->sxml 'pred (symbol->string (car a)))
                                                                    (element->sxml 'assumable "true"))))
                                  (map text/term->sxml (cdr a)))
                          (append (list 's
-                                       (elements->attributes (list (element->sxml 'pred (car a)))))
+                                       (elements->attributes (list (element->sxml 'pred (symbol->string (car a))))))
                                  (map text/term->sxml (cdr a)))))
                                
           (else (display "Error: unknown atom - ")
