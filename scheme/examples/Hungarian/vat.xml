@@ -1,336 +1,393 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="file:/Users/tgo/Documents/Projects/Carneades/dist/schemas/LKIF.rnc" type="compact"?>
 <lkif>
-<!-- *********************************************************************** -->
-<!-- PART I. - Is the vendor liable for paying VAT for a given selling    -->
-	<rule id="vendorIsLiableForPayingVAT">
-		<body>
-			<s>vendorOf ?Selling ?Vendor</s>
+
+	<theory>
+	
+		<rules>
+
+		<!-- *********************************************************************** -->
+		<!-- PART I. - Is the vendor liable for paying VAT for a given selling    -->
+			<rule id="vendorIsLiableForPayingVAT">
+				<body>
+					<and>
+						<s pred="vendorOf"><v>Selling</v><v>Vendor</v></s>					
+						<s pred="isDistanceSelling"><v>Selling</v></s>
+						<s pred="isTaxablePersonInAMemberState"><v>Vendor</v></s>
+						<s pred="hasEuropeanTaxNumber"><v>Vendor</v></s>
+					</and>
+				</body>
+				<head>
+					<s pred="isLiableForPayingVATFor"><v>Selling</v><v>Vendor</v></s>
+				</head>
+			</rule>
 			
-			<s>isDistanceSelling ?Selling</s>
-			<s>isTaxablePersonInAMemberState ?Vendor</s>
-			<s>hasEuropeanTaxNumber ?Vendor</s>
-		</body>
-		<head>
-			<s>isLiableForPayingVATFor ?Selling ?Vendor</s>
-		</head>
-	</rule>
-	
-	<rule id="fact_1"><s>vendorOf Selling Vendor</s></rule>
-	<rule id="fact_3"><s>isTaxablePersonInAMemberState Vendor</s></rule>
-	<rule id="fact_4"><s>hasEuropeanTaxNumber Vendor</s></rule>
+			<rule id="fact_1"><head><s pred="vendorOf"><c>Selling</c><c>Vendor</c></s></head></rule>
+			<rule id="fact_3"><head><s pred="isTaxablePersonInAMemberState"><c>Vendor</c></s></head></rule>
+			<rule id="fact_4"><head><s pred="hasEuropeanTaxNumber"><c>Vendor</c></s></head></rule>
 
-	<rule id="isDistanceSelling">
-		<body>
-			<s>vendorOf ?Selling ?Vendor</s>
-			<s>acquirerOf ?Selling ?Acquirer</s>
-			<s>goodsOf ?Selling ?Goods</s>
-			<s>memberStateOf ?Vendor ?SourceCountry</s>
-			<s>memberStateOf ?Acquirer ?TargetCountry</s>
+			<rule id="isDistanceSelling">
+				<body>
+					<and>
+						<s pred="vendorOf"><v>Selling</v><v>Vendor</v></s>
+						<s pred="acquirerOf"><v>Selling</v><v>Acquirer</v></s>
+						<s pred="goodsOf"><v>Selling</v><v>Goods</v></s>
+						<s pred="memberStateOf"><v>Vendor</v><v>SourceCountry</v></s>
+						<s pred="memberStateOf"><v>Acquirer</v><v>TargetCountry</v></s>
+						
+						<s pred="isSpecialAcquirer"><v>Acquirer</v></s>
+						<s pred="notTransportedBy"><v>Acquirer</v><v>Selling</v></s>
+						<not><s pred="areSpecialGoods"><v>Goods</v></s></not>
+						
+						<not><s pred="equals"><v>SourceCountry</v><v>TargetCountry</v></s></not>
+					</and>
+				</body>
+				<head>
+					<s pred="isDistanceSelling"><v>Selling</v></s>
+				</head>
+			</rule>
 			
-			<s>isSpecialAcquirer ?Acquirer</s>
-			<s>notTransportedBy ?Acquirer ?Selling</s>
-			<not><s>areSpecialGoods ?Goods</s></not>
+			<rule id="fact_5"><head><s pred="acquirerOf"><c>Selling</c><c>Acquirer</c></s></head></rule>
+			<rule id="fact_6"><head><s pred="goodsOf Selling"><c>Goods</c></s></head></rule>
+			<rule id="fact_7"><head><s pred="memberStateOf"><c>Vendor</c><c>Hungary</c></s></head></rule>
+			<rule id="fact_8"><head><s pred="memberStateOf"><c>Acquirer</c><c>Austria</c></s></head></rule>
 			
-			<not><s>equals ?SourceCountry ?TargetCountry</s></not>
-		</body>
-		<head>
-			<s>isDistanceSelling ?Selling</s>
-		</head>
-	</rule>
-	
-	<rule id="fact_5"><s>acquirerOf Selling Acquirer</s></rule>
-	<rule id="fact_6"><s>goodsOf Selling Goods</s></rule>
-	<rule id="fact_7"><s>memberStateOf Vendor Hungary</s></rule>
-	<rule id="fact_8"><s>memberStateOf Acquirer Austria</s></rule>
-	
-	<rule id="equals">
-		<body>
-			<s>eval #t <s>eq? '?x '?y</s></s>
-		</body>
-		<head>
-			<s>equals ?x ?y</s>
-		</head>
-	</rule>
-	<rule id="not_equals">
-		<body>
-			<s>eval #f <s>eq? '?x '?y</s></s>
-		</body>
-		<head>
-			<not><s>equals ?x ?y</s></not>
-		</head>
-	</rule>
-
-	<rule id="isSpecialAcquirer_1">
-		<body>
-			<not><s>isTaxablePersonInAMemberState ?Acquirer</s></not>
-		</body>
-		<head>
-			<s>isSpecialAcquirer ?Acquirer</s>
-		</head>
-	</rule>
-	<rule id="fact_13"><not><s>isTaxablePersonInAMemberState Acquirer</s></not></rule>
-	
-	<rule id="isSpecialAcquirer_2">
-		<body>
-			<s>isSpecialTaxablePerson ?Acquirer</s>
-		</body>
-		<head>
-			<s>isSpecialAcquirer ?Acquirer</s>
-		</head>
-	</rule>
-	
-
-<!--**	<rule id="notTransportedBy_1">
-		<body>
-			<s>acquirerOf ?Selling ?Acquirer</s>
-			<s>vendorOf ?Selling ?Vendor</s>
+			<rule id="equals">
+				<body>
+					<s pred="eval">
+						<c>true</c>
+						<s pred="eq?">
+							<s pred="quote"><v>x</v></s>
+							<s pred="quote"><v>y</v></s>
+						</s>
+					</s>
+				</body>
+				<head>
+					<s pred="equals"><v>x</v><v>y</v></s>
+				</head>
+			</rule>
 			
-			<s>transporterOf ?Selling ?Vendor</s>
-		</body>
-		<head>
-			<s>notTransportedBy ?Acquirer ?Selling</s>
-		</head>
-	</rule>
--->
-<!--** <rule id="fact_15"><s>transporterOf Selling Vendor</s></rule> -->
-	
-	<rule id="notTransportedBy_2">
-		<body>
-			<s>vendorOf ?Selling ?Vendor</s>
-			<s>acquirerOf ?Selling ?Acquirer</s>
-			<s>transporterOf ?Selling ?Transporter</s>
+			<rule id="not_equals">
+				<body>
+					<s pred="eval">
+						<c>false</c>
+						<s pred="eq?">
+							<s pred="quote"><v>x</v></s>
+							<s pred="quote"><v>y</v></s>
+						</s>
+					</s>
+				</body>
+				<head>
+					<not><s pred="equals"><v>x</v><v>y</v></s></not>
+				</head>
+			</rule>
+
+			<rule id="isSpecialAcquirer_1">
+				<body>
+					<not><s pred="isTaxablePersonInAMemberState"><v>Acquirer</v></s></not>
+				</body>
+				<head>
+					<s pred="isSpecialAcquirer"><v>Acquirer</v></s>
+				</head>
+			</rule>
 			
-			<s>actsOnBehalfOf ?Vendor ?Transporter</s>
-			<not><s>equals ?Transporter ?Vendor</s></not>
-			<not><s>equals ?Transporter ?Acquirer</s></not>
-		</body>
-		<head>
-			<s>notTransportedBy ?Acquirer ?Selling</s>
-		</head>
-	</rule>
-	<rule id="fact_16"><s>transporterOf Selling Transporter</s></rule>
-	<rule id="fact_17"><s>actsOnBehalfOf Vendor Transporter</s></rule>
-
-
-	<rule id="isSpecialTaxablePerson_1">
-		<body>
-			<s>carriesOutOnlyTheSellingOrServicesThatAreNotDeductible ?Person</s>
-		</body>
-		<head>
-			<s>isSpecialTaxablePerson ?Person</s>
-		</head>
-	</rule>
-	<rule id="fact_20"><s>carriesOutOnlyTheSellingOrServicesThatAreNotDeductible Acquirer</s></rule>
-	
-	<rule id="isSpecialTaxablePerson_2">
-		<body>
-			<s>isEngagedInAgriculturalActivitiesAndIsEntitledToSpecialLegalStatusIfAcquiringTheGoodsForSuchActivities ?Person</s>
-		</body>
-		<head>
-			<s>isSpecialTaxablePerson ?Person</s>
-		</head>
-	</rule>
-	<rule id="fact_21"><s>isEngagedInAgriculturalActivitiesAndIsEntitledToSpecialLegalStatusIfAcquiringTheGoodsForSuchActivities Acquirer</s></rule>
-
-	<rule id="isSpecialTaxablePerson_3">
-		<body>
-			<s>isNon-taxableLegalPerson ?Person</s>
-		</body>
-		<head>
-			<s>isSpecialTaxablePerson ?Person</s>
-		</head>
-	</rule>
-	<rule id="fact_22"><s>isNon-taxableLegalPerson Acquirer</s></rule>
-	
-	<rule id="isSpecialTaxablePerson_4">
-		<body>
-			<s>isEligibleForIndividualTaxExemption ?Person</s>
-		</body>
-		<head>
-			<s>isSpecialTaxablePerson ?Person</s>
-		</head>
-	</rule>
-	<rule id="fact_23"><s>isEligibleForIndividualTaxExemption Acquirer</s></rule>
-
-
-	<rule id="areSpecialGoods_1">
-		<body>
-			<s>areNewMeansOfTransport ?Goods</s>
-		</body>
-		<head>
-			<s>areSpecialGoods ?Goods</s>
-		</head>
-	</rule>
-	<rule id="areSpecialGoods_2">
-		<body>
-			<s>areGoodsIntendedForInstallationOrAssembly ?Goods</s>
-		</body>
-		<head>
-			<s>areSpecialGoods ?Goods</s>
-		</head>
-	</rule>
-	
-	<rule id="not_AreSpecialGoods">
-		<body>
-			<not><s>areNewMeansOfTransport ?Goods</s></not>
-			<not><s>areGoodsIntendedForInstallationOrAssembly ?Goods</s></not>
-		</body>
-		<head>
-			<not><s>areSpecialGoods ?Goods</s></not>
-		</head>
-	</rule>
-	<rule id="fact_24"><not><s>areNewMeansOfTransport Goods</s></not></rule>
-	<rule id="fact_25"><not><s>areGoodsIntendedForInstallationOrAssembly Goods</s></not></rule>
-	
-<!-- *********************************************************************** -->
-<!-- PART II. - If he is, where should he pay it?                            -->
-
-	<rule id="_isLiableForPayingVATFor"><s>_isLiableForPayingVATFor Selling Vendor</s></rule>
-
-	<rule id="placeOfPayingVAT_targetCountry_1">
-		<body>
-			<s>vendorOf ?Selling ?Vendor</s>
-			<s>acquirerOf ?Selling ?Acquirer</s>
-			<s>memberStateOf ?Acquirer ?TargetCountry</s>
+			<rule id="fact_13"><head><not><s pred="isTaxablePersonInAMemberState"><c>Acquirer</c></s></not></head></rule>
 			
-			<s>_isLiableForPayingVATFor ?Selling ?Vendor</s>
-			<s>isRegisteredIn ?TargetCountry ?Vendor</s>
-		</body>
-		<head>
-			<s>placeOfPayingVATFor ?Selling ?TargetCountry</s>
-		</head>
-	</rule>
-<!--	<rule id="fact_26"><s>isRegisteredIn Austria Vendor</s></rule> -->
-	
-	<rule id="placeOfPayingVAT_targetCountry_2">
-		<body>
-			<s>vendorOf ?Selling ?Vendor</s>
-			<s>acquirerOf ?Selling ?Acquirer</s>
-			<s>memberStateOf ?Acquirer ?TargetCountry</s>
+			<rule id="isSpecialAcquirer_2">
+				<body>
+					<s pred="isSpecialTaxablePerson"><v>Acquirer</v></s>
+				</body>
+				<head>
+					<s pred="isSpecialAcquirer"><v>Acquirer</v></s>
+				</head>
+			</rule>
 			
-			<s>totalSellingsOf ?Vendor ?TotalSellings</s> 
-			<s>thresholdIn ?TargetCountry ?Threshold</s>
+
+		<!--**	<rule id="notTransportedBy_1">
+				<body>
+					<s pred="acquirerOf"><v>Selling</v><v>Acquirer</v></s>
+					<s pred="vendorOf"><v>Selling</v><v>Vendor</v></s>
+					
+					<s pred="transporterOf"><v>Selling</v><v>Vendor</v></s>
+				</body>
+				<head>
+					<s pred="notTransportedBy"><v>Acquirer</v><v>Selling</v></s>
+				</head>
+			</rule>
+		-->
+		<!--** <rule id="fact_15"><s>transporterOf Selling Vendor</s></rule> -->
 			
-			<s>_isLiableForPayingVATFor ?Selling ?Vendor</s>
-			<s>greaterOrEquals ?TotalSellings ?Threshold</s>
-		</body>
-		<head>
-			<s>placeOfPayingVATFor ?Selling ?TargetCountry</s>
-		</head>
-	</rule>
-	<rule id="fact_27"><s>totalSellingsOf Vendor 120000</s></rule>
-	
-	<rule id="greaterOrEquals">
-		<body>
-			<s>eval #t <s>>= ?x ?y</s></s>
-		</body>
-		<head>
-			<s>greaterOrEquals ?x ?y</s>
-		</head>
-	</rule>
-	<rule id="not_greaterOrEquals">
-		<body>
-			 <s>eval #f <s>>= ?x ?y</s></s>
-		</body>
-		<head>
-			<not><s>greaterOrEquals ?x ?y</s></not>
-		</head>
-	</rule>
-	
-	<rule id="placeOfPayingVAT_sourceCountry">
-		<body>
-			<s>vendorOf ?Selling ?Vendor</s>
-			<s>acquirerOf ?Selling ?Acquirer</s>
-			<s>memberStateOf ?Acquirer ?TargetCountry</s>
-			<s>memberStateOf ?Vendor ?SourceCountry</s>
+			<rule id="notTransportedBy_2">
+				<body>
+					<and>
+						<s pred="vendorOf"><v>Selling</v><v>Vendor</v></s>
+						<s pred="acquirerOf"><v>Selling</v><v>Acquirer</v></s>
+						<s pred="transporterOf"><v>Selling</v><v>Transporter</v></s>
+						
+						<s pred="actsOnBehalfOf"><v>Vendor</v><v>Transporter</v></s>
+						<not><s pred="equals"><v>Transporter</v><v>Vendor</v></s></not>
+						<not><s pred="equals"><v>Transporter</v><v>Acquirer</v></s></not>
+					</and>
+				</body>
+				<head>
+					<s pred="notTransportedBy"><v>Acquirer</v><v>Selling</v></s>
+				</head>
+			</rule>
 			
-			<s>totalSellingsOf ?Vendor ?TotalSellings</s>
-			<s>thresholdIn ?TargetCountry ?Threshold</s>
+			<rule id="fact_16"><head><s pred="transporterOf"><c>Selling</c><c>Transporter</c></s></head></rule>
+			<rule id="fact_17"><head><s pred="actsOnBehalfOf"><c>Vendor</c><c>Transporter</c></s></head></rule>
+
+
+			<rule id="isSpecialTaxablePerson_1">
+				<body>
+					<s pred="carriesOutOnlyTheSellingOrServicesThatAreNotDeductible"><v>Person</v></s>
+				</body>
+				<head>
+					<s pred="isSpecialTaxablePerson"><v>Person</v></s>
+				</head>
+			</rule>
+			
+			<rule id="fact_20"><head><s pred="carriesOutOnlyTheSellingOrServicesThatAreNotDeductible"><c>Acquirer</c></s></head></rule>
+			
+			<rule id="isSpecialTaxablePerson_2">
+				<body>
+					<s pred="isEngagedInAgriculturalActivitiesAndIsEntitledToSpecialLegalStatusIfAcquiringTheGoodsForSuchActivities"><v>Person</v></s>
+				</body>
+				<head>
+					<s pred="isSpecialTaxablePerson"><v>Person</v></s>
+				</head>
+			</rule>
+			
+			<rule id="fact_21"><head><s pred="isEngagedInAgriculturalActivitiesAndIsEntitledToSpecialLegalStatusIfAcquiringTheGoodsForSuchActivities"><c>Acquirer</c></s></head></rule>
+
+			<rule id="isSpecialTaxablePerson_3">
+				<body>
+					<s pred="isNon-taxableLegalPerson"><v>Person</v></s>
+				</body>
+				<head>
+					<s pred="isSpecialTaxablePerson"><v>Person</v></s>
+				</head>
+			</rule>
+			
+			<rule id="fact_22"><head><s pred="isNon-taxableLegalPerson"><c>Acquirer</c></s></head></rule>
+			
+			<rule id="isSpecialTaxablePerson_4">
+				<body>
+					<s pred="isEligibleForIndividualTaxExemption"><v>Person</v></s>
+				</body>
+				<head>
+					<s pred="isSpecialTaxablePerson"><v>Person</v></s>
+				</head>
+			</rule>
+			
+			<rule id="fact_23"><head><s pred="isEligibleForIndividualTaxExemption"><c>Acquirer</c></s></head></rule>
+
+
+			<rule id="areSpecialGoods_1">
+				<body>
+					<s pred="areNewMeansOfTransport"><v>Goods</v></s>
+				</body>
+				<head>
+					<s pred="areSpecialGoods"><v>Goods</v></s>
+				</head>
+			</rule>
+			
+			<rule id="areSpecialGoods_2">
+				<body>
+					<s pred="areGoodsIntendedForInstallationOrAssembly"><v>Goods</v></s>
+				</body>
+				<head>
+					<s pred="areSpecialGoods"><v>Goods</v></s>
+				</head>
+			</rule>
+			
+			<rule id="not_AreSpecialGoods">
+				<body>
+					<and>
+						<not><s pred="areNewMeansOfTransport"><v>Goods</v></s></not>
+						<not><s pred="areGoodsIntendedForInstallationOrAssembly"><v>Goods</v></s></not>
+					</and>
+				</body>
+				<head>
+					<not><s pred="areSpecialGoods"><v>Goods</v></s></not>
+				</head>
+			</rule>
+			
+			<rule id="fact_24"><head><not><s pred="areNewMeansOfTransport"><c>Goods</c></s></not></head></rule>
+			<rule id="fact_25"><head><not><s pred="areGoodsIntendedForInstallationOrAssembly"><c>Goods</c></s></not></head></rule>
+			
+		<!-- *********************************************************************** -->
+		<!-- PART II. - If he is, where should he pay it?                            -->
+
+			<rule id="_isLiableForPayingVATFor"><head><s pred="_isLiableForPayingVATFor"><c>Selling</c><c>Vendor</c></s></head></rule>
+
+			<rule id="placeOfPayingVAT_targetCountry_1">
+				<body>
+					<and>
+						<s pred="vendorOf"><v>Selling</v><v>Vendor</v></s>
+						<s pred="acquirerOf"><v>Selling</v><v>Acquirer</v></s>
+						<s pred="memberStateOf"><v>Acquirer</v><v>TargetCountry</v></s>
+					
+						<s pred="_isLiableForPayingVATFor"><v>Selling</v><v>Vendor</v></s>
+						<s pred="isRegisteredIn"><v>TargetCountry</v><v>Vendor</v></s>
+					</and>
+				</body>
+				<head>
+					<s pred="placeOfPayingVATFor"><v>Selling</v><v>TargetCountry</v></s>
+				</head>
+			</rule>
+		<!--	<rule id="fact_26"><s>isRegisteredIn Austria Vendor</s></rule> -->
+			
+			<rule id="placeOfPayingVAT_targetCountry_2">
+				<body>
+					<and>
+						<s pred="vendorOf"><v>Selling</v><v>Vendor</v></s>
+						<s pred="acquirerOf"><v>Selling</v><v>Acquirer</v></s>
+						<s pred="memberStateOf"><v>Acquirer</v><v>TargetCountry</v></s>
+					
+						<s pred="totalSellingsOf"><v>Vendor</v><v>TotalSellings</v></s> 
+						<s pred="thresholdIn"><v>TargetCountry</v><v>Threshold</v></s>
+					
+						<s pred="_isLiableForPayingVATFor"><v>Selling</v><v>Vendor</v></s>
+						<s pred="greaterOrEquals"><v>TotalSellings</v><v>Threshold</v></s>
+					</and>
+				</body>
+				<head>
+					<s pred="placeOfPayingVATFor"><v>Selling</v><v>TargetCountry</v></s>
+				</head>
+			</rule>
+			
+			<rule id="fact_27"><head><s pred="totalSellingsOf"><c>Vendor</c><c>120000</c></s></head></rule>
+			
+			<rule id="greaterOrEquals">
+				<body>
+					<s pred="eval">
+						<c>true</c>
+						<s pred=">="><v>x</v><v>y</v></s>
+					</s>
+				</body>
+				<head>
+					<s pred="greaterOrEquals"><v>x</v><v>y</v></s>
+				</head>
+			</rule>
+			
+			<rule id="not_greaterOrEquals">
+				<body>
+					<s pred="eval">
+						<c>false</c>
+						<s pred=">="><v>x</v><v>y</v></s>
+					</s>
+				</body>
+				<head>
+					<not><s pred="greaterOrEquals"><v>x</v><v>y</v></s></not>
+				</head>
+			</rule>
+			
+			<rule id="placeOfPayingVAT_sourceCountry">
+				<body>
+					<and>
+						<s pred="vendorOf"><v>Selling</v><v>Vendor</v></s>
+						<s pred="acquirerOf"><v>Selling</v><v>Acquirer</v></s>
+						<s pred="memberStateOf"><v>Acquirer</v><v>TargetCountry</v></s>
+						<s pred="memberStateOf"><v>Vendor</v><v>SourceCountry</v></s>
+					
+						<s pred="totalSellingsOf"><v>Vendor</v><v>TotalSellings</v></s>
+						<s pred="thresholdIn"><v>TargetCountry</v><v>Threshold</v></s>
+				
+						<s pred="_isLiableForPayingVATFor"><v>Selling</v><v>Vendor</v></s>
+						<not><s pred="isRegisteredIn"><v>TargetCountry</v><v>Vendor</v></s></not>
+						<not><s pred="greaterOrEquals"><v>TotalSellings</v><v>Threshold</v></s></not>
+					</and>
+				</body>
+				<head>
+					<s pred="placeOfPayingVATFor"><v>Selling</v><v>SourceCountry</v></s>
+				</head>
+			</rule>
+			
+		<!--	<rule id="fact_29"><s>totalSellingsOf Vendor 80000</s></rule> -->
+		<!--	<rule id="fact_30"><not><s>isRegisteredIn Austria Vendor</s></not></rule> -->
+
+			<rule id="threshold_Austria"><head><s pred="thresholdIn"><c>Austria</c><c>100000</c></s></head></rule>
+			<rule id="threshold_Belgium"><head><s pred="thresholdIn"><c>Belgium</c><c>5000</c></s></head></rule>
+			<rule id="threshold_Ciprus"><head><s pred="thresholdIn"><c>Ciprus</c><c>34220</c></s></head></rule>
+			<rule id="threshold_CzechRepublic"><head><s pred="thresholdIn"><c>CzechRepublic</c><c>35000</c></s></head></rule>
+			<rule id="threshold_Denmark"><head><s pred="thresholdIn"><c>Denmark</c><c>37528</c></s></head></rule>
+			<rule id="threshold_Estonia"><head><s pred="thresholdIn"><c>Estonia</c><c>35150</c></s></head></rule>
+			<rule id="threshold_Finland"><head><s pred="thresholdIn"><c>Finland</c><c>35000</c></s></head></rule>
+			<rule id="threshold_France"><head><s pred="thresholdIn"><c>France</c><c>100000</c></s></head></rule>
+			<rule id="threshold_Germany"><head><s pred="thresholdIn"><c>Germany</c><c>100000</c></s></head></rule>
+			<rule id="threshold_GreatBritain"><head><s pred="thresholdIn"><c>GreatBritain</c><c>109598</c></s></head></rule>
+			<rule id="threshold_Greece"><head><s pred="thresholdIn"><c>Greece</c><c>35000</c></s></head></rule>
+			<rule id="threshold_Hungary"><head><s pred="thresholdIn"><c>Hungary</c><c>35000</c></s></head></rule>
+			<rule id="threshold_Ireland"><head><s pred="thresholdIn"><c>Ireland</c><c>35000</c></s></head></rule>
+			<rule id="threshold_Italy"><head><s pred="thresholdIn"><c>Italy</c><c>27889</c></s></head></rule>
+			<rule id="threshold_Latvia"><head><s pred="thresholdIn"><c>Latvia</c><c>36952</c></s></head></rule>
+			<rule id="threshold_Lithuania"><head><s pred="thresholdIn"><c>Lithuania</c><c>36207</c></s></head></rule>
+			<rule id="threshold_Luxemburg"><head><s pred="thresholdIn"><c>Luxemburg</c><c>100000</c></s></head></rule>
+			<rule id="threshold_Malta"><head><s pred="thresholdIn"><c>Malta</c><c>35000</c></s></head></rule>
+			<rule id="threshold_Netherlands"><head><s pred="thresholdIn"><c>Netherlands</c><c>100000</c></s></head></rule>
+			<rule id="threshold_Poland"><head><s pred="thresholdIn"><c>Poland</c><c>35000</c></s></head></rule>
+			<rule id="threshold_Portugal"><head><s pred="thresholdIn"><c>Portugal</c><c>31424</c></s></head></rule>
+			<rule id="threshold_Slovakia"><head><s pred="thresholdIn"><c>Slovakia</c><c>35000</c></s></head></rule>
+			<rule id="threshold_Slovenia"><head><s pred="thresholdIn"><c>Slovenia</c><c>35000</c></s></head></rule>
+			<rule id="threshold_Spain"><head><s pred="thresholdIn"><c>Spain</c><c>35000</c></s></head></rule>
+			<rule id="threshold_Sweden"><head><s pred="thresholdIn"><c>Sweden</c><c>35809</c></s></head></rule>
+			
+		<!-- *********************************************************************** -->
+		<!-- PART III. - How much should he pay?                                     -->
+
+			<!-- <rule id="fact_32"><s>_placeOfPayingVATFor Selling Austria</s></rule> -->
+
+			<rule id="amountOfVAT">
+				<body>
+					<and>
+						<s pred="_placeOfPayingVATFor"><v>Selling</v><v>Country</v></s>
+						<s pred="rateOfVATIn"><v>Country</v><v>Rate</v></s>
+						<s pred="priceOf"><v>Selling</v><v>Price</v></s>
+					
+						<s pred="eval">
+							<v>Amount</v>
+							<s pred="*"><v>Rate</v><v>Price</v></s>
+						</s>
+					</and>
+				</body>
+				<head>
+					<s pred="amountOfVATFor"><v>Selling</v><v>Amount</v></s>
+				</head>
+			</rule>
+				
+			<!-- <rule id="fact_33"><s>priceOf Selling 100</s></rule> -->
+			
+			<rule id="rate_Austria"><head><s pred="rateOfVATIn"><c>Austria</c><c>.20</c></s></head></rule>
+			<rule id="rate_Belgium"><head><s pred="rateOfVATIn"><c>Belgium</c><c>.21</c></s></head></rule>
+			<rule id="rate_Bulgaria"><head><s pred="rateOfVATIn"><c>Bulgaria</c><c>.20</c></s></head></rule>
+			<rule id="rate_Ciprus"><head><s pred="rateOfVATIn"><c>Ciprus</c><c>.15</c></s></head></rule>
+			<rule id="rate_CzechRepublic"><head><s pred="rateOfVATIn"><c>CzechRepublic</c><c>.19</c></s></head></rule>
+			<rule id="rate_Germany"><head><s pred="rateOfVATIn"><c>Germany</c><c>.19</c></s></head></rule>
+			<rule id="rate_Denmark"><head><s pred="rateOFVATIn"><c>Denmark</c><c>.25</c></s></head></rule>
+			<rule id="rate_Spain"><head><s pred="rateOFVATIn"><c>Spain</c><c>.16</c></s></head></rule>
+			<rule id="rate_Estonia"><head><s pred="rateOFVATIn"><c>Estonia</c><c>.18</c></s></head></rule>
+			<rule id="rate_France"><head><s pred="rateOFVATIn"><c>France</c><c>.096</c></s></head></rule>
+			<rule id="rate_Finnland"><head><s pred="rateOFVATIn"><c>Finnland</c><c>.22</c></s></head></rule>
+			<rule id="rate_GreatBritain"><head><s pred="rateOFVATIn"><c>GreatBritain</c><c>.175</c></s></head></rule>
+			<rule id="rate_Greece"><head><s pred="rateOFVATIn"><c>Greece</c><c>.19</c></s></head></rule>
+			<rule id="rate_Hungary"><head><s pred="rateOFVATIn"><c>Hungary</c><c>.20</c></s></head></rule>
+			<rule id="rate_Italy"><head><s pred="rateOFVATIn"><c>Italy</c><c>.20</c></s></head></rule>
+			<rule id="rate_Ireland"><head><s pred="rateOFVATIn"><c>Ireland</c><c>.21</c></s></head></rule>
+			<rule id="rate_Luxembourg"><head><s pred="rateOFVATIn"><c>Luxembourg</c><c>.15</c></s></head></rule>
+			<rule id="rate_Lithuania"><head><s pred="rateOFVATIn"><c>Lithuania</c><c>.18</c></s></head></rule>
+			<rule id="rate_Latvia"><head><s pred="rateOFVATIn"><c>Latvia</c><c>.18</c></s></head></rule>
+			<rule id="rate_Malta"><head><s pred="rateOFVATIn"><c>Malta</c><c>.18</c></s></head></rule>
+			<rule id="rate_Netherlands"><head><s pred="rateOFVATIn"><c>Netherlands</c><c>.19</c></s></head></rule>
+			<rule id="rate_Portugal"><head><s pred="rateOFVATIn"><c>Portugal</c><c>.21</c></s></head></rule>
+			<rule id="rate_Poland"><head><s pred="rateOFVATIn"><c>Poland</c><c>.22</c></s></head></rule>
+			<rule id="rate_Rumania"><head><s pred="rateOFVATIn"><c>Rumania</c><c>.19</c></s></head></rule>
+			<rule id="rate_Sweden"><head><s pred="rateOFVATIn"><c>Sweden</c><c>.25</c></s></head></rule>
+			<rule id="rate_Slovakia"><head><s pred="rateOFVATIn"><c>Slovakia</c><c>.19</c></s></head></rule>
+			<rule id="rate_Slovenia"><head><s pred="rateOFVATIn"><c>Slovenia</c><c>.20</c></s></head></rule>
+			
+		</rules>
 		
-			<s>_isLiableForPayingVATFor ?Selling ?Vendor</s>
-			<not><s>isRegisteredIn ?TargetCountry ?Vendor</s></not>
-			<not><s>greaterOrEquals ?TotalSellings ?Threshold</s></not>
-		</body>
-		<head>
-			<s>placeOfPayingVATFor ?Selling ?SourceCountry</s>
-		</head>
-	</rule>
+	</theory>
 	
-<!--	<rule id="fact_29"><s>totalSellingsOf Vendor 80000</s></rule> -->
-<!--	<rule id="fact_30"><not><s>isRegisteredIn Austria Vendor</s></not></rule> -->
-
-	<rule id="threshold_Austria"><s>thresholdIn Austria 100000</s></rule>
-	<rule id="threshold_Belgium"><s>thresholdIn Belgium 5000</s></rule>
-	<rule id="threshold_Ciprus"><s>thresholdIn Ciprus 34220</s></rule>
-	<rule id="threshold_CzechRepublic"><s>thresholdIn CzechRepublic 35000</s></rule>
-	<rule id="threshold_Denmark"><s>thresholdIn Denmark 37528</s></rule>
-	<rule id="threshold_Estonia"><s>thresholdIn Estonia 35150</s></rule>
-	<rule id="threshold_Finland"><s>thresholdIn Finland 35000</s></rule>
-	<rule id="threshold_France"><s>thresholdIn France 100000</s></rule>
-	<rule id="threshold_Germany"><s>thresholdIn Germany 100000</s></rule>
-	<rule id="threshold_GreatBritain"><s>thresholdIn GreatBritain 109598</s></rule>
-	<rule id="threshold_Greece"><s>thresholdIn Greece 35000</s></rule>
-	<rule id="threshold_Hungary"><s>thresholdIn Hungary 35000</s></rule>
-	<rule id="threshold_Ireland"><s>thresholdIn Ireland 35000</s></rule>
-	<rule id="threshold_Italy"><s>thresholdIn Italy 27889</s></rule>
-	<rule id="threshold_Latvia"><s>thresholdIn Latvia 36952</s></rule>
-	<rule id="threshold_Lithuania"><s>thresholdIn Lithuania 36207</s></rule>
-	<rule id="threshold_Luxemburg"><s>thresholdIn Luxemburg 100000</s></rule>
-	<rule id="threshold_Malta"><s>thresholdIn Malta 35000</s></rule>
-	<rule id="threshold_Netherlands"><s>thresholdIn Netherlands 100000</s></rule>
-	<rule id="threshold_Poland"><s>thresholdIn Poland 35000</s></rule>
-	<rule id="threshold_Portugal"><s>thresholdIn Portugal 31424</s></rule>
-	<rule id="threshold_Slovakia"><s>thresholdIn Slovakia 35000</s></rule>
-	<rule id="threshold_Slovenia"><s>thresholdIn Slovenia 35000</s></rule>
-	<rule id="threshold_Spain"><s>thresholdIn Spain 35000</s></rule>
-	<rule id="threshold_Sweden"><s>thresholdIn Sweden 35809</s></rule>
-	
-<!-- *********************************************************************** -->
-<!-- PART III. - How much should he pay?                                     -->
-
-	<!-- <rule id="fact_32"><s>_placeOfPayingVATFor Selling Austria</s></rule> -->
-
-	<rule id="amountOfVAT">
-		<body>
-			<s>_placeOfPayingVATFor ?Selling ?Country</s>
-			<s>rateOfVATIn ?Country ?Rate</s>
-			<s>priceOf ?Selling ?Price</s>
-			
-			<s>eval ?Amount <s>* ?Rate ?Price</s></s>
-		</body>
-		<head>
-			<s>amountOfVATFor ?Selling ?Amount</s>
-		</head>
-	</rule>
-		
-	<!-- <rule id="fact_33"><s>priceOf Selling 100</s></rule> -->
-	
-	<rule id="rate_Austria"><s>rateOfVATIn Austria .20</s></rule>
-	<rule id="rate_Belgium"><s>rateOfVATIn Belgium .21</s></rule>
-	<rule id="rate_Bulgaria"><s>rateOfVATIn Bulgaria .20</s></rule>
-	<rule id="rate_Ciprus"><s>rateOfVATIn Ciprus .15</s></rule>
-	<rule id="rate_CzechRepublic"><s>rateOfVATIn CzechRepublic .19</s></rule>
-	<rule id="rate_Germany"><s>rateOfVATIn Germany .19</s></rule>
-	<rule id="rate_Denmark"><s>rateOFVATIn Denmark .25</s></rule>
-	<rule id="rate_Spain"><s>rateOFVATIn Spain .16</s></rule>
-	<rule id="rate_Estonia"><s>rateOFVATIn Estonia .18</s></rule>
-	<rule id="rate_France"><s>rateOFVATIn France .096</s></rule>
-	<rule id="rate_Finnland"><s>rateOFVATIn Finnland .22</s></rule>
-	<rule id="rate_GreatBritain"><s>rateOFVATIn GreatBritain .175</s></rule>
-	<rule id="rate_Greece"><s>rateOFVATIn Greece .19</s></rule>
-	<rule id="rate_Hungary"><s>rateOFVATIn Hungary .20</s></rule>
-	<rule id="rate_Italy"><s>rateOFVATIn Italy .20</s></rule>
-	<rule id="rate_Ireland"><s>rateOFVATIn Ireland .21</s></rule>
-	<rule id="rate_Luxembourg"><s>rateOFVATIn Luxembourg .15</s></rule>
-	<rule id="rate_Lithuania"><s>rateOFVATIn Lithuania .18</s></rule>
-	<rule id="rate_Latvia"><s>rateOFVATIn Latvia .18</s></rule>
-	<rule id="rate_Malta"><s>rateOFVATIn Malta .18</s></rule>
-	<rule id="rate_Netherlands"><s>rateOFVATIn Netherlands .19</s></rule>
-	<rule id="rate_Portugal"><s>rateOFVATIn Portugal .21</s></rule>
-	<rule id="rate_Poland"><s>rateOFVATIn Poland .22</s></rule>
-	<rule id="rate_Rumania"><s>rateOFVATIn Rumania .19</s></rule>
-	<rule id="rate_Sweden"><s>rateOFVATIn Sweden .25</s></rule>
-	<rule id="rate_Slovakia"><s>rateOFVATIn Slovakia .19</s></rule>
-	<rule id="rate_Slovenia"><s>rateOFVATIn Slovenia .20</s></rule>
 </lkif>

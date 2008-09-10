@@ -1,42 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="../../schemas/LKIF.rnc" type="compact"?>
 <lkif>
+	<argument-graphs>
+	
+		<argument-graph>
+			<statements>
+			    <statement id="contract" value="unknown" assumption="true"><s>There is a contract</s></statement>
+			    <statement id="writing" value="unknown" assumption="true"><s>The agreement is in writing.</s></statement>
+			    <statement id="real-estate" value="unknown" assumption="true"><s>The agreement is for the sale of real estate.</s></statement>
+			    <statement id="agreement" value="unknown" assumption="true"><s>There is an agreement.</s></statement>
+			    <statement id="minor" value="unknown" assumption="true"><s>One of the parties is a minor.</s></statement>
+			    <statement id="email" value="unknown" assumption="true"><s>The agreement was by email.</s></statement>
+			    <statement id="deed" value="true" assumption="true"><s assumable="true">There is a deed.</s></statement>
+			</statements>
 
-    <s id="contract" summary="There is a contract."/>
-    <s id="writing" summary="The agreement is in writing."/>
-    <s id="real-estate" summary="The agreement is for the sale of real estate."/>
-    <s id="agreement" summary="There is an agreement."/>
-    <s id="minor" summary="One of the parties is a minor."/>
-    <s id="email" summary="The agreement was by email."/>
-    <s id="deed" summary="There is a deed."/>
-    
-    <argument-graph>
-        <argument id="a1" direction="pro">
-            <premise statement="agreement"/>
-            <exception statement="minor"/>
-            <conclusion statement="contract"/>
-        </argument>    
-        
-        <argument id="a2" direction="con">
-            <premise statement="writing" polarity="negative"/>
-            <premise statement="real-estate" />
-            <conclusion statement="contract" />
-        </argument>
-        
-        <argument id="a3" direction="con">
-            <premise statement="email"/>
-            <conclusion statement="writing"/>
-        </argument>
-        
-        <argument id="a4" direction="pro">
-            <premise statement="deed" />
-            <conclusion statement="agreement"/>
-        </argument>    
-        
-        <argument id="a5" direction="pro">
-            <assumption statement="deed"/>
-            <conclusion statement="real-estate"/>
-        </argument>
-    </argument-graph>
-
+			<arguments>
+		        <argument id="a1" direction="pro">
+					<conclusion statement="contract"/>
+					<premises>
+			            <premise statement="agreement"/>
+			            <premise exception="true" statement="minor"/>
+					</premises>
+		        </argument>    
+		        
+		        <argument id="a2" direction="con">
+					<conclusion statement="contract" />
+					<premises>
+			            <premise polarity="negative" statement="writing" />
+			            <premise statement="real-estate" />
+					</premises>
+		        </argument>
+		        
+		        <argument id="a3" direction="con">
+					<conclusion statement="writing"/>
+					<premises>
+						<premise statement="email"/>
+		            </premises>
+		        </argument>
+		        
+		        <argument id="a4" direction="pro">
+					<conclusion statement="agreement"/>
+					<premises>
+						<premise statement="deed" />
+		            </premises>
+		        </argument>    
+		        
+		        <argument id="a5" direction="pro">
+					<conclusion statement="real-estate"/>
+					<premises>
+						<premise statement="deed"/>
+		            </premises>
+		        </argument>
+			</arguments>
+	    </argument-graph>
+	</argument-graphs>
 </lkif>
