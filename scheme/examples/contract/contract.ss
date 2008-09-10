@@ -4,8 +4,7 @@
         (carneades lkif2)
         (carneades argument-diagram))
 
-
-(define import-data (lkif-import "q1-arguments2.xml"))
+(define import-data (lkif-import "contract.xml"))
 
 (define stages (lkif-data-stages import-data))
 

@@ -1,55 +1,170 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="../../schemas/LKIF.rnc" type="compact"?>
 <lkif xmlns:foo="http://www.estrellaproject.org/foo#">
+	
+	<theory id="goods">
+	
+		<rules>
     
-    <rule id="facts">
-        <s>foo:Movable g1</s>
-        <s>Money g1</s>
-    </rule>
-    
-    <rule id="s-109-h">
-        <head><s>Goods ?c</s></head>
-        <body><s>foo:Movable ?c</s> 
-              <unless><s>Money ?c</s></unless></body>
-    </rule>
-    
-    <rule id="lex-posterior">
-        <head><s>prior ?r2 ?r1</s></head>
-        <body><s>enacted ?r1 ?d1</s>
-              <s>enacted ?r2 ?d2</s></body>
-    </rule>
-  
-    <rule id="s-109-h-i">
-        <body><s>Money ?c</s></body>
-        <head><s>excluded s-109-5-h <s>Goods ?c</s></s></head>
-    </rule>
-    
-    <rule id="repeal">
-        <body><s>repealed ?r1</s></body>
-        <head><not><s>valid ?r1</s></not></head>
-    </rule>
-    
-    <rule id="s-9-306-1">
-        <body>
-            <s>Goods ?s ?c</s>
-            <s>consideration ?s ?p</s>
-            <s>collateral ?si ?c</s>
-            <s>holds <s>perfected ?si ?c</s> ?e</s>
-            <unless><s>applies s-9-306-3-2 <s>perfected ?si ?p</s></s></unless>
-        </body>
-        <head>
-            <s>hold <s>perfected ?si ?c</s> ?e</s>
-        </head>
-    </rule>
-    
-    <rule id="s-9-306-2a">
-        <body>
-            <s>goods ?t ?c</s>
-            <s>collateral ?s ?c</s>
-        </body>
-        <head>
-            <not><s>terminates ?t <s>SecurityInterest ?s</s></s></not>
-        </head>
-    </rule>
+		    <rule id="fact1">
+				<head>
+					<s pred="foo:Movable">
+						<c>g1</c>
+					</s>
+				</head>		        
+		    </rule>
+			
+			<rule id="fact2">
+				<head>
+					<s pred="Money">
+						<c>g1</c>
+					</s>
+				</head>		        
+		    </rule>			
+		    
+		    <rule id="s-109-h">
+		        <head>
+					<s pred="Goods">
+						<v>c</v>
+					</s>
+				</head>
+		        <body>
+					<and>
+						<s pred="foo:Movable">
+							<v>c</v>
+						</s> 
+						<not exception="true">
+							<s pred="Money">
+								<v>c</v>
+							</s>
+						</not>
+					</and>
+				</body>
+		    </rule>
+		    
+		    <rule id="lex-posterior">
+		        <head>
+					<s pred="prior">
+						<v>r2</v>
+						<v>r1</v>
+					</s>
+				</head>
+		        <body>
+					<and>
+						<s pred="enacted">
+							<v>r1</v>
+							<v>d1</v>
+						</s>
+						<s pred="enacted">
+							<v>r2</v>
+							<v>d2</v>
+						</s>
+					</and>
+				</body>					
+		    </rule>
+		  
+		    <rule id="s-109-h-i">
+				<head>
+					<s pred="excluded">
+						<c>s-109-5-h</c>
+						<s pred="Goods">
+							<v>c</v>
+						</s>
+					</s>
+				</head>
+		        <body>
+					<s pred="Money">
+						<v>c</v>
+					</s>
+				</body>
+		    </rule>
+		    
+		    <rule id="repeal">
+		        <body>
+					<s pred="repealed">
+						<v>r1</v>
+					</s>
+				</body>
+		        <head>
+					<not>
+						<s pred="valid">
+							<v>r1</v>
+						</s>
+					</not>
+				</head>
+		    </rule>
+		    
+		    <rule id="s-9-306-1">
+		        <body>
+					<and>
+						<s pred="Goods">
+							<v>s</v>
+							<v>c</v>
+						</s>
+						<s pred="consideration">
+							<v>s</v>
+							<v>p</v>
+						</s>
+						<s pred="collateral">
+							<v>si</v>
+							<v>c</v>
+						</s>
+						<s pred="holds">
+							<s pred="perfected">
+								<v>si</v>
+								<v>c</v>
+							</s>
+							<v>e</v>
+						</s>
+						<not exception="true">
+							<s pred="applies">
+								<c>s-9-306-3-2</c>
+								<s pred="perfected">
+									<v>si</v>
+									<v>p</v>
+								</s>
+							</s>
+						</not>
+					</and>
+		        </body>
+		        <head>
+		            <s pred="hold">
+						<s pred="perfected">
+							<v>si</v>
+							<v>c</v>
+						</s>
+						<v>e</v>
+					</s>
+		        </head>
+		    </rule>
+		    
+		    <rule id="s-9-306-2a">
+		        <body>
+					<and>
+						<s pred="goods">
+							<v>t</v>
+							<v>c</v>
+						</s>
+						<s pred="collateral">
+							<v>s</v>
+							<v>c</v>
+						</s>
+					</and>
+		        </body>
+		        <head>
+		            <not>
+						<s pred="terminates">
+							<v>t</v>
+							<s pred="SecurityInterest">
+								<v>s</v>
+							</s>
+						</s>
+					</not>
+		        </head>
+		    </rule>
+			
+		</rules>
+		
+	</theory>
  
 </lkif>

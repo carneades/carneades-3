@@ -11,7 +11,7 @@
 
 (define null '())
 
-(define import-data (lkif-import "vat2.xml"))
+(define import-data (lkif-import "vat.xml"))
 
 (define vat (lkif-data-rulebase import-data))
 

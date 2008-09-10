@@ -10,7 +10,7 @@
 
 
 
-(define import-data (lkif-import "goods2.xml"))
+(define import-data (lkif-import "goods.xml"))
 
 (define goods (lkif-data-rulebase import-data))
 
