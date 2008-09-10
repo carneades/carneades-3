@@ -18,10 +18,11 @@
 (library 
  (carneades statement)
  
- (export make-text text? text-id text-statement text-src text-summary
-         statement-equal? statement-compare statement-positive?
-         statement-negative? statement-complement statement-atom term->sxml
-         statement->sxml index-by-statement index-by-id summarize)
+ (export statement-equal? statement-compare statement-positive?
+         statement-negative? statement-complement statement-atom summarize
+;         statement->sxml index-by-statement index-by-id term->sxml
+;         make-text text? text-id text-statement text-src text-summary
+         )
  
  (import (rnrs base)
          (rnrs io simple)
@@ -34,18 +35,18 @@
  ; <atom> := <symbol> | <list> | <string>
  ; <statement> := <atom> | (not <atom>)   ;; i.e. literals
 
- (define-record-type text
-   (fields
-    id       ; symbol
-    exp      ; statement | null
-    summary  ; string, quoting or paraphrasing the source text
-    src      ; string, a URL pointing to the original text
-    ))
- 
- (define (text-statement txt)
-   (if (null? (text-exp txt))
-       (text-id txt)
-       (text-exp txt)))
+; (define-record-type text
+;   (fields
+;    id       ; symbol
+;    exp      ; statement | null
+;    summary  ; string, quoting or paraphrasing the source text
+;    src      ; string, a URL pointing to the original text
+;    ))
+; 
+; (define (text-statement txt)
+;   (if (null? (text-exp txt))
+;       (text-id txt)
+;       (text-exp txt)))
  
  (define statement-equal? equal?)
  
@@ -79,37 +80,37 @@
            s1)
        s1))
  
- (define (term->sxml t)
-   (cond ((symbol? t) (string-append (symbol->string t) " "))
-         ((list? t) (statement->sxml t))
-         (else t)))
- 
- (define (statement->sxml s)
-   (cond ((symbol? s) (list 's (symbol->string s)))
-         ((list? s)
-          (if (eq? (car s) 'not)
-              (cons 'not (list (statement->sxml (cadr s))))
-              (cons 's (map term->sxml s))))
-         (else s)))
+; (define (term->sxml t)
+;   (cond ((symbol? t) (string-append (symbol->string t) " "))
+;         ((list? t) (statement->sxml t))
+;         (else t)))
+; 
+; (define (statement->sxml s)
+;   (cond ((symbol? s) (list 's (symbol->string s)))
+;         ((list? s)
+;          (if (eq? (car s) 'not)
+;              (cons 'not (list (statement->sxml (cadr s))))
+;              (cons 's (map term->sxml s))))
+;         (else s)))
  
  #| index-by-statement: (list-of text) -> (hashtable-of datum text)
             assumption: the statement of each text in the list is unique.  |#
- (define (index-by-statement texts)
-   (let ((tbl (table:make-table)))
-     (for-each (lambda (txt) 
-                 (if (text-statement txt)
-                     (set! tbl (table:insert tbl (text-statement txt) txt))))
-               texts)
-     tbl))
+; (define (index-by-statement texts)
+;   (let ((tbl (table:make-table)))
+;     (for-each (lambda (txt) 
+;                 (if (text-statement txt)
+;                     (set! tbl (table:insert tbl (text-statement txt) txt))))
+;               texts)
+;     tbl))
  
  #| index-by-id: (list-of text) -> (hashtable-of symbol text)
             assumption: the id of each text in the list is unique. |#
- (define (index-by-id texts)
-   (let ((tbl (table:make-table)))
-     (for-each (lambda (txt) 
-                 (set! tbl (table:insert tbl (text-id txt) txt)))
-               texts)
-     tbl))
+; (define (index-by-id texts)
+;   (let ((tbl (table:make-table)))
+;     (for-each (lambda (txt) 
+;                 (set! tbl (table:insert tbl (text-id txt) txt)))
+;               texts)
+;     tbl))
  
  #| summarize: statement -> string
             default string representation of statements,
