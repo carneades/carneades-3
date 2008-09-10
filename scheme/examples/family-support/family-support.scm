@@ -1,7 +1,7 @@
 #!r6rs
 
 (import (rnrs)
-        (prefix (carneades lkif) lkif:)
+        (carneades lkif2)
         (prefix (carneades argument)  argument:)
         (carneades argument-builtins)
         (carneades rule)
@@ -10,8 +10,7 @@
         (carneades shell))
 
 (define family-support 
-  (add-rules empty-rulebase 
-             (lkif:import "family-support.xml")))    
+  (lkif-data-rulebase (lkif-import "family-support.xml")))    
 
 
 ;; undue hardship cases

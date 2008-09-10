@@ -4,7 +4,7 @@
         (carneades lkif2)
         (carneades argument-diagram))
 
-(define import-data (lkif-import "ITpilot2_3-2.xml"))
+(define import-data (lkif-import "EUpilot2_3.xml"))
 
 (define stages (lkif-data-stages import-data))
 
