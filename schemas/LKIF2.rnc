@@ -72,7 +72,7 @@ grammar {
     # an issue for this atom in which case the value of the assumption attribute of 
     # the issue for this atom is 
     Atom = element s { 
-        attribute pred { xsd:anyURI | xsd:Name }?,
+        attribute pred { xsd:anyURI }?,
         attribute assumable { xsd:boolean}?,  # default: false
         ((text | Term)*) 
     }
@@ -148,7 +148,7 @@ grammar {
     
     Statement = element statement { 
         attribute id { xsd:ID },
-        attribute value { "unknown" | "true" | "false" },  # default: unknown
+        attribute value { "unknown" | "true" | "false" }?,  # default: unknown
         attribute assumption { xsd:boolean }?, # default: false
         attribute standard { "SE" | "DV" | "BA" | "PE" | "BRD" | "CCE" }?, # default: BA
         Atom
