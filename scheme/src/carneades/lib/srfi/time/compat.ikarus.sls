@@ -1,12 +1,14 @@
 (library 
+ 
  (carneades lib srfi time compat)
- (export
-  format
-  host:time-resolution
-  host:current-time 
-  host:time-nanosecond 
-  host:time-second 
-  host:time-gmt-offset)
+ 
+ (export format
+         host:time-resolution
+         host:current-time 
+         host:time-nanosecond 
+         host:time-second 
+         host:time-gmt-offset)
+ 
  (import
   (rnrs base)
   (only (ikarus) format)

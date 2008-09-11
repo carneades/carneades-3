@@ -106,6 +106,28 @@
          (carneades lib util)
          (carneades lib srfi random))
  
+ 
+  ; default compare
+ 
+ (define (default-compare x y)
+   (select-compare 
+    x y
+    (null?    0)
+    (pair?    (default-compare (car x) (car y))
+              (default-compare (cdr x) (cdr y)))
+    (boolean? (boolean-compare x y))
+    (char?    (char-compare    x y))
+    (string?  (string-compare  x y))
+    (symbol?  (symbol-compare  x y))
+    (number?  (number-compare  x y))
+    (vector?  (vector-compare default-compare x y))
+    (else (error "unrecognized type in default-compare" x y))))
+ 
+ ; Note that we pass default-compare to compare-{pair,vector} explictly.
+ ; This makes sure recursion proceeds with this default-compare, which 
+ ; need not be the one in the lexical scope of compare-{pair,vector}.
+ 
+ 
  (define (compare:checked result compare . args)
    (for-each (lambda (x) (compare x x)) args)
    result)
@@ -646,26 +668,6 @@
        ((        x y           )
         (vector-compare-as-list default-compare x y vector-length vector-ref)))))
  
- 
- ; default compare
- 
- (define (default-compare x y)
-   (select-compare 
-    x y
-    (null?    0)
-    (pair?    (default-compare (car x) (car y))
-              (default-compare (cdr x) (cdr y)))
-    (boolean? (boolean-compare x y))
-    (char?    (char-compare    x y))
-    (string?  (string-compare  x y))
-    (symbol?  (symbol-compare  x y))
-    (number?  (number-compare  x y))
-    (vector?  (vector-compare default-compare x y))
-    (else (error "unrecognized type in default-compare" x y))))
- 
- ; Note that we pass default-compare to compare-{pair,vector} explictly.
- ; This makes sure recursion proceeds with this default-compare, which 
- ; need not be the one in the lexical scope of compare-{pair,vector}.
  
  
  ; debug compare
