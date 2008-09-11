@@ -21,7 +21,7 @@
  (export make-node node? node-depth node-label node-parent node-state
          make-root root? make-problem problem? problem-root problem-space problem-goal
          search path make-resource resource? resource-amount resource-empty?
-         use depth-first breadth-first iterative-deepening best-first)
+         depth-first breadth-first iterative-deepening best-first)
  
  (import (rnrs)
          (rnrs records syntactic)
