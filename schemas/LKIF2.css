@@ -51,10 +51,23 @@ axioms {
     display: block;
 }
 
-axioms > or, if, iff, exists, all, not, and, s {
+
+axiom:before {
+    content: attr(id) ". ";
+}
+
+axiom, head, body {
+    margin-left: 2em;
+    /* margin-bottom: 2em; */
+    display: block;
+}
+
+/*
+head, body > or, if, iff, exists, all, and, s {
     margin-left: 2em;
     display: block;
 }
+*/
  
 rules:before {
     font-weight: bold;
@@ -96,13 +109,15 @@ head:before {
     /* content: "conclusions "; */
     font-weight: bold;
     /* display: block; */
-    margin-left: 1em;
+    /* margin-left: 1em; */
 }
 
+/*
 head {
     display: block;
     margin-left: 2em;
 }
+*/
 
 body:before {
     content: "given";
@@ -111,10 +126,11 @@ body:before {
     margin-left: 1em;
 }
 
+/*
 body {
     margin-left: 2em;
-    display: block;
 }
+*/
 
 s {
     quotes: '"' '"' "'" "'";
@@ -126,20 +142,11 @@ or > s {
     margin-left: 1em;
 }
 
-and > s {
+and, body > s {
     display: block;
     margin-left: 1em;
 }
 
-unless:before {
-    content: "unless ";
-    font-weight: bold;
-}
-
-assuming:before {
-    content: "assuming ";
-    font-weight: bold;
-}
 
 or:before { 
     content: "at least one of the following is true:";
@@ -178,18 +185,20 @@ and {
     margin-left: 1em;
 }
 
+
+not[exception="false"]:before {
+    content:"it is not the case that:";
+}
+
+not[exception="true"]:before {
+    content:"unless:";
+}
+
 not:before {
-    content: "it is not the case that:";
-    display: block;
-}
-
-not {
-    display: block;
-    margin-left: 2em;
-}
-
-
-s > s {
+    content:"it is not the case that:";
+}   
+    
+s, statement > s {
     display: inline;
     content: ""
 }
@@ -223,12 +232,12 @@ statements {
     display: block;
 }
 
-statements > s {
+statements > statement {
     margin-left: 2em;
     display: block;
 }
 
-statements > s:before {
+statement:before {
     content: attr(id) ". ";
 }
 
