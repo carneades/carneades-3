@@ -21,9 +21,29 @@
  (export system pretty-print tcp-connect gensym)
  
  (import (rnrs) 
-         (only (core) system pretty-print gensym))
+         (only (core) system pretty-print))
  
  (define (tcp-connect . args) 
    (raise-continuable (make-message-condition "tcp-connect not provided by Ypsilon")))
+ 
+ 
+ ; ypsilon has its own gensym-function, but its generated symbols
+ ; look like 'g56.48c8fb95.d7d57, which doesn't work with GraphViz
+ 
+ (define gensym-counter 0)
+ 
+ (define gensym
+   (case-lambda 
+     (() 
+      (set! gensym-counter (+ 1 gensym-counter))
+      (string->symbol (string-append "g" 
+                                     (number->string gensym-counter))))
+     ((prefix) ; symbol or string
+      (set! gensym-counter (+ 1 gensym-counter))
+      (string->symbol (string-append 
+                       (if (symbol? prefix) 
+                           (symbol->string prefix) 
+                           prefix)
+                       (number->string gensym-counter))))))
 
  )
