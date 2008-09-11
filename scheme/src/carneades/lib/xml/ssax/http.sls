@@ -20,7 +20,7 @@
          (carneades lib xml ssax common)
          (carneades lib xml ssax myenv)
          (carneades lib xml ssax mime)
-        ;  (carneades lib xml ssax srfi-12)
+         ;  (carneades lib xml ssax srfi-12)
          (carneades lib xml ssax util)
          (only (carneades lib srfi strings) string-index string-prefix?)
          (only (carneades system) tcp-connect))
@@ -133,54 +133,54 @@
  ;
  ; These functions are necessarily platform- and system-specific
  
-; (cond-expand
-;  (gambit
-;   ; For Gambit 4
-;   (define (open-tcp-connection host port-number)
-;     (assert (integer? port-number) (positive? port-number))
-;     (let ((p (open-tcp-client
-;               (list server-address: host
-;                     port-number: port-number))))
-;       (cons p p)))
-;   (define flush-output-port force-output)
-;   (define close-tcp-connection close-port)
-;   
-;   ; DL: by analogue with Gambit 3
-;   (define shutdown-sender force-output)
-;   
-;   ; Previous version for Gambit 3
-;   ;  ; The Gambit implementation relies on internal Gambit procedures,
-;   ;  ; whose names start with ##
-;   ;  ; Such identifiers cannot be _read_ on many other systems
-;   ;  ; The following macro constructs Gambit-specific ids on the fly
-;   ;  (define-macro (_gid id)
-;   ;    (string->symbol (string-append "##" (symbol->string id))))
-;   ;  (define (open-tcp-connection host port-number)
-;   ;    (assert (integer? port-number) (positive? port-number))
-;   ;    (let ((io-port ((_gid open-input-output-file)
-;   ;		    (string-append "tcp://" host ":"
-;   ;				   (number->string port-number)))))
-;   ;      (cons io-port io-port)))
-;   ;  (define flush-output-port flush-output)
-;   ;  (define shutdown-sender flush-output)
-;   )
-;  (bigloo
-;   (define (open-tcp-connection host port-number)
-;     (let ((sock (make-client-socket host port-number)))
-;       (cons (socket-input sock) (socket-output sock))))
-;   ; flush-output-port is built-in
-;   (define shutdown-sender close-output-port)
-;   )
-;  ((or plt chicken)
-;   (define (open-tcp-connection host port-number)
-;     (call-with-values
-;      (lambda () (tcp-connect host port-number))
-;      (lambda (input-port output-port)
-;        (cons input-port output-port))))
-;   (define flush-output-port flush-output)
-;   (define shutdown-sender close-output-port)
-;   )
-;  )
+ ; (cond-expand
+ ;  (gambit
+ ;   ; For Gambit 4
+ ;   (define (open-tcp-connection host port-number)
+ ;     (assert (integer? port-number) (positive? port-number))
+ ;     (let ((p (open-tcp-client
+ ;               (list server-address: host
+ ;                     port-number: port-number))))
+ ;       (cons p p)))
+ ;   (define flush-output-port force-output)
+ ;   (define close-tcp-connection close-port)
+ ;   
+ ;   ; DL: by analogue with Gambit 3
+ ;   (define shutdown-sender force-output)
+ ;   
+ ;   ; Previous version for Gambit 3
+ ;   ;  ; The Gambit implementation relies on internal Gambit procedures,
+ ;   ;  ; whose names start with ##
+ ;   ;  ; Such identifiers cannot be _read_ on many other systems
+ ;   ;  ; The following macro constructs Gambit-specific ids on the fly
+ ;   ;  (define-macro (_gid id)
+ ;   ;    (string->symbol (string-append "##" (symbol->string id))))
+ ;   ;  (define (open-tcp-connection host port-number)
+ ;   ;    (assert (integer? port-number) (positive? port-number))
+ ;   ;    (let ((io-port ((_gid open-input-output-file)
+ ;   ;		    (string-append "tcp://" host ":"
+ ;   ;				   (number->string port-number)))))
+ ;   ;      (cons io-port io-port)))
+ ;   ;  (define flush-output-port flush-output)
+ ;   ;  (define shutdown-sender flush-output)
+ ;   )
+ ;  (bigloo
+ ;   (define (open-tcp-connection host port-number)
+ ;     (let ((sock (make-client-socket host port-number)))
+ ;       (cons (socket-input sock) (socket-output sock))))
+ ;   ; flush-output-port is built-in
+ ;   (define shutdown-sender close-output-port)
+ ;   )
+ ;  ((or plt chicken)
+ ;   (define (open-tcp-connection host port-number)
+ ;     (call-with-values
+ ;      (lambda () (tcp-connect host port-number))
+ ;      (lambda (input-port output-port)
+ ;        (cons input-port output-port))))
+ ;   (define flush-output-port flush-output)
+ ;   (define shutdown-sender close-output-port)
+ ;   )
+ ;  )
  ;^^^^^^^
  
  (define shutdown-sender close-output-port)
@@ -191,7 +191,7 @@
     (lambda (input-port output-port)
       (cons input-port output-port))))
  
-
+ 
  
  ; The body of the function.
  ; The function is written as a collection of mutually-recursive
@@ -199,159 +199,170 @@
  
  (define (http-transaction req-method req-url req-parms response-handler)
    
-   ; expected keyword arguments and their default values
-   (define-def http-proxy req-parms  #f)
-   (define-def user-agent req-parms  "Scheme-HTTP/1.0")
-   (define-def http-req   req-parms  '())
-   (define-def logger     req-parms
-     (lambda (port msg . other-msgs) (cerr msg other-msgs nl)))
-   
-   (define CRLF (string (integer->char 13) (integer->char 10)))
-   
-   (define-record-type (&http-condition make-http-condition http-condition?)
-     (parent &condition)
-     (fields name reason headers))
-     
-   (define (die reason headers port)
-     (if port (close-output-port port))
-     (raise-continuable (make-http-condition 'HTTP-TRANSACTION reason headers)))
-   
-   ; re-throw the exception exc as a HTTP-TRANSACTION exception
-   (define (die-again exc reason headers port)
-     (if port (close-output-port port))
-     (raise-continuable (condition
-                         (make-http-condition 'HTTP-TRANSACTION reason headers)
-                         exc)))
-   
-   ; Open a connection, send the request, and if successful,
-   ; invoke the read-resp-status-line on the opened http-port.
-   (define (make-req schema dummy host resource)
-     (let* ((target-host (or http-proxy host))
-            (target-addr-lst (string-split target-host '(#\:)))
-            (target-host-proper (car target-addr-lst))
-            (target-port
-             (if (pair? (cdr target-addr-lst))
-                 (string->integer (cadr target-addr-lst) 0
-                                  (string-length (cadr target-addr-lst)))
-                 80))
-            (dummy (logger #f "Connecting to " target-host-proper ":"
-                           target-port))
-            ; prevent hacking
-            (dummy (if (string-index target-host-proper #\|)
-                       (myenv:error "Bad target addr: " target-host-proper)))
-            (http-ports (open-tcp-connection target-host-proper target-port))
-            (http-i-port (car http-ports))
-            (http-o-port (cdr http-ports))
-            )
-       
-       (for-each
-        (lambda (str) (display str http-o-port))
-        `(,req-method " "
-                      ; if the proxy is set, request the full REQ-URL; otherwise,
-                      ; send only the relative URL
-                      ,@(if http-proxy (list req-url) (list "/" resource))
-                      " HTTP/1.0" ,CRLF
-                      "Host: " ,host ,CRLF
-                      "User-agent: " ,user-agent ,CRLF
-                      "Connection: close" ,CRLF))
-       (if (procedure? http-req)
-           (http-req http-o-port)	; let the user write other headers
-           (begin
-             (for-each (lambda (header-name-value)
-                         (display (car header-name-value) http-o-port)
-                         (write-char #\: http-o-port)
-                         (display (cdr header-name-value) http-o-port)
-                         (display CRLF http-o-port))
-                       http-req)
-             (display CRLF http-o-port) ; An empty line ends headers
-             ))
-       (flush-output-port http-o-port)
-       (shutdown-sender http-o-port)
-       (logger http-o-port "sent request. Now listening for the response...")
-       (read-resp-status-line http-i-port)))
-   
-   
-   ; Read the first line of the server's response, something like
-   ; HTTP/1.x 200 OK
-   ; and extract the response code
-   ; Invoke
-   ;  read-headers http-i-port resp-code
-   ;		'(HTTP-RESPONSE . the-whole-response-line)
-   ; or raise an exception if the response line is absent or invalid
-   (define (read-resp-status-line http-port)
-     (let* ((resp-line (get-line http-port))
-            (dummy (logger http-port "Got response :" resp-line)) 
-            (resp-headers (list (cons 'HTTP-RESPONSE resp-line))))
-       (cond
-         ((eof-object? resp-line)
-          (die 'NO-REPLY '() http-port))
-         ((not (string-prefix? "HTTP/1." resp-line))
-          (die 'BAD-RESP-LINE resp-headers http-port))
-         (else
-          (let* ((resp-line-parts (string-split resp-line '() 3))
-                 (resp-code
-                  (and (pair? resp-line-parts)
-                       (pair? (cdr resp-line-parts))
-                       (string->integer (cadr resp-line-parts) 0
-                                        (string-length (cadr resp-line-parts)))))
-                 )
-            (if resp-code
-                (read-headers http-port resp-code resp-headers)
-                (die 'BAD-RESP-LINE resp-headers http-port)))))))
-   
-   
-   ; read-headers http-port resp-code init-resp-headers
-   ; The http-port is positioned after the response line.
-   ; The procedure reads HTTP response headers and adds them to
-   ; init-resp-headers.
-   ; On success, the procedure exits to response-handler, passing
-   ; it the response code, the read headers and the http-port. The
-   ; port is positioned after the empty line that terminates the headers.
-   (define (read-headers http-port resp-code init-resp-headers)
-     (let ((headers
-            (with-exception-handler
-             (lambda (exc)
-               (die-again exc 'BAD-HEADER init-resp-headers http-port))
-             (lambda ()
-               (MIME:read-headers http-port)))))
-       (response-handler resp-code (append init-resp-headers headers)
-                         http-port)))
-   
-   ; parse the req-url and exit either to make-req, or to
-   ; the response-handler to handle the error
-   (let ((url-parts (string-split req-url '(#\/) 4)))
-     ; this stub is added by Dmitry Lizorkin for handling URIs consisting of
-     ; just a schema and a host, say, "http://www.plt-scheme.org"
-     (let ((url-parts
-            (if (and (string=? "http:" (car url-parts))
-                     (= 3 (length url-parts)))
-                (append url-parts '(""))
-                url-parts)))    
-       (cond
-         ((not (= 4 (length url-parts)))
-          (die 'BAD-REQ-URL '() #f))
-         ((string=? "http:" (car url-parts))
-          (apply make-req url-parts))
-         (else
-          (die 'UNSUPPORTED-SCHEMA '() #f)
-          ))))
-   )
+   (letrec*
+    
+    ; expected keyword arguments and their default values
+    ((http-proxy (define-def http-proxy req-parms  #f))
+     (user-agent (define-def user-agent req-parms  "Scheme-HTTP/1.0"))
+     (http-req (define-def http-req   req-parms  '()))
+     (logger (define-def logger     req-parms
+               (lambda (port msg . other-msgs) (cerr msg other-msgs nl)))))
+    
+    (define CRLF (string (integer->char 13) (integer->char 10)))
+    
+    (define-record-type (&http-condition make-http-condition http-condition?)
+      (parent &condition)
+      (fields name reason headers))
+    
+    (define (die reason headers port)
+      (if port (close-output-port port))
+      (raise-continuable (make-http-condition 'HTTP-TRANSACTION reason headers)))
+    
+    ; re-throw the exception exc as a HTTP-TRANSACTION exception
+    (define (die-again exc reason headers port)
+      (if port (close-output-port port))
+      (raise-continuable (condition
+                          (make-http-condition 'HTTP-TRANSACTION reason headers)
+                          exc)))
+    
+    ; Open a connection, send the request, and if successful,
+    ; invoke the read-resp-status-line on the opened http-port.
+    (define (make-req schema dummy host resource)
+      (let* ((target-host (or http-proxy host))
+             (target-addr-lst (string-split target-host '(#\:)))
+             (target-host-proper (car target-addr-lst))
+             (target-port
+              (if (pair? (cdr target-addr-lst))
+                  (string->integer (cadr target-addr-lst) 0
+                                   (string-length (cadr target-addr-lst)))
+                  80))
+             (dummy (logger #f "Connecting to " target-host-proper ":"
+                            target-port))
+             ; prevent hacking
+             (dummy (if (string-index target-host-proper #\|)
+                        (myenv:error "Bad target addr: " target-host-proper)))
+             (http-ports (open-tcp-connection target-host-proper target-port))
+             (http-i-port (car http-ports))
+             (http-o-port (cdr http-ports))
+             )
+        
+        (for-each
+         (lambda (str) (display str http-o-port))
+         `(,req-method " "
+                       ; if the proxy is set, request the full REQ-URL; otherwise,
+                       ; send only the relative URL
+                       ,@(if http-proxy (list req-url) (list "/" resource))
+                       " HTTP/1.0" ,CRLF
+                       "Host: " ,host ,CRLF
+                       "User-agent: " ,user-agent ,CRLF
+                       "Connection: close" ,CRLF))
+        (if (procedure? http-req)
+            (http-req http-o-port)	; let the user write other headers
+            (begin
+              (for-each (lambda (header-name-value)
+                          (display (car header-name-value) http-o-port)
+                          (write-char #\: http-o-port)
+                          (display (cdr header-name-value) http-o-port)
+                          (display CRLF http-o-port))
+                        http-req)
+              (display CRLF http-o-port) ; An empty line ends headers
+              ))
+        (flush-output-port http-o-port)
+        (shutdown-sender http-o-port)
+        (logger http-o-port "sent request. Now listening for the response...")
+        (read-resp-status-line http-i-port)))
+    
+    
+    ; Read the first line of the server's response, something like
+    ; HTTP/1.x 200 OK
+    ; and extract the response code
+    ; Invoke
+    ;  read-headers http-i-port resp-code
+    ;		'(HTTP-RESPONSE . the-whole-response-line)
+    ; or raise an exception if the response line is absent or invalid
+    (define (read-resp-status-line http-port)
+      (let* ((resp-line (get-line http-port))
+             (dummy (logger http-port "Got response :" resp-line)) 
+             (resp-headers (list (cons 'HTTP-RESPONSE resp-line))))
+        (cond
+          ((eof-object? resp-line)
+           (die 'NO-REPLY '() http-port))
+          ((not (string-prefix? "HTTP/1." resp-line))
+           (die 'BAD-RESP-LINE resp-headers http-port))
+          (else
+           (let* ((resp-line-parts (string-split resp-line '() 3))
+                  (resp-code
+                   (and (pair? resp-line-parts)
+                        (pair? (cdr resp-line-parts))
+                        (string->integer (cadr resp-line-parts) 0
+                                         (string-length (cadr resp-line-parts)))))
+                  )
+             (if resp-code
+                 (read-headers http-port resp-code resp-headers)
+                 (die 'BAD-RESP-LINE resp-headers http-port)))))))
+    
+    
+    ; read-headers http-port resp-code init-resp-headers
+    ; The http-port is positioned after the response line.
+    ; The procedure reads HTTP response headers and adds them to
+    ; init-resp-headers.
+    ; On success, the procedure exits to response-handler, passing
+    ; it the response code, the read headers and the http-port. The
+    ; port is positioned after the empty line that terminates the headers.
+    (define (read-headers http-port resp-code init-resp-headers)
+      (let ((headers
+             (with-exception-handler
+              (lambda (exc)
+                (die-again exc 'BAD-HEADER init-resp-headers http-port))
+              (lambda ()
+                (MIME:read-headers http-port)))))
+        (response-handler resp-code (append init-resp-headers headers)
+                          http-port)))
+    
+    ; parse the req-url and exit either to make-req, or to
+    ; the response-handler to handle the error
+    (let ((url-parts (string-split req-url '(#\/) 4)))
+      ; this stub is added by Dmitry Lizorkin for handling URIs consisting of
+      ; just a schema and a host, say, "http://www.plt-scheme.org"
+      (let ((url-parts
+             (if (and (string=? "http:" (car url-parts))
+                      (= 3 (length url-parts)))
+                 (append url-parts '(""))
+                 url-parts)))    
+        (cond
+          ((not (= 4 (length url-parts)))
+           (die 'BAD-REQ-URL '() #f))
+          ((string=? "http:" (car url-parts))
+           (apply make-req url-parts))
+          (else
+           (die 'UNSUPPORTED-SCHEMA '() #f)
+           ))))
+    ))
  
-  ; syntax: define-def ident assoc-list defaultvalue
+ ; syntax: define-def ident assoc-list defaultvalue
  ; Bind a variable ident to a value found in an assoc list.
  ; assoc-list is a list of pairs (symbol . value)
  ; We look up 'ident' in the assoc-list, and bind it to the found value, unless
  ; the latter is #f.
  ; If the lookup fails, the defaultvalue is used.
  
+ ; (define-syntax define-def
+ ;   (syntax-rules ()
+ ;     ((define-def ident assoc-list defaultvalue)
+ ;      (define ident 
+ ;         (or
+ ;          (cond
+ ;            ((assq ident assoc-list) => cdr)
+ ;            (else #f))
+ ;          defaultvalue)))))
+ 
  (define-syntax define-def
    (syntax-rules ()
      ((define-def ident assoc-list defaultvalue)
-      (define ident 
-         (or
-          (cond
-            ((assq ident assoc-list) => cdr)
-            (else #f))
-          defaultvalue)))))
+      (or
+       (cond
+         ((assq ident assoc-list) => cdr)
+         (else #f))
+       defaultvalue))))
  
  )
