@@ -25,7 +25,7 @@
          make-argument argument? argument-id argument-direction 
          argument-conclusion argument-premises argument-scheme pro con
          define-argument argument->datum datum->argument add-premise status?
-         proof-standard? complementary-proof-standard make-context
+         proof-standard? make-context
          context-status context-standard context-compare default-context
          context? state question accept reject assign-standard schemes-applied 
          status proof-standard prior decided? accepted? rejected?
@@ -224,7 +224,7 @@
      ((~brd) 'brd)))
  
  (define-record-type context 
-   (fields status        ; statement -> status table
+   (fields status        ; (statement -> status) table
            standard      ; statement -> standard
            compare))     ; argument * argument -> {-1, 0, 1}   
  

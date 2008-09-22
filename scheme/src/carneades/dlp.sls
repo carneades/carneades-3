@@ -19,7 +19,7 @@
 (library
  (carneades dlp) ; description logic programming
  
- (export ontology axiom generate-arguments-from-ontologies dlp? to-rule dlprule? dlprules*? rulerewrite)
+ (export ontology axiom generate-arguments-from-ontology dlp? to-rule dlprule? dlprules*? rulerewrite)
  (import (rnrs)
          (carneades lib match)
          (carneades rule)
@@ -864,8 +864,8 @@
                                                  (%axiom (string->symbol (string-append (symbol->string (quote oname)) "-axiom")) x))
                                                (list (quote axiom1) ...))))))))
  
- ; generate-arguments-from-ontologies: knowledgebase (list-of question-types) -> generator
- (define generate-arguments-from-ontologies generate-arguments-from-rules)
+ ; generate-arguments-from-ontology: knowledgebase (list-of question-types) -> generator
+ (define generate-arguments-from-ontology generate-arguments-from-rules)
  
  
  

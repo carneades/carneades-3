@@ -18,7 +18,7 @@
 (library
  (carneades shell) ;; utility procedures for querying knowledge bases
  
- (export make-engine make-engine* show-state show show1 ask ask1
+ (export make-engine make-engine* show-state show show1 ask ask1 diagram1
          all-acceptable? some-acceptable? success? failure?)
  
  (import (except (rnrs base) assert)
@@ -68,7 +68,18 @@
  (define (show1 query engine)
    (let ((str (engine query)))
      (if (not (stream-null? str)) 
-         (show-state (stream-car str)))))
+         (diagram* (stream-car str)))))
+
+ ; diagram1: statement (statement -> (stream-of argument-state)) -> void
+ ; writes a DOT diagram for argument graph of the first state in the stream
+ (define (diagram1 query engine)
+   (let ((str (engine query)))
+     (if (not (stream-null? str)) 
+         (diagram* (state-arguments str)
+                   (state-context str)
+                   (state-substitutions str)
+                   (lambda (s) (format "~A" s))
+                   (current-output-port)))))
  
  ; ask: statement (statement -> (stream-of argument-state)) -> void
  ; displays each solution to a query, using the given inference engine
