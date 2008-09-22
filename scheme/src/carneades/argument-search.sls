@@ -22,10 +22,13 @@
  ; which some topic statement is either acceptable or not acceptable, depending on the 
  ; viewpoint. 
  
- (export find-arguments find-best-arguments goal-state opposing-viewpoint state? 
-         make-state state-topic state-viewpoint state-pro-goals state-con-goals state-context 
-         state-substitutions state-arguments initial-state switch-viewpoint instantiated-arguments
-         make-successor-state next-goals make-response response? response-argument response-substitutions)
+ (export make-state initial-state state? state-topic state-viewpoint state-pro-goals 
+         state-con-goals state-context state-substitutions state-arguments 
+         opposing-viewpoint switch-viewpoint 
+         make-response response? response-argument 
+         response-substitutions
+         find-arguments find-best-arguments goal-state instantiated-arguments
+         make-successor-state next-goals )
  
  (import (rnrs base)
          (rnrs records syntactic)
@@ -135,6 +138,7 @@
                                               premises))
                          ((con) (append (state-pro-goals state)
                                         (map list exceptions) ; separate clause for each exception
+                                        ; rebuttals and rebuttals of assumptions:
                                         ; (list (list (statement-complement conclusion)))
                                         ; (map list (map statement-complement assumptions))
                                         )))   
@@ -142,6 +146,7 @@
                        (case (state-viewpoint state)
                          ((pro) (append (state-con-goals state)
                                         (map list exceptions) ; separate clause for each exception
+                                        ; rebuttals and rebuttals of assumptions:
                                         ; (list (list (statement-complement conclusion)))
                                         ; (map list (map statement-complement assumptions))
                                         ))

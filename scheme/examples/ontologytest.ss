@@ -37,7 +37,7 @@
 
 (define (engine max-nodes max-turns)
   (make-engine max-nodes max-turns 
-               (list (generate-arguments-from-ontologies kb1 '()))))
+               (list (generate-arguments-from-ontology kb1 '()))))
 
 (define e1 (engine 100 10))
 
