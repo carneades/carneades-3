@@ -71,6 +71,7 @@
                     <s pred="later"><v>d1</v> is later than <v>d2</v></s>
                 </body>
             </rule>
+          
         </rules>
     </theory>
     <argument-graphs>
