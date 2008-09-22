@@ -19,7 +19,9 @@
 (library
  (carneades dlp) ; description logic programming
  
- (export ontology axiom generate-arguments-from-ontology dlp? to-rule dlprule? dlprules*? rulerewrite)
+ ; (export ontology axiom generate-arguments-from-ontology dlp? to-rule dlprule? dlprules*? rulerewrite)
+ (export ontology axiom generate-arguments-from-ontology)
+ 
  (import (rnrs)
          (carneades lib match)
          (carneades rule)
