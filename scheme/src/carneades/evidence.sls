@@ -35,9 +35,11 @@
  
  (export make-witness witness-name make-question question-predicate question-type
          question-cardinality question-text make-form form-questions form-help
-         make-testimony testimony-witness testimony-forms testimony-answers 
-         testimony-statements get-form get-question get-answer already-asked? 
-         generate-arguments-from-testimony)
+         make-testimony testimony-witness testimony-forms 
+         testimony-statements get-form get-question answer? answer-question answer-values
+         get-answer already-asked? 
+         generate-arguments-from-testimony
+         (rename (answer-closed answer-closed?)))
  
  (import (rnrs)
          (carneades stream)
