@@ -22,7 +22,7 @@
          make-factors make-case case? case-name case-pfactors case-dfactors case-factors
          case-winner case-statements make-casebase casebase? casebase-issue casebase-factors casebase-cases
          list-cases get-case partition1 partition2 partition3 partition4 partition5 partition6
-         partition7 more-on-point as-on-point common-parent? decided-for-other-party current-case
+         partition7 more-on-point as-on-point common-parent? decided-for-other-party? current-case
          generate-arguments-from-cases)
          
  (import (rnrs)
@@ -258,7 +258,7 @@
               (factor-parent f2))))
   
   ; decided-for-other-party: case case -> boolean
-  (define (decided-for-other-party pc1 pc2)
+  (define (decided-for-other-party? pc1 pc2)
     (cond ((eq? (case-winner pc1) 'plaintiff)
            (eq? (case-winner pc2) 'defendant))
           ((eq? (case-winner pc1) 'defendant)
@@ -358,7 +358,7 @@
                            (previous-schemes (arg:schemes-applied (state-arguments state)
                                                               (statement-atom goal))))
                       (if (and (not (set:empty? diff))
-                               (decided-for-other-party new-precedent previous-precedent)
+                               (decided-for-other-party? new-precedent previous-precedent)
                                (not (member scheme previous-schemes)))
                           (stream (make-response 
                                    subs ; no new subs
