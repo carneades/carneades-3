@@ -48,10 +48,23 @@
  ; --------------------------------
  ; export function
  
- ; lkif-export: struct:lkif-data file-path -> void
- (define (lkif-export export-data path)
+ 
+ ; lkif-export: struct:lkif-data (port | filename) -> void
+ ; If `port-or-filename' is not supplied, the function writes the lkif-representation
+ ; of the `export-data' to the current output-port.
+ ; If `port-or-filename' is supplied and is a port, the function writes the
+ ; lkif-representation of `export-data' to this port and returns an
+ ; unspecified result.
+ ; If `port-or-filename' is supplied and is a string, this string is treated as
+ ; an output filename, the lkif-representation of `export-data' is written to
+ ; that filename and an unspecified result is returned. If a file with the given
+ ; name already exists, the effect is unspecified.
+ 
+ (define (lkif-export export-data . port-or-filename)
    (let ((sxml-obj (lkif-data->sxml export-data)))
-         (srl:sxml->xml sxml-obj path)))     
+     (if (null? port-or-filename)
+         (srl:sxml->xml sxml-obj (current-output-port))
+         (srl:sxml->xml sxml-obj (car port-or-filename)))))
 
  
  ; --------------------------------
@@ -68,16 +81,26 @@
  
  ; lkif-data->sxml: struct:lkif-data -> sxml
  (define (lkif-data->sxml data)
-   (let ((sxml (list (lkif-data->sources data) 
-                     (lkif-data->theory data)
-                     (lkif-data->argument-graphs data))))
-     ;(write sxml) (newline)
-     (cons 'lkif sxml))) 
+   (let ((sources (lkif-data->sources data))
+         (theory (lkif-data->theory data))
+         (argument-graphs (lkif-data->argument-graphs data)))
+     (define lkif (list 'lkif))
+     (if (not (null? sources))
+         (set! lkif (append lkif (list sources))))
+     (if (not (null? theory))
+         (set! lkif (append lkif (list theory))))
+     (if (not (null? argument-graphs))
+         (set! lkif (append lkif (list argument-graphs))))
+     lkif))
+     
+    
  
  ; lkif-data->sources: struct:lkif-data -> sxml
  (define (lkif-data->sources data)
    (let ((sources (lkif-data-sources data)))
-     (cons 'sources (map source->sxml sources))))
+     (if (null? sources)
+         '()
+         (cons 'sources (map source->sxml sources)))))
  
  ; source->sxml: struct:source -> sxml
  (define (source->sxml source)
@@ -90,12 +113,18 @@
    (let ((attributes (elements->attributes (list (element->sxml 'id (new-id "theory")))))
          (axioms (context->axioms (lkif-data-context data)))
          (rules (rulebase->rules (lkif-data-rulebase data))))
-     (list 'theory attributes axioms rules)))
+     (if (and (null? axioms)
+              (null? rules))
+         '()
+         (list 'theory attributes axioms rules))))
  
  ; context->axioms: context -> sxml
  (define (context->axioms context)
    (let ((axioms (table:keys (context-status context))))
-     (cons 'axioms (map (lambda (a) (axiom->sxml a (context-status context))) axioms))))
+     (let ((a (map (lambda (a) (axiom->sxml a (context-status context))) axioms)))
+       (if (null? a)
+           '()
+           (cons 'axioms a)))))
  
  ; axiom->sxml: axiom table:statement->status -> sxml
  (define (axiom->sxml a t)
@@ -166,7 +195,10 @@
  
  ; rulebase->rules: rulebase -> sxml
  (define (rulebase->rules rb)
-   (cons 'rules (map rule->sxml (rulebase-rules rb))))
+   (let ((rules (map rule->sxml (rulebase-rules rb))))
+     (if (null? rules)
+         '()
+         (cons 'rules rules))))
  
  ; rule->sxml: struct:rule -> sxml
  (define (rule->sxml r)
@@ -198,7 +230,9 @@
  ; lkif-data->argument-graphs: struct:lkif-data -> sxml
  (define (lkif-data->argument-graphs data)
    (let ((stages (lkif-data-stages data)))
-     (cons 'argument-graphs (map stage->sxml stages))))
+     (if (null? stages)
+         '()
+         (cons 'argument-graphs (map stage->sxml stages)))))
  
  ; stage->sxml: struct:stage -> sxml
   (define (stage->sxml s)
