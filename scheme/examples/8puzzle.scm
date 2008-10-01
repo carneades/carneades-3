@@ -132,7 +132,7 @@
 ; show: (stream-of node) -> void
 (define (show str) 
   (if (stream-null? str)
-      '() 
+      (begin (display "stream null!") (newline)) 
       (begin (display (path (stream-car str)))
              (newline))))
 
