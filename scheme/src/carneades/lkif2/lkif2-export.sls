@@ -352,7 +352,7 @@
                                                 "true"
                                                 "false"))
                                  (role (premise-role p))
-                                 (statement (statement-id (table:lookup t (premise-atom p)))))
+                                 (statement (statement-id (table:lookup t (premise-atom p) #f))))
                              (list 'premise
                                    (elements->attributes
                                     (list (element->sxml 'polarity polarity)
