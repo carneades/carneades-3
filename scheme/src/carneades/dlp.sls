@@ -158,6 +158,7 @@
  (define symbolcounter 0) 
  (define axiomcounter 0)
  (define errorcounter 0)
+ (define owlcounter 0)
  (define successcounter 0)
  
  (define newsym
@@ -183,6 +184,9 @@
    (lambda ()
      (set! axiomcounter 0)))
  
+ (define initowl
+   (lambda ()
+     (set! owlcounter 0))) 
  
  (define adderror
    (lambda ()
@@ -191,6 +195,10 @@
  (define addsuccess
    (lambda ()
      (set! successcounter (+ successcounter 1))))
+ 
+ (define addowl
+   (lambda ()
+     (set! owlcounter (+ owlcounter 1))))
  
  
  
@@ -820,8 +828,18 @@
        ;(assertion-violation "ontology" "error: no valid dlp ontology" ont)))
        (begin
          (adderror)
-         (pretty-print "ontology-error - no valid dlp ontology:")
-         (pretty-print ont)
+         (display "------------------")
+         (newline)
+         (display "ontology-error - no valid dlp axiom: \"")
+         (display ont)
+         (display "\"")
+         (newline)
+         (if (syntax? ont)
+             (begin (display "axiom is in dl but not in dlp")
+                    (addowl))
+             (display "input is not even an dl-axiom"))
+         (newline)
+         (display "------------------")
          (newline)
          '())))
  
@@ -851,6 +869,9 @@
    (display "Nr. of non dlp axioms: ")
    (display errorcounter)
    (newline)
+   (display "Nr. of non-dlp dl-axioms: ")
+   (display owlcounter)
+   (newline)
    (add-rules empty-knowledgebase (fold-right append '() l)))
  
  (define-syntax ontology
@@ -859,6 +880,7 @@
                              (initerror)
                              (initsuccess)
                              (initaxiom)
+                             (initowl)
                              (define oname
                                (%ontology (map (lambda (x)
                                                  ;(display x)
