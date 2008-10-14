@@ -68,7 +68,7 @@
  (define (show1 query engine)
    (let ((str (engine query)))
      (if (not (stream-null? str)) 
-         (diagram* (stream-car str)))))
+         (show-state (stream-car str)))))
 
  ; diagram1: statement (statement -> (stream-of argument-state)) -> void
  ; writes a DOT diagram for argument graph of the first state in the stream
