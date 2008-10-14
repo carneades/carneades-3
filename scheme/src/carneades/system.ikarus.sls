@@ -24,7 +24,8 @@
          (prefix (ikarus) ikarus:))
  
  (define (system cmd) 
-   (raise-continuable (make-message-condition "system procedure not yet implemented")))
+   ;(raise-continuable (make-message-condition "system procedure not yet implemented")))
+   (ikarus:system cmd))
   
  (define pretty-print ikarus:pretty-print)
  
