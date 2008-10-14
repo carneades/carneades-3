@@ -20,6 +20,40 @@
 			</axiom>
         </axioms>
         <rules>
+			<!-- following rules named fact# are also expressed as axioms, but unless these axioms are read and put into a context by the lkif-module and the rule-engine can't handle the context yet,
+			it is neccessary to rewrite them as rules without bodies -->
+			
+			<rule id="fact1">
+				<head>
+					<s pred="family:father"><c>Tom</c> is the father of <c>Dustin</c></s>
+				</head>
+			</rule>
+			
+			<rule id="fact2">
+				<head>
+					<s pred="family:mother"><c>Gloria</c> is the mother of <c>Tom</c></s>
+				</head>
+			</rule>
+			
+			<rule id="fact3">
+				<head>
+					<s pred="family:needy"><c>Gloria</c> is needy</s>
+				</head>
+			</rule>
+			
+			<rule id="fact4">
+				<head>
+					<not>
+						<s pred="family:hasCapacityToSupport">
+							<c>Dustin</c>
+							has the capacity to provide support
+						</s>
+					</not>
+				</head>
+			</rule>
+			
+			<!-- axioms end -->
+			
             <rule id="r1" strict="true">
                 <head>
                     <s pred="family:grandparent"><v>Person1</v> is a grandparent of
@@ -32,6 +66,19 @@
                     </and>
                 </body>
             </rule>
+			
+		    <rule id="r2" strict="yes">
+				<head>
+					<s>ancestor ?x ?y</s>
+				</head>
+				<body>
+					<and>
+						<s>parent ?x ?z</s>
+						<s>ancestor ?z ?y</s>
+					</and>
+				</body>
+			</rule>
+			
             <rule id="s1601-BGB">
                 <head>
                     <s pred="family:obligatedToSupport"><v>Person1</v> is obligated to support
@@ -53,7 +100,7 @@
             </rule>
             <rule id="s1589b-BGB">
                 <head>
-                    <s pred="directLineage"><v>Person1</v> is in direct lineage to
+                    <s pred="family:directLineage"><v>Person1</v> is in direct lineage to
                     <v>Person2</v></s>
                 </head>
                 <body>
@@ -90,28 +137,28 @@
                 </head>
                 <body>
                     <not>
-                        <s pred="family:Needy"><v>Person1</v> is needy </s>
+                        <s pred="family:needy"><v>Person1</v> is needy </s>
                     </not>
                 </body>
             </rule>
             <rule id="s1602b-BGB">
                 <head>
-                    <s pred="family:Needy"><v>Person1</v> is needy</s>
+                    <s pred="family:needy"><v>Person1</v> is needy</s>
                 </head>
                 <body>
                     <not>
-                        <s pred="AbleToSupportSelf"><v>Person1</v> is able to support himself</s>
+                        <s pred="family:ableToSupportSelf"><v>Person1</v> is able to support himself</s>
                     </not>
                 </body>
             </rule>
             <rule id="s1602c-BGB">
                 <head>
                     <not>
-                        <s pred="family:Needy"><v>Person1</v> is needy</s>
+                        <s pred="family:needy"><v>Person1</v> is needy</s>
                     </not>
                 </head>
                 <body>
-                    <s pred="family:AbleToSupportSelf"><v>Person1</v> is able to support to
+                    <s pred="family:ableToSupportSelf"><v>Person1</v> is able to support to
                     himself</s>
                 </body>
             </rule>
@@ -124,26 +171,26 @@
                 </head>
                 <body>
                     <not>
-                        <s pred="family:HasCapacityToSupport"><v>Person1</v> has the capacity to
+                        <s pred="family:hasCapacityToSupport"><v>Person1</v> has the capacity to
                             provide support</s>
                     </not>
                 </body>
             </rule>
             <rule id="s1611a-BGB">
                 <head>
-                    <s pred="rule:excluded">
+                    <s pred="excluded">
                         <c>s1601-BGB</c> excludes <s pred="family:obligatedToSupport"><v>Person2</v>
                             is obligated to support <v>Person1</v></s>
                     </s>
                 </head>
                 <body>
-                    <s pred="family:NeedyDueToImmoralBehavior"><v>Person1</v> is needy due to his
+                    <s pred="family:needyDueToImmoralBehavior"><v>Person1</v> is needy due to his
                         own immoral behavior</s>
                 </body>
             </rule>
             <rule id="s91-BSHG">
                 <head>
-                    <s pred="rule:excluded">
+                    <s pred="excluded">
                         <c>s1601-BGB</c>
 						excludes 
 						<s pred="family:obligatedToSupport">

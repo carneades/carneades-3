@@ -7,7 +7,19 @@
         (carneades rule)
         (carneades evidence)
         (carneades case)
-        (carneades shell))
+        (carneades shell)
+        (carneades dlp))
+
+(ontology family-relations
+          
+          (define-primitive-role family:ancestor family:relative)
+          (define-primitive-role family:parent family:ancestor)
+          (define-primitive-role family:ancestor family:descendent)
+          (define-primitive-role family:mother family:parent)
+          (define-primitive-role family:father family:parent)
+          (define-primitive-role family:sibling family:relative)
+          (define-primitive-role family:brother family:sibling)
+          (define-primitive-role family:sister family:sibling))
 
 (define family-support 
   (lkif-data-rulebase (lkif-import "family-support.xml")))    
@@ -18,19 +30,19 @@
 ; factors
 
 (define f1
-  (make-factor 'has-already-provided-much-support 'plaintiff #f))
+  (make-factor 'family:hasAlreadyProvidedMuchSupport 'plaintiff #f))
 
 (define f2
-  (make-factor 'expected-duration-of-support-is-short 'defendant #f))
+  (make-factor 'family:expectedDurationOfSupportIsShort 'defendant #f))
 
 (define f3
-  (make-factor 'never-had-parent-child-relationship 'plaintiff #f))
+  (make-factor 'family:neverHadParentChildRelationship 'plaintiff #f))
 
 (define f4 
-  (make-factor 'would-cause-irrepairable-harm-to-family 'plaintiff #f))
+  (make-factor 'family:wouldCauseIrrepairableHarmToFamily 'plaintiff #f))
 
 (define f5
-  (make-factor 'has-not-provided-care 'defendant #f))
+  (make-factor 'family:hasNotProvidedCare 'defendant #f))
 
 ; cases
 (define müller (make-case "Müller" 'plaintiff (list f3)))
@@ -39,7 +51,7 @@
 
 (define undue-hardship-casebase
   (make-casebase 
-   'undue-hardship
+   'family:undueHardship
    (list f1 f2 f3 f4 f5) ; factors
    (list müller schmidt bauer))) ; cases
 
@@ -50,15 +62,15 @@
 (define form1 
   (make-form 
    ; questions
-   (list (make-question 'mother 'symbol 'one "Who is ~a's mother?")
-         (make-question 'father 'symbol 'one "Who is ~a's father?"))
+   (list (make-question 'family:mother 'symbol 'one "Who is ~a's mother?")
+         (make-question 'family:father 'symbol 'one "Who is ~a's father?"))
    ; help text, in SXML format
    '()))
 
 (define form2
   (make-form
    ; questions
-   (list (make-question 'needy 'boolean 'one "Is ~a needy?"))
+   (list (make-question 'family:needy 'boolean 'one "Is ~a needy?"))
    ; help text
    '()))
 
@@ -66,7 +78,7 @@
   (make-form
    ; questions
    (list (make-question 
-          'capacity-to-provide-support 
+          'family:hasCapacityToSupport 
           'boolean 
           'one 
           "Does ~a have the capacity to provide support?"))
@@ -113,14 +125,15 @@
   (rulebase
    
    (rule hardship-bridge
-         (if undue-hardship
-             (undue-hardship ?x (obligated-to-support ?x ?y))))))
+         (if family:undueHardship
+             (family:undueHardship ?x (family:obligatedToSupport ?x ?y))))))
 
 
 ; type critical-question = excluded | priority | valid
 
 (define argument-generators
   (list (generate-arguments-from-testimony testimony) ; ask the user first
+        (generate-arguments-from-ontology family-relations '())
         (generate-arguments-from-rules family-support '(excluded))
         (generate-arguments-from-rules bridge-rules '())
         (generate-arguments-from-cases undue-hardship-casebase)
@@ -132,7 +145,7 @@
 
 (define e1 (make-engine 50 2 argument-generators))
 
-(show1 '(obligated-to-support Max ?y) e1)
+(show1 '(family:obligatedToSupport Max ?y) e1)
 
 ; Answers to provide to questions asked:
 ; 1. Who is Max's mother? 
@@ -160,6 +173,6 @@
 ; if the undue hardship exception now applies.
 
 (define e2 (make-engine* 50 4 c2 argument-generators))
-(ask1 '(obligated-to-support Max ?y) e2)
+(ask1 '(family:obligatedToSupport Max ?y) e2)
 
 ; end of file
