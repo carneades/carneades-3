@@ -53,7 +53,7 @@
   (make-casebase 
    'family:undueHardship
    (list f1 f2 f3 f4 f5) ; factors
-   (list müller schmidt bauer))) ; cases
+   (list bauer schmidt müller))) ; cases
 
 ; Testimony of the respondent
 
@@ -126,7 +126,7 @@
    
    (rule hardship-bridge
          (if family:undueHardship
-             (family:undueHardship ?x (family:obligatedToSupport ?x ?y))))))
+             (family:undueHardship (family:obligatedToSupport ?x ?y) ?x)))))
 
 
 ; type critical-question = excluded | priority | valid
@@ -173,6 +173,6 @@
 ; if the undue hardship exception now applies.
 
 (define e2 (make-engine* 50 4 c2 argument-generators))
-(ask1 '(family:obligatedToSupport Max ?y) e2)
+(show1 '(family:obligatedToSupport Max ?y) e2)
 
 ; end of file
