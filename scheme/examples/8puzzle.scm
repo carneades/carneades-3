@@ -5,7 +5,7 @@
         (rnrs records syntactic)
         (carneades search)
         (carneades lib match)
-        (carneades stream))
+        (carneades lib srfi streams))
 
 (define (make-state r1c1 r1c2 r1c3
                     r2c1 r2c2 r2c3

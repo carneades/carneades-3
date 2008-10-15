@@ -53,7 +53,8 @@
          (only (carneades system) gensym))
  
  (define (printf format-string . args)
-   (apply format `(,(current-output-port)  ,format-string ,@args)))
+   (apply format `(,(current-output-port)  ,format-string ,@args))
+   (flush-output-port (current-output-port)))
  
  (define null '())
  
@@ -233,7 +234,6 @@
          (printf (question-text question))
          (printf (question-text question) subject))
      (printf " ")
-     (flush-output-port (current-output-port))
      (let* ((v (read)))
        (match v
          ('none (record-answer! testimony question subject null #f))
@@ -241,16 +241,13 @@
           (if (valid-input? question values)
               (record-answer! testimony question subject values #f)
               (begin (printf "Invalid input. Please try again.~%")
-                     (flush-output-port (current-output-port))
                      (loop))))
          (('all . values) 
           (if (valid-input? question values)
               (record-answer! testimony question subject values #t)
               (begin (printf "Invalid input. Please try again.~%")
-                     (flush-output-port (current-output-port))
                      (loop))))
          (_ (begin (printf "Invalid input. Please try again.~%")
-                   (flush-output-port (current-output-port))
                    (loop)))))))
  
  ; ask!: testimony question symbol -> void

@@ -27,8 +27,8 @@
          define-argument argument->datum datum->argument add-premise status?
          proof-standard? make-context
          context-status context-standard context-compare default-context
-         context? state question accept reject assign-standard schemes-applied 
-         status proof-standard prior decided? accepted? rejected?
+         context? state question accept reject assign-standard pro-arguments 
+         con-arguments schemes-applied status proof-standard prior decided? accepted? rejected?
          questioned? stated? issue? empty-argument-graph argument-graph?
          argument-graph-nodes argument-graph-arguments put-argument assert* assert 
          update questions facts statements accepted-statements rejected-statements 
@@ -195,33 +195,10 @@
  
  (define (proof-standard? sym)
    (member sym '(se        ; scintilla of the evidence
-                 ~se       ; complement of se
-                 nse       ; negation of se
-                 n~se      ; negation of ~se
                  ba        ; best argument (was "preponderance of the evidence")
-                 ~ba       ; complement of ba
-                 nba       ; negation of ba
-                 n~ba      ; negation of ~ba
                  dv        ; dialectical validity                  
-                 ~dv       ; complement of dv
-                 ndv       ; negation of dv
-                 n~dv      ; negation of ~dv
                  brd       ; beyond a reasonable doubt
-                 ~brd      ; complement of brd
-                 nbrd      ; negation of brd
-                 n~brd     ; negation of ~brd
                  )))   
- 
- (define (complementary-proof-standard ps)
-   (case ps
-     ((se) '~se)
-     ((~se) 'se)
-     ((ba) '~ba)
-     ((~ba) 'ba)
-     ((dv) '~dv)
-     ((~dv) 'dv)
-     ((brd) '~brd)
-     ((~brd) 'brd)))
  
  (define-record-type context 
    (fields status        ; (statement -> status) table
@@ -247,11 +224,8 @@
  
  ; proof-standard: context statement -> standard
  (define (proof-standard c s) 
-   (let ((v ((context-standard c) (statement-atom s))))
-     (if (statement-positive? s)
-         v
-         (complementary-proof-standard v))))
- 
+   ((context-standard c) (statement-atom s)))
+
  ; prior: context argument argument -> boolean
  (define (prior c a1 a2) (= ((context-compare c) a1 a2) 1))
  
@@ -573,35 +547,24 @@
    (fold-right (lambda (arg ag) (assert* ag arg #t))
                ag args))
  
- ; satisfies: argument-graph context statement proof-standard -> boolean
- (define (satisfies? ag c s ps)
-   (if (statement-negative? s)
-       (satisfies? ag c (statement-atom s) (complementary-proof-standard ps))
-       (let ((n (get-node ag s)))
-         (if (not n) 
-             #f
-             (case ps
-               ((se) (scintilla? ag c n)) 
-               ((~se) (~scintilla? ag c n))
-               ((nse) (not (scintilla? ag c n)))
-               ((n~se) (not (~scintilla? ag c n)))
-               ((ba) (best-argument? ag c n))
-               ((~ba) (~best-argument? ag c n))
-               ((nba) (not (best-argument? ag c n)))
-               ((n~ba) (not (~best-argument? ag c n)))
-               ((dv) (dialectically-valid? ag c n))
-               ((~dv) (~dialectically-valid? ag c n))
-               ((ndv) (not (dialectically-valid? ag c n)))
-               ((n~dv) (not (~dialectically-valid? ag c n)))
-               ((brd) (beyond-reasonable-doubt? ag c n))
-               ((~brd) (~beyond-reasonable-doubt? ag c n))
-               ((nbrd) (not (beyond-reasonable-doubt? ag c n)))
-               ((n~brd) (not (~beyond-reasonable-doubt? ag c n)))
-               (else (error "satisfies: unknown proof standard." ps)))))))
+ ; satisfies: argument-graph context proof-standard 
+ ;            (list-of argument) (list-of argument) -> boolean
+ (define (satisfies? ag c ps pro-args con-args)
+   (case ps
+     ((se) (scintilla? ag c pro-args con-args)) 
+     ((ba) (best-argument? ag c pro-args con-args))
+     ((dv) (dialectically-valid? ag c pro-args con-args))
+     ((brd) (beyond-reasonable-doubt? ag c pro-args con-args))
+     (else (error "satisfies: unknown proof standard." ps))))
  
  ; acceptable?: argument-graph context statement -> boolean
  (define (acceptable? ag c s)
-   (satisfies? ag c s (proof-standard c (statement-atom s))))
+   (let ((ps (proof-standard c (statement-atom s))))
+     (if (statement-negative? s)
+         (satisfies? ag c ps 
+                     (con-arguments ag (statement-atom s)) 
+                     (pro-arguments ag (statement-atom s)))
+         (satisfies? ag c ps (pro-arguments ag s) (con-arguments ag s)))))
  
  ; in?: argument-graph context statement -> boolean
  (define (in? ag c s)
@@ -618,28 +581,18 @@
             (case s
               ((accepted) (positive-premise? p))
               ((rejected) (negative-premise? p))
-              ((questioned stated) 
-               (if (positive-premise? p)
-                   (acceptable? ag c (premise-statement p))
-                   (acceptable? ag c (statement-complement (premise-statement p)))))))
+              ((questioned stated) (acceptable? ag c (premise-statement p)))))
            ((assumption? p)
             (case s
               ((stated) #t) ; whether the premise is positive or negative 
               ((accepted) (positive-premise? p))
               ((rejected) (negative-premise? p))
-              ((questioned) 
-               (if (positive-premise? p)
-                   (acceptable? ag c (premise-statement p))
-                   (acceptable? ag c (statement-complement (premise-statement p)))))))
+              ((questioned) (acceptable? ag c (premise-statement p)))))
            ((exception? p)
             (case s
               ((accepted) (negative-premise? p))
               ((rejected) (positive-premise? p))
-              ((stated questioned) 
-               (if (positive-premise? p)
-                   (not (acceptable? ag c (premise-statement p)))
-                   (not (acceptable? ag c (statement-complement (premise-statement p)))))
-               )))
+              ((stated questioned) (not (acceptable? ag c (premise-statement p))))))
            (else (error "holds: not a premise." p)))))
  
  ; all-premises-hold?: argument-graph context argument -> boolean
@@ -648,50 +601,34 @@
  (define (all-premises-hold? ag c arg)
    (list:every (lambda (p) (holds? ag c p)) (argument-premises arg)))
  
- ; scintilla?: argument-graph context node -> boolean
- (define (scintilla? ag c n)
+ ; scintilla?: argument-graph context (list-of argument) (list-of argument) -> boolean
+ (define (scintilla? ag c pro-args con-args)
    (list:any (lambda (arg) (all-premises-hold? ag c arg)) 
-             (pro-arguments ag (node-statement n))))
+             pro-args))
  
- (define (~scintilla? ag c n)  
-   (list:any (lambda (arg) (all-premises-hold? ag c arg)) 
-             (con-arguments ag (node-statement n))))
- 
- ; dialectically-valid?:  argument-graph context node -> boolean
- (define (dialectically-valid? ag c n)
-   (and (scintilla? ag c n)
+ ; dialectically-valid?:  argument-graph context (list-of argument) (list-of argument) -> boolean
+ (define (dialectically-valid? ag c pro-args con-args)
+   (and (scintilla? ag c pro-args con-args)
         (not (list:any (lambda (arg) (all-premises-hold? ag c arg))
-                       (con-arguments ag (node-statement n))))))
- 
- (define (~dialectically-valid? ag c n)
-   (and (~scintilla? ag c n)
-        (not (list:any (lambda (arg) (all-premises-hold? ag c arg))
-                       (pro-arguments ag (node-statement n))))))
+                       con-args))))
  
  
- ; beyond-reasonable-doubt?: argument-graph context node -> boolean
- (define (beyond-reasonable-doubt? ag c n)
-   (and (scintilla? ag c n)
+ ; beyond-reasonable-doubt?: argument-graph context (list-of argument) (list-of argument) -> boolean
+ (define (beyond-reasonable-doubt? ag c pro-args con-args)
+   (and (scintilla? ag c pro-args con-args)
         (list:every (lambda (arg) (all-premises-hold? ag c arg))
-                    (pro-arguments ag (node-statement n)))
+                    pro)
         (not (list:any (lambda (arg) (all-premises-hold? ag c arg))
-                       (con-arguments ag (node-statement n))))))
+                       con-args))))
  
  
- (define (~beyond-reasonable-doubt? ag c n)
-   (and (~scintilla? ag c n)
-        (list:every (lambda (arg) (all-premises-hold? ag c arg))
-                    (con-arguments ag (node-statement n)))
-        (not (list:any (lambda (arg) (all-premises-hold? ag c arg))
-                       (pro-arguments ag (node-statement n))))))
- 
- ; best-argument?: argument-graph context node -> boolean
+ ; best-argument?: argument-graph context (list-of argument) (list-of argument) -> boolean
  ; changed name from "preponderance of the evidence" as per Trevor's suggestion
- (define (best-argument? ag c n)
+ (define (best-argument? ag c pro-args con-args)
    (let* ((pro (filter (lambda (arg) (all-premises-hold? ag c arg))
-                       (pro-arguments ag (node-statement n))))
+                       pro-args))
           (con (filter (lambda (arg) (all-premises-hold? ag c arg))
-                       (con-arguments ag (node-statement n))))
+                       con-args))
           (best-pro (and (not (null? pro))
                          (apply compare:max-compare 
                                 (cons (context-compare c) pro))))
@@ -702,20 +639,6 @@
           (or (null? con)
               (= 1 ((context-compare c) best-pro best-con))))))
  
- (define (~best-argument? ag c n)
-   (let* ((pro (filter (lambda (arg) (all-premises-hold? ag c arg))
-                       (pro-arguments ag (node-statement n))))
-          (con (filter (lambda (arg) (all-premises-hold? ag c arg))
-                       (con-arguments ag (node-statement n))))
-          (best-pro (and (not (null? pro))
-                         (apply compare:max-compare
-                                (cons (context-compare c) pro))))
-          (best-con (and (not (null? con))
-                         (apply compare:max-compare 
-                                (cons (context-compare c) con)))))
-     (and (not (null? con)) 
-          (or (null? pro)
-              (= 1 ((context-compare c) best-con best-pro))))))
  
  
  ) ; module argument

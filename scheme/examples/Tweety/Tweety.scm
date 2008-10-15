@@ -29,10 +29,17 @@
   (pro tweety-is-abnormal 
        (pr tweety-isa-penguin)))
 
+(define-argument a3 (pro '(p a) (pr '(not (q a)))))
+(define-argument a4 (con '(q a)))
+
 (define ag1 (assert empty-argument-graph (list a1)))
 
 (define ag2 (assert ag1 (list a2)))
 
 (define c1 (accept default-context (list tweety-isa-penguin tweety-isa-bird)))
 
-(diagram ag2 c1)
+(define ag3 (assert empty-argument-graph (list a3 a4)))
+
+; (view ag2 c1)
+
+; (view ag3 default-context)
