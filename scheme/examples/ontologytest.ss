@@ -26,7 +26,11 @@
           
           (define-concept Mother (and Female Parent))
           
-          (define-primitive-role (transitive-closure ancestor) ancestor))
+          (define-primitive-role (transitive-closure ancestor) ancestor)
+          
+          (define-primitive-concept Human (or Male Female))
+          
+          (define-concept (or (and Child Male) Female) (not LiableToMilitaryService)))
 
 
 ;(define kb2 (add-ontologies kb1 (list (axiom fact9 (instance Ines Female))
