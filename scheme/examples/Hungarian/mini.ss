@@ -22,5 +22,8 @@
               (list (generate-arguments-from-rules vat critical-questions)
                     builtins)))
 
-(check (all-acceptable? '(goal-A X) (engine 100 1 null)) => #t)
-(check (all-acceptable? '(goal-B X) (engine 100 1 null)) => #t)
+(define e1 (engine 100 1 null))
+
+(check (all-acceptable? '(p a) e1) => #t)
+(check (all-acceptable? '(not (q a)) e1) => #t)
+(check (all-acceptable? '(r b) e1) => #t)
