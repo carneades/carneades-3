@@ -86,5 +86,5 @@ then time to run away.")
 
 
 ;(diagram ag1 c1)
-;(view ag2 c2)
+; (view ag2 c2)
 (diagram ag3 c3)

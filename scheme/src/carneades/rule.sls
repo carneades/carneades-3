@@ -44,11 +44,16 @@
          (carneades stream)
          (carneades argument-search)
          (carneades lib match)
-         (prefix (carneades table) table:))
+         (prefix (carneades table) table:)
+         (carneades lib srfi format))
   
   (define *debug* #f)
   
   (define null '())
+  
+  (define (printf format-string . args)
+    (apply format `(,(current-output-port)  ,format-string ,@args))
+    (flush-output-port (current-output-port)))
  
   
   ; Negation, exceptions and assumptions. Statements of the form (not P), (unless P)
@@ -311,11 +316,11 @@
                                     applicable-rules)))
 ;      (if *debug*
 ;          (begin
-;            (printf "goal: ~s~n" goal)
-;            (printf "predicate: ~s~n" pred)
-;            (printf "applicable rules: ~s~n" (map rule-id applicable-rules))
-;            (printf "applied rules: ~s~n" applied-rules)
-;            (printf "remaining rules: ~s~n~n" (map rule-id remaining-rules))
+;            (printf "goal: ~a~%" goal)
+;            (printf "predicate: ~a~%" pred)
+;            (printf "applicable rules: ~a~%" (map rule-id applicable-rules))
+;            (printf "applied rules: ~a~%" applied-rules)
+;            (printf "remaining rules: ~a~%~%" (map rule-id remaining-rules))
 ;            ))
       remaining-rules
       ))
@@ -373,34 +378,40 @@
           
           
           (define (apply-for-conclusion c) ; -> response | #f
-            ; Apply the clause for conclusion c of in the head of the rule. 
+            ; Apply the clause for conclusion c in the head of the rule. 
+            (if *debug* (printf "unifying conclusion ~a of rule ~a with goal ~a~%" c (rule-id rule) subgoal))
             (let ((subs2 (or (unify1 c subgoal)
                              (unify1 `(unless ,c) subgoal)
                              (unify1 `(assuming ,c) subgoal)
                              (unify1 `(applies ,(rule-id rule) ,c) subgoal))))
               (if (not subs2)
                   ; fail
-                  #f 
+                  (begin 
+                    (if *debug* (printf "unification failed~%")) 
+                    #f)
                   ; succeed
-                  (make-response 
-                   subs2 
-                   (argument:make-argument (gensym 'a) ; id
-                                           ; direction
-                                           (match subgoal
-                                             (('not _) 'con)
-                                             (_ 'pro))
-                                           ; conclusion:
-                                           (statement-atom (condition-statement subgoal))
-                                           ; premises:
-                                           (append (map statement->premise clause) 
-                                                   (rule-critical-questions rule qs subgoal))
-                                           ; scheme:
-                                           (symbol->string (rule-id rule))) ))))
+                  (begin 
+                    (if *debug* (printf "unification succeeded~%"))
+                    (make-response 
+                     subs2 
+                     (argument:make-argument (gensym 'a) ; id
+                                             ; direction
+                                             (match subgoal
+                                               (('not _) 'con)
+                                               (_ 'pro))
+                                             ; conclusion:
+                                             (statement-atom (condition-statement subgoal))
+                                             ; premises:
+                                             (append (map statement->premise clause) 
+                                                     (rule-critical-questions rule qs subgoal))
+                                             ; scheme:
+                                             (symbol->string (rule-id rule))) )))))
           
           (filter response? (map apply-for-conclusion (rule-head rule))))
         
         (list->stream (flatmap (lambda (rule) 
-                                 ; (printf "applying rule ~s~n" (rule-id rule)) ; debug
+                                 ; (if *debug* (printf "applying rule ~a~%" (rule-id rule)))
+                                 
                                  (if (null? (rule-body rule))  ; empty body, i.e. "facts"
                                      (apply-clause null rule)
                                      (flatmap (lambda (clause)
