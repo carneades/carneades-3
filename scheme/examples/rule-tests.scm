@@ -115,7 +115,7 @@
 (check (all-acceptable? '(goods item1) (engine 20 1 null)) => #t) ; find pro argument
 (check (not (all-acceptable? '(goods item1) (engine 20 2 null))) => #t) ; unless money exception
 (check (all-acceptable? '(goods item1) (engine 20 2 null))=> #f) ; unless money exception
-(check (not (all-acceptable? '(goods item2) (engine 20 2 null))) => #t) ; edible things are not goods
+(check (not (all-acceptable? '(goods item2) (engine 20 2 null))) => #t) ; rebuttal: edible things are not goods
 (check (not (all-acceptable? '(convenient item1) (engine 20 2 '(valid)))) => #t) ; repealed rules are not valid
 (check (not (all-acceptable? '(goods item2) (engine 20 2 '(priority)))) => #t) ; lex posterior
 ; to do: fix the following test. The success predicate tests only whether one is found, not all  

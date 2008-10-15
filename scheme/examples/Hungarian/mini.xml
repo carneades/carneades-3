@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="../../../schemas/LKIF2.rnc" type="compact"?>
+<?xml-stylesheet type="text/css" href="../../../schemas/LKIF2.css"?>
+<lkif>
+  <theory id="theory1">
+    <rules>
+      <rule id="rule-1">
+        <head>
+          <s pred="p">p(<v>x</v>)</s>
+        </head>
+        <body>
+          <not>
+            <s pred="q">q(<v>x</v>)</s></not>
+        </body>
+      </rule>
+      <rule id="rule-2">
+        <head>
+          <s pred="r">r(<v>x</v>)</s>
+        </head>
+        <body>
+          <s pred="s">s(<v>x</v>)</s>
+        </body>
+      </rule>
+      <rule id="fact-1">
+        <head><not>
+            <s pred="q">q(<c>a</c>)</s></not></head>
+      </rule>
+      <rule id="fact-2">
+        <head><s pred="s">s(<c>b</c>)</s></head>
+      </rule>
+    </rules>
+  </theory>
+</lkif>

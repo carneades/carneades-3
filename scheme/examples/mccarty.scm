@@ -180,29 +180,28 @@
    
    )) ; end of rule base
 
-;  (define blocks-world-facts 
-;    '((block A)
-;      (block B)
-;      (block C)
-;      (heavy A)
-;      (heavy B)
-;      (heavy C)
-;      (not (on B table))))
-;     
-;  (define blocks-world-engine (engine 20 2 blocks-world-facts '(excluded)))
+(define blocks-world-facts 
+  '((block A)
+    (block B)
+    (block C)
+    (heavy A)
+    (heavy B)
+    (heavy C)
+    (not (on B table))))
 
-;  (ask '(on ?x table) blocks-world-engine)
+(define blocks-world-engine (engine 20 2 blocks-world-facts '(excluded)))
 
+(check (some-acceptable? '(on ?x table) blocks-world-engine) => #t)
 
-; Note: the above query fails because of the (known) bug which prevents goals from matching rejected and accepted
+; Note: the test above fails because of the bug which prevents goals from matching rejected and accepted
 ; statements of the context.
 
-; Note: the (ballerina Sally) test below fails due to some unknown bug.  Also the query (ballerina ?x) should
-; succeed with x=Mikhail and x=Naomi, but it succeeds, incorrectly, with x=Sally.
 
 (check (failure? '(ballerina Sally) (engine 50 2 null '(excluded))) => #t)
 (check-report)
 
+; Note: the test above fails due to some unknown bug.  Also the query (ballerina ?x) should
+; succeed with x=Mikhail and x=Naomi, but it succeeds, incorrectly, with x=Sally.
 
 ; Example commands
 ; (ask '(goods item2) (engine 20 2 null))
