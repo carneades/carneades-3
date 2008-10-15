@@ -100,13 +100,17 @@
  ; with any variables instantiated using the substituions of the solution state found, 
  ; or prints nothing if no solution was found.
  (define (ask1 query engine)
-   (let ((str (engine query)))
+   (define (f str) 
      (if (not (stream-null? str))
          (let ((s (stream-car str)))
            (if (acceptable? (state-arguments s)
                             (state-context s)
                             query)
-               (printf "~A~%" ((state-substitutions s) query)))))))
+               (printf "~A~%" ((state-substitutions s) query))
+               (f (stream-cdr str))))))
+   (let ((str (engine query)))
+     (f str)))
+     
  
  ; success? : statement -> engine -> boolean
  ; A query is successful iff the given inference engine finds one or more argument states
@@ -144,8 +148,7 @@
                                        str)))))
  
  ; some-acceptable? : statement engine -> boolean
- ; A statement is "defensible", relative to given engine, if it is acceptable in at least one
- ; of the argument graphs found by the engine.  
+ ; Checks if at least one argument graph was found in which the statement is acceptable.  
  (define (some-acceptable? query engine)
    (let ((str (engine query)))
      (not (stream-null? (stream-filter (lambda (s)
