@@ -5,7 +5,9 @@
         (carneades argument-builtins)
         (carneades rule)
         (carneades shell)
-        (carneades lib srfi lightweight-testing))
+        (carneades lib srfi lightweight-testing)
+        (carneades stream)
+        (carneades argument-search))
 
 
 ; Examples from "The Case for Explicit Exceptions", by L. Thorne McCarty and William W. Cohen
@@ -180,16 +182,8 @@
    
    )) ; end of rule base
 
-(define blocks-world-facts 
-  '((block A)
-    (block B)
-    (block C)
-    (heavy A)
-    (heavy B)
-    (heavy C)
-    (not (on B table))))
 
-(define blocks-world-engine (engine 20 2 blocks-world-facts '(excluded)))
+(define blocks-world-engine (engine 20 2 null '(excluded)))
 
 (check (some-acceptable? '(on ?x table) blocks-world-engine) => #t)
 

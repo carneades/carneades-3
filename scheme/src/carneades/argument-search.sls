@@ -37,6 +37,7 @@
          (prefix (carneades argument) arg:)
          (carneades unify)
          (carneades stream)
+         (carneades statement)
          ; (require (prefix compare: (lib "67.ss" "srfi"))) 
          ; (require (lib "pretty.ss"))
          )
