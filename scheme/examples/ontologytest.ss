@@ -49,7 +49,7 @@
 (check (all-acceptable? '(ancestor ?x ?y) e1) => #t)
 (check (all-acceptable? '(ancestor Caroline ?y) e1) => #t)
 (check (all-acceptable? '(ancestor Caroline Tom) e1) => #t)
-(check (failure? '(parent Hildegard Tom) e1) => #t)
+(check (no-argument-found? '(parent Hildegard Tom) e1) => #t)
 (check (all-acceptable? '(ancestor Caroline Gloria) e1) => #t)
 (check (all-acceptable? '(applies ?r (parent ?x ?y)) e1) => #t)
 (check (all-acceptable? '(Father Tom) e1) => #t)

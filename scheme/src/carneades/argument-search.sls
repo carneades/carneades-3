@@ -30,7 +30,7 @@
          find-arguments find-best-arguments goal-state instantiated-arguments
          make-successor-state next-goals )
  
- (import (rnrs base)
+ (import (rnrs)
          (rnrs records syntactic)
          (prefix (rnrs lists) list:)
          (prefix (carneades search) search:)
@@ -38,11 +38,12 @@
          (carneades unify)
          (carneades stream)
          (carneades statement)
+         (carneades system) ; pretty-print
          ; (require (prefix compare: (lib "67.ss" "srfi"))) 
          ; (require (lib "pretty.ss"))
          )
  
- (define *debug* #f)
+ (define *debug* #t)
  
  (define null '())
  
@@ -158,18 +159,19 @@
                        new-subs
                        ; extend argument graph with the new  
                        (arg:assert (state-arguments state) (list arg)))))
-;     (if *debug* 
-;         (begin (printf "prior pro-goals:~n")
-;                (pretty-print (state-pro-goals state))
-;                (printf "new pro-goals:~n")
-;                (pretty-print (state-pro-goals new-state))
-;                (printf "old con-goals:~n")
-;                (pretty-print (state-con-goals state))
-;                (printf "new con-goals:~n")
-;                (pretty-print (state-con-goals new-state))
-;                (printf "new ~n")
-;                (pretty-print (argument->datum arg))
-;                (newline)))
+     (if *debug* 
+         (begin 
+               ; (printf "prior pro-goals:~n")
+               ; (pretty-print (state-pro-goals state))
+               ; (printf "new pro-goals:~n")
+               ; (pretty-print (state-pro-goals new-state))
+               ; (printf "old con-goals:~n")
+               ; (pretty-print (state-con-goals state))
+               ; (printf "new con-goals:~n")
+               ; (pretty-print (state-con-goals new-state))
+               ;  (printf "new ~n")
+                (pretty-print (arg:argument->datum arg))
+                (newline)))
      new-state))
  
  ; type generator : statement state -> (stream-of response)
