@@ -42,7 +42,7 @@
          (prefix (carneades lib srfi lists) list:)
          (prefix (carneades argument) argument:)
          (carneades stream)
-         (carneades argument-search)
+         (prefix (carneades argument-search) as:)
          (carneades lib match)
          (prefix (carneades table) table:)
          (carneades lib srfi format))
@@ -115,6 +115,13 @@
       (if (pair? s2) (car s2) s2)))
   
 
+  
+  (define-record-type named-clause
+    (fields id       ; symbol
+            rule     ; rule-id
+            strict  ; rule-strict?
+            head     ; rule-head
+            clause)) ; the actual clause
   
   ; Note: Renamed this structure from "rule" to "%rule" to avoid a name conflict with
   ; the "rule" macro.
@@ -199,19 +206,19 @@
   ; type question-type = excluded | priority | valid
   (define question-types '(excluded priority valid))
     
-  ; rule-critical-questions: rule (list-of question-type) statement -> (list-of premise)
+  ; rule-critical-questions: rule-id (list-of question-type) statement bool -> (list-of premise)
   ; The critical questions for an argument about a statement s
   ; generated from a rule r:
   ; 1) Is r a valid rule?
   ; 2) Is r excluded with respect to s?
   ; 3) Is there another rule of higher priority which rebuts r?
-  (define (rule-critical-questions r qs s)
+  (define (rule-critical-questions rid qs s strict?)
     (define (f question) 
       (case question
-        ((excluded) (argument:ex `(excluded ,(rule-id r) ,s)))
-        ((priority) (argument:ex `(priority ,(genvar) ,(rule-id r) ,s)))
-        ((valid) (argument:ex `(not (valid ,(rule-id r)))))))
-    (if (rule-strict r) 
+        ((excluded) (argument:ex `(excluded ,rid ,s)))
+        ((priority) (argument:ex `(priority ,(genvar) ,rid ,s)))
+        ((valid) (argument:ex `(not (valid ,rid))))))
+    (if strict? 
         null
         ; filter out unknown questions:
         (map f (list:lset-intersection eq? qs question-types))))  
@@ -255,6 +262,14 @@
                  (rule-strict r)
                  (rename-variables tbl (rule-head r))
                  (rename-variables tbl (rule-body r)))))
+  
+  (define (rename-clause-variables c)
+    (let ((tbl (make-eq-hashtable)))
+      (make-named-clause (named-clause-id c)
+                         (named-clause-rule c)
+                         (named-clause-strict c)
+                         (rename-variables tbl (named-clause-head c))
+                         (rename-variables tbl (named-clause-clause c)))))
   
   (define-record-type %rulebase 
     (fields table    ; finite map from a predicate symbol to a list of rules about the predicate
@@ -325,6 +340,74 @@
       remaining-rules
       ))
   
+  (define (get-rule id rb1)
+    (find (lambda (r) (eq? (rule-id r) id)) (%rulebase-rules rb1)))
+  
+  (define clause-counter 0)
+  
+  (define (init-clause-counter)
+    (set! clause-counter 0))
+  
+  (define (add-clause)
+    (set! clause-counter (+ clause-counter 1))
+    (string->symbol (string-append "c" (number->string clause-counter))))
+  
+  (define (get-clauses args rb1 goal)
+    (let* ((pred (predicate goal))
+           (applicable-rules (table:lookup (%rulebase-table rb1)
+                                           pred
+                                           null))
+           (applicable-clauses (flatmap (lambda (rule)
+                                          (init-clause-counter)
+                                          (let ((rule-clauses (rule-body rule)))
+                                            (if (null? rule-clauses)
+                                                (list (make-named-clause (add-clause)
+                                                                         (rule-id rule)
+                                                                         (rule-strict rule)
+                                                                         (rule-head rule)
+                                                                         '()))
+                                                (map (lambda (c) (make-named-clause (add-clause)
+                                                                                    (rule-id rule)
+                                                                                    (rule-strict rule)
+                                                                                    (rule-head rule)
+                                                                                    c))
+                                                     rule-clauses))))
+                                        applicable-rules))
+           (applied-clauses (map string->symbol (argument:schemes-applied args (statement-atom goal))))
+           (remaining-clauses (filter (lambda (c)
+                                        (not (member (string->symbol (string-append (symbol->string (named-clause-rule c))
+                                                                                    (symbol->string (named-clause-id c))
+                                                                                    ))
+                                                     applied-clauses)))
+                                      applicable-clauses)))
+;      (display "--------------------")
+;      (newline)
+;      (display "goal: ")
+;      (display goal)
+;      (newline)
+;      (display "rule-table: ")
+;      (display (table:keys (%rulebase-table rb1)))
+;      (newline)
+;      (display "argument-table: ")
+;      (display (table:keys (argument:argument-graph-nodes args)))
+;      (newline)
+;      (display "applicable rules: ")
+;      (display applicable-rules)
+;      (newline)
+;      (display "applicable clauses: ")
+;      (display applicable-clauses)
+;      (newline)
+;      (display "applied clauses: ")
+;      (display applied-clauses)
+;      (newline)
+;      (display "remaining clauses: ")
+;      (display remaining-clauses)
+;      (newline)
+;      (display "--------------------")
+;      (newline)
+      remaining-clauses
+      ))
+  
   ; flatmap: (any -> list) list -> list
   (define (flatmap f l) (apply append (map f l)))
   
@@ -363,11 +446,11 @@
   ; generate-arguments-from-rules: rulebase (list-of question-types) -> generator
   (define (generate-arguments-from-rules rb qs)
     (lambda (subgoal state) 
-      (let ((args (state-arguments state))
-            (subs (state-substitutions state)))
+      (let ((args (as:state-arguments state))
+            (subs (as:state-substitutions state)))
                 
         ; apply-clause: ; clause rule -> (list-of response)
-        (define (apply-clause clause rule) 
+        (define (apply-clause clause) 
           
           (define (unify1 t1 t2) 
             (unify* t1 t2 
@@ -379,22 +462,50 @@
           
           (define (apply-for-conclusion c) ; -> response | #f
             ; Apply the clause for conclusion c in the head of the rule. 
-            (if *debug* (printf "unifying conclusion ~a of rule ~a with goal ~a~%" c (rule-id rule) subgoal))
+            (if *debug* (begin (display "unifying conclusion ")
+                               (display c)
+                               (display " of rule ")
+                               (display (named-clause-rule clause))
+                               (display " with goal ")
+                               (display subgoal)
+                               (newline)))
             (let ((subs2 (or (unify1 c subgoal)
                              (unify1 `(unless ,c) subgoal)
                              (unify1 `(assuming ,c) subgoal)
-                             (unify1 `(applies ,(rule-id rule) ,c) subgoal))))
+                             (unify1 `(applies ,(named-clause-rule clause) ,c) subgoal))))
               (if (not subs2)
                   ; fail
                   (begin 
-                    (if *debug* (printf "unification failed~%")) 
+                    (if *debug* (begin (display "unification failed")
+                                       (newline))) 
                     #f)
                   ; succeed
                   (begin 
-                    (if *debug* (printf "unification succeeded~%"))
-                    (make-response 
+                    (let ((arg-id (gensym 'a)))
+                    (if *debug*
+                        (begin (display "argument constructed by rule-generator:")
+                               (newline)
+                               (display "argument-id: ")
+                               (display arg-id)
+                               (newline) 
+                               (display "argument-scheme: ")
+                               (display (string-append (symbol->string (named-clause-rule clause))
+                                                       (symbol->string (named-clause-id clause))
+                                                       ))
+                               (newline)
+                               (display "argument-conclusion: ")
+                               (display (statement-atom (condition-statement subgoal)))
+                               (newline)
+                               (display "argument-premises: ")
+                               (display (append (map statement->premise (named-clause-clause clause))
+                                                (rule-critical-questions (named-clause-rule clause) qs subgoal (named-clause-strict clause))))
+                               (newline)
+                               (newline)
+                               ;(printf "unification succeeded~%")
+                               ))
+                    (as:make-response 
                      subs2 
-                     (argument:make-argument (gensym 'a) ; id
+                     (argument:make-argument arg-id ; id
                                              ; direction
                                              (match subgoal
                                                (('not _) 'con)
@@ -402,22 +513,26 @@
                                              ; conclusion:
                                              (statement-atom (condition-statement subgoal))
                                              ; premises:
-                                             (append (map statement->premise clause) 
-                                                     (rule-critical-questions rule qs subgoal))
+                                             (append (map statement->premise (named-clause-clause clause))
+                                                     (rule-critical-questions (named-clause-rule clause) qs subgoal (named-clause-strict clause)))
                                              ; scheme:
-                                             (symbol->string (rule-id rule))) )))))
+                                             (string-append (symbol->string (named-clause-rule clause))
+                                                            (symbol->string (named-clause-id clause))
+                                                            )
+                                             )))))))
           
-          (filter response? (map apply-for-conclusion (rule-head rule))))
+          (filter as:response? (map apply-for-conclusion (named-clause-head clause))))
         
-        (list->stream (flatmap (lambda (rule) 
-                                 ; (if *debug* (printf "applying rule ~a~%" (rule-id rule)))
+        (list->stream (flatmap (lambda (clause) 
+                                 (if *debug* (printf "applying clause ~a~a~%" (named-clause-rule clause) (named-clause-id clause)))
                                  
-                                 (if (null? (rule-body rule))  ; empty body, i.e. "facts"
-                                     (apply-clause null rule)
-                                     (flatmap (lambda (clause)
-                                                (apply-clause clause rule))
-                                              (rule-body rule))))
-                               (map rename-rule-variables (get-rules args rb (subs subgoal))))))))
+;                                 (if (null? (rule-body rule))  ; empty body, i.e. "facts"
+;                                     (apply-clause null rule)
+;                                     (flatmap (lambda (clause)
+;                                                (apply-clause clause rule))
+;                                              (rule-body rule))))
+                                 (apply-clause clause))
+                               (map rename-clause-variables (get-clauses args rb subgoal)))))))
   ; end of generate-arguments-from-rules
     
   
