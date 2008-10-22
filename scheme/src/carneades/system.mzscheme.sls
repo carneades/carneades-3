@@ -20,8 +20,27 @@
  
  (export system pretty-print tcp-connect gensym)
  
- (import (only (scheme system) system)
+ (import (rnrs)
+         (only (scheme system) system)
          (only (scheme pretty) pretty-print)
          (only (scheme tcp) tcp-connect)
-         (only (scheme base) gensym))
+         ;(only (scheme base) gensym)
+         )
+ 
+ (define gensym-counter 0)
+ 
+ (define gensym
+   (case-lambda 
+     (() 
+      (set! gensym-counter (+ 1 gensym-counter))
+      (string->symbol (string-append "g" 
+                                     (number->string gensym-counter))))
+     ((prefix) ; symbol or string
+      (set! gensym-counter (+ 1 gensym-counter))
+      (string->symbol (string-append 
+                       (if (symbol? prefix) 
+                           (symbol->string prefix) 
+                           prefix)
+                       (number->string gensym-counter))))))
+ 
  )
