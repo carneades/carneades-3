@@ -19,7 +19,7 @@
  (carneades shell) ;; utility procedures for querying knowledge bases
  
  (export make-engine make-engine* show-state show show1 ask ask1 diagram1
-         all-acceptable? some-acceptable? success? failure?)
+         all-acceptable? some-acceptable? some-argument-found? no-argument-found?)
  
  (import (except (rnrs base) assert)
          (rnrs io simple)
@@ -110,30 +110,7 @@
                (f (stream-cdr str))))))
    (let ((str (engine query)))
      (f str)))
-     
  
- ; success? : statement -> engine -> boolean
- ; A query is successful iff the given inference engine finds one or more argument states
- ; and the query is acceptable in the argument graph of the first argument state found.
- ;  (define (success? query) 
- ;    (lambda (engine)
- ;      (let ((s (engine query)))
- ;        (and (not (stream-null? s))
- ;             (acceptable? (state-arguments (stream-car s))
- ;                          (state-context (stream-car s))
- ;                          query)))))
- 
- ;  ; failure? : statement -> engine -> boolean
- ;  ; A query fails iff the given inference engine finds one or more argument states
- ;  ; and the query is *not* acceptable in the argument graph of the first state found
- ;  (define (failure? query)
- ;    (lambda (engine)
- ;      (let ((s (engine query)))
- ;        (and (not (stream-null? s))
- ;             (not (acceptable? (state-arguments (stream-car s))
- ;                               (state-context (stream-car s))
- ;                               query))))))
- ;  
  
  ; all-acceptable? : statement engine -> boolean
  ; Checks if at least one argument graph was found by the engine and the
@@ -157,14 +134,14 @@
                                                       query))
                                        str)))))
  
- ; success? : statement engine -> boolean
- ; A query succeeds iff the given engine is able to find at least one argument pro or con the statement
+ ; some-argument-found? : statement engine -> boolean
+ ; Returns true if the given engine is able to find at least one argument pro or con the statement
  ; of the query.
- (define (success? query engine) (not (stream-null? (engine query))))
+ (define (some-argument-found? query engine) (not (stream-null? (engine query))))
  
- ; failure? : statement engine -> boolean
- ; A query fails iff the given inference engine is not able to find any arguments pro or
- ; con the statment
- (define (failure? query engine) (stream-null? (engine query)))
+ ; no-argument-found? : statement engine -> boolean
+ ; Returns true if the given inference engine is not able to find any arguments pro or
+ ; con the statement
+ (define (no-argument-found? query engine) (stream-null? (engine query)))
  
  ) ; end of shell.scm

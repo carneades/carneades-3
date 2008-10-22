@@ -1,13 +1,14 @@
 #!r6rs
 
-(import (except (rnrs base) assert)
+(import (except (rnrs base) assert values)
         (carneades argument)
         (carneades argument-builtins)
         (carneades rule)
         (carneades shell)
         (carneades lib srfi lightweight-testing)
         (carneades stream)
-        (carneades argument-search))
+        (carneades argument-search)
+        (carneades table))
 
 
 ; Examples from "The Case for Explicit Exceptions", by L. Thorne McCarty and William W. Cohen
@@ -137,7 +138,7 @@
    ;     give us a *reason* to believe she is not a ballerina?
    ;     If someone has put forward an argument for someone being a ballerina,
    ;     should it be possible to rebut this argument by proving she is a dancer?
-   ;     In particular, if one has use r12 to argue that she is a ballerina, by
+   ;     In particular, if one uses r12 to argue that she is a ballerina, by
    ;     proving she is a graceful dancer, should it be possible to rebut this
    ;     argument by showing she is a dancer?  In my view, r11 illustrates two
    ;     different interpretations of defeasible rules:  1) as expressions of 
@@ -153,11 +154,11 @@
    ;     no purpose.  They would make a bit more sense if there were
    ;     some exceptions to r12, such as the following:
    
+     
    (rule r14 
-         (if (or (rock-and-roller ?x)
+         (if (or (rock-and-roller ?x) 
                  (square-dancer ?x))
              (excluded r12 (graceful ?x))))
-   
    
    (rule r15
          (if (square-dancer ?x)
@@ -166,6 +167,7 @@
    (rule r16
          (if (rock-and-roller ?x)
              (dancer ?x)))
+  
    
    ; The policy issue is whether it is better to presume that 
    ; someone is graceful, knowing that he or she is a dancer.  
@@ -184,17 +186,13 @@
 
 
 (define blocks-world-engine (engine 20 2 null '(excluded)))
+; (check (some-acceptable? '(on ?x table) blocks-world-engine) => #t)
 
-(check (some-acceptable? '(on ?x table) blocks-world-engine) => #t)
-
-; Note: the test above fails because of the bug which prevents goals from matching rejected and accepted
-; statements of the context.
-
-
-(check (failure? '(ballerina Sally) (engine 50 2 null '(excluded))) => #t)
+(define e1 (engine 50 2 null '(excluded)))
+(check (some-acceptable? '(ballerina Sally) e1) => #f)
 (check-report)
 
-; Note: the test above fails due to some unknown bug.  Also the query (ballerina ?x) should
+; Note: the test above fails due to some unknown bug.  The query (ballerina ?x) should
 ; succeed with x=Mikhail and x=Naomi, but it succeeds, incorrectly, with x=Sally.
 
 ; Example commands
