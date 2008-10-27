@@ -69,10 +69,10 @@ then time to run away.")
                 (lambda (arg1 arg2) 0) ; no priorities
                 identity))
 
-(define ag1 (assert-argument empty-argument-graph (list a1)))
+(define ag1 (assert-arguments empty-argument-graph (list a1)))
 (define c1 (accept c0 (list killing malice)))
 
-(define ag2 (assert-argument ag1 (list a2 a3)))
+(define ag2 (assert-arguments ag1 (list a2 a3)))
 (define c2 (accept c1 (list f1)))
 
 ; problem: the defendant's argument also met the BA standard,
@@ -82,7 +82,7 @@ then time to run away.")
 ; when the "tactical burden" is to be switch back to the other
 ; party, as in the next step below.
 
-(define ag3 (assert-argument ag2 (list a4)))
+(define ag3 (assert-arguments ag2 (list a4)))
 (define c3 (accept c2 (list f2)))
 (set! c3 (assign-standard c3 self-defense (list 'n~ba)))
 

@@ -30,7 +30,7 @@
          context? state question accept reject assign-standard update-substitutions pro-arguments 
          con-arguments schemes-applied status proof-standard prior decided? accepted? rejected?
          questioned? stated? issue? empty-argument-graph argument-graph?
-         argument-graph-nodes argument-graph-arguments put-argument assert-argument* assert-argument 
+         argument-graph-nodes argument-graph-arguments put-argument assert-arguments* assert-arguments 
          update questions facts statements accepted-statements rejected-statements 
          stated-statements relevant-statements list-arguments issues relevant?   
          satisfies? acceptable? holds? all-premises-hold? in? out? 
@@ -532,8 +532,8 @@
    (filter (lambda (s) (relevant? ag s g))
            (statements ag))) 
  
- ; assert-argument*: argument-graph argument boolean -> argument-graph
- ; (assert-argument* arg ag r):  Add the argument, arg, to the argument graph, ag,
+ ; assert-arguments*: argument-graph argument boolean -> argument-graph
+ ; (assert-arguments* arg ag r):  Add the argument, arg, to the argument graph, ag,
  ; if doing so would not introduce a cycle. "r" is a flag
  ; for choosing whether or not to replace an argument having
  ; the same id as arg.  If r is false and some argument with
@@ -543,12 +543,12 @@
  ; It is the responsiblity of the protocol to question the
  ; conclusion of the argument, if this is wanted.
  
- (define (assert-argument* ag arg replace)
+ (define (assert-arguments* ag arg replace)
    (cond ((and (not replace) 
                (get-argument ag (argument-id arg)))
-          (error "assert-argument*: attempt to replace an existing argument." arg))
+          (error "assert-arguments*: attempt to replace an existing argument." arg))
          ((not (cycle-free? arg ag))
-          (error "assert-argument*: cyclic argument." arg))
+          (error "assert-arguments*: cyclic argument." arg))
          (else (let* ((n (or (get-node ag (argument-conclusion arg))
                              (make-node (argument-conclusion arg) null null)))
                       (ag1 (if (eq? (argument-direction arg) 'pro)
@@ -562,22 +562,22 @@
                                                                    (node-con n)))))))
                  (put-argument ag1 arg)))))
  
- ; assert-argument: argument-graph (list-of argument) -> argument-graph
- (define (assert-argument ag args) 
-   (fold-right (lambda (arg ag) (assert-argument* ag arg #f))
+ ; assert-arguments: argument-graph (list-of argument) -> argument-graph
+ (define (assert-arguments ag args) 
+   (fold-right (lambda (arg ag) (assert-arguments* ag arg #f))
                ag 
                args))
  
  ; list->argument-graph: (list-of datum) -> argument-graph
  ; converts a list of expressions representing arguments into an argument graph
  (define (list->argument-graph l)
-   (fold-right (lambda (arg ag) (assert-argument* ag arg #f))
+   (fold-right (lambda (arg ag) (assert-arguments* ag arg #f))
                empty-argument-graph 
                (map datum->argument l)))
  
  ; update: argument-graph (list-of argument) -> argument-graph
  (define (update ag args)
-   (fold-right (lambda (arg ag) (assert-argument* ag arg #t))
+   (fold-right (lambda (arg ag) (assert-arguments* ag arg #t))
                ag args))
  
  ; satisfies: argument-graph context proof-standard 

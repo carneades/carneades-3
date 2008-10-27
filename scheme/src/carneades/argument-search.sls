@@ -176,7 +176,7 @@
                         (arg:question (state-context state) (list conclusion)) 
                         new-subs)
                        ; extend argument graph with the new arg
-                       (arg:assert-argument (state-arguments state) (list arg))))
+                       (arg:assert-arguments (state-arguments state) (list arg))))
          
          ; create a successor state by modifying the substitutions of the context, but without
          ; putting forward a new argument.
