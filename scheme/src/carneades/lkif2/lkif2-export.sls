@@ -11,7 +11,7 @@
          
          (carneades lkif2 lkif2-import) ; only for testing
          
-         (except (carneades argument) assert)
+         (carneades argument)
          (only (carneades statement) statement-equal?)
          (carneades rule)
          (prefix (carneades table) table:)
@@ -242,8 +242,8 @@
        (let ((id (new-id "ag"))
              (title "")
              (main-issue "")
-             (statements (apply-context c statements-table (table:values (argument-graph-arguments ag))))
-             (arguments (arguments->sxml (table:values (argument-graph-arguments ag)) statements-table)))
+             (statements (apply-context c statements-table (table:objects (argument-graph-arguments ag))))
+             (arguments (arguments->sxml (table:objects (argument-graph-arguments ag)) statements-table)))
          (list 'argument-graph
                (elements->attributes (list (element->sxml 'id id)
                                            (element->sxml 'title title)

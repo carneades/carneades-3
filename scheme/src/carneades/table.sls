@@ -22,11 +22,11 @@
  ;; Immutable, functional tables. Simple implementation using association lists. 
  ;; Keys compared with equal?
  
- (export make-table table? insert lookup keys values  
-         filter-keys filter-values 
+ (export make-table table? insert lookup keys objects  
+         filter-keys filter-objects 
          (rename (table-filter filter)))
  
- (import (except (rnrs) values)
+ (import (rnrs)
          (prefix (carneades set) set:))
  
  (define-record-type table 
@@ -50,8 +50,8 @@
    ; use list->set to remove duplicate keys
    (set:set->list ((set:list->set equal?) (map car (table-pairs t1)))))
  
- ; values: table -> (list-of datum)
- (define (values t1)
+ ; objects table -> (list-of datum)
+ (define (objects t1)
    (map (lambda (k) (lookup t1 k #f)) (keys t1)))
  
  ; filter: table (-> (pair-of key value) boolean) -> (list-of (pair-of key value))
@@ -63,7 +63,7 @@
  (define (filter-keys pred table)
    (map car (table-filter pred table)))
  
- (define (filter-values pred table)
+ (define (filter-objects pred table)
    (map cdr (table-filter pred table)))
  
  ) ; end of table library

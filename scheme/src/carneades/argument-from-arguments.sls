@@ -24,7 +24,7 @@
  
  (export generate-arguments-from-argument-graph)
  
- (import (except (rnrs base) assert)
+ (import (rnrs base)
          (carneades statement)
          (only (carneades system) gensym)
          (carneades stream)

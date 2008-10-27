@@ -21,7 +21,7 @@
  (export make-engine make-engine* show-state show show1 ask ask1 diagram1
          all-in? some-in? some-argument-found? no-argument-found?)
  
- (import (except (rnrs base) assert)
+ (import (rnrs base)
          (rnrs io simple)
          (carneades argument)
          (carneades argument-search)
