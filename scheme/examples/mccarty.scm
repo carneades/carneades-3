@@ -17,18 +17,18 @@
 
 ; type question = excluded | priority | valid
 
-
-; engine integer integer (list-of statement) (list-of symbol) -> statement -> (stream-of argument-state)
-(define (engine max-nodes max-turns assumptions critical-questions)
+; engine integer integer rulebase (list-of statement) (list-of symbol) -> statement -> (stream-of argument-state)
+(define (engine max-nodes max-turns rules assumptions critical-questions)
   (make-engine* max-nodes max-turns 
                 (accept default-context assumptions)
-                (list (generate-arguments-from-rules rb1 critical-questions) builtins)))
+                (list (generate-arguments-from-rules rules critical-questions) 
+                      builtins
+                      )))
 
+; Royal Elephants Benchmark
 
-(define rb1 
+(define elephants-rulebase 
   (rulebase
-   
-   ; Royal Elephants Benchmark
    
    (rule r1 
          (if (and (elephant ?x)
@@ -38,16 +38,24 @@
    (rule r2 
          (if (and (elephant ?x)
                   (royal ?x))
-             (not (gray ?x))))
-   
-   (rule* elephant-facts 
-          (elephant clyde)
-          (african clyde)
-          (royal clyde)
-          (elephant dumbo)
-          (african dumbo))
-   
-   ; Pennsylvania Dutch Benchmark
+             (not (gray ?x))))      
+ ))
+
+(define elephant-facts
+  '((elephant clyde)
+    (african clyde)
+    (royal clyde)
+    (elephant dumbo)
+    (african dumbo)))
+
+(define e1 (engine 20 2 elephants-rulebase elephant-facts null))
+(check (some-in? '(gray ?x) e1) => #t)
+(check (some-in? '(not (gray ?x)) e1) => #t)
+  
+; Pennsylvania Dutch Benchmark
+
+(define dutch-rulebase
+  (rulebase
    
    (rule r3
          (if (native-speaker ?x Pa-Dutch)
@@ -61,37 +69,55 @@
    (rule r5 
          (if (native-speaker ?x Pa-Dutch)
              (native-speaker ?x German)))
-   
-   (rule* pa-dutch-facts 
-          (native-speaker Herman Pa-Dutch)
-          (native-speaker Fritz German))
-   
-   ; Gullible Citizens Benchmark
+   ))
+
+(define dutch-facts
+  '((native-speaker Herman Pa-Dutch)
+    (native-speaker Fritz German)))
+
+(define e2 (engine 20 2 dutch-rulebase dutch-facts null))
+(check (some-in? '(born ?x ?y) e2) => #t)
+(check (some-in? '(not (born ?x America)) e2) => #t)
+
+; Gullible Citizens Benchmark
+
+(define gullible-rulebase
+  (rulebase
    
    (rule r6 (if (and (citizen ?x)
                      (crook ?y))
                 (not (like ?x ?y))))
    
-   ;     (rule r7 (if (and (citizen ?x)
-   ;                       (gullible ?x)
-   ;                       (crook ?y)
-   ;                       (elected ?y))
-   ;                  (like ?x ?y)))
+   ; r7 would only work if rebuttals are search for and found
+;   (rule r7 (if (and (citizen ?x)
+;                     (gullible ?x)
+;                     (crook ?y)
+;                     (elected ?y))
+;                (like ?x ?y)))
    
    (rule r7 (if (and (citizen ?x)
                      (gullible ?x)
                      (crook ?y)
                      (elected ?y))
                 (excluded r6 (not (like ?x ?y)))))
+))
+
+(define gullible-facts
+  '((citizen Fred)
+    (citizen John)
+    (gullible Fred)
+    (crook Dick)
+    (elected Dick)))
+
+(define e3 (engine 20 2 gullible-rulebase gullible-facts '(excluded)))
+(check (some-in? '(not (like ?x ?y)) e3) => #t)
+(check (some-in? '(not (like Fred Dick)) e3) => #f)
+
+; Blocks World Benchmark
+
+(define blocks-world-rulebase
+  (rulebase
    
-   (rule* gullible-citizen-facts 
-          (citizen Fred)
-          (citizen John)
-          (gullible Fred)
-          (crook Dick)
-          (elected Dick))
-   
-   ; Blocks World Benchmark
    
    (rule r8 
          (if (and (block ?x)
@@ -105,18 +131,26 @@
    (rule r10 
          (if (on B table)
              (excluded r8 (on A table))))  
-   
-   (rule blocks-world-facts
-         (block A)
-         (block B)
-         (block C)
-         (heavy A)
-         (heavy B)
-         (heavy C)
-         (not (on B table)))
-   
-   
-   ; Ballerina Benchmark
+   ))
+
+(define blocks-world-facts 
+  '((block A)
+    (block B)
+    (block C)
+    (heavy A)
+    (heavy B)
+    (heavy C)
+    (not (on B table))))
+
+(define e4 (engine 20 2 blocks-world-rulebase blocks-world-facts '(excluded)))
+(check (some-in? '(block ?x) e4) => #t)
+(check (some-in? '(on ?x table) e4) => #t)
+(check (some-in? '(not (on ?x table)) e4) => #t)
+
+
+; Dancer Benchmark
+(define dancer-rulebase
+   (rulebase
    
    ;     (rule r11
    ;           (if (dancer ?x)
@@ -176,28 +210,22 @@
    ; and vice versa?  It is not possible to evaluate the quality
    ; of these rules without such information.
    
-   (rule ballerina-facts
-         (dancer Naomi)
-         (dancer Mikhail)
-         (rock-and-roller Norbert)
-         (square-dancer Sally))
-   
    )) ; end of rule base
 
 
-(define blocks-world-engine (engine 20 2 null '(excluded)))
-; (check (some-acceptable? '(on ?x table) blocks-world-engine) => #t)
 
-(define e1 (engine 50 2 null '(excluded)))
-(check (some-acceptable? '(ballerina Sally) e1) => #f)
+(define dancer-facts 
+  '((dancer Naomi)
+    (dancer Mikhail)
+    (rock-and-roller Norbert)
+    (square-dancer Sally)))
+
+(define e5 (engine 50 2 dancer-rulebase dancer-facts '(excluded)))
+(check (some-in? '(dancer Sally) e5) => #t)
+(check (some-in? '(ballerina Sally) e5) => #f)
+
 (check-report)
 
-; Note: the test above fails due to some unknown bug.  The query (ballerina ?x) should
-; succeed with x=Mikhail and x=Naomi, but it succeeds, incorrectly, with x=Sally.
-
-; Example commands
-; (ask '(goods item2) (engine 20 2 null))
-; (show '(goods item2) (engine 20 2 '(priority)))
 
 
 

@@ -5,7 +5,8 @@
         (carneades statement)
         (carneades argument)
         (carneades argument-diagram)
-        (prefix (carneades table) table:))
+        (prefix (carneades table) table:)
+        (carneades unify))
 
 (define null '())
 
@@ -65,7 +66,8 @@ then time to run away.")
 (define c0 
   (make-context (table:make-table) ; status table
                 (lambda (statement) 'se) ; default standard: scintilla
-                (lambda (arg1 arg2) 0))) ; no priorities
+                (lambda (arg1 arg2) 0) ; no priorities
+                identity))
 
 (define ag1 (assert empty-argument-graph (list a1)))
 (define c1 (accept c0 (list killing malice)))

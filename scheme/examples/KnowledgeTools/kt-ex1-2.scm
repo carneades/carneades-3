@@ -56,9 +56,9 @@
 
 (define e1 (engine 20 1 argument:default-context))
   
-;(check (all-acceptable? 'k473 e1) => #t)  ; max 10% of nominal value   
-;(check (all-acceptable? 'k472 e1) => #t)  ; cash payment
-;(check (all-acceptable? 'k470 e1) => #t)  ; counter-performance
+;(check (all-in? 'k473 e1) => #t)  ; max 10% of nominal value   
+;(check (all-in? 'k472 e1) => #t)  ; cash payment
+;(check (all-in? 'k470 e1) => #t)  ; counter-performance
 ;(check-report)
 
 

@@ -23,11 +23,11 @@
  ; viewpoint. 
  
  (export make-state initial-state state? state-topic state-viewpoint state-pro-goals 
-         state-con-goals state-context state-substitutions state-arguments 
+         state-con-goals state-context state-arguments state-substitutions
          opposing-viewpoint switch-viewpoint 
          make-response response? response-argument 
          response-substitutions
-         find-arguments find-best-arguments goal-state instantiated-arguments
+         find-arguments find-best-arguments goal-state? instantiated-arguments
          make-successor-state next-goals )
  
  (import (rnrs)
@@ -43,7 +43,7 @@
          ; (require (lib "pretty.ss"))
          )
  
- (define *debug* #t)
+ (define *debug* #f)
  
  (define null '())
  
@@ -60,20 +60,35 @@
            pro-goals       ; (list-of (list-of statement)) ; disjunctive normal form
            con-goals       ; (list-of (list-of statement)) ; disjunctive normal form
            context         ; context
-           substitutions   ; term -> term
            arguments))     ; argument-graph 
+ 
+ ; display-state: state -> voide
+ ; for debugging
+ (define (display-state state)
+   (let ((subs (state-substitutions state)))
+     (display "topic: ") (display (subs (state-topic state))) (newline)
+     (display "viewpoint: ") (display (state-viewpoint state)) (newline)
+     (display "first pro goal: ") (display (if (null? (state-pro-goals state)) "" (subs (car (state-pro-goals state))))) (newline)
+     (display "first con goal: ") (display (if (null? (state-con-goals state)) "" (subs (car (state-con-goals state))))) (newline)
+     (display "number of arguments: ") (display (length (arg:list-arguments (state-arguments state)))) (newline)
+     (newline)))
+  
+  
+ ; state-substitutions: state -> substitutions
+ ; For backwards compatibility
+ (define (state-substitutions state)
+   (arg:context-substitutions (state-context state)))
  
  (define-record-type response
    (fields substitutions   ; term -> term
-           argument))      ; argument
+           argument))      ; argument | #f
  
  (define (initial-state goal context)
    (make-state goal 
                'pro 
                (list (list goal))
                null 
-               context 
-               identity 
+               context  
                arg:empty-argument-graph))
  
  
@@ -84,7 +99,6 @@
                (state-pro-goals s)
                (state-con-goals s)
                (state-context s)
-               (state-substitutions s)
                (state-arguments s)))
  
  ; instantiated-arguments: state -> argument-graph
@@ -92,7 +106,7 @@
  ; instantiated with their values in the substitutions of the state
  (define (instantiated-arguments state)
    (arg:instantiate-argument-graph (state-arguments state)
-                                   (state-substitutions state)))
+                                   (arg:context-substitutions (state-context state))))
  
  
  ; next-goals: state -> (list-of (list-of statement)) 
@@ -120,18 +134,21 @@
          (cdr disjunction-of-conjunctions)
          (cons clause1 (cdr disjunction-of-conjunctions)))))
  
- ; make-successor-state: state substitutions argument -> state
- (define (make-successor-state state new-subs arg)
-   (let* ((conclusion (arg:argument-conclusion arg))
-          (assumptions (questioned-assumptions (map arg:premise-statement 
-                                                        (list:filter arg:assumption? (arg:argument-premises arg)))
-                                                   (state-context state)))
-          (premises (append (map arg:premise-statement 
-                                 (list:filter arg:ordinary-premise? (arg:argument-premises arg)))
-                            assumptions))
-          (exceptions (map arg:premise-statement 
-                           (list:filter arg:exception? (arg:argument-premises arg))))
-          (new-state
+ ; make-successor-state: state response -> state
+ (define (make-successor-state state response)
+   (let ((new-subs (response-substitutions response))
+         (arg (response-argument response)))
+     (if arg
+         (let* ((arg (response-argument response))
+                (conclusion (arg:argument-conclusion arg))
+                (assumptions (questioned-assumptions (map arg:premise-statement 
+                                                          (list:filter arg:assumption? (arg:argument-premises arg)))
+                                                     (state-context state)))
+                (premises (append (map arg:premise-statement 
+                                       (list:filter arg:ordinary-premise? (arg:argument-premises arg)))
+                                  assumptions))
+                (exceptions (map arg:premise-statement 
+                                 (list:filter arg:exception? (arg:argument-premises arg)))))
            (make-state (state-topic state)
                        (state-viewpoint state)
                        ; new pro goals
@@ -155,24 +172,30 @@
                          ((con) (update-goals (state-con-goals state) 
                                               premises)))
                        ; make an issue of the conclusion:
-                       (arg:question (state-context state) (list conclusion))
-                       new-subs
-                       ; extend argument graph with the new  
-                       (arg:assert (state-arguments state) (list arg)))))
-     (if *debug* 
-         (begin 
-               ; (printf "prior pro-goals:~n")
-               ; (pretty-print (state-pro-goals state))
-               ; (printf "new pro-goals:~n")
-               ; (pretty-print (state-pro-goals new-state))
-               ; (printf "old con-goals:~n")
-               ; (pretty-print (state-con-goals state))
-               ; (printf "new con-goals:~n")
-               ; (pretty-print (state-con-goals new-state))
-               ;  (printf "new ~n")
-                (pretty-print (arg:argument->datum arg))
-                (newline)))
-     new-state))
+                       (arg:update-substitutions 
+                        (arg:question (state-context state) (list conclusion)) 
+                        new-subs)
+                       ; extend argument graph with the new arg
+                       (arg:assert (state-arguments state) (list arg))))
+         
+         ; create a successor state by modifying the substitutions of the context, but without
+         ; putting forward a new argument.
+        
+         (make-state (state-topic state)
+                     (state-viewpoint state)
+                     ; new pro goals
+                     (case (state-viewpoint state)
+                       ((pro) (update-goals (state-pro-goals state) '()))
+                       ((con) (state-pro-goals state)))
+                     ; new con goals
+                     (case (state-viewpoint state)
+                       ((pro) (state-con-goals state))
+                       ((con) (update-goals (state-con-goals state) '())))
+                     ; replace the subtutions of the context
+                     (arg:update-substitutions (state-context state) new-subs)
+                     ; no new arguments
+                     (state-arguments state)))))
+ 
  
  ; type generator : statement state -> (stream-of response)
  ; A generator maps a goal statement to a stream of arguments pro this goal.  The conclusion
@@ -193,30 +216,33 @@
                    (stream-map (lambda (response) ; response -> state
                                  (make-successor-state 
                                   (search:node-state node) 
-                                  (response-substitutions response)   
-                                  (response-argument response))) 
+                                  response)) 
                                (stream-flatmap 
                                 (lambda (clause) ; -> (stream-of (pair-of argument substitutions))
-                                  ; where clause is a list representing a conjunction of statements
-                                  ; (if *debug* (printf "clause: ~v~n" clause))
-                                  (generator (car clause) ; first statement of clause
-                                             state1))
+                                  (let ((goal (car clause)))
+                                    (generator goal state1)))
                                 (list->stream (next-goals state1)))))))
    (lambda (node)
      (stream-flatmap (lambda (g) (apply-generator g node))
                      (list->stream l))))
  
- ; goal-state: state -> boolean
+ ; goal-state?: state -> boolean
  ; If viewpoint of the state is pro, then the goal is to find a
  ; state in which the topic statement is acceptable. If the viewpoint is con, 
  ; the goal is to find a state in which topic is not acceptable. 
- (define (goal-state state)
-   (let ((in (arg:in? (state-arguments state) 
+ (define (goal-state? state)
+   (let* ((in (arg:in? (state-arguments state) 
                   (state-context state)
-                  (state-topic state))))
-     (case (state-viewpoint state)
-       ((pro) in)
-       ((con) (not in)))))
+                  (state-topic state)))
+          (result (case (state-viewpoint state)
+                     ((pro) in)
+                     ((con) (not in)))))
+     (if *debug* 
+         (begin 
+           (display "goal-state: ") (display result) (newline)
+           (display-state state)))
+     result))
+ 
  
  ; node-compare: node node -> {-1,0,1}
  ; Prefer nodes with the smallest number of issues
@@ -242,7 +268,7 @@
    (stream-map (lambda (node) (search:node-state node))
                (search:search (search:make-problem (search:make-root initial-state)
                                                    (make-transitions generators) 
-                                                   goal-state)
+                                                   goal-state?)
                               (strategy r))))
  
  

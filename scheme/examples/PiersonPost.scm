@@ -4,7 +4,8 @@
         (carneades statement)
         (carneades argument)
         (carneades argument-diagram)
-        (prefix (carneades table) table:))
+        (prefix (carneades table) table:)
+        (carneades unify))
 
 (define null '())
 
@@ -93,7 +94,8 @@ an important social value.")
 (define c0 
   (make-context (table:make-table) ; status table
                 (lambda (statement) 'se) ; default standard: scintilla
-                (lambda (arg1 arg2) 0))) ; no priorities
+                (lambda (arg1 arg2) 0) ; no priorities
+                identity))
 
 (define-argument a1 (pro not-property 
                          (pr possession-required)

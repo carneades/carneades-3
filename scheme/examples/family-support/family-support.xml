@@ -7,37 +7,37 @@
             <import uri="http://fokus.fraunhofer.de/elan/estrella/family.owl"/>
         </imports>
         <axioms>
-            <axiom id="f1"><s pred="family:father"><c>Tom</c> is the father of <c>Dustin</c></s></axiom>
-            <axiom id="f2"><s pred="family:mother"><c>Gloria</c> is the mother of <c>Tom</c></s></axiom>
-            <axiom id="f3"><s pred="family:needy"><c>Gloria</c> is needy</s></axiom>
+            <axiom id="f1"><s pred="family:father">The father of <c>Charles</c> is <c>Max</c></s></axiom>
+            <axiom id="f2"><s pred="family:mother">The mother of <c>Max</c> is <c>Gertrude</c></s></axiom>
+            <axiom id="f3"><s pred="family:needy"><c>Gertrude</c> is needy</s></axiom>
             <axiom id="f4">
 				<not>
 					<s pred="family:hasCapacityToSupport">
-						<c>Dustin</c>
+						<c>Max</c>
 						has the capacity to provide support
 					</s>
 				</not>
 			</axiom>
         </axioms>
         <rules>
-			<!-- following rules named fact# are also expressed as axioms, but unless these axioms are read and put into a context by the lkif-module and the rule-engine can't handle the context yet,
-			it is neccessary to rewrite them as rules without bodies -->
+			<!-- The following rules, repeating the information in the axoims, are needed until 
+                             the LKIF importer converts axioms to accepted and rejected statements of the context -->
 			
 			<rule id="fact1">
 				<head>
-					<s pred="family:father"><c>Tom</c> is the father of <c>Dustin</c></s>
+					<s pred="family:father">The father of <c>Charles</c> is <c>Max</c></s>
 				</head>
 			</rule>
 			
 			<rule id="fact2">
 				<head>
-					<s pred="family:mother"><c>Gloria</c> is the mother of <c>Tom</c></s>
+					<s pred="family:mother">The mother of <c>Max</c> is <c>Gertrude</c></s>
 				</head>
 			</rule>
 			
 			<rule id="fact3">
 				<head>
-					<s pred="family:needy"><c>Gloria</c> is needy</s>
+					<s pred="family:needy"><c>Gertrude</c> is needy</s>
 				</head>
 			</rule>
 			
@@ -45,7 +45,7 @@
 				<head>
 					<not>
 						<s pred="family:hasCapacityToSupport">
-							<c>Dustin</c>
+							<c>Max</c>
 							has the capacity to provide support
 						</s>
 					</not>

@@ -262,10 +262,7 @@
               (ask-one-question! testimony question subject)))
         (form-questions (get-form testimony (question-predicate question))))))
  
- 
- ; type generator : statement argument-graph substitutions -> 
- ;                  (stream-of (pair-of argument substitutions ))
- 
+  
  ; dispatch: statement testimony subs -> (stream-of response)
  (define (dispatch goal testimony subs)
    (define (f direction predicate subject object)
@@ -368,7 +365,7 @@
  
  ; generate-arguments-from-testimony: testimony -> generator
  (define (generate-arguments-from-testimony testimony)
-   (lambda (goal state) (dispatch goal testimony (state-substitutions state))))
+   (lambda (goal state) (dispatch goal testimony (argument:context-substitutions (state-context state)))))
  
  
  ) ;end of module
