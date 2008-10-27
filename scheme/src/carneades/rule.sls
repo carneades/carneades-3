@@ -441,13 +441,13 @@
   ; A. Time dependent rules must include temporal conditions.  
   
   
-  ; type generator : statement state -> (stream-of result)
+  ; type generator : statement state -> (stream-of response)
   
   ; generate-arguments-from-rules: rulebase (list-of question-types) -> generator
   (define (generate-arguments-from-rules rb qs)
     (lambda (subgoal state) 
       (let ((args (as:state-arguments state))
-            (subs (as:state-substitutions state)))
+            (subs (argument:context-substitutions (as:state-context state))))
                 
         ; apply-clause: ; clause rule -> (list-of response)
         (define (apply-clause clause) 

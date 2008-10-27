@@ -172,13 +172,14 @@ public class StatementEditPanel extends EditPanel {
 
 	private attribute standardGroup: SwingToggleGroup = SwingToggleGroup {};
 
-	private attribute selectedStandard: String = bind (if (BAButton.selected) "BA" 
-														else if (SEButton.selected) "SE" 
+	private attribute selectedStandard: String = bind (// if (BAButton.selected) "BA" 
+														if (SEButton.selected) "SE" 
 														else if (DVButton.selected) "DV" 
 														else if (BRDButton.selected) "BRD" 
 														else if (CCEButton.selected) "CCE" 
 														else "PE");
 
+	/* 
 	private attribute BAButton: SwingRadioButton = CRadioButton {
 		toggleGroup: standardGroup
 		text: "best argument"
@@ -187,6 +188,7 @@ public class StatementEditPanel extends EditPanel {
 			submitStandard();
 		}
 	}
+	*/
 
 	private attribute SEButton: SwingRadioButton = CRadioButton {
 		toggleGroup: standardGroup
@@ -299,7 +301,7 @@ public class StatementEditPanel extends EditPanel {
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, compAcceptableBox,
 										Label { text: "proof standard", preferredSize: [editLabelWidth, 20] }, SEButton,
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, DVButton, 
-										Label { text: "", preferredSize: [editLabelWidth, 20] }, BAButton, 
+										// Label { text: "", preferredSize: [editLabelWidth, 20] }, BAButton, 
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, PEButton, 
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, CCEButton, 
 										Label { text: "", preferredSize: [editLabelWidth, 20] }, BRDButton, 
@@ -322,9 +324,9 @@ public class StatementEditPanel extends EditPanel {
 		if (statement.standard instanceof DialecticalValidity) { DVButton.selected = true; }
 		else if (statement.standard instanceof Scintilla) { SEButton.selected = true; }
 		else if (statement.standard instanceof BeyondReasonableDoubt) { BRDButton.selected = true; }
-		else if (statement.standard instanceof Preponderance) { PEButton.selected = true; }
 		else if (statement.standard instanceof ClearAndConvincingEvidence) { CCEButton.selected = true; }
-		else /*if (statement.standard instanceof BestArgument)*/ { BAButton.selected = true; }
+	    else /* if (statement.standard instanceof Preponderance) */ { PEButton.selected = true; }
+		// else /*if (statement.standard instanceof BestArgument)*/ { BAButton.selected = true; }
 		
 	}
 }

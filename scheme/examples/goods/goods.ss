@@ -19,6 +19,6 @@
                (list (generate-arguments-from-rules goods critical-questions)
                      builtins)))
 
-(check (all-acceptable? '(Goods g1) (engine 20 1 '())) => #t)
-(check (not (all-acceptable? '(Goods g1) (engine 20 2 '()))) => #t)
+(check (all-in? '(Goods g1) (engine 20 1 '())) => #t)
+(check (not (all-in? '(Goods g1) (engine 20 2 '()))) => #t)
 (check-report)

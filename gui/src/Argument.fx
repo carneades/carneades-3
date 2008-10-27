@@ -523,39 +523,27 @@ public class DialecticalValidity extends ProofStandard {
 	}
 }
 
+
+// BestArgument and Preponderance are now equivalent standards, i.e.
+// synonyms.
+
 public class BestArgument extends ProofStandard {
 	override function test (ag: ArgumentGraph, 
 	               pro: Argument[], 
 	               con: Argument[]): Boolean {
 	       var okPro = pro [ arg | arg.allPremisesHold() ];
 	       var okCon = con [ arg | arg.allPremisesHold() ];
-	       // there is at least one ok pro argument, and
-	       sizeof(okPro) > 0 and
-	       // there is no ok con argument which is at least
-	       // as strong as every ok pro argument, that is
-	       // there is an ok pro argument which is strictly 
-	       // stronger than every ok con argument.
-	       0 < sizeof(okPro [ proArg |	
-	       		0 == sizeof (okCon [ conArg | 	
-	       				ag.asStrong(conArg,proArg) ]) ]);
-
+	       
+	       var maxPro = 0.0; 
+	       for (arg in okPro) if (arg.weight > maxPro) maxPro = arg.weight;
+	       
+	       var maxCon = 0.0;
+	       for (arg in okCon) if (arg.weight > maxCon) maxCon = arg.weight;
+	       
+	       return sizeof(okPro) > 0 and maxPro > maxCon;
 	}
 }
 
-// According to Clermont and Sherman, in the US "Everyone agrees .. the
-// establishment of the truth of facts in adjudication is typically a 
-// a matter of probabilities, falling short of absolute certainty".  The 
-// different proof standards are interpreted as setting different 
-// probability thresholds.  preponderance: > 0.5,  clear and convincing
-// evidence: > 0.7 (my estimate, no number stated in at the article), 
-// beyond a reasonable doubt:  0.95 (again, my estimate.  Described
-// in the article only as "virtual certainty.)
-
-// The alternative model of these standards below is not based on 
-// probability theory.  They will thus need to be justified carefully
-// in an article comparing argumentation theory with probability theory
-// and explaining the inapplicability of probability theory to the
-// problem of aggregating evidence in legal cases.
 
 public class Preponderance extends ProofStandard {
 	override function test (ag: ArgumentGraph, 
@@ -564,15 +552,13 @@ public class Preponderance extends ProofStandard {
 	       var okPro = pro [ arg | arg.allPremisesHold() ];
 	       var okCon = con [ arg | arg.allPremisesHold() ];
 	       
-	       var sumPro = 0.0; 
-	       for (arg in okPro) sumPro = sumPro + arg.weight;
-	       var avgPro = sumPro / sizeof(okPro);
+	       var maxPro = 0.0; 
+	       for (arg in okPro) if (arg.weight > maxPro) maxPro = arg.weight;
 	       
-	       var sumCon = 0.0;
-	       for (arg in okCon) sumCon = sumCon + arg.weight;
-	       var avgCon = sumCon / sizeof(okCon);
+	       var maxCon = 0.0;
+	       for (arg in okCon) if (arg.weight > maxCon) maxCon = arg.weight;
 	       
-	       return avgPro > avgCon;
+	       return sizeof(okPro) > 0 and maxPro > maxCon;
 	}
 }
 
@@ -586,20 +572,23 @@ public class ClearAndConvincingEvidence extends ProofStandard {
 	               pro: Argument[], 
 	               con: Argument[]): Boolean {
 
-		   var threshold = 0.3;
+		   // thresholds
+		   var alpha = 0.5;
+		   var beta = 0.3;
+		   
 	       var okPro = pro [ arg | arg.allPremisesHold() ];
 	       var okCon = con [ arg | arg.allPremisesHold() ];
 	       
-	       var sumPro = 0.0; 
-	       for (arg in okPro) sumPro = sumPro + arg.weight;
-	       var avgPro = sumPro / sizeof(okPro);
+	       var maxPro = 0.0; 
+	       for (arg in okPro) if (arg.weight > maxPro) maxPro = arg.weight;
 	       
-	       var sumCon = 0.0;
-	       for (arg in okCon) sumCon = sumCon + arg.weight;
-	       var avgCon = sumCon / sizeof(okCon);
+	       var maxCon = 0.0;
+	       for (arg in okCon) if (arg.weight > maxCon) maxCon = arg.weight;
 	       
-	       return (avgPro > avgCon) and 
-	              (avgPro - avgCon > threshold);
+	       return sizeof(okPro) > 0 and
+	              maxPro > maxCon and 
+	              maxPro > alpha and
+	              maxPro - maxCon > beta;
 	}
 }
 
@@ -610,27 +599,26 @@ public class BeyondReasonableDoubt extends ProofStandard {
 	override function test (ag: ArgumentGraph, 
 	               pro: Argument[], 
 	               con: Argument[]): Boolean {
-	      var threshold = 0.3;
 
-	      var okPro = pro [ arg | arg.allPremisesHold() ];
-	      var okCon = con [ arg | arg.allPremisesHold() ];
-
-   	      var strongestCon = 0.0;
-	      for (arg in okCon) 
-	      	if (arg.weight > strongestCon) 
-	      		strongestCon = arg.weight;
+		   // thresholds
+		   var alpha = 0.5;
+		   var beta = 0.3;
+		   var gamma = 0.2;
+		   
+	       var okPro = pro [ arg | arg.allPremisesHold() ];
+	       var okCon = con [ arg | arg.allPremisesHold() ];
 	       
-	      var sumPro = 0.0; 
-	      for (arg in okPro) sumPro = sumPro + arg.weight;
-	      var avgPro = sumPro / sizeof(okPro);
+	       var maxPro = 0.0; 
+	       for (arg in okPro) if (arg.weight > maxPro) maxPro = arg.weight;
 	       
-	      var sumCon = 0.0;
-	      for (arg in okCon) sumCon = sumCon + arg.weight;
-	      var avgCon = sumCon / sizeof(okCon);
-	     
-	      return (avgPro > avgCon) and 
-	             (avgPro - avgCon > threshold) and
-	             strongestCon < threshold;
+	       var maxCon = 0.0;
+	       for (arg in okCon) if (arg.weight > maxCon) maxCon = arg.weight;
+	       
+	       return sizeof(okPro) > 0 and
+	              maxPro > maxCon and 
+	              maxPro > alpha and
+	              maxPro - maxCon > beta and
+	              maxCon < gamma;
 	}
 }
 

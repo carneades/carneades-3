@@ -117,7 +117,9 @@
    ; help text
    '()))
 
-(define testimony (make-testimony witness1 (list form1 form2 form3 form4)))
+; (define testimony (make-testimony witness1 (list form1 form2 form3 form4)))
+(define testimony (make-testimony witness1 (list form3 form4)))
+
 
 ; bridging rules, from the rulebase to the casebase
 
@@ -131,16 +133,17 @@
 
 ; type critical-question = excluded | priority | valid
 
+
 (define argument-generators
-  (list (generate-arguments-from-testimony testimony) ; ask the user first
+  (list builtins
         (generate-arguments-from-ontology family-relations '())
         (generate-arguments-from-rules family-support '(excluded))
+        (generate-arguments-from-testimony testimony) ; ask the user 
         (generate-arguments-from-rules bridge-rules '())
-        (generate-arguments-from-cases undue-hardship-casebase)
-        builtins))
+        (generate-arguments-from-cases undue-hardship-casebase)))
 
 
-; 1. Find the best arguments about whether Max is obligated to support Gertrude, without considering the
+; 1. Find the best arguments about whether Tom is obligated to support Gloria, without considering the
 ; issue of undue hardship
 
 (define e1 (make-engine 50 2 argument-generators))
@@ -150,11 +153,11 @@
 ; Answers to provide to questions asked:
 ; 1. Who is Max's mother? 
 ; Answer: (all Gertrude)
-; 2. Who is Max father? 
+; 2. Who is Max's father? 
 ; Answer: (all Heribert)
 ; 3. Is Gertrude needy? 
 ; Answer: (all #t)
-; Does Radboud have the capacity to provide support?
+; Does Masx have the capacity to provide support?
 ; Answer: (all #t)
 
 ; 2. Collect the information about Max needed for using case-based reasoning, by asking the user
@@ -174,5 +177,8 @@
 
 (define e2 (make-engine* 50 4 c2 argument-generators))
 (show1 '(family:obligatedToSupport Max ?y) e2)
+
+
+
 
 ; end of file

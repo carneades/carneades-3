@@ -22,8 +22,9 @@
  
  (export builtins)
  
- (import (rnrs base)
-         (rnrs exceptions)
+ (import (rnrs)
+         ; (rnrs base)
+         ; (rnrs exceptions)
          (rnrs eval)
          (carneades stream)
          (carneades unify)
@@ -34,9 +35,9 @@
          (prefix (carneades argument) argument:))
  
  (define null '())
+ (define *debug* #f)
  
- ; type generator: statement argument-graph substitutions  -> 
- ;                 (stream-of (pair-of argument substitutions))
+ ; type generator: statement state  -> (stream-of response)
  
  (define builtin-rules 
    (rulebase 
@@ -54,7 +55,7 @@
  ; dispatch: stmt state -> (stream-of response)
  (define (dispatch stmt state)
    (let ((args (state-arguments state))
-         (subs (state-substitutions state)))
+         (subs (argument:context-substitutions (state-context state))))
      (match stmt
        (('eval term expr) 
         (call/cc (lambda (escape)
@@ -85,10 +86,36 @@
                                null
                                ; scheme:
                                "builtin: eval"))))))))))
-       (_ (stream))))) ; fail
+       (('not stmt)
+        ; try to unify stmt with rejected statements in the context
+        ; no new arguments are added, but the substitutions are extended
+        (stream-flatmap (lambda (stmt2) 
+                          (let ((subs2 (unify* stmt 
+                                               stmt2 
+                                               subs 
+                                               (lambda (t) t) 
+                                               (lambda (msg) #f)
+                                               #f)))
+                            (if (not subs2)
+                                (stream) ; fail
+                                (stream (make-response subs2 #f)))))
+                        (list->stream (argument:rejected-statements (state-context state)))))
+       (stmt 
+        ; try to unify stmt with accepted statements in the context
+        ; no new arguments are added, but the substitutions are extended
+        (stream-flatmap (lambda (stmt2) 
+                          (let ((subs2 (unify* stmt 
+                                               stmt2 
+                                               subs 
+                                               (lambda (t) t) 
+                                               (lambda (msg) #f)
+                                               #f)))
+                            (if (not subs2)
+                                (stream) ; fail
+                                (stream (make-response subs2 #f)))))
+                        (list->stream (argument:accepted-statements (state-context state))))))))
  
- ; builtins: statement argument-graph substitutions -> 
- ;           (stream-of (pair-of argument substitutions)
+ ; builtins: statement state -> (stream-of response)
  (define (builtins goal state)
    (stream-interleave
     ((generate-arguments-from-rules builtin-rules null) goal state)
