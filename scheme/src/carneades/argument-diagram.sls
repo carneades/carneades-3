@@ -20,7 +20,7 @@
  
  (export diagram view diagram* view*)
  
- (import (except (rnrs base) assert)
+ (import (rnrs base)
          (rnrs files)
          ; (rnrs hashtables)
          (rnrs io simple)

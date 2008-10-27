@@ -30,14 +30,14 @@
          context? state question accept reject assign-standard update-substitutions pro-arguments 
          con-arguments schemes-applied status proof-standard prior decided? accepted? rejected?
          questioned? stated? issue? empty-argument-graph argument-graph?
-         argument-graph-nodes argument-graph-arguments put-argument assert* assert 
+         argument-graph-nodes argument-graph-arguments put-argument assert-argument* assert-argument 
          update questions facts statements accepted-statements rejected-statements 
          stated-statements relevant-statements list-arguments issues relevant?   
          satisfies? acceptable? holds? all-premises-hold? in? out? 
          node? node-statement node-pro node-con get-node get-argument
          list->argument-graph instantiate-argument-graph)
  
- (import (except (rnrs) assert)
+ (import (rnrs)
          (rnrs records syntactic)
          (rnrs lists)
          (only (carneades system) gensym)
@@ -333,7 +333,7 @@
    (table:lookup (argument-graph-nodes ag) s #f))
  
  ; get-nodes: argument-graph -> (list-of node)
- (define (get-nodes ag) (table:values (argument-graph-nodes ag)))
+ (define (get-nodes ag) (table:objects (argument-graph-nodes ag)))
  
  ; put-argument argument-graph argument -> argument-graph
  (define (put-argument ag arg)
@@ -352,7 +352,7 @@
    (table:lookup (argument-graph-arguments ag) id #f))
  
  ; list-arguments: argument-graph -> (list-of argument)
- (define (list-arguments ag) (table:values (argument-graph-arguments ag)))
+ (define (list-arguments ag) (table:objects (argument-graph-arguments ag)))
  
  ; instantiate-argument-graph: argument-graph substitutions -> argument-graph
  ; replace any variables in the statements of the arguments in the 
@@ -520,7 +520,7 @@
  ; statements: argument-graph -> (list-of statement)
  ; returns the list of all statements in the argument graph
  (define (statements ag)
-   (map node-statement (table:values (argument-graph-nodes ag))))
+   (map node-statement (table:objects (argument-graph-nodes ag))))
  
  ; relevant-statements: argument-graph statement -> (list-of statement)
  ; (relevant-statements ag g) finds the statements in ag which are
@@ -532,8 +532,8 @@
    (filter (lambda (s) (relevant? ag s g))
            (statements ag))) 
  
- ; assert*: argument-graph argument boolean -> argument-graph
- ; (assert* arg ag r):  Add the argument, arg, to the argument graph, ag,
+ ; assert-argument*: argument-graph argument boolean -> argument-graph
+ ; (assert-argument* arg ag r):  Add the argument, arg, to the argument graph, ag,
  ; if doing so would not introduce a cycle. "r" is a flag
  ; for choosing whether or not to replace an argument having
  ; the same id as arg.  If r is false and some argument with
@@ -543,12 +543,12 @@
  ; It is the responsiblity of the protocol to question the
  ; conclusion of the argument, if this is wanted.
  
- (define (assert* ag arg replace)
+ (define (assert-argument* ag arg replace)
    (cond ((and (not replace) 
                (get-argument ag (argument-id arg)))
-          (error "assert*: attempt to replace an existing argument." arg))
+          (error "assert-argument*: attempt to replace an existing argument." arg))
          ((not (cycle-free? arg ag))
-          (error "assert*: cyclic argument." arg))
+          (error "assert-argument*: cyclic argument." arg))
          (else (let* ((n (or (get-node ag (argument-conclusion arg))
                              (make-node (argument-conclusion arg) null null)))
                       (ag1 (if (eq? (argument-direction arg) 'pro)
@@ -562,22 +562,22 @@
                                                                    (node-con n)))))))
                  (put-argument ag1 arg)))))
  
- ; assert: argument-graph (list-of argument) -> argument-graph
- (define (assert ag args) 
-   (fold-right (lambda (arg ag) (assert* ag arg #f))
+ ; assert-argument: argument-graph (list-of argument) -> argument-graph
+ (define (assert-argument ag args) 
+   (fold-right (lambda (arg ag) (assert-argument* ag arg #f))
                ag 
                args))
  
  ; list->argument-graph: (list-of datum) -> argument-graph
  ; converts a list of expressions representing arguments into an argument graph
  (define (list->argument-graph l)
-   (fold-right (lambda (arg ag) (assert* ag arg #f))
+   (fold-right (lambda (arg ag) (assert-argument* ag arg #f))
                empty-argument-graph 
                (map datum->argument l)))
  
  ; update: argument-graph (list-of argument) -> argument-graph
  (define (update ag args)
-   (fold-right (lambda (arg ag) (assert* ag arg #t))
+   (fold-right (lambda (arg ag) (assert-argument* ag arg #t))
                ag args))
  
  ; satisfies: argument-graph context proof-standard 

@@ -19,9 +19,9 @@
 (library 
  (carneades table)  ;; immutable, functional tables.  Keys compared with equal?
  
- (export make-table table? insert lookup keys values  filter-keys filter-values (rename (table-filter filter)))
+ (export make-table table? insert lookup keys objects  filter-keys filter-objects (rename (table-filter filter)))
  
- (import (except (rnrs) values)
+ (import (rnrs)
          (prefix (only (scheme) 
                        hash? make-immutable-hash hash-set hash-ref 
                        hash-for-each for/list in-hash-keys in-hash-values
@@ -42,7 +42,7 @@
  (define (keys table)
    (plt:list->mlist (plt:for/list ((i (plt:in-hash-keys table))) i)))
  
- (define (values table)
+ (define (objects table)
    (plt:list->mlist (plt:for/list ((i (plt:in-hash-values table))) i)))
  
  ; filter: table (-> (pair-of key value) boolean) -> (list-of (pair-of key value))
@@ -53,7 +53,7 @@
  (define (filter-keys pred table)
    (map car (table-filter pred table)))
  
- (define (filter-values pred table)
+ (define (filter-objects pred table)
    (map cdr (table-filter pred table)))
  
 
