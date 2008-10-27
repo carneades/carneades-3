@@ -1,6 +1,6 @@
 #!r6rs
 
-(import (except (rnrs base) assert)
+(import (rnrs base)
         (carneades statement)
         (carneades argument)
         (carneades argument-diagram)
@@ -134,7 +134,7 @@ an important social value.")
        (pr order)))     ; value promoted
 
 (define tompkins 
-  (assert empty-argument-graph
+  (assert-argument empty-argument-graph
           (list a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14)))
 
 (define c1 (accept c0 (list foxes-are-wild possession-required certainty order)))
@@ -183,16 +183,16 @@ and noxious beast.")
 (define-argument a17
   (pro foxes-are-noxious (am admitted-in-the-pleadings)))
 
-(define livingston (assert empty-argument-graph (list a15 a16 a17)))
+(define livingston (assert-argument empty-argument-graph (list a15 a16 a17)))
 (define c2 (accept c1 (list chased-by-big-dogs)))
 
-(define both (assert tompkins (list a15 a16 a17)))
+(define both (assert-argument tompkins (list a15 a16 a17)))
 ; (view both c2)
 
 ; (diagram livingston c2)
 ; (view livingston c2)
 
-(define fig4-args (assert empty-argument-graph (list a9 a10 a11)))
-(define fig5-args (assert empty-argument-graph (list a12 a13)))
+(define fig4-args (assert-argument empty-argument-graph (list a9 a10 a11)))
+(define fig5-args (assert-argument empty-argument-graph (list a12 a13)))
 
 (diagram both c2)

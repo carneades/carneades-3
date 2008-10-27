@@ -1,6 +1,6 @@
 #!r6rs
 
-(import (except (rnrs base) assert values)
+(import (rnrs base)
         (carneades argument)
         (carneades argument-builtins)
         (carneades rule)
