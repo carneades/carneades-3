@@ -32,13 +32,13 @@
 (define-argument a3 (pro '(p a) (pr '(not (q a)))))
 (define-argument a4 (con '(q a)))
 
-(define ag1 (assert-argument empty-argument-graph (list a1)))
+(define ag1 (assert-arguments empty-argument-graph (list a1)))
 
-(define ag2 (assert-argument ag1 (list a2)))
+(define ag2 (assert-arguments ag1 (list a2)))
 
 (define c1 (accept default-context (list tweety-isa-penguin tweety-isa-bird)))
 
-(define ag3 (assert-argument empty-argument-graph (list a3 a4)))
+(define ag3 (assert-arguments empty-argument-graph (list a3 a4)))
 
 ; (view ag2 c1)
 
