@@ -36,9 +36,9 @@
                      builtins)))
 
 
-(check (all-acceptable? '(isLiableForPayingVATFor Selling Vendor) (engine 100 1 null)) => #t)
-(check (all-acceptable? '(placeOfPayingVATFor Selling Austria) (engine 100 1 null)) => #t)
-(check (all-acceptable? '(amountOfVATFor Selling ?x) (engine 100 1 null)) => #t)
+(check (all-in? '(isLiableForPayingVATFor Selling Vendor) (engine 100 1 null)) => #t)
+(check (all-in? '(placeOfPayingVATFor Selling Austria) (engine 100 1 null)) => #t)
+(check (all-in? '(amountOfVATFor Selling ?x) (engine 100 1 null)) => #t)
 (check-report)
 
 ; For q3, provide these answers to the questions asked:

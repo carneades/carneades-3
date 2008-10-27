@@ -19,7 +19,7 @@
  (carneades shell) ;; utility procedures for querying knowledge bases
  
  (export make-engine make-engine* show-state show show1 ask ask1 diagram1
-         all-acceptable? some-acceptable? some-argument-found? no-argument-found?)
+         all-in? some-in? some-argument-found? no-argument-found?)
  
  (import (except (rnrs base) assert)
          (rnrs io simple)
@@ -53,7 +53,7 @@
  (define (show-state s)
    (view* (state-arguments s)
           (state-context s)
-          (state-substitutions s)
+          (context-substitutions (state-context s))
           (lambda (s) (format "~A" s))))
  
  
@@ -77,7 +77,7 @@
      (if (not (stream-null? str)) 
          (diagram* (state-arguments str)
                    (state-context str)
-                   (state-substitutions str)
+                   (context-substitutions (state-context str))
                    (lambda (s) (format "~A" s))
                    (current-output-port)))))
  
@@ -89,10 +89,10 @@
  (define (ask query engine)
    (let ((str (engine query)))
      (stream-for-each (lambda (s) 
-                        (if (acceptable? (state-arguments s)
+                        (if (in? (state-arguments s)
                                          (state-context s)
                                          query)
-                            (printf "~A~%" ((state-substitutions s) query))))
+                            (printf "~A~%" ((context-substitutions (state-context s)) query))))
                       str)))
  
  ; ask1: statement (statement -> (stream-of argument-state)) -> void
@@ -103,33 +103,33 @@
    (define (f str) 
      (if (not (stream-null? str))
          (let ((s (stream-car str)))
-           (if (acceptable? (state-arguments s)
-                            (state-context s)
-                            query)
-               (printf "~A~%" ((state-substitutions s) query))
+           (if (in? (state-arguments s)
+                    (state-context s)
+                    query)
+               (printf "~A~%" ((context-substitutions (state-context s)) query))
                (f (stream-cdr str))))))
    (let ((str (engine query)))
      (f str)))
  
  
- ; all-acceptable? : statement engine -> boolean
+ ; all-in? : statement engine -> boolean
  ; Checks if at least one argument graph was found by the engine and the
- ; statement is acceptable in every argument graph found.
- (define (all-acceptable? query engine)
+ ; statement is acceptable or accepted in every argument graph found.
+ (define (all-in? query engine)
    (let ((str (engine query)))
      (and (not (stream-null? str))
           (stream-null? (stream-filter (lambda (s)
-                                         (not (acceptable? (state-arguments s)
+                                         (not (in? (state-arguments s)
                                                            (state-context s)
                                                            query)))
                                        str)))))
  
- ; some-acceptable? : statement engine -> boolean
- ; Checks if at least one argument graph was found in which the statement is acceptable.  
- (define (some-acceptable? query engine)
+ ; some-in? : statement engine -> boolean
+ ; Checks if at least one argument graph was found in which the statement is acceptable or accepted.  
+ (define (some-in? query engine)
    (let ((str (engine query)))
      (not (stream-null? (stream-filter (lambda (s)
-                                         (acceptable? (state-arguments s)
+                                         (in? (state-arguments s)
                                                       (state-context s)
                                                       query))
                                        str)))))

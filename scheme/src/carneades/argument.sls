@@ -26,8 +26,8 @@
          argument-conclusion argument-premises argument-scheme pro con
          define-argument argument->datum datum->argument add-premise status?
          proof-standard? make-context
-         context-status context-standard context-compare default-context
-         context? state question accept reject assign-standard pro-arguments 
+         context-status context-standard context-compare context-substitutions default-context
+         context? state question accept reject assign-standard update-substitutions pro-arguments 
          con-arguments schemes-applied status proof-standard prior decided? accepted? rejected?
          questioned? stated? issue? empty-argument-graph argument-graph?
          argument-graph-nodes argument-graph-arguments put-argument assert* assert 
@@ -46,6 +46,7 @@
          (prefix (carneades table) table:)
          (prefix (only (carneades lib srfi lists) lset-union any every) list:)
          (prefix (carneades lib srfi compare) compare:)
+         (carneades unify)
          )
  
  
@@ -203,13 +204,15 @@
  (define-record-type context 
    (fields status        ; (statement -> status) table
            standard      ; statement -> standard
-           compare))     ; argument * argument -> {-1, 0, 1}   
+           compare       ; argument * argument -> {-1, 0, 1}   
+           substitutions ; term -> term
+           )) 
  
  (define default-context 
    (make-context (table:make-table) 
                  (lambda (statement) 'dv) ; default standard: dialectical validity
-                 (lambda (arg1 arg2) 0))) ; default order: all arguments equally strong
- 
+                 (lambda (arg1 arg2) 0)   ; default order: all arguments equally strong
+                 identity))               ; identity substitution environment
  
  ; status: context statement -> status
  (define (status c s)
@@ -237,7 +240,8 @@
                                              (statement-atom s) 
                                              'stated)
                                (context-standard c) 
-                               (context-compare c)))
+                               (context-compare c)
+                               (context-substitutions c)))
                context 
                statements))
  
@@ -249,7 +253,8 @@
                                              (statement-atom s) 
                                              'questioned)
                                (context-standard c) 
-                               (context-compare c)))
+                               (context-compare c)
+                               (context-substitutions c)))
                context 
                statements))
  
@@ -263,7 +268,8 @@
                                                  'accepted
                                                  'rejected))
                                (context-standard c) 
-                               (context-compare c)))
+                               (context-compare c)
+                               (context-substitutions c)))
                context 
                statements))
  
@@ -277,7 +283,8 @@
                                                  'rejected
                                                  'accepted)) 
                                (context-standard c) 
-                               (context-compare c)))
+                               (context-compare c)
+                               (context-substitutions c)))
                context
                statements))
  
@@ -290,9 +297,17 @@
                                      ps
                                ;      ((context-standard c) s1)))
                                      ((context-standard c) s2)))
-                               (context-compare c)))
+                               (context-compare c)
+                               (context-substitutions c)))
                context
                statements))
+ 
+ ; update-substitutions: context substitutions -> context
+ (define (update-substitutions c newsubs)
+   (make-context (context-status c)
+                 (context-standard c)
+                 (context-compare c)
+                 newsubs))
  
  (define-record-type node 
    (fields statement ; datum
@@ -389,17 +404,35 @@
  
  ; accepted?: context statement -> boolean
  (define (accepted? c s)
-   (let ((v (table:lookup (context-status c)  (statement-atom s) 'undecided)))
-     (if (statement-positive? s)
-         (eq? v 'accepted)
-         (eq? v 'rejected))))
+   (if (statement-positive? s)
+       (let ((s1 ((context-substitutions c) s)))
+         (and (member s1 (map (context-substitutions c) 
+                              (accepted-statements c)))
+              #t))
+       (rejected? c (statement-atom s))))
+   
+
+;  (define (accepted? c s)
+;   (let ((v (table:lookup (context-status c)  (statement-atom s) 'undecided)))
+;     (if (statement-positive? s)
+;         (eq? v 'accepted)
+;         (eq? v 'rejected))))
  
  ; rejected?: context statement -> boolean
+ 
  (define (rejected? c s)
-   (let ((v (table:lookup (context-status c) (statement-atom s) 'undecided)))
-     (if (statement-positive? s)
-         (eq? v 'rejected)
-         (eq? v 'accepted))))   
+   (if (statement-positive? s)
+       (let ((s1 ((context-substitutions c) s)))
+         (and (member s1 (map (context-substitutions c) 
+                              (rejected-statements c)))
+              #t))
+       (accepted? c (statement-atom s))))
+ 
+; (define (rejected? c s)
+;   (let ((v (table:lookup (context-status c) (statement-atom s) 'undecided)))
+;     (if (statement-positive? s)
+;         (eq? v 'rejected)
+;         (eq? v 'accepted))))   
  
  ; decided?: context statement -> boolean
  (define (decided? c s)
@@ -428,13 +461,6 @@
  (define (questions ag c)
    (filter (lambda (s) (questioned? c s)) (statements ag)))
  
- ; facts: argument-graph context -> (list-of statement)
- (define (facts ag c)
-   (map (lambda (s) 
-          (if (rejected? c s)
-              `(not ,s)
-              s))
-        (filter (lambda (s) (decided? c s)) (statements ag))))
  
  ; accepted-statements: context -> (list-of statement)
  (define (accepted-statements c)
@@ -443,6 +469,13 @@
  ; rejected-statements: context -> (list-of statement)
  (define (rejected-statements c)
    (table:filter-keys (lambda (pair) (eq? (cdr pair) 'rejected)) (context-status c)))
+ 
+ ; facts: argument-graph context -> (list-of statement)
+ (define (facts ag c)
+   (append (accepted-statements c)
+           (map (lambda (s) `(not ,s))
+                (rejected-statements c))))
+
  
  ; stated-statements: argument-graph context -> (list-of statement)
  (define (stated-statements ag c)
@@ -581,18 +614,18 @@
             (case s
               ((accepted) (positive-premise? p))
               ((rejected) (negative-premise? p))
-              ((questioned stated) (acceptable? ag c (premise-statement p)))))
+              ((questioned stated) (in? ag c (premise-statement p)))))
            ((assumption? p)
             (case s
               ((stated) #t) ; whether the premise is positive or negative 
               ((accepted) (positive-premise? p))
               ((rejected) (negative-premise? p))
-              ((questioned) (acceptable? ag c (premise-statement p)))))
+              ((questioned) (in? ag c (premise-statement p)))))
            ((exception? p)
             (case s
               ((accepted) (negative-premise? p))
               ((rejected) (positive-premise? p))
-              ((stated questioned) (not (acceptable? ag c (premise-statement p))))))
+              ((stated questioned) (not (in? ag c (premise-statement p))))))
            (else (error "holds: not a premise." p)))))
  
  ; all-premises-hold?: argument-graph context argument -> boolean

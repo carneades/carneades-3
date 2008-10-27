@@ -96,13 +96,13 @@
 
 ; to do: further and more systematic tests
 
-(check (some-acceptable? 'trade-secret-violation (cbr-engine 50 4 wyner-cb c-vanilla)) => #t)
-(check (some-acceptable? 'trade-secret-violation (cbr-engine 50 4 wyner-cb c-mason)) => #t)
+(check (some-in? 'trade-secret-violation (cbr-engine 50 4 wyner-cb c-vanilla)) => #t)
+(check (some-in? 'trade-secret-violation (cbr-engine 50 4 wyner-cb c-mason)) => #t)
 ; re q3 and q4 below: neither claim is defensible since the burden of proof is on the proponent,
 ; and the opponent can distinguish every precedent for either claim.
-(check (not (some-acceptable? 'trade-secret-violation (cbr-engine 50 4 hypo-cb c-mason))) => #t)
-(check (not (some-acceptable? '(not trade-secret-violation) (cbr-engine 50 4 hypo-cb c-mason))) => #t)
-(check (all-acceptable? '(not trade-secret-violation) (cbr-engine 50 4 wyner-cb c-announce)) => #t)
+(check (not (some-in? 'trade-secret-violation (cbr-engine 50 4 hypo-cb c-mason))) => #t)
+(check (not (some-in? '(not trade-secret-violation) (cbr-engine 50 4 hypo-cb c-mason))) => #t)
+(check (all-in? '(not trade-secret-violation) (cbr-engine 50 4 wyner-cb c-announce)) => #t)
 (check-report)
 
 ; (ask 'trade-secret-violation (cbr-engine 50 4 wyner-cb c-vanilla))  
