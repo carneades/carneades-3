@@ -2,317 +2,444 @@
 <?oxygen RNGSchema="../../../schemas/LKIF2.rnc" type="compact"?>
 <?xml-stylesheet type="text/css" href="../../../schemas/LKIF2.css"?>
 <lkif xmlns:family="http:://fokus.fraunhofer.de/elan/estrella/family.owl"
-    xmlns:foods="http:://fokus.fraunhofer.de/elan/estrella/food.owl"
-    xmlns:smith="http:://fokus.fraunhofer.de/elan/estrella/smith.owl">
-    <sources>
-        <source element="s1" uri="http://www.foo.de/foo"/>
-        <source element="s2" uri="http://www.bar.com"/>
-    </sources>
-    <theory id="rb1">
-		<axioms>
-			<axiom id="a1">
-				<s pred="family:ancestor"><i value="Peter">Peter</i> is an ancestor of <i value="Paul">Paul</i>.</s>
-			</axiom>
-			<axiom id="a2">
-				<s pred="family:ancestor"><i value="Paul">Paul</i> is an ancestor of <i value="Pascal">Pascal</i>.</s>
-			</axiom>
-		</axioms>
-        <rules>
-            <rule id="r1">
-                <head>
-                    <s pred="goods"><v>c</v> is goods.</s>
-                </head>
-                <body>
-					<and>
-						<s pred="movable"><v>c</v></s>
-						<not exception="true">
-							<s pred="money"><v>c</v></s>
-						</not>
-					</and>
-                </body>
-            </rule>
-            <rule id="r3">
-                <head>
-                    <s pred="money"><v>x</v></s>
-                </head>
-                <body>
-                    <s pred="coins"><v>x</v></s>
-                </body>
-            </rule>
-			<rule id="r4">
-				<head>
-					<and>
-						<s pred="light"><v>x</v></s>
-						<s pred="shipable"><v>x</v></s>
-					</and>
-				</head>
-				<body>
-					<s pred="movable"><v>x</v></s>
-				</body>
-			</rule>
-			<rule id="r5">
-				<head>
-					<and>
-						<s pred="light"><v>x</v></s>
-						<s pred="shipable"><v>x</v></s>
-					</and>
-				</head>
-				<body>
-					<s pred="convenient"><v>x</v></s>
-				</body>
-			</rule>
-			<rule id="lex-posterior" strict="true">
-				<head>
-					<s pred="prior"><v>r2</v><v>r1</v></s>
-				</head>
-				<body>
-					<and>
-						<s pred="enacted"><v>r1</v><v>d1</v></s>
-						<s pred="enacted"><v>r2</v><v>d2</v></s>
-						<s pred="later"><v>d2</v><v>d1</v></s>
-					</and>
-				</body>
-			</rule>
-			<rule id="r6">
-				<head>
-					<not>
-						<s pred="goods"><v>x</v></s>
-					</not>
-				</head>
-				<body>
-					<s pred="edible"><v>x</v></s>
-				</body>
-			</rule>
-			<rule id="r14">
-				<head>
-					<s pred="flies"><v>x</v></s>
-				</head>
-				<body>
-					<s pred="bird"><v>x</v></s>
-				</body>
-			</rule>
-			<rule id="r15" strict="true">
-				<head>
-					<s pred="excluded">
-						<c>r14</c>
-						<s pred="flies"><v>x</v></s>
-					</s>
-				</head>
-				<body>
-					<s pred="penguin"><v>x</v></s>
-				</body>
-			</rule>			
-			<rule id="repeal">
-				<head>
-					<not>
-						<s pred="valid"><v>r</v></s>
-					</not>
-				</head>
-				<body>
-					<s pred="repealed"><v>r</v></s>
-				</body>
-			</rule>
-			<rule id="r19">
-				<head>
-					<s pred="p3"><v>x</v></s>
-				</head>
-				<body>
-					<or>
-						<s pred="p1"><v>x</v></s>
-						<s pred="p2"><v>x</v></s>
-					</or>
-				</body>
-			</rule>
-			<rule id="r20">
-				<head>
-					<s pred="p9"><v>x</v></s>
-				</head>
-				<body>
-					<or>
-						<and>
-							<s pred="p4"><v>x</v></s>
-							<s pred="p5"><v>x</v></s>
-						</and>
-						<and>
-							<s pred="p6"><v>x</v></s>
-							<s pred="p7"><v>x</v></s>
-						</and>
-						<s pred="p8"><v>x</v></s>
-					</or>
-				</body>
-			</rule>
-			<rule id="r21">
-				<head>
-					<s pred="p11"><v>z</v></s>
-				</head>
-				<body>
-					<and>
-						<s pred="p10"><v>x</v></s>
-						<s pred="eval">
-							<v>z</v>
-							<s pred="reverse"><v>x</v></s>
-						</s>
-					</and>
-				</body>
-			</rule>
-			<rule id="r22">
-				<head>
-					<s pred="taxable-income"><v>x</v><v>t</v></s>
-				</head>
-				<body>
-					<and>
-						<s pred="income"><v>x</v><v>i</v></s>
-						<s pred="deductions"><v>x</v><v>d</v></s>
-						<s pred="eval">
-							<v>t</v>
-							<s pred="-"><v>i</v><v>d</v></s>
-						</s>
-					</and>
-				</body>
-			</rule>
-			
-			<rule id="fact1">
-				<head>
-					<s pred="coins"><c>item1</c></s>
-				</head>
-			</rule>
-			<rule id="fact2">
-				<head>
-					<s pred="bird"><c>Tweety</c></s>
-				</head>
-			</rule>
-			<rule id="fact3">
-				<head>
-					<s pred="penguin"><c>Tweety</c></s>
-				</head>
-			</rule>
-			<rule id="fact4">
-				<head>
-					<s pred="enacted"><c>r1</c><c>d1</c></s>
-				</head>
-			</rule>
-			<rule id="fact5">
-				<head>
-					<s pred="enacted"><c>r6</c><c>d2</c></s>
-				</head>
-			</rule>
-			<rule id="fact6">
-				<head>
-					<s pred="later"><c>d2</c><c>d1</c></s>
-				</head>
-			</rule>
-			<rule id="fact7">
-				<head>
-					<s pred="repealed"><c>r5</c></s>
-				</head>
-			</rule>
-			<rule id="fact8">
-				<head>
-					<s pred="movable"><c>item1</c></s>
-				</head>
-			</rule>
-			<rule id="fact9">
-				<head>
-					<s pred="movable"><c>item2</c></s>
-				</head>
-			</rule>
-			<rule id="fact10">
-				<head>
-					<s pred="edible"><c>item2</c></s>
-				</head>
-			</rule>
-			<rule id="fact11">
-				<head>
-					<s pred="foo2"><c>a</c></s>
-				</head>
-			</rule>
-			<rule id="fact12">
-				<head>
-					<s pred="p1"><c>a</c></s>
-				</head>
-			</rule>
-			<rule id="fact13">
-				<head>
-					<s pred="p6"><c>a</c></s>
-				</head>
-			</rule>
-			<rule id="fact14">
-				<head>
-					<s pred="p7"><c>a</c></s>
-				</head>
-			</rule>
-			<rule id="fact15">
-				<head>
-					<s pred="p8"><c>a</c></s>
-				</head>
-			</rule>
-			<rule id="fact16">
-				<head>
-					<s pred="p10">
-						<expr functor="list">
-							<c>a</c>
-							<c>b</c>
-							<c>c</c>
-							<c>d</c>
-							<c>e</c>
-						</expr>
-					</s>
-				</head>
-			</rule>
-			<rule id="fact17">
-				<head>
-					<s pred="income"><c>Sam</c><c>60000</c></s>
-				</head>
-			</rule>
-			<rule id="fact18">
-				<head>
-					<s pred="deductions"><c>Sam</c><c>7000</c></s>
-				</head>
-			</rule>
-        </rules>
-    </theory>
-	<argument-graphs>
-	    <argument-graph>
-	        <statements>
-				<statement id="s1" value="unknown">
-					<s>All men are mortal.</s>
-				</statement>
-				<statement id="s2" value="unknown">
-					<s>Socrates is a man.</s>
-				</statement>
-				<statement id="s3" value="unknown">
-					<s>Socrates is mortal.</s>
-				</statement>
-				<statement id="s4" value="unknown">
-					<s>Tweety is a bird.</s>
-				</statement>
-				<statement id="s5" value="unknown">
-					<s>Birds normally fly.</s>
-				</statement>
-				<statement id="s6" value="unknown">
-					<s>Tweety is a normal bird.</s>
-				</statement>
-				<statement id="s7" value="unknown">
-					<s>Tweety flies.</s>
-				</statement>
-	        </statements>
-	        <arguments>
-	            <argument id="arg1">
-	                <conclusion statement="s3"/>
-	                <premises>
-	                    <premise statement="s1"/>
-	                    <premise statement="s2"/>
-	                </premises>
-	            </argument>
-	            <argument id="arg2">
-	                <conclusion statement="s7"/>
-	                <premises>
-	                    <premise statement="s4"/>
-	                    <premise statement="s5"/>
-	                    <premise statement="s6"/>
-	                </premises>
-	            </argument>
-	        </arguments>
-		</argument-graph>
-	</argument-graphs>
+  xmlns:foods="http:://fokus.fraunhofer.de/elan/estrella/food.owl"
+  xmlns:smith="http:://fokus.fraunhofer.de/elan/estrella/smith.owl">
+  <sources>
+    <source element="s1" uri="http://www.foo.de/foo"/>
+    <source element="s2" uri="http://www.bar.com"/>
+  </sources>
+  <theory id="rb1">
+    <axioms>
+      <axiom id="a1">
+        <s pred="family:ancestor"><i value="Peter">Peter</i> is an ancestor of <i value="Paul"
+          >Paul</i>.</s>
+      </axiom>
+      <axiom id="a2">
+        <s pred="family:ancestor"><i value="Paul">Paul</i> is an ancestor of <i value="Pascal"
+            >Pascal</i>.</s>
+      </axiom>
+    </axioms>
+    <rules>
+      <rule id="r1">
+        <head>
+          <s pred="goods"><v>c</v> is goods.</s>
+        </head>
+        <body>
+          <and>
+            <s pred="movable">
+              <v>c</v>
+            </s>
+            <not exception="true">
+              <s pred="money">
+                <v>c</v>
+              </s>
+            </not>
+          </and>
+        </body>
+      </rule>
+      <rule id="r3">
+        <head>
+          <s pred="money">
+            <v>x</v>
+          </s>
+        </head>
+        <body>
+          <s pred="coins">
+            <v>x</v>
+          </s>
+        </body>
+      </rule>
+      <rule id="r4">
+        <head>
+          <and>
+            <s pred="light">
+              <v>x</v>
+            </s>
+            <s pred="shipable">
+              <v>x</v>
+            </s>
+          </and>
+        </head>
+        <body>
+          <s pred="movable">
+            <v>x</v>
+          </s>
+        </body>
+      </rule>
+      <rule id="r5">
+        <head>
+          <and>
+            <s pred="light">
+              <v>x</v>
+            </s>
+            <s pred="shipable">
+              <v>x</v>
+            </s>
+          </and>
+        </head>
+        <body>
+          <s pred="convenient">
+            <v>x</v>
+          </s>
+        </body>
+      </rule>
+      <rule id="lex-posterior" strict="true">
+        <head>
+          <s pred="prior">
+            <v>r2</v>
+            <v>r1</v>
+          </s>
+        </head>
+        <body>
+          <and>
+            <s pred="enacted">
+              <v>r1</v>
+              <v>d1</v>
+            </s>
+            <s pred="enacted">
+              <v>r2</v>
+              <v>d2</v>
+            </s>
+            <s pred="later">
+              <v>d2</v>
+              <v>d1</v>
+            </s>
+          </and>
+        </body>
+      </rule>
+      <rule id="r6">
+        <head>
+          <not>
+            <s pred="goods">
+              <v>x</v>
+            </s>
+          </not>
+        </head>
+        <body>
+          <s pred="edible">
+            <v>x</v>
+          </s>
+        </body>
+      </rule>
+      <rule id="r14">
+        <head>
+          <s pred="flies">
+            <v>x</v>
+          </s>
+        </head>
+        <body>
+          <s pred="bird">
+            <v>x</v>
+          </s>
+        </body>
+      </rule>
+      <rule id="r15" strict="true">
+        <head>
+          <s pred="excluded">
+            <c>r14</c>
+            <s pred="flies">
+              <v>x</v>
+            </s>
+          </s>
+        </head>
+        <body>
+          <s pred="penguin">
+            <v>x</v>
+          </s>
+        </body>
+      </rule>
+      <rule id="repeal">
+        <head>
+          <not>
+            <s pred="valid">
+              <v>r</v>
+            </s>
+          </not>
+        </head>
+        <body>
+          <s pred="repealed">
+            <v>r</v>
+          </s>
+        </body>
+      </rule>
+      <rule id="r19">
+        <head>
+          <s pred="p3">
+            <v>x</v>
+          </s>
+        </head>
+        <body>
+          <or>
+            <s pred="p1">
+              <v>x</v>
+            </s>
+            <s pred="p2">
+              <v>x</v>
+            </s>
+          </or>
+        </body>
+      </rule>
+      <rule id="r20">
+        <head>
+          <s pred="p9">
+            <v>x</v>
+          </s>
+        </head>
+        <body>
+          <or>
+            <and>
+              <s pred="p4">
+                <v>x</v>
+              </s>
+              <s pred="p5">
+                <v>x</v>
+              </s>
+            </and>
+            <and>
+              <s pred="p6">
+                <v>x</v>
+              </s>
+              <s pred="p7">
+                <v>x</v>
+              </s>
+            </and>
+            <s pred="p8">
+              <v>x</v>
+            </s>
+          </or>
+        </body>
+      </rule>
+      <rule id="r21">
+        <head>
+          <s pred="p11">
+            <v>z</v>
+          </s>
+        </head>
+        <body>
+          <and>
+            <s pred="p10">
+              <v>x</v>
+            </s>
+            <s pred="eval">
+              <v>z</v>
+              <s pred="reverse">
+                <v>x</v>
+              </s>
+            </s>
+          </and>
+        </body>
+      </rule>
+      <rule id="r22">
+        <head>
+          <s pred="taxable-income">
+            <v>x</v>
+            <v>t</v>
+          </s>
+        </head>
+        <body>
+          <and>
+            <s pred="income">
+              <v>x</v>
+              <v>i</v>
+            </s>
+            <s pred="deductions">
+              <v>x</v>
+              <v>d</v>
+            </s>
+            <s pred="eval">
+              <v>t</v>
+              <s pred="-">
+                <v>i</v>
+                <v>d</v>
+              </s>
+            </s>
+          </and>
+        </body>
+      </rule>
+
+      <rule id="fact1">
+        <head>
+          <s pred="coins">
+            <c>item1</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact2">
+        <head>
+          <s pred="bird">
+            <c>Tweety</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact3">
+        <head>
+          <s pred="penguin">
+            <c>Tweety</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact4">
+        <head>
+          <s pred="enacted">
+            <c>r1</c>
+            <c>d1</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact5">
+        <head>
+          <s pred="enacted">
+            <c>r6</c>
+            <c>d2</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact6">
+        <head>
+          <s pred="later">
+            <c>d2</c>
+            <c>d1</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact7">
+        <head>
+          <s pred="repealed">
+            <c>r5</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact8">
+        <head>
+          <s pred="movable">
+            <c>item1</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact9">
+        <head>
+          <s pred="movable">
+            <c>item2</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact10">
+        <head>
+          <s pred="edible">
+            <c>item2</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact11">
+        <head>
+          <s pred="foo2">
+            <c>a</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact12">
+        <head>
+          <s pred="p1">
+            <c>a</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact13">
+        <head>
+          <s pred="p6">
+            <c>a</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact14">
+        <head>
+          <s pred="p7">
+            <c>a</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact15">
+        <head>
+          <s pred="p8">
+            <c>a</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact16">
+        <head>
+          <s pred="p10">
+            <expr functor="quote">
+              <expr functor="list">
+                <c>a</c>
+                <c>b</c>
+                <c>c</c>
+                <c>d</c>
+                <c>e</c>
+              </expr>
+            </expr>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact17">
+        <head>
+          <s pred="income">
+            <c>Sam</c>
+            <c>60000</c>
+          </s>
+        </head>
+      </rule>
+      <rule id="fact18">
+        <head>
+          <s pred="deductions">
+            <c>Sam</c>
+            <c>7000</c>
+          </s>
+        </head>
+      </rule>
+    </rules>
+  </theory>
+  <argument-graphs>
+    <argument-graph>
+      <statements>
+        <statement id="s1" value="unknown">
+          <s>All men are mortal.</s>
+        </statement>
+        <statement id="s2" value="unknown">
+          <s>Socrates is a man.</s>
+        </statement>
+        <statement id="s3" value="unknown">
+          <s>Socrates is mortal.</s>
+        </statement>
+        <statement id="s4" value="unknown">
+          <s>Tweety is a bird.</s>
+        </statement>
+        <statement id="s5" value="unknown">
+          <s>Birds normally fly.</s>
+        </statement>
+        <statement id="s6" value="unknown">
+          <s>Tweety is a normal bird.</s>
+        </statement>
+        <statement id="s7" value="unknown">
+          <s>Tweety flies.</s>
+        </statement>
+      </statements>
+      <arguments>
+        <argument id="arg1">
+          <conclusion statement="s3"/>
+          <premises>
+            <premise statement="s1"/>
+            <premise statement="s2"/>
+          </premises>
+        </argument>
+        <argument id="arg2">
+          <conclusion statement="s7"/>
+          <premises>
+            <premise statement="s4"/>
+            <premise statement="s5"/>
+            <premise statement="s6"/>
+          </premises>
+        </argument>
+      </arguments>
+    </argument-graph>
+  </argument-graphs>
 </lkif>
