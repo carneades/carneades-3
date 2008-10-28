@@ -437,7 +437,7 @@
    (let ((statements (argument-graph-statements ag)))
      (let ((tbl (statements->table statements)))
        (let ((arguments (map (lambda (x) (argument-to-record x tbl)) (argument-graph-arguments ag))))
-         (values (argument:assert argument:empty-argument-graph arguments)
+         (values (argument:assert-arguments argument:empty-argument-graph arguments)
                  (statements->context statements))))))
  
  ; argument-graph->stage: struct:lkif-argument-graph -> struct:stage
