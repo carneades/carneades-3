@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:/Users/tgo/Documents/Projects/Carneades/dist/schemas/LKIF.rnc" type="compact"?>
+<?oxygen RNGSchema="../../../schemas/LKIF2.rnc" type="compact"?>
 <lkif>
 
-	<theory>
+	<theory id="vat">
 	
 		<rules>
 
 		<!-- *********************************************************************** -->
 		<!-- PART I. - Is the vendor liable for paying VAT for a given selling    -->
 			<rule id="vendorIsLiableForPayingVAT">
+			  <head>
+			    <s pred="isLiableForPayingVATFor"><v>Selling</v><v>Vendor</v></s>
+			  </head>
 				<body>
 					<and>
 						<s pred="vendorOf"><v>Selling</v><v>Vendor</v></s>					
@@ -17,9 +20,7 @@
 						<s pred="hasEuropeanTaxNumber"><v>Vendor</v></s>
 					</and>
 				</body>
-				<head>
-					<s pred="isLiableForPayingVATFor"><v>Selling</v><v>Vendor</v></s>
-				</head>
+
 			</rule>
 			
 			<rule id="fact_1"><head><s pred="vendorOf"><c>Selling</c><c>Vendor</c></s></head></rule>
@@ -27,6 +28,9 @@
 			<rule id="fact_4"><head><s pred="hasEuropeanTaxNumber"><c>Vendor</c></s></head></rule>
 
 			<rule id="isDistanceSelling">
+			  <head>
+			    <s pred="isDistanceSelling"><v>Selling</v></s>
+			  </head>
 				<body>
 					<and>
 						<s pred="vendorOf"><v>Selling</v><v>Vendor</v></s>
@@ -42,17 +46,18 @@
 						<not><s pred="equals"><v>SourceCountry</v><v>TargetCountry</v></s></not>
 					</and>
 				</body>
-				<head>
-					<s pred="isDistanceSelling"><v>Selling</v></s>
-				</head>
+
 			</rule>
 			
 			<rule id="fact_5"><head><s pred="acquirerOf"><c>Selling</c><c>Acquirer</c></s></head></rule>
-			<rule id="fact_6"><head><s pred="goodsOf Selling"><c>Goods</c></s></head></rule>
+			<rule id="fact_6"><head><s pred="goodsOf"><c>Selling</c><c>Goods</c></s></head></rule>
 			<rule id="fact_7"><head><s pred="memberStateOf"><c>Vendor</c><c>Hungary</c></s></head></rule>
 			<rule id="fact_8"><head><s pred="memberStateOf"><c>Acquirer</c><c>Austria</c></s></head></rule>
 			
 			<rule id="equals">
+			  <head>
+			    <s pred="equals"><v>x</v><v>y</v></s>
+			  </head>
 				<body>
 					<s pred="eval">
 						<c>true</c>
@@ -62,12 +67,13 @@
 						</s>
 					</s>
 				</body>
-				<head>
-					<s pred="equals"><v>x</v><v>y</v></s>
-				</head>
+
 			</rule>
 			
 			<rule id="not_equals">
+			  <head>
+			    <not><s pred="equals"><v>x</v><v>y</v></s></not>
+			  </head>
 				<body>
 					<s pred="eval">
 						<c>false</c>
@@ -77,29 +83,28 @@
 						</s>
 					</s>
 				</body>
-				<head>
-					<not><s pred="equals"><v>x</v><v>y</v></s></not>
-				</head>
+
 			</rule>
 
 			<rule id="isSpecialAcquirer_1">
+			  <head>
+			    <s pred="isSpecialAcquirer"><v>Acquirer</v></s>
+			  </head>
 				<body>
 					<not><s pred="isTaxablePersonInAMemberState"><v>Acquirer</v></s></not>
 				</body>
-				<head>
-					<s pred="isSpecialAcquirer"><v>Acquirer</v></s>
-				</head>
+
 			</rule>
 			
 			<rule id="fact_13"><head><not><s pred="isTaxablePersonInAMemberState"><c>Acquirer</c></s></not></head></rule>
 			
 			<rule id="isSpecialAcquirer_2">
+			  <head>
+			    <s pred="isSpecialAcquirer"><v>Acquirer</v></s>
+			  </head>
 				<body>
 					<s pred="isSpecialTaxablePerson"><v>Acquirer</v></s>
 				</body>
-				<head>
-					<s pred="isSpecialAcquirer"><v>Acquirer</v></s>
-				</head>
 			</rule>
 			
 
@@ -118,6 +123,9 @@
 		<!--** <rule id="fact_15"><s>transporterOf Selling Vendor</s></rule> -->
 			
 			<rule id="notTransportedBy_2">
+			  <head>
+			    <s pred="notTransportedBy"><v>Acquirer</v><v>Selling</v></s>
+			  </head>
 				<body>
 					<and>
 						<s pred="vendorOf"><v>Selling</v><v>Vendor</v></s>
@@ -129,9 +137,7 @@
 						<not><s pred="equals"><v>Transporter</v><v>Acquirer</v></s></not>
 					</and>
 				</body>
-				<head>
-					<s pred="notTransportedBy"><v>Acquirer</v><v>Selling</v></s>
-				</head>
+
 			</rule>
 			
 			<rule id="fact_16"><head><s pred="transporterOf"><c>Selling</c><c>Transporter</c></s></head></rule>
@@ -139,78 +145,84 @@
 
 
 			<rule id="isSpecialTaxablePerson_1">
+			  <head>
+			    <s pred="isSpecialTaxablePerson"><v>Person</v></s>
+			  </head>
 				<body>
 					<s pred="carriesOutOnlyTheSellingOrServicesThatAreNotDeductible"><v>Person</v></s>
 				</body>
-				<head>
-					<s pred="isSpecialTaxablePerson"><v>Person</v></s>
-				</head>
+
 			</rule>
 			
 			<rule id="fact_20"><head><s pred="carriesOutOnlyTheSellingOrServicesThatAreNotDeductible"><c>Acquirer</c></s></head></rule>
 			
 			<rule id="isSpecialTaxablePerson_2">
+			  <head>
+			    <s pred="isSpecialTaxablePerson"><v>Person</v></s>
+			  </head>
 				<body>
 					<s pred="isEngagedInAgriculturalActivitiesAndIsEntitledToSpecialLegalStatusIfAcquiringTheGoodsForSuchActivities"><v>Person</v></s>
 				</body>
-				<head>
-					<s pred="isSpecialTaxablePerson"><v>Person</v></s>
-				</head>
+
 			</rule>
 			
 			<rule id="fact_21"><head><s pred="isEngagedInAgriculturalActivitiesAndIsEntitledToSpecialLegalStatusIfAcquiringTheGoodsForSuchActivities"><c>Acquirer</c></s></head></rule>
 
 			<rule id="isSpecialTaxablePerson_3">
+			  <head>
+			    <s pred="isSpecialTaxablePerson"><v>Person</v></s>
+			  </head>
 				<body>
 					<s pred="isNon-taxableLegalPerson"><v>Person</v></s>
 				</body>
-				<head>
-					<s pred="isSpecialTaxablePerson"><v>Person</v></s>
-				</head>
+
 			</rule>
 			
 			<rule id="fact_22"><head><s pred="isNon-taxableLegalPerson"><c>Acquirer</c></s></head></rule>
 			
 			<rule id="isSpecialTaxablePerson_4">
+			  <head>
+			    <s pred="isSpecialTaxablePerson"><v>Person</v></s>
+			  </head>
 				<body>
 					<s pred="isEligibleForIndividualTaxExemption"><v>Person</v></s>
 				</body>
-				<head>
-					<s pred="isSpecialTaxablePerson"><v>Person</v></s>
-				</head>
+
 			</rule>
 			
 			<rule id="fact_23"><head><s pred="isEligibleForIndividualTaxExemption"><c>Acquirer</c></s></head></rule>
 
-
 			<rule id="areSpecialGoods_1">
+			  <head>
+			    <s pred="areSpecialGoods"><v>Goods</v></s>
+			  </head>
 				<body>
 					<s pred="areNewMeansOfTransport"><v>Goods</v></s>
 				</body>
-				<head>
-					<s pred="areSpecialGoods"><v>Goods</v></s>
-				</head>
+
 			</rule>
 			
 			<rule id="areSpecialGoods_2">
+			  <head>
+			    <s pred="areSpecialGoods"><v>Goods</v></s>
+			  </head>
 				<body>
 					<s pred="areGoodsIntendedForInstallationOrAssembly"><v>Goods</v></s>
 				</body>
-				<head>
-					<s pred="areSpecialGoods"><v>Goods</v></s>
-				</head>
+	
 			</rule>
 			
 			<rule id="not_AreSpecialGoods">
+			  <head>
+			    <not><s pred="areSpecialGoods"><v>Goods</v></s></not>
+			  </head>
 				<body>
 					<and>
 						<not><s pred="areNewMeansOfTransport"><v>Goods</v></s></not>
 						<not><s pred="areGoodsIntendedForInstallationOrAssembly"><v>Goods</v></s></not>
 					</and>
 				</body>
-				<head>
-					<not><s pred="areSpecialGoods"><v>Goods</v></s></not>
-				</head>
+
 			</rule>
 			
 			<rule id="fact_24"><head><not><s pred="areNewMeansOfTransport"><c>Goods</c></s></not></head></rule>
@@ -222,6 +234,9 @@
 			<rule id="_isLiableForPayingVATFor"><head><s pred="_isLiableForPayingVATFor"><c>Selling</c><c>Vendor</c></s></head></rule>
 
 			<rule id="placeOfPayingVAT_targetCountry_1">
+			  <head>
+			    <s pred="placeOfPayingVATFor"><v>Selling</v><v>TargetCountry</v></s>
+			  </head>
 				<body>
 					<and>
 						<s pred="vendorOf"><v>Selling</v><v>Vendor</v></s>
@@ -231,14 +246,13 @@
 						<s pred="_isLiableForPayingVATFor"><v>Selling</v><v>Vendor</v></s>
 						<s pred="isRegisteredIn"><v>TargetCountry</v><v>Vendor</v></s>
 					</and>
-				</body>
-				<head>
-					<s pred="placeOfPayingVATFor"><v>Selling</v><v>TargetCountry</v></s>
-				</head>
-			</rule>
+				</body>			</rule>
 		<!--	<rule id="fact_26"><s>isRegisteredIn Austria Vendor</s></rule> -->
 			
 			<rule id="placeOfPayingVAT_targetCountry_2">
+			  <head>
+			    <s pred="placeOfPayingVATFor"><v>Selling</v><v>TargetCountry</v></s>
+			  </head>
 				<body>
 					<and>
 						<s pred="vendorOf"><v>Selling</v><v>Vendor</v></s>
@@ -252,38 +266,41 @@
 						<s pred="greaterOrEquals"><v>TotalSellings</v><v>Threshold</v></s>
 					</and>
 				</body>
-				<head>
-					<s pred="placeOfPayingVATFor"><v>Selling</v><v>TargetCountry</v></s>
-				</head>
+
 			</rule>
 			
 			<rule id="fact_27"><head><s pred="totalSellingsOf"><c>Vendor</c><c>120000</c></s></head></rule>
 			
 			<rule id="greaterOrEquals">
+			  <head>
+			    <s pred="greaterOrEquals"><v>x</v><v>y</v></s>
+			  </head>
 				<body>
 					<s pred="eval">
 						<c>true</c>
 						<s pred=">="><v>x</v><v>y</v></s>
 					</s>
 				</body>
-				<head>
-					<s pred="greaterOrEquals"><v>x</v><v>y</v></s>
-				</head>
+
 			</rule>
 			
 			<rule id="not_greaterOrEquals">
+			  <head>
+			    <not><s pred="greaterOrEquals"><v>x</v><v>y</v></s></not>
+			  </head>
 				<body>
 					<s pred="eval">
 						<c>false</c>
 						<s pred=">="><v>x</v><v>y</v></s>
 					</s>
 				</body>
-				<head>
-					<not><s pred="greaterOrEquals"><v>x</v><v>y</v></s></not>
-				</head>
+
 			</rule>
 			
 			<rule id="placeOfPayingVAT_sourceCountry">
+			  <head>
+			    <s pred="placeOfPayingVATFor"><v>Selling</v><v>SourceCountry</v></s>
+			  </head>
 				<body>
 					<and>
 						<s pred="vendorOf"><v>Selling</v><v>Vendor</v></s>
@@ -299,9 +316,7 @@
 						<not><s pred="greaterOrEquals"><v>TotalSellings</v><v>Threshold</v></s></not>
 					</and>
 				</body>
-				<head>
-					<s pred="placeOfPayingVATFor"><v>Selling</v><v>SourceCountry</v></s>
-				</head>
+	
 			</rule>
 			
 		<!--	<rule id="fact_29"><s>totalSellingsOf Vendor 80000</s></rule> -->
@@ -339,9 +354,12 @@
 			<!-- <rule id="fact_32"><s>_placeOfPayingVATFor Selling Austria</s></rule> -->
 
 			<rule id="amountOfVAT">
+			  <head>
+			    <s pred="amountOfVATFor"><v>Selling</v><v>Amount</v></s>
+			  </head>
 				<body>
 					<and>
-						<s pred="_placeOfPayingVATFor"><v>Selling</v><v>Country</v></s>
+						<s pred="placeOfPayingVATFor"><v>Selling</v><v>Country</v></s>
 						<s pred="rateOfVATIn"><v>Country</v><v>Rate</v></s>
 						<s pred="priceOf"><v>Selling</v><v>Price</v></s>
 					
@@ -349,11 +367,9 @@
 							<v>Amount</v>
 							<s pred="*"><v>Rate</v><v>Price</v></s>
 						</s>
-					</and>
+					</and>  
 				</body>
-				<head>
-					<s pred="amountOfVATFor"><v>Selling</v><v>Amount</v></s>
-				</head>
+
 			</rule>
 				
 			<!-- <rule id="fact_33"><s>priceOf Selling 100</s></rule> -->
