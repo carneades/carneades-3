@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <lkif>
 	<argument-graphs>
-		<argument-graph id="NewGraph">
+		<argument-graph id="Toulmin">
 
 			<statements>
 				<statement id="s1" value="unknown" assumption="true" standard="BA">
