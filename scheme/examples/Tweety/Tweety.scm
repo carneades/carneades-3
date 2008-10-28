@@ -40,6 +40,6 @@
 
 (define ag3 (assert-arguments empty-argument-graph (list a3 a4)))
 
-; (view ag2 c1)
+(view ag2 c1)
 
 ; (view ag3 default-context)
