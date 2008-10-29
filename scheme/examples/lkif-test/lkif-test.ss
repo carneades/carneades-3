@@ -6,7 +6,9 @@
         (carneades argument-builtins)
         (carneades lkif2)
         (carneades argument-diagram)
-        (carneades lib srfi lightweight-testing))
+        (carneades unify)
+        (carneades lib srfi lightweight-testing)
+        (carneades lib srfi format))
 
 (define null '())
 
@@ -16,7 +18,7 @@
 
 (define axioms (lkif-data-context i))
 
-(define rb (lkif-data-rulebase i))
+(define rb1 (lkif-data-rulebase i))
 
 (define stages (lkif-data-stages i))
 
@@ -24,31 +26,30 @@
 
 ;(view (stage-argument-graph stage1) (stage-context stage1))
 
+(define d1 (call-with-values open-string-output-port 
+                             (lambda (p e)
+                               (diagram* (stage-argument-graph stage1)
+                                         (stage-context stage1)
+                                         identity 
+                                         (lambda (s) (format "~a" s)) p)
+                               (e))))
+
+(define d2 "digraph g {\n    rankdir = \"RL\";\n    g1 [shape=box, label=\"Tweety is a penguin.\", style=\"filled\"];\n    g2 [shape=box, label=\"Birds normally fly.\", style=\"\"];\n    g3 [shape=box, label=\"Tweety is an abnormal bird.\", style=\"filled\"];\n    g4 [shape=box, label=\"Tweety is a bird.\", style=\"filled\"];\n    g5 [shape=box, label=\"Tweety can fly.\", style=\"\"];\n    g6 [shape=ellipse, label=\"a1\", style=\"\"];\n    g6 -> g5;\n    g4 -> g6 [arrowhead=\"none\"];\n    g2 -> g6 [arrowhead=\"dot\"];\n    g3 -> g6 [arrowhead=\"odot\"];\n    g7 [shape=ellipse, label=\"a2\", style=\"filled\"];\n    g7 -> g3;\n    g1 -> g7 [arrowhead=\"none\"];\n}\n")
+
 (define (engine max-nodes max-turns critical-questions)
-  (make-engine max-nodes max-turns 
-               (list (generate-arguments-from-rules rb critical-questions) builtins)))
+  (make-engine* max-nodes max-turns
+                axioms
+                (list (generate-arguments-from-rules rb1 critical-questions) builtins)))
+
+(define lkif-engine1 (engine 20 2 '()))
+(define lkif-engine2 (engine 20 2 '(excluded)))
+
+(display (string=? d1 d2))
+(newline)
+(display (all-in? '(flies ?bird) lkif-engine1))
+(newline)
+(display (not (some-in? '(flies ?bird) lkif-engine2)))
 
 
-(check (all-in? '(bird Tweety) (engine 20 1 null)) => #t)
-(check (all-in? '(bird ?x) (engine 20 1 null)) => #t)
-(check (all-in? '(money item1) (engine 20 1 null)) => #t) ; coins are money
-(check (all-in? '(prior ?r1 ?r2) (engine 20 1 null)) => #t)
-(check (all-in? '(p3 a) (engine 20 1 null)) => #t) ; disjunction of atomic statements
-(check (all-in? '(p9 a) (engine 20 1 null)) => #t) ; disjunction of conjunctions
-(check (all-in? '(goods item1) (engine 20 1 null)) => #t) ; find pro argument
-(check (not (all-in? '(goods item1) (engine 20 2 null))) => #t) ; unless money exception
-; (check (not (all-in? '(goods item2) (engine 20 2 null))) => #t) ; edible things are not goods, requires rebuttals
-(check (not (all-in? '(convenient item1) (engine 20 2 '(valid)))) => #t) ; repealed rules are not valid
-(check (not (all-in? '(goods item2) (engine 20 2 '(priority)))) => #t) ; lex posterior
-; to do: fix the following test. The success predicate tests only whether one is found, not all  
-; (test-true "multiple rule conclusions" (all-in? '(convenient ?x)) (engine 20 1 null))
-(check (all-in? '(not (goods item2)) (engine 20 3 null)) => #t)
-(check (not (all-in? '(flies Tweety) (engine 20 2 '(excluded)))) => #t)
-(check (all-in? '(applies ?r (goods ?x)) (engine 20 1 null)) => #t)
-; to do: test negative conditions and exceptions
-; to do: test rules with negative conclusions
-(check (all-in? '(p11 ?x) (engine 20 1 null)) => #t) ; reverse a list
-(check (all-in? '(taxable-income Sam ?x) (engine 20 1 null)) => #t) ; calculations
-; to do: test assumptions -- a statement is questioned by making an argument pro or con the statement
-; to do: event calculus tests
-(check-report)
+
+
