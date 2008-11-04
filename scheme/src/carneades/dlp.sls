@@ -26,6 +26,7 @@
          (carneades lib match)
          (carneades rule)
          (carneades system)
+         (carneades dnf) ; debug
          )
  
  ;----------------------
@@ -52,7 +53,7 @@
  ;
  ; <lhclass> = <conceptname> | <lhconjunction> | <lhunivrestrict>
  ; <lhconjunction> = (and <lhclass> <lhclass>+)
- ; <lhunivrestrict> = (all <rolename> <lhclass>
+ ; <lhunivrestrict> = (all <rolename> <lhclass>)
  ;
  ;
  ; Lb - concepts from Lb can be mapped into the body of LP rules:
@@ -160,6 +161,8 @@
  (define errorcounter 0)
  (define owlcounter 0)
  (define successcounter 0)
+ 
+ (define output? #f)
  
  (define newsym
    (lambda ()
@@ -794,7 +797,9 @@
    (if (dlprule? r)
        (if (dlprule? (cadr r))
            (let ((h (rulerewrite (cadr r))))
-             (list 'rule (cadr h) (list 'and (caddr h) (caddr r))))
+             (if (= (length r) 3)
+                 (list 'rule (cadr h) (list 'and (caddr h) (caddr r)))
+                 h))
            r)
        (if (dlprules*? r)
            (map rulerewrite r)
@@ -862,31 +867,41 @@
  ; %ontology: ontology (list-of ontology) ... -> knowledgebase
  (define (%ontology l)
    ;(display l)
-   (newline)
-   (display "Nr. of axioms read: ")
-   (display successcounter)
-   (newline)
-   (display "Nr. of non dlp axioms: ")
-   (display errorcounter)
-   (newline)
-   (display "Nr. of non-dlp dl-axioms: ")
-   (display owlcounter)
-   (newline)
+   (if output?
+       (begin
+         (newline)
+         (display "Nr. of axioms read: ")
+         (display successcounter)
+         (newline)
+         (display "Nr. of non dlp axioms: ")
+         (display errorcounter)
+         (newline)
+         (display "Nr. of non-dlp dl-axioms: ")
+         (display owlcounter)
+         (newline)))
    (add-rules empty-knowledgebase (fold-right append '() l)))
  
- (define-syntax ontology
+ #;(define-syntax ontology
    (syntax-rules ()
      ((_ oname axiom1 ...) (begin
+                             (define oname '())
                              (initerror)
                              (initsuccess)
                              (initaxiom)
                              (initowl)
-                             (define oname
-                               (%ontology (map (lambda (x)
-                                                 ;(display x)
-                                                 ;(newline)
-                                                 (%axiom (string->symbol (string-append (symbol->string (quote oname)) "-axiom")) x))
-                                               (list (quote axiom1) ...))))))))
+                             (set! oname
+                                   (%ontology (map (lambda (x)
+                                                     ;(display x)
+                                                     ;(newline)
+                                                     (%axiom (string->symbol (string-append (symbol->string (quote oname)) "-axiom")) x))
+                                                   (list (quote axiom1) ...))))))))
+ 
+ (define-syntax ontology
+   (syntax-rules ()
+     ((_ oname axiom1 ...) (define oname 
+                             (%ontology (map (lambda (x)
+                                               (%axiom (string->symbol (string-append (symbol->string (quote oname)) "-axiom")) x))
+                                             (list (quote axiom1) ...)))))))
  
  ; generate-arguments-from-ontology: knowledgebase (list-of question-types) -> generator
  (define generate-arguments-from-ontology generate-arguments-from-rules)
