@@ -50,7 +50,9 @@
          |#
          
          
-         (export to-dnf)
+         (export to-dnf
+                 dnf?
+                 compare-formulas)
          
          (import (rnrs base)
                  (rnrs io simple)
@@ -84,8 +86,10 @@
          ; every symbol, except 'not 'and 'or 'if 'iff 'assuming 'unless
          (define (atom? formula)
            (or (not (list? formula))
-               (not (member (car formula)
-                            '(not or and if iff unless assuming)))))
+               (if (> (length formula) 0)
+                   (not (member (car formula)
+                                '(not or and if iff unless assuming)))
+                   #f)))
            
            #;(and
             (symbol? formula)
@@ -550,13 +554,20 @@
            (set! t '(iff (and a (or b (if c d))) e))
            (test-all t))
            
-           (define (get-atoms formula)
+           #;(define (get-atoms formula)
              (if (pair? formula)
                  (if (atom? (car formula))
                      (cons (car formula) (get-atoms (cdr formula)))
                      (append (get-atoms (car formula)) (get-atoms (cdr formula))))
                  (if (atom? formula)
                      (list formula)
+                     '())))
+           
+           (define (get-atoms formula)
+             (if (atom? formula)
+                 (list formula)
+                 (if (pair? formula)
+                     (fold-left append '() (map get-atoms (cdr formula)))
                      '())))
            
            (define (rmv-double dbllist)
@@ -576,7 +587,7 @@
            
            (define (is-in? a l)
              (if (pair? l)
-                 (if (eq? (car l) a)
+                 (if (equal? (car l) a)
                      #t
                      (is-in? a (cdr l)))
                  #f))
@@ -595,14 +606,26 @@
            
            ; <atom> x <boolean> x <formula> -> <formula>
            ; atom a is substituted for the boolean b in the formula f
-           (define (substitute a b f)
-             (if (pair? f)
-                 (if (eq? (car f) a)
-                     (cons b (substitute a b (cdr f)))
-                     (cons (substitute a b (car f)) (substitute a b (cdr f))))
-                 (if (eq? a f)
+           #;(define (substitute a b f)
+             (if (atom? f)
+                 (if (equal? a f)
                      b
-                     f)))
+                     f)
+                 (if (null? f)
+                     '()
+                     (if (equal? (car f) a)
+                         (cons b (substitute a b (cdr f)))
+                         (cons (substitute a b (car f)) (substitute a b (cdr f)))))
+                 ))
+           
+           (define (substitute a b f)
+             (if (equal? a f)
+                 b
+                 (if (atom? f)
+                     f
+                     (if (pair? f)
+                         (cons (car f) (map (lambda (g) (substitute a b g)) (cdr  f)))
+                         '()))))
            
            ; <atom>n x <boolean>n x <formula> -> <formula>
            ; given a list of atoms and a list of boolean, every atom is
@@ -611,7 +634,7 @@
              (if (pair? a*)
                  (substitute-all (cdr a*) (cdr b*) (substitute (car a*) (car b*) f))
                  (substitute a* b* f)))
-           
+         
            (define (eval-formulas a* s* f1 f2)
              (if (pair? s*)
                  (and
