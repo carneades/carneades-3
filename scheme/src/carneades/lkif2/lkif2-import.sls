@@ -139,7 +139,7 @@
  (define (source-to-record s)
    (let ((uri (get-attribute-value (get-attribute s 'uri) "")) 
          (element (get-attribute-value (get-attribute s 'element) "")))
-     (make-source uri element)))
+     (make-source element uri)))
  
  ; theory-to-record: lkif-theory -> struct:theory
  (define (theory-to-record t)
