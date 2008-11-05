@@ -54,10 +54,8 @@
                  dnf?
                  compare-formulas)
          
-         (import (rnrs base)
-                 (rnrs io simple)
-                 (rnrs lists (6))
-                 (rnrs eval (6)))
+         (import (rnrs)
+                 (rnrs eval))
          
          #|
 
@@ -639,8 +637,20 @@
              (if (pair? s*)
                  (and
                   (eq?
-                   (eval (substitute-all a* (car s*) f1) (environment '(rnrs)))
-                   (eval (substitute-all a* (car s*) f2) (environment '(rnrs))))
+                   (guard (con
+                           (else
+                            (display "error! formula  couldn't be evaluated: ")
+                            (display (substitute-all a* (car s*) f1))
+                            (newline)
+                            '()))
+                           (eval (substitute-all a* (car s*) f1) (environment '(rnrs))))
+                  (guard (con
+                           (else
+                            (display "error! formula  couldn't be evaluated: ")
+                            (display (substitute-all a* (car s*) f2))
+                            (newline)
+                            '()))
+                           (eval (substitute-all a* (car s*) f2) (environment '(rnrs)))))                 
                   (eval-formulas a* (cdr s*) f1 f2))
                  #t))
            
