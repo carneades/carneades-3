@@ -4,7 +4,9 @@
         (carneades dlp)
         (carneades shell)
         (carneades argument-builtins)
-        (carneades lib srfi lightweight-testing))
+        (carneades lib srfi lightweight-testing)
+        (carneades argument-diagram) ; debug
+        )
 
 
 (ontology kb1
