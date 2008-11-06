@@ -7,6 +7,7 @@
         (carneades rule)
         (carneades lkif2)
         (carneades dlp)
+        (carneades dnf)
         (carneades shell)
         (carneades unify)
         (carneades lib srfi format)
@@ -780,6 +781,61 @@
   
   )
 
+
+; -------------------------------
+; dnf tests
+; -------------------------------
+
+(define (run-dnf-tests)
+  
+  (define t1 'a)
+  (define t2 '(p x))
+  (define t3 '(or a b))
+  (define t4 '(and a b))
+  (define t5 '(or (p a) (p b)))
+  (define t6 '(and (or a b) c))
+  (define t7 '(and (or a b) (or c d)))
+  (define t8 '(and (or a b) (or a b)))
+  (define t9 '(if (or a b) (or c d)))
+  (define t10 '(and (or a b c) (or c d e)))
+  (define t11 '(not (and (or a b c) (or c d e))))
+  (define t12 '(not (or (or a b (not c)) (and (not (or c d)) (not (and e f))))))
+  (define t13 '(not (iff (and (or a b) (not c)) d)))
+  
+  (define (test-term t c)
+    (display "testing dnf term: ")
+    (display t)
+    (display " ... ")
+    (let ((d (to-dnf t)))
+      (if (and d
+               (dnf? d)
+               (if c
+                   (compare-formulas t d)
+                   #t))
+          (printn " OK")
+          (begin (adderror "dnf: term could not be converted to dnf or conversion is not logical equivalent")
+                 (printn " failed!")))))
+     
+  (printn "starting with dnf tests ...")
+  (test-term t1 #t)
+  (test-term t2 #t)
+  (test-term t3 #t)
+  (test-term t4 #t)
+  (test-term t5 #t)
+  (test-term t6 #t)
+  (test-term t7 #t)
+  (test-term t8 #t)
+  (test-term t9 #f)
+  (test-term t10 #t)
+  (test-term t11 #t)
+  (test-term t12 #t)
+  (test-term t13 #f)
+  
+  (newline)
+  
+  )
+
+
 ; -------------------------------
 ; test run and report
 ; -------------------------------
@@ -792,6 +848,7 @@
   (run-rule-tests)
   (run-ontology-tests)
   (run-lkif-tests)
+  (run-dnf-tests)
   (printn "all tests finished")
   (newline))
 
