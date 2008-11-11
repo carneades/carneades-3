@@ -112,7 +112,7 @@
           (wait-until-visible tk-wait-until-visible)
           (with-lock tk-with-lock)
           (map-ttk-widgets ttk-map-widgets))
-  tk/after tk/bell tk/update tk/clipboard tk/bgerror tk/bind tk/bindtags
+  string-split tk/after tk/bell tk/update tk/clipboard tk/bgerror tk/bind tk/bindtags
   tk/destroy tk/event tk/focus tk/grab tk/grid tk/image
   tk/lower tk/option tk/pack tk/place tk/raise tk/selection
   tk/winfo tk/wm tk/choose-color tk/choose-directory 

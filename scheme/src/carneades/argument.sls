@@ -41,7 +41,7 @@
  (import (rnrs)
          (rnrs records syntactic)
          (rnrs lists)
-         (only (carneades system) gensym)
+         (only (carneades system) gensym null)
          (carneades statement)
          (carneades lib match)
          (prefix (carneades table) table:)
@@ -50,9 +50,7 @@
          (carneades unify)
          )
  
- 
- (define null '())
- 
+  
  (define-record-type premise 
    (fields atom      ; an atomic statement
            polarity  ; boolean, #t => positive premise | #f => negative premise
