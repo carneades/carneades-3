@@ -38,14 +38,12 @@
          (carneades unify)
          (carneades stream)
          (carneades statement)
-         (carneades system) ; pretty-print
+         (carneades system)
          ; (require (prefix compare: (lib "67.ss" "srfi"))) 
          ; (require (lib "pretty.ss"))
          )
  
  (define *debug* #f)
- 
- (define null '())
  
  ; opposing-viewpoint: viewpoint -> viewpoint
  (define (opposing-viewpoint vp)
