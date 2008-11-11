@@ -29,7 +29,8 @@
          context-status context-standard context-compare context-substitutions default-context
          context? state question accept reject assign-standard update-substitutions pro-arguments 
          con-arguments schemes-applied status proof-standard prior decided? accepted? rejected?
-         questioned? stated? issue? empty-argument-graph argument-graph?
+         questioned? stated? issue? make-argument-graph empty-argument-graph 
+         argument-graph? argument-graph-id argument-graph-title argument-graph-main-issue
          argument-graph-nodes argument-graph-arguments put-argument assert-arguments* assert-arguments 
          update questions facts statements accepted-statements rejected-statements 
          stated-statements relevant-statements list-arguments issues relevant?   
@@ -316,16 +317,25 @@
            ))
  
  (define-record-type argument-graph
-   (fields nodes        ; table: statement -> node
+   (fields id           ; symbol
+           title        ; string
+           main-issue   ; statement | #f
+           nodes        ; table: statement -> node
            arguments))  ; table: argument-id -> argument 
  
  (define empty-argument-graph 
-   (make-argument-graph (table:make-table)
+   (make-argument-graph (gensym)
+                        ""
+                        #f
+                        (table:make-table)
                         (table:make-table)))
  
  ; put-node: argument-graph node -> argument-graph 
  (define (put-node ag n)
-   (make-argument-graph (table:insert (argument-graph-nodes ag) (node-statement n) n)
+   (make-argument-graph (argument-graph-id ag)
+                        (argument-graph-title ag)
+                        (argument-graph-main-issue ag)
+                        (table:insert (argument-graph-nodes ag) (node-statement n) n)
                         (argument-graph-arguments ag)))
  
  ; get-node: argument-graph statement -> node | #f
@@ -344,8 +354,12 @@
                                 (put-node ag1 (make-node (premise-atom p) null null ))))
                           ag
                           (argument-premises arg))))
-     (make-argument-graph (argument-graph-nodes ag1)
-                          (table:insert (argument-graph-arguments ag1)(argument-id arg) arg))))
+     (make-argument-graph (argument-graph-id ag1)
+                          (argument-graph-title ag1)
+                          (argument-graph-main-issue ag1)
+                          (argument-graph-nodes ag1)
+                          (table:insert (argument-graph-arguments ag1)
+                                        (argument-id arg) arg))))
  
  ; get-argument: argument-graph symbol -> argument | #f
  (define (get-argument ag id)

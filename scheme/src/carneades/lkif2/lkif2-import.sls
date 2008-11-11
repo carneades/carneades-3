@@ -67,7 +67,7 @@
  ; Import functions 
  
  
- ; lkif-import: file-path -> struct:lkif-import
+ ; lkif-import: file-path -> lkif-data
  (define (lkif-import path)
    (let ((lkif-body (get-lkif (get-document path))))
      (let ((sources (read-sources lkif-body))
