@@ -31,7 +31,7 @@
            rules))
  
  ; argument-graph in lkif2
- (define-record-type argument-graph
+ (define-record-type lkif-argument-graph
    (fields id
            title
            main-issue
@@ -156,7 +156,7 @@
          (main-issue (get-attribute-value (get-attribute ag 'main-issue) ""))
          (statements (map statement-to-record (get-elements (get-element ag 'statements) 'statement)))
          (arguments (get-elements (get-element ag 'arguments) 'argument)))
-     (make-argument-graph id title main-issue statements arguments)))
+     (make-lkif-argument-graph id title main-issue statements arguments)))
  
  ; lkif-argument-graph->stage: lkif-argument-graph -> struct:stage
  (define (lkif-argument-graph->stage ag)
@@ -434,11 +434,16 @@
  
  ; lkif-argument-graph->argument-graph: struct:lkif-argument-graph -> (struct:argument-graph context)
  (define (lkif-argument-graph->argument-graph/context ag)
-   (let ((statements (argument-graph-statements ag)))
-     (let ((tbl (statements->table statements)))
-       (let ((arguments (map (lambda (x) (argument-to-record x tbl)) (argument-graph-arguments ag))))
-         (values (argument:assert-arguments argument:empty-argument-graph arguments)
-                 (statements->context statements))))))
+   (let* ((statements (lkif-argument-graph-statements ag))
+          (tbl (statements->table statements))
+          (arguments (map (lambda (x) (argument-to-record x tbl)) (lkif-argument-graph-arguments ag)))
+          (ag1 (argument:assert-arguments argument:empty-argument-graph arguments)))
+     (values (argument:make-argument-graph (lkif-argument-graph-id ag)
+                                  (lkif-argument-graph-title ag)
+                                  (lkif-argument-graph-main-issue ag)
+                                  (argument:argument-graph-nodes ag1)
+                                  (argument:argument-graph-arguments ag1))
+             (statements->context statements))))
  
  ; argument-graph->stage: struct:lkif-argument-graph -> struct:stage
  (define (argument-graph->stage ag)

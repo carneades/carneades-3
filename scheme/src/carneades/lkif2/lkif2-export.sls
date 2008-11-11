@@ -236,21 +236,21 @@
  
  ; stage->sxml: struct:stage -> sxml
   (define (stage->sxml s)
-   (let ((ag (stage-argument-graph s))
-         (c (stage-context s)))
-     (let ((statements-table (nodes->table (argument-graph-nodes ag))))
-       (let ((id (new-id "ag"))
-             (title "")
-             (main-issue "")
-             (statements (apply-context c statements-table (table:objects (argument-graph-arguments ag))))
-             (arguments (arguments->sxml (table:objects (argument-graph-arguments ag)) statements-table)))
-         (list 'argument-graph
-               (elements->attributes (list (element->sxml 'id id)
-                                           (element->sxml 'title title)
-                                           (element->sxml 'main-issue main-issue)
-                                           ))
-               statements
-               arguments)))))
+    (let* ((ag (stage-argument-graph s))
+           (c (stage-context s))
+           (statements-table (nodes->table (argument-graph-nodes ag)))
+           (id (argument-graph-id ag))
+           (title (argument-graph-title ag))
+           (main-issue (argument-graph-main-issue ag))
+           (statements (apply-context c statements-table (table:objects (argument-graph-arguments ag))))
+           (arguments (arguments->sxml (table:objects (argument-graph-arguments ag)) statements-table)))
+      (list 'argument-graph
+            (elements->attributes (list (element->sxml 'id id)
+                                        (element->sxml 'title title)
+                                        (element->sxml 'main-issue main-issue)
+                                        ))
+            statements
+            arguments)))
   
   ; nodes->table: table:statement->node -> table:atom->struct:statement
   (define (nodes->table n)
