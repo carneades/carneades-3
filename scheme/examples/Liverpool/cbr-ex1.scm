@@ -90,10 +90,6 @@
                       ; (generate-arguments-from-rules rb1 critical-questions)
                       (generate-arguments-from-cases case-base))))
 
-(define wyner-engine (cbr-engine 50 4 wyner-cb null))
-(define hypo-engine (cbr-engine 50 4 hypo-cb null))
-
-
 ; to do: further and more systematic tests
 
 (check (some-in? 'trade-secret-violation (cbr-engine 50 4 wyner-cb c-vanilla)) => #t)

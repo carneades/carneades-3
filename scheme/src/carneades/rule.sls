@@ -28,7 +28,7 @@
   ; And we need to reason about the applicability of rules to statements.
   
  (export rule rule* make-rule rule? rule-id rule-strict rule-head rule-body 
-         rule-critical-questions empty-rulebase rulebase rulebase? 
+         rule-critical-questions empty-rulebase rulebase rulebase? get-rule
          add-rules rulebase-rules generate-arguments-from-rules rule->datum
          rulebase->datum (rename (make-head make-rule-head) (make-body make-rule-body)))
  
@@ -119,7 +119,7 @@
   (define-record-type named-clause
     (fields id       ; symbol
             rule     ; rule-id
-            strict  ; rule-strict?
+            strict   ; rule-strict?
             head     ; rule-head
             clause)) ; the actual clause
   

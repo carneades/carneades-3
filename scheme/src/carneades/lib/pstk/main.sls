@@ -141,8 +141,6 @@
  (define wish-input #f)
   
  (define wish-output #f)
- 
- ; (define tk #f)
   
  (define tk-is-running #f)
   
