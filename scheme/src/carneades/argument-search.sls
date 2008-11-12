@@ -171,7 +171,9 @@
                                               premises)))
                        ; make an issue of the conclusion:
                        (arg:update-substitutions 
-                        (arg:question (state-context state) (list conclusion)) 
+                        (if (arg:decided? (state-context state) conclusion)
+                            (state-context state)
+                            (arg:question (state-context state) (list conclusion))) 
                         new-subs)
                        ; extend argument graph with the new arg
                        (arg:assert-arguments (state-arguments state) (list arg))))
