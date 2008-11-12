@@ -613,7 +613,9 @@
  
  ; in?: argument-graph context statement -> boolean
  (define (in? ag c s)
-   (or (accepted? c s) (acceptable? ag c s)))
+   (if (decided? c s)
+       (accepted? c s) 
+       (acceptable? ag c s)))
  
  ; out?: argument-graph context statement -> boolean
  (define (out? ag c s)
