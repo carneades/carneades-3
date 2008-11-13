@@ -5,14 +5,15 @@
  
  (export)
  
- (import (rnrs)
-         (carneades argument)
-         (carneades rule))
+ (import (rnrs))
  
  (define id-counter 0)
  (define (new-id)
    (set! id-counter (+ id-counter 1))
    id-counter) 
+ (define (init-id)
+   (set! id-counter 0))
+ 
  ; topic language Lt
  
  ; communication language Lc = {claim, why, concede, retract, since}
@@ -65,53 +66,96 @@
      ((none) (list 'claim 'since))
      (else '())))
  
- ; Tg: Mf -> Pow(N)
+ ; Tg: Mf x A -> Pow(N)
  ; target function
- (define (tg-unique-reply d)
+ (define (tg-unique-reply d p)
    (if (null? d)
        (list 0)
-       (list (move-id (car d)))))
+       (let* ((all-counter-moves (map move-id (filter (lambda (m)
+                                                        (not (eq? (move-player m) p)))
+                                                      d)))
+              (already-replied (map move-target d)))
+         (filter (lambda (m)
+                   (not (member m already-replied)))
+                 all-counter-moves))))
+         
  
- (define (tg-multiple-reply d)
+ (define (tg-multiple-reply d p)
    (if (null? d)
        (list 0)
-       (map move-id d)))
+       (map move-id (filter (lambda (m)
+                              (not (eq? (move-player m) p)))
+                            d))))
+ 
+ 
+ ; choose-functions
+ 
+ (define (choose-next-player d t)
+   (let ((possible-players (t d)))
+     (display "choose next player: ")
+     (display possible-players)
+     (let ((np (read)))
+       (if (member np possible-players)
+           np
+           (begin (display "wrong player: ")
+                  (display np)
+                  (newline)
+                  (choose-next-player d t))))))
+ 
+ (define (choose-next-target d tg np)
+   (let ((possible-targets (tg d np)))
+     (if (null? possible-targets)
+         (begin (display "sorry, no possible targets for player ")
+                (display np)
+                (newline)
+                (display "please choose another player")
+                (newline)
+                -1)
+         (begin (display "choose next target: ")
+                (display possible-targets)
+                (let ((nt (read)))
+                  (if (member nt possible-targets)
+                      nt
+                      (begin (display "wrong target: ")
+                             (display nt)
+                             (newline)
+                             (choose-next-target d tg np))))))))
+ 
+ (define (choose-next-reply d r nt)
+   (let* ((sa (if (null? d)
+                  'none
+                  (move-speech-act (list-ref d (- (length d) nt)))))
+          (possible-replies (r sa)))
+     (if (null? possible-replies)
+         (begin (display "sorry, no possible replies to ")
+                (display sa)
+                (newline)
+                (display "please choose another target")
+                (newline)
+                '())
+         (begin (display "choose next reply: ")
+                (display possible-replies)
+                (let ((nsa (read)))
+                  (if (member nsa possible-replies)
+                      nsa
+                      (begin (display "wrong reply: ")
+                             (display nsa)
+                             (newline)
+                             (choose-next-reply d r nt))))))))
  
  ; choose-next-move:
  ; Mf x (Mf -> Pow(A)) x (Mf -> Pow(N)) x (Lc -> Pow(Lc)) -> Mf
  (define (choose-next-move d t tg r)
-   (display "Choose next player: ")
-   (display (t d))
-   (let ((np (read)))
-     (if (member np (t d))
-         (begin (display "Choose next target: ")
-                (display (tg d))
-                (let ((nt (read)))
-                  (if (member nt (tg d))
-                      (let ((sa (if (null? d)
-                                    'none
-                                    (move-speech-act (list-ref d (- (length d) nt))))))
-                        (display "Choose next reply: ")
-                        (display (r sa))
-                        (let ((nsa (read)))
-                          (if (member nsa  (r sa))
-                              (cons (make-move (new-id)
-                                               np
-                                               nsa
-                                               nt)
-                                    d)
-                              (begin (display "Wrong reply: ")
-                                     (write nsa)
-                                     (newline)
-                                     d))))
-                      (begin (display "Wrong target: ")
-                             (write nt)
-                             (newline)
-                             d))))
-         (begin (display "Wrong player: ")
-                (write np)
-                (newline)
-                d))))
+   (if (null? d)
+       (init-id))
+   (let* ((np (choose-next-player d t))
+          (nt (choose-next-target d tg np))
+          (nsa (choose-next-reply d r nt)))
+     (cons (make-move (new-id)
+                      np
+                      nsa
+                      nt)
+           d)))
  
  (define mv1 (choose-next-move '() t-unique-move tg-unique-reply r-standard))
 
