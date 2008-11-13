@@ -3,6 +3,7 @@
 (import (except (rnrs) assert values)
         (carneades argument)
         (carneades argument-diagram)
+        (carneades case)
         (carneades argument-builtins)
         (carneades rule)
         (carneades lkif2)
@@ -31,6 +32,15 @@
   (set! error-counter (+ error-counter 1))
   (set! error-message (string-append error-message s "\n")))
 
+(define (run-single-test b test-string failure-string)
+  (display (string-append "testing " test-string " ... "))  
+  (if b
+      (display "OK")
+      (begin (display "failed")
+             (adderror failure-string)))
+  (newline))
+
+
 
 (printn "--------------")
 (printn "Carneades Testing Module")
@@ -55,6 +65,7 @@
   
   (define c1 (accept default-context (list "Tweety is a bird" "Tweety is a penguin")))
   
+  ; string-length of d1 should be 690
   (define d1 (call-with-values open-string-output-port (lambda (port extract)
                                                          (diagram* tweety-graph
                                                                    c1
@@ -63,24 +74,130 @@
                                                                    port)
                                                          (extract))))
   
-  ; plt-scheme
-  (define d2 "digraph g {\n    rankdir = \"RL\";\n    g1 [shape=box, label=\"Tweety is a penguin\", style=\"filled\"];\n    g2 [shape=box, label=\"Tweety is an abnormal bird\", style=\"filled\"];\n    g3 [shape=box, label=\"Birds fly\", style=\"\"];\n    g4 [shape=box, label=\"Penguins are abnormal birds\", style=\"\"];\n    g5 [shape=box, label=\"Tweety is a bird\", style=\"filled\"];\n    g6 [shape=box, label=\"Tweety flies\", style=\"\"];\n    g7 [shape=ellipse, label=\"a1\", style=\"\"];\n    g7 -> g6;\n    g5 -> g7 [arrowhead=\"none\"];\n    g3 -> g7 [arrowhead=\"dot\"];\n    g2 -> g7 [arrowhead=\"odot\"];\n    g8 [shape=ellipse, label=\"a2\", style=\"filled\"];\n    g8 -> g2;\n    g1 -> g8 [arrowhead=\"none\"];\n    g4 -> g8 [arrowhead=\"dot\"];\n}\n")
-  
-  ; ypsilon
-  (define d3 "digraph g {\n    rankdir = \"RL\";\n    g1 [shape=box, label=\"Tweety is an abnormal bird\", style=\"filled\"];\n    g2 [shape=box, label=\"Penguins are abnormal birds\", style=\"\"];\n    g3 [shape=box, label=\"Tweety is a penguin\", style=\"filled\"];\n    g4 [shape=box, label=\"Tweety flies\", style=\"\"];\n    g5 [shape=box, label=\"Birds fly\", style=\"\"];\n    g6 [shape=box, label=\"Tweety is a bird\", style=\"filled\"];\n    g7 [shape=ellipse, label=\"a2\", style=\"filled\"];\n    g7 -> g1;\n    g3 -> g7 [arrowhead=\"none\"];\n    g2 -> g7 [arrowhead=\"dot\"];\n    g8 [shape=ellipse, label=\"a1\", style=\"\"];\n    g8 -> g4;\n    g6 -> g8 [arrowhead=\"none\"];\n    g5 -> g8 [arrowhead=\"dot\"];\n    g1 -> g8 [arrowhead=\"odot\"];\n}\n")
+
   
   (printn "starting with argument tests ...")
-  
-  (display "testing argument-diagram ...")  
-  
-  (if (or (string=? d1 d2) (string=? d1 d3))
-      (printn " OK")
-      (begin (adderror "argument-diagram: the created diagram is not identical with the presetting")
-             (printn " failed!")))
+
+  (run-single-test (= (string-length d1) 690)
+                   "argument-diagram"
+                   "argument-diagram: the created diagram is not identical with the presetting")
   
   (newline)
   
   )
+
+
+
+; -------------------------------
+; case tests
+; -------------------------------
+
+(define (run-case-tests)
+  
+  (define f101 (make-factor 'info-trade-secret 'plaintiff #f))
+  (define f102 (make-factor 'efforts-to-maintain-secrecy 'plaintiff f101))
+  (define f120 (make-factor 'info-legitimately-obtained-or-obtainable 'defendant #f))
+  (define f104 (make-factor 'info-valuable 'plaintiff f101))
+  (define f105 (make-factor 'info-known-or-available 'defendant f101))
+  (define f108 (make-factor 'info-available-elsewhere 'defendant f105))
+  (define f111 (make-factor 'questionable-means 'plaintiff f120))
+  (define f114 (make-factor 'confidential-relationship 'plaintiff #f))
+  (define f115 (make-factor 'notice-of-confidentiality 'plaintiff f114))
+  (define f122 (make-factor 'efforts-to-maintain-secrecy-vis-a-vis-defendant 'plaintiff f102))
+  (define f1 (make-factor 'disclosure-in-negotiations 'defendant f122))
+  (define f2 (make-factor 'bribed-employee 'plaintiff f111))
+  (define f4 (make-factor 'agreed-not-to-disclose 'plaintiff f122))
+  (define f6 (make-factor 'security-measures 'plaintiff f102))
+  (define f7 (make-factor 'brought-tools 'plaintiff #f))
+  (define f10 (make-factor 'secrets-disclosed-to-outsiders 'defendant f105))
+  (define f12 (make-factor 'outsider-disclosures-restricted 'plaintiff f105))
+  (define f15 (make-factor 'unique-product 'plaintiff f104))
+  (define f16 (make-factor 'info-reverse-engineerable 'defendant f108))
+  (define f21 (make-factor 'knew-info-confidential 'plaintiff f115))
+  (define f25 (make-factor 'information-reverse-engineered 'defendant f111))
+  (define f26 (make-factor 'used-deception 'plaintiff f111))
+  (define f27 (make-factor 'disclosure-in-public-forum 'defendant f105))
+  
+  (define factors (list f1 f2 f4 f6 f7 f10 f12 f15 f16 f21 f25 f26 f27  f101 f102 f104 f105 
+                        f108 f111 f114 f115 f120 f122))
+  
+  ; cases from [Wyner & Bench-Capon, 2007]
+  (define vanilla (make-case "Vanilla" 'plaintiff (list f1 f15)))
+  (define bribe (make-case "Bribe" 'plaintiff (list f1 f2 f15)))
+  (define deceit (make-case "Deceit" 'plaintiff (list f1 f15 f26)))
+  (define disclose (make-case "Disclose" 'plaintiff (list f1 f10 f15)))
+  (define restrict (make-case "Restrict" 'plaintiff (list f1 f10 f12 f15)))
+  (define bribe2 (make-case "Bribe2" 'plaintiff (list f1 f2 f15 f25)))
+  (define rev (make-case "Reverse" 'plaintiff (list f1 f15 f25)))
+  (define announce (make-case "Announce" 'defendant (list f1 f2 f15 f27))) ; added f2 for testing more-on-point scheme
+  
+  
+  (define wyner-cases (list vanilla bribe deceit disclose restrict bribe2 rev announce))
+  
+  (define wyner-cb (make-casebase 'trade-secret-violation factors wyner-cases))
+  (define bribe-cb (make-casebase 'trade-secret-violation factors (list bribe)))
+  (define vanilla-cb (make-casebase 'trade-secret-violation factors (list vanilla)))
+  
+  ; Initial contexts for some test "current" cases, with their
+  ; accepted statements copied from factors of cases
+  
+  (define (make-context-from-case case)
+    (accept default-context (case-statements case)))
+  
+  (define c-vanilla (make-context-from-case vanilla))
+  (define c-disclose (make-context-from-case disclose))
+  (define c-bribe (make-context-from-case bribe))
+  (define c-announce (make-context-from-case announce))  
+  (define c-as1 (accept c-vanilla (list '(factors-favor plaintiff trade-secret-violation))))
+  (define c-as2 (reject c-vanilla (list '(distinguishable defendant "Bribe"))))
+  (define c-mop (reject  c-bribe '((distinguishable plaintiff "Announce"))))
+  
+  
+  ; cbr-engine: integer integer case-base context -> statement -> (stream-of argument-state)
+  (define (cbr-engine max-nodes max-turns case-base context)
+    (make-engine* max-nodes max-turns context
+                  (list builtins 
+                        (generate-arguments-from-cases case-base))))
+  
+  (printn "starting with case tests ...")
+  
+  ; to do: further and more systematic tests
+  
+  ; AS1: Main Scheme  
+  (run-single-test (all-in? 'trade-secret-violation (cbr-engine 50 4 bribe-cb c-as1))
+                   "case: AS1 - Main Scheme"
+                   "case: 'trade-secret-violation should be in! (AS1)")
+  
+  ; AS2: Preference-From-Precedent Scheme
+  (run-single-test (all-in? '(factors-favor plaintiff trade-secret-violation) (cbr-engine 50 4 bribe-cb c-as2))
+                   "case: AS2 - Preference-From-Precedent Scheme"
+                   "case: '(factors-favor plaintiff trade-secret-violation) should be in! (AS2)")
+  
+  ; AS3: Precedent-Stronger Scheme
+  (run-single-test (all-in? '(distinguishable defendant "Bribe") (cbr-engine 50 4 bribe-cb c-vanilla))
+                   "case: AS3 - Precedent-Stronger Scheme"
+                   "case: '(distinguishable defendant \"Bribe\") should be in! (AS3)")
+  
+  ; AS4: Current-Case-Weaker Scheme
+  (run-single-test (all-in? '(distinguishable defendant "Vanilla") (cbr-engine 50 4 vanilla-cb c-disclose))
+                   "case: AS4 - Current-Case-Weaker Scheme"
+                   "case: '(distinguishable defendant \"Vanilla\") should be in! (AS4)")
+  
+  ; Counterexample: More-On-Point Scheme
+  (run-single-test (all-in? '(has-counterexample defendant "Reverse") (cbr-engine 50 4 wyner-cb c-mop))
+                   "case: Counterexample - More-On-Point Scheme"
+                   "case: '(has-counterexample defendant \"Reverse\") should be in! (Counterexample)")
+  
+  ; Downplay-Precedent-Stronger Scheme
+  (run-single-test (all-in? '(downplay precedent-stronger plaintiff "Deceit") (cbr-engine 50 4 wyner-cb c-bribe))
+                   "case: Downplay-Precedent-Stronger Scheme"
+                   "case '(downplay precedent-stronger plaintiff \"Deceit\") should be in! (Downplay-Precedent-Stronger)")
+  
+  
+  (newline)
+  
+  )
+
 
 
 ; -------------------------------
@@ -175,350 +292,288 @@
       (p10 '(a b c d e))
       (income Sam 60000)
       (deductions Sam 7000)))
+  
+  (define elephants-rulebase 
+    (rulebase
+     
+     (rule r1 
+           (if (and (elephant ?x)
+                    (unless (royal ?x)))
+               (gray ?x)))
+     
+     (rule r2 
+           (if (and (elephant ?x)
+                    (royal ?x))
+               (not (gray ?x))))      
+     ))
+  
+  (define elephant-facts
+    '((elephant clyde)
+      (african clyde)
+      (royal clyde)
+      (elephant dumbo)
+      (african dumbo)))
+  
+  (define dutch-rulebase
+    (rulebase
+     
+     (rule r3
+           (if (native-speaker ?x Pa-Dutch)
+               (born ?x America)))
+     
+     (rule r4
+           (if (and (native-speaker ?x German)
+                    (unless (native-speaker ?x Pa-Dutch)))
+               (not (born ?x America))))
+     
+     (rule r5 
+           (if (native-speaker ?x Pa-Dutch)
+               (native-speaker ?x German)))
+     ))
+  
+  (define dutch-facts
+    '((native-speaker Herman Pa-Dutch)
+      (native-speaker Fritz German)))
+  
+  (define gullible-rulebase
+    (rulebase
+     
+     (rule r6 (if (and (citizen ?x)
+                       (crook ?y))
+                  (not (like ?x ?y))))
+     
+     ; r7 would only work if rebuttals are search for and found
+     ;   (rule r7 (if (and (citizen ?x)
+     ;                     (gullible ?x)
+     ;                     (crook ?y)
+     ;                     (elected ?y))
+     ;                (like ?x ?y)))
+     
+     (rule r7 (if (and (citizen ?x)
+                       (gullible ?x)
+                       (crook ?y)
+                       (elected ?y))
+                  (excluded r6 (not (like ?x ?y)))))
+     ))
+  
+  (define gullible-facts
+    '((citizen Fred)
+      (citizen John)
+      (gullible Fred)
+      (crook Dick)
+      (elected Dick)))
+  
+  (define blocks-world-rulebase
+    (rulebase
+     
+     
+     (rule r8 
+           (if (and (block ?x)
+                    (heavy ?x))
+               (on ?x table)))
+     
+     (rule r9 
+           (if (on A table)
+               (excluded r8 (on B table))))
+     
+     (rule r10 
+           (if (on B table)
+               (excluded r8 (on A table))))  
+     ))
+  
+  (define blocks-world-facts 
+    '((block A)
+      (block B)
+      (block C)
+      (heavy A)
+      (heavy B)
+      (heavy C)
+      (not (on B table))))
+  
+  (define dancer-rulebase
+    (rulebase
+     
+     (rule r12
+           (if (dancer ?x)
+               (graceful ?x)))
+     
+     (rule r13
+           (if (and (dancer ?x)
+                    (graceful ?x))
+               (ballerina ?x))) 
+     
+     (rule r14 
+           (if (or (rock-and-roller ?x) 
+                   (square-dancer ?x))
+               (excluded r12 (graceful ?x))))
+     
+     (rule r15
+           (if (square-dancer ?x)
+               (dancer ?x)))
+     
+     (rule r16
+           (if (rock-and-roller ?x)
+               (dancer ?x)))
+     
+     )) ; end of rule base
+  
+  (define dancer-facts 
+    '((dancer Naomi)
+      (dancer Mikhail)
+      (rock-and-roller Norbert)
+      (square-dancer Sally)))
+  
+  
+  ; engine integer integer (list-of symbol) -> statement -> (stream-of argument-state)
+  (define (engine max-nodes max-turns rules assumptions critical-questions)
+    (make-engine* max-nodes max-turns 
+                  (accept default-context assumptions)
+                  (list (generate-arguments-from-rules rules critical-questions) 
+                        builtins
+                        )))
+  
+  (printn "starting with rule tests ...")
+  
+  
+  ; -- taken from rule-tests
+  
+  (run-single-test (all-in? '(bird Tweety) (engine 20 1 rb1 as1 null))
+                   "simple rules"
+                   "rule test: (bird Tweety) should be acceptable! (simple)")
+  
+  (run-single-test (all-in? '(bird ?x) (engine 20 1 rb1 as1 null))
+                   "simple rules with variables"
+                   "rule test: (bird Tweety) should be acceptable! (simple variables)")
+  
+  ; coins are money
+  (run-single-test (all-in? '(money item1) (engine 20 1 rb1 as1 null))
+                   "simple rules"
+                   "rule test: (money item1) should be acceptable! (simple)")
+  
+  (run-single-test (all-in? '(prior ?r1 ?r2) (engine 20 1 rb1 as1 null))
+                   "rules with conjunctions"
+                   "rule test: (prior r6 r1) should be acceptable! (conjunction)")
+  
+  ; disjunction of atomic statements
+  (run-single-test (all-in? '(p3 a) (engine 20 1 rb1 as1 null))
+                   "rules with disjunctions of atomic statements"
+                   "rule test: (p3 a) should be acceptable! (disjunction of atomic statements)")
+  
+  ; disjunction of conjunctions
+  (run-single-test (all-in? '(p9 a) (engine 20 1 rb1 as1 null))
+                   "rules with disjunctions of conjunctions"
+                   "rule test: (p9 a) should be acceptable! (disjunction of conjunction)")
+  
+  ; find pro argument
+  (run-single-test (all-in? '(goods item1) (engine 20 1 rb1 as1 null))
+                   "rules with one turn"
+                   "rule test: (goods item1) should be acceptable! (one turn)")
+  
+  ; unless money exception
+  (run-single-test (not (all-in? '(goods item1) (engine 20 2 rb1 as1 null)))
+                   "rules with two turns"
+                   "rule test: (goods item1) should not be acceptable! (2 turns - exception)")
+    
+  ; repealed rules are not valid
+  (run-single-test (not (all-in? '(convenient item1) (engine 20 2 rb1 as1 '(valid))))
+                   "repealed rules should not be acceptable"
+                   "rule test: (convenient item1) should not be acceptable! (repealed rules are not valid)")
+  
+  ; lex posterior
+  (run-single-test (not (all-in? '(goods item2) (engine 20 2 rb1 as1 '(priority)))) 
+                   "lex posterior rules"
+                   "rule test: (goods item2) should not be acceptable! (lex posterior)")
+  
+  ; to do: fix the following test. The success predicate tests only whether one is found, not all  
+  ; (test-true "multiple rule conclusions" (all-in? '(convenient ?x)) (engine 20 1 null))
+  
+  (run-single-test (all-in? '(not (goods item2)) (engine 20 3 rb1 as1 null)) 
+                   "rules with 3 turns and negated query"
+                   "rule test: (not (goods item2)) should be acceptable! (3 turns - negated query)")
+  
+  (run-single-test (not (all-in? '(flies Tweety) (engine 20 2 rb1 as1 '(excluded))))
+                   "exclusionary rules"
+                   "rule test: (flies Tweety) should not be acceptable! (exclusionary)")
+  
+  (run-single-test (all-in? '(applies ?r (goods ?x)) (engine 20 1 rb1 as1 null))
+                   "rules with applies"
+                   "rule test: (applies (goods item1)) and (applies (goods item2)) shpuld be acceptable! (applies)")
+  
+  ; to do: test negative conditions and exceptions
+  ; to do: test rules with negative conclusions
+  
+  ; reverse a list
+  (run-single-test (all-in? '(p11 ?x) (engine 20 1 rb1 as1 null)) 
+                   "rules with eval (reverse)"
+                   "rule test: (p11 (e d c b a)) should be acceptable! (eval)")
+  
+  ; calculations
+  (run-single-test (all-in? '(taxable-income Sam ?x) (engine 20 1 rb1 as1 null))
+                   "rules with eval (calculation)"
+                   "rule test: (taxable-income Sam 53000) should be acceptable! (eval)")
+  
+  ; to do: test assumptions -- a statement is questioned by making an argument pro or con the statement
+  ; to do: event calculus tests
+  
+  
+  ; -- Royal Elephant Benchmark
+  
+  (run-single-test (some-in? '(gray ?x) (engine 20 2 elephants-rulebase elephant-facts null))
+                   "rules: Royal Elephant Benchmark 1"
+                   "rule test: (gray dumbo) should be acceptable! (Royal Elephant Benchmark)")
+  
+  (run-single-test (some-in? '(not (gray ?x)) (engine 20 2 elephants-rulebase elephant-facts null))
+                   "rules: Royal Elephant Benchmark 2"
+                   "rule test: (not (gray clyde)) should be acceptable! (Royal Elephant Benchmark)")
+  
+  ; -- Pennsylvania Dutch Benchmark
+  
+  (run-single-test (some-in? '(born ?x ?y) (engine 20 2 dutch-rulebase dutch-facts null))
+                   "rules: Pennsylvania Dutch Benchmark 1"
+                   "rule test: (born Herman America) should be acceptable! (Pennsylvania Dutch Benchmark)")
 
-(define elephants-rulebase 
-  (rulebase
-   
-   (rule r1 
-         (if (and (elephant ?x)
-                  (unless (royal ?x)))
-             (gray ?x)))
-   
-   (rule r2 
-         (if (and (elephant ?x)
-                  (royal ?x))
-             (not (gray ?x))))      
-   ))
-
-(define elephant-facts
-  '((elephant clyde)
-    (african clyde)
-    (royal clyde)
-    (elephant dumbo)
-    (african dumbo)))
-
-(define dutch-rulebase
-  (rulebase
-   
-   (rule r3
-         (if (native-speaker ?x Pa-Dutch)
-             (born ?x America)))
-   
-   (rule r4
-         (if (and (native-speaker ?x German)
-                  (unless (native-speaker ?x Pa-Dutch)))
-             (not (born ?x America))))
-   
-   (rule r5 
-         (if (native-speaker ?x Pa-Dutch)
-             (native-speaker ?x German)))
-   ))
-
-(define dutch-facts
-  '((native-speaker Herman Pa-Dutch)
-    (native-speaker Fritz German)))
-
-(define gullible-rulebase
-  (rulebase
-   
-   (rule r6 (if (and (citizen ?x)
-                     (crook ?y))
-                (not (like ?x ?y))))
-   
-   ; r7 would only work if rebuttals are search for and found
-   ;   (rule r7 (if (and (citizen ?x)
-   ;                     (gullible ?x)
-   ;                     (crook ?y)
-   ;                     (elected ?y))
-   ;                (like ?x ?y)))
-   
-   (rule r7 (if (and (citizen ?x)
-                     (gullible ?x)
-                     (crook ?y)
-                     (elected ?y))
-                (excluded r6 (not (like ?x ?y)))))
-   ))
-
-(define gullible-facts
-  '((citizen Fred)
-    (citizen John)
-    (gullible Fred)
-    (crook Dick)
-    (elected Dick)))
-
-(define blocks-world-rulebase
-  (rulebase
-   
-   
-   (rule r8 
-         (if (and (block ?x)
-                  (heavy ?x))
-             (on ?x table)))
-   
-   (rule r9 
-         (if (on A table)
-             (excluded r8 (on B table))))
-   
-   (rule r10 
-         (if (on B table)
-             (excluded r8 (on A table))))  
-   ))
-
-(define blocks-world-facts 
-  '((block A)
-    (block B)
-    (block C)
-    (heavy A)
-    (heavy B)
-    (heavy C)
-    (not (on B table))))
-
-(define dancer-rulebase
-  (rulebase
-   
-   (rule r12
-         (if (dancer ?x)
-             (graceful ?x)))
-   
-   (rule r13
-         (if (and (dancer ?x)
-                  (graceful ?x))
-             (ballerina ?x))) 
-   
-   (rule r14 
-         (if (or (rock-and-roller ?x) 
-                 (square-dancer ?x))
-             (excluded r12 (graceful ?x))))
-   
-   (rule r15
-         (if (square-dancer ?x)
-             (dancer ?x)))
-   
-   (rule r16
-         (if (rock-and-roller ?x)
-             (dancer ?x)))
-   
-   )) ; end of rule base
-
-(define dancer-facts 
-  '((dancer Naomi)
-    (dancer Mikhail)
-    (rock-and-roller Norbert)
-    (square-dancer Sally)))
-
-
-; engine integer integer (list-of symbol) -> statement -> (stream-of argument-state)
-(define (engine max-nodes max-turns rules assumptions critical-questions)
-  (make-engine* max-nodes max-turns 
-                (accept default-context assumptions)
-                (list (generate-arguments-from-rules rules critical-questions) 
-                      builtins
-                      )))
-
-(printn "starting with rule tests ...")
-
-
-; -- taken from rule-tests
-
-(display "testing simple rules ...")
-(if (all-in? '(bird Tweety) (engine 20 1 rb1 as1 null))
-    (printn " OK") 
-    (begin (adderror "rule test: (bird Tweety) should be acceptable! (simple)")
-           (printn " failed!")))
-
-(display "testing simple rules with variables ...")
-(if (all-in? '(bird ?x) (engine 20 1 rb1 as1 null))
-    (printn " OK")
-    (begin (adderror "rule test: (bird Tweety) should be acceptable! (simple variables)")
-           (printn " failed!")))
-
-; coins are money
-(display "testing simple rules ...")
-(if (all-in? '(money item1) (engine 20 1 rb1 as1 null))
-    (printn " OK") 
-    (begin (adderror "rule test: (money item1) should be acceptable! (simple)")
-           (printn " failed!"))) 
-
-(display "testing rules with conjunctions ...")
-(if (all-in? '(prior ?r1 ?r2) (engine 20 1 rb1 as1 null)) 
-    (printn " OK") 
-    (begin (adderror "rule test: (prior r6 r1) should be acceptable! (conjunction)")
-           (printn " failed!")))
-
-; disjunction of atomic statements
-(display "testing rules with disjunctions of atomic statements ...")
-(if (all-in? '(p3 a) (engine 20 1 rb1 as1 null))
-    (printn " OK")
-    (begin (adderror "rule test: (p3 a) should be acceptable! (disjunction of atomic statements)")
-           (printn " failed!"))) 
-
-; disjunction of conjunctions
-(display "testing rules with disjunctions of conjunctions ...")
-(if (all-in? '(p9 a) (engine 20 1 rb1 as1 null))
-    (printn " OK")
-    (begin (adderror "rule test: (p9 a) should be acceptable! (disjunction of conjunction)") 
-           (printn " failed!"))) 
-
-; find pro argument
-(display "testing rules with one turn ...")
-(if (all-in? '(goods item1) (engine 20 1 rb1 as1 null))
-    (printn " OK")
-    (begin (adderror "rule test: (goods item1) should be acceptable! (one turn)")
-           (printn " failed!"))) 
-
-; unless money exception
-(display "testing rules with two turns ...")
-(if (not (all-in? '(goods item1) (engine 20 2 rb1 as1 null)))
-    (printn " OK") 
-    (begin (adderror "rule test: (goods item1) should not be acceptable! (2 turns - exception)")
-           (printn " failed!"))) 
-
-; rebuttal: edible things are not goods
-(display "testing rules with rebuttals ...")
-(if (not (all-in? '(goods item2) (engine 20 2 rb1 as1 null))) 
-    (printn " OK")
-    (begin (adderror "rule test: (goods item2) should not be acceptable! (rebuttal - this failure is known and should appear)")
-           (printn " failed!")))
-
-; repealed rules are not valid
-(display "testing repealed rules should not be acceptable ...")
-(if (not (all-in? '(convenient item1) (engine 20 2 rb1 as1 '(valid))))
-    (printn " OK") 
-    (begin (adderror "rule test: (convenient item1) should not be acceptable! (repealed rules are not valid)") 
-           (printn " failed!")))
-
-; lex posterior
-(display "testing lex posterior rules ...")
-(if (not (all-in? '(goods item2) (engine 20 2 rb1 as1 '(priority)))) 
-    (printn " OK") 
-    (begin (adderror "rule test: (goods item2) should not be acceptable! (lex posterior)")
-           (printn " failed!")))   
-
-; to do: fix the following test. The success predicate tests only whether one is found, not all  
-; (test-true "multiple rule conclusions" (all-in? '(convenient ?x)) (engine 20 1 null))
-
-(display "testing rules with 3 turns and negated query ...")
-(if (all-in? '(not (goods item2)) (engine 20 3 rb1 as1 null)) 
-    (printn " OK") 
-    (begin (adderror "rule test: (not (goods item2)) should be acceptable! (3 turns - negated query)")
-           (printn " failed!")))
-
-(display "testing exclusionary rules ...")
-(if (not (all-in? '(flies Tweety) (engine 20 2 rb1 as1 '(excluded))))
-    (printn " OK")
-    (begin (adderror "rule test: (flies Tweety) should not be acceptable! (exclusionary)")
-           (printn " failed!")))
-
-(display "testing rules with applies ...")
-(if (all-in? '(applies ?r (goods ?x)) (engine 20 1 rb1 as1 null))
-    (printn " OK")
-    (begin (adderror "rule test: (applies (goods item1)) and (applies (goods item2)) shpuld be acceptable! (applies)")
-           (printn " failed!")))
-
-; to do: test negative conditions and exceptions
-; to do: test rules with negative conclusions
-
-; reverse a list
-(display "testing rules with eval (reverse) ...")
-(if (all-in? '(p11 ?x) (engine 20 1 rb1 as1 null)) 
-    (printn " OK")
-    (begin (adderror "rule test: (p11 (e d c b a)) should be acceptable! (eval)")
-           (printn " failed!"))) 
-
-; calculations
-(display "testing rules with eval (calculation) ...")
-(if (all-in? '(taxable-income Sam ?x) (engine 20 1 rb1 as1 null))
-    (printn " OK")
-    (begin (adderror "rule test: (taxable-income Sam 53000) should be acceptable! (eval)")
-           (printn " failed!"))) 
-
-; to do: test assumptions -- a statement is questioned by making an argument pro or con the statement
-; to do: event calculus tests
-
-
-; -- Royal Elephant Benchmark
-
-(display "testing rules: Royal Elephant Benchmark 1 ...")
-(if (some-in? '(gray ?x) (engine 20 2 elephants-rulebase elephant-facts null))
-    (printn " OK")
-    (begin (adderror "rule test: (gray dumbo) should be acceptable! (Royal Elephant Benchmark)")
-           (printn " failed!"))) 
-
-(display "testing rules: Royal Elephant Benchmark 2 ...")
-(if (some-in? '(not (gray ?x)) (engine 20 2 elephants-rulebase elephant-facts null))
-    (printn " OK")
-    (begin (adderror "rule test: (not (gray clyde)) should be acceptable! (Royal Elephant Benchmark)")
-           (printn " failed!"))) 
-
-
-; -- Pennsylvania Dutch Benchmark
-
-(display "testing rules: Pennsylvania Dutch Benchmark 1 ...")
-(if (some-in? '(born ?x ?y) (engine 20 2 dutch-rulebase dutch-facts null))
-    (printn " OK")
-    (begin (adderror "rule test: (born Herman America) should be acceptable! (Pennsylvania Dutch Benchmark)")
-           (printn " failed!"))) 
-
-(display "testing rules: Pennsylvania Dutch Benchmark 2 ...")
-(if (some-in? '(not (born ?x America)) (engine 20 2 dutch-rulebase dutch-facts null))
-    (printn " OK")
-    (begin (adderror "rule test: (not (born Fritz America)) should be acceptable! (Pennsylvania Dutch Benchmark)")
-           (printn " failed!"))) 
-
-
-; -- Gullible Citizens Benchmark
-
-(display "testing rules: Gullible Citizens Benchmark 1 ...")
-(if (some-in? '(not (like ?x ?y)) (engine 20 2 gullible-rulebase gullible-facts '(excluded)))
-    (printn " OK")
-    (begin (adderror "rule test: (not (like John Dick)) should be acceptable! (Gullible Citizens Benchmark)")
-           (printn " failed!")))
-
-(display "testing rules: Gullible Citizens Benchmark 2 ...")
-(if (not (some-in? '(not (like Fred Dick)) (engine 20 2 gullible-rulebase gullible-facts '(excluded))))
-    (printn " OK")
-    (begin (adderror "rule test: (not (like Fred Dick)) should not be acceptable! (Gullible Citizens Benchmark)")
-           (printn " failed!")))
-
-
-; -- Blocks World Benchmark
-
-(display "testing rules: Blocks World Benchmark 1 ...")
-(if (some-in? '(block ?x) (engine 20 2 blocks-world-rulebase blocks-world-facts '(excluded)))
-    (printn " OK")
-    (begin (adderror "rule test: (block C), (block B) and (block A) should be acceptable! (Blocks World Benchmark)")
-           (printn " failed!")))
-
-(display "testing rules: Blocks World Benchmark 2 ...")
-(if (some-in? '(on ?x table) (engine 20 2 blocks-world-rulebase blocks-world-facts '(excluded)))
-    (printn " OK")
-    (begin (adderror "rule test: (on C table) should be acceptable! (Blocks World Benchmark)")
-           (printn " failed!")))
-
-(display "testing rules: Blocks World Benchmark 3 ...")
-(if (some-in? '(not (on ?x table)) (engine 20 2 blocks-world-rulebase blocks-world-facts '(excluded)))
-    (printn " OK")
-    (begin (adderror "rule test: (not (on B table)) should be acceptable! (Blocks World Benchmark)")
-           (printn " failed!")))
-
-
-; -- Dancer Benchmark
-
-(display "testing rules: Dancer Benchmark 1 ...")
-(if (some-in? '(dancer Sally) (engine 50 2 dancer-rulebase dancer-facts '(excluded)))
-    (printn " OK")
-    (begin (adderror "rule test: (dancer Sally) should be acceptable! (Dancer Benchmark)")
-           (printn " failed!")))
-
-(display "testing rules: Dancer Benchmark 2 ...")
-(if (not (some-in? '(ballerina Sally) (engine 50 2 dancer-rulebase dancer-facts '(excluded))))
-    (printn " OK")
-    (begin (adderror "rule test: (ballerina Sally) should not be acceptable! (Dancer Benchmark)")
-           (printn " failed!")))  
-
-(newline)
-
-)
+  
+  (run-single-test (some-in? '(not (born ?x America)) (engine 20 2 dutch-rulebase dutch-facts null))
+                   "rules: Pennsylvania Dutch Benchmark 2"
+                   "rule test: (not (born Fritz America)) should be acceptable! (Pennsylvania Dutch Benchmark)")
+  
+  ; -- Gullible Citizens Benchmark
+  
+  (run-single-test (some-in? '(not (like ?x ?y)) (engine 20 2 gullible-rulebase gullible-facts '(excluded)))
+                   "rules: Gullible Citizens Benchmark 1"
+                   "rule test: (not (like John Dick)) should be acceptable! (Gullible Citizens Benchmark)")
+  
+  (run-single-test (not (some-in? '(not (like Fred Dick)) (engine 20 2 gullible-rulebase gullible-facts '(excluded))))
+                   "rules: Gullible Citizens Benchmark 2"
+                   "rule test: (not (like Fred Dick)) should not be acceptable! (Gullible Citizens Benchmark)")
+  
+  ; -- Blocks World Benchmark
+  
+  (run-single-test (some-in? '(block ?x) (engine 20 2 blocks-world-rulebase blocks-world-facts '(excluded)))
+                   "rules: Blocks World Benchmark 1"
+                   "rule test: (block C), (block B) and (block A) should be acceptable! (Blocks World Benchmark)")
+  
+  (run-single-test (some-in? '(on ?x table) (engine 20 2 blocks-world-rulebase blocks-world-facts '(excluded)))
+                   "rules: Blocks World Benchmark 2"
+                   "rule test: (on C table) should be acceptable! (Blocks World Benchmark)")
+  
+  (run-single-test (some-in? '(not (on ?x table)) (engine 20 2 blocks-world-rulebase blocks-world-facts '(excluded)))
+                   "rules: Blocks World Benchmark 3"
+                   "rule test: (not (on B table)) should be acceptable! (Blocks World Benchmark)")
+  
+  ; -- Dancer Benchmark
+  
+  (run-single-test (some-in? '(dancer Sally) (engine 50 2 dancer-rulebase dancer-facts '(excluded)))
+                   "rules: Dancer Benchmark 1"
+                   "rule test: (dancer Sally) should be acceptable! (Dancer Benchmark)")
+  
+  (run-single-test (not (some-in? '(ballerina Sally) (engine 50 2 dancer-rulebase dancer-facts '(excluded))))
+                   "rules: Dancer Benchmark 2"
+                   "rule test: (ballerina Sally) should not be acceptable! (Dancer Benchmark)")
+  
+  (newline)
+  
+  )
 
 
 ; -------------------------------
@@ -597,91 +652,65 @@
   
   (printn "starting with ontology tests ...")
   
-  (display "testing ontologies: dlpcinclusion (simple) ...")
-  (if (all-in? '(c2 i1) e1)
-      (printn " OK")
-      (begin (adderror "ontology test: (c2 i1) should be acceptable! (dlpcinclusion - simple)")
-             (printn " failed!"))) 
+  (run-single-test (all-in? '(c2 i1) e1)
+                   "ontologies: dlpcinclusion (simple)"
+                   "ontology test: (c2 i1) should be acceptable! (dlpcinclusion - simple)")
   
-  (display "testing ontologies: dlpcinclusion (conjunction) ...")
-  (if (and (all-in? '(c3 i2) e1)
-           (all-in? '(c4 i2) e1))
-      (printn " OK")
-      (begin (adderror "ontology test: (c3 i2) and (c4 i2) should be acceptable! (dlpcinclusion - conjunction)")
-             (printn " failed!")))
+  (run-single-test (and (all-in? '(c3 i2) e1)
+                        (all-in? '(c4 i2) e1))
+                   "ontologies: dlpcinclusion (conjunction)"
+                   "ontology test: (c3 i2) and (c4 i2) should be acceptable! (dlpcinclusion - conjunction)")
   
-  (display "testing ontologies: dlpcinclusion (disjunction and univrestriction) ...")
-  (if (and (all-in? '(c9 i33) e1)
-           (all-in? '(c9 i44) e1))
-      (printn " OK")
-      (begin (adderror "ontology test: (c9 i33) and (c9 i44) should be acceptable! (dlpcinclusion - disjunction and univrestriction)")
-             (printn " failed!")))
+  (run-single-test (and (all-in? '(c9 i33) e1)
+                        (all-in? '(c9 i44) e1))
+                   "ontologies: dlpcinclusion (disjunction and univrestriction)"
+                   "ontology test: (c9 i33) and (c9 i44) should be acceptable! (dlpcinclusion - disjunction and univrestriction)")
   
-  (display "testing ontologies: dlpcinclusion (existrestriction) ...")
-  (if (all-in? '(c12 i5) e1)          
-      (printn " OK")
-      (begin (adderror "ontology test: (c2 i5) should be acceptable! (dlpcinclusion - existrestriction)")
-             (printn " failed!")))
+  (run-single-test (all-in? '(c12 i5) e1)
+                   "ontologies: dlpcinclusion (existrestriction)"
+                   "ontology test: (c2 i5) should be acceptable! (dlpcinclusion - existrestriction)")
   
-  (display "testing ontologies: dlpcequivalence (simple) ...")
-  (if (and (all-in? '(c13 i7) e1)
-           (all-in? '(c14 i8) e1))
-      (printn " OK")
-      (begin (adderror "ontology test: (c13 i7) and (c14 i8) should be acceptable! (dlpcequivalence - simple)")
-             (printn " failed!")))
+  (run-single-test (and (all-in? '(c13 i7) e1)
+                        (all-in? '(c14 i8) e1))
+                   "ontologies: dlpcequivalence (simple)"
+                   "ontology test: (c13 i7) and (c14 i8) should be acceptable! (dlpcequivalence - simple)")
   
-  (display "testing ontologies: dlpcequivalence (conjunction) ...")
-  (if (and (all-in? '(c15 i9) e1)
-           (all-in? '(c16 i9) e1)
-           (all-in? '(c17 i10) e1)
-           (all-in? '(c18 i10) e1))
-      (printn " OK")
-      (begin (adderror "ontology test: (c15 i9), (c16 i9), (c17 i10) and (c18 i10) should be acceptable! (dlpcequivalence - conjunction)")
-             (printn " failed!")))
+  (run-single-test (and (all-in? '(c15 i9) e1)
+                        (all-in? '(c16 i9) e1)
+                        (all-in? '(c17 i10) e1)
+                        (all-in? '(c18 i10) e1))
+                   "ontologies: dlpcequivalence (conjunction)"
+                   "ontology test: (c15 i9), (c16 i9), (c17 i10) and (c18 i10) should be acceptable! (dlpcequivalence - conjunction)")
   
-  (display "testing ontologies: dlprange ...")
-  (if (all-in? '(c19 i12) e1)
-      (printn " OK")
-      (begin (adderror "ontology test: (c19 i12) should be acceptable! (dlprange)")
-             (printn " failed!")))
+  (run-single-test (all-in? '(c19 i12) e1)
+                   "ontologies: dlprange"
+                   "ontology test: (c19 i12) should be acceptable! (dlprange)")
   
-  (display "testing ontologies: dlpdomain ...")
-  (if (all-in? '(c20 i11) e1)
-      (printn " OK")
-      (begin (adderror "ontology test: (c20 i11) should be acceptable! (dlpdomain)")
-             (printn " failed!")))
+  (run-single-test (all-in? '(c20 i11) e1)
+                   "ontologies: dlpdomain"
+                   "ontology test: (c20 i11) should be acceptable! (dlpdomain)")
   
-  (display "testing ontologies: dlprinclusion ...")
-  (if (all-in? '(r4 i13 i14) e1)
-      (printn " OK")
-      (begin (adderror "ontology test: (r4 i13 i14) should be acceptable! (dlprinclusion)")
-             (printn " failed!")))
+  (run-single-test (all-in? '(r4 i13 i14) e1)
+                   "ontologies: dlprinclusion"
+                   "ontology test: (r4 i13 i14) should be acceptable! (dlprinclusion)")
   
-  (display "testing ontologies: dlprequivalence ...")
-  (if (and (all-in? '(r5 i15 i16) e1)
-           (all-in? '(r6 i17 i18) e1))
-      (printn " OK")
-      (begin (adderror "ontology test: (r5 i15 i16) and (r6 i17 i18) should be acceptable! (dlprequivalence)")
-             (printn " failed!")))
+  (run-single-test (and (all-in? '(r5 i15 i16) e1)
+                        (all-in? '(r6 i17 i18) e1))
+                   "ontologies: dlprequivalence"
+                   "ontology test: (r5 i15 i16) and (r6 i17 i18) should be acceptable! (dlprequivalence)")
   
-  (display "testing ontologies: dlpinverse ...")
-  (if (and (all-in? '(r8 i20 i19) e1)
-           (all-in? '(r7 i22 i21) e1))
-      (printn " OK")
-      (begin (adderror "ontology test: (r8 i20 i19) and (r7 i22 i21) should be acceptable! (dlpinverse)")
-             (printn " failed!")))
+  (run-single-test (and (all-in? '(r8 i20 i19) e1)
+                        (all-in? '(r7 i22 i21) e1))
+                   "ontologies: dlpinverse"
+                   "ontology test: (r8 i20 i19) and (r7 i22 i21) should be acceptable! (dlpinverse)")
   
-  (display "testing ontologies: dlptransitivity ...")
-  (if (all-in? '(r9 i23 i25) e1)
-      (printn " OK")
-      (begin (adderror "ontology test: (r9 i23 i25) should be acceptable! (dlptransitivity)")
-             (printn " failed!")))
+  (run-single-test (all-in? '(r9 i23 i25) e1)
+                   "ontologies: dlptransitivity"
+                   "ontology test: (r9 i23 i25) should be acceptable! (dlptransitivity)")
   
-  (display "testing ontologies: dlpassertion (univrestriction) ...")
-  (if (all-in? '(c21 i27) e1)
-      (printn " OK")
-      (begin (adderror "ontology test: (c21 i27) should be acceptable! (dlpassertion - univrestriction)")
-             (printn " failed!")))
+  (run-single-test (all-in? '(c21 i27) e1)
+                   "ontologies: dlpassertion (univrestriction)"
+                   "ontology test: (c21 i27) should be acceptable! (dlpassertion - univrestriction)")
   
   (newline)
   
@@ -711,27 +740,22 @@
   
   ;(view (stage-argument-graph stage1) (stage-context stage1))
   
+  ; d1 should have a string-length of 645 
   (define d1 (call-with-values open-string-output-port 
                                (lambda (p e)
                                  (diagram* (stage-argument-graph stage1)
                                            (stage-context stage1)
                                            identity 
                                            (lambda (s) (format "~a" s)) p)
-                                 (e))))
+                                 (e))))  
   
+  ; string-length of e1 is 3037 in plt and 3034 in ypsilon
   (define e1 (call-with-values open-string-output-port
                                (lambda (p e)
                                  (lkif-export i p)
-                                 (e))))
-  
-  ; plt
-  (define d2 "digraph g {\n    rankdir = \"RL\";\n    g589 [shape=box, label=\"Tweety is a penguin.\", style=\"filled\"];\n    g590 [shape=box, label=\"Birds normally fly.\", style=\"\"];\n    g591 [shape=box, label=\"Tweety is an abnormal bird.\", style=\"filled\"];\n    g592 [shape=box, label=\"Tweety is a bird.\", style=\"filled\"];\n    g593 [shape=box, label=\"Tweety can fly.\", style=\"\"];\n    g594 [shape=ellipse, label=\"a1\", style=\"\"];\n    g594 -> g593;\n    g592 -> g594 [arrowhead=\"none\"];\n    g590 -> g594 [arrowhead=\"dot\"];\n    g591 -> g594 [arrowhead=\"odot\"];\n    g595 [shape=ellipse, label=\"a2\", style=\"filled\"];\n    g595 -> g591;\n    g589 -> g595 [arrowhead=\"none\"];\n}\n")
-  
-  ; ypsilon
-  (define d3 "digraph g {\n    rankdir = \"RL\";\n    g589 [shape=box, label=\"Tweety is an abnormal bird.\", style=\"filled\"];\n    g590 [shape=box, label=\"Tweety is a penguin.\", style=\"filled\"];\n    g591 [shape=box, label=\"Tweety can fly.\", style=\"\"];\n    g592 [shape=box, label=\"Birds normally fly.\", style=\"\"];\n    g593 [shape=box, label=\"Tweety is a bird.\", style=\"filled\"];\n    g594 [shape=ellipse, label=\"a2\", style=\"filled\"];\n    g594 -> g589;\n    g590 -> g594 [arrowhead=\"none\"];\n    g595 [shape=ellipse, label=\"a1\", style=\"\"];\n    g595 -> g591;\n    g593 -> g595 [arrowhead=\"none\"];\n    g592 -> g595 [arrowhead=\"dot\"];\n    g589 -> g595 [arrowhead=\"odot\"];\n}\n")
-  
-  (define e2 "<lkif>\n  <sources>\n    <source uri=\"http://fokus.lkif.test.de\" element=\"p\"/>\n    <source uri=\"http://fokus.lkif.test.de\" element=\"q\"/>\n  </sources>\n  <theory id=\"theory596\">\n    <axioms>\n      <axiom id=\"a597\">\n        <s pred=\"is-a-penguin\">\n          <c>Tweety</c>\n        </s>\n      </axiom>\n    </axioms>\n    <rules>\n      <rule id=\"r1\" strict=\"true\">\n        <head>\n          <s pred=\"is-an-abnormal-bird\">\n            <v>bird</v>\n          </s>\n        </head>\n        <body>\n          <s pred=\"is-a-penguin\">\n            <v>bird</v>\n          </s>\n        </body>\n      </rule>\n      <rule id=\"r2\" strict=\"true\">\n        <head>\n          <s pred=\"is-a-bird\">\n            <v>bird</v>\n          </s>\n        </head>\n        <body>\n          <s pred=\"is-a-penguin\">\n            <v>bird</v>\n          </s>\n        </body>\n      </rule>\n      <rule id=\"r3\" strict=\"false\">\n        <head>\n          <s pred=\"flies\">\n            <v>bird</v>\n          </s>\n        </head>\n        <body>\n          <s pred=\"is-a-bird\">\n            <v>bird</v>\n          </s>\n        </body>\n      </rule>\n      <rule id=\"r4\" strict=\"false\">\n        <head>\n          <s pred=\"excluded\">\n            <c>r3</c>\n            <s pred=\"flies\">\n              <v>bird</v>\n            </s>\n          </s>\n        </head>\n        <body>\n          <s pred=\"is-a-penguin\">\n            <v>bird</v>\n          </s>\n        </body>\n      </rule>\n    </rules>\n  </theory>\n  <argument-graphs>\n    <argument-graph id=\"ag603\" title=\"\" main-issue=\"\">\n      <statements>\n        <statement id=\"s598\" value=\"true\" assumption=\"false\" standard=\"BA\">\n          <s>Tweety is a penguin.</s>\n        </statement>\n        <statement id=\"s599\" value=\"unknown\" assumption=\"true\" standard=\"BA\">\n          <s assumable=\"true\">Birds normally fly.</s>\n        </statement>\n        <statement id=\"s600\" value=\"unknown\" assumption=\"true\" standard=\"BA\">\n          <s>Tweety is an abnormal bird.</s>\n        </statement>\n        <statement id=\"s601\" value=\"true\" assumption=\"false\" standard=\"BA\">\n          <s>Tweety is a bird.</s>\n        </statement>\n        <statement id=\"s602\" value=\"unknown\" assumption=\"true\" standard=\"BA\">\n          <s>Tweety can fly.</s>\n        </statement>\n      </statements>\n      <arguments>\n        <argument id=\"a1\" title=\"\" direction=\"pro\" scheme=\"\" weight=\"0.5\">\n          <conclusion statement=\"s602\"/>\n          <premises>\n            <premise polarity=\"positive\" exception=\"false\" role=\"\" statement=\"s601\"/>\n            <premise polarity=\"positive\" exception=\"false\" role=\"\" statement=\"s599\"/>\n            <premise polarity=\"positive\" exception=\"true\" role=\"\" statement=\"s600\"/>\n          </premises>\n        </argument>\n        <argument id=\"a2\" title=\"\" direction=\"pro\" scheme=\"\" weight=\"0.5\">\n          <conclusion statement=\"s600\"/>\n          <premises>\n            <premise polarity=\"positive\" exception=\"false\" role=\"\" statement=\"s598\"/>\n          </premises>\n        </argument>\n      </arguments>\n    </argument-graph>\n  </argument-graphs>\n</lkif>")
+                                 (e)))) 
 
+  
   
   (define (engine max-nodes max-turns critical-questions)
     (make-engine* max-nodes max-turns
@@ -743,39 +767,29 @@
   
   (printn "starting with lkif-tests ...")
   
-  (display "testing lkif-import: sources ...")
-  (if (and (string=? (source-uri src1) "http://fokus.lkif.test.de")
-           (string=? (source-element src1) "p")
-           (string=? (source-uri src2) "http://fokus.lkif.test.de")
-           (string=? (source-element src2) "q"))
-      (printn " OK")
-      (begin (adderror "lkif-import test: the imported list of sources is not identical with the presetting")
-             (printn " failed!")))
+  (run-single-test (and (string=? (source-uri src1) "http://fokus.lkif.test.de")
+                        (string=? (source-element src1) "p")
+                        (string=? (source-uri src2) "http://fokus.lkif.test.de")
+                        (string=? (source-element src2) "q"))
+                   "lkif-import: sources"
+                   "lkif-import test: the imported list of sources is not identical with the presetting")
   
-  (display "testing lkif-import: argument-diagram ...")
-  (if (or (string=? d1 d2)
-          (string=? d1 d3))
-      (printn " OK")
-      (begin (adderror "lkif-import test: the imported diagram is not identical with the presetting")
-             (printn " failed!")))  
+  (run-single-test (= (string-length d1) 645)
+                   "lkif-import: argument-diagram"
+                   "lkif-import test: the imported diagram is not identical with the presetting")
   
-  (display "testing lkif-import: rule-base (simple) ...")
-  (if (all-in? '(flies ?bird) lkif-engine1)
-      (printn " OK")
-      (begin (adderror "lkif-import test: (flies Tweety) should be acceptable (simple)")
-             (printn " failed!")))
+  (run-single-test (all-in? '(flies ?bird) lkif-engine1)
+                   "lkif-import: rule-base (simple)"
+                   "lkif-import test: (flies Tweety) should be acceptable (simple)")
   
-  (display "testing lkif-import: rule-base (excluded) ...")
-  (if (not (some-in? '(flies ?bird) lkif-engine2))
-      (printn " OK")
-      (begin (adderror "lkif-import test: (flies Tweety) should not be acceptable (excluded)")
-             (printn " failed!")))
+  (run-single-test (not (some-in? '(flies ?bird) lkif-engine2))
+                   "lkif-import: rule-base (excluded)"
+                   "lkif-import test: (flies Tweety) should not be acceptable (excluded)")
   
-  (display "testing lkif-export: file-creation ...")
-  (if (string=? e1 e2)
-      (printn " OK")
-      (begin (adderror "lkif-export: the created lkif-file is not identical with the presetting")
-             (printn " failed!")))
+  (run-single-test (or (= (string-length e1) 3034)
+                       (= (string-length e1) 3037))
+                   "lkif-export: file-creation"
+                   "lkif-export: the created lkif-file is not identical with the presetting")
   
   (newline)
   
@@ -801,21 +815,22 @@
   (define t11 '(not (and (or a b c) (or c d e))))
   (define t12 '(not (or (or a b (not c)) (and (not (or c d)) (not (and e f))))))
   (define t13 '(not (iff (and (or a b) (not c)) d)))
+
   
   (define (test-term t c)
-    (display "testing dnf term: ")
-    (display t)
-    (display " ... ")
-    (let ((d (to-dnf t)))
-      (if (and d
-               (dnf? d)
-               (if c
-                   (compare-formulas t d)
-                   #t))
-          (printn " OK")
-          (begin (adderror "dnf: term could not be converted to dnf or conversion is not logical equivalent")
-                 (printn " failed!")))))
-     
+    (let* ((s (call-with-values open-string-output-port (lambda (p e)
+                                                         (put-datum p t)
+                                                         (e))))
+           (d (to-dnf t)))
+      (run-single-test (and d
+                            (dnf? d)
+                            (if c
+                                (compare-formulas t d)
+                                #t))
+                       (string-append "dnf term: " s)
+                       "dnf: term could not be converted to dnf or conversion is not logical equivalent")))
+  
+  
   (printn "starting with dnf tests ...")
   (test-term t1 #t)
   (test-term t2 #t)
@@ -845,6 +860,7 @@
   (newline)
   (init-errors)
   (run-argument-tests)
+  (run-case-tests)
   (run-rule-tests)
   (run-ontology-tests)
   (run-lkif-tests)
