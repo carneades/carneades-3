@@ -38,7 +38,6 @@
               (and (Female ?x)
                    (Parent ?x))))
    
-   
    )) ; rulebase
 
 (define assumptions

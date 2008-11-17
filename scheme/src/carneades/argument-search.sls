@@ -38,10 +38,7 @@
          (carneades unify)
          (carneades stream)
          (carneades statement)
-         (carneades system)
-         ; (require (prefix compare: (lib "67.ss" "srfi"))) 
-         ; (require (lib "pretty.ss"))
-         )
+         (carneades system) )
  
  (define *debug* #f)
  
@@ -191,7 +188,7 @@
                      (case (state-viewpoint state)
                        ((pro) (state-con-goals state))
                        ((con) (update-goals (state-con-goals state) '())))
-                     ; replace the subtutions of the context
+                     ; replace the substitutions of the context
                      (arg:update-substitutions (state-context state) new-subs)
                      ; no new arguments
                      (state-arguments state)))))
@@ -239,7 +236,7 @@
                      ((con) (not in)))))
      (if *debug* 
          (begin 
-           (display "goal-state: ") (display result) (newline)
+           (printf "goal-state: ~a~%" result)
            (display-state state)))
      result))
  

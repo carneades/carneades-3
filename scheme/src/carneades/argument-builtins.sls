@@ -31,10 +31,9 @@
          (carneades lib match)
          (carneades rule)
          (carneades argument-search)
-         (only (carneades system) gensym)
+         (only (carneades system) gensym null printf)
          (prefix (carneades argument) argument:))
  
- (define null '())
  (define *debug* #f)
  
  ; type generator: statement state  -> (stream-of response)
