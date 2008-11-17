@@ -1,185 +1,210 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="../../../schemas/LKIF2.rnc" type="compact"?>
 <?xml-stylesheet type="text/css" href="../../../schemas/LKIF2.css"?>
-<lkif xmlns:family="http:://fokus.fraunhofer.de/elan/estrella/family.owl" xmlns:rules="http://www.estrellaproject.org/lkif-core/lkif-rules.owl">
-    <theory id="family-support">
-        <imports>
-            <import uri="http://fokus.fraunhofer.de/elan/estrella/family.owl"/>
-        </imports>
-        <axioms>
-            <axiom id="f1"><s pred="family:father">The father of <c>Charles</c> is <c>Max</c></s></axiom>
-            <axiom id="f2"><s pred="family:mother">The mother of <c>Max</c> is <c>Gertrude</c></s></axiom>
-            <axiom id="f3"><s pred="family:needy"><c>Gertrude</c> is needy</s></axiom>
-            <axiom id="f4">
-				<not>
-					<s pred="family:hasCapacityToSupport">
-						<c>Max</c>
-						has the capacity to provide support
-					</s>
-				</not>
-			</axiom>
-        </axioms>
-        <rules>
-		
-            <rule id="r1" strict="true">
-                <head>
-                    <s pred="family:grandparent"><v>Person1</v> is a grandparent of
-                    <v>Person3</v></s>
-                </head>
-                <body>
-                    <and>
-                        <s pred="family:parent"><v>Person1</v> is a parent of <v>Person2</v></s>
-                        <s pred="family:parent"><v>Person2</v> is a parent of <v>Person3</v></s>
-                    </and>
-                </body>
-            </rule>
-			
-		    <rule id="r2" strict="yes">
-				<head>
-					<s>ancestor ?x ?y</s>
-				</head>
-				<body>
-					<and>
-						<s>parent ?x ?z</s>
-						<s>ancestor ?z ?y</s>
-					</and>
-				</body>
-			</rule>
-			
-            <rule id="s1601-BGB">
-                <head>
-                    <s pred="family:obligatedToSupport"><v>Person1</v> is obligated to support
-                            <v>Person2</v></s>
-                </head>
-                <body>
-                    <s pred="family:directLineage"><v>Person1</v> is in direct lineage to
-                        <v>Person2</v></s>
-                </body>
-            </rule>
-            <rule id="s1589a-BGB">
-                <head>
-                    <s pred="family:directLineage"><v>Person1</v> is in direct lineage to
-                        <v>Person2</v></s>
-                </head>
-                <body>
-                    <s pred="family:ancestor"><v>Person1</v> is an ancestor of <v>Person2</v></s>
-                </body>
-            </rule>
-            <rule id="s1589b-BGB">
-                <head>
-                    <s pred="family:directLineage"><v>Person1</v> is in direct lineage to
-                    <v>Person2</v></s>
-                </head>
-                <body>
-                    <s pred="family:descendent"><v>Person1</v> is a descendent of <v>Person2</v>
-                    </s>
-                </body>
-            </rule>
-            <rule id="s1741-BGB">
-                <head>
-                    <s pred="family:ancestor"><v>Person2</v> is an ancestor <v>Person1</v></s>
-                </head>
-                <body>
-                    <s pred="family:adoptedBy"><v>Person1</v> was adopted by <v>Person2</v></s>
-                </body>
-            </rule>
-            <rule id="s1590-BGB">
-                <head>
-                    <not>
-                        <s pred="family:obligatedToSupport"><v>Person2</v> is obligated to support
-                                <v>Person2</v></s>
-                    </not>
-                </head>
-                <body>
-                    <s pred="family:relativeOfSpouse"><v>Person1</v> is a relative of the spouse of
-                            <v>Person2</v></s>
-                </body>
-            </rule>
-            <rule id="s1602a-BGB">
-                <head>
-                    <not>
-                        <s pred="family:obligatedToSupport"><v>Person2</v> is obligated to support
-                                <v>Person1</v></s>
-                    </not>
-                </head>
-                <body>
-                    <not>
-                        <s pred="family:needy"><v>Person1</v> is needy </s>
-                    </not>
-                </body>
-            </rule>
-            <rule id="s1602b-BGB">
-                <head>
-                    <s pred="family:needy"><v>Person1</v> is needy</s>
-                </head>
-                <body>
-                    <not>
-                        <s pred="family:ableToSupportSelf"><v>Person1</v> is able to support himself</s>
-                    </not>
-                </body>
-            </rule>
-            <rule id="s1602c-BGB">
-                <head>
-                    <not>
-                        <s pred="family:needy"><v>Person1</v> is needy</s>
-                    </not>
-                </head>
-                <body>
-                    <s pred="family:ableToSupportSelf"><v>Person1</v> is able to support to
-                    himself</s>
-                </body>
-            </rule>
-            <rule id="s1603-BGB">
-                <head>
-                    <not>
-                        <s pred="family:obligatedToSupport"><v>Person1</v> is obligated to support
-                                <v>Person2</v></s>
-                    </not>
-                </head>
-                <body>
-                    <not>
-                        <s pred="family:hasCapacityToSupport"><v>Person1</v> has the capacity to
-                            provide support</s>
-                    </not>
-                </body>
-            </rule>
-            <rule id="s1611a-BGB">
-                <head>
-                    <s pred="excluded">
-                        <c>s1601-BGB</c> excludes <s pred="family:obligatedToSupport"><v>Person2</v>
-                            is obligated to support <v>Person1</v></s>
-                    </s>
-                </head>
-                <body>
-                    <s pred="family:needyDueToImmoralBehavior"><v>Person1</v> is needy due to his
-                        own immoral behavior</s>
-                </body>
-            </rule>
-            <rule id="s91-BSHG">
-                <head>
-                    <s pred="excluded">
-                        <c>s1601-BGB</c>
-						excludes 
-						<s pred="family:obligatedToSupport">
-							<v>Person1</v>
-                            is obligated to support
-							<v>Person2</v>
-						</s>
-					</s>
-                </head>
-                <body>
-                    <s pred="family:undueHardship">
-						<s pred="family:obligatedToSupport">
-							<v>Person1</v> 
-							is obligated to support 
-							<v>Person2</v>
-						</s> 
-						would cause
-                        <v>Person1</v>
-						undue hardship
-					</s>
-                </body>
-            </rule>
-        </rules>
-    </theory>
+<lkif xmlns:family="http:://fokus.fraunhofer.de/elan/estrella/family.owl"
+  xmlns:rules="http://www.estrellaproject.org/lkif-core/lkif-rules.owl">
+  <theory id="family-support">
+    <imports>
+      <import uri="http://fokus.fraunhofer.de/elan/estrella/family.owl"/>
+    </imports>
+    <axioms>
+      <axiom id="f1">
+        <s pred="family:father">The father of <c>Max</c> is <c>Charles</c></s>
+      </axiom>
+      <axiom id="f2">
+        <s pred="family:mother">The mother of <c>Max</c> is <c>Gertrude</c></s>
+      </axiom>
+      <axiom id="f3">
+        <s pred="family:needy"><c>Gertrude</c> is needy</s>
+      </axiom>
+      <axiom id="f4">
+        <not>
+          <s pred="family:hasCapacityToSupport">
+            <c>Max</c> has the capacity to provide support </s>
+        </not>
+      </axiom>
+    </axioms>
+    
+    <rules>
+
+      <!-- begin rules from the ontology -->
+      
+      <rule id="o1">
+        <head>
+          <s pred="family:ancestor"><v>Person1</v> is an ancestor of <v>Person2</v></s>
+        </head>
+        <body>
+            <s pred="family:father">The father of <v>Person2</v> is <v>Person1</v></s>
+        </body>
+      </rule>
+      
+      <rule id="o2">
+        <head>
+          <s pred="family:ancestor"><v>Person1</v> is an ancestor of <v>Person2</v></s>
+        </head>
+        <body>
+          <s pred="family:mother">The mother of <v>Person2</v> is <v>Person1</v></s>
+        </body>
+      </rule>
+      
+      <!-- end rules from the ontology -->
+      
+      
+      <rule id="r1" strict="true">
+        <head>
+          <s pred="family:grandparent"><v>Person1</v> is a grandparent of <v>Person3</v></s>
+        </head>
+        <body>
+          <and>
+            <s pred="family:parent"><v>Person1</v> is a parent of <v>Person2</v></s>
+            <s pred="family:parent"><v>Person2</v> is a parent of <v>Person3</v></s>
+          </and>
+        </body>
+      </rule>
+
+      <rule id="r2" strict="true">
+        <head>
+          <s>ancestor ?x ?y</s>
+        </head>
+        <body>
+          <and>
+            <s>parent ?x ?z</s>
+            <s>ancestor ?z ?y</s>
+          </and>
+        </body>
+      </rule>
+
+      <rule id="s1601-BGB">
+        <head>
+          <s pred="family:obligatedToSupport"><v>Person1</v> is obligated to support
+          <v>Person2</v></s>
+        </head>
+        <body>
+          <s pred="family:directLineage"><v>Person1</v> is in direct lineage to <v>Person2</v></s>
+        </body>
+      </rule>
+      <rule id="s1589a-BGB">
+        <head>
+          <s pred="family:directLineage"><v>Person1</v> is in direct lineage to <v>Person2</v></s>
+        </head>
+        <body>
+          <s pred="family:ancestor"><v>Person2</v> is an ancestor of <v>Person1</v></s>
+        </body>
+      </rule>
+      <rule id="s1589b-BGB">
+        <head>
+          <s pred="family:directLineage"><v>Person1</v> is in direct lineage to <v>Person2</v></s>
+        </head>
+        <body>
+          <s pred="family:descendent"><v>Person1</v> is a descendent of <v>Person2</v>
+          </s>
+        </body>
+      </rule>
+      <rule id="s1741-BGB">
+        <head>
+          <s pred="family:ancestor"><v>Person2</v> is an ancestor <v>Person1</v></s>
+        </head>
+        <body>
+          <s pred="family:adoptedBy"><v>Person1</v> was adopted by <v>Person2</v></s>
+        </body>
+      </rule>
+      <rule id="s1590-BGB">
+        <head>
+          <not>
+            <s pred="family:obligatedToSupport"><v>Person2</v> is obligated to support
+              <v>Person2</v></s>
+          </not>
+        </head>
+        <body>
+          <s pred="family:relativeOfSpouse"><v>Person1</v> is a relative of the spouse of
+            <v>Person2</v></s>
+        </body>
+      </rule>
+      <rule id="s1602a-BGB">
+        <head>
+          <not>
+            <s pred="family:obligatedToSupport"><v>Person2</v> is obligated to support
+              <v>Person1</v></s>
+          </not>
+        </head>
+        <body>
+          <not>
+            <s pred="family:needy"><v>Person1</v> is needy </s>
+          </not>
+        </body>
+      </rule>
+      <rule id="s1602b-BGB">
+        <head>
+          <s pred="family:needy"><v>Person1</v> is needy</s>
+        </head>
+        <body>
+          <not>
+            <s pred="family:ableToSupportSelf"><v>Person1</v> is able to support himself</s>
+          </not>
+        </body>
+      </rule>
+      <rule id="s1602c-BGB">
+        <head>
+          <not>
+            <s pred="family:needy"><v>Person1</v> is needy</s>
+          </not>
+        </head>
+        <body>
+          <s pred="family:ableToSupportSelf"><v>Person1</v> is able to support to himself</s>
+        </body>
+      </rule>
+      <rule id="s1603-BGB">
+        <head>
+          <not>
+            <s pred="family:obligatedToSupport"><v>Person1</v> is obligated to support
+              <v>Person2</v></s>
+          </not>
+        </head>
+        <body>
+          <not>
+            <s pred="family:hasCapacityToSupport"><v>Person1</v> has the capacity to provide
+            support</s>
+          </not>
+        </body>
+      </rule>
+      <rule id="s1611a-BGB">
+        <head>
+          <s pred="excluded">
+            <c>s1601-BGB</c> excludes <s pred="family:obligatedToSupport"><v>Person2</v> is
+              obligated to support <v>Person1</v></s>
+          </s>
+        </head>
+        <body>
+          <s pred="family:needyDueToImmoralBehavior"><v>Person1</v> is needy due to his own immoral
+            behavior</s>
+        </body>
+      </rule>
+      <rule id="s91-BSHG">
+        <head>
+          <s pred="excluded">
+            <c>s1601-BGB</c> excludes <s pred="family:obligatedToSupport">
+              <v>Person1</v> is obligated to support <v>Person2</v>
+            </s>
+          </s>
+        </head>
+        <body>
+          <s pred="family:undueHardship">
+            <s pred="family:obligatedToSupport">
+              <v>Person1</v> is obligated to support <v>Person2</v>
+            </s> would cause <v>Person1</v> undue hardship </s>
+        </body>
+      </rule>
+    </rules>
+  </theory>
+  <argument-graphs>
+    <argument-graph id="ag1" title="Is Max obligated to support Gertrude?" main-issue="s1">
+      <statements>		
+        <statement id="s1" value="unknown" assumption="true" standard="BA">
+          <s pred="family:obligatedToSupport"><c>Max</c> is obligated to support <c>Gertrude</c></s>
+        </statement>
+      </statements>
+      <arguments>
+      </arguments>
+    </argument-graph>
+    </argument-graphs>
 </lkif>

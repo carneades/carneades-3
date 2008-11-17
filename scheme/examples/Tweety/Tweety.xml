@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?oxygen RNGSchema="../../../schemas/LKIF2.rnc" type="compact"?>
 <lkif>
 	<argument-graphs>
-	  <argument-graph id="NewGraph">
+	  <argument-graph id="ag1" title="Can Tweety fly?" main-issue="s1">
 	    <statements>		
 	      <statement id="s1" value="unknown" assumption="true" standard="BA"><s>Tweety can fly.</s></statement>
 	      <statement id="s2" value="true" assumption="true" standard="BA"><s>Tweety is a bird.</s></statement>
@@ -22,6 +23,31 @@
 	        <conclusion statement="s4"/>
 	        <premises>
 	          <premise exception="false" polarity="positive" role="" statement="s5"/>
+	        </premises>
+	      </argument>
+	    </arguments>
+	  </argument-graph>
+	  <argument-graph id="ag2" title="Can Tweety play guitar?" main-issue="s1">
+	    <statements>		
+	      <statement id="s1b" value="unknown" assumption="true" standard="BA"><s>Tweety can play guitar.</s></statement>
+	      <statement id="s2b" value="true" assumption="true" standard="BA"><s>Tweety is a bluesman.</s></statement>
+	      <statement id="s3b" value="unknown" assumption="true" standard="BA"><s assumable="true">Bluesmen normally play guitar.</s></statement>
+	      <statement id="s4b" value="unknown" assumption="true" standard="BA"><s>Tweety is an abnormal bluesman.</s></statement>
+	      <statement id="s5b" value="true" assumption="true" standard="BA"><s>Tweety is a harmonica player.</s></statement>
+	    </statements>
+	    <arguments>
+	      <argument direction="pro" id="a1b" scheme="" weight="50.0">
+	        <conclusion statement="s1b"/>
+	        <premises>
+	          <premise exception="false" polarity="positive" role="" statement="s2b"/>
+	          <premise exception="false" polarity="positive" role="" statement="s3b"/>
+	          <premise exception="true" polarity="positive" role="" statement="s4b"/>
+	        </premises>
+	      </argument>
+	      <argument direction="pro" id="a2b" scheme="" weight="50.0">
+	        <conclusion statement="s4b"/>
+	        <premises>
+	          <premise exception="false" polarity="positive" role="" statement="s5b"/>
 	        </premises>
 	      </argument>
 	    </arguments>

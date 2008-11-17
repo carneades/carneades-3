@@ -26,7 +26,7 @@
          argument-conclusion argument-premises argument-scheme pro con
          define-argument argument->datum datum->argument add-premise status?
          proof-standard? make-context
-         context-status context-standard context-compare context-substitutions default-context
+         context-status context-standard context-compare context-substitutions context-statements default-context
          context? state question accept reject assign-standard update-substitutions pro-arguments 
          con-arguments schemes-applied status proof-standard prior decided? accepted? rejected?
          questioned? stated? issue? make-argument-graph empty-argument-graph 
@@ -422,14 +422,7 @@
                               (accepted-statements c)))
               #t))
        (rejected? c (statement-atom s))))
-   
-
-;  (define (accepted? c s)
-;   (let ((v (table:lookup (context-status c)  (statement-atom s) 'undecided)))
-;     (if (statement-positive? s)
-;         (eq? v 'accepted)
-;         (eq? v 'rejected))))
- 
+    
  ; rejected?: context statement -> boolean
  
  (define (rejected? c s)
@@ -440,17 +433,12 @@
               #t))
        (accepted? c (statement-atom s))))
  
-; (define (rejected? c s)
-;   (let ((v (table:lookup (context-status c) (statement-atom s) 'undecided)))
-;     (if (statement-positive? s)
-;         (eq? v 'rejected)
-;         (eq? v 'accepted))))   
  
  ; decided?: context statement -> boolean
  (define (decided? c s)
-   (member (table:lookup  (context-status c) (statement-atom s) 'undecided)
-           '(rejected accepted)))
- 
+   (or (accepted? c s)
+       (rejected? c s)))
+  
  ; questioned?: context statement -> boolean
  (define (questioned? c s)
    (eq? 'questioned (table:lookup (context-status c)  
@@ -469,10 +457,14 @@
  ; Additional arguments may make the statement unacceptable again.
  (define (issue? c s) (not (decided? c s)))
  
- ; questions: argument-graph context -> (list-of statement)
- (define (questions ag c)
-   (filter (lambda (s) (questioned? c s)) (statements ag)))
  
+ ; context-statements: context -> (list-of statement)
+ (define (context-statements c)
+   (table:keys (context-status c)))
+ 
+ ; questions: context -> (list-of statement)
+ (define (questions c)
+   (table:filter-keys (lambda (pair) (eq? (cdr pair) 'questioned)) (context-status c)))
  
  ; accepted-statements: context -> (list-of statement)
  (define (accepted-statements c)
@@ -482,8 +474,8 @@
  (define (rejected-statements c)
    (table:filter-keys (lambda (pair) (eq? (cdr pair) 'rejected)) (context-status c)))
  
- ; facts: argument-graph context -> (list-of statement)
- (define (facts ag c)
+ ; facts: context -> (list-of statement)
+ (define (facts c)
    (append (accepted-statements c)
            (map (lambda (s) `(not ,s))
                 (rejected-statements c))))
@@ -611,11 +603,11 @@
                      (pro-arguments ag (statement-atom s)))
          (satisfies? ag c ps (pro-arguments ag s) (con-arguments ag s)))))
  
- ; in?: argument-graph context statement -> boolean
- (define (in? ag c s)
-   (if (decided? c s)
-       (accepted? c s) 
-       (acceptable? ag c s)))
+ ; in?: argument-graph context statement -> boolean 
+  (define (in? ag c s)
+   (or (accepted? c s) 
+       (and (not (rejected? c s))
+            (acceptable? ag c s))))
  
  ; out?: argument-graph context statement -> boolean
  (define (out? ag c s)
