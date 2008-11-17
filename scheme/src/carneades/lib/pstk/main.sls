@@ -112,7 +112,7 @@
           (wait-until-visible tk-wait-until-visible)
           (with-lock tk-with-lock)
           (map-ttk-widgets ttk-map-widgets))
-  string-split tk/after tk/bell tk/update tk/clipboard tk/bgerror tk/bind tk/bindtags
+  tk/after tk/bell tk/update tk/clipboard tk/bgerror tk/bind tk/bindtags
   tk/destroy tk/event tk/focus tk/grab tk/grid tk/image
   tk/lower tk/option tk/pack tk/place tk/raise tk/selection
   tk/winfo tk/wm tk/choose-color tk/choose-directory 
@@ -640,17 +640,18 @@
   ; start: void -> tk
   (define start
     (lambda ()
-      (start-wish)
-      (wish tk-init-string)
-      (set! tk-ids+widgets '())
-      (set! tk-widgets '())
-      (set! in-callback #f)
-      (let ((tk (make-widget-by-id 'toplevel "." 'class: 'Wish)))
+      (let ((tk #f)) ; the top-level window
+        (start-wish)
+        (wish tk-init-string)
+        (set! tk-ids+widgets '())
+        (set! tk-widgets '())
+        (set! in-callback #f)
+        (set! tk (make-widget-by-id 'toplevel "." 'class: 'Wish))
         (set! commands-invoked-by-tk '())
         (set! inverse-commands-invoked-by-tk '())
         (tk/wm 'protocol tk 'WM_DELETE_WINDOW end-tk)
         tk)))
-  
+
   (define end-tk
    (lambda ()
      (set! tk-is-running #f)

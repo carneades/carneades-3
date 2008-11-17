@@ -63,7 +63,7 @@
     </theory>
 	
 	<argument-graphs>
-	  <argument-graph id="NewGraph">
+	  <argument-graph id="ag1" title="Can Tweety fly?" main-issue="s1">
 	    <statements>		
 	      <statement id="s1" value="unknown" assumption="true" standard="BA"><s>Tweety can fly.</s></statement>
 	      <statement id="s2" value="true" assumption="true" standard="BA"><s>Tweety is a bird.</s></statement>
