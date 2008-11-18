@@ -239,7 +239,7 @@
     (let* ((ag (stage-argument-graph s))
            (c (stage-context s))
            (statements-table (nodes->table (argument-graph-nodes ag)))
-           (id (argument-graph-id ag))
+           (id (symbol->string (argument-graph-id ag)))
            (title (argument-graph-title ag))
            (issue-statement (table:lookup statements-table (argument-graph-main-issue ag) #f))
            (main-issue (if issue-statement
