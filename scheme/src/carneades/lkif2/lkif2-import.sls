@@ -34,7 +34,7 @@
  (define-record-type lkif-argument-graph
    (fields id
            title
-           main-issue
+           main-issue-id
            statements
            arguments))
  
@@ -153,10 +153,10 @@
  (define (argument-graph-to-record ag)
    (let ((id (get-attribute-value (get-attribute ag 'id) ""))
          (title (get-attribute-value (get-attribute ag 'title) ""))
-         (main-issue (get-attribute-value (get-attribute ag 'main-issue) ""))
+         (main-issue-id (get-attribute-value (get-attribute ag 'main-issue) ""))
          (statements (map statement-to-record (get-elements (get-element ag 'statements) 'statement)))
          (arguments (get-elements (get-element ag 'arguments) 'argument)))
-     (make-lkif-argument-graph id title main-issue statements arguments)))
+     (make-lkif-argument-graph id title main-issue-id statements arguments)))
  
  ; lkif-argument-graph->stage: lkif-argument-graph -> struct:stage
  (define (lkif-argument-graph->stage ag)
@@ -439,10 +439,12 @@
           (arguments (map (lambda (x) (argument-to-record x tbl)) (lkif-argument-graph-arguments ag)))
           (ag1 (argument:assert-arguments argument:empty-argument-graph arguments)))
      (values (argument:make-argument-graph (lkif-argument-graph-id ag)
-                                  (lkif-argument-graph-title ag)
-                                  (lkif-argument-graph-main-issue ag)
-                                  (argument:argument-graph-nodes ag1)
-                                  (argument:argument-graph-arguments ag1))
+                                           (lkif-argument-graph-title ag)
+                                           (if (string=? (lkif-argument-graph-main-issue-id ag) "")
+                                               ""
+                                               (statement->sexpr (get-statement (lkif-argument-graph-main-issue-id ag) tbl)))
+                                           (argument:argument-graph-nodes ag1)
+                                           (argument:argument-graph-arguments ag1))
              (statements->context statements))))
  
  ; argument-graph->stage: struct:lkif-argument-graph -> struct:stage
