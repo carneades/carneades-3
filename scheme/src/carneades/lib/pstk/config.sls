@@ -7,6 +7,6 @@
  
  (import (rnrs base))
 
- (define *wish-program* "/usr/local/bin/tclsh8.5")
+ (define *wish-program* "C:\\Tcl\\bin\\tclsh85.exe")
  
  )

@@ -350,7 +350,7 @@
   
   (define (add-clause)
     (set! clause-counter (+ clause-counter 1))
-    (string->symbol (string-append "c" (number->string clause-counter))))
+    (string->symbol (string-append "-c" (number->string clause-counter))))
   
   (define (get-clauses args rb1 goal subs)
     (let* ((pred (predicate (subs goal)))
