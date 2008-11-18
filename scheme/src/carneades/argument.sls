@@ -609,6 +609,10 @@
        (and (not (rejected? c s))
             (acceptable? ag c s))))
  
+; (define (in? ag c s)
+;   (or (accepted? c s) 
+;       (acceptable? ag c s)))
+ 
  ; out?: argument-graph context statement -> boolean
  (define (out? ag c s)
    (not (in? ag c s)))
