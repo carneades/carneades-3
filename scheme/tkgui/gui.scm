@@ -338,27 +338,27 @@ http://carneades.berlios.de
 
 (define rule-list (rule-list-frame 'create-widget 'ttk::treeview
                                    'columns: '(id)
-                                   'height: 40
+                                   'height: 33
                                    'show: '(headings)))
 (rule-list 'heading 'id 'text: "ID")
 
 ;; rule inspector
 
-(define rule-column-width 480)
+(define rule-column-width 850)
 
 (define rule-id-frame (rule-panel 'create-widget 'ttk::labelframe 
                                       'text: "ID"
                                       'borderwidth: 2))
 
 (define rule-id-field (rule-id-frame 'create-widget 'ttk::entry
-                                     'width: 60))
+                                     'width: 106))
 
 (define rule-head-frame (rule-panel 'create-widget 'ttk::labelframe 
                                         'text: "Head"
                                         'borderwidth: 2))
 
 (define rule-head-list (rule-head-frame 'create-widget 'ttk::treeview
-                                        'height: 10
+                                        'height: 5
                                         'columns: '(statement)
                                         'show: '(headings)))
 
@@ -371,7 +371,7 @@ http://carneades.berlios.de
 
 (define rule-body-list 
   (rule-body-frame 'create-widget 'ttk::treeview
-                   'height: 22
+                   'height: 19
                    'columns: '(clause)
                    'show: '(headings)))
 
@@ -380,12 +380,12 @@ http://carneades.berlios.de
 
 (tk/grid rule-list-frame 'row: 0 'column: 0 'rowspan: 3 'padx: "2m" 'pady: "2m")
 (tk/grid rule-list 'row: 0 'column: 0 'padx: "2m" 'pady: "2m")
-(tk/grid rule-id-frame 'row: 0 'column: 1 'padx: "2m" 'pady: "2m")
+(tk/grid rule-id-frame 'row: 0 'column: 1 'sticky: 'we 'padx: "2m" 'pady: "2m")
 (tk/grid rule-id-field 'row: 0 'column: 0 'padx: "2m" 'pady: "2m")
-(tk/grid rule-head-frame 'row: 1 'column: 1 'padx: "2m" 'pady: "2m")
-(tk/grid rule-head-list 'row: 0 'column: 0 'padx: "2m" 'pady: "2m")
-(tk/grid rule-body-frame 'row: 2 'column: 1 'padx: "2m" 'pady: "2m")
-(tk/grid rule-body-list 'row: 0 'column: 0 'padx: "2m" 'pady: "2m")
+(tk/grid rule-head-frame 'row: 1 'column: 1 'sticky: 'we 'padx: "2m" 'pady: "2m")
+(tk/grid rule-head-list 'row: 0 'column: 0 'sticky: 'we 'padx: "2m" 'pady: "2m")
+(tk/grid rule-body-frame 'row: 2 'column: 1 'sticky: 'we 'padx: "2m" 'pady: "2m")
+(tk/grid rule-body-list 'row: 0 'column: 0 'sticky: 'we 'padx: "2m" 'pady: "2m")
 
 (tk/bind rule-list "<<TreeviewSelect>>" 
          (lambda ()
@@ -412,7 +412,7 @@ http://carneades.berlios.de
 (define argument-graph-table
   (argument-graph-table-frame 'create-widget 'ttk::treeview
                         'columns: '(id title)
-                        'height: 45
+                        'height: 33
                         'show: '(headings)))
 (argument-graph-table 'heading 'id 'text: "ID")
 (argument-graph-table 'heading 'title 'text: "Title")
@@ -681,6 +681,7 @@ http://carneades.berlios.de
   (statement-table-frame 'create-widget 'ttk::treeview
                          'columns: '(id status acceptable pro con standard content content-with-subs)
                          'displaycolumns: '(id status acceptable pro con standard content-with-subs)
+                         'height: 7
                          'show: '(headings)))
 (statement-table 'heading 'id 'text: "ID")
 (statement-table 'heading 'status 'text: "Status")
@@ -688,7 +689,7 @@ http://carneades.berlios.de
 (statement-table 'heading 'pro 'text: "Pro") ; number of pro arguments
 (statement-table 'heading 'con 'text: "Con") ; number of con arguments
 (statement-table 'heading 'standard 'text: "Standard")
-(statement-table 'heading 'content 'text: "Content")
+(statement-table 'heading 'content-with-subs 'text: "Content")
 (statement-table 'column 'id 'width: 50 'minwidth: 50 'stretch: 0)
 (statement-table 'column 'status 'width: 80 'minwidth: 80 'stretch: 0)
 (statement-table 'column 'acceptable 'width: 80 'minwidth: 80 'stretch: 0)
@@ -739,6 +740,7 @@ http://carneades.berlios.de
 (define argument-tree
   (argument-tree-frame 'create-widget 'ttk::treeview
                         'columns: '(id title direction applicable weight scheme)
+                        'height: 5
                         'show: '(headings)))
 
 (argument-tree 'heading 'id 'text: "ID")
@@ -795,6 +797,7 @@ http://carneades.berlios.de
 (define premise-table
   (premise-table-frame 'create-widget 'ttk::treeview
                        'columns: '(polarity holds type role statement)
+                       'height: 5
                        'show: '(headings)))
 
 (premise-table 'heading 'polarity 'text: "+/-")
@@ -836,4 +839,5 @@ http://carneades.berlios.de
 
                             
 (tk/wm 'deiconify tk)
+(tk/wm 'resizable tk #f #f)
 (tk-event-loop tk)
