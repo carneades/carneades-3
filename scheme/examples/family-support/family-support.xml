@@ -24,33 +24,39 @@
         </not>
       </axiom>
     </axioms>
-    
+
     <rules>
 
       <!-- begin rules from the ontology -->
-      
-      <rule id="o1">
+
+      <rule id="ancestor">
         <head>
           <s pred="family:ancestor"><v>Person1</v> is an ancestor of <v>Person2</v></s>
         </head>
         <body>
+          <or>
+            <s pred="family:parent"><v>Person1</v> is a parent of <v>Person2</v></s>
+            <and>
+              <s pred="family:parent"><v>Person3</v> is a parent of <v>Person2</v></s>
+              <s pred="family:ancestor"><v>Person1</v> is an ancestor of <v>Person3</v></s>
+            </and>
+          </or>
+        </body>
+      </rule>
+
+      <rule id="parent">
+        <head>
+          <s pred="family:parent"><v>Person1</v> is a parent of <v>Person2</v></s>
+        </head>
+        <body>
+          <or>
+            <s pred="family:mother">The mother of <v>Person2</v> is <v>Person1</v></s>
             <s pred="family:father">The father of <v>Person2</v> is <v>Person1</v></s>
+          </or>
         </body>
       </rule>
-      
-      <rule id="o2">
-        <head>
-          <s pred="family:ancestor"><v>Person1</v> is an ancestor of <v>Person2</v></s>
-        </head>
-        <body>
-          <s pred="family:mother">The mother of <v>Person2</v> is <v>Person1</v></s>
-        </body>
-      </rule>
-      
-      <!-- end rules from the ontology -->
-      
-      
-      <rule id="r1" strict="true">
+
+      <rule id="grandparent">
         <head>
           <s pred="family:grandparent"><v>Person1</v> is a grandparent of <v>Person3</v></s>
         </head>
@@ -62,17 +68,7 @@
         </body>
       </rule>
 
-      <rule id="r2" strict="true">
-        <head>
-          <s>ancestor ?x ?y</s>
-        </head>
-        <body>
-          <and>
-            <s>parent ?x ?z</s>
-            <s>ancestor ?z ?y</s>
-          </and>
-        </body>
-      </rule>
+      <!-- end rules from the ontology -->
 
       <rule id="s1601-BGB">
         <head>
@@ -197,14 +193,23 @@
     </rules>
   </theory>
   <argument-graphs>
-    <argument-graph id="ag1" title="Is Max obligated to support Gertrude?" main-issue="s1">
-      <statements>		
+    <argument-graph id="ag1" title="Is Max obligated to support someone?"
+      main-issue="s1">  
+      <statements>
         <statement id="s1" value="unknown" assumption="true" standard="BA">
-          <s pred="family:obligatedToSupport"><c>Max</c> is obligated to support <c>Gertrude</c></s>
+          <s pred="family:obligatedToSupport"><c>Max</c> is obligated to support <v>x</v></s>
         </statement>
       </statements>
-      <arguments>
-      </arguments>
+      <arguments> </arguments>
     </argument-graph>
-    </argument-graphs>
+    <argument-graph id="ag2" title="Who is Max's father?"
+      main-issue="s2">  
+      <statements>
+        <statement id="s2" value="unknown" assumption="true" standard="BA">
+          <s pred="family:father">The father of <c>Max</c> is <v>x</v></s>
+        </statement>
+      </statements>
+      <arguments> </arguments>
+    </argument-graph>
+  </argument-graphs>
 </lkif>
