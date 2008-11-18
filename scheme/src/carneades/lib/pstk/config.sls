@@ -1,4 +1,4 @@
-#!r6rs
+﻿#!r6rs
 
 (library 
  (carneades lib pstk config)
@@ -7,6 +7,6 @@
  
  (import (rnrs base))
 
- (define *wish-program* "C:\\Tcl\\bin\\tclsh85.exe")
+ (define *wish-program* "/usr/local/bin/tclsh8.5")
  
  )
