@@ -438,10 +438,10 @@
           (tbl (statements->table statements))
           (arguments (map (lambda (x) (argument-to-record x tbl)) (lkif-argument-graph-arguments ag)))
           (ag1 (argument:assert-arguments argument:empty-argument-graph arguments)))
-     (values (argument:make-argument-graph (lkif-argument-graph-id ag)
+     (values (argument:make-argument-graph (string->symbol (lkif-argument-graph-id ag))
                                            (lkif-argument-graph-title ag)
                                            (if (string=? (lkif-argument-graph-main-issue-id ag) "")
-                                               ""
+                                               #f
                                                (statement->sexpr (get-statement (lkif-argument-graph-main-issue-id ag) tbl)))
                                            (argument:argument-graph-nodes ag1)
                                            (argument:argument-graph-arguments ag1))
