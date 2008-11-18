@@ -28,13 +28,14 @@
  
  ; Example for Unix users, including Mac OS X and Linux:
  ; (define dot "/usr/local/graphviz-2.14/bin/dot")
- (define dot "/Applications/Graphviz/Graphviz.app/Contents/MacOS/dot")
+ ; (define dot "/Applications/Graphviz/Graphviz.app/Contents/MacOS/dot")
+ (define dot "\"C:\\Programme\\Graphviz2.18\\bin\\dot.exe\"")
  
  ; Example For Windows users.  This works if dot.exe is in a folder in your PATH.
  ; (define dot "dot.exe")
  
  ; preferred-graphic-format:  "dot" "png" | "ps" | "svg"
- (define preferred-graphic-format "dot")
+ (define preferred-graphic-format "png")
  
  ; viewer: path to a program for viewing files in the preferred graphic format.
  ; The program must accept a filename as its first parameter
@@ -46,7 +47,8 @@
  ; Mac OS X examples:
  ; (define viewer "/Applications/Firefox.app/Contents/MacOS/firefox-bin")
  ; (define viewer "java -jar /Applications/Batik/batik-squiggle.jar")
- (define viewer "/Applications/Graphviz/Graphviz.app/Contents/MacOS/Graphviz")
+ ; (define viewer "/Applications/Graphviz/Graphviz.app/Contents/MacOS/Graphviz")
+ (define viewer "\"C:\\WINDOWS\\system32\\mspaint.exe\"")
  
  ; Windows examples.  Notice the double backslashes, which are needed since backslash
  ; is the escape character in Scheme, and the backslashed quotation marks, which are needed
@@ -57,5 +59,5 @@
  
  ; tmpdir: filename of a directory for temporary files.  Be sure to include the 
  ; final pathname separation character, '/' (Unix) or '\\' (Windows)
- (define tmpdir "/tmp/")
+ (define tmpdir "C:\\tmp\\")
  )
