@@ -241,7 +241,10 @@
            (statements-table (nodes->table (argument-graph-nodes ag)))
            (id (argument-graph-id ag))
            (title (argument-graph-title ag))
-           (main-issue (argument-graph-main-issue ag))
+           (issue-statement (table:lookup statements-table (argument-graph-main-issue ag) #f))
+           (main-issue (if issue-statement
+                           (statement-id issue-statement)
+                           ""))
            (statements (apply-context c statements-table (table:objects (argument-graph-arguments ag))))
            (arguments (arguments->sxml (table:objects (argument-graph-arguments ag)) statements-table)))
       (list 'argument-graph
