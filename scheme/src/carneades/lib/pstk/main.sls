@@ -128,7 +128,7 @@
          (carneades lib pstk config))
  
  (define *wish-debug-input* #f)
- (define *wish-debug-output* #f)
+ (define *wish-debug-output* #t)
  
  (define *use-keywords?*
    (or (not (symbol? 'text:))
@@ -551,6 +551,10 @@
                (display argument)
                (newline)))
         (display argument wish-input)
+        (display argument)
+        (newline)
+        (write wish-input)
+        (newline)
         (newline wish-input)
         (flush-wish))
       arguments)))
