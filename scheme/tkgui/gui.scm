@@ -428,6 +428,7 @@ http://carneades.berlios.de
 
 (tk/bind tk "<Command-q>" tk-end)
 (tk/bind tk "<Command-o>" open-lkif)
+(tk/bind tk "<Command-s>" save-lkif)
 
 ; tabs and panels of the main window
 
