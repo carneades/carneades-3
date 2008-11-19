@@ -110,6 +110,22 @@
             (if stage (begin (set! *current-stage* stage)
                              (load-stage! stage))))))))
 
+(define save-lkif
+  (lambda ()
+    (let ((filename (tk/get-save-file)))
+      (call/cc (lambda (escape)
+                 (with-exception-handler
+                  ; fail if any exception is raised
+                  (lambda (exn) 
+                    (escape (tk/message-box 'icon: 'warning
+                                            'message: "Unable to save to the selected file."
+                                            'type: 'ok
+                                            'parent: tk)))
+                  (lambda ()
+                    (if *current-document*
+                          (lkif-export (document-data *current-document*) filename)))) )))))
+
+
 (define show-argument-map
   (lambda ()
     (if *current-stage*
@@ -211,7 +227,7 @@
                        (ps (proof-standard c3 p))
                        (content (datum->string p))
                        (content-with-subs (datum->string (subs p)))
-                       (row (list id s a pro con ps content content-with-subs)))
+                       (row (list id a s pro con ps content content-with-subs)))
                   (statement-table 'insert ""
                                    'end
                                    'values: row)))
@@ -234,6 +250,77 @@
   (statement-table 'delete (statement-table 'children ""))
   (argument-tree 'delete (argument-tree 'children ""))
   (premise-table 'delete (premise-table 'children "")))
+
+(define insert-argument-graph!
+  (lambda ()
+    (printf "debug: insert-argument-graph begin~%")
+    (if *current-stage* 
+        (let* ((frame (tk 'create-widget 'toplevel 
+                          'class: 'ttk::frame
+                          'bg: 'gray90))
+               (lw (string-length "Title:")) ; label-width
+               (ew 40) ; entry-width
+               (id-frame (frame 'create-widget 'ttk::frame))
+               (id-label (id-frame 'create-widget 'ttk::label 
+                                   'text: "ID:"
+                                   'width: lw))
+               (id-entry (id-frame 'create-widget 'ttk::entry
+                                   'width: ew))
+               (title-frame (frame 'create-widget 'ttk::frame))
+               (title-label (title-frame 'create-widget 'ttk::label
+                                         'text: "Title:"
+                                         'width: lw))
+               (title-entry (title-frame 'create-widget 'ttk::entry
+                                         'width: ew))
+               (issue-frame (frame 'create-widget 'ttk::frame))
+               (issue-label (issue-frame 'create-widget 'ttk::label
+                                         'text: "Issue:"
+                                         'width: lw))
+               (issue-entry (issue-frame 'create-widget 'ttk::entry
+                                         'width: ew))
+               (buttons-frame (frame 'create-widget 'ttk::frame))
+               (cancel-button (buttons-frame 'create-widget 'ttk::button
+                                             'text: "Cancel"
+                                             'command: (lambda () (tk/wm 'withdraw frame))))
+               (ok-cmd (lambda ()
+                         ; to do:  validate the id and title entries
+                         (let* ((id (string->symbol (id-entry 'get)))
+                                (title (title-entry 'get))
+                                (issue (read (open-string-input-port (issue-entry 'get))))
+                                (ag (make-argument-graph id
+                                                         title
+                                                         issue))
+                                (stage (make-stage ag default-context)))
+                           (tk/wm 'withdraw frame)
+                           (update-stage! *current-document*
+                                          id
+                                          stage)
+                           (load-document! *current-document*)
+                           (load-stage! stage))))
+               
+               (ok-button (buttons-frame 'create-widget 'ttk::button
+                                         'text: "OK"
+                                         'command: ok-cmd)) 
+               
+               (px "2m")
+               (py "2m"))
+          
+          
+          (tk/wm 'title frame "Insert New Argument Graph")
+          (tk/wm 'resizable frame #f #f)
+          ; (id-entry 'insert 0 (argument-graph-id ag))
+          ; (title-entry 'insert 0 (argument-graph-title ag))
+          (issue-entry 'insert 0 "(predicate subject object)")
+          
+          (tk/pack id-label id-entry 'side: 'left)
+          (tk/pack title-label title-entry 'side: 'left)
+          (tk/pack issue-label issue-entry 'side: 'left)
+          (tk/pack cancel-button ok-button 'side: 'left)
+          (tk/grid id-frame 'row: 0 'column: 0 'columnspan: 2 'sticky: 'w 'padx: px 'pady: py)   
+          (tk/grid title-frame 'row: 1 'column: 0 'columnspan: 2 'sticky: 'w 'padx: px 'pady: py)
+          (tk/grid issue-frame 'row: 2 'column: 0 'columnspan: 2 'sticky: 'w 'padx: px 'pady: py)
+          (tk/grid buttons-frame 'row: 3 'column: 1 'padx: px 'pady: py) ))))
+  
 
 ; menu bar
 
@@ -278,15 +365,52 @@ http://carneades.berlios.de
            'accelerator: "Command+O"
            'command: open-lkif )
 
-; view menu
 
-(define view-menu (menubar 'create-widget 'menu))
-(menubar 'add 'cascade 
-         'label: "View"
-         'menu: view-menu)
-(view-menu 'add 'command 
-           'label: "Argument Map" 
-           'command: show-argument-map)
+(file-menu 'add 'command 
+           'label: "Save" 
+           'accelerator: "Command+S"
+           'command: save-lkif )
+
+
+;; view menu
+;
+;(define view-menu (menubar 'create-widget 'menu))
+;(menubar 'add 'cascade 
+;         'label: "View"
+;         'menu: view-menu)
+;(view-menu 'add 'command 
+;           'label: "Argument Map" 
+;           'command: show-argument-map)
+
+; edit menu
+
+(define edit-menu (menubar 'create-widget 'menu))
+(menubar 'add 'cascade
+         'label: "Edit"
+         'menu: edit-menu)
+(edit-menu 'add 'command
+             'label: "Undo"
+             'command: (lambda () 'todo))
+(edit-menu 'add 'command
+             'label: "Redo"
+             'command: (lambda () 'todo))
+(edit-menu 'add 'separator)
+(edit-menu 'add 'command
+             'label: "Delete"
+             'command: (lambda () 'todo))
+(edit-menu 'add 'command
+             'label: "Inspect"
+             'command: (lambda () 'todo))
+
+; insert menu
+
+(define insert-menu (menubar 'create-widget 'menu))
+(menubar 'add 'cascade
+         'label: "Insert"
+         'menu: insert-menu)
+(insert-menu 'add 'command
+             'label: "Argument Graph"
+             'command: insert-argument-graph!)
 
 ; help menu
 (define help-menu (menubar 'create-widget 'menu))
@@ -481,7 +605,7 @@ http://carneades.berlios.de
                          (let* ((new-id (string->symbol (id-entry 'get)))
                                 (ag2 (make-argument-graph new-id
                                                          (title-entry 'get)
-                                                         (subs (argument-graph-main-issue ag))
+                                                         (argument-graph-main-issue ag)
                                                          (argument-graph-nodes ag)
                                                          (argument-graph-arguments ag)))
                                 (new-stage (make-stage ag2 c)))
@@ -566,11 +690,18 @@ http://carneades.berlios.de
                               (max-turns (read (open-string-input-port (turns-entry 'get))))
                               (rb (lkif-data-rulebase data))
                               (cqs '(excluded))  ; to do: check boxes
-                              (generators (list builtins (generate-arguments-from-rules rb cqs))))
+                              (generators (list builtins (generate-arguments-from-rules rb cqs)))
+                              (side (if (in? ag c2 issue) 'con 'pro))
+                              (pro-goals (if (eq? side 'pro) 
+                                             (list (list issue))
+                                             null))
+                              (con-goals (if (eq? side 'pro) 
+                                             null 
+                                             (list (list (statement-complement issue))))))
                          (find-best-arguments search:depth-first 
                                               (search:make-resource max-nodes)
                                                max-turns
-                                              (make-state issue 'pro (list (list issue)) null c2 ag)
+                                              (make-state issue side pro-goals con-goals c2 ag)
                                               generators)))))
          (before-states null) ; list of states previously found, in reverse order
          (current-state #f)   ; the current state in the stream of search results
@@ -679,8 +810,8 @@ http://carneades.berlios.de
 
 (define statement-table
   (statement-table-frame 'create-widget 'ttk::treeview
-                         'columns: '(id status acceptable pro con standard content content-with-subs)
-                         'displaycolumns: '(id status acceptable pro con standard content-with-subs)
+                         'columns: '(id acceptable status pro con standard content content-with-subs)
+                         'displaycolumns: '(id acceptable status  pro con standard content-with-subs)
                          'height: 7
                          'show: '(headings)))
 (statement-table 'heading 'id 'text: "ID")
@@ -724,7 +855,7 @@ http://carneades.berlios.de
                                 (scheme (argument-scheme arg)))
                             (argument-tree 'insert ""
                                            'end
-                                           'values: (list id title direction applicable weight scheme))))))
+                                           'values: (list id applicable title direction weight scheme))))))
              
         ; clear the argument tree
         (argument-tree 'delete (argument-tree 'children ""))
@@ -739,7 +870,7 @@ http://carneades.berlios.de
                         'padding: 2))
 (define argument-tree
   (argument-tree-frame 'create-widget 'ttk::treeview
-                        'columns: '(id title direction applicable weight scheme)
+                        'columns: '(id applicable title direction weight scheme)
                         'height: 5
                         'show: '(headings)))
 
@@ -782,7 +913,7 @@ http://carneades.berlios.de
                                                 ((assumption? p) "assumption"))))
                                 (premise-table 'insert ""
                                                'end
-                                               'values: (list polarity holds type role statement))))))
+                                               'values: (list holds type role polarity statement))))))
         
         ; first clear the premise-table
         ; (printf "arg-id=~w; arg=~w~%" arg-id arg)
@@ -796,7 +927,7 @@ http://carneades.berlios.de
 
 (define premise-table
   (premise-table-frame 'create-widget 'ttk::treeview
-                       'columns: '(polarity holds type role statement)
+                       'columns: '(holds type role polarity statement)
                        'height: 5
                        'show: '(headings)))
 
