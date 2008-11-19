@@ -151,6 +151,12 @@
       </rule>
       <rule id="s1603-BGB">
         <head>
+          <!-- <s pred="excluded">
+            <c>s1601-BGB</c> excludes <s pred="family:obligatedToSupport">
+              <v>Person1</v> is obligated to support <v>Person2</v>
+            </s>
+          </s>
+          -->
           <not>
             <s pred="family:obligatedToSupport"><v>Person1</v> is obligated to support
               <v>Person2</v></s>
@@ -193,20 +199,11 @@
     </rules>
   </theory>
   <argument-graphs>
-    <argument-graph id="ag1" title="Is Max obligated to support someone?"
+    <argument-graph id="ag1" title="Does someone have a support obligation?"
       main-issue="s1">  
       <statements>
-        <statement id="s1" value="unknown" assumption="true" standard="BA">
-          <s pred="family:obligatedToSupport"><c>Max</c> is obligated to support <v>x</v></s>
-        </statement>
-      </statements>
-      <arguments> </arguments>
-    </argument-graph>
-    <argument-graph id="ag2" title="Who is Max's father?"
-      main-issue="s2">  
-      <statements>
-        <statement id="s2" value="unknown" assumption="true" standard="BA">
-          <s pred="family:father">The father of <c>Max</c> is <v>x</v></s>
+        <statement id="s1">
+          <s pred="family:obligatedToSupport"><v>Person1</v> is obligated to support <v>Person2</v></s>
         </statement>
       </statements>
       <arguments> </arguments>
