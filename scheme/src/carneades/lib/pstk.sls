@@ -1,4 +1,4 @@
-﻿#!r6rs
+#!r6rs
 
 ; PS/Tk -- A Portable Scheme Interface to the Tk GUI Toolkit
 ; Copyright (C) 2008 Kenneth A Dickey
@@ -95,8 +95,9 @@
 ; 2006-12-02 Added Scheme 48 port, portable GENSYM, R5RS fixes.
 ; 2006-12-02 Added PLT/Windows port.
 
+
 (library 
- (carneades lib pstk main)
+ (carneades lib pstk)
  
  (export 
   (rename (eval-wish tk-eval)

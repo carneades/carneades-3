@@ -1,4 +1,4 @@
-﻿#!r6rs
+#!r6rs
 
 (library 
  (carneades lib pstk config)

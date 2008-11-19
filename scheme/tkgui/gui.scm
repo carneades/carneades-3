@@ -1,7 +1,7 @@
 #!r6rs
 
 (import (rnrs)
-        (carneades lib pstk main)
+        (carneades lib pstk)
         (carneades statement)
         (carneades argument)
         (carneades lkif2)
