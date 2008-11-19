@@ -319,14 +319,24 @@
            title        ; string
            main-issue   ; statement | #f
            nodes        ; table: statement -> node
-           arguments))  ; table: argument-id -> argument 
+           arguments)  ; table: argument-id -> argument 
+   (protocol
+    (lambda (new)
+      (case-lambda 
+        ((id title main-issue nodes arguments)
+         (new id title main-issue nodes arguments))
+        ((id title main-issue)
+         (new id title main-issue (table:make-table) (table:make-table)))
+        (() (new (gensym) "" #f (table:make-table) (table:make-table)))))))
  
- (define empty-argument-graph 
-   (make-argument-graph (gensym)
-                        ""
-                        #f
-                        (table:make-table)
-                        (table:make-table)))
+; (define empty-argument-graph 
+;   (make-argument-graph (gensym)
+;                        ""
+;                        #f
+;                        (table:make-table)
+;                        (table:make-table)))
+ 
+ (define empty-argument-graph (make-argument-graph))
  
  ; put-node: argument-graph node -> argument-graph 
  (define (put-node ag n)
