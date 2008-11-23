@@ -345,13 +345,15 @@ public class DeleteConclusionCommand extends UndoableCommand {
 	override function do(): Number {
 		argumentGraph.deleteStatement(conclusion);
 		delete premise from motherArgument.premises;
-		for (c in childArguments) delete c from argumentGraph.arguments;
+		for (c in childArguments) { 
+			delete c from argumentGraph.arguments;
+		}
 		return C_OK;
 	}
 
 	override function undo(): Number {
 		argumentGraph.insertStatement(conclusion);
-		for (c in childArguments) insert c into argumentGraph.arguments;
+		for (c in childArguments) { insert c into argumentGraph.arguments; }
 		insert premise into motherArgument.premises;
 		return C_OK;
 	}

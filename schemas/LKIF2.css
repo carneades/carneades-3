@@ -142,7 +142,7 @@ or > s {
     margin-left: 1em;
 }
 
-and, body > s {
+and > s {
     display: block;
     margin-left: 1em;
 }

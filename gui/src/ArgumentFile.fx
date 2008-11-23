@@ -236,7 +236,9 @@ public var getGraphFromFile = function(file: File): ArgumentGraph[] {
 		var document = builder.parseFile(file);
 
 		// I. Fork according to older LKIF formats
-		if (sizeof document.getElementsByTagName("issue") > 0) return getGraphFromLkifV1Document(document);
+		if (sizeof document.getElementsByTagName("issue") > 0) {
+			return getGraphFromLkifV1Document(document);
+		}
 
 		// II. Load the Argument Graphs according to the current format.
 		var argumentGraphs: ArgumentGraph[] = [];

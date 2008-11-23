@@ -153,7 +153,7 @@
                          ((con) (append (state-pro-goals state)
                                         (map list exceptions) ; separate clause for each exception
                                         ; rebuttals and rebuttals of assumptions:
-                                        ; (list (list (statement-complement conclusion)))
+                                        (list (list (statement-complement conclusion)))
                                         ; (map list (map statement-complement assumptions))
                                         )))   
                        ; new con goals
@@ -161,7 +161,7 @@
                          ((pro) (append (state-con-goals state)
                                         (map list exceptions) ; separate clause for each exception
                                         ; rebuttals and rebuttals of assumptions:
-                                        ; (list (list (statement-complement conclusion)))
+                                        (list (list (statement-complement conclusion)))
                                         ; (map list (map statement-complement assumptions))
                                         ))
                          ((con) (update-goals (state-con-goals state) 
