@@ -24,52 +24,53 @@
         </not>
       </axiom>
     </axioms>
-
     <rules>
-
       <!-- begin rules from the ontology -->
-
       <rule id="ancestor">
         <head>
-          <s pred="family:ancestor"><v>Person1</v> is an ancestor of <v>Person2</v></s>
+          <s pred="family:ancestor">An ancestor of <v>Person1</v> is <v>Person2</v></s>
         </head>
         <body>
           <or>
-            <s pred="family:parent"><v>Person1</v> is a parent of <v>Person2</v></s>
+            <s pred="family:parent">A parent of <v>Person1</v> is <v>Person2</v></s>
             <and>
-              <s pred="family:parent"><v>Person3</v> is a parent of <v>Person2</v></s>
-              <s pred="family:ancestor"><v>Person1</v> is an ancestor of <v>Person3</v></s>
+              <s pred="family:parent">A parent of <v>Person1</v> is <v>Person3</v></s>
+              <s pred="family:ancestor">An ancestor of <v>Person3</v> is <v>Person2</v></s>
             </and>
           </or>
         </body>
       </rule>
-
+      <rule id="descendent">
+        <head>
+          <s pred="family:descendent">A descendent of <v>Person1</v> is <v>Person2</v></s>
+        </head>
+        <body>
+          <s pred="family:ancestor">An ancestor <v>Person2</v> is <v>Person1</v></s>
+        </body>
+      </rule>
       <rule id="parent">
         <head>
-          <s pred="family:parent"><v>Person1</v> is a parent of <v>Person2</v></s>
+          <s pred="family:parent">A parent of <v>Person1</v> is <v>Person2</v></s>
         </head>
         <body>
           <or>
-            <s pred="family:mother">The mother of <v>Person2</v> is <v>Person1</v></s>
-            <s pred="family:father">The father of <v>Person2</v> is <v>Person1</v></s>
+            <s pred="family:mother">The mother of <v>Person1</v> is <v>Person2</v></s>
+            <s pred="family:father">The father of <v>Person1</v> is <v>Person2</v></s>
           </or>
         </body>
       </rule>
-
       <rule id="grandparent">
         <head>
-          <s pred="family:grandparent"><v>Person1</v> is a grandparent of <v>Person3</v></s>
+          <s pred="family:grandparent">A grandparent of <v>Person1</v> is <v>Person2</v></s>
         </head>
         <body>
           <and>
-            <s pred="family:parent"><v>Person1</v> is a parent of <v>Person2</v></s>
-            <s pred="family:parent"><v>Person2</v> is a parent of <v>Person3</v></s>
+            <s pred="family:parent">A parent of <v>Person1</v> is <v>Person3</v></s>
+            <s pred="family:parent">A parent of <v>Person3</v> is <v>Person2</v></s>
           </and>
         </body>
       </rule>
-
       <!-- end rules from the ontology -->
-
       <rule id="s1601-BGB">
         <head>
           <s pred="family:obligatedToSupport"><v>Person1</v> is obligated to support
@@ -79,23 +80,28 @@
           <s pred="family:directLineage"><v>Person1</v> is in direct lineage to <v>Person2</v></s>
         </body>
       </rule>
-      <rule id="s1589a-BGB">
+      <rule id="s1589-BGB">
         <head>
           <s pred="family:directLineage"><v>Person1</v> is in direct lineage to <v>Person2</v></s>
         </head>
         <body>
-          <s pred="family:ancestor"><v>Person2</v> is an ancestor of <v>Person1</v></s>
+          <or>
+            <s pred="family:ancestor">An ancestor of <v>Person1</v> is <v>Person2</v></s>
+            <s pred="family:descendent">A descendent of <v>Person1</v> is <v>Person2</v></s>
+          </or>
         </body>
       </rule>
+      <!--
       <rule id="s1589b-BGB">
         <head>
           <s pred="family:directLineage"><v>Person1</v> is in direct lineage to <v>Person2</v></s>
         </head>
         <body>
-          <s pred="family:descendent"><v>Person1</v> is a descendent of <v>Person2</v>
+          <s pred="family:descendent">A descendent of <v>Person1</v> is <v>Person2</v>
           </s>
         </body>
       </rule>
+ -->
       <rule id="s1741-BGB">
         <head>
           <s pred="family:ancestor"><v>Person2</v> is an ancestor <v>Person1</v></s>
@@ -107,7 +113,7 @@
       <rule id="s1590-BGB">
         <head>
           <not>
-            <s pred="family:obligatedToSupport"><v>Person2</v> is obligated to support
+            <s pred="family:obligatedToSupport"><v>Person1</v> is obligated to support
               <v>Person2</v></s>
           </not>
         </head>
@@ -199,14 +205,15 @@
     </rules>
   </theory>
   <argument-graphs>
-    <argument-graph id="ag1" title="Does someone have a support obligation?"
-      main-issue="s1">  
+    <argument-graph id="ag1" title="Does someone have a support obligation?" main-issue="s1">
       <statements>
         <statement id="s1">
-          <s pred="family:obligatedToSupport"><v>Person1</v> is obligated to support <v>Person2</v></s>
+          <s pred="family:obligatedToSupport"><v>Person1</v> is obligated to support
+          <v>Person2</v></s>
         </statement>
       </statements>
-      <arguments> </arguments>
+      <arguments>
+      </arguments>
     </argument-graph>
   </argument-graphs>
 </lkif>

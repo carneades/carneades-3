@@ -367,7 +367,7 @@ http://carneades.berlios.de
 
 
 (file-menu 'add 'command 
-           'label: "Save" 
+           'label: "Save As	" 
            'accelerator: "Command+S"
            'command: save-lkif )
 
@@ -667,7 +667,7 @@ http://carneades.berlios.de
                                    'text: "Issue:"
                                    'width: lw))
          (issue-entry (issue-frame 'create-widget 'ttk::entry
-                                   'width: 80
+                                   'width: 90
                                    'textvariable: (tk-var 'current-issue)))
          
          (solution-frame (frame 'create-widget 'ttk::frame))
@@ -675,7 +675,7 @@ http://carneades.berlios.de
                                          'text: "Solution:"
                                          'width: lw))
          (solution-entry (solution-frame 'create-widget 'ttk::entry
-                                         'width: 80
+                                         'width: 90
                                          'textvariable: (tk-var 'current-solution)))
          
          (search (lambda () 
@@ -782,7 +782,7 @@ http://carneades.berlios.de
                                     'text: "Map"
                                     'command: show-argument-map))
          (save-button (buttons-frame 'create-widget 'ttk::button
-                                     'text: "Save"
+                                     'text: "Insert"
                                      'command: save-argument-graph-cmd)))
     (limit-entry 'insert 0 "20")
     (turns-entry 'insert 0 "2")

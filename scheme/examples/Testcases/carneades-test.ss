@@ -285,7 +285,7 @@
       (movable item2)
       (edible item2)
       (foo2 a)
-      (p1 a)
+      (p2 a)
       (p6 a)
       (p7 a)
       (p8 a)

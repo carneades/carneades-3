@@ -29,8 +29,8 @@
 
 (define null '())
 
-(define import-data (lkif-import "kt-ex1-2.xml"))
-
+; (define import-data (lkif-import "kt-ex1-2.xml"))
+(define import-data (lkif-import "estrella_kT_lkif_1.xml"))
 (define stages (lkif-data-stages import-data))
 
 (define st1 (car stages))
