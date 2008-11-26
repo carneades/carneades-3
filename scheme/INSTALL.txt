@@ -8,20 +8,22 @@ interface implemented in JavaFX.
   standard <http://www.r6rs.org>.
 - GraphViz <http://www.graphviz.org/>
 
-Carneades has been tested thus far using PLT Scheme, version 4.x 
+Carneades has been tested thus far using PLT Scheme, version 4.x:
 	<http://www.plt-scheme.org> 
-and Ikarus Scheme 
+Ikarus Scheme: 
 	<http://www.cs.indiana.edu/~aghuloum/ikarus/index.html>
+and Ypsilon Scheme:Scheme:
+	<http://code.google.com/p/ypsilon/>
 
 2. Downloading Carneades
 
 Carneades is available for downloading from
 	<http://carneades.berlios.de>  
 
-Alternatively, the sources can be downloaded using the SVN source 
-code management system, following the instructions available here 
+Alternatively, the sources can be downloaded using either the SVN or the Bazaar source code management system:
 
-	<http://developer.berlios.de/svn/?group_id=9385>.
+	$ svn checkout svn://svn.berlios.de/carneades/trunk
+	$ bzr branch lp:~vcs-imports/carneades/trunk
 
 3. Installation
 
