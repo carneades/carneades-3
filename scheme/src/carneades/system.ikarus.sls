@@ -18,18 +18,10 @@
 (library
  (carneades system)
  
- (export system pretty-print tcp-connect gensym null printf)
+ (export system pretty-print tcp-connect gensym)
  
  (import (rnrs)
-         (prefix (ikarus) ikarus:)
-         (carneades lib srfi format))
- 
- (define null '())
- 
- (define (printf format-string . args)
-   (apply format `(,(current-output-port)  ,format-string ,@args))
-   (flush-output-port (current-output-port)))
- 
+         (prefix (ikarus) ikarus:)) 
  
  (define (system cmd) 
    ;(raise-continuable (make-message-condition "system procedure not yet implemented")))

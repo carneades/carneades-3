@@ -35,6 +35,7 @@
          (prefix (rnrs lists) list:)
          (prefix (carneades search) search:)
          (prefix (carneades argument) arg:)
+         (carneades base)
          (carneades unify)
          (carneades stream)
          (carneades statement)
