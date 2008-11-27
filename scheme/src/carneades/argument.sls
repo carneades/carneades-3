@@ -40,7 +40,7 @@
  
  (import (rnrs)
          (rnrs records syntactic)
-         (rnrs lists)
+         ; (rnrs lists)
          (only (carneades system) gensym null)
          (carneades statement)
          (carneades lib match)
@@ -314,6 +314,19 @@
            con       ; (list-of argument)
            ))
  
+ ; builds a new node from a statement with no pro- or con-arguments
+ (define (statement->node s)
+   (make-node s
+              '()
+              '()))
+ 
+ ; builds a node-table from a list of statements
+ (define (statements->nodes s)
+   (fold-left (lambda (t s)
+                (table:insert t s (statement->node s)))
+              (table:make-table)
+              s))              
+ 
  (define-record-type argument-graph
    (fields id           ; symbol
            title        ; string
@@ -327,6 +340,8 @@
          (new id title main-issue nodes arguments))
         ((id title main-issue)
          (new id title main-issue (table:make-table) (table:make-table)))
+        ((id title main-issue statements)
+         (new id title main-issue (statements->nodes statements) (table:make-table)))
         (() (new (gensym) "" #f (table:make-table) (table:make-table)))))))
  
 ; (define empty-argument-graph 
