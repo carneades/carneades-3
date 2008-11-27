@@ -42,6 +42,7 @@
          (rename (answer-closed answer-closed?)))
  
  (import (rnrs)
+         (carneades base)
          (carneades stream)
          (carneades unify)
          (carneades statement)
@@ -51,12 +52,6 @@
          (prefix (carneades lib srfi lists) list:)
          (carneades lib match)
          (only (carneades system) gensym))
- 
- (define (printf format-string . args)
-   (apply format `(,(current-output-port)  ,format-string ,@args))
-   (flush-output-port (current-output-port)))
- 
- (define null '())
  
  (define-record-type witness 
    (fields name ; string
