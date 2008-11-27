@@ -63,31 +63,53 @@
     </theory>
 	
 	<argument-graphs>
-	  <argument-graph id="ag1" title="Can Tweety fly?" main-issue="s1">
-	    <statements>		
-	      <statement id="s1" value="unknown" assumption="true" standard="BA"><s>Tweety can fly.</s></statement>
-	      <statement id="s2" value="true" assumption="true" standard="BA"><s>Tweety is a bird.</s></statement>
-	      <statement id="s3" value="unknown" assumption="true" standard="BA"><s assumable="true">Birds normally fly.</s></statement>
-	      <statement id="s4" value="unknown" assumption="true" standard="BA"><s>Tweety is an abnormal bird.</s></statement>
-	      <statement id="s5" value="true" assumption="true" standard="BA"><s>Tweety is a penguin.</s></statement>
-	    </statements>
-	    <arguments>
-	      <argument direction="pro" id="a1" scheme="" weight="50.0">
-	        <conclusion statement="s1"/>
-	        <premises>
-	          <premise exception="false" polarity="positive" role="" statement="s2"/>
-	          <premise exception="false" polarity="positive" role="" statement="s3"/>
-	          <premise exception="true" polarity="positive" role="" statement="s4"/>
-	        </premises>
-	      </argument>
-	      <argument direction="pro" id="a2" scheme="" weight="50.0">
-	        <conclusion statement="s4"/>
-	        <premises>
-	          <premise exception="false" polarity="positive" role="" statement="s5"/>
-	        </premises>
-	      </argument>
-	    </arguments>
-	  </argument-graph>
+	
+		<argument-graph id="ag1" title="Is Max obligated to support someone?"
+	      main-issue="s1">  
+	      <statements>
+	        <statement id="s1" value="unknown" assumption="true" standard="BA">
+	          <s pred="family:obligatedToSupport"><c>Max</c> is obligated to support <v>x</v></s>
+	        </statement>
+	      </statements>
+	      <arguments> </arguments>
+	    </argument-graph>
+	
+	    <argument-graph id="ag2" title="Who is Max's father?"
+	      main-issue="s2">  
+	      <statements>
+	        <statement id="s2" value="unknown" assumption="true" standard="BA">
+	          <s pred="family:father">The father of <c>Max</c> is <v>x</v></s>
+	        </statement>
+	      </statements>
+	      <arguments> </arguments>
+	    </argument-graph>
+	
+		<argument-graph id="ag3" title="Can Tweety fly?" main-issue="s1">
+		    <statements>		
+		      <statement id="s1" value="unknown" assumption="true" standard="BA"><s>Tweety can fly.</s></statement>
+		      <statement id="s2" value="true" assumption="true" standard="BA"><s>Tweety is a bird.</s></statement>
+		      <statement id="s3" value="unknown" assumption="true" standard="BA"><s assumable="true">Birds normally fly.</s></statement>
+		      <statement id="s4" value="unknown" assumption="true" standard="BA"><s>Tweety is an abnormal bird.</s></statement>
+		      <statement id="s5" value="true" assumption="true" standard="BA"><s>Tweety is a penguin.</s></statement>
+			  <statement id="s6" value="unknown" assumption="true"><s>Tweety eats chocolate</s></statement>
+		    </statements>
+		    <arguments>
+		      <argument direction="pro" id="a1" scheme="" weight="50.0">
+		        <conclusion statement="s1"/>
+		        <premises>
+		          <premise exception="false" polarity="positive" role="" statement="s2"/>
+		          <premise exception="false" polarity="positive" role="" statement="s3"/>
+		          <premise exception="true" polarity="positive" role="" statement="s4"/>
+		        </premises>
+		      </argument>
+		      <argument direction="pro" id="a2" scheme="" weight="50.0">
+		        <conclusion statement="s4"/>
+		        <premises>
+		          <premise exception="false" polarity="positive" role="" statement="s5"/>
+		        </premises>
+		      </argument>
+		    </arguments>
+		</argument-graph>
 	</argument-graphs>
 	
 </lkif>
