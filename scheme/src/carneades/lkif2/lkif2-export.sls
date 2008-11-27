@@ -23,6 +23,8 @@
  ; --------------------------------
  ; misc functions
  
+ (define *debug* #f)
+ 
  ; generates a new ID
  (define (new-id prefix)
    (symbol->string (gensym prefix)))
@@ -242,9 +244,18 @@
            (id (symbol->string (argument-graph-id ag)))
            (title (argument-graph-title ag))
            (issue-statement (table:lookup statements-table (argument-graph-main-issue ag) #f))
-           (main-issue (if issue-statement
-                           (statement-id issue-statement)
-                           ""))
+           (main-issue (begin (if *debug*
+                                  (begin (display "table: ")
+                                         (display (argument-graph-nodes ag))
+                                         (newline)
+                                         (display "issue: ")
+                                         (display (argument-graph-main-issue ag))
+                                         (display " - ")
+                                         (display issue-statement)                              
+                                         (newline)))
+                              (if issue-statement
+                                  (statement-id issue-statement)
+                                  "")))
            (statements (apply-context c statements-table (table:objects (argument-graph-arguments ag))))
            (arguments (arguments->sxml (table:objects (argument-graph-arguments ag)) statements-table)))
       (list 'argument-graph
