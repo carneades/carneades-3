@@ -35,6 +35,7 @@
  (import (rnrs)
          (rnrs lists)
          (rnrs hashtables)
+         (carneades base)
          (only (carneades system) gensym)
          (carneades dnf)
          (carneades statement)
@@ -48,12 +49,6 @@
          (carneades lib srfi format))
   
   (define *debug* #f)
-  
-  (define null '())
-  
-  (define (printf format-string . args)
-    (apply format `(,(current-output-port)  ,format-string ,@args))
-    (flush-output-port (current-output-port)))
  
   
   ; Negation, exceptions and assumptions. Statements of the form (not P), (unless P)

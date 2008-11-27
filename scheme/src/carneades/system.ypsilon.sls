@@ -18,21 +18,14 @@
 (library
  (carneades system)
  
- (export system pretty-print tcp-connect gensym null printf)
+ (export system pretty-print tcp-connect gensym)
  
  (import (rnrs) 
-         (only (core) system pretty-print)
-         (carneades lib srfi format))
+         (only (core) system pretty-print))
  
  (define (tcp-connect . args) 
    (raise-continuable (make-message-condition "tcp-connect not provided by Ypsilon")))
- 
- (define null '())
- 
- (define (printf format-string . args)
-   (apply format `(,(current-output-port)  ,format-string ,@args))
-   (flush-output-port (current-output-port)))
- 
+  
  ; ypsilon has its own gensym-function, but its generated symbols
  ; look like 'g56.48c8fb95.d7d57, which doesn't work with GraphViz
  
