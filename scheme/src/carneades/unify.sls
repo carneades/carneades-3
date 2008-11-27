@@ -22,45 +22,21 @@
  (export variable? identity unify* unify genvar rename-variables ground?)
  (import (rnrs base)
          (rnrs hashtables)
+         (carneades statement)
          (only (carneades system) gensym))
  
  ; Based on the implementation of the unification algorithm from
  ; the book "The Scheme Programming Language", by Kent Dybvig.
- 
- ; type term = literal | variable | list
- ; type literal = symbol | number | string | boolean
- 
- ; variable? : object -> boolean
- ; A logic variable is represented as a symbol prefixed with a 
- ; question mark, as in SWRL. For example: '?x
- (define variable? 
-   (lambda (u)
-     (and (symbol? u)
-          (let ((s (symbol->string u)))
-            (and (> (string-length s) 0)
-                 (eq? (string-ref s 0) #\?))))))
- 
- ; literal? : object -> boolean
- ; Warning: variables are also literals. Be sure to check whether
- ; an object is a variable before checking whether it is a literal,
- ; in contexts where the two need to be distinguished.
- (define literal?
-   (lambda (u)
-     (or (symbol? u)
-         (number? u)
-         (string? u)
-         (boolean? u))))
- 
- 
+  
  ; occurs? returns true if and only if u occurs in v
  (define occurs?
    (lambda (u v)
-     (and (pair? v)
-          (let f ((l (cdr v)))
-            (and (pair? l)
-                 (or (eq? u (car l))
-                     (occurs? u (car l))
-                     (f (cdr l)))))))) 
+     (and (compound-term? v)
+          (let f ((l (term-args v)))
+            (and (compound-term? l)
+                 (or (eq? u (term-functor l))
+                     (occurs? u (term-functor l))
+                     (f (term-args l)))))))) 
  
  ;; substitution constructors: identity and sigma
  
@@ -74,9 +50,13 @@
      (lambda (x)
        (let f ((x (s x)))
          (cond ((variable? x) (if (eq? x u) v x))
-               ((pair? x) (cons (car x) (map f (cdr x))))
+               ((pair? x) 
+                (cons (car x) (map f (cdr x))))
+               ((fatom? x) 
+                (make-fatom (fatom-form x)
+                            (cons (car (fatom-expr x))
+                                  (map f (cdr (fatom-expr x))))))
                (else x))))))
- 
  
  ; try-subst tries to substitute u for v but may require a
  ; full unification if (s u) is not a variable, and it may
@@ -103,19 +83,19 @@
      (cond
        ((variable? u) (try-subst u v s ks kf occurs-check))
        ((variable? v) (try-subst v u s ks kf occurs-check))
-       ((and (literal? u) (literal? v))
+       ((and (constant? u) (constant? v))
         (if  (equal? u v) (ks s) (kf "clash")))
-       ((and (pair? u) 
-             (pair? v) 
-             (eq? (car u) (car v))
-             (= (length u) (length v)))
-        (let f ((u (cdr u)) (v (cdr v)) (s s))
+       ((and (compound-term? u) 
+             (compound-term? v) 
+             (eq? (term-functor u) (term-functor v))
+             (= (length (term-args u)) (length (term-args v))))
+        (let f ((u (term-args u)) (v (term-args v)) (s s))
           (if (null? u)
               (ks s)
               (unify* (car u)
                       (car v)
                       s
-                      (lambda (s) (f (cdr u) (cdr v) s))
+                      (lambda (s) (f (term-args u) (term-args v) s))
                       kf
                       occurs-check))))
        (else (kf "clash"))))) 
@@ -150,15 +130,12 @@
                 (hashtable-set! tbl trm v)
                 v)))
          ((pair? trm)
-          (cons (rename-variables tbl (car trm)) (rename-variables tbl (cdr trm)))) 
+          (cons (rename-variables tbl (car trm)) 
+                (rename-variables tbl (cdr trm))))
+         ((fatom? trm)
+          (make-fatom (fatom-form trm)
+                      (cons (rename-variables tbl (car (fatom-expr trm)))
+                            (rename-variables tbl (cdr (fatom-expr trm))))))
          (else trm)))
- 
- ; ground: term -> boolean
- (define (ground? trm)
-   (cond ((variable? trm) #f)
-         ((literal? trm) #t)
-         ((pair? trm) (and (ground? (car trm))
-                           (ground? (cdr trm))))
-         (else #t)))
  
  ) ; end of unify module

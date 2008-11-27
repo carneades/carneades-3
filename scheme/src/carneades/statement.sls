@@ -12,57 +12,133 @@
 ;;; 
 ;;; You should have received a copy of the GNU Lesser General Public License
 ;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  
+
 #!r6rs
 
 (library 
  (carneades statement)
  
- (export statement-equal? statement-compare statement-positive?
-         statement-negative? statement-complement statement-atom summarize
-;         statement->sxml index-by-statement index-by-id term->sxml
-;         make-text text? text-id text-statement text-src text-summary
-         )
+ (export variable? constant? compound-term? statement? statement-equal?
+         statement-compare statement-positive?
+         statement-negative? statement-complement statement-atom
+         statement-predicate statement-formatted statement-wff
+         make-fatom fatom? fatom-form fatom-expr
+         term? term-functor term-args ground?)
  
  (import (rnrs base)
          (rnrs io simple)
          (rnrs io ports)
          (rnrs records syntactic (6))
          ; (rnrs hashtables (6))
+         (carneades lib srfi format)
          (prefix (carneades table) table:)
          (prefix (carneades lib srfi compare) compare:))
-  
- ; <atom> := <symbol> | <list> | <string>
+ 
+ ; variable? : object -> boolean
+ ; A logic variable is represented as a symbol prefixed with a 
+ ; question mark.  For example: '?x
+ (define variable? 
+   (lambda (u)
+     (and (symbol? u)
+          (let ((s (symbol->string u)))
+            (and (> (string-length s) 0)
+                 (eq? (string-ref s 0) #\?))))))
+ 
+ ; constant? : object -> boolean
+ (define constant?
+   (lambda (u)
+     (or (and (symbol? u) (not (variable? u)))
+         (number? u)
+         (string? u)
+         (boolean? u))))
+ 
+ ; <atom> := <symbol> | <list> | <string> | <fatom>
  ; <statement> := <atom> | (not <atom>)   ;; i.e. literals
-
-; (define-record-type text
-;   (fields
-;    id       ; symbol
-;    exp      ; statement | null
-;    summary  ; string, quoting or paraphrasing the source text
-;    src      ; string, a URL pointing to the original text
-;    ))
-; 
-; (define (text-statement txt)
-;   (if (null? (text-exp txt))
-;       (text-id txt)
-;       (text-exp txt)))
  
- (define statement-equal? equal?)
+ ; fatom: formatted atomic formulas of predicate logic.
+ (define-record-type fatom 
+   (fields
+    form ; string, as used by the format procedure
+    expr ; list of the form (<symbol> ...)
+    ))
  
-
+ (define (compound-term? t1)
+   (or (pair? t1)
+       (fatom? t1)))
+ 
+  
+ ; term?: datum -> boolean
+ (define (term? t1)
+   (or (statement? t1)
+       (number? t1)
+       (boolean? t1)))
+ 
+ ; term-functor -> symbol | #f
+ (define (term-functor t1)
+   (cond ((pair? t1)
+          (car t1))
+         ((fatom? t1)
+          (car (fatom-expr t1)))
+         (else #f)))
+ 
+ ; term-args: term -> (list-of term) 
+ (define (term-args t1)
+   (cond ((pair? t1)(cdr t1))
+         ((fatom? t1) (cdr (fatom-expr t1)))
+         (else '())))
+ 
+ ; term-formatted: term -> datum
+ ; to quote statements
+ (define (term-formatted t1)
+   (if (fatom? t1) 
+       (string-append "\"" (statement-formatted t1) "\"")
+       t1))
+ 
+ ; ground?: term -> boolean
+ (define (ground? trm)
+   (cond ((variable? trm) #f)
+         ((constant? trm) #t)
+         ((pair? trm) (and (ground? (car trm))
+                           (ground? (cdr trm))))
+         (else #t)))
+ 
+ ; example: (make-fatom "The mother of ~a is ~a." '(mother Tom Gloria))
+ 
+ (define (statement? s1)
+   (or (symbol? s1)
+       (string? s1)
+       (pair? s1)
+       (fatom? s1)))
+ 
+ (define (statement-equal? s1 s2)
+   (cond ((and (symbol? s1) (symbol? s2))
+          (eq? s1 s2))
+         ((and (string? s1) (string? s2))
+          (string=? s1 s2))
+         ((and (list? s1) (list? s2))
+          (equal? s1 s2))
+         ((and (fatom? s1) (fatom? s2))
+          (equal? (fatom-expr s1) (fatom-expr s2)))
+         (else #f)))
+ 
  ; statement-compare: statement statement -> {-1,0,1}
- (define statement-compare compare:default-compare)
+ (define (statement-compare s1 s2)
+   (cond ((and (fatom? s1) (fatom? s2))
+          (compare:default-compare (fatom-expr s1) 
+                                   (fatom-expr s2)))
+         (else (compare:default-compare s1 s2))))
  
  (define (statement-positive? s1)
-   (or (not (pair? s1))
+   (or (string? s1) 
+       (symbol? s1)
+       (fatom? s1)
        (and (pair? s1)
             (not (eq? (car s1) 'not)))))
  
  (define (statement-negative? s1)
    (and (pair? s1)
         (eq? (car s1) 'not)))
-
+ 
  (define (statement-complement s1)
    (if (pair? s1)
        (if (eq? (car s1) 'not)
@@ -80,48 +156,28 @@
            s1)
        s1))
  
-; (define (term->sxml t)
-;   (cond ((symbol? t) (string-append (symbol->string t) " "))
-;         ((list? t) (statement->sxml t))
-;         (else t)))
-; 
-; (define (statement->sxml s)
-;   (cond ((symbol? s) (list 's (symbol->string s)))
-;         ((list? s)
-;          (if (eq? (car s) 'not)
-;              (cons 'not (list (statement->sxml (cadr s))))
-;              (cons 's (map term->sxml s))))
-;         (else s)))
+ ; statement-predicate: statement -> symbol | #f
+ (define (statement-predicate s1)
+   (let ((s2 (statement-atom s1)))
+     (cond ((pair? s2)
+            (car s2))
+           ((fatom? s2)
+            (car (fatom-expr s2)))
+           (else #f))))
  
- #| index-by-statement: (list-of text) -> (hashtable-of datum text)
-            assumption: the statement of each text in the list is unique.  |#
-; (define (index-by-statement texts)
-;   (let ((tbl (table:make-table)))
-;     (for-each (lambda (txt) 
-;                 (if (text-statement txt)
-;                     (set! tbl (table:insert tbl (text-statement txt) txt))))
-;               texts)
-;     tbl))
+ ; statement-wff: statement -> symbol | string | list
+ (define (statement-wff s1)
+   (if (fatom? s1)
+       (fatom-expr s1)
+       s1))
  
- #| index-by-id: (list-of text) -> (hashtable-of symbol text)
-            assumption: the id of each text in the list is unique. |#
-; (define (index-by-id texts)
-;   (let ((tbl (table:make-table)))
-;     (for-each (lambda (txt) 
-;                 (set! tbl (table:insert tbl (text-id txt) txt)))
-;               texts)
-;     tbl))
- 
- #| summarize: statement -> string
-            default string representation of statements,
-            for use in reports and diagrams.  The default just displays the
-            statement as an s-expression. |#
- (define (summarize statement)
-   (let ((write-statement-to-port
-          (lambda (p f)
-            (write statement p)
-            (f))))
-     (call-with-values open-string-output-port write-statement-to-port)))
+ ; statement-formatted: statement -> string
+ (define (statement-formatted s1)
+   (if (fatom? s1) 
+       (apply format `(,(fatom-form s1) 
+                       ,@ (map term-formatted (cdr (fatom-expr s1)))))
+       s1))
  
  
- ) ; end of library statement
+ 
+ ) ; end of statement library
