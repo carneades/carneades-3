@@ -23,16 +23,14 @@
  
  (import (rnrs base)
          (rnrs io simple)
+         (carneades base)
          (carneades argument)
          (carneades argument-search)
          (carneades stream)
          (carneades argument-diagram)
          (carneades statement)
-         (prefix (carneades search) search:)
-         (carneades lib srfi format))
- 
- (define (printf format-string . args)
-    (apply format `(,(current-output-port)  ,format-string ,@args)))
+         (prefix (carneades search) search:))
+
  
  ; make-engine*: integer integer context (list-of generator) -> statement -> (stream-of argument-state)
  (define (make-engine* max-nodes max-turns context generators) 
@@ -54,7 +52,7 @@
    (view* (state-arguments s)
           (state-context s)
           (context-substitutions (state-context s))
-          (lambda (s) (format "~A" s))))
+          (lambda (s) (statement-formatted s))))
  
  
  ; show: statement (statement -> (stream-of argument-state)) -> void
@@ -78,7 +76,7 @@
          (diagram* (state-arguments str)
                    (state-context str)
                    (context-substitutions (state-context str))
-                   (lambda (s) (format "~A" s))
+                   (lambda (s) (statement-formatted s))
                    (current-output-port)))))
  
  ; ask: statement (statement -> (stream-of argument-state)) -> void
