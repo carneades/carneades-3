@@ -396,9 +396,14 @@
  ; replace any variables in the statements of the arguments in the 
  ; argument graph with their values in the substitutions
  (define (instantiate-argument-graph ag subs)
-   (list->argument-graph 
-    (map (lambda (arg) (subs (argument->datum arg)))
-         (list-arguments ag))))
+   (let ((iag (list->argument-graph 
+               (map (lambda (arg) (subs (argument->datum arg)))
+                    (list-arguments ag)))))
+     (make-argument-graph (argument-graph-id ag)
+                          (argument-graph-title ag)
+                          (argument-graph-main-issue ag)
+                          (argument-graph-nodes iag)
+                          (argument-graph-arguments iag))))
  
  ; add-string: string (list-of string) -> (list-of string)
  ; Add the string, s, the list l, if it is not already a member of l
