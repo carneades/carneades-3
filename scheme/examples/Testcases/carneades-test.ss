@@ -285,7 +285,8 @@
       (movable item2)
       (edible item2)
       (foo2 a)
-      (p2 a)
+      (p1 a)
+      (p2 b)
       (p6 a)
       (p7 a)
       (p8 a)
@@ -455,7 +456,7 @@
                    "rule test: (prior r6 r1) should be acceptable! (conjunction)")
   
   ; disjunction of atomic statements
-  (run-single-test (all-in? '(p3 a) (engine 20 1 rb1 as1 null))
+  (run-single-test (all-in? '(p3 b) (engine 20 1 rb1 as1 null))
                    "rules with disjunctions of atomic statements"
                    "rule test: (p3 a) should be acceptable! (disjunction of atomic statements)")
   
