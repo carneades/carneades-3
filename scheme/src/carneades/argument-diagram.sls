@@ -139,6 +139,6 @@
  
  ; view: argument-graph context -> void
  (define (view ag c)
-   (view* ag c unify:identity (lambda (s) (format "~a" s))))
+   (view* ag c unify:identity (lambda (s) (statement-formatted s))))
  
  ) ; end library

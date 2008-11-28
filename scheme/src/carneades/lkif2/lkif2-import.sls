@@ -11,6 +11,7 @@
          (carneades lkif2 lkif2-base)
          (carneades rule)
          (prefix (carneades argument) argument:)
+         (prefix (carneades statement) statement:)
          (carneades lib match)
          (prefix (carneades table) table:)
          (carneades lib xml sxml xpath-context_xlink))
@@ -129,6 +130,16 @@
  (define (get-conclusion-statement c tbl)
    (let ((sid (get-attribute-value (get-attribute c 'statement) "")))
      (get-statement sid tbl)))
+ 
+  
+ ; get-text/term: atom -> (list-of text/term)
+ (define (get-text/term* a)
+   (let* ((s (cdr a)))
+     (if (and (pair? s)
+              (pair? (car s))
+              (eq? (caar s) '^))
+         (cdr s)
+         s)))
  
  
  ; --------------------------------
@@ -255,26 +266,38 @@
                (newline)
                '())))
  
+ (define (text/term->format-string t)
+   (if (string? t)
+       t
+       "~a"))
+ 
+ (define (text/term*->format-string tt)
+   (fold-left (lambda (s t)
+                (string-append s (text/term->format-string t)))
+              ""
+              tt))       
+ 
+ (define (atom->format-string a)
+   (let ((tt (get-text/term* a)))
+     (text/term*->format-string tt)))
+ 
  (define (lkif-atom->sexpr a)
-   (let ((pred (get-attribute-value (get-attribute a 'pred) #f))
-         (assumable (get-attribute-value (get-attribute a 'assumable) "none")))
-     (let ((text/term (if pred
-                          (if (string=? assumable "none")
-                              (list-tail a 2)
-                              (list-tail a 3))
-                          (if (string=? assumable "none")
-                              (list-tail a 1)
-                              (list-tail a 2)))) 
-           (term? (element-checker 'v 'i 'c 'expr 's)))
-       (call-with-values (lambda () (partition term? text/term))
-                         (lambda (terms text)
-                           (if (string=? assumable "true")
-                               (if pred
-                                   (list 'assuming (cons (string->symbol pred) (map lkif-term->sexpr terms)))
-                                   (list 'assuming (car text)))
-                               (if pred
-                                   (cons (string->symbol pred) (map lkif-term->sexpr terms))
-                                   (car text))))))))
+   (let* ((pred (get-attribute-value (get-attribute a 'pred) #f))
+          (assumable (get-attribute-value (get-attribute a 'assumable) "none"))
+          (text/term* (get-text/term* a)) 
+          (term? (element-checker 'v 'i 'c 'expr 's))
+          (format-string (text/term*->format-string text/term*)))
+     (call-with-values (lambda () (partition term? text/term*))
+                       (lambda (terms text)
+                         (if (string=? assumable "true")
+                             (if pred
+                                 (list 'assuming (statement:make-fatom format-string
+                                                             (cons (string->symbol pred) (map lkif-term->sexpr terms))))
+                                 (list 'assuming (car text)))
+                             (if pred
+                                 (statement:make-fatom format-string
+                                             (cons (string->symbol pred) (map lkif-term->sexpr terms)))
+                                 (car text)))))))
  
  (define (lkif-or->sexpr o)
    (let ((assumable (get-attribute-value (get-attribute o 'assumable) #f)))
