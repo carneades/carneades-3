@@ -12,12 +12,13 @@
          (carneades lkif2 lkif2-import) ; only for testing
          
          (carneades argument)
-         (only (carneades statement) statement-equal?)
+         (prefix (carneades statement) statement:)
          (carneades rule)
          (prefix (carneades table) table:)
          (carneades unify)
          (carneades system)
-         (carneades lib xml sxml serializer))
+         (carneades lib xml sxml serializer)
+         (carneades lib xml ssax util))
  
  
  ; --------------------------------
@@ -64,6 +65,9 @@
  
  (define (lkif-export export-data . port-or-filename)
    (let ((sxml-obj (lkif-data->sxml export-data)))
+     (write sxml-obj)
+     (newline)
+     (newline)
      (if (null? port-or-filename)
          (srl:sxml->xml sxml-obj (current-output-port))
          (srl:sxml->xml sxml-obj (car port-or-filename)))))
@@ -138,16 +142,51 @@
            attributes
            wff)))
  
+ (define (parse-format expr l b)
+   (cond ((null? l)
+          '())
+         ((and b
+               (pair? (cdr l))
+               (string=? (car l) ""))
+          (cons (car expr)
+                (cons (substring (cadr l) 1 (string-length (cadr l)))
+                      (parse-format (cdr expr) (cddr l) #f))))
+         ((and (not b)
+               (char=? (string-ref (car l) 0) #\a))
+          (cons (car expr) 
+                (cons (substring (car l) 1 (string-length (car l)))
+                      (parse-format (cdr expr) (cdr l) #f))))
+         (else (cons (car l) (parse-format expr (cdr l) #f)))))
+ 
+ (define (combine-expression-format expr fs)
+   (let* ((l (string-split fs '(#\~)))
+          (p (parse-format (cdr expr) l #t)))
+     (filter (lambda (s)
+               (not (and (string? s)
+                         (string=? s ""))))
+             (map text/term->sxml p))))
+          
+ 
  ; wff->sxml: wff -> sxml
  (define (wff->sxml f)
    (cond ((string? f) (list 's f))
          ((symbol? f) (list 's f))
+         ((statement:fatom? f) (append (list 's
+                                             (elements->attributes 
+                                              (list (element->sxml 'pred (symbol->string (statement:statement-predicate f))))))
+                                       (combine-expression-format (statement:fatom-expr f)
+                                                                  (statement:fatom-form f))))                                     
          ((pair? f) (case (car f)
                       ((not) (list 'not (wff->sxml (cadr f))))
                       ((and or if iff) (cons (car f) (map wff->sxml (cdr f))))
                       ((assuming) (let ((s (wff->sxml (cadr f))))
                                     (list (car s)
-                                          (elements->attributes (list (element->sxml 'assumable "true")))
+                                          (if (and (pair? (cdr s))
+                                                   (pair? (cadr s))
+                                                   (eq? (caadr s) '^))
+                                              (elements->attributes (cons (element->sxml 'assumable "true")
+                                                                          (cdadr s)))
+                                              (elements->attributes (list (element->sxml 'assumable "true"))))
                                           (cadr s))))
                       ((unless) (append (list 'not
                                             (elements->attributes (list (element->sxml 'exception "true"))))
@@ -179,6 +218,11 @@
    (cond ((boolean? t) (list 'c (if t "true" "false")))
          ((number? t) (list 'c t))
          ((string? t) t)
+         ((statement:fatom? t) (append (list 's
+                                             (elements->attributes 
+                                              (list (element->sxml 'pred (symbol->string (statement:statement-predicate t))))))
+                                       (combine-expression-format (statement:fatom-expr t)
+                                                                  (statement:fatom-form t))))
          ((variable? t) (let ((s (symbol->string t)))
                           (element->sxml 'v (substring s 1 (string-length s)))))
          ((symbol? t) (list 'c (symbol->string t)))
@@ -311,31 +355,36 @@
     (find (lambda (a)
             (let ((premises (argument-premises a)))
               (let ((prm (find (lambda (p)
-                                 (statement-equal? (premise-statement p) s))
+                                 (statement:statement-equal? (premise-statement p) s))
                                premises)))
                 (and prm (assumption? prm)))))
           args)) 
   
-  ; atom->sxml: atom (list-of struct:argument) -> sxml
-  (define (atom->sxml a args)
+  ; atom->sxml: atom (list-of struct:argument) substitutions -> sxml
+  (define (atom->sxml a args subs)
     (cond ((string? a) (if (assumption-premise? a args)
                            (list 's
                                  (elements->attributes (list (element->sxml 'assumable "true")))
-                                 a)
-                           (list 's a)))
+                                 (subs a))
+                           (list 's (subs a))))
+          ((statement:fatom? a) (append (list 's
+                                             (elements->attributes 
+                                              (list (element->sxml 'pred (symbol->string (statement:statement-predicate a))))))
+                                       (combine-expression-format (statement:fatom-expr a)
+                                                                  (statement:fatom-form a))))
           ((symbol? a) (if (assumption-premise? a args)
                            (list 's
                                  (elements->attributes (list (element->sxml 'assumable "true")))
-                                 (symbol->string a))                           
-                           (list 's (symbol->string a))))
+                                 (symbol->string (subs a)))                           
+                           (list 's (symbol->string (subs a)))))
           ((pair? a) (if (assumption-premise? a args)
                          (append (list 's
-                                       (elements->attributes (list (element->sxml 'pred (symbol->string (car a)))
+                                       (elements->attributes (list (element->sxml 'pred (symbol->string (car (subs a))))
                                                                    (element->sxml 'assumable "true"))))
-                                 (map text/term->sxml (cdr a)))
+                                 (map text/term->sxml (cdr (subs a))))
                          (append (list 's
-                                       (elements->attributes (list (element->sxml 'pred (symbol->string (car a))))))
-                                 (map text/term->sxml (cdr a)))))
+                                       (elements->attributes (list (element->sxml 'pred (symbol->string (car (subs a)))))))
+                                 (map text/term->sxml (cdr (subs a))))))
                                
           (else (display "Error: unknown atom - ")
                 (display a)
@@ -353,7 +402,7 @@
                                             (element->sxml 'value (status->value st))
                                             (element->sxml 'assumption (status->assumption st))
                                             (element->sxml 'standard (string-upcase (symbol->string (proof-standard c a))))))
-                                     (atom->sxml a args))))))
+                                     (atom->sxml a args (context-substitutions c)))))))
       (cons 'statements (map statement->sxml (table:keys t)))))
   
   ; arguments->sxml: (list-of argument) table:atom->struct:statement -> sxml
