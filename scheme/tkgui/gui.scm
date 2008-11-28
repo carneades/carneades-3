@@ -1,6 +1,7 @@
 #!r6rs
 
 (import (rnrs)
+        (carneades base)
         (carneades lib pstk)
         (carneades statement)
         (carneades argument)
@@ -12,7 +13,6 @@
         (carneades lib srfi format)
         (prefix (carneades search) search:)
         (carneades rule)
-        (only (carneades system) null printf)
         (prefix (carneades table) table:))
 
 
