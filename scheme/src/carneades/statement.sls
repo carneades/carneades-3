@@ -58,7 +58,7 @@
  ; fatom: formatted atomic formulas of predicate logic.
  (define-record-type fatom 
    (fields
-    form ; string, as used by the format procedure
+    form ; string, with ~a, as in format, used to denote fields
     expr ; list of the form (<symbol> ...)
     ))
  
@@ -115,10 +115,14 @@
           (eq? s1 s2))
          ((and (string? s1) (string? s2))
           (string=? s1 s2))
-         ((and (list? s1) (list? s2))
+         ((and (pair? s1) (pair? s2))
           (equal? s1 s2))
          ((and (fatom? s1) (fatom? s2))
           (equal? (fatom-expr s1) (fatom-expr s2)))
+         ((and (pair s1) (fatom? s2))
+          (equal? s1 (fatom-expr s2)))
+         ((and (fatom? s1) (pair s2))
+          (equal? (fatom-expr s1) s2))
          (else #f)))
  
  ; statement-compare: statement statement -> {-1,0,1}
@@ -126,6 +130,10 @@
    (cond ((and (fatom? s1) (fatom? s2))
           (compare:default-compare (fatom-expr s1) 
                                    (fatom-expr s2)))
+         ((and (pair s1) (fatom? s2))
+          (compare:default-compare s1 (fatom-expr s2)))
+         ((and (fatom? s1) (pair s2))
+          (compare:default-compare (fatom-expr s1) s2))
          (else (compare:default-compare s1 s2))))
  
  (define (statement-positive? s1)
