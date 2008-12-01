@@ -1,13 +1,12 @@
 #!r6rs
 
 (import (rnrs base)
+        (carneades base)
         (carneades statement)
         (carneades argument)
         (carneades argument-diagram)
         (prefix (carneades table) table:)
         (carneades unify))
-
-(define null '())
 
 ; The Pierson vs. Post case.  Used to illustrate the use of
 ;   a scheme for "practical reasoning" in legal argument.
@@ -92,7 +91,7 @@ peace and order.")
 an important social value.")
 
 (define c0 
-  (make-context (table:make-table) ; status table
+  (make-context (table:make-table statement=? null) ; status table
                 (lambda (statement) 'se) ; default standard: scintilla
                 (lambda (arg1 arg2) 0) ; no priorities
                 identity))

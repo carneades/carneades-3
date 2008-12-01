@@ -18,7 +18,7 @@
 (library 
  (carneades statement)
  
- (export variable? constant? compound-term? statement? statement-equal?
+ (export variable? constant? compound-term? statement? statement=?
          statement-compare statement-positive?
          statement-negative? statement-complement statement-atom
          statement-predicate statement-formatted statement-wff
@@ -110,7 +110,7 @@
        (pair? s1)
        (fatom? s1)))
  
- (define (statement-equal? s1 s2)
+ (define (statement=? s1 s2)
    (cond ((and (symbol? s1) (symbol? s2))
           (eq? s1 s2))
          ((and (string? s1) (string? s2))
@@ -119,9 +119,9 @@
           (equal? s1 s2))
          ((and (fatom? s1) (fatom? s2))
           (equal? (fatom-expr s1) (fatom-expr s2)))
-         ((and (pair s1) (fatom? s2))
+         ((and (pair? s1) (fatom? s2))
           (equal? s1 (fatom-expr s2)))
-         ((and (fatom? s1) (pair s2))
+         ((and (fatom? s1) (pair? s2))
           (equal? (fatom-expr s1) s2))
          (else #f)))
  
@@ -130,9 +130,9 @@
    (cond ((and (fatom? s1) (fatom? s2))
           (compare:default-compare (fatom-expr s1) 
                                    (fatom-expr s2)))
-         ((and (pair s1) (fatom? s2))
+         ((and (pair? s1) (fatom? s2))
           (compare:default-compare s1 (fatom-expr s2)))
-         ((and (fatom? s1) (pair s2))
+         ((and (fatom? s1) (pair? s2))
           (compare:default-compare (fatom-expr s1) s2))
          (else (compare:default-compare s1 s2))))
  

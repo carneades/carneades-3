@@ -20,7 +20,7 @@
  (carneades table)  
  
  ;; Immutable, functional tables. Simple implementation using association lists. 
- ;; Keys compared with equal?
+ ;; Keys compared with equal? by default
  
  (export make-table table? insert lookup keys objects  
          filter-keys filter-objects 
@@ -30,25 +30,27 @@
          (prefix (carneades set) set:))
  
  (define-record-type table 
-   (fields pairs) ; alist of (key,value) pairs
+   (fields pred pairs) ; alist of (key,value) pairs
    (protocol (lambda (new) 
                (case-lambda 
-                (() (new '()))
-                ((alist) (new alist))))))
+                (() (new equal? '()))
+                ((alist) (new equal? alist))
+                ((pred alist) (new pred alist))))))
                            
  
  ; insert: table key value -> table
  (define (insert t1 k v) 
-   (make-table (cons (cons k v) (table-pairs t1))))
+   (make-table (table-pred t1) (cons (cons k v) (table-pairs t1))))
  
  ; lookup: table key default -> value 
- (define (lookup t1 k v) 
-   (let ((p (assoc k (table-pairs t1))))
+ (define (lookup t1 k1 v) 
+   (let ((p (assp (lambda (k2) ((table-pred t1) k1 k2)) 
+                   (table-pairs t1))))
      (if p (cdr p) v)))
  
  (define (keys t1) 
    ; use list->set to remove duplicate keys
-   (set:set->list ((set:list->set equal?) (map car (table-pairs t1)))))
+   (set:set->list ((set:list->set (table-pred t1)) (map car (table-pairs t1)))))
  
  ; objects table -> (list-of datum)
  (define (objects t1)

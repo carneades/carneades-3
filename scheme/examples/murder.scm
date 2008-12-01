@@ -2,13 +2,13 @@
 #!r6rs
 
 (import (rnrs base)
+        (carneades base)
         (carneades statement)
         (carneades argument)
         (carneades argument-diagram)
         (prefix (carneades table) table:)
         (carneades unify))
 
-(define null '())
 
 (define murder "murder")
 
@@ -64,7 +64,7 @@ then time to run away.")
   (con self-defense (pr f2) (ex w2-not-credible)))
 
 (define c0 
-  (make-context (table:make-table) ; status table
+  (make-context (table:make-table statement=? null) ; status table
                 (lambda (statement) 'se) ; default standard: scintilla
                 (lambda (arg1 arg2) 0) ; no priorities
                 identity))
