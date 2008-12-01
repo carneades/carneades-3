@@ -24,6 +24,7 @@
          (rnrs files)
          ; (rnrs hashtables)
          (rnrs io simple)
+         (carneades base)
          (carneades lib srfi format)
          (carneades statement)
          (carneades argument)
@@ -33,7 +34,7 @@
          (prefix (carneades config) config:)
          (carneades system)) 
  
- (define ids (table:make-table))
+ (define ids (table:make-table eq? null))
  
  ; get-id: datum -> symbol
  ; get the symbol used to identify some datum, generating
@@ -50,7 +51,7 @@
  ; diagram*: argument-graph context substitutions
  ;           (-> statement string) output-port -> void
  (define (diagram* ag context subs statement->string port)
-   (set! ids (table:make-table)) ; re-initialize
+   (set! ids (table:make-table eq? null)) ; re-initialize
    (format port "digraph g {~%    rankdir = \"RL\";~%")
    (print-statements ag context subs (statements ag) statement->string  port)
    (print-arguments ag context subs (list-arguments ag) port)

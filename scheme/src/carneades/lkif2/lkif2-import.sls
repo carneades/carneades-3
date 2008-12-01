@@ -8,6 +8,7 @@
          )
  
  (import (rnrs)
+         (carneades base)
          (carneades lkif2 lkif2-base)
          (carneades rule)
          (prefix (carneades argument) argument:)
@@ -414,7 +415,7 @@
  
  ; statements->table: (list-of struct:statement) -> table
  (define (statements->table s)
-   (fold-left insert-statement (table:make-table) s))
+   (fold-left insert-statement (table:make-table statement:statement=? null) s))
  
  ; statement->sexpr: struct:statement -> any
  (define (statement->sexpr s)

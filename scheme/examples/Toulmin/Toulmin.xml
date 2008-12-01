@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?oxygen RNGSchema="../../../schemas/LKIF2.rnc" type="compact"?>
+<?xml-stylesheet type="text/css" href="../../../schemas/LKIF2.css"?>
 <lkif>
 	<argument-graphs>
-		<argument-graph id="Toulmin">
+		<argument-graph id="Toulmin" main-issue="s1">
 
 			<statements>
 				<statement id="s1" value="unknown" assumption="true" standard="BA">
-					<s>Harry is a British subject.</s>
+					<s pred="british"><c>Harry</c> is a British subject.</s>
 				</statement>
-				<statement id="s2" value="unknown" assumption="true" standard="BA">
-					<s>Harry was born in Bermuda.</s>
+				<statement id="s2" value="true" assumption="true" standard="BA">
+					<s pred="born-in"><c>Harry</c> was born in <c>Bermuda</c>.</s>
 				</statement>
-				<statement id="s3" value="unknown" assumption="true" standard="BA">
-					<s>A man born in Bermuda will generally be a Brisith subject.</s>
+				<statement id="s3" value="true" assumption="true" standard="BA">
+					<s>A man born in Bermuda will generally be a British subject.</s>
 				</statement>
 				<statement id="s4" value="unknown" assumption="true" standard="BA">
 					<s>Civil Code Section 123</s>
 				</statement>
 				<statement id="s5" value="unknown" assumption="true" standard="BA">
-					<s>Harry has become an American and thus is no longer a British subject.</s>
+					<s pred="no-longer-subject"><c>Harry</c> is no longer a <c>British</c> subject.</s>
 				</statement>
 				<statement id="s6" value="unknown" assumption="true" standard="BA">
-					<s>Harry has become an American citizen.</s>
+					<s pred="has-become-citizen"><c>Harry</c> has become an <c>American</c> citizen.</s>
 				</statement>
 				<statement id="s7" value="unknown" assumption="true" standard="BA">
 					<s>Persons who become American citizens are no longer British subjects.</s>

@@ -7,6 +7,7 @@
  (export lkif-export)
  
  (import (rnrs)         
+         (carneades base)
          (carneades lkif2 lkif2-base)
          
          (carneades lkif2 lkif2-import) ; only for testing
@@ -314,7 +315,7 @@
   (define (nodes->table n)
     (fold-left (lambda (t s)
                  (insert-statement t s))
-               (table:make-table)
+               (table:make-table statement:statement=? null)
                (table:keys n)))
   
   ; insert-statement: table statement -> table
@@ -355,7 +356,7 @@
     (find (lambda (a)
             (let ((premises (argument-premises a)))
               (let ((prm (find (lambda (p)
-                                 (statement:statement-equal? (premise-statement p) s))
+                                 (statement:statement=? (premise-statement p) s))
                                premises)))
                 (and prm (assumption? prm)))))
           args)) 
