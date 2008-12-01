@@ -32,15 +32,14 @@
 (define *current-stage* #f)
 (define *search-rest* #f) ; stream of remaining states found by argument search
 
+; *statements-table*:  maps strings to statements
+; assumption: no two statements have the same formatted string representation 
+(define *statements-table* (make-hashtable string-hash string=?))
+
 ;(define *current-issue* (tk-var 'current-issue))
 ;(define *current-solution* (tk-var 'current-solution))
 
 ;; utilities
-
-(define (datum->string d)
-  (let-values (((port extract) (open-string-output-port)))
-    (write d port)
-    (extract)))
 
 ; replace-element: list datum datum -> list
 ; replaces e1 by e2 in the list l. e1 and e2 are compared using eq?
@@ -151,12 +150,13 @@
     
     ; load the facts
     (for-each (lambda (fact)
+                (hashtable-set! *statements-table* (statement-formatted fact) fact)
                 (cond ((accepted? context fact)
                        (fact-table 'insert "" 'end
-                                   'values: (list "" "true" (datum->string fact))))
+                                   'values: (list "" "true" (statement-formatted fact))))
                       ((rejected? context fact)
                        (fact-table 'insert "" 'end
-                                   'values:(list "" "false" (datum->string fact))))))
+                                   'values:(list "" "false" (statement-formatted fact))))))
               (table:keys (context-status context)))
 
     ; load the rules
@@ -195,11 +195,17 @@
   (rule-head-list 'delete (rule-head-list 'children ""))
   (rule-head-list 'insert ""
                   'end
-                  'values: (map datum->string (rule-head rule)))
+                  'values: (map (lambda (s) 
+                                  (let ((sf (statement-formatted s)))
+                                    sf))
+                                  (rule-head rule)))
   (rule-body-list 'delete (rule-body-list 'children ""))
   (rule-body-list 'insert ""
                   'end
-                  'values: (map datum->string (rule-body rule))))
+                  'values: (map (lambda (clause)
+                                  (printf "debug: clause=~a~%" clause)
+                                  (map statement-formatted clause))
+                                (rule-body rule))))
 
 ; load-stage!: stage -> void
 (define (load-stage! stage)
@@ -225,9 +231,10 @@
                        (pro (length (pro-arguments ag p)))
                        (con (length (con-arguments ag p)))
                        (ps (proof-standard c3 p))
-                       (content (datum->string p))
-                       (content-with-subs (datum->string (subs p)))
+                       (content (statement-formatted p))
+                       (content-with-subs (statement-formatted (subs p)))
                        (row (list id a s pro con ps content content-with-subs)))
+                  (hashtable-set! *statements-table* content-with-subs p)
                   (statement-table 'insert ""
                                    'end
                                    'values: row)))
@@ -833,8 +840,8 @@ http://carneades.berlios.de
 (tk/bind statement-table "<<TreeviewSelect>>" 
          (lambda ()
            (let* ((s1 (statement-table 'selection))
-                  (p (read (open-string-input-port (statement-table 'set s1 'content)))))
-             (load-arguments! p) )))
+                  (p  (hashtable-ref *statements-table* (statement-table 'set s1 'content-with-subs) #f)))
+             (if p (load-arguments! p) ))))
 
 
 ; load-arguments!: statement -> void
@@ -905,7 +912,7 @@ http://carneades.berlios.de
              (arg (get-argument ag arg-id))
              
              (load-premise! (lambda (p) 
-                              (let ((statement (datum->string (subs (premise-atom p))))
+                              (let ((statement (statement-formatted (subs (premise-atom p))))
                                     (polarity (if (premise-polarity p) "+" "-"))
                                     (holds (if (holds? ag c p) "yes" "no"))
                                     (role (premise-role p))

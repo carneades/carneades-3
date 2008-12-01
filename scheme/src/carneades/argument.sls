@@ -98,8 +98,8 @@
                  (ordinary-premise? p2))
             (and (negative-premise? p1)
                  (negative-premise? p2)))
-        (statement-equal? (premise-atom p1)
-                          (premise-atom p2))))
+        (statement=? (premise-atom p1)
+                     (premise-atom p2))))
  
  (define (direction? sym) (member sym '(pro con)))
  
@@ -209,7 +209,7 @@
            )) 
  
  (define default-context 
-   (make-context (table:make-table) 
+   (make-context (table:make-table statement=? null)
                  (lambda (statement) 'dv) ; default standard: dialectical validity
                  (lambda (arg1 arg2) 0)   ; default order: all arguments equally strong
                  identity))               ; identity substitution environment
@@ -293,7 +293,7 @@
    (fold-right (lambda (s1 c) 
                  (make-context (context-status c)
                                (lambda (s2) 
-                                 (if (statement-equal? (statement-atom s1) s2)
+                                 (if (statement=? (statement-atom s1) s2)
                                      ps
                                ;      ((context-standard c) s1)))
                                      ((context-standard c) s2)))
@@ -325,7 +325,7 @@
  (define (statements->nodes s)
    (fold-left (lambda (t s)
                 (table:insert t s (statement->node s)))
-              (table:make-table)
+              (table:make-table statement=? null)
               s))              
  
  (define-record-type argument-graph
@@ -340,17 +340,10 @@
         ((id title main-issue nodes arguments)
          (new id title main-issue nodes arguments))
         ((id title main-issue)
-         (new id title main-issue (table:make-table) (table:make-table)))
+         (new id title main-issue (table:make-table statement=? null) (table:make-table eq? null)))
         ((id title main-issue statements)
-         (new id title main-issue (statements->nodes statements) (table:make-table)))
-        (() (new (gensym) "" #f (table:make-table) (table:make-table)))))))
- 
-; (define empty-argument-graph 
-;   (make-argument-graph (gensym)
-;                        ""
-;                        #f
-;                        (table:make-table)
-;                        (table:make-table)))
+         (new id title main-issue (statements->nodes statements) (table:make-table eq? null)))
+        (() (new (gensym) "" #f (table:make-table statement=? null) (table:make-table eq? null)))))))
  
  (define empty-argument-graph (make-argument-graph))
  
@@ -533,7 +526,7 @@
  ; s1 depends on s2 in ag if s1 equals s2 or, recursively, some premise 
  ; of some argument pro or con s1 depends on s2 in ag. 
  (define (depends-on? ag s1 s2)
-   (or (statement-equal? s1 s2)
+   (or (statement=? s1 s2)
        (list:any (lambda (p) (depends-on? ag (premise-atom p) s2))
                  (all-premises ag s1))))
  
