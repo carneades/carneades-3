@@ -15,7 +15,8 @@
          (prefix (carneades statement) statement:)
          (carneades lib match)
          (prefix (carneades table) table:)
-         (carneades lib xml sxml xpath-context_xlink))
+         (carneades lib xml sxml xpath-context_xlink)
+         (only (carneades lib srfi strings) string-tokenize string-join))
  
  
  
@@ -273,10 +274,11 @@
        "~a"))
  
  (define (text/term*->format-string tt)
-   (fold-left (lambda (s t)
-                (string-append s (text/term->format-string t)))
-              ""
-              tt))       
+   (string-join (string-tokenize (fold-left (lambda (s t)
+                                              (string-append s (text/term->format-string t)))
+                                            ""
+                                            tt))
+                " "))
  
  (define (atom->format-string a)
    (let ((tt (get-text/term* a)))
