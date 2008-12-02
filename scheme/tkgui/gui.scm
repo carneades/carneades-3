@@ -188,24 +188,30 @@
          ; else return #f to indicate the document contains no argument graphs
          #f))) 
 
+(define (format-clause clause)
+  (let ((n (length clause)))
+    (cond ((= n 0) "")
+          ((= n 1) (statement-formatted (car clause)))
+          ((> n 1) (string-append (statement-formatted (car clause))
+                                  ", " 
+                                  (format-clause (cdr clause)))))))
+
 ; load-rule!: rule -> void
 (define (load-rule! rule)
   (rule-id-field 'delete 0 'end)
   (rule-id-field 'insert 0 (rule-id rule))
   (rule-head-list 'delete (rule-head-list 'children ""))
-  (rule-head-list 'insert ""
+  (for-each (lambda (head)
+              (rule-head-list 'insert ""
                   'end
-                  'values: (map (lambda (s) 
-                                  (let ((sf (statement-formatted s)))
-                                    sf))
-                                  (rule-head rule)))
+                  'values: (list (statement-formatted head))))
+            (rule-head rule))
   (rule-body-list 'delete (rule-body-list 'children ""))
-  (rule-body-list 'insert ""
+  (for-each (lambda (clause)
+              (rule-body-list 'insert ""
                   'end
-                  'values: (map (lambda (clause)
-                                  ; (printf "debug: clause=~a~%" clause)
-                                  (map statement-formatted clause))
-                                (rule-body rule))))
+                  'values: (list (format-clause clause))))
+            (rule-body rule)))
 
 ; load-stage!: stage -> void
 (define (load-stage! stage)
