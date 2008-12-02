@@ -203,7 +203,7 @@
   (rule-body-list 'insert ""
                   'end
                   'values: (map (lambda (clause)
-                                  (printf "debug: clause=~a~%" clause)
+                                  ; (printf "debug: clause=~a~%" clause)
                                   (map statement-formatted clause))
                                 (rule-body rule))))
 
@@ -234,7 +234,7 @@
                        (content (statement-formatted p))
                        (content-with-subs (statement-formatted (subs p)))
                        (row (list id a s pro con ps content content-with-subs)))
-                  (hashtable-set! *statements-table* content-with-subs p)
+                  (hashtable-set! *statements-table* content p)
                   (statement-table 'insert ""
                                    'end
                                    'values: row)))
@@ -840,7 +840,7 @@ http://carneades.berlios.de
 (tk/bind statement-table "<<TreeviewSelect>>" 
          (lambda ()
            (let* ((s1 (statement-table 'selection))
-                  (p  (hashtable-ref *statements-table* (statement-table 'set s1 'content-with-subs) #f)))
+                  (p  (hashtable-ref *statements-table* (statement-table 'set s1 'content) #f)))
              (if p (load-arguments! p) ))))
 
 
@@ -974,7 +974,6 @@ http://carneades.berlios.de
 (nb1 'add rule-panel 
      'text: "Rules" 
      'underline: 0)
-
 
                             
 (tk/wm 'deiconify tk)
