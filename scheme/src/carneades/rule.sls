@@ -48,7 +48,7 @@
          (prefix (carneades table) table:)
          (carneades lib srfi format))
   
-  (define *debug* #t)
+  (define *debug* #f)
  
   
   ; Negation, exceptions and assumptions. Statements of the form (not P), (unless P)
