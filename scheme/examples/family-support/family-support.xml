@@ -208,9 +208,9 @@
     <argument-graph id="ag1" title="Does someone have a support obligation?" main-issue="s1">
       <statements>
         <statement id="s1">
-          <s pred="family:father">The father of <c>Max</c> is <c>Charles</c></s>
-       <!--   <s pred="family:obligatedToSupport"><v>Person1</v> is obligated to support
-          <v>Person2</v></s> -->
+        <!-- <s pred="family:father">The father of <c>Max</c> is <c>Charles</c></s> -->
+        <s pred="family:obligatedToSupport"><v>Person1</v> is obligated to support
+          <v>Person2</v></s> 
         </statement>
       </statements>
       <arguments>

@@ -31,6 +31,7 @@
          (rnrs records syntactic (6))
          (carneades base)
          (carneades lib srfi format)
+         (carneades lib srfi strings)
          (prefix (carneades table) table:)
          (prefix (carneades lib srfi compare) compare:))
  
@@ -205,13 +206,13 @@
  
  ; statement-formatted: statement -> string
  (define (statement-formatted s1)
-   (if (statement-positive? s1)
-       (if (fatom? s1) 
-           (apply format `(,(fatom-form s1) 
-                           ,@ (map term-formatted (cdr (fatom-expr s1)))))
-           s1)
-       (string-append "not: " (statement-formatted (statement-atom s1)))))
- 
+   (cond ((string? s1) s1)
+         ((symbol? s1) (symbol->string s1))
+         ((fatom? s1) 
+          (apply format `(,(fatom-form s1) 
+                          ,@ (map term-formatted (cdr (fatom-expr s1))))))
+         ((pair? s1)
+          (string-join (map statement-formatted s1) ": "))))
  
  
  ) ; end of statement library

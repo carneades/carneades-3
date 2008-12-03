@@ -442,22 +442,41 @@
  (define (accepted? c s)
    (if (statement-positive? s)
        (let ((s1 ((context-substitutions c) s)))
-         (and (member s1 (map (context-substitutions c) 
-                              (accepted-statements c)))
+         (and (find (lambda (s2)
+                      (statement=? s1 s2))
+                    (map (context-substitutions c) 
+                         (accepted-statements c)))
               #t))
        (rejected? c (statement-atom s))))
+ 
+;  (define (accepted? c s)
+;   (if (statement-positive? s)
+;       (let ((s1 ((context-substitutions c) s)))
+;         (and (member s1 (map (context-substitutions c) 
+;                              (accepted-statements c)))
+;              #t))
+;       (rejected? c (statement-atom s))))
  
  ; rejected?: context statement -> boolean
  
  (define (rejected? c s)
    (if (statement-positive? s)
        (let ((s1 ((context-substitutions c) s)))
-         (and (member s1 (map (context-substitutions c) 
-                              (rejected-statements c)))
+         (and (find (lambda (s2) (statement=? s1 s2))
+                    (map (context-substitutions c) 
+                         (rejected-statements c)))
               #t))
        (accepted? c (statement-atom s))))
  
  
+;  (define (rejected? c s)
+;   (if (statement-positive? s)
+;       (let ((s1 ((context-substitutions c) s)))
+;         (and (member s1 (map (context-substitutions c) 
+;                              (rejected-statements c)))
+;              #t))
+;       (accepted? c (statement-atom s))))
+  
  ; decided?: context statement -> boolean
  (define (decided? c s)
    (or (accepted? c s)
