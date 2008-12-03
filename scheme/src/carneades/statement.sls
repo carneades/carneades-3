@@ -18,18 +18,17 @@
 (library 
  (carneades statement)
  
- (export variable? constant? compound-term? statement? statement=?
+ (export variable? constant? statement? statement=?
          statement-compare statement-positive?
          statement-negative? statement-complement statement-atom
          statement-predicate statement-formatted statement-wff
          make-fatom fatom? fatom-form fatom-expr
-         term? term-functor term-args ground?)
+         term? compound-term?  term-functor term-args ground?)
  
  (import (rnrs base)
          (rnrs io simple)
          (rnrs io ports)
          (rnrs records syntactic (6))
-         ; (rnrs hashtables (6))
          (carneades base)
          (carneades lib srfi format)
          (prefix (carneades table) table:)
