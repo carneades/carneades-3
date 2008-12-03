@@ -66,9 +66,10 @@
  
  (define (lkif-export export-data . port-or-filename)
    (let ((sxml-obj (lkif-data->sxml export-data)))
-     (write sxml-obj)
-     (newline)
-     (newline)
+     (if *debug*
+         (begin (write sxml-obj)
+                (newline)
+                (newline)))
      (if (null? port-or-filename)
          (srl:sxml->xml sxml-obj (current-output-port))
          (srl:sxml->xml sxml-obj (car port-or-filename)))))
@@ -371,7 +372,7 @@
           ((statement:fatom? a) (append (list 's
                                              (elements->attributes 
                                               (list (element->sxml 'pred (symbol->string (statement:statement-predicate a))))))
-                                       (combine-expression-format (statement:fatom-expr a)
+                                       (combine-expression-format (statement:fatom-expr (subs a))
                                                                   (statement:fatom-form a))))
           ((symbol? a) (if (assumption-premise? a args)
                            (list 's
