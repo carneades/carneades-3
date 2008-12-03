@@ -193,7 +193,7 @@
     (cond ((= n 0) "")
           ((= n 1) (statement-formatted (car clause)))
           ((> n 1) (string-append (statement-formatted (car clause))
-                                  ", " 
+                                  "; " 
                                   (format-clause (cdr clause)))))))
 
 ; load-rule!: rule -> void
@@ -220,9 +220,12 @@
          (subs (context-substitutions c))
          (data (document-data *current-document*))
          (c2 (lkif-data-context data))
-         (c3 (accept c (facts c2))))
+         (c3 (accept c (facts c2)))
+         (issue (argument-graph-main-issue ag))
+         (issue-formatted (statement-formatted issue)))
     ; load the query form
-    (tk-set-var! 'current-issue (argument-graph-main-issue ag))
+    (hashtable-set! *statements-table* issue-formatted issue)
+    (tk-set-var! 'current-issue issue-formatted)
     ; load the statements table
     (for-each (lambda (p)
                 (let* ((id "") ; to do: modify model of statements to reflect LKIF
@@ -712,6 +715,7 @@ http://carneades.berlios.de
                               (con-goals (if (eq? side 'pro) 
                                              null 
                                              (list (list (statement-complement issue))))))
+                         (printf "debug: issue=~w; side=~a~%" issue side)
                          (find-best-arguments search:depth-first 
                                               (search:make-resource max-nodes)
                                                max-turns

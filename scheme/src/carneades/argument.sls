@@ -51,7 +51,7 @@
          (carneades unify)
          )
  
-  
+ 
  (define-record-type premise 
    (fields atom      ; an atomic statement
            polarity  ; boolean, #t => positive premise | #f => negative premise
@@ -228,12 +228,12 @@
  ; proof-standard: context statement -> standard
  (define (proof-standard c s) 
    ((context-standard c) (statement-atom s)))
-
+ 
  ; prior: context argument argument -> boolean
  (define (prior c a1 a2) (= ((context-compare c) a1 a2) 1))
  
  
-  ; state: context (list-of statement) -> context
+ ; state: context (list-of statement) -> context
  (define (state context statements)
    (fold-right (lambda (s c) 
                  (make-context (table:insert (context-status c) 
@@ -295,7 +295,7 @@
                                (lambda (s2) 
                                  (if (statement=? (statement-atom s1) s2)
                                      ps
-                               ;      ((context-standard c) s1)))
+                                     ;      ((context-standard c) s1)))
                                      ((context-standard c) s2)))
                                (context-compare c)
                                (context-substitutions c)))
@@ -446,7 +446,7 @@
                               (accepted-statements c)))
               #t))
        (rejected? c (statement-atom s))))
-    
+ 
  ; rejected?: context statement -> boolean
  
  (define (rejected? c s)
@@ -462,7 +462,7 @@
  (define (decided? c s)
    (or (accepted? c s)
        (rejected? c s)))
-  
+ 
  ; questioned?: context statement -> boolean
  (define (questioned? c s)
    (eq? 'questioned (table:lookup (context-status c)  
@@ -503,7 +503,7 @@
    (append (accepted-statements c)
            (map (lambda (s) `(not ,s))
                 (rejected-statements c))))
-
+ 
  
  ; stated-statements: argument-graph context -> (list-of statement)
  (define (stated-statements ag c)
@@ -628,14 +628,10 @@
          (satisfies? ag c ps (pro-arguments ag s) (con-arguments ag s)))))
  
  ; in?: argument-graph context statement -> boolean 
-  (define (in? ag c s)
+ (define (in? ag c s)
    (or (accepted? c s) 
        (and (not (rejected? c s))
             (acceptable? ag c s))))
- 
-; (define (in? ag c s)
-;   (or (accepted? c s) 
-;       (acceptable? ag c s)))
  
  ; out?: argument-graph context statement -> boolean
  (define (out? ag c s)
