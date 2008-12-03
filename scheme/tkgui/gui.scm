@@ -132,7 +132,7 @@
                (c1 (stage-context *current-stage*))
                (c2 (lkif-data-context (document-data *current-document*)))
                (c3 (accept c1 (facts c2))))
-          (view* ag c3 (context-substitutions c3) (lambda (s) (format "~A" s))))
+          (view* ag c3 (context-substitutions c3) statement-formatted))
         (tk/message-box 'icon: 'warning
                         'message: "No argument graph to map."
                         'type: 'ok
@@ -760,7 +760,7 @@ http://carneades.berlios.de
                             (issue (argument-graph-main-issue ag)))
                        (clear-argument-graph!)
                        (set! *current-stage* (make-stage ag c))
-                       (tk-set-var! 'current-solution (subs issue))
+                       (tk-set-var! 'current-solution (statement-formatted (subs issue)))
                        (load-stage! *current-stage*)))))
                             
          (previous (lambda () 
