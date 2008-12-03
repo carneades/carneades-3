@@ -48,7 +48,7 @@
          (prefix (carneades table) table:)
          (carneades lib srfi format))
   
-  (define *debug* #f)
+  (define *debug* #t)
  
   
   ; Negation, exceptions and assumptions. Statements of the form (not P), (unless P)
@@ -100,15 +100,23 @@
   ; By convention, the "predicate" of literal sentences, e.g. represented
   ; as a string or symbol, is the sentence itself.
   
+;  (define (predicate s1)
+;    (let ((s2 (match s1 
+;                (('not s3) (predicate s3))
+;                (('unless s3) (predicate s3))
+;                (('assuming s3) (predicate s3))
+;                (('applies _ s3) (predicate s3))
+;                (_ s1))))
+;      (if (pair? s2) (car s2) s2)))
+  
   (define (predicate s1)
     (let ((s2 (match s1 
-                (('not s3) (predicate s3))
-                (('unless s3) (predicate s3))
-                (('assuming s3) (predicate s3))
-                (('applies _ s3) (predicate s3))
+                (('not s3) s3)
+                (('unless s3) s3)
+                (('assuming s3) s3)
+                (('applies _ s3) s3)
                 (_ s1))))
-      (if (pair? s2) (car s2) s2)))
-  
+      (statement-predicate s2)))
 
   
   (define-record-type named-clause

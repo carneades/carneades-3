@@ -62,11 +62,11 @@
  ; for debugging
  (define (display-state state)
    (let ((subs (state-substitutions state)))
-     (display "topic: ") (display (subs (state-topic state))) (newline)
-     (display "viewpoint: ") (display (state-viewpoint state)) (newline)
-     (display "first pro goal: ") (display (if (null? (state-pro-goals state)) "" (subs (car (state-pro-goals state))))) (newline)
-     (display "first con goal: ") (display (if (null? (state-con-goals state)) "" (subs (car (state-con-goals state))))) (newline)
-     (display "number of arguments: ") (display (length (arg:list-arguments (state-arguments state)))) (newline)
+     (printf "topic: ~a~%" (statement-formatted (subs (state-topic state))))
+     (printf "viewpoint: ~a~%" (state-viewpoint state))
+     (printf "first pro goal: ~a~%" (if (null? (state-pro-goals state)) "" (subs (car (state-pro-goals state)))))
+     (printf "first con goal: ~a~%" (if (null? (state-con-goals state)) "" (subs (car (state-con-goals state)))))
+     (printf "number of arguments: ~a~%" (length (arg:list-arguments (state-arguments state))))
      (newline)))
   
   
