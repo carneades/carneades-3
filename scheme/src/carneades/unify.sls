@@ -54,8 +54,8 @@
                 (cons (car x) (map f (cdr x))))
                ((fatom? x) 
                 (make-fatom (fatom-form x)
-                            (cons (car (fatom-expr x))
-                                  (map f (cdr (fatom-expr x))))))
+                            (cons (car (fatom-term x))
+                                  (map f (cdr (fatom-term x))))))
                (else x))))))
  
  ; try-subst tries to substitute u for v but may require a
@@ -134,8 +134,8 @@
                 (rename-variables tbl (cdr trm))))
          ((fatom? trm)
           (make-fatom (fatom-form trm)
-                      (cons (rename-variables tbl (car (fatom-expr trm)))
-                            (rename-variables tbl (cdr (fatom-expr trm))))))
+                      (cons (rename-variables tbl (car (fatom-term trm)))
+                            (rename-variables tbl (cdr (fatom-term trm))))))
          (else trm)))
  
  ) ; end of unify module
