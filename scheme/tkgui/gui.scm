@@ -129,10 +129,8 @@
   (lambda ()
     (if *current-stage*
         (let* ((ag (stage-argument-graph *current-stage*))
-               (c1 (stage-context *current-stage*))
-               (c2 (lkif-data-context (document-data *current-document*)))
-               (c3 (accept c1 (facts c2))))
-          (view* ag c3 (context-substitutions c3) statement-formatted))
+               (c1 (stage-context *current-stage*)))
+          (view* ag c1 (context-substitutions c1) statement-formatted))
         (tk/message-box 'icon: 'warning
                         'message: "No argument graph to map."
                         'type: 'ok
@@ -219,8 +217,6 @@
          (c (stage-context stage))
          (subs (context-substitutions c))
          (data (document-data *current-document*))
-         (c2 (lkif-data-context data))
-         (c3 (accept c (facts c2)))
          (issue (argument-graph-main-issue ag))
          (issue-formatted (statement-formatted issue)))
     ; load the query form
@@ -228,10 +224,10 @@
     (tk-set-var! 'current-issue issue-formatted)
     ; load the statements table
     (for-each (lambda (p)
-                (let* ((id "") ; to do: modify model of statements to reflect LKIF
-                       (s (status c3 p))
-                       (a (let ((ap (acceptable? ag c3 p))
-                                (an (acceptable? ag c3 (statement-complement p))))
+                (let* ((id "") 
+                       (s (status c (subs p)))
+                       (a (let ((ap (acceptable? ag c p))
+                                (an (acceptable? ag c (statement-complement p))))
                             (cond ((and ap an)
                                    "P,¬P")
                                   (ap "P")
@@ -239,7 +235,7 @@
                                   (else ""))))
                        (pro (length (pro-arguments ag p)))
                        (con (length (con-arguments ag p)))
-                       (ps (proof-standard c3 p))
+                       (ps (proof-standard c p))
                        (content (statement-formatted p))
                        (content-with-subs (statement-formatted (subs p)))
                        (row (list id a s pro con ps content content-with-subs)))
@@ -247,8 +243,8 @@
                   (statement-table 'insert ""
                                    'end
                                    'values: row)))
-              ; (statements ag)
-              (context-statements c3))))
+              (statements ag))))
+
 
 (define (clear-panels!)
   ; clear fact panel
@@ -269,7 +265,7 @@
 
 (define insert-argument-graph!
   (lambda ()
-    (printf "debug: insert-argument-graph begin~%")
+    ; (printf "debug: insert-argument-graph begin~%")
     (if *current-stage* 
         (let* ((frame (tk 'create-widget 'toplevel 
                           'class: 'ttk::frame
@@ -699,8 +695,6 @@ http://carneades.berlios.de
                        (let* ((ag (stage-argument-graph *current-stage*))
                               (data (document-data *current-document*))
                               (c1 (lkif-data-context data))
-                              ; the facts of the theory have priority 
-                              (c2 (accept (stage-context *current-stage*) (facts c1)))
                               (issue (argument-graph-main-issue ag))
                               ; to do: validate entries in the form
                               (max-nodes (read (open-string-input-port (limit-entry 'get))))
@@ -708,18 +702,18 @@ http://carneades.berlios.de
                               (rb (lkif-data-rulebase data))
                               (cqs '(excluded))  ; to do: check boxes
                               (generators (list builtins (generate-arguments-from-rules rb cqs)))
-                              (side (if (in? ag c2 issue) 'con 'pro))
+                              (side (if (in? ag c1 issue) 'con 'pro))
                               (pro-goals (if (eq? side 'pro) 
                                              (list (list issue))
                                              null))
                               (con-goals (if (eq? side 'pro) 
                                              null 
                                              (list (list (statement-complement issue))))))
-                         (printf "debug: issue=~w; side=~a~%" issue side)
+                         ; (printf "debug: issue=~w; side=~a~%" issue side)
                          (find-best-arguments search:depth-first 
                                               (search:make-resource max-nodes)
                                                max-turns
-                                              (make-state issue side pro-goals con-goals c2 ag)
+                                              (make-state issue side pro-goals con-goals c1 ag)
                                               generators)))))
          (before-states null) ; list of states previously found, in reverse order
          (current-state #f)   ; the current state in the stream of search results
@@ -779,7 +773,7 @@ http://carneades.berlios.de
                                    (issue (argument-graph-main-issue ag)))
                               (clear-argument-graph!)
                               (set! *current-stage* (make-stage ag c))
-                              (tk-set-var! 'current-solution (subs issue))
+                              (tk-set-var! 'current-solution (statement-formatted (subs issue)))
                               (load-stage! *current-stage*)))
                            (else (tk/message-box 'icon: 'warning
                                                  'message: "No previous arguments."
