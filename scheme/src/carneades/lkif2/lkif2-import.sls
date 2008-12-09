@@ -408,11 +408,16 @@
  (define (insert-axiom t a)
    (let* ((id (get-attribute-value (get-attribute a 'id) #f))
           (wff (caddr a))
+          (rejected? (eq? (car wff) 'not))
           (st (make-statement id
-                             "true"
+                             (if rejected?
+                                 "false"
+                                 "true")
                              "false"
                              "BA"
-                             wff)))
+                             (if rejected?
+                                 (cadr wff)
+                                 wff))))
      (table:insert t id st)))
  
  (define (lkif-axioms->table a)
