@@ -218,9 +218,13 @@
   (define (rule-critical-questions rid qs s strict?)
     (define (f question) 
       (case question
-        ((excluded) (argument:ex `(excluded ,rid ,s)))
-        ((priority) (argument:ex `(priority ,(genvar) ,rid ,s)))
-        ((valid) (argument:ex `(not (valid ,rid))))))
+        ((excluded) (argument:ex (make-fatom "Rule ~a is excluded for ~a."
+                                             `(excluded ,rid ,s))))
+        ((priority) (argument:ex (make-fatom "Rule ~a has priority over rule ~a with respect to ~a."
+                                             `(priority ,(genvar) ,rid ,s))))
+        ((valid) (argument:ex (make-fatom "not: ~a"
+                                          `(not ,(make-fatom "Rule ~a is valid."
+                                                      `(valid ,rid))))))))
     (if strict? 
         null
         ; filter out unknown questions:

@@ -61,19 +61,18 @@
  (define-record-type fatom 
    (fields
     form ; string, with ~a, as in format, used to denote fields
-    expr ; list of the form (<symbol> ...)
+    expr ; term
     ))
  
  (define (compound-term? t1)
    (or (pair? t1)
        (fatom? t1)))
  
-  
  ; term?: datum -> boolean
  (define (term? t1)
-   (or (statement? t1)
-       (number? t1)
-       (boolean? t1)))
+   (or (variable? t1)
+       (constant? t1)
+       (compound-term? t1)))
  
  ; term-functor -> symbol | #f
  (define (term-functor t1)

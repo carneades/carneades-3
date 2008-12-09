@@ -40,32 +40,32 @@ import Carneades.Control.GraphControl;
 
 public class GraphEdit extends SwingPanel {
 
-	override attribute x = 0;
-	override attribute y = 0;
-	override attribute visible = true;
+	override var x = 0;
+	override var y = 0;
+	override var visible = true;
 
-	public attribute control: GraphControl;
-	public attribute argumentGraph: ArgumentGraph;
+	public var control: GraphControl;
+	public var argumentGraph: ArgumentGraph;
 
-	private attribute statementPanel = StatementEditPanel { 
+	 var statementPanel = StatementEditPanel { 
 		control: bind control, argumentGraph: bind argumentGraph 
 		preferredSize: bind this.preferredSize
 	};
-	private attribute argumentPanel = ArgumentEditPanel { 
+	 var argumentPanel = ArgumentEditPanel { 
 		control: bind control, argumentGraph: bind argumentGraph 
 		preferredSize: bind this.preferredSize
 	};
-	private attribute premisePanel = PremiseEditPanel {
+	 var premisePanel = PremiseEditPanel {
 		control: bind control, argumentGraph: bind argumentGraph 
 		preferredSize: bind this.preferredSize
 	};
-	private attribute graphPanel = GraphEditPanel {
+	 var graphPanel = GraphEditPanel {
 		control: bind control, argumentGraph: bind argumentGraph 
 		preferredSize: bind this.preferredSize
 	};
 
-	private attribute panelEmpty = true;
-	override attribute content = bind { if (not panelEmpty) [graphPanel, statementPanel, argumentPanel, premisePanel] else []};
+	 var panelEmpty = true;
+	override var content = bind { if (not panelEmpty) [graphPanel, statementPanel, argumentPanel, premisePanel] else []};
 
 	public function update(): Void {
 		panelEmpty = false;
@@ -110,23 +110,23 @@ public class GraphEdit extends SwingPanel {
 }
 
 public class EditPanel extends FlowPanel {
-	//override attribute background = panelBackground;
-	override attribute alignment = HorizontalAlignment.LEFT;
-	override attribute width = editWidth;
-	override attribute height = editHeight;
-	override attribute visible = false;
-	protected attribute control: GraphControl;
-	public attribute argumentGraph: ArgumentGraph;
-	protected attribute editComponentWidth = bind editWidth - editLabelWidth - 20;
+	//override var background = panelBackground;
+	override var alignment = HorizontalAlignment.LEFT;
+	override var width = editWidth;
+	override var height = editHeight;
+	override var visible = false;
+	protected var control: GraphControl;
+	public var argumentGraph: ArgumentGraph;
+	protected var editComponentWidth = bind editWidth - editLabelWidth - 20;
 
 }
 
 public class StatementEditPanel extends EditPanel {
-	attribute statement: Statement;
+	var statement: Statement;
 	
 	// General Components
 
-	private attribute idField: IdField = IdField {
+	 var idField: IdField = IdField {
 		editable: bind idsEditable
 		preferredSize: [editComponentWidth, textFieldHeight ]
 		action: function(): Void {
@@ -134,21 +134,21 @@ public class StatementEditPanel extends EditPanel {
 		}
 	}
 	
-	private attribute contentField: ContentField = ContentField {
+	 var contentField: ContentField = ContentField {
 		preferredSize: [ editComponentWidth, textFieldHeight ]
 		action: function(): Void {
 			control.changeStatementWff(statement, contentField.text);
 		}
 	}
 
-	private attribute acceptableBox: SwingCheckBox = CCheckBox {
+	 var acceptableBox: SwingCheckBox = CCheckBox {
 		text: "statement"
 		enabled: false
 		preferredSize: [ editWidth - editLabelWidth - 30, 20 ]
 		selected: bind statement.ok
 	}
 
-	private attribute compAcceptableBox: SwingCheckBox = CCheckBox {
+	 var compAcceptableBox: SwingCheckBox = CCheckBox {
 		text: "complement"
 		enabled: false
 		preferredSize: [ editWidth - editLabelWidth - 30, 20 ]
@@ -157,7 +157,7 @@ public class StatementEditPanel extends EditPanel {
 
 	// Proof Standard Components
 
-	private attribute proofStandardBox: ProofStandardField = ProofStandardField {
+	 var proofStandardBox: ProofStandardField = ProofStandardField {
 		preferredSize: [ editComponentWidth - 30, 20 ]
 		action: function(): Void {
 			submitStandard();
@@ -165,14 +165,14 @@ public class StatementEditPanel extends EditPanel {
 	}
 
 	// temporary function to submit a new Proof Standard
-	private function submitStandard(): Void {
+	 function submitStandard(): Void {
 		control.changeStatementProofStandard( statement,
 											  selectedStandard);
 	}
 
-	private attribute standardGroup: SwingToggleGroup = SwingToggleGroup {};
+	 var standardGroup: SwingToggleGroup = SwingToggleGroup {};
 
-	private attribute selectedStandard: String = bind (// if (BAButton.selected) "BA" 
+	 var selectedStandard: String = bind (// if (BAButton.selected) "BA" 
 														if (SEButton.selected) "SE" 
 														else if (DVButton.selected) "DV" 
 														else if (BRDButton.selected) "BRD" 
@@ -180,7 +180,7 @@ public class StatementEditPanel extends EditPanel {
 														else "PE");
 
 	/* 
-	private attribute BAButton: SwingRadioButton = CRadioButton {
+	 var BAButton: SwingRadioButton = CRadioButton {
 		toggleGroup: standardGroup
 		text: "best argument"
 		preferredSize: [ editComponentWidth, 20 ]
@@ -190,7 +190,7 @@ public class StatementEditPanel extends EditPanel {
 	}
 	*/
 
-	private attribute SEButton: SwingRadioButton = CRadioButton {
+	 var SEButton: SwingRadioButton = CRadioButton {
 		toggleGroup: standardGroup
 		text: "scintilla of evidence"
 		preferredSize: [ editComponentWidth, 20 ]
@@ -199,7 +199,7 @@ public class StatementEditPanel extends EditPanel {
 		}
 	}
 
-	private attribute DVButton: SwingRadioButton = CRadioButton {
+	 var DVButton: SwingRadioButton = CRadioButton {
 		toggleGroup: standardGroup
 		text: "dialectical validity"
 		preferredSize: [ editComponentWidth, 20 ]
@@ -208,7 +208,7 @@ public class StatementEditPanel extends EditPanel {
 		}
 	}
 
-	private attribute PEButton: SwingRadioButton = CRadioButton {
+	 var PEButton: SwingRadioButton = CRadioButton {
 		toggleGroup: standardGroup
 		text: "preponderance of evidence"
 		preferredSize: [ editComponentWidth, 20 ]
@@ -217,7 +217,7 @@ public class StatementEditPanel extends EditPanel {
 		}
 	}
 
-	private attribute BRDButton: SwingRadioButton = CRadioButton {
+	 var BRDButton: SwingRadioButton = CRadioButton {
 		toggleGroup: standardGroup
 		text: "beyond reasonable doubt"
 		preferredSize: [ editComponentWidth, 20 ]
@@ -226,7 +226,7 @@ public class StatementEditPanel extends EditPanel {
 		}
 	}
 
-	private attribute CCEButton: SwingRadioButton = CRadioButton {
+	 var CCEButton: SwingRadioButton = CRadioButton {
 		toggleGroup: standardGroup
 		text: "clear & convincing evidence"
 		preferredSize: [ editComponentWidth, 20 ]
@@ -237,9 +237,9 @@ public class StatementEditPanel extends EditPanel {
 
 	// Status Components
 	
-	private attribute statusGroup: SwingToggleGroup = SwingToggleGroup {};
+	 var statusGroup: SwingToggleGroup = SwingToggleGroup {};
 
-	private attribute statedButton: SwingRadioButton = CRadioButton {
+	 var statedButton: SwingRadioButton = CRadioButton {
 		text: "stated"
 		toggleGroup: statusGroup
 		preferredSize: [ editComponentWidth, 20 ]
@@ -247,7 +247,7 @@ public class StatementEditPanel extends EditPanel {
 			control.changeStatementStatus(statement, statedButton.text);
 		}
 	}
-	private attribute questionedButton: SwingRadioButton = CRadioButton {
+	 var questionedButton: SwingRadioButton = CRadioButton {
 		text: "questioned"
 		toggleGroup: statusGroup
 		preferredSize: [ editComponentWidth, 20 ]
@@ -255,7 +255,7 @@ public class StatementEditPanel extends EditPanel {
 			control.changeStatementStatus(statement, questionedButton.text);
 		}
 	}
-	private attribute assumedTrueButton: SwingRadioButton = CRadioButton {
+	 var assumedTrueButton: SwingRadioButton = CRadioButton {
 		text: "assumed true"
 		toggleGroup: statusGroup
 		preferredSize: [ editComponentWidth, 20 ]
@@ -263,7 +263,7 @@ public class StatementEditPanel extends EditPanel {
 			control.changeStatementStatus(statement, assumedTrueButton.text);
 		}
 	}
-	private attribute assumedFalseButton: SwingRadioButton = CRadioButton {
+	 var assumedFalseButton: SwingRadioButton = CRadioButton {
 		text: "assumed false"
 		toggleGroup: statusGroup
 		preferredSize: [ editComponentWidth, 20 ]
@@ -271,7 +271,7 @@ public class StatementEditPanel extends EditPanel {
 			control.changeStatementStatus(statement, assumedFalseButton.text);
 		}
 	}
-	private attribute acceptedButton: SwingRadioButton = CRadioButton {
+	 var acceptedButton: SwingRadioButton = CRadioButton {
 		text: "accepted"
 		toggleGroup: statusGroup
 		preferredSize: [ editComponentWidth, 20 ]
@@ -279,7 +279,7 @@ public class StatementEditPanel extends EditPanel {
 			control.changeStatementStatus(statement, acceptedButton.text);
 		}
 	}
-	private attribute rejectedButton: SwingRadioButton = CRadioButton {
+	 var rejectedButton: SwingRadioButton = CRadioButton {
 		text: "rejected"
 		toggleGroup: statusGroup
 		preferredSize: [ editComponentWidth, 20 ]
@@ -288,7 +288,7 @@ public class StatementEditPanel extends EditPanel {
 		}
 	}
 
-	override attribute content = bind [ 
+	override var content = bind [ 
 										Label { text: "id ", preferredSize: [editLabelWidth, 20] }, idField, 
 										Label { text: "content ", preferredSize: [editLabelWidth, 20] }, contentField,
 										Label { text: "status ", preferredSize: [editLabelWidth, 20] }, statedButton, 
@@ -332,11 +332,11 @@ public class StatementEditPanel extends EditPanel {
 }
 
 public class ArgumentEditPanel extends EditPanel {
-	attribute argument: Argument;
+	var argument: Argument;
 
 	// Components
 
-	public attribute idField: IdField = IdField {
+	public var idField: IdField = IdField {
 		preferredSize: [ editComponentWidth, textFieldHeight ]
 		editable: bind idsEditable
 		action: function(): Void {
@@ -344,29 +344,29 @@ public class ArgumentEditPanel extends EditPanel {
 		}
 	}
 	
-	private attribute titleField: ContentField = ContentField {
+	 var titleField: ContentField = ContentField {
 		preferredSize: [ editComponentWidth, textFieldHeight ]
 		action: function(): Void {
 			control.changeArgumentTitle(titleField.text, argument);
 		}
 	}
 
-	public attribute defensibleBox: SwingCheckBox = CCheckBox {
+	public var defensibleBox: SwingCheckBox = CCheckBox {
 		preferredSize: [ editComponentWidth, 20 ]
 		enabled: false
 		selected: bind argument.ok
 	}
 
-	private attribute schemeField: SchemeField = SchemeField {
+	 var schemeField: SchemeField = SchemeField {
 		preferredSize: [ editComponentWidth, textFieldHeight ]
 		action: function(): Void {
 			control.changeArgumentScheme(argument, schemeField.text);
 		}
 	}
 
-	private attribute directionGroup: SwingToggleGroup = SwingToggleGroup {};
+	 var directionGroup: SwingToggleGroup = SwingToggleGroup {};
 
-	private attribute proButton: SwingRadioButton = CRadioButton {
+	 var proButton: SwingRadioButton = CRadioButton {
 		preferredSize: [editComponentWidth / 2, 20]
 		toggleGroup: directionGroup
 		text: "pro"
@@ -375,7 +375,7 @@ public class ArgumentEditPanel extends EditPanel {
 		}
 	}
 
-	private attribute conButton: SwingRadioButton = CRadioButton {
+	 var conButton: SwingRadioButton = CRadioButton {
 		preferredSize: [editComponentWidth / 2, 20]
 		toggleGroup: directionGroup
 		text: "con"
@@ -384,7 +384,7 @@ public class ArgumentEditPanel extends EditPanel {
 		}
 	}
 
-	private attribute weightSlider: WeightSlider = WeightSlider {
+	 var weightSlider: WeightSlider = WeightSlider {
 		argument: bind argument
 		control: bind control
 		preferredSize: [ editComponentWidth-45, 20 ]
@@ -392,13 +392,13 @@ public class ArgumentEditPanel extends EditPanel {
 		minimum: 0
 	}
 
-	private attribute weightNumber: SwingTextField = SwingTextField {
+	 var weightNumber: SwingTextField = SwingTextField {
 		preferredSize: [ 40, textFieldHeight ]
 		editable: false
 		text: bind ".{(weightSlider.value).toString()}"
 	}
 
-	override attribute content = bind [ 
+	override var content = bind [ 
 										Label { text: "id " preferredSize: [editLabelWidth, 20]}, idField, 
 										Label { text: "title " preferredSize: [editLabelWidth, 20]}, titleField, 
 										Label { text: "direction ", preferredSize: [editLabelWidth, 20]}, proButton, conButton,
@@ -427,10 +427,10 @@ public class ArgumentEditPanel extends EditPanel {
 }
 
 public class PremiseEditPanel extends EditPanel {
-	attribute premise: Premise;
+	var premise: Premise;
 
 	// Components
-	public attribute roleField: RoleField = RoleField {
+	public var roleField: RoleField = RoleField {
 		preferredSize: [ editComponentWidth, textFieldHeight ]
 		editable: true
 		action: function(): Void {
@@ -438,7 +438,7 @@ public class PremiseEditPanel extends EditPanel {
 		}
 	}
 
-	public attribute exceptionBox: SwingCheckBox = CCheckBox {
+	public var exceptionBox: SwingCheckBox = CCheckBox {
 		preferredSize: [ editComponentWidth, 20 ]
 		selected: premise.exception
 		action: function(): Void {
@@ -446,7 +446,7 @@ public class PremiseEditPanel extends EditPanel {
 		}
 	}
 
-	public attribute negationBox: SwingCheckBox = CCheckBox {
+	public var negationBox: SwingCheckBox = CCheckBox {
 		preferredSize: [ editComponentWidth, 20 ]
 		selected: premise.negative
 		action: function(): Void {
@@ -454,7 +454,7 @@ public class PremiseEditPanel extends EditPanel {
 		}
 	}
 
-	override attribute content = bind [ 
+	override var content = bind [ 
 										Label { text: "role ", preferredSize: [editLabelWidth, 20] }, roleField, 
 										Label { text: "exception ", preferredSize: [editLabelWidth, 20] }, exceptionBox,
 										Label { text: "negated ", preferredSize: [editLabelWidth, 20] }, negationBox,
@@ -471,19 +471,19 @@ public class PremiseEditPanel extends EditPanel {
 public class GraphEditPanel extends EditPanel {
 
 	// Components
-	private attribute idField: IdField = IdField {
+	 var idField: IdField = IdField {
 		editable: bind idsEditable
 		preferredSize: [editComponentWidth, textFieldHeight ]
 	}
 	
-	private attribute titleField: ContentField = ContentField {
+	 var titleField: ContentField = ContentField {
 		preferredSize: [ editComponentWidth, textFieldHeight ]
 		action: function(): Void {
 			control.changeGraphTitle(titleField.text, argumentGraph);
 		}
 	}
 
-	override attribute content = bind [ 
+	override var content = bind [ 
 										Label { text: "id ", preferredSize: [editLabelWidth, 20] }, idField, 
 										Label { text: "title ", preferredSize: [editLabelWidth, 20] }, titleField,
 										];
@@ -498,30 +498,30 @@ public class GraphEditPanel extends EditPanel {
 // INTERMEDIATE COMPONENT CLASSES
 
 class IdField extends SwingTextField {
-	override attribute visible = true;
-	override attribute editable = false;
-	override attribute preferredSize = [editWidth - 50, 20];
+	override var visible = true;
+	override var editable = false;
+	override var preferredSize = [editWidth - 50, 20];
 }
 
 class SchemeField extends SwingTextField {
-	override attribute visible = true;
-	override attribute preferredSize = [editWidth - 50, 20];
+	override var visible = true;
+	override var preferredSize = [editWidth - 50, 20];
 }
 
 class ContentField extends SwingTextField {
-	override attribute editable = true;
-	override attribute preferredSize = [editWidth - 80, 20];
+	override var editable = true;
+	override var preferredSize = [editWidth - 80, 20];
 }
 
 class RoleField extends SwingTextField {
-	override attribute editable = false;
-	override attribute preferredSize = [editWidth - 40, 20];
+	override var editable = false;
+	override var preferredSize = [editWidth - 40, 20];
 }
 
 class BooleanBox extends ComboBox {
-	public attribute value: Boolean;
-	override attribute visible = true;
-	override attribute items = [
+	public var value: Boolean;
+	override var visible = true;
+	override var items = [
 		ComboBoxItem {
 			text: "true"
 			value: true
@@ -536,9 +536,9 @@ class BooleanBox extends ComboBox {
 }
 
 class DirectionBox extends ComboBox {
-	public attribute pro: Boolean;
-	override attribute visible = true;
-	override attribute items = [
+	public var pro: Boolean;
+	override var visible = true;
+	override var items = [
 		ComboBoxItem {
 			text: "Pro"
 			value: true
@@ -553,9 +553,9 @@ class DirectionBox extends ComboBox {
 }
 
 class ProofStandardBox extends ComboBox {
-	public attribute standard: ProofStandard;
-	override attribute visible = true;
-	override attribute items = [
+	public var standard: ProofStandard;
+	override var visible = true;
+	override var items = [
 		ComboBoxItem {
 			text: "DV"
 			value: "DV"
@@ -575,9 +575,9 @@ class ProofStandardBox extends ComboBox {
 }
 
 class StatusBox extends ComboBox {
-	public attribute statement: Statement;
-	override attribute visible = true;
-	override attribute items = [
+	public var statement: Statement;
+	override var visible = true;
+	override var items = [
 		ComboBoxItem {
 			text: "stated"
 			value: "stated"
@@ -602,9 +602,9 @@ class StatusBox extends ComboBox {
 }
 
 class PremiseBox extends ComboBox {
-	public attribute premiseType: String = "";
-	override attribute visible = true;
-	override attribute items = [
+	public var premiseType: String = "";
+	override var visible = true;
+	override var items = [
 		ComboBoxItem {
 			text: "ordinary"
 			value: "ordinary"
@@ -618,39 +618,39 @@ class PremiseBox extends ComboBox {
 	]
 }
 
-// Temporary Textfield components until the combobox gets an action attribute
+// Temporary Textfield components until the combobox gets an action var
 
 class LimitedTextField extends SwingTextField {
-	attribute choices: String[] = [];
-	override attribute foreground = bind { if (sizeof choices[c | c == this.text] == 1) Color.DARKGREEN else Color.DARKRED};
-	attribute verified: Boolean = bind { (sizeof choices[c | c == this.text] == 1) };
+	var choices: String[] = [];
+	override var foreground = bind { if (sizeof choices[c | c == this.text] == 1) Color.DARKGREEN else Color.DARKRED};
+	var verified: Boolean = bind { (sizeof choices[c | c == this.text] == 1) };
 }
 
 class BooleanField extends LimitedTextField {
-	override attribute preferredSize = [70, 20];
-	override attribute choices = [ "true", "false" ];
+	override var preferredSize = [70, 20];
+	override var choices = [ "true", "false" ];
 }
 
 class ProofStandardField extends LimitedTextField {
-	override attribute preferredSize = [80, 20];
-	override attribute choices = [ "SE", "DV", "BA" ];
+	override var preferredSize = [80, 20];
+	override var choices = [ "SE", "DV", "BA" ];
 }
 
 class PremiseField extends LimitedTextField {
-	override attribute preferredSize = [100, 20];
-	override attribute choices = [ "ordinary", "exception" ];
+	override var preferredSize = [100, 20];
+	override var choices = [ "ordinary", "exception" ];
 }
 
 class DirectionField extends LimitedTextField {
-	override attribute preferredSize = [100, 20];
-	override attribute choices = [ "pro", "con" ];
+	override var preferredSize = [100, 20];
+	override var choices = [ "pro", "con" ];
 }
 
 class WeightSlider extends SwingSlider {
-	public attribute argument: Argument = Argument {} on replace { value = (argument.weight * 100) as Integer; }
-	private attribute updateChange: Boolean = true; // needs to be true to avoid inital command dispatch from on replace value
-	override attribute value = (argument.weight) as Integer on replace { submitWeight(); }
-	public attribute control: GraphControl;
+	public var argument: Argument = Argument {} on replace { value = (argument.weight * 100) as Integer; }
+	 var updateChange: Boolean = true; // needs to be true to avoid inital command dispatch from on replace value
+	override var value = (argument.weight) as Integer on replace { submitWeight(); }
+	public var control: GraphControl;
 
 	function setValue(v: Integer) {
 		updateChange = true;
@@ -667,9 +667,9 @@ class WeightSlider extends SwingSlider {
 }
 
 class CCheckBox extends SwingCheckBox {
-	//override attribute background = panelBackground;
+	//override var background = panelBackground;
 }
 
 class CRadioButton extends SwingRadioButton {
-	//override attribute background = panelBackground;
+	//override var background = panelBackground;
 }

@@ -29,7 +29,7 @@ import java.lang.Math;
  * A graph layout that displays the argument graph as an ordinary top-down tree.
  */
 public class TreeLayout extends GraphLayout {
-	attribute root: Vertex;
+	var root: Vertex;
 	
 	// helper function for debugging
 	public function debug(s: String):Void {
@@ -37,7 +37,7 @@ public class TreeLayout extends GraphLayout {
 	}
 
 	// helper function to be discardad once select code works
-	private function pickChild(parentVertex: Vertex, priority: Number):Vertex {
+	 function pickChild(parentVertex: Vertex, priority: Number):Vertex {
 		var found: Vertex;
 		for (i in parentVertex.children) {
 			if (i.priority == priority) { found = i; }
@@ -45,7 +45,7 @@ public class TreeLayout extends GraphLayout {
 		return found;
 	}
 
-	private function setPriorities(v: Vertex):Void {
+	 function setPriorities(v: Vertex):Void {
 		// Set child node drawing priorities
 		// right now: Simple child array index duplication
 		if (v.children != null) {
@@ -56,7 +56,7 @@ public class TreeLayout extends GraphLayout {
 		}
 	} 
 
-	private function getBottomLeft(v: Vertex):Vertex {
+	 function getBottomLeft(v: Vertex):Vertex {
 		// to do: check for empty graph
 		var bottomLeft: Vertex = v;
 		while (bottomLeft.children != null ) {
@@ -71,13 +71,13 @@ public class TreeLayout extends GraphLayout {
 		return bottomLeft;
 	}
 	
-	private function treeSize(v: Vertex):Void {
+	 function treeSize(v: Vertex):Void {
 		treeSize(v, false);
 	}
 
 	// FIRST TRAVERSAL: Determine Subtree Sizes
 	// parameter is the "BOTTOM LEFT" node of the tree
-	private function treeSize(v: Vertex, complete: Boolean):Void {
+	 function treeSize(v: Vertex, complete: Boolean):Void {
 		
 		if (d) debug("sizing {v.caption}");
 		if (v.children == null) { // It is a leaf node
@@ -146,7 +146,7 @@ public class TreeLayout extends GraphLayout {
 
 	// SECOND TRAVERSAL: Assign horizontal positions
 	// parameter is the ROOT node of the tree
-	private function position(v: Vertex):Void {
+	 function position(v: Vertex):Void {
 		
 		// determine whether the parent is wider than all its child subtrees together
 		var childSum: Number = 0;
@@ -193,7 +193,7 @@ public class TreeLayout extends GraphLayout {
 	}
 
 
-	private function adjust():Void {
+	 function adjust():Void {
 		// set the overall tree width
 		this.width = Math.max(appWidth - editWidth - 30, root.xSubTreeSize).intValue();
 
@@ -212,7 +212,7 @@ public class TreeLayout extends GraphLayout {
 		this.height = Math.max( appHeight - toolBarHeight - 50 , bottom).intValue();
 	}
 
-	private function layoutEdges():Void {
+	 function layoutEdges():Void {
 		// adjust edges
 
 		// 1. determine direction from which edge is coming in

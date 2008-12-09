@@ -48,9 +48,9 @@ public abstract class ArgumentElement extends Vertex {
 	/**
 	 * The filler color.
 	 */
-	attribute fill: Color = Color.WHITE;
+	var fill: Color = Color.WHITE;
 
-	override attribute text = Text {
+	override var text = Text {
 					content: bind caption
 					verticalAlignment: VerticalAlignment.TOP
 					horizontalAlignment: HorizontalAlignment.CENTER
@@ -58,7 +58,7 @@ public abstract class ArgumentElement extends Vertex {
 					y: bind y
 				} // Text
 
-	private attribute selection: Node = Rectangle {
+	 var selection: Node = Rectangle {
 					x: bind x - (width / 2) - 5
 					y: bind y - (height / 2) - 5
 					width: bind width + 10
@@ -70,7 +70,7 @@ public abstract class ArgumentElement extends Vertex {
 					visible: bind selected
 				} // selection rect
 	
-	private attribute middlePoint: Circle = Circle {
+	 var middlePoint: Circle = Circle {
 		centerX: bind x
 		centerY: bind y
 		radius: 3
@@ -88,16 +88,16 @@ public class ArgumentBox extends ArgumentElement {
 	/**
 	 * The represented model argument object.
 	 */
-	public attribute argument: Argument;
+	public var argument: Argument;
 
-	override attribute height = argumentCircleDefaultRadius * 2;
-	override attribute defaultWidth = argumentCircleDefaultRadius * 2;
-	override attribute scaleWithText = false;
-	override attribute caption = bind argument.id;
-	override attribute fill = bind {if (argument.ok) Color.LIGHTGREY else Color.WHITE};
-	override attribute bottomBrink = argumentBoxBottomBrink;
+	override var height = argumentCircleDefaultRadius * 2;
+	override var defaultWidth = argumentCircleDefaultRadius * 2;
+	override var scaleWithText = false;
+	override var caption = bind argument.id;
+	override var fill = bind {if (argument.ok) Color.LIGHTGREY else Color.WHITE};
+	override var bottomBrink = argumentBoxBottomBrink;
 
-	override attribute text = Text {
+	override var text = Text {
 					content: bind { 
 						if ((argument.conclusion.standard) instanceof BestArgument
 							or (argument.conclusion.standard) instanceof Preponderance
@@ -118,7 +118,7 @@ public class ArgumentBox extends ArgumentElement {
 					}
 				} // Text
 
-	private attribute mainCircle: Circle = Circle {
+	 var mainCircle: Circle = Circle {
 		centerX: bind x
 		centerY: bind y
 		radius: bind argumentCircleDefaultRadius
@@ -172,7 +172,7 @@ public class ArgumentBox extends ArgumentElement {
 		}
 	}
 
-	override attribute selection = Circle {
+	override var selection = Circle {
 		centerX: bind x 
 		centerY: bind y
 		radius: argumentCircleDefaultRadius + 5
@@ -202,15 +202,15 @@ public class StatementBox extends ArgumentElement {
 	/**
 	 * The represented model statement.
 	 */
-	public attribute statement: Statement;
+	public var statement: Statement;
 
-	override attribute scaleWithText = false;
-	override attribute defaultWidth = statementBoxDefaultWidth;
-	override attribute bottomBrink = statementBoxBottomBrink;
-	override attribute caption = bind { if (statement.wff.length() < numDisplayedChars) statement.wff
+	override var scaleWithText = false;
+	override var defaultWidth = statementBoxDefaultWidth;
+	override var bottomBrink = statementBoxBottomBrink;
+	override var caption = bind { if (statement.wff.length() < numDisplayedChars) statement.wff
 										else "{statement.wff.substring(0, numDisplayedChars-1)}..."};
-	private attribute status: String = bind statement.getBoundStatus();
-	private attribute statusColor = bind { 
+	 var status: String = bind statement.getBoundStatus();
+	 var statusColor = bind { 
 		if (status == "stated") statusStatedColor
 		else if (status == "assumed true") statusAssumedTrueColor
 		else if (status == "assumed false") statusAssumedFalseColor
@@ -219,7 +219,7 @@ public class StatementBox extends ArgumentElement {
 		else /*if (status == "questioned")*/ statusQuestionedColor
 	}
 
-	private attribute mainRect: Rectangle = Rectangle {
+	 var mainRect: Rectangle = Rectangle {
 					x: bind x - (width / 2)
 					y: bind y - (height / 2)
 					width: bind width 
@@ -266,7 +266,7 @@ public class StatementBox extends ArgumentElement {
 					}	
 				} // main rect
 
-	private attribute acceptableCircle: Circle = Circle {
+	 var acceptableCircle: Circle = Circle {
 		centerX: bind x + (this.width / 2) + acceptableCirclePadding + (acceptableCircleWidth / 2)
 		centerY: bind y - (acceptableCirclePadding / 2) - (acceptableCircleWidth / 2)
 		radius: bind (acceptableCircleWidth / 2)
@@ -286,7 +286,7 @@ public class StatementBox extends ArgumentElement {
 		}
 	}
 
-	private attribute acceptableCompCircle: Circle = Circle {
+	 var acceptableCompCircle: Circle = Circle {
 		centerX: bind x + (this.width / 2) + acceptableCirclePadding + (acceptableCircleWidth / 2)
 		centerY: bind y + (acceptableCirclePadding / 2) + (acceptableCircleWidth / 2)
 		radius: bind (acceptableCircleWidth / 2)
@@ -327,20 +327,20 @@ public class Arrow extends Edge {
 	/**
 	 * The size of the arrowhead in side length pixels.
 	 */
-	public attribute headSize: Number = 10;
+	public var headSize: Number = 10;
 
 	/**
 	 * 0 means it points right, 1 it points left, straight up or down does not matter
 	 */
-	public attribute heading: Number = 0; 
+	public var heading: Number = 0; 
 
 	/**
 	 * The color to fill the arrowhead with.
 	 */
-	public attribute fill: Color = Color.BLACK;
+	public var fill: Color = Color.BLACK;
 
-	override attribute stroke = Color.BLACK;
-	override attribute turnHead = true;
+	override var stroke = Color.BLACK;
+	override var turnHead = true;
 
 	postinit {
 		setAngle();
@@ -369,23 +369,23 @@ public class Arrow extends Edge {
  * Argument link specific arrow class to set base attributes.
  */
 public class ArgumentLink extends Arrow {
-	override attribute headSize = 10;
+	override var headSize = 10;
 }
 
 /**
  * Contra argument link specific arrow class to set base attributes.
  */
 public class ConArgumentLink extends ArgumentLink {
-	override attribute yHeadShift = bind headSize / 3;
-	override attribute fill = Color.WHITE
+	override var yHeadShift = bind headSize / 3;
+	override var fill = Color.WHITE
 }
 
 /**
  * Pro argument link specific arrow class to set base attributes.
  */
 public class ProArgumentLink extends ArgumentLink {
-	override attribute yHeadShift = bind headSize / 3;
-	override attribute fill = Color.BLACK
+	override var yHeadShift = bind headSize / 3;
+	override var fill = Color.BLACK
 }
 
 /**
@@ -396,33 +396,33 @@ public class PremiseLink extends Edge {
 	/**
 	 * The represented model premise object.
 	 */
-	public attribute premise: Premise;
+	public var premise: Premise;
 
 	/**
 	 * The radius of the head at the edges end. Deprecated! Was used in older design of assumptions and exceptions.
 	 */
-	public attribute radius: Number = 5;
+	public var radius: Number = 5;
 
 	/**
 	 * The width of the negation bar.
 	 */
-	public attribute negWidth: Number = 10;
+	public var negWidth: Number = 10;
 
 	/**
 	 * The stroke width of the negation bar.
 	 */
-	attribute negStrokeWidth: Number = 2;
+	var negStrokeWidth: Number = 2;
 
-	override attribute dashed = bind premise.exception;
+	override var dashed = bind premise.exception;
 
 	/**
 	 * Shall the negation bar be drawn?
 	 */
-	public attribute negated: Boolean = false;
+	public var negated: Boolean = false;
 
-	override attribute turnHead = bind negated;
+	override var turnHead = bind negated;
 	
-	private attribute negation: Line = Line {
+	 var negation: Line = Line {
 					startX: bind x2 - Math.max(yHeadShift * 2, negWidth)
 					startY: bind y2 - (negWidth / 2) 
 					endX: bind x2 - Math.max(yHeadShift * 2, negWidth)
@@ -434,7 +434,7 @@ public class PremiseLink extends Edge {
 				}
 
 	// exceptionhead currently not in content because of dashed lines
-	private attribute exceptionHead: Circle = Circle {
+	 var exceptionHead: Circle = Circle {
    				     centerX: bind x2
    				     centerY: bind y2
    	    			 radius: bind radius
