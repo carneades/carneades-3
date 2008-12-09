@@ -48,6 +48,8 @@
        (eq? f 'list)
        (eq? f 'cons)))
  
+ (define axioms-table (table:make-table statement:statement=? null))
+ 
  
  ; --------------------------------
  ; export function
@@ -136,10 +138,12 @@
  
  ; axiom->sxml: axiom table:statement->status -> sxml
  (define (axiom->sxml a t)
-   (let ((attributes (elements->attributes (list (element->sxml 'id (new-id "a")))))
-         (wff (if (eq? (table:lookup t a 'accepted) 'rejected)
-                  (list 'not (wff->sxml a))
-                  (wff->sxml a))))
+   (let* ((id (new-id "a"))
+          (attributes (elements->attributes (list (element->sxml 'id id))))
+          (wff (if (eq? (table:lookup t a 'accepted) 'rejected)
+                   (list 'not (wff->sxml a))
+                   (wff->sxml a))))
+     (set! axioms-table (table:insert axioms-table a id))
      (list 'axiom
            attributes
            wff)))
@@ -409,41 +413,45 @@
   
   ; arguments->sxml: (list-of argument) table:atom->struct:statement -> sxml
   (define (arguments->sxml args t)
-    (let ((premise->sxml (lambda (p)
-                           (let ((polarity (if (positive-premise? p)
-                                               "positive"
-                                               "negative"))
-                                 (exception (if (exception? p)
-                                                "true"
-                                                "false"))
-                                 (role (premise-role p))
-                                 (statement (statement-id (table:lookup t (premise-atom p) #f))))
-                             (list 'premise
-                                   (elements->attributes
-                                    (list (element->sxml 'polarity polarity)
-                                          (element->sxml 'exception exception)
-                                          (element->sxml 'role role)
-                                          (element->sxml 'statement statement))))))))
-      (let ((argument->sxml (lambda (a)
-                              (let ((conclusion (list 'conclusion
+    (let* ((premise->sxml (lambda (p)
+                            (let* ((polarity (if (positive-premise? p)
+                                                 "positive"
+                                                 "negative"))
+                                   (exception (if (exception? p)
+                                                  "true"
+                                                  "false"))
+                                   (role (premise-role p))
+                                   (fact-id (table:lookup axioms-table (premise-atom p) #f))
+                                   (statement (or fact-id
+                                                  (statement-id (table:lookup t (premise-atom p) #f)))))
+                              (list 'premise
+                                    (elements->attributes
+                                     (list (element->sxml 'polarity polarity)
+                                           (element->sxml 'exception exception)
+                                           (element->sxml 'role role)
+                                           (element->sxml 'statement statement)))))))
+           (argument->sxml (lambda (a)
+                             (let* ((fact-id (table:lookup axioms-table (argument-conclusion a) #f))
+                                    (conclusion (list 'conclusion
                                                       (elements->attributes 
                                                        (list (element->sxml 'statement
-                                                                            (statement-id (table:lookup
-                                                                                           t 
-                                                                                           (argument-conclusion a)
-                                                                                           #f)))))))
+                                                                            (or fact-id
+                                                                                (statement-id (table:lookup
+                                                                                               t 
+                                                                                               (argument-conclusion a)
+                                                                                               #f))))))))
                                     (premises (cons 'premises
                                                     (map premise->sxml (argument-premises a)))))
-                                (list 'argument
-                                      (elements->attributes
-                                       (list (element->sxml 'id (symbol->string (argument-id a)))
-                                             (element->sxml 'title "")
-                                             (element->sxml 'direction (symbol->string (argument-direction a)))
-                                             (element->sxml 'scheme (argument-scheme a))
-                                             (element->sxml 'weight 0.5)))
-                                      conclusion
-                                      premises)))))                                           
-        (cons 'arguments (map argument->sxml args)))))
+                               (list 'argument
+                                     (elements->attributes
+                                      (list (element->sxml 'id (symbol->string (argument-id a)))
+                                            (element->sxml 'title "")
+                                            (element->sxml 'direction (symbol->string (argument-direction a)))
+                                            (element->sxml 'scheme (argument-scheme a))
+                                            (element->sxml 'weight 0.5)))
+                                     conclusion
+                                     premises)))))                                        
+      (cons 'arguments (map argument->sxml args))))
  
  
  ; ----------------------------------
