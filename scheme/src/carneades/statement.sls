@@ -22,7 +22,7 @@
          statement-compare statement-positive?
          statement-negative? statement-complement statement-atom
          statement-predicate statement-formatted statement-wff
-         make-fatom fatom? fatom-form fatom-expr
+         make-fatom fatom? fatom-form fatom-term
          term? compound-term?  term-functor term-args ground?)
  
  (import (rnrs base)
@@ -61,7 +61,7 @@
  (define-record-type fatom 
    (fields
     form ; string, with ~a, as in format, used to denote fields
-    expr ; term
+    term ; term
     ))
  
  (define (compound-term? t1)
@@ -79,13 +79,13 @@
    (cond ((pair? t1)
           (car t1))
          ((fatom? t1)
-          (car (fatom-expr t1)))
+          (car (fatom-term t1)))
          (else #f)))
  
  ; term-args: term -> (list-of term) 
  (define (term-args t1)
    (cond ((pair? t1)(cdr t1))
-         ((fatom? t1) (cdr (fatom-expr t1)))
+         ((fatom? t1) (cdr (fatom-term t1)))
          (else '())))
  
  ; term-formatted: term -> datum
@@ -122,11 +122,11 @@
                 ((and (pair? s1) (pair? s2))
                  (equal? s1 s2))
                 ((and (fatom? s1) (fatom? s2))
-                 (equal? (fatom-expr s1) (fatom-expr s2)))
+                 (equal? (fatom-term s1) (fatom-term s2)))
                 ((and (pair? s1) (fatom? s2))
-                 (equal? s1 (fatom-expr s2)))
+                 (equal? s1 (fatom-term s2)))
                 ((and (fatom? s1) (pair? s2))
-                 (equal? (fatom-expr s1) s2))
+                 (equal? (fatom-term s1) s2))
                 (else #f)))
          ((and (statement-negative? s1)
                (statement-negative? s2))
@@ -140,12 +140,12 @@
    (cond ((and (statement-positive? s1)
                (statement-positive? s2))
           (cond ((and (fatom? s1) (fatom? s2))
-                 (compare:default-compare (fatom-expr s1) 
-                                          (fatom-expr s2)))
+                 (compare:default-compare (fatom-term s1) 
+                                          (fatom-term s2)))
                 ((and (pair? s1) (fatom? s2))
-                 (compare:default-compare s1 (fatom-expr s2)))
+                 (compare:default-compare s1 (fatom-term s2)))
                 ((and (fatom? s1) (pair? s2))
-                 (compare:default-compare (fatom-expr s1) s2))
+                 (compare:default-compare (fatom-term s1) s2))
                 (else (compare:default-compare s1 s2))))
          ((and (statement-negative? s1)
                (statement-negative? s2))
@@ -192,14 +192,14 @@
      (cond ((pair? s2)
             (car s2))
            ((fatom? s2)
-            (car (fatom-expr s2)))
+            (car (fatom-term s2)))
            (else #f))))
  
  ; statement-wff: statement -> symbol | string | list
  (define (statement-wff s1)
    (if (statement-positive? s1)
        (if (fatom? s1)
-           (fatom-expr s1)
+           (fatom-term s1)
            s1)
        `(not ,(statement-wff (statement-atom s1)))))
  
@@ -209,7 +209,7 @@
          ((symbol? s1) (symbol->string s1))
          ((fatom? s1) 
           (apply format `(,(fatom-form s1) 
-                          ,@ (map term-formatted (cdr (fatom-expr s1))))))
+                          ,@ (map term-formatted (cdr (fatom-term s1))))))
          ((pair? s1)
           (string-join (map statement-formatted s1) ": "))))
  

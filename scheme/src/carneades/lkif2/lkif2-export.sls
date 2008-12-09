@@ -176,7 +176,7 @@
          ((statement:fatom? f) (append (list 's
                                              (elements->attributes 
                                               (list (element->sxml 'pred (symbol->string (statement:statement-predicate f))))))
-                                       (combine-expression-format (statement:fatom-expr f)
+                                       (combine-expression-format (statement:fatom-term f)
                                                                   (statement:fatom-form f))))                                     
          ((pair? f) (case (car f)
                       ((not) (list 'not (wff->sxml (cadr f))))
@@ -223,7 +223,7 @@
          ((statement:fatom? t) (append (list 's
                                              (elements->attributes 
                                               (list (element->sxml 'pred (symbol->string (statement:statement-predicate t))))))
-                                       (combine-expression-format (statement:fatom-expr t)
+                                       (combine-expression-format (statement:fatom-term t)
                                                                   (statement:fatom-form t))))
          ((variable? t) (let ((s (symbol->string t)))
                           (element->sxml 'v (substring s 1 (string-length s)))))
@@ -372,7 +372,7 @@
           ((statement:fatom? a) (append (list 's
                                              (elements->attributes 
                                               (list (element->sxml 'pred (symbol->string (statement:statement-predicate a))))))
-                                       (combine-expression-format (statement:fatom-expr (subs a))
+                                       (combine-expression-format (statement:fatom-term (subs a))
                                                                   (statement:fatom-form a))))
           ((symbol? a) (if (assumption-premise? a args)
                            (list 's

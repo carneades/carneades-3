@@ -124,8 +124,9 @@
      (lambda (p) 
        (if (resource-empty? r)
            stream-null
-           (stream-append ((depth-first init) p)
-                          (((iterative-deepening (+ init step) step) r) p))))))
+           (let ((x ((depth-first init) p)))
+             (stream-append x
+                            (((iterative-deepening (+ init step) step) r) p)))))))
  
  
  ; best-first: (node node -> {-1,0,1}) -> resource-limited-strategy
