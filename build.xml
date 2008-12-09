@@ -14,9 +14,9 @@
   
   <property name="javafxc.home" value="${env.JAVAFXHOME}"/>
   <property name="javafxc.class.path" 
-			value="${javafxc.home}/lib/javafxc.jar:
-				   ${javafxc.home}/lib/javafxrt.jar:
-				   ${javafxc.home}/lib/Scenario.jar"/>
+			value="${javafxc.home}/lib/shared/javafxc.jar:
+				   ${javafxc.home}/lib/shared/javafxrt.jar:
+				   ${javafxc.home}/lib/desktop/Scenario.jar"/>
 
   <path id="gui.class.path">
 	<pathelement location="${gui.basedir}/lib/javafx-xml.jar"/>

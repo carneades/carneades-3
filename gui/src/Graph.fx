@@ -34,37 +34,37 @@ public class Graph extends CustomNode {
 	/**
 	 * The corresponding control object of the application.
 	 */
-	public attribute control: GraphControl;
+	public var control: GraphControl;
 
 	/**
 	 * The sequence of vertices that make up the graph.
 	 */
-	public attribute vertices: Vertex[];
+	public var vertices: Vertex[];
 
 	/**
 	 * The graph's root vertex. Note that this usually is an invisible node and does not correspond to a model object.
 	 */
-	public attribute root: Vertex;
+	public var root: Vertex;
 
 	/**
 	 * The edges connecting the vertices.
 	 */
-	public attribute edges: Edge[];
+	public var edges: Edge[];
 
 	/**
 	 * The sequence of selected model objects.
 	 */
-	public attribute selectedModels: Object[] = [];
+	public var selectedModels: Object[] = [];
 
 	/**
 	 * The sequence of selected view objects.
 	 */
-	public attribute selected: GraphElement[] = [];
+	public var selected: GraphElement[] = [];
 
 	/**
 	 * The layout which is used to display the graph.
 	 */
-	public attribute layout: GraphLayout;
+	public var layout: GraphLayout;
 
 	/**
 	 * The function which is called to create a view graph from a model graph.

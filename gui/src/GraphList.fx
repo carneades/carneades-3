@@ -44,17 +44,17 @@ public class GraphListPanel extends SwingPanel {
 	/**
 	 * The sequence of model argument graphs to list.
 	 */
-	public attribute argumentGraphs: ArgumentGraph[] = [];
+	public var argumentGraphs: ArgumentGraph[] = [];
 
 	/**
 	 * The application's control object.
 	 */
-	public attribute control: GraphControl;
+	public var control: GraphControl;
 
 	/**
 	 * The actual list component.
 	 */
-	public attribute list: GraphList = GraphList {
+	public var list: GraphList = GraphList {
 		x: 5
 		y: 30
 		width: bind this.width - 10
@@ -65,7 +65,7 @@ public class GraphListPanel extends SwingPanel {
 		items: bind for (g in argumentGraphs) { ArgumentGraphItem { argumentGraph: g } }
 	}
 
-	override attribute content = bind [
+	override var content = bind [
 		Label {
 			x: 5
 			y: 5
@@ -95,14 +95,14 @@ public class GraphList extends List {
 	/**
 	 * The sequence of argument graphs to be listed.
 	 */
-	public attribute argumentGraphs: ArgumentGraph[] = [];
+	public var argumentGraphs: ArgumentGraph[] = [];
 
 	/**
 	 * The application's control object.
 	 */
-	public attribute control: GraphControl;
+	public var control: GraphControl;
 
-	override attribute selectedItem = null on replace { 
+	override var selectedItem = null on replace { 
 		if (selectedItem != null) {
 			control.switchToGraph((selectedItem as ArgumentGraphItem).argumentGraph); 
 			control.unSelectGraph();
@@ -121,7 +121,7 @@ class ArgumentGraphItem extends ListItem {
 	/**
 	 * The model argument graph represented by the item.
 	 */
-	public attribute argumentGraph: ArgumentGraph;
+	public var argumentGraph: ArgumentGraph;
 
-	override attribute text = bind { if (argumentGraph.title != "") argumentGraph.title else argumentGraph.id };
+	override var text = bind { if (argumentGraph.title != "") argumentGraph.title else argumentGraph.id };
 }

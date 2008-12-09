@@ -36,10 +36,10 @@ import Carneades.Graph.GC.*;
 
 // helper issue class for file loading in older LKIF format
 class Issue {
-	attribute statementId: String;
-	attribute value: String;
-	attribute assumption: Boolean;
-	attribute standard: String;
+	var statementId: String;
+	var value: String;
+	var assumption: Boolean;
+	var standard: String;
 }
 
 public var builder: DocumentBuilder = DocumentBuilder {

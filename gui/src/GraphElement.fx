@@ -34,12 +34,12 @@ public abstract class GraphElement extends CustomNode {
 	/**
 	 * Has the element been selected by the user?
 	 */
-	public attribute selected: Boolean = false;
+	public var selected: Boolean = false;
 
 	/**
 	 * Unique index of the element.
 	 */
-	public attribute index: Integer = newIndex();
+	public var index: Integer = newIndex();
 
 	/**
 	 * Produce a new index value for the component. Should be made static.

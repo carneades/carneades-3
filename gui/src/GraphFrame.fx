@@ -57,41 +57,41 @@ public class GraphFrame extends SwingFrame {
 	/**
 	 * The version to be displayed in the about-box. Currently being unsuccessfully extracted from the ant environmen.t
 	 */
-	private attribute version: String = "";
+	 var version: String = "";
 	
 	/**
 	 * The view graph object currently displayed in the canvas.
 	 */
-	public attribute graph: Graph;
+	public var graph: Graph;
 
 	/**
 	 * The control object.
 	 */
-	public attribute control: GraphControl;
+	public var control: GraphControl;
 
 	/**
 	 * The model argument graph array.
 	 */
-	public attribute argumentGraphs: ArgumentGraph[];
+	public var argumentGraphs: ArgumentGraph[];
 
 	/**
 	 * The model argument graph whose graphical representation is currently displayed in the canvas.
 	 */
-	public attribute argumentGraph: ArgumentGraph;
+	public var argumentGraph: ArgumentGraph;
 
-	private attribute showCredits: Boolean = false;
+	 var showCredits: Boolean = false;
 
-	private attribute chooser: JFileChooser = new JFileChooser();
+	 var chooser: JFileChooser = new JFileChooser();
 
-	override attribute title = "Carneades";
-	override attribute width = appWidth on replace { if (width < appWidth) width = appWidth; };
-	override attribute height = appHeight on replace { if (height < appHeight) height = appHeight; };
-	override attribute background = panelBackground;
+	override var title = "Carneades";
+	override var width = appWidth on replace { if (width < appWidth) width = appWidth; };
+	override var height = appHeight on replace { if (height < appHeight) height = appHeight; };
+	override var background = panelBackground;
 
 	/**
 	 * The view component as the top scenegraph node which is displayed on the viewCanvas.
 	 */
-	public attribute view: GraphView = bind GraphView {
+	public var view: GraphView = bind GraphView {
 							width: bind viewCanvas.width
 							height: bind viewCanvas.height
 							graph: bind graph
@@ -102,7 +102,7 @@ public class GraphFrame extends SwingFrame {
 	/**
 	 * The canvas on the lower left of the frame in which the graph is shown.
 	 */
-	public attribute viewCanvas: Canvas = Canvas {
+	public var viewCanvas: Canvas = Canvas {
 		preferredSize: bind [this.width-editWidth - graphListWidth - 5, this.height - toolBarHeight]
 		content: bind view
 	}
@@ -110,7 +110,7 @@ public class GraphFrame extends SwingFrame {
 	/**
 	 * The inspector panel to the lower right of the frame which allows for the modification of the attributes of an argument element.
 	 */
-	public attribute edit: GraphEdit = GraphEdit {
+	public var edit: GraphEdit = GraphEdit {
 		background: panelBackground
 		visible: true
 		control: bind control
@@ -121,7 +121,7 @@ public class GraphFrame extends SwingFrame {
 	/**
 	 * The list of statements on the upper right of the frame.
 	 */
-	public attribute list: ElementList = ElementList {
+	public var list: ElementList = ElementList {
 		background: panelBackground
 		visible: true
 		control: bind control
@@ -129,11 +129,11 @@ public class GraphFrame extends SwingFrame {
 		preferredSize: bind [editWidth, (this.height /3) - 40]
 	}
 
-	override attribute closeAction = function(): Void {
+	override var closeAction = function(): Void {
 		quit();
 	}
 
-	private attribute rightPanel: BorderPanel = bind BorderPanel {
+	 var rightPanel: BorderPanel = bind BorderPanel {
 		background: panelBackground
 		preferredSize: bind [ editWidth, this.height ]
 		top: bind list
@@ -144,20 +144,20 @@ public class GraphFrame extends SwingFrame {
 	/**
 	 * The graph list panel at the left edge of the frame.
 	 */
-	public attribute graphList: GraphListPanel = GraphListPanel {
+	public var graphList: GraphListPanel = GraphListPanel {
 		argumentGraphs: bind argumentGraphs
 		control: bind control
 		preferredSize: [graphListWidth, this.height - toolBarHeight]
 	}
 
-	override attribute content = bind BorderPanel {
+	override var content = bind BorderPanel {
 		top: bind toolPanel
 		left: bind graphList
 		center: bind viewCanvas
 		right: bind rightPanel
 	}
 	
-	private attribute toolPanel: FlowPanel = FlowPanel {
+	 var toolPanel: FlowPanel = FlowPanel {
 		alignment: HorizontalAlignment.LEFT
 		preferredSize: [ this.width, toolBarHeight ]
 		background: toolPanelBackground
@@ -272,7 +272,7 @@ public class GraphFrame extends SwingFrame {
 	}
 
 	// Menus
-	override attribute menus = [
+	override var menus = [
 				Menu {
 					text: "File"
 					items: [
@@ -412,7 +412,7 @@ public class GraphFrame extends SwingFrame {
 		loadVersionNumber();
 	}
 
-	private attribute creditsFrame: SwingFrame = SwingFrame {
+	 var creditsFrame: SwingFrame = SwingFrame {
 		visible: bind this.showCredits
 		title: "About Carneades"
 		height: 300
@@ -488,7 +488,7 @@ public class GraphFrame extends SwingFrame {
 		);
 	}
 
-	private function quit(): Void {
+	 function quit(): Void {
 		if (control.fileChanged) {
 			var choice = JOptionPane.showOptionDialog(
 				null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?", 
@@ -506,7 +506,7 @@ public class GraphFrame extends SwingFrame {
 		}
 	}
 
-	private function newDocument(): Void {
+	 function newDocument(): Void {
 		if (control.fileChanged) {
 			var choice = JOptionPane.showOptionDialog(
 					  null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?", 
@@ -524,7 +524,7 @@ public class GraphFrame extends SwingFrame {
 		}
 	}
 
-	private function open(): Void {
+	 function open(): Void {
 		if (control.fileChanged) {
 			var choice = JOptionPane.showOptionDialog(
 								  null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?", 
@@ -548,7 +548,7 @@ public class GraphFrame extends SwingFrame {
 		}
 	}
 
-	private function save(): Void {
+	 function save(): Void {
 		if (control.fileLoaded) {
 			control.saveGraphToFile(control.currentFile);
 		} else {
@@ -557,7 +557,7 @@ public class GraphFrame extends SwingFrame {
 		} // if loaded
 	} // function
 
-	private function saveAs(): Void {
+	 function saveAs(): Void {
 		var returnval = chooser.showSaveDialog(null);
 		if (returnval == JFileChooser.APPROVE_OPTION) {
 			var file: File = chooser.getSelectedFile();
@@ -573,7 +573,7 @@ public class GraphFrame extends SwingFrame {
 		}		
 	}
 
-	private function loadVersionNumber(): Void {
+	 function loadVersionNumber(): Void {
 		var file: File = new File ("version.txt");
 		if (file.canRead()) {
 			var s: Scanner = new Scanner(file);
@@ -587,12 +587,12 @@ public class GraphFrame extends SwingFrame {
 }
 
 class ToolBarButton extends SwingButton {
-	override attribute preferredSize = [toolBarHeight, toolBarHeight];
+	override var preferredSize = [toolBarHeight, toolBarHeight];
 }
 
 class SpacerPanel extends SwingPanel {
-	override attribute visible = true;
-	override attribute width = 10;
-	override attribute height = 10;
-	override attribute background = Color.rgb(0,0,0,0);
+	override var visible = true;
+	override var width = 10;
+	override var height = 10;
+	override var background = Color.rgb(0,0,0,0);
 }

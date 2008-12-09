@@ -41,102 +41,102 @@ public class Edge extends GraphElement {
 	/**
 	 * The vertex from which the directed edge is originating
 	 */
-	public attribute producer: Vertex; 
+	public var producer: Vertex; 
 
 	/**
 	 * The Vertex to which the directed edge is going.
 	 */
-	public attribute recipient: Vertex; // ... and to which vertex it is going.
+	public var recipient: Vertex; // ... and to which vertex it is going.
 
 	/**
 	 * Horizontal adjustment of the origin of the edge.
 	 */
-	public attribute x1Shift: Number = 0; 
+	public var x1Shift: Number = 0; 
 
 	/**
 	 * Horizontal adjustment of the end point of the edge.
 	 */
-	public attribute x2Shift: Number = 0; 
+	public var x2Shift: Number = 0; 
 
 	/**
 	 * Vertical adjustment of the origin of the edge.
 	 */
-	public attribute y1Shift: Number = 0; // Shift to where the edge LINE should stop
+	public var y1Shift: Number = 0; // Shift to where the edge LINE should stop
 
 	/**
 	 * Vertical adjustment of the end point of the edge.
 	 */
-	public attribute y2Shift: Number = 0;
+	public var y2Shift: Number = 0;
 
 	/**
 	 * Additional vertical adjustment for the head of the edge depending on its shape.
 	 */
-	public attribute yHeadShift: Number = 0; // Additional Shift for the HEAD (Arrow, etc.) size to adjust additionally
+	public var yHeadShift: Number = 0; // Additional Shift for the HEAD (Arrow, etc.) size to adjust additionally
 
 	/**
 	 * Additional horizontal adjustment for the head of the edge depending on its shape.
 	 */
-	public attribute xHeadShift: Number = 0;
+	public var xHeadShift: Number = 0;
 
 	/**
 	 * Horizontal origin of the edge.
 	 */
-	public attribute x1: Number = bind producer.x + x1Shift on replace { if (turnHead) setAngle() };
+	public var x1: Number = bind producer.x + x1Shift on replace { if (turnHead) setAngle() };
 
 	/**
 	 * Vertical origin of the edge.
 	 */
-	public attribute y1: Number = bind producer.y + y1Shift on replace { if (turnHead) setAngle() };
+	public var y1: Number = bind producer.y + y1Shift on replace { if (turnHead) setAngle() };
 
 	/**
 	 * Absolute horizontal end point of the edge. Is bound and read-only.
 	 */
-	public attribute x2: Number = bind recipient.x + x2Shift + xHeadShift on replace { if (turnHead) setAngle() };
+	public var x2: Number = bind recipient.x + x2Shift + xHeadShift on replace { if (turnHead) setAngle() };
 
 	/**
 	 * Absolute vertical end point of the edge. Is bound and read-only.
 	 */
-	public attribute y2: Number = bind recipient.y + y2Shift + yHeadShift on replace { if (turnHead) setAngle() };
+	public var y2: Number = bind recipient.y + y2Shift + yHeadShift on replace { if (turnHead) setAngle() };
 
 	/**
 	 * Direction from which the edge is hitting is recipient. Needed for edge head angle calculation purposes. By default, it is assumed that the edge hits the node on the bottom side.
 	 */
-	public attribute direction: Number = BOTTOM; 
+	public var direction: Number = BOTTOM; 
 
 	/**
 	* The stroke color of the edge.
 	*/
-	public attribute stroke: Color = Color.BLACK;
+	public var stroke: Color = Color.BLACK;
 
 	/**
 	 * the stroke width of the edge.
 	 */
-	public attribute strokeWidth: Number = edgeStrokeWidth;
+	public var strokeWidth: Number = edgeStrokeWidth;
 
 	/**
 	 * Is the edge displayed in dashes.
 	 */
-	public attribute dashed: Boolean = false;
+	public var dashed: Boolean = false;
 
 	/**
 	 * The application's control object.
 	 */
-	public attribute control: GraphControl;
+	public var control: GraphControl;
 
 	// attributes for optional heads
 
 	/**
 	 * Is there an edge head that needs to be turned to a certain angle?
 	 */
-	public attribute turnHead: Boolean = false;
+	public var turnHead: Boolean = false;
 
 	/**
 	 * Variable to store the computed angle head.
 	 */
-	public attribute angle: Number = 0;
+	public var angle: Number = 0;
 
 	// main line of the edge
-	attribute edgeLine: Line = Line {
+	var edgeLine: Line = Line {
 					startX: bind x1
 					startY: bind y1
 					endX: bind x2
@@ -148,7 +148,7 @@ public class Edge extends GraphElement {
 				}
 	
 	// invisible wider line for easier selection
-	attribute selectLine = Line {
+	var selectLine = Line {
 					startX: bind x1
 					startY: bind y1
 					endX: bind x2
@@ -164,7 +164,7 @@ public class Edge extends GraphElement {
 				}
 
 	// newly colored line once selected
-	attribute selection: Line = Line {
+	var selection: Line = Line {
 					startX: bind x1
 					startY: bind y1
 					endX: bind x2
@@ -176,7 +176,7 @@ public class Edge extends GraphElement {
 					strokeDashOffset: bind { if (dashed) 0.0 else 0.0 }
 				}
 
-	attribute line: Group = Group {
+	var line: Group = Group {
 		content: [
 			edgeLine, selection, selectLine
 		]

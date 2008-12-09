@@ -46,17 +46,17 @@ public class GraphControl {
 	/**
 	 * The array of currently loaded model argument graphs. Read-Only.
 	 */
-	public attribute argumentGraphs: ArgumentGraph[] = bind for (g in graphs) {g.argumentGraph};
+	public var argumentGraphs: ArgumentGraph[] = bind for (g in graphs) {g.argumentGraph};
 
 	/**
 	 * The current model argument graph that is to be displayed. Read-Only.
 	 */
-	public attribute argumentGraph: ArgumentGraph = bind graph.argumentGraph;
+	public var argumentGraph: ArgumentGraph = bind graph.argumentGraph;
 
 	/**
 	 * The application frame.
 	 */	
-	public attribute frame: GraphFrame = GraphFrame {
+	public var frame: GraphFrame = GraphFrame {
 		visible: true
 		graph: bind graph
 		argumentGraph: bind argumentGraph
@@ -67,61 +67,61 @@ public class GraphControl {
 	/**
 	 * The application's inspector panel.
 	 */
-	public attribute edit: GraphEdit = bind frame.edit;
+	public var edit: GraphEdit = bind frame.edit;
 
 	/**
 	 * The application's view.
 	 */
-	public attribute view: GraphView = bind frame.view;
+	public var view: GraphView = bind frame.view;
 
 	/**
 	 * The array of graph objects that correspond to the model graphs.
 	 */
-	public attribute graphs: CarneadesGraph[] = [];
+	public var graphs: CarneadesGraph[] = [];
 
 	/**
 	 * The view graph object currently displayed.
 	 */
-	public attribute graph: CarneadesGraph;
+	public var graph: CarneadesGraph;
 
 	/**
 	 * The command administering unit of the currently displayed graph.
 	 */
-	private attribute commands: CommandControl = bind graph.commands;
+	 var commands: CommandControl = bind graph.commands;
 
 	// !!! -> This should be moved into the graph class!
-	//private attribute selectedModels: Object[];
+	// var selectedModels: Object[];
 
 	// View configuration attributes
-	public attribute possibleToAddConclusion: Boolean = true;
+	public var possibleToAddConclusion: Boolean = true;
 
-	public attribute possibleToInverseArgument: Boolean = false;
-	public attribute possibleToNegatePremise: Boolean = false;
+	public var possibleToInverseArgument: Boolean = false;
+	public var possibleToNegatePremise: Boolean = false;
 
-	public attribute possibleToChangeToOrdPremise: Boolean = false;
-	public attribute possibleToChangeToException: Boolean = false;
-	public attribute possibleToChangeToAssumption: Boolean = false;
+	public var possibleToChangeToOrdPremise: Boolean = false;
+	public var possibleToChangeToException: Boolean = false;
+	public var possibleToChangeToAssumption: Boolean = false;
 
-	public attribute possibleToRemove: Boolean = false ;
+	public var possibleToRemove: Boolean = false ;
 	
-	public attribute possibleToUndo: Boolean = false;
-	public attribute possibleToRedo: Boolean = false;
+	public var possibleToUndo: Boolean = false;
+	public var possibleToRedo: Boolean = false;
 	
-	public attribute dragging: Boolean = false;
-	public attribute dragView: Boolean = false;
+	public var dragging: Boolean = false;
+	public var dragView: Boolean = false;
 
-	public attribute selectedArgumentEditable: Boolean = false;
-	public attribute selectedStatementEditable: Boolean = false;
-	public attribute selectedPremiseEditable: Boolean = false;
+	public var selectedArgumentEditable: Boolean = false;
+	public var selectedStatementEditable: Boolean = false;
+	public var selectedPremiseEditable: Boolean = false;
 
 	/**
 	 * Is the user just dragging something over something else?
 	 */
-	public attribute draggingOver = null;
+	public var draggingOver = null;
 
-	public attribute currentFile: File = null;
-	public attribute fileChanged: Boolean = true;
-	public attribute fileLoaded: Boolean = bind currentFile != null;
+	public var currentFile: File = null;
+	public var fileChanged: Boolean = true;
+	public var fileLoaded: Boolean = bind currentFile != null;
 
 	/**
 	 * Set the object the users currently drags something over. Should be called by all view obects receiving dragging actions in their onMouseEnter/onMouseLeave methods.
@@ -130,19 +130,19 @@ public class GraphControl {
 
 	// SELECTION FUNCTIONS
 
-	public attribute possibleToAddArgument = bind graph.selectedModels[0] instanceof Statement;
-	public attribute possibleToAddPremise = bind graph.selectedModels[0] instanceof Argument;
+	public var possibleToAddArgument = bind graph.selectedModels[0] instanceof Statement;
+	public var possibleToAddPremise = bind graph.selectedModels[0] instanceof Argument;
 
-	private function singleArgumentLinkSelected(s: GraphElement[]): Boolean {
+	 function singleArgumentLinkSelected(s: GraphElement[]): Boolean {
 		return { if (sizeof s != 1) false else (s instanceof ArgumentLink) } 
 	}
-	private function singlePremiseSelected(s: GraphElement[]): Boolean {
+	 function singlePremiseSelected(s: GraphElement[]): Boolean {
 		return { if (sizeof s != 1) false else (s instanceof PremiseLink) } 
 	}
-	private function premiseSelected(s: GraphElement[]): Boolean {
+	 function premiseSelected(s: GraphElement[]): Boolean {
 		return { if (sizeof s != 1) false else (s instanceof PremiseLink) } 
 	}
-	private function singleSomethingSelected(s: GraphElement[]): Boolean {
+	 function singleSomethingSelected(s: GraphElement[]): Boolean {
 		return { (sizeof graph.selected == 1) } 
 	}
 
@@ -275,7 +275,7 @@ public class GraphControl {
 	
 	// UPDATE FUNCTIONS
 	
-	private attribute update: Timeline = Timeline {
+	 var update: Timeline = Timeline {
 	// This is the central workaround for the Scenegraph threading problem.
 	// Fix this once the do {...} code works again in later versions of the compiler.
     	keyFrames:  KeyFrame {
@@ -325,7 +325,7 @@ public class GraphControl {
     	repeatCount: java.lang.Double.POSITIVE_INFINITY
 	}
 
-	private function updateView(): Void {
+	 function updateView(): Void {
 		// function to update the view component influencing booleans
 		possibleToUndo = commands.possibleToUndo();
 		possibleToRedo = commands.possibleToRedo();
@@ -374,7 +374,7 @@ public class GraphControl {
 	/**
 	 * Is a dragging action in progress.
 	 */
-	override attribute dragging = false;
+	override var dragging = false;
 
 	/**
 	 * Processes the start of a dragging action. Should be called whenever a dragging action starts.
@@ -397,7 +397,7 @@ public class GraphControl {
 		}
 	}
 
-	private function dragEndsAt(target): Void {
+	 function dragEndsAt(target): Void {
 		var selected = getSelected();
 		for (s in selected) {
 			if (s instanceof StatementBox) {
@@ -938,14 +938,14 @@ public class GraphControl {
 
 	// Load / Save / New Options
 
-	private function graphIdTaken(id: String): Boolean {
+	 function graphIdTaken(id: String): Boolean {
 		for (a in argumentGraphs) {
 			if (a.id == id) { return true; }
 		}
 		return false;
 	}
 
-	private function getNewGraphId(): String {
+	 function getNewGraphId(): String {
 		var admissible: Boolean = true;
 		var id: String = "g";
 		var number: Integer = 1;

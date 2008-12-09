@@ -41,26 +41,26 @@ public class CarneadesGraph extends Graph {
 	/**
 	 * The command control and stack object associated with the graph. Each graph has its own commands object so that each graph can have its own undo history.
 	 */
-	public attribute commands: CommandControl = CommandControl {
+	public var commands: CommandControl = CommandControl {
 		control: bind control
 	}
 	
 	/**
 	 * The model graph object displayed through the CarneadesGraph object.
 	 */
-	public attribute argumentGraph: ArgumentGraph;
+	public var argumentGraph: ArgumentGraph;
 
 	// the invisible root node
-	override attribute root = Vertex {
+	override var root = Vertex {
 		caption: "root"
 		x: bind root.xShift
 		y: bind root.yShift
 		visible: false
 	}
 
-	override attribute vertices = [];
+	override var vertices = [];
 
-	override attribute edges = [];
+	override var edges = [];
 
 	// CONVERSION FUNCTIONS
 
@@ -89,7 +89,7 @@ public class CarneadesGraph extends Graph {
 	}
 
 
-	private function toVertices(statements: Statement[], arguments: Argument[]): Vertex[] {
+	 function toVertices(statements: Statement[], arguments: Argument[]): Vertex[] {
 		var statementBoxes: StatementBox[];
 		var argumentBoxes: ArgumentBox[];
 		// 1. create bound vertices
@@ -154,7 +154,7 @@ public class CarneadesGraph extends Graph {
 		return [argumentBoxes, statementBoxes];
 	}
 	
-	private function toEdges(statements: Statement[], arguments: Argument[]): Edge[] {
+	 function toEdges(statements: Statement[], arguments: Argument[]): Edge[] {
 		var links: Edge[];
 
 		// 1. argument links

@@ -41,21 +41,21 @@ import Carneades.Control.GraphControl;
  */
 public class ElementList extends FlowPanel {
 
-	override attribute alignment = HorizontalAlignment.LEFT;
+	override var alignment = HorizontalAlignment.LEFT;
 
 	// text displayed by the (left) addButton
-	private attribute addButtonText: String = "";
+	 var addButtonText: String = "";
 
 	// text displayed by the (right) deleteButton
-	private attribute deleteButtonText: String = "";
+	 var deleteButtonText: String = "";
 
-	attribute control: GraphControl;
-	attribute argumentGraph: ArgumentGraph;
+	var control: GraphControl;
+	var argumentGraph: ArgumentGraph;
 
 	/**
 	 * The search string input field.
 	 */
-	private attribute input: SwingTextField = SwingTextField {
+	 var input: SwingTextField = SwingTextField {
 		preferredSize: bind [editWidth-65, textFieldHeight]
 		visible: true
 	}
@@ -63,7 +63,7 @@ public class ElementList extends FlowPanel {
 	/**
 	 * The embedded custom list component.
 	 */
-	public attribute list: StatementList = StatementList {
+	public var list: StatementList = StatementList {
 		control: bind control
 		preferredSize: bind [this.width-15, this.height - 70]
 		visible: true
@@ -71,19 +71,19 @@ public class ElementList extends FlowPanel {
 		filter: bind input.text.toLowerCase()
 	}
 
-	attribute addButton: SwingButton = SwingButton {
+	var addButton: SwingButton = SwingButton {
 		text: bind addButtonText
 		enabled: false
 		preferredSize: [140, 20]
 	}
 
-	attribute deleteButton: SwingButton = SwingButton {
+	var deleteButton: SwingButton = SwingButton {
 		text: bind deleteButtonText
 		enabled: false
 		preferredSize: [140, 20]
 	}
 
-	override attribute content = bind [ Label {text: "search "}, input, 
+	override var content = bind [ Label {text: "search "}, input, 
 										list,
 										addButton, deleteButton];
 
@@ -156,14 +156,14 @@ public class StatementList extends List {
 	/**
 	 * The associated control component.
 	 */
-	public attribute control: GraphControl;
+	public var control: GraphControl;
 	
 	/**
 	 * The display filter string for the statement list.
 	 */
-	public attribute filter: String = "";
+	public var filter: String = "";
 
-	override attribute selectedItem = null on replace {
+	override var selectedItem = null on replace {
 		if (selectedItem != null) {
 			control.unSelectGraph();
 			control.processSelection();
@@ -173,9 +173,9 @@ public class StatementList extends List {
 	/**
 	 * The sequence of statements to be displayed in the list.
 	 */
-	public attribute statements: Statement[];
+	public var statements: Statement[];
 
-	override attribute items = bind [ 
+	override var items = bind [ 
 									for (s in statements 
 											 where (matches(filter, s.id.toLowerCase()) 
 													or matches(filter, s.wff.toLowerCase()))) {
@@ -197,7 +197,7 @@ public class StatementList extends List {
 		}
 	}
 
-	private function matches(filter: String, text: String): Boolean {
+	 function matches(filter: String, text: String): Boolean {
 		var result: Boolean = false;
 		for (i in [0 .. (text.length()-1)]) {
 			if (text.substring(i).startsWith(filter)) {
@@ -216,6 +216,6 @@ public class StatementItem extends ListItem {
 	/**
 	 * The model statement represented by the list item.
 	 */
-	public attribute statement: Statement;
-	attribute visible: Boolean = true;
+	public var statement: Statement;
+	var visible: Boolean = true;
 }

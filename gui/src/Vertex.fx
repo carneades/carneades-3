@@ -43,77 +43,77 @@ public class Vertex extends GraphElement {
 	/**
 	 * The application's control object.
 	 */
-	public attribute control: GraphControl;
+	public var control: GraphControl;
 
 	/**
 	 * The title of the vertex, if displayed.
 	 */
-	attribute caption = "";
+	var caption = "";
 
 	/**
 	 * The parent vertex. null if the vertex is the root. It is called "parentVertex" since "parent" is taken by JavaFX internally.
 	 */
-	public attribute parentVertex: Vertex = null;
+	public var parentVertex: Vertex = null;
 
 	/**
 	 * X axis ccordinate shift relative to the parent vertex.
 	 */
-	public attribute xShift: Number = 0; // display coordinates relative to the parent node
+	public var xShift: Number = 0; // display coordinates relative to the parent node
 
 	/**
 	 * Y axis coordinate shift relative to the parent vertex.
 	 */
-	public attribute yShift: Number = 0; 
+	public var yShift: Number = 0; 
 
 	/**
 	 * Absolute X coordinate. Bound and thus read-only.
 	 */
-	public attribute x: Number = bind parentVertex.x + xShift; 
+	public var x: Number = bind parentVertex.x + xShift; 
 
 	/**
 	 * Absolute Y coordinate. Bound and thus read-only.
 	 */
-	public attribute y: Number = bind parentVertex.y + yShift;
+	public var y: Number = bind parentVertex.y + yShift;
 
 	/**
-	 * The default width of the vertex. If enforced statically the moment the scaleWithText attribute is false.
+	 * The default width of the vertex. If enforced statically the moment the scaleWithText var is false.
 	 */
-	public attribute defaultWidth: Number = vertexDefaultWidth;
+	public var defaultWidth: Number = vertexDefaultWidth;
 
 	/**
 	 * Determines whether the vertex scales with the text.
 	 */
-	public attribute scaleWithText: Boolean = scaleVerticesWithText;
+	public var scaleWithText: Boolean = scaleVerticesWithText;
 	
 	/**
 	 * The width of the vertex. Should not be set statically (use defaultWidth instead), but rather is set by a function that chooses between defaultWidth or a wider size depending on the text contained in the vertex.
 	 */
-	public attribute width: Number = { if (scaleWithText) Math.max(50, text.getWidth() + 10) else defaultWidth };
+	public var width: Number = { if (scaleWithText) Math.max(50, text.getWidth() + 10) else defaultWidth };
 
 	/**
 	 * The height of the vertex.
 	 */
-	public attribute height: Number = vertexDefaultHeight;
+	public var height: Number = vertexDefaultHeight;
 
 	/**
 	 * The child vertices sequence.
 	 */
-	public attribute children: Vertex[];
+	public var children: Vertex[];
 
 	/**
 	 * The depth level of the vertex, where the root is level 0.
 	 */
-	public attribute level: Number = 0; // The depth level of the vertex, where the root vertex has level 0
+	public var level: Number = 0; // The depth level of the vertex, where the root vertex has level 0
 
 	// attributes for graph drawing - Don't set manually! The layout computes them.
-	attribute priority: Number = 0;
-	attribute xSubTreeSize: Number;
-	attribute ySubTreeSize: Number;
-	attribute leftSTOutline: Number;
-	attribute rightSTOutline: Number;
-	attribute bottomBrink: Number = 0;
+	var priority: Number = 0;
+	var xSubTreeSize: Number;
+	var ySubTreeSize: Number;
+	var leftSTOutline: Number;
+	var rightSTOutline: Number;
+	var bottomBrink: Number = 0;
 	
-	attribute text: Text = Text {
+	var text: Text = Text {
 					content: bind caption
 					verticalAlignment: VerticalAlignment.CENTER
 					horizontalAlignment: HorizontalAlignment.CENTER
