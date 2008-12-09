@@ -73,13 +73,15 @@
  ; lkif-import: file-path -> lkif-data
  (define (lkif-import path)
    (let ((lkif-body (get-lkif (get-document path))))
-     (let ((sources (read-sources lkif-body))
+     (let* ((sources (read-sources lkif-body))
            (theory (read-theory lkif-body))
-           (arg-graphs (read-argument-graphs lkif-body)))
-       (let ((context (lkif-axioms->context (theory-axioms theory)))
-             (rb (lkif-rules->rulebase (theory-rules theory)))
-             (stages (map argument-graph->stage arg-graphs)))
-         (make-lkif-data sources context rb stages)))))
+           (arg-graphs (read-argument-graphs lkif-body))
+           (tbl (lkif-axioms->table (theory-axioms theory)))
+           (context (lkif-axioms->context (theory-axioms theory)))
+           (rb (lkif-rules->rulebase (theory-rules theory)))
+           (stages (map (lambda (argg)
+                          (lkif-argument-graph->stage argg context tbl)) arg-graphs)))
+       (make-lkif-data sources context rb stages))))
  
  
  ; --------------------------------
@@ -170,11 +172,6 @@
          (statements (map statement-to-record (get-elements (get-element ag 'statements) 'statement)))
          (arguments (get-elements (get-element ag 'arguments) 'argument)))
      (make-lkif-argument-graph id title main-issue-id statements arguments)))
- 
- ; lkif-argument-graph->stage: lkif-argument-graph -> struct:stage
- (define (lkif-argument-graph->stage ag)
-   (call-with-values (lambda () (lkif-argument-graph->argument-graph/context ag))
-                     (lambda (a c) (make-stage a c))))
  
  ; statement-to-record: lkif-statement -> struct:statement
  (define (statement-to-record  s)
@@ -408,6 +405,19 @@
  (define (lkif-axioms->context a)
    (argument:accept argument:default-context (map lkif-axiom->sexpr a)))
  
+ (define (insert-axiom t a)
+   (let* ((id (get-attribute-value (get-attribute a 'id) #f))
+          (wff (caddr a))
+          (st (make-statement id
+                             "true"
+                             "false"
+                             "BA"
+                             wff)))
+     (table:insert t id st)))
+ 
+ (define (lkif-axioms->table a)
+   (fold-left insert-axiom (table:make-table statement:statement=? null) a))
+ 
  
  ; statement conversion
  
@@ -415,9 +425,9 @@
  (define (insert-statement tbl s)
     (table:insert tbl (statement-id s) s))
  
- ; statements->table: (list-of struct:statement) -> table
- (define (statements->table s)
-   (fold-left insert-statement (table:make-table statement:statement=? null) s))
+ ; statements->table: table (list-of struct:statement) -> table
+ (define (statements->table t s)
+   (fold-left insert-statement t s))
  
  ; statement->sexpr: struct:statement -> any
  (define (statement->sexpr s)
@@ -458,10 +468,16 @@
  
  ; argument-graph-conversion
  
- ; lkif-argument-graph->argument-graph: struct:lkif-argument-graph -> (struct:argument-graph context)
- (define (lkif-argument-graph->argument-graph/context ag)
+  ; lkif-argument-graph->stage: lkif-argument-graph -> struct:stage
+ (define (lkif-argument-graph->stage ag c t)
+   (call-with-values (lambda () (lkif-argument-graph->argument-graph/context ag c t))
+                     (lambda (a c) (make-stage a c))))
+ 
+ ; lkif-argument-graph->argument-graph: struct:lkif-argument-graph context -> (struct:argument-graph context)
+ ; creates an argument-graph and a context from a given lkif-argument-graph and a context
+ (define (lkif-argument-graph->argument-graph/context ag c t)
    (let* ((statements (lkif-argument-graph-statements ag))
-          (tbl (statements->table statements))
+          (tbl (statements->table t statements))
           (arguments (map (lambda (x) (argument-to-record x tbl)) (lkif-argument-graph-arguments ag)))
           (ag1 (argument:make-argument-graph (string->symbol (lkif-argument-graph-id ag))
                                              (lkif-argument-graph-title ag)
@@ -476,14 +492,8 @@
                                                           sexpr)))
                                                   statements))))
      (values (argument:assert-arguments ag1 arguments)
-             (statements->context statements))))
- 
- ; argument-graph->stage: struct:lkif-argument-graph -> struct:stage
- (define (argument-graph->stage ag)
-   (call-with-values (lambda () (lkif-argument-graph->argument-graph/context ag))
-                     (lambda (a c)
-                       (make-stage a c))))
-         
+             ; the context is used to overwrite facts
+             (argument:accept (statements->context statements) (argument:facts c)))))     
  
  
 
