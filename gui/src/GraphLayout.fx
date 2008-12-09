@@ -24,13 +24,13 @@ import java.lang.System;
 
 public abstract class GraphLayout {
 	// This would normally be a Graph object, but the inverse bind forces the classes to exactly match.
-	public attribute graph: Graph;
+	public var graph: Graph;
 	
-	public attribute width: Integer;
-	public attribute height: Integer;
-	attribute xOffset: Integer = xOffset;
-	attribute yOffset: Integer = yOffset;
-	attribute d: Boolean = bind debug; // debug messages?
+	public var width: Integer;
+	public var height: Integer;
+	var xOffset: Integer = xOffset;
+	var yOffset: Integer = yOffset;
+	var d: Boolean = bind debug; // debug messages?
 
 	public function compose():Graph { graph }
 

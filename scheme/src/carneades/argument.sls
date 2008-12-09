@@ -311,8 +311,8 @@
  
  (define-record-type node 
    (fields statement ; datum
-           pro       ; (list-of argument)
-           con       ; (list-of argument)
+           pro       ; (list-of argument ids)
+           con       ; (list-of argument ids)
            ))
  
  ; builds a new node from a statement with no pro- or con-arguments
@@ -398,7 +398,7 @@
                           (argument-graph-nodes iag)
                           (argument-graph-arguments iag))))
  
- ; add-string: string (list-of string) -> (list-of string)
+ ; add-string (list-of string) -> (list-of string)
  ; Add the string, s, the list l, if it is not already a member of l
  (define (add-string s l)
    (if (memq s l) l (cons s l)))

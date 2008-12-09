@@ -24,14 +24,14 @@ import Carneades.Graph.GC.*;
 import java.lang.System;
 
 abstract public class ProofStandard {
-	public attribute statement : Statement;  // backwards reference
+	public var statement : Statement;  // backwards reference
 
-	public attribute negated: Boolean = false 
+	public var negated: Boolean = false 
 		on replace {
 			statement.update();
 		};
 
-	public attribute complement: Boolean = false
+	public var complement: Boolean = false
 		on replace {
 			statement.update();
 		};
@@ -52,42 +52,42 @@ abstract public class ProofStandard {
 }
 
 public class Statement {
-	public attribute id: String;  // xsd:ID
-	public attribute wff: String; // The content model of the wff XML element
-	public attribute graph: ArgumentGraph; // backwards reference
+	public var id: String;  // xsd:ID
+	public var wff: String; // The content model of the wff XML element
+	public var graph: ArgumentGraph; // backwards reference
 	
 	// arguments in which this statement is a premise
-	public attribute arguments: Argument[]; 
+	public var arguments: Argument[]; 
 	
 	// read-only: value, assumption
 	// use the methods below to alter state
 
 	// value = "true", "false" or "unknown
-    public attribute value: String = "unknown";      	
-	public attribute assumption: Boolean = true;
+    public var value: String = "unknown";      	
+	public var assumption: Boolean = true;
 		
-	public attribute standard: ProofStandard = BestArgument {}
+	public var standard: ProofStandard = BestArgument {}
 		on replace {
 			standard.statement = this;
 			update();
 		}
 	
 	// ok should be read only for other objects.  But we can't
-	// make it private because views need to bind to this variable
+	// make it  because views need to bind to this variable
 	// and track changes to its value.
-	public attribute ok: Boolean = false 
+	public var ok: Boolean = false 
 		on replace {
 			for (arg in arguments) arg.update(); // propogate changes
 		}
 		
 	// read-only
-	public attribute complementOk: Boolean = true 
+	public var complementOk: Boolean = true 
 		on replace {
 			for (arg in arguments) arg.update();
 		}
 	
 
-    private function update () : Void {
+     function update () : Void {
     	var pro = graph.arguments[arg | arg.conclusion == this and arg.pro];
 		var con = graph.arguments[arg | arg.conclusion == this and not arg.pro];
     	ok = standard.satisfied(graph,pro,con);
@@ -176,19 +176,19 @@ public class Statement {
 }
 
 public class Premise {
-	public attribute statement: Statement 
+	public var statement: Statement 
 		on replace {
 			statement.update();
 		};
 		
-	public attribute role: String = "";
+	public var role: String = "";
 	
-	public attribute negative: Boolean = false 
+	public var negative: Boolean = false 
 		on replace {
 			statement.update();
 		};
 		
-	public attribute exception: Boolean = false
+	public var exception: Boolean = false
 		on replace {
 			statement.update();
 		};
@@ -212,42 +212,42 @@ public class Premise {
 }
 
 public class Scheme {
-	public attribute id: String;   // could be URI
+	public var id: String;   // could be URI
 	// to do: possibly other attributes
 }
 
 public class Argument {
-	public attribute id: String;
-	public attribute title: String;
-	public attribute graph : ArgumentGraph;  
+	public var id: String;
+	public var title: String;
+	public var graph : ArgumentGraph;  
 
-	public attribute weight: Number = 0.5 // range: 0.0 to 1.0 coming as soon as JavaFX does it right
+	public var weight: Number = 0.5 // range: 0.0 to 1.0 coming as soon as JavaFX does it right
 		on replace {
 			conclusion.update();
 		}
 		
-	public attribute scheme: Scheme;
+	public var scheme: Scheme;
 	
-    public attribute premises: Premise[] 
+    public var premises: Premise[] 
     	on replace {
     		update();
     		conclusion.update();
     	};
     	
-	public attribute pro: Boolean = true 
+	public var pro: Boolean = true 
 		on replace {
 			conclusion.update();
 		};
 	
-	public attribute conclusion: Statement 
+	public var conclusion: Statement 
 		on replace {	
 			conclusion.update();
 		}
 	
 	// ok should be read only for other objects.  But we can't
-	// make it private because views need to bind to this variable
+	// make it  because views need to bind to this variable
 	// and track changes to its value.
-	public attribute ok: Boolean = false 
+	public var ok: Boolean = false 
 		on replace {
 			conclusion.update();  // propogate changes
 		}
@@ -256,7 +256,7 @@ public class Argument {
 		0 == sizeof(premises[p | not p.holds()]);
 	} 
 	
-	private function update () : Void {
+	 function update () : Void {
 		ok = allPremisesHold();
 	}
 	
@@ -287,13 +287,13 @@ public class Argument {
 }
 
 public class ArgumentGraph {
-	public attribute id: String = "NewGraph";
-	public attribute title: String = "New Graph";
-	public attribute mainIssue: Statement; 
+	public var id: String = "NewGraph";
+	public var title: String = "New Graph";
+	public var mainIssue: Statement; 
 
 	// statements and arguments should be "read-only"
-	public attribute statements: Statement[];
-    public attribute arguments: Argument[];
+	public var statements: Statement[];
+    public var arguments: Argument[];
 
     // Issues of XML format not needed, since the 
     // statements here have all the attributes of issues.
@@ -411,8 +411,8 @@ public class ArgumentGraph {
 		return result
 	}
 	
-	// Recursive private function for cycle checking
-	private function noCyclesRec(root: Object, marked: Object[]): Boolean {
+	// Recursive  function for cycle checking
+	 function noCyclesRec(root: Object, marked: Object[]): Boolean {
 		var result = true;
 		
 		if (root instanceof Argument) {
@@ -454,7 +454,7 @@ public class ArgumentGraph {
 	}
 
 	// DOUBLE ID CHECKING
-	private function idTaken(id: String): Boolean {
+	 function idTaken(id: String): Boolean {
 		for (s in statements) {
 			if (s.id == id) { return true; }
 		}

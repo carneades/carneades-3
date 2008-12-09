@@ -42,17 +42,17 @@ public abstract class Command {
 	/**
 	 * The model argument graph associated with the administering CommandControl object.
 	 */
-	public attribute argumentGraph: ArgumentGraph;
+	public var argumentGraph: ArgumentGraph;
 
 	/**
 	 * The administering CommandControl object.
 	 */
-	public attribute commandControl: CommandControl;
+	public var commandControl: CommandControl;
 
 	/**
 	 * Does this command have the ability to merge with other commands?
 	 */
-	public attribute merges: Boolean = false;
+	public var merges: Boolean = false;
 
 	/**
 	 * Execute the command.
@@ -92,22 +92,22 @@ public class CommandControl {
 	/**
 	 * The application's control object.
 	 */
-	public attribute control: GraphControl;
+	public var control: GraphControl;
 
 	/**
 	 * The command stack.
 	 */
-	private attribute commands: Command[] = [];
+	 var commands: Command[] = [];
 
 	/**
 	 * The size of the command stack for easy handling. Bound and read-only.
 	 */
-	private attribute size: Integer = bind sizeof commands;
+	 var size: Integer = bind sizeof commands;
 
 	/**
 	 * The bookmark determines where we are in the undo-stack. It usually is 0, meaning that we have undone 0 commands. Whenever an undo is called, it increases by one. Hence, a redo decreases it by one.
 	 */
-	private attribute bookmark: Integer = 0;
+	 var bookmark: Integer = 0;
 	
 	public function possibleToUndo(): Boolean { return (size - bookmark > 0); }
 
@@ -195,8 +195,8 @@ public class CommandControl {
 
 public class AddArgumentCommand extends UndoableCommand {
 
-	public attribute statement: Statement;
-	public attribute argument: Argument;
+	public var statement: Statement;
+	public var argument: Argument;
 
 	postinit {
 		argument = Argument {
@@ -219,7 +219,7 @@ public class AddArgumentCommand extends UndoableCommand {
 
 public class AddStatementCommand extends UndoableCommand {
 
-	public attribute statement: Statement;
+	public var statement: Statement;
 
 	override function do(): Number {
 		// set a default value in case no statement has been passed
@@ -242,9 +242,9 @@ public class AddStatementCommand extends UndoableCommand {
 
 public class AddPremiseCommand extends UndoableCommand {
 
-	public attribute argument: Argument;
-	public attribute premise: Premise;
-	public attribute statement: Statement;
+	public var argument: Argument;
+	public var premise: Premise;
+	public var statement: Statement;
 
 	postinit {
 		statement = Statement {
@@ -271,10 +271,10 @@ public class AddPremiseCommand extends UndoableCommand {
 
 public class AddArgumentAndPremiseCommand extends UndoableCommand {
 
-	public attribute statement: Statement;
-	public attribute argument: Argument;
-	public attribute premise: Premise;
-	public attribute pstatement: Statement;
+	public var statement: Statement;
+	public var argument: Argument;
+	public var premise: Premise;
+	public var pstatement: Statement;
 
 	postinit {
 		pstatement = Statement {
@@ -308,7 +308,7 @@ public class AddArgumentAndPremiseCommand extends UndoableCommand {
 
 public class RemoveArgumentCommand extends UndoableCommand {
 	
-	public attribute argument: Argument;
+	public var argument: Argument;
 	
 	override function do(): Number {
 		argumentGraph.deleteArgument(argument);
@@ -322,7 +322,7 @@ public class RemoveArgumentCommand extends UndoableCommand {
 }
 
 public class DeleteStatementCommand extends UndoableCommand {
-	public attribute statement: Statement;
+	public var statement: Statement;
 	
 	override function do(): Number {
 		argumentGraph.deleteStatement(statement);
@@ -337,10 +337,10 @@ public class DeleteStatementCommand extends UndoableCommand {
 
 public class DeleteConclusionCommand extends UndoableCommand {
 	// Is called whenever a statement is deleted from the graph that has arguments attached to it.
-	public attribute conclusion: Statement;
-	public attribute motherArgument: Argument;
-	public attribute premise: Premise;
-	public attribute childArguments: Argument[];
+	public var conclusion: Statement;
+	public var motherArgument: Argument;
+	public var premise: Premise;
+	public var childArguments: Argument[];
 	
 	override function do(): Number {
 		argumentGraph.deleteStatement(conclusion);
@@ -360,8 +360,8 @@ public class DeleteConclusionCommand extends UndoableCommand {
 }
 
 public class DeletePremiseCommand extends UndoableCommand {
-	public attribute premise: Premise;
-	public attribute argument: Argument;
+	public var premise: Premise;
+	public var argument: Argument;
 
 	override function do(): Number {	
 		argument.deletePremise(premise);
@@ -375,8 +375,8 @@ public class DeletePremiseCommand extends UndoableCommand {
 }
 
 public class DeletePremiseStatementCommand extends UndoableCommand {
-	public attribute premise: Premise;
-	public attribute argument: Argument;
+	public var premise: Premise;
+	public var argument: Argument;
 
 	override function do(): Number {	
 		delete premise from argument.premises;
@@ -394,9 +394,9 @@ public class DeletePremiseStatementCommand extends UndoableCommand {
 }
 
 public class MovePremiseCommand extends UndoableCommand {
-	public attribute premise: Premise;
-	public attribute oldArgument: Argument;
-	public attribute newArgument: Argument;
+	public var premise: Premise;
+	public var oldArgument: Argument;
+	public var newArgument: Argument;
 
 	override function do(): Number {
 		// 1. remove premise from argument
@@ -416,9 +416,9 @@ public class MovePremiseCommand extends UndoableCommand {
 }
 
 public class MoveArgumentCommand extends UndoableCommand {
-	public attribute argument: Argument;
-	public attribute oldStatement: Statement;
-	public attribute newStatement: Statement;
+	public var argument: Argument;
+	public var oldStatement: Statement;
+	public var newStatement: Statement;
 
 	override function do(): Number {
 		argument.conclusion = newStatement;
@@ -433,9 +433,9 @@ public class MoveArgumentCommand extends UndoableCommand {
 
 public class ChangeStatementStatusCommand extends UndoableCommand {
 
-	public attribute statement: Statement;
-	public attribute oldStatus: String;
-	public attribute newStatus: String;
+	public var statement: Statement;
+	public var oldStatus: String;
+	public var newStatus: String;
 
 	override function do(): Number {
 		
@@ -476,9 +476,9 @@ public class ChangeStatementStatusCommand extends UndoableCommand {
 
 public class ChangeStatementIdCommand extends UndoableCommand {
 
-	public attribute statement: Statement;
-	public attribute id: String;
-	public attribute oldId: String;
+	public var statement: Statement;
+	public var id: String;
+	public var oldId: String;
 
 	override function do(): Number {
 		oldId = statement.id;
@@ -496,9 +496,9 @@ public class ChangeStatementIdCommand extends UndoableCommand {
 
 public class ChangeStatementWffCommand extends UndoableCommand {
 
-	public attribute statement: Statement;
-	public attribute wff: String;
-	public attribute oldWff: String;
+	public var statement: Statement;
+	public var wff: String;
+	public var oldWff: String;
 
 	override function do(): Number {
 		oldWff = statement.wff;
@@ -514,8 +514,8 @@ public class ChangeStatementWffCommand extends UndoableCommand {
 
 public class ChangeGraphTitleCommand extends UndoableCommand {
 
-	public attribute title: String;
-	public attribute oldTitle: String;
+	public var title: String;
+	public var oldTitle: String;
 
 	override function do(): Number {
 		oldTitle = argumentGraph.title;
@@ -531,9 +531,9 @@ public class ChangeGraphTitleCommand extends UndoableCommand {
 
 public class ChangeArgumentSchemeCommand extends UndoableCommand {
 
-	public attribute argument: Argument;
-	public attribute scheme: String;
-	public attribute oldScheme: String;
+	public var argument: Argument;
+	public var scheme: String;
+	public var oldScheme: String;
 
 	override function do(): Number {
 		oldScheme = argument.scheme.id;
@@ -549,9 +549,9 @@ public class ChangeArgumentSchemeCommand extends UndoableCommand {
 
 public class ChangeStatementStandardCommand extends UndoableCommand {
 
-	public attribute statement: Statement;
-	public attribute standard: ProofStandard;
-	public attribute oldStandard: ProofStandard;
+	public var statement: Statement;
+	public var standard: ProofStandard;
+	public var oldStandard: ProofStandard;
 
 	override function do(): Number {
 		// backup old standard via deep copy
@@ -586,9 +586,9 @@ public class ChangeStatementStandardCommand extends UndoableCommand {
 
 public class ChangeArgumentIdCommand extends UndoableCommand {
 
-	public attribute argument: Argument;
-	public attribute id: String;
-	public attribute oldId: String;
+	public var argument: Argument;
+	public var id: String;
+	public var oldId: String;
 
 	override function do(): Number {
 		oldId = argument.id;
@@ -604,9 +604,9 @@ public class ChangeArgumentIdCommand extends UndoableCommand {
 
 public class ChangeArgumentTitleCommand extends UndoableCommand {
 
-	public attribute argument: Argument;
-	public attribute title: String;
-	public attribute oldTitle: String;
+	public var argument: Argument;
+	public var title: String;
+	public var oldTitle: String;
 
 	override function do(): Number {
 		oldTitle = argument.title;
@@ -622,10 +622,10 @@ public class ChangeArgumentTitleCommand extends UndoableCommand {
 
 public class ChangeArgumentWeightCommand extends UndoableCommand {
 
-	public attribute argument: Argument;
-	public attribute weight: Number;
-	public attribute oldWeight: Number;
-	override attribute merges = true;
+	public var argument: Argument;
+	public var weight: Number;
+	public var oldWeight: Number;
+	override var merges = true;
 
 	override function do(): Number {
 		oldWeight = argument.weight;
@@ -651,7 +651,7 @@ public class ChangeArgumentWeightCommand extends UndoableCommand {
 
 public class ChangeArgumentDirectionCommand extends UndoableCommand {
 
-	public attribute argument: Argument;
+	public var argument: Argument;
 
 	override function do(): Number {
 		argument.switchDirection();
@@ -668,9 +668,9 @@ public class ChangeArgumentDirectionCommand extends UndoableCommand {
 
 public class ChangePremiseRoleCommand extends UndoableCommand {
 
-	public attribute premise: Premise;
-	public attribute role: String;
-	public attribute oldRole: String;
+	public var premise: Premise;
+	public var role: String;
+	public var oldRole: String;
 
 	override function do(): Number {
 		oldRole = premise.role;
@@ -688,7 +688,7 @@ public class ChangePremiseRoleCommand extends UndoableCommand {
 
 public class NegatePremiseCommand extends UndoableCommand {
 	
-	public attribute premise: Premise;
+	public var premise: Premise;
 
 	override function do(): Number {
 		//argumentGraph.negatePremise(premise);
@@ -705,7 +705,7 @@ public class NegatePremiseCommand extends UndoableCommand {
 
 public class ChangePremiseTypeCommand extends UndoableCommand {
 	
-	public attribute premise: Premise;
+	public var premise: Premise;
 
 	override function do(): Number {
 		if (premise.exception) { premise.exception = false } else { premise.exception = true }

@@ -43,55 +43,55 @@ public class GraphView extends CustomNode {
 	/**
 	 * The X coordinate of the point on which the view focuses during shifting and zooming.
 	 */
-	private attribute focusX: Number = middleX;
+	 var focusX: Number = middleX;
 
 	/**
 	 * The Y coordinate of the point on which the view focuses during shifting and zooming.
 	 */
-	private attribute focusY: Number = middleY;
+	 var focusY: Number = middleY;
 
 	/**
 	 * The canvas middle point X coordinate.
 	 */
-	public attribute middleX: Number = bind this.width/2 on replace { graph.translateX = middleX };
+	public var middleX: Number = bind this.width/2 on replace { graph.translateX = middleX };
 
 	/**
 	 * The canvas middle point Y coordinate.
 	 */
-	public attribute middleY: Number = bind this.height/2 on replace { graph.translateY = middleY };
+	public var middleY: Number = bind this.height/2 on replace { graph.translateY = middleY };
 
-	private attribute tempX: Number = 0;
-	private attribute tempY: Number = 0;
+	 var tempX: Number = 0;
+	 var tempY: Number = 0;
 	
 	/**
 	 * The currently displayed view graph object.
 	 */
-	public attribute graph: Graph;
+	public var graph: Graph;
 
 	/**
 	 * The width of the view.
 	 */
-	public attribute width: Number;
+	public var width: Number;
 
 	/**
 	 * The height of the view.
 	 */
-	public attribute height: Number;
+	public var height: Number;
 
 	/**
 	 * The layout of the graph. Bound and read-only.
 	 */
-	public attribute layout: GraphLayout = bind graph.layout;
+	public var layout: GraphLayout = bind graph.layout;
 
 	/**
 	 * The application's control object.
 	 */
-	public attribute control: GraphControl;
+	public var control: GraphControl;
 
 	/**
 	 * The current zoom factor. It has a replace trigger on it that checks for bounds (current limits 0.1-2.0) and dynamically zooms the view by scaling the view graph.
 	 */
-	public attribute zoomFactor: Number = 1.0 on replace {
+	public var zoomFactor: Number = 1.0 on replace {
 		if (zoomFactor < 0.1) { zoomFactor = 0.1 }
 		if (zoomFactor > 2.0) { zoomFactor = 2.0 }
 		graph.scaleX = zoomFactor;
@@ -99,7 +99,7 @@ public class GraphView extends CustomNode {
 	};
 
 	// background layer
-	private attribute background: Rectangle = Rectangle {
+	 var background: Rectangle = Rectangle {
 		x: 0
 		y: 0
 		height: bind this.height
@@ -109,7 +109,7 @@ public class GraphView extends CustomNode {
 	}
 
 	// sensor object to detect mouse events outside of nodes.
-	private attribute backSensor: Rectangle = Rectangle {
+	 var backSensor: Rectangle = Rectangle {
 		x: 0
 		y: 0
 		height: bind this.height
@@ -166,7 +166,7 @@ public class GraphView extends CustomNode {
 		}
 	}
 
-	private attribute dragSymbol = Rectangle {
+	 var dragSymbol = Rectangle {
 		x: 0
 		y: 0
 		width: 20
@@ -175,7 +175,7 @@ public class GraphView extends CustomNode {
 		visible: bind control.dragging
 	}
 
-	private attribute middlePoint = Circle {
+	 var middlePoint = Circle {
 		centerX: bind middleX
 		centerY: bind middleY
 		radius: 5
