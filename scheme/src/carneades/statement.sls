@@ -88,12 +88,21 @@
          ((fatom? t1) (cdr (fatom-term t1)))
          (else '())))
  
- ; term-formatted: term -> datum
+ ; term-formatted: term -> string
  ; to quote statements
  (define (term-formatted t1)
-   (if (fatom? t1) 
-       (string-append "\"" (statement-formatted t1) "\"")
-       t1))
+   (cond ((variable? t1) (symbol->string t1))
+         ((constant? t1) (call-with-values open-string-output-port 
+                                           (lambda (p e) 
+                                             (write t1 p)
+                                             (e))))
+         ((pair? t1)
+          (string-join (cons (term-formatted (car t1))
+                             (map term-formatted (cdr t1)))
+                       " "))
+         ((fatom? t1) 
+          (string-append "\"" (statement-formatted t1) "\""))))
+   
  
  ; ground?: term -> boolean
  (define (ground? trm)
@@ -209,9 +218,9 @@
          ((symbol? s1) (symbol->string s1))
          ((fatom? s1) 
           (apply format `(,(fatom-form s1) 
-                          ,@ (map term-formatted (cdr (fatom-term s1))))))
+                          ,@(map term-formatted (cdr (fatom-term s1))))))
          ((pair? s1)
-          (string-join (map statement-formatted s1) ": "))))
+          (string-join (map term-formatted s1) ": "))))
  
  
  ) ; end of statement library
