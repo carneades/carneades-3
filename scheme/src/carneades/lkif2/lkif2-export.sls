@@ -307,7 +307,7 @@
                                   (statement-id issue-statement)
                                   "")))
            (statements (apply-context c statements-table (table:objects (argument-graph-arguments ag))))
-           (arguments (arguments->sxml (table:objects (argument-graph-arguments ag)) statements-table)))
+           (arguments (arguments->sxml (table:objects (argument-graph-arguments ag)) statements-table (context-substitutions c))))
       (list 'argument-graph
             (elements->attributes (list (element->sxml 'id id)
                                         (element->sxml 'title title)
@@ -413,7 +413,7 @@
       (cons 'statements (map statement->sxml l))))
   
   ; arguments->sxml: (list-of argument) table:atom->struct:statement -> sxml
-  (define (arguments->sxml args t)
+  (define (arguments->sxml args t subs)
     (let* ((premise->sxml (lambda (p)
                             (let* ((polarity (if (positive-premise? p)
                                                  "positive"
@@ -422,7 +422,7 @@
                                                   "true"
                                                   "false"))
                                    (role (premise-role p))
-                                   (fact-id (table:lookup axioms-table (premise-atom p) #f))
+                                   (fact-id (table:lookup axioms-table (subs (premise-atom p)) #f))
                                    (statement (or fact-id
                                                   (statement-id (table:lookup t (premise-atom p) #f)))))
                               (list 'premise
@@ -432,7 +432,7 @@
                                            (element->sxml 'role role)
                                            (element->sxml 'statement statement)))))))
            (argument->sxml (lambda (a)
-                             (let* ((fact-id (table:lookup axioms-table (argument-conclusion a) #f))
+                             (let* ((fact-id (table:lookup axioms-table (subs (argument-conclusion a)) #f))
                                     (conclusion (list 'conclusion
                                                       (elements->attributes 
                                                        (list (element->sxml 'statement
