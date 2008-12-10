@@ -408,8 +408,9 @@
                                             (element->sxml 'value (status->value st))
                                             (element->sxml 'assumption (status->assumption st))
                                             (element->sxml 'standard (string-upcase (symbol->string (proof-standard c a))))))
-                                     (atom->sxml a args (context-substitutions c)))))))
-      (cons 'statements (map statement->sxml (table:keys t)))))
+                                     (atom->sxml a args (context-substitutions c))))))
+          (l (filter (lambda (s) (not (table:lookup axioms-table ((context-substitutions c) s) #f))) (table:keys t)))) ; filter axioms
+      (cons 'statements (map statement->sxml l))))
   
   ; arguments->sxml: (list-of argument) table:atom->struct:statement -> sxml
   (define (arguments->sxml args t)
