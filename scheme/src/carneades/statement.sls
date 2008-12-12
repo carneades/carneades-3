@@ -116,7 +116,7 @@
  ; example: (make-fatom "The mother of ~a is ~a." '(mother Tom Gloria))
  
  (define (statement? s1)
-   (or (symbol? s1)
+   (or (symbol? s1) 
        (string? s1)
        (pair? s1)
        (fatom? s1)))
