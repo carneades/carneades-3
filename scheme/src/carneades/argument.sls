@@ -333,7 +333,7 @@
            title        ; string
            main-issue   ; statement | #f
            nodes        ; table: statement -> node
-           arguments)  ; table: argument-id -> argument 
+           arguments)   ; table: argument-id -> argument 
    (protocol
     (lambda (new)
       (case-lambda 
@@ -567,7 +567,7 @@
  ; statements: argument-graph -> (list-of statement)
  ; returns the list of all statements in the argument graph
  (define (statements ag)
-   (map node-statement (table:objects (argument-graph-nodes ag))))
+   (table:keys (argument-graph-nodes ag)))
  
  ; relevant-statements: argument-graph statement -> (list-of statement)
  ; (relevant-statements ag g) finds the statements in ag which are
