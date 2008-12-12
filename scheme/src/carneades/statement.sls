@@ -23,15 +23,12 @@
          statement-negative? statement-complement statement-atom
          statement-predicate statement-formatted statement-wff
          make-fatom fatom? fatom-form fatom-term
-         term? compound-term?  term-functor term-args ground?)
+         term? term=? compound-term?  term-functor term-args ground?)
  
- (import (rnrs base)
-         (rnrs io simple)
-         (rnrs io ports)
-         (rnrs records syntactic (6))
+ (import (rnrs)
          (carneades base)
          (carneades lib srfi format)
-         (carneades lib srfi strings)
+         (only (carneades lib srfi strings) string-join)
          (prefix (carneades table) table:)
          (prefix (carneades lib srfi compare) compare:))
  
@@ -88,6 +85,18 @@
          ((fatom? t1) (cdr (fatom-term t1)))
          (else '())))
  
+ (define (term=? t1 t2)
+   (cond ((and (variable? t1) (variable? t2))
+          (eq? t1 t2))
+         ((and (constant? t1) (constant? t2))
+          (equal? t1 t2))
+         ((and (compound-term? t1) (compound-term? t2))
+          (and (eq? (term-functor t1) (term-functor t2))
+               (= (length (term-args t1)) (length (term-args t2)))
+               (for-all term=? (term-args t1) (term-args t2))))
+         (else #f)))
+  
+ 
  ; term-formatted: term -> string
  ; to quote statements
  (define (term-formatted t1)
@@ -121,27 +130,29 @@
        (pair? s1)
        (fatom? s1)))
  
- (define (statement=? s1 s2)
-   (cond ((and (statement-positive? s1)
-               (statement-positive? s2))
-          (cond ((and (symbol? s1) (symbol? s2))
-                 (eq? s1 s2))
-                ((and (string? s1) (string? s2))
-                 (string=? s1 s2))
-                ((and (pair? s1) (pair? s2))
-                 (equal? s1 s2))
-                ((and (fatom? s1) (fatom? s2))
-                 (equal? (fatom-term s1) (fatom-term s2)))
-                ((and (pair? s1) (fatom? s2))
-                 (equal? s1 (fatom-term s2)))
-                ((and (fatom? s1) (pair? s2))
-                 (equal? (fatom-term s1) s2))
-                (else #f)))
-         ((and (statement-negative? s1)
-               (statement-negative? s2))
-          (statement=? (statement-atom s1)
-                       (statement-atom s2)))
-         (else #f)))
+ (define statement=? term=?)
+ 
+; (define (statement=? s1 s2) 
+;   (cond ((and (statement-positive? s1)
+;               (statement-positive? s2))
+;          (cond ((and (symbol? s1) (symbol? s2))
+;                 (eq? s1 s2))
+;                ((and (string? s1) (string? s2))
+;                 (string=? s1 s2))
+;                ((and (pair? s1) (pair? s2))
+;                 (term=? s1 s2))
+;                ((and (fatom? s1) (fatom? s2))
+;                 (term=? (fatom-term s1) (fatom-term s2)))
+;                ((and (pair? s1) (fatom? s2))
+;                 (term=? s1 (fatom-term s2)))
+;                ((and (fatom? s1) (pair? s2))
+;                 (term=? (fatom-term s1) s2))
+;                (else #f)))
+;         ((and (statement-negative? s1)
+;               (statement-negative? s2))
+;          (statement=? (statement-atom s1)
+;                       (statement-atom s2)))
+;         (else #f)))
 
  
  ; statement-compare: statement statement -> {-1,0,1}
