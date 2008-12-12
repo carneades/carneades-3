@@ -62,11 +62,11 @@
               (and ag (eq? arg-graph-id (argument-graph-id ag)))))
           stages)))
 
-; update-stage!: document symbol stage -> void
+; insert-stage!: document symbol stage -> void
 ; If there is a stage in the document whose argument graph has the
 ; given id, replace the stage. If there is no such stage, add the new
 ; stage to the list of stages of the document.
-(define (update-stage! doc arg-graph-id new-stage)
+(define (insert-stage! doc arg-graph-id new-stage)
   (let* ((old-stage (find-stage doc arg-graph-id))
          (d (document-data doc))
          (old-stages (lkif-data-stages d)))
@@ -225,7 +225,7 @@
     ; load the statements table
     (for-each (lambda (p)
                 (let* ((id "") 
-                       (s (status c (subs p)))
+                       (s (status c p))
                        (a (let ((ap (acceptable? ag c p))
                                 (an (acceptable? ag c (statement-complement p))))
                             (cond ((and ap an)
@@ -304,10 +304,10 @@
                                                          issue))
                                 (stage (make-stage ag default-context)))
                            (tk/wm 'withdraw frame)
-                           (update-stage! *current-document*
+                           (insert-stage! *current-document*
                                           id
                                           stage)
-                           (load-document! *current-document*)
+                           (load-document! *current-document*) ; to refresh the list of argument graphs
                            (load-stage! stage))))
                
                (ok-button (buttons-frame 'create-widget 'ttk::button
@@ -559,8 +559,8 @@ http://carneades.berlios.de
 (tk/bind argument-graph-table "<<TreeviewSelect>>" 
          (lambda ()
            (let* ((s (argument-graph-table 'selection))
-                  (ag (string->symbol (argument-graph-table 'set s 'id)))
-                  (stage (find-stage *current-document* ag)))
+                  (ag-id (string->symbol (argument-graph-table 'set s 'id)))
+                  (stage (find-stage *current-document* ag-id)))
              (if stage 
                  (begin  
                    (set! *current-stage* stage)
@@ -620,10 +620,10 @@ http://carneades.berlios.de
                                                          (title-entry 'get)
                                                          (argument-graph-main-issue ag)
                                                          (argument-graph-nodes ag)
-                                                         (argument-graph-arguments ag)))
+                                                         (argument-graph-arguments ag)) )
                                 (new-stage (make-stage ag2 c)))
                            (tk/wm 'withdraw frame)
-                           (update-stage! *current-document*
+                           (insert-stage! *current-document*
                                           new-id
                                           new-stage)
                            (load-document! *current-document*)
@@ -694,7 +694,8 @@ http://carneades.berlios.de
                    (if (and *current-document* *current-stage*)
                        (let* ((ag (stage-argument-graph *current-stage*))
                               (data (document-data *current-document*))
-                              (c1 (lkif-data-context data))
+                              ; (c1 (lkif-data-context data))
+                              (c1 (stage-context *current-stage*))
                               (issue (argument-graph-main-issue ag))
                               ; to do: validate entries in the form
                               (max-nodes (read (open-string-input-port (limit-entry 'get))))
@@ -709,7 +710,7 @@ http://carneades.berlios.de
                               (con-goals (if (eq? side 'pro) 
                                              null 
                                              (list (list (statement-complement issue))))))
-                         ; (printf "debug: issue=~w; side=~a~%" issue side)
+                         (printf "debug: issue=~w; side=~a~%" issue side)
                          (find-best-arguments search:depth-first 
                                               (search:make-resource max-nodes)
                                                max-turns
