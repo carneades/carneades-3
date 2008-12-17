@@ -216,7 +216,9 @@
  
  ; status: context statement -> status
  (define (status c s)
-   (let ((v (table:lookup (context-status c) (statement-atom s) 'stated)))
+   (let ((v (table:lookup (context-status c) 
+                          ((context-substitutions c) (statement-atom s)) 
+                          'stated)))
      (if (statement-positive? s)
          v
          (case v 

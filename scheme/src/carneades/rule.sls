@@ -222,9 +222,7 @@
                                              `(excluded ,rid ,s))))
         ((priority) (argument:ex (make-fatom "Rule ~a has priority over rule ~a with respect to ~a."
                                              `(priority ,(genvar) ,rid ,s))))
-        ((valid) (argument:ex (make-fatom "not: ~a"
-                                          `(not ,(make-fatom "Rule ~a is valid."
-                                                      `(valid ,rid))))))))
+        ((valid) (argument:ex `(not ,(make-fatom "Rule ~a is valid." `(valid ,rid)))))))
     (if strict? 
         null
         ; filter out unknown questions:

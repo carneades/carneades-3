@@ -532,6 +532,7 @@ http://carneades.berlios.de
                       (data (document-data *current-document*))
                       (rules (lkif-data-rulebase data))
                       (rule (get-rule rule-id rules)))
+                 ; (printf "debug: rule id=~a; rule found=~a~%" rule-id (if rule #t #f))
                  (if rule (load-rule! rule))))))
              
 ; argument graph panel
@@ -710,7 +711,7 @@ http://carneades.berlios.de
                               (con-goals (if (eq? side 'pro) 
                                              null 
                                              (list (list (statement-complement issue))))))
-                         (printf "debug: issue=~w; side=~a~%" issue side)
+                         ; (printf "debug: issue=~w; side=~a~%" issue side)
                          (find-best-arguments search:depth-first 
                                               (search:make-resource max-nodes)
                                                max-turns
