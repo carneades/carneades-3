@@ -155,7 +155,7 @@
                                         (map list exceptions) ; separate clause for each exception
                                         ; rebuttals and rebuttals of assumptions:
                                         (list (list (statement-complement conclusion)))
-                                        ; (map list (map statement-complement assumptions))
+                                        (map list (map statement-complement assumptions))
                                         )))   
                        ; new con goals
                        (case (state-viewpoint state)
@@ -163,7 +163,7 @@
                                         (map list exceptions) ; separate clause for each exception
                                         ; rebuttals and rebuttals of assumptions:
                                         (list (list (statement-complement conclusion)))
-                                        ; (map list (map statement-complement assumptions))
+                                        (map list (map statement-complement assumptions))
                                         ))
                          ((con) (update-goals (state-con-goals state) 
                                               premises)))
@@ -171,7 +171,7 @@
                        (arg:update-substitutions 
                         (if (arg:decided? (state-context state) conclusion)
                             (state-context state)
-                            (arg:question (state-context state) (list conclusion))) 
+                            (arg:question (state-context state) (list (new-subs conclusion)))) ; TEST
                         new-subs)
                        ; extend argument graph with the new arg
                        (arg:assert-arguments (state-arguments state) (list arg))))

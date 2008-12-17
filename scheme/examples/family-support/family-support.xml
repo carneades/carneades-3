@@ -5,7 +5,7 @@
   xmlns:rules="http://www.estrellaproject.org/lkif-core/lkif-rules.owl">
   <theory id="family-support">
     <imports>
-      <import uri="http://fokus.fraunhofer.de/elan/estrella/family.owl"/>
+      <import prefix="family" uri="http://fokus.fraunhofer.de/elan/estrella/family.owl"/>
     </imports>
     <axioms>
       <axiom id="f1">
