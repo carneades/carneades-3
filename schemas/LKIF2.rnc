@@ -45,7 +45,10 @@ grammar {
     # When importing OWL files, not only the axioms of the ontology  
     # are imported but also any assertions about instances, the ABox. 
 
-    Import = element import { attribute uri { xsd:anyURI } }
+    Import = element import { 
+      attribute prefix { xsd:ID },
+      attribute uri { xsd:anyURI } 
+    }
     
     Axiom = element axiom { 
         attribute id { xsd:ID }, 

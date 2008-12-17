@@ -145,7 +145,7 @@
 ; to do: fix the following test. The success predicate tests only whether one is found, not all  
 ; (test-true "multiple rule conclusions" (all-in? '(convenient ?x)) (engine 20 1 null))
 (check (all-in? '(not (goods item2)) (engine 20 3 null)) => #t)
-(check (not (all-in? '(flies Tweety) (engine 20 2 '(excluded)))) => #t)
+(check (not (all-in? '(flies Tweety) (engine 20 2 '(excluded)))) => #t)  ; excluded rules
 (check (all-in? '(applies ?r (goods ?x)) (engine 20 1 null)) => #t)
 ; to do: test negative conditions and exceptions
 ; to do: test rules with negative conclusions
