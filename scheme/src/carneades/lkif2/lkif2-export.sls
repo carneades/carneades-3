@@ -171,7 +171,11 @@
                (not (and (string? s)
                          (string=? s ""))))
              (map text/term->sxml p))))
-          
+ 
+ (define (has-attributes? s)
+   (and (pair? (cdr s))
+        (pair? (cadr s))
+        (eq? (caadr s) '^)))
  
  ; wff->sxml: wff -> sxml
  (define (wff->sxml f)
@@ -186,14 +190,13 @@
                       ((not) (list 'not (wff->sxml (cadr f))))
                       ((and or if iff) (cons (car f) (map wff->sxml (cdr f))))
                       ((assuming) (let ((s (wff->sxml (cadr f))))
-                                    (list (car s)
-                                          (if (and (pair? (cdr s))
-                                                   (pair? (cadr s))
-                                                   (eq? (caadr s) '^))
-                                              (elements->attributes (cons (element->sxml 'assumable "true")
-                                                                          (cdadr s)))
-                                              (elements->attributes (list (element->sxml 'assumable "true"))))
-                                          (cadr s))))
+                                    (cons (car s)
+                                          (if (has-attributes? s)
+                                              (cons (elements->attributes (cons (element->sxml 'assumable "true")
+                                                                                (cdadr s)))
+                                                    (cddr s))
+                                              (cons (elements->attributes (list (element->sxml 'assumable "true")))
+                                                    (cdr s))))))
                       ((unless) (append (list 'not
                                             (elements->attributes (list (element->sxml 'exception "true"))))
                                       (map wff->sxml (cdr f))))
@@ -385,7 +388,7 @@
                            (list 's (symbol->string (subs a)))))
           ((pair? a) (if (assumption-premise? a args)
                          (append (list 's
-                                       (elements->attributes (list (element->sxml 'pred (symbol->string (car (subs a))))
+                                       (elements->attributes (list (element->sxml 'pred (symbol->string (car a)))
                                                                    (element->sxml 'assumable "true"))))
                                  (map text/term->sxml (cdr (subs a))))
                          (append (list 's
