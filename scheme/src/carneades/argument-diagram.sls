@@ -65,12 +65,19 @@
      (let ((id (get-id n)))
        (format port "    ~A [shape=box, label=~S, style=~S];~%"
                 id
-                (statement->string (subs n))
-                (if (or (and (acceptable? ag c n)
-                             (not (rejected? c n)))
-                        (accepted? c n))
-                    "filled" 
-                    ""))))
+                (cond ((questioned? c n)
+                       (string-append "? " (statement->string (subs n))))
+                      ((accepted? c n)
+                       (string-append "+ " (statement->string (subs n))))
+                      ((rejected? c n)
+                       (string-append "- " (statement->string (subs n))))
+                      (else (statement->string (subs n))))
+                (cond ((and (acceptable? ag c n)
+                            (acceptable? ag c (statement-complement n)))
+                       "dotted,filled")
+                      ((acceptable? ag c n) "filled")
+                      ((acceptable? ag c (statement-complement n)) "dashed,filled")
+                      (else "solid")))))
    (for-each print-statement statements))
  
  ; print-arguments: argument-graph context substitutions
@@ -78,24 +85,26 @@
  (define (print-arguments ag c subs args port)
    (define (print-argument arg)
      (format port "    ~A [shape=ellipse, label=~S, style=~S];~%"
-              (get-id (argument-id arg))
-              (if (and (argument-scheme arg)
-                       (< 0 (string-length (argument-scheme arg))))
-                  (argument-scheme arg)
-                  (symbol->string (argument-id arg)))
-              (if (all-premises-hold? ag c arg) "filled" ""))
-     (format port "    ~A -> ~A~A;~%" 
-              (get-id (argument-id arg))
-              (get-id (argument-conclusion arg))
-              (if (eq? (argument-direction arg) 'con) " [arrowhead=\"onormal\"]" ""))
+             (get-id (argument-id arg))
+             (if (and (argument-scheme arg)
+                      (< 0 (string-length (argument-scheme arg))))
+                 (argument-scheme arg)
+                 (symbol->string (argument-id arg)))
+             (if (all-premises-hold? ag c arg) "filled" "none"))
+     (format port "    ~A -> ~A [arrowhead=~S];~%" 
+             (get-id (argument-id arg))
+             (get-id (argument-conclusion arg))
+             (case (argument-direction arg)
+               ((pro) "normal")
+               ((con) "onormal")))
      (for-each (lambda (p) 
-                 (format port "    ~A -> ~A [arrowhead=\"~A~A\"];~%" 
-                          (get-id (premise-atom p))
-                          (get-id (argument-id arg))
-                          (cond ((assumption? p) "dot")
-                                ((exception? p) "odot") 
-                                (else "none"))
-                          (if (negative-premise? p) "tee" "")))
+                 (format port "    ~A -> ~A [style=~S, arrowhead=~S];~%" 
+                         (get-id (premise-atom p))
+                         (get-id (argument-id arg))
+                         (cond ((assumption? p) "dotted")
+                               ((exception? p) "dashed") 
+                               (else "solid")) ; ordinary premise
+                         (if (negative-premise? p) "tee" "none")))
                (argument-premises arg))) 
    (for-each print-argument args))
  

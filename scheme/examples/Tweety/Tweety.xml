@@ -27,7 +27,7 @@
 	      </argument>
 	    </arguments>
 	  </argument-graph>
-	  <argument-graph id="ag2" title="Can Tweety play guitar?" main-issue="s1">
+<!--	  <argument-graph id="ag2" title="Can Tweety play guitar?" main-issue="s1">
 	    <statements>		
 	      <statement id="s1b" value="unknown" assumption="true" standard="BA"><s>Tweety can play guitar.</s></statement>
 	      <statement id="s2b" value="true" assumption="true" standard="BA"><s>Tweety is a bluesman.</s></statement>
@@ -52,5 +52,6 @@
 	      </argument>
 	    </arguments>
 	  </argument-graph>
+	  -->
 	</argument-graphs>
 </lkif>
