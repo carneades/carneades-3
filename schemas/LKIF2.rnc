@@ -175,8 +175,7 @@ grammar {
     
     Premise = element premise { 
         attribute polarity { "positive" | "negative" }?, # default: positive
-        # premise types: assumptions are now global, in the scope of an argument graph,
-        # and represent as an attribute of issues.
+        attribute assumable { xsd:boolean }?, # default: false
         attribute exception { xsd:boolean }?,  # default: false, i.e. ordinary premise
         attribute role { xsd:anyURI | xsd:string }?,
         attribute statement { xsd:anyURI } 
