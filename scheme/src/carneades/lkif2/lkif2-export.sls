@@ -421,9 +421,9 @@
                             (let* ((polarity (if (positive-premise? p)
                                                  "positive"
                                                  "negative"))
-                                   (exception (if (exception? p)
-                                                  "true"
-                                                  "false"))
+                                   (type (cond ((exception? p) "exception")
+                                               ((assumption? p) "assumption")
+                                               (else "ordinary")))
                                    (role (premise-role p))
                                    (fact-id (table:lookup axioms-table (subs (premise-atom p)) #f))
                                    (statement (or fact-id
@@ -431,7 +431,7 @@
                               (list 'premise
                                     (elements->attributes
                                      (list (element->sxml 'polarity polarity)
-                                           (element->sxml 'exception exception)
+                                           (element->sxml 'type type)
                                            (element->sxml 'role role)
                                            (element->sxml 'statement statement)))))))
            (argument->sxml (lambda (a)
