@@ -10,8 +10,7 @@
          :-dispatch-ref :-dispatch-set! make-initial-:-dispatch 
          dispatch-union :generator-proc)
  
- (import (rnrs)
-         (rnrs r5rs))
+ (import (rnrs))
  
  ; Eager Comprehensions in [outer..inner|expr]-Convention
  ; ======================================================
@@ -584,7 +583,7 @@
              (if (not (and (real? a) (real? b) (real? s)))
                  (error "arguments of :real-range are not real" a b s) )
              (if (and (exact? a) (or (not (exact? b)) (not (exact? s))))
-                 (set! a (exact->inexact a)) )
+                 (set! a (inexact a)) )
              (set! istop (/ (- b a) s)) )
            ((i 0))
            (< i istop)
