@@ -67,6 +67,8 @@
 
 (define form1 
   (make-form 
+   ; id
+   'parents
    ; questions
    (list (make-question 'family:mother 'symbol 'one "Who is ~a's mother?")
          (make-question 'family:father 'symbol 'one "Who is ~a's father?"))
@@ -75,6 +77,8 @@
 
 (define form2
   (make-form
+   ; id
+    'neediness
    ; questions
    (list (make-question 'family:needy 'boolean 'one "Is ~a needy?"))
    ; help text
@@ -82,6 +86,8 @@
 
 (define form3
   (make-form
+   ; id
+   'capacity
    ; questions
    (list (make-question 
           'family:hasCapacityToSupport 
@@ -93,6 +99,7 @@
 
 (define form4
   (make-form
+   'undue-hardship
    (list 
     (make-question 
      (factor-statement f1)
@@ -123,8 +130,8 @@
    ; help text
    '()))
 
-; (define testimony (make-testimony witness1 (list form1 form2 form3 form4)))
-(define testimony (make-testimony witness1 (list form3 form4)))
+(define testimony (make-testimony witness1 (list form1 form2 form3 form4)))
+; (define testimony (make-testimony witness1 (list form3 form4)))
 
 
 ; bridging rules, from the rulebase to the casebase
