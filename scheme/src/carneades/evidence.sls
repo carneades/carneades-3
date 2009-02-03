@@ -30,7 +30,7 @@
  ;
  ; - critical questions for testimonial evidence
  ; - default values for questions, possibly
- ; - addition data types for questions, in particular dates.
+ ; - additional data types for questions, in particular dates.
  ; - extend LKIF.scm to support the importing and exporting of forms, questions and answers.
  
  (export make-witness witness-name make-question question-predicate question-type
@@ -105,7 +105,8 @@
  ; form: if any question in the form is asked, they all are asked, in the given order.
  ; Used to produce a more structured dialogue.
  (define-record-type form
-   (fields questions  ; question list, at most one question per predicate
+   (fields id         ; symbol
+           questions  ; question list, at most one question per predicate
            help       ; HTML, in SXML format.
            )
    (sealed #t))
@@ -257,7 +258,6 @@
               (ask-one-question! testimony question subject)))
         (form-questions (get-form testimony (question-predicate question))))))
  
-  
  ; dispatch: statement testimony subs -> (stream-of response)
  (define (dispatch goal testimony subs)
    (define (f direction predicate subject object)

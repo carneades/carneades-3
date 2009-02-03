@@ -139,6 +139,7 @@
 ; (define sols1 (search pr5 (depth-first 100)))
 (show (search pr5 (breadth-first (make-resource 1000))))
 ;  (set! n 0)
+(show (search pr5 (depth-first (make-resource 200))))
 (show (search pr5 ((iterative-deepening 10 10) (make-resource 200))))
 
 
