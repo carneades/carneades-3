@@ -72,7 +72,7 @@
         (if (stream-null? results)
             (let ((s ((state-substitutions state) goal)))
                  (if (askable? s questions)
-                     (raise-continuable `(ask ,s))
+                     (raise `(ask ,s))
                      (stream))) ; empty stream
             results))))
             
