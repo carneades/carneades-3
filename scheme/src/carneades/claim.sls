@@ -56,9 +56,10 @@
    (cond ((constant? goal) 
           (member goal questions))
          ((compound-term? goal)
-          (member (statement-predicate goal) questions)
-          (or (= (length (term-args goal)) 0)
-              (constant? (car (term-args goal)))))
+          (and
+           (member (statement-predicate goal) questions)
+           (or (null? (term-args goal))
+               (constant? (car (term-args goal))))))
          (else #f)))
    
  ; type generator: statement state -> (stream-of response)
@@ -66,13 +67,13 @@
  ; generate-arguments-from-claims: claims (listof statement) -> generator
  (define (generate-arguments-from-claims claims questions)
    (lambda (goal state) 
-      (let ((results (generate-arguments-from-rules (claims->rulebase claims) null)
-                     goal
-                     state))
+      (let ((results ((generate-arguments-from-rules (claims->rulebase claims) null)
+                      goal
+                      state)))
         (if (stream-null? results)
             (let ((s ((state-substitutions state) goal)))
                  (if (askable? s questions)
-                     (raise `(ask ,s))
+                     (raise `(ask ,(statement-wff s)))
                      (stream))) ; empty stream
             results))))
             
