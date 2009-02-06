@@ -123,10 +123,13 @@
    (let ((attributes (elements->attributes (list (element->sxml 'id (new-id "theory")))))
          (axioms (context->axioms (lkif-data-context data)))
          (rules (rulebase->rules (lkif-data-rulebase data))))
-     (if (and (null? axioms)
-              (null? rules))
-         '()
-         (list 'theory attributes axioms rules))))
+     (if (null? axioms)
+         (if (null? rules)
+             '()
+             (list 'theory rules))
+         (if (null? rules)
+             (list 'theory axioms)
+             (list 'theory attributes axioms rules)))))
  
  ; context->axioms: context -> sxml
  (define (context->axioms context)
