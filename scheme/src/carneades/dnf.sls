@@ -350,7 +350,7 @@
          ; it us used as a single application of the distributive law, where the elements of the
          ;   list of formulas as well as the disjunction were operands of a conjunction
          (define (distri formulas* disj)
-           (cons 'or (map (lambda (t) (cons 'and (cons t formulas*))) (cdr disj))))
+           (cons 'or (map (lambda (t) (cons 'and (append formulas* (list t)))) (cdr disj))))
          
          ; <formula> -> <formula>
          ; uses distributiv law to bring inner disjunctions to an outer level
