@@ -1,10 +1,24 @@
+;;; Carneades Argumentation Library and Tools.
+;;; Copyright (C) 2008 Thomas F. Gordon, Fraunhofer FOKUS, Berlin
+;;; 
+;;; This program is free software: you can redistribute it and/or modify
+;;; it under the terms of the GNU Lesser General Public License version 3 (LGPL-3)
+;;; as published by the Free Software Foundation.
+;;; 
+;;; This program is distributed in the hope that it will be useful, but
+;;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;;; General Public License for details.
+;;; 
+;;; You should have received a copy of the GNU Lesser General Public License
+;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 #!r6rs
 
 (library 
  (carneades table)  
  
- ;; Immutable, functional tables. Simple implementation using association lists. 
- ;; Keys compared with equal? by default
+ ;; Functional tables. Simple implementation using r6rs mutable hashtables
  
  (export make-table make-eq-table table? insert lookup keys objects  
          filter-keys
@@ -12,6 +26,9 @@
  
  (import (rnrs))
  
+ ; (make-table)
+ ; (make-table alist)
+ ; (make-table hash-func equiv? alist)
  (define (make-table . l)
    (if (null? l)
        (make-hashtable equal-hash equal?)
@@ -21,6 +38,7 @@
                (fold-left insert (make-hashtable (car l) (cadr l)) (caddr l))
                (error "make-table: 0, 1 or 3 arguments expected!" l)))))
  
+ ; (make-eq-table alist)
  (define (make-eq-table l)
    (fold-left insert (make-eq-hashtable) l))
    
@@ -31,7 +49,8 @@
      (hashtable-set! h k v)
      h))
  
- (define lookup hashtable-ref)
+ (define (lookup hashtable-ref)
+     r))
  
  (define (keys ht)
    (vector->list (hashtable-keys ht)))
