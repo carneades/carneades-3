@@ -48,7 +48,7 @@
        (eq? f 'list)
        (eq? f 'cons)))
  
- (define axioms-table (table:make-table statement:statement=? null))
+ (define axioms-table (table:make-table statement:statement-hash statement:statement=? null))
  
  
  ; --------------------------------
@@ -326,7 +326,7 @@
   (define (nodes->table n)
     (fold-left (lambda (t s)
                  (insert-statement t s))
-               (table:make-table statement:statement=? null)
+               (table:make-table statement:statement-hash statement:statement=? null)
                (table:keys n)))
   
   ; insert-statement: table statement -> table

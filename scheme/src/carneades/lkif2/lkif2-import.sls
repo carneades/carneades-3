@@ -415,7 +415,7 @@
      (table:insert t id st)))
  
  (define (lkif-axioms->table a)
-   (fold-left insert-axiom (table:make-table statement:statement=? null) a))
+   (fold-left insert-axiom (table:make-table statement:statement-hash statement:statement=? null) a))
  
  
  ; statement conversion

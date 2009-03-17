@@ -287,7 +287,7 @@
   (define rulebase-rules %rulebase-rules)
   
   (define empty-rulebase
-    (make-%rulebase (table:make-table eq? null) null))
+    (make-%rulebase (table:make-eq-table null) null))
   
   ; add-rule:  rulebase rule -> rulebase
   ; Add a rule to the rule base, for each conclusion of the rule,

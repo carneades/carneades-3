@@ -209,7 +209,7 @@
            )) 
  
  (define default-context 
-   (make-context (table:make-table statement=? null)
+   (make-context (table:make-table statement-hash statement=? null)
                  (lambda (statement) 'dv) ; default standard: dialectical validity
                  (lambda (arg1 arg2) 0)   ; default order: all arguments equally strong
                  identity))               ; identity substitution environment
@@ -327,7 +327,7 @@
  (define (statements->nodes s)
    (fold-left (lambda (t s)
                 (table:insert t s (statement->node s)))
-              (table:make-table statement=? null)
+              (table:make-table statement-hash statement=? null)
               s))              
  
  (define-record-type argument-graph
@@ -342,10 +342,10 @@
         ((id title main-issue nodes arguments)
          (new id title main-issue nodes arguments))
         ((id title main-issue)
-         (new id title main-issue (table:make-table statement=? null) (table:make-table eq? null)))
+         (new id title main-issue (table:make-table statement-hash statement=? null) (table:make-eq-table null)))
         ((id title main-issue statements)
-         (new id title main-issue (statements->nodes statements) (table:make-table eq? null)))
-        (() (new (gensym) "" #f (table:make-table statement=? null) (table:make-table eq? null)))))))
+         (new id title main-issue (statements->nodes statements) (table:make-eq-table null)))
+        (() (new (gensym) "" #f (table:make-table statement-hash statement=? null) (table:make-eq-table null)))))))
  
  (define empty-argument-graph (make-argument-graph))
  
