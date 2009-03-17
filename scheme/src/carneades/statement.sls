@@ -23,7 +23,8 @@
          statement-negative? statement-complement statement-atom
          statement-predicate statement-formatted statement-wff
          make-fatom fatom? fatom-form fatom-term
-         term? term=? compound-term?  term-functor term-args ground?)
+         term? term=? compound-term?  term-functor term-args ground?
+         statement-hash)
  
  (import (rnrs)
          (carneades base)
@@ -232,6 +233,13 @@
                           ,@(map term-formatted (cdr (fatom-term s1))))))
          ((pair? s1)
           (string-join (map term-formatted s1) ": "))))
+ 
+  (define (statement-hash s)
+   (let ((s (statement-atom s)))
+     (cond ((symbol? s) (symbol-hash s))
+           ((string? s) (string-hash s))
+           ((pair? s) (symbol-hash (car s)))
+           ((fatom? s) (symbol-hash (car (fatom-term s)))))))
  
  
  ) ; end of statement library

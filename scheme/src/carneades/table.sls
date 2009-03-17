@@ -1,19 +1,3 @@
-;;; Carneades Argumentation Library and Tools.
-;;; Copyright (C) 2008 Thomas F. Gordon, Fraunhofer FOKUS, Berlin
-;;; 
-;;; This program is free software: you can redistribute it and/or modify
-;;; it under the terms of the GNU Lesser General Public License version 3 (LGPL-3)
-;;; as published by the Free Software Foundation.
-;;; 
-;;; This program is distributed in the hope that it will be useful, but
-;;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;;; General Public License for details.
-;;; 
-;;; You should have received a copy of the GNU Lesser General Public License
-;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-
 #!r6rs
 
 (library 
@@ -22,50 +6,47 @@
  ;; Immutable, functional tables. Simple implementation using association lists. 
  ;; Keys compared with equal? by default
  
- (export make-table table? insert lookup keys objects  
-         filter-keys filter-objects 
-         (rename (table-filter filter)))
+ (export make-table make-eq-table table? insert lookup keys objects  
+         filter-keys
+         )
  
- (import (rnrs)
-         (prefix (carneades set) set:))
+ (import (rnrs))
  
- (define-record-type table 
-   (fields pred pairs) ; alist of (key,value) pairs
-   (protocol (lambda (new) 
-               (case-lambda 
-                (() (new equal? '()))
-                ((alist) (new equal? alist))
-                ((pred alist) (new pred alist))))))
-                           
+ (define (make-table . l)
+   (if (null? l)
+       (make-hashtable equal-hash equal?)
+       (if (= (length l) 1)
+           (fold-left insert (make-hashtable equal-hash equal?) (car l))
+           (if (= (length l) 3)               
+               (fold-left insert (make-hashtable (car l) (cadr l)) (caddr l))
+               (error "make-table: 0, 1 or 3 arguments expected!" l)))))
  
- ; insert: table key value -> table
- (define (insert t1 k v) 
-   (make-table (table-pred t1) (cons (cons k v) (table-pairs t1))))
+ (define (make-eq-table l)
+   (fold-left insert (make-eq-hashtable) l))
+   
+ (define table? hashtable?)
  
- ; lookup: table key default -> value 
- (define (lookup t1 k1 v) 
-   (let ((p (assp (lambda (k2) ((table-pred t1) k1 k2)) 
-                   (table-pairs t1))))
-     (if p (cdr p) v)))
+ (define (insert ht k v)
+   (let* ((h (hashtable-copy ht #t)))
+     (hashtable-set! h k v)
+     h))
  
- (define (keys t1) 
-   ; use list->set to remove duplicate keys
-   (set:set->list ((set:list->set (table-pred t1)) (map car (table-pairs t1)))))
+ (define lookup hashtable-ref)
  
- ; objects table -> (list-of datum)
- (define (objects t1)
-   (map (lambda (k) (lookup t1 k #f)) (keys t1)))
+ (define (keys ht)
+   (vector->list (hashtable-keys ht)))
  
- ; filter: table (-> (pair-of key value) boolean) -> (list-of (pair-of key value))
- (define (table-filter pred tbl) 
-   (filter pred (map (lambda (k)
-                       (cons k (lookup tbl k #f)))
-                     (keys tbl))))
+ (define (objects ht)
+   (call-with-values (lambda () (hashtable-entries ht))
+                     (lambda (k e) (vector->list e))))
  
- (define (filter-keys pred table)
-   (map car (table-filter pred table)))
+ (define (hashtable->alist t)
+   (call-with-values (lambda () (hashtable-entries t))
+                     (lambda (k e) (map cons (vector->list k) (vector->list e)))))
  
- (define (filter-objects pred table)
-   (map cdr (table-filter pred table)))
+ (define (filter-keys pred t)
+   (let ((l (hashtable->alist t)))
+     (map car (filter pred l))))
+              
  
- ) ; end of table library
+ )

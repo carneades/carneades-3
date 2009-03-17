@@ -34,7 +34,7 @@
          (prefix (carneades config) config:)
          (carneades system)) 
  
- (define ids (table:make-table statement=? null))
+ (define ids (table:make-table statement-hash statement=? null))
  
  ; get-id: datum -> symbol
  ; get the symbol used to identify some datum, generating
@@ -51,7 +51,7 @@
  ; diagram*: argument-graph context substitutions
  ;           (-> statement string) output-port -> void
  (define (diagram* ag context subs statement->string port)
-   (set! ids (table:make-table statement=? null)) ; re-initialize
+   (set! ids (table:make-table statement-hash statement=? null)) ; re-initialize
    (format port "digraph g {~%    rankdir = \"RL\";~%")
    (print-statements ag context subs (statements ag) statement->string  port)
    (print-arguments ag context subs (list-arguments ag) port)
