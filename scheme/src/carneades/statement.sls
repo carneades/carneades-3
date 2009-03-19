@@ -239,7 +239,10 @@
      (cond ((symbol? s) (symbol-hash s))
            ((string? s) (string-hash s))
            ((pair? s) (symbol-hash (car s)))
-           ((fatom? s) (symbol-hash (car (fatom-term s)))))))
+           ((fatom? s) (symbol-hash (car (fatom-term s))))
+           (else (begin ;(display "statement-hash: unknown statement! : ")
+                        ;(write s)
+                        0)))))
  
  
  ) ; end of statement library
