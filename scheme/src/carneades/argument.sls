@@ -36,7 +36,8 @@
          stated-statements relevant-statements list-arguments issues relevant?   
          satisfies? acceptable? holds? all-premises-hold? in? out? 
          node? node-statement node-pro node-con get-node get-argument
-         list->argument-graph instantiate-argument-graph)
+         list->argument-graph instantiate-argument-graph cycle-free? make-node node-statement node-pro node-con
+         put-node add-string)
  
  (import (rnrs)
          (rnrs records syntactic)
@@ -131,7 +132,7 @@
                               ((assumption? premise) 'assumption)
                               (else 'premise)))
           (premise-sexp (cons premise-type (list (premise-statement premise)))))
-     (if (equal? role "")
+     (if (not (equal? role ""))
          (append premise-sexp (list role)) 
          premise-sexp)))
  
@@ -154,12 +155,31 @@
             (entry (if (not (null? attrs)) (assq key (cdr attributes)))))
        (if entry (cadr entry) default)))
    
-   (define (datum->premise sexp)
+   #;(define (datum->premise sexp)
      (match sexp
        (('exception s) (ex s))
        (('assumption s) (am s))
        (('premise s) (pr s))
        (_ (pr sexp))))
+   
+   (define (datum->premise sexp)
+     (match sexp
+       (('exception s) (ex s))
+       (('assumption s) (am s))
+       (('premise s) (pr s))
+       (('exception s r) (make-exception (statement-atom s)
+                                         (statement-positive? s)
+                                         r))
+       (('assumption s r) (make-assumption (statement-atom s)
+                                           (statement-positive? s)
+                                           r))
+       (('premise s r) (make-ordinary-premise (statement-atom s)
+                                              (statement-positive? s)
+                                              r))
+       (_ (begin (display "unknown premise: ")
+                 (write sexp)
+                 (newline)
+                 (pr sexp)))))
    
    (define (get-conclusion l)
      (let ((sexp (filter (lambda (sexp) (eq? (car sexp) 'conclusion))
