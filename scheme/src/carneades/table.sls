@@ -49,8 +49,7 @@
      (hashtable-set! h k v)
      h))
  
- (define (lookup hashtable-ref)
-     r))
+ (define lookup hashtable-ref)
  
  (define (keys ht)
    (vector->list (hashtable-keys ht)))
@@ -63,9 +62,27 @@
    (call-with-values (lambda () (hashtable-entries t))
                      (lambda (k e) (map cons (vector->list k) (vector->list e)))))
  
- (define (filter-keys pred t)
+ (define (filter-keys2 pred t)
    (let ((l (hashtable->alist t)))
      (map car (filter pred l))))
-              
  
+ #;(define (filter-keys pred t)
+   (let ((result '()))
+     (call-with-values (lamda () (hashtable-entries ht))
+                       (lambda (k v)
+                         (vector-for-each (lambda (key val)
+                                            (if (pred (key . val))
+                                                (set! result (cons key result))))
+                                          k v)))
+     result))
+              
+  (define (filter-keys pred t)
+   (let ((result '()))
+     (let*-values (((k v) (hashtable-entries t)))
+       (vector-for-each (lambda (key val)
+                          (if (pred (cons key val))
+                              (set! result (cons key result))))
+                        k v))
+     result))
+              
  )
