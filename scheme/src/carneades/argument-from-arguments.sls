@@ -39,7 +39,8 @@
      (let ((ag2 (state-arguments state))
            (subs (state-substitutions state)))
        (let* ((p (subs goal))
-              (node (get-node ag1 (statement-atom p))))
+              (pro-args (pro-arguments ag (statement-atom p)))
+              (con-args (con-arguments ag (statement-atom p))))
          (stream-flatmap 
           (lambda (arg-id)
             (let ((arg (get-argument ag1 arg-id)))
@@ -52,10 +53,8 @@
                     (stream (make-response subs arg))) ; no new substitutions, since propositional
                   ; else fail, no argument with the given id
                   (stream))))
-          (list->stream (if (not node)
-                            '()
-                            (if (statement-negative? p)
-                                (node-con node)
-                                (node-pro node)))))))))
+          (list->stream  (if (statement-negative? p)
+                             con-args
+                             pro-args)))))))
  
  ) ; end of module

@@ -15,6 +15,8 @@
 
 #!r6rs
 
+; To do: update this library to use the new argument-graph library 
+
 (library 
  (carneades argument-diagram)
  
@@ -34,7 +36,7 @@
          (prefix (carneades config) config:)
          (carneades system)) 
  
- (define ids (table:make-table statement-hash statement=? null))
+ (define ids (table:make-table statement=? null))
  
  ; get-id: datum -> symbol
  ; get the symbol used to identify some datum, generating
@@ -48,41 +50,39 @@
            (set! ids (table:insert ids d v2))
            v2))))
  
- ; diagram*: argument-graph context substitutions
- ;           (-> statement string) output-port -> void
- (define (diagram* ag context subs statement->string port)
-   (set! ids (table:make-table statement-hash statement=? null)) ; re-initialize
+ ; diagram*: argument-graph (-> statement string) output-port -> void
+ (define (diagram* ag statement->string port)
+   (set! ids (table:make-table statement=? null)) ; re-initialize
    (format port "digraph g {~%    rankdir = \"RL\";~%")
-   (print-statements ag context subs (statements ag) statement->string  port)
-   (print-arguments ag context subs (list-arguments ag) port)
+   (print-statements ag (statements ag) statement->string  port)
+   (print-arguments ag (list-arguments ag) port)
    (format port "}~%"))
  
  
- ; print-statements: argument-graph context substitutions 
- ;               (list-of statement) (-> statement string) output-port -> void
- (define (print-statements ag c subs statements statement->string port)
+ ; print-statements: argument-graph (list-of statement) (-> statement string) output-port -> void
+ (define (print-statements ag statements statement->string port)
    (define (print-statement n)
-     (let ((id (get-id n)))
+     (let ((id (get-id n))
+           (subs (argument-graph-substitutions ag)))
        (format port "    ~A [shape=box, label=~S, style=~S];~%"
                 id
-                (cond ((questioned? c n)
+                (cond ((questioned? ag n)
                        (string-append "? " (statement->string (subs n))))
-                      ((accepted? c n)
+                      ((accepted? ag n)
                        (string-append "+ " (statement->string (subs n))))
-                      ((rejected? c n)
+                      ((rejected? ag n)
                        (string-append "- " (statement->string (subs n))))
                       (else (statement->string (subs n))))
-                (cond ((and (acceptable? ag c n)
-                            (acceptable? ag c (statement-complement n)))
+                (cond ((and (acceptable? ag n)
+                            (acceptable? ag (statement-complement n)))
                        "dotted,filled")
-                      ((acceptable? ag c n) "filled")
-                      ((acceptable? ag c (statement-complement n)) "dashed,filled")
+                      ((acceptable? ag n) "filled")
+                      ((acceptable? ag (statement-complement n)) "dashed,filled")
                       (else "solid")))))
    (for-each print-statement statements))
  
- ; print-arguments: argument-graph context substitutions
- ;                  (list-of argument) output-port -> void
- (define (print-arguments ag c subs args port)
+ ; print-arguments: argument-graph (list-of argument) output-port -> void
+ (define (print-arguments ag args port)
    (define (print-argument arg)
      (format port "    ~A [shape=ellipse, label=~S, style=~S];~%"
              (get-id (argument-id arg))
@@ -90,7 +90,7 @@
                       (< 0 (string-length (argument-scheme arg))))
                  (argument-scheme arg)
                  (symbol->string (argument-id arg)))
-             (if (all-premises-hold? ag c arg) "filled" "none"))
+             (if (applicable? ag arg) "filled" "none"))
      (format port "    ~A -> ~A [arrowhead=~S];~%" 
              (get-id (argument-id arg))
              (get-id (argument-conclusion arg))
@@ -108,14 +108,13 @@
                (argument-premises arg))) 
    (for-each print-argument args))
  
- ; view*: argument-graph context substitutions
- ;        (-> statement string) -> void
+ ; view*: argument-graph (-> statement string) -> void
  ; Provides a convenient way to display an argument graph. 
  ; Based on code contributed by András Förhécz <fandrew@mit.bme.hu>.
  ; To do: find a way to put the viewer process in the background, but still have the 
  ; temporary files deleted after use.
  
- (define (view* ag c subs statement->string)
+ (define (view* ag statement->string)
    (let* ((suffix config:preferred-graphic-format)
           (format (if (equal? config:preferred-graphic-format "ps") 
                       "ps2" 
@@ -123,7 +122,7 @@
           (tmp-dot (string-append config:tmpdir
                                   (symbol->string (gensym "carneades-")) ".dot")))
      (call-with-output-file tmp-dot
-       (lambda (port) (diagram* ag c subs statement->string port)))
+       (lambda (port) (diagram* ag statement->string port)))
      (if (equal? format "dot")
          (begin (system (string-append config:viewer " " tmp-dot))
                 (delete-file tmp-dot))
@@ -143,12 +142,12 @@
            (delete-file tmp-output)))))
  
  
- ; diagram: argument-graph context -> void
- (define (diagram ag c)
-   (diagram* ag c unify:identity (lambda (s) (format "~a" s)) (current-output-port)))
+ ; diagram: argument-graph -> void
+ (define (diagram ag)
+   (diagram* ag (lambda (s) (format "~a" s)) (current-output-port)))
  
- ; view: argument-graph context -> void
- (define (view ag c)
-   (view* ag c unify:identity (lambda (s) (statement-formatted s))))
+ ; view: argument-graph  -> void
+ (define (view ag)
+   (view* ag (lambda (s) (statement-formatted s))))
  
  ) ; end library

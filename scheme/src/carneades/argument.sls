@@ -22,22 +22,18 @@
          make-premise premise? ordinary-premise? exception? assumption?
          premise-atom premise-polarity premise-role premise-statement 
          pr am ex premise=? negative-premise? positive-premise? 
-         make-argument argument? argument-id argument-direction 
-         argument-conclusion argument-premises argument-scheme pro con
+         make-argument argument? argument-id argument-direction argument-weight
+         argument-conclusion argument-premises argument-scheme default-weight pro con
          define-argument argument->datum datum->argument add-premise status?
-         proof-standard? make-context
-         context-status context-standard context-compare context-substitutions context-statements default-context
-         context? state question accept reject assign-standard update-substitutions pro-arguments 
-         con-arguments schemes-applied status proof-standard prior decided? accepted? rejected?
-         questioned? stated? issue? make-argument-graph empty-argument-graph 
+         proof-standard? state question accept reject assign-standard assert-substitutions 
+         arguments pro-arguments con-arguments schemes-applied status proof-standard prior
+         decided? accepted? rejected? questioned? stated? issue? make-argument-graph empty-argument-graph 
          argument-graph? argument-graph-id argument-graph-title argument-graph-main-issue
-         argument-graph-nodes argument-graph-arguments put-argument assert-arguments* assert-arguments 
-         update questions facts statements accepted-statements rejected-statements 
+         argument-graph-nodes argument-graph-arguments argument-graph-substitutions assert-argument assert-arguments 
+         questions facts statements accepted-statements rejected-statements 
          stated-statements relevant-statements list-arguments issues relevant?   
-         satisfies? acceptable? holds? all-premises-hold? in? out? 
-         node? node-statement node-pro node-con get-node get-argument
-         list->argument-graph instantiate-argument-graph cycle-free? make-node node-statement node-pro node-con
-         put-node add-string)
+         satisfies? acceptable? holds? applicable? in? out? get-argument
+         list->argument-graph instantiate-argument-graph update-statement)
  
  (import (rnrs)
          (rnrs records syntactic)
@@ -52,6 +48,7 @@
          (carneades unify)
          )
  
+ (define *debug* #t)
  
  (define-record-type premise 
    (fields atom      ; an atomic statement
@@ -106,6 +103,8 @@
  
  (define-record-type argument 
    (fields id           ; symbol
+           applicable   ; boolean
+           weight       ; 0.0 ... 1.0
            direction    ; 'pro | 'con
            conclusion   ; statement
            premises     ; premise list
@@ -113,11 +112,13 @@
  
  ; Implicit premises, i.e. enthymemes, may be revealed using the  add-premise function.
  
+ (define default-weight 0.5)
+ 
  (define (pro id conclusion premises)
-   (make-argument id 'pro conclusion premises ""))
+   (make-argument id #f default-weight 'pro conclusion premises ""))
  
  (define (con id conclusion premises)
-   (make-argument id 'con conclusion premises ""))
+   (make-argument id #f default-weight 'con conclusion premises ""))
  
  (define-syntax define-argument ; TODO: revise to use the argument->datum format 
    (syntax-rules (pro con and)
@@ -132,7 +133,7 @@
                               ((assumption? premise) 'assumption)
                               (else 'premise)))
           (premise-sexp (cons premise-type (list (premise-statement premise)))))
-     (if (not (equal? role ""))
+     (if (equal? role "")
          (append premise-sexp (list role)) 
          premise-sexp)))
  
@@ -155,31 +156,12 @@
             (entry (if (not (null? attrs)) (assq key (cdr attributes)))))
        (if entry (cadr entry) default)))
    
-   #;(define (datum->premise sexp)
-     (match sexp
-       (('exception s) (ex s))
-       (('assumption s) (am s))
-       (('premise s) (pr s))
-       (_ (pr sexp))))
-   
    (define (datum->premise sexp)
      (match sexp
        (('exception s) (ex s))
        (('assumption s) (am s))
        (('premise s) (pr s))
-       (('exception s r) (make-exception (statement-atom s)
-                                         (statement-positive? s)
-                                         r))
-       (('assumption s r) (make-assumption (statement-atom s)
-                                           (statement-positive? s)
-                                           r))
-       (('premise s r) (make-ordinary-premise (statement-atom s)
-                                              (statement-positive? s)
-                                              r))
-       (_ (begin (display "unknown premise: ")
-                 (write sexp)
-                 (newline)
-                 (pr sexp)))))
+       (_ (pr sexp))))
    
    (define (get-conclusion l)
      (let ((sexp (filter (lambda (sexp) (eq? (car sexp) 'conclusion))
@@ -198,6 +180,8 @@
    (match sexp
      (('argument attributes . l)
       (make-argument (get-attr attributes 'id (gensym 'a))
+                     #f
+                     default-weight
                      (get-attr attributes 'direction 'pro)
                      (get-conclusion l)
                      (get-premises l)
@@ -207,198 +191,297 @@
  ; add-premise: premise argument -> argument
  (define (add-premise p arg)
    (make-argument (argument-id arg)
+                  #f
+                  default-weight
                   (argument-direction arg)
                   (argument-conclusion arg)
                   (cons p (argument-premises arg))
                   (argument-scheme arg)))
  
- (define (status? sym) (member sym '(stated questioned accepted rejected))) 
+ (define (status? sym) (member sym '(unstated stated questioned accepted rejected))) 
  
  (define (proof-standard? sym)
    (member sym '(se        ; scintilla of the evidence
                  ba        ; best argument (was "preponderance of the evidence")
-                 dv        ; dialectical validity                  
+                 dv        ; dialectical validity
+                 pe        ; preponderance of the evidence
+                 cce       ; clear and convincing evidence
                  brd       ; beyond a reasonable doubt
                  )))   
  
- (define-record-type context 
-   (fields status        ; (statement -> status) table
-           standard      ; statement -> standard
-           compare       ; argument * argument -> {-1, 0, 1}   
-           substitutions ; term -> term
-           )) 
- 
- (define default-context 
-   (make-context (table:make-table statement-hash statement=? null)
-                 (lambda (statement) 'dv) ; default standard: dialectical validity
-                 (lambda (arg1 arg2) 0)   ; default order: all arguments equally strong
-                 identity))               ; identity substitution environment
- 
- ; status: context statement -> status
- (define (status c s)
-   (let ((v (table:lookup (context-status c) 
-                          ((context-substitutions c) (statement-atom s)) 
-                          'stated)))
-     (if (statement-positive? s)
-         v
-         (case v 
-           ((stated) 'stated)
-           ((questioned) 'questioned)
-           ((accepted) 'rejected)
-           ((rejected) 'accepted)))))
- 
- ; proof-standard: context statement -> standard
- (define (proof-standard c s) 
-   ((context-standard c) (statement-atom s)))
- 
- ; prior: context argument argument -> boolean
- (define (prior c a1 a2) (= ((context-compare c) a1 a2) 1))
- 
- 
- ; state: context (list-of statement) -> context
- (define (state context statements)
-   (fold-right (lambda (s c) 
-                 (make-context (table:insert (context-status c) 
-                                             (statement-atom s) 
-                                             'stated)
-                               (context-standard c) 
-                               (context-compare c)
-                               (context-substitutions c)))
-               context 
-               statements))
- 
- 
- ; question: context (list-of statement) -> context
- (define (question context statements)
-   (fold-right (lambda (s c) 
-                 (make-context (table:insert (context-status c) 
-                                             (statement-atom s) 
-                                             'questioned)
-                               (context-standard c) 
-                               (context-compare c)
-                               (context-substitutions c)))
-               context 
-               statements))
- 
- 
- ; accept: context (list-of statement) -> context
- (define (accept context statements)
-   (fold-right (lambda (s c) 
-                 (make-context (table:insert (context-status c)
-                                             (statement-atom s)
-                                             (if (statement-positive? s)
-                                                 'accepted
-                                                 'rejected))
-                               (context-standard c) 
-                               (context-compare c)
-                               (context-substitutions c)))
-               context 
-               statements))
- 
- 
- ; reject: context (list-of statement) -> context
- (define (reject context statements)
-   (fold-right (lambda (s c) 
-                 (make-context (table:insert (context-status c)
-                                             (statement-atom s)
-                                             (if (statement-positive? s)
-                                                 'rejected
-                                                 'accepted)) 
-                               (context-standard c) 
-                               (context-compare c)
-                               (context-substitutions c)))
-               context
-               statements))
- 
- ; assign-standard: context  proof-standard (list-of statement) -> context
- (define (assign-standard context ps statements)
-   (fold-right (lambda (s1 c) 
-                 (make-context (context-status c)
-                               (lambda (s2) 
-                                 (if (statement=? (statement-atom s1) s2)
-                                     ps
-                                     ;      ((context-standard c) s1)))
-                                     ((context-standard c) s2)))
-                               (context-compare c)
-                               (context-substitutions c)))
-               context
-               statements))
- 
- ; update-substitutions: context substitutions -> context
- (define (update-substitutions c newsubs)
-   (make-context (context-status c)
-                 (context-standard c)
-                 (context-compare c)
-                 newsubs))
+ (define default-proof-standard 'dv)
  
  (define-record-type node 
-   (fields statement ; datum
-           pro       ; (list-of argument ids)
-           con       ; (list-of argument ids)
+   (fields statement              ; statement
+           status                 ; status
+           standard               ; proof standard
+           in                     ; boolean
+           complement-in          ; boolean
+           acceptable             ; boolean
+           complement-acceptable  ; boolean
+           premise-of             ; (list-of symbol), where each symbol is an argument id
+           conclusion-of          ; (list-of symbol), where each symbol is an argument id
            ))
  
  ; builds a new node from a statement with no pro- or con-arguments
  (define (statement->node s)
    (make-node s
-              '()
-              '()))
+              'stated
+              default-proof-standard
+              #f
+              #f
+              #f
+              #f
+              null
+              null))
  
  ; builds a node-table from a list of statements
  (define (statements->nodes s)
    (fold-left (lambda (t s)
                 (table:insert t s (statement->node s)))
-              (table:make-table statement-hash statement=? null)
+              (table:make-table statement=? null)
               s))              
  
  (define-record-type argument-graph
-   (fields id           ; symbol
-           title        ; string
-           main-issue   ; statement | #f
-           nodes        ; table: statement -> node
-           arguments)   ; table: argument-id -> argument 
+   (fields id             ; symbol
+           title          ; string
+           main-issue     ; statement | #f
+           nodes          ; table: statement -> node
+           arguments      ; table: argument-id -> argument 
+           substitutions) ; term -> term
    (protocol
     (lambda (new)
       (case-lambda 
-        ((id title main-issue nodes arguments)
-         (new id title main-issue nodes arguments))
+        ((id title main-issue nodes arguments subs)
+         (new id title main-issue nodes arguments subs))
         ((id title main-issue)
-         (new id title main-issue (table:make-table statement-hash statement=? null) (table:make-eq-table null)))
+         (new id title main-issue (table:make-table statement=? null) (table:make-table eq? null) identity))
         ((id title main-issue statements)
-         (new id title main-issue (statements->nodes statements) (table:make-eq-table null)))
-        (() (new (gensym) "" #f (table:make-table statement-hash statement=? null) (table:make-eq-table null)))))))
+         (new id title main-issue (statements->nodes statements) (table:make-table eq? null) identity))
+        (() (new (gensym) "" #f (table:make-table statement=? null) (table:make-table eq? null) identity))))))
  
  (define empty-argument-graph (make-argument-graph))
+ 
+ ; status: argument-graph statement -> status
+ (define (status ag s) 
+   (let ((n (table:lookup (argument-graph-nodes ag) (statement-atom) #f)))
+     (if (not n)
+         'unstated
+         (let ((v (node-status n)))
+           (if (statement-positive? s)
+               v
+               (case v 
+                 ((stated) 'stated)
+                 ((questioned) 'questioned)
+                 ((accepted) 'rejected)
+                 ((rejected) 'accepted)
+                 (else 'unstated)))))))
+ 
+ ; proof-standard: argument-graph statement -> standard
+ (define (proof-standard ag s) 
+   (let ((n (table:lookup (argument-graph-nodes ag) (statement-atom s) #f)))
+     (if (not n)
+         default-proof-standard
+         (node-standard n))))
+ 
+ ; prior: argument argument -> boolean
+ (define (prior a1 a2) 
+   (> (argument-weight  a1)
+      (argument-weight  a2)))
  
  ; put-node: argument-graph node -> argument-graph 
  (define (put-node ag n)
    (make-argument-graph (argument-graph-id ag)
                         (argument-graph-title ag)
                         (argument-graph-main-issue ag)
-                        (table:insert (argument-graph-nodes ag) (node-statement n) n)
-                        (argument-graph-arguments ag)))
+                        (table:insert (argument-graph-nodes ag) (node-statement n) n) 
+                        (argument-graph-arguments ag)
+                        (argument-graph-substitutions ag)))
  
  ; get-node: argument-graph statement -> node | #f
  (define (get-node ag s)
-   (table:lookup (argument-graph-nodes ag) s #f))
+   (table:lookup (argument-graph-nodes ag) (statement-atom s) #f))
  
  ; get-nodes: argument-graph -> (list-of node)
  (define (get-nodes ag) (table:objects (argument-graph-nodes ag)))
  
- ; put-argument argument-graph argument -> argument-graph
- (define (put-argument ag arg)
-   ; first create and insert nodes for any new premises
-   (let ((ag1 (fold-right (lambda (p ag1)
-                            (if (get-node ag1 (premise-atom p))
-                                ag1
-                                (put-node ag1 (make-node (premise-atom p) null null ))))
-                          ag
-                          (argument-premises arg))))
-     (make-argument-graph (argument-graph-id ag1)
-                          (argument-graph-title ag1)
-                          (argument-graph-main-issue ag1)
-                          (argument-graph-nodes ag1)
-                          (table:insert (argument-graph-arguments ag1)
-                                        (argument-id arg) arg))))
+ ; update-statement: argument-graph statement -> argument-graph
+ ; updates the nodes for the given statement. If the "in" status of the statement
+ ; of the node, or the complement of the statement of the node, is different  
+ ; from the old-in and old-complement in flags, than the change
+ ; is propogated forwards by udating the arguments in which the statement 
+ ; is used as a premise, which, recursively, updates the conclusions of these arguments.
+ (define (update-statement ag1 s)
+   (if *debug* (printf "updating: ~s~%" s))
+   (let* ((n1 (table:lookup (argument-graph-nodes ag1) (statement-atom s) #f)))
+     (if (not n1)
+         ag1
+         (let* ((n2 (make-node (statement-atom s)
+                               (node-status n1)
+                               (node-standard n1)
+                               (check-if-in ag1 (statement-atom s))
+                               (check-if-in ag1 (statement-complement s))
+                               (check-acceptability ag1 (statement-atom s))
+                               (check-acceptability ag1 (statement-complement (statement-atom s)))
+                               (node-premise-of n1)
+                               (node-conclusion-of n1)))
+                (ag2 (make-argument-graph (argument-graph-id ag1)
+                                          (argument-graph-title ag1)
+                                          (argument-graph-main-issue ag1)
+                                          (table:insert (argument-graph-nodes ag1)
+                                                        (statement-atom s)
+                                                        n2)
+                                          (argument-graph-arguments ag1)
+                                          (argument-graph-substitutions ag1))))
+           (if (and (eq? (node-in n1) (node-in n2))
+                    (eq? (node-complement-in n1) (node-complement-in n2)))
+               ; then the status of the statement hasn't changed and there's no need to propogate further
+               ag2
+               ; else propogate the update to the arguments in which the statement is a premise
+               (fold-right (lambda (arg-id ag)
+                             (let ((arg (get-argument ag arg-id)))
+                               (if arg
+                                   (update-argument ag arg)
+                                   ag)))
+                           ag2
+                           (node-premise-of n1))))))) 
+ 
+ ; update-statements: argument-graph (list-of statement) -> argument-graph
+ (define (update-statements ag statements)
+   (fold-right (lambda (s ag) (update-statement ag s)) ag statements))
+ 
+ ; update-argument: argument-graph argument -> argument-graph
+ ; updates the applicability of an argument in an argument graph and propogates 
+ ; this change by updating the argument graph for the conclusion
+ ; of the argument.  
+ (define (update-argument ag arg)
+   (let* ((old-applicability (argument-applicable arg))
+          (new-applicability (all-premises-hold? ag arg))
+          (ag2 (make-argument-graph (argument-graph-id ag)
+                                            (argument-graph-title ag)
+                                            (argument-graph-main-issue ag)
+                                            (argument-graph-nodes ag)
+                                            (table:insert (argument-graph-arguments ag)
+                                                          (argument-id arg)
+                                                          (make-argument (argument-id arg)
+                                                                         new-applicability
+                                                                         (argument-weight arg)
+                                                                         (argument-direction arg)
+                                                                         (argument-conclusion arg)
+                                                                         (argument-premises arg)
+                                                                         (argument-scheme arg)))
+                                            (argument-graph-substitutions ag))))
+     (if (eq? old-applicability new-applicability)
+         ag2
+         ; update the applicability of the new argument and propogate the change
+         ; by updating the conclusion of the argument
+         (update-statement ag2 (argument-conclusion arg)))))
+ 
+  
+ ; update-arguments: argument-graph (list-of argument) -> argument-graph
+ (define (update-arguments ag args)
+   (fold-right (lambda (arg ag) (update-argument ag arg)) ag args))
+ 
+ ; change-status argument-graph statement status -> argument-graph
+ ; change the status of the atom of the given statement to the given status.
+ (define (change-status ag s status)
+   (let ((n (table:lookup (argument-graph-nodes ag) 
+                          (statement-atom s) 
+                          (statement->node (statement-atom s)))))
+     (make-argument-graph (argument-graph-id ag)
+                          (argument-graph-title ag)
+                          (argument-graph-main-issue ag)
+                          (table:insert (argument-graph-nodes ag)
+                                        (statement-atom s)
+                                        (make-node (statement-atom s)
+                                                   status ; the attributed changed
+                                                   (node-standard n)
+                                                   (node-in n)
+                                                   (node-complement-in n)
+                                                   (node-acceptable n)
+                                                   (node-complement-acceptable n)
+                                                   (node-premise-of n)
+                                                   (node-conclusion-of n)))
+                          (argument-graph-arguments ag)
+                          (argument-graph-substitutions ag))))
+ 
+ ; state: argument-graph (list-of statement) -> argument-graph
+ ; Changes, non-destructively, the status of each statement in the list to 
+ ; stated in the argument graph.  Statements in the list which do not
+ ; have a node in the argument graph are ignored. 
+ (define (state ag statements)
+   (update-statements (fold-right (lambda (s ag) (change-status ag s 'stated))
+                                  ag 
+                                  statements)
+                      statements))
+   
+ 
+ ; question: argument-graph (list-of statement) -> argument-graph
+ (define (question ag statements)
+   (update-statements (fold-right (lambda (s ag) (change-status ag s 'questioned))
+                                  ag 
+                                  statements)
+                      statements))
+ 
+ ; accept: argument-graph (list-of statement) -> argument-graph
+ (define (accept ag statements)
+   (update-statements (fold-right (lambda (s ag) 
+                                    (change-status ag 
+                                                   (statement-atom s) 
+                                                   (if (statement-positive? s) 
+                                                       'accepted 
+                                                       'rejected)))
+                                  ag 
+                                  statements)
+                      statements))
+ 
+ ; reject: argument-graph (list-of statement) -> argument-graph
+ (define (reject ag statements)
+   (update-statements (fold-right (lambda (s ag) 
+                                    (change-status ag 
+                                                   (statement-atom s)
+                                                   (if (statement-positive? s) 
+                                                       'rejected
+                                                       'accepted)))
+                                  ag 
+                                  statements)
+                      statements))
+ 
+ ; assign-standard: argument-graph  proof-standard (list-of statement) -> argument-graph
+ (define (assign-standard ag ps statements)
+   (update-statements (fold-right (lambda (s ag) 
+                                    (let ((n (table:lookup (argument-graph-nodes ag) 
+                                                           (statement-atom s) 
+                                                           (statement->node (statement-atom s)))))
+                                      (make-argument-graph (argument-graph-id ag)
+                                                           (argument-graph-title ag)
+                                                           (argument-graph-main-issue ag)
+                                                           (table:insert (argument-graph-nodes ag)
+                                                                         (statement-atom s)
+                                                                         (make-node (statement-atom s)
+                                                                                    (node-status n)
+                                                                                    ps ; the new proof standard
+                                                                                    (node-in n)
+                                                                                    (node-complement-in n)
+                                                                                    (node-acceptable n)
+                                                                                    (node-complement-acceptable n)
+                                                                                    (node-premise-of n)
+                                                                                    (node-conclusion-of n)))
+                                                           (argument-graph-arguments ag)
+                                                           (argument-graph-substitutions ag)))
+                                    ag
+                                    statements))
+                      statements))
+     
+ ; assert-substitutions: argument-graph substitutions -> argument-graph
+ ; constructs an argument graph by replacing the substitutions with the ones provided
+ (define (assert-substitutions ag newsubs)
+   (make-argument-graph (argument-graph-id ag)
+                        (argument-graph-title ag)
+                        (argument-graph-main-issue ag)
+                        (argument-graph-nodes ag)
+                        (argument-graph-arguments ag)
+                        newsubs))
  
  ; get-argument: argument-graph symbol -> argument | #f
  (define (get-argument ag id)
@@ -425,134 +508,112 @@
  (define (add-string s l)
    (if (memq s l) l (cons s l)))
  
- ; pro-arguments: argument-graph statement  -> (list-of argument)
- (define (pro-arguments ag s)
+ ; ids->arguments: argument-graph (list-of symbol) -> (list-of argument)
+ (define (ids->arguments ag ids)
+   (filter (lambda (arg) (not (eq? arg #f)))
+           (map (lambda (arg-id) (get-argument ag arg-id))
+                ids)))
+   
+ ; arguments: argument-graph statement -> (list-of argument)
+ ; all arguments pro and con some statement in an argument graph
+ (define (arguments ag s)
    (let ((n (get-node ag s)))
      (if (not (node? n))
          null
-         (fold-right (lambda (id l) 
-                       (let ((arg (get-argument ag id)))
-                         (if (not arg) l (cons arg l))))
-                     null
-                     (node-pro n)))))
+         (ids->arguments ag (node-conclusion-of n)))))
+ 
+  ; pro-arguments: argument-graph statement  -> (list-of argument)
+ (define (pro-arguments ag s)
+   (filter (lambda (arg) (eq? (argument-direction arg) 'pro))
+                (arguments ag s)))
  
  ; con-arguments: argument-graph statement -> (list-of argument)
  (define (con-arguments ag s)
+   (filter (lambda (arg) (eq? (argument-direction arg) 'con))
+                (arguments ag s)))
+ 
+ ; schemes-applied: argument-graph statement -> (list-of symbol)
+ (define (schemes-applied ag s)
    (let ((n (get-node ag s)))
      (if (not (node? n))
          null
-         (fold-right (lambda (id l) 
-                       (let ((arg (get-argument ag id)))
-                         (if (not arg) l (cons arg l))))
-                     null
-                     (node-con n)))))
+         (map argument-scheme (ids->arguments ag (node-conclusion-of n))))))
  
- ; schemes-applied:argument-graph statement -> (list-of symbol)
- (define (schemes-applied ag s)
-   (let ((n (get-node ag s))
-         (f (lambda (id l) 
-              (let ((arg (get-argument ag id)))
-                (if (not arg) l (cons (argument-scheme arg) l))))))
-     (if (not (node? n))
-         null
-         (let ((pro-schemes  (fold-right f null (node-pro n)))
-               (con-schemes (fold-right f null (node-con n))))
-           (append pro-schemes con-schemes)))))
- 
- 
- ; accepted?: context statement -> boolean
- (define (accepted? c s)
+ ; accepted?: argument-graph statement -> boolean
+ (define (accepted? ag s)
    (if (statement-positive? s)
-       (let ((s1 ((context-substitutions c) s)))
+       (let ((s1 ((argument-graph-substitutions ag) s)))
          (and (find (lambda (s2)
                       (statement=? s1 s2))
-                    (map (context-substitutions c) 
-                         (accepted-statements c)))
+                    (map (argument-graph-substitutions ag) 
+                         (accepted-statements ag)))
               #t))
-       (rejected? c (statement-atom s))))
+       (rejected? ag (statement-atom s))))
  
-;  (define (accepted? c s)
-;   (if (statement-positive? s)
-;       (let ((s1 ((context-substitutions c) s)))
-;         (and (member s1 (map (context-substitutions c) 
-;                              (accepted-statements c)))
-;              #t))
-;       (rejected? c (statement-atom s))))
- 
- ; rejected?: context statement -> boolean
- 
- (define (rejected? c s)
+ ; rejected?: argument-graph statement -> boolean
+ (define (rejected? ag s)
    (if (statement-positive? s)
-       (let ((s1 ((context-substitutions c) s)))
+       (let ((s1 ((argument-graph-substitutions ag) s)))
          (and (find (lambda (s2) (statement=? s1 s2))
-                    (map (context-substitutions c) 
-                         (rejected-statements c)))
+                    (map (argument-graph-substitutions ag) 
+                         (rejected-statements ag)))
               #t))
-       (accepted? c (statement-atom s))))
+       (accepted? ag (statement-atom s))))
  
+ ; decided?: argument-graph statement -> boolean
+ (define (decided? ag s) (or (accepted? ag s) (rejected? ag s)))
  
-;  (define (rejected? c s)
-;   (if (statement-positive? s)
-;       (let ((s1 ((context-substitutions c) s)))
-;         (and (member s1 (map (context-substitutions c) 
-;                              (rejected-statements c)))
-;              #t))
-;       (accepted? c (statement-atom s))))
-  
- ; decided?: context statement -> boolean
- (define (decided? c s)
-   (or (accepted? c s)
-       (rejected? c s)))
+ ; questioned?: argument-graph statement -> boolean
+ (define (questioned? ag s)
+   (let ((n (table:lookup (argument-graph-nodes ag) (statement-atom s) #f)))
+     (and n (eq? 'questioned (node-status n)))))
  
- ; questioned?: context statement -> boolean
- (define (questioned? c s)
-   (eq? 'questioned (table:lookup (context-status c)  
-                                  (statement-atom s)
-                                  'undecided)))
+ ; stated?: argument-graph statement -> boolean
+ (define (stated? ag s)
+    (let ((n (table:lookup (argument-graph-nodes ag) (statement-atom s) #f)))
+     (and n (eq? 'stated (node-status n)))))
  
- ; stated?: context statement -> boolean
- (define (stated? c s)
-   (eq? 'stated (table:lookup (context-status c) 
-                              (statement-atom s)
-                              'undecided)))
- 
- ; issue?: context statement -> boolean
- ; a statement is a an issue if it is undecided in the context
+ ; issue?: argument-graph statement -> boolean
+ ; An statement is an issue if it is undecided in the argument graph
  ; An acceptable statement is still an issue, due to nonmonotonicity:
  ; Additional arguments may make the statement unacceptable again.
- (define (issue? c s) (not (decided? c s)))
+ (define (issue? ag s) (not (decided? ag s)))
  
+ ; questions: argument-graph -> (list-of statement)
+ (define (questions ag)
+   (table:filter-keys (lambda (pair) 
+                        (eq? (node-status (cdr pair)) 'questioned)) 
+                      (argument-graph-nodes ag)))
  
- ; context-statements: context -> (list-of statement)
- (define (context-statements c)
-   (table:keys (context-status c)))
+ ; accepted-statements: argument-graph -> (list-of statement)
+ (define (accepted-statements ag)
+   (table:filter-keys (lambda (pair) 
+                        (eq? (node-status (cdr pair)) 'accepted)) 
+                      (argument-graph-nodes ag)))
  
- ; questions: context -> (list-of statement)
- (define (questions c)
-   (table:filter-keys (lambda (pair) (eq? (cdr pair) 'questioned)) (context-status c)))
+ ; rejected-statements: argument-graph -> (list-of statement)
+ (define (rejected-statements ag)
+   (table:filter-keys (lambda (pair) 
+                        (eq? (node-status (cdr pair)) 'rejected)) 
+                      (argument-graph-nodes ag)))
  
- ; accepted-statements: context -> (list-of statement)
- (define (accepted-statements c)
-   (table:filter-keys (lambda (pair) (eq? (cdr pair) 'accepted)) (context-status c)))
- 
- ; rejected-statements: context -> (list-of statement)
- (define (rejected-statements c)
-   (table:filter-keys (lambda (pair) (eq? (cdr pair) 'rejected)) (context-status c)))
- 
- ; facts: context -> (list-of statement)
- (define (facts c)
-   (append (accepted-statements c)
+ ; facts: argument-graph -> (list-of statement)
+ ; The "facts" are the accepted statements and the complements 
+ ; of the rejected statements
+ (define (facts ag)
+   (append (accepted-statements ag)
            (map (lambda (s) `(not ,s))
-                (rejected-statements c))))
+                (rejected-statements ag))))
  
- 
- ; stated-statements: argument-graph context -> (list-of statement)
+ ; stated-statements: argument-graph -> (list-of statement)
  (define (stated-statements ag c)
-   (filter (lambda (s) (stated? c s)) (statements ag)))
+   (table:filter-keys (lambda (pair) 
+                        (eq? (node-status (cdr pair)) 'stated)) 
+                      (argument-graph-nodes ag)))
  
- ; issues: argument-graph context -> (list-of statement)
+ ; issues: argument-graph argument-graph -> (list-of statement)
  (define (issues ag c)
-   (filter (lambda (s) (not (decided? c s))) (statements ag)))
+   (filter (lambda (s) (issue? ag s)) (statements ag)))
  
  ; all-premises: argument-graph statement -> (list-of premise)
  ; Returns the set of all the premises of all arguments pro or con the 
@@ -561,7 +622,7 @@
    (fold-right (lambda (arg l) 
                  (list:lset-union premise=? (argument-premises arg) l))
                null
-               (append (pro-arguments ag s) (con-arguments ag s))))
+               (arguments ag s)))
  
  ; depends-on?: argument-graph statement statement -> boolean
  ; s1 depends on s2 in ag if s1 equals s2 or, recursively, some premise 
@@ -601,148 +662,229 @@
    (filter (lambda (s) (relevant? ag s g))
            (statements ag))) 
  
- ; assert-arguments*: argument-graph argument boolean -> argument-graph
- ; (assert-arguments* arg ag r):  Add the argument, arg, to the argument graph, ag,
- ; if doing so would not introduce a cycle. "r" is a flag
- ; for choosing whether or not to replace an argument having
- ; the same id as arg.  If r is false and some argument with
- ; this id exists in ag, then arg is not put asserted, otherwise 
- ; arg replaces the prior argument. An entry for a statement is added 
- ; to the node table of the argument graph if one does not yet exist. 
- ; It is the responsiblity of the protocol to question the
- ; conclusion of the argument, if this is wanted.
+ ; assert-argument: argument-graph argument -> argument-graph
+ ; Add the argument, arg, to the argument graph, ag,
+ ; if doing so would not introduce a cycle. If some argument with
+ ; the same id exists in the argument graph, then the existing argument is replaced by the
+ ; new argument. A node for the conclusion of the argument is added to the node table of the 
+ ; argument graph if one does not yet exist. It is the responsiblity of the
+ ; protocol to question the conclusion of the argument, if this is wanted.
  
- (define (assert-arguments* ag arg replace)
-   (cond ((and (not replace) 
-               (get-argument ag (argument-id arg)))
-          (error "assert-arguments*: attempt to replace an existing argument." arg))
-         ((not (cycle-free? arg ag))
-          (error "assert-arguments*: cyclic argument." arg))
+ (define (assert-argument ag arg)
+   (cond ((not (cycle-free? arg ag))
+          (error "assert-argument: cyclic argument." arg))
          (else (let* ((n (or (get-node ag (argument-conclusion arg))
-                             (make-node (argument-conclusion arg) null null)))
-                      (ag1 (if (eq? (argument-direction arg) 'pro)
-                               (put-node ag (make-node (node-statement n)
-                                                       (add-string (argument-id arg) 
-                                                                   (node-pro n))
-                                                       (node-con n)))
-                               (put-node ag (make-node (node-statement n)
-                                                       (node-pro n)
-                                                       (add-string (argument-id arg) 
-                                                                   (node-con n)))))))
-                 (put-argument ag1 arg)))))
+                             (statement->node (argument-conclusion arg))))
+                      ; update the node for the conclusion of the argument
+                      (ag1 (put-node ag (make-node (node-statement n)
+                                                   (node-status n)
+                                                   (node-standard n)
+                                                   (node-in n)
+                                                   (node-complement-in n)
+                                                   (node-acceptable n) ; updated below
+                                                   (node-complement-acceptable n) ; updated below
+                                                   (node-premise-of n)
+                                                   (add-string (argument-id arg) 
+                                                               (node-conclusion-of n)))))
+                      ; update or create nodes for each of the premises of the argument
+                      (ag2 (fold-right (lambda (p ag1)
+                                         (let ((n (or (get-node ag1 (premise-atom p))
+                                                      (statement->node (premise-atom p)))))
+                                           
+                                           (put-node ag1 
+                                                     (make-node (node-statement n)
+                                                                (node-status n)
+                                                                (node-standard n)
+                                                                (node-in n)
+                                                                (node-complement-in n)
+                                                                (node-acceptable n) ; updated below
+                                                                (node-complement-acceptable n) ; updated below
+                                                                (add-string (argument-id arg)
+                                                                            (node-premise-of n))
+                                                                (node-conclusion-of n)))))
+                                       ag1
+                                       (argument-premises arg))))
+                 (update-argument ag2 arg)))))
  
  ; assert-arguments: argument-graph (list-of argument) -> argument-graph
+ ; asserts a list of arguments
  (define (assert-arguments ag args) 
-   (fold-right (lambda (arg ag) (assert-arguments* ag arg #f))
+   (fold-right (lambda (arg ag) (assert-argument ag arg))
                ag 
                args))
- 
+
  ; list->argument-graph: (list-of datum) -> argument-graph
  ; converts a list of expressions representing arguments into an argument graph
  (define (list->argument-graph l)
-   (fold-right (lambda (arg ag) (assert-arguments* ag arg #f))
-               empty-argument-graph 
-               (map datum->argument l)))
+   (assert-arguments empty-argument-graph (map datum->argument l)))
  
- ; update: argument-graph (list-of argument) -> argument-graph
- (define (update ag args)
-   (fold-right (lambda (arg ag) (assert-arguments* ag arg #t))
-               ag args))
- 
- ; satisfies: argument-graph context proof-standard 
+ ; satisfies?: argument-graph proof-standard 
  ;            (list-of argument) (list-of argument) -> boolean
- (define (satisfies? ag c ps pro-args con-args)
+ (define (satisfies? ag ps pro-args con-args)
    (case ps
-     ((se) (scintilla? ag c pro-args con-args)) 
-     ((ba) (best-argument? ag c pro-args con-args))
-     ((dv) (dialectically-valid? ag c pro-args con-args))
-     ((brd) (beyond-reasonable-doubt? ag c pro-args con-args))
+     ((se) (scintilla? ag pro-args con-args)) 
+     ((ba) (best-argument? ag pro-args con-args))
+     ((dv) (dialectically-valid? ag pro-args con-args))
+     ((pe) (preponderance-of-the-evidence? ag pro-args con-args))
+     ((cce) (clear-and-convincing-evidence? ag pro-args con-args))
+     ((brd) (beyond-reasonable-doubt? ag pro-args con-args))
      (else (error "satisfies: unknown proof standard." ps))))
  
- ; acceptable?: argument-graph context statement -> boolean
- (define (acceptable? ag c s)
-   (let ((ps (proof-standard c (statement-atom s))))
-     (if (statement-negative? s)
-         (satisfies? ag c ps 
-                     (con-arguments ag (statement-atom s)) 
-                     (pro-arguments ag (statement-atom s)))
-         (satisfies? ag c ps (pro-arguments ag s) (con-arguments ag s)))))
+ ; check-acceptability: argument-graph statement -> boolean
+ (define (check-acceptability ag s)
+   (let* ((s2 ((argument-graph-substitutions ag)(statement-atom s)))
+          (ps (proof-standard ag s2)))
+     (if (statement-negative? s2)
+         (satisfies? ag ps 
+                     (con-arguments ag (statement-atom s2)) 
+                     (pro-arguments ag (statement-atom s2)))
+         (satisfies? ag ps 
+                     (pro-arguments ag s2) 
+                     (con-arguments ag s2)))))
  
- ; in?: argument-graph context statement -> boolean 
- (define (in? ag c s)
-   (or (accepted? c s) 
-       (and (not (rejected? c s))
-            (acceptable? ag c s))))
+ ; acceptable?: argument-graph statement -> boolean
+ (define (acceptable? ag s)
+   (let* ((s2  ((argument-graph-substitutions ag)(statement-atom s)))
+          (n (table:lookup (argument-graph-nodes ag) s2 #f)))
+     (if (not n)
+         #f  
+         (if (statement-positive? s2)
+             (node-acceptable n)
+             (node-complement-acceptable n)))))
  
- ; out?: argument-graph context statement -> boolean
- (define (out? ag c s)
-   (not (in? ag c s)))
+ ; applicable?: argument-graph argument -> boolean
+ ; Assumes that the applicability of the argument has been 
+ ; previously computed or updated and stored in the applicable
+ ; field of the argument.
+ (define (applicable? ag arg) (argument-applicable arg))
  
- ; holds?: argument-graph context premise -> boolean
- (define (holds? ag c p) 
-   (let ((s (status c (premise-atom p))))
-     (cond ((ordinary-premise? p)
-            (case s
-              ((accepted) (positive-premise? p))
-              ((rejected) (negative-premise? p))
-              ((questioned stated) (in? ag c (premise-statement p)))))
-           ((assumption? p)
-            (case s
-              ((stated) #t) ; whether the premise is positive or negative 
-              ((accepted) (positive-premise? p))
-              ((rejected) (negative-premise? p))
-              ((questioned) (in? ag c (premise-statement p)))))
-           ((exception? p)
-            (case s
-              ((accepted) (negative-premise? p))
-              ((rejected) (positive-premise? p))
-              ((stated questioned) (not (in? ag c (premise-statement p))))))
-           (else (error "holds: not a premise." p)))))
+ ; in?: argument-graph statement -> boolean 
+ ; looks up the cached "in" status of the statement in the agreement graph
+ (define (in? ag s)
+   (let* ((s2  ((argument-graph-substitutions ag)(statement-atom s)))
+          (n (table:lookup (argument-graph-nodes ag) s2 #f)))
+     (if (and *debug* (not n)) (printf "in?: no node for ~a~%" s2))
+     (and n
+          (if (statement-positive? s)
+              (node-in n)
+              (node-complement-in n)))))
  
- ; all-premises-hold?: argument-graph context argument -> boolean
- ; Was called "defensible" in the 2007 AIJ article on Carneades, but I now
- ; prefer this more descriptive and presumably less confusing term.
- (define (all-premises-hold? ag c arg)
-   (list:every (lambda (p) (holds? ag c p)) (argument-premises arg)))
+ ; check-if-in: argument-graph statement -> boolean
+ ; computes whether the statement is "in" in the argument graph
+ (define (check-if-in ag s)
+   (let* ((s2  ((argument-graph-substitutions ag)(statement-atom s)))
+          (n (table:lookup (argument-graph-nodes ag) s2 #f)))
+     (if (and *debug* (not n)) (printf "check-if-in: no node for ~a~%" s2))
+     (and n
+          (if (statement-positive? s)
+              (or (eq? (node-status n) 'accepted)
+                  (and (not (eq? (node-status n) 'rejected))
+                       (check-acceptability ag s)))
+              (or (eq? (node-status n) 'rejected)
+                  (and (not (eq? (node-status n) 'accepted))
+                       (check-acceptability ag s)))))))
+   
+ ; out?: argument-graph statement -> boolean
+ (define (out? ag s) (not (in? ag s)))
  
- ; scintilla?: argument-graph context (list-of argument) (list-of argument) -> boolean
- (define (scintilla? ag c pro-args con-args)
-   (list:any (lambda (arg) (all-premises-hold? ag c arg)) 
+ ; holds?: argument-graph premise -> boolean
+ (define (holds? ag p) 
+   (let ((n (table:lookup (argument-graph-nodes ag) (premise-atom p) #f)))
+     (if (not n) #f
+         (cond ((ordinary-premise? p)
+                (case (node-status n)
+                  ((accepted) (positive-premise? p))
+                  ((rejected) (negative-premise? p))
+                  ((questioned stated) (in? ag (premise-statement p)))
+                  ((unstated) #f)))
+               ((assumption? p)
+                (case (node-status n)
+                  ((stated) #t) ; whether the premise is positive or negative 
+                  ((unstated) #f)
+                  ((accepted) (positive-premise? p))
+                  ((rejected) (negative-premise? p))
+                  ((questioned) (in? ag (premise-statement p)))))
+               ((exception? p)
+                (case (node-status n)
+                  ((accepted) (negative-premise? p))
+                  ((rejected) (positive-premise? p))
+                  ((stated questioned) (out? ag (premise-statement p)))
+                  ((unstated) #f)))
+               (else (error "holds: not a premise." p))))))
+
+ 
+ ; all-premises-hold?: argument-graph argument -> boolean
+ (define (all-premises-hold? ag arg)
+   (list:every (lambda (p) (holds? ag p)) (argument-premises arg)))
+ 
+ ; scintilla?: argument-graph (list-of argument) (list-of argument) -> boolean
+ (define (scintilla? ag pro-args con-args)
+   (list:any (lambda (arg) (all-premises-hold? ag arg)) 
              pro-args))
  
- ; dialectically-valid?:  argument-graph context (list-of argument) (list-of argument) -> boolean
- (define (dialectically-valid? ag c pro-args con-args)
-   (and (scintilla? ag c pro-args con-args)
-        (not (list:any (lambda (arg) (all-premises-hold? ag c arg))
+ ; dialectically-valid?: argument-graph (list-of argument) (list-of argument) -> boolean
+ (define (dialectically-valid? ag pro-args con-args)
+   (and (scintilla? ag pro-args con-args)
+        (not (list:any (lambda (arg) (all-premises-hold? ag arg))
                        con-args))))
  
- 
- ; beyond-reasonable-doubt?: argument-graph context (list-of argument) (list-of argument) -> boolean
- (define (beyond-reasonable-doubt? ag c pro-args con-args)
-   (and (scintilla? ag c pro-args con-args)
-        (list:every (lambda (arg) (all-premises-hold? ag c arg))
-                    pro)
-        (not (list:any (lambda (arg) (all-premises-hold? ag c arg))
-                       con-args))))
- 
- 
- ; best-argument?: argument-graph context (list-of argument) (list-of argument) -> boolean
- ; changed name from "preponderance of the evidence" as per Trevor's suggestion
- (define (best-argument? ag c pro-args con-args)
-   (let* ((pro (filter (lambda (arg) (all-premises-hold? ag c arg))
+ ; best-argument?: argument-graph (list-of argument) (list-of argument) -> boolean
+ (define (best-argument? ag pro-args con-args)
+   (let* ((pro (filter (lambda (arg) (all-premises-hold? ag arg))
                        pro-args))
-          (con (filter (lambda (arg) (all-premises-hold? ag c arg))
+          (con (filter (lambda (arg) (all-premises-hold? ag arg))
                        con-args))
-          (best-pro (and (not (null? pro))
-                         (apply compare:max-compare 
-                                (cons (context-compare c) pro))))
-          (best-con (and (not (null? con))
-                         (apply compare:max-compare 
-                                (cons (context-compare c) con)))))
-     (and (not (null? pro)) 
-          (or (null? con)
-              (= 1 ((context-compare c) best-pro best-con))))))
+          (best-pro (if (null? pro)
+                        0.0 
+                        (apply max (map argument-weight pro))))
+          (best-con (if (null? con)
+                        0.0
+                        (apply max (map argument-weight con)))))
+     (> best-pro best-con)))
+ 
+ ; preponderance-of-the-evidence?: argument-graph (list-of argument) (list-of argument) -> boolean
+ (define preponderance-of-the-evidence? best-argument?) 
+ 
+ ; clear-and-convincing-evidence?: argument-graph (list-of argument) (list-of argument) -> boolean
+ (define (clear-and-convincing-evidence? ag pro-args con-args)
+   (let* ((pro (filter (lambda (arg) (all-premises-hold? ag arg))
+                       pro-args))
+          (con (filter (lambda (arg) (all-premises-hold? ag arg))
+                       con-args))
+          (best-pro (if (null? pro)
+                        0.0 
+                        (apply max (map argument-weight pro))))
+          (best-con (if (null? con)
+                        0.0
+                        (apply max (map argument-weight con))))
+          (alpha 0.5)
+          (beta 0.3))
+     (and (> best-pro best-con)  ; i.e. preponderance of the evidence test is met
+          (> best-pro alpha)
+          (> (- best-pro best-con) beta))))
  
  
- 
+ ; beyond-reasonable-doubt?: argument-graph (list-of argument) (list-of argument) -> boolean
+ (define (beyond-reasonable-doubt? ag pro-args con-args)
+   (let* ((pro (filter (lambda (arg) (all-premises-hold? ag arg))
+                       pro-args))
+          (con (filter (lambda (arg) (all-premises-hold? ag arg))
+                       con-args))
+          (best-pro (if (null? pro)
+                        0.0 
+                        (apply max (map argument-weight pro))))
+          (best-con (if (null? con)
+                        0.0
+                        (apply max (map argument-weight con))))
+          (alpha 0.5)
+          (beta 0.3)
+          (gamma 0.2))
+     (and  
+      ; clear and convincing evidence test is also met
+      (> best-pro best-con) 
+      (> best-pro alpha)
+      (> (- best-pro best-con) beta)
+      ; and the strongest con argument weighs less than the gamma threshold
+      (< best-con gamma))))
+
  ) ; module argument

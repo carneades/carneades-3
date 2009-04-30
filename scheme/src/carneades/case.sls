@@ -269,13 +269,12 @@
   ; The factors of the current case are the factors in the casebase which 
   ; have been accepted or are acceptable in the argument graph of the state
   (define (current-case state cb)
-    (let ((ag (state-arguments state))
-          (c (state-context state)))
+    (let ((ag (state-arguments state)))
       (make-case "current" 
                  'undecided 
                  (set:set->list (set:filter (lambda (factor)
-                                             (or (arg:accepted? c (factor-statement factor))
-                                                 (arg:acceptable? ag c (factor-statement factor))))
+                                             (or (arg:accepted? ag (factor-statement factor))
+                                                 (arg:acceptable? ag (factor-statement factor))))
                                            (casebase-factors cb))))))
   
   
