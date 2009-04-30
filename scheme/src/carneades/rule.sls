@@ -251,17 +251,6 @@
                      (_ #f)))
                  cl)))
   
-  ; clause-antecedents: clause context -> (list-of statement)
-  ; The statements in clause, as 
-  ; well as all assumptions which are questioned in the context.
-  (define (clause-antecedents cl c)
-    (filter (lambda (s) 
-              (match s
-                (('unless a) #f)
-                (('assuming a) (argument:questioned? c a))
-                (_ #t))) ; atomic and negated statements
-            cl))
-  
 
   ; rename-rule-variables: rule -> rule
   (define (rename-rule-variables r)
@@ -287,7 +276,7 @@
   (define rulebase-rules %rulebase-rules)
   
   (define empty-rulebase
-    (make-%rulebase (table:make-eq-table null) null))
+    (make-%rulebase (table:make-table eq? null) null))
   
   ; add-rule:  rulebase rule -> rulebase
   ; Add a rule to the rule base, for each conclusion of the rule,
@@ -454,9 +443,9 @@
   ; generate-arguments-from-rules: rulebase (list-of question-types) -> generator
   (define (generate-arguments-from-rules rb qs)
     (lambda (subgoal state) 
-      (let ((args (as:state-arguments state))
-            (subs (argument:context-substitutions (as:state-context state))))
-                
+      (let* ((args (as:state-arguments state))
+             (subs (argument:argument-graph-substitutions args)))
+        
         ; apply-clause: ; clause rule -> (list-of response)
         (define (apply-clause clause) 
           
@@ -490,55 +479,55 @@
                   ; succeed
                   (begin 
                     (let ((arg-id (gensym 'a)))
-                    (if *debug*
-                        (begin (display "argument constructed by rule-generator:")
-                               (newline)
-                               (display "argument-id: ")
-                               (display arg-id)
-                               (newline) 
-                               (display "argument-scheme: ")
-                               (display (string-append (symbol->string (named-clause-rule clause))
-                                                       (symbol->string (named-clause-id clause))
-                                                       ))
-                               (newline)
-                               (display "argument-conclusion: ")
-                               (display (statement-atom (condition-statement subgoal)))
-                               (newline)
-                               (display "argument-premises: ")
-                               (display (append (map statement->premise (named-clause-clause clause))
-                                                (rule-critical-questions (named-clause-rule clause) qs subgoal (named-clause-strict clause))))
-                               (newline)
-                               (newline)
-                               ;(printf "unification succeeded~%")
-                               ))
-                    (as:make-response 
-                     subs2 
-                     (argument:make-argument arg-id ; id
-                                             ; direction
-                                             (match subgoal
-                                               (('not _) 'con)
-                                               (_ 'pro))
-                                             ; conclusion:
-                                             (statement-atom (condition-statement subgoal))
-                                             ; premises:
-                                             (append (map statement->premise (named-clause-clause clause))
-                                                     (rule-critical-questions (named-clause-rule clause) qs subgoal (named-clause-strict clause)))
-                                             ; scheme:
-                                             (string-append (symbol->string (named-clause-rule clause))
-                                                            (symbol->string (named-clause-id clause))
-                                                            )
-                                             )))))))
+                      (if *debug*
+                          (begin (display "argument constructed by rule-generator:")
+                                 (newline)
+                                 (display "argument-id: ")
+                                 (display arg-id)
+                                 (newline) 
+                                 (display "argument-scheme: ")
+                                 (display (string-append (symbol->string (named-clause-rule clause))
+                                                         (symbol->string (named-clause-id clause))
+                                                         ))
+                                 (newline)
+                                 (display "argument-conclusion: ")
+                                 (display (subs2 (statement-atom (condition-statement subgoal))))
+                                 (newline)
+                                 (display "argument-premises: ")
+                                 (display (map subs2 
+                                               (append (map statement->premise (named-clause-clause clause))
+                                                       (rule-critical-questions (named-clause-rule clause) qs subgoal (named-clause-strict clause)))))
+                                 (newline)
+                                 (newline)
+                                 ;(printf "unification succeeded~%")
+                                 ))
+                      (as:make-response 
+                       (statement-atom (condition-statement subgoal)) ; the affected statement, the conclusion of the argument
+                       subs2 
+                       (argument:make-argument arg-id ; id
+                                               ; applicable
+                                               #f
+                                               ; weight
+                                               argument:default-weight
+                                               ; direction
+                                               (match subgoal
+                                                 (('not _) 'con)
+                                                 (_ 'pro))
+                                               ; conclusion:
+                                               (statement-atom (condition-statement subgoal))
+                                               ; premises:
+                                               (append (map statement->premise (named-clause-clause clause))
+                                                       (rule-critical-questions (named-clause-rule clause) qs subgoal (named-clause-strict clause)))
+                                               ; scheme:
+                                               (string-append (symbol->string (named-clause-rule clause))
+                                                              (symbol->string (named-clause-id clause))
+                                                              )
+                                               )))))))
           
           (filter as:response? (map apply-for-conclusion (named-clause-head clause))))
         
         (list->stream (flatmap (lambda (clause) 
                                  (if *debug* (printf "applying clause ~a~a~%" (named-clause-rule clause) (named-clause-id clause)))
-                                 
-;                                 (if (null? (rule-body rule))  ; empty body, i.e. "facts"
-;                                     (apply-clause null rule)
-;                                     (flatmap (lambda (clause)
-;                                                (apply-clause clause rule))
-;                                              (rule-body rule))))
                                  (apply-clause clause))
                                (map rename-clause-variables (get-clauses args rb subgoal subs)))))))
   ; end of generate-arguments-from-rules

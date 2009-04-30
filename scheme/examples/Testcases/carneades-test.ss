@@ -63,7 +63,7 @@
   
   (define tweety-graph (assert-arguments empty-argument-graph (list a1 a2)))
   
-  (define c1 (accept default-context (list "Tweety is a bird" "Tweety is a penguin")))
+  (define c1 (accept empty-argument-graph (list "Tweety is a bird" "Tweety is a penguin")))
   
   ; string-length of d1 should be 690
   (define d1 (call-with-values open-string-output-port (lambda (port extract)

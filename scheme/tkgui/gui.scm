@@ -862,7 +862,7 @@ http://carneades.berlios.de
                           (let ((id (argument-id arg))
                                 (title "") ; to do: add title to arguments
                                 (direction (argument-direction arg))
-                                (applicable (if (all-premises-hold? ag c arg)
+                                (applicable (if (applicable? ag c arg)
                                                 "yes"
                                                 "no"))
                                 (weight "") ; to do: replace context-compare with weights
