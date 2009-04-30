@@ -239,7 +239,7 @@
  (define (statements->nodes s)
    (fold-left (lambda (t s)
                 (table:insert t s (statement->node s)))
-              (table:make-table statement=? null)
+              (table:make-table statement-hash statement=? null)
               s))              
  
  (define-record-type argument-graph
@@ -255,10 +255,10 @@
         ((id title main-issue nodes arguments subs)
          (new id title main-issue nodes arguments subs))
         ((id title main-issue)
-         (new id title main-issue (table:make-table statement=? null) (table:make-table eq? null) identity))
+         (new id title main-issue (table:make-table statement-hash statement=? null) (table:make-eq-table null) identity))
         ((id title main-issue statements)
-         (new id title main-issue (statements->nodes statements) (table:make-table eq? null) identity))
-        (() (new (gensym) "" #f (table:make-table statement=? null) (table:make-table eq? null) identity))))))
+         (new id title main-issue (statements->nodes statements) (table:make-eq-table null) identity))
+        (() (new (gensym) "" #f (table:make-table statement-hash statement=? null) (table:make-eq-table null) identity))))))
  
  (define empty-argument-graph (make-argument-graph))
  
