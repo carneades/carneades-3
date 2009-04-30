@@ -264,7 +264,7 @@
  
  ; status: argument-graph statement -> status
  (define (status ag s) 
-   (let ((n (table:lookup (argument-graph-nodes ag) (statement-atom) #f)))
+   (let ((n (table:lookup (argument-graph-nodes ag) ((argument-graph-substitutions ag) (statement-atom)) #f)))
      (if (not n)
          'unstated
          (let ((v (node-status n)))
@@ -312,10 +312,11 @@
  ; is propogated forwards by udating the arguments in which the statement 
  ; is used as a premise, which, recursively, updates the conclusions of these arguments.
  (define (update-statement ag1 s)
-   (if *debug* (printf "updating: ~s~%" s))
+   (if *debug* (printf "updating statement: ~s~%" s))
    (let* ((n1 (table:lookup (argument-graph-nodes ag1) (statement-atom s) #f)))
      (if (not n1)
-         ag1
+         (begin (if *debug* (printf "node not found: ~s~%" s))
+                ag1)
          (let* ((n2 (make-node (statement-atom s)
                                (node-status n1)
                                (node-standard n1)
@@ -355,6 +356,7 @@
  ; this change by updating the argument graph for the conclusion
  ; of the argument.  
  (define (update-argument ag arg)
+   (if *debug* (printf "updating argument: ~s~%" (argument-id arg)))
    (let* ((old-applicability (argument-applicable arg))
           (new-applicability (all-premises-hold? ag arg))
           (ag2 (make-argument-graph (argument-graph-id ag)
@@ -540,6 +542,13 @@
          (map argument-scheme (ids->arguments ag (node-conclusion-of n))))))
  
  ; accepted?: argument-graph statement -> boolean
+ #;(define (accepted? ag s)
+   (if (statement-positive? s)
+       (let* ((s1 ((argument-graph-substitutions ag) s))
+              (n (table:lookup (argument-graph-nodes ag) s1 #f)))
+         (and n (eq? (node-status n) 'accepted)))
+       (rejected? ag (statement-atom s))))
+         
  (define (accepted? ag s)
    (if (statement-positive? s)
        (let ((s1 ((argument-graph-substitutions ag) s)))
@@ -551,6 +560,13 @@
        (rejected? ag (statement-atom s))))
  
  ; rejected?: argument-graph statement -> boolean
+ #;(define (rejected? ag s)
+   (if (statement-positive? s)
+       (let* ((s1 ((argument-graph-substitutions ag) s))
+              (n (table:lookup (argument-graph-nodes ag) s1 #f)))
+         (and n (eq? (node-status n) 'rejected)))
+       (accepted? ag (statement-atom s))))
+   
  (define (rejected? ag s)
    (if (statement-positive? s)
        (let ((s1 ((argument-graph-substitutions ag) s)))
@@ -606,13 +622,13 @@
                 (rejected-statements ag))))
  
  ; stated-statements: argument-graph -> (list-of statement)
- (define (stated-statements ag c)
+ (define (stated-statements ag)
    (table:filter-keys (lambda (pair) 
                         (eq? (node-status (cdr pair)) 'stated)) 
                       (argument-graph-nodes ag)))
  
  ; issues: argument-graph argument-graph -> (list-of statement)
- (define (issues ag c)
+ (define (issues ag)
    (filter (lambda (s) (issue? ag s)) (statements ag)))
  
  ; all-premises: argument-graph statement -> (list-of premise)
@@ -732,23 +748,21 @@
  
  ; check-acceptability: argument-graph statement -> boolean
  (define (check-acceptability ag s)
-   (let* ((s2 ((argument-graph-substitutions ag)(statement-atom s)))
-          (ps (proof-standard ag s2)))
-     (if (statement-negative? s2)
+   (let ((ps (proof-standard ag s)))
+     (if (statement-negative? s)
          (satisfies? ag ps 
-                     (con-arguments ag (statement-atom s2)) 
-                     (pro-arguments ag (statement-atom s2)))
+                     (con-arguments ag (statement-atom s)) 
+                     (pro-arguments ag (statement-atom s)))
          (satisfies? ag ps 
-                     (pro-arguments ag s2) 
-                     (con-arguments ag s2)))))
+                     (pro-arguments ag s) 
+                     (con-arguments ag s)))))
  
  ; acceptable?: argument-graph statement -> boolean
  (define (acceptable? ag s)
-   (let* ((s2  ((argument-graph-substitutions ag)(statement-atom s)))
-          (n (table:lookup (argument-graph-nodes ag) s2 #f)))
+   (let ((n (table:lookup (argument-graph-nodes ag) s #f)))
      (if (not n)
          #f  
-         (if (statement-positive? s2)
+         (if (statement-positive? s)
              (node-acceptable n)
              (node-complement-acceptable n)))))
  
@@ -762,8 +776,8 @@
  ; looks up the cached "in" status of the statement in the agreement graph
  (define (in? ag s)
    (let* ((s2  ((argument-graph-substitutions ag)(statement-atom s)))
-          (n (table:lookup (argument-graph-nodes ag) s2 #f)))
-     (if (and *debug* (not n)) (printf "in?: no node for ~a~%" s2))
+          (n (table:lookup (argument-graph-nodes ag) s #f)))
+     (if (and *debug* (not n)) (printf "in?: no node for ~a~%" s))
      (and n
           (if (statement-positive? s)
               (node-in n)
@@ -774,9 +788,9 @@
  (define (check-if-in ag s)
    (let* ((s2  ((argument-graph-substitutions ag)(statement-atom s)))
           (n (table:lookup (argument-graph-nodes ag) s2 #f)))
-     (if (and *debug* (not n)) (printf "check-if-in: no node for ~a~%" s2))
+     (if (and *debug* (not n)) (printf "check-if-in: no node for ~a~%" s))
      (and n
-          (if (statement-positive? s)
+          (if (statement-positive? s2)
               (or (eq? (node-status n) 'accepted)
                   (and (not (eq? (node-status n) 'rejected))
                        (check-acceptability ag s)))
@@ -789,7 +803,7 @@
  
  ; holds?: argument-graph premise -> boolean
  (define (holds? ag p) 
-   (let ((n (table:lookup (argument-graph-nodes ag) (premise-atom p) #f)))
+   (let ((n (table:lookup (argument-graph-nodes ag) ((argument-graph-substitutions ag) (premise-atom p)) #f)))
      (if (not n) #f
          (cond ((ordinary-premise? p)
                 (case (node-status n)
