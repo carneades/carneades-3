@@ -41,11 +41,11 @@ because he is biased.")
 (define-argument a3 (pro s7 (pr s6) (ex s8)))
 (define-argument a4 (pro s8 (pr s5) #;(ex s7)))
 
-(define ag1 (assert-arguments empty-argument-graph (list a1 a2 a3 a4)))
-(define c1 (accept default-context (list s1 s2 s3 s4)))
-(define c2 (accept c1 (list s1 s2 s3 s4 s5)))
-(define c3 (accept c2 (list s1 s2 s3 s4 s5 s6)))
+(define args (list a1 a2 a3 a4))
 
+(define ag1 (assert-arguments empty-argument-graph args))
+(define ag2 (accept ag1 (list s1 s2 s3 s4)))
+(define ag3 (accept ag2 (list s5)))
+(define ag4 (accept ag3 (list s6)))
 
-; (view ag1 c3)
-(diagram ag1 c3)
+(view ag4)

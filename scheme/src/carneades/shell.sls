@@ -32,26 +32,24 @@
          (prefix (carneades search) search:))
 
  
- ; make-engine*: integer integer context (list-of generator) -> statement -> (stream-of argument-state)
- (define (make-engine* max-nodes max-turns context generators) 
+ ; make-engine*: integer integer argument-graph (list-of generator) -> statement -> (stream-of argument-state)
+ (define (make-engine* max-nodes max-turns ag generators) 
    (lambda (goal)
      (find-best-arguments search:depth-first 
                           (search:make-resource max-nodes)
                           max-turns
-                          (initial-state goal context) 
+                          (initial-state goal ag) 
                           generators)))
  
  ; make-engine: integer integer (list-of generator) -> statement -> (stream-of argument-state)
  ; a simplified version of make-engine*, using the default-context 
  (define (make-engine max-nodes max-turns generators) 
-   (make-engine* max-nodes max-turns default-context generators))
+   (make-engine* max-nodes max-turns empty-argument-graph generators))
  
  ; show-state: state -> void
  ; view a diagram of the argument graph of a state
  (define (show-state s)
    (view* (state-arguments s)
-          (state-context s)
-          (context-substitutions (state-context s))
           (lambda (s) (statement-formatted s))))
  
  
@@ -74,8 +72,6 @@
    (let ((str (engine query)))
      (if (not (stream-null? str)) 
          (diagram* (state-arguments str)
-                   (state-context str)
-                   (context-substitutions (state-context str))
                    (lambda (s) (statement-formatted s))
                    (current-output-port)))))
  
@@ -88,9 +84,8 @@
    (let ((str (engine query)))
      (stream-for-each (lambda (s) 
                         (if (in? (state-arguments s)
-                                         (state-context s)
-                                         query)
-                            (printf "~A~%" ((context-substitutions (state-context s)) query))))
+                                 query)
+                            (printf "~A~%" ((argument-graph-substitutions (state-arguments s)) query))))
                       str)))
  
  ; ask1: statement (statement -> (stream-of argument-state)) -> void
@@ -101,10 +96,9 @@
    (define (f str) 
      (if (not (stream-null? str))
          (let ((s (stream-car str)))
-           (if (in? (state-arguments s)
-                    (state-context s)
+           (if (in? (state-arguments s) 
                     query)
-               (printf "~A~%" ((context-substitutions (state-context s)) query))
+               (printf "~A~%" ((argument-graph-substitutions (state-arguments s)) query))
                (f (stream-cdr str))))))
    (let ((str (engine query)))
      (f str)))
@@ -115,11 +109,10 @@
  ; statement is acceptable or accepted in every argument graph found.
  (define (all-in? query engine)
    (let ((str (engine query)))
-     (and (not (stream-null? str))
+     (and (not (stream-null? str)) 
           (stream-null? (stream-filter (lambda (s)
                                          (not (in? (state-arguments s)
-                                                           (state-context s)
-                                                           query)))
+                                                   query)))
                                        str)))))
  
  ; some-in? : statement engine -> boolean
@@ -127,9 +120,8 @@
  (define (some-in? query engine)
    (let ((str (engine query)))
      (not (stream-null? (stream-filter (lambda (s)
-                                         (in? (state-arguments s)
-                                                      (state-context s)
-                                                      query))
+                                         (in? (state-arguments s) 
+                                              query))
                                        str)))))
  
  ; some-argument-found? : statement engine -> boolean

@@ -54,8 +54,8 @@
  
  ; dispatch: stmt state -> (stream-of response)
  (define (dispatch stmt state)
-   (let ((args (state-arguments state))
-         (subs (argument:context-substitutions (state-context state))))
+   (let* ((args (state-arguments state))
+          (subs (argument:argument-graph-substitutions args)))
      (match stmt
        (('eval term expr) 
         (call/cc (lambda (escape)
@@ -75,9 +75,14 @@
                             (stream) ; not unifiable, so fail by returning the empty stream
                             (stream 
                              (make-response 
+                              stmt
                               subs2
                               (argument:make-argument 
-                               (gensym 'a) ; id
+                               ; id:
+                               (gensym 'a)
+                               ; applicable: 
+                               #t
+                               argument:default-weight
                                ; direction:
                                'pro
                                ; conclusion:
@@ -87,7 +92,7 @@
                                ; scheme:
                                "builtin: eval"))))))))))
        (('not stmt)
-        ; try to unify stmt with rejected statements in the context
+        ; try to unify stmt with rejected statements in the argument graph
         ; no new arguments are added, but the substitutions are extended
         (stream-flatmap (lambda (stmt2) 
                           (let ((subs2 (unify* stmt 
@@ -98,10 +103,10 @@
                                                #f)))
                             (if (not subs2)
                                 (stream) ; fail
-                                (stream (make-response subs2 #f)))))
-                        (list->stream (argument:rejected-statements (state-context state)))))
+                                (stream (make-response stmt subs2 #f)))))
+                        (list->stream (argument:rejected-statements args))))
        (stmt 
-        ; try to unify stmt with accepted statements in the context
+        ; try to unify stmt with accepted statements in the argument graph
         ; no new arguments are added, but the substitutions are extended
         (stream-flatmap (lambda (stmt2) 
                           (let ((subs2 (unify* stmt 
@@ -110,10 +115,11 @@
                                                (lambda (t) t) 
                                                (lambda (msg) #f)
                                                #f)))
+                            ; (printf "builtins; unify(~a,~a)=~a~%" stmt stmt2 (if subs2 #t #f))
                             (if (not subs2)
                                 (stream) ; fail
-                                (stream (make-response subs2 #f)))))
-                        (list->stream (argument:accepted-statements (state-context state))))))))
+                                (stream (make-response stmt subs2 #f)))))
+                        (list->stream (argument:accepted-statements args)))))))
  
  ; builtins: statement state -> (stream-of response)
  (define (builtins goal state)

@@ -99,9 +99,9 @@
    
    )) ; end of rule base
 
-; accept some facts in the context
-(define context 
-  (arg:accept arg:default-context 
+; accept some facts 
+(define ag1
+  (arg:accept arg:empty-argument-graph 
               '((coins item1)
                 (bird Tweety)
                 (penguin Tweety)
@@ -126,7 +126,7 @@
 
 ; engine integer integer (list-of symbol) -> statement -> (stream-of argument-state)
 (define (engine max-nodes max-turns critical-questions)
-  (make-engine* max-nodes max-turns context
+  (make-engine* max-nodes max-turns ag1
                 (list (generate-arguments-from-rules rb1 critical-questions) builtins)))
 
 
