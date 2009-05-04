@@ -23,10 +23,10 @@
  ; viewpoint. 
  
  (export make-state initial-state state? state-topic state-viewpoint state-pro-goals 
-         state-con-goals state-arguments state-substitutions
-         opposing-viewpoint switch-viewpoint make-response response? response-argument 
+         state-con-goals state-arguments state-substitutions state-candidates
+         opposing-viewpoint switch-viewpoint make-response response? response-statement response-argument
          response-substitutions find-arguments find-best-arguments goal-state? 
-         instantiated-arguments make-successor-state next-goals)
+         make-successor-state next-goals)
  
  (import (rnrs)
          (rnrs records syntactic)
@@ -41,7 +41,7 @@
          (carneades argument-diagram) ; only for debugging
          )
  
- (define *debug* #t)
+ (define *debug* #f)
  
  ; opposing-viewpoint: viewpoint -> viewpoint
  (define (opposing-viewpoint vp)
@@ -49,13 +49,36 @@
      ((pro) 'con)
      ((con) 'pro)))
  
+ ; A candidate argument is an argument which might have uninstantiated variables.
+ ; The candidate argument is asserted into an argument graph of a state only when 
+ ; the guard is ground in the substitution environment of the state, by
+ ; substituting all the variables in the argument with their values in the 
+ ; substitution environment.  If the guard is correct, the argument put
+ ; forward will contain only ground statements, i.e. with no variables.
+ (define-record-type candidate
+   (fields guard     ; statement containing all the variables used by the argument
+           argument))
+    
  ; state for use when searching for arguments which satisfy some goal
  (define-record-type state 
    (fields topic           ; statement for the main issue or thesis
            viewpoint       ; pro | con the topic
            pro-goals       ; (list-of (list-of statement)) ; disjunctive normal form
            con-goals       ; (list-of (list-of statement)) ; disjunctive normal form
-           arguments))     ; argument-graph 
+           arguments       ; argument-graph 
+           substitutions   ; substitutions
+           candidates      ; (list-of candidate)
+           ))
+ 
+  ; initial-state: statement argument-graph -> state
+ (define (initial-state goal ag)
+   (make-state goal 
+               'pro 
+               (list (list goal))
+               null 
+               ag
+               identity
+               null))
  
  ; display-state: state -> voide
  ; for debugging
@@ -66,29 +89,15 @@
      (printf "pro goals: ~a~%" (if (null? (state-pro-goals state)) "" (subs (state-pro-goals state))))
      (printf "con goals: ~a~%" (if (null? (state-con-goals state)) "" (subs (state-con-goals state))))
      (printf "number of arguments: ~a~%" (length (arg:list-arguments (state-arguments state))))
+     (printf "number or candidate arguments: ~a~%" (length (state-candidates state)))
      (newline)
      (view (state-arguments state))
      ))
-  
-  
- ; state-substitutions: state -> substitutions
- ; For backwards compatibility
- (define (state-substitutions state)
-   (arg:argument-graph-substitutions (state-arguments state)))
  
  (define-record-type response
-   (fields statement       ; the affected statement, whose status needs to be updated 
+   (fields statement       ; the statement which needs to be updated in the argument graph
            substitutions   ; term -> term
            argument))      ; argument | #f
- 
- ; initial-state: statement argument-graph -> state
- (define (initial-state goal ag)
-   (make-state goal 
-               'pro 
-               (list (list goal))
-               null 
-               ag))
- 
  
  ; switch-viewpoint: state -> state
  (define (switch-viewpoint s)
@@ -96,15 +105,9 @@
                (opposing-viewpoint (state-viewpoint s))
                (state-pro-goals s)
                (state-con-goals s)
-               (state-arguments s)))
- 
- ; instantiated-arguments: state -> argument-graph
- ; return the argument graph of the state with its variables
- ; instantiated with their values in the substitutions of the state
- (define (instantiated-arguments state)
-   (arg:instantiate-argument-graph (state-arguments state)
-                                   (arg:argument-graph-substitutions (state-arguments state))))
- 
+               (state-arguments s)
+               (state-substitutions s)
+               (state-candidates s)))
  
  ; next-goals: state -> (list-of (list-of statement)) 
  ; Returns a list representing a disjunction of a conjunction of 
@@ -131,14 +134,47 @@
          (cdr disjunction-of-conjunctions)
          (cons clause1 (cdr disjunction-of-conjunctions)))))
  
+ ; apply-candidates-result
+ ; the type of the result of the apply-candidates function
+ ; Alternatives would be to use pairs or multiple values
+ (define-record-type apply-candidates-result
+   (fields arguments    ; new argument graph, from putting forward instantiations
+                        ; of candidate arguments
+           candidates)) ; remaining candidates, still with uninstantiated variables
+ 
+ ; apply-candidates: substitutions argument-graph (list-of candidate) -> apply-candidates-result
+ (define (apply-candidates subs ag candidates)
+   (let ((ag2 ag)
+         (candidates2 null))
+     (for-each (lambda (c)
+                 (if *debug*
+                     (begin 
+                       (printf "candidate argument: ~a~%" (arg:argument->datum (candidate-argument c)))
+                       (printf "argument variables: ~a~%" (arg:argument-variables (candidate-argument c)))
+                       (printf "candidate guard: ~a~%" (candidate-guard c))
+                       (printf "candidate guard with subs: ~a~%" (subs (candidate-guard c)))))
+                 (if (ground? (subs (candidate-guard c))) 
+                     (let ((arg (arg:instantiate-argument (candidate-argument c) subs)))
+                       (if *debug*
+                           (printf "arg ~a is now instantiated~%" (arg:argument-id arg)))
+                       (set! ag2 (arg:assert-argument (arg:question ag2
+                                                                    (list (arg:argument-conclusion arg)))
+                                                      arg)))
+                     ; else candidate argument is not yet ground, so keep as a candidate
+                     (begin 
+                       (if *debug*
+                           (printf "arg ~a is still not instantiated~%" (arg:argument-id (candidate-argument c))))
+                       (set! candidates2 (cons c candidates2)))))
+               candidates)
+     (make-apply-candidates-result ag2 candidates2)))
+     
  ; make-successor-state: state response -> state
  (define (make-successor-state state response)
    (let ((statement (response-statement response))
          (new-subs (response-substitutions response))
-         (arg (response-argument response)))
+         (arg      (response-argument response)))
      (if arg
-         (let* ((arg (response-argument response))
-                (conclusion (arg:argument-conclusion arg))
+         (let* ((conclusion (arg:argument-conclusion arg))
                 (assumptions (questioned-assumptions (map arg:premise-statement 
                                                           (list:filter arg:assumption? (arg:argument-premises arg)))
                                                      (state-arguments state)))
@@ -146,7 +182,13 @@
                                        (list:filter arg:ordinary-premise? (arg:argument-premises arg)))
                                   assumptions))
                 (exceptions (map arg:premise-statement 
-                                 (list:filter arg:exception? (arg:argument-premises arg)))))
+                                 (list:filter arg:exception? (arg:argument-premises arg))))
+                (cr (apply-candidates new-subs
+                                      (state-arguments state) 
+                                      (cons (make-candidate `(guard ,@(arg:argument-variables arg)) 
+                                                            arg) 
+                                            (state-candidates state)))))
+           
            (make-state (state-topic state)
                        (state-viewpoint state)
                        ; new pro goals
@@ -169,30 +211,35 @@
                                         ))
                          ((con) (update-goals (state-con-goals state) 
                                               premises)))
-                       ; update the substitutions, make an issue of the conclusion and
-                       ; extend the argument graph with the new arg
-                       (arg:assert-argument (arg:question (arg:assert-substitutions (state-arguments state) new-subs)
-                                                                           (list conclusion))
-                                                             arg)))
+                       ; new argument graph
+                       (apply-candidates-result-arguments cr)
+                       ; new substitutions:
+                       new-subs
+                       ; new candidates:
+                       (apply-candidates-result-candidates cr)))
          
-         ; create a successor state by modifying the substitutions of the argument graph, but without
+         ; create a successor state by modifying the substitutions of the state, but without
          ; putting forward a new argument.
-        
-         (make-state (state-topic state)
-                     (state-viewpoint state)
-                     ; new pro goals
-                     (case (state-viewpoint state)
-                       ((pro) (update-goals (state-pro-goals state) '()))
-                       ((con) (state-pro-goals state)))
-                     ; new con goals
-                     (case (state-viewpoint state)
-                       ((pro) (state-con-goals state))
-                       ((con) (update-goals (state-con-goals state) '())))
-                     ; replace the substitutions of the argument graph and then update the
-                     ; status of the affected statement in the resulting argument graph
-                     (arg:update-statement (arg:assert-substitutions (state-arguments state) new-subs)
-                                           statement)))))
- 
+         
+         (let ((cr (apply-candidates new-subs
+                                     (state-arguments state) 
+                                     (state-candidates state))))
+           (make-state (state-topic state)
+                       (state-viewpoint state)
+                       ; new pro goals:
+                       (case (state-viewpoint state)
+                         ((pro) (update-goals (state-pro-goals state) '()))
+                         ((con) (state-pro-goals state)))
+                       ; new con goals:
+                       (case (state-viewpoint state)
+                         ((pro) (state-con-goals state))
+                         ((con) (update-goals (state-con-goals state) '())))
+                       ; new argument graph:
+                       (apply-candidates-result-arguments cr)
+                       ; new substitutions:
+                       new-subs
+                       ; new candidates:
+                       (apply-candidates-result-candidates cr))))))
  
  ; type generator : statement state -> (stream-of response)
  ; A generator maps a goal statement to a stream of arguments pro this goal.  The conclusion
@@ -229,7 +276,7 @@
  ; the goal is to find a state in which topic is not acceptable. 
  (define (goal-state? state)
    (let* ((in (arg:in? (state-arguments state) 
-                       (state-topic state)))
+                       ((state-substitutions state) (state-topic state)))) 
           (result (case (state-viewpoint state)
                     ((pro) in)
                     ((con) (not in)))))
@@ -238,7 +285,6 @@
            (printf "goal-state: ~a~%" result)
            (display-state state)))
      result))
- 
  
  ; find-arguments: resource-limited-strategy resource state (list-of generator) -> (stream-of state)
  (define (find-arguments strategy r initial-state generators)
