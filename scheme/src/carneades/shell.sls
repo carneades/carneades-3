@@ -84,9 +84,9 @@
    (let ((str (engine query)))
      (stream-for-each (lambda (s) 
                         (if (in? (state-arguments s)
-                                 query)
-                            (printf "~A~%" ((argument-graph-substitutions (state-arguments s)) query))))
-                      str)))
+                                 ((state-substitutions s) query))
+                            (printf "~A~%" ((state-substitutions s) query))))
+                      str))) 
  
  ; ask1: statement (statement -> (stream-of argument-state)) -> void
  ; displays the first solution to a query, using the given inference engine,
@@ -97,8 +97,8 @@
      (if (not (stream-null? str))
          (let ((s (stream-car str)))
            (if (in? (state-arguments s) 
-                    query)
-               (printf "~A~%" ((argument-graph-substitutions (state-arguments s)) query))
+                    ((state-substitutions s) query))
+               (printf "~A~%" ((state-substitutions s) query))
                (f (stream-cdr str))))))
    (let ((str (engine query)))
      (f str)))
@@ -112,7 +112,7 @@
      (and (not (stream-null? str)) 
           (stream-null? (stream-filter (lambda (s)
                                          (not (in? (state-arguments s)
-                                                   query)))
+                                                   ((state-substitutions s) query))))
                                        str)))))
  
  ; some-in? : statement engine -> boolean
@@ -121,7 +121,7 @@
    (let ((str (engine query)))
      (not (stream-null? (stream-filter (lambda (s)
                                          (in? (state-arguments s) 
-                                              query))
+                                              ((state-substitutions s) query)))
                                        str)))))
  
  ; some-argument-found? : statement engine -> boolean

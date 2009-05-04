@@ -24,14 +24,15 @@
          statement-predicate statement-formatted statement-wff
          make-fatom fatom? fatom-form fatom-term
          term? term=? compound-term?  term-functor term-args ground?
-         statement-hash)
+         statement-hash variables)
  
  (import (rnrs)
          (carneades base)
          (carneades lib srfi format)
          (only (carneades lib srfi strings) string-join)
          (prefix (carneades table) table:)
-         (prefix (carneades lib srfi compare) compare:))
+         (prefix (carneades lib srfi compare) compare:)
+         (prefix (carneades set) set:))
  
  ; variable? : object -> boolean
  ; A logic variable is represented as a symbol prefixed with a 
@@ -122,6 +123,18 @@
           (and (ground? (term-functor trm))
                (ground? (term-args trm))))
          (else #t)))
+ 
+ ; variables: term -> (list-of symbol)
+ ; returns a list of the variables in the term
+ (define (variables trm)
+   (define (f trm)
+     (cond ((variable? trm) (list trm))
+           ((constant? trm) null)
+           ((compound-term? trm) 
+            (append (f (term-functor trm))
+                    (f (term-args trm))))
+           (else null)))
+   (set:set->list ((set:list->set eq?) (f trm))))
  
  ; example: (make-fatom "The mother of ~a is ~a." '(mother Tom Gloria))
  
