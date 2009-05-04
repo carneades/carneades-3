@@ -33,7 +33,7 @@
          (carneades rule)
          (carneades argument-search)
          (only (carneades system) gensym)
-         (prefix (carneades argument) argument:))
+         (prefix (carneades argument) arg:))
  
  (define *debug* #f)
  
@@ -55,7 +55,8 @@
  ; dispatch: stmt state -> (stream-of response)
  (define (dispatch stmt state)
    (let* ((args (state-arguments state))
-          (subs (argument:argument-graph-substitutions args)))
+          (subs (state-substitutions state)))
+     (if *debug* (printf "builtins dispatch: ~a~%" stmt))
      (match stmt
        (('eval term expr) 
         (call/cc (lambda (escape)
@@ -74,23 +75,22 @@
                         (if (not subs2)
                             (stream) ; not unifiable, so fail by returning the empty stream
                             (stream 
-                             (make-response 
-                              stmt
-                              subs2
-                              (argument:make-argument 
-                               ; id:
-                               (gensym 'a)
-                               ; applicable: 
-                               #t
-                               argument:default-weight
-                               ; direction:
-                               'pro
-                               ; conclusion:
-                               stmt
-                               ; premises:
-                               null
-                               ; scheme:
-                               "builtin: eval"))))))))))
+                             (make-response stmt
+                                            subs2
+                                            (arg:make-argument 
+                                             ; id:
+                                             (gensym 'a)
+                                             ; applicable: 
+                                             #t
+                                             arg:default-weight
+                                             ; direction:
+                                             'pro
+                                             ; conclusion:
+                                             stmt
+                                             ; premises:
+                                             null
+                                             ; scheme:
+                                             "builtin:eval"))))))))))
        (('not stmt)
         ; try to unify stmt with rejected statements in the argument graph
         ; no new arguments are added, but the substitutions are extended
@@ -104,7 +104,7 @@
                             (if (not subs2)
                                 (stream) ; fail
                                 (stream (make-response stmt subs2 #f)))))
-                        (list->stream (argument:rejected-statements args))))
+                        (list->stream (arg:rejected-statements args))))
        (stmt 
         ; try to unify stmt with accepted statements in the argument graph
         ; no new arguments are added, but the substitutions are extended
@@ -115,11 +115,11 @@
                                                (lambda (t) t) 
                                                (lambda (msg) #f)
                                                #f)))
-                            ; (printf "builtins; unify(~a,~a)=~a~%" stmt stmt2 (if subs2 #t #f))
+                            (if *debug* (printf "builtins; unify(~a,~a)=~a~%" stmt stmt2 (if subs2 #t #f)))
                             (if (not subs2)
                                 (stream) ; fail
                                 (stream (make-response stmt subs2 #f)))))
-                        (list->stream (argument:accepted-statements args)))))))
+                        (list->stream (arg:accepted-statements args)))))))
  
  ; builtins: statement state -> (stream-of response)
  (define (builtins goal state)

@@ -62,17 +62,16 @@
  ; print-statements: argument-graph (list-of statement) (-> statement string) output-port -> void
  (define (print-statements ag statements statement->string port)
    (define (print-statement n)
-     (let ((id (get-id n))
-           (subs (argument-graph-substitutions ag)))
+     (let ((id (get-id n)))
        (format port "    ~A [shape=box, label=~S, style=~S];~%"
                 id
                 (cond ((questioned? ag n)
-                       (string-append "? " (statement->string (subs n))))
+                       (string-append "? " (statement->string n)))
                       ((accepted? ag n)
-                       (string-append "+ " (statement->string (subs n))))
+                       (string-append "+ " (statement->string n)))
                       ((rejected? ag n)
-                       (string-append "- " (statement->string (subs n))))
-                      (else (statement->string (subs n))))
+                       (string-append "- " (statement->string n)))
+                      (else (statement->string n)))
                 (cond ((and (acceptable? ag n)
                             (acceptable? ag (statement-complement n)))
                        "dotted,filled")
