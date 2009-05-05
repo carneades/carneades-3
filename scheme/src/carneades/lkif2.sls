@@ -6,9 +6,8 @@
  
  (export lkif-import
          lkif-export
-         make-lkif-data lkif-data? lkif-data-sources lkif-data-context
-         lkif-data-rulebase lkif-data-stages
-         make-stage stage? stage-argument-graph stage-context
+         make-lkif-data lkif-data? lkif-data-sources lkif-data-argument-graphs
+         lkif-data-rulebase
          make-source source? source-element source-uri)
  
  (import (rnrs)

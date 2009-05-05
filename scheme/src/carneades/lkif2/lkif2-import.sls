@@ -72,16 +72,13 @@
  
  ; lkif-import: file-path -> lkif-data
  (define (lkif-import path)
-   (let ((lkif-body (get-lkif (get-document path))))
-     (let* ((sources (read-sources lkif-body))
-           (theory (read-theory lkif-body))
-           (arg-graphs (read-argument-graphs lkif-body))
-           (tbl (lkif-axioms->table (theory-axioms theory)))
-           (context (lkif-axioms->context (theory-axioms theory)))
-           (rb (lkif-rules->rulebase (theory-rules theory)))
-           (stages (map (lambda (argg)
-                          (lkif-argument-graph->stage argg context tbl)) arg-graphs)))
-       (make-lkif-data sources context rb stages))))
+   (let* ((lkif-body (get-lkif (get-document path)))
+          (sources (read-sources lkif-body))
+          (theory (read-theory lkif-body))
+          (arg-graphs (read-argument-graphs lkif-body))
+          (argument-graphs (lkif-graphs->argument-graphs arg-graphs))
+          (rb (theory->rulebase theory)))
+     (make-lkif-data sources rb argument-graphs)))
  
  
  ; --------------------------------
@@ -202,10 +199,11 @@
  ; argument-to-record: lkif-argument table -> struct:argument
  (define (argument-to-record a tbl)
    (let ((id (string->symbol (get-attribute-value (get-attribute a 'id) "")))
+         (applicable #f)
          (title (string->symbol (get-attribute-value (get-attribute a 'title) "")))
          (direction (string->symbol (get-attribute-value (get-attribute a 'direction) "pro")))
          (scheme (get-attribute-value (get-attribute a 'scheme) ""))
-         (weight (string->symbol (get-attribute-value (get-attribute a 'weight) "0.5")))
+         (weight (string->number (get-attribute-value (get-attribute a 'weight) "0.5")))
          (conclusion (let ((c (statement->sexpr (get-conclusion-statement (cdr (get-element a 'conclusion))
                                                                           tbl))))
                        (if (and (pair? c)
@@ -213,7 +211,7 @@
                            (cadr c)
                            c)))
          (premises (map (lambda (x) (premise-to-record x tbl)) (get-elements (get-element a 'premises) 'premise))))
-     (argument:make-argument id direction conclusion premises scheme)))
+     (argument:make-argument id applicable weight direction conclusion premises scheme)))
  
  
 
@@ -396,26 +394,25 @@
  (define (lkif-axiom->sexpr a)
    (lkif-wff->sexpr (caddr a)))
  
- (define (lkif-axioms->context a)
-   (argument:accept argument:default-context (map lkif-axiom->sexpr a)))
+ (define (lkif-axioms->rules axioms)
+   (map lkif-axiom->rule axioms))
  
- (define (insert-axiom t a)
-   (let* ((id (get-attribute-value (get-attribute a 'id) #f))
-          (wff (caddr a))
-          (rejected? (eq? (car wff) 'not))
-          (st (make-statement id
-                             (if rejected?
-                                 "false"
-                                 "true")
-                             "false"
-                             "BA"
-                             (if rejected?
-                                 (cadr wff)
-                                 wff))))
-     (table:insert t id st)))
+ (define (lkif-axiom->rule a)
+   (let ((id (get-attribute-value (get-attribute a 'id) #f))
+         (sexpr (lkif-axiom->sexpr a)))
+     (make-rule (string->symbol id)
+                #t
+                (list sexpr)
+                '())))
  
- (define (lkif-axioms->table a)
-   (fold-left insert-axiom (table:make-table statement:statement-hash statement:statement=? null) a))
+ 
+ ; theory conversion
+ 
+ (define (theory->rulebase theory)
+   (let ((rb (lkif-rules->rulebase (theory-rules theory)))
+         (axioms (lkif-axioms->rules (theory-axioms theory))))
+     (add-rules rb axioms)))
+ 
  
  
  ; statement conversion
@@ -433,7 +430,7 @@
    (lkif-atom->sexpr (statement-atom s)))
  
  ; statements->context: (list-of struct:statement) -> context
- (define (statements->context statements)
+ #;(define (statements->context statements)
    (let ((scontext (fold-left (lambda (c s)
                                 (let ((sexpr (statement->sexpr s)))
                                   (let ((st (if (and (pair? sexpr)
@@ -465,13 +462,13 @@
  ; argument-graph-conversion
  
   ; lkif-argument-graph->stage: lkif-argument-graph -> struct:stage
- (define (lkif-argument-graph->stage ag c t)
+ #;(define (lkif-argument-graph->stage ag c t)
    (call-with-values (lambda () (lkif-argument-graph->argument-graph/context ag c t))
                      (lambda (a c) (make-stage a c))))
  
  ; lkif-argument-graph->argument-graph: struct:lkif-argument-graph context -> (struct:argument-graph context)
  ; creates an argument-graph and a context from a given lkif-argument-graph and a context
- (define (lkif-argument-graph->argument-graph/context ag c t)
+ #;(define (lkif-argument-graph->argument-graph/context ag c t)
    (let* ((statements (lkif-argument-graph-statements ag))
           (tbl (statements->table t statements))
           (arguments (map (lambda (x) (argument-to-record x tbl)) (lkif-argument-graph-arguments ag)))
@@ -493,5 +490,48 @@
  
  
 
-
+ 
+ (define (lkif-graphs->argument-graphs lkif-graphs)
+   (map lkif-graph->argument-graph lkif-graphs))
+ 
+ 
+ (define (lkif-graph->argument-graph ag)
+   (let* ((statements (lkif-argument-graph-statements ag))
+          (tbl (statements->table (table:make-table statement:statement-hash statement:statement=? null)  statements))
+          (arguments (map (lambda (x) (argument-to-record x tbl)) (lkif-argument-graph-arguments ag)))
+          (ag1 (argument:make-argument-graph (string->symbol (lkif-argument-graph-id ag))
+                                             (lkif-argument-graph-title ag)
+                                             (if (string=? (lkif-argument-graph-main-issue-id ag) "")
+                                                 #f
+                                                 (statement->sexpr (get-statement (lkif-argument-graph-main-issue-id ag) tbl)))))
+          (ag2 (argument:assert-arguments ag1 arguments)))
+     (apply-status/standard ag2 statements)))
+ 
+ (define (apply-status/standard ag statements)
+   (if (null? statements)
+       ag
+       (let* ((st (car statements))
+              (sexpr (statement->sexpr st))
+              (a (if (and (pair? sexpr)
+                          (eq? (car sexpr) 'assuming))
+                     (cadr sexpr)
+                     sexpr))
+              (standard (string->symbol (string-downcase (statement-standard st))))
+              (value (statement-value st))
+              (assumption (string=? (statement-assumption st) "true"))
+              ; applying status
+              (ag1 (if assumption
+                       (begin (display "Stating statement: ")(write a)(newline)
+                              (argument:state ag (list a)))
+                       (cond 
+                         ((string=? value "unknown") (begin (display "Questioning statement: ")(write a)(newline)
+                                                            (argument:question ag (list a))))
+                         ((string=? value "true") (begin (display "Accepting statement: ")(write a)(newline)
+                                                         (argument:accept ag (list a))))
+                         ((string=? value "false") (begin (display "Rejecting statement: ")(write a)(newline)
+                                                          (argument:reject ag (list a)))))))
+              ; applying standard
+              (ag2 (argument:assign-standard ag1 standard (list a))))
+         (display "Assigning standard: ")(write a)(display " ")(write standard)(newline)
+         (apply-status/standard ag2 (cdr statements)))))
  )
