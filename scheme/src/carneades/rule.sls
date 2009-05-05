@@ -501,7 +501,7 @@
                                  ;(printf "unification succeeded~%")
                                  ))
                       (as:make-response 
-                       (statement-atom (condition-statement subgoal)) ; the affected statement, the conclusion of the argument
+                       ; (statement-atom (condition-statement subgoal)) ; the affected statement, the conclusion of the argument
                        subs2 
                        (argument:make-argument arg-id ; id
                                                ; applicable

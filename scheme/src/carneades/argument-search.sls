@@ -24,7 +24,7 @@
  
  (export make-state initial-state state? state-topic state-viewpoint state-pro-goals 
          state-con-goals state-arguments state-substitutions state-candidates
-         opposing-viewpoint switch-viewpoint make-response response? response-statement response-argument
+         opposing-viewpoint switch-viewpoint make-response response? response-argument
          response-substitutions find-arguments find-best-arguments goal-state? 
          make-successor-state next-goals)
  
@@ -95,8 +95,7 @@
      ))
  
  (define-record-type response
-   (fields statement       ; the statement which needs to be updated in the argument graph
-           substitutions   ; term -> term
+   (fields substitutions   ; term -> term
            argument))      ; argument | #f
  
  ; switch-viewpoint: state -> state
@@ -170,8 +169,7 @@
      
  ; make-successor-state: state response -> state
  (define (make-successor-state state response)
-   (let ((statement (response-statement response))
-         (new-subs (response-substitutions response))
+   (let ((new-subs (response-substitutions response))
          (arg      (response-argument response)))
      (if arg
          (let* ((conclusion (arg:argument-conclusion arg))
