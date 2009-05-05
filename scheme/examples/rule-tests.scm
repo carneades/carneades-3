@@ -1,14 +1,13 @@
 #!r6rs
 
 (import (rnrs base)
+        (carneades base)
         (carneades shell)
         (prefix (carneades argument) arg:)
         (carneades argument-builtins)
         (carneades rule)
         (carneades lib srfi lightweight-testing)
         )
-
-(define null '())
 
 (define rb1 
   (rulebase
