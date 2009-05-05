@@ -289,7 +289,7 @@
  
  ; status: argument-graph statement -> status
  (define (status ag s) 
-   (let ((n (table:lookup (argument-graph-nodes ag) (statement-atom) #f)))
+   (let ((n (table:lookup (argument-graph-nodes ag) (statement-atom s) #f)))
      (if (not n)
          'unstated
          (let ((v (node-status n)))
