@@ -20,7 +20,7 @@
  
  ; Provides a way to ask users questions. Designed for use with dialogue managers and form servers.
  
- (export ask)
+ (export ask-user)
 
  (import (rnrs)
          (carneades base)
@@ -30,7 +30,7 @@
  ; type generator: statement state -> (stream-of response)
  
  ; ask: (statement -> boolean) -> generator
- (define (ask askable?)
+ (define (ask-user askable?)
    (lambda (goal state) 
      (let ((g ((state-substitutions state) goal)))
        (if (askable? g)
