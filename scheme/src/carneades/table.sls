@@ -44,15 +44,11 @@
    
  (define table? hashtable?)
  
- #;(define (insert ht k v)
+ (define (insert ht k v)
    (let* ((h (hashtable-copy ht #t)))
      (hashtable-set! h k v)
      h))
- 
- (define (insert ht k v)
-     (hashtable-set! ht k v)
-     ht)
- 
+  
  (define lookup hashtable-ref)
  
  (define (keys ht)
