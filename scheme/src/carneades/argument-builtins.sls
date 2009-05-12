@@ -119,7 +119,7 @@
                             (if (not subs2)
                                 (stream) ; fail
                                 (stream (make-response subs2 #f)))))
-                        (list->stream (arg:accepted-statements args)))))))
+                        (list->stream (arg:statements args)))))))
  
  ; builtins: statement state -> (stream-of response)
  (define (builtins goal state)
