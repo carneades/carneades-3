@@ -32,9 +32,10 @@
  ; ask: (statement -> boolean) -> generator
  (define (ask askable?)
    (lambda (goal state) 
-     (if (askable? goal)
-         (raise `(ask ,((state-substitutions state) goal), state))
-         (stream)))) ; empty stream
+     (let ((g ((state-substitutions state) goal)))
+       (if (askable? g)
+           (raise `(ask ,g ,state))
+           (stream))))) ; empty stream
              
  
  ) ;end of module
