@@ -27,6 +27,7 @@
          ; (rnrs exceptions)
          (rnrs eval)
          (carneades base)
+         (carneades statement)
          (carneades stream)
          (carneades unify)
          (carneades lib match)
@@ -91,25 +92,25 @@
                                              null
                                              ; scheme:
                                              "builtin:eval"))))))))))
-       (('not stmt)
-        ; try to unify stmt with rejected statements in the argument graph
-        ; no new arguments are added, but the substitutions are extended
-        (stream-flatmap (lambda (stmt2) 
-                          (let ((subs2 (unify* stmt 
-                                               stmt2 
-                                               subs 
-                                               (lambda (t) t) 
-                                               (lambda (msg) #f)
-                                               #f)))
-                            (if (not subs2)
-                                (stream) ; fail
-                                (stream (make-response subs2 #f)))))
-                        (list->stream (arg:rejected-statements args))))
+;       (('not stmt)
+;        ; try to unify stmt with rejected statements in the argument graph
+;        ; no new arguments are added, but the substitutions are extended
+;        (stream-flatmap (lambda (stmt2) 
+;                          (let ((subs2 (unify* stmt 
+;                                               stmt2 
+;                                               subs 
+;                                               (lambda (t) t) 
+;                                               (lambda (msg) #f)
+;                                               #f)))
+;                            (if (not subs2)
+;                                (stream) ; fail
+;                                (stream (make-response subs2 #f)))))
+;                        (list->stream (arg:statements args))))
        (stmt 
         ; try to unify stmt with accepted statements in the argument graph
         ; no new arguments are added, but the substitutions are extended
         (stream-flatmap (lambda (stmt2) 
-                          (let ((subs2 (unify* stmt 
+                          (let ((subs2 (unify* (statement-atom stmt)
                                                stmt2 
                                                subs 
                                                (lambda (t) t) 
