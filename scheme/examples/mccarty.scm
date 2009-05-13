@@ -1,6 +1,7 @@
 #!r6rs
 
 (import (rnrs base)
+        (carneades base)
         (carneades argument)
         (carneades argument-builtins)
         (carneades rule)
@@ -13,16 +14,14 @@
 
 ; Examples from "The Case for Explicit Exceptions", by L. Thorne McCarty and William W. Cohen
 
-(define null '())
-
 ; type question = excluded | priority | valid
 
 ; engine integer integer rulebase (list-of statement) (list-of symbol) -> statement -> (stream-of argument-state)
 (define (engine max-nodes max-turns rules assumptions critical-questions)
   (make-engine* max-nodes max-turns 
-                (accept default-context assumptions)
-                (list (generate-arguments-from-rules rules critical-questions) 
-                      builtins
+                (accept empty-argument-graph assumptions)
+                (list builtins 
+                      (generate-arguments-from-rules rules critical-questions) 
                       )))
 
 ; Royal Elephants Benchmark
@@ -88,18 +87,18 @@
                      (crook ?y))
                 (not (like ?x ?y))))
    
-   ; r7 would only work if rebuttals are search for and found
-;   (rule r7 (if (and (citizen ?x)
-;                     (gullible ?x)
-;                     (crook ?y)
-;                     (elected ?y))
-;                (like ?x ?y)))
-   
+   ; r7 would override r7 only if rebuttals are searched for and found
    (rule r7 (if (and (citizen ?x)
                      (gullible ?x)
                      (crook ?y)
                      (elected ?y))
-                (excluded r6 (not (like ?x ?y)))))
+                (like ?x ?y)))
+   
+;   (rule r7 (if (and (citizen ?x)
+;                     (gullible ?x)
+;                     (crook ?y)
+;                     (elected ?y))
+;                (excluded r6 (not (like ?x ?y)))))
 ))
 
 (define gullible-facts

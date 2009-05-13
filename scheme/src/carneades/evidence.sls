@@ -360,7 +360,7 @@
  
  ; generate-arguments-from-testimony: testimony -> generator
  (define (generate-arguments-from-testimony testimony)
-   (lambda (goal state) (dispatch goal testimony (argument:context-substitutions (state-context state)))))
+   (lambda (goal state) (dispatch goal testimony (state-substitutions state))))
  
  
  ) ;end of module

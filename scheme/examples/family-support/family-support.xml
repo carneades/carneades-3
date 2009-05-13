@@ -7,7 +7,7 @@
     <imports>
       <import prefix="family" uri="http://fokus.fraunhofer.de/elan/estrella/family.owl"/>
     </imports>
-    <axioms>
+  <!--  <axioms>
       <axiom id="f1">
         <s pred="family:father">The father of <c>Max</c> is <c>Charles</c></s>
       </axiom>
@@ -24,6 +24,7 @@
         </not>
       </axiom>
     </axioms>
+  -->
     <rules>
       <!-- begin rules from the ontology -->
       <rule id="ancestor">
