@@ -35,26 +35,29 @@
  (import
   (rnrs base)
   (carneades lib srfi streams))
-
  
- (define (stream-interleave s1 s2)
-   (if (stream-null? s1)
-       s2
-       (stream-cons (stream-car s1)
-                    (stream-interleave s2 (stream-cdr s1)))))
+ (define stream-interleave 
+   (stream-lambda (s1 s2)
+      (if (stream-null? s1)
+          s2
+          (stream-cons (stream-car s1)
+                       (stream-interleave s2 (stream-cdr s1))))))
  
- (define (stream-accumulate combiner initial-value stream)
-   (if (stream-null? stream)
-       initial-value
-       (combiner (stream-car stream)
-                 (stream-accumulate combiner
-                                    initial-value
-                                    (stream-cdr stream)))))
+ (define stream-accumulate 
+   (stream-lambda (combiner initial-value stream)
+     (if (stream-null? stream)
+         initial-value
+         (combiner (stream-car stream)
+                   (stream-accumulate combiner
+                                      initial-value
+                                      (stream-cdr stream))))))
  
- (define (stream-flatten stream)
-   (stream-accumulate stream-interleave stream-null stream))
+ (define stream-flatten 
+   (stream-lambda (stream)
+     (stream-accumulate stream-interleave stream-null stream)))
  
- (define (stream-flatmap f s) (stream-flatten (stream-map f s)))
-
+ 
+ (define stream-flatmap 
+   (stream-lambda (f s) (stream-flatten (stream-map f s))))
  
  ) ; end of stream library

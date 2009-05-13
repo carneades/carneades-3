@@ -108,7 +108,16 @@
            direction    ; 'pro | 'con
            conclusion   ; statement
            premises     ; premise list
-           scheme))     ; a string describing or naming the scheme applied
+           scheme)      ; a string describing or naming the scheme applied
+   (protocol
+    (lambda (new)
+      (case-lambda 
+        ((id applicable weight direction conclusion premises scheme)
+         (new id applicable weight direction conclusion premises scheme))
+        ((id direction conclusion premises scheme)
+         (new id #f default-weight direction conclusion premises scheme))
+        ((id direction conclusion premises)
+         (new id #f default-weight direction conclusion premises ""))))))
  
  ; Implicit premises, i.e. enthymemes, may be revealed using the  add-premise function.
  
