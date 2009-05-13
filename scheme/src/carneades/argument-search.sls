@@ -88,7 +88,7 @@
      (printf "viewpoint: ~a~%" (state-viewpoint state))
      (printf "pro goals: ~a~%" (if (null? (state-pro-goals state)) "" (subs (state-pro-goals state))))
      (printf "con goals: ~a~%" (if (null? (state-con-goals state)) "" (subs (state-con-goals state))))
-     (printf "number of arguments: ~a~%" (length (arg:list-arguments (state-arguments state))))
+     (printf "number of arguments: ~a~%" (length (arg:arguments (state-arguments state))))
      (printf "number or candidate arguments: ~a~%" (length (state-candidates state)))
      (newline)
      (view (state-arguments state))

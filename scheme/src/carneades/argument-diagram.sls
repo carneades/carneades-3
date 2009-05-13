@@ -55,7 +55,7 @@
    (set! ids (table:make-table statement-hash statement=? null)) ; re-initialize
    (format port "digraph g {~%    rankdir = \"RL\";~%")
    (print-statements ag (statements ag) statement->string  port)
-   (print-arguments ag (list-arguments ag) port)
+   (print-arguments ag (arguments ag) port)
    (format port "}~%"))
  
  
