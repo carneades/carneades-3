@@ -57,7 +57,6 @@
  (define (dispatch stmt state)
    (let* ((args (state-arguments state))
           (subs (state-substitutions state)))
-     (if *debug* (printf "builtins dispatch: ~a~%" stmt))
      (match stmt
        (('eval term expr) 
         (call/cc (lambda (escape)
@@ -75,24 +74,20 @@
                                             #f)))
                         (if (not subs2)
                             (stream) ; not unifiable, so fail by returning the empty stream
-                            (stream 
-                             (make-response subs2
-                                            (arg:make-argument 
-                                             ; id:
-                                             (gensym 'a)
-                                             ; applicable: 
-                                             #t
-                                             ; weight:
-                                             arg:default-weight
-                                             ; direction:
-                                             'pro
-                                             ; conclusion:
-                                             stmt
-                                             ; premises:
-                                             null
-                                             ; scheme:
-                                             "builtin:eval"))))))))))
-
+                              (stream 
+                               (make-response subs2
+                                              (arg:make-argument 
+                                               ; id:
+                                               (gensym 'a)
+                                               ; direction
+                                               'pro
+                                               ; conclusion:
+                                               stmt
+                                               ; premises:
+                                               null
+                                               ; scheme:
+                                               "builtin:eval"))))))))))
+       
        (stmt 
         ; try to unify stmt with accepted statements in the argument graph
         ; no new arguments are added, but the substitutions are extended
@@ -103,7 +98,7 @@
                                                (lambda (t) t) 
                                                (lambda (msg) #f)
                                                #f)))
-                            (if *debug* (printf "builtins; unify(~a,~a)=~a~%" stmt stmt2 (if subs2 #t #f)))
+                            (if *debug* (printf "(unify ~a ~a) => ~a~%" stmt stmt2 (if subs2 #t #f)))
                             (if (not subs2)
                                 (stream) ; fail
                                 (stream (make-response subs2 #f)))))
