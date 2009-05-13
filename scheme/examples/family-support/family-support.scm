@@ -27,9 +27,6 @@
 (define family-support 
   (lkif-data-rulebase family-data))
 
-(define family-context
-  (lkif-data-context family-data))
-
 
 ;; undue hardship cases
 
@@ -159,7 +156,7 @@
 ; 1. Find the best arguments about whether Tom is obligated to support Gloria, without considering the
 ; issue of undue hardship
 
-(define e1 (make-engine* 50 2 family-context argument-generators))
+(define e1 (make-engine* 50 2 argument:empty-argument-graph argument-generators))
 
 (show1 '(family:obligatedToSupport Max ?y) e1)
 
@@ -183,12 +180,12 @@
 
 ; 3. Construct a context, c2, in which the information collected is assumed to be true.
 
-(define c2 (argument:accept family-context (testimony-statements testimony)))
+(define ag1 (argument:accept argument:empty-argument-graph (testimony-statements testimony)))
 
 ; 4. Using this context, search again for the best arguments about Max's support obligations, to see
 ; if the undue hardship exception now applies.
 
-(define e2 (make-engine* 50 4 c2 argument-generators))
+(define e2 (make-engine* 50 4 ag1 argument-generators))
 (show1 '(family:obligatedToSupport Max ?y) e2)
 
 
