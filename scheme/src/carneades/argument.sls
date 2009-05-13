@@ -26,13 +26,11 @@
          argument-conclusion argument-premises argument-scheme default-weight pro con
          define-argument argument->datum datum->argument argument-variables instantiate-argument add-premise status?
          proof-standard? state question accept reject assign-standard 
-         arguments pro-arguments con-arguments schemes-applied status proof-standard prior
+         statements arguments pro-arguments con-arguments schemes-applied status proof-standard prior
          decided? accepted? rejected? questioned? stated? issue? make-argument-graph empty-argument-graph 
          argument-graph? argument-graph-id argument-graph-title argument-graph-main-issue
          argument-graph-nodes argument-graph-arguments assert-argument assert-arguments 
-         questions facts statements accepted-statements rejected-statements 
-         stated-statements relevant-statements issues relevant?   
-         satisfies? acceptable? holds? applicable? in? out? get-argument
+         relevant? satisfies? acceptable? holds? applicable? in? out? get-argument
          list->argument-graph)
  
  (import (rnrs)
@@ -271,28 +269,34 @@
               null))
  
  ; builds a node-table from a list of statements
+ ; statements->nodes: (list-of statement) -> node table
  (define (statements->nodes s)
    (fold-left (lambda (t s)
-                (table:insert t s (statement->node s)))
-              (table:make-table statement-hash statement=? null)
+                (let ((bucket (table:lookup t 
+                                            (statement-predicate s)
+                                            (table:make-table statement-hash statement=? null)))) 
+                  (table:insert t 
+                                (statement-predicate s) 
+                                (table:insert bucket s (statement->node s)))))
+              (table:make-eq-table null)
               s))              
  
  (define-record-type argument-graph
    (fields id             ; symbol
            title          ; string
            main-issue     ; statement | #f
-           nodes          ; table: statement -> node
+           nodes          ; table: symbol -> statement -> node
            arguments)     ; table: argument-id -> argument 
    (protocol
     (lambda (new)
       (case-lambda 
-        ((id title main-issue nodes arguments)
-         (new id title main-issue nodes arguments))
+        (() (new (gensym) "" #f (table:make-eq-table null) (table:make-eq-table null)))
         ((id title main-issue)
-         (new id title main-issue (table:make-table statement-hash statement=? null) (table:make-eq-table null)))
+         (new id title main-issue (table:make-eq-table null) (table:make-eq-table null)))
         ((id title main-issue statements)
          (new id title main-issue (statements->nodes statements) (table:make-eq-table null)))
-        (() (new (gensym) "" #f (table:make-table statement-hash statement=? null) (table:make-eq-table null)))))))
+        ((id title main-issue nodes arguments)
+         (new id title main-issue nodes arguments)) ))))
  
  (define empty-argument-graph (make-argument-graph))
  
@@ -318,20 +322,32 @@
    (> (argument-weight  a1)
       (argument-weight  a2)))
  
- ; put-node: argument-graph node -> argument-graph 
- (define (put-node ag n)
+ ; get-node-bucket: argument-graph symbol -> table
+ (define (get-node-bucket ag predicate)
+   (table:lookup (argument-graph-nodes ag) 
+                 predicate
+                 (table:make-table statement-hash statement=? null)))
+                 
+ ; get-node: argument-graph statement -> node
+ (define (get-node ag s)
+   (table:lookup (get-node-bucket ag (statement-predicate (statement-atom s))) 
+                 (statement-atom s) 
+                 (statement->node s)))
+ 
+ ; add-node-to-argument-graph: argument-graph node -> argument-graph 
+ ; add a node to the nodes table of an argument graph and replace 
+ ; the nodes table of the argument graph with this new table
+ (define (add-node-to-argument-graph ag n)
    (make-argument-graph (argument-graph-id ag)
                         (argument-graph-title ag)
                         (argument-graph-main-issue ag)
-                        (table:insert (argument-graph-nodes ag) (node-statement n) n) 
+                        (table:insert (argument-graph-nodes ag)
+                                      (statement-predicate (node-statement n))
+                                      (table:insert (get-node-bucket ag (statement-predicate (node-statement n)))
+                                                    (node-statement n) 
+                                                    n)) 
                         (argument-graph-arguments ag)))
- 
- ; get-node: argument-graph statement -> node
- (define (get-node ag s)
-   (table:lookup (argument-graph-nodes ag) 
-                 (statement-atom s)
-                 (statement->node s)))
- 
+  
  ; update-statement: argument-graph statement (or symbol #f) -> argument-graph
  ; updates the nodes for the given statement by changing the status of the 
  ; statment to new-status and recomputing the acceptability of the statement
@@ -341,36 +357,29 @@
  ; is used as a premise, which, recursively, updates the conclusions of these arguments.
  (define (update-statement ag1 s new-status)
    (if *debug* (printf "updating statement: ~s with new status ~s~%" s new-status))
-   (let* ((n1 (get-node ag1 s)))
-     (let* ((old-status (node-status n1))
-            (n2 (make-node (statement-atom s)
-                           (or new-status old-status)
-                           (node-standard n1)
-                           (check-acceptability ag1 (statement-atom s))
-                           (check-acceptability ag1 (statement-complement (statement-atom s)))
-                           (node-premise-of n1)
-                           (node-conclusion-of n1)))
-            (ag2 (make-argument-graph (argument-graph-id ag1)
-                                      (argument-graph-title ag1)
-                                      (argument-graph-main-issue ag1)
-                                      (table:insert (argument-graph-nodes ag1)
-                                                    (statement-atom s)
-                                                    n2)
-                                      (argument-graph-arguments ag1))))
-       (if (and (eq? (node-in? ag1 n1 #t) (node-in? ag2 n2 #t))
-                (eq? (node-in? ag1 n1 #f) (node-in? ag2 n2 #f)))
-           ; then the "in" status of the statement hasn't changed and there's no need to propogate further
-           (begin 
-             (if *debug* (printf "the in status of ~s didn't change.~%" s))
-             ag2)
-           ; else propogate the update to the arguments in which the statement is a premise
-           (fold-right (lambda (arg-id ag)
-                         (let ((arg (get-argument ag arg-id)))
-                           (if arg
-                               (update-argument ag arg)
-                               ag)))
-                       ag2
-                       (node-premise-of n1)))))) 
+   (let* ((n1 (get-node ag1 s)) 
+          (old-status (node-status n1))
+          (n2 (make-node (statement-atom s)
+                         (or new-status old-status)
+                         (node-standard n1)
+                         (check-acceptability ag1 (statement-atom s))
+                         (check-acceptability ag1 (statement-complement (statement-atom s)))
+                         (node-premise-of n1)
+                         (node-conclusion-of n1)))
+          (ag2 (add-node-to-argument-graph ag1 n2))) 
+ 
+     (if (and (eq? (node-in? ag1 n1 #t) (node-in? ag2 n2 #t))
+              (eq? (node-in? ag1 n1 #f) (node-in? ag2 n2 #f)))
+         ; then the "in" status of the statement hasn't changed and there's no need to propogate further
+         ag2
+         ; else propogate the update to the arguments in which the statement is a premise
+         (fold-right (lambda (arg-id ag)
+                       (let ((arg (get-argument ag arg-id)))
+                         (if arg
+                             (update-argument ag arg)
+                             ag)))
+                     ag2
+                     (node-premise-of n1))))) 
  
  ; update-argument: argument-graph argument -> argument-graph
  ; updates the applicability of an argument in an argument graph and propogates 
@@ -419,7 +428,7 @@
  (define (accept ag statements)
    (fold-right (lambda (s ag) 
                  (update-statement ag 
-                                   (statement-atom s) 
+                                   s
                                    (if (statement-positive? s) 
                                        'accepted 
                                        'rejected)))
@@ -430,7 +439,7 @@
  (define (reject ag statements)
    (fold-right (lambda (s ag) 
                  (update-statement ag 
-                                   (statement-atom s)
+                                   s
                                    (if (statement-positive? s) 
                                        'rejected
                                        'accepted)))
@@ -441,19 +450,13 @@
  (define (assign-standard ag ps statements)
    (fold-right (lambda (s ag) 
                  (let ((n (get-node ag s)))
-                   (update-statement (make-argument-graph (argument-graph-id ag)
-                                                          (argument-graph-title ag)
-                                                          (argument-graph-main-issue ag)
-                                                          (table:insert (argument-graph-nodes ag)
-                                                                        (statement-atom s)
-                                                                        (make-node (statement-atom s)
-                                                                                   (node-status n)
-                                                                                   ps ; the new proof standard
-                                                                                   (node-acceptable n)
-                                                                                   (node-complement-acceptable n)
-                                                                                   (node-premise-of n)
-                                                                                   (node-conclusion-of n)))
-                                                          (argument-graph-arguments ag))
+                   (update-statement (add-node-to-argument-graph ag (make-node (statement-atom s)
+                                                                               (node-status n)
+                                                                               ps ; the new proof standard
+                                                                               (node-acceptable n)
+                                                                               (node-complement-acceptable n)
+                                                                               (node-premise-of n)
+                                                                               (node-conclusion-of n)))
                                      s
                                      (node-status n))))
                ag
@@ -535,43 +538,7 @@
  ; An acceptable statement is still an issue, due to nonmonotonicity:
  ; Additional arguments may make the statement unacceptable again.
  (define (issue? ag s) (not (decided? ag s)))
- 
- ; questions: argument-graph -> (list-of statement)
- (define (questions ag)
-   (table:filter-keys (lambda (pair) 
-                        (eq? (node-status (cdr pair)) 'questioned)) 
-                      (argument-graph-nodes ag)))
- 
- ; accepted-statements: argument-graph -> (list-of statement)
- (define (accepted-statements ag)
-   (table:filter-keys (lambda (pair) 
-                        (eq? (node-status (cdr pair)) 'accepted)) 
-                      (argument-graph-nodes ag)))
- 
- ; rejected-statements: argument-graph -> (list-of statement)
- (define (rejected-statements ag)
-   (table:filter-keys (lambda (pair) 
-                        (eq? (node-status (cdr pair)) 'rejected)) 
-                      (argument-graph-nodes ag)))
- 
- ; facts: argument-graph -> (list-of statement)
- ; The "facts" are the accepted statements and the complements 
- ; of the rejected statements
- (define (facts ag)
-   (append (accepted-statements ag)
-           (map (lambda (s) `(not ,s))
-                (rejected-statements ag))))
- 
- ; stated-statements: argument-graph -> (list-of statement)
- (define (stated-statements ag)
-   (table:filter-keys (lambda (pair) 
-                        (eq? (node-status (cdr pair)) 'stated)) 
-                      (argument-graph-nodes ag)))
- 
- ; issues: argument-graph argument-graph -> (list-of statement)
- (define (issues ag)
-   (filter (lambda (s) (issue? ag s)) (statements ag)))
- 
+
  ; all-premises: argument-graph statement -> (list-of premise)
  ; Returns the set of all the premises of all arguments pro or con the 
  ; statement s in the argument graph ag. The set of premises is represented as a list.         
@@ -604,10 +571,15 @@
  ;  goal sentence g in ag if g depends on s in ag 
  (define (relevant? ag s g) (depends-on? ag g s))
  
- ; statements: argument-graph -> (list-of statement)
+ ; statements: argument-graph [symbol] -> (list-of statement)
  ; returns the list of all statements in the argument graph
- (define (statements ag)
-   (table:keys (argument-graph-nodes ag)))
+ (define statements 
+   (case-lambda ((ag) ; retrieve all statements in the argument graph
+                 (apply append (map (lambda (predicate)
+                                      (table:keys (get-node-bucket ag predicate)))
+                                    (table:keys (argument-graph-nodes ag)))))
+                ((ag predicate) ; retrieve all statements with this predicate
+                 (table:keys (get-node-bucket ag predicate)))))
  
  ; relevant-statements: argument-graph statement -> (list-of statement)
  ; (relevant-statements ag g) finds the statements in ag which are
@@ -637,28 +609,29 @@
          (else (let* ((n (or (get-node ag (argument-conclusion arg))
                              (statement->node (argument-conclusion arg))))
                       ; update the node for the conclusion of the argument
-                      (ag1 (put-node ag (make-node (node-statement n)
-                                                   (node-status n)
-                                                   (node-standard n)
-                                                   (node-acceptable n) ; updated below
-                                                   (node-complement-acceptable n) ; updated below
-                                                   (node-premise-of n)
-                                                   (add-string (argument-id arg) 
-                                                               (node-conclusion-of n)))))
+                      (ag1 (add-node-to-argument-graph ag 
+                                                       (make-node (node-statement n)
+                                                                  (node-status n)
+                                                                  (node-standard n)
+                                                                  (node-acceptable n) ; updated below
+                                                                  (node-complement-acceptable n) ; updated below
+                                                                  (node-premise-of n)
+                                                                  (add-string (argument-id arg) 
+                                                                              (node-conclusion-of n)))))
                       ; update or create nodes for each of the premises of the argument
                       (ag2 (fold-right (lambda (p ag1)
                                          (let ((n (or (get-node ag1 (premise-atom p))
                                                       (statement->node (premise-atom p)))))
                                            
-                                           (put-node ag1 
-                                                     (make-node (node-statement n)
-                                                                (node-status n)
-                                                                (node-standard n)
-                                                                (node-acceptable n) ; updated below
-                                                                (node-complement-acceptable n) ; updated below
-                                                                (add-string (argument-id arg)
-                                                                            (node-premise-of n))
-                                                                (node-conclusion-of n)))))
+                                           (add-node-to-argument-graph ag1 
+                                                                       (make-node (node-statement n)
+                                                                                  (node-status n)
+                                                                                  (node-standard n)
+                                                                                  (node-acceptable n) ; updated below
+                                                                                  (node-complement-acceptable n) ; updated below
+                                                                                  (add-string (argument-id arg)
+                                                                                              (node-premise-of n))
+                                                                                  (node-conclusion-of n)))))
                                        ag1
                                        (argument-premises arg))))
                  (update-argument ag2 arg)))))
