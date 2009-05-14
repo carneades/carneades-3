@@ -39,8 +39,8 @@
      (let ((ag2 (state-arguments state))
            (subs (state-substitutions state)))
        (let* ((p (subs goal))
-              (pro-args (pro-arguments ag (statement-atom p)))
-              (con-args (con-arguments ag (statement-atom p))))
+              (pro-args (pro-arguments ag2 (statement-atom p)))
+              (con-args (con-arguments ag2 (statement-atom p))))
          (stream-flatmap 
           (lambda (arg-id)
             (let ((arg (get-argument ag1 arg-id)))

@@ -72,7 +72,7 @@
 ; accepted statements copied from factors of cases
 
 (define (make-context-from-case case)
-  (accept default-context (case-statements case)))
+  (accept empty-argument-graph (case-statements case)))
 
 (define c-vanilla (make-context-from-case vanilla))
 (define c-mason (make-context-from-case mason)) 

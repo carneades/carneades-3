@@ -7,8 +7,8 @@
 
 (define import-data (lkif-import "q1-arguments.xml"))
 
-(define stages (lkif-data-stages import-data))
+(define graphs (lkif-data-argument-graphs import-data))
 
-(define st1 (car stages))
+(define ag1 (car graphs))
 
-(view (stage-argument-graph st1) (stage-context st1))
+(view ag1)
