@@ -24,9 +24,9 @@
  
  (export make-state initial-state state? state-topic state-viewpoint state-pro-goals 
          state-con-goals state-arguments state-substitutions state-candidates
-         opposing-viewpoint switch-viewpoint make-response response? response-argument
-         response-substitutions find-arguments find-best-arguments goal-state? 
-         make-successor-state next-goals)
+         opposing-viewpoint switch-viewpoint replace-argument-graph 
+         make-response response? response-argument response-substitutions find-arguments 
+         find-best-arguments goal-state? make-successor-state next-goals current-goal)
  
  (import (rnrs)
          (rnrs records syntactic)
@@ -108,6 +108,16 @@
                (state-substitutions s)
                (state-candidates s)))
  
+ ; replace-argument-graph: state argument-graph -> state
+ (define (replace-argument-graph s ag)
+    (make-state (state-topic s)
+               (state-viewpoint s)
+               (state-pro-goals s)
+               (state-con-goals s)
+               ag
+               (state-substitutions s)
+               (state-candidates s)))
+ 
  ; next-goals: state -> (list-of (list-of statement)) 
  ; Returns a list representing a disjunction of a conjunction of 
  ; goal statements for the current viewpoint to try to solve in the state
@@ -116,6 +126,12 @@
    (case (state-viewpoint state)
      ((pro) (state-pro-goals state))
      ((con) (state-con-goals state))))
+ 
+ ; current-goal: state -> statement | #f
+ (define (current-goal state)
+   (let* ((goals (next-goals state))
+          (clause (and (not (null? goals)) (car goals))))
+     (and clause (car clause))))
  
  ; questioned-assumptions: (list-of statement) argument-graph -> (list-of statement)
  (define (questioned-assumptions assumptions ag)
