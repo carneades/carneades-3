@@ -1,6 +1,7 @@
 #!r6rs
 
 (import (rnrs)
+        (carneades base)
         (carneades lkif2)
         (prefix (carneades evidence) e:)
         (carneades argument-builtins)
@@ -8,8 +9,6 @@
         (carneades shell)
         (carneades lib srfi lightweight-testing))
 
-
-(define null '())
 
 (define import-data (lkif-import "vat.xml"))
 
@@ -19,6 +18,8 @@
 
 (define form1 
   (e:make-form 
+   ; id
+   'form1
    ; questions
    (list (e:make-question 'placeOfPayingVATFor 'symbol 'one "In which country did \"~A\" take place?")
          (e:make-question 'priceOf 'number 'one "What price was paid in the \"~A\" transaction?"))

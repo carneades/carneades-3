@@ -68,6 +68,11 @@
    (rule r5 
          (if (native-speaker ?x Pa-Dutch)
              (native-speaker ?x German)))
+   
+   (rule r6
+         (if (and (native-speaker ?x German)
+                  (unless (native-speaker ?x Pa-Dutch)))
+             (born ?x Germany)))
    ))
 
 (define dutch-facts

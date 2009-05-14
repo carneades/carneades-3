@@ -29,18 +29,17 @@
 
 (define null '())
 
-; (define import-data (lkif-import "kt-ex1-2.xml"))
-(define import-data (lkif-import "estrella_kT_lkif_1.xml"))
-(define stages (lkif-data-stages import-data))
+(define import-data (lkif-import "kt-ex1-2.xml"))
+(define graphs (lkif-data-argument-graphs import-data))
 
-(define st1 (car stages))
-
-(define ag1 (stage-argument-graph st1))
+(define ag1 (car graphs))
 
 (define witness (e:make-witness "Gerd"))
 
 (define form1 
-  (e:make-form 
+  (e:make-form
+   ; id
+   'form1
    ; questions
    (list (e:make-question 'k473 'boolean 'one "Max 10% of nominal value?"))
    ; help text, in SXML format
@@ -48,13 +47,13 @@
 
 (define testimony (e:make-testimony witness (list form1)))
 
-(define (engine max-nodes max-turns context)
-  (make-engine* max-nodes max-turns context
+(define (engine max-nodes max-turns graph)
+  (make-engine* max-nodes max-turns graph
                 (list  (e:generate-arguments-from-testimony testimony) ; ask the user first
                        (generate-arguments-from-argument-graph ag1))))
 
 
-(define e1 (engine 20 1 argument:default-context))
+(define e1 (engine 20 1 argument:empty-argument-graph))
   
 ;(check (all-in? 'k473 e1) => #t)  ; max 10% of nominal value   
 ;(check (all-in? 'k472 e1) => #t)  ; cash payment

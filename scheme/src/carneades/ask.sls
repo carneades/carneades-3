@@ -20,11 +20,15 @@
  
  ; Provides a way to ask users questions. Designed for use with dialogue managers and form servers.
  
- (export ask-user)
+ (export ask-user reply)
 
  (import (rnrs)
          (carneades base)
+         (only (carneades system) gensym)
+         (carneades statement)
          (carneades stream)
+         (carneades unify)
+         (carneades argument)
          (carneades argument-search))
    
  ; type generator: statement state -> (stream-of response)
@@ -36,6 +40,29 @@
        (if (askable? g)
            (raise `(ask ,g ,state))
            (stream))))) ; empty stream
-             
+ 
+ 
+ ; reply: state statement statement -> response
+ ; reply constructs a response from an answer by 
+ ; unifying the answer and question using the substitutions
+ ; of the prior state and constructing an argument from the answer.
+ (define (reply state question answer)
+   (let* ((subs1 (state-substitutions state))
+          (subs2 (unify* question
+                         answer
+                         subs1                                        
+                         (lambda (t) t) 
+                         (lambda (msg) #f) 
+                         #f)))
+     (if (not subs2)
+         state
+         (make-response subs2
+                        (make-argument (gensym 'a)
+                                       (if (statement-positive? question)
+                                           'pro
+                                           'con)
+                                       (statement-atom answer) 
+                                       null 
+                                       "ask")))))
  
  ) ;end of module
