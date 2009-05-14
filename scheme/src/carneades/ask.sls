@@ -42,27 +42,32 @@
            (stream))))) ; empty stream
  
  
- ; reply: state statement statement -> response
- ; reply constructs a response from an answer by 
- ; unifying the answer and question using the substitutions
- ; of the prior state and constructing an argument from the answer.
- (define (reply state question answer)
-   (let* ((subs1 (state-substitutions state))
-          (subs2 (unify* question
-                         answer
-                         subs1                                        
-                         (lambda (t) t) 
-                         (lambda (msg) #f) 
-                         #f)))
-     (if (not subs2)
-         state
-         (make-response subs2
-                        (make-argument (gensym 'a)
-                                       (if (statement-positive? question)
-                                           'pro
-                                           'con)
-                                       (statement-atom answer) 
-                                       null 
-                                       "ask")))))
+ ; reply: state statement -> state
+ ; reply constructs a successor state from an answer by 
+ ; unifying the answer with the current goal of the prior state 
+ ; and asserting an argument claiming the answer is true.
+ ; If the answer is unifiable with the current goal, then the goal is 
+ ; considered solved by the answer and removed from the
+ ; list of goals in the successor state.
+ (define (reply state answer)
+   (let* ((question (current-goal state))
+          (subs1 (state-substitutions state))
+          (subs2 (and question 
+                      (unify* question
+                              answer
+                              subs1                                        
+                              (lambda (t) t) 
+                              (lambda (msg) #f) 
+                              #f)))
+          (arg (make-argument (gensym 'a)
+                              (if (statement-positive? question)
+                                  'pro
+                                  'con)
+                              (statement-atom answer) 
+                              null 
+                              "claim")))
+     (if subs2
+         (make-successor-state state (make-response subs2 arg))
+         (replace-argument-graph state (assert-argument (state-arguments state) arg)))))
  
  ) ;end of module

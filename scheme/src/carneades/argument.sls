@@ -127,6 +127,16 @@
  (define (con id conclusion premises)
    (make-argument id #f default-weight 'con conclusion premises ""))
  
+ ; assign-applicability: argument boolean -> argument
+ (define (assign-applicability arg new-applicability)
+   (make-argument (argument-id arg)
+                  new-applicability
+                  (argument-weight arg)
+                  (argument-direction arg)
+                  (argument-conclusion arg)
+                  (argument-premises arg)
+                  (argument-scheme arg)))
+ 
  (define-syntax define-argument ; TODO: revise to use the argument->datum format 
    (syntax-rules (pro con and)
      ((define-argument id (pro conclusion premise ...))
@@ -390,18 +400,14 @@
    (let* ((old-applicability (argument-applicable arg))
           (new-applicability (all-premises-hold? ag arg))
           (ag2 (make-argument-graph (argument-graph-id ag)
-                                            (argument-graph-title ag)
-                                            (argument-graph-main-issue ag)
-                                            (argument-graph-nodes ag)
-                                            (table:insert (argument-graph-arguments ag)
-                                                          (argument-id arg)
-                                                          (make-argument (argument-id arg)
-                                                                         new-applicability
-                                                                         (argument-weight arg)
-                                                                         (argument-direction arg)
-                                                                         (argument-conclusion arg)
-                                                                         (argument-premises arg)
-                                                                         (argument-scheme arg))) )))
+                                    (argument-graph-title ag)
+                                    (argument-graph-main-issue ag)
+                                    (argument-graph-nodes ag)
+                                    (table:insert (argument-graph-arguments ag)
+                                                  (argument-id arg)
+                                                  (assign-applicability arg 
+                                                                        new-applicability)))))
+     
      (if (eq? old-applicability new-applicability)
          ag2
          ; update the applicability of the new argument and propogate the change
@@ -598,10 +604,11 @@
  ; new argument. A node for the conclusion of the argument is added to the node table of the 
  ; argument graph if one does not yet exist. It is the responsiblity of the
  ; protocol to question the conclusion of the argument, if this is wanted.
+ ; The "applicable" field of the argument is changed to #f before it is updated to assure
+ ; the the acceptabiity of its conclusion is checked if the argument is in fact applicable.
  
  (define (assert-argument ag arg)
    (cond ((not (cycle-free? arg ag))
-          ; (error "assert-argument: cyclic argument." arg))
           ; just ignore the argument if it would introduce a cycle
           (if *debug*
               (printf "This argument would cause a cycle:~%~a~%" (argument->datum arg)))
@@ -634,7 +641,9 @@
                                                                                   (node-conclusion-of n)))))
                                        ag1
                                        (argument-premises arg))))
-                 (update-argument ag2 arg)))))
+                 (update-argument ag2 (if (not (argument-applicable arg)) ; safety check
+                                          arg 
+                                          (assign-applicability arg #f)))))))
  
  ; assert-arguments: argument-graph (list-of argument) -> argument-graph
  ; asserts a list of arguments
