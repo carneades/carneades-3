@@ -3,7 +3,7 @@
 (import (rnrs base)
         (rnrs hashtables)
         (prefix (rnrs lists) list:)
-        (prefix (carneades lkif) lkif:)
+        (prefix (carneades lkif2) lkif:)
         (carneades statement)
         (carneades shell)
         (carneades stream)
@@ -16,14 +16,15 @@
 
 (define null '())
 
-(define imports (lkif:import "kt-ex1.xml"))
-(define texts (index-by-id (list:filter text? imports)))  
-(define ag1 (car (list:filter argument:argument-graph? imports)))
+(define lkif-data (lkif:lkif-import "kt-ex1.xml"))
+ 
+(define ag1 (car (lkif:lkif-data-argument-graphs lkif-data)))
 
 (define witness (e:make-witness "Gerd"))
 
 (define form1 
   (e:make-form 
+   'form1
    ; questions
    (list (e:make-question 'k473 'boolean 'one "Max 10% of nominal value?"))
    ; help text, in SXML format
@@ -33,31 +34,15 @@
 
 
 
-; engine integer integer context -> statement -> (stream-of argument-state)
-(define (engine max-nodes max-turns context)
-  (make-engine* max-nodes max-turns context
+; engine integer integer argument-graph -> statement -> (stream-of argument-state)
+(define (engine max-nodes max-turns ag)
+  (make-engine* max-nodes max-turns ag
                 (list  (e:generate-arguments-from-testimony testimony) ; ask the user first
                        (generate-arguments-from-argument-graph ag1))))
 
 
-(define c1 (argument:accept argument:default-context (list 'k473)))
-(define e1 (engine 20 1 argument:default-context))
-
-
-; view1: statement (statement -> (stream-of argument-state)) -> void
-; view a diagram of argument graph of the first state in a stream of states.
-(define (view1 query engine)
-  (let ((str (engine query)))
-    (if (not (stream-null? str)) 
-        (let ((s (stream-car str)))
-          (view* (state-arguments s)
-                 (state-context s)
-                 (lambda (x) x)
-                 (lambda (stmt)
-                   (let ((txt (hashtable-ref texts stmt #f)))
-                     (if (and txt (not (equal? (text-summary txt) "")))
-                         (text-summary txt)
-                         stmt))))))))
+(define c1 (argument:accept argument:empty-argument-graph (list 'k473)))
+(define e1 (engine 20 1 argument:empty-argument-graph))
 
 ;(check (all-in? 'k473 e1) => #t)  ; max 10% of nominal value   
 ;(check (all-in? 'k472 e1) => #t)  ; cash payment
@@ -70,4 +55,4 @@
 ; Answer: (all #t)
 
 (ask1 'k470 e1) 
-; (view1 'k470 e1) 
+; (show1 'k470 e1) 

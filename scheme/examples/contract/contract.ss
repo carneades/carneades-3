@@ -6,8 +6,8 @@
 
 (define import-data (lkif-import "contract.xml"))
 
-(define stages (lkif-data-stages import-data))
+(define argument-graphs (lkif-data-argument-graphs import-data))
 
-(define st1 (car stages))
+(define ag1 (car argument-graphs))
 
-(view (stage-argument-graph st1) (stage-context st1))
+(view ag1)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="file:/Users/tgo/Documents/Projects/Carneades/dist/schemas/lkif.rnc" type="compact"?>
+<?oxygen RNGSchema="../../../schemas/LKIF2.rnc" type="compact"?>
 <lkif>
     <s id="k639" summary="permanent establish- ment situated in MS"/>
     <s id="k581" summary="one company"/>
