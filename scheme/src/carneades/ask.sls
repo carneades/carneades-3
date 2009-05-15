@@ -20,7 +20,7 @@
  
  ; Provides a way to ask users questions. Designed for use with dialogue managers and form servers.
  
- (export ask-user reply make-answer answer-predicate answer-subject answer-values answer-closed)
+ (export ask-user reply make-answer answer-predicate answer-subject answer-values answer-closed answer-statements)
 
  (import (rnrs)
          (carneades base)
