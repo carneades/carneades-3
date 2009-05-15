@@ -62,13 +62,13 @@
            )
    (sealed #t))
  
- ; answer-statements: answer -> (stream-of statement)
+ ; answer-statements: answer -> (list-of statement)
  (define (answer-statements answer)
-   (list->stream (map (lambda (value)
-                        (list (answer-predicate answer)
-                              (answer-subject answer)
-                              value))
-                      (answer-values answer))))
+   (map (lambda (value)
+          (list (answer-predicate answer)
+                (answer-subject answer)
+                value))
+        (answer-values answer)))
   
  ; reply: state statement (list-of answer) -> (stream-of response)
  ; to do: handle negative goals, using the limited "closed-world assertion" discussed above.
@@ -84,6 +84,6 @@
                          (if (not subs2)
                              (stream) ; fail
                              (stream (make-response subs2 (make-argument (gensym 'a) 'pro stmt null "claim"))))))
-                     (stream-flatmap answer-statements (list->stream answers)))))
+                     (list->stream (apply append (map answer-statements answers))))))
  
  ) ;end of module
