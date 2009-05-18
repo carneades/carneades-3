@@ -44,9 +44,9 @@
 
 (display (string=? d1 d2))
 (newline)
-(display (all-in? '(flies ?bird) lkif-engine1))
+(display (succeed? '(flies ?bird) lkif-engine1))
 (newline)
-(display (not (some-in? '(flies ?bird) lkif-engine2)))
+(display (fail? '(flies ?bird) lkif-engine2))
 
 
 

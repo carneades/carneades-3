@@ -56,7 +56,6 @@
    (stream-lambda (stream)
      (stream-accumulate stream-interleave stream-null stream)))
  
- 
  (define stream-flatmap 
    (stream-lambda (f s) (stream-flatten (stream-map f s))))
  

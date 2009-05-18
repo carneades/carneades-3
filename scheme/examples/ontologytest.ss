@@ -47,15 +47,15 @@
 
 (define e1 (engine 100 10))
 
-(check (all-in? '(parent ?x ?y) e1) => #t)
-(check (all-in? '(ancestor ?x ?y) e1) => #t)
-(check (all-in? '(ancestor Caroline ?y) e1) => #t)
-(check (all-in? '(ancestor Caroline Tom) e1) => #t)
-(check (no-argument-found? '(parent Hildegard Tom) e1) => #t)
-(check (all-in? '(ancestor Caroline Gloria) e1) => #t)
-(check (all-in? '(applies ?r (parent ?x ?y)) e1) => #t)
-(check (all-in? '(Father Tom) e1) => #t)
-(check (all-in? '(Mother Ines) e1) => #t)
+(check (succeed? '(parent ?x ?y) e1) => #t)
+(check (succeed? '(ancestor ?x ?y) e1) => #t)
+(check (succeed? '(ancestor Caroline ?y) e1) => #t)
+(check (succeed? '(ancestor Caroline Tom) e1) => #t)
+(check (fail? '(parent Hildegard Tom) e1) => #t)
+(check (succeed? '(ancestor Caroline Gloria) e1) => #t)
+(check (succeed? '(applies ?r (parent ?x ?y)) e1) => #t)
+(check (succeed? '(Father Tom) e1) => #t)
+(check (succeed? '(Mother Ines) e1) => #t)
 
 (check-report)
 

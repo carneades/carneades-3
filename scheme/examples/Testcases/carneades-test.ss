@@ -68,8 +68,6 @@
   ; string-length of d1 should be 690
   (define d1 (call-with-values open-string-output-port (lambda (port extract)
                                                          (diagram* tweety-graph
-                                                                   c1
-                                                                   identity
                                                                    (lambda (s) (format "~a" s))
                                                                    port)
                                                          (extract))))
@@ -142,7 +140,7 @@
   ; accepted statements copied from factors of cases
   
   (define (make-context-from-case case)
-    (accept default-context (case-statements case)))
+    (accept empty-argument-graph (case-statements case)))
   
   (define c-vanilla (make-context-from-case vanilla))
   (define c-disclose (make-context-from-case disclose))
@@ -164,32 +162,32 @@
   ; to do: further and more systematic tests
   
   ; AS1: Main Scheme  
-  (run-single-test (all-in? 'trade-secret-violation (cbr-engine 50 4 bribe-cb c-as1))
+  (run-single-test (succeed? 'trade-secret-violation (cbr-engine 50 4 bribe-cb c-as1))
                    "case: AS1 - Main Scheme"
                    "case: 'trade-secret-violation should be in! (AS1)")
   
   ; AS2: Preference-From-Precedent Scheme
-  (run-single-test (all-in? '(factors-favor plaintiff trade-secret-violation) (cbr-engine 50 4 bribe-cb c-as2))
+  (run-single-test (succeed? '(factors-favor plaintiff trade-secret-violation) (cbr-engine 50 4 bribe-cb c-as2))
                    "case: AS2 - Preference-From-Precedent Scheme"
                    "case: '(factors-favor plaintiff trade-secret-violation) should be in! (AS2)")
   
   ; AS3: Precedent-Stronger Scheme
-  (run-single-test (all-in? '(distinguishable defendant "Bribe") (cbr-engine 50 4 bribe-cb c-vanilla))
+  (run-single-test (succeed? '(distinguishable defendant "Bribe") (cbr-engine 50 4 bribe-cb c-vanilla))
                    "case: AS3 - Precedent-Stronger Scheme"
                    "case: '(distinguishable defendant \"Bribe\") should be in! (AS3)")
   
   ; AS4: Current-Case-Weaker Scheme
-  (run-single-test (all-in? '(distinguishable defendant "Vanilla") (cbr-engine 50 4 vanilla-cb c-disclose))
+  (run-single-test (succeed? '(distinguishable defendant "Vanilla") (cbr-engine 50 4 vanilla-cb c-disclose))
                    "case: AS4 - Current-Case-Weaker Scheme"
                    "case: '(distinguishable defendant \"Vanilla\") should be in! (AS4)")
   
   ; Counterexample: More-On-Point Scheme
-  (run-single-test (all-in? '(has-counterexample defendant "Reverse") (cbr-engine 50 4 wyner-cb c-mop))
+  (run-single-test (succeed? '(has-counterexample defendant "Reverse") (cbr-engine 50 4 wyner-cb c-mop))
                    "case: Counterexample - More-On-Point Scheme"
                    "case: '(has-counterexample defendant \"Reverse\") should be in! (Counterexample)")
   
   ; Downplay-Precedent-Stronger Scheme
-  (run-single-test (all-in? '(downplay precedent-stronger plaintiff "Deceit") (cbr-engine 50 4 wyner-cb c-bribe))
+  (run-single-test (succeed? '(downplay precedent-stronger plaintiff "Deceit") (cbr-engine 50 4 wyner-cb c-bribe))
                    "case: Downplay-Precedent-Stronger Scheme"
                    "case '(downplay precedent-stronger plaintiff \"Deceit\") should be in! (Downplay-Precedent-Stronger)")
   
@@ -428,7 +426,7 @@
   ; engine integer integer (list-of symbol) -> statement -> (stream-of argument-state)
   (define (engine max-nodes max-turns rules assumptions critical-questions)
     (make-engine* max-nodes max-turns 
-                  (accept default-context assumptions)
+                  (accept empty-argument-graph assumptions)
                   (list (generate-arguments-from-rules rules critical-questions) 
                         builtins
                         )))
@@ -438,65 +436,65 @@
   
   ; -- taken from rule-tests
   
-  (run-single-test (all-in? '(bird Tweety) (engine 20 1 rb1 as1 null))
+  (run-single-test (succeed? '(bird Tweety) (engine 20 1 rb1 as1 null))
                    "simple rules"
                    "rule test: (bird Tweety) should be acceptable! (simple)")
   
-  (run-single-test (all-in? '(bird ?x) (engine 20 1 rb1 as1 null))
+  (run-single-test (succeed? '(bird ?x) (engine 20 1 rb1 as1 null))
                    "simple rules with variables"
                    "rule test: (bird Tweety) should be acceptable! (simple variables)")
   
   ; coins are money
-  (run-single-test (all-in? '(money item1) (engine 20 1 rb1 as1 null))
+  (run-single-test (succeed? '(money item1) (engine 20 1 rb1 as1 null))
                    "simple rules"
                    "rule test: (money item1) should be acceptable! (simple)")
   
-  (run-single-test (all-in? '(prior ?r1 ?r2) (engine 20 1 rb1 as1 null))
+  (run-single-test (succeed? '(prior ?r1 ?r2) (engine 20 1 rb1 as1 null))
                    "rules with conjunctions"
                    "rule test: (prior r6 r1) should be acceptable! (conjunction)")
   
   ; disjunction of atomic statements
-  (run-single-test (all-in? '(p3 b) (engine 20 1 rb1 as1 null))
+  (run-single-test (succeed? '(p3 b) (engine 20 1 rb1 as1 null))
                    "rules with disjunctions of atomic statements"
                    "rule test: (p3 a) should be acceptable! (disjunction of atomic statements)")
   
   ; disjunction of conjunctions
-  (run-single-test (all-in? '(p9 a) (engine 20 1 rb1 as1 null))
+  (run-single-test (succeed? '(p9 a) (engine 20 1 rb1 as1 null))
                    "rules with disjunctions of conjunctions"
                    "rule test: (p9 a) should be acceptable! (disjunction of conjunction)")
   
   ; find pro argument
-  (run-single-test (all-in? '(goods item1) (engine 20 1 rb1 as1 null))
+  (run-single-test (succeed? '(goods item1) (engine 20 1 rb1 as1 null))
                    "rules with one turn"
                    "rule test: (goods item1) should be acceptable! (one turn)")
   
   ; unless money exception
-  (run-single-test (not (all-in? '(goods item1) (engine 20 2 rb1 as1 null)))
+  (run-single-test (fail? '(goods item1) (engine 20 2 rb1 as1 null))
                    "rules with two turns"
                    "rule test: (goods item1) should not be acceptable! (2 turns - exception)")
     
   ; repealed rules are not valid
-  (run-single-test (not (all-in? '(convenient item1) (engine 20 2 rb1 as1 '(valid))))
+  (run-single-test (fail? '(convenient item1) (engine 20 2 rb1 as1 '(valid)))
                    "repealed rules should not be acceptable"
                    "rule test: (convenient item1) should not be acceptable! (repealed rules are not valid)")
   
   ; lex posterior
-  (run-single-test (not (all-in? '(goods item2) (engine 20 2 rb1 as1 '(priority)))) 
+  (run-single-test (fail? '(goods item2) (engine 20 2 rb1 as1 '(priority)))
                    "lex posterior rules"
                    "rule test: (goods item2) should not be acceptable! (lex posterior)")
   
   ; to do: fix the following test. The success predicate tests only whether one is found, not all  
-  ; (test-true "multiple rule conclusions" (all-in? '(convenient ?x)) (engine 20 1 null))
+  ; (test-true "multiple rule conclusions" (succeed? '(convenient ?x)) (engine 20 1 null))
   
-  (run-single-test (all-in? '(not (goods item2)) (engine 20 3 rb1 as1 null)) 
+  (run-single-test (succeed? '(not (goods item2)) (engine 20 3 rb1 as1 null)) 
                    "rules with 3 turns and negated query"
                    "rule test: (not (goods item2)) should be acceptable! (3 turns - negated query)")
   
-  (run-single-test (not (all-in? '(flies Tweety) (engine 20 2 rb1 as1 '(excluded))))
+  (run-single-test (fail? '(flies Tweety) (engine 20 2 rb1 as1 '(excluded)))
                    "exclusionary rules"
                    "rule test: (flies Tweety) should not be acceptable! (exclusionary)")
   
-  (run-single-test (all-in? '(applies ?r (goods ?x)) (engine 20 1 rb1 as1 null))
+  (run-single-test (succeed? '(applies ?r (goods ?x)) (engine 20 1 rb1 as1 null))
                    "rules with applies"
                    "rule test: (applies (goods item1)) and (applies (goods item2)) shpuld be acceptable! (applies)")
   
@@ -504,12 +502,12 @@
   ; to do: test rules with negative conclusions
   
   ; reverse a list
-  (run-single-test (all-in? '(p11 ?x) (engine 20 1 rb1 as1 null)) 
+  (run-single-test (succeed? '(p11 ?x) (engine 20 1 rb1 as1 null)) 
                    "rules with eval (reverse)"
                    "rule test: (p11 (e d c b a)) should be acceptable! (eval)")
   
   ; calculations
-  (run-single-test (all-in? '(taxable-income Sam ?x) (engine 20 1 rb1 as1 null))
+  (run-single-test (succeed? '(taxable-income Sam ?x) (engine 20 1 rb1 as1 null))
                    "rules with eval (calculation)"
                    "rule test: (taxable-income Sam 53000) should be acceptable! (eval)")
   
@@ -519,56 +517,56 @@
   
   ; -- Royal Elephant Benchmark
   
-  (run-single-test (some-in? '(gray ?x) (engine 20 2 elephants-rulebase elephant-facts null))
+  (run-single-test (succeed? '(gray ?x) (engine 20 2 elephants-rulebase elephant-facts null))
                    "rules: Royal Elephant Benchmark 1"
                    "rule test: (gray dumbo) should be acceptable! (Royal Elephant Benchmark)")
   
-  (run-single-test (some-in? '(not (gray ?x)) (engine 20 2 elephants-rulebase elephant-facts null))
+  (run-single-test (succeed? '(not (gray ?x)) (engine 20 2 elephants-rulebase elephant-facts null))
                    "rules: Royal Elephant Benchmark 2"
                    "rule test: (not (gray clyde)) should be acceptable! (Royal Elephant Benchmark)")
   
   ; -- Pennsylvania Dutch Benchmark
   
-  (run-single-test (some-in? '(born ?x ?y) (engine 20 2 dutch-rulebase dutch-facts null))
+  (run-single-test (succeed? '(born ?x ?y) (engine 20 2 dutch-rulebase dutch-facts null))
                    "rules: Pennsylvania Dutch Benchmark 1"
                    "rule test: (born Herman America) should be acceptable! (Pennsylvania Dutch Benchmark)")
 
   
-  (run-single-test (some-in? '(not (born ?x America)) (engine 20 2 dutch-rulebase dutch-facts null))
+  (run-single-test (succeed? '(not (born ?x America)) (engine 20 2 dutch-rulebase dutch-facts null))
                    "rules: Pennsylvania Dutch Benchmark 2"
                    "rule test: (not (born Fritz America)) should be acceptable! (Pennsylvania Dutch Benchmark)")
   
   ; -- Gullible Citizens Benchmark
   
-  (run-single-test (some-in? '(not (like ?x ?y)) (engine 20 2 gullible-rulebase gullible-facts '(excluded)))
+  (run-single-test (succeed? '(not (like ?x ?y)) (engine 20 2 gullible-rulebase gullible-facts '(excluded)))
                    "rules: Gullible Citizens Benchmark 1"
                    "rule test: (not (like John Dick)) should be acceptable! (Gullible Citizens Benchmark)")
   
-  (run-single-test (not (some-in? '(not (like Fred Dick)) (engine 20 2 gullible-rulebase gullible-facts '(excluded))))
+  (run-single-test (fail? '(not (like Fred Dick)) (engine 20 2 gullible-rulebase gullible-facts '(excluded)))
                    "rules: Gullible Citizens Benchmark 2"
                    "rule test: (not (like Fred Dick)) should not be acceptable! (Gullible Citizens Benchmark)")
   
   ; -- Blocks World Benchmark
   
-  (run-single-test (some-in? '(block ?x) (engine 20 2 blocks-world-rulebase blocks-world-facts '(excluded)))
+  (run-single-test (succeed? '(block ?x) (engine 20 2 blocks-world-rulebase blocks-world-facts '(excluded)))
                    "rules: Blocks World Benchmark 1"
                    "rule test: (block C), (block B) and (block A) should be acceptable! (Blocks World Benchmark)")
   
-  (run-single-test (some-in? '(on ?x table) (engine 20 2 blocks-world-rulebase blocks-world-facts '(excluded)))
+  (run-single-test (succeed? '(on ?x table) (engine 20 2 blocks-world-rulebase blocks-world-facts '(excluded)))
                    "rules: Blocks World Benchmark 2"
                    "rule test: (on C table) should be acceptable! (Blocks World Benchmark)")
   
-  (run-single-test (some-in? '(not (on ?x table)) (engine 20 2 blocks-world-rulebase blocks-world-facts '(excluded)))
+  (run-single-test (succeed? '(not (on ?x table)) (engine 20 2 blocks-world-rulebase blocks-world-facts '(excluded)))
                    "rules: Blocks World Benchmark 3"
                    "rule test: (not (on B table)) should be acceptable! (Blocks World Benchmark)")
   
   ; -- Dancer Benchmark
   
-  (run-single-test (some-in? '(dancer Sally) (engine 50 2 dancer-rulebase dancer-facts '(excluded)))
+  (run-single-test (succeed? '(dancer Sally) (engine 50 2 dancer-rulebase dancer-facts '(excluded)))
                    "rules: Dancer Benchmark 1"
                    "rule test: (dancer Sally) should be acceptable! (Dancer Benchmark)")
   
-  (run-single-test (not (some-in? '(ballerina Sally) (engine 50 2 dancer-rulebase dancer-facts '(excluded))))
+  (run-single-test (fail? '(ballerina Sally) (engine 50 2 dancer-rulebase dancer-facts '(excluded)))
                    "rules: Dancer Benchmark 2"
                    "rule test: (ballerina Sally) should not be acceptable! (Dancer Benchmark)")
   
@@ -653,63 +651,63 @@
   
   (printn "starting with ontology tests ...")
   
-  (run-single-test (all-in? '(c2 i1) e1)
+  (run-single-test (succeed? '(c2 i1) e1)
                    "ontologies: dlpcinclusion (simple)"
                    "ontology test: (c2 i1) should be acceptable! (dlpcinclusion - simple)")
   
-  (run-single-test (and (all-in? '(c3 i2) e1)
-                        (all-in? '(c4 i2) e1))
+  (run-single-test (and (succeed? '(c3 i2) e1)
+                        (succeed? '(c4 i2) e1))
                    "ontologies: dlpcinclusion (conjunction)"
                    "ontology test: (c3 i2) and (c4 i2) should be acceptable! (dlpcinclusion - conjunction)")
   
-  (run-single-test (and (all-in? '(c9 i33) e1)
-                        (all-in? '(c9 i44) e1))
+  (run-single-test (and (succeed? '(c9 i33) e1)
+                        (succeed? '(c9 i44) e1))
                    "ontologies: dlpcinclusion (disjunction and univrestriction)"
                    "ontology test: (c9 i33) and (c9 i44) should be acceptable! (dlpcinclusion - disjunction and univrestriction)")
   
-  (run-single-test (all-in? '(c12 i5) e1)
+  (run-single-test (succeed? '(c12 i5) e1)
                    "ontologies: dlpcinclusion (existrestriction)"
                    "ontology test: (c2 i5) should be acceptable! (dlpcinclusion - existrestriction)")
   
-  (run-single-test (and (all-in? '(c13 i7) e1)
-                        (all-in? '(c14 i8) e1))
+  (run-single-test (and (succeed? '(c13 i7) e1)
+                        (succeed? '(c14 i8) e1))
                    "ontologies: dlpcequivalence (simple)"
                    "ontology test: (c13 i7) and (c14 i8) should be acceptable! (dlpcequivalence - simple)")
   
-  (run-single-test (and (all-in? '(c15 i9) e1)
-                        (all-in? '(c16 i9) e1)
-                        (all-in? '(c17 i10) e1)
-                        (all-in? '(c18 i10) e1))
+  (run-single-test (and (succeed? '(c15 i9) e1)
+                        (succeed? '(c16 i9) e1)
+                        (succeed? '(c17 i10) e1)
+                        (succeed? '(c18 i10) e1))
                    "ontologies: dlpcequivalence (conjunction)"
                    "ontology test: (c15 i9), (c16 i9), (c17 i10) and (c18 i10) should be acceptable! (dlpcequivalence - conjunction)")
   
-  (run-single-test (all-in? '(c19 i12) e1)
+  (run-single-test (succeed? '(c19 i12) e1)
                    "ontologies: dlprange"
                    "ontology test: (c19 i12) should be acceptable! (dlprange)")
   
-  (run-single-test (all-in? '(c20 i11) e1)
+  (run-single-test (succeed? '(c20 i11) e1)
                    "ontologies: dlpdomain"
                    "ontology test: (c20 i11) should be acceptable! (dlpdomain)")
   
-  (run-single-test (all-in? '(r4 i13 i14) e1)
+  (run-single-test (succeed? '(r4 i13 i14) e1)
                    "ontologies: dlprinclusion"
                    "ontology test: (r4 i13 i14) should be acceptable! (dlprinclusion)")
   
-  (run-single-test (and (all-in? '(r5 i15 i16) e1)
-                        (all-in? '(r6 i17 i18) e1))
+  (run-single-test (and (succeed? '(r5 i15 i16) e1)
+                        (succeed? '(r6 i17 i18) e1))
                    "ontologies: dlprequivalence"
                    "ontology test: (r5 i15 i16) and (r6 i17 i18) should be acceptable! (dlprequivalence)")
   
-  (run-single-test (and (all-in? '(r8 i20 i19) e1)
-                        (all-in? '(r7 i22 i21) e1))
+  (run-single-test (and (succeed? '(r8 i20 i19) e1)
+                        (succeed? '(r7 i22 i21) e1))
                    "ontologies: dlpinverse"
                    "ontology test: (r8 i20 i19) and (r7 i22 i21) should be acceptable! (dlpinverse)")
   
-  (run-single-test (all-in? '(r9 i23 i25) e1)
+  (run-single-test (succeed? '(r9 i23 i25) e1)
                    "ontologies: dlptransitivity"
                    "ontology test: (r9 i23 i25) should be acceptable! (dlptransitivity)")
   
-  (run-single-test (all-in? '(c21 i27) e1)
+  (run-single-test (succeed? '(c21 i27) e1)
                    "ontologies: dlpassertion (univrestriction)"
                    "ontology test: (c21 i27) should be acceptable! (dlpassertion - univrestriction)")
   
@@ -731,22 +729,20 @@
   
   (define src2 (cadr sources))
   
-  (define axioms (lkif-data-context i))
+  ; (define axioms (lkif-data-context i))
   
   (define rb1 (lkif-data-rulebase i))
   
-  (define stages (lkif-data-stages i))
+  (define argument-graphs (lkif-data-argument-graphs i))
   
-  (define stage1 (car stages))
+  (define ag1 (car argument-graphs))
   
-  ;(view (stage-argument-graph stage1) (stage-context stage1))
+  ;(view (stage-argument-graph ag1))
   
   ; d1 should have a string-length of 645 
   (define d1 (call-with-values open-string-output-port 
                                (lambda (p e)
-                                 (diagram* (stage-argument-graph stage1)
-                                           (stage-context stage1)
-                                           identity 
+                                 (diagram* ag1
                                            (lambda (s) (format "~a" s)) p)
                                  (e))))  
   
@@ -760,7 +756,7 @@
   
   (define (engine max-nodes max-turns critical-questions)
     (make-engine* max-nodes max-turns
-                  axioms
+                  empty-argument-graph
                   (list (generate-arguments-from-rules rb1 critical-questions) builtins)))
   
   (define lkif-engine1 (engine 20 2 '()))
@@ -779,11 +775,11 @@
                    "lkif-import: argument-diagram"
                    "lkif-import test: the imported diagram is not identical with the presetting")
   
-  (run-single-test (all-in? '(flies ?bird) lkif-engine1)
+  (run-single-test (succeed? '(flies ?bird) lkif-engine1)
                    "lkif-import: rule-base (simple)"
                    "lkif-import test: (flies Tweety) should be acceptable (simple)")
   
-  (run-single-test (not (some-in? '(flies ?bird) lkif-engine2))
+  (run-single-test (fail? '(flies ?bird) lkif-engine2)
                    "lkif-import: rule-base (excluded)"
                    "lkif-import test: (flies Tweety) should not be acceptable (excluded)")
   
