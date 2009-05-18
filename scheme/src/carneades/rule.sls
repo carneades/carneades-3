@@ -30,7 +30,8 @@
  (export rule rule* make-rule rule? rule-id rule-strict rule-head rule-body 
          rule-critical-questions empty-rulebase rulebase rulebase? get-rule
          add-rules rulebase-rules generate-arguments-from-rules rule->datum
-         rulebase->datum (rename (make-head make-rule-head) (make-body make-rule-body)))
+         rulebase->datum (rename (make-head make-rule-head) (make-body make-rule-body))
+         get-clauses)
  
  (import (rnrs)
          (rnrs lists)
@@ -220,7 +221,7 @@
       (case question
         ((excluded) 
          (argument:ex (make-fatom "Rule ~a is excluded for ~a." `(excluded ,rid ,s))))
-         ; (argument:ex (make-fatom "ex(~a,~a)" `(excluded ,rid ,s))))
+         ; (argument:ex `(excluded ,rid ,s)))
         ((priority) 
          (argument:ex (make-fatom "Rule ~a has priority over rule ~a with respect to ~a."
                                              `(priority ,(genvar) ,rid ,s))))
@@ -314,29 +315,6 @@
   ; rulebase: rule ... -> rulebase
   (define (rulebase . l)  (add-rules empty-rulebase l))
   
-  ; get-rules: argument-graph rulebase goal -> (list-of rule)
-  ; Rules previously applied to a goal are not tried again.
-  ; This doesn't impair completeness, since each conclusion of a rule 
-  ; will be applied to the goal. 
-  (define (get-rules args rb1 goal)
-    (let* ((pred (predicate goal))
-           (applicable-rules (table:lookup (%rulebase-table rb1)
-                                           pred 
-                                           null)) 
-           (applied-rules (map string->symbol (argument:schemes-applied args (statement-atom goal))))
-           (remaining-rules (filter (lambda (r) (not (member (rule-id r) applied-rules)))
-                                    applicable-rules)))
-;      (if *debug*
-;          (begin
-;            (printf "goal: ~a~%" goal)
-;            (printf "predicate: ~a~%" pred)
-;            (printf "applicable rules: ~a~%" (map rule-id applicable-rules))
-;            (printf "applied rules: ~a~%" applied-rules)
-;            (printf "remaining rules: ~a~%~%" (map rule-id remaining-rules))
-;            ))
-      remaining-rules
-      ))
-  
   (define (get-rule id rb1)
     (find (lambda (r) (eq? (rule-id r) id)) (%rulebase-rules rb1)))
   
@@ -370,14 +348,14 @@
                                                                                     c))
                                                      rule-clauses))))
                                         applicable-rules))
-           (applied-clauses (map string->symbol (argument:schemes-applied args (statement-atom goal))))
+           (applied-clauses (map string->symbol (argument:schemes-applied args (subs (statement-atom goal)))))
            (remaining-clauses (filter (lambda (c)
                                         (not (member (string->symbol (string-append (symbol->string (named-clause-rule c))
                                                                                     (symbol->string (named-clause-id c))
                                                                                     ))
                                                      applied-clauses)))
                                       applicable-clauses)))
-
+      ; (if *debug* (printf "get-clauses: goal ~a has ~a remaining clauses~%" (subs goal) (length remaining-clauses)))
       remaining-clauses
       ))
   
@@ -449,33 +427,33 @@
               (if (not subs2)
                   ; fail
                   (begin 
-                    (if *debug* (begin (display "unification failed")
-                                       (newline))) 
+;                    (if *debug* (begin (display "unification failed")
+;                                       (newline))) 
                     #f)
                   ; succeed
                   (begin 
                     (let ((arg-id (gensym 'a)))
-                      (if *debug*
-                          (begin (display "argument constructed by rule-generator:")
-                                 (newline)
-                                 (display "argument-id: ")
-                                 (display arg-id)
-                                 (newline) 
-                                 (display "argument-scheme: ")
-                                 (display (string-append (symbol->string (named-clause-rule clause))
-                                                         (symbol->string (named-clause-id clause))
-                                                         ))
-                                 (newline)
-                                 (display "argument-conclusion: ")
-                                 (display (statement-atom (condition-statement subgoal)))
-                                 (newline)
-                                 (display "argument-premises: ")
-                                 (display (append (map statement->premise (named-clause-clause clause))
-                                                       (rule-critical-questions (named-clause-rule clause) qs subgoal (named-clause-strict clause))))
-                                 (newline)
-                                 (newline)
-                                 ;(printf "unification succeeded~%")
-                                 ))
+;                      (if *debug*
+;                          (begin (display "argument constructed by rule-generator:")
+;                                 (newline)
+;                                 (display "argument-id: ")
+;                                 (display arg-id)
+;                                 (newline) 
+;                                 (display "argument-scheme: ")
+;                                 (display (string-append (symbol->string (named-clause-rule clause))
+;                                                         (symbol->string (named-clause-id clause))
+;                                                         ))
+;                                 (newline)
+;                                 (display "argument-conclusion: ")
+;                                 (display (statement-atom (condition-statement subgoal)))
+;                                 (newline)
+;                                 (display "argument-premises: ")
+;                                 (display (append (map statement->premise (named-clause-clause clause))
+;                                                       (rule-critical-questions (named-clause-rule clause) qs subgoal (named-clause-strict clause))))
+;                                 (newline)
+;                                 (newline)
+;                                 ;(printf "unification succeeded~%")
+;                                 ))
                       (as:make-response 
                        ; (statement-atom (condition-statement subgoal)) ; the affected statement, the conclusion of the argument
                        subs2 

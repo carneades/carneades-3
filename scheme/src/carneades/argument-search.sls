@@ -26,7 +26,8 @@
          state-con-goals state-arguments state-substitutions state-candidates
          opposing-viewpoint switch-viewpoint replace-argument-graph 
          make-response response? response-argument response-substitutions find-arguments 
-         find-best-arguments goal-state? make-successor-state next-goals current-goal)
+         find-best-arguments goal-state? make-successor-state next-goals 
+         display-state)
  
  (import (rnrs)
          (rnrs records syntactic)
@@ -84,14 +85,15 @@
  ; for debugging
  (define (display-state state)
    (let ((subs (state-substitutions state)))
-     (printf "topic: ~a~%" (statement-formatted (subs (state-topic state))))
-     (printf "viewpoint: ~a~%" (state-viewpoint state))
-     (printf "pro goals: ~a~%" (if (null? (state-pro-goals state)) "" (subs (state-pro-goals state))))
-     (printf "con goals: ~a~%" (if (null? (state-con-goals state)) "" (subs (state-con-goals state))))
-     (printf "number of arguments: ~a~%" (length (arg:arguments (state-arguments state))))
-     (printf "number or candidate arguments: ~a~%" (length (state-candidates state)))
-     (newline)
-     (view (state-arguments state))
+;     (printf "topic: ~a~%" (statement-formatted (subs (state-topic state))))
+      (printf "viewpoint: ~a~%" (state-viewpoint state))
+;     (printf "topic in: ~a~%" (arg:in? (state-arguments state) (subs (state-topic state))))
+      (printf "pro goals: ~a~%" (if (null? (state-pro-goals state)) "" (subs (state-pro-goals state))))
+      (printf "con goals: ~a~%" (if (null? (state-con-goals state)) "" (subs (state-con-goals state))))
+;     (printf "number of arguments: ~a~%" (length (arg:arguments (state-arguments state))))
+;     (printf "number or candidate arguments: ~a~%" (length (state-candidates state)))
+;     (newline)
+;     (view (state-arguments state))
      ))
  
  (define-record-type response
@@ -127,12 +129,6 @@
      ((pro) (state-pro-goals state))
      ((con) (state-con-goals state))))
  
- ; current-goal: state -> statement | #f
- (define (current-goal state)
-   (let* ((goals (next-goals state))
-          (clause (and (not (null? goals)) (car goals))))
-     (and clause (car clause))))
- 
  ; questioned-assumptions: (list-of statement) argument-graph -> (list-of statement)
  (define (questioned-assumptions assumptions ag)
    (list:filter (lambda (s) (arg:questioned? ag s)) assumptions))
@@ -162,24 +158,13 @@
    (let ((ag2 ag)
          (candidates2 null))
      (for-each (lambda (c)
-                 (if *debug*
-                     (begin 
-                       (printf "candidate argument: ~a~%" (arg:argument->datum (candidate-argument c)))
-                       (printf "argument variables: ~a~%" (arg:argument-variables (candidate-argument c)))
-                       (printf "candidate guard: ~a~%" (candidate-guard c))
-                       (printf "candidate guard with subs: ~a~%" (subs (candidate-guard c)))))
                  (if (ground? (subs (candidate-guard c))) 
                      (let ((arg (arg:instantiate-argument (candidate-argument c) subs)))
-                       (if *debug*
-                           (printf "arg ~a is now instantiated~%" (arg:argument-id arg)))
                        (set! ag2 (arg:assert-argument (arg:question ag2
                                                                     (list (arg:argument-conclusion arg)))
                                                       arg)))
                      ; else candidate argument is not yet ground, so keep as a candidate
-                     (begin 
-                       (if *debug*
-                           (printf "arg ~a is still not instantiated~%" (arg:argument-id (candidate-argument c))))
-                       (set! candidates2 (cons c candidates2)))))
+                     (set! candidates2 (cons c candidates2))))
                candidates)
      (make-apply-candidates-result ag2 candidates2)))
      
@@ -275,7 +260,7 @@
                                  (make-successor-state 
                                   (search:node-state node) 
                                   response)) 
-                               (stream-flatmap 
+                               (stream-flatmap
                                 (lambda (clause) ; -> (stream-of (pair-of argument substitutions))
                                   (let ((goal (car clause)))
                                     (generator goal state1)))
@@ -286,18 +271,17 @@
  
  ; goal-state?: state -> boolean
  ; If viewpoint of the state is pro, then the goal is to find a
- ; state in which the topic statement is acceptable. If the viewpoint is con, 
- ; the goal is to find a state in which topic is not acceptable. 
+ ; state in which the topic statement is in. If the viewpoint is con, 
+ ; the goal is to find a state in which topic is out. 
  (define (goal-state? state)
    (let* ((in (arg:in? (state-arguments state) 
                        ((state-substitutions state) (state-topic state)))) 
           (result (case (state-viewpoint state)
                     ((pro) in)
                     ((con) (not in)))))
-     (if *debug* 
-         (begin 
-           (printf "goal-state: ~a~%" result)
-           (display-state state)))
+     (if *debug*  
+         (begin (printf "~%---------------~%goal-state: ~a~%" result)
+                (display-state state)))
      result))
  
  ; find-arguments: resource-limited-strategy resource state (list-of generator) -> (stream-of state)

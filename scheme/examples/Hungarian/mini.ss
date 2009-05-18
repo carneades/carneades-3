@@ -24,6 +24,6 @@
 
 (define e1 (engine 100 1 null))
 
-(check (all-in? '(p a) e1) => #t)
-(check (all-in? '(not (q a)) e1) => #t)
-(check (all-in? '(r b) e1) => #t)
+(check (succeed? '(p a) e1) => #t)
+(check (succeed? '(not (q a)) e1) => #t)
+(check (succeed? '(r b) e1) => #t)
