@@ -648,7 +648,7 @@
                      builtins)))
 
 
-(check (all-in? '(covered-by-directive ?x) (engine 50 3 null)) => #t)
+(check (succeed? '(covered-by-directive ?x) (engine 50 3 null)) => #t)
 (check-report)
 
 

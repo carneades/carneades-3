@@ -190,7 +190,7 @@
                      builtins)))
 
 
-(check (all-in? '(beneficial-owner ?x) (engine 50 3 null)) => #t)
+(check (succeed? '(beneficial-owner ?x) (engine 50 3 null)) => #t)
 (check-report)
 
 ; (ask '(beneficial-owner ?x) (engine 50 3 null))

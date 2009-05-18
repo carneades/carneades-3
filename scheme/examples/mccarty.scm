@@ -9,7 +9,9 @@
         (carneades lib srfi lightweight-testing)
         (carneades stream)
         (carneades argument-search)
-        (carneades table))
+        (carneades table)
+        (carneades unify))
+                   
 
 
 ; Examples from "The Case for Explicit Exceptions", by L. Thorne McCarty and William W. Cohen
@@ -48,8 +50,7 @@
     (african dumbo)))
 
 (define e1 (engine 20 2 elephants-rulebase elephant-facts null))
-(check (some-in? '(gray ?x) e1) => #t)
-(check (some-in? '(not (gray ?x)) e1) => #t)
+
   
 ; Pennsylvania Dutch Benchmark
 
@@ -80,8 +81,6 @@
     (native-speaker Fritz German)))
 
 (define e2 (engine 20 2 dutch-rulebase dutch-facts null))
-(check (some-in? '(born ?x ?y) e2) => #t)
-(check (some-in? '(not (born ?x America)) e2) => #t)
 
 ; Gullible Citizens Benchmark
 
@@ -92,18 +91,12 @@
                      (crook ?y))
                 (not (like ?x ?y))))
    
-   ; r7 would override r7 only if rebuttals are searched for and found
+   
    (rule r7 (if (and (citizen ?x)
                      (gullible ?x)
                      (crook ?y)
                      (elected ?y))
-                (like ?x ?y)))
-   
-;   (rule r7 (if (and (citizen ?x)
-;                     (gullible ?x)
-;                     (crook ?y)
-;                     (elected ?y))
-;                (excluded r6 (not (like ?x ?y)))))
+                (excluded r6 (not (like ?x ?y)))))
 ))
 
 (define gullible-facts
@@ -114,8 +107,6 @@
     (elected Dick)))
 
 (define e3 (engine 20 2 gullible-rulebase gullible-facts '(excluded)))
-(check (some-in? '(not (like ?x ?y)) e3) => #t)
-(check (some-in? '(not (like Fred Dick)) e3) => #f)
 
 ; Blocks World Benchmark
 
@@ -147,86 +138,101 @@
     (not (on B table))))
 
 (define e4 (engine 20 2 blocks-world-rulebase blocks-world-facts '(excluded)))
-(check (some-in? '(block ?x) e4) => #t)
-(check (some-in? '(on ?x table) e4) => #t)
-(check (some-in? '(not (on ?x table)) e4) => #t)
 
+; Dancer Benchmark.  McCarty's original formulation
 
-; Dancer Benchmark
-(define dancer-rulebase
+(define dancer-rulebase1
    (rulebase
    
-   ;     (rule r11
-   ;           (if (dancer ?x)
-   ;               (not (ballerina ?x))))
+    (rule r11
+          (if (dancer ?x)
+              (not (ballerina ?x))))
+    
+    (rule r12
+          (if (dancer ?x)
+              (graceful ?x)))
+    
+    (rule r13
+          (if (and (dancer ?x)
+                   (graceful ?x))
+              (ballerina ?x)))))
+
+
+;     This formulation of the rules is problematical. The intention is to express 
+;     that dancers are not normally or usually ballerinas.  
+;     But can one construct an argument for someone not being a
+;     ballerina by showing that she is a dancer?  Does her being a dancer 
+;     give us a *reason* to believe she is not a ballerina?
+;     If someone has put forward an argument for someone being a ballerina,
+;     should it be possible to rebut this argument by proving she is a dancer?
+;     In particular, if one uses r12 to argue that she is a ballerina, by
+;     proving she is a graceful dancer, should it be possible to rebut this
+;     argument by showing she is a dancer?  In my view, r11 illustrates two
+;     different interpretations of defeasible rules:  1) as expressions of 
+;     normality conditions (e.g. dancers are not normally ballerinas) and 
+;     2) as inference rules or argumentation schemes for guiding reasoning 
+;     (e.g. to argue that someone is a ballerina, prove she is a graceful 
+;     dancer.)  Carneades is designed only for this second purpose, 
+;     representing argumentation schemes.
+
+;     Also, r12 and r13 alone hardly make sense as an expression
+;     of reasoning policy.  With just these two rules, all dancers
+;     are presumably ballerinas.  The second condition of r13 serves
+;     no purpose. 
+
+;     Here is a reformulation of the rulebase which makes more sense to me.
+;     The policy issue is whether it is better to presume that 
+;     someone is graceful, knowing that he or she is a dancer.  
+;     In this rulebase, it is presumed that a dancer is graceful, unless
+;     it is shown that the dancer is a rock-and-roller's or square dancer.
+;     That is, the policy implemented by these rules errs on the side of 
+;     concluding that a dancer is graceful when he or she is not.
+      
+
+(define dancer-rulebase2
+  (rulebase
    
-   (rule r12
-         (if (dancer ?x)
-             (graceful ?x)))
+   (rule r11 (if (or (ballerina ?x)
+                     (square-dancer ?x)
+                     (rock-and-roller ?x))
+                 (dancer ?x)))
    
-   (rule r13
-         (if (and (dancer ?x)
-                  (graceful ?x))
-             (ballerina ?x)))
+   (rule r12 (if (dancer ?x)
+                 (graceful ?x)))
    
-   ;     Rule r11 is problematical. The intention is to express 
-   ;     that dancers are not normally or usually ballerinas.  
-   ;     But can one construct an argument for someone not being a
-   ;     ballerina by showing that she is a dancer?  Does her being a dancer 
-   ;     give us a *reason* to believe she is not a ballerina?
-   ;     If someone has put forward an argument for someone being a ballerina,
-   ;     should it be possible to rebut this argument by proving she is a dancer?
-   ;     In particular, if one uses r12 to argue that she is a ballerina, by
-   ;     proving she is a graceful dancer, should it be possible to rebut this
-   ;     argument by showing she is a dancer?  In my view, r11 illustrates two
-   ;     different interpretations of defeasible rules:  1) as expressions of 
-   ;     normality conditions (e.g. dancers are not normally ballerinas) and 
-   ;     2) as inference rules or argumentation schemes for guiding reasoning 
-   ;     (e.g. to argue that someone is a ballerina, prove she is a graceful 
-   ;     dancer.)  Carneades is designed only for this second purpose, 
-   ;     representing argumentation schemes.
-   
-   ;     Also, r12 and r13 alone hardly make sense as an expression
-   ;     of reasoning policy.  With just these two rules, all dancers
-   ;     are presumably ballerinas.  The second condition of r13 serves
-   ;     no purpose.  They would make a bit more sense if there were
-   ;     some exceptions to r12, such as the following:
-   
-     
-   (rule r14 
-         (if (or (rock-and-roller ?x) 
-                 (square-dancer ?x))
+   (rule r13 
+         (if (or (square-dancer ?x) 
+                 (rock-and-roller ?x)) 
              (excluded r12 (graceful ?x))))
-   
-   (rule r15
-         (if (square-dancer ?x)
-             (dancer ?x)))
-   
-   (rule r16
-         (if (rock-and-roller ?x)
-             (dancer ?x)))
   
-   
-   ; The policy issue is whether it is better to presume that 
-   ; someone is graceful, knowing that he or she is a dancer.  
-   ; What are the risks and benefits of acting on the 
-   ; presumption that someone is graceful when she is not, 
-   ; and vice versa?  It is not possible to evaluate the quality
-   ; of these rules without such information.
-   
-   )) ; end of rule base
-
-
+   ))
 
 (define dancer-facts 
-  '((dancer Naomi)
-    (dancer Mikhail)
+  '((ballerina Naomi)
     (rock-and-roller Norbert)
     (square-dancer Sally)))
 
-(define e5 (engine 50 2 dancer-rulebase dancer-facts '(excluded)))
-(check (some-in? '(dancer Sally) e5) => #t)
-(check (some-in? '(ballerina Sally) e5) => #f)
+(define e5 (engine 200 2 dancer-rulebase2 dancer-facts '(excluded)))
+
+(check (succeed? '(gray ?x) e1) => #t)
+(check (succeed? '(not (gray ?x)) e1) => #t)
+
+
+(check (succeed? '(born ?x ?y) e2) => #t)
+(check (succeed? '(not (born ?x America)) e2) => #t)
+
+
+(check (succeed? '(not (like ?x ?y)) e3) => #t)
+(check (succeed? '(not (like Fred Dick)) e3) => #f)
+
+
+(check (succeed? '(block ?x) e4) => #t)
+(check (succeed? '(on ?x table) e4) => #t)
+(check (succeed? '(not (on ?x table)) e4) => #t)
+
+
+(check (succeed? '(dancer Sally) e5) => #t)
+(check (succeed? '(graceful Norbert) e5) => #f)
 
 (check-report)
 
