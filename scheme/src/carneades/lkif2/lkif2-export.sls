@@ -359,13 +359,13 @@
              arguments)))
  
  (define (argument-graph->sxml ag)
-   (let* ((statements-table (nodes->table (argument-graph-nodes ag)))
+   (let* ((statements-table (nodes->table (statement-nodes ag)))
           (id (symbol->string (argument-graph-id ag)))
           (title (argument-graph-title ag))
           (issue-statement (table:lookup statements-table (argument-graph-main-issue ag) #f))
           (main-issue (begin (if *debug*
                                  (begin (display "table: ")
-                                        (display (argument-graph-nodes ag))
+                                        (display (statement-nodes ag))
                                         (newline)
                                         (display "issue: ")
                                         (display (argument-graph-main-issue ag))
@@ -385,12 +385,12 @@
            statements
            arguments)))
  
- ; nodes->table: table:statement->node -> table:atom->struct:statement
+ ; nodes->table: (list-of node) -> table:atom->struct:statement
  (define (nodes->table n)
    (fold-left (lambda (t s)
                 (insert-statement t s))
               (table:make-table statement:statement-hash statement:statement=? null)
-              (table:keys n)))
+              (map node-statement n)))
  
  ; insert-statement: table statement -> table
  (define (insert-statement tbl s)
