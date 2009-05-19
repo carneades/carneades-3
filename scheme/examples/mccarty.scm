@@ -212,7 +212,7 @@
     (rock-and-roller Norbert)
     (square-dancer Sally)))
 
-(define e5 (engine 200 2 dancer-rulebase2 dancer-facts '(excluded)))
+(define e5 (engine 20 2 dancer-rulebase2 dancer-facts '(excluded)))
 
 (check (succeed? '(gray ?x) e1) => #t)
 (check (succeed? '(not (gray ?x)) e1) => #t)

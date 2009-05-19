@@ -93,7 +93,7 @@
  
  ; ask1: statement (statement -> (stream-of state)) -> void
  ; displays the query with the substitutions found in each state 
- ; produced by the given inference engine or prints nothing if the stream is emtpy.
+ ; produced by the given inference engine or prints nothing if the stream is empty.
  ; Always terminates, as only states found given the resource limit of the 
  ; inference engine will be displayed.
  (define (ask1 query engine)

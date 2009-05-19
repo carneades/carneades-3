@@ -25,11 +25,12 @@
          make-argument argument? argument-id argument-direction argument-weight
          argument-conclusion argument-premises argument-scheme default-weight pro con
          define-argument argument->datum datum->argument argument-variables instantiate-argument add-premise status?
-         proof-standard? state question accept reject assign-standard 
-         statements arguments pro-arguments con-arguments schemes-applied status proof-standard prior
+         proof-standard? state question accept reject assign-standard statement-nodes
+         node? node-statement node-status node-standard node-acceptable node-complement-acceptable node-premise-of node-conclusion-of
+         in-statements arguments pro-arguments con-arguments schemes-applied status proof-standard prior
          decided? accepted? rejected? questioned? stated? issue? make-argument-graph empty-argument-graph 
          argument-graph? argument-graph-id argument-graph-title argument-graph-main-issue
-         argument-graph-nodes argument-graph-arguments assert-argument assert-arguments 
+         argument-graph-arguments assert-argument assert-arguments 
          relevant? satisfies? acceptable? holds? applicable? in? out? get-argument
          list->argument-graph)
  
@@ -577,15 +578,41 @@
  ;  goal sentence g in ag if g depends on s in ag 
  (define (relevant? ag s g) (depends-on? ag g s))
  
- ; statements: argument-graph [symbol] -> (list-of statement)
- ; returns the list of all statements in the argument graph
- (define statements 
-   (case-lambda ((ag) ; retrieve all statements in the argument graph
+ ; statement-nodes: argument-graph [symbol] -> (list-of node)
+ ; returns the list of all statement nodes in the argument graph, or all
+ ; statement nodes with the given predicate, if one is provided.
+ (define statement-nodes
+   (case-lambda ((ag) ; retrieve all statement nodes in the argument graph
                  (apply append (map (lambda (predicate)
-                                      (table:keys (get-node-bucket ag predicate)))
+                                      (table:objects (get-node-bucket ag predicate)))
                                     (table:keys (argument-graph-nodes ag)))))
-                ((ag predicate) ; retrieve all statements with this predicate
-                 (table:keys (get-node-bucket ag predicate)))))
+                ((ag predicate) ; retrieve all statement nodes with this predicate
+                 (table:objects (get-node-bucket ag predicate)))))
+ 
+ ; in-node-statements: argument-graph node -> (list-of statement)
+ ; For a node whose statement is P, returns a list of the members of '(P (not P))
+ ; which are in.
+ (define (in-node-statements ag node)
+   (append (if (node-in? ag node #t) 
+               (list (node-statement node)) 
+               null)
+           (if (node-in? ag node #f) 
+               (list (statement-complement (node-statement node))) 
+               null)))
+ 
+ ; in-statements: argument-graph [symbol] -> (list-of statement)
+ ; returns the list of all the in statements (literals) in the argument graph,
+ ; or all in statements with the given predicate, if one is provided.
+ ; Notice that for some atomic statement P, both P and (not P) may be members
+ ; of the list of statements returned, since if a weak proof standard is assigned
+ ; to P, both P and (not P) may be in.
+ (define in-statements 
+   (case-lambda ((ag) ; retrieve all in statements in the argument graph
+                 (apply append (map (lambda (node) (in-node-statements ag node))
+                                    (statement-nodes ag))))
+                ((ag predicate) ; retrieve all in statements with this predicate
+                 (apply append (map (lambda (node) (in-node-statements ag node))
+                                    (statement-nodes ag predicate))))))
  
  ; relevant-statements: argument-graph statement -> (list-of statement)
  ; (relevant-statements ag g) finds the statements in ag which are
@@ -595,7 +622,7 @@
  
  (define (relevant-statements ag g)
    (filter (lambda (s) (relevant? ag s g))
-           (statements ag))) 
+           (map node-statement (statement-nodes ag))))
  
  ; assert-argument: argument-graph argument -> argument-graph
  ; Add the argument, arg, to the argument graph, ag,

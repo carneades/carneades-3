@@ -54,7 +54,7 @@
  (define (diagram* ag statement->string port)
    (set! ids (table:make-table statement-hash statement=? null)) ; re-initialize
    (format port "digraph g {~%    rankdir = \"RL\";~%")
-   (print-statements ag (statements ag) statement->string  port)
+   (print-statements ag (map node-statement (statement-nodes ag)) statement->string  port)
    (print-arguments ag (arguments ag) port)
    (format port "}~%"))
  
