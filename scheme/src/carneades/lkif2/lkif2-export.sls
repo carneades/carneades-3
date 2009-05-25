@@ -359,13 +359,13 @@
              arguments)))
  
  (define (argument-graph->sxml ag)
-   (let* ((statements-table (nodes->table (statement-nodes ag)))
+   (let* ((statements-table (nodes->table (list-nodes ag)))
           (id (symbol->string (argument-graph-id ag)))
           (title (argument-graph-title ag))
           (issue-statement (table:lookup statements-table (argument-graph-main-issue ag) #f))
           (main-issue (begin (if *debug*
                                  (begin (display "table: ")
-                                        (display (statement-nodes ag))
+                                        (display (list-nodes ag))
                                         (newline)
                                         (display "issue: ")
                                         (display (argument-graph-main-issue ag))
