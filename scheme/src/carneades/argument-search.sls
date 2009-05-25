@@ -69,17 +69,27 @@
            arguments       ; argument-graph 
            substitutions   ; substitutions
            candidates      ; (list-of candidate)
-           ))
+           )
+   (protocol (lambda (new)
+               (case-lambda 
+                 ((topic viewpoint pro-goals con-goals arguments substitutions candidates)
+                  (new topic viewpoint pro-goals con-goals arguments substitutions candidates))
+                 ((topic viewpoint pro-goals con-goals arguments)
+                  (new topic viewpoint pro-goals con-goals arguments identity null))
+                 ((topic arguments)
+                  (new topic 'pro (list (list topic)) null arguments identity null))))))
+ 
  
   ; initial-state: statement argument-graph -> state
- (define (initial-state goal ag)
-   (make-state goal 
-               'pro 
-               (list (list goal))
-               null 
-               ag
-               identity
-               null))
+ (define (initial-state topic ag) (make-state topic ag))
+ 
+;   (make-state goal 
+;               'pro 
+;               (list (list goal))
+;               null 
+;               ag
+;               identity
+;               null))
  
  ; display-state: state -> voide
  ; for debugging

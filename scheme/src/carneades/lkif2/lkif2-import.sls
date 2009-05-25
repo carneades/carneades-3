@@ -477,13 +477,13 @@
                                              (if (string=? (lkif-argument-graph-main-issue-id ag) "")
                                                #f
                                                (statement->sexpr (get-statement (lkif-argument-graph-main-issue-id ag) tbl)))
-                                             (map (lambda (s)
-                                                    (let* ((sexpr (statement->sexpr s)))
-                                                      (if (and (pair? sexpr)
-                                                               (eq? (car sexpr) 'assuming))
-                                                          (cadr sexpr)
-                                                          sexpr)))
-                                                  statements))))
+                                             (argument:statements->nodes (map (lambda (s)
+                                                                                (let* ((sexpr (statement->sexpr s)))
+                                                                                  (if (and (pair? sexpr)
+                                                                                           (eq? (car sexpr) 'assuming))
+                                                                                      (cadr sexpr)
+                                                                                      sexpr)))
+                                                                              statements)))))
      (values (argument:assert-arguments ag1 arguments)
              ; the context is used to overwrite facts
              (argument:accept (statements->context statements) (argument:facts c)))))     
@@ -521,17 +521,17 @@
               (assumption (string=? (statement-assumption st) "true"))
               ; applying status
               (ag1 (if assumption
-                       (begin (display "Stating statement: ")(write a)(newline)
+                       (begin ; (display "Stating statement: ")(write a)(newline)
                               (argument:state ag (list a)))
                        (cond 
-                         ((string=? value "unknown") (begin (display "Questioning statement: ")(write a)(newline)
+                         ((string=? value "unknown") (begin ; (display "Questioning statement: ")(write a)(newline)
                                                             (argument:question ag (list a))))
-                         ((string=? value "true") (begin (display "Accepting statement: ")(write a)(newline)
+                         ((string=? value "true") (begin ; (display "Accepting statement: ")(write a)(newline)
                                                          (argument:accept ag (list a))))
-                         ((string=? value "false") (begin (display "Rejecting statement: ")(write a)(newline)
+                         ((string=? value "false") (begin ; (display "Rejecting statement: ")(write a)(newline)
                                                           (argument:reject ag (list a)))))))
               ; applying standard
               (ag2 (argument:assign-standard ag1 standard (list a))))
-         (display "Assigning standard: ")(write a)(display " ")(write standard)(newline)
+         ; (display "Assigning standard: ")(write a)(display " ")(write standard)(newline)
          (apply-status/standard ag2 (cdr statements)))))
  )

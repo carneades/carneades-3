@@ -29,7 +29,7 @@
 
 (define *documents* null) ; a list of open documents
 (define *current-document* #f)
-(define *current-stage* #f)
+(define *current-argument-graph* #f)
 (define *search-rest* #f) ; stream of remaining states found by argument search
 
 ; *statements-table*:  maps strings to statements
@@ -53,37 +53,20 @@
       
       
 
-; find-stage: document symbol -> stage | #f
-(define (find-stage doc arg-graph-id)
+; find-argument-graph: document symbol -> argument-graph | #f
+(define (find-argument-graph doc arg-graph-id)
   (let* ((data (document-data doc))
-         (stages (lkif-data-stages data)))
-    (find (lambda (stage) 
-            (let ((ag (stage-argument-graph stage)))
-              (and ag (eq? arg-graph-id (argument-graph-id ag)))))
-          stages)))
-
-; insert-stage!: document symbol stage -> void
-; If there is a stage in the document whose argument graph has the
-; given id, replace the stage. If there is no such stage, add the new
-; stage to the list of stages of the document.
-(define (insert-stage! doc arg-graph-id new-stage)
-  (let* ((old-stage (find-stage doc arg-graph-id))
-         (d (document-data doc))
-         (old-stages (lkif-data-stages d)))
-    (document-data-set! doc 
-                        (make-lkif-data (lkif-data-sources d)
-                                        (lkif-data-context d)
-                                        (lkif-data-rulebase d)
-                                        (if old-stage 
-                                            (replace-element old-stages old-stage new-stage)
-                                            (append old-stages (list new-stage)))))))
+         (ags (lkif-data-argument-graphs data)))
+    (find (lambda (ag) 
+            (eq? arg-graph-id (argument-graph-id ag)))
+          ags)))
 
 
 ; current-issue: void -> statement | #f
 (define current-issue
   (lambda () 
-    (if *current-stage* 
-        (argument-graph-main-issue (stage-argument-graph *current-stage*))
+    (if *current-argument-graph* 
+        (argument-graph-main-issue *current-argument-graph*)
         #f)))
           
 ; commands
@@ -105,9 +88,9 @@
                     (set! *current-document* (car *documents*))
                     ))))
       (if *current-document* 
-          (let ((stage (load-document! *current-document*)))
-            (if stage (begin (set! *current-stage* stage)
-                             (load-stage! stage))))))))
+          (let ((ag (load-document! *current-document*)))
+            (if ag (begin (set! *current-argument-graph* ag)
+                          (load-argument-graph! ag))))))))
 
 (define save-lkif
   (lambda ()
@@ -127,35 +110,21 @@
 
 (define show-argument-map
   (lambda ()
-    (if *current-stage*
-        (let* ((ag (stage-argument-graph *current-stage*))
-               (c1 (stage-context *current-stage*)))
-          (view* ag c1 (context-substitutions c1) statement-formatted))
+    (if *current-argument-graph*
+          (view* *current-argument-graph* statement-formatted)
         (tk/message-box 'icon: 'warning
                         'message: "No argument graph to map."
                         'type: 'ok
                         'parent: tk))))
 
 
-; load-document!: document -> stage | #f
+; load-document!: document -> argument-graph | #f
 (define (load-document! document)
   (let* ((data (document-data document))
-         (context (lkif-data-context data))
          (rules (lkif-data-rulebase data))
-         (stages (lkif-data-stages data)))
+         (argument-graphs (lkif-data-argument-graphs data)))
     
     (clear-panels!)
-    
-    ; load the facts
-    (for-each (lambda (fact)
-                (hashtable-set! *statements-table* (statement-formatted fact) fact)
-                (cond ((accepted? context fact)
-                       (fact-table 'insert "" 'end
-                                   'values: (list "" "true" (statement-formatted fact))))
-                      ((rejected? context fact)
-                       (fact-table 'insert "" 'end
-                                   'values:(list "" "false" (statement-formatted fact))))))
-              (table:keys (context-status context)))
 
     ; load the rules
     (if (not (null? (rulebase-rules rules)))
@@ -169,22 +138,17 @@
           (load-rule! (car (rulebase-rules rules)))))
     
     ; load the argument graphs
-    (if (not (null? stages))
-         (let* ((stage (car stages))
-                (c (stage-context stage))
-                (ag (stage-argument-graph stage)))
-          ; (set! *current-stage* stage)
-          (for-each (lambda (stage)
-                      (let ((ag (stage-argument-graph stage)))
-                        (argument-graph-table 'insert ""
-                                              'end 
-                                              'values: (list (symbol->string (argument-graph-id ag))
-                                                             (argument-graph-title ag)))))
-                    stages)
-           ; return the first stage
-           stage)
-         ; else return #f to indicate the document contains no argument graphs
-         #f))) 
+    (if (not (null? argument-graphs))
+        (begin (for-each (lambda (ag)
+                           (argument-graph-table 'insert ""
+                                                 'end 
+                                                 'values: (list (symbol->string (argument-graph-id ag))
+                                                                (argument-graph-title ag))))
+                         argument-graphs)
+               ; return the first argument graph
+               (car argument-graphs))
+        ; else return #f to indicate the document contains no argument graphs
+        #f))) 
 
 (define (format-clause clause)
   (let ((n (length clause)))
@@ -211,23 +175,21 @@
                   'values: (list (format-clause clause))))
             (rule-body rule)))
 
-; load-stage!: stage -> void
-(define (load-stage! stage)
-  (let* ((ag (stage-argument-graph stage))
-         (c (stage-context stage))
-         (subs (context-substitutions c))
-         (data (document-data *current-document*))
+; load-argument-graph!: argument-graph -> void
+(define (load-argument-graph! ag)
+  (let* ((data (document-data *current-document*))
          (issue (argument-graph-main-issue ag))
          (issue-formatted (statement-formatted issue)))
     ; load the query form
     (hashtable-set! *statements-table* issue-formatted issue)
     (tk-set-var! 'current-issue issue-formatted)
     ; load the statements table
-    (for-each (lambda (p)
-                (let* ((id "") 
-                       (s (status c p))
-                       (a (let ((ap (acceptable? ag c p))
-                                (an (acceptable? ag c (statement-complement p))))
+    (for-each (lambda (node)
+                (let* ((p (node-statement node))
+                       (id "") 
+                       (s (status ag p))
+                       (a (let ((ap (acceptable? ag p))
+                                (an (acceptable? ag (statement-complement p))))
                             (cond ((and ap an)
                                    "P,¬P")
                                   (ap "P")
@@ -235,15 +197,14 @@
                                   (else ""))))
                        (pro (length (pro-arguments ag p)))
                        (con (length (con-arguments ag p)))
-                       (ps (proof-standard c p))
+                       (ps (proof-standard ag p))
                        (content (statement-formatted p))
-                       (content-with-subs (statement-formatted (subs p)))
-                       (row (list id a s pro con ps content content-with-subs)))
+                       (row (list id a s pro con ps content)))
                   (hashtable-set! *statements-table* content p)
                   (statement-table 'insert ""
                                    'end
                                    'values: row)))
-              (statements ag))))
+              (list-nodes ag))))
 
 
 (define (clear-panels!)
@@ -263,10 +224,26 @@
   (argument-tree 'delete (argument-tree 'children ""))
   (premise-table 'delete (premise-table 'children "")))
 
+
+; update-argument-graphs!: document symbol argument-graph -> void
+; If there is an argument graph with the 
+; given id, replace the argument-graph. If there is no such argument graph, add the new
+; argument graph to the list of argument graphs of the document.
+(define (update-argument-graphs! doc arg-graph-id new-ag)
+  (let* ((old-ag (find-argument-graph doc arg-graph-id))
+         (d (document-data doc))
+         (ags (lkif-data-argument-graphs d)))
+    (document-data-set! doc 
+                        (make-lkif-data (lkif-data-sources d)
+                                        (lkif-data-rulebase d)
+                                        (if old-ag 
+                                            (replace-element ags old-ag new-ag)
+                                            (append ags (list new-ag)))))))
+
 (define insert-argument-graph!
   (lambda ()
     ; (printf "debug: insert-argument-graph begin~%")
-    (if *current-stage* 
+    (if *current-argument-graph* 
         (let* ((frame (tk 'create-widget 'toplevel 
                           'class: 'ttk::frame
                           'bg: 'gray90))
@@ -301,14 +278,13 @@
                                 (issue (read (open-string-input-port (issue-entry 'get))))
                                 (ag (make-argument-graph id
                                                          title
-                                                         issue))
-                                (stage (make-stage ag default-context)))
+                                                         issue)))
                            (tk/wm 'withdraw frame)
-                           (insert-stage! *current-document*
-                                          id
-                                          stage)
+                           (update-argument-graphs! *current-document*
+                                                    id
+                                                    ag)
                            (load-document! *current-document*) ; to refresh the list of argument graphs
-                           (load-stage! stage))))
+                           (load-argument-graph! ag))))
                
                (ok-button (buttons-frame 'create-widget 'ttk::button
                                          'text: "OK"
@@ -561,10 +537,10 @@ http://carneades.berlios.de
          (lambda ()
            (let* ((s (argument-graph-table 'selection))
                   (ag-id (string->symbol (argument-graph-table 'set s 'id)))
-                  (stage (find-stage *current-document* ag-id)))
-             (if stage 
+                  (ag (find-argument-graph *current-document* ag-id)))
+             (if ag 
                  (begin  
-                   (set! *current-stage* stage)
+                   (set! *current-argument-graph* ag)
                    ; reset the search engine
                    (set! *search-rest* #f)
                    ; clear the statement argument and premise tables
@@ -572,10 +548,10 @@ http://carneades.berlios.de
                    (argument-tree 'delete (argument-tree 'children ""))
                    (premise-table 'delete (premise-table 'children ""))
                 
-                   ; and then load the selected stage
+                   ; and then load the selected argument graph
                    (tk-set-var! 'current-solution "")
-                   (load-stage! stage))
-                 (printf "debug: no stage!~%")))))
+                   (load-argument-graph! ag))
+                 (printf "debug: no argument graph~%")))))
 
 
 ; Save Argument Graph Dialog
@@ -587,7 +563,7 @@ http://carneades.berlios.de
 ; saved as a new graph, with a new id and title.
 (define save-argument-graph-cmd
   (lambda () 
-    (if *current-stage* 
+    (if *current-argument-graph* 
         (let* ((frame (tk 'create-widget 'toplevel 
                           'class: 'ttk::frame
                           'bg: 'gray90))
@@ -609,26 +585,22 @@ http://carneades.berlios.de
                (cancel-button (buttons-frame 'create-widget 'ttk::button
                                              'text: "Cancel"
                                              'command: (lambda () (tk/wm 'withdraw frame))))
-               
-               (ag (stage-argument-graph *current-stage*))
-               (c  (stage-context *current-stage*))
-               (subs (context-substitutions c))
+              
                
                (ok-cmd (lambda ()
                          ; to do:  validate the id and title entries
                          (let* ((new-id (string->symbol (id-entry 'get)))
                                 (ag2 (make-argument-graph new-id
                                                          (title-entry 'get)
-                                                         (argument-graph-main-issue ag)
-                                                         (argument-graph-nodes ag)
-                                                         (argument-graph-arguments ag)) )
-                                (new-stage (make-stage ag2 c)))
+                                                         (argument-graph-main-issue *current-argument-graph*)
+                                                         (argument-graph-nodes *current-argument-graph*)
+                                                         (argument-graph-arguments *current-argument-graph*))))
                            (tk/wm 'withdraw frame)
-                           (insert-stage! *current-document*
+                           (update-argument-graphs! *current-document*
                                           new-id
-                                          new-stage)
+                                          ag2)
                            (load-document! *current-document*)
-                           (load-stage! new-stage))))
+                           (load-argument-graph! ag2))))
 
                (ok-button (buttons-frame 'create-widget 'ttk::button
                                          'text: "OK"
@@ -640,8 +612,8 @@ http://carneades.berlios.de
  
           (tk/wm 'title frame "Save Argument Graph Dialog")
           (tk/wm 'resizable frame #f #f)
-          (id-entry 'insert 0 (argument-graph-id ag))
-          (title-entry 'insert 0 (argument-graph-title ag))
+          (id-entry 'insert 0 (argument-graph-id *current-argument-graph*))
+          (title-entry 'insert 0 (argument-graph-title *current-argument-graph*))
           
           (tk/pack id-label id-entry 'side: 'left)
           (tk/pack title-label title-entry 'side: 'left)
@@ -692,11 +664,9 @@ http://carneades.berlios.de
                                          'textvariable: (tk-var 'current-solution)))
          
          (search (lambda () 
-                   (if (and *current-document* *current-stage*)
-                       (let* ((ag (stage-argument-graph *current-stage*))
+                   (if (and *current-document* *current-argument-graph*)
+                       (let* ((ag *current-argument-graph*)
                               (data (document-data *current-document*))
-                              ; (c1 (lkif-data-context data))
-                              (c1 (stage-context *current-stage*))
                               (issue (argument-graph-main-issue ag))
                               ; to do: validate entries in the form
                               (max-nodes (read (open-string-input-port (limit-entry 'get))))
@@ -704,7 +674,7 @@ http://carneades.berlios.de
                               (rb (lkif-data-rulebase data))
                               (cqs '(excluded))  ; to do: check boxes
                               (generators (list builtins (generate-arguments-from-rules rb cqs)))
-                              (side (if (in? ag c1 issue) 'con 'pro))
+                              (side (if (in? ag issue) 'con 'pro))
                               (pro-goals (if (eq? side 'pro) 
                                              (list (list issue))
                                              null))
@@ -715,7 +685,7 @@ http://carneades.berlios.de
                          (find-best-arguments search:depth-first 
                                               (search:make-resource max-nodes)
                                                max-turns
-                                              (make-state issue side pro-goals con-goals c1 ag)
+                                              (make-state issue side pro-goals con-goals ag)
                                               generators)))))
          (before-states null) ; list of states previously found, in reverse order
          (current-state #f)   ; the current state in the stream of search results
@@ -750,14 +720,13 @@ http://carneades.berlios.de
                                              'type: 'ok
                                              'parent: tk)))
                  (if current-state
-                     (let* ((ag (state-arguments current-state))
-                            (c (state-context current-state))
+                     (let* ((ag (state-arguments current-state))              
                             (subs (state-substitutions current-state))
                             (issue (argument-graph-main-issue ag)))
                        (clear-argument-graph!)
-                       (set! *current-stage* (make-stage ag c))
+                       (set! *current-argument-graph* ag)
                        (tk-set-var! 'current-solution (statement-formatted (subs issue)))
-                       (load-stage! *current-stage*)))))
+                       (load-argument-graph! *current-argument-graph*)))))
                             
          (previous (lambda () 
                      (cond ((not *search-rest*) ; search not initialized, thus no previous solutions
@@ -770,13 +739,12 @@ http://carneades.berlios.de
                             (set! current-state (car before-states))
                             (set! before-states (cdr before-states))
                             (let* ((ag (state-arguments current-state))
-                                   (c (state-context current-state))
                                    (subs (state-substitutions current-state))
                                    (issue (argument-graph-main-issue ag)))
                               (clear-argument-graph!)
-                              (set! *current-stage* (make-stage ag c))
+                              (set! *current-argument-graph* ag)
                               (tk-set-var! 'current-solution (statement-formatted (subs issue)))
-                              (load-stage! *current-stage*)))
+                              (load-argument-graph! *current-argument-graph*)))
                            (else (tk/message-box 'icon: 'warning
                                                  'message: "No previous arguments."
                                                  'type: 'ok
@@ -824,8 +792,8 @@ http://carneades.berlios.de
 
 (define statement-table
   (statement-table-frame 'create-widget 'ttk::treeview
-                         'columns: '(id acceptable status pro con standard content content-with-subs)
-                         'displaycolumns: '(id acceptable status  pro con standard content-with-subs)
+                         'columns: '(id acceptable status pro con standard content)
+                         'displaycolumns: '(id acceptable status  pro con standard content)
                          'height: 7
                          'show: '(headings)))
 (statement-table 'heading 'id 'text: "ID")
@@ -834,14 +802,14 @@ http://carneades.berlios.de
 (statement-table 'heading 'pro 'text: "Pro") ; number of pro arguments
 (statement-table 'heading 'con 'text: "Con") ; number of con arguments
 (statement-table 'heading 'standard 'text: "Standard")
-(statement-table 'heading 'content-with-subs 'text: "Content")
+(statement-table 'heading 'content 'text: "Content")
 (statement-table 'column 'id 'width: 50 'minwidth: 50 'stretch: 0)
 (statement-table 'column 'status 'width: 80 'minwidth: 80 'stretch: 0)
 (statement-table 'column 'acceptable 'width: 80 'minwidth: 80 'stretch: 0)
 (statement-table 'column 'pro 'width: 25 'minwidth: 20 'stretch: 0)
 (statement-table 'column 'con 'width: 25 'minwidth: 20 'stretch: 0)
 (statement-table 'column 'standard 'width: 60 'minwidth: 60 'stretch: 0)
-(statement-table 'column 'content-with-subs 'width: 480 'minwidth: 480 'stretch: 1)
+(statement-table 'column 'content 'width: 480 'minwidth: 480 'stretch: 1)
 
 (tk/bind statement-table "<<TreeviewSelect>>" 
          (lambda ()
@@ -852,30 +820,27 @@ http://carneades.berlios.de
 
 ; load-arguments!: statement -> void
 (define (load-arguments! p)
- ; (printf "debug: p=~w~%" p)
-  (if *current-stage* 
-      (let* ((ag (stage-argument-graph *current-stage*))
-             (c (stage-context *current-stage*))
-             
-             
-             (load-arg! (lambda (arg) 
-                          (let ((id (argument-id arg))
-                                (title "") ; to do: add title to arguments
-                                (direction (argument-direction arg))
-                                (applicable (if (applicable? ag c arg)
-                                                "yes"
-                                                "no"))
-                                (weight "") ; to do: replace context-compare with weights
-                                (scheme (argument-scheme arg)))
-                            (argument-tree 'insert ""
-                                           'end
-                                           'values: (list id applicable title direction weight scheme))))))
-             
+  ; (printf "debug: p=~w~%" p)
+  (if *current-argument-graph* 
+      (let ((ag *current-argument-graph*)
+            (load-arg! (lambda (arg) 
+                         (let ((id (argument-id arg))
+                               (title "") ; to do: add title to arguments
+                               (direction (argument-direction arg))
+                               (applicable (if (applicable? *current-argument-graph* arg)
+                                               "yes"
+                                               "no"))
+                               (weight "") ; to do: replace context-compare with weights
+                               (scheme (argument-scheme arg)))
+                           (argument-tree 'insert ""
+                                          'end
+                                          'values: (list id applicable title direction weight scheme))))))
+        
         ; clear the argument tree
         (argument-tree 'delete (argument-tree 'children ""))
         (for-each load-arg! (append (pro-arguments ag p) 
                                     (con-arguments ag p))))
-      (printf "debug: no *current-stage*~%")))
+      (printf "debug: no *current-argument-graph*~%")))
 
 
 (define argument-tree-frame
@@ -911,16 +876,14 @@ http://carneades.berlios.de
                 (load-premises! (string->symbol id))))))
 
 (define (load-premises! arg-id)
-  (if *current-stage* 
-      (let* ((ag (stage-argument-graph *current-stage*))
-             (c (stage-context *current-stage*))
-             (subs (context-substitutions c))
+  (if *current-argument-graph* 
+      (let* ((ag *current-argument-graph*)
              (arg (get-argument ag arg-id))
              
              (load-premise! (lambda (p) 
-                              (let ((statement (statement-formatted (subs (premise-atom p))))
+                              (let ((statement (statement-formatted (premise-atom p)))
                                     (polarity (if (premise-polarity p) "+" "-"))
-                                    (holds (if (holds? ag c p) "yes" "no"))
+                                    (holds (if (holds? ag p) "yes" "no"))
                                     (role (premise-role p))
                                     (type (cond ((ordinary-premise? p) "ordinary")
                                                 ((exception? p) "exception")
@@ -973,9 +936,6 @@ http://carneades.berlios.de
      'text: "Arguments" 
      'underline: 0)
 
-(nb1 'add fact-table 'text: "Facts" 
-     'underline: 0
-     'padding: 5)
 
 (nb1 'add rule-panel 
      'text: "Rules" 
