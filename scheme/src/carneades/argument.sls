@@ -25,11 +25,11 @@
          make-argument argument? argument-id argument-direction argument-weight
          argument-conclusion argument-premises argument-scheme default-weight pro con
          define-argument argument->datum datum->argument argument-variables instantiate-argument add-premise status?
-         proof-standard? state question accept reject assign-standard statement-nodes
+         proof-standard? state question accept reject assign-standard list-nodes 
          node? node-statement node-status node-standard node-acceptable node-complement-acceptable node-premise-of node-conclusion-of
-         in-statements arguments pro-arguments con-arguments schemes-applied status proof-standard prior
+         statements->nodes in-statements arguments pro-arguments con-arguments schemes-applied status proof-standard prior
          decided? accepted? rejected? questioned? stated? issue? make-argument-graph empty-argument-graph 
-         argument-graph? argument-graph-id argument-graph-title argument-graph-main-issue
+         argument-graph? argument-graph-id argument-graph-title argument-graph-main-issue argument-graph-nodes
          argument-graph-arguments assert-argument assert-arguments 
          relevant? satisfies? acceptable? holds? applicable? in? out? get-argument
          list->argument-graph)
@@ -47,7 +47,7 @@
          (prefix (carneades set) set:)
          )
  
- (define *debug* #f)
+ (define *debug* #t)
  
  (define-record-type premise 
    (fields atom      ; an atomic statement
@@ -304,8 +304,8 @@
         (() (new (gensym) "" #f (table:make-eq-table null) (table:make-eq-table null)))
         ((id title main-issue)
          (new id title main-issue (table:make-eq-table null) (table:make-eq-table null)))
-        ((id title main-issue statements)
-         (new id title main-issue (statements->nodes statements) (table:make-eq-table null)))
+        ((id title main-issue nodes)
+         (new id title main-issue nodes (table:make-eq-table null)))
         ((id title main-issue nodes arguments)
          (new id title main-issue nodes arguments)) ))))
  
@@ -367,7 +367,6 @@
  ; is propogated forwards by updating the arguments in which the statement 
  ; is used as a premise, which, recursively, updates the conclusions of these arguments.
  (define (update-statement ag1 s new-status)
-   (if *debug* (printf "updating statement: ~s with new status ~s~%" s new-status))
    (let* ((n1 (get-node ag1 s)) 
           (old-status (node-status n1))
           (n2 (make-node (statement-atom s)
@@ -397,7 +396,6 @@
  ; this change by updating the argument graph for the conclusion
  ; of the argument.  
  (define (update-argument ag arg)
-   (if *debug* (printf "updating argument: ~s~%" (argument-id arg)))
    (let* ((old-applicability (argument-applicable arg))
           (new-applicability (all-premises-hold? ag arg))
           (ag2 (make-argument-graph (argument-graph-id ag)
@@ -578,10 +576,10 @@
  ;  goal sentence g in ag if g depends on s in ag 
  (define (relevant? ag s g) (depends-on? ag g s))
  
- ; statement-nodes: argument-graph [symbol] -> (list-of node)
+ ; list-nodes: argument-graph [symbol] -> (list-of node)
  ; returns the list of all statement nodes in the argument graph, or all
  ; statement nodes with the given predicate, if one is provided.
- (define statement-nodes
+ (define list-nodes
    (case-lambda ((ag) ; retrieve all statement nodes in the argument graph
                  (apply append (map (lambda (predicate)
                                       (table:objects (get-node-bucket ag predicate)))
@@ -609,10 +607,10 @@
  (define in-statements 
    (case-lambda ((ag) ; retrieve all in statements in the argument graph
                  (apply append (map (lambda (node) (in-node-statements ag node))
-                                    (statement-nodes ag))))
+                                    (list-nodes ag))))
                 ((ag predicate) ; retrieve all in statements with this predicate
                  (apply append (map (lambda (node) (in-node-statements ag node))
-                                    (statement-nodes ag predicate))))))
+                                    (list-nodes ag predicate))))))
  
  ; relevant-statements: argument-graph statement -> (list-of statement)
  ; (relevant-statements ag g) finds the statements in ag which are
@@ -622,7 +620,7 @@
  
  (define (relevant-statements ag g)
    (filter (lambda (s) (relevant? ag s g))
-           (map node-statement (statement-nodes ag))))
+           (map node-statement (list-nodes ag))))
  
  ; assert-argument: argument-graph argument -> argument-graph
  ; Add the argument, arg, to the argument graph, ag,
