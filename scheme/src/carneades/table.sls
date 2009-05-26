@@ -26,17 +26,10 @@
  
  (import (rnrs))
  
- ; (make-table)
- ; (make-table alist)
  ; (make-table hash-func equiv? alist)
- (define (make-table . l)
-   (if (null? l)
-       (make-hashtable equal-hash equal?)
-       (if (= (length l) 1)
-           (fold-left insert (make-hashtable equal-hash equal?) (car l))
-           (if (= (length l) 3)               
-               (fold-left insert (make-hashtable (car l) (cadr l)) (caddr l))
-               (error "make-table: 0, 1 or 3 arguments expected!" l)))))
+ (define (make-table hf eq alist)
+   (fold-left insert (make-hashtable hf eq) alist))
+               
  
  ; (make-eq-table alist)
  (define (make-eq-table l)
