@@ -247,15 +247,6 @@
          ((pair? s1)
           (string-join (map term-formatted s1) ": "))))
  
-  (define (statement-hash s)
-   (let ((s (statement-atom s)))
-     (cond ((symbol? s) (abs (symbol-hash s)))
-           ((string? s) (abs (string-hash s)))
-           ((pair? s) (abs (symbol-hash (car s))))
-           ((fatom? s) (abs (symbol-hash (car (fatom-term s)))))
-           (else (begin ;(display "statement-hash: unknown statement! : ")
-                        ;(write s)
-                        0)))))
- 
+ (define (statement-hash s) (abs (symbol-hash (statement-predicate s))))
  
  ) ; end of statement library
