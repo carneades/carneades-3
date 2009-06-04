@@ -247,6 +247,9 @@
          ((pair? s1)
           (string-join (map term-formatted s1) ": "))))
  
- (define (statement-hash s) (abs (symbol-hash (statement-predicate s))))
+ (define (statement-hash s) 
+   (cond ((string? s) (string-hash s))
+         ((symbol? s) (symbol-hash s))
+         (else (symbol-hash (statement-predicate s)))))
  
  ) ; end of statement library

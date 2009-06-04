@@ -14,7 +14,7 @@
           
           (define-primitive-role family:ancestor family:relative)
           (define-primitive-role family:parent family:ancestor)
-          (define-primitive-role family:ancestor family:descendent)
+          (define-primitive-role family:ancestor (inverse family:descendent))
           (define-primitive-role family:mother family:parent)
           (define-primitive-role family:father family:parent)
           (define-primitive-role family:sibling family:relative)
