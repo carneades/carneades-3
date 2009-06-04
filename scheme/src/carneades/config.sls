@@ -43,8 +43,8 @@
  ; on most operating systems.  See http://xmlgraphics.apache.org/batik/
  
  ; Mac OS X examples:
- ; (define viewer "/Applications/Firefox.app/Contents/MacOS/firefox-bin")
-   (define viewer "/Applications/Safari.app/Contents/MacOS/Safari")
+ (define viewer "/Applications/Firefox.app/Contents/MacOS/firefox-bin")
+ ;  (define viewer "/Applications/Safari.app/Contents/MacOS/Safari")
 
  ; (define viewer "java -jar /Applications/Batik/batik-squiggle.jar")
  ; (define viewer "/Applications/Graphviz/Graphviz.app/Contents/MacOS/Graphviz")

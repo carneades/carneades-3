@@ -10,27 +10,27 @@
 (define rb1 
   (rulebase
    
-   (rule* r1 
+   (rule r1 
           (if (parent ?x ?y)
               (ancestor ?x ?y)))   
    
-   (rule* r2 
+   (rule r2 
           (if (and (ancestor ?x ?z) 
                    (parent ?z ?y))
               (ancestor ?x ?y)))
    
-   (rule* r3
+   (rule r3
           (if (and (male ?x) 
                    (parent ?y ?x))
               (father ?x)))
    
-   (rule* r4
+   (rule r4
           (if (and (female ?x)
                    (parent ?y ?x))
               (mother ?x)))
    
-  ; (rule* r5 (male Tom))
-  ; (rule* r6 (parent Caroline Tom))
+  ; (rule r5 (male Tom))
+  ; (rule r6 (parent Caroline Tom))
    
    )) ; rulebase
 
