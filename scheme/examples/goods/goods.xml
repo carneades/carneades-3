@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="../../../schemas/LKIF2.rnc" type="compact"?>
+<?xml-stylesheet type="text/css" href="../../../schemas/LKIF2.css"?>
 <lkif xmlns:foo="http://www.estrellaproject.org/foo#">
 
   <theory id="goods">
@@ -24,19 +25,13 @@
 
       <rule id="s-109-h">
         <head>
-          <s pred="Goods">
-            <v>c</v>
-          </s>
+          <s pred="Goods"> <v>c</v> is a good</s>
         </head>
         <body>
           <and>
-            <s pred="foo:Movable">
-              <v>c</v>
-            </s>
+            <s pred="foo:Movable"><v>c</v> is movable</s>
             <not exception="true">
-              <s pred="Money">
-                <v>c</v>
-              </s>
+              <s pred="Money"><v>c</v> is money</s>
             </not>
           </and>
         </body>

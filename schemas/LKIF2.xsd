@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Carneades Argumentation Library and Tools.
   Copyright (C) 2008 Thomas F. Gordon, Fraunhofer FOKUS, Berlin
   
   This program is free software: you can redistribute it and/or modify
@@ -85,6 +84,7 @@
   -->
   <xs:element name="import">
     <xs:complexType>
+      <xs:attribute name="prefix" use="required" type="xs:ID"/>
       <xs:attribute name="uri" use="required" type="xs:anyURI"/>
     </xs:complexType>
   </xs:element>
@@ -134,11 +134,7 @@
   <xs:element name="s">
     <xs:complexType mixed="true">
       <xs:group minOccurs="0" maxOccurs="unbounded" ref="Term"/>
-      <xs:attribute name="pred">
-        <xs:simpleType>
-          <xs:union memberTypes="xs:anyURI xs:Name"/>
-        </xs:simpleType>
-      </xs:attribute>
+      <xs:attribute name="pred" type="xs:anyURI"/>
       <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
@@ -281,7 +277,7 @@
         <xs:element ref="s"/>
       </xs:sequence>
       <xs:attribute name="id" use="required" type="xs:ID"/>
-      <xs:attribute name="value" use="required">
+      <xs:attribute name="value">
         <xs:simpleType>
           <xs:restriction base="xs:token">
             <xs:enumeration value="unknown"/>
@@ -299,6 +295,7 @@
             <xs:enumeration value="BA"/>
             <xs:enumeration value="PE"/>
             <xs:enumeration value="BRD"/>
+            <xs:enumeration value="CCE"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
@@ -356,7 +353,15 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
-      <xs:attribute name="exception" type="xs:boolean"/>
+      <xs:attribute name="type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="ordinary"/>
+            <xs:enumeration value="exception"/>
+            <xs:enumeration value="assumption"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
       <xs:attribute name="role">
         <xs:simpleType>
           <xs:union memberTypes="xs:anyURI xs:string"/>
