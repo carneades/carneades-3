@@ -26,7 +26,7 @@
     </axioms>
 
     <rules>
-      <!-- begin rules from the ontology -->
+      <!-- begin rules from the ontology 
       <rule id="ancestor">
         <head>
           <s pred="family:ancestor">An ancestor of <v>Person1</v> is <v>Person2</v></s>
@@ -71,7 +71,7 @@
           </and>
         </body>
       </rule>
-      <!-- end rules from the ontology -->
+       end rules from the ontology -->
       <rule id="s1601-BGB">
         <head>
           <s pred="family:obligatedToSupport"><v>Person1</v> is obligated to support
@@ -191,9 +191,8 @@
       <rule id="s91-BSHG">
         <head>
           <s pred="excluded">
-            <c>s1601-BGB</c> excludes <s pred="family:obligatedToSupport">
-              <v>Person1</v> is obligated to support <v>Person2</v>
-            </s>
+            <c>s1601-BGB</c> excludes 
+            <s pred="family:obligatedToSupport"><v>Person1</v> is obligated to support <v>Person2</v></s>
           </s>
         </head>
         <body>
@@ -201,6 +200,16 @@
             <s pred="family:obligatedToSupport">
               <v>Person1</v> is obligated to support <v>Person2</v>
             </s> would cause <v>Person1</v> undue hardship </s>
+        </body>
+      </rule>
+      <rule id="lex-posterior">
+        <head>
+          <s pred="prior"><v>r2</v> was enacted prior to <v>r1</v></s>
+        </head>
+        <body>
+          <s pred="enacted"><v>r1</v> was enacted on <v>d1</v></s>
+          <s pred="enacted"><v>r2</v> was enacted on <v>d2</v></s>
+          <s pred="later"><v>d1</v> is later than <v>d2</v></s>
         </body>
       </rule>
     </rules>
