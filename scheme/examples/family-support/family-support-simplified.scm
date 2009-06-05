@@ -36,6 +36,6 @@
 
 (define e1 (make-engine* 50 2 empty-argument-graph argument-generators))
 
-(show1 '(family:obligatedToSupport Max ?y) e1)
+(diagram1 '(family:obligatedToSupport Max ?y) e1)
 
 ; end of file
