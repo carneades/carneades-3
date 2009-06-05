@@ -78,7 +78,7 @@
  (define (diagram1 query engine)
    (let ((str (engine query)))
      (if (not (stream-null? str)) 
-         (diagram* (state-arguments str)
+         (diagram* (state-arguments (stream-car str))
                    (lambda (s) (statement-formatted s))
                    (current-output-port)))))
           
