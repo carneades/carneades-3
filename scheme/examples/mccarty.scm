@@ -12,8 +12,6 @@
         (carneades table)
         (carneades unify))
                    
-
-
 ; Examples from "The Case for Explicit Exceptions", by L. Thorne McCarty and William W. Cohen
 
 ; type question = excluded | priority | valid
