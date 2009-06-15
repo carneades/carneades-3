@@ -37,12 +37,37 @@
  
  (export json-read
          json-write
+         json?
          
          hashtable->vector
          vector->hashtable)
  
  (import (rnrs)
          (carneades lib packrat))
+ 
+ (define (json? x)
+   (or (integer? x)
+       (and (number? x) (inexact? x))
+       (void? x)
+       (boolean? x)
+       (string? x)
+       (null? x)
+       (json-array? x)
+       (json-object? x)))
+ 
+ (define (json-array? x)
+   (or (null? x)
+       (and (pair? x)
+            (json? (car x))
+            (json-array? (cdr x)))))
+ 
+ (define (json-struct? x)
+   (and (vector? x)
+        (for-all (lambda (v)
+                   (and (symbol? (car v))
+                        (json? (cdr v))))
+                 (vector->list x))))
+
  
  (define (hashtable->vector ht)
    (call-with-values (lambda () (hashtable-entries ht))
