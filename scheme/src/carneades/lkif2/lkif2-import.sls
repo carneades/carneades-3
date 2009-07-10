@@ -409,9 +409,21 @@
  ; theory conversion
  
  (define (theory->rulebase theory)
-   (let ((rb (lkif-rules->rulebase (theory-rules theory)))
+   (let ((imported-rb (import-rules (theory-imports theory)))
+         (defined-rb (lkif-rules->rulebase (theory-rules theory)))
          (axioms (lkif-axioms->rules (theory-axioms theory))))
-     (add-rules rb axioms)))
+     (add-rules (add-rules defined-rb (rulebase-rules imported-rb)) axioms)))
+ 
+ (define (import-rules imports)
+   (fold-left (lambda (rb1 rb2)
+                (add-rules rb1 (rulebase-rules rb2)))
+              empty-rulebase
+              (map import-rb imports)))
+ 
+ (define (import-rb import)
+   (let ((prefix (get-attribute-value (get-attribute import 'prefix) ""))
+         (uri (get-attribute-value (get-attribute import 'uri) #f)))
+     (lkif-data-rulebase (lkif-import uri))))
  
  
  
