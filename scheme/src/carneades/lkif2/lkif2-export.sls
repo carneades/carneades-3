@@ -66,8 +66,8 @@
  ; that filename and an unspecified result is returned. If a file with the given
  ; name already exists, the effect is unspecified.
  
- (define (lkif-export export-data . port-or-filename)
-   (let ((sxml-obj (lkif-data->sxml export-data)))
+ (define (lkif-export imports export-data . port-or-filename)
+   (let ((sxml-obj (lkif-data->sxml imports export-data)))
      (if *debug*
          (begin (write sxml-obj)
                 (newline)
@@ -90,9 +90,9 @@
    (cons '^ l))
  
  ; lkif-data->sxml: struct:lkif-data -> sxml
- (define (lkif-data->sxml data)
+ (define (lkif-data->sxml import-list data)
    (let ((sources (lkif-data->sources data))
-         (theory (lkif-data->theory data))
+         (theory (lkif-data->theory import-list data))
          (argument-graphs (lkif-data->argument-graphs data)))
      (define lkif (list 'lkif))
      (if (not (null? sources))
@@ -119,21 +119,33 @@
                                      (element->sxml 'element (source-element source))))))
  
  ; lkif-data->theory: struct:lkif-data -> sxml
- (define (lkif-data->theory data)
+ (define (lkif-data->theory import-list data)
    (let* ((attributes (elements->attributes (list (element->sxml 'id (new-id "theory")))))
+          (imports (import-list->imports import-list))
           (rb (lkif-data-rulebase data))
           (splitted-rb (split-rulebase rb))
           (rules-with-body (car splitted-rb))
           (rules-without-body (cadr splitted-rb))
           (axioms (rules->axioms rules-without-body))
           (rules (rules->lkif-rules rules-with-body)))
-     (if (null? axioms)
-         (if (null? rules)
-             '()
-             (list 'theory attributes rules))
-         (if (null? rules)
-             (list 'theory attributes (cons 'axioms axioms))
-             (list 'theory attributes (cons 'axioms axioms) rules)))))
+     (define theory (list 'theory attributes))
+     (if (not (null? axioms))
+         (set! theory (append theory (list (cons 'axioms axioms)))))
+     (if (not (null? imports))
+         (set! theory (append theory imports)))
+     (if (not (null? rules))
+         (set! theory (append theory (list rules))))
+     (if (= (length theory) 2)
+         '()
+         theory)))
+ 
+ (define (import-list->imports import-list)
+   (list (cons 'imports (map import->lkif import-list))))
+ 
+ (define (import->lkif import)
+   (let ((attributes (elements->attributes (list (element->sxml 'uri import)
+                                                 (element->sxml 'prefix "")))))
+     (list 'import attributes)))
  
  (define (split-rulebase rb)
    (divide-rules (rulebase-rules rb) '() '()))
@@ -519,7 +531,7 @@
                                     premises)))))                                        
      (cons 'arguments (map argument->sxml args))))
  
- 
+
  ;  ----------------------------------
  ;  Testing Code
  ; 
