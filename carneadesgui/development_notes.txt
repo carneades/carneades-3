@@ -1,0 +1,7 @@
+Development Notes
+------
+
+This file contains various things that a developer working on the Carneades GUI should know about the code to avoid confusion and loss of time.
+
+
+

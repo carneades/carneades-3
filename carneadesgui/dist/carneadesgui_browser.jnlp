@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" codebase="file:/Users/matthiasgrabmair/Documents/Studium/Pittsburgh/Pittsburgh%20ISP/carneades/code/javafx/carneadesgui/dist/" href="carneadesgui_browser.jnlp">
+    <information>
+        <title>carneadesgui</title>
+        <vendor>${application.vendor}</vendor>
+        <homepage href=""/>
+        <description>carneadesgui</description>
+        <offline-allowed/>
+        <shortcut>
+            <desktop/>
+        </shortcut>
+    </information>
+    <resources>
+        <j2se version="1.5+"/>
+        <extension name="JavaFX Runtime" href="http://dl.javafx.com/1.2/javafx-rt.jnlp"/>
+        <jar href="carneadesgui.jar" main="true"/>
+    </resources>
+    <applet-desc name="carneadesgui" main-class="com.sun.javafx.runtime.adapter.Applet" width="200" height="200">
+        <param name="MainJavaFXScript" value="carneadesgui.Main">
+    </applet-desc>
+    <update check="background">
+</jnlp>
