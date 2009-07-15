@@ -644,5 +644,39 @@ public class BeyondReasonableDoubt extends ProofStandard {
 	}
 }
 
+public function defaultArgumentGraph(id: String): ArgumentGraph {
+		var argumentGraph = ArgumentGraph {
+			id: id
+		};
+
+		var s1: Statement = Statement {
+			id: "s1"
+			wff: "The street is wet."
+		}
+
+		var s2: Statement = Statement {
+			id: "s2"
+			wff: "It rained"
+		}
+
+		var a1: Argument = Argument {
+			id: "a1"
+			conclusion: s1
+			title: "When it rains, things get wet."
+		}
+
+		var p: Premise = Premise {
+			statement: s2
+		}
+
+		a1.addPremise(p);
+
+		argumentGraph.insertStatement(s1);
+		argumentGraph.insertStatement(s2);
+		argumentGraph.insertArgument(a1);
+
+		return argumentGraph;
+}
+
 
 

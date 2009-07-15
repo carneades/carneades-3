@@ -28,17 +28,17 @@ var inspectorLayoutInfo: LayoutInfo = LayoutInfo {
 class EditPanelButton extends Button {}
 
 abstract class EditButtonPanel extends Panel {
+	public-init var control: CarneadesControl;
 	override var layoutInfo = inspectorLayoutInfo;
 }
 
 class DefaultEditButtonPanel extends EditButtonPanel {
-	public var control: CarneadesControl = null;
 	override var content = bind HBox {
 		content: [
 			EditPanelButton {
 				text: "add graph"
 				action: function() {
-					control.addArgumentGraph(control.defaultGraph());
+					control.addArgumentGraph(defaultArgumentGraph(control.getNewGraphId()));
 				}
 			},
 			EditPanelButton {
@@ -52,14 +52,13 @@ class DefaultEditButtonPanel extends EditButtonPanel {
 }
 
 class GraphEditButtonPanel extends EditButtonPanel {
-	public var control: CarneadesControl = null;
 	public var graph: ArgumentGraph = null;
 	override var content = bind VBox {
 		content: [
 			EditPanelButton {
 				text: "add graph"
 				action: function() {
-					control.addArgumentGraph(control.defaultGraph());
+					control.addArgumentGraph(defaultArgumentGraph(control.getNewGraphId()));
 				}
 			},
 			EditPanelButton {
@@ -71,7 +70,6 @@ class GraphEditButtonPanel extends EditButtonPanel {
 }
 
 class StatementEditButtonPanel extends EditButtonPanel {
-	public var control: CarneadesControl = null;
 	public var statement: Statement = null;
 	override var content = bind VBox {
 		content: [
@@ -92,7 +90,6 @@ class StatementEditButtonPanel extends EditButtonPanel {
 }
 
 class ArgumentEditButtonPanel extends EditButtonPanel {
-	public var control: CarneadesControl = null;
 	public var argument: Argument = null;
 	override var content = bind VBox {
 	content: [
@@ -113,7 +110,6 @@ class ArgumentEditButtonPanel extends EditButtonPanel {
 }
 
 class PremiseEditButtonPanel extends EditButtonPanel {
-	public var control: CarneadesControl = null;
 	public var premise: Premise= null;
 }
 
