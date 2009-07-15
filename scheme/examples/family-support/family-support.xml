@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="../../../schemas/LKIF2.rnc" type="compact"?>
 <?xml-stylesheet type="text/css" href="../../../schemas/LKIF2.css"?>
+<?xml-stylesheet type="text/css" href="../../../schemas/LKIF2.css"?>
+<?xml-stylesheet type="text/css" href="../../../schemas/LKIF2.css"?>
+<?oxygen RNGSchema="../../../schemas/LKIF2.rnc" type="compact"?>
+<?oxygen RNGSchema="../../../schemas/LKIF2.rnc" type="compact"?>
+<?oxygen RNGSchema="file:/Users/tgo/Documents/Projects/Carneades/svn/schemas/LKIF2.rnc" type="compact"?>
 <lkif xmlns:family="http:://fokus.fraunhofer.de/elan/estrella/family.owl"
   xmlns:rules="http://www.estrellaproject.org/lkif-core/lkif-rules.owl">
   <theory id="family-support">
@@ -26,7 +31,7 @@
     </axioms>
 
     <rules>
-      <!-- begin rules from the ontology 
+      <!-- begin rules from the ontology -->
       <rule id="ancestor">
         <head>
           <s pred="family:ancestor">An ancestor of <v>Person1</v> is <v>Person2</v></s>
@@ -71,7 +76,7 @@
           </and>
         </body>
       </rule>
-       end rules from the ontology -->
+      <!-- end rules from the ontology -->
       <rule id="s1601-BGB">
         <head>
           <s pred="family:obligatedToSupport"><v>Person1</v> is obligated to support
@@ -202,16 +207,7 @@
             </s> would cause <v>Person1</v> undue hardship </s>
         </body>
       </rule>
-      <rule id="lex-posterior">
-        <head>
-          <s pred="prior"><v>r2</v> was enacted prior to <v>r1</v></s>
-        </head>
-        <body>
-          <s pred="enacted"><v>r1</v> was enacted on <v>d1</v></s>
-          <s pred="enacted"><v>r2</v> was enacted on <v>d2</v></s>
-          <s pred="later"><v>d1</v> is later than <v>d2</v></s>
-        </body>
-      </rule>
+
     </rules>
   </theory>
   <argument-graphs>
