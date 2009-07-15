@@ -238,7 +238,6 @@ public class CarneadesControl {
 
 				// 2. Restore Selection
 				graph.updateSelectedElementsFromModel();
-				
        		}
     	}
 	}
