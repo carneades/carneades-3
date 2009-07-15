@@ -61,6 +61,7 @@
          ssax:reverse-collect-str
          ssax:reverse-collect-str-drop-ws
          ssax:xml->sxml
+         ssax:dtd-xml->sxml
          )
  
  (import (rnrs)
@@ -75,9 +76,12 @@
                string-index
                string-concatenate/shared
                string-null?
-               string-concatenate-reverse/shared)
+               string-concatenate-reverse/shared
+               string-tokenize
+               string-trim-both)
          )
  
+ (define *debug* #f)
  
  (define-syntax run-test
    (syntax-rules (define) 
@@ -724,6 +728,7 @@
    (DOCTYPE (lambda (port docname systemid internal-subset? seed)
               (when internal-subset? 
                 (ssax:warn port "Internal DTD subset is not currently handled ")
+                
                 (ssax:skip-internal-dtd port))
               (ssax:warn port "DOCTYPE DECL " docname " " systemid " found and skipped")
               (values #f (quote ()) (quote ()) seed)))
@@ -828,6 +833,119 @@
                                                         (list (car ns) (cdr ns)))
                                                       namespace-prefix-assig)))
                                      result))))))
+ 
+ (define (ssax:dtd-xml->sxml port namespace-prefix-assig)
+   (letrec ((namespaces (map (lambda (el)
+                               (cons* #f (car el) (ssax:uri-string->symbol (cdr el))))
+                             namespace-prefix-assig))
+            (RES-NAME->SXML (lambda (res-name)
+                              (string->symbol 
+                               (string-append 
+                                (symbol->string (car res-name))
+                                ":"
+                                (symbol->string (cdr res-name)))))))
+     (let ((result (reverse ((ssax:make-parser 
+                              NEW-LEVEL-SEED
+                              (lambda (elem-gi attributes namespaces expected-content seed) (quote ()))
+                              FINISH-ELEMENT
+                              (lambda (elem-gi attributes namespaces parent-seed seed)
+                                (let ((seed (ssax:reverse-collect-str-drop-ws seed))
+                                      (attrs (attlist-fold (lambda (attr accum)
+                                                             (cons (list 
+                                                                    (if (symbol? (car attr))
+                                                                        (car attr)
+                                                                        (RES-NAME->SXML (car attr)))
+                                                                    (cdr attr))
+                                                                   accum))
+                                                           (quote ())
+                                                           attributes)))
+                                  (cons (cons (if (symbol? elem-gi)
+                                                  elem-gi
+                                                  (RES-NAME->SXML elem-gi))
+                                              (if (null? attrs)
+                                                  seed 
+                                                  (cons (cons '^ attrs) seed)))
+                                        parent-seed)))
+                              CHAR-DATA-HANDLER
+                              (lambda (string1 string2 seed)
+                                (if (string-null? string2)
+                                    (cons string1 seed)
+                                    (cons* string2 string1 seed)))
+                              DOCTYPE
+                              (lambda (port docname systemid internal-subset? seed)
+                                (doctype-handler port docname systemid internal-subset? seed namespaces))
+                              UNDECL-ROOT
+                              (lambda (elem-gi seed) (values #f (quote ()) namespaces seed))
+                              PI
+                              ((*DEFAULT* lambda (port pi-tag seed)
+                                          (cons (list (quote *PI*) pi-tag (ssax:read-pi-body-as-string port)) seed))))
+                             port (quote ())))))
+       (cons (quote *TOP*) (if (null? namespace-prefix-assig)
+                               result
+                               (cons (list '^
+                                           (cons (quote *NAMESPACES*)
+                                                 (map (lambda (ns)
+                                                        (list (car ns) (cdr ns)))
+                                                      namespace-prefix-assig)))
+                                     result))))))
+ 
+ (define (extract-entities port entities)
+   (let* ((l (get-line port))
+          (line (if (string? l)
+                    (string-tokenize l)
+                    l)))
+     (if *debug*
+         (begin (display "extract-entities: ")
+                (write line)
+                (newline)))
+     (if (string=? l "]>")
+         entities
+         (if (and (list? line)
+                  (>= (length line) 3))
+             (let ((ent (car line))
+                   (name (string->symbol (cadr line)))
+                   (uri (string-trim-both (caddr line) #\")))
+               (if *debug*
+                   (begin (display "ent: ")
+                          (write ent)
+                          (newline)
+                          (display "name: ")
+                          (write name)
+                          (newline)
+                          (display "uri: ")
+                          (write uri)
+                          (newline)))
+               (if (string=? ent "<!ENTITY")
+                   (extract-entities port (append entities (list (cons name uri))))
+                   (extract-entities port entities)))
+             (extract-entities port entities)))))
+ 
+ (define doctype-handler
+   (lambda (port docname systemid internal-subset? seed namespaces)
+     (if *debug*
+         (begin (display "port: ")
+                (write port)
+                (newline)
+                (display "docname: ")
+                (write docname)
+                (newline)
+                (display "systemid: ")
+                (write systemid)
+                (newline)
+                (display "internal-subset?: ")
+                (write internal-subset?)
+                (newline)
+                (display "seed: ")
+                (write seed)
+                (newline)))
+     (let ((entities (extract-entities port '())))
+       (write entities)
+       (newline)
+       (values #f entities namespaces seed))))
+ 
+ #;(define (ssax:skip-internal-dtd port)
+   (if (not (find-string-from-port? "]>" port))
+       (parser-error port "Failed to find ]> terminating the internal DTD subset")))
  
  
  )
