@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp spec="1.0+" codebase="file:/Users/matthiasgrabmair/Documents/Studium/Pittsburgh/Pittsburgh%20ISP/carneades/code/javafx/carneadesgui/dist/" href="carneadesgui_browser.jnlp">
+<jnlp spec="1.0+" codebase="file:/Users/matthiasgrabmair/Documents/code/JavaFX/carneades/trunk/carneadesgui/dist/" href="carneadesgui_browser.jnlp">
     <information>
         <title>carneadesgui</title>
         <vendor>${application.vendor}</vendor>

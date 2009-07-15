@@ -36,6 +36,12 @@ class DefaultEditButtonPanel extends EditButtonPanel {
 	override var content = bind HBox {
 		content: [
 			EditPanelButton {
+				text: "add graph"
+				action: function() {
+					control.addArgumentGraph(control.defaultGraph());
+				}
+			},
+			EditPanelButton {
 				text: "add statement"
 				action: function() {
 				control.addStatement();
@@ -58,8 +64,7 @@ class GraphEditButtonPanel extends EditButtonPanel {
 			},
 			EditPanelButton {
 				text: "delete graph"
-				action: function() {
-				}
+				action: function() { control.removeCurrentArgumentGraph(); }
 			}
 		]
 	}
