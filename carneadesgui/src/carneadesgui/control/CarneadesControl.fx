@@ -910,9 +910,23 @@ public class CarneadesControl {
 		};
 		graph.update();
 		insert graph into graphs;
-		updateView( GraphUpdate {} );
+		updateView( GraphUpdate {
+			listView: true
+		} );
 	}
-	
+
+	public function removeCurrentArgumentGraph(): Void {
+		delete argumentGraph from argumentGraphs;
+		delete graph from graphs;
+
+		if (argumentGraphs != []) {
+			displayGraph(argumentGraphs[0]);
+		} else {
+			newGraph();
+		}
+
+		updateAll();
+	}
 
 	/*p
 	public function addArgumentGraph(newArgGraph: ArgumentGraph): Void {
@@ -1004,9 +1018,6 @@ public class CarneadesControl {
 	}
 
 	public function saveAsGraphToFile(f: File): Void {
-
-		// todo: Check for overwrite
-
 		ArgumentFile.saveGraphToFile(argumentGraphs, f);
 		currentFile = f;
 		//p frame.title = "Carneades - { f.getAbsolutePath() }";
@@ -1048,7 +1059,21 @@ public class CarneadesControl {
 	}
 
 	public function quit(): Void {
-		view.quit();
+		if (fileChanged) {
+			var choice = JOptionPane.showOptionDialog(
+								  null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?",
+								  JOptionPane.YES_NO_CANCEL_OPTION,
+								  JOptionPane.QUESTION_MESSAGE, null,
+								  ["Save", "Don't Save", "Cancel"], null
+							  );
+			if (choice == JOptionPane.YES_OPTION) {
+				saveAs();
+			} else if (choice == JOptionPane.NO_OPTION) {
+				view.quit();
+			}
+		} else {
+			view.quit();
+		}
 	}
 
 	/*
