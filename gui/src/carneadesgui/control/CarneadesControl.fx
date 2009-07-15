@@ -48,120 +48,71 @@ import javax.swing.JOptionPane;
 
 public class CarneadesControl {
 
-	/**
-	* The application's model component. Should be set using setModel() in the application object post-init.
-	*/
-	public var model: CarneadesModel = null;
+	// The application's model component. Should be set using setModel() in the application object post-init.
+	public-read var model: CarneadesModel = null;
+		public function setModel(view: CarneadesModel) {
+		this.model = model;
+	}
 
-	/**
-	 * The application's view. Should be set using setView() from the CarneadesGUI object post-init.
-	 */
-	public var view: CarneadesView = null;
-
-	/**
-	 * The array of currently loaded model argument graphs in the model component. Read-Only.
-	 */
-	public var argumentGraphs: ArgumentGraph[] = model.argumentGraphs;
-
-	/**
-	 * The current model argument graph that is to be displayed. Read-Only.
-	 */
-	public var argumentGraph: ArgumentGraph = bind graph.argumentGraph;
-
-	/**
-	 * The application's inspector panel.
-	 */
-	//public var edit: GraphEdit = bind frame.edit;
-	
-	/**
-	 * The array of graph objects that correspond to the model graphs.
-	 */
-	public var graphs: CarneadesGraph[] = [];
-
-	/**
-	 * The view graph object currently displayed.
-	 */
-	public var graph: CarneadesGraph;
-
-	/**
-	 * The command administering unit of the currently displayed graph.
-	 */
-	var commands: CommandControl = bind graph.commands;
-
-	// !!! -> This should be moved into the graph class!
-	// var selectedModels: Object[];
-
-	// View configuration attributes
-	public var possibleToAddConclusion: Boolean = true;
-
-	public var possibleToInverseArgument: Boolean = false;
-	public var possibleToNegatePremise: Boolean = false;
-
-	public var possibleToChangeToOrdPremise: Boolean = false;
-	public var possibleToChangeToException: Boolean = false;
-	public var possibleToChangeToAssumption: Boolean = false;
-
-	public var possibleToRemove: Boolean = false ;
-
-	public var possibleToUndo: Boolean = false;
-	public var possibleToRedo: Boolean = false;
-
-	public var dragView: Boolean = false;
-
-	public var selectedArgumentEditable: Boolean = false;
-	public var selectedStatementEditable: Boolean = false;
-	public var selectedPremiseEditable: Boolean = false;
-
-	/**
-	 * Is the user just dragging something over something else?
-	 */
-	public var draggingOver: Object = false;
-
-	public var currentFile: File = null;
-	public var fileChanged: Boolean = true;
-	public var fileLoaded: Boolean = bind currentFile != null;
-	public var fileChooser: JFileChooser = new JFileChooser();
-
-
+	// The application's view. Should be set using setView() from the CarneadesGUI object post-init.
+	public-read var view: CarneadesView = null;
 	public function setView(view: CarneadesView) {
 		view.control = this;
 		this.view = view;
 	}
 
-	public function setModel(view: CarneadesModel) {
-		this.model = model;
-	}
+	// The array of currently loaded model argument graphs in the model component. Read-Only.
+	public var argumentGraphs: ArgumentGraph[] = model.argumentGraphs;
 
-	/**
-	 * Set the object the users currently drags something over. Should be called by all view obects receiving dragging actions in their onMouseEnter/onMouseLeave methods.
-	 */
-	public function setDraggingOver(thing): Void { draggingOver = thing; };
+	// The current model argument graph that is to be displayed. Read-Only.
+	public var argumentGraph: ArgumentGraph = bind graph.argumentGraph;
+	
+	// The array of graph objects that correspond to the model graphs.
+	public var graphs: CarneadesGraph[] = [];
 
-	// SELECTION FUNCTIONS
+	// The view graph object currently displayed.
+	public var graph: CarneadesGraph;
 
+	// The command administering unit of the currently displayed graph.
+	var commands: CommandControl = bind graph.commands;
+
+	// View configuration attributes
+	public var possibleToAddConclusion: Boolean = true;
+	public var possibleToInverseArgument: Boolean = false;
+	public var possibleToNegatePremise: Boolean = false;
+	public var possibleToChangeToOrdPremise: Boolean = false;
+	public var possibleToChangeToException: Boolean = false;
+	public var possibleToChangeToAssumption: Boolean = false;
+	public var possibleToRemove: Boolean = false ;
+	public var possibleToUndo: Boolean = false;
+	public var possibleToRedo: Boolean = false;
+
+	// navigation mg: currently idle
+	public var dragView: Boolean = false;
+
+	// SELECTION
+	public var selectedArgumentEditable: Boolean = false;
+	public var selectedStatementEditable: Boolean = false;
+	public var selectedPremiseEditable: Boolean = false;
 	public var possibleToAddArgument = bind graph.selectedModels[0] instanceof Statement;
 	public var possibleToAddPremise = bind graph.selectedModels[0] instanceof Argument;
-
-	function singleStatementSelected(): Boolean {
-		return graph.selectedModels[0] instanceof Statement
-	}
-	function singleArgumentSelected(): Boolean {
-		return graph.selectedModels[0] instanceof Argument
-	}
+	
+	function singleStatementSelected(): Boolean { return graph.selectedModels[0] instanceof Statement }
+	function singleArgumentSelected(): Boolean { return graph.selectedModels[0] instanceof Argument }
 	function singlePremiseSelected(): Boolean {
-		var s: GraphElement[] = graph.selectedElements();
-		return { if (sizeof s != 1) false else (s[0] instanceof PremiseLink) }
+		return { 
+			if (sizeof graph.selectedElements() != 1) false
+			else (graph.selectedElements()[0] instanceof PremiseLink)
+		}
 	}
 	function premiseSelected(): Boolean {
-		var s: GraphElement[] = graph.selectedElements();
-		return { if (sizeof s != 1) false else (s[0] instanceof PremiseLink) }
+		return { 
+			if (sizeof graph.selectedElements() != 1) false
+			else (graph.selectedElements()[0] instanceof PremiseLink)
+		}
 	}
-	function singleSomethingSelected(): Boolean {
-		return { (sizeof graph.selectedElements() == 1) }
-	}
-	function nothingSelected(): Boolean {
-		return (sizeof graph.selectedElements() == 0);
-	}
+	function singleSomethingSelected(): Boolean { return { (sizeof graph.selectedElements() == 1) }}
+	function nothingSelected(): Boolean { return (sizeof graph.selectedElements() == 0); }
 
 	public function processGraphSelection(g: GraphElement): Void {
 		unSelectAll();
@@ -216,15 +167,8 @@ public class CarneadesControl {
 		view.focusOn(graph.selectedElements()[0]);
 	}
 
-	/**
-	 * Switch the view to another argument graph.
-	 */
-	public function displayGraph(a: ArgumentGraph) {
-		graph = (for (g in graphs where (g as CarneadesGraph).argumentGraph == a) { g }) [0];
-		updateAll();
-	}
-
 	// UPDATE FUNCTIONS
+
 	// TODO clean this up. This timeline belongs into the view.
 	var update: Timeline = Timeline {
 		repeatCount: 1
@@ -270,43 +214,43 @@ public class CarneadesControl {
 		});
 	}
 
-	/**
-	 * Perform an undo action.
-	 */
+	// Perform an undo action.
 	public function undo(): Number {
 		var result = commands.undo();
 		updateAll();
 		return result;
 	}
 
-	/**
-	 * Perform a redo action.
-	 */
+	// Perform a redo action.
 	public function redo(): Number {
 		var result = commands.redo();
 		updateAll();
 		return result;
 	}
 
+
+	// Switch the view to another argument graph.
+	public function displayGraph(a: ArgumentGraph) {
+		graph = (for (g in graphs where (g as CarneadesGraph).argumentGraph == a) { g }) [0];
+		updateAll();
+	}
+
 	// MODEL MANIPULATION FUNCTIONS
 
-	// DRAGGING FUNCTIONS
+	// DRAGGING
 
-	/**
-	 * Is a dragging action in progress.
-	 */
+	// drag & drop
+	public var draggingOver: Object = false;
+	public function setDraggingOver(thing): Void { draggingOver = thing; };
 	public var dragging = false;
 
-	/**
-	 * Processes the start of a dragging action. Should be called whenever a dragging action starts.
-	 */
+
+	// Processes the start of a dragging action. Should be called whenever a dragging action starts.
 	public function startDrag(): Void {
 		dragging = true;
 	}
 
-	/**
-	 * Processes the end of a dragging action. Should be called when a dragging action ends.
-	 */
+	// Processes the end of a dragging action. Should be called when a dragging action ends.
 	public function endDrag(): Void {
 		if (dragging) {
 			dragging = false;
@@ -318,7 +262,7 @@ public class CarneadesControl {
 		}
 	}
 
-	 function dragEndsAt(target): Void {
+	function dragEndsAt(target): Void {
 		var selected = graph.selectedElements();
 		for (s in selected) {
 			if (s instanceof StatementBox) {
@@ -327,7 +271,6 @@ public class CarneadesControl {
 
 					// 1. Determine linking premise
 					var temp = (graph.edges[ e | e.producer == s ]);
-
 					var premiseLink: PremiseLink;
 					var premise: Premise;
 
@@ -352,8 +295,7 @@ public class CarneadesControl {
 							premise: premise
 							oldArgument: oldArgument
 							newArgument: newArgument
-						}
-					);
+						});
 
 					// 5. check for cycles and undo in case
 					if (not argumentGraph.noCycles()) {
@@ -374,8 +316,7 @@ public class CarneadesControl {
 							argument: (s as ArgumentBox).argument
 							oldStatement: (s as ArgumentBox).argument.conclusion
 							newStatement: (target as StatementBox).statement
-						}
-					);
+						});
 
 					// 2. check for cycles and undo in case
 					if (not argumentGraph.noCycles()) {
@@ -390,6 +331,8 @@ public class CarneadesControl {
 		updateAll();
 	}
 
+	// CORE MODEL MANIPULATION
+
 	/**
 	 * Adds a blank statement to the graph.
 	 */
@@ -397,8 +340,7 @@ public class CarneadesControl {
 		commands.do(
 			AddStatementCommand {
 				argumentGraph: argumentGraph
-			}
-		);
+			});
 		updateAll();
 	}
 
@@ -414,12 +356,9 @@ public class CarneadesControl {
 							AddArgumentAndPremiseCommand {
 								argumentGraph: argumentGraph
 								statement: s as Statement
-							}
-						) != C_OK) {
+							}) != C_OK) {
 						view.alert("Argument cannot be inserted here.\nThe Graph would become cyclic.");
-					} else {
-						updateAll();
-					}
+					} else updateAll();
 				}
 			}
 		}
@@ -432,15 +371,12 @@ public class CarneadesControl {
 		var selected = graph.selectedElements();
 		for (a in selected where a instanceof ArgumentBox) {
 			var argument = (a as ArgumentBox).argument;
-
 			commands.do(
 				AddPremiseCommand {
 					argumentGraph: argumentGraph
 					argument: argument
-				}
-			);
+				});
 		}
-
 		updateAll();
 	}
 
@@ -451,14 +387,11 @@ public class CarneadesControl {
 	public function removeArgumentFromBox(ar: Argument): Void {
 		var a: Argument = null;
 		if (ar != null) a = ar else a = graph.selectedModels[0] as Argument;
-
 		commands.do(
 			RemoveArgumentCommand {
 				argumentGraph: argumentGraph
 				argument: a
-			}
-		);
-
+			});
 		unSelectAll();
 		updateAll();
 	}
@@ -471,9 +404,7 @@ public class CarneadesControl {
 			RemoveArgumentCommand {
 				argumentGraph: argumentGraph
 				argument: a
-			}
-		);
-
+			});
 		unSelectAll();
 		updateAll();
 	}
@@ -508,8 +439,7 @@ public class CarneadesControl {
 					motherArgument: tempArgument
 					premise: tempPremise
 					childArguments: argumentGraph.arguments[a | a.conclusion == s ]
-				}
-			);
+				});
 		} else if (argumentGraph.isPremise(s)){
 		// If it is a premise, delete both statement and premise.
 			commands.do(
@@ -517,41 +447,18 @@ public class CarneadesControl {
 					argumentGraph: argumentGraph
 					argument: tempArgument
 					premise: tempPremise
-				}
-			);
+				});
 		} else {
 		// Otherwise, delete the statement only.
 			commands.do(
 				DeleteStatementCommand {
 					argumentGraph: argumentGraph
 					statement: s
-				}
-			);
+				});
 		}
-
 		unSelectAll();
 		updateAll();
 	}
-
-	/**
-	 * Remove a statement that has been selected in the statement list.
-	 */
-	/*p
-	public function deleteStatementFromList(): Void {
-		var s: Statement = frame.list.getSelectedStatement();
-		if (s != null) {
-			commands.do(
-				DeleteStatementCommand {
-					argumentGraph: argumentGraph
-					statement: s
-				}
-			);
-		}
-		//p unSelectAll();
-		updateAll();
-		//p updateView();
-	}*/
-
 
 	/**
 	 * Remove an argument from its selected link.
@@ -561,10 +468,8 @@ public class CarneadesControl {
 			RemoveArgumentCommand {
 				argumentGraph: argumentGraph
 				argument: (l.producer as ArgumentBox).argument
-			}
-		);
-
-		//p unSelectAll();
+			});
+		unSelectAll();
 		updateAll();
 	}
 
@@ -580,8 +485,7 @@ public class CarneadesControl {
 							argumentGraph: argumentGraph
 							argument: a
 							premise: p
-						}
-					);
+						});
 				}
 			}
 		}
@@ -600,8 +504,7 @@ public class CarneadesControl {
 							argumentGraph: argumentGraph
 							argument: a
 							premise: p
-						}
-					);
+						});
 				}
 			}
 		}
@@ -626,7 +529,7 @@ public class CarneadesControl {
 				deletePremiseFromLink(e as PremiseLink);
 			}
 		}
-		//p unSelectAll();
+		unSelectAll();
 		updateAll();
 	}
 
@@ -634,22 +537,21 @@ public class CarneadesControl {
 	// Hopefully self-explanatory
 
 	// for statements
-	/*p
 	public function changeStatementId(s: Statement, id: String): Void {
 		var admissible: Boolean = true;
 
 		if (not argumentGraph.noDoubleIDs(id)) {
-			frame.alert("The chosen id is already taken!");
+			view.alert("The chosen id is already taken!");
 			admissible = false;
 		}
 
 		if (id == "") {
-			frame.alert("id may not be empty.");
+			view.alert("id may not be empty.");
 			admissible = false;
 		}
 
 		if (id.matches("^*[:alnum:][:space:]*[:alnum:]$")) {
-			frame.alert("id may not contain whitespaces.");
+			view.alert("id may not contain whitespaces.");
 			admissible = false;
 		}
 
@@ -659,12 +561,10 @@ public class CarneadesControl {
 					argumentGraph: argumentGraph
 					statement: s
 					id: id
-				}
-			);
+				});
 		}
-
 		updateAll();
-	}*/
+	}
 
 	public function changeStatementWff(s: Statement, c: String): Void {
 		commands.do(
@@ -672,13 +572,11 @@ public class CarneadesControl {
 				argumentGraph: argumentGraph
 				statement: s
 				wff: c
-			}
-		);
+			});
 		updateView(
 			GraphUpdate {
 				changedAttribute: true
-			}
-		);
+			});
 	};
 
 	public function changeGraphTitle(g: ArgumentGraph, t: String): Void {
@@ -686,8 +584,7 @@ public class CarneadesControl {
 			ChangeGraphTitleCommand {
 				argumentGraph: g
 				title: t
-			}
-		);
+			});
 		updateAll();
 	};
 
@@ -697,8 +594,7 @@ public class CarneadesControl {
 				argumentGraph: argumentGraph
 				statement: s
 				newStatus: v
-			}
-		);
+			});
 		updateAll();
 	};
 
@@ -709,48 +605,42 @@ public class CarneadesControl {
 						argumentGraph: argumentGraph
 						statement: s
 						standard: Scintilla {}
-					}
-				);
+					});
 			} else if (st == proofStandardDV) {
 				commands.do(
 					ChangeStatementStandardCommand {
 						argumentGraph: argumentGraph
 						statement: s
 						standard: DialecticalValidity {}
-					}
-				);
+					});
 			} else if (st == proofStandardBA) {
 				commands.do(
 					ChangeStatementStandardCommand {
 						argumentGraph: argumentGraph
 						statement: s
 						standard: BestArgument {}
-					}
-				);
+					});
 			} else if (st == proofStandardPE) {
 				commands.do(
 					ChangeStatementStandardCommand {
 						argumentGraph: argumentGraph
 						statement: s
 						standard: Preponderance {}
-					}
-				);
+					});
 			} else if (st == proofStandardCCE) {
 				commands.do(
 					ChangeStatementStandardCommand {
 						argumentGraph: argumentGraph
 						statement: s
 						standard: ClearAndConvincingEvidence {}
-					}
-				);
+					});
 			} else if (st == proofStandardBRD) {
 				commands.do(
 					ChangeStatementStandardCommand {
 						argumentGraph: argumentGraph
 						statement: s
 						standard: BeyondReasonableDoubt {}
-					}
-				);
+					});
 			}
 		updateAll();
 	};
@@ -764,10 +654,8 @@ public class CarneadesControl {
 				ChangeArgumentDirectionCommand {
 					argumentGraph: argumentGraph
 					argument: a
-				}
-			);
+				});
 		}
-
 		updateAll();
 	}
 
@@ -777,10 +665,7 @@ public class CarneadesControl {
 				argumentGraph: argumentGraph
 				argument: a
 				weight: v
-			}
-		);
-		// no new layout needed, so only update the view
-		//p updateView();
+			});
 	}
 
 	public function changeArgumentScheme(a: Argument, c: String): Void {
@@ -789,9 +674,7 @@ public class CarneadesControl {
 				argumentGraph: argumentGraph
 				argument: a
 				scheme: c
-			}
-		);
-		//p updateView();
+			});
 	};
 
 	public function changeArgumentTitle(a: Argument, t: String): Void {
@@ -799,8 +682,7 @@ public class CarneadesControl {
 			ChangeArgumentTitleCommand {
 				argument: a
 				title: t
-			}
-		);
+			});
 	}
 
 	public function changeArgumentId(a: Argument, id: String): Void {
@@ -867,17 +749,16 @@ public class CarneadesControl {
 		updateAll();
 	}
 
-
 	// Load / Save / New Options
 
-	 function graphIdTaken(id: String): Boolean {
+	function graphIdTaken(id: String): Boolean {
 		for (a in argumentGraphs) {
 			if (a.id == id) { return true; }
 		}
 		return false;
 	}
 
-	 function getNewGraphId(): String {
+	public function getNewGraphId(): String {
 		var admissible: Boolean = true;
 		var id: String = "g";
 		var number: Integer = 1;
@@ -887,11 +768,9 @@ public class CarneadesControl {
 
 	public function newGraph(): Void {
 		graphs = [];
-		addArgumentGraph(CarneadesControl.defaultGraph());
+		addArgumentGraph(defaultArgumentGraph(getNewGraphId()));
 		graph = graphs[0];
-
 		currentFile = null;
-
 		commands.reset();
 		unSelectAll();
 		updateAll();
@@ -927,32 +806,20 @@ public class CarneadesControl {
 		updateAll();
 	}
 
-	/*p
-	public function addArgumentGraph(newArgGraph: ArgumentGraph): Void {
-		var graph: CarneadesGraph = CarneadesGraph {
-			visible: true
-			control: bind this
-			argumentGraph: newArgGraph
-			layout: TreeLayout {
-				graph: bind graph
-			}
-		};
-		graph.translateX = view.middleX;
-		graph.translateY = view.middleY - yDistance;
-		graph.update();
-		insert graph into graphs;
-		graph.layout.compose();
-	}
-	*/
+	// FILE LOAD, SAVE & QUIT
+
+	public var currentFile: File = null;
+	public var fileChanged: Boolean = true;
+	public var fileLoaded: Boolean = bind currentFile != null;
+	public var fileChooser: JFileChooser = new JFileChooser();
 
 	public function open(): Void {
 		if (fileChanged) {
 			var choice = JOptionPane.showOptionDialog(
-								  null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?",
-								  JOptionPane.YES_NO_CANCEL_OPTION,
-								  JOptionPane.QUESTION_MESSAGE, null,
-								  ["Save", "Don't Save", "Cancel"], null
-							  );
+				null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?",
+				JOptionPane.YES_NO_CANCEL_OPTION,
+				JOptionPane.QUESTION_MESSAGE, null,
+				["Save", "Don't Save", "Cancel"], null);
 			if (choice == JOptionPane.YES_OPTION) {
 				saveAs();
 			} else if (choice == JOptionPane.NO_OPTION) {
@@ -1023,50 +890,18 @@ public class CarneadesControl {
 		fileChanged = false;
 	}
 
-	// DEBUG FUNCTIONS
-	// This is misplaced here and should actually go into the model.
-	public function defaultGraph(): ArgumentGraph {
-		var argumentGraph = ArgumentGraph { id: getNewGraphId() };
-
-		var s1: Statement = Statement {
-			id: "s1"
-			wff: "The street is wet."
-		}
-
-		var s2: Statement = Statement {
-			id: "s2"
-			wff: "It rained"
-		}
-
-		var a1: Argument = Argument {
-			id: "a1"
-			conclusion: s1
-			title: "When it rains, things get wet."
-		}
-
-		var p: Premise = Premise {
-			statement: s2
-		}
-
-		a1.addPremise(p);
-
-		argumentGraph.insertStatement(s1);
-		argumentGraph.insertStatement(s2);
-		argumentGraph.insertArgument(a1);
-
-		return argumentGraph;
-	}
-
 	public function quit(): Void {
 		if (fileChanged) {
 			var choice = JOptionPane.showOptionDialog(
-								  null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?",
-								  JOptionPane.YES_NO_CANCEL_OPTION,
-								  JOptionPane.QUESTION_MESSAGE, null,
-								  ["Save", "Don't Save", "Cancel"], null
-							  );
+				null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?",
+				JOptionPane.YES_NO_CANCEL_OPTION,
+				JOptionPane.QUESTION_MESSAGE, null,
+				["Save", "Don't Save", "Cancel"], null);
 			if (choice == JOptionPane.YES_OPTION) {
-				saveAs();
+				if (currentFile != null) {
+					save();
+					view.quit();
+				} else saveAs();
 			} else if (choice == JOptionPane.NO_OPTION) {
 				view.quit();
 			}
@@ -1074,21 +909,5 @@ public class CarneadesControl {
 			view.quit();
 		}
 	}
-
-	/*
-	// DEBUG PRINT FUNCTIONS
-
-	public function printSelected(): Void {
-		System.out.println("vertices: {graph.selected}");
-		System.out.println("models: {graph.selectedModels}");
-		System.out.println("list: {frame.list.list.selectedItem}");
-	}
-
-	public function printSizes(): Void {
-		System.out.println("view: {view.width}");
-		System.out.println("layout: {graph.layout.width}");
-	}
-	*/
-
 }
 
