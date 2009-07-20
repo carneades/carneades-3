@@ -16,19 +16,18 @@
  (carneades set)
 
  (export singleton list->set set->list empty? select
-         (rename (set-filter filter) 
-                 (set-any? any?) 
-                 (set-every? every?)
-                 ; (set/finder finder)
-                 ; (set/foldl fold-left)
-                 (set-empty empty-set)
-                 (set-adjoin adjoin)
-                 (set-union union)
-                 (set-intersection intersection)
-                 (set-disjoint? disjoint?)
-                 (set-difference difference)
-                 (set-subset? subset?)))
- 
+         (rename (set-filter filter))
+         (rename (set-any? any?))
+         (rename (set-every? every?))
+         (rename (set/finder finder))
+         (rename (set/foldl fold-left))
+         (rename (set-empty empty-set))
+         (rename (set-adjoin adjoin))
+         (rename (set-union union))
+         (rename (set-intersection intersection))
+         (rename (set-disjoint? disjoint?))
+         (rename (set-difference difference))
+         (rename (set-subset? subset?)))
  
  (import (rnrs))
  
