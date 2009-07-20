@@ -939,8 +939,9 @@
                 (write seed)
                 (newline)))
      (let ((entities (extract-entities port '())))
-       (write entities)
-       (newline)
+       (if *debug*
+           (begin (write entities)
+                  (newline)))
        (values #f entities namespaces seed))))
  
  #;(define (ssax:skip-internal-dtd port)
