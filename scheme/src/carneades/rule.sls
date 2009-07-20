@@ -30,7 +30,7 @@
  (export rule rule* make-rule rule? rule-id rule-strict rule-head rule-body 
          rule-critical-questions empty-rulebase rulebase rulebase? get-rule
          add-rules rulebase-rules generate-arguments-from-rules rule->datum
-         rulebase->datum (rename (make-head make-rule-head) (make-body make-rule-body))
+         rulebase->datum (rename (make-head make-rule-head)) (rename (make-body make-rule-body))
          get-clauses)
  
  (import (rnrs)
