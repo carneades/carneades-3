@@ -52,7 +52,9 @@
          
          (export to-dnf
                  dnf?
-                 compare-formulas)
+                 compare-formulas
+                 lconjunction?
+                 literal?)
          
          (import (rnrs)
                  (rnrs eval))
@@ -435,7 +437,7 @@
                  (display formula)
                  (newline)
                  '())))
-         
+                 
          
          
          ; -----------------------------------------------------------------------

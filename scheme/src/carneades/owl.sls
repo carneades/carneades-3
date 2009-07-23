@@ -1,3 +1,18 @@
+;;; Carneades Argumentation Library and Tools.
+;;; Copyright (C) 2008 Thomas F. Gordon, Fraunhofer FOKUS, Berlin
+;;; 
+;;; This program is free software: you can redistribute it and/or modify
+;;; it under the terms of the GNU Lesser General Public License version 3 (LGPL-3)
+;;; as published by the Free Software Foundation.
+;;; 
+;;; This program is distributed in the hope that it will be useful, but
+;;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;;; General Public License for details.
+;;; 
+;;; You should have received a copy of the GNU Lesser General Public License
+;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 #!r6rs
 
 (library
@@ -8,6 +23,7 @@
  (import (rnrs)
          (carneades rule)
          (carneades system)
+         (carneades dnf)
          (only (carneades lib srfi strings) string-trim string-suffix?)
          (carneades lib xml ssax ssax-code)
          (carneades lib xml ssax access-remote)
@@ -36,6 +52,28 @@
     !!! we wil only concentrate on class and property axioms !!!
 |#
  
+#|
+    OWL class axioms
+    - subclasses          - total support
+    - equivalent classes  - partial support as far as rules only support conjunctions of literals in the head
+    - disjoint classes    - partial support (s.a.); maybe different semantic
+    - complete classes    - !!! no support !!! will propably be implemented later
+
+    OWL class descriptions
+    - identifier            - total support
+    - enumerations          - !!! no support !!! no equation theory in carneades
+    - property restrictions - partial support
+      - allValuesFrom  - !!! no support !!!
+      - someValuesFrom - total support
+      - hasValue       - total support
+      - maxCardinality - !!! no support !!!
+      - minCardinality - !!! no support !!!
+      - Cardinality    - !!! no support !!!
+    - intersections         - total support
+    - unions                - total support
+    - complements           - total support
+|#
+ 
  ; -------------------------
  ; Classes
  ; -------------------------
@@ -59,6 +97,8 @@
  
  (define (get-class-complements sxml)
    ((sxpath "owl:complementOf" namespaces) sxml))
+ 
+ 
  
  ; class axioms
  
@@ -134,15 +174,6 @@
           (symmetric-property-rules (filter (lambda (l) (not (null? l)))
                                             (flatmap symmetric-property-axiom->rules symmetric-properties)))
           (class-rules (filter (lambda (l) (not (null? l))) (flatmap class-axiom->rules class-axioms))))
-     (display "class-rules: ")
-     (display class-rules)
-     (newline)
-     (display "object-property-rules: ")
-     (display object-property-rules)
-     (newline)
-     (display "data-property-rules: ")
-     (display data-property-rules)
-     (newline)
      (add-rules empty-rulebase (append class-rules object-property-rules data-property-rules))))
  
  (define (class-axiom->rules axiom)
@@ -152,7 +183,7 @@
                             ((not (null? rdf-about)) (string-trim (car rdf-about) #\#))
                             (else (begin (display axiom)
                                          (newline)
-                                         (raise "no class name found")))))
+                                         (error "class-axiom->rule" "no class name found" axiom)))))
           (subclasses (get-subclasses axiom))
           (equivalents (get-equivalent-classes axiom))
           (disjoints (get-disjoint-classes axiom))
@@ -162,34 +193,62 @@
      (append subclass-rules equivalent-rules disjoint-rules)))
  
  (define (subclass-axiom->rule axiom-name sxml)
-   (let ((superclass '(superclass ?x)))
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) sxml))
+          (owl-classes (get-owl-classes sxml))
+          (restrictions (get-class-property-restrictions sxml))
+          (class-argument (cond ((not (null? rdf-resource))
+                                 (list (string->symbol (string-trim (car rdf-resource) #\#)) (string->symbol (string-append "?" axiom-name))))
+                            ((not (null? owl-classes)) (class-description->formula axiom-name (car owl-classes)))
+                            ((not (null? restrictions)) (class-restriction->formula axiom-name (car restrictions)))
+                            (else (error "subclass-axiom->rule" "no class description found" sxml)))))
      (make-rule (string->symbol (string-append "subclass-" axiom-name "-rule"))
                 #f
-                (make-rule-head superclass)
-                (make-rule-body (list (string->symbol axiom-name) '?x)))))
+                (make-rule-head class-argument)
+                (make-rule-body (list (string->symbol axiom-name) (string->symbol (string-append "?" axiom-name)))))))
 
  
  (define (equivalent-axiom->rules axiom-name sxml)
-   (let ((equiv-class '(equi-class ?x)))
-     (list (make-rule (string->symbol (string-append "equivalent-" axiom-name "-<-rule"))
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) sxml))
+          (owl-classes (get-owl-classes sxml))
+          (restrictions (get-class-property-restrictions sxml))
+          (class-argument (cond ((not (null? rdf-resource))
+                                 (list (string->symbol (string-trim (car rdf-resource) #\#)) (string->symbol (string-append "?" axiom-name))))
+                            ((not (null? owl-classes)) (class-description->formula axiom-name (car owl-classes)))
+                            ((not (null? restrictions)) (class-restriction->formula axiom-name (car restrictions)))
+                            (else (error "equivalent-axiom->rules" "no class description found" sxml))))
+          (rule-< (make-rule (string->symbol (string-append "equivalent-" axiom-name "-<-rule"))
+                             #f
+                             (make-rule-head class-argument)
+                             (make-rule-body (list (string->symbol axiom-name) (string->symbol (string-append "?" axiom-name))))))
+          (rule-> (make-rule (string->symbol (string-append "equivalent-" axiom-name "->-rule"))
                       #f
-                      (make-rule-head equiv-class)
-                      (make-rule-body (list (string->symbol axiom-name) '?x)))
-           (make-rule (string->symbol (string-append "equivalent-" axiom-name "->-rule"))
-                      #f
-                      (make-rule-head (list (string->symbol axiom-name) '?x))
-                      (make-rule-body equiv-class)))))
+                      (make-rule-head (list (string->symbol axiom-name) (string->symbol (string-append "?" axiom-name))))
+                      (make-rule-body class-argument))))
+
+     (if (lconjunction? class-argument)
+         (list rule-< rule->)
+         (list rule->)))) 
  
  (define (disjoint-axiom->rules axiom-name sxml)
-   (let ((disjoint-class '(disjoint ?x)))
-     (list (make-rule (string->symbol (string-append "disjoint-" axiom-name "-<-rule"))
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) sxml))
+          (owl-classes (get-owl-classes sxml))
+          (restrictions (get-class-property-restrictions sxml))
+          (class-argument (cond ((not (null? rdf-resource))
+                                 (list (string->symbol (string-trim (car rdf-resource) #\#)) (string->symbol (string-append "?" axiom-name))))
+                            ((not (null? owl-classes)) (class-description->formula axiom-name (car owl-classes)))
+                            ((not (null? restrictions)) (class-restriction->formula axiom-name (car restrictions)))
+                            (else (error "disjoint-axiom->rules" "no class description found" sxml))))
+          (rule-< (make-rule (string->symbol (string-append "disjoint-" axiom-name "-<-rule"))
                       #f
-                      (make-rule-head (list 'not disjoint-class))
-                      (make-rule-body (list (string->symbol axiom-name) '?x)))
-           (make-rule (string->symbol (string-append "disjoint-" axiom-name "-<-rule"))
+                      (make-rule-head (list 'not class-argument))
+                      (make-rule-body (list (string->symbol axiom-name) (string->symbol (string-append "?" axiom-name))))))
+          (rule-> (make-rule (string->symbol (string-append "disjoint-" axiom-name "->-rule"))
                       #f
-                      (make-rule-head (list 'not (list (string->symbol axiom-name) '?x)))
-                      (make-rule-body disjoint-class)))))
+                      (make-rule-head (list 'not (list (string->symbol axiom-name) (string->symbol (string-append "?" axiom-name)))))
+                      (make-rule-body class-argument))))
+     (if (literal? class-argument)
+         (list rule-< rule->)
+         (list rule->))))
  
  (define (property-axiom->rules axiom)
    (let* ((rdf-id ((sxpath "@rdf:ID/text()" namespaces) axiom))
@@ -198,7 +257,7 @@
                                ((not (null? rdf-about)) (string-trim (car rdf-about) #\#))
                                (else (begin (display axiom)
                                             (newline)
-                                            (raise "no class name found")))))
+                                            (error "property-axiom->rule" "no property name found" axiom)))))
           (subproperties (get-subproperties axiom))
           (domains (get-domains axiom))
           (ranges (get-ranges axiom))
@@ -248,7 +307,7 @@
                                ((not (null? rdf-about)) (string-trim (car rdf-about) #\#))
                                (else (begin (display axiom)
                                             (newline)
-                                            (raise "no class name found")))))
+                                            (error "transitive-property-axiom->rule" "no property name found" axiom)))))
           (property-rules (property-axiom->rules axiom))
           (transitive-rule (make-rule (string->symbol (string-append property-name "-transitive-rule"))
                                       #f
@@ -266,7 +325,7 @@
                                ((not (null? rdf-about)) (string-trim (car rdf-about) #\#))
                                (else (begin (display axiom)
                                             (newline)
-                                            (raise "no class name found")))))
+                                            (error "symmetric-property-axiom->rule" "no property name found" axiom)))))
           (property-rules (property-axiom->rules axiom))
           (symmetric-rule (make-rule (string->symbol (string-append property-name "-symmetric-rule"))
                                      #f
@@ -275,16 +334,81 @@
      (append property-rules (list symmetric-rule))))
  
 
- (define (class-description->formula class-desc)
+ (define (class-description->formula axiom-name class-desc)  
    (let* ((rdf-id ((sxpath "@rdf:ID/text()" namespaces) class-desc))
           (rdf-about ((sxpath "@rdf:about/text()" namespaces) class-desc))
+          ;(rdf-resource ((sxpath "@rdf:resource/text()" namespaces) class-desc))
           ;(rdf-type ((sxpath "@rdf:type/text()" namespaces) class-desc))          
           (class-name (cond ((not (null? rdf-id)) (car rdf-id))
-                               ((not (null? rdf-about)) (string-trim (car rdf-about) #\#))
-                               (else #f)))
+                            ((not (null? rdf-about)) (string-trim (car rdf-about) #\#))
+                            ;((not (null? rdf-resource)) (string-trim (car rdf-resource) #\#))
+                            (else #f)))
+          (enumerations (get-class-enumerations class-desc))          
+          (intersections (get-class-intersections class-desc))
           (unions (get-class-unions class-desc))
-          (intersections (get-class-intersections class-desc)))
-     '()))
+          (complements (get-class-complements class-desc)))     
+     (cond (class-name (list (string->symbol class-name) (string->symbol (string-append "?" axiom-name))))
+           ((not (null? enumerations)) (enumeration->formula axiom-name (car enumerations)))           
+           ((not (null? intersections)) (intersection->formula axiom-name (car intersections)))
+           ((not (null? unions)) (union->formula axiom-name (car unions)))
+           ((not (null? complements)) (complement->formula axiom-name (car complements)))
+           (else (error "class-description->formula" "no valid class description found" class-desc)))))
+ 
+ (define (class-restriction->formula axiom-name class-restr)
+   (let* ((prop (string-trim (car ((sxpath "owl:onProperty/@rdf:resource/text()" namespaces) class-restr)) #\#))
+          (someValues ((sxpath "owl:someValuesFrom" namespaces) class-restr))
+          (hasValue ((sxpath "owl:hasValue" namespaces) class-restr)))
+     
+     (cond ((not (null? someValues)) (some-values-restriction->rule axiom-name prop (car someValues)))
+           ((not (null? hasValue)) (has-value-restriction->rule axiom-name prop (car hasValue)))
+           (else (error "class-restriction->formula" "owl:someValuesFrom or owl:hasValue expected! other restrictions are not supported!" class-restr)))))
+ 
+ (define (some-values-restriction->rule axiom-name prop restriction)
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) restriction))
+          (owl-classes (get-owl-classes restriction))
+          (restrictions (get-class-property-restrictions restriction))
+          (class-argument (cond ((not (null? rdf-resource)) 
+                                 (list (string->symbol (string-trim (car rdf-resource) #\#)) (string->symbol (string-append "?" prop))))
+                                ((not (null? owl-classes)) (class-description->formula prop (car owl-classes)))
+                                ((not (null? restrictions)) (class-restriction->formula prop (car restrictions)))
+                                (else (error "some-values-restriction->rule" "no class description found" restriction)))))
+     (list 'and 
+            (list (string->symbol prop)
+                  (string->symbol (string-append "?" axiom-name))
+                  (string->symbol (string-append "?" prop)))
+            class-argument)))
+ 
+ (define (has-value-restriction->rule axiom-name prop restriction)
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) restriction))
+          (data-value ((sxpath "/text()" '()) restriction))
+          (value (cond ((not (null? rdf-resource)) (string->symbol (string-trim (car rdf-resource) #\#)))
+                       ((not (null? data-value)) (string->symbol (car data-value))))))          
+     (list (string->symbol prop) (string->symbol (string-append "?" axiom-name)) value)))
+     
+ 
+ (define (enumeration->formula axiom-name enum)
+   (error "class-description->formula" "no numerations supported" enum))
+ 
+ (define (intersection->formula axiom-name intersect) 
+   (let* ((owl-classes (get-owl-classes intersect))
+          (restrictions (get-class-property-restrictions intersect))
+          (class-arguments (append (map (lambda (c) (class-description->formula axiom-name c)) owl-classes)
+                                   (map (lambda (c) (class-restriction->formula axiom-name c)) restrictions))))
+     (cons 'and class-arguments)))
+ 
+ (define (union->formula axiom-name union)
+   (let* ((owl-classes (get-owl-classes union))
+          (restrictions (get-class-property-restrictions union))
+          (class-arguments (append (map (lambda (c) (class-description->formula axiom-name c)) owl-classes)
+                                   (map (lambda (c) (class-restriction->formula axiom-name c)) restrictions))))
+     (cons 'or class-arguments)))
+ 
+ (define (complement->formula axiom-name comp)
+   (let* ((owl-classes (get-owl-classes comp))
+          (restrictions (get-class-property-restrictions comp))
+          (class-arguments (append (map (lambda (c) (class-description->formula axiom-name c)) owl-classes)
+                                   (map (lambda (c) (class-restriction->formula axiom-name c)) restrictions))))
+   (cons 'not class-arguments)))
  
  ; -------------------------
  ; UTILS
@@ -299,20 +423,20 @@
  ; -------------------------
  
   
- (define sxml '(*TOP* (doc (^ (foo "foo"))
+ #;(define sxml '(*TOP* (doc (^ (foo "foo"))
                            (title "Hello world")
                            (title "foo bar"))))
  
- (define doc ((sxpath "doc" '()) sxml))
+ ;(define doc ((sxpath "doc" '()) sxml))
  
- (define titles ((sxpath "title" '()) doc))
+ ;(define titles ((sxpath "title" '()) doc))
  
- (define hund (ssax:dtd-xml->sxml (open-input-resource "C:\\Users\\Silvi\\Desktop\\OWL\\Hundeformular.owl") '()))
+ (define hund (ssax:dtd-xml->sxml (open-input-resource "C:\\Users\\stb\\Desktop\\Hundeformular.owl") namespaces))
  
- (define classes ((sxpath "rdf:RDF/owl:Class" namespaces) hund))
+ ;(define classes ((sxpath "rdf:RDF/owl:Class" namespaces) hund))
  
- (define class1 (car classes))
+ ;(define class1 (car classes))
  
- (define rb (import-owl "C:\\Users\\Silvi\\Desktop\\OWL\\Hundeformular.owl"))
+ (define rb (import-owl "C:\\Users\\stb\\Desktop\\Hundeformular.owl"))
  
  )
