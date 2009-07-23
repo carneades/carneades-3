@@ -8,7 +8,7 @@
  (import (rnrs)
          (carneades rule)
          (carneades system)
-         (only (carneades lib srfi strings) string-trim)
+         (only (carneades lib srfi strings) string-trim string-suffix?)
          (carneades lib xml ssax ssax-code)
          (carneades lib xml ssax access-remote)
          (carneades lib xml sxml sxpath))
@@ -28,7 +28,7 @@
  
  #|
     An OWL document consists of:
-    - optional ontology heders (generally at most one)
+    - optional ontology headers (generally at most one)
     - class axioms
     - property axioms
     - facts about individuals
@@ -85,10 +85,10 @@
  (define (get-subproperties sxml)
    ((sxpath "owl:subPropertyOf" namespaces) sxml))
  
- (define (get-domain sxml)
+ (define (get-domains sxml)
    ((sxpath "rdfs:domain" namespaces) sxml))
  
- (define (get-range sxml)
+ (define (get-ranges sxml)
    ((sxpath "rdfs:range" namespaces) sxml))
  
  (define (get-equivalent-properties sxml)
@@ -110,28 +110,42 @@
    ((sxpath "owl:SymmetricProperty" namespaces) sxml))
  
  ; -------------------------
+ ; RDF
+ ; -------------------------
+ 
+ (define (get-types sxml)
+   ((sxpath "rdf:type" namespaces) sxml))
+ 
+ 
+ ; -------------------------
  ; Ontology -> Rule Convertion
  ; -------------------------
  
  (define (ontology->rules ontology)
    (let* ((class-axioms (get-owl-classes ontology))
           (object-properties (get-object-properties ontology))
-          (data-properties (get-data-properties ontology)))
-#|     (display "class-axioms: ")
-     (display class-axioms)
+          (data-properties (get-data-properties ontology))
+          (transitive-properties (get-transitive-properties ontology))
+          (symmetric-properties (get-symmetric-properties ontology))
+          (object-property-rules (filter (lambda (l) (not (null? l))) (flatmap property-axiom->rules object-properties)))
+          (data-property-rules (filter (lambda (l) (not (null? l))) (flatmap property-axiom->rules data-properties)))
+          (transitive-property-rules (filter (lambda (l) (not (null? l)))
+                                             (flatmap transitive-property-axiom->rules transitive-properties)))
+          (symmetric-property-rules (filter (lambda (l) (not (null? l)))
+                                            (flatmap symmetric-property-axiom->rules symmetric-properties)))
+          (class-rules (filter (lambda (l) (not (null? l))) (flatmap class-axiom->rules class-axioms))))
+     (display "class-rules: ")
+     (display class-rules)
      (newline)
+     (display "object-property-rules: ")
+     (display object-property-rules)
      (newline)
-     (display "object-properties: ")
-     (display object-properties)
+     (display "data-property-rules: ")
+     (display data-property-rules)
      (newline)
-     (newline)
-     (display "data-properties: ")
-     (display data-properties)
-     (newline)
-     (newline) |#
-     (add-rules empty-rulebase (map class-axiom->rule class-axioms))))
+     (add-rules empty-rulebase (append class-rules object-property-rules data-property-rules))))
  
- (define (class-axiom->rule axiom)
+ (define (class-axiom->rules axiom)
    (let* ((rdf-id ((sxpath "@rdf:ID/text()" namespaces) axiom))
           (rdf-about ((sxpath "@rdf:about/text()" namespaces) axiom))
           (axiom-name (cond ((not (null? rdf-id)) (car rdf-id))
@@ -139,19 +153,144 @@
                             (else (begin (display axiom)
                                          (newline)
                                          (raise "no class name found")))))
-          (rule-name (gensym (string-append axiom-name "-rule")))
-          (rule-head (list (string->symbol axiom-name) '?x))
           (subclasses (get-subclasses axiom))
           (equivalents (get-equivalent-classes axiom))
           (disjoints (get-disjoint-classes axiom))
-          (clauses (axioms->clauses subclasses equivalents disjoints)))
-     (make-rule rule-name 
-                #f
-                (make-rule-head rule-head)
-                (make-rule-body clauses))))
+          (subclass-rules (map (lambda (s) (subclass-axiom->rule axiom-name s)) subclasses))
+          (equivalent-rules (flatmap (lambda (s) (equivalent-axiom->rules axiom-name s)) equivalents))
+          (disjoint-rules (flatmap (lambda (s) (disjoint-axiom->rules axiom-name s)) disjoints)))
+     (append subclass-rules equivalent-rules disjoint-rules)))
  
- (define (axioms->clauses subclasses equivalents disjoints)
-   '(foo ?x))
+ (define (subclass-axiom->rule axiom-name sxml)
+   (let ((superclass '(superclass ?x)))
+     (make-rule (string->symbol (string-append "subclass-" axiom-name "-rule"))
+                #f
+                (make-rule-head superclass)
+                (make-rule-body (list (string->symbol axiom-name) '?x)))))
+
+ 
+ (define (equivalent-axiom->rules axiom-name sxml)
+   (let ((equiv-class '(equi-class ?x)))
+     (list (make-rule (string->symbol (string-append "equivalent-" axiom-name "-<-rule"))
+                      #f
+                      (make-rule-head equiv-class)
+                      (make-rule-body (list (string->symbol axiom-name) '?x)))
+           (make-rule (string->symbol (string-append "equivalent-" axiom-name "->-rule"))
+                      #f
+                      (make-rule-head (list (string->symbol axiom-name) '?x))
+                      (make-rule-body equiv-class)))))
+ 
+ (define (disjoint-axiom->rules axiom-name sxml)
+   (let ((disjoint-class '(disjoint ?x)))
+     (list (make-rule (string->symbol (string-append "disjoint-" axiom-name "-<-rule"))
+                      #f
+                      (make-rule-head (list 'not disjoint-class))
+                      (make-rule-body (list (string->symbol axiom-name) '?x)))
+           (make-rule (string->symbol (string-append "disjoint-" axiom-name "-<-rule"))
+                      #f
+                      (make-rule-head (list 'not (list (string->symbol axiom-name) '?x)))
+                      (make-rule-body disjoint-class)))))
+ 
+ (define (property-axiom->rules axiom)
+   (let* ((rdf-id ((sxpath "@rdf:ID/text()" namespaces) axiom))
+          (rdf-about ((sxpath "@rdf:about/text()" namespaces) axiom))         
+          (property-name (cond ((not (null? rdf-id)) (car rdf-id))
+                               ((not (null? rdf-about)) (string-trim (car rdf-about) #\#))
+                               (else (begin (display axiom)
+                                            (newline)
+                                            (raise "no class name found")))))
+          (subproperties (get-subproperties axiom))
+          (domains (get-domains axiom))
+          (ranges (get-ranges axiom))
+          (equiv-props (get-equivalent-properties axiom))
+          (inverse-props (get-inverse-properties axiom))
+          (functional-props (get-functional-properties axiom))
+          (inverse-functional-props (get-inverse-functional-properties axiom))
+          (prop-types (get-types axiom))
+          (type-rules (filter (lambda (x) (not (null? x))) (map (lambda (t) (prop-type->rule property-name t)) prop-types)))
+          )
+     (append (list (make-rule (string->symbol (string-append property-name "-rule"))
+                              #f
+                              (make-rule-head (string->symbol property-name))
+                              '()))
+             type-rules)))
+ 
+ (define (prop-type->rule property-name prop-type)
+   (let* ((transitive? (let ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) prop-type)))
+                         (and (not (null? rdf-resource))
+                              (string-suffix? "TransitiveProperty" (car rdf-resource)))))
+          (symmetric? (let ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) prop-type)))
+                        (and (not (null? rdf-resource))
+                             (string-suffix? "SymmetricProperty" (car rdf-resource)))))
+          (functional? (let ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) prop-type)))
+                         (and (not (null? rdf-resource))
+                              (string-suffix? "FunctionalProperty" (car rdf-resource)))))
+          (inverse-functional? (let ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) prop-type)))
+                                 (and (not (null? rdf-resource))
+                                      (string-suffix? "InverseFunctionalProperty" (car rdf-resource))))))
+     (cond (transitive? (make-rule (string->symbol (string-append property-name "-transitive-rule"))
+                                   #f
+                                   (make-rule-head (list (string->symbol property-name)'?x '?z))
+                                   (make-rule-body (list 'and
+                                                         (list (string->symbol property-name)'?x '?y)
+                                                         (list (string->symbol property-name)'?y '?z)))))
+           (symmetric? (make-rule (string->symbol (string-append property-name "-symmetric-rule"))
+                                     #f
+                                     (make-rule-head (list (string->symbol property-name)'?y '?x))
+                                     (make-rule-body (list (string->symbol property-name)'?x '?y))))
+           (else '()))))
+ 
+ (define (transitive-property-axiom->rules axiom)
+   (let* ((rdf-id ((sxpath "@rdf:ID/text()" namespaces) axiom))
+          (rdf-about ((sxpath "@rdf:about/text()" namespaces) axiom))
+          ;(rdf-type ((sxpath "@rdf:type/text()" namespaces) axiom))          
+          (property-name (cond ((not (null? rdf-id)) (car rdf-id))
+                               ((not (null? rdf-about)) (string-trim (car rdf-about) #\#))
+                               (else (begin (display axiom)
+                                            (newline)
+                                            (raise "no class name found")))))
+          (property-rules (property-axiom->rules axiom))
+          (transitive-rule (make-rule (string->symbol (string-append property-name "-transitive-rule"))
+                                      #f
+                                      (make-rule-head (list (string->symbol property-name)'?x '?z))
+                                      (make-rule-body (list 'and
+                                                            (list (string->symbol property-name)'?x '?y)
+                                                            (list (string->symbol property-name)'?y '?z))))))
+     (append property-rules (list transitive-rule))))
+ 
+ (define (symmetric-property-axiom->rules axiom)
+   (let* ((rdf-id ((sxpath "@rdf:ID/text()" namespaces) axiom))
+          (rdf-about ((sxpath "@rdf:about/text()" namespaces) axiom))
+          ;(rdf-type ((sxpath "@rdf:type/text()" namespaces) axiom))          
+          (property-name (cond ((not (null? rdf-id)) (car rdf-id))
+                               ((not (null? rdf-about)) (string-trim (car rdf-about) #\#))
+                               (else (begin (display axiom)
+                                            (newline)
+                                            (raise "no class name found")))))
+          (property-rules (property-axiom->rules axiom))
+          (symmetric-rule (make-rule (string->symbol (string-append property-name "-symmetric-rule"))
+                                     #f
+                                     (make-rule-head (list (string->symbol property-name)'?y '?x))
+                                     (make-rule-body (list (string->symbol property-name)'?x '?y)))))
+     (append property-rules (list symmetric-rule))))
+ 
+
+ (define (class-description->formula class-desc)
+   (let* ((rdf-id ((sxpath "@rdf:ID/text()" namespaces) class-desc))
+          (rdf-about ((sxpath "@rdf:about/text()" namespaces) class-desc))
+          ;(rdf-type ((sxpath "@rdf:type/text()" namespaces) class-desc))          
+          (class-name (cond ((not (null? rdf-id)) (car rdf-id))
+                               ((not (null? rdf-about)) (string-trim (car rdf-about) #\#))
+                               (else #f)))
+          (unions (get-class-unions class-desc))
+          (intersections (get-class-intersections class-desc)))
+     '()))
+ 
+ ; -------------------------
+ ; UTILS
+ ; -------------------------
+ 
+ (define (flatmap f l) (apply append (map f l)))
    
 
  
@@ -168,12 +307,12 @@
  
  (define titles ((sxpath "title" '()) doc))
  
- (define hund (ssax:dtd-xml->sxml (open-input-resource "C:\\Users\\stb\\Desktop\\Hundeformular.owl") '()))
+ (define hund (ssax:dtd-xml->sxml (open-input-resource "C:\\Users\\Silvi\\Desktop\\OWL\\Hundeformular.owl") '()))
  
  (define classes ((sxpath "rdf:RDF/owl:Class" namespaces) hund))
  
  (define class1 (car classes))
  
- (define rb (import-owl "C:\\Users\\stb\\Desktop\\Hundeformular.owl"))
+ (define rb (import-owl "C:\\Users\\Silvi\\Desktop\\OWL\\Hundeformular.owl"))
  
  )
