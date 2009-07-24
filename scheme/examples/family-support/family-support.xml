@@ -20,11 +20,11 @@
         <s pred="family:mother">The mother of <c>Max</c> is <c>Gertrude</c></s>
       </axiom>
       <axiom id="f3">
-        <s pred="family:needy"><c>Gertrude</c> is needy</s>
+        <s pred="family:Needy"><c>Gertrude</c> is needy</s>
       </axiom>
       <axiom id="f4">
         <not>
-          <s pred="family:hasCapacityToSupport">
+          <s pred="family:HasCapacityToSupport">
             <c>Max</c> has the capacity to provide support </s>
         </not>
       </axiom>
@@ -137,28 +137,28 @@
         </head>
         <body>
           <not>
-            <s pred="family:needy"><v>Person1</v> is needy </s>
+            <s pred="family:Needy"><v>Person1</v> is needy </s>
           </not>
         </body>
       </rule>
       <rule id="s1602b-BGB">
         <head>
-          <s pred="family:needy"><v>Person1</v> is needy</s>
+          <s pred="family:Needy"><v>Person1</v> is needy</s>
         </head>
         <body>
           <not>
-            <s pred="family:ableToSupportSelf"><v>Person1</v> is able to support himself</s>
+            <s pred="family:AbleToSupportSelf"><v>Person1</v> is able to support himself</s>
           </not>
         </body>
       </rule>
       <rule id="s1602c-BGB">
         <head>
           <not>
-            <s pred="family:needy"><v>Person1</v> is needy</s>
+            <s pred="family:Needy"><v>Person1</v> is needy</s>
           </not>
         </head>
         <body>
-          <s pred="family:ableToSupportSelf"><v>Person1</v> is able to support to himself</s>
+          <s pred="family:AbleToSupportSelf"><v>Person1</v> is able to support to himself</s>
         </body>
       </rule>
       <rule id="s1603-BGB">
@@ -176,7 +176,7 @@
         </head>
         <body>
           <not>
-            <s pred="family:hasCapacityToSupport"><v>Person1</v> has the capacity to provide
+            <s pred="family:HasCapacityToSupport"><v>Person1</v> has the capacity to provide
             support</s>
           </not>
         </body>
@@ -189,7 +189,7 @@
           </s>
         </head>
         <body>
-          <s pred="family:needyDueToImmoralBehavior"><v>Person1</v> is needy due to his own immoral
+          <s pred="family:NeedyDueToImmoralBehavior"><v>Person1</v> is needy due to his own immoral
             behavior</s>
         </body>
       </rule>
