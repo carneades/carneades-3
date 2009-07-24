@@ -29,6 +29,8 @@
          (carneades lib xml ssax access-remote)
          (carneades lib xml sxml sxpath))
  
+ (define *debug* #t)
+ 
  (define namespaces '((owl . "http://www.w3.org/2002/07/owl#")
                       (xsd . "http://www.w3.org/2001/XMLSchema#")
                       (owl2xml . "http://www.w3.org/2006/12/owl2-xml#")
@@ -44,12 +46,11 @@
  
  #|
     An OWL document consists of:
-    - optional ontology headers (generally at most one)
-    - class axioms
-    - property axioms
-    - facts about individuals
-
-    !!! we wil only concentrate on class and property axioms !!!
+    - optional ontology headers (generally at most one) - !!! no support !!!
+    - class axioms                                      - partial support
+    - property axioms                                   - partial support
+    - facts about individuals                           - !!! no support !!! will propably be implemented later
+    
 |#
  
 #|
@@ -72,6 +73,19 @@
     - intersections         - total support
     - unions                - total support
     - complements           - total support
+|#
+ 
+ #|
+    OWL property axioms
+    - subproperty                 - total support
+    - domain                      - total support
+    - range                       - total support
+    - equivalent property         - total support
+    - inverse property            - total support
+    - functional property         - !!! no support !!!
+    - inverse functional property - !!! no support !!!
+    - symmetric property          - total support
+    - transitive property         - total support
 |#
  
  ; -------------------------
@@ -174,7 +188,7 @@
           (symmetric-property-rules (filter (lambda (l) (not (null? l)))
                                             (flatmap symmetric-property-axiom->rules symmetric-properties)))
           (class-rules (filter (lambda (l) (not (null? l))) (flatmap class-axiom->rules class-axioms))))
-     (add-rules empty-rulebase (append class-rules object-property-rules data-property-rules))))
+     (add-rules empty-rulebase (append class-rules object-property-rules data-property-rules transitive-property-rules symmetric-property-rules))))
  
  (define (class-axiom->rules axiom)
    (let* ((rdf-id ((sxpath "@rdf:ID/text()" namespaces) axiom))
@@ -266,16 +280,98 @@
           (functional-props (get-functional-properties axiom))
           (inverse-functional-props (get-inverse-functional-properties axiom))
           (prop-types (get-types axiom))
+          (subproperty-rules (map (lambda (s) (subproperty->rule property-name s)) subproperties))
+          (domain-rules (map (lambda (d) (domain->rule property-name d)) domains))
+          (range-rules (map (lambda (r) (range->rule property-name r)) ranges))
+          (equiv-rules (flatmap (lambda (e) (equivalent-property->rules property-name e)) equiv-props))
+          (inverse-rules (flatmap (lambda (i) (inverse-property->rules property-name i)) inverse-props))          
           (type-rules (filter (lambda (x) (not (null? x))) (map (lambda (t) (prop-type->rule property-name t)) prop-types)))
           )
-     (append (list (make-rule (string->symbol (string-append property-name "-rule"))
-                              #f
-                              (make-rule-head (string->symbol property-name))
-                              '()))
-             type-rules)))
+     (append subproperty-rules domain-rules range-rules equiv-rules inverse-rules type-rules)))
+ 
+ (define (subproperty->rule property-name sub-prop)
+   (let* ((rdf-resource (string-trim (car ((sxpath "@rdf:resource/text()" namespaces) sub-prop)) #\#))
+          (rule-head (list (string->symbol rdf-resource)
+                           (string->symbol (string-append "?" property-name "-1"))
+                           (string->symbol (string-append "?" property-name "-2"))))
+          (rule-body (list (string->symbol property-name)
+                           (string->symbol (string-append "?" property-name "-1"))
+                           (string->symbol (string-append "?" property-name "-2")))))
+     (make-rule (string->symbol (string-append property-name "-subproperty-rule"))
+                #f
+                (make-rule-head rule-head)
+                (make-rule-body rule-body))))
+ 
+ (define (domain->rule property-name domain)
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) domain))
+          (var1 (string->symbol (string-append "?" property-name "-1")))
+          (var2 (string->symbol (string-append "?" property-name "-2")))
+          (owl-classes (get-owl-classes domain))
+          (restrictions (get-class-property-restrictions domain))
+          (rule-head (cond ((not (null? rdf-resource)) (list (string->symbol (string-trim (car rdf-resource) #\#)) var1))
+                              ((not (null? owl-classes)) (class-description->formula (string-append property-name "-1") (car owl-classes)))
+                              ((not (null? restrictions)) (class-restriction->formula (string-append property-name "-1") (car restrictions)))
+                              (else (error "domain->rule" "no class description found" domain))))          
+          (rule-body (list (string->symbol property-name) var1 var2)))
+     (make-rule (string->symbol (string-append property-name "-domain-rule"))
+                #f
+                (make-rule-head rule-head)
+                (make-rule-body rule-body))))
+                                
+ 
+ (define (range->rule property-name range)
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) range))
+          (var1 (string->symbol (string-append "?" property-name "-1")))
+          (var2 (string->symbol (string-append "?" property-name "-2")))
+          (owl-classes (get-owl-classes range))
+          (restrictions (get-class-property-restrictions range))
+          (rule-head (cond ((not (null? rdf-resource)) (list (string->symbol (string-trim (car rdf-resource) #\#)) var2))
+                              ((not (null? owl-classes)) (class-description->formula (string-append property-name "-2") (car owl-classes)))
+                              ((not (null? restrictions)) (class-restriction->formula (string-append property-name "-2") (car restrictions)))
+                              (else (error "range->rule" "no class description found" range))))          
+          (rule-body (list (string->symbol property-name) var1 var2)))
+     (make-rule (string->symbol (string-append property-name "-range-rule"))
+                #f
+                (make-rule-head rule-head)
+                (make-rule-body rule-body))))
+ 
+ (define (equivalent-property->rules property-name equiv-prop)
+   (let* ((rdf-resource (string->symbol (string-trim (car ((sxpath "@rdf:resource/text()" namespaces) equiv-prop)) #\#)))
+          (var1 (string->symbol (string-append "?" property-name "-1")))
+          (var2 (string->symbol (string-append "?" property-name "-2")))
+          (prop (string->symbol property-name))
+          (stmt1 (list prop var1 var2))
+          (stmt2 (list rdf-resource var1 var2)))
+     (list (make-rule (string->symbol (string-append property-name "-equiv->-rule"))
+                      #f
+                      (make-rule-head stmt1)
+                      (make-rule-head stmt2))
+           (make-rule (string->symbol (string-append property-name "-equiv-<-rule"))
+                      #f
+                      (make-rule-head stmt2)
+                      (make-rule-head stmt1)))))
+ 
+ (define (inverse-property->rules property-name inverse-prop)
+   (let* ((rdf-resource (string->symbol (string-trim (car ((sxpath "@rdf:resource/text()" namespaces) inverse-prop)) #\#)))
+          (var1 (string->symbol (string-append "?" property-name "-1")))
+          (var2 (string->symbol (string-append "?" property-name "-2")))
+          (prop (string->symbol property-name))
+          (stmt1 (list prop var1 var2))
+          (stmt2 (list rdf-resource var2 var1)))
+     (list (make-rule (string->symbol (string-append property-name "-inverse->-rule"))
+                      #f
+                      (make-rule-head stmt1)
+                      (make-rule-head stmt2))
+           (make-rule (string->symbol (string-append property-name "-inverse-<-rule"))
+                      #f
+                      (make-rule-head stmt2)
+                      (make-rule-head stmt1)))))
  
  (define (prop-type->rule property-name prop-type)
-   (let* ((transitive? (let ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) prop-type)))
+   (let* ((var1 (string->symbol (string-append "?" property-name "-1")))
+          (var2 (string->symbol (string-append "?" property-name "-2")))
+          (var3 (string->symbol (string-append "?" property-name "-3")))
+          (transitive? (let ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) prop-type)))
                          (and (not (null? rdf-resource))
                               (string-suffix? "TransitiveProperty" (car rdf-resource)))))
           (symmetric? (let ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) prop-type)))
@@ -289,15 +385,20 @@
                                       (string-suffix? "InverseFunctionalProperty" (car rdf-resource))))))
      (cond (transitive? (make-rule (string->symbol (string-append property-name "-transitive-rule"))
                                    #f
-                                   (make-rule-head (list (string->symbol property-name)'?x '?z))
+                                   (make-rule-head (list (string->symbol property-name)var1 var3))
                                    (make-rule-body (list 'and
-                                                         (list (string->symbol property-name)'?x '?y)
-                                                         (list (string->symbol property-name)'?y '?z)))))
+                                                         (list (string->symbol property-name)var1 var2)
+                                                         (list (string->symbol property-name)var2 var3)))))
            (symmetric? (make-rule (string->symbol (string-append property-name "-symmetric-rule"))
                                      #f
-                                     (make-rule-head (list (string->symbol property-name)'?y '?x))
-                                     (make-rule-body (list (string->symbol property-name)'?x '?y))))
-           (else '()))))
+                                     (make-rule-head (list (string->symbol property-name)var2 var1))
+                                     (make-rule-body (list (string->symbol property-name)var1 var2))))
+           (else (if *debug*
+                     (begin (display "prop-type->rule: only symmetric and transitive types supported")
+                            (newline)
+                            (display "found: ")
+                            (display prop-type)))
+                 '()))))
  
  (define (transitive-property-axiom->rules axiom)
    (let* ((rdf-id ((sxpath "@rdf:ID/text()" namespaces) axiom))
@@ -308,13 +409,16 @@
                                (else (begin (display axiom)
                                             (newline)
                                             (error "transitive-property-axiom->rule" "no property name found" axiom)))))
+          (var1 (string->symbol (string-append "?" property-name "-1")))
+          (var2 (string->symbol (string-append "?" property-name "-2")))
+          (var3 (string->symbol (string-append "?" property-name "-3")))
           (property-rules (property-axiom->rules axiom))
           (transitive-rule (make-rule (string->symbol (string-append property-name "-transitive-rule"))
                                       #f
-                                      (make-rule-head (list (string->symbol property-name)'?x '?z))
+                                      (make-rule-head (list (string->symbol property-name)var1 var3))
                                       (make-rule-body (list 'and
-                                                            (list (string->symbol property-name)'?x '?y)
-                                                            (list (string->symbol property-name)'?y '?z))))))
+                                                            (list (string->symbol property-name)var1 var2)
+                                                            (list (string->symbol property-name)var2 var3))))))
      (append property-rules (list transitive-rule))))
  
  (define (symmetric-property-axiom->rules axiom)
@@ -325,12 +429,14 @@
                                ((not (null? rdf-about)) (string-trim (car rdf-about) #\#))
                                (else (begin (display axiom)
                                             (newline)
-                                            (error "symmetric-property-axiom->rule" "no property name found" axiom)))))
+                                            (error "symmetric-property-axiom->rules" "no property name found" axiom)))))
+          (var1 (string->symbol (string-append "?" property-name "-1")))
+          (var2 (string->symbol (string-append "?" property-name "-2")))
           (property-rules (property-axiom->rules axiom))
           (symmetric-rule (make-rule (string->symbol (string-append property-name "-symmetric-rule"))
                                      #f
-                                     (make-rule-head (list (string->symbol property-name)'?y '?x))
-                                     (make-rule-body (list (string->symbol property-name)'?x '?y)))))
+                                     (make-rule-head (list (string->symbol property-name)var2 var1))
+                                     (make-rule-body (list (string->symbol property-name)var1 var2)))))
      (append property-rules (list symmetric-rule))))
  
 
@@ -404,11 +510,15 @@
      (cons 'or class-arguments)))
  
  (define (complement->formula axiom-name comp)
-   (let* ((owl-classes (get-owl-classes comp))
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) comp))
+          (owl-classes (get-owl-classes comp))
           (restrictions (get-class-property-restrictions comp))
-          (class-arguments (append (map (lambda (c) (class-description->formula axiom-name c)) owl-classes)
-                                   (map (lambda (c) (class-restriction->formula axiom-name c)) restrictions))))
-   (cons 'not class-arguments)))
+          (class-arguments (cond ((not (null? rdf-resource)) (list (string->symbol (string-trim (car rdf-resource) #\#))
+                                                                   (string->symbol (string-append "?" axiom-name))))
+                                 ((not (null? owl-classes)) (class-description->formula axiom-name (car owl-classes)))
+                                 ((not (null? restrictions)) (class-restriction->formula axiom-name (car restrictions)))
+                                 (else (error "complement->formula" "no class description found" comp)))))
+     (list 'not class-arguments)))
  
  ; -------------------------
  ; UTILS
