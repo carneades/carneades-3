@@ -20,10 +20,10 @@
 ;          (define-primitive-role family:brother family:sibling)
 ;          (define-primitive-role family:sister family:sibling))
 
-(define family-relations (import-owl "./family-support.owl"))
+(define family-relations (owl-import "./family-support.owl"))
 
 ;(define family-data (lkif-import "family-support.xml"))
-; (define family-support (lkif-data-rulebase family-data))
+;(define family-support (lkif-data-rulebase family-data))
 
 ; type critical-question = excluded | priority | valid
 
@@ -35,8 +35,8 @@
   ))
 
 (define ag1 (accept empty-argument-graph 
-                    '(
-                      (father Dustin Tom)
+                    `(
+                      (,(string->symbol "http://www.semanticweb.org/ontologies/2009/6/family-support.owl#father") Dustin Tom)
                       )))
 
 ; 1. Find the best arguments about whether Tom is obligated to support Gloria, without considering the

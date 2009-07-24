@@ -42,9 +42,7 @@
 
     <!-- http://www.semanticweb.org/ontologies/2009/6/family-support.owl#ancestor -->
 
-    <owl:ObjectProperty rdf:about="#ancestor">
-        <rdf:type rdf:resource="&owl;TransitiveProperty"/>
-    </owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="#ancestor"/>
     
 
 
@@ -52,14 +50,6 @@
 
     <owl:ObjectProperty rdf:about="#brother">
         <rdfs:subPropertyOf rdf:resource="#sibling"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://www.semanticweb.org/ontologies/2009/6/family-support.owl#descendent -->
-
-    <owl:ObjectProperty rdf:about="#descendent">
-        <owl:inverseOf rdf:resource="#ancestor"/>
     </owl:ObjectProperty>
     
 
