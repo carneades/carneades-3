@@ -6,12 +6,14 @@
 <?oxygen RNGSchema="../../../schemas/LKIF2.rnc" type="compact"?>
 <?oxygen RNGSchema="../../../schemas/LKIF2.rnc" type="compact"?>
 <?oxygen RNGSchema="file:/Users/tgo/Documents/Projects/Carneades/svn/schemas/LKIF2.rnc" type="compact"?>
-<lkif xmlns:family="http:://fokus.fraunhofer.de/elan/estrella/family.owl"
-  xmlns:rules="http://www.estrellaproject.org/lkif-core/lkif-rules.owl">
+<!--  <lkif xmlns:family="http:://fokus.fraunhofer.de/elan/estrella/family.owl"
+  xmlns:rules="http://www.estrellaproject.org/lkif-core/lkif-rules.owl"> -->
+<lkif>
   <theory id="family-support">
-    <imports>
+ <!--   <imports>
       <import prefix="family" uri="http://fokus.fraunhofer.de/elan/estrella/family.owl"/>
     </imports>
+  -->
     <axioms>
       <axiom id="f1">
         <s pred="family:father">The father of <c>Max</c> is <c>Charles</c></s>
