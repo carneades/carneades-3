@@ -88,6 +88,29 @@
                                              ; scheme:
                                              "builtin:eval"))))))))))
        
+       (('= term1 term2)
+        (let ((subs2 (unify* term1
+                             term2
+                             subs 
+                             (lambda (t) t) 
+                             (lambda (msg) #f)
+                             #f)))
+          (if *debug* (printf "(= ~a ~a) => ~a~%" term1 term2 (if subs2 #t #f)))
+          (if (not subs2)
+              (stream) ; fail
+              (stream (make-response subs2 
+                                     (arg:make-argument
+                                      ; id
+                                      (gensym 'a)
+                                      ; direction
+                                      'pro
+                                      ; conclusion
+                                      stmt
+                                      ; premises
+                                      null
+                                      ; scheme:
+                                      "builtin:equal"))))))
+       
        (stmt 
         ; try to unify stmt with statements in the argument graph
         ; no new arguments are added, but the substitutions are extended
