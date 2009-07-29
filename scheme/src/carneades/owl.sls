@@ -96,9 +96,12 @@
  (define (owl-import path optionals)
    (let* ((doc (ssax:dtd-xml->sxml (open-input-resource path) '()))
           (owl-body ((sxpath ontology-path namespaces) doc)))
+     (clear-properties-and-classes)
      (ontology->rules owl-body optionals)))
  
  
+ ; parsers:
+ ; sxml -> (list-of sxml)
  
  ; -------------------------
  ; class parser
@@ -106,11 +109,12 @@
  
  (define classes '())
  
+ ; add-class: string -> <void>
  (define (add-class c)
    (set! classes (append classes (list (apply-namespaces c namespaces)))))
  
  ; class descriptions
- 
+  
  (define (get-owl-classes sxml)
    ((sxpath "owl:Class" namespaces) sxml))
  
@@ -235,6 +239,7 @@
  ; Ontology -> Rule Convertion
  ; -------------------------
  
+ ; ontology->rules: sxml (list-of symbol) -> rule-base
  (define (ontology->rules ontology optionals)     
    (let* ((xml-base ((sxpath "@xml:base/text()" namespaces) ontology))
           (namespaces-changed (if (not (null? xml-base))
@@ -251,7 +256,7 @@
                                     '()))
           ; property rules
           (object-property-rules (filter (lambda (l) (not (null? l))) (flatmap (lambda (p) (property-axiom->rules p optionals)) object-properties)))
-          (data-property-rules (filter (lambda (l) (not (null? l))) (flatmap (lambda (p) property-axiom->rules p optionals) data-properties)))
+          (data-property-rules (filter (lambda (l) (not (null? l))) (flatmap (lambda (p) (property-axiom->rules p optionals)) data-properties)))
           (transitive-property-rules (filter (lambda (l) (not (null? l)))
                                              (flatmap transitive-property-axiom->rules transitive-properties)))
           (symmetric-property-rules (filter (lambda (l) (not (null? l)))
@@ -262,19 +267,26 @@
           (descriptions (get-descriptions ontology))
           (class-members (get-class-members ontology))
           (description-rules (flatmap individual-description->rules descriptions))
-          (class-member-rules (flatmap class-member->rules class-members)))
-     (add-rules empty-rulebase (append class-rules
-                                       object-property-rules
-                                       data-property-rules
-                                       transitive-property-rules
-                                       symmetric-property-rules
-                                       description-rules
-                                       class-member-rules))))
+          (class-member-rules (flatmap class-member->rules class-members))
+          (rules (append class-rules
+                         object-property-rules
+                         data-property-rules
+                         transitive-property-rules
+                         symmetric-property-rules
+                         description-rules
+                         class-member-rules)))
+     (if *debug*
+         (begin (newline)
+                (display (length rules))
+                (display " rules imported")
+                (newline)))
+     (add-rules empty-rulebase rules)))
  
  ; ----------------------
  ; class-conversion
  ; ----------------------
  
+ ; class-axiom->rules: sxml -> (list-of rule)
  (define (class-axiom->rules axiom)
    (let* ((rdf-id ((sxpath "@rdf:ID/text()" namespaces) axiom))
           (rdf-about ((sxpath "@rdf:about/text()" namespaces) axiom))
@@ -486,7 +498,7 @@
           (type-rules (filter (lambda (x) (not (null? x))) (map (lambda (t) (prop-type->rule property-name t optionals)) prop-types)))            
           )
      (cond ((eq? property-type (string->symbol (resolve-namespaces "owl::ObjectProperty" namespaces))) (add-object-property property-name))
-           ((eq? property-type (string->symbol (resolve-namespaces "owl::DataProperty" namespaces))) (add-data-property property-name))
+           ((eq? property-type (string->symbol (resolve-namespaces "owl::DatatypeProperty" namespaces))) (add-data-property property-name))
            (else (error "property-axiom->rules" "unknown property type (not data- or object-property)" axiom)))
      (append subproperty-rules domain-rules range-rules equiv-rules inverse-rules type-rules)))
  
@@ -575,29 +587,31 @@
           (var1 (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-1")))
           (var2 (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-2")))
           (var3 (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-3")))
-          (transitive? (and (exists (lambda (o) (eq? o 'transitive)) optionals)
-                            (not (null? rdf-resource))
-                            (string=? (resolve-namespaces "owl::TransitiveProperty" namespaces) (car rdf-resource))))
-          (symmetric? (and (exists (lambda (o) (eq? o 'symmetric)) optionals)
-                           (not (null? rdf-resource))
-                           (string=? (resolve-namespaces "owl::SymmetricProperty" namespaces) (car rdf-resource))))
+          (transitive-allowed? (exists (lambda (o) (eq? o 'transitive)) optionals))
+          (symmetric-allowed? (exists (lambda (o) (eq? o 'symmetric)) optionals))
+          (transitive? (and (not (null? rdf-resource))
+                            (string=? (resolve-namespaces "owl:TransitiveProperty" namespaces) (car rdf-resource))))
+          (symmetric? (and (not (null? rdf-resource))
+                           (string=? (resolve-namespaces "owl:SymmetricProperty" namespaces) (car rdf-resource))))
           (functional? (and (not (null? rdf-resource))
-                            (string=? (resolve-namespaces "owl::FunctionalProperty" namespaces) (car rdf-resource))))
+                            (string=? (resolve-namespaces "owl:FunctionalProperty" namespaces) (car rdf-resource))))
           (inverse-functional? (and (not (null? rdf-resource))
-                                    (string=? (resolve-namespaces "owl::InverseFunctionalProperty" namespaces) (car rdf-resource)))))
-     (cond (transitive? (make-rule (string->symbol (string-append property-name "-transitive-rule"))
-                                   #f
-                                   (make-rule-head (list (string->symbol property-name)var1 var3))
-                                   (make-rule-body (list 'and
-                                                         (list (string->symbol property-name)var1 var2)
-                                                         (list (string->symbol property-name)var2 var3)))))
-           (symmetric? (make-rule (string->symbol (string-append property-name "-symmetric-rule"))
-                                  #f
-                                  (make-rule-head (list (string->symbol property-name)var2 var1))
-                                  (make-rule-body (list (string->symbol property-name)var1 var2))))
+                                    (string=? (resolve-namespaces "owl:InverseFunctionalProperty" namespaces) (car rdf-resource)))))
+     (cond ((and transitive? transitive-allowed?)
+            (make-rule (string->symbol (string-append property-name "-transitive-rule"))
+                       #f
+                       (make-rule-head (list (string->symbol property-name)var1 var3))
+                       (make-rule-body (list 'and
+                                             (list (string->symbol property-name)var1 var2)
+                                             (list (string->symbol property-name)var2 var3)))))
+           ((and symmetric? symmetric-allowed?)
+            (make-rule (string->symbol (string-append property-name "-symmetric-rule"))
+                       #f
+                       (make-rule-head (list (string->symbol property-name)var2 var1))
+                       (make-rule-body (list (string->symbol property-name)var1 var2))))
            (else (if (and *debug*
-                          (exists (lambda (o) (eq? o 'symmetric)) optionals)
-                          (exists (lambda (o) (eq? o 'transitive)) optionals))
+                          (not transitive?)
+                          (not symmetric?))
                      (begin (display "prop-type->rule: only symmetric and transitive types supported")
                             (newline)
                             (display "found: ")
@@ -693,11 +707,11 @@
  (define (object-property-value->rule individual-name property-value)
    (let* ((property-name (resolve-namespaces (car property-value) namespaces))
           (prop-value (cdr property-value))
-          (rdf-resource ((sxpath "@rdf:resource/text()" namespaces) property-value))
+          (rdf-resource ((sxpath "@rdf:resource/text()" namespaces) prop-value))
           (object (if (not (null? rdf-resource))
                       (string->symbol (text->name rdf-resource))
-                      (error "object-property-value->rule" "no rdf:resource found" property-value)))
-          (rule-name (string->symbol (string-append property-name "-" individual-name "-property-rule"))))
+                      (error "object-property-value->rule" "no rdf:resource found" prop-value)))
+          (rule-name (string->symbol (string-append property-name "-" individual-name "-object-property-rule"))))
      (make-rule rule-name
                 #f
                 (make-rule-head (list (string->symbol property-name)
@@ -706,12 +720,30 @@
                 '())))
  
  (define (data-property-value->rule individual-name property-value)
-   '())
+   (let* ((property-name (resolve-namespaces (car property-value) namespaces))
+          (prop-value (cdr property-value))
+          (rdf-datatype ((sxpath "@rdf:datatype/text()" namespaces) prop-value))
+          (text ((sxpath "text()" '()) prop-value))
+          (data (if (null? text)
+                    (error "data-property-value->rule" "no text found" prop-value)
+                    (car text)))
+          (rule-name (string->symbol (string-append property-name "-" individual-name "-data-property-rule"))))
+     (make-rule rule-name
+                #f
+                (make-rule-head (list (string->symbol property-name)
+                                      (string->symbol individual-name)
+                                      data))
+                '())))
       
  
  ; -------------------------
  ; UTILS
  ; -------------------------
+ 
+ (define (clear-properties-and-classes)
+   (set! classes '())
+   (set! object-properties '())
+   (set! data-properties '()))
  
  (define (flatmap f l) (apply append (map f l)))
  
@@ -724,7 +756,8 @@
  (define (resolve-namespaces s ns)
    (fold-left resolve-namespace s ns))
  
- ; "owl:foo" -> "http://www.w3.org/2002/07/owl#foo"
+ ; "owl:foo"  |-> "http://www.w3.org/2002/07/owl#foo"
+ ; "owl::foo" |-> "http://www.w3.org/2002/07/owl#:foo"
  (define (resolve-namespace s ns)
    (let ((prefix (string-append (symbol->string (car ns)) ":"))
          (uri (cdr ns)))
@@ -735,7 +768,7 @@
  (define (apply-namespaces s ns)
    (fold-left apply-namespace s ns))
  
- ; "http://www.w3.org/2002/07/owl#foo" -> "owl:foo"
+ ; "http://www.w3.org/2002/07/owl#foo" |-> "owl:foo"
  (define (apply-namespace s ns)
    (let ((prefix (string-append (symbol->string (car ns)) ":"))
          (uri (cdr ns)))
@@ -768,6 +801,6 @@
  
  ;(define class1 (car classes))
  
- ;(define rb (owl-import "C:\\Users\\stb\\Desktop\\Hundeformular.owl" '()))
+ ;(define rb (owl-import "C:\\Users\\stb\\Desktop\\Hundeformular.owl" '(transitive symmetric domain range)))
  
  )
