@@ -26,7 +26,6 @@
          (carneades lib match)
          (carneades rule)
          (carneades system)
-         ; (carneades dnf) ; debug
          )
  
  ;----------------------
