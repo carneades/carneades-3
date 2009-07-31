@@ -11,26 +11,35 @@ package carneadesgui;
  */
 
 import carneadesgui.control.CarneadesControl;
-import carneadesgui.view.CarneadesView.StandardView;
 import carneadesgui.view.CarneadesView;
 import carneadesgui.model.CarneadesModel;
-
-import java.io.File;
+import carneadesgui.view.StandardView;
+import carneadesgui.view.RichView;
+import carneadesgui.GC.*;
 
 public class CarneadesGUI {
-    var control: CarneadesControl = CarneadesControl {};
-    var view: CarneadesView = StandardView {};
+    var control: CarneadesControl = CarneadesControl {
+	application: this
+    };
+    var standardView: CarneadesView = StandardView {};
+    var richView: CarneadesView = RichView {};
     var model: CarneadesModel = CarneadesModel {};
-
+	
 	postinit {
-		control.setView(view);
 		control.setModel(model);
+		control.addView(standardView);
+		control.addView(richView);
+		control.setActiveView(standardView);
 		control.newGraph();
-		//control.loadGraphFromFile(new File("Tweety.xml"));
 	}
 
 	public function display() {
-		return view.view;
+		return control.view.view; // yes I know this reads weird ...
+	}
+
+	public function quit() {
+	    richView.quit();
+	    standardView.quit();
 	}
 }
 
