@@ -169,6 +169,7 @@ class GraphList extends ListView {
 public class GraphListView extends Panel {
 	override var layoutInfo = graphListLayoutInfo;
 	public var control: CarneadesControl = null;
+	public var view: CarneadesView;
 	var mode: Integer = listStatementMode;
 
 	var tabGroup: ToggleGroup = ToggleGroup {}

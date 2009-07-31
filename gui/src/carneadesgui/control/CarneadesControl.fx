@@ -39,8 +39,9 @@ import javafx.animation.Timeline;
 
 // File Chooser for Load/Save
 import javax.swing.JFileChooser;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+
+import carneadesgui.CarneadesGUI;
 
 /**
  * Central control class for the Carneades application. It instantiates the needed view and model objects
@@ -48,30 +49,68 @@ import javax.swing.JOptionPane;
 
 public class CarneadesControl {
 
+	public var application: CarneadesGUI;
+
 	// The application's model component. Should be set using setModel() in the application object post-init.
-	public-read var model: CarneadesModel = null;
-		public function setModel(view: CarneadesModel) {
+	public-read var model: CarneadesModel;
+	public function setModel(model: CarneadesModel) {
 		this.model = model;
 	}
 
-	// The application's view. Should be set using setView() from the CarneadesGUI object post-init.
-	public-read var view: CarneadesView = null;
-	public function setView(view: CarneadesView) {
+	// The application's views. Should be set using setView() from the CarneadesGUI object post-init.
+	public-read var views: CarneadesView[] = [];
+	public-read var view: CarneadesView;
+	public function addView(view: CarneadesView): Void {
 		view.control = this;
+		insert view into views;
+	}
+	public function setActiveView(view: CarneadesView): Void {
+		for (v in views) v.deactivate();
+		view.activate();
 		this.view = view;
+	}
+	public function alternateView(): Void {
+
+		var oldView: CarneadesView = view;
+		var newView: CarneadesView;
+
+		// determine old view
+		var index: Integer = 0;
+		for (i in [0 .. sizeof views - 1]) if (views[i] == view) index = i;
+
+		// deactivate old view
+		oldView.deactivate();
+
+		// determine new view
+		if (index == sizeof views -1) index = 0 else index++;
+		newView = views[index];
+		newView.activate();
+
+		// take over the array of viewgraphs
+		var cg: CarneadesGraph = oldView.currentGraph;
+		oldView.currentGraph = null;
+		var gs: CarneadesGraph[] = oldView.graphs;
+		oldView.graphs = null;
+
+		newView.graphs = gs;
+		newView.currentGraph = cg;
+
+		// set
+		this.view = newView;
+		updateAll();
 	}
 
 	// The array of currently loaded model argument graphs in the model component. Read-Only.
-	public var argumentGraphs: ArgumentGraph[] = model.argumentGraphs;
+	public var argumentGraphs: ArgumentGraph[] = bind model.argumentGraphs;
 
 	// The current model argument graph that is to be displayed. Read-Only.
 	public var argumentGraph: ArgumentGraph = bind graph.argumentGraph;
 	
 	// The array of graph objects that correspond to the model graphs.
-	public var graphs: CarneadesGraph[] = [];
+	public var graphs: CarneadesGraph[] = bind view.graphs;
 
 	// The view graph object currently displayed.
-	public var graph: CarneadesGraph;
+	public var graph: CarneadesGraph = bind view.currentGraph;
 
 	// The command administering unit of the currently displayed graph.
 	var commands: CommandControl = bind graph.commands;
@@ -172,7 +211,7 @@ public class CarneadesControl {
 	// TODO clean this up. This timeline belongs into the view.
 	var update: Timeline = Timeline {
 		repeatCount: 1
-    	keyFrames:  KeyFrame {
+		keyFrames:  KeyFrame {
        		time: 0.01s
        		action: function() {
 
@@ -231,7 +270,7 @@ public class CarneadesControl {
 
 	// Switch the view to another argument graph.
 	public function displayGraph(a: ArgumentGraph) {
-		graph = (for (g in graphs where (g as CarneadesGraph).argumentGraph == a) { g }) [0];
+		view.currentGraph = (for (g in graphs where (g as CarneadesGraph).argumentGraph == a) { g }) [0];
 		updateAll();
 	}
 
@@ -767,17 +806,14 @@ public class CarneadesControl {
 	}
 
 	public function newGraph(): Void {
-		graphs = [];
+		view.graphs = [];
 		addArgumentGraph(defaultArgumentGraph(getNewGraphId()));
-		graph = graphs[0];
 		currentFile = null;
 		commands.reset();
-		unSelectAll();
-		updateAll();
 	}
 
 	public function addArgumentGraph(newArgGraph: ArgumentGraph): Void {
-		insert newArgGraph into argumentGraphs;
+		insert newArgGraph into model.argumentGraphs;
 		var graph: CarneadesGraph = CarneadesGraph {
 			visible: true
 			control: bind this
@@ -787,10 +823,10 @@ public class CarneadesControl {
 			}
 		};
 		graph.update();
-		insert graph into graphs;
-		updateView( GraphUpdate {
-			listView: true
-		} );
+		insert graph into view.graphs;
+		view.currentGraph = graphs[0];
+		unSelectAll();
+		updateAll()
 	}
 
 	public function removeCurrentArgumentGraph(): Void {
@@ -837,7 +873,7 @@ public class CarneadesControl {
 	}
 	
 	public function loadGraphFromFile(f: File): Void {
-		graphs = [];
+		view.graphs = [];
 
 		// set the current file
 		currentFile = f;
@@ -847,7 +883,7 @@ public class CarneadesControl {
 
 		for (g in newArgGraphs) addArgumentGraph(g);
 
-		graph = graphs[0];
+		view.currentGraph = view.graphs[0];
 		commands.reset();
 		updateAll();
 	}
@@ -879,14 +915,12 @@ public class CarneadesControl {
 	public function saveGraphToFile(f: File): Void {
 		ArgumentFile.saveGraphToFile(argumentGraphs, f);
 		currentFile = f;
-		//p frame.title = "Carneades - { f.getAbsolutePath() }";
 		fileChanged = false;
 	}
 
 	public function saveAsGraphToFile(f: File): Void {
 		ArgumentFile.saveGraphToFile(argumentGraphs, f);
 		currentFile = f;
-		//p frame.title = "Carneades - { f.getAbsolutePath() }";
 		fileChanged = false;
 	}
 
@@ -900,14 +934,48 @@ public class CarneadesControl {
 			if (choice == JOptionPane.YES_OPTION) {
 				if (currentFile != null) {
 					save();
-					view.quit();
+					application.quit();
 				} else saveAs();
 			} else if (choice == JOptionPane.NO_OPTION) {
-				view.quit();
+				application.quit();
 			}
 		} else {
-			view.quit();
+			application.quit();
 		}
+	}
+
+	public function defaultArgumentGraph(id: String): ArgumentGraph {
+		var argumentGraph = ArgumentGraph {
+			id: id
+		};
+
+		var s1: Statement = Statement {
+			id: "s1"
+			wff: "The street is wet."
+		}
+
+		var s2: Statement = Statement {
+			id: "s2"
+			wff: "It rained"
+		}
+
+		var a1: Argument = Argument {
+			id: "a1"
+			conclusion: s1
+			title: "When it rains, things get wet."
+		}
+
+		var p: Premise = Premise {
+			statement: s2
+		}
+
+		a1.addPremise(p);
+
+		argumentGraph.insertStatement(s1);
+		argumentGraph.insertStatement(s2);
+		argumentGraph.insertArgument(a1);
+
+		return argumentGraph;
 	}
 }
 

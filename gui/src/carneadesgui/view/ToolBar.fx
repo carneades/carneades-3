@@ -88,6 +88,12 @@ public class ToolBar extends Panel {
 		action: function(): Void { control.quit(); }
 	};
 
+	var alternateViewButton: ToolBarButton = ToolBarButton {
+		text: "alternate\nview"
+		control: bind control
+		action: function(): Void { control.alternateView(); }
+	};
+
 	override var content = bind [
 		LayoutRect {
 			width: bind appWidth
@@ -110,7 +116,8 @@ public class ToolBar extends Panel {
 				saveAsButton,
 				undoButton,
 				redoButton,
-				quitButton
+				quitButton,
+				alternateViewButton
 			]
 		}
 	];
