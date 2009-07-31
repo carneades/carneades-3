@@ -38,7 +38,7 @@ class DefaultEditButtonPanel extends EditButtonPanel {
 			EditPanelButton {
 				text: "add graph"
 				action: function() {
-					control.addArgumentGraph(defaultArgumentGraph(control.getNewGraphId()));
+					control.addArgumentGraph(control.defaultArgumentGraph(control.getNewGraphId()));
 				}
 			},
 			EditPanelButton {
@@ -58,7 +58,7 @@ class GraphEditButtonPanel extends EditButtonPanel {
 			EditPanelButton {
 				text: "add graph"
 				action: function() {
-					control.addArgumentGraph(defaultArgumentGraph(control.getNewGraphId()));
+					control.addArgumentGraph(control.defaultArgumentGraph(control.getNewGraphId()));
 				}
 			},
 			EditPanelButton {
