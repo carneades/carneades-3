@@ -4,7 +4,7 @@
 
 #!r6rs 
 (import (rnrs)
-        (carneades lib pstk main))
+        (carneades lib pstk))
 
 (define tk (tk-start))
 (ttk-map-widgets 'all)

@@ -100,19 +100,19 @@
  (carneades lib pstk)
  
  (export 
-  (rename (eval-wish tk-eval))
-  (rename (id->widget tk-id->widget))
-  (rename (var tk-var))
-  (rename (get-var tk-get-var))
-  (rename (set-var! tk-set-var!))
-  (rename (start tk-start))
-  (rename (end-tk tk-end))
-  (rename (dispatch-event tk-dispatch-event))
-  (rename (event-loop tk-event-loop))
-  (rename (wait-for-window tk-wait-for-window))
-  (rename (wait-until-visible tk-wait-until-visible))
-  (rename (with-lock tk-with-lock))
-  (rename (map-ttk-widgets ttk-map-widgets))
+  (rename (eval-wish tk-eval)
+          (id->widget tk-id->widget)
+          (var tk-var)
+          (get-var tk-get-var)
+          (set-var! tk-set-var!)
+          (start tk-start)
+          (end-tk tk-end)
+          (dispatch-event tk-dispatch-event)
+          (event-loop tk-event-loop)
+          (wait-for-window tk-wait-for-window)
+          (wait-until-visible tk-wait-until-visible)
+          (with-lock tk-with-lock)
+          (map-ttk-widgets ttk-map-widgets))
   tk/after tk/bell tk/update tk/clipboard tk/bgerror tk/bind tk/bindtags
   tk/destroy tk/event tk/focus tk/grab tk/grid tk/image
   tk/lower tk/option tk/pack tk/place tk/raise tk/selection
@@ -125,6 +125,7 @@
  
  (import (rnrs)
          (rnrs mutable-pairs)
+         (carneades system)
          (carneades lib pstk system)
          (carneades lib pstk config))
  
@@ -559,7 +560,7 @@
   (define start-wish
    (lambda ()
      (let ((result (run-program *wish-program*)))
-       (set! wish-input (cadr result))
+       (set! wish-input (cdr result))
        (set! wish-output (car result)))))
   
   (define read-line

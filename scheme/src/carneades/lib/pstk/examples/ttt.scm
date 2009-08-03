@@ -5,7 +5,7 @@
 #!r6rs
 
 (import (rnrs)
-        (carneades lib pstk main))
+        (carneades lib pstk))
 
 (define Font "Courier 30")
 
