@@ -28,6 +28,7 @@
  (import (rnrs)
          (rnrs records syntactic)
          (only (rnrs lists) partition)
+         (carneades base)
          (only (carneades system) gensym)
          (carneades stream)
          (prefix (carneades argument) arg:)
@@ -37,7 +38,7 @@
          (carneades lib match)
          (prefix (carneades set) set:))
          
-  (define *debug* #f)
+  (define *debug* #t)
   
   ; specialize set operations
   (define empty-set (set:empty-set eq?))
@@ -286,15 +287,15 @@
       (let ((subs (state-substitutions state))
             (args (state-arguments state)))
       ; dispatch: statement casebase  -> generator | #f
-      ; (if *debug* (printf "cbr debug: goal is ~v~n" goal))
+      (if *debug* (printf "cbr debug: goal is ~a~%" goal))
       (match goal
         (('factors-favor p i)
          ; scheme: cite on-point precedent 
          ; AS2 ("preference from precedent") of [Wyner & Bench-Capon, 2007]
-         ; (if *debug* (printf "cbr debug, factors-favor~n"))
+         (if *debug* (printf "cbr debug, AS2. factors-favor~%"))
          (let ((party (subs p))
                (issue (subs i)))
-           ; (printf "debug: factors-favor ~v ~v~n" party issue)
+           (printf "debug: factors-favor ~a ~a~%" party issue)
            (if (not (ground? `(factors-favor ,party ,issue)))
                (stream) ; fail
                (stream-flatmap 
@@ -341,7 +342,7 @@
          ; with more pfactors and dfactors in common with cc than the cited case that went the other
          ; way. 
          
-         ; (if *debug* (printf "cbr debug, has-counterexample~n"))
+         (if *debug* (printf "cbr debug, has-counterexample~%"))
 
          (let* ((party (subs p))
                 (cname (subs cn))
@@ -388,7 +389,7 @@
          ; arguments for defedant as well as plaintiff. The scheme looks for 
          ; arguments favoring the given party.
          
-         ; (if *debug* (printf "cbr debug, distinguishable~n"))
+         (if *debug* (printf "cbr debug, distinguishable~%"))
                   
          (let* ((party (subs p))
                 (cname (subs cn))
@@ -468,7 +469,7 @@
          ; substitute or cancel factors. See [Wyner & Bench-Capon, 2007].
          ; distinction-type: 'precedent-stronger | 'current-case-weaker
          
-         ; (if *debug* (printf "cbr debug, downplay~n"))
+         (if *debug* (printf "cbr debug, downplay~%"))
 
                   
          (let* ((distinction-type (subs dt))
@@ -544,7 +545,7 @@
         (_ (match goal 
              (('not statement)
               
-              ; (if *debug* (printf "cbr debug, AS1, negative goal~v~n" (subs goal)))
+              (if *debug* (printf "cbr debug, AS1, negative goal~a~%" (subs goal)))
 
               (let* ((scheme (string-append "AS1. factor comparison"))
                      (previous-schemes (arg:schemes-applied (state-arguments state) 
@@ -579,13 +580,13 @@
                     (let* ((scheme (string-append "AS1. factor comparison"))
                            (previous-schemes (arg:schemes-applied (state-arguments state) 
                                                               (statement-atom goal))))
-                      ; (if *debug* (printf "cbr debug, AS1, positive goal ~v~n" (subs goal)))
+                      (if *debug* (printf "cbr debug, AS1, positive goal ~a~%" (subs goal)))
                       (if (and (eq? (subs goal)
                                     (casebase-issue cb))
                                (not (member scheme previous-schemes)))
                           ; before using the CBR schemes.
                           (begin
-                            ; (printf "cbrd debug, AS1 success~n")
+                            (printf "cbrd debug, AS1 success~%")
                             (stream (make-response 
                                      subs ; no new subs
                                      (arg:make-argument 
@@ -600,12 +601,12 @@
                                       ; scheme: 
                                       scheme))))
                           (begin
-                            ; (printf "cbr debug, AS1 fail~n")
+                            (printf "cbr debug, AS1 fail~%")
                             (stream))))
                     (begin 
-;                      (if *debug* (printf "cbr debug, AS1, goal ~v does not equal issue ~v~n" 
-;                                          (subs goal) 
-;                                          (casebase-issue cb)))
+                      (if *debug* (printf "cbr debug, AS1, goal ~a does not equal issue ~a~%" 
+                                          (subs goal) 
+                                          (casebase-issue cb)))
                       (stream)))))) ; fail
         )))) ; end of generate-arguments-from-cases
   
