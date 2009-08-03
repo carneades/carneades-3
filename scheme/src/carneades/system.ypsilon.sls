@@ -18,10 +18,10 @@
 (library
  (carneades system)
  
- (export system pretty-print tcp-connect gensym)
+ (export system pretty-print tcp-connect gensym run-program)
  
  (import (rnrs) 
-         (only (core) system pretty-print))
+         (only (core) system pretty-print process))
  
  (define (tcp-connect . args) 
    (raise-continuable (make-message-condition "tcp-connect not provided by Ypsilon")))
@@ -45,4 +45,9 @@
                            prefix)
                        (number->string gensym-counter))))))
  
+  (define run-program
+    (lambda (program . args)
+      (let ((l (apply process (cons program args))))
+        (cons (transcoded-port (list-ref l 2) (native-transcoder))
+              (transcoded-port (list-ref l 1) (native-transcoder))))))
  )

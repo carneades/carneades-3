@@ -18,10 +18,11 @@
 (library
  (carneades system)
  
- (export system pretty-print tcp-connect gensym)
+ (export system pretty-print tcp-connect gensym run-program)
  
  (import (rnrs)
-         (only (scheme system) system)
+         (only (scheme base) system-type subprocess)
+         (only (scheme system) system) 
          (only (scheme pretty) pretty-print)
          (only (scheme tcp) tcp-connect)
          )
@@ -41,5 +42,28 @@
                            (symbol->string prefix) 
                            prefix)
                        (number->string gensym-counter))))))
+ 
+  (define (concatenate strings)
+    (let loop ((result "")
+               (rest strings))
+      (cond ((null? rest) result)
+            ((pair? rest) 
+             (loop (if (string=? result "")
+                       (car rest)
+                       (string-append result " " (car rest)))
+                   (cdr rest))))))
+                 
+  (define (run-program program . args)
+   (let-values
+       (((pid in out err)
+         (if (eq? (system-type 'os) 'windows)
+             (subprocess #f #f #f (concatenate (cons program args)) 'exact   ;  MZSCHEME / Windows
+                     program)
+             (subprocess #f #f #f "/bin/sh" "-c"   ;  MZSCHEME / Unix
+                         (string-append "exec " (concatenate (cons program args)) " 2>&1")))))
+     (let ((utf8-transcoder (make-transcoder (utf-8-codec))))
+       (cons (transcoded-port in  utf8-transcoder)
+             (transcoded-port out utf8-transcoder)))))
+
  
  )

@@ -18,7 +18,7 @@
 (library
  (carneades system)
  
- (export system pretty-print tcp-connect gensym)
+ (export system pretty-print tcp-connect gensym run-program)
  
  (import (rnrs)
          (prefix (ikarus) ikarus:)) 
@@ -48,4 +48,11 @@
                            (symbol->string prefix) 
                            prefix)
                        (number->string gensym-counter))))))
+ 
+  (define run-program
+   (lambda (program . args)
+     (let-values (((pid from to errport) (apply ikarus:process (cons program args))))
+       (let ((utf8-transcoder (make-transcoder (utf-8-codec))))
+         (cons (transcoded-port to   utf8-transcoder)
+               (transcoded-port from utf8-transcoder))))))
  )
