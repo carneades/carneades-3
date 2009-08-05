@@ -84,7 +84,7 @@ public var edgeSelectionWidth: Integer = 5;
 public var selectedEdgeWidth: Integer = 2;
 
 // shadows
-public var drawShadows: Boolean = true;
+public var drawShadows: Boolean = false;
 public var shadowColor: Color = Color.rgb(0, 0, 0, 0.7 );
 public var shadowBlurRadius: Integer = 4;
 public var xShadowShift: Integer = 4;
