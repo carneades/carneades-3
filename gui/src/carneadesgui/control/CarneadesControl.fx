@@ -875,6 +875,7 @@ public class CarneadesControl {
 
 	    view.currentGraph = view.graphs[0];
 	    commands.reset();
+	    view.displayTitle = f.getAbsolutePath();
 	    updateAll();
 	}
 

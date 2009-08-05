@@ -37,6 +37,9 @@ public class GraphPanel extends Panel {
 	var shiftX: Number = 0;
 	var shiftY: Number = 0; // x- and y-shift due to element focusing
 
+	var dragX: Number = 0;
+	var dragY: Number = 0; // x- and y-shift due to hand-dragging
+
 	var zoom: Number = 1.0; // Zoom factor
 
 	override var layoutInfo = LayoutInfo {
@@ -75,6 +78,24 @@ public class GraphPanel extends Panel {
 					control.unSelectAll();
 				}
 			}
+		}
+
+		onMouseDragged: function(e: MouseEvent) {
+		    // update hand dragging
+		    if (e.button == MouseButton.SECONDARY) {
+			dragX = e.dragX;
+			dragY = e.dragY;
+		    }
+		}
+
+		onMouseReleased: function(e: MouseEvent) {
+		    // end hand dragging
+		    if (e.button == MouseButton.SECONDARY) {
+			shiftX -= dragX;
+			shiftY -= dragY;
+			dragX = 0;
+			dragY = 0;
+		    }
 		}
 	}
 
@@ -126,8 +147,8 @@ public class GraphPanel extends Panel {
 				Group {
 					transforms: bind [
 						Translate {
-							x: bind centerX - shiftX
-							y: bind centerY - shiftY
+							x: bind centerX - shiftX + dragX
+							y: bind centerY - shiftY + dragY
 						},
 						Scale {
 							x: zoom
