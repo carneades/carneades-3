@@ -119,7 +119,7 @@ public class StandardView extends CarneadesView {
 	}
 
 	override var view = Stage {
-		title: "Carneades GUI Classic"
+		title: bind displayTitle
 		width: bind appWidth with inverse
 		height: bind appHeight with inverse
 		visible: bind active
