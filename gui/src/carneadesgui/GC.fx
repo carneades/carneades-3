@@ -72,11 +72,11 @@ public var edgeStrokeWidth: Number = 1;
 public var selectionColor: Color = Color.RED;
 public var hoverColor: Color = Color.ORANGE;
 public var dragColor: Color = Color {
-												red: 0.5
-												green: 0
-												blue: 0
-												opacity: 0.5
-												};
+    red: 0.5
+    green: 0
+    blue: 0
+    opacity: 0.5
+};
 public var possibleColor: Color = Color.GREEN;
 public var impossibleColor: Color = Color.RED;
 
@@ -94,16 +94,10 @@ public var yShadowShift: Integer = 6;
 public var zoomTime: Number = 4.0; // in seconds
 public var zoomLimits: Number[] = [0.2, 3.0];
 
-// General Vertex Constants
-public var scaleVerticesWithText = false;
-public var vertexDefaultWidth: Integer = 50;
-public var vertexDefaultHeight: Integer = 50;
-
 // Statement Boxes
 public var numDisplayedChars = 15;
 public var statementBoxDefaultWidth: Integer = 150;
 public var statementBoxBottomBrink: Integer = 50;
-public var boxTextPadding: Integer = 5;
 
 public var fillStatements = true;
 public var statusAcceptedColor: Color = Color.rgb(45, 193, 56);
@@ -157,15 +151,18 @@ public var debug: Boolean = false;
 
 // Graph Layout constants
 
-/**
- * The horizontal distance between neighboring tree nodes.
- */
-public var xDistance: Integer = bind acceptableCircleWidth + (2 * acceptableCirclePadding) + 10;
+// General Vertex Constants
+public var scaleVerticesWithText = false;
+public var vertexDefaultWidth: Integer = 50;
+public var vertexDefaultHeight: Integer = 40;
 
-/**
- * The vertical distance between the layers of the tree.
- */
-public var yDistance: Integer = 50;
+// The horizontal distance between neighboring tree nodes.
+public var xPadding: Integer = 10;
+
+// The vertical distance between the layers of the tree.
+public var yPadding: Integer = 50;
+
+
 
 // Graph validation constants
 
@@ -249,5 +246,10 @@ public class LayoutRect extends Rectangle {
 	override var height = bind parent.layoutBounds.height;
 	override var fill = bind Color.RED;
 	//override var stroke = Color.YELLOW;
+}
+
+public function isMemberOf(object: Object, sequence: Object[]): Boolean {
+    for (e in sequence) if (e == object) return true;
+    false
 }
 

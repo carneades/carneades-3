@@ -131,7 +131,7 @@ class StatementInspector extends Inspector {
 			for (s in standardButtons) s.selected = { if (s.text == statement.getStandard()) true else false};
 			acceptableStatementCheckBox.selected =  { if (statement.ok) true else false };
 			acceptableComplementCheckBox.selected =  { if (statement.complementOk) true else false };
-		} else reset();
+		} else reset("statement");
 	}
 }
 
@@ -250,7 +250,7 @@ class ArgumentInspector extends Inspector {
 			directionProButton.selected = { if (argument.pro) true else false };
 			directionConButton.selected = { if (not argument.pro) true else false };
 			weightSlider.setValue(argument.weight);
-		} else reset();
+		} else reset("argument");
 	}
 }
 
@@ -258,58 +258,58 @@ class ArgumentInspector extends Inspector {
 * The Premise inspector as used in the sidebar.
 */
 class PremiseInspector extends Inspector {
-	public var premise: Premise = null;
+    public var premise: Premise = null;
 
-	// Role inspector
-	var roleTextBox: TextBox = InspectorTextBox {
-		editable: bind not controlsLocked
-		action: function(): Void { control.changePremiseRole(premise, roleTextBox.text);}
-	}
-	var roleLabel: Label = InspectorLabel { text: "role" }
-	var roleBox: HBox = HBox {
-		content: [roleLabel, roleTextBox]
-	}
+    // Role inspector
+    var roleTextBox: TextBox = InspectorTextBox {
+	    editable: bind not controlsLocked
+	    action: function(): Void { control.changePremiseRole(premise, roleTextBox.text);}
+    }
+    var roleLabel: Label = InspectorLabel { text: "role" }
+    var roleBox: HBox = HBox {
+	    content: [roleLabel, roleTextBox]
+    }
 
-	// exception inspector
-	var exceptionLabel: Label = InspectorLabel { text: "exception" }
-	var exceptionCheckBox: InspectorCheckBox = InspectorCheckBox {
-		text: "exception"
-		action: function(): Void { control.changePremiseType(premise, exceptionCheckBox.selected); }
-	}
-	var exceptionBox: HBox = HBox {
-		content: [exceptionLabel, exceptionCheckBox]
-	}
+    // exception inspector
+    var exceptionLabel: Label = InspectorLabel { text: "exception" }
+    var exceptionCheckBox: InspectorCheckBox = InspectorCheckBox {
+	    text: "exception"
+	    action: function(): Void { control.changePremiseType(premise, exceptionCheckBox.selected); }
+    }
+    var exceptionBox: HBox = HBox {
+	    content: [exceptionLabel, exceptionCheckBox]
+    }
 
-	// negation inspector
-	var negatedLabel: Label = InspectorLabel { text: "negated" }
-	var negatedCheckBox: InspectorCheckBox = InspectorCheckBox {
-		text: "negate"
-		action: function(): Void { control.negatePremise(premise); }
-	}
-	var negatedBox: HBox = HBox {
-		content: [negatedLabel, negatedCheckBox]
-	}
+    // negation inspector
+    var negatedLabel: Label = InspectorLabel { text: "negated" }
+    var negatedCheckBox: InspectorCheckBox = InspectorCheckBox {
+	    text: "negate"
+	    action: function(): Void { control.negatePremise(premise); }
+    }
+    var negatedBox: HBox = HBox {
+	    content: [negatedLabel, negatedCheckBox]
+    }
 
-	override var content = [
-		VBox {
-			content: bind [
-				roleBox,
-				exceptionBox,
-				negatedBox
-			]
-		}
-	];
-
-	/**
-	* Update the inspector from the selected model premise.
-	*/
-	override function update(u: GraphUpdate) {
-		if (premise != null) {
-			roleTextBox.text = premise.role;
-			exceptionCheckBox.selected = premise.exception;
-			negatedCheckBox.selected = premise.negative;
-		} else reset();
+    override var content = [
+	VBox {
+	    content: bind [
+		roleBox,
+		exceptionBox,
+		negatedBox
+	    ]
 	}
+    ];
+
+    /**
+    * Update the inspector from the selected model premise.
+    */
+    override function update(u: GraphUpdate) {
+	if (premise != null) {
+	    roleTextBox.text = premise.role;
+	    exceptionCheckBox.selected = premise.exception;
+	    negatedCheckBox.selected = premise.negative;
+	} else reset("premise");
+    }
 }
 
 /**
@@ -342,7 +342,7 @@ class GraphInspector extends Inspector {
 	override function update(u: GraphUpdate) {
 		if (graph != null) {
 			titleTextBox.text = graph.title;
-		} else reset();
+		} else reset("graph");
 	}
 }
 

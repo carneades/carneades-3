@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package carneadesgui.view;
 
 // general imports
-import java.lang.Math;
 
 // scenegraph imports
 import javafx.scene.*;
@@ -28,124 +27,116 @@ import javafx.scene.paint.*;
 import javafx.scene.shape.Rectangle;
 
 // control imports
-import carneadesgui.control.CarneadesControl;
 
 // constants import
 import carneadesgui.GC.*;
+
+import javafx.scene.input.MouseEvent;
+
+import carneadesgui.control.CarneadesControl;
 
 /**
  * The base class for tree vertices.
  */
 public class Vertex extends GraphElement {
 
-	/**
-	 * The application's control object.
-	 */
-	public var control: CarneadesControl;
+    // hide vertex by default to blend it in
+    override var visible = false;
 
-	/**
-	 * The title of the vertex, if displayed.
-	 */
-	public var caption = "";
+    postinit {
+	for (c in children) c.parentVertex = this;
+    }
 
-	public var text: Text = Text {
-					content: bind caption
-					textAlignment: TextAlignment.CENTER
-					textOrigin: TextOrigin.BASELINE
-					x: bind x
-					y: bind y
-				} // Text
+    /**
+     * The title of the vertex, if displayed.
+     */
+    public var caption = "";
 
-	/**
-	 * The parent vertex. null if the vertex is the root. It is called "parentVertex" since "parent" is taken by JavaFX internally.
-	 */
-	public var parentVertex: Vertex = null;
+    public var text: Text = Text {
+	content: bind caption
+	textAlignment: TextAlignment.CENTER
+	textOrigin: TextOrigin.BASELINE
+	x: bind x
+	y: bind y
+    } // Text
 
-	/**
-	 * X axis ccordinate shift relative to the parent vertex.
-	 */
-	public var xShift: Number = 0; // display coordinates relative to the parent node
+    /**
+     * The parent vertex. null if the vertex is the root. It is called "parentVertex" since "parent" is taken by JavaFX internally.
+     */
+    public var parentVertex: Vertex = null;
 
-	/**
-	 * Y axis coordinate shift relative to the parent vertex.
-	 */
-	public var yShift: Number = 0;
+    /**
+     * Absolute X coordinate.
+     */
+    public var x: Number = 0;
+    public var xNew: Number = 0;
+    public var xOld: Number = 0;
 
-	/**
-	 * Absolute X coordinate. Bound and thus read-only.
-	 */
-	public var x: Number = 0;
+    /**
+     * Absolute Y coordinate.
+     */
+    public var y: Number = 0;
+    public var yNew: Number = 0;
+    public var yOld: Number = 0;
 
-	/**
-	 * Absolute Y coordinate. Bound and thus read-only.
-	 */
-	public var y: Number = 0;
+    /**
+     * The width of the vertex. Should not be set statically (use defaultWidth instead), but rather is set by a function that chooses between defaultWidth or a wider size depending on the text contained in the vertex.
+     */
+    public var width: Integer = vertexDefaultWidth;
 
-	/**
-	 * The default width of the vertex. If enforced statically the moment the scaleWithText var is false.
-	 */
-	public var defaultWidth: Number = vertexDefaultWidth;
+    /**
+     * The height of the vertex.
+     */
+    public var height: Number = vertexDefaultHeight;
 
-	/**
-	 * Determines whether the vertex scales with the text.
-	 */
-	public var scaleWithText: Boolean = scaleVerticesWithText;
+    /**
+     * The child vertices sequence.
+     */
+    public var children: Vertex[];
 
-	/**
-	 * The width of the vertex. Should not be set statically (use defaultWidth instead), but rather is set by a function that chooses between defaultWidth or a wider size depending on the text contained in the vertex.
-	 */
-	public var width: Number = { if (scaleWithText) Math.max(50, this.text.boundsInLocal.width + 10) else defaultWidth };
+    /**
+     * The depth level of the vertex, where the root is level 0.
+     */
+    public var level: Number = 0; // The depth level of the vertex, where the root vertex has level 0
 
-	/**
-	 * The height of the vertex.
-	 */
-	public var height: Number = vertexDefaultHeight;
+    // attributes for graph drawing - Don't set manually! The layout computes them.
+    public var priority: Number = 0;
+    public var subTreeWidth: Number;
+    public var subTreeHeight: Number;
+    public var bottomBrink: Number = 0;
 
-	/**
-	 * The child vertices sequence.
-	 */
-	public var children: Vertex[];
+    function onClick(e: MouseEvent): Void {
+	p("clicked #{index}");
+    }
 
-	/**
-	 * The depth level of the vertex, where the root is level 0.
-	 */
-	public var level: Number = 0; // The depth level of the vertex, where the root vertex has level 0
+    override function create():Node {
+	    Group {
+		    content: [
+			    Rectangle {
+				    x: bind x - (width/2)
+				    y: bind y - (height/2)
+				    width: bind width
+				    height: bind height
+				    fill: Color.WHITE
+				    stroke: Color.BLACK
+				    strokeWidth: 2
+				    arcWidth: 5
+				    arcHeight: 5
+				    visible: bind visible
+				    onMouseClicked: onClick
+			    } // Rect
+			    , text
+		    ] // content
+	    } // Group
+    } // composeNode
 
-	// attributes for graph drawing - Don't set manually! The layout computes them.
-	public var priority: Number = 0;
-	public var xSubTreeSize: Number;
-	public var ySubTreeSize: Number;
-	public var leftSTOutline: Number;
-	public var rightSTOutline: Number;
-	public var bottomBrink: Number = 0;
+    public function getAllSubNodes(): Vertex[] {
+	return [children, for (c in children) c.getAllSubNodes()]
+    }
 
-	override function create():Node {
-		Group {
-			content: [
-				Rectangle {
-					x: bind x - (width/2)
-					y: bind y - (height/2)
-					width: bind width
-					height: bind height
-					fill: Color.WHITE
-					stroke: Color.BLACK
-					strokeWidth: 2
-					arcWidth: 5
-					arcHeight: 5
-					visible: bind visible
-				} // Rect
-				, text
-			] // content
-		} // Group
-	} // composeNode
-
-	/**
-	 * Print information about the vertex for debugging purposes.
-	 */
-	public function print(): Void {
-		p("{caption} x/y: {x} / {y} P: {parentVertex.caption}: {level} #C: {sizeof children}");
-		p("Width: {width} Height: {height} Index: {index}" );
-		p("xSubtreeSize: {xSubTreeSize} ySubTreeSize: {ySubTreeSize}");
-	}
+    public function print(): Void {
+	    p("{caption} x/y: {x} / {y} P: {parentVertex.index} L: {level} #C: {sizeof children}");
+	    p("Width: {width} Height: {height} Index: {index}" );
+	    p("subtreeWidth: {subTreeWidth} subTreeHeight: {subTreeHeight}");
+    }
 }
-

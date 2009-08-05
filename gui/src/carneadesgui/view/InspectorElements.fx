@@ -73,7 +73,7 @@ public class InspectorSlider extends Slider {
 public abstract class Inspector extends Panel {
 	public var control: CarneadesControl = null;
 	public function update(u: GraphUpdate): Void {}
-	public function reset(): Void {
-		p("Called for inspector reset: Inspector shall be shown without a model being loaded. Check for bug!")
+	public function reset(s: String): Void {
+		p("{s} Inspector shall be shown without a model being loaded. Check for bug!")
 	}
 }
