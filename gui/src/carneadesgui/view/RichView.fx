@@ -37,6 +37,8 @@ import carneadesgui.view.CarneadesView;
 */
 public class RichView extends CarneadesView {
 
+	override var displayTitle = "Carneades GUI Fancy";
+
 	var graphPanel: GraphPanel = GraphPanel {
 		constraintX: inspectorPanelWidth + mainPanelSpacing
 		constraintY: toolBarHeight
@@ -48,7 +50,6 @@ public class RichView extends CarneadesView {
 		control: bind control
 		view: bind this
 	}
-
 
 	var masterEditButtonPanel: MasterEditButtonPanel = MasterEditButtonPanel {
 		mode: bind mode
@@ -120,7 +121,7 @@ public class RichView extends CarneadesView {
 	}
 
 	override var view = Stage {
-		title: "Carneades GUI Fancy"
+		title: bind displayTitle
 		width: bind appWidth with inverse
 		height: bind appHeight with inverse
 		visible: bind active

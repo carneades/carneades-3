@@ -37,6 +37,8 @@ public abstract class CarneadesView {
 	public var control: CarneadesControl = null;
 	public var mode: Integer = inspectorDefaultMode;
 
+	public var displayTitle: String = "Carneades GUI";
+
 	public-read var active: Boolean = false;
 	public function activate(): Void {
 		active = true;
@@ -47,33 +49,33 @@ public abstract class CarneadesView {
 	}
 
     public var view: Stage = Stage {
-		title: "Application title"
-		width: bind appWidth
-		height: bind appHeight
-		scene: Scene {
-			content: [
-				Text {
-				    font : Font {
-				    size : 16
-					}
-				x: 10
-				y: 30
-				content: "This is the default view of the Carneades GUI"
-				}
-			]
+	title: bind displayTitle
+	width: bind appWidth
+	height: bind appHeight
+	scene: Scene {
+	    content: [
+		Text {
+		    font : Font {
+		    size : 16
+		    }
+		x: 10
+		y: 30
+		content: "This is the default view of the Carneades GUI"
 		}
+	    ]
 	}
+    }
 
-	public function update(u: GraphUpdate): Void {}
-	public function focusOn(e: GraphElement): Void {}
-	public function editNothing(): Void {}
-	public function editStatement(s: Statement): Void {}
-	public function editArgument(a: Argument): Void {}
-	public function editPremise(p: Premise): Void {}
-	public function editGraph(a: ArgumentGraph): Void {}
-	public function alert(t: String): Void {}
-	public function unSelectAll(): Void {}
-	public function quit(): Void { view.close(); }
+    public function update(u: GraphUpdate): Void {}
+    public function focusOn(e: GraphElement): Void {}
+    public function editNothing(): Void {}
+    public function editStatement(s: Statement): Void {}
+    public function editArgument(a: Argument): Void {}
+    public function editPremise(p: Premise): Void {}
+    public function editGraph(a: ArgumentGraph): Void {}
+    public function alert(t: String): Void {}
+    public function unSelectAll(): Void {}
+    public function quit(): Void { view.close(); }
 }
 
 
