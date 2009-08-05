@@ -30,32 +30,32 @@ public var currentIndex: Integer = 0;
  */
 public abstract class GraphElement extends CustomNode {
 
-	public var graph: Graph;
+    public var graph: Graph;
 
-	/**
-	 * Has the element been selected by the user?
-	 */
-	public var selected: Boolean = false;
+    /**
+     * Has the element been selected by the user?
+     */
+    public var selected: Boolean = false;
 
-	// functionality to blend it in and out
-	public var toBeDisplayed: Boolean = true;
-	public var toBeHidden: Boolean = false;
+    // functionality to blend it in and out
+    public var toBeDisplayed: Boolean = true;
+    public var toBeHidden: Boolean = false;
 
-	/**
-	* The model object represented by the GraphElement. Is null if not representing anything.
-	*/
-	public var model: Object = null;
+    /**
+    * The model object represented by the GraphElement. Is null if not representing anything.
+    */
+    public var model: Object = null;
 
-	/**
-	 * Unique index of the element.
-	 */
-	public var index: Integer = newIndex();
+    /**
+     * Unique index of the element.
+     */
+    public var index: Integer = newIndex();
 
-	/**
-	 * Produce a new index value for the component. Should be made static.
-	 */
-	protected function newIndex(): Integer {
-		currentIndex++;
-		return currentIndex;
-	}
+    /**
+     * Produce a new index value for the component. Should be made static.
+     */
+    protected function newIndex(): Integer {
+	currentIndex++;
+	return currentIndex;
+    }
 }
