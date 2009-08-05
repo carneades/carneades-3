@@ -275,12 +275,12 @@ public class Graph extends CustomNode {
 	}
 
 	override function create():Node {
-		Group {
-			content: bind [
-				vertices,
-				edges,
-				]// bind
-		} // Group
+	    Group {
+		content: bind [
+		    vertices,
+		    edges,
+		    ]// bind
+	    } // Group
 	} // composeNode
 
 	/**

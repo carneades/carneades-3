@@ -227,13 +227,12 @@ public class StatementBox extends ArgumentElement {
 	else "{statement.wff.substring(0, numDisplayedChars-1)}..."
     };
 
-    var status: String = bind statement.getBoundStatus();
     var statusColor = bind {
-	if (status == "stated") statusStatedColor
-	else if (status == "assumed true") statusAssumedTrueColor
-	else if (status == "assumed false") statusAssumedFalseColor
-	else if (status == "rejected") statusRejectedColor
-	else if (status == "accepted") statusAcceptedColor
+	if (statement.status == "stated") statusStatedColor
+	else if (statement.status == "assumed true") statusAssumedTrueColor
+	else if (statement.status == "assumed false") statusAssumedFalseColor
+	else if (statement.status == "rejected") statusRejectedColor
+	else if (statement.status == "accepted") statusAcceptedColor
 	else /*if (status == "questioned")*/ statusQuestionedColor
     };
 
@@ -318,7 +317,7 @@ public class StatementBox extends ArgumentElement {
 	}
     }
 
-     var acceptableCompCircle: Circle = Circle {
+    var acceptableCompCircle: Circle = Circle {
 	centerX: bind x + (this.width / 2) - (acceptableCircleWidth / 2) + 3
 	centerY: bind y + (acceptableCirclePadding / 2) + (acceptableCircleWidth / 2)
 	radius: bind (acceptableCircleWidth / 2)
@@ -374,16 +373,12 @@ public class Arrow extends CarneadesEdge {
     override var stroke = Color.BLACK;
     override var turnHead = true;
 
-    postinit {
-	setAngle();
-    }
-
     override function create():Node {
 	Group {
 	    content: [
 		edgeLine,
 		Polygon {
-		    transforms: bind [Transform.rotate(angle, x2, y2)]
+		   // transforms: bind [Transform.rotate(getAngle(x1, x2, y1, y2), x2, y2)]
 		    points: bind [ x2, y2,
 			x2 - headSize, y2+(headSize / 2),
 			x2 - headSize, y2-(headSize / 2)]
@@ -437,8 +432,6 @@ public class PremiseLink extends CarneadesEdge {
      */
     var negStrokeWidth: Number = 2;
 
-    override var dashed = bind premise.exception;
-
     /**
      * Shall the negation bar be drawn?
      */
@@ -468,7 +461,6 @@ public class PremiseLink extends CarneadesEdge {
 	    x1+2, y1,
 	    x2+2, y2,
 	    x2-2, y2,]
-	    
 	blocksMouse: true
 	fill: Color.GREEN
 	stroke: null
@@ -489,17 +481,13 @@ public class PremiseLink extends CarneadesEdge {
     }
 
     var negation: Line = Line {
-	startX: bind x2 - Math.max(yHeadShift * 2, negWidth)
-	startY: bind y2 - (negWidth / 2)
-	endX: bind x2 - Math.max(yHeadShift * 2, negWidth)
-	endY: bind y2 + (negWidth / 2)
+	startX: bind x2 - negWidth
+	startY: bind y2 + yHeadShift
+	endX: bind x2 + negWidth
+	endY: bind y2 + yHeadShift
 	transforms: bind [
-	    Rotate {
-		angle: bind angle
-		pivotX: bind x2
-		pivotY: bind y2
-	    }
-	]
+		//getRotation(x1, x2, y1, y2)
+	    ]
 	stroke: bind stroke
 	strokeWidth: bind negStrokeWidth
     }

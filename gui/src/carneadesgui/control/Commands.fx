@@ -435,38 +435,38 @@ public class ChangeStatementStatusCommand extends UndoableCommand {
 
 	override function do(): Number {
 
-		oldStatus = statement.status();
-		if (newStatus == "stated") {
-			statement.state();
-		} else if (newStatus == "questioned") {
-			statement.question();
-		} else if (newStatus == "rejected") {
-			statement.reject();
-		} else if (newStatus == "accepted") {
-			statement.accept();
-		} else if (newStatus == "assumed true") {
-			statement.assume(true);
-		} else if (newStatus == "assumed false") {
-			statement.assume(false);
-		}
-		return C_OK;
+	    oldStatus = statement.status;
+	    if (newStatus == "stated") {
+		    statement.state();
+	    } else if (newStatus == "questioned") {
+		    statement.question();
+	    } else if (newStatus == "rejected") {
+		    statement.reject();
+	    } else if (newStatus == "accepted") {
+		    statement.accept();
+	    } else if (newStatus == "assumed true") {
+		    statement.assume(true);
+	    } else if (newStatus == "assumed false") {
+		    statement.assume(false);
+	    }
+	    return C_OK;
 	}
 
 	override function undo(): Number {
-		if (oldStatus == "stated") {
-			statement.state();
-		} else if (oldStatus == "questioned") {
-			statement.question();
-		} else if (oldStatus == "rejected") {
-			statement.reject();
-		} else if (oldStatus == "accepted") {
-			statement.accept();
-		} else if (oldStatus == "assumed true") {
-			statement.assume(true);
-		} else if (oldStatus == "assumed false") {
-			statement.assume(false);
-		}
-		return C_OK;
+	    if (oldStatus == "stated") {
+		    statement.state();
+	    } else if (oldStatus == "questioned") {
+		    statement.question();
+	    } else if (oldStatus == "rejected") {
+		    statement.reject();
+	    } else if (oldStatus == "accepted") {
+		    statement.accept();
+	    } else if (oldStatus == "assumed true") {
+		    statement.assume(true);
+	    } else if (oldStatus == "assumed false") {
+		    statement.assume(false);
+	    }
+	    return C_OK;
 	}
 }
 
