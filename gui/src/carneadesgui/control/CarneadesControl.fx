@@ -840,42 +840,42 @@ public class CarneadesControl {
 	public var fileChooser: JFileChooser = new JFileChooser();
 
 	public function open(): Void {
-		if (fileChanged) {
-			var choice = JOptionPane.showOptionDialog(
-				null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?",
-				JOptionPane.YES_NO_CANCEL_OPTION,
-				JOptionPane.QUESTION_MESSAGE, null,
-				["Save", "Don't Save", "Cancel"], null);
-			if (choice == JOptionPane.YES_OPTION) {
-				saveAs();
-			} else if (choice == JOptionPane.NO_OPTION) {
-				var returnval = fileChooser.showOpenDialog(null);
-				if (returnval == JFileChooser.APPROVE_OPTION) {
-					loadGraphFromFile(fileChooser.getSelectedFile());
-				}
-			}
-		} else {
-			var returnval = fileChooser.showOpenDialog(null);
-			if (returnval == JFileChooser.APPROVE_OPTION) {
-				loadGraphFromFile(fileChooser.getSelectedFile());
-			}
+	    if (fileChanged) {
+		var choice = JOptionPane.showOptionDialog(
+		    null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?",
+		    JOptionPane.YES_NO_CANCEL_OPTION,
+		    JOptionPane.QUESTION_MESSAGE, null,
+		    ["Save", "Don't Save", "Cancel"], null);
+		if (choice == JOptionPane.YES_OPTION) {
+		    saveAs();
+		} else if (choice == JOptionPane.NO_OPTION) {
+		    var returnval = fileChooser.showOpenDialog(null);
+		    if (returnval == JFileChooser.APPROVE_OPTION) {
+			    loadGraphFromFile(fileChooser.getSelectedFile());
+		    }
 		}
+	    } else {
+		var returnval = fileChooser.showOpenDialog(null);
+		if (returnval == JFileChooser.APPROVE_OPTION) {
+			loadGraphFromFile(fileChooser.getSelectedFile());
+		}
+	    }
 	}
 	
 	public function loadGraphFromFile(f: File): Void {
-		view.graphs = [];
+	    view.graphs = [];
 
-		// set the current file
-		currentFile = f;
+	    // set the current file
+	    currentFile = f;
 
-		// load the graph
-		var newArgGraphs: ArgumentGraph[] = ArgumentFile.getGraphFromFile(f);
+	    // load the graph
+	    var newArgGraphs: ArgumentGraph[] = ArgumentFile.getGraphFromFile(f);
 
-		for (g in newArgGraphs) addArgumentGraph(g);
+	    for (g in newArgGraphs) addArgumentGraph(g);
 
-		view.currentGraph = view.graphs[0];
-		commands.reset();
-		updateAll();
+	    view.currentGraph = view.graphs[0];
+	    commands.reset();
+	    updateAll();
 	}
 
 	public function saveAs(): Void {
