@@ -150,7 +150,7 @@ class GraphList extends ListView {
 				model: m
 			};
 			var s: String = item.toString();
-			if ((filter == "") or matches(filter, s.toLowerCase())) {
+			if ((filter == "") or matches(filter.toLowerCase(), s.toLowerCase())) {
 				insert item into listItems
 			}
 		}

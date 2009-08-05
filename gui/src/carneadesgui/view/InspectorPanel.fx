@@ -127,7 +127,7 @@ class StatementInspector extends Inspector {
 		if (statement != null) {
 			idTextBox.text = statement.id;
 			contentTextBox.text = statement.wff;
-			for (s in statusButtons) s.selected = { if (s.text == statement.status()) true else false };
+			for (s in statusButtons) s.selected = { if (s.text == statement.status) true else false };
 			for (s in standardButtons) s.selected = { if (s.text == statement.getStandard()) true else false};
 			acceptableStatementCheckBox.selected =  { if (statement.ok) true else false };
 			acceptableComplementCheckBox.selected =  { if (statement.complementOk) true else false };

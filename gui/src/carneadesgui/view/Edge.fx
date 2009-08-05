@@ -19,20 +19,18 @@ package carneadesgui.view;
 
 // general imports
 import javafx.scene.paint.*;
-import java.lang.Math;
 
 // view imports
 import carneadesgui.view.*;
-import carneadesgui.GC.*;
 
-import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Line;
 
 // control imports
-import carneadesgui.control.CarneadesControl;
 
 import javafx.scene.Group;
 import javafx.scene.Node;
+
+import javafx.scene.transform.Rotate;
 
 /**
  * The base class for all edges in the view graphs
@@ -76,14 +74,9 @@ public class Edge extends GraphElement {
 	public var y2New: Number = 0;
 
 	/**
-	* The X shift of the head symbol.
-	*/
-	public var xHeadShift: Number = 0;
-
-	/**
 	* The Y shift of the head symbol.
 	*/
-	public var yHeadShift: Number = 0;
+	public var yHeadShift: Number = 5;
 
 	/**
 	* The stroke color of the edge.
@@ -95,22 +88,12 @@ public class Edge extends GraphElement {
 	*/
 	public var strokeWidth: Number = 1;
 
-	/**
-	 * Is the edge displayed in dashes.
-	 */
-	public var dashed: Boolean = false;
-
 	// attributes for optional heads
 
 	/**
 	 * Is there an edge head that needs to be turned to a certain angle?
 	 */
 	public var turnHead: Boolean = false;
-
-	/**
-	 * Variable to store the computed angle head.
-	 */
-	public var angle: Number = 0;
 
 	// main line of the edge
 	public var edgeLine: Line = Line {
@@ -125,33 +108,11 @@ public class Edge extends GraphElement {
 	/**
 	 * Function computing the angle of the edge depending on origin and end point of the edge.
 	 */
-	protected function setAngle():Void {
-		// determine arrowhead angle
-		// This code is highly redundant and suboptimal, but it was the only way which worked for "Transform.rotate"
-		angle = 0;
-
-		if (x1 == x2) {
-			if (y2 > y1) { // vertical arrow
-				angle = 90; // arrow top down
-			} else {
-				angle = -90; // arrow bottom up
-			}
-		} else
-		if (y1 == y2) { // horizontal arrow
-			if (x2 > x1) { // arrow pointing right
-				angle = 0;
-			} else { // arrow pointing left
-				angle = 180;
-			}
-		} else // tilted arrow
-		if (x1 < x2) {
-			// arrow pointing right
-			angle = ((Math.atan((Math.abs(y2-y1))/(x2-x1)) / (Math.PI/2)) * 90);
-			if (y2 < y1) angle *= -1;
-		} else {
-			angle = ((Math.atan((Math.abs(y2-y1))/(x2-x1)) / (Math.PI/2)) * 90 + 180);
-			if (y2 < y1) angle *= -1;
-		}
+	protected bound function getHeadRotation(x1: Number, x2: Number, y1: Number, y2: Number): Rotate {
+	    Rotate {
+		pivotX: bind x2
+		pivotY: bind y2
+	    }
 	}
 
 	override function create():Node {
