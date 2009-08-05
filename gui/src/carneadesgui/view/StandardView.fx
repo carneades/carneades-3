@@ -70,6 +70,10 @@ public class StandardView extends CarneadesView {
 			graphListView.update(u);
 	}
 
+	override function isVisible(e: GraphElement) {
+	    graphPanel.isVisibleInGraphPanel(e);
+	}
+
 	override function focusOn(e: GraphElement) {
 		graphPanel.focusOn(e);
 	}
