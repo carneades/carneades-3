@@ -29,7 +29,6 @@ import carneadesgui.model.Argument.*;
 // Other View Imports
 import carneadesgui.view.*;
 import carneadesgui.GC.*;
-import carneadesgui.view.Elements.CenteredStatementText;
 
 // control import
 import javafx.scene.Node;
@@ -40,16 +39,15 @@ import javafx.scene.shape.Rectangle;
 
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
-import javafx.scene.transform.Transform;
-import javafx.util.Math;
 
 import javafx.scene.shape.Shape;
 
 import javafx.scene.transform.Translate;
-import javafx.scene.transform.Rotate;
 
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextOrigin;
+
+import javafx.scene.input.MouseButton;
 
 /**
 * Auxiliary class for centered text.
@@ -168,7 +166,7 @@ public class ArgumentBox extends ArgumentElement {
 	}
 
 	onMouseDragged: function(e: MouseEvent) {
-	    if (this.selected) { control.startDrag(); }
+	    if (this.selected and (e.button == MouseButton.PRIMARY)) { control.startDrag(); }
 	}
 
 	onMouseReleased: function(e: MouseEvent) {
@@ -281,11 +279,11 @@ public class StatementBox extends ArgumentElement {
 	}
 
 	onMouseDragged: function(e: MouseEvent) {
-	    if (this.selected) { control.startDrag(); }
+	    if (this.selected and (e.button == MouseButton.PRIMARY)) { control.startDrag(); }
 	}
 
 	onMouseReleased: function(e: MouseEvent) {
-	    if (control.dragging) {	control.endDrag(); }
+	    if (control.dragging) { control.endDrag(); }
 	}
 
 	onMouseEntered: function(e: MouseEvent) {

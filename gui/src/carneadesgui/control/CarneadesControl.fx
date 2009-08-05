@@ -157,7 +157,7 @@ public class CarneadesControl {
 		unSelectAll();
 		g.selected = true;
 		graph.updateSelectedModelsFromElements();
-		focusOnSelected();
+		if (not view.isVisible(g)) focusOnSelected();
 		updateView( GraphUpdate { graphSelection: true } );
 	}
 	
@@ -276,7 +276,7 @@ public class CarneadesControl {
 
 	// Processes the start of a dragging action. Should be called whenever a dragging action starts.
 	public function startDrag(): Void {
-		dragging = true;
+	    dragging = true;
 	}
 
 	// Processes the end of a dragging action. Should be called when a dragging action ends.
@@ -377,36 +377,36 @@ public class CarneadesControl {
 	 * Append an argument to the selected statement.
 	 */
 	public function addArgumentToSelected(): Void {
-		var selected = graph.selectedModels;
-		if (sizeof selected > 0) {
-			for (s in selected) {
-				if (s instanceof Statement) {
-					if (commands.do(
-							AddArgumentAndPremiseCommand {
-								argumentGraph: argumentGraph
-								statement: s as Statement
-							}) != C_OK) {
-						view.alert("Argument cannot be inserted here.\nThe Graph would become cyclic.");
-					} else updateAll();
-				}
-			}
+	    var selected = graph.selectedModels;
+	    if (sizeof selected > 0) {
+		for (s in selected) {
+		    if (s instanceof Statement) {
+			if (commands.do(
+			    AddArgumentAndPremiseCommand {
+				argumentGraph: argumentGraph
+				statement: s as Statement
+			    }) != C_OK) {
+			    view.alert("Argument cannot be inserted here.\nThe Graph would become cyclic.");
+			} else updateAll();
+		    }
 		}
+	    }
 	}
 
 	/**
 	 * Append a premise to the selected argument.
 	 */
 	public function addPremiseToSelected(): Void {
-		var selected = graph.selectedElements();
-		for (a in selected where a instanceof ArgumentBox) {
-			var argument = (a as ArgumentBox).argument;
-			commands.do(
-				AddPremiseCommand {
-					argumentGraph: argumentGraph
-					argument: argument
-				});
-		}
-		updateAll();
+	    var selected = graph.selectedElements();
+	    for (a in selected where a instanceof ArgumentBox) {
+		var argument = (a as ArgumentBox).argument;
+		commands.do(
+		    AddPremiseCommand {
+			argumentGraph: argumentGraph
+			argument: argument
+		    });
+	    }
+	    updateAll();
 	}
 
 	// DELETION FUNCTIONS
@@ -414,28 +414,28 @@ public class CarneadesControl {
 	 * Removes an argument from a marked view argument node.
 	 */
 	public function removeArgumentFromBox(ar: Argument): Void {
-		var a: Argument = null;
-		if (ar != null) a = ar else a = graph.selectedModels[0] as Argument;
-		commands.do(
-			RemoveArgumentCommand {
-				argumentGraph: argumentGraph
-				argument: a
-			});
-		unSelectAll();
-		updateAll();
+	    var a: Argument = null;
+	    if (ar != null) a = ar else a = graph.selectedModels[0] as Argument;
+	    commands.do(
+		RemoveArgumentCommand {
+		    argumentGraph: argumentGraph
+		    argument: a
+		});
+	    unSelectAll();
+	    updateAll();
 	}
 
 	/**
 	 * Removes an argument from a selected model argument (e.g. off a list).
 	 */
 	public function removeArgument(a: Argument): Void {
-		commands.do(
-			RemoveArgumentCommand {
-				argumentGraph: argumentGraph
-				argument: a
-			});
-		unSelectAll();
-		updateAll();
+	    commands.do(
+		RemoveArgumentCommand {
+		    argumentGraph: argumentGraph
+		    argument: a
+		});
+	    unSelectAll();
+	    updateAll();
 	}
 
 	/**
@@ -443,123 +443,123 @@ public class CarneadesControl {
 	 */
 	public function removeStatementFromBox(st: Statement): Void {
 		
-		var s: Statement = null;
-		if (st != null) s = st else s = graph.selectedModels[0] as Statement;
+	    var s: Statement = null;
+	    if (st != null) s = st else s = graph.selectedModels[0] as Statement;
 
-		// get the statement's premise and mother argument if present
-		var tempArgument: Argument;
-		var tempPremise: Premise;
-		for (a in argumentGraph.arguments) {
-			for (p in a.premises) {
-				if (p.statement == s) {
-					tempPremise = p;
-					tempArgument = a;
-				}
-			}
+	    // get the statement's premise and mother argument if present
+	    var tempArgument: Argument;
+	    var tempPremise: Premise;
+	    for (a in argumentGraph.arguments) {
+		for (p in a.premises) {
+		    if (p.statement == s) {
+			tempPremise = p;
+			tempArgument = a;
+		    }
 		}
+	    }
 
-		if (argumentGraph.isConclusion(s)) {
-		// If the statement is the conclusion of an argument,
-		// delete the premise as well as the arguments leading to it.
-			commands.do(
-				DeleteConclusionCommand {
-					argumentGraph: argumentGraph
-					conclusion: s
-					motherArgument: tempArgument
-					premise: tempPremise
-					childArguments: argumentGraph.arguments[a | a.conclusion == s ]
-				});
-		} else if (argumentGraph.isPremise(s)){
-		// If it is a premise, delete both statement and premise.
-			commands.do(
-				DeletePremiseStatementCommand {
-					argumentGraph: argumentGraph
-					argument: tempArgument
-					premise: tempPremise
-				});
-		} else {
-		// Otherwise, delete the statement only.
-			commands.do(
-				DeleteStatementCommand {
-					argumentGraph: argumentGraph
-					statement: s
-				});
-		}
-		unSelectAll();
-		updateAll();
+	    if (argumentGraph.isConclusion(s)) {
+	    // If the statement is the conclusion of an argument,
+	    // delete the premise as well as the arguments leading to it.
+		commands.do(
+		    DeleteConclusionCommand {
+			argumentGraph: argumentGraph
+			conclusion: s
+			motherArgument: tempArgument
+			premise: tempPremise
+			childArguments: argumentGraph.arguments[a | a.conclusion == s ]
+		    });
+	    } else if (argumentGraph.isPremise(s)){
+	    // If it is a premise, delete both statement and premise.
+		commands.do(
+		    DeletePremiseStatementCommand {
+			argumentGraph: argumentGraph
+			argument: tempArgument
+			premise: tempPremise
+		    });
+	    } else {
+	    // Otherwise, delete the statement only.
+		commands.do(
+		    DeleteStatementCommand {
+			argumentGraph: argumentGraph
+			statement: s
+		    });
+	    }
+	    unSelectAll();
+	    updateAll();
 	}
 
 	/**
 	 * Remove an argument from its selected link.
 	 */
 	public function removeArgumentFromLink(l: ArgumentLink): Void {
-		commands.do(
-			RemoveArgumentCommand {
-				argumentGraph: argumentGraph
-				argument: (l.producer as ArgumentBox).argument
-			});
-		unSelectAll();
-		updateAll();
+	    commands.do(
+		RemoveArgumentCommand {
+		    argumentGraph: argumentGraph
+		    argument: (l.producer as ArgumentBox).argument
+		});
+	    unSelectAll();
+	    updateAll();
 	}
 
 	/**
 	 * Delete a premise from its selected graphic link.
 	 */
 	public function deletePremiseFromLink(l: PremiseLink): Void {
-		for (a in argumentGraph.arguments) {
-			for (p in a.premises) {
-				if (p == l.premise) {
-					commands.do(
-						DeletePremiseCommand {
-							argumentGraph: argumentGraph
-							argument: a
-							premise: p
-						});
-				}
-			}
+	    for (a in argumentGraph.arguments) {
+		for (p in a.premises) {
+		    if (p == l.premise) {
+			commands.do(
+			    DeletePremiseCommand {
+				argumentGraph: argumentGraph
+				argument: a
+				premise: p
+			    });
+		    }
 		}
+	    }
 	}
 
 	/**
 	 * Delete the premise from its model object.
 	 */
 	public function deletePremise(pr: Premise): Void {
-		for (a in argumentGraph.arguments) {
-			for (p in a.premises) {
-				if (p == pr) {
-					// todo: bug here: Should be one command for all of them
-					commands.do(
-						DeletePremiseCommand {
-							argumentGraph: argumentGraph
-							argument: a
-							premise: p
-						});
-				}
-			}
+	    for (a in argumentGraph.arguments) {
+		for (p in a.premises) {
+		    if (p == pr) {
+			// todo: bug here: Should be one command for all of them
+			commands.do(
+			    DeletePremiseCommand {
+				    argumentGraph: argumentGraph
+				    argument: a
+				    premise: p
+			    });
+		    }
 		}
+	    }
 	}
 
 	/**
 	 * Remove the currently selected view object irrespective of its nature.
 	 */
 	public function removeSelected(): Void {
-		var s = graph.selectedElements();
-		for (e in s) {
-			if (e instanceof ArgumentBox) {
-				removeArgumentFromBox((e as ArgumentBox).argument);
-			}
-			if (e instanceof StatementBox) {
-				removeStatementFromBox((e as StatementBox).statement);
-			}
-			if (e instanceof ArgumentLink) {
-				removeArgumentFromLink(e as ArgumentLink);
-			}
-			if (e instanceof PremiseLink) {
-				deletePremiseFromLink(e as PremiseLink);
-			}
+	    var s = graph.selectedElements();
+	    for (e in s) {
+		if (e instanceof ArgumentBox) {
+		    removeArgumentFromBox((e as ArgumentBox).argument);
 		}
-		unSelectAll();
-		updateAll();
+		if (e instanceof StatementBox) {
+		    removeStatementFromBox((e as StatementBox).statement);
+		}
+		if (e instanceof ArgumentLink) {
+		    removeArgumentFromLink(e as ArgumentLink);
+		}
+		if (e instanceof PremiseLink) {
+		    deletePremiseFromLink(e as PremiseLink);
+		}
+	    }
+	    unSelectAll();
+	    updateAll();
 	}
 
 	// Attribute Modification Functions
@@ -567,269 +567,268 @@ public class CarneadesControl {
 
 	// for statements
 	public function changeStatementId(s: Statement, id: String): Void {
-		var admissible: Boolean = true;
+	    var admissible: Boolean = true;
 
-		if (not argumentGraph.noDoubleIDs(id)) {
-			view.alert("The chosen id is already taken!");
-			admissible = false;
-		}
+	    if (not argumentGraph.noDoubleIDs(id)) {
+		view.alert("The chosen id is already taken!");
+		admissible = false;
+	    }
 
-		if (id == "") {
-			view.alert("id may not be empty.");
-			admissible = false;
-		}
+	    if (id == "") {
+		view.alert("id may not be empty.");
+		admissible = false;
+	    }
 
-		if (id.matches("^*[:alnum:][:space:]*[:alnum:]$")) {
-			view.alert("id may not contain whitespaces.");
-			admissible = false;
-		}
+	    if (id.matches("^*[:alnum:][:space:]*[:alnum:]$")) {
+		view.alert("id may not contain whitespaces.");
+		admissible = false;
+	    }
 
-		if (admissible) {
-			commands.do(
-				ChangeStatementIdCommand {
-					argumentGraph: argumentGraph
-					statement: s
-					id: id
-				});
-		}
-		updateAll();
+	    if (admissible) {
+		commands.do(
+		ChangeStatementIdCommand {
+		    argumentGraph: argumentGraph
+		    statement: s
+		    id: id
+		});
+	    }
+	    updateAll();
 	}
 
 	public function changeStatementWff(s: Statement, c: String): Void {
 	    commands.do(
-		    ChangeStatementWffCommand {
-			    argumentGraph: argumentGraph
-			    statement: s
-			    wff: c
-		    });
+		ChangeStatementWffCommand {
+		    argumentGraph: argumentGraph
+		    statement: s
+		    wff: c
+		});
 	    updateView(
-		    GraphUpdate {
-			    changedAttribute: true
-		    });
+		GraphUpdate {
+		    changedAttribute: true
+		});
 	};
 
 	public function changeGraphTitle(g: ArgumentGraph, t: String): Void {
-		commands.do(
-			ChangeGraphTitleCommand {
-				argumentGraph: g
-				title: t
-			});
-		updateAll();
+	    commands.do(
+		ChangeGraphTitleCommand {
+		    argumentGraph: g
+		    title: t
+		});
+	    updateAll();
 	};
 
 	public function changeStatementStatus(s: Statement, v: String): Void {
-		commands.do(
-			ChangeStatementStatusCommand {
-				argumentGraph: argumentGraph
-				statement: s
-				newStatus: v
-			});
-		updateAll();
+	    commands.do(
+		ChangeStatementStatusCommand {
+		    argumentGraph: argumentGraph
+		    statement: s
+		    newStatus: v
+		});
+	    updateAll();
 	};
 
 	public function changeStatementProofStandard(s: Statement, st: String): Void {
-			if (st == proofStandardSE) {
-				commands.do(
-					ChangeStatementStandardCommand {
-						argumentGraph: argumentGraph
-						statement: s
-						standard: Scintilla {}
-					});
-			} else if (st == proofStandardDV) {
-				commands.do(
-					ChangeStatementStandardCommand {
-						argumentGraph: argumentGraph
-						statement: s
-						standard: DialecticalValidity {}
-					});
-			} else if (st == proofStandardBA) {
-				commands.do(
-					ChangeStatementStandardCommand {
-						argumentGraph: argumentGraph
-						statement: s
-						standard: BestArgument {}
-					});
-			} else if (st == proofStandardPE) {
-				commands.do(
-					ChangeStatementStandardCommand {
-						argumentGraph: argumentGraph
-						statement: s
-						standard: Preponderance {}
-					});
-			} else if (st == proofStandardCCE) {
-				commands.do(
-					ChangeStatementStandardCommand {
-						argumentGraph: argumentGraph
-						statement: s
-						standard: ClearAndConvincingEvidence {}
-					});
-			} else if (st == proofStandardBRD) {
-				commands.do(
-					ChangeStatementStandardCommand {
-						argumentGraph: argumentGraph
-						statement: s
-						standard: BeyondReasonableDoubt {}
-					});
-			}
-		updateAll();
+	    if (st == proofStandardSE) {
+		commands.do(
+		    ChangeStatementStandardCommand {
+			argumentGraph: argumentGraph
+			statement: s
+			standard: Scintilla {}
+		    });
+	    } else if (st == proofStandardDV) {
+		commands.do(
+		    ChangeStatementStandardCommand {
+			argumentGraph: argumentGraph
+			statement: s
+			standard: DialecticalValidity {}
+		    });
+	    } else if (st == proofStandardBA) {
+		commands.do(
+		    ChangeStatementStandardCommand {
+			argumentGraph: argumentGraph
+			statement: s
+			standard: BestArgument {}
+		    });
+	    } else if (st == proofStandardPE) {
+		commands.do(
+		    ChangeStatementStandardCommand {
+			argumentGraph: argumentGraph
+			statement: s
+			standard: Preponderance {}
+		    });
+	    } else if (st == proofStandardCCE) {
+		commands.do(
+		    ChangeStatementStandardCommand {
+			argumentGraph: argumentGraph
+			statement: s
+			standard: ClearAndConvincingEvidence {}
+		    });
+	    } else if (st == proofStandardBRD) {
+		commands.do(
+		    ChangeStatementStandardCommand {
+			argumentGraph: argumentGraph
+			statement: s
+			standard: BeyondReasonableDoubt {}
+		    });
+	    }
+	    updateAll();
 	};
 
 	// for arguments
 
 	public function changeArgumentDirection(a: Argument, value: String): Void {
-		var newValue: Boolean = { if (value == "pro") true else false };
-		if (newValue != a.pro) {
-			commands.do(
-				ChangeArgumentDirectionCommand {
-					argumentGraph: argumentGraph
-					argument: a
-				});
-		}
-		updateAll();
+	    var newValue: Boolean = { if (value == "pro") true else false };
+	    if (newValue != a.pro) {
+		commands.do(
+		    ChangeArgumentDirectionCommand {
+			argumentGraph: argumentGraph
+			argument: a
+		    });
+	    }
+	    updateAll();
 	}
 
 	public function changeArgumentWeight(a: Argument, v: Number): Void {
-		commands.do(
-			ChangeArgumentWeightCommand {
-				argumentGraph: argumentGraph
-				argument: a
-				weight: v
-			});
+	    commands.do(
+		ChangeArgumentWeightCommand {
+		    argumentGraph: argumentGraph
+		    argument: a
+		    weight: v
+		});
 	}
 
 	public function changeArgumentScheme(a: Argument, c: String): Void {
-		commands.do(
-			ChangeArgumentSchemeCommand {
-				argumentGraph: argumentGraph
-				argument: a
-				scheme: c
-			});
+	    commands.do(
+		ChangeArgumentSchemeCommand {
+		    argumentGraph: argumentGraph
+		    argument: a
+		    scheme: c
+		});
 	};
 
 	public function changeArgumentTitle(a: Argument, t: String): Void {
-		commands.do(
-			ChangeArgumentTitleCommand {
-				argument: a
-				title: t
-			});
+	    commands.do(
+		ChangeArgumentTitleCommand {
+		    argument: a
+		    title: t
+		});
 	}
 
 	public function changeArgumentId(a: Argument, id: String): Void {
-		var admissible: Boolean = true;
+	    var admissible: Boolean = true;
 
-		if (not argumentGraph.noDoubleIDs(id)) {
-			view.alert("The chosen id is already taken!");
-			admissible = false;
-		}
+	    if (not argumentGraph.noDoubleIDs(id)) {
+		view.alert("The chosen id is already taken!");
+		admissible = false;
+	    }
 
-		if (id == "") {
-			view.alert("id may not be empty.");
-			admissible = false;
-		}
-		if (id.matches("^*[:alnum:][:space:]*[:alnum:]$")) {
-			view.alert("id may not contain whitespaces.");
-			admissible = false;
-		}
+	    if (id == "") {
+		view.alert("id may not be empty.");
+		admissible = false;
+	    }
+	    if (id.matches("^*[:alnum:][:space:]*[:alnum:]$")) {
+		view.alert("id may not contain whitespaces.");
+		admissible = false;
+	    }
 
-		if (admissible) {
-			commands.do(
-				ChangeArgumentIdCommand {
-					argumentGraph: argumentGraph
-					argument: a
-					id: id
-				}
-			);
-		}
-		updateAll();
+	    if (admissible) {
+		commands.do(
+		    ChangeArgumentIdCommand {
+			argumentGraph: argumentGraph
+			argument: a
+			id: id
+		    }
+		);
+	    }
+	    updateAll();
 	}
 
 	// ... and for premises
 
 	public function negatePremise(p: Premise): Void {
-		commands.do(
-			NegatePremiseCommand {
-				argumentGraph: argumentGraph
-				premise: p
-			}
-		);
-		updateAll();
+	    commands.do(
+		NegatePremiseCommand {
+		    argumentGraph: argumentGraph
+		    premise: p
+		}
+	    );
+	    updateAll();
 	}
 
 	public function changePremiseType(p: Premise, exception: Boolean): Void {
-		if (exception != p.exception) {
-			commands.do(
-				ChangePremiseTypeCommand {
-					argumentGraph: argumentGraph
-					premise: p
-				}
-			);
-		}
-		updateAll();
+	    if (exception != p.exception) {
+		commands.do(
+		    ChangePremiseTypeCommand {
+			argumentGraph: argumentGraph
+			premise: p
+		    }
+		);
+	    }
+	    updateAll();
 	}
 
 	public function changePremiseRole(p: Premise, r: String): Void {
-		commands.do(
-			ChangePremiseRoleCommand {
-				argumentGraph: argumentGraph
-				premise: p
-				role: r
-			}
-		);
-		updateAll();
+	    commands.do(
+		ChangePremiseRoleCommand {
+		    argumentGraph: argumentGraph
+		    premise: p
+		    role: r
+		}
+	    );
+	    updateAll();
 	}
 
 	// Load / Save / New Options
 
 	function graphIdTaken(id: String): Boolean {
-		for (a in argumentGraphs) {
-			if (a.id == id) { return true; }
-		}
-		return false;
+	    for (a in argumentGraphs) {
+		if (a.id == id) { return true; }
+	    }
+	    return false;
 	}
 
 	public function getNewGraphId(): String {
-		var admissible: Boolean = true;
-		var id: String = "g";
-		var number: Integer = 1;
-		while ( graphIdTaken("{id}{number.toString()}") ) { number ++; }
-		return "{id}{number.toString()}";
+	    var admissible: Boolean = true;
+	    var id: String = "g";
+	    var number: Integer = 1;
+	    while ( graphIdTaken("{id}{number.toString()}") ) { number ++; }
+	    return "{id}{number.toString()}";
 	}
 
 	public function newGraph(): Void {
-		view.graphs = [];
-		addArgumentGraph(defaultArgumentGraph(getNewGraphId()));
-		currentFile = null;
-		commands.reset();
+	    view.graphs = [];
+	    addArgumentGraph(defaultArgumentGraph(getNewGraphId()));
+	    currentFile = null;
+	    commands.reset();
 	}
 
 	public function addArgumentGraph(newArgGraph: ArgumentGraph): Void {
-		insert newArgGraph into model.argumentGraphs;
-		var graph: CarneadesGraph = CarneadesGraph {
-			visible: true
-			control: bind this
-			argumentGraph: newArgGraph
-			glayout: TreeLayout {
-				graph: bind graph
-			}
-		};
-		graph.updateFromModel();
-		insert graph into view.graphs;
-		view.currentGraph = graphs[0];
-		unSelectAll();
-		updateAll()
+	    insert newArgGraph into model.argumentGraphs;
+	    var graph: CarneadesGraph = CarneadesGraph {
+		visible: true
+		control: bind this
+		argumentGraph: newArgGraph
+		glayout: TreeLayout {
+		    graph: bind graph
+		}
+	    };
+	    graph.updateFromModel();
+	    insert graph into view.graphs;
+	    view.currentGraph = graphs[0];
+	    unSelectAll();
+	    updateAll()
 	}
 
 	public function removeCurrentArgumentGraph(): Void {
-		delete argumentGraph from model.argumentGraphs;
-		delete graph from view.graphs;
+	    delete argumentGraph from model.argumentGraphs;
+	    delete graph from view.graphs;
 
-		if (argumentGraphs != []) {
-			displayGraph(argumentGraphs[0]);
-		} else {
-			newGraph();
-		}
-
-		updateAll();
+	    if (argumentGraphs != []) {
+		displayGraph(argumentGraphs[0]);
+	    } else {
+		newGraph();
+	    }
+	    updateAll();
 	}
 
 	// FILE LOAD, SAVE & QUIT
@@ -880,19 +879,26 @@ public class CarneadesControl {
 	}
 
 	public function saveAs(): Void {
-		var returnval = fileChooser.showSaveDialog(null);
-		if (returnval == JFileChooser.APPROVE_OPTION) {
-			var file: File = fileChooser.getSelectedFile();
-				if (file.exists()) {
-					var overwrite = JOptionPane.showOptionDialog(
-						null, "The file already exists.\nDo you want to overwrite it?" , "Overwrite existing file?",
-						JOptionPane.YES_NO_OPTION,
-						JOptionPane.QUESTION_MESSAGE, null,
-						["Yes", "No"], null
-					);
-				if (overwrite == JOptionPane.OK_OPTION) { saveAsGraphToFile(file); }
-			} else { saveAsGraphToFile(file); }
+	    var returnval = fileChooser.showSaveDialog(null);
+	    var file: File;
+	    if (returnval == JFileChooser.APPROVE_OPTION) {
+		file = fileChooser.getSelectedFile();
+		    if (file.exists()) {
+			var overwrite = JOptionPane.showOptionDialog(
+			    null, "The file already exists.\nDo you want to overwrite it?" , "Overwrite existing file?",
+			    JOptionPane.YES_NO_OPTION,
+			    JOptionPane.QUESTION_MESSAGE, null,
+			    ["Yes", "No"], null
+			);
+		    if (overwrite == JOptionPane.OK_OPTION) {
+			saveAsGraphToFile(file);
+			view.displayTitle = file.getAbsolutePath();
+		    }
+		} else {
+		    saveAsGraphToFile(file);
+		    view.displayTitle = file.getAbsolutePath();
 		}
+	    }
 	}
 	
 	public function save(): Void {

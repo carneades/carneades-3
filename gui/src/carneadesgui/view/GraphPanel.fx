@@ -22,6 +22,8 @@ import javafx.scene.transform.Translate;
 import carneadesgui.control.CarneadesControl;
 import carneadesgui.GC.*;
 
+import javafx.geometry.Point2D;
+
 /**
 * Panel displaying the graph in the standard way. Its layout elements are set to work with the StandardView. If used elsewhere, override them accordingly.
 */
@@ -98,6 +100,15 @@ public class GraphPanel extends Panel {
 		}
 	    }
 	}
+
+
+	/**
+	* Function to check whether a certain element of the graph is visible in the graph panel.
+	*/
+	public function isVisibleInGraphPanel(e: GraphElement): Boolean {
+	    (this.localToScene(this.boundsInLocal)).intersects(e.localToScene(e.boundsInLocal))
+	}
+
 
 	/**
 	* The function that centers the view on a given graph element.
