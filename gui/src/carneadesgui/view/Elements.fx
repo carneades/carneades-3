@@ -378,10 +378,10 @@ public class Arrow extends CarneadesEdge {
 	    content: [
 		edgeLine,
 		Polygon {
-		   // transforms: bind [Transform.rotate(getAngle(x1, x2, y1, y2), x2, y2)]
+		    transforms: bind getHeadRotation(x1, x2, y1, y2)
 		    points: bind [ x2, y2,
-			x2 - headSize, y2+(headSize / 2),
-			x2 - headSize, y2-(headSize / 2)]
+			x2 - (headSize / 2), y2 + headSize,
+			x2 + (headSize / 2), y2 + headSize]
 		    stroke: bind stroke
 		    fill: bind fill
 		}
@@ -437,8 +437,6 @@ public class PremiseLink extends CarneadesEdge {
      */
     public var negated: Boolean = false;
 
-    override var turnHead = bind negated;
-
     // main line of the edge
     override var edgeLine = Line {
 	startX: bind x1
@@ -480,14 +478,14 @@ public class PremiseLink extends CarneadesEdge {
 	strokeDashOffset: bind { if (premise.exception) 0.0 else 0.0 }
     }
 
-    var negation: Line = Line {
-	startX: bind x2 - negWidth
-	startY: bind y2 + yHeadShift
-	endX: bind x2 + negWidth
-	endY: bind y2 + yHeadShift
-	transforms: bind [
-		//getRotation(x1, x2, y1, y2)
-	    ]
+    // The negation bar should be a line but the line won't rotate for some reason.
+    var negation: Polygon = Polygon {
+	points: bind [
+	    x2 - (negWidth / 2), y2 + yHeadShift,
+	    x2 + (negWidth / 2), y2 + yHeadShift,
+	    x2 + (negWidth / 2), y2 + yHeadShift + negStrokeWidth,
+	    x2 - (negWidth / 2), y2 + yHeadShift + negStrokeWidth]
+	transforms: bind getHeadRotation(x1, x2, y1, y2)
 	stroke: bind stroke
 	strokeWidth: bind negStrokeWidth
     }
@@ -507,9 +505,9 @@ public class PremiseLink extends CarneadesEdge {
      */
     public function negate() {
 	if (negated) {
-		negated = false;
+	    negated = false;
 	} else {
-		negated = true;
+	    negated = true;
 	}
     }
 
