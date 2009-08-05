@@ -29,7 +29,6 @@ public class GraphLayout {
 	public var height: Integer;
 	var xOffset: Integer = 0;
 	var yOffset: Integer = 0;
-	var d: Boolean = bind debug; // debug messages?
 
 	public function compose():Graph { graph }
 
