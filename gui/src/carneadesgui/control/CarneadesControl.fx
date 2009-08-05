@@ -596,16 +596,16 @@ public class CarneadesControl {
 	}
 
 	public function changeStatementWff(s: Statement, c: String): Void {
-		commands.do(
-			ChangeStatementWffCommand {
-				argumentGraph: argumentGraph
-				statement: s
-				wff: c
-			});
-		updateView(
-			GraphUpdate {
-				changedAttribute: true
-			});
+	    commands.do(
+		    ChangeStatementWffCommand {
+			    argumentGraph: argumentGraph
+			    statement: s
+			    wff: c
+		    });
+	    updateView(
+		    GraphUpdate {
+			    changedAttribute: true
+		    });
 	};
 
 	public function changeGraphTitle(g: ArgumentGraph, t: String): Void {
@@ -820,8 +820,8 @@ public class CarneadesControl {
 	}
 
 	public function removeCurrentArgumentGraph(): Void {
-		delete argumentGraph from argumentGraphs;
-		delete graph from graphs;
+		delete argumentGraph from model.argumentGraphs;
+		delete graph from view.graphs;
 
 		if (argumentGraphs != []) {
 			displayGraph(argumentGraphs[0]);

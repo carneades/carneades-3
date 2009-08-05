@@ -84,14 +84,14 @@ public class Statement {
 	* Function that returns the proof standard as a string according as set in the constants file.
 	*/
 	public function getStandard(): String {
-		var s: String = "";
-		if (standard instanceof Scintilla) s = proofStandardSE
-		else if (standard instanceof DialecticalValidity) s = proofStandardDV
-		else if (standard instanceof BestArgument) s = proofStandardBA
-		else if (standard instanceof Preponderance) s = proofStandardPE
-		else if (standard instanceof ClearAndConvincingEvidence) s = proofStandardCCE
-		else if (standard instanceof BeyondReasonableDoubt) s = proofStandardBRD;
-		return s;
+	    var s: String = "";
+	    if (standard instanceof Scintilla) s = proofStandardSE
+	    else if (standard instanceof DialecticalValidity) s = proofStandardDV
+	    else if (standard instanceof BestArgument) s = proofStandardBA
+	    else if (standard instanceof Preponderance) s = proofStandardPE
+	    else if (standard instanceof ClearAndConvincingEvidence) s = proofStandardCCE
+	    else if (standard instanceof BeyondReasonableDoubt) s = proofStandardBRD;
+	    return s;
 	}
 
 	// ok should be read only for other objects.  But we can't
@@ -109,12 +109,13 @@ public class Statement {
 		}
 
 
-     function update () : Void {
+    function update () : Void {
     	var pro = graph.arguments[arg | arg.conclusion == this and arg.pro];
-		var con = graph.arguments[arg | arg.conclusion == this and not arg.pro];
+	var con = graph.arguments[arg | arg.conclusion == this and not arg.pro];
     	ok = standard.satisfied(graph,pro,con);
     	complementOk = standard.satisfied(graph,con,pro);
     	for (arg in arguments) arg.update();
+	status = getStatus();
     }
 
 	public function stated () : Boolean {
@@ -141,36 +142,28 @@ public class Statement {
     	value == "false" and assumption == false;
     }
 
-	// this function is a workaround as there is a bug
-	// in the compiler with regard to calling bound
-	// functions from non-bound contexts
-	public bound function getBoundStatus(): String {
-		if (stated()) "stated"
-		else if (questioned()) "questioned"
-		else if (assumedTrue()) "assumed true"
-		else if (assumedFalse()) "assumed false"
-		else if (rejected()) "rejected"
-		else if (accepted()) "accepted"
-		else "";
-	}
+    // this function is a workaround as there is a bug
+    // in the compiler with regard to calling bound
+    // functions from non-bound contexts
+    public function getStatus(): String {
+	if (stated()) "stated"
+	else if (questioned()) "questioned"
+	else if (assumedTrue()) "assumed true"
+	else if (assumedFalse()) "assumed false"
+	else if (rejected()) "rejected"
+	else if (accepted()) "accepted"
+	else "";
+    }
 
-	public function status(): String {
-		if (stated()) "stated"
-		else if (questioned()) "questioned"
-		else if (assumedTrue()) "assumed true"
-		else if (assumedFalse()) "assumed false"
-		else if (rejected()) "rejected"
-		else if (accepted()) "accepted"
-		else "";
-	}
+    public var status: String = getStatus();
 
-	public function state ():  Void {
-		value = "unknown";
-		assumption = true;
-		update();
-	}
+    public function state ():  Void {
+	value = "unknown";
+	assumption = true;
+	update();
+    }
 
-	public function question () : Void {
+    public function question () : Void {
     	value = "unknown";
     	assumption = false;
     	update();
@@ -315,10 +308,10 @@ public class ArgumentGraph {
 
 	// statements and arguments should be "read-only"
 	public var statements: Statement[];
-    public var arguments: Argument[];
+	public var arguments: Argument[];
 
-    // Issues of XML format not needed, since the
-    // statements here have all the attributes of issues.
+	// Issues of XML format not needed, since the
+	// statements here have all the attributes of issues.
 
 	public function stronger (a1: Argument, a2: Argument) : Boolean {
 		a1.weight > a2.weight;
