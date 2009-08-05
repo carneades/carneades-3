@@ -30,10 +30,16 @@ public var currentIndex: Integer = 0;
  */
 public abstract class GraphElement extends CustomNode {
 
+	public var graph: Graph;
+
 	/**
 	 * Has the element been selected by the user?
 	 */
 	public var selected: Boolean = false;
+
+	// functionality to blend it in and out
+	public var toBeDisplayed: Boolean = true;
+	public var toBeHidden: Boolean = false;
 
 	/**
 	* The model object represented by the GraphElement. Is null if not representing anything.

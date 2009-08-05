@@ -22,13 +22,13 @@ public class CarneadesGUI {
 	application: this
     };
     var standardView: CarneadesView = StandardView {};
-    var richView: CarneadesView = RichView {};
+    //var richView: CarneadesView = RichView {};
     var model: CarneadesModel = CarneadesModel {};
 	
 	postinit {
 		control.setModel(model);
 		control.addView(standardView);
-		control.addView(richView);
+		//control.addView(richView);
 		control.setActiveView(standardView);
 		control.newGraph();
 	}
@@ -38,7 +38,7 @@ public class CarneadesGUI {
 	}
 
 	public function quit() {
-	    richView.quit();
+	    //richView.quit();
 	    standardView.quit();
 	}
 }

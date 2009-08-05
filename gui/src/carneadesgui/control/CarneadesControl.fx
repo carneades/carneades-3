@@ -162,17 +162,17 @@ public class CarneadesControl {
 	}
 	
 	public function processListSelection(e: Object): Void {
-		unSelectGraph();
-		if (not (e instanceof ArgumentGraph))
-		{
-			insert e into graph.selectedModels;
-			graph.updateSelectedElementsFromModel();
-			focusOnSelected();
-			updateView( GraphUpdate { listSelection: true } );
-		} else {
-			view.editGraph(e as ArgumentGraph);
-			if ((e as ArgumentGraph) != argumentGraph) displayGraph(e as ArgumentGraph);
-		}
+	    unSelectGraph();
+	    if (not (e instanceof ArgumentGraph))
+	    {
+		insert e into graph.selectedModels;
+		graph.updateSelectedElementsFromModel();
+		focusOnSelected();
+		updateView( GraphUpdate { listSelection: true } );
+	    } else {
+		view.editGraph(e as ArgumentGraph);
+		if ((e as ArgumentGraph) != argumentGraph) displayGraph(e as ArgumentGraph);
+	    }
 	}
 
 	/**
@@ -208,70 +208,60 @@ public class CarneadesControl {
 
 	// UPDATE FUNCTIONS
 
-	// TODO clean this up. This timeline belongs into the view.
-	var update: Timeline = Timeline {
-		repeatCount: 1
-		keyFrames:  KeyFrame {
-       		time: 0.01s
-       		action: function() {
-
-				// 1. Rendering update
-				graph.update();
-				graph.glayout.compose();
-
-				// 2. Restore Selection
-				graph.updateSelectedElementsFromModel();
-       		}
-    	}
-	}
-
 	function updateView(u: GraphUpdate): Void {
-		if (u.layout) update.playFromStart();
+	    if (u.layout) {
+		// 1. Rendering update
+		graph.updateFromModel();
+		graph.updateDisplay();
 
-		// set modes
-		if (singleStatementSelected()) view.editStatement(graph.selectedModels[0] as Statement);
-		if (singleArgumentSelected()) view.editArgument(graph.selectedModels[0] as Argument);
-		if (singlePremiseSelected()) view.editPremise(graph.selectedModels[0] as Premise);
-		if (nothingSelected()) view.editNothing();
+		// 2. Restore Selection
+		graph.updateSelectedElementsFromModel();
+	    }
 
-		// update the view component influencing booleans
-		possibleToUndo = commands.possibleToUndo();
-		possibleToRedo = commands.possibleToRedo();
-	 	possibleToInverseArgument = singleArgumentSelected();
-		possibleToRemove = singleSomethingSelected();
+	    // set modes
+	    if (singleStatementSelected()) view.editStatement(graph.selectedModels[0] as Statement);
+	    if (singleArgumentSelected()) view.editArgument(graph.selectedModels[0] as Argument);
+	    if (singlePremiseSelected()) view.editPremise(graph.selectedModels[0] as Premise);
+	    if (nothingSelected()) view.editNothing();
 
-		view.update(u);
+	    // update the view component influencing booleans
+	    possibleToUndo = commands.possibleToUndo();
+	    possibleToRedo = commands.possibleToRedo();
+	    possibleToInverseArgument = singleArgumentSelected();
+	    possibleToRemove = singleSomethingSelected();
+
+	    view.update(u);
 	}
 
 	/**
 	 * Do a global view and controls update.
 	 */
 	public function updateAll() {
-		updateView( GraphUpdate {
-			layout: true
-			selection: true
-		});
+	    updateView( GraphUpdate {
+		layout: true
+		selection: true
+	    });
 	}
 
 	// Perform an undo action.
 	public function undo(): Number {
-		var result = commands.undo();
-		updateAll();
-		return result;
+	    var result = commands.undo();
+	    updateAll();
+	    return result;
 	}
 
 	// Perform a redo action.
 	public function redo(): Number {
-		var result = commands.redo();
-		updateAll();
-		return result;
+	    var result = commands.redo();
+	    updateAll();
+	    return result;
 	}
 
 
 	// Switch the view to another argument graph.
 	public function displayGraph(a: ArgumentGraph) {
-		view.currentGraph = (for (g in graphs where (g as CarneadesGraph).argumentGraph == a) { g }) [0];
-		updateAll();
+	    view.currentGraph = (for (g in graphs where (g as CarneadesGraph).argumentGraph == a) { g }) [0];
+	    updateAll();
 	}
 
 	// MODEL MANIPULATION FUNCTIONS
@@ -376,11 +366,11 @@ public class CarneadesControl {
 	 * Adds a blank statement to the graph.
 	 */
 	public function addStatement(): Void {
-		commands.do(
-			AddStatementCommand {
-				argumentGraph: argumentGraph
-			});
-		updateAll();
+	    commands.do(
+		AddStatementCommand {
+			argumentGraph: argumentGraph
+		});
+	    updateAll();
 	}
 
 	/**
@@ -822,7 +812,7 @@ public class CarneadesControl {
 				graph: bind graph
 			}
 		};
-		graph.update();
+		graph.updateFromModel();
 		insert graph into view.graphs;
 		view.currentGraph = graphs[0];
 		unSelectAll();

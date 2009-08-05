@@ -27,324 +27,80 @@ import java.lang.Math;
  * A graph layout that displays the argument graph as an ordinary top-down tree.
  */
 public class TreeLayout extends GraphLayout {
-	var d: Boolean = false;
 
-	var root: Vertex;
+    function subTreeWidth(v: Vertex): Integer {
+	v.subTreeWidth =
+	    if ((sizeof v.children) > 0) {
 
-	// helper function for debugging
-	public function debug(s: String):Void {
-		System.out.println(s);
-	}
-
-	// helper function to be discardad once select code works
-	 function pickChild(parentVertex: Vertex, priority: Number):Vertex {
-		var found: Vertex;
-		for (i in parentVertex.children) {
-			if (i.priority == priority) { found = i; }
-		}
-		return found;
-	}
-
-	 function setPriorities(v: Vertex):Void {
-		// Set child node drawing priorities
-		// right now: Simple child array index duplication
-		if (v.children != null) {
-			for (i in [0 .. (sizeof v.children-1)]) {
-				v.children[i].priority = i;
-				setPriorities(v.children[i]);
-			}
-		}
-	}
-
-	 function getBottomLeft(v: Vertex):Vertex {
-		// to do: check for empty graph
-		var bottomLeft: Vertex = v;
-		while (bottomLeft.children != null ) {
-			var next: Vertex;
-			for	(i in bottomLeft.children) {
-				if (i.priority == 0) {
-					next = i;
-				}
-			}
-			bottomLeft = next;
-		}
-		return bottomLeft;
-	}
-
-	 function treeSize(v: Vertex):Void {
-		treeSize(v, false);
-	}
-
-	// FIRST TRAVERSAL: Determine Subtree Sizes
-	// parameter is the "BOTTOM LEFT" node of the tree
-	 function treeSize(v: Vertex, complete: Boolean):Void {
-
-		if (d) debug("sizing {v.caption}");
-		if (v.children == null) { // It is a leaf node
-			if (d) debug("... it is a leaf node");
-
-			// determine size if the subtree as the size of the node
-			v.xSubTreeSize = v.width;
-
-			// do the next sibling if there are any left
-			if ((sizeof v.parentVertex.children) > (v.priority + 1)) {
-				if (d) debug("Attempting to size sibling");
-				// take the sibling with the next priority
-				treeSize(pickChild(v.parentVertex, v.priority + 1))
-
-			} else {
-				if (d) debug("No sibling found ...");
-				// else do the parent if there is one
-				if (v.parentVertex != null) {
-					if (d) debug("Attempting to size parent");
-					treeSize(v.parentVertex, true);
-				}
-			}
-
-		} else { // It is no leaf node
-			if (d) debug("... it is no leaf node");
-
-			// Is the subtree already complete?
-			if (complete) {
-				if (d) debug("... the subtree is complete");
-				// determine the subtree size
-				v.xSubTreeSize = 0;
-				for (i in v.children) {
-					// add every subtree's size
-					v.xSubTreeSize += i.xSubTreeSize;
-				}
-				// add spacing in between
-				v.xSubTreeSize += (sizeof v.children - 1) * xDistance;
-
-				// check whether the node is wider than its subtree
-				if (v.width > v.xSubTreeSize) {
-					v.xSubTreeSize = v.width;
-				}
-
-				// do the next sibling if there are any left
-				if ((sizeof v.parentVertex.children) > (v.priority + 1)) {
-					if (d) debug("Attempting to size sibling");
-					// take the sibling with the next priority
-					treeSize(pickChild(v.parentVertex, v.priority+1))
-
-				} else {
-					if (d) debug("No sibling found ...");
-					// else do the parent if there is one
-					if (v.parentVertex != null) {
-						if (d) debug("Attempting to size parent");
-						treeSize(v.parentVertex, true);
-					}
-				}
-
-			} else {
-				// get new bottom left and layout it
-				treeSize(getBottomLeft(v));
-			}
-		}
-	}
-
-
-	// SECOND TRAVERSAL: Assign horizontal positions
-	// parameter is the ROOT node of the tree
-	 function position(v: Vertex):Void {
-
-		// determine whether the parent is wider than all its child subtrees together
-		var childSum: Number = 0;
-		for (c in v.children) { childSum += c.xSubTreeSize; } // add up children
-		childSum += xDistance * (sizeof v.children - 1); // add gaps
-		var parentWider: Boolean = (v.xSubTreeSize > childSum);
-
-		if (sizeof v.children > 1) {
-			// if there is more than one child, position them one at a time using a "cursor"
-			// Layout children of passed node
-
-			if (not parentWider) {
-				var cursor: Number = (- v.xSubTreeSize / 2) + (pickChild(v, 0).xSubTreeSize / 2);
-
-				for (i in [0 .. (sizeof v.children-1)]) {
-					var current: Vertex = pickChild(v, i);
-					current.xShift = cursor;
-					current.x = current.parentVertex.x + current.xShift;
-					cursor += (current.xSubTreeSize / 2) + xDistance;
-
-					if (i < (sizeof v.children-1)) cursor += (pickChild(v, i+1).xSubTreeSize / 2);
-
-					// determine y coordinate according to whether it is the root node or not
-					if (current.parentVertex != null) {
-						current.yShift = (current.height/2) + (current.parentVertex.height / 2) + yDistance;
-						current.y = current.parentVertex.y + current.yShift;
-					} else {
-						current.y = 0;
-					}
-				}
-			} else {
-				var cursor: Number = (- childSum / 2) + (pickChild(v, 0).xSubTreeSize / 2);
-
-				for (i in [0 .. (sizeof v.children-1)]) {
-					var current: Vertex = pickChild(v, i);
-					current.xShift = cursor;
-					current.x = current.parentVertex.x + current.xShift;
-					cursor += (current.xSubTreeSize / 2) + xDistance;
-
-					if (i < (sizeof v.children-1)) cursor += (pickChild(v, i+1).xSubTreeSize / 2);
-
-					// determine y coordinate according to whether it is the root node or not
-					if (current.parentVertex != null) {
-						current.yShift = (current.height/2) + (current.parentVertex.height / 2) + yDistance;
-						current.y = current.parentVertex.y + current.yShift;
-					} else {
-						current.y = 0;
-					}
-				}
-			}
-
-			// position the children's children recursively
-			for (i in v.children) position(i);
-
-		} else {
-			// if there is only one child, position it straight below
-			if (sizeof v.children == 1) {
-				v.x = v.parentVertex.x + v.xShift;
-
-				// determine y coordinate according to whether it is the root node or not
-				if (v.parentVertex != null) {
-					v.yShift = (v.height/2) + (v.parentVertex.height / 2) + yDistance;
-					v.y = v.parentVertex.y + v.yShift;
-				} else {
-					v.y = 0;
-				}
-
-				// position child
-				v.children[0].xShift = 0;
-				v.children[0].yShift = (v.height/2) + (v.children[0].height / 2) + yDistance;
-				v.children[0].y = v.y + v.children[0].yShift;
-				position(v.children[0]);
-			}
-			
-			// if there is no child ...
-			if (sizeof v.children == 0) {
-				v.x = v.parentVertex.x + v.xShift;
-
-				// determine y coordinate according to whether it is the root node or not
-				if (v.parentVertex != null) {
-					v.yShift = (v.height/2) + (v.parentVertex.height / 2) + yDistance;
-					v.y = v.parentVertex.y + v.yShift;
-				} else {
-					v.y = 0;
-				}
-			}
-		}
-	}
-
-
-	function adjust():Void {
-		// workover!
-
-		// set the overall tree width
-		this.width = Math.max(appWidth - inspectorPanelWidth - mainPanelSpacing, root.xSubTreeSize).intValue();
-
-		// find deepest node
-		var bottom: Number = 0;
-		for (i: Vertex in graph.vertices) {
-			bottom = Math.max(bottom, i.y - graph.root.yShift);
+		// add up childrens' widths and padding
+		var stw = 0;
+		for (i in [0 .. sizeof v.children - 1]) {
+		    stw += subTreeWidth(v.children[i]) + {if (i < sizeof v.children - 1) xPadding else 0}
 		}
 
-		// adjust overall tree height
-		this.height = Math.max( appHeight - 50 , bottom).intValue();
+		// if the children together are less wide than the parent, the parent determines the subtree size.
+		if (stw < v.width) v.width else stw;
+
+	    } else /*if (v.children == [])*/ {
+		// if there are no child nodes, the parent determines the subtree
+		v.width;
+	    }
+	v.subTreeWidth as Integer;
+    }
+
+    function positionVerticesHorizontally(v: Vertex): Void {
+	// the main point here is to see that the root stays at 0,0 and this function positions the children of a node
+	if (v.parentVertex == null) {
+	    // it is the root node
+	    v.xNew = 0;
+	    v.yNew = 0;
 	}
 
-	function layoutEdges():Void {
-		// adjust edges
-
-		// 1. determine direction from which edge is coming in
-		for ( i in graph.edges) {
-			if (i.producer.level < i.recipient.level) {
-				// edge comes top down
-				i.direction = TOP;
-			} else {
-				// edge comes bottom up
-				i.direction = BOTTOM;
-			}
-		}
-
-
-		// 2. move line ends to the vertically correct points according to the levels they span
-		for ( i in graph.edges) {
-			if (i.producer.level < i.recipient.level) {
-				// edge comes top down
-				i.y1Shift = i.producer.height;
-			} else {
-				// edge comes bottom up
-				i.y2Shift = i.recipient.height / 2;
-				i.y1Shift = - i.producer.height / 2;
-			}
-		}
-
-		// 3. move line ends to correct horizontal position according to the box end
-		for ( i in graph.edges) {
-			if (i.producer.level < i.recipient.level) {
-				// edge comes top down
-				i.x2Shift = - (i.producer.width / 2) // move to lower left corner of the bottom edge
-							+ (i.producer.width / (sizeof i.producer.children + 1)) * (i.recipient.priority + 1);
-
-			} else {
-				// edge comes bottom up
-				i.x2Shift = - ((i.recipient.width-i.recipient.bottomBrink) / 2) // move to lower left corner of the bottom edge
-							+ ((i.recipient.width-i.recipient.bottomBrink) / (sizeof i.recipient.children + 1)) * (i.producer.priority + 1);
-			}
-		}
-
-		// set head angles
+	var cursor: Number = v.xNew - (v.subTreeWidth / 2);
+	for (c in v.children) {
+	    // position child nodes
+	    c.xNew = cursor + (c.subTreeWidth / 2);
+	    cursor = c.xNew + (c.subTreeWidth / 2) + xPadding;
 	}
 
-	function makeAbsolute(r: Vertex) {
-		
+	for (c in v.children) {
+	    positionVerticesHorizontally(c);
 	}
+    }
 
-	override function compose():Graph {
-		System.out.println("layout started!");
-
-		// update box widths
-		// This is a very poor workaround, but I see no way to trigger an update event in here...
-		for (v in graph.vertices) {
-			if (v.scaleWithText) {
-				v.width = Math.max(50, v.text.boundsInLocal.width + 10);
-			} else {
-				v.width = v.defaultWidth;
-			}
-		}
-
-		var roots: Vertex[];
-
-		// get roots
-		for (v in graph.vertices) {
-			if (v.parentVertex == null) { insert v into roots; }
-		}
-
-		root = roots [0];
-
-		// set graph priorities for drawing the nodes in order
-		setPriorities(root);
-
-		// do the main tree vertex layout
-		// First Traversal: determine tree sizes
-		treeSize(getBottomLeft(root));
-
-		// second traversal: assign positions
-		position(root);
-
-		// adjust layout according to the offset
-		adjust();
-
-		// do edges
-		layoutEdges();
-
-		// make positions absolute
-		makeAbsolute(root);
-
-		//graph.print();
-
-		return graph;
+    function positionVerticesVertically(v: Vertex): Void {
+	if (v.parentVertex == null) {
+	    v.yNew = 0;
+	} else {
+	    v.yNew = v.parentVertex.yNew + (v.parentVertex.height / 2) + (v.height / 2) + yPadding;
 	}
+	for (c in v.children) positionVerticesVertically(c);
+    }
+
+    function positionEdges(): Void {
+	for (e in graph.edges) {
+	    e.x1New = e.producer.xNew;
+	    e.y1New = e.producer.yNew - e.producer.height / 2;
+	    e.x2New = e.recipient.xNew;
+	    e.y2New = e.recipient.yNew + e.producer.height / 2;
+	}
+    }
+
+    override function compose(): Graph {
+
+	// first traversal: determine subtree width
+	subTreeWidth(graph.root);
+
+	// second traversal: position vertices horizontally in their subtree
+	positionVerticesHorizontally(graph.root);
+
+	// set vertex heights
+	positionVerticesVertically(graph.root);
+
+	// layout edges
+	positionEdges();
+
+	return graph;
+    }
 }
 
