@@ -101,19 +101,19 @@ public class CarneadesControl {
 	}
 
 	// The array of currently loaded model argument graphs in the model component. Read-Only.
-	public var argumentGraphs: ArgumentGraph[] = bind model.argumentGraphs;
+	public def argumentGraphs: ArgumentGraph[] = bind model.argumentGraphs;
 
 	// The current model argument graph that is to be displayed. Read-Only.
-	public var argumentGraph: ArgumentGraph = bind graph.argumentGraph;
+	public def argumentGraph: ArgumentGraph = bind graph.argumentGraph;
 	
 	// The array of graph objects that correspond to the model graphs.
-	public var graphs: CarneadesGraph[] = bind view.graphs;
+	public def graphs: CarneadesGraph[] = bind view.graphs;
 
 	// The view graph object currently displayed.
-	public var graph: CarneadesGraph = bind view.currentGraph;
+	public def graph: CarneadesGraph = bind view.currentGraph;
 
 	// The command administering unit of the currently displayed graph.
-	var commands: CommandControl = bind graph.commands;
+	def commands: CommandControl = bind graph.commands;
 
 	// View configuration attributes
 	public var possibleToAddConclusion: Boolean = true;
@@ -270,94 +270,119 @@ public class CarneadesControl {
 
 	// drag & drop
 	public var draggingOver: Object = false;
-	public function setDraggingOver(thing): Void { draggingOver = thing; };
-	public var dragging = false;
+	public var dragging: Boolean = false;
+	public var canDrop: Boolean = false;
+
+	public function setDraggingOver(thing): Void {
+	    draggingOver = thing;
+	    canDrop = canDropOn(thing);
+	}
+
+	public function canDropOn(target): Boolean {
+	    // there is something to drop on
+	    target != null
+
+	    // something is not dropped on itself
+	    and graph.selectedElements()[0] != target
+
+	    // they are not of different types
+	    and {
+		if (graph.selectedElements()[0] instanceof StatementBox)
+		    if (target instanceof StatementBox) false else true
+		else if (graph.selectedElements()[0] instanceof ArgumentBox)
+		    if (target instanceof ArgumentBox) false else true
+		else false;
+	    }
+	}
 
 
 	// Processes the start of a dragging action. Should be called whenever a dragging action starts.
-	public function startDrag(): Void {
+	public function startDrag(thing): Void {
 	    dragging = true;
 	}
 
 	// Processes the end of a dragging action. Should be called when a dragging action ends.
 	public function endDrag(): Void {
-		if (dragging) {
-			dragging = false;
-			// Were we dragging over something?
-			if (draggingOver != null) {
-				dragEndsAt(draggingOver as ArgumentElement);
-				draggingOver = null;
-			}
+	    if (dragging) {
+		dragging = false;
+		// Were we dragging over something?
+		if (draggingOver != null) {
+		    dragEndsAt(draggingOver as ArgumentElement);
+		    draggingOver = null;
 		}
+	    }
+	    canDrop = false;
 	}
 
 	function dragEndsAt(target): Void {
-		var selected = graph.selectedElements();
+	    var selected = graph.selectedElements();
+	    if (target != selected) {
 		for (s in selected) {
-			if (s instanceof StatementBox) {
-				if (target instanceof ArgumentBox) {
-					// A statement is dragged onto an argument: Append as a premise
+		    if (s instanceof StatementBox) {
+			if (target instanceof ArgumentBox) {
+			    // A statement is dragged onto an argument: Append as a premise
 
-					// 1. Determine linking premise
-					var temp = (graph.edges[ e | e.producer == s ]);
-					var premiseLink: PremiseLink;
-					var premise: Premise;
+			    // 1. Determine linking premise
+			    var temp = (graph.edges[ e | e.producer == s ]);
+			    var premiseLink: PremiseLink;
+			    var premise: Premise;
 
-					if (temp != []) {
-						premiseLink = temp[0] as PremiseLink;
-						premise = premiseLink.premise;
-					}
+			    if (temp != []) {
+				premiseLink = temp[0] as PremiseLink;
+				premise = premiseLink.premise;
+			    }
 
-					// If there is no premise (meaning the statement is a root), give it a blank one
-					if (premise == null) { premise = Premise { statement: (s as StatementBox).statement }; }
+			    // If there is no premise (meaning the statement is a root), give it a blank one
+			    if (premise == null) { premise = Premise { statement: (s as StatementBox).statement }; }
 
-					// 2. Get current parent argument
-					var oldArgument: Argument = (premiseLink.recipient as ArgumentBox).argument;
+			    // 2. Get current parent argument
+			    var oldArgument: Argument = (premiseLink.recipient as ArgumentBox).argument;
 
-					// 3. Get new parent argument
-					var newArgument: Argument = (target as ArgumentBox).argument;
+			    // 3. Get new parent argument
+			    var newArgument: Argument = (target as ArgumentBox).argument;
 
-					// 4. issue command
-					commands.do(
-						MovePremiseCommand {
-							argumentGraph: argumentGraph
-							premise: premise
-							oldArgument: oldArgument
-							newArgument: newArgument
-						});
+			    // 4. issue command
+			    commands.do(
+				MovePremiseCommand {
+				    argumentGraph: argumentGraph
+				    premise: premise
+				    oldArgument: oldArgument
+				    newArgument: newArgument
+				});
 
-					// 5. check for cycles and undo in case
-					if (not argumentGraph.noCycles()) {
-						commands.undo();
-						commands.pop();
-						view.alert("No! The Graph would become cyclic.");
-					}
-				}
+			    // 5. check for cycles and undo in case
+			    if (not argumentGraph.noCycles()) {
+				commands.undo();
+				commands.pop();
+				view.alert("No! The Graph would become cyclic.");
+			    }
 			}
-			if (s instanceof ArgumentBox) {
-				if (target instanceof StatementBox) {
-					// An argument is dragged over a statement: Append as argument
+		    }
+		    if (s instanceof ArgumentBox) {
+			if (target instanceof StatementBox) {
+			    // An argument is dragged over a statement: Append as argument
 
-					// 1. Issue the command
-					commands.do(
-						MoveArgumentCommand {
-							argumentGraph: argumentGraph
-							argument: (s as ArgumentBox).argument
-							oldStatement: (s as ArgumentBox).argument.conclusion
-							newStatement: (target as StatementBox).statement
-						});
+			    // 1. Issue the command
+			    commands.do(
+				MoveArgumentCommand {
+				    argumentGraph: argumentGraph
+				    argument: (s as ArgumentBox).argument
+				    oldStatement: (s as ArgumentBox).argument.conclusion
+				    newStatement: (target as StatementBox).statement
+				});
 
-					// 2. check for cycles and undo in case
-					if (not argumentGraph.noCycles()) {
-						commands.undo();
-						commands.pop();
-						view.alert("No! The Graph would become cyclic.");
-					}
-				}
+			    // 2. check for cycles and undo in case
+			    if (not argumentGraph.noCycles()) {
+				commands.undo();
+				commands.pop();
+				view.alert("No! The Graph would become cyclic.");
+			    }
 			}
+		    }
 		}
-		unSelectAll();
-		updateAll();
+	    }
+	    unSelectAll();
+	    updateAll();
 	}
 
 	// CORE MODEL MANIPULATION
