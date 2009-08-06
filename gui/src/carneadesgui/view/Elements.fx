@@ -113,6 +113,7 @@ public class ArgumentBox extends ArgumentElement {
     // bind the model element to the argument element
     override var model = bind argument;
 
+    override var cache = true;
     override var height = argumentCircleDefaultRadius * 2;
     override var width = argumentCircleDefaultRadius * 2;
     override var caption = bind argument.id;
@@ -218,6 +219,7 @@ public class StatementBox extends ArgumentElement {
     // bind the model element to the statement element
     override var model = bind statement;
 
+    override var cache = true;
     override var width = statementBoxDefaultWidth;
     override var bottomBrink = statementBoxBottomBrink;
     override var caption = bind {
@@ -235,7 +237,6 @@ public class StatementBox extends ArgumentElement {
     };
 
     override var text = CenteredStatementText {
-	cache: true
 	blocksMouse: false
 	content: bind caption
 	x: bind x - (acceptableCircleWidth/ 2)
