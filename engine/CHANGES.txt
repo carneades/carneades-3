@@ -4,7 +4,7 @@ Carneades Changelog
 - For more recent changes, see the change log of either of the source code control systems were are now using:
 
 	- https://launchpad.net/carneades
-	- http://developer.berlios.de/projects/carneades,
+	- http://developer.berlios.de/projects/carneades
 
 Version 0.1.4  (July 29, 2008)
 

@@ -89,7 +89,7 @@
                       (< 0 (string-length (argument-scheme arg))))
                  (argument-scheme arg)
                  (symbol->string (argument-id arg)))
-             (if (applicable? ag arg) "filled" "solid"))
+             (if (applicable? ag arg) "filled" "none"))
      (format port "    ~A -> ~A [arrowhead=~S];~%" 
              (get-id (argument-id arg))
              (get-id (argument-conclusion arg))
