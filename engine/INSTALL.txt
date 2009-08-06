@@ -38,21 +38,21 @@ CARNEADES_HOME.
 
 - Unpack the zip file in this directory.
 
-The Scheme source files of Carneades should now be in 
-the "scheme/src/carneades" directory inside the CARNEADES_HOME directory.
+The Scheme source files of the Carneades engine should now be in 
+the CARNEADES_HOME/engine/src/carneades directory inside the CARNEADES_HOME directory.
 
 - The .zip file can now be deleted.
 
-- Install the Scheme libraries in CARNEADES_HOME/scheme/src 
+- Install the Scheme libraries in CARNEADES_HOME/engine/src 
 so that they will be available  to the implementation of R6RS Scheme you 
 are using.  The procedure for doing this varies from implementation to 
 implementation.  Using Ikarus, for example, the shell variable
-named IKARUS_LIBRARY_PATH should be set to include the CARNEADES_HOME/scheme/src
+named IKARUS_LIBRARY_PATH should be set to include the CARNEADES_HOME/engine/src
 directory.
 
 4. Configuration
 
-- In the src/carneades directory, edit the config.scm file to select your
+- In the CARNEADES_HOME/engine/src/carneades directory, edit the config.scm file to select your
 preferred graphics format for displaying argument graphs (png, ps, or
 svg) and specify the full path to some application for viewing graphics
 in this format.  The config.scm file includes some examples for both
@@ -75,6 +75,6 @@ the GraphViz package, producing a nice PDF file containing the diagram.
 
 Here's how to run the same program using version 4.x of PLT Scheme:
 
-$ plt-r6rs ++path CARNEADES_HOME/scheme/src experts.scm | dot -Tpdf > experts.pdf
+$ plt-r6rs ++path CARNEADES_HOME/engine/src experts.scm | dot -Tpdf > experts.pdf
 
 
