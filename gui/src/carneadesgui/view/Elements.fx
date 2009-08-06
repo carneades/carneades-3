@@ -22,6 +22,10 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.text.*;
 import javafx.scene.*;
 
+import java.lang.Math.atan;
+import java.lang.Math.PI;
+import java.lang.Math.sqrt;
+
 // import the necessary parts of the model
 import carneadesgui.model.Argument;
 import carneadesgui.model.Argument.*;
@@ -36,18 +40,14 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
-
 import javafx.scene.shape.Shape;
-
 import javafx.scene.transform.Translate;
-
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextOrigin;
-
 import javafx.scene.input.MouseButton;
+import javafx.scene.transform.Rotate;
 
 /**
 * Auxiliary class for centered text.
@@ -167,7 +167,7 @@ public class ArgumentBox extends ArgumentElement {
 	}
 
 	onMouseDragged: function(e: MouseEvent) {
-	    if (this.selected and (e.button == MouseButton.PRIMARY)) { control.startDrag(); }
+	    if (this.selected and (e.button == MouseButton.PRIMARY)) { control.startDrag(this); }
 	}
 
 	onMouseReleased: function(e: MouseEvent) {
@@ -280,7 +280,7 @@ public class StatementBox extends ArgumentElement {
 	}
 
 	onMouseDragged: function(e: MouseEvent) {
-	    if (this.selected and (e.button == MouseButton.PRIMARY)) { control.startDrag(); }
+	    if (this.selected and (e.button == MouseButton.PRIMARY)) { control.startDrag(this); }
 	}
 
 	onMouseReleased: function(e: MouseEvent) {
@@ -414,7 +414,7 @@ public class PremiseLink extends CarneadesEdge {
     public var premise: Premise;
 
     // bind the model element to the premise element
-    override var model = bind premise;
+    override def model = bind premise;
 
     /**
      * The radius of the head at the edges end. Deprecated! Was used in older design of assumptions and exceptions.
@@ -442,25 +442,33 @@ public class PremiseLink extends CarneadesEdge {
 	startY: bind y1
 	endX: bind x2
 	endY: bind y2
+	strokeDashArray: bind { if (premise.exception) [6.0, 6.0] else [1.0] }
 	stroke: bind stroke
 	strokeWidth: bind strokeWidth
-	strokeDashArray: bind { if (premise.exception) [5.0, 5.0] else [1.0] }
-	strokeDashOffset: bind { if (premise.exception) 0.0 else 0.0 }
     }
 
-    var action = function(e: MouseEvent): Void{
+    def action = function(e: MouseEvent): Void{
 	control.processGraphSelection(this);
     }
 
-    var selectRect: Polygon = Polygon {
+    // this is supposed to be a line but the line will not give mouse click events
+    function getLengthOfEdge(x1: Number, x2: Number, y1: Number, y2: Number) {
+	sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2))
+    }
+
+    var selectPoly: Polygon = Polygon {
 	points: bind [
-	    x1-2, y1,
-	    x1+2, y1,
-	    x2+2, y2,
-	    x2-2, y2,]
+	    (x1+x2)/2 - 3, (y1+y2)/2 + getLengthOfEdge(x1, x2, y1, y2) / 2,
+	    (x1+x2)/2 + 3, (y1+y2)/2 + getLengthOfEdge(x1, x2, y1, y2) / 2,
+	    (x1+x2)/2 + 3, (y1+y2)/2 - getLengthOfEdge(x1, x2, y1, y2) / 2,
+	    (x1+x2)/2 - 3, (y1+y2)/2 - getLengthOfEdge(x1, x2, y1, y2) / 2,]
+	transforms: bind Rotate {
+		pivotX: bind (x2 + x1) / 2
+		pivotY: bind (y2 + y1) / 2
+		angle: - (atan((x2-x1)/(y2-y1)) / PI) * 180
+	    }
 	blocksMouse: true
 	fill: Color.GREEN
-	stroke: null
 	opacity: 0.0
 	onMouseClicked: action
     }
@@ -471,10 +479,9 @@ public class PremiseLink extends CarneadesEdge {
 	startY: bind y1
 	endX: bind x2
 	endY: bind y2
+	strokeDashArray: bind { if (premise.exception) [6.0, 6.0] else [1.0] }
 	stroke: bind selectionColor
 	strokeWidth: bind selectedEdgeWidth;
-	strokeDashArray: bind { if (premise.exception) [5.0, 5.0] else [1.0] }
-	strokeDashOffset: bind { if (premise.exception) 0.0 else 0.0 }
     }
 
     // The negation bar should be a line but the line won't rotate for some reason.
@@ -515,9 +522,8 @@ public class PremiseLink extends CarneadesEdge {
 	    content: bind [
 		edgeLine, 
 		{if (selected) selection else null},
-		selectRect,
+		selectPoly,
 		{if (negated) negation else null},
-		{if (premise.exception) exceptionHead else null}
 	    ] // content
 	} // Group
     } // composeNode

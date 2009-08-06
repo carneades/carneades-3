@@ -1,8 +1,19 @@
 /*
- * GraphPanel.fx
- *
- * Created on 02.07.2009, 01:31:36
- */
+Carneades Argumentation Library and Tools.
+Copyright (C) 2008 Thomas Gordon and Matthias Grabmair
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License version 3 (GPL-3)
+as published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 package carneadesgui.view;
 
@@ -21,7 +32,6 @@ import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import carneadesgui.control.CarneadesControl;
 import carneadesgui.GC.*;
-
 import javafx.geometry.Point2D;
 
 /**
@@ -33,14 +43,17 @@ public class GraphPanel extends Panel {
     public var constraintX: Number = 0;
     public var constraintY: Number = 0;
 
-    var centerX: Number = bind this.width / 2;
-    var centerY: Number = bind this.height / 2;
+    def centerX: Number = bind this.width / 2;
+    def centerY: Number = bind this.height / 2;
 
     var shiftX: Number = 0;
-    var shiftY: Number = 0; // x- and y-shift due to element focusing
+    var shiftY: Number = yPadding * 2 + vertexDefaultHeight; // x- and y-shift due to element focusing
 
     var dragX: Number = 0;
     var dragY: Number = 0; // x- and y-shift due to hand-dragging
+
+    var dragSymbolX: Number = 0;
+    var dragSymbolY: Number = 0; // x- and y-position of the dragging symbol
 
     var zoom: Number = 1.0; // Zoom factor
 
@@ -50,10 +63,21 @@ public class GraphPanel extends Panel {
     }
 
     var centerCircle = Circle {
-	    centerX: this.centerX
-	    centerY: this.centerY
+	    centerX: bind this.centerX
+	    centerY: bind this.centerY
 	    radius: 3
 	    fill: Color.RED
+    }
+
+    var dragSymbol: Rectangle = Rectangle {
+	    width: 20
+	    height: 15
+	    x: bind this.dragSymbolX - dragSymbol.width/2
+	    y: bind this.dragSymbolY - dragSymbol.height/2
+	    opacity: 0.5
+	    fill: bind { if (control.draggingOver != null)
+			    if (control.canDrop) Color.GREEN else Color.RED
+			 else Color.BLUE }
     }
 
     var detectorRect: Rectangle = Rectangle {
@@ -83,24 +107,31 @@ public class GraphPanel extends Panel {
 	}
 
 	onMouseDragged: function(e: MouseEvent) {
-	    // update hand dragging
-	    if (e.button == MouseButton.SECONDARY) {
-		dragX = e.dragX;
-		dragY = e.dragY;
+	    if (not controlsLocked) {
+		// update hand dragging
+		if (e.button == MouseButton.PRIMARY) {
+		    dragSymbolX = e.x;
+		    dragSymbolY = e.y;
+		}
+		if (e.button == MouseButton.SECONDARY) {
+		    dragX = e.dragX;
+		    dragY = e.dragY;
+		}
 	    }
 	}
 
 	onMouseReleased: function(e: MouseEvent) {
-	    // end hand dragging
-	    if (e.button == MouseButton.SECONDARY) {
-		shiftX -= dragX;
-		shiftY -= dragY;
-		dragX = 0;
-		dragY = 0;
+	    if (not controlsLocked) {
+		// end hand dragging
+		if (e.button == MouseButton.SECONDARY) {
+		    shiftX -= dragX;
+		    shiftY -= dragY;
+		    dragX = 0;
+		    dragY = 0;
+		}
 	    }
 	}
     }
-
 
     /**
     * Function to check whether a certain element of the graph is visible in the graph panel.
@@ -108,7 +139,6 @@ public class GraphPanel extends Panel {
     public function isVisibleInGraphPanel(e: GraphElement): Boolean {
 	(this.localToScene(this.boundsInLocal)).contains(e.localToScene(e.boundsInLocal))
     }
-
 
     /**
     * The function that centers the view on a given graph element.
@@ -167,7 +197,7 @@ public class GraphPanel extends Panel {
 
     override var content = bind [
 	LayoutRect {fill: viewBackground},
-	Filler { content: bind "{this.width}\n{this.centerX}\n{this.centerY}" },
+	//Filler { content: bind "{this.width}\n{this.centerX}\n{this.centerY}" },
 	Group {
 	    content: bind [
 		Group {
@@ -187,6 +217,7 @@ public class GraphPanel extends Panel {
 		},
 		detectorRect
 	    ]
-	}
+	},
+	if (control.dragging) dragSymbol else null
     ]
 }

@@ -30,9 +30,7 @@ import javafx.scene.shape.Rectangle;
 
 // constants import
 import carneadesgui.GC.*;
-
 import javafx.scene.input.MouseEvent;
-
 import carneadesgui.control.CarneadesControl;
 
 /**
