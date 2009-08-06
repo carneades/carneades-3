@@ -81,7 +81,7 @@ public var possibleColor: Color = Color.GREEN;
 public var impossibleColor: Color = Color.RED;
 
 public var edgeSelectionWidth: Integer = 5;
-public var selectedEdgeWidth: Integer = 2;
+public var selectedEdgeWidth: Integer = 3;
 
 // shadows
 public var drawShadows: Boolean = false;
