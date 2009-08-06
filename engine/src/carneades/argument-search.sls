@@ -42,7 +42,7 @@
          (carneades argument-diagram) ; only for debugging
          )
  
- (define *debug* #t)
+ (define *debug* #f)
  
  ; opposing-viewpoint: viewpoint -> viewpoint
  (define (opposing-viewpoint vp)
