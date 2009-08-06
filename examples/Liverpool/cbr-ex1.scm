@@ -71,21 +71,21 @@
 ; Initial contexts for some test "current" cases, with their
 ; accepted statements copied from factors of cases
 
-(define (make-context-from-case case)
+(define (make-argument-graph-from-case case)
   (accept empty-argument-graph (case-statements case)))
 
-(define c-vanilla (make-context-from-case vanilla))
-(define c-mason (make-context-from-case mason)) 
-(define c-announce (make-context-from-case announce))
+(define c-vanilla (make-argument-graph-from-case vanilla))
+(define c-mason (make-argument-graph-from-case mason)) 
+(define c-announce (make-argument-graph-from-case announce))
 
 ; A simple rulebase, to test whether rules and cases can be used together.
 (define rb1 (rulebase  
              (rule r1 (if has-patent unique-product))
              (rule r2 (if (not used-deception) honest))))
 
-; cbr-engine: integer integer case-base context -> statement -> (stream-of argument-state)
-(define (cbr-engine max-nodes max-turns case-base context)
-  (make-engine* max-nodes max-turns context
+; cbr-engine: integer integer case-base argument-graph -> statement -> (stream-of argument-state)
+(define (cbr-engine max-nodes max-turns case-base ag)
+  (make-engine* max-nodes max-turns ag
                 (list builtins 
                       ; (generate-arguments-from-rules rb1 critical-questions)
                       (generate-arguments-from-cases case-base))))

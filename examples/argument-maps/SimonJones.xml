@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?oxygen RNGSchema="../../schemas/LKIF2.rnc" type="compact"?>
+<lkif version="2.0.4">
+  <argument-graphs>
+    <argument-graph id="NewGraph" title="New Graph">
+      <statements>
+        <statement assumption="true" id="s1" standard="BA" value="unknown">
+          <s>The press need not keep quiet about Simon Jone's private life.</s>
+        </statement>
+        <statement assumption="true" id="s2" standard="BA" value="unknown">
+          <s>Simon Jones is a Member of Parliament.</s>
+        </statement>
+        <statement assumption="true" id="s3" standard="BA" value="unknown">
+          <s>The press need not keep quiet the private life of Members of Parliament.</s>
+        </statement>
+        <statement assumption="true" id="s4" standard="BA" value="unknown">
+          <s>Simon Jones just resigned from the House of Commons.</s>
+        </statement>
+        <statement assumption="true" id="s5" standard="BA" value="unknown">
+          <s>Persons who resign from the House of Commons are no longer Members of Parliament. </s>
+        </statement>
+      </statements>
+      <arguments>
+        <argument direction="pro" id="a1" scheme="" weight="0.5">
+          <conclusion statement="s1"/>
+          <premises>
+            <premise exception="false" polarity="positive" role="" statement="s2"/>
+            <premise exception="false" polarity="positive" role="" statement="s3"/>
+          </premises>
+        </argument>
+        <argument direction="con" id="a2" scheme="" weight="0.5">
+          <conclusion statement="s2"/>
+          <premises>
+            <premise exception="false" polarity="positive" role="" statement="s4"/>
+            <premise exception="false" polarity="positive" role="" statement="s5"/>
+          </premises>
+        </argument>
+      </arguments>
+    </argument-graph>
+  </argument-graphs>
+</lkif>
