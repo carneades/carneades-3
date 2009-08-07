@@ -251,7 +251,6 @@ public class StatementBox extends ArgumentElement {
 			x + (width / 2) - acceptableCircleWidth , y - (height / 2) + height,
 			x - (width / 2), y - (height / 2) + height ]
 		blocksMouse: true
-
 		fill: bind { if (fillStatements) statusColor else defaultBoxFill }
 		stroke: bind { if (fillStatements) Color.BLACK else statusColor }
 		strokeWidth: 1
@@ -298,12 +297,12 @@ public class StatementBox extends ArgumentElement {
 
 		effect: {
 			if (drawShadows) {
-			DropShadow {
-				color: bind shadowColor
-				offsetX: bind xShadowShift
-				offsetY: bind yShadowShift
-				radius: bind shadowBlurRadius
-			}
+				DropShadow {
+					color: bind shadowColor
+					offsetX: bind xShadowShift
+					offsetY: bind yShadowShift
+					radius: bind shadowBlurRadius
+				}
 			} else null
 		}
     }
@@ -330,12 +329,12 @@ public class StatementBox extends ArgumentElement {
     override function create():Node {
 		Group {
 			content: [
-			mainRect,
-			selection,
-			text,
-			acceptableCircle,
-			acceptableCompCircle,
-			middlePoint,
+				mainRect,
+				selection,
+				text,
+				acceptableCircle,
+				acceptableCompCircle,
+				middlePoint,
 			] // content
 		} // Group
     } // composeNode
@@ -374,6 +373,7 @@ public class Arrow extends CarneadesEdge {
 					x2 - (headSize / 2), y2 + headSize,
 					x2 + (headSize / 2), y2 + headSize]
 					stroke: bind stroke
+					strokeWidth: bind strokeWidth
 					fill: bind fill
 				}
 			] // content
@@ -428,16 +428,7 @@ public class PremiseLink extends CarneadesEdge {
      */
     public var negated: Boolean = false;
 
-    // main line of the edge
-    override var edgeLine = Line {
-		startX: bind x1
-		startY: bind y1
-		endX: bind x2
-		endY: bind y2
-		strokeDashArray: bind { if (premise.exception) [6.0, 6.0] else [1.0] }
-		stroke: bind stroke
-		strokeWidth: bind strokeWidth
-    }
+	override var dashArray = bind { if (premise.exception) [6.0, 6.0] else [1.0] };
 
     def action = function(e: MouseEvent): Void { control.processGraphSelection(this) }
 
@@ -510,10 +501,10 @@ public class PremiseLink extends CarneadesEdge {
     override function create():Node {
 		Group {
 			content: bind [
-			edgeLine,
-			{if (selected) selection else null},
-			selectPoly,
-			{if (negated) negation else null},
+				edgeLine,
+				{if (selected) selection else null},
+				selectPoly,
+				{if (negated) negation else null},
 			] // content
 		} // Group
     } // composeNode
