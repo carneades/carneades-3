@@ -58,26 +58,26 @@ public class GraphPanel extends Panel {
     var zoom: Number = 1.0; // Zoom factor
 
     override var layoutInfo = LayoutInfo {
-	    width: bind appWidth - constraintX - horizontalWindowMismatch;
-	    height: bind appHeight - constraintY - verticalWindowMismatch;
+	width: bind appWidth - constraintX - horizontalWindowMismatch;
+	height: bind appHeight - constraintY - verticalWindowMismatch;
     }
 
     var centerCircle = Circle {
-	    centerX: bind this.centerX
-	    centerY: bind this.centerY
-	    radius: 3
-	    fill: Color.RED
+	centerX: bind this.centerX
+	centerY: bind this.centerY
+	radius: 3
+	fill: Color.RED
     }
 
     var dragSymbol: Rectangle = Rectangle {
-	    width: 20
-	    height: 15
-	    x: bind this.dragSymbolX - dragSymbol.width/2
-	    y: bind this.dragSymbolY - dragSymbol.height/2
-	    opacity: 0.5
-	    fill: bind { if (control.draggingOver != null)
-			    if (control.canDrop) Color.GREEN else Color.RED
-			 else Color.BLUE }
+	width: 20
+	height: 15
+	x: bind this.dragSymbolX - dragSymbol.width/2
+	y: bind this.dragSymbolY - dragSymbol.height/2
+	opacity: 0.5
+	fill: bind { if (control.draggingOver != null)
+			if (control.canDrop) Color.GREEN else Color.RED
+		     else Color.BLUE }
     }
 
     var detectorRect: Rectangle = Rectangle {
