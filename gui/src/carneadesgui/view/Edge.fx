@@ -82,7 +82,7 @@ public class Edge extends GraphElement {
     /**
     * The stroke color of the edge.
     */
-    public var strokeWidth: Number = 1;
+    public var strokeWidth: Number = 1.5;
 
     // attributes for optional heads
 
@@ -91,33 +91,39 @@ public class Edge extends GraphElement {
      */
     public var turnHead: Boolean = false;
 
+	/**
+	* The dash pattern array.
+	*/
+	public var dashArray: Number[] = [1.0];
+
     // main line of the edge
     public var edgeLine: Line = Line {
-	startX: bind x1
-	startY: bind y1
-	endX: bind x2
-	endY: bind y2
-	stroke: bind stroke
-	strokeWidth: bind strokeWidth
+		startX: bind x1
+		startY: bind y1
+		endX: bind x2
+		endY: bind y2
+		stroke: bind stroke
+		strokeWidth: bind strokeWidth
+		strokeDashArray: bind dashArray
     }
 
     /**
      * Function computing the angle of the edge depending on origin and end point of the edge.
      */
     protected bound function getHeadRotation(x1: Number, x2: Number, y1: Number, y2: Number): Rotate {
-	Rotate {
-	    pivotX: bind x2
-	    pivotY: bind y2
-	    angle:  - (atan((x2-x1)/(y2-y1)) / PI) * 180
-	}
+		Rotate {
+			pivotX: bind x2
+			pivotY: bind y2
+			angle:  - (atan((x2-x1)/(y2-y1)) / PI) * 180
+		}
     }
 
     override function create():Node {
-	Group {
-	    content: bind [
-		edgeLine,
-	    ] // content
-	} // Group
+		Group {
+			content: bind [
+			edgeLine,
+			] // content
+		} // Group
     } // composeNode
 
 }
