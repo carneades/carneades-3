@@ -122,43 +122,43 @@ public class ArgumentBox extends ArgumentElement {
 
     override var text = CenteredStatementText {
 	content: bind {
-	    if ((argument.conclusion.standard) instanceof BestArgument
-		or (argument.conclusion.standard) instanceof Preponderance
-		or (argument.conclusion.standard) instanceof ClearAndConvincingEvidence
-		or (argument.conclusion.standard) instanceof BeyondReasonableDoubt
-		)
-		"{if (argument.pro) '+' else '-'}.{(argument.weight * 100) as Integer}"
-	    else "{if (argument.pro) '+' else '-'}"}
-	textAlignment: TextAlignment.CENTER
-	textOrigin: TextOrigin.BASELINE
-	x: bind x
-	// The text Y coordinate positioning is dirty as the text currently lacks a currentheight attribute
-	y: bind y + 10
+			if ((argument.conclusion.standard) instanceof BestArgument
+				or (argument.conclusion.standard) instanceof Preponderance
+				or (argument.conclusion.standard) instanceof ClearAndConvincingEvidence
+				or (argument.conclusion.standard) instanceof BeyondReasonableDoubt
+				)
+				"{if (argument.pro) '+' else '-'}.{(argument.weight * 100) as Integer}"
+				else "{if (argument.pro) '+' else '-'}"}
+		textAlignment: TextAlignment.CENTER
+		textOrigin: TextOrigin.BASELINE
+		x: bind x
+		// The text Y coordinate positioning is dirty as the text currently lacks a currentheight attribute
+		y: bind y + 10
     } // Text
 
     var mainCircle: Circle = Circle {
-	centerX: bind x
-	centerY: bind y
-	radius: bind argumentCircleDefaultRadius
+		centerX: bind x
+		centerY: bind y
+		radius: bind argumentCircleDefaultRadius
 
-	fill: bind {
-	    if (not argument.ok) Color.WHITE
-	    else {
-		if (not argument.pro) argumentConColor else argumentProColor
-	    }
-	};
-
-	stroke: Color.BLACK
-	blocksMouse: false
-
-	effect: {
-	    if (drawShadows) {
-		DropShadow {
-		    color: bind shadowColor
-		    offsetX: bind xShadowShift
-		    offsetY: bind yShadowShift
-		    radius: bind shadowBlurRadius
+		fill: bind {
+			if (not argument.ok) Color.WHITE
+			else {
+				if (not argument.pro) argumentConColor else argumentProColor
+			}
 		}
+
+		stroke: Color.BLACK
+		blocksMouse: false
+
+		effect: {
+			if (drawShadows) {
+			DropShadow {
+				color: bind shadowColor
+				offsetX: bind xShadowShift
+				offsetY: bind yShadowShift
+				radius: bind shadowBlurRadius
+			}
 	    } else null
 	}
 
@@ -184,25 +184,25 @@ public class ArgumentBox extends ArgumentElement {
     }
 
     override var selection = Circle {
-	fill: Color.TRANSPARENT
-	centerX: bind x
-	centerY: bind y
-	radius: argumentCircleDefaultRadius + 5
-	stroke: bind {if (control.dragging) dragColor else selectionColor};
-	strokeWidth: 2
-	visible: bind selected
+		fill: Color.TRANSPARENT
+		centerX: bind x
+		centerY: bind y
+		radius: argumentCircleDefaultRadius + 5
+		stroke: bind {if (control.dragging) dragColor else selectionColor};
+		strokeWidth: 2
+		visible: bind selected
     } // selection circle
 
 
     override function create():Node {
-	Group {
-	    content: [
-		mainCircle,
-		selection,
-		text,
-		middlePoint
-	    ] // content
-	} // Group
+		Group {
+			content: [
+			mainCircle,
+			selection,
+			text,
+			middlePoint
+			] // content
+		} // Group
     } // composeNode
 }
 
@@ -223,129 +223,121 @@ public class StatementBox extends ArgumentElement {
     override var width = statementBoxDefaultWidth;
     override var bottomBrink = statementBoxBottomBrink;
     override var caption = bind {
-	if (statement.wff.length() < numDisplayedChars) statement.wff
-	else "{statement.wff.substring(0, numDisplayedChars-1)}..."
+		if (statement.wff.length() < numDisplayedChars) statement.wff
+		else "{statement.wff.substring(0, numDisplayedChars-1)}..."
     };
 
     var statusColor = bind {
-	if (statement.status == "stated") statusStatedColor
-	else if (statement.status == "assumed true") statusAssumedTrueColor
-	else if (statement.status == "assumed false") statusAssumedFalseColor
-	else if (statement.status == "rejected") statusRejectedColor
-	else if (statement.status == "accepted") statusAcceptedColor
-	else /*if (status == "questioned")*/ statusQuestionedColor
+		if (statement.status == "stated") statusStatedColor
+		else if (statement.status == "assumed true") statusAssumedTrueColor
+		else if (statement.status == "assumed false") statusAssumedFalseColor
+		else if (statement.status == "rejected") statusRejectedColor
+		else if (statement.status == "accepted") statusAcceptedColor
+		else /*if (status == "questioned")*/ statusQuestionedColor
     };
 
     override var text = CenteredStatementText {
-	blocksMouse: false
-	content: bind caption
-	x: bind x - (acceptableCircleWidth/ 2)
-	y: bind y
-	wrappingWidth: bind width - (acceptableCircleWidth/ 2)
+		blocksMouse: false
+		content: bind caption
+		x: bind x - (acceptableCircleWidth/ 2)
+		y: bind y
+		wrappingWidth: bind width - (acceptableCircleWidth/ 2)
     } // Text
 
     var mainRect: Polygon = Polygon {
-	points: bind [
-	    x - (width / 2), y - (height / 2),
-	    x + (width / 2) - acceptableCircleWidth , y - (height / 2),
-	    x + (width / 2) - acceptableCircleWidth , y - (height / 2) + height,
-	    x - (width / 2), y - (height / 2) + height ]
-	blocksMouse: true
+		points: bind [
+			x - (width / 2), y - (height / 2),
+			x + (width / 2) - acceptableCircleWidth , y - (height / 2),
+			x + (width / 2) - acceptableCircleWidth , y - (height / 2) + height,
+			x - (width / 2), y - (height / 2) + height ]
+		blocksMouse: true
 
-	//x: bind x - (width / 2)
-	//y: bind y - (height / 2)
-	//width: bind width
-	//height: bind height
-	fill: bind { if (fillStatements) statusColor else defaultBoxFill }
-	stroke: bind { if (fillStatements) Color.BLACK else statusColor }
-	strokeWidth: 1
+		fill: bind { if (fillStatements) statusColor else defaultBoxFill }
+		stroke: bind { if (fillStatements) Color.BLACK else statusColor }
+		strokeWidth: 1
 
-	effect: {
-	    if (drawShadows) {
-		DropShadow {
-		    color: bind shadowColor
-		    offsetX: bind xShadowShift
-		    offsetY: bind yShadowShift
-		    radius: bind shadowBlurRadius
+		effect: {
+			if (drawShadows) {
+				DropShadow {
+					color: bind shadowColor
+					offsetX: bind xShadowShift
+					offsetY: bind yShadowShift
+					radius: bind shadowBlurRadius
+				}
+			} else null
 		}
-	    } else null
-	}
 
-	onMouseClicked: function(e: MouseEvent): Void {
-	    control.processGraphSelection(this);
+		onMouseClicked: function(e: MouseEvent): Void {
+			control.processGraphSelection(this);
+		}
 
-	    if (debug) {
-		print();
-	    }
-	}
+		onMouseDragged: function(e: MouseEvent) {
+			if (this.selected and (e.button == MouseButton.PRIMARY)) { control.startDrag(this); }
+		}
 
-	onMouseDragged: function(e: MouseEvent) {
-	    if (this.selected and (e.button == MouseButton.PRIMARY)) { control.startDrag(this); }
-	}
+		onMouseReleased: function(e: MouseEvent) {
+			if (control.dragging) { control.endDrag(); }
+		}
 
-	onMouseReleased: function(e: MouseEvent) {
-	    if (control.dragging) { control.endDrag(); }
-	}
+		onMouseEntered: function(e: MouseEvent) {
+			if (control.dragging) { control.setDraggingOver(this); }
+		}
 
-	onMouseEntered: function(e: MouseEvent) {
-	    if (control.dragging) { control.setDraggingOver(this); }
-	}
-
-	onMouseExited: function(e: MouseEvent) {
-	    if (control.dragging) { control.setDraggingOver(null); }
-	}
+		onMouseExited: function(e: MouseEvent) {
+			if (control.dragging) { control.setDraggingOver(null); }
+		}
     } // main rect
 
-     var acceptableCircle: Circle = Circle {
-	centerX: bind x + (this.width / 2) - (acceptableCircleWidth / 2) + 3
-	centerY: bind y - (acceptableCirclePadding / 2) - (acceptableCircleWidth / 2)
-	radius: bind (acceptableCircleWidth / 2)
-	fill: bind { if (statement.ok) statusAcceptedColor else null }
-	strokeWidth: 1
-	stroke: Color.BLACK
+    var acceptableCircle: Circle = Circle {
+		centerX: bind x + (this.width / 2) - (acceptableCircleWidth / 2) + 3
+		centerY: bind y - (acceptableCirclePadding / 2) - (acceptableCircleWidth / 2)
+		radius: bind (acceptableCircleWidth / 2)
+		fill: bind { if (statement.ok) statusAcceptedColor else null }
+		strokeWidth: 1
+		stroke: Color.BLACK
 
-	effect: {
-	    if (drawShadows) {
-		DropShadow {
-		    color: bind shadowColor
-		    offsetX: bind xShadowShift
-		    offsetY: bind yShadowShift
-		    radius: bind shadowBlurRadius
+		effect: {
+			if (drawShadows) {
+			DropShadow {
+				color: bind shadowColor
+				offsetX: bind xShadowShift
+				offsetY: bind yShadowShift
+				radius: bind shadowBlurRadius
+			}
+			} else null
 		}
-	    } else null
-	}
     }
 
     var acceptableCompCircle: Circle = Circle {
-	centerX: bind x + (this.width / 2) - (acceptableCircleWidth / 2) + 3
-	centerY: bind y + (acceptableCirclePadding / 2) + (acceptableCircleWidth / 2)
-	radius: bind (acceptableCircleWidth / 2)
-	fill: bind { if (statement.complementOk) statusRejectedColor else null }
-	strokeWidth: 1
-	stroke: Color.BLACK
-	effect: {
-	    if (drawShadows) {
-		DropShadow {
-		    color: bind shadowColor
-		    offsetX: bind xShadowShift
-		    offsetY: bind yShadowShift
-		    radius: bind shadowBlurRadius
+		centerX: bind x + (this.width / 2) - (acceptableCircleWidth / 2) + 3
+		centerY: bind y + (acceptableCirclePadding / 2) + (acceptableCircleWidth / 2)
+		radius: bind (acceptableCircleWidth / 2)
+		fill: bind { if (statement.complementOk) statusRejectedColor else null }
+		strokeWidth: 1
+		stroke: Color.BLACK
+		effect: {
+			if (drawShadows) {
+				DropShadow {
+					color: bind shadowColor
+					offsetX: bind xShadowShift
+					offsetY: bind yShadowShift
+					radius: bind shadowBlurRadius
+				}
+			} else null
 		}
-	    } else null
-	}
     }
 
     override function create():Node {
-	Group {
-	    content: [
-		mainRect,
-		selection,
-		text,
-		acceptableCircle,
-		acceptableCompCircle,
-		middlePoint,
-	    ] // content
-	} // Group
+		Group {
+			content: [
+			mainRect,
+			selection,
+			text,
+			acceptableCircle,
+			acceptableCompCircle,
+			middlePoint,
+			] // content
+		} // Group
     } // composeNode
 }
 
@@ -373,19 +365,19 @@ public class Arrow extends CarneadesEdge {
     override var turnHead = true;
 
     override function create():Node {
-	Group {
-	    content: [
-		edgeLine,
-		Polygon {
-		    transforms: bind getHeadRotation(x1, x2, y1, y2)
-		    points: bind [ x2, y2,
-			x2 - (headSize / 2), y2 + headSize,
-			x2 + (headSize / 2), y2 + headSize]
-		    stroke: bind stroke
-		    fill: bind fill
-		}
-	    ] // content
-	} // group
+		Group {
+			content: [
+				edgeLine,
+				Polygon {
+					transforms: bind getHeadRotation(x1, x2, y1, y2)
+					points: bind [ x2, y2,
+					x2 - (headSize / 2), y2 + headSize,
+					x2 + (headSize / 2), y2 + headSize]
+					stroke: bind stroke
+					fill: bind fill
+				}
+			] // content
+		} // group
     }
 }
 
@@ -438,94 +430,92 @@ public class PremiseLink extends CarneadesEdge {
 
     // main line of the edge
     override var edgeLine = Line {
-	startX: bind x1
-	startY: bind y1
-	endX: bind x2
-	endY: bind y2
-	strokeDashArray: bind { if (premise.exception) [6.0, 6.0] else [1.0] }
-	stroke: bind stroke
-	strokeWidth: bind strokeWidth
+		startX: bind x1
+		startY: bind y1
+		endX: bind x2
+		endY: bind y2
+		strokeDashArray: bind { if (premise.exception) [6.0, 6.0] else [1.0] }
+		stroke: bind stroke
+		strokeWidth: bind strokeWidth
     }
 
-    def action = function(e: MouseEvent): Void{
-	control.processGraphSelection(this);
-    }
+    def action = function(e: MouseEvent): Void { control.processGraphSelection(this) }
 
     // this is supposed to be a line but the line will not give mouse click events
     function getLengthOfEdge(x1: Number, x2: Number, y1: Number, y2: Number) {
-	sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2))
+		sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2))
     }
 
     var selectPoly: Polygon = Polygon {
-	points: bind [
-	    (x1+x2)/2 - 3, (y1+y2)/2 + getLengthOfEdge(x1, x2, y1, y2) / 2,
-	    (x1+x2)/2 + 3, (y1+y2)/2 + getLengthOfEdge(x1, x2, y1, y2) / 2,
-	    (x1+x2)/2 + 3, (y1+y2)/2 - getLengthOfEdge(x1, x2, y1, y2) / 2,
-	    (x1+x2)/2 - 3, (y1+y2)/2 - getLengthOfEdge(x1, x2, y1, y2) / 2,]
-	transforms: bind Rotate {
-		pivotX: bind (x2 + x1) / 2
-		pivotY: bind (y2 + y1) / 2
-		angle: - (atan((x2-x1)/(y2-y1)) / PI) * 180
-	    }
-	blocksMouse: true
-	fill: Color.GREEN
-	opacity: 0.0
-	onMouseClicked: action
+		points: bind [
+			(x1+x2)/2 - 3, (y1+y2)/2 + getLengthOfEdge(x1, x2, y1, y2) / 2,
+			(x1+x2)/2 + 3, (y1+y2)/2 + getLengthOfEdge(x1, x2, y1, y2) / 2,
+			(x1+x2)/2 + 3, (y1+y2)/2 - getLengthOfEdge(x1, x2, y1, y2) / 2,
+			(x1+x2)/2 - 3, (y1+y2)/2 - getLengthOfEdge(x1, x2, y1, y2) / 2,]
+		transforms: bind Rotate {
+			pivotX: bind (x2 + x1) / 2
+			pivotY: bind (y2 + y1) / 2
+			angle: - (atan((x2-x1)/(y2-y1)) / PI) * 180
+		}
+		blocksMouse: true
+		fill: Color.GREEN
+		opacity: 0.0
+		onMouseClicked: action
     }
 
     // newly colored line once selected
     var selection: Line = Line {
-	startX: bind x1
-	startY: bind y1
-	endX: bind x2
-	endY: bind y2
-	strokeDashArray: bind { if (premise.exception) [6.0, 6.0] else [1.0] }
-	stroke: bind selectionColor
-	strokeWidth: bind selectedEdgeWidth;
+		startX: bind x1
+		startY: bind y1
+		endX: bind x2
+		endY: bind y2
+		strokeDashArray: bind { if (premise.exception) [6.0, 6.0] else [1.0] }
+		stroke: bind selectionColor
+		strokeWidth: bind selectedEdgeWidth;
     }
 
     // The negation bar should be a line but the line won't rotate for some reason.
     var negation: Polygon = Polygon {
-	points: bind [
-	    x2 - (negWidth / 2), y2 + yHeadShift,
-	    x2 + (negWidth / 2), y2 + yHeadShift,
-	    x2 + (negWidth / 2), y2 + yHeadShift + negStrokeWidth,
-	    x2 - (negWidth / 2), y2 + yHeadShift + negStrokeWidth]
-	transforms: bind getHeadRotation(x1, x2, y1, y2)
-	stroke: bind stroke
-	strokeWidth: bind negStrokeWidth
+		points: bind [
+			x2 - (negWidth / 2), y2 + yHeadShift,
+			x2 + (negWidth / 2), y2 + yHeadShift,
+			x2 + (negWidth / 2), y2 + yHeadShift + negStrokeWidth,
+			x2 - (negWidth / 2), y2 + yHeadShift + negStrokeWidth]
+		transforms: bind getHeadRotation(x1, x2, y1, y2)
+		stroke: bind stroke
+		strokeWidth: bind negStrokeWidth
     }
 
     // exceptionhead currently not in content because of dashed lines
     var exceptionHead: Circle = Circle {
-	centerX: bind x2
-	centerY: bind y2
-	radius: bind radius
-	fill: Color.WHITE
-	stroke: Color.BLACK
-	visible: bind premise.exception
+		centerX: bind x2
+		centerY: bind y2
+		radius: bind radius
+		fill: Color.WHITE
+		stroke: Color.BLACK
+		visible: bind premise.exception
     }
 
     /**
      * Switches the negation bar on and off. Used to update the view more efficiently as the tree layout does not need to be updated.
      */
     public function negate() {
-	if (negated) {
-	    negated = false;
-	} else {
-	    negated = true;
-	}
+		if (negated) {
+			negated = false;
+		} else {
+			negated = true;
+		}
     }
 
     override function create():Node {
-	Group {
-	    content: bind [
-		edgeLine, 
-		{if (selected) selection else null},
-		selectPoly,
-		{if (negated) negation else null},
-	    ] // content
-	} // Group
+		Group {
+			content: bind [
+			edgeLine,
+			{if (selected) selection else null},
+			selectPoly,
+			{if (negated) negation else null},
+			] // content
+		} // Group
     } // composeNode
 }
 
