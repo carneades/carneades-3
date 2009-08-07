@@ -20,30 +20,19 @@ package carneadesgui.view;
 import javafx.scene.layout.Panel;
 import carneadesgui.GC.*;
 import carneadesgui.control.CarneadesControl;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.input.MouseEvent;
-
 import javafx.scene.control.Button;
-
 import javafx.scene.layout.LayoutInfo;
-
 import javafx.geometry.VPos;
 
-class ImageButton extends ImageView {
-	public function action(): Void {}
-	override var onMouseClicked = function (e: MouseEvent) { action(); }
-	override var preserveRatio = true;
-	override var cache = true;
-}
+import javafx.scene.image.Image;
 
-class ToolBarButton extends Button {
+
+class ToolBarButton extends ImageButton {
+	override var width = toolBarHeight - 10;
+	override var height = toolBarHeight - 10;
 	public var control: CarneadesControl;
-	override var layoutInfo = LayoutInfo {
-		minHeight: toolBarHeight - 10
-		height: toolBarHeight - 10
-		
-	}
 }
 
 
@@ -61,46 +50,51 @@ public class ToolBar extends Panel {
 	}
 
 	var openButton: ToolBarButton = ToolBarButton {
-		text: "open"
+		//text: "open"
 		control: bind control
+		image: Image { url: "{__DIR__}images/icon-open.png"	}
 		action: function(): Void { control.open(); }
 	};
 
 	var saveButton: ToolBarButton = ToolBarButton {
-		text: "save"
+		//text: "save"
 		disable: bind not control.fileChanged
 		control: bind control
+		image: Image { url: "{__DIR__}images/icon-save.png"	}
 		action: function(): Void { control.save(); }
 	};
 
 	var saveAsButton: ToolBarButton = ToolBarButton {
-		text: "save as"
+		//text: "save as"
 		control: bind control
 		action: function(): Void { control.saveAs(); }
 	};
 
 	var undoButton: ToolBarButton = ToolBarButton {
-		text: "undo"
+		//text: "undo"
 		disable: bind not control.possibleToUndo
 		control: bind control
+		image: Image { url: "{__DIR__}images/icon-undo.png"	}
 		action: function(): Void { control.undo(); }
 	};
 
 	var redoButton: ToolBarButton = ToolBarButton {
-		text: "redo"
+		// text: "redo"
 		disable: bind not control.possibleToRedo
 		control: bind control
+		image: Image { url: "{__DIR__}images/icon-redo.png"	}
 		action: function(): Void { control.redo(); }
 	};
 
 	var quitButton: ToolBarButton = ToolBarButton {
-		text: "quit"
+		// text: "quit"
 		control: bind control
+		image: Image { url: "{__DIR__}images/icon-quit.png"	}
 		action: function(): Void { control.quit(); }
 	};
 
 	var alternateViewButton: ToolBarButton = ToolBarButton {
-		text: "alternate\nview"
+		// text: "alternate\nview"
 		control: bind control
 		action: function(): Void { control.alternateView(); }
 	};
@@ -124,11 +118,11 @@ public class ToolBar extends Panel {
 				//debugButton,
 				openButton,
 				saveButton,
-				saveAsButton,
+				//saveAsButton,
 				undoButton,
 				redoButton,
 				quitButton,
-				alternateViewButton
+				//alternateViewButton
 			]
 		}
 	];
