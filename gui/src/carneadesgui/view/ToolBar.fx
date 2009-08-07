@@ -67,6 +67,7 @@ public class ToolBar extends Panel {
 	var saveAsButton: ToolBarButton = ToolBarButton {
 		//text: "save as"
 		control: bind control
+		image: Image { url: "{__DIR__}images/icon-saveas.png"	}
 		action: function(): Void { control.saveAs(); }
 	};
 
@@ -84,6 +85,12 @@ public class ToolBar extends Panel {
 		control: bind control
 		image: Image { url: "{__DIR__}images/icon-redo.png"	}
 		action: function(): Void { control.redo(); }
+	};
+
+	var saveAsImageButton: ToolBarButton = ToolBarButton {
+		control: bind control
+		image: Image { url: "{__DIR__}images/icon-print.png"	}
+		action: function(): Void { control.saveGraphAsImage(); }
 	};
 
 	var quitButton: ToolBarButton = ToolBarButton {
@@ -118,9 +125,10 @@ public class ToolBar extends Panel {
 				//debugButton,
 				openButton,
 				saveButton,
-				//saveAsButton,
+				saveAsButton,
 				undoButton,
 				redoButton,
+				// saveAsImageButton,
 				quitButton,
 				//alternateViewButton
 			]
