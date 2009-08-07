@@ -1,8 +1,19 @@
 /*
- * ImageButton.fx
- *
- * Created on 07.08.2009, 13:34:37
- */
+Carneades Argumentation Library and Tools.
+Copyright (C) 2008 Thomas Gordon and Matthias Grabmair
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License version 3 (GPL-3)
+as published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 package carneadesgui.view;
 
@@ -11,7 +22,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.effect.Effect;
 import javafx.scene.effect.Glow;
-import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -37,7 +47,6 @@ public class ImageButton extends CustomNode {
 	public var hoverGlow: Number = 0.3;
 
 	public var hoverEffect: Effect = Glow { level: hoverGlow };
-	public var pressEffect: Effect = null; //InnerShadow { };
 
 	public-read var armed: Boolean = false;
 	
