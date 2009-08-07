@@ -17,10 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package carneadesgui.view;
 
-/**
- * @author matthiasgrabmair
- */
-
 import carneadesgui.GC.*;
 import carneadesgui.control.CarneadesControl;
 import carneadesgui.view.GraphUpdate;
@@ -71,12 +67,11 @@ public class InspectorCheckBox extends CheckBox {
 public class InspectorSlider extends Slider {
 	override var layoutInfo = rightColumnLayoutInfo;
 	var fires: Boolean = true;
-	public var val: Number = 0.0;
 	public var action: function(): Void = null;
-	override var value = bind val on replace { if (fires) action(); }
+	override var value = 0.5 on replace { if (fires) action(); }
 	public function setValue(v: Number): Void {
 		fires = false;
-		val = v;
+		value = v;
 		fires = true;
 	}
 }
