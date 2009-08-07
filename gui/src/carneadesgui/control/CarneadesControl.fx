@@ -40,8 +40,11 @@ import javafx.animation.Timeline;
 // File Chooser for Load/Save
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-
 import carneadesgui.CarneadesGUI;
+
+import javafx.reflect.*;
+import javafx.scene.*;
+import java.awt.image.BufferedImage;
 
 /**
  * Central control class for the Carneades application. It instantiates the needed view and model objects
@@ -624,370 +627,406 @@ public class CarneadesControl {
     }
 
     public function changeGraphTitle(g: ArgumentGraph, t: String): Void {
-	commands.do(
-	    ChangeGraphTitleCommand {
-		argumentGraph: g
-		title: t
-	    });
-	updateAll();
+		commands.do(
+			ChangeGraphTitleCommand {
+				argumentGraph: g
+				title: t
+			});
+		updateAll();
     };
 
     public function changeStatementStatus(s: Statement, v: String): Void {
-	commands.do(
-	    ChangeStatementStatusCommand {
-		argumentGraph: argumentGraph
-		statement: s
-		newStatus: v
-	    });
-	updateAll();
-    };
+		commands.do(
+			ChangeStatementStatusCommand {
+				argumentGraph: argumentGraph
+				statement: s
+			newStatus: v
+			});
+		updateAll();
+    }
 
     public function changeStatementProofStandard(s: Statement, st: String): Void {
-	if (st == proofStandardSE) {
-	    commands.do(
-		ChangeStatementStandardCommand {
-		    argumentGraph: argumentGraph
-		    statement: s
-		    standard: Scintilla {}
-		});
-	} else if (st == proofStandardDV) {
-	    commands.do(
-		ChangeStatementStandardCommand {
-		    argumentGraph: argumentGraph
-		    statement: s
-		    standard: DialecticalValidity {}
-		});
-	} else if (st == proofStandardBA) {
-	    commands.do(
-		ChangeStatementStandardCommand {
-		    argumentGraph: argumentGraph
-		    statement: s
-		    standard: BestArgument {}
-		});
-	} else if (st == proofStandardPE) {
-	    commands.do(
-		ChangeStatementStandardCommand {
-		    argumentGraph: argumentGraph
-		    statement: s
-		    standard: Preponderance {}
-		});
-	} else if (st == proofStandardCCE) {
-	    commands.do(
-		ChangeStatementStandardCommand {
-		    argumentGraph: argumentGraph
-		    statement: s
-		    standard: ClearAndConvincingEvidence {}
-		});
-	} else if (st == proofStandardBRD) {
-	    commands.do(
-		ChangeStatementStandardCommand {
-		    argumentGraph: argumentGraph
-		    statement: s
-		    standard: BeyondReasonableDoubt {}
-		});
-	}
-	updateAll();
-    };
+		if (st == proofStandardSE) {
+			commands.do(
+			ChangeStatementStandardCommand {
+				argumentGraph: argumentGraph
+				statement: s
+				standard: Scintilla {}
+			});
+		} else if (st == proofStandardDV) {
+			commands.do(
+			ChangeStatementStandardCommand {
+				argumentGraph: argumentGraph
+				statement: s
+				standard: DialecticalValidity {}
+			});
+		} else if (st == proofStandardBA) {
+			commands.do(
+			ChangeStatementStandardCommand {
+				argumentGraph: argumentGraph
+				statement: s
+				standard: BestArgument {}
+			});
+		} else if (st == proofStandardPE) {
+			commands.do(
+			ChangeStatementStandardCommand {
+				argumentGraph: argumentGraph
+				statement: s
+				standard: Preponderance {}
+			});
+		} else if (st == proofStandardCCE) {
+			commands.do(
+			ChangeStatementStandardCommand {
+				argumentGraph: argumentGraph
+				statement: s
+				standard: ClearAndConvincingEvidence {}
+			});
+		} else if (st == proofStandardBRD) {
+			commands.do(
+			ChangeStatementStandardCommand {
+				argumentGraph: argumentGraph
+				statement: s
+				standard: BeyondReasonableDoubt {}
+			});
+		}
+		updateAll();
+    }
 
     // for arguments
 
     public function changeArgumentDirection(a: Argument, value: String): Void {
-	var newValue: Boolean = { if (value == "pro") true else false };
-	if (newValue != a.pro) {
-	    commands.do(
-		ChangeArgumentDirectionCommand {
-		    argumentGraph: argumentGraph
-		    argument: a
-		});
-	}
-	updateAll();
+		var newValue: Boolean = { if (value == "pro") true else false };
+		if (newValue != a.pro) {
+			commands.do(
+			ChangeArgumentDirectionCommand {
+				argumentGraph: argumentGraph
+				argument: a
+			});
+		}
+		updateAll();
     }
 
     public function changeArgumentWeight(a: Argument, v: Number): Void {
-	commands.do(
-	    ChangeArgumentWeightCommand {
-		argumentGraph: argumentGraph
-		argument: a
-		weight: v
-	    });
+		commands.do(
+			ChangeArgumentWeightCommand {
+			argumentGraph: argumentGraph
+			argument: a
+			weight: v
+			});
     }
 
     public function changeArgumentScheme(a: Argument, c: String): Void {
-	commands.do(
-	    ChangeArgumentSchemeCommand {
-		argumentGraph: argumentGraph
-		argument: a
-		scheme: c
-	    });
+		commands.do(
+			ChangeArgumentSchemeCommand {
+			argumentGraph: argumentGraph
+			argument: a
+			scheme: c
+			});
     };
 
     public function changeArgumentTitle(a: Argument, t: String): Void {
-	commands.do(
-	    ChangeArgumentTitleCommand {
-		argument: a
-		title: t
-	    });
+		commands.do(
+			ChangeArgumentTitleCommand {
+			argument: a
+			title: t
+			});
     }
 
     public function changeArgumentId(a: Argument, id: String): Void {
-	var admissible: Boolean = true;
+		var admissible: Boolean = true;
 
-	if (not argumentGraph.noDoubleIDs(id)) {
-	    view.alert("The chosen id is already taken!");
-	    admissible = false;
-	}
-
-	if (id == "") {
-	    view.alert("id may not be empty.");
-	    admissible = false;
-	}
-	if (id.matches("^*[:alnum:][:space:]*[:alnum:]$")) {
-	    view.alert("id may not contain whitespaces.");
-	    admissible = false;
-	}
-
-	if (admissible) {
-	    commands.do(
-		ChangeArgumentIdCommand {
-		    argumentGraph: argumentGraph
-		    argument: a
-		    id: id
+		if (not argumentGraph.noDoubleIDs(id)) {
+			view.alert("The chosen id is already taken!");
+			admissible = false;
 		}
-	    );
-	}
-	updateAll();
+
+		if (id == "") {
+			view.alert("id may not be empty.");
+			admissible = false;
+		}
+		if (id.matches("^*[:alnum:][:space:]*[:alnum:]$")) {
+			view.alert("id may not contain whitespaces.");
+			admissible = false;
+		}
+
+		if (admissible) {
+			commands.do(
+				ChangeArgumentIdCommand {
+					argumentGraph: argumentGraph
+					argument: a
+					id: id
+				}
+			);
+		}
+		updateAll();
     }
 
     // ... and for premises
 
     public function negatePremise(p: Premise): Void {
-	commands.do(
-	    NegatePremiseCommand {
-		argumentGraph: argumentGraph
-		premise: p
-	    }
-	);
-	updateAll();
+		commands.do(
+			NegatePremiseCommand {
+				argumentGraph: argumentGraph
+				premise: p
+			}
+		);
+		updateAll();
     }
 
     public function changePremiseType(p: Premise, exception: Boolean): Void {
-	if (exception != p.exception) {
-	    commands.do(
-		ChangePremiseTypeCommand {
-		    argumentGraph: argumentGraph
-		    premise: p
+		if (exception != p.exception) {
+			commands.do(
+			ChangePremiseTypeCommand {
+					argumentGraph: argumentGraph
+					premise: p
+				}
+			);
 		}
-	    );
-	}
-	updateAll();
+		updateAll();
     }
 
     public function changePremiseRole(p: Premise, r: String): Void {
-	commands.do(
-	    ChangePremiseRoleCommand {
-		argumentGraph: argumentGraph
-		premise: p
-		role: r
-	    }
-	);
-	updateAll();
+		commands.do(
+			ChangePremiseRoleCommand {
+				argumentGraph: argumentGraph
+				premise: p
+				role: r
+			}
+		);
+		updateAll();
     }
 
     // Load / Save / New Options
 
     function graphIdTaken(id: String): Boolean {
-	for (a in argumentGraphs) {
-	    if (a.id == id) { return true; }
-	}
-	return false;
+		for (a in argumentGraphs) {
+			if (a.id == id) { return true; }
+		}
+		return false;
     }
 
     public function getNewGraphId(): String {
-	var admissible: Boolean = true;
-	var id: String = "g";
-	var number: Integer = 1;
-	while ( graphIdTaken("{id}{number.toString()}") ) { number ++; }
-	return "{id}{number.toString()}";
+		var id: String = "g";
+		var number: Integer = 1;
+		while ( graphIdTaken("{id}{number.toString()}") ) { number ++; }
+		return "{id}{number.toString()}";
     }
 
     public function newGraph(): Void {
-	view.graphs = [];
-	addArgumentGraph(defaultArgumentGraph(getNewGraphId()));
-	currentFile = null;
-	commands.reset();
+		view.graphs = [];
+		addArgumentGraph(defaultArgumentGraph(getNewGraphId()));
+		currentFile = null;
+		commands.reset();
     }
 
     public function addArgumentGraph(newArgGraph: ArgumentGraph): Void {
-	insert newArgGraph into model.argumentGraphs;
-	var graph: CarneadesGraph = CarneadesGraph {
-	    visible: true
-	    control: bind this
-	    argumentGraph: newArgGraph
-	    glayout: TreeLayout {
-		graph: bind graph
-	    }
-	};
-	graph.updateFromModel();
-	insert graph into view.graphs;
-	view.currentGraph = graphs[0];
-	unSelectAll();
-	updateAll()
+		insert newArgGraph into model.argumentGraphs;
+		var graph: CarneadesGraph = CarneadesGraph {
+				visible: true
+				control: bind this
+				argumentGraph: newArgGraph
+				glayout: TreeLayout {
+					graph: bind graph
+				}
+		};
+		graph.updateFromModel();
+		insert graph into view.graphs;
+		view.currentGraph = graphs[0];
+		unSelectAll();
+		updateAll()
     }
 
     public function removeCurrentArgumentGraph(): Void {
-	delete argumentGraph from model.argumentGraphs;
-	delete graph from view.graphs;
+		delete argumentGraph from model.argumentGraphs;
+		delete graph from view.graphs;
 
-	if (argumentGraphs != []) {
-	    displayGraph(argumentGraphs[0]);
-	} else {
-	    newGraph();
-	}
-	updateAll();
+		if (argumentGraphs != []) {
+			displayGraph(argumentGraphs[0]);
+		} else {
+			newGraph();
+		}
+		updateAll();
     }
 
     // FILE LOAD, SAVE & QUIT
 
     public var currentFile: File = null;
-    public var fileChanged: Boolean = true;
+    public var fileChanged: Boolean = false;
     public var fileLoaded: Boolean = bind currentFile != null;
     public var fileChooser: JFileChooser = new JFileChooser();
 
     public function open(): Void {
-	if (fileChanged) {
-	    var choice = JOptionPane.showOptionDialog(
-		null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?",
-		JOptionPane.YES_NO_CANCEL_OPTION,
-		JOptionPane.QUESTION_MESSAGE, null,
-		["Save", "Don't Save", "Cancel"], null);
-	    if (choice == JOptionPane.YES_OPTION) {
-		saveAs();
-	    } else if (choice == JOptionPane.NO_OPTION) {
-		var returnval = fileChooser.showOpenDialog(null);
-		if (returnval == JFileChooser.APPROVE_OPTION) {
-			loadGraphFromFile(fileChooser.getSelectedFile());
+		if (fileChanged) {
+			var choice = JOptionPane.showOptionDialog(
+				null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?",
+				JOptionPane.YES_NO_CANCEL_OPTION,
+				JOptionPane.QUESTION_MESSAGE, null,
+				["Save", "Don't Save", "Cancel"], null);
+			if (choice == JOptionPane.YES_OPTION) {
+				saveAs();
+			} else if (choice == JOptionPane.NO_OPTION) {
+				var returnval = fileChooser.showOpenDialog(null);
+				if (returnval == JFileChooser.APPROVE_OPTION) {
+					loadGraphFromFile(fileChooser.getSelectedFile());
+				}
+			}
+		} else {
+			var returnval = fileChooser.showOpenDialog(null);
+			if (returnval == JFileChooser.APPROVE_OPTION) {
+				loadGraphFromFile(fileChooser.getSelectedFile());
+			}
 		}
-	    }
-	} else {
-	    var returnval = fileChooser.showOpenDialog(null);
-	    if (returnval == JFileChooser.APPROVE_OPTION) {
-		    loadGraphFromFile(fileChooser.getSelectedFile());
-	    }
-	}
     }
 
     public function loadGraphFromFile(f: File): Void {
-	view.graphs = [];
+		view.graphs = [];
 
-	// set the current file
-	currentFile = f;
+		// set the current file
+		currentFile = f;
 
-	// load the graph
-	var newArgGraphs: ArgumentGraph[] = ArgumentFile.getGraphFromFile(f);
+		// load the graph
+		var newArgGraphs: ArgumentGraph[] = ArgumentFile.getGraphFromFile(f);
 
-	for (g in newArgGraphs) addArgumentGraph(g);
+		for (g in newArgGraphs) addArgumentGraph(g);
 
-	view.currentGraph = view.graphs[0];
-	commands.reset();
-	view.displayTitle = f.getAbsolutePath();
-	updateAll();
-    }
-
-    public function saveAs(): Void {
-	var returnval = fileChooser.showSaveDialog(null);
-	var file: File;
-	if (returnval == JFileChooser.APPROVE_OPTION) {
-	    file = fileChooser.getSelectedFile();
-		if (file.exists()) {
-		    var overwrite = JOptionPane.showOptionDialog(
-			null, "The file already exists.\nDo you want to overwrite it?" , "Overwrite existing file?",
-			JOptionPane.YES_NO_OPTION,
-			JOptionPane.QUESTION_MESSAGE, null,
-			["Yes", "No"], null
-		    );
-		if (overwrite == JOptionPane.OK_OPTION) {
-		    saveAsGraphToFile(file);
-		    view.displayTitle = file.getAbsolutePath();
+		view.currentGraph = view.graphs[0];
+		commands.reset();
+		view.displayTitle = f.getAbsolutePath();
+		updateAll();
 		}
-	    } else {
-		saveAsGraphToFile(file);
-		view.displayTitle = file.getAbsolutePath();
-	    }
-	}
+
+	public function saveAs(): Void {
+		var returnval = fileChooser.showSaveDialog(null);
+		var file: File;
+		if (returnval == JFileChooser.APPROVE_OPTION) {
+			file = fileChooser.getSelectedFile();
+			if (file.exists()) {
+				var overwrite = JOptionPane.showOptionDialog(
+					null, "The file already exists.\nDo you want to overwrite it?" , "Overwrite existing file?",
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE, null,
+					["Yes", "No"], null
+					);
+				if (overwrite == JOptionPane.OK_OPTION) {
+					saveAsGraphToFile(file);
+					view.displayTitle = file.getAbsolutePath();
+				}
+			} else {
+				saveAsGraphToFile(file);
+				view.displayTitle = file.getAbsolutePath();
+			}
+		}
     }
 
     public function save(): Void {
-	if (currentFile != null) {
-	    saveGraphToFile(currentFile);
-	} else {
-	    saveAs();
-	}
+		if (currentFile != null) {
+			saveGraphToFile(currentFile);
+		} else {
+			saveAs();
+		}
     }
 
     public function saveGraphToFile(f: File): Void {
-	ArgumentFile.saveGraphToFile(argumentGraphs, f);
-	currentFile = f;
-	fileChanged = false;
+		ArgumentFile.saveGraphToFile(argumentGraphs, f);
+		currentFile = f;
+		fileChanged = false;
     }
 
     public function saveAsGraphToFile(f: File): Void {
-	ArgumentFile.saveGraphToFile(argumentGraphs, f);
-	currentFile = f;
-	fileChanged = false;
+		ArgumentFile.saveGraphToFile(argumentGraphs, f);
+		currentFile = f;
+		fileChanged = false;
     }
 
     public function quit(): Void {
-	if (fileChanged) {
-	    var choice = JOptionPane.showOptionDialog(
-		null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?",
-		JOptionPane.YES_NO_CANCEL_OPTION,
-		JOptionPane.QUESTION_MESSAGE, null,
-		["Save", "Don't Save", "Cancel"], null);
-	    if (choice == JOptionPane.YES_OPTION) {
-		if (currentFile != null) {
-		    save();
-		    application.quit();
-		} else saveAs();
-	    } else if (choice == JOptionPane.NO_OPTION) {
-		application.quit();
-	    }
-	} else {
-	    application.quit();
-	}
+		if (fileChanged) {
+			var choice = JOptionPane.showOptionDialog(
+				null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?",
+				JOptionPane.YES_NO_CANCEL_OPTION,
+				JOptionPane.QUESTION_MESSAGE, null,
+				["Save", "Don't Save", "Cancel"], null);
+			if (choice == JOptionPane.YES_OPTION) {
+				if (currentFile != null) {
+					save();
+					application.quit();
+				} else saveAs();
+			} else if (choice == JOptionPane.NO_OPTION) {
+				application.quit();
+			}
+		} else {
+			application.quit();
+		}
     }
 
+	public function saveGraphAsImage(): Void {
+		// this is an adapted copy and paste code from a hack found at:
+		// http://forums.sun.com/thread.jspa?threadID=5392334
+		// Revise this once the API does it out of the box.
+		var node = view.currentGraph;
+		var shiftX: Number = graph.boundsInLocal.width / 2;
+		var shiftY: Number = graph.boundsInLocal.height / 2;
+		var width = graph.boundsInLocal.width;
+		var height =  graph.boundsInLocal.height + 200;
+		graph.translateX = shiftX;
+
+		var context = FXLocal.getContext();
+		var nodeClass = context.findClass("javafx.scene.Node");
+		var getFXNode = nodeClass.getFunction("impl_getPGNode");
+		var sgNode = (getFXNode.invoke(context.mirrorOf(node)) as FXLocal.ObjectValue).asObject();
+		var g2dClass = (context.findClass("java.awt.Graphics2D") as FXLocal.ClassType).getJavaImplementationClass();
+		var boundsClass=(context.findClass("com.sun.javafx.geom.Bounds2D") as FXLocal.ClassType).getJavaImplementationClass();
+		var affineClass=(context.findClass("com.sun.javafx.geom.AffineTransform") as FXLocal.ClassType).getJavaImplementationClass();
+		var affine:com.sun.javafx.geom.AffineTransform;
+		var getBounds = sgNode.getClass().getMethod("getContentBounds",boundsClass,affineClass);
+		var bounds = getBounds.invoke(sgNode, new com.sun.javafx.geom.Bounds2D(), new com.sun.javafx.geom.AffineTransform()) as com.sun.javafx.geom.Bounds2D;
+		var paintMethod = sgNode.getClass().getMethod("render", g2dClass, boundsClass, affineClass);
+    
+		var img = new java.awt.image.BufferedImage(width, height,
+			java.awt.image.BufferedImage.TYPE_INT_ARGB);
+
+		var g2 = img.createGraphics();
+		paintMethod.invoke(sgNode,g2, bounds, new com.sun.javafx.geom.AffineTransform());
+		g2.dispose();
+
+		var savefile = new java.io.File("capture.png");
+		javax.imageio.ImageIO.write(img, "png", savefile);
+
+		// restore graph
+		graph.translateX = 0;
+	}
+
     public function defaultArgumentGraph(id: String): ArgumentGraph {
-	var argumentGraph = ArgumentGraph {
-	    id: id
-	};
+		var argumentGraph = ArgumentGraph {
+			id: id
+		}
 
-	var s1: Statement = Statement {
-	    id: "s1"
-	    wff: "The street is wet."
-	}
+		var s1: Statement = Statement {
+			id: "s1"
+			wff: "The street is wet."
+		}
 
-	var s2: Statement = Statement {
-	    id: "s2"
-	    wff: "It rained"
-	}
+		var s2: Statement = Statement {
+			id: "s2"
+			wff: "It rained"
+		}
 
-	var a1: Argument = Argument {
-	    id: "a1"
-	    conclusion: s1
-	    title: "When it rains, things get wet."
-	}
+		var a1: Argument = Argument {
+			id: "a1"
+			conclusion: s1
+			title: "When it rains, things get wet."
+		}
 
-	var p: Premise = Premise {
-	    statement: s2
-	}
+		var p: Premise = Premise {
+			statement: s2
+		}
 
-	a1.addPremise(p);
+		a1.addPremise(p);
 
-	argumentGraph.insertStatement(s1);
-	argumentGraph.insertStatement(s2);
-	argumentGraph.insertArgument(a1);
+		argumentGraph.insertStatement(s1);
+		argumentGraph.insertStatement(s2);
+		argumentGraph.insertArgument(a1);
 
-	return argumentGraph;
+		return argumentGraph;
     }
 }
 
