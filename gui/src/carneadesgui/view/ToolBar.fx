@@ -130,7 +130,7 @@ public class ToolBar extends Panel {
 				redoButton,
 				// saveAsImageButton,
 				quitButton,
-				//alternateViewButton
+				// alternateViewButton
 			]
 		}
 	];
