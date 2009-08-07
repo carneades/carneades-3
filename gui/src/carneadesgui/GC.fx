@@ -103,7 +103,7 @@ public var fillStatements = true;
 public var statusAcceptedColor: Color = Color.rgb(45, 193, 56);
 public var statusRejectedColor: Color = Color.rgb(255, 82, 85);
 public var statusAssumedTrueColor: Color = Color.rgb(106, 255, 121);
-public var statusAssumedFalseColor: Color = Color.rgb(193, 160, 164);
+public var statusAssumedFalseColor: Color = Color.rgb(255, 82, 85); //old: Color.rgb(193, 160, 164);
 public var statusStatedColor: Color = Color.WHITE;
 public var statusQuestionedColor: Color = Color.rgb(255, 251, 144);
 
