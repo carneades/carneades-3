@@ -56,51 +56,49 @@ public class CarneadesControl {
 
     // The application's model component. Should be set using setModel() in the application object post-init.
     public-read var model: CarneadesModel;
-    public function setModel(model: CarneadesModel) {
-	this.model = model;
-    }
+    public function setModel(model: CarneadesModel) { this.model = model; }
 
     // The application's views. Should be set using setView() from the CarneadesGUI object post-init.
     public-read var views: CarneadesView[] = [];
     public-read var view: CarneadesView;
     public function addView(view: CarneadesView): Void {
-	view.control = this;
-	insert view into views;
+		view.control = this;
+		insert view into views;
     }
     public function setActiveView(view: CarneadesView): Void {
-	for (v in views) v.deactivate();
-	view.activate();
-	this.view = view;
+		for (v in views) v.deactivate();
+		view.activate();
+		this.view = view;
     }
     public function alternateView(): Void {
 
-	var oldView: CarneadesView = view;
-	var newView: CarneadesView;
+		var oldView: CarneadesView = view;
+		var newView: CarneadesView;
 
-	// determine old view
-	var index: Integer = 0;
-	for (i in [0 .. sizeof views - 1]) if (views[i] == view) index = i;
+		// determine old view
+		var index: Integer = 0;
+		for (i in [0 .. sizeof views - 1]) if (views[i] == view) index = i;
 
-	// deactivate old view
-	oldView.deactivate();
+		// deactivate old view
+		oldView.deactivate();
 
-	// determine new view
-	if (index == sizeof views -1) index = 0 else index++;
-	newView = views[index];
-	newView.activate();
+		// determine new view
+		if (index == sizeof views -1) index = 0 else index++;
+		newView = views[index];
+		newView.activate();
 
-	// take over the array of viewgraphs
-	var cg: CarneadesGraph = oldView.currentGraph;
-	oldView.currentGraph = null;
-	var gs: CarneadesGraph[] = oldView.graphs;
-	oldView.graphs = null;
+		// take over the array of viewgraphs
+		var cg: CarneadesGraph = oldView.currentGraph;
+		oldView.currentGraph = null;
+		var gs: CarneadesGraph[] = oldView.graphs;
+		oldView.graphs = null;
 
-	newView.graphs = gs;
-	newView.currentGraph = cg;
+		newView.graphs = gs;
+		newView.currentGraph = cg;
 
-	// set
-	this.view = newView;
-	updateAll();
+		// set
+		this.view = newView;
+		updateAll();
     }
 
     // The array of currently loaded model argument graphs in the model component. Read-Only.
@@ -136,19 +134,17 @@ public class CarneadesControl {
     public var selectedArgumentEditable: Boolean = false;
     public var selectedStatementEditable: Boolean = false;
     public var selectedPremiseEditable: Boolean = false;
-    public var possibleToAddArgument = bind graph.selectedModels[0] instanceof Statement;
-    public var possibleToAddPremise = bind graph.selectedModels[0] instanceof Argument;
+    public def possibleToAddArgument = bind graph.selectedModels[0] instanceof Statement;
+    public def possibleToAddPremise = bind graph.selectedModels[0] instanceof Argument;
 
-    function singleStatementSelected(): Boolean { return graph.selectedModels[0] instanceof Statement }
-    function singleArgumentSelected(): Boolean { return graph.selectedModels[0] instanceof Argument }
+    function singleStatementSelected(): Boolean { graph.selectedModels[0] instanceof Statement }
+    function singleArgumentSelected(): Boolean { graph.selectedModels[0] instanceof Argument }
 	function singlePremiseSelected(): Boolean {
-			not (sizeof graph.selectedElements() != 1) and (graph.selectedElements()[0] instanceof PremiseLink)
-    }
+			not (sizeof graph.selectedElements() != 1) and (graph.selectedElements()[0] instanceof PremiseLink)}
     function premiseSelected(): Boolean {
-			not (sizeof graph.selectedElements() != 1) and (graph.selectedElements()[0] instanceof PremiseLink)
-    }
-    function singleSomethingSelected(): Boolean { return { (sizeof graph.selectedElements() == 1) }}
-    function nothingSelected(): Boolean { return (sizeof graph.selectedElements() == 0); }
+			not (sizeof graph.selectedElements() != 1) and (graph.selectedElements()[0] instanceof PremiseLink)}
+    function singleSomethingSelected(): Boolean { (sizeof graph.selectedElements() == 1) }
+    function nothingSelected(): Boolean { (sizeof graph.selectedElements() == 0); }
 
     public function processGraphSelection(g: GraphElement): Void {
 		unSelectAll();
@@ -184,49 +180,43 @@ public class CarneadesControl {
     /**
      * Unselects the graph view only.
      */
-    public function unSelectGraph(): Void {
-		graph.unSelectAll();
-    }
+    public function unSelectGraph(): Void { graph.unSelectAll(); }
 
     /**
      * Focus the view on a certain view object.
      */
-    public function focusOnElement(e: GraphElement) {
-		view.focusOn(e);
-    }
+    public function focusOnElement(e: GraphElement) { view.focusOn(e); }
 
     /**
      * Focus the view on the selected view object.
      */
-    public function focusOnSelected() {
-		view.focusOn(graph.selectedElements()[0]);
-    }
+    public function focusOnSelected() { view.focusOn(graph.selectedElements()[0]); }
 
     // UPDATE FUNCTIONS
 
     function updateView(u: GraphUpdate): Void {
-	if (u.layout) {
-	    // 1. Rendering update
-	    graph.updateFromModel();
-	    graph.updateDisplay();
+		if (u.layout) {
+			// 1. Rendering update
+			graph.updateFromModel();
+			graph.updateDisplay();
 
-	    // 2. Restore Selection
-	    graph.updateSelectedElementsFromModel();
-	}
+			// 2. Restore Selection
+			graph.updateSelectedElementsFromModel();
+		}
 
-	// set modes
-	if (singleStatementSelected()) view.editStatement(graph.selectedModels[0] as Statement);
-	if (singleArgumentSelected()) view.editArgument(graph.selectedModels[0] as Argument);
-	if (singlePremiseSelected()) view.editPremise(graph.selectedModels[0] as Premise);
-	if (nothingSelected()) view.editNothing();
+		// set modes
+		if (singleStatementSelected()) view.editStatement(graph.selectedModels[0] as Statement);
+		if (singleArgumentSelected()) view.editArgument(graph.selectedModels[0] as Argument);
+		if (singlePremiseSelected()) view.editPremise(graph.selectedModels[0] as Premise);
+		if (nothingSelected()) view.editNothing();
 
-	// update the view component influencing booleans
-	possibleToUndo = commands.possibleToUndo();
-	possibleToRedo = commands.possibleToRedo();
-	possibleToInverseArgument = singleArgumentSelected();
-	possibleToRemove = singleSomethingSelected();
+		// update the view component influencing booleans
+		possibleToUndo = commands.possibleToUndo();
+		possibleToRedo = commands.possibleToRedo();
+		possibleToInverseArgument = singleArgumentSelected();
+		possibleToRemove = singleSomethingSelected();
 
-	view.update(u);
+		view.update(u);
     }
 
     /**
