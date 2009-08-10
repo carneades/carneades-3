@@ -90,7 +90,7 @@ public class TreeLayout extends GraphLayout {
 						((e.recipient.width - 2*e.recipient.bottomBrink) / (sizeof e.recipient.children - 1)))
 					else 0;
 				}
-			e.y2New = e.recipient.yNew + e.producer.height / 2;
+			e.y2New = e.recipient.yNew + e.recipient.height / 2;
 		}
     }
 

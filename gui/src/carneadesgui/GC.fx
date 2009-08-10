@@ -89,7 +89,7 @@ public var zoomLimits: Number[] = [0.2, 3.0];
 
 // Statement Boxes
 public var statementBoxDefaultWidth: Integer = 150;
-public var statementBoxDefaultHeight: Integer = 40;
+public var statementBoxDefaultHeight: Integer = 50;
 public var statementBoxBottomBrink: Integer = 40;
 public var statementBoxTextHorizontalPadding: Number = 10;
 
