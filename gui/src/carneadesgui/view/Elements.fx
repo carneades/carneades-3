@@ -55,18 +55,31 @@ import javafx.scene.transform.Rotate;
 public class CenteredStatementText extends Text {
 
     override var transforms = bind [
-	Translate {
-	    x: - boundsInLocal.width / 2
-	    y: - boundsInLocal.height / 2
-	}
+		Translate {
+			x: - boundsInLocal.width / 2 /* hand correction: */ + 0
+			y: - boundsInLocal.height / 2 /* hand correction: */ + 2
+		}
     ];
 
-    public function setText(s: String): Void {
-	content = s;
-    }
-
+	public var boundingHeight: Number;
     override var textAlignment = TextAlignment.CENTER;
     override var textOrigin = TextOrigin.TOP;
+
+	public function changeText(t: String): Void {
+		var text: String = t;
+		var check: CenteredStatementText = CenteredStatementText {
+			content: text
+			wrappingWidth: wrappingWidth
+			boundingHeight: boundingHeight
+			visible: false
+		};
+
+		while (check.boundsInLocal.height > boundingHeight and boundingHeight != 0) {
+			text = text.substring(0, text.length() - 1);
+			check.content = "{text} ...";
+		}
+		content = check.content;
+	}
 }
 
 /**
@@ -80,23 +93,23 @@ public abstract class ArgumentElement extends CarneadesVertex {
     var fill: Color = Color.WHITE;
 
     var selection: Shape = Rectangle {
-	blocksMouse: false
-	fill: Color.TRANSPARENT
-	x: bind x - (width / 2) - 5
-	y: bind y - (height / 2) - 5
-	width: bind width + 10
-	height: bind height + 10
-	stroke: bind {if (control.dragging) dragColor else selectionColor};
-	strokeWidth: 2
-	visible: bind selected
+		blocksMouse: false
+		fill: Color.TRANSPARENT
+		x: bind x - (width / 2) - 5
+		y: bind y - (height / 2) - 5
+		width: bind width + 10
+		height: bind height + 10
+		stroke: bind {if (control.dragging) dragColor else selectionColor};
+		strokeWidth: 2
+		visible: bind selected
     } // selection rect
 
     var middlePoint: Circle = Circle {
-	centerX: bind x
-	centerY: bind y
-	radius: 3
-	fill: Color.RED
-	visible: bind drawDebug
+		centerX: bind x
+		centerY: bind y
+		radius: 3
+		fill: Color.RED
+		visible: bind drawDebug
     }
 }
 
@@ -116,8 +129,8 @@ public class ArgumentBox extends ArgumentElement {
     override var cache = true;
     override var height = argumentCircleDefaultRadius * 2;
     override var width = argumentCircleDefaultRadius * 2;
-    override var caption = bind argument.id;
-    override var fill = bind {if (argument.ok) Color.LIGHTGREY else Color.WHITE};
+    override def caption = bind argument.id;
+    override def fill = bind {if (argument.ok) Color.LIGHTGREY else Color.WHITE};
     override var bottomBrink = argumentBoxBottomBrink;
 
     override var text = CenteredStatementText {
@@ -211,23 +224,31 @@ public class ArgumentBox extends ArgumentElement {
  */
 public class StatementBox extends ArgumentElement {
 
+	postinit {
+		/* Those calls should not be necessary, but there is currently no way to initialize
+		a StatementBox object with the wrappign dimensions of the text being non-zero.
+		*/
+		text.wrappingWidth = mainRectWidth - statementBoxTextHorizontalPadding;
+		(text as CenteredStatementText).boundingHeight = mainRectHeight;
+		(text as CenteredStatementText).changeText(statement.wff);
+	}
+
     /**
      * The represented model statement.
      */
     public var statement: Statement;
 
     // bind the model element to the statement element
-    override var model = bind statement;
+    override def model = bind statement;
+    
+	override def cache = true;
+	override var width = statementBoxDefaultWidth;
+	override var height = statementBoxDefaultHeight;
+	override def bottomBrink = statementBoxBottomBrink;
 
-    override var cache = true;
-    override var width = statementBoxDefaultWidth;
-    override var bottomBrink = statementBoxBottomBrink;
-    override var caption = bind {
-		if (statement.wff.length() < numDisplayedChars) statement.wff
-		else "{statement.wff.substring(0, numDisplayedChars-1)}..."
-    };
+    override def caption = bind statement.wff on replace { (text as CenteredStatementText).changeText(statement.wff) }
 
-    var statusColor = bind {
+    def statusColor = bind {
 		if (statement.status == "stated") statusStatedColor
 		else if (statement.status == "assumed true") statusAssumedTrueColor
 		else if (statement.status == "assumed false") statusAssumedFalseColor
@@ -236,20 +257,15 @@ public class StatementBox extends ArgumentElement {
 		else /*if (status == "questioned")*/ statusQuestionedColor
     };
 
-    override var text = CenteredStatementText {
-		blocksMouse: false
-		content: bind caption
-		x: bind x - (acceptableCircleWidth/ 2)
-		y: bind y
-		wrappingWidth: bind width - (acceptableCircleWidth/ 2)
-    } // Text
-
-    var mainRect: Polygon = Polygon {
+	// main statement box
+	def mainRectWidth = width - acceptableCircleWidth;
+	def mainRectHeight = height;
+    def mainRect: Polygon = Polygon {
 		points: bind [
 			x - (width / 2), y - (height / 2),
-			x + (width / 2) - acceptableCircleWidth , y - (height / 2),
-			x + (width / 2) - acceptableCircleWidth , y - (height / 2) + height,
-			x - (width / 2), y - (height / 2) + height ]
+			x - (width / 2) + mainRectWidth, y - (height / 2),
+			x - (width / 2) + mainRectWidth, y - (height / 2) + mainRectHeight,
+			x - (width / 2), y - (height / 2) + mainRectHeight ]
 		blocksMouse: true
 		fill: bind { if (fillStatements) statusColor else defaultBoxFill }
 		stroke: bind { if (fillStatements) Color.BLACK else statusColor }
@@ -287,7 +303,15 @@ public class StatementBox extends ArgumentElement {
 		}
     } // main rect
 
-    var acceptableCircle: Circle = Circle {
+	override def text = CenteredStatementText {
+		blocksMouse: false
+		x: bind x - (acceptableCircleWidth/ 2)
+		y: bind y
+		wrappingWidth: mainRectWidth - statementBoxTextHorizontalPadding
+		boundingHeight: mainRectHeight
+    } // Text
+
+    def acceptableCircle: Circle = Circle {
 		centerX: bind x + (this.width / 2) - (acceptableCircleWidth / 2) + 3
 		centerY: bind y - (acceptableCirclePadding / 2) - (acceptableCircleWidth / 2)
 		radius: bind (acceptableCircleWidth / 2)
@@ -307,7 +331,7 @@ public class StatementBox extends ArgumentElement {
 		}
     }
 
-    var acceptableCompCircle: Circle = Circle {
+    def acceptableCompCircle: Circle = Circle {
 		centerX: bind x + (this.width / 2) - (acceptableCircleWidth / 2) + 3
 		centerY: bind y + (acceptableCirclePadding / 2) + (acceptableCircleWidth / 2)
 		radius: bind (acceptableCircleWidth / 2)
@@ -351,17 +375,9 @@ public class Arrow extends CarneadesEdge {
     public var headSize: Number = 10;
 
     /**
-     * 0 means it points right, 1 it points left, straight up or down does not matter
-     */
-    public var heading: Number = 0;
-
-    /**
      * The color to fill the arrowhead with.
      */
     public var fill: Color = Color.BLACK;
-
-    override var stroke = Color.BLACK;
-    override var turnHead = true;
 
     override function create():Node {
 		Group {

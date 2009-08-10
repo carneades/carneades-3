@@ -33,30 +33,23 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextOrigin;
 
 // Model Constants
-public var proofStandardSE: String = "scintilla of evidence";
-public var proofStandardDV: String = "dialectical validity";
-public var proofStandardBA: String = "best argument";
-public var proofStandardPE: String = "preponderance";
-public var proofStandardCCE: String = "clear and convincing";
-public var proofStandardBRD: String = "beyond reasonable doubt";
+public def proofStandardSE: String = "scintilla of evidence";
+public def proofStandardDV: String = "dialectical validity";
+public def proofStandardBA: String = "best argument";
+public def proofStandardPE: String = "preponderance";
+public def proofStandardCCE: String = "clear and convincing";
+public def proofStandardBRD: String = "beyond reasonable doubt";
 
 // General Application Constants
 public var appWidth: Number = 800;
 public var appHeight: Number = 600;
-public var verticalWindowMismatch: Number = 23;
-public var horizontalWindowMismatch: Number = 1;
+public def verticalWindowMismatch: Number = 23;
+public def horizontalWindowMismatch: Number = 1;
 
 // StandardView Constants
 public var mainPanelSpacing: Integer = 1;	// spacing between the two/three main panels
 
 // Graph Display Constants
-//
-// Alignment constants for edge ending offsets
-// The variable gives information about from which direction the link hits the node
-public var TOP: Number = 1;
-public var BOTTOM: Number = 2;
-public var RIGHT: Number = 3;
-public var LEFT: Number = 4;
 
 // Drawing constants
 public var drawAllStatements: Boolean = true;
@@ -95,9 +88,10 @@ public var zoomTime: Number = 4.0; // in seconds
 public var zoomLimits: Number[] = [0.2, 3.0];
 
 // Statement Boxes
-public var numDisplayedChars = 15;
 public var statementBoxDefaultWidth: Integer = 150;
-public var statementBoxBottomBrink: Integer = 50;
+public var statementBoxDefaultHeight: Integer = 40;
+public var statementBoxBottomBrink: Integer = 40;
+public var statementBoxTextHorizontalPadding: Number = 10;
 
 public var fillStatements = true;
 public var statusAcceptedColor: Color = Color.rgb(45, 193, 56);
@@ -210,17 +204,7 @@ public var C_LATEST_COMMAND: Number = 3;
  */
 public var p = function(s: String) { System.out.println(s)}
 
-/**
- * Function returning true if a certain element is contained in the list or not. This function checks for equality by comparing the pointers to the objects, not the object content itself.
- */
-public var contains = function(list: Object[], element: Object): Boolean {
-	for (i in list) {
-		if (i == element) { return true; }
-	}
-	return false;
-}
-
-public var flag = Circle {
+public def flag = Circle {
 	centerX: 0
 	centerY: 0
 	radius: 5
@@ -253,3 +237,8 @@ public function isMemberOf(object: Object, sequence: Object[]): Boolean {
     false
 }
 
+// function that returns the position (1+) of an object in a sequence. If it is not in there, it returns 0;
+public function indexOf(object: Object, list: Object[]): Integer {
+	for (i in [0..sizeof list - 1]) if (object == list[i]) return i + 1;
+	return 0
+}
