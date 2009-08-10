@@ -61,9 +61,12 @@ public class CenteredStatementText extends Text {
 		}
     ];
 
+	override var font = Font {
+		name: "Courier"
+	}
 
-	//public var boundingHeight: Number;
-	public var maxChars: Integer = 30;
+	public var boundingHeight: Number;
+	public var maxChars: Integer = 50;
     override var textAlignment = TextAlignment.CENTER;
     override var textOrigin = TextOrigin.TOP;
 
@@ -81,7 +84,8 @@ public class CenteredStatementText extends Text {
 			check.content = "{text} ...";
 		}
 		content = check.content;
-		*/
+		check = null;*/
+		
 
 		content = "{ if (t.length() > maxChars ) "{t.substring(0, 26)} ..." else t}";
 	}
