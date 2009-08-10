@@ -107,7 +107,7 @@ public var acceptableCirclePadding: Integer = 5;
 
 // Argument Boxes. They were originally boxes, hence the name.
 public var argumentBoxDefaultWidth: Integer = 60;
-public var argumentBoxBottomBrink: Integer = 3;
+public var argumentBoxBottomBrink: Integer = 15;
 public var argumentCircleDefaultRadius: Integer = 20;
 public var argumentConColor = statusRejectedColor;
 public var argumentProColor = statusAcceptedColor;
