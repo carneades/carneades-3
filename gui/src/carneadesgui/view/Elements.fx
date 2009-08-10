@@ -61,11 +61,14 @@ public class CenteredStatementText extends Text {
 		}
     ];
 
-	public var boundingHeight: Number;
+
+	//public var boundingHeight: Number;
+	public var maxChars: Integer = 30;
     override var textAlignment = TextAlignment.CENTER;
     override var textOrigin = TextOrigin.TOP;
 
 	public function changeText(t: String): Void {
+		/*
 		var text: String = t;
 		var check: CenteredStatementText = CenteredStatementText {
 			content: text
@@ -73,12 +76,14 @@ public class CenteredStatementText extends Text {
 			boundingHeight: boundingHeight
 			visible: false
 		};
-
 		while (check.boundsInLocal.height > boundingHeight and boundingHeight != 0) {
 			text = text.substring(0, text.length() - 1);
 			check.content = "{text} ...";
 		}
 		content = check.content;
+		*/
+
+		content = "{ if (t.length() > maxChars ) "{t.substring(0, 26)} ..." else t}";
 	}
 }
 
@@ -228,9 +233,10 @@ public class StatementBox extends ArgumentElement {
 		/* Those calls should not be necessary, but there is currently no way to initialize
 		a StatementBox object with the wrappign dimensions of the text being non-zero.
 		*/
+		// commented out because of shift to maxChar solution.
 		text.wrappingWidth = mainRectWidth - statementBoxTextHorizontalPadding;
-		(text as CenteredStatementText).boundingHeight = mainRectHeight;
-		(text as CenteredStatementText).changeText(statement.wff);
+		//(text as CenteredStatementText).boundingHeight = mainRectHeight;
+		//(text as CenteredStatementText).changeText(statement.wff);
 	}
 
     /**
@@ -308,7 +314,7 @@ public class StatementBox extends ArgumentElement {
 		x: bind x - (acceptableCircleWidth/ 2)
 		y: bind y
 		wrappingWidth: mainRectWidth - statementBoxTextHorizontalPadding
-		boundingHeight: mainRectHeight
+		//boundingHeight: mainRectHeight
     } // Text
 
     def acceptableCircle: Circle = Circle {
