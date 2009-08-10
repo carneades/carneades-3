@@ -435,7 +435,7 @@ public class ArgumentGraph {
 			for (p in (root as Argument).premises) {
 				//p("checking " + p.statement.id);
 				// check whether the premise statement has been marked before
-				if (contains(marked, p.statement)) {
+				if (isMemberOf(marked, p.statement)) {
 					//p("returning false");
 					result = false;
 				}
@@ -452,7 +452,7 @@ public class ArgumentGraph {
 				if (a.conclusion == root) {
 					// has the argument already been marked
 					//p("checking " + a.id);
-					if (contains(marked, a)) {
+					if (isMemberOf(marked, a)) {
 						//p("returning false");
 						result = false;
 					} else {
@@ -499,12 +499,12 @@ public class ArgumentGraph {
 		var ids: String[];
 
 		for (s in statements) {
-			if (contains(ids, s.id)) { return false; } else { insert s.id into ids; }
+			if (isMemberOf(ids, s.id)) { return false; } else { insert s.id into ids; }
 		}
 		for (a in arguments) {
-			if (contains(ids, a.id)) { return false; } else { insert a.id into ids; }
+			if (isMemberOf(ids, a.id)) { return false; } else { insert a.id into ids; }
 		}
-		if (contains(ids, newId)) { return false; }
+		if (isMemberOf(ids, newId)) { return false; }
 
 		return true;
 	}
