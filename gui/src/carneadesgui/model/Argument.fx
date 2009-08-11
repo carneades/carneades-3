@@ -24,9 +24,6 @@ import java.lang.Object;
 import carneadesgui.GC.*;
 import java.lang.System;
 
-// Changed: List of supported statuses for the GUI
-public var statuses: String[] = ["stated", "questioned", "assumed true", "assumed false", /*"accepted", "rejected"*/];
-
 // Changed: List of supported proof standards for the GUI
 public var proofStandards: String[] = [proofStandardSE, proofStandardDV, proofStandardBA, proofStandardPE, proofStandardCCE, proofStandardBRD];
 
