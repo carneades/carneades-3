@@ -126,6 +126,7 @@ public class StandardView extends CarneadesView {
 			width: bind inspectorPanelWidth
 			height: bind appHeight - toolBarHeight
 		}
+		spacing: SIDEBAR_SPACING
 		content: bind [
 			graphListView,
 			masterEditButtonPanel,

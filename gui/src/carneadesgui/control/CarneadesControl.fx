@@ -707,26 +707,26 @@ public class CarneadesControl {
     public function changeArgumentWeight(a: Argument, v: Number): Void {
 		commands.do(
 			ChangeArgumentWeightCommand {
-			argumentGraph: argumentGraph
-			argument: a
-			weight: v
+				argumentGraph: argumentGraph
+				argument: a
+				weight: v
 			});
     }
 
     public function changeArgumentScheme(a: Argument, c: String): Void {
 		commands.do(
 			ChangeArgumentSchemeCommand {
-			argumentGraph: argumentGraph
-			argument: a
-			scheme: c
+				argumentGraph: argumentGraph
+				argument: a
+				scheme: c
 			});
     };
 
     public function changeArgumentTitle(a: Argument, t: String): Void {
 		commands.do(
 			ChangeArgumentTitleCommand {
-			argument: a
-			title: t
+				argument: a
+				title: t
 			});
     }
 

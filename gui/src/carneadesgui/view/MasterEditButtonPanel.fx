@@ -64,7 +64,7 @@ class DefaultEditButtonPanel extends EditButtonPanel {
 
 class GraphEditButtonPanel extends EditButtonPanel {
 	public var graph: ArgumentGraph = null;
-	override var content = bind VBox {
+	override var content = bind HBox {
 		content: [
 			EditPanelButton {
 				text: "add graph"
@@ -82,7 +82,7 @@ class GraphEditButtonPanel extends EditButtonPanel {
 
 class StatementEditButtonPanel extends EditButtonPanel {
 	public var statement: Statement = null;
-	override var content = bind VBox {
+	override var content = bind HBox {
 		content: [
 			EditPanelButton {
 				text: "remove statement"
@@ -102,7 +102,7 @@ class StatementEditButtonPanel extends EditButtonPanel {
 
 class ArgumentEditButtonPanel extends EditButtonPanel {
 	public var argument: Argument = null;
-	override var content = bind VBox {
+	override var content = bind HBox {
 	content: [
 			EditPanelButton {
 				text: "remove argument"
