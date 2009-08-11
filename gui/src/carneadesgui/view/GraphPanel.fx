@@ -203,16 +203,16 @@ public class GraphPanel extends Panel {
 			content: bind [
 				Group {
 					transforms: bind [
-					Translate {
-						x: bind centerX - shiftX + (dragX * zoom)
-						y: bind centerY - shiftY + (dragY * zoom)
-					},
-					Scale {
-						x: zoom
-						y: zoom
-						pivotX: shiftX
-						pivotY: shiftY
-					},
+						Translate {
+							x: bind centerX - shiftX + (dragX * zoom)
+							y: bind centerY - shiftY + (dragY * zoom)
+						},
+						Scale {
+							x: zoom
+							y: zoom
+							pivotX: shiftX
+							pivotY: shiftY
+						},
 					]
 					content: bind graph
 				},

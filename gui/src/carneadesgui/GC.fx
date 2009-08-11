@@ -32,6 +32,20 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextOrigin;
 
+import javafx.scene.CustomNode;
+
+import javafx.scene.Node;
+
+import javafx.scene.layout.HBox;
+
+import javafx.scene.layout.VBox;
+
+import javafx.geometry.HPos;
+
+import javafx.geometry.VPos;
+
+import javafx.scene.Group;
+
 // Model Constants
 public def proofStandardSE: String = "scintilla of evidence";
 public def proofStandardDV: String = "dialectical validity";
@@ -112,6 +126,9 @@ public var toolBarSpacing: Integer = 10;
 // inspector panel constants
 public def SIDEBAR_SPACING: Integer = 10;
 public def INSPECTOR_PANEL_SPACING: Integer = 5;
+public def INSPECTOR_PANEL_HEIGHT: Integer = 260;
+public def INSPECTOR_PADDING: Integer = 5;
+public def INSPECTOR_WINDOWEDGE_PADDING: Number = 5;
 public var inspectorPanelWidth: Integer = 280;
 public var inspectorLabelWidth: Integer = 100;
 public var inspectorDefaultMode: Integer = 0;
@@ -124,12 +141,14 @@ public var inspectorGraphMode: Integer = 4;
 public var listGraphMode: Integer = 1;
 public var listStatementMode: Integer = 2;
 public var listArgumentMode: Integer = 3;
-public var listViewHeight: Integer = 160;
+public var GRAPHLISTVIEW_HEIGHT: Integer = 160;
+public var GRAPHLISTVIEW_MINIMIZED_HEIGHT: Integer = 35;
+public var GRAPHLISTVIEW_SPACING: Number = 3;
 public var listEntryFieldHeight: Integer = 20;
 public var tabButtonHeight: Integer = 25;
 
 // Edit button panel constants
-public var editButtonPanelHeight: Integer = 50;
+public var editButtonPanelHeight: Integer = 25 + 2*INSPECTOR_PADDING;
 
 // User interaction constants
 public var controlsLocked: Boolean = false;
@@ -236,4 +255,104 @@ public function isMemberOf(object: Object, sequence: Object[]): Boolean {
 public function indexOf(object: Object, list: Object[]): Integer {
 	for (i in [0..sizeof list - 1]) if (object == list[i]) return i + 1;
 	return 0
+}
+
+public class PaddedVBox extends CustomNode {
+
+	public var xPadding: Number;
+	public var yPadding: Number;
+	public var spacing: Number;
+	public var nodeHPos: HPos;
+	public var hpos: HPos;
+
+	public var content: Node[];
+
+	override function create() {
+		HBox {
+			layoutInfo: bind layoutInfo
+			spacing: bind xPadding
+			content: bind [
+				Rectangle {},
+				VBox {
+					nodeHPos: bind nodeHPos
+					hpos: bind hpos
+					spacing: bind yPadding
+					content: bind [
+						Rectangle {},
+						VBox {
+							nodeHPos: bind nodeHPos
+							hpos: bind hpos
+							spacing: bind spacing
+							content: bind content
+						}
+						Rectangle {}
+					]
+				}
+				Rectangle {}
+			]
+		}
+
+	}
+}
+
+public class PaddedHBox extends CustomNode {
+
+	public var xPadding: Number;
+	public var yPadding: Number;
+	public var spacing: Number;
+	public var nodeVPos: VPos;
+
+	public var content: Node[];
+
+	override function create() {
+		HBox {
+			spacing: bind xPadding
+			content: bind [
+				Rectangle {},
+				VBox {
+					spacing: bind yPadding
+					content: bind [
+						Rectangle {},
+						HBox {
+							nodeVPos: bind nodeVPos
+							spacing: bind spacing
+							content: bind content
+						}
+						Rectangle {}
+					]
+				}
+				Rectangle {}
+			]
+		}
+
+	}
+}
+
+public class PaddedBox extends CustomNode {
+
+	public var xPadding: Number;
+	public var yPadding: Number;
+
+	public var content: Node[];
+
+	override function create() {
+		HBox {
+			spacing: bind xPadding
+			content: bind [
+				Rectangle {},
+				VBox {
+					spacing: bind yPadding
+					content: bind [
+						Rectangle {},
+						Group {
+							content: bind content
+						}
+						Rectangle {}
+					]
+				}
+				Rectangle {}
+			]
+		}
+
+	}
 }

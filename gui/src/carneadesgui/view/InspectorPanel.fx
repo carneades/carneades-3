@@ -33,6 +33,8 @@ import carneadesgui.model.Argument.*;
 import carneadesgui.view.InspectorElements.*;
 import carneadesgui.view.GraphUpdate;
 
+import javafx.scene.paint.Color;
+
 /**
 * The statement inspector as used in the sidebar.
 */
@@ -42,40 +44,40 @@ class StatementInspector extends Inspector {
 	public var statement: Statement = null;
 
 	// id inspector
-	var idTextBox: TextBox = InspectorTextBox { editable: false }
-	var idLabel: Label = InspectorLabel { text: "id" }
-	var idBox: HBox = HBox {
+	def idTextBox: TextBox = InspectorTextBox { editable: false }
+	def idLabel: Label = InspectorLabel { text: "id" }
+	def idBox: HBox = HBox {
 		content: [idLabel, idTextBox]
 	}
 
 	// content inspector
-	var contentTextBox: TextBox = InspectorTextBox {
+	def contentTextBox: TextBox = InspectorTextBox {
 		editable: bind not controlsLocked
 		action: function(): Void { control.changeStatementWff(statement, contentTextBox.text);}
 	}
-	var contentLabel: Label = InspectorLabel { text: "content" }
-	var contentBox: HBox = HBox {
+	def contentLabel: Label = InspectorLabel { text: "content" }
+	def contentBox: HBox = HBox {
 		content: [contentLabel, contentTextBox]
 	}
 
 	// status inspector
-	var statusLabel: Label = InspectorLabel { text: "status" }
-	var statusGroup: ToggleGroup = ToggleGroup {}
-	var issueButton = InspectorRadioButton {
+	def statusLabel: Label = InspectorLabel { text: "status" }
+	def statusGroup: ToggleGroup = ToggleGroup {}
+	def issueButton = InspectorRadioButton {
 		text: "issue"
 		toggleGroup: statusGroup
 		onMouseClicked: function(e: MouseEvent): Void {
 			control.changeStatementStatus(statement, "stated");
 		}
 	}
-	var trueButton = InspectorRadioButton {
+	def trueButton = InspectorRadioButton {
 		text: "true"
 		toggleGroup: statusGroup
 		onMouseClicked: function(e: MouseEvent): Void {
 			control.changeStatementStatus(statement, "assumed true");
 		}
 	}
-	var falseButton = InspectorRadioButton {
+	def falseButton = InspectorRadioButton {
 		text: "false"
 		toggleGroup: statusGroup
 		onMouseClicked: function(e: MouseEvent): Void {
@@ -83,25 +85,25 @@ class StatementInspector extends Inspector {
 		}
 	}
 	
-	var statusBox: HBox = HBox {
+	def statusBox: HBox = HBox {
 		content: [
 			statusLabel, VBox { content: [ issueButton, trueButton, falseButton ] }
 		]
 	}
 
 	// acceptable?
-	var acceptableLabel: Label = InspectorLabel { text: "acceptable" }
-	var acceptableStatementCheckBox = InspectorCheckBox {
+	def acceptableLabel: Label = InspectorLabel { text: "acceptable" }
+	def acceptableStatementCheckBox = InspectorCheckBox {
 		text: "statement"
 		disable: true
 		defined: true
 	}
-	var acceptableComplementCheckBox = InspectorCheckBox {
+	def acceptableComplementCheckBox = InspectorCheckBox {
 		text: "complement"
 		disable: true
 		defined: true
 	}
-	var acceptableBox: HBox = HBox {
+	def acceptableBox: HBox = HBox {
 		content: [
 			acceptableLabel,
 			VBox { content: [
@@ -113,9 +115,9 @@ class StatementInspector extends Inspector {
 	}
 
 	// proof standard
-	var standardLabel: Label = InspectorLabel { text: "proof standard" }
-	var standardGroup: ToggleGroup = ToggleGroup {}
-	var standardButtons: RadioButton[] = [for (s in proofStandards)
+	def standardLabel: Label = InspectorLabel { text: "proof standard" }
+	def standardGroup: ToggleGroup = ToggleGroup {}
+	def standardButtons: RadioButton[] = [for (s in proofStandards)
 		InspectorRadioButton {
 			text: s
 			toggleGroup: standardGroup
@@ -124,23 +126,26 @@ class StatementInspector extends Inspector {
 			}
 		}
 	];
-	var standardBox: HBox = HBox {
+	def standardBox: HBox = HBox {
 		content: [
 			standardLabel,
 			VBox { content: standardButtons }
 		]
 	}
 
-	override var content = [
-		VBox {
-			spacing: INSPECTOR_PANEL_SPACING
-			content: bind [
-				idBox,
-				contentBox,
-				statusBox,
-				acceptableBox,
-				standardBox
-			]
+	override def content = [
+		PaddedVBox {
+			xPadding: INSPECTOR_PANEL_SPACING
+			yPadding: INSPECTOR_PANEL_SPACING
+			content: bind VBox {
+				content: bind [
+					idBox,
+					contentBox,
+					statusBox,
+					acceptableBox,
+					standardBox
+				]
+			}
 		}
 	];
 
@@ -168,30 +173,30 @@ class ArgumentInspector extends Inspector {
 	public var argument: Argument = null;
 
 	// id inspector
-	var idTextBox: TextBox = InspectorTextBox { editable: false }
-	var idLabel: Label = InspectorLabel { text: "id" }
-	var idBox: HBox = HBox {
+	def idTextBox: TextBox = InspectorTextBox { editable: false }
+	def idLabel: Label = InspectorLabel { text: "id" }
+	def idBox: HBox = HBox {
 		content: [idLabel, idTextBox]
 	}
 
 	// title inspector
-	var titleTextBox: TextBox = InspectorTextBox {
+	def titleTextBox: TextBox = InspectorTextBox {
 		editable: bind not controlsLocked
 		action: function(): Void { control.changeArgumentTitle(argument, titleTextBox.text);}
 	}
-	var titleLabel: Label = InspectorLabel { text: "title" }
-	var titleBox: HBox = HBox {
+	def titleLabel: Label = InspectorLabel { text: "title" }
+	def titleBox: HBox = HBox {
 		content: [titleLabel, titleTextBox]
 	}
 
 	// defensible?
-	var defensibleLabel: Label = InspectorLabel { text: "defensible" }
-	var defensibleCheckBox = InspectorCheckBox {
+	def defensibleLabel: Label = InspectorLabel { text: "defensible" }
+	def defensibleCheckBox = InspectorCheckBox {
 		text: "defensible"
 		disable: true
 		defined: true
 	}
-	var defensibleBox: HBox = HBox {
+	def defensibleBox: HBox = HBox {
 		content: [
 			defensibleLabel,
 			VBox { content: [ defensibleCheckBox ] }
@@ -199,33 +204,33 @@ class ArgumentInspector extends Inspector {
 	}
 
 	// Scheme inspector
-	var schemeTextBox: TextBox = InspectorTextBox {
+	def schemeTextBox: TextBox = InspectorTextBox {
 		editable: bind not controlsLocked
 		action: function(): Void { control.changeArgumentScheme(argument, schemeTextBox.text);}
 	}
-	var schemeLabel: Label = InspectorLabel { text: "scheme" }
-	var schemeBox: HBox = HBox {
+	def schemeLabel: Label = InspectorLabel { text: "scheme" }
+	def schemeBox: HBox = HBox {
 		content: [schemeLabel, schemeTextBox]
 	}
 
 	// argument direction inspector
 	var directionLabel: Label = InspectorLabel { text: "direction" }
-	var directionGroup: ToggleGroup = ToggleGroup {}
-	var directionProButton: RadioButton = InspectorRadioButton {
+	def directionGroup: ToggleGroup = ToggleGroup {}
+	def directionProButton: RadioButton = InspectorRadioButton {
 		text: "pro"
 		toggleGroup: directionGroup
 		onMouseClicked: function(e: MouseEvent): Void {
 			control.changeArgumentDirection(argument, "pro");
 		}
 	}
-	var directionConButton: RadioButton = InspectorRadioButton {
+	def directionConButton: RadioButton = InspectorRadioButton {
 		text: "con"
 		toggleGroup: directionGroup
 		onMouseClicked: function(e: MouseEvent): Void {
 			control.changeArgumentDirection(argument, "con");
 		}
 	}
-	var directionBox: HBox = HBox {
+	def directionBox: HBox = HBox {
 		content: [directionLabel, VBox {
 				content: [directionProButton, directionConButton]
 			}
@@ -233,15 +238,15 @@ class ArgumentInspector extends Inspector {
 	}
 
 	// weight slider
-	var weightLabel: Label = InspectorLabel { text: "weight" }
-	var weightSlider: InspectorSlider = InspectorSlider {
+	def weightLabel: Label = InspectorLabel { text: "weight" }
+	def weightSlider: InspectorSlider = InspectorSlider {
 		min: 0.0
 		max: 1.0
 		action: function() {
 			control.changeArgumentWeight(argument, weightSlider.value);
 		}
 	}
-	var weightTextBox: TextBox = InspectorTextBox {
+	def weightTextBox: TextBox = InspectorTextBox {
 		editable: false
 		text: bind { 
 		if (("{weightSlider.value}").length() <= 4)
@@ -249,12 +254,12 @@ class ArgumentInspector extends Inspector {
 			else ("{weightSlider.value}").substring(0, 4)
 		}
 	}
-	var weightBox: HBox = HBox {
+	def weightBox: HBox = HBox {
 		content: [weightLabel, VBox { content: [weightSlider, weightTextBox] }]
 	}
 
 
-	override var content = [
+	override def content = [
 		VBox {
 			spacing: INSPECTOR_PANEL_SPACING
 			content: bind [
@@ -291,36 +296,36 @@ class PremiseInspector extends Inspector {
     public var premise: Premise = null;
 
     // Role inspector
-    var roleTextBox: TextBox = InspectorTextBox {
+    def roleTextBox: TextBox = InspectorTextBox {
 	    editable: bind not controlsLocked
 	    action: function(): Void { control.changePremiseRole(premise, roleTextBox.text);}
     }
-    var roleLabel: Label = InspectorLabel { text: "role" }
-    var roleBox: HBox = HBox {
+    def roleLabel: Label = InspectorLabel { text: "role" }
+    def roleBox: HBox = HBox {
 	    content: [roleLabel, roleTextBox]
     }
 
     // exception inspector
-    var exceptionLabel: Label = InspectorLabel { text: "exception" }
-    var exceptionCheckBox: InspectorCheckBox = InspectorCheckBox {
+    def exceptionLabel: Label = InspectorLabel { text: "exception" }
+    def exceptionCheckBox: InspectorCheckBox = InspectorCheckBox {
 	    text: "exception"
 	    action: function(): Void { control.changePremiseType(premise, exceptionCheckBox.selected); }
     }
-    var exceptionBox: HBox = HBox {
+    def exceptionBox: HBox = HBox {
 	    content: [exceptionLabel, exceptionCheckBox]
     }
 
     // negation inspector
-    var negatedLabel: Label = InspectorLabel { text: "negated" }
-    var negatedCheckBox: InspectorCheckBox = InspectorCheckBox {
+    def negatedLabel: Label = InspectorLabel { text: "negated" }
+    def negatedCheckBox: InspectorCheckBox = InspectorCheckBox {
 	    text: "negate"
 	    action: function(): Void { control.negatePremise(premise); }
     }
-    var negatedBox: HBox = HBox {
+    def negatedBox: HBox = HBox {
 	    content: [negatedLabel, negatedCheckBox]
     }
 
-    override var content = [
+    override def content = [
 		VBox {
 			spacing: INSPECTOR_PANEL_SPACING
 			content: bind [
@@ -335,11 +340,11 @@ class PremiseInspector extends Inspector {
     * Update the inspector from the selected model premise.
     */
     override function update(u: GraphUpdate) {
-	if (premise != null) {
-	    roleTextBox.text = premise.role;
-	    exceptionCheckBox.selected = premise.exception;
-	    negatedCheckBox.selected = premise.negative;
-	} else reset("premise");
+		if (premise != null) {
+			roleTextBox.text = premise.role;
+			exceptionCheckBox.selected = premise.exception;
+			negatedCheckBox.selected = premise.negative;
+		} else reset("premise");
     }
 }
 
@@ -350,16 +355,16 @@ class GraphInspector extends Inspector {
 	public var graph: ArgumentGraph = null;
 
 	// id inspector
-	var titleTextBox: TextBox = InspectorTextBox {
+	def titleTextBox: TextBox = InspectorTextBox {
 		editable: true
 		action: function(): Void { control.changeGraphTitle(graph, titleTextBox.text);}
 	}
-	var titleLabel: Label = InspectorLabel { text: "title" }
-	var titleBox: HBox = HBox {
+	def titleLabel: Label = InspectorLabel { text: "title" }
+	def titleBox: HBox = HBox {
 		content: [titleLabel, titleTextBox]
 	}
 
-	override var content = [
+	override def content = [
 		VBox {
 			spacing: INSPECTOR_PANEL_SPACING
 			content: bind [
@@ -383,47 +388,49 @@ class GraphInspector extends Inspector {
 */
 public class InspectorPanel extends Panel {
 	public var control: CarneadesControl = null;
-	public var constraintY: Number = bind listViewHeight + editButtonPanelHeight;
+	public def constraintY: Number = bind GRAPHLISTVIEW_HEIGHT + editButtonPanelHeight;
 	public var mode: Integer = inspectorDefaultMode;
 
-	override var layoutInfo = bind LayoutInfo {
+	override def layoutInfo = bind LayoutInfo {
 		minWidth: bind inspectorPanelWidth;
 		width: bind inspectorPanelWidth;
-		// height constraints are currently switched off
-		//minHeight: bind appHeight - constraintY - verticalWindowMismatch;
-		//height: bind appHeight - constraintY - verticalWindowMismatch;
 	}
 
-	var statementInspector: StatementInspector = StatementInspector {
+	def statementInspector: StatementInspector = StatementInspector {
 		control: bind control
-		visible: bind (mode == inspectorStatementMode)
 	}
 
-	var argumentInspector: ArgumentInspector = ArgumentInspector {
+	def argumentInspector: ArgumentInspector = ArgumentInspector {
 		control: bind control
-		visible: bind (mode == inspectorArgumentMode)
 	}
 
-	var premiseInspector: PremiseInspector = PremiseInspector {
+	def premiseInspector: PremiseInspector = PremiseInspector {
 		control: bind control
-		visible: bind (mode == inspectorPremiseMode)
 	}
 
-	var graphInspector: GraphInspector = GraphInspector {
+	def graphInspector: GraphInspector = GraphInspector {
 		control: bind control
-		visible: bind (mode == inspectorGraphMode)
 	}
 
-	override var content = bind [
-		/*LayoutRect {
-			width: bind inspectorPanelWidth;
-			height: bind appHeight - constraintY - verticalWindowMismatch;
-			fill: panelBackground
-		},*/
-		graphInspector,
-		statementInspector,
-		argumentInspector,
-		premiseInspector
+	override def content = bind [
+		{ if (mode != inspectorDefaultMode)
+				LayoutRect {
+				width: inspectorPanelWidth
+				height: INSPECTOR_PANEL_HEIGHT
+				fill: panelBackground
+				stroke: Color.BLACK
+			} else null
+		},
+		PaddedBox {
+			xPadding: INSPECTOR_PADDING
+			yPadding: INSPECTOR_PADDING
+			content: bind [
+				if (mode == inspectorGraphMode) graphInspector else null,
+				if (mode == inspectorStatementMode) statementInspector else null,
+				if (mode == inspectorArgumentMode) argumentInspector else null,
+				if (mode == inspectorPremiseMode) premiseInspector else null
+			]
+		}
 	];
 
 	public function editStatement(s: Statement): Void {

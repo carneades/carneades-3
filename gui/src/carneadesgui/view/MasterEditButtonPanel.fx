@@ -19,7 +19,6 @@ package carneadesgui.view;
 
 import javafx.scene.layout.Panel;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.control.Button;
 
@@ -28,12 +27,20 @@ import carneadesgui.control.CarneadesControl;
 import carneadesgui.model.Argument.*;
 import carneadesgui.model.Argument;
 
+import javafx.scene.paint.Color;
+
+
+import javafx.geometry.HPos;
+
+import javafx.scene.Group;
+
+import javafx.scene.layout.Stack;
 
 var inspectorLayoutInfo: LayoutInfo = LayoutInfo {
-		minWidth: bind inspectorPanelWidth;
-		width: bind inspectorPanelWidth;
-		minHeight: bind editButtonPanelHeight;
-		height: bind editButtonPanelHeight;
+	minWidth: bind inspectorPanelWidth;
+	width: bind inspectorPanelWidth;
+	minHeight: bind editButtonPanelHeight;
+	height: bind editButtonPanelHeight;
 }
 
 class EditPanelButton extends Button {}
@@ -45,6 +52,7 @@ abstract class EditButtonPanel extends Panel {
 
 class DefaultEditButtonPanel extends EditButtonPanel {
 	override var content = bind HBox {
+		spacing: INSPECTOR_PANEL_SPACING
 		content: [
 			EditPanelButton {
 				text: "add graph"
@@ -65,6 +73,7 @@ class DefaultEditButtonPanel extends EditButtonPanel {
 class GraphEditButtonPanel extends EditButtonPanel {
 	public var graph: ArgumentGraph = null;
 	override var content = bind HBox {
+		spacing: INSPECTOR_PANEL_SPACING
 		content: [
 			EditPanelButton {
 				text: "add graph"
@@ -83,6 +92,7 @@ class GraphEditButtonPanel extends EditButtonPanel {
 class StatementEditButtonPanel extends EditButtonPanel {
 	public var statement: Statement = null;
 	override var content = bind HBox {
+		spacing: INSPECTOR_PANEL_SPACING
 		content: [
 			EditPanelButton {
 				text: "remove statement"
@@ -103,7 +113,8 @@ class StatementEditButtonPanel extends EditButtonPanel {
 class ArgumentEditButtonPanel extends EditButtonPanel {
 	public var argument: Argument = null;
 	override var content = bind HBox {
-	content: [
+		spacing: INSPECTOR_PANEL_SPACING
+		content: [
 			EditPanelButton {
 				text: "remove argument"
 				action: function() {
@@ -129,40 +140,53 @@ public class MasterEditButtonPanel extends Panel {
 	public var mode: Integer = inspectorDefaultMode;
 	override var layoutInfo = inspectorLayoutInfo;
 
-	var defaultEditButtonPanel: DefaultEditButtonPanel = DefaultEditButtonPanel {
+	def defaultEditButtonPanel: DefaultEditButtonPanel = DefaultEditButtonPanel {
 		control: bind control
 		visible: bind (mode == inspectorDefaultMode)
 	}
 
-	var statementEditButtonPanel: StatementEditButtonPanel = StatementEditButtonPanel {
+	def statementEditButtonPanel: StatementEditButtonPanel = StatementEditButtonPanel {
 		control: bind control
 		visible: bind (mode == inspectorStatementMode)
 	}
-	var argumentEditButtonPanel: ArgumentEditButtonPanel = ArgumentEditButtonPanel {
+	def argumentEditButtonPanel: ArgumentEditButtonPanel = ArgumentEditButtonPanel {
 		control: bind control
 		visible: bind (mode == inspectorArgumentMode)
 	}
 
-	var premiseEditButtonPanel: PremiseEditButtonPanel = PremiseEditButtonPanel {
+	def premiseEditButtonPanel: PremiseEditButtonPanel = PremiseEditButtonPanel {
 		control: bind control
 		visible: bind (mode == inspectorPremiseMode)
 	}
 
-	var graphEditButtonPanel: GraphEditButtonPanel = GraphEditButtonPanel {
+	def graphEditButtonPanel: GraphEditButtonPanel = GraphEditButtonPanel {
 		control: bind control
 		visible: bind (mode == inspectorGraphMode)
 	}
 
-	override var content = bind [
+	override def content = bind [
 		LayoutRect {
 			width: bind inspectorPanelWidth;
+			height: bind editButtonPanelHeight
 			fill: panelBackground
+			stroke: Color.BLACK
 		},
-		defaultEditButtonPanel,
-		graphEditButtonPanel,
-		statementEditButtonPanel,
-		argumentEditButtonPanel,
-		premiseEditButtonPanel,
+		PaddedVBox {
+			layoutInfo: inspectorLayoutInfo
+			nodeHPos: HPos.CENTER
+			hpos: HPos.CENTER
+			xPadding: INSPECTOR_PANEL_SPACING
+			yPadding: INSPECTOR_PANEL_SPACING
+			content: bind Stack {
+				content: bind [
+					defaultEditButtonPanel,
+					graphEditButtonPanel,
+					statementEditButtonPanel,
+					argumentEditButtonPanel,
+					premiseEditButtonPanel,
+				]
+			}
+		}
 	];
 
 	public function editStatement(s: Statement): Void {
@@ -197,8 +221,7 @@ public class MasterEditButtonPanel extends Panel {
 	/**
 	* General update function. Assumes that mode has been set before.
 	*/
-	public function update(): Void {
-	}
+	public function update(): Void {}
 }
 
 

@@ -21,7 +21,6 @@ import javafx.scene.paint.Color;
 
 // general imports
 import javafx.scene.Scene;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -40,6 +39,9 @@ import carneadesgui.view.MasterEditButtonPanel;
 import carneadesgui.view.GraphListView;
 import carneadesgui.view.ToolBar;
 import carneadesgui.view.GraphUpdate;
+import javafx.scene.layout.Stack;
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
 
 
 /**
@@ -47,30 +49,38 @@ import carneadesgui.view.GraphUpdate;
 */
 public class StandardView extends CarneadesView {
 
-	var graphPanel: GraphPanel = GraphPanel {
-		constraintX: inspectorPanelWidth + mainPanelSpacing
+	def graphPanel: GraphPanel = GraphPanel {
+		//constraintX: inspectorPanelWidth + mainPanelSpacing
 		constraintY: toolBarHeight
 		graph: bind currentGraph
 		control: bind control
 	}
 
-	var graphListView: GraphListView = GraphListView {
+	def graphListView: GraphListView = GraphListView {
 		control: bind control
 		view: bind this
+		translateX: bind appWidth - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
+		translateY: INSPECTOR_WINDOWEDGE_PADDING
 	}
 
 
-	var masterEditButtonPanel: MasterEditButtonPanel = MasterEditButtonPanel {
+	def masterEditButtonPanel: MasterEditButtonPanel = MasterEditButtonPanel {
 		mode: bind mode
 		control: bind control
+		translateX: bind appWidth - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
+		translateY: bind { if (not graphListView.minimized) GRAPHLISTVIEW_HEIGHT else GRAPHLISTVIEW_MINIMIZED_HEIGHT }
+			+ 2 * INSPECTOR_WINDOWEDGE_PADDING
 	}
 
-	var inspectorPanel: InspectorPanel = InspectorPanel {
+	def inspectorPanel: InspectorPanel = InspectorPanel {
 		mode: bind mode
 		control: bind control
-	};
+		translateX: bind appWidth - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
+		translateY: bind { if (not graphListView.minimized) GRAPHLISTVIEW_HEIGHT else GRAPHLISTVIEW_MINIMIZED_HEIGHT }
+			+ 3 * INSPECTOR_WINDOWEDGE_PADDING + editButtonPanelHeight
+	}
 
-	var toolBar: ToolBar = ToolBar {
+	def toolBar: ToolBar = ToolBar {
 		control: bind control
 	}
 
@@ -128,13 +138,13 @@ public class StandardView extends CarneadesView {
 		}
 		spacing: SIDEBAR_SPACING
 		content: bind [
-			graphListView,
+			/*graphListView,
 			masterEditButtonPanel,
-			inspectorPanel
+			inspectorPanel*/
 		]
 	}
 
-	override var view = Stage {
+	override def view = Stage {
 		title: bind displayTitle
 		width: bind appWidth with inverse
 		height: bind appHeight with inverse
@@ -152,8 +162,18 @@ public class StandardView extends CarneadesView {
 					spacing: mainPanelSpacing
 					content: bind [
 						toolBar,
+						Stack {
+							nodeHPos: HPos.LEFT
+							nodeVPos: VPos.TOP
+							content: bind [
+								graphPanel,
+								graphListView,
+								masterEditButtonPanel,
+								inspectorPanel
+							]
+						}
 						// the horizontal layout of display and inspectors.
-						HBox {
+						/*HBox {
 							layoutInfo: LayoutInfo {
 								width: bind appWidth
 								height: bind appHeight - toolBarHeight
@@ -161,9 +181,9 @@ public class StandardView extends CarneadesView {
 							spacing: mainPanelSpacing
 							content: bind [
 								graphPanel,
-								rightSideBar
+								//rightSideBar
 							]
-						}
+						}*/
 					]
 				}
 			]
