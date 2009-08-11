@@ -38,7 +38,7 @@ public class InspectorLabel extends Label {
 
 var rightColumnLayoutInfo: LayoutInfo = LayoutInfo {
 	minWidth: inspectorPanelWidth - inspectorLabelWidth
-	width: inspectorPanelWidth - inspectorLabelWidth - 10
+	width: inspectorPanelWidth - inspectorLabelWidth - 10 - INSPECTOR_PADDING
 }
 
 public class InspectorTextBox extends TextBox {
