@@ -62,7 +62,7 @@ public class CenteredStatementText extends Text {
     ];
 
 	override var font = Font {
-		name: "Courier"
+		name: "Monaco"
 	}
 
 	public var boundingHeight: Number;
@@ -71,22 +71,6 @@ public class CenteredStatementText extends Text {
     override var textOrigin = TextOrigin.TOP;
 
 	public function changeText(t: String): Void {
-		/*
-		var text: String = t;
-		var check: CenteredStatementText = CenteredStatementText {
-			content: text
-			wrappingWidth: wrappingWidth
-			boundingHeight: boundingHeight
-			visible: false
-		};
-		while (check.boundsInLocal.height > boundingHeight and boundingHeight != 0) {
-			text = text.substring(0, text.length() - 1);
-			check.content = "{text} ...";
-		}
-		content = check.content;
-		check = null;*/
-		
-
 		content = "{ if (t.length() > maxChars ) "{t.substring(0, 26)} ..." else t}";
 	}
 }
@@ -143,22 +127,23 @@ public class ArgumentBox extends ArgumentElement {
     override var bottomBrink = argumentBoxBottomBrink;
 
     override var text = CenteredStatementText {
-	content: bind {
+		content: bind {
 			if ((argument.conclusion.standard) instanceof BestArgument
 				or (argument.conclusion.standard) instanceof Preponderance
 				or (argument.conclusion.standard) instanceof ClearAndConvincingEvidence
 				or (argument.conclusion.standard) instanceof BeyondReasonableDoubt
 				)
 				"{if (argument.pro) '+' else '-'}.{(argument.weight * 100) as Integer}"
-				else "{if (argument.pro) '+' else '-'}"}
+			else "{if (argument.pro) '+' else '-'}"
+		}
 		textAlignment: TextAlignment.CENTER
 		textOrigin: TextOrigin.BASELINE
 		x: bind x
 		// The text Y coordinate positioning is dirty as the text currently lacks a currentheight attribute
 		y: bind y + 10
-    } // Text
+	} // Text
 
-    var mainCircle: Circle = Circle {
+	var mainCircle: Circle = Circle {
 		centerX: bind x
 		centerY: bind y
 		radius: bind argumentCircleDefaultRadius
@@ -173,37 +158,26 @@ public class ArgumentBox extends ArgumentElement {
 		stroke: Color.BLACK
 		blocksMouse: false
 
-		effect: {
-			if (drawShadows) {
-			DropShadow {
-				color: bind shadowColor
-				offsetX: bind xShadowShift
-				offsetY: bind yShadowShift
-				radius: bind shadowBlurRadius
-			}
-	    } else null
-	}
+		onMouseClicked: function(e: MouseEvent): Void {
+			control.processGraphSelection(this);
+		}
 
-	onMouseClicked: function(e: MouseEvent): Void {
-	    control.processGraphSelection(this);
-	}
+		onMouseDragged: function(e: MouseEvent) {
+			if (this.selected and (e.button == MouseButton.PRIMARY)) { control.startDrag(this); }
+		}
 
-	onMouseDragged: function(e: MouseEvent) {
-	    if (this.selected and (e.button == MouseButton.PRIMARY)) { control.startDrag(this); }
-	}
+		onMouseReleased: function(e: MouseEvent) {
+			if (control.dragging) {	control.endDrag(); }
+		}
 
-	onMouseReleased: function(e: MouseEvent) {
-	    if (control.dragging) {	control.endDrag(); }
-	}
+		onMouseEntered: function(e: MouseEvent) {
+			if (control.dragging) { control.setDraggingOver(this); }
+		}
 
-	onMouseEntered: function(e: MouseEvent) {
-	    if (control.dragging) { control.setDraggingOver(this); }
+		onMouseExited: function(e: MouseEvent) {
+			if (control.dragging) { control.setDraggingOver(null); }
+		}
 	}
-
-	onMouseExited: function(e: MouseEvent) {
-	    if (control.dragging) { control.setDraggingOver(null); }
-	}
-    }
 
     override var selection = Circle {
 		fill: Color.TRANSPARENT
@@ -219,10 +193,10 @@ public class ArgumentBox extends ArgumentElement {
     override function create():Node {
 		Group {
 			content: [
-			mainCircle,
-			selection,
-			text,
-			middlePoint
+				mainCircle,
+				selection,
+				text,
+				middlePoint
 			] // content
 		} // Group
     } // composeNode
@@ -232,16 +206,6 @@ public class ArgumentBox extends ArgumentElement {
  * The statement view object.
  */
 public class StatementBox extends ArgumentElement {
-
-	postinit {
-		/* Those calls should not be necessary, but there is currently no way to initialize
-		a StatementBox object with the wrappign dimensions of the text being non-zero.
-		*/
-		// commented out because of shift to maxChar solution.
-		text.wrappingWidth = mainRectWidth - statementBoxTextHorizontalPadding;
-		//(text as CenteredStatementText).boundingHeight = mainRectHeight;
-		//(text as CenteredStatementText).changeText(statement.wff);
-	}
 
     /**
      * The represented model statement.
@@ -281,17 +245,6 @@ public class StatementBox extends ArgumentElement {
 		stroke: bind { if (fillStatements) Color.BLACK else statusColor }
 		strokeWidth: 1
 
-		effect: {
-			if (drawShadows) {
-				DropShadow {
-					color: bind shadowColor
-					offsetX: bind xShadowShift
-					offsetY: bind yShadowShift
-					radius: bind shadowBlurRadius
-				}
-			} else null
-		}
-
 		onMouseClicked: function(e: MouseEvent): Void {
 			control.processGraphSelection(this);
 		}
@@ -317,8 +270,7 @@ public class StatementBox extends ArgumentElement {
 		blocksMouse: false
 		x: bind x - (acceptableCircleWidth/ 2)
 		y: bind y
-		wrappingWidth: mainRectWidth - statementBoxTextHorizontalPadding
-		//boundingHeight: mainRectHeight
+		wrappingWidth: bind mainRectWidth - statementBoxTextHorizontalPadding
     } // Text
 
     def acceptableCircle: Circle = Circle {
@@ -328,17 +280,6 @@ public class StatementBox extends ArgumentElement {
 		fill: bind { if (statement.ok) statusAcceptedColor else null }
 		strokeWidth: 1
 		stroke: Color.BLACK
-
-		effect: {
-			if (drawShadows) {
-				DropShadow {
-					color: bind shadowColor
-					offsetX: bind xShadowShift
-					offsetY: bind yShadowShift
-					radius: bind shadowBlurRadius
-				}
-			} else null
-		}
     }
 
     def acceptableCompCircle: Circle = Circle {
@@ -348,17 +289,7 @@ public class StatementBox extends ArgumentElement {
 		fill: bind { if (statement.complementOk) statusRejectedColor else null }
 		strokeWidth: 1
 		stroke: Color.BLACK
-		effect: {
-			if (drawShadows) {
-				DropShadow {
-					color: bind shadowColor
-					offsetX: bind xShadowShift
-					offsetY: bind yShadowShift
-					radius: bind shadowBlurRadius
-				}
-			} else null
-		}
-    }
+	}
 
     override function create():Node {
 		Group {

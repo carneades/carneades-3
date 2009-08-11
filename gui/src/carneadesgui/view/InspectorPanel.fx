@@ -61,19 +61,31 @@ class StatementInspector extends Inspector {
 	// status inspector
 	var statusLabel: Label = InspectorLabel { text: "status" }
 	var statusGroup: ToggleGroup = ToggleGroup {}
-	var statusButtons: RadioButton[] = [for (s in statuses)
-		InspectorRadioButton {
-			text: s
-			toggleGroup: statusGroup
-			onMouseClicked: function(e: MouseEvent): Void {
-				control.changeStatementStatus(statement, s);
-			}
+	var issueButton = InspectorRadioButton {
+		text: "issue"
+		toggleGroup: statusGroup
+		onMouseClicked: function(e: MouseEvent): Void {
+			control.changeStatementStatus(statement, "stated");
 		}
-	];
+	}
+	var trueButton = InspectorRadioButton {
+		text: "true"
+		toggleGroup: statusGroup
+		onMouseClicked: function(e: MouseEvent): Void {
+			control.changeStatementStatus(statement, "assumed true");
+		}
+	}
+	var falseButton = InspectorRadioButton {
+		text: "false"
+		toggleGroup: statusGroup
+		onMouseClicked: function(e: MouseEvent): Void {
+			control.changeStatementStatus(statement, "assumed false");
+		}
+	}
+	
 	var statusBox: HBox = HBox {
 		content: [
-			statusLabel,
-			VBox { content: statusButtons }
+			statusLabel, VBox { content: [ issueButton, trueButton, falseButton ] }
 		]
 	}
 
@@ -138,7 +150,9 @@ class StatementInspector extends Inspector {
 		if (statement != null) {
 			idTextBox.text = statement.id;
 			contentTextBox.text = statement.wff;
-			for (s in statusButtons) s.selected = { if (s.text == statement.status) true else false };
+			issueButton.selected = statement.stated() or statement.questioned();
+			trueButton.selected = statement.assumedTrue() or statement.accepted();
+			falseButton.selected = statement.assumedFalse() or statement.rejected();
 			for (s in standardButtons) s.selected = { if (s.text == statement.getStandard()) true else false};
 			acceptableStatementCheckBox.selected =  { if (statement.ok) true else false };
 			acceptableComplementCheckBox.selected =  { if (statement.complementOk) true else false };
@@ -228,8 +242,11 @@ class ArgumentInspector extends Inspector {
 	}
 	var weightTextBox: TextBox = InspectorTextBox {
 		editable: false
-		text: bind "{weightSlider.value}"
-		//action: function(): Void { control.changeArgumentScheme(argument, schemeTextBox.text);}
+		text: bind { 
+		if (("{weightSlider.value}").length() <= 4)
+			"{weightSlider.value}"
+			else ("{weightSlider.value}").substring(0, 4)
+		}
 	}
 	var weightBox: HBox = HBox {
 		content: [weightLabel, VBox { content: [weightSlider, weightTextBox] }]

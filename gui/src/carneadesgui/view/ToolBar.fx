@@ -35,8 +35,6 @@ class ToolBarButton extends ImageButton {
 	public var control: CarneadesControl;
 }
 
-
-
 /**
 * The class for the upper toolbar of the standard view.
 */
@@ -45,8 +43,7 @@ public class ToolBar extends Panel {
 
 	var debugButton: Button = Button {
 		text: "debug"
-		onMouseClicked: function(e: MouseEvent): Void {
-		}
+		onMouseClicked: function(e: MouseEvent): Void {}
 	}
 
 	var openButton: ToolBarButton = ToolBarButton {
@@ -128,7 +125,7 @@ public class ToolBar extends Panel {
 				saveAsButton,
 				undoButton,
 				redoButton,
-				// saveAsImageButton,
+				//saveAsImageButton,
 				quitButton,
 				// alternateViewButton
 			]

@@ -76,13 +76,6 @@ public var impossibleColor: Color = Color.RED;
 public var edgeSelectionWidth: Integer = 5;
 public var selectedEdgeWidth: Integer = 3;
 
-// shadows
-public var drawShadows: Boolean = false;
-public var shadowColor: Color = Color.rgb(0, 0, 0, 0.7 );
-public var shadowBlurRadius: Integer = 4;
-public var xShadowShift: Integer = 4;
-public var yShadowShift: Integer = 6;
-
 // animations
 public var zoomTime: Number = 4.0; // in seconds
 public var zoomLimits: Number[] = [0.2, 3.0];

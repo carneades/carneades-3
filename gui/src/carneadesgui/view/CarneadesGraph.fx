@@ -51,11 +51,11 @@ public class CarneadesGraph extends Graph {
 
     // the invisible root node
     override var root = CarneadesVertex {
-	caption: "root"
-	x: 0
-	y: 0
-	visible: false
-	toBeDisplayed: false
+		caption: "root"
+		x: 0
+		y: 0
+		visible: false
+		toBeDisplayed: false
     }
 
     function getStatementBox(s: Statement): StatementBox {
@@ -207,11 +207,11 @@ public class CarneadesGraph extends Graph {
 						var pl: PremiseLink = getPremiseLink(p);
 						if (pl == null) {
 							insert PremiseLink {
-							premise: p
-							producer: getStatementBox(p.statement)
-							recipient: getArgumentBox(a)
-							negated: bind p.negative
-							control: bind control
+								premise: p
+								producer: getStatementBox(p.statement)
+								recipient: getArgumentBox(a)
+								negated: bind p.negative
+								control: bind control
 							} into edges;
 						} else {
 							if (pl.recipient != ab) pl.recipient = ab;
@@ -301,52 +301,52 @@ public class CarneadesGraph extends Graph {
     }
 
     function toEdges(statements: Statement[], arguments: Argument[]): Edge[] {
-	var links: Edge[];
+		var links: Edge[];
 
-	// 1. argument links
-	for (a in arguments where (a.conclusion != null)) {
-		var link: Edge;
-		var producer: ArgumentBox[] = (for (v in vertices where
-		    ((v instanceof ArgumentBox)
-		    and (v as ArgumentBox).argument == a))
-			    { v as ArgumentBox});
-		var recipient: StatementBox[] = (for (v in vertices where
-		    ((v instanceof StatementBox)
-		    and (v as StatementBox).statement == a.conclusion))
-			    { v as StatementBox });
+		// 1. argument links
+		for (a in arguments where (a.conclusion != null)) {
+			var link: Edge;
+			var producer: ArgumentBox[] = (for (v in vertices where
+				((v instanceof ArgumentBox)
+				and (v as ArgumentBox).argument == a))
+					{ v as ArgumentBox});
+			var recipient: StatementBox[] = (for (v in vertices where
+				((v instanceof StatementBox)
+				and (v as StatementBox).statement == a.conclusion))
+					{ v as StatementBox });
 
-		link = ArgumentLink {
-			argument: a
-			producer: producer[0]
-			recipient: recipient[0]
-			control: bind control
+			link = ArgumentLink {
+				argument: a
+				producer: producer[0]
+				recipient: recipient[0]
+				control: bind control
+			}
+			insert link into links;
 		}
-		insert link into links;
-	}
 
-	// 2. Premises
-	for (a in arguments) {
-	    for (p in a.premises) {
-		var link: Edge;
-		var recipient: ArgumentBox[] = (for (v in vertices where
-		    ((v instanceof ArgumentBox)
-		    and (v as ArgumentBox).argument == a))
-			    { v as ArgumentBox});
-		var producer: StatementBox[] = (for (v in vertices where
-		    ((v instanceof StatementBox)
-		    and (v as StatementBox).statement == p.statement))
-			    { v as StatementBox });
-		link = PremiseLink {
-		    premise: p
-		    producer: producer[0]
-		    recipient: recipient[0]
-		    negated: bind p.negative
-		    control: bind control
+		// 2. Premises
+		for (a in arguments) {
+			for (p in a.premises) {
+				var link: Edge;
+				var recipient: ArgumentBox[] = (for (v in vertices where
+					((v instanceof ArgumentBox)
+					and (v as ArgumentBox).argument == a))
+						{ v as ArgumentBox});
+				var producer: StatementBox[] = (for (v in vertices where
+					((v instanceof StatementBox)
+					and (v as StatementBox).statement == p.statement))
+						{ v as StatementBox });
+				link = PremiseLink {
+					premise: p
+					producer: producer[0]
+					recipient: recipient[0]
+					negated: bind p.negative
+					control: bind control
+				}
+				insert link into links;
+			}
 		}
-		insert link into links;
-	    }
-	}
-	return links;
+		return links;
     }
 
     public function printGraph(): Void {
