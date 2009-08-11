@@ -133,6 +133,7 @@ class StatementInspector extends Inspector {
 
 	override var content = [
 		VBox {
+			spacing: INSPECTOR_PANEL_SPACING
 			content: bind [
 				idBox,
 				contentBox,
@@ -255,6 +256,7 @@ class ArgumentInspector extends Inspector {
 
 	override var content = [
 		VBox {
+			spacing: INSPECTOR_PANEL_SPACING
 			content: bind [
 				idBox,
 				titleBox,
@@ -319,13 +321,14 @@ class PremiseInspector extends Inspector {
     }
 
     override var content = [
-	VBox {
-	    content: bind [
-		roleBox,
-		exceptionBox,
-		negatedBox
-	    ]
-	}
+		VBox {
+			spacing: INSPECTOR_PANEL_SPACING
+			content: bind [
+			roleBox,
+			exceptionBox,
+			negatedBox
+			]
+		}
     ];
 
     /**
@@ -358,6 +361,7 @@ class GraphInspector extends Inspector {
 
 	override var content = [
 		VBox {
+			spacing: INSPECTOR_PANEL_SPACING
 			content: bind [
 				titleBox,
 			]

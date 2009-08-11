@@ -28,6 +28,10 @@ import javafx.geometry.VPos;
 
 import javafx.scene.image.Image;
 
+import javafx.scene.effect.Glow;
+
+import javafx.scene.shape.Rectangle;
+
 
 class ToolBarButton extends ImageButton {
 	override var width = toolBarHeight - 10;
@@ -108,6 +112,9 @@ public class ToolBar extends Panel {
 			width: bind appWidth
 			height: bind toolBarHeight
 			fill: bind toolPanelBackground
+			effect: Glow {
+				level: 0.5
+			}
 		},
 		HBox {
 			vpos: VPos.CENTER
@@ -119,6 +126,7 @@ public class ToolBar extends Panel {
 				minHeight: bind toolBarHeight
 			}
 			content: bind [
+				Rectangle {}, // dead filler rectangle
 				//debugButton,
 				openButton,
 				saveButton,
