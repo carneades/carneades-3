@@ -110,8 +110,10 @@ public var toolBarHeight: Integer = 60;
 public var toolBarSpacing: Integer = 10;
 
 // inspector panel constants
-public var inspectorPanelWidth: Integer = 220;
-public var inspectorLabelWidth: Integer = 80;
+public def SIDEBAR_SPACING: Integer = 10;
+public def INSPECTOR_PANEL_SPACING: Integer = 5;
+public var inspectorPanelWidth: Integer = 280;
+public var inspectorLabelWidth: Integer = 100;
 public var inspectorDefaultMode: Integer = 0;
 public var inspectorStatementMode: Integer = 1;
 public var inspectorArgumentMode: Integer = 2;
@@ -124,7 +126,7 @@ public var listStatementMode: Integer = 2;
 public var listArgumentMode: Integer = 3;
 public var listViewHeight: Integer = 160;
 public var listEntryFieldHeight: Integer = 20;
-public var tabButtonHeight: Integer = 40;
+public var tabButtonHeight: Integer = 25;
 
 // Edit button panel constants
 public var editButtonPanelHeight: Integer = 50;

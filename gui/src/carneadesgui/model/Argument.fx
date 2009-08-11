@@ -108,11 +108,11 @@ public class Statement {
 
     function update () : Void {
     	var pro = graph.arguments[arg | arg.conclusion == this and arg.pro];
-	var con = graph.arguments[arg | arg.conclusion == this and not arg.pro];
+		var con = graph.arguments[arg | arg.conclusion == this and not arg.pro];
     	ok = standard.satisfied(graph,pro,con);
     	complementOk = standard.satisfied(graph,con,pro);
     	for (arg in arguments) arg.update();
-	status = getStatus();
+		status = getStatus();
     }
 
     public function stated () : Boolean {
@@ -238,7 +238,7 @@ public class Argument {
 			conclusion.update();
 		}
 
-	public var scheme: Scheme;
+	public var scheme: Scheme = Scheme {};
 
     public var premises: Premise[]
     	on replace {
