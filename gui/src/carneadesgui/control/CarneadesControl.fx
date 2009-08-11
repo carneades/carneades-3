@@ -34,17 +34,25 @@ import carneadesgui.view.GraphUpdate;
 // Other Control Imports
 import carneadesgui.control.Commands.*;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 
 // File Chooser for Load/Save
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import carneadesgui.CarneadesGUI;
 
-import javafx.reflect.*;
-import javafx.scene.*;
+
+
+
+import java.awt.Frame;
+import javax.swing.JFrame;
+
+import java.applet.Applet;
+
+import java.awt.Container;
+
+import javafx.geometry.Bounds;
 import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 
 /**
  * Central control class for the Carneades application. It instantiates the needed view and model objects
@@ -950,39 +958,33 @@ public class CarneadesControl {
 
 	public function saveGraphAsImage(): Void {
 		// this is an adapted copy and paste code from a hack found at:
-		// http://forums.sun.com/thread.jspa?threadID=5392334
+		// http://blogs.sun.com/rakeshmenonp/entry/javafx_save_as_image
 		// Revise this once the API does it out of the box.
-		var node = view.currentGraph;
-		var shiftX: Number = graph.boundsInLocal.width / 2;
-		var shiftY: Number = graph.boundsInLocal.height / 2;
-		var width = graph.boundsInLocal.width;
-		var height =  graph.boundsInLocal.height + 200;
-		graph.translateX = shiftX;
+	}
 
-		var context = FXLocal.getContext();
-		var nodeClass = context.findClass("javafx.scene.Node");
-		var getFXNode = nodeClass.getFunction("impl_getPGNode");
-		var sgNode = (getFXNode.invoke(context.mirrorOf(node)) as FXLocal.ObjectValue).asObject();
-		var g2dClass = (context.findClass("java.awt.Graphics2D") as FXLocal.ClassType).getJavaImplementationClass();
-		var boundsClass=(context.findClass("com.sun.javafx.geom.Bounds2D") as FXLocal.ClassType).getJavaImplementationClass();
-		var affineClass=(context.findClass("com.sun.javafx.geom.AffineTransform") as FXLocal.ClassType).getJavaImplementationClass();
-		var affine:com.sun.javafx.geom.AffineTransform;
-		var getBounds = sgNode.getClass().getMethod("getContentBounds",boundsClass,affineClass);
-		var bounds = getBounds.invoke(sgNode, new com.sun.javafx.geom.Bounds2D(), new com.sun.javafx.geom.AffineTransform()) as com.sun.javafx.geom.Bounds2D;
-		var paintMethod = sgNode.getClass().getMethod("render", g2dClass, boundsClass, affineClass);
-    
-		var img = new java.awt.image.BufferedImage(width, height,
-			java.awt.image.BufferedImage.TYPE_INT_ARGB);
+	function getContainer() : Container {
+		var container : Container;
+		if("{__PROFILE__}" == "browser") { // Applet
+			container = FX.getArgument("javafx.applet") as Applet;
+		} else { // Standalone
+			var frames = Frame.getFrames();
+			// We may improve this logic so as to find the
+			// exact Stage (Frame) based on its title
+			container = (frames[0] as JFrame).getContentPane();
+		}
+		return container;
+	}
 
-		var g2 = img.createGraphics();
-		paintMethod.invoke(sgNode,g2, bounds, new com.sun.javafx.geom.AffineTransform());
-		g2.dispose();
+	function save(container : Container, bounds : Bounds, file : File) {
 
-		var savefile = new java.io.File("capture.png");
-		javax.imageio.ImageIO.write(img, "png", savefile);
+		var bufferedImage = new BufferedImage(
+			bounds.width, bounds.height, BufferedImage.TYPE_INT_ARGB);
+		var graphics = bufferedImage.getGraphics();
+		graphics.translate(-bounds.minX, -bounds.minY);
+		container.paint(graphics);
+		graphics.dispose();
 
-		// restore graph
-		graph.translateX = 0;
+		ImageIO.write(bufferedImage, "png", file);
 	}
 
     public function defaultArgumentGraph(id: String): ArgumentGraph {

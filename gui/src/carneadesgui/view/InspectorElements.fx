@@ -67,6 +67,8 @@ public class InspectorCheckBox extends CheckBox {
 public class InspectorSlider extends Slider {
 	override var layoutInfo = rightColumnLayoutInfo;
 	var fires: Boolean = true;
+	override def snapToTicks = true;
+	override def majorTickUnit = 0.01;
 	public var action: function(): Void = null;
 	override var value = 0.5 on replace { if (fires) action(); }
 	public function setValue(v: Number): Void {
