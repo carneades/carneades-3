@@ -44,7 +44,10 @@ class StatementInspector extends Inspector {
 	public var statement: Statement = null;
 
 	// id inspector
-	def idTextBox: TextBox = InspectorTextBox { editable: false }
+	def idTextBox: TextBox = InspectorTextBox {
+		editable: bind idsEditable
+		action: function(): Void { control.changeStatementId(statement, idTextBox.text); }
+	}
 	def idLabel: Label = InspectorLabel { text: "id" }
 	def idBox: HBox = HBox {
 		content: [idLabel, idTextBox]
@@ -142,8 +145,8 @@ class StatementInspector extends Inspector {
 					idBox,
 					contentBox,
 					statusBox,
+					standardBox,
 					acceptableBox,
-					standardBox
 				]
 			}
 		}
@@ -173,7 +176,10 @@ class ArgumentInspector extends Inspector {
 	public var argument: Argument = null;
 
 	// id inspector
-	def idTextBox: TextBox = InspectorTextBox { editable: false }
+	def idTextBox: TextBox = InspectorTextBox {
+		editable: bind idsEditable
+		action: function(): Void { control.changeArgumentId(argument, idTextBox.text); }
+	}
 	def idLabel: Label = InspectorLabel { text: "id" }
 	def idBox: HBox = HBox {
 		content: [idLabel, idTextBox]
@@ -190,9 +196,9 @@ class ArgumentInspector extends Inspector {
 	}
 
 	// defensible?
-	def defensibleLabel: Label = InspectorLabel { text: "defensible" }
+	def defensibleLabel: Label = InspectorLabel { text: "applicable" }
 	def defensibleCheckBox = InspectorCheckBox {
-		text: "defensible"
+		text: ""
 		disable: true
 		defined: true
 	}
@@ -265,10 +271,10 @@ class ArgumentInspector extends Inspector {
 			content: bind [
 				idBox,
 				titleBox,
-				defensibleBox,
 				schemeBox,
 				directionBox,
 				weightBox,
+				defensibleBox,
 			]
 		}
 	];
@@ -308,7 +314,7 @@ class PremiseInspector extends Inspector {
     // exception inspector
     def exceptionLabel: Label = InspectorLabel { text: "exception" }
     def exceptionCheckBox: InspectorCheckBox = InspectorCheckBox {
-	    text: "exception"
+	    text: ""
 	    action: function(): Void { control.changePremiseType(premise, exceptionCheckBox.selected); }
     }
     def exceptionBox: HBox = HBox {
@@ -318,7 +324,7 @@ class PremiseInspector extends Inspector {
     // negation inspector
     def negatedLabel: Label = InspectorLabel { text: "negated" }
     def negatedCheckBox: InspectorCheckBox = InspectorCheckBox {
-	    text: "negate"
+	    text: ""
 	    action: function(): Void { control.negatePremise(premise); }
     }
     def negatedBox: HBox = HBox {
