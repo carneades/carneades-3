@@ -6,54 +6,48 @@
 
 package carneadesgui.view;
 
-import javafx.scene.layout.Panel;
 import javafx.scene.layout.LayoutInfo;
 
 import carneadesgui.GC.*;
 import carneadesgui.model.Argument;
 import carneadesgui.model.Argument.*;
 import carneadesgui.view.GraphUpdate;
-import carneadesgui.view.ImageButton;
 import carneadesgui.control.CarneadesControl;
 
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.Group;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextBox;
 import javafx.scene.input.MouseEvent;
 import java.lang.String;
-import javafx.scene.paint.Color;
-
-import javafx.geometry.HPos;
-
-import javafx.scene.image.Image;
-
-import javafx.scene.shape.Rectangle;
-
 import javafx.scene.layout.VBox;
 
-var listEntryLayoutInfo: LayoutInfo = LayoutInfo {
+import javafx.scene.Node;
+
+
+import javafx.scene.control.Button;
+
+def listEntryLayoutInfo: LayoutInfo = LayoutInfo {
 	minWidth: bind inspectorPanelWidth - 2*INSPECTOR_PADDING;
 	width: bind inspectorPanelWidth - 2*INSPECTOR_PADDING;
 	minHeight: bind listEntryFieldHeight;
 	height: bind listEntryFieldHeight;
 }
 
-var tabButtonLayoutInfo: LayoutInfo = LayoutInfo {
-		minHeight: bind tabButtonHeight;
-		height: bind tabButtonHeight;
+def tabButtonLayoutInfo: LayoutInfo = LayoutInfo {
+	maxHeight: bind tabButtonHeight;
+	minHeight: bind tabButtonHeight;
+	height: bind tabButtonHeight;
 }
 
-
 // improved widget classes
-class TabButton extends ToggleButton {
-	override var layoutInfo = tabButtonLayoutInfo;
+class TabButton extends Button {
+	public var toggleGroup: ToggleGroup;
+	override def layoutInfo = tabButtonLayoutInfo;
 }
 
 class ListEntryField extends TextBox {
-	override var layoutInfo = listEntryLayoutInfo;
 	override var action = function() { listView.filter = text; };
 	public var listView: GraphList = null;
 }
@@ -85,13 +79,6 @@ class GraphListGroup {
 
 class GraphList extends ListView {
 	override var items = bind listItems;
-	//override var layoutInfo = listLayoutInfo;
-	// The ListView does not adhere to its layoutInfo attribute in JavaFX 1.2
-	override var width = bind inspectorPanelWidth - 2*INSPECTOR_PADDING - 2;
-	override var height = 
-		bind { if (not minimized) GRAPHLISTVIEW_HEIGHT else GRAPHLISTVIEW_MINIMIZED_HEIGHT }
-		- tabButtonHeight  - 3*GRAPHLISTVIEW_SPACING
-		- listEntryFieldHeight - 2*INSPECTOR_PADDING;
 	public var listItems: ListItem[] = null;
 	public var listedModels: Object[] = null;
 
@@ -162,125 +149,109 @@ class GraphList extends ListView {
 /**
 * The Panel containing the tabs, entry field and list.
 */
-public class GraphListView extends Panel {
-	public-read var minimized: Boolean = false;
-	override var width = inspectorPanelWidth;
-	override var height = { if (not minimized) GRAPHLISTVIEW_HEIGHT else GRAPHLISTVIEW_MINIMIZED_HEIGHT };
+public class GraphListView extends MoveablePanel {
+	override def title = "Search Elements";
+	override def width = inspectorPanelWidth;
+	override def height = GRAPHLISTVIEW_HEIGHT;
+	override def padding = INSPECTOR_PADDING;
+
 	public var control: CarneadesControl = null;
 	public var view: CarneadesView;
+
+	override def onClose = function() {
+		hide();
+	}
+
 	var mode: Integer = listStatementMode;
 
-	var tabGroup: ToggleGroup = ToggleGroup {}
-
-	var graphTabButton: ToggleButton = TabButton {
-		selected: {mode == listGraphMode}
-		toggleGroup: tabGroup
+	def graphTabButton: TabButton = TabButton {
+		strong: bind {mode == listGraphMode}
 		text: "graphs"
 		onMouseClicked: function(e: MouseEvent) {
-			if (minimized) minimized = false;
 			mode = listGraphMode;
 		}
 	}
 
-	var statementTabButton: ToggleButton = TabButton {
-		toggleGroup: tabGroup
-		selected: {mode == listStatementMode}
+	def statementTabButton: TabButton = TabButton {
+		strong: bind {mode == listStatementMode}
 		text: "statements"
 		onMouseClicked: function(e: MouseEvent) {
-			if (minimized) minimized = false;
 			mode = listStatementMode;
 		}
 	}
 
-	var argumentTabButton: ToggleButton = TabButton {
-		toggleGroup: tabGroup
-		selected: {mode == listArgumentMode}
+	def argumentTabButton: TabButton = TabButton {
+		strong: bind {mode == listArgumentMode}
 		text: "arguments"
 		onMouseClicked: function(e: MouseEvent) {
-			if (minimized) minimized = false;
 			mode = listArgumentMode;
 		}
 	}
 
-	def minimizeIcon: Image = Image { url: "{__DIR__}images/icon-minimize.png"}
-	def maximizeIcon: Image = Image { url: "{__DIR__}images/icon-maximize.png"}
-	def sizeButton: ImageButton = ImageButton {
-		width: tabButtonHeight - 2
-		height: tabButtonHeight - 2
-		image: bind if (minimized) maximizeIcon else minimizeIcon
-		action: function() {
-			if (minimized) minimized = false else minimized = true
-		}
+	def listGroup: GraphListGroup = GraphListGroup {};
+
+	def graphListLayoutInfo: LayoutInfo = LayoutInfo{
+		def w: Number = inspectorPanelWidth - 2 * INSPECTOR_PADDING
+		def h: Number = GRAPHLISTVIEW_HEIGHT - 3 * INSPECTOR_PADDING - tabButtonHeight - 2 * INSPECTOR_PANEL_SPACING - MOVEABLEPANEL_TITLE_HEIGHT - listEntryFieldHeight
+		height: h
+		maxHeight: h
+		width: w
+		maxWidth: w
 	}
 
-	var listGroup: GraphListGroup = GraphListGroup {};
+	def entryFieldLayoutInfo: LayoutInfo = LayoutInfo{
+		def w: Number = inspectorPanelWidth - 2 * INSPECTOR_PADDING
+		def h: Number = listEntryFieldHeight
+		height: h
+		maxHeight: h
+		width: w
+		maxWidth: w
+	}
 
-	var graphList: GraphList = GraphList {
+	def graphList: GraphList = GraphList {
+		layoutInfo: graphListLayoutInfo
 	}
 	
-	var graphListEntryField: ListEntryField = ListEntryField {
+	def graphListEntryField: ListEntryField = ListEntryField {
 		listView: graphList
+		layoutInfo: entryFieldLayoutInfo
 	}
 
-	var statementList: GraphList = GraphList {
+	def statementList: GraphList = GraphList {
 		group: listGroup
+		layoutInfo: graphListLayoutInfo
 	}
-	var statementListEntryField: ListEntryField = ListEntryField {
+
+	def statementListEntryField: ListEntryField = ListEntryField {
 		listView: statementList
+		layoutInfo: entryFieldLayoutInfo
 	}
 
-	var argumentList: GraphList = GraphList {
+	def argumentList: GraphList = GraphList {
 		group: listGroup
+		layoutInfo: graphListLayoutInfo
 	}
-	var argumentListEntryField: ListEntryField = ListEntryField {
+	def argumentListEntryField: ListEntryField = ListEntryField {
 		listView: argumentList
+		layoutInfo: entryFieldLayoutInfo
 	}
 
-	def listComponents: Group = Group {
-		content: bind [ 
+	def listComponents: Node[] =
+		bind 
 			if (mode == listGraphMode)
-				VBox {
-					spacing: GRAPHLISTVIEW_SPACING
-					content: bind [graphListEntryField, graphList]
-				}
+				[graphListEntryField, graphList]
 			else if (mode == listStatementMode)
-				VBox {
-					spacing: GRAPHLISTVIEW_SPACING
-					content: bind [ statementListEntryField, statementList ]
-				}
+				[ statementListEntryField, statementList ]
 			else /*(mode == listArgumentMode)*/
-				VBox { 
-					spacing: GRAPHLISTVIEW_SPACING
-					content: bind [ argumentListEntryField, argumentList]
-				}
+				[ argumentListEntryField, argumentList];
+
+	override var content = bind VBox {
+		spacing: GRAPHLISTVIEW_SPACING
+		content: bind [
+			HBox { content: bind [  graphTabButton, statementTabButton, argumentTabButton ] },
+			listComponents
 		]
 	}
-
-	override var content = [
-		LayoutRect {
-			width: inspectorPanelWidth
-			height: bind { if (not minimized) GRAPHLISTVIEW_HEIGHT else GRAPHLISTVIEW_MINIMIZED_HEIGHT }
-			fill: panelBackground
-			stroke: Color.BLACK
-		},
-		PaddedVBox {
-			//width: inspectorPanelWidth
-			//height: bind { if (not minimized) GRAPHLISTVIEW_HEIGHT else GRAPHLISTVIEW_MINIMIZED_HEIGHT }
-			nodeHPos: HPos.LEFT
-			spacing: GRAPHLISTVIEW_SPACING
-			xPadding: INSPECTOR_PADDING
-			yPadding: INSPECTOR_PADDING
-			content: bind [
-				HBox {
-					content: bind [
-						graphTabButton, statementTabButton, argumentTabButton,
-						Rectangle{ width: 20}, sizeButton
-					]
-				},
-				if (not minimized) listComponents else null
-			]
-		}
-	];
 
 	// unselect stuff
 	public function unSelectAll(): Void {

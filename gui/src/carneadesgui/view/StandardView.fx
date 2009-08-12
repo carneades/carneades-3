@@ -35,7 +35,6 @@ import carneadesgui.model.Argument.*;
 
 // view imports
 import carneadesgui.view.InspectorPanel;
-import carneadesgui.view.MasterEditButtonPanel;
 import carneadesgui.view.GraphListView;
 import carneadesgui.view.ToolBar;
 import carneadesgui.view.GraphUpdate;
@@ -59,29 +58,28 @@ public class StandardView extends CarneadesView {
 	def graphListView: GraphListView = GraphListView {
 		control: bind control
 		view: bind this
-		translateX: bind appWidth - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
-		translateY: INSPECTOR_WINDOWEDGE_PADDING
-	}
-
-
-	def masterEditButtonPanel: MasterEditButtonPanel = MasterEditButtonPanel {
-		mode: bind mode
-		control: bind control
-		translateX: bind appWidth - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
-		translateY: bind { if (not graphListView.minimized) GRAPHLISTVIEW_HEIGHT else GRAPHLISTVIEW_MINIMIZED_HEIGHT }
-			+ 2 * INSPECTOR_WINDOWEDGE_PADDING
+		x: appWidth - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING 
+		y: INSPECTOR_WINDOWEDGE_PADDING
+		maxX: bind appWidth - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
+		minX: 0
+		maxY: bind appHeight - toolBarHeight - GRAPHLISTVIEW_HEIGHT - INSPECTOR_WINDOWEDGE_PADDING
+		minY: 0
 	}
 
 	def inspectorPanel: InspectorPanel = InspectorPanel {
-		mode: bind mode
 		control: bind control
-		translateX: bind appWidth - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
-		translateY: bind { if (not graphListView.minimized) GRAPHLISTVIEW_HEIGHT else GRAPHLISTVIEW_MINIMIZED_HEIGHT }
-			+ 3 * INSPECTOR_WINDOWEDGE_PADDING + editButtonPanelHeight
+		view: this
+		x: appWidth - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
+		y: 2 * INSPECTOR_WINDOWEDGE_PADDING + GRAPHLISTVIEW_HEIGHT
+		maxX: bind appWidth - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
+		minX: 0
+		maxY: bind appHeight - toolBarHeight - GRAPHLISTVIEW_HEIGHT - INSPECTOR_WINDOWEDGE_PADDING
+		minY: 0
 	}
 
 	def toolBar: ToolBar = ToolBar {
 		control: bind control
+		view: bind this
 	}
 
 	override function update(u: GraphUpdate) {
@@ -89,6 +87,10 @@ public class StandardView extends CarneadesView {
 			inspectorPanel.update(u);
 		if (u.selection or u.graphSelection or u.listView)
 			graphListView.update(u);
+	}
+
+	override function displayGraphListView(){
+		if (not graphListView.display) graphListView.show();
 	}
 
 	override function isVisible(e: GraphElement) {
@@ -131,19 +133,6 @@ public class StandardView extends CarneadesView {
 		graphListView.unSelectAll();
 	}
 
-	var rightSideBar: VBox = VBox {
-		layoutInfo: LayoutInfo {
-			width: bind inspectorPanelWidth
-			height: bind appHeight - toolBarHeight
-		}
-		spacing: SIDEBAR_SPACING
-		content: bind [
-			/*graphListView,
-			masterEditButtonPanel,
-			inspectorPanel*/
-		]
-	}
-
 	override def view = Stage {
 		title: bind displayTitle
 		width: bind appWidth with inverse
@@ -168,22 +157,9 @@ public class StandardView extends CarneadesView {
 							content: bind [
 								graphPanel,
 								graphListView,
-								masterEditButtonPanel,
 								inspectorPanel
 							]
 						}
-						// the horizontal layout of display and inspectors.
-						/*HBox {
-							layoutInfo: LayoutInfo {
-								width: bind appWidth
-								height: bind appHeight - toolBarHeight
-							}
-							spacing: mainPanelSpacing
-							content: bind [
-								graphPanel,
-								//rightSideBar
-							]
-						}*/
 					]
 				}
 			]
