@@ -25,11 +25,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.LayoutInfo;
 import javafx.geometry.VPos;
-
 import javafx.scene.image.Image;
-
 import javafx.scene.effect.Glow;
-
 import javafx.scene.shape.Rectangle;
 
 
@@ -44,20 +41,22 @@ class ToolBarButton extends ImageButton {
 */
 public class ToolBar extends Panel {
 	public var control: CarneadesControl;
+	public var view: CarneadesView;
+	public def mode: Integer = bind view.mode;
 
-	var debugButton: Button = Button {
+	def debugButton: Button = Button {
 		text: "debug"
 		onMouseClicked: function(e: MouseEvent): Void {}
 	}
 
-	var openButton: ToolBarButton = ToolBarButton {
+	def openButton: ToolBarButton = ToolBarButton {
 		//text: "open"
 		control: bind control
 		image: Image { url: "{__DIR__}images/icon-open.png"	}
 		action: function(): Void { control.open(); }
 	};
 
-	var saveButton: ToolBarButton = ToolBarButton {
+	def saveButton: ToolBarButton = ToolBarButton {
 		//text: "save"
 		disable: bind not control.fileChanged
 		control: bind control
@@ -65,14 +64,14 @@ public class ToolBar extends Panel {
 		action: function(): Void { control.save(); }
 	};
 
-	var saveAsButton: ToolBarButton = ToolBarButton {
+	def saveAsButton: ToolBarButton = ToolBarButton {
 		//text: "save as"
 		control: bind control
 		image: Image { url: "{__DIR__}images/icon-saveas.png"	}
 		action: function(): Void { control.saveAs(); }
 	};
 
-	var undoButton: ToolBarButton = ToolBarButton {
+	def undoButton: ToolBarButton = ToolBarButton {
 		//text: "undo"
 		disable: bind not control.possibleToUndo
 		control: bind control
@@ -80,7 +79,7 @@ public class ToolBar extends Panel {
 		action: function(): Void { control.undo(); }
 	};
 
-	var redoButton: ToolBarButton = ToolBarButton {
+	def redoButton: ToolBarButton = ToolBarButton {
 		// text: "redo"
 		disable: bind not control.possibleToRedo
 		control: bind control
@@ -88,24 +87,69 @@ public class ToolBar extends Panel {
 		action: function(): Void { control.redo(); }
 	};
 
-	var saveAsImageButton: ToolBarButton = ToolBarButton {
+	def displayGraphListButton: ToolBarButton = ToolBarButton {
+		control: bind control
+		image: Image { url: "{__DIR__}images/icon-searchedit.png"	}
+		action: function(): Void { control.displayGraphListView(); }
+	};
+
+	def saveAsImageButton: ToolBarButton = ToolBarButton {
 		control: bind control
 		image: Image { url: "{__DIR__}images/icon-print.png"	}
 		action: function(): Void { control.saveGraphAsImage(); }
 	};
 
-	var quitButton: ToolBarButton = ToolBarButton {
+	def quitButton: ToolBarButton = ToolBarButton {
 		// text: "quit"
 		control: bind control
 		image: Image { url: "{__DIR__}images/icon-quit.png"	}
 		action: function(): Void { control.quit(); }
 	};
 
-	var alternateViewButton: ToolBarButton = ToolBarButton {
+	def alternateViewButton: ToolBarButton = ToolBarButton {
 		// text: "alternate\nview"
 		control: bind control
 		action: function(): Void { control.alternateView(); }
 	};
+
+	def addGraphButton: ToolBarButton = ToolBarButton {
+		control: bind control
+		image: Image { url: "{__DIR__}images/icon-newelement.png"	}
+		action: function(): Void { control.addArgumentGraph(control.defaultArgumentGraph(control.getNewGraphId())); }
+	}
+
+	def addStatementButton: ToolBarButton = ToolBarButton {
+		control: bind control
+		image: Image { url: "{__DIR__}images/icon-newbox.png"	}
+		action: function(): Void { control.addStatement(); }
+	}
+
+	def removeStatementButton: ToolBarButton = ToolBarButton {
+		control: bind control
+		image: Image { url: "{__DIR__}images/icon-stop.png"	}
+		action: function(): Void { control.removeStatementFromBox(null); }
+	}
+
+	def addArgumentButton: ToolBarButton = ToolBarButton {
+		control: bind control
+		image: Image { url: "{__DIR__}images/icon-newelement.png"	}
+		action: function(): Void { control.addArgumentToSelected(); }
+	}
+
+	def removeArgumentButton: ToolBarButton = ToolBarButton {
+		control: bind control
+		image: Image { url: "{__DIR__}images/icon-stop.png"	}
+		action: function(): Void { control.removeArgumentFromBox(null); }
+	}
+
+	def addPremiseButton: ToolBarButton = ToolBarButton {
+		control: bind control
+		image: Image { url: "{__DIR__}images/icon-newelement.png" }
+		action: function(): Void { control.addPremiseToSelected(); }
+	}
+
+	def deadButton1: ToolBarButton = ToolBarButton { disable: true }
+	def deadButton2: ToolBarButton = ToolBarButton { disable: true }
 
 	override var content = bind [
 		LayoutRect {
@@ -131,11 +175,19 @@ public class ToolBar extends Panel {
 				openButton,
 				saveButton,
 				saveAsButton,
+				Rectangle {}, // dead filler rectangle
 				undoButton,
 				redoButton,
-				//saveAsImageButton,
+				Rectangle {}, // dead filler rectangle
+				if (mode == inspectorDefaultMode) [addGraphButton, addStatementButton]
+				else if (mode == inspectorStatementMode) [addArgumentButton, removeStatementButton]
+				else if (mode == inspectorArgumentMode) [addPremiseButton, removeArgumentButton]
+				else if (mode == inspectorPremiseMode) [deadButton1, deadButton2]
+				else null,
+				Rectangle {}, // dead filler rectangle
+				displayGraphListButton,
+				Rectangle {}, // dead filler rectangle
 				quitButton,
-				// alternateViewButton
 			]
 		}
 	];

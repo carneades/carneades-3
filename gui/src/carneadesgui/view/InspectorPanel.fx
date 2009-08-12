@@ -137,18 +137,15 @@ class StatementInspector extends Inspector {
 	}
 
 	override def content = [
-		PaddedVBox {
-			xPadding: INSPECTOR_PANEL_SPACING
-			yPadding: INSPECTOR_PANEL_SPACING
-			content: bind VBox {
-				content: bind [
-					idBox,
-					contentBox,
-					statusBox,
-					standardBox,
-					acceptableBox,
-				]
-			}
+		VBox {
+			spacing: INSPECTOR_PANEL_SPACING
+			content: bind [
+				idBox,
+				contentBox,
+				statusBox,
+				standardBox,
+				acceptableBox,
+			]
 		}
 	];
 
@@ -335,9 +332,9 @@ class PremiseInspector extends Inspector {
 		VBox {
 			spacing: INSPECTOR_PANEL_SPACING
 			content: bind [
-			roleBox,
-			exceptionBox,
-			negatedBox
+				roleBox,
+				exceptionBox,
+				negatedBox
 			]
 		}
     ];
@@ -392,14 +389,17 @@ class GraphInspector extends Inspector {
 /**
 * Panel containing the inspector components.
 */
-public class InspectorPanel extends Panel {
-	public var control: CarneadesControl = null;
-	public def constraintY: Number = bind GRAPHLISTVIEW_HEIGHT + editButtonPanelHeight;
-	public var mode: Integer = inspectorDefaultMode;
-
-	override def layoutInfo = bind LayoutInfo {
-		minWidth: bind inspectorPanelWidth;
-		width: bind inspectorPanelWidth;
+public class InspectorPanel extends MoveablePanel {
+	override def title = "Element Inspector";
+	override def width = inspectorPanelWidth;
+	override def height = INSPECTOR_PANEL_HEIGHT;
+	override def padding = INSPECTOR_PADDING;
+	public var control: CarneadesControl;
+	public var view: CarneadesView;
+	public def mode: Integer = bind view.mode;
+	override var display = false;
+	override def onClose = function() {
+		hide();
 	}
 
 	def statementInspector: StatementInspector = StatementInspector {
@@ -419,47 +419,38 @@ public class InspectorPanel extends Panel {
 	}
 
 	override def content = bind [
-		{ if (mode != inspectorDefaultMode)
-				LayoutRect {
-				width: inspectorPanelWidth
-				height: INSPECTOR_PANEL_HEIGHT
-				fill: panelBackground
-				stroke: Color.BLACK
-			} else null
-		},
-		PaddedBox {
-			xPadding: INSPECTOR_PADDING
-			yPadding: INSPECTOR_PADDING
-			content: bind [
-				if (mode == inspectorGraphMode) graphInspector else null,
-				if (mode == inspectorStatementMode) statementInspector else null,
-				if (mode == inspectorArgumentMode) argumentInspector else null,
-				if (mode == inspectorPremiseMode) premiseInspector else null
-			]
-		}
+		if (mode == inspectorGraphMode) graphInspector else null,
+		if (mode == inspectorStatementMode) statementInspector else null,
+		if (mode == inspectorArgumentMode) argumentInspector else null,
+		if (mode == inspectorPremiseMode) premiseInspector else null
 	];
 
 	public function editStatement(s: Statement): Void {
 		statementInspector.statement = s;
+		if (not display) show();
 		update(null);
 	}
 
 	public function editArgument(a: Argument): Void {
 		argumentInspector.argument = a;
+		if (not display) show();
 		update(null);
 	}
 
 	public function editPremise(pr: Premise): Void {
 		premiseInspector.premise = pr;
+		if (not display) show();
 		update(null);
 	}
 
 	public function editGraph(a: ArgumentGraph): Void {
 		graphInspector.graph = a;
+		if (not display) show();
 		update(null);
 	}
 
 	public function reset(): Void {
+		hide();
 		update(null);
 	}
 
@@ -472,5 +463,4 @@ public class InspectorPanel extends Panel {
 		else if (mode == inspectorGraphMode) graphInspector.update(null)
 		else if (mode == inspectorPremiseMode) premiseInspector.update(null);
 	}
-	
 }
