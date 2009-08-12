@@ -20,30 +20,20 @@ package carneadesgui;
 import javafx.scene.paint.*;
 import java.lang.System;
 import java.lang.Object;
-
 import javafx.scene.shape.Circle;
-
 import javafx.scene.input.MouseEvent;
-
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextOrigin;
-
 import javafx.scene.CustomNode;
-
 import javafx.scene.Node;
-
 import javafx.scene.layout.HBox;
-
 import javafx.scene.layout.VBox;
-
 import javafx.geometry.HPos;
-
 import javafx.geometry.VPos;
-
 import javafx.scene.Group;
 
 // Model Constants
@@ -152,7 +142,7 @@ public var editButtonPanelHeight: Integer = 25 + 2*INSPECTOR_PADDING;
 
 // User interaction constants
 public var controlsLocked: Boolean = false;
-public var idsEditable: Boolean = false;
+public var idsEditable: Boolean = true;
 
 // Version administration constants
 public var debug: Boolean = false;
