@@ -40,16 +40,10 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import carneadesgui.CarneadesGUI;
 
-
-
-
 import java.awt.Frame;
 import javax.swing.JFrame;
-
 import java.applet.Applet;
-
 import java.awt.Container;
-
 import javafx.geometry.Bounds;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
@@ -258,6 +252,11 @@ public class CarneadesControl {
 		updateAll();
     }
 
+	public function displayGraphListView() {
+		view.displayGraphListView()
+	}
+
+
     // MODEL MANIPULATION FUNCTIONS
 
     // DRAGGING
@@ -460,6 +459,7 @@ public class CarneadesControl {
     public function removeStatementFromBox(st: Statement): Void {
 
 		var s: Statement = null;
+											// TODO: throws classcastException
 		if (st != null) s = st else s = graph.selectedModels[0] as Statement;
 
 		// get the statement's premise and mother argument if present

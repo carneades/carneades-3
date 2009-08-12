@@ -197,7 +197,7 @@ public class GraphPanel extends Panel {
     }
 
     override var content = bind [
-		LayoutRect {fill: viewBackground},
+		LayoutRect {fill: viewBackground, stroke: null },
 		//Filler { content: bind "{this.width}\n{this.centerX}\n{this.centerY}" },
 		Group {
 			content: bind [

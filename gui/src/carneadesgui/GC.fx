@@ -17,24 +17,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package carneadesgui;
 
-import javafx.scene.paint.*;
-import java.lang.System;
-import java.lang.Object;
-import javafx.scene.shape.Circle;
+
+
+
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.effect.Effect;
+import javafx.scene.effect.Glow;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Circle;
+import java.lang.Object;
+import java.lang.System;
+
+import javafx.scene.CustomNode;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextOrigin;
-import javafx.scene.CustomNode;
-import javafx.scene.Node;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.geometry.HPos;
-import javafx.geometry.VPos;
-import javafx.scene.Group;
 
 // Model Constants
 public def proofStandardSE: String = "scintilla of evidence";
@@ -113,10 +118,15 @@ public var argumentProColor = statusAcceptedColor;
 public var toolBarHeight: Integer = 60;
 public var toolBarSpacing: Integer = 10;
 
+// MoveablePanel
+public def MOVEABLEPANEL_TITLE_HEIGHT = 20;
+public def MOVEABLEPANEL_TITLE_FILL = Color.PURPLE;
+public def MOVEABLEPANEL_TITLE_EFFECT: Effect = Glow {}
+
 // inspector panel constants
 public def SIDEBAR_SPACING: Integer = 10;
 public def INSPECTOR_PANEL_SPACING: Integer = 5;
-public def INSPECTOR_PANEL_HEIGHT: Integer = 260;
+public def INSPECTOR_PANEL_HEIGHT: Integer = 295;
 public def INSPECTOR_PADDING: Integer = 5;
 public def INSPECTOR_WINDOWEDGE_PADDING: Number = 5;
 public var inspectorPanelWidth: Integer = 280;
@@ -346,3 +356,4 @@ public class PaddedBox extends CustomNode {
 
 	}
 }
+
