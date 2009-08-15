@@ -54,27 +54,29 @@ public class Graph extends CustomNode {
 	public var fadingElements: GraphElement[] = [];
 
 	/**
-	* Function to remove elements from the displayed graph to give them the possibility to be faded out.
+	* deletion function for edges
 	*/
-	public function removeWithFade(e: GraphElement): Void {
-	    if (e instanceof Vertex) {
-			e.toBeHidden = true;
-			// mg: this causes an error -> hence no fade out
-			//insert e into fadingElements;
-			delete e as Vertex from vertices;
-	    }
-	    if (e instanceof Edge) {
-			e.toBeHidden = true;
-			// mg: this causes an error -> hence no fade out
-			//insert e into fadingElements;
-			delete e as Edge from edges;
-	    }
+	public function deleteVertexAndEdges(v: Vertex): Void {
+		v.children = [];
+		delete v from v.parentVertex.children;
+		v.parentVertex = null;
+		delete v from vertices;
+		for (e in edges where e.producer == v or e.recipient == v) deleteEdge(e);
 	}
 
 	/**
+	* deletion function for edges
+	*/
+	public function deleteEdge(e: Edge): Void {
+		e.producer = null;
+		e.recipient = null;
+		delete e from edges;
+	}
+	
+	/**
 	 * The sequence of selected model objects.
 	 */
-	public var selectedModels: Object[] = [];
+	public var selectedModel: Object;
 
 	/**
 	* Returns the list of selected GraphElements
@@ -86,22 +88,15 @@ public class Graph extends CustomNode {
 	/**
 	* Updates the graph's selected element list from the selectedModels list.
 	*/
-	public function updateSelectedElementsFromModel(): Void {
-	    for (m in selectedModels) {
-			for (e in [vertices, edges] where (e as GraphElement).model == m) { e.selected = true; }
-	    }
+	public function updateSelectedElementFromModel(): Void {
+		for (e in [vertices, edges] where (e as GraphElement).model == selectedModel) { e.selected = true; }
 	}
 
 	/**
 	* Updates the graph's selected model list from the selected elements.
 	*/
 	public function updateSelectedModelsFromElements(): Void {
-	    var s: GraphElement[] = selectedElements();
-	    for (e in s) {
-			if (e.selected) {
-				insert e.model into selectedModels;
-			}
-	    }
+	    selectedModel = selectedElements()[0].model;
 	}
 
 	/**
@@ -289,7 +284,7 @@ public class Graph extends CustomNode {
 	public function unSelectAll(): Void {
 		for (i in vertices) i.selected = false;
 		for (i in edges) i.selected = false;
-		selectedModels = [];
+		selectedModel = null;
 	}
 
 	public function print() {

@@ -29,12 +29,29 @@ import javafx.scene.image.Image;
 import javafx.scene.effect.Glow;
 import javafx.scene.shape.Rectangle;
 
+import javafx.scene.image.ImageView;
 
-class ToolBarButton extends ImageButton {
-	override var width = toolBarHeight - 10;
-	override var height = toolBarHeight - 10;
+
+class ToolBarButton extends Button {
+	public var image: Image;
+
+	def imageView: ImageView = ImageView {
+		smooth: true
+		image: bind image
+	}
+
+	override def graphic = bind imageView;
 	public var control: CarneadesControl;
+
+	override def layoutInfo = LayoutInfo {
+		minWidth: toolBarHeight - 10
+		width: toolBarHeight - 10
+		minHeight: toolBarHeight - 10
+		height: toolBarHeight - 10
+	}
 }
+
+
 
 /**
 * The class for the upper toolbar of the standard view.
@@ -100,10 +117,15 @@ public class ToolBar extends Panel {
 	};
 
 	def quitButton: ToolBarButton = ToolBarButton {
-		// text: "quit"
 		control: bind control
 		image: Image { url: "{__DIR__}images/icon-quit.png"	}
 		action: function(): Void { control.quit(); }
+	};
+
+	def aboutButton: ToolBarButton = ToolBarButton {
+		control: bind control
+		image: Image { url: "{__DIR__}images/icon-about.png"	}
+		action: function(): Void { view.displayAboutInformation(); }
 	};
 
 	def alternateViewButton: ToolBarButton = ToolBarButton {
@@ -118,6 +140,12 @@ public class ToolBar extends Panel {
 		action: function(): Void { control.addArgumentGraph(control.defaultArgumentGraph(control.getNewGraphId())); }
 	}
 
+	def removeGraphButton: ToolBarButton = ToolBarButton {
+		control: bind control
+		image: Image { url: "{__DIR__}images/icon-stop.png"	}
+		action: function(): Void { control.removeCurrentArgumentGraph(); }
+	}
+
 	def addStatementButton: ToolBarButton = ToolBarButton {
 		control: bind control
 		image: Image { url: "{__DIR__}images/icon-newbox.png"	}
@@ -126,30 +154,35 @@ public class ToolBar extends Panel {
 
 	def removeStatementButton: ToolBarButton = ToolBarButton {
 		control: bind control
+		disable: bind not control.possibleToRemove
 		image: Image { url: "{__DIR__}images/icon-stop.png"	}
-		action: function(): Void { control.removeStatementFromBox(null); }
+		action: function(): Void { control.removeSelected(); }
 	}
 
 	def addArgumentButton: ToolBarButton = ToolBarButton {
 		control: bind control
+		disable: bind not control.possibleToAddArgument
 		image: Image { url: "{__DIR__}images/icon-newelement.png"	}
 		action: function(): Void { control.addArgumentToSelected(); }
 	}
 
 	def removeArgumentButton: ToolBarButton = ToolBarButton {
 		control: bind control
+		disable: bind not control.possibleToRemove
 		image: Image { url: "{__DIR__}images/icon-stop.png"	}
 		action: function(): Void { control.removeArgumentFromBox(null); }
 	}
 
 	def addPremiseButton: ToolBarButton = ToolBarButton {
 		control: bind control
+		disable: bind not control.possibleToAddPremise
 		image: Image { url: "{__DIR__}images/icon-newelement.png" }
 		action: function(): Void { control.addPremiseToSelected(); }
 	}
 
 	def deadButton1: ToolBarButton = ToolBarButton { disable: true }
 	def deadButton2: ToolBarButton = ToolBarButton { disable: true }
+	def deadButton3: ToolBarButton = ToolBarButton { disable: true }
 
 	override var content = bind [
 		LayoutRect {
@@ -179,14 +212,15 @@ public class ToolBar extends Panel {
 				undoButton,
 				redoButton,
 				Rectangle {}, // dead filler rectangle
-				if (mode == inspectorDefaultMode) [addGraphButton, addStatementButton]
-				else if (mode == inspectorStatementMode) [addArgumentButton, removeStatementButton]
-				else if (mode == inspectorArgumentMode) [addPremiseButton, removeArgumentButton]
-				else if (mode == inspectorPremiseMode) [deadButton1, deadButton2]
+				if (mode == inspectorDefaultMode) [addGraphButton, removeGraphButton, addStatementButton]
+				else if (mode == inspectorStatementMode) [addArgumentButton, removeStatementButton, deadButton1]
+				else if (mode == inspectorArgumentMode) [addPremiseButton, removeArgumentButton, deadButton1]
+				else if (mode == inspectorPremiseMode) [deadButton1, deadButton2, deadButton3]
 				else null,
 				Rectangle {}, // dead filler rectangle
 				displayGraphListButton,
 				Rectangle {}, // dead filler rectangle
+				aboutButton,
 				quitButton,
 			]
 		}

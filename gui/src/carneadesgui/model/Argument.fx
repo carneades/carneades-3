@@ -155,9 +155,9 @@ public class Statement {
     public var status: String = getStatus();
 
     public function state ():  Void {
-	value = "unknown";
-	assumption = true;
-	update();
+		value = "unknown";
+		assumption = true;
+		update();
     }
 
     public function question () : Void {
@@ -296,6 +296,14 @@ public class Argument {
 		delete this from p.statement.arguments;
 		return AG_OK;
 	}
+
+	public function hasStatementAsPremise(s: Statement): Boolean {
+		isMemberOf(this, s.arguments)
+	}
+
+	public function getPremise(s: Statement): Premise {
+		[for (p in premises where p.statement == s) p][0]
+	}
 }
 
 public class ArgumentGraph {
@@ -335,8 +343,11 @@ public class ArgumentGraph {
 	public function deleteStatement (s: Statement) : Void {
 		delete s from statements;
 
-		// todo: remove possible premises leading to the statement.
-		// todo: put the statement into the "trash" and allow a final deletion later.
+		// The code below is commented out because implicit premise
+		// deletion is taken care of by the DeleteStatementCommand.
+		/*for (a in arguments)
+			for (p in a.premises)
+				if (p.statement == s) delete p from a.premises;*/
 	}
 
 	public function insertArgument (arg: Argument) : Number {
@@ -404,12 +415,7 @@ public class ArgumentGraph {
 
 	// function to tell whether a statement is a premise of an argument
 	public function isPremise(s: Statement): Boolean {
-		var premised: Boolean = false;
-		for (a in arguments)
-			for (p in a.premises)
-				if (p.statement == s)
-					premised = true;
-		return premised;
+		s.arguments != []
 	}
 
 	// CYCLE CHECKING

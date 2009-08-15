@@ -46,6 +46,11 @@ public abstract class GraphElement extends CustomNode {
     */
     public var model: Object = null;
 
+	/**
+	* Universal boolean variable for Graph update traversals.
+	*/
+	public var updated: Boolean = false;
+
     /**
      * Unique index of the element.
      */
@@ -55,7 +60,7 @@ public abstract class GraphElement extends CustomNode {
      * Produce a new index value for the component. Should be made static.
      */
     protected function newIndex(): Integer {
-	currentIndex++;
-	return currentIndex;
+		currentIndex++;
+		return currentIndex;
     }
 }
