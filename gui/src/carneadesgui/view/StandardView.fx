@@ -21,7 +21,6 @@ import javafx.scene.paint.Color;
 
 // general imports
 import javafx.scene.Scene;
-import javafx.scene.layout.LayoutInfo;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.Alert;
@@ -41,6 +40,21 @@ import carneadesgui.view.GraphUpdate;
 import javafx.scene.layout.Stack;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
+
+import javafx.scene.layout.HBox;
+
+import javafx.scene.image.ImageView;
+
+import javafx.scene.image.Image;
+
+import javafx.scene.input.MouseEvent;
+
+import javafx.scene.text.Text;
+
+import javafx.scene.text.Font;
+
+
+import javafx.scene.Group;
 
 
 /**
@@ -133,6 +147,57 @@ public class StandardView extends CarneadesView {
 		graphListView.unSelectAll();
 	}
 
+	override function displayAboutInformation() {
+		aboutInformationDisplayed = true;
+	}
+
+	def aboutInformation: Stack = Stack {
+		onMouseReleased: function(e: MouseEvent) { aboutInformationDisplayed = false }
+		blocksMouse: true
+		content: [
+			LayoutRect {
+				fill: Color.BLACK
+				opacity: 0.7
+				width: bind appWidth
+				height: bind appHeight
+			},
+			LayoutRect {
+				fill: Color.WHITE
+				stroke: Color.BLACK
+				strokeWidth: 2
+				opacity: 1.0
+				width: 460
+				height: 200
+			},
+			HBox {
+				spacing: 10
+				hpos: HPos.CENTER
+				vpos: VPos.CENTER
+				content: [
+					ImageView {
+						fitWidth: 120
+						preserveRatio: true
+						smooth: true
+						image: Image { url: "{__DIR__}images/carneades.jpg"	}
+					},
+					VBox {
+						spacing: 4
+						content: [
+							Text { font: Font { size: 14 embolden: true } content: "Carneades" },
+							Text { content: "Pre-Release Build of August 2009" },
+							Text { content: "License: GPL v3" },
+							Text { content: "Copyright (c) 2008-2009" },
+							Text { content: "Thomas F. Gordon\nFraunhofer FOKUS, Berlin" },
+							Text { content: "Matthias Grabmair\nIntelligent Systems Program, University of Pittsburgh" },
+							Text { content: "http://carneades.berlios.de" }
+						]
+					}	
+				]
+			}
+		]
+	}
+
+
 	override def view = Stage {
 		title: bind displayTitle
 		width: bind appWidth with inverse
@@ -161,7 +226,8 @@ public class StandardView extends CarneadesView {
 							]
 						}
 					]
-				}
+				},
+				Group { content: bind { if (aboutInformationDisplayed) aboutInformation else []} }
 			]
 		}
 	}

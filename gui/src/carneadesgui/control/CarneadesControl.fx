@@ -34,7 +34,6 @@ import carneadesgui.view.GraphUpdate;
 // Other Control Imports
 import carneadesgui.control.Commands.*;
 
-
 // File Chooser for Load/Save
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -119,28 +118,18 @@ public class CarneadesControl {
     def commands: CommandControl = bind graph.commands;
 
     // View configuration attributes
-    public var possibleToAddConclusion: Boolean = true;
-    public var possibleToInverseArgument: Boolean = false;
-    public var possibleToNegatePremise: Boolean = false;
-    public var possibleToChangeToOrdPremise: Boolean = false;
-    public var possibleToChangeToException: Boolean = false;
-    public var possibleToChangeToAssumption: Boolean = false;
     public var possibleToRemove: Boolean = false ;
     public var possibleToUndo: Boolean = false;
     public var possibleToRedo: Boolean = false;
+	public def possibleToAddArgument = bind graph.selectedModel instanceof Statement;
+    public def possibleToAddPremise = bind graph.selectedModel instanceof Argument;
 
     // navigation mg: currently idle
     public var dragView: Boolean = false;
 
     // SELECTION
-    public var selectedArgumentEditable: Boolean = false;
-    public var selectedStatementEditable: Boolean = false;
-    public var selectedPremiseEditable: Boolean = false;
-    public def possibleToAddArgument = bind graph.selectedModels[0] instanceof Statement;
-    public def possibleToAddPremise = bind graph.selectedModels[0] instanceof Argument;
-
-    function singleStatementSelected(): Boolean { graph.selectedModels[0] instanceof Statement }
-    function singleArgumentSelected(): Boolean { graph.selectedModels[0] instanceof Argument }
+    function singleStatementSelected(): Boolean { graph.selectedModel instanceof Statement }
+    function singleArgumentSelected(): Boolean { graph.selectedModel instanceof Argument }
 	function singlePremiseSelected(): Boolean {
 			not (sizeof graph.selectedElements() != 1) and (graph.selectedElements()[0] instanceof PremiseLink)}
     function premiseSelected(): Boolean {
@@ -159,8 +148,8 @@ public class CarneadesControl {
     public function processListSelection(e: Object): Void {
 		unSelectGraph();
 		if (not (e instanceof ArgumentGraph)) {
-			insert e into graph.selectedModels;
-			graph.updateSelectedElementsFromModel();
+			graph.selectedModel = e;
+			graph.updateSelectedElementFromModel();
 			focusOnSelected();
 			updateView( GraphUpdate { listSelection: true } );
 		} else {
@@ -203,19 +192,18 @@ public class CarneadesControl {
 			graph.updateDisplay();
 
 			// 2. Restore Selection
-			graph.updateSelectedElementsFromModel();
+			graph.updateSelectedElementFromModel();
 		}
 
 		// set modes
-		if (singleStatementSelected()) view.editStatement(graph.selectedModels[0] as Statement);
-		if (singleArgumentSelected()) view.editArgument(graph.selectedModels[0] as Argument);
-		if (singlePremiseSelected()) view.editPremise(graph.selectedModels[0] as Premise);
+		if (singleStatementSelected()) view.editStatement(graph.selectedModel as Statement);
+		if (singleArgumentSelected()) view.editArgument(graph.selectedModel as Argument);
+		if (singlePremiseSelected()) view.editPremise(graph.selectedModel as Premise);
 		if (nothingSelected()) view.editNothing();
 
 		// update the view component influencing booleans
 		possibleToUndo = commands.possibleToUndo();
 		possibleToRedo = commands.possibleToRedo();
-		possibleToInverseArgument = singleArgumentSelected();
 		possibleToRemove = singleSomethingSelected();
 
 		view.update(u);
@@ -272,103 +260,109 @@ public class CarneadesControl {
     }
 
     public function canDropOn(target): Boolean {
-	// there is something to drop on
-	target != null
+		// there is something to drop on
+		target != null
 
-	// something is not dropped on itself
-	and graph.selectedElements()[0] != target
+		// something is not dropped on itself
+		and graph.selectedElements()[0] != target
 
-	// they are not of different types
-	and {
-	    ((graph.selectedElements()[0] instanceof StatementBox) and not (target instanceof StatementBox))
-	    or ((graph.selectedElements()[0] instanceof ArgumentBox) and not (target instanceof ArgumentBox))
+		// they are not of different types
+		and {
+			((graph.selectedElements()[0] instanceof StatementBox) and not (target instanceof StatementBox))
+			or ((graph.selectedElements()[0] instanceof ArgumentBox) and not (target instanceof ArgumentBox))
+		}
 	}
-    }
 
 
-    // Processes the start of a dragging action. Should be called whenever a dragging action starts.
-    public function startDrag(thing): Void {
+		// Processes the start of a dragging action. Should be called whenever a dragging action starts.
+	public function startDrag(thing): Void {
 		dragging = true;
-    }
-
-    // Processes the end of a dragging action. Should be called when a dragging action ends.
-    public function endDrag(): Void {
-	if (dragging) {
-	    dragging = false;
-	    // Were we dragging over something?
-	    if (draggingOver != null) {
-			dragEndsAt(draggingOver as ArgumentElement);
-			draggingOver = null;
-	    }
 	}
-	canDrop = false;
+
+		// Processes the end of a dragging action. Should be called when a dragging action ends.
+	public function endDrag(shiftDown: Boolean): Void {
+		if (dragging) {
+			dragging = false;
+			// Were we dragging over something?
+			if (draggingOver != null) {
+				dragEndsAt(draggingOver as ArgumentElement, shiftDown);
+				draggingOver = null;
+			}
+		}
+		canDrop = false;
     }
 
-    function dragEndsAt(target): Void {
+    function dragEndsAt(target, shiftDown: Boolean): Void {
 		var selected = graph.selectedElements();
 		if (target != selected) {
 			for (s in selected) {
-			if (s instanceof StatementBox) {
-				if (target instanceof ArgumentBox) {
-				// A statement is dragged onto an argument: Append as a premise
+				if (s instanceof StatementBox) {
+					if (target instanceof ArgumentBox) {
+						// A statement is dragged onto an argument: Append as a premise
 
-				// 1. Determine linking premise
-				var temp = (graph.edges[ e | e.producer == s ]);
-				var premiseLink: PremiseLink;
-				var premise: Premise;
+						// 1. Determine linking premise
+						var temp = (graph.edges[ e | e.producer == s ]);
+						var premiseLink: PremiseLink;
+						var premise: Premise;
 
-				if (temp != []) {
-					premiseLink = temp[0] as PremiseLink;
-					premise = premiseLink.premise;
+						if (temp != []) {
+							premiseLink = temp[0] as PremiseLink;
+							premise = premiseLink.premise;
+						}
+
+						// If there is no premise (meaning the statement is a root), give it a blank one
+						if (premise == null) { premise = Premise { statement: (s as StatementBox).statement }; }
+
+						// 2. Get current parent argument
+						var oldArgument: Argument = (premiseLink.recipient as ArgumentBox).argument;
+
+						// 3. Get new parent argument
+						var newArgument: Argument = (target as ArgumentBox).argument;
+
+						// 4. issue command
+						if (shiftDown) { commands.do(
+							CopyPremiseCommand {
+								argumentGraph: argumentGraph
+								premise: premise
+								newArgument: newArgument
+							})
+						} else commands.do(
+							MovePremiseCommand {
+								argumentGraph: argumentGraph
+								premise: premise
+								oldArgument: oldArgument
+								newArgument: newArgument
+							});
+
+						// 5. check for cycles and undo in case
+						if (not argumentGraph.noCycles()) {
+							commands.undo();
+							commands.pop();
+							view.alert("No! The Graph would become cyclic.");
+						}
+					}
 				}
+				if (s instanceof ArgumentBox) {
+					if (target instanceof StatementBox) {
+						// An argument is dragged over a statement: Append as argument
 
-				// If there is no premise (meaning the statement is a root), give it a blank one
-				if (premise == null) { premise = Premise { statement: (s as StatementBox).statement }; }
+						// 1. Issue the command
+						commands.do(
+							MoveArgumentCommand {
+							argumentGraph: argumentGraph
+							argument: (s as ArgumentBox).argument
+							oldStatement: (s as ArgumentBox).argument.conclusion
+							newStatement: (target as StatementBox).statement
+							});
 
-				// 2. Get current parent argument
-				var oldArgument: Argument = (premiseLink.recipient as ArgumentBox).argument;
-
-				// 3. Get new parent argument
-				var newArgument: Argument = (target as ArgumentBox).argument;
-
-				// 4. issue command
-				commands.do(
-					MovePremiseCommand {
-					argumentGraph: argumentGraph
-					premise: premise
-					oldArgument: oldArgument
-					newArgument: newArgument
-					});
-
-				// 5. check for cycles and undo in case
-				if (not argumentGraph.noCycles()) {
-					commands.undo();
-					commands.pop();
-					view.alert("No! The Graph would become cyclic.");
+						// 2. check for cycles and undo in case
+						if (not argumentGraph.noCycles()) {
+							commands.undo();
+							commands.pop();
+							view.alert("No! The Graph would become cyclic.");
+						}
+					}
 				}
-				}
-			}
-			if (s instanceof ArgumentBox) {
-				if (target instanceof StatementBox) {
-				// An argument is dragged over a statement: Append as argument
-
-				// 1. Issue the command
-				commands.do(
-					MoveArgumentCommand {
-					argumentGraph: argumentGraph
-					argument: (s as ArgumentBox).argument
-					oldStatement: (s as ArgumentBox).argument.conclusion
-					newStatement: (target as StatementBox).statement
-					});
-
-				// 2. check for cycles and undo in case
-				if (not argumentGraph.noCycles()) {
-					commands.undo();
-					commands.pop();
-					view.alert("No! The Graph would become cyclic.");
-				}
-				}
-			}
 			}
 		}
 		unSelectAll();
@@ -392,19 +386,14 @@ public class CarneadesControl {
      * Append an argument to the selected statement.
      */
     public function addArgumentToSelected(): Void {
-		var selected = graph.selectedModels;
-		if (sizeof selected > 0) {
-			for (s in selected) {
-			if (s instanceof Statement) {
-				if (commands.do(
-				AddArgumentAndPremiseCommand {
-					argumentGraph: argumentGraph
-					statement: s as Statement
-				}) != C_OK) {
-				view.alert("Argument cannot be inserted here.\nThe Graph would become cyclic.");
-				} else updateAll();
-			}
-			}
+		if (graph.selectedModel instanceof Statement) {
+			if (commands.do(
+			AddArgumentAndPremiseCommand {
+				argumentGraph: argumentGraph
+				statement: graph.selectedModel as Statement
+			}) != C_OK) {
+			view.alert("Argument cannot be inserted here.\nThe Graph would become cyclic.");
+			} else updateAll();
 		}
     }
 
@@ -430,7 +419,7 @@ public class CarneadesControl {
      */
     public function removeArgumentFromBox(ar: Argument): Void {
 		var a: Argument = null;
-		if (ar != null) a = ar else a = graph.selectedModels[0] as Argument;
+		if (ar != null) a = ar else a = graph.selectedModel as Argument;
 		commands.do(
 			RemoveArgumentCommand {
 				argumentGraph: argumentGraph
@@ -456,51 +445,42 @@ public class CarneadesControl {
     /**
      * Remove a statement from whose view object has been selected.
      */
-    public function removeStatementFromBox(st: Statement): Void {
+    public function removeStatementFromBox(sb: StatementBox): Void {
 
-		var s: Statement = null;
-											// TODO: throws classcastException
-		if (st != null) s = st else s = graph.selectedModels[0] as Statement;
-
-		// get the statement's premise and mother argument if present
-		var tempArgument: Argument;
-		var tempPremise: Premise;
-		for (a in argumentGraph.arguments) {
-			for (p in a.premises) {
-				if (p.statement == s) {
-					tempPremise = p;
-					tempArgument = a;
-				}
-			}
-		}
-
-		if (argumentGraph.isConclusion(s)) {
+		if (argumentGraph.isConclusion(sb.statement)) {
 			// If the statement is the conclusion of an argument,
 			// delete the premise as well as the arguments leading to it.
 			commands.do(
 			DeleteConclusionCommand {
 				argumentGraph: argumentGraph
-				conclusion: s
-				motherArgument: tempArgument
-				premise: tempPremise
-				childArguments: argumentGraph.arguments[a | a.conclusion == s ]
+				conclusion: sb.statement
+				motherArgument: {if (sb.parentVertex != graph.root) (sb.parentVertex as ArgumentBox).argument else null}
+				childArguments: argumentGraph.arguments[a | a.conclusion == sb.statement ]
 			});
-		} else if (argumentGraph.isPremise(s)){
-			// If it is a premise, delete both statement and premise.
+		} else if (argumentGraph.isPremise(sb.statement)){
+
+			// get corresponding model premise and argument
+			var argument: Argument = (sb.parentVertex as ArgumentBox).argument;
+			//var premise: Premise = [for (p in argument.premises where p.statement == sb.statement) p as Premise][0];
+			var premise: Premise = argument.premises[p | p.statement == sb.statement][0];
+			
+			// if there is one instance left, arrange duplicate ramifications
 			commands.do(
 			DeletePremiseStatementCommand {
 				argumentGraph: argumentGraph
-				argument: tempArgument
-				premise: tempPremise
+				argument: argument
+				premise: premise
 			});
+			
 		} else {
 			// Otherwise, delete the statement only.
 			commands.do(
 			DeleteStatementCommand {
 				argumentGraph: argumentGraph
-				statement: s
+				statement: sb.statement
 			});
 		}
+
 		unSelectAll();
 		updateAll();
     }
@@ -559,23 +539,20 @@ public class CarneadesControl {
      * Remove the currently selected view object irrespective of its nature.
      */
     public function removeSelected(): Void {
-		var s = graph.selectedElements();
-		for (e in s) {
-			if (e instanceof ArgumentBox) {
-				removeArgumentFromBox((e as ArgumentBox).argument);
-			}
-			if (e instanceof StatementBox) {
-				removeStatementFromBox((e as StatementBox).statement);
-			}
-			if (e instanceof ArgumentLink) {
-				removeArgumentFromLink(e as ArgumentLink);
-			}
-			if (e instanceof PremiseLink) {
-				deletePremiseFromLink(e as PremiseLink);
-			}
+		var e: GraphElement = graph.selectedElements()[0];
+		
+		if (e instanceof ArgumentBox) {
+			removeArgumentFromBox((e as ArgumentBox).argument);
 		}
-		unSelectAll();
-		updateAll();
+		if (e instanceof StatementBox) {
+			removeStatementFromBox(e as StatementBox);
+		}
+		if (e instanceof ArgumentLink) {
+			removeArgumentFromLink(e as ArgumentLink);
+		}
+		if (e instanceof PremiseLink) {
+			deletePremiseFromLink(e as PremiseLink);
+		}
     }
 
     // Attribute Modification Functions
@@ -827,7 +804,6 @@ public class CarneadesControl {
 					graph: bind graph
 				}
 		};
-		graph.updateFromModel();
 		insert graph into view.graphs;
 		view.currentGraph = graphs[0];
 		unSelectAll();
@@ -992,31 +968,61 @@ public class CarneadesControl {
 			id: id
 		}
 
+		var a1: Argument;
+		var a2: Argument;
+
 		var s1: Statement = Statement {
 			id: "s1"
-			wff: "The street is wet."
+			wff: "Ruby Tuesday"
 		}
 
 		var s2: Statement = Statement {
 			id: "s2"
-			wff: "It rained"
+			wff: "We're on the edge of destruction"
+			//arguments: [a1]
 		}
 
-		var a1: Argument = Argument {
+		var s3: Statement = Statement {
+			id: "s3"
+			wff: "California Dreaming"
+			//arguments: [a1, a2]
+		}
+
+		a1 = Argument {
 			id: "a1"
 			conclusion: s1
-			title: "When it rains, things get wet."
+			title: "... therefore ..."
 		}
 
-		var p: Premise = Premise {
+		a2 = Argument {
+			id: "a2"
+			pro: false
+			conclusion: s3
+			title: "... therefore ..."
+		}
+
+		var p1a1: Premise = Premise {
 			statement: s2
 		}
 
-		a1.addPremise(p);
+		var p2a1: Premise = Premise {
+			statement: s3
+		}
+
+		var p1a2: Premise = Premise {
+			statement: s3
+		}
+
+		a1.addPremise(p1a1);
+		a1.addPremise(p2a1);
+		a2.addPremise(p1a1);
 
 		argumentGraph.insertStatement(s1);
 		argumentGraph.insertStatement(s2);
+		argumentGraph.insertStatement(s3);
 		argumentGraph.insertArgument(a1);
+		argumentGraph.insertArgument(a2);
+	
 
 		return argumentGraph;
     }

@@ -39,7 +39,7 @@ public class ImageButton extends CustomNode {
 	public var width: Integer;
 	public var height: Integer;
 
-	public var padding: Integer = 5;
+	public var padding: Integer = 2;
 
 	public var backColor: Color = Color.GREY;
 	public var borderColor: Color = Color.WHITE;

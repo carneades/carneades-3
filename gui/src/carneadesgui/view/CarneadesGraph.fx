@@ -27,8 +27,10 @@ import carneadesgui.model.*;
 import carneadesgui.model.Argument.*;
 
 // control import
-import carneadesgui.control.Commands.CommandControl;
 import carneadesgui.control.CarneadesControl;
+import carneadesgui.control.Commands.*;
+
+import java.lang.System;
 
 /**
  * The view graph class displaying a model graph object.
@@ -65,7 +67,7 @@ public class CarneadesGraph extends Graph {
 			var found: Boolean = false;
 			for (v in vertices)
 				if (v instanceof StatementBox)
-					if ((v as StatementBox).statement == s) {
+					if ((v as StatementBox).statement == s and not (v as StatementBox).duplicate) {
 						ab = v as StatementBox;
 						found = true;
 					}
@@ -118,236 +120,234 @@ public class CarneadesGraph extends Graph {
 		}) ab else null
     }
 
-    function updateGraphConnections(): Void {
+	function update_rec(element: Vertex): Void {
+		var argumentBoxes: ArgumentBox[] = [for (v in vertices where v instanceof ArgumentBox) v as ArgumentBox];
+		var argumentLinks: ArgumentLink[] = [for (e in edges where e instanceof ArgumentLink) e as ArgumentLink];
+		var premiseLinks: PremiseLink[] = [for (e in edges where e instanceof PremiseLink) e as PremiseLink];
+
+		var putPremiseLinkIfNeeded = function(p: Premise, abox: ArgumentBox, sbox: StatementBox): Void {
+			var isAlreadyThere: Boolean = false;
+			for (pl in premiseLinks where pl.recipient == abox and pl.producer == sbox) {
+				isAlreadyThere = true;
+				pl.updated = true;
+			}
+			if (not isAlreadyThere) {
+				insert PremiseLink {
+					control: control
+					premise: p
+					producer: sbox
+					recipient: abox
+					updated: true
+				} into edges;
+			}
+		}
+
+		var putArgumentLinkIfNeeded = function(abox: ArgumentBox, sbox: StatementBox): Void {
+			var isAlreadyThere: Boolean = false;
+			for (al in argumentLinks where al.recipient == sbox and al.producer == abox) {
+				isAlreadyThere = true;
+				al.updated = true;
+			}
+			if (not isAlreadyThere) {
+				insert ArgumentLink {
+					control: control
+					argument: abox.argument
+					producer: abox
+					recipient: sbox
+					updated: true
+				} into edges;
+			}
+		}
+
+		// STATEMENT BOXES
+		if (element instanceof StatementBox) {
+			var sbox: StatementBox = element as StatementBox;
+			// get the arguments leading to it
+			for (a in argumentGraph.arguments where a.conclusion == sbox.statement) {
+				// check if there is an argument box for it
+				var boxAlreadyThere: Boolean = false;
+				for (c in argumentBoxes) {
+					// if there is one ...
+					if ((c as ArgumentBox).argument == a) {
+						boxAlreadyThere = true;
+						c.updated = true;
+						delete c from c.parentVertex.children;
+						c.parentVertex = sbox;
+						insert c into sbox.children;
+
+						// put in argument link if necessary
+						putArgumentLinkIfNeeded(c as ArgumentBox, sbox);
+
+						// do the recursive call if necessary
+						if (a.premises != []) update_rec(c as ArgumentBox);
+					}
+				}
+				if (not boxAlreadyThere) {
+					// if there is none ...
+					var abox: ArgumentBox = ArgumentBox {
+						argument: a
+						control: control
+						updated: true
+						parentVertex: sbox
+					}
+					insert abox into vertices;
+					insert abox into sbox.children;
+
+					// put in argument link if necessary
+					putArgumentLinkIfNeeded(abox, sbox);
+
+					// do the recursive call if necessary
+					if (a.premises != []) update_rec(abox);
+				}
+			}
+
+		// ARGUMENT BOXES
+		} else if (element instanceof ArgumentBox) {
+			var abox: ArgumentBox = element as ArgumentBox;
+			for (p in abox.argument.premises) {
+				// check if we have a statement box
+				var boxAlreadyThere: Boolean = false;
+				for (c in abox.children) {
+					// if there is one ...
+					if ((c as StatementBox).statement == p.statement) {
+						boxAlreadyThere = true;
+						c.updated = true;
+						delete c from c.parentVertex.children;
+						c.parentVertex = abox;
+						insert c into abox.children;
+						(c as StatementBox).duplicate = {
+							// if there is some statement box with the same statement, this one must be a duplicate
+							var anotherOne: Boolean = false;
+
+							for (v in vertices where v instanceof StatementBox)
+								// The other one ...
+								// ... has to be a statement box representing the same statement
+								if ((v as StatementBox).statement == p.statement
+									// .. that is distinct ...
+									and v != c
+									// and not a duplicate itself
+									and not (v as StatementBox).duplicate
+									and (
+											// and it is either
+											(
+												// somewhere in the tree as a premise ...
+												(v as StatementBox).parentVertex != root
+												and isMemberOf(((v as StatementBox).parentVertex as ArgumentBox).argument,
+												(v as StatementBox).statement.arguments)
+											)
+											or (
+												// or legitimately at the tree root
+												(v as StatementBox).parentVertex == root
+												and isMemberOf((v as StatementBox).statement, argumentGraph.statements)
+											)
+										)
+									) anotherOne = true;
+							anotherOne
+						}
+
+						// put in premise link if necessary
+						putPremiseLinkIfNeeded(p, abox, c as StatementBox);
+						
+						// do rec. call
+						if (not (c as StatementBox).duplicate) update_rec(c as StatementBox);
+					}
+				}
+				if (not boxAlreadyThere) {
+					// if there is none ...
+					var sbox: StatementBox = StatementBox {
+						statement: p.statement
+						control: control
+						updated: true
+						parentVertex: abox
+						duplicate: {
+							// if there is some statement box with the same statement, this one must be a duplicate
+							var anotherOne: Boolean = false;
+							for (v in vertices where v instanceof StatementBox)
+								if ((v as StatementBox).statement == p.statement
+									and not (v as StatementBox).duplicate) anotherOne = true;
+							anotherOne
+						}
+					}
+					insert sbox into vertices;
+					insert sbox into abox.children;
+
+					// put in premise link if necessary
+					putPremiseLinkIfNeeded(p, abox, sbox);
+					
+					// do rec. call
+					if (not sbox.duplicate) update_rec(sbox);
+				}
+			}
+
+		} else {
+			p("update_rec() has been called on a non-box vertex. Debug.")
+			// should not
+		}
+
+	}
+
+	override function updateFromModel(): Void {
+
+		// tell the graph elements that they have not been traversed
+		for (e in [vertices, edges]) e.updated = false;
+
+		// do a preliminary cleaning of deleted elements
 		var statementBoxes: StatementBox[] = [for (v in vertices where v instanceof StatementBox) v as StatementBox];
 		var argumentBoxes: ArgumentBox[] = [for (v in vertices where v instanceof ArgumentBox) v as ArgumentBox];
 
-		// delete all connections
-		for (v in vertices) v.children = [];
+		for (sbox in statementBoxes where not isMemberOf(sbox.statement, argumentGraph.statements))
+			deleteVertexAndEdges(sbox);
 
-		// determine parent/child and set it
-		// for statements
-		for (s in statementBoxes) {
+		for (sbox in statementBoxes where sbox.parentVertex == root and sbox.statement.arguments != [])
+			deleteVertexAndEdges(sbox);
 
-			var found: Vertex[];
-			for (a in argumentBoxes){
-				for (p in a.argument.premises) {
-					if (p.statement == s.statement) {
-						insert a into found;
-						insert s into a.children
-					}
+		for (abox in argumentBoxes where not isMemberOf(abox.argument, argumentGraph.arguments))
+			deleteVertexAndEdges(abox);
+
+		// create/update all statement boxes that are children of the root
+		for (s in argumentGraph.statements where s.arguments == []) {
+			// check whether it has a statement box
+			var sbox: StatementBox = [ for (sb in vertices where (sb instanceof StatementBox)
+				and (sb as StatementBox).statement == s and sb.parentVertex == root) sb as StatementBox][0];
+			if (sbox == null) {
+				// if there is no box, create one
+				sbox = StatementBox {
+					statement: s
+					parentVertex: root
+					control: control
+					updated: true
 				}
-			}
-			if (sizeof found > 0) {
-				s.parentVertex = found [0];
+				insert sbox into vertices;
+				insert sbox into root.children;
+
+				// and call recursively for its children
+				if (argumentGraph.isConclusion(s)) update_rec(sbox);
 			} else {
-				s.parentVertex = root;
-				insert s into root.children;
+				// if there already is a box, do the subtree
+				sbox.updated = true;
+				if (argumentGraph.isConclusion(s) and not sbox.duplicate) update_rec(sbox);
 			}
 		}
 
-		// for arguments
-		for (a in argumentBoxes) {
-			var found: Vertex[];
-			for (s in statementBoxes) {
-				if (a.argument.conclusion == s.statement) {
-					insert s into found;
-					insert a into s.children;
-				}
-			}
-			if (sizeof found > 0) {
-				a.parentVertex = found [0];
-			} else if (a != root) {
-				a.parentVertex = root;
-				insert a into root.children;
-			}
-		}
-    }
+		// the root is updated
+		root.updated = true;
 
-    function createStatementBox(s: Statement): StatementBox {
-		var statementBox: StatementBox = StatementBox {
-			statement: s
-			level: bind { statementBox.parentVertex.level + 1}
-			control: control
-		}
-    }
-
-    function createArgumentBox(a: Argument): ArgumentBox {
-		var argumentBox: ArgumentBox = ArgumentBox {
-			argument: a
-			level: bind { argumentBox.parentVertex.level + 1}
-			control: bind control
-		}
-    }
-
-    override function updateFromModel(): Void {
-
-		// VERTICES
-		// if there is no graph create the whole thing
-		if (vertices == []) {
-			root.children = [];
-			vertices = [root, toVertices(argumentGraph.statements, argumentGraph.arguments)];
-		} else {
-			// if there is something we assume an alteration and hence update accordingly
-
-			// has a statement been added?
-			for (s in argumentGraph.statements) {
-				if (getStatementBox(s) == null) {
-					insert createStatementBox(s) into vertices;
-				}
-			}
-
-			// has an argument been added?
-			for (a in argumentGraph.arguments) {
-				// is it in the graph?
-				var ab: ArgumentBox = getArgumentBox(a);
-				if (ab != null) {
-					// check whether it still connects to all its premises
-					for (p in a.premises) {
-						var pl: PremiseLink = getPremiseLink(p);
-						if (pl == null) {
-							insert PremiseLink {
-								premise: p
-								producer: getStatementBox(p.statement)
-								recipient: getArgumentBox(a)
-								negated: bind p.negative
-								control: bind control
-							} into edges;
-						} else {
-							if (pl.recipient != ab) pl.recipient = ab;
-						}
-					}
-
-				} else {
-					// if not, add it and connect it according
-					insert createArgumentBox(a) into vertices;
-					insert ArgumentLink {
-						argument: a
-						recipient: getStatementBox(a.conclusion)
-						producer: getArgumentBox(a)
-						control: bind control
-					} into edges;
-
-					for (p in a.premises)
-					if (getPremiseLink(p) == null) {
-						insert PremiseLink {
-							premise: p
-							producer: getStatementBox(p.statement)
-							recipient: getArgumentBox(a)
-							negated: bind p.negative
-							control: bind control
-						} into edges;
-					}
-				}
-
-				// is the link proper?
-				if (getArgumentLink(a) != null) {
-					var al: ArgumentLink = getArgumentLink(a);
-					if (((al.recipient) as StatementBox).statement != a.conclusion) {
-						al.recipient = getStatementBox(a.conclusion);
-					}
-				}
-			}
-
-			// has stuff been been removed?
-			var statementBoxes: StatementBox[] = [for (v in vertices where v instanceof StatementBox) v as StatementBox];
-			var argumentBoxes: ArgumentBox[] = [for (v in vertices where v instanceof ArgumentBox) v as ArgumentBox];
-			var argumentLinks: ArgumentLink[] = [for (e in edges where e instanceof ArgumentLink) e as ArgumentLink];
-			var premiseLinks: PremiseLink[] = [for (e in edges where e instanceof PremiseLink) e as PremiseLink];
-			for (ab in argumentBoxes)
-				if (not isMemberOf(ab.argument, argumentGraph.arguments))
-					removeWithFade(ab);
-			for (al in argumentLinks)
-				if (not isMemberOf(al.argument, argumentGraph.arguments))
-					removeWithFade(al);
-			for (sb in statementBoxes)
-				if (not isMemberOf(sb.statement, argumentGraph.statements))
-					removeWithFade(sb);
-			for (pl in premiseLinks)
-				if ({
-					var obsolete: Boolean = true;
-					for (a in argumentGraph.arguments)
-						if (isMemberOf(pl.premise, a.premises))
-							obsolete = false;
-					obsolete
-				}) removeWithFade(pl);
-
-			// has an argument been moved?
+		// Clean up
+		for (v in vertices where not v.updated) {
+			v.children = [];
+			delete v from v.parentVertex.children;
+			v.parentVertex = null;
+			delete v from vertices;
 		}
 
-		// EDGES
-		updateGraphConnections();
-		if (edges == []) {
-			edges = toEdges(argumentGraph.statements, argumentGraph.arguments);
+		for (e in edges where not e.updated) {
+			e.producer = null;
+			e.recipient = null;
+			delete e from edges;
 		}
-    }
-
-    function toVertices(statements: Statement[], arguments: Argument[]): Vertex[] {
-		var statementBoxes: StatementBox[];
-		var argumentBoxes: ArgumentBox[];
-		// 1. create bound vertices
-		// for statements
-		for (s in statements) {
-			if (drawAllStatements or (argumentGraph.broughtForth(s) or argumentGraph.isPremise(s))) {
-				insert createStatementBox(s) into statementBoxes;
-			}
-		}
-		// for arguments
-		for (a in arguments) {
-			insert createArgumentBox(a) into argumentBoxes;
-		}
-
-		return [argumentBoxes, statementBoxes];
-    }
-
-    function toEdges(statements: Statement[], arguments: Argument[]): Edge[] {
-		var links: Edge[];
-
-		// 1. argument links
-		for (a in arguments where (a.conclusion != null)) {
-			var link: Edge;
-			var producer: ArgumentBox[] = (for (v in vertices where
-				((v instanceof ArgumentBox)
-				and (v as ArgumentBox).argument == a))
-					{ v as ArgumentBox});
-			var recipient: StatementBox[] = (for (v in vertices where
-				((v instanceof StatementBox)
-				and (v as StatementBox).statement == a.conclusion))
-					{ v as StatementBox });
-
-			link = ArgumentLink {
-				argument: a
-				producer: producer[0]
-				recipient: recipient[0]
-				control: bind control
-			}
-			insert link into links;
-		}
-
-		// 2. Premises
-		for (a in arguments) {
-			for (p in a.premises) {
-				var link: Edge;
-				var recipient: ArgumentBox[] = (for (v in vertices where
-					((v instanceof ArgumentBox)
-					and (v as ArgumentBox).argument == a))
-						{ v as ArgumentBox});
-				var producer: StatementBox[] = (for (v in vertices where
-					((v instanceof StatementBox)
-					and (v as StatementBox).statement == p.statement))
-						{ v as StatementBox });
-				link = PremiseLink {
-					premise: p
-					producer: producer[0]
-					recipient: recipient[0]
-					negated: bind p.negative
-					control: bind control
-				}
-				insert link into links;
-			}
-		}
-		return links;
-    }
+	}
+	
+    
 
     public function printGraph(): Void {
 	    for (v in vertices) v.print();
