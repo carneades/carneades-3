@@ -236,6 +236,23 @@ public class AddStatementCommand extends UndoableCommand {
 	}
 }
 
+public class CopyPremiseCommand extends UndoableCommand {
+	public var premise: Premise;
+	public var newArgument: Argument;
+
+	override function do(): Number {
+		// 1. add premise to new node
+		newArgument.appendPremise(premise);
+		return C_OK;
+	}
+
+	override function undo(): Number {
+		// 1. remove premise from argument
+		newArgument.deletePremise(premise);
+		return C_OK;
+	}
+}
+
 public class AddPremiseCommand extends UndoableCommand {
 
 	public var argument: Argument;
@@ -319,6 +336,7 @@ public class RemoveArgumentCommand extends UndoableCommand {
 
 public class DeleteStatementCommand extends UndoableCommand {
 	public var statement: Statement;
+	var premises: Premise[];
 
 	override function do(): Number {
 		argumentGraph.deleteStatement(statement);
@@ -335,22 +353,32 @@ public class DeleteConclusionCommand extends UndoableCommand {
 	// Is called whenever a statement is deleted from the graph that has arguments attached to it.
 	public var conclusion: Statement;
 	public var motherArgument: Argument;
-	public var premise: Premise;
+	var premise: Premise;
 	public var childArguments: Argument[];
 
 	override function do(): Number {
-		argumentGraph.deleteStatement(conclusion);
-		delete premise from motherArgument.premises;
-		for (c in childArguments) {
-			delete c from argumentGraph.arguments;
+		if (motherArgument != null) {
+			// if there is a mother argument, get the corresponding premise
+			premise = motherArgument.premises[p | p.statement == conclusion][0];
+			motherArgument.deletePremise(premise);
+			if (motherArgument.premises == []) argumentGraph.deleteArgument(motherArgument);
 		}
+		for (c in childArguments) argumentGraph.deleteArgument(c);
+
+		if (conclusion.arguments == [] and not argumentGraph.isConclusion(conclusion))
+			argumentGraph.deleteStatement(conclusion);
 		return C_OK;
 	}
 
 	override function undo(): Number {
-		argumentGraph.insertStatement(conclusion);
+		if (motherArgument != null) {
+			if (motherArgument.premises == []) argumentGraph.insertArgument(motherArgument);
+			motherArgument.appendPremise(premise);
+		}
 		for (c in childArguments) { insert c into argumentGraph.arguments; }
-		insert premise into motherArgument.premises;
+
+		if (not isMemberOf(conclusion, argumentGraph.statements)) argumentGraph.insertStatement(conclusion);
+		
 		return C_OK;
 	}
 }
@@ -375,16 +403,15 @@ public class DeletePremiseStatementCommand extends UndoableCommand {
 	public var argument: Argument;
 
 	override function do(): Number {
-		delete premise from argument.premises;
-		delete argument from premise.statement.arguments;
-		delete premise.statement from argumentGraph.statements;
+		argument.deletePremise(premise);
+		if (premise.statement.arguments == [] and not argumentGraph.isConclusion(premise.statement))
+			argumentGraph.deleteStatement(premise.statement);
 		return C_OK;
 	}
 
 	override function undo(): Number {
-		insert premise into argument.premises;
-		insert argument into premise.statement.arguments;
-		insert premise.statement into argumentGraph.statements;
+		argument.appendPremise(premise);
+		if (not isMemberOf(premise.statement, argumentGraph.statements)) argumentGraph.insertStatement(premise.statement);
 		return C_OK;
 	}
 }

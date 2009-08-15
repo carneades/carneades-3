@@ -21,7 +21,6 @@ import carneadesgui.control.CarneadesControl;
 import carneadesgui.view.CarneadesView;
 import carneadesgui.model.CarneadesModel;
 import carneadesgui.view.StandardView;
-import carneadesgui.view.RichView;
 import carneadesgui.GC.*;
 
 public class CarneadesGUI {
@@ -29,13 +28,11 @@ public class CarneadesGUI {
 	application: this
     };
     var standardView: CarneadesView = StandardView {};
-    //var richView: CarneadesView = RichView {};
     var model: CarneadesModel = CarneadesModel {};
 	
 	postinit {
 		control.setModel(model);
 		control.addView(standardView);
-		//control.addView(richView);
 		control.setActiveView(standardView);
 		control.newGraph();
 	}

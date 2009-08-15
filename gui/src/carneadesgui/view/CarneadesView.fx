@@ -46,9 +46,11 @@ public abstract class CarneadesView {
 	public var currentGraph: CarneadesGraph;
 
 	public var control: CarneadesControl = null;
+
 	public var mode: Integer = inspectorDefaultMode;
 
 	public var displayTitle: String = "Carneades GUI";
+	protected var aboutInformationDisplayed: Boolean = false;
 
 	public-read var active: Boolean = false;
 	public function activate(): Void {
@@ -56,7 +58,6 @@ public abstract class CarneadesView {
 	}
 	public function deactivate(): Void {
 		active = false;
-		//currentGraph = null;
 	}
 
     public var view: Stage = Stage {
@@ -64,17 +65,17 @@ public abstract class CarneadesView {
 	width: bind appWidth
 	height: bind appHeight
 	scene: Scene {
-	    content: [
-		Text {
-		    font : Font {
-		    size : 16
-		    }
-		x: 10
-		y: 30
-		content: "This is the default view of the Carneades GUI"
+		content: [
+			Text {
+				font : Font {
+					size : 16
+				}
+				x: 10
+				y: 30
+				content: "This is the default view of the Carneades GUI"
+			}
+			]
 		}
-	    ]
-	}
     }
 
     public function update(u: GraphUpdate): Void {}
@@ -88,6 +89,7 @@ public abstract class CarneadesView {
     public function isVisible(e: GraphElement): Boolean { false }
     public function alert(t: String): Void {}
     public function unSelectAll(): Void {}
+	public function displayAboutInformation(): Void {}
     public function quit(): Void { view.close(); }
 }
 

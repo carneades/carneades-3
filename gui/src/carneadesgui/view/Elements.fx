@@ -18,13 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package carneadesgui.view;
 
 import javafx.scene.paint.*;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.text.*;
 import javafx.scene.*;
 
-import java.lang.Math.atan;
-import java.lang.Math.PI;
-import java.lang.Math.sqrt;
 
 // import the necessary parts of the model
 import carneadesgui.model.Argument;
@@ -48,6 +44,8 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextOrigin;
 import javafx.scene.input.MouseButton;
 import javafx.scene.transform.Rotate;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 /**
 * Auxiliary class for centered text.
@@ -66,7 +64,7 @@ public class CenteredStatementText extends Text {
 	}
 
 	public var boundingHeight: Number;
-	public var maxChars: Integer = 50;
+	public var maxChars: Integer = 45;
     override var textAlignment = TextAlignment.CENTER;
     override var textOrigin = TextOrigin.TOP;
 
@@ -90,7 +88,7 @@ public abstract class ArgumentElement extends CarneadesVertex {
 		fill: Color.TRANSPARENT
 		x: bind x - (width / 2) - 5
 		y: bind y - (height / 2) - 5
-		width: bind width + 10
+		width: bind width + 13
 		height: bind height + 10
 		stroke: bind {if (control.dragging) dragColor else selectionColor};
 		strokeWidth: 2
@@ -119,6 +117,7 @@ public class ArgumentBox extends ArgumentElement {
     // bind the model element to the argument element
     override var model = bind argument;
 
+	override def level = bind { parentVertex.level + 1}
     override var cache = true;
     override var height = argumentCircleDefaultRadius * 2;
     override var width = argumentCircleDefaultRadius * 2;
@@ -167,7 +166,7 @@ public class ArgumentBox extends ArgumentElement {
 		}
 
 		onMouseReleased: function(e: MouseEvent) {
-			if (control.dragging) {	control.endDrag(); }
+			if (control.dragging) {	control.endDrag(e.shiftDown); }
 		}
 
 		onMouseEntered: function(e: MouseEvent) {
@@ -212,8 +211,13 @@ public class StatementBox extends ArgumentElement {
      */
     public var statement: Statement;
 
+	// Is this the primary box of the statement
+	public var duplicate: Boolean = false;
+
     // bind the model element to the statement element
     override def model = bind statement;
+
+	override def level = bind { parentVertex.level + 1}
     
 	override def cache = true;
 	override var width = statementBoxDefaultWidth;
@@ -242,7 +246,8 @@ public class StatementBox extends ArgumentElement {
 			x - (width / 2), y - (height / 2) + mainRectHeight ]
 		blocksMouse: true
 		fill: bind { if (fillStatements) statusColor else defaultBoxFill }
-		stroke: bind { if (fillStatements) Color.BLACK else statusColor }
+		stroke: bind { if (fillStatements) Color.BLACK else statusColor	}
+		strokeDashArray: bind {if (duplicate) [6.0, 6.0] else [1.0]}
 		strokeWidth: 1
 
 		onMouseClicked: function(e: MouseEvent): Void {
@@ -254,7 +259,7 @@ public class StatementBox extends ArgumentElement {
 		}
 
 		onMouseReleased: function(e: MouseEvent) {
-			if (control.dragging) { control.endDrag(); }
+			if (control.dragging) { control.endDrag(e.shiftDown); }
 		}
 
 		onMouseEntered: function(e: MouseEvent) {
@@ -291,14 +296,38 @@ public class StatementBox extends ArgumentElement {
 		stroke: Color.BLACK
 	}
 
+	def duplicateLink: Group = Group {
+		def dimension: Integer = 20
+		translateX: bind this.x - this.width / 2
+		translateY: bind this.y + this.height / 2 - dimension
+		content: [
+			Rectangle {
+				def stroke: Number = 1
+				width: dimension
+				height: dimension
+				fill: null
+				stroke: Color.BLUE
+				strokeWidth: 1
+			},
+			ImageView {
+				fitWidth: dimension
+				fitHeight: dimension
+				image: Image {
+					url: "{__DIR__}images/icon-link.png"
+				}
+			}
+		]
+	}
+
     override function create():Node {
 		Group {
-			content: [
+			content: bind [
 				mainRect,
 				selection,
 				text,
 				acceptableCircle,
 				acceptableCompCircle,
+				{ if (duplicate) duplicateLink else null},
 				middlePoint,
 			] // content
 		} // Group
@@ -391,7 +420,7 @@ public class PremiseLink extends CarneadesEdge {
 
     // this is supposed to be a line but the line will not give mouse click events
     function getLengthOfEdge(x1: Number, x2: Number, y1: Number, y2: Number) {
-		sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2))
+		java.lang.Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2))
     }
 
     var selectPoly: Polygon = Polygon {
@@ -403,7 +432,7 @@ public class PremiseLink extends CarneadesEdge {
 		transforms: bind Rotate {
 			pivotX: bind (x2 + x1) / 2
 			pivotY: bind (y2 + y1) / 2
-			angle: - (atan((x2-x1)/(y2-y1)) / PI) * 180
+			angle: - (java.lang.Math.atan((x2-x1)/(y2-y1)) / java.lang.Math.PI) * 180
 		}
 		blocksMouse: true
 		fill: Color.GREEN

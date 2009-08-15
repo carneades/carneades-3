@@ -145,49 +145,51 @@ public class GraphPanel extends Panel {
     */
     public function focusOn(e: GraphElement): Void {
 		if (e instanceof Vertex) {
-			var oldShiftX: Number = shiftX;
-			var oldShiftY: Number = shiftY;
-			var visibilitySlices: Integer = 10;
-			var animationDuration: Integer = 500;
-			var timeline: Timeline;
-			timeline = Timeline {
-				repeatCount: 1
-				keyFrames: [
-					KeyFrame {
-						time: 0s
-						action: function(): Void {
-							controlsLocked = true;
-						}
-						values: [
-							shiftX => oldShiftX,
-							shiftY => oldShiftY
-						]
-					},
-					// create keyframes that check whether the node is visible now
-					[ for (i in [1..visibilitySlices]) KeyFrame {
-						time: Duration.valueOf((animationDuration / (visibilitySlices + 1)) * i)
+			if (not isVisibleInGraphPanel(e)) {
+				var oldShiftX: Number = shiftX;
+				var oldShiftY: Number = shiftY;
+				var visibilitySlices: Integer = 10;
+				var animationDuration: Integer = 500;
+				var timeline: Timeline;
+				timeline = Timeline {
+					repeatCount: 1
+					keyFrames: [
+						KeyFrame {
+							time: 0s
 							action: function(): Void {
-								if (isVisibleInGraphPanel(e)) {
-								// if it is, then stop the animation and enable controls
-								timeline.stop();
-								controlsLocked = false;
+								controlsLocked = true;
+							}
+							values: [
+								shiftX => oldShiftX,
+								shiftY => oldShiftY
+							]
+						},
+						// create keyframes that check whether the node is visible now
+						[ for (i in [1..visibilitySlices]) KeyFrame {
+							time: Duration.valueOf((animationDuration / (visibilitySlices + 1)) * i)
+								action: function(): Void {
+									if (isVisibleInGraphPanel(e)) {
+									// if it is, then stop the animation and enable controls
+									timeline.stop();
+									controlsLocked = false;
+									}
 								}
 							}
+						],
+						KeyFrame {
+							time: Duration.valueOf(animationDuration)
+							action: function(): Void {
+								controlsLocked = false;
+							}
+							values: [
+								shiftX => (e as Vertex).x tween Interpolator.EASEBOTH,
+								shiftY => (e as Vertex).y tween Interpolator.EASEBOTH
+							]
 						}
-					],
-					KeyFrame {
-						time: Duration.valueOf(animationDuration)
-						action: function(): Void {
-							controlsLocked = false;
-						}
-						values: [
-							shiftX => (e as Vertex).x tween Interpolator.EASEBOTH,
-							shiftY => (e as Vertex).y tween Interpolator.EASEBOTH
-						]
-					}
-				]
+					]
+				}
+				timeline.playFromStart();
 			}
-			timeline.playFromStart();
 		}
     }
 

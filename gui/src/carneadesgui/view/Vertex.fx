@@ -42,7 +42,7 @@ public class Vertex extends GraphElement {
     override var visible = false;
 
     postinit {
-	for (c in children) c.parentVertex = this;
+		for (c in children) c.parentVertex = this;
     }
 
     /**
@@ -51,11 +51,11 @@ public class Vertex extends GraphElement {
     public var caption = "";
 
     public var text: Text = Text {
-	content: bind caption
-	textAlignment: TextAlignment.CENTER
-	textOrigin: TextOrigin.BASELINE
-	x: bind x
-	y: bind y
+		content: bind caption
+		textAlignment: TextAlignment.CENTER
+		textOrigin: TextOrigin.BASELINE
+		x: bind x
+		y: bind y
     } // Text
 
     /**
