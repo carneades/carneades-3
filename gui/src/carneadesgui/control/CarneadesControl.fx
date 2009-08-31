@@ -829,6 +829,24 @@ public class CarneadesControl {
     public var fileLoaded: Boolean = bind currentFile != null;
     public var fileChooser: JFileChooser = new JFileChooser();
 
+	public function newDocument(): Void {
+        if (fileChanged) {
+            var choice = JOptionPane.showOptionDialog(
+                      null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?",
+                      JOptionPane.YES_NO_CANCEL_OPTION,
+                      JOptionPane.QUESTION_MESSAGE, null,
+                      ["Save", "Don't Save", "Cancel"], null
+                  );
+            if (choice == JOptionPane.YES_OPTION) {
+                saveAs();
+            } else if (choice == JOptionPane.NO_OPTION) {
+                newGraph();
+            }
+        } else {
+            newGraph();
+        }
+    }
+
     public function open(): Void {
 		if (fileChanged) {
 			var choice = JOptionPane.showOptionDialog(

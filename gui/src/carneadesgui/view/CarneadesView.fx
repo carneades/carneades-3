@@ -35,6 +35,8 @@ import carneadesgui.model.Argument.*;
 // view imports
 import carneadesgui.view.GraphUpdate;
 
+import javafx.scene.input.MouseEvent;
+
 /**
 * The base class for view components to the Carneades GUI. A new view component should subclass it and override attributes and methods as needed.
 */
@@ -86,6 +88,8 @@ public abstract class CarneadesView {
     public function editPremise(p: Premise): Void {}
     public function editGraph(a: ArgumentGraph): Void {}
 	public function displayGraphListView(): Void {}
+	public function displayToolTip(e: MouseEvent, text: String): Void {}
+	public function hideToolTip(): Void {}
     public function isVisible(e: GraphElement): Boolean { false }
     public function alert(t: String): Void {}
     public function unSelectAll(): Void {}
