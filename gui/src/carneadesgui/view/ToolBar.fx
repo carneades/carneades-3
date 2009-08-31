@@ -49,6 +49,16 @@ class ToolBarButton extends Button {
 		minHeight: toolBarHeight - 10
 		height: toolBarHeight - 10
 	}
+
+	public var toolTipText: String = "";
+
+	override def onMouseEntered = function(e: MouseEvent) {
+		view.displayToolTip(e, toolTipText);
+	}
+
+	override def onMouseExited = function(e: MouseEvent) {
+		view.hideToolTip();
+	}
 }
 
 
@@ -66,9 +76,18 @@ public class ToolBar extends Panel {
 		onMouseClicked: function(e: MouseEvent): Void {}
 	}
 
+	def newButton: ToolBarButton = ToolBarButton {
+		//text: "new"
+		control: bind control
+		toolTipText: "new document"
+		image: Image { url: "{__DIR__}images/icon-new.png"	}
+		action: function(): Void { control.newDocument(); }
+	};
+
 	def openButton: ToolBarButton = ToolBarButton {
 		//text: "open"
 		control: bind control
+		toolTipText: "open file"
 		image: Image { url: "{__DIR__}images/icon-open.png"	}
 		action: function(): Void { control.open(); }
 	};
@@ -184,7 +203,7 @@ public class ToolBar extends Panel {
 	def deadButton2: ToolBarButton = ToolBarButton { disable: true }
 	def deadButton3: ToolBarButton = ToolBarButton { disable: true }
 
-	override var content = bind [
+	override def content = bind [
 		LayoutRect {
 			width: bind appWidth
 			height: bind toolBarHeight
@@ -205,6 +224,7 @@ public class ToolBar extends Panel {
 			content: bind [
 				Rectangle {}, // dead filler rectangle
 				//debugButton,
+				newButton,
 				openButton,
 				saveButton,
 				saveAsButton,
@@ -223,7 +243,7 @@ public class ToolBar extends Panel {
 				aboutButton,
 				quitButton,
 			]
-		}
+		},
 	];
 }
 
