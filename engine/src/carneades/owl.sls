@@ -17,7 +17,7 @@
 ;
 ; TODO:
 ;
-;  - anonymous individuals (gensym)
+;  - individual facts
 ;
 ; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -26,7 +26,7 @@
     - optional ontology headers (generally at most one) - !!! no support !!!
     - class axioms                                      - partial support
     - property axioms                                   - partial support
-    - facts about individuals                           - partial support (anonymous missing)
+    - facts about individuals                           - partial support 
     
 |#
 
@@ -276,9 +276,9 @@
           (class-rules (filter (lambda (l) (not (null? l))) (flatmap class-axiom->rules class-axioms)))
           ; individual rules
           (descriptions (get-descriptions ontology))
-          (class-members (get-class-members ontology))
+          (class-members (get-class-members ontology))          
           (description-rules (flatmap individual-description->rules descriptions))
-          (class-member-rules (flatmap class-member->rules class-members))
+          (class-member-rules (flatmap class-members->rules class-members))
           (rules (append class-rules
                          object-property-rules
                          data-property-rules
@@ -733,7 +733,7 @@
           (rdf-about((sxpath "@rdf:about/text()" namespaces) desc))
           (individual-name (cond ((not (null? rdf-id)) (car rdf-id))
                                  ((not (null? rdf-about)) (text->name rdf-about))
-                                 (else (error "description->rules" "no individual-name found" desc))))
+                                 (else (error "individual-description->rules" "no individual-name found" desc))))
           (types (get-types desc))
           (object-prop-values (get-object-property-values desc))
           (data-prop-values (get-data-property-values desc))
@@ -742,18 +742,22 @@
           (data-prop-value-rules (map (lambda (p) (data-property-value->rule individual-name p)) data-prop-values)))
      (append type-rules  object-prop-value-rules data-prop-value-rules)))
  
+ ; class-members->rules : sxml -> (list-of rule)
+ (define (class-members->rules class-members)
+   (flatmap class-member->rules (cdr class-members)))
+ 
  ; class-member->rules : sxml -> (list-of rule)
  (define (class-member->rules class-member)
-   (let* ((class-name (resolve-namespaces (car class-member) namespaces))
-          (member (cdr class-member))
-          (rdf-id ((sxpath "@rdf:ID/text()" namespaces) member))
-          (rdf-about((sxpath "@rdf:about/text()" namespaces) member))
+   (let* ((class-name (car class-member))
+          ;(member (cdr class-member))
+          (rdf-id ((sxpath "@rdf:ID/text()" namespaces) class-member))
+          (rdf-about((sxpath "@rdf:about/text()" namespaces) class-member))
           (individual-name (cond ((not (null? rdf-id)) (car rdf-id))
                                  ((not (null? rdf-about)) (text->name rdf-about))
-                                 (else (error "description->rules" "no individual-name found" class-member))))
+                                 (else (symbol->string (gensym "anonymous-individual-")))))          
           (types (get-types class-member))
           (object-prop-values (get-object-property-values class-member))
-          (data-prop-values (get-data-property-values class-member))
+          (data-prop-values (get-data-property-values class-member))          
           (type-rules (map (lambda (t) (member-type->rule individual-name t)) types))
           (object-prop-value-rules (map (lambda (p) (object-property-value->rule individual-name p)) object-prop-values))
           (data-prop-value-rules (map (lambda (p) (data-property-value->rule individual-name p)) data-prop-values)))
