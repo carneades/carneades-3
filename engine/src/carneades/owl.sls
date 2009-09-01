@@ -84,7 +84,7 @@
          (carneades lib xml ssax access-remote)
          (carneades lib xml sxml sxpath))
  
- (define *debug* #t)
+ (define *debug* #f)
  
  ; list of namespace-prefixes used for sxpath
  (define namespaces '((owl . "http://www.w3.org/2002/07/owl#")
@@ -921,6 +921,6 @@
  
  ;(define class1 (car classes))
  
- (define rb (owl-import "C:\\Users\\stb\\Desktop\\Hundeformular Test\\Hundeformular.owl" '(transitive symmetric domain range)))
+ ;(define rb (owl-import "C:\\Users\\stb\\Desktop\\Hundeformular Test\\Hundeformular.owl" '(transitive symmetric domain range)))
  
  )
