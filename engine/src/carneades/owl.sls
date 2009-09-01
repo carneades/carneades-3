@@ -13,56 +13,59 @@
 ;;; You should have received a copy of the GNU Lesser General Public License
 ;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-;
-; TODO:
-;
-;  - individual facts
-;
-; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 #|
     An OWL document consists of:
-    - optional ontology headers (generally at most one) - !!! no support !!!
-    - class axioms                                      - partial support
-    - property axioms                                   - partial support
-    - facts about individuals                           - partial support 
+     - optional ontology headers (generally at most one) - !!! no support !!!
+     - class axioms                                      - partial support
+     - property axioms                                   - partial support
+     - facts about individuals                           - partial support 
     
 |#
 
 #|
     OWL class axioms
-    - subclasses          - total support
-    - equivalent classes  - partial support as far as rules only support conjunctions of literals in the head
-    - disjoint classes    - partial support (s.a.); maybe different semantic
-    - complete classes    - !!! no support !!! will propably be implemented later
+     - subclasses          - total support
+     - equivalent classes  - partial support as far as rules only support conjunctions of literals in the head
+     - disjoint classes    - partial support (s.a.); maybe different semantic
+     - complete classes    - !!! no support !!! will propably be implemented later
 
     OWL class descriptions
-    - identifier            - total support
-    - enumerations          - total support
-    - property restrictions - partial support
-      - allValuesFrom  - partial support in subclasses and in equivalent classes in one direction
-      - someValuesFrom - total support
-      - hasValue       - total support
-      - maxCardinality - !!! no support !!!
-      - minCardinality - !!! no support !!!
-      - Cardinality    - !!! no support !!!
-    - intersections         - total support
-    - unions                - total support
-    - complements           - total support
+     - identifier            - total support
+     - enumerations          - total support
+     - property restrictions - partial support
+       - allValuesFrom  - partial support in subclasses and in equivalent classes in one direction
+       - someValuesFrom - total support
+       - hasValue       - total support
+       - maxCardinality - !!! no support !!!
+       - minCardinality - !!! no support !!!
+       - Cardinality    - !!! no support !!!
+     - intersections         - total support
+     - unions                - total support
+     - complements           - total support
 |#
 
 #|
     OWL property axioms
-    - subproperty                 - total support
-    - domain                      - total support
-    - range                       - total support
-    - equivalent property         - total support
-    - inverse property            - total support
-    - functional property         - !!! no support !!!
-    - inverse functional property - !!! no support !!!
-    - symmetric property          - total support
-    - transitive property         - total support
+     - subproperty                 - total support
+     - domain                      - total support
+     - range                       - total support
+     - equivalent property         - total support
+     - inverse property            - total support
+     - functional property         - !!! no support !!!
+     - inverse functional property - !!! no support !!!
+     - symmetric property          - total support
+     - transitive property         - total support
+|#
+
+#|
+    OWL individual axioms
+     - class membership    - total support
+     - property values     - total support
+     - identity            - partial support
+       - same as           - total support
+       - different from    - total support
+       - all different     - no support
 |#
 
 #!r6rs
@@ -81,7 +84,7 @@
          (carneades lib xml ssax access-remote)
          (carneades lib xml sxml sxpath))
  
- (define *debug* #f)
+ (define *debug* #t)
  
  ; list of namespace-prefixes used for sxpath
  (define namespaces '((owl . "http://www.w3.org/2002/07/owl#")
@@ -237,6 +240,12 @@
                         '()
                         (cons c member))))
                 data-properties)))
+ 
+ (define (get-same-individuals sxml)
+   ((sxpath "owl:sameAs" namespaces) sxml))
+ 
+ (define (get-different-individuals sxml)
+   ((sxpath "owl:differentFrom" namespaces) sxml))
  
  ; -------------------------
  ; rdf parser
@@ -737,10 +746,14 @@
           (types (get-types desc))
           (object-prop-values (get-object-property-values desc))
           (data-prop-values (get-data-property-values desc))
+          (same-individuals (get-same-individuals desc))
+          (different-individuals (get-different-individuals desc))
           (type-rules (map (lambda (t) (member-type->rule individual-name t)) types))
           (object-prop-value-rules (map (lambda (p) (object-property-value->rule individual-name p)) object-prop-values))
-          (data-prop-value-rules (map (lambda (p) (data-property-value->rule individual-name p)) data-prop-values)))
-     (append type-rules  object-prop-value-rules data-prop-value-rules)))
+          (data-prop-value-rules (map (lambda (p) (data-property-value->rule individual-name p)) data-prop-values))
+          (same-rules (map (lambda (s) (same-individual->rule individual-name s)) same-individuals))
+          (different-rules (map (lambda (d) (different-individual->rule individual-name d)) different-individuals)))
+     (append type-rules  object-prop-value-rules data-prop-value-rules same-rules different-rules)))
  
  ; class-members->rules : sxml -> (list-of rule)
  (define (class-members->rules class-members)
@@ -757,11 +770,19 @@
                                  (else (symbol->string (gensym "anonymous-individual-")))))          
           (types (get-types class-member))
           (object-prop-values (get-object-property-values class-member))
-          (data-prop-values (get-data-property-values class-member))          
+          (data-prop-values (get-data-property-values class-member))    
+          (same-individuals (get-same-individuals class-member))  
+          (different-individuals (get-different-individuals class-member))
           (type-rules (map (lambda (t) (member-type->rule individual-name t)) types))
           (object-prop-value-rules (map (lambda (p) (object-property-value->rule individual-name p)) object-prop-values))
-          (data-prop-value-rules (map (lambda (p) (data-property-value->rule individual-name p)) data-prop-values)))
-     (append type-rules  object-prop-value-rules data-prop-value-rules)))
+          (data-prop-value-rules (map (lambda (p) (data-property-value->rule individual-name p)) data-prop-values))
+          (same-rules (map (lambda (s) (same-individual->rule individual-name s)) same-individuals))
+          (different-rules (map (lambda (d) (different-individual->rule individual-name d)) different-individuals))
+          (member-rule (make-rule (gensym (string-append individual-name "-class-member-rule-"))
+                                  #f
+                                  (make-rule-head (list class-name (string->symbol individual-name)))
+                                  '())))
+     (append type-rules  object-prop-value-rules data-prop-value-rules (list member-rule) same-rules different-rules)))
  
  ; member-type->rule : string sxml -> rule
  (define (member-type->rule individual-name type)
@@ -810,6 +831,28 @@
                 (make-rule-head (list (string->symbol property-name)
                                       (string->symbol individual-name)
                                       data))
+                '())))
+ 
+ ; same-individual->rule : string sxml -> rule
+ (define (same-individual->rule individual-name sameAs)
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) sameAs))
+          (object (if (not (null? rdf-resource))
+                      (string->symbol (text->name rdf-resource))
+                      (error "same-individual->rule" "no rdf:resource found" sameAs))))
+     (make-rule (gensym (string-append individual-name "-same-as-rule-"))
+                #f
+                (make-rule-head (list '= (string->symbol individual-name) object))
+                '())))
+ 
+ ; different-individual->rule : string sxml -> rule
+ (define (different-individual->rule individual-name differentFrom)
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) differentFrom))
+          (object (if (not (null? rdf-resource))
+                      (string->symbol (text->name rdf-resource))
+                      (error "different-individual->rule" "no rdf:resource found" differentFrom))))
+     (make-rule (gensym (string-append individual-name "-different-from-rule-"))
+                #f
+                (make-rule-head (list 'not (list '= (string->symbol individual-name) object)))
                 '())))
       
  
@@ -878,6 +921,6 @@
  
  ;(define class1 (car classes))
  
- ;(define rb (owl-import "C:\\Users\\stb\\Desktop\\Hundeformular Test\\Hundeformular.owl" '(transitive symmetric domain range)))
+ (define rb (owl-import "C:\\Users\\stb\\Desktop\\Hundeformular Test\\Hundeformular.owl" '(transitive symmetric domain range)))
  
  )
