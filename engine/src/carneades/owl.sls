@@ -65,7 +65,12 @@
      - identity            - partial support
        - same as           - total support
        - different from    - total support
-       - all different     - no support
+       - all different     - !!! no support !!!
+
+   !!! Individual identity !!!
+   OWL does not make the so-called "unique names" assumption. Carneades doesn't
+   make this assumption explicitly either, but has no equation-theory implemented
+   and therefor cannot reason about identity!
 |#
 
 #!r6rs
