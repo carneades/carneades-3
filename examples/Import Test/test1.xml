@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?oxygen RNGSchema="../../schemas/LKIF2.rnc" type="compact"?>
+<lkif>
+    
+    <theory id="test1">        
+        <imports>
+            <import uri="C:\Users\stb\Documents\Carneades Project\examples\Import Test\test2.xml" prefix="test2"/>
+            <import uri="C:\Users\stb\Documents\Carneades Project\examples\Import Test\test3.xml" prefix="test3"/>
+        </imports>
+        <rules>
+            <rule id="r11">
+                <head>
+                    <s pred="foo"><v>x</v></s>
+                </head>                
+                <body>
+                    <s pred="bar"><v>x</v></s>
+                </body>
+            </rule>
+        </rules>
+    </theory>    
+    
+    <argument-graphs>
+        <argument-graph id="ag1" main-issue="s1">
+            <statements>
+                <statement id="s1" value="true">
+                    <s>A</s>
+                </statement>
+                <statement id="s2" value="true">
+                    <s>B</s>
+                </statement>
+                <statement id="s3" value="true">
+                    <s>C</s>
+                </statement>
+            </statements>
+            <arguments>
+                <argument id="a1" direction="pro">
+                    <conclusion statement="s1"/>
+                    <premises>
+                        <premise statement="s2"/>
+                        <premise statement="s3"/>
+                    </premises>
+                </argument>
+            </arguments>
+        </argument-graph>
+    </argument-graphs>
+    
+</lkif>
+    
+    
