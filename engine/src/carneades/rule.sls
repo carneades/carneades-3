@@ -29,9 +29,9 @@
   
  (export rule rule* make-rule rule? rule-id rule-strict rule-head rule-body 
          rule-critical-questions empty-rulebase rulebase rulebase? get-rule
-         add-rules rulebase-rules generate-arguments-from-rules rule->datum
-         rulebase->datum (rename (make-head make-rule-head)) (rename (make-body make-rule-body))
-         get-clauses)
+         add-rules rulebase-rules rulebase-table generate-arguments-from-rules
+         rule->datum rulebase->datum (rename (make-head make-rule-head))
+         (rename (make-body make-rule-body)) get-clauses)
  
  (import (rnrs)
          (rnrs lists)
@@ -274,7 +274,8 @@
             rules))  ; list of the rules
 
   (define rulebase? %rulebase?)
-  (define rulebase-rules %rulebase-rules)
+  (define rulebase-rules %rulebase-rules)  
+  (define rulebase-table %rulebase-table)
   
   (define empty-rulebase
     (make-%rulebase (table:make-eq-table null) null))
@@ -290,11 +291,11 @@
                   (let* ((pred (predicate conclusion))
                          (tbl (%rulebase-table rb2))
                          (current-rules (table:lookup tbl pred null))
-                         (new-rules (if (not (memq r current-rules))
-                                        (cons r current-rules)
-                                        current-rules)))
-                    (make-%rulebase (table:insert tbl pred new-rules)
-                                    (cons r (%rulebase-rules rb1)))))
+                         (new-rules (cons r current-rules)))
+                    (if (not (memq (rule-id r) (map rule-id current-rules)))
+                        (make-%rulebase (table:insert tbl pred new-rules)
+                                        (cons r (%rulebase-rules rb1)))
+                        rb2)))
                 rb1
                 (rule-head r)))
   
