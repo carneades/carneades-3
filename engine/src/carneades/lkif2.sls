@@ -6,6 +6,7 @@
  
  (export lkif-import
          lkif-export
+         lkif?
          make-lkif-data lkif-data? lkif-data-sources lkif-data-argument-graphs
          lkif-data-rulebase
          make-source source? source-element source-uri)
