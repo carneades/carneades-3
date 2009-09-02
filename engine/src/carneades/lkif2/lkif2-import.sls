@@ -5,17 +5,22 @@
  (carneades lkif2 lkif2-import)
  
  (export lkif-import
+         lkif?
          )
  
  (import (rnrs)
          (carneades base)
          (carneades lkif2 lkif2-base)
          (carneades rule)
+         (carneades owl)
          (prefix (carneades argument) argument:)
          (prefix (carneades statement) statement:)
          (carneades lib match)
          (prefix (carneades table) table:)
          (carneades lib xml sxml xpath-context_xlink)
+         (carneades lib xml ssax ssax-code)
+         (carneades lib xml ssax access-remote)
+         (carneades lib xml sxml sxpath)
          (only (carneades lib srfi strings) string-tokenize string-join))
  
  
@@ -69,15 +74,28 @@
  ; --------------------------------
  ; Import functions 
  
+ ; lkif?: string -> boolean
+ (define (lkif? path)
+  (let* ((doc (ssax:dtd-xml->sxml (open-input-resource path) '()))
+         (lkif ((sxpath "lkif" namespaces) doc)))
+    (not (null? lkif))))
  
- ; lkif-import: file-path -> lkif-data
- (define (lkif-import path)
+ 
+ (define  (lkif-import path . optionals)
+   (if (null? optionals)
+       (%lkif-import path (list path) '())
+       (%lkif-import path (list path) optionals)))
+ 
+ ; %lkif-import: file-path (list-of string) [(list-of symbol)] -> lkif-data
+ (define (%lkif-import path files optionals)
    (let* ((lkif-body (get-lkif (get-document path)))
           (sources (read-sources lkif-body))
           (theory (read-theory lkif-body))
           (arg-graphs (read-argument-graphs lkif-body))
-          (argument-graphs (lkif-graphs->argument-graphs arg-graphs))
-          (rb (theory->rulebase theory)))
+          (defined-arg-graphs (lkif-graphs->argument-graphs arg-graphs))
+          (imports (theory->rulebase/ags theory optionals files))
+          (rb (car imports))
+          (argument-graphs (append defined-arg-graphs (cdr imports))))
      (make-lkif-data sources rb argument-graphs)))
  
  
@@ -121,11 +139,9 @@
  
  ; get-statement: xsd:ID table -> struct:statement
  (define (get-statement sid tbl)
-   (table:lookup tbl sid (lambda ()
-                           (display "Error: Statement-ID not found: ")
-                           (display sid)
-                           (newline)
-                           #f)))
+   (or (table:lookup tbl sid #f)
+       (error "get-statement" "statement not found" sid)))
+         
  
  ; get-conclusion-statement: lkif-conclusion table -> struct:statement
  (define (get-conclusion-statement c tbl)
@@ -408,22 +424,45 @@
  
  ; theory conversion
  
- (define (theory->rulebase theory)
-   (let ((imported-rb (import-rules (theory-imports theory)))
-         (defined-rb (lkif-rules->rulebase (theory-rules theory)))
-         (axioms (lkif-axioms->rules (theory-axioms theory))))
-     (add-rules (add-rules defined-rb (rulebase-rules imported-rb)) axioms)))
+ (define (theory->rulebase/ags theory optionals files)
+   (let* ((imported-rb/ags (import-rules/ags (theory-imports theory) optionals files))
+          (imported-rb (car imported-rb/ags))
+          (imported-ags (cadr imported-rb/ags))
+          (defined-rb (lkif-rules->rulebase (theory-rules theory)))
+          (axioms (lkif-axioms->rules (theory-axioms theory))))
+     (cons (add-rules (add-rules defined-rb (rulebase-rules imported-rb)) axioms)
+           imported-ags)))
  
- (define (import-rules imports)
-   (fold-left (lambda (rb1 rb2)
-                (add-rules rb1 (rulebase-rules rb2)))
-              empty-rulebase
-              (map import-rb imports)))
+ (define (import-rules/ags imports optionals files)
+   (let* ((rb/ags-list (split-list (map (lambda (i) (import-rb/ags i optionals files)) imports)))
+          (rb-list (car rb/ags-list))
+          (ags-list (cadr rb/ags-list))
+          (rules (fold-left (lambda (rb1 rb2)
+                              (add-rules rb1 (rulebase-rules rb2)))
+                            empty-rulebase
+                            rb-list))
+          (ags (fold-left append '() ags-list)))
+     (list rules ags)))                            
+                             
  
- (define (import-rb import)
-   (let ((prefix (get-attribute-value (get-attribute import 'prefix) ""))
-         (uri (get-attribute-value (get-attribute import 'uri) #f)))
-     (lkif-data-rulebase (lkif-import uri))))
+ (define (split-list l)
+   (if (not (null? l))
+       (let* ((sl (split-list (cdr l)))
+              (l1 (car sl))
+              (l2 (cadr sl)))
+         (list (cons (caar l) l1) (cons (cdar l) l2)))
+       (list '() '())))
+ 
+ (define (import-rb/ags import optionals files)
+   (let* ((prefix (get-attribute-value (get-attribute import 'prefix) ""))
+          (uri (get-attribute-value (get-attribute import 'uri) #f)))
+     (if (member uri files)
+         (cons empty-rulebase '())
+         (cond ((owl? uri) (cons (owl-import uri optionals) '()))
+               ((lkif? uri) (let ((i-data (%lkif-import uri optionals (cons uri files))))
+                              (cons (lkif-data-rulebase i-data) (lkif-data-argument-graphs i-data))))
+               (else (error "import-rb/ags" "no owl- or lkif-file" import))))))
+
  
  
  
