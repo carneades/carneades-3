@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:/C:/Users/stb/Documents/Carneades%20Project/schemas/LKIF2.rnc" type="compact"?>
+<lkif>
+    <theory id="circle1">        
+        <imports>
+            <import uri="C:\Users\stb\Documents\Carneades Project\examples\Import Test\circle2.lkif" prefix="circle2"/>
+        </imports>
+        <rules>
+            <rule id="r21">
+                <head>
+                    <s pred="a"><v>x</v></s>
+                </head>                
+                <body>
+                    <s pred="b"><v>x</v></s>
+                </body>
+            </rule>
+        </rules>
+    </theory>    
+</lkif>
