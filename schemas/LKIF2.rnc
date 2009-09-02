@@ -46,8 +46,7 @@ grammar {
     # are imported but also any assertions about instances, the ABox. 
 
     Import = element import { 
-      attribute prefix { xsd:ID },
-      attribute uri { xsd:anyURI } 
+      attribute url { xsd:anyURI } 
     }
     
     Axiom = element axiom { 
