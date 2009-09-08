@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="file:/C:/Users/stb/Documents/Carneades%20Project/schemas/LKIF2.rnc" type="compact"?>
+
+<!DOCTYPE foo [ 
+    <!ENTITY owl1 "http://www.carneades/owl1.owl#" >
+]>
+
 <lkif>
     <theory id="test2">        
         <imports>
@@ -8,10 +13,10 @@
         <rules>
             <rule id="r21">
                 <head>
-                    <s pred="http://www.carneades/owl1.owl#a"><v>x</v></s>
+                    <s pred="&owl1;a"><v>x</v></s>
                 </head>                
                 <body>
-                    <s pred="http://www.carneades/owl1.owl#b"><v>x</v></s>
+                    <s pred="&owl1;b"><v>x</v></s>
                 </body>
             </rule>
         </rules>
