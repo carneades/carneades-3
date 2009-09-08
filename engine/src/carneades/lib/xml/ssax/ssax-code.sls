@@ -898,7 +898,7 @@
          (begin (display "extract-entities: ")
                 (write line)
                 (newline)))
-     (if (string=? l "]>")
+     (if (string=? (string-trim-both l) "]>")                         
          entities
          (if (and (list? line)
                   (>= (length line) 3))
@@ -918,6 +918,7 @@
                (if (string=? ent "<!ENTITY")
                    (extract-entities port (append entities (list (cons name uri))))
                    (extract-entities port entities)))
+                                
              (extract-entities port entities)))))
  
  (define doctype-handler
