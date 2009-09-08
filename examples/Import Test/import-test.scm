@@ -8,11 +8,10 @@
         (carneades lkif2)
         (carneades shell))
 
-; (define dir "C:\\Users\\stb\\Documents\\Carneades Project\\examples\\Import Test\\")
-(define dir "/Users/tgo/Documents/Projects/Carneades/svn/examples/Import Test/")
-(define test1 (string-append dir "test1.xml"))
 
-(define circle1 (string-append dir "circle1.lkif"))
+(define test1 "test1.xml")
+
+(define circle1 "circle1.lkif")
 
 (define t1 (lkif-import test1 '(transitive symmetric domain range)))
 (define c1 (lkif-import circle1 '()))
