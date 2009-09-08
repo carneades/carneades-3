@@ -3,7 +3,7 @@
 <lkif>
     <theory id="circle1">        
         <imports>
-            <import uri="circle2.lkif" />
+            <import url="circle2.lkif" />
         </imports>
         <rules>
             <rule id="r21">
