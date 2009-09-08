@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?oxygen RNGSchema="../../../schemas/LKIF2.rnc" type="compact"?>
-<?xml-stylesheet type="text/css" href="../../../schemas/LKIF2.css"?>
-<?xml-stylesheet type="text/css" href="../../../schemas/LKIF2.css"?>
-<?xml-stylesheet type="text/css" href="../../../schemas/LKIF2.css"?>
-<?oxygen RNGSchema="../../../schemas/LKIF2.rnc" type="compact"?>
-<?oxygen RNGSchema="../../../schemas/LKIF2.rnc" type="compact"?>
-<?oxygen RNGSchema="file:/Users/tgo/Documents/Projects/Carneades/svn/schemas/LKIF2.rnc" type="compact"?>
+<?oxygen RNGSchema="../../schemas/LKIF2.rnc" type="compact"?>
+<?xml-stylesheet type="text/css" href="../../schemas/LKIF2.css"?>
 
 <lkif>
   <theory id="family-support">

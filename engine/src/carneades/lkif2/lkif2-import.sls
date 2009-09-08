@@ -77,7 +77,7 @@
  ; lkif?: string -> boolean
  (define (lkif? path)
   (let* ((doc (ssax:dtd-xml->sxml (open-input-resource path) '()))
-         (lkif ((sxpath "lkif" namespaces) doc)))
+         (lkif ((sxpath "lkif" (namespaces)) doc)))
     (not (null? lkif))))
  
  

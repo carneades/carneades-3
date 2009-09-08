@@ -95,11 +95,15 @@
  (define *debug* #f)
  
  ; list of namespace-prefixes used for sxpath
- (define namespaces '((owl . "http://www.w3.org/2002/07/owl#")
+ (define *namespaces* '((owl . "http://www.w3.org/2002/07/owl#")
                       (xsd . "http://www.w3.org/2001/XMLSchema#")
                       (owl2xml . "http://www.w3.org/2006/12/owl2-xml#")
                       (rdfs . "http://www.w3.org/2000/01/rdf-schema#")
                       (rdf . "http://www.w3.org/1999/02/22-rdf-syntax-ns#")))
+ 
+ (define namespaces
+   (case-lambda (() *namespaces*)
+                ((ns) (set! *namespaces* ns) *namespaces*)))
  
  (define prefixes '("http://www.w3.org/2002/07/owl#"
                     "http://www.w3.org/2001/XMLSchema#"
@@ -132,7 +136,7 @@
    (let* ((doc (ssax:dtd-xml->sxml (open-input-resource path) '()))
           (owl-body ((sxpath ontology-path namespaces) doc))
           (rb (ontology->rules owl-body optionals)))
-     (set! namespaces (remp (lambda (n) (eq? (car n) 'base)) namespaces))
+     (namespaces (remp (lambda (n) (eq? (car n) 'base)) namespaces))
      rb))
  
  
@@ -147,43 +151,43 @@
  
  ; add-class: string -> <void>
  (define (add-class c)
-   (set! classes (append classes (list (apply-namespaces c namespaces)))))
+   (set! classes (append classes (list (apply-namespaces c *namespaces*)))))
  
  ; class descriptions
   
  (define (get-owl-classes sxml)
-   ((sxpath "owl:Class" namespaces) sxml))
+   ((sxpath "owl:Class" *namespaces*) sxml))
  
  (define (get-class-enumerations sxml)
-   ((sxpath "owl:oneOf" namespaces) sxml))
+   ((sxpath "owl:oneOf" *namespaces*) sxml))
  
  (define (get-class-property-restrictions sxml)
-   ((sxpath "owl:Restriction" namespaces) sxml))
+   ((sxpath "owl:Restriction" *namespaces*) sxml))
  
  (define (get-owl-universal-restriction sxml)
-   ((sxpath "*[self::owl:Restriction/owl:allValuesFrom]" namespaces) sxml))
+   ((sxpath "*[self::owl:Restriction/owl:allValuesFrom]" *namespaces*) sxml))
  
  (define (get-class-intersections sxml)
-   ((sxpath "owl:intersectionOf" namespaces) sxml))
+   ((sxpath "owl:intersectionOf" *namespaces*) sxml))
  
  (define (get-class-unions sxml)
-   ((sxpath "owl:unionOf" namespaces) sxml))
+   ((sxpath "owl:unionOf" *namespaces*) sxml))
  
  (define (get-class-complements sxml)
-   ((sxpath "owl:complementOf" namespaces) sxml))
+   ((sxpath "owl:complementOf" *namespaces*) sxml))
  
  
  
  ; class axioms
  
  (define (get-subclasses sxml)
-   ((sxpath "rdfs:subClassOf" namespaces) sxml))
+   ((sxpath "rdfs:subClassOf" *namespaces*) sxml))
  
  (define (get-equivalent-classes sxml)
-   ((sxpath "owl:equivalentClass" namespaces) sxml))
+   ((sxpath "owl:equivalentClass" *namespaces*) sxml))
  
  (define (get-disjoint-classes sxml)
-   ((sxpath "owl:disjointWith" namespaces) sxml))
+   ((sxpath "owl:disjointWith" *namespaces*) sxml))
  
  
  ; -------------------------
@@ -194,55 +198,55 @@
  (define data-properties '())
  
  (define (add-object-property p)
-   (set! object-properties (append object-properties (list (apply-namespaces p namespaces)))))
+   (set! object-properties (append object-properties (list (apply-namespaces p *namespaces*)))))
  
  (define (add-data-property p)
-   (set! data-properties (append data-properties (list (apply-namespaces p namespaces)))))
+   (set! data-properties (append data-properties (list (apply-namespaces p *namespaces*)))))
  
  (define (get-object-properties sxml)
-   ((sxpath "owl:ObjectProperty" namespaces) sxml))
+   ((sxpath "owl:ObjectProperty" *namespaces*) sxml))
  
  (define (get-data-properties sxml)
-   ((sxpath "owl:DatatypeProperty" namespaces) sxml))
+   ((sxpath "owl:DatatypeProperty" *namespaces*) sxml))
  
  (define (get-subproperties sxml)
-   ((sxpath "rdfs:subPropertyOf" namespaces) sxml))
+   ((sxpath "rdfs:subPropertyOf" *namespaces*) sxml))
  
  (define (get-domains sxml)
-   ((sxpath "rdfs:domain" namespaces) sxml))
+   ((sxpath "rdfs:domain" *namespaces*) sxml))
  
  (define (get-ranges sxml)
-   ((sxpath "rdfs:range" namespaces) sxml))
+   ((sxpath "rdfs:range" *namespaces*) sxml))
  
  (define (get-equivalent-properties sxml)
-   ((sxpath "owl:equivalentProperty" namespaces) sxml))
+   ((sxpath "owl:equivalentProperty" *namespaces*) sxml))
  
  (define (get-inverse-properties sxml)
-   ((sxpath "owl:inverseOf" namespaces) sxml))
+   ((sxpath "owl:inverseOf" *namespaces*) sxml))
  
  (define (get-functional-properties sxml)
-   ((sxpath "owl:FunctionalProperty" namespaces) sxml))
+   ((sxpath "owl:FunctionalProperty" *namespaces*) sxml))
  
  (define (get-inverse-functional-properties sxml)
-   ((sxpath "owl:InverseFunctionalProperty" namespaces) sxml))
+   ((sxpath "owl:InverseFunctionalProperty" *namespaces*) sxml))
  
  (define (get-transitive-properties sxml)
-   ((sxpath "owl:TransitiveProperty" namespaces) sxml))
+   ((sxpath "owl:TransitiveProperty" *namespaces*) sxml))
  
  (define (get-symmetric-properties sxml)
-   ((sxpath "owl:SymmetricProperty" namespaces) sxml))
+   ((sxpath "owl:SymmetricProperty" *namespaces*) sxml))
  
  ; -------------------------
  ; individual parser
  ; -------------------------
  
  (define (get-descriptions sxml)
-   ((sxpath "rdf:Description" namespaces) sxml))
+   ((sxpath "rdf:Description" *namespaces*) sxml))
  
  (define (get-class-members sxml)
    (filter (lambda (c) (not (null? c)))
            (map (lambda (c) 
-                  (let ((member ((sxpath c namespaces) sxml)))
+                  (let ((member ((sxpath c *namespaces*) sxml)))
                     (if (null? member)
                         '()
                         (cons c member))))
@@ -251,7 +255,7 @@
  (define (get-object-property-values sxml)
    (filter (lambda (p) (not (null? p)))
            (map (lambda (c) 
-                  (let ((member ((sxpath c namespaces) sxml)))
+                  (let ((member ((sxpath c *namespaces*) sxml)))
                     (if (null? member)
                         '()
                         (cons c member))))
@@ -260,24 +264,24 @@
  (define (get-data-property-values sxml)
    (filter (lambda (p) (not (null? p)))
            (map (lambda (c) 
-                  (let ((member ((sxpath c namespaces) sxml)))
+                  (let ((member ((sxpath c *namespaces*) sxml)))
                     (if (null? member)
                         '()
                         (cons c member))))
                 data-properties)))
  
  (define (get-same-individuals sxml)
-   ((sxpath "owl:sameAs" namespaces) sxml))
+   ((sxpath "owl:sameAs" *namespaces*) sxml))
  
  (define (get-different-individuals sxml)
-   ((sxpath "owl:differentFrom" namespaces) sxml))
+   ((sxpath "owl:differentFrom" *namespaces*) sxml))
  
  ; -------------------------
  ; rdf parser
  ; -------------------------
  
  (define (get-types sxml)
-   ((sxpath "rdf:type" namespaces) sxml))
+   ((sxpath "rdf:type" *namespaces*) sxml))
  
  
  ; -------------------------
@@ -286,11 +290,11 @@
  
  ; ontology->rules: sxml (list-of symbol) -> rule-base
  (define (ontology->rules ontology optionals)     
-   (let* ((base ((sxpath "@xml:base/text()" namespaces) ontology))
+   (let* ((base ((sxpath "@xml:base/text()" *namespaces*) ontology))
           (namespaces-changed (if (not (null? base))
-                                  (begin (set! namespaces (cons (cons 'base (string-append (car base) "#")) namespaces))
+                                  (begin (namespaces (cons (cons 'base (string-append (car base) "#")) *namespaces*))
                                          (set! xml-base (string-append (car base) "#")))
-                                  namespaces))
+                                  *namespaces*))
           (class-axioms (get-owl-classes ontology))
           (object-properties (get-object-properties ontology))
           (data-properties (get-data-properties ontology))
@@ -334,12 +338,12 @@
  
  ; class-axiom->rules: sxml -> (list-of rule)
  (define (class-axiom->rules axiom)
-   (let* ((rdf-id ((sxpath "@rdf:ID/text()" namespaces) axiom))
-          (rdf-about ((sxpath "@rdf:about/text()" namespaces) axiom))
+   (let* ((rdf-id ((sxpath "@rdf:ID/text()" *namespaces*) axiom))
+          (rdf-about ((sxpath "@rdf:about/text()" *namespaces*) axiom))
           (axiom-name (cond ((not (null? rdf-id)) (car rdf-id))
                             ((not (null? rdf-about)) (text->name rdf-about))
                             (else (error "class-axiom->rule" "no class name found" axiom))))
-          (class-var (string->symbol (string-append "?" (apply-namespaces axiom-name namespaces))))
+          (class-var (string->symbol (string-append "?" (apply-namespaces axiom-name *namespaces*))))
           (subclasses (get-subclasses axiom))
           (equivalents (get-equivalent-classes axiom))
           (disjoints (get-disjoint-classes axiom))
@@ -351,7 +355,7 @@
  
  ; subclass-axiom->rule: string symbol sxml -> rule
  (define (subclass-axiom->rule axiom-name argument sxml)
-   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) sxml))
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" *namespaces*) sxml))
           (owl-classes (get-owl-classes sxml))
           (universal-restrictions (get-owl-universal-restriction sxml))
           (restrictions (get-class-property-restrictions sxml))
@@ -373,7 +377,7 @@
  
  ; equivalent-axiom->rules: string symbol sxml -> (list-of rule)
  (define (equivalent-axiom->rules axiom-name argument sxml)
-   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) sxml))
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" *namespaces*) sxml))
           (owl-classes (get-owl-classes sxml))
           (universal-restrictions (get-owl-universal-restriction sxml))
           (restrictions (get-class-property-restrictions sxml))
@@ -403,7 +407,7 @@
  
  ; disjoint-axiom->rules : string symbol sxml -> (list-of rule)
  (define (disjoint-axiom->rules axiom-name argument sxml)
-   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) sxml))
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" *namespaces*) sxml))
           (owl-classes (get-owl-classes sxml))
           (restrictions (get-class-property-restrictions sxml))
           (class-argument (cond ((not (null? rdf-resource))
@@ -428,12 +432,12 @@
  
  ; universal-restriction->rule : string symbol sxml -> (list-of rule)
  (define (universal-restriction->rule axiom-name argument restriction)
-   (let* ((prop (text->name ((sxpath "owl:onProperty/@rdf:resource/text()" namespaces) restriction)))
-          (allValues ((sxpath "owl:allValuesFrom" namespaces) restriction))
-          (rdf-resource ((sxpath "@rdf:resource/text()" namespaces) allValues))
+   (let* ((prop (text->name ((sxpath "owl:onProperty/@rdf:resource/text()" *namespaces*) restriction)))
+          (allValues ((sxpath "owl:allValuesFrom" *namespaces*) restriction))
+          (rdf-resource ((sxpath "@rdf:resource/text()" *namespaces*) allValues))
           (owl-classes (get-owl-classes allValues))
           (restrictions (get-class-property-restrictions allValues))
-          (prop-var (string->symbol (string-append "?" (apply-namespaces prop namespaces))))
+          (prop-var (string->symbol (string-append "?" (apply-namespaces prop *namespaces*))))
           (class-argument (cond ((not (null? rdf-resource)) 
                                  (list (string->symbol (text->name rdf-resource))
                                        prop-var))
@@ -450,10 +454,10 @@
  
  ; class-description->formula: symbol sxml -> formula
  (define (class-description->formula argument class-desc)  
-   (let* ((rdf-id ((sxpath "@rdf:ID/text()" namespaces) class-desc))
-          (rdf-about ((sxpath "@rdf:about/text()" namespaces) class-desc))
-          ;(rdf-resource ((sxpath "@rdf:resource/text()" namespaces) class-desc))
-          ;(rdf-type ((sxpath "@rdf:type/text()" namespaces) class-desc))          
+   (let* ((rdf-id ((sxpath "@rdf:ID/text()" *namespaces*) class-desc))
+          (rdf-about ((sxpath "@rdf:about/text()" *namespaces*) class-desc))
+          ;(rdf-resource ((sxpath "@rdf:resource/text()" *namespaces*) class-desc))
+          ;(rdf-type ((sxpath "@rdf:type/text()" *namespaces*) class-desc))          
           (class-name (cond ((not (null? rdf-id)) (car rdf-id))
                             ((not (null? rdf-about)) (text->name rdf-about))
                             ;((not (null? rdf-resource)) (string-trim (car rdf-resource) #\#))
@@ -471,8 +475,8 @@
  
  ; rdf-description->formula : symbol sxml -> formula
  (define (rdf-description->formula argument rdf-desc)
-   (let* ((rdf-id ((sxpath "@rdf:ID/text()" namespaces) rdf-desc))
-          (rdf-about ((sxpath "@rdf:about/text()" namespaces) rdf-desc))         
+   (let* ((rdf-id ((sxpath "@rdf:ID/text()" *namespaces*) rdf-desc))
+          (rdf-about ((sxpath "@rdf:about/text()" *namespaces*) rdf-desc))         
           (class-name (cond ((not (null? rdf-id)) (car rdf-id))
                             ((not (null? rdf-about)) (text->name rdf-about))                            
                             (else (error "rdf-description->formula" "no ID or about found" rdf-desc)))))
@@ -480,10 +484,10 @@
  
  ; class-restriction->formula : symbol sxml -> formula
  (define (class-restriction->formula argument class-restr)
-   (let* ((prop (text->name ((sxpath "owl:onProperty/@rdf:resource/text()" namespaces) class-restr)))
-          (allValues ((sxpath "owl:allValuesFrom" namespaces) class-restr))
-          (someValues ((sxpath "owl:someValuesFrom" namespaces) class-restr))
-          (hasValue ((sxpath "owl:hasValue" namespaces) class-restr)))     
+   (let* ((prop (text->name ((sxpath "owl:onProperty/@rdf:resource/text()" *namespaces*) class-restr)))
+          (allValues ((sxpath "owl:allValuesFrom" *namespaces*) class-restr))
+          (someValues ((sxpath "owl:someValuesFrom" *namespaces*) class-restr))
+          (hasValue ((sxpath "owl:hasValue" *namespaces*) class-restr)))     
      (cond ((not (null? someValues)) (some-values-restriction->formula prop argument (car someValues)))
            ((not (null? hasValue)) (has-value-restriction->formula prop argument (car hasValue)))
            (else (error "class-restriction->formula" "owl:someValuesFrom or owl:hasValue expected! other restrictions are not supported!" class-restr)))))
@@ -491,10 +495,10 @@
 
  ; some-values-restriction->formula : string symbol sxml -> formula
  (define (some-values-restriction->formula prop argument restriction)
-   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) restriction))
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" *namespaces*) restriction))
           (owl-classes (get-owl-classes restriction))
           (restrictions (get-class-property-restrictions restriction))
-          (prop-var (string->symbol (string-append "?" (apply-namespaces prop namespaces))))
+          (prop-var (string->symbol (string-append "?" (apply-namespaces prop *namespaces*))))
           ;(descriptions (get-descriptions restriction))
           (class-argument (cond ((not (null? rdf-resource)) 
                                  (list (string->symbol (text->name rdf-resource))
@@ -511,7 +515,7 @@
  
  ; has-value-restriction->formula : string symbol sxml -> formula
  (define (has-value-restriction->formula prop argument restriction)
-   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) restriction))
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" *namespaces*) restriction))
           (data-value ((sxpath "/text()" '()) restriction))
           (value (cond ((not (null? rdf-resource)) (string->symbol (text->name rdf-resource)))
                        ((not (null? data-value)) (string->symbol (car data-value)))
@@ -521,7 +525,7 @@
 
  ; enumeration->formula : symbol sxml -> formula
  (define (enumeration->formula argument enum)
-   (let* ((individuals ((sxpath "*/@rdf:about/text()" namespaces) enum))
+   (let* ((individuals ((sxpath "*/@rdf:about/text()" *namespaces*) enum))
           (l (map (lambda (i) (list '= argument (string->symbol (text->name (list i))))) individuals)))
      (if (= (length individuals) 1)
          l
@@ -550,7 +554,7 @@
  
  ; complement->formula : symbol sxml -> formula
  (define (complement->formula argument comp)
-   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) comp))
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" *namespaces*) comp))
           (owl-classes (get-owl-classes comp))
           (restrictions (get-class-property-restrictions comp))
           ;(descriptions (get-descriptions comp))
@@ -568,8 +572,8 @@
  
  ; property-axiom->rules : sxml (list-of symbol) -> (list-of rule)
  (define (property-axiom->rules axiom optionals)
-   (let* ((rdf-id ((sxpath "@rdf:ID/text()" namespaces) axiom))
-          (rdf-about ((sxpath "@rdf:about/text()" namespaces) axiom))         
+   (let* ((rdf-id ((sxpath "@rdf:ID/text()" *namespaces*) axiom))
+          (rdf-about ((sxpath "@rdf:about/text()" *namespaces*) axiom))         
           (property-name (cond ((not (null? rdf-id)) (car rdf-id))
                                ((not (null? rdf-about)) (text->name rdf-about))
                                (else (error "property-axiom->rule" "no property name found" axiom))))
@@ -593,20 +597,20 @@
           (inverse-rules (flatmap (lambda (i) (inverse-property->rules property-name i)) inverse-props))          
           (type-rules (filter (lambda (x) (not (null? x))) (map (lambda (t) (prop-type->rule property-name t optionals)) prop-types)))            
           )
-     (cond ((eq? property-type (string->symbol (resolve-namespaces "owl::ObjectProperty" namespaces))) (add-object-property property-name))
-           ((eq? property-type (string->symbol (resolve-namespaces "owl::DatatypeProperty" namespaces))) (add-data-property property-name))
+     (cond ((eq? property-type (string->symbol (resolve-namespaces "owl::ObjectProperty" *namespaces*))) (add-object-property property-name))
+           ((eq? property-type (string->symbol (resolve-namespaces "owl::DatatypeProperty" *namespaces*))) (add-data-property property-name))
            (else (error "property-axiom->rules" "unknown property type (not data- or object-property)" axiom)))
      (append subproperty-rules domain-rules range-rules equiv-rules inverse-rules type-rules)))
  
  ; property-axiom->rules : string sxml  -> rule
  (define (subproperty->rule property-name sub-prop)
-   (let* ((rdf-resource (text->name ((sxpath "@rdf:resource/text()" namespaces) sub-prop)))
+   (let* ((rdf-resource (text->name ((sxpath "@rdf:resource/text()" *namespaces*) sub-prop)))
           (rule-head (list (string->symbol rdf-resource)
-                           (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-1"))
-                           (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-2"))))
+                           (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-1"))
+                           (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-2"))))
           (rule-body (list (string->symbol property-name)
-                           (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-1"))
-                           (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-2")))))
+                           (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-1"))
+                           (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-2")))))
      (make-rule (gensym (string-append xml-base "subproperty-rule-"))
                 #f
                 (make-rule-head rule-head)
@@ -614,9 +618,9 @@
  
  ; domain->rule : string sxml  -> rule
  (define (domain->rule property-name domain)
-   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) domain))
-          (var1 (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-1")))
-          (var2 (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-2")))
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" *namespaces*) domain))
+          (var1 (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-1")))
+          (var2 (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-2")))
           (owl-classes (get-owl-classes domain))
           (restrictions (get-class-property-restrictions domain))
           (rule-head (cond ((not (null? rdf-resource)) (list (string->symbol (text->name rdf-resource))
@@ -632,9 +636,9 @@
  
  ; range->rule : string sxml  -> rule
  (define (range->rule property-name range)
-   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) range))
-          (var1 (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-1")))
-          (var2 (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-2")))
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" *namespaces*) range))
+          (var1 (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-1")))
+          (var2 (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-2")))
           (owl-classes (get-owl-classes range))
           (restrictions (get-class-property-restrictions range))
           (rule-head (cond ((not (null? rdf-resource)) (list (string->symbol (text->name rdf-resource))
@@ -650,9 +654,9 @@
  
  ; equivalent-property->rules : string sxml  -> (list-of rule)
  (define (equivalent-property->rules property-name equiv-prop)
-   (let* ((rdf-resource (string->symbol (text->name ((sxpath "@rdf:resource/text()" namespaces) equiv-prop))))
-          (var1 (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-1")))
-          (var2 (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-2")))
+   (let* ((rdf-resource (string->symbol (text->name ((sxpath "@rdf:resource/text()" *namespaces*) equiv-prop))))
+          (var1 (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-1")))
+          (var2 (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-2")))
           (prop (string->symbol property-name))
           (stmt1 (list prop var1 var2))
           (stmt2 (list rdf-resource var1 var2)))
@@ -667,9 +671,9 @@
  
  ; inverse-property->rules : string sxml  -> (list-of rule)
  (define (inverse-property->rules property-name inverse-prop)
-   (let* ((rdf-resource (string->symbol (text->name ((sxpath "@rdf:resource/text()" namespaces) inverse-prop))))
-          (var1 (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-1")))
-          (var2 (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-2")))
+   (let* ((rdf-resource (string->symbol (text->name ((sxpath "@rdf:resource/text()" *namespaces*) inverse-prop))))
+          (var1 (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-1")))
+          (var2 (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-2")))
           (prop (string->symbol property-name))
           (stmt1 (list prop var1 var2))
           (stmt2 (list rdf-resource var2 var1)))
@@ -684,20 +688,20 @@
  
  ; prop-type->rule : string sxml (list-of symbol) -> rule
  (define (prop-type->rule property-name prop-type optionals)
-   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) prop-type))
-          (var1 (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-1")))
-          (var2 (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-2")))
-          (var3 (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-3")))
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" *namespaces*) prop-type))
+          (var1 (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-1")))
+          (var2 (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-2")))
+          (var3 (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-3")))
           (transitive-allowed? (exists (lambda (o) (eq? o 'transitive)) optionals))
           (symmetric-allowed? (exists (lambda (o) (eq? o 'symmetric)) optionals))
           (transitive? (and (not (null? rdf-resource))
-                            (string=? (resolve-namespaces "owl:TransitiveProperty" namespaces) (car rdf-resource))))
+                            (string=? (resolve-namespaces "owl:TransitiveProperty" *namespaces*) (car rdf-resource))))
           (symmetric? (and (not (null? rdf-resource))
-                           (string=? (resolve-namespaces "owl:SymmetricProperty" namespaces) (car rdf-resource))))
+                           (string=? (resolve-namespaces "owl:SymmetricProperty" *namespaces*) (car rdf-resource))))
           (functional? (and (not (null? rdf-resource))
-                            (string=? (resolve-namespaces "owl:FunctionalProperty" namespaces) (car rdf-resource))))
+                            (string=? (resolve-namespaces "owl:FunctionalProperty" *namespaces*) (car rdf-resource))))
           (inverse-functional? (and (not (null? rdf-resource))
-                                    (string=? (resolve-namespaces "owl:InverseFunctionalProperty" namespaces) (car rdf-resource)))))
+                                    (string=? (resolve-namespaces "owl:InverseFunctionalProperty" *namespaces*) (car rdf-resource)))))
      (cond ((and transitive? transitive-allowed?)
             (make-rule (gensym (string-append xml-base "transitive-rule-"))
                        #f
@@ -722,15 +726,15 @@
  
  ; transitive-property-axiom->rules : sxml  -> (list-of rule)
  (define (transitive-property-axiom->rules axiom)
-   (let* ((rdf-id ((sxpath "@rdf:ID/text()" namespaces) axiom))
-          (rdf-about ((sxpath "@rdf:about/text()" namespaces) axiom))
-          ;(rdf-type ((sxpath "@rdf:type/text()" namespaces) axiom))          
+   (let* ((rdf-id ((sxpath "@rdf:ID/text()" *namespaces*) axiom))
+          (rdf-about ((sxpath "@rdf:about/text()" *namespaces*) axiom))
+          ;(rdf-type ((sxpath "@rdf:type/text()" *namespaces*) axiom))          
           (property-name (cond ((not (null? rdf-id)) (car rdf-id))
                                ((not (null? rdf-about)) (text->name rdf-about))
                                (else (error "transitive-property-axiom->rule" "no property name found" axiom))))
-          (var1 (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-1")))
-          (var2 (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-2")))
-          (var3 (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-3")))
+          (var1 (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-1")))
+          (var2 (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-2")))
+          (var3 (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-3")))
           (property-rules (property-axiom->rules axiom))
           (transitive-rule (gensym (string->symbol (string-append xml-base property-name "-transitive-rule-"))
                                       #f
@@ -742,14 +746,14 @@
  
  ; symmetric-property-axiom->rules : sxml  -> (list-of rule)
  (define (symmetric-property-axiom->rules axiom)
-   (let* ((rdf-id ((sxpath "@rdf:ID/text()" namespaces) axiom))
-          (rdf-about ((sxpath "@rdf:about/text()" namespaces) axiom))
-          ;(rdf-type ((sxpath "@rdf:type/text()" namespaces) axiom))          
+   (let* ((rdf-id ((sxpath "@rdf:ID/text()" *namespaces*) axiom))
+          (rdf-about ((sxpath "@rdf:about/text()" *namespaces*) axiom))
+          ;(rdf-type ((sxpath "@rdf:type/text()" *namespaces*) axiom))          
           (property-name (cond ((not (null? rdf-id)) (car rdf-id))
                                ((not (null? rdf-about)) (text->name rdf-about))
                                (else (error "symmetric-property-axiom->rules" "no property name found" axiom))))
-          (var1 (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-1")))
-          (var2 (string->symbol (string-append "?" (apply-namespaces property-name namespaces) "-2")))
+          (var1 (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-1")))
+          (var2 (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-2")))
           (property-rules (property-axiom->rules axiom))
           (symmetric-rule (make-rule (gensym (string-append xml-base "symmetric-rule-"))
                                      #f
@@ -764,8 +768,8 @@
  
  ; individual-description->rules : sxml -> (list-of rule)
  (define (individual-description->rules desc)
-   (let* ((rdf-id ((sxpath "@rdf:ID/text()" namespaces) desc))
-          (rdf-about((sxpath "@rdf:about/text()" namespaces) desc))
+   (let* ((rdf-id ((sxpath "@rdf:ID/text()" *namespaces*) desc))
+          (rdf-about((sxpath "@rdf:about/text()" *namespaces*) desc))
           (individual-name (cond ((not (null? rdf-id)) (car rdf-id))
                                  ((not (null? rdf-about)) (text->name rdf-about))
                                  (else (error "individual-description->rules" "no individual-name found" desc))))
@@ -793,8 +797,8 @@
                                           (string-replace c-name "#" hash-pos (+ 2 hash-pos))
                                           c-name)))
           ;(member (cdr class-member))
-          (rdf-id ((sxpath "@rdf:ID/text()" namespaces) class-member))
-          (rdf-about((sxpath "@rdf:about/text()" namespaces) class-member))
+          (rdf-id ((sxpath "@rdf:ID/text()" *namespaces*) class-member))
+          (rdf-about((sxpath "@rdf:about/text()" *namespaces*) class-member))
           (individual-name (cond ((not (null? rdf-id)) (car rdf-id))
                                  ((not (null? rdf-about)) (text->name rdf-about))
                                  (else (symbol->string (gensym "anonymous-individual-")))))          
@@ -816,7 +820,7 @@
  
  ; member-type->rule : string sxml -> rule
  (define (member-type->rule individual-name type)
-   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) type))
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" *namespaces*) type))
           (owl-classes (get-owl-classes type))
           (restrictions (get-class-property-restrictions type))
           (rule-head (cond ((not (null? rdf-resource)) (list (string->symbol (text->name rdf-resource))
@@ -832,9 +836,9 @@
  
  ; object-property-value->rule : string sxml -> rule
  (define (object-property-value->rule individual-name property-value)
-   (let* ((property-name (resolve-namespaces (car property-value) namespaces))
+   (let* ((property-name (resolve-namespaces (car property-value) *namespaces*))
           (prop-value (cdr property-value))
-          (rdf-resource ((sxpath "@rdf:resource/text()" namespaces) prop-value))
+          (rdf-resource ((sxpath "@rdf:resource/text()" *namespaces*) prop-value))
           (object (if (not (null? rdf-resource))
                       (string->symbol (text->name rdf-resource))
                       (error "object-property-value->rule" "no rdf:resource found" prop-value)))
@@ -848,9 +852,9 @@
  
  ; data-property-value->rule : string sxml -> rule
  (define (data-property-value->rule individual-name property-value)
-   (let* ((property-name (resolve-namespaces (car property-value) namespaces))
+   (let* ((property-name (resolve-namespaces (car property-value) *namespaces*))
           (prop-value (cdr property-value))
-          (rdf-datatype ((sxpath "@rdf:datatype/text()" namespaces) prop-value))
+          (rdf-datatype ((sxpath "@rdf:datatype/text()" *namespaces*) prop-value))
           (text ((sxpath "text()" '()) prop-value))
           (data (if (null? text)
                     (error "data-property-value->rule" "no text found" prop-value)
@@ -865,7 +869,7 @@
  
  ; same-individual->rule : string sxml -> rule
  (define (same-individual->rule individual-name sameAs)
-   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) sameAs))
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" *namespaces*) sameAs))
           (object (if (not (null? rdf-resource))
                       (string->symbol (text->name rdf-resource))
                       (error "same-individual->rule" "no rdf:resource found" sameAs))))
@@ -876,7 +880,7 @@
  
  ; different-individual->rule : string sxml -> rule
  (define (different-individual->rule individual-name differentFrom)
-   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" namespaces) differentFrom))
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" *namespaces*) differentFrom))
           (object (if (not (null? rdf-resource))
                       (string->symbol (text->name rdf-resource))
                       (error "different-individual->rule" "no rdf:resource found" differentFrom))))
@@ -929,7 +933,7 @@
  (define (text->name txt)
    (if (one-of-prefixes? prefixes (car txt))
        (string-trim (car txt) #\#)
-       (resolve-namespaces (string-append "base:" (string-trim (car txt) #\#)) namespaces)))
+       (resolve-namespaces (string-append "base:" (string-trim (car txt) #\#)) *namespaces*)))
  
  
  ; -------------------------
@@ -945,9 +949,9 @@
  
  ;(define titles ((sxpath "title" '()) doc))
  
- (define hund (ssax:dtd-xml->sxml (open-input-resource "C:\\Users\\stb\\Documents\\Carneades Project\\examples\\Import Test\\owl1.owl") '()))
+ ;(define hund (ssax:dtd-xml->sxml (open-input-resource "C:\\Users\\stb\\Documents\\Carneades Project\\examples\\Import Test\\owl1.owl") '()))
  
- ;(define classes ((sxpath "rdf:RDF/owl:Class" namespaces) hund))
+ ;(define classes ((sxpath "rdf:RDF/owl:Class" *namespaces*) hund))
  
  ;(define class1 (car classes))
  
