@@ -125,7 +125,7 @@
  ; owl?: string -> boolean
  (define (owl? path)
   (let* ((doc (ssax:dtd-xml->sxml (open-input-resource path) '()))
-         (rdf ((sxpath ontology-path namespaces) doc)))
+         (rdf ((sxpath ontology-path *namespaces*) doc)))
     (not (null? rdf))))
  
  ; owl-import: string (list-of symbol) -> rulebase
@@ -134,9 +134,9 @@
    (set! local-gen 0)
    (clear-properties-and-classes)
    (let* ((doc (ssax:dtd-xml->sxml (open-input-resource path) '()))
-          (owl-body ((sxpath ontology-path namespaces) doc))
+          (owl-body ((sxpath ontology-path *namespaces*) doc))
           (rb (ontology->rules owl-body optionals)))
-     (namespaces (remp (lambda (n) (eq? (car n) 'base)) namespaces))
+     (namespaces (remp (lambda (n) (eq? (car n) 'base)) *namespaces*))
      rb))
  
  
