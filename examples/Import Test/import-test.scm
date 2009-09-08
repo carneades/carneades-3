@@ -8,7 +8,8 @@
         (carneades lkif2)
         (carneades shell))
 
-(define dir "C:\\Users\\stb\\Documents\\Carneades Project\\examples\\Import Test\\")
+; (define dir "C:\\Users\\stb\\Documents\\Carneades Project\\examples\\Import Test\\")
+(define dir "/Users/tgo/Documents/Projects/Carneades/svn/examples/Import Test/")
 (define test1 (string-append dir "test1.xml"))
 
 (define circle1 (string-append dir "circle1.lkif"))

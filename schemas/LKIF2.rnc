@@ -174,7 +174,7 @@ grammar {
     
     Premise = element premise { 
         attribute polarity { "positive" | "negative" }?, # default: positive
-        attribute type { "ordinary" | "exception" | "assumption" }, # default: ordinary
+        attribute type { "ordinary" | "exception" | "assumption" }?, # default: ordinary
         attribute role { xsd:anyURI | xsd:string }?,
         attribute statement { xsd:anyURI } 
      } 
