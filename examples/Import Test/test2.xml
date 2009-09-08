@@ -3,7 +3,7 @@
 <lkif>
     <theory id="test2">        
         <imports>
-          <import url="owl1.owl"/> 
+          <import url="owl1.owl" prefix="bla"/> 
         </imports>
         <rules>
             <rule id="r21">
