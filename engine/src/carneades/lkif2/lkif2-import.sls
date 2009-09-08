@@ -76,7 +76,7 @@
  
  ; lkif?: string -> boolean
  (define (lkif? path)
-  (let* ((doc (ssax:dtd-xml->sxml (open-input-resource path) '()))
+  (let* ((doc (ssax:dtd-xml->sxml (open-input-resource path) '()))         
          (lkif ((sxpath "lkif" (namespaces)) doc)))
     (not (null? lkif))))
  
@@ -122,7 +122,7 @@
            
  ; get-document: file-path -> sxml-document
  (define (get-document path)
-   (sxml:document path '()))
+   (ssax:dtd-xml->sxml (open-input-resource path) '()))
  
  ; get-lkif: sxml-document -> lkif-body
  (define (get-lkif doc)
@@ -454,12 +454,14 @@
        (list '() '())))
  
  (define (import-rb/ags import optionals files)
-   (let* ((prefix (get-attribute-value (get-attribute import 'prefix) ""))
-          (uri (get-attribute-value (get-attribute import 'uri) #f)))
-     (if (member uri files)
+   (let* ((*url* ((sxpath "@url/text()" '()) import))
+          (url (if (not (null? *url*))
+                   (car *url*)
+                   (error "import-rb/ags" "couldn't find url" import))))
+     (if (member url files)
          (cons empty-rulebase '())
-         (cond ((owl? uri) (cons (owl-import uri optionals) '()))
-               ((lkif? uri) (let ((i-data (%lkif-import uri optionals (cons uri files))))
+         (cond ((owl? url) (cons (owl-import url optionals) '()))
+               ((lkif? url) (let ((i-data (%lkif-import url optionals (cons url files))))
                               (cons (lkif-data-rulebase i-data) (lkif-data-argument-graphs i-data))))
                (else (error "import-rb/ags" "no owl- or lkif-file" import))))))
 
