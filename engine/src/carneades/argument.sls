@@ -319,7 +319,7 @@
            v
            (case v 
              ((stated) 'stated)
-             ((questioned) 'questioned)
+	     ((questioned) 'questioned)
              ((accepted) 'rejected)
              ((rejected) 'accepted)
              (else 'unstated))))))
