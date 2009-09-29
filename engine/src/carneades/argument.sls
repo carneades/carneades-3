@@ -47,7 +47,7 @@
          (prefix (carneades set) set:)
          )
  
- (define *debug* #t)
+ (define *debug* #f)
  
  (define-record-type premise 
    (fields atom      ; an atomic statement
