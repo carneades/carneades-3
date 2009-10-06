@@ -31,13 +31,23 @@ import javafx.scene.shape.Rectangle;
 
 import javafx.scene.image.ImageView;
 
+import javafx.scene.layout.VBox;
+
+import javafx.scene.control.Label;
+
+import javafx.geometry.HPos;
+
 
 class ToolBarButton extends Button {
 	public var image: Image;
+	public var scaleImage: Boolean = false;
 
 	def imageView: ImageView = ImageView {
 		smooth: true
 		image: bind image
+		fitHeight: bind { if (scaleImage) height else 0}
+		fitWidth: bind { if (scaleImage) width else 0}
+		preserveRatio: true
 	}
 
 	override def graphic = bind imageView;
@@ -75,6 +85,43 @@ public class ToolBar extends Panel {
 		text: "debug"
 		onMouseClicked: function(e: MouseEvent): Void {}
 	}
+
+	def zoomLabelHeight: Number = 14;
+
+	def zoomButtonLayoutInfo: LayoutInfo = LayoutInfo {
+			minWidth: toolBarHeight - 10
+			width: toolBarHeight - 10
+			minHeight: (toolBarHeight - 10)/3
+			height: (toolBarHeight - 10)/3
+		}
+
+	def plusButton: ToolBarButton = ToolBarButton {
+		scaleImage: true
+		layoutInfo: zoomButtonLayoutInfo
+		control: bind control
+		toolTipText: "zoom in"
+		image: Image { url: "{__DIR__}images/icon-plus.png"	}
+		action: function(): Void { view.changeZoom(-ZOOM_INCREMENT) }
+	};
+
+	def minusButton: ToolBarButton = ToolBarButton {
+		scaleImage: true
+		layoutInfo: zoomButtonLayoutInfo
+		control: bind control
+		toolTipText: "zoom out"
+		image: Image { url: "{__DIR__}images/icon-minus.png"	}
+		action: function(): Void { view.changeZoom(ZOOM_INCREMENT) }
+	};
+
+	def resetZoomButton: ToolBarButton = ToolBarButton {
+		def format = function(n: Number): String {
+			"{(n * 100).toString().substring(0,{if (n >= 1.0) 3 else 2})} %"
+		}
+		text: bind format((view as StandardView).graphPanel.zoom)
+		layoutInfo: zoomButtonLayoutInfo
+		control: bind control
+		action: function(): Void { view.resetZoom() }
+	};
 
 	def newButton: ToolBarButton = ToolBarButton {
 		//text: "new"
@@ -229,6 +276,11 @@ public class ToolBar extends Panel {
 				saveButton,
 				saveAsButton,
 				Rectangle {}, // dead filler rectangle
+				VBox {
+					nodeHPos: HPos.CENTER
+					content: bind [plusButton, resetZoomButton, minusButton]
+				},
+				Rectangle {}, // dead filler rectangle
 				undoButton,
 				redoButton,
 				Rectangle {}, // dead filler rectangle
@@ -239,6 +291,7 @@ public class ToolBar extends Panel {
 				else null,
 				Rectangle {}, // dead filler rectangle
 				displayGraphListButton,
+				//saveAsImageButton,
 				Rectangle {}, // dead filler rectangle
 				aboutButton,
 				quitButton,

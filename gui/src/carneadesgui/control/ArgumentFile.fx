@@ -19,19 +19,24 @@ package carneadesgui.control;
 
 // General imports
 import java.io.File;
-import java.lang.System;
 
-// other Argument imports
 import carneadesgui.model.Argument;
 import carneadesgui.model.Argument.*;
-
-// import Constants
-
-// control imports
+import carneadesgui.view.CarneadesGraph;
 import carneadesgui.control.XWDocumentBuilder;
 import carneadesgui.control.XWDocumentBuilder.*;
 
 import java.io.FileWriter;
+
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import org.apache.batik.transcoder.TranscoderInput;
+import org.apache.batik.transcoder.TranscoderOutput;
+import org.apache.batik.transcoder.image.PNGTranscoder;
+
+import java.lang.System;
 
 
 // helper issue class for file loading in older LKIF format
@@ -112,10 +117,9 @@ public var saveGraphToFile = function(argumentGraphs: ArgumentGraph[], file: Fil
 										XWAttribute {
 											name: "standard"
 											value: {
-												if (s.standard instanceof BestArgument) "BA"
+												if (s.standard instanceof Preponderance) "PE"
 												else if (s.standard instanceof Scintilla) "SE"
 												else if (s.standard instanceof DialecticalValidity) "DV"
-												else if (s.standard instanceof Preponderance) "PE"
 												else if (s.standard instanceof BeyondReasonableDoubt) "BRD"
 												else if (s.standard instanceof ClearAndConvincingEvidence) "CCE"
 												else ""
@@ -222,14 +226,9 @@ public var saveGraphToFile = function(argumentGraphs: ArgumentGraph[], file: Fil
 		// toDo: test canwrite()
 
 		var writer: FileWriter = new FileWriter(file);
-
 		var output: String = document.toString();
-
 		writer.write(output);
-
 		writer.close();
-
-		System.out.println(document);
 	}
 
 
@@ -276,11 +275,6 @@ public var getGraphFromFile = function(file: File): ArgumentGraph[] {
 				var assumption: Boolean;
 				var value: String;
 				var standard: ProofStandard;
-				// toDo: Term component missing, but also not in current version of Argument.fx
-				// also: predicates
-
-				// set variables
-
 
 				for (a in s.attributes) {
 					if (a.name == "id") { id = a.value; }
@@ -288,7 +282,7 @@ public var getGraphFromFile = function(file: File): ArgumentGraph[] {
 					else if (a.name == "value") { value = a.value }
 					else if (a.name == "standard") {
 						standard = {
-							if (a.value == "BA") BestArgument {}
+							if (a.value == "BA") Preponderance {} // Preponderance and Best Argument are functionally equivalent
 							else if (a.value == "SE") Scintilla {}
 							else if (a.value == "PE") Preponderance {}
 							else if (a.value == "BRD") BeyondReasonableDoubt {}
@@ -501,7 +495,7 @@ var getGraphFromLkifV1Document = function(document: XWDocument): ArgumentGraph[]
 					else if (extractedStandard == "DV") DialecticalValidity { statement: newStatement }
 					else if (extractedStandard == "PE") Preponderance { statement: newStatement }
 					else if (extractedStandard == "BRD") BeyondReasonableDoubt { statement: newStatement }
-					else BestArgument { statement: newStatement }
+					else Preponderance { statement: newStatement }
 				};
 			}
 			insert newStatement into argumentGraph.statements;
@@ -600,4 +594,35 @@ var getGraphFromLkifV1Document = function(document: XWDocument): ArgumentGraph[]
 		return [argumentGraph];
 	}
 
+public function printGraphAsSVG(g: CarneadesGraph): String {
+	//'<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"> <svg width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg">{''}</svg>'
+	g.toSVG()
+}
+
+public var saveAsImage = function(g: CarneadesGraph): Void {
+	// Create a JPEG transcoder
+	var t: PNGTranscoder = new PNGTranscoder();
+
+	System.out.println("{printGraphAsSVG(g)}");
+
+	var writer: FileWriter = new FileWriter("out.svg");
+	writer.write(printGraphAsSVG(g));
+	writer.close();
+
+	// Create the transcoder input.
+	var reader: Reader = new StringReader(printGraphAsSVG(g));
+	var input: TranscoderInput = new TranscoderInput(reader);
+
+	// Create the transcoder output.
+	var ostream: OutputStream = new FileOutputStream("out.png");
+	var output: TranscoderOutput = new TranscoderOutput(ostream);
+
+	// Save the image.
+	t.transcode(input, output);
+
+	// Flush and close the stream.
+	ostream.flush();
+	ostream.close();
+
+}
 

@@ -582,8 +582,6 @@ public class ChangeStatementStandardCommand extends UndoableCommand {
 			oldStandard = Scintilla {};
 		} else if (statement.standard instanceof DialecticalValidity) {
 			oldStandard = DialecticalValidity {};
-		} else if (statement.standard instanceof BestArgument) {
-			oldStandard = BestArgument {};
 		} else if (statement.standard instanceof Preponderance) {
 			oldStandard = Preponderance {};
 		} else if (statement.standard instanceof ClearAndConvincingEvidence) {
@@ -594,12 +592,10 @@ public class ChangeStatementStandardCommand extends UndoableCommand {
 		// Set new Standard
 		statement.standard = standard;
 		standard.statement = statement;
-		//argumentGraph.setProofStandard(statement, standard);
 		return C_OK;
 	}
 
 	override function undo(): Number {
-		//argumentGraph.setProofStandard(statement,oldStandard);
 		statement.standard = oldStandard;
 		return C_OK;
 	}

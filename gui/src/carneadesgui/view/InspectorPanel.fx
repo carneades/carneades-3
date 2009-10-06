@@ -390,6 +390,7 @@ class GraphInspector extends Inspector {
 * Panel containing the inspector components.
 */
 public class InspectorPanel extends MoveablePanel {
+	override var positionLocked = bind not INSPECTOR_PANEL_MOVEABLE;
 	override def title = "Element Inspector";
 	override def width = inspectorPanelWidth;
 	override def height = INSPECTOR_PANEL_HEIGHT;
@@ -458,9 +459,9 @@ public class InspectorPanel extends MoveablePanel {
 	* General update function. Assumes that mode has been set before.
 	*/
 	public function update(u: GraphUpdate): Void {
-		if (mode == inspectorStatementMode) statementInspector.update(null)
+		if (mode == inspectorStatementMode)		statementInspector.update(null)
 		else if (mode == inspectorArgumentMode) argumentInspector.update(null)
-		else if (mode == inspectorGraphMode) graphInspector.update(null)
-		else if (mode == inspectorPremiseMode) premiseInspector.update(null);
+		else if (mode == inspectorGraphMode)	graphInspector.update(null)
+		else if (mode == inspectorPremiseMode)	premiseInspector.update(null);
 	}
 }

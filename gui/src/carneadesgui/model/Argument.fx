@@ -25,7 +25,7 @@ import carneadesgui.GC.*;
 import java.lang.System;
 
 // Changed: List of supported proof standards for the GUI
-public var proofStandards: String[] = [proofStandardSE, proofStandardDV, proofStandardBA, proofStandardPE, proofStandardCCE, proofStandardBRD];
+public var proofStandards: String[] = [proofStandardSE, proofStandardDV, proofStandardPE, proofStandardCCE, proofStandardBRD];
 
 abstract public class ProofStandard {
 	public var statement : Statement;  // backwards reference
@@ -71,7 +71,7 @@ public class Statement {
     public var value: String = "unknown";
 	public var assumption: Boolean = true;
 
-	public var standard: ProofStandard = BestArgument {}
+	public var standard: ProofStandard = Preponderance {}
 		on replace {
 			standard.statement = this;
 			update();
@@ -84,7 +84,6 @@ public class Statement {
 	    var s: String = "";
 	    if (standard instanceof Scintilla) s = proofStandardSE
 	    else if (standard instanceof DialecticalValidity) s = proofStandardDV
-	    else if (standard instanceof BestArgument) s = proofStandardBA
 	    else if (standard instanceof Preponderance) s = proofStandardPE
 	    else if (standard instanceof ClearAndConvincingEvidence) s = proofStandardCCE
 	    else if (standard instanceof BeyondReasonableDoubt) s = proofStandardBRD;
@@ -542,26 +541,7 @@ public class DialecticalValidity extends ProofStandard {
 }
 
 
-// BestArgument and Preponderance are now equivalent standards, i.e.
-// synonyms.
-
-public class BestArgument extends ProofStandard {
-	override function test (ag: ArgumentGraph,
-	               pro: Argument[],
-	               con: Argument[]): Boolean {
-	       var okPro = pro [ arg | arg.allPremisesHold() ];
-	       var okCon = con [ arg | arg.allPremisesHold() ];
-
-	       var maxPro = 0.0;
-	       for (arg in okPro) if (arg.weight > maxPro) maxPro = arg.weight;
-
-	       var maxCon = 0.0;
-	       for (arg in okCon) if (arg.weight > maxCon) maxCon = arg.weight;
-
-	       return sizeof(okPro) > 0 and maxPro > maxCon;
-	}
-}
-
+// Preponderance of Evidence (former "Best Argument")
 
 public class Preponderance extends ProofStandard {
 	override function test (ag: ArgumentGraph,
