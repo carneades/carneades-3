@@ -21,7 +21,6 @@ import javafx.scene.paint.*;
 import javafx.scene.text.*;
 import javafx.scene.*;
 
-
 // import the necessary parts of the model
 import carneadesgui.model.Argument;
 import carneadesgui.model.Argument.*;
@@ -47,6 +46,11 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import carneadesgui.control.XWDocumentBuilder.XWText;
+import carneadesgui.control.XWDocumentBuilder.XWElement;
+import carneadesgui.control.XWDocumentBuilder.XWDocument;
+import carneadesgui.control.XWDocumentBuilder.XWAttribute;
+
 /**
 * Auxiliary class for centered text.
 */
@@ -67,6 +71,7 @@ public class CenteredStatementText extends Text {
 	public var maxChars: Integer = 45;
     override var textAlignment = TextAlignment.CENTER;
     override var textOrigin = TextOrigin.TOP;
+	override var blocksMouse = false;
 
 	public function changeText(t: String): Void {
 		content = "{ if (t.length() > maxChars ) "{t.substring(0, 26)} ..." else t}";
@@ -127,8 +132,7 @@ public class ArgumentBox extends ArgumentElement {
 
     override var text = CenteredStatementText {
 		content: bind {
-			if ((argument.conclusion.standard) instanceof BestArgument
-				or (argument.conclusion.standard) instanceof Preponderance
+			if ((argument.conclusion.standard) instanceof Preponderance
 				or (argument.conclusion.standard) instanceof ClearAndConvincingEvidence
 				or (argument.conclusion.standard) instanceof BeyondReasonableDoubt
 				)
@@ -154,7 +158,7 @@ public class ArgumentBox extends ArgumentElement {
 			}
 		}
 
-		stroke: Color.BLACK
+		stroke: bind { if (mainCircle.hover) Color.GREY else Color.BLACK }
 		blocksMouse: false
 
 		onMouseClicked: function(e: MouseEvent): Void {
@@ -246,7 +250,7 @@ public class StatementBox extends ArgumentElement {
 			x - (width / 2), y - (height / 2) + mainRectHeight ]
 		blocksMouse: true
 		fill: bind { if (fillStatements) statusColor else defaultBoxFill }
-		stroke: bind { if (fillStatements) Color.BLACK else statusColor	}
+		stroke: bind { if (mainRect.hover) Color.GREY else Color.BLACK }
 		strokeDashArray: bind {if (duplicate) [6.0, 6.0] else [1.0]}
 		strokeWidth: 1
 
@@ -332,6 +336,76 @@ public class StatementBox extends ArgumentElement {
 			] // content
 		} // Group
     } // composeNode
+
+	override function toSVG(d: XWDocument) {
+		XWElement {
+			name: "g"
+			document: d
+			children: [
+				/*XWElement {
+					name: "rect"
+					document: d
+					attributes: [
+						XWAttribute {
+							name: "x"
+							value: "{x}"
+						},
+						XWAttribute {
+							name: "y"
+							value: "{y}"
+						},
+						XWAttribute {
+							name: "width"
+							value: "{width}"
+						},
+						XWAttribute {
+							name: "height"
+							value: "{height}"
+						},
+						XWAttribute {
+							name: "fill"
+							value: "{toSVGColorCode(mainRect.fill)}"
+						},
+						XWAttribute {
+							name: "opacity"
+							value: "{mainRect.opacity}"
+						},
+						XWAttribute {
+							name: "stroke"
+							value: "{toSVGColorCode(mainRect.stroke)}"
+						},
+						XWAttribute {
+							name: "stroke-width"
+							value: "{mainRect.strokeWidth}"
+						},
+					]
+				},*/
+				XWElement {
+					document: d
+					name: "text"
+					attributes: [
+						XWAttribute {
+							name: "x"
+							value: "{x}"
+						},
+						XWAttribute {
+							name: "y"
+							value: "{y}"
+						},
+						XWAttribute {
+							name: "fontsize"
+							value: "{20}"
+						},
+					]
+					children: [
+						XWText {
+							value: "text"
+						}
+					]
+				}
+			]
+		}		
+	}
 }
 
 /**

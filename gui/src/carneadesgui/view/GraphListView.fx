@@ -150,6 +150,7 @@ class GraphList extends ListView {
 * The Panel containing the tabs, entry field and list.
 */
 public class GraphListView extends MoveablePanel {
+	override var positionLocked = bind not GRAPHLISTVIEW_MOVEABLE;
 	override def title = "Search Elements";
 	override def width = inspectorPanelWidth;
 	override def height = GRAPHLISTVIEW_HEIGHT;

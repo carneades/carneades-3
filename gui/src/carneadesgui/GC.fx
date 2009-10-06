@@ -17,9 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package carneadesgui;
 
-
-
-
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Group;
@@ -34,23 +31,22 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Circle;
 import java.lang.Object;
 import java.lang.System;
-
 import javafx.scene.CustomNode;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextOrigin;
+import javafx.scene.paint.Paint;
 
 // Model Constants
 public def proofStandardSE: String = "scintilla of evidence";
 public def proofStandardDV: String = "dialectical validity";
-public def proofStandardBA: String = "best argument";
 public def proofStandardPE: String = "preponderance";
 public def proofStandardCCE: String = "clear and convincing";
 public def proofStandardBRD: String = "beyond reasonable doubt";
 
 // General Application Constants
-public var appWidth: Number = 800;
+public var appWidth: Number = 850;
 public var appHeight: Number = 600;
 public def verticalWindowMismatch: Number = 23;
 public def horizontalWindowMismatch: Number = 1;
@@ -85,9 +81,10 @@ public var impossibleColor: Color = Color.RED;
 public var edgeSelectionWidth: Integer = 5;
 public var selectedEdgeWidth: Integer = 3;
 
-// animations
+// Zooming
 public var zoomTime: Number = 4.0; // in seconds
 public var zoomLimits: Number[] = [0.2, 3.0];
+public var ZOOM_INCREMENT: Number = 0.05;
 
 // Statement Boxes
 public var statementBoxDefaultWidth: Integer = 150;
@@ -124,6 +121,7 @@ public def MOVEABLEPANEL_TITLE_FILL = Color.PURPLE;
 public def MOVEABLEPANEL_TITLE_EFFECT: Effect = Glow {}
 
 // inspector panel constants
+public def INSPECTOR_PANEL_MOVEABLE: Boolean = false;
 public def SIDEBAR_SPACING: Integer = 10;
 public def INSPECTOR_PANEL_SPACING: Integer = 5;
 public def INSPECTOR_PANEL_HEIGHT: Integer = 295;
@@ -138,6 +136,7 @@ public var inspectorPremiseMode: Integer = 3;
 public var inspectorGraphMode: Integer = 4;
 
 // Graph List mode constants
+public def GRAPHLISTVIEW_MOVEABLE: Boolean = false;
 public var listGraphMode: Integer = 1;
 public var listStatementMode: Integer = 2;
 public var listArgumentMode: Integer = 3;
@@ -355,5 +354,10 @@ public class PaddedBox extends CustomNode {
 		}
 
 	}
+}
+
+public function toSVGColorCode(p: Paint): String {
+	var c: Color = p as Color;
+	"#{Integer.toHexString(c.red*255)}{Integer.toHexString(c.green * 255)}{Integer.toHexString(c.blue * 255)}"
 }
 

@@ -47,9 +47,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import javafx.scene.Group;
-
 import javafx.scene.shape.Rectangle;
-
 import javafx.scene.text.TextOrigin;
 
 
@@ -58,7 +56,7 @@ import javafx.scene.text.TextOrigin;
 */
 public class StandardView extends CarneadesView {
 
-	def graphPanel: GraphPanel = GraphPanel {
+	public def graphPanel: GraphPanel = GraphPanel {
 		//constraintX: inspectorPanelWidth + mainPanelSpacing
 		constraintY: toolBarHeight
 		graph: bind currentGraph
@@ -68,8 +66,8 @@ public class StandardView extends CarneadesView {
 	def graphListView: GraphListView = GraphListView {
 		control: bind control
 		view: bind this
-		x: appWidth - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING 
-		y: INSPECTOR_WINDOWEDGE_PADDING
+		x: bind appWidth - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
+		y: bind INSPECTOR_WINDOWEDGE_PADDING
 		maxX: bind appWidth - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
 		minX: 0
 		maxY: bind appHeight - toolBarHeight - GRAPHLISTVIEW_HEIGHT - INSPECTOR_WINDOWEDGE_PADDING
@@ -79,8 +77,8 @@ public class StandardView extends CarneadesView {
 	def inspectorPanel: InspectorPanel = InspectorPanel {
 		control: bind control
 		view: this
-		x: appWidth - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
-		y: 2 * INSPECTOR_WINDOWEDGE_PADDING + GRAPHLISTVIEW_HEIGHT
+		x: bind appWidth - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
+		y: bind 2 * INSPECTOR_WINDOWEDGE_PADDING + GRAPHLISTVIEW_HEIGHT
 		maxX: bind appWidth - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
 		minX: 0
 		maxY: bind appHeight - toolBarHeight - GRAPHLISTVIEW_HEIGHT - INSPECTOR_WINDOWEDGE_PADDING
@@ -109,6 +107,14 @@ public class StandardView extends CarneadesView {
 
 	override function focusOn(e: GraphElement) {
 		graphPanel.focusOn(e);
+	}
+
+	override function changeZoom(steps: Number): Void {
+		graphPanel.changeZoom(steps)
+	}
+
+	override function resetZoom(): Void {
+		graphPanel.resetZoom()
 	}
 
 	override function editStatement(s: Statement) {
@@ -149,7 +155,6 @@ public class StandardView extends CarneadesView {
 	var toolTipY: Number;
 
 	override function displayToolTip(e: MouseEvent, text: String) {
-		p("hmf");
 		toolTipX = e.sceneX;
 		toolTipY = e.sceneY;
 		showToolTip = true;

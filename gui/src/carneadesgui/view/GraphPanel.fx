@@ -55,7 +55,17 @@ public class GraphPanel extends Panel {
     var dragSymbolX: Number = 0;
     var dragSymbolY: Number = 0; // x- and y-position of the dragging symbol
 
-    var zoom: Number = 1.0; // Zoom factor
+    public-read var zoom: Number = 1.0; // Zoom factor
+
+	public function changeZoom(steps: Number): Void {
+		var newZoom: Number = zoom;
+		newZoom -= steps;
+		if (newZoom >= zoomLimits[0] and newZoom <= zoomLimits[1]) zoom = newZoom;
+	}
+
+	public function resetZoom(): Void {
+		zoom = 1.0
+	}
 
     override var layoutInfo = LayoutInfo {
 		width: bind appWidth - constraintX - horizontalWindowMismatch;
@@ -91,9 +101,7 @@ public class GraphPanel extends Panel {
 		onMouseWheelMoved: function(e: MouseEvent) {
 			if (not controlsLocked) {
 				// zoom on mousewheel movement
-				var newZoom: Number = zoom;
-				newZoom -= e.wheelRotation / 10;
-				if (newZoom >= zoomLimits[0] and newZoom <= zoomLimits[1]) zoom = newZoom;
+				changeZoom(e.wheelRotation / 10);
 			}
 		}
 
