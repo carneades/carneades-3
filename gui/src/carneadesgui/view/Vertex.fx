@@ -31,7 +31,10 @@ import javafx.scene.shape.Rectangle;
 // constants import
 import carneadesgui.GC.*;
 import javafx.scene.input.MouseEvent;
-import carneadesgui.control.CarneadesControl;
+
+import carneadesgui.control.XWDocumentBuilder.XWElement;
+import carneadesgui.control.XWDocumentBuilder.XWDocument;
+
 
 /**
  * The base class for tree vertices.
@@ -137,4 +140,8 @@ public class Vertex extends GraphElement {
 	    p("Width: {width} Height: {height} Index: {index}" );
 	    p("subtreeWidth: {subTreeWidth} subTreeHeight: {subTreeHeight}");
     }
+
+	public function toSVG(d :XWDocument): XWElement {
+		null
+	}
 }

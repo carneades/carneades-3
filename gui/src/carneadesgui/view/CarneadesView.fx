@@ -82,6 +82,8 @@ public abstract class CarneadesView {
 
     public function update(u: GraphUpdate): Void {}
     public function focusOn(e: GraphElement): Void {}
+	public function changeZoom(s: Number): Void {}
+	public function resetZoom(): Void {}
     public function editNothing(): Void {}
     public function editStatement(s: Statement): Void {}
     public function editArgument(a: Argument): Void {}

@@ -5,6 +5,7 @@
         <data xmlns="http://www.netbeans.org/ns/javafx-project/3">
             <name>gui</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
+            <explicit-platform explicit-javac-supported="true" explicit-source-supported="true"/>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>

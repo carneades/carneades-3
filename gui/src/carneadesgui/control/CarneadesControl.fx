@@ -33,6 +33,7 @@ import carneadesgui.view.GraphUpdate;
 
 // Other Control Imports
 import carneadesgui.control.Commands.*;
+import carneadesgui.control.ArgumentFile.*;
 
 // File Chooser for Load/Save
 import javax.swing.JFileChooser;
@@ -635,13 +636,6 @@ public class CarneadesControl {
 				statement: s
 				standard: DialecticalValidity {}
 			});
-		} else if (st == proofStandardBA) {
-			commands.do(
-			ChangeStatementStandardCommand {
-				argumentGraph: argumentGraph
-				statement: s
-				standard: BestArgument {}
-			});
 		} else if (st == proofStandardPE) {
 			commands.do(
 			ChangeStatementStandardCommand {
@@ -797,12 +791,12 @@ public class CarneadesControl {
     public function addArgumentGraph(newArgGraph: ArgumentGraph): Void {
 		insert newArgGraph into model.argumentGraphs;
 		var graph: CarneadesGraph = CarneadesGraph {
-				visible: true
-				control: bind this
-				argumentGraph: newArgGraph
-				glayout: TreeLayout {
-					graph: bind graph
-				}
+			visible: true
+			control: bind this
+			argumentGraph: newArgGraph
+			glayout: TreeLayout {
+				graph: bind graph
+			}
 		};
 		insert graph into view.graphs;
 		view.currentGraph = graphs[0];
@@ -832,11 +826,11 @@ public class CarneadesControl {
 	public function newDocument(): Void {
         if (fileChanged) {
             var choice = JOptionPane.showOptionDialog(
-                      null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?",
-                      JOptionPane.YES_NO_CANCEL_OPTION,
-                      JOptionPane.QUESTION_MESSAGE, null,
-                      ["Save", "Don't Save", "Cancel"], null
-                  );
+				  null, "All changes to the graph will be lost.\nSave it now?" , "Save Changes?",
+				  JOptionPane.YES_NO_CANCEL_OPTION,
+				  JOptionPane.QUESTION_MESSAGE, null,
+				  ["Save", "Don't Save", "Cancel"], null
+			  );
             if (choice == JOptionPane.YES_OPTION) {
                 saveAs();
             } else if (choice == JOptionPane.NO_OPTION) {
@@ -885,7 +879,7 @@ public class CarneadesControl {
 		commands.reset();
 		view.displayTitle = f.getAbsolutePath();
 		updateAll();
-		}
+	}
 
 	public function saveAs(): Void {
 		var returnval = fileChooser.showSaveDialog(null);
@@ -951,9 +945,7 @@ public class CarneadesControl {
     }
 
 	public function saveGraphAsImage(): Void {
-		// this is an adapted copy and paste code from a hack found at:
-		// http://blogs.sun.com/rakeshmenonp/entry/javafx_save_as_image
-		// Revise this once the API does it out of the box.
+		saveAsImage(graph);
 	}
 
 	function getContainer() : Container {
@@ -991,18 +983,12 @@ public class CarneadesControl {
 
 		var s1: Statement = Statement {
 			id: "s1"
-			wff: "Ruby Tuesday"
+			wff: "Conclusion"
 		}
 
 		var s2: Statement = Statement {
 			id: "s2"
-			wff: "We're on the edge of destruction"
-			//arguments: [a1]
-		}
-
-		var s3: Statement = Statement {
-			id: "s3"
-			wff: "California Dreaming"
+			wff: "Premise Statement"
 			//arguments: [a1, a2]
 		}
 
@@ -1012,35 +998,15 @@ public class CarneadesControl {
 			title: "... therefore ..."
 		}
 
-		a2 = Argument {
-			id: "a2"
-			pro: false
-			conclusion: s3
-			title: "... therefore ..."
-		}
-
 		var p1a1: Premise = Premise {
 			statement: s2
 		}
 
-		var p2a1: Premise = Premise {
-			statement: s3
-		}
-
-		var p1a2: Premise = Premise {
-			statement: s3
-		}
-
 		a1.addPremise(p1a1);
-		a1.addPremise(p2a1);
-		a2.addPremise(p1a1);
 
 		argumentGraph.insertStatement(s1);
 		argumentGraph.insertStatement(s2);
-		argumentGraph.insertStatement(s3);
 		argumentGraph.insertArgument(a1);
-		argumentGraph.insertArgument(a2);
-	
 
 		return argumentGraph;
     }

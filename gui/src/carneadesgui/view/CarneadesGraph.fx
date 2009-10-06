@@ -30,7 +30,9 @@ import carneadesgui.model.Argument.*;
 import carneadesgui.control.CarneadesControl;
 import carneadesgui.control.Commands.*;
 
-import java.lang.System;
+
+import carneadesgui.control.XWDocumentBuilder;
+import carneadesgui.control.XWDocumentBuilder.*;
 
 /**
  * The view graph class displaying a model graph object.
@@ -353,4 +355,45 @@ public class CarneadesGraph extends Graph {
 	    for (v in vertices) v.print();
     }
 
+	public function toSVG(): String {
+		var builder: XWDocumentBuilder = XWDocumentBuilder {}
+
+		var document: XWDocument = XWDocument {
+			version: '<?xml version="1.0" encoding="UTF-8" standalone="no"?>'
+			schema: '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">'
+		}
+
+		document.documentElement = XWElement {
+			name: "svg"
+			parent: document
+			document: document
+			attributes: [
+				XWAttribute {
+					document: document
+					name: "width"
+					value: "100%"
+				},
+				XWAttribute {
+					document: document
+					name: "height"
+					value: "100%"
+				},
+				XWAttribute {
+					document: document
+					name: "version"
+					value: "1.1"
+				},
+				XWAttribute {
+					document: document
+					name: "xmlns"
+					value: "http://www.w3.org/2000/svg"
+				},
+			]
+			children: [
+				[for (v in vertices) v.toSVG(document)]
+			]
+		}
+
+		document.toString()
+	}
 }

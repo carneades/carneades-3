@@ -36,6 +36,7 @@ import javafx.scene.image.Image;
 
 
 public class MoveablePanel extends CustomNode {
+	public var positionLocked: Boolean = false;
 	public var title: String = "Window Title";
 	public-read protected var display: Boolean = true;
 	public var width: Number;
@@ -82,28 +83,32 @@ public class MoveablePanel extends CustomNode {
 		blocksMouse: true
 		effect: MOVEABLEPANEL_TITLE_EFFECT
 		onMouseDragged: function(e: MouseEvent) {
-			if (not controlsLocked) {
-				if (e.button == MouseButton.PRIMARY) {
-					if (not dragging) dragging = true;
-					dragX = e.dragX;
-					dragY = e.dragY;
+			if (not positionLocked)
+				if (not controlsLocked) {
+					if (e.button == MouseButton.PRIMARY) {
+						if (not dragging) dragging = true;
+						dragX = e.dragX;
+						dragY = e.dragY;
+					}
 				}
-			}
 		}
+
+
 		onMouseReleased: function(e: MouseEvent) {
-			if (not controlsLocked) {
-				if (e.button == MouseButton.PRIMARY) {
-					if (x + dragX < minX) x = minX
-						else if (x + dragX > maxX) x = maxX
-							else x += dragX;
-					if (y + dragY < minY) y = minY
-						else if (y + dragY > maxY) y = maxY
-							else y += dragY;
-					dragX = 0;
-					dragY = 0;
-					dragging = false;
+			if (not positionLocked)
+				if (not controlsLocked) {
+					if (e.button == MouseButton.PRIMARY) {
+						if (x + dragX < minX) x = minX
+							else if (x + dragX > maxX) x = maxX
+								else x += dragX;
+						if (y + dragY < minY) y = minY
+							else if (y + dragY > maxY) y = maxY
+								else y += dragY;
+						dragX = 0;
+						dragY = 0;
+						dragging = false;
+					}
 				}
-			}
 		}
 	}
 
