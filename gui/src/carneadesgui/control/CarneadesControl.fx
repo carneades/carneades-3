@@ -866,6 +866,7 @@ public class CarneadesControl {
 
     public function loadGraphFromFile(f: File): Void {
 		view.graphs = [];
+		model.argumentGraphs = [];
 
 		// set the current file
 		currentFile = f;
