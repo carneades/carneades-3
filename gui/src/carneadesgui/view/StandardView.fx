@@ -195,7 +195,7 @@ public class StandardView extends CarneadesView {
 	def aboutInformation: Stack = Stack {
 		onMouseReleased: function(e: MouseEvent) { aboutInformationDisplayed = false }
 		blocksMouse: true
-		content: [
+		content: bind [
 			LayoutRect {
 				fill: Color.BLACK
 				opacity: 0.7
