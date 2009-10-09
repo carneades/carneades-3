@@ -251,7 +251,19 @@ public var getGraphFromFile = function(file: File): ArgumentGraph[] {
 		var agraphs: XWElement[] = document.getElementsByTagName("argument-graph");
 
 		for (agraph in agraphs) {
-			var argumentGraph: ArgumentGraph = ArgumentGraph {};
+			var graphId: String = "NewGraph";
+			var graphTitle: String = "New Graph";
+			
+			for (a in agraph.attributes) {
+				if (a.name == "id") graphId = a.value;
+				if (a.name == "title") graphTitle = a.value;
+			}
+
+			var argumentGraph: ArgumentGraph = ArgumentGraph {
+				id: graphId
+				title: graphTitle
+			}
+
 			var statements: XWElement[];
 			var arguments: XWElement[];
 			var issues: XWElement[];
