@@ -90,12 +90,6 @@ peace and order.")
   "Peace and order is
 an important social value.")
 
-(define c0 
-  (make-context (table:make-table statement=? null) ; status table
-                (lambda (statement) 'se) ; default standard: scintilla
-                (lambda (arg1 arg2) 0) ; no priorities
-                identity))
-
 (define-argument a1 (pro not-property 
                          (pr possession-required)
                          (pr no-possession)
@@ -132,12 +126,13 @@ an important social value.")
        (pr certainty)   ; policy/action
        (pr order)))     ; value promoted
 
-(define tompkins 
+(define args1
   (assert-arguments empty-argument-graph
           (list a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14)))
 
-(define c1 (accept c0 (list foxes-are-wild possession-required certainty order)))
-; (view tompkins c1)
+(define facts1 (list foxes-are-wild possession-required certainty order))
+(define tompkins (accept args1 facts1))
+; (view tompkins)
 
 ; Judge Livingston's dissent.
 
@@ -182,16 +177,17 @@ and noxious beast.")
 (define-argument a17
   (pro foxes-are-noxious (am admitted-in-the-pleadings)))
 
-(define livingston (assert-arguments empty-argument-graph (list a15 a16 a17)))
-(define c2 (accept c1 (list chased-by-big-dogs)))
-
-(define both (assert-arguments tompkins (list a15 a16 a17)))
-; (view both c2)
-
+(define args2 (assert-arguments empty-argument-graph (list a15 a16 a17)))
+(define facts2 (list chased-by-big-dogs))
+(define livingston (accept args2 facts2))
 ; (diagram livingston c2)
 ; (view livingston c2)
+
+(define both (accept (assert-arguments tompkins (list a15 a16 a17))
+                     facts2))
+; (view both)
 
 (define fig4-args (assert-arguments empty-argument-graph (list a9 a10 a11)))
 (define fig5-args (assert-arguments empty-argument-graph (list a12 a13)))
 
-(diagram both c2)
+(view both)
