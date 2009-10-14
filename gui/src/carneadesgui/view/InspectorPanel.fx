@@ -77,14 +77,14 @@ class StatementInspector extends Inspector {
 		text: "true"
 		toggleGroup: statusGroup
 		onMouseClicked: function(e: MouseEvent): Void {
-			control.changeStatementStatus(statement, "assumed true");
+			control.changeStatementStatus(statement, "accepted");
 		}
 	}
 	def falseButton = InspectorRadioButton {
 		text: "false"
 		toggleGroup: statusGroup
 		onMouseClicked: function(e: MouseEvent): Void {
-			control.changeStatementStatus(statement, "assumed false");
+			control.changeStatementStatus(statement, "rejected");
 		}
 	}
 	
