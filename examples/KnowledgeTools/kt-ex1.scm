@@ -32,8 +32,6 @@
 
 (define testimony (e:make-testimony witness (list form1)))
 
-
-
 ; engine integer integer argument-graph -> statement -> (stream-of argument-state)
 (define (engine max-nodes max-turns ag)
   (make-engine* max-nodes max-turns ag
