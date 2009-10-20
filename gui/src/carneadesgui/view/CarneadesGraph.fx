@@ -56,6 +56,7 @@ public class CarneadesGraph extends Graph {
     // the invisible root node
     override var root = CarneadesVertex {
 		caption: "root"
+		graph: this
 		x: 0
 		y: 0
 		visible: false
@@ -135,6 +136,7 @@ public class CarneadesGraph extends Graph {
 			}
 			if (not isAlreadyThere) {
 				insert PremiseLink {
+					graph: this
 					control: control
 					premise: p
 					producer: sbox
@@ -152,6 +154,7 @@ public class CarneadesGraph extends Graph {
 			}
 			if (not isAlreadyThere) {
 				insert ArgumentLink {
+					graph: this
 					control: control
 					argument: abox.argument
 					producer: abox
@@ -187,6 +190,7 @@ public class CarneadesGraph extends Graph {
 				if (not boxAlreadyThere) {
 					// if there is none ...
 					var abox: ArgumentBox = ArgumentBox {
+						graph: this
 						argument: a
 						control: control
 						updated: true
@@ -257,6 +261,7 @@ public class CarneadesGraph extends Graph {
 				if (not boxAlreadyThere) {
 					// if there is none ...
 					var sbox: StatementBox = StatementBox {
+						graph: this
 						statement: p.statement
 						control: control
 						updated: true
@@ -314,6 +319,7 @@ public class CarneadesGraph extends Graph {
 			if (sbox == null) {
 				// if there is no box, create one
 				sbox = StatementBox {
+					graph: this
 					statement: s
 					parentVertex: root
 					control: control
@@ -390,7 +396,8 @@ public class CarneadesGraph extends Graph {
 				},
 			]
 			children: [
-				[for (v in vertices) v.toSVG(document)]
+				[for (v in vertices) v.toSVG(document)],
+				[for (e in edges) e.toSVG(document)]
 			]
 		}
 

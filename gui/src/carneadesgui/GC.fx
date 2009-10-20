@@ -111,6 +111,10 @@ public var argumentCircleDefaultRadius: Integer = 20;
 public var argumentConColor = statusRejectedColor;
 public var argumentProColor = statusAcceptedColor;
 
+// Graphic Export constants
+public var SVG_LEFTOFFSET: Integer = 50;
+public var SVG_TEXT_HORIZONTALCORRECTION: Integer = 50;
+
 // toolbar constants
 public var toolBarHeight: Integer = 60;
 public var toolBarSpacing: Integer = 10;

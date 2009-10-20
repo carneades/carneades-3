@@ -28,6 +28,9 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.transform.Rotate;
 
+import carneadesgui.control.XWDocumentBuilder;
+import carneadesgui.control.XWDocumentBuilder.*;
+
 /**
  * The base class for all edges in the view graphs
  */
@@ -117,6 +120,10 @@ public class Edge extends GraphElement {
 			angle:  - (atan((x2-x1)/(y2-y1)) / PI) * 180
 		}
     }
+
+	public function toSVG(d: XWDocument): XWElement {
+		null
+	}
 
     override function create():Node {
 		Group {
