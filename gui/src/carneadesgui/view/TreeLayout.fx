@@ -45,7 +45,7 @@ public class TreeLayout extends GraphLayout {
 					// if there are no child nodes, the parent determines the subtree
 					v.width;
 				}
-			v.subTreeWidth as Integer;
+		v.subTreeWidth as Integer;
     }
 
     function positionVerticesHorizontally(v: Vertex): Void {
@@ -106,6 +106,8 @@ public class TreeLayout extends GraphLayout {
 
 		// layout edges
 		positionEdges();
+
+		//p("root subtreewidth: {graph.root.subTreeWidth}");
 
 		return graph;
     }
