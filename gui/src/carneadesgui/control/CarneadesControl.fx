@@ -782,6 +782,7 @@ public class CarneadesControl {
     }
 
     public function newGraph(): Void {
+		model.argumentGraphs = [];
 		view.graphs = [];
 		addArgumentGraph(defaultArgumentGraph(getNewGraphId()));
 		currentFile = null;
@@ -947,19 +948,6 @@ public class CarneadesControl {
 
 	public function saveGraphAsImage(): Void {
 		saveAsImage(graph);
-	}
-
-	function getContainer() : Container {
-		var container : Container;
-		if("{__PROFILE__}" == "browser") { // Applet
-			container = FX.getArgument("javafx.applet") as Applet;
-		} else { // Standalone
-			var frames = Frame.getFrames();
-			// We may improve this logic so as to find the
-			// exact Stage (Frame) based on its title
-			container = (frames[0] as JFrame).getContentPane();
-		}
-		return container;
 	}
 
 	function save(container : Container, bounds : Bounds, file : File) {

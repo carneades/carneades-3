@@ -337,12 +337,18 @@ public class StatementBox extends ArgumentElement {
 		} // Group
     } // composeNode
 
-	override function toSVG(d: XWDocument) {
+	override function toSVG(d: XWDocument): XWElement {
 		XWElement {
 			name: "g"
 			document: d
+			attributes: [
+				XWAttribute {
+					name: "transform"
+					value: "translate({graph.boundsInLocal.width / 2 + SVG_LEFTOFFSET}, 0)"
+				},
+			]
 			children: [
-				/*XWElement {
+				XWElement {
 					name: "rect"
 					document: d
 					attributes: [
@@ -353,6 +359,10 @@ public class StatementBox extends ArgumentElement {
 						XWAttribute {
 							name: "y"
 							value: "{y}"
+						},
+						XWAttribute {
+							name: "transform"
+							value: "translate(-{width/2}, -{height/2})"
 						},
 						XWAttribute {
 							name: "width"
@@ -379,27 +389,45 @@ public class StatementBox extends ArgumentElement {
 							value: "{mainRect.strokeWidth}"
 						},
 					]
-				},*/
+				},
 				XWElement {
 					document: d
 					name: "text"
 					attributes: [
 						XWAttribute {
 							name: "x"
-							value: "{x}"
+							value: "{text.x 
+										+ (text.transforms[0] as Translate).x
+										+ /*hand correction*/ SVG_TEXT_HORIZONTALCORRECTION}"
 						},
 						XWAttribute {
 							name: "y"
-							value: "{y}"
+							value: "{text.y + (text.transforms[0] as Translate).y}"
 						},
 						XWAttribute {
-							name: "fontsize"
-							value: "{20}"
+							name: "width"
+							value: "{width}"
+						},
+						XWAttribute {
+							name: "height"
+							value: "{height}"
+						},
+						XWAttribute {
+							name: "fill"
+							value: "{toSVGColorCode(Color.BLACK)}"
+						},
+						XWAttribute {
+							name: "font-size"
+							value: "14"
+						},
+						XWAttribute {
+							name: "style"
+							value: "fill: #000000; font-family: Monaco; font-style: normal; font-variant: normal; font-weight: normal; line-height: 100%; word-spacing: normal; letter-spacing: normal; text-decoration: none; text-transform: none; text-align: center; text-indent: 0ex;"
 						},
 					]
 					children: [
 						XWText {
-							value: "text"
+							value: "{text.content}"
 						}
 					]
 				}
@@ -557,6 +585,56 @@ public class PremiseLink extends CarneadesEdge {
 			negated = true;
 		}
     }
+
+	override function toSVG(d: XWDocument) {
+		XWElement {
+			name: "g"
+			document: d
+			attributes: [
+				XWAttribute {
+					name: "transform"
+					value: "translate({graph.boundsInLocal.width / 2 + SVG_LEFTOFFSET}, 0)"
+				},
+			]
+			children: [
+				//<line x1="15" y1="240" x2="30" y2="200" stroke-width="2"/>
+				XWElement {
+					name: "line"
+					document: d
+					attributes: [
+						XWAttribute {
+							name: "x1"
+							value: "{x1}"
+						},
+						XWAttribute {
+							name: "y1"
+							value: "{y1}"
+						},
+						XWAttribute {
+							name: "x2"
+							value: "{x2}"
+						},
+						XWAttribute {
+							name: "y2"
+							value: "{y2}"
+						},
+						XWAttribute {
+							name: "stroke-width"
+							value: "{strokeWidth}"
+						},
+						XWAttribute {
+							name: "stroke"
+							value: "{toSVGColorCode(stroke)}"
+						},
+						XWAttribute {
+							name: "stroke-dasharray"
+							value: "{ if (premise.exception) "6.0, 6.0" else "1.0" }"
+						}
+					]
+				}
+			]
+		}
+	}
 
     override function create():Node {
 		Group {
