@@ -620,6 +620,7 @@ public var saveAsImage = function(g: CarneadesGraph): Void {
 	writer.write(printGraphAsSVG(g));
 	writer.close();
 
+	/*
 	// Create the transcoder input.
 	var reader: Reader = new StringReader(printGraphAsSVG(g));
 	var input: TranscoderInput = new TranscoderInput(reader);
@@ -633,7 +634,7 @@ public var saveAsImage = function(g: CarneadesGraph): Void {
 
 	// Flush and close the stream.
 	ostream.flush();
-	ostream.close();
+	ostream.close();*/
 
 }
 

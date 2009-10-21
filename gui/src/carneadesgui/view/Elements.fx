@@ -481,6 +481,77 @@ public class ArgumentLink extends Arrow {
     override var model = bind argument;
 
     override var fill = bind {if (argument.pro) Color.BLACK else Color.WHITE};
+
+	override function toSVG(d: XWDocument) {
+		XWElement {
+			name: "g"
+			document: d
+			attributes: [
+				XWAttribute {
+					name: "transform"
+					value: "translate({graph.boundsInLocal.width / 2 + SVG_LEFTOFFSET}, 0)"
+				},
+			]
+			children: [
+				XWElement {
+					name: "line"
+					document: d
+					attributes: [
+						XWAttribute {
+							name: "x1"
+							value: "{x1}"
+						},
+						XWAttribute {
+							name: "y1"
+							value: "{y1}"
+						},
+						XWAttribute {
+							name: "x2"
+							value: "{x2}"
+						},
+						XWAttribute {
+							name: "y2"
+							value: "{y2}"
+						},
+						XWAttribute {
+							name: "stroke-width"
+							value: "{strokeWidth}"
+						},
+						XWAttribute {
+							name: "stroke"
+							value: "{toSVGColorCode(stroke)}"
+						}
+					]
+				},
+				XWElement {
+					name: "polygon"
+					document: d
+					attributes: [
+						XWAttribute {
+							name: "fill"
+							value: "{toSVGColorCode(fill)}"
+						},
+						XWAttribute {
+							name: "points"
+							value: "{x2}, {y2} {x2 - (headSize / 2)}, {y2 + headSize} {x2 + (headSize / 2)}, {y2 + headSize}"
+						},
+						XWAttribute {
+							name: "stroke"
+							value: "{toSVGColorCode(stroke)}"
+						},
+						XWAttribute {
+							name: "stroke-width"
+							value: "{strokeWidth}"
+						},
+						XWAttribute {
+							name: "transform"
+							value: "rotate({- (java.lang.Math.atan((x2-x1)/(y2-y1)) / java.lang.Math.PI) * 180} {x2} {y2})"
+						},
+					]
+				}
+			]
+		}
+	}
 }
 
 /**
@@ -597,7 +668,6 @@ public class PremiseLink extends CarneadesEdge {
 				},
 			]
 			children: [
-				//<line x1="15" y1="240" x2="30" y2="200" stroke-width="2"/>
 				XWElement {
 					name: "line"
 					document: d
@@ -626,10 +696,10 @@ public class PremiseLink extends CarneadesEdge {
 							name: "stroke"
 							value: "{toSVGColorCode(stroke)}"
 						},
-						XWAttribute {
-							name: "stroke-dasharray"
-							value: "{ if (premise.exception) "6.0, 6.0" else "1.0" }"
-						}
+						if (premise.exception) XWAttribute {
+								name: "stroke-dasharray"
+								value: "6.0, 6.0"
+						} else null
 					]
 				}
 			]

@@ -107,8 +107,6 @@ public class TreeLayout extends GraphLayout {
 		// layout edges
 		positionEdges();
 
-		//p("root subtreewidth: {graph.root.subTreeWidth}");
-
 		return graph;
     }
 }

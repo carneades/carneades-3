@@ -34,6 +34,8 @@ import carneadesgui.control.Commands.*;
 import carneadesgui.control.XWDocumentBuilder;
 import carneadesgui.control.XWDocumentBuilder.*;
 
+import javafx.scene.paint.Color;
+
 /**
  * The view graph class displaying a model graph object.
  */
@@ -377,12 +379,12 @@ public class CarneadesGraph extends Graph {
 				XWAttribute {
 					document: document
 					name: "width"
-					value: "100%"
+					value: "{this.boundsInLocal.width + 2*SVG_LEFTOFFSET}"
 				},
 				XWAttribute {
 					document: document
 					name: "height"
-					value: "100%"
+					value: "{this.boundsInLocal.height + 2*SVG_LEFTOFFSET}"
 				},
 				XWAttribute {
 					document: document
@@ -396,6 +398,38 @@ public class CarneadesGraph extends Graph {
 				},
 			]
 			children: [
+				XWElement {
+					document: document
+					name: "g"
+					children: [
+						XWElement {
+							document: document
+							name: "rect"
+							attributes: [
+								XWAttribute {
+									name: "x"
+									value: "0"
+								},
+								XWAttribute {
+									name: "y"
+									value: "0"
+								},
+								XWAttribute {
+									name: "width"
+									value: "{this.boundsInLocal.width + 2*SVG_LEFTOFFSET}"
+								},
+								XWAttribute {
+									name: "height"
+									value: "{this.boundsInLocal.height + 2*SVG_LEFTOFFSET}"
+								},
+								XWAttribute {
+									name: "fill"
+									value: "{toSVGColorCode(Color.rgb(223, 226, 229))}"
+								},
+							]
+						}
+					]
+				},
 				[for (v in vertices) v.toSVG(document)],
 				[for (e in edges) e.toSVG(document)]
 			]
