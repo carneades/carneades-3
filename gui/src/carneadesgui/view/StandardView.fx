@@ -63,7 +63,7 @@ public class StandardView extends CarneadesView {
 		control: bind control
 	}
 
-	def graphListView: GraphListView = GraphListView {
+	public def graphListView: GraphListView = GraphListView {
 		control: bind control
 		view: bind this
 		x: bind appWidth - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
@@ -149,47 +149,8 @@ public class StandardView extends CarneadesView {
 		graphListView.unSelectAll();
 	}
 
-	var showToolTip: Boolean = false;
-	var toolTipText: String;
-	var toolTipX: Number;
-	var toolTipY: Number;
-
-	override function displayToolTip(e: MouseEvent, text: String) {
-		toolTipX = e.sceneX;
-		toolTipY = e.sceneY;
-		showToolTip = true;
-		toolTipText = text;
-	}
-
-	override function hideToolTip() {
-		showToolTip = false;
-	}
-
 	override function displayAboutInformation() {
 		aboutInformationDisplayed = true;
-	}
-
-	public var toolTip: Group = Group {
-		content: bind {
-			if (showToolTip) [
-				Rectangle {
-					x: bind toolTipX
-					y: bind toolTipY
-					fill: Color.BEIGE
-					width: 70
-					height: 20
-					stroke: Color.BLACK
-					strokeWidth: 1
-				},
-				Text {
-					textOrigin: TextOrigin.TOP
-					x: bind toolTipX + 2
-					y: bind toolTipY + 2
-					content: bind toolTipText
-				}
-			]
-			else []
-		}
 	}
 
 	def aboutInformation: Stack = Stack {
@@ -263,13 +224,12 @@ public class StandardView extends CarneadesView {
 							content: bind [
 								graphPanel,
 								graphListView,
-								inspectorPanel
+								inspectorPanel,
 							]
 						}
 					]
 				},
 				Group { content: bind { if (aboutInformationDisplayed) aboutInformation else []} },
-				toolTip
 			]
 		}
 	}

@@ -90,8 +90,6 @@ public abstract class CarneadesView {
     public function editPremise(p: Premise): Void {}
     public function editGraph(a: ArgumentGraph): Void {}
 	public function displayGraphListView(): Void {}
-	public function displayToolTip(e: MouseEvent, text: String): Void {}
-	public function hideToolTip(): Void {}
     public function isVisible(e: GraphElement): Boolean { false }
     public function alert(t: String): Void {}
     public function unSelectAll(): Void {}
