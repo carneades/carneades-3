@@ -25,7 +25,7 @@ import carneadesgui.GC.*;
 import java.lang.System;
 
 // Changed: List of supported proof standards for the GUI
-public var proofStandards: String[] = [proofStandardSE, proofStandardDV, proofStandardPE, proofStandardCCE, proofStandardBRD];
+public var proofStandards: String[] = [proofStandardSE, proofStandardPE, proofStandardCCE, proofStandardBRD, proofStandardDV];
 
 abstract public class ProofStandard {
 	public var statement : Statement;  // backwards reference
