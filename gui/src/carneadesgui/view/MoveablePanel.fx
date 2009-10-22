@@ -38,7 +38,7 @@ import javafx.scene.image.Image;
 public class MoveablePanel extends CustomNode {
 	public var positionLocked: Boolean = false;
 	public var title: String = "Window Title";
-	public-read protected var display: Boolean = true;
+	public var display: Boolean = true;
 	public var width: Number;
 	public var height: Number;
 	public var x: Number;
