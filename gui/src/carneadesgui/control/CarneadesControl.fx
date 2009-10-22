@@ -806,14 +806,23 @@ public class CarneadesControl {
     }
 
     public function removeCurrentArgumentGraph(): Void {
-		delete argumentGraph from model.argumentGraphs;
-		delete graph from view.graphs;
 
-		if (argumentGraphs != []) {
+		var choice = JOptionPane.showOptionDialog(
+			  null, "Are you sure you wish to delete the current argument graph?" , "Delete Graph?",
+			  JOptionPane.YES_NO_OPTION,
+			  JOptionPane.QUESTION_MESSAGE, null,
+			  ["delete", "Don't delete"], null
+		  );
+		if (choice == JOptionPane.YES_OPTION) {
+			// delete the graph
+			delete argumentGraph from model.argumentGraphs;
+			delete graph from view.graphs;
+			if (argumentGraphs != []) {
 			displayGraph(argumentGraphs[0]);
-		} else {
-			newGraph();
-		}
+			} else {
+				newGraph();
+			}
+		} else if (choice == JOptionPane.NO_OPTION) {}
 		updateAll();
     }
 

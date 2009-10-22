@@ -365,3 +365,6 @@ public function toSVGColorCode(p: Paint): String {
 	"#{Integer.toHexString(c.red*255)}{Integer.toHexString(c.green * 255)}{Integer.toHexString(c.blue * 255)}"
 }
 
+public bound function boundMin(a: Number, b: Number): Number {
+		java.lang.Math.min(a, b)
+}
