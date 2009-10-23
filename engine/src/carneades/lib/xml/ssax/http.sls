@@ -203,19 +203,20 @@
     
     ; expected keyword arguments and their default values
     ((http-proxy (define-def http-proxy req-parms  #f))
-     (user-agent (define-def user-agent req-parms  "Scheme-HTTP/1.0"))
+     (user-agent (define-def user-agent req-parms  "Scheme-HTTP/1.1"))
      (http-req (define-def http-req   req-parms  '()))
      (logger (define-def logger     req-parms
                (lambda (port msg . other-msgs) (cerr msg other-msgs nl)))))
     
-    (define CRLF (string (integer->char 13) (integer->char 10)))
+    (define CRLF (string ;(integer->char 13)
+                  (integer->char 10)))
     
     (define-record-type (&http-condition make-http-condition http-condition?)
       (parent &condition)
       (fields name reason headers))
     
     (define (die reason headers port)
-      (if port (close-output-port port))
+      (if port? (close-port port))
       (raise-continuable (make-http-condition 'HTTP-TRANSACTION reason headers)))
     
     ; re-throw the exception exc as a HTTP-TRANSACTION exception
@@ -252,7 +253,7 @@
                        ; if the proxy is set, request the full REQ-URL; otherwise,
                        ; send only the relative URL
                        ,@(if http-proxy (list req-url) (list "/" resource))
-                       " HTTP/1.0" ,CRLF
+                       " HTTP/1.1" ,CRLF
                        "Host: " ,host ,CRLF
                        "User-agent: " ,user-agent ,CRLF
                        "Connection: close" ,CRLF))
