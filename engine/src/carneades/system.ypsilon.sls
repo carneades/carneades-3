@@ -18,10 +18,16 @@
 (library
  (carneades system)
  
- (export system pretty-print tcp-connect gensym run-program)
+ (export system pretty-print tcp-connect gensym run-program get-pure-port string->url)
  
  (import (rnrs) 
          (only (core) system pretty-print process))
+ 
+ (define (get-pure-port url)
+   (error "get-pure-port" "not yet implemented for ypsilon" url))
+ 
+ (define (string->url string)
+   (error "get-pure-port" "not yet implemented for ypsilon" url))
  
  (define (tcp-connect . args) 
    (raise-continuable (make-message-condition "tcp-connect not provided by Ypsilon")))
