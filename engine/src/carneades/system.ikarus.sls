@@ -18,10 +18,16 @@
 (library
  (carneades system)
  
- (export system pretty-print tcp-connect gensym run-program)
+ (export system pretty-print tcp-connect gensym run-program get-pure-port string->url)
  
  (import (rnrs)
          (prefix (ikarus) ikarus:)) 
+ 
+ (define (get-pure-port url)
+   (error "get-pure-port" "not yet implemented for ikarus" url))
+ 
+ (define (string->url string)
+   (error "get-pure-port" "not yet implemented for ikarus" url))
  
  (define (system cmd) 
    ;(raise-continuable (make-message-condition "system procedure not yet implemented")))

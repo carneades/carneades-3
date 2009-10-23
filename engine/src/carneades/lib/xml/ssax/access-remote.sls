@@ -30,6 +30,7 @@
          (carneades lib xml ssax http)
          ; (carneades lib xml ssax srfi-12)
          (carneades lib xml ssax util)
+         (only (carneades system) get-pure-port string->url)
          (only (carneades lib srfi strings) string-prefix? string-index))
  
  ;; Uniform access to local and remote resources
@@ -77,7 +78,7 @@
     (lambda ()
       (cond
         ((string-prefix? "http://" req-uri)  ; HTTP scheme is used in REQ-URI
-         (http-transaction
+#|         (http-transaction
           "GET"
           req-uri
           (list (cons 'logger (lambda (port message . other-messages) #t)))
@@ -87,7 +88,9 @@
               (else
                (close-input-port resp-port)
                (cerr nl req-uri ": resource not available: " resp-code nl)
-               #f)))))
+               #f)))) |#
+         (transcoded-port (get-pure-port (string->url req-uri)) (make-transcoder (utf-8-codec)))
+         )
         (else  ; a local file    
          (open-input-file req-uri))))))
  

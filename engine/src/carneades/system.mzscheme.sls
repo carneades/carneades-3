@@ -18,13 +18,14 @@
 (library
  (carneades system)
  
- (export system pretty-print (rename (textual-tcp-connect tcp-connect)) gensym run-program)
+ (export system pretty-print (rename (textual-tcp-connect tcp-connect)) gensym run-program get-pure-port string->url)
  
  (import (rnrs)
          (only (scheme base) system-type subprocess)
          (only (scheme system) system) 
          (only (scheme pretty) pretty-print)
          (only (scheme tcp) tcp-connect)
+         (only (net url) get-pure-port string->url)
          )
  
  (define (textual-tcp-connect hostname port-number)
