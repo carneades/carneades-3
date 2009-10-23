@@ -105,7 +105,6 @@ public abstract class ArgumentElement extends CarneadesVertex {
 		centerY: bind y
 		radius: 3
 		fill: Color.RED
-		visible: bind drawDebug
     }
 }
 
@@ -199,7 +198,7 @@ public class ArgumentBox extends ArgumentElement {
 				mainCircle,
 				selection,
 				text,
-				middlePoint
+				// middlePoint
 			] // content
 		} // Group
     } // composeNode
@@ -249,7 +248,7 @@ public class StatementBox extends ArgumentElement {
 			x - (width / 2) + mainRectWidth, y - (height / 2) + mainRectHeight,
 			x - (width / 2), y - (height / 2) + mainRectHeight ]
 		blocksMouse: true
-		fill: bind { if (fillStatements) statusColor else defaultBoxFill }
+		fill: bind { if (fillStatements) statusColor else DEFAULT_BOX_FILL }
 		stroke: bind { if (mainRect.hover) Color.GREY else Color.BLACK }
 		strokeDashArray: bind {if (duplicate) [6.0, 6.0] else [1.0]}
 		strokeWidth: 1
@@ -332,7 +331,7 @@ public class StatementBox extends ArgumentElement {
 				acceptableCircle,
 				acceptableCompCircle,
 				{ if (duplicate) duplicateLink else null},
-				middlePoint,
+				// middlePoint,
 			] // content
 		} // Group
     } // composeNode
@@ -646,17 +645,6 @@ public class PremiseLink extends CarneadesEdge {
 		visible: bind premise.exception
     }
 
-    /**
-     * Switches the negation bar on and off. Used to update the view more efficiently as the tree layout does not need to be updated.
-     */
-    public function negate() {
-		if (negated) {
-			negated = false;
-		} else {
-			negated = true;
-		}
-    }
-
 	override function toSVG(d: XWDocument) {
 		XWElement {
 			name: "g"
@@ -712,7 +700,7 @@ public class PremiseLink extends CarneadesEdge {
 				edgeLine,
 				{if (selected) selection else null},
 				selectPoly,
-				{if (negated) negation else null},
+				{if (premise.negative) negation else null},
 			] // content
 		} // Group
     } // composeNode

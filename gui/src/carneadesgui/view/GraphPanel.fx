@@ -68,8 +68,8 @@ public class GraphPanel extends Panel {
 	}
 
     override var layoutInfo = LayoutInfo {
-		width: bind appWidth - constraintX - horizontalWindowMismatch;
-		height: bind appHeight - constraintY - verticalWindowMismatch;
+		width: bind APP_WIDTH - constraintX - HORIZONTAL_WINDOW_MISMATCH;
+		height: bind APP_HEIGHT - constraintY - VERTICAL_WINDOW_MISMATCH;
     }
 
     var centerCircle = Circle {
@@ -207,7 +207,7 @@ public class GraphPanel extends Panel {
     }
 
     override var content = bind [
-		LayoutRect {fill: viewBackground, stroke: null },
+		LayoutRect {fill: VIEW_BACKGROUND_COLOR, stroke: null },
 		//Filler { content: bind "{this.width}\n{this.centerX}\n{this.centerY}" },
 		Group {
 			content: bind [

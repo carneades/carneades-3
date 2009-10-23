@@ -173,7 +173,7 @@ public class MoveablePanel extends CustomNode {
 					LayoutRect {
 						width: bind width
 						height: bind height
-						fill: panelBackground
+						fill: bind PANEL_BACKGROUND_COLOR
 						stroke: Color.BLACK
 					}, mainArea
 				] else null

@@ -64,8 +64,8 @@ public abstract class CarneadesView {
 
     public var view: Stage = Stage {
 	title: bind displayTitle
-	width: bind appWidth
-	height: bind appHeight
+	width: bind APP_WIDTH
+	height: bind APP_HEIGHT
 	scene: Scene {
 		content: [
 			Text {
