@@ -18,7 +18,7 @@
 (library
  (carneades system)
  
- (export system pretty-print tcp-connect gensym run-program)
+ (export system pretty-print (rename (textual-tcp-connect tcp-connect)) gensym run-program)
  
  (import (rnrs)
          (only (scheme base) system-type subprocess)
@@ -26,6 +26,12 @@
          (only (scheme pretty) pretty-print)
          (only (scheme tcp) tcp-connect)
          )
+ 
+ (define (textual-tcp-connect hostname port-number)
+   (call-with-values (lambda () (tcp-connect hostname port-number))
+                     (lambda (byte-in byte-out)
+                       (values (transcoded-port byte-in (make-transcoder (utf-8-codec)))
+                               (transcoded-port byte-out (make-transcoder (utf-8-codec)))))))
     
  (define gensym-counter 0)
  
