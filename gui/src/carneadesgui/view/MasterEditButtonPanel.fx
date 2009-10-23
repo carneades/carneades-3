@@ -168,7 +168,7 @@ public class MasterEditButtonPanel extends Panel {
 		LayoutRect {
 			width: bind inspectorPanelWidth;
 			height: bind editButtonPanelHeight
-			fill: panelBackground
+			fill: PANEL_BACKGROUND_COLOR
 			stroke: Color.BLACK
 		},
 		PaddedVBox {

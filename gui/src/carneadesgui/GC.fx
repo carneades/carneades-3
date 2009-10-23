@@ -46,25 +46,22 @@ public def proofStandardCCE: String = "clear and convincing";
 public def proofStandardBRD: String = "beyond reasonable doubt";
 
 // General Application Constants
-public var appWidth: Number = 850;
-public var appHeight: Number = 600;
-public def verticalWindowMismatch: Number = 23;
-public def horizontalWindowMismatch: Number = 1;
+public var APP_WIDTH: Number = 850;
+public var APP_HEIGHT: Number = 600;
+public def VERTICAL_WINDOW_MISMATCH: Number = 23;
+public def HORIZONTAL_WINDOW_MISMATCH: Number = 1;
 
 // StandardView Constants
-public var mainPanelSpacing: Integer = 1;	// spacing between the two/three main panels
+public var MAINPANEL_SPACING: Integer = 1;	// spacing between the two/three main panels
 
 // Graph Display Constants
 
 // Drawing constants
-public var drawAllStatements: Boolean = true;
-public var canvasFontSize: Integer = 8;
-public var textFieldHeight: Integer = 25;
-public var defaultBoxFill = Color.WHITE;
-public var drawDebug = bind debug;
-public var viewBackground: Color = Color.rgb(178, 195, 218);
-public var toolPanelBackground: Color = Color.rgb(124, 141, 172);
-public var panelBackground: Color = Color.rgb(223, 226, 229);
+public var DEFAULT_BOX_FILL: Color = Color.WHITE;
+public var DRAW_DEBUG_INFO = bind debug;
+public var VIEW_BACKGROUND_COLOR: Color = Color.rgb(178, 195, 218);
+public var TOOLPANEL_BACKGROUND_COLOR: Color = Color.rgb(124, 141, 172);
+public var PANEL_BACKGROUND_COLOR: Color = Color.rgb(223, 226, 229);
 
 public var edgeStrokeWidth: Number = 1;
 public var selectionColor: Color = Color.RED;

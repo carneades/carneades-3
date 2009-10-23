@@ -323,9 +323,9 @@ public class ToolBar extends Stack {
 
 	override def content = bind [
 		LayoutRect {
-			width: bind appWidth
+			width: bind APP_WIDTH
 			height: bind toolBarHeight
-			fill: bind toolPanelBackground
+			fill: bind TOOLPANEL_BACKGROUND_COLOR
 			effect: Glow {
 				level: 0.5
 			}
@@ -334,8 +334,8 @@ public class ToolBar extends Stack {
 			vpos: VPos.CENTER
 			spacing: toolBarSpacing
 			layoutInfo: LayoutInfo {
-				width: bind appWidth
-				minWidth: bind appWidth
+				width: bind APP_WIDTH
+				minWidth: bind APP_HEIGHT
 				height: bind toolBarHeight
 				minHeight: bind toolBarHeight
 			}

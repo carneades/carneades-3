@@ -66,22 +66,22 @@ public class StandardView extends CarneadesView {
 	public def graphListView: GraphListView = GraphListView {
 		control: bind control
 		view: bind this
-		x: bind appWidth - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
+		x: bind APP_WIDTH - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
 		y: bind INSPECTOR_WINDOWEDGE_PADDING
-		maxX: bind appWidth - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
+		maxX: bind APP_WIDTH - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
 		minX: 0
-		maxY: bind appHeight - toolBarHeight - GRAPHLISTVIEW_HEIGHT - INSPECTOR_WINDOWEDGE_PADDING
+		maxY: bind APP_HEIGHT - toolBarHeight - GRAPHLISTVIEW_HEIGHT - INSPECTOR_WINDOWEDGE_PADDING
 		minY: 0
 	}
 
 	def inspectorPanel: InspectorPanel = InspectorPanel {
 		control: bind control
 		view: this
-		x: bind appWidth - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
+		x: bind APP_WIDTH - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
 		y: bind 2 * INSPECTOR_WINDOWEDGE_PADDING + GRAPHLISTVIEW_HEIGHT
-		maxX: bind appWidth - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
+		maxX: bind APP_HEIGHT - inspectorPanelWidth - INSPECTOR_WINDOWEDGE_PADDING
 		minX: 0
-		maxY: bind appHeight - toolBarHeight - GRAPHLISTVIEW_HEIGHT - INSPECTOR_WINDOWEDGE_PADDING
+		maxY: bind APP_HEIGHT - toolBarHeight - GRAPHLISTVIEW_HEIGHT - INSPECTOR_WINDOWEDGE_PADDING
 		minY: 0
 	}
 
@@ -160,8 +160,8 @@ public class StandardView extends CarneadesView {
 			LayoutRect {
 				fill: Color.BLACK
 				opacity: 0.7
-				width: bind appWidth
-				height: bind appHeight
+				width: bind APP_WIDTH
+				height: bind APP_HEIGHT
 			},
 			LayoutRect {
 				fill: Color.WHITE
@@ -202,20 +202,20 @@ public class StandardView extends CarneadesView {
 
 	override def view = Stage {
 		title: bind displayTitle
-		width: bind appWidth with inverse
-		height: bind appHeight with inverse
+		width: bind APP_WIDTH with inverse
+		height: bind APP_HEIGHT with inverse
 		visible: bind active
 		scene: Scene {
 			fill: Color.BLACK
 			content: [
 				LayoutRect {
-					fill: panelBackground
-					width: bind appWidth
-					height: bind appHeight - verticalWindowMismatch
+					fill: bind PANEL_BACKGROUND_COLOR
+					width: bind APP_WIDTH
+					height: bind APP_WIDTH - VERTICAL_WINDOW_MISMATCH
 				},
 				// the vertical box containing the (optional) upper toolbar and the rest of the GUI.
 				VBox {
-					spacing: mainPanelSpacing
+					spacing: MAINPANEL_SPACING
 					content: bind [
 						toolBar,
 						Stack {
