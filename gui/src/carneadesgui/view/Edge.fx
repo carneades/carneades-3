@@ -121,6 +121,13 @@ public class Edge extends GraphElement {
 		}
     }
 
+	/**
+     * Rotation function passing back the plain angle.
+     */
+    protected function getHeadRotationAngle(x1: Number, x2: Number, y1: Number, y2: Number): Number {
+		- (atan((x2-x1)/(y2-y1)) / PI) * 180
+    }
+
 	public function toSVG(d: XWDocument): XWElement {
 		null
 	}

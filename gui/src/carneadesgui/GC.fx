@@ -38,6 +38,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextOrigin;
 import javafx.scene.paint.Paint;
 
+
 // Model Constants
 public def proofStandardSE: String = "scintilla of evidence";
 public def proofStandardDV: String = "dialectical validity";
@@ -62,6 +63,9 @@ public var DRAW_DEBUG_INFO = bind debug;
 public var VIEW_BACKGROUND_COLOR: Color = Color.rgb(178, 195, 218);
 public var TOOLPANEL_BACKGROUND_COLOR: Color = Color.rgb(124, 141, 172);
 public var PANEL_BACKGROUND_COLOR: Color = Color.rgb(223, 226, 229);
+
+// Image Export Constants
+public var IMAGE_EXPORT_BACKGROUND: Color = Color.WHITE;
 
 public var edgeStrokeWidth: Number = 1;
 public var selectionColor: Color = Color.RED;
@@ -88,6 +92,9 @@ public var statementBoxDefaultWidth: Integer = 150;
 public var statementBoxDefaultHeight: Integer = 50;
 public var statementBoxBottomBrink: Integer = 40;
 public var statementBoxTextHorizontalPadding: Number = 10;
+public var STATEMENTBOX_FONTSIZE: Integer = 12;
+public var STATEMENTBOX_TEXT_NUMLINES: Integer = 3;
+public var STATEMENTBOX_TEXT_MAXCHARINLINE: Integer = 18;
 
 public var fillStatements = true;
 public var statusAcceptedColor: Color = Color.rgb(45, 193, 56);
@@ -109,8 +116,10 @@ public var argumentConColor = statusRejectedColor;
 public var argumentProColor = statusAcceptedColor;
 
 // Graphic Export constants
+public var SVG_SCALING_FACTOR: Number = 3;
 public var SVG_LEFTOFFSET: Integer = 50;
-public var SVG_TEXT_HORIZONTALCORRECTION: Integer = 50;
+public var SVG_STATEMENTBOX_TEXT_HOR_HANDCOR: Integer = -10;
+public var SVG_CREATE_PNG: Boolean = false;
 
 // toolbar constants
 public var toolBarHeight: Integer = 60;
@@ -364,4 +373,42 @@ public function toSVGColorCode(p: Paint): String {
 
 public bound function boundMin(a: Number, b: Number): Number {
 		java.lang.Math.min(a, b)
+}
+
+// Statement Box line formatting
+public function toLines(t: String): String[] {
+	var words: String[] = t.split(" ");
+	var lines: String[] = [];
+	var currentLine: String = "";
+
+	while (sizeof words > 0 and (sizeof lines < STATEMENTBOX_TEXT_NUMLINES)) {
+		// Is the current word longer than the line break the word
+		if (STATEMENTBOX_TEXT_MAXCHARINLINE < words[0].length()) {
+			var firstHalf: String = "{words[0].substring(0, STATEMENTBOX_TEXT_MAXCHARINLINE - 2)}-";
+			var secondHalf: String = "{words[0].substring(STATEMENTBOX_TEXT_MAXCHARINLINE-2, words[0].length())}";
+			delete words[0] from words;
+			words = [firstHalf, secondHalf, words];
+		}
+
+		// can we fit another word on the current line?
+		if (currentLine.length() + words[0].length() + 1 <= STATEMENTBOX_TEXT_MAXCHARINLINE)
+			{
+				// if so, do it
+				currentLine = "{currentLine}{words[0]}";
+				delete words[0] from words;
+				if (sizeof words == 0) insert currentLine into lines;
+			}
+		else {
+			// add line
+			insert currentLine into lines;
+			currentLine = "";
+		}
+	}
+	lines
+}
+
+public function toEscapeLines(t: String): String {
+	var text: String = "";
+	for (l in toLines(t)) text = "{text}{l}\n";
+	text;
 }
