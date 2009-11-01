@@ -362,7 +362,7 @@ public class ToolBar extends Stack {
 				else null,
 				Rectangle {}, // dead filler rectangle
 				displayGraphListButton,
-				//saveAsImageButton,
+				saveAsImageButton,
 				Rectangle {}, // dead filler rectangle
 				aboutButton,
 				quitButton,

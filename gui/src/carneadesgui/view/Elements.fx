@@ -56,6 +56,11 @@ import carneadesgui.control.XWDocumentBuilder.XWAttribute;
 */
 public class CenteredStatementText extends Text {
 
+	public var boundingHeight: Number;
+    override var textAlignment = TextAlignment.CENTER;
+    override var textOrigin = TextOrigin.TOP;
+	override var blocksMouse = false;
+
     override var transforms = bind [
 		Translate {
 			x: - boundsInLocal.width / 2 /* hand correction: */ + 0
@@ -65,16 +70,11 @@ public class CenteredStatementText extends Text {
 
 	override var font = Font {
 		name: "Monaco"
+		size: STATEMENTBOX_FONTSIZE
 	}
 
-	public var boundingHeight: Number;
-	public var maxChars: Integer = 45;
-    override var textAlignment = TextAlignment.CENTER;
-    override var textOrigin = TextOrigin.TOP;
-	override var blocksMouse = false;
-
-	public function changeText(t: String): Void {
-		content = "{ if (t.length() > maxChars ) "{t.substring(0, 26)} ..." else t}";
+	public function changeText(t: String): String {
+		content = toEscapeLines(t);
 	}
 }
 
@@ -86,9 +86,9 @@ public abstract class ArgumentElement extends CarneadesVertex {
     /**
      * The filler color.
      */
-    var fill: Color = Color.WHITE;
+    public var fill: Color = Color.WHITE;
 
-    var selection: Shape = Rectangle {
+    protected var selection: Shape = Rectangle {
 		blocksMouse: false
 		fill: Color.TRANSPARENT
 		x: bind x - (width / 2) - 5
@@ -100,339 +100,12 @@ public abstract class ArgumentElement extends CarneadesVertex {
 		visible: bind selected
     } // selection rect
 
-    var middlePoint: Circle = Circle {
+    def middlePoint: Circle = Circle {
 		centerX: bind x
 		centerY: bind y
 		radius: 3
 		fill: Color.RED
     }
-}
-
-/**
- * The argument view object. Currently it is a circle, but it used to be a box, hence the name.
- */
-public class ArgumentBox extends ArgumentElement {
-
-    /**
-     * The represented model argument object.
-     */
-    public var argument: Argument;
-
-    // bind the model element to the argument element
-    override var model = bind argument;
-
-	override def level = bind { parentVertex.level + 1}
-    override var cache = true;
-    override var height = argumentCircleDefaultRadius * 2;
-    override var width = argumentCircleDefaultRadius * 2;
-    override def caption = bind argument.id;
-    override def fill = bind {if (argument.ok) Color.LIGHTGREY else Color.WHITE};
-    override var bottomBrink = argumentBoxBottomBrink;
-
-    override var text = CenteredStatementText {
-		content: bind {
-			if ((argument.conclusion.standard) instanceof Preponderance
-				or (argument.conclusion.standard) instanceof ClearAndConvincingEvidence
-				or (argument.conclusion.standard) instanceof BeyondReasonableDoubt
-				)
-				"{if (argument.pro) '+' else '-'}.{(argument.weight * 100) as Integer}"
-			else "{if (argument.pro) '+' else '-'}"
-		}
-		textAlignment: TextAlignment.CENTER
-		textOrigin: TextOrigin.BASELINE
-		x: bind x
-		// The text Y coordinate positioning is dirty as the text currently lacks a currentheight attribute
-		y: bind y + 10
-	} // Text
-
-	var mainCircle: Circle = Circle {
-		centerX: bind x
-		centerY: bind y
-		radius: bind argumentCircleDefaultRadius
-
-		fill: bind {
-			if (not argument.ok) Color.WHITE
-			else {
-				if (not argument.pro) argumentConColor else argumentProColor
-			}
-		}
-
-		stroke: bind { if (mainCircle.hover) Color.GREY else Color.BLACK }
-		blocksMouse: false
-
-		onMouseClicked: function(e: MouseEvent): Void {
-			control.processGraphSelection(this);
-		}
-
-		onMouseDragged: function(e: MouseEvent) {
-			if (this.selected and (e.button == MouseButton.PRIMARY)) { control.startDrag(this); }
-		}
-
-		onMouseReleased: function(e: MouseEvent) {
-			if (control.dragging) {	control.endDrag(e.shiftDown); }
-		}
-
-		onMouseEntered: function(e: MouseEvent) {
-			if (control.dragging) { control.setDraggingOver(this); }
-		}
-
-		onMouseExited: function(e: MouseEvent) {
-			if (control.dragging) { control.setDraggingOver(null); }
-		}
-	}
-
-    override var selection = Circle {
-		fill: Color.TRANSPARENT
-		centerX: bind x
-		centerY: bind y
-		radius: argumentCircleDefaultRadius + 5
-		stroke: bind {if (control.dragging) dragColor else selectionColor};
-		strokeWidth: 2
-		visible: bind selected
-    } // selection circle
-
-
-    override function create():Node {
-		Group {
-			content: [
-				mainCircle,
-				selection,
-				text,
-				// middlePoint
-			] // content
-		} // Group
-    } // composeNode
-}
-
-/**
- * The statement view object.
- */
-public class StatementBox extends ArgumentElement {
-
-    /**
-     * The represented model statement.
-     */
-    public var statement: Statement;
-
-	// Is this the primary box of the statement
-	public var duplicate: Boolean = false;
-
-    // bind the model element to the statement element
-    override def model = bind statement;
-
-	override def level = bind { parentVertex.level + 1}
-    
-	override def cache = true;
-	override var width = statementBoxDefaultWidth;
-	override var height = statementBoxDefaultHeight;
-	override def bottomBrink = statementBoxBottomBrink;
-
-    override def caption = bind statement.wff on replace { (text as CenteredStatementText).changeText(statement.wff) }
-
-    def statusColor = bind {
-		if (statement.status == "stated") statusStatedColor
-		else if (statement.status == "assumed true") statusAssumedTrueColor
-		else if (statement.status == "assumed false") statusAssumedFalseColor
-		else if (statement.status == "rejected") statusRejectedColor
-		else if (statement.status == "accepted") statusAcceptedColor
-		else /*if (status == "questioned")*/ statusQuestionedColor
-    };
-
-	// main statement box
-	def mainRectWidth = width - acceptableCircleWidth;
-	def mainRectHeight = height;
-    def mainRect: Polygon = Polygon {
-		points: bind [
-			x - (width / 2), y - (height / 2),
-			x - (width / 2) + mainRectWidth, y - (height / 2),
-			x - (width / 2) + mainRectWidth, y - (height / 2) + mainRectHeight,
-			x - (width / 2), y - (height / 2) + mainRectHeight ]
-		blocksMouse: true
-		fill: bind { if (fillStatements) statusColor else DEFAULT_BOX_FILL }
-		stroke: bind { if (mainRect.hover) Color.GREY else Color.BLACK }
-		strokeDashArray: bind {if (duplicate) [6.0, 6.0] else [1.0]}
-		strokeWidth: 1
-
-		onMouseClicked: function(e: MouseEvent): Void {
-			control.processGraphSelection(this);
-		}
-
-		onMouseDragged: function(e: MouseEvent) {
-			if (this.selected and (e.button == MouseButton.PRIMARY)) { control.startDrag(this); }
-		}
-
-		onMouseReleased: function(e: MouseEvent) {
-			if (control.dragging) { control.endDrag(e.shiftDown); }
-		}
-
-		onMouseEntered: function(e: MouseEvent) {
-			if (control.dragging) { control.setDraggingOver(this); }
-		}
-
-		onMouseExited: function(e: MouseEvent) {
-			if (control.dragging) { control.setDraggingOver(null); }
-		}
-    } // main rect
-
-	override def text = CenteredStatementText {
-		blocksMouse: false
-		x: bind x - (acceptableCircleWidth/ 2)
-		y: bind y
-		wrappingWidth: bind mainRectWidth - statementBoxTextHorizontalPadding
-    } // Text
-
-    def acceptableCircle: Circle = Circle {
-		centerX: bind x + (this.width / 2) - (acceptableCircleWidth / 2) + 3
-		centerY: bind y - (acceptableCirclePadding / 2) - (acceptableCircleWidth / 2)
-		radius: bind (acceptableCircleWidth / 2)
-		fill: bind { if (statement.ok) statusAcceptedColor else null }
-		strokeWidth: 1
-		stroke: Color.BLACK
-    }
-
-    def acceptableCompCircle: Circle = Circle {
-		centerX: bind x + (this.width / 2) - (acceptableCircleWidth / 2) + 3
-		centerY: bind y + (acceptableCirclePadding / 2) + (acceptableCircleWidth / 2)
-		radius: bind (acceptableCircleWidth / 2)
-		fill: bind { if (statement.complementOk) statusRejectedColor else null }
-		strokeWidth: 1
-		stroke: Color.BLACK
-	}
-
-	def duplicateLink: Group = Group {
-		def dimension: Integer = 20
-		translateX: bind this.x - this.width / 2
-		translateY: bind this.y + this.height / 2 - dimension
-		content: [
-			Rectangle {
-				def stroke: Number = 1
-				width: dimension
-				height: dimension
-				fill: null
-				stroke: Color.BLUE
-				strokeWidth: 1
-			},
-			ImageView {
-				fitWidth: dimension
-				fitHeight: dimension
-				image: Image {
-					url: "{__DIR__}images/icon-link.png"
-				}
-			}
-		]
-	}
-
-    override function create():Node {
-		Group {
-			content: bind [
-				mainRect,
-				selection,
-				text,
-				acceptableCircle,
-				acceptableCompCircle,
-				{ if (duplicate) duplicateLink else null},
-				// middlePoint,
-			] // content
-		} // Group
-    } // composeNode
-
-	override function toSVG(d: XWDocument): XWElement {
-		XWElement {
-			name: "g"
-			document: d
-			attributes: [
-				XWAttribute {
-					name: "transform"
-					value: "translate({graph.boundsInLocal.width / 2 + SVG_LEFTOFFSET}, 0)"
-				},
-			]
-			children: [
-				XWElement {
-					name: "rect"
-					document: d
-					attributes: [
-						XWAttribute {
-							name: "x"
-							value: "{x}"
-						},
-						XWAttribute {
-							name: "y"
-							value: "{y}"
-						},
-						XWAttribute {
-							name: "transform"
-							value: "translate(-{width/2}, -{height/2})"
-						},
-						XWAttribute {
-							name: "width"
-							value: "{width}"
-						},
-						XWAttribute {
-							name: "height"
-							value: "{height}"
-						},
-						XWAttribute {
-							name: "fill"
-							value: "{toSVGColorCode(mainRect.fill)}"
-						},
-						XWAttribute {
-							name: "opacity"
-							value: "{mainRect.opacity}"
-						},
-						XWAttribute {
-							name: "stroke"
-							value: "{toSVGColorCode(mainRect.stroke)}"
-						},
-						XWAttribute {
-							name: "stroke-width"
-							value: "{mainRect.strokeWidth}"
-						},
-					]
-				},
-				XWElement {
-					document: d
-					name: "text"
-					attributes: [
-						XWAttribute {
-							name: "x"
-							value: "{text.x 
-										+ (text.transforms[0] as Translate).x
-										+ /*hand correction*/ SVG_TEXT_HORIZONTALCORRECTION}"
-						},
-						XWAttribute {
-							name: "y"
-							value: "{text.y + (text.transforms[0] as Translate).y}"
-						},
-						XWAttribute {
-							name: "width"
-							value: "{width}"
-						},
-						XWAttribute {
-							name: "height"
-							value: "{height}"
-						},
-						XWAttribute {
-							name: "fill"
-							value: "{toSVGColorCode(Color.BLACK)}"
-						},
-						XWAttribute {
-							name: "font-size"
-							value: "14"
-						},
-						XWAttribute {
-							name: "style"
-							value: "fill: #000000; font-family: Monaco; font-style: normal; font-variant: normal; font-weight: normal; line-height: 100%; word-spacing: normal; letter-spacing: normal; text-decoration: none; text-transform: none; text-align: center; text-indent: 0ex;"
-						},
-					]
-					children: [
-						XWText {
-							value: "{text.content}"
-						}
-					]
-				}
-			]
-		}		
-	}
 }
 
 /**
@@ -689,7 +362,33 @@ public class PremiseLink extends CarneadesEdge {
 								value: "6.0, 6.0"
 						} else null
 					]
-				}
+				},
+				if (premise.negative) XWElement {
+					name: "polygon"
+					document: d
+					attributes: [
+						XWAttribute {
+							name: "fill"
+							value: "{toSVGColorCode(stroke)}"
+						},
+						XWAttribute {
+							name: "points"
+							value: "{x2 - (negWidth / 2)} {y2 + yHeadShift} {x2 + (negWidth / 2)} {y2 + yHeadShift} {x2 + (negWidth / 2)} {y2 + yHeadShift + negStrokeWidth} {x2 - (negWidth / 2)} {y2 + yHeadShift + negStrokeWidth}"
+						},
+						XWAttribute {
+							name: "stroke-width"
+							value: "{negStrokeWidth}"
+						},
+						XWAttribute {
+							name: "stroke"
+							value: "{toSVGColorCode(stroke)}"
+						},
+						XWAttribute {
+							name: "transform"
+							value: "rotate({getHeadRotationAngle(x1, x2, y1, y2)} {x2} {y2})"
+						},
+					]
+				} else null
 			]
 		}
 	}

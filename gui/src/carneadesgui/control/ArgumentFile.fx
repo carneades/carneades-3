@@ -17,17 +17,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package carneadesgui.control;
 
-// General imports
-import java.io.File;
-
+import carneadesgui.GC.*;
 import carneadesgui.model.Argument;
 import carneadesgui.model.Argument.*;
 import carneadesgui.view.CarneadesGraph;
 import carneadesgui.control.XWDocumentBuilder;
 import carneadesgui.control.XWDocumentBuilder.*;
-
+import java.io.File;
 import java.io.FileWriter;
-
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -610,31 +607,32 @@ public function printGraphAsSVG(g: CarneadesGraph): String {
 	g.toSVG()
 }
 
-public var saveAsImage = function(g: CarneadesGraph): Void {
-	// Create a JPEG transcoder
-	var t: PNGTranscoder = new PNGTranscoder();
+public var saveAsImage = function(g: CarneadesGraph, fileName: String): Void {
 
-	System.out.println("{printGraphAsSVG(g)}");
+	// System.out.println("{printGraphAsSVG(g)}");
 
-	var writer: FileWriter = new FileWriter("out.svg");
+	var writer: FileWriter = new FileWriter("{fileName}{if (not fileName.endsWith(".svg")) ".svg" else ""}");
 	writer.write(printGraphAsSVG(g));
 	writer.close();
 
-	/*
-	// Create the transcoder input.
-	var reader: Reader = new StringReader(printGraphAsSVG(g));
-	var input: TranscoderInput = new TranscoderInput(reader);
+	if (SVG_CREATE_PNG) {
+		// Create a PNG transcoder
+		var	t: PNGTranscoder = new PNGTranscoder();
 
-	// Create the transcoder output.
-	var ostream: OutputStream = new FileOutputStream("out.png");
-	var output: TranscoderOutput = new TranscoderOutput(ostream);
+		// Create the transcoder input.
+		var reader: Reader = new StringReader(printGraphAsSVG(g));
+		var input: TranscoderInput = new TranscoderInput(reader);
 
-	// Save the image.
-	t.transcode(input, output);
+		// Create the transcoder output.
+		var ostream: OutputStream = new FileOutputStream("{fileName}.png");
+		var output: TranscoderOutput = new TranscoderOutput(ostream);
 
-	// Flush and close the stream.
-	ostream.flush();
-	ostream.close();*/
+		// Save the image.
+		t.transcode(input, output);
 
+		// Flush and close the stream.
+		ostream.flush();
+		ostream.close();
+	}
 }
 
