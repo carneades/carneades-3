@@ -53,14 +53,6 @@ public class Vertex extends GraphElement {
      */
     public var caption = "";
 
-    public var text: Text = Text {
-		content: bind caption
-		textAlignment: TextAlignment.CENTER
-		textOrigin: TextOrigin.BASELINE
-		x: bind x
-		y: bind y
-    } // Text
-
     /**
      * The parent vertex. null if the vertex is the root. It is called "parentVertex" since "parent" is taken by JavaFX internally.
      */
@@ -126,7 +118,6 @@ public class Vertex extends GraphElement {
 				    visible: bind visible
 				    onMouseClicked: onClick
 			    } // Rect
-			    , text
 		    ] // content
 	    } // Group
     } // composeNode

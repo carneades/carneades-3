@@ -379,12 +379,12 @@ public class CarneadesGraph extends Graph {
 				XWAttribute {
 					document: document
 					name: "width"
-					value: "{this.boundsInLocal.width + 2*SVG_LEFTOFFSET}"
+					value: "{(this.boundsInLocal.width + 2*SVG_LEFTOFFSET)*SVG_SCALING_FACTOR}"
 				},
 				XWAttribute {
 					document: document
 					name: "height"
-					value: "{this.boundsInLocal.height + 2*SVG_LEFTOFFSET}"
+					value: "{(this.boundsInLocal.height + 2*SVG_LEFTOFFSET)*SVG_SCALING_FACTOR}"
 				},
 				XWAttribute {
 					document: document
@@ -395,6 +395,11 @@ public class CarneadesGraph extends Graph {
 					document: document
 					name: "xmlns"
 					value: "http://www.w3.org/2000/svg"
+				},
+				XWAttribute {
+					document: document
+					name: "viewBox"
+					value: "0 0 {this.boundsInLocal.width + 2*SVG_LEFTOFFSET} {this.boundsInLocal.height + 2*SVG_LEFTOFFSET}"
 				},
 			]
 			children: [
@@ -424,7 +429,7 @@ public class CarneadesGraph extends Graph {
 								},
 								XWAttribute {
 									name: "fill"
-									value: "{toSVGColorCode(Color.rgb(223, 226, 229))}"
+									value: "{toSVGColorCode(IMAGE_EXPORT_BACKGROUND)}"
 								},
 							]
 						}

@@ -956,7 +956,25 @@ public class CarneadesControl {
     }
 
 	public function saveGraphAsImage(): Void {
-		saveAsImage(graph);
+		var returnval = fileChooser.showSaveDialog(null);
+		var file: File;
+		if (returnval == JFileChooser.APPROVE_OPTION) {
+			file = fileChooser.getSelectedFile();
+			if (file.exists()) {
+				var overwrite = JOptionPane.showOptionDialog(
+					null, "The file already exists.\nDo you want to overwrite it?" , "Overwrite existing file?",
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE, null,
+					["Yes", "No"], null
+					);
+				if (overwrite == JOptionPane.OK_OPTION) {
+					saveAsImage(graph, file.getAbsolutePath());
+				}
+			} else {
+				saveAsImage(graph, file.getAbsolutePath());
+			}
+		}
+		saveAsImage(graph, file.getAbsolutePath());
 	}
 
 	function save(container : Container, bounds : Bounds, file : File) {
