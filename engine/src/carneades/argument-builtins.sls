@@ -56,8 +56,11 @@
  ; dispatch: stmt state -> (stream-of response)
  (define (dispatch stmt state)
    (let* ((args (state-arguments state))
-          (subs (state-substitutions state)))
-     (match stmt
+          (subs (state-substitutions state))
+          (wff (statement-wff stmt)))
+     (if *debug* (begin (display "builtins: matching statement")
+                        (newline)))
+     (match wff
        ;eval
        (('eval term expr) 
         (call/cc (lambda (escape)
@@ -73,6 +76,8 @@
                                             (lambda (t) t) 
                                             (lambda (msg) #f) 
                                             #f)))
+                        (if *debug* (begin (display "builtins: matched eval")
+                                           (newline)))
                         (if (not subs2)
                             (stream) ; not unifiable, so fail by returning the empty stream
                             (stream 
@@ -96,6 +101,8 @@
                              (lambda (t) t) 
                              (lambda (msg) #f)
                              #f)))
+          (if *debug* (begin (display "builtins: matched =")
+                             (newline)))
           (if *debug* (printf "(= ~a ~a) => ~a~%" term1 term2 (if subs2 #t #f)))
           (if (not subs2)
               (stream) ; fail
@@ -119,6 +126,8 @@
                              (lambda (t) t) 
                              (lambda (msg) #f)
                              #f)))
+          (if *debug* (begin (display "builtins: matched !=")
+                             (newline)))
           (if *debug* (printf "(!= ~a ~a) => ~a~%" term1 term2 (if subs2 #f #t)))
           (if (not subs2)              
               (stream (make-response subs 
@@ -137,20 +146,23 @@
               )))
        
        (stmt 
-        ; try to unify stmt with statements in the argument graph
-        ; no new arguments are added, but the substitutions are extended
-        (stream-flatmap (lambda (stmt2) 
-                          (let ((subs2 (unify* stmt
-                                               stmt2
-                                               subs 
-                                               (lambda (t) t) 
-                                               (lambda (msg) #f)
-                                               #f)))
-                            (if *debug* (printf "(unify ~a ~a) => ~a~%" (statement-atom stmt) stmt2 (if subs2 #t #f)))
-                            (if (not subs2)
-                                (stream) ; fail
-                                (stream (make-response subs2 #f)))))
-                        (list->stream (arg:in-statements args (statement-predicate stmt))))))))
+        (begin (if *debug* (begin (display "builtins: matched nothing: ")
+                                  (write stmt)
+                                  (newline)))
+               ; try to unify stmt with statements in the argument graph
+               ; no new arguments are added, but the substitutions are extended
+               (stream-flatmap (lambda (stmt2) 
+                                 (let ((subs2 (unify* stmt
+                                                      stmt2
+                                                      subs 
+                                                      (lambda (t) t) 
+                                                      (lambda (msg) #f)
+                                                      #f)))
+                                   (if *debug* (printf "(unify ~a ~a) => ~a~%" (statement-atom stmt) stmt2 (if subs2 #t #f)))
+                                   (if (not subs2)
+                                       (stream) ; fail
+                                       (stream (make-response subs2 #f)))))
+                               (list->stream (arg:in-statements args (statement-predicate stmt)))))))))
  
  ; builtins: statement state -> (stream-of response)
  (define (builtins goal state)
