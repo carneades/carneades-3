@@ -58,6 +58,7 @@
    (let* ((args (state-arguments state))
           (subs (state-substitutions state)))
      (match stmt
+       ;eval
        (('eval term expr) 
         (call/cc (lambda (escape)
                    (with-exception-handler
@@ -87,7 +88,7 @@
                                              null
                                              ; scheme:
                                              "builtin:eval"))))))))))
-       
+       ; equal
        (('= term1 term2)
         (let ((subs2 (unify* term1
                              term2
@@ -110,6 +111,30 @@
                                       null
                                       ; scheme:
                                       "builtin:equal"))))))
+       ;unequal
+       (('!= term1 term2)
+        (let ((subs2 (unify* term1
+                             term2
+                             subs 
+                             (lambda (t) t) 
+                             (lambda (msg) #f)
+                             #f)))
+          (if *debug* (printf "(!= ~a ~a) => ~a~%" term1 term2 (if subs2 #f #t)))
+          (if (not subs2)              
+              (stream (make-response subs 
+                                     (arg:make-argument
+                                      ; id
+                                      (gensym 'a)
+                                      ; direction
+                                      'pro
+                                      ; conclusion
+                                      stmt
+                                      ; premises
+                                      null
+                                      ; scheme:
+                                      "builtin:unequal")))
+              (stream) ; fail
+              )))
        
        (stmt 
         ; try to unify stmt with statements in the argument graph
