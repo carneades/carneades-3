@@ -87,7 +87,7 @@ public class StatementBox extends ArgumentElement {
 		strokeDashArray: bind {if (duplicate) [6.0, 6.0] else [1.0]}
 		strokeWidth: 1
 
-		onMouseClicked: function(e: MouseEvent): Void {
+		onMousePressed: function(e: MouseEvent): Void {
 			control.processGraphSelection(this);
 		}
 
@@ -110,7 +110,7 @@ public class StatementBox extends ArgumentElement {
 
 	def text: CenteredStatementText = CenteredStatementText {
 		blocksMouse: false
-		x: bind x - (acceptableCircleWidth/ 2)
+		x: bind x - (acceptableCircleWidth/ 2) + STATEMENTBOX_TEXT_HOR_HANDCOR
 		y: bind y
 		content: toEscapeLines(caption)
     } // Text
@@ -221,6 +221,10 @@ public class StatementBox extends ArgumentElement {
 							name: "stroke-width"
 							value: "{mainRect.strokeWidth}"
 						},
+						if (duplicate) XWAttribute {
+								name: "stroke-dasharray"
+								value: "6.0, 6.0"
+						} else null
 					]
 				},
 				XWElement {
@@ -297,10 +301,7 @@ public class StatementBox extends ArgumentElement {
 					attributes: [
 						XWAttribute {
 							name: "x"
-							value: "{text.x
-										+ (text.transforms[0] as Translate).x
-										- acceptableCircleWidth / 2
-										+ SVG_STATEMENTBOX_TEXT_HOR_HANDCOR}"
+							value: "{text.x}"
 						},
 						XWAttribute {
 							name: "y"
@@ -309,14 +310,6 @@ public class StatementBox extends ArgumentElement {
 						XWAttribute {
 							name: "text-anchor"
 							value: "middle"
-						},
-						XWAttribute {
-							name: "width"
-							value: "{width}"
-						},
-						XWAttribute {
-							name: "height"
-							value: "{height}"
 						},
 						XWAttribute {
 							name: "fill"
@@ -339,7 +332,7 @@ public class StatementBox extends ArgumentElement {
 								attributes: [
 									XWAttribute {
 										name: "x"
-										value: "0"
+										value: "{text.x}"
 									},
 									XWAttribute {
 										name: "dy"

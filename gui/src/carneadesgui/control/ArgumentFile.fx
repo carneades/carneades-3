@@ -33,8 +33,6 @@ import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 
-import java.lang.System;
-
 
 // helper issue class for file loading in older LKIF format
 class Issue {
