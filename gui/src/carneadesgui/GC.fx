@@ -95,6 +95,7 @@ public var statementBoxTextHorizontalPadding: Number = 10;
 public var STATEMENTBOX_FONTSIZE: Integer = 12;
 public var STATEMENTBOX_TEXT_NUMLINES: Integer = 3;
 public var STATEMENTBOX_TEXT_MAXCHARINLINE: Integer = 18;
+public var STATEMENTBOX_TEXT_HOR_HANDCOR: Integer = -3;
 
 public var fillStatements = true;
 public var statusAcceptedColor: Color = Color.rgb(45, 193, 56);
@@ -118,7 +119,6 @@ public var argumentProColor = statusAcceptedColor;
 // Graphic Export constants
 public var SVG_SCALING_FACTOR: Number = 3;
 public var SVG_LEFTOFFSET: Integer = 50;
-public var SVG_STATEMENTBOX_TEXT_HOR_HANDCOR: Integer = -10;
 public var SVG_CREATE_PNG: Boolean = false;
 
 // toolbar constants
@@ -394,7 +394,7 @@ public function toLines(t: String): String[] {
 		if (currentLine.length() + words[0].length() + 1 <= STATEMENTBOX_TEXT_MAXCHARINLINE)
 			{
 				// if so, do it
-				currentLine = "{currentLine}{words[0]}";
+				currentLine = "{currentLine} {words[0]}";
 				delete words[0] from words;
 				if (sizeof words == 0) insert currentLine into lines;
 			}

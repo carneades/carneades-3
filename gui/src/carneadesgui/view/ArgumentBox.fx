@@ -101,7 +101,7 @@ public class ArgumentBox extends ArgumentElement {
 		stroke: bind { if (mainCircle.hover) Color.GREY else Color.BLACK }
 		blocksMouse: false
 
-		onMouseClicked: function(e: MouseEvent): Void {
+		onMousePressed: function(e: MouseEvent): Void {
 			control.processGraphSelection(this);
 		}
 
