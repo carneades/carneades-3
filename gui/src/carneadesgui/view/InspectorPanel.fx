@@ -25,8 +25,6 @@ import javafx.scene.control.TextBox;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.RadioButton;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.LayoutInfo;
-import javafx.scene.layout.Panel;
 import javafx.scene.layout.VBox;
 import carneadesgui.model.Argument;
 import carneadesgui.model.Argument.*;

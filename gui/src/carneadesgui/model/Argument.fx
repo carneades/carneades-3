@@ -506,7 +506,7 @@ public class ArgumentGraph {
 		for (a in arguments) {
 			if (isMemberOf(ids, a.id)) { return false; } else { insert a.id into ids; }
 		}
-		if (isMemberOf(ids, newId)) { return false; }
+		if (isMemberOf(newId, ids)) { return false; }
 
 		return true;
 	}

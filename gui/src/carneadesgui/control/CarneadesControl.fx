@@ -40,9 +40,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import carneadesgui.CarneadesGUI;
 
-import java.awt.Frame;
-import javax.swing.JFrame;
-import java.applet.Applet;
 import java.awt.Container;
 import javafx.geometry.Bounds;
 import java.awt.image.BufferedImage;
@@ -578,6 +575,13 @@ public class CarneadesControl {
 			admissible = false;
 		}
 
+		for (a in argumentGraphs) {
+			if (a.id == id) {
+				view.alert("The chosen id is already taken!");
+				admissible = false;
+			}
+		}
+
 		if (admissible) {
 			commands.do(
 			ChangeStatementIdCommand {
@@ -718,6 +722,13 @@ public class CarneadesControl {
 			admissible = false;
 		}
 
+		for (ag in argumentGraphs) {
+			if (ag.id == id) {
+				view.alert("The chosen id is already taken!");
+				admissible = false;
+			}
+		}
+
 		if (admissible) {
 			commands.do(
 				ChangeArgumentIdCommand {
@@ -787,6 +798,7 @@ public class CarneadesControl {
 		addArgumentGraph(defaultArgumentGraph(getNewGraphId()));
 		currentFile = null;
 		commands.reset();
+		fileChanged = false;
     }
 
     public function addArgumentGraph(newArgGraph: ArgumentGraph): Void {
@@ -806,7 +818,6 @@ public class CarneadesControl {
     }
 
     public function removeCurrentArgumentGraph(): Void {
-
 		var choice = JOptionPane.showOptionDialog(
 			  null, "Are you sure you wish to delete the current argument graph?" , "Delete Graph?",
 			  JOptionPane.YES_NO_OPTION,

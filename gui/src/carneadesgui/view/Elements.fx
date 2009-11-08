@@ -282,7 +282,7 @@ public class PremiseLink extends CarneadesEdge {
 		blocksMouse: true
 		fill: Color.GREEN
 		opacity: 0.0
-		onMouseClicked: action
+		onMousePressed: action
     }
 
     // newly colored line once selected
