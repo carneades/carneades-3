@@ -74,9 +74,9 @@
                 (newline)))
      (if (null? port-or-filename)
          (srl:sxml->xml sxml-obj (current-output-port))
-         (begin (if (and (string? port-or-filename)
-                         (file-exists? port-or-filename))
-                    (delete-file port-or-filename))
+         (begin (if (and (string? (car port-or-filename))
+                         (file-exists? (car port-or-filename)))
+                    (delete-file (car port-or-filename)))
                 (srl:sxml->xml sxml-obj (car port-or-filename))))))
  
  
