@@ -79,7 +79,7 @@
     (lambda ()
       (cond
         ((string-prefix? "http://" req-uri)  ; HTTP scheme is used in REQ-URI
-         (http-transaction ; standard use of ssax own http-library
+#|         (http-transaction
           "GET"
           req-uri
           (list (cons 'logger (lambda (port message . other-messages) #t)))
@@ -89,8 +89,8 @@
               (else
                (close-input-port resp-port)
                (cerr nl req-uri ": resource not available: " resp-code nl)
-               #f))))
-         ; (transcoded-port (get-pure-port (string->url req-uri)) (make-transcoder (utf-8-codec)))
+               #f)))) |#
+         (transcoded-port (get-pure-port (string->url req-uri)) (make-transcoder (utf-8-codec))) ; using http-request from plt
          )
         (else  ; a local file    
          (open-input-file req-uri))))))
