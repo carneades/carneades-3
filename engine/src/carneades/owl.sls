@@ -129,7 +129,7 @@
     (not (null? rdf))))
  
  ; owl-import: string (list-of symbol) -> rulebase
- ; optionals: transitive, symmetric, domain or range
+ ; optionals: transitive, symmetric, domain, range or equivalent
  (define (owl-import path optionals)
    (set! local-gen 0)
    (clear-properties-and-classes)
@@ -312,7 +312,7 @@
           (symmetric-property-rules (filter (lambda (l) (not (null? l)))
                                             (flatmap symmetric-property-axiom->rules symmetric-properties)))
           ; class rules
-          (class-rules (filter (lambda (l) (not (null? l))) (flatmap class-axiom->rules class-axioms)))
+          (class-rules (filter (lambda (l) (not (null? l))) (flatmap (lambda (a) (class-axiom->rules a optionals)) class-axioms)))
           ; individual rules
           (descriptions (get-descriptions ontology))
           (class-members (get-class-members ontology))          
@@ -336,8 +336,8 @@
  ; class-conversion
  ; ----------------------
  
- ; class-axiom->rules: sxml -> (list-of rule)
- (define (class-axiom->rules axiom)
+ ; class-axiom->rules: sxml (list-of symbol) -> (list-of rule)
+ (define (class-axiom->rules axiom optionals)
    (let* ((rdf-id ((sxpath "@rdf:ID/text()" *namespaces*) axiom))
           (rdf-about ((sxpath "@rdf:about/text()" *namespaces*) axiom))
           (axiom-name (cond ((not (null? rdf-id)) (car rdf-id))
@@ -348,7 +348,7 @@
           (equivalents (get-equivalent-classes axiom))
           (disjoints (get-disjoint-classes axiom))
           (subclass-rules (map (lambda (s) (subclass-axiom->rule axiom-name class-var s)) subclasses))
-          (equivalent-rules (flatmap (lambda (s) (equivalent-axiom->rules axiom-name class-var s)) equivalents))
+          (equivalent-rules (flatmap (lambda (s) (equivalent-axiom->rules axiom-name class-var s optionals)) equivalents))
           (disjoint-rules (flatmap (lambda (s) (disjoint-axiom->rules axiom-name class-var s)) disjoints)))
      (add-class axiom-name)
      (append subclass-rules equivalent-rules disjoint-rules)))
@@ -375,9 +375,10 @@
                 (make-rule-head class-argument)
                 (make-rule-body (list (string->symbol axiom-name) argument))))))
  
- ; equivalent-axiom->rules: string symbol sxml -> (list-of rule)
- (define (equivalent-axiom->rules axiom-name argument sxml)
-   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" *namespaces*) sxml))
+ ; equivalent-axiom->rules: string symbol sxml (list-of symbol) -> (list-of rule)
+ (define (equivalent-axiom->rules axiom-name argument sxml optionals)
+   (let* ((equivalent? (member 'equivalent optionals))
+          (rdf-resource ((sxpath "@rdf:resource/text()" *namespaces*) sxml))
           (owl-classes (get-owl-classes sxml))
           (universal-restrictions (get-owl-universal-restriction sxml))
           (restrictions (get-class-property-restrictions sxml))
@@ -401,7 +402,8 @@
      
      (if (not (null? universal-restrictions))
          (list (universal-restriction->rule axiom-name argument (car universal-restrictions)))
-         (if (lconjunction? class-argument)
+         (if (and equivalent?
+                  (lconjunction? class-argument))
              (list rule-< rule->)
              (list rule->))))) 
  
@@ -502,7 +504,7 @@
           ;(descriptions (get-descriptions restriction))
           (class-argument (cond ((not (null? rdf-resource)) 
                                  (list (string->symbol (text->name rdf-resource))
-                                       argument))
+                                       prop-var))
                                 ((not (null? owl-classes)) (class-description->formula prop prop-var (car owl-classes)))
                                 ((not (null? restrictions)) (class-restriction->formula prop prop-var (car restrictions)))
                                 ;((not (null? descriptions)) (rdf-description->formula prop (car descriptions)))
@@ -955,6 +957,6 @@
  
  ;(define class1 (car classes))
  
- ;(define rb1 (owl-import "C:\\Users\\stb\\Desktop\\Hundeformular Test\\Hundeformular.owl" '(transitive symmetric domain range)))
+ (define rb1 (owl-import "C:\\Users\\stb\\Desktop\\Hundeformular Test\\Hundeformular.owl" '(transitive symmetric domain range)))
  
  )
