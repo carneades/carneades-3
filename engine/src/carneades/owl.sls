@@ -73,6 +73,11 @@
    and therefor cannot reason about identity!
 |#
 
+; this library is not free of side-effects:
+;  - *namespaces* is changed on import
+;  - existential? is changed when converting axioms to rules
+;  - classes is changed when converting class-axioms to rules
+
 #!r6rs
 
 (library
@@ -92,7 +97,17 @@
          (carneades lib xml ssax access-remote)
          (carneades lib xml sxml sxpath))
  
+ 
+ ; -------------------------
+ ; debug
+ ; -------------------------
+ 
  (define *debug* #f)
+ 
+ 
+ ; -------------------------
+ ; namespaces
+ ; -------------------------
  
  ; list of namespace-prefixes used for sxpath
  (define *namespaces* '((owl . "http://www.w3.org/2002/07/owl#")
@@ -115,21 +130,14 @@
  
  (define ontology-path "rdf:RDF")
  
- (define local-gen 0)
+  
  
- ; gensym: string -> symbol
- (define (gensym s)
-   (set! local-gen (+ local-gen 1))
-   (string->symbol (string-append s (number->string local-gen))))
- 
- ; owl?: string -> boolean
- (define (owl? path)
-  (let* ((doc (ssax:dtd-xml->sxml (open-input-resource path) '()))
-         (rdf ((sxpath ontology-path *namespaces*) doc)))
-    (not (null? rdf))))
+ ; -------------------------
+ ; "main"
+ ; -------------------------
  
  ; owl-import: string (list-of symbol) -> rulebase
- ; optionals: transitive, symmetric, domain, range or equivalent
+ ; optionals: transitive, symmetric, domain, range, disjoint or equivalent
  (define (owl-import path optionals)
    (set! local-gen 0)
    (clear-properties-and-classes)
@@ -349,7 +357,7 @@
           (disjoints (get-disjoint-classes axiom))
           (subclass-rules (map (lambda (s) (subclass-axiom->rule axiom-name class-var s)) subclasses))
           (equivalent-rules (flatmap (lambda (s) (equivalent-axiom->rules axiom-name class-var s optionals)) equivalents))
-          (disjoint-rules (flatmap (lambda (s) (disjoint-axiom->rules axiom-name class-var s)) disjoints)))
+          (disjoint-rules (flatmap (lambda (s) (disjoint-axiom->rules axiom-name class-var s optionals)) disjoints)))
      (add-class axiom-name)
      (append subclass-rules equivalent-rules disjoint-rules)))
  
@@ -368,6 +376,7 @@
                                 ((not (null? owl-classes)) (class-description->formula argument (car owl-classes)))
                                 ((not (null? restrictions)) (class-restriction->formula argument (car restrictions)))
                                 (else (error "subclass-axiom->rule" "no class description found" sxml)))))
+     (set! existential? #f) ; side effect: clear flag for existentialy quantified variables
      (if (rule? class-argument)
          class-argument
          (make-rule (gensym (string-append xml-base "subclass-rule-"))
@@ -382,13 +391,13 @@
           (owl-classes (get-owl-classes sxml))
           (universal-restrictions (get-owl-universal-restriction sxml))
           (restrictions (get-class-property-restrictions sxml))
-          (class-argument (cond ((not (null? rdf-resource))
-                                 (list (string->symbol (text->name rdf-resource))
-                                       argument))
-                                ((not (null? universal-restrictions)) 'foo)
-                                ((not (null? owl-classes)) (class-description->formula argument (car owl-classes)))
-                                ((not (null? restrictions)) (class-restriction->formula argument (car restrictions)))
-                                (else (error "equivalent-axiom->rules" "no class description found" sxml))))
+          (class-argument (to-dnf (cond ((not (null? rdf-resource))
+                                         (list (string->symbol (text->name rdf-resource))
+                                               argument))
+                                        ((not (null? universal-restrictions)) 'foo)
+                                        ((not (null? owl-classes)) (class-description->formula argument (car owl-classes)))
+                                        ((not (null? restrictions)) (class-restriction->formula argument (car restrictions)))
+                                        (else (error "equivalent-axiom->rules" "no class description found" sxml)))))
           (rule-< (make-rule (gensym (string-append xml-base "equivalent-<-rule-"))
                              #f
                              (make-rule-head class-argument)
@@ -398,39 +407,51 @@
                              #f
                              (make-rule-head (list (string->symbol axiom-name)
                                                    argument))
-                             (make-rule-body class-argument))))
-     
-     (if (not (null? universal-restrictions))
-         (list (universal-restriction->rule axiom-name argument (car universal-restrictions)))
-         (if (and equivalent?
-                  (lconjunction? class-argument))
-             (list rule-< rule->)
-             (list rule->))))) 
+                             (make-rule-body class-argument)))
+          (rules (if (not (null? universal-restrictions))
+                     (list (universal-restriction->rule axiom-name argument (car universal-restrictions)))
+                     (if (and equivalent?                      ; equivalent as parameter
+                              (lconjunction? class-argument)   ; head is conjunction of literals
+                              (not existential?))             ; head has no existentialy quantified variables
+                         (list rule-< rule->)
+                         (begin (if *debug*
+                                    (begin (display "not lconjunction? : ")
+                                           (write class-argument)
+                                           (newline)))
+                                (list rule->))))))
+     (set! existential? #f)
+     rules))
  
- ; disjoint-axiom->rules : string symbol sxml -> (list-of rule)
- (define (disjoint-axiom->rules axiom-name argument sxml)
-   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" *namespaces*) sxml))
+ ; disjoint-axiom->rules : string symbol sxml (list-of symbol) -> (list-of rule)
+ (define (disjoint-axiom->rules axiom-name argument sxml optionals)
+   (let* ((disjoint? (member 'disjoint optionals))
+          (rdf-resource ((sxpath "@rdf:resource/text()" *namespaces*) sxml))
           (owl-classes (get-owl-classes sxml))
           (restrictions (get-class-property-restrictions sxml))
-          (class-argument (cond ((not (null? rdf-resource))
-                                 (list (string->symbol (text->name rdf-resource))
-                                       argument))
-                                ((not (null? owl-classes)) (class-description->formula argument (car owl-classes)))
-                                ((not (null? restrictions)) (class-restriction->formula argument (car restrictions)))
-                                (else (error "disjoint-axiom->rules" "no class description found" sxml))))
+          (class-argument (to-dnf (cond ((not (null? rdf-resource))
+                                         (list (string->symbol (text->name rdf-resource))
+                                               argument))
+                                        ((not (null? owl-classes)) (class-description->formula argument (car owl-classes)))
+                                        ((not (null? restrictions)) (class-restriction->formula argument (car restrictions)))
+                                        (else (error "disjoint-axiom->rules" "no class description found" sxml)))))
+          (negated-argument (to-dnf (list 'not class-argument)))
           (rule-< (make-rule (gensym (string-append xml-base "disjoint-<-rule-"))
                              #f
-                             (make-rule-head (list 'not class-argument))
+                             (make-rule-head negated-argument)
                              (make-rule-body (list (string->symbol axiom-name) 
                                                    argument))))
           (rule-> (make-rule (gensym (string-append xml-base "disjoint->-rule-"))
                              #f
                              (make-rule-head (list 'not (list (string->symbol axiom-name) 
                                                               argument)))
-                             (make-rule-body class-argument))))
-     (if (literal? class-argument)
-         (list rule-< rule->)
-         (list rule->))))
+                             (make-rule-body class-argument)))
+          (rules (if (and disjoint?
+                          (lconjunction? negated-argument)
+                          (not existential?))
+                     (list rule-< rule->)
+                     (list rule->))))
+     (set! existential? #f)
+     rules))
  
  ; universal-restriction->rule : string symbol sxml -> (list-of rule)
  (define (universal-restriction->rule axiom-name argument restriction)
@@ -447,6 +468,7 @@
                                 ((not (null? restrictions)) (class-restriction->formula prop prop-var (car restrictions)))
                                 ;((not (null? descriptions)) (rdf-description->formula prop (car descriptions)))
                                 (else (error "universal-restriction->rule" "no class description found" restriction)))))
+     (set! existential? #f)
      (make-rule (gensym (string-append xml-base "universal-property-rule-"))
                 #f
                 (make-rule-head class-argument)
@@ -509,6 +531,7 @@
                                 ((not (null? restrictions)) (class-restriction->formula prop prop-var (car restrictions)))
                                 ;((not (null? descriptions)) (rdf-description->formula prop (car descriptions)))
                                 (else (error "some-values-restriction->rule" "no class description found" restriction)))))
+     (set! existential? #t) ; set flag for existentialy quantified variables
      (list 'and 
            (list (string->symbol prop)
                  argument
@@ -896,6 +919,23 @@
  ; UTILS
  ; -------------------------
  
+ (define local-gen 0)
+ 
+ ; gensym: string -> symbol
+ (define (gensym s)
+   (set! local-gen (+ local-gen 1))
+   (string->symbol (string-append s (number->string local-gen))))
+ 
+ ; needed for making sure, that existentialy quantified
+ ; variables don't appear in the head
+ (define existential? #f)
+ 
+ ; owl?: string -> boolean
+ (define (owl? path)
+  (let* ((doc (ssax:dtd-xml->sxml (open-input-resource path) '()))
+         (rdf ((sxpath ontology-path *namespaces*) doc)))
+    (not (null? rdf))))
+ 
  (define (clear-properties-and-classes)
    (set! classes '())
    (set! object-properties '())
@@ -957,6 +997,6 @@
  
  ;(define class1 (car classes))
  
- (define rb1 (owl-import "C:\\Users\\stb\\Desktop\\Hundeformular Test\\Hundeformular.owl" '(transitive symmetric domain range)))
+ ; (define rb1 (owl-import "C:\\Users\\stb\\Desktop\\Hundeformular Test\\Hundeformular.owl" '(transitive symmetric domain range equivalent disjoint)))
  
  )
