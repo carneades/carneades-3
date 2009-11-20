@@ -63,14 +63,14 @@
      - class membership    - total support
      - property values     - total support
      - identity            - partial support
-       - same as           - total support
-       - different from    - total support
+       - same as           - total support - but no equality-reasoning!
+       - different from    - total support - but no equality-reasoning!
        - all different     - !!! no support !!!
 
    !!! Individual identity !!!
    OWL does not make the so-called "unique names" assumption. Carneades doesn't
    make this assumption explicitly either, but has no equation-theory implemented
-   and therefor cannot reason about identity!
+   and therefore cannot reason about identity!
 |#
 
 ; this library is not free of side-effects:
