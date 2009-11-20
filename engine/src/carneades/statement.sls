@@ -105,7 +105,7 @@
    (cond ((variable? t1) (symbol->string t1))
          ((constant? t1) (call-with-values open-string-output-port 
                                            (lambda (p e) 
-                                             (write t1 p)
+                                             (format p "~a" t1)
                                              (e))))
          ((pair? t1)
           (string-join (cons (term-formatted (car t1))
