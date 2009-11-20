@@ -137,7 +137,7 @@
  ; -------------------------
  
  ; owl-import: string (list-of symbol) -> rulebase
- ; optionals: transitive, symmetric, domain, range, disjoint or equivalent
+ ; optionals: transitive, symmetric, inverse, domain, range, disjoint or equivalent
  (define (owl-import path optionals)
    (set! local-gen 0)
    (clear-properties-and-classes)
@@ -591,6 +591,8 @@
                                  (else (error "complement->formula" "no class description found" comp)))))
      (list 'not class-arguments)))
  
+ 
+ 
  ; ----------------------
  ; property-conversion
  ; ----------------------
@@ -604,10 +606,10 @@
                                (else (error "property-axiom->rule" "no property name found" axiom))))
           (property-type (car axiom))
           (subproperties (get-subproperties axiom))
-          (domains (if (exists (lambda (o) (eq? o 'domain)) optionals)
+          (domains (if (member 'domain optionals)
                        (get-domains axiom)
                        '()))
-          (ranges (if (exists (lambda (o) (eq? o 'range)) optionals)
+          (ranges (if (member 'range optionals)
                       (get-ranges axiom)
                       '()))          
           (equiv-props (get-equivalent-properties axiom))
@@ -618,8 +620,8 @@
           (subproperty-rules (map (lambda (s) (subproperty->rule property-name s)) subproperties))
           (domain-rules (map (lambda (d) (domain->rule property-name d)) domains))
           (range-rules (map (lambda (r) (range->rule property-name r)) ranges))
-          (equiv-rules (flatmap (lambda (e) (equivalent-property->rules property-name e)) equiv-props))
-          (inverse-rules (flatmap (lambda (i) (inverse-property->rules property-name i)) inverse-props))          
+          (equiv-rules (flatmap (lambda (e) (equivalent-property->rules property-name e optionals)) equiv-props))
+          (inverse-rules (flatmap (lambda (i) (inverse-property->rules property-name i optionals)) inverse-props))          
           (type-rules (filter (lambda (x) (not (null? x))) (map (lambda (t) (prop-type->rule property-name t optionals)) prop-types)))            
           )
      (cond ((eq? property-type (string->symbol (resolve-namespaces "owl::ObjectProperty" *namespaces*))) (add-object-property property-name))
@@ -678,38 +680,46 @@
                 (make-rule-body rule-body))))
  
  ; equivalent-property->rules : string sxml  -> (list-of rule)
- (define (equivalent-property->rules property-name equiv-prop)
-   (let* ((rdf-resource (string->symbol (text->name ((sxpath "@rdf:resource/text()" *namespaces*) equiv-prop))))
+ (define (equivalent-property->rules property-name equiv-prop optionals)
+   (let* ((equivalent? (member 'equivalent optionals))
+          (rdf-resource (string->symbol (text->name ((sxpath "@rdf:resource/text()" *namespaces*) equiv-prop))))
           (var1 (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-1")))
           (var2 (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-2")))
           (prop (string->symbol property-name))
           (stmt1 (list prop var1 var2))
-          (stmt2 (list rdf-resource var1 var2)))
-     (list (make-rule (gensym (string-append xml-base "equiv->-rule-"))
-                      #f
-                      (make-rule-head stmt1)
-                      (make-rule-head stmt2))
-           (make-rule (gensym (string-append xml-base "equiv-<-rule-"))
-                      #f
-                      (make-rule-head stmt2)
-                      (make-rule-head stmt1)))))
+          (stmt2 (list rdf-resource var1 var2))
+          (rule-> (make-rule (gensym (string-append xml-base "equiv->-rule-"))
+                             #f
+                             (make-rule-head stmt1)
+                             (make-rule-head stmt2)))
+          (rule-< (make-rule (gensym (string-append xml-base "equiv-<-rule-"))
+                             #f
+                             (make-rule-head stmt2)
+                             (make-rule-head stmt1))))
+     (if equivalent?
+         (list rule-> rule-<)
+         (list rule->))))
  
  ; inverse-property->rules : string sxml  -> (list-of rule)
- (define (inverse-property->rules property-name inverse-prop)
-   (let* ((rdf-resource (string->symbol (text->name ((sxpath "@rdf:resource/text()" *namespaces*) inverse-prop))))
+ (define (inverse-property->rules property-name inverse-prop optionals)
+   (let* ((inverse? (member 'inverse optionals))
+          (rdf-resource (string->symbol (text->name ((sxpath "@rdf:resource/text()" *namespaces*) inverse-prop))))
           (var1 (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-1")))
           (var2 (string->symbol (string-append "?" (apply-namespaces property-name *namespaces*) "-2")))
           (prop (string->symbol property-name))
           (stmt1 (list prop var1 var2))
-          (stmt2 (list rdf-resource var2 var1)))
-     (list (make-rule (gensym (string-append xml-base "inverse->-rule-"))
-                      #f
-                      (make-rule-head stmt1)
-                      (make-rule-head stmt2))
-           (make-rule (gensym (string-append xml-base "inverse-<-rule-"))
-                      #f
-                      (make-rule-head stmt2)
-                      (make-rule-head stmt1)))))
+          (stmt2 (list rdf-resource var2 var1))
+          (rule-> (make-rule (gensym (string-append xml-base "inverse->-rule-"))
+                             #f
+                             (make-rule-head stmt1)
+                             (make-rule-head stmt2)))
+          (rule-< (make-rule (gensym (string-append xml-base "inverse-<-rule-"))
+                             #f
+                             (make-rule-head stmt2)
+                             (make-rule-head stmt1))))
+     (if inverse?
+         (list rule-> rule-<)
+         (list rule->))))
  
  ; prop-type->rule : string sxml (list-of symbol) -> rule
  (define (prop-type->rule property-name prop-type optionals)
