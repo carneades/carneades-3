@@ -545,6 +545,7 @@
           (value (cond ((not (null? rdf-resource)) (string->symbol (text->name rdf-resource)))
                        ((not (null? data-value)) (string->symbol (car data-value)))
                        (else (error "has-value-restriction->rule" "no resource or data-value found" restriction)))))
+     (set! existential? #t) ; set flag for existentialy quantified variables
      (list (string->symbol prop) argument value)))
  
 
