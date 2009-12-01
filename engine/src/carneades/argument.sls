@@ -26,7 +26,8 @@
          argument-conclusion argument-premises argument-scheme default-weight pro con
          define-argument argument->datum datum->argument argument-variables instantiate-argument add-premise status?
          proof-standard? state question accept reject assign-standard list-nodes 
-         node? node-statement node-status node-standard node-acceptable node-complement-acceptable node-premise-of node-conclusion-of
+         node? make-node  node-statement node-status node-standard node-acceptable
+         node-complement-acceptable node-premise-of node-conclusion-of add-node-to-argument-graph
          statements->nodes in-statements arguments pro-arguments con-arguments schemes-applied status proof-standard prior
          decided? accepted? rejected? questioned? stated? issue? make-argument-graph empty-argument-graph 
          argument-graph? argument-graph-id argument-graph-title argument-graph-main-issue argument-graph-nodes
