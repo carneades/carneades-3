@@ -76,7 +76,7 @@
                             (acceptable? ag (statement-complement n)))
                        "dotted,filled")
                       ((acceptable? ag n) "filled")
-                      ((acceptable? ag (statement-complement n)) "dashed,filled")
+                      ((acceptable? ag (statement-complement n)) "dotted")
                       (else "solid")))))
    (for-each print-statement statements))
  
