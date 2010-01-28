@@ -321,7 +321,7 @@ public class CarneadesControl {
 						if (shiftDown) { commands.do(
 							CopyPremiseCommand {
 								argumentGraph: argumentGraph
-								premise: premise
+								premise: Premise { statement: premise.statement }
 								newArgument: newArgument
 							})
 						} else commands.do(
@@ -1022,7 +1022,6 @@ public class CarneadesControl {
 		a1 = Argument {
 			id: "a1"
 			conclusion: s1
-			title: "... therefore ..."
 		}
 
 		var p1a1: Premise = Premise {
