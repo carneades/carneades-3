@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package carneadesgui.control;
 
-import carneadesgui.GC.*;
 import carneadesgui.model.Argument;
 import carneadesgui.model.Argument.*;
 import carneadesgui.view.CarneadesGraph;
@@ -25,13 +24,7 @@ import carneadesgui.control.XWDocumentBuilder;
 import carneadesgui.control.XWDocumentBuilder.*;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.StringReader;
-import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.image.PNGTranscoder;
+import java.lang.System;
 
 
 // helper issue class for file loading in older LKIF format
@@ -303,6 +296,14 @@ public var getGraphFromFile = function(file: File): ArgumentGraph[] {
 					if (c.name == "s") {
 						// extract text
 						wff = c.children[0].value;
+						System.out.println(wff);
+
+						// remove all linebreaks and tabs
+						wff = wff.replaceAll("\n", "");
+						wff = wff.replaceAll("\r", "");
+						wff = wff.replaceAll("\t", "");
+
+						System.out.println(wff);
 					}
 				}
 
@@ -477,6 +478,10 @@ var getGraphFromLkifV1Document = function(document: XWDocument): ArgumentGraph[]
 
 			// set variables
 			wff = s.children[0].value; // get text node
+			// remove all linebreaks and tabs
+			wff = wff.replaceAll("\n", "");
+			wff = wff.replaceAll("\r", "");
+			wff = wff.replaceAll("\t", "");
 
 			for (a in s.attributes) {
 				if (a.name == "id") { id = a.value; }
@@ -612,25 +617,5 @@ public var saveAsImage = function(g: CarneadesGraph, fileName: String): Void {
 	var writer: FileWriter = new FileWriter("{fileName}{if (not fileName.endsWith(".svg")) ".svg" else ""}");
 	writer.write(printGraphAsSVG(g));
 	writer.close();
-
-	if (SVG_CREATE_PNG) {
-		// Create a PNG transcoder
-		var	t: PNGTranscoder = new PNGTranscoder();
-
-		// Create the transcoder input.
-		var reader: Reader = new StringReader(printGraphAsSVG(g));
-		var input: TranscoderInput = new TranscoderInput(reader);
-
-		// Create the transcoder output.
-		var ostream: OutputStream = new FileOutputStream("{fileName}.png");
-		var output: TranscoderOutput = new TranscoderOutput(ostream);
-
-		// Save the image.
-		t.transcode(input, output);
-
-		// Flush and close the stream.
-		ostream.flush();
-		ostream.close();
-	}
 }
 
