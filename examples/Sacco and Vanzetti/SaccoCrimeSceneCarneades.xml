@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?oxygen RNGSchema="../../schemas/LKIF2.rnc" type="compact"?>
+<lkif version="2.0.4"><argument-graphs><argument-graph id="g1" title="New Graph"><statements><statement id="P3" value="unknown" assumption="true" standard="PE"><s>Sacco and Vanzetti shot Berardelli </s>
+</statement>
+<statement id="18" value="unknown" assumption="true" standard="PE"><s>Sacco was at the crime scene </s>
+</statement>
+<statement id="18a" value="unknown" assumption="true" standard="PE"><s>Wade saw someone who looked like Sacco</s>
+</statement>
+<statement id="25" value="unknown" assumption="true" standard="PE"><s>Wade Testimony</s>
+</statement>
+<statement id="134c" value="unknown" assumption="true" standard="PE"><s>Wade would not say Sacco was the shooter</s>
+</statement>
+<statement id="134d" value="unknown" assumption="true" standard="PE"><s>Wade cross-examination</s>
+</statement>
+<statement id="26" value="unknown" assumption="true" standard="PE"><s>Pelser testimony</s>
+</statement>
+<statement id="316" value="unknown" assumption="true" standard="PE"><s>Pelser was under a bench during the shooting</s>
+</statement>
+<statement id="317" value="unknown" assumption="true" standard="PE"><s>Constantino testimony</s>
+</statement>
+<statement id="318b" value="unknown" assumption="true" standard="PE"><s>Pelser could not have seen the shooting</s>
+</statement>
+<statement id="318c" value="unknown" assumption="true" standard="PE"><s>McCullum testimony</s>
+</statement>
+<statement id="319" value="unknown" assumption="true" standard="PE"><s>Pelser cross-examination</s>
+</statement>
+<statement id="s1" value="unknown" assumption="true" standard="PE"><s>Constantino had doubts</s>
+</statement>
+<statement id="s2" value="unknown" assumption="true" standard="PE"><s>Constantino cross-examination</s>
+</statement>
+<statement id="320" value="unknown" assumption="true" standard="PE"><s>Pelser was not near the window</s>
+</statement>
+<statement id="321" value="unknown" assumption="true" standard="PE"><s>Brenner testimony</s>
+</statement>
+<statement id="322" value="unknown" assumption="true" standard="PE"><s>Brenner's doubts about Pelser's whereabouts</s>
+</statement>
+<statement id="322a" value="unknown" assumption="true" standard="PE"><s>Brenner cross-examination</s>
+</statement>
+<statement id="323" value="unknown" assumption="true" standard="PE"><s>Sacco was not leaning against the fence</s>
+</statement>
+<statement id="324" value="unknown" assumption="true" standard="PE"><s>Frantello testimony</s>
+</statement>
+<statement id="325" value="unknown" assumption="true" standard="PE"><s>The man on the fence spoke "American"</s>
+</statement>
+<statement id="326" value="unknown" assumption="true" standard="PE"><s>Frantello testimony</s>
+</statement>
+<statement id="327" value="unknown" assumption="true" standard="PE"><s>Sacco speaks broken English</s>
+</statement>
+<statement id="328" value="unknown" assumption="true" standard="PE"><s>Observable in court</s>
+</statement>
+<statement id="329" value="unknown" assumption="true" standard="PE"><s>Frantello could not identify jurors' characteristics</s>
+</statement>
+<statement id="330" value="unknown" assumption="true" standard="PE"><s>Frantello cross-examination</s>
+</statement>
+</statements>
+<arguments><argument id="a0" weight="0.5" direction="pro" scheme=""><conclusion statement="P3"></conclusion>
+<premises><premise statement="18" exception="false" polarity="positive" role=""></premise>
+</premises>
+</argument>
+<argument id="a1" weight="0.5" direction="pro" scheme=""><conclusion statement="18"></conclusion>
+<premises><premise statement="18a" exception="false" polarity="positive" role=""></premise>
+</premises>
+</argument>
+<argument id="a2" weight="0.5" direction="pro" scheme="Witness Testimony"><conclusion statement="18a"></conclusion>
+<premises><premise statement="25" exception="false" polarity="positive" role=""></premise>
+<premise statement="134c" exception="true" polarity="positive" role=""></premise>
+</premises>
+</argument>
+<argument id="a3" weight="0.5" direction="pro" scheme="Cross-examination"><conclusion statement="134c"></conclusion>
+<premises><premise statement="134d" exception="false" polarity="positive" role=""></premise>
+</premises>
+</argument>
+<argument id="a4" weight="0.5" direction="pro" scheme="Witness Testimony"><conclusion statement="18"></conclusion>
+<premises><premise statement="26" exception="false" polarity="positive" role=""></premise>
+<premise statement="316" exception="true" polarity="positive" role=""></premise>
+<premise statement="318b" exception="true" polarity="positive" role=""></premise>
+<premise statement="320" exception="true" polarity="positive" role=""></premise>
+</premises>
+</argument>
+<argument id="a5" weight="0.5" direction="pro" scheme="Witness Testimony"><conclusion statement="316"></conclusion>
+<premises><premise statement="317" exception="false" polarity="positive" role=""></premise>
+<premise statement="s1" exception="true" polarity="positive" role=""></premise>
+</premises>
+</argument>
+<argument id="a6" weight="0.5" direction="pro" scheme="Witness Testimony"><conclusion statement="318b"></conclusion>
+<premises><premise statement="318c" exception="false" polarity="positive" role=""></premise>
+</premises>
+</argument>
+<argument id="a7" weight="0.5" direction="pro" scheme="Cross-examination"><conclusion statement="316"></conclusion>
+<premises><premise statement="319" exception="false" polarity="positive" role=""></premise>
+</premises>
+</argument>
+<argument id="a8" weight="0.5" direction="pro" scheme="Cross-examination"><conclusion statement="s1"></conclusion>
+<premises><premise statement="s2" exception="false" polarity="positive" role=""></premise>
+</premises>
+</argument>
+<argument id="a9" weight="0.5" direction="pro" scheme="Witness Testimony"><conclusion statement="320"></conclusion>
+<premises><premise statement="321" exception="false" polarity="positive" role=""></premise>
+<premise statement="322" exception="true" polarity="positive" role=""></premise>
+</premises>
+</argument>
+<argument id="a10" weight="0.5" direction="pro" scheme="Cross-examination"><conclusion statement="322"></conclusion>
+<premises><premise statement="322a" exception="false" polarity="positive" role=""></premise>
+</premises>
+</argument>
+<argument id="a11" weight="0.5" direction="con" scheme=""><conclusion statement="18"></conclusion>
+<premises><premise statement="323" exception="false" polarity="positive" role=""></premise>
+</premises>
+</argument>
+<argument id="a12" weight="0.5" direction="pro" scheme="Witness Testimony"><conclusion statement="323"></conclusion>
+<premises><premise statement="324" exception="false" polarity="positive" role=""></premise>
+<premise statement="329" exception="true" polarity="positive" role=""></premise>
+</premises>
+</argument>
+<argument id="a13" weight="0.5" direction="pro" scheme=""><conclusion statement="323"></conclusion>
+<premises><premise statement="325" exception="false" polarity="positive" role=""></premise>
+<premise statement="327" exception="false" polarity="positive" role=""></premise>
+</premises>
+</argument>
+<argument id="a14" weight="0.5" direction="pro" scheme="Witness Testimony"><conclusion statement="325"></conclusion>
+<premises><premise statement="326" exception="false" polarity="positive" role=""></premise>
+</premises>
+</argument>
+<argument id="a15" weight="0.5" direction="pro" scheme="Autoptic proference"><conclusion statement="327"></conclusion>
+<premises><premise statement="328" exception="false" polarity="positive" role=""></premise>
+</premises>
+</argument>
+<argument id="a16" weight="0.5" direction="pro" scheme="Cross-examination"><conclusion statement="329"></conclusion>
+<premises><premise statement="330" exception="false" polarity="positive" role=""></premise>
+</premises>
+</argument>
+</arguments>
+</argument-graph>
+</argument-graphs>
+</lkif>
