@@ -1,3 +1,5 @@
+; the imported lkif-file was constructed by Floris Bex florisbex@gmail.com
+
 #!r6rs
 
 (import (rnrs)
