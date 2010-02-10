@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?oxygen RNGSchema="../../schemas/LKIF2.rnc" type="compact"?>
+<!-- by Floris Bex florisbex@gmail.com -->
 <lkif version="2.0.4"><argument-graphs><argument-graph id="g1" title="New Graph"><statements><statement id="P3" value="unknown" assumption="true" standard="PE"><s>Sacco and Vanzetti shot Berardelli </s>
 </statement>
 <statement id="18" value="unknown" assumption="true" standard="PE"><s>Sacco was at the crime scene </s>
