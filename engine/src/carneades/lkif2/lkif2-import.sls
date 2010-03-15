@@ -199,7 +199,7 @@
  (define (premise-to-record p tbl)
    (let* ((polarity (string=? (get-attribute-value (get-attribute p 'polarity) "positive") "positive"))
           ;(assumable (get-attribute-value (get-attribute p 'assumable) "false"))
-          ;(exception (get-attribute-value (get-attribute p 'exception) "false"))
+          (exception (get-attribute-value (get-attribute p 'exception) "false"))
           (type (get-attribute-value (get-attribute p 'type) "ordinary"))
           (role (get-attribute-value (get-attribute p 'role) ""))
           (sid (get-attribute-value (get-attribute p 'statement) ""))
@@ -208,8 +208,8 @@
                       (eq? (car s*) 'assuming))
                  (cadr s*)
                  s*)))
-     (cond ((string=? type "exception") (argument:make-exception s polarity role))
-           ((string=? type "assumption") (argument:make-assumption s polarity role))
+     (cond ((string=? exception "true") (argument:make-exception s polarity role))
+           ;((string=? type "assumption") (argument:make-assumption s polarity role))
            (else (argument:make-ordinary-premise s polarity role)))))
  
  ; argument-to-record: lkif-argument table -> struct:argument
