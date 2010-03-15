@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?oxygen RNGSchema="../../schemas/LKIF2.rnc" type="compact"?>
+<lkif version="2.0.4"><argument-graphs><argument-graph id="g1" title="New Graph"><statements><statement id="s1" value="unknown" assumption="true" standard="PE"><s>P</s>
+</statement>
+<statement id="s2" value="unknown" assumption="true" standard="PE"><s>Q</s>
+</statement>
+<statement id="s3" value="unknown" assumption="true" standard="PE"><s>S</s>
+</statement>
+<statement id="s4" value="unknown" assumption="true" standard="PE"><s>R</s>
+</statement>
+<statement id="s5" value="unknown" assumption="true" standard="PE"><s>U</s>
+</statement>
+<statement id="s6" value="unknown" assumption="true" standard="PE"><s>T</s>
+</statement>
+<statement id="s7" value="unknown" assumption="true" standard="PE"><s>W</s>
+</statement>
+<statement id="s8" value="unknown" assumption="true" standard="PE"><s>V</s>
+</statement>
+</statements>
+<arguments><argument id="a2" weight="0.40799996" direction="pro" scheme=""><conclusion statement="s1"></conclusion>
+<premises><premise statement="s2" exception="false" polarity="positive" role=""></premise>
+<premise statement="s3" exception="false" polarity="positive" role=""></premise>
+</premises>
+</argument>
+<argument id="a1" weight="0.60999995" direction="con" scheme=""><conclusion statement="s1"></conclusion>
+<premises><premise statement="s4" exception="false" polarity="positive" role=""></premise>
+</premises>
+</argument>
+<argument id="a4" weight="0.5" direction="pro" scheme=""><conclusion statement="s4"></conclusion>
+<premises><premise statement="s5" exception="false" polarity="positive" role=""></premise>
+<premise statement="s8" exception="true" polarity="positive" role=""></premise>
+</premises>
+</argument>
+<argument id="a3" weight="0.604" direction="con" scheme=""><conclusion statement="s4"></conclusion>
+<premises><premise statement="s6" exception="false" polarity="positive" role=""></premise>
+</premises>
+</argument>
+<argument id="a5" weight="0.40799996" direction="con" scheme=""><conclusion statement="s4"></conclusion>
+<premises><premise statement="s7" exception="false" polarity="positive" role=""></premise>
+</premises>
+</argument>
+<argument id="a6" weight="0.604" direction="pro" scheme=""><conclusion statement="s2"></conclusion>
+<premises></premises>
+</argument>
+<argument id="a7" weight="0.39999998" direction="con" scheme=""><conclusion statement="s2"></conclusion>
+<premises></premises>
+</argument>
+</arguments>
+</argument-graph>
+</argument-graphs>
+</lkif>
