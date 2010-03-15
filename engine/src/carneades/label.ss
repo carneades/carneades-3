@@ -45,25 +45,68 @@
  (define (conjunct-clause-with-dnf cl d)
    (map (lambda (c) (apply append (list cl c))) d))
  
+ (define (true-filter l)
+   (remp (lambda (a) (equal? a #t)) l))
+ 
  ; argument-in-label: argument-graph argument -> dnf
  (define (argument-in-label ag asm arg)
    (let*-values (((ex pr) (partition exception? (argument-premises arg)))
-                 ((pr-labels) (map (lambda (p) (statement-in-label ag asm (premise-statement p))) pr))
-                 ((ex-labels) (map (lambda (p) (statement-out-label ag asm (premise-statement p))) ex)))
-     (combine-conjunction-of-dnf (apply append (list pr-labels ex-labels)))))
+                 ((pr-labels) (let ((l (map (lambda (p) (statement-in-label ag asm (premise-statement p))) pr)))
+                                (if (or (for-all (lambda (l) (equal? l (list (list #t)))) l)
+                                        (null? l))
+                                    #t
+                                    l)))
+                 ((ex-labels) (let ((l (map (lambda (p) (statement-out-label ag asm (premise-statement p))) ex)))
+                                (if (or (for-all (lambda (l) (equal? l (list (list #t)))) l)
+                                        (null? l))
+                                    #t
+                                    l))))
+     (cond
+       ((and (equal? pr-labels #t)
+             (equal? ex-labels #t))
+        (list (list #t)))
+       ((equal? pr-labels #t)
+        (map true-filter (combine-conjunction-of-dnf ex-labels)))
+       ((equal? ex-labels #t)
+        (map true-filter (combine-conjunction-of-dnf pr-labels)))
+       (else (map true-filter (combine-conjunction-of-dnf (apply append (list pr-labels ex-labels))))))))
  
  ; argument-out-label: argument-graph argument -> dnf
  (define (argument-out-label ag asm arg)
    (let*-values (((ex pr) (partition exception? (argument-premises arg)))
-                 ((pr-labels) (map (lambda (p) (statement-out-label ag asm (premise-statement p))) pr))
-                 ((ex-labels) (map (lambda (p) (statement-in-label ag asm (premise-statement p))) ex)))
-                (apply append (list pr-labels ex-labels))))
+                 ((pr-labels) (let ((l (flatmap (lambda (p) (statement-out-label ag asm (premise-statement p))) pr)))
+                                (if (exists (lambda (d) (equal? d (list #t))) l)
+                                    #t
+                                    l)))
+                 ((ex-labels) (let ((l (flatmap (lambda (p) (statement-in-label ag asm (premise-statement p))) ex)))
+                                (if (exists (lambda (d) (equal? d (list #t))) l)
+                                    #t
+                                    l)))
+                 ((label) (cond
+                            ((or (equal? pr-labels #t)
+                                 (equal? ex-labels #t))
+                             (list (list #t)))
+                            ((and (null? pr-labels)
+                                  (null? ex-labels))
+                             (list (list #f)))
+                            ((null? pr-labels)
+                             ex-labels)
+                            (else (map true-filter (apply append (list pr-labels ex-labels)))))))
+     (display "argument-out(")
+     (display (argument-id arg))
+     (display "): ")
+     (display label)
+     (display " - ")
+     (display pr-labels)
+     (newline)
+     label
+     ))
  
  ; statement-in-label: argument-graph (list-of statement) statement -> dnf
  (define (statement-in-label ag asm s)
    (let ((standard (proof-standard ag s)))
      (cond 
-       ((member s asm) #t)
+       ((member s asm) (list (list #t)))
        ((member (statement-complement s) asm) (list (list s)))
        ((eq? standard 'dv) (dv-in-label ag asm s))
        ((eq? standard 'ba) (ba-in-label ag asm s))
@@ -74,24 +117,83 @@
    (let ((standard (proof-standard ag s)))
      (cond 
        ((member s asm) (list (list (statement-complement s))))
-       ((member (statement-complement s) asm) #t)
+       ((member (statement-complement s) asm) (list (list #t)))
        ((eq? standard 'dv) (dv-out-label ag asm s))
        ((eq? standard 'ba) (ba-out-label ag asm s))
        (else (list (list (statement-complement s)))))))
  
+ ; dv-in-label: argument-graph (list-of statement) statement -> dnf
  (define (dv-in-label ag asm s)
    (let* ((pro-args (pro-arguments ag s))
           (con-args (con-arguments ag s))
-          (pro-labels (flatmap (lambda (arg) (argument-in-label ag asm arg)) pro-args))
-          (con-labels (map (lambda (arg) (argument-out-label ag asm arg)) con-args)))
-     (cons (list (list s)) (combine-conjunction-of-dnf (cons pro-labels con-labels)))))
+          (pro-labels (let ((l (flatmap (lambda (arg) (argument-in-label ag asm arg)) pro-args)))
+                        (if (exists (lambda (c) (equal? c (list #t))) l)
+                            #t
+                            l)))
+          (con-labels (let ((l (map (lambda (arg) (argument-out-label ag asm arg)) con-args)))
+                        (if (for-all (lambda (d) (equal? d (list (list #t)))) l)
+                            #t
+                            (if (exists (lambda (c) (equal? c (list (list #f)))) l)
+                                #f
+                                l))))
+          (label (cond 
+                   ((equal? con-labels #f)
+                    (list (list s)))
+                   ((and (equal? pro-labels #t)
+                         (equal? con-labels #t))
+                    (list (list #t)))
+                   ((equal? pro-labels #t)
+                    (cons (list s) (map true-filter (combine-conjunction-of-dnf con-labels))))
+                   ((equal? con-labels #t)
+                    (cons (list s) pro-labels))                   
+                   (else (cons (list s) (map true-filter (combine-conjunction-of-dnf (cons pro-labels con-labels))))))))
+     (display "in(")
+     (display s)
+     (display "): ")
+     (display label)
+     (newline)
+     (display "  pro-labels: ")
+     (display pro-labels)
+     (newline)
+     (display "  con-labels: ")
+     (display con-labels)
+     (newline)
+     label))
  
  (define (dv-out-label ag asm s)
    (let* ((pro-args (pro-arguments ag s))
           (con-args (con-arguments ag s))
-          (pro-labels (map (lambda (arg) (argument-out-label ag asm arg)) pro-args))
-          (con-labels (flatmap (lambda (arg) (argument-in-label ag asm arg)) con-args)))
-     (cons (list (list (statement-complement s))) (combine-conjunction-of-dnf (cons con-labels pro-labels)))))
+          (pro-labels (let ((l (map (lambda (arg) (argument-out-label ag asm arg)) pro-args)))
+                        (if (for-all (lambda (d) (equal? d (list (list #t)))) l)
+                            #t
+                            (if (exists (lambda (c) (equal? c (list (list #f)))) l)
+                                #f
+                                l))))
+          (con-labels (let ((l (flatmap (lambda (arg) (argument-in-label ag asm arg)) con-args)))
+                        (if (exists (lambda (d) (equal? d (list #t))) l)
+                            #t
+                            l)))
+          ; handle (null? con-labels) case
+          (label (cond                   
+                   ((or (equal? pro-labels #t)
+                        (equal? con-labels #t))
+                    (list (list #t)))
+                   ((equal? pro-labels #f)
+                    (cons (list (statement-complement s)) con-labels))
+                   (else
+                    (cons (list (statement-complement s)) (map true-filter (apply append (list con-labels (combine-conjunction-of-dnf pro-labels)))))))))
+     (display "out(")
+     (display s)
+     (display "): ")
+     (display label)
+     (newline)
+     (display "  pro-labels: ")
+     (display pro-labels)
+     (newline)
+     (display "  con-labels: ")
+     (display con-labels)
+     (newline)
+     label))
  
  (define (ba-in-label ag asm s)
    (list (list s)))
@@ -100,9 +202,8 @@
    (list (list (statement-complement s))))
  
  )
-                         
-          
-     
-   
-   
-   
+
+
+
+
+

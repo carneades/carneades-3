@@ -33,7 +33,7 @@
          argument-graph? argument-graph-id argument-graph-title argument-graph-main-issue argument-graph-nodes
          argument-graph-arguments assert-argument assert-arguments 
          relevant? satisfies? acceptable? holds? applicable? in? out? get-argument
-         list->argument-graph)
+         list->argument-graph get-node)
  
  (import (rnrs)
          (rnrs records syntactic)
@@ -285,10 +285,10 @@
  (define (statements->nodes s)
    (fold-left (lambda (t s)
                 (let ((bucket (table:lookup t 
-                                            (statement-predicate s)
+                                            (statement-symbol s)
                                             (table:make-table statement-hash statement=? null)))) 
                   (table:insert t 
-                                (statement-predicate s) 
+                                (statement-symbol s) 
                                 (table:insert bucket s (statement->node s)))))
               (table:make-eq-table null)
               s))              
@@ -342,7 +342,7 @@
                  
  ; get-node: argument-graph statement -> node
  (define (get-node ag s)
-   (table:lookup (get-node-bucket ag (statement-predicate (statement-atom s))) 
+   (table:lookup (get-node-bucket ag (statement-symbol (statement-atom s))) 
                  (statement-atom s) 
                  (statement->node s)))
  
@@ -354,8 +354,8 @@
                         (argument-graph-title ag)
                         (argument-graph-main-issue ag)
                         (table:insert (argument-graph-nodes ag)
-                                      (statement-predicate (node-statement n))
-                                      (table:insert (get-node-bucket ag (statement-predicate (node-statement n)))
+                                      (statement-symbol (node-statement n))
+                                      (table:insert (get-node-bucket ag (statement-symbol (node-statement n)))
                                                     (node-statement n) 
                                                     n)) 
                         (argument-graph-arguments ag)))
@@ -497,13 +497,14 @@
  
   ; pro-arguments: argument-graph statement  -> (list-of argument)
  (define (pro-arguments ag s)
-   (filter (lambda (arg) (eq? (argument-direction arg) 'pro))
-                (arguments ag s)))
+   (let ((args (arguments ag s)))
+     (if (statement-positive? s)
+         (filter (lambda (arg) (eq? (argument-direction arg) 'pro)) args)
+         (filter (lambda (arg) (eq? (argument-direction arg) 'con)) args))))
  
  ; con-arguments: argument-graph statement -> (list-of argument)
  (define (con-arguments ag s)
-   (filter (lambda (arg) (eq? (argument-direction arg) 'con))
-                (arguments ag s)))
+   (pro-arguments ag (statement-complement s)))
  
  ; schemes-applied: argument-graph statement -> (list-of symbol)
  (define (schemes-applied ag s)
@@ -698,13 +699,9 @@
  ; check-acceptability: argument-graph statement -> boolean
  (define (check-acceptability ag s)
    (let ((ps (proof-standard ag s)))
-     (if (statement-negative? s)
-         (satisfies? ag ps 
-                     (con-arguments ag (statement-atom s)) 
-                     (pro-arguments ag (statement-atom s)))
          (satisfies? ag ps 
                      (pro-arguments ag s) 
-                     (con-arguments ag s)))))
+                     (con-arguments ag s))))
  
  ; acceptable?: argument-graph statement -> boolean
  (define (acceptable? ag s)
