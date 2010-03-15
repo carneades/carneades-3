@@ -21,7 +21,7 @@
  (export variable? constant? statement? statement=?
          statement-compare statement-positive?
          statement-negative? statement-complement statement-atom
-         statement-predicate statement-formatted statement-wff
+         statement-predicate statement-formatted statement-wff statement-symbol
          make-fatom fatom? fatom-form fatom-term
          term? term=? compound-term?  term-functor term-args ground?
          statement-hash variables)
@@ -228,6 +228,13 @@
            ((fatom? s2)
             (car (fatom-term s2)))
            (else #f))))
+ 
+ ; statement-symbol: statement -> symbol
+ (define (statement-symbol s)
+   (or (statement-predicate s)
+       (if (string? s)
+           (string->symbol s)
+           s)))
  
  ; statement-wff: statement -> symbol | string | list
  (define (statement-wff s1)
