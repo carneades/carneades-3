@@ -18,7 +18,7 @@
 ; dnf = (list-of (list-of statement)) - i.g. (A or (B and C)) = ((A) (B C))
 
 (library
- (carneades label)
+ (carneades abduction)
  
  (export statement-in-label statement-out-label
          argument-in-label argument-out-label)
