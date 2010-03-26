@@ -24,7 +24,7 @@
 
 (set! *assert* true)
 
-(declare update-statement) ; forward declaration
+(declare update-statement assert-arguments) ; forward declaration
 
 (defstruct- premise-struct
   :atom ; an atomic statement
@@ -57,6 +57,20 @@
 (defn exception [& vals]
   (apply struct exception-struct (concat vals [::exception])))
 
+;; abbreviations for constructing premises with empty roles
+
+(defn pm [s]
+  "statement -> ordinary-premise"
+  (ordinary-premise (statement-atom s) (statement-pos? s) nil))
+
+(defn am [s]
+  "statement -> assumption"
+  (assumption (statement-atom s) (statement-pos? s) nil))
+
+(defn ex [s]
+  "statement -> exception"
+  (exception (statement-atom s) (statement-pos? s) nil))
+
 (defn premise-pos? [p]
   (:polarity p))
 
@@ -86,22 +100,8 @@
 (defn premise-atom [p]
   (:atom p))
 
-;; abbreviations for constructing premises with empty roles
-
-(defn pm [s]
-  "statement -> ordinary-premise"
-  (ordinary-premise (statement-atom s) (statement-pos? s) nil))
-
-(defn am [s]
-  "statement -> assumption"
-  (assumption (statement-atom s) (statement-pos? s) nil))
-
-(defn ex [s]
-  "statement -> exception"
-  (exception (statement-atom s) (statement-pos? s) nil))
-
 (defn premise= [p1 p2]
-  (and (or (= (:type p1) (:type p2)) ; BUG?
+  (and (or (= (:type p1) (:type p2))
            (and (premise-neg? p1)
                 (premise-neg? p2)))
        (statement= (:atom p1) (:atom p2))))
@@ -158,7 +158,10 @@
   (assoc arg :applicable applicability))
 
 (defmacro defargument [id definition]
-  "Example: (defargument b1 (pro not-property 
+  "Define an argument with identifiant id and 
+   assign it to the variable named id with the def method
+
+   Example: (defargument b1 (pro not-property 
                             (pm possession-required)
                             (pm no-possession)
                             (pm foxes-are-wild)))"
@@ -179,11 +182,16 @@
 ;; structures
 
 (defn argument-variables [arg]
+  "argument -> (seq-of symbol)
+
+   Returns a sequence containing the variables of the argument arg"
   (distinct (concat (mapcat #(variables (:atom %)) (:premises arg))
                     (variables (:conclusion arg)))))
 
 (defn instantiate-argument [arg subs]
-  "argument substitutions -> argument"
+  "argument substitutions -> argument
+
+   Instanciate the variable of an argument by applying substitions"
   (assoc arg
     :premises (map #(assoc :atom (subs (:atom %))) (:premises arg))
     :conclusion (subs (:conclusion arg))))
@@ -222,8 +230,10 @@
           #{}))
 
 (defn nodes [s]
-  "builds a node-table from a list of statements
-   (seq-of statement) -> node table"
+  ;; this function is not used!
+  "(seq-of statement) -> node table
+
+   Builds a node-table from a list of statements "
   ; take care here, = is used by the map, not statement=, to
   ; order element
   (reduce (fn [nodes x]
@@ -242,13 +252,11 @@
   :arguments ; map: argument-id -> argument
   )
 
-(declare assert-arguments)
-
 (defn argument-graph
   ([]
      (struct argument-graph-struct (gensym "ag") "" nil {} {}))
   ([exprs]
-     "converts a seq of expressions representing arguments into an argument 
+     "converts a seq of arguments into an argument 
       graph"
      (assert-arguments (argument-graph) exprs))
   ([id title main-issue]
@@ -284,18 +292,20 @@
 (defn proof-standard [ag s]
   (:standard (get-node ag s)))
 
-(defn prior [a1 a2]
+(defn- prior [a1 a2]
+  ; this function is not used!
   (> (:weight a1)
      (:weight a2)))
 
-(defn add-node [ag n]
+(defn- add-node [ag n]
   {:pre [(not (nil? ag))]}
-  "Add a node to the nodes table of an argument graph and replace 
-   the nodes table of the argument graph with this new table
-   argument-graph node -> argument-graph "
+  "argument-graph node -> argument-graph 
+
+   Add a node to the nodes table of an argument graph and replace 
+   the nodes table of the argument graph with this new table "
   (assoc-in ag [:nodes (statement-symbol (:statement n)) (:statement n)] n))
 
-(defn node-in? [n positive]
+(defn- node-in? [n positive]
   "argument-graph node boolean -> boolean"
   (if positive
     (or (= (:status n) :accepted)
@@ -303,16 +313,16 @@
     (or (= (:status n) :rejected)
         (:complement-acceptable n))))
 
-(defn in? [ag s]
+(defn- in? [ag s]
   "looks up the cached 'in' status of the statement in the agreement graph
    argument-graph statement -> boolean "
   (let [n (get-node ag s)]
     (node-in? n (statement-pos? s))))
 
-(defn out? [ag s]
+(defn- out? [ag s]
   (not (in? ag s)))
 
-(defn holds? [ag p]
+(defn- holds? [ag p]
   "argument-graph premise -> boolean"
   (let [n (get-node ag (:atom p))]
     (cond (ordinary-premise? p)
@@ -341,7 +351,7 @@
             false)
           :else (throw (Exception. (format "not a premise %s" p))))))
 
-(defn all-premises-hold? [ag arg]
+(defn- all-premises-hold? [ag arg]
   "argument-graph argument -> boolean"
   (every? #(holds? ag %) (:premises arg)))
 
@@ -537,20 +547,20 @@
 
 (defn relevant-statements [ag g]
  "argument-graph statement -> (seq-of statement)
- (relevant-statements ag g) finds the statements in ag which are
 
- relevant for proving g. Since only nodes in the graph are 
- considered, g itself will be a member of the resulting list
- only if it has a node in the argument graph."
+  Finds the statements in ag which are 
+  relevant for proving g. Since only nodes in the graph are 
+  considered, g itself will be a member of the resulting list
+  only if it has a node in the argument graph."
  (filter #(relevant? ag % g) (map #(:statement %) (get-nodes ag))))
 
 (defn update-argument [ag arg]
   {:pre [(not (nil? (:id arg)))]}
   "argument-graph argument -> argument-graph 
 
-  updates the applicability of an argument in an argument graph and propogates 
-  this change by updating the argument graph for the conclusion
-  of the argument. "
+   updates the applicability of an argument in an argument graph and propogates 
+   this change by updating the argument graph for the conclusion
+   of the argument. "
   (let [old-applicability (:applicable arg)
         new-applicability (all-premises-hold? ag arg)
         ag2 (assoc-in ag [:arguments (:id arg)]
@@ -563,33 +573,33 @@
 
 (defn assert-argument [ag arg]
   {:pre [(not (nil? ag))]}
- "argument-graph argument -> argument-graph
+  "argument-graph argument -> argument-graph
 
-  Add the argument, arg, to the argument graph, ag,
-  if doing so would not introduce a cycle. If some argument with
-  the same id exists in the argument graph, then the existing argument is 
-  replacd by the new argument. A node for the conclusion of the argument is 
-  added to the node table of the argument graph if one does not yet exist. 
-  It is the responsiblity of the protocol to question the conclusion of the 
-  argument, if this is wanted. The \"applicable\" field of the argument is 
-  changed to false before it is updated toassure the the acceptabiity of its 
-  conclusion is checked if the argument is in fact applicable."
- (if (not (cycle-free? ag arg))
-   ag
-   (let [n (get-node ag (:conclusion arg))
-         ;; update the node for the conclusion of the argument
-         ;; :acceptable and :complement-acceptable are updated below
-         ag1 (add-node ag (assoc n :conclusion-of (union #{(:id arg)}
-                                                         (:conclusion-of n))))
-         ;; update or create nodes for each of the premises of the argument
-         ag2 (reduce (fn [ag p]
-                       (let [n (get-node ag (:atom p))]
-                         (add-node ag
-                                   (assoc n :premise-of
-                                          (union #{(:id arg)} 
-                                                 (:premise-of n))))))
-                     ag1 (:premises arg))]
-     (update-argument ag2 (assoc arg :applicable false)))))
+   Add the argument, arg, to the argument graph, ag,
+   if doing so would not introduce a cycle. If some argument with
+   the same id exists in the argument graph, then the existing argument is 
+   replacd by the new argument. A node for the conclusion of the argument is 
+   added to the node table of the argument graph if one does not yet exist. 
+   It is the responsiblity of the protocol to question the conclusion of the 
+   argument, if this is wanted. The \"applicable\" field of the argument is 
+   changed to false before it is updated toassure the the acceptabiity of its 
+   conclusion is checked if the argument is in fact applicable."
+  (if (not (cycle-free? ag arg))
+    ag
+    (let [n (get-node ag (:conclusion arg))
+          ;; update the node for the conclusion of the argument
+          ;; :acceptable and :complement-acceptable are updated below
+          ag1 (add-node ag (assoc n :conclusion-of (union #{(:id arg)}
+                                                          (:conclusion-of n))))
+          ;; update or create nodes for each of the premises of the argument
+          ag2 (reduce (fn [ag p]
+                        (let [n (get-node ag (:atom p))]
+                          (add-node ag
+                                    (assoc n :premise-of
+                                           (union #{(:id arg)} 
+                                                  (:premise-of n))))))
+                      ag1 (:premises arg))]
+      (update-argument ag2 (assoc arg :applicable false)))))
 
 (defn assert-arguments [ag args]
   {:pre [(not (nil? ag))]}
@@ -599,39 +609,39 @@
   (reduce (fn [ag arg] (assert-argument ag arg)) ag args))
 
 (defn update-statement
- "updates the nodes for the given statement by changing the status of the 
-  statment to new-status and recomputing the acceptability of the statement
-  and its complement. If the \"in\" status of the statement
-  of the node, or the complement of the statement, is affected, the change
-  is propogated forwards by updating the arguments in which the statement 
-  is used as a premise, which, recursively, updates the conclusions of these 
-  arguments. 
+  "argument-graph statement (or symbol nil) -> argument-graph
 
-  argument-graph statement (or symbol nil) -> argument-graph"
- ([ag s]
-    (update-statement ag s nil))
- ([ag s new-status]
-    (let [n1 (get-node ag s)
-          old-status (:status n1)
-          n2 (assoc n1
-               :status (or new-status old-status)
-               :acceptable (check-acceptability ag (statement-atom s))
-               :complement-acceptable
-               (check-acceptability ag
-                                    (statement-complement (statement-atom s))))
-          ag2 (add-node ag n2)]
-      (if (and (= (node-in? n1 true) (node-in? n2 true))
-               (= (node-in? n1 false) (node-in? n2 false)))
-        ;; then the "in" status of the statement hasn't changed and there's no
-        ;; need to propogate further
-        ag2
-        ;; else propogate the update to the arguments in which the statement
-        ;; is a premise
-        (reduce (fn [ag id]
-                  (if-let [arg (get-argument ag id)]
-                    (update-argument ag arg)
-                    ag))
-                ag2 (:premise-of n1))))))
+   updates the nodes for the given statement by changing the status of the 
+   statment to new-status and recomputing the acceptability of the statement
+   and its complement. If the \"in\" status of the statement
+   of the node, or the complement of the statement, is affected, the change
+   is propogated forwards by updating the arguments in which the statement 
+   is used as a premise, which, recursively, updates the conclusions of these 
+   arguments. "
+  ([ag s]
+     (update-statement ag s nil))
+  ([ag s new-status]
+     (let [n1 (get-node ag s)
+           old-status (:status n1)
+           n2 (assoc n1
+                :status (or new-status old-status)
+                :acceptable (check-acceptability ag (statement-atom s))
+                :complement-acceptable
+                (check-acceptability ag
+                                     (statement-complement (statement-atom s))))
+           ag2 (add-node ag n2)]
+       (if (and (= (node-in? n1 true) (node-in? n2 true))
+                (= (node-in? n1 false) (node-in? n2 false)))
+         ;; then the "in" status of the statement hasn't changed and there's no
+         ;; need to propogate further
+         ag2
+         ;; else propogate the update to the arguments in which the statement
+         ;; is a premise
+         (reduce (fn [ag id]
+                   (if-let [arg (get-argument ag id)]
+                     (update-argument ag arg)
+                     ag))
+                 ag2 (:premise-of n1))))))
 
 (deftest test-argument-variables
   (let [p1 (pm '(age ?x ?y))
@@ -644,3 +654,103 @@
     (is (some #(= '?k %) vars))
     (is (some #(= '?z %) vars))))
 
+(deftest test-premise-statement
+  (let [stmt "Foxes are wild animals."]
+    (= stmt (premise-statement (pm stmt)))
+    (= ('not stmt) (premise-statement (ordinary-premise stmt false nil)))))
+
+(deftest test-argument-variables
+  (let [not-property
+        (struct fatom
+                "%s by pursing the ?animal did not acquire property in the %s"
+                '(not-property ?person ?animal))
+        possession-required
+        "Property rights in wild animals may be acquired only by possession"
+        no-possession (struct fatom "%s did not have possession of the %s"
+                              '(no-possession ?person ?animal))
+        are-wild (struct fatom "%s are wild" '(are-wild ?animals))
+        arg (pro 'arg1 not-property (list (pm possession-required)
+                                          (pm no-possession)
+                                          (pm are-wild)))]
+    (= '(?animal ?animals person) (sort (argument-variables arg)))))
+
+(deftest test-add-premise
+  (let [not-property
+        "Post by pursing the fox did not acquire property in the fox"
+        possession-required
+        "Property rights in wild animals may be acquired only by possession"
+        no-possession "Post did not have possession of the fox"
+        foxes-are-wild "Foxes are wild animals"
+        arg (pro 'arg1 not-property (list (pm possession-required)
+                                          (pm no-possession))) 
+        arg2 (add-premise arg (pm foxes-are-wild))]
+    (= {:id 'arg1,
+        :applicable false,
+        :weight 0.5,
+        :direction :pro,
+        :conclusion
+        "Post by pursing the fox did not acquire property in the fox",
+        :premises
+        '({:atom
+           "Property rights in wild animals may be acquired only by possession",
+           :polarity true,
+           :role nil,
+           :type :carneades.engine.argument/ordinary-premise}
+          {:atom "Post did not have possession of the fox",
+           :polarity true,
+           :role nil,
+           :type :carneades.engine.argument/ordinary-premise}),
+        :scheme nil}
+       arg)
+    (= {:id 'arg1,
+        :applicable false,
+        :weight 0.5,
+        :direction :pro,
+        :conclusion
+        "Post by pursing the fox did not acquire property in the fox",
+        :premises
+        '({:atom "Foxes are wild animals",
+           :polarity true,
+           :role nil,
+           :type :carneades.engine.argument/ordinary-premise}
+          {:atom
+           "Property rights in wild animals may be acquired only by possession",
+           :polarity true,
+           :role nil,
+           :type :carneades.engine.argument/ordinary-premise}
+          {:atom "Post did not have possession of the fox",
+           :polarity true,
+           :role nil,
+           :type :carneades.engine.argument/ordinary-premise}),
+        :scheme nil}
+       arg2)))
+
+(deftest test-nodes
+  (= {'father
+      {'(father X Y)
+       {:statement '(father X Y),
+        :status :stated,
+        :standard :dv,
+        :acceptable false,
+        :complement-acceptable false,
+        :premise-of #{},
+        :conclusion-of #{}}},
+      'mother
+      {{:form "blabla", :term '(mother X Y)}
+       {:statement {:form "blabla", :term '(mother X Y)},
+        :status :stated,
+        :standard :dv,
+        :acceptable false,
+        :complement-acceptable false,
+        :premise-of #{},
+        :conclusion-of #{}},
+       '(mother P A)
+       {:statement '(mother P A),
+        :status :stated,
+        :standard :dv,
+        :acceptable false,
+        :complement-acceptable false,
+        :premise-of #{},
+        :conclusion-of #{}}}}
+     (nodes (list '(mother P A) '(father X Y)
+                  (struct fatom "blabla" '(mother X Y))) )))
