@@ -162,10 +162,16 @@
    assign it to the variable named id with the def method
 
    Example: (defargument b1 (pro not-property 
-                            (pm possession-required)
-                            (pm no-possession)
-                            (pm foxes-are-wild)))"
-  (letfn [(prefixns
+                              (pm possession-required)
+                              (pm no-possession)
+                              (pm foxes-are-wild)))"
+  `(def ~id (arg ~id ~definition)))
+
+(defmacro arg
+  "Like defargument but does not assign the created argument to anything,
+   just returns it."
+  ([id definition]
+     (letfn [(prefixns
            [x sq]
            (let [f (first sq)
                  r (rest sq)]
@@ -175,8 +181,9 @@
           nsdir (symbol (str cns "/" dir))
           conclusion (second definition)
           premises (map #(prefixns cns %) (drop 2 definition))]
-      `(def ~id (~nsdir (quote ~id) ~conclusion (list ~@premises))))))
-
+      `(~nsdir (quote ~id) ~conclusion (list ~@premises)))))
+  ([definition]
+     `(arg ~(gensym "a") ~definition)))
 
 ;; use (prn-str object) and (read-string s) to read/write argument
 ;; structures
@@ -656,8 +663,9 @@
 
 (deftest test-premise-statement
   (let [stmt "Foxes are wild animals."]
-    (= stmt (premise-statement (pm stmt)))
-    (= ('not stmt) (premise-statement (ordinary-premise stmt false nil)))))
+    (is (= stmt (premise-statement (pm stmt))))
+    (is (= (list 'not stmt)
+           (premise-statement (ordinary-premise stmt false nil))))))
 
 (deftest test-argument-variables
   (let [not-property
@@ -672,7 +680,7 @@
         arg (pro 'arg1 not-property (list (pm possession-required)
                                           (pm no-possession)
                                           (pm are-wild)))]
-    (= '(?animal ?animals person) (sort (argument-variables arg)))))
+    (is (= '(?animal ?animals ?person) (sort (argument-variables arg))))))
 
 (deftest test-add-premise
   (let [not-property
@@ -684,73 +692,298 @@
         arg (pro 'arg1 not-property (list (pm possession-required)
                                           (pm no-possession))) 
         arg2 (add-premise arg (pm foxes-are-wild))]
-    (= {:id 'arg1,
-        :applicable false,
-        :weight 0.5,
-        :direction :pro,
-        :conclusion
-        "Post by pursing the fox did not acquire property in the fox",
-        :premises
-        '({:atom
-           "Property rights in wild animals may be acquired only by possession",
-           :polarity true,
-           :role nil,
-           :type :carneades.engine.argument/ordinary-premise}
-          {:atom "Post did not have possession of the fox",
-           :polarity true,
-           :role nil,
-           :type :carneades.engine.argument/ordinary-premise}),
-        :scheme nil}
-       arg)
-    (= {:id 'arg1,
-        :applicable false,
-        :weight 0.5,
-        :direction :pro,
-        :conclusion
-        "Post by pursing the fox did not acquire property in the fox",
-        :premises
-        '({:atom "Foxes are wild animals",
-           :polarity true,
-           :role nil,
-           :type :carneades.engine.argument/ordinary-premise}
-          {:atom
-           "Property rights in wild animals may be acquired only by possession",
-           :polarity true,
-           :role nil,
-           :type :carneades.engine.argument/ordinary-premise}
-          {:atom "Post did not have possession of the fox",
-           :polarity true,
-           :role nil,
-           :type :carneades.engine.argument/ordinary-premise}),
-        :scheme nil}
-       arg2)))
+    (is (= {:id 'arg1,
+         :applicable false,
+         :weight 0.5,
+         :direction :pro,
+         :conclusion
+         "Post by pursing the fox did not acquire property in the fox",
+         :premises
+         '({:atom
+            "Property rights in wild animals may be acquired only by possession",
+            :polarity true,
+            :role nil,
+            :type :carneades.engine.argument/ordinary-premise}
+           {:atom "Post did not have possession of the fox",
+            :polarity true,
+            :role nil,
+            :type :carneades.engine.argument/ordinary-premise}),
+         :scheme nil}
+        arg))
+    (is (= {:id 'arg1,
+         :applicable false,
+         :weight 0.5,
+         :direction :pro,
+         :conclusion
+         "Post by pursing the fox did not acquire property in the fox",
+         :premises
+         '({:atom "Foxes are wild animals",
+            :polarity true,
+            :role nil,
+            :type :carneades.engine.argument/ordinary-premise}
+           {:atom
+            "Property rights in wild animals may be acquired only by possession",
+            :polarity true,
+            :role nil,
+            :type :carneades.engine.argument/ordinary-premise}
+           {:atom "Post did not have possession of the fox",
+            :polarity true,
+            :role nil,
+            :type :carneades.engine.argument/ordinary-premise}),
+         :scheme nil}
+        arg2))))
 
 (deftest test-nodes
-  (= {'father
-      {'(father X Y)
-       {:statement '(father X Y),
-        :status :stated,
-        :standard :dv,
-        :acceptable false,
-        :complement-acceptable false,
-        :premise-of #{},
-        :conclusion-of #{}}},
-      'mother
-      {{:form "blabla", :term '(mother X Y)}
-       {:statement {:form "blabla", :term '(mother X Y)},
-        :status :stated,
-        :standard :dv,
-        :acceptable false,
-        :complement-acceptable false,
-        :premise-of #{},
-        :conclusion-of #{}},
-       '(mother P A)
-       {:statement '(mother P A),
-        :status :stated,
-        :standard :dv,
-        :acceptable false,
-        :complement-acceptable false,
-        :premise-of #{},
-        :conclusion-of #{}}}}
-     (nodes (list '(mother P A) '(father X Y)
-                  (struct fatom "blabla" '(mother X Y))) )))
+  (is (= {'father
+       {'(father X Y)
+        {:statement '(father X Y),
+         :status :stated,
+         :standard :dv,
+         :acceptable false,
+         :complement-acceptable false,
+         :premise-of #{},
+         :conclusion-of #{}}},
+       'mother
+       {{:form "blabla", :term '(mother X Y)}
+        {:statement {:form "blabla", :term '(mother X Y)},
+         :status :stated,
+         :standard :dv,
+         :acceptable false,
+         :complement-acceptable false,
+         :premise-of #{},
+         :conclusion-of #{}},
+        '(mother P A)
+        {:statement '(mother P A),
+         :status :stated,
+         :standard :dv,
+         :acceptable false,
+         :complement-acceptable false,
+         :premise-of #{},
+         :conclusion-of #{}}}}
+      (nodes (list '(mother P A) '(father X Y)
+                   (struct fatom "blabla" '(mother X Y))) ))))
+
+(deftest test-accept
+  ;; test based on the Pierson-Post example
+  (let [not-property (str "Post, by pursuing the fox,"
+                          "did not acquire property in the fox.")
+        possession-required (str "Property rights in wild animals may "
+                                 "be acquired only by possession.")
+        foxes-are-wild "Foxes are wild animals."
+        no-possession (str "Post did not have possession of the fox.")
+        pursuit-not-sufficient (str "Pursuit is not sufficient"
+                                    "to acquire possession.")
+        justinian "Justinian's Institutes"
+        fleta "Fleta"
+        bracton "Bracton"
+        actual-possession-required "Actual corporal possession is required."
+        puffendorf "Puffendorf"
+        bynkershoek "Bynkershoek"
+        mortally-wounded-deemed-possessed (str "Pursuit is sufficient to obtain"
+                                               " possession when the animal "
+                                               "is mortally wounded.")
+        barbeyrac "Barbeyrac"
+        grotius "Grotius"
+        mortally-wounded "The fox was mortally wounded."
+        land-owner-has-possession (str "The owner of land pursuing a "
+                                       "livelihood with animals on his land is "
+                                       "deemed to have possession of "
+                                       "the animals.")
+        livelihood-on-own-land "Post was pursing his livelihood on his own land"
+        keeble "Keeble"
+        certainty (str "A bright-line rule creates legal certainty, "
+                       "preserving peace and order.")
+        order "Peace and order is an important social value."
+        a1 (arg a1 (pro not-property
+                        (pm possession-required)
+                        (pm no-possession)
+                        (pm foxes-are-wild)))
+        a2 (arg a2 (pro no-possession (pm pursuit-not-sufficient)))
+        a3 (arg a3 (pro pursuit-not-sufficient (am justinian)))
+        a4 (arg a4 (pro pursuit-not-sufficient (am fleta)))
+        a5 (arg a5 (pro pursuit-not-sufficient (am bracton)))
+        a6 (arg a6 (pro no-possession (pm actual-possession-required)))
+        a7 (arg a7 (pro actual-possession-required (am puffendorf)))
+        a8 (arg a8 (pro puffendorf (am bynkershoek)))
+        a9 (arg a9 (con actual-possession-required 
+                        (pm mortally-wounded-deemed-possessed)
+                        (pm mortally-wounded)))
+        a10 (arg a10 (pro mortally-wounded-deemed-possessed (am grotius)))
+        a11 (arg a11 (pro mortally-wounded-deemed-possessed (am barbeyrac)))
+        a12 (arg a12 (con actual-possession-required
+                          (pm land-owner-has-possession)
+                          (pm livelihood-on-own-land)))
+        a13 (arg a13 (pro land-owner-has-possession (am keeble)))
+        a14 (arg a14 (pro actual-possession-required 
+                          (pm certainty)
+                          (pm order)))
+        args1 (argument-graph (list a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13
+                                    a14))
+        facts1 (list foxes-are-wild possession-required certainty order)
+        tompkins (accept args1 facts1)]
+    (is (= (into #{} (vals (:nodes tompkins)))
+           #{{"Bynkershoek"
+              {:statement "Bynkershoek",
+               :status :stated,
+               :standard :dv,
+               :acceptable false,
+               :complement-acceptable false,
+               :premise-of #{'a8},
+               :conclusion-of #{}}}
+             {"Pursuit is sufficient to obtain possession when the animal is mortally wounded."
+              {:statement
+               "Pursuit is sufficient to obtain possession when the animal is mortally wounded.",
+               :status :stated,
+               :standard :dv,
+               :acceptable true,
+               :complement-acceptable false,
+               :premise-of #{'a9},
+               :conclusion-of #{'a11 'a10}}}
+             {"Actual corporal possession is required."
+              {:statement "Actual corporal possession is required.",
+               :status :stated,
+               :standard :dv,
+               :acceptable true,
+               :complement-acceptable false,
+               :premise-of #{'a6},
+               :conclusion-of #{'a7 'a12 'a14 'a9}}}
+             {"Bracton"
+              {:statement "Bracton",
+               :status :stated,
+               :standard :dv,
+               :acceptable false,
+               :complement-acceptable false,
+               :premise-of #{'a5},
+               :conclusion-of #{}}}
+             {"A bright-line rule creates legal certainty, preserving peace and order."
+              {:statement
+               "A bright-line rule creates legal certainty, preserving peace and order.",
+               :status :accepted,
+               :standard :dv,
+               :acceptable false,
+               :complement-acceptable false,
+               :premise-of #{'a14},
+               :conclusion-of #{}}}
+             {"Justinian's Institutes"
+              {:statement "Justinian's Institutes",
+               :status :stated,
+               :standard :dv,
+               :acceptable false,
+               :complement-acceptable false,
+               :premise-of #{'a3},
+               :conclusion-of #{}}}
+             {"Foxes are wild animals."
+              {:statement "Foxes are wild animals.",
+               :status :accepted,
+               :standard :dv,
+               :acceptable false,
+               :complement-acceptable false,
+               :premise-of #{'a1},
+               :conclusion-of #{}}}
+             {"Fleta"
+              {:statement "Fleta",
+               :status :stated,
+               :standard :dv,
+               :acceptable false,
+               :complement-acceptable false,
+               :premise-of #{'a4},
+               :conclusion-of #{}}}
+             {"Post, by pursuing the fox,did not acquire property in the fox."
+              {:statement
+               "Post, by pursuing the fox,did not acquire property in the fox.",
+               :status :stated,
+               :standard :dv,
+               :acceptable true,
+               :complement-acceptable false,
+               :premise-of #{},
+               :conclusion-of #{'a1}}}
+             {"Grotius"
+              {:statement "Grotius",
+               :status :stated,
+               :standard :dv,
+               :acceptable false,
+               :complement-acceptable false,
+               :premise-of #{'a10},
+               :conclusion-of #{}}}
+             {"Post was pursing his livelihood on his own land"
+              {:statement "Post was pursing his livelihood on his own land",
+               :status :stated,
+               :standard :dv,
+               :acceptable false,
+               :complement-acceptable false,
+               :premise-of #{'a12},
+               :conclusion-of #{}}}
+             {"Keeble"
+              {:statement "Keeble",
+               :status :stated,
+               :standard :dv,
+               :acceptable false,
+               :complement-acceptable false,
+               :premise-of #{'a13},
+               :conclusion-of #{}}}
+             {"The owner of land pursuing a livelihood with animals on his land is deemed to have possession of the animals."
+              {:statement
+               "The owner of land pursuing a livelihood with animals on his land is deemed to have possession of the animals.",
+               :status :stated,
+               :standard :dv,
+               :acceptable true,
+               :complement-acceptable false,
+               :premise-of #{'a12},
+               :conclusion-of #{'a13}}}
+             {"Barbeyrac"
+              {:statement "Barbeyrac",
+               :status :stated,
+               :standard :dv,
+               :acceptable false,
+               :complement-acceptable false,
+               :premise-of #{'a11},
+               :conclusion-of #{}}}
+             {"Post did not have possession of the fox."
+              {:statement "Post did not have possession of the fox.",
+               :status :stated,
+               :standard :dv,
+               :acceptable true,
+               :complement-acceptable false,
+               :premise-of #{'a1},
+               :conclusion-of #{'a6 'a2}}}
+             {"The fox was mortally wounded."
+              {:statement "The fox was mortally wounded.",
+               :status :stated,
+               :standard :dv,
+               :acceptable false,
+               :complement-acceptable false,
+               :premise-of #{'a9},
+               :conclusion-of #{}}}
+             {"Peace and order is an important social value."
+              {:statement "Peace and order is an important social value.",
+               :status :accepted,
+               :standard :dv,
+               :acceptable false,
+               :complement-acceptable false,
+               :premise-of #{'a14},
+               :conclusion-of #{}}}
+             {"Puffendorf"
+              {:statement "Puffendorf",
+               :status :stated,
+               :standard :dv,
+               :acceptable true,
+               :complement-acceptable false,
+               :premise-of #{'a7},
+               :conclusion-of #{'a8}}}
+             {"Property rights in wild animals may be acquired only by possession."
+              {:statement
+               "Property rights in wild animals may be acquired only by possession.",
+               :status :accepted,
+               :standard :dv,
+               :acceptable false,
+               :complement-acceptable false,
+               :premise-of #{'a1},
+               :conclusion-of #{}}}
+             {"Pursuit is not sufficientto acquire possession."
+              {:statement "Pursuit is not sufficientto acquire possession.",
+               :status :stated,
+               :standard :dv,
+               :acceptable true,
+               :complement-acceptable false,
+               :premise-of #{'a2},
+               :conclusion-of #{'a5 'a4 'a3}}}}))))
