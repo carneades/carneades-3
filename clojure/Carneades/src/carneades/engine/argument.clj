@@ -120,7 +120,7 @@
 
 (defn argument
   ([id direction conclusion premises]
-     (struct argument-struct id direction false *default-weight* conclusion
+     (struct argument-struct id false *default-weight* direction conclusion
              premises nil))
   ([id direction conclusion premises scheme]
      (struct argument-struct id false *default-weight* direction conclusion
@@ -136,6 +136,7 @@
   (:scheme a))
 
 (defn argument-direction [a]
+  {:post [(not (nil? %))]}
   (:direction a))
 
 (defn argument-conclusion [a]
@@ -167,7 +168,7 @@
                               (pm foxes-are-wild)))"
   `(def ~id (arg ~id ~definition)))
 
-(defmacro arg
+(defmacro make-arg
   "Like defargument but does not assign the created argument to anything,
    just returns it."
   ([id definition]
@@ -794,27 +795,27 @@
         certainty (str "A bright-line rule creates legal certainty, "
                        "preserving peace and order.")
         order "Peace and order is an important social value."
-        a1 (arg a1 (pro not-property
+        a1 (make-arg a1 (pro not-property
                         (pm possession-required)
                         (pm no-possession)
                         (pm foxes-are-wild)))
-        a2 (arg a2 (pro no-possession (pm pursuit-not-sufficient)))
-        a3 (arg a3 (pro pursuit-not-sufficient (am justinian)))
-        a4 (arg a4 (pro pursuit-not-sufficient (am fleta)))
-        a5 (arg a5 (pro pursuit-not-sufficient (am bracton)))
-        a6 (arg a6 (pro no-possession (pm actual-possession-required)))
-        a7 (arg a7 (pro actual-possession-required (am puffendorf)))
-        a8 (arg a8 (pro puffendorf (am bynkershoek)))
-        a9 (arg a9 (con actual-possession-required 
+        a2 (make-arg a2 (pro no-possession (pm pursuit-not-sufficient)))
+        a3 (make-arg a3 (pro pursuit-not-sufficient (am justinian)))
+        a4 (make-arg a4 (pro pursuit-not-sufficient (am fleta)))
+        a5 (make-arg a5 (pro pursuit-not-sufficient (am bracton)))
+        a6 (make-arg a6 (pro no-possession (pm actual-possession-required)))
+        a7 (make-arg a7 (pro actual-possession-required (am puffendorf)))
+        a8 (make-arg a8 (pro puffendorf (am bynkershoek)))
+        a9 (make-arg a9 (con actual-possession-required 
                         (pm mortally-wounded-deemed-possessed)
                         (pm mortally-wounded)))
-        a10 (arg a10 (pro mortally-wounded-deemed-possessed (am grotius)))
-        a11 (arg a11 (pro mortally-wounded-deemed-possessed (am barbeyrac)))
-        a12 (arg a12 (con actual-possession-required
+        a10 (make-arg a10 (pro mortally-wounded-deemed-possessed (am grotius)))
+        a11 (make-arg a11 (pro mortally-wounded-deemed-possessed (am barbeyrac)))
+        a12 (make-arg a12 (con actual-possession-required
                           (pm land-owner-has-possession)
                           (pm livelihood-on-own-land)))
-        a13 (arg a13 (pro land-owner-has-possession (am keeble)))
-        a14 (arg a14 (pro actual-possession-required 
+        a13 (make-arg a13 (pro land-owner-has-possession (am keeble)))
+        a14 (make-arg a14 (pro actual-possession-required 
                           (pm certainty)
                           (pm order)))
         args1 (argument-graph (list a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13
