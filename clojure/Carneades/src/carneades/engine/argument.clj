@@ -166,7 +166,7 @@
                               (pm possession-required)
                               (pm no-possession)
                               (pm foxes-are-wild)))"
-  `(def ~id (arg ~id ~definition)))
+  `(def ~id (make-arg ~id ~definition)))
 
 (defmacro make-arg
   "Like defargument but does not assign the created argument to anything,
