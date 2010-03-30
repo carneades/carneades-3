@@ -75,7 +75,7 @@
          {mxConstants/STYLE_DASHED true}))
 
 (defvar- *acceptable-and-complement-acceptable-statement-style*
-  (merge *complement-acceptable-style*
+  (merge *complement-acceptable-statement-style*
          *acceptable-statement-style*))
 
 (defvar- *edge-style*
