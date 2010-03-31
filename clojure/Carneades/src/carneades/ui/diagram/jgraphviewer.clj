@@ -18,16 +18,13 @@
         clojure.contrib.pprint
         carneades.ui.diagram.viewerdef
         carneades.engine.argument)
-  (:import javax.swing.JFrame
-           javax.swing.SwingConstants
-           com.mxgraph.layout.mxCompactTreeLayout
-           com.mxgraph.layout.mxOrganicLayout
+  (:import (javax.swing JFrame JMenu JFileChooser JMenuBar JMenuItem
+                        JWindow SwingConstants UIManager filechooser.FileFilter)
+           (java.awt.event KeyEvent ActionListener)
+           (com.mxgraph.util mxConstants mxUtils mxCellRenderer)
+           (com.mxgraph.view mxGraph mxStylesheet)
            com.mxgraph.layout.hierarchical.mxHierarchicalLayout
-           com.mxgraph.layout.mxStackLayout
-           com.mxgraph.swing.mxGraphComponent
-           com.mxgraph.util.mxConstants
-           com.mxgraph.view.mxGraph
-           com.mxgraph.view.mxStylesheet))
+           com.mxgraph.swing.mxGraphComponent))
 
 (defvar- *title* "Carneades")
 
@@ -158,24 +155,6 @@
     (doto layout
       (.execute p))))
 
-(defn- treelayout [g p]
-  (let [treelayout (mxCompactTreeLayout. g)]
-    (doto treelayout
-      (.setLevelDistance  50) 
-      (.setNodeDistance 50)
-      (.setHorizontal true)
-      (.execute p))))
-
-(defn- organiclayout [g p]
-  (let [organiclayout (mxOrganicLayout. g)]
-    (doto organiclayout
-      (.execute p))))
-
-(defn- stacklayout [g p]
-  (let [stacklayout (mxStackLayout. g true 30 10 10 10)]
-    (doto stacklayout
-      (.execute p))))
-
 (defn- layout [g p]
   (hierarchicallayout g p))
 
@@ -250,6 +229,15 @@
             (add-argument g p ag arg vertices))
           vertices (arguments ag)))
 
+(defn- export-graph [g filename]
+  "Saves the graph on disk. Only SVG format is supported now.
+
+   Throws java.io.Exception"
+  (mxUtils/writeFile (mxUtils/getXml
+                      (.. (mxCellRenderer/createSvgDocument g nil 1 nil nil)
+                          getDocumentElement))
+                     filename))
+
 (defn- create-graph [ag stmt-str]
   (let [g (mxGraph.)
         p (.getDefaultParent g)]
@@ -270,15 +258,66 @@
     (.setConnectable graphcomponent false)
     graphcomponent))
 
+;; code to create the menu
+(defn- create-file-filter []
+  (letfn [(extension [filename]
+                     (last (.split filename "\\.")))]
+    (proxy [FileFilter] []
+      (getDescription []
+                      "SVG Files")
+      (accept [f]
+              (or (.isDirectory f)
+                  (= "svg" (extension (.getName f))))))))
+
+(defn- on-export-as-svg [frame]
+  (let [graph (.. frame getContentPane (getComponent 0) getGraph)
+        filechooser (JFileChooser.)]
+    (doto filechooser
+      (.setDialogTitle "Export as SVG")
+      (.setFileFilter (create-file-filter))
+      (.showSaveDialog frame))
+    (if-let [file (.getSelectedFile filechooser)]
+      (export-graph graph (.getPath file)))))
+
+(defn- on-exit-item [frame]
+  (doto frame
+    (.setVisible false)
+    (.dispose)))
+
+(defn- create-menubar [frame]
+  (let [menuBar (JMenuBar.)
+        fileMenu (JMenu. "File")
+        exportItem (JMenuItem. "Export as SVG..." KeyEvent/VK_E)
+        exitItem (JMenuItem. "Exit" KeyEvent/VK_X)]
+    (.setMnemonic fileMenu KeyEvent/VK_F)
+    (.addActionListener exitItem
+                        (proxy [ActionListener] []
+                          (actionPerformed [e]
+                                           (on-exit-item frame))))
+    (.addActionListener exportItem
+                        (proxy [ActionListener] []
+                          (actionPerformed [e]
+                                           (on-export-as-svg frame))))
+    (.add fileMenu exportItem)
+    (.insertSeparator fileMenu 1)
+    (.add fileMenu exitItem)
+    (.add menuBar fileMenu)
+    menuBar))
+
+(defn- set-native-look-and-feel []
+  (try
+   (UIManager/setLookAndFeel (UIManager/getSystemLookAndFeelClassName))
+   (catch Exception e)))
+
 (defn view-jgraph [ag stmt-str]
+  (set-native-look-and-feel)
   (let [frame (JFrame. *title*)]
     (doto frame
+      (.setJMenuBar (create-menubar frame))
       (.. getContentPane (add (create-graph-component ag stmt-str)))
-      ;(.setDefaultCloseOperation JFrame/EXIT_ON_CLOSE)
+      ;;(.setDefaultCloseOperation JFrame/EXIT_ON_CLOSE)
       (.setSize 800 800)
       (.setVisible true))))
 
 (defmethod view-graph "jgraph" [viewer ag stmt-str]
   (view-jgraph ag stmt-str))
-
-;(view-jgraph nil nil)
