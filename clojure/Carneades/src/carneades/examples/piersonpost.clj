@@ -123,9 +123,9 @@ an important social value.")
        (pm order)))     ; value promoted
 
 (def args1
-     (argument-graph (list a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14)))
+     (argument-graph [a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14]))
 
-(def facts1 (list foxes-are-wild possession-required certainty order))
+(def facts1 [foxes-are-wild possession-required certainty order])
 
 (def tompkins (accept args1 facts1))
 
@@ -175,17 +175,17 @@ and noxious beast.")
 (defargument a17
   (pro foxes-are-noxious (am admitted-in-the-pleadings)))
 
-(def args2 (argument-graph (list a15 a16 a17)))
-(def facts2 (list chased-by-big-dogs))
+(def args2 (argument-graph [a15 a16 a17]))
+(def facts2 [chased-by-big-dogs])
 (def livingston (accept args2 facts2))
 ; (diagram livingston c2)
 ; (view livingston c2)
 
-(def both (accept (assert-arguments tompkins (list a15 a16 a17))
+(def both (accept (assert-arguments tompkins [a15 a16 a17])
                      facts2))
 ; (view both)
 
-(def fig4-args (argument-graph (list a9 a10 a11)))
-(def fig5-args (argument-graph (list a12 a13)))
+(def fig4-args (argument-graph [a9 a10 a11]))
+(def fig5-args (argument-graph [a12 a13]))
 
 (view both)

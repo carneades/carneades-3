@@ -264,7 +264,7 @@
   ([]
      (struct argument-graph-struct (gensym "ag") "" nil {} {}))
   ([exprs]
-     "converts a seq of arguments into an argument 
+     "converts a collection of arguments into an argument 
       graph"
      (assert-arguments (argument-graph) exprs))
   ([id title main-issue]
@@ -376,7 +376,7 @@
   (reduce #(update-statement %1 %2 :questioned) ag statements))
 
 (defn accept [ag statements]
-  "argument-graph (seq-of statement) -> argument-graph"
+  "argument-graph (collection-of statement) -> argument-graph"
   (reduce #(update-statement %1 %2 (if (statement-pos? %2)
                                      :accepted
                                      :rejected)) ag statements))
@@ -611,7 +611,7 @@
 
 (defn assert-arguments [ag args]
   {:pre [(not (nil? ag))]}
-  "argument-graph (seq-of argument) -> argument-graph
+  "argument-graph (collection-of argument) -> argument-graph
 
    asserts a list of arguments"
   (reduce (fn [ag arg] (assert-argument ag arg)) ag args))
