@@ -150,13 +150,30 @@
 (defn- insert-edge [g parent begin end style]
   (.insertEdge g parent nil nil begin end style))
 
-(defn- hierarchicallayout [g p]
-  (let [layout (mxHierarchicalLayout. g SwingConstants/WEST)]
-    (doto layout
-      (.execute p))))
+(defn- translate-right [g p vertices]
+  (letfn [(getx [vertice]
+                (.. vertice getGeometry getX))
+          (setx [vertice x]
+                (. (.. vertice getGeometry) setX x))]
+    (let [minx (reduce (fn [acc vertice]
+                         (min (getx vertice) acc))
+                       0
+                       (vals vertices))
+          margin 10
+          translation (+ margin (- minx))]
+      (dorun
+       (map (fn [v] (setx v (+ (getx v) translation))) (vals vertices))))))
 
-(defn- layout [g p]
-  (hierarchicallayout g p))
+(defn- hierarchicallayout [g p vertices]
+  (let [layout (mxHierarchicalLayout. g SwingConstants/EAST)]
+    (.setAllowNegativeCoordinates g false)
+    (doto layout      
+      (.setFineTuning true)
+      (.execute p)))
+  (translate-right g p vertices))
+
+(defn- layout [g p vertices]
+  (hierarchicallayout g p vertices))
 
 (defn- get-statement-style [ag stmt]
   (cond (acceptable? ag stmt) "acceptableStatement"
@@ -212,7 +229,8 @@
 
 (defn- add-edges [g p ag vertices]
   (dorun
-   (map #(add-argument-edges g p ag % vertices) (arguments ag))))
+   (map #(add-argument-edges g p ag % vertices) (arguments ag)))
+  vertices)
 
 (defn- get-argument-style [ag arg]
   (if (applicable? ag arg)
@@ -245,10 +263,10 @@
      (register-styles (.getStylesheet g))
      (disable-interactions g)
      (.. g getModel beginUpdate)
-     (add-edges g p ag
-                (add-arguments g p ag
-                               (add-statements g p ag stmt-str)))
-     (layout g p)
+     (->> (add-statements g p ag stmt-str)
+          (add-arguments g p ag)
+          (add-edges g p ag)
+          (layout g p))
      (finally
       (.. g getModel endUpdate)))
     g))
