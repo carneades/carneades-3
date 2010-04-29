@@ -1,7 +1,9 @@
-
-(ns carneades.engine.search)
+(ns carneades.engine.search
+  (:use clojure.contrib.pprint))
 
 (defstruct node :depth :label :parent :state)
+
+(defstruct resource :amount)
 
 (defn make-root 
   "Returns the root node of a search space containing the state s."
@@ -32,10 +34,14 @@
    not terminate if the sequence is infinite and contains no goal states."
   ([p s n]
      (let [goal? (:goal p)]
-       (filter (fn [node] (goal? (:state node)))
+       (filter (fn [node]
+                 (if (nil? (:state node))
+                   (throw (IllegalArgumentException.
+                           (format "Invalid node %s" node))))
+                 (goal? (:state node)))
 	       (if (and n (>= n 0))
 		 (take n (s (:space p) (:root p)))
-		 (s (:space p) (:root p))))))
+                 (s (:space p) (:root p))))))
   ([p s] (search p s nil)))
 
 (defn path
