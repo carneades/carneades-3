@@ -7,9 +7,10 @@
   "Read properties from filename. Filename is searched in the classpath"
   ;; see also clojure.contrib.java-utils
   [filename]
-  (with-open [b (ClassLoader/getSystemResourceAsStream filename)]
-    (doto (java.util.Properties.)
-      (.load b))))
+  (doto (java.util.Properties.)
+    (.load (-> (Thread/currentThread)
+               (.getContextClassLoader)
+               (.getResourceAsStream *configfilename*)))))
 
 (defvar- *properties* (read-properties *configfilename*))
 
