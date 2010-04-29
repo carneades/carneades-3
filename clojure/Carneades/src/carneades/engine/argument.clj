@@ -95,7 +95,7 @@
   (isa? (:type p) ::assumption))
 
 (defn exception? [p]
-  (isa? (:type p) ::assumption))
+  (isa? (:type p) ::exception))
 
 (defn premise-atom [p]
   (:atom p))
@@ -201,7 +201,7 @@
 
    Instanciate the variable of an argument by applying substitions"
   (assoc arg
-    :premises (map #(assoc :atom (subs (:atom %))) (:premises arg))
+    :premises (map #(update-in % [:atom] subs) (:premises arg))
     :conclusion (subs (:conclusion arg))))
 
 (defn add-premise [arg p]
@@ -321,7 +321,8 @@
     (or (= (:status n) :rejected)
         (:complement-acceptable n))))
 
-(defn- in? [ag s]
+(defn in? [ag s]
+  {:pre [(not (nil? ag))]}
   "looks up the cached 'in' status of the statement in the agreement graph
    argument-graph statement -> boolean "
   (let [n (get-node ag s)]
@@ -399,7 +400,7 @@
   "argument-graph symbol -> argument | nil"
   ((:arguments ag) id))
 
-(defn ids-arguments [ag ids]
+(defn get-arguments [ag ids]
   "argument-graph (seq-of symbol) -> (seq-of argument)"
   (filter identity (map #(get-argument ag %) ids)))
 
@@ -409,7 +410,7 @@
      argument-graph [statement] -> (seq-of argument)"
    ([ag s]
       (if-let [n (get-node ag s)]
-        (ids-arguments ag (seq (:conclusion-of n)))
+        (get-arguments ag (seq (:conclusion-of n)))
         '()))
    ([ag]
       (if-let [args (vals (:arguments ag))]
@@ -430,7 +431,8 @@
 (defn schemes-applied [ag s]
   "argument-graph statement -> (seq-of symbol)"
   (let [n (get-node ag s)]
-    (map :scheme )))
+    (map (fn [x]
+           (:scheme x)) (get-arguments ag (:conclusion-of n)) )))
 
 (defn accepted? [ag s]
   "argument-graph statement -> boolean"
@@ -527,17 +529,17 @@
   ([ag]
      (mapcat #(vals %) (vals (:nodes ag))))
   ([ag predicate]
-     (throw (Exception. "NYI"))))
-     ;(vals (get-in ag [:nodes predicate]))))
+     ;; predicate is the symbol used as a key for statements
+     (vals (get-in ag [:nodes predicate]))))
 
 (defn in-node-statements [ag n]
   "argument-graph node -> (seq-of statement)
 
    For a node whose statement is P, returns a list of the members of
    '(P (not P)) which are in."
-  (filter identity (list (if (node-in? ag n true)
+  (filter identity (list (if (node-in? n true)
                            (:statement n))
-                         (if (node-in? ag n false)
+                         (if (node-in? n false)
                            (statement-complement (statement-atom n))))))
 
 (defn in-statements
@@ -549,9 +551,9 @@
   of the list of statements returned, since if a weak proof standard is assigned
   to P, both P and (not P) may be in."
  ([ag]
-    (mapcat #(in-node-statements %) (get-nodes ag)))
+    (mapcat #(in-node-statements ag %) (get-nodes ag)))
  ([ag predicate]
-    (mapcat #(in-node-statements %) (get-nodes ag predicate))))
+    (mapcat #(in-node-statements ag %) (get-nodes ag predicate))))
 
 (defn relevant-statements [ag g]
  "argument-graph statement -> (seq-of statement)

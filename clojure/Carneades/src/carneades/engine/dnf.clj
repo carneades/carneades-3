@@ -120,7 +120,7 @@
   "formula -> bool"
   (if (nonemptyseq? formula)
     (if (literal? (first formula))
-      (literals*? (next formula))
+      (literals*? (rest formula))
       false)
     (if (seq? formula)
       true
@@ -130,7 +130,7 @@
   "formula -> bool"
   (if (nonemptyseq? formula)
     (if (extliteral? (first formula))
-      (extliterals*? (next formula))
+      (extliterals*? (rest formula))
       false)
     (if (seq? formula)
       true
@@ -148,14 +148,14 @@
   (and (nonemptyseq? formula)
        (> (count formula) 2)
        (= (first formula) 'and)
-       (formulas*? (next formula))))
+       (formulas*? (rest formula))))
 
 (defn disjunction? [formula]
   "formula -> bool"
   (and (nonemptyseq? formula)
        (> (count formula) 2)
        (= (first formula) 'or)
-       (formulas*? (next formula))))
+       (formulas*? (rest formula))))
 
 (defn lconjunction? [formula]
   "formula -> bool"
@@ -211,7 +211,7 @@
   "formula -> bool"
   (if (nonemptyseq? formula)
     (if (formula? (first formula))
-      (recur (next formula))
+      (recur (rest formula))
       false)
     (if (seq? formula)
       true
@@ -224,14 +224,14 @@
    implication is substituted a=>b -> (not a) or b
   "
   (cond (equivalence? formula)
-        (let [rformula (map equivalence-conversion (next formula))]
+        (let [rformula (map equivalence-conversion (rest formula))]
           (list 'and
                 (list 'if (first rformula) (second rformula))
                 (list 'if (second rformula) (first rformula))))
         (literal? formula) formula
         (formula? formula) (cons (first formula)
                                  (map equivalence-conversion
-                                      (next formula)))
+                                      (rest formula)))
         :else formula))
 
 (defn implication-conversion [formula]
@@ -239,11 +239,11 @@
   ;; implication is substituted
   ;; a=>b -> (not a) or b
   (cond (implication? formula) (let [[x y] (map implication-conversion
-                                                (next formula))]
+                                                (rest formula))]
                                  (list 'or (list 'not x) y))
         (literal? formula) formula
         (formula? formula?) (cons (first formula)
-                                  (map implication-conversion (next formula)))
+                                  (map implication-conversion (rest formula)))
         :else formula))
 
 (defn negate [formula]
@@ -259,9 +259,9 @@
    "
   (cond (literal? formula) formula
         (conjunction? formula) (cons (first formula)
-                                     (map negation-conversion (next formula)))
+                                     (map negation-conversion (rest formula)))
         (disjunction? formula) (cons (first formula)
-                                     (map negation-conversion (next formula)))
+                                     (map negation-conversion (rest formula)))
         (negation? formula) (let [f (second formula)]
                               ;; formula (not (not t)) -> t
                               ;; (second (second formula)) = t
@@ -272,27 +272,27 @@
                                     (conjunction? f)
                                     (cons 'or (map negation-conversion
                                                    (map negate
-                                                        (next
+                                                        (rest
                                                          (second formula)))))
                                     ;; formula = (not (or t1 t2 ...))
                                     ;; -> (and (not t1) (not t2) ...)
                                     (disjunction? f)
                                     (cons 'and (map negation-conversion
                                                     (map negate
-                                                         (next
+                                                         (rest
                                                           (second formula)))))
                                     ;; formula = (not (assuming t))
                                     ;; -> (assuming (not t))
                                     (assumption? f)
                                     (list 'assuming
                                           (negation-conversion
-                                           (cons 'not (next (second formula)))))
+                                           (cons 'not (rest (second formula)))))
                                     ;; formula = (not (unless t))
                                     ;; -> (unless (not t))
                                     (exception? f)
                                     (list 'unless (negation-conversion
                                                    (cons 'not
-                                                         (next
+                                                         (rest
                                                           (second formula)))))
                                     :else (negation-conversion f)))
         :else formula))
@@ -305,7 +305,7 @@
    it us used as a single application of the distributive law, where the 
    elements of the list of formulas as well as the disjunction were operands 
    of a conjunction"
-  (cons 'or (map #(cons 'and (conj formulas %)) (next dis))))
+  (cons 'or (map #(cons 'and (conj formulas %)) (rest dis))))
 
 (defn distributive-conversion [formula]
   "Uses distributiv law to bring inner disjunctions to an outer level
@@ -317,11 +317,11 @@
                                   (distributive-conversion (second formula)))
         (disjunction? formula) (cons (first formula)
                                      (map distributive-conversion
-                                          (next formula)))
+                                          (rest formula)))
         (conjunction? formula) (let [rformulas ;; apply the conversion
                                      ;; recursively to all operands
                                      (map distributive-conversion
-                                          (next formula))
+                                          (rest formula))
                                      ;; split the operands to disjunctions and
                                      ;; no disjunctions
                                      disj (filter disjunction? rformulas)
@@ -341,7 +341,7 @@
                                        ;; distributive law once and start again
                                        (distributive-conversion
                                         (associative-conversion
-                                         (distri (conj (next disj) nodisj)
+                                         (distri (conj (rest disj) nodisj)
                                                  (first disj))))))
         :else formula))
 
@@ -350,11 +350,11 @@
   (if (not (empty? formulas))
     (if (> (count formulas) 1)
       (if (con? (first formulas))
-        (concat (x-flatten (next (first formulas)) dis? con?)
-                (x-flatten (next formulas) dis? con?))
-        (cons (first formulas) (x-flatten (next formulas) dis? con?)))
+        (concat (x-flatten (rest (first formulas)) dis? con?)
+                (x-flatten (rest formulas) dis? con?))
+        (cons (first formulas) (x-flatten (rest formulas) dis? con?)))
       (if (con? (first formulas))
-        (x-flatten (next (first formulas)) dis? con?)
+        (x-flatten (rest (first formulas)) dis? con?)
         formulas))
     formulas))
 
@@ -382,11 +382,11 @@
         (conjunction? formula) (cons
                                 (first formula)
                                 (con-flatten
-                                 (map associative-conversion (next formula))))
+                                 (map associative-conversion (rest formula))))
         (disjunction? formula) (cons
                                 (first formula)
                                 (dis-flatten
-                                 (map associative-conversion (next formula))))
+                                 (map associative-conversion (rest formula))))
         :else formula))
 
 

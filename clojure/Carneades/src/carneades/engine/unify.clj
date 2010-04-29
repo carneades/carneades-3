@@ -91,15 +91,32 @@
                                   occurs-check)))]
              (unif (term-args u) (term-args v) s))
            :else (kf :clash)))
+  ([u v s]
+     (unify u v s identity (fn [state] nil) false))
   ([u v]
-     (unify u v identity #(% u) (fn [state] nil) false)))
+     (unify u v identity identity (fn [state] nil) false)))
 
 (defn genvar []
   "generate a fresh, unique variable"
   (gensym "?"))
 
-(defn rename-variables [m t]
-  (throw (Exception. "NYI")))
+(defn rename-variables [m trm]
+   "hashmap term -> [hashmap term]
+
+    Systematically rename the variables in term, keeping track of the 
+    replacements in the map"                
+   (cond (variable? trm) (if-let [v (m trm)]
+                           [m v]
+                           (let [v (genvar)]
+                             [(assoc m trm v) v]))
+         (nonemptyseq? trm) (let [[m2 trm2] (rename-variables m (first trm))
+                                  [m3 trm3] (rename-variables m2 (next trm))]
+                              [m3 (cons trm2 trm3)])
+         (fatom? trm) (let [[m2 trm2] (rename-variables m (first (:term trm)))
+                            [m3 trm3] (rename-variables m2 (next (:term trm)))]
+                        [m3 (assoc trm :term
+                                   (cons trm2 trm3))])
+         :else [m trm]))
 
 (deftest test-unify
   (is (= '?y (unify '?x '?y)))
