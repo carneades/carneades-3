@@ -52,4 +52,4 @@ $ lein repl
 
 And then type, for instance to test the Pierson-Post example:
 
-(use :reload-all 'carneades.examples.piersonspost)
+(use :reload-all 'carneades.examples.piersonpost)
