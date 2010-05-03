@@ -77,7 +77,9 @@
 
 (defvar- *edge-style*
   {mxConstants/STYLE_ENDARROW mxConstants/ARROW_CLASSIC
-   mxConstants/STYLE_STROKEWIDTH 1.25})
+   mxConstants/STYLE_STROKEWIDTH 1.25
+   mxConstants/STYLE_ROUNDED true})
+;; mxConstants/STYLE_EDGE mxConstants/EDGESTYLE_ENTITY_RELATION
 
 (defvar- *conclusion-edge-style* *edge-style*)
 
@@ -132,8 +134,9 @@
                    "negAssumptionEdge" *neg-assumption-edge-style*
                    "negExceptionEdge" *neg-exception-edge-style*})
 
-(defn- disable-interactions [g]
+(defn- configure-graph [g]
   (doto g
+    ;; (.setAllowNegativeCoordinates false)
     (.setCellsEditable false)
     (.setEdgeLabelsMovable false)
     (.setVertexLabelsMovable false)
@@ -161,16 +164,18 @@
                        (vals vertices))
           margin 10
           translation (+ margin (- minx))]
-      (dorun
-       (map (fn [v] (setx v (+ (getx v) translation))) (vals vertices))))))
+      (.. g getView (scaleAndTranslate 1 translation 0)))))
 
 (defn- hierarchicallayout [g p vertices]
   (let [layout (mxHierarchicalLayout. g SwingConstants/EAST)]
     (.setAllowNegativeCoordinates g false)
-    (doto layout      
+    (doto layout
       (.setFineTuning true)
-      (.execute p)))
-  (translate-right g p vertices))
+      (.execute p))
+    ;; negative coordinates are used by the layout algorithm
+    ;; even with setAllowNegativeCoordinates set to false.
+    ;; we translate to make all edges and vertices visible
+    (translate-right g p vertices)))
 
 (defn- layout [g p vertices]
   (hierarchicallayout g p vertices))
@@ -261,7 +266,7 @@
         p (.getDefaultParent g)]
     (try
      (register-styles (.getStylesheet g))
-     (disable-interactions g)
+     (configure-graph g)
      (.. g getModel beginUpdate)
      (->> (add-statements g p ag stmt-str)
           (add-arguments g p ag)
