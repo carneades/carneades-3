@@ -137,7 +137,7 @@
 (defn- configure-graph [g]
   (doto g
     ;; (.setAllowNegativeCoordinates false)
-    (.setCellsEditable false)
+    (.setCellsLocked true)
     (.setEdgeLabelsMovable false)
     (.setVertexLabelsMovable false)
     (.setCellsDisconnectable false)))
