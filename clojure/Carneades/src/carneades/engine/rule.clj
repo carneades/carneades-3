@@ -99,7 +99,7 @@
                            'not stmt
                            'unless stmt
                            'assuming stmt
-                           'applies (nth s 3)
+                           'applies (nth s 2)
                            s))))
 
 (defstruct named-clause
@@ -174,9 +174,11 @@
             "Empty sequence as second argument"))))
 
 (defmacro rule  [id body]
+  "create a rule, not strict"
   (rule-macro-helper id body false))
 
 (defmacro rule*  [id body]
+  "create a strict rule"
   (rule-macro-helper id body true))
 
 (defn statement-to-premise [s]
@@ -202,17 +204,16 @@
                           (condp = question
                             'excluded
                             (ex (struct fatom
-                                        "Rule %s is exclcuded for %s."
-                                        `(~'excluded ~rid ~rid ~s)))
+                                        "Rule %s is excluded for %s."
+                                        `(~'excluded ~rid ~s)))
                             'priority
                             (ex
                              (struct fatom
                               "Rule %s has priority over %s respect to %s."
-                              ;; why random variable here?
                               `(~'priority ~(genvar) ~rid ~s)))
                             'valid
-                            (ex `(not ~(struct fatom "Rule %s is valid."
-                                                  `(~'valid ~rid))))))]
+                            (ex `(~'not ~(struct fatom "Rule %s is valid."
+                                                 `(~'valid ~rid))))))]
     (if strict
       '()
       ;; filter out unknown questions
@@ -332,11 +333,11 @@
                ;; apply the clause for conclusion
                ;; in the head of the rule
                (let [subs2 (or (unify c subgoal subs)
-                               (unify `(unless ~c)
+                               (unify `(~'unless ~c)
                                       subgoal subs)
-                               (unify `(assuming ~c)
+                               (unify `(~'assuming ~c)
                                       subgoal subs)
-                               (unify `(applies ~(:rule clause) ~c) subgoal subs))]
+                               (unify `(~'applies ~(:rule clause) ~c) subgoal subs))]
                  (if (not subs2)
                    ;; fail
                    false
@@ -346,15 +347,14 @@
                          premises (concat (map statement-to-premise (:clause clause))
                                           (rule-critical-questions (:rule clause) qs subgoal (:strict clause)))
                          scheme (str (:rule clause) (:id clause))] 
-                     (struct as/response subs2
-                             (argument arg-id
-                                       false
-                                       *default-weight*
-                                       direction
-                                       conclusion
-                                       premises
-                                       scheme))))))
-              
+                     (as/response subs2
+                                  (argument arg-id
+                                            false
+                                            *default-weight*
+                                            direction
+                                            conclusion
+                                            premises
+                                            scheme))))))
               (apply-clause [clause]
                             (filter identity (map #(apply-for-conclusion clause %) (:head clause)) ))]
         (mapinterleave (fn [c]
