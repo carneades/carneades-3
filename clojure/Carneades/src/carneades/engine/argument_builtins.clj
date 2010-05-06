@@ -57,6 +57,18 @@
         '()))
     (catch java.lang.SecurityException e '())))
 
+(defn- dispatch-equal [subs stmt term1 term2]
+  (if-let [subs2 (unify term1 term2 subs)]
+    (list (response subs2 (argument (gensym "a") :pro stmt '()
+                                    "builtin:eval")))
+    '()))
+
+(defn- dispatch-notequal [subs stmt term1 term2]
+  (if-let [subs2 (unify term1 term2 subs)]
+    '()
+    (list (response subs (argument (gensym "a") :pro stmt '()
+                                    "builtin:eval")))))
+
 (defn dispatch [stmt state]
   "stmt state -> (stream-of response)"
   (let [args (:arguments state)
@@ -65,8 +77,8 @@
         [pre term1 term2] wff]
     (condp = pre
           'eval (dispatch-eval subs stmt term1 term2)
-          '= (throw (Exception. "NYI"))
-          'not= (throw (Exception. "NYI"))
+          '= (dispatch-equal subs stmt term1 term2)
+          'not= (dispatch-notequal subs stmt term1 term2)
           (try-unify stmt args subs))))
 
 (defn builtins [goal state]
