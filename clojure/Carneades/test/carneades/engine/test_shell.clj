@@ -252,5 +252,32 @@
         query '(taxable-income Sam ?x)]
     (is (succeed? query eng))))
 
+(deftest test-engine-15-builtin-equal
+  (let [rb (rulebase
+            (rule r-doctor
+                  (if (= (Title ?x ?y) (Title ?x Doctor))
+                    (Doctor ?x))))
+        ag (arg/accept arg/*empty-argument-graph*
+                       '((Title Tom Doctor)
+                         (Title Tom Professor)))
+        eng (engine rb ag 20 1)
+        query '(Doctor Tom)]
+    (is (succeed? query eng))))
+
+(deftest test-engine-16-builtin-notequal
+  (let [rb (rulebase
+            (rule r-militaryduty
+                  (if (not= (MilitaryStatus ?x ?y) (MilitaryStatus ?x Exempted))
+                    (Enrolled ?x))))
+        ag (arg/accept arg/*empty-argument-graph*
+                       '((MilitaryStatus Lena Exempted)
+                         (MilitaryStatus Joe Done)))
+        eng (engine rb ag 20 1)
+        query '(Enrolled Lena)
+        query2 '(Enrolled Joe)]
+    (is (fail? query eng))
+    ;; (is (succeed? query2 eng))
+    ))
+
 ;; (view (:arguments (first (solutions (eng query)))))
 
