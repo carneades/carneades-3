@@ -35,9 +35,6 @@
   ([p s n]
      (let [goal? (:goal p)]
        (filter (fn [node]
-                 (if (nil? (:state node))
-                   (throw (IllegalArgumentException.
-                           (format "Invalid node %s" node))))
                  (goal? (:state node)))
 	       (if (and n (>= n 0))
 		 (take n (s (:space p) (:root p)))

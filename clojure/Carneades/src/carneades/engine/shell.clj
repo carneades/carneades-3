@@ -31,7 +31,7 @@
   "integer integer argument-graph (seq-of generator) -> statement -> 
    (seq-of state)"
   (fn [goal]
-    (find-best-arguments depth-first max-turns
+    (find-best-arguments depth-first max-nodes max-turns
                          (initial-state goal ag) generators)))
 
 (defn make-engine [max-nodes max-turns generators]

@@ -2,7 +2,8 @@
   (:use clojure.contrib.pprint
         carneades.engine.argument-builtins
         carneades.engine.shell
-        carneades.engine.rule)
+        carneades.engine.rule
+        carneades.ui.diagram.viewer)
   (:require [carneades.engine.argument :as arg]))
 
 (def rb1
@@ -60,25 +61,23 @@
               (p9 ?x)))
    
       ;; eval test
-      ;; (rule r21 
-      ;;       (if (and (p10 ?x) (eval ?z (reverse ?x))) 
-      ;;         (p11 ?z)))
-   
+      (rule r21 
+            (if (and (p10 ?x) (eval ?z (reverse ?x))) 
+              (p11 ?z)))
    
       ;; another eval test, to demonstrate calculations
-      ;; (rule r22 
-      ;;       (if (and (income ?x ?i)
-      ;;                (deductions ?x ?d)
-      ;;                (eval ?t (- ?i ?d)))
-      ;;         (taxable-income ?x ?t)))
+      (rule r22
+            (if (and (income ?x ?i)
+                     (deductions ?x ?d)
+                     (eval ?t (- ?i ?d)))
+              (taxable-income ?x ?t)))
    
       )) ;; of rule base
 
 ; accept some facts 
 (def ag1
      (arg/accept arg/*empty-argument-graph*
-                 '(
-                   (coins item1)
+                 '((coins item1)
                    (bird Tweety)
                    (penguin Tweety)
                    (enacted r1 d1)
@@ -103,16 +102,23 @@
   (make-engine* max-nodes max-turns ag1
                 (list (generate-arguments-from-rules rb1 critical-questions) builtins)))
 
-(printf "succeed? %s\n"(succeed? '(bird Tweety) (engine 20 1 []))) ;; t
-(printf "succeed? %s\n" (succeed? '(bird ?x) (engine 20 1 []))) ;; t
-(printf "succeed? %s\n" (succeed? '(money item1) (engine 20 1 []))) ;; t
-(printf "succeed? %s\n" (succeed? '(prior ?r1 ?r2) (engine 20 1 []))) ;; t
-(printf "succeed? %s\n" (succeed? '(p3 a) (engine 20 1 []))) ;; t
-(printf "succeed ? %s\n" (succeed? '(p9 a) (engine 20 1 []))) ;; t
-(printf "succeed ? %s\n" (succeed? '(goods item1) (engine 20 1 []))) ;; t
-(printf "fail? %s\n" (fail? '(goods item1) (engine 20 2 []))) ;; t
-(printf "succeed? %s\n" (succeed? '(goods item1) (engine 20 2 []))) ;; f
-(printf "fail? %s\n" (fail? '(goods item2) (engine 20 2 []))) ;; t
-(printf "fail? %s\n" (fail? '(goods item2) (engine 20 2 '(priority)))) ;; t
-(printf "succeed? %s\n" (succeed? '(not (goods item2)) (engine 20 3 []))) ;; t
+(defn engine [max-nodes max-turns critical-questions]
+  (make-engine* max-nodes max-turns ag1
+                (list (generate-arguments-from-rules rb1 critical-questions)
+                      builtins)))
 
+;; (printf "succeed? %s\n"(succeed? '(bird Tweety) (engine 20 1 [])))
+;; (printf "succeed? %s\n" (succeed? '(bird ?x) (engine 20 1 [])))
+;;(printf "succeed? %s\n" (succeed? '(money item1) (engine 20 1 [])))
+;; (printf "succeed? %s\n" (succeed? '(prior ?r1 ?r2) (engine 20 1 [])))
+;; (printf "succeed? %s\n" (succeed? '(p3 a) (engine 20 1 [])))
+;; (printf "succeed ? %s\n" (succeed? '(p9 a) (engine 20 1 [])))
+;; (printf "fail? %s\n" (fail? '(goods item1) (engine 20 2 [])))
+;; (printf "fail? %s\n" (fail? '(goods item2) (engine 20 2 [])))
+;; (printf "fail? %s\n" (fail? '(convenient item1) (engine 20 2 '(valid))))
+;;(printf "fail? %s\n" (fail? '(goods item2) (engine 20 2 '(priority))))
+;; (printf "succeed? %s\n" (succeed? '(not (goods item2)) (engine 20 3 [])))
+;; (printf "fail? %s\n" (fail? '(flies Tweety) (engine 20 2 '(excluded))))
+;; (printf "succeed? %s\n" (succeed? '(applies ?r (goods ?x)) (engine 20 2 [])))
+;; (printf "succeed? %s\n" (succeed? '(p11 ?x) (engine 20 1 [])))
+(printf "succeed? %s\n" (succeed? '(taxable-income Sam ?x) (engine 20 1 [])))
