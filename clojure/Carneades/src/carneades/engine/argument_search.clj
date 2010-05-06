@@ -37,10 +37,14 @@
   (struct state-struct topic viewpoint pro-goals con-goals
           arguments substitutions candidates))
 
-(defstruct response
+(defstruct- response-struct
   :substitutions ;; term -> term
   :argument ;; argument | nil
   )
+
+(defn response [subs arg]
+  {:pre [(not (nil? subs))]}
+  (struct response-struct subs arg))
 
 (defn initial-state [topic ag]
   "statement argument-graph -> state"
@@ -62,10 +66,10 @@
   (filter (partial arg/questioned? ag) assumptions))
 
 (defn apply-candidates [subs ag candidates]
-  {:pre [(not (nil? ag))]}
+  {:pre [(not (nil? subs))
+         (not (nil? ag))]}
   "substitutions argument-graph (list-of candidate)
    -> [ag candidate]"
-  (doall
    (reduce
     (fn [acc c]
       (let [[ag2 candidates2] acc]
@@ -78,7 +82,7 @@
               candidates2])
           [ag2 (cons c candidates2)])))
     [ag '()]
-    candidates)))
+    candidates))
 
 (defn update-goals [dis-of-con replacements]
   "(seq-of (seq-of statement)) (seq-of statement)  ->
@@ -146,6 +150,7 @@
            newcandidates)))
 
 (defn- make-successor-state-noforward [stat newsubs]
+  {:pre [(not (nil? newsubs))]}
   "create a successor state by modifying the substitutions of the state, 
    but without putting forward a new argument."
   (let [[newag newcandidates]
@@ -231,19 +236,36 @@
                :con :pro))]
     (update-in s [:viewpoint] opposing-viewpoint)))
 
-(defn searcharg [turns arguments strategy generators]
+(defn find-arguments [strategy max-nodes initial-state generators]
+  "strategy state (seq-of generator) -> (seq-of state)"
+  (let [root (search/make-root initial-state)
+        r (search/search (struct search/problem
+                                 root
+                                 (make-transitions generators)
+                                 goal-state?)
+                         strategy
+                         max-nodes)]
+    (map :state r)))
+
+(defn searcharg [strategy max-nodes turns arguments generators]
   (if (<= turns 0)
     arguments
     (mapinterleave (fn [state2]
-                     (let [arg2 (find-arguments strategy
-                                                (switch-viewpoint state2)
-                                                generators)]
+                     (let [arg2 (find-arguments
+                                 strategy
+                                 max-nodes
+                                 (switch-viewpoint state2)
+                                 generators)]
                        (if (empty? arg2)
                          (list state2)
-                         (searcharg (dec turns) arg2 strategy generators))))
+                         (searcharg strategy
+                                    max-nodes
+                                    (dec turns)
+                                    arg2
+                                    generators))))
                    arguments)))
 
-(defn find-best-arguments [strategy max-turns state1 generators]
+(defn find-best-arguments [strategy max-nodes max-turns state1 generators]
   "strategy int state (seq-of generator) -> (seq-of state)
   
   find the best arguments for *both* viewpoints, starting with the viewpoint of
@@ -254,6 +276,6 @@
   counterarguments in its resulting stream of arguments."
   (if (neg? max-turns)
     '()
-    (searcharg (dec max-turns) (find-arguments strategy state1 generators)
-               strategy generators)))
-
+    (searcharg strategy max-turns (dec max-turns)
+               (find-arguments strategy max-nodes state1 generators)
+               generators)))

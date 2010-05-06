@@ -43,6 +43,3 @@
          (rule r6 
                (if (edible ?x) 
                  (not (goods ?x)))))))
-
-
-
