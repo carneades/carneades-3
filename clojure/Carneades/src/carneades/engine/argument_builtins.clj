@@ -55,7 +55,8 @@
         (list (response subs2 (argument (gensym "a") :pro stmt '()
                                         "builtin:eval")))
         '()))
-    (catch java.lang.SecurityException e '())))
+    (catch java.lang.SecurityException e '())
+    (catch java.util.concurrent.TimeoutException e '())))
 
 (defn- dispatch-equal [subs stmt term1 term2]
   (if-let [subs2 (unify term1 term2 subs)]
