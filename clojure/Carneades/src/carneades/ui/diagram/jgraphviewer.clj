@@ -23,7 +23,9 @@
            (java.awt.event KeyEvent ActionListener)
            (com.mxgraph.util mxConstants mxUtils mxCellRenderer)
            (com.mxgraph.view mxGraph mxStylesheet)
+           com.mxgraph.model.mxGeometry
            com.mxgraph.layout.hierarchical.mxHierarchicalLayout
+           com.mxgraph.layout.mxStackLayout
            com.mxgraph.swing.mxGraphComponent))
 
 (defvar- *title* "Carneades")
@@ -137,7 +139,9 @@
 (defn- configure-graph [g]
   (doto g
     ;; (.setAllowNegativeCoordinates false)
-    (.setCellsLocked true)
+    ;; seems there is a bug with stacklayout and setCellsLocked
+    ;; so setCellsLocked is called after the layout
+    ;; (.setCellsLocked true)
     (.setEdgeLabelsMovable false)
     (.setVertexLabelsMovable false)
     (.setCellsDisconnectable false)))
@@ -152,19 +156,21 @@
 
 (defn- insert-edge [g parent begin end style]
   (.insertEdge g parent nil nil begin end style))
+(defn- getx [vertex]
+  (.. vertex getGeometry getX))
+
+(defn- setx [vertex x]
+  (. (.. vertex getGeometry) setX x))
 
 (defn- translate-right [g p vertices]
-  (letfn [(getx [vertice]
-                (.. vertice getGeometry getX))
-          (setx [vertice x]
-                (. (.. vertice getGeometry) setX x))]
-    (let [minx (reduce (fn [acc vertice]
-                         (min (getx vertice) acc))
-                       0
-                       (vals vertices))
-          margin 10
-          translation (+ margin (- minx))]
-      (.. g getView (scaleAndTranslate 1 translation 0)))))
+  (let [minx (reduce (fn [acc vertex]
+                       (min (getx vertex) acc))
+                     0
+                     (vals vertices))
+        margin 10
+        translation (+ margin (- minx))
+        ytranslation 30]
+    (.. g getView (scaleAndTranslate 1 translation ytranslation))))
 
 (defn- hierarchicallayout [g p vertices]
   (let [layout (mxHierarchicalLayout. g SwingConstants/EAST)]
@@ -177,8 +183,32 @@
     ;; we translate to make all edges and vertices visible
     (translate-right g p vertices)))
 
+(defn- align-orphan-cells [g p vertices]
+  "align orphan cells on the right of the graph, with a stacklayout"
+  (letfn [(isorphan?
+           [vertex]
+           (empty? (.getEdges g vertex)))]
+    (let [[orphans maxx-notorphan]
+          (reduce (fn [acc vertex]
+                    (let [[orphans maxx-notorphan] acc
+                          x (getx vertex)]
+                      (cond (isorphan? vertex)
+                            [(conj orphans vertex) maxx-notorphan]
+                            (> x maxx-notorphan) [orphans x]
+                            :else acc)))
+                  ['() 0]
+                  (vals vertices))
+          stackspacing 20
+          groupparent (.insertVertex g p nil "" 0 0 0 0 "opacity=0")
+          group (. g groupCells groupparent 0 (to-array orphans))
+          stacklayout (mxStackLayout. g false stackspacing 0 0 0)]
+      (.execute stacklayout groupparent)
+      ;; make the parent invisible
+      (.setGeometry group (mxGeometry. 0 0 0 0)))))
+
 (defn- layout [g p vertices]
-  (hierarchicallayout g p vertices))
+  (hierarchicallayout g p vertices)
+  (align-orphan-cells g p vertices))
 
 (defn- get-statement-style [ag stmt]
   (cond (acceptable? ag stmt) "acceptableStatement"
@@ -272,12 +302,19 @@
           (add-arguments g p ag)
           (add-edges g p ag)
           (layout g p))
+     (.setCellsLocked g true)
      (finally
       (.. g getModel endUpdate)))
     g))
 
 (defn- create-graph-component [ag stmt-str]
-  (let [graphcomponent (mxGraphComponent. (create-graph ag stmt-str))]
+  (let [g (create-graph ag stmt-str)
+        graphcomponent (proxy [mxGraphComponent] [g]
+                         ;; no icon for groups
+                         ;; allow invisible groups
+                         (getFoldingIcon
+                          [state]
+                          nil))]
     (.setConnectable graphcomponent false)
     graphcomponent))
 
