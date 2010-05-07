@@ -267,7 +267,8 @@
 (deftest test-engine-16-builtin-notequal
   (let [rb (rulebase
             (rule r-militaryduty
-                  (if (not= (MilitaryStatus ?x ?y) (MilitaryStatus ?x Exempted))
+                  (if (and (MilitaryStatus ?x ?y)
+                        (not= ?y Exempted))
                     (Enrolled ?x))))
         ag (arg/accept arg/*empty-argument-graph*
                        '((MilitaryStatus Lena Exempted)
@@ -276,8 +277,7 @@
         query '(Enrolled Lena)
         query2 '(Enrolled Joe)]
     (is (fail? query eng))
-    ;; (is (succeed? query2 eng))
-    ))
+    (is (succeed? query2 eng))))
 
 ;; (view (:arguments (first (solutions (eng query)))))
 

@@ -60,14 +60,14 @@
 (defn- dispatch-equal [subs stmt term1 term2]
   (if-let [subs2 (unify term1 term2 subs)]
     (list (response subs2 (argument (gensym "a") :pro stmt '()
-                                    "builtin:eval")))
+                                    "builtin:=")))
     '()))
 
 (defn- dispatch-notequal [subs stmt term1 term2]
   (if-let [subs2 (unify term1 term2 subs)]
     '()
     (list (response subs (argument (gensym "a") :pro stmt '()
-                                    "builtin:eval")))))
+                                    "builtin:not=")))))
 
 (defn dispatch [stmt state]
   "stmt state -> (stream-of response)"
