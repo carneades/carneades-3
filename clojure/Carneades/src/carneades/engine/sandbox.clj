@@ -20,6 +20,7 @@
 (defvar- *sandbox* (new-sandbox))
 
 (defn eval-expr [expr]
-  "throws java.lang.SecurityException"
+  "throws java.lang.SecurityException
+   and java.util.concurrent.TimeoutException"
   (*sandbox* expr))
 
