@@ -9,6 +9,7 @@
 ;; This is a purely functional implementation of de Kleer's ATMS
 ;; based on Ulrich Junker's more imperative implementation in Standard ML.
 
+;; Warning: This code is buggy and needs work.
 
 (defstruct atms :nodes) ; datum -> node map
 
