@@ -55,3 +55,13 @@
    a simplified version of make-engine*, using the default-context "
   (make-engine* max-nodes max-turns arg/*empty-argument-graph* generators))
 
+(defn ask
+  " ask: statement (statement -> (stream-of state)) -> void
+
+    Displays the query with the substitions found in each state
+    produced by the given inference engine or prints nothing if the stream is emtpy.
+    Always terminates, as only states found given the resource limit of the
+    inference engine will be displayed."
+  [query engine]
+  (map (fn [s] (pprint ((:substitutions s) query))) (solutions (engine query))))
+
