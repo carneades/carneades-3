@@ -182,11 +182,13 @@
   (rule-macro-helper id body true))
 
 (defn statement-to-premise [s]
-  (let [[predicate stmt] s]
-    (condp = predicate
-      'unless (ex stmt)
-      'assuming (am stmt)
-      (pm s))))
+  (if (seq? s)
+    (let [[predicate stmt] s]
+      (condp = predicate
+        'unless (ex stmt)
+        'assuming (am stmt)
+        (pm s)))
+    (pm s)))
 
 (defvar *question-types* #{'excluded 'priority 'valid}
   "question-type = excluded | priority | valid")
