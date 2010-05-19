@@ -214,7 +214,7 @@
 ;;                  pe        ; preponderance of the evidence
 ;;                  cce       ; clear and convincing evidence
 ;;                  brd       ; beyond a reasonable doubt
-(defvar- *default-proof-standard* :dv)
+(defvar *default-proof-standard* :dv)
 
 (defstruct- node-struct
   :statement ; statement
