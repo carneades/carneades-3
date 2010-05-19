@@ -6,7 +6,7 @@
 </statement>
 <statement id="s3" value="unknown" assumption="true" standard="PE"><s>Excuse</s>
 </statement>
-<statement id="s4" value="true" assumption="false" standard="PE"><s>Sick</s>
+<statement id="s4" value="unknown" assumption="true" standard="PE"><s>Ill</s>
 </statement>
 <statement id="s5" value="unknown" assumption="true" standard="PE"><s>Cold</s>
 </statement>
