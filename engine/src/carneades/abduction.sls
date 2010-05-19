@@ -21,7 +21,8 @@
  (carneades abduction)
  
  (export statement-in-label statement-out-label
-         argument-in-label argument-out-label)
+         argument-in-label argument-out-label
+         assume-decided-statements verum falsum)
  
  (import (rnrs)
          (carneades argument)
@@ -29,6 +30,14 @@
  
  
  (define (flatmap f l) (apply append (map f l))) 
+ 
+ ; assume-decided-statements: argument-graph -> (list-of statement)
+ (define (assume-decided-statements ag)
+   (let*-values (((symbols stbl) (hashtable-entries (argument-graph-nodes ag)))
+                ((statements) (flatmap (lambda (t) (vector->list (hashtable-keys t))) (vector->list stbl)))
+                ((dec) (filter (lambda (s) (decided? ag s)) statements))
+                ((acc rej) (partition (lambda (s) (accepted? ag s)) dec)))
+    (apply append (list acc (map statement-complement rej)))))
  
  (define verum-clause (list #t))
  (define verum (list verum-clause))
