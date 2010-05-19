@@ -31,9 +31,9 @@
          statements->nodes in-statements arguments pro-arguments con-arguments schemes-applied status proof-standard prior
          decided? accepted? rejected? questioned? stated? issue? make-argument-graph empty-argument-graph 
          argument-graph? argument-graph-id argument-graph-title argument-graph-main-issue argument-graph-nodes
-         argument-graph-arguments assert-argument assert-arguments 
+         argument-graph-arguments assert-argument assert-arguments merge-argument-graphs
          relevant? satisfies? acceptable? holds? applicable? in? out? get-argument
-         list->argument-graph get-node)
+         list->argument-graph get-node depth)
  
  (import (rnrs)
          (rnrs records syntactic)
@@ -678,6 +678,64 @@
    (fold-right (lambda (arg ag) (assert-argument ag arg))
                ag 
                args))
+ 
+ (define (fresh-argument-id arg)
+   (make-argument (gensym 'a)
+                  (argument-applicable arg)
+                  (argument-weight arg)
+                  (argument-direction arg)
+                  (argument-conclusion arg)
+                  (argument-premises arg)
+                  (argument-scheme arg)))
+ 
+ #;(define (merge-argument-graphs l)
+   (fold-left (lambda (ag1 ag2) (assert-arguments ag2 (map fresh-argument-id (arguments ag1))))
+              empty-argument-graph
+              l))
+ 
+ (define (merge-argument-graphs l)
+   (fold-right combine-graphs empty-argument-graph l))
+ 
+ (define (combine-graphs ag1 ag2)
+   (let ((args (arguments ag2)))
+     (fold-left unite-args ag1 args)))
+ 
+ (define (unite-args ag arg)
+   (if (find (lambda (arg2) (and (equal? (argument-scheme arg) (argument-scheme arg2))
+                                 (statement=? (argument-conclusion arg) (argument-conclusion arg2))))
+             (arguments ag))
+       (begin 
+         (display "argument filtered: ")
+         (display (argument-id arg))         
+         (newline)
+         (display "conclusion: ")
+         (display (argument-conclusion arg))         
+         (newline)
+         (display "scheme: ")
+         (display (argument-scheme arg))         
+         (newline)
+         ag)
+       (assert-argument ag (fresh-argument-id arg))))
+ 
+ (define (get-minimum l)
+   (get-minimum* (car l) (cdr l)))
+ 
+ (define (get-minimum* n l)
+   (if (null? l)
+       n
+       (let ((new (car l)))
+         (if (< new n)
+             (get-minimum* new (cdr l))
+             (get-minimum* n (cdr l))))))
+ 
+ (define (depth ag stmt)
+   (let* ((n (get-node ag stmt))
+          (parent-args (node-premise-of n))
+          (parent-stmts (map (lambda (aid) (argument-conclusion (get-argument ag aid))) parent-args)))
+     (if (null? parent-stmts)
+         0
+         (+ 1 (get-minimum (map (lambda (c) (depth ag c)) parent-stmts))))))
+          
 
  ; list->argument-graph: (list-of datum) -> argument-graph
  ; converts a list of expressions representing arguments into an argument graph
