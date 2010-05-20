@@ -40,7 +40,7 @@
 
 
 (define c1 (argument:accept argument:empty-argument-graph (list 'k473)))
-(define e1 (engine 20 1 argument:empty-argument-graph))
+(define e1 (engine 20 1 c1))
 
 ;(check (succeed? 'k473 e1) => #t)  ; max 10% of nominal value   
 ;(check (succeed? 'k472 e1) => #t)  ; cash payment
