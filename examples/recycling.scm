@@ -7,9 +7,14 @@
         (carneades abduction)
         (carneades argument-diagram)
         (prefix (carneades table) table:)
-        (carneades unify))
+        (carneades unify)
+        (carneades argument-from-arguments)
+        (carneades shell)
+        (carneades argument-search)
+        (carneades stream))
 
 ; The recycling example used by Adam Wyner 
+; Also illustrates the argument-from-arguments module.
 
 (define p1 "Every household should pay some tax for the household's garbage.")
 ; p2 is the complement of p1
@@ -68,4 +73,11 @@ reduces a need of a new dump which is for the garbage.")
 (define in-label (statement-in-label args1 '() p1))
 (define comp-in-label (statement-in-label args1 '() `(not ,p1)))
 
-;(view args1)
+(define args2 (accept empty-argument-graph (list p14))) ; every supermarket creates some garbage
+
+(define e1
+  (make-engine* 100 2 args2
+                (list (generate-arguments-from-argument-graph args1))))
+
+; (view args1)
+(show1 p15 e1)

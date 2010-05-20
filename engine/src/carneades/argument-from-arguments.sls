@@ -33,26 +33,19 @@
  
  ; type generator: statement state  -> (stream-of response)
  
- ; generate-arguments-from-argument-graph: argument-graph -> generator
  (define (generate-arguments-from-argument-graph ag1)
    (lambda (goal state)
      (let ((ag2 (state-arguments state))
            (subs (state-substitutions state)))
        (let* ((p (subs goal))
-              (pro-args (pro-arguments ag2 p))
-              (con-args (con-arguments ag2 p)))
-         (stream-flatmap 
-          (lambda (arg-id)
-            (let ((arg (get-argument ag1 arg-id)))
-              (if arg
-                  (let ((arg  (make-argument (gensym 'a) ; new id required to assure uniqueness
-                                             (argument-direction arg)
-                                             (argument-conclusion arg)
-                                             (argument-premises arg)
-                                             (argument-scheme arg))))
-                    (stream (make-response subs arg))) ; no new substitutions, since propositional
-                  ; else fail, no argument with the given id
-                  (stream))))
-          (list->stream  pro-args))))))
- 
+              (pro-args (pro-arguments ag1 p)))
+         (stream-map 
+          (lambda (arg1)
+            (let ((arg2 (make-argument (gensym 'a) ; new id required to assure uniqueness
+                                       (argument-direction arg1)
+                                       (argument-conclusion arg1)
+                                       (argument-premises arg1)
+                                       (argument-scheme arg1))))
+              (make-response subs arg2))) ; no new substitutions, since propositional
+          (list->stream pro-args))))))
  ) ; end of module
