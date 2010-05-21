@@ -15,8 +15,10 @@
 
 (ns carneades.engine.shell
   (:use clojure.contrib.pprint
+        carneades.engine.utils
         carneades.engine.argument-search
-        [carneades.engine.search :only (depth-first resource)])
+        [carneades.engine.search :only (depth-first resource)]
+        carneades.ui.diagram.viewer)
   (:require [carneades.engine.argument :as arg]))
 
 (defn solutions [states]
@@ -65,3 +67,20 @@
   [query engine]
   (map (fn [s] (pprint ((:substitutions s) query))) (solutions (engine query))))
 
+(defn show-state [state]
+  "view a diagram of the argument graph of a state"
+  (view (sget state :arguments)))
+
+(defn show
+  ([query engine]
+     (show query engine true))
+  ([query engine showall]
+     (let [states (engine query)]
+       (if showall
+         (doseq [s states]
+           (show-state s))
+         (when-not (empty? states)
+           (show-state (first states)))))))
+
+(defn show1 [query engine]
+  (show query engine false))
