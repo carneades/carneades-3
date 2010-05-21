@@ -16,6 +16,8 @@
 (ns carneades.engine.utils
   (:use clojure.contrib.pprint))
 
+(set! *assert* true)
+
 (defn boolean? [x]
   (instance? Boolean x))
 
@@ -86,12 +88,13 @@
           :else (apply interleaveall col))))
 
 ;; safe get
-(defn sget [map key]
-  "Returns the value mapped to key. Throw an exception if the key
-   is not present."
-  (let [notfound (gensym)
-        v (get map key notfound)]
-    (if (= v notfound)
-      (throw (Exception. (format "Key '%s' not found" key)))
-      v)))
-
+(defmacro sget [map key]
+  "Like get but if *assert* is true, throws an exception if the key is 
+   not present "
+  (if *assert*
+    `(let [notfound# (gensym)
+           v# (get ~map ~key notfound#)]
+       (if (= v# notfound#)
+         (throw (Exception. (format "Key '%s' not found" ~key)))
+         v#))
+    `(get ~map ~key)))
