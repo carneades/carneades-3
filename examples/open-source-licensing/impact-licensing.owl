@@ -175,6 +175,7 @@
     <!-- http://carneades.berlios.de/impact-licensing#CarneadesEngine -->
 
     <owl:Thing rdf:about="#CarneadesEngine">
+        <rdf:type rdf:resource="&oss-licenses;SoftwareEntity"/>
         <oss-licenses:linksStaticallyTo rdf:resource="#Alfresco"/>
         <oss-licenses:compiledBy rdf:resource="#Clojure"/>
         <oss-licenses:linksStaticallyTo rdf:resource="#Clojure"/>

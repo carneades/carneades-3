@@ -3,7 +3,7 @@
 <?oxygen RNGSchema="../../schemas/LKIF2.rnc" type="compact"?>
 
 <!DOCTYPE rb [ 
-	<!ENTITY oss "http://carneades.berlios.de/oss-licenses.owl#" >
+	<!ENTITY oss "http://carneades.berlios.de/oss-licenses#" >
 ]>
 
 <lkif>
