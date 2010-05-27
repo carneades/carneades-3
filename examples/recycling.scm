@@ -80,4 +80,4 @@ reduces a need of a new dump which is for the garbage.")
                 (list (generate-arguments-from-argument-graph args1))))
 
 ; (view args1)
-(show1 p15 e1)
+; (show1 p15 e1)

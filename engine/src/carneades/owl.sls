@@ -102,7 +102,7 @@
  ; debug
  ; -------------------------
  
- (define *debug* #f)
+ (define *debug* #t)
  
  
  ; -------------------------
@@ -306,7 +306,7 @@
           (class-axioms (get-owl-classes ontology))
           (object-properties (get-object-properties ontology))
           (data-properties (get-data-properties ontology))
-          (transitive-properties (if (exists (lambda (o) (eq? o 'transitve)) optionals)
+          (transitive-properties (if (exists (lambda (o) (eq? o 'transitive)) optionals)
                                      (get-transitive-properties ontology)
                                      '()))
           (symmetric-properties (if (exists (lambda (o) (eq? o 'symmetric)) optionals)
