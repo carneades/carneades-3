@@ -50,9 +50,15 @@
     
 
 
-    <!-- http://carneades.berlios.de/oss-licenses#interpretedBy -->
+    <!-- http://carneades.berlios.de/oss-licenses#implementedIn -->
 
-    <owl:ObjectProperty rdf:about="&oss-licenses;interpretedBy"/>
+    <owl:ObjectProperty rdf:about="&oss-licenses;implementedIn"/>
+    
+
+
+    <!-- http://carneades.berlios.de/oss-licenses#implements -->
+
+    <owl:ObjectProperty rdf:about="&oss-licenses;implements"/>
     
 
 
@@ -68,21 +74,21 @@
     
 
 
-    <!-- http://carneades.berlios.de/oss-licenses#runsOnOperatingSystem -->
+    <!-- http://carneades.berlios.de/oss-licenses#linksTo -->
 
-    <owl:ObjectProperty rdf:about="&oss-licenses;runsOnOperatingSystem"/>
-    
-
-
-    <!-- http://carneades.berlios.de/oss-licenses#servedBy -->
-
-    <owl:ObjectProperty rdf:about="&oss-licenses;servedBy"/>
+    <owl:ObjectProperty rdf:about="&oss-licenses;linksTo"/>
     
 
 
     <!-- http://carneades.berlios.de/oss-licenses#usesService -->
 
     <owl:ObjectProperty rdf:about="&oss-licenses;usesService"/>
+    
+
+
+    <!-- http://carneades.berlios.de/oss-licenses#usesSpecification -->
+
+    <owl:ObjectProperty rdf:about="&oss-licenses;usesSpecification"/>
     
 
 
@@ -94,6 +100,18 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
+    
+
+
+    <!-- http://carneades.berlios.de/oss-licenses#API -->
+
+    <owl:Class rdf:about="&oss-licenses;API"/>
+    
+
+
+    <!-- http://carneades.berlios.de/oss-licenses#AbstractMachine -->
+
+    <owl:Class rdf:about="&oss-licenses;AbstractMachine"/>
     
 
 
@@ -127,15 +145,45 @@
     
 
 
+    <!-- http://carneades.berlios.de/oss-licenses#Program -->
+
+    <owl:Class rdf:about="&oss-licenses;Program"/>
+    
+
+
+    <!-- http://carneades.berlios.de/oss-licenses#ProgrammingLanguage -->
+
+    <owl:Class rdf:about="&oss-licenses;ProgrammingLanguage"/>
+    
+
+
     <!-- http://carneades.berlios.de/oss-licenses#ProprietaryLicense -->
 
     <owl:Class rdf:about="&oss-licenses;ProprietaryLicense"/>
     
 
 
+    <!-- http://carneades.berlios.de/oss-licenses#RichInternetApplication -->
+
+    <owl:Class rdf:about="&oss-licenses;RichInternetApplication"/>
+    
+
+
     <!-- http://carneades.berlios.de/oss-licenses#SoftwareEntity -->
 
     <owl:Class rdf:about="&oss-licenses;SoftwareEntity"/>
+    
+
+
+    <!-- http://carneades.berlios.de/oss-licenses#SoftwareLibrary -->
+
+    <owl:Class rdf:about="&oss-licenses;SoftwareLibrary"/>
+    
+
+
+    <!-- http://carneades.berlios.de/oss-licenses#Specification -->
+
+    <owl:Class rdf:about="&oss-licenses;Specification"/>
     
 
 
@@ -160,6 +208,8 @@
 
     <owl:Thing rdf:about="#Alfresco">
         <rdf:type rdf:resource="&oss-licenses;SoftwareEntity"/>
+        <oss-licenses:implements rdf:resource="#CMIS"/>
+        <oss-licenses:usesSpecification rdf:resource="#JavaEE"/>
     </owl:Thing>
     
 
@@ -172,18 +222,36 @@
     
 
 
+    <!-- http://carneades.berlios.de/impact-licensing#CMIS -->
+
+    <oss-licenses:API rdf:about="#CMIS">
+        <rdf:type rdf:resource="&owl;Thing"/>
+    </oss-licenses:API>
+    
+
+
+    <!-- http://carneades.berlios.de/impact-licensing#CSS -->
+
+    <oss-licenses:Specification rdf:about="#CSS">
+        <rdf:type rdf:resource="&owl;Thing"/>
+    </oss-licenses:Specification>
+    
+
+
     <!-- http://carneades.berlios.de/impact-licensing#CarneadesEngine -->
 
     <owl:Thing rdf:about="#CarneadesEngine">
-        <rdf:type rdf:resource="&oss-licenses;SoftwareEntity"/>
-        <oss-licenses:linksStaticallyTo rdf:resource="#Alfresco"/>
-        <oss-licenses:compiledBy rdf:resource="#Clojure"/>
-        <oss-licenses:linksStaticallyTo rdf:resource="#Clojure"/>
+        <rdf:type rdf:resource="&oss-licenses;SoftwareLibrary"/>
+        <oss-licenses:usesSpecification rdf:resource="#CMIS"/>
+        <oss-licenses:implementedIn rdf:resource="#Clojure"/>
+        <oss-licenses:compiledBy rdf:resource="#ClojureCompiler"/>
         <oss-licenses:linksStaticallyTo rdf:resource="#ClojureContrib"/>
-        <oss-licenses:interpretedBy rdf:resource="#HotSpotJVM"/>
+        <oss-licenses:linksStaticallyTo rdf:resource="#ClojureLib"/>
         <oss-licenses:linksStaticallyTo rdf:resource="#JGraphX"/>
+        <oss-licenses:usesSpecification rdf:resource="#JVM"/>
+        <oss-licenses:usesSpecification rdf:resource="#JavaEE"/>
+        <oss-licenses:usesSpecification rdf:resource="#OSGI"/>
         <oss-licenses:linksStaticallyTo rdf:resource="#cljSandbox"/>
-        <oss-licenses:servedBy rdf:resource="#jbossApplicationServer"/>
     </owl:Thing>
     
 
@@ -191,20 +259,28 @@
     <!-- http://carneades.berlios.de/impact-licensing#CarneadesGui -->
 
     <owl:Thing rdf:about="#CarneadesGui">
-        <rdf:type rdf:resource="&oss-licenses;SoftwareEntity"/>
+        <rdf:type rdf:resource="&oss-licenses;RichInternetApplication"/>
+        <oss-licenses:usesSpecification rdf:resource="#CSS"/>
         <oss-licenses:usesService rdf:resource="#CarneadesEngine"/>
         <oss-licenses:linksDynamicallyTo rdf:resource="#GWT"/>
-        <oss-licenses:interpretedBy rdf:resource="#V8"/>
+        <oss-licenses:usesSpecification rdf:resource="#HTML"/>
+        <oss-licenses:usesSpecification rdf:resource="#JavaScript"/>
+        <oss-licenses:usesSpecification rdf:resource="#SVN"/>
     </owl:Thing>
     
 
 
     <!-- http://carneades.berlios.de/impact-licensing#Chrome -->
 
-    <owl:Thing rdf:about="#Chrome">
-        <rdf:type rdf:resource="&oss-licenses;SoftwareEntity"/>
+    <oss-licenses:Program rdf:about="#Chrome">
+        <rdf:type rdf:resource="&owl;Thing"/>
+        <oss-licenses:implements rdf:resource="#CSS"/>
+        <oss-licenses:implements rdf:resource="#HTML"/>
+        <oss-licenses:implements rdf:resource="#JavaScript"/>
+        <oss-licenses:implements rdf:resource="#SVN"/>
         <oss-licenses:linksStaticallyTo rdf:resource="#V8"/>
-    </owl:Thing>
+        <oss-licenses:linksTo rdf:resource="#WebKit"/>
+    </oss-licenses:Program>
     
 
 
@@ -218,10 +294,21 @@
 
     <!-- http://carneades.berlios.de/impact-licensing#Clojure -->
 
-    <owl:Thing rdf:about="#Clojure">
-        <rdf:type rdf:resource="&oss-licenses;SoftwareEntity"/>
+    <oss-licenses:ProgrammingLanguage rdf:about="#Clojure">
+        <rdf:type rdf:resource="&owl;Thing"/>
         <oss-licenses:hasLicense rdf:resource="#ClojureLicense"/>
-    </owl:Thing>
+    </oss-licenses:ProgrammingLanguage>
+    
+
+
+    <!-- http://carneades.berlios.de/impact-licensing#ClojureCompiler -->
+
+    <oss-licenses:Program rdf:about="#ClojureCompiler">
+        <rdf:type rdf:resource="&owl;Thing"/>
+        <oss-licenses:implementedIn rdf:resource="#Clojure"/>
+        <oss-licenses:implements rdf:resource="#Clojure"/>
+        <oss-licenses:hasLicense rdf:resource="#ClojureLicense"/>
+    </oss-licenses:Program>
     
 
 
@@ -238,6 +325,15 @@
 
     <owl:Thing rdf:about="#ClojureContribLicense">
         <rdf:type rdf:resource="&oss-licenses;EPL"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://carneades.berlios.de/impact-licensing#ClojureLib -->
+
+    <owl:Thing rdf:about="#ClojureLib">
+        <rdf:type rdf:resource="&oss-licenses;SoftwareLibrary"/>
+        <oss-licenses:hasLicense rdf:resource="#ClojureLicense"/>
     </owl:Thing>
     
 
@@ -267,19 +363,27 @@
     
 
 
-    <!-- http://carneades.berlios.de/impact-licensing#HotSpotJVM -->
+    <!-- http://carneades.berlios.de/impact-licensing#HTML -->
 
-    <owl:Thing rdf:about="#HotSpotJVM">
-        <rdf:type rdf:resource="&oss-licenses;SoftwareEntity"/>
-        <oss-licenses:hasLicense rdf:resource="#HotSpotJVM_License"/>
-        <oss-licenses:runsOnOperatingSystem rdf:resource="#Linux"/>
-    </owl:Thing>
+    <oss-licenses:ProgrammingLanguage rdf:about="#HTML">
+        <rdf:type rdf:resource="&owl;Thing"/>
+    </oss-licenses:ProgrammingLanguage>
     
 
 
-    <!-- http://carneades.berlios.de/impact-licensing#HotSpotJVM_License -->
+    <!-- http://carneades.berlios.de/impact-licensing#HotSpotJvm -->
 
-    <owl:Thing rdf:about="#HotSpotJVM_License">
+    <oss-licenses:SoftwareEntity rdf:about="#HotSpotJvm">
+        <rdf:type rdf:resource="&owl;Thing"/>
+        <oss-licenses:hasLicense rdf:resource="#HotSpotJvmLicense"/>
+        <oss-licenses:implements rdf:resource="#JVM"/>
+    </oss-licenses:SoftwareEntity>
+    
+
+
+    <!-- http://carneades.berlios.de/impact-licensing#HotSpotJvmLicense -->
+
+    <owl:Thing rdf:about="#HotSpotJvmLicense">
         <rdf:type rdf:resource="&oss-licenses;GPL"/>
     </owl:Thing>
     
@@ -302,6 +406,38 @@
     
 
 
+    <!-- http://carneades.berlios.de/impact-licensing#JVM -->
+
+    <oss-licenses:AbstractMachine rdf:about="#JVM">
+        <rdf:type rdf:resource="&owl;Thing"/>
+    </oss-licenses:AbstractMachine>
+    
+
+
+    <!-- http://carneades.berlios.de/impact-licensing#Java -->
+
+    <owl:Thing rdf:about="#Java">
+        <rdf:type rdf:resource="&oss-licenses;ProgrammingLanguage"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://carneades.berlios.de/impact-licensing#JavaEE -->
+
+    <oss-licenses:API rdf:about="#JavaEE">
+        <rdf:type rdf:resource="&owl;Thing"/>
+    </oss-licenses:API>
+    
+
+
+    <!-- http://carneades.berlios.de/impact-licensing#JavaScript -->
+
+    <oss-licenses:ProgrammingLanguage rdf:about="#JavaScript">
+        <rdf:type rdf:resource="&owl;Thing"/>
+    </oss-licenses:ProgrammingLanguage>
+    
+
+
     <!-- http://carneades.berlios.de/impact-licensing#Linux -->
 
     <owl:Thing rdf:about="#Linux">
@@ -319,11 +455,29 @@
     
 
 
+    <!-- http://carneades.berlios.de/impact-licensing#OSGI -->
+
+    <owl:Thing rdf:about="#OSGI">
+        <rdf:type rdf:resource="&oss-licenses;API"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://carneades.berlios.de/impact-licensing#SVN -->
+
+    <owl:Thing rdf:about="#SVN">
+        <rdf:type rdf:resource="&oss-licenses;Specification"/>
+    </owl:Thing>
+    
+
+
     <!-- http://carneades.berlios.de/impact-licensing#V8 -->
 
-    <owl:Thing rdf:about="#V8">
+    <oss-licenses:SoftwareLibrary rdf:about="#V8">
+        <rdf:type rdf:resource="&owl;Thing"/>
+        <oss-licenses:implements rdf:resource="#JavaScript"/>
         <oss-licenses:hasLicense rdf:resource="#V8License"/>
-    </owl:Thing>
+    </oss-licenses:SoftwareLibrary>
     
 
 
@@ -331,6 +485,23 @@
 
     <owl:Thing rdf:about="#V8License">
         <rdf:type rdf:resource="&oss-licenses;BSD"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://carneades.berlios.de/impact-licensing#WebKit -->
+
+    <oss-licenses:SoftwareLibrary rdf:about="#WebKit">
+        <rdf:type rdf:resource="&owl;Thing"/>
+        <oss-licenses:hasLicense rdf:resource="#WebkitLicense"/>
+    </oss-licenses:SoftwareLibrary>
+    
+
+
+    <!-- http://carneades.berlios.de/impact-licensing#WebkitLicense -->
+
+    <owl:Thing rdf:about="#WebkitLicense">
+        <rdf:type rdf:resource="&oss-licenses;LGPL"/>
     </owl:Thing>
     
 
