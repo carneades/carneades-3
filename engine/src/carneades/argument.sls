@@ -31,7 +31,7 @@
          statements->nodes in-statements arguments pro-arguments con-arguments schemes-applied status proof-standard prior
          decided? accepted? rejected? questioned? stated? issue? make-argument-graph empty-argument-graph 
          argument-graph? argument-graph-id argument-graph-title argument-graph-main-issue argument-graph-nodes
-         argument-graph-arguments assert-argument assert-arguments merge-argument-graphs
+         argument-graph-arguments assert-argument assert-arguments unite-argument-graphs
          relevant? satisfies? acceptable? holds? applicable? in? out? get-argument
          list->argument-graph get-node depth)
  
@@ -693,16 +693,28 @@
               empty-argument-graph
               l))
  
- (define (merge-argument-graphs l)
-   (fold-right combine-graphs empty-argument-graph l))
+ (define (unite-argument-graphs l)
+   (fold-right unite-graphs empty-argument-graph l))
  
- (define (combine-graphs ag1 ag2)
+ (define (unite-graphs ag1 ag2)
    (let ((args (arguments ag2)))
      (fold-left unite-args ag1 args)))
  
+ (define (has-premise? p prs)
+   (if (null? prs)
+       #f
+       (or (statement=? (premise-atom p) (premise-atom (car prs)))
+           (has-premise? p (cdr prs)))))
+ 
+ (define (premises=? pr1 pr2)
+   (for-all (lambda (p)
+              (has-premise? p pr2))
+     pr1))
+ 
  (define (unite-args ag arg)
    (if (find (lambda (arg2) (and (equal? (argument-scheme arg) (argument-scheme arg2))
-                                 (statement=? (argument-conclusion arg) (argument-conclusion arg2))))
+                                 (statement=? (argument-conclusion arg) (argument-conclusion arg2))
+                                 (premises=? (argument-premises arg) (argument-premises arg2))))
              (arguments ag))
        (begin 
          (display "argument filtered: ")
