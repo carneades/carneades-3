@@ -21,12 +21,15 @@
  (export make-node node? node-depth node-label node-parent node-state
          make-root root? make-problem problem? problem-root problem-space problem-goal
          search path make-resource resource? resource-amount resource-empty?
-         use depth-first breadth-first iterative-deepening best-first)
+         use depth-first breadth-first search-all iterative-deepening best-first)
  
  (import (rnrs)
          (rnrs records syntactic)
          (carneades stream)
+         (carneades base)
          (prefix (carneades heap) heap:))
+ 
+ (define *debug* #f)
  
  (define-record-type node (fields depth label parent state))
   
@@ -75,13 +78,15 @@
    (lambda (p)
      (define (loop open-nodes)
        (use r)
-       (if (or (stream-null? open-nodes)(resource-empty? r))
-           stream-null
-           (let ((node (stream-car open-nodes)))
-             (cond (((problem-goal p) (node-state node))
-                    (stream-cons node (loop (stream-cdr open-nodes))))
-                   (else (loop (stream-append (expand-node node p) 
-                                              (stream-cdr open-nodes))))))))
+       (cond
+         ((stream-null? open-nodes) stream-null)
+         ((resource-empty? r) (begin (if *debug* (printf "resource empty!~%"))
+                                     stream-null))
+         (else (let ((node (stream-car open-nodes)))
+                 (cond (((problem-goal p) (node-state node))
+                        (stream-cons node (loop (stream-cdr open-nodes))))
+                       (else (loop (stream-append (expand-node node p) 
+                                                  (stream-cdr open-nodes)))))))))
      (loop (stream (problem-root p)))))
  
  ; breadth-first: resource-limited-strategy
@@ -97,6 +102,22 @@
                     (stream-cons node (loop (stream-cdr open-nodes))))
                    (else (loop (stream-append (stream-cdr open-nodes) 
                                               (expand-node node p))))))))
+     (loop (stream (problem-root p)))))
+ 
+ ; search-all: resource-limited-strategy
+ ; no real search-strategy, more a generator; maybe useless
+ ; resource: the maximum number of nodes which may be expanded
+ (define (search-all r)
+   (lambda (p) 
+     (define (loop open-nodes)
+       (use r)
+       (cond
+         ((stream-null? open-nodes) stream-null)
+         ((resource-empty? r) (begin (if *debug* (printf "resource empty!~%"))
+                                     stream-null))
+         (else (let ((node (stream-car open-nodes)))
+                 (stream-cons node (loop (stream-append (stream-cdr open-nodes)
+                                                        (expand-node node p))))))))
      (loop (stream (problem-root p)))))
  
  ;   iterative-deepening: integer integer -> resource-limited-strategy
