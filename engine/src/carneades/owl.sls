@@ -92,7 +92,9 @@
          (carneades rule)
          ;(carneades system)
          (carneades dnf)
-         (only (carneades lib srfi strings) string-trim string-suffix? string-prefix? string-replace string-contains)
+         (only (carneades lib srfi strings)
+               string-trim string-suffix? string-prefix? string-replace string-contains
+               string-index string-index-right)
          (carneades lib xml ssax ssax-code)
          (carneades lib xml ssax access-remote)
          (carneades lib xml sxml sxpath))
@@ -102,7 +104,7 @@
  ; debug
  ; -------------------------
  
- (define *debug* #t)
+ (define *debug* #f)
  
  
  ; -------------------------
@@ -110,11 +112,13 @@
  ; -------------------------
  
  ; list of namespace-prefixes used for sxpath
- (define *namespaces* '((owl . "http://www.w3.org/2002/07/owl#")
-                      (xsd . "http://www.w3.org/2001/XMLSchema#")
-                      (owl2xml . "http://www.w3.org/2006/12/owl2-xml#")
-                      (rdfs . "http://www.w3.org/2000/01/rdf-schema#")
-                      (rdf . "http://www.w3.org/1999/02/22-rdf-syntax-ns#")))
+ (define *orig-namespaces* '((owl . "http://www.w3.org/2002/07/owl#")
+                             (xsd . "http://www.w3.org/2001/XMLSchema#")
+                             (owl2xml . "http://www.w3.org/2006/12/owl2-xml#")
+                             (rdfs . "http://www.w3.org/2000/01/rdf-schema#")
+                             (rdf . "http://www.w3.org/1999/02/22-rdf-syntax-ns#")))
+ 
+ (define *namespaces* *orig-namespaces*)
  
  (define namespaces
    (case-lambda (() *namespaces*)
@@ -144,7 +148,10 @@
    (let* ((doc (ssax:dtd-xml->sxml (open-input-resource path) '()))
           (owl-body ((sxpath ontology-path *namespaces*) doc))
           (rb (ontology->rules owl-body optionals)))
-     (namespaces (remp (lambda (n) (eq? (car n) 'base)) *namespaces*))
+     (namespaces *orig-namespaces*)
+     (if *debug*
+         (begin (display *namespaces*)
+                (newline)))
      rb))
  
  
@@ -159,6 +166,13 @@
  
  ; add-class: string -> <void>
  (define (add-class c)
+   (if *debug*
+       (begin (display "adding class: ")
+              (write c)
+              (newline)
+              (display "ns          : ")
+              (write (apply-namespaces c *namespaces*))
+              (newline)))
    (set! classes (append classes (list (apply-namespaces c *namespaces*)))))
  
  ; class descriptions
@@ -252,6 +266,9 @@
    ((sxpath "rdf:Description" *namespaces*) sxml))
  
  (define (get-class-members sxml)
+   (if *debug*
+       (begin (display classes)
+              (newline)))
    (filter (lambda (c) (not (null? c)))
            (map (lambda (c) 
                   (let ((member ((sxpath c *namespaces*) sxml)))
@@ -982,31 +999,34 @@
          (string-replace s prefix 0 (string-length uri))
          s)))
  
+ (define (with-new-prefix uri)
+   (let* ((hash-pos (or (string-index uri #\#)
+                        (string-index-right uri #\\)))
+          (ns (substring uri 0 hash-pos))
+          (n (substring uri hash-pos (string-length uri)))
+          (new-prefix (gensym "pre")))
+     (namespaces (cons (cons new-prefix ns) (namespaces)))
+     (string-append (symbol->string new-prefix) ":" n)))
+ 
  (define (text->name txt)
-   (if (one-of-prefixes? prefixes (car txt))
-       (string-trim (car txt) #\#)
-       (resolve-namespaces (string-append "base:" (string-trim (car txt) #\#)) *namespaces*)))
+   (if *debug*
+       (begin (display "text->name: ")
+              (write txt)
+              (newline)
+              (display "prefixes  : ")
+              (display prefixes)
+              (newline)
+              (display "trimmed   : ")
+              (write (string-trim (car txt) #\#))
+              (newline)
+              (display "resolved  : ")
+              (write (resolve-namespaces (string-append "base:" (string-trim (car txt) #\#)) *namespaces*))
+              (newline)))
+   (cond 
+     ((one-of-prefixes? prefixes (car txt)) (string-trim (car txt) #\#))
+     ((equal? (string-ref (car txt) 0) #\#) 
+      (resolve-namespaces (string-append "base:" (string-trim (car txt) #\#)) *namespaces*))
+     (else (with-new-prefix (car txt)))))
  
- 
- ; -------------------------
- ; Test Code
- ; -------------------------
- 
- 
- #;(define sxml '(*TOP* (doc (^ (foo "foo"))
-                             (title "Hello world")
-                             (title "foo bar"))))
- 
- ;(define doc ((sxpath "doc" '()) sxml))
- 
- ;(define titles ((sxpath "title" '()) doc))
- 
- ;(define hund (ssax:dtd-xml->sxml (open-input-resource "C:\\Users\\stb\\Documents\\Carneades Project\\examples\\Import Test\\owl1.owl") '()))
- 
- ;(define classes ((sxpath "rdf:RDF/owl:Class" *namespaces*) hund))
- 
- ;(define class1 (car classes))
- 
- ; (define rb1 (owl-import "C:\\Users\\stb\\Desktop\\Hundeformular Test\\Hundeformular.owl" '(transitive symmetric domain range equivalent disjoint)))
  
  )
