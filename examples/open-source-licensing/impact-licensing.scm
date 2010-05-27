@@ -23,8 +23,8 @@
                 (list (generate-arguments-from-rules rb1 cqs)
                       builtins)))
 
-(define CarneadesEngine (string->symbol "http://carneades.berlios.de/impact-licensing.owl#CarneadesEngine"))
-(define mayUseLicenseTemplate  (string->symbol "http://carneades.berlios.de/oss-licenses.owl#mayUseLicenseTemplate"))
+(define CarneadesEngine (string->symbol "http://carneades.berlios.de/impact-licensing#CarneadesEngine"))
+(define mayUseLicenseTemplate  (string->symbol "http://carneades.berlios.de/oss-licenses#mayUseLicenseTemplate"))
 
 ;generate all possible licenses for MyCode
 ;(show1 `(,mayUseLicenseTemplate ,CarneadesEngine ?x) e1)
@@ -36,7 +36,8 @@
                                   (list (generate-arguments-from-rules rb1 cqs)
                                         builtins)))
 
-(define ag (unite-solutions-with-candidates sols))
+(define ag1 (unite-solutions-with-candidates sols))
+(define ag2 (unite-solutions sols))
 
-(view ag)
+(view ag2)
 
