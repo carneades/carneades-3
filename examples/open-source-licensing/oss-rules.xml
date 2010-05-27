@@ -24,8 +24,8 @@
 		      <s pred="&oss;mayUseLicenseTemplate"><v>SE</v> may be licensed using the <v>T</v> template</s>
 		    </head>
 		    <body>
-		      <s pred="&oss;SoftwareEntity"><v>SE</v> is a software entity</s>
-		      <s pred="&oss;CopyrightLicenseTemplate"><v>T</v> is a copyright license template</s>
+		    	<s pred="&oss;CopyrightLicenseTemplate"><v>T</v> is a copyright license template</s>
+		    	<s pred="&oss;SoftwareEntity"><v>SE</v> is a software entity</s>		      
 		    </body>
 		  </rule>
 		  
