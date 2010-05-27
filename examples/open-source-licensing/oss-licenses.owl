@@ -125,12 +125,29 @@
     
 
 
-    <!-- http://carneades.berlios.de/oss-licenses#implementsAPI -->
+    <!-- http://carneades.berlios.de/oss-licenses#implementedIn -->
 
-    <owl:ObjectProperty rdf:about="#implementsAPI">
-        <rdfs:range rdf:resource="#API"/>
-        <rdfs:domain rdf:resource="#Executable"/>
+    <owl:ObjectProperty rdf:about="#implementedIn">
+        <rdfs:range rdf:resource="#ProgrammingLanguage"/>
+        <rdfs:domain rdf:resource="#SoftwareEntity"/>
         <rdfs:subPropertyOf rdf:resource="#uses"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://carneades.berlios.de/oss-licenses#implements -->
+
+    <owl:ObjectProperty rdf:about="#implements">
+        <rdfs:domain rdf:resource="#SoftwareEntity"/>
+        <rdfs:subPropertyOf rdf:resource="#uses"/>
+        <rdfs:range>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#API"/>
+                    <rdf:Description rdf:about="#ProgrammingLanguage"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:range>
     </owl:ObjectProperty>
     
 
@@ -266,6 +283,16 @@
     
 
 
+    <!-- http://carneades.berlios.de/oss-licenses#usesSpecification -->
+
+    <owl:ObjectProperty rdf:about="#usesSpecification">
+        <rdfs:domain rdf:resource="#SoftwareEntity"/>
+        <rdfs:range rdf:resource="#Specification"/>
+        <rdfs:subPropertyOf rdf:resource="#uses"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
@@ -280,7 +307,15 @@
     <!-- http://carneades.berlios.de/oss-licenses#API -->
 
     <owl:Class rdf:about="#API">
-        <rdfs:subClassOf rdf:resource="#SoftwareEntity"/>
+        <rdfs:subClassOf rdf:resource="#Specification"/>
+    </owl:Class>
+    
+
+
+    <!-- http://carneades.berlios.de/oss-licenses#AbstractMachine -->
+
+    <owl:Class rdf:about="#AbstractMachine">
+        <rdfs:subClassOf rdf:resource="#Specification"/>
     </owl:Class>
     
 
@@ -429,6 +464,14 @@
     
 
 
+    <!-- http://carneades.berlios.de/oss-licenses#ApplicationServer -->
+
+    <owl:Class rdf:about="#ApplicationServer">
+        <rdfs:subClassOf rdf:resource="#SoftwareEntity"/>
+    </owl:Class>
+    
+
+
     <!-- http://carneades.berlios.de/oss-licenses#BSD -->
 
     <owl:Class rdf:about="#BSD">
@@ -499,14 +542,6 @@
 
     <owl:Class rdf:about="#EPL">
         <rdfs:subClassOf rdf:resource="#ReciprocalLicense"/>
-    </owl:Class>
-    
-
-
-    <!-- http://carneades.berlios.de/oss-licenses#Executable -->
-
-    <owl:Class rdf:about="#Executable">
-        <rdfs:subClassOf rdf:resource="#SoftwareEntity"/>
     </owl:Class>
     
 
@@ -755,6 +790,22 @@
     
 
 
+    <!-- http://carneades.berlios.de/oss-licenses#Program -->
+
+    <owl:Class rdf:about="#Program">
+        <rdfs:subClassOf rdf:resource="#SoftwareEntity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://carneades.berlios.de/oss-licenses#ProgrammingLanguage -->
+
+    <owl:Class rdf:about="#ProgrammingLanguage">
+        <rdfs:subClassOf rdf:resource="#Specification"/>
+    </owl:Class>
+    
+
+
     <!-- http://carneades.berlios.de/oss-licenses#ProprietaryLicense -->
 
     <owl:Class rdf:about="#ProprietaryLicense">
@@ -786,6 +837,14 @@
     
 
 
+    <!-- http://carneades.berlios.de/oss-licenses#RichInternetApplication -->
+
+    <owl:Class rdf:about="#RichInternetApplication">
+        <rdfs:subClassOf rdf:resource="#Program"/>
+    </owl:Class>
+    
+
+
     <!-- http://carneades.berlios.de/oss-licenses#Right -->
 
     <owl:Class rdf:about="#Right">
@@ -813,6 +872,14 @@
     <!-- http://carneades.berlios.de/oss-licenses#SourceCode -->
 
     <owl:Class rdf:about="#SourceCode">
+        <rdfs:subClassOf rdf:resource="#SoftwareEntity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://carneades.berlios.de/oss-licenses#Specification -->
+
+    <owl:Class rdf:about="#Specification">
         <rdfs:subClassOf rdf:resource="#SoftwareEntity"/>
     </owl:Class>
     
