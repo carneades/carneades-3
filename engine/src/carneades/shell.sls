@@ -18,7 +18,12 @@
 (library
  (carneades shell) ;; utility procedures for querying knowledge bases
  
- (export make-engine make-engine* show-state show show1 ask ask1 diagram1 succeed? fail?)
+ (export make-engine make-engine*
+         ;make-abductive-engine
+         construct-arguments
+         ;make-abductive-engine*
+         unite-solutions unite-solutions-with-candidates
+         show-state show show1 ask ask1 diagram1 succeed? fail?)
  
  (import (rnrs base)
          (rnrs io simple)
@@ -40,10 +45,54 @@
                           (initial-state goal ag) 
                           generators)))
  
+ ; make-abductive-engine: symbol (statement -> number) number number argument-graph (list-of generator) -> statement -> (stream-of state)
+ #;(define (make-abductive-engine discussion costs max-nodes max-turns ag generators)
+   (lambda (goal)
+     (find-best-arguments-abductively search:depth-first
+                                      (search:make-resource max-nodes)
+                                      max-turns
+                                      (initial-state goal ag discussion costs) 
+                                      generators)))
+ 
+ ; TODO: check if search-all is better, faster, ...?
+ #;(define (make-abductive-engine* discussion costs max-nodes max-turns ag generators)
+   (lambda (goal)
+     (find-best-arguments-abductively search:search-all
+                                      (search:make-resource max-nodes)
+                                      max-turns
+                                      (initial-state goal ag discussion costs) 
+                                      generators)))
+ 
+ (define (construct-arguments goal max-nodes max-turns ag generators)   
+   (find-best-arguments search:search-all
+                        (search:make-resource max-nodes)
+                        max-turns
+                        (initial-state goal ag) 
+                        generators))
+                              
+ 
  ; make-engine: integer integer (list-of generator) -> statement -> (stream-of state)
  ; a simplified version of make-engine*, using the default-context 
  (define (make-engine max-nodes max-turns generators) 
    (make-engine* max-nodes max-turns empty-argument-graph generators))
+ 
+ (define (unite-solutions str)
+   (let* ((sols (stream->list str))
+          (arg-graphs (map state-arguments sols)))
+     (unite-argument-graphs arg-graphs)))
+ 
+ (define (add-candidates ag candidates subs)
+   (let ((args (map (lambda (c) (instantiate-argument (candidate-argument c) subs)) candidates)))
+     (assert-arguments ag args)))
+ 
+ (define (unite-solutions-with-candidates str)
+   (let* ((sols (stream->list str))
+          (arg-graphs (map (lambda (st) 
+                             (add-candidates (state-arguments st)
+                                             (state-candidates st)
+                                             (state-substitutions st)))
+                           sols)))
+     (unite-argument-graphs arg-graphs)))
  
  ; show-state: state -> void
  ; view a diagram of the argument graph of a state
@@ -55,11 +104,11 @@
  ; A state is a "solution" if the instantiated topic of the state is in.
  (define (solutions str)
    (stream-filter (lambda (s) 
-                    (in? (state-arguments s)
-                    ((state-substitutions s) (state-topic s))))
-;                    (and (eq? (state-viewpoint s) 'pro)
-;                                  (goal-state? s)))
-                  str))
+                        (in? (state-arguments s)
+                             ((state-substitutions s) (state-topic s))))
+                      ;                    (and (eq? (state-viewpoint s) 'pro)
+                      ;                                  (goal-state? s)))
+                      str))
  
  ; show: statement (statement -> (stream-of state)) -> void
  ; for each state in the stream, view a diagram of argument graph of the state
