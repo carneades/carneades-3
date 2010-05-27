@@ -16,7 +16,7 @@
 
 (define cqs '())
 
-#;(define e1 
+(define e1 
   (make-engine* 500 ; max-nodes
                 10  ; max-turns
                 empty-argument-graph
@@ -25,19 +25,23 @@
 
 (define CarneadesEngine (string->symbol "http://carneades.berlios.de/impact-licensing#CarneadesEngine"))
 (define mayUseLicenseTemplate  (string->symbol "http://carneades.berlios.de/oss-licenses#mayUseLicenseTemplate"))
+(define CopyRightLicenseTemplate  (string->symbol "http://carneades.berlios.de/oss-licenses#CopyrightLicenseTemplate"))
 
 ;generate all possible licenses for MyCode
-;(show1 `(,mayUseLicenseTemplate ,CarneadesEngine ?x) e1)
+(define ag (unite-solutions-with-candidates (e1 `(,mayUseLicenseTemplate ,CarneadesEngine ?x))))
 
-(define sols (construct-arguments `(,mayUseLicenseTemplate ,CarneadesEngine ?x)
-                                  500
+(define goal1 `(,CopyRightLicenseTemplate ?x))
+(define goal2 `(,mayUseLicenseTemplate ,CarneadesEngine ?x))
+
+#;(define sols (construct-arguments goal2
+                                  200
                                   10
                                   empty-argument-graph
                                   (list (generate-arguments-from-rules rb1 cqs)
                                         builtins)))
 
-(define ag1 (unite-solutions-with-candidates sols))
-(define ag2 (unite-solutions sols))
+;(define ag1 (unite-solutions-with-candidates sols))
+;(define ag2 (unite-solutions sols))
 
-(view ag2)
+;(view ag1)
 
