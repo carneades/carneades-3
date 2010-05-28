@@ -282,6 +282,13 @@
                 classes)))
  
  (define (get-object-property-values sxml)
+   (if *debug*
+       (begin (display "collected properties ")
+              (write object-properties)
+              (newline)
+              (display "namespace        : ")
+              (write (namespaces))
+              (newline)))
    (filter (lambda (p) (not (null? p)))
            (map (lambda (c) 
                   (let ((member ((sxpath c *namespaces*) sxml)))
@@ -872,6 +879,16 @@
                                   #f
                                   (make-rule-head (list class-name (string->symbol individual-name)))
                                   '())))
+     (if *debug*
+         (begin (display "class-mamber->rule: ")
+                (write c-name)
+                (newline)
+                (display "individual        : ")
+                (write individual-name)
+                (newline)
+                (display "ind-object-props  : ")                
+                (write object-prop-values)                
+                (newline)))
      (append type-rules  object-prop-value-rules data-prop-value-rules (list member-rule) same-rules different-rules)))
  
  ; member-type->rule : string sxml -> rule
@@ -1006,7 +1023,7 @@
  (define (add-new-prefix uri)
    (let* ((hash-pos (or (string-index uri #\#)
                         (string-index-right uri #\\)))
-          (ns (substring uri 0 hash-pos))          
+          (ns (substring uri 0 (+ hash-pos 1)))
           (new-prefix (gensym "pre")))
      (namespaces (cons (cons new-prefix ns) (namespaces)))
      uri))
