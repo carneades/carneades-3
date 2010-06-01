@@ -62,6 +62,20 @@
     
 
 
+    <!-- http://carneades.berlios.de/oss-licenses#instanceOfTemplate -->
+
+    <owl:ObjectProperty rdf:about="&oss-licenses;instanceOfTemplate"/>
+    
+
+
+    <!-- http://carneades.berlios.de/oss-licenses#isCompatibleWith -->
+
+    <owl:ObjectProperty rdf:about="&oss-licenses;isCompatibleWith">
+        <rdf:type rdf:resource="&owl;ReflexiveProperty"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://carneades.berlios.de/oss-licenses#linksDynamicallyTo -->
 
     <owl:ObjectProperty rdf:about="&oss-licenses;linksDynamicallyTo"/>
@@ -325,6 +339,7 @@
 
     <owl:Thing rdf:about="#ClojureContribLicense">
         <rdf:type rdf:resource="&oss-licenses;EPL"/>
+        <oss-licenses:instanceOfTemplate rdf:resource="&oss-licenses;EPL_Template"/>
     </owl:Thing>
     
 
@@ -538,6 +553,12 @@
     <oss-licenses:LGPL rdf:about="#jbossApplicationServerLicense">
         <rdf:type rdf:resource="&owl;Thing"/>
     </oss-licenses:LGPL>
+    
+
+
+    <!-- http://carneades.berlios.de/oss-licenses#EPL_Template -->
+
+    <owl:Thing rdf:about="&oss-licenses;EPL_Template"/>
 </rdf:RDF>
 
 
