@@ -871,7 +871,7 @@
           (same-individuals (get-same-individuals class-member))  
           (different-individuals (get-different-individuals class-member))
           (type-rules (map (lambda (t) (member-type->rule individual-name t)) types))
-          (object-prop-value-rules (map (lambda (p) (object-property-value->rule individual-name p)) object-prop-values))
+          (object-prop-value-rules (flatmap (lambda (p) (object-property-values->rules individual-name p)) object-prop-values))
           (data-prop-value-rules (map (lambda (p) (data-property-value->rule individual-name p)) data-prop-values))
           (same-rules (map (lambda (s) (same-individual->rule individual-name s)) same-individuals))
           (different-rules (map (lambda (d) (different-individual->rule individual-name d)) different-individuals))
@@ -906,16 +906,36 @@
                 #f
                 (make-rule-head rule-head)
                 '())))
+  ; object-property-values->rule : string (list-of sxml) -> (list-of rule)
+ (define (object-property-values->rules individual-name property-values)
+   (if *debug* 
+       (begin (display "object-property-values->rules : ")
+              (display individual-name)
+              (newline)
+              (display "property-values : ")
+              (display property-values)
+              (newline)))
+   (let ((property-name (resolve-namespaces (car property-values) (namespaces))))
+     (map (lambda (p) (object-property-value->rule individual-name property-name p)) (cdr property-values))))
  
  ; object-property-value->rule : string sxml -> rule
- (define (object-property-value->rule individual-name property-value)
-   (let* ((property-name (resolve-namespaces (car property-value) *namespaces*))
-          (prop-value (cdr property-value))
-          (rdf-resource ((sxpath "@rdf:resource/text()" *namespaces*) prop-value))
+ (define (object-property-value->rule individual-name property-name property-value)
+   (if *debug*
+         (begin (display "object-property-value->rule : ")
+                (display individual-name)
+                (newline)
+                (display "property-value : ")
+                (display property-value)
+                (newline)))
+   (let* ((rdf-resource ((sxpath "@rdf:resource/text()" *namespaces*) property-value))
           (object (if (not (null? rdf-resource))
                       (string->symbol (text->name rdf-resource))
-                      (error "object-property-value->rule" "no rdf:resource found" prop-value)))
+                      (error "object-property-value->rule" "no rdf:resource found" property-value)))
           (rule-name (gensym (string-append xml-base "object-property-rule-"))))
+     (if *debug*
+         (begin (display "rdf-resource : ")
+                (display rdf-resource)
+                (newline)))
      (make-rule rule-name
                 #f
                 (make-rule-head (list (string->symbol property-name)
