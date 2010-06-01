@@ -27,6 +27,7 @@
          opposing-viewpoint switch-viewpoint replace-argument-graph 
          make-response response? response-argument response-substitutions find-arguments 
          find-best-arguments goal-state? make-successor-state next-goals 
+         candidate-argument
          display-state)
  
  (import (rnrs)
