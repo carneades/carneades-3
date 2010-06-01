@@ -116,8 +116,8 @@
          ((resource-empty? r) (begin (if *debug* (printf "resource empty!~%"))
                                      stream-null))
          (else (let ((node (stream-car open-nodes)))
-                 (stream-cons node (loop (stream-append (stream-cdr open-nodes)
-                                                        (expand-node node p))))))))
+                 (stream-cons node (loop (stream-append (expand-node node p)
+                                                        (stream-cdr open-nodes))))))))
      (loop (stream (problem-root p)))))
  
  ;   iterative-deepening: integer integer -> resource-limited-strategy

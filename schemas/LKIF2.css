@@ -87,7 +87,7 @@ import:before {
 }
 
 import {
-    content: attr(uri);
+    content: attr(url);
     margin-left: 2em;
     display: block;
 }
@@ -99,29 +99,23 @@ rule:before {
 }
 
 rule {
-    content: attr(id) ". ";
-    margin-left: 2em;
-    margin-bottom: 2em;
+    content: attr(id);
+    margin-left: 1em;
+    margin-bottom: 1em;
     display: block;
 }
 
-head:before {
-    /* content: "conclusions "; */
-    font-weight: bold;
-    /* display: block; */
-    /* margin-left: 1em; */
-}
-
-/*
 head {
     display: block;
-    margin-left: 2em;
+    margin-left: 1.5em;
 }
-*/
 
 body:before {
     content: "given";
     font-weight: bold;
+}
+
+body {
     display: block;
     margin-left: 1em;
 }
@@ -148,9 +142,27 @@ and > s {
 }
 
 
-or:before { 
-    content: "at least one of the following is true:";
+
+body > s {
     display: block;
+    margin-left: 1em;
+}
+
+body > unless {
+    display: block;
+    margin-left: 1em;
+}
+
+body > not {
+    display: block;
+    margin-left: 1em;
+}
+
+
+or:before { 
+    content: "any:";
+    display: block;
+    margin-left: 1em;
 }
 
 or {
@@ -176,8 +188,9 @@ iff > s+s:before {
 }
 
 and:before { 
-    content: "all of the following are true:";
+    content: "all:";
     display: block;
+    margin-left: 1em;
 }
 
 and {
@@ -187,15 +200,15 @@ and {
 
 
 not[exception="false"]:before {
-    content:"it is not the case that:";
+    content:"not: ";
 }
 
 not[exception="true"]:before {
-    content:"unless:";
+    content:"unless: ";
 }
 
 not:before {
-    content:"it is not the case that:";
+    content:"not: ";
 }   
     
 s, statement > s {
