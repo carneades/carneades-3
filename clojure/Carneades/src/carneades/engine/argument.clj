@@ -178,7 +178,7 @@
                  r (rest sq)]
              (cons (symbol (str x "/" f)) r)))]
     (let [cns (namespace ::here)
-          dir (first definition)
+          dir (first definition) ;; direction : pro or con function
           nsdir (symbol (str cns "/" dir))
           conclusion (second definition)
           premises (map #(prefixns cns %) (drop 2 definition))]
@@ -588,7 +588,7 @@
    Add the argument, arg, to the argument graph, ag,
    if doing so would not introduce a cycle. If some argument with
    the same id exists in the argument graph, then the existing argument is 
-   replacd by the new argument. A node for the conclusion of the argument is 
+   replaced by the new argument. A node for the conclusion of the argument is 
    added to the node table of the argument graph if one does not yet exist. 
    It is the responsiblity of the protocol to question the conclusion of the 
    argument, if this is wanted. The \"applicable\" field of the argument is 
