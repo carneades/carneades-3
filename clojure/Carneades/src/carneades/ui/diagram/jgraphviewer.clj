@@ -23,7 +23,7 @@
            (java.awt.event KeyEvent ActionListener)
            (com.mxgraph.util mxConstants mxUtils mxCellRenderer)
            (com.mxgraph.view mxGraph mxStylesheet)
-           com.mxgraph.model.mxGeometry
+           (com.mxgraph.model mxCell mxGeometry)
            com.mxgraph.layout.hierarchical.mxHierarchicalLayout
            com.mxgraph.layout.mxStackLayout
            com.mxgraph.swing.mxGraphComponent))
@@ -136,7 +136,7 @@
                    "negAssumptionEdge" *neg-assumption-edge-style*
                    "negExceptionEdge" *neg-exception-edge-style*})
 
-(defn- configure-graph [g]
+(defn- configure-graph [#^mxGraph g]
   (doto g
     ;; (.setAllowNegativeCoordinates false)
     ;; seems there is a bug with stacklayout and setCellsLocked
@@ -146,23 +146,23 @@
     (.setVertexLabelsMovable false)
     (.setCellsDisconnectable false)))
 
-(defn register-styles [stylesheet]
+(defn register-styles [#^mxStylesheet stylesheet]
   (dorun (map (fn [[k v]] (.putCellStyle stylesheet k v)) *styles*)))
 
-(defn- insert-vertex [g parent name style]
+(defn- insert-vertex [#^mxGraph g parent name style]
   (let [v (.insertVertex g parent nil name 10 10 40 40 style)]
     (.updateCellSize g v)
     v))
 
-(defn- insert-edge [g parent begin end style]
+(defn- insert-edge [#^mxGraph g parent begin end style]
   (.insertEdge g parent nil nil begin end style))
-(defn- getx [vertex]
+(defn- getx [#^mxCell vertex]
   (.. vertex getGeometry getX))
 
-(defn- setx [vertex x]
+(defn- setx [#^mxCell vertex x]
   (. (.. vertex getGeometry) setX x))
 
-(defn- translate-right [g p vertices]
+(defn- translate-right [#^mxGraph g p vertices]
   (let [minx (reduce (fn [acc vertex]
                        (min (getx vertex) acc))
                      0
@@ -172,7 +172,7 @@
         ytranslation 30]
     (.. g getView (scaleAndTranslate 1 translation ytranslation))))
 
-(defn- hierarchicallayout [g p vertices]
+(defn- hierarchicallayout [#^mxGraph g p vertices]
   (let [layout (mxHierarchicalLayout. g SwingConstants/EAST)]
     (.setAllowNegativeCoordinates g false)
     (doto layout
@@ -183,7 +183,7 @@
     ;; we translate to make all edges and vertices visible
     (translate-right g p vertices)))
 
-(defn- align-orphan-cells [g p vertices]
+(defn- align-orphan-cells [#^mxGraph g p vertices]
   "align orphan cells on the right of the graph, with a stacklayout"
   (letfn [(isorphan?
            [vertex]
@@ -320,16 +320,16 @@
 
 ;; code to create the menu
 (defn- create-file-filter []
-  (letfn [(extension [filename]
+  (letfn [(extension [#^String filename]
                      (last (.split filename "\\.")))]
     (proxy [FileFilter] []
       (getDescription []
                       "SVG Files")
-      (accept [f]
+      (accept [#^java.io.File f]
               (or (.isDirectory f)
                   (= "svg" (extension (.getName f))))))))
 
-(defn- on-export-as-svg [frame]
+(defn- on-export-as-svg [#^JFrame frame]
   (let [graph (.. frame getContentPane (getComponent 0) getGraph)
         filechooser (JFileChooser.)]
     (doto filechooser
@@ -339,7 +339,7 @@
     (if-let [file (.getSelectedFile filechooser)]
       (export-graph graph (.getPath file)))))
 
-(defn- on-exit-item [frame]
+(defn- on-exit-item [#^JFrame frame]
   (doto frame
     (.setVisible false)
     (.dispose)))
