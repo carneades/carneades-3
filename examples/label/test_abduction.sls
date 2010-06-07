@@ -19,12 +19,11 @@
                          (pr u)
                          (ex v)))
 (define a3 (make-argument 'a3 #f 0.6 'con r (list (pr t)) ""))
-(define-argument a5 (con r
-                         (pr w)))
+(define a5 (make-argument 'a5 #f 0.4 'con r (list (pr w)) ""))
 (define a1 (make-argument 'a1 #f 0.6 'con p (list (pr r)) ""))
 (define a2 (make-argument 'a2 #f 0.4 'pro p (list (pr s) (pr q)) ""))
 
-(define ag (assign-standard (assert-arguments (reject empty-argument-graph (list s w))
+(define ag (assign-standard (assert-arguments empty-argument-graph
                                              (list a1 a2 a3 a4 a5))
                            'ba
                            (list u v t w r s q p)))
@@ -36,4 +35,4 @@
                   s))
 
 
-(display (statement-in-label ag asm p))
+(display (statement-in-label ag asm (statement-complement p)))
