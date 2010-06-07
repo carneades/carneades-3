@@ -27,7 +27,7 @@
                (.getContextClassLoader)
                (.getResourceAsStream *configfilename*)))))
 
-(defvar- *properties* (read-properties *configfilename*))
+(defvar- #^java.util.Properties *properties* (read-properties *configfilename*))
 
 (defn configvalue [s]
   "Returns the value of the configuration property named s"
