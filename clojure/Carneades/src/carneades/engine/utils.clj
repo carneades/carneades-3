@@ -16,7 +16,6 @@
 (ns carneades.engine.utils
   (:use clojure.contrib.pprint))
 
-(set! *assert* true)
 
 (defn boolean? [x]
   (instance? Boolean x))

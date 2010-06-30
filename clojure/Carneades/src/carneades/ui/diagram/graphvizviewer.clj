@@ -25,8 +25,6 @@
                                            statement-complement)])
   (:require [clojure.contrib.shell-out :as shell]))
 
-(set! *assert* true)
-
 (defvar- *viewer* (configvalue "viewer"))
 (defvar- *graphic-format* (configvalue "graphviz.format"))
 (defvar- *graphvizdot* (configvalue "graphviz.dot"))

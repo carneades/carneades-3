@@ -22,8 +22,6 @@
         carneades.engine.statement
         carneades.engine.proofstandard))
 
-(set! *assert* true)
-
 (declare update-statement assert-arguments) ; forward declaration
 
 (defstruct- premise-struct
