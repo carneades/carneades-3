@@ -24,7 +24,6 @@
         [carneades.engine.unify :only (genvar unify rename-variables)])
   (:require [carneades.engine.argument-search :as as]))
 
-(set! *assert* true)
 
 ;; This is an implementation of the argumentation scheme for
 ;; for arguments from defeasible rules.  Rules may have multiple

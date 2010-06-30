@@ -21,8 +21,6 @@
         carneades.engine.argument
         carneades.engine.statement))
 
-(set! *assert* true)
-
 (defvar *verum-clause* '(true))
 (defvar *verum* (list *verum-clause*))
 (defvar *falsum-clause* '(false))

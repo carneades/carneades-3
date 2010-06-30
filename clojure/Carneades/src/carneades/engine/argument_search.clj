@@ -21,7 +21,6 @@
   (:require [carneades.engine.argument :as arg]
             [carneades.engine.search :as search]))
 
-(set! *assert* true)
 
 (defstruct candidate
   ;; A candidate argument is an argument which might have uninstantiated
