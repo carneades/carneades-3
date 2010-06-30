@@ -17,7 +17,6 @@
   (:use clojure.walk
         carneades.engine.utils))
 
-(set! *assert* true)
 
 ;; This library is implemented to convert every logical formula into an
 ;; equivalent "disjunctive normalform" (DNF). A DNF is a disjunction of a
