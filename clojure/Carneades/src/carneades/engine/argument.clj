@@ -14,6 +14,7 @@
 ;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns carneades.engine.argument
+  (:refer-clojure :exclude [satisfies?])
   (:use clojure.test
         clojure.set
         clojure.contrib.def

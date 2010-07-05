@@ -14,6 +14,7 @@
 ;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns carneades.engine.proofstandard
+  (:refer-clojure :exclude [satisfies?])
   (:use clojure.contrib.def))
 
 ;; dispatch on the proof standard

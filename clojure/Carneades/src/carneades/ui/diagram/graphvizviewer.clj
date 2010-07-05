@@ -16,7 +16,6 @@
 (ns carneades.ui.diagram.graphvizviewer
   (:use clojure.contrib.def
         clojure.contrib.str-utils
-        clojure.contrib.duck-streams
         carneades.ui.diagram.viewerdef
         carneades.config.reader
         carneades.engine.argument
