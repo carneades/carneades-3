@@ -16,7 +16,6 @@
 (ns carneades.engine.abduction
   (:use clojure.contrib.def
         clojure.contrib.pprint
-        [clojure.contrib.seq-utils :only (group-by flatten)]
         carneades.engine.utils
         carneades.engine.argument
         carneades.engine.statement))

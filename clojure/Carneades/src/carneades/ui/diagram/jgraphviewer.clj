@@ -307,7 +307,7 @@
       (.. g getModel endUpdate)))
     g))
 
-(defn- create-graph-component [ag stmt-str]
+(defn create-graph-component [ag stmt-str]
   (let [g (create-graph ag stmt-str)
         graphcomponent (proxy [mxGraphComponent] [g]
                          ;; no icon for groups
