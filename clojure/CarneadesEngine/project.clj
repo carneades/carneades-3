@@ -5,7 +5,6 @@ various argumentation tasks. This is the software library (the engine)."
   :dependencies [[org.clojure/clojure "1.2.0-master-SNAPSHOT"]
                  [org.clojure/clojure-contrib "1.2.0-master-SNAPSHOT"]
                  [org.clojars.pallix/owlapi "3.0.0"]
-                 [clj-sandbox "0.3.8"]
-                 [org.clojars.pallix/jgraphx "1.4.0.2"]]
+                 [clj-sandbox "0.3.8"]]
   :dev-dependencies [[swank-clojure "1.2.0"]
                      [lein-run "1.0.0-SNAPSHOT"]])
