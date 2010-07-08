@@ -1,7 +1,7 @@
 (ns carneades.examples.piersonpost
   (:use carneades.engine.statement
         carneades.engine.argument
-        carneades.ui.diagram.viewer))
+        carneades.mapcomponent.viewer))
 
 ;; The Pierson vs. Post case.  Used to illustrate the use of
 ;;   a scheme for "practical reasoning" in legal argument.
