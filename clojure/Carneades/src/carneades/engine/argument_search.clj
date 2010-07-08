@@ -290,6 +290,6 @@
   counterarguments in its resulting stream of arguments."
   (if (neg? max-turns)
     '()
-    (searcharg strategy max-turns (dec max-turns)
+    (searcharg strategy max-nodes (dec max-turns)
                (find-arguments strategy max-nodes state1 generators)
                generators)))
