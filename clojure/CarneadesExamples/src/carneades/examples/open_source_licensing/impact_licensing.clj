@@ -14,11 +14,11 @@
 
 (def cqs '())
 
-(def CarneadesEngine (string->symbol "http://carneades.berlios.de/impact-licensing#CarneadesEngine"))
-(def EPL (string->symbol "http://carneades.berlios.de/impact-licensing#EPL"))
-(def mayUseLicenseTemplate  (string->symbol "http://carneades.berlios.de/oss-licenses#mayUseLicenseTemplate"))
-(def implementedIn (string->symbol "http://carneades.berlios.de/oss-licenses#implementedIn"))
-(def (c ns n) (string->symbol (string-append ns n)))
+(def CarneadesEngine (symbol "http://carneades.berlios.de/impact-licensing#CarneadesEngine"))
+(def EPL (symbol "http://carneades.berlios.de/impact-licensing#EPL"))
+(def mayUseLicenseTemplate  (symbol "http://carneades.berlios.de/oss-licenses#mayUseLicenseTemplate"))
+(def implementedIn (symbol "http://carneades.berlios.de/oss-licenses#implementedIn"))
+(def (c ns n) (symbol (string-append ns n)))
 
 (def il "http://carneades.berlios.de/impact-licensing#")
 (def oss "http://carneades.berlios.de/oss-licenses#")

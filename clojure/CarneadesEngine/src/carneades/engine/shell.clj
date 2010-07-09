@@ -67,9 +67,9 @@
   [query engine]
   (map (fn [s] (pprint ((:substitutions s) query))) (solutions (engine query))))
 
-;; (defn show-state [state]
-;;   "view a diagram of the argument graph of a state"
-;;   (view (sget state :arguments)))
+; (defn show-state [state]
+;   "view a diagram of the argument graph of a state"
+;  (view (sget state :arguments)))
 
 ;; (defn show
 ;;   ([query engine]

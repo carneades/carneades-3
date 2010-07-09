@@ -4,8 +4,7 @@
       carneades.engine.argument-from-arguments
       carneades.engine.shell
       carneades.engine.rule
-      carneades.ui.diagram.viewer))
-
+      carneades.mapcomponent.viewer))
 
 ; The recycling example used by Adam Wyner 
 ; Also illustrates the argument-from-arguments module.
@@ -67,6 +66,4 @@ reduces a need of a new dump which is for the garbage.")
 (def e1 (make-engine* 100 2 args2
                       [(generate-arguments-from-argument-graph args1)]))
 
-
-;; (view args1)
-(show1 p15 e1)
+(view (:arguments (first (e1 p15))))
