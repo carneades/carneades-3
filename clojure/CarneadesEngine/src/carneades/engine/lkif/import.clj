@@ -405,18 +405,18 @@
       {:sources source-list :rb rb :ags ags}
       )))
 
-(def test-path "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\examples\\lkif-test\\lkif-test.xml")
-(def lkif-args (xml1-> (zip/xml-zip (xml/parse test-path)) :argument-graphs))
-(def args (xml-> lkif-args :argument-graph))
-(def arg1 (first args))
-(def lkif-stmts (xml1-> arg1 :statements))
-(def lkif-stmt* (xml-> lkif-stmts :statement))
-(def lkif-stmt1 (first lkif-stmt*))
-
-(def lkif-args (xml1-> arg1 :arguments))
-(def stmt-map (parse-statements lkif-stmts))
-
-(def pr1 (first (rest (rest (:premises (first (parse-arguments lkif-args stmt-map)))))))
+;(def test-path "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\examples\\lkif-test\\lkif-test.xml")
+;(def lkif-args (xml1-> (zip/xml-zip (xml/parse test-path)) :argument-graphs))
+;(def args (xml-> lkif-args :argument-graph))
+;(def arg1 (first args))
+;(def lkif-stmts (xml1-> arg1 :statements))
+;(def lkif-stmt* (xml-> lkif-stmts :statement))
+;(def lkif-stmt1 (first lkif-stmt*))
+;
+;(def lkif-args (xml1-> arg1 :arguments))
+;(def stmt-map (parse-statements lkif-stmts))
+;
+;(def pr1 (first (rest (rest (:premises (first (parse-arguments lkif-args stmt-map)))))))
 
 ;(def t (xml-> theo :rules :rule))
 
