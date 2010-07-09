@@ -7,7 +7,7 @@
     carneades.engine.rule
     carneades.engine.lkif.import
     carneades.engine.shell
-    carneades.ui.diagram.viewer
+    carneades.mapcomponent.viewer
     clojure.contrib.pprint)
   ;(:import )
   )

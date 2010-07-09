@@ -4,7 +4,7 @@
         carneades.engine.argument-builtins
         carneades.engine.shell
         carneades.engine.rule
-	carneades.ui.diagram.viewer))
+	carneades.mapcomponent.viewer))
 
 (def rb1 
   (rulebase
