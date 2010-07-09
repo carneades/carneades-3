@@ -6,4 +6,5 @@ various argumentation tasks. This are the examples"
                  [org.clojure/clojure-contrib "1.2.0-SNAPSHOT"]
                  [carneades-engine "1.0.0-SNAPSHOT"]
                  [carneades-mapcomponent "1.0.0-SNAPSHOT"]]
-  :dev-dependencies [[swank-clojure "1.2.0"]])
+  :dev-dependencies [[swank-clojure "1.2.0"]
+                     [lein-run "1.0.0-SNAPSHOT"]])
