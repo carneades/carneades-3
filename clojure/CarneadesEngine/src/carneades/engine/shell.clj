@@ -67,20 +67,20 @@
   [query engine]
   (map (fn [s] (pprint ((:substitutions s) query))) (solutions (engine query))))
 
-(defn show-state [state]
-  "view a diagram of the argument graph of a state"
-  (view (sget state :arguments)))
+;; (defn show-state [state]
+;;   "view a diagram of the argument graph of a state"
+;;   (view (sget state :arguments)))
 
-(defn show
-  ([query engine]
-     (show query engine true))
-  ([query engine showall]
-     (let [states (engine query)]
-       (if showall
-         (doseq [s states]
-           (show-state s))
-         (when-not (empty? states)
-           (show-state (first states)))))))
+;; (defn show
+;;   ([query engine]
+;;      (show query engine true))
+;;   ([query engine showall]
+;;      (let [states (engine query)]
+;;        (if showall
+;;          (doseq [s states]
+;;            (show-state s))
+;;          (when-not (empty? states)
+;;            (show-state (first states)))))))
 
-(defn show1 [query engine]
-  (show query engine false))
+;; (defn show1 [query engine]
+;;   (show query engine false))
