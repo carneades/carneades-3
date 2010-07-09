@@ -60,10 +60,4 @@ reduces a need of a new dump which is for the garbage.")
      (assert-arguments *empty-argument-graph*
                     [a1 a2 a3 a4 a5 a6 a7 a8 a9]))
 
-;; every supermarket creates some garbage
-(def args2 (accept *empty-argument-graph* [p14]))
-
-(def e1 (make-engine* 100 2 args2
-                      [(generate-arguments-from-argument-graph args1)]))
-
-(view (:arguments (first (e1 p15))))
+(view args1)
