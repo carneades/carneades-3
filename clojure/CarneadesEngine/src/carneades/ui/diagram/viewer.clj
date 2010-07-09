@@ -18,7 +18,6 @@
         carneades.config.reader
         carneades.ui.diagram.viewerdef
         carneades.ui.diagram.graphvizviewer
-        carneades.ui.diagram.jgraphviewer
         carneades.engine.statement))
 
 (defvar- *viewerlibrary* (configvalue "viewer.library"))
