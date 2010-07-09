@@ -29,7 +29,7 @@ environment variable with this name.)
 
 - Unpack the zip file in this directory.
 
-- Change directory to CARNEADES_HOME/clojure/Carneades
+- Change directory to CARNEADES_HOME/clojure/CarneadesEngine
 
 - Resolve dependencies:
 
@@ -50,6 +50,4 @@ $ lein test
 
 $ lein repl
 
-And then type, for instance to test the Pierson-Post example:
 
-(use :reload-all 'carneades.examples.piersonpost)
