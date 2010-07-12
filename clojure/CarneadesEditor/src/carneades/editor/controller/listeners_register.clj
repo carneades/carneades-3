@@ -21,7 +21,7 @@
 ;; This allow to keep the listeners logic independant from the GUI.
 ;;
 
-(defn register-listeners []
+(defn register-listeners [view]
   (add-action-listener
-   EditorApplicationView/fileOpenMenuItem on-open-file))
+   EditorApplicationView/fileOpenFileMenuItem on-open-file view))
 

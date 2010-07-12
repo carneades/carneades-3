@@ -6,7 +6,7 @@
 
 ;;; some tests
 
-(defn on-open-file [event]
+(defn on-open-file [event view]
   (let [not-property (str "Post, by pursuing the fox,"
                           "did not acquire property in the fox.")
         possession-required (str "Property rights in wild animals may "
@@ -63,4 +63,5 @@
                                     a14))
         facts1 (list foxes-are-wild possession-required certainty order)
         tompkins (accept args1 facts1)]
-    (display-graph tompkins)))
+    ;; (display-graph tompkins)
+    (display-graph view tompkins statement-formatted)))

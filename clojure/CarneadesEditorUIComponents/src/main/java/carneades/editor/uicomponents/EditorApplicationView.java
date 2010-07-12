@@ -31,6 +31,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jButton1 = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         saveMenuItem = new javax.swing.JMenuItem();
@@ -49,15 +50,25 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         mainPanel.setOneTouchExpandable(true);
 
+        propertiesPanel.setPreferredSize(new java.awt.Dimension(200, 331));
+
+        jButton1.setText("jButton1");
+
         javax.swing.GroupLayout propertiesPanelLayout = new javax.swing.GroupLayout(propertiesPanel);
         propertiesPanel.setLayout(propertiesPanelLayout);
         propertiesPanelLayout.setHorizontalGroup(
             propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, propertiesPanelLayout.createSequentialGroup()
+                .addContainerGap(24, Short.MAX_VALUE)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         propertiesPanelLayout.setVerticalGroup(
             propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 279, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, propertiesPanelLayout.createSequentialGroup()
+                .addContainerGap(27, Short.MAX_VALUE)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(25, 25, 25))
         );
 
         mainPanel.setLeftComponent(propertiesPanel);
@@ -65,8 +76,8 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         fileMenu.setText("File");
 
-        fileOpenMenuItem.setText("Open");
-        fileMenu.add(fileOpenMenuItem);
+        fileOpenFileMenuItem.setText("Open File...");
+        fileMenu.add(fileOpenFileMenuItem);
 
         saveMenuItem.setText("Save");
         fileMenu.add(saveMenuItem);
@@ -116,11 +127,11 @@ public class EditorApplicationView extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
+            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
         );
 
         pack();
@@ -150,8 +161,9 @@ public class EditorApplicationView extends javax.swing.JFrame {
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
-    public static final javax.swing.JMenuItem fileOpenMenuItem = new javax.swing.JMenuItem();
+    public static final javax.swing.JMenuItem fileOpenFileMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JButton jButton1;
     public static final javax.swing.JSplitPane mainPanel = new javax.swing.JSplitPane();
     public static final javax.swing.JTabbedPane mapPanel = new javax.swing.JTabbedPane();
     private javax.swing.JMenuBar menuBar;
