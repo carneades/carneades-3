@@ -62,4 +62,7 @@
 (define ag1 (args empty-argument-graph goal1))
 (define ag2 (args ag1 goal2))
 
+(define ag3 (state-arguments (stream-car (e1 goal1))))
+
+
 ; (view ag2)
