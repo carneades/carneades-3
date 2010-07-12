@@ -18,7 +18,7 @@
 (def EPL (symbol "http://carneades.berlios.de/impact-licensing#EPL"))
 (def mayUseLicenseTemplate  (symbol "http://carneades.berlios.de/oss-licenses#mayUseLicenseTemplate"))
 (def implementedIn (symbol "http://carneades.berlios.de/oss-licenses#implementedIn"))
-(defn c [ns n] (symbol (str (concat ns n))))
+(defn c [ns n] (symbol (str ns n)))
 
 (def il "http://carneades.berlios.de/impact-licensing#")
 (def oss "http://carneades.berlios.de/oss-licenses#")
