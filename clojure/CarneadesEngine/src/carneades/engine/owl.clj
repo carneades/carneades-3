@@ -1,6 +1,7 @@
 
 (ns carneades.engine.owl
-  ;(:require )
+  (:require :reload-all
+    [clojure.xml :as xml])
   (:use 
     carneades.engine.statement
     carneades.engine.argument
@@ -11,13 +12,14 @@
     (org.semanticweb.owlapi.vocab OWLRDFVocabulary)
     (org.semanticweb.owlapi.reasoner OWLReasonerFactory)
     (org.semanticweb.owlapi.reasoner OWLReasoner)
+    (java.net URI)
     (java.io File)
     )
   )
 
 ; TODO : forall
 
-(declare class-expression->sexpr)
+(declare class-expression->sexpr load-ontology)
 
 ; ---------------------------
 ; property expressions
@@ -222,7 +224,7 @@
         prop1 (. axiom getFirstProperty),
         prop-sexpr1 (property-expression->sexpr prop1 varx vary),
         prop2 (. axiom getSecondProperty),
-        prop-sexpr2 (property-expression->sexpr prop1 vary varx),
+        prop-sexpr2 (property-expression->sexpr prop2 vary varx),
         rule-< (make-rule
                  (gensym "inverse-properties-axiom")
                  false
@@ -322,20 +324,45 @@
     AxiomType/DATA_PROPERTY_ASSERTION (prop-assertion->rules axiom)
     ; else
     (do
-      (println "couldn't translate axiom : " (. axiom getAxiomType))
+      (println "unsupported axiom type            : " (. axiom getAxiomType))
       '())))
+
+(defn owl?
+  [url]
+  (= (:tag (xml/parse url)) :rdf:RDF))
+
+(defn path->uri
+  [path]
+  (let [file (new File path)]
+    (if (. file exists)
+      (. file toURI)
+      (new URI path))))
+
+(defn imports->rules
+  [ont opts]
+  (let [imports (. ont getDirectImports),
+        rulebases (map (fn [o] (load-ontology o opts)) imports)]
+    (last (reductions (fn [rb1 rb2] (add-rules rb1 (:rules rb2))) *empty-rulebase* rulebases))))
+
 
 (defn load-ontology
   "loads an owl ontology from path and translates it to rules"
   ([path] (load-ontology path '()))
   ([path optionals]
    (let [manager (OWLManager/createOWLOntologyManager),
-         documentIRI (IRI/create (new File path)), ; TODO URIs
-         ontology (. manager loadOntologyFromOntologyDocument documentIRI), ; TODO imports don't work
+         se (. manager setSilentMissingImportsHandling true), ; TODO : handle imports
+         documentIRI (IRI/create (path->uri path)),
+         ontology (. manager loadOntology documentIRI), ; TODO imports don't work
          axioms (. ontology getLogicalAxioms),
-         rules (apply concat (map axiom->rules axioms))]
+         defined-rules (apply concat (map axiom->rules axioms))
+         imported-rules (imports->rules ontology optionals),
+         rules (concat imported-rules defined-rules)]
      (println "# of all axioms     : " (. ontology getAxiomCount))
      (println "# of logical axioms : " (. ontology getLogicalAxiomCount))
+     (println "# of rules imported : " (count rules))
      (add-rules *empty-rulebase* rules))))
 
-; (def p "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\examples\\open-source-licensing\\oss-licenses.owl")
+
+;(def p1 "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\examples\\open-source-licensing\\oss-licenses.owl")
+;(def p2 "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\examples\\open-source-licensing\\impact-licensing.owl")
+(def p3 "http://www.co-ode.org/ontologies/pizza/pizza.owl")
