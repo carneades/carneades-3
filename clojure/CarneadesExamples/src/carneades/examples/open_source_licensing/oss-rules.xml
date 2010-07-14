@@ -7,7 +7,7 @@
 <lkif>
   <theory id="oss-rules">
     <imports>
-      <import url="oss-licenses.owl"/>
+      <import url="src/carneades/examples/open_source_licensing/oss-licenses.owl"/>
     </imports>
     <rules>
       <rule id="DefaultLicenseRule">
