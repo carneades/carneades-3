@@ -1,10 +1,13 @@
 (ns carneades.editor.controller.listeners
-  (:use carneades.editor.view.editorapplication
-        ;; some tests
+  (:use clojure.contrib.def
+        clojure.contrib.pprint
+        carneades.editor.view.editorapplication
+        carneades.engine.lkif.import
+        ;; temporary tests:
         carneades.engine.statement
         carneades.engine.argument))
 
-;;; some tests
+(defvar- *lkif-content* (atom {}))
 
 (defn on-open-file [event view]
   (let [not-property (str "Post, by pursuing the fox,"
@@ -63,5 +66,33 @@
                                     a14))
         facts1 (list foxes-are-wild possession-required certainty order)
         tompkins (accept args1 facts1)]
-    ;; (display-graph tompkins)
-    (display-graph view tompkins statement-formatted)))
+    ;; (display-graph view tompkins statement-formatted)
+    (prn "ask-lkif-file-to-open...")
+    (when-let [file (ask-lkif-file-to-open view)]
+      (when-let [content (lkif-import (.getPath file))]
+        (reset! *lkif-content* content)
+        (pprint content)
+        (display-graphs-list view (map :id (:ags (deref *lkif-content*))))))))
+
+(defn on-select-graph-id [event view]
+  (when-not (.getValueIsAdjusting event)
+    (let [list (.getSource event)
+        model (.getModel list)
+        indices (seq (. list getSelectedIndices))
+        ids (set (map (fn [i] (.getElementAt model i)) indices))]
+    
+    (prn "indices")
+    (prn indices)
+    (prn "ids")
+    (prn ids)
+    (let [ags (filter identity
+               (map (fn [ag]
+                      (when (contains? ids (:id ag))
+                        ag))
+                    (:ags (deref *lkif-content*))))]
+      (prn "ags")
+      (doseq [ag ags]
+        (prn "ag")
+        (prn ag)
+        (display-graph view ag statement-formatted))))))
+

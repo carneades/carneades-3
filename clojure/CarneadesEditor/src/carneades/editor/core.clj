@@ -2,7 +2,8 @@
   (:use carneades.editor.view.editorapplication
         carneades.editor.controller.listeners-register)
   (:import carneades.editor.view.editorapplication.SwingView)
-  (:gen-class))
+  ;; (:gen-class)
+  )
 
 (defn -main [& args]
   (prn "Starting the Carneades Editor...")
@@ -10,4 +11,4 @@
     (register-listeners view))
   (launch-application args))
 
-;; printf broken in the JAR?
+(-main ())
