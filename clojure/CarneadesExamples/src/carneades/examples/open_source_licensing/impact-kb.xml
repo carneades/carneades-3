@@ -9,8 +9,8 @@
 <lkif>
 <theory id="impact-kb">
 		<imports>
-		  <import url="src/carneades/examples/open_source_licensing/oss-rules.xml" />
-			<import url="src/carneades/examples/open_source_licensing/impact-licensing.owl" />
+		  <import url="oss-rules.xml" />
+	    <import url="impact-licensing.owl" />
 		</imports>
 	</theory>
 </lkif>
