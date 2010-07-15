@@ -4,7 +4,7 @@
   <groupId>carneades-examples</groupId>
   <artifactId>carneades-examples</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-  <name>CarneadesExamples</name>
+  <name>carneades-examples</name>
   <description>Carneades is an argument mapping application, with a graphical 
 user interface, and a software library for building applications supporting 
 various argumentation tasks. This are the examples</description>
@@ -34,12 +34,12 @@ various argumentation tasks. This are the examples</description>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.2.0-master-SNAPSHOT</version>
+      <version>1.2.0-beta1</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure-contrib</artifactId>
-      <version>1.2.0-SNAPSHOT</version>
+      <version>1.2.0-beta1</version>
     </dependency>
     <dependency>
       <groupId>carneades-engine</groupId>
