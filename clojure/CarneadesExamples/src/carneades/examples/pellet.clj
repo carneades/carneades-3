@@ -2,7 +2,7 @@
 (ns carneades.examples.pellet
   ;(:require )
   (:use
-    carneades.ui.diagram.viewer
+    carneades.mapcomponent.viewer
     carneades.engine.argument
     carneades.engine.pellet
     carneades.engine.shell)
