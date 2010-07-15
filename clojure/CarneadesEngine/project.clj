@@ -2,8 +2,8 @@
   :description "Carneades is an argument mapping application, with a graphical 
 user interface, and a software library for building applications supporting 
 various argumentation tasks. This is the software library (the engine)."
-  :dependencies [[org.clojure/clojure "1.2.0-master-SNAPSHOT"]
-                 [org.clojure/clojure-contrib "1.2.0-master-SNAPSHOT"]
+  :dependencies [[org.clojure/clojure "1.2.0-beta1"]
+                 [org.clojure/clojure-contrib "1.2.0-beta1"]
                  [org.clojars.pallix/owlapi "3.0.0"]
 				 [org.clojars.pallix/pellet-core "2.1.1"]
 				 [org.clojars.pallix/pellet-owlapiv3 "2.1.1"]

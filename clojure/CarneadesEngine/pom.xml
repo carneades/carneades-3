@@ -34,17 +34,47 @@ various argumentation tasks. This is the software library (the engine).</descrip
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.2.0-master-SNAPSHOT</version>
+      <version>1.2.0-beta1</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure-contrib</artifactId>
-      <version>1.2.0-master-SNAPSHOT</version>
+      <version>1.2.0-beta1</version>
     </dependency>
     <dependency>
       <groupId>org.clojars.pallix</groupId>
       <artifactId>owlapi</artifactId>
       <version>3.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.clojars.pallix</groupId>
+      <artifactId>pellet-core</artifactId>
+      <version>2.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.clojars.pallix</groupId>
+      <artifactId>pellet-owlapiv3</artifactId>
+      <version>2.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.clojars.pallix</groupId>
+      <artifactId>pellet-rules</artifactId>
+      <version>2.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.clojars.pallix</groupId>
+      <artifactId>pellet-datatypes</artifactId>
+      <version>2.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.clojars.pallix</groupId>
+      <artifactId>pellet-el</artifactId>
+      <version>2.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.clojars.pallix</groupId>
+      <artifactId>aterm-java</artifactId>
+      <version>1.6</version>
     </dependency>
     <dependency>
       <groupId>clj-sandbox</groupId>
