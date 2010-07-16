@@ -651,3 +651,33 @@
                      (update-argument ag arg)
                      ag))
                  ag2 (:premise-of n1))))))
+
+(defn has-premise?
+  [p prs]
+  (and
+    (not (empty? prs))
+    (or
+      (statement= (:atom p) (:atom (first prs)))
+      (recur p (rest prs)))))
+
+(defn premises=?
+  [pr1 pr2]
+  (every? (fn [p] (has-premise? p pr2)) pr1))
+
+(defn unite-args
+  [ag arg]
+  (if (some (fn [arg2] (and
+                         (= (:scheme arg) (:scheme arg2))
+                         (statement= (:conclusion arg) (:conclusion arg2))
+                         (premises=? (:premises arg) (:premises arg2))))
+        (:arguments ag))
+    ag
+    (assert-argument ag (assoc arg :id (gensym "a")))))
+
+(defn unite-graphs
+  [ag1 ag2]
+  (reduce unite-args ag1 (arguments ag2)))
+
+(defn unite-argument-graphs
+  [l]
+  (reduce unite-graphs *empty-argument-graph* l))
