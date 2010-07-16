@@ -27,6 +27,7 @@
 ;generate all possible licenses for MyCode
 ;(show1 `(,mayUseLicenseTemplate ,CarneadesEngine ?x) e1)
 
+
 (def goal1 `(~(c oss "mayUseLicenseTemplate") ~(c il "CarneadesEngine") ~(c oss "EPL_Template")))
 (def goal2 (list 'not (list (c oss "mayUseLicenseTemplate") (c il "CarneadesEngine") (c oss "EPL_Template"))))
 (def goal3 `(~(c oss "instanceOfTemplate") ~(c il "ClojureContribLicense") ~(c oss "EPL_Template")))
