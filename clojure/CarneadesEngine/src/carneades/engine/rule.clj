@@ -323,16 +323,22 @@
                                                          (str (:rule c)
                                                               (:id c))))))
                                       applicable-clauses)]
-;        (println "--------")
-;        (println "get clauses for goal:" goal)
-;        (println "remaining clauses:" remaining-clauses)
-;        (println "--------")
+        (println "--------")
+        (println "get clauses for goal:" goal)
+        (println "remaining clauses:" remaining-clauses)
+        (println "--------")
         remaining-clauses))))
 
 (defn generate-arguments-from-rules [rb qs]
   (fn [subgoal state]
     (let [args (:arguments state)
-          subs (:substitutions state)]
+          subs (:substitutions state),
+          all-args (assert-arguments
+                     args
+                     (map
+                       (fn [c] (instantiate-argument (:argument c) subs))
+                       (:candidates state)))]
+
       (letfn [(apply-for-conclusion
                [clause c]
                ;; apply the clause for conclusion
@@ -364,5 +370,5 @@
                             (filter identity (map #(apply-for-conclusion clause %) (:head clause)) ))]
         (mapinterleave (fn [c]
                          (apply-clause c))  (map rename-clause-variables
-                         (get-clauses args rb subgoal subs)))))))
+                         (get-clauses all-args rb subgoal subs)))))))
 
