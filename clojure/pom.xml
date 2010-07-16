@@ -6,7 +6,7 @@
     <artifactId>Carneades</artifactId>
     <packaging>jar</packaging>
     <version>1.0.0-SNAPSHOT</version>
-    <name>Carneades</name>
+    <name>carneades</name>
     <url>http://maven.apache.org</url>
     <build>
         <plugins>
@@ -79,20 +79,6 @@
                              <workingDirectory>${project.basedir}/CarneadesExamples</workingDirectory>
                              <arguments>
                                  <argument>deps</argument>
-                             </arguments>
-                         </configuration>
-                         <goals>
-                             <goal>exec</goal>
-                         </goals>
-                     </execution>
-                     <execution>
-                         <id>lein-install-CarneadesExamples</id>
-                         <phase>install</phase>
-                         <configuration>
-                             <executable>lein</executable>
-                             <workingDirectory>${project.basedir}/CarneadesExamples</workingDirectory>
-                             <arguments>
-                                 <argument>install</argument>
                              </arguments>
                          </configuration>
                          <goals>
