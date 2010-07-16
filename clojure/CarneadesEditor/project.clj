@@ -1,4 +1,4 @@
-(defproject CarneadesEditor "1.0.0-SNAPSHOT"
+(defproject carneades-editor "1.0.0-SNAPSHOT"
   :description "Carneades is an argument mapping application, with a graphical user interface, and a software library for building applications supporting various argumentation tasks. This is the graphical editor."
   :dependencies [[org.clojure/clojure "1.2.0-beta1"]
                  [org.clojure/clojure-contrib "1.2.0-beta1"]
