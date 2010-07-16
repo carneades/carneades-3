@@ -44,6 +44,34 @@
   "
   (empty? (solutions (engine query))))
 
+(defn unite-solutions
+  [sols]
+  (arg/unite-argument-graphs (map :arguments sols)))
+
+(defn add-candidates
+  [ag candidates subs]
+  (arg/assert-arguments ag (map
+                         (fn [c]
+                           (arg/instantiate-argument
+                             (:argument c)
+                             subs))
+                         candidates)))
+
+(defn unite-solutions-with-candidates
+  [sols]
+  (arg/unite-argument-graphs
+    (map (fn [s] (add-candidates
+                   (:arguments s)
+                   (:candidates s)
+                   (:substitutions s)))
+      sols)))
+
+(defn construct-arguments [goal max-nodes max-turns ag generators]
+  "integer integer argument-graph (seq-of generator) -> statement ->
+(seq-of state)"  
+  (construct-best-arguments depth-first max-nodes max-turns
+    (initial-state goal ag) generators))
+
 (defn make-engine* [max-nodes max-turns ag generators]
   "integer integer argument-graph (seq-of generator) -> statement -> 
    (seq-of state)"

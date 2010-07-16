@@ -56,6 +56,13 @@
                  (s (:space p) (:root p))))))
   ([p s] (search p s nil)))
 
+(defn search-all
+  ([p s n]
+    (if (and n (>= n 0))
+      (take n (s (:space p) (:root p)))
+      (s (:space p) (:root p))))
+  ([p s] (search p s nil)))
+
 (defn path
   "Returns a sequence of the labels from the root node the node n."
   [n]
