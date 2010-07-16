@@ -7,13 +7,13 @@
 <lkif>
   <theory id="oss-rules">
     <imports>
-      <import url="oss-licenses.owl"/>
+      <import url="src/carneades/examples/open_source_licensing/oss-licenses.owl"/>
     </imports>
     <rules>
       <rule id="DefaultLicenseRule">
         <!--
-         By default, a software entity may be licensed using any license template
-         -->
+		      By default, a software entity may be licensed using any license template 
+		    -->
         <head>
           <s pred="&oss;mayUseLicenseTemplate"><v>SE</v> may be licensed using the <v>T</v>
           template</s>
@@ -22,9 +22,9 @@
   
       <rule id="ReciprocityRule">
         <!--
-	 A software entity derived from a software entity licensed under a
-	 recipricol license must be licensed using a compatible license. 	
-	 -->
+		      A software entity derived from a software entity licensed under a
+		      recipricol license must be licensed using a compatible license. 	
+		    -->
         <head>
           <not><s pred="&oss;mayUseLicenseTemplate"><v>SE1</v> may be licensed using the <v>T1</v>
               template</s></not>
@@ -48,9 +48,9 @@
       
       <rule id="ModificationsAreDerivateWorks">
         <!-- 
-            A software entity, SE1, is derived from another software entity, SE2, if
-            SE1 has been produced by modifying the source code of SE2.
-          -->
+		      A software entity, SE1, is derived from another software entity, SE2, if 
+		      SE1 has been produced by modifying the source code of SE2.   
+		    -->
         <head>
           <s pred="&oss;isDerivedFrom"><v>SE1</v> is derived from <v>SE2</v></s>
         </head>
@@ -62,8 +62,8 @@
       
       <rule id="FSFTheoryOfLinking">
         <!--
-	According to the legal theory of the FSF, linking creates a derivative work.
-	-->
+					According to the legal theory of the FSF, linking creates a derivative work.
+				-->
         <head>
           <s pred="&oss;isDerivedFrom"><v>SE1</v> is derived from <v>SE2</v></s>
         </head>
@@ -76,9 +76,9 @@
       
       <rule id="RosenTheoryOfLinking">
         <!--
-          According to the legal theory of Lawrence Rosen, linking is not sufficient to create a derivative work.
-	  See: http://en.wikipedia.org/wiki/GNU_General_Public_License#Linking_and_derived_works
-         -->
+		      According to the legal theory of Lawrence Rosen, linking is not sufficient to create a derivative work.
+		      See: http://en.wikipedia.org/wiki/GNU_General_Public_License#Linking_and_derived_works
+		    -->
         <head>
           <not><s pred="&oss;isDerivedFrom"><v>SE1</v> is derived from <v>SE2</v></s></not>
         </head>
@@ -91,8 +91,8 @@
       
       <rule id="hasNoncompliantLicense">
         <!-- 
-          A work has a noncompliant license if the license is an instance of a template which may not be used.
-	-->
+		       A work has a noncompliant license if the license is an instance of a template which may not be used.
+		    -->
         <head><s pred="&oss;hasNoncompliantLicense"><v>W</v> has a noncompliant license <v>L</v></s></head>
         <body>
           <s pred="oss;hasLicense"><v>W</v> is licensed under <v>L</v></s>
@@ -104,9 +104,9 @@
       
       <rule id="CompliantWork">
         <!--
-	 A work is compliant with all relevant licenses unless its own license is not compliant and 
-	 unless it is derived from a work which is not compliant with all its relevant licenses.
-	-->
+		        A work is compliant with all relevant licenses unless its own license is not compliant and 
+		        unless it is derived from a work which is not compliant with all its relevant licenses.
+		      -->
         <head><s pred="&oss;CompliantWork"><v>W1</v> is compliant with all relevant licenses</s></head>
         <body>
           <s pred="&oss;hasLicense"><v>W1</v> is licensed under <v>L1</v></s>
@@ -120,9 +120,9 @@
       
       <rule id="NoncompliantWork">
         <!--
-	 A work is not compliant with all relevant licenses if its own license is not compliant or 
-	 it is derived from a work which is not compliant with all its relevant licenses.
-	-->
+		      A work is not compliant with all relevant licenses if its own license is not compliant or 
+		      it is derived from a work which is not compliant with all its relevant licenses.
+		    -->
         <head><not><s pred="&oss;CompliantWork"><v>W1</v> is compliant with all relevant
             licenses</s></not></head>
         <body>
@@ -143,7 +143,7 @@
       <rule id="DerivedFromNoncompliantWork">
         <!-- 
           A work is derived from a noncompliant work if it uses a work, unless the work used is compliant.
-	-->
+		    -->
         <head><s pred="&oss;isDerivedFromNoncompliantWork"><v>W1</v> is derived from a noncompliant
             work <v>W2</v></s></head>
         <body>
