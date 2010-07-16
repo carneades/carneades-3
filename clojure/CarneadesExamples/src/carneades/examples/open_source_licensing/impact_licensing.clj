@@ -59,9 +59,7 @@
                         ag
                         generators)))
 
-;(def ag1 (args arg/*empty-argument-graph* goal1))
-;(def ag2 (args ag1 goal2))
-
-;(def ag1 (:arguments (first (e1 goal1))))
+(def ag1 (args arg/*empty-argument-graph* goal1))
+(def ag2 (args ag1 goal2))
 
 ; (view ag2)
