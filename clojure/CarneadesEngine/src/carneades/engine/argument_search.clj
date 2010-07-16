@@ -261,6 +261,17 @@
                          max-nodes)]
     (map :state r)))
 
+(defn construct-args [strategy max-nodes initial-state generators]
+  "strategy state (seq-of generator) -> (seq-of state)"
+  (let [root (search/make-root initial-state)
+        r (search/search-all (struct search/problem
+                                 root
+                                 (make-transitions generators)
+                                 goal-state?)
+                         strategy
+                         max-nodes)]
+    (map :state r)))
+
 (defn searcharg [strategy max-nodes turns arguments generators]
   (if (<= turns 0)
     arguments
@@ -279,6 +290,25 @@
                                     generators))))
                    arguments)))
 
+(defn constructarg [strategy max-nodes turns arguments generators]
+  (if (<= turns 0)
+    arguments
+    (mapinterleave (fn [state2]
+                     (let [arg2 (construct-args
+                                 strategy
+                                 max-nodes
+                                 (switch-viewpoint state2)
+                                 generators)]
+                       (if (empty? arg2)
+                         (list state2)
+                         (constructarg strategy
+                                    max-nodes
+                                    (dec turns)
+                                    arg2
+                                    generators))))
+                   arguments)))
+
+
 (defn find-best-arguments [strategy max-nodes max-turns state1 generators]
   "strategy int state (seq-of generator) -> (seq-of state)
   
@@ -292,4 +322,11 @@
     '()
     (searcharg strategy max-nodes (dec max-turns)
                (find-arguments strategy max-nodes state1 generators)
+               generators)))
+
+(defn construct-best-arguments [strategy max-nodes max-turns state1 generators]
+  (if (neg? max-turns)
+    '()
+    (constructarg strategy max-nodes (dec max-turns)
+               (construct-args strategy max-nodes state1 generators)
                generators)))

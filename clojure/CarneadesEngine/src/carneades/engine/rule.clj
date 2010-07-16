@@ -323,10 +323,10 @@
                                                          (str (:rule c)
                                                               (:id c))))))
                                       applicable-clauses)]
-        (println "--------")
-        (println "get clauses for goal:" goal)
-        (println "remaining clauses:" remaining-clauses)
-        (println "--------")
+;        (println "--------")
+;        (println "get clauses for goal:" goal)
+;        (println "remaining clauses:" remaining-clauses)
+;        (println "--------")
         remaining-clauses))))
 
 (defn generate-arguments-from-rules [rb qs]
