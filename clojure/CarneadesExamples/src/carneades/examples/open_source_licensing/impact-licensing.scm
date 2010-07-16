@@ -42,7 +42,7 @@
 (define (args ag goal)
   (unite-solutions (construct-arguments goal
                        500
-                       4
+                       1
                        ag
                        generators
                       )))
@@ -51,7 +51,7 @@
   (unite-solutions-with-candidates 
    (construct-arguments goal
                         500
-                        4
+                        1
                         ag
                         generators)))
 
