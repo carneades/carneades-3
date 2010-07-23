@@ -32,13 +32,13 @@ public class EditorApplicationView extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jToolBar1 = new javax.swing.JToolBar();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jSeparator4 = new javax.swing.JToolBar.Separator();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
-        saveMenuItem = new javax.swing.JMenuItem();
-        saveAsMenuItem = new javax.swing.JMenuItem();
-        exitMenuItem = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        jSeparator3 = new javax.swing.JPopupMenu.Separator();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
         editMenu = new javax.swing.JMenu();
         cutMenuItem = new javax.swing.JMenuItem();
         copyMenuItem = new javax.swing.JMenuItem();
@@ -48,68 +48,130 @@ public class EditorApplicationView extends javax.swing.JFrame {
         contentsMenuItem = new javax.swing.JMenuItem();
         aboutMenuItem = new javax.swing.JMenuItem();
 
+        tabPopupMenu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        closeTabMenuItem.setText("Close");
+        tabPopupMenu.add(closeTabMenuItem);
+
+        lkifFilePopupMenu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        closeLkifFileMenuItem.setText("Close");
+        lkifFilePopupMenu.add(closeLkifFileMenuItem);
+
+        graphPopupMenu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        openGraphMenuItem.setText("Open");
+        graphPopupMenu.add(openGraphMenuItem);
+
+        closeGraphMenuItem.setText("Close");
+        graphPopupMenu.add(closeGraphMenuItem);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         mainPanel.setOneTouchExpandable(true);
 
-        propertiesPanel.setPreferredSize(new java.awt.Dimension(200, 331));
+        leftPanel.setPreferredSize(new java.awt.Dimension(300, 10));
 
-        jScrollPane1.setViewportView(argumentgraphsList);
+        jPanel1.setPreferredSize(new java.awt.Dimension(306, 200));
+
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
+        lkifsTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        lkifsTree.setMaximumSize(new java.awt.Dimension(32767, 32767));
+        jScrollPane2.setViewportView(lkifsTree);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(28, Short.MAX_VALUE))
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
+
+        javax.swing.GroupLayout leftPanelLayout = new javax.swing.GroupLayout(leftPanel);
+        leftPanel.setLayout(leftPanelLayout);
+        leftPanelLayout.setHorizontalGroup(
+            leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, leftPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(propertiesPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        leftPanelLayout.setVerticalGroup(
+            leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(leftPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(propertiesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout propertiesPanelLayout = new javax.swing.GroupLayout(propertiesPanel);
-        propertiesPanel.setLayout(propertiesPanelLayout);
-        propertiesPanelLayout.setHorizontalGroup(
-            propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        propertiesPanelLayout.setVerticalGroup(
-            propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(propertiesPanelLayout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(253, Short.MAX_VALUE))
-        );
-
-        mainPanel.setLeftComponent(propertiesPanel);
+        mainPanel.setLeftComponent(leftPanel);
         mainPanel.setRightComponent(mapPanel);
 
-        jToolBar1.setFloatable(false);
-        jToolBar1.setRollover(true);
+        toolBar.setFloatable(false);
+        toolBar.setRollover(true);
+        toolBar.add(jSeparator4);
+
+        zoomResetButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/zoomreset.png"))); // NOI18N
+        zoomResetButton.setBorder(null);
+        zoomResetButton.setBorderPainted(false);
+        zoomResetButton.setFocusPainted(false);
+        zoomResetButton.setFocusable(false);
+        zoomResetButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        zoomResetButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolBar.add(zoomResetButton);
+
+        zoomOutButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/zoomout.png"))); // NOI18N
+        zoomOutButton.setBorder(null);
+        zoomOutButton.setFocusable(false);
+        zoomOutButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        zoomOutButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolBar.add(zoomOutButton);
+
+        zoomInButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/zoomin.png"))); // NOI18N
+        zoomInButton.setBorder(null);
+        zoomInButton.setFocusable(false);
+        zoomInButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        zoomInButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolBar.add(zoomInButton);
 
         fileMenu.setText("File");
 
-        fileOpenFileMenuItem.setText("Open File...");
-        fileMenu.add(fileOpenFileMenuItem);
+        openFileMenuItem.setText("Open...");
+        fileMenu.add(openFileMenuItem);
 
-        saveMenuItem.setText("Save");
-        fileMenu.add(saveMenuItem);
+        closeFileMenuItem.setText("Close");
+        fileMenu.add(closeFileMenuItem);
+        fileMenu.add(jSeparator2);
 
-        saveAsMenuItem.setText("Save As ...");
-        fileMenu.add(saveAsMenuItem);
+        saveFileMenuItem.setText("Save");
+        fileMenu.add(saveFileMenuItem);
 
-        exitMenuItem.setText("Exit");
-        exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        saveAsFileMenuItem.setText("Save As ...");
+        fileMenu.add(saveAsFileMenuItem);
+        fileMenu.add(jSeparator3);
+
+        exportFileMenuItem.setText("Export...");
+        fileMenu.add(exportFileMenuItem);
+        fileMenu.add(jSeparator1);
+
+        exitFileMenuItem.setText("Exit");
+        exitFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exitMenuItemActionPerformed(evt);
+                exitFileMenuItemActionPerformed(evt);
             }
         });
-        fileMenu.add(exitMenuItem);
+        fileMenu.add(exitFileMenuItem);
 
         menuBar.add(fileMenu);
 
@@ -145,23 +207,23 @@ public class EditorApplicationView extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 667, Short.MAX_VALUE)
-            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 667, Short.MAX_VALUE)
+            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 821, Short.MAX_VALUE)
+            .addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 821, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(toolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE))
+                .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 542, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
+    private void exitFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitFileMenuItemActionPerformed
         System.exit(0);
-    }//GEN-LAST:event_exitMenuItemActionPerformed
+    }//GEN-LAST:event_exitFileMenuItemActionPerformed
 
     /**
     * @param args the command line arguments
@@ -176,26 +238,43 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
-    public static final javax.swing.JList argumentgraphsList = new javax.swing.JList();
+    public static final javax.swing.JMenuItem closeFileMenuItem = new javax.swing.JMenuItem();
+    public static final javax.swing.JMenuItem closeGraphMenuItem = new javax.swing.JMenuItem();
+    public static final javax.swing.JMenuItem closeLkifFileMenuItem = new javax.swing.JMenuItem();
+    public static final javax.swing.JMenuItem closeTabMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenuItem contentsMenuItem;
     private javax.swing.JMenuItem copyMenuItem;
     private javax.swing.JMenuItem cutMenuItem;
     private javax.swing.JMenuItem deleteMenuItem;
     private javax.swing.JMenu editMenu;
-    private javax.swing.JMenuItem exitMenuItem;
+    public static final javax.swing.JMenuItem exitFileMenuItem = new javax.swing.JMenuItem();
+    public static final javax.swing.JMenuItem exportFileMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenu fileMenu;
-    public static final javax.swing.JMenuItem fileOpenFileMenuItem = new javax.swing.JMenuItem();
+    public static final javax.swing.JPopupMenu graphPopupMenu = new javax.swing.JPopupMenu();
     private javax.swing.JMenu helpMenu;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JPopupMenu.Separator jSeparator3;
+    private javax.swing.JToolBar.Separator jSeparator4;
+    public static final javax.swing.JPanel leftPanel = new javax.swing.JPanel();
+    public static final javax.swing.JPopupMenu lkifFilePopupMenu = new javax.swing.JPopupMenu();
+    public static final javax.swing.JTree lkifsTree = new javax.swing.JTree();
     public static final javax.swing.JSplitPane mainPanel = new javax.swing.JSplitPane();
     public static final javax.swing.JTabbedPane mapPanel = new javax.swing.JTabbedPane();
     private javax.swing.JMenuBar menuBar;
+    public static final javax.swing.JMenuItem openFileMenuItem = new javax.swing.JMenuItem();
+    public static final javax.swing.JMenuItem openGraphMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenuItem pasteMenuItem;
     public static final javax.swing.JPanel propertiesPanel = new javax.swing.JPanel();
-    private javax.swing.JMenuItem saveAsMenuItem;
-    private javax.swing.JMenuItem saveMenuItem;
+    public static final javax.swing.JMenuItem saveAsFileMenuItem = new javax.swing.JMenuItem();
+    public static final javax.swing.JMenuItem saveFileMenuItem = new javax.swing.JMenuItem();
+    public static final javax.swing.JPopupMenu tabPopupMenu = new javax.swing.JPopupMenu();
+    public static final javax.swing.JToolBar toolBar = new javax.swing.JToolBar();
+    public static final javax.swing.JButton zoomInButton = new javax.swing.JButton();
+    public static final javax.swing.JButton zoomOutButton = new javax.swing.JButton();
+    public static final javax.swing.JButton zoomResetButton = new javax.swing.JButton();
     // End of variables declaration//GEN-END:variables
 
     // our modifications:

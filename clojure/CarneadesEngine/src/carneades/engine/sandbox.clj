@@ -15,12 +15,13 @@
 
 (ns carneades.engine.sandbox
   (:use clojure.contrib.def
-        net.licenser.sandbox))
+        ;; net.licenser.sandbox
+        ))
 
-(defvar- *sandbox* (new-sandbox))
+;; (defvar- *sandbox* (new-sandbox))
 
 (defn eval-expr [expr]
   "throws java.lang.SecurityException
    and java.util.concurrent.TimeoutException"
-  (*sandbox* expr))
+  (eval expr))
 
