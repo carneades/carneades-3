@@ -8,7 +8,7 @@
 (defn -main [& args]
   (prn "Starting the Carneades Editor...")
   (let [view (SwingView.)]
-    (register-listeners view))
-  (launch-application args))
+    (register-listeners view)
+    (show view)))
 
 (-main ())

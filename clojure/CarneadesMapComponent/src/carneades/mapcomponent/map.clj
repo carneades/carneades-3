@@ -22,7 +22,9 @@
            (com.mxgraph.model mxCell mxGeometry)
            com.mxgraph.layout.hierarchical.mxHierarchicalLayout
            com.mxgraph.layout.mxStackLayout
-           com.mxgraph.swing.mxGraphComponent))
+           com.mxgraph.swing.mxGraphComponent
+           com.mxgraph.swing.mxGraphOutline
+           java.awt.event.MouseWheelListener))
 
 (defvar- *argument-style*
   {mxConstants/STYLE_SHAPE mxConstants/SHAPE_ELLIPSE
@@ -164,6 +166,8 @@
         margin 10
         translation (+ margin (- minx))
         ytranslation 30]
+    (prn "translation")
+    (prn translation)
     (.. g getView (scaleAndTranslate 1 translation ytranslation))))
 
 (defn- hierarchicallayout [#^mxGraph g p vertices]
@@ -301,6 +305,46 @@
                           getDocumentElement))
                      filename))
 
+(defmacro with-restore-translate [g & body]
+  "executes body and restores the initial translation of the graph after"
+  `(do
+     (let [point# (.. ~g getView getTranslate)
+           x# (.getX point#)
+           y# (.getY point#)]
+       ~@body
+       (let [scale# (.. ~g getView getScale)]
+         (prn "scale")
+         (prn scale#)
+         (.. ~g getView (scaleAndTranslate scale# x# y#))))))
+
+(defn zoom-in [graphcomponent]
+  (let [g (.getGraph graphcomponent)]
+    (with-restore-translate g
+      (.zoomIn graphcomponent))))
+
+(defn zoom-out [graphcomponent]
+  (let [g (.getGraph graphcomponent)]
+    (when (> (.. g getView getScale) 0.1)
+      (with-restore-translate g
+        (.zoomOut graphcomponent)))))
+
+(defn zoom-reset [graphcomponent]
+  (let [g (.getGraph graphcomponent)]
+    (with-restore-translate g
+      (.. g getView (scaleAndTranslate 1 0 0)))))
+
+(deftype MouseListener [g graphcomponent] MouseWheelListener
+  (mouseWheelMoved
+   [this event]
+   (when (or (instance? mxGraphOutline (.getSource event))
+             (.isControlDown event))
+     (if (neg? (.getWheelRotation event))
+       (zoom-in graphcomponent)
+       (zoom-out graphcomponent)))))
+
+(defn- add-mouse-zoom [g graphcomponent]
+  (.addMouseWheelListener graphcomponent (MouseListener. g graphcomponent)))
+
 (defn create-graph-component [ag stmt-str]
   (let [g (create-graph ag stmt-str)
         graphcomponent (proxy [mxGraphComponent] [g]
@@ -310,4 +354,5 @@
                           [state]
                           nil))]
     (.setConnectable graphcomponent false)
+    (add-mouse-zoom g graphcomponent)
     graphcomponent))
