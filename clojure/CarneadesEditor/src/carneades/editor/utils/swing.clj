@@ -83,7 +83,10 @@
 
 (defn set-look-and-feel [name]
   (try
-    (doseq [info (UIManager/getInstalledLookAndFeels)]
-      (when (= name (.getName info))
-        (UIManager/setLookAndFeel (.getClassName info))))
-    (catch Exception e)))
+    (loop [infos (UIManager/getInstalledLookAndFeels)]
+      (let [info (first infos)]
+        (when-not (empty? infos)
+          (if (= name (.getName info))
+            (UIManager/setLookAndFeel (.getClassName info))
+            (recur (rest infos))))))
+    (catch Exception e (prn "Exception") (prn e))))

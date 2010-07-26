@@ -5,10 +5,14 @@
   ;; (:gen-class)
   )
 
-(defn -main [& args]
+(defn start []
   (prn "Starting the Carneades Editor...")
   (let [view (SwingView.)]
+    (init view)
     (register-listeners view)
     (show view)))
 
-(-main ())
+(defn -main [& args]
+  (start))
+
+(start)

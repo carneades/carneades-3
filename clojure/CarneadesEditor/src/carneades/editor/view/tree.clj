@@ -8,20 +8,19 @@
            (java.awt.event MouseAdapter)
            (carneades.editor.uicomponents EditorApplicationView)))
 
-(defvar- *lkifFilePopupMenu* EditorApplicationView/lkifFilePopupMenu)
-(defvar- *graphPopupMenu* EditorApplicationView/graphPopupMenu)
-(defvar- *closeGraphMenuItem* EditorApplicationView/closeGraphMenuItem)
+(defvar- *viewinstance* (EditorApplicationView/instance))
 
-(defvar *lkifsTree* EditorApplicationView/lkifsTree)
+(defvar- *lkifFilePopupMenu* (.lkifFilePopupMenu *viewinstance*))
+(defvar- *graphPopupMenu* (.graphPopupMenu *viewinstance*))
+(defvar- *closeGraphMenuItem* (.closeGraphMenuItem *viewinstance*))
+
+(defvar *lkifsTree* (.lkifsTree *viewinstance*))
 
 (defrecord LkifFileInfo [path filename] Object
   (toString [this] filename))
 
 (defrecord GraphInfo [lkifinfo id] Object
   (toString [this] id))
-
-(defn typepred [infotype info]
-  (isa? (type info) infotype))
 
 (defn add-lkif-content [file graphids]
   (with-tree *lkifsTree*
@@ -82,7 +81,7 @@
                (let [selectedpath (.getSelectionPath *lkifsTree*)]
                  (when (= path selectedpath)
                    (when-let [info (get-selected-object)]
-                     (condp typepred info
+                     (condp instance? info
                        GraphInfo
                        (do
                          (.setEnabled
