@@ -2,7 +2,9 @@
   (:use clojure.contrib.def)
   (:import carneades.editor.uicomponents.EditorApplicationView))
 
-(defvar- *propertiesPanel* EditorApplicationView/propertiesPanel)
+(defvar- *viewinstance* (EditorApplicationView/instance))
+
+(defvar- *propertiesPanel* (.propertiesPanel *viewinstance*))
 
 (defvar- *properties* (atom nil))
 

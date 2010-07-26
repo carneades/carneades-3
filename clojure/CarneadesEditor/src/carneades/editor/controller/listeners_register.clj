@@ -28,21 +28,26 @@
 ;; This allow to keep the listeners logic independant from the GUI.
 ;;
 
-(defvar- *openFileMenuItem* EditorApplicationView/openFileMenuItem)
-(defvar- *closeTabMenuItem* EditorApplicationView/closeTabMenuItem)
-(defvar- *closeFileMenuItem* EditorApplicationView/closeFileMenuItem)
-(defvar- *closeLkifFileMenuItem* EditorApplicationView/closeLkifFileMenuItem)
-(defvar- *openGraphMenuItem* EditorApplicationView/openGraphMenuItem)
-(defvar- *closeGraphMenuItem* EditorApplicationView/closeGraphMenuItem)
+(defvar- *viewinstance* (EditorApplicationView/instance))
 
-(defvar- *action-listeners*
-  [*openFileMenuItem* *closeTabMenuItem*])
+(defvar- *openFileMenuItem* (.openFileMenuItem *viewinstance*))
+(defvar- *closeTabMenuItem* (.closeTabMenuItem *viewinstance*))
+(defvar- *closeFileMenuItem* (.closeFileMenuItem *viewinstance*))
 
-(defn- unregister-listeners []
-  (doseq [component *action-listeners*]
-    (remove-action-listeners component))
-  (remove-window-listeners EditorApplicationView/instance)
-  (remove-mouse-listeners *lkifsTree*))
+(defvar- *closeLkifFileMenuItem* (.closeLkifFileMenuItem *viewinstance*))
+(defvar- *openGraphMenuItem* (.openGraphMenuItem *viewinstance*))
+(defvar- *closeGraphMenuItem* (.closeGraphMenuItem *viewinstance*))
+
+(defvar- *openFileButton* (.openFileButton *viewinstance*))
+
+;; (defvar- *action-listeners*
+;;   [*openFileMenuItem* *closeTabMenuItem*])
+
+;; (defn- unregister-listeners []
+;;   (doseq [component *action-listeners*]
+;;     (remove-action-listeners component))
+;;   (remove-window-listeners EditorApplicationView/instance)
+;;   (remove-mouse-listeners *lkifsTree*))
 
 (defn- mouse-click-in-tree-listener [event view]
   (let [clickcount (.getClickCount event)]
@@ -51,12 +56,12 @@
         (prn "info")
         (prn info)
         (case clickcount
-            1 (condp typepred info 
+            1 (condp instance? info 
                 GraphInfo (on-select-graphid view (:path (:lkifinfo info))
                                              (:id info))
                 LkifFileInfo (on-select-lkif-file view (:path info))
                 nil)
-            2 (condp typepred info
+            2 (condp instance? info
                 GraphInfo (on-edit-graphid view (:path (:lkifinfo info))
                                            (:id info))
                 nil)
@@ -66,7 +71,7 @@
   (prn "close file listener")
   (when-let [node (.getLastSelectedPathComponent *lkifsTree*)]
     (when-let [info (.getUserObject node)]
-      (condp typepred info
+      (condp instance? info
         LkifFileInfo (on-close-file view (:path info))
         GraphInfo (on-close-file view (:path (:lkifinfo info)))
         nil))))
@@ -79,25 +84,26 @@
   (prn "open-graph-listener")
   (when-let [node (.getLastSelectedPathComponent *lkifsTree*)]
     (when-let [info (.getUserObject node)]
-      (condp typepred info
+      (condp instance? info
         GraphInfo (on-open-graph view (:path (:lkifinfo info)) (:id info))
         nil))))
 
 (defn- close-graph-listener [event view]
-  (prn "close-graph-listener")
+  (do-swing-and-wait (prn "close-graph-listener"))
   (when-let [node (.getLastSelectedPathComponent *lkifsTree*)]
     (when-let [info (.getUserObject node)]
-      (condp typepred info
+      (condp instance? info
         GraphInfo (on-close-graph view (:path (:lkifinfo info)) (:id info))
         nil))))
 
 (defn register-listeners [view]
+  (add-action-listener *openFileButton* (fn [event] (on-open-file view)))
   (add-action-listener *openFileMenuItem* (fn [event] (on-open-file view)))
   (add-action-listener *closeFileMenuItem* close-file-listener view)
   (add-action-listener *closeLkifFileMenuItem* close-file-listener view)
   (add-action-listener *openGraphMenuItem* open-graph-listener view)
   (add-action-listener *closeGraphMenuItem* close-graph-listener view)
   (add-action-listener *closeTabMenuItem* close-listener view)
-  (add-windowclose-listener
-   EditorApplicationView/instance (fn [& args] (unregister-listeners)))
+  ;; (add-windowclose-listener
+  ;;  *viewinstance* (fn [& args] (unregister-listeners)))
   (add-mousepressed-listener *lkifsTree* mouse-click-in-tree-listener view))

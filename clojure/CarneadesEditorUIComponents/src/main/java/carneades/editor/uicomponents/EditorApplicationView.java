@@ -11,6 +11,9 @@
 
 package carneades.editor.uicomponents;
 
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+
 /**
  *
  * @author pal
@@ -120,6 +123,18 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         toolBar.setFloatable(false);
         toolBar.setRollover(true);
+
+        openFileButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/document-open.png"))); // NOI18N
+        openFileButton.setFocusable(false);
+        openFileButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        openFileButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolBar.add(openFileButton);
+
+        saveFileButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/document-save.png"))); // NOI18N
+        saveFileButton.setFocusable(false);
+        saveFileButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        saveFileButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolBar.add(saveFileButton);
         toolBar.add(jSeparator4);
 
         zoomResetButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/zoomreset.png"))); // NOI18N
@@ -238,19 +253,19 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
-    public static final javax.swing.JMenuItem closeFileMenuItem = new javax.swing.JMenuItem();
-    public static final javax.swing.JMenuItem closeGraphMenuItem = new javax.swing.JMenuItem();
-    public static final javax.swing.JMenuItem closeLkifFileMenuItem = new javax.swing.JMenuItem();
-    public static final javax.swing.JMenuItem closeTabMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem closeFileMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem closeGraphMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem closeLkifFileMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem closeTabMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenuItem contentsMenuItem;
     private javax.swing.JMenuItem copyMenuItem;
     private javax.swing.JMenuItem cutMenuItem;
     private javax.swing.JMenuItem deleteMenuItem;
     private javax.swing.JMenu editMenu;
-    public static final javax.swing.JMenuItem exitFileMenuItem = new javax.swing.JMenuItem();
-    public static final javax.swing.JMenuItem exportFileMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem exitFileMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem exportFileMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenu fileMenu;
-    public static final javax.swing.JPopupMenu graphPopupMenu = new javax.swing.JPopupMenu();
+    public final javax.swing.JPopupMenu graphPopupMenu = new javax.swing.JPopupMenu();
     private javax.swing.JMenu helpMenu;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
@@ -258,25 +273,50 @@ public class EditorApplicationView extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JToolBar.Separator jSeparator4;
-    public static final javax.swing.JPanel leftPanel = new javax.swing.JPanel();
-    public static final javax.swing.JPopupMenu lkifFilePopupMenu = new javax.swing.JPopupMenu();
-    public static final javax.swing.JTree lkifsTree = new javax.swing.JTree();
-    public static final javax.swing.JSplitPane mainPanel = new javax.swing.JSplitPane();
-    public static final javax.swing.JTabbedPane mapPanel = new javax.swing.JTabbedPane();
+    public final javax.swing.JPanel leftPanel = new javax.swing.JPanel();
+    public final javax.swing.JPopupMenu lkifFilePopupMenu = new javax.swing.JPopupMenu();
+    public final javax.swing.JTree lkifsTree = new javax.swing.JTree();
+    public final javax.swing.JSplitPane mainPanel = new javax.swing.JSplitPane();
+    public final javax.swing.JTabbedPane mapPanel = new javax.swing.JTabbedPane();
     private javax.swing.JMenuBar menuBar;
-    public static final javax.swing.JMenuItem openFileMenuItem = new javax.swing.JMenuItem();
-    public static final javax.swing.JMenuItem openGraphMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JButton openFileButton = new javax.swing.JButton();
+    public final javax.swing.JMenuItem openFileMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem openGraphMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenuItem pasteMenuItem;
-    public static final javax.swing.JPanel propertiesPanel = new javax.swing.JPanel();
-    public static final javax.swing.JMenuItem saveAsFileMenuItem = new javax.swing.JMenuItem();
-    public static final javax.swing.JMenuItem saveFileMenuItem = new javax.swing.JMenuItem();
-    public static final javax.swing.JPopupMenu tabPopupMenu = new javax.swing.JPopupMenu();
-    public static final javax.swing.JToolBar toolBar = new javax.swing.JToolBar();
-    public static final javax.swing.JButton zoomInButton = new javax.swing.JButton();
-    public static final javax.swing.JButton zoomOutButton = new javax.swing.JButton();
-    public static final javax.swing.JButton zoomResetButton = new javax.swing.JButton();
+    public final javax.swing.JPanel propertiesPanel = new javax.swing.JPanel();
+    public final javax.swing.JMenuItem saveAsFileMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JButton saveFileButton = new javax.swing.JButton();
+    public final javax.swing.JMenuItem saveFileMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JPopupMenu tabPopupMenu = new javax.swing.JPopupMenu();
+    public final javax.swing.JToolBar toolBar = new javax.swing.JToolBar();
+    public final javax.swing.JButton zoomInButton = new javax.swing.JButton();
+    public final javax.swing.JButton zoomOutButton = new javax.swing.JButton();
+    public final javax.swing.JButton zoomResetButton = new javax.swing.JButton();
     // End of variables declaration//GEN-END:variables
 
     // our modifications:
-    public static final EditorApplicationView instance = new EditorApplicationView();
+    static {
+        // set nimbus theme
+        try {
+            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    public static EditorApplicationView viewInstance = new EditorApplicationView();
+
+    public static synchronized EditorApplicationView instance()
+    {
+        return viewInstance;
+    }
+
+    public static synchronized void reset()
+    {
+        viewInstance = new EditorApplicationView();
+    }
 }

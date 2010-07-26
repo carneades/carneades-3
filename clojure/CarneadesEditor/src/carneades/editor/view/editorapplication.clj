@@ -2,7 +2,7 @@
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         ;;
-        ;; no import of carneades.engine.* are allowed here
+        ;; no imports of carneades.engine.* are allowed here
         ;;
         carneades.editor.view.menu.mainmenu
         carneades.mapcomponent.map
@@ -26,6 +26,8 @@
            (carneades.editor.uicomponents EditorApplicationView)))
 
 (defprotocol View
+  (init [this])
+  
   (display-error [this title content])
   (show [this] "display the main view, take the command lines arguments
                        as second argument")
@@ -47,7 +49,7 @@
   (display-lkif-property [this path]))
 
 
-(defvar- *frame* EditorApplicationView/instance)
+(defvar- *frame* (EditorApplicationView/instance))
 
 (defn- create-file-filter []
   (letfn [(extension [#^String filename]
@@ -60,6 +62,13 @@
                   (= "xml" (extension (.getName f))))))))
 
 (deftype SwingView [] View
+  (init
+   [this]
+   ;; make a new instance (without listeners!)
+   (set-look-and-feel "Nimbus")
+   (EditorApplicationView/reset)
+   (lkif-properties-init))
+  
   (display-error
    [this title content]
    (JOptionPane/showMessageDialog *frame* content title
@@ -71,7 +80,6 @@
    (init-menu)
    (add-treeselection-listener *lkifsTree* on-tree-selection)
    (.addMouseListener *lkifsTree* (create-tree-mouse-listener))
-   (set-look-and-feel "Nimbus")
    (.setRootVisible *lkifsTree* false)
    (.setSelectionMode (.getSelectionModel *lkifsTree*)
                        TreeSelectionModel/SINGLE_TREE_SELECTION)
