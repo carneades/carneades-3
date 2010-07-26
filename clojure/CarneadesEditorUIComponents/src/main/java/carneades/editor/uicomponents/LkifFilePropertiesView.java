@@ -61,9 +61,19 @@ public class LkifFilePropertiesView extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
-    public static final javax.swing.JTextField pathTextField = new javax.swing.JTextField();
+    public final javax.swing.JTextField pathTextField = new javax.swing.JTextField();
     // End of variables declaration//GEN-END:variables
 
     // our modifications:
-    public static final LkifFilePropertiesView instance = new LkifFilePropertiesView();
+    public static LkifFilePropertiesView viewInstance = new LkifFilePropertiesView();
+
+    public static synchronized LkifFilePropertiesView instance()
+    {
+        return viewInstance;
+    }
+
+    public static synchronized void reset()
+    {
+        viewInstance = new LkifFilePropertiesView();
+    }
 }

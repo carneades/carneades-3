@@ -11,9 +11,11 @@
                         tree.TreeSelectionModel)
            (carneades.editor.uicomponents EditorApplicationView)))
 
-(defvar *mapPanel* EditorApplicationView/mapPanel)
+(defvar- *viewinstance* (EditorApplicationView/instance))
 
-(defvar- *tabPopupMenu* EditorApplicationView/tabPopupMenu)
+(defvar *mapPanel* (.mapPanel *viewinstance*))
+
+(defvar- *tabPopupMenu* (.tabPopupMenu *viewinstance*))
 
 (defn- show-popupmenu [event]
   (when (.isPopupTrigger event)
@@ -63,12 +65,13 @@
           n
           (recur (dec n)))))))
 
-(defvar- *components-to-ags* (atom {}) "components -> [path graphid]")
-(defvar- *ags-to-components* (atom {}) "[path id] -> component")
+(defvar- *components-to-ags* (ref {}) "components -> [path graphid]")
+(defvar- *ags-to-components* (ref {}) "[path id] -> component")
 
 (defn add-component [component path id]
-  (swap! *components-to-ags* assoc component [path id])
-  (swap! *ags-to-components* assoc [path id] component))
+  (dosync
+   (alter *components-to-ags* assoc component [path id])
+   (alter *ags-to-components* assoc [path id] component)))
 
 (defn get-graphinfo [component]
   (get (deref *components-to-ags*) component))
@@ -77,9 +80,10 @@
   (get (deref *ags-to-components*) [path id]))
 
 (defn remove-component [component]
-  (let [info (get-graphinfo component)] 
-    (swap! *components-to-ags* dissoc component)
-    (swap! *ags-to-components* dissoc info)))
+  (let [info (get-graphinfo component)]
+    (dosync
+     (alter *components-to-ags* dissoc component)
+     (alter *ags-to-components* dissoc info))))
 
 (defn tabs-empty? []
   "true if no tabs"

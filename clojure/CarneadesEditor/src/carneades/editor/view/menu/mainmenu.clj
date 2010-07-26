@@ -5,19 +5,21 @@
         carneades.editor.view.tabs)
   (:import carneades.editor.uicomponents.EditorApplicationView))
 
-(defvar- *zoomInButton*
-  carneades.editor.uicomponents.EditorApplicationView/zoomInButton)
-(defvar- *zoomOutButton*
-  carneades.editor.uicomponents.EditorApplicationView/zoomOutButton)
-(defvar- *zoomResetButton*
-  carneades.editor.uicomponents.EditorApplicationView/zoomResetButton)
-(defvar- *toolBar*
-  carneades.editor.uicomponents.EditorApplicationView/toolBar)
+(defvar- *viewinstance* (EditorApplicationView/instance))
 
-(defvar- *closeFileMenuItem* EditorApplicationView/closeFileMenuItem)
-(defvar- *saveFileMenuItem* EditorApplicationView/saveFileMenuItem)
-(defvar- *saveAsFileMenuItem* EditorApplicationView/saveAsFileMenuItem)
-(defvar- *exportFileMenuItem* EditorApplicationView/exportFileMenuItem)
+(defvar- *zoomInButton*
+  (.zoomInButton *viewinstance*))
+(defvar- *zoomOutButton*
+  (.zoomOutButton *viewinstance*))
+(defvar- *zoomResetButton*
+  (.zoomResetButton *viewinstance*))
+
+(defvar- *closeFileMenuItem* (.closeFileMenuItem *viewinstance*))
+(defvar- *saveFileMenuItem* (.saveFileMenuItem *viewinstance*))
+(defvar- *saveAsFileMenuItem* (.saveAsFileMenuItem *viewinstance*))
+(defvar- *exportFileMenuItem* (.exportFileMenuItem *viewinstance*))
+
+(defvar- *saveFileButton* (.saveFileButton *viewinstance*))
 
 (defn- on-zoom-in [event]
   (prn "on-zoom-in")
@@ -51,7 +53,8 @@
   (.setEnabled *closeFileMenuItem* state)
   (.setEnabled *saveAsFileMenuItem* state)
   (.setEnabled *saveFileMenuItem* state)
-  (.setEnabled *exportFileMenuItem* state))
+  (.setEnabled *exportFileMenuItem* state)
+  (.setEnabled *saveFileButton* state))
 
 (defn disable-file-items []
   (set-enable-file-items false))
