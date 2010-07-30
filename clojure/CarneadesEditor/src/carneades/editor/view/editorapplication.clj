@@ -9,7 +9,10 @@
         carneades.editor.view.tabs
         carneades.editor.view.tree
         carneades.editor.view.properties.lkif
+        carneades.editor.view.properties.graph
         carneades.editor.view.properties.properties
+        carneades.editor.view.aboutbox
+        carneades.editor.view.printpreview.preview
         carneades.editor.utils.swing)
   (:import (java.awt EventQueue event.MouseAdapter Dimension FlowLayout Color)
            (javax.swing UIManager JTabbedPane JLabel JButton JFrame JPanel
@@ -26,9 +29,8 @@
            (carneades.editor.uicomponents EditorApplicationView)))
 
 (defprotocol View
-  (init [this])
+  (init [this] "init the view")
   
-  (display-error [this title content])
   (show [this] "display the main view, take the command lines arguments
                        as second argument")
   
@@ -41,25 +43,41 @@
   (ask-lkif-file-to-open [this] "ask the user the LKIF file to open. 
                                  Returns File or nil")
 
+  (ask-file-to-save [this description extension suggested])
+  
+  (export-graph-to-svg [this ag stmt-fmt filename])
+
   (display-lkif-content [this file graphids]
                         "display information relative to an LKIF file")
 
   (hide-lkif-content [this path])
+
+  (print-preview [this path ag stmt-fmt])
   
-  (display-lkif-property [this path]))
+  (display-lkif-property [this path])
+
+  (display-graph-property [this id title mainissue])
+
+  (display-about [this])
+
+  (ask-confirmation [this title content])
+  
+  (display-error [this title content]))
 
 
 (defvar- *frame* (EditorApplicationView/instance))
 
-(defn- create-file-filter []
-  (letfn [(extension [#^String filename]
+(defn- create-file-filter [description extension]
+  (letfn [(get-extension [#^String filename]
                      (last (.split filename "\\.")))]
     (proxy [FileFilter] []
       (getDescription []
-                      "LKIF Files")
+                      description)
       (accept [#^java.io.File f]
               (or (.isDirectory f)
-                  (= "xml" (extension (.getName f))))))))
+                  (= extension (get-extension (.getName f))))))))
+
+(defvar- *dialog-current-directory* (atom nil))
 
 (deftype SwingView [] View
   (init
@@ -67,16 +85,25 @@
    ;; make a new instance (without listeners!)
    (set-look-and-feel "Nimbus")
    (EditorApplicationView/reset)
-   (lkif-properties-init))
+   (lkif-properties-init)
+   (graph-properties-init))
   
   (display-error
    [this title content]
    (JOptionPane/showMessageDialog *frame* content title
                                   JOptionPane/ERROR_MESSAGE))
+
+  (ask-confirmation
+   [this title content]
+   (= (JOptionPane/showOptionDialog *frame* content title
+                                  JOptionPane/OK_CANCEL_OPTION
+                                  JOptionPane/QUESTION_MESSAGE
+                                  nil nil nil)
+      JOptionPane/OK_OPTION))
   
   (show
    [this]
-   (disable-zoom-buttons)
+   (disable-diagram-buttons-and-menus)
    (init-menu)
    (add-treeselection-listener *lkifsTree* on-tree-selection)
    (.addMouseListener *lkifsTree* (create-tree-mouse-listener))
@@ -118,32 +145,74 @@
                                (.indexOfComponent *mapPanel* component)
                                (create-tabcomponent title))
            (.setSelectedComponent *mapPanel* component)
-           (enable-zoom-buttons))))))
+           (enable-diagram-buttons-and-menus))))))
 
   (close-graph
    [this path id]
-   (prn "close graph")
    (let [component (get-component path id)]
      (.remove *mapPanel* component)
      (remove-component component))
    (when (tabs-empty?)
-     (disable-zoom-buttons)))
+     (disable-diagram-buttons-and-menus)))
 
   (current-graph
    [this]
-   (prn "current-graph")
    (get-graphinfo (.getSelectedComponent *mapPanel*)))
 
   (display-lkif-property
    [this path]
-   (prn "display-lkif-property")
    (show-properties (get-lkif-properties-panel path)))
+
+  (display-graph-property
+   [this id title mainissue]
+   (show-properties (get-graph-properties-panel id title mainissue)))
+
+  (ask-file-to-save
+   [this-view description extension suggested]
+   (let [jc (proxy [JFileChooser] []
+              (approveSelection
+               []
+               (when-let [selected (proxy-super getSelectedFile)]
+                 (if (.exists selected)
+                   (when (ask-confirmation this-view "Save"
+                                           "Overwrite existing file?")
+                     (proxy-super approveSelection))
+                   (proxy-super approveSelection)))))]
+     (.setFileFilter jc (create-file-filter description extension))
+     (when-let [dir (deref *dialog-current-directory*)]
+       (.setCurrentDirectory jc dir))
+     (when suggested
+       (.setSelectedFile jc suggested))
+     (let [val (.showSaveDialog jc *frame*)]
+       (when (= val JFileChooser/APPROVE_OPTION)
+         (reset! *dialog-current-directory* (.getCurrentDirectory jc))
+         (.getSelectedFile jc)))))
+
+  (export-graph-to-svg
+   [this ag stmt-fmt filename]
+   (try
+     (export-graph (create-graph-component ag stmt-fmt) filename)
+     (catch java.io.IOException e
+       (display-error this "Save error" (.getMessage e)))))
   
   (ask-lkif-file-to-open
    [this]
    (let [jc (JFileChooser.)]
-     (.setFileFilter jc (create-file-filter))
+     (.setFileFilter jc (create-file-filter "LKIF files" "xml"))
+     (when-let [dir (deref *dialog-current-directory*)]
+       (.setCurrentDirectory jc dir))
      (let [val (.showOpenDialog jc *frame*)]
        (when (= val JFileChooser/APPROVE_OPTION)
-         (.getSelectedFile jc))))))
+         (reset! *dialog-current-directory* (.getCurrentDirectory jc))
+         (.getSelectedFile jc)))))
+
+  (print-preview
+   [this path ag stmt-fmt]
+   (let [component (or (get-component path (:id ag))
+                       (create-graph-component ag stmt-fmt))]
+     (printpreview component)))
+
+  (display-about
+   [this]
+   (show-about-box *frame*)))
 
