@@ -26,8 +26,7 @@
            com.mxgraph.swing.mxGraphComponent
            com.mxgraph.swing.mxGraphOutline
            java.awt.event.MouseWheelListener
-           java.awt.print.PrinterJob
-           printutils.PrintPreview))
+           java.awt.print.PrinterJob))
 
 (defvar- *global-style*
   {mxConstants/STYLE_FONTCOLOR "#000000"
