@@ -34,6 +34,8 @@ public class EditorApplicationView extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jSeparator5 = new javax.swing.JPopupMenu.Separator();
+        jSeparator6 = new javax.swing.JPopupMenu.Separator();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jSeparator4 = new javax.swing.JToolBar.Separator();
@@ -41,6 +43,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
         fileMenu = new javax.swing.JMenu();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
+        jSeparator7 = new javax.swing.JPopupMenu.Separator();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         editMenu = new javax.swing.JMenu();
         cutMenuItem = new javax.swing.JMenuItem();
@@ -49,7 +52,6 @@ public class EditorApplicationView extends javax.swing.JFrame {
         deleteMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         contentsMenuItem = new javax.swing.JMenuItem();
-        aboutMenuItem = new javax.swing.JMenuItem();
 
         tabPopupMenu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -60,6 +62,10 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         closeLkifFileMenuItem.setText("Close");
         lkifFilePopupMenu.add(closeLkifFileMenuItem);
+        lkifFilePopupMenu.add(jSeparator5);
+
+        exportLkifFileMenuItem.setText("Export...");
+        lkifFilePopupMenu.add(exportLkifFileMenuItem);
 
         graphPopupMenu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -68,6 +74,10 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         closeGraphMenuItem.setText("Close");
         graphPopupMenu.add(closeGraphMenuItem);
+        graphPopupMenu.add(jSeparator6);
+
+        exportGraphMenuItem.setText("Export...");
+        graphPopupMenu.add(exportGraphMenuItem);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -96,6 +106,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
         );
 
         propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
+        propertiesPanel.setLayout(new javax.swing.BoxLayout(propertiesPanel, javax.swing.BoxLayout.PAGE_AXIS));
 
         javax.swing.GroupLayout leftPanelLayout = new javax.swing.GroupLayout(leftPanel);
         leftPanel.setLayout(leftPanelLayout);
@@ -114,8 +125,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(propertiesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(propertiesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE))
         );
 
         mainPanel.setLeftComponent(leftPanel);
@@ -172,12 +182,19 @@ public class EditorApplicationView extends javax.swing.JFrame {
         saveFileMenuItem.setText("Save");
         fileMenu.add(saveFileMenuItem);
 
-        saveAsFileMenuItem.setText("Save As ...");
+        saveAsFileMenuItem.setText("Save As...");
         fileMenu.add(saveAsFileMenuItem);
         fileMenu.add(jSeparator3);
 
         exportFileMenuItem.setText("Export...");
         fileMenu.add(exportFileMenuItem);
+        fileMenu.add(jSeparator7);
+
+        printPreviewFileMenuItem.setText("Print Preview");
+        fileMenu.add(printPreviewFileMenuItem);
+
+        printMenuItem.setText("Print...");
+        fileMenu.add(printMenuItem);
         fileMenu.add(jSeparator1);
 
         exitFileMenuItem.setText("Exit");
@@ -211,8 +228,8 @@ public class EditorApplicationView extends javax.swing.JFrame {
         contentsMenuItem.setText("Contents");
         helpMenu.add(contentsMenuItem);
 
-        aboutMenuItem.setText("About");
-        helpMenu.add(aboutMenuItem);
+        aboutHelpMenuItem.setText("About");
+        helpMenu.add(aboutHelpMenuItem);
 
         menuBar.add(helpMenu);
 
@@ -252,7 +269,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem aboutMenuItem;
+    public final javax.swing.JMenuItem aboutHelpMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem closeFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem closeGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem closeLkifFileMenuItem = new javax.swing.JMenuItem();
@@ -264,6 +281,8 @@ public class EditorApplicationView extends javax.swing.JFrame {
     private javax.swing.JMenu editMenu;
     public final javax.swing.JMenuItem exitFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem exportFileMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem exportGraphMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem exportLkifFileMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenu fileMenu;
     public final javax.swing.JPopupMenu graphPopupMenu = new javax.swing.JPopupMenu();
     private javax.swing.JMenu helpMenu;
@@ -273,6 +292,9 @@ public class EditorApplicationView extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JToolBar.Separator jSeparator4;
+    private javax.swing.JPopupMenu.Separator jSeparator5;
+    private javax.swing.JPopupMenu.Separator jSeparator6;
+    private javax.swing.JPopupMenu.Separator jSeparator7;
     public final javax.swing.JPanel leftPanel = new javax.swing.JPanel();
     public final javax.swing.JPopupMenu lkifFilePopupMenu = new javax.swing.JPopupMenu();
     public final javax.swing.JTree lkifsTree = new javax.swing.JTree();
@@ -283,6 +305,8 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JMenuItem openFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem openGraphMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenuItem pasteMenuItem;
+    public final javax.swing.JMenuItem printMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem printPreviewFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JPanel propertiesPanel = new javax.swing.JPanel();
     public final javax.swing.JMenuItem saveAsFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JButton saveFileButton = new javax.swing.JButton();

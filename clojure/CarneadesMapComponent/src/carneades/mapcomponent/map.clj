@@ -15,7 +15,8 @@
 
 (ns carneades.mapcomponent.map
   (:use clojure.contrib.def
-        carneades.engine.argument)
+        carneades.engine.argument
+        carneades.engine.statement)
   (:import javax.swing.SwingConstants
            (com.mxgraph.util mxConstants mxUtils mxCellRenderer)
            (com.mxgraph.view mxGraph mxStylesheet)
@@ -24,42 +25,65 @@
            com.mxgraph.layout.mxStackLayout
            com.mxgraph.swing.mxGraphComponent
            com.mxgraph.swing.mxGraphOutline
-           java.awt.event.MouseWheelListener))
+           java.awt.event.MouseWheelListener
+           java.awt.print.PrinterJob
+           printutils.PrintPreview))
+
+(defvar- *global-style*
+  {mxConstants/STYLE_FONTCOLOR "#000000"
+   mxConstants/STYLE_STROKEWIDTH 1.5
+   ;; mxConstants/STYLE_FONTSTYLE mxConstants/FONT_BOLD
+   })
 
 (defvar- *argument-style*
-  {mxConstants/STYLE_SHAPE mxConstants/SHAPE_ELLIPSE
-   mxConstants/STYLE_PERIMETER mxConstants/PERIMETER_ELLIPSE
-   mxConstants/STYLE_GRADIENT_DIRECTION mxConstants/DIRECTION_SOUTH
-   mxConstants/STYLE_FILLCOLOR "#c2c9ff"
-   mxConstants/STYLE_GRADIENTCOLOR "#ffffff"
-   mxConstants/STYLE_STROKECOLOR "#000000"
-   mxConstants/STYLE_SHADOW true
-   mxConstants/W3C_SHADOWCOLOR "gray"
-   mxConstants/STYLE_SPACING_TOP 10
-   mxConstants/STYLE_SPACING_BOTTOM 10
-   mxConstants/STYLE_SPACING_LEFT 10
-   mxConstants/STYLE_SPACING_RIGHT 10})
+  (merge *global-style*
+         {mxConstants/STYLE_SHAPE mxConstants/SHAPE_ELLIPSE
+          mxConstants/STYLE_PERIMETER mxConstants/PERIMETER_ELLIPSE
+          mxConstants/STYLE_GRADIENT_DIRECTION mxConstants/DIRECTION_SOUTH
+          mxConstants/STYLE_FILLCOLOR "#ffffff"
+          ;; mxConstants/STYLE_GRADIENTCOLOR "#ffffff"
+          mxConstants/STYLE_STROKECOLOR "#000000"
+          ;; mxConstants/STYLE_SHADOW true
+          ;; mxConstants/W3C_SHADOWCOLOR "gray"
+          mxConstants/STYLE_SPACING_TOP 10
+          mxConstants/STYLE_SPACING_BOTTOM 10
+          mxConstants/STYLE_SPACING_LEFT 10
+          mxConstants/STYLE_SPACING_RIGHT 10}))
 
 (defvar- *applicable-argument-style*
   (merge *argument-style*
-         {mxConstants/STYLE_FILLCOLOR "#9cff89"}))
+         {mxConstants/STYLE_FILLCOLOR "#8ee888"}))
 
 (defvar- *not-applicable-argument-style* *argument-style*)
 
-(defvar- *statement-style*
-  {mxConstants/STYLE_SHAPE mxConstants/SHAPE_RECTANGLE
-   mxConstants/STYLE_STROKECOLOR "#000000"
-   mxConstants/STYLE_FILLCOLOR "#c2c9ff"
-   mxConstants/STYLE_GRADIENT_DIRECTION mxConstants/DIRECTION_SOUTH
-   mxConstants/STYLE_GRADIENTCOLOR "#ffffff"
-   mxConstants/STYLE_SHADOW true
-   ;;mxConstants/STYLE_OPACITY 75
-   mxConstants/W3C_SHADOWCOLOR "gray"
-   mxConstants/STYLE_PERIMETER mxConstants/PERIMETER_RECTANGLE
-   mxConstants/STYLE_SPACING_TOP 10
-   mxConstants/STYLE_SPACING_BOTTOM 10
-   mxConstants/STYLE_SPACING_LEFT 10
-   mxConstants/STYLE_SPACING_RIGHT 10})
+(defvar- *statement-style* ;; out and not out
+  (merge *global-style*
+         {mxConstants/STYLE_SHAPE mxConstants/SHAPE_RECTANGLE
+          mxConstants/STYLE_STROKECOLOR "#000000"
+          ;; mxConstants/STYLE_FILLCOLOR "#c2c9ff"
+          mxConstants/STYLE_FILLCOLOR "#ffffff"
+          ;; mxConstants/STYLE_GRADIENT_DIRECTION mxConstants/DIRECTION_SOUTH
+          ;; mxConstants/STYLE_GRADIENTCOLOR "#ffffff"
+          ;; mxConstants/STYLE_SHADOW true
+          ;;mxConstants/STYLE_OPACITY 75
+          ;; mxConstants/W3C_SHADOWCOLOR "gray"
+          mxConstants/STYLE_PERIMETER mxConstants/PERIMETER_RECTANGLE
+          mxConstants/STYLE_SPACING_TOP 10
+          mxConstants/STYLE_SPACING_BOTTOM 10
+          mxConstants/STYLE_SPACING_LEFT 10
+          mxConstants/STYLE_SPACING_RIGHT 10}))
+
+(defvar- *in-and-not-out-statement-style*
+  (merge *statement-style*
+         {mxConstants/STYLE_FILLCOLOR "#8ee888"}))
+
+(defvar- *in-and-not-in-statement-style*
+  (merge *statement-style*
+         {mxConstants/STYLE_FILLCOLOR "#ffe955"}))
+
+(defvar- *out-and-not-in-statement-style*
+  (merge *statement-style*
+         {mxConstants/STYLE_FILLCOLOR "#ff383d"}))
 
 (defvar- *acceptable-statement-style*
   (merge *statement-style*
@@ -74,7 +98,8 @@
          *acceptable-statement-style*))
 
 (defvar- *edge-style*
-  {mxConstants/STYLE_ENDARROW mxConstants/ARROW_CLASSIC
+  {mxConstants/STYLE_ENDARROW mxConstants/NONE
+   mxConstants/STYLE_STROKECOLOR "#000000"
    mxConstants/STYLE_STROKEWIDTH 1.25
    mxConstants/STYLE_ROUNDED true})
 ;; mxConstants/STYLE_EDGE mxConstants/EDGESTYLE_ENTITY_RELATION
@@ -83,36 +108,32 @@
 
 (defvar- *pro-conclusion-edge-style*
         (merge *conclusion-edge-style*
-               {mxConstants/STYLE_ENDARROW mxConstants/ARROW_CLASSIC
-                mxConstants/STYLE_STROKECOLOR "#37b71d"}))
+               {mxConstants/STYLE_ENDARROW mxConstants/ARROW_CLASSIC}))
 
 (defvar- *con-conclusion-edge-style*
   (merge *conclusion-edge-style*
-         {mxConstants/STYLE_ENDARROW mxConstants/ARROW_OPEN
-          mxConstants/STYLE_STROKECOLOR "#e50e0e"}))
+         {mxConstants/STYLE_ENDARROW mxConstants/ARROW_OVAL}))
 
 (defvar- *premise-edge-style* *edge-style*)
 
 (defvar- *assumption-edge-style*
-  (merge *premise-edge-style*
-         {mxConstants/STYLE_DASHED "true"}))
+  (merge *premise-edge-style*))
 
 (defvar- *exception-edge-style*
   (merge *premise-edge-style*
-         {mxConstants/STYLE_DASHED "true"
-          mxConstants/STYLE_STROKECOLOR "#994fa4"}))
+         {mxConstants/STYLE_DASHED "true"}))
 
 (defvar- *neg-premise-edge-style*
-  (merge *edge-style*
-         {mxConstants/STYLE_ENDARROW mxConstants/ARROW_DIAMOND}))
+  (merge *premise-edge-style*
+         {mxConstants/STYLE_ENDARROW mxConstants/ARROW_OVAL}))
 
 (defvar- *neg-assumption-edge-style*
   (merge *assumption-edge-style*
-         {mxConstants/STYLE_ENDARROW mxConstants/ARROW_DIAMOND}))
+         {mxConstants/STYLE_ENDARROW mxConstants/ARROW_OVAL}))
 
 (defvar- *neg-exception-edge-style*
   (merge *exception-edge-style*
-         {mxConstants/STYLE_ENDARROW mxConstants/ARROW_DIAMOND}))
+         {mxConstants/STYLE_ENDARROW mxConstants/ARROW_OVAL}))
 
 (defvar- *styles* {"applicableArgument" *applicable-argument-style*
                    "notApplicableArgument" *not-applicable-argument-style*
@@ -122,6 +143,9 @@
                    *complement-acceptable-statement-style*
                    "acceptableAndComplementAcceptableStatement"
                    *acceptable-and-complement-acceptable-statement-style*
+                   "inAndNotOutStatement" *in-and-not-out-statement-style*
+                   "inAndNotInStatement" *in-and-not-in-statement-style*
+                   "outAndNotInStatement" *out-and-not-in-statement-style*
                    "edge" *edge-style*
                    "proConclusionEdge" *pro-conclusion-edge-style*
                    "conConclusionEdge" *con-conclusion-edge-style*
@@ -152,34 +176,47 @@
 
 (defn- insert-edge [#^mxGraph g parent begin end style]
   (.insertEdge g parent nil nil begin end style))
+
 (defn- getx [#^mxCell vertex]
   (.. vertex getGeometry getX))
 
 (defn- setx [#^mxCell vertex x]
-  (. (.. vertex getGeometry) setX x))
+  (.. vertex getGeometry (setX x)))
+
+(defn- gety [#^mxCell vertex]
+  (.. vertex getGeometry getY))
+
+(defn- sety [#^mxCell vertex y]
+  (.. vertex getGeometry (setY y)))
+
+(defvar- *ymargin* 10)
+(defvar- *xmargin* 10)
 
 (defn- translate-right [#^mxGraph g p vertices]
-  (let [minx (reduce (fn [acc vertex]
+  (let [cells (vals vertices)
+        minx (reduce (fn [acc vertex]
                        (min (getx vertex) acc))
                      0
-                     (vals vertices))
-        margin 10
-        translation (+ margin (- minx))
-        ytranslation 30]
-    (prn "translation")
-    (prn translation)
-    (.. g getView (scaleAndTranslate 1 translation ytranslation))))
+                     cells)
+        translation (+ *xmargin* (- minx))]
+    (doseq [cell cells]
+      (setx cell (+ (getx cell) translation))
+      (sety cell (+ (gety cell) *ymargin*)))
+    ;; (.. g getView (scaleAndTranslate 1 translation *ymargin*))
+))
 
 (defn- hierarchicallayout [#^mxGraph g p vertices]
   (let [layout (mxHierarchicalLayout. g SwingConstants/EAST)]
     (.setAllowNegativeCoordinates g false)
     (doto layout
       (.setFineTuning true)
-      (.execute p))
+      (.execute p)
+      )
     ;; negative coordinates are used by the layout algorithm
     ;; even with setAllowNegativeCoordinates set to false.
     ;; we translate to make all edges and vertices visible
-    (translate-right g p vertices)))
+    (translate-right g p vertices)
+    ))
 
 (defn- align-orphan-cells [#^mxGraph g p vertices]
   "align orphan cells on the right of the graph, with a stacklayout"
@@ -209,18 +246,22 @@
   (align-orphan-cells g p vertices))
 
 (defn- get-statement-style [ag stmt]
-  (cond (acceptable? ag stmt) "acceptableStatement"
-        :else "statement"))
+  (let [comp (statement-complement stmt)]
+    (cond (and (in? ag stmt) (out? ag comp)) "inAndNotOutStatement"
+          (and (in? ag stmt) (in? ag comp)) "inAndNotInStatement"
+          (and (out? ag stmt) (in? ag comp)) "outAndNotInStatement"
+          :else "statement")))
 
 (defn- add-statement [g p ag stmt vertices stmt-str]
-  (letfn [(prefix [s]
-                      (cond (questioned? ag stmt)
-                            (str "? " s)
-                            (accepted? ag stmt)
-                            (str "+ " s)
-                            (rejected? ag stmt)
-                            (str "-" s)
-                            :else s))]
+  (letfn [(prefix
+           [s]
+           (cond (questioned? ag stmt)
+                 (str "? " s)
+                 (accepted? ag stmt)
+                 (str "+ " s)
+                 (rejected? ag stmt)
+                 (str "-" s)
+                 :else s))]
     (assoc vertices
       stmt
       (insert-vertex g p (prefix (stmt-str stmt))
@@ -296,42 +337,38 @@
       (.. g getModel endUpdate)))
     g))
 
-(defn export-graph [g filename]
+(defn export-graph [graphcomponent filename]
   "Saves the graph on disk. Only SVG format is supported now.
 
-   Throws java.io.Exception"
-  (mxUtils/writeFile (mxUtils/getXml
-                      (.. (mxCellRenderer/createSvgDocument g nil 1 nil nil)
-                          getDocumentElement))
-                     filename))
+   Throws java.io.IOException"
+  (let [g (.getGraph graphcomponent)]
+    (mxUtils/writeFile (mxUtils/getXml
+                        (.. (mxCellRenderer/createSvgDocument g nil 1 nil nil)
+                            getDocumentElement))
+                       filename)))
 
-(defmacro with-restore-translate [g & body]
-  "executes body and restores the initial translation of the graph after"
-  `(do
-     (let [point# (.. ~g getView getTranslate)
-           x# (.getX point#)
-           y# (.getY point#)]
-       ~@body
-       (let [scale# (.. ~g getView getScale)]
-         (prn "scale")
-         (prn scale#)
-         (.. ~g getView (scaleAndTranslate scale# x# y#))))))
+;; (defmacro with-restore-translate [g & body]
+;;   "executes body and restores the initial translation of the graph after"
+;;   `(do
+;;      (let [point# (.. ~g getView getTranslate)
+;;            x# (.getX point#)
+;;            y# (.getY point#)]
+;;        ~@body
+;;        (let [scale# (.. ~g getView getScale)]
+;;          (.. ~g getView (scaleAndTranslate scale# x# y#))))))
 
 (defn zoom-in [graphcomponent]
   (let [g (.getGraph graphcomponent)]
-    (with-restore-translate g
-      (.zoomIn graphcomponent))))
+    (.zoomIn graphcomponent)))
 
 (defn zoom-out [graphcomponent]
   (let [g (.getGraph graphcomponent)]
     (when (> (.. g getView getScale) 0.1)
-      (with-restore-translate g
-        (.zoomOut graphcomponent)))))
+      (.zoomOut graphcomponent))))
 
 (defn zoom-reset [graphcomponent]
   (let [g (.getGraph graphcomponent)]
-    (with-restore-translate g
-      (.. g getView (scaleAndTranslate 1 0 0)))))
+    (.. g getView (scaleAndTranslate 1 0 0))))
 
 (deftype MouseListener [g graphcomponent] MouseWheelListener
   (mouseWheelMoved
@@ -356,3 +393,4 @@
     (.setConnectable graphcomponent false)
     (add-mouse-zoom g graphcomponent)
     graphcomponent))
+

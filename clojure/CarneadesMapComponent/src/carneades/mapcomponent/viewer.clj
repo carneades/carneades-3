@@ -70,13 +70,18 @@
     (.add menuBar fileMenu)
     menuBar))
 
-(defn- set-native-look-and-feel []
+(defn set-look-and-feel [name]
   (try
-   (UIManager/setLookAndFeel (UIManager/getSystemLookAndFeelClassName))
-   (catch Exception e)))
+    (loop [infos (UIManager/getInstalledLookAndFeels)]
+      (let [info (first infos)]
+        (when-not (empty? infos)
+          (if (= name (.getName info))
+            (UIManager/setLookAndFeel (.getClassName info))
+            (recur (rest infos))))))
+    (catch Exception e (prn "Exception") (prn e))))
 
 (defn view-graph [ag stmt-str]
-  (set-native-look-and-feel)
+  (set-look-and-feel "Nimbus")
   (let [frame (JFrame. *title*)]
     (doto frame
       (.setJMenuBar (create-menubar frame))

@@ -327,7 +327,7 @@
   (let [n (get-node ag s)]
     (node-in? n (statement-pos? s))))
 
-(defn- out? [ag s]
+(defn out? [ag s]
   (not (in? ag s)))
 
 (defn- holds? [ag p]

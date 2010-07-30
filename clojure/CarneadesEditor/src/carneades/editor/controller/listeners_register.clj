@@ -33,12 +33,20 @@
 (defvar- *openFileMenuItem* (.openFileMenuItem *viewinstance*))
 (defvar- *closeTabMenuItem* (.closeTabMenuItem *viewinstance*))
 (defvar- *closeFileMenuItem* (.closeFileMenuItem *viewinstance*))
+(defvar- *exportFileMenuItem* (.exportFileMenuItem *viewinstance*))
+(defvar- *printPreviewFileMenuItem* (.printPreviewFileMenuItem *viewinstance*))
+(defvar- *aboutHelpMenuItem* (.aboutHelpMenuItem *viewinstance*))
 
 (defvar- *closeLkifFileMenuItem* (.closeLkifFileMenuItem *viewinstance*))
+(defvar- *exportLkifFileMenuItem* (.exportLkifFileMenuItem *viewinstance*))
+
 (defvar- *openGraphMenuItem* (.openGraphMenuItem *viewinstance*))
 (defvar- *closeGraphMenuItem* (.closeGraphMenuItem *viewinstance*))
+(defvar- *exportGraphMenuItem* (.exportGraphMenuItem *viewinstance*))
 
 (defvar- *openFileButton* (.openFileButton *viewinstance*))
+
+
 
 ;; (defvar- *action-listeners*
 ;;   [*openFileMenuItem* *closeTabMenuItem*])
@@ -89,17 +97,45 @@
         nil))))
 
 (defn- close-graph-listener [event view]
-  (do-swing-and-wait (prn "close-graph-listener"))
   (when-let [node (.getLastSelectedPathComponent *lkifsTree*)]
     (when-let [info (.getUserObject node)]
       (condp instance? info
         GraphInfo (on-close-graph view (:path (:lkifinfo info)) (:id info))
         nil))))
 
+(defn- export-file-listener [event view]
+  (when-let [node (.getLastSelectedPathComponent *lkifsTree*)]
+    (when-let [info (.getUserObject node)]
+      (condp instance? info
+        GraphInfo (if-let [[path id] (current-graph view)]
+                    (on-export-graph view path id)
+                    (on-export-graph view (:path (:lkifinfo info)) (:id info)))
+        LkifFileInfo (if-let [[path id] (current-graph view)]
+                       (on-export-graph view path id)
+                       (on-export-file view (:path info)))
+        nil))))
+
+(defn- export-element-listener [event view]
+  (when-let [node (.getLastSelectedPathComponent *lkifsTree*)]
+    (when-let [info (.getUserObject node)]
+      (condp instance? info
+        GraphInfo (on-export-graph view (:path (:lkifinfo info)) (:id info))
+        LkifFileInfo (on-export-file view (:path info))
+        nil))))
+
+(defn- printpreview-listener [event view]
+  (if-let [[path id] (current-graph view)]
+    (on-printpreview-graph view path id)))
+
 (defn register-listeners [view]
   (add-action-listener *openFileButton* (fn [event] (on-open-file view)))
   (add-action-listener *openFileMenuItem* (fn [event] (on-open-file view)))
   (add-action-listener *closeFileMenuItem* close-file-listener view)
+  (add-action-listener *exportFileMenuItem* export-file-listener view)
+  (add-action-listener *exportLkifFileMenuItem* export-element-listener view)
+  (add-action-listener *exportGraphMenuItem* export-element-listener view)
+  (add-action-listener *printPreviewFileMenuItem* printpreview-listener view)
+  (add-action-listener *aboutHelpMenuItem* (fn [event] (on-about view)))
   (add-action-listener *closeLkifFileMenuItem* close-file-listener view)
   (add-action-listener *openGraphMenuItem* open-graph-listener view)
   (add-action-listener *closeGraphMenuItem* close-graph-listener view)
@@ -107,3 +143,4 @@
   ;; (add-windowclose-listener
   ;;  *viewinstance* (fn [& args] (unregister-listeners)))
   (add-mousepressed-listener *lkifsTree* mouse-click-in-tree-listener view))
+
