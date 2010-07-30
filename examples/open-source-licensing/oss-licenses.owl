@@ -139,15 +139,8 @@
 
     <owl:ObjectProperty rdf:about="#implements">
         <rdfs:domain rdf:resource="#SoftwareEntity"/>
+        <rdfs:range rdf:resource="#Specification"/>
         <rdfs:subPropertyOf rdf:resource="#uses"/>
-        <rdfs:range>
-            <owl:Class>
-                <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="#API"/>
-                    <rdf:Description rdf:about="#ProgrammingLanguage"/>
-                </owl:unionOf>
-            </owl:Class>
-        </rdfs:range>
     </owl:ObjectProperty>
     
 
@@ -218,8 +211,8 @@
     <!-- http://carneades.berlios.de/oss-licenses#linksTo -->
 
     <owl:ObjectProperty rdf:about="#linksTo">
-        <rdfs:range rdf:resource="#SoftwareEntity"/>
         <rdfs:domain rdf:resource="#SoftwareEntity"/>
+        <rdfs:range rdf:resource="#SoftwareLibrary"/>
         <rdfs:subPropertyOf rdf:resource="#uses"/>
     </owl:ObjectProperty>
     
@@ -247,7 +240,7 @@
     <!-- http://carneades.berlios.de/oss-licenses#runsOnOperatingSystem -->
 
     <owl:ObjectProperty rdf:about="#runsOnOperatingSystem">
-        <rdfs:range rdf:resource="#SoftwareEntity"/>
+        <rdfs:range rdf:resource="#OperatingSystem"/>
         <rdfs:domain rdf:resource="#SoftwareEntity"/>
         <rdfs:subPropertyOf rdf:resource="#uses"/>
     </owl:ObjectProperty>
@@ -335,131 +328,125 @@
     <owl:Class rdf:about="#ApacheLicense2.0">
         <owl:equivalentClass>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="#grantsRight"/>
-                <owl:someValuesFrom rdf:resource="#MayDistributeDerivativeWorksInSourceForm"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#hasCondition"/>
-                <owl:someValuesFrom rdf:resource="#MustDistributeCopyOfNoticeText"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#hasCondition"/>
-                <owl:someValuesFrom rdf:resource="#NoPermissionToUseTrademarks"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#hasCondition"/>
-                <owl:someValuesFrom rdf:resource="#MustDistributeCopyOfLicense"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#hasCondition"/>
-                <owl:someValuesFrom rdf:resource="#MustOfferSourceCode"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#grantsRight"/>
-                <owl:someValuesFrom rdf:resource="#MayPubliclyPerform"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#grantsRight"/>
-                <owl:someValuesFrom rdf:resource="#MaySublicense"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#grantsRight"/>
-                <owl:someValuesFrom rdf:resource="#MayDistributeOriginalWorkInSourceForm"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#grantsRight"/>
-                <owl:someValuesFrom rdf:resource="#MayDistributeOriginalWorkInObjectForm"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#grantsRight"/>
-                <owl:someValuesFrom rdf:resource="#MayAcceptWarrantyOrAdditionalLiability"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#grantsRight"/>
-                <owl:someValuesFrom rdf:resource="#MayProduceDerivativeWorks"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#hasCondition"/>
-                <owl:someValuesFrom rdf:resource="#LimitedLiability"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#hasCondition"/>
-                <owl:someValuesFrom rdf:resource="#MustMarkModifications"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#grantsRight"/>
-                <owl:someValuesFrom rdf:resource="#MayAddYourOwnCopyrightStatementToYourModifications"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#grantsRight"/>
-                <owl:someValuesFrom rdf:resource="#MayPubliclyDisplay"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#grantsRight"/>
-                <owl:someValuesFrom rdf:resource="#MayDistributeDerivativeWorksInObjectForm"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <owl:equivalentClass>
-            <owl:Restriction>
                 <owl:onProperty rdf:resource="#instanceOfTemplate"/>
                 <owl:hasValue rdf:resource="#ApacheLicense2.0Template"/>
             </owl:Restriction>
         </owl:equivalentClass>
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#grantsRight"/>
-                <owl:someValuesFrom rdf:resource="#MayCopy"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="#AcademicLicense"/>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="#hasCondition"/>
                 <owl:someValuesFrom rdf:resource="#ProvidedWithoutWarranties"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <owl:equivalentClass>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#hasCondition"/>
+                <owl:someValuesFrom rdf:resource="#MustDistributeCopyOfNoticeText"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#hasCondition"/>
+                <owl:someValuesFrom rdf:resource="#NoPermissionToUseTrademarks"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#hasCondition"/>
+                <owl:someValuesFrom rdf:resource="#MustOfferSourceCode"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#grantsRight"/>
+                <owl:someValuesFrom rdf:resource="#MayProduceDerivativeWorks"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="#hasCondition"/>
                 <owl:someValuesFrom rdf:resource="#MustRetainNoticesInSourceDistributions"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <owl:equivalentClass>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#instanceOfTemplate"/>
+                <owl:hasValue rdf:resource="#ApacheLicense2.0Template"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="#grantsRight"/>
-                <owl:someValuesFrom rdf:resource="#MayProvideAdditionalOrDifferentLicenseTermsToYourModifications"/>
+                <owl:someValuesFrom rdf:resource="#MayCopy"/>
             </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="#AcademicLicense"/>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#grantsRight"/>
+                <owl:someValuesFrom rdf:resource="#MayAddYourOwnCopyrightStatementToYourModifications"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#hasCondition"/>
+                <owl:someValuesFrom rdf:resource="#LimitedLiability"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#grantsRight"/>
+                <owl:someValuesFrom rdf:resource="#MayAcceptWarrantyOrAdditionalLiability"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#grantsRight"/>
+                <owl:someValuesFrom rdf:resource="#MaySublicense"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#grantsRight"/>
+                <owl:someValuesFrom rdf:resource="#MayDistributeDerivativeWorksInSourceForm"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#grantsRight"/>
+                <owl:someValuesFrom rdf:resource="#MayDistributeOriginalWorkInObjectForm"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#grantsRight"/>
+                <owl:someValuesFrom rdf:resource="#MayPubliclyDisplay"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#grantsRight"/>
+                <owl:someValuesFrom rdf:resource="#MayDistributeDerivativeWorksInObjectForm"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#hasCondition"/>
+                <owl:someValuesFrom rdf:resource="#MustMarkModifications"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#grantsRight"/>
+                <owl:someValuesFrom rdf:resource="#MayPubliclyPerform"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#hasCondition"/>
+                <owl:someValuesFrom rdf:resource="#MustDistributeCopyOfLicense"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
     </owl:Class>
     
 
@@ -796,6 +783,14 @@
     
 
 
+    <!-- http://carneades.berlios.de/oss-licenses#OperatingSystem -->
+
+    <owl:Class rdf:about="#OperatingSystem">
+        <rdfs:subClassOf rdf:resource="#SoftwareEntity"/>
+    </owl:Class>
+    
+
+
     <!-- http://carneades.berlios.de/oss-licenses#Organization -->
 
     <owl:Class rdf:about="#Organization">
@@ -894,6 +889,14 @@
     <!-- http://carneades.berlios.de/oss-licenses#SoftwareLibrary -->
 
     <owl:Class rdf:about="#SoftwareLibrary">
+        <rdfs:subClassOf rdf:resource="#SoftwareEntity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://carneades.berlios.de/oss-licenses#SoftwareService -->
+
+    <owl:Class rdf:about="#SoftwareService">
         <rdfs:subClassOf rdf:resource="#SoftwareEntity"/>
     </owl:Class>
     

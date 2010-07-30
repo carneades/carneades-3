@@ -10,9 +10,11 @@
 	
 	<theory id="family-support">
 	
+<!-- 
         <imports>
             <import uri="http://fokus.lkif.test.de/Tweety.owl"/>
         </imports>
+-->
 		
         <axioms>
             <axiom id="f1"><s pred="is-a-penguin"><c>Tweety</c>is a penguin</s></axiom>

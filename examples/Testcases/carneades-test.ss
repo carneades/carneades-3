@@ -749,7 +749,7 @@
   ; string-length of e1 is 3037 in plt and 3034 in ypsilon
   (define e1 (call-with-values open-string-output-port
                                (lambda (p e)
-                                 (lkif-export i p)
+                                 (lkif-export null i p)
                                  (e)))) 
 
   
