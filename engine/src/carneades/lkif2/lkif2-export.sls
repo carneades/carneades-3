@@ -55,7 +55,7 @@
  ; export function
  
  
- ; lkif-export: struct:lkif-data (port | filename) -> void
+ ; lkif-export: list struct:lkif-data (port | filename) -> void
  ; If `port-or-filename' is not supplied, the function writes the lkif-representation
  ; of the `export-data' to the current output-port.
  ; If `port-or-filename' is supplied and is a port, the function writes the
@@ -92,7 +92,7 @@
  (define (elements->attributes l)
    (cons '^ l))
  
- ; lkif-data->sxml: struct:lkif-data -> sxml
+ ; lkif-data->sxml: list struct:lkif-data -> sxml
  (define (lkif-data->sxml import-list data)
    (let ((sources (lkif-data->sources data))
          (theory (lkif-data->theory import-list data))

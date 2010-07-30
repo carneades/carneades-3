@@ -44,6 +44,12 @@
     
 
 
+    <!-- http://carneades.berlios.de/oss-licenses#grantsRight -->
+
+    <owl:ObjectProperty rdf:about="&oss-licenses;grantsRight"/>
+    
+
+
     <!-- http://carneades.berlios.de/oss-licenses#hasLicense -->
 
     <owl:ObjectProperty rdf:about="&oss-licenses;hasLicense"/>
@@ -117,6 +123,20 @@
     
 
 
+    <!-- http://carneades.berlios.de/impact-licensing#PreferredLicense -->
+
+    <owl:Class rdf:about="#PreferredLicense">
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&oss-licenses;grantsRight"/>
+                <owl:someValuesFrom rdf:resource="&oss-licenses;MayCopy"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="&oss-licenses;AcademicLicense"/>
+    </owl:Class>
+    
+
+
     <!-- http://carneades.berlios.de/oss-licenses#API -->
 
     <owl:Class rdf:about="&oss-licenses;API"/>
@@ -126,6 +146,12 @@
     <!-- http://carneades.berlios.de/oss-licenses#AbstractMachine -->
 
     <owl:Class rdf:about="&oss-licenses;AbstractMachine"/>
+    
+
+
+    <!-- http://carneades.berlios.de/oss-licenses#AcademicLicense -->
+
+    <owl:Class rdf:about="&oss-licenses;AcademicLicense"/>
     
 
 
@@ -156,6 +182,12 @@
     <!-- http://carneades.berlios.de/oss-licenses#LGPL -->
 
     <owl:Class rdf:about="&oss-licenses;LGPL"/>
+    
+
+
+    <!-- http://carneades.berlios.de/oss-licenses#MayCopy -->
+
+    <owl:Class rdf:about="&oss-licenses;MayCopy"/>
     
 
 
@@ -388,11 +420,11 @@
 
     <!-- http://carneades.berlios.de/impact-licensing#HotSpotJvm -->
 
-    <oss-licenses:SoftwareEntity rdf:about="#HotSpotJvm">
+    <oss-licenses:Program rdf:about="#HotSpotJvm">
         <rdf:type rdf:resource="&owl;Thing"/>
         <oss-licenses:hasLicense rdf:resource="#HotSpotJvmLicense"/>
         <oss-licenses:implements rdf:resource="#JVM"/>
-    </oss-licenses:SoftwareEntity>
+    </oss-licenses:Program>
     
 
 
