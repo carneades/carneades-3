@@ -18,31 +18,30 @@
 (defvar- *saveFileMenuItem* (.saveFileMenuItem *viewinstance*))
 (defvar- *saveAsFileMenuItem* (.saveAsFileMenuItem *viewinstance*))
 (defvar- *exportFileMenuItem* (.exportFileMenuItem *viewinstance*))
+(defvar- *printPreviewFileMenuItem* (.printPreviewFileMenuItem *viewinstance*))
 
 (defvar- *saveFileButton* (.saveFileButton *viewinstance*))
 
 (defn- on-zoom-in [event]
-  (prn "on-zoom-in")
   (zoom-in (.getSelectedComponent *mapPanel*)))
 
 (defn- on-zoom-out [event]
-  (prn "on-zoom-out")
   (zoom-out (.getSelectedComponent *mapPanel*)))
 
 (defn- on-zoom-reset [event]
-  (prn "on-zoom-reset")
   (zoom-reset (.getSelectedComponent *mapPanel*)))
 
-(defn- set-enable-zoom-buttons [state]
+(defn- set-enable-diagram-buttons-and-menus [state]
   (.setEnabled *zoomInButton* state)
   (.setEnabled *zoomOutButton* state)
-  (.setEnabled *zoomResetButton* state))
+  (.setEnabled *zoomResetButton* state)
+  (.setEnabled *printPreviewFileMenuItem* state))
 
-(defn enable-zoom-buttons []
-  (set-enable-zoom-buttons true))
+(defn enable-diagram-buttons-and-menus []
+  (set-enable-diagram-buttons-and-menus true))
 
-(defn disable-zoom-buttons []
-  (set-enable-zoom-buttons false))
+(defn disable-diagram-buttons-and-menus []
+  (set-enable-diagram-buttons-and-menus false))
 
 (defn init-menu []
   (add-action-listener *zoomInButton* on-zoom-in)

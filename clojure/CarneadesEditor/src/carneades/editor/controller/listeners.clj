@@ -6,7 +6,8 @@
         carneades.editor.model.docmanager
         carneades.editor.view.editorapplication
         ;; no import of java.awt.* or javax.* are allowed here
-        ))
+        )
+  (:import java.io.File))
 
 (defvar- *file-error* "File Error")
 (defvar- *file-already-opened* "File %s is already opened.")
@@ -33,9 +34,11 @@
           (display-lkif-property view path))))))
 
 (defn on-select-graphid [view path graphid]
-  (prn "on-select-graphid")
-  (prn path)
-  (prn graphid))
+  (let [ag (get-ag path graphid)
+        id (:id ag)
+        title (:title ag)
+        mainissue (statement-formatted (:main-issue ag))]
+    (display-graph-property view id title mainissue)))
 
 (defn on-edit-graphid [view path graphid]
   (prn "on-edit-graphid")
@@ -61,6 +64,24 @@
 (defn on-open-graph [view path id]
   (open-graph view path (get-ag path id) statement-formatted))
 
+(defn on-export-graph [view path id]
+  (when-let [ag (get-ag path id)]
+    (when-let [file (ask-file-to-save view "SVG Files" "svg"
+                                      (File. (str id ".svg")))]
+      (let [filename (.getPath file)]
+        (export-graph-to-svg view ag statement-formatted filename)))))
+
 (defn on-close-graph [view path id]
   (close-graph view path id))
 
+(defn on-export-file [view path]
+  (when (ask-confirmation view "Export" "Export all the argument graphs?")
+    (doseq [id (get-ags-id path)]
+      (on-export-graph view path id))))
+
+(defn on-about [view]
+  (display-about view))
+
+(defn on-printpreview-graph [view path id]
+  (let [ag (get-ag path id)]
+    (print-preview view path ag statement-formatted)))

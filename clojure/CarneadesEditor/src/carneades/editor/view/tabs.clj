@@ -24,19 +24,30 @@
            (.getX event)
            (.getY event))))
 
+(defn- dispatch-panel-event [tabpanel event]
+  (.dispatchEvent *mapPanel*
+                  (SwingUtilities/convertMouseEvent
+                   tabpanel event *mapPanel*)))
+
 (deftype TabMouseMenuListener [] MouseListener
-  (mouseClicked [this event])
-  (mouseEntered [this event])
-  (mouseExited [this event])
-  (mousePressed [this event]
-                (prn "left click")
-                (let [tabpanel (.getSource event)]
-                  (prn "tabpanel")
-                  (.dispatchEvent *mapPanel*
-                                 (SwingUtilities/convertMouseEvent
-                                  tabpanel event *mapPanel*))))
+  (mouseClicked
+   [this event]
+   (dispatch-panel-event (.getSource event) event))
+  
+  (mouseEntered
+   [this event]
+   (dispatch-panel-event (.getSource event) event))
+  
+  (mouseExited
+   [this event]
+   (dispatch-panel-event (.getSource event) event))
+  
+  (mousePressed
+   [this event]
+   (dispatch-panel-event (.getSource event) event))
+  
   (mouseReleased [this event]
-                 (prn "left click released")))
+   (dispatch-panel-event (.getSource event) event)))
 
 (defvar- *tabMouseListener* (TabMouseMenuListener.))
 
@@ -45,6 +56,7 @@
         label (JLabel. title)]
     (.setOpaque tabcomponent false)
     (.setFocusable label false)
+    (.setFocusable tabcomponent false)
     (.setComponentPopupMenu label *tabPopupMenu*)
     (.setBorder tabcomponent (BorderFactory/createEmptyBorder 5 5 5 5))
     (.setLayout tabcomponent (FlowLayout. FlowLayout/LEFT 0 0))

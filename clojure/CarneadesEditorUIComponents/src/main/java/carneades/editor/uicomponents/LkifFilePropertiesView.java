@@ -33,6 +33,8 @@ public class LkifFilePropertiesView extends javax.swing.JPanel {
 
         jLabel1 = new javax.swing.JLabel();
 
+        setPreferredSize(new java.awt.Dimension(260, 118));
+
         jLabel1.setText("Path:");
 
         pathTextField.setEditable(false);
