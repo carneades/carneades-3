@@ -9,6 +9,8 @@
         )
   (:import java.io.File))
 
+;;; in this namespace we define the Swing independant listeners
+
 (defvar- *file-error* "File Error")
 (defvar- *file-already-opened* "File %s is already opened.")
 
