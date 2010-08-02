@@ -11,6 +11,8 @@
     clojure.contrib.zip-filter.xml
     carneades.engine.argument-builtins ; for testing
     carneades.engine.shell    ; for testing
+    carneades.ui.diagram.viewer ; for testing
+    carneades.engine.argument-builtins ; for testing
     carneades.engine.statement
     carneades.engine.argument
     carneades.engine.rule
@@ -274,7 +276,7 @@
       ;(println "imported-ags " (count imported-ags))
       ;(println "defined-rules: " (count defined-rules))
       ;(println "axioms: " axioms)
-      {:rb rb}
+      {:rb rb :ag imported-ags}
       )
     nil
     ))
@@ -383,8 +385,10 @@
 
 (defn parse-arg-graph
   [lkif-arg-graph]
-  (let* [id (attr lkif-arg-graph :id),
-         title (attr lkif-arg-graph :title),
+  (let* [id (or (attr lkif-arg-graph :id)
+              (gensym "g")),
+         title (or (attr lkif-arg-graph :title)
+                 ""),
          lkif-main-issue (attr lkif-arg-graph :main-issue),
          lkif-stmts (xml1-> lkif-arg-graph :statements),
          lkif-args (xml1-> lkif-arg-graph :arguments),
@@ -412,7 +416,7 @@
            lkif-theory (xml1-> document :theory),
            lkif-arg-graphs (xml1-> document :argument-graphs),
            source-list (sources->list lkif-sources),
-           theory-rb_ag (theory->rb_ags lkif-theory optionals files),
+           theory-rb_ag (theory->rb_ags lkif-theory optionals (cons filename files)),
            ags (parse-arg-graphs lkif-arg-graphs),
            rb (:rb theory-rb_ag),
            ag (:ag theory-rb_ag)
@@ -422,10 +426,18 @@
       ;(println "lkif-theory: " lkif-theory)
       ;(println "lkif-arg-graphs: " lkif-arg-graphs)
       ;(println "theory-rb-ag: " theory-rb_ag)
-      {:sources source-list :rb rb :ags ags}
+      {:sources source-list :rb rb :ags (concat ags ag)}
       )))
 
-;(def test-path "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\examples\\lkif-test\\lkif-test.xml")
+;(def test-path "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\examples\\Import Test\\test1.xml")
+;(def i (lkif-import test-path))
+;
+;(def e1 (make-engine 50 1 (list (generate-arguments-from-rules (:rb i) '())
+;                                                   builtins)))
+;
+;(def goal (list (symbol "http://www.carneades/owl1.owl#a") '?x))
+;
+;(def sols (e1 goal))
 ;(def lkif-args (xml1-> (zip/xml-zip (xml/parse test-path)) :argument-graphs))
 ;(def args (xml-> lkif-args :argument-graph))
 ;(def arg1 (first args))
