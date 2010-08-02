@@ -18,7 +18,8 @@
         carneades.engine.argument
         carneades.engine.statement)
   (:import javax.swing.SwingConstants
-           (com.mxgraph.util mxConstants mxUtils mxCellRenderer)
+           (com.mxgraph.util mxConstants mxUtils mxCellRenderer mxPoint mxEvent
+                             mxEventSource$mxIEventListener)
            (com.mxgraph.view mxGraph mxStylesheet)
            (com.mxgraph.model mxCell mxGeometry)
            com.mxgraph.layout.hierarchical.mxHierarchicalLayout
@@ -36,7 +37,10 @@
 
 (defvar- *argument-style*
   (merge *global-style*
-         {mxConstants/STYLE_SHAPE mxConstants/SHAPE_ELLIPSE
+         {mxConstants/STYLE_LABEL_POSITION mxConstants/ALIGN_CENTER
+          mxConstants/STYLE_ALIGN mxConstants/ALIGN_CENTER
+          mxConstants/STYLE_FONTSIZE 16
+          mxConstants/STYLE_SHAPE mxConstants/SHAPE_ELLIPSE
           mxConstants/STYLE_PERIMETER mxConstants/PERIMETER_ELLIPSE
           mxConstants/STYLE_GRADIENT_DIRECTION mxConstants/DIRECTION_SOUTH
           mxConstants/STYLE_FILLCOLOR "#ffffff"
@@ -111,7 +115,8 @@
 
 (defvar- *con-conclusion-edge-style*
   (merge *conclusion-edge-style*
-         {mxConstants/STYLE_ENDARROW mxConstants/ARROW_OVAL}))
+         ;; {mxConstants/STYLE_ENDARROW mxConstants/ARROW_OVAL}
+         {mxConstants/STYLE_ENDARROW mxConstants/ARROW_CLASSIC}))
 
 (defvar- *premise-edge-style* *edge-style*)
 
@@ -155,6 +160,23 @@
                    "negAssumptionEdge" *neg-assumption-edge-style*
                    "negExceptionEdge" *neg-exception-edge-style*})
 
+(defrecord StatementCell [ag stmt stmt-str] Object
+  (toString
+   [this]
+   (let [formatted (stmt-str stmt)]
+     (cond (questioned? ag stmt)
+                 (str "? " formatted)
+                 (accepted? ag stmt)
+                 (str "+ " formatted)
+                 (rejected? ag stmt)
+                 (str "-" formatted)
+                 :else formatted))))
+
+(defrecord ArgumentCell [arg] Object
+  (toString
+   [this]
+   (if (= (:direction arg) :pro) "+" "-")))
+
 (defn- configure-graph [#^mxGraph g]
   (doto g
     ;; (.setAllowNegativeCoordinates false)
@@ -163,7 +185,9 @@
     ;; (.setCellsLocked true)
     (.setEdgeLabelsMovable false)
     (.setVertexLabelsMovable false)
-    (.setCellsDisconnectable false)))
+    (.setCellsDisconnectable false)
+    (.setCellsBendable false)
+    ))
 
 (defn register-styles [#^mxStylesheet stylesheet]
   (dorun (map (fn [[k v]] (.putCellStyle stylesheet k v)) *styles*)))
@@ -192,7 +216,9 @@
 (defvar- *xmargin* 10)
 
 (defn- translate-right [#^mxGraph g p vertices]
-  (let [cells (vals vertices)
+  (let [model (.getModel g)
+        defaultparent (.getDefaultParent g)
+        cells (vals vertices)
         minx (reduce (fn [acc vertex]
                        (min (getx vertex) acc))
                      0
@@ -201,8 +227,28 @@
     (doseq [cell cells]
       (setx cell (+ (getx cell) translation))
       (sety cell (+ (gety cell) *ymargin*)))
+    (doseq [edge (.getChildCells g defaultparent false true)]
+      (let [controlpoints (or (.. edge getGeometry getPoints) ())]
+        (doseq [point controlpoints]
+          (let [x (.getX point)
+                y (.getY point)]
+            (.setX point (+ x translation))
+            (.setY point (+ y *ymargin*))))))
     ;; (.. g getView (scaleAndTranslate 1 translation *ymargin*))
 ))
+
+(defn- print-debug [g]
+  (let [defaultparent (.getDefaultParent g)
+        edges (.getChildCells g defaultparent false true)]
+    (doseq [edge edges]
+      (let [x (getx edge)
+            y (gety edge)
+            controlpoints (or (.. edge getGeometry getPoints) ())]
+        (printf "edge %s [%s %s] \n" edge x y)
+        (printf "control points = {")
+        (doseq [point controlpoints]
+          (printf "[%s %s], " (.getX point) (.getY point)))
+        (printf "}\n")))))
 
 (defn- hierarchicallayout [#^mxGraph g p vertices]
   (let [layout (mxHierarchicalLayout. g SwingConstants/EAST)]
@@ -214,8 +260,7 @@
     ;; negative coordinates are used by the layout algorithm
     ;; even with setAllowNegativeCoordinates set to false.
     ;; we translate to make all edges and vertices visible
-    (translate-right g p vertices)
-    ))
+    (translate-right g p vertices)))
 
 (defn- align-orphan-cells [#^mxGraph g p vertices]
   "align orphan cells on the right of the graph, with a stacklayout"
@@ -252,19 +297,10 @@
           :else "statement")))
 
 (defn- add-statement [g p ag stmt vertices stmt-str]
-  (letfn [(prefix
-           [s]
-           (cond (questioned? ag stmt)
-                 (str "? " s)
-                 (accepted? ag stmt)
-                 (str "+ " s)
-                 (rejected? ag stmt)
-                 (str "-" s)
-                 :else s))]
-    (assoc vertices
-      stmt
-      (insert-vertex g p (prefix (stmt-str stmt))
-                     (get-statement-style ag stmt)))))
+  (assoc vertices
+    stmt
+    (insert-vertex g p (StatementCell. ag stmt stmt-str)
+                   (get-statement-style ag stmt))))
 
 (defn- add-statements [g p ag stmt-str]
   "add statements and returns a map statement -> vertex"
@@ -310,10 +346,16 @@
     "applicableArgument"
     "notApplicableArgument"))
 
+(defvar- *argument-width* 32)
+(defvar- *argument-height* 32)
+
 (defn- add-argument [g p ag arg vertices]
-  (assoc vertices
-    (argument-id arg)
-    (insert-vertex g p (argument-id arg) (get-argument-style ag arg))))
+  (let [vertex
+        (insert-vertex g p (ArgumentCell. arg)
+                       (get-argument-style ag arg))]
+    (.. vertex getGeometry (setWidth *argument-width*))
+    (.. vertex getGeometry (setHeight *argument-height*))
+    (assoc vertices (argument-id arg) vertex)))
 
 (defn- add-arguments [g p ag vertices]
   (reduce (fn [vertices arg]
@@ -393,3 +435,9 @@
     (add-mouse-zoom g graphcomponent)
     graphcomponent))
 
+(defn add-node-selected-listener [graphcomponent listener]
+  (let [selectionmodel (.getSelectionModel (.getGraph graphcomponent))]
+    (.addListener selectionmodel mxEvent/CHANGE
+                  (proxy [mxEventSource$mxIEventListener] []
+                    (invoke [sender event]
+                            (prn "invoke!"))))))
