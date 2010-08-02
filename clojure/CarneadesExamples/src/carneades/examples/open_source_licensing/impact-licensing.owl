@@ -44,6 +44,12 @@
     
 
 
+    <!-- http://carneades.berlios.de/oss-licenses#grantsRight -->
+
+    <owl:ObjectProperty rdf:about="&oss-licenses;grantsRight"/>
+    
+
+
     <!-- http://carneades.berlios.de/oss-licenses#hasLicense -->
 
     <owl:ObjectProperty rdf:about="&oss-licenses;hasLicense"/>
@@ -65,14 +71,6 @@
     <!-- http://carneades.berlios.de/oss-licenses#instanceOfTemplate -->
 
     <owl:ObjectProperty rdf:about="&oss-licenses;instanceOfTemplate"/>
-    
-
-
-    <!-- http://carneades.berlios.de/oss-licenses#isCompatibleWith -->
-
-    <owl:ObjectProperty rdf:about="&oss-licenses;isCompatibleWith">
-        <rdf:type rdf:resource="&owl;ReflexiveProperty"/>
-    </owl:ObjectProperty>
     
 
 
@@ -117,6 +115,26 @@
     
 
 
+    <!-- http://carneades.berlios.de/impact-licensing#PreferredLicense -->
+
+    <owl:Class rdf:about="#PreferredLicense">
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&oss-licenses;grantsRight"/>
+                <owl:someValuesFrom rdf:resource="&oss-licenses;MayCopy"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="&oss-licenses;AcademicLicense"/>
+    </owl:Class>
+    
+
+
+    <!-- http://carneades.berlios.de/oss-licenses#AGPL -->
+
+    <owl:Class rdf:about="&oss-licenses;AGPL"/>
+    
+
+
     <!-- http://carneades.berlios.de/oss-licenses#API -->
 
     <owl:Class rdf:about="&oss-licenses;API"/>
@@ -126,6 +144,12 @@
     <!-- http://carneades.berlios.de/oss-licenses#AbstractMachine -->
 
     <owl:Class rdf:about="&oss-licenses;AbstractMachine"/>
+    
+
+
+    <!-- http://carneades.berlios.de/oss-licenses#AcademicLicense -->
+
+    <owl:Class rdf:about="&oss-licenses;AcademicLicense"/>
     
 
 
@@ -156,6 +180,12 @@
     <!-- http://carneades.berlios.de/oss-licenses#LGPL -->
 
     <owl:Class rdf:about="&oss-licenses;LGPL"/>
+    
+
+
+    <!-- http://carneades.berlios.de/oss-licenses#MayCopy -->
+
+    <owl:Class rdf:about="&oss-licenses;MayCopy"/>
     
 
 
@@ -256,7 +286,6 @@
 
     <owl:Thing rdf:about="#CarneadesEngine">
         <rdf:type rdf:resource="&oss-licenses;SoftwareLibrary"/>
-        <oss-licenses:usesSpecification rdf:resource="#CMIS"/>
         <oss-licenses:implementedIn rdf:resource="#Clojure"/>
         <oss-licenses:compiledBy rdf:resource="#ClojureCompiler"/>
         <oss-licenses:linksStaticallyTo rdf:resource="#ClojureContrib"/>
@@ -265,6 +294,8 @@
         <oss-licenses:usesSpecification rdf:resource="#JVM"/>
         <oss-licenses:usesSpecification rdf:resource="#JavaEE"/>
         <oss-licenses:usesSpecification rdf:resource="#OSGI"/>
+        <oss-licenses:linksStaticallyTo rdf:resource="#OWL_API_ReferenceImplementation"/>
+        <oss-licenses:linksStaticallyTo rdf:resource="#Pellet"/>
         <oss-licenses:linksStaticallyTo rdf:resource="#cljSandbox"/>
     </owl:Thing>
     
@@ -328,10 +359,10 @@
 
     <!-- http://carneades.berlios.de/impact-licensing#ClojureContrib -->
 
-    <oss-licenses:SoftwareEntity rdf:about="#ClojureContrib">
-        <rdf:type rdf:resource="&owl;Thing"/>
+    <owl:Thing rdf:about="#ClojureContrib">
+        <rdf:type rdf:resource="&oss-licenses;SoftwareLibrary"/>
         <oss-licenses:hasLicense rdf:resource="#ClojureContribLicense"/>
-    </oss-licenses:SoftwareEntity>
+    </owl:Thing>
     
 
 
@@ -388,11 +419,11 @@
 
     <!-- http://carneades.berlios.de/impact-licensing#HotSpotJvm -->
 
-    <oss-licenses:SoftwareEntity rdf:about="#HotSpotJvm">
+    <oss-licenses:Program rdf:about="#HotSpotJvm">
         <rdf:type rdf:resource="&owl;Thing"/>
         <oss-licenses:hasLicense rdf:resource="#HotSpotJvmLicense"/>
         <oss-licenses:implements rdf:resource="#JVM"/>
-    </oss-licenses:SoftwareEntity>
+    </oss-licenses:Program>
     
 
 
@@ -406,10 +437,10 @@
 
     <!-- http://carneades.berlios.de/impact-licensing#JGraphX -->
 
-    <oss-licenses:SoftwareEntity rdf:about="#JGraphX">
+    <oss-licenses:SoftwareLibrary rdf:about="#JGraphX">
         <rdf:type rdf:resource="&owl;Thing"/>
         <oss-licenses:hasLicense rdf:resource="#JGraphXLicense"/>
-    </oss-licenses:SoftwareEntity>
+    </oss-licenses:SoftwareLibrary>
     
 
 
@@ -478,6 +509,48 @@
     
 
 
+    <!-- http://carneades.berlios.de/impact-licensing#OWL_API -->
+
+    <owl:Thing rdf:about="#OWL_API">
+        <rdf:type rdf:resource="&oss-licenses;API"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://carneades.berlios.de/impact-licensing#OWL_API_ReferenceImplementation -->
+
+    <owl:Thing rdf:about="#OWL_API_ReferenceImplementation">
+        <rdf:type rdf:resource="&oss-licenses;API"/>
+        <oss-licenses:hasLicense rdf:resource="#OWL_API_ReferenceImplementationLicense"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://carneades.berlios.de/impact-licensing#OWL_API_ReferenceImplementationLicense -->
+
+    <owl:Thing rdf:about="#OWL_API_ReferenceImplementationLicense">
+        <rdf:type rdf:resource="&oss-licenses;LGPL"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://carneades.berlios.de/impact-licensing#Pellet -->
+
+    <owl:Thing rdf:about="#Pellet">
+        <rdf:type rdf:resource="&oss-licenses;SoftwareLibrary"/>
+        <oss-licenses:hasLicense rdf:resource="#PelletLicense"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://carneades.berlios.de/impact-licensing#PelletLicense -->
+
+    <owl:Thing rdf:about="#PelletLicense">
+        <rdf:type rdf:resource="&oss-licenses;AGPL"/>
+    </owl:Thing>
+    
+
+
     <!-- http://carneades.berlios.de/impact-licensing#SVN -->
 
     <owl:Thing rdf:about="#SVN">
@@ -523,12 +596,10 @@
 
     <!-- http://carneades.berlios.de/impact-licensing#cljSandbox -->
 
-    <oss-licenses:SoftwareEntity rdf:about="#cljSandbox">
+    <oss-licenses:SoftwareLibrary rdf:about="#cljSandbox">
         <rdf:type rdf:resource="&owl;Thing"/>
-        <oss-licenses:linksStaticallyTo rdf:resource="#Clojure"/>
-        <oss-licenses:linksStaticallyTo rdf:resource="#ClojureContrib"/>
-        <oss-licenses:linksStaticallyTo rdf:resource="#cljSandbox"/>
-    </oss-licenses:SoftwareEntity>
+        <oss-licenses:hasLicense rdf:resource="#cljSandboxLicense"/>
+    </oss-licenses:SoftwareLibrary>
     
 
 
