@@ -66,8 +66,7 @@
         <body>
           <s pred="&oss;SoftwareLibrary"><v>SE2</v> is a software library</s>
           <s pred="&oss;linksTo"><v>SE1</v> is linked to <v>SE2</v></s>
-          <s pred="applies">The <i value="FSFTheoryOfLinking">FSF theory</i> applies to <s pred="&oss;isDerivedFrom"><v>SE1</v>
-              is derived from <v>SE2</v></s></s>
+          <s pred="valid">The <i value="FSFTheoryOfLinking">FSF theory of linking</i> is valid</s>
         </body>
       </rule>
       <rule id="RosenTheoryOfLinking">
@@ -81,8 +80,7 @@
         <body>
           <s pred="&oss;SoftwareLibrary"><v>SE2</v> is a software library</s>
           <s pred="&oss;linksTo"><v>SE1</v> is linked to <v>SE2</v></s>
-          <s pred="applies">The <i value="RosenTheoryOfLinking">Rosen theory</i> applies to <s pred="&oss;isDerivedFrom"
-              ><v>SE1</v> is derived from <v>SE2</v></s></s>
+          <s pred="valid">The <i value="RosenTheoryOfLinking">Rosen theory of linking</i> is valid</s>
         </body>
       </rule>
       <rule id="hasNoncompliantLicense">
@@ -119,9 +117,9 @@
             licenses</s></not></head>
         <body>
           <or>
-              <s pred="&oss;NoncompliantLicense"><v>W1</v> has a noncompliant license</s>
-              <s pred="&oss;isDerivedFromNoncompliantWork"><v>W1</v> is derived from a noncompliant
-                work</s>
+            <s pred="&oss;NoncompliantLicense"><v>W1</v> has a noncompliant license</s>
+            <s pred="&oss;isDerivedFromNoncompliantWork"><v>W1</v> is derived from a noncompliant
+              work</s>
           </or>
         </body>
       </rule>
