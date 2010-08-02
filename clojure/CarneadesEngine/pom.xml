@@ -34,12 +34,12 @@ various argumentation tasks. This is the software library (the engine).</descrip
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.2.0-beta1</version>
+      <version>1.2.0-RC1</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure-contrib</artifactId>
-      <version>1.2.0-beta1</version>
+      <version>1.2.0-RC1</version>
     </dependency>
     <dependency>
       <groupId>org.clojars.pallix</groupId>
