@@ -3,7 +3,6 @@
 
 <!DOCTYPE rdf:RDF [
     <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
-    <!ENTITY licensesOnt "http://lkbs09/licensesOnt.owl#" >
     <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
     <!ENTITY owl2xml "http://www.w3.org/2006/12/owl2-xml#" >
     <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
@@ -12,11 +11,10 @@
 ]>
 
 
-<rdf:RDF xmlns="http://lkbs09/licensesOnt.owl#"
+<rdf:RDF xmlns="http://carneades.berlios.de/oss-licenses#"
      xml:base="http://carneades.berlios.de/oss-licenses"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:owl2xml="http://www.w3.org/2006/12/owl2-xml#"
-     xmlns:licensesOnt="http://lkbs09/licensesOnt.owl#"
      xmlns:oss-licenses="http://carneades.berlios.de/oss-licenses#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
@@ -67,15 +65,8 @@
     <!-- http://carneades.berlios.de/oss-licenses#hasCondition -->
 
     <owl:ObjectProperty rdf:about="#hasCondition">
+        <rdfs:range rdf:resource="#Condition"/>
         <rdfs:domain rdf:resource="#CopyrightLicense"/>
-        <rdfs:range>
-            <owl:Class>
-                <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="#Condition"/>
-                    <rdf:Description rdf:about="#Right"/>
-                </owl:unionOf>
-            </owl:Class>
-        </rdfs:range>
     </owl:ObjectProperty>
     
 
@@ -294,6 +285,20 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
+    
+
+
+    <!-- http://carneades.berlios.de/oss-licenses#AGPL -->
+
+    <owl:Class rdf:about="#AGPL">
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#instanceOfTemplate"/>
+                <owl:hasValue rdf:resource="#AGPL_Template"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="#ReciprocalLicense"/>
+    </owl:Class>
     
 
 
@@ -941,44 +946,50 @@
     
 
 
+    <!-- http://carneades.berlios.de/oss-licenses#AGPL_Template -->
+
+    <owl:Thing rdf:about="#AGPL_Template"/>
+    
+
+
     <!-- http://carneades.berlios.de/oss-licenses#ApacheLicense2.0Template -->
 
-    <oss-licenses:CopyrightLicenseTemplate rdf:about="#ApacheLicense2.0Template">
+    <CopyrightLicenseTemplate rdf:about="#ApacheLicense2.0Template">
         <rdf:type rdf:resource="&owl;Thing"/>
-    </oss-licenses:CopyrightLicenseTemplate>
+    </CopyrightLicenseTemplate>
     
 
 
     <!-- http://carneades.berlios.de/oss-licenses#BSD_Template -->
 
-    <oss-licenses:CopyrightLicenseTemplate rdf:about="#BSD_Template">
+    <CopyrightLicenseTemplate rdf:about="#BSD_Template">
         <rdf:type rdf:resource="&owl;Thing"/>
-    </oss-licenses:CopyrightLicenseTemplate>
+    </CopyrightLicenseTemplate>
     
 
 
     <!-- http://carneades.berlios.de/oss-licenses#EPL_Template -->
 
-    <oss-licenses:CopyrightLicenseTemplate rdf:about="#EPL_Template">
+    <CopyrightLicenseTemplate rdf:about="#EPL_Template">
         <rdf:type rdf:resource="&owl;Thing"/>
-    </oss-licenses:CopyrightLicenseTemplate>
+    </CopyrightLicenseTemplate>
     
 
 
     <!-- http://carneades.berlios.de/oss-licenses#GPL_Template -->
 
-    <oss-licenses:CopyrightLicenseTemplate rdf:about="#GPL_Template">
+    <CopyrightLicenseTemplate rdf:about="#GPL_Template">
         <rdf:type rdf:resource="&owl;Thing"/>
-        <oss-licenses:isCompatibleWith rdf:resource="#LGPL_Template"/>
-    </oss-licenses:CopyrightLicenseTemplate>
+        <isCompatibleWith rdf:resource="#LGPL_Template"/>
+    </CopyrightLicenseTemplate>
     
 
 
     <!-- http://carneades.berlios.de/oss-licenses#LGPL_Template -->
 
-    <oss-licenses:CopyrightLicenseTemplate rdf:about="#LGPL_Template">
+    <CopyrightLicenseTemplate rdf:about="#LGPL_Template">
         <rdf:type rdf:resource="&owl;Thing"/>
-    </oss-licenses:CopyrightLicenseTemplate>
+    </CopyrightLicenseTemplate>
     
 
 
@@ -992,9 +1003,9 @@
 
     <!-- http://carneades.berlios.de/oss-licenses#MPL_Template -->
 
-    <oss-licenses:CopyrightLicenseTemplate rdf:about="#MPL_Template">
+    <CopyrightLicenseTemplate rdf:about="#MPL_Template">
         <rdf:type rdf:resource="&owl;Thing"/>
-    </oss-licenses:CopyrightLicenseTemplate>
+    </CopyrightLicenseTemplate>
 </rdf:RDF>
 
 

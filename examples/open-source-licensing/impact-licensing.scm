@@ -41,8 +41,8 @@
 
 (define (args ag goal)
   (unite-solutions (construct-arguments goal
-                       500
-                       1
+                       5000
+                       8
                        ag
                        generators
                       )))
@@ -50,19 +50,20 @@
 (define (argswc ag goal)
   (unite-solutions-with-candidates 
    (construct-arguments goal
-                        500
-                        1
+                        5000
+                        8
                         ag
                         generators)))
 
 (define goal1 `(,(c oss "mayUseLicenseTemplate") ,(c il "CarneadesEngine") ,(c oss "EPL_Template")))
-(define goal2 `(not (,(c oss "mayUseLicenseTemplate") ,(c il "CarneadesEngine") ,(c oss "EPL_Template"))))
-(define goal3 `(,(c oss "instanceOfTemplate") ,(c il "ClojureContribLicense") ,(c oss "EPL_Template")))
+(define goal2 `(,(c oss "mayUseLicenseTemplate") ,(c il "CarneadesEngine") ,(c oss "GPL_Template")))
+(define goal3 `(,(c oss "SoftwareLibrary") ,(c il "ClojureContrib")))
+
 
 (define ag1 (args empty-argument-graph goal1))
-(define ag2 (args ag1 goal2))
+; (define ag2 (args ag1 goal2))
 
-(define ag3 (state-arguments (stream-car (e1 goal1))))
+; (define ag3 (state-arguments (stream-car (e1 goal1))))
 
 
 ; (view ag2)

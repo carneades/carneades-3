@@ -10,7 +10,7 @@
 <theory id="impact-kb">
 		<imports>
 		  <import url="oss-rules.xml" />
-	    <import url="impact-licensing.owl" />
+			<import url="impact-licensing.owl" />
 		</imports>
 	</theory>
 </lkif>
