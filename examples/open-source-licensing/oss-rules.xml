@@ -9,6 +9,9 @@
     <imports>
       <import url="oss-licenses.owl"/>
     </imports>
+    <axioms>
+      <axiom id="f1"><s pred="valid">The <i value="FSFTheoryOfLinking">FSF theory of linking</i> is valid</s>  </axiom>
+    </axioms>
     <rules>
       <rule id="DefaultLicenseRule">
         <!--

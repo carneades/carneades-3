@@ -57,13 +57,14 @@
 
 (define goal1 `(,(c oss "mayUseLicenseTemplate") ,(c il "CarneadesEngine") ,(c oss "EPL_Template")))
 (define goal2 `(,(c oss "mayUseLicenseTemplate") ,(c il "CarneadesEngine") ,(c oss "GPL_Template")))
-(define goal3 `(,(c oss "SoftwareLibrary") ,(c il "ClojureContrib")))
+(define goal3 '(valid FSFTheoryOfLinking))
 
+(define ag0 (make-argument-graph 'ag1 "licensing" goal1))
+(define ag1 (args ag0 goal1))
 
-(define ag1 (args empty-argument-graph goal1))
-; (define ag2 (args ag1 goal2))
+; (define ag2 (state-arguments (stream-car (e1 goal1))))
 
-; (define ag3 (state-arguments (stream-car (e1 goal1))))
+; (view ag1)
 
-
-; (view ag2)
+(define ld (make-lkif-data (lkif-data-sources kb1) (lkif-data-rulebase kb1) (list ag1)))
+(lkif-export '() ld "output.xml")
