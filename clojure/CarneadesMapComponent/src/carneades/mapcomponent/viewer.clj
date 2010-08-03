@@ -36,14 +36,14 @@
                   (= "svg" (extension (.getName f))))))))
 
 (defn- on-export-as-svg [#^JFrame frame]
-  (let [graph (.. frame getContentPane (getComponent 0) getGraph)
+  (let [component (.. frame getContentPane (getComponent 0))
         filechooser (JFileChooser.)]
     (doto filechooser
       (.setDialogTitle "Export as SVG")
       (.setFileFilter (create-file-filter))
       (.showSaveDialog frame))
     (if-let [file (.getSelectedFile filechooser)]
-      (export-graph graph (.getPath file)))))
+      (export-graph component (.getPath file)))))
 
 (defn- on-exit-item [#^JFrame frame]
   (doto frame
