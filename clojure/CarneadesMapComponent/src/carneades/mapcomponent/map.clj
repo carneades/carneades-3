@@ -68,8 +68,7 @@
 
 (defvar- *con-applicable-argument-style*
   (merge *applicable-argument-style*
-         {mxConstants/STYLE_STROKECOLOR "#ff383d"}
-         {mxConstants/STYLE_FILLCOLOR "#8ee888"}))
+         {mxConstants/STYLE_STROKECOLOR "#ff383d"}))
 
 (defvar- *not-applicable-argument-style* *argument-style*)
 
@@ -143,7 +142,8 @@
 (defvar- *premise-edge-style* *edge-style*)
 
 (defvar- *assumption-edge-style*
-  (merge *premise-edge-style*))
+  (merge *premise-edge-style*
+         {mxConstants/STYLE_STARTARROW mxConstants/ARROW_DIAMOND}))
 
 (defvar- *exception-edge-style*
   (merge *premise-edge-style*
@@ -165,15 +165,15 @@
                    "conApplicableArgument" *con-applicable-argument-style*
                    "proNotApplicableArgument" *pro-not-applicable-argument-style*
                    "conNotApplicableArgument" *con-not-applicable-argument-style*
-                   "statement" *statement-style*
+                   "OutOutStatement" *statement-style*
                    "acceptableStatement" *acceptable-statement-style*
                    "complementAcceptableStatement"
                    *complement-acceptable-statement-style*
                    "acceptableAndComplementAcceptableStatement"
                    *acceptable-and-complement-acceptable-statement-style*
-                   "inAndNotOutStatement" *in-and-not-out-statement-style*
-                   "inAndNotInStatement" *in-and-not-in-statement-style*
-                   "outAndNotInStatement" *out-and-not-in-statement-style*
+                   "InOutStatement" *in-and-not-out-statement-style*
+                   "InInStatement" *in-and-not-in-statement-style*
+                   "OutInStatement" *out-and-not-in-statement-style*
                    "edge" *edge-style*
                    "proConclusionEdge" *pro-conclusion-edge-style*
                    "conConclusionEdge" *con-conclusion-edge-style*
@@ -315,10 +315,10 @@
 
 (defn- get-statement-style [ag stmt]
   (let [comp (statement-complement stmt)]
-    (cond (and (in? ag stmt) (out? ag comp)) "inAndNotOutStatement"
-          (and (in? ag stmt) (in? ag comp)) "inAndNotInStatement"
-          (and (out? ag stmt) (in? ag comp)) "outAndNotInStatement"
-          :else "statement")))
+    (cond (and (in? ag stmt) (out? ag comp)) "InOutStatement"
+          (and (in? ag stmt) (in? ag comp)) "InInStatement"
+          (and (out? ag stmt) (in? ag comp)) "OutInStatement"
+          :else "OutOutStatement")))
 
 (defn- add-statement [g p ag stmt vertices stmt-str]
   (assoc vertices
@@ -366,13 +366,23 @@
   vertices)
 
 (defn- get-argument-style [ag arg]
+  (prn "argument")
+  (prn arg)
   (cond (and (applicable? ag arg) (= (:direction arg) :pro))
-        "proApplicableArgument"
+        (do
+          (prn "proApplicableArgument")
+          "proApplicableArgument")
         (and (applicable? ag arg) (= (:direction arg) :con))
-        "conApplicableArgument"
+        (do
+          (prn "conApplicableArgument")
+         "conApplicableArgument")
         (= (:direction arg) :pro)
-        "proNotApplicableArgument"
-        :else "conNotApplicableArgument"))
+        (do
+          (prn "proNotApplicableArgument")
+         "proNotApplicableArgument")
+        :else (do
+                prn "conNotApplicableArgument"
+               "conNotApplicableArgument")))
 
 (defvar- *argument-width* 32)
 (defvar- *argument-height* 32)
