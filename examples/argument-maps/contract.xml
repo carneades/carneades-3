@@ -14,8 +14,6 @@
 </statement>
 <statement id="s7" value="true" assumption="false" standard="PE"><s>deed</s>
 </statement>
-<statement id="s8" value="true" assumption="false" standard="PE"><s>Premise Statement</s>
-</statement>
 </statements>
 <arguments><argument id="a1" weight="0.566" direction="pro" scheme=""><conclusion statement="s1"></conclusion>
 <premises><premise statement="s2" exception="false" polarity="positive" role=""></premise>
@@ -36,7 +34,7 @@
 </premises>
 </argument>
 <argument id="a5" weight="0.5" direction="pro" scheme=""><conclusion statement="s5"></conclusion>
-<premises><premise statement="s8" exception="false" polarity="positive" role=""></premise>
+<premises><premise statement="s7" exception="false" polarity="positive" role=""></premise>
 </premises>
 </argument>
 </arguments>
