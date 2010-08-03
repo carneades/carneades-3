@@ -10,7 +10,9 @@
       <import url="oss-licenses.owl"/>
     </imports>
     <axioms>
-      <axiom id="f1"><s pred="valid">The <i value="FSFTheoryOfLinking">FSF theory of linking</i> is valid</s>  </axiom>
+      <axiom id="f1"><s pred="valid">The <i value="FSFTheoryOfLinking">FSF theory of linking</i> is
+          valid</s>
+      </axiom>
     </axioms>
     <rules>
       <rule id="DefaultLicenseRule">
@@ -83,7 +85,8 @@
         <body>
           <s pred="&oss;SoftwareLibrary"><v>SE2</v> is a software library</s>
           <s pred="&oss;linksTo"><v>SE1</v> is linked to <v>SE2</v></s>
-          <s pred="valid">The <i value="RosenTheoryOfLinking">Rosen theory of linking</i> is valid</s>
+          <s pred="valid">The <i value="RosenTheoryOfLinking">Rosen theory of linking</i> is
+          valid</s>
         </body>
       </rule>
       <rule id="hasNoncompliantLicense">
