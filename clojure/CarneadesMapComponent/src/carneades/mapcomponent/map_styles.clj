@@ -176,17 +176,16 @@
 (defvar- *neg-assumption-edge-style*
   (make-style
    "negAssumptionEdgeStyle"
-   (merge (:style *neg-premise-edge-style*)
-          (:style *assumption-edge-style*)
+   (merge (:style *assumption-edge-style*)
+          (:style *neg-premise-edge-style*)
           ;; {mxConstants/STYLE_ENDARROW mxConstants/ARROW_OVAL}
           )))
 
 (defvar- *neg-exception-edge-style*
   (make-style
    "negExceptionEdgeStyle"
-   (merge (:style *neg-premise-edge-style*)
-          (:style *exception-edge-style*)
-          
+   (merge (:style *exception-edge-style*)
+          (:style *neg-premise-edge-style*)
           ;; {mxConstants/STYLE_ENDARROW mxConstants/ARROW_OVAL}
           )))
 
