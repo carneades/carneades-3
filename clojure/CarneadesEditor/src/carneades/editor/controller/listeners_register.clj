@@ -4,7 +4,8 @@
         carneades.editor.controller.swing-listeners
         carneades.editor.controller.listeners
         carneades.editor.utils.swing
-        carneades.editor.view.tree))
+        carneades.editor.view.tree
+        carneades.editor.view.tabs))
 
 ;;
 ;; For the seperation of concerns, we follow here the MVC pattern,
@@ -42,4 +43,6 @@
   (add-action-listener *closeTabMenuItem* close-listener view)
   ;; (add-windowclose-listener
   ;;  *viewinstance* (fn [& args] (unregister-listeners)))
-  (add-mousepressed-listener *lkifsTree* mouse-click-in-tree-listener view))
+  (add-mousepressed-listener *lkifsTree* mouse-click-in-tree-listener view)
+
+  (register-close-button-listener (fn [event] (close-listener event view))))
