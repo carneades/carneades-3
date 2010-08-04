@@ -37,8 +37,10 @@
 
 (defvar- *argument-style*
   (merge *global-style*
-         {;; mxConstants/STYLE_VERTICAL_LABEL_POSITION mxConstants/ALIGN_TOP
-          ;; mxConstants/STYLE_VERTICAL_ALIGN mxConstants/ALIGN_BOTTOM
+         {;; mxConstants/STYLE_LABEL_POSITION mxConstants/ALIGN_CENTER
+          ;; mxConstants/STYLE_ALIGN mxConstants/ALIGN_CENTER
+          ;; mxConstants/STYLE_VERTICAL_LABEL_POSITION mxConstants/ALIGN_CENTER
+          mxConstants/STYLE_VERTICAL_ALIGN mxConstants/ALIGN_BOTTOM
           mxConstants/STYLE_STROKEWIDTH 2
           mxConstants/STYLE_FONTSIZE 16
           mxConstants/STYLE_SHAPE mxConstants/SHAPE_ELLIPSE
