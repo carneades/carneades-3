@@ -104,7 +104,7 @@
 (defn parse-term_text
   [term_text]
   (if (zip/branch? term_text)
-    "~a"
+    "%s"
     (first term_text)))
 
 (defn parse-term_text*
@@ -430,6 +430,8 @@
       )))
 
 ;(def test-path "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\examples\\Import Test\\test1.xml")
+(def p "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\examples\\open-source-licensing\\output.xml")
+;(def p "C:\\Users\\stb\\Desktop\\big.xml")
 ;(def i (lkif-import test-path))
 ;
 ;(def e1 (make-engine 50 1 (list (generate-arguments-from-rules (:rb i) '())
