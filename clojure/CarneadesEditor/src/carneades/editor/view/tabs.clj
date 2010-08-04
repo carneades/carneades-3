@@ -1,7 +1,9 @@
 (ns carneades.editor.view.tabs
-  (:use clojure.contrib.def)
+  (:use clojure.contrib.def
+        clojure.contrib.swing-utils)
   (:import (java.awt EventQueue event.MouseListener Dimension FlowLayout)
            (javax.swing UIManager JTabbedPane JLabel JButton JFrame JPanel
+                        ImageIcon
                         JInternalFrame
                         JFileChooser
                         filechooser.FileFilter
@@ -29,43 +31,68 @@
                   (SwingUtilities/convertMouseEvent
                    tabpanel event *mapPanel*)))
 
-(deftype TabMouseMenuListener [] MouseListener
-  (mouseClicked
-   [this event]
-   (dispatch-panel-event (.getSource event) event))
+;; (deftype TabMouseMenuListener [] MouseListener
+;;   (mouseClicked
+;;    [this event]
+;;    (dispatch-panel-event (.getSource event) event))
   
-  (mouseEntered
-   [this event]
-   (dispatch-panel-event (.getSource event) event))
+;;   (mouseEntered
+;;    [this event]
+;;    (dispatch-panel-event (.getSource event) event))
   
-  (mouseExited
-   [this event]
-   (dispatch-panel-event (.getSource event) event))
+;;   (mouseExited
+;;    [this event]
+;;    (dispatch-panel-event (.getSource event) event))
   
-  (mousePressed
-   [this event]
-   (dispatch-panel-event (.getSource event) event))
+;;   (mousePressed
+;;    [this event]
+;;    (dispatch-panel-event (.getSource event) event))
   
-  (mouseReleased [this event]
-   (dispatch-panel-event (.getSource event) event)))
+;;   (mouseReleased [this event]
+;;    (dispatch-panel-event (.getSource event) event)))
 
-(defvar- *tabMouseListener* (TabMouseMenuListener.))
+;; (defvar- *tabMouseListener* (TabMouseMenuListener.))
+
+(defvar- *closebutton-url* "carneades/editor/view/close-button.png")
+(defvar- *closebutton-rollover-url*
+  "carneades/editor/view/close-button-rollover.png")
+
+(defvar- *close-button-listeners* (atom ()))
+
+(defn register-close-button-listener [listener]
+  (swap! *close-button-listeners* conj listener))
+
+(defn create-close-button []
+     (let [closebutton (JButton.)]
+       (doto closebutton
+         (.setBorder nil)
+         (.setIcon (ImageIcon. (ClassLoader/getSystemResource
+                                *closebutton-url*)))
+         (.setRolloverIcon (ImageIcon. (ClassLoader/getSystemResource
+                     *closebutton-rollover-url*)))
+         ;; (.setFocusable false)
+         (.setRolloverEnabled true))
+       (doseq [listener (deref *close-button-listeners*)]
+         (add-action-listener closebutton listener))
+       closebutton))
 
 (defn create-tabcomponent [title]
   (let [tabcomponent (JPanel.)
-        label (JLabel. title)]
+        label (JLabel. title)
+        closebutton (create-close-button)]
     (.setOpaque tabcomponent false)
     (.setFocusable label false)
     (.setFocusable tabcomponent false)
-    (.setComponentPopupMenu label *tabPopupMenu*)
+    ;; (.setComponentPopupMenu label *tabPopupMenu*)
     (.setBorder tabcomponent (BorderFactory/createEmptyBorder 5 5 5 5))
     (.setLayout tabcomponent (FlowLayout. FlowLayout/LEFT 0 0))
     (.add tabcomponent label)
-    (.addMouseListener label *tabMouseListener*)
+    (.add tabcomponent closebutton)
+    ;; (.addMouseListener label *tabMouseListener*)
     tabcomponent))
 
 (defn get-tabtitle [ag]
-  (format "%s - %s" (:id ag) (:title ag)))
+  (format "%s - %s " (:id ag) (:title ag)))
 
 (defn get-tab [tabpanel title]
   "returns the index of the tab titled title or nil if it does not exist"
