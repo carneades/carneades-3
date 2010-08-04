@@ -15,6 +15,7 @@
 
 (ns carneades.mapcomponent.map
   (:use clojure.contrib.def
+        carneades.mapcomponent.map-styles
         carneades.engine.argument
         carneades.engine.statement)
   (:import javax.swing.SwingConstants
@@ -28,163 +29,6 @@
            com.mxgraph.swing.mxGraphOutline
            java.awt.event.MouseWheelListener
            java.awt.print.PrinterJob))
-
-(defvar- *global-style*
-  {mxConstants/STYLE_FONTCOLOR "#000000"
-   mxConstants/STYLE_STROKEWIDTH 1.5
-   ;; mxConstants/STYLE_FONTSTYLE mxConstants/FONT_BOLD
-   })
-
-(defvar- *argument-style*
-  (merge *global-style*
-         {;; mxConstants/STYLE_LABEL_POSITION mxConstants/ALIGN_CENTER
-          ;; mxConstants/STYLE_ALIGN mxConstants/ALIGN_CENTER
-          ;; mxConstants/STYLE_VERTICAL_LABEL_POSITION mxConstants/ALIGN_CENTER
-          mxConstants/STYLE_VERTICAL_ALIGN mxConstants/ALIGN_BOTTOM
-          mxConstants/STYLE_STROKEWIDTH 2
-          mxConstants/STYLE_FONTSIZE 16
-          mxConstants/STYLE_SHAPE mxConstants/SHAPE_ELLIPSE
-          mxConstants/STYLE_PERIMETER mxConstants/PERIMETER_ELLIPSE
-          mxConstants/STYLE_GRADIENT_DIRECTION mxConstants/DIRECTION_SOUTH
-          mxConstants/STYLE_FILLCOLOR "#ffffff"
-          ;; mxConstants/STYLE_GRADIENTCOLOR "#ffffff"
-          mxConstants/STYLE_STROKECOLOR "#000000"
-          ;; mxConstants/STYLE_SHADOW true
-          ;; mxConstants/W3C_SHADOWCOLOR "gray"
-          ;; mxConstants/STYLE_SPACING_TOP 10
-          ;; mxConstants/STYLE_SPACING_BOTTOM 2
-          ;; mxConstants/STYLE_SPACING_LEFT 2
-          ;; mxConstants/STYLE_SPACING_RIGHT 2
-          }))
-
-(defvar- *pro-arg-color* "#0e5200")
-(defvar- *con-arg-color* "#e10005")
-
-(defvar- *applicable-argument-style*
-  (merge *argument-style*
-         {mxConstants/STYLE_FILLCOLOR "#8ee888"}))
-
-(defvar- *pro-applicable-argument-style*
-  (merge *applicable-argument-style*
-         {mxConstants/STYLE_STROKECOLOR *pro-arg-color*}))
-
-(defvar- *con-applicable-argument-style*
-  (merge *applicable-argument-style*
-         {mxConstants/STYLE_STROKECOLOR "#ff383d"}))
-
-(defvar- *not-applicable-argument-style* *argument-style*)
-
-(defvar- *pro-not-applicable-argument-style*
-  (merge *not-applicable-argument-style*
-         {mxConstants/STYLE_STROKECOLOR *pro-arg-color*}))
-
-(defvar- *con-not-applicable-argument-style*
-  (merge *not-applicable-argument-style*
-         {mxConstants/STYLE_STROKECOLOR *con-arg-color*}))
-
-(defvar- *statement-style* ;; out and not out
-  (merge *global-style*
-         {mxConstants/STYLE_SHAPE mxConstants/SHAPE_RECTANGLE
-          mxConstants/STYLE_STROKECOLOR "#000000"
-          ;; mxConstants/STYLE_FILLCOLOR "#c2c9ff"
-          mxConstants/STYLE_FILLCOLOR "#ffffff"
-          ;; mxConstants/STYLE_GRADIENT_DIRECTION mxConstants/DIRECTION_SOUTH
-          ;; mxConstants/STYLE_GRADIENTCOLOR "#ffffff"
-          ;; mxConstants/STYLE_SHADOW true
-          ;;mxConstants/STYLE_OPACITY 75
-          ;; mxConstants/W3C_SHADOWCOLOR "gray"
-          mxConstants/STYLE_PERIMETER mxConstants/PERIMETER_RECTANGLE
-          mxConstants/STYLE_SPACING_TOP 10
-          mxConstants/STYLE_SPACING_BOTTOM 10
-          mxConstants/STYLE_SPACING_LEFT 10
-          mxConstants/STYLE_SPACING_RIGHT 10}))
-
-(defvar- *in-and-not-out-statement-style*
-  (merge *statement-style*
-         {mxConstants/STYLE_FILLCOLOR "#8ee888"}))
-
-(defvar- *in-and-not-in-statement-style*
-  (merge *statement-style*
-         {mxConstants/STYLE_FILLCOLOR "#ffe955"}))
-
-(defvar- *out-and-not-in-statement-style*
-  (merge *statement-style*
-         {mxConstants/STYLE_FILLCOLOR "#ff383d"}))
-
-(defvar- *acceptable-statement-style*
-  (merge *statement-style*
-         {mxConstants/STYLE_FILLCOLOR "#a8ff97"}))
-
-(defvar- *complement-acceptable-statement-style*
-  (merge *statement-style*
-         {mxConstants/STYLE_DASHED true}))
-
-(defvar- *acceptable-and-complement-acceptable-statement-style*
-  (merge *complement-acceptable-statement-style*
-         *acceptable-statement-style*))
-
-(defvar- *edge-style*
-  {mxConstants/STYLE_ENDARROW mxConstants/NONE
-   mxConstants/STYLE_STROKECOLOR "#000000"
-   mxConstants/STYLE_STROKEWIDTH 1.25
-   mxConstants/STYLE_ROUNDED true})
-;; mxConstants/STYLE_EDGE mxConstants/EDGESTYLE_ENTITY_RELATION
-
-(defvar- *conclusion-edge-style* *edge-style*)
-
-(defvar- *pro-conclusion-edge-style*
-        (merge *conclusion-edge-style*
-               {mxConstants/STYLE_ENDARROW mxConstants/ARROW_CLASSIC}))
-
-(defvar- *con-conclusion-edge-style*
-  (merge *conclusion-edge-style*
-         ;; {mxConstants/STYLE_ENDARROW mxConstants/ARROW_OVAL}
-         {mxConstants/STYLE_ENDARROW mxConstants/ARROW_CLASSIC}))
-
-(defvar- *premise-edge-style* *edge-style*)
-
-(defvar- *assumption-edge-style*
-  (merge *premise-edge-style*
-         {mxConstants/STYLE_STARTARROW mxConstants/ARROW_DIAMOND}))
-
-(defvar- *exception-edge-style*
-  (merge *premise-edge-style*
-         {mxConstants/STYLE_DASHED "true"}))
-
-(defvar- *neg-premise-edge-style*
-  (merge *premise-edge-style*
-         {mxConstants/STYLE_ENDARROW mxConstants/ARROW_OVAL}))
-
-(defvar- *neg-assumption-edge-style*
-  (merge *assumption-edge-style*
-         {mxConstants/STYLE_ENDARROW mxConstants/ARROW_OVAL}))
-
-(defvar- *neg-exception-edge-style*
-  (merge *exception-edge-style*
-         {mxConstants/STYLE_ENDARROW mxConstants/ARROW_OVAL}))
-
-(defvar- *styles* {"proApplicableArgument" *pro-applicable-argument-style*
-                   "conApplicableArgument" *con-applicable-argument-style*
-                   "proNotApplicableArgument" *pro-not-applicable-argument-style*
-                   "conNotApplicableArgument" *con-not-applicable-argument-style*
-                   "OutOutStatement" *statement-style*
-                   "acceptableStatement" *acceptable-statement-style*
-                   "complementAcceptableStatement"
-                   *complement-acceptable-statement-style*
-                   "acceptableAndComplementAcceptableStatement"
-                   *acceptable-and-complement-acceptable-statement-style*
-                   "InOutStatement" *in-and-not-out-statement-style*
-                   "InInStatement" *in-and-not-in-statement-style*
-                   "OutInStatement" *out-and-not-in-statement-style*
-                   "edge" *edge-style*
-                   "proConclusionEdge" *pro-conclusion-edge-style*
-                   "conConclusionEdge" *con-conclusion-edge-style*
-                   "premiseEdge" *premise-edge-style*
-                   "assumptionEdge" *assumption-edge-style*
-                   "exceptionEdge" *exception-edge-style*
-                   "negPremiseEdge" *neg-premise-edge-style*
-                   "negAssumptionEdge" *neg-assumption-edge-style*
-                   "negExceptionEdge" *neg-exception-edge-style*})
 
 (defrecord StatementCell [ag stmt stmt-str] Object
   (toString
@@ -214,9 +58,6 @@
     (.setCellsDisconnectable false)
     (.setCellsBendable false)
     ))
-
-(defn register-styles [#^mxStylesheet stylesheet]
-  (dorun (map (fn [[k v]] (.putCellStyle stylesheet k v)) *styles*)))
 
 (defn- insert-vertex [#^mxGraph g parent name style]
   (let [v (.insertVertex g parent nil name 10 10 40 40 style)]
@@ -315,13 +156,6 @@
   (hierarchicallayout g p vertices)
   (align-orphan-cells g p vertices))
 
-(defn- get-statement-style [ag stmt]
-  (let [comp (statement-complement stmt)]
-    (cond (and (in? ag stmt) (out? ag comp)) "InOutStatement"
-          (and (in? ag stmt) (in? ag comp)) "InInStatement"
-          (and (out? ag stmt) (in? ag comp)) "OutInStatement"
-          :else "OutOutStatement")))
-
 (defn- add-statement [g p ag stmt vertices stmt-str]
   (assoc vertices
     stmt
@@ -333,20 +167,6 @@
   (reduce (fn [vertices statement]
             (add-statement g p ag statement vertices stmt-str))
           {} (map node-statement (get-nodes ag))))
-
-(defn- get-edge-style [p]
-  (if (premise-neg? p)
-    (cond (assumption? p) "negAssumptionEdge"
-          (exception? p) "negExceptionEdge"
-          :else "negPremiseEdge")
-    (cond (assumption? p) "assumptionEdge"
-          (exception? p) "exceptionEdge"
-          :else "premiseEdge")))
-
-(defn- get-conclusion-edge-style [arg]
-  (if (= (argument-direction arg) :pro)
-    "proConclusionEdge"
-    "conConclusionEdge"))
 
 (defn- add-conclusion-edge [g p arg statement vertices]
   (insert-edge g p (vertices (argument-id arg)) (vertices statement)
@@ -366,25 +186,6 @@
   (dorun
    (map #(add-argument-edges g p ag % vertices) (arguments ag)))
   vertices)
-
-(defn- get-argument-style [ag arg]
-  (prn "argument")
-  (prn arg)
-  (cond (and (applicable? ag arg) (= (:direction arg) :pro))
-        (do
-          (prn "proApplicableArgument")
-          "proApplicableArgument")
-        (and (applicable? ag arg) (= (:direction arg) :con))
-        (do
-          (prn "conApplicableArgument")
-         "conApplicableArgument")
-        (= (:direction arg) :pro)
-        (do
-          (prn "proNotApplicableArgument")
-         "proNotApplicableArgument")
-        :else (do
-                prn "conNotApplicableArgument"
-               "conNotApplicableArgument")))
 
 (defvar- *argument-width* 32)
 (defvar- *argument-height* 32)
