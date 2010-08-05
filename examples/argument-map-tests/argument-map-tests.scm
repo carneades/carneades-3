@@ -28,7 +28,7 @@
        (pr "W")))
 
 (define-argument a4 
-  (con "V"
+  (pro "V"
       (pr "X")))
 
 (define-argument a5

@@ -42,6 +42,9 @@
            
            (in? ag (statement-complement stmt))
            (str "‒ " formatted)
+
+           (questioned? ag stmt)
+           (str "? " formatted)
            
            :else formatted))))
 
