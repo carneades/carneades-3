@@ -63,39 +63,37 @@
  (define (print-statements ag statements statement->string port)
    (define (print-statement n)
      (let ((id (get-id n)))
-       (format port "    ~A [shape=box, label=~S, style=~S];~%"
+       (format port "    ~A [shape=box, label=~S, style=filled fillcolor=~S];~%"
                 id
-                (cond ((questioned? ag n)
-                       (string-append "? " (statement->string n)))
-                      ((accepted? ag n)
+                (cond ((and (in? ag n) (in? ag (statement-complement n)))
+                       (string-append "± " (statement->string n)))
+                      ((in? ag n) 
                        (string-append "+ " (statement->string n)))
-                      ((rejected? ag n)
+                      ((in? ag (statement-complement n))
                        (string-append "- " (statement->string n)))
+                      ((questioned? ag n)
+                       (string-append "? " (statement->string n)))
                       (else (statement->string n)))
-                (cond ((and (acceptable? ag n)
-                            (acceptable? ag (statement-complement n)))
-                       "dotted,filled")
-                      ((acceptable? ag n) "filled")
-                      ((acceptable? ag (statement-complement n)) "dotted")
-                      (else "solid")))))
+                (cond ((and (in? ag n) (in? ag (statement-complement n)))
+                       "yellow")
+                      ((in? ag n) "limegreen")
+                      ((in? ag (statement-complement n)) "tomato")
+                      (else "white")))))
    (for-each print-statement statements))
  
  ; print-arguments: argument-graph (list-of argument) output-port -> void
  (define (print-arguments ag args port)
    (define (print-argument arg)
-     (format port "    ~A [shape=ellipse, label=~S, style=~S];~%"
+     (format port "    ~A [shape=circle, label=~S, style=filled, fillcolor=~S];~%"
              (get-id (argument-id arg))
-             (if (and (argument-scheme arg)
-                      (< 0 (string-length (argument-scheme arg))))
-                 (argument-scheme arg)
-                 (symbol->string (argument-id arg)))
-             (if (applicable? ag arg) "filled" "solid"))
+             (if (eq? 'pro (argument-direction arg)) "+" "–")
+             (if (applicable? ag arg) "limegreen" "white"))
      (format port "    ~A -> ~A [arrowhead=~S];~%" 
              (get-id (argument-id arg))
              (get-id (argument-conclusion arg))
              (case (argument-direction arg)
                ((pro) "normal")
-               ((con) "onormal")))
+               ((con) "normal"))) ; was onormal
      (for-each (lambda (p) 
                  (format port "    ~A -> ~A [style=~S, arrowhead=~S];~%" 
                          (get-id (premise-atom p))
