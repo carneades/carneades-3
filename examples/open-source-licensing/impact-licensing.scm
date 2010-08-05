@@ -64,7 +64,7 @@
 
 ; (define ag2 (state-arguments (stream-car (e1 goal1))))
 
-; (view ag1)
+(view ag1)
 
-(define ld (make-lkif-data (lkif-data-sources kb1) (lkif-data-rulebase kb1) (list ag1)))
-(lkif-export '() ld "output.xml")
+;(define ld (make-lkif-data (lkif-data-sources kb1) (lkif-data-rulebase kb1) (list ag1)))
+; (lkif-export '() ld "output.xml")
