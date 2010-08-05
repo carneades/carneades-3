@@ -35,13 +35,13 @@
    [this]
    (let [formatted (stmt-str stmt)]
      (cond (and (in? ag stmt) (in? ag (statement-complement stmt)))
-           (str "± " formatted)
+           (str "✔✘ " formatted)
            
            (in? ag stmt)
-           (str "+ " formatted)
+           (str "✔ " formatted)
            
            (in? ag (statement-complement stmt))
-           (str "‒ " formatted)
+           (str "✘ " formatted)
 
            (questioned? ag stmt)
            (str "? " formatted)
