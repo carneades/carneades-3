@@ -380,8 +380,10 @@
           (ag2 (add-node-to-argument-graph ag1 n2))) 
  
      (if (and (eq? (node-in? ag1 n1 #t) (node-in? ag2 n2 #t))
-              (eq? (node-in? ag1 n1 #f) (node-in? ag2 n2 #f)))
-         ; then the "in" status of the statement hasn't changed and there's no need to propogate further
+              (eq? (node-in? ag1 n1 #f) (node-in? ag2 n2 #f))
+              (not (eq? new-status 'questioned)))
+         ; then the "in" status of the statement hasn't changed and there's no need to propogate further unless
+         ; an assumption has been questioned
          ag2
          ; else propogate the update to the arguments in which the statement is a premise
          (fold-right (lambda (arg-id ag)

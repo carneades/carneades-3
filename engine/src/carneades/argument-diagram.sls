@@ -84,9 +84,10 @@
  ; print-arguments: argument-graph (list-of argument) output-port -> void
  (define (print-arguments ag args port)
    (define (print-argument arg)
-     (format port "    ~A [shape=circle, label=~S, style=filled, fillcolor=~S];~%"
+     (format port "    ~A [shape=circle, label=~S, color=~S, style=filled, fillcolor=~S];~%"
              (get-id (argument-id arg))
              (if (eq? 'pro (argument-direction arg)) "+" "–")
+             (if (eq? 'pro (argument-direction arg)) "forestgreen" "red")
              (if (applicable? ag arg) "limegreen" "white"))
      (format port "    ~A -> ~A [arrowhead=~S];~%" 
              (get-id (argument-id arg))
