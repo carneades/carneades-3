@@ -45,7 +45,7 @@ public class CarneadesAboutBox extends javax.swing.JDialog {
         homepageLabel.setFont(homepageLabel.getFont().deriveFont(homepageLabel.getFont().getStyle() | java.awt.Font.BOLD));
         homepageLabel.setText("Web:");
 
-        appVendorLabel.setText("LGPL");
+        appVendorLabel.setText("EPL");
 
         appDescLabel.setText("<html>Carneades is an argument mapping application, with a graphical user interface, and a software library for building applications supporting various argumentation tasks.");
 
@@ -68,7 +68,7 @@ public class CarneadesAboutBox extends javax.swing.JDialog {
         urlButton.setRequestFocusEnabled(false);
         urlButton.setRolloverEnabled(false);
 
-        jLabel1.setText("Copyright © 2008-2010 by Fraunhofer Gesellschaft ");
+        jLabel1.setText("Copyright © 2008-2010 by Fraunhofer Gesellschaft");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

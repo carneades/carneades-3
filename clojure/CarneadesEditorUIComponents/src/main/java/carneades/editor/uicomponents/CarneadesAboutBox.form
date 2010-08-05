@@ -99,7 +99,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="appVendorLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="LGPL"/>
+        <Property name="text" type="java.lang.String" value="EPL"/>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
@@ -181,7 +181,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Copyright &#xa9; 2008-2010 by Fraunhofer Gesellschaft "/>
+        <Property name="text" type="java.lang.String" value="Copyright &#xa9; 2008-2010 by Fraunhofer Gesellschaft"/>
       </Properties>
     </Component>
   </SubComponents>
