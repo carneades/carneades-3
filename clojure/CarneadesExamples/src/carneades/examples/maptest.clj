@@ -23,7 +23,7 @@
       (pm "X")))
 
 (defargument a5
-  (pro "Q"
+  (pro "P"
        (am "Y")))
 
 (def ag1 (argument-graph 'ag1 "argument graph test" "P"))
