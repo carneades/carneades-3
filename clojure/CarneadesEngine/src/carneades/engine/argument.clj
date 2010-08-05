@@ -640,9 +640,10 @@
                                      (statement-complement (statement-atom s))))
            ag2 (add-node ag n2)]
        (if (and (= (node-in? n1 true) (node-in? n2 true))
-                (= (node-in? n1 false) (node-in? n2 false)))
+                (= (node-in? n1 false) (node-in? n2 false))
+                (not= new-status :questioned))
          ;; then the "in" status of the statement hasn't changed and there's no
-         ;; need to propogate further
+         ;; need to propogate further unless an assumption has been questioned
          ag2
          ;; else propogate the update to the arguments in which the statement
          ;; is a premise
