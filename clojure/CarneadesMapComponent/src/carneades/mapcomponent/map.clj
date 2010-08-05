@@ -34,18 +34,21 @@
   (toString
    [this]
    (let [formatted (stmt-str stmt)]
-     (cond (questioned? ag stmt)
-                 (str "? " formatted)
-                 (accepted? ag stmt)
-                 (str "+ " formatted)
-                 (rejected? ag stmt)
-                 (str "-" formatted)
-                 :else formatted))))
+     (cond (and (in? ag stmt) (in? ag (statement-complement stmt)))
+           (str "± " formatted)
+           
+           (in? ag stmt)
+           (str "+ " formatted)
+           
+           (in? ag (statement-complement stmt))
+           (str "‒ " formatted)
+           
+           :else formatted))))
 
 (defrecord ArgumentCell [arg] Object
   (toString
    [this]
-   (if (= (:direction arg) :pro) "+" "-")))
+   (if (= (:direction arg) :pro) "+" "‒")))
 
 (defn- configure-graph [#^mxGraph g]
   (doto g

@@ -101,7 +101,8 @@
   (make-style
    "outInStatementStyle"
    (merge (:style *statement-style*)
-          {mxConstants/STYLE_FILLCOLOR "#ff383d"})))
+          ;; red
+          {mxConstants/STYLE_FILLCOLOR "#ff7e7e"})))
 
 (defvar- *acceptable-statement-style*
   (make-style
