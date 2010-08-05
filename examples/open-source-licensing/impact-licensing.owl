@@ -263,7 +263,6 @@
         <oss-licenses:linksStaticallyTo rdf:resource="#ClojureLib"/>
         <oss-licenses:linksStaticallyTo rdf:resource="#JGraphX"/>
         <oss-licenses:usesSpecification rdf:resource="#JVM"/>
-        <oss-licenses:usesSpecification rdf:resource="#JavaEE"/>
         <oss-licenses:usesSpecification rdf:resource="#OSGI"/>
         <oss-licenses:linksStaticallyTo rdf:resource="#OWL_API_ReferenceImplementation"/>
         <oss-licenses:linksStaticallyTo rdf:resource="#Pellet"/>
