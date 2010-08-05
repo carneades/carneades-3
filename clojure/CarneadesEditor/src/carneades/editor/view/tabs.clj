@@ -15,16 +15,16 @@
 
 (defvar- *viewinstance* (EditorApplicationView/instance))
 
-;; (defvar *mapPanel* (.mapPanel *viewinstance*))
+(defvar *mapPanel* (.mapPanel *viewinstance*))
 
-(defvar- *tabPopupMenu* (.tabPopupMenu *viewinstance*))
+;; (defvar- *tabPopupMenu* (.tabPopupMenu *viewinstance*))
 
-(defn- show-popupmenu [event]
-  (when (.isPopupTrigger event)
-    (.show *tabPopupMenu*
-           (.getComponent event)
-           (.getX event)
-           (.getY event))))
+;; (defn- show-popupmenu [event]
+;;   (when (.isPopupTrigger event)
+;;     (.show *tabPopupMenu*
+;;            (.getComponent event)
+;;            (.getX event)
+;;            (.getY event))))
 
 ;; (defn- dispatch-panel-event [tabpanel event]
 ;;   (.dispatchEvent *mapPanel*
