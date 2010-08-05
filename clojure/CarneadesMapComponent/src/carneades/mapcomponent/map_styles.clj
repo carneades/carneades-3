@@ -24,6 +24,7 @@
           {mxConstants/STYLE_VERTICAL_ALIGN mxConstants/ALIGN_BOTTOM
            mxConstants/STYLE_STROKEWIDTH 2
            mxConstants/STYLE_FONTSIZE 16
+           mxConstants/STYLE_FONTSTYLE mxConstants/FONT_BOLD
            mxConstants/STYLE_SHAPE mxConstants/SHAPE_ELLIPSE
            mxConstants/STYLE_PERIMETER mxConstants/PERIMETER_ELLIPSE
            mxConstants/STYLE_GRADIENT_DIRECTION mxConstants/DIRECTION_SOUTH
@@ -45,10 +46,13 @@
    (merge (:style *applicable-argument-style*)
           {mxConstants/STYLE_STROKECOLOR *pro-arg-color*})))
 
+(defvar- *tomato* "#ff7e7e")
+
 (defvar- *con-applicable-argument-style*
   (make-style "conApplicableArgumentStyle"
    (merge (:style *applicable-argument-style*)
-          {mxConstants/STYLE_STROKECOLOR "#ff383d"})))
+          {mxConstants/STYLE_STROKECOLOR "#ff383d"
+           mxConstants/STYLE_FILLCOLOR *tomato*})))
 
 (defvar- *not-applicable-argument-style*
   (make-style
@@ -102,7 +106,7 @@
    "outInStatementStyle"
    (merge (:style *statement-style*)
           ;; red
-          {mxConstants/STYLE_FILLCOLOR "#ff7e7e"})))
+          {mxConstants/STYLE_FILLCOLOR *tomato*})))
 
 (defvar- *acceptable-statement-style*
   (make-style
