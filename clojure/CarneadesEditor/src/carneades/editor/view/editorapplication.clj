@@ -71,9 +71,15 @@
 
 (defvar- *dialog-current-directory* (atom nil))
 
+(defvar- *application-name* "Carneades Editor")
+
 (deftype SwingView [] View
   (init
    [this]
+   (System/setProperty "apple.laf.useScreenMenuBar" "true")
+   (System/setProperty "com.apple.mrj.application.apple.menu.about.name"
+                       *application-name*)
+
    ;; make a new instance (without listeners!)
    (set-look-and-feel "Nimbus")
    (EditorApplicationView/reset)

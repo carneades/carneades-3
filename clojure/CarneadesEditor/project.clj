@@ -7,6 +7,5 @@
                  [carneades-mapcomponent "1.0.0-SNAPSHOT"]]
   :dev-dependencies [[swank-clojure "1.2.0"]
                      [lein-run "1.0.0-SNAPSHOT"]]
-  ;; :namespaces [carneades.editor.core]
-  ;; :main carneades.editor.core
-  )
+  :aot [carneades.editor.core]
+  :main carneades.editor.core)
