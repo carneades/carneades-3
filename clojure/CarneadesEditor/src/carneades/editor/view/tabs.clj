@@ -15,7 +15,7 @@
 
 (defvar- *viewinstance* (EditorApplicationView/instance))
 
-(defvar *mapPanel* (.mapPanel *viewinstance*))
+;; (defvar *mapPanel* (.mapPanel *viewinstance*))
 
 (defvar- *tabPopupMenu* (.tabPopupMenu *viewinstance*))
 
@@ -26,10 +26,10 @@
            (.getX event)
            (.getY event))))
 
-(defn- dispatch-panel-event [tabpanel event]
-  (.dispatchEvent *mapPanel*
-                  (SwingUtilities/convertMouseEvent
-                   tabpanel event *mapPanel*)))
+;; (defn- dispatch-panel-event [tabpanel event]
+;;   (.dispatchEvent *mapPanel*
+;;                   (SwingUtilities/convertMouseEvent
+;;                    tabpanel event *mapPanel*)))
 
 ;; (deftype TabMouseMenuListener [] MouseListener
 ;;   (mouseClicked
