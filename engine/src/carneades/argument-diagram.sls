@@ -66,11 +66,11 @@
        (format port "    ~A [shape=box, label=~S, style=filled fillcolor=~S];~%"
                 id
                 (cond ((and (in? ag n) (in? ag (statement-complement n)))
-                       (string-append "± " (statement->string n)))
+                       (string-append "✓✗ " (statement->string n)))
                       ((in? ag n) 
-                       (string-append "+ " (statement->string n)))
+                       (string-append "✓ " (statement->string n)))
                       ((in? ag (statement-complement n))
-                       (string-append "- " (statement->string n)))
+                       (string-append "✗ " (statement->string n)))
                       ((questioned? ag n)
                        (string-append "? " (statement->string n)))
                       (else (statement->string n)))
@@ -86,9 +86,15 @@
    (define (print-argument arg)
      (format port "    ~A [shape=circle, label=~S, color=~S, style=filled, fillcolor=~S];~%"
              (get-id (argument-id arg))
-             (if (eq? 'pro (argument-direction arg)) "+" "–")
+             (if (eq? 'pro (argument-direction arg)) "╋" "━")
              (if (eq? 'pro (argument-direction arg)) "forestgreen" "red")
-             (if (applicable? ag arg) "limegreen" "white"))
+             (cond ((and (eq? 'pro (argument-direction arg)) 
+                         (applicable? ag arg))
+                    "limegreen") 
+                   ((and (eq? 'con (argument-direction arg)) 
+                         (applicable? ag arg))
+                    "tomato")
+                   (else "white")))
      (format port "    ~A -> ~A [arrowhead=~S];~%" 
              (get-id (argument-id arg))
              (get-id (argument-conclusion arg))
