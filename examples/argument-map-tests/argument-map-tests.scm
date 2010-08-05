@@ -32,8 +32,9 @@
       (pr "X")))
 
 (define-argument a5
-  (pro "Q"
+  (pro "P"
        (am "Y")))
+
 
 (define ag1 (make-argument-graph 'ag1 "argument graph test" "P"))
 (set! ag1 (assert-arguments ag1 (list a1 a2 a3 a4 a5)))
