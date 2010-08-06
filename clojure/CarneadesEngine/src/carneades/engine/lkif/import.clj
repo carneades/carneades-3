@@ -284,15 +284,16 @@
 (defn lkif-premise->premise
   [lkif-premise stmt-map]
   (let* [polarity (attr lkif-premise :polarity),
-         exc (attr lkif-premise :exception),
+         pr_type (attr lkif-premise :type),
          role (attr lkif-premise :role),
          stmt-kw (keyword (attr lkif-premise :statement)),
          stmt* (get stmt-map stmt-kw),
          stmt (if (and (list? stmt*) (= (first stmt*) 'assuming))
                 (first (rest stmt*))
                 stmt*),
-         pr (if (and exc (= exc "true"))
-              exception
+         pr (condp = pr_type
+              "exception" exception,
+              "assumption" assumption,
               ordinary-premise)]
     (pr
       stmt              ; atom
@@ -430,7 +431,7 @@
       )))
 
 ;(def test-path "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\examples\\Import Test\\test1.xml")
-(def p "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\examples\\open-source-licensing\\output.xml")
+;(def p "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\examples\\argument-map-tests\\argument-map-tests.xml")
 ;(def p "C:\\Users\\stb\\Desktop\\big.xml")
 ;(def i (lkif-import test-path))
 ;
