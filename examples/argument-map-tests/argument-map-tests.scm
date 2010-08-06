@@ -43,8 +43,7 @@
 (set! ag1 (question ag1 (list "R" "Y")))
 (set! ag1 (assign-standard ag1 'se (list "P")))
 
-; (define ld (make-lkif-data (lkif-data-sources kb1) (lkif-data-rulebase kb1) (list ag1)))
 (define ld (make-lkif-data '() (rulebase) (list ag1)))
-(lkif-export '() ld "argument-map-tests2.xml")
+(lkif-export '() ld "output.xml")
 
 (view ag1)
