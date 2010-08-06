@@ -75,39 +75,46 @@
                        (string-append "? " (statement->string n)))
                       (else (statement->string n)))
                 (cond ((and (in? ag n) (in? ag (statement-complement n)))
-                       "yellow")
-                      ((in? ag n) "limegreen")
-                      ((in? ag (statement-complement n)) "tomato")
+                       "lightyellow")
+                      ((in? ag n) "greenyellow")
+                      ((in? ag (statement-complement n)) "lightpink")
                       (else "white")))))
    (for-each print-statement statements))
  
  ; print-arguments: argument-graph (list-of argument) output-port -> void
  (define (print-arguments ag args port)
    (define (print-argument arg)
-     (format port "    ~A [shape=circle, label=~S, color=~S, style=filled, fillcolor=~S];~%"
+     (format port "    ~A [shape=circle, fontname=Arial, label=~S, color=~S, style=filled, fillcolor=~S];~%"
              (get-id (argument-id arg))
-             (if (eq? 'pro (argument-direction arg)) "╋" "━")
+             (if (eq? 'pro (argument-direction arg)) "+" "-")
              (if (eq? 'pro (argument-direction arg)) "forestgreen" "red")
              (cond ((and (eq? 'pro (argument-direction arg)) 
                          (applicable? ag arg))
-                    "limegreen") 
+                    "greenyellow") 
                    ((and (eq? 'con (argument-direction arg)) 
                          (applicable? ag arg))
-                    "tomato")
+                    "lightpink")
                    (else "white")))
-     (format port "    ~A -> ~A [arrowhead=~S];~%" 
+     (format port "    ~A -> ~A [arrowhead=~S, color=~S];~%" 
              (get-id (argument-id arg))
              (get-id (argument-conclusion arg))
              (case (argument-direction arg)
                ((pro) "normal")
-               ((con) "normal"))) ; was onormal
+               ((con) "normal")) ; was onormal
+             (case (argument-direction arg)
+               ((pro) "forestgreen")
+               ((con) "red")))
      (for-each (lambda (p) 
-                 (format port "    ~A -> ~A [style=~S, arrowhead=~S];~%" 
+                 (format port "    ~A -> ~A [style=~S, color=~S, arrowhead=~S];~%" 
                          (get-id (premise-atom p))
                          (get-id (argument-id arg))
                          (cond ((assumption? p) "dotted")
                                ((exception? p) "dashed") 
                                (else "solid")) ; ordinary premise
+                         (cond ((and (exception? p) (negative-premise? p))
+                                "forestgreen")
+                               ((or (negative-premise? p) (exception? p)) "red")
+                               (else "forestgreen"))
                          (if (negative-premise? p) "tee" "none")))
                (argument-premises arg))) 
    (for-each print-argument args))
