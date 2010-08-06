@@ -12,7 +12,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Version:  2.0.4
+# Version:  2.1
 
 datatypes xsd = "http://www.w3.org/2001/XMLSchema-datatypes"
 
@@ -82,7 +82,9 @@ grammar {
     # Wffs are well-formed formulas of predicate logic, extended with exceptions and assumptions
     # Free variables are schema variables, i.e. inference rule variables; 
     # bound variables, using Exists or All, are first-order logic variables.
-    Wff = Atom | Or | And | Not | If | Iff | All | Exists
+    # Wffs may also be variables, i.e. variables may range over Wffs, to
+    # allow inference rules such as modus ponens to be represented.
+    Wff = Atom | Or | And | Not | If | Iff | All | Exists | Variable
     Or = element or { attribute assumable { xsd:boolean }?,  #default: false
                       Wff, Wff+ }
     And = element and { attribute assumable { xsd:boolean }?,  #default: false
@@ -113,8 +115,8 @@ grammar {
         Variable+, Wff 
      }
     
-    # Terms include statements, to support meta-level statements
-    Term = Variable | Individual | Constant | Expression | Atom
+    # Terms include wffs, to support meta-level statements
+    Term = Variable | Individual | Constant | Expression | Wff
     
     Variable = element v { xsd:Name }
     
