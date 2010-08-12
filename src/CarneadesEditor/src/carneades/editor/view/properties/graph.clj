@@ -1,3 +1,6 @@
+;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Licensed under the EUPL V.1.1
+
 (ns carneades.editor.view.properties.graph
   (:use clojure.contrib.def)
   (:import carneades.editor.uicomponents.ArgumentGraphPropertiesView))
