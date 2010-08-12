@@ -1,16 +1,11 @@
 These are the source files of the Carneades argumentation system.
 
-This software is licensed under the GNU General Public Licence (GLP, v3) and 
-the GNU Lesser General Public License (LGPL, v3).  Which license applies 
-is specified in the header of each source file.  The licenses are in the 
-licenses directory.
+Copyright © 2010 Fraunhofer Gesellschaft 
+Licensed under the EUPL V.1.1
 
-The software consists of two main parts: 1) a graphical user interface,
-implementated in Java FX; and 2) a collection of R6RS Scheme libraries.  The
-source code for these parts are in the gui and engine directories, respectively.
+The full text of the EUPL is in the licenses directory. For further
+information about the EUPL, see <http://www.osor.eu/eupl>.
 
-The installation instructions for the Scheme library are in the INSTALL.txt 
-file in the engine directory.
-
-For further information see <http://carneades.berlios.de>.
+For further information about Carneades see
+<http://carneades.berlios.de>.
 

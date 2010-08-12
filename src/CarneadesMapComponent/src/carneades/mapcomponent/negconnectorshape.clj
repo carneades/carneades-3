@@ -1,3 +1,6 @@
+;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Licensed under the EUPL V.1.1
+
 (ns carneades.mapcomponent.negconnectorshape
   (:use clojure.contrib.def)
   (:import (com.mxgraph.util mxUtils mxPoint mxConstants)
