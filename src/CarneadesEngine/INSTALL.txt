@@ -1,3 +1,6 @@
+;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Licensed under the EUPL V.1.1
+
 These installation instructions are for the Carneades inference engine,
 implemented in the Clojure programming language.
 
