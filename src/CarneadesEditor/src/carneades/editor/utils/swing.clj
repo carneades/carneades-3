@@ -4,10 +4,22 @@
 (ns carneades.editor.utils.swing
   (:import (javax.swing.event ListSelectionListener
                               TreeSelectionListener)
-           javax.swing.UIManager
+           (javax.swing UIManager
+                        JFileChooser
+                        filechooser.FileFilter)
            (javax.swing.tree.TreePath)
            (java.awt.event WindowAdapter
                            MouseAdapter)))
+
+(defn create-file-filter [description extension]
+  (letfn [(get-extension [#^String filename]
+                         (last (.split filename "\\.")))]
+    (proxy [FileFilter] []
+      (getDescription []
+                      description)
+      (accept [#^java.io.File f]
+              (or (.isDirectory f)
+                  (= extension (get-extension (.getName f))))))))
 
 (defmacro with-tree [tree & body]
   "works on a JTree and restores its expanded paths after executing body"

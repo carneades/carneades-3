@@ -20,50 +20,31 @@
 
 (defvar *mapPanel* (.mapPanel *viewinstance*))
 
-;; (defvar- *tabPopupMenu* (.tabPopupMenu *viewinstance*))
-
-;; (defn- show-popupmenu [event]
-;;   (when (.isPopupTrigger event)
-;;     (.show *tabPopupMenu*
-;;            (.getComponent event)
-;;            (.getX event)
-;;            (.getY event))))
-
-;; (defn- dispatch-panel-event [tabpanel event]
-;;   (.dispatchEvent *mapPanel*
-;;                   (SwingUtilities/convertMouseEvent
-;;                    tabpanel event *mapPanel*)))
-
-;; (deftype TabMouseMenuListener [] MouseListener
-;;   (mouseClicked
-;;    [this event]
-;;    (dispatch-panel-event (.getSource event) event))
-  
-;;   (mouseEntered
-;;    [this event]
-;;    (dispatch-panel-event (.getSource event) event))
-  
-;;   (mouseExited
-;;    [this event]
-;;    (dispatch-panel-event (.getSource event) event))
-  
-;;   (mousePressed
-;;    [this event]
-;;    (dispatch-panel-event (.getSource event) event))
-  
-;;   (mouseReleased [this event]
-;;    (dispatch-panel-event (.getSource event) event)))
-
-;; (defvar- *tabMouseListener* (TabMouseMenuListener.))
-
 (defvar- *closebutton-url* "carneades/editor/view/close-button.png")
 (defvar- *closebutton-rollover-url*
   "carneades/editor/view/close-button-rollover.png")
 
 (defvar- *close-button-listeners* (atom ()))
 
-(defn register-close-button-listener [listener]
-  (swap! *close-button-listeners* conj listener))
+(defvar- *components-to-ags* (ref {}) "components -> [path graphid]")
+(defvar- *ags-to-components* (ref {}) "[path id] -> component")
+
+(defn init-tabs []
+  (.setTabLayoutPolicy *mapPanel* JTabbedPane/SCROLL_TAB_LAYOUT))
+
+(defn get-graphinfo [component]
+  (get (deref *components-to-ags*) component))
+
+(defn register-close-button-listener [l args]
+  (swap! *close-button-listeners* conj {:listener l :args args}))
+
+(defn graphinfo-being-closed [event]
+  "returns [path id]"
+  (let [button (.getSource event)
+        tabcomponent (.getParent button)
+        idx (.indexOfTabComponent *mapPanel* tabcomponent)
+        component (.getComponentAt *mapPanel* idx)]
+    (get-graphinfo component)))
 
 (defn create-close-button []
      (let [closebutton (JButton.)]
@@ -75,8 +56,8 @@
                      *closebutton-rollover-url*)))
          ;; (.setFocusable false)
          (.setRolloverEnabled true))
-       (doseq [listener (deref *close-button-listeners*)]
-         (add-action-listener closebutton listener))
+       (doseq [{:keys [listener args]} (deref *close-button-listeners*)]
+         (apply add-action-listener closebutton listener args))
        closebutton))
 
 (defn create-tabcomponent [title]
@@ -97,26 +78,20 @@
 (defn get-tabtitle [ag]
   (format "%s - %s " (:id ag) (:title ag)))
 
-(defn get-tab [tabpanel title]
-  "returns the index of the tab titled title or nil if it does not exist"
-  (let [nbtabs (.getTabCount tabpanel)]
-    (loop [n (dec nbtabs)]
-      (if (neg? n)
-        nil
-        (if (= (.getTitleAt tabpanel n) title)
-          n
-          (recur (dec n)))))))
-
-(defvar- *components-to-ags* (ref {}) "components -> [path graphid]")
-(defvar- *ags-to-components* (ref {}) "[path id] -> component")
+;; (defn get-tab [tabpanel title]
+;;   "returns the index of the tab titled title or nil if it does not exist"
+;;   (let [nbtabs (.getTabCount tabpanel)]
+;;     (loop [n (dec nbtabs)]
+;;       (if (neg? n)
+;;         nil
+;;         (if (= (.getTitleAt tabpanel n) title)
+;;           n
+;;           (recur (dec n)))))))
 
 (defn add-component [component path id]
   (dosync
    (alter *components-to-ags* assoc component [path id])
    (alter *ags-to-components* assoc [path id] component)))
-
-(defn get-graphinfo [component]
-  (get (deref *components-to-ags*) component))
 
 (defn get-component [path id]
   (get (deref *ags-to-components*) [path id]))
