@@ -70,7 +70,7 @@
 
 (defn lkif-individual->sexpr
   [lkif-individual]
-  (symbol (attr lkif-individual) :value))
+  (symbol (attr lkif-individual :value)))
 
 (defn lkif-constant->sexpr
   [lkif-constant]
@@ -126,7 +126,9 @@
                    (cons (symbol pred) (map lkif-term->sexpr term*))
                    (text lkif-atom)),
            form (parse-term_text* term_text*),
-           fa (struct fatom form sexpr)]
+           ;fa (struct fatom form sexpr)
+           fa sexpr
+           ]
       ;(pprint fa)
       fa)))
 
@@ -184,7 +186,20 @@
 
 (defn lkif-exists->sexpr
   [lkif-exists]
-  (throw (Exception. "\"Exists\" is not supported in Carneades")))
+  ;(println "lkif-exists->sexpr:" lkif-exists)
+  (let [assumable (attr lkif-exists :assumable),
+        v1 (lkif-term->sexpr (xml1-> lkif-exists :v)),
+        v2 (symbol (.substring (str v1) 1)),
+        wffs (rest (filter/children-auto lkif-exists)),
+        t (lkif-wff->sexpr (first wffs)),
+        t2 (replace-var v1 v2 t),
+        p (lkif-wff->sexpr (second wffs)),
+        p2 (replace-var v1 v2 p),
+        e (list 'exists v2 t2 p2)]
+    ;(println "exists imported:" e)
+    (if (and assumable (= assumable "true"))
+      (list 'assuming e)
+      e)))
 
 (defn lkif-wff->sexpr
   [lkif-wff]
