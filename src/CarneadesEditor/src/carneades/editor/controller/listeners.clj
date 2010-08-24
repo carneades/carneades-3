@@ -7,8 +7,10 @@
         carneades.engine.lkif.import
         [carneades.engine.statement :only (statement-formatted)]
         carneades.editor.model.docmanager
-        carneades.editor.view.editorapplication
-        ;; no import of java.awt.* or javax.* are allowed here
+        ;; only the view.viewprotocol namespace is allowed to be imported
+        carneades.editor.view.viewprotocol
+        ;; no import of carneades.editor.view.editorapplication,
+        ;; java.awt.*, javax.* are allowed here
         )
   (:import java.io.File))
 
