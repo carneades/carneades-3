@@ -327,6 +327,8 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JButton zoomResetButton = new javax.swing.JButton();
     // End of variables declaration//GEN-END:variables
 
+    private final static String APPLICATION_NAME = "Carneades Editor";
+
     // our modifications:
     static {
         // set nimbus theme
@@ -339,6 +341,11 @@ public class EditorApplicationView extends javax.swing.JFrame {
             }
         } catch (Exception e) {
         }
+
+        // mac os x:
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name",
+                APPLICATION_NAME);
     }
 
     public static EditorApplicationView viewInstance = new EditorApplicationView();
