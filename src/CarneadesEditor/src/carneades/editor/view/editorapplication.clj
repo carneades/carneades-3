@@ -12,71 +12,43 @@
         ;; carneades.examples.hundeanmeldung
         ;; carneades.engine.shell
         ;; </debug>
-        
-        carneades.editor.view.menu.mainmenu
         carneades.mapcomponent.map
+        carneades.editor.view.viewprotocol
+        carneades.editor.view.swinguiprotocol
+        carneades.editor.view.menu.mainmenu
+        carneades.editor.utils.swing
         carneades.editor.view.tabs
         carneades.editor.view.tree
         carneades.editor.view.properties.lkif
         carneades.editor.view.properties.graph
         carneades.editor.view.properties.properties
         carneades.editor.view.aboutbox
-        carneades.editor.view.printpreview.preview
-        carneades.editor.utils.swing)
-  (:import (java.awt EventQueue event.MouseAdapter Dimension FlowLayout Color)
-           (javax.swing UIManager JTabbedPane JLabel JButton JFrame JPanel
-                        JToolBar
-                        JInternalFrame
-                        JOptionPane
-                        JFileChooser
-                        filechooser.FileFilter
-                        SwingUtilities
-                        BorderFactory
-                        tree.DefaultMutableTreeNode
-                        tree.TreeSelectionModel)
-           (carneades.editor.view.tree GraphInfo LkifFileInfo)
-           (carneades.editor.uicomponents EditorApplicationView)))
-
-
-(defprotocol View
-  (init [this] "init the view")
-  (show [this] "display the main view, take the command lines arguments
-                       as second argument")
-  (open-graph [this path ag stmt-fmt] "open the graph for edition")
-  (close-graph [this path id])
-  (current-graph [this] "returns [path id] for the graph currently edited")
-  (ask-lkif-file-to-open [this] "ask the user the LKIF file to open. 
-                                 Returns File or nil")
-  (ask-file-to-save [this description extension suggested])
-  (export-graph-to-svg [this ag stmt-fmt filename])
-  (display-lkif-content [this file graphids]
-                        "display information relative to an LKIF file")
-  (hide-lkif-content [this path])
-  (print-preview [this path ag stmt-fmt])
-  (display-lkif-property [this path])
-  (display-graph-property [this id title mainissue])
-  (display-about [this])
-  (ask-confirmation [this title content])
-  (display-error [this title content]))
-
+        carneades.editor.view.printpreview.preview)
+  (:import (carneades.editor.uicomponents EditorApplicationView)
+           (java.awt EventQueue)
+           (javax.swing UIManager JFrame JFileChooser JOptionPane)))
 
 (defvar- *frame* (EditorApplicationView/instance))
-
-(defn- create-file-filter [description extension]
-  (letfn [(get-extension [#^String filename]
-                     (last (.split filename "\\.")))]
-    (proxy [FileFilter] []
-      (getDescription []
-                      description)
-      (accept [#^java.io.File f]
-              (or (.isDirectory f)
-                  (= extension (get-extension (.getName f))))))))
-
 (defvar- *dialog-current-directory* (atom nil))
-
 (defvar- *application-name* "Carneades Editor")
 
-(deftype SwingView [] View
+(defvar *openFileButton* (.openFileButton *frame*))
+(defvar *openFileMenuItem* (.openFileMenuItem *frame*))
+(defvar *closeFileMenuItem* (.closeFileMenuItem *frame*))
+
+(defvar *exportFileMenuItem* (.exportFileMenuItem *frame*))
+(defvar *printPreviewFileMenuItem* (.printPreviewFileMenuItem *frame*))
+(defvar *aboutHelpMenuItem* (.aboutHelpMenuItem *frame*))
+
+(defvar *closeLkifFileMenuItem* (.closeLkifFileMenuItem *frame*))
+(defvar *exportLkifFileMenuItem* (.exportLkifFileMenuItem *frame*))
+
+(defvar *openGraphMenuItem* (.openGraphMenuItem *frame*))
+(defvar *closeGraphMenuItem* (.closeGraphMenuItem *frame*))
+(defvar *exportGraphMenuItem* (.exportGraphMenuItem *frame*))
+
+
+(deftype SwingView [] View SwingUI
   (init
    [this]
    (System/setProperty "apple.laf.useScreenMenuBar" "true")
@@ -105,16 +77,11 @@
   (show
    [this]
    (disable-diagram-buttons-and-menus)
-   (init-menu)
-   (add-treeselection-listener *lkifsTree* on-tree-selection)
-   (.addMouseListener *lkifsTree* (create-tree-mouse-listener))
-   (.setRootVisible *lkifsTree* false)
-   (.setSelectionMode (.getSelectionModel *lkifsTree*)
-                       TreeSelectionModel/SINGLE_TREE_SELECTION)
-   (.setShowsRootHandles *lkifsTree* true)
    (disable-file-items)
+   (init-menu)
+   (init-tree)
+   (init-tabs)
    (.setDefaultCloseOperation *frame* JFrame/DISPOSE_ON_CLOSE)
-   (.setTabLayoutPolicy *mapPanel* JTabbedPane/SCROLL_TAB_LAYOUT)
    (EventQueue/invokeLater
     (proxy [Runnable] []
       (run []
@@ -224,5 +191,69 @@
 
   (display-about
    [this]
-   (show-about-box *frame*)))
+   (show-about-box *frame*))
 
+  ;; here below, implementation of the SwingUI protocol:
+  (add-close-button-listener
+   [this f args]
+   (register-close-button-listener f args))
+
+  (add-open-file-button-listener
+   [this f args]
+   (apply add-action-listener *openFileButton* f args))
+
+  (add-mousepressed-tree-listener
+   [this f args]
+   (apply add-mousepressed-listener *lkifsTree* f args))
+
+  (add-open-file-menuitem-listener [this f args]
+   (apply add-action-listener *openFileMenuItem* f args))
+
+  (add-close-file-menuitem-listener
+   [this f args]
+   (apply add-action-listener *closeFileMenuItem* f args))
+
+  (export-file-menuitem-listener
+   [this f args]
+   (apply add-action-listener *exportFileMenuItem* f args))
+
+  (add-export-lkif-filemenuitem-listener
+   [this f args]
+   (apply add-action-listener *exportLkifFileMenuItem* f args))
+
+  (add-export-graph-menuitem-listener
+   [this f args]
+   (apply add-action-listener *exportGraphMenuItem* f args))
+
+  (add-about-helpmenuitem-listener
+   [this f args]
+   (apply add-action-listener *aboutHelpMenuItem* f args))
+
+  (add-printpreview-filemenuitem-listener
+   [this f args]
+   (apply add-action-listener *printPreviewFileMenuItem* f args))
+
+  (add-close-lkif-filemenuitem-listener
+   [this f args]
+   (apply add-action-listener *closeLkifFileMenuItem* f args))
+
+  (add-export-filemenuitem-listener
+   [this f args]
+   (apply add-action-listener *exportFileMenuItem* f args))
+  
+  (add-open-graph-menuitem-listener
+   [this f args]
+   (apply add-action-listener *openGraphMenuItem* f args))
+
+  (add-close-graph-menuitem-listener
+   [this f args]
+   (apply add-action-listener *closeGraphMenuItem* f args))
+
+  (get-selected-object-in-tree
+   [this]
+   (selected-object-in-tree))
+
+  (get-graphinfo-being-closed
+   [this event]
+   (graphinfo-being-closed event))
+  )

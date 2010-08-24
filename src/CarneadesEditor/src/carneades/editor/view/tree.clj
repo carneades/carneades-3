@@ -3,13 +3,17 @@
 
 (ns carneades.editor.view.tree
   (:use clojure.contrib.def
+        carneades.editor.view.swinguiprotocol
         [carneades.editor.view.tabs :only (get-component)]
         carneades.editor.view.menu.mainmenu
         carneades.editor.utils.swing)
   (:import (javax.swing.tree DefaultMutableTreeNode
-                     TreePath)
+                             TreePath
+                             DefaultMutableTreeNode
+                             TreeSelectionModel)
            (java.awt.event MouseAdapter)
-           (carneades.editor.uicomponents EditorApplicationView)))
+           (carneades.editor.uicomponents EditorApplicationView)
+           (carneades.editor.view.swinguiprotocol GraphInfo LkifFileInfo)))
 
 (defvar- *viewinstance* (EditorApplicationView/instance))
 
@@ -19,44 +23,9 @@
 
 (defvar *lkifsTree* (.lkifsTree *viewinstance*))
 
-(defrecord LkifFileInfo [path filename] Object
-  (toString [this] filename))
-
-(defrecord GraphInfo [lkifinfo id] Object
-  (toString [this] id))
-
-(defn add-lkif-content [file graphids]
-  (with-tree *lkifsTree*
-    (let [model (.getModel *lkifsTree*)
-          root (.getRoot model)
-          lkifinfo (LkifFileInfo. (.getPath file)
-                                  (.getName file))
-          lkif-file (DefaultMutableTreeNode. lkifinfo)]
-      (.add root lkif-file)
-      (doseq [id graphids]
-        (.add lkif-file (DefaultMutableTreeNode. (GraphInfo. lkifinfo id))))
-      (.reload model root)
-      (let [path (TreePath. (.getPath lkif-file))]
-        (.expandPath *lkifsTree* path)
-        (.scrollPathToVisible *lkifsTree* path)
-        (.setSelectionPath (.getSelectionModel *lkifsTree*) path)))))
-
-(defn remove-lkif-content [path]
-  (prn "remove-lkif-content")
-  (with-tree *lkifsTree*
-    (let [model (.getModel *lkifsTree*)
-          root (.getRoot model)
-          childcount (.getChildCount root)]
-      (prn "childcount")
-      (prn childcount)
-      (loop [nb (range childcount)]
-        (let[i (first nb)
-             child (.getChildAt root i)
-             lkif-file (.getUserObject child)]
-          (if (= path (:path lkif-file))
-            (.remove root i)
-            (recur (rest nb)))))
-      (.reload model root))))
+(defn selected-object-in-tree []
+  (when-let [node (.getLastSelectedPathComponent *lkifsTree*)]
+    (.getUserObject node)))
 
 (defn tree-has-content []
   (let [model (.getModel *lkifsTree*)
@@ -108,3 +77,46 @@
       [event]
       (when (.isPopupTrigger event)
         (showpopup event))))))
+
+(defn init-tree []
+  (add-treeselection-listener *lkifsTree* on-tree-selection)
+  (.addMouseListener *lkifsTree* (create-tree-mouse-listener))
+  (.setRootVisible *lkifsTree* false)
+  (.setSelectionMode (.getSelectionModel *lkifsTree*)
+                     TreeSelectionModel/SINGLE_TREE_SELECTION)
+  (.setShowsRootHandles *lkifsTree* true))
+
+(defn add-lkif-content [file graphids]
+  (with-tree *lkifsTree*
+    (let [model (.getModel *lkifsTree*)
+          root (.getRoot model)
+          lkifinfo (LkifFileInfo. (.getPath file)
+                                  (.getName file))
+          lkif-file (DefaultMutableTreeNode. lkifinfo)]
+      (.add root lkif-file)
+      (doseq [id graphids]
+        (.add lkif-file (DefaultMutableTreeNode. (GraphInfo. lkifinfo id))))
+      (.reload model root)
+      (let [path (TreePath. (.getPath lkif-file))]
+        (.expandPath *lkifsTree* path)
+        (.scrollPathToVisible *lkifsTree* path)
+        (.setSelectionPath (.getSelectionModel *lkifsTree*) path)))))
+
+(defn remove-lkif-content [path]
+  (prn "remove-lkif-content")
+  (with-tree *lkifsTree*
+    (let [model (.getModel *lkifsTree*)
+          root (.getRoot model)
+          childcount (.getChildCount root)]
+      (prn "childcount")
+      (prn childcount)
+      (loop [nb (range childcount)]
+        (let[i (first nb)
+             child (.getChildAt root i)
+             lkif-file (.getUserObject child)]
+          (if (= path (:path lkif-file))
+            (.remove root i)
+            (recur (rest nb)))))
+      (.reload model root))))
+
+

@@ -4,10 +4,10 @@
 (ns carneades.editor.controller.listeners-register
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
+        carneades.editor.view.swinguiprotocol
         carneades.editor.controller.swing-listeners
         carneades.editor.controller.listeners
         carneades.editor.utils.swing
-        carneades.editor.view.tree
         carneades.editor.view.tabs))
 
 ;;
@@ -22,30 +22,32 @@
 ;; dispatch the calls in an UI-independent way to the listeners in listeners.clj
 ;;
 ;; This is the only namespace, with the swing-listeners,
-;; that should be given direct access to the Swing UI.
+;; that should be given direct access to the Swing UI and only through
+;; the SwingUI protocol.
 ;;
 ;; All other accesses must be made within listeners.clj
-;; and only through the interface defined by the View.
+;; and only through the View protocol.
 ;;
 ;; This allow to keep the model and the listeners logic independant
 ;; from the specific Swing GUI implementation.
 ;;
 
 (defn register-listeners [view]
-  (add-action-listener *openFileButton* (fn [event] (on-open-file view)))
-  (add-action-listener *openFileMenuItem* (fn [event] (on-open-file view)))
-  (add-action-listener *closeFileMenuItem* close-file-listener view)
-  (add-action-listener *exportFileMenuItem* export-file-listener view)
-  (add-action-listener *exportLkifFileMenuItem* export-element-listener view)
-  (add-action-listener *exportGraphMenuItem* export-element-listener view)
-  (add-action-listener *printPreviewFileMenuItem* printpreview-listener view)
-  (add-action-listener *aboutHelpMenuItem* (fn [event] (on-about view)))
-  (add-action-listener *closeLkifFileMenuItem* close-file-listener view)
-  (add-action-listener *openGraphMenuItem* open-graph-listener view)
-  (add-action-listener *closeGraphMenuItem* close-graph-listener view)
-  (add-action-listener *closeTabMenuItem* close-listener view)
-  ;; (add-windowclose-listener
-  ;;  *viewinstance* (fn [& args] (unregister-listeners)))
-  (add-mousepressed-listener *lkifsTree* mouse-click-in-tree-listener view)
+  ;; we need to extract some information from the UI,
+  ;; dispatch to the swing_listeners:
+  (add-close-graph-menuitem-listener view close-graph-listener [view])
+  (add-open-graph-menuitem-listener view open-graph-listener [view])
+  (add-close-lkif-filemenuitem-listener view close-file-listener [view])
+  (add-printpreview-filemenuitem-listener view printpreview-listener [view])
+  (add-export-graph-menuitem-listener view export-element-listener [view])
+  (add-export-lkif-filemenuitem-listener view export-element-listener [view])
+  (add-export-filemenuitem-listener view export-file-listener [view])
+  (add-close-file-menuitem-listener view close-file-listener [view])
+  (add-close-button-listener view close-listener [view])
+  (add-mousepressed-tree-listener view mouse-click-in-tree-listener [view])
 
-  (register-close-button-listener (fn [event] (close-listener event view))))
+  ;; we don't need to extract information from the UI,
+  ;; dispatch to the listeners:
+  (add-about-helpmenuitem-listener view (fn [event] (on-about view)) [])
+  (add-open-file-menuitem-listener view (fn [event] (on-open-file view)) [])
+  (add-open-file-button-listener view (fn [event] (on-open-file view)) []))
