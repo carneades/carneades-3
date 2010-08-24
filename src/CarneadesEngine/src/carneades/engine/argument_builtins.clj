@@ -8,10 +8,17 @@
         carneades.engine.utils
         carneades.engine.statement
         carneades.engine.argument
-        carneades.engine.sandbox
-        [carneades.engine.argument-search :only (response)]
+        carneades.engine.sandbox        
         carneades.engine.rule
-        carneades.engine.unify))
+        carneades.engine.utils
+        ;carneades.engine.shell
+        [carneades.engine.search :only (breadth-first)]
+        carneades.engine.unify)
+  (:require
+    [carneades.engine.argument-search :as as]
+    ))
+
+(declare builtins)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; An argument generator for "builtin" predicates: eval, etc.
@@ -32,7 +39,7 @@
 (defn- try-unify [stmt args subs]
   (mapinterleave (fn [stmt2]
                    (if-let [subs2 (unify stmt stmt2 subs)]
-                     (list (response subs2 nil))
+                     (list (as/response subs2 nil))
                      ;; fail:
                      '()))
                  (in-statements args (statement-predicate stmt))))
@@ -41,7 +48,7 @@
   (try
     (let [result (eval-expr (subs (statement-wff expr)))]
       (if-let [subs2 (unify term result subs)]
-        (list (response subs2 (argument (gensym "a") :pro stmt '()
+        (list (as/response subs2 (argument (gensym "a") :pro stmt '()
                                         "builtin:eval")))
         '()))
     (catch java.lang.SecurityException e '())
@@ -49,18 +56,63 @@
 
 (defn- dispatch-equal [subs stmt term1 term2]
   (if-let [subs2 (unify term1 term2 subs)]
-    (list (response subs2 (argument (gensym "a") :pro stmt '()
+    (list (as/response subs2 (argument (gensym "a") :pro stmt '()
                                     "builtin:=")))
     '()))
 
 (defn- dispatch-notequal [subs stmt term1 term2]
   (if-let [subs2 (unify term1 term2 subs)]
     '()
-    (list (response subs (argument (gensym "a") :pro stmt '()
+    (list (as/response subs (argument (gensym "a") :pro stmt '()
                                     "builtin:not=")))))
 
-(defn dispatch [stmt state]
-  "stmt state -> (stream-of response)"
+(defn- dispatch-exists
+  [state stmt wff generators]
+  (let [subs (:substitutions state),
+        [e v t p] (subs wff),
+        v2 (gensym "?"),
+        t2 (replace-var v v2 t),
+        p2 (replace-var v v2 p),
+        type-states (as/find-best-arguments
+                      breadth-first
+                      nil
+                      0
+                      (as/state
+                        t2
+                        :pro 
+                        (list (list t2)) 
+                        '()
+                        (:arguments state)
+                        (:substitutions state)
+                        (:candidates state))
+                        (lazy-cat generators (lazy-seq (list (builtins generators))))),
+        ] 
+;    (println "exists dispatch:" (count type-states) "found")
+;    (println "generators" generators)
+;    (println "  v :" v)
+;    (println "  v2:" v2)
+;    (println "  t :" t)
+;    (println "  t2:" t2)
+;    (println "  p :" p)
+;    (println "  p2:" p2)
+    (map (fn [s]
+           (let [new-subs (:substitutions s)]
+             (as/response
+               new-subs
+               (cons
+                 (argument
+                   (gensym "exists")
+                   :pro 
+                   stmt
+                   (list
+                     (pm (new-subs p2))
+                     (am (new-subs t2)))
+                   "exists")
+                 (vals (:arguments (:arguments s)))))))
+      type-states)))
+
+(defn dispatch [stmt state generators]
+  "stmt state (list-of generator) -> (stream-of response)"
   (let [args (:arguments state)
         subs (:substitutions state)
         wff (statement-wff stmt)
@@ -69,10 +121,18 @@
           'eval (dispatch-eval subs stmt term1 term2)
           '= (dispatch-equal subs stmt term1 term2)
           'not= (dispatch-notequal subs stmt term1 term2)
+          'exists (dispatch-exists state stmt wff generators)
           (try-unify stmt args subs))))
 
-(defn builtins [goal state]
-  "statement state -> (stream-of response)"
-  (interleaveall
-   ((generate-arguments-from-rules *builtin-rules* []) goal state)
-   (dispatch goal state)))
+(defn builtins  
+  ([goal state]
+    "statement state -> (stream-of response)"
+    (interleaveall
+      ((generate-arguments-from-rules *builtin-rules* []) goal state)
+      (dispatch goal state '())))
+  ([generators]
+    "(list-of generator) -> (statement state -> (seq-of response))"
+    (fn [goal state]
+      (interleaveall
+        ((generate-arguments-from-rules *builtin-rules* []) goal state)
+        (dispatch goal state generators)))))

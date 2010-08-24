@@ -3,10 +3,14 @@
 
 
 (ns carneades.engine.argument-search
+  (:import (java.io PrintWriter) ; for debugging
+    )
   (:use clojure.contrib.def
         carneades.engine.utils
         carneades.engine.statement
-        clojure.contrib.pprint)
+        clojure.contrib.pprint
+        carneades.ui.diagram.viewer ; for debugging
+    )
   (:require [carneades.engine.argument :as arg]
             [carneades.engine.search :as search]))
 
@@ -100,17 +104,19 @@
       (rest dis-of-con)
       (cons clause (rest dis-of-con)))))
 
-(defn- get-pro-goals [state premises assumptions exceptions conclusion]
+(defn- get-pro-goals [state premises assumptions exceptions conclusion goal-proc]
   {:post [(not (nil? %))]}
   (condp = (:viewpoint state)
-      :pro (update-goals (:pro-goals state) premises)
+      :pro (if (= goal-proc :update)
+             (update-goals (:pro-goals state) premises)
+             (:pro-goals state)),
       :con  (concat (:pro-goals state)
                     (map list exceptions) ;; separate clause for each exception
                     ;; rebutalls and rebuttals of assumptions
                     (list (list (statement-complement conclusion)))
                     (map list (map statement-complement assumptions)))))
 
-(defn- get-con-goals [state premises assumptions exceptions conclusion]
+(defn- get-con-goals [state premises assumptions exceptions conclusion goal-proc]
   {:post [(not (nil? %))]}
   (condp = (:viewpoint state)
       :pro (concat (:con-goals state)
@@ -118,10 +124,15 @@
                    (map list exceptions)
                    (list (list (statement-complement conclusion)))
                    (map list (map statement-complement assumptions)))
-      :con (update-goals (:con-goals state) premises)))
+      :con (if (= goal-proc :update)
+             (update-goals (:con-goals state) premises)
+             (:con-goals state))))
 
-(defn- make-successor-state-putforward [stat newsubs arg]
-  (let [conclusion (:conclusion arg)
+(defn- make-successor-state-putforward 
+  ([stat newsubs arg]
+    (make-successor-state-putforward stat newsubs arg :update))
+  ([stat newsubs arg goal-proc]
+  (let [conclusion (:conclusion arg) ; maybe use complement regarding argument-dirction?
         assumptions (questioned-assumptions
                      (map arg/premise-statement
                           (filter arg/assumption?
@@ -139,18 +150,39 @@
          (:arguments stat)
          (cons (struct candidate
                        `(~'guard ~@(arg/argument-variables arg)) arg)
-               (:candidates stat)))]
-
-    (state (:topic stat)
+               (:candidates stat)))
+        pro-goals (get-pro-goals stat premises assumptions exceptions conclusion goal-proc)
+        con-goals (get-con-goals stat premises assumptions exceptions conclusion goal-proc)
+        new-state (state (:topic stat)
            (:viewpoint stat)
-           (get-pro-goals stat premises assumptions exceptions conclusion)
-           (get-con-goals stat premises assumptions exceptions conclusion)
+           pro-goals
+           con-goals
            ;; new argument graph
            newag
            ;; new subs
            newsubs
            ;; new candidates
-           newcandidates)))
+           newcandidates)]
+;    (println "-------------")
+;    ;(println "state" stat)
+;    (println "argument" (:id arg))
+;    (println "conclusion" conclusion)
+;    (println "gesubt" (newsubs conclusion))
+;    (println "assumptions" assumptions)
+;    (println "premises" premises)
+;    (println "exceptions" exceptions)
+;    (println "old pro-goals" (:pro-goals stat))
+;    (println "new pro-goals" pro-goals)
+;    (println "old con-goals" (:con-goals stat))
+;    (println "new con-goals" con-goals)
+;    (println "goal process" goal-proc)
+;;    (view (let [cand-args (map :argument (:candidates new-state)),
+;;                inst-cands (map (fn [a] (arg/instantiate-argument a newsubs)) cand-args),
+;;                agwc (arg/assert-arguments newag inst-cands)]
+;;            agwc))
+;    (println "-------------")
+    new-state
+    )))
 
 (defn- make-successor-state-noforward [stat newsubs]
   {:pre [(not (nil? newsubs))]}
@@ -181,7 +213,11 @@
   "state response -> state"
   (let [newsubs (:substitutions response)]
     (if-let [arg (:argument response)]
-      (make-successor-state-putforward state newsubs arg)
+      (if (seq? arg)
+        (let []
+          ;(println "reducing" (count arg) "states")
+          (reduce (fn [s a] (make-successor-state-putforward s newsubs a :none)) (make-successor-state-putforward state newsubs (first arg) :update) (rest arg)))
+        (make-successor-state-putforward state newsubs arg))
       (make-successor-state-noforward state newsubs))))
 
 (defn apply-generator [generator node]
@@ -194,7 +230,9 @@
          (map (fn [response]
                 (make-successor-state (:state node) response))
               (mapinterleave (fn [clause]
-                               (let [goal (first clause)]
+                               (let [goal (first clause)
+                                     dummy-states (binding [*out* (new PrintWriter "test.txt")] (generator goal state1))]
+                                 ;(println "generating for goal:" goal (count dummy-states) generator)
                                  (generator goal state1)))
                              (next-goals state1))))))
 

@@ -55,11 +55,12 @@
                    (:substitutions s)))
       sols)))
 
-(defn construct-arguments [goal max-nodes max-turns ag generators]
-  "integer integer argument-graph (seq-of generator) -> statement ->
-(seq-of state)"  
-  (construct-best-arguments depth-first max-nodes max-turns
-    (initial-state goal ag) generators))
+(defn construct-arguments
+  [goal max-nodes max-turns ag generators]
+    "integer integer argument-graph (seq-of generator) -> statement ->
+    (seq-of state)"
+    (construct-best-arguments depth-first max-nodes max-turns
+      (initial-state goal ag) generators))
 
 (defn make-engine* [max-nodes max-turns ag generators]
   "integer integer argument-graph (seq-of generator) -> statement -> 
