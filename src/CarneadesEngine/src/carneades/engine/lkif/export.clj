@@ -47,8 +47,8 @@
     (fatom? t) [:s {:pred (statement-predicate t)} (combine-expression-format (:term t) (:form t))],
     (variable? t) [:v (.substring (str t) 1)],
     (symbol? t) [:c (str t)],
-    (and (list? t) (functor? (first t))) [:expr {:functor (first t)} (map text_term->sxml (rest t))],
-    (list? t) [:s {:pred (first t)} (map text_term->sxml (rest t))],
+    (and (seq? t) (functor? (first t))) [:expr {:functor (first t)} (map text_term->sxml (rest t))],
+    (seq? t) [:s {:pred (first t)} (map text_term->sxml (rest t))],
     true (println "no valid text/term" t)))
 
 
@@ -59,7 +59,7 @@
     (string? wff) [:s wff],
     (symbol? wff) [:s wff],
     (fatom? wff) [:s {:pred (statement-predicate wff)} (combine-expression-format (:term wff) (:form wff))],
-    (list? wff) (condp = (first wff)
+    (seq? wff) (condp = (first wff)
                   'not [:not (wff->sxml (second wff))],
                   'and [:and (map wff->sxml (rest wff))],
                   'or [:or (map wff->sxml (rest wff))],
@@ -119,7 +119,7 @@
     (symbol? s) (if (assumption-premise? s ag)
                   [:s {:assumable true} s]
                   [:s s]),
-    (list? s) (if (assumption-premise? s ag)
+    (seq? s) (if (assumption-premise? s ag)
                 [:s {:pred (statement-predicate s), :assumable true} (map text_term->sxml (rest s))]
                 [:s {:pred (statement-predicate s)} (map text_term->sxml (rest s))]),
     true (println "no valid atom" s)))
@@ -168,7 +168,7 @@
         main-issue (or (:id (get statement-map (:main-issue ag)))
                      ""),
         statements (statements->sxml ag statement-map),
-        arguments (arguments->sxml (vals (:arguments ag)) statement-map)]
+        arguments (arguments->sxml (vals (:arguments ag)) statement-map)]    
     [:argument-graph {:id id, :title title, :main-issue main-issue} statements arguments]))
 
 (defn arg-graphs->sxml

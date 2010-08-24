@@ -1,6 +1,17 @@
-;;; Copyright © 2010 Fraunhofer Gesellschaft 
-;;; Licensed under the EUPL V.1.1
-
+;;; Carneades Argumentation Library and Tools.
+;;; Copyright (C) 2010 Thomas F. Gordon, Fraunhofer FOKUS, Berlin
+;;; 
+;;; This program is free software: you can redistribute it and/or modify
+;;; it under the terms of the GNU Lesser General Public License version 3 (LGPL-3)
+;;; as published by the Free Software Foundation.
+;;; 
+;;; This program is distributed in the hope that it will be useful, but
+;;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;;; General Public License for details.
+;;; 
+;;; You should have received a copy of the GNU Lesser General Public License
+;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns carneades.engine.argument
   (:refer-clojure :exclude [satisfies?])
@@ -78,12 +89,6 @@
   (if (premise-pos? p)
     (:atom p)
     (statement-complement (:atom p))))
-
-(defn assumption? [p]
-  (isa? (:type p) ::assumption))
-
-(defn exception? [p]
-  (isa? (:type p) ::exception))
 
 (defn premise-atom [p]
   (:atom p))
@@ -187,7 +192,7 @@
 (defn instantiate-argument [arg subs]
   "argument substitutions -> argument
 
-   Instanciate the variable of an argument by applying substitions"
+   Instanciate the variable of an argument by applying substitions"  
   (assoc arg
     :premises (map #(update-in % [:atom] subs) (:premises arg))
     :conclusion (subs (:conclusion arg))))
@@ -656,18 +661,46 @@
 
 (defn unite-args
   [ag arg]
-  (if (some (fn [arg2] (and
-                         (= (:scheme arg) (:scheme arg2))
-                         (statement= (:conclusion arg) (:conclusion arg2))
-                         (premises=? (:premises arg) (:premises arg2))))
-        (:arguments ag))
+  (if (some (fn [arg2]
+              (and
+                 (= (:scheme arg) (:scheme arg2))
+                 (statement= (:conclusion arg) (:conclusion arg2))
+                 (premises=? (:premises arg) (:premises arg2))))
+        (vals (:arguments ag)))
     ag
     (assert-argument ag (assoc arg :id (gensym "a")))))
 
 (defn unite-graphs
   [ag1 ag2]
-  (reduce unite-args ag1 (arguments ag2)))
+  (let [all-nodes (get-nodes ag2),
+        accepted-nodes (filter (fn [n] (= (:status n) :accepted)) all-nodes),
+        rejected-nodes (filter (fn [n] (= (:status n) :rejected)) all-nodes)]
+    (reject (accept (reduce unite-args ag1 (arguments ag2)) (map :statement accepted-nodes)) (map :statement rejected-nodes))))
 
 (defn unite-argument-graphs
   [l]
   (reduce unite-graphs *empty-argument-graph* l))
+
+(defn depth-in
+  [n ag]
+  (let [parent-args (:premise-of n),
+        parent-stmts (map (fn [aid] (:conclusion (get-argument ag aid))) parent-args)]
+    (if (empty? parent-stmts)
+      0
+      (+ 1 (apply min (map (fn [s] (depth-in (get-node ag s) ag)) parent-stmts))))))
+
+(defn height-in
+  [n ag]
+  (let [child-args (:conclusion-of n),
+        child-stmts (apply concat (map (fn [aid] (map :atom (:premises (get-argument ag aid)))) child-args))]
+    ;(println "child-stmts" (:statement n) child-stmts)
+    (if (empty? child-stmts)
+      0
+      (+ 1 (apply max (map (fn [s] (height-in (get-node ag s) ag)) child-stmts))))))
+
+
+(defn graph-depth
+  [ag]
+  (let [main-issues (filter (fn [n] (empty? (:premise-of n))) (get-nodes ag))]
+    (apply max (map (fn [n] (height-in n ag)) main-issues))))
+
