@@ -169,7 +169,7 @@
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
               </AuxValues>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="printMenuItem">
+            <MenuItem class="javax.swing.JMenuItem" name="printFileMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Print..."/>
               </Properties>

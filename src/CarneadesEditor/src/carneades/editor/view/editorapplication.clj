@@ -38,6 +38,7 @@
 
 (defvar *exportFileMenuItem* (.exportFileMenuItem *frame*))
 (defvar *printPreviewFileMenuItem* (.printPreviewFileMenuItem *frame*))
+(defvar *printFileMenuItem* (.printFileMenuItem *frame*))
 (defvar *aboutHelpMenuItem* (.aboutHelpMenuItem *frame*))
 
 (defvar *closeLkifFileMenuItem* (.closeLkifFileMenuItem *frame*))
@@ -59,8 +60,11 @@
    (set-look-and-feel "Nimbus")
    (EditorApplicationView/reset)
    (lkif-properties-init)
-   (graph-properties-init))
-  
+   (graph-properties-init)
+   (init-menu)
+   (init-tree)
+   (init-tabs))
+
   (display-error
    [this title content]
    (JOptionPane/showMessageDialog *frame* content title
@@ -78,9 +82,6 @@
    [this]
    (disable-diagram-buttons-and-menus)
    (disable-file-items)
-   (init-menu)
-   (init-tree)
-   (init-tabs)
    (.setDefaultCloseOperation *frame* JFrame/DISPOSE_ON_CLOSE)
    (EventQueue/invokeLater
     (proxy [Runnable] []
@@ -182,12 +183,18 @@
        (when (= val JFileChooser/APPROVE_OPTION)
          (reset! *dialog-current-directory* (.getCurrentDirectory jc))
          (.getSelectedFile jc)))))
+  
+  (print-graph
+   [this path ag stmt-fmt]
+   (let [component (or (get-component path (:id ag))
+                       (create-graph-component ag stmt-fmt))]
+     (print-document component)))
 
   (print-preview
    [this path ag stmt-fmt]
    (let [component (or (get-component path (:id ag))
                        (create-graph-component ag stmt-fmt))]
-     (printpreview component)))
+     (printpreview *frame* component)))
 
   (display-about
    [this]
@@ -249,6 +256,10 @@
    [this f args]
    (apply add-action-listener *closeGraphMenuItem* f args))
 
+  (add-print-filemenuitem-listener
+   [this f args]
+   (apply add-action-listener *printFileMenuItem* f args))
+  
   (get-selected-object-in-tree
    [this]
    (selected-object-in-tree))
@@ -256,4 +267,5 @@
   (get-graphinfo-being-closed
    [this event]
    (graphinfo-being-closed event))
+
   )

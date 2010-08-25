@@ -21,6 +21,7 @@
                         "display information relative to an LKIF file")
   (hide-lkif-content [this path])
   (print-preview [this path ag stmt-fmt])
+  (print-graph [this path ag stmt-fmt])
   (display-lkif-property [this path])
   (display-graph-property [this id title mainissue])
   (display-about [this])
