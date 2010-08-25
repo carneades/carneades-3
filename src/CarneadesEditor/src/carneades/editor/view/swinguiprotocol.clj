@@ -21,6 +21,7 @@
   (add-close-lkif-filemenuitem-listener [this f args])
   (add-open-graph-menuitem-listener [this f args])
   (add-close-graph-menuitem-listener [this f args])
+  (add-print-filemenuitem-listener [this f args])
 
   ;; functions to get information from the Swing UI
   (get-selected-object-in-tree [this])

@@ -4,9 +4,9 @@
  */
 
 /*
- * PrintPreviewView.java
+ * PrintPreviewDialog.java
  *
- * Created on Jul 28, 2010, 3:46:19 PM
+ * Created on Aug 25, 2010, 2:56:54 PM
  */
 
 package carneades.editor.uicomponents;
@@ -15,10 +15,11 @@ package carneades.editor.uicomponents;
  *
  * @author pal
  */
-public class PrintPreviewView extends javax.swing.JFrame {
+public class PrintPreviewDialog extends javax.swing.JDialog {
 
-    /** Creates new form PrintPreviewView */
-    public PrintPreviewView() {
+    /** Creates new form PrintPreviewDialog */
+    public PrintPreviewDialog(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
         initComponents();
     }
 
@@ -38,7 +39,7 @@ public class PrintPreviewView extends javax.swing.JFrame {
         jSeparator3 = new javax.swing.JToolBar.Separator();
         jScrollPane1 = new javax.swing.JScrollPane();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
@@ -70,7 +71,6 @@ public class PrintPreviewView extends javax.swing.JFrame {
 
         landscapeToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/landscape.png"))); // NOI18N
         landscapeToggleButton.setText("Landscape ");
-        landscapeToggleButton.setBorder(null);
         landscapeToggleButton.setFocusable(false);
         jToolBar1.add(landscapeToggleButton);
         jToolBar1.add(jSeparator3);
@@ -91,15 +91,17 @@ public class PrintPreviewView extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBar1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 625, Short.MAX_VALUE)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 625, Short.MAX_VALUE)
+            .addGap(0, 677, Short.MAX_VALUE)
+            .addComponent(jToolBar1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 677, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 677, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 570, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 487, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE))
         );
 
         pack();
@@ -111,7 +113,13 @@ public class PrintPreviewView extends javax.swing.JFrame {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new PrintPreviewView().setVisible(true);
+                PrintPreviewDialog dialog = new PrintPreviewDialog(new javax.swing.JFrame(), true);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
             }
         });
     }

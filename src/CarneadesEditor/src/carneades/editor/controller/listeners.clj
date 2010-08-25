@@ -92,3 +92,8 @@
 (defn on-printpreview-graph [view path id]
   (let [ag (get-ag path id)]
     (print-preview view path ag statement-formatted)))
+
+(defn on-print-graph [view path id]
+  (let [ag (get-ag path id)]
+    (print-graph view path ag statement-formatted)))
+
