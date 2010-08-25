@@ -167,9 +167,10 @@ is one"
 (declare term-formatted)
 
 (defn short-str [s]
-  (or
-    (.getFragment (new URI s))
-    s))
+  (try (or
+        (.getFragment (new URI s))
+        s)
+    (catch Exception e s)))
 
 (defn break-str [s]
   (let [l (.split s " ")]
