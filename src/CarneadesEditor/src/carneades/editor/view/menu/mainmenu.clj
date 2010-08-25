@@ -22,6 +22,7 @@
 (defvar- *saveAsFileMenuItem* (.saveAsFileMenuItem *viewinstance*))
 (defvar- *exportFileMenuItem* (.exportFileMenuItem *viewinstance*))
 (defvar- *printPreviewFileMenuItem* (.printPreviewFileMenuItem *viewinstance*))
+(defvar- *printFileMenuItem* (.printFileMenuItem *viewinstance*))
 
 (defvar- *saveFileButton* (.saveFileButton *viewinstance*))
 
@@ -38,6 +39,7 @@
   (.setEnabled *zoomInButton* state)
   (.setEnabled *zoomOutButton* state)
   (.setEnabled *zoomResetButton* state)
+  (.setEnabled *printFileMenuItem* state)
   (.setEnabled *printPreviewFileMenuItem* state))
 
 (defn enable-diagram-buttons-and-menus []

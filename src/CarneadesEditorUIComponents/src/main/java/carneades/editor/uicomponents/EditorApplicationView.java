@@ -199,8 +199,8 @@ public class EditorApplicationView extends javax.swing.JFrame {
         printPreviewFileMenuItem.setText("Print Preview");
         fileMenu.add(printPreviewFileMenuItem);
 
-        printMenuItem.setText("Print...");
-        fileMenu.add(printMenuItem);
+        printFileMenuItem.setText("Print...");
+        fileMenu.add(printFileMenuItem);
         fileMenu.add(jSeparator1);
 
         exitFileMenuItem.setText("Exit");
@@ -313,7 +313,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JMenuItem openFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem openGraphMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenuItem pasteMenuItem;
-    public final javax.swing.JMenuItem printMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem printFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem printPreviewFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JPanel propertiesPanel = new javax.swing.JPanel();
     public final javax.swing.JMenuItem saveAsFileMenuItem = new javax.swing.JMenuItem();

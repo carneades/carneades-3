@@ -72,3 +72,7 @@
 (defn printpreview-listener [event view]
   (if-let [[path id] (current-graph view)]
     (on-printpreview-graph view path id)))
+
+(defn print-listener [event view]
+  (if-let [[path id] (current-graph view)]
+    (on-print-graph view path id)))
