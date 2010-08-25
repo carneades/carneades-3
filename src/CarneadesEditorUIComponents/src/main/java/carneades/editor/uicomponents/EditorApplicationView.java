@@ -36,12 +36,13 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
+        jSeparator4 = new javax.swing.JToolBar.Separator();
+        jSplitPane1 = new javax.swing.JSplitPane();
+        jSplitPane2 = new javax.swing.JSplitPane();
         leftTabbedPane = new javax.swing.JTabbedPane();
-        filesPane = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         searchPanel = new javax.swing.JPanel();
-        jSeparator4 = new javax.swing.JToolBar.Separator();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
@@ -84,59 +85,6 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        mainPanel.setOneTouchExpandable(true);
-
-        leftPanel.setPreferredSize(new java.awt.Dimension(300, 10));
-        leftPanel.setLayout(new javax.swing.BoxLayout(leftPanel, javax.swing.BoxLayout.LINE_AXIS));
-
-        filesPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-
-        jPanel1.setPreferredSize(new java.awt.Dimension(306, 200));
-
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
-        lkifsTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
-        lkifsTree.setMaximumSize(new java.awt.Dimension(32767, 32767));
-        jScrollPane2.setViewportView(lkifsTree);
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        filesPane.setLeftComponent(jPanel1);
-
-        propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
-        propertiesPanel.setLayout(new javax.swing.BoxLayout(propertiesPanel, javax.swing.BoxLayout.PAGE_AXIS));
-        filesPane.setRightComponent(propertiesPanel);
-
-        leftTabbedPane.addTab("Files", filesPane);
-
-        javax.swing.GroupLayout searchPanelLayout = new javax.swing.GroupLayout(searchPanel);
-        searchPanel.setLayout(searchPanelLayout);
-        searchPanelLayout.setHorizontalGroup(
-            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 296, Short.MAX_VALUE)
-        );
-        searchPanelLayout.setVerticalGroup(
-            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 511, Short.MAX_VALUE)
-        );
-
-        leftTabbedPane.addTab("Search", searchPanel);
-
-        leftPanel.add(leftTabbedPane);
-
-        mainPanel.setLeftComponent(leftPanel);
-        mainPanel.setRightComponent(mapPanel);
-
         toolBar.setFloatable(false);
         toolBar.setRollover(true);
 
@@ -175,6 +123,57 @@ public class EditorApplicationView extends javax.swing.JFrame {
         zoomInButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         zoomInButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         toolBar.add(zoomInButton);
+
+        jSplitPane1.setOneTouchExpandable(true);
+        jSplitPane1.setRightComponent(mapPanel);
+
+        jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+
+        leftTabbedPane.setMinimumSize(new java.awt.Dimension(60, 70));
+        leftTabbedPane.setPreferredSize(new java.awt.Dimension(310, 280));
+
+        jPanel1.setPreferredSize(new java.awt.Dimension(306, 200));
+
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
+        lkifsTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        lkifsTree.setMaximumSize(new java.awt.Dimension(32767, 32767));
+        jScrollPane2.setViewportView(lkifsTree);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        leftTabbedPane.addTab("Files", jPanel1);
+
+        javax.swing.GroupLayout searchPanelLayout = new javax.swing.GroupLayout(searchPanel);
+        searchPanel.setLayout(searchPanelLayout);
+        searchPanelLayout.setHorizontalGroup(
+            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 306, Short.MAX_VALUE)
+        );
+        searchPanelLayout.setVerticalGroup(
+            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 269, Short.MAX_VALUE)
+        );
+
+        leftTabbedPane.addTab("Search", searchPanel);
+
+        jSplitPane2.setLeftComponent(leftTabbedPane);
+
+        propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
+        propertiesPanel.setLayout(new javax.swing.BoxLayout(propertiesPanel, javax.swing.BoxLayout.PAGE_AXIS));
+        jSplitPane2.setRightComponent(propertiesPanel);
+
+        jSplitPane1.setLeftComponent(jSplitPane2);
 
         fileMenu.setText("File");
 
@@ -245,15 +244,15 @@ public class EditorApplicationView extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 821, Short.MAX_VALUE)
             .addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 821, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 821, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(toolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 542, Short.MAX_VALUE))
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 542, Short.MAX_VALUE))
         );
 
         pack();
@@ -290,7 +289,6 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JMenuItem exportGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem exportLkifFileMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenu fileMenu;
-    private javax.swing.JSplitPane filesPane;
     public final javax.swing.JPopupMenu graphPopupMenu = new javax.swing.JPopupMenu();
     private javax.swing.JMenu helpMenu;
     private javax.swing.JPanel jPanel1;
@@ -302,11 +300,11 @@ public class EditorApplicationView extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
-    public final javax.swing.JPanel leftPanel = new javax.swing.JPanel();
+    private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JTabbedPane leftTabbedPane;
     public final javax.swing.JPopupMenu lkifFilePopupMenu = new javax.swing.JPopupMenu();
     public final javax.swing.JTree lkifsTree = new javax.swing.JTree();
-    public final javax.swing.JSplitPane mainPanel = new javax.swing.JSplitPane();
     public final javax.swing.JTabbedPane mapPanel = new javax.swing.JTabbedPane();
     private javax.swing.JMenuBar menuBar;
     public final javax.swing.JButton openFileButton = new javax.swing.JButton();

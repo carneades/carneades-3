@@ -43,7 +43,9 @@ public class ArgumentGraphPropertiesView extends javax.swing.JPanel {
         jLabel3.setText("Main issue:");
 
         mainIssueTextArea.setColumns(20);
+        mainIssueTextArea.setLineWrap(true);
         mainIssueTextArea.setRows(5);
+        mainIssueTextArea.setWrapStyleWord(true);
         mainIssueTextArea.setMinimumSize(new java.awt.Dimension(0, 50));
         mainIssueTextArea.setPreferredSize(new java.awt.Dimension(260, 100));
 
@@ -60,10 +62,10 @@ public class ArgumentGraphPropertiesView extends javax.swing.JPanel {
                             .addComponent(titleLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(titleText, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
-                            .addComponent(idText, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)))
+                            .addComponent(titleText, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
+                            .addComponent(idText, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)))
                     .addComponent(jLabel3)
-                    .addComponent(mainIssueTextArea, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE))
+                    .addComponent(mainIssueTextArea, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -81,7 +83,7 @@ public class ArgumentGraphPropertiesView extends javax.swing.JPanel {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(mainIssueTextArea, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
