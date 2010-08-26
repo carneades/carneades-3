@@ -7,11 +7,6 @@
         ;;
         ;; no imports of carneades.engine.* are allowed here
         ;;
-
-        ;; <debug>
-        ;; carneades.examples.hundeanmeldung
-        ;; carneades.engine.shell
-        ;; </debug>
         carneades.mapcomponent.map
         carneades.editor.view.viewprotocol
         carneades.editor.view.swinguiprotocol
@@ -19,6 +14,7 @@
         carneades.editor.utils.swing
         carneades.editor.view.tabs
         carneades.editor.view.tree
+        carneades.editor.view.search
         carneades.editor.view.properties.lkif
         carneades.editor.view.properties.graph
         carneades.editor.view.properties.properties
@@ -63,7 +59,8 @@
    (graph-properties-init)
    (init-menu)
    (init-tree)
-   (init-tabs))
+   (init-tabs)
+   (init-search))
 
   (display-error
    [this title content]
