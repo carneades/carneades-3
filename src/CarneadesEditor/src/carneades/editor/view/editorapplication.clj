@@ -4,6 +4,7 @@
 (ns carneades.editor.view.editorapplication
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
+        [clojure.string :only (trim)]
         ;;
         ;; no imports of carneades.engine.* are allowed here
         ;;
@@ -16,13 +17,17 @@
         carneades.editor.view.tree
         carneades.editor.view.search
         carneades.editor.view.properties.lkif
+        carneades.editor.view.properties.statement
+        carneades.editor.view.properties.argument
+        carneades.editor.view.properties.premise
         carneades.editor.view.properties.graph
         carneades.editor.view.properties.properties
         carneades.editor.view.aboutbox
         carneades.editor.view.printpreview.preview)
   (:import (carneades.editor.uicomponents EditorApplicationView)
            (java.awt EventQueue)
-           (javax.swing UIManager JFrame JFileChooser JOptionPane)))
+           (javax.swing UIManager JFrame JFileChooser JOptionPane)
+           (carneades.mapcomponent.map StatementCell ArgumentCell PremiseCell)))
 
 (defvar- *frame* (EditorApplicationView/instance))
 (defvar- *dialog-current-directory* (atom nil))
@@ -44,6 +49,22 @@
 (defvar *closeGraphMenuItem* (.closeGraphMenuItem *frame*))
 (defvar *exportGraphMenuItem* (.exportGraphMenuItem *frame*))
 
+(defvar- *statement-selection-listeners* (atom ()))
+(defvar- *argument-selection-listeners* (atom ()))
+(defvar- *premise-selection-listeners* (atom ()))
+
+(defn- node-selection-listener [path id obj]
+  (cond (instance? StatementCell obj)
+        (doseq [{:keys [listener args]} (deref *statement-selection-listeners*)]
+          (apply listener path id (:stmt obj) args))
+
+        (instance? ArgumentCell obj)
+        (doseq [{:keys [listener args]} (deref *argument-selection-listeners*)]
+          (apply listener path id (:arg obj) args))
+
+        (instance? PremiseCell obj)
+        (doseq [{:keys [listener args]} (deref *premise-selection-listeners*)]
+          (apply listener path id (:pm obj) args))))
 
 (deftype SwingView [] View SwingUI
   (init
@@ -57,6 +78,9 @@
    (EditorApplicationView/reset)
    (lkif-properties-init)
    (graph-properties-init)
+   (init-statement-properties)
+   (init-premise-properties)
+   
    (init-menu)
    (init-tree)
    (init-tabs)
@@ -113,7 +137,8 @@
                (create-graph-component ag
                  stmt-fmt)]
            ;; (printpreview component)
-           (add-node-selected-listener component nil)
+           (add-node-selection-listener component #(node-selection-listener
+                                                    path (:id ag) %))
            (add-component component path (:id ag))
            (.add *mapPanel* title component)
            (.setTabComponentAt *mapPanel*
@@ -141,6 +166,21 @@
   (display-graph-property
    [this id title mainissue]
    (show-properties (get-graph-properties-panel id title mainissue)))
+
+  (display-statement-property
+   [this stmt status proofstandard acceptable complement-acceptable]
+   (show-properties (get-statement-properties-panel
+                     stmt status proofstandard
+                     acceptable complement-acceptable)))
+
+  (display-premise-property
+   [this polarity type]
+   (show-properties (get-premise-properties-panel polarity type)))
+    
+  (display-argument-property
+   [this id applicable weight direction scheme]
+   (show-properties (get-argument-properties-panel id applicable
+                                                   weight direction scheme)))
 
   (ask-file-to-save
    [this-view description extension suggested]
@@ -257,6 +297,10 @@
    [this f args]
    (apply add-action-listener *printFileMenuItem* f args))
   
+  (add-search-button-listener
+   [this f args]
+   (apply add-action-listener *searchButton* f args))
+
   (get-selected-object-in-tree
    [this]
    (selected-object-in-tree))
@@ -265,4 +309,24 @@
    [this event]
    (graphinfo-being-closed event))
 
+  (get-searched-info
+   [this]
+   (let [text (.getSelectedItem *searchComboBox*)
+            options {}]
+     (if (nil? text)
+       nil
+       [(trim text) options])))
+
+  (register-statement-selection-listener
+   [this l args]
+   (swap! *statement-selection-listeners* conj {:listener l :args args}))
+  
+  (register-argument-selection-listener
+   [this l args]
+   (swap! *argument-selection-listeners* conj {:listener l :args args}))
+  
+  (register-premise-selection-listener
+   [this l args]
+   (swap! *premise-selection-listeners* conj {:listener l :args args}))
+  
   )

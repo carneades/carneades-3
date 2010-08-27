@@ -4,6 +4,7 @@
 (ns carneades.editor.controller.listeners-register
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
+        carneades.editor.view.viewprotocol
         carneades.editor.view.swinguiprotocol
         carneades.editor.controller.swing-listeners
         carneades.editor.controller.listeners
@@ -46,9 +47,16 @@
   (add-close-file-menuitem-listener view close-file-listener [view])
   (add-close-button-listener view close-listener [view])
   (add-mousepressed-tree-listener view mouse-click-in-tree-listener [view])
-
+  (add-search-button-listener view search-button-listener [view])
+  
   ;; we don't need to extract information from the UI,
   ;; dispatch to the listeners:
   (add-about-helpmenuitem-listener view (fn [event] (on-about view)) [])
   (add-open-file-menuitem-listener view (fn [event] (on-open-file view)) [])
-  (add-open-file-button-listener view (fn [event] (on-open-file view)) []))
+  (add-open-file-button-listener view (fn [event] (on-open-file view)) [])
+
+  ;; non-swing listeners:
+  (register-statement-selection-listener view on-select-statement [view])
+  (register-argument-selection-listener view on-select-argument [view])
+  (register-premise-selection-listener view on-select-premise [view])
+  )

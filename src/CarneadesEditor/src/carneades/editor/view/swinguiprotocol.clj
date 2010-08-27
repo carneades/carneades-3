@@ -22,10 +22,12 @@
   (add-open-graph-menuitem-listener [this f args])
   (add-close-graph-menuitem-listener [this f args])
   (add-print-filemenuitem-listener [this f args])
+  (add-search-button-listener [this f args])
 
   ;; functions to get information from the Swing UI
   (get-selected-object-in-tree [this])
   (get-graphinfo-being-closed [this event])
+  (get-searched-info [this]) ;; returns [text options] or nil if search is empty
   )
 
 ;; records stored in the element of the tree:
