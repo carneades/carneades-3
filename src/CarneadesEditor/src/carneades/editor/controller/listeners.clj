@@ -5,6 +5,7 @@
   (:use clojure.contrib.def
         clojure.contrib.pprint
         carneades.engine.lkif.import
+        carneades.engine.argument
         [carneades.engine.statement :only (statement-formatted)]
         carneades.editor.model.docmanager
         ;; only the view.viewprotocol namespace is allowed to be imported
@@ -96,4 +97,40 @@
 (defn on-print-graph [view path id]
   (let [ag (get-ag path id)]
     (print-graph view path ag statement-formatted)))
+
+(defn on-search-begins [view searchinfo]
+  (prn "Beginning search")
+  (prn searchinfo))
+
+(defn on-search-stops [view]
+  (prn "Stopping search"))
+
+(defn on-select-statement [path id stmt view]
+  (prn "on select statement")
+  (prn stmt)
+  (let [node (get-node (get-ag path id) stmt)
+        status (:status node)
+        proofstandard (:standard node)
+        acceptable (:acceptable node)
+        complement-acceptable (:complement-acceptable node)]
+    (prn "node = ")
+    (prn node)
+    (display-statement-property view (statement-formatted stmt) status
+                                proofstandard acceptable complement-acceptable)))
+
+(defn on-select-argument [path id arg view]
+  (prn "on select argument")
+  (prn arg)
+  (display-argument-property
+   view (str (:id arg)) (:applicable arg) (:weight arg) (:direction arg) (:scheme arg)))
+
+(defn on-select-premise [path id pm view]
+  (prn "on select premise")
+  (prn pm)
+  (let [type (:type pm)
+        typestr (condp = type
+                    :carneades.engine.argument/ordinary-premise "Ordinary premise"
+                    :carneades.engine.argument/assumption "Assumption"
+                    :carneades.engine.argument/exception "Exception")]
+    (display-premise-property view (:polarity pm) typestr)))
 

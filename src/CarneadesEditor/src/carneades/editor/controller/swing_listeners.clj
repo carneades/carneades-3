@@ -76,3 +76,12 @@
 (defn print-listener [event view]
   (if-let [[path id] (current-graph view)]
     (on-print-graph view path id)))
+
+(defvar- *searchactive* (atom false))
+
+(defn search-button-listener [event view]
+  (prn "Search button pressed")
+  (swap! *searchactive* not)
+  (if (deref *searchactive*)
+    (on-search-begins view (get-searched-info view))
+    (on-search-stops view)))

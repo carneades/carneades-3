@@ -9,6 +9,7 @@
   (:import javax.swing.SwingConstants
            (com.mxgraph.util mxConstants mxUtils mxCellRenderer mxPoint mxEvent
                              mxEventSource$mxIEventListener)
+           com.mxgraph.swing.util.mxGraphTransferable
            (com.mxgraph.view mxGraph mxStylesheet)
            (com.mxgraph.model mxCell mxGeometry)
            com.mxgraph.layout.hierarchical.mxHierarchicalLayout
@@ -16,7 +17,8 @@
            com.mxgraph.swing.mxGraphComponent
            com.mxgraph.swing.mxGraphOutline
            java.awt.event.MouseWheelListener
-           java.awt.print.PrinterJob))
+           java.awt.print.PrinterJob
+           (java.awt Color BasicStroke)))
 
 (defrecord StatementCell [ag stmt stmt-str] Object
   (toString
@@ -41,7 +43,22 @@
    [this]
    (if (= (:direction arg) :pro) "+" "‒")))
 
+(defrecord PremiseCell [pm] Object
+  (toString
+   [this]
+   (str pm)))
+
 (defn- configure-graph [#^mxGraph g]
+  (let [stroke (BasicStroke. 5 BasicStroke/CAP_BUTT,
+                             BasicStroke/JOIN_MITER
+                             10.0
+                             (into-array Float/TYPE [3 3])
+                             0.0)
+        color Color/orange]
+    (set! mxConstants/VERTEX_SELECTION_COLOR color)
+    (set! mxConstants/EDGE_SELECTION_COLOR color)
+    (set! mxConstants/VERTEX_SELECTION_STROKE stroke)
+    (set! mxConstants/EDGE_SELECTION_STROKE stroke))
   (doto g
     ;; (.setAllowNegativeCoordinates false)
     ;; seems there is a bug with stacklayout and setCellsLocked
@@ -58,8 +75,8 @@
     (.updateCellSize g v)
     v))
 
-(defn- insert-edge [#^mxGraph g parent begin end style]
-  (.insertEdge g parent nil nil begin end style))
+(defn- insert-edge [#^mxGraph g parent userobject begin end style]
+  (.insertEdge g parent nil userobject begin end style))
 
 (defn- getx [#^mxCell vertex]
   (.. vertex getGeometry getX))
@@ -163,11 +180,11 @@
           {} (map node-statement (get-nodes ag))))
 
 (defn- add-conclusion-edge [g p arg statement vertices]
-  (insert-edge g p (vertices (argument-id arg)) (vertices statement)
+  (insert-edge g p nil (vertices (argument-id arg)) (vertices statement)
                (get-conclusion-edge-style arg)))
 
 (defn- add-argument-edge [g p premise argid vertices]
-  (insert-edge g p (vertices (premise-atom premise))
+  (insert-edge g p (PremiseCell. premise) (vertices (premise-atom premise))
                (vertices argid) (get-edge-style premise)))
 
 (defn- add-argument-edges [g p ag arg vertices]
@@ -270,9 +287,16 @@
     (add-mouse-zoom g graphcomponent)
     graphcomponent))
 
-(defn add-node-selected-listener [graphcomponent listener]
+(defn add-node-selection-listener [graphcomponent listener & args]
+  "Adds a selection listener to the map. When a cell is selected, listener 
+   will be invoked with the userobject of the cell as its first argument 
+   followed by args.
+   Userobject can be StatementCell, ArgumentCell, PremiseCell or nil"
   (let [selectionmodel (.getSelectionModel (.getGraph graphcomponent))]
     (.addListener selectionmodel mxEvent/CHANGE
                   (proxy [mxEventSource$mxIEventListener] []
-                    (invoke [sender event]
-                            (prn "invoke!"))))))
+                    (invoke
+                     [sender event]
+                     (when-let [cell (.getCell selectionmodel)]
+                       (let [userobject (.getValue cell)]
+                         (apply listener userobject args))))))))
