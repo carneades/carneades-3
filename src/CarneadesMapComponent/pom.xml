@@ -54,7 +54,7 @@ various argumentation tasks. This is the Swing Argument Map Component.</descript
     <dependency>
       <groupId>org.clojars.pallix</groupId>
       <artifactId>jgraphx</artifactId>
-      <version>1.4.0.8</version>
+      <version>1.4.0.9</version>
     </dependency>
     <dependency>
       <groupId>carneades-engine</groupId>

@@ -135,7 +135,8 @@
    {mxConstants/STYLE_ENDARROW mxConstants/NONE
     mxConstants/STYLE_STROKECOLOR "#000000"
     mxConstants/STYLE_STROKEWIDTH 1.25
-    mxConstants/STYLE_ROUNDED true}))
+    mxConstants/STYLE_ROUNDED true
+    mxConstants/STYLE_NOLABEL true}))
 
 (defvar- *conclusion-edge-style*
   (make-style

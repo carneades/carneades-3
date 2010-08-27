@@ -26,4 +26,17 @@
   (display-graph-property [this id title mainissue])
   (display-about [this])
   (ask-confirmation [this title content])
-  (display-error [this title content]))
+  (display-error [this title content])
+  (display-statement-property
+   [this stmt status proofstandard acceptable complement-acceptable])
+  (display-premise-property
+   [this polarity type])
+  (display-argument-property
+   [this id applicable weight direction scheme])
+  
+  ;; non-swing listeners:
+  (register-statement-selection-listener [this l args])
+  (register-argument-selection-listener [this l args])
+  (register-premise-selection-listener [this l args])
+
+  )
