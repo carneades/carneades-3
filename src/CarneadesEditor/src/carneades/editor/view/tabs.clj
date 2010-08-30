@@ -55,6 +55,7 @@
          (.setRolloverIcon (ImageIcon. (ClassLoader/getSystemResource
                      *closebutton-rollover-url*)))
          ;; (.setFocusable false)
+         (.setContentAreaFilled false)
          (.setRolloverEnabled true))
        (doseq [{:keys [listener args]} (deref *close-button-listeners*)]
          (apply add-action-listener closebutton listener args))
