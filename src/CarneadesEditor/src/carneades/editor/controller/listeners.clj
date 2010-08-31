@@ -127,7 +127,6 @@
                                   ;; so we need to use the do-swing macro
                                   (display-statement-search-result view path id stmt
                                                                    statement-formatted))
-                                 (Thread/sleep 3000)
                                  (recur (rest res))))))
                          (finally (do-swing
                                    (display-search-state view false)))))]
