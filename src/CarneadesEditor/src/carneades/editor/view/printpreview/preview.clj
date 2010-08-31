@@ -2,140 +2,125 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.editor.view.printpreview.preview
-  (:use clojure.contrib.def)
+  (:use clojure.contrib.def
+        clojure.contrib.swing-utils
+        [clojure.string :only (split)])
   (:import (javax.swing JPanel JFrame JButton)
+           (javax.print.attribute HashPrintRequestAttributeSet
+                                  standard.OrientationRequested)
            (java.awt Dimension Image Color image.BufferedImage)
-           (java.awt.print PrinterJob Printable)
-           (carneades.editor.uicomponents PrintPreviewView
+           (java.awt.print PrinterJob Printable PageFormat Book)
+           (carneades.editor.uicomponents PrintPreviewDialog
                                           PreviewContainer
                                           PagePreview)))
 
+;; we don't follow the MVC pattern for the print preview frame
+;; the view register the listeners itself
+;; this allow to build an autonome component for any print task
+
 (defvar- *horizontal-gap* 16)
 (defvar- *vertical-gap* 10)
+(defvar- *scale* (atom 100))
 
-;; (defvar- *previewcontainer*
-;;   (proxy [JPanel] []
-;;     (getPreferredSize
-;;      []
-;;      (let [n (proxy-super getComponentCount)]
-;;        (if (= n 0)
-;;          (Dimension. *horizontal-gap* *vertical-gap*)
-;;          (let [firstcomp (proxy-super getComponent 0)
-;;                dim (.getPreferredSize firstcomp)
-;;                width (.width dim)
-;;                height (.height dim)
-;;                parent (proxy-super getParent)
-;;                parentdim (.getSize parent)
-;;                ncol (max (/ (- (.width parentdim) *horizontal-gap*)
-;;                             (+ width *horizontal-gap*))
-;;                          1)
-;;                nrow (int (/ n ncol))
-;;                nrow (if (< (* nrow ncol) n) (inc nrow) nrow)
-;;                windowwidth (+ (* ncol (+ height *horizontal-gap*))
-;;                               *vertical-gap*)
-;;                windowheight (+ (* nrow (+ height *vertical-gap*))
-;;                                *vertical-gap*)
-;;                insets (proxy-super getInsets)]
-;;            (let [w (+ windowwidth (.left insets) (.right insets))
-;;                  h (+ windowheight (.top insets) (.bottom insets))]
-;;              (prn "previewcontainer")
-;;              (prn "w")
-;;              (prn w)
-;;              (prn "h")
-;;              (prn h)
-;;              (Dimension. w h))))))
-;;     (getMaximumSize
-;;      []
-;;      (.getPreferredSize this))
-;;     (getMinimumSize
-;;      []
-;;      (.getPreferredSize this))
-;;     (doLayout
-;;      []
-;;      (let [insets (proxy-super getInsets)
-;;            x (+ (.left insets) *horizontal-gap*)
-;;            y (+ (.top insets) *vertical-gap*)
-;;            n (proxy-super getComponentCount)]
-;;        (when-not (= n 0)
-;;          (let [firstcomp (proxy-super getComponent 0)
-;;                dim (.getPreferredSize firstcomp)
-;;                width (.width dim)
-;;                height (.height dim)
-;;                parentdim (.getSize (proxy-super getParent))
-;;                ncol (max (/ (- (.width parentdim) *horizontal-gap*)
-;;                             (+ width *horizontal-gap*))
-;;                          1)
-;;                nrow (int (/ n ncol))
-;;                nrow (if (< (* nrow ncol) n) (inc nrow) nrow)]
-;;            (letfn [(place-component
-;;                     [index]
-;;                     (loop [index index
-;;                            m 0
-;;                            x x]
-;;                       (cond (>= index n) nil
-;;                             (>= m ncol) [x index]
-;;                             :else
-;;                             (let [compo (proxy-super getComponent index)]
-;;                               (.setBounds compo x y width height)
-;;                               (recur (inc index) (inc m)
-;;                                      (+ x width *horizontal-gap*)))
-;;                             )))]
-;;              (loop [k 0
-;;                     y y
-;;                     index 0]
-;;              (when (< k nrow)
-;;                (when-let [[x index]  (place-component index)]
-;;                  (recur (inc k) (+ y (.left insets) *horizontal-gap*)
-;;                         index)))))))))))
+(defn print-document
+  ([printable]
+     (let [printjob (PrinterJob/getPrinterJob)
+           pageformat (.defaultPage printjob)]
+       (.setOrientation pageformat PageFormat/LANDSCAPE)
+       (print-document printable pageformat)))
+  ([printable pageformat]
+     (let [printjob (PrinterJob/getPrinterJob)
+           book (Book.)
+           attributes (HashPrintRequestAttributeSet.)]
+       (cond (= (.getOrientation pageformat) PageFormat/LANDSCAPE)
+             (.add attributes OrientationRequested/LANDSCAPE)
+             
+             (= (.getOrientation pageformat) PageFormat/PORTRAIT)
+             (.add attributes OrientationRequested/PORTRAIT))
+       ;; (.append book printable pageformat)
+       ;; (.setPageable printjob book)
+       (when (.printDialog printjob attributes)
+         (.setPrintable printjob printable)
+         (.print printjob attributes)))))
 
-;; (defn get-pagepreview [width height source]
-;;   (let [w (atom width)
-;;         h (atom height)
-;;         img (atom (.getScaledInstance source width height Image/SCALE_SMOOTH))
-;;         proxy (proxy [JPanel] []
-;;                 (setScaledSize
-;;                  [wi he]
-;;                  (reset! w wi)
-;;                  (reset! h he)
-;;                  (reset! img (.getScaledInstance (deref img)
-;;                                                  wi
-;;                                                  he
-;;                                                  Image/SCALE_SMOOTH))
-;;                  (proxy-super repaint))
-                
-;;                 (paint
-;;                  [g]
-;;                  (.setColor g (proxy-super getBackground))
-;;                  (.fillRect g 0 0 (proxy-super getWidth) (proxy-super getHeight))
-;;                  (.drawImage g (deref img) 0 0 this)
-;;                  (proxy-super paintBorder g)))]
-;;     (.flush (deref img))
-;;     proxy
-;;     ))
-
-(defn printpreview [graphcomponent]
-  (let [previewframe (PrintPreviewView.)
-        mainpanel (.mainPanel previewframe)
-        printjob (PrinterJob/getPrinterJob)
-        pageformat (.defaultPage printjob)
-        wpage (int (.getWidth pageformat))
+(defn- fill-previewcontainer [previewcontainer printable pageformat]
+  (let [wpage (int (.getWidth pageformat))
         hpage (int (.getHeight pageformat))
-        scale 10
+        scale (deref *scale*)
         w (int (/ (* wpage scale) 100))
-        h (int (/ (* hpage scale) 100))
-        previewcontainer (PreviewContainer.)]
+        h (int (/ (* hpage scale) 100))]
+    (.removeAll previewcontainer)
     (loop [img (BufferedImage. wpage hpage BufferedImage/TYPE_INT_RGB)
            pageindex 0]
       (let [g (.getGraphics img)]
         (.setColor g Color/white)
         (.fillRect g 0 0 wpage hpage)
-        (when (= (.print graphcomponent g pageformat pageindex)
+        (when (= (.print printable g pageformat pageindex)
                  Printable/PAGE_EXISTS)
-          (.add previewcontainer (PagePreview. wpage hpage img)
-                ;; (get-pagepreview wpage hpage img)
-                )
+          (.add previewcontainer (PagePreview. w h img))
           (recur (BufferedImage. wpage hpage BufferedImage/TYPE_INT_RGB)
                  (inc pageindex)))))
+    (.revalidate previewcontainer)
+    ))
+
+(defn- print-button-listener [event printable pageformat]
+  (print-document printable pageformat))
+
+(defn- portrait-button-listener [event landscapebutton
+                                 previewcontainer printable pageformat]
+  (let [portrait (.getSource event)]
+    (when (.isSelected portrait)
+      (.setSelected landscapebutton false)
+      (.setOrientation pageformat PageFormat/PORTRAIT)
+      (fill-previewcontainer previewcontainer printable pageformat))))
+
+(defn- landscape-button-listener [event portraitbutton previewframe
+                                  printable pageformat]
+  (let [landscape (.getSource event)]
+    (when (.isSelected landscape)
+      (.setSelected portraitbutton false)
+      (.setOrientation pageformat PageFormat/LANDSCAPE)
+      (fill-previewcontainer previewframe printable pageformat))))
+
+(defn- scale-combobox-listener [event previewcontainer printable pageformat]
+  (letfn [(parse-value
+           [s]
+           (Integer/parseInt (first (split s #"%"))))]
+   (let [combobox (.getSource event)
+         scale (parse-value (.getSelectedItem combobox))]
+     (reset! *scale* scale)
+     (fill-previewcontainer previewcontainer printable pageformat))))
+
+(defn- attach-listeners [previewframe previewcontainer printable pageformat]
+  (let [printbutton (.printButton previewframe)
+        closepreviewbutton (.closePreviewButton previewframe)
+        landscapetogglebutton (.landscapeToggleButton previewframe)
+        portraittogglebutton (.portraitToggleButton previewframe)
+        scalecombobox (.scaleComboBox previewframe)]
+    (add-action-listener printbutton print-button-listener printable pageformat)
+    (add-action-listener closepreviewbutton (fn [event] (.dispose previewframe)))
+    (add-action-listener portraittogglebutton portrait-button-listener
+                         landscapetogglebutton previewcontainer printable
+                         pageformat)
+    (add-action-listener landscapetogglebutton landscape-button-listener
+                         portraittogglebutton previewcontainer printable pageformat)
+    (add-action-listener scalecombobox scale-combobox-listener previewcontainer
+                         printable pageformat)
+    )
+  )
+
+(defn printpreview [parent printable]
+  (let [previewframe (PrintPreviewDialog. parent true)
+        mainpanel (.mainPanel previewframe)
+        printjob (PrinterJob/getPrinterJob)
+        pageformat (.defaultPage printjob)
+        previewcontainer (PreviewContainer.)
+        landscapetogglebutton (.landscapeToggleButton previewframe)]
+    (reset! *scale* 100)
+    (.setSelected landscapetogglebutton true)
+    (.setOrientation pageformat PageFormat/LANDSCAPE)
+    (attach-listeners previewframe previewcontainer printable pageformat)
+    (fill-previewcontainer previewcontainer printable pageformat)
     (.add mainpanel previewcontainer)
     (.revalidate mainpanel)
     (.setDefaultCloseOperation previewframe JFrame/DISPOSE_ON_CLOSE)
