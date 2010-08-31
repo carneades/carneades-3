@@ -31,12 +31,12 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="titleText" pref="228" max="32767" attributes="0"/>
-                          <Component id="idText" alignment="0" pref="228" max="32767" attributes="0"/>
+                          <Component id="titleText" pref="194" max="32767" attributes="0"/>
+                          <Component id="idText" alignment="0" pref="194" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="mainIssueTextArea" alignment="0" pref="270" max="32767" attributes="0"/>
+                  <Component id="mainIssueTextArea" alignment="0" pref="236" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -59,7 +59,7 @@
               <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="mainIssueTextArea" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="19" max="32767" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -96,7 +96,9 @@
     <Component class="javax.swing.JTextArea" name="mainIssueTextArea">
       <Properties>
         <Property name="columns" type="int" value="20"/>
+        <Property name="lineWrap" type="boolean" value="true"/>
         <Property name="rows" type="int" value="5"/>
+        <Property name="wrapStyleWord" type="boolean" value="true"/>
         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[0, 50]"/>
         </Property>

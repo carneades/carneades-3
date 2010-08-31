@@ -17,7 +17,7 @@ public class PreviewContainer extends JPanel {
     @Override
     public Dimension getPreferredSize() {
         int n = getComponentCount();
-
+        
         if (n == 0) {
             return new Dimension(H_GAP, V_GAP);
         }
