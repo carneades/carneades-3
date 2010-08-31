@@ -250,6 +250,10 @@
    [this f args]
    (apply add-mousepressed-listener *lkifsTree* f args))
 
+  (add-mousepressed-searchresult-listener
+   [this f args]
+   (apply add-mousepressed-listener *searchResultTable* f args))
+
   (add-open-file-menuitem-listener [this f args]
    (apply add-action-listener *openFileMenuItem* f args))
 
@@ -296,26 +300,41 @@
   (add-print-filemenuitem-listener
    [this f args]
    (apply add-action-listener *printFileMenuItem* f args))
-  
-  (add-search-button-listener
+
+  (add-searchresult-selection-listener
    [this f args]
-   (apply add-action-listener *searchButton* f args))
+   (register-searchresult-selection-listener f args))
+  
+  (register-search-listener
+   [this l args]
+   (register-search-button-listener l args))
+
+  (display-statement-search-result
+   [this path id stmt stmt-fmt]
+   (add-stmt-search-result path id stmt stmt-fmt))
+
+  (display-search-state
+   [this inprogress]
+   (set-search-state inprogress))
+
+  (display-statement
+   [this path ag stmt stmt-fmt]
+   (prn "display statement")
+   (open-graph this path ag stmt-fmt)
+   (let [component (get-component path (:id ag))]
+     (select-statement component stmt stmt-fmt)))
 
   (get-selected-object-in-tree
    [this]
    (selected-object-in-tree))
 
+  (get-selected-object-in-search-result
+   [this]
+   (selected-object-in-search-result))
+  
   (get-graphinfo-being-closed
    [this event]
    (graphinfo-being-closed event))
-
-  (get-searched-info
-   [this]
-   (let [text (.getSelectedItem *searchComboBox*)
-            options {}]
-     (if (nil? text)
-       nil
-       [(trim text) options])))
 
   (register-statement-selection-listener
    [this l args]
@@ -327,6 +346,6 @@
   
   (register-premise-selection-listener
    [this l args]
-   (swap! *premise-selection-listeners* conj {:listener l :args args}))
+   (swap! *premise-selection-listeners* conj {:listener l :args args})))
   
-  )
+  
