@@ -33,10 +33,16 @@
    [this polarity type])
   (display-argument-property
    [this id applicable weight direction scheme])
+  (display-search-state [this inprogress])
+  (display-statement-search-result
+   [this path id stmt stmt-fmt])
+  (display-statement
+   [this path ag stmt stmt-fmt])
   
   ;; non-swing listeners:
   (register-statement-selection-listener [this l args])
   (register-argument-selection-listener [this l args])
   (register-premise-selection-listener [this l args])
-
+  (register-search-listener [this l args]
+                            "calls l with s earchinfo searchbegins args")
   )

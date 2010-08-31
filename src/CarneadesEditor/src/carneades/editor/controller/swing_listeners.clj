@@ -9,7 +9,9 @@
         carneades.editor.controller.listeners
         carneades.editor.utils.swing)
   (:import (carneades.editor.uicomponents EditorApplicationView)
-           (carneades.editor.view.swinguiprotocol GraphInfo LkifFileInfo)))
+           (carneades.editor.view.swinguiprotocol GraphInfo
+                                                  LkifFileInfo
+                                                  StatementInfo)))
 
 (defn mouse-click-in-tree-listener [event view]
   (let [clickcount (.getClickCount event)]
@@ -25,6 +27,15 @@
                                            (:id info))
                 nil)
             nil))))
+
+(defn mouse-click-in-searchresult [event view]
+  (let [clickcount (.getClickCount event)]
+    (when-let [info (get-selected-object-in-search-result view)]
+      (when (= clickcount 2)
+        (condp instance? info
+          StatementInfo (on-open-statement view (:path info) (:id info)
+                                           (:stmt info))
+                nil)))))
 
 (defn close-file-listener [event view]
   (prn "close file listener")
@@ -77,11 +88,9 @@
   (if-let [[path id] (current-graph view)]
     (on-print-graph view path id)))
 
-(defvar- *searchactive* (atom false))
-
-(defn search-button-listener [event view]
-  (prn "Search button pressed")
-  (swap! *searchactive* not)
-  (if (deref *searchactive*)
-    (on-search-begins view (get-searched-info view))
-    (on-search-stops view)))
+(defn search-result-selection-listener [event view]
+  (let [info (get-selected-object-in-search-result view)]
+    (condp instance? info
+      StatementInfo (on-select-statement (:path info) (:id info)
+                                         (:stmt info) view)
+      nil)))

@@ -4,7 +4,9 @@
 (ns carneades.editor.controller.listeners
   (:use clojure.contrib.def
         clojure.contrib.pprint
+        [clojure.contrib.swing-utils :only (do-swing do-swing-and-wait)]
         carneades.engine.lkif.import
+        [carneades.engine.shell :only (search-statements)]
         carneades.engine.argument
         [carneades.engine.statement :only (statement-formatted)]
         carneades.editor.model.docmanager
@@ -98,12 +100,45 @@
   (let [ag (get-ag path id)]
     (print-graph view path ag statement-formatted)))
 
+(defvar- *end-search* (atom false))
+
 (defn on-search-begins [view searchinfo]
   (prn "Beginning search")
-  (prn searchinfo))
+  (let [text (first searchinfo)
+        options (second searchinfo)
+        [path id] (current-graph view)]
+    (if path
+      (let [ag (get-ag path id)
+            searchagent (agent {:results
+                                (search-statements ag statement-formatted
+                                                   {:search-content text})})
+            searchfn (fn [state]
+                       (try
+                         (let [{:keys [results]} state]
+                           (loop [res results]
+                             (let [stmt (first res)]
+                               (prn "stmt = ")
+                               (prn stmt)
+                               (prn "end search =")
+                               (prn (deref *end-search*))
+                               (when-not (or (nil? stmt) (deref *end-search*))
+                                 (do-swing
+                                  ;; we are not in the swing thread anymore
+                                  ;; so we need to use the do-swing macro
+                                  (display-statement-search-result view path id stmt
+                                                                   statement-formatted))
+                                 (Thread/sleep 3000)
+                                 (recur (rest res))))))
+                         (finally (do-swing
+                                   (display-search-state view false)))))]
+        (display-search-state view true)
+        (reset! *end-search* false)
+        (send searchagent searchfn))
+      (display-search-state view false))))
 
-(defn on-search-stops [view]
-  (prn "Stopping search"))
+(defn on-search-ends [view]
+  (prn "Stopping search")
+  (reset! *end-search* true))
 
 (defn on-select-statement [path id stmt view]
   (prn "on select statement")
@@ -134,3 +169,10 @@
                     :carneades.engine.argument/exception "Exception")]
     (display-premise-property view (:polarity pm) typestr)))
 
+(defn on-select-statement-search [view path id stmt]
+  (prn "on select statement search"))
+
+(defn on-open-statement [view path id stmt]
+  (prn "on-open-statement")
+  (let [ag (get-ag path id)]
+    (display-statement view path ag stmt statement-formatted)))
