@@ -287,6 +287,19 @@
     (add-mouse-zoom g graphcomponent)
     graphcomponent))
 
+(defn select-statement [component stmt stmt-fmt]
+  (let [graph (.getGraph component)]
+    (loop [vertices (seq (.getChildCells graph
+                                         (.getDefaultParent graph) true false))]
+      (if-let [cell (first vertices)]
+        (let [userobject (.getValue cell)]
+          (if (and (= (:stmt userobject) stmt)
+                   (= (:stmt-str userobject) stmt-fmt))
+            (do
+             (.setSelectionCell graph cell)
+             (.scrollCellToVisible component cell))
+            (recur (rest vertices))))))))
+
 (defn add-node-selection-listener [graphcomponent listener & args]
   "Adds a selection listener to the map. When a cell is selected, listener 
    will be invoked with the userobject of the cell as its first argument 

@@ -69,7 +69,7 @@
     (.setFocusable label false)
     (.setFocusable tabcomponent false)
     ;; (.setComponentPopupMenu label *tabPopupMenu*)
-    (.setBorder tabcomponent (BorderFactory/createEmptyBorder 5 5 5 5))
+    (.setBorder tabcomponent (BorderFactory/createEmptyBorder 0 0 0 0))
     (.setLayout tabcomponent (FlowLayout. FlowLayout/LEFT 0 0))
     (.add tabcomponent label)
     (.add tabcomponent closebutton)
