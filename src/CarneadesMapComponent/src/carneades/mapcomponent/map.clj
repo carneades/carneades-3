@@ -70,13 +70,8 @@
     (.setCellsBendable false)
     ))
 
-(defn- insert-vertex [#^mxGraph g parent name style]
-  (let [v (.insertVertex g parent nil name 10 10 40 40 style)]
-    (.updateCellSize g v)
-    v))
-
-(defn- insert-edge [#^mxGraph g parent userobject begin end style]
-  (.insertEdge g parent nil userobject begin end style))
+(defvar- *mincellwidth* 70)
+(defvar- *mincellheight* 40)
 
 (defn- getx [#^mxCell vertex]
   (.. vertex getGeometry getX))
@@ -89,6 +84,21 @@
 
 (defn- sety [#^mxCell vertex y]
   (.. vertex getGeometry (setY y)))
+
+(defn- insert-vertex [#^mxGraph g parent name style]
+  (let [v (.insertVertex g parent nil name 10 10 40 40 style)]
+    (.updateCellSize g v)
+    (let [geo (.getGeometry v)
+          w (.getWidth geo)
+          h (.getHeight geo)]
+      (when (< h *mincellheight*)
+        (.setHeight geo *mincellheight*))
+      (when (< w *mincellwidth*)
+        (.setWidth geo *mincellwidth*)))
+    v))
+
+(defn- insert-edge [#^mxGraph g parent userobject begin end style]
+  (.insertEdge g parent nil userobject begin end style))
 
 (defvar- *ymargin* 10)
 (defvar- *xmargin* 10)
