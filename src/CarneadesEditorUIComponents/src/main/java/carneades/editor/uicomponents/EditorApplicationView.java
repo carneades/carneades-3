@@ -36,12 +36,21 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
+        searchInButtonGroup = new javax.swing.ButtonGroup();
+        jSeparator4 = new javax.swing.JToolBar.Separator();
+        jSplitPane1 = new javax.swing.JSplitPane();
+        jSplitPane2 = new javax.swing.JSplitPane();
         leftTabbedPane = new javax.swing.JTabbedPane();
-        filesPane = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        searchPanel = new javax.swing.JPanel();
-        jSeparator4 = new javax.swing.JToolBar.Separator();
+        searchForPanel = new javax.swing.JPanel();
+        jCheckBox3 = new javax.swing.JCheckBox();
+        jCheckBox4 = new javax.swing.JCheckBox();
+        searchInPanel = new javax.swing.JPanel();
+        jRadioButton3 = new javax.swing.JRadioButton();
+        jRadioButton4 = new javax.swing.JRadioButton();
+        resultPanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
@@ -84,59 +93,6 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        mainPanel.setOneTouchExpandable(true);
-
-        leftPanel.setPreferredSize(new java.awt.Dimension(300, 10));
-        leftPanel.setLayout(new javax.swing.BoxLayout(leftPanel, javax.swing.BoxLayout.LINE_AXIS));
-
-        filesPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-
-        jPanel1.setPreferredSize(new java.awt.Dimension(306, 200));
-
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
-        lkifsTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
-        lkifsTree.setMaximumSize(new java.awt.Dimension(32767, 32767));
-        jScrollPane2.setViewportView(lkifsTree);
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        filesPane.setLeftComponent(jPanel1);
-
-        propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
-        propertiesPanel.setLayout(new javax.swing.BoxLayout(propertiesPanel, javax.swing.BoxLayout.PAGE_AXIS));
-        filesPane.setRightComponent(propertiesPanel);
-
-        leftTabbedPane.addTab("Files", filesPane);
-
-        javax.swing.GroupLayout searchPanelLayout = new javax.swing.GroupLayout(searchPanel);
-        searchPanel.setLayout(searchPanelLayout);
-        searchPanelLayout.setHorizontalGroup(
-            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 296, Short.MAX_VALUE)
-        );
-        searchPanelLayout.setVerticalGroup(
-            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 511, Short.MAX_VALUE)
-        );
-
-        leftTabbedPane.addTab("Search", searchPanel);
-
-        leftPanel.add(leftTabbedPane);
-
-        mainPanel.setLeftComponent(leftPanel);
-        mainPanel.setRightComponent(mapPanel);
-
         toolBar.setFloatable(false);
         toolBar.setRollover(true);
 
@@ -176,6 +132,153 @@ public class EditorApplicationView extends javax.swing.JFrame {
         zoomInButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         toolBar.add(zoomInButton);
 
+        jSplitPane1.setOneTouchExpandable(true);
+        jSplitPane1.setRightComponent(mapPanel);
+
+        jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+
+        leftTabbedPane.setMinimumSize(new java.awt.Dimension(60, 70));
+        leftTabbedPane.setPreferredSize(new java.awt.Dimension(330, 320));
+
+        jPanel1.setPreferredSize(new java.awt.Dimension(306, 200));
+
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
+        lkifsTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        lkifsTree.setMaximumSize(new java.awt.Dimension(32767, 32767));
+        jScrollPane2.setViewportView(lkifsTree);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        leftTabbedPane.addTab("Files", jPanel1);
+
+        searchScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        searchPanel.setPreferredSize(new java.awt.Dimension(306, 200));
+
+        searchComboBox.setEditable(true);
+
+        optionsPanel.setMinimumSize(new java.awt.Dimension(0, 116));
+        optionsPanel.setLayout(new javax.swing.BoxLayout(optionsPanel, javax.swing.BoxLayout.PAGE_AXIS));
+
+        searchForPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Search for:"));
+
+        jCheckBox3.setSelected(true);
+        jCheckBox3.setText("Statements");
+
+        jCheckBox4.setSelected(true);
+        jCheckBox4.setText("Arguments");
+
+        javax.swing.GroupLayout searchForPanelLayout = new javax.swing.GroupLayout(searchForPanel);
+        searchForPanel.setLayout(searchForPanelLayout);
+        searchForPanelLayout.setHorizontalGroup(
+            searchForPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(searchForPanelLayout.createSequentialGroup()
+                .addComponent(jCheckBox3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jCheckBox4)
+                .addContainerGap(81, Short.MAX_VALUE))
+        );
+        searchForPanelLayout.setVerticalGroup(
+            searchForPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(searchForPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(jCheckBox3)
+                .addComponent(jCheckBox4))
+        );
+
+        optionsPanel.add(searchForPanel);
+
+        searchInPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Search in:"));
+
+        searchInButtonGroup.add(jRadioButton3);
+        jRadioButton3.setSelected(true);
+        jRadioButton3.setText("Current graph");
+
+        searchInButtonGroup.add(jRadioButton4);
+        jRadioButton4.setText("All LKIF files");
+
+        javax.swing.GroupLayout searchInPanelLayout = new javax.swing.GroupLayout(searchInPanel);
+        searchInPanel.setLayout(searchInPanelLayout);
+        searchInPanelLayout.setHorizontalGroup(
+            searchInPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(searchInPanelLayout.createSequentialGroup()
+                .addComponent(jRadioButton3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jRadioButton4)
+                .addContainerGap(72, Short.MAX_VALUE))
+        );
+        searchInPanelLayout.setVerticalGroup(
+            searchInPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(searchInPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(jRadioButton3)
+                .addComponent(jRadioButton4))
+        );
+
+        optionsPanel.add(searchInPanel);
+
+        showOptionsButton.setText("Show options");
+
+        resultPanel.setLayout(new javax.swing.BoxLayout(resultPanel, javax.swing.BoxLayout.Y_AXIS));
+
+        jScrollPane1.setViewportView(searchResultList);
+
+        resultPanel.add(jScrollPane1);
+        resultPanel.add(searchProgressBar);
+
+        searchButton.setText("Search");
+
+        javax.swing.GroupLayout searchPanelLayout = new javax.swing.GroupLayout(searchPanel);
+        searchPanel.setLayout(searchPanelLayout);
+        searchPanelLayout.setHorizontalGroup(
+            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(resultPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                    .addComponent(optionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                    .addComponent(searchComboBox, 0, 300, Short.MAX_VALUE)
+                    .addComponent(showOptionsButton, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                    .addComponent(searchButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        searchPanelLayout.setVerticalGroup(
+            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(searchPanelLayout.createSequentialGroup()
+                .addGap(4, 4, 4)
+                .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(showOptionsButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(optionsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(resultPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        searchScrollPane.setViewportView(searchPanel);
+
+        leftTabbedPane.addTab("Search", searchScrollPane);
+
+        jSplitPane2.setLeftComponent(leftTabbedPane);
+
+        propertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Properties"));
+        propertiesPanel.setLayout(new javax.swing.BoxLayout(propertiesPanel, javax.swing.BoxLayout.PAGE_AXIS));
+        jSplitPane2.setRightComponent(propertiesPanel);
+
+        jSplitPane1.setLeftComponent(jSplitPane2);
+
         fileMenu.setText("File");
 
         openFileMenuItem.setText("Open...");
@@ -199,8 +302,8 @@ public class EditorApplicationView extends javax.swing.JFrame {
         printPreviewFileMenuItem.setText("Print Preview");
         fileMenu.add(printPreviewFileMenuItem);
 
-        printMenuItem.setText("Print...");
-        fileMenu.add(printMenuItem);
+        printFileMenuItem.setText("Print...");
+        fileMenu.add(printFileMenuItem);
         fileMenu.add(jSeparator1);
 
         exitFileMenuItem.setText("Exit");
@@ -245,15 +348,15 @@ public class EditorApplicationView extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 821, Short.MAX_VALUE)
             .addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 821, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 821, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(toolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 542, Short.MAX_VALUE))
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 542, Short.MAX_VALUE))
         );
 
         pack();
@@ -290,10 +393,14 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JMenuItem exportGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem exportLkifFileMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenu fileMenu;
-    private javax.swing.JSplitPane filesPane;
     public final javax.swing.JPopupMenu graphPopupMenu = new javax.swing.JPopupMenu();
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JCheckBox jCheckBox3;
+    private javax.swing.JCheckBox jCheckBox4;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JRadioButton jRadioButton3;
+    private javax.swing.JRadioButton jRadioButton4;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
@@ -302,30 +409,43 @@ public class EditorApplicationView extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
-    public final javax.swing.JPanel leftPanel = new javax.swing.JPanel();
+    private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JTabbedPane leftTabbedPane;
     public final javax.swing.JPopupMenu lkifFilePopupMenu = new javax.swing.JPopupMenu();
     public final javax.swing.JTree lkifsTree = new javax.swing.JTree();
-    public final javax.swing.JSplitPane mainPanel = new javax.swing.JSplitPane();
     public final javax.swing.JTabbedPane mapPanel = new javax.swing.JTabbedPane();
     private javax.swing.JMenuBar menuBar;
     public final javax.swing.JButton openFileButton = new javax.swing.JButton();
     public final javax.swing.JMenuItem openFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem openGraphMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JPanel optionsPanel = new javax.swing.JPanel();
     private javax.swing.JMenuItem pasteMenuItem;
-    public final javax.swing.JMenuItem printMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem printFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem printPreviewFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JPanel propertiesPanel = new javax.swing.JPanel();
+    private javax.swing.JPanel resultPanel;
     public final javax.swing.JMenuItem saveAsFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JButton saveFileButton = new javax.swing.JButton();
     public final javax.swing.JMenuItem saveFileMenuItem = new javax.swing.JMenuItem();
-    private javax.swing.JPanel searchPanel;
+    public final javax.swing.JButton searchButton = new javax.swing.JButton();
+    public final javax.swing.JComboBox searchComboBox = new javax.swing.JComboBox();
+    private javax.swing.JPanel searchForPanel;
+    private javax.swing.ButtonGroup searchInButtonGroup;
+    private javax.swing.JPanel searchInPanel;
+    public final javax.swing.JPanel searchPanel = new javax.swing.JPanel();
+    public final javax.swing.JProgressBar searchProgressBar = new javax.swing.JProgressBar();
+    public final javax.swing.JList searchResultList = new javax.swing.JList();
+    public final javax.swing.JScrollPane searchScrollPane = new javax.swing.JScrollPane();
+    public final javax.swing.JButton showOptionsButton = new javax.swing.JButton();
     public final javax.swing.JPopupMenu tabPopupMenu = new javax.swing.JPopupMenu();
     public final javax.swing.JToolBar toolBar = new javax.swing.JToolBar();
     public final javax.swing.JButton zoomInButton = new javax.swing.JButton();
     public final javax.swing.JButton zoomOutButton = new javax.swing.JButton();
     public final javax.swing.JButton zoomResetButton = new javax.swing.JButton();
     // End of variables declaration//GEN-END:variables
+
+    private final static String APPLICATION_NAME = "Carneades Editor";
 
     // our modifications:
     static {
@@ -339,6 +459,11 @@ public class EditorApplicationView extends javax.swing.JFrame {
             }
         } catch (Exception e) {
         }
+
+        // mac os x:
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name",
+                APPLICATION_NAME);
     }
 
     public static EditorApplicationView viewInstance = new EditorApplicationView();
