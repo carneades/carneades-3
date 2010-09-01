@@ -17,8 +17,9 @@
                                  Returns File or nil")
   (ask-file-to-save [this description extension suggested])
   (export-graph-to-svg [this ag stmt-fmt filename])
-  (display-lkif-content [this file graphids]
-                        "display information relative to an LKIF file")
+  (display-lkif-content [this file graphinfos]
+                        "display information relative to an LKIF file. 
+                         graphinfos is a seq of [id title] ")
   (hide-lkif-content [this path])
   (print-preview [this path ag stmt-fmt])
   (print-graph [this path ag stmt-fmt])
@@ -32,11 +33,17 @@
   (display-premise-property
    [this polarity type])
   (display-argument-property
-   [this id applicable weight direction scheme])
+   [this title applicable weight direction scheme])
+  (display-search-state [this inprogress])
+  (display-statement-search-result
+   [this path id stmt stmt-fmt])
+  (display-statement
+   [this path ag stmt stmt-fmt])
   
   ;; non-swing listeners:
   (register-statement-selection-listener [this l args])
   (register-argument-selection-listener [this l args])
   (register-premise-selection-listener [this l args])
-
+  (register-search-listener [this l args]
+                            "calls l with s earchinfo searchbegins args")
   )
