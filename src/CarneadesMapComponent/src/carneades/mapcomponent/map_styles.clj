@@ -147,17 +147,20 @@
   (make-style
    "proConclusionEdgeStyle"
    (merge (:style *conclusion-edge-style*)
-          {mxConstants/STYLE_ENDARROW mxConstants/ARROW_CLASSIC})))
+          {mxConstants/STYLE_ENDARROW mxConstants/ARROW_CLASSIC
+           mxConstants/STYLE_STROKECOLOR *pro-arg-color*})))
 
 (defvar- *con-conclusion-edge-style*
   (make-style "conConclusionEdgeStyle"
    (merge (:style *conclusion-edge-style*)
-          {mxConstants/STYLE_ENDARROW mxConstants/ARROW_CLASSIC})))
+          {mxConstants/STYLE_ENDARROW mxConstants/ARROW_CLASSIC
+           mxConstants/STYLE_STROKECOLOR *con-arg-color*})))
 
 (defvar- *premise-edge-style*
   (make-style
    "premiseEdgeStyle"
-   (:style *edge-style*)))
+   (merge (:style *edge-style*)
+          {mxConstants/STYLE_STROKECOLOR *pro-arg-color*})))
 
 (defvar- *assumption-edge-style*
   (make-style
@@ -171,32 +174,27 @@
    "exceptionEdgeStyle"
    (merge (:style *premise-edge-style*)
           {mxConstants/STYLE_DASHED "true"
-           mxConstants/STYLE_DASH_PATTERN "8.0,2.0"})))
+           mxConstants/STYLE_DASH_PATTERN "8.0,2.0"
+           mxConstants/STYLE_STROKECOLOR *con-arg-color*})))
 
 (defvar- *neg-premise-edge-style*
   (make-style
    "negPremiseEdgeStyle"
    (merge (:style *premise-edge-style*)
-          ;; {mxConstants/STYLE_ENDARROW mxConstants/ARROW_OVAL}
           {mxConstants/STYLE_SHAPE *carneades-shape-connector*
-           mxConstants/STYLE_ENDARROW *carneades-negarrow*}
-          )))
+           mxConstants/STYLE_ENDARROW *carneades-negarrow*})))
 
 (defvar- *neg-assumption-edge-style*
   (make-style
    "negAssumptionEdgeStyle"
    (merge (:style *assumption-edge-style*)
-          (:style *neg-premise-edge-style*)
-          ;; {mxConstants/STYLE_ENDARROW mxConstants/ARROW_OVAL}
-          )))
+          (:style *neg-premise-edge-style*))))
 
 (defvar- *neg-exception-edge-style*
   (make-style
    "negExceptionEdgeStyle"
    (merge (:style *exception-edge-style*)
-          (:style *neg-premise-edge-style*)
-          ;; {mxConstants/STYLE_ENDARROW mxConstants/ARROW_OVAL}
-          )))
+          (:style *neg-premise-edge-style*))))
 
 (defvar- *styles*
   [*global-style*
