@@ -48,7 +48,7 @@ public class StatementPropertiesView extends javax.swing.JPanel {
 
         jLabel2.setText("Proof standard:");
 
-        proofstandardComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Best argument", "Beyond reasonable doubt", "Clear and convincing evidence", "Dialectically validity", "Scientilla of evidence" }));
+        proofstandardComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Dialectical Validity", "Scintilla of Evidence", "Preponderance of Evidence", "Clear and Convincing Evidence", "Beyond Reasonable Doubt " }));
 
         jLabel3.setText("Status:");
 
@@ -56,7 +56,7 @@ public class StatementPropertiesView extends javax.swing.JPanel {
 
         complementacceptableCheckBox.setText("Complement acceptable");
 
-        statusComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Stated", "Accepted", "Rejected", "Questioned" }));
+        statusComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Stated", "Questioned", "Accepted", "Rejected" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

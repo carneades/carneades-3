@@ -18,12 +18,12 @@
                      :rejected "Rejected"
                      :questioned "Questioned"})
 
-(defvar- *proofstandards* {:ba "Best argument"
-                           :pe "Best argument"
-                           :brd "Beyond reasonable doubt"
-                           :cce "Clear and convincing evidence"
-                           :dv "Dialectically validity"
-                           :se "Scientilla of evidence"})
+(defvar- *proofstandards* {:ba "Preponderance of Evidence"
+                           :pe "Preponderance of Evidence"
+                           :brd "Beyond Reasonable Doubt"
+                           :cce "Clear and Convincing Evidence"
+                           :dv "Dialectical Validity"
+                           :se "Scintilla of Evidence"})
 
 (defn- acceptable-checkbox-listener [event]
   ;; there is no read-only checkboxes in Swing, we cancel the change to make

@@ -7,16 +7,14 @@
   (:import carneades.editor.uicomponents.PremisePropertiesView))
 
 (defvar- *premiseProperties* (PremisePropertiesView/instance))
-(defvar- *proButton* (.proButton *premiseProperties*))
-(defvar- *conButton* (.conButton *premiseProperties*))
+(defvar- *negatedCheckBox* (.negatedCheckBox *premiseProperties*))
 (defvar- *typeComboBox* (.typeComboBox *premiseProperties*))
 
 (defn init-premise-properties []
   (PremisePropertiesView/reset))
 
 (defn get-premise-properties-panel [polarity type]
-  (.setSelected *proButton* polarity)
-  (.setSelected *conButton* (not polarity))
+  (.setSelected *negatedCheckBox* (not polarity))
   (.setSelectedItem *typeComboBox* type)
   *premiseProperties*)
 

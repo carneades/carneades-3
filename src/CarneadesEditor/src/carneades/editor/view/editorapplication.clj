@@ -110,8 +110,8 @@
            (.setVisible *frame* true)))))
 
   (display-lkif-content
-   [this file graphids]
-   (add-lkif-content file graphids)
+   [this file graphinfos]
+   (add-lkif-content file graphinfos)
    (enable-file-items))
 
   (hide-lkif-content

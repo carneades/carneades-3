@@ -40,7 +40,9 @@
         (display-error view *file-error* (format *file-already-opened* path))
         (when-let [content (lkif-import path)]
           (add-doc *docmanager* path content)
-          (display-lkif-content view file (get-ags-id path))
+          (display-lkif-content view file
+                                (map (fn [id] [id (:title (get-ag path id))])
+                                     (get-ags-id path)))
           (display-lkif-property view path))))))
 
 (defn on-select-graphid [view path graphid]
@@ -163,7 +165,7 @@
   (prn pm)
   (let [type (:type pm)
         typestr (condp = type
-                    :carneades.engine.argument/ordinary-premise "Ordinary premise"
+                    :carneades.engine.argument/ordinary-premise "Premise"
                     :carneades.engine.argument/assumption "Assumption"
                     :carneades.engine.argument/exception "Exception")]
     (display-premise-property view (:polarity pm) typestr)))
