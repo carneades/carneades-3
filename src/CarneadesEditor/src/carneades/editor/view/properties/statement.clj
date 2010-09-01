@@ -13,6 +13,9 @@
 (defvar- *acceptableCheckBox* (.acceptableCheckBox *statementProperties*))
 (defvar- *complementacceptableCheckBox* (.complementacceptableCheckBox *statementProperties*))
 
+(defvar- *mapTitleText* (.mapTitleText *statementProperties*))
+(defvar- *pathText* (.pathText *statementProperties*))
+
 (defvar- *statuses* {:stated "Stated"
                      :accepted "Accepted"
                      :rejected "Rejected"
@@ -40,7 +43,9 @@
   (add-action-listener *complementacceptableCheckBox*
                        complementacceptable-checkbox-listener))
 
-(defn get-statement-properties-panel [stmt status proofstandard acceptable complement-acceptable]
+(defn get-statement-properties-panel [path maptitle stmt status proofstandard acceptable complement-acceptable]
+  (.setText *pathText* path)
+  (.setText *mapTitleText* maptitle)
   (.setText *statementTextArea* stmt)
   (.setSelectedItem *statusComboBox* (get *statuses* status))
   (.setSelectedItem *proofstandardComboBox* (get *proofstandards* proofstandard))

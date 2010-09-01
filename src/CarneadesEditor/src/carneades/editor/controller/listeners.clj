@@ -38,12 +38,17 @@
     (let [path (.getPath file)]
       (if (doc-exists? *docmanager* path)
         (display-error view *file-error* (format *file-already-opened* path))
-        (when-let [content (lkif-import path)]
-          (add-doc *docmanager* path content)
-          (display-lkif-content view file
-                                (map (fn [id] [id (:title (get-ag path id))])
-                                     (get-ags-id path)))
-          (display-lkif-property view path))))))
+        (try
+          (prn "set busy")
+          (set-busy view true)
+          (when-let [content (lkif-import path)]
+            (add-doc *docmanager* path content)
+            (display-lkif-content view file
+                                  (map (fn [id] [id (:title (get-ag path id))])
+                                       (get-ags-id path)))
+            (display-lkif-property view path))
+          (finally
+           (set-busy view false)))))))
 
 (defn on-select-graphid [view path graphid]
   (let [ag (get-ag path graphid)
@@ -78,7 +83,7 @@
 
 (defn on-export-graph [view path id]
   (when-let [ag (get-ag path id)]
-    (when-let [file (ask-file-to-save view "SVG Files" "svg"
+    (when-let [file (ask-file-to-save view "SVG Files" #{"svg"} 
                                       (File. (str id ".svg")))]
       (let [filename (.getPath file)]
         (export-graph-to-svg view ag statement-formatted filename)))))
@@ -105,11 +110,10 @@
 (defvar- *end-search* (atom false))
 
 (defn on-search-begins [view searchinfo]
-  (prn "Beginning search")
   (let [text (first searchinfo)
         options (second searchinfo)
         [path id] (current-graph view)]
-    (if path
+    (if (and path (not (empty? text)))
       (let [ag (get-ag path id)
             searchagent (agent {:results
                                 (search-statements ag statement-formatted
@@ -119,10 +123,6 @@
                          (let [{:keys [results]} state]
                            (loop [res results]
                              (let [stmt (first res)]
-                               (prn "stmt = ")
-                               (prn stmt)
-                               (prn "end search =")
-                               (prn (deref *end-search*))
                                (when-not (or (nil? stmt) (deref *end-search*))
                                  (do-swing
                                   ;; we are not in the swing thread anymore
@@ -144,14 +144,16 @@
 (defn on-select-statement [path id stmt view]
   (prn "on select statement")
   (prn stmt)
-  (let [node (get-node (get-ag path id) stmt)
+  (let [ag (get-ag path id)
+        node (get-node ag stmt)
         status (:status node)
         proofstandard (:standard node)
         acceptable (:acceptable node)
         complement-acceptable (:complement-acceptable node)]
     (prn "node = ")
     (prn node)
-    (display-statement-property view (statement-formatted stmt) status
+    (display-statement-property view path (:title ag)
+                                (statement-formatted stmt) status
                                 proofstandard acceptable complement-acceptable)))
 
 (defn on-select-argument [path id arg view]
