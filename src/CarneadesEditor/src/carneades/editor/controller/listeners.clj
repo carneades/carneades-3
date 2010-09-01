@@ -122,7 +122,7 @@
   (prn "on select argument")
   (prn arg)
   (display-argument-property
-   view (str (:id arg)) (:applicable arg) (:weight arg) (:direction arg) (:scheme arg)))
+   view (:title arg) (:applicable arg) (:weight arg) (:direction arg) (:scheme arg)))
 
 (defn on-select-premise [path id pm view]
   (prn "on select premise")

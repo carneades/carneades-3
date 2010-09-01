@@ -8,7 +8,7 @@
 
 (defvar- *argumentProperties* (ArgumentPropertiesView/instance))
 
-(defvar- *idText* (.idText *argumentProperties*))
+(defvar- *titleText* (.titleText *argumentProperties*))
 (defvar- *applicableCheckBox* (.applicableCheckBox *argumentProperties*))
 (defvar- *weightSpinner* (.weightSpinner *argumentProperties*))
 (defvar- *proButton* (.proButton *argumentProperties*))
@@ -22,8 +22,8 @@
   (ArgumentPropertiesView/reset)
   (add-action-listener *applicableCheckBox* applicable-checkbox-listener))
 
-(defn get-argument-properties-panel [id applicable weight direction scheme]
-  (.setText *idText* id)
+(defn get-argument-properties-panel [title applicable weight direction scheme]
+  (.setText *titleText* title)
   (.setSelected *applicableCheckBox* applicable)
   (.setValue *weightSpinner* weight)
   (.setSelected *proButton* (= direction :pro))
