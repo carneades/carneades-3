@@ -104,11 +104,11 @@
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="5">
-            <StringItem index="0" value="Best argument"/>
-            <StringItem index="1" value="Beyond reasonable doubt"/>
-            <StringItem index="2" value="Clear and convincing evidence"/>
-            <StringItem index="3" value="Dialectically validity"/>
-            <StringItem index="4" value="Scientilla of evidence"/>
+            <StringItem index="0" value="Dialectical Validity"/>
+            <StringItem index="1" value="Scintilla of Evidence"/>
+            <StringItem index="2" value="Preponderance of Evidence"/>
+            <StringItem index="3" value="Clear and Convincing Evidence"/>
+            <StringItem index="4" value="Beyond Reasonable Doubt "/>
           </StringArray>
         </Property>
       </Properties>
@@ -142,9 +142,9 @@
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="4">
             <StringItem index="0" value="Stated"/>
-            <StringItem index="1" value="Accepted"/>
-            <StringItem index="2" value="Rejected"/>
-            <StringItem index="3" value="Questioned"/>
+            <StringItem index="1" value="Questioned"/>
+            <StringItem index="2" value="Accepted"/>
+            <StringItem index="3" value="Rejected"/>
           </StringArray>
         </Property>
       </Properties>

@@ -86,7 +86,7 @@
                      TreeSelectionModel/SINGLE_TREE_SELECTION)
   (.setShowsRootHandles *lkifsTree* true))
 
-(defn add-lkif-content [file graphids]
+(defn add-lkif-content [file graphinfos]
   (with-tree *lkifsTree*
     (let [model (.getModel *lkifsTree*)
           root (.getRoot model)
@@ -94,8 +94,8 @@
                                   (.getName file))
           lkif-file (DefaultMutableTreeNode. lkifinfo)]
       (.add root lkif-file)
-      (doseq [id graphids]
-        (.add lkif-file (DefaultMutableTreeNode. (GraphInfo. lkifinfo id))))
+      (doseq [[id title] graphinfos]
+        (.add lkif-file (DefaultMutableTreeNode. (GraphInfo. lkifinfo id title))))
       (.reload model root)
       (let [path (TreePath. (.getPath lkif-file))]
         (.expandPath *lkifsTree* path)
