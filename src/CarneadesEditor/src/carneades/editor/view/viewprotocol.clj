@@ -17,8 +17,9 @@
                                  Returns File or nil")
   (ask-file-to-save [this description extension suggested])
   (export-graph-to-svg [this ag stmt-fmt filename])
-  (display-lkif-content [this file graphids]
-                        "display information relative to an LKIF file")
+  (display-lkif-content [this file graphinfos]
+                        "display information relative to an LKIF file. 
+                         graphinfos is a seq of [id title] ")
   (hide-lkif-content [this path])
   (print-preview [this path ag stmt-fmt])
   (print-graph [this path ag stmt-fmt])

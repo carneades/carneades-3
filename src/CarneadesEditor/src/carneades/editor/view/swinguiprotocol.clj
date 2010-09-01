@@ -34,8 +34,12 @@
 (defrecord LkifFileInfo [path filename] Object
   (toString [this] filename))
 
-(defrecord GraphInfo [lkifinfo id] Object
-  (toString [this] id))
+(defrecord GraphInfo [lkifinfo id title] Object
+  (toString
+   [this]
+   (if (empty? title)
+     (format "%s [title missing]" id)
+     title)))
 
 ;; stored in the search result:
 (defrecord StatementInfo [path id stmt stmt-fmt] Object

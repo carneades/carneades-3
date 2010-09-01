@@ -337,7 +337,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
         fileMenu.add(printFileMenuItem);
         fileMenu.add(jSeparator1);
 
-        exitFileMenuItem.setText("Exit");
+        exitFileMenuItem.setText("Quit");
         exitFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exitFileMenuItemActionPerformed(evt);

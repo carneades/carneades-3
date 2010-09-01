@@ -183,7 +183,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="exitFileMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Exit"/>
+                <Property name="text" type="java.lang.String" value="Quit"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exitFileMenuItemActionPerformed"/>

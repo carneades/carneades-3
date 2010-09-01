@@ -33,19 +33,12 @@ public class PremisePropertiesView extends javax.swing.JPanel {
 
         proConGroup = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-
-        proConGroup.add(proButton);
-        proButton.setText("Pro");
-
-        proConGroup.add(conButton);
-        conButton.setText("Con");
 
         jLabel1.setText("Type:");
 
-        jLabel2.setText("Polarity:");
+        typeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Premise", "Assumption", "Exception" }));
 
-        typeComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Ordinary premise", "Assumption", "Exception" }));
+        negatedCheckBox.setText("Negated");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -54,39 +47,30 @@ public class PremisePropertiesView extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(proButton)
-                        .addGap(12, 12, 12)
-                        .addComponent(conButton))
-                    .addComponent(typeComboBox, 0, 170, Short.MAX_VALUE))
+                        .addComponent(jLabel1)
+                        .addGap(37, 37, 37)
+                        .addComponent(typeComboBox, 0, 162, Short.MAX_VALUE))
+                    .addComponent(negatedCheckBox))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(proButton)
-                    .addComponent(jLabel2)
-                    .addComponent(conButton))
-                .addGap(14, 14, 14)
+                .addGap(15, 15, 15)
+                .addComponent(negatedCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(typeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addContainerGap(171, Short.MAX_VALUE))
+                .addContainerGap(176, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public final javax.swing.JRadioButton conButton = new javax.swing.JRadioButton();
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    public final javax.swing.JRadioButton proButton = new javax.swing.JRadioButton();
+    public final javax.swing.JCheckBox negatedCheckBox = new javax.swing.JCheckBox();
     private javax.swing.ButtonGroup proConGroup;
     public final javax.swing.JComboBox typeComboBox = new javax.swing.JComboBox();
     // End of variables declaration//GEN-END:variables

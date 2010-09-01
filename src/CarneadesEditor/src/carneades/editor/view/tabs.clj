@@ -77,7 +77,9 @@
     tabcomponent))
 
 (defn get-tabtitle [ag]
-  (format "%s - %s " (:id ag) (:title ag)))
+  (if (empty? (:title ag))
+    (format "%s [title missing]" (:id ag))
+    (:title ag)))
 
 ;; (defn get-tab [tabpanel title]
 ;;   "returns the index of the tab titled title or nil if it does not exist"
