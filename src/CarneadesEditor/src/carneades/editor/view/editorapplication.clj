@@ -178,8 +178,8 @@
    (show-properties (get-premise-properties-panel polarity type)))
     
   (display-argument-property
-   [this id applicable weight direction scheme]
-   (show-properties (get-argument-properties-panel id applicable
+   [this title applicable weight direction scheme]
+   (show-properties (get-argument-properties-panel title applicable
                                                    weight direction scheme)))
 
   (ask-file-to-save
