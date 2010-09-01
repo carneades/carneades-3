@@ -104,11 +104,8 @@ Returns a sequence of the variables in the term"
     (fatom? s)))
 
 (defn statement-pos? [s]
-  (or (string? s)
-    (symbol? s)
-    (fatom? s)
-    (and (nonemptyseq? s)
-      (not (= (first s) 'not)))))
+  (not (and (nonemptyseq? s)
+         (= (first s) 'not))))
 
 (defn statement-neg? [s]
   (not (statement-pos? s)))
