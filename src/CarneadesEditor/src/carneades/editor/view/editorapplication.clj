@@ -25,7 +25,7 @@
         carneades.editor.view.aboutbox
         carneades.editor.view.printpreview.preview)
   (:import (carneades.editor.uicomponents EditorApplicationView)
-           (java.awt EventQueue)
+           (java.awt EventQueue Cursor)
            (javax.swing UIManager JFrame JFileChooser JOptionPane)
            (carneades.mapcomponent.map StatementCell ArgumentCell PremiseCell)))
 
@@ -128,24 +128,28 @@
        (if component
          (.setSelectedIndex *mapPanel*
                             (.indexOfComponent *mapPanel* component))
-         (let [component (create-graph-component ag stmt-fmt)
-               ;; ag (:arguments
-               ;;   (first (solutions
-               ;;           (engine
-               ;;            '(hund-muss-neuangemeldet-werden ?h)))))
-               component
-               (create-graph-component ag
-                 stmt-fmt)]
-           ;; (printpreview component)
-           (add-node-selection-listener component #(node-selection-listener
-                                                    path (:id ag) %))
-           (add-component component path (:id ag))
-           (.add *mapPanel* title component)
-           (.setTabComponentAt *mapPanel*
-                               (.indexOfComponent *mapPanel* component)
-                               (create-tabcomponent title))
-           (.setSelectedComponent *mapPanel* component)
-           (enable-diagram-buttons-and-menus))))))
+         (try
+           (set-busy this true)
+           (let [component (create-graph-component ag stmt-fmt)
+                 ;; ag (:arguments
+                 ;;   (first (solutions
+                 ;;           (engine
+                 ;;            '(hund-muss-neuangemeldet-werden ?h)))))
+                 component
+                 (create-graph-component ag
+                                         stmt-fmt)]
+             ;; (printpreview component)
+             (add-node-selection-listener component #(node-selection-listener
+                                                      path (:id ag) %))
+             (add-component component path (:id ag))
+             (.add *mapPanel* title component)
+             (.setTabComponentAt *mapPanel*
+                                 (.indexOfComponent *mapPanel* component)
+                                 (create-tabcomponent title))
+             (.setSelectedComponent *mapPanel* component)
+             (enable-diagram-buttons-and-menus))
+           (finally
+           (set-busy this false)))))))
 
   (close-graph
    [this path id]
@@ -168,8 +172,9 @@
    (show-properties (get-graph-properties-panel id title mainissue)))
 
   (display-statement-property
-   [this stmt status proofstandard acceptable complement-acceptable]
+   [this path maptitle stmt status proofstandard acceptable complement-acceptable]
    (show-properties (get-statement-properties-panel
+                     path maptitle
                      stmt status proofstandard
                      acceptable complement-acceptable)))
 
@@ -183,7 +188,7 @@
                                                    weight direction scheme)))
 
   (ask-file-to-save
-   [this-view description extension suggested]
+   [this-view description extensions suggested]
    (let [jc (proxy [JFileChooser] []
               (approveSelection
                []
@@ -193,7 +198,7 @@
                                            "Overwrite existing file?")
                      (proxy-super approveSelection))
                    (proxy-super approveSelection)))))]
-     (.setFileFilter jc (create-file-filter description extension))
+     (.setFileFilter jc (create-file-filter description extensions))
      (when-let [dir (deref *dialog-current-directory*)]
        (.setCurrentDirectory jc dir))
      (when suggested
@@ -213,7 +218,7 @@
   (ask-lkif-file-to-open
    [this]
    (let [jc (JFileChooser.)]
-     (.setFileFilter jc (create-file-filter "LKIF files" "xml"))
+     (.setFileFilter jc (create-file-filter "LKIF files"  #{"xml" "lkif"} ))
      (when-let [dir (deref *dialog-current-directory*)]
        (.setCurrentDirectory jc dir))
      (let [val (.showOpenDialog jc *frame*)]
@@ -324,6 +329,12 @@
    (let [component (get-component path (:id ag))]
      (select-statement component stmt stmt-fmt)))
 
+  (set-busy
+   [this isbusy]
+   (if isbusy
+     (.setCursor *frame* Cursor/WAIT_CURSOR)
+     (.setCursor *frame* (Cursor/getDefaultCursor))))
+  
   (get-selected-object-in-tree
    [this]
    (selected-object-in-tree))

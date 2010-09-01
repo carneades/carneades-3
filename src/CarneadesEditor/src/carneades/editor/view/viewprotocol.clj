@@ -15,7 +15,7 @@
   (current-graph [this] "returns [path id] for the graph currently edited")
   (ask-lkif-file-to-open [this] "ask the user the LKIF file to open. 
                                  Returns File or nil")
-  (ask-file-to-save [this description extension suggested])
+  (ask-file-to-save [this description extensions suggested])
   (export-graph-to-svg [this ag stmt-fmt filename])
   (display-lkif-content [this file graphinfos]
                         "display information relative to an LKIF file. 
@@ -29,7 +29,7 @@
   (ask-confirmation [this title content])
   (display-error [this title content])
   (display-statement-property
-   [this stmt status proofstandard acceptable complement-acceptable])
+   [this path maptitle stmt status proofstandard acceptable complement-acceptable])
   (display-premise-property
    [this polarity type])
   (display-argument-property
@@ -39,6 +39,8 @@
    [this path id stmt stmt-fmt])
   (display-statement
    [this path ag stmt stmt-fmt])
+  (set-busy
+   [this isbusy])
   
   ;; non-swing listeners:
   (register-statement-selection-listener [this l args])

@@ -150,6 +150,8 @@
     ;; we translate to make all edges and vertices visible
     (translate-right g p vertices)))
 
+(defvar- *orphan-offset* 50)
+
 (defn- align-orphan-cells [#^mxGraph g p vertices]
   "align orphan cells on the right of the graph, with a stacklayout"
   (letfn [(isorphan?
@@ -158,20 +160,54 @@
     (let [[orphans maxx-notorphan]
           (reduce (fn [acc vertex]
                     (let [[orphans maxx-notorphan] acc
-                          x (getx vertex)]
+                          width (.. vertex getGeometry getWidth)
+                          x (+ width (getx vertex))]
                       (cond (isorphan? vertex)
                             [(conj orphans vertex) maxx-notorphan]
-                            (> x maxx-notorphan) [orphans x]
+                            
+                            (> x maxx-notorphan)
+                            [orphans x]
+                            
                             :else acc)))
                   ['() 0]
                   (vals vertices))
-          stackspacing 20
-          groupparent (.insertVertex g p nil "" 0 0 0 0 "opacity=0")
-          group (. g groupCells groupparent 0 (to-array orphans))
-          stacklayout (mxStackLayout. g false stackspacing 0 0 0)]
-      (.execute stacklayout groupparent)
-      ;; make the parent invisible
-      (.setGeometry group (mxGeometry. 0 0 0 0)))))
+          yorigin 20
+          stackspacing 20]
+      (loop [orphans orphans
+             y yorigin]
+        (when-not (empty? orphans)
+          (let [orphan (first orphans)]
+            (setx orphan (+ maxx-notorphan *orphan-offset*))
+            (sety orphan y)
+            (recur (rest orphans) (+ y stackspacing))))))))
+
+;; (defn- align-orphan-cells [#^mxGraph g p vertices]
+;;   "align orphan cells on the right of the graph, with a stacklayout"
+;;   (letfn [(isorphan?
+;;            [vertex]
+;;            (empty? (.getEdges g vertex)))]
+;;     (let [[orphans maxx-notorphan]
+;;           (reduce (fn [acc vertex]
+;;                     (let [[orphans maxx-notorphan] acc
+;;                           width (.. vertex getGeometry getWidth)
+;;                           x (+ width (getx vertex))]
+;;                       (cond (isorphan? vertex)
+;;                             [(conj orphans vertex) maxx-notorphan]
+                            
+;;                             (> x maxx-notorphan)
+;;                             [orphans x]
+                            
+;;                             :else acc)))
+;;                   ['() 0]
+;;                   (vals vertices))
+;;           stackspacing 20
+;;           groupparent (.insertVertex g p nil "" 0 0 0 0 "opacity=0")
+;;           group (. g groupCells groupparent 0 (to-array orphans))
+;;           stacklayout (mxStackLayout. g false stackspacing
+;;                                       (+ maxx-notorphan *orphan-offset*) 0 0)]
+;;       (.execute stacklayout groupparent)
+;;       ;; make the parent invisible
+;;       (.setGeometry group (mxGeometry. 0 0 0 0)))))
 
 (defn- layout [g p vertices]
   (hierarchicallayout g p vertices)
@@ -299,8 +335,8 @@
 
 (defn select-statement [component stmt stmt-fmt]
   (let [graph (.getGraph component)]
-    (loop [vertices (seq (.getChildCells graph
-                                         (.getDefaultParent graph) true false))]
+    (loop [vertices (seq (.getChildVertices graph
+                                         (.getDefaultParent graph)))]
       (if-let [cell (first vertices)]
         (let [userobject (.getValue cell)]
           (if (and (= (:stmt userobject) stmt)
