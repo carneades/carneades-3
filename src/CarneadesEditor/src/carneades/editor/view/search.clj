@@ -126,13 +126,14 @@
     (apply listener event args)))
 
 (defn init-search []
-  (doseq [col ["Element" "Map Id" "File" "Path"]]
+  (doseq [col ["Results"]]
     (.addColumn *modelTable* col))
   (.setModel *searchResultTable* *modelTable*)
-  (let [model (.getColumnModel *searchResultTable*)
-        firstcol (.getColumn model 0)
-        width (.getWidth firstcol)]
-    (.setPreferredWidth firstcol (* width 2)))
+  ;; (let [model (.getColumnModel *searchResultTable*)
+  ;;       firstcol (.getColumn model 0)
+  ;;       width (.getWidth firstcol)]
+  ;;   (.setPreferredWidth firstcol (* width 2)))
+  
   ;;  This prevents action events from being fired when the
   ;;  up/down arrow keys are used on the dropdown menu
   (.putClientProperty *searchComboBox* "JComboBox.isTableCellEditor" true)

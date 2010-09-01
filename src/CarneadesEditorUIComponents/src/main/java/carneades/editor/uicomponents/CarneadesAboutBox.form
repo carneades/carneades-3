@@ -45,7 +45,7 @@
                       </Group>
                       <EmptySpace min="-2" pref="116" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="closeButton" min="-2" pref="386" max="-2" attributes="1"/>
+                  <Component id="closeButton" alignment="0" min="-2" pref="386" max="-2" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
