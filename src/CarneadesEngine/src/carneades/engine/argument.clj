@@ -107,6 +107,7 @@
   :conclusion ; statement
   :premises ; seq-of premise
   :scheme ; a string describing or naming the scheme applied | nil
+  :title ; a string for the title | nil
 )
 
 (def *default-weight* 0.5)
@@ -114,13 +115,13 @@
 (defn argument
   ([id direction conclusion premises]
      (struct argument-struct id false *default-weight* direction conclusion
-             premises nil))
+             premises nil nil))
   ([id direction conclusion premises scheme]
      (struct argument-struct id false *default-weight* direction conclusion
-             premises scheme))
+             premises scheme nil))
   ([id applicable weight direction conclusion premises scheme]
      (struct argument-struct id applicable weight direction
-             conclusion premises scheme)))
+             conclusion premises scheme nil)))
 
 (defn argument-id [a]
   (:id a))
