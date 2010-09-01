@@ -33,7 +33,7 @@
   (display-premise-property
    [this polarity type])
   (display-argument-property
-   [this id applicable weight direction scheme])
+   [this title applicable weight direction scheme])
   (display-search-state [this inprogress])
   (display-statement-search-result
    [this path id stmt stmt-fmt])
