@@ -1,12 +1,12 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-
 (ns carneades.engine.shell
   (:use clojure.contrib.pprint
         clojure.contrib.def
         carneades.engine.utils
         carneades.engine.argument-search
+        [carneades.engine.argument :only (node-statement get-nodes)]
         [carneades.engine.search :only (depth-first resource search traverse)]
         carneades.ui.diagram.viewer)
   (:require [carneades.engine.argument :as arg]))
@@ -103,3 +103,20 @@
 
 ;; (defn show1 [query engine]
 ;;   (show query engine false))
+
+(defn search-statements [ag stmt-fmt options]
+  "Produces a sequence of statements satisfying the search options.
+   The sequence is produced in the background with seque. The 
+   reading from the sequence can block if the reader gets ahead of the
+   search
+
+   The keys for options are :search-content"
+  (let [n-ahead 100
+        {:keys [search-content]} options
+        pred (fn [stmt]
+               (let [formatted (stmt-fmt stmt)]
+                 (.contains (.toLowerCase formatted) (.toLowerCase search-content))))]
+    (seque n-ahead (keep (fn [stmt]
+                           (when (pred stmt)
+                             stmt))
+                         (map node-statement (get-nodes ag))))))
