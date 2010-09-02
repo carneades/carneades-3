@@ -37,6 +37,13 @@
                                            (:stmt info))
                 nil)))))
 
+(defn keyenter-in-searchresult [event view]
+  (when-let [info (get-selected-object-in-search-result view)]
+    (condp instance? info
+      StatementInfo (on-open-statement view (:path info) (:id info)
+                                       (:stmt info))
+      nil)))
+
 (defn close-file-listener [event view]
   (prn "close file listener")
   (when-let [info (get-selected-object-in-tree view)]

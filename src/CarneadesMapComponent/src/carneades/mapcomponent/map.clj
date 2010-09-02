@@ -176,10 +176,11 @@
       (loop [orphans orphans
              y yorigin]
         (when-not (empty? orphans)
-          (let [orphan (first orphans)]
+          (let [orphan (first orphans)
+                height (.. orphan getGeometry getHeight)]
             (setx orphan (+ maxx-notorphan *orphan-offset*))
             (sety orphan y)
-            (recur (rest orphans) (+ y stackspacing))))))))
+            (recur (rest orphans) (+ y height stackspacing))))))))
 
 ;; (defn- align-orphan-cells [#^mxGraph g p vertices]
 ;;   "align orphan cells on the right of the graph, with a stacklayout"
@@ -359,3 +360,8 @@
                      (when-let [cell (.getCell selectionmodel)]
                        (let [userobject (.getValue cell)]
                          (apply listener userobject args))))))))
+
+(defn scale-page [graphcomponent scale]
+  (if (nil? scale)
+    (.setPageScale mxGraphComponent/DEFAULT_PAGESCALE)
+    (.setPageScale graphcomponent scale)))

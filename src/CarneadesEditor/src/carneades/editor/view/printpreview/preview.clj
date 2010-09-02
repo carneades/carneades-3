@@ -4,6 +4,7 @@
 (ns carneades.editor.view.printpreview.preview
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
+        carneades.mapcomponent.map
         [clojure.string :only (split)])
   (:import (javax.swing JPanel JFrame JButton)
            (javax.print.attribute HashPrintRequestAttributeSet
@@ -46,7 +47,7 @@
 (defn- fill-previewcontainer [previewcontainer printable pageformat]
   (let [wpage (int (.getWidth pageformat))
         hpage (int (.getHeight pageformat))
-        scale (deref *scale*)
+        scale 100;; (deref *scale*)
         w (int (/ (* wpage scale) 100))
         h (int (/ (* hpage scale) 100))]
     (.removeAll previewcontainer)
@@ -61,7 +62,7 @@
           (recur (BufferedImage. wpage hpage BufferedImage/TYPE_INT_RGB)
                  (inc pageindex)))))
     (.revalidate previewcontainer)
-    ))
+    (.repaint previewcontainer)))
 
 (defn- print-button-listener [event printable pageformat]
   (print-document printable pageformat))
@@ -86,10 +87,12 @@
   (letfn [(parse-value
            [s]
            (Integer/parseInt (first (split s #"%"))))]
-   (let [combobox (.getSource event)
-         scale (parse-value (.getSelectedItem combobox))]
-     (reset! *scale* scale)
-     (fill-previewcontainer previewcontainer printable pageformat))))
+    (let [combobox (.getSource event)
+          scale (parse-value (.getSelectedItem combobox))]
+      (reset! *scale* scale)
+      (let [scaleval (/ 100 (double scale))]
+        (scale-page printable scaleval))
+      (fill-previewcontainer previewcontainer printable pageformat))))
 
 (defn- attach-listeners [previewframe previewcontainer printable pageformat]
   (let [printbutton (.printButton previewframe)
@@ -105,9 +108,7 @@
     (add-action-listener landscapetogglebutton landscape-button-listener
                          portraittogglebutton previewcontainer printable pageformat)
     (add-action-listener scalecombobox scale-combobox-listener previewcontainer
-                         printable pageformat)
-    )
-  )
+                         printable pageformat)))
 
 (defn printpreview [parent printable]
   (let [previewframe (PrintPreviewDialog. parent true)
@@ -117,6 +118,7 @@
         previewcontainer (PreviewContainer.)
         landscapetogglebutton (.landscapeToggleButton previewframe)]
     (reset! *scale* 100)
+    (scale-page printable 1)
     (.setSelected landscapetogglebutton true)
     (.setOrientation pageformat PageFormat/LANDSCAPE)
     (attach-listeners previewframe previewcontainer printable pageformat)
