@@ -8,7 +8,7 @@
           <s>Which Car?</s>
         </statement>
         <statement assumption="true" id="s2" standard="BA" value="unknown">
-          <s>Vovlo</s>
+          <s>Volvo</s>
         </statement>
         <statement assumption="true" id="s3" standard="BA" value="unknown">
           <s>Porsche</s>
@@ -26,7 +26,7 @@
           <s>expensive</s>
         </statement>
         <statement assumption="true" id="s8" standard="BA" value="true">
-          <s>Vovlo's advertising</s>
+          <s>Volvo's advertising</s>
         </statement>
         <statement assumption="true" id="s9" standard="BA" value="true">
           <s>government statistics</s>
