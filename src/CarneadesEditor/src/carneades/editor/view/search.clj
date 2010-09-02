@@ -7,7 +7,8 @@
         carneades.editor.utils.swing
         carneades.editor.view.swinguiprotocol
         [clojure.string :only (trim split)])
-  (:import (javax.swing JScrollPane table.DefaultTableModel)
+  (:import (java.awt.event KeyEvent KeyAdapter)
+           (javax.swing JScrollPane table.DefaultTableModel KeyStroke JTable)
            (carneades.editor.uicomponents EditorApplicationView)
            (carneades.editor.view.swinguiprotocol StatementInfo)))
 
@@ -108,10 +109,7 @@
   (let [was-active (deref *searchactive*)]
     (when-not was-active
       (if-let [text (.getSelectedItem *searchComboBox*)]
-        (do
-          (add-item-to-search-box (trim text)))
-        (.setSelected *searchButton* false)))
-    (set-search-state (not was-active))
+        (add-item-to-search-box (trim text))))
     (doseq [{:keys [listener args]} (deref *search-button-listeners*)]
       (if was-active
         (apply listener false nil args)
@@ -125,14 +123,27 @@
   (doseq [{:keys [listener args]} (deref *searchresult-selection-listeners*)]
     (apply listener event args)))
 
+(defvar- *keyenter-searchresult-listeners* (atom ()))
+
+(defn register-keyenter-searchresult-listener [f args]
+  (swap! *keyenter-searchresult-listeners* conj {:listener f :args args}))
+
+(defn- create-search-result-keylistener []
+  (proxy [KeyAdapter] []
+    (keyPressed
+     [keyevent]
+     (when (= (.getKeyCode keyevent) KeyEvent/VK_ENTER)
+       (doseq [{:keys [listener args]} (deref *keyenter-searchresult-listeners*)]
+         (apply listener keyevent args)
+         (.consume keyevent))))))
+
 (defn init-search []
   (doseq [col ["Results"]]
     (.addColumn *modelTable* col))
   (.setModel *searchResultTable* *modelTable*)
-  ;; (let [model (.getColumnModel *searchResultTable*)
-  ;;       firstcol (.getColumn model 0)
-  ;;       width (.getWidth firstcol)]
-  ;;   (.setPreferredWidth firstcol (* width 2)))
+    ;; map enter key to edit
+  (.addKeyListener *searchResultTable* (create-search-result-keylistener))
+  ;; (.remove (.getInputMap *searchResultTable*) (KeyStroke/getKeyStroke KeyEvent/VK_ENTER 0))
   
   ;;  This prevents action events from being fired when the
   ;;  up/down arrow keys are used on the dropdown menu

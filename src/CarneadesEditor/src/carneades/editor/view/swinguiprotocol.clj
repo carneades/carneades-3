@@ -11,6 +11,7 @@
   (add-open-file-button-listener [this f args])
   (add-mousepressed-tree-listener [this f args])
   (add-mousepressed-searchresult-listener [this f args])
+  (add-keyenter-searchresult-listener [this f args])
   (add-open-file-menuitem-listener [this f args])
   (add-close-file-menuitem-listener [this f args])
   (export-file-menuitem-listener [this f args])

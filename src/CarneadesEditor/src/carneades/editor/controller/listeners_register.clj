@@ -51,6 +51,8 @@
                                        [view])
   (add-mousepressed-searchresult-listener view mouse-click-in-searchresult
                                           [view])
+  (add-keyenter-searchresult-listener view keyenter-in-searchresult
+                                          [view])
   
   ;; we don't need to extract information from the UI,
   ;; dispatch to the listeners:

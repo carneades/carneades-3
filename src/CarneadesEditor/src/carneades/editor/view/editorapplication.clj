@@ -25,7 +25,7 @@
         carneades.editor.view.aboutbox
         carneades.editor.view.printpreview.preview)
   (:import (carneades.editor.uicomponents EditorApplicationView)
-           (java.awt EventQueue Cursor)
+           (java.awt EventQueue Cursor Color)
            (javax.swing UIManager JFrame JFileChooser JOptionPane)
            (carneades.mapcomponent.map StatementCell ArgumentCell PremiseCell)))
 
@@ -258,6 +258,10 @@
   (add-mousepressed-searchresult-listener
    [this f args]
    (apply add-mousepressed-listener *searchResultTable* f args))
+
+  (add-keyenter-searchresult-listener
+   [this f args]
+   (register-keyenter-searchresult-listener f args))
 
   (add-open-file-menuitem-listener [this f args]
    (apply add-action-listener *openFileMenuItem* f args))
