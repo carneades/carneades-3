@@ -182,19 +182,22 @@
    "negPremiseEdgeStyle"
    (merge (:style *premise-edge-style*)
           {mxConstants/STYLE_SHAPE *carneades-shape-connector*
-           mxConstants/STYLE_ENDARROW *carneades-negarrow*})))
+           mxConstants/STYLE_ENDARROW *carneades-negarrow*
+           mxConstants/STYLE_STROKECOLOR *con-arg-color*})))
 
 (defvar- *neg-assumption-edge-style*
   (make-style
    "negAssumptionEdgeStyle"
    (merge (:style *assumption-edge-style*)
-          (:style *neg-premise-edge-style*))))
+          (:style *neg-premise-edge-style*)
+          {mxConstants/STYLE_STROKECOLOR *con-arg-color*})))
 
 (defvar- *neg-exception-edge-style*
   (make-style
    "negExceptionEdgeStyle"
    (merge (:style *exception-edge-style*)
-          (:style *neg-premise-edge-style*))))
+          (:style *neg-premise-edge-style*)
+          {mxConstants/STYLE_STROKECOLOR *pro-arg-color*})))
 
 (defvar- *styles*
   [*global-style*
