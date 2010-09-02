@@ -35,6 +35,7 @@ public class PrintPreviewDialog extends javax.swing.JDialog {
         jToolBar1 = new javax.swing.JToolBar();
         jSeparator2 = new javax.swing.JToolBar.Separator();
         jLabel1 = new javax.swing.JLabel();
+        scaleComboBox = new javax.swing.JComboBox();
         jSeparator1 = new javax.swing.JToolBar.Separator();
         jSeparator3 = new javax.swing.JToolBar.Separator();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -91,13 +92,11 @@ public class PrintPreviewDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 677, Short.MAX_VALUE)
             .addComponent(jToolBar1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 677, Short.MAX_VALUE)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 677, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 570, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -136,7 +135,7 @@ public class PrintPreviewDialog extends javax.swing.JDialog {
     public final javax.swing.JPanel mainPanel = new javax.swing.JPanel();
     public final javax.swing.JToggleButton portraitToggleButton = new javax.swing.JToggleButton();
     public final javax.swing.JButton printButton = new javax.swing.JButton();
-    public final javax.swing.JComboBox scaleComboBox = new javax.swing.JComboBox();
+    private javax.swing.JComboBox scaleComboBox;
     // End of variables declaration//GEN-END:variables
 
 }

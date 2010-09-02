@@ -114,28 +114,29 @@
         options (second searchinfo)
         [path id] (current-graph view)]
     (if (and path (not (empty? text)))
-      (let [ag (get-ag path id)
-            searchagent (agent {:results
-                                (search-statements ag statement-formatted
-                                                   {:search-content text})})
-            searchfn (fn [state]
-                       (try
-                         (let [{:keys [results]} state]
-                           (loop [res results]
-                             (let [stmt (first res)]
-                               (when-not (or (nil? stmt) (deref *end-search*))
-                                 (do-swing
-                                  ;; we are not in the swing thread anymore
-                                  ;; so we need to use the do-swing macro
-                                  (display-statement-search-result view path id stmt
-                                                                   statement-formatted))
-                                 (recur (rest res))))))
-                         (finally (do-swing
-                                   (display-search-state view false)))))]
-        (display-search-state view true)
-        (reset! *end-search* false)
-        (send searchagent searchfn))
-      (display-search-state view false))))
+      (prn "Search begins"
+       (let [ag (get-ag path id)
+             searchagent (agent {:results
+                                 (search-statements ag statement-formatted
+                                                    {:search-content text})})
+             searchfn (fn [state]
+                        (try
+                          (do-swing-and-wait
+                           (display-search-state view true))
+                          (let [{:keys [results]} state]
+                            (loop [res results]
+                              (let [stmt (first res)]
+                                (when-not (or (nil? stmt) (deref *end-search*))
+                                  (do-swing
+                                   ;; we are not in the swing thread anymore
+                                   ;; so we need to use the do-swing macro
+                                   (display-statement-search-result view path id stmt
+                                                                    statement-formatted))
+                                  (recur (rest res))))))
+                          (finally (do-swing-and-wait
+                                    (display-search-state view false)))))]
+         (reset! *end-search* false)
+         (send searchagent searchfn))))))
 
 (defn on-search-ends [view]
   (prn "Stopping search")

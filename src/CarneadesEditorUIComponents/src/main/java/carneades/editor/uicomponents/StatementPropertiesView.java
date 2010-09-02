@@ -11,6 +11,9 @@
 
 package carneades.editor.uicomponents;
 
+import java.awt.Color;
+import javax.swing.UIManager;
+
 /**
  *
  * @author pal
@@ -38,6 +41,7 @@ public class StatementPropertiesView extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
 
         jLabel1.setText("Statement:");
 
@@ -64,13 +68,17 @@ public class StatementPropertiesView extends javax.swing.JPanel {
 
         statusComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Stated", "Questioned", "Accepted", "Rejected" }));
 
-        jLabel4.setText("Map's title:");
+        jLabel4.setText("Graph:");
 
+        mapTitleText.setBackground(new java.awt.Color(222, 222, 222));
         mapTitleText.setEditable(false);
+        mapTitleText.setDisabledTextColor(new java.awt.Color(1, 1, 1));
 
         jLabel5.setText("Path:");
 
+        pathText.setBackground(new java.awt.Color(222, 222, 222));
         pathText.setEditable(false);
+        pathText.setDisabledTextColor(new java.awt.Color(226, 210, 196));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -79,6 +87,7 @@ public class StatementPropertiesView extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(jLabel3)
@@ -94,8 +103,8 @@ public class StatementPropertiesView extends javax.swing.JPanel {
                             .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(pathText, javax.swing.GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
-                            .addComponent(mapTitleText, javax.swing.GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)))
+                            .addComponent(pathText, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
+                            .addComponent(mapTitleText, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)))
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(proofstandardComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 294, Short.MAX_VALUE))
@@ -111,7 +120,9 @@ public class StatementPropertiesView extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(mapTitleText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
-                .addGap(18, 18, 18)
+                .addGap(4, 4, 4)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(4, 4, 4)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -141,6 +152,7 @@ public class StatementPropertiesView extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
     public final javax.swing.JTextField mapTitleText = new javax.swing.JTextField();
     public final javax.swing.JTextField pathText = new javax.swing.JTextField();
     public final javax.swing.JComboBox proofstandardComboBox = new javax.swing.JComboBox();

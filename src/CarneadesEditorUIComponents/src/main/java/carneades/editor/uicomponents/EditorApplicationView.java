@@ -11,6 +11,7 @@
 
 package carneades.editor.uicomponents;
 
+import java.awt.Color;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
