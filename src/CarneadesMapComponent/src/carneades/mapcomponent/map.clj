@@ -48,7 +48,7 @@
    [this]
    (str pm)))
 
-(defn- configure-graph [#^mxGraph g]
+(defn- configure-graph [^mxGraph g]
   (let [stroke (BasicStroke. 5 BasicStroke/CAP_BUTT,
                              BasicStroke/JOIN_MITER
                              10.0
@@ -70,30 +70,40 @@
     (.setCellsBendable false)
     ))
 
-(defn- insert-vertex [#^mxGraph g parent name style]
-  (let [v (.insertVertex g parent nil name 10 10 40 40 style)]
-    (.updateCellSize g v)
-    v))
+(defvar- *mincellwidth* 70)
+(defvar- *mincellheight* 40)
 
-(defn- insert-edge [#^mxGraph g parent userobject begin end style]
-  (.insertEdge g parent nil userobject begin end style))
-
-(defn- getx [#^mxCell vertex]
+(defn- getx [^mxCell vertex]
   (.. vertex getGeometry getX))
 
-(defn- setx [#^mxCell vertex x]
+(defn- setx [^mxCell vertex x]
   (.. vertex getGeometry (setX x)))
 
-(defn- gety [#^mxCell vertex]
+(defn- gety [^mxCell vertex]
   (.. vertex getGeometry getY))
 
-(defn- sety [#^mxCell vertex y]
+(defn- sety [^mxCell vertex y]
   (.. vertex getGeometry (setY y)))
+
+(defn- insert-vertex [^mxGraph g parent name style]
+  (let [v (.insertVertex g parent nil name 10 10 40 40 style)]
+    (.updateCellSize g v)
+    (let [geo (.getGeometry v)
+          w (.getWidth geo)
+          h (.getHeight geo)]
+      (when (< h *mincellheight*)
+        (.setHeight geo *mincellheight*))
+      (when (< w *mincellwidth*)
+        (.setWidth geo *mincellwidth*)))
+    v))
+
+(defn- insert-edge [^mxGraph g parent userobject begin end style]
+  (.insertEdge g parent nil userobject begin end style))
 
 (defvar- *ymargin* 10)
 (defvar- *xmargin* 10)
 
-(defn- translate-right [#^mxGraph g p vertices]
+(defn- translate-right [^mxGraph g p vertices]
   (let [model (.getModel g)
         defaultparent (.getDefaultParent g)
         cells (vals vertices)
@@ -128,7 +138,7 @@
           (printf "[%s %s], " (.getX point) (.getY point)))
         (printf "}\n")))))
 
-(defn- hierarchicallayout [#^mxGraph g p vertices]
+(defn- hierarchicallayout [^mxGraph g p vertices]
   (let [layout (mxHierarchicalLayout. g SwingConstants/EAST)]
     (.setAllowNegativeCoordinates g false)
     (doto layout
@@ -140,7 +150,9 @@
     ;; we translate to make all edges and vertices visible
     (translate-right g p vertices)))
 
-(defn- align-orphan-cells [#^mxGraph g p vertices]
+(defvar- *orphan-offset* 50)
+
+(defn- align-orphan-cells [^mxGraph g p vertices]
   "align orphan cells on the right of the graph, with a stacklayout"
   (letfn [(isorphan?
            [vertex]
@@ -148,20 +160,55 @@
     (let [[orphans maxx-notorphan]
           (reduce (fn [acc vertex]
                     (let [[orphans maxx-notorphan] acc
-                          x (getx vertex)]
+                          width (.. vertex getGeometry getWidth)
+                          x (+ width (getx vertex))]
                       (cond (isorphan? vertex)
                             [(conj orphans vertex) maxx-notorphan]
-                            (> x maxx-notorphan) [orphans x]
+                            
+                            (> x maxx-notorphan)
+                            [orphans x]
+                            
                             :else acc)))
                   ['() 0]
                   (vals vertices))
-          stackspacing 20
-          groupparent (.insertVertex g p nil "" 0 0 0 0 "opacity=0")
-          group (. g groupCells groupparent 0 (to-array orphans))
-          stacklayout (mxStackLayout. g false stackspacing 0 0 0)]
-      (.execute stacklayout groupparent)
-      ;; make the parent invisible
-      (.setGeometry group (mxGeometry. 0 0 0 0)))))
+          yorigin 20
+          stackspacing 20]
+      (loop [orphans orphans
+             y yorigin]
+        (when-not (empty? orphans)
+          (let [orphan (first orphans)
+                height (.. orphan getGeometry getHeight)]
+            (setx orphan (+ maxx-notorphan *orphan-offset*))
+            (sety orphan y)
+            (recur (rest orphans) (+ y height stackspacing))))))))
+
+;; (defn- align-orphan-cells [^mxGraph g p vertices]
+;;   "align orphan cells on the right of the graph, with a stacklayout"
+;;   (letfn [(isorphan?
+;;            [vertex]
+;;            (empty? (.getEdges g vertex)))]
+;;     (let [[orphans maxx-notorphan]
+;;           (reduce (fn [acc vertex]
+;;                     (let [[orphans maxx-notorphan] acc
+;;                           width (.. vertex getGeometry getWidth)
+;;                           x (+ width (getx vertex))]
+;;                       (cond (isorphan? vertex)
+;;                             [(conj orphans vertex) maxx-notorphan]
+                            
+;;                             (> x maxx-notorphan)
+;;                             [orphans x]
+                            
+;;                             :else acc)))
+;;                   ['() 0]
+;;                   (vals vertices))
+;;           stackspacing 20
+;;           groupparent (.insertVertex g p nil "" 0 0 0 0 "opacity=0")
+;;           group (. g groupCells groupparent 0 (to-array orphans))
+;;           stacklayout (mxStackLayout. g false stackspacing
+;;                                       (+ maxx-notorphan *orphan-offset*) 0 0)]
+;;       (.execute stacklayout groupparent)
+;;       ;; make the parent invisible
+;;       (.setGeometry group (mxGeometry. 0 0 0 0)))))
 
 (defn- layout [g p vertices]
   (hierarchicallayout g p vertices)
@@ -180,7 +227,8 @@
           {} (map node-statement (get-nodes ag))))
 
 (defn- add-conclusion-edge [g p arg statement vertices]
-  (insert-edge g p nil (vertices (argument-id arg)) (vertices statement)
+  (insert-edge g p (ArgumentCell. arg) (vertices (argument-id arg))
+               (vertices statement)
                (get-conclusion-edge-style arg)))
 
 (defn- add-argument-edge [g p premise argid vertices]
@@ -287,6 +335,19 @@
     (add-mouse-zoom g graphcomponent)
     graphcomponent))
 
+(defn select-statement [component stmt stmt-fmt]
+  (let [graph (.getGraph component)]
+    (loop [vertices (seq (.getChildVertices graph
+                                         (.getDefaultParent graph)))]
+      (if-let [cell (first vertices)]
+        (let [userobject (.getValue cell)]
+          (if (and (= (:stmt userobject) stmt)
+                   (= (:stmt-str userobject) stmt-fmt))
+            (do
+             (.setSelectionCell graph cell)
+             (.scrollCellToVisible component cell))
+            (recur (rest vertices))))))))
+
 (defn add-node-selection-listener [graphcomponent listener & args]
   "Adds a selection listener to the map. When a cell is selected, listener 
    will be invoked with the userobject of the cell as its first argument 
@@ -300,3 +361,8 @@
                      (when-let [cell (.getCell selectionmodel)]
                        (let [userobject (.getValue cell)]
                          (apply listener userobject args))))))))
+
+(defn scale-page [graphcomponent scale]
+  (if (nil? scale)
+    (.setPageScale mxGraphComponent/DEFAULT_PAGESCALE)
+    (.setPageScale graphcomponent scale)))

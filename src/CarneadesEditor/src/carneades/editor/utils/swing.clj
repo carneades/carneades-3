@@ -11,7 +11,7 @@
            (java.awt.event WindowAdapter
                            MouseAdapter)))
 
-(defn create-file-filter [description extension]
+(defn create-file-filter [description extensions]
   (letfn [(get-extension [#^String filename]
                          (last (.split filename "\\.")))]
     (proxy [FileFilter] []
@@ -19,7 +19,7 @@
                       description)
       (accept [#^java.io.File f]
               (or (.isDirectory f)
-                  (= extension (get-extension (.getName f))))))))
+                  (contains? extensions (get-extension (.getName f))))))))
 
 (defmacro with-tree [tree & body]
   "works on a JTree and restores its expanded paths after executing body"

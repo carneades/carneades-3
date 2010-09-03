@@ -4,7 +4,9 @@
 (ns carneades.editor.controller.listeners
   (:use clojure.contrib.def
         clojure.contrib.pprint
+        [clojure.contrib.swing-utils :only (do-swing do-swing-and-wait)]
         carneades.engine.lkif.import
+        [carneades.engine.shell :only (search-statements)]
         carneades.engine.argument
         [carneades.engine.statement :only (statement-formatted)]
         carneades.editor.model.docmanager
@@ -36,17 +38,24 @@
     (let [path (.getPath file)]
       (if (doc-exists? *docmanager* path)
         (display-error view *file-error* (format *file-already-opened* path))
-        (when-let [content (lkif-import path)]
-          (add-doc *docmanager* path content)
-          (display-lkif-content view file (get-ags-id path))
-          (display-lkif-property view path))))))
+        (try
+          (prn "set busy")
+          (set-busy view true)
+          (when-let [content (lkif-import path)]
+            (add-doc *docmanager* path content)
+            (display-lkif-content view file
+                                  (map (fn [id] [id (:title (get-ag path id))])
+                                       (get-ags-id path)))
+            (display-lkif-property view path))
+          (finally
+           (set-busy view false)))))))
 
 (defn on-select-graphid [view path graphid]
   (let [ag (get-ag path graphid)
         id (:id ag)
         title (:title ag)
         mainissue (statement-formatted (:main-issue ag))]
-    (display-graph-property view id title mainissue)))
+    (display-graph-property view path title mainissue)))
 
 (defn on-edit-graphid [view path graphid]
   (prn "on-edit-graphid")
@@ -74,7 +83,7 @@
 
 (defn on-export-graph [view path id]
   (when-let [ag (get-ag path id)]
-    (when-let [file (ask-file-to-save view "SVG Files" "svg"
+    (when-let [file (ask-file-to-save view "SVG Files" #{"svg"} 
                                       (File. (str id ".svg")))]
       (let [filename (.getPath file)]
         (export-graph-to-svg view ag statement-formatted filename)))))
@@ -98,39 +107,83 @@
   (let [ag (get-ag path id)]
     (print-graph view path ag statement-formatted)))
 
-(defn on-search-begins [view searchinfo]
-  (prn "Beginning search")
-  (prn searchinfo))
+(defvar- *end-search* (atom false))
 
-(defn on-search-stops [view]
-  (prn "Stopping search"))
+(defn on-search-begins [view searchinfo]
+  (let [text (first searchinfo)
+        options (second searchinfo)
+        [path id] (current-graph view)]
+    (if (and path (not (empty? text)))
+      (prn "Search begins"
+       (let [ag (get-ag path id)
+             searchagent (agent {:results
+                                 (search-statements ag statement-formatted
+                                                    {:search-content text})})
+             searchfn (fn [state]
+                        (try
+                          (do-swing-and-wait
+                           (display-search-state view true))
+                          (let [{:keys [results]} state]
+                            (loop [res results]
+                              (let [stmt (first res)]
+                                (when-not (or (nil? stmt) (deref *end-search*))
+                                  (do-swing
+                                   ;; we are not in the swing thread anymore
+                                   ;; so we need to use the do-swing macro
+                                   (display-statement-search-result view path id stmt
+                                                                    statement-formatted))
+                                  (recur (rest res))))))
+                          (finally (do-swing-and-wait
+                                    (display-search-state view false)))))]
+         (reset! *end-search* false)
+         (send searchagent searchfn))))))
+
+(defn on-search-ends [view]
+  (prn "Stopping search")
+  (reset! *end-search* true))
 
 (defn on-select-statement [path id stmt view]
   (prn "on select statement")
   (prn stmt)
-  (let [node (get-node (get-ag path id) stmt)
+  (let [ag (get-ag path id)
+        node (get-node ag stmt)
         status (:status node)
         proofstandard (:standard node)
         acceptable (:acceptable node)
         complement-acceptable (:complement-acceptable node)]
     (prn "node = ")
     (prn node)
-    (display-statement-property view (statement-formatted stmt) status
+    (display-statement-property view path (:title ag)
+                                (statement-formatted stmt) status
                                 proofstandard acceptable complement-acceptable)))
 
 (defn on-select-argument [path id arg view]
   (prn "on select argument")
   (prn arg)
   (display-argument-property
-   view (:title arg) (:applicable arg) (:weight arg) (:direction arg) (:scheme arg)))
+   view path
+   (:title (get-ag path id))
+   (:title arg)
+   (:applicable arg)
+   (:weight arg)
+   (:direction arg)
+   (:scheme arg)))
 
 (defn on-select-premise [path id pm view]
   (prn "on select premise")
   (prn pm)
   (let [type (:type pm)
         typestr (condp = type
-                    :carneades.engine.argument/ordinary-premise "Ordinary premise"
+                    :carneades.engine.argument/ordinary-premise "Premise"
                     :carneades.engine.argument/assumption "Assumption"
                     :carneades.engine.argument/exception "Exception")]
-    (display-premise-property view (:polarity pm) typestr)))
+    (display-premise-property view path (:title (get-ag path id))
+                              (:polarity pm) typestr)))
 
+(defn on-select-statement-search [view path id stmt]
+  (prn "on select statement search"))
+
+(defn on-open-statement [view path id stmt]
+  (prn "on-open-statement")
+  (let [ag (get-ag path id)]
+    (display-statement view path ag stmt statement-formatted)))

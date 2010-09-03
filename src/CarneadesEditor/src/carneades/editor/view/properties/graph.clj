@@ -6,15 +6,15 @@
   (:import carneades.editor.uicomponents.ArgumentGraphPropertiesView))
 
 (defvar- *graphProperties* (ArgumentGraphPropertiesView/instance))
-(defvar- *idText* (.idText *graphProperties*))
 (defvar- *titleText* (.titleText *graphProperties*))
+(defvar- *pathText* (.pathText *graphProperties*))
 (defvar- *mainIssueTextArea* (.mainIssueTextArea *graphProperties*))
 
 (defn graph-properties-init []
   (ArgumentGraphPropertiesView/reset))
 
-(defn get-graph-properties-panel [id title mainissue]
-  (.setText *idText* id)
+(defn get-graph-properties-panel [path title mainissue]
+  (.setText *pathText* path)
   (.setText *titleText* title)
   (.setText *mainIssueTextArea* mainissue)
   *graphProperties*)

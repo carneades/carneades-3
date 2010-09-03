@@ -8,7 +8,9 @@
 
 (defvar- *argumentProperties* (ArgumentPropertiesView/instance))
 
+(defvar- *pathText* (.pathText *argumentProperties*))
 (defvar- *titleText* (.titleText *argumentProperties*))
+(defvar- *mapTitleText* (.mapTitleText *argumentProperties*))
 (defvar- *applicableCheckBox* (.applicableCheckBox *argumentProperties*))
 (defvar- *weightSpinner* (.weightSpinner *argumentProperties*))
 (defvar- *proButton* (.proButton *argumentProperties*))
@@ -22,7 +24,9 @@
   (ArgumentPropertiesView/reset)
   (add-action-listener *applicableCheckBox* applicable-checkbox-listener))
 
-(defn get-argument-properties-panel [title applicable weight direction scheme]
+(defn get-argument-properties-panel [path graphtitle title applicable weight direction scheme]
+  (.setText *mapTitleText* graphtitle)
+  (.setText *pathText* path)
   (.setText *titleText* title)
   (.setSelected *applicableCheckBox* applicable)
   (.setValue *weightSpinner* weight)
