@@ -37,6 +37,7 @@ public class LkifFilePropertiesView extends javax.swing.JPanel {
 
         jLabel1.setText("Path:");
 
+        pathTextField.setBackground(new java.awt.Color(222, 222, 222));
         pathTextField.setEditable(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -47,7 +48,7 @@ public class LkifFilePropertiesView extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pathTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE))
+                .addComponent(pathTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

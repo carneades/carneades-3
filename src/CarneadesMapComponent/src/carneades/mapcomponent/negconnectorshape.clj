@@ -44,7 +44,7 @@
              ;; vector perpendicular to the normal vector
              perx (* (- unity) abssize)
              pery (* unitx abssize)
-             offsetfromend (* abssize 6)
+             offsetfromend (int (/ dist 3)) ;; (* abssize 6)
              xanchor (- (.getX pe) (* offsetfromend unitx))
              yanchor (- (.getY pe) (* offsetfromend unity))
              poly (Polygon. )]

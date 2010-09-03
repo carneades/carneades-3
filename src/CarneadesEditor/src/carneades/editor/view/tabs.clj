@@ -69,7 +69,7 @@
     (.setFocusable label false)
     (.setFocusable tabcomponent false)
     ;; (.setComponentPopupMenu label *tabPopupMenu*)
-    (.setBorder tabcomponent (BorderFactory/createEmptyBorder 5 5 5 5))
+    (.setBorder tabcomponent (BorderFactory/createEmptyBorder 0 0 0 0))
     (.setLayout tabcomponent (FlowLayout. FlowLayout/LEFT 0 0))
     (.add tabcomponent label)
     (.add tabcomponent closebutton)
@@ -77,7 +77,9 @@
     tabcomponent))
 
 (defn get-tabtitle [ag]
-  (format "%s - %s " (:id ag) (:title ag)))
+  (if (empty? (:title ag))
+    (format "%s [title missing]" (:id ag))
+    (:title ag)))
 
 ;; (defn get-tab [tabpanel title]
 ;;   "returns the index of the tab titled title or nil if it does not exist"
