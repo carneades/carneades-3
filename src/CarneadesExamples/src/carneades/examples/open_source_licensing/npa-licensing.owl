@@ -85,6 +85,12 @@
     
 
 
+    <!-- http://www.w3.org/2002/07/owl#Thing -->
+
+    <owl:Class rdf:about="&owl;Thing"/>
+    
+
+
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
@@ -141,8 +147,8 @@
 
     <owl:Thing rdf:about="#NPA_Java">
         <rdf:type rdf:resource="&oss-licenses;SoftwareLibrary"/>
-        <oss-licenses:uses rdf:resource="#JWSD"/>
-        <oss-licenses:uses rdf:resource="#OpenSAML"/>
+        <oss-licenses:linksTo rdf:resource="#JWSD"/>
+        <oss-licenses:linksTo rdf:resource="#OpenSAML"/>
     </owl:Thing>
     
 
@@ -160,7 +166,7 @@
 
     <owl:Thing rdf:about="#NPA_PHP">
         <rdf:type rdf:resource="&oss-licenses;SoftwareLibrary"/>
-        <oss-licenses:uses rdf:resource="#Shibboleth"/>
+        <oss-licenses:linksTo rdf:resource="#Shibboleth"/>
     </owl:Thing>
     
 
