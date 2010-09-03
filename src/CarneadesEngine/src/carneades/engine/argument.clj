@@ -652,12 +652,10 @@
       (statement= (:atom p) (:atom (first prs)))
       (recur p (rest prs)))))
 
-(defn premises=?
 (defn- premises=?
   [pr1 pr2]
   (every? (fn [p] (has-premise? p pr2)) pr1))
 
-(defn unite-args
 (defn- unite-args
   [ag arg]
   (if (some (fn [arg2]
@@ -666,15 +664,9 @@
                  (statement= (:conclusion arg) (:conclusion arg2))
                  (premises=? (:premises arg) (:premises arg2))))
         (vals (:arguments ag)))
-
-
-
-
-
     ag
     (assert-argument ag (assoc arg :id (gensym "a")))))
 
-(defn unite-graphs
 (defn- unite-graphs
   [ag1 ag2]
   (let [all-nodes (get-nodes ag2),
@@ -685,7 +677,6 @@
 
 (defn unite-argument-graphs
   [l]
-  (reduce unite-graphs *empty-argument-graph* l))
   (prof :uniteGraphs (assoc (reduce unite-graphs *empty-argument-graph* l) :id (gensym "a"))))
 
 (defn depth-in

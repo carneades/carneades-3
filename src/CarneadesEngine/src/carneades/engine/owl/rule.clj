@@ -193,7 +193,7 @@
   (let [varx '?x,
         vary '?y,
         range (. axiom getRange),
-        range-sexpr (class-expression->sexpr domain vary),
+        range-sexpr (class-expression->sexpr range vary),
         prop (. axiom getProperty),
         prop-sexpr (property-expression->sexpr prop varx vary)]
     (list (make-rule
