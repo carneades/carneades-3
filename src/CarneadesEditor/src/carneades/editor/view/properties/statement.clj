@@ -13,17 +13,20 @@
 (defvar- *acceptableCheckBox* (.acceptableCheckBox *statementProperties*))
 (defvar- *complementacceptableCheckBox* (.complementacceptableCheckBox *statementProperties*))
 
+(defvar- *mapTitleText* (.mapTitleText *statementProperties*))
+(defvar- *pathText* (.pathText *statementProperties*))
+
 (defvar- *statuses* {:stated "Stated"
                      :accepted "Accepted"
                      :rejected "Rejected"
                      :questioned "Questioned"})
 
-(defvar- *proofstandards* {:ba "Best argument"
-                           :pe "Best argument"
-                           :brd "Beyond reasonable doubt"
-                           :cce "Clear and convincing evidence"
-                           :dv "Dialectically validity"
-                           :se "Scientilla of evidence"})
+(defvar- *proofstandards* {:ba "Preponderance of Evidence"
+                           :pe "Preponderance of Evidence"
+                           :brd "Beyond Reasonable Doubt"
+                           :cce "Clear and Convincing Evidence"
+                           :dv "Dialectical Validity"
+                           :se "Scintilla of Evidence"})
 
 (defn- acceptable-checkbox-listener [event]
   ;; there is no read-only checkboxes in Swing, we cancel the change to make
@@ -40,7 +43,9 @@
   (add-action-listener *complementacceptableCheckBox*
                        complementacceptable-checkbox-listener))
 
-(defn get-statement-properties-panel [stmt status proofstandard acceptable complement-acceptable]
+(defn get-statement-properties-panel [path maptitle stmt status proofstandard acceptable complement-acceptable]
+  (.setText *pathText* path)
+  (.setText *mapTitleText* maptitle)
   (.setText *statementTextArea* stmt)
   (.setSelectedItem *statusComboBox* (get *statuses* status))
   (.setSelectedItem *proofstandardComboBox* (get *proofstandards* proofstandard))

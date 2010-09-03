@@ -47,7 +47,12 @@
   (add-close-file-menuitem-listener view close-file-listener [view])
   (add-close-button-listener view close-listener [view])
   (add-mousepressed-tree-listener view mouse-click-in-tree-listener [view])
-  (add-search-button-listener view search-button-listener [view])
+  (add-searchresult-selection-listener view search-result-selection-listener
+                                       [view])
+  (add-mousepressed-searchresult-listener view mouse-click-in-searchresult
+                                          [view])
+  (add-keyenter-searchresult-listener view keyenter-in-searchresult
+                                          [view])
   
   ;; we don't need to extract information from the UI,
   ;; dispatch to the listeners:
@@ -59,4 +64,8 @@
   (register-statement-selection-listener view on-select-statement [view])
   (register-argument-selection-listener view on-select-argument [view])
   (register-premise-selection-listener view on-select-premise [view])
+  (register-search-listener view (fn [inprogress searchinfo]
+                                   (if inprogress
+                                     (on-search-begins view searchinfo)
+                                     (on-search-ends view))) [])
   )

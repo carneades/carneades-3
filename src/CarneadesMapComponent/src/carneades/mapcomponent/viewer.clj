@@ -14,16 +14,16 @@
 
 ;; code to create the menu
 (defn- create-file-filter []
-  (letfn [(extension [#^String filename]
+  (letfn [(extension [^String filename]
                      (last (.split filename "\\.")))]
     (proxy [FileFilter] []
       (getDescription []
                       "SVG Files")
-      (accept [#^java.io.File f]
+      (accept [^java.io.File f]
               (or (.isDirectory f)
                   (= "svg" (extension (.getName f))))))))
 
-(defn- on-export-as-svg [#^JFrame frame]
+(defn- on-export-as-svg [^JFrame frame]
   (let [component (.. frame getContentPane (getComponent 0))
         filechooser (JFileChooser.)]
     (doto filechooser
@@ -33,7 +33,7 @@
     (if-let [file (.getSelectedFile filechooser)]
       (export-graph component (.getPath file)))))
 
-(defn- on-exit-item [#^JFrame frame]
+(defn- on-exit-item [^JFrame frame]
   (doto frame
     (.setVisible false)
     (.dispose)))

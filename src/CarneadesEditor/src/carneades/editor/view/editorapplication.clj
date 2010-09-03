@@ -25,7 +25,7 @@
         carneades.editor.view.aboutbox
         carneades.editor.view.printpreview.preview)
   (:import (carneades.editor.uicomponents EditorApplicationView)
-           (java.awt EventQueue)
+           (java.awt EventQueue Cursor Color)
            (javax.swing UIManager JFrame JFileChooser JOptionPane)
            (carneades.mapcomponent.map StatementCell ArgumentCell PremiseCell)))
 
@@ -110,8 +110,8 @@
            (.setVisible *frame* true)))))
 
   (display-lkif-content
-   [this file graphids]
-   (add-lkif-content file graphids)
+   [this file graphinfos]
+   (add-lkif-content file graphinfos)
    (enable-file-items))
 
   (hide-lkif-content
@@ -128,24 +128,28 @@
        (if component
          (.setSelectedIndex *mapPanel*
                             (.indexOfComponent *mapPanel* component))
-         (let [component (create-graph-component ag stmt-fmt)
-               ;; ag (:arguments
-               ;;   (first (solutions
-               ;;           (engine
-               ;;            '(hund-muss-neuangemeldet-werden ?h)))))
-               component
-               (create-graph-component ag
-                 stmt-fmt)]
-           ;; (printpreview component)
-           (add-node-selection-listener component #(node-selection-listener
-                                                    path (:id ag) %))
-           (add-component component path (:id ag))
-           (.add *mapPanel* title component)
-           (.setTabComponentAt *mapPanel*
-                               (.indexOfComponent *mapPanel* component)
-                               (create-tabcomponent title))
-           (.setSelectedComponent *mapPanel* component)
-           (enable-diagram-buttons-and-menus))))))
+         (try
+           (set-busy this true)
+           (let [component (create-graph-component ag stmt-fmt)
+                 ;; ag (:arguments
+                 ;;   (first (solutions
+                 ;;           (engine
+                 ;;            '(hund-muss-neuangemeldet-werden ?h)))))
+                 component
+                 (create-graph-component ag
+                                         stmt-fmt)]
+             ;; (printpreview component)
+             (add-node-selection-listener component #(node-selection-listener
+                                                      path (:id ag) %))
+             (add-component component path (:id ag))
+             (.add *mapPanel* title component)
+             (.setTabComponentAt *mapPanel*
+                                 (.indexOfComponent *mapPanel* component)
+                                 (create-tabcomponent title))
+             (.setSelectedComponent *mapPanel* component)
+             (enable-diagram-buttons-and-menus))
+           (finally
+           (set-busy this false)))))))
 
   (close-graph
    [this path id]
@@ -164,26 +168,27 @@
    (show-properties (get-lkif-properties-panel path)))
 
   (display-graph-property
-   [this id title mainissue]
-   (show-properties (get-graph-properties-panel id title mainissue)))
+   [this path title mainissue]
+   (show-properties (get-graph-properties-panel path title mainissue)))
 
   (display-statement-property
-   [this stmt status proofstandard acceptable complement-acceptable]
+   [this path maptitle stmt status proofstandard acceptable complement-acceptable]
    (show-properties (get-statement-properties-panel
+                     path maptitle
                      stmt status proofstandard
                      acceptable complement-acceptable)))
 
   (display-premise-property
-   [this polarity type]
-   (show-properties (get-premise-properties-panel polarity type)))
+   [this path maptitle polarity type]
+   (show-properties (get-premise-properties-panel path maptitle polarity type)))
     
   (display-argument-property
-   [this title applicable weight direction scheme]
-   (show-properties (get-argument-properties-panel title applicable
+   [this path maptitle title applicable weight direction scheme]
+   (show-properties (get-argument-properties-panel path maptitle title applicable
                                                    weight direction scheme)))
 
   (ask-file-to-save
-   [this-view description extension suggested]
+   [this-view description extensions suggested]
    (let [jc (proxy [JFileChooser] []
               (approveSelection
                []
@@ -193,7 +198,7 @@
                                            "Overwrite existing file?")
                      (proxy-super approveSelection))
                    (proxy-super approveSelection)))))]
-     (.setFileFilter jc (create-file-filter description extension))
+     (.setFileFilter jc (create-file-filter description extensions))
      (when-let [dir (deref *dialog-current-directory*)]
        (.setCurrentDirectory jc dir))
      (when suggested
@@ -213,7 +218,7 @@
   (ask-lkif-file-to-open
    [this]
    (let [jc (JFileChooser.)]
-     (.setFileFilter jc (create-file-filter "LKIF files" "xml"))
+     (.setFileFilter jc (create-file-filter "LKIF files"  #{"xml" "lkif"} ))
      (when-let [dir (deref *dialog-current-directory*)]
        (.setCurrentDirectory jc dir))
      (let [val (.showOpenDialog jc *frame*)]
@@ -249,6 +254,14 @@
   (add-mousepressed-tree-listener
    [this f args]
    (apply add-mousepressed-listener *lkifsTree* f args))
+
+  (add-mousepressed-searchresult-listener
+   [this f args]
+   (apply add-mousepressed-listener *searchResultTable* f args))
+
+  (add-keyenter-searchresult-listener
+   [this f args]
+   (register-keyenter-searchresult-listener f args))
 
   (add-open-file-menuitem-listener [this f args]
    (apply add-action-listener *openFileMenuItem* f args))
@@ -296,26 +309,47 @@
   (add-print-filemenuitem-listener
    [this f args]
    (apply add-action-listener *printFileMenuItem* f args))
-  
-  (add-search-button-listener
-   [this f args]
-   (apply add-action-listener *searchButton* f args))
 
+  (add-searchresult-selection-listener
+   [this f args]
+   (register-searchresult-selection-listener f args))
+  
+  (register-search-listener
+   [this l args]
+   (register-search-button-listener l args))
+
+  (display-statement-search-result
+   [this path id stmt stmt-fmt]
+   (add-stmt-search-result path id stmt stmt-fmt))
+
+  (display-search-state
+   [this inprogress]
+   (set-search-state inprogress))
+
+  (display-statement
+   [this path ag stmt stmt-fmt]
+   (prn "display statement")
+   (open-graph this path ag stmt-fmt)
+   (let [component (get-component path (:id ag))]
+     (select-statement component stmt stmt-fmt)))
+
+  (set-busy
+   [this isbusy]
+   (if isbusy
+     (.setCursor *frame* Cursor/WAIT_CURSOR)
+     (.setCursor *frame* (Cursor/getDefaultCursor))))
+  
   (get-selected-object-in-tree
    [this]
    (selected-object-in-tree))
 
+  (get-selected-object-in-search-result
+   [this]
+   (selected-object-in-search-result))
+  
   (get-graphinfo-being-closed
    [this event]
    (graphinfo-being-closed event))
-
-  (get-searched-info
-   [this]
-   (let [text (.getSelectedItem *searchComboBox*)
-            options {}]
-     (if (nil? text)
-       nil
-       [(trim text) options])))
 
   (register-statement-selection-listener
    [this l args]
@@ -327,6 +361,6 @@
   
   (register-premise-selection-listener
    [this l args]
-   (swap! *premise-selection-listeners* conj {:listener l :args args}))
+   (swap! *premise-selection-listeners* conj {:listener l :args args})))
   
-  )
+  
