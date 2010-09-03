@@ -9,16 +9,17 @@
         carneades.engine.shell
         carneades.engine.rule
         carneades.engine.statement
-	;carneades.engine.owl
-        carneades.engine.pellet
+	carneades.engine.owl
+        ;carneades.engine.pellet
         [carneades.engine.abduction :as abd]
 	carneades.engine.lkif.import
         carneades.ui.diagram.viewer)
     (:require [carneades.engine.argument :as arg]))
 
-(def oss-path "src/carneades/examples/open_source_licensing/npa-oss-rules.xml")
+(def oss-path "src/carneades/examples/open_source_licensing/oss-rules.xml")
 (def npa-prepath "src/carneades/examples/open_source_licensing/")
 (def npa-path "npa-licensing.owl")
+(def npa-ont (load-ontology npa-path npa-prepath))
 
 (def oss-kb (:rb (lkif-import oss-path '(transitive symmetric domain range equivalent))))
 
@@ -40,41 +41,24 @@
 (def basic-generators
   (list
     (generate-arguments-from-rules oss-kb cqs)
-    (generate-arguments-from-owl npa-path npa-prepath)))
+    (generate-arguments-from-owl npa-ont :reasoner)))
 
 (def generators  
   (cons
     (builtins basic-generators)
     basic-generators))
 
-(def sols (construct-arguments
-            goal1
-            500
-            1
-            arg/*empty-argument-graph*
-            generators))
 
 (def ag0 (arg/accept arg/*empty-argument-graph*
            '((valid FSFTheoryOfLinking)
-             (valid npa-licensing.owl))))
-
-(def e1 (make-engine* 5000 1 ag0 generators))
+             (valid http://www.carneades.berlios.de/npa-licensing))))
 
 (defn args [ag goal]
   (unite-solutions (construct-arguments goal
                        50
-                       1
                        ag
                        generators
                       )))
-
-(defn argswc [ag goal]
-  (unite-solutions-with-candidates
-   (construct-arguments goal
-                        50
-                        1
-                        ag
-                        generators)))
 
 (defn get-con-goals [s ag]
   (let [assmptns (abd/assume-decided-statements ag)]
@@ -92,7 +76,7 @@
 
 (def ag2 (reduce (fn [ag g]
                    (println "goal:" (statement-formatted g))
-                   (argswc ag g))
+                   (args ag g))
            ag1 con-goals))
 (view ag2)
 (def pro-goals (apply union (get-pro-goals goal1 ag2)))
@@ -100,6 +84,6 @@
 
 (def ag3 (reduce (fn [ag g]
                    (println "goal:" (statement-formatted g))
-                   (argswc ag g))
+                   (args ag g))
            ag2 pro-goals))
 (view ag3)

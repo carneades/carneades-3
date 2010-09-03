@@ -119,10 +119,15 @@
 
     <owl:Class rdf:about="#PreferredLicense">
         <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="&oss-licenses;grantsRight"/>
-                <owl:someValuesFrom rdf:resource="&oss-licenses;MayCopy"/>
-            </owl:Restriction>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&oss-licenses;AcademicLicense"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="&oss-licenses;grantsRight"/>
+                        <owl:someValuesFrom rdf:resource="&oss-licenses;MayCopy"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
         </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="&oss-licenses;AcademicLicense"/>
     </owl:Class>
