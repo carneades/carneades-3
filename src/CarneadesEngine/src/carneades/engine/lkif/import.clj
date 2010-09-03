@@ -18,6 +18,7 @@
     carneades.engine.statement
     carneades.engine.argument
     carneades.engine.rule
+    carneades.engine.owl.rule
     carneades.engine.owl)
   ;(:import )
   )
@@ -255,7 +256,7 @@
                             rb (:rb i),
                             ags (:ags i)]                        
                         {:rb rb, :ag ags}),
-          (owl? url) {:rb (load-ontology url optionals),
+          (owl? url) {:rb (map-ontology (load-ontology url) optionals),
                       :ag nil} )))
     {:rb *empty-rulebase*, :ag nil}))
 

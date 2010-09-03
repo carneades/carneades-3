@@ -58,33 +58,8 @@ various argumentation tasks. This is the software library (the engine).</descrip
     </dependency>
     <dependency>
       <groupId>org.clojars.pallix</groupId>
-      <artifactId>pellet-core</artifactId>
-      <version>2.1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.clojars.pallix</groupId>
-      <artifactId>pellet-owlapiv3</artifactId>
-      <version>2.1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.clojars.pallix</groupId>
-      <artifactId>pellet-rules</artifactId>
-      <version>2.1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.clojars.pallix</groupId>
-      <artifactId>pellet-datatypes</artifactId>
-      <version>2.1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.clojars.pallix</groupId>
-      <artifactId>pellet-el</artifactId>
-      <version>2.1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.clojars.pallix</groupId>
-      <artifactId>aterm-java</artifactId>
-      <version>1.6</version>
+      <artifactId>hermit</artifactId>
+      <version>1.2.4</version>
     </dependency>
     <dependency>
       <groupId>clj-sandbox</groupId>
