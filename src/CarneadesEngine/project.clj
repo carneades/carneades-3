@@ -9,12 +9,7 @@ various argumentation tasks. This is the software library (the engine)."
   :dependencies [[org.clojure/clojure "1.2.0"]
                  [org.clojure/clojure-contrib "1.2.0"]
                  [org.clojars.pallix/owlapi "3.0.0"]
-				 [org.clojars.pallix/pellet-core "2.1.1"]
-				 [org.clojars.pallix/pellet-owlapiv3 "2.1.1"]
-				 [org.clojars.pallix/pellet-rules "2.1.1"]
-				 [org.clojars.pallix/pellet-datatypes "2.1.1"]
-				 [org.clojars.pallix/pellet-el "2.1.1"]
-				 [org.clojars.pallix/aterm-java "1.6"]
+				 [org.clojars.pallix/hermit "1.2.4"]
                  [clj-sandbox "0.3.8"]]
   :dev-dependencies [[swank-clojure "1.2.0"]
                      [lein-run "1.0.0-SNAPSHOT"]])

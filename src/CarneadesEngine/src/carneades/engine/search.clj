@@ -45,7 +45,12 @@
                  (s (:space p) (:root p))))))
   ([p s] (search p s nil)))
 
-(defn search-all
+(defn traverse
+  "Expands the problem space p, using the strategy s,
+   and returns a sequence of nodes. If n is an integer, not nil,
+   then at most n nodes of the space are visited.
+   If n is 0, then all nodes will be visited and the traverse will
+   not terminate if the sequence is infinite."
   ([p s n]
     (if (and n (>= n 0))
       (take n (s (:space p) (:root p)))
