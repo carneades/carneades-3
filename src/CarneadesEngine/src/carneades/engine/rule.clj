@@ -81,7 +81,6 @@
 ;; as a string or symbol, is the sentence itself.
 
 (defn predicate [s]
-  (if (seq? s)
   (statement-predicate (let [pred (first s)
                              stmt (second s)]
                          (condp = pred
@@ -89,10 +88,7 @@
                            'unless stmt
                            'assuming stmt
                            'applies (nth s 2)
-                           s)))
-    (do
-      (println "predicate - no seq! :" s)
-      s)))
+                           s))))
 
 (defstruct named-clause
   :id ;; symbol
@@ -350,8 +346,7 @@
                          conclusion (statement-atom (condition-statement subgoal))
                          premises (concat (map statement-to-premise (:clause clause))
                                           (rule-critical-questions (:rule clause) qs subgoal (:strict clause)))
-                         scheme (str (:rule clause) (:id clause))]
-                     ;(println "rule instantiated:" (str (:rule clause) (:id clause)))
+                         scheme (str (:rule clause) (:id clause))] 
                      (as/response subs2
                                   (argument arg-id
                                             false
