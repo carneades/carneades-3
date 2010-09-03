@@ -1,5 +1,5 @@
 
-(ns carneades.examples.exists
+(ns carneades.examples.all
   ;(:require )
   (:use
     carneades.engine.argument
@@ -30,7 +30,7 @@
 (def type-rb
   (rulebase
 
-    (rule t1 (if (exists x (t x) (u x ?y))
+    (rule t1 (if (all x (t x) (u x ?y))
                (s ?y)))
 
    (assertions type-facts
@@ -46,7 +46,7 @@
 
 (def type-gens (list (generate-arguments-from-rules type-rb '())))
 
-(def goal '(exists x (s x) (q x)))
+(def goal '(all x (t x) (q x)))
 ;(def goal '(exists x (t x) (u x ?y)))
 ;(def goal '(s ?y))
 

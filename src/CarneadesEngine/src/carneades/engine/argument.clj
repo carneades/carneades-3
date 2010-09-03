@@ -1,17 +1,6 @@
-;;; Carneades Argumentation Library and Tools.
-;;; Copyright (C) 2010 Thomas F. Gordon, Fraunhofer FOKUS, Berlin
-;;; 
-;;; This program is free software: you can redistribute it and/or modify
-;;; it under the terms of the GNU Lesser General Public License version 3 (LGPL-3)
-;;; as published by the Free Software Foundation.
-;;; 
-;;; This program is distributed in the hope that it will be useful, but
-;;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;;; General Public License for details.
-;;; 
-;;; You should have received a copy of the GNU Lesser General Public License
-;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Licensed under the EUPL V.1.1
+
 
 (ns carneades.engine.argument
   (:refer-clojure :exclude [satisfies?])
@@ -90,6 +79,12 @@
   (if (premise-pos? p)
     (:atom p)
     (statement-complement (:atom p))))
+
+
+
+
+
+
 
 (defn premise-atom [p]
   (:atom p))
@@ -194,7 +189,7 @@
 (defn instantiate-argument [arg subs]
   "argument substitutions -> argument
 
-   Instanciate the variable of an argument by applying substitions"  
+   Instanciate the variable of an argument by applying substitions"
   (assoc arg
     :premises (map #(update-in % [:atom] subs) (:premises arg))
     :conclusion (subs (:conclusion arg))))
@@ -657,10 +652,12 @@
       (statement= (:atom p) (:atom (first prs)))
       (recur p (rest prs)))))
 
+(defn premises=?
 (defn- premises=?
   [pr1 pr2]
   (every? (fn [p] (has-premise? p pr2)) pr1))
 
+(defn unite-args
 (defn- unite-args
   [ag arg]
   (if (some (fn [arg2]
@@ -669,9 +666,15 @@
                  (statement= (:conclusion arg) (:conclusion arg2))
                  (premises=? (:premises arg) (:premises arg2))))
         (vals (:arguments ag)))
+
+
+
+
+
     ag
     (assert-argument ag (assoc arg :id (gensym "a")))))
 
+(defn unite-graphs
 (defn- unite-graphs
   [ag1 ag2]
   (let [all-nodes (get-nodes ag2),
@@ -679,8 +682,10 @@
         rejected-nodes (filter (fn [n] (= (:status n) :rejected)) all-nodes)]
     (reject (accept (reduce unite-args ag1 (arguments ag2)) (map :statement accepted-nodes)) (map :statement rejected-nodes))))
 
+
 (defn unite-argument-graphs
   [l]
+  (reduce unite-graphs *empty-argument-graph* l))
   (prof :uniteGraphs (assoc (reduce unite-graphs *empty-argument-graph* l) :id (gensym "a"))))
 
 (defn depth-in

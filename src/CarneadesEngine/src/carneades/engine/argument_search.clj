@@ -10,6 +10,9 @@
         carneades.engine.statement
         clojure.contrib.pprint
         carneades.ui.diagram.viewer ; for debugging
+    )
+        clojure.contrib.pprint
+        carneades.ui.diagram.viewer ; for debugging
         clojure.contrib.profile ; for testing
     )
   (:require [carneades.engine.argument :as arg]
@@ -106,11 +109,13 @@
       (cons clause (rest dis-of-con)))))
 
 (defn- get-pro-goals [state premises assumptions exceptions conclusion goal-proc]
+
   {:post [(not (nil? %))]}
   (condp = (:viewpoint state)
       :pro (if (= goal-proc :update)
              (update-goals (:pro-goals state) premises)
              (:pro-goals state)),
+
       :con  (concat (:pro-goals state)
                     (map list exceptions) ;; separate clause for each exception
                     ;; rebutalls and rebuttals of assumptions
@@ -118,6 +123,7 @@
                     (map list (map statement-complement assumptions)))))
 
 (defn- get-con-goals [state premises assumptions exceptions conclusion goal-proc]
+
   {:post [(not (nil? %))]}
   (condp = (:viewpoint state)
       :pro (concat (:con-goals state)
@@ -129,11 +135,14 @@
              (update-goals (:con-goals state) premises)
              (:con-goals state))))
 
+
 (defn- make-successor-state-putforward 
   ([stat newsubs arg]
     (make-successor-state-putforward stat newsubs arg :update))
   ([stat newsubs arg goal-proc]
   (let [conclusion (:conclusion arg) ; maybe use complement regarding argument-dirction?
+
+
         assumptions (questioned-assumptions
                      (map arg/premise-statement
                           (filter arg/assumption?
@@ -155,9 +164,14 @@
         pro-goals (get-pro-goals stat premises assumptions exceptions conclusion goal-proc)
         con-goals (get-con-goals stat premises assumptions exceptions conclusion goal-proc)
         new-state (state (:topic stat)
+
+
+
            (:viewpoint stat)
            pro-goals
            con-goals
+
+
            ;; new argument graph
            newag
            ;; new subs
@@ -184,6 +198,7 @@
 ;    (println "-------------")
     new-state
     )))
+
 
 (defn- make-successor-state-noforward [stat newsubs]
   {:pre [(not (nil? newsubs))]}
@@ -219,6 +234,7 @@
           ;(println "reducing" (count arg) "states")
           (reduce (fn [s a] (make-successor-state-putforward s newsubs a :none)) (make-successor-state-putforward state newsubs (first arg) :update) (rest arg)))
         (make-successor-state-putforward state newsubs arg))
+
       (make-successor-state-noforward state newsubs))))
 
 (defn apply-generator [generator node]
@@ -232,9 +248,13 @@
                 (make-successor-state (:state node) response))
               (mapinterleave (fn [clause]
                                (let [goal (first clause)
+                                     dummy-states (binding [*out* (new PrintWriter "test.txt")] (generator goal state1))]
+                                 ;(println "generating for goal:" goal (count dummy-states) generator)
+                               (let [goal (first clause)
                                      ;dummy-states (binding [*out* (new PrintWriter "test.txt")] (generator goal state1))
                                      ]
                                  ;(println "generating for goal:" goal (count dummy-states) generator)
+                                 (generator goal state1)))
                                  (prof :applyingGenerator (generator goal state1))))
                              (next-goals state1))))))
 
@@ -260,6 +280,16 @@
         :pro in
         :con (not in))))
 
+(defn find-arguments [strategy initial-state generators]
+  "strategy state (seq-of generator) -> (seq-of state)"
+  (let [root (search/make-root initial-state)
+        r (search/search (struct search/problem
+                                 root
+                                 (make-transitions generators)
+                                 goal-state?)
+                         strategy)]
+    (doall (map :state r))))
+
 (defn switch-viewpoint [s]
   "state -> state"
   (letfn [(opposing-viewpoint
@@ -269,9 +299,11 @@
                :con :pro))]
     (update-in s [:viewpoint] opposing-viewpoint)))
 
+(defn find-arguments [strategy max-nodes initial-state generators]
 (defn find-arguments [type strategy max-nodes initial-state generators]
   "strategy state (seq-of generator) -> (seq-of state)"
   (let [root (search/make-root initial-state)
+        r (search/search (struct search/problem
         r (type (struct search/problem
                                  root
                                  (make-transitions generators)
@@ -280,7 +312,18 @@
                          max-nodes)]
     (map :state r)))
 
+(defn construct-args [strategy max-nodes initial-state generators]
+  "strategy state (seq-of generator) -> (seq-of state)"
+  (let [root (search/make-root initial-state)
+        r (search/search-all (struct search/problem
+                                 root
+                                 (make-transitions generators)
+                                 goal-state?)
+                         strategy
+                         max-nodes)]
+    (map :state r)))
 
+(defn searcharg [strategy max-nodes turns arguments generators]
 (defn searcharg [type strategy max-nodes turns arguments generators]
   (if (<= turns 0)
     arguments
@@ -293,6 +336,7 @@
                                  generators)]
                        (if (empty? arg2)
                          (list state2)
+                         (searcharg strategy
                          (searcharg type
                                     strategy
                                     max-nodes
@@ -301,7 +345,26 @@
                                     generators))))
                    arguments)))
 
+(defn constructarg [strategy max-nodes turns arguments generators]
+  (if (<= turns 0)
+    arguments
+    (mapinterleave (fn [state2]
+                     (let [arg2 (construct-args
+                                 strategy
+                                 max-nodes
+                                 (switch-viewpoint state2)
+                                 generators)]
+                       (if (empty? arg2)
+                         (list state2)
+                         (constructarg strategy
+                                    max-nodes
+                                    (dec turns)
+                                    arg2
+                                    generators))))
+                   arguments)))
 
+
+(defn find-best-arguments [strategy max-nodes max-turns state1 generators]
 (defn find-best-arguments [type strategy max-nodes max-turns state1 generators]
   "strategy int state (seq-of generator) -> (seq-of state)
   
@@ -313,6 +376,15 @@
   counterarguments in its resulting stream of arguments."
   (if (neg? max-turns)
     '()
+    (searcharg strategy max-nodes (dec max-turns)
+               (find-arguments strategy max-nodes state1 generators)
     (searcharg type strategy max-nodes (dec max-turns)
                (find-arguments type strategy max-nodes state1 generators)
+               generators)))
+
+(defn construct-best-arguments [strategy max-nodes max-turns state1 generators]
+  (if (neg? max-turns)
+    '()
+    (constructarg strategy max-nodes (dec max-turns)
+               (construct-args strategy max-nodes state1 generators)
                generators)))
