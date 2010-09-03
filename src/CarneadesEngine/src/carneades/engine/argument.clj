@@ -19,6 +19,7 @@
         clojure.set
         clojure.contrib.def
         clojure.contrib.pprint
+        clojure.contrib.profile ; for testing
         carneades.engine.utils
         carneades.engine.statement
         carneades.engine.proofstandard))
@@ -648,7 +649,7 @@
                      ag))
                  ag2 (:premise-of n1))))))
 
-(defn has-premise?
+(defn- has-premise?
   [p prs]
   (and
     (not (empty? prs))
@@ -656,11 +657,11 @@
       (statement= (:atom p) (:atom (first prs)))
       (recur p (rest prs)))))
 
-(defn premises=?
+(defn- premises=?
   [pr1 pr2]
   (every? (fn [p] (has-premise? p pr2)) pr1))
 
-(defn unite-args
+(defn- unite-args
   [ag arg]
   (if (some (fn [arg2]
               (and
@@ -671,7 +672,7 @@
     ag
     (assert-argument ag (assoc arg :id (gensym "a")))))
 
-(defn unite-graphs
+(defn- unite-graphs
   [ag1 ag2]
   (let [all-nodes (get-nodes ag2),
         accepted-nodes (filter (fn [n] (= (:status n) :accepted)) all-nodes),
@@ -680,7 +681,7 @@
 
 (defn unite-argument-graphs
   [l]
-  (reduce unite-graphs *empty-argument-graph* l))
+  (prof :uniteGraphs (assoc (reduce unite-graphs *empty-argument-graph* l) :id (gensym "a"))))
 
 (defn depth-in
   [n ag]

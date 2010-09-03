@@ -85,3 +85,28 @@
          (throw (Exception. (format "Key '%s' not found" ~key)))
          v#))
     `(get ~map ~key)))
+
+(defn conjoin [f & fs]
+  "returns a predicate that returns true when all of the predicates return true.
+
+   Translated from the book Ansi Common Lisp, Prentice Hall, Paul Graham"
+  (if (empty? fs)
+    f
+    (let [conjoined (apply conjoin fs)]
+      (fn [& args]
+        (and (apply f args) (apply conjoined args))))))
+
+(defn disjoin [f & fs]
+  "returns a predicate that returns true when one of the predicates return true.
+
+   Translated from the book Ansi Common Lisp, Prentice Hall, Paul Graham"
+  (if (empty? fs)
+    f
+    (let [conjoined (apply conjoin fs)]
+      (fn [& args]
+        (or (apply f args) (apply conjoined args))))))
+
+(defn nilify [f]
+  "returns a predicate that returns true when f returns true, nil otherwise"
+  (fn [& args]
+    (or (apply f args) nil)))
