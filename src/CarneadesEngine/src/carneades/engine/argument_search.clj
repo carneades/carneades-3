@@ -10,9 +10,6 @@
         carneades.engine.statement
         clojure.contrib.pprint
         carneades.ui.diagram.viewer ; for debugging
-    )
-        clojure.contrib.pprint
-        carneades.ui.diagram.viewer ; for debugging
         clojure.contrib.profile ; for testing
     )
   (:require [carneades.engine.argument :as arg]
@@ -248,13 +245,9 @@
                 (make-successor-state (:state node) response))
               (mapinterleave (fn [clause]
                                (let [goal (first clause)
-                                     dummy-states (binding [*out* (new PrintWriter "test.txt")] (generator goal state1))]
-                                 ;(println "generating for goal:" goal (count dummy-states) generator)
-                               (let [goal (first clause)
                                      ;dummy-states (binding [*out* (new PrintWriter "test.txt")] (generator goal state1))
                                      ]
                                  ;(println "generating for goal:" goal (count dummy-states) generator)
-                                 (generator goal state1)))
                                  (prof :applyingGenerator (generator goal state1))))
                              (next-goals state1))))))
 
@@ -299,11 +292,9 @@
                :con :pro))]
     (update-in s [:viewpoint] opposing-viewpoint)))
 
-(defn find-arguments [strategy max-nodes initial-state generators]
 (defn find-arguments [type strategy max-nodes initial-state generators]
   "strategy state (seq-of generator) -> (seq-of state)"
   (let [root (search/make-root initial-state)
-        r (search/search (struct search/problem
         r (type (struct search/problem
                                  root
                                  (make-transitions generators)
@@ -312,18 +303,7 @@
                          max-nodes)]
     (map :state r)))
 
-(defn construct-args [strategy max-nodes initial-state generators]
-  "strategy state (seq-of generator) -> (seq-of state)"
-  (let [root (search/make-root initial-state)
-        r (search/search-all (struct search/problem
-                                 root
-                                 (make-transitions generators)
-                                 goal-state?)
-                         strategy
-                         max-nodes)]
-    (map :state r)))
 
-(defn searcharg [strategy max-nodes turns arguments generators]
 (defn searcharg [type strategy max-nodes turns arguments generators]
   (if (<= turns 0)
     arguments
@@ -336,7 +316,6 @@
                                  generators)]
                        (if (empty? arg2)
                          (list state2)
-                         (searcharg strategy
                          (searcharg type
                                     strategy
                                     max-nodes
@@ -345,26 +324,6 @@
                                     generators))))
                    arguments)))
 
-(defn constructarg [strategy max-nodes turns arguments generators]
-  (if (<= turns 0)
-    arguments
-    (mapinterleave (fn [state2]
-                     (let [arg2 (construct-args
-                                 strategy
-                                 max-nodes
-                                 (switch-viewpoint state2)
-                                 generators)]
-                       (if (empty? arg2)
-                         (list state2)
-                         (constructarg strategy
-                                    max-nodes
-                                    (dec turns)
-                                    arg2
-                                    generators))))
-                   arguments)))
-
-
-(defn find-best-arguments [strategy max-nodes max-turns state1 generators]
 (defn find-best-arguments [type strategy max-nodes max-turns state1 generators]
   "strategy int state (seq-of generator) -> (seq-of state)
   
@@ -376,15 +335,7 @@
   counterarguments in its resulting stream of arguments."
   (if (neg? max-turns)
     '()
-    (searcharg strategy max-nodes (dec max-turns)
-               (find-arguments strategy max-nodes state1 generators)
     (searcharg type strategy max-nodes (dec max-turns)
                (find-arguments type strategy max-nodes state1 generators)
                generators)))
 
-(defn construct-best-arguments [strategy max-nodes max-turns state1 generators]
-  (if (neg? max-turns)
-    '()
-    (constructarg strategy max-nodes (dec max-turns)
-               (construct-args strategy max-nodes state1 generators)
-               generators)))

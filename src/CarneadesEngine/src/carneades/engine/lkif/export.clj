@@ -1,4 +1,4 @@
-;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Copyright © 2010 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.engine.lkif.export
@@ -47,19 +47,20 @@
     (fatom? t) [:s {:pred (statement-predicate t)} (combine-expression-format (:term t) (:form t))],
     (variable? t) [:v (.substring (str t) 1)],
     (symbol? t) [:c (str t)],
-    (and (list? t) (functor? (first t))) [:expr {:functor (first t)} (map text_term->sxml (rest t))],
-    (list? t) [:s {:pred (first t)} (map text_term->sxml (rest t))],
+    (and (seq? t) (functor? (first t))) [:expr {:functor (first t)} (map text_term->sxml (rest t))],
+    (seq? t) [:s {:pred (first t)} (map text_term->sxml (rest t))],
     true (println "no valid text/term" t)))
 
 
 (defn wff->sxml
   [wff]
   ;(println "wff->sxml" wff)
+  ; TODO: exists and all
   (cond
     (string? wff) [:s wff],
     (symbol? wff) [:s wff],
     (fatom? wff) [:s {:pred (statement-predicate wff)} (combine-expression-format (:term wff) (:form wff))],
-    (list? wff) (condp = (first wff)
+    (seq? wff) (condp = (first wff)
                   'not [:not (wff->sxml (second wff))],
                   'and [:and (map wff->sxml (rest wff))],
                   'or [:or (map wff->sxml (rest wff))],
@@ -119,7 +120,7 @@
     (symbol? s) (if (assumption-premise? s ag)
                   [:s {:assumable true} s]
                   [:s s]),
-    (list? s) (if (assumption-premise? s ag)
+    (seq? s) (if (assumption-premise? s ag)
                 [:s {:pred (statement-predicate s), :assumable true} (map text_term->sxml (rest s))]
                 [:s {:pred (statement-predicate s)} (map text_term->sxml (rest s))]),
     true (println "no valid atom" s)))
@@ -206,7 +207,7 @@
   (map (fn [wff] [:axiom {:id (gensym "axiom")} (wff->sxml wff)]) (:head axiom)))
 
 (defn axioms->sxml
-  [axioms]  
+  [axioms]
   (if (empty? axioms)
     nil
     [:axioms (map axiom->sxml axioms)]))

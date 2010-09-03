@@ -6,7 +6,7 @@
         carneades.engine.utils
         carneades.engine.argument-search
         [carneades.engine.argument :only (node-statement get-nodes)]
-        [carneades.engine.search :only (depth-first resource)]
+        [carneades.engine.search :only (depth-first resource search traverse)]
         carneades.ui.diagram.viewer)
   (:require [carneades.engine.argument :as arg]))
 
@@ -55,17 +55,17 @@
                    (:substitutions s)))
       sols)))
 
-(defn construct-arguments [goal max-nodes max-turns ag generators]
+(defn construct-arguments [goal max-nodes ag generators]
   "integer integer argument-graph (seq-of generator) -> statement ->
 (seq-of state)"  
-  (construct-best-arguments depth-first max-nodes max-turns
+  (find-best-arguments traverse depth-first max-nodes 1
     (initial-state goal ag) generators))
 
 (defn make-engine* [max-nodes max-turns ag generators]
   "integer integer argument-graph (seq-of generator) -> statement -> 
    (seq-of state)"
   (fn [goal]
-    (find-best-arguments depth-first max-nodes max-turns
+    (find-best-arguments search depth-first max-nodes max-turns
                          (initial-state goal ag) generators)))
 
 (defn make-engine [max-nodes max-turns generators]
