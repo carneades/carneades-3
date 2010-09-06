@@ -49,8 +49,6 @@ public class EditorApplicationView extends javax.swing.JFrame {
         jCheckBox3 = new javax.swing.JCheckBox();
         jCheckBox4 = new javax.swing.JCheckBox();
         searchInPanel = new javax.swing.JPanel();
-        jRadioButton3 = new javax.swing.JRadioButton();
-        jRadioButton4 = new javax.swing.JRadioButton();
         resultPanel = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         menuBar = new javax.swing.JMenuBar();
@@ -157,7 +155,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
         );
 
         leftTabbedPane.addTab("Files", jPanel1);
@@ -229,28 +227,28 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         searchInPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Search in:"));
 
-        searchInButtonGroup.add(jRadioButton3);
-        jRadioButton3.setSelected(true);
-        jRadioButton3.setText("Current graph");
+        searchInButtonGroup.add(searchInCurrentGraphButton);
+        searchInCurrentGraphButton.setSelected(true);
+        searchInCurrentGraphButton.setText("Current graph");
 
-        searchInButtonGroup.add(jRadioButton4);
-        jRadioButton4.setText("All LKIF files");
+        searchInButtonGroup.add(searchInAllLkifFilesButton);
+        searchInAllLkifFilesButton.setText("All LKIF files");
 
         javax.swing.GroupLayout searchInPanelLayout = new javax.swing.GroupLayout(searchInPanel);
         searchInPanel.setLayout(searchInPanelLayout);
         searchInPanelLayout.setHorizontalGroup(
             searchInPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(searchInPanelLayout.createSequentialGroup()
-                .addComponent(jRadioButton3)
+                .addComponent(searchInCurrentGraphButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jRadioButton4)
+                .addComponent(searchInAllLkifFilesButton)
                 .addContainerGap(84, Short.MAX_VALUE))
         );
         searchInPanelLayout.setVerticalGroup(
             searchInPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(searchInPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(jRadioButton3)
-                .addComponent(jRadioButton4))
+                .addComponent(searchInCurrentGraphButton)
+                .addComponent(searchInAllLkifFilesButton))
         );
 
         optionsPanel.add(searchInPanel);
@@ -436,8 +434,6 @@ public class EditorApplicationView extends javax.swing.JFrame {
     private javax.swing.JCheckBox jCheckBox4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JRadioButton jRadioButton3;
-    private javax.swing.JRadioButton jRadioButton4;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JPopupMenu.Separator jSeparator1;
@@ -469,7 +465,9 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JButton searchButton = new javax.swing.JButton();
     public final javax.swing.JComboBox searchComboBox = new javax.swing.JComboBox();
     private javax.swing.JPanel searchForPanel;
+    public final javax.swing.JRadioButton searchInAllLkifFilesButton = new javax.swing.JRadioButton();
     private javax.swing.ButtonGroup searchInButtonGroup;
+    public final javax.swing.JRadioButton searchInCurrentGraphButton = new javax.swing.JRadioButton();
     private javax.swing.JPanel searchInPanel;
     public final javax.swing.JPanel searchPanel = new javax.swing.JPanel();
     public final javax.swing.JProgressBar searchProgressBar = new javax.swing.JProgressBar();

@@ -7,14 +7,21 @@
 (defn create-docmanager []
      (atom {}))
 
-(defn add-doc [docmanager path content]
-  (swap! docmanager assoc path content))
+(defn add-doc [docmanager key content]
+  (swap! docmanager assoc key content))
 
-(defn remove-doc [docmanager path]
-  (swap! docmanager dissoc path))
+(defn remove-doc [docmanager key]
+  (swap! docmanager dissoc key))
 
-(defn doc-exists? [docmanager path]
-  (contains? (deref docmanager) path))
+(defn doc-exists? [docmanager key]
+  (contains? (deref docmanager) key))
 
-(defn get-doc-content [docmanager path]
-  (get (deref docmanager) path))
+(defn get-doc-content [docmanager key]
+  (get (deref docmanager) key))
+
+(defn count-docs [docmanager]
+  (count (keys (deref docmanager))))
+
+(defn get-all-keys [docmanager]
+  (keys (deref docmanager)))
+

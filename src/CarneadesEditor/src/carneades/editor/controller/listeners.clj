@@ -108,39 +108,68 @@
     (print-graph view path ag statement-formatted)))
 
 (defvar- *end-search* (atom false))
+(defvar- *nb-agents-running* (atom 0))
+(defvar- *running-agents* (atom ()))
+
+(defn- do-one-search [state view]
+  (try
+    (let [{:keys [results path id]} state]
+      (loop [res results]
+        (let [stmt (first res)]
+          (when-not (or (nil? stmt) (deref *end-search*))
+            (do-swing
+             ;; we are not in the swing thread anymore
+             ;; so we need to use the do-swing macro
+             (display-statement-search-result view path id stmt
+                                              statement-formatted))
+            (recur (rest res))))))
+    (finally
+     (let [nb-agents (swap! *nb-agents-running* dec)]
+       (prn "end of agent, nb-agents = ")
+       (prn nb-agents)
+       (when (zero? nb-agents)
+         (do-swing-and-wait
+          (display-search-state view false))
+         )))))
 
 (defn on-search-begins [view searchinfo]
   (let [text (first searchinfo)
-        options (second searchinfo)
+        {:keys [search-in]} (second searchinfo)
         [path id] (current-graph view)]
-    (if (and path (not (empty? text)))
-      (prn "Search begins"
-       (let [ag (get-ag path id)
-             searchagent (agent {:results
-                                 (search-statements ag statement-formatted
-                                                    {:search-content text})})
-             searchfn (fn [state]
-                        (try
-                          (do-swing-and-wait
-                           (display-search-state view true))
-                          (let [{:keys [results]} state]
-                            (loop [res results]
-                              (let [stmt (first res)]
-                                (when-not (or (nil? stmt) (deref *end-search*))
-                                  (do-swing
-                                   ;; we are not in the swing thread anymore
-                                   ;; so we need to use the do-swing macro
-                                   (display-statement-search-result view path id stmt
-                                                                    statement-formatted))
-                                  (recur (rest res))))))
-                          (finally (do-swing-and-wait
-                                    (display-search-state view false)))))]
-         (reset! *end-search* false)
-         (send searchagent searchfn))))))
+    (when (and (not (empty? text))
+               (or (and path (= search-in :current-graph))
+                   (= search-in :all-lkif-files)))
+      (prn "Search begins")
+      (let [path-to-id (if (= search-in :all-lkif-files)
+                         (mapcat (fn [path]
+                                   (partition 2 (interleave
+                                                 (repeat path)
+                                                 (get-ags-id path))))
+                                 (get-all-keys *docmanager*))
+                         [[path id]])
+            nb-ids (count path-to-id)
+            searchagents (map (fn [[path id]]
+                                (agent {:results
+                                        (search-statements (get-ag path id)
+                                                           statement-formatted
+                                                           text {})
+                                        :path path
+                                        :id id}))
+                              path-to-id)]
+        (reset! *end-search* false)
+        (reset! *nb-agents-running* nb-ids)
+        (reset! *running-agents* searchagents)
+        (display-search-state view true)
+        (doseq [searchagent searchagents]
+          (send searchagent do-one-search view))))))
 
 (defn on-search-ends [view]
-  (prn "Stopping search")
-  (reset! *end-search* true))
+  (prn "search ends")
+  (reset! *end-search* true)
+  ;; await is blocking, probably because of the concurrent access in the Swing
+  ;; thread
+  ;; so we just wait to let agents finish
+  (Thread/sleep 200))
 
 (defn on-select-statement [path id stmt view]
   (prn "on select statement")

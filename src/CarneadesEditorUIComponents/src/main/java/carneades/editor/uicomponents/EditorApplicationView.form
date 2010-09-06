@@ -661,9 +661,9 @@
                                 <DimensionLayout dim="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
-                                          <Component id="jRadioButton3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="searchInCurrentGraphButton" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="jRadioButton4" min="-2" max="-2" attributes="0"/>
+                                          <Component id="searchInAllLkifFilesButton" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace pref="84" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -671,14 +671,14 @@
                                 <DimensionLayout dim="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                                          <Component id="jRadioButton3" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jRadioButton4" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="searchInCurrentGraphButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="searchInAllLkifFilesButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                                 </DimensionLayout>
                               </Layout>
                               <SubComponents>
-                                <Component class="javax.swing.JRadioButton" name="jRadioButton3">
+                                <Component class="javax.swing.JRadioButton" name="searchInCurrentGraphButton">
                                   <Properties>
                                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                                       <ComponentRef name="searchInButtonGroup"/>
@@ -686,14 +686,20 @@
                                     <Property name="selected" type="boolean" value="true"/>
                                     <Property name="text" type="java.lang.String" value="Current graph"/>
                                   </Properties>
+                                  <AuxValues>
+                                    <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
+                                  </AuxValues>
                                 </Component>
-                                <Component class="javax.swing.JRadioButton" name="jRadioButton4">
+                                <Component class="javax.swing.JRadioButton" name="searchInAllLkifFilesButton">
                                   <Properties>
                                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                                       <ComponentRef name="searchInButtonGroup"/>
                                     </Property>
                                     <Property name="text" type="java.lang.String" value="All LKIF files"/>
                                   </Properties>
+                                  <AuxValues>
+                                    <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
+                                  </AuxValues>
                                 </Component>
                               </SubComponents>
                             </Container>

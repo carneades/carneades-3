@@ -22,6 +22,7 @@
 (defvar- *searchPanel* (.searchPanel *frame*))
 (defvar- *searchScrollPane* (.searchScrollPane *frame*))
 (defvar- *searchProgressBar* (.searchProgressBar *frame*))
+(defvar- *searchInCurrentGraph* (.searchInCurrentGraphButton *frame*))
 
 (defvar *searchResultTable* (.searchResultTable *frame*))
 ;; (defvar- *modelTable* (.getModel *searchResultTable*))
@@ -86,7 +87,9 @@
 
 (defn- get-searched-info []
   (let [text (.getSelectedItem *searchComboBox*)
-        options {:search-in :current-graph}]
+        options {:search-in (if (.isSelected *searchInCurrentGraph*)
+                              :current-graph
+                              :all-lkif-files)}]
     (if (nil? text)
      nil
      [(trim text) options])))
@@ -106,6 +109,7 @@
       (.setIndeterminate *searchProgressBar* false))))
 
 (defn- search-button-listener [event]
+  (prn "event")
   (let [was-active (deref *searchactive*)]
     (when-not was-active
       (if-let [text (.getSelectedItem *searchComboBox*)]
@@ -165,11 +169,9 @@
   (last (split path (java.util.regex.Pattern/compile java.io.File/pathSeparator))))
 
 (defn add-stmt-search-result [path id stmt stmt-fmt]
-  (prn "adding element")
-  ;; (.addElement *listModel* (StatementObject. path id stmt stmt-fmt))
   (let [obj (StatementInfo. path id stmt stmt-fmt)]
     (.insertRow *modelTable* (.getRowCount *modelTable*)
-                (to-array [obj id (file-from-path path) path]))))
+                (to-array [obj]))))
 
 (defn register-searchresult-selection-listener [l args]
   (swap! *searchresult-selection-listeners* conj {:listener l :args args}))
