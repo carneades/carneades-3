@@ -34,36 +34,16 @@
 (def oss "http://carneades.berlios.de/oss-licenses#")
 
 ; do copyright licenses exist that we may use for the carneades engine?
-(def goal1 (list 'exists 'LT (list (c oss "CopyrightLicenseTemplate") 'LT) (list (c oss "mayUseLicenseTemplate") (c il "CarneadesEngine") 'LT)))
-;(def goal1 (list (c oss "mayUseLicenseTemplate") (c il "CarneadesEngine") (c oss "GPL_Template")))
-
-; defining argument generators
-(def basic-generators
-  (list
-    (generate-arguments-from-rules oss-kb '())
-    (generate-arguments-from-owl impact-ont :reasoner)))
+;(def goal1 (list 'exists 'LT (list (c oss "CopyrightLicenseTemplate") 'LT) (list (c oss "mayUseLicenseTemplate") (c il "CarneadesEngine") 'LT)))
+(def goal1 (list (c oss "mayUseLicenseTemplate") (c il "CarneadesEngine") (c oss "GPL_Template")))
 
 (def generators
-  (cons
-    (builtins basic-generators)
-    basic-generators))
+  (list
+    (generate-arguments-from-rules oss-kb '())
+    (generate-arguments-from-owl impact-ont :reasoner)
+    (builtins (list (generate-arguments-from-owl impact-ont :reasoner)))
+    ))
 
-; argument construction function
-(defn args [ag goal]
-  (unite-solutions (construct-arguments goal
-                       50
-                       ag
-                       generators
-                      )))
-
-; goal function
-(defn get-con-goals [s ag]
-  (let [assmptns (abd/assume-decided-statements ag)]
-    (abd/statement-out-label ag assmptns s)))
-
-(defn get-pro-goals [s ag]
-  (let [assmptns (abd/assume-decided-statements ag)]
-    (abd/statement-in-label ag assmptns s)))
 
 ; -------------------------------------------
 ; main
@@ -77,33 +57,14 @@
              '((valid FSFTheoryOfLinking)
                 (valid http://carneades.berlios.de/impact-licensing))))
 
-  ; constructing arguments for initial goal
-  (def ag1 (args ag0 goal1))
-  (view ag1)
 
-  ; getting con-goals
-  (def con-goals (apply union (get-con-goals goal1 ag1)))
-  (println "con-goals: " (count con-goals))
-
-  ; constructing arguments for con-goals
-  (def ag2 (reduce (fn [ag g]
-                     (println "goal:" (statement-formatted g))
-                     (args ag g))
-             ag1 con-goals))
-  (view ag2)
-
-  ; getting pro-goals
-  (def pro-goals (apply union (get-pro-goals goal1 ag2)))
-  (println "pro-goals: " (count pro-goals))
-
-  ; constructing arguments for pro-goals
-  (def ag3 (reduce (fn [ag g]
-                     (println "goal:" (statement-formatted g))
-                     (args ag g))
-             ag2 pro-goals))
-  (view ag3)
+  ; constructing arguments
+  (def ag1 (construct-arguments-abductively goal1 100 3 ag0 generators))
 
   ; exporting results to lkif
-  (lkif-export {:ag [ag1 ag2 ag3]} "C:\\Users\\stb\\Desktop\\impact-licensing.xml"))
+  (lkif-export {:ag [ag1]} "impact-licensing.xml"))
 
-(profile (main))
+;(profile (main))
+(main)
+
+;(view ag1)
