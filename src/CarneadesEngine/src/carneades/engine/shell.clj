@@ -2,8 +2,11 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.engine.shell
-  (:use clojure.contrib.pprint
+  (:use clojure.set
+        clojure.contrib.pprint
+    clojure.contrib.profile
         carneades.engine.utils
+        [carneades.engine.abduction :as abd]
         carneades.engine.argument-search
         [carneades.engine.argument :only (node-statement get-nodes)]
         [carneades.engine.search :only (depth-first resource search traverse)]
@@ -58,8 +61,31 @@
 (defn construct-arguments [goal max-nodes ag generators]
   "integer integer argument-graph (seq-of generator) -> statement ->
 (seq-of state)"  
-  (find-best-arguments traverse depth-first max-nodes 1
-    (initial-state goal ag) generators))
+  (prof :constructArguments (find-best-arguments traverse depth-first max-nodes 1
+    (initial-state goal ag) generators)))
+
+(defn construct-arguments-abductively
+  ([goal max-nodes max-turns ag generators]
+    (construct-arguments-abductively goal goal max-nodes max-turns ag generators :pro #{goal}))
+  ([main-issue goal max-nodes max-turns ag generators viewpoint applied-goals]
+    (println "current goal:" goal)
+    (condp = max-turns
+      0 ag,
+      1 (unite-solutions (construct-arguments goal max-nodes ag generators)),
+      (let [ag2 (unite-solutions (construct-arguments goal max-nodes ag generators)),
+            asmpts (abd/assume-decided-statements ag2),
+            new-goals (prof :abduction (apply union
+                    (if (= viewpoint :con)
+                        (abd/statement-in-label ag2 asmpts main-issue)
+                        (abd/statement-out-label ag2 asmpts main-issue)))),
+            goals (difference new-goals applied-goals),
+            new-vp (if (= viewpoint :pro)
+                     :con
+                     :pro)]
+        ;(view ag2)
+        ;(println "new goals:" new-goals)
+        ;(println "goals    :" goals)
+        (reduce (fn [ag3 g] (construct-arguments-abductively main-issue g max-nodes (- max-turns 1) ag3 generators new-vp (union applied-goals goals))) ag2 goals)))))
 
 (defn make-engine* [max-nodes max-turns ag generators]
   "integer integer argument-graph (seq-of generator) -> statement -> 
