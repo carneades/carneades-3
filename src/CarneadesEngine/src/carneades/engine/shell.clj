@@ -102,15 +102,14 @@
 ;; (defn show1 [query engine]
 ;;   (show query engine false))
 
-(defn search-statements [ag stmt-fmt options]
+(defn search-statements [ag stmt-fmt search-content options]
   "Produces a sequence of statements satisfying the search options.
    The sequence is produced in the background with seque. The 
    reading from the sequence can block if the reader gets ahead of the
    search
 
-   The keys for options are :search-content"
+   The keys for options are ..."
   (let [n-ahead 100
-        {:keys [search-content]} options
         pred (fn [stmt]
                (let [formatted (stmt-fmt stmt)]
                  (.contains (.toLowerCase formatted) (.toLowerCase search-content))))]
