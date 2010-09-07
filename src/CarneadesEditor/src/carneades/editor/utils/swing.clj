@@ -2,7 +2,8 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.editor.utils.swing
-  (:import (javax.swing.event ListSelectionListener
+  (:import java.beans.PropertyChangeListener
+           (javax.swing.event ListSelectionListener
                               TreeSelectionListener)
            (javax.swing UIManager
                         JFileChooser
@@ -31,6 +32,14 @@
      ~@body
      (doseq [path# expanded#]
        (.expandPath ~tree path#))))
+
+(defn add-propertychange-listener
+  [component f & args]
+  (let [listener (proxy [PropertyChangeListener] []
+                   (propertyChange [event]
+                                   (apply f event args)))]
+    (.addPropertyChangeListener component listener)
+    listener))
 
 (defn add-listselection-listener
   [component f & args]
