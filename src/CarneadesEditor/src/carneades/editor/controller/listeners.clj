@@ -13,14 +13,16 @@
         ;; only the view.viewprotocol namespace is allowed to be imported
         carneades.editor.view.viewprotocol
         ;; no import of carneades.editor.view.editorapplication,
-        ;; java.awt.*, javax.* are allowed here
+        ;; java.awt.*, javax.* are not allowed here
         )
+  (:require [clojure.string :as str])
   (:import java.io.File))
 
 ;;; in this namespace we define the Swing independant listeners
 
 (defvar- *file-error* "File Error")
 (defvar- *file-already-opened* "File %s is already opened.")
+(defvar- *file-format-not-supported* "This file format is not supported")
 
 (defvar- *docmanager* (create-docmanager))
 
@@ -81,12 +83,53 @@
 (defn on-open-graph [view path id]
   (open-graph view path (get-ag path id) statement-formatted))
 
+(defvar- *dot-description* "DOT Files")
+(defvar- *svg-description* "SVG Files")
+(defvar- *graphviz-svg-description* "Graphviz SVG Files")
+
+(defn- suggested-filename [title id ext]
+  (if (nil? title)
+    (File. (str id "." ext))
+    (File. (str (str/join "_" (str/split (str/trim title) #"\s")) "." ext))))
+
+(defn- get-extension [filename]
+  (let [idx (.lastIndexOf filename ".")]
+    (when (not= idx -1)
+     (subs filename (inc idx)))))
+
 (defn on-export-graph [view path id]
   (when-let [ag (get-ag path id)]
-    (when-let [file (ask-file-to-save view "SVG Files" #{"svg"} 
-                                      (File. (str id ".svg")))]
-      (let [filename (.getPath file)]
-        (export-graph-to-svg view ag statement-formatted filename)))))
+    (when-let [[file desc] (ask-file-to-save view {*dot-description* "dot"
+                                                   *graphviz-svg-description* "svg"
+                                                   *svg-description* "svg"}
+                                             (suggested-filename (:title ag) id "svg"))]
+      (let [filename (.getPath file)
+            extension (get-extension filename)]
+        (prn "desc = ")
+        (prn desc)
+        (condp = desc
+            *svg-description*
+          (export-graph-to-svg view ag statement-formatted filename)
+
+          *dot-description*
+          (export-graph-to-dot view ag statement-formatted filename)
+
+          *graphviz-svg-description*
+          (do
+            (prn "export graphviz")
+            (export-graph-to-graphviz-svg view ag statement-formatted filename))
+
+          ;; for the "All files filter":
+          (condp = extension
+              "dot"
+            (export-graph-to-dot view ag statement-formatted filename)
+
+            "svg"
+            (do
+              (prn "here")
+              (export-graph-to-svg view ag statement-formatted filename))
+
+            (display-error view *file-error* *file-format-not-supported*)))))))
 
 (defn on-close-graph [view path id]
   (close-graph view path id))

@@ -15,8 +15,10 @@
   (current-graph [this] "returns [path id] for the graph currently edited")
   (ask-lkif-file-to-open [this] "ask the user the LKIF file to open. 
                                  Returns File or nil")
-  (ask-file-to-save [this description extensions suggested])
+  (ask-file-to-save [this descriptions suggested])
   (export-graph-to-svg [this ag stmt-fmt filename])
+  (export-graph-to-dot [this ag statement-formatted filename])
+  (export-graph-to-graphviz-svg [this ag statement-formatted filename])
   (display-lkif-content [this file graphinfos]
                         "display information relative to an LKIF file. 
                          graphinfos is a seq of [id title] ")

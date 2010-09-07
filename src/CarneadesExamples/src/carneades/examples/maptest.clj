@@ -2,8 +2,9 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.examples.maptest
-  (:use carneades.engine.argument
-        carneades.mapcomponent.viewer))
+  (:use carneades.engine.argument)
+  (:require [carneades.mapcomponent.viewer :as jgraphx]
+            [carneades.ui.diagram.viewer :as graphviz]))
 
 (defargument a1
   (pro "P"
@@ -40,4 +41,5 @@
 ;; (def ld (make-lkif-data '() (rulebase) (list ag1)))
 ;; (lkif-export '() ld "argument-map-tests2.xml")
 
-(view ag1)
+(jgraphx/view ag1)
+(graphviz/view ag1)

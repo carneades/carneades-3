@@ -8,6 +8,7 @@
         ;;
         ;; no imports of carneades.engine.* are allowed here
         ;;
+        carneades.ui.diagram.graphvizviewer
         carneades.mapcomponent.map
         carneades.editor.view.viewprotocol
         carneades.editor.view.swinguiprotocol
@@ -24,7 +25,8 @@
         carneades.editor.view.properties.properties
         carneades.editor.view.aboutbox
         carneades.editor.view.printpreview.preview)
-  (:import (carneades.editor.uicomponents EditorApplicationView)
+  (:import java.io.File
+           (carneades.editor.uicomponents EditorApplicationView)
            (java.awt EventQueue Cursor Color)
            (javax.swing UIManager JFrame JFileChooser JOptionPane)
            (carneades.mapcomponent.map StatementCell ArgumentCell PremiseCell)))
@@ -188,30 +190,69 @@
                                                    weight direction scheme)))
 
   (ask-file-to-save
-   [this-view description extensions suggested]
-   (let [jc (proxy [JFileChooser] []
-              (approveSelection
-               []
-               (when-let [selected (proxy-super getSelectedFile)]
-                 (if (.exists selected)
-                   (when (ask-confirmation this-view "Save"
-                                           "Overwrite existing file?")
-                     (proxy-super approveSelection))
-                   (proxy-super approveSelection)))))]
-     (.setFileFilter jc (create-file-filter description extensions))
-     (when-let [dir (deref *dialog-current-directory*)]
-       (.setCurrentDirectory jc dir))
-     (when suggested
-       (.setSelectedFile jc suggested))
-     (let [val (.showSaveDialog jc *frame*)]
-       (when (= val JFileChooser/APPROVE_OPTION)
-         (reset! *dialog-current-directory* (.getCurrentDirectory jc))
-         (.getSelectedFile jc)))))
+   [this-view descriptions suggested]
+   (letfn [(changeextension
+            [file ext]
+            (let [filename (.getName file)]
+             (let [idxlastdot (.lastIndexOf filename ".")]
+               (if (not= idxlastdot -1)
+                 (File. (str (subs filename 0 idxlastdot) "." ext))
+                 (File. (str filename "." ext))))))]
+     (let [selectedfile (atom suggested)
+           jc (proxy [JFileChooser] []
+                (approveSelection
+                 []
+                 (when-let [selected (proxy-super getSelectedFile)]
+                   (if (.exists selected)
+                     (when (ask-confirmation this-view "Save"
+                                             "Overwrite existing file?")
+                       (proxy-super approveSelection))
+                     (proxy-super approveSelection)))))]
+       (doseq [[description extension] descriptions]
+         (.addChoosableFileFilter jc (create-file-filter description (set [extension]))))
+       (when-let [dir (deref *dialog-current-directory*)]
+         (.setCurrentDirectory jc dir))
+       (when suggested
+         (.setSelectedFile jc suggested))
+       (add-propertychange-listener jc (fn [event]
+                                         (condp = (.getPropertyName event)
+                                             
+                                             JFileChooser/FILE_FILTER_CHANGED_PROPERTY
+                                           (when-let [file (deref selectedfile)]
+                                             (let [desc (.. jc getFileFilter getDescription)]
+                                               (.setSelectedFile jc (changeextension file
+                                                                                     (descriptions desc)))))
+                                               
+                                           JFileChooser/SELECTED_FILE_CHANGED_PROPERTY
+                                           (do
+                                             (when-let [file (.. event getNewValue)]
+                                               (reset! selectedfile file)))
+
+                                           nil)))
+       (let [val (.showSaveDialog jc *frame*)]
+         (when (= val JFileChooser/APPROVE_OPTION)
+           (reset! *dialog-current-directory* (.getCurrentDirectory jc))
+           [(.getSelectedFile jc) (.. jc getFileFilter getDescription)])))))
 
   (export-graph-to-svg
    [this ag stmt-fmt filename]
    (try
      (export-graph (create-graph-component ag stmt-fmt) filename)
+     (catch java.io.IOException e
+       (display-error this "Save error" (.getMessage e)))))
+
+  (export-graph-to-dot
+   [this ag statement-formatted filename]
+   (try
+     (spit filename (gen-graphvizcontent ag statement-formatted))
+     (catch java.io.IOException e
+       (display-error this "Save error" (.getMessage e)))))
+
+  (export-graph-to-graphviz-svg
+   [this ag statement-formatted filename]
+   (prn "export to graphviz svg")
+   (try
+     (gen-image ag statement-formatted filename)
      (catch java.io.IOException e
        (display-error this "Save error" (.getMessage e)))))
   
