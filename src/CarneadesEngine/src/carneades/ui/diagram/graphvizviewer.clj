@@ -49,69 +49,102 @@
 
 (defn- statement-graphvizstr [ag n stmt-str]
   (let [id (get-id n)]
-    (format "    %s [shape=box, label=\"%s\", style=\"%s\"];\n"
+    (format "    %s [shape=box, label=\"%s\", style=filled fillcolor=\"%s\"];\n"
             id
-            (cond (questioned? ag n) (str-escape "? " (stmt-str n))
-                  (accepted? ag n) (str-escape  "+ " (stmt-str n))
-                  (rejected? ag n) (str-escape  "- " (stmt-str n))
-                  :else (str-escape (stmt-str n)))
-            (cond (and (acceptable? ag n)
-                       (acceptable? ag (statement-complement n)))
-                  "dotted,filled"
-                  (acceptable? ag n) "filled"
-                  (acceptable? ag (statement-complement n)) "dotted"
-                  :else "solid"))))
+            (cond (and (in? ag n) (in? ag (statement-complement n)))
+                  (str-escape "✓✗ " (stmt-str n))
+                  
+                  (in? ag n) 
+                  (str-escape "✓ " (stmt-str n))
+                  
+                  (in? ag (statement-complement n))
+                  (str-escape "✗ " (stmt-str n))
+                  
+                  (questioned? ag n)
+                  (str-escape "? " (stmt-str n))
+                  
+                  :else (stmt-str n))
+            (cond (and (in? ag n) (in? ag (statement-complement n)))
+                  "lightyellow"
+                  
+                  (in? ag n)
+                  "greenyellow"
+                  
+                  (in? ag (statement-complement n))
+                  "lightpink"
+                  
+                  :else "white"))))
 
 (defn- statements-graphvizstr [ag statements stmt-str]
   (str-join "" (map #(statement-graphvizstr ag % stmt-str) statements)))
 
 (defn- argument-graphvizstr [ag arg]
   {:pre [(not (nil? arg))] }
-  (str (format "    %s [shape=ellipse, label=\"%s\", style=\"%s\"];\n"
+  (str (format "    %s [shape=circle, label=\"%s\", color=\"%s\", style=filled, fillcolor=\"%s\"];\n"
                (get-id (argument-id arg))
-               (if (argument-scheme arg)
-                 (argument-scheme arg)
-                 (str-escape (argument-id arg)))
-               (if (applicable? ag arg)
-                 "filled"
-                 "solid"))
-       (format "    %s -> %s [arrowhead=\"%s\"];\n"
+               (if (= (:direction arg) :pro) "+" "-")
+               (if (= (:direction arg) :pro) "forestgreen" "red")
+               (cond (and (= :pro (:direction arg)) 
+                          (applicable? ag arg))
+                     "greenyellow"
+                     
+                     (and (= :con (:direction arg)) 
+                          (applicable? ag arg))
+                     "lightpink"
+                     
+                     :else "white"))
+       (format "    %s -> %s [arrowhead=\"%s\", color=\"%s\"];\n"
                (get-id (argument-id arg))
                (get-id (argument-conclusion arg))
                (condp = (argument-direction arg)
                  :pro "normal"
-                 :con "onormal"))
+                 :con "normal")
+               (case (:direction arg)
+                     :pro "forestgreen"
+                     :con "red"))
        (str-join "" (map
-                     #(format "    %s -> %s [style=\"%s\", arrowhead=\"%s\"];\n"
+                     #(format "    %s -> %s [style=\"%s\", color=\"%s\", arrowhead=\"%s\"];\n"
                               (get-id (premise-atom %))
                               (get-id (argument-id arg))
                               (cond (assumption? %) "dotted"
                                     (exception? %) "dashed"
                                     :else "solid")
+                              (cond (and (exception? %) (premise-neg? %))
+                                    "forestgreen"
+                                    
+                                    (or (premise-neg? %) (exception? %)) "red"
+                                    :else "forestgreen")
                               (if (premise-neg? %) "tee" "none"))
                          (argument-premises arg)))))
 
 (defn- arguments-graphvizstr [ag args]
   (str-join "" (map #(argument-graphvizstr ag %) args)))
 
- (defn- gen-graphvizcontent [ag stmt-str]
-   (reset-ids)
-   (str "digraph g {\n    rankdir = \"RL\";\n"
-        (statements-graphvizstr ag
-                                (map node-statement (get-nodes ag)) stmt-str)
-        (arguments-graphvizstr ag (arguments ag))
-        "}\n"))
+(defn gen-graphvizcontent [ag stmt-str]
+  (reset-ids)
+  (str "digraph g {\n    rankdir = \"RL\";\n"
+       (statements-graphvizstr ag
+                               (map node-statement (get-nodes ag)) stmt-str)
+       (arguments-graphvizstr ag (arguments ag))
+       "}\n"))
+
+(defn gen-image-from-dot [dotfile imgfile]
+  (shell/sh *graphvizdot*
+            (str "-T" *graphic-format*)
+            dotfile
+            "-o"
+            imgfile))
+
+(defn gen-image [ag stmt-str imgfile]
+  (let [graphvizfile (gen-graphvizfile (gen-graphvizcontent ag stmt-str))]
+    (gen-image-from-dot graphvizfile imgfile)
+    (delete-file graphvizfile true)
+    imgfile))
 
 (defn- view-graphviz [ag stmt-str]
-  (let [graphvizfile (gen-graphvizfile (gen-graphvizcontent ag stmt-str))
-        imgfile (str *tmpdir* *separator* (gensym "carneades") "."
+  (let [imgfile (str *tmpdir* *separator* (gensym "carneades") "."
                      *graphic-format*)]
-    (shell/sh *graphvizdot*
-                     (str "-T" *graphic-format*)
-                     graphvizfile
-                     "-o"
-                     imgfile)
-    (delete-file graphvizfile true)
+    (gen-image ag stmt-str imgfile)
     (shell/sh *viewer* imgfile)))
 
 (defmethod view-graph "graphviz" [viewer ag stmt-str]
