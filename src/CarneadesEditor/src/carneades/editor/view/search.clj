@@ -110,6 +110,8 @@
 
 (defn- search-button-listener [event]
   (prn "event")
+  (prn event)
+  (Thread/sleep 50)
   (let [was-active (deref *searchactive*)]
     (when-not was-active
       (if-let [text (.getSelectedItem *searchComboBox*)]
@@ -147,17 +149,22 @@
   (.setModel *searchResultTable* *modelTable*)
     ;; map enter key to edit
   (.addKeyListener *searchResultTable* (create-search-result-keylistener))
-  ;; (.remove (.getInputMap *searchResultTable*) (KeyStroke/getKeyStroke KeyEvent/VK_ENTER 0))
   
   ;;  This prevents action events from being fired when the
   ;;  up/down arrow keys are used on the dropdown menu
   (.putClientProperty *searchComboBox* "JComboBox.isTableCellEditor" true)
   (add-listselection-listener (.getSelectionModel *searchResultTable*)
                               search-result-selection-listener)
-  (add-action-listener *searchComboBox* (fn [event]
-                                          (when (= (.getActionCommand event)
-                                                   "comboBoxEdited")
-                                            (search-button-listener event))))
+  (add-action-listener
+   *searchComboBox*
+   (fn [event]
+     (when (and (= (.getActionCommand event)
+                   "comboBoxEdited")
+                ;; prevent:
+                ;; http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6336981
+                (.isFocusOwner
+                 (.. *searchComboBox* getEditor getEditorComponent)))
+       (search-button-listener event))))
   (set-options-visible (deref *state*))
   (add-action-listener *showOptionsButton* showoptions-button-listener)
   (add-action-listener *searchButton* search-button-listener))

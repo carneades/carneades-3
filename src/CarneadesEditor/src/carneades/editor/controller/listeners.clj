@@ -152,37 +152,34 @@
 
 (defvar- *end-search* (atom false))
 (defvar- *nb-agents-running* (atom 0))
-(defvar- *running-agents* (atom ()))
+(defvar- *running-futures* (atom ()))
 
 (defn- do-one-search [state view]
-  (try
-    (let [{:keys [results path id]} state]
-      (loop [res results]
-        (let [stmt (first res)]
-          (when-not (or (nil? stmt) (deref *end-search*))
-            (do-swing
-             ;; we are not in the swing thread anymore
-             ;; so we need to use the do-swing macro
-             (display-statement-search-result view path id stmt
-                                              statement-formatted))
-            (recur (rest res))))))
-    (finally
-     (let [nb-agents (swap! *nb-agents-running* dec)]
-       (prn "end of agent, nb-agents = ")
-       (prn nb-agents)
-       (when (zero? nb-agents)
-         (do-swing-and-wait
-          (display-search-state view false))
-         )))))
+  (prn "do one search!")
+  (let [{:keys [results path id]} state]
+    (loop [res results]
+      (let [stmt (first res)]
+        (when-not (or (nil? stmt) (deref *end-search*))
+          (do-swing
+           ;; we are not in the swing thread anymore
+           ;; so we need to use the do-swing macro
+           (display-statement-search-result view path id stmt
+                                            statement-formatted))
+          (recur (rest res)))))))
 
-(defn on-search-begins [view searchinfo]
-  (let [text (first searchinfo)
-        {:keys [search-in]} (second searchinfo)
-        [path id] (current-graph view)]
+(defn wait-for-futures []
+  (doseq [future (deref *running-futures*)]
+    (prn "waiting for one future...")
+    (deref future)))
+
+(defn- do-search [view path id text options]
+  (let [{:keys [search-in]} options]
     (when (and (not (empty? text))
                (or (and path (= search-in :current-graph))
                    (= search-in :all-lkif-files)))
       (prn "Search begins")
+      (wait-for-futures)
+      (prn "Ready to search!")
       (let [path-to-id (if (= search-in :all-lkif-files)
                          (mapcat (fn [path]
                                    (partition 2 (interleave
@@ -190,29 +187,40 @@
                                                  (get-ags-id path))))
                                  (get-all-keys *docmanager*))
                          [[path id]])
-            nb-ids (count path-to-id)
-            searchagents (map (fn [[path id]]
-                                (agent {:results
-                                        (search-statements (get-ag path id)
-                                                           statement-formatted
-                                                           text {})
-                                        :path path
-                                        :id id}))
-                              path-to-id)]
+            nb-ids (count path-to-id)]
+        (do-swing-and-wait
+         (display-search-state view true))
         (reset! *end-search* false)
         (reset! *nb-agents-running* nb-ids)
-        (reset! *running-agents* searchagents)
-        (display-search-state view true)
-        (doseq [searchagent searchagents]
-          (send searchagent do-one-search view))))))
+        (let [searchfutures (doall
+                             (map (fn [[path id]]
+                                    (let [res (search-statements (get-ag path id)
+                                                                 statement-formatted
+                                                                 text {})]
+                                      (future
+                                       (do-one-search {:results
+                                                       res
+                                                       :path path
+                                                       :id id}
+                                                      view)))) path-to-id))]
+          (reset! *running-futures* searchfutures)
+          (future (wait-for-futures)
+                  (do-swing-and-wait
+                   (display-search-state view false))
+                  (prn "setting searching state to false")))))))
+
+(defn on-search-begins [view searchinfo]
+  (let [text (first searchinfo)
+        options (second searchinfo)
+        [path id] (current-graph view)]
+    ;; start a separate thread so we can wait for futures to finish
+    ;; but not on the swing ui thread (it would cause a deadlock with the
+    ;; wait + access from the do-search function)
+    (.start (Thread. #(do-search view path id text options)))))
 
 (defn on-search-ends [view]
   (prn "search ends")
-  (reset! *end-search* true)
-  ;; await is blocking, probably because of the concurrent access in the Swing
-  ;; thread
-  ;; so we just wait to let agents finish
-  (Thread/sleep 200))
+  (reset! *end-search* true))
 
 (defn on-select-statement [path id stmt view]
   (prn "on select statement")
