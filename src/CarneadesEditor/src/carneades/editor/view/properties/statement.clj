@@ -3,13 +3,15 @@
 
 (ns carneades.editor.view.properties.statement
   (:use clojure.contrib.def
-        clojure.contrib.swing-utils)
+        clojure.contrib.swing-utils
+        carneades.editor.utils.seq)
   (:import carneades.editor.uicomponents.StatementPropertiesView))
 
 (defvar- *statementProperties* (StatementPropertiesView/instance))
 (defvar- *statementTextArea* (.statementTextArea *statementProperties*))
-(defvar- *statusComboBox* (.statusComboBox *statementProperties*))
-(defvar- *proofstandardComboBox* (.proofstandardComboBox *statementProperties*))
+(defvar *statementEditButton* (.editButton *statementProperties*))
+(defvar *statementStatusComboBox* (.statusComboBox *statementProperties*))
+(defvar *statementProofstandardComboBox* (.proofstandardComboBox *statementProperties*))
 (defvar- *acceptableCheckBox* (.acceptableCheckBox *statementProperties*))
 (defvar- *complementacceptableCheckBox* (.complementacceptableCheckBox *statementProperties*))
 
@@ -21,12 +23,16 @@
                      :rejected "Rejected"
                      :questioned "Questioned"})
 
-(defvar- *proofstandards* {:ba "Preponderance of Evidence"
+(defvar- *txt-to-status* (reverse-map *statuses*))
+
+(defvar- *proofstandards* {;; :ba "Preponderance of Evidence"
                            :pe "Preponderance of Evidence"
                            :brd "Beyond Reasonable Doubt"
                            :cce "Clear and Convincing Evidence"
                            :dv "Dialectical Validity"
                            :se "Scintilla of Evidence"})
+
+(defvar- *txt-to-proofstandard* (reverse-map *proofstandards*))
 
 (defn- acceptable-checkbox-listener [event]
   ;; there is no read-only checkboxes in Swing, we cancel the change to make
@@ -43,13 +49,25 @@
   (add-action-listener *complementacceptableCheckBox*
                        complementacceptable-checkbox-listener))
 
-(defn get-statement-properties-panel [path maptitle stmt status proofstandard acceptable complement-acceptable]
+(defvar- *previous-statement-content* (atom {}))
+
+(defn get-statement-properties-panel [path id maptitle stmt stmt-str status proofstandard acceptable complement-acceptable]
   (.setText *pathText* path)
   (.setText *mapTitleText* maptitle)
-  (.setText *statementTextArea* stmt)
-  (.setSelectedItem *statusComboBox* (get *statuses* status))
-  (.setSelectedItem *proofstandardComboBox* (get *proofstandards* proofstandard))
+  (.setText *statementTextArea* (stmt-str stmt))
+  (reset! *previous-statement-content* {:path path :id id :previous-content stmt
+                                        :previous-status status
+                                        :previous-proofstandard proofstandard})
+  (.setSelectedItem *statementStatusComboBox* (get *statuses* status))
+  (.setSelectedItem *statementProofstandardComboBox* (get *proofstandards* proofstandard))
   (.setSelected *acceptableCheckBox* acceptable)
   (.setSelected *complementacceptableCheckBox* complement-acceptable)
   *statementProperties*)
 
+(defn statement-being-edited-info []
+  (prn "selected proofstandard =")
+  (prn (.getSelectedItem *statementProofstandardComboBox*))
+  (merge {:content (.getText *statementTextArea*)
+          :status (*txt-to-status* (.getSelectedItem *statementStatusComboBox*))
+          :proofstandard (*txt-to-proofstandard* (.getSelectedItem *statementProofstandardComboBox*))}
+         (deref *previous-statement-content*)))

@@ -45,7 +45,7 @@
   (add-export-lkif-filemenuitem-listener view export-element-listener [view])
   (add-export-filemenuitem-listener view export-file-listener [view])
   (add-close-file-menuitem-listener view close-file-listener [view])
-  (add-close-button-listener view close-listener [view])
+  (add-close-button-listener view close-button-listener [view])
   (add-mousepressed-tree-listener view mouse-click-in-tree-listener [view])
   (add-searchresult-selection-listener view search-result-selection-listener
                                        [view])
@@ -53,6 +53,12 @@
                                           [view])
   (add-keyenter-searchresult-listener view keyenter-in-searchresult
                                           [view])
+  (add-statement-edit-listener view statement-button-edit-listener [view])
+  (add-statement-edit-status-listener view statement-status-edit-listener [view])
+  (add-statement-edit-proofstandard-listener view statement-proofstandard-edit-listener [view])
+  (add-undo-button-listener view undo-button-listener [view])
+  (add-redo-button-listener view redo-button-listener [view])
+  (add-save-button-listener view save-button-listener [view])
   
   ;; we don't need to extract information from the UI,
   ;; dispatch to the listeners:

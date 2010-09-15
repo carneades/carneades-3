@@ -36,29 +36,18 @@ public class StatementPropertiesView extends javax.swing.JPanel {
 
         statusGroup = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
+        jScrollPane2 = new javax.swing.JScrollPane();
 
         jLabel1.setText("Statement:");
 
-        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-        jScrollPane1.setMinimumSize(new java.awt.Dimension(6, 50));
-
-        statementTextArea.setColumns(20);
-        statementTextArea.setLineWrap(true);
-        statementTextArea.setRows(5);
-        statementTextArea.setWrapStyleWord(true);
-        statementTextArea.setMinimumSize(new java.awt.Dimension(100, 50));
-        jScrollPane1.setViewportView(statementTextArea);
-
         jLabel2.setText("Proof standard:");
 
-        proofstandardComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Dialectical Validity", "Scintilla of Evidence", "Preponderance of Evidence", "Clear and Convincing Evidence", "Beyond Reasonable Doubt " }));
+        proofstandardComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Dialectical Validity", "Scintilla of Evidence", "Preponderance of Evidence", "Clear and Convincing Evidence", "Beyond Reasonable Doubt" }));
 
         jLabel3.setText("Status:");
 
@@ -80,24 +69,25 @@ public class StatementPropertiesView extends javax.swing.JPanel {
         pathText.setEditable(false);
         pathText.setDisabledTextColor(new java.awt.Color(226, 210, 196));
 
+        statementTextArea.setColumns(20);
+        statementTextArea.setLineWrap(true);
+        statementTextArea.setRows(5);
+        statementTextArea.setWrapStyleWord(true);
+        statementTextArea.setMinimumSize(new java.awt.Dimension(100, 50));
+        jScrollPane2.setViewportView(statementTextArea);
+
+        editButton.setText("Edit");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(statusComboBox, 0, 236, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(acceptableCheckBox)
-                        .addGap(18, 18, 18)
-                        .addComponent(complementacceptableCheckBox))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addComponent(jLabel4))
@@ -105,14 +95,23 @@ public class StatementPropertiesView extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(pathText, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
                             .addComponent(mapTitleText, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)))
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(proofstandardComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 294, Short.MAX_VALUE))
+                    .addComponent(jLabel1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(statusComboBox, 0, 236, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(acceptableCheckBox)
+                        .addGap(18, 18, 18)
+                        .addComponent(complementacceptableCheckBox))
+                    .addComponent(jLabel2)
+                    .addComponent(proofstandardComboBox, 0, 294, Short.MAX_VALUE)
+                    .addComponent(editButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(pathText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
@@ -125,8 +124,10 @@ public class StatementPropertiesView extends javax.swing.JPanel {
                 .addGap(4, 4, 4)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(4, 4, 4)
+                .addComponent(editButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(statusComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -138,7 +139,7 @@ public class StatementPropertiesView extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(acceptableCheckBox)
                     .addComponent(complementacceptableCheckBox))
-                .addContainerGap())
+                .addContainerGap(61, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -146,12 +147,13 @@ public class StatementPropertiesView extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public final javax.swing.JCheckBox acceptableCheckBox = new javax.swing.JCheckBox();
     public final javax.swing.JCheckBox complementacceptableCheckBox = new javax.swing.JCheckBox();
+    public final javax.swing.JButton editButton = new javax.swing.JButton();
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     public final javax.swing.JTextField mapTitleText = new javax.swing.JTextField();
     public final javax.swing.JTextField pathText = new javax.swing.JTextField();
