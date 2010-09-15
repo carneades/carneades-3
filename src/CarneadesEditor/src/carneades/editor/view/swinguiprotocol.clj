@@ -25,11 +25,19 @@
   (add-close-graph-menuitem-listener [this f args])
   (add-print-filemenuitem-listener [this f args])
   (add-searchresult-selection-listener [this f args])
-
+  (add-statement-edit-listener [this f args])
+  (add-statement-edit-status-listener [this f args])
+  (add-statement-edit-proofstandard-listener [this f args])
+  (add-undo-button-listener [this f args])
+  (add-redo-button-listener [this f args])
+  (add-save-button-listener [this f args])
+  
   ;; functions to get information from the Swing UI
   (get-selected-object-in-tree [this])
   (get-selected-object-in-search-result [this])
-  (get-graphinfo-being-closed [this event]))
+  (get-graphinfo-being-closed [this event])
+  (get-statement-being-edited-info [this])
+  )
 
 ;; records stored in the element of the tree:
 (defrecord LkifFileInfo [path filename] Object

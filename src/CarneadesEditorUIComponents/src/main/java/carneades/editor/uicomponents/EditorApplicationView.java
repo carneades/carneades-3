@@ -39,6 +39,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
         searchInButtonGroup = new javax.swing.ButtonGroup();
         jSeparator4 = new javax.swing.JToolBar.Separator();
+        jSeparator8 = new javax.swing.JToolBar.Separator();
         jSplitPane1 = new javax.swing.JSplitPane();
         jSplitPane2 = new javax.swing.JSplitPane();
         leftTabbedPane = new javax.swing.JTabbedPane();
@@ -102,12 +103,25 @@ public class EditorApplicationView extends javax.swing.JFrame {
         openFileButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         toolBar.add(openFileButton);
 
-        saveFileButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/document-save.png"))); // NOI18N
-        saveFileButton.setFocusable(false);
-        saveFileButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        saveFileButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        toolBar.add(saveFileButton);
+        saveButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/document-save.png"))); // NOI18N
+        saveButton.setFocusable(false);
+        saveButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        saveButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolBar.add(saveButton);
         toolBar.add(jSeparator4);
+
+        undoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/edit-undo.png"))); // NOI18N
+        undoButton.setFocusable(false);
+        undoButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        undoButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolBar.add(undoButton);
+
+        redoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/edit-redo.png"))); // NOI18N
+        redoButton.setFocusable(false);
+        redoButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        redoButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolBar.add(redoButton);
+        toolBar.add(jSeparator8);
 
         zoomResetButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/zoomreset.png"))); // NOI18N
         zoomResetButton.setBorder(null);
@@ -443,6 +457,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
+    private javax.swing.JToolBar.Separator jSeparator8;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JTabbedPane leftTabbedPane;
@@ -458,9 +473,10 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JMenuItem printFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem printPreviewFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JPanel propertiesPanel = new javax.swing.JPanel();
+    public final javax.swing.JButton redoButton = new javax.swing.JButton();
     private javax.swing.JPanel resultPanel;
     public final javax.swing.JMenuItem saveAsFileMenuItem = new javax.swing.JMenuItem();
-    public final javax.swing.JButton saveFileButton = new javax.swing.JButton();
+    public final javax.swing.JButton saveButton = new javax.swing.JButton();
     public final javax.swing.JMenuItem saveFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JButton searchButton = new javax.swing.JButton();
     public final javax.swing.JComboBox searchComboBox = new javax.swing.JComboBox();
@@ -476,6 +492,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JToggleButton showOptionsButton = new javax.swing.JToggleButton();
     public final javax.swing.JPopupMenu tabPopupMenu = new javax.swing.JPopupMenu();
     public final javax.swing.JToolBar toolBar = new javax.swing.JToolBar();
+    public final javax.swing.JButton undoButton = new javax.swing.JButton();
     public final javax.swing.JButton zoomInButton = new javax.swing.JButton();
     public final javax.swing.JButton zoomOutButton = new javax.swing.JButton();
     public final javax.swing.JButton zoomResetButton = new javax.swing.JButton();

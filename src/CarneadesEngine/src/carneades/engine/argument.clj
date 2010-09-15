@@ -11,7 +11,8 @@
         clojure.contrib.profile ; for testing
         carneades.engine.utils
         carneades.engine.statement
-        carneades.engine.proofstandard))
+        carneades.engine.proofstandard
+        [clojure.contrib.core :only (dissoc-in)]))
 
 (declare update-statement assert-arguments) ; forward declaration
 
@@ -266,11 +267,15 @@
 
 (defvar *empty-argument-graph* (argument-graph))
 
+(defn statement-node [ag s]
+  "returns the node of s if it exists, nil otherwise"
+  (get-in ag
+          [:nodes (statement-symbol (statement-atom s))
+           (statement-atom s)]))
+
 (defn get-node [ag s]
-  "argument-graph statement -> node | nil"
-  (if-let [n (get-in ag
-                  [:nodes (statement-symbol (statement-atom s))
-                   (statement-atom s)])]
+  "argument-graph statement -> node"
+  (if-let [n (statement-node ag s)]
     n
     (node s)))
 
@@ -655,6 +660,52 @@
 (defn- premises=?
   [pr1 pr2]
   (every? (fn [p] (has-premise? p pr2)) pr1))
+
+(defn- update-premise [arg oldstmt newstmt]
+  (let [oldpremise (first (filter #(= oldstmt (:atom %)) (:premises arg)))
+        newpremise (assoc oldpremise :atom newstmt)
+        premises (filter #(not= oldstmt (:atom %)) (:premises arg))
+        premises (conj premises newpremise)]
+    (assoc arg :premises premises)))
+
+(defn- update-premises [ag argids oldstmt newstmt]
+  (reduce (fn [ag argid]
+            (let [arg (get-argument ag argid)
+                  newarg (update-premise arg oldstmt newstmt)]
+              (assoc-in ag [:arguments argid] newarg)))
+          ag argids))
+
+(defn- update-conclusion [arg new]
+  (assoc arg :conclusion new))
+
+(defn- update-conclusions [ag argids new]
+  (reduce (fn [ag argid]
+            (let [oldarg (get-argument ag argid)
+                  newarg (update-conclusion oldarg new)]
+              (assoc-in ag [:arguments argid] newarg)))
+          ag argids))
+
+(defn- update-main-issue [ag oldstmt newstmt]
+  (if (= (:main-issue ag) oldstmt)
+    (assoc ag :main-issue newstmt)
+    ag))
+
+(defn update-statement-content [ag oldstmt newstmt]
+  (let [n (get-node ag oldstmt)
+        key (statement-symbol (statement-atom oldstmt))
+        ag (dissoc-in ag [:nodes key])
+        n (assoc n :statement newstmt)
+        ag (add-node ag n)
+        ag (update-conclusions ag (:conclusion-of n) newstmt)
+        ag (update-main-issue ag oldstmt newstmt)
+        ag (update-premises ag (:premise-of n) oldstmt newstmt)]
+    ag))
+
+(defn update-statement-proofstandard [ag stmt proofstandard]
+  (let [n (get-node ag stmt)
+        n (assoc n :standard proofstandard)
+        ag (add-node ag n)]
+    (update-statement ag stmt)))
 
 (defn- unite-args
   [ag arg]

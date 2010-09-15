@@ -38,6 +38,8 @@
 (defvar *openFileButton* (.openFileButton *frame*))
 (defvar *openFileMenuItem* (.openFileMenuItem *frame*))
 (defvar *closeFileMenuItem* (.closeFileMenuItem *frame*))
+(defvar *undoButton* (.undoButton *frame*))
+(defvar *redoButton* (.redoButton *frame*))
 
 (defvar *exportFileMenuItem* (.exportFileMenuItem *frame*))
 (defvar *printPreviewFileMenuItem* (.printPreviewFileMenuItem *frame*))
@@ -68,6 +70,15 @@
         (doseq [{:keys [listener args]} (deref *premise-selection-listeners*)]
           (apply listener path id (:pm obj) args))))
 
+(defn- on-zoom-in [event]
+  (zoom-in (.getSelectedComponent *mapPanel*)))
+
+(defn- on-zoom-out [event]
+  (zoom-out (.getSelectedComponent *mapPanel*)))
+
+(defn- on-zoom-reset [event]
+  (zoom-reset (.getSelectedComponent *mapPanel*)))
+
 (deftype SwingView [] View SwingUI
   (init
    [this]
@@ -78,15 +89,19 @@
    ;; make a new instance (without listeners!)
    (set-look-and-feel "Nimbus")
    (EditorApplicationView/reset)
+   (add-action-listener *zoomInButton* on-zoom-in)
+   (add-action-listener *zoomOutButton* on-zoom-out)
+   (add-action-listener *zoomResetButton* on-zoom-reset)
+   
    (lkif-properties-init)
    (graph-properties-init)
    (init-statement-properties)
    (init-premise-properties)
-   
    (init-menu)
    (init-tree)
    (init-tabs)
-   (init-search))
+   (init-search)
+   (.setDefaultCloseOperation *frame* JFrame/DISPOSE_ON_CLOSE))
 
   (display-error
    [this title content]
@@ -104,8 +119,10 @@
   (show
    [this]
    (disable-diagram-buttons-and-menus)
+   (disable-undo-button)
+   (disable-redo-button)
    (disable-file-items)
-   (.setDefaultCloseOperation *frame* JFrame/DISPOSE_ON_CLOSE)
+   (disable-save-button)
    (EventQueue/invokeLater
     (proxy [Runnable] []
       (run []
@@ -125,40 +142,25 @@
 
   (open-graph
    [this path ag stmt-fmt]
-   (let [title (get-tabtitle ag)]
-     (let [component (get-component path (:id ag))]
-       (if component
-         (.setSelectedIndex *mapPanel*
-                            (.indexOfComponent *mapPanel* component))
-         (try
-           (set-busy this true)
-           (let [component (create-graph-component ag stmt-fmt)
-                 ;; ag (:arguments
-                 ;;   (first (solutions
-                 ;;           (engine
-                 ;;            '(hund-muss-neuangemeldet-werden ?h)))))
-                 component
-                 (create-graph-component ag
-                                         stmt-fmt)]
-             ;; (printpreview component)
-             (add-node-selection-listener component #(node-selection-listener
-                                                      path (:id ag) %))
-             (add-component component path (:id ag))
-             (.add *mapPanel* title component)
-             (.setTabComponentAt *mapPanel*
-                                 (.indexOfComponent *mapPanel* component)
-                                 (create-tabcomponent title))
-             (.setSelectedComponent *mapPanel* component)
-             (enable-diagram-buttons-and-menus))
-           (finally
-           (set-busy this false)))))))
+   (let [component (get-component path (:id ag))]
+     (if component
+       (select-component component)
+       (try
+         (set-busy this true)
+         (let [component (create-graph-component ag stmt-fmt)]
+           (add-node-selection-listener component #(node-selection-listener
+                                                     path (:id ag) %))
+           (add-component component path ag)
+           (enable-diagram-buttons-and-menus))
+         (finally
+          (set-busy this false))))))
 
   (close-graph
    [this path id]
    (let [component (get-component path id)]
-     (.remove *mapPanel* component)
      (remove-component component))
    (when (tabs-empty?)
+     (disable-save-button)   
      (disable-diagram-buttons-and-menus)))
 
   (current-graph
@@ -174,10 +176,10 @@
    (show-properties (get-graph-properties-panel path title mainissue)))
 
   (display-statement-property
-   [this path maptitle stmt status proofstandard acceptable complement-acceptable]
+   [this path id maptitle stmt stmt-fmt status proofstandard acceptable complement-acceptable]
    (show-properties (get-statement-properties-panel
-                     path maptitle
-                     stmt status proofstandard
+                     path id maptitle
+                     stmt stmt-fmt status proofstandard
                      acceptable complement-acceptable)))
 
   (display-premise-property
@@ -188,7 +190,21 @@
    [this path maptitle title applicable weight direction scheme]
    (show-properties (get-argument-properties-panel path maptitle title applicable
                                                    weight direction scheme)))
+  (statement-content-changed
+   [this path ag oldstmt newstmt]
+   (when-let [component (get-component path (:id ag))]
+     (change-statement-content component ag oldstmt newstmt)))
 
+  (statement-status-changed
+   [this path ag stmt]
+   (when-let [component (get-component path (:id ag))]
+    (change-statement-status component ag stmt)))
+
+  (statement-proofstandard-changed
+   [this path ag stmt]
+   (when-let [component (get-component path (:id ag))]
+    (change-statement-proofstandard component ag stmt)))
+  
   (ask-file-to-save
    [this-view descriptions suggested]
    (letfn [(changeextension
@@ -271,13 +287,13 @@
    [this path ag stmt-fmt]
    (let [component (or (get-component path (:id ag))
                        (create-graph-component ag stmt-fmt))]
-     (print-document component)))
+     (print-document (:component component))))
 
   (print-preview
    [this path ag stmt-fmt]
    (let [component (or (get-component path (:id ag))
                        (create-graph-component ag stmt-fmt))]
-     (printpreview *frame* component)))
+     (printpreview *frame* (:component component))))
 
   (display-about
    [this]
@@ -354,6 +370,44 @@
   (add-searchresult-selection-listener
    [this f args]
    (register-searchresult-selection-listener f args))
+
+  (add-statement-edit-listener
+   [this f args]
+   (apply add-action-listener *statementEditButton* f args))
+
+  (add-statement-edit-status-listener
+   [this f args]
+   (apply add-action-listener *statementStatusComboBox* f args))
+
+  (add-statement-edit-proofstandard-listener
+   [this f args]
+   (apply add-action-listener *statementProofstandardComboBox* f args))
+
+  (add-undo-button-listener
+   [this f args]
+   (apply add-action-listener *undoButton* f args))
+  
+  (add-redo-button-listener
+   [this f args]
+   (apply add-action-listener *redoButton* f args))
+
+  (add-save-button-listener
+   [this f args]
+   (apply add-action-listener *saveButton* f args))
+  
+  (edit-undone
+   [this path id]
+   (when-let [component (get-component path id)]
+     (undo component)))
+
+  (edit-redone
+   [this path id]
+   (when-let [component (get-component path id)]
+     (redo component)))
+  
+  (get-statement-being-edited-info
+   [this]
+   (statement-being-edited-info))
   
   (register-search-listener
    [this l args]
@@ -379,6 +433,25 @@
    (if isbusy
      (.setCursor *frame* Cursor/WAIT_CURSOR)
      (.setCursor *frame* (Cursor/getDefaultCursor))))
+
+  (set-can-undo
+   [this path id state]
+   (set-component-can-undo path id state))
+
+  (set-can-redo
+   [this path id state]
+   (set-component-can-redo path id state))
+
+  (set-dirty
+   [this path ag state]
+   (when-let [component (get-component path (:id ag))]
+    (set-component-dirty component ag state)
+    (let [[currentpath id] (current-graph this)]
+      (when (and (= path currentpath)
+                 (= id (:id ag)))
+        (if state
+          (enable-save-button)
+          (disable-save-button))))))
   
   (get-selected-object-in-tree
    [this]

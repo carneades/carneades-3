@@ -52,7 +52,8 @@
       GraphInfo (on-close-file view (:path (:lkifinfo info)))
       nil)))
 
-(defn close-listener [event view]
+(defn close-button-listener [event view]
+  (prn "close-button-listener")
   (let [[path id] (get-graphinfo-being-closed view event)]
     (on-close-graph view path id)))
 
@@ -64,6 +65,7 @@
       nil)))
 
 (defn close-graph-listener [event view]
+  (prn "close-graph-listener")
   (when-let [info (get-selected-object-in-tree view)]
     (condp instance? info
       GraphInfo (on-close-graph view (:path (:lkifinfo info)) (:id info))
@@ -101,3 +103,37 @@
       StatementInfo (on-select-statement (:path info) (:id info)
                                          (:stmt info) view)
       nil)))
+
+(defn statement-button-edit-listener [event view]
+  (let [info (get-statement-being-edited-info view)
+        {:keys [path id]} info]
+    (on-edit-statement view path id info)))
+
+(defn statement-status-edit-listener [event view]
+  (prn "statement-status-edit-listener")
+  (when (.isFocusOwner (.getSource event))
+    ;; comboBox fires twice the action event...
+    (let [info (get-statement-being-edited-info view)
+          {:keys [path id previous-content]} info]
+      ;; we don't take in account the current content of the TextArea when just
+      ;; editing the status
+      (on-edit-statement-status view path id (assoc info :content previous-content)))))
+
+(defn statement-proofstandard-edit-listener [event view]
+  (when (.isFocusOwner (.getSource event))
+    ;; comboBox fires twice the action event...
+    (let [info (get-statement-being-edited-info view)
+          {:keys [path id previous-content]} info]
+      (on-edit-statement-proofstandard view path id (assoc info :content previous-content)))))
+
+(defn undo-button-listener [event view]
+  (when-let [[path id] (current-graph view)]
+    (on-undo view path id)))
+
+(defn redo-button-listener [event view]
+  (when-let [[path id] (current-graph view)]
+    (on-redo view path id)))
+
+(defn save-button-listener [event view]
+  (when-let [[path id] (current-graph view)]
+    (on-save view path id)))

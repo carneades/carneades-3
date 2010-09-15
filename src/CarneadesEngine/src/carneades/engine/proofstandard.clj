@@ -45,8 +45,8 @@
   "argument-graph (seq-of argument) (seq-of argument) -> boolean"
   (let [pro (filter #(all-premises-hold? ag %) pro-args)
         con (filter #(all-premises-hold? ag %) con-args)
-        best-pro (best-arg pro all-premises-hold?)
-        best-con (best-arg con all-premises-hold?)
+        best-pro (best-arg pro)
+        best-con (best-arg con)
         alpha 0.5
         beta 0.3]
     (and (> best-pro best-con) ; i.e. preponderance of the evidence test is met
@@ -58,8 +58,8 @@
   "argument-graph (list-of argument) (list-of argument) -> boolean"
   (let [pro (filter #(all-premises-hold? ag %) pro-args)
         con (filter #(all-premises-hold? ag %) con-args)
-        best-pro (best-arg pro all-premises-hold?)
-        best-con (best-arg con all-premises-hold?)
+        best-pro (best-arg pro)
+        best-con (best-arg con)
         alpha 0.5
         beta 0.5
         gamma 0.2]

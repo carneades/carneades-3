@@ -4,18 +4,19 @@
 (ns carneades.editor.view.menu.mainmenu
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
-        carneades.mapcomponent.map
-        carneades.editor.view.tabs)
+        carneades.mapcomponent.map)
   (:import carneades.editor.uicomponents.EditorApplicationView))
 
 (defvar- *viewinstance* (EditorApplicationView/instance))
 
-(defvar- *zoomInButton*
-  (.zoomInButton *viewinstance*))
-(defvar- *zoomOutButton*
-  (.zoomOutButton *viewinstance*))
-(defvar- *zoomResetButton*
-  (.zoomResetButton *viewinstance*))
+(defvar *zoomInButton* (.zoomInButton *viewinstance*))
+(defvar *zoomOutButton* (.zoomOutButton *viewinstance*))
+(defvar *zoomResetButton* (.zoomResetButton *viewinstance*))
+(defvar *saveButton* (.saveButton *viewinstance*))
+
+(defvar- *undoButton* (.undoButton *viewinstance*))
+(defvar- *redoButton* (.redoButton *viewinstance*))
+
 
 (defvar- *closeFileMenuItem* (.closeFileMenuItem *viewinstance*))
 (defvar- *saveFileMenuItem* (.saveFileMenuItem *viewinstance*))
@@ -23,17 +24,6 @@
 (defvar- *exportFileMenuItem* (.exportFileMenuItem *viewinstance*))
 (defvar- *printPreviewFileMenuItem* (.printPreviewFileMenuItem *viewinstance*))
 (defvar- *printFileMenuItem* (.printFileMenuItem *viewinstance*))
-
-(defvar- *saveFileButton* (.saveFileButton *viewinstance*))
-
-(defn- on-zoom-in [event]
-  (zoom-in (.getSelectedComponent *mapPanel*)))
-
-(defn- on-zoom-out [event]
-  (zoom-out (.getSelectedComponent *mapPanel*)))
-
-(defn- on-zoom-reset [event]
-  (zoom-reset (.getSelectedComponent *mapPanel*)))
 
 (defn- set-enable-diagram-buttons-and-menus [state]
   (.setEnabled *zoomInButton* state)
@@ -49,16 +39,13 @@
   (set-enable-diagram-buttons-and-menus false))
 
 (defn init-menu []
-  (add-action-listener *zoomInButton* on-zoom-in)
-  (add-action-listener *zoomOutButton* on-zoom-out)
-  (add-action-listener *zoomResetButton* on-zoom-reset))
+  )
 
 (defn- set-enable-file-items [state]
   (.setEnabled *closeFileMenuItem* state)
   (.setEnabled *saveAsFileMenuItem* state)
   (.setEnabled *saveFileMenuItem* state)
-  (.setEnabled *exportFileMenuItem* state)
-  (.setEnabled *saveFileButton* state))
+  (.setEnabled *exportFileMenuItem* state))
 
 (defn disable-file-items []
   (set-enable-file-items false))
@@ -66,3 +53,20 @@
 (defn enable-file-items []
   (set-enable-file-items true))
 
+(defn enable-undo-button []
+  (.setEnabled *undoButton* true))
+
+(defn disable-undo-button []
+  (.setEnabled *undoButton* false))
+
+(defn enable-redo-button []
+  (.setEnabled *redoButton* true))
+
+(defn disable-redo-button []
+  (.setEnabled *redoButton* false))
+
+(defn enable-save-button []
+  (.setEnabled *saveButton* true))
+
+(defn disable-save-button []
+  (.setEnabled *saveButton* false))
