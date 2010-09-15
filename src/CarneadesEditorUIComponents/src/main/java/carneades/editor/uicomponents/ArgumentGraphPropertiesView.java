@@ -48,7 +48,9 @@ public class ArgumentGraphPropertiesView extends javax.swing.JPanel {
 
         jLabel3.setText("Main issue:");
 
+        mainIssueTextArea.setBackground(new java.awt.Color(222, 222, 222));
         mainIssueTextArea.setColumns(20);
+        mainIssueTextArea.setEditable(false);
         mainIssueTextArea.setLineWrap(true);
         mainIssueTextArea.setRows(5);
         mainIssueTextArea.setWrapStyleWord(true);

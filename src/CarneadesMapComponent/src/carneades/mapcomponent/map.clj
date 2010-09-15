@@ -8,7 +8,7 @@
         carneades.engine.statement)
   (:import javax.swing.SwingConstants
            (com.mxgraph.util mxConstants mxUtils mxCellRenderer mxPoint mxEvent
-                             mxEventSource$mxIEventListener)
+                             mxEventSource$mxIEventListener mxUndoManager)
            com.mxgraph.swing.util.mxGraphTransferable
            (com.mxgraph.view mxGraph mxStylesheet)
            (com.mxgraph.model mxCell mxGeometry)
@@ -85,16 +85,20 @@
 (defn- sety [^mxCell vertex y]
   (.. vertex getGeometry (setY y)))
 
+(defn adjust-size [v]
+  "the the vertex to minimum size"
+  (let [geo (.getGeometry v)
+        w (.getWidth geo)
+        h (.getHeight geo)]
+    (when (< h *mincellheight*)
+      (.setHeight geo *mincellheight*))
+    (when (< w *mincellwidth*)
+      (.setWidth geo *mincellwidth*))))
+
 (defn- insert-vertex [^mxGraph g parent name style]
   (let [v (.insertVertex g parent nil name 10 10 40 40 style)]
     (.updateCellSize g v)
-    (let [geo (.getGeometry v)
-          w (.getWidth geo)
-          h (.getHeight geo)]
-      (when (< h *mincellheight*)
-        (.setHeight geo *mincellheight*))
-      (when (< w *mincellwidth*)
-        (.setWidth geo *mincellwidth*)))
+    (adjust-size v)
     v))
 
 (defn- insert-edge [^mxGraph g parent userobject begin end style]
@@ -103,10 +107,9 @@
 (defvar- *ymargin* 10)
 (defvar- *xmargin* 10)
 
-(defn- translate-right [^mxGraph g p vertices]
+(defn- translate-right [^mxGraph g p cells]
   (let [model (.getModel g)
         defaultparent (.getDefaultParent g)
-        cells (vals vertices)
         minx (reduce (fn [acc vertex]
                        (min (getx vertex) acc))
                      0
@@ -152,7 +155,7 @@
 
 (defvar- *orphan-offset* 50)
 
-(defn- align-orphan-cells [^mxGraph g p vertices]
+(defn- align-orphan-cells [^mxGraph g p cells]
   "align orphan cells on the right of the graph, with a stacklayout"
   (letfn [(isorphan?
            [vertex]
@@ -170,7 +173,7 @@
                             
                             :else acc)))
                   ['() 0]
-                  (vals vertices))
+                  cells)
           yorigin 20
           stackspacing 20]
       (loop [orphans orphans
@@ -182,37 +185,12 @@
             (sety orphan y)
             (recur (rest orphans) (+ y height stackspacing))))))))
 
-;; (defn- align-orphan-cells [^mxGraph g p vertices]
-;;   "align orphan cells on the right of the graph, with a stacklayout"
-;;   (letfn [(isorphan?
-;;            [vertex]
-;;            (empty? (.getEdges g vertex)))]
-;;     (let [[orphans maxx-notorphan]
-;;           (reduce (fn [acc vertex]
-;;                     (let [[orphans maxx-notorphan] acc
-;;                           width (.. vertex getGeometry getWidth)
-;;                           x (+ width (getx vertex))]
-;;                       (cond (isorphan? vertex)
-;;                             [(conj orphans vertex) maxx-notorphan]
-                            
-;;                             (> x maxx-notorphan)
-;;                             [orphans x]
-                            
-;;                             :else acc)))
-;;                   ['() 0]
-;;                   (vals vertices))
-;;           stackspacing 20
-;;           groupparent (.insertVertex g p nil "" 0 0 0 0 "opacity=0")
-;;           group (. g groupCells groupparent 0 (to-array orphans))
-;;           stacklayout (mxStackLayout. g false stackspacing
-;;                                       (+ maxx-notorphan *orphan-offset*) 0 0)]
-;;       (.execute stacklayout groupparent)
-;;       ;; make the parent invisible
-;;       (.setGeometry group (mxGeometry. 0 0 0 0)))))
+(defn- do-layout [g p cells]
+  (hierarchicallayout g p cells)
+  (align-orphan-cells g p cells))
 
 (defn- layout [g p vertices]
-  (hierarchicallayout g p vertices)
-  (align-orphan-cells g p vertices))
+  (do-layout g p (vals vertices)))
 
 (defn- add-statement [g p ag stmt vertices stmt-str]
   (assoc vertices
@@ -323,6 +301,46 @@
 (defn- add-mouse-zoom [g graphcomponent]
   (.addMouseWheelListener graphcomponent (MouseListener. g graphcomponent)))
 
+(defn- add-undo-manager [g]
+  (let [undomanager (mxUndoManager.)
+        undo-handler (proxy [mxEventSource$mxIEventListener] []
+                       (invoke
+                        [sender event]
+                        (prn "undo-handler!")
+                        (.undoableEditHappened undomanager
+                                               (.getProperty event "edit"))))
+        undo-sync-handler (proxy [mxEventSource$mxIEventListener] []
+                            (invoke
+                             [sender event]
+                             ;; Keeps the selection in sync with the command history
+                             (let [changes (.getChanges (.getProperty event "edit"))]
+                               (prn "changes = ")
+                               (prn changes)
+                              (.setSelectionCells
+                               g (.getSelectionCellsForChanges g changes)))))]
+    (.. g getModel (addListener mxEvent/UNDO undo-handler))
+    (.. g getView (addListener mxEvent/UNDO undo-handler))
+    ;; (.addListener undomanager mxEvent/UNDO undo-sync-handler)
+    ;; (.addListener undomanager mxEvent/REDO undo-sync-handler)
+    undomanager))
+
+(defn- select-current-cell [graphcomponent]
+  ;; refresh the selection to refresh the panel properties
+  (let [g (.getGraph graphcomponent)
+        selectionmodel (.getSelectionModel g)]
+    (when-let [cell (.getCell selectionmodel)]
+      (.setCell selectionmodel cell))))
+
+(defn undo [graphcomponent]
+  (prn "map-undo!")
+  (.undo (:undomanager graphcomponent))
+  (select-current-cell (:component graphcomponent)))
+
+(defn redo [graphcomponent]
+  (prn "map-redo!")
+  (.redo (:undomanager graphcomponent))
+  (select-current-cell (:component graphcomponent)))
+
 (defn create-graph-component [ag stmt-str]
   (let [g (create-graph ag stmt-str)
         graphcomponent (proxy [mxGraphComponent] [g]
@@ -330,30 +348,36 @@
                          ;; allow invisible groups
                          (getFoldingIcon
                           [state]
-                          nil))]
+                          nil))
+        undomanager (add-undo-manager g)]
     (.setConnectable graphcomponent false)
     (add-mouse-zoom g graphcomponent)
-    graphcomponent))
+    {:component graphcomponent :undomanager undomanager}))
+
+(defn- find-statement-cell [graph stmt]
+  (loop [vertices (seq (.getChildVertices graph
+                                          (.getDefaultParent graph)))]
+    (when-let [cell (first vertices)]
+      (let [userobject (.getValue cell)]
+        (if (and (instance? StatementCell userobject)
+                 (= (:stmt userobject) stmt))
+          cell
+          (recur (rest vertices)))))))
 
 (defn select-statement [component stmt stmt-fmt]
-  (let [graph (.getGraph component)]
-    (loop [vertices (seq (.getChildVertices graph
-                                         (.getDefaultParent graph)))]
-      (if-let [cell (first vertices)]
-        (let [userobject (.getValue cell)]
-          (if (and (= (:stmt userobject) stmt)
-                   (= (:stmt-str userobject) stmt-fmt))
-            (do
-             (.setSelectionCell graph cell)
-             (.scrollCellToVisible component cell))
-            (recur (rest vertices))))))))
+  (let [component (:component component)
+        graph (.getGraph component)]
+    (when-let [cell (find-statement-cell graph stmt)]
+      (.setSelectionCell graph cell)
+      (.scrollCellToVisible component cell))))
 
 (defn add-node-selection-listener [graphcomponent listener & args]
   "Adds a selection listener to the map. When a cell is selected, listener 
    will be invoked with the userobject of the cell as its first argument 
    followed by args.
    Userobject can be StatementCell, ArgumentCell, PremiseCell or nil"
-  (let [selectionmodel (.getSelectionModel (.getGraph graphcomponent))]
+  (let [component (:component graphcomponent)
+        selectionmodel (.getSelectionModel (.getGraph component))]
     (.addListener selectionmodel mxEvent/CHANGE
                   (proxy [mxEventSource$mxIEventListener] []
                     (invoke
@@ -362,7 +386,60 @@
                        (let [userobject (.getValue cell)]
                          (apply listener userobject args))))))))
 
-(defn scale-page [graphcomponent scale]
+(defn scale-page [swingcomponent scale]
   (if (nil? scale)
-    (.setPageScale mxGraphComponent/DEFAULT_PAGESCALE)
-    (.setPageScale graphcomponent scale)))
+    (.setPageScale swingcomponent mxGraphComponent/DEFAULT_PAGESCALE)
+    (.setPageScale swingcomponent scale)))
+
+(defn- get-vertices [g p]
+  (seq (.getChildVertices g p)))
+
+(defn change-statement-content [graphcomponent ag oldstmt newstmt]
+  (let [component (:component graphcomponent)
+        graph (.getGraph component)
+        cell (find-statement-cell graph oldstmt)
+        stmt-str (:stmt-str (.getValue cell))
+        stmt (StatementCell. ag newstmt stmt-str)
+        p (.getDefaultParent graph)
+        model (.getModel graph)]
+    (prn "change-statement-content")
+    (try
+      (.. model beginUpdate)
+      (.setValue model cell stmt)
+      (.setStyle model cell (get-statement-style ag newstmt))
+      (.updateCellSize graph cell)
+      (adjust-size cell)
+      (do-layout graph p (get-vertices graph p))
+      (finally
+       (.. model endUpdate)
+       (.refresh component)))))
+
+(defn- change-cell-and-styles [component ag stmt]
+  (let [graph (.getGraph component)
+        model (.getModel graph)]
+    (when-let [cell (find-statement-cell graph stmt)]
+      (let [stmt-str (:stmt-str (.getValue cell))
+            stmtcell (StatementCell. ag stmt stmt-str)
+            p (.getDefaultParent graph)]
+        (try
+          (.. model beginUpdate)
+          (.setValue model cell stmtcell)
+          (.setStyle model cell (get-statement-style ag stmt))
+          (doseq [cell (get-vertices graph p)]
+            (let [val (.getValue cell)]
+              (cond (instance? StatementCell val)
+                    (.setStyle model cell (get-statement-style ag (:stmt (.getValue cell))))
+
+                    (instance? ArgumentCell val)
+                    (.setStyle model cell (get-argument-style ag (:arg (.getValue cell)))))))
+          (finally
+           (.. model endUpdate)
+           (.refresh component)))))))
+
+(defn change-statement-status [graphcomponent ag stmt]
+  (let [component (:component graphcomponent)]
+   (change-cell-and-styles component ag stmt)))
+
+(defn change-statement-proofstandard [graphcomponent ag stmt]
+  (let [component (:component graphcomponent)]
+    (change-cell-and-styles component ag stmt)))

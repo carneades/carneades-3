@@ -6,6 +6,7 @@
         clojure.contrib.pprint
         [clojure.contrib.swing-utils :only (do-swing do-swing-and-wait)]
         carneades.engine.lkif.import
+        carneades.engine.lkif.export
         [carneades.engine.shell :only (search-statements)]
         carneades.engine.argument
         [carneades.engine.statement :only (statement-formatted)]
@@ -15,39 +16,52 @@
         ;; no import of carneades.editor.view.editorapplication,
         ;; java.awt.*, javax.* are not allowed here
         )
-  (:require [clojure.string :as str])
+  (:require [clojure.string :as str]
+            [carneades.editor.model.lkif-utils :as lkif])
   (:import java.io.File))
 
 ;;; in this namespace we define the Swing independant listeners
 
 (defvar- *file-error* "File Error")
+(defvar- *edit-error* "Edit Error")
+(defvar- *statement-already-exists* "Statement already exists")
 (defvar- *file-already-opened* "File %s is already opened.")
 (defvar- *file-format-not-supported* "This file format is not supported")
 
 (defvar- *docmanager* (create-docmanager))
+(defvar- *dirtyags* (atom #{}))
+
+(defn set-ag-dirty [path id isdirty]
+  (if isdirty
+    (swap! *dirtyags* conj [path id])
+    (swap! *dirtyags* disj [path id])))
+
+(defn is-ag-dirty [path id]
+  (contains? (deref *dirtyags*) [path id]))
 
 (defn- get-ag [lkifpath id]
-  (first (filter #(= (:id %) id)
-                 (:ags (get-doc-content *docmanager* lkifpath)))))
+  (get-section-content *docmanager* [lkifpath :ags id]))
 
 (defn- get-ags-id [lkifpath]
-  (map :id (:ags (get-doc-content *docmanager* lkifpath))))
+  (let [agsid (get-all-sectionskeys *docmanager* [lkifpath :ags])]
+    agsid))
 
 (defn on-open-file [view]
   ;; (display-graph view tompkins statement-formatted)
   (prn "ask-lkif-file-to-open...")
   (when-let [file (ask-lkif-file-to-open view)]
     (let [path (.getPath file)]
-      (if (doc-exists? *docmanager* path)
+      (if (section-exists? *docmanager* [path])
         (display-error view *file-error* (format *file-already-opened* path))
         (try
           (prn "set busy")
           (set-busy view true)
           (when-let [content (lkif-import path)]
-            (add-doc *docmanager* path content)
+            (lkif/add-lkif-to-docmanager path content *docmanager*)
             (display-lkif-content view file
-                                  (map (fn [id] [id (:title (get-ag path id))])
-                                       (get-ags-id path)))
+                                  (sort-by second
+                                           (map (fn [id] [id (:title (get-ag path id))])
+                                                (get-ags-id path))))
             (display-lkif-property view path))
           (finally
            (set-busy view false)))))))
@@ -65,10 +79,6 @@
   (when-let [ag (get-ag path graphid)]
     (open-graph view path ag statement-formatted)))
 
-(defn on-close-graph [view path id]
-  (prn "on-close-graph")
-  (close-graph view path id))
-
 (defn on-select-lkif-file [view path]
   (prn "on-select-lkif-file")
   (display-lkif-property view path))
@@ -78,7 +88,7 @@
   (doseq [id (get-ags-id path)]
     (close-graph view path id))
   (hide-lkif-content view path)
-  (remove-doc *docmanager* path))
+  (remove-section *docmanager* [path]))
 
 (defn on-open-graph [view path id]
   (open-graph view path (get-ag path id) statement-formatted))
@@ -132,7 +142,13 @@
             (display-error view *file-error* *file-format-not-supported*)))))))
 
 (defn on-close-graph [view path id]
-  (close-graph view path id))
+  (prn "on-close-graph")
+  (if (is-ag-dirty path id)
+    (when (ask-confirmation view "Close" "Close unsaved graph?")
+      (cancel-updates-section *docmanager* [path :ags id])
+      (set-ag-dirty path id false)
+      (close-graph view path id))
+    (close-graph view path id)))
 
 (defn on-export-file [view path]
   (when (ask-confirmation view "Export" "Export all the argument graphs?")
@@ -185,7 +201,7 @@
                                    (partition 2 (interleave
                                                  (repeat path)
                                                  (get-ags-id path))))
-                                 (get-all-keys *docmanager*))
+                                 (get-all-sectionskeys *docmanager* [path :ags]))
                          [[path id]])
             nb-ids (count path-to-id)]
         (do-swing-and-wait
@@ -231,10 +247,9 @@
         proofstandard (:standard node)
         acceptable (:acceptable node)
         complement-acceptable (:complement-acceptable node)]
-    (prn "node = ")
-    (prn node)
-    (display-statement-property view path (:title ag)
-                                (statement-formatted stmt) status
+    (prn "calling display statement property")
+    (display-statement-property view path id (:title ag)
+                                stmt statement-formatted status
                                 proofstandard acceptable complement-acceptable)))
 
 (defn on-select-argument [path id arg view]
@@ -260,10 +275,102 @@
     (display-premise-property view path (:title (get-ag path id))
                               (:polarity pm) typestr)))
 
-(defn on-select-statement-search [view path id stmt]
-  (prn "on select statement search"))
-
 (defn on-open-statement [view path id stmt]
   (prn "on-open-statement")
   (let [ag (get-ag path id)]
     (display-statement view path ag stmt statement-formatted)))
+
+(defn update-undo-redo-statuses [view path id]
+  (set-can-undo view path id (can-undo-section? *docmanager* [path :ags id]))
+  (set-can-redo view path id (can-redo-section? *docmanager* [path :ags id])))
+
+(defn on-edit-statement [view path id stmt-info]
+  (prn "on-edit-statement")
+  (prn stmt-info)
+  (let [{:keys [content previous-content]} stmt-info
+        oldag (get-ag path id)]
+    (if (statement-node oldag content)
+      (display-error view *edit-error* *statement-already-exists*)
+      (let [ag (update-statement-content oldag previous-content content)
+            stmt (:content stmt-info)
+            node (get-node ag stmt)
+            status (:status node)
+            proofstandard (:standard node)
+            acceptable (:acceptable node)
+            complement-acceptable (:complement-acceptable node)]
+        (update-section *docmanager* [path :ags (:id oldag)] ag)
+        (update-undo-redo-statuses view path (:id oldag))
+        (set-ag-dirty path (:id ag) true)
+        (set-dirty view path ag true)
+        (display-statement-property view path id (:title ag)
+                                    stmt statement-formatted status
+                                    proofstandard acceptable complement-acceptable)
+        (statement-content-changed view path ag previous-content content)))))
+
+(defn on-edit-statement-status [view path id stmt-info]
+  (prn "on-edit-statement-status")
+  (let [{:keys [status content previous-status]} stmt-info]
+    (when (not= status previous-status)
+      (let [oldag (get-ag path id)
+            ag (update-statement oldag content status)
+            node (get-node ag content)
+            status (:status node)
+            proofstandard (:standard node)
+            acceptable (:acceptable node)
+            complement-acceptable (:complement-acceptable node)]
+        (update-section *docmanager* [path :ags (:id oldag)] ag)
+        (update-undo-redo-statuses view path (:id oldag))
+        (set-ag-dirty path (:id oldag) true)
+        (set-dirty view path ag true)
+        (display-statement-property view path id (:title ag)
+                                    content statement-formatted status
+                                    proofstandard acceptable complement-acceptable)
+        (statement-status-changed view path ag content)))))
+
+(defn on-edit-statement-proofstandard [view path id stmt-info]
+  (prn "on-edit-statement-proofstandard")
+  (prn "stmt-info")
+  (prn stmt-info)
+  (let [{:keys [proofstandard content previous-proofstandard]} stmt-info]
+    (when (not= proofstandard previous-proofstandard)
+      (let [oldag (get-ag path id)
+            ag (update-statement-proofstandard oldag content proofstandard)
+            node (get-node ag content)
+            status (:status node)
+            proofstandard (:standard node)
+            acceptable (:acceptable node)
+            complement-acceptable (:complement-acceptable node)]
+        (update-section *docmanager* [path :ags (:id oldag)] ag)
+        (update-undo-redo-statuses view path (:id oldag))
+        (set-ag-dirty path (:id oldag) true)
+        (set-dirty view path ag true)
+        (display-statement-property view path id (:title ag)
+                                    content statement-formatted status
+                                    proofstandard acceptable complement-acceptable)
+        (statement-proofstandard-changed view path ag content)))))
+
+(defn on-undo [view path id]
+  (prn "on undo")
+  (undo-section *docmanager* [path :ags id])
+  (update-undo-redo-statuses view path id)
+  (let [ag (get-ag path id)]
+    (set-dirty view path id  true)
+    (set-ag-dirty path id true))
+  (edit-undone view path id))
+
+(defn on-redo [view path id]
+  (prn "on redo")
+  (redo-section *docmanager* [path :ags id])
+  (update-undo-redo-statuses view path id)
+  (set-dirty view path (get-ag path id) true)
+  (set-ag-dirty path id true)
+  (edit-redone view path id))
+
+(defn on-save [view path id]
+  (prn "on-save")
+  (delete-section-history *docmanager* [path :ags id])
+  (set-ag-dirty path id false)
+  (set-dirty view path (get-ag path id) false)
+  (update-undo-redo-statuses view path id)
+  (let [lkifdata (lkif/extract-lkif-from-docmanager path *docmanager*)]
+    (lkif-export lkifdata path)))
