@@ -10,6 +10,7 @@
            (com.mxgraph.util mxConstants mxUtils mxCellRenderer mxPoint mxEvent
                              mxEventSource$mxIEventListener mxUndoManager)
            com.mxgraph.swing.util.mxGraphTransferable
+           com.mxgraph.swing.handler.mxRubberband
            (com.mxgraph.view mxGraph mxStylesheet)
            (com.mxgraph.model mxCell mxGeometry)
            com.mxgraph.layout.hierarchical.mxHierarchicalLayout
@@ -18,6 +19,7 @@
            com.mxgraph.swing.mxGraphOutline
            java.awt.event.MouseWheelListener
            java.awt.print.PrinterJob
+            (java.awt.datatransfer Transferable DataFlavor)
            (java.awt Color BasicStroke)))
 
 (defrecord StatementCell [ag stmt stmt-str] Object
@@ -349,7 +351,8 @@
                          (getFoldingIcon
                           [state]
                           nil))
-        undomanager (add-undo-manager g)]
+        undomanager (add-undo-manager g)
+        rubberband (mxRubberband. graphcomponent)]
     (.setConnectable graphcomponent false)
     (add-mouse-zoom g graphcomponent)
     {:component graphcomponent :undomanager undomanager}))
@@ -443,3 +446,36 @@
 (defn change-statement-proofstandard [graphcomponent ag stmt]
   (let [component (:component graphcomponent)]
     (change-cell-and-styles component ag stmt)))
+
+(deftype ImageSelection [img]
+  Transferable
+  (getTransferDataFlavors
+   [this]
+   (into-array DataFlavor [DataFlavor/imageFlavor]))
+
+  (isDataFlavorSupported
+   [this flavor]
+   (= DataFlavor/imageFlavor flavor))
+
+  (getTransferData
+   [this flavor]
+   (when (= DataFlavor/imageFlavor flavor)
+     img)))
+
+(defn copyselection-toclipboard [graphcomponent]
+  (let [component (:component graphcomponent)
+        graph (.getGraph component)
+        selectionmodel (.getSelectionModel graph)
+        selectedcells (.getCells selectionmodel)
+        img (mxCellRenderer/createBufferedImage
+             graph selectedcells 1 nil (.isAntiAlias component) nil (.getCanvas component))
+        imgselection (ImageSelection. img)
+        clipboard (.getSystemClipboard (.getToolkit component))]
+    (.setContents clipboard imgselection nil)))
+
+(defn select-all [graphcomponent]
+  (let [component (:component graphcomponent)
+        graph (.getGraph component)
+        cells (.getChildCells graph (.getDefaultParent graph) true true)
+        selectionmodel (.getSelectionModel graph)]
+    (.setCells selectionmodel cells)))
