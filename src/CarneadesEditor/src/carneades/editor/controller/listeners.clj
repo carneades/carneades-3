@@ -374,3 +374,6 @@
   (update-undo-redo-statuses view path id)
   (let [lkifdata (lkif/extract-lkif-from-docmanager path *docmanager*)]
     (lkif-export lkifdata path)))
+
+(defn on-copyclipboard [view path id]
+  (copyselection-clipboard view path id))

@@ -137,3 +137,7 @@
 (defn save-button-listener [event view]
   (when-let [[path id] (current-graph view)]
     (on-save view path id)))
+
+(defn copyclipboard-button-listener [event view]
+  (when-let [[path id] (current-graph view)]
+    (on-copyclipboard view path id)))

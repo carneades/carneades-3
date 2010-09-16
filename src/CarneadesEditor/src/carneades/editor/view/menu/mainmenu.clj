@@ -13,6 +13,8 @@
 (defvar *zoomOutButton* (.zoomOutButton *viewinstance*))
 (defvar *zoomResetButton* (.zoomResetButton *viewinstance*))
 (defvar *saveButton* (.saveButton *viewinstance*))
+(defvar *copyClipboardEditMenuItem* (.copyClipboardEditMenuItem *viewinstance*))
+(defvar *selectAllEditMenuItem* (.selectAllEditMenuItem *viewinstance*))
 
 (defvar- *undoButton* (.undoButton *viewinstance*))
 (defvar- *redoButton* (.redoButton *viewinstance*))
@@ -24,6 +26,7 @@
 (defvar- *exportFileMenuItem* (.exportFileMenuItem *viewinstance*))
 (defvar- *printPreviewFileMenuItem* (.printPreviewFileMenuItem *viewinstance*))
 (defvar- *printFileMenuItem* (.printFileMenuItem *viewinstance*))
+
 
 (defn- set-enable-diagram-buttons-and-menus [state]
   (.setEnabled *zoomInButton* state)

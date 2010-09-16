@@ -54,7 +54,8 @@
   (set-can-undo [this path id state])
   (set-can-redo [this path id state])
   (set-dirty [this path ag state])
-
+  (copyselection-clipboard [this path id])
+  
   ;; non-swing listeners:
   (register-statement-selection-listener [this l args])
   (register-argument-selection-listener [this l args])
