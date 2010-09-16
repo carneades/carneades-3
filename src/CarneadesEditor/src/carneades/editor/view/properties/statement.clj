@@ -5,11 +5,11 @@
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.utils.seq)
-  (:import carneades.editor.uicomponents.StatementPropertiesView))
+  (:import carneades.editor.uicomponents.StatementPropertiesView
+           (javax.swing KeyStroke Action AbstractAction)))
 
 (defvar- *statementProperties* (StatementPropertiesView/instance))
 (defvar- *statementTextArea* (.statementTextArea *statementProperties*))
-(defvar *statementEditButton* (.editButton *statementProperties*))
 (defvar *statementStatusComboBox* (.statusComboBox *statementProperties*))
 (defvar *statementProofstandardComboBox* (.proofstandardComboBox *statementProperties*))
 (defvar- *acceptableCheckBox* (.acceptableCheckBox *statementProperties*))
@@ -34,6 +34,8 @@
 
 (defvar- *txt-to-proofstandard* (reverse-map *proofstandards*))
 
+(defvar- *statement-edit-listeners* (atom ()))
+
 (defn- acceptable-checkbox-listener [event]
   ;; there is no read-only checkboxes in Swing, we cancel the change to make
   ;; a read-only-like checkbox:
@@ -51,6 +53,22 @@
 
 (defvar- *previous-statement-content* (atom {}))
 
+(defn- set-enter-edit-statement []
+  ;; see http://stackoverflow.com/questions/2162170/jtextarea-new-line-on-shift-enter
+  (let [txtsubmit "text-submit"
+        insertbreak "insert-break"
+        input (.getInputMap *statementTextArea*)
+        enter (KeyStroke/getKeyStroke "ENTER")
+        shiftenter (KeyStroke/getKeyStroke "shift ENTER")
+        actions (.getActionMap *statementTextArea*)]
+    (.put input shiftenter insertbreak)
+    (.put input enter txtsubmit)
+    (.put actions txtsubmit (proxy [AbstractAction] []
+                              (actionPerformed
+                               [event]
+                               (doseq [{:keys [listener args]} (deref *statement-edit-listeners*)]
+                                 (apply listener event args)))))))
+
 (defn get-statement-properties-panel [path id maptitle stmt stmt-str status proofstandard acceptable complement-acceptable]
   (.setText *pathText* path)
   (.setText *mapTitleText* maptitle)
@@ -62,6 +80,7 @@
   (.setSelectedItem *statementProofstandardComboBox* (get *proofstandards* proofstandard))
   (.setSelected *acceptableCheckBox* acceptable)
   (.setSelected *complementacceptableCheckBox* complement-acceptable)
+  (set-enter-edit-statement)
   *statementProperties*)
 
 (defn statement-being-edited-info []
@@ -71,3 +90,6 @@
           :status (*txt-to-status* (.getSelectedItem *statementStatusComboBox*))
           :proofstandard (*txt-to-proofstandard* (.getSelectedItem *statementProofstandardComboBox*))}
          (deref *previous-statement-content*)))
+
+(defn register-statement-edit-listener [f args]
+  (swap! *statement-edit-listeners* conj {:listener f :args args}))
