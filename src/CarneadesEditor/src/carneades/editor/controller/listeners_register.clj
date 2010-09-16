@@ -72,6 +72,7 @@
   (register-argument-selection-listener view on-select-argument [view])
   (register-premise-selection-listener view on-select-premise [view])
   (register-search-listener view (fn [inprogress searchinfo]
+                                   (prn "on-register-search-listener$0")
                                    (if inprogress
                                      (on-search-begins view searchinfo)
                                      (on-search-ends view))) [])

@@ -9,7 +9,7 @@
         [clojure.string :only (trim split)])
   (:import (java.awt.event KeyEvent KeyAdapter)
            (javax.swing JScrollPane table.DefaultTableModel KeyStroke JTable)
-           (carneades.editor.uicomponents EditorApplicationView)
+           (carneades.editor.uicomponents EditorApplicationView SearchOptionsDialog)
            (carneades.editor.view.swinguiprotocol StatementInfo)))
 
 (defvar- *frame* (EditorApplicationView/instance))
@@ -17,12 +17,12 @@
 (defvar- *searchButton* (.searchButton *frame*))
 (defvar- *searchComboBox* (.searchComboBox *frame*))
 
-(defvar- *optionsPanel* (.optionsPanel *frame*))
-(defvar- *showOptionsButton* (.showOptionsButton *frame*))
+;; (defvar- *optionsPanel* (.optionsPanel *frame*))
+(defvar- *optionsButton* (.optionsButton *frame*))
 (defvar- *searchPanel* (.searchPanel *frame*))
 (defvar- *searchScrollPane* (.searchScrollPane *frame*))
 (defvar- *searchProgressBar* (.searchProgressBar *frame*))
-(defvar- *searchInCurrentGraph* (.searchInCurrentGraphButton *frame*))
+;; (defvar- *searchInCurrentGraph* (.searchInCurrentGraphButton *frame*))
 
 (defvar *searchResultTable* (.searchResultTable *frame*))
 ;; (defvar- *modelTable* (.getModel *searchResultTable*))
@@ -58,41 +58,41 @@
 
 (defvar- *search-button-listeners* (atom ()))
 
-(defn- set-options-visible [state]
-  (reset! *state* state)
-  (if state
-    (do
-      ;; (.setText *showOptionsButton* *hideOptionsMessage*)
-      (.setVisible *optionsPanel* true))
-    (do
-      ;; (.setText *showOptionsButton* *showOptionsMessage*)
-      (.setVisible *optionsPanel* false)))
-  (.setPreferredSize *searchScrollPane* (.getPreferredSize *searchPanel*))
-  (update-scrollbar-size)
-  (.revalidate *searchPanel*))
-
-(defn- toggle-options-button []
-  (set-options-visible (not (deref *state*))))
+(defvar- *search-options* (atom {}))
 
 (defn- showoptions-button-listener [event]
-  (toggle-options-button))
+  (let [dialog (SearchOptionsDialog. *frame* true)
+        cancelbutton (.cancelbutton dialog)
+        okbutton (.okbutton dialog)
+        searchincurrentgraph (.searchInCurrentGraphButton dialog)
+        searchalllkiffiles (.searchInAllLkifFilesButton dialog)
+        {:keys [search-in]} (deref *search-options*)]
+    (add-action-listener cancelbutton (fn [event] (.dispose dialog)))
+    (add-action-listener okbutton
+                         (fn [event]
+                           (swap! *search-options* assoc
+                                  :search-in (if (.isSelected searchincurrentgraph)
+                                               :current-graph
+                                               :all-lkif-files))
+                           (.dispose dialog)))
+    (.setSelected searchincurrentgraph (= search-in :current-graph))
+    (.setSelected searchalllkiffiles (= search-in :all-lkif-files))
+    (.setLocationRelativeTo dialog *frame*)
+    (.setVisible dialog true)))
 
 (defn- add-item-to-search-box [item]
   (loop [n (dec (.getItemCount *searchComboBox*))]
     (cond (neg? n)
           (.addItem *searchComboBox* item)
-    
+          
           (not= (.getItemAt *searchComboBox* n) item)
           (recur (dec n)))))
 
 (defn- get-searched-info []
-  (let [text (.getSelectedItem *searchComboBox*)
-        options {:search-in (if (.isSelected *searchInCurrentGraph*)
-                              :current-graph
-                              :all-lkif-files)}]
+  (let [text (.getSelectedItem *searchComboBox*)]
     (if (nil? text)
      nil
-     [(trim text) options])))
+     [(trim text) (deref *search-options*)])))
 
 (defn set-search-state [active]
   (reset! *searchactive* active)
@@ -114,7 +114,7 @@
   (Thread/sleep 50)
   (let [was-active (deref *searchactive*)]
     (when-not was-active
-      (if-let [text (.getSelectedItem *searchComboBox*)]
+      (when-let [text (.getSelectedItem *searchComboBox*)]
         (add-item-to-search-box (trim text))))
     (doseq [{:keys [listener args]} (deref *search-button-listeners*)]
       (if was-active
@@ -165,15 +165,15 @@
                 (.isFocusOwner
                  (.. *searchComboBox* getEditor getEditorComponent)))
        (search-button-listener event))))
-  (set-options-visible (deref *state*))
-  (add-action-listener *showOptionsButton* showoptions-button-listener)
+  ;; (set-options-visible (deref *state*))
+  (add-action-listener *optionsButton* showoptions-button-listener)
   (add-action-listener *searchButton* search-button-listener))
 
 (defn register-search-button-listener [f args]
   (swap! *search-button-listeners* conj {:listener f :args args}))
 
 (defn file-from-path [path]
-  (last (split path (java.util.regex.Pattern/compile java.io.File/pathSeparator))))
+  (last (split path (re-pattern java.io.File/pathSeparator))))
 
 (defn add-stmt-search-result [path id stmt stmt-fmt]
   (let [obj (StatementInfo. path id stmt stmt-fmt)]
