@@ -34,7 +34,9 @@
     (first-content history)))
 
 (defn get-all-sectionskeys [docmanager keys]
-  (clojure.core/keys (get-in (deref docmanager) keys)))
+  (if (empty? keys)
+    (clojure.core/keys (deref docmanager))
+    (clojure.core/keys (get-in (deref docmanager) keys))))
 
 (defn undo-section [docmanager keys]
   (let [history (get-in (deref docmanager) keys)]

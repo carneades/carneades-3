@@ -46,10 +46,6 @@ public class EditorApplicationView extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jPanel2 = new javax.swing.JPanel();
-        searchForPanel = new javax.swing.JPanel();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jCheckBox4 = new javax.swing.JCheckBox();
-        searchInPanel = new javax.swing.JPanel();
         resultPanel = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         menuBar = new javax.swing.JMenuBar();
@@ -177,9 +173,6 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         searchComboBox.setEditable(true);
 
-        showOptionsButton.setText("Options");
-        showOptionsButton.setPreferredSize(new java.awt.Dimension(57, 29));
-
         searchButton.setText("Search");
         searchButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -187,13 +180,15 @@ public class EditorApplicationView extends javax.swing.JFrame {
             }
         });
 
+        optionsButton.setText("Options...");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(showOptionsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addComponent(optionsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
                 .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -201,67 +196,9 @@ public class EditorApplicationView extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(showOptionsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(optionsButton)))
         );
-
-        optionsPanel.setMinimumSize(new java.awt.Dimension(0, 116));
-        optionsPanel.setLayout(new javax.swing.BoxLayout(optionsPanel, javax.swing.BoxLayout.Y_AXIS));
-
-        searchForPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Search for:"));
-
-        jCheckBox3.setSelected(true);
-        jCheckBox3.setText("Statements");
-
-        jCheckBox4.setSelected(true);
-        jCheckBox4.setText("Arguments");
-
-        javax.swing.GroupLayout searchForPanelLayout = new javax.swing.GroupLayout(searchForPanel);
-        searchForPanel.setLayout(searchForPanelLayout);
-        searchForPanelLayout.setHorizontalGroup(
-            searchForPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(searchForPanelLayout.createSequentialGroup()
-                .addComponent(jCheckBox3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jCheckBox4)
-                .addContainerGap(93, Short.MAX_VALUE))
-        );
-        searchForPanelLayout.setVerticalGroup(
-            searchForPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(searchForPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(jCheckBox3)
-                .addComponent(jCheckBox4))
-        );
-
-        optionsPanel.add(searchForPanel);
-
-        searchInPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Search in:"));
-
-        searchInButtonGroup.add(searchInCurrentGraphButton);
-        searchInCurrentGraphButton.setSelected(true);
-        searchInCurrentGraphButton.setText("Current graph");
-
-        searchInButtonGroup.add(searchInAllLkifFilesButton);
-        searchInAllLkifFilesButton.setText("All LKIF files");
-
-        javax.swing.GroupLayout searchInPanelLayout = new javax.swing.GroupLayout(searchInPanel);
-        searchInPanel.setLayout(searchInPanelLayout);
-        searchInPanelLayout.setHorizontalGroup(
-            searchInPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(searchInPanelLayout.createSequentialGroup()
-                .addComponent(searchInCurrentGraphButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(searchInAllLkifFilesButton)
-                .addContainerGap(84, Short.MAX_VALUE))
-        );
-        searchInPanelLayout.setVerticalGroup(
-            searchInPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(searchInPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(searchInCurrentGraphButton)
-                .addComponent(searchInAllLkifFilesButton))
-        );
-
-        optionsPanel.add(searchInPanel);
 
         resultPanel.setLayout(new javax.swing.BoxLayout(resultPanel, javax.swing.BoxLayout.Y_AXIS));
         resultPanel.add(searchProgressBar);
@@ -288,10 +225,9 @@ public class EditorApplicationView extends javax.swing.JFrame {
             searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, searchPanelLayout.createSequentialGroup()
                 .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(resultPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
                     .addComponent(searchComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 312, Short.MAX_VALUE)
-                    .addComponent(optionsPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(resultPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         searchPanelLayout.setVerticalGroup(
@@ -300,10 +236,8 @@ public class EditorApplicationView extends javax.swing.JFrame {
                 .addComponent(searchComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(optionsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(resultPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(resultPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE))
         );
 
         searchScrollPane.setViewportView(searchPanel);
@@ -435,8 +369,6 @@ public class EditorApplicationView extends javax.swing.JFrame {
     private javax.swing.JMenu fileMenu;
     public final javax.swing.JPopupMenu graphPopupMenu = new javax.swing.JPopupMenu();
     private javax.swing.JMenu helpMenu;
-    private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JCheckBox jCheckBox4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;
@@ -460,7 +392,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JButton openFileButton = new javax.swing.JButton();
     public final javax.swing.JMenuItem openFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem openGraphMenuItem = new javax.swing.JMenuItem();
-    public final javax.swing.JPanel optionsPanel = new javax.swing.JPanel();
+    public final javax.swing.JButton optionsButton = new javax.swing.JButton();
     public final javax.swing.JMenuItem printFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem printPreviewFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JPanel propertiesPanel = new javax.swing.JPanel();
@@ -472,17 +404,12 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JMenuItem saveFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JButton searchButton = new javax.swing.JButton();
     public final javax.swing.JComboBox searchComboBox = new javax.swing.JComboBox();
-    private javax.swing.JPanel searchForPanel;
-    public final javax.swing.JRadioButton searchInAllLkifFilesButton = new javax.swing.JRadioButton();
     private javax.swing.ButtonGroup searchInButtonGroup;
-    public final javax.swing.JRadioButton searchInCurrentGraphButton = new javax.swing.JRadioButton();
-    private javax.swing.JPanel searchInPanel;
     public final javax.swing.JPanel searchPanel = new javax.swing.JPanel();
     public final javax.swing.JProgressBar searchProgressBar = new javax.swing.JProgressBar();
     public final javax.swing.JTable searchResultTable = new javax.swing.JTable();
     public final javax.swing.JScrollPane searchScrollPane = new javax.swing.JScrollPane();
     public final javax.swing.JMenuItem selectAllEditMenuItem = new javax.swing.JMenuItem();
-    public final javax.swing.JToggleButton showOptionsButton = new javax.swing.JToggleButton();
     public final javax.swing.JPopupMenu tabPopupMenu = new javax.swing.JPopupMenu();
     public final javax.swing.JToolBar toolBar = new javax.swing.JToolBar();
     public final javax.swing.JButton undoButton = new javax.swing.JButton();

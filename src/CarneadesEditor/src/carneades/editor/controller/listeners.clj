@@ -189,19 +189,28 @@
     (deref future)))
 
 (defn- do-search [view path id text options]
+  (prn "do-search")
   (let [{:keys [search-in]} options]
+    (prn "options =")
+    (prn options)
+    (prn "text =")
+    (prn text)
     (when (and (not (empty? text))
                (or (and path (= search-in :current-graph))
                    (= search-in :all-lkif-files)))
       (prn "Search begins")
       (wait-for-futures)
       (prn "Ready to search!")
+      (prn "searchin all lkif?")
+      (prn "keys =")
+      (prn (get-all-sectionskeys *docmanager* [path :ags]))
+      (prn (= search-in :all-lkif-files))
       (let [path-to-id (if (= search-in :all-lkif-files)
                          (mapcat (fn [path]
                                    (partition 2 (interleave
                                                  (repeat path)
                                                  (get-ags-id path))))
-                                 (get-all-sectionskeys *docmanager* [path :ags]))
+                                 (get-all-sectionskeys *docmanager* []))
                          [[path id]])
             nb-ids (count path-to-id)]
         (do-swing-and-wait
