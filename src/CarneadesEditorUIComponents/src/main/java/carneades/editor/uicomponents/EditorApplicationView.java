@@ -59,12 +59,8 @@ public class EditorApplicationView extends javax.swing.JFrame {
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         editMenu = new javax.swing.JMenu();
-        cutMenuItem = new javax.swing.JMenuItem();
-        copyMenuItem = new javax.swing.JMenuItem();
-        pasteMenuItem = new javax.swing.JMenuItem();
-        deleteMenuItem = new javax.swing.JMenuItem();
+        jSeparator9 = new javax.swing.JPopupMenu.Separator();
         helpMenu = new javax.swing.JMenu();
-        contentsMenuItem = new javax.swing.JMenuItem();
 
         tabPopupMenu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -363,24 +359,22 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         editMenu.setText("Edit");
 
-        cutMenuItem.setText("Cut");
-        editMenu.add(cutMenuItem);
+        undoEditMenuItem.setText("Undo");
+        editMenu.add(undoEditMenuItem);
 
-        copyMenuItem.setText("Copy");
-        editMenu.add(copyMenuItem);
+        redoEditMenuItem.setText("Redo");
+        editMenu.add(redoEditMenuItem);
+        editMenu.add(jSeparator9);
 
-        pasteMenuItem.setText("Paste");
-        editMenu.add(pasteMenuItem);
+        copyClipboardEditMenuItem.setText("Copy to clipboard");
+        editMenu.add(copyClipboardEditMenuItem);
 
-        deleteMenuItem.setText("Delete");
-        editMenu.add(deleteMenuItem);
+        selectAllEditMenuItem.setText("Select All");
+        editMenu.add(selectAllEditMenuItem);
 
         menuBar.add(editMenu);
 
         helpMenu.setText("Help");
-
-        contentsMenuItem.setText("Contents");
-        helpMenu.add(contentsMenuItem);
 
         aboutHelpMenuItem.setText("About");
         helpMenu.add(aboutHelpMenuItem);
@@ -432,10 +426,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JMenuItem closeGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem closeLkifFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem closeTabMenuItem = new javax.swing.JMenuItem();
-    private javax.swing.JMenuItem contentsMenuItem;
-    private javax.swing.JMenuItem copyMenuItem;
-    private javax.swing.JMenuItem cutMenuItem;
-    private javax.swing.JMenuItem deleteMenuItem;
+    public final javax.swing.JMenuItem copyClipboardEditMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenu editMenu;
     public final javax.swing.JMenuItem exitFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem exportFileMenuItem = new javax.swing.JMenuItem();
@@ -458,6 +449,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JToolBar.Separator jSeparator8;
+    private javax.swing.JPopupMenu.Separator jSeparator9;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JTabbedPane leftTabbedPane;
@@ -469,11 +461,11 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JMenuItem openFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem openGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JPanel optionsPanel = new javax.swing.JPanel();
-    private javax.swing.JMenuItem pasteMenuItem;
     public final javax.swing.JMenuItem printFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem printPreviewFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JPanel propertiesPanel = new javax.swing.JPanel();
     public final javax.swing.JButton redoButton = new javax.swing.JButton();
+    public final javax.swing.JMenuItem redoEditMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JPanel resultPanel;
     public final javax.swing.JMenuItem saveAsFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JButton saveButton = new javax.swing.JButton();
@@ -489,10 +481,12 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JProgressBar searchProgressBar = new javax.swing.JProgressBar();
     public final javax.swing.JTable searchResultTable = new javax.swing.JTable();
     public final javax.swing.JScrollPane searchScrollPane = new javax.swing.JScrollPane();
+    public final javax.swing.JMenuItem selectAllEditMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JToggleButton showOptionsButton = new javax.swing.JToggleButton();
     public final javax.swing.JPopupMenu tabPopupMenu = new javax.swing.JPopupMenu();
     public final javax.swing.JToolBar toolBar = new javax.swing.JToolBar();
     public final javax.swing.JButton undoButton = new javax.swing.JButton();
+    public final javax.swing.JMenuItem undoEditMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JButton zoomInButton = new javax.swing.JButton();
     public final javax.swing.JButton zoomOutButton = new javax.swing.JButton();
     public final javax.swing.JButton zoomResetButton = new javax.swing.JButton();

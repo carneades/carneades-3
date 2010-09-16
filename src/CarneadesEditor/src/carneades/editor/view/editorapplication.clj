@@ -79,6 +79,11 @@
 (defn- on-zoom-reset [event]
   (zoom-reset (.getSelectedComponent *mapPanel*)))
 
+(defn- select-all-listener [event this]
+  (let [[path id] (current-graph this)]
+    (when-let [component (get-component path id)]
+      (select-all component))))
+
 (deftype SwingView [] View SwingUI
   (init
    [this]
@@ -92,6 +97,7 @@
    (add-action-listener *zoomInButton* on-zoom-in)
    (add-action-listener *zoomOutButton* on-zoom-out)
    (add-action-listener *zoomResetButton* on-zoom-reset)
+   (add-action-listener *selectAllEditMenuItem* select-all-listener this)
    
    (lkif-properties-init)
    (graph-properties-init)
@@ -394,6 +400,10 @@
   (add-save-button-listener
    [this f args]
    (apply add-action-listener *saveButton* f args))
+
+  (add-copyclipboard-button-listener
+   [this f args]
+   (apply add-action-listener *copyClipboardEditMenuItem* f args))
   
   (edit-undone
    [this path id]
@@ -452,6 +462,11 @@
         (if state
           (enable-save-button)
           (disable-save-button))))))
+  
+  (copyselection-clipboard
+   [this path id]
+   (when-let [component (get-component path id)]
+     (copyselection-toclipboard component)))
   
   (get-selected-object-in-tree
    [this]

@@ -31,6 +31,7 @@
   (add-undo-button-listener [this f args])
   (add-redo-button-listener [this f args])
   (add-save-button-listener [this f args])
+  (add-copyclipboard-button-listener [this f args])
   
   ;; functions to get information from the Swing UI
   (get-selected-object-in-tree [this])

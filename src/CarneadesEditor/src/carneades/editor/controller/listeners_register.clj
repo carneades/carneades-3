@@ -59,6 +59,7 @@
   (add-undo-button-listener view undo-button-listener [view])
   (add-redo-button-listener view redo-button-listener [view])
   (add-save-button-listener view save-button-listener [view])
+  (add-copyclipboard-button-listener view copyclipboard-button-listener [view])
   
   ;; we don't need to extract information from the UI,
   ;; dispatch to the listeners:
