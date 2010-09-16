@@ -379,7 +379,7 @@
 
   (add-statement-edit-listener
    [this f args]
-   (apply add-action-listener *statementEditButton* f args))
+   (register-statement-edit-listener f args))
 
   (add-statement-edit-status-listener
    [this f args]

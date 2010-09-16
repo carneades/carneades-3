@@ -76,8 +76,6 @@ public class StatementPropertiesView extends javax.swing.JPanel {
         statementTextArea.setMinimumSize(new java.awt.Dimension(100, 50));
         jScrollPane2.setViewportView(statementTextArea);
 
-        editButton.setText("Edit");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -105,8 +103,7 @@ public class StatementPropertiesView extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(complementacceptableCheckBox))
                     .addComponent(jLabel2)
-                    .addComponent(proofstandardComboBox, 0, 294, Short.MAX_VALUE)
-                    .addComponent(editButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(proofstandardComboBox, 0, 294, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -125,9 +122,7 @@ public class StatementPropertiesView extends javax.swing.JPanel {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(4, 4, 4)
-                .addComponent(editButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(statusComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -139,7 +134,7 @@ public class StatementPropertiesView extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(acceptableCheckBox)
                     .addComponent(complementacceptableCheckBox))
-                .addContainerGap(61, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -147,7 +142,6 @@ public class StatementPropertiesView extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public final javax.swing.JCheckBox acceptableCheckBox = new javax.swing.JCheckBox();
     public final javax.swing.JCheckBox complementacceptableCheckBox = new javax.swing.JCheckBox();
-    public final javax.swing.JButton editButton = new javax.swing.JButton();
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
