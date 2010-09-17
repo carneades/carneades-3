@@ -199,13 +199,11 @@
   (assoc arg :applicable false :premises (cons p (:premises arg))))
 
 ;; se        ; scintilla of the evidence
-;;                  ba        ; best argument
-;; (was "preponderance of the evidence")
 ;;                  dv        ; dialectical validity
 ;;                  pe        ; preponderance of the evidence
 ;;                  cce       ; clear and convincing evidence
 ;;                  brd       ; beyond a reasonable doubt
-(defvar *default-proof-standard* :dv)
+(defvar *default-proof-standard* :pe)
 
 (defstruct- node-struct
   :statement ; statement
