@@ -417,6 +417,13 @@
        (.. model endUpdate)
        (.refresh component)))))
 
+(defn- change-statement-userobject [cell ag]
+  (let [val (.getValue cell)
+        stmt-str (:stmt-str val)
+        stmt (:stmt val)
+        stmtcell (StatementCell. ag stmt stmt-str)]
+    (.setValue cell stmtcell)))
+
 (defn- change-cell-and-styles [component ag stmt]
   (let [graph (.getGraph component)
         model (.getModel graph)]
@@ -431,8 +438,11 @@
           (doseq [cell (get-vertices graph p)]
             (let [val (.getValue cell)]
               (cond (instance? StatementCell val)
-                    (.setStyle model cell (get-statement-style ag (:stmt (.getValue cell))))
+                    (do
+                      (change-statement-userobject cell ag)
+                      (.setStyle model cell (get-statement-style ag (:stmt (.getValue cell)))))
 
+                    ;; TODO: update all user objects with the new ag
                     (instance? ArgumentCell val)
                     (.setStyle model cell (get-argument-style ag (:arg (.getValue cell)))))))
           (finally
