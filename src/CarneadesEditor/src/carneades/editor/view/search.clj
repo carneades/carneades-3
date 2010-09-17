@@ -58,7 +58,7 @@
 
 (defvar- *search-button-listeners* (atom ()))
 
-(defvar- *search-options* (atom {}))
+(defvar- *search-options* (atom {:search-in :current-graph}))
 
 (defn- showoptions-button-listener [event]
   (let [dialog (SearchOptionsDialog. *frame* true)
@@ -89,6 +89,8 @@
           (recur (dec n)))))
 
 (defn- get-searched-info []
+  (prn "get-searched-info")
+  (prn (deref *search-options*))
   (let [text (.getSelectedItem *searchComboBox*)]
     (if (nil? text)
      nil

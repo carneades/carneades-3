@@ -23,22 +23,22 @@
 (defn- best-arg [ags]
   (if (empty? ags) 0.0 (apply max (map :weight ags))))
 
-;; best-argument?
-
-(defn- best-argument [ag ps pro-args con-args all-premises-hold?]
+(defn- preponderance [ag ps pro-args con-args all-premises-hold?]
   (let [pro (filter #(all-premises-hold? ag %) pro-args)
         con (filter #(all-premises-hold? ag %) con-args)
         best-pro (best-arg pro)
         best-con (best-arg con)]
     (> best-pro best-con)))
 
+;;; deprecated!
 (defmethod satisfies? :ba [ag ps pro-args con-args all-premises-hold?]
   "argument-graph (seq-of argument) (seq-of argument) -> boolean"
-  (best-argument ag ps pro-args con-args all-premises-hold?))
+  (preponderance ag ps pro-args con-args all-premises-hold?))
 
 (defmethod satisfies? :pe [ag ps pro-args con-args all-premises-hold?]
   "argument-graph (seq-of argument) (seq-of argument) -> boolean"
-  (best-argument ag ps pro-args con-args all-premises-hold?))
+  ;; preponderance of the evidence
+  (preponderance ag ps pro-args con-args all-premises-hold?))
 
 ;; clear-and-convincing-evidence?
 (defmethod satisfies? :cce [ag ps pro-args con-args all-premises-hold?]
