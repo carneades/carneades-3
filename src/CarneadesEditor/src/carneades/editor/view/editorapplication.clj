@@ -10,19 +10,10 @@
         ;;
         carneades.ui.diagram.graphvizviewer
         carneades.mapcomponent.map
-        carneades.editor.view.viewprotocol
-        carneades.editor.view.swinguiprotocol
         carneades.editor.view.menu.mainmenu
         carneades.editor.utils.swing
-        carneades.editor.view.tabs
-        carneades.editor.view.tree
-        carneades.editor.view.search
-        carneades.editor.view.properties.lkif
-        carneades.editor.view.properties.statement
-        carneades.editor.view.properties.argument
-        carneades.editor.view.properties.premise
-        carneades.editor.view.properties.graph
-        carneades.editor.view.properties.properties
+        (carneades.editor.view search viewprotocol swinguiprotocol tabs tree context)
+        (carneades.editor.view.properties lkif statement argument premise graph properties)
         carneades.editor.view.aboutbox
         carneades.editor.view.printpreview.preview)
   (:import java.io.File
@@ -107,6 +98,7 @@
    (init-tree)
    (init-tabs)
    (init-search)
+   (init-context)
    (.setDefaultCloseOperation *frame* JFrame/DISPOSE_ON_CLOSE))
 
   (display-error
@@ -124,11 +116,6 @@
   
   (show
    [this]
-   (disable-diagram-buttons-and-menus)
-   (disable-undo-button)
-   (disable-redo-button)
-   (disable-file-items)
-   (disable-save-button)
    (EventQueue/invokeLater
     (proxy [Runnable] []
       (run []
@@ -148,16 +135,23 @@
 
   (open-graph
    [this path ag stmt-fmt]
+   (prn "open-graph")
+   (prn "path =")
+   (prn path)
+   (prn "ag id = ")
+   (prn (:id ag))
    (let [component (get-component path (:id ag))]
      (if component
-       (select-component component)
+       (do
+         (select-component component)
+         (set-current-ag-context path (:id ag)))
        (try
          (set-busy this true)
          (let [component (create-graph-component ag stmt-fmt)]
            (add-node-selection-listener component #(node-selection-listener
                                                      path (:id ag) %))
-           (add-component component path ag)
-           (enable-diagram-buttons-and-menus))
+           (add-component component path ag (is-dirty? path (:id ag)))
+           (set-current-ag-context path (:id ag)))
          (finally
           (set-busy this false))))))
 
@@ -165,9 +159,10 @@
    [this path id]
    (let [component (get-component path id)]
      (remove-component component))
-   (when (tabs-empty?)
-     (disable-save-button)   
-     (disable-diagram-buttons-and-menus)))
+   (if (tabs-empty?)
+     (set-current-context-empty)
+     (let [[path id] (current-graph this)]
+       (set-current-ag-context path id))))
 
   (current-graph
    [this]
@@ -446,22 +441,15 @@
 
   (set-can-undo
    [this path id state]
-   (set-component-can-undo path id state))
+   (set-ag-canundo path id state))
 
   (set-can-redo
    [this path id state]
-   (set-component-can-redo path id state))
+   (set-ag-canredo path id state))
 
   (set-dirty
    [this path ag state]
-   (when-let [component (get-component path (:id ag))]
-    (set-component-dirty component ag state)
-    (let [[currentpath id] (current-graph this)]
-      (when (and (= path currentpath)
-                 (= id (:id ag)))
-        (if state
-          (enable-save-button)
-          (disable-save-button))))))
+   (set-ag-dirty path (:id ag) state))
   
   (copyselection-clipboard
    [this path id]
