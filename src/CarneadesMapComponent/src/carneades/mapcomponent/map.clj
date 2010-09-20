@@ -262,7 +262,7 @@
   "Saves the graph on disk. Only SVG format is supported now.
 
    Throws java.io.IOException"
-  (let [g (.getGraph graphcomponent)]
+  (let [g (.getGraph (:component graphcomponent))]
     (mxUtils/writeFile (mxUtils/getXml
                         (.. (mxCellRenderer/createSvgDocument g nil 1 nil nil)
                             getDocumentElement))

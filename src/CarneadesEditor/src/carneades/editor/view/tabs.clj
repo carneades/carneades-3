@@ -3,8 +3,7 @@
 
 (ns carneades.editor.view.tabs
   (:use clojure.contrib.def
-        clojure.contrib.swing-utils
-        carneades.editor.view.menu.mainmenu)
+        clojure.contrib.swing-utils)
   (:import (java.awt EventQueue event.MouseListener Dimension FlowLayout)
            (javax.swing UIManager JTabbedPane JLabel JButton JFrame JPanel
                         ImageIcon
@@ -30,44 +29,13 @@
 
 (defvar- *swingcomponents-to-ags* (ref {}) "components -> [path graphid]")
 (defvar- *ags-to-components* (ref {}) "[path id] -> component")
-(defvar- *undoable-components* (ref #{}))
-(defvar- *redoable-components* (ref #{}))
 (defvar- *component-to-title* (ref {}))
-(defvar- *dirty-components* (atom #{}))
 
 (defn get-graphinfo [component]
   (get (deref *swingcomponents-to-ags*) component))
 
-(defn update-undo-redo-button-states [path id]
-  (let [undoables (deref *undoable-components*)
-        redoables (deref *redoable-components*)] 
-    (if (contains? undoables [path id])
-      (enable-undo-button)
-      (disable-undo-button))
-    (if (contains? redoables [path id])
-         (enable-redo-button)
-         (disable-redo-button))))
-
-(defvar- *change-listener*
-  (proxy [ChangeListener] []
-    (stateChanged
-     [evt]
-     (let [idx (.getSelectedIndex *mapPanel*)]
-       (if (= idx -1)
-         (do
-           (disable-save-button)
-           (disable-undo-button)
-           (disable-redo-button))
-         (let [component (.getComponentAt *mapPanel* idx)
-               [path id] (get-graphinfo component)]
-           (if (contains? (deref *dirty-components*) component)
-             (enable-save-button)
-             (disable-save-button))
-           (update-undo-redo-button-states path id)))))))
-
 (defn init-tabs []
-  (.setTabLayoutPolicy *mapPanel* JTabbedPane/SCROLL_TAB_LAYOUT)
-  (.addChangeListener *mapPanel* *change-listener*))
+  (.setTabLayoutPolicy *mapPanel* JTabbedPane/SCROLL_TAB_LAYOUT))
 
 (defn register-close-button-listener [l args]
   (swap! *close-button-listeners* conj {:listener l :args args}))
@@ -112,8 +80,8 @@
     (str (if isdirty "*") (format "%s [title missing]" (:id ag)))
     (str (if isdirty "*") (:title ag))))
 
-(defn add-component [graphcomponent path ag]
-  (let [title (get-tabtitle ag false)
+(defn add-component [graphcomponent path ag isdirty]
+  (let [title (get-tabtitle ag isdirty)
         id (:id ag)
         component (:component graphcomponent)
         tab (create-tabcomponent title)]
@@ -137,9 +105,7 @@
     (dosync
      (alter *swingcomponents-to-ags* dissoc component)
      (alter *component-to-title* dissoc component)
-     (alter *ags-to-components* dissoc info)
-     (alter *undoable-components* disj info)
-     (alter *redoable-components* disj info))))
+     (alter *ags-to-components* dissoc info))))
 
 (defn tabs-empty? []
   "true if no tabs"
@@ -149,23 +115,21 @@
   (.setSelectedIndex *mapPanel*
                      (.indexOfComponent *mapPanel* (:component component))))
 
-(defn set-component-can-undo [path id state]
-  (dosync
-   (if state
-     (alter *undoable-components* conj [path id])
-     (alter *undoable-components* disj [path id]))))
+(defn set-tab-dirty [path id isdirty]
+  (if-let [component (:component (get (deref *ags-to-components*) [path id]))]
+    (if-let [label (get (deref *component-to-title*) component)]
+      (let [oldtext (.getText label)]
+        (cond (and isdirty (not= (first oldtext) \*))
+              (.setText label (str "*" oldtext))
 
-(defn set-component-can-redo [path id state]
-  (dosync
-   (if state
-     (alter *redoable-components* conj [path id])
-     (alter *redoable-components* disj [path id])))
-  (update-undo-redo-button-states path id))
+              (not isdirty)
+              (do
+                (prn "unsetting dirty")
+                (.setText label (.substring oldtext 1)))))
+      (do
+        (prn "title not found")))
+    (do
+      (prn "component not found"))))
 
-(defn set-component-dirty [graphcomponent ag isdirty]
-  (let [component (:component graphcomponent)
-        label (get (deref *component-to-title*) component)]
-    (.setText label (get-tabtitle ag isdirty))
-    (if isdirty
-      (swap! *dirty-components* conj component)
-      (swap! *dirty-components* disj component))))
+(defn register-tab-change-listener [listener]
+  (.addChangeListener *mapPanel* listener))
