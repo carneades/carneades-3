@@ -31,10 +31,14 @@
 (defvar- *docmanager* (create-docmanager))
 (defvar- *dirtyags* (atom #{}))
 
-(defn set-ag-dirty [path id isdirty]
+(defn- set-ag-dirty [path id isdirty]
   (if isdirty
     (swap! *dirtyags* conj [path id])
     (swap! *dirtyags* disj [path id])))
+
+(defn- update-dirty-state [view path ag isdirty]
+  (set-ag-dirty path (:id ag) isdirty)
+  (set-dirty view path ag isdirty))
 
 (defn is-ag-dirty [path id]
   (contains? (deref *dirtyags*) [path id]))
@@ -45,6 +49,13 @@
 (defn- get-ags-id [lkifpath]
   (let [agsid (get-all-sectionskeys *docmanager* [lkifpath :ags])]
     agsid))
+
+(defn- update-undo-redo-statuses [view path id]
+  (prn "update-undo-redo-statuses")
+  (prn "can-undo?")
+  (prn (can-undo-section? *docmanager* [path :ags id]))
+  (set-can-undo view path id (can-undo-section? *docmanager* [path :ags id]))
+  (set-can-redo view path id (can-redo-section? *docmanager* [path :ags id])))
 
 (defn on-open-file [view]
   ;; (display-graph view tompkins statement-formatted)
@@ -146,7 +157,8 @@
   (if (is-ag-dirty path id)
     (when (ask-confirmation view "Close" "Close unsaved graph?")
       (cancel-updates-section *docmanager* [path :ags id])
-      (set-ag-dirty path id false)
+      (update-dirty-state view path (get-ag path id) false)
+      (update-undo-redo-statuses view path id)
       (close-graph view path id))
     (close-graph view path id)))
 
@@ -250,16 +262,15 @@
 (defn on-select-statement [path id stmt view]
   (prn "on select statement")
   (prn stmt)
-  (let [ag (get-ag path id)
-        node (get-node ag stmt)
-        status (:status node)
-        proofstandard (:standard node)
-        acceptable (:acceptable node)
-        complement-acceptable (:complement-acceptable node)]
-    (prn "calling display statement property")
-    (display-statement-property view path id (:title ag)
-                                stmt statement-formatted status
-                                proofstandard acceptable complement-acceptable)))
+  (when-let [ag (get-ag path id)]
+    (let [node (get-node ag stmt)
+          status (:status node)
+          proofstandard (:standard node)
+          acceptable (:acceptable node)
+          complement-acceptable (:complement-acceptable node)]
+      (display-statement-property view path id (:title ag)
+                                  stmt statement-formatted status
+                                  proofstandard acceptable complement-acceptable))))
 
 (defn on-select-argument [path id arg view]
   (prn "on select argument")
@@ -286,12 +297,15 @@
 
 (defn on-open-statement [view path id stmt]
   (prn "on-open-statement")
-  (let [ag (get-ag path id)]
+  (when-let [ag (get-ag path id)]
     (display-statement view path ag stmt statement-formatted)))
 
-(defn update-undo-redo-statuses [view path id]
-  (set-can-undo view path id (can-undo-section? *docmanager* [path :ags id]))
-  (set-can-redo view path id (can-redo-section? *docmanager* [path :ags id])))
+(defn- do-update-section [view keys ag]
+  ;; the first key is the path
+  (let [path (first keys)]
+    (update-section *docmanager* keys ag)
+    (update-undo-redo-statuses view path (:id ag))
+    (update-dirty-state view path ag true)))
 
 (defn on-edit-statement [view path id stmt-info]
   (prn "on-edit-statement")
@@ -300,41 +314,38 @@
         oldag (get-ag path id)]
     (if (statement-node oldag content)
       (display-error view *edit-error* *statement-already-exists*)
-      (let [ag (update-statement-content oldag previous-content content)
-            stmt (:content stmt-info)
-            node (get-node ag stmt)
-            status (:status node)
-            proofstandard (:standard node)
-            acceptable (:acceptable node)
-            complement-acceptable (:complement-acceptable node)]
-        (update-section *docmanager* [path :ags (:id oldag)] ag)
-        (update-undo-redo-statuses view path (:id oldag))
-        (set-ag-dirty path (:id ag) true)
-        (set-dirty view path ag true)
-        (display-statement-property view path id (:title ag)
-                                    stmt statement-formatted status
-                                    proofstandard acceptable complement-acceptable)
-        (statement-content-changed view path ag previous-content content)))))
+      (when-let [ag (update-statement-content oldag previous-content content)]
+        (let [stmt (:content stmt-info)
+              node (get-node ag stmt)
+              status (:status node)
+              proofstandard (:standard node)
+              acceptable (:acceptable node)
+              complement-acceptable (:complement-acceptable node)]
+          (do-update-section view [path :ags (:id ag)] ag)
+          (display-statement-property view path id (:title ag)
+                                      stmt statement-formatted status
+                                      proofstandard acceptable complement-acceptable)
+          (statement-content-changed view path ag previous-content content)
+          (display-statement view path ag stmt statement-formatted))))))
 
 (defn on-edit-statement-status [view path id stmt-info]
   (prn "on-edit-statement-status")
-  (let [{:keys [status content previous-status]} stmt-info]
-    (when (not= status previous-status)
-      (let [oldag (get-ag path id)
-            ag (update-statement oldag content status)
+  (let [{:keys [status content previous-status]} stmt-info
+        oldag (get-ag path id)]
+    (when (and (not= status previous-status)
+               (statement-node oldag content))
+      (let [ag (update-statement oldag content status)
             node (get-node ag content)
             status (:status node)
             proofstandard (:standard node)
             acceptable (:acceptable node)
             complement-acceptable (:complement-acceptable node)]
-        (update-section *docmanager* [path :ags (:id oldag)] ag)
-        (update-undo-redo-statuses view path (:id oldag))
-        (set-ag-dirty path (:id oldag) true)
-        (set-dirty view path ag true)
+        (do-update-section view [path :ags (:id oldag)] ag)
         (display-statement-property view path id (:title ag)
                                     content statement-formatted status
                                     proofstandard acceptable complement-acceptable)
-        (statement-status-changed view path ag content)))))
+        (statement-status-changed view path ag content)
+        (display-statement view path ag content statement-formatted)))))
 
 (defn on-edit-statement-proofstandard [view path id stmt-info]
   (prn "on-edit-statement-proofstandard")
@@ -342,44 +353,38 @@
   (prn stmt-info)
   (let [{:keys [proofstandard content previous-proofstandard]} stmt-info]
     (when (not= proofstandard previous-proofstandard)
-      (let [oldag (get-ag path id)
-            ag (update-statement-proofstandard oldag content proofstandard)
-            node (get-node ag content)
-            status (:status node)
-            proofstandard (:standard node)
-            acceptable (:acceptable node)
-            complement-acceptable (:complement-acceptable node)]
-        (update-section *docmanager* [path :ags (:id oldag)] ag)
-        (update-undo-redo-statuses view path (:id oldag))
-        (set-ag-dirty path (:id oldag) true)
-        (set-dirty view path ag true)
-        (display-statement-property view path id (:title ag)
-                                    content statement-formatted status
-                                    proofstandard acceptable complement-acceptable)
-        (statement-proofstandard-changed view path ag content)))))
+      (when-let [ag (update-statement-proofstandard (get-ag path id)
+                                                    content proofstandard)]
+        (let [node (get-node ag content)
+              status (:status node)
+              proofstandard (:standard node)
+              acceptable (:acceptable node)
+              complement-acceptable (:complement-acceptable node)]
+          (do-update-section view [path :ags (:id ag)] ag)
+          (display-statement-property view path id (:title ag)
+                                      content statement-formatted status
+                                      proofstandard acceptable complement-acceptable)
+          (statement-proofstandard-changed view path ag content)
+          (display-statement view path ag content statement-formatted))))))
 
 (defn on-undo [view path id]
   (prn "on undo")
   (undo-section *docmanager* [path :ags id])
   (update-undo-redo-statuses view path id)
-  (let [ag (get-ag path id)]
-    (set-dirty view path id  true)
-    (set-ag-dirty path id true))
+  (update-dirty-state view path (get-ag path id) true)
   (edit-undone view path id))
 
 (defn on-redo [view path id]
   (prn "on redo")
   (redo-section *docmanager* [path :ags id])
   (update-undo-redo-statuses view path id)
-  (set-dirty view path (get-ag path id) true)
-  (set-ag-dirty path id true)
+  (update-dirty-state view path (get-ag path id) true)
   (edit-redone view path id))
 
 (defn on-save [view path id]
   (prn "on-save")
   (delete-section-history *docmanager* [path :ags id])
-  (set-ag-dirty path id false)
-  (set-dirty view path (get-ag path id) false)
+  (update-dirty-state view path (get-ag path id) false)
   (update-undo-redo-statuses view path id)
   (let [lkifdata (lkif/extract-lkif-from-docmanager path *docmanager*)]
     (lkif-export lkifdata path)))

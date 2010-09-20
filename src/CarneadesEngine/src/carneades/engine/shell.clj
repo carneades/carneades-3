@@ -136,9 +136,10 @@
 
    The keys for options are ..."
   (let [n-ahead 100
+        to-search (.toLowerCase search-content)
         pred (fn [stmt]
                (let [formatted (stmt-fmt stmt)]
-                 (.contains (.toLowerCase formatted) (.toLowerCase search-content))))]
+                 (.contains (.toLowerCase formatted) to-search)))]
     (seque n-ahead (keep (fn [stmt]
                            (when (pred stmt)
                              stmt))

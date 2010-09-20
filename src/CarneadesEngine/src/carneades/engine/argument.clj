@@ -689,21 +689,22 @@
     ag))
 
 (defn update-statement-content [ag oldstmt newstmt]
-  (let [n (get-node ag oldstmt)
-        key (statement-symbol (statement-atom oldstmt))
-        ag (dissoc-in ag [:nodes key])
-        n (assoc n :statement newstmt)
-        ag (add-node ag n)
-        ag (update-conclusions ag (:conclusion-of n) newstmt)
-        ag (update-main-issue ag oldstmt newstmt)
-        ag (update-premises ag (:premise-of n) oldstmt newstmt)]
-    ag))
+  "returns the new ag or nil if oldsmt does not exist in ag"
+  (when-let [n (statement-node ag oldstmt)]
+    (let [key (statement-symbol (statement-atom oldstmt))
+          ag (dissoc-in ag [:nodes key])
+          n (assoc n :statement newstmt)
+          ag (add-node ag n)
+          ag (update-conclusions ag (:conclusion-of n) newstmt)
+          ag (update-main-issue ag oldstmt newstmt)
+          ag (update-premises ag (:premise-of n) oldstmt newstmt)]
+      ag)))
 
 (defn update-statement-proofstandard [ag stmt proofstandard]
-  (let [n (get-node ag stmt)
-        n (assoc n :standard proofstandard)
-        ag (add-node ag n)]
-    (update-statement ag stmt)))
+  (when-let [n (statement-node ag stmt)]
+   (let [n (assoc n :standard proofstandard)
+         ag (add-node ag n)]
+     (update-statement ag stmt))))
 
 (defn- unite-args
   [ag arg]
