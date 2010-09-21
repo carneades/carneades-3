@@ -22,6 +22,7 @@
            java.awt.Toolkit
            java.io.ByteArrayOutputStream
            javax.imageio.ImageIO
+           javax.swing.ImageIcon
            (java.awt.datatransfer Transferable DataFlavor)
            (java.awt Color BasicStroke)))
 
@@ -473,7 +474,7 @@
   (getTransferData
    [this flavor]
    (when (= DataFlavor/imageFlavor flavor)
-     (.createImage (Toolkit/getDefaultToolkit) data))))
+     (.getImage (ImageIcon. data)))))
 
 (defn copyselection-toclipboard [graphcomponent]
   (let [component (:component graphcomponent)
@@ -483,7 +484,7 @@
         bufferedimg (mxCellRenderer/createBufferedImage
              graph selectedcells 1 nil (.isAntiAlias component) nil (.getCanvas component))
         os (ByteArrayOutputStream.)
-        res (ImageIO/write bufferedimg "jpeg" os)
+        res (ImageIO/write bufferedimg "png" os)
         imgselection (ImageSelection. (.toByteArray os))
         clipboard (.getSystemClipboard (.getToolkit component))]
     (.setContents clipboard imgselection nil)))
