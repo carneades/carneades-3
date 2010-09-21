@@ -96,10 +96,17 @@
 
 (defn on-close-file [view path]
   (prn "on close file")
-  (doseq [id (get-ags-id path)]
-    (close-graph view path id))
-  (hide-lkif-content view path)
-  (remove-section *docmanager* [path]))
+  (letfn [(close-all
+           [ids]
+           (doseq [id ids]
+             (close-graph view path id))
+           (hide-lkif-content view path)
+           (remove-section *docmanager* [path]))]
+   (let [ids (get-ags-id path)]
+     (if (not (empty? (filter #(is-ag-dirty path %) ids)))
+       (when (ask-confirmation view "Close" "Close unsaved file?")
+         (close-all ids))
+       (close-all ids)))))
 
 (defn on-open-graph [view path id]
   (open-graph view path (get-ag path id) statement-formatted))
