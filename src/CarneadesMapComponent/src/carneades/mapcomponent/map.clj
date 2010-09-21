@@ -483,7 +483,7 @@
         bufferedimg (mxCellRenderer/createBufferedImage
              graph selectedcells 1 nil (.isAntiAlias component) nil (.getCanvas component))
         os (ByteArrayOutputStream.)
-        res (ImageIO/write bufferedimg "png" os)
+        res (ImageIO/write bufferedimg "jpeg" os)
         imgselection (ImageSelection. (.toByteArray os))
         clipboard (.getSystemClipboard (.getToolkit component))]
     (.setContents clipboard imgselection nil)))
