@@ -42,10 +42,12 @@
         <body>
           <exists>
             <v>SE2</v>
-            <s pred="&oss;uses"><v>SE1</v> uses <v>SE2</v></s>
+            <!-- <s pred="&oss;uses"><v>SE1</v> uses <v>SE2</v></s> -->
+            <property pred="&oss;uses"><v>SE1</v> uses <v>SE2</v></property>
             <exists>
               <v>L</v>
-              <s pred="&oss;hasLicense"><v>SE2</v> is licensed under <v>L</v></s>
+              <!-- <s pred="&oss;hasLicense"><v>SE2</v> is licensed under <v>L</v></s> -->
+              <property pred="&oss;hasLicense"><v>SE2</v> is licensed under <v>L</v></property>
               <s pred="isReciprocalDerivedAndNotCompatible">
                 <v>T1</v>
                 <v>L</v>
@@ -73,8 +75,10 @@
           <not exception="true">
             <exists>
               <v>T2</v>
-              <s pred="&oss;instanceOfTemplate"><v>L</v> is an instance of the <v>T2</v>
-                template license</s>
+              <!-- <s pred="&oss;instanceOfTemplate"><v>L</v> is an instance of the <v>T2</v>
+              template license</s> -->
+              <property pred="&oss;instanceOfTemplate"><v>L</v> is an instance of the <v>T2</v>
+                template license</property>
               <s pred="&oss;isCompatibleWith"><v>T1</v> is compatible with <v>T2</v></s>
             </exists>
           </not>
