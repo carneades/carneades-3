@@ -59,7 +59,7 @@
 
         (instance? PremiseCell obj)
         (doseq [{:keys [listener args]} (deref *premise-selection-listeners*)]
-          (apply listener path id (:pm obj) args))))
+          (apply listener path id (:arg obj) (:pm obj) args))))
 
 (defn- on-zoom-in [event]
   (zoom-in (.getSelectedComponent *mapPanel*)))
@@ -158,7 +158,8 @@
   (close-graph
    [this path id]
    (let [component (get-component path id)]
-     (remove-component component))
+     (remove-component component)
+     (remove-ag-context path id))
    (if (tabs-empty?)
      (set-current-context-empty)
      (let [[path id] (current-graph this)]
@@ -173,8 +174,8 @@
    (show-properties (get-lkif-properties-panel path)))
 
   (display-graph-property
-   [this path title mainissue]
-   (show-properties (get-graph-properties-panel path title mainissue)))
+   [this path id title mainissue]
+   (show-properties (get-graph-properties-panel path id title mainissue)))
 
   (display-statement-property
    [this path id maptitle stmt stmt-fmt status proofstandard acceptable complement-acceptable]
@@ -184,8 +185,9 @@
                      acceptable complement-acceptable)))
 
   (display-premise-property
-   [this path maptitle polarity type]
-   (show-properties (get-premise-properties-panel path maptitle polarity type)))
+   [this path id maptitle arg polarity type atom]
+   (show-properties
+    (get-premise-properties-panel path id maptitle arg polarity type atom)))
     
   (display-argument-property
    [this path maptitle title applicable weight direction scheme]
@@ -205,6 +207,18 @@
    [this path ag stmt]
    (when-let [component (get-component path (:id ag))]
     (change-statement-proofstandard component ag stmt)))
+
+  (title-changed
+   [this path ag title]
+   (when-let [component (get-component path (:id ag))]
+     (change-title component ag title)
+     (change-tab-title component title))
+   (change-ag-in-tree-title path (:id ag) title))
+
+  (premise-polarity-changed
+   [this path ag oldarg arg pm]
+   (when-let [component (get-component path (:id ag))]
+    (change-premise-polarity component ag oldarg arg pm)))
   
   (ask-file-to-save
    [this-view descriptions suggested]
@@ -355,6 +369,22 @@
   (add-export-filemenuitem-listener
    [this f args]
    (apply add-action-listener *exportFileMenuItem* f args))
+
+  (add-save-filemenuitem-listener
+   [this f args]
+   (apply add-action-listener *saveFileMenuItem* f args))
+  
+  (add-saveas-filemenuitem-listener
+   [this f args]
+   (apply add-action-listener *saveAsFileMenuItem* f args))
+
+  (add-undo-editmenuitem-listener
+   [this f args]
+   (apply add-action-listener *undoEditMenuItem* f args))
+
+  (add-redo-editmenuitem-listener
+   [this f args]
+   (apply add-action-listener *redoEditMenuItem* f args))
   
   (add-open-graph-menuitem-listener
    [this f args]
@@ -376,6 +406,14 @@
    [this f args]
    (register-statement-edit-listener f args))
 
+  (add-title-edit-listener
+   [this f args]
+   (register-graph-edit-listener f args))
+
+  (get-graph-being-edited-info
+   [this]
+   (graph-being-edited-info))
+  
   (add-statement-edit-status-listener
    [this f args]
    (apply add-action-listener *statementStatusComboBox* f args))
@@ -399,6 +437,10 @@
   (add-copyclipboard-button-listener
    [this f args]
    (apply add-action-listener *copyClipboardEditMenuItem* f args))
+
+  (add-premise-edit-polarity-listener
+   [this f args]
+   (apply add-action-listener *negatedCheckBox* f args))
   
   (edit-undone
    [this path id]
@@ -417,7 +459,7 @@
   (register-search-listener
    [this l args]
    (register-search-button-listener l args))
-
+  
   (display-statement-search-result
    [this path id stmt stmt-fmt]
    (add-stmt-search-result path id stmt stmt-fmt))
@@ -467,6 +509,10 @@
   (get-graphinfo-being-closed
    [this event]
    (graphinfo-being-closed event))
+
+  (get-premise-being-edited-info
+   [this]
+   (premise-being-edited-info))
 
   (register-statement-selection-listener
    [this l args]
