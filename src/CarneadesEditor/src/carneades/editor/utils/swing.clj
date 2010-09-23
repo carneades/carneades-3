@@ -28,10 +28,13 @@
          expanded# (if-let [x# (.getExpandedDescendants
                                 ~tree (TreePath. root#))]
                      (enumeration-seq x#)
-                     ())]
+                     ())
+         selectionmodel# (.getSelectionModel ~tree)
+         selectionpaths# (. selectionmodel# getSelectionPaths)]
      ~@body
      (doseq [path# expanded#]
-       (.expandPath ~tree path#))))
+       (.expandPath ~tree path#))
+     (.setSelectionPaths selectionmodel# selectionpaths#)))
 
 (defn add-propertychange-listener
   [component f & args]

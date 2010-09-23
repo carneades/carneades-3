@@ -28,6 +28,6 @@
     ;; (prn rb)
     ;; (prn "sources =>")
     ;; (prn sources)
-    (prn "ags =>")
-    (prn ags)
+    ;; (prn "ags =>")
+    ;; (prn ags)
     {:rb rb :sources sources :ag ags}))

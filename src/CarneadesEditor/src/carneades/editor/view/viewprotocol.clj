@@ -26,14 +26,14 @@
   (print-preview [this path ag stmt-fmt])
   (print-graph [this path ag stmt-fmt])
   (display-lkif-property [this path])
-  (display-graph-property [this path title mainissue])
+  (display-graph-property [this path id title mainissue])
   (display-about [this])
   (ask-confirmation [this title content])
   (display-error [this title content])
   (display-statement-property
    [this path id maptitle stmt stmt-fmt status proofstandard acceptable complement-acceptable])
   (display-premise-property
-   [this path maptitle polarity type])
+   [this path id maptitle arg polarity type atom])
   (display-argument-property
    [this path maptitle title applicable weight direction scheme])
   (display-search-state [this inprogress])
@@ -47,6 +47,9 @@
    [this path ag stmt])
   (statement-proofstandard-changed
    [this path ag stmt])
+  (title-changed [this path ag title])
+  (premise-polarity-changed [this path ag old arg pm])
+  
   (set-busy
    [this isbusy])
   (edit-undone [this path id])

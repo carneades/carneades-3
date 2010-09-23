@@ -3,7 +3,7 @@
 
 (ns carneades.editor.view.context
   (:use clojure.contrib.def
-        carneades.editor.view.tabs
+        (carneades.editor.view tabs tree)
         carneades.editor.view.menu.mainmenu)
   (:import (javax.swing.event ChangeListener)))
 
@@ -18,7 +18,32 @@
 
 (defvar- *current-ag* (atom nil))
 
-(defn- update-menu [])
+(defn- update-file-menu [isdirty]
+  (if isdirty
+    (do
+      (enable-save-filemenuitem)
+      (enable-saveas-filemenuitem))
+    (do
+      (disable-save-filemenuitem)
+      (disable-saveas-filemenuitem))))
+
+(defn- update-undo-item [canundo]
+  (if canundo
+    (enable-undo-editmenuitem)
+    (disable-undo-editmenuitem)))
+
+(defn- update-redo-item [canredo]
+  (if canredo
+    (enable-redo-editmenuitem)
+    (disable-redo-editmenuitem)))
+
+(defn- update-edit-menu [canundo canredo]
+  (update-undo-item canundo)
+  (update-redo-item canredo))
+
+(defn- update-menus [isdirty canundo canredo]
+  (update-file-menu isdirty)
+  (update-edit-menu canundo canredo))
 
 (defn- update-undo-button [canundo]
   (if canundo
@@ -43,44 +68,41 @@
   (update-save-button isdirty)
   (update-undo-redo-buttons canundo canredo))
 
-(defn- update-tree [])
+(defn- update-tree [path id isdirty]
+  (set-ag-in-tree-dirty path id isdirty))
 
 (defn- update-tab [path id isdirty]
   (set-tab-dirty path id isdirty))
 
 (defn current-ag-context []
-  "returns [path id]")
+  "returns [path id]"
+  (deref *current-ag*))
 
 (defn set-ag-dirty [path id isdirty]
-  (prn "context.set-ag-dirty")
-  (prn "dirty?")
-  (prn isdirty)
   (if isdirty
     (swap! *dirty-ags* conj [path id])
     (swap! *dirty-ags* disj [path id]))
-  ;; TODO: update buttons only when the current graph is the one
-  ;; passed as argument
-  (update-save-button isdirty)
-  (update-tab path id isdirty))
+  (when (= (current-ag-context) [path id])
+    (update-save-button isdirty)
+    (update-tab path id isdirty)
+    (update-tree path id isdirty)
+    (update-file-menu isdirty)))
 
 (defn set-ag-canundo [path id canundo]
-  (prn "set-ag-canundo")
-  (prn canundo)
-  (prn "path")
-  (prn path)
-  (prn "id")
-  (prn id)
   (if canundo
    (swap! *undoable-ags* conj [path id])
    (swap! *undoable-ags* disj [path id]))
-  ;; TODO: only if on the current graph
-  (update-undo-button canundo))
+  (when (= (current-ag-context) [path id])
+    (update-undo-button canundo)
+    (update-undo-item canundo)))
 
 (defn set-ag-canredo [path id canredo]
   (if canredo
    (swap! *redoable-ags* conj [path id])
    (swap! *redoable-ags* disj [path id]))
-  (update-redo-button canredo))
+  (when (= (current-ag-context) [path id])
+    (update-redo-button canredo)
+    (update-redo-item canredo)))
 
 (defn can-undo? [path id]
   (contains? (deref *undoable-ags*) [path id]))
@@ -92,6 +114,7 @@
   (contains? (deref *dirty-ags*) [path id]))
 
 (defn set-current-context-empty []
+  (reset! *current-ag* nil)
   (disable-save-button)
   (disable-undo-button)
   (disable-redo-button)
@@ -99,12 +122,18 @@
 
 (defn set-current-ag-context [path id]
   {:pre [(not (nil? path))]}
+  (reset! *current-ag* [path id])
   (let [isdirty (is-dirty? path id)
         canundo (can-undo? path id)
         canredo (can-redo? path id)]
     (update-buttons isdirty canundo canredo)
-    (enable-diagram-buttons-and-menus)))
-    ;; TODO update-menus))
+    (enable-diagram-buttons-and-menus)
+    (update-menus isdirty canundo canredo)))
+
+(defn remove-ag-context [path id]
+  (swap! *dirty-ags* disj [path id])
+  (swap! *undoable-ags* disj [path id])
+  (swap! *redoable-ags* disj [path id]))
 
 (defvar- *tab-change-listener*
   (proxy [ChangeListener] []
@@ -123,5 +152,7 @@
   (disable-redo-button)
   (disable-file-items)
   (disable-save-button)
+  (disable-undo-button)
+  (disable-redo-button)
   (register-tab-change-listener *tab-change-listener*))
 

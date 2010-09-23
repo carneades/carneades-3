@@ -53,13 +53,22 @@
                                           [view])
   (add-keyenter-searchresult-listener view keyenter-in-searchresult
                                           [view])
+
+  ;; properties listeners:
   (add-statement-edit-listener view statement-button-edit-listener [view])
   (add-statement-edit-status-listener view statement-status-edit-listener [view])
   (add-statement-edit-proofstandard-listener view statement-proofstandard-edit-listener [view])
+  (add-title-edit-listener view title-edit-listener [view])
+  (add-premise-edit-polarity-listener view premise-edit-polarity-listener [view])
+  
   (add-undo-button-listener view undo-button-listener [view])
   (add-redo-button-listener view redo-button-listener [view])
   (add-save-button-listener view save-button-listener [view])
   (add-copyclipboard-button-listener view copyclipboard-button-listener [view])
+  (add-save-filemenuitem-listener view save-filemenuitem-listener [view])
+  (add-saveas-filemenuitem-listener view saveas-filemenuitem-listener [view])
+  (add-undo-editmenuitem-listener view undo-editmenuitem-listener [view])
+  (add-redo-editmenuitem-listener view redo-editmenuitem-listener [view])
   
   ;; we don't need to extract information from the UI,
   ;; dispatch to the listeners:

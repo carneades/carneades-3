@@ -21,12 +21,14 @@
 
 
 (defvar- *closeFileMenuItem* (.closeFileMenuItem *viewinstance*))
-(defvar- *saveFileMenuItem* (.saveFileMenuItem *viewinstance*))
-(defvar- *saveAsFileMenuItem* (.saveAsFileMenuItem *viewinstance*))
+(defvar *saveFileMenuItem* (.saveFileMenuItem *viewinstance*))
+(defvar *saveAsFileMenuItem* (.saveAsFileMenuItem *viewinstance*))
 (defvar- *exportFileMenuItem* (.exportFileMenuItem *viewinstance*))
 (defvar- *printPreviewFileMenuItem* (.printPreviewFileMenuItem *viewinstance*))
 (defvar- *printFileMenuItem* (.printFileMenuItem *viewinstance*))
 
+(defvar *undoEditMenuItem* (.undoEditMenuItem *viewinstance*))
+(defvar *redoEditMenuItem* (.redoEditMenuItem *viewinstance*))
 
 (defn- set-enable-diagram-buttons-and-menus [state]
   (.setEnabled *zoomInButton* state)
@@ -68,8 +70,32 @@
 (defn disable-redo-button []
   (.setEnabled *redoButton* false))
 
+(defn enable-save-filemenuitem []
+  (.setEnabled *saveFileMenuItem* true))
+
+(defn disable-save-filemenuitem []
+  (.setEnabled *saveFileMenuItem* false))
+
+(defn enable-saveas-filemenuitem []
+  (.setEnabled *saveAsFileMenuItem* true))
+
+(defn disable-saveas-filemenuitem []
+  (.setEnabled *saveAsFileMenuItem* false))
+
 (defn enable-save-button []
   (.setEnabled *saveButton* true))
 
 (defn disable-save-button []
   (.setEnabled *saveButton* false))
+
+(defn enable-undo-editmenuitem []
+  (.setEnabled *undoEditMenuItem* true))
+
+(defn disable-undo-editmenuitem []
+  (.setEnabled *undoEditMenuItem* false))
+
+(defn enable-redo-editmenuitem []
+  (.setEnabled *redoEditMenuItem* true))
+
+(defn disable-redo-editmenuitem []
+  (.setEnabled *redoEditMenuItem* false))

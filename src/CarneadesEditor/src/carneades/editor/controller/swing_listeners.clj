@@ -134,6 +134,12 @@
   (when-let [[path id] (current-graph view)]
     (on-redo view path id)))
 
+(defn undo-editmenuitem-listener [event view]
+  (undo-button-listener event view))
+
+(defn redo-editmenuitem-listener [event view]
+  (redo-button-listener event view))
+
 (defn save-button-listener [event view]
   (when-let [[path id] (current-graph view)]
     (on-save view path id)))
@@ -141,3 +147,19 @@
 (defn copyclipboard-button-listener [event view]
   (when-let [[path id] (current-graph view)]
     (on-copyclipboard view path id)))
+
+(defn save-filemenuitem-listener [event view]
+  (save-button-listener event view))
+
+(defn saveas-filemenuitem-listener [event view]
+  (when-let [[path id] (current-graph view)]
+    (on-saveas view path id)))
+
+(defn title-edit-listener [event view]
+  (let [info (get-graph-being-edited-info view)]
+    (on-title-edit view (:path info) (:id info) info)))
+
+(defn premise-edit-polarity-listener [event view]
+  (let [info (get-premise-being-edited-info view)]
+    (on-premise-edit-polarity view (:path info) (:id info) info)))
+

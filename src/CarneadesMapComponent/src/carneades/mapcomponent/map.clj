@@ -26,30 +26,33 @@
            (java.awt.datatransfer Transferable DataFlavor)
            (java.awt Color BasicStroke)))
 
-(defrecord StatementCell [ag stmt stmt-str] Object
+(defn- stmt-to-str [ag stmt stmt-str]
+  (let [formatted (stmt-str stmt)]
+    (cond (and (in? ag stmt) (in? ag (statement-complement stmt)))
+          (str "✔✘ " formatted)
+           
+          (in? ag stmt)
+          (str "✔ " formatted)
+           
+          (in? ag (statement-complement stmt))
+          (str "✘ " formatted)
+
+          (questioned? ag stmt)
+          (str "? " formatted)
+           
+          :else formatted)))
+
+(defrecord StatementCell [ag stmt stmt-str formatted] Object
   (toString
    [this]
-   (let [formatted (stmt-str stmt)]
-     (cond (and (in? ag stmt) (in? ag (statement-complement stmt)))
-           (str "✔✘ " formatted)
-           
-           (in? ag stmt)
-           (str "✔ " formatted)
-           
-           (in? ag (statement-complement stmt))
-           (str "✘ " formatted)
-
-           (questioned? ag stmt)
-           (str "? " formatted)
-           
-           :else formatted))))
+   formatted))
 
 (defrecord ArgumentCell [arg] Object
   (toString
    [this]
    (if (= (:direction arg) :pro) "+" "‒")))
 
-(defrecord PremiseCell [pm] Object
+(defrecord PremiseCell [arg pm] Object
   (toString
    [this]
    (str pm)))
@@ -201,7 +204,7 @@
 (defn- add-statement [g p ag stmt vertices stmt-str]
   (assoc vertices
     stmt
-    (insert-vertex g p (StatementCell. ag stmt stmt-str)
+    (insert-vertex g p (StatementCell. ag stmt stmt-str (stmt-to-str ag stmt stmt-str))
                    (get-statement-style ag stmt))))
 
 (defn- add-statements [g p ag stmt-str]
@@ -215,14 +218,14 @@
                (vertices statement)
                (get-conclusion-edge-style arg)))
 
-(defn- add-argument-edge [g p premise argid vertices]
-  (insert-edge g p (PremiseCell. premise) (vertices (premise-atom premise))
+(defn- add-argument-edge [g p arg premise argid vertices]
+  (insert-edge g p (PremiseCell. arg premise) (vertices (premise-atom premise))
                (vertices argid) (get-edge-style premise)))
 
 (defn- add-argument-edges [g p ag arg vertices]
   (add-conclusion-edge g p arg (argument-conclusion arg) vertices)
   (dorun
-   (map #(add-argument-edge g p % (argument-id arg) vertices)
+   (map #(add-argument-edge g p arg % (argument-id arg) vertices)
         (argument-premises arg))))
 
 (defn- add-edges [g p ag vertices]
@@ -406,7 +409,7 @@
         graph (.getGraph component)
         cell (find-statement-cell graph oldstmt)
         stmt-str (:stmt-str (.getValue cell))
-        stmt (StatementCell. ag newstmt stmt-str)
+        stmt (StatementCell. ag newstmt stmt-str (stmt-to-str ag newstmt stmt-str))
         p (.getDefaultParent graph)
         model (.getModel graph)]
     (prn "change-statement-content")
@@ -421,45 +424,79 @@
        (.. model endUpdate)
        (.refresh component)))))
 
-(defn- change-statement-userobject [cell ag]
-  (let [val (.getValue cell)
-        stmt-str (:stmt-str val)
-        stmt (:stmt val)
-        stmtcell (StatementCell. ag stmt stmt-str)]
-    (.setValue cell stmtcell)))
-
-(defn- change-cell-and-styles [component ag stmt]
+(defn- change-cell-and-styles [component ag
+                               update-statement-object
+                               update-statement-style
+                               update-premise-object
+                               update-premise-style
+                               update-argument-object
+                               update-argument-style]
   (let [graph (.getGraph component)
         model (.getModel graph)]
-    (when-let [cell (find-statement-cell graph stmt)]
-      (let [stmt-str (:stmt-str (.getValue cell))
-            stmtcell (StatementCell. ag stmt stmt-str)
-            p (.getDefaultParent graph)]
-        (try
-          (.. model beginUpdate)
-          (.setValue model cell stmtcell)
-          (.setStyle model cell (get-statement-style ag stmt))
-          (doseq [cell (get-vertices graph p)]
-            (let [val (.getValue cell)]
-              (cond (instance? StatementCell val)
-                    (do
-                      (change-statement-userobject cell ag)
-                      (.setStyle model cell (get-statement-style ag (:stmt (.getValue cell)))))
+    (let [p (.getDefaultParent graph)]
+      (try
+        (.. model beginUpdate)
+        (doseq [cell (.getChildCells graph p true true)]
+          (let [val (.getValue cell)]
+            (cond (instance? StatementCell val)
+                  (do
+                    (.setValue model cell (update-statement-object val))
+                    (.setStyle model cell (update-statement-style val (.getStyle cell))))
 
-                    ;; TODO: update all user objects with the new ag
-                    (instance? ArgumentCell val)
-                    (.setStyle model cell (get-argument-style ag (:arg (.getValue cell)))))))
-          (finally
-           (.. model endUpdate)
-           (.refresh component)))))))
+                  (instance? PremiseCell val)
+                  (do
+                    (.setValue model cell (update-premise-object val))
+                    (.setStyle model cell (update-premise-style val (.getStyle cell))))
+                  
+                  (and (instance? ArgumentCell val) (.isVertex cell))
+                  (do
+                    (.setValue model cell (update-argument-object val))
+                    (.setStyle model cell (update-argument-style val (.getStyle cell))))
+
+                  ;;TODO : conclusion edge
+                  )))
+        (finally
+         (.. model endUpdate)
+         (.refresh component))))))
+
+(defn change-all-cell-and-styles
+  ([component ag]
+     (letfn [(do-no-change-style
+              [userobject style]
+              style)]
+       (change-all-cell-and-styles component ag identity do-no-change-style)))
+  
+  ([component ag update-pm-object update-pm-style]
+     (letfn [(update-stmt-object
+              [userobject]
+              (let [stmt-str (:stmt-str userobject)
+                    stmt (:stmt userobject)]
+                (StatementCell. ag stmt stmt-str (stmt-to-str ag stmt stmt-str))))
+
+             (update-stmt-style
+              [userobject oldstyle]
+              (get-statement-style ag (:stmt userobject)))
+          
+             (update-argument-style
+              [userobject oldstyle]
+              (get-argument-style ag (:arg userobject)))
+             
+             ]
+       (change-cell-and-styles component ag
+                               update-stmt-object
+                               update-stmt-style
+                               update-pm-object
+                               update-pm-style
+                               identity
+                               update-argument-style))))
 
 (defn change-statement-status [graphcomponent ag stmt]
   (let [component (:component graphcomponent)]
-   (change-cell-and-styles component ag stmt)))
+    (change-all-cell-and-styles component ag)))
 
 (defn change-statement-proofstandard [graphcomponent ag stmt]
   (let [component (:component graphcomponent)]
-    (change-cell-and-styles component ag stmt)))
+    (change-all-cell-and-styles component ag)))
 
 (deftype ImageSelection [data]
   Transferable
@@ -495,3 +532,30 @@
         cells (.getChildCells graph (.getDefaultParent graph) true true)
         selectionmodel (.getSelectionModel graph)]
     (.setCells selectionmodel cells)))
+
+(defn change-title [graphcomponent ag title]
+  (let [component (:component graphcomponent)]
+    (change-all-cell-and-styles component ag)))
+
+(defn change-premise-polarity [graphcomponent ag oldarg arg pm]
+  (let [component (:component graphcomponent)]
+    (letfn [(update-premise-object
+             [userobject]
+             (let [cellargid (:id (:arg userobject))
+                   oldpm (:pm userobject)]
+               (if (and (= cellargid (:id oldarg))
+                        (= (:atom pm) (:atom oldpm)))
+                 (PremiseCell. arg pm)
+                 userobject)))
+            
+            (update-premise-style
+             [userobject oldstyle]
+             (let [oldpm (:pm userobject)
+                   cellarg (:arg userobject)
+                   style (get-edge-style oldpm)
+                   cellargid (:id (:arg userobject))]
+               (if (and (= cellargid (:id oldarg))
+                        (= (:atom pm) (:atom oldpm)))
+                 (get-edge-style pm)
+                 style)))]
+      (change-all-cell-and-styles component ag update-premise-object update-premise-style))))
