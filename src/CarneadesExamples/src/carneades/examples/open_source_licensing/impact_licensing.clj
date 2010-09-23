@@ -41,7 +41,7 @@
   (list
     (generate-arguments-from-rules oss-kb '())
     (generate-arguments-from-owl impact-ont :reasoner)
-    (builtins (list (generate-arguments-from-owl impact-ont :reasoner)))
+    (builtins (list (generate-arguments-fcarom-owl impact-ont :reasoner)))
     ))
 
 

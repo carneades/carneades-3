@@ -1,200 +1,199 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?oxygen RNGSchema="../../schemas/LKIF2.rnc" type="compact"?>
-<lkif version="2.0.4">
-  <argument-graphs>
-    <argument-graph id="NewGraph" title="New Graph">
-      <statements>
-        <statement assumption="true" id="s1" standard="BA" value="unknown">
-          <s>Post, by pursuing the fox, did not acquire property in the fox.</s>
-        </statement>
-        <statement assumption="true" id="s2" standard="BA" value="unknown">
-          <s>Property rights in wild animals may be acquired only by possession.</s>
-        </statement>
-        <statement assumption="true" id="s3" standard="BA" value="unknown">
-          <s>Foxes are wild animals.</s>
-        </statement>
-        <statement assumption="true" id="s4" standard="BA" value="unknown">
-          <s>Post did not have possession of the fox.</s>
-        </statement>
-        <statement assumption="true" id="s6" standard="BA" value="unknown">
-          <s>Pursuit is not sufficient to acquire possession.</s>
-        </statement>
-        <statement assumption="true" id="s7" standard="BA" value="unknown">
-          <s>Bracton</s>
-        </statement>
-        <statement assumption="true" id="s8" standard="BA" value="unknown">
-          <s>Fleta</s>
-        </statement>
-        <statement assumption="true" id="s9" standard="BA" value="unknown">
-          <s>Justinian's Institutes</s>
-        </statement>
-        <statement assumption="true" id="s10" standard="BA" value="unknown">
-          <s>Actual corporal possession is required.</s>
-        </statement>
-        <statement assumption="true" id="s11" standard="BA" value="unknown">
-          <s>Puffendorf</s>
-        </statement>
-        <statement assumption="true" id="s12" standard="BA" value="unknown">
-          <s>Bynkershoek</s>
-        </statement>
-        <statement assumption="true" id="s13" standard="BA" value="unknown">
-          <s>Peace and order is an important social value.</s>
-        </statement>
-        <statement assumption="true" id="s14" standard="BA" value="unknown">
-          <s>A bright-line rule creates legal certainty, promoting peach and order.</s>
-        </statement>
-        <statement assumption="true" id="s15" standard="BA" value="unknown">
-          <s>The fox was mortally wounded.</s>
-        </statement>
-        <statement assumption="true" id="s16" standard="BA" value="unknown">
-          <s>Pursuit is sufficient to obtain possession when the animal is mortally wounded.</s>
-        </statement>
-        <statement assumption="true" id="s17" standard="BA" value="unknown">
-          <s>Barbeyrac</s>
-        </statement>
-        <statement assumption="true" id="s18" standard="BA" value="unknown">
-          <s>Grotius</s>
-        </statement>
-        <statement assumption="true" id="s19" standard="BA" value="unknown">
-          <s>Post was pursuing his livlihood on his own land.</s>
-        </statement>
-        <statement assumption="true" id="s20" standard="BA" value="unknown">
-          <s>The owner of land is pursuing a livelihood with animals on his land is deemed to have possession of the animals.</s>
-        </statement>
-        <statement assumption="true" id="s21" standard="BA" value="unknown">
-          <s>Keeble</s>
-        </statement>
-        <statement assumption="true" id="s22" standard="BA" value="true">
-          <s>The fox was being chased by large hounds.</s>
-        </statement>
-        <statement assumption="true" id="s23" standard="BA" value="unknown">
-          <s>Foxes are noxious animals.</s>
-        </statement>
-        <statement assumption="true" id="s24" standard="BA" value="true">
-          <s>It is admitted in the pleadings that a fox is wild and noxious beast.</s>
-        </statement>
-        <statement assumption="false" id="s25" standard="BA" value="unknown">
-          <s>A noxious animal being chased by large hounds shall be deemed mortally wounded.</s>
-        </statement>
-        <statement assumption="true" id="s26" standard="BA" value="true">
-          <s>Protecting farmers is an important social value.</s>
-        </statement>
-        <statement assumption="true" id="s27" standard="BA" value="true">
-          <s>Encouraging hunding helps protect famers from noxious animals.</s>
-        </statement>
-      </statements>
-      <arguments>
-        <argument direction="pro" id="a1" scheme="" weight="0.5">
-          <conclusion statement="s1"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s2"/>
-            <premise exception="false" polarity="positive" role="" statement="s3"/>
-            <premise exception="false" polarity="positive" role="" statement="s4"/>
-          </premises>
-        </argument>
-        <argument direction="pro" id="a2" scheme="" weight="0.5">
-          <conclusion statement="s4"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s6"/>
-          </premises>
-        </argument>
-        <argument direction="pro" id="a3" scheme="" weight="0.5">
-          <conclusion statement="s6"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s7"/>
-          </premises>
-        </argument>
-        <argument direction="pro" id="a4" scheme="" weight="0.5">
-          <conclusion statement="s6"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s8"/>
-          </premises>
-        </argument>
-        <argument direction="pro" id="a5" scheme="" weight="0.5">
-          <conclusion statement="s6"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s9"/>
-          </premises>
-        </argument>
-        <argument direction="pro" id="a6" scheme="" weight="0.5">
-          <conclusion statement="s4"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s10"/>
-          </premises>
-        </argument>
-        <argument direction="pro" id="a7" scheme="" weight="0.5">
-          <conclusion statement="s10"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s11"/>
-          </premises>
-        </argument>
-        <argument direction="pro" id="a8" scheme="" weight="0.5">
-          <conclusion statement="s11"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s12"/>
-          </premises>
-        </argument>
-        <argument direction="pro" id="a9" scheme="" weight="0.5">
-          <conclusion statement="s10"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s13"/>
-            <premise exception="false" polarity="positive" role="" statement="s14"/>
-          </premises>
-        </argument>
-        <argument direction="con" id="a10" scheme="" weight="0.5">
-          <conclusion statement="s10"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s15"/>
-            <premise exception="false" polarity="positive" role="" statement="s16"/>
-          </premises>
-        </argument>
-        <argument direction="pro" id="a11" scheme="" weight="0.5">
-          <conclusion statement="s16"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s17"/>
-          </premises>
-        </argument>
-        <argument direction="pro" id="a12" scheme="" weight="0.5">
-          <conclusion statement="s17"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s18"/>
-          </premises>
-        </argument>
-        <argument direction="con" id="a13" scheme="" weight="0.5">
-          <conclusion statement="s10"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s19"/>
-            <premise exception="false" polarity="positive" role="" statement="s20"/>
-          </premises>
-        </argument>
-        <argument direction="pro" id="a14" scheme="" weight="0.5">
-          <conclusion statement="s20"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s21"/>
-          </premises>
-        </argument>
-        <argument direction="pro" id="a15" scheme="" weight="0.5">
-          <conclusion statement="s15"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s22"/>
-            <premise exception="false" polarity="positive" role="" statement="s23"/>
-            <premise exception="false" polarity="positive" role="" statement="s25"/>
-          </premises>
-        </argument>
-        <argument direction="pro" id="a16" scheme="" weight="0.5">
-          <conclusion statement="s23"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s24"/>
-          </premises>
-        </argument>
-        <argument direction="pro" id="a17" scheme="" weight="0.5">
-          <conclusion statement="s25"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s26"/>
-            <premise exception="false" polarity="positive" role="" statement="s27"/>
-          </premises>
-        </argument>
-      </arguments>
-    </argument-graph>
-  </argument-graphs>
+
+<lkif>
+   <argument-graphs>
+      <argument-graph id="NewGraph" title="New Graph" main-issue="">
+         <statements>
+            <statement id="s6098" value="unknown" assumption="false" standard="BA">
+               <s>Actual corporal possession is required.</s>
+            </statement>
+            <statement id="s6115" value="true" assumption="false" standard="BA">
+               <s>Bracton</s>
+            </statement>
+            <statement id="s6113" value="unknown" assumption="false" standard="BA">
+               <s>Pursuit is not sufficient to acquire possession.</s>
+            </statement>
+            <statement id="s6106" value="unknown" assumption="false" standard="BA">
+               <s>Post did not have possession of the fox.</s>
+            </statement>
+            <statement id="s6112" value="true" assumption="false" standard="BA">
+               <s>The fox was being chased by large hounds.</s>
+            </statement>
+            <statement id="s6114" value="true" assumption="false" standard="BA">
+               <s>Property rights in wild animals may be acquired only by possession.</s>
+            </statement>
+            <statement id="s6122" value="unknown" assumption="false" standard="BA">
+               <s>A noxious animal being chased by large hounds shall be deemed mortally wounded.</s>
+            </statement>
+            <statement id="s6099" value="true" assumption="false" standard="BA">
+               <s>Peace and order is an important social value.</s>
+            </statement>
+            <statement id="s6107" value="unknown" assumption="true" standard="BA">
+               <s>The fox was mortally wounded.</s>
+            </statement>
+            <statement id="s6116" value="unknown" assumption="true" standard="BA">
+               <s>Foxes are noxious animals.</s>
+            </statement>
+            <statement id="s6117" value="true" assumption="false" standard="BA">
+               <s>Fleta</s>
+            </statement>
+            <statement id="s6110" value="true" assumption="false" standard="BA">
+               <s>Post was pursuing his livlihood on his own land.</s>
+            </statement>
+            <statement id="s6111" value="unknown" assumption="true" standard="BA">
+               <s>Puffendorf</s>
+            </statement>
+            <statement id="s6105" value="true" assumption="false" standard="BA">
+               <s>Justinian&apos;s Institutes</s>
+            </statement>
+            <statement id="s6100" value="unknown" assumption="true" standard="BA">
+               <s>Pursuit is sufficient to obtain possession when the animal is mortally wounded.</s>
+            </statement>
+            <statement id="s6119" value="true" assumption="false" standard="BA">
+               <s>Keeble</s>
+            </statement>
+            <statement id="s6101" value="unknown" assumption="true" standard="BA">
+               <s>Barbeyrac</s>
+            </statement>
+            <statement id="s6121" value="unknown" assumption="false" standard="BA">
+               <s>Post, by pursuing the fox, did not acquire property in the fox.</s>
+            </statement>
+            <statement id="s6123" value="unknown" assumption="true" standard="BA">
+               <s>The owner of land is pursuing a livelihood with animals on his land is deemed to have possession of the animals.</s>
+            </statement>
+            <statement id="s6104" value="true" assumption="false" standard="BA">
+               <s>Grotius</s>
+            </statement>
+            <statement id="s6108" value="true" assumption="false" standard="BA">
+               <s>Protecting farmers is an important social value.</s>
+            </statement>
+            <statement id="s6102" value="true" assumption="false" standard="BA">
+               <s>It is admitted in the pleadings that a fox is wild and noxious beast.</s>
+            </statement>
+            <statement id="s6103" value="true" assumption="false" standard="BA">
+               <s>A bright-line rule creates legal certainty, promoting peach and order.</s>
+            </statement>
+            <statement id="s6118" value="true" assumption="false" standard="BA">
+               <s>Encouraging hunding helps protect famers from noxious animals.</s>
+            </statement>
+            <statement id="s6120" value="true" assumption="false" standard="BA">
+               <s>Foxes are wild animals.</s>
+            </statement>
+            <statement id="s6109" value="true" assumption="false" standard="BA">
+               <s>Bynkershoek</s>
+            </statement>
+         </statements>
+         <arguments>
+            <argument id="a7" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s6098"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6111"/>
+               </premises>
+            </argument>
+            <argument id="a8" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s6111"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6109"/>
+               </premises>
+            </argument>
+            <argument id="a5" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s6113"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6105"/>
+               </premises>
+            </argument>
+            <argument id="a6" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s6106"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6098"/>
+               </premises>
+            </argument>
+            <argument id="a2" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s6106"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6113"/>
+               </premises>
+            </argument>
+            <argument id="a1" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s6121"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6114"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6120"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6106"/>
+               </premises>
+            </argument>
+            <argument id="a4" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s6113"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6117"/>
+               </premises>
+            </argument>
+            <argument id="a3" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s6113"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6115"/>
+               </premises>
+            </argument>
+            <argument id="a11" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s6100"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6101"/>
+               </premises>
+            </argument>
+            <argument id="a10" direction="con" scheme="" weight="0.5">
+               <conclusion statement="s6098"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6107"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6100"/>
+               </premises>
+            </argument>
+            <argument id="a13" direction="con" scheme="" weight="0.5">
+               <conclusion statement="s6098"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6110"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6123"/>
+               </premises>
+            </argument>
+            <argument id="a12" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s6101"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6104"/>
+               </premises>
+            </argument>
+            <argument id="a16" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s6116"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6102"/>
+               </premises>
+            </argument>
+            <argument id="a17" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s6122"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6108"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6118"/>
+               </premises>
+            </argument>
+            <argument id="a14" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s6123"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6119"/>
+               </premises>
+            </argument>
+            <argument id="a9" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s6098"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6099"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6103"/>
+               </premises>
+            </argument>
+            <argument id="a15" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s6107"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6112"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6116"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6122"/>
+               </premises>
+            </argument>
+         </arguments>
+      </argument-graph>
+   </argument-graphs>
 </lkif>
