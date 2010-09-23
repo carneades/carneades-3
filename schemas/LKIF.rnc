@@ -59,12 +59,24 @@ grammar {
     Rule = element rule { 
         attribute id { xsd:ID }, 
         attribute strict { xsd:boolean }?, # default: false
-        Head, Body?
+        Head, Domains?, Body?
     }
     
     Head = element head { Wff+ }
+    Domains = element domains { Domain+ }
+    Domain = (Class|Property)
     Body = element body { Wff+ }
     
+    Class = element class {
+    	   attribute pred { xsd:anyURI },
+	       Variable, text?
+    }
+
+    Property = element property {
+    	     attribute pred { xsd:anyURI },
+	         Variable, text?, Variable, text?
+    }
+
     # Atomic formulas. Propositional logic letters are represented by 
     # omitting the (optional) predicate attribute.  The "s" tag
     # is used for backwards compatibility and because it is probably
@@ -112,7 +124,7 @@ grammar {
                         
     Exists = element exists { 
         attribute assumable { xsd:boolean }?,  #default: false,
-        Variable+, Wff 
+        Variable+, Domain?, Wff 
      }
     
     # Terms include wffs, to support meta-level statements
