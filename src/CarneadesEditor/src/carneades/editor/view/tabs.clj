@@ -133,3 +133,8 @@
 
 (defn register-tab-change-listener [listener]
   (.addChangeListener *mapPanel* listener))
+
+(defn change-tab-title [component newtitle]
+  "change the title of a clean component"
+  (when-let [label (get (deref *component-to-title*) (:component component))]
+    (.setText label newtitle)))

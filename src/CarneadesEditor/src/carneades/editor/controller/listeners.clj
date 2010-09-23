@@ -52,20 +52,16 @@
 
 (defn- update-undo-redo-statuses [view path id]
   (prn "update-undo-redo-statuses")
-  (prn "can-undo?")
-  (prn (can-undo-section? *docmanager* [path :ags id]))
   (set-can-undo view path id (can-undo-section? *docmanager* [path :ags id]))
   (set-can-redo view path id (can-redo-section? *docmanager* [path :ags id])))
 
 (defn on-open-file [view]
-  ;; (display-graph view tompkins statement-formatted)
   (prn "ask-lkif-file-to-open...")
   (when-let [file (ask-lkif-file-to-open view)]
     (let [path (.getPath file)]
       (if (section-exists? *docmanager* [path])
         (display-error view *file-error* (format *file-already-opened* path))
         (try
-          (prn "set busy")
           (set-busy view true)
           (when-let [content (lkif-import path)]
             (lkif/add-lkif-to-docmanager path content *docmanager*)
@@ -82,7 +78,7 @@
         id (:id ag)
         title (:title ag)
         mainissue (statement-formatted (:main-issue ag))]
-    (display-graph-property view path title mainissue)))
+    (display-graph-property view path id title mainissue)))
 
 (defn on-edit-graphid [view path graphid]
   (prn "on-edit-graphid")
@@ -291,16 +287,16 @@
    (:direction arg)
    (:scheme arg)))
 
-(defn on-select-premise [path id pm view]
+(defn on-select-premise [path id arg pm view]
   (prn "on select premise")
+  (prn "arg")
+  (prn arg)
+  (prn "premise")
   (prn pm)
-  (let [type (:type pm)
-        typestr (condp = type
-                    :carneades.engine.argument/ordinary-premise "Premise"
-                    :carneades.engine.argument/assumption "Assumption"
-                    :carneades.engine.argument/exception "Exception")]
-    (display-premise-property view path (:title (get-ag path id))
-                              (:polarity pm) typestr)))
+  (let [type (:type pm)]
+    (display-premise-property view path id (:title (get-ag path id))
+                              arg
+                              (:polarity pm) type (:atom pm))))
 
 (defn on-open-statement [view path id stmt]
   (prn "on-open-statement")
@@ -388,13 +384,53 @@
   (update-dirty-state view path (get-ag path id) true)
   (edit-redone view path id))
 
+(defn- save-lkif [view path]
+  (try
+    (set-busy view true)
+    (let [lkifdata (lkif/extract-lkif-from-docmanager path *docmanager*)]
+      (lkif-export lkifdata path))
+    (finally
+     (set-busy view false))))
+
 (defn on-save [view path id]
   (prn "on-save")
   (delete-section-history *docmanager* [path :ags id])
   (update-dirty-state view path (get-ag path id) false)
   (update-undo-redo-statuses view path id)
-  (let [lkifdata (lkif/extract-lkif-from-docmanager path *docmanager*)]
-    (lkif-export lkifdata path)))
+  (save-lkif view path))
+
+(defn on-saveas [view path id]
+  (prn "on save as!"))
 
 (defn on-copyclipboard [view path id]
   (copyselection-clipboard view path id))
+
+(defn on-title-edit [view path id ag-info]
+  (let [{:keys [previous-title title]} ag-info]
+    (when (not= previous-title title)
+      (when-let [ag (get-ag path id)]
+        (if (is-ag-dirty path id)
+          (display-error view *edit-error* "Please save the graph first.")
+          (let [ag (assoc ag :title title)]
+            (update-section *docmanager* [path :ags id] ag)
+            (delete-section-history *docmanager* [path :ags id])
+            (save-lkif view path)
+            (display-graph-property view path id title (:main-issue ag))
+            (title-changed view path ag title)))))))
+
+(defn on-premise-edit-polarity [view path id pm-info]
+  (when-let [ag (get-ag path id)]
+    (let [atom (:atom pm-info)
+          previous-polarity (:previous-polarity pm-info)
+          polarity (:polarity pm-info)]
+      (when (not= previous-polarity polarity)
+        (let [oldarg (:arg pm-info)
+              ag (update-premise-polarity ag oldarg atom polarity)
+              arg (get-argument ag (:id oldarg))
+              title (:title ag)]
+          (do-update-section view [path :ags (:id ag)] ag)
+          (premise-polarity-changed view path ag oldarg arg (get-premise arg atom))
+          (display-premise-property view path id title
+                              arg
+                              polarity (:type pm-info) atom))))))
+

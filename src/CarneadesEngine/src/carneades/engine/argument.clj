@@ -136,6 +136,13 @@
 (defn argument-premises [a]
   (:premises a))
 
+(defn get-premise [arg atom]
+  "return the premise of arg which has the :atom equals to atom"
+  (let [pms (:premises arg)
+        pms (group-by (fn [pm]
+                        (= (:atom pm) atom)) pms)]
+    (first (get pms true))))
+
 ;; Implicit premises, i.e. enthymemes, may be revealed using the  add-premise
 ;; function.
 
@@ -705,6 +712,18 @@
    (let [n (assoc n :standard proofstandard)
          ag (add-node ag n)]
      (update-statement ag stmt))))
+
+(defn update-premise-polarity [ag arg atom polarity]
+  (letfn [(update-pm-polarity
+           [arg]
+           (let [pms (:premises arg)
+                 pms (group-by (fn [pm]
+                                 (= (:atom pm) atom)) pms)
+                 toupdate (first (get pms true))
+                 tokeep (get pms false)
+                 updated (assoc toupdate :polarity polarity)]
+             (assoc arg :premises (conj tokeep updated))))]
+    (update-in ag [:arguments (:id arg)] update-pm-polarity)))
 
 (defn- unite-args
   [ag arg]

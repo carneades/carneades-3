@@ -95,7 +95,7 @@
           lkif-file (DefaultMutableTreeNode. lkifinfo)]
       (.add root lkif-file)
       (doseq [[id title] graphinfos]
-        (.add lkif-file (DefaultMutableTreeNode. (GraphInfo. lkifinfo id title))))
+        (.add lkif-file (DefaultMutableTreeNode. (GraphInfo. lkifinfo id title false))))
       (.reload model root)
       (let [path (TreePath. (.getPath lkif-file))]
         (.expandPath *lkifsTree* path)
@@ -103,13 +103,10 @@
         (.setSelectionPath (.getSelectionModel *lkifsTree*) path)))))
 
 (defn remove-lkif-content [path]
-  (prn "remove-lkif-content")
   (with-tree *lkifsTree*
     (let [model (.getModel *lkifsTree*)
           root (.getRoot model)
           childcount (.getChildCount root)]
-      (prn "childcount")
-      (prn childcount)
       (loop [nb (range childcount)]
         (let[i (first nb)
              child (.getChildAt root i)
@@ -119,4 +116,39 @@
             (recur (rest nb)))))
       (.reload model root))))
 
+(defn- change-ag-object-in-tree [path id f]
+  "change the object identified by path and id and set it's value to 
+  (f olduserobjectvalue)"
+  (with-tree *lkifsTree*
+    (let [model (.getModel *lkifsTree*)
+          root (.getRoot model)]
+      (doseq [lkif (enumeration-seq (.children root))]
+        (doseq [ag (enumeration-seq (.children lkif))]
+          (when-let [userobject (.getUserObject ag)]
+            (when (and (instance? GraphInfo userobject)
+                       (= path (:path (:lkifinfo userobject)))
+                       (= id (:id userobject)))
+              (.setUserObject ag (f userobject))))))
+      (.reload model root))))
 
+(defn set-ag-in-tree-dirty [path id isdirty]
+  (letfn [(update
+           [userobject]
+           (let [dirty (:dirty userobject)
+                 lkifinfo (:lkifinfo userobject)
+                 id (:id userobject)
+                 title (:title userobject)]
+             (if (not= dirty isdirty)
+               (GraphInfo. lkifinfo id title isdirty)
+               (GraphInfo. lkifinfo id title dirty))))]
+    (change-ag-object-in-tree path id update)))
+
+(defn change-ag-in-tree-title [path id newtitle]
+  (letfn [(update
+           [userobject]
+           (let [dirty (:dirty userobject)
+                 lkifinfo (:lkifinfo userobject)
+                 id (:id userobject)
+                 dirty (:dirty userobject)]
+             (GraphInfo. lkifinfo id newtitle dirty)))]
+   (change-ag-object-in-tree path id update)))
