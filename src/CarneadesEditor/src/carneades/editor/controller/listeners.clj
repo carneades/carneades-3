@@ -24,9 +24,9 @@
 
 (defvar- *file-error* "File Error")
 (defvar- *edit-error* "Edit Error")
-(defvar- *statement-already-exists* "Statement already exists")
+(defvar- *statement-already-exists* "Statement already exists.")
 (defvar- *file-already-opened* "File %s is already opened.")
-(defvar- *file-format-not-supported* "This file format is not supported")
+(defvar- *file-format-not-supported* "This file format is not supported.")
 
 (defvar- *docmanager* (create-docmanager))
 (defvar- *dirtyags* (atom #{}))
@@ -277,10 +277,12 @@
 
 (defn on-select-argument [path id arg view]
   (prn "on select argument")
-  (prn arg)
   (display-argument-property
-   view path
+   view
+   path
+   id
    (:title (get-ag path id))
+   (:id arg)
    (:title arg)
    (:applicable arg)
    (:weight arg)
@@ -420,9 +422,7 @@
 
 (defn on-premise-edit-polarity [view path id pm-info]
   (when-let [ag (get-ag path id)]
-    (let [atom (:atom pm-info)
-          previous-polarity (:previous-polarity pm-info)
-          polarity (:polarity pm-info)]
+    (let [{:keys [atom previous-polarity polarity]} pm-info]
       (when (not= previous-polarity polarity)
         (let [oldarg (:arg pm-info)
               ag (update-premise-polarity ag oldarg atom polarity)
@@ -432,5 +432,67 @@
           (premise-polarity-changed view path ag oldarg arg (get-premise arg atom))
           (display-premise-property view path id title
                               arg
-                              polarity (:type pm-info) atom))))))
+                              polarity (:previous-type pm-info) atom))))))
 
+(defn on-premise-edit-type [view path id pm-info]
+  (when-let [ag (get-ag path id)]
+    (let [{:keys [previous-type type arg atom pm]} pm-info]
+      (when (not= previous-type type)
+        (let [ag (update-premise-type ag arg atom type)
+              newarg (get-argument ag (:id arg))]
+          (do-update-section view [path :ags (:id ag)] ag)
+          (premise-type-changed view path ag arg newarg (get-premise newarg atom))
+          (display-premise-property view path id (:title ag) arg (:polarity pm) type atom))))))
+
+(defn on-argument-edit-title [view path id arg-info]
+  (prn "on argument edit")
+  (prn "info =")
+  (prn arg-info)
+  (when-let [ag (get-ag path id)]
+    (let [{:keys [argid previous-title title]} arg-info]
+      (when (not= previous-title title)
+        (let [arg (get-argument ag argid)
+              ag (update-argument-title ag arg title)
+              arg (get-argument ag argid)]
+          (do-update-section view [path :ags (:id ag)] ag)
+          (argument-title-changed view path ag arg title)
+          (display-argument-property
+           view
+           path
+           id
+           (:title ag)
+           argid
+           (:title arg)
+           (:applicable arg)
+           (:weight arg)
+           (:direction arg)
+           (:scheme arg)))))))
+
+(defn on-argument-edit-weight [view path id arg-info]
+  (prn "on argument edit weight")
+  (prn arg-info)
+  (when-let [ag (get-ag path id)]
+    (let [{:keys [previous-weight weight argid]} arg-info]
+      (when (not= previous-weight weight)
+        (let [arg (get-argument ag argid)
+              newag (update-argument-weight ag arg weight)
+              arg (get-argument newag argid)]
+          (do-update-section view [path :ags (:id ag)] newag)
+          ;; (prn "old ag =")
+          ;; (prn ag)
+          ;; (prn "new ag =")
+          ;; (prn newag)
+          (argument-weight-changed view path newag arg weight)
+          (display-argument-property
+           view
+           path
+           id
+           (:title newag)
+           argid
+           (:title arg)
+           (:applicable arg)
+           (:weight arg)
+           (:direction arg)
+           (:scheme arg)))
+        )))
+  )

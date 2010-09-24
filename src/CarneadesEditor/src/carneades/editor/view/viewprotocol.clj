@@ -35,7 +35,7 @@
   (display-premise-property
    [this path id maptitle arg polarity type atom])
   (display-argument-property
-   [this path maptitle title applicable weight direction scheme])
+   [this path id maptitle argid title applicable weight direction scheme])
   (display-search-state [this inprogress])
   (display-statement-search-result
    [this path id stmt stmt-fmt])
@@ -49,6 +49,9 @@
    [this path ag stmt])
   (title-changed [this path ag title])
   (premise-polarity-changed [this path ag old arg pm])
+  (premise-type-changed [this path ag oldarg arg pm])
+  (argument-title-changed [this path ag arg title])
+  (argument-weight-changed [this path ag arg weight])
   
   (set-busy
    [this isbusy])
