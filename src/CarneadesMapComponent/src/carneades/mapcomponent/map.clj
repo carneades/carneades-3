@@ -430,7 +430,8 @@
                                update-premise-object
                                update-premise-style
                                update-argument-object
-                               update-argument-style]
+                               update-argument-style
+                               update-argument-edge-style]
   (let [graph (.getGraph component)
         model (.getModel graph)]
     (let [p (.getDefaultParent graph)]
@@ -453,42 +454,46 @@
                     (.setValue model cell (update-argument-object val))
                     (.setStyle model cell (update-argument-style val (.getStyle cell))))
 
-                  ;;TODO : conclusion edge
+                  (and (instance? ArgumentCell val) (.isEdge cell))
+                  (do
+                    (.setValue model cell (update-argument-object val))
+                    (.setStyle model cell (update-argument-edge-style val (.getStyle cell))))
+
                   )))
         (finally
          (.. model endUpdate)
          (.refresh component))))))
 
-(defn change-all-cell-and-styles
+(defn- do-not-change-style [userobject style]
+  style)
+
+(defn- update-stmt-object [userobject newag]
+  (let [stmt-str (:stmt-str userobject)
+        stmt (:stmt userobject)]
+    (StatementCell. newag stmt stmt-str (stmt-to-str newag stmt stmt-str))))
+
+(defn- update-stmt-style [userobject oldstyle ag]
+  (get-statement-style ag (:stmt userobject)))
+
+(defn update-argument-style [userobject oldstyle ag]
+  (get-argument-style ag (:arg userobject)))
+
+(defn- change-all-cell-and-styles
   ([component ag]
-     (letfn [(do-no-change-style
-              [userobject style]
-              style)]
-       (change-all-cell-and-styles component ag identity do-no-change-style)))
+     (change-all-cell-and-styles component ag identity do-not-change-style))
   
   ([component ag update-pm-object update-pm-style]
-     (letfn [(update-stmt-object
-              [userobject]
-              (let [stmt-str (:stmt-str userobject)
-                    stmt (:stmt userobject)]
-                (StatementCell. ag stmt stmt-str (stmt-to-str ag stmt stmt-str))))
-
-             (update-stmt-style
+     (letfn [(update-argument-edge-style
               [userobject oldstyle]
-              (get-statement-style ag (:stmt userobject)))
-          
-             (update-argument-style
-              [userobject oldstyle]
-              (get-argument-style ag (:arg userobject)))
-             
-             ]
+              (get-conclusion-edge-style (:arg userobject)))]
        (change-cell-and-styles component ag
-                               update-stmt-object
-                               update-stmt-style
+                               #(update-stmt-object % ag)
+                               #(update-stmt-style %1 %2 ag)
                                update-pm-object
                                update-pm-style
                                identity
-                               update-argument-style))))
+                               #(update-argument-style %1 %2 ag)
+                               update-argument-edge-style))))
 
 (defn change-statement-status [graphcomponent ag stmt]
   (let [component (:component graphcomponent)]
@@ -537,7 +542,7 @@
   (let [component (:component graphcomponent)]
     (change-all-cell-and-styles component ag)))
 
-(defn change-premise-polarity [graphcomponent ag oldarg arg pm]
+(defn- change-premise-content-and-style [graphcomponent ag oldarg arg pm]
   (let [component (:component graphcomponent)]
     (letfn [(update-premise-object
              [userobject]
@@ -559,3 +564,38 @@
                  (get-edge-style pm)
                  style)))]
       (change-all-cell-and-styles component ag update-premise-object update-premise-style))))
+
+(defn change-premise-polarity [graphcomponent ag oldarg arg pm]
+  (change-premise-content-and-style graphcomponent ag oldarg arg pm))
+
+(defn change-premise-type [graphcomponent ag oldarg arg pm]
+  (change-premise-content-and-style graphcomponent ag oldarg arg pm))
+
+(defn- update-arg-in-pm [userobject arg]
+  (let [cellargid (:id (:arg userobject))]
+    (if (= cellargid (:id arg))
+      (PremiseCell. arg (:pm userobject))
+      userobject)))
+
+(defn- update-arg [userobject arg]
+  (let [cellargid (:id (:arg userobject))]
+    (if (= cellargid (:id arg))
+      (ArgumentCell. arg)
+      userobject)))
+
+(defn change-argument-title [graphcomponent ag arg title]
+  (let [component (:component graphcomponent)]
+    (change-cell-and-styles component ag
+                            #(update-stmt-object % ag) do-not-change-style
+                            #(update-arg-in-pm % arg) do-not-change-style
+                            #(update-arg % arg) do-not-change-style
+                            do-not-change-style)))
+
+(defn change-argument-weight [graphcomponent ag arg title]
+  (prn "change-argument-weight")
+  (let [component (:component graphcomponent)]
+   (change-cell-and-styles component ag
+                           #(update-stmt-object % ag) #(update-stmt-style %1 %2 ag)
+                           #(update-arg-in-pm % arg) do-not-change-style
+                           #(update-arg % arg) #(update-argument-style %1 %2 ag)
+                           do-not-change-style)))

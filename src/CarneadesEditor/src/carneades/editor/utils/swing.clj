@@ -4,7 +4,8 @@
 (ns carneades.editor.utils.swing
   (:import java.beans.PropertyChangeListener
            (javax.swing.event ListSelectionListener
-                              TreeSelectionListener)
+                              TreeSelectionListener
+                              ChangeListener)
            (javax.swing UIManager
                         JFileChooser
                         filechooser.FileFilter)
@@ -42,6 +43,14 @@
                    (propertyChange [event]
                                    (apply f event args)))]
     (.addPropertyChangeListener component listener)
+    listener))
+
+(defn add-change-listener
+  [component f & args]
+  (let [listener (proxy [ChangeListener] []
+                   (stateChanged [event]
+                                 (apply f event args)))]
+    (.addChangeListener component listener)
     listener))
 
 (defn add-listselection-listener

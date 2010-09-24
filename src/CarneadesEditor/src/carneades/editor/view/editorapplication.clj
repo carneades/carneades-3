@@ -190,8 +190,8 @@
     (get-premise-properties-panel path id maptitle arg polarity type atom)))
     
   (display-argument-property
-   [this path maptitle title applicable weight direction scheme]
-   (show-properties (get-argument-properties-panel path maptitle title applicable
+   [this path id maptitle argid title applicable weight direction scheme]
+   (show-properties (get-argument-properties-panel path id maptitle argid title applicable
                                                    weight direction scheme)))
   (statement-content-changed
    [this path ag oldstmt newstmt]
@@ -219,6 +219,21 @@
    [this path ag oldarg arg pm]
    (when-let [component (get-component path (:id ag))]
     (change-premise-polarity component ag oldarg arg pm)))
+
+  (premise-type-changed
+   [this path ag oldarg arg pm]
+   (when-let [component (get-component path (:id ag))]
+     (change-premise-type component ag oldarg arg pm)))
+
+  (argument-title-changed
+   [this path ag arg title]
+   (when-let [component (get-component path (:id ag))]
+     (change-argument-title component ag arg title)))
+
+  (argument-weight-changed
+   [this path ag arg weight]
+   (when-let [component (get-component path (:id ag))]
+     (change-argument-weight component ag arg weight)))
   
   (ask-file-to-save
    [this-view descriptions suggested]
@@ -413,6 +428,10 @@
   (get-graph-being-edited-info
    [this]
    (graph-being-edited-info))
+
+  (get-argument-being-edited-info
+   [this]
+   (argument-being-edited-info))
   
   (add-statement-edit-status-listener
    [this f args]
@@ -422,6 +441,18 @@
    [this f args]
    (apply add-action-listener *statementProofstandardComboBox* f args))
 
+  (add-premise-edit-type-listener
+   [this f args]
+   (apply add-action-listener *typeComboBox* f args))
+
+  (add-argument-edit-title-listener
+   [this f args]
+   (apply add-action-listener *titleText* f args))
+  
+  (add-argument-edit-weight-listener
+   [this f args]
+   (apply add-change-listener *weightSpinner* f args))
+  
   (add-undo-button-listener
    [this f args]
    (apply add-action-listener *undoButton* f args))

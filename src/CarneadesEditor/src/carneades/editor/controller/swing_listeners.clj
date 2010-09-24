@@ -163,3 +163,14 @@
   (let [info (get-premise-being-edited-info view)]
     (on-premise-edit-polarity view (:path info) (:id info) info)))
 
+(defn premise-edit-type-listener [event view]
+  (let [info (get-premise-being-edited-info view)]
+    (on-premise-edit-type view (:path info) (:id info) info)))
+
+(defn argument-edit-title-listener [event view]
+  (let [info (get-argument-being-edited-info view)]
+    (on-argument-edit-title view (:path info) (:id info) info)))
+
+(defn argument-edit-weight-listener [event view]
+  (let [info (get-argument-being-edited-info view)]
+    (on-argument-edit-weight view (:path info) (:id info) info)))
