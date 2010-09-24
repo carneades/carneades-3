@@ -725,6 +725,32 @@
              (assoc arg :premises (conj tokeep updated))))]
     (update-in ag [:arguments (:id arg)] update-pm-polarity)))
 
+(defn update-premise-type [ag arg atom type]
+  (letfn [(update-pm-type
+           [arg]
+           (let [pms (:premises arg)
+                 pms (group-by (fn [pm]
+                                 (= (:atom pm) atom)) pms)
+                 toupdate (first (get pms true))
+                 tokeep (get pms false)
+                 updated (assoc toupdate :type type)]
+             (assoc arg :premises (conj tokeep updated))))]
+    (update-in ag [:arguments (:id arg)] update-pm-type)))
+
+(defn update-argument-title [ag arg title]
+  (letfn [(update-arg-title
+           [arg]
+           (assoc arg :title title))]
+    (update-in ag [:arguments (:id arg)] update-arg-title)))
+
+(defn update-argument-weight [ag arg weight]
+  (letfn [(update-arg-weight
+           [arg]
+           (assoc arg :weight weight))]
+    (let [ag (update-in ag [:arguments (:id arg)] update-arg-weight)
+          arg (get-argument ag (:id arg))]
+      (update-statement ag (:conclusion arg)))))
+
 (defn- unite-args
   [ag arg]
   (if (some (fn [arg2]

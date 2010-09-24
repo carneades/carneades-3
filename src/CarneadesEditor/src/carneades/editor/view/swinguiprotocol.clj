@@ -32,7 +32,10 @@
   (add-statement-edit-status-listener [this f args])
   (add-statement-edit-proofstandard-listener [this f args])
   (add-premise-edit-polarity-listener [this f args])
-  
+  (add-premise-edit-type-listener [this f args])
+  (add-argument-edit-title-listener [this f args])
+  (add-argument-edit-weight-listener [this f args])
+
   (add-undo-button-listener [this f args])
   (add-redo-button-listener [this f args])
   (add-save-button-listener [this f args])
@@ -50,6 +53,7 @@
   (get-statement-being-edited-info [this])
   (get-graph-being-edited-info [this])
   (get-premise-being-edited-info [this])
+  (get-argument-being-edited-info [this])
   )
 
 ;; records stored in the element of the tree:

@@ -11,7 +11,7 @@
 (defvar- *pathText* (.pathText *premiseProperties*))
 (defvar- *mapTitleText* (.mapTitleText *premiseProperties*))
 (defvar *negatedCheckBox* (.negatedCheckBox *premiseProperties*))
-(defvar- *typeComboBox* (.typeComboBox *premiseProperties*))
+(defvar *typeComboBox* (.typeComboBox *premiseProperties*))
 
 (defn init-premise-properties []
   (PremisePropertiesView/reset))
@@ -49,4 +49,4 @@
    :previous-polarity (deref *previous-polarity*)
    :polarity (not (.isSelected *negatedCheckBox*))
    :previous-type (deref *previous-type*)
-   :type (.getSelectedItem *typeComboBox*)})
+   :type (*str-to-type* (.getSelectedItem *typeComboBox*))})
