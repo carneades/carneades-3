@@ -63,7 +63,8 @@
   (add-premise-edit-type-listener view premise-edit-type-listener [view])
   (add-argument-edit-title-listener view argument-edit-title-listener [view])
   (add-argument-edit-weight-listener view argument-edit-weight-listener [view])
-    
+  (add-argument-edit-direction-listener view argument-edit-direction-listener [view])
+
   (add-undo-button-listener view undo-button-listener [view])
   (add-redo-button-listener view redo-button-listener [view])
   (add-save-button-listener view save-button-listener [view])

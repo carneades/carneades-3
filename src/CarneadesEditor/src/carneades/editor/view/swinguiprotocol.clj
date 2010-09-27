@@ -35,6 +35,7 @@
   (add-premise-edit-type-listener [this f args])
   (add-argument-edit-title-listener [this f args])
   (add-argument-edit-weight-listener [this f args])
+  (add-argument-edit-direction-listener [this f args])
 
   (add-undo-button-listener [this f args])
   (add-redo-button-listener [this f args])
@@ -68,7 +69,14 @@
      (str (when dirty "*") title))))
 
 ;; stored in the search result:
-(defrecord StatementInfo [path id stmt stmt-fmt] Object
+(defrecord StatementInfo [path id stmt stmt-fmt]
+  Object
   (toString
    [this]
    (str (stmt-fmt stmt))))
+
+(defrecord ArgumentInfo [path id arg title]
+  Object
+  (toString
+   [this]
+   title))

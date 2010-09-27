@@ -7,7 +7,7 @@
         [clojure.contrib.swing-utils :only (do-swing do-swing-and-wait)]
         carneades.engine.lkif.import
         carneades.engine.lkif.export
-        [carneades.engine.shell :only (search-statements)]
+        [carneades.engine.shell :only (search-statements search-arguments)]
         (carneades.engine argument argument-edit)
         [carneades.engine.statement :only (statement-formatted)]
         carneades.editor.model.docmanager
@@ -185,7 +185,7 @@
 (defvar- *nb-agents-running* (atom 0))
 (defvar- *running-futures* (atom ()))
 
-(defn- do-one-search [state view]
+(defn- do-one-search-stmt [state view]
   (prn "do one search!")
   (let [{:keys [results path id]} state]
     (loop [res results]
@@ -198,6 +198,15 @@
                                             statement-formatted))
           (recur (rest res)))))))
 
+(defn- do-one-search-arg [state view]
+  (let [{:keys [results path id]} state]
+    (loop [res results]
+      (let [arg (first res)]
+        (when-not (or (nil? arg) (deref *end-search*))
+          (do-swing
+           (display-argument-search-result view path id arg (:title arg)))
+          (recur (rest res)))))))
+
 (defn wait-for-futures []
   (doseq [future (deref *running-futures*)]
     (prn "waiting for one future...")
@@ -205,7 +214,7 @@
 
 (defn- do-search [view path id text options]
   (prn "do-search")
-  (let [{:keys [search-in]} options]
+  (let [{:keys [search-in search-for-statements search-for-arguments]} options]
     (prn "options =")
     (prn options)
     (prn "text =")
@@ -232,17 +241,30 @@
          (display-search-state view true))
         (reset! *end-search* false)
         (reset! *nb-agents-running* nb-ids)
-        (let [searchfutures (doall
-                             (map (fn [[path id]]
-                                    (let [res (search-statements (get-ag path id)
-                                                                 statement-formatted
-                                                                 text {})]
-                                      (future
-                                       (do-one-search {:results
-                                                       res
-                                                       :path path
-                                                       :id id}
-                                                      view)))) path-to-id))]
+        (let [searchfutures
+              (doall
+               (map (fn [[path id]]
+                       (let [ag (get-ag path id)]
+                         (cond search-for-statements
+                               (let [res (search-statements ag
+                                                            statement-formatted
+                                                            text {})]
+                                 (future (do-one-search-stmt
+                                          {:results
+                                           res
+                                           :path path
+                                           :id id}
+                                          view)))
+
+                               search-for-arguments
+                               (let [res (search-arguments ag text {})]
+                                 (future (do-one-search-arg
+                                          {:results
+                                           res
+                                           :path path
+                                           :id id}
+                                          view))))
+                         )) path-to-id))]
           (reset! *running-futures* searchfutures)
           (future (wait-for-futures)
                   (do-swing-and-wait
@@ -277,17 +299,20 @@
 
 (defn on-select-argument [path id arg view]
   (prn "on select argument")
-  (display-argument-property
-   view
-   path
-   id
-   (:title (get-ag path id))
-   (:id arg)
-   (:title arg)
-   (:applicable arg)
-   (:weight arg)
-   (:direction arg)
-   (:scheme arg)))
+  (when-let [ag (get-ag path id)]
+   (let [arg (get-argument ag (:id arg))]
+     (prn arg)
+     (display-argument-property
+      view
+      path
+      id
+      (:title (get-ag path id))
+      (:id arg)
+      (:title arg)
+      (:applicable arg)
+      (:weight arg)
+      (:direction arg)
+      (:scheme arg)))))
 
 (defn on-select-premise [path id arg pm view]
   (prn "on select premise")
@@ -304,6 +329,10 @@
   (prn "on-open-statement")
   (when-let [ag (get-ag path id)]
     (display-statement view path ag stmt statement-formatted)))
+
+(defn on-open-argument [view path id arg]
+  (when-let [ag (get-ag path id)]
+    (display-argument view path ag arg statement-formatted)))
 
 (defn- do-update-section [view keys ag]
   ;; the first key is the path
@@ -478,10 +507,6 @@
               newag (update-argument-weight ag arg weight)
               arg (get-argument newag argid)]
           (do-update-section view [path :ags (:id ag)] newag)
-          ;; (prn "old ag =")
-          ;; (prn ag)
-          ;; (prn "new ag =")
-          ;; (prn newag)
           (argument-weight-changed view path newag arg weight)
           (display-argument-property
            view
@@ -494,5 +519,28 @@
            (:weight arg)
            (:direction arg)
            (:scheme arg)))
-        )))
-  )
+        ))))
+
+(defn on-argument-edit-direction [view path id arg-info]
+  (prn "on-argument-edit-direction")
+  (prn arg-info)
+  (when-let [ag (get-ag path id)]
+    (let [{:keys [previous-direction direction argid]} arg-info]
+      (when (not= previous-direction direction)
+        (let [arg (get-argument ag argid)
+              ag (update-argument-direction ag arg direction)
+              arg (get-argument ag argid)]
+          (do-update-section view [path :ags (:id ag)] ag)
+          (argument-direction-changed view path ag arg direction)
+          (display-argument-property
+           view
+           path
+           id
+           (:title ag)
+           argid
+           (:title arg)
+           (:applicable arg)
+           (:weight arg)
+           (:direction arg)
+           (:scheme arg))
+          )))))
