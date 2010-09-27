@@ -11,7 +11,8 @@
   (:import (carneades.editor.uicomponents EditorApplicationView)
            (carneades.editor.view.swinguiprotocol GraphInfo
                                                   LkifFileInfo
-                                                  StatementInfo)))
+                                                  StatementInfo
+                                                  ArgumentInfo)))
 
 (defn mouse-click-in-tree-listener [event view]
   (let [clickcount (.getClickCount event)]
@@ -35,6 +36,8 @@
         (condp instance? info
           StatementInfo (on-open-statement view (:path info) (:id info)
                                            (:stmt info))
+
+          ArgumentInfo (on-open-argument view (:path info) (:id info) (:arg info))
                 nil)))))
 
 (defn keyenter-in-searchresult [event view]
@@ -42,6 +45,8 @@
     (condp instance? info
       StatementInfo (on-open-statement view (:path info) (:id info)
                                        (:stmt info))
+
+      ArgumentInfo (on-open-argument view (:path info) (:id info) (:arg info))
       nil)))
 
 (defn close-file-listener [event view]
@@ -102,6 +107,8 @@
     (condp instance? info
       StatementInfo (on-select-statement (:path info) (:id info)
                                          (:stmt info) view)
+
+      ArgumentInfo (on-select-argument (:path info) (:id info) (:arg info) view)
       nil)))
 
 (defn statement-button-edit-listener [event view]
@@ -174,3 +181,7 @@
 (defn argument-edit-weight-listener [event view]
   (let [info (get-argument-being-edited-info view)]
     (on-argument-edit-weight view (:path info) (:id info) info)))
+
+(defn argument-edit-direction-listener [event view]
+  (let [info (get-argument-being-edited-info view)]
+    (on-argument-edit-direction view (:path info) (:id info) info)))

@@ -104,3 +104,11 @@
     (let [ag (update-in ag [:arguments (:id arg)] update-arg-weight)
           arg (get-argument ag (:id arg))]
       (update-statement ag (:conclusion arg)))))
+
+(defn update-argument-direction [ag arg direction]
+  (letfn [(update-arg-direction
+           [arg]
+           (assoc arg :direction direction))]
+    (let [ag (update-in ag [:arguments (:id arg)] update-arg-direction)
+          arg (get-argument ag (:id arg))]
+      (update-statement ag (:conclusion arg)))))

@@ -42,6 +42,7 @@ public class StatementPropertiesView extends javax.swing.JPanel {
         jLabel5 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         jScrollPane2 = new javax.swing.JScrollPane();
+        jLabel6 = new javax.swing.JLabel();
 
         jLabel1.setText("Statement:");
 
@@ -50,10 +51,6 @@ public class StatementPropertiesView extends javax.swing.JPanel {
         proofstandardComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Dialectical Validity", "Scintilla of Evidence", "Preponderance of Evidence", "Clear and Convincing Evidence", "Beyond Reasonable Doubt" }));
 
         jLabel3.setText("Status:");
-
-        acceptableCheckBox.setText("Acceptable");
-
-        complementacceptableCheckBox.setText("Complement acceptable");
 
         statusComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Stated", "Questioned", "Accepted", "Rejected" }));
 
@@ -76,34 +73,44 @@ public class StatementPropertiesView extends javax.swing.JPanel {
         statementTextArea.setMinimumSize(new java.awt.Dimension(100, 50));
         jScrollPane2.setViewportView(statementTextArea);
 
+        jLabel6.setText("Acceptability:");
+
+        acceptableText.setBackground(new java.awt.Color(222, 222, 222));
+        acceptableText.setText("Acceptable");
+
+        complementAcceptableText.setBackground(new java.awt.Color(222, 222, 222));
+        complementAcceptableText.setText("Complement Acceptable");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(pathText, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
-                            .addComponent(mapTitleText, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)))
-                    .addComponent(jLabel1)
-                    .addGroup(layout.createSequentialGroup()
+                            .addComponent(pathText, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
+                            .addComponent(mapTitleText, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(statusComboBox, 0, 236, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(acceptableCheckBox)
-                        .addGap(18, 18, 18)
-                        .addComponent(complementacceptableCheckBox))
-                    .addComponent(jLabel2)
-                    .addComponent(proofstandardComboBox, 0, 294, Short.MAX_VALUE))
+                        .addComponent(statusComboBox, 0, 235, Short.MAX_VALUE))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(proofstandardComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 293, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(complementAcceptableText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
+                            .addComponent(acceptableText, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -130,23 +137,26 @@ public class StatementPropertiesView extends javax.swing.JPanel {
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(proofstandardComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(acceptableCheckBox)
-                    .addComponent(complementacceptableCheckBox))
+                    .addComponent(jLabel6)
+                    .addComponent(acceptableText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(complementAcceptableText, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public final javax.swing.JCheckBox acceptableCheckBox = new javax.swing.JCheckBox();
-    public final javax.swing.JCheckBox complementacceptableCheckBox = new javax.swing.JCheckBox();
+    public final javax.swing.JTextField acceptableText = new javax.swing.JTextField();
+    public final javax.swing.JTextField complementAcceptableText = new javax.swing.JTextField();
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     public final javax.swing.JTextField mapTitleText = new javax.swing.JTextField();

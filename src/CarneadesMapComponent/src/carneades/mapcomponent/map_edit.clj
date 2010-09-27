@@ -73,7 +73,12 @@
   (get-statement-style ag (:stmt userobject)))
 
 (defn- update-argument-style [userobject oldstyle ag]
-  (get-argument-style ag (:arg userobject)))
+  (get-argument-style ag (get-argument ag (:id (:arg userobject)))))
+
+(defn- update-argument-object [userobject ag]
+  (let [id (:id (:arg userobject))
+        arg (get-argument ag id)]
+    (ArgumentCell. arg)))
 
 (defn- change-all-cell-and-styles
   ([component ag]
@@ -82,13 +87,13 @@
   ([component ag update-pm-object update-pm-style]
      (letfn [(update-argument-edge-style
               [userobject oldstyle]
-              (get-conclusion-edge-style (:arg userobject)))]
+              (get-conclusion-edge-style (get-argument ag (:id (:arg userobject)))))]
        (change-cell-and-styles component ag
                                #(update-stmt-object % ag)
                                #(update-stmt-style %1 %2 ag)
                                update-pm-object
                                update-pm-style
-                               identity
+                               #(update-argument-object %1 ag)
                                #(update-argument-style %1 %2 ag)
                                update-argument-edge-style))))
 
@@ -183,5 +188,9 @@
     (change-all-cell-and-styles component ag)))
 
 (defn change-statement-proofstandard [graphcomponent ag stmt]
+  (let [component (:component graphcomponent)]
+    (change-all-cell-and-styles component ag)))
+
+(defn change-argument-direction [graphcomponent ag arg direction]
   (let [component (:component graphcomponent)]
     (change-all-cell-and-styles component ag)))

@@ -374,10 +374,28 @@
           cell
           (recur (rest vertices)))))))
 
+(defn find-argument-cell [graph arg]
+  (loop [vertices (seq (.getChildVertices graph
+                                          (.getDefaultParent graph)))]
+    (when-let [cell (first vertices)]
+      (let [userobject (.getValue cell)]
+        (if (and (.isVertex cell)
+                 (instance? ArgumentCell userobject)
+                 (= (:arg userobject) arg))
+          cell
+          (recur (rest vertices)))))))
+
 (defn select-statement [component stmt stmt-fmt]
   (let [component (:component component)
         graph (.getGraph component)]
     (when-let [cell (find-statement-cell graph stmt)]
+      (.setSelectionCell graph cell)
+      (.scrollCellToVisible component cell))))
+
+(defn select-argument [component arg]
+  (let [component (:component component)
+        graph (.getGraph component)]
+    (when-let [cell (find-argument-cell graph arg)]
       (.setSelectionCell graph cell)
       (.scrollCellToVisible component cell))))
 

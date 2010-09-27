@@ -234,6 +234,11 @@
    [this path ag arg weight]
    (when-let [component (get-component path (:id ag))]
      (change-argument-weight component ag arg weight)))
+
+  (argument-direction-changed
+   [this path ag arg direction]
+   (when-let [component (get-component path (:id ag))]
+     (change-argument-direction component ag arg direction)))
   
   (ask-file-to-save
    [this-view descriptions suggested]
@@ -451,7 +456,12 @@
   
   (add-argument-edit-weight-listener
    [this f args]
-   (apply add-change-listener *weightSpinner* f args))
+   (register-argument-weight-listener f args))
+
+  (add-argument-edit-direction-listener
+   [this f args]
+   (apply add-action-listener *proButton* f args)
+   (apply add-action-listener *conButton* f args))
   
   (add-undo-button-listener
    [this f args]
@@ -495,6 +505,10 @@
    [this path id stmt stmt-fmt]
    (add-stmt-search-result path id stmt stmt-fmt))
 
+  (display-argument-search-result
+   [this path id arg title]
+   (add-arg-search-result path id arg title))
+
   (display-search-state
    [this inprogress]
    (set-search-state inprogress))
@@ -505,6 +519,12 @@
    (open-graph this path ag stmt-fmt)
    (let [component (get-component path (:id ag))]
      (select-statement component stmt stmt-fmt)))
+
+  (display-argument
+   [this path ag arg stmt-fmt]
+   (open-graph this path ag stmt-fmt)
+   (let [component (get-component path (:id ag))]
+     (select-argument component arg)))
 
   (set-busy
    [this isbusy]
