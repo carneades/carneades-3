@@ -8,7 +8,7 @@
         carneades.engine.lkif.import
         carneades.engine.lkif.export
         [carneades.engine.shell :only (search-statements)]
-        carneades.engine.argument
+        (carneades.engine argument argument-edit)
         [carneades.engine.statement :only (statement-formatted)]
         carneades.editor.model.docmanager
         ;; only the view.viewprotocol namespace is allowed to be imported

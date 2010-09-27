@@ -9,7 +9,7 @@
         ;; no imports of carneades.engine.* are allowed here
         ;;
         carneades.ui.diagram.graphvizviewer
-        carneades.mapcomponent.map
+        (carneades.mapcomponent map map-edit)
         carneades.editor.view.menu.mainmenu
         carneades.editor.utils.swing
         (carneades.editor.view search viewprotocol swinguiprotocol tabs tree context)
