@@ -12,8 +12,8 @@
 (defvar- *statementTextArea* (.statementTextArea *statementProperties*))
 (defvar *statementStatusComboBox* (.statusComboBox *statementProperties*))
 (defvar *statementProofstandardComboBox* (.proofstandardComboBox *statementProperties*))
-(defvar- *acceptableCheckBox* (.acceptableCheckBox *statementProperties*))
-(defvar- *complementacceptableCheckBox* (.complementacceptableCheckBox *statementProperties*))
+(defvar- *acceptableText* (.acceptableText *statementProperties*))
+(defvar- *complementAcceptableText* (.complementAcceptableText *statementProperties*))
 
 (defvar- *mapTitleText* (.mapTitleText *statementProperties*))
 (defvar- *pathText* (.pathText *statementProperties*))
@@ -36,20 +36,8 @@
 
 (defvar- *statement-edit-listeners* (atom ()))
 
-(defn- acceptable-checkbox-listener [event]
-  ;; there is no read-only checkboxes in Swing, we cancel the change to make
-  ;; a read-only-like checkbox:
-  (.setSelected *acceptableCheckBox* (not (.isSelected *acceptableCheckBox*))))
-
-(defn- complementacceptable-checkbox-listener [event]
-  (.setSelected *complementacceptableCheckBox*
-                (not (.isSelected *complementacceptableCheckBox*))))
-
 (defn init-statement-properties []
-  (StatementPropertiesView/reset)
-  (add-action-listener *acceptableCheckBox* acceptable-checkbox-listener)
-  (add-action-listener *complementacceptableCheckBox*
-                       complementacceptable-checkbox-listener))
+  (StatementPropertiesView/reset))
 
 (defvar- *previous-statement-content* (atom {}))
 
@@ -78,8 +66,12 @@
                                         :previous-proofstandard proofstandard})
   (.setSelectedItem *statementStatusComboBox* (get *statuses* status))
   (.setSelectedItem *statementProofstandardComboBox* (get *proofstandards* proofstandard))
-  (.setSelected *acceptableCheckBox* acceptable)
-  (.setSelected *complementacceptableCheckBox* complement-acceptable)
+  (if acceptable
+    (.setText *acceptableText* "Acceptable")
+    (.setText *acceptableText* "Not Acceptable"))
+  (if complement-acceptable
+    (.setText *complementAcceptableText* "Complement Acceptable")
+    (.setText *complementAcceptableText* "Complement Not Acceptable"))
   (set-enter-edit-statement)
   *statementProperties*)
 

@@ -10,29 +10,23 @@
   (:import (java.awt.event KeyEvent KeyAdapter)
            (javax.swing JScrollPane table.DefaultTableModel KeyStroke JTable)
            (carneades.editor.uicomponents EditorApplicationView SearchOptionsDialog)
-           (carneades.editor.view.swinguiprotocol StatementInfo)))
+           (carneades.editor.view.swinguiprotocol StatementInfo ArgumentInfo)))
 
 (defvar- *frame* (EditorApplicationView/instance))
 
 (defvar- *searchButton* (.searchButton *frame*))
 (defvar- *searchComboBox* (.searchComboBox *frame*))
 
-;; (defvar- *optionsPanel* (.optionsPanel *frame*))
 (defvar- *optionsButton* (.optionsButton *frame*))
 (defvar- *searchPanel* (.searchPanel *frame*))
 (defvar- *searchScrollPane* (.searchScrollPane *frame*))
 (defvar- *searchProgressBar* (.searchProgressBar *frame*))
-;; (defvar- *searchInCurrentGraph* (.searchInCurrentGraphButton *frame*))
 
 (defvar *searchResultTable* (.searchResultTable *frame*))
-;; (defvar- *modelTable* (.getModel *searchResultTable*))
 (defvar- *modelTable* (proxy [DefaultTableModel] []
                         (isCellEditable
                          [r c]
                          false)))
-
-;; (defvar- *showOptionsMessage* "Show options")
-;; (defvar- *hideOptionsMessage* "Hide options")
 
 (defvar- *searchActiveMessage* "Stop search")
 (defvar- *searchInactiveMessage* "Search")
@@ -58,7 +52,9 @@
 
 (defvar- *search-button-listeners* (atom ()))
 
-(defvar- *search-options* (atom {:search-in :current-graph}))
+(defvar- *search-options* (atom {:search-for-statements true
+                                 :search-for-arguments true
+                                 :search-in :current-graph}))
 
 (defn- showoptions-button-listener [event]
   (let [dialog (SearchOptionsDialog. *frame* true)
@@ -66,17 +62,24 @@
         okbutton (.okbutton dialog)
         searchincurrentgraph (.searchInCurrentGraphButton dialog)
         searchalllkiffiles (.searchInAllLkifFilesButton dialog)
-        {:keys [search-in]} (deref *search-options*)]
+        searchforstatements (.searchForStatementsCheckBox dialog)
+        searchforarguments (.searchForArgumentsCheckBox dialog)
+        {:keys [search-in search-for-arguments search-for-statements]}
+        (deref *search-options*)]
     (add-action-listener cancelbutton (fn [event] (.dispose dialog)))
     (add-action-listener okbutton
                          (fn [event]
                            (swap! *search-options* assoc
                                   :search-in (if (.isSelected searchincurrentgraph)
                                                :current-graph
-                                               :all-lkif-files))
+                                               :all-lkif-files)
+                                  :search-for-statements (.isSelected searchforstatements)
+                                  :search-for-arguments (.isSelected searchforarguments))
                            (.dispose dialog)))
     (.setSelected searchincurrentgraph (= search-in :current-graph))
     (.setSelected searchalllkiffiles (= search-in :all-lkif-files))
+    (.setSelected searchforstatements search-for-statements)
+    (.setSelected searchforarguments search-for-arguments)
     (.setLocationRelativeTo dialog *frame*)
     (.setVisible dialog true)))
 
@@ -179,6 +182,11 @@
 
 (defn add-stmt-search-result [path id stmt stmt-fmt]
   (let [obj (StatementInfo. path id stmt stmt-fmt)]
+    (.insertRow *modelTable* (.getRowCount *modelTable*)
+                (to-array [obj]))))
+
+(defn add-arg-search-result [path id arg title]
+  (let [obj (ArgumentInfo. path id arg title)]
     (.insertRow *modelTable* (.getRowCount *modelTable*)
                 (to-array [obj]))))
 

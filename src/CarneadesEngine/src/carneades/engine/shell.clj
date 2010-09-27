@@ -8,7 +8,7 @@
         carneades.engine.utils
         [carneades.engine.abduction :as abd]
         carneades.engine.argument-search
-        [carneades.engine.argument :only (node-statement get-nodes)]
+        [carneades.engine.argument :only (node-statement get-nodes arguments)]
         [carneades.engine.search :only (depth-first resource search traverse)]
         carneades.ui.diagram.viewer)
   (:require [carneades.engine.argument :as arg]))
@@ -128,6 +128,13 @@
 ;; (defn show1 [query engine]
 ;;   (show query engine false))
 
+(defn- search-graph [pred objects]
+  (let [n-ahead 100]
+   (seque n-ahead (keep (fn [obj]
+                          (when (pred obj)
+                            obj))
+                        objects))))
+
 (defn search-statements [ag stmt-fmt search-content options]
   "Produces a sequence of statements satisfying the search options.
    The sequence is produced in the background with seque. The 
@@ -135,12 +142,19 @@
    search
 
    The keys for options are ..."
-  (let [n-ahead 100
-        to-search (.toLowerCase search-content)
+  (let [to-search (.toLowerCase search-content)
         pred (fn [stmt]
                (let [formatted (stmt-fmt stmt)]
-                 (.contains (.toLowerCase formatted) to-search)))]
-    (seque n-ahead (keep (fn [stmt]
-                           (when (pred stmt)
-                             stmt))
-                         (map node-statement (get-nodes ag))))))
+                 (.contains (.toLowerCase formatted) to-search)))
+        stmts (map node-statement (get-nodes ag))]
+    (search-graph pred stmts)))
+
+(defn search-arguments [ag search-content options]
+  "See search-statements"
+  (let [to-search (.toLowerCase search-content)
+        pred (fn [arg]
+               (let [title (:title arg)]
+                 (if-not (nil? title)
+                   (.contains (.toLowerCase title) to-search)
+                   false)))]
+    (search-graph pred (arguments ag))))

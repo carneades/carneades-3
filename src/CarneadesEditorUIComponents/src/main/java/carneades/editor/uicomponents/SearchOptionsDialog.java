@@ -34,8 +34,6 @@ public class SearchOptionsDialog extends javax.swing.JDialog {
 
         searchInButtonGroup = new javax.swing.ButtonGroup();
         searchForPanel = new javax.swing.JPanel();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jCheckBox4 = new javax.swing.JCheckBox();
         searchInPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -47,27 +45,27 @@ public class SearchOptionsDialog extends javax.swing.JDialog {
 
         searchForPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Search for:"));
 
-        jCheckBox3.setSelected(true);
-        jCheckBox3.setText("Statements");
+        searchForStatementsCheckBox.setSelected(true);
+        searchForStatementsCheckBox.setText("Statements");
 
-        jCheckBox4.setSelected(true);
-        jCheckBox4.setText("Arguments");
+        searchForArgumentsCheckBox.setSelected(true);
+        searchForArgumentsCheckBox.setText("Arguments");
 
         javax.swing.GroupLayout searchForPanelLayout = new javax.swing.GroupLayout(searchForPanel);
         searchForPanel.setLayout(searchForPanelLayout);
         searchForPanelLayout.setHorizontalGroup(
             searchForPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(searchForPanelLayout.createSequentialGroup()
-                .addComponent(jCheckBox3)
+                .addComponent(searchForStatementsCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jCheckBox4)
+                .addComponent(searchForArgumentsCheckBox)
                 .addContainerGap(93, Short.MAX_VALUE))
         );
         searchForPanelLayout.setVerticalGroup(
             searchForPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(searchForPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(jCheckBox3)
-                .addComponent(jCheckBox4))
+                .addComponent(searchForStatementsCheckBox)
+                .addComponent(searchForArgumentsCheckBox))
         );
 
         searchInPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Search in:"));
@@ -151,10 +149,10 @@ public class SearchOptionsDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public final javax.swing.JButton cancelbutton = new javax.swing.JButton();
-    private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JCheckBox jCheckBox4;
     public final javax.swing.JButton okbutton = new javax.swing.JButton();
+    public final javax.swing.JCheckBox searchForArgumentsCheckBox = new javax.swing.JCheckBox();
     private javax.swing.JPanel searchForPanel;
+    public final javax.swing.JCheckBox searchForStatementsCheckBox = new javax.swing.JCheckBox();
     public final javax.swing.JRadioButton searchInAllLkifFilesButton = new javax.swing.JRadioButton();
     private javax.swing.ButtonGroup searchInButtonGroup;
     public final javax.swing.JRadioButton searchInCurrentGraphButton = new javax.swing.JRadioButton();

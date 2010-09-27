@@ -20,11 +20,11 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane2" alignment="0" pref="294" max="32767" attributes="0"/>
-                  <Component id="jSeparator1" alignment="1" pref="294" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="jScrollPane2" alignment="0" pref="293" max="32767" attributes="0"/>
+                  <Component id="jSeparator1" alignment="1" pref="293" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
@@ -32,23 +32,26 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="pathText" pref="239" max="32767" attributes="0"/>
-                          <Component id="mapTitleText" alignment="1" pref="239" max="32767" attributes="0"/>
+                          <Component id="pathText" pref="238" max="32767" attributes="0"/>
+                          <Component id="mapTitleText" alignment="1" pref="238" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="statusComboBox" pref="236" max="32767" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="acceptableCheckBox" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="complementacceptableCheckBox" min="-2" max="-2" attributes="0"/>
+                      <Component id="statusComboBox" pref="235" max="32767" attributes="0"/>
                   </Group>
                   <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="proofstandardComboBox" alignment="0" pref="294" max="32767" attributes="0"/>
+                  <Component id="proofstandardComboBox" alignment="0" pref="293" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="complementAcceptableText" alignment="1" pref="196" max="32767" attributes="1"/>
+                          <Component id="acceptableText" alignment="0" pref="196" max="32767" attributes="1"/>
+                      </Group>
+                  </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -81,11 +84,13 @@
               <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="proofstandardComboBox" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="acceptableCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="complementacceptableCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="acceptableText" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="complementAcceptableText" min="-2" pref="27" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
@@ -122,22 +127,6 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Status:"/>
       </Properties>
-    </Component>
-    <Component class="javax.swing.JCheckBox" name="acceptableCheckBox">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Acceptable"/>
-      </Properties>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
-      </AuxValues>
-    </Component>
-    <Component class="javax.swing.JCheckBox" name="complementacceptableCheckBox">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Complement acceptable"/>
-      </Properties>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
-      </AuxValues>
     </Component>
     <Component class="javax.swing.JComboBox" name="statusComboBox">
       <Properties>
@@ -214,5 +203,32 @@
         </Component>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JLabel" name="jLabel6">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Acceptability:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="acceptableText">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="de" green="de" red="de" type="rgb"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Acceptable"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JTextField" name="complementAcceptableText">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="de" green="de" red="de" type="rgb"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Complement Acceptable"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
+      </AuxValues>
+    </Component>
   </SubComponents>
 </Form>

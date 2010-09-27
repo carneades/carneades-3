@@ -39,8 +39,12 @@
   (display-search-state [this inprogress])
   (display-statement-search-result
    [this path id stmt stmt-fmt])
+  (display-argument-search-result
+   [this path id arg title])
   (display-statement
    [this path ag stmt stmt-fmt])
+  (display-argument
+   [this path ag arg stmt-fmt])
   (statement-content-changed
    [this path ag oldstmt newstmt])
   (statement-status-changed
@@ -52,6 +56,7 @@
   (premise-type-changed [this path ag oldarg arg pm])
   (argument-title-changed [this path ag arg title])
   (argument-weight-changed [this path ag arg weight])
+  (argument-direction-changed [this path ag arg direction])
   
   (set-busy
    [this isbusy])

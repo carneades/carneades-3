@@ -410,11 +410,11 @@
    ([ag s]
       (if-let [n (get-node ag s)]
         (get-arguments ag (seq (:conclusion-of n)))
-        '()))
+        ()))
    ([ag]
       (if-let [args (vals (:arguments ag))]
         args
-        '())))
+        ())))
 
 (defn pro-arguments [ag s]
   "argument-graph statement  -> (seq-of argument)"
