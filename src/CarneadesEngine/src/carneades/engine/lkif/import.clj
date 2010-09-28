@@ -358,6 +358,7 @@
       conclusion        ; conclusion
       premises          ; premises
       scheme            ; scheme
+      title             ; title
       )))
 
 (defn parse-arguments
