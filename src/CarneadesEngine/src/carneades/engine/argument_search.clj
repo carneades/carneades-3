@@ -10,7 +10,7 @@
         carneades.engine.statement
         clojure.contrib.pprint
         carneades.ui.diagram.viewer ; for debugging
-        clojure.contrib.profile ; for testing
+        ;clojure.contrib.profile ; for testing
     )
   (:require [carneades.engine.argument :as arg]
             [carneades.engine.search :as search]))
@@ -248,7 +248,7 @@
                                      ;dummy-states (binding [*out* (new PrintWriter "test.txt")] (generator goal state1))
                                      ]
                                  ;(println "generating for goal:" goal (count dummy-states) generator)
-                                 (prof :applyingGenerator (generator goal state1))))
+                                 (generator goal state1)))
                              (next-goals state1))))))
 
 ;; type generator : statement state -> (stream-of response)

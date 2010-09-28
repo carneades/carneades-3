@@ -4,7 +4,7 @@
     [clojure.xml :as xml])
   (:use
     clojure.contrib.def
-    clojure.contrib.profile
+    ;clojure.contrib.profile
     carneades.engine.owl.reasoner
     carneades.engine.owl.rule
     carneades.engine.rule
@@ -64,7 +64,7 @@
           documentIRI (IRI/create (path->uri (str pre-path path))),
           ontology (. manager loadOntology documentIRI),
           reasoner (. (new Reasoner$ReasonerFactory) createReasoner ontology)]
-      (prof :prepareReasoner (. reasoner prepareReasoner))
+      (. reasoner prepareReasoner)
       (println "ontology loaded")
       ;(println "direct imports" (count (.getDirectImports manager ontology)))
       ;(println "processing goal:" wff)

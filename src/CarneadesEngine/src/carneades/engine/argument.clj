@@ -8,7 +8,7 @@
         clojure.set
         clojure.contrib.def
         clojure.contrib.pprint
-        clojure.contrib.profile ; for testing
+        ;clojure.contrib.profile ; for testing
         carneades.engine.utils
         carneades.engine.statement
         carneades.engine.proofstandard))
@@ -686,7 +686,7 @@
 
 (defn unite-argument-graphs
   [l]
-  (prof :uniteGraphs (assoc (reduce unite-graphs *empty-argument-graph* l) :id (gensym "a"))))
+  (assoc (reduce unite-graphs *empty-argument-graph* l) :id (gensym "a")))
 
 (defn depth-in
   [n ag]
