@@ -135,6 +135,16 @@
                             obj))
                         objects))))
 
+(defn- stmt-pred [stmt stmt-fmt to-search]
+  (let [formatted (stmt-fmt stmt)]
+    (.contains (.toLowerCase formatted) to-search)))
+
+(defn- arg-pred [arg to-search]
+  (let [title (:title arg)]
+    (if-not (nil? title)
+      (.contains (.toLowerCase title) to-search)
+      false)))
+
 (defn search-statements [ag stmt-fmt search-content options]
   "Produces a sequence of statements satisfying the search options.
    The sequence is produced in the background with seque. The 
@@ -143,18 +153,19 @@
 
    The keys for options are ..."
   (let [to-search (.toLowerCase search-content)
-        pred (fn [stmt]
-               (let [formatted (stmt-fmt stmt)]
-                 (.contains (.toLowerCase formatted) to-search)))
         stmts (map node-statement (get-nodes ag))]
-    (search-graph pred stmts)))
+    (search-graph #(stmt-pred % stmt-fmt to-search) stmts)))
 
 (defn search-arguments [ag search-content options]
   "See search-statements"
+  (let [to-search (.toLowerCase search-content)]
+    (search-graph #(arg-pred % to-search) (arguments ag))))
+
+(defn search-all [ag stmt-fmt search-content options]
+  "returns a seq of the form ((:stmt stmt1) (:arg arg1) (:stmt stmt2) ...)"
   (let [to-search (.toLowerCase search-content)
-        pred (fn [arg]
-               (let [title (:title arg)]
-                 (if-not (nil? title)
-                   (.contains (.toLowerCase title) to-search)
-                   false)))]
-    (search-graph pred (arguments ag))))
+        stmts (search-statements ag stmt-fmt search-content options)
+        args (search-arguments ag search-content options)]
+    (interleaveall (partition 2 (interleave (repeat :stmt) stmts))
+                   (partition 2 (interleave (repeat :arg) args)))))
+
