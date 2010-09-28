@@ -6,7 +6,7 @@
     [carneades.engine.argument-search :as as] ; for testing only
     )   
   (:use
-    clojure.contrib.profile ; for testing
+    ;clojure.contrib.profile ; for testing
     carneades.engine.statement
     carneades.engine.unify
     [carneades.engine.argument :as arg])
@@ -129,8 +129,7 @@
     (let [manager (OWLManager/createOWLOntologyManager),          
           subs (:substitutions state),
           wff (subs (statement-wff subgoal))]
-      (prof :resonerDispatch
-        (cond
+      (cond
         (and
           (seq? wff)
           (= (count wff) 2)
@@ -146,4 +145,4 @@
         (and
           (seq? wff)
           (= (count wff) 3)
-          (not (variable? (nth wff 2)))) (single-property-instance-to-responses reasoner manager wff subs ontology))))))
+          (not (variable? (nth wff 2)))) (single-property-instance-to-responses reasoner manager wff subs ontology)))))

@@ -4,7 +4,7 @@
 (ns carneades.engine.shell
   (:use clojure.set
         clojure.contrib.pprint
-    clojure.contrib.profile
+    ;clojure.contrib.profile
         carneades.engine.utils
         [carneades.engine.abduction :as abd]
         carneades.engine.argument-search
@@ -61,8 +61,8 @@
 (defn construct-arguments [goal max-nodes ag generators]
   "integer integer argument-graph (seq-of generator) -> statement ->
 (seq-of state)"  
-  (prof :constructArguments (find-best-arguments traverse depth-first max-nodes 1
-    (initial-state goal ag) generators)))
+  (find-best-arguments traverse depth-first max-nodes 1
+    (initial-state goal ag) generators))
 
 (defn construct-arguments-abductively
   ([goal max-nodes max-turns ag generators]
@@ -74,10 +74,10 @@
       1 (unite-solutions (construct-arguments goal max-nodes ag generators)),
       (let [ag2 (unite-solutions (construct-arguments goal max-nodes ag generators)),
             asmpts (abd/assume-decided-statements ag2),
-            new-goals (prof :abduction (apply union
+            new-goals (apply union
                     (if (= viewpoint :con)
                         (abd/statement-in-label ag2 asmpts main-issue)
-                        (abd/statement-out-label ag2 asmpts main-issue)))),
+                        (abd/statement-out-label ag2 asmpts main-issue))),
             goals (difference new-goals applied-goals),
             new-vp (if (= viewpoint :pro)
                      :con
