@@ -17,7 +17,7 @@
   ([rb ag max-nodes max-turns critical-questions]
      (make-engine* max-nodes max-turns ag
                    (list (generate-arguments-from-rules rb critical-questions)
-                         builtins))))
+                         (builtins)))))
 
 (deftest test-engine-01-fact
   (let [rb (rulebase)

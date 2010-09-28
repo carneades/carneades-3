@@ -182,6 +182,7 @@
       nil)))
 
 (defn builtins
+  ([] (builtins '()))
   ([generators]
     "(list-of generator) -> (statement state -> (seq-of response))"
     (fn [goal state]
