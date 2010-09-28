@@ -238,6 +238,9 @@
         arg-graphs (arg-graphs->sxml (:ags data))]
     [:lkif sources theory arg-graphs]))
 
+
+; can throw:
+;   - java.io.Exception
 (defn lkif-export
   ([export-data]
     (binding [prx/*prxml-indent* 3]
@@ -247,49 +250,3 @@
     (io/write-lines port (list (lkif-export export-data)))
     )
   )
-
-
-; ------------------------------
-; testing
-
-;(def source1 {:element 'a :uri "http://test/"})
-;(def source2 {:element 'b :uri "http://test/"})
-;
-;(def sources (list source1 source2))
-;
-;(def c '(p a b))
-;
-;(def p1 '(q a))
-;
-;(def p2 {:term '(hasAge Peter 3), :form "%s is %s years old."})
-;
-;(def p3 '(r b))
-;
-;(def p4 '(not (s a)))
-;
-;(defargument a1 (pro c
-;                  (pm p1)
-;                  (am p2)
-;                  (ex p3)))
-;
-;(defargument a2 (con p3
-;                  (pm p4)))
-;
-;(def ag1 (argument-graph [a1 a2]))
-;(def ag2 (accept ag1 (list p1 p4)))
-;
-;(def rb1
-;     (rulebase
-;
-;      (rule r1
-;            (if (or
-;                  (and (movable ?c)
-;                     (unless (money ?c)))
-;                  (p ?x))
-;              (goods ?c)))
-;
-;      (assertions r2 (s a) (r a b))
-;
-;      (rule* r3 (if (coins ?x) (and (r ?x) (money ?x))))))
-;
-;(println (lkif-export {:ag (list ag1), :sources sources, :rb rb1}))

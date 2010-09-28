@@ -425,6 +425,10 @@
     (map parse-arg-graph (xml-> lkif-arg-graphs :argument-graph))
     (argument-graph)))
 
+; can throw:
+;    - java.lang.IllegalArgumentException
+;    - org.xml.sax.SAXException
+;    - java.io.IOException
 (defn lkif-import
   "Reads an lkif-file from path and returns a lkif-struct"
   ([filename] (lkif-import filename '()))
@@ -441,50 +445,6 @@
            rb (:rb theory-rb_ag),
            ag (:ag theory-rb_ag)
            ]
-      ;(println "lkif-sources: " lkif-sources)
-      ;(println "source-list: " source-list)
-      ;(println "lkif-theory: " lkif-theory)
-      ;(println "lkif-arg-graphs: " lkif-arg-graphs)
-      ;(println "theory-rb-ag: " theory-rb_ag)
       {:sources source-list :rb rb :ags (concat ags ag)}
       )))
 
-;(def test-path "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\examples\\Import Test\\test1.xml")
-;(def p "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\examples\\argument-map-tests\\argument-map-tests.xml")
-;(def p "C:\\Users\\stb\\Desktop\\big.xml")
-;(def i (lkif-import test-path))
-;
-;(def e1 (make-engine 50 1 (list (generate-arguments-from-rules (:rb i) '())
-;                                                   builtins)))
-;
-;(def goal (list (symbol "http://www.carneades/owl1.owl#a") '?x))
-;
-;(def sols (e1 goal))
-;(def lkif-args (xml1-> (zip/xml-zip (xml/parse test-path)) :argument-graphs))
-;(def args (xml-> lkif-args :argument-graph))
-;(def arg1 (first args))
-;(def lkif-stmts (xml1-> arg1 :statements))
-;(def lkif-stmt* (xml-> lkif-stmts :statement))
-;(def lkif-stmt1 (first lkif-stmt*))
-;
-;(def lkif-args (xml1-> arg1 :arguments))
-;(def stmt-map (parse-statements lkif-stmts))
-;
-;(def pr1 (first (rest (rest (:premises (first (parse-arguments lkif-args stmt-map)))))))
-
-;(def t (xml-> theo :rules :rule))
-
-;(def s (first (filter/children-auto (xml1-> (first t) :body))))
-
-;(def i (lkif-import test-path))
-
-;(defn engine [max-nodes max-turns critical-questions]
-;  (make-engine* max-nodes max-turns (argument-graph)
-;                (list (generate-arguments-from-rules i critical-questions)
-;                      builtins)))
-
-;(def path1 "src/carneades/examples/open_source_licensing/impact-kb.xml")
-;(def path2 "src/carneades/examples/open_source_licensing/oss-rules.xml")
-;(def path3 "src/carneades/examples/open_source_licensing/impact-licensing.owl")
-;
-;(def i (lkif-import path1))
