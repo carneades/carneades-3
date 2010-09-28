@@ -203,12 +203,15 @@
                               ;)
                             'priority
                             (ex
-                             (struct fatom
-                              "Rule %s has priority over %s respect to %s."
-                              `(~'priority ~(genvar) ~rid ~s)))
+                             ;(struct fatom
+                              ;"Rule %s has priority over %s respect to %s."
+                              `(~'priority ~(genvar) ~rid ~s))
+                              ;)
                             'valid
-                            (ex `(~'not ~(struct fatom "Rule %s is valid."
-                                                 `(~'valid ~rid))))))]
+                            (ex `(~'not ;~(struct fatom "Rule %s is valid."
+                                                 `(~'valid ~rid)
+                                         ;   )
+                                   ))))]
     (if strict
       '()
       ;; filter out unknown questions
