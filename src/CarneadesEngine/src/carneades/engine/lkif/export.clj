@@ -235,7 +235,7 @@
   [data]
   (let [sources (sources->sxml (:sources data)),
         theory (rulebase->sxml (:rb data)),
-        arg-graphs (arg-graphs->sxml (:ag data))]
+        arg-graphs (arg-graphs->sxml (:ags data))]
     [:lkif sources theory arg-graphs]))
 
 (defn lkif-export
