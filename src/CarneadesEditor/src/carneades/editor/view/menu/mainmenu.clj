@@ -18,7 +18,7 @@
 
 (defvar- *undoButton* (.undoButton *viewinstance*))
 (defvar- *redoButton* (.redoButton *viewinstance*))
-
+(defvar- *refreshButton* (.refreshButton *viewinstance*))
 
 (defvar- *closeFileMenuItem* (.closeFileMenuItem *viewinstance*))
 (defvar *saveFileMenuItem* (.saveFileMenuItem *viewinstance*))
@@ -31,6 +31,7 @@
 (defvar *redoEditMenuItem* (.redoEditMenuItem *viewinstance*))
 
 (defn- set-enable-diagram-buttons-and-menus [state]
+  (.setEnabled *refreshButton* state)
   (.setEnabled *zoomInButton* state)
   (.setEnabled *zoomOutButton* state)
   (.setEnabled *zoomResetButton* state)

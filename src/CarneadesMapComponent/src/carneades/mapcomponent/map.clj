@@ -6,7 +6,7 @@
         carneades.mapcomponent.map-styles
         carneades.engine.argument
         carneades.engine.statement)
-  (:import javax.swing.SwingConstants
+  (:import (javax.swing SwingConstants SwingUtilities)
            (com.mxgraph.util mxConstants mxUtils mxCellRenderer mxPoint mxEvent
                              mxEventSource$mxIEventListener mxUndoManager)
            com.mxgraph.swing.util.mxGraphTransferable
@@ -17,12 +17,12 @@
            com.mxgraph.layout.mxStackLayout
            com.mxgraph.swing.mxGraphComponent
            com.mxgraph.swing.mxGraphOutline
-           java.awt.event.MouseWheelListener
            java.awt.print.PrinterJob
            java.awt.Toolkit
            java.io.ByteArrayOutputStream
            javax.imageio.ImageIO
            javax.swing.ImageIcon
+           (java.awt.event MouseAdapter MouseWheelListener)
            (java.awt.datatransfer Transferable DataFlavor)
            (java.awt Color BasicStroke)))
 
@@ -110,7 +110,7 @@
     (adjust-size v)
     v))
 
-(defn- insert-edge [^mxGraph g parent userobject begin end style]
+(defn insert-edge [^mxGraph g parent userobject begin end style]
   (.insertEdge g parent nil userobject begin end style))
 
 (defvar- *ymargin* 10)
@@ -365,12 +365,10 @@
     {:component graphcomponent :undomanager undomanager}))
 
 (defn- find-vertex [graph pred]
-  (loop [vertices (seq (.getChildVertices graph
-                                          (.getDefaultParent graph)))]
-    (when-let [cell (first vertices)]
-      (if (pred cell)
-        cell
-        (recur (rest vertices))))))
+  (let [vertices (seq (.getChildVertices
+                       graph
+                       (.getDefaultParent graph)))]
+    (first (filter pred vertices))))
 
 (defn find-statement-cell [graph stmt]
   (letfn [(stmt-pred
@@ -380,12 +378,12 @@
                   (= (:stmt userobject) stmt))))]
     (find-vertex graph stmt-pred)))
 
-(defn find-argument-cell [graph arg]
+(defn find-argument-cell [graph argid]
   (letfn [(arg-pred
            [cell]
            (let [userobject (.getValue cell)]
             (and (instance? ArgumentCell userobject)
-                 (= (:arg userobject) arg))))]
+                 (= (:id (:arg userobject)) argid))))]
     (find-vertex graph arg-pred)))
 
 (defn select-statement [component stmt stmt-fmt]
@@ -398,7 +396,7 @@
 (defn select-argument [component arg]
   (let [component (:component component)
         graph (.getGraph component)]
-    (when-let [cell (find-argument-cell graph arg)]
+    (when-let [cell (find-argument-cell graph (:id arg))]
       (.setSelectionCell graph cell)
       (.scrollCellToVisible component cell))))
 
@@ -459,3 +457,40 @@
         cells (.getChildCells graph (.getDefaultParent graph) true true)
         selectionmodel (.getSelectionModel graph)]
     (.setCells selectionmodel cells)))
+
+(defn add-right-click-listener [graphcomponent listener]
+  (let [component (:component graphcomponent)
+        graphcontrol (.getGraphControl component)]
+    (.addMouseListener graphcontrol
+                       (proxy [MouseAdapter] []
+                         (mouseReleased
+                          [event]
+                          (.mousePressed this event))
+    
+                         (mousePressed
+                          [event]
+                          (when (.isPopupTrigger event)
+                            (let [pt (SwingUtilities/convertPoint
+                                      (.getComponent event)
+                                      (.getPoint event)
+                                      component)]
+                              (when-let [cell (.getCellAt component (.getX pt) (.getY pt))]
+                                (when-let [userobject (.getValue cell)]
+                                  (listener event userobject))))))))))
+
+(defn current-selected-object [graphcomponent]
+  (let [component (:component graphcomponent)]
+    (when-let [cell (.. component getGraph getSelectionCell)]
+      (.getValue cell))))
+
+(defn layout-map [graphcomponent]
+  (let [component (:component graphcomponent)
+        graph (.getGraph component)
+        model (.getModel graph)
+        p (.getDefaultParent graph)
+        vertices (get-vertices graph p)]
+    (try
+        (.. model beginUpdate)
+        (do-layout graph p vertices)
+        (finally
+         (.. model endUpdate)))))
