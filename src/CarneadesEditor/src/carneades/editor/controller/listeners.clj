@@ -5,9 +5,8 @@
   (:use clojure.contrib.def
         clojure.contrib.pprint
         [clojure.contrib.swing-utils :only (do-swing do-swing-and-wait)]
-        carneades.engine.lkif.import
-        carneades.engine.lkif.export
-        [carneades.engine.shell :only (search-statements search-arguments)]
+        (carneades.editor.controller search documents)
+        (carneades.engine.lkif import export)
         (carneades.engine argument argument-edit)
         [carneades.engine.statement :only (statement-formatted)]
         carneades.editor.model.docmanager
@@ -27,33 +26,6 @@
 (defvar- *statement-already-exists* "Statement already exists.")
 (defvar- *file-already-opened* "File %s is already opened.")
 (defvar- *file-format-not-supported* "This file format is not supported.")
-
-(defvar- *docmanager* (create-docmanager))
-(defvar- *dirtyags* (atom #{}))
-
-(defn- set-ag-dirty [path id isdirty]
-  (if isdirty
-    (swap! *dirtyags* conj [path id])
-    (swap! *dirtyags* disj [path id])))
-
-(defn- update-dirty-state [view path ag isdirty]
-  (set-ag-dirty path (:id ag) isdirty)
-  (set-dirty view path ag isdirty))
-
-(defn is-ag-dirty [path id]
-  (contains? (deref *dirtyags*) [path id]))
-
-(defn- get-ag [lkifpath id]
-  (get-section-content *docmanager* [lkifpath :ags id]))
-
-(defn- get-ags-id [lkifpath]
-  (let [agsid (get-all-sectionskeys *docmanager* [lkifpath :ags])]
-    agsid))
-
-(defn- update-undo-redo-statuses [view path id]
-  (prn "update-undo-redo-statuses")
-  (set-can-undo view path id (can-undo-section? *docmanager* [path :ags id]))
-  (set-can-redo view path id (can-redo-section? *docmanager* [path :ags id])))
 
 (defn on-open-file [view]
   (prn "ask-lkif-file-to-open...")
@@ -180,96 +152,6 @@
 (defn on-print-graph [view path id]
   (let [ag (get-ag path id)]
     (print-graph view path ag statement-formatted)))
-
-(defvar- *end-search* (atom false))
-(defvar- *nb-agents-running* (atom 0))
-(defvar- *running-futures* (atom ()))
-
-(defn- do-one-search-stmt [state view]
-  (prn "do one search!")
-  (let [{:keys [results path id]} state]
-    (loop [res results]
-      (let [stmt (first res)]
-        (when-not (or (nil? stmt) (deref *end-search*))
-          (do-swing
-           ;; we are not in the swing thread anymore
-           ;; so we need to use the do-swing macro
-           (display-statement-search-result view path id stmt
-                                            statement-formatted))
-          (recur (rest res)))))))
-
-(defn- do-one-search-arg [state view]
-  (let [{:keys [results path id]} state]
-    (loop [res results]
-      (let [arg (first res)]
-        (when-not (or (nil? arg) (deref *end-search*))
-          (do-swing
-           (display-argument-search-result view path id arg (:title arg)))
-          (recur (rest res)))))))
-
-(defn wait-for-futures []
-  (doseq [future (deref *running-futures*)]
-    (prn "waiting for one future...")
-    (deref future)))
-
-(defn- do-search [view path id text options]
-  (prn "do-search")
-  (let [{:keys [search-in search-for-statements search-for-arguments]} options]
-    (prn "options =")
-    (prn options)
-    (prn "text =")
-    (prn text)
-    (when (and (not (empty? text))
-               (or (and path (= search-in :current-graph))
-                   (= search-in :all-lkif-files)))
-      (prn "Search begins")
-      (wait-for-futures)
-      (prn "Ready to search!")
-      (prn "searchin all lkif?")
-      (prn "keys =")
-      (prn (get-all-sectionskeys *docmanager* [path :ags]))
-      (prn (= search-in :all-lkif-files))
-      (let [path-to-id (if (= search-in :all-lkif-files)
-                         (mapcat (fn [path]
-                                   (partition 2 (interleave
-                                                 (repeat path)
-                                                 (get-ags-id path))))
-                                 (get-all-sectionskeys *docmanager* []))
-                         [[path id]])
-            nb-ids (count path-to-id)]
-        (do-swing-and-wait
-         (display-search-state view true))
-        (reset! *end-search* false)
-        (reset! *nb-agents-running* nb-ids)
-        (let [searchfutures
-              (doall
-               (map (fn [[path id]]
-                       (let [ag (get-ag path id)]
-                         (cond search-for-statements
-                               (let [res (search-statements ag
-                                                            statement-formatted
-                                                            text {})]
-                                 (future (do-one-search-stmt
-                                          {:results
-                                           res
-                                           :path path
-                                           :id id}
-                                          view)))
-
-                               search-for-arguments
-                               (let [res (search-arguments ag text {})]
-                                 (future (do-one-search-arg
-                                          {:results
-                                           res
-                                           :path path
-                                           :id id}
-                                          view))))
-                         )) path-to-id))]
-          (reset! *running-futures* searchfutures)
-          (future (wait-for-futures)
-                  (do-swing-and-wait
-                   (display-search-state view false))
-                  (prn "setting searching state to false")))))))
 
 (defn on-search-begins [view searchinfo]
   (let [text (first searchinfo)

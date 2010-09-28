@@ -364,26 +364,29 @@
     (add-mouse-zoom g graphcomponent)
     {:component graphcomponent :undomanager undomanager}))
 
-(defn find-statement-cell [graph stmt]
+(defn- find-vertex [graph pred]
   (loop [vertices (seq (.getChildVertices graph
                                           (.getDefaultParent graph)))]
     (when-let [cell (first vertices)]
-      (let [userobject (.getValue cell)]
-        (if (and (instance? StatementCell userobject)
-                 (= (:stmt userobject) stmt))
-          cell
-          (recur (rest vertices)))))))
+      (if (pred cell)
+        cell
+        (recur (rest vertices))))))
+
+(defn find-statement-cell [graph stmt]
+  (letfn [(stmt-pred
+           [cell]
+           (let [userobject (.getValue cell)]
+             (and (instance? StatementCell userobject)
+                  (= (:stmt userobject) stmt))))]
+    (find-vertex graph stmt-pred)))
 
 (defn find-argument-cell [graph arg]
-  (loop [vertices (seq (.getChildVertices graph
-                                          (.getDefaultParent graph)))]
-    (when-let [cell (first vertices)]
-      (let [userobject (.getValue cell)]
-        (if (and (.isVertex cell)
-                 (instance? ArgumentCell userobject)
-                 (= (:arg userobject) arg))
-          cell
-          (recur (rest vertices)))))))
+  (letfn [(arg-pred
+           [cell]
+           (let [userobject (.getValue cell)]
+            (and (instance? ArgumentCell userobject)
+                 (= (:arg userobject) arg))))]
+    (find-vertex graph arg-pred)))
 
 (defn select-statement [component stmt stmt-fmt]
   (let [component (:component component)
