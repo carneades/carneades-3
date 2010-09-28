@@ -47,21 +47,21 @@
     ;;           ba-in-label]
     ;;          (statement-in-label ag asm p))
     (is (= (count in-label-p) 2))
-    (is (or (and (= (first in-label-p) (list p))
-                 (= (second in-label-p) (list q)))
-            (and (= (first in-label-p) (list q))
-                 (= (second in-label-p) (list p)))))
+    (is (or (and (= (first in-label-p) #{p})
+                 (= (second in-label-p) #{q}))
+            (and (= (first in-label-p) #{q})
+                 (= (second in-label-p) #{p}))))
 
     (is (= (count in-label-not-p)) 3)
-    (is (contains? in-label-not-p (list (statement-complement p))))
-    (is (contains? in-label-not-p (list r)))
-    (is (contains? in-label-not-p (list u)))
+    (is (contains? in-label-not-p #{(statement-complement p)}))
+    (is (contains? in-label-not-p #{r}))
+    (is (contains? in-label-not-p #{u}))
 
     (is (= (count out-label-p) 1))
-    (is (= (first out-label-p) (list true)))
+    (is (= out-label-p *verum*))
 
     (is (= (count out-label-not-p) 1))
-    (is (= (first out-label-not-p) (list true)))
+    (is (= out-label-not-p *verum*))
 
     ;; (let [x (statement-in-label ag asm p)]
     ;;   (printf "=============\n")

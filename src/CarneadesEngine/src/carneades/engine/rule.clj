@@ -197,9 +197,10 @@
   (letfn [(questionfilter [question]
                           (condp = question
                             'excluded
-                            (ex (struct fatom
-                                        "Rule %s is excluded for %s."
-                                        `(~'excluded ~rid ~s)))
+                            (ex ;(struct fatom
+                                ;        "Rule %s is excluded for %s."
+                                        `(~'excluded ~rid ~s))
+                              ;)
                             'priority
                             (ex
                              (struct fatom

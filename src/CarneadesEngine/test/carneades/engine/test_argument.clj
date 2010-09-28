@@ -65,7 +65,8 @@
             :polarity true,
             :role nil,
             :type :carneades.engine.argument/ordinary-premise}),
-         :scheme nil}
+         :scheme nil
+         :title nil}
         arg))
     (is (= {:id 'arg1,
          :applicable false,
@@ -87,7 +88,8 @@
             :polarity true,
             :role nil,
             :type :carneades.engine.argument/ordinary-premise}),
-         :scheme nil}
+         :scheme nil
+         :title nil}
         arg2))))
 
 (deftest test-nodes
@@ -95,7 +97,7 @@
        {'(father X Y)
         {:statement '(father X Y),
          :status :stated,
-         :standard :dv,
+         :standard :pe,
          :acceptable false,
          :complement-acceptable false,
          :premise-of #{},
@@ -104,7 +106,7 @@
        {{:form "blabla", :term '(mother X Y)}
         {:statement {:form "blabla", :term '(mother X Y)},
          :status :stated,
-         :standard :dv,
+         :standard :pe,
          :acceptable false,
          :complement-acceptable false,
          :premise-of #{},
@@ -112,7 +114,7 @@
         '(mother P A)
         {:statement '(mother P A),
          :status :stated,
-         :standard :dv,
+         :standard :pe,
          :acceptable false,
          :complement-acceptable false,
          :premise-of #{},
@@ -182,7 +184,7 @@
            #{{"Bynkershoek"
               {:statement "Bynkershoek",
                :status :stated,
-               :standard :dv,
+               :standard :pe,
                :acceptable false,
                :complement-acceptable false,
                :premise-of #{'a8},
@@ -191,7 +193,7 @@
               {:statement
                "Pursuit is sufficient to obtain possession when the animal is mortally wounded.",
                :status :stated,
-               :standard :dv,
+               :standard :pe,
                :acceptable true,
                :complement-acceptable false,
                :premise-of #{'a9},
@@ -199,7 +201,7 @@
              {"Actual corporal possession is required."
               {:statement "Actual corporal possession is required.",
                :status :stated,
-               :standard :dv,
+               :standard :pe,
                :acceptable true,
                :complement-acceptable false,
                :premise-of #{'a6},
@@ -207,7 +209,7 @@
              {"Bracton"
               {:statement "Bracton",
                :status :stated,
-               :standard :dv,
+               :standard :pe,
                :acceptable false,
                :complement-acceptable false,
                :premise-of #{'a5},
@@ -216,7 +218,7 @@
               {:statement
                "A bright-line rule creates legal certainty, preserving peace and order.",
                :status :accepted,
-               :standard :dv,
+               :standard :pe,
                :acceptable false,
                :complement-acceptable false,
                :premise-of #{'a14},
@@ -224,7 +226,7 @@
              {"Justinian's Institutes"
               {:statement "Justinian's Institutes",
                :status :stated,
-               :standard :dv,
+               :standard :pe,
                :acceptable false,
                :complement-acceptable false,
                :premise-of #{'a3},
@@ -232,7 +234,7 @@
              {"Foxes are wild animals."
               {:statement "Foxes are wild animals.",
                :status :accepted,
-               :standard :dv,
+               :standard :pe,
                :acceptable false,
                :complement-acceptable false,
                :premise-of #{'a1},
@@ -240,7 +242,7 @@
              {"Fleta"
               {:statement "Fleta",
                :status :stated,
-               :standard :dv,
+               :standard :pe,
                :acceptable false,
                :complement-acceptable false,
                :premise-of #{'a4},
@@ -249,7 +251,7 @@
               {:statement
                "Post, by pursuing the fox,did not acquire property in the fox.",
                :status :stated,
-               :standard :dv,
+               :standard :pe,
                :acceptable true,
                :complement-acceptable false,
                :premise-of #{},
@@ -257,7 +259,7 @@
              {"Grotius"
               {:statement "Grotius",
                :status :stated,
-               :standard :dv,
+               :standard :pe,
                :acceptable false,
                :complement-acceptable false,
                :premise-of #{'a10},
@@ -265,7 +267,7 @@
              {"Post was pursing his livelihood on his own land"
               {:statement "Post was pursing his livelihood on his own land",
                :status :stated,
-               :standard :dv,
+               :standard :pe,
                :acceptable false,
                :complement-acceptable false,
                :premise-of #{'a12},
@@ -273,7 +275,7 @@
              {"Keeble"
               {:statement "Keeble",
                :status :stated,
-               :standard :dv,
+               :standard :pe,
                :acceptable false,
                :complement-acceptable false,
                :premise-of #{'a13},
@@ -282,7 +284,7 @@
               {:statement
                "The owner of land pursuing a livelihood with animals on his land is deemed to have possession of the animals.",
                :status :stated,
-               :standard :dv,
+               :standard :pe,
                :acceptable true,
                :complement-acceptable false,
                :premise-of #{'a12},
@@ -290,7 +292,7 @@
              {"Barbeyrac"
               {:statement "Barbeyrac",
                :status :stated,
-               :standard :dv,
+               :standard :pe,
                :acceptable false,
                :complement-acceptable false,
                :premise-of #{'a11},
@@ -298,7 +300,7 @@
              {"Post did not have possession of the fox."
               {:statement "Post did not have possession of the fox.",
                :status :stated,
-               :standard :dv,
+               :standard :pe,
                :acceptable true,
                :complement-acceptable false,
                :premise-of #{'a1},
@@ -306,7 +308,7 @@
              {"The fox was mortally wounded."
               {:statement "The fox was mortally wounded.",
                :status :stated,
-               :standard :dv,
+               :standard :pe,
                :acceptable false,
                :complement-acceptable false,
                :premise-of #{'a9},
@@ -314,7 +316,7 @@
              {"Peace and order is an important social value."
               {:statement "Peace and order is an important social value.",
                :status :accepted,
-               :standard :dv,
+               :standard :pe,
                :acceptable false,
                :complement-acceptable false,
                :premise-of #{'a14},
@@ -322,7 +324,7 @@
              {"Puffendorf"
               {:statement "Puffendorf",
                :status :stated,
-               :standard :dv,
+               :standard :pe,
                :acceptable true,
                :complement-acceptable false,
                :premise-of #{'a7},
@@ -331,7 +333,7 @@
               {:statement
                "Property rights in wild animals may be acquired only by possession.",
                :status :accepted,
-               :standard :dv,
+               :standard :pe,
                :acceptable false,
                :complement-acceptable false,
                :premise-of #{'a1},
@@ -339,7 +341,7 @@
              {"Pursuit is not sufficientto acquire possession."
               {:statement "Pursuit is not sufficientto acquire possession.",
                :status :stated,
-               :standard :dv,
+               :standard :pe,
                :acceptable true,
                :complement-acceptable false,
                :premise-of #{'a2},
