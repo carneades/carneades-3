@@ -112,3 +112,11 @@
     (let [ag (update-in ag [:arguments (:id arg)] update-arg-direction)
           arg (get-argument ag (:id arg))]
       (update-statement ag (:conclusion arg)))))
+
+(defn add-premise [ag arg stmt]
+  (letfn [(add-premise-to-arg
+           [arg]
+           (update-in arg [:premises] conj (pm stmt)))]
+   (let [ag (update-in ag [:arguments (:id arg)] add-premise-to-arg)
+         newarg (get-argument ag (:id arg))]
+     (update-argument ag newarg))))

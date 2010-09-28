@@ -68,6 +68,7 @@
   (add-undo-button-listener view undo-button-listener [view])
   (add-redo-button-listener view redo-button-listener [view])
   (add-save-button-listener view save-button-listener [view])
+  (add-refresh-button-listener view refresh-button-listener [view])
   (add-copyclipboard-button-listener view copyclipboard-button-listener [view])
   (add-save-filemenuitem-listener view save-filemenuitem-listener [view])
   (add-saveas-filemenuitem-listener view saveas-filemenuitem-listener [view])
@@ -85,8 +86,8 @@
   (register-argument-selection-listener view on-select-argument [view])
   (register-premise-selection-listener view on-select-premise [view])
   (register-search-listener view (fn [inprogress searchinfo]
-                                   (prn "on-register-search-listener$0")
                                    (if inprogress
                                      (on-search-begins view searchinfo)
                                      (on-search-ends view))) [])
+  (register-add-existing-premise-listener view on-add-existing-premise [])
   )
