@@ -1,87 +1,86 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?oxygen RNGSchema="../../schemas/LKIF2.rnc" type="compact"?>
-<lkif version="2.0.4">
-  <argument-graphs>
-    <argument-graph id="NewGraph" title="New Graph">
-      <statements>
-        <statement assumption="true" id="s1" standard="BA" value="unknown">
-          <s>Which Car?</s>
-        </statement>
-        <statement assumption="true" id="s2" standard="BA" value="unknown">
-          <s>Vovlo</s>
-        </statement>
-        <statement assumption="true" id="s3" standard="BA" value="unknown">
-          <s>Porsche</s>
-        </statement>
-        <statement assumption="true" id="s4" standard="BA" value="unknown">
-          <s>safe</s>
-        </statement>
-        <statement assumption="true" id="s5" standard="BA" value="unknown">
-          <s>family car</s>
-        </statement>
-        <statement assumption="true" id="s6" standard="BA" value="unknown">
-          <s>fast</s>
-        </statement>
-        <statement assumption="true" id="s7" standard="BA" value="unknown">
-          <s>expensive</s>
-        </statement>
-        <statement assumption="true" id="s8" standard="BA" value="true">
-          <s>Vovlo's advertising</s>
-        </statement>
-        <statement assumption="true" id="s9" standard="BA" value="true">
-          <s>government statistics</s>
-        </statement>
-      </statements>
-      <arguments>
-        <argument direction="pro" id="a1" scheme="" weight="0.5">
-          <conclusion statement="s1"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s2"/>
-          </premises>
-        </argument>
-        <argument direction="pro" id="a2" scheme="" weight="0.5">
-          <conclusion statement="s1"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s3"/>
-          </premises>
-        </argument>
-        <argument direction="pro" id="a3" scheme="" weight="0.5">
-          <conclusion statement="s2"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s4"/>
-          </premises>
-        </argument>
-        <argument direction="con" id="a4" scheme="" weight="0.5">
-          <conclusion statement="s2"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s5"/>
-          </premises>
-        </argument>
-        <argument direction="pro" id="a5" scheme="" weight="0.5">
-          <conclusion statement="s3"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s6"/>
-          </premises>
-        </argument>
-        <argument direction="con" id="a6" scheme="" weight="0.5">
-          <conclusion statement="s3"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s7"/>
-          </premises>
-        </argument>
-        <argument direction="pro" id="a7" scheme="" weight="0.5199999809265137">
-          <conclusion statement="s4"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s8"/>
-          </premises>
-        </argument>
-        <argument direction="con" id="a8" scheme="" weight="0.5">
-          <conclusion statement="s4"/>
-          <premises>
-            <premise exception="false" polarity="positive" role="" statement="s9"/>
-          </premises>
-        </argument>
-      </arguments>
-    </argument-graph>
-  </argument-graphs>
+
+<lkif>
+   <argument-graphs>
+      <argument-graph id="NewGraph" title="New Graph" main-issue="">
+         <statements>
+            <statement id="s6905" value="unknown" assumption="true" standard="PE">
+               <s>Which Car?</s>
+            </statement>
+            <statement id="s6904" value="unknown" assumption="true" standard="PE">
+               <s>Vovlo</s>
+            </statement>
+            <statement id="s6903" value="unknown" assumption="true" standard="PE">
+               <s>Porsche</s>
+            </statement>
+            <statement id="s6902" value="unknown" assumption="true" standard="PE">
+               <s>safe</s>
+            </statement>
+            <statement id="s6901" value="unknown" assumption="true" standard="PE">
+               <s>family car</s>
+            </statement>
+            <statement id="s6900" value="unknown" assumption="true" standard="PE">
+               <s>fast</s>
+            </statement>
+            <statement id="s6899" value="true" assumption="false" standard="PE">
+               <s>expensive</s>
+            </statement>
+            <statement id="s6898" value="true" assumption="false" standard="PE">
+               <s>Vovlo&apos;s advertising</s>
+            </statement>
+            <statement id="s6897" value="true" assumption="false" standard="PE">
+               <s>government statistics</s>
+            </statement>
+         </statements>
+         <arguments>
+            <argument id="a8" direction="con" scheme="" weight="0.5">
+               <conclusion statement="s6902"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6897"/>
+               </premises>
+            </argument>
+            <argument id="a7" direction="pro" scheme="" weight="0.52">
+               <conclusion statement="s6902"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6898"/>
+               </premises>
+            </argument>
+            <argument id="a6" direction="con" scheme="" weight="0.5">
+               <conclusion statement="s6903"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6899"/>
+               </premises>
+            </argument>
+            <argument id="a5" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s6903"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6900"/>
+               </premises>
+            </argument>
+            <argument id="a4" direction="con" scheme="" weight="0.5">
+               <conclusion statement="s6904"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6901"/>
+               </premises>
+            </argument>
+            <argument id="a3" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s6904"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6902"/>
+               </premises>
+            </argument>
+            <argument id="a2" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s6905"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6903"/>
+               </premises>
+            </argument>
+            <argument id="a1" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s6905"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s6904"/>
+               </premises>
+            </argument>
+         </arguments>
+      </argument-graph>
+   </argument-graphs>
 </lkif>

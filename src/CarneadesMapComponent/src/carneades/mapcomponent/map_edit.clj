@@ -34,32 +34,27 @@
   (let [graph (.getGraph component)
         model (.getModel graph)]
     (let [p (.getDefaultParent graph)]
-      (try
-        (.. model beginUpdate)
-        (doseq [cell (.getChildCells graph p true true)]
-          (let [val (.getValue cell)]
-            (cond (instance? StatementCell val)
-                  (do
-                    (.setValue model cell (update-statement-object val))
-                    (.setStyle model cell (update-statement-style val (.getStyle cell))))
+      (doseq [cell (.getChildCells graph p true true)]
+        (let [val (.getValue cell)]
+          (cond (instance? StatementCell val)
+                (do
+                  (.setValue model cell (update-statement-object val))
+                  (.setStyle model cell (update-statement-style val (.getStyle cell))))
 
-                  (instance? PremiseCell val)
-                  (do
-                    (.setValue model cell (update-premise-object val))
-                    (.setStyle model cell (update-premise-style val (.getStyle cell))))
+                (instance? PremiseCell val)
+                (do
+                  (.setValue model cell (update-premise-object val))
+                  (.setStyle model cell (update-premise-style val (.getStyle cell))))
                   
-                  (and (instance? ArgumentCell val) (.isVertex cell))
-                  (do
-                    (.setValue model cell (update-argument-object val))
-                    (.setStyle model cell (update-argument-style val (.getStyle cell))))
+                (and (instance? ArgumentCell val) (.isVertex cell))
+                (do
+                  (.setValue model cell (update-argument-object val))
+                  (.setStyle model cell (update-argument-style val (.getStyle cell))))
 
-                  (and (instance? ArgumentCell val) (.isEdge cell))
-                  (do
-                    (.setValue model cell (update-argument-object val))
-                    (.setStyle model cell (update-argument-edge-style val (.getStyle cell)))))))
-        (finally
-         (.. model endUpdate)
-         (.refresh component))))))
+                (and (instance? ArgumentCell val) (.isEdge cell))
+                (do
+                  (.setValue model cell (update-argument-object val))
+                  (.setStyle model cell (update-argument-edge-style val (.getStyle cell))))))))))
 
 (defn- do-not-change-style [userobject style]
   style)
@@ -97,28 +92,27 @@
                                #(update-argument-style %1 %2 ag)
                                update-argument-edge-style))))
 
-(defn- change-premise-content-and-style [graphcomponent ag oldarg arg pm]
-  (let [component (:component graphcomponent)]
-    (letfn [(update-premise-object
-             [userobject]
-             (let [cellargid (:id (:arg userobject))
-                   oldpm (:pm userobject)]
-               (if (and (= cellargid (:id oldarg))
-                        (= (:atom pm) (:atom oldpm)))
-                 (PremiseCell. arg pm)
-                 userobject)))
+(defn- change-premise-content-and-style [component ag oldarg arg pm]
+  (letfn [(update-premise-object
+           [userobject]
+           (let [cellargid (:id (:arg userobject))
+                 oldpm (:pm userobject)]
+             (if (and (= cellargid (:id oldarg))
+                      (= (:atom pm) (:atom oldpm)))
+               (PremiseCell. arg pm)
+               userobject)))
             
-            (update-premise-style
-             [userobject oldstyle]
-             (let [oldpm (:pm userobject)
-                   cellarg (:arg userobject)
-                   style (get-edge-style oldpm)
-                   cellargid (:id (:arg userobject))]
-               (if (and (= cellargid (:id oldarg))
-                        (= (:atom pm) (:atom oldpm)))
-                 (get-edge-style pm)
-                 style)))]
-      (change-all-cell-and-styles component ag update-premise-object update-premise-style))))
+          (update-premise-style
+           [userobject oldstyle]
+           (let [oldpm (:pm userobject)
+                 cellarg (:arg userobject)
+                 style (get-edge-style oldpm)
+                 cellargid (:id (:arg userobject))]
+             (if (and (= cellargid (:id oldarg))
+                      (= (:atom pm) (:atom oldpm)))
+               (get-edge-style pm)
+               style)))]
+    (change-all-cell-and-styles component ag update-premise-object update-premise-style)))
 
 (defn- update-arg-in-pm [userobject arg]
   (let [cellargid (:id (:arg userobject))]
@@ -132,36 +126,52 @@
       (ArgumentCell. arg)
       userobject)))
 
+(defmacro with-transaction [component & body]
+  (let [comp component]
+   `(let [model# (.. ~comp getGraph getModel)]
+      (try
+        (.. model# beginUpdate)
+        ~@body
+        (finally
+         (.. model# endUpdate))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; public functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn change-title [graphcomponent ag title]
   (let [component (:component graphcomponent)]
-    (change-all-cell-and-styles component ag)))
+    (with-transaction component
+      (change-all-cell-and-styles component ag))))
 
 (defn change-premise-polarity [graphcomponent ag oldarg arg pm]
-  (change-premise-content-and-style graphcomponent ag oldarg arg pm))
+  (let [component (:component graphcomponent)]
+    (with-transaction component
+      (change-premise-content-and-style component ag oldarg arg pm))))
 
 (defn change-premise-type [graphcomponent ag oldarg arg pm]
-  (change-premise-content-and-style graphcomponent ag oldarg arg pm))
+  (let [component (:component graphcomponent)]
+    (with-transaction component
+     (change-premise-content-and-style component ag oldarg arg pm))))
 
 (defn change-argument-title [graphcomponent ag arg title]
   (let [component (:component graphcomponent)]
-    (change-cell-and-styles component ag
-                            #(update-stmt-object % ag) do-not-change-style
-                            #(update-arg-in-pm % arg) do-not-change-style
-                            #(update-arg % arg) do-not-change-style
-                            do-not-change-style)))
+    (with-transaction component
+     (change-cell-and-styles component ag
+                             #(update-stmt-object % ag) do-not-change-style
+                             #(update-arg-in-pm % arg) do-not-change-style
+                             #(update-arg % arg) do-not-change-style
+                             do-not-change-style))))
 
 (defn change-argument-weight [graphcomponent ag arg title]
   (prn "change-argument-weight")
   (let [component (:component graphcomponent)]
-   (change-cell-and-styles component ag
-                           #(update-stmt-object % ag) #(update-stmt-style %1 %2 ag)
-                           #(update-arg-in-pm % arg) do-not-change-style
-                           #(update-arg % arg) #(update-argument-style %1 %2 ag)
-                           do-not-change-style)))
+    (with-transaction component
+     (change-cell-and-styles component ag
+                             #(update-stmt-object % ag) #(update-stmt-style %1 %2 ag)
+                             #(update-arg-in-pm % arg) do-not-change-style
+                             #(update-arg % arg) #(update-argument-style %1 %2 ag)
+                             do-not-change-style))))
 
 (defn change-statement-content [graphcomponent ag oldstmt newstmt]
   (let [component (:component graphcomponent)
@@ -185,12 +195,30 @@
 
 (defn change-statement-status [graphcomponent ag stmt]
   (let [component (:component graphcomponent)]
-    (change-all-cell-and-styles component ag)))
+    (with-transaction component
+      (change-all-cell-and-styles component ag))))
 
 (defn change-statement-proofstandard [graphcomponent ag stmt]
   (let [component (:component graphcomponent)]
-    (change-all-cell-and-styles component ag)))
+    (with-transaction component
+      (change-all-cell-and-styles component ag))))
 
 (defn change-argument-direction [graphcomponent ag arg direction]
   (let [component (:component graphcomponent)]
-    (change-all-cell-and-styles component ag)))
+    (with-transaction
+     (change-all-cell-and-styles component ag))))
+
+(defn add-premise [graphcomponent ag arg stmt]
+  (let [component (:component graphcomponent)
+        graph (.getGraph component)
+        model (.getModel graph)
+        p (.getDefaultParent graph)]
+    (let [argcell (find-argument-cell graph (:id arg))
+          stmtcell (find-statement-cell graph stmt)
+          premise (get-premise arg (statement-atom stmt))]
+      (prn "search for premise returns = ")
+      (prn premise)
+      (with-transaction component
+        (insert-edge graph p (PremiseCell. arg premise) stmtcell argcell
+                     (get-edge-style premise))
+        (change-all-cell-and-styles component ag)))))
