@@ -115,9 +115,9 @@
   ([id direction conclusion premises scheme]
      (struct argument-struct id false *default-weight* direction conclusion
              premises scheme nil))
-  ([id applicable weight direction conclusion premises scheme]
+  ([id applicable weight direction conclusion premises scheme title]
      (struct argument-struct id applicable weight direction
-             conclusion premises scheme nil)))
+             conclusion premises scheme title)))
 
 (defn argument-id [a]
   (:id a))
@@ -201,8 +201,8 @@
     :premises (map #(update-in % [:atom] subs) (:premises arg))
     :conclusion (subs (:conclusion arg))))
 
-(defn add-premise [arg p]
-  (assoc arg :applicable false :premises (cons p (:premises arg))))
+;; (defn add-premise [arg p]
+;;   (assoc arg :applicable false :premises (cons p (:premises arg))))
 
 ;; se        ; scintilla of the evidence
 ;;                  dv        ; dialectical validity

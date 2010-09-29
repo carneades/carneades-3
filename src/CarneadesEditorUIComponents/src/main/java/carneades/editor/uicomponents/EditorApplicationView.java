@@ -84,6 +84,9 @@ public class EditorApplicationView extends javax.swing.JFrame {
         exportGraphMenuItem.setText("Export...");
         graphPopupMenu.add(exportGraphMenuItem);
 
+        addExistingPremiseMenuItem.setText("Add existing premise");
+        argumentPopupMenu.add(addExistingPremiseMenuItem);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         toolBar.setFloatable(false);
@@ -114,6 +117,12 @@ public class EditorApplicationView extends javax.swing.JFrame {
         redoButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         toolBar.add(redoButton);
         toolBar.add(jSeparator8);
+
+        refreshButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view-refresh.png"))); // NOI18N
+        refreshButton.setFocusable(false);
+        refreshButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        refreshButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolBar.add(refreshButton);
 
         zoomResetButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/zoomreset.png"))); // NOI18N
         zoomResetButton.setBorder(null);
@@ -356,6 +365,8 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public final javax.swing.JMenuItem aboutHelpMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem addExistingPremiseMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JPopupMenu argumentPopupMenu = new javax.swing.JPopupMenu();
     public final javax.swing.JMenuItem closeFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem closeGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem closeLkifFileMenuItem = new javax.swing.JMenuItem();
@@ -398,6 +409,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JPanel propertiesPanel = new javax.swing.JPanel();
     public final javax.swing.JButton redoButton = new javax.swing.JButton();
     public final javax.swing.JMenuItem redoEditMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JButton refreshButton = new javax.swing.JButton();
     private javax.swing.JPanel resultPanel;
     public final javax.swing.JMenuItem saveAsFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JButton saveButton = new javax.swing.JButton();
