@@ -26,6 +26,19 @@
            (java.awt.datatransfer Transferable DataFlavor)
            (java.awt Color BasicStroke)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; private functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defmacro with-transaction [component & body]
+  `(let [comp# ~component
+         model# (.. comp# getGraph getModel)]
+     (try
+       (.. model# beginUpdate)
+       ~@body
+       (finally
+        (.. model# endUpdate)))))
+
 (defn stmt-to-str [ag stmt stmt-str]
   (let [formatted (stmt-str stmt)]
     (cond (and (in? ag stmt) (in? ag (statement-complement stmt)))
@@ -125,17 +138,21 @@
                      cells)
         translation (+ *xmargin* (- minx))]
     (doseq [cell cells]
-      (setx cell (+ (getx cell) translation))
-      (sety cell (+ (gety cell) *ymargin*)))
+      (let [geometry (.getGeometry cell)
+            width (.getWidth geometry)
+            height (.getHeight geometry)
+            x (.getX geometry)
+            y (.getY geometry)
+            newx (+ x translation)
+            newy (+ y *ymargin*)]
+        (.setGeometry model cell (mxGeometry. newx newy width height))))
     (doseq [edge (.getChildCells g defaultparent false true)]
       (let [controlpoints (or (.. edge getGeometry getPoints) ())]
         (doseq [point controlpoints]
           (let [x (.getX point)
                 y (.getY point)]
             (.setX point (+ x translation))
-            (.setY point (+ y *ymargin*))))))
-    ;; (.. g getView (scaleAndTranslate 1 translation *ymargin*))
-))
+            (.setY point (+ y *ymargin*))))))))
 
 (defn- print-debug [g]
   (let [defaultparent (.getDefaultParent g)
@@ -160,16 +177,18 @@
     ;; negative coordinates are used by the layout algorithm
     ;; even with setAllowNegativeCoordinates set to false.
     ;; we translate to make all edges and vertices visible
-    (translate-right g p vertices)))
+    (translate-right g p vertices)
+    ))
 
 (defvar- *orphan-offset* 50)
 
 (defn- align-orphan-cells [^mxGraph g p cells]
-  "align orphan cells on the right of the graph, with a stacklayout"
+  "align orphan cells on the right of the graph"
   (letfn [(isorphan?
            [vertex]
            (empty? (.getEdges g vertex)))]
-    (let [[orphans maxx-notorphan]
+    (let [model (.getModel g)
+          [orphans maxx-notorphan]
           (reduce (fn [acc vertex]
                     (let [[orphans maxx-notorphan] acc
                           width (.. vertex getGeometry getWidth)
@@ -181,7 +200,7 @@
                             [orphans x]
                             
                             :else acc)))
-                  ['() 0]
+                  [() 0]
                   cells)
           yorigin 20
           stackspacing 20]
@@ -189,9 +208,10 @@
              y yorigin]
         (when-not (empty? orphans)
           (let [orphan (first orphans)
-                height (.. orphan getGeometry getHeight)]
-            (setx orphan (+ maxx-notorphan *orphan-offset*))
-            (sety orphan y)
+                width (.. orphan getGeometry getWidth)
+                height (.. orphan getGeometry getHeight)
+                newx (+ maxx-notorphan *orphan-offset*)]
+            (.setGeometry model orphan (mxGeometry. newx y width height))
             (recur (rest orphans) (+ y height stackspacing))))))))
 
 (defn do-layout [g p cells]
@@ -265,51 +285,6 @@
       (.. g getModel endUpdate)))
     g))
 
-(defn export-graph [graphcomponent filename]
-  "Saves the graph on disk. Only SVG format is supported now.
-
-   Throws java.io.IOException"
-  (let [g (.getGraph (:component graphcomponent))]
-    (mxUtils/writeFile (mxUtils/getXml
-                        (.. (mxCellRenderer/createSvgDocument g nil 1 nil nil)
-                            getDocumentElement))
-                       filename)))
-
-;; (defmacro with-restore-translate [g & body]
-;;   "executes body and restores the initial translation of the graph after"
-;;   `(do
-;;      (let [point# (.. ~g getView getTranslate)
-;;            x# (.getX point#)
-;;            y# (.getY point#)]
-;;        ~@body
-;;        (let [scale# (.. ~g getView getScale)]
-;;          (.. ~g getView (scaleAndTranslate scale# x# y#))))))
-
-(defn zoom-in [graphcomponent]
-  (let [g (.getGraph graphcomponent)]
-    (.zoomIn graphcomponent)))
-
-(defn zoom-out [graphcomponent]
-  (let [g (.getGraph graphcomponent)]
-    (when (> (.. g getView getScale) 0.1)
-      (.zoomOut graphcomponent))))
-
-(defn zoom-reset [graphcomponent]
-  (let [g (.getGraph graphcomponent)]
-    (.. g getView (scaleAndTranslate 1 0 0))))
-
-(deftype MouseListener [g graphcomponent] MouseWheelListener
-  (mouseWheelMoved
-   [this event]
-   (when (or (instance? mxGraphOutline (.getSource event))
-             (.isControlDown event))
-     (if (neg? (.getWheelRotation event))
-       (zoom-in graphcomponent)
-       (zoom-out graphcomponent)))))
-
-(defn- add-mouse-zoom [g graphcomponent]
-  (.addMouseWheelListener graphcomponent (MouseListener. g graphcomponent)))
-
 (defn- add-undo-manager [g]
   (let [undomanager (mxUndoManager.)
         undo-handler (proxy [mxEventSource$mxIEventListener] []
@@ -339,6 +314,61 @@
         selectionmodel (.getSelectionModel g)]
     (when-let [cell (.getCell selectionmodel)]
       (.setCell selectionmodel cell))))
+
+(deftype ImageSelection [data]
+  Transferable
+  (getTransferDataFlavors
+   [this]
+   (into-array DataFlavor [DataFlavor/imageFlavor]))
+
+  (isDataFlavorSupported
+   [this flavor]
+   (= DataFlavor/imageFlavor flavor))
+
+  (getTransferData
+   [this flavor]
+   (when (= DataFlavor/imageFlavor flavor)
+     (.getImage (ImageIcon. data)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; public functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn zoom-in [graphcomponent]
+  (let [g (.getGraph graphcomponent)]
+    (.zoomIn graphcomponent)))
+
+(defn zoom-out [graphcomponent]
+  (let [g (.getGraph graphcomponent)]
+    (when (> (.. g getView getScale) 0.1)
+      (.zoomOut graphcomponent))))
+
+(defn zoom-reset [graphcomponent]
+  (let [g (.getGraph graphcomponent)]
+    (.. g getView (scaleAndTranslate 1 0 0))))
+
+(deftype MouseListener [g graphcomponent] MouseWheelListener
+  (mouseWheelMoved
+   [this event]
+   (when (or (instance? mxGraphOutline (.getSource event))
+             (.isControlDown event))
+     (if (neg? (.getWheelRotation event))
+       (zoom-in graphcomponent)
+       (zoom-out graphcomponent)))))
+
+(defn- add-mouse-zoom [g graphcomponent]
+  (.addMouseWheelListener graphcomponent (MouseListener. g graphcomponent)))
+
+(defn export-graph [graphcomponent filename]
+  "Saves the graph on disk. Only SVG format is supported now.
+
+   Throws java.io.IOException"
+  (let [g (.getGraph (:component graphcomponent))]
+    (mxUtils/writeFile (mxUtils/getXml
+                        (.. (mxCellRenderer/createSvgDocument g nil 1 nil nil)
+                            getDocumentElement))
+                       filename)))
+
 
 (defn undo [graphcomponent]
   (prn "map-undo!")
@@ -423,21 +453,6 @@
 (defn get-vertices [g p]
   (seq (.getChildVertices g p)))
 
-(deftype ImageSelection [data]
-  Transferable
-  (getTransferDataFlavors
-   [this]
-   (into-array DataFlavor [DataFlavor/imageFlavor]))
-
-  (isDataFlavorSupported
-   [this flavor]
-   (= DataFlavor/imageFlavor flavor))
-
-  (getTransferData
-   [this flavor]
-   (when (= DataFlavor/imageFlavor flavor)
-     (.getImage (ImageIcon. data)))))
-
 (defn copyselection-toclipboard [graphcomponent]
   (let [component (:component graphcomponent)
         graph (.getGraph component)
@@ -458,6 +473,11 @@
         selectionmodel (.getSelectionModel graph)]
     (.setCells selectionmodel cells)))
 
+(defn current-selected-object [graphcomponent]
+  (let [component (:component graphcomponent)]
+    (when-let [cell (.. component getGraph getSelectionCell)]
+      (.getValue cell))))
+
 (defn add-right-click-listener [graphcomponent listener]
   (let [component (:component graphcomponent)
         graphcontrol (.getGraphControl component)]
@@ -470,27 +490,13 @@
                          (mousePressed
                           [event]
                           (when (.isPopupTrigger event)
-                            (let [pt (SwingUtilities/convertPoint
-                                      (.getComponent event)
-                                      (.getPoint event)
-                                      component)]
-                              (when-let [cell (.getCellAt component (.getX pt) (.getY pt))]
-                                (when-let [userobject (.getValue cell)]
-                                  (listener event userobject))))))))))
-
-(defn current-selected-object [graphcomponent]
-  (let [component (:component graphcomponent)]
-    (when-let [cell (.. component getGraph getSelectionCell)]
-      (.getValue cell))))
+                            (when-let [userobject (current-selected-object graphcomponent)]
+                              (listener event userobject))))))))
 
 (defn layout-map [graphcomponent]
   (let [component (:component graphcomponent)
         graph (.getGraph component)
-        model (.getModel graph)
         p (.getDefaultParent graph)
         vertices (get-vertices graph p)]
-    (try
-        (.. model beginUpdate)
-        (do-layout graph p vertices)
-        (finally
-         (.. model endUpdate)))))
+    (with-transaction component
+      (do-layout graph p vertices))))

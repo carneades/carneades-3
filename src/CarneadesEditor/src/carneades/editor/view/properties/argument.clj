@@ -20,13 +20,6 @@
 
 (defvar- *schemeText* (.schemeText *argumentProperties*))
 
-(defvar- *id* (atom nil))
-(defvar- *argid* (atom nil))
-(defvar- *previous-title* (atom nil))
-(defvar- *previous-weight* (atom nil))
-(defvar- *previous-direction* (atom nil))
-(defvar- *previous-scheme* (atom nil))
-
 (defvar- *change-listeners* (atom #{}))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -47,14 +40,16 @@
 (defn init-argument-properties []
   (ArgumentPropertiesView/reset))
 
+(defvar- *previous-argument-content* (atom {}))
+
 (defn get-argument-properties-panel [path id graphtitle argid title
                                      applicable weight direction scheme]
-  (reset! *id* id)
-  (reset! *previous-title* title)
-  (reset! *argid* argid)
-  (reset! *previous-weight* weight)
-  (reset! *previous-direction* direction)
-  (reset! *previous-scheme* scheme)
+  (reset! *previous-argument-content* {:id id
+                                       :previous-title title
+                                       :argid argid
+                                       :previous-weight weight
+                                       :previous-direction direction
+                                       :previous-scheme scheme})
   (.setText *mapTitleText* graphtitle)
   (.setText *pathText* path)
   (.setText *titleText* title)
@@ -68,18 +63,13 @@
   *argumentProperties*)
 
 (defn argument-being-edited-info []
-  {:path (.getText *pathText*)
-   :id (deref *id*)
-   :argid (deref *argid*)
-   :previous-title (deref *previous-title*)
-   :title (.getText *titleText*)
-   :previous-weight (deref *previous-weight*)
-   :weight (.getValue *weightSpinner*)
-   :previous-direction (deref *previous-direction*)
-   :direction (if (.isSelected *proButton*) :pro :con)
-   :previous-scheme (deref *previous-scheme*)
-   :scheme (.getText *schemeText*)
-   })
+  (merge
+   {:path (.getText *pathText*)
+    :title (.getText *titleText*)
+    :weight (.getValue *weightSpinner*)
+    :direction (if (.isSelected *proButton*) :pro :con)
+    :scheme (.getText *schemeText*)}
+   (deref *previous-argument-content*)))
 
 (defn register-argument-weight-listener [l args]
   (let [changelistener (apply add-change-listener *weightSpinner* l args)]

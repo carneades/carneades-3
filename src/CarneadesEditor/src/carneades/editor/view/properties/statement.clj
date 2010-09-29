@@ -58,9 +58,12 @@
                                  (apply listener event args)))))))
 
 (defn get-statement-properties-panel [path id maptitle stmt stmt-str status proofstandard acceptable complement-acceptable]
+  (prn "in properties")
+  (prn "stmt =")
+  (prn stmt)
   (.setText *pathText* path)
   (.setText *mapTitleText* maptitle)
-  (.setText *statementTextArea* (stmt-str stmt))
+  (.setText *statementTextArea* stmt)
   (reset! *previous-statement-content* {:path path :id id :previous-content stmt
                                         :previous-status status
                                         :previous-proofstandard proofstandard})

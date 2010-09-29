@@ -47,6 +47,10 @@
 
 (defn update-statement-content [ag oldstmt newstmt]
   "returns the new ag or nil if oldsmt does not exist in ag"
+  (prn "oldstmt =")
+  (prn oldstmt)
+  (prn "newstmt =")
+  (prn newstmt)
   (when-let [n (statement-node ag oldstmt)]
     (let [key (statement-symbol (statement-atom oldstmt))
           ag (dissoc-in ag [:nodes key])

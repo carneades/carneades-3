@@ -16,25 +16,20 @@
 (defn init-premise-properties []
   (PremisePropertiesView/reset))
 
-(defvar- *previous-polarity* (atom nil))
-(defvar- *id* (atom nil))
-(defvar- *arg* (atom nil))
-(defvar- *atom* (atom nil))
-(defvar- *previous-type* (atom nil))
-(defvar- *stmt* (atom nil))
-
 (defvar- *type-to-str* {:carneades.engine.argument/ordinary-premise "Premise"
                         :carneades.engine.argument/assumption "Assumption"
                         :carneades.engine.argument/exception "Exception"})
 
 (defvar- *str-to-type* (reverse-map *type-to-str*))
 
+(defvar- *previous-premise-content* (atom {}))
+
 (defn get-premise-properties-panel [path id maptitle arg polarity type atom]
-  (reset! *previous-polarity* polarity)
-  (reset! *id* id)
-  (reset! *previous-type* type)
-  (reset! *arg* arg)
-  (reset! *atom* atom)
+  (reset! *previous-premise-content* {:id id
+                                      :previous-polarity polarity
+                                      :previous-type type
+                                      :arg arg
+                                      :atom atom})
   (.setText *pathText* path)
   (.setText *mapTitleText* maptitle)
   (.setSelected *negatedCheckBox* (not polarity))
@@ -42,11 +37,8 @@
   *premiseProperties*)
 
 (defn premise-being-edited-info []
-  {:path (.getText *pathText*)
-   :arg (deref *arg*)
-   :id (deref *id*)
-   :atom (deref *atom*)
-   :previous-polarity (deref *previous-polarity*)
-   :polarity (not (.isSelected *negatedCheckBox*))
-   :previous-type (deref *previous-type*)
-   :type (*str-to-type* (.getSelectedItem *typeComboBox*))})
+  (merge
+   {:path (.getText *pathText*)
+    :polarity (not (.isSelected *negatedCheckBox*))
+    :type (*str-to-type* (.getSelectedItem *typeComboBox*))}
+   (deref *previous-premise-content*)))

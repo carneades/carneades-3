@@ -21,22 +21,21 @@
   (ArgumentGraphPropertiesView/reset)
   (add-action-listener *titleText* title-action-listener))
 
-(defvar- *id* (atom nil))
-(defvar- *previous-title* (atom nil))
+(defvar- *previous-graph-content* (atom {}))
 
 (defn get-graph-properties-panel [path id title mainissue]
-  (reset! *id* id)
-  (reset! *previous-title* title)
+  (reset! *previous-graph-content* {:id id
+                                    :previous-title title})
   (.setText *pathText* path)
   (.setText *titleText* title)
   (.setText *mainIssueTextArea* mainissue)
   *graphProperties*)
 
 (defn graph-being-edited-info []
-  {:path (.getText *pathText*)
-   :id (deref *id*)
-   :title (.getText *titleText*)
-   :previous-title (deref *previous-title*)})
+  (merge
+   {:path (.getText *pathText*)
+    :title (.getText *titleText*)}
+   (deref *previous-graph-content*)))
 
 (defn register-graph-edit-listener [f args]
   (swap! *graph-edit-listeners* conj {:listener f :args args}))

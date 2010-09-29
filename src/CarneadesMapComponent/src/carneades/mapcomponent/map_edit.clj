@@ -164,7 +164,6 @@
                              do-not-change-style))))
 
 (defn change-argument-weight [graphcomponent ag arg title]
-  (prn "change-argument-weight")
   (let [component (:component graphcomponent)]
     (with-transaction component
      (change-cell-and-styles component ag
@@ -181,7 +180,6 @@
         stmt (StatementCell. ag newstmt stmt-str (stmt-to-str ag newstmt stmt-str))
         p (.getDefaultParent graph)
         model (.getModel graph)]
-    (prn "change-statement-content")
     (try
       (.. model beginUpdate)
       (.setValue model cell stmt)
@@ -190,8 +188,7 @@
       (adjust-size cell)
       (do-layout graph p (get-vertices graph p))
       (finally
-       (.. model endUpdate)
-       (.refresh component)))))
+       (.. model endUpdate)))))
 
 (defn change-statement-status [graphcomponent ag stmt]
   (let [component (:component graphcomponent)]
@@ -205,7 +202,7 @@
 
 (defn change-argument-direction [graphcomponent ag arg direction]
   (let [component (:component graphcomponent)]
-    (with-transaction
+    (with-transaction component
      (change-all-cell-and-styles component ag))))
 
 (defn add-premise [graphcomponent ag arg stmt]
