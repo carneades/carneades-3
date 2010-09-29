@@ -19,7 +19,7 @@
   (:import java.io.File
            (carneades.editor.uicomponents EditorApplicationView)
            (java.awt EventQueue Cursor Color)
-           (javax.swing UIManager JFrame JFileChooser JOptionPane)
+           (javax.swing UIManager JFrame JFileChooser JOptionPane SwingUtilities)
            (carneades.mapcomponent.map StatementCell ArgumentCell PremiseCell)))
 
 (defvar- *frame* (EditorApplicationView/instance))
@@ -53,18 +53,24 @@
 (defvar- *premise-selection-listeners* (atom ()))
 (defvar- *add-existing-premise-listeners* (atom ()))
 
-(defvar- *add-existing-premise-data* (atom {:src nil}))
+(defvar- *add-existing-premise-data* (atom {:path nil :id nil :src nil}))
+
+(defn- check-link-premise [view path id obj]
+  (let [data (deref *add-existing-premise-data*)]
+    (when-let [src (:src data)]
+      (when (and (= (:path data) path)
+                 (= (:id data) id))
+        ;; currently doing an 'add existing premise'?
+        (doseq [{:keys [listener args]} (deref *add-existing-premise-listeners*)]
+          (apply listener view path id (:arg src) (:stmt obj) args)))
+      (swap! *add-existing-premise-data* assoc :src nil))))
 
 (defn- node-selection-listener [view path id obj]
   (cond (instance? StatementCell obj)
-        (doseq [{:keys [listener args]} (deref *statement-selection-listeners*)]
-          (when-let [src (:src (deref *add-existing-premise-data*))]
-            ;; currently doing an 'add existing premise'?
-            (doseq [{:keys [listener args]} (deref *add-existing-premise-listeners*)]
-              (apply listener view path id (:arg src) (:stmt obj) args))
-            (swap! *add-existing-premise-data* assoc :src nil)
-            )
-          (apply listener path id (:stmt obj) args))
+        (do
+          (check-link-premise view path id obj)
+          (doseq [{:keys [listener args]} (deref *statement-selection-listeners*)]
+            (apply listener path id (:stmt obj) args)))
 
         (instance? ArgumentCell obj)
         (doseq [{:keys [listener args]} (deref *argument-selection-listeners*)]
@@ -78,13 +84,20 @@
   (let [[path id] (current-graph view)]
     (when-let [component (get-component path id)]
       (let [obj (current-selected-object component)]
-        (swap! *add-existing-premise-data* assoc :src obj)
+        (swap! *add-existing-premise-data* assoc :src obj :path path :id id)
 
         ))))
 
 (defn- right-click-listener [path id component event obj]
-  (let [x (.getX event)
-        y (.getY event)]
+  (let [pt (SwingUtilities/convertPoint
+            (.getComponent event)
+            (.getPoint event)
+            component)
+        x (.getX pt)
+        y (.getY pt)]
+    (prn "right click")
+    (prn "instance =")
+    (prn obj)
     (cond (instance? ArgumentCell obj)
           (.show *argumentPopupMenu* component x y)
 
@@ -195,8 +208,7 @@
   (redisplay-graph
    [this path ag stmt-fmt]
    (when-let [component (get-component path (:id ag))]
-     (remove-component component)
-     (create-tabgraph-component this path ag stmt-fmt)))
+     (layout-map component)))
 
   (close-graph
    [this path id]

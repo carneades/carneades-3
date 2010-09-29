@@ -84,7 +84,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
         exportGraphMenuItem.setText("Export...");
         graphPopupMenu.add(exportGraphMenuItem);
 
-        addExistingPremiseMenuItem.setText("Add existing premise");
+        addExistingPremiseMenuItem.setText("Link premise");
         argumentPopupMenu.add(addExistingPremiseMenuItem);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);

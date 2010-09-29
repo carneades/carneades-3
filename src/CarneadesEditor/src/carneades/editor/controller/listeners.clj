@@ -176,7 +176,7 @@
           acceptable (:acceptable node)
           complement-acceptable (:complement-acceptable node)]
       (display-statement-property view path id (:title ag)
-                                  stmt statement-formatted status
+                                  (pr-str stmt) statement-formatted status
                                   proofstandard acceptable complement-acceptable))))
 
 (defn on-select-argument [path id arg view]
@@ -228,21 +228,26 @@
   (prn stmt-info)
   (let [{:keys [content previous-content]} stmt-info
         oldag (get-ag path id)]
-    (if (statement-node oldag content)
-      (display-error view *edit-error* *statement-already-exists*)
-      (when-let [ag (update-statement-content oldag previous-content content)]
-        (let [stmt (:content stmt-info)
-              node (get-node ag stmt)
-              status (:status node)
-              proofstandard (:standard node)
-              acceptable (:acceptable node)
-              complement-acceptable (:complement-acceptable node)]
-          (do-update-section view [path :ags (:id ag)] ag)
-          (display-statement-property view path id (:title ag)
-                                      stmt statement-formatted status
-                                      proofstandard acceptable complement-acceptable)
-          (statement-content-changed view path ag previous-content content)
-          (display-statement view path ag stmt statement-formatted))))))
+    (try
+      (let [previous-content-as-obj (read-string previous-content) 
+            newcontent (read-string content)]
+        (if (statement-node oldag newcontent)
+          (display-error view *edit-error* *statement-already-exists*)
+          (when-let [ag (update-statement-content oldag previous-content-as-obj newcontent)]
+            (let [stmt (:content stmt-info)
+                  node (get-node ag stmt)
+                  status (:status node)
+                  proofstandard (:standard node)
+                  acceptable (:acceptable node)
+                  complement-acceptable (:complement-acceptable node)]
+              (do-update-section view [path :ags (:id ag)] ag)
+              (display-statement-property view path id (:title ag)
+                                          (pr-str newcontent) statement-formatted status
+                                          proofstandard acceptable complement-acceptable)
+              (statement-content-changed view path ag previous-content-as-obj newcontent)
+              (display-statement view path ag stmt statement-formatted)))))
+      (catch Exception e
+        (display-error view *edit-error* "Content is invalid.")))))
 
 (defn on-edit-statement-status [view path id stmt-info]
   (prn "on-edit-statement-status")
@@ -258,7 +263,7 @@
             complement-acceptable (:complement-acceptable node)]
         (do-update-section view [path :ags (:id oldag)] ag)
         (display-statement-property view path id (:title ag)
-                                    content statement-formatted status
+                                    (pr-str content) statement-formatted status
                                     proofstandard acceptable complement-acceptable)
         (statement-status-changed view path ag content)
         (display-statement view path ag content statement-formatted)))))
@@ -278,7 +283,7 @@
               complement-acceptable (:complement-acceptable node)]
           (do-update-section view [path :ags (:id ag)] ag)
           (display-statement-property view path id (:title ag)
-                                      content statement-formatted status
+                                      (pr-str content) statement-formatted status
                                       proofstandard acceptable complement-acceptable)
           (statement-proofstandard-changed view path ag content)
           (display-statement view path ag content statement-formatted))))))
@@ -428,11 +433,6 @@
           )))))
 
 (defn on-add-existing-premise [view path id arg stmt]
-  (prn "on-add-existing-premise")
-  (prn "arg =")
-  (prn arg)
-  (prn "stmt =")
-  (prn stmt)
   (when-let [ag (get-ag path id)]
     (when (nil? (get-premise arg stmt))
       ;; premise does not already exists!
@@ -444,5 +444,6 @@
 
 (defn on-refresh [view path id]
   (when-let [ag (get-ag path id)]
-   (redisplay-graph view path ag statement-formatted)))
+    (do-update-section view [path :ags (:id ag)] ag)
+    (redisplay-graph view path ag statement-formatted)))
 
