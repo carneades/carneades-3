@@ -426,3 +426,23 @@
            (:direction arg)
            (:scheme arg))
           )))))
+
+(defn on-add-existing-premise [view path id arg stmt]
+  (prn "on-add-existing-premise")
+  (prn "arg =")
+  (prn arg)
+  (prn "stmt =")
+  (prn stmt)
+  (when-let [ag (get-ag path id)]
+    (when (nil? (get-premise arg stmt))
+      ;; premise does not already exists!
+      (let [arg (get-argument ag (:id arg))
+            ag (add-premise ag arg stmt)
+            newarg (get-argument ag (:id arg))]
+        (do-update-section view [path :ags (:id ag)] ag)
+        (premise-added view path ag newarg stmt)))))
+
+(defn on-refresh [view path id]
+  (when-let [ag (get-ag path id)]
+   (redisplay-graph view path ag statement-formatted)))
+

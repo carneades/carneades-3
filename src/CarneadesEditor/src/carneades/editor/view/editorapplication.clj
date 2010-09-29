@@ -31,6 +31,7 @@
 (defvar *closeFileMenuItem* (.closeFileMenuItem *frame*))
 (defvar *undoButton* (.undoButton *frame*))
 (defvar *redoButton* (.redoButton *frame*))
+(defvar *refreshButton* (.refreshButton *frame*))
 
 (defvar *exportFileMenuItem* (.exportFileMenuItem *frame*))
 (defvar *printPreviewFileMenuItem* (.printPreviewFileMenuItem *frame*))
@@ -44,13 +45,25 @@
 (defvar *closeGraphMenuItem* (.closeGraphMenuItem *frame*))
 (defvar *exportGraphMenuItem* (.exportGraphMenuItem *frame*))
 
+(defvar- *argumentPopupMenu* (.argumentPopupMenu *frame*))
+(defvar- *addExistingPremiseMenuItem* (.addExistingPremiseMenuItem *frame*))
+
 (defvar- *statement-selection-listeners* (atom ()))
 (defvar- *argument-selection-listeners* (atom ()))
 (defvar- *premise-selection-listeners* (atom ()))
+(defvar- *add-existing-premise-listeners* (atom ()))
 
-(defn- node-selection-listener [path id obj]
+(defvar- *add-existing-premise-data* (atom {:src nil}))
+
+(defn- node-selection-listener [view path id obj]
   (cond (instance? StatementCell obj)
         (doseq [{:keys [listener args]} (deref *statement-selection-listeners*)]
+          (when-let [src (:src (deref *add-existing-premise-data*))]
+            ;; currently doing an 'add existing premise'?
+            (doseq [{:keys [listener args]} (deref *add-existing-premise-listeners*)]
+              (apply listener view path id (:arg src) (:stmt obj) args))
+            (swap! *add-existing-premise-data* assoc :src nil)
+            )
           (apply listener path id (:stmt obj) args))
 
         (instance? ArgumentCell obj)
@@ -60,6 +73,22 @@
         (instance? PremiseCell obj)
         (doseq [{:keys [listener args]} (deref *premise-selection-listeners*)]
           (apply listener path id (:arg obj) (:pm obj) args))))
+
+(defn add-existing-premise-menuitem-listener [event view]
+  (let [[path id] (current-graph view)]
+    (when-let [component (get-component path id)]
+      (let [obj (current-selected-object component)]
+        (swap! *add-existing-premise-data* assoc :src obj)
+
+        ))))
+
+(defn- right-click-listener [path id component event obj]
+  (let [x (.getX event)
+        y (.getY event)]
+    (cond (instance? ArgumentCell obj)
+          (.show *argumentPopupMenu* component x y)
+
+          )))
 
 (defn- on-zoom-in [event]
   (zoom-in (.getSelectedComponent *mapPanel*)))
@@ -75,6 +104,24 @@
     (when-let [component (get-component path id)]
       (select-all component))))
 
+(defn- create-tabgraph-component [this path ag stmt-fmt]
+  (try
+    (set-busy this true)
+    (let [component (create-graph-component ag stmt-fmt)]
+      (add-node-selection-listener component #(node-selection-listener
+                                               this path (:id ag) %))
+      (add-right-click-listener component
+                                (fn [event listener]
+                                  (right-click-listener path
+                                                        (:id ag)
+                                                        (:component component)
+                                                        event
+                                                        listener)))
+      (add-component component path ag (is-dirty? path (:id ag)))
+      (set-current-ag-context path (:id ag)))
+    (finally
+     (set-busy this false))))
+
 (deftype SwingView [] View SwingUI
   (init
    [this]
@@ -89,6 +136,8 @@
    (add-action-listener *zoomOutButton* on-zoom-out)
    (add-action-listener *zoomResetButton* on-zoom-reset)
    (add-action-listener *selectAllEditMenuItem* select-all-listener this)
+   (add-action-listener *addExistingPremiseMenuItem*
+                        add-existing-premise-menuitem-listener this)
    
    (lkif-properties-init)
    (graph-properties-init)
@@ -135,25 +184,19 @@
 
   (open-graph
    [this path ag stmt-fmt]
-   (prn "open-graph")
-   (prn "path =")
-   (prn path)
-   (prn "ag id = ")
-   (prn (:id ag))
    (let [component (get-component path (:id ag))]
      (if component
        (do
          (select-component component)
          (set-current-ag-context path (:id ag)))
-       (try
-         (set-busy this true)
-         (let [component (create-graph-component ag stmt-fmt)]
-           (add-node-selection-listener component #(node-selection-listener
-                                                     path (:id ag) %))
-           (add-component component path ag (is-dirty? path (:id ag)))
-           (set-current-ag-context path (:id ag)))
-         (finally
-          (set-busy this false))))))
+       (create-tabgraph-component this path ag stmt-fmt)
+       )))
+
+  (redisplay-graph
+   [this path ag stmt-fmt]
+   (when-let [component (get-component path (:id ag))]
+     (remove-component component)
+     (create-tabgraph-component this path ag stmt-fmt)))
 
   (close-graph
    [this path id]
@@ -239,6 +282,11 @@
    [this path ag arg direction]
    (when-let [component (get-component path (:id ag))]
      (change-argument-direction component ag arg direction)))
+
+  (premise-added
+   [this path ag arg stmt]
+   (when-let [component (get-component path (:id ag))]
+     (add-premise component ag arg stmt)))
   
   (ask-file-to-save
    [this-view descriptions suggested]
@@ -466,6 +514,10 @@
   (add-undo-button-listener
    [this f args]
    (apply add-action-listener *undoButton* f args))
+
+  (add-refresh-button-listener
+   [this f args]
+   (apply add-action-listener *refreshButton* f args))
   
   (add-redo-button-listener
    [this f args]
@@ -500,6 +552,10 @@
   (register-search-listener
    [this l args]
    (register-search-button-listener l args))
+
+  (register-add-existing-premise-listener
+   [this l args]
+   (swap! *add-existing-premise-listeners* conj {:listener l :args args}))
   
   (display-statement-search-result
    [this path id stmt stmt-fmt]

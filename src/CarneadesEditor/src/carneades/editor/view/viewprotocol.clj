@@ -11,6 +11,7 @@
   (show [this] "display the main view, take the command lines arguments
                        as second argument")
   (open-graph [this path ag stmt-fmt] "open the graph for edition")
+  (redisplay-graph [this path ag stmt-fmt])
   (close-graph [this path id])
   (current-graph [this] "returns [path id] for the graph currently edited")
   (ask-lkif-file-to-open [this] "ask the user the LKIF file to open. 
@@ -47,6 +48,11 @@
    [this path ag arg stmt-fmt])
   (statement-content-changed
    [this path ag oldstmt newstmt])
+
+  ;; notifications:
+  ;; these fine grained modifications avoid to redisplay the whole
+  ;; argument graph each time, which takes too much time with
+  ;; big graphs
   (statement-status-changed
    [this path ag stmt])
   (statement-proofstandard-changed
@@ -57,6 +63,7 @@
   (argument-title-changed [this path ag arg title])
   (argument-weight-changed [this path ag arg weight])
   (argument-direction-changed [this path ag arg direction])
+  (premise-added [this path ag arg stmt])
   
   (set-busy
    [this isbusy])
@@ -67,10 +74,12 @@
   (set-dirty [this path ag state])
   (copyselection-clipboard [this path id])
   
+  
   ;; non-swing listeners:
   (register-statement-selection-listener [this l args])
   (register-argument-selection-listener [this l args])
   (register-premise-selection-listener [this l args])
   (register-search-listener [this l args]
                             "calls l with searchinfo searchbegins args")
+  (register-add-existing-premise-listener [this l args] "calls l with view path id arg stmt args")
   )

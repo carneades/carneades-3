@@ -141,6 +141,10 @@
   (when-let [[path id] (current-graph view)]
     (on-redo view path id)))
 
+(defn refresh-button-listener [event view]
+  (when-let [[path id] (current-graph view)]
+    (on-refresh view path id)))
+
 (defn undo-editmenuitem-listener [event view]
   (undo-button-listener event view))
 

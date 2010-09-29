@@ -74,7 +74,8 @@ grammar {
 
     Property = element property {
     	     attribute pred { xsd:anyURI },
-	         Variable, text?, Variable, text?
+	         (Variable | Constant
+	         ), text?, Variable, text?
     }
 
     # Atomic formulas. Propositional logic letters are represented by 
@@ -119,12 +120,12 @@ grammar {
                         
     All = element all { 
         attribute assumable { xsd:boolean }?,  #default: false
-        Variable+, Wff 
+        Variable, Atom?, Wff 
     }
                         
     Exists = element exists { 
         attribute assumable { xsd:boolean }?,  #default: false,
-        Variable+, Domain?, Wff 
+        Variable, Atom?, Wff 
      }
     
     # Terms include wffs, to support meta-level statements
@@ -166,7 +167,7 @@ grammar {
         attribute id { xsd:ID },
         attribute value { "unknown" | "true" | "false" }?,  # default: unknown
         attribute assumption { xsd:boolean }?, # default: false
-        attribute standard { "SE" | "DV" | "BA" | "PE" | "BRD" | "CCE" }?, # default: BA
+        attribute standard { "SE" | "DV" | "PE" | "BRD" | "CCE" }?, # default: PE
         Atom
     }
          
