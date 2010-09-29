@@ -126,15 +126,6 @@
       (ArgumentCell. arg)
       userobject)))
 
-(defmacro with-transaction [component & body]
-  (let [comp component]
-   `(let [model# (.. ~comp getGraph getModel)]
-      (try
-        (.. model# beginUpdate)
-        ~@body
-        (finally
-         (.. model# endUpdate))))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; public functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
