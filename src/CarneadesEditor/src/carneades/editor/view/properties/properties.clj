@@ -1,6 +1,9 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
+
+;;; panel properties
+
 (ns carneades.editor.view.properties.properties
   (:use clojure.contrib.def)
   (:import carneades.editor.uicomponents.EditorApplicationView))

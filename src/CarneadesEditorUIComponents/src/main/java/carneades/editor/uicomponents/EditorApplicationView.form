@@ -121,7 +121,7 @@
       <SubComponents>
         <MenuItem class="javax.swing.JMenuItem" name="addExistingPremiseMenuItem">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Add existing premise"/>
+            <Property name="text" type="java.lang.String" value="Link premise"/>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
