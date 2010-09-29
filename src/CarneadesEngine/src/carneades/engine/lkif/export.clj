@@ -153,7 +153,7 @@
 (defn argument->sxml
   [arg st-map]
   [:argument
-   {:id (:id arg), :direction (.substring (str (:direction arg)) 1), :scheme (:scheme arg), :weight (:weight arg)}
+   {:id (:id arg), :title (:title arg), :direction (.substring (str (:direction arg)) 1), :scheme (:scheme arg), :weight (:weight arg)}
    [:conclusion {:statement (:id (get st-map (:conclusion arg)))}]
    [:premises (map (fn [p] (premise->sxml p st-map)) (:premises arg))]])
 
