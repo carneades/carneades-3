@@ -46,13 +46,22 @@
    [this path ag stmt stmt-fmt])
   (display-argument
    [this path ag arg stmt-fmt])
-  (statement-content-changed
-   [this path ag oldstmt newstmt])
+  (set-busy
+   [this isbusy])
+  (edit-undone [this path id])
+  (edit-redone [this path id])
+  (set-can-undo [this path id state])
+  (set-can-redo [this path id state])
+  (set-dirty [this path ag state])
+  (copyselection-clipboard [this path id])
+  
 
   ;; notifications:
   ;; these fine grained modifications avoid to redisplay the whole
   ;; argument graph each time, which takes too much time with
   ;; big graphs
+  (statement-content-changed
+   [this path ag oldstmt newstmt])
   (statement-status-changed
    [this path ag stmt])
   (statement-proofstandard-changed
@@ -64,16 +73,10 @@
   (argument-weight-changed [this path ag arg weight])
   (argument-direction-changed [this path ag arg direction])
   (premise-added [this path ag arg stmt])
-  
-  (set-busy
-   [this isbusy])
-  (edit-undone [this path id])
-  (edit-redone [this path id])
-  (set-can-undo [this path id state])
-  (set-can-redo [this path id state])
-  (set-dirty [this path ag state])
-  (copyselection-clipboard [this path id])
-  
+  (premise-deleted [this path ag arg pm])
+  (new-premise-added [this path ag arg stmt stmt-str])
+  (statement-deleted [this path ag stmt])
+  (argument-deleted [this path ag arg])
   
   ;; non-swing listeners:
   (register-statement-selection-listener [this l args])

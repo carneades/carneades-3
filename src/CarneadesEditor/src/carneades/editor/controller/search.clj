@@ -34,6 +34,7 @@
           (recur (rest res)))))))
 
 (defn- do-one-search-arg [state view]
+  (prn "do one search arg")
   (let [{:keys [results path id]} state]
     (loop [res results]
       (let [arg (first res)]
@@ -64,8 +65,10 @@
 
 (defn- create-search-future [view path ag id search-for-statements
                              search-for-arguments text]
+  (prn "create-search-future!")
   (cond (and search-for-statements search-for-arguments)
         (let [res (search-all ag statement-formatted text {})]
+          (prn "after res")
           (future (do-one-search-all
                    {:results
                     res
@@ -77,6 +80,7 @@
         (let [res (search-statements ag
                                      statement-formatted
                                      text {})]
+          (prn "after res")
           (future (do-one-search-stmt
                    {:results
                     res
@@ -86,6 +90,7 @@
 
         search-for-arguments
         (let [res (search-arguments ag text {})]
+          (prn "after res")(prn "after res")
           (future (do-one-search-arg
                    {:results
                     res
@@ -125,12 +130,17 @@
               (doall
                (map (fn [[path id]]
                        (let [ag (get-ag path id)]
+                         (prn "ag not nil")
+                         (prn (not (nil? ag)))
                          (create-search-future view path ag id
                                                search-for-statements
                                                search-for-arguments
                                                text)
                          )) path-to-id))]
           (reset! *running-futures* searchfutures)
-          (future (wait-for-futures)
-                  (do-swing-and-wait
-                   (display-search-state view false))))))))
+          (let [f (future (wait-for-futures)
+                   (do-swing-and-wait
+                    (display-search-state view false)))]
+            (prn "f = ")
+            (prn f)
+            f))))))

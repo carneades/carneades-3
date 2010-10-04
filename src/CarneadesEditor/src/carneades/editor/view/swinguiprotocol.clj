@@ -34,6 +34,9 @@
   (add-save-filemenuitem-listener [this f args])
   (add-saveas-filemenuitem-listener [this f args])
   (add-copyclipboard-button-listener [this f args])
+  (add-delete-premise-menuitem-listener [this f args])
+  (add-delete-statement-menuitem-listener [this f args])
+  (add-delete-argument-menuitem-listener [this f args])
 
   ;; properties edit listeners
   (add-statement-edit-listener [this f args])
@@ -45,7 +48,7 @@
   (add-argument-edit-title-listener [this f args])
   (add-argument-edit-weight-listener [this f args])
   (add-argument-edit-direction-listener [this f args])
-
+  (add-new-premise-menuitem-listener [this f args])
   
   ;; functions to get information from the Swing UI
   (get-selected-object-in-tree [this])
@@ -55,6 +58,7 @@
   (get-graph-being-edited-info [this])
   (get-premise-being-edited-info [this])
   (get-argument-being-edited-info [this])
+  (get-selected-node [this path id])
   )
 
 ;; records stored in the element of the tree:

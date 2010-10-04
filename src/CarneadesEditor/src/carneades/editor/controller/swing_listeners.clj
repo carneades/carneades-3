@@ -189,3 +189,23 @@
 (defn argument-edit-direction-listener [event view]
   (let [info (get-argument-being-edited-info view)]
     (on-argument-edit-direction view (:path info) (:id info) info)))
+
+(defn delete-premise-menuitem-listener [event view]
+  (when-let [[path id] (current-graph view)]
+    (let [{:keys [pm arg]} (get-selected-node view path id)]
+      (on-delete-premise view path id arg pm))))
+
+(defn new-premise-menuitem-listener [event view]
+  (when-let [[path id] (current-graph view)]
+    (let [arg (get-selected-node view path id)]
+      (on-new-premise view path id arg))))
+
+(defn delete-statement-menuitem-listener [event view]
+  (when-let [[path id] (current-graph view)]
+    (let [stmt (get-selected-node view path id)]
+      (on-delete-statement view path id stmt))))
+
+(defn delete-argument-menuitem-listener [event view]
+  (when-let [[path id] (current-graph view)]
+    (let [arg (get-selected-node view path id)]
+      (on-delete-argument view path id arg))))
