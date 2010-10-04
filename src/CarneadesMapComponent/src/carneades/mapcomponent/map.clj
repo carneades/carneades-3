@@ -95,13 +95,13 @@
 (defvar- *mincellwidth* 70)
 (defvar- *mincellheight* 40)
 
-(defn- getx [^mxCell vertex]
+(defn getx [^mxCell vertex]
   (.. vertex getGeometry getX))
 
 (defn- setx [^mxCell vertex x]
   (.. vertex getGeometry (setX x)))
 
-(defn- gety [^mxCell vertex]
+(defn gety [^mxCell vertex]
   (.. vertex getGeometry getY))
 
 (defn- sety [^mxCell vertex y]
@@ -117,14 +117,14 @@
     (when (< w *mincellwidth*)
       (.setWidth geo *mincellwidth*))))
 
-(defn- insert-vertex [^mxGraph g parent name style]
-  (let [v (.insertVertex g parent nil name 10 10 40 40 style)]
+(defn insert-vertex [^mxGraph g parent name style]
+  (let [v (.insertVertex g parent (str (gensym)) name 10 10 40 40 style)]
     (.updateCellSize g v)
     (adjust-size v)
     v))
 
 (defn insert-edge [^mxGraph g parent userobject begin end style]
-  (.insertEdge g parent nil userobject begin end style))
+  (.insertEdge g parent (str (gensym)) userobject begin end style))
 
 (defvar- *ymargin* 10)
 (defvar- *xmargin* 10)
@@ -154,26 +154,35 @@
             (.setX point (+ x translation))
             (.setY point (+ y *ymargin*))))))))
 
-(defn- print-debug [g]
+(defn print-debug [g]
   (let [defaultparent (.getDefaultParent g)
         edges (.getChildCells g defaultparent false true)]
     (doseq [edge edges]
       (let [x (getx edge)
             y (gety edge)
             controlpoints (or (.. edge getGeometry getPoints) ())]
-        (printf "edge %s [%s %s] \n" edge x y)
+        (printf "edge %s [%s %s] = " edge x y)
+        (prn (.getValue edge))
         (printf "control points = {")
         (doseq [point controlpoints]
           (printf "[%s %s], " (.getX point) (.getY point)))
         (printf "}\n")))))
 
-(defn- hierarchicallayout [^mxGraph g p vertices]
+(defn move-cell [graph cell x y]
+  (let [layout (mxHierarchicalLayout. graph SwingConstants/EAST)]
+    (.moveCell layout cell x y)
+    ))
+
+(defn- hierarchicallayout [^mxGraph g p vertices roots]
   (let [layout (mxHierarchicalLayout. g SwingConstants/EAST)]
     (.setAllowNegativeCoordinates g false)
     (doto layout
       (.setFineTuning true)
-      (.execute p)
-      )
+      (.setMoveParent true)
+      (.setResizeParent true))
+    (if (empty? roots)
+      (.execute layout p)
+      (.execute layout p (to-array roots)))
     ;; negative coordinates are used by the layout algorithm
     ;; even with setAllowNegativeCoordinates set to false.
     ;; we translate to make all edges and vertices visible
@@ -182,7 +191,7 @@
 
 (defvar- *orphan-offset* 50)
 
-(defn- align-orphan-cells [^mxGraph g p cells]
+(defn align-orphan-cells [^mxGraph g p cells]
   "align orphan cells on the right of the graph"
   (letfn [(isorphan?
            [vertex]
@@ -214,9 +223,18 @@
             (.setGeometry model orphan (mxGeometry. newx y width height))
             (recur (rest orphans) (+ y height stackspacing))))))))
 
-(defn do-layout [g p cells]
-  (hierarchicallayout g p cells)
-  (align-orphan-cells g p cells))
+(defn test-layout [g p]
+  (let [layout (mxHierarchicalLayout. g SwingConstants/EAST)]
+    (.run layout p)
+    ))
+
+(defn do-layout
+  ([g p cells roots]
+     (hierarchicallayout g p cells roots))
+  ([g p cells]
+     (hierarchicallayout g p cells ())
+     ;; (align-orphan-cells g p cells)
+     ))
 
 (defn- layout [g p vertices]
   (do-layout g p (vals vertices)))
@@ -385,9 +403,10 @@
         graphcomponent (proxy [mxGraphComponent] [g]
                          ;; no icon for groups
                          ;; allow invisible groups
-                         (getFoldingIcon
-                          [state]
-                          nil))
+                         ;; (getFoldingIcon
+                         ;;  [state]
+                         ;;  nil)
+                         )
         undomanager (add-undo-manager g)
         rubberband (mxRubberband. graphcomponent)]
     (.setConnectable graphcomponent false)
@@ -415,6 +434,13 @@
             (and (instance? ArgumentCell userobject)
                  (= (:id (:arg userobject)) argid))))]
     (find-vertex graph arg-pred)))
+
+(defn find-premise-cell [graph argid pm]
+  (when-let [argcell (find-argument-cell graph argid)]
+    (let [edges (seq (.getEdges graph argcell))]
+      (first (filter #(when-let [obj (.getValue %)]
+                        (and (instance? PremiseCell obj)
+                             (= (:pm obj) pm))) edges)))))
 
 (defn select-statement [component stmt stmt-fmt]
   (let [component (:component component)

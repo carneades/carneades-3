@@ -46,7 +46,13 @@
 (defvar *exportGraphMenuItem* (.exportGraphMenuItem *frame*))
 
 (defvar- *argumentPopupMenu* (.argumentPopupMenu *frame*))
+(defvar- *premisePopupMenu* (.premisePopupMenu *frame*))
+(defvar- *statementPopupMenu* (.statementPopupMenu *frame*))
 (defvar- *addExistingPremiseMenuItem* (.addExistingPremiseMenuItem *frame*))
+(defvar- *newPremiseMenuItem* (.newPremiseMenuItem *frame*))
+(defvar- *deleteArgumentMenuItem* (.deleteArgumentMenuItem *frame*))
+(defvar- *deletePremiseMenuItem* (.deletePremiseMenuItem *frame*))
+(defvar- *deleteStatementMenuItem* (.deleteStatementMenuItem *frame*))
 
 (defvar- *statement-selection-listeners* (atom ()))
 (defvar- *argument-selection-listeners* (atom ()))
@@ -84,9 +90,7 @@
   (let [[path id] (current-graph view)]
     (when-let [component (get-component path id)]
       (let [obj (current-selected-object component)]
-        (swap! *add-existing-premise-data* assoc :src obj :path path :id id)
-
-        ))))
+        (swap! *add-existing-premise-data* assoc :src obj :path path :id id)))))
 
 (defn- right-click-listener [path id component event obj]
   (let [pt (SwingUtilities/convertPoint
@@ -95,12 +99,14 @@
             component)
         x (.getX pt)
         y (.getY pt)]
-    (prn "right click")
-    (prn "instance =")
-    (prn obj)
     (cond (instance? ArgumentCell obj)
           (.show *argumentPopupMenu* component x y)
 
+          (instance? PremiseCell obj)
+          (.show *premisePopupMenu* component x y)
+
+          (instance? StatementCell obj)
+          (.show *statementPopupMenu* component x y)
           )))
 
 (defn- on-zoom-in [event]
@@ -255,6 +261,8 @@
 
   (statement-status-changed
    [this path ag stmt]
+   (prn "statement-statuts-changed: stmt =")
+   (prn stmt)
    (when-let [component (get-component path (:id ag))]
     (change-statement-status component ag stmt)))
 
@@ -299,6 +307,26 @@
    [this path ag arg stmt]
    (when-let [component (get-component path (:id ag))]
      (add-premise component ag arg stmt)))
+
+  (premise-deleted
+   [this path ag arg pm]
+   (when-let [component (get-component path (:id ag))]
+     (delete-premise component ag arg pm)))
+
+  (statement-deleted
+   [this path ag stmt]
+   (when-let [component (get-component path (:id ag))]
+     (delete-statement component ag stmt)))
+  
+  (argument-deleted
+   [this path ag arg]
+   (when-let [component (get-component path (:id ag))]
+     (delete-argument component ag arg)))
+
+  (new-premise-added
+   [this path ag arg stmt stmt-str]
+   (when-let [component (get-component path (:id ag))]
+     (add-new-premise component ag arg stmt stmt-str)))
   
   (ask-file-to-save
    [this-view descriptions suggested]
@@ -478,6 +506,22 @@
    [this f args]
    (apply add-action-listener *printFileMenuItem* f args))
 
+  (add-delete-premise-menuitem-listener
+   [this f args]
+   (apply add-action-listener *deletePremiseMenuItem* f args))
+
+  (add-delete-argument-menuitem-listener
+   [this f args]
+   (apply add-action-listener *deleteArgumentMenuItem* f args))
+
+  (add-delete-statement-menuitem-listener
+   [this f args]
+   (apply add-action-listener *deleteStatementMenuItem* f args))
+
+  (add-new-premise-menuitem-listener
+   [this f args]
+   (apply add-action-listener *newPremiseMenuItem* f args))
+  
   (add-searchresult-selection-listener
    [this f args]
    (register-searchresult-selection-listener f args))
@@ -633,6 +677,21 @@
    [this]
    (premise-being-edited-info))
 
+  (get-selected-node
+   [this path id]
+   (when-let [component (get-component path id)]
+     (when-let [obj (current-selected-object component)]
+       (cond (instance? PremiseCell obj)
+             {:arg (:arg obj) :pm (:pm obj)}
+
+             (instance? ArgumentCell obj)
+             (:arg obj)
+
+             (instance? StatementCell obj)
+             (:stmt obj)
+             )
+       )))
+  
   (register-statement-selection-listener
    [this l args]
    (swap! *statement-selection-listeners* conj {:listener l :args args}))

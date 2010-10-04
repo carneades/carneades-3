@@ -168,13 +168,13 @@
 
 (defn on-select-statement [path id stmt view]
   (prn "on select statement")
-  (prn stmt)
   (when-let [ag (get-ag path id)]
     (let [node (get-node ag stmt)
           status (:status node)
           proofstandard (:standard node)
           acceptable (:acceptable node)
           complement-acceptable (:complement-acceptable node)]
+      (prn node)
       (display-statement-property view path id (:title ag)
                                   (pr-str stmt) statement-formatted status
                                   proofstandard acceptable complement-acceptable))))
@@ -217,6 +217,7 @@
     (display-argument view path ag arg statement-formatted)))
 
 (defn- do-update-section [view keys ag]
+  "updates section content in the model and dirty markers in the view"
   ;; the first key is the path
   (let [path (first keys)]
     (update-section *docmanager* keys ag)
@@ -252,7 +253,8 @@
 (defn on-edit-statement-status [view path id stmt-info]
   (prn "on-edit-statement-status")
   (let [{:keys [status content previous-status]} stmt-info
-        oldag (get-ag path id)]
+        oldag (get-ag path id)
+        content (read-string content)]
     (when (and (not= status previous-status)
                (statement-node oldag content))
       (let [ag (update-statement oldag content status)
@@ -272,7 +274,8 @@
   (prn "on-edit-statement-proofstandard")
   (prn "stmt-info")
   (prn stmt-info)
-  (let [{:keys [proofstandard content previous-proofstandard]} stmt-info]
+  (let [{:keys [proofstandard content previous-proofstandard]} stmt-info
+        content (read-string content)]
     (when (not= proofstandard previous-proofstandard)
       (when-let [ag (update-statement-proofstandard (get-ag path id)
                                                     content proofstandard)]
@@ -447,3 +450,51 @@
     (do-update-section view [path :ags (:id ag)] ag)
     (redisplay-graph view path ag statement-formatted)))
 
+(defn on-delete-premise [view path id arg pm]
+  (prn "pm =")
+  (prn pm)
+  (when-let [ag (get-ag path id)]
+    (let [arg (get-argument ag (:id arg))
+          newag (delete-premise ag arg pm)
+          newarg (get-argument ag (:id arg))]
+      (do-update-section view [path :ags (:id ag)] newag)
+      (premise-deleted view path newag arg pm))))
+
+(defn gen-statement-content []
+  (str (gensym "statement_")))
+
+(defn on-new-premise [view path id arg]
+  (prn "on new premise")
+  (when-let [ag (get-ag path id)]
+    (let [arg (get-argument ag (:id arg))
+          stmt (gen-statement-content)
+          newag (update-statement ag stmt)
+          arg (get-argument ag (:id arg))
+          newag (add-premise newag arg stmt)]
+      (do-update-section view [path :ags (:id ag)] newag)
+      (new-premise-added view path newag arg stmt statement-formatted)
+      )
+    )
+  )
+
+(defn on-delete-statement [view path id stmt]
+  (prn "on delete stmt")
+  (prn "stmt =")
+  (prn stmt)
+  (when-let [ag (get-ag path id)]
+    (let [newag (delete-statement ag stmt)]
+      (do-update-section view [path :ags (:id ag)] newag)
+      ;; (prn "ag after = ")
+      ;; (pprint newag)
+      ;; (prn "!")
+      (statement-deleted view path newag stmt)
+      ))
+  )
+
+(defn on-delete-argument [view path id arg]
+  (prn "on-delete-argument")
+  (when-let [ag (get-ag path id)]
+    (let [arg (get-argument ag (:id arg))
+          newag (delete-argument ag arg)]
+      (do-update-section view [path :ags (:id ag)] newag)
+      (argument-deleted view path newag arg))))

@@ -65,6 +65,9 @@
     (StatementCell. newag stmt stmt-str (stmt-to-str newag stmt stmt-str))))
 
 (defn- update-stmt-style [userobject oldstyle ag]
+  ;; (prn " * update-stmt-style*")
+  ;; (prn "stmt = " (:stmt userobject))
+  ;; (prn "statement style = " (get-statement-style ag (:stmt userobject)))
   (get-statement-style ag (:stmt userobject)))
 
 (defn- update-argument-style [userobject oldstyle ag]
@@ -182,6 +185,14 @@
        (.. model endUpdate)))))
 
 (defn change-statement-status [graphcomponent ag stmt]
+  ;; (prn "change-statement-status")
+  ;; (prn "stmt =")
+  ;; (prn stmt)
+  ;; (clojure.contrib.pprint/pprint (get-node ag stmt))
+  ;; (prn "statement style =")
+  ;; (prn (get-statement-style ag stmt))
+  ;; (prn "out?")
+  ;; (prn (out? ag (statement-complement stmt)))
   (let [component (:component graphcomponent)]
     (with-transaction component
       (change-all-cell-and-styles component ag))))
@@ -204,9 +215,89 @@
     (let [argcell (find-argument-cell graph (:id arg))
           stmtcell (find-statement-cell graph stmt)
           premise (get-premise arg (statement-atom stmt))]
-      (prn "search for premise returns = ")
-      (prn premise)
       (with-transaction component
         (insert-edge graph p (PremiseCell. arg premise) stmtcell argcell
                      (get-edge-style premise))
         (change-all-cell-and-styles component ag)))))
+
+(defn delete-premise [graphcomponent ag arg pm]
+  (let [component (:component graphcomponent)
+        graph (.getGraph component)
+        model (.getModel graph)
+        p (.getDefaultParent graph)]
+    (when-let [pmcell (find-premise-cell graph (:id arg) pm)]
+      (with-transaction component
+        (.remove model pmcell)
+        (change-all-cell-and-styles component ag)
+        (align-orphan-cells graph p (get-vertices graph p))))))
+
+(defn add-new-premise [graphcomponent ag arg stmt stmt-str]
+  (let [component (:component graphcomponent)
+        graph (.getGraph component)
+        model (.getModel graph)
+        p (.getDefaultParent graph)]
+    (when-let [argcell (find-argument-cell graph (:id arg))]
+      (with-transaction component
+        (let [x (getx argcell)
+              y (gety argcell)
+              premise (get-premise (get-argument ag (:id arg)) (statement-atom stmt))
+              stmtcell (insert-vertex graph p (StatementCell. ag stmt stmt-str (stmt-to-str ag stmt stmt-str))
+                                      (get-statement-style ag stmt))
+              premisescells (map #(find-premise-cell graph (:id arg) %) (:premises arg))]
+          (prn "premise =")
+          (prn premise)
+          (prn "premise cell =")
+          (prn premisescells)
+          (insert-edge graph p (PremiseCell. arg premise) stmtcell argcell
+                       (get-edge-style premise))
+          (change-all-cell-and-styles component ag)
+          ;; (prn "children of arg =")
+          ;; (prn (alength (.getChildCells graph argcell)))
+          ;; (move-cell graph stmtcell x y)
+
+          ;; (let [children (to-array (concat premisescells [argcell stmtcell]))
+          ;;       group (.createGroupCell graph children)
+          ;;       grouped (.groupCells graph group 5 )]
+          ;;   (do-layout graph grouped (get-vertices graph p))
+          ;;   )
+          ;; (do-layout graph argcell (get-vertices graph p))
+          ;; (let [father (mxCell.)]
+          ;;   (doseq [cell premisescells]
+          ;;     (.insert father cell 0))
+          ;;   (.insert father stmtcell 0)
+          ;; ;; (test-layout graph p)
+          ;;  (do-layout graph father (get-vertices graph p))
+          ;;  (.remove model father)
+          ;;  (doseq [cell premisescells]
+          ;;     (.insert p cell 0))
+          ;;   (.insert p stmtcell 0)
+          ;;  )
+          )
+        ))))
+
+(defn delete-argument [graphcomponent ag arg]
+  (let [component (:component graphcomponent)
+        graph (.getGraph component)
+        model (.getModel graph)
+        p (.getDefaultParent graph)]
+    (when-let [argcell (find-argument-cell graph (:id arg))]
+      (with-transaction component
+        (.removeCells graph (into-array [argcell]) true)
+        (change-all-cell-and-styles component ag)
+        (align-orphan-cells graph p (get-vertices graph p))))))
+
+(defn delete-statement [graphcomponent ag stmt]
+  (let [component (:component graphcomponent)
+        graph (.getGraph component)
+        model (.getModel graph)
+        p (.getDefaultParent graph)]
+    (when-let [stmtcell (find-statement-cell graph stmt)]
+     (with-transaction component
+       (doseq [argid (:conclusion-of (get-node (:ag (.getValue stmtcell)) stmt))]
+        (let [argcell (find-argument-cell graph argid)]
+          (.removeCells graph (into-array [argcell]) true)))
+       (.removeCells graph (into-array [stmtcell]) true)
+       (change-all-cell-and-styles component ag)
+       (align-orphan-cells graph p (get-vertices graph p))))))
+
+

@@ -74,6 +74,10 @@
   (add-saveas-filemenuitem-listener view saveas-filemenuitem-listener [view])
   (add-undo-editmenuitem-listener view undo-editmenuitem-listener [view])
   (add-redo-editmenuitem-listener view redo-editmenuitem-listener [view])
+  (add-delete-premise-menuitem-listener view delete-premise-menuitem-listener [view])
+  (add-new-premise-menuitem-listener view new-premise-menuitem-listener [view])
+  (add-delete-statement-menuitem-listener view delete-statement-menuitem-listener [view])
+  (add-delete-argument-menuitem-listener view delete-argument-menuitem-listener [view])
   
   ;; we don't need to extract information from the UI,
   ;; dispatch to the listeners:

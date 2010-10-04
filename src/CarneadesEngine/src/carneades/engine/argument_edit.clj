@@ -47,12 +47,8 @@
 
 (defn update-statement-content [ag oldstmt newstmt]
   "returns the new ag or nil if oldsmt does not exist in ag"
-  (prn "oldstmt =")
-  (prn oldstmt)
-  (prn "newstmt =")
-  (prn newstmt)
   (when-let [n (statement-node ag oldstmt)]
-    (let [key (statement-symbol (statement-atom oldstmt))
+    (let [key (statement-symbol oldstmt)
           ag (dissoc-in ag [:nodes key])
           n (assoc n :statement newstmt)
           ag (add-node ag n)
@@ -121,6 +117,47 @@
   (letfn [(add-premise-to-arg
            [arg]
            (update-in arg [:premises] conj (pm stmt)))]
-   (let [ag (update-in ag [:arguments (:id arg)] add-premise-to-arg)
+    (let [ag (update-in ag [:arguments (:id arg)] add-premise-to-arg)
+          newarg (get-argument ag (:id arg))]
+      (update-argument ag newarg))))
+
+(defn delete-premise [ag arg pm]
+  (letfn [(delete-premise-from-arg
+           [arg]
+           (assoc arg :premises (filter #(not= pm %) (:premises arg))))]
+   (let [ag (update-in ag [:arguments (:id arg)] delete-premise-from-arg)
          newarg (get-argument ag (:id arg))]
      (update-argument ag newarg))))
+
+(defn delete-argument [ag arg]
+  (let [conclusion (:conclusion arg)
+        key (statement-symbol conclusion)
+        ag (update-in ag [:nodes key conclusion :conclusion-of] disj (:id arg))
+        ag (dissoc-in ag [:arguments (:id arg)])
+        ag (reduce (fn [ag pm]
+                        (let [key (statement-symbol (:atom pm))
+                              stmt (statement-atom (:atom pm))]
+                          (update-in ag [:nodes key stmt :premise-of] disj (:id arg))))
+                      ag
+                      (:premises arg))]
+    (reduce (fn [ag pm]
+                  (update-statement ag (:atom pm)))
+                ag
+                (:premises arg))))
+
+(defn delete-statement [ag stmt]
+  (when-let [node (statement-node ag stmt)]
+    (let [premises-of (:premise-of node)
+          conclusion-of (:conclusion-of node)
+          key (statement-symbol stmt)
+          main-issue (:main-issue ag)
+          ag (reduce (fn [ag argid]
+                          (delete-premise ag (get-argument ag argid) stmt))
+                        ag premises-of)
+          ag (reduce (fn [ag argid]
+                          (delete-argument ag (get-argument ag argid)))
+                        ag conclusion-of)
+          ag (dissoc-in ag [:nodes key])]
+      (if (= main-issue stmt)
+        (assoc ag :main-issue nil)
+        ag))))

@@ -274,7 +274,7 @@
 (defn statement-node [ag s]
   "returns the node of s if it exists, nil otherwise"
   (get-in ag
-          [:nodes (statement-symbol (statement-atom s))
+          [:nodes (statement-symbol s)
            (statement-atom s)]))
 
 (defn get-node [ag s]
