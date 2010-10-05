@@ -251,6 +251,7 @@
           (insert-edge graph p (PremiseCell. arg premise) stmtcell argcell
                        (get-edge-style premise))
           (change-all-cell-and-styles component ag)
+          (do-layout graph p (get-vertices graph p))
           ;; (prn "children of arg =")
           ;; (prn (alength (.getChildCells graph argcell)))
           ;; (move-cell graph stmtcell x y)

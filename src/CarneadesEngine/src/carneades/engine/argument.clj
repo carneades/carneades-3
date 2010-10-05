@@ -115,6 +115,9 @@
   ([id direction conclusion premises scheme]
      (struct argument-struct id false *default-weight* direction conclusion
              premises scheme nil))
+  ([id applicable weight direction conclusion premises scheme]
+     (struct argument-struct id applicable weight direction
+             conclusion premises scheme nil))
   ([id applicable weight direction conclusion premises scheme title]
      (struct argument-struct id applicable weight direction
              conclusion premises scheme title)))

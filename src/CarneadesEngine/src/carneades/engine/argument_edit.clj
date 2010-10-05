@@ -126,6 +126,8 @@
            [arg]
            (assoc arg :premises (filter #(not= pm %) (:premises arg))))]
    (let [ag (update-in ag [:arguments (:id arg)] delete-premise-from-arg)
+         ag (update-in ag [:nodes (statement-symbol (:atom pm))
+                           (:atom pm) :premise-of] disj (:id arg))
          newarg (get-argument ag (:id arg))]
      (update-argument ag newarg))))
 
@@ -141,9 +143,9 @@
                       ag
                       (:premises arg))]
     (reduce (fn [ag pm]
-                  (update-statement ag (:atom pm)))
-                ag
-                (:premises arg))))
+              (update-statement ag (:atom pm)))
+            ag
+            (:premises arg))))
 
 (defn delete-statement [ag stmt]
   (when-let [node (statement-node ag stmt)]

@@ -233,7 +233,7 @@
      (hierarchicallayout g p cells roots))
   ([g p cells]
      (hierarchicallayout g p cells ())
-     ;; (align-orphan-cells g p cells)
+     (align-orphan-cells g p cells)
      ))
 
 (defn- layout [g p vertices]

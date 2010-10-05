@@ -37,6 +37,7 @@
           (set-busy view true)
           (when-let [content (lkif-import path)]
             (lkif/add-lkif-to-docmanager path content *docmanager*)
+            (init-new-stmt-counters path content)
             (display-lkif-content view file
                                   (sort-by second
                                            (map (fn [id] [id (:title (get-ag path id))])
@@ -385,7 +386,8 @@
            (:applicable arg)
            (:weight arg)
            (:direction arg)
-           (:scheme arg)))))))
+           (:scheme arg))
+          (display-argument view path ag arg statement-formatted))))))
 
 (defn on-argument-edit-weight [view path id arg-info]
   (prn "on argument edit weight")
@@ -408,8 +410,8 @@
            (:applicable arg)
            (:weight arg)
            (:direction arg)
-           (:scheme arg)))
-        ))))
+           (:scheme arg))
+          (display-argument view path ag arg statement-formatted))))))
 
 (defn on-argument-edit-direction [view path id arg-info]
   (prn "on-argument-edit-direction")
@@ -433,7 +435,7 @@
            (:weight arg)
            (:direction arg)
            (:scheme arg))
-          )))))
+          (display-argument view path ag arg statement-formatted))))))
 
 (defn on-add-existing-premise [view path id arg stmt]
   (when-let [ag (get-ag path id)]
@@ -460,19 +462,23 @@
       (do-update-section view [path :ags (:id ag)] newag)
       (premise-deleted view path newag arg pm))))
 
-(defn gen-statement-content []
-  (str (gensym "statement_")))
+(defn gen-statement-content [path ag]
+  (let [stmt (str "statement_" (counter-value path (:id ag)))]
+    (if (statement-node ag stmt)
+      (gen-statement-content path ag)
+      stmt)))
 
 (defn on-new-premise [view path id arg]
   (prn "on new premise")
   (when-let [ag (get-ag path id)]
     (let [arg (get-argument ag (:id arg))
-          stmt (gen-statement-content)
+          stmt (gen-statement-content path ag)
           newag (update-statement ag stmt)
           arg (get-argument ag (:id arg))
           newag (add-premise newag arg stmt)]
       (do-update-section view [path :ags (:id ag)] newag)
       (new-premise-added view path newag arg stmt statement-formatted)
+      (display-statement view path ag stmt statement-formatted)
       )
     )
   )
