@@ -7,6 +7,7 @@
     )   
   (:use
     ;clojure.contrib.profile ; for testing
+    clojure.contrib.def
     carneades.engine.statement
     carneades.engine.unify
     [carneades.engine.argument :as arg])
@@ -23,13 +24,15 @@
     )
   )
 
+(defvar- *debug* false)
+
 (defn class-instances-to-responses
   [reasoner manager wff subs ontology]
-  ;(println "finding instances of class" (statement-formatted wff))
+  (if *debug* (println "finding instances of class" (statement-formatted wff)))
   (let [cname (str (first wff)),
         clazz (. (. manager getOWLDataFactory) getOWLClass (IRI/create cname)),
         insts (. (. reasoner getInstances clazz false) getFlattened)]
-    ;(println "# of instances found:" (count insts))
+    (if *debug* (println "# of instances found:" (count insts)))
     (map (fn [i]
            (let [c (list (first wff) (symbol (. i toStringID))),
                  subs2 (unify c wff subs)]
@@ -45,16 +48,16 @@
 
 (defn single-class-instance-to-responses
   [reasoner manager wff subs ontology]
-  ;(println "finding instances of class" (statement-formatted wff))
+  (if *debug* (println "finding instances of class" (statement-formatted wff)))
   (let [cname (str (first wff)),
         clazz (. (. manager getOWLDataFactory) getOWLClass (IRI/create cname)),
         iname (str (second wff)),
         ind (. (. manager getOWLDataFactory) getOWLNamedIndividual (IRI/create iname)),
         insts (map (memfn toStringID) (. (. reasoner getInstances clazz false) getFlattened))]
-    ;(println "# of instances found:" (count insts))
+    (if *debug* (println "# of instances found:" (count insts)))
     (if (some #{iname} insts)
       (let []
-        ;(println iname "is instance of" cname)
+        (if *debug* (println iname "is instance of" cname))
         (list (as/response
               subs
               (arg/argument
@@ -67,7 +70,7 @@
 
 (defn property-instances-to-responses
   [reasoner manager wff subs ontology]
-  ;(println "finding instances of property:" (statement-formatted wff))
+  (if *debug* (println "finding instances of property:" (statement-formatted wff)))
   (let [pname (str (first wff)),
         prop-type (cond
                     (. ontology containsDataPropertyInSignature (IRI/create pname)) :data,
@@ -80,7 +83,7 @@
         insts (condp = prop-type
                 :data (map (memfn getLiteral) (. reasoner getDataPropertyValues ind prop)),
                 :object (map (memfn toStringID) (. (. reasoner getObjectPropertyValues ind prop) getFlattened)))]
-    ;(println "# of instances found:" (count insts))
+    (if *debug* (println "# of instances found:" (count insts)))
     (map (fn [i]
            (let [c (list (first wff) (second wff) (symbol i)),
                  subs2 (unify c wff subs)]
@@ -96,7 +99,7 @@
 
 (defn single-property-instance-to-responses
   [reasoner manager wff subs ontology]
-  ;(println "finding instances of property" (statement-formatted wff))
+  (if *debug* (println "finding instances of property" (statement-formatted wff)))
   (let [pname (str (first wff)),
         prop-type (cond
                     (. ontology containsDataPropertyInSignature (IRI/create pname)) :data,
@@ -110,7 +113,7 @@
         insts (condp = prop-type
                 :data (map (memfn getLiteral) (. reasoner getDataPropertyValues ind prop)),
                 :object (map (memfn toStringID) (. (. reasoner getObjectPropertyValues ind prop) getFlattened)))]
-    ;(println "# of instances found:" (count insts))
+    (if *debug* (println "# of instances found:" (count insts)))
     (if (some #{iname2} insts)
       (list (as/response
               subs

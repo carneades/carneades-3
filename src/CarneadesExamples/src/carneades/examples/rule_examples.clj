@@ -104,7 +104,7 @@
 (defn engine [max-nodes max-turns critical-questions]
   (make-engine* max-nodes max-turns ag1
                 (list (generate-arguments-from-rules rb1 critical-questions)
-                      builtins)))
+                      (builtins))))
 (time
  (do
   (printf "succeed? %s\n"(succeed? '(bird Tweety) (engine 20 1 [])))
