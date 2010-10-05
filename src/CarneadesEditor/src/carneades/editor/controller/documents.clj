@@ -32,3 +32,12 @@
 (defn get-ags-id [lkifpath]
   (let [agsid (get-all-sectionskeys *docmanager* [lkifpath :ags])]
     agsid))
+
+(defn init-new-stmt-counters [path content]
+  (doseq [id (get-ags-id path)]
+    (add-section *docmanager* [path id :counter] 1)))
+
+(defn counter-value [path id]
+  (let [v (get-section-content *docmanager* [path id :counter])]
+    (update-section *docmanager* [path id :counter] (inc v))
+    v))
