@@ -96,6 +96,10 @@ public class EditorApplicationView extends javax.swing.JFrame {
         deletePremiseMenuItem.setText("Delete");
         premisePopupMenu.add(deletePremiseMenuItem);
 
+        mainIssueMenuItem.setSelected(true);
+        mainIssueMenuItem.setText("Main issue");
+        statementPopupMenu.add(mainIssueMenuItem);
+
         deleteStatementMenuItem.setText("Delete");
         statementPopupMenu.add(deleteStatementMenuItem);
 
@@ -413,6 +417,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     private javax.swing.JTabbedPane leftTabbedPane;
     public final javax.swing.JPopupMenu lkifFilePopupMenu = new javax.swing.JPopupMenu();
     public final javax.swing.JTree lkifsTree = new javax.swing.JTree();
+    public final javax.swing.JCheckBoxMenuItem mainIssueMenuItem = new javax.swing.JCheckBoxMenuItem();
     public final javax.swing.JTabbedPane mapPanel = new javax.swing.JTabbedPane();
     private javax.swing.JMenuBar menuBar;
     public final javax.swing.JMenuItem newPremiseMenuItem = new javax.swing.JMenuItem();
