@@ -149,10 +149,11 @@ is one"
       (fatom? atm) (first (:term atm)))))
 
 (defn statement-symbol [s]
-  (or (statement-predicate s)
-    (if (string? s)
-      (symbol s)
-      s)))
+  (let [a (statement-atom s)]
+  (or (statement-predicate a)
+    (if (string? a)
+      (symbol a)
+      a))))
 
 (defn statement-wff [s]
   (if (statement-pos? s)

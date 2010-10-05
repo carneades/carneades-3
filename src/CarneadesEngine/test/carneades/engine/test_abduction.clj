@@ -38,8 +38,7 @@
               (statement-complement t)
               w s}
         in-label-p (statement-in-label ag asm p)
-        in-label-not-p
-        (set (statement-in-label ag asm (statement-complement p)))
+        in-label-not-p (statement-in-label ag asm (statement-complement p))
         out-label-p (statement-out-label ag asm p)
         out-label-not-p (statement-out-label ag asm (statement-complement p))]
     ;; (dotrace [combine-conjunction-of-dnf
