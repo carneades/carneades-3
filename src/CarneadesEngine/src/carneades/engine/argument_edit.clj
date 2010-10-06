@@ -2,7 +2,8 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.engine.argument-edit
-  (:use carneades.engine.argument
+  (:use clojure.contrib.pprint
+        carneades.engine.argument
         carneades.engine.statement
         [clojure.contrib.core :only (dissoc-in)]))
 
@@ -49,7 +50,7 @@
   "returns the new ag or nil if oldsmt does not exist in ag"
   (when-let [n (statement-node ag oldstmt)]
     (let [key (statement-symbol oldstmt)
-          ag (dissoc-in ag [:nodes key])
+          ag (update-in ag [:nodes] dissoc key)
           n (assoc n :statement newstmt)
           ag (add-node ag n)
           ag (update-conclusions ag (:conclusion-of n) newstmt)
@@ -127,7 +128,7 @@
            (assoc arg :premises (filter #(not= pm %) (:premises arg))))]
    (let [ag (update-in ag [:arguments (:id arg)] delete-premise-from-arg)
          ag (update-in ag [:nodes (statement-symbol (:atom pm))
-                           (:atom pm) :premise-of] disj (:id arg))
+                           (statement-atom (:atom pm)) :premise-of] disj (:id arg))
          newarg (get-argument ag (:id arg))]
      (update-argument ag newarg))))
 
@@ -135,7 +136,7 @@
   (let [conclusion (:conclusion arg)
         key (statement-symbol conclusion)
         ag (update-in ag [:nodes key conclusion :conclusion-of] disj (:id arg))
-        ag (dissoc-in ag [:arguments (:id arg)])
+        ag (update-in ag [:arguments] dissoc (:id arg))
         ag (reduce (fn [ag pm]
                         (let [key (statement-symbol (:atom pm))
                               stmt (statement-atom (:atom pm))]
@@ -154,12 +155,17 @@
           key (statement-symbol stmt)
           main-issue (:main-issue ag)
           ag (reduce (fn [ag argid]
-                          (delete-premise ag (get-argument ag argid) stmt))
-                        ag premises-of)
+                       (let [arg (get-argument ag argid)
+                             pm (get-premise arg stmt)]
+                        (delete-premise ag arg pm)))
+                     ag premises-of)
           ag (reduce (fn [ag argid]
-                          (delete-argument ag (get-argument ag argid)))
-                        ag conclusion-of)
-          ag (dissoc-in ag [:nodes key])]
+                       (delete-argument ag (get-argument ag argid)))
+                     ag conclusion-of)
+          ag (update-in ag [:nodes] dissoc key)]
       (if (= main-issue stmt)
         (assoc ag :main-issue nil)
         ag))))
+
+(defn change-mainissue [ag stmt]
+ (assoc ag :main-issue stmt))

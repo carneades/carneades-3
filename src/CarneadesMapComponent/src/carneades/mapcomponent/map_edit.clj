@@ -185,14 +185,6 @@
        (.. model endUpdate)))))
 
 (defn change-statement-status [graphcomponent ag stmt]
-  ;; (prn "change-statement-status")
-  ;; (prn "stmt =")
-  ;; (prn stmt)
-  ;; (clojure.contrib.pprint/pprint (get-node ag stmt))
-  ;; (prn "statement style =")
-  ;; (prn (get-statement-style ag stmt))
-  ;; (prn "out?")
-  ;; (prn (out? ag (statement-complement stmt)))
   (let [component (:component graphcomponent)]
     (with-transaction component
       (change-all-cell-and-styles component ag))))
@@ -293,12 +285,26 @@
         model (.getModel graph)
         p (.getDefaultParent graph)]
     (when-let [stmtcell (find-statement-cell graph stmt)]
-     (with-transaction component
-       (doseq [argid (:conclusion-of (get-node (:ag (.getValue stmtcell)) stmt))]
-        (let [argcell (find-argument-cell graph argid)]
-          (.removeCells graph (into-array [argcell]) true)))
-       (.removeCells graph (into-array [stmtcell]) true)
-       (change-all-cell-and-styles component ag)
-       (align-orphan-cells graph p (get-vertices graph p))))))
+      (with-transaction component
+        (doseq [argid (:conclusion-of (get-node (:ag (.getValue stmtcell)) stmt))]
+          (let [argcell (find-argument-cell graph argid)]
+            (.removeCells graph (into-array [argcell]) true)))
+        (.removeCells graph (into-array [stmtcell]) true)
+        (change-all-cell-and-styles component ag)
+        (align-orphan-cells graph p (get-vertices graph p))))))
 
+(defn change-mainissue [graphcomponent ag stmt]
+  (let [component (:component graphcomponent)]
+    (with-transaction component
+      (change-all-cell-and-styles component ag))))
 
+(defn add-new-statement [graphcomponent ag stmt stmt-str]
+  (let [component (:component graphcomponent)
+        graph (.getGraph component)
+        model (.getModel graph)
+        p (.getDefaultParent graph)]
+    (with-transaction component
+      (change-all-cell-and-styles component ag)
+      (insert-vertex graph p (StatementCell. ag stmt stmt-str (stmt-to-str ag stmt stmt-str))
+                   (get-statement-style ag stmt))
+      (align-orphan-cells graph p (get-vertices graph p)))))
