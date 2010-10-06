@@ -221,3 +221,26 @@
 (defn new-statement-menuitem-listener [event view]
   (when-let [[path id] (current-graph view)]
     (on-new-statement view path id)))
+
+(defn new-argument-menuitem-listener [event view]
+  (when-let [[path id] (current-graph view)]
+    (let [stmt (get-selected-node view path id)]
+      (on-new-argument view path id stmt))))
+
+(defn new-graph-menuitem-listener [event view]
+  (when-let [info (get-selected-object-in-tree view)]
+    (condp instance? info
+      LkifFileInfo (on-new-graph view (:path info))
+      
+      nil)))
+
+(defn delete-graph-menuitem-listener [event view]
+  (when-let [info (get-selected-object-in-tree view)]
+    (condp instance? info
+      GraphInfo (on-delete-graph view (:path (:lkifinfo info)) (:id info))
+      
+      nil)))
+
+(defn new-file-menuitem-listener [event view]
+  (on-new-file view)
+  )
