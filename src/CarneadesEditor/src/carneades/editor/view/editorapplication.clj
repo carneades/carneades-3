@@ -253,7 +253,18 @@
    [this path ag arg stmt stmt-str]
    (when-let [component (get-component path (:id ag))]
      (add-new-premise component ag arg stmt stmt-str)))
-  
+
+  (mainissue-changed
+   [this path ag stmt]
+   (swap! *main-issues* assoc [path (:id ag)] (:main-issue ag))
+   (when-let [component (get-component path (:id ag))]
+     (change-mainissue component ag stmt)))
+
+  (new-statement-added
+   [this path ag stmt stmt-formatted]
+   (when-let [component (get-component path (:id ag))]
+     (add-new-statement component ag stmt stmt-formatted)))
+
   (ask-file-to-save
    [this-view descriptions suggested]
    (letfn [(changeextension
@@ -516,6 +527,14 @@
   (add-premise-edit-polarity-listener
    [this f args]
    (apply add-action-listener *negatedCheckBox* f args))
+
+  (add-mainissue-menuitem-listener
+   [this f args]
+   (apply add-action-listener *mainIssueMenuItem* f args))
+
+  (add-new-statement-menuitem-listener
+   [this f args]
+   (apply add-action-listener *newStatementMenuItem* f args))
   
   (edit-undone
    [this path id]

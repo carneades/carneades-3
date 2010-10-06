@@ -21,9 +21,12 @@
 
 (defvar *mapPanel* (.mapPanel *viewinstance*))
 
-(defvar- *closebutton-url* "carneades/editor/view/close-button.png")
+;; (defvar- *closebutton-url* "carneades/editor/view/close-button.png")
+(defvar- *closebutton-url* "close-button.png")
+;; (defvar- *closebutton-rollover-url*
+;;   "carneades/editor/view/close-button-rollover.png")
 (defvar- *closebutton-rollover-url*
-  "carneades/editor/view/close-button-rollover.png")
+  "close-button-rollover.png")
 
 (defvar- *close-button-listeners* (atom ()))
 
