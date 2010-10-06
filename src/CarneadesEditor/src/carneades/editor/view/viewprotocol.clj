@@ -78,6 +78,9 @@
   (argument-deleted [this path ag arg])
   (mainissue-changed [this path ag stmt])
   (new-statement-added [this path ag stmt stmt-formatted])
+  (new-argument-added [this path ag arg])
+  (new-graph-added [this path ag stmt-fmt])
+  (graph-deleted [this path id])
   
   ;; non-swing listeners:
   (register-statement-selection-listener [this l args])

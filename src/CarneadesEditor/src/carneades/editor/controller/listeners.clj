@@ -37,7 +37,7 @@
           (set-busy view true)
           (when-let [content (lkif-import path)]
             (lkif/add-lkif-to-docmanager path content *docmanager*)
-            (init-new-stmt-counters path content)
+            (init-counters path)
             (display-lkif-content view file
                                   (sort-by second
                                            (map (fn [id] [id (:title (get-ag path id))])
@@ -469,12 +469,6 @@
       (prn)
       (premise-deleted view path newag arg pm))))
 
-(defn gen-statement-content [path ag]
-  (let [stmt (str "statement_" (counter-value path (:id ag)))]
-    (if (statement-node ag stmt)
-      (gen-statement-content path ag)
-      stmt)))
-
 (defn on-new-premise [view path id arg]
   (prn "on new premise")
   (when-let [ag (get-ag path id)]
@@ -532,3 +526,40 @@
       (display-statement view path ag stmt statement-formatted)
       )
     ))
+
+(defn on-new-argument [view path id stmt]
+  (prn "on new argument")
+  (prn "stmt = ")
+  (prn stmt)
+  (when-let [ag (get-ag path id)]
+    (let [arg (pro (gensym "a") stmt ())
+          ag (assert-argument ag arg)]
+      (do-update-section view [path :ags (:id ag)] ag)
+      (new-argument-added view path ag arg)
+      (display-argument view path ag arg statement-formatted)
+      )
+    )
+  )
+
+(defn on-new-graph [view path]
+  (prn "on new graph")
+  (let [title (gen-graph-title path)
+        ag (argument-graph)
+        ag (assoc ag :title title)]
+    (add-section *docmanager* [path :ags (:id ag)] ag)
+    (init-stmt-counter path (:id ag))
+    (save-lkif view path)
+    (new-graph-added view path ag statement-formatted)))
+
+(defn on-delete-graph [view path id]
+  (when (ask-confirmation view "Delete" "Delete the graph permanently?")
+    (close-graph view path id)
+    (remove-section *docmanager* [path :ags id])
+    (save-lkif view path)
+    (graph-deleted view path id)
+    ))
+
+(defn on-new-file [view]
+  (prn "new file")
+  ;; (when (prompt-string view "File" "Filename:"))
+  )

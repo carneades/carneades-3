@@ -134,8 +134,7 @@
        (do
          (select-component component)
          (set-current-ag-context path (:id ag)))
-       (create-tabgraph-component this path ag stmt-fmt)
-       )))
+       (create-tabgraph-component this path ag stmt-fmt))))
 
   (redisplay-graph
    [this path ag stmt-fmt]
@@ -265,6 +264,15 @@
    (when-let [component (get-component path (:id ag))]
      (add-new-statement component ag stmt stmt-formatted)))
 
+  (new-argument-added
+   [this path ag arg]
+   (when-let [component (get-component path (:id ag))]
+     (add-new-argument component ag arg)))
+
+  (new-graph-added
+   [this path ag stmt-fmt]
+   (add-ag-in-tree path (:id ag) (:title ag)))
+
   (ask-file-to-save
    [this-view descriptions suggested]
    (letfn [(changeextension
@@ -290,21 +298,23 @@
          (.setCurrentDirectory jc dir))
        (when suggested
          (.setSelectedFile jc suggested))
-       (add-propertychange-listener jc (fn [event]
-                                         (condp = (.getPropertyName event)
-                                             
-                                             JFileChooser/FILE_FILTER_CHANGED_PROPERTY
-                                           (when-let [file (deref selectedfile)]
-                                             (let [desc (.. jc getFileFilter getDescription)]
-                                               (.setSelectedFile jc (changeextension file
-                                                                                     (descriptions desc)))))
-                                               
-                                           JFileChooser/SELECTED_FILE_CHANGED_PROPERTY
-                                           (do
-                                             (when-let [file (.. event getNewValue)]
-                                               (reset! selectedfile file)))
+       (add-propertychange-listener
+        jc
+        (fn [event]
+          (condp = (.getPropertyName event)
+              
+              JFileChooser/FILE_FILTER_CHANGED_PROPERTY
+            (when-let [file (deref selectedfile)]
+              (let [desc (.. jc getFileFilter getDescription)]
+                (.setSelectedFile jc (changeextension file
+                                                      (descriptions desc)))))
+            
+            JFileChooser/SELECTED_FILE_CHANGED_PROPERTY
+            (do
+              (when-let [file (.. event getNewValue)]
+                (reset! selectedfile file)))
 
-                                           nil)))
+            nil)))
        (let [val (.showSaveDialog jc *frame*)]
          (when (= val JFileChooser/APPROVE_OPTION)
            (reset! *dialog-current-directory* (.getCurrentDirectory jc))
@@ -535,6 +545,26 @@
   (add-new-statement-menuitem-listener
    [this f args]
    (apply add-action-listener *newStatementMenuItem* f args))
+
+  (add-new-argument-menuitem-listener
+   [this f args]
+   (apply add-action-listener *newArgumentMenuItem* f args))
+
+  (add-new-graph-menuitem-listener
+   [this f args]
+   (apply add-action-listener *newGraphMenuItem* f args))
+
+  (add-delete-graph-menuitem-listener
+   [this f args]
+   (apply add-action-listener *deleteGraphMenuItem* f args))
+
+  (add-new-file-menuitem-listener
+   [this f args]
+   (apply add-action-listener *newFileMenuItem* f args))
+  
+  (graph-deleted
+   [this path id]
+   (remove-ag-in-tree path id))
   
   (edit-undone
    [this path id]

@@ -308,3 +308,17 @@
       (insert-vertex graph p (StatementCell. ag stmt stmt-str (stmt-to-str ag stmt stmt-str))
                    (get-statement-style ag stmt))
       (align-orphan-cells graph p (get-vertices graph p)))))
+
+(defn add-new-argument [graphcomponent ag arg]
+  (let [component (:component graphcomponent)
+        graph (.getGraph component)
+        model (.getModel graph)
+        p (.getDefaultParent graph)]
+    (with-transaction component
+      (change-all-cell-and-styles component ag)
+      (let [argvertex (add-argument-vertex graph p ag arg)
+            stmtcell (find-statement-cell graph (:conclusion arg))]
+        (insert-edge graph p (ArgumentCell. arg) argvertex
+                     stmtcell
+                     (get-conclusion-edge-style arg)))
+      (do-layout graph p (get-vertices graph p)))))
