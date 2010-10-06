@@ -274,12 +274,16 @@
 (defvar- *argument-width* 32)
 (defvar- *argument-height* 32)
 
-(defn- add-argument [g p ag arg vertices]
+(defn add-argument-vertex [g p ag arg]
   (let [vertex
-        (insert-vertex g p (ArgumentCell. arg)
-                       (get-argument-style ag arg))]
-    (.. vertex getGeometry (setWidth *argument-width*))
-    (.. vertex getGeometry (setHeight *argument-height*))
+           (insert-vertex g p (ArgumentCell. arg)
+                          (get-argument-style ag arg))]
+       (.. vertex getGeometry (setWidth *argument-width*))
+       (.. vertex getGeometry (setHeight *argument-height*))
+       vertex))
+
+(defn- add-argument [g p ag arg vertices]
+  (let [vertex (add-argument-vertex g p ag arg)]
     (assoc vertices (argument-id arg) vertex)))
 
 (defn- add-arguments [g p ag vertices]

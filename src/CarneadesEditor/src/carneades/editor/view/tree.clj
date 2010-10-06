@@ -102,6 +102,39 @@
         (.scrollPathToVisible *lkifsTree* path)
         (.setSelectionPath (.getSelectionModel *lkifsTree*) path)))))
 
+(defn add-ag-in-tree [path id title]
+  (with-tree *lkifsTree*
+    (let [model (.getModel *lkifsTree*)
+          root (.getRoot model)
+          childcount (.getChildCount root)]
+      (loop [nb (range childcount)]
+        (when-let [i (first nb)]
+          (let[child (.getChildAt root i)
+               lkif-file (.getUserObject child)]
+            (if (= path (:path lkif-file))
+              (do
+                (.add child (DefaultMutableTreeNode. (GraphInfo. lkif-file id title false)))
+                (.reload model root)))
+            (recur (rest nb))))))))
+
+(defn remove-ag-in-tree [path id]
+  (with-tree *lkifsTree*
+    (let [model (.getModel *lkifsTree*)
+          root (.getRoot model)
+          childcount (.getChildCount root)]
+      (loop [nb (range childcount)]
+        (let[i (first nb)
+             child (.getChildAt root i)
+             lkif-file (.getUserObject child)]
+          (if (= path (:path lkif-file))
+            (doseq [j (range (.getChildCount child))]
+              (let [graph (.getChildAt child j)]
+                (let [graphinfo (.getUserObject graph)]
+                  (when (= (:id graphinfo) id)
+                    (.remove child j)))))
+            (recur (rest nb)))))
+      (.reload model root))))
+
 (defn remove-lkif-content [path]
   (with-tree *lkifsTree*
     (let [model (.getModel *lkifsTree*)

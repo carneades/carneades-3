@@ -18,6 +18,10 @@
 (defvar- *mapPopupMenu* (.mapPopupMenu *frame*))
 (defvar *addExistingPremiseMenuItem* (.addExistingPremiseMenuItem *frame*))
 (defvar *newStatementMenuItem* (.newStatementMenuItem *frame*))
+(defvar *newArgumentMenuItem* (.newArgumentMenuItem *frame*))
+(defvar *newGraphMenuItem* (.newGraphMenuItem *frame*))
+(defvar *deleteGraphMenuItem* (.deleteGraphMenuItem *frame*))
+(defvar *newFileMenuItem* (.newFileMenuItem *frame*))
 
 (defvar *add-existing-premise-data* (atom {:path nil :id nil :src nil}))
 

@@ -37,6 +37,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
+        jSeparator10 = new javax.swing.JPopupMenu.Separator();
         searchInButtonGroup = new javax.swing.ButtonGroup();
         jSeparator4 = new javax.swing.JToolBar.Separator();
         jSeparator8 = new javax.swing.JToolBar.Separator();
@@ -50,6 +51,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
         jScrollPane4 = new javax.swing.JScrollPane();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
+        jSeparator11 = new javax.swing.JPopupMenu.Separator();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
@@ -64,6 +66,9 @@ public class EditorApplicationView extends javax.swing.JFrame {
         tabPopupMenu.add(closeTabMenuItem);
 
         lkifFilePopupMenu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        newGraphMenuItem.setText("New Graph");
+        lkifFilePopupMenu.add(newGraphMenuItem);
 
         closeLkifFileMenuItem.setText("Close");
         lkifFilePopupMenu.add(closeLkifFileMenuItem);
@@ -83,6 +88,10 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         exportGraphMenuItem.setText("Export...");
         graphPopupMenu.add(exportGraphMenuItem);
+        graphPopupMenu.add(jSeparator10);
+
+        deleteGraphMenuItem.setText("Delete");
+        graphPopupMenu.add(deleteGraphMenuItem);
 
         newPremiseMenuItem.setText("New premise");
         argumentPopupMenu.add(newPremiseMenuItem);
@@ -95,6 +104,9 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         deletePremiseMenuItem.setText("Delete");
         premisePopupMenu.add(deletePremiseMenuItem);
+
+        newArgumentMenuItem.setText("New argument");
+        statementPopupMenu.add(newArgumentMenuItem);
 
         mainIssueMenuItem.setSelected(true);
         mainIssueMenuItem.setText("Main issue");
@@ -284,6 +296,10 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         fileMenu.setText("File");
 
+        newFileMenuItem.setText("New File...");
+        fileMenu.add(newFileMenuItem);
+        fileMenu.add(jSeparator11);
+
         openFileMenuItem.setText("Open...");
         fileMenu.add(openFileMenuItem);
 
@@ -392,6 +408,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JMenuItem closeTabMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem copyClipboardEditMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem deleteArgumentMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem deleteGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem deletePremiseMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem deleteStatementMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenu editMenu;
@@ -407,6 +424,8 @@ public class EditorApplicationView extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator10;
+    private javax.swing.JPopupMenu.Separator jSeparator11;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JToolBar.Separator jSeparator4;
@@ -424,6 +443,9 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JTabbedPane mapPanel = new javax.swing.JTabbedPane();
     public final javax.swing.JPopupMenu mapPopupMenu = new javax.swing.JPopupMenu();
     private javax.swing.JMenuBar menuBar;
+    public final javax.swing.JMenuItem newArgumentMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem newFileMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem newGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem newPremiseMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem newStatementMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JButton openFileButton = new javax.swing.JButton();
