@@ -209,3 +209,15 @@
   (when-let [[path id] (current-graph view)]
     (let [arg (get-selected-node view path id)]
       (on-delete-argument view path id arg))))
+
+(defn mainissue-menuitem-listener [event view]
+  (when-let [[path id] (current-graph view)]
+    (let [stmt (get-selected-node view path id)
+          selected (.isSelected (.getSource event))]
+      (if selected
+       (on-change-mainissue view path id stmt)
+       (on-change-mainissue view path id nil)))))
+
+(defn new-statement-menuitem-listener [event view]
+  (when-let [[path id] (current-graph view)]
+    (on-new-statement view path id)))

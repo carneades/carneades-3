@@ -37,6 +37,8 @@
   (add-delete-premise-menuitem-listener [this f args])
   (add-delete-statement-menuitem-listener [this f args])
   (add-delete-argument-menuitem-listener [this f args])
+  (add-mainissue-menuitem-listener [this f args])
+  (add-new-statement-menuitem-listener [this f args])
 
   ;; properties edit listeners
   (add-statement-edit-listener [this f args])

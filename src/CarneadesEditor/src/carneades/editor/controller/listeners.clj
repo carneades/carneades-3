@@ -51,6 +51,9 @@
         id (:id ag)
         title (:title ag)
         mainissue (statement-formatted (:main-issue ag))]
+    ;; (pprint "ag = ")
+    ;; (pprint ag)
+    ;; (prn)
     (display-graph-property view path id title mainissue)))
 
 (defn on-edit-graphid [view path graphid]
@@ -131,6 +134,7 @@
 (defn on-close-graph [view path id]
   (prn "on-close-graph")
   (if (is-ag-dirty path id)
+    ;; TODO "Save graph before closing it?" [yes] [no] [cancel]
     (when (ask-confirmation view "Close" "Close unsaved graph?")
       (cancel-updates-section *docmanager* [path :ags id])
       (update-dirty-state view path (get-ag path id) false)
@@ -460,6 +464,9 @@
           newag (delete-premise ag arg pm)
           newarg (get-argument ag (:id arg))]
       (do-update-section view [path :ags (:id ag)] newag)
+      (prn "ag after delete premise = ")
+      (pprint ag)
+      (prn)
       (premise-deleted view path newag arg pm))))
 
 (defn gen-statement-content [path ag]
@@ -488,19 +495,40 @@
   (prn "stmt =")
   (prn stmt)
   (when-let [ag (get-ag path id)]
-    (let [newag (delete-statement ag stmt)]
-      (do-update-section view [path :ags (:id ag)] newag)
-      ;; (prn "ag after = ")
-      ;; (pprint newag)
-      ;; (prn "!")
-      (statement-deleted view path newag stmt)
-      ))
-  )
+    (let [ag (delete-statement ag stmt)]
+      (do-update-section view [path :ags (:id ag)] ag)
+      (prn "after delete stmt =")
+      (pprint ag)
+      (prn)
+      (statement-deleted view path ag stmt))))
 
 (defn on-delete-argument [view path id arg]
   (prn "on-delete-argument")
   (when-let [ag (get-ag path id)]
     (let [arg (get-argument ag (:id arg))
-          newag (delete-argument ag arg)]
-      (do-update-section view [path :ags (:id ag)] newag)
-      (argument-deleted view path newag arg))))
+          ag (delete-argument ag arg)]
+      (do-update-section view [path :ags (:id ag)] ag)
+      (prn "ag after delete argument = ")
+      (pprint ag)
+      (prn)
+      (argument-deleted view path ag arg))))
+
+(defn on-change-mainissue [view path id stmt]
+  (prn "on change mainissue")
+  (prn "stmt =")
+  (prn stmt)
+  (when-let [ag (get-ag path id)]
+    (when (or (nil? stmt) (statement-node ag stmt))
+      (let [ag (change-mainissue ag stmt)]
+        (do-update-section view [path :ags (:id ag)] ag)
+        (mainissue-changed view path ag stmt)))))
+
+(defn on-new-statement [view path id]
+  (when-let [ag (get-ag path id)]
+    (let [stmt (gen-statement-content path ag)
+          ag (update-statement ag stmt)]
+      (do-update-section view [path :ags (:id ag)] ag)
+      (new-statement-added view path ag stmt statement-formatted)
+      (display-statement view path ag stmt statement-formatted)
+      )
+    ))

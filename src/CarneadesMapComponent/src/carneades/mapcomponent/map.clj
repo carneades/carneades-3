@@ -516,7 +516,7 @@
                          (mousePressed
                           [event]
                           (when (.isPopupTrigger event)
-                            (when-let [userobject (current-selected-object graphcomponent)]
+                            (let [userobject (current-selected-object graphcomponent)]
                               (listener event userobject))))))))
 
 (defn layout-map [graphcomponent]

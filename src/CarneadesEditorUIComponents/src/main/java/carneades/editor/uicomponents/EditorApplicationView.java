@@ -103,6 +103,9 @@ public class EditorApplicationView extends javax.swing.JFrame {
         deleteStatementMenuItem.setText("Delete");
         statementPopupMenu.add(deleteStatementMenuItem);
 
+        newStatementMenuItem.setText("New statement");
+        mapPopupMenu.add(newStatementMenuItem);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         toolBar.setFloatable(false);
@@ -419,8 +422,10 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JTree lkifsTree = new javax.swing.JTree();
     public final javax.swing.JCheckBoxMenuItem mainIssueMenuItem = new javax.swing.JCheckBoxMenuItem();
     public final javax.swing.JTabbedPane mapPanel = new javax.swing.JTabbedPane();
+    public final javax.swing.JPopupMenu mapPopupMenu = new javax.swing.JPopupMenu();
     private javax.swing.JMenuBar menuBar;
     public final javax.swing.JMenuItem newPremiseMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem newStatementMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JButton openFileButton = new javax.swing.JButton();
     public final javax.swing.JMenuItem openFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem openGraphMenuItem = new javax.swing.JMenuItem();

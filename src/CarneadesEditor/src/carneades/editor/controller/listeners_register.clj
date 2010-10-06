@@ -78,7 +78,9 @@
   (add-new-premise-menuitem-listener view new-premise-menuitem-listener [view])
   (add-delete-statement-menuitem-listener view delete-statement-menuitem-listener [view])
   (add-delete-argument-menuitem-listener view delete-argument-menuitem-listener [view])
-  
+  (add-mainissue-menuitem-listener view mainissue-menuitem-listener [view])
+  (add-new-statement-menuitem-listener view new-statement-menuitem-listener [view])
+
   ;; we don't need to extract information from the UI,
   ;; dispatch to the listeners:
   (add-about-helpmenuitem-listener view (fn [event] (on-about view)) [])
