@@ -378,7 +378,7 @@
   [lkif-stmts]
   (let* [lkif-stmt* (xml-> lkif-stmts :statement),
          key-val-list (apply concat (map parse-stmt lkif-stmt*))]
-    (apply assoc (cons (hash-map) key-val-list))))
+    (apply hash-map key-val-list)))
 
 (defn apply-status_standard
   [ag lkif-stmt*]
