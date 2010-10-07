@@ -35,7 +35,8 @@
      ~@body
      (doseq [path# expanded#]
        (.expandPath ~tree path#))
-     (.setSelectionPaths selectionmodel# selectionpaths#)))
+     ;; (.setSelectionPaths selectionmodel# selectionpaths#)
+     ))
 
 (defn add-propertychange-listener
   [component f & args]

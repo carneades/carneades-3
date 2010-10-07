@@ -27,6 +27,11 @@
 (defvar- *file-already-opened* "File %s is already opened.")
 (defvar- *file-format-not-supported* "This file format is not supported.")
 
+(defn- create-lkifinfo [path]
+  (sort-by second
+           (map (fn [id] [id (:title (get-ag path id))])
+                (get-ags-id path))))
+
 (defn on-open-file [view]
   (prn "ask-lkif-file-to-open...")
   (when-let [file (ask-lkif-file-to-open view)]
@@ -38,10 +43,7 @@
           (when-let [content (lkif-import path)]
             (lkif/add-lkif-to-docmanager path content *docmanager*)
             (init-counters path)
-            (display-lkif-content view file
-                                  (sort-by second
-                                           (map (fn [id] [id (:title (get-ag path id))])
-                                                (get-ags-id path))))
+            (display-lkif-content view file (create-lkifinfo path))
             (display-lkif-property view path))
           (finally
            (set-busy view false)))))))
@@ -100,7 +102,7 @@
 (defn on-export-graph [view path id]
   (when-let [ag (get-ag path id)]
     (when-let [[file desc] (ask-file-to-save view {*dot-description* "dot"
-                                                   *graphviz-svg-description* "svg"
+                                                   ;; *graphviz-svg-description* "svg"
                                                    *svg-description* "svg"}
                                              (suggested-filename (:title ag) id "svg"))]
       (let [filename (.getPath file)
@@ -474,11 +476,11 @@
   (when-let [ag (get-ag path id)]
     (let [arg (get-argument ag (:id arg))
           stmt (gen-statement-content path ag)
-          newag (update-statement ag stmt)
+          ag (update-statement ag stmt)
           arg (get-argument ag (:id arg))
-          newag (add-premise newag arg stmt)]
-      (do-update-section view [path :ags (:id ag)] newag)
-      (new-premise-added view path newag arg stmt statement-formatted)
+          ag (add-premise ag arg stmt)]
+      (do-update-section view [path :ags (:id ag)] ag)
+      (new-premise-added view path ag arg stmt statement-formatted)
       (display-statement view path ag stmt statement-formatted)
       )
     )
@@ -532,14 +534,11 @@
   (prn "stmt = ")
   (prn stmt)
   (when-let [ag (get-ag path id)]
-    (let [arg (pro (gensym "a") stmt ())
+    (let [arg (pro (gen-argument-id) stmt ())
           ag (assert-argument ag arg)]
       (do-update-section view [path :ags (:id ag)] ag)
       (new-argument-added view path ag arg)
-      (display-argument view path ag arg statement-formatted)
-      )
-    )
-  )
+      (display-argument view path ag arg statement-formatted))))
 
 (defn on-new-graph [view path]
   (prn "on new graph")
@@ -549,10 +548,12 @@
     (add-section *docmanager* [path :ags (:id ag)] ag)
     (init-stmt-counter path (:id ag))
     (save-lkif view path)
-    (new-graph-added view path ag statement-formatted)))
+    (new-graph-added view path ag statement-formatted)
+    (open-graph view path ag statement-formatted)
+    (display-graph-property view path (:id ag) (:title ag) (:main-issue ag))))
 
 (defn on-delete-graph [view path id]
-  (when (ask-confirmation view "Delete" "Delete the graph permanently?")
+  (when (ask-confirmation view "Delete" "Permanently delete the graph?")
     (close-graph view path id)
     (remove-section *docmanager* [path :ags id])
     (save-lkif view path)
@@ -560,6 +561,17 @@
     ))
 
 (defn on-new-file [view]
-  (prn "new file")
-  ;; (when (prompt-string view "File" "Filename:"))
+  (when-let [[file desc] (ask-file-to-save view {"LKIF files (.xml)" "xml"}
+                                           (File. "lkif1.xml"))]
+    (let [path (.getPath file)]
+      (prn "new file =")
+      (prn file)
+      (prn "new path =")
+      (prn path)
+      (lkif/add-lkif-to-docmanager path lkif/*empty-lkif-content* *docmanager*)
+      (init-counters path)
+      (save-lkif view path)
+      (display-lkif-content view file (create-lkifinfo path))
+      (display-lkif-property view path)
+      ))
   )

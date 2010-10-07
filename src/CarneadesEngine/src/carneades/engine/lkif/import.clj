@@ -2,7 +2,7 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.engine.lkif.import
-  (:require  :reload-all
+  (:require
     [clojure.zip :as zip]
     [clojure.xml :as xml]
     [clojure.contrib.zip-filter :as filter])
