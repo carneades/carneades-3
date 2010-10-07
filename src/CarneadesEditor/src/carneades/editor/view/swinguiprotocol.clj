@@ -37,7 +37,14 @@
   (add-delete-premise-menuitem-listener [this f args])
   (add-delete-statement-menuitem-listener [this f args])
   (add-delete-argument-menuitem-listener [this f args])
-
+  (add-mainissue-menuitem-listener [this f args])
+  (add-new-statement-menuitem-listener [this f args])
+  (add-new-argument-menuitem-listener [this f args])
+  (add-new-premise-menuitem-listener [this f args])
+  (add-new-graph-menuitem-listener [this f args])
+  (add-delete-graph-menuitem-listener [this f args])
+  (add-new-file-menuitem-listener [this f args])
+  
   ;; properties edit listeners
   (add-statement-edit-listener [this f args])
   (add-title-edit-listener [this f args])
@@ -48,7 +55,6 @@
   (add-argument-edit-title-listener [this f args])
   (add-argument-edit-weight-listener [this f args])
   (add-argument-edit-direction-listener [this f args])
-  (add-new-premise-menuitem-listener [this f args])
   
   ;; functions to get information from the Swing UI
   (get-selected-object-in-tree [this])

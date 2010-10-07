@@ -3,6 +3,7 @@
 
 (ns carneades.editor.controller.documents
   (:use clojure.contrib.def
+        carneades.engine.argument
         carneades.editor.model.docmanager
         carneades.editor.view.viewprotocol))
 
@@ -33,11 +34,33 @@
   (let [agsid (get-all-sectionskeys *docmanager* [lkifpath :ags])]
     agsid))
 
-(defn init-new-stmt-counters [path content]
+(defn init-counters [path]
+  (add-section *docmanager* [path :graph-counter] 1)
   (doseq [id (get-ags-id path)]
-    (add-section *docmanager* [path id :counter] 1)))
+    (add-section *docmanager* [path id :stmt-counter] 1)))
 
-(defn counter-value [path id]
-  (let [v (get-section-content *docmanager* [path id :counter])]
-    (update-section *docmanager* [path id :counter] (inc v))
+(defn init-stmt-counter [path id]
+  (add-section *docmanager* [path id :stmt-counter] 1))
+
+(defn stmt-counter-value [path id]
+  (let [v (get-section-content *docmanager* [path id :stmt-counter])]
+    (update-section *docmanager* [path id :stmt-counter] (inc v))
     v))
+
+(defn graph-counter-value [path]
+  (let [v (get-section-content *docmanager* [path :graph-counter])]
+    (update-section *docmanager* [path :graph-counter] (inc v))
+    v))
+
+(defn gen-statement-content [path ag]
+  (let [stmt (str "statement_" (stmt-counter-value path (:id ag)))]
+    (if (statement-node ag stmt)
+      (gen-statement-content path ag)
+      stmt)))
+
+(defn gen-graph-title [path]
+  (let [title (str "graph" (graph-counter-value path))
+        titles (set (map :title (map #(get-ag path %) (get-ags-id path))))]
+    (if (get titles title)
+      (gen-graph-title path)
+      title)))
