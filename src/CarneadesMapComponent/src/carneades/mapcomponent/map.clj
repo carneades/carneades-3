@@ -489,7 +489,8 @@
         selectionmodel (.getSelectionModel graph)
         selectedcells (.getCells selectionmodel)
         bufferedimg (mxCellRenderer/createBufferedImage
-             graph selectedcells 1 nil (.isAntiAlias component) nil (.getCanvas component))
+             graph selectedcells 1 Color/WHITE
+             (.isAntiAlias component) nil (.getCanvas component))
         os (ByteArrayOutputStream.)
         res (ImageIO/write bufferedimg "png" os)
         imgselection (ImageSelection. (.toByteArray os))

@@ -2,7 +2,7 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.engine.lkif.export
-  (:require :reload-all
+  (:require
     [clojure.contrib.io :as io]
     [clojure.contrib.prxml :as prx]
     )
