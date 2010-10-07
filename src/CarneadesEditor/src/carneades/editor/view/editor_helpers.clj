@@ -15,7 +15,13 @@
 (defvar- *argumentPopupMenu* (.argumentPopupMenu *frame*))
 (defvar- *premisePopupMenu* (.premisePopupMenu *frame*))
 (defvar- *statementPopupMenu* (.statementPopupMenu *frame*))
+(defvar- *mapPopupMenu* (.mapPopupMenu *frame*))
 (defvar *addExistingPremiseMenuItem* (.addExistingPremiseMenuItem *frame*))
+(defvar *newStatementMenuItem* (.newStatementMenuItem *frame*))
+(defvar *newArgumentMenuItem* (.newArgumentMenuItem *frame*))
+(defvar *newGraphMenuItem* (.newGraphMenuItem *frame*))
+(defvar *deleteGraphMenuItem* (.deleteGraphMenuItem *frame*))
+(defvar *newFileMenuItem* (.newFileMenuItem *frame*))
 
 (defvar *add-existing-premise-data* (atom {:path nil :id nil :src nil}))
 
@@ -80,6 +86,9 @@
 
           (instance? StatementCell obj)
           (.show *statementPopupMenu* component x y)
+
+          (nil? obj)
+          (.show *mapPopupMenu* component x y)
           )))
 
 (defn create-tabgraph-component [this path ag stmt-fmt]
@@ -89,12 +98,12 @@
       (add-node-selection-listener component #(node-selection-listener
                                                this path (:id ag) %))
       (add-right-click-listener component
-                                (fn [event listener]
+                                (fn [event obj]
                                   (right-click-listener path
                                                         (:id ag)
                                                         (:component component)
                                                         event
-                                                        listener)))
+                                                        obj)))
       (add-component component path ag (is-dirty? path (:id ag)))
       (set-current-ag-context path (:id ag)))
     (finally

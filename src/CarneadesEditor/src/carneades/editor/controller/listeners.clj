@@ -37,7 +37,7 @@
           (set-busy view true)
           (when-let [content (lkif-import path)]
             (lkif/add-lkif-to-docmanager path content *docmanager*)
-            (init-new-stmt-counters path content)
+            (init-counters path)
             (display-lkif-content view file
                                   (sort-by second
                                            (map (fn [id] [id (:title (get-ag path id))])
@@ -51,6 +51,9 @@
         id (:id ag)
         title (:title ag)
         mainissue (statement-formatted (:main-issue ag))]
+    ;; (pprint "ag = ")
+    ;; (pprint ag)
+    ;; (prn)
     (display-graph-property view path id title mainissue)))
 
 (defn on-edit-graphid [view path graphid]
@@ -131,6 +134,7 @@
 (defn on-close-graph [view path id]
   (prn "on-close-graph")
   (if (is-ag-dirty path id)
+    ;; TODO "Save graph before closing it?" [yes] [no] [cancel]
     (when (ask-confirmation view "Close" "Close unsaved graph?")
       (cancel-updates-section *docmanager* [path :ags id])
       (update-dirty-state view path (get-ag path id) false)
@@ -460,13 +464,10 @@
           newag (delete-premise ag arg pm)
           newarg (get-argument ag (:id arg))]
       (do-update-section view [path :ags (:id ag)] newag)
+      (prn "ag after delete premise = ")
+      (pprint ag)
+      (prn)
       (premise-deleted view path newag arg pm))))
-
-(defn gen-statement-content [path ag]
-  (let [stmt (str "statement_" (counter-value path (:id ag)))]
-    (if (statement-node ag stmt)
-      (gen-statement-content path ag)
-      stmt)))
 
 (defn on-new-premise [view path id arg]
   (prn "on new premise")
@@ -488,19 +489,77 @@
   (prn "stmt =")
   (prn stmt)
   (when-let [ag (get-ag path id)]
-    (let [newag (delete-statement ag stmt)]
-      (do-update-section view [path :ags (:id ag)] newag)
-      ;; (prn "ag after = ")
-      ;; (pprint newag)
-      ;; (prn "!")
-      (statement-deleted view path newag stmt)
-      ))
-  )
+    (let [ag (delete-statement ag stmt)]
+      (do-update-section view [path :ags (:id ag)] ag)
+      (prn "after delete stmt =")
+      (pprint ag)
+      (prn)
+      (statement-deleted view path ag stmt))))
 
 (defn on-delete-argument [view path id arg]
   (prn "on-delete-argument")
   (when-let [ag (get-ag path id)]
     (let [arg (get-argument ag (:id arg))
-          newag (delete-argument ag arg)]
-      (do-update-section view [path :ags (:id ag)] newag)
-      (argument-deleted view path newag arg))))
+          ag (delete-argument ag arg)]
+      (do-update-section view [path :ags (:id ag)] ag)
+      (prn "ag after delete argument = ")
+      (pprint ag)
+      (prn)
+      (argument-deleted view path ag arg))))
+
+(defn on-change-mainissue [view path id stmt]
+  (prn "on change mainissue")
+  (prn "stmt =")
+  (prn stmt)
+  (when-let [ag (get-ag path id)]
+    (when (or (nil? stmt) (statement-node ag stmt))
+      (let [ag (change-mainissue ag stmt)]
+        (do-update-section view [path :ags (:id ag)] ag)
+        (mainissue-changed view path ag stmt)))))
+
+(defn on-new-statement [view path id]
+  (when-let [ag (get-ag path id)]
+    (let [stmt (gen-statement-content path ag)
+          ag (update-statement ag stmt)]
+      (do-update-section view [path :ags (:id ag)] ag)
+      (new-statement-added view path ag stmt statement-formatted)
+      (display-statement view path ag stmt statement-formatted)
+      )
+    ))
+
+(defn on-new-argument [view path id stmt]
+  (prn "on new argument")
+  (prn "stmt = ")
+  (prn stmt)
+  (when-let [ag (get-ag path id)]
+    (let [arg (pro (gensym "a") stmt ())
+          ag (assert-argument ag arg)]
+      (do-update-section view [path :ags (:id ag)] ag)
+      (new-argument-added view path ag arg)
+      (display-argument view path ag arg statement-formatted)
+      )
+    )
+  )
+
+(defn on-new-graph [view path]
+  (prn "on new graph")
+  (let [title (gen-graph-title path)
+        ag (argument-graph)
+        ag (assoc ag :title title)]
+    (add-section *docmanager* [path :ags (:id ag)] ag)
+    (init-stmt-counter path (:id ag))
+    (save-lkif view path)
+    (new-graph-added view path ag statement-formatted)))
+
+(defn on-delete-graph [view path id]
+  (when (ask-confirmation view "Delete" "Delete the graph permanently?")
+    (close-graph view path id)
+    (remove-section *docmanager* [path :ags id])
+    (save-lkif view path)
+    (graph-deleted view path id)
+    ))
+
+(defn on-new-file [view]
+  (prn "new file")
+  ;; (when (prompt-string view "File" "Filename:"))
+  )
