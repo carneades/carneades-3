@@ -119,6 +119,11 @@ public class EditorApplicationView extends javax.swing.JFrame {
         mapPopupMenu.add(newStatementMenuItem);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         toolBar.setFloatable(false);
         toolBar.setRollover(true);
@@ -386,6 +391,10 @@ public class EditorApplicationView extends javax.swing.JFrame {
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_searchButtonActionPerformed
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        System.exit(0);
+    }//GEN-LAST:event_formWindowClosed
 
     /**
     * @param args the command line arguments

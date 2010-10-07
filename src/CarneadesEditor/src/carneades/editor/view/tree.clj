@@ -32,11 +32,6 @@
         root (.getRoot model)]
     (pos? (.getChildCount root))))
 
-(defn get-selected-object []
-  (when-let [node (.getLastSelectedPathComponent *lkifsTree*)]
-    (when-let [info (.getUserObject node)]
-      info)))
-
 (defn on-tree-selection [event]
   (let [node (.getLastSelectedPathComponent *lkifsTree*)]
     (if (nil? node)
@@ -52,7 +47,7 @@
              (when-let [path (.getPathForLocation *lkifsTree* x y)]
                (let [selectedpath (.getSelectionPath *lkifsTree*)]
                  (when (= path selectedpath)
-                   (when-let [info (get-selected-object)]
+                   (when-let [info (selected-object-in-tree)]
                      (condp instance? info
                        GraphInfo
                        (do
@@ -112,28 +107,37 @@
           (let[child (.getChildAt root i)
                lkif-file (.getUserObject child)]
             (if (= path (:path lkif-file))
-              (do
-                (.add child (DefaultMutableTreeNode. (GraphInfo. lkif-file id title false)))
-                (.reload model root)))
+              (let [agnode (DefaultMutableTreeNode. (GraphInfo. lkif-file id title false))]
+                (.add child agnode)
+                (.reload model root)
+                (let [path (TreePath. (.getPath agnode))]
+                  (.expandPath *lkifsTree* path)
+                  (.scrollPathToVisible *lkifsTree* path)
+                  (.setSelectionPath (.getSelectionModel *lkifsTree*) path))))
             (recur (rest nb))))))))
 
 (defn remove-ag-in-tree [path id]
-  (with-tree *lkifsTree*
-    (let [model (.getModel *lkifsTree*)
-          root (.getRoot model)
-          childcount (.getChildCount root)]
-      (loop [nb (range childcount)]
-        (let[i (first nb)
-             child (.getChildAt root i)
-             lkif-file (.getUserObject child)]
-          (if (= path (:path lkif-file))
-            (doseq [j (range (.getChildCount child))]
-              (let [graph (.getChildAt child j)]
-                (let [graphinfo (.getUserObject graph)]
-                  (when (= (:id graphinfo) id)
-                    (.remove child j)))))
-            (recur (rest nb)))))
-      (.reload model root))))
+  (letfn [(remove-ag
+           [lkifnode id]
+           (loop [childcount (range (.getChildCount lkifnode))]
+             (when-let [j (first childcount)]
+               (let [graph (.getChildAt lkifnode j)]
+                 (let [graphinfo (.getUserObject graph)]
+                   (if (= (:id graphinfo) id)
+                     (.remove lkifnode j)
+                     (recur (rest childcount))))))))]
+      (with-tree *lkifsTree*
+        (let [model (.getModel *lkifsTree*)
+              root (.getRoot model)
+              childcount (.getChildCount root)]
+          (loop [nb (range childcount)]
+            (let[i (first nb)
+                 lkifnode (.getChildAt root i)
+                 lkifobj (.getUserObject lkifnode)]
+              (if (= path (:path lkifobj))
+                (remove-ag lkifnode id)
+                (recur (rest nb)))))
+          (.reload model root)))))
 
 (defn remove-lkif-content [path]
   (with-tree *lkifsTree*
@@ -153,16 +157,16 @@
   "change the object identified by path and id and set it's value to 
   (f olduserobjectvalue)"
   (with-tree *lkifsTree*
-    (let [model (.getModel *lkifsTree*)
-          root (.getRoot model)]
-      (doseq [lkif (enumeration-seq (.children root))]
-        (doseq [ag (enumeration-seq (.children lkif))]
-          (when-let [userobject (.getUserObject ag)]
-            (when (and (instance? GraphInfo userobject)
-                       (= path (:path (:lkifinfo userobject)))
-                       (= id (:id userobject)))
-              (.setUserObject ag (f userobject))))))
-      (.reload model root))))
+   (let [model (.getModel *lkifsTree*)
+         root (.getRoot model)]
+     (doseq [lkif (enumeration-seq (.children root))]
+       (doseq [ag (enumeration-seq (.children lkif))]
+         (when-let [userobject (.getUserObject ag)]
+           (when (and (instance? GraphInfo userobject)
+                      (= path (:path (:lkifinfo userobject)))
+                      (= id (:id userobject)))
+             (.setUserObject ag (f userobject))))))
+     (.reload model root))))
 
 (defn set-ag-in-tree-dirty [path id isdirty]
   (letfn [(update

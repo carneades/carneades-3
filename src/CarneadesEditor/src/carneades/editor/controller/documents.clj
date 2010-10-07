@@ -64,3 +64,9 @@
     (if (get titles title)
       (gen-graph-title path)
       title)))
+
+(defn gen-argument-id [ag]
+  (let [id (gensym "a")]
+    (if (get-argument ag id)
+      (gen-argument-id ag)
+      id)))

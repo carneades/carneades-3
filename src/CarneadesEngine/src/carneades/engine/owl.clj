@@ -1,6 +1,6 @@
 
 (ns carneades.engine.owl
-  (:require :reload-all
+  (:require 
     [clojure.xml :as xml])
   (:use
     clojure.contrib.def

@@ -3,6 +3,7 @@
 
 (ns carneades.editor.model.lkif-utils
   (:use clojure.contrib.def
+        carneades.engine.rule
         carneades.editor.model.docmanager))
 
 (defn- dissect [lkifcontent]
@@ -31,3 +32,6 @@
     ;; (prn "ags =>")
     ;; (prn ags)
     {:rb rb :sources sources :ags ags}))
+
+(defvar *empty-lkif-content*
+  {:sources nil :rb *empty-rulebase* :ags ()})

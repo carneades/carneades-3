@@ -11,7 +11,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; private functions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn- update-premise [arg oldstmt newstmt]
   (let [oldpremise (first (filter #(= oldstmt (:atom %)) (:premises arg)))
@@ -119,6 +119,8 @@
            [arg]
            (update-in arg [:premises] conj (pm stmt)))]
     (let [ag (update-in ag [:arguments (:id arg)] add-premise-to-arg)
+          key (statement-symbol stmt)
+          ag (update-in ag [:nodes key (statement-atom stmt) :premise-of] conj (:id arg))
           newarg (get-argument ag (:id arg))]
       (update-argument ag newarg))))
 
