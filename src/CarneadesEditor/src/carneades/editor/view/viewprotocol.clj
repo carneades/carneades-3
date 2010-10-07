@@ -54,7 +54,6 @@
   (set-can-redo [this path id state])
   (set-dirty [this path ag state])
   (copyselection-clipboard [this path id])
-  
 
   ;; notifications:
   ;; these fine grained modifications avoid to redisplay the whole
@@ -77,6 +76,11 @@
   (new-premise-added [this path ag arg stmt stmt-str])
   (statement-deleted [this path ag stmt])
   (argument-deleted [this path ag arg])
+  (mainissue-changed [this path ag stmt])
+  (new-statement-added [this path ag stmt stmt-formatted])
+  (new-argument-added [this path ag arg])
+  (new-graph-added [this path ag stmt-fmt])
+  (graph-deleted [this path id])
   
   ;; non-swing listeners:
   (register-statement-selection-listener [this l args])
