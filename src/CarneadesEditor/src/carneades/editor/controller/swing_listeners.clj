@@ -242,5 +242,7 @@
       nil)))
 
 (defn new-file-menuitem-listener [event view]
-  (on-new-file view)
-  )
+  (on-new-file view))
+
+(defn windowclosing-listener [event view]
+  (on-exit view event))

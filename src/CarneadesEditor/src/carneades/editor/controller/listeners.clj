@@ -159,13 +159,15 @@
 (defn on-save [view path id]
   "returns false if an error occured, true otherwise"
   (prn "on-save")
-  (if (save-lkif view path)
-    (do
-      (delete-section-history *docmanager* [path :ags id])
-      (update-dirty-state view path (get-ag path id) false)
-      (update-undo-redo-statuses view path id)
-      true)
-    false))
+  (prn "saving id =")
+  (prn id)
+  (delete-section-history *docmanager* [path :ags id])
+  (update-dirty-state view path (get-ag path id) false)
+  (update-undo-redo-statuses view path id)
+  (save-lkif view path)
+  true
+  ;; TODO: fix bug when save-lkif fails
+  )
 
 (defn on-close-graph [view path id]
   (prn "on-close-graph")
@@ -367,11 +369,11 @@
         (if (is-ag-dirty path id)
           (display-error view *edit-error* "Please save the graph first.")
           (let [ag (assoc ag :title title)]
-            (when (save-lkif view path)
-              (update-section *docmanager* [path :ags id] ag)
-              (delete-section-history *docmanager* [path :ags id])
-              (display-graph-property view path id title (:main-issue ag))
-              (title-changed view path ag title))))))))
+            (update-section *docmanager* [path :ags id] ag)
+            (delete-section-history *docmanager* [path :ags id])
+            (save-lkif view path)
+            (display-graph-property view path id title (:main-issue ag))
+            (title-changed view path ag title)))))))
 
 (defn on-premise-edit-polarity [view path id pm-info]
   (when-let [ag (get-ag path id)]
@@ -573,32 +575,50 @@
         id (gen-graph-id path)
         ag (argument-graph id title nil)
         ag (assoc ag :title title)]
-    (when (save-lkif view path)
-      (add-section *docmanager* [path :ags (:id ag)] ag)
-      (init-stmt-counter path (:id ag))
-      (new-graph-added view path ag statement-formatted)
-      (open-graph view path ag statement-formatted)
-      (display-graph-property view path (:id ag) (:title ag) (:main-issue ag)))))
+    (add-section *docmanager* [path :ags (:id ag)] ag)
+    (init-stmt-counter path (:id ag))
+    (save-lkif view path)
+    (new-graph-added view path ag statement-formatted)
+    (open-graph view path ag statement-formatted)
+    (display-graph-property view path (:id ag) (:title ag) (:main-issue ag))))
 
 (defn on-delete-graph [view path id]
   (when (ask-confirmation view "Delete" "Permanently delete the graph?")
-    (when (save-lkif view path)
-      (close-graph view path id)
-      (remove-section *docmanager* [path :ags id])
-      (graph-deleted view path id))))
+    (close-graph view path id)
+    (remove-section *docmanager* [path :ags id])
+    (save-lkif view path)
+    (graph-deleted view path id)))
 
 (defn on-new-file [view]
   (when-let [[file desc] (ask-file-to-save view {"LKIF files (.xml)" "xml"}
                                            (File. "lkif1.xml"))]
     (let [path (.getPath file)]
-      (prn "new file =")
-      (prn file)
-      (prn "new path =")
-      (prn path)
+      ;; (prn "new file =")
+      ;; (prn file)
+      ;; (prn "new path =")
+      ;; (prn path)
       (lkif/add-lkif-to-docmanager path lkif/*empty-lkif-content* *docmanager*)
       (init-counters path)
       (save-lkif view path)
       (display-lkif-content view file (create-lkifinfo path))
       (display-lkif-property view path)
-      ))
-  )
+      )))
+
+(defn- exit []
+  (System/exit 0))
+
+(defn on-exit [view event]
+  (prn "on exit")
+  (let [unsavedgraphs (get-unsaved-graphs)]
+    (if (empty? unsavedgraphs)
+      (exit)
+      (case (ask-yesnocancel-question view "Close" "Save all graphs before closing?")
+            :yes (loop [unsavedgraphs unsavedgraphs]
+                   (if-let [[path id] (first unsavedgraphs)]
+                     (when (on-save view path id)
+                       ;; if we save successfully we continue
+                       (recur (rest unsavedgraphs)))
+                     ;; all saved, exit
+                     (exit)))
+            :no (exit)
+            :cancel nil))))
