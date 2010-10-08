@@ -91,8 +91,7 @@
    (init-tree)
    (init-tabs)
    (init-search)
-   (init-context)
-   (.setDefaultCloseOperation *frame* JFrame/DISPOSE_ON_CLOSE))
+   (init-context))
 
   (display-error
    [this title content]
@@ -572,6 +571,10 @@
   (add-new-file-menuitem-listener
    [this f args]
    (apply add-action-listener *newFileMenuItem* f args))
+
+  (add-windowclosing-listener
+   [this f args]
+   (apply add-windowclose-listener *frame* f args))
   
   (graph-deleted
    [this path id]
