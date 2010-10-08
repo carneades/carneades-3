@@ -28,7 +28,7 @@
 (defvar- *statement-already-exists* "Statement already exists.")
 (defvar- *file-already-opened* "File %s is already opened.")
 (defvar- *file-format-not-supported* "This file format is not supported.")
-(defvar- *invalid-content* "The content of the file is invalid.")
+(defvar- *invalid-content* "The content of the file is invalid")
 (defvar- *error-saving* "Error while saving")
 
 (defn- create-lkifinfo [path]
@@ -50,11 +50,11 @@
             (display-lkif-content view file (create-lkifinfo path))
             (display-lkif-property view path))
           (catch IllegalArgumentException
-              e (display-error view *open-error* *invalid-content*))
+              e (display-error view *open-error* (str *invalid-content* ".")))
           (catch java.io.IOException
-              e (display-error view *open-error* *invalid-content*))
+              e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
           (catch org.xml.sax.SAXException
-              e (display-error view *open-error* *invalid-content*))
+              e (display-error view *open-error* (str *invalid-content* ".")))
           (finally
            (set-busy view false)))))))
 
@@ -325,21 +325,24 @@
   (edit-redone view path id))
 
 (defn- save-lkif [view path]
+  "returns false if an error occured, true otherwise"
   (try
     (set-busy view true)
     (let [lkifdata (lkif/extract-lkif-from-docmanager path *docmanager*)]
-      (lkif-export lkifdata path))
+      (lkif-export lkifdata path)
+      true)
     (catch java.io.IOException e
-      (display-error view *save-error* (str *error-saving* ": " (.getMessage e))))
+      (display-error view *save-error* (str *error-saving* ": " (.getMessage e)))
+      false)
     (finally
      (set-busy view false))))
 
 (defn on-save [view path id]
   (prn "on-save")
-  (delete-section-history *docmanager* [path :ags id])
-  (update-dirty-state view path (get-ag path id) false)
-  (update-undo-redo-statuses view path id)
-  (save-lkif view path))
+  (when (save-lkif view path)
+    (delete-section-history *docmanager* [path :ags id])
+    (update-dirty-state view path (get-ag path id) false)
+    (update-undo-redo-statuses view path id)))
 
 (defn on-saveas [view path id]
   (prn "on save as!"))
@@ -354,11 +357,11 @@
         (if (is-ag-dirty path id)
           (display-error view *edit-error* "Please save the graph first.")
           (let [ag (assoc ag :title title)]
-            (update-section *docmanager* [path :ags id] ag)
-            (delete-section-history *docmanager* [path :ags id])
-            (save-lkif view path)
-            (display-graph-property view path id title (:main-issue ag))
-            (title-changed view path ag title)))))))
+            (when (save-lkif view path)
+              (update-section *docmanager* [path :ags id] ag)
+              (delete-section-history *docmanager* [path :ags id])
+              (display-graph-property view path id title (:main-issue ag))
+              (title-changed view path ag title))))))))
 
 (defn on-premise-edit-polarity [view path id pm-info]
   (when-let [ag (get-ag path id)]
@@ -559,20 +562,19 @@
   (let [title (gen-graph-title path)
         ag (argument-graph)
         ag (assoc ag :title title)]
-    (add-section *docmanager* [path :ags (:id ag)] ag)
-    (init-stmt-counter path (:id ag))
-    (save-lkif view path)
-    (new-graph-added view path ag statement-formatted)
-    (open-graph view path ag statement-formatted)
-    (display-graph-property view path (:id ag) (:title ag) (:main-issue ag))))
+    (when (save-lkif view path)
+      (add-section *docmanager* [path :ags (:id ag)] ag)
+      (init-stmt-counter path (:id ag))
+      (new-graph-added view path ag statement-formatted)
+      (open-graph view path ag statement-formatted)
+      (display-graph-property view path (:id ag) (:title ag) (:main-issue ag)))))
 
 (defn on-delete-graph [view path id]
   (when (ask-confirmation view "Delete" "Permanently delete the graph?")
-    (close-graph view path id)
-    (remove-section *docmanager* [path :ags id])
-    (save-lkif view path)
-    (graph-deleted view path id)
-    ))
+    (when (save-lkif view path)
+      (close-graph view path id)
+      (remove-section *docmanager* [path :ags id])
+      (graph-deleted view path id))))
 
 (defn on-new-file [view]
   (when-let [[file desc] (ask-file-to-save view {"LKIF files (.xml)" "xml"}
