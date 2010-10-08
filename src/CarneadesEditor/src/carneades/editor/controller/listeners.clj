@@ -8,7 +8,7 @@
         (carneades.editor.controller search documents)
         (carneades.engine.lkif import export)
         (carneades.engine argument argument-edit)
-        [carneades.engine.statement :only (statement-formatted)]
+        [carneades.engine.statement :only (statement-formatted statement?)]
         carneades.editor.model.docmanager
         ;; only the view.viewprotocol namespace is allowed to be imported
         carneades.editor.view.viewprotocol
@@ -239,21 +239,23 @@
     (try
       (let [previous-content-as-obj (read-string previous-content) 
             newcontent (read-string content)]
-        (if (statement-node oldag newcontent)
-          (display-error view *edit-error* *statement-already-exists*)
-          (when-let [ag (update-statement-content oldag previous-content-as-obj newcontent)]
-            (let [stmt (:content stmt-info)
-                  node (get-node ag stmt)
-                  status (:status node)
-                  proofstandard (:standard node)
-                  acceptable (:acceptable node)
-                  complement-acceptable (:complement-acceptable node)]
-              (do-update-section view [path :ags (:id ag)] ag)
-              (display-statement-property view path id (:title ag)
-                                          (pr-str newcontent) statement-formatted status
-                                          proofstandard acceptable complement-acceptable)
-              (statement-content-changed view path ag previous-content-as-obj newcontent)
-              (display-statement view path ag stmt statement-formatted)))))
+        (if (not (statement? newcontent))
+          (display-error view *edit-error* "Content is invalid.")
+          (if (statement-node oldag newcontent)
+            (display-error view *edit-error* *statement-already-exists*)
+            (when-let [ag (update-statement-content oldag previous-content-as-obj newcontent)]
+              (let [stmt (:content stmt-info)
+                    node (get-node ag stmt)
+                    status (:status node)
+                    proofstandard (:standard node)
+                    acceptable (:acceptable node)
+                    complement-acceptable (:complement-acceptable node)]
+                (do-update-section view [path :ags (:id ag)] ag)
+                (display-statement-property view path id (:title ag)
+                                            (pr-str newcontent) statement-formatted status
+                                            proofstandard acceptable complement-acceptable)
+                (statement-content-changed view path ag previous-content-as-obj newcontent)
+                (display-statement view path ag stmt statement-formatted))))))
       (catch Exception e
         (display-error view *edit-error* "Content is invalid.")))))
 
@@ -534,7 +536,7 @@
   (prn "stmt = ")
   (prn stmt)
   (when-let [ag (get-ag path id)]
-    (let [arg (pro (gen-argument-id) stmt ())
+    (let [arg (pro (gen-argument-id ag) stmt ())
           ag (assert-argument ag arg)]
       (do-update-section view [path :ags (:id ag)] ag)
       (new-argument-added view path ag arg)
