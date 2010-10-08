@@ -23,9 +23,13 @@
 
 (defvar- *file-error* "File Error")
 (defvar- *edit-error* "Edit Error")
+(defvar- *open-error* "Open Error")
+(defvar- *save-error* "Save Error")
 (defvar- *statement-already-exists* "Statement already exists.")
 (defvar- *file-already-opened* "File %s is already opened.")
 (defvar- *file-format-not-supported* "This file format is not supported.")
+(defvar- *invalid-content* "The content of the file is invalid.")
+(defvar- *error-saving* "Error while saving")
 
 (defn- create-lkifinfo [path]
   (sort-by second
@@ -45,6 +49,12 @@
             (init-counters path)
             (display-lkif-content view file (create-lkifinfo path))
             (display-lkif-property view path))
+          (catch IllegalArgumentException
+              e (display-error view *open-error* *invalid-content*))
+          (catch java.io.IOException
+              e (display-error view *open-error* *invalid-content*))
+          (catch org.xml.sax.SAXException
+              e (display-error view *open-error* *invalid-content*))
           (finally
            (set-busy view false)))))))
 
@@ -319,6 +329,8 @@
     (set-busy view true)
     (let [lkifdata (lkif/extract-lkif-from-docmanager path *docmanager*)]
       (lkif-export lkifdata path))
+    (catch java.io.IOException e
+      (display-error view *save-error* (str *error-saving* ": " (.getMessage e))))
     (finally
      (set-busy view false))))
 

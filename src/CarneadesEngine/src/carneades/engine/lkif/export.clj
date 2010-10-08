@@ -240,7 +240,7 @@
 
 
 ; can throw:
-;   - java.io.Exception
+;   - java.io.IOException
 (defn lkif-export
   ([export-data]
     (binding [prx/*prxml-indent* 3]
