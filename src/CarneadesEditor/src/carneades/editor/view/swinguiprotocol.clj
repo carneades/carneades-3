@@ -44,6 +44,7 @@
   (add-new-graph-menuitem-listener [this f args])
   (add-delete-graph-menuitem-listener [this f args])
   (add-new-file-menuitem-listener [this f args])
+  (add-windowclosing-listener [this f args])
   
   ;; properties edit listeners
   (add-statement-edit-listener [this f args])

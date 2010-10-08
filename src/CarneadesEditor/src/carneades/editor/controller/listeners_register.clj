@@ -84,7 +84,8 @@
   (add-new-graph-menuitem-listener view new-graph-menuitem-listener [view])
   (add-delete-graph-menuitem-listener view delete-graph-menuitem-listener [view])
   (add-new-file-menuitem-listener view new-file-menuitem-listener [view])
-
+  (add-windowclosing-listener view windowclosing-listener [view])
+  
   ;; we don't need to extract information from the UI,
   ;; dispatch to the listeners:
   (add-about-helpmenuitem-listener view (fn [event] (on-about view)) [])

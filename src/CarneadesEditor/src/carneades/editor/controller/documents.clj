@@ -34,6 +34,17 @@
   (let [agsid (get-all-sectionskeys *docmanager* [lkifpath :ags])]
     agsid))
 
+(defn get-allpaths []
+  (get-all-sectionskeys *docmanager* []))
+
+(defn get-unsaved-graphs []
+  "returns a ([path id] [path id] ...) seq "
+  (mapcat (fn [path]
+            (partition 2
+                       (interleave (repeat path)
+                                   (filter #(is-ag-dirty path %) (get-ags-id path)))))
+          (get-allpaths)))
+
 (defn init-counters [path]
   (add-section *docmanager* [path :graph-counter] 1)
   (doseq [id (get-ags-id path)]
