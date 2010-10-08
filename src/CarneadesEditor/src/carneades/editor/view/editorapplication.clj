@@ -106,6 +106,17 @@
                                   JOptionPane/QUESTION_MESSAGE
                                   nil nil nil)
       JOptionPane/OK_OPTION))
+
+  (ask-yesnocancel-question
+   [this title content]
+   (condp = (JOptionPane/showOptionDialog *frame* content title
+                                          JOptionPane/YES_NO_CANCEL_OPTION
+                                          JOptionPane/QUESTION_MESSAGE
+                                          nil nil nil)
+       JOptionPane/YES_OPTION :yes
+       JOptionPane/NO_OPTION :no
+       JOptionPane/CANCEL_OPTION :cancel
+       JOptionPane/CLOSED_OPTION :cancel))
   
   (show
    [this]

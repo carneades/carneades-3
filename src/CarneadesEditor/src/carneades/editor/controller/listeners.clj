@@ -143,15 +143,45 @@
 
             (display-error view *file-error* *file-format-not-supported*)))))))
 
+(defn- save-lkif [view path]
+  "returns false if an error occured, true otherwise"
+  (try
+    (set-busy view true)
+    (let [lkifdata (lkif/extract-lkif-from-docmanager path *docmanager*)]
+      (lkif-export lkifdata path)
+      true)
+    (catch java.io.IOException e
+      (display-error view *save-error* (str *error-saving* ": " (.getMessage e)))
+      false)
+    (finally
+     (set-busy view false))))
+
+(defn on-save [view path id]
+  "returns false if an error occured, true otherwise"
+  (prn "on-save")
+  (if (save-lkif view path)
+    (do
+      (delete-section-history *docmanager* [path :ags id])
+      (update-dirty-state view path (get-ag path id) false)
+      (update-undo-redo-statuses view path id)
+      true)
+    false))
+
 (defn on-close-graph [view path id]
   (prn "on-close-graph")
   (if (is-ag-dirty path id)
     ;; TODO "Save graph before closing it?" [yes] [no] [cancel]
-    (when (ask-confirmation view "Close" "Close unsaved graph?")
-      (cancel-updates-section *docmanager* [path :ags id])
-      (update-dirty-state view path (get-ag path id) false)
-      (update-undo-redo-statuses view path id)
-      (close-graph view path id))
+    (case (ask-yesnocancel-question view "Close" "Save graph before closing?")
+          :yes (when (on-save view path id)
+                 (close-graph view path id))
+          
+          :no (do
+                (cancel-updates-section *docmanager* [path :ags id])
+                (update-dirty-state view path (get-ag path id) false)
+                (update-undo-redo-statuses view path id)
+                (close-graph view path id))
+          
+          :cancel nil)
     (close-graph view path id)))
 
 (defn on-export-file [view path]
@@ -323,26 +353,6 @@
   (update-undo-redo-statuses view path id)
   (update-dirty-state view path (get-ag path id) true)
   (edit-redone view path id))
-
-(defn- save-lkif [view path]
-  "returns false if an error occured, true otherwise"
-  (try
-    (set-busy view true)
-    (let [lkifdata (lkif/extract-lkif-from-docmanager path *docmanager*)]
-      (lkif-export lkifdata path)
-      true)
-    (catch java.io.IOException e
-      (display-error view *save-error* (str *error-saving* ": " (.getMessage e)))
-      false)
-    (finally
-     (set-busy view false))))
-
-(defn on-save [view path id]
-  (prn "on-save")
-  (when (save-lkif view path)
-    (delete-section-history *docmanager* [path :ags id])
-    (update-dirty-state view path (get-ag path id) false)
-    (update-undo-redo-statuses view path id)))
 
 (defn on-saveas [view path id]
   (prn "on save as!"))

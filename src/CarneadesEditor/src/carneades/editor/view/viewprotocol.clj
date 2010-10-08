@@ -30,6 +30,7 @@
   (display-graph-property [this path id title mainissue])
   (display-about [this])
   (ask-confirmation [this title content])
+  (ask-yesnocancel-question [this title content])
   (display-error [this title content])
   (display-statement-property
    [this path id maptitle stmt stmt-fmt status proofstandard acceptable complement-acceptable])
