@@ -560,7 +560,8 @@
 (defn on-new-graph [view path]
   (prn "on new graph")
   (let [title (gen-graph-title path)
-        ag (argument-graph)
+        id (gen-graph-id path)
+        ag (argument-graph id title nil)
         ag (assoc ag :title title)]
     (when (save-lkif view path)
       (add-section *docmanager* [path :ags (:id ag)] ag)

@@ -70,3 +70,9 @@
     (if (get-argument ag id)
       (gen-argument-id ag)
       id)))
+
+(defn gen-graph-id [path]
+  (let [id (gensym "ag")]
+    (if (get-ag path id)
+      (gen-graph-id path)
+      id)))
