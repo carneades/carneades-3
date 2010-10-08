@@ -25,18 +25,17 @@
 
 (defmacro with-tree [tree & body]
   "works on a JTree and restores its expanded paths after executing body"
-  `(let [root# (.getRoot (.getModel ~tree))
+  `(let [tree# ~tree
+         root# (.getRoot (.getModel tree#))
          expanded# (if-let [x# (.getExpandedDescendants
-                                ~tree (TreePath. root#))]
+                                tree# (TreePath. root#))]
                      (enumeration-seq x#)
                      ())
-         selectionmodel# (.getSelectionModel ~tree)
+         selectionmodel# (.getSelectionModel tree#)
          selectionpaths# (. selectionmodel# getSelectionPaths)]
      ~@body
      (doseq [path# expanded#]
-       (.expandPath ~tree path#))
-     ;; (.setSelectionPaths selectionmodel# selectionpaths#)
-     ))
+       (.expandPath tree# path#))))
 
 (defn add-propertychange-listener
   [component f & args]
