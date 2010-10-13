@@ -126,9 +126,7 @@
               (.setText label (str "*" oldtext))
 
               (not isdirty)
-              (do
-                (prn "unsetting dirty")
-                (.setText label (.substring oldtext 1)))))
+              (.setText label (.substring oldtext 1))))
       (do
         (prn "title not found")))
     (do

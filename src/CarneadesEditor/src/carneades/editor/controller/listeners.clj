@@ -25,6 +25,7 @@
 (defvar- *edit-error* "Edit Error")
 (defvar- *open-error* "Open Error")
 (defvar- *save-error* "Save Error")
+(defvar- *save-as* "Save As")
 (defvar- *statement-already-exists* "Statement already exists.")
 (defvar- *file-already-opened* "File %s is already opened.")
 (defvar- *file-format-not-supported* "This file format is not supported.")
@@ -35,6 +36,13 @@
   (sort-by second
            (map (fn [id] [id (:title (get-ag path id))])
                 (get-ags-id path))))
+
+(defn- close-all [view path]
+  "closes all graphs without saving, removes LKIF from tree"
+  (doseq [id (get-ags-id path)]
+    (close-graph view path id))
+  (hide-lkif-content view path)
+  (remove-section *docmanager* [path]))
 
 (defn on-open-file [view]
   (prn "ask-lkif-file-to-open...")
@@ -49,12 +57,12 @@
             (init-counters path)
             (display-lkif-content view file (create-lkifinfo path))
             (display-lkif-property view path))
-          (catch IllegalArgumentException
-              e (display-error view *open-error* (str *invalid-content* ".")))
-          (catch java.io.IOException
-              e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
-          (catch org.xml.sax.SAXException
-              e (display-error view *open-error* (str *invalid-content* ".")))
+          ;; (catch IllegalArgumentException
+          ;;     e (display-error view *open-error* (str *invalid-content* ".")))
+          ;; (catch java.io.IOException
+          ;;     e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
+          ;; (catch org.xml.sax.SAXException
+          ;;     e (display-error view *open-error* (str *invalid-content* ".")))
           (finally
            (set-busy view false)))))))
 
@@ -77,20 +85,6 @@
 (defn on-select-lkif-file [view path]
   (prn "on-select-lkif-file")
   (display-lkif-property view path))
-
-(defn on-close-file [view path]
-  (prn "on close file")
-  (letfn [(close-all
-           [ids]
-           (doseq [id ids]
-             (close-graph view path id))
-           (hide-lkif-content view path)
-           (remove-section *docmanager* [path]))]
-   (let [ids (get-ags-id path)]
-     (if (not (empty? (filter #(is-ag-dirty path %) ids)))
-       (when (ask-confirmation view "Close" "Close unsaved file?")
-         (close-all ids))
-       (close-all ids)))))
 
 (defn on-open-graph [view path id]
   (open-graph view path (get-ag path id) statement-formatted))
@@ -156,6 +150,13 @@
     (finally
      (set-busy view false))))
 
+(defn- do-close-graph [view path id]
+  "close graph without saving it"
+  (cancel-updates-section *docmanager* [path :ags id])
+  (update-dirty-state view path (get-ag path id) false)
+  (update-undo-redo-statuses view path id)
+  (close-graph view path id))
+
 (defn on-save [view path id]
   "returns false if an error occured, true otherwise"
   (prn "on-save")
@@ -169,19 +170,42 @@
   ;; TODO: fix bug when save-lkif fails
   )
 
+(defn on-saveas [view path id]
+  (when-let [title (read-sentence view *save-as* "Graph title:")]
+    (cond
+     
+     (empty? title)
+     (do
+       (display-error view *save-as* "Name is empty.")
+       (on-saveas view path id))
+     
+     (contains? (get-graphs-titles path) title)
+     (do
+       (display-error view *save-as* (format "Title '%s' is already used." title))
+       (on-saveas view path id))
+
+     :else
+     (do
+       (when-let [ag (get-ag path id)]
+        (let [newag (assoc ag :title title)
+              newid (gen-graph-id path)
+              newag (assoc newag :id newid)]
+          (add-section *docmanager* [path :ags newid] newag)
+          (init-stmt-counter path (:id newag))
+          (on-save view path newid)
+          (new-graph-added view path newag statement-formatted)
+          (open-graph view path newag statement-formatted)
+          (display-graph-property view path (:id newag) (:title newag)
+                                  (:main-issue newag))))))))
+
 (defn on-close-graph [view path id]
   (prn "on-close-graph")
   (if (is-ag-dirty path id)
-    ;; TODO "Save graph before closing it?" [yes] [no] [cancel]
     (case (ask-yesnocancel-question view "Close" "Save graph before closing?")
           :yes (when (on-save view path id)
                  (close-graph view path id))
           
-          :no (do
-                (cancel-updates-section *docmanager* [path :ags id])
-                (update-dirty-state view path (get-ag path id) false)
-                (update-undo-redo-statuses view path id)
-                (close-graph view path id))
+          :no (do-close-graph view path id)
           
           :cancel nil)
     (close-graph view path id)))
@@ -355,9 +379,6 @@
   (update-undo-redo-statuses view path id)
   (update-dirty-state view path (get-ag path id) true)
   (edit-redone view path id))
-
-(defn on-saveas [view path id]
-  (prn "on save as!"))
 
 (defn on-copyclipboard [view path id]
   (copyselection-clipboard view path id))
@@ -597,6 +618,9 @@
       ;; (prn file)
       ;; (prn "new path =")
       ;; (prn path)
+      (when (section-exists? *docmanager* [path])
+        (prn "already exists!")
+        (close-all view path))
       (lkif/add-lkif-to-docmanager path lkif/*empty-lkif-content* *docmanager*)
       (init-counters path)
       (save-lkif view path)
@@ -622,3 +646,18 @@
                      (exit)))
             :no (exit)
             :cancel nil))))
+
+(defn on-close-file [view path]
+  (prn "on close file")
+  (let [unsaved (get-unsaved-graphs path)]
+    (if (not (empty? unsaved))
+      (case (ask-yesnocancel-question view "Close" "Save all graphs before closing?")
+            :yes (loop [unsaved unsaved]
+                   (if-let [id (first unsaved)]
+                     (when (on-save view path id)
+                       ;; save without problem? yes, we continue
+                       (recur (rest unsaved)))
+                     (close-all view path)))
+            :no (close-all view path)
+            :cancel nil)
+      (close-all view path))))

@@ -31,6 +31,7 @@
   (display-about [this])
   (ask-confirmation [this title content])
   (ask-yesnocancel-question [this title content])
+  (read-sentence [this title prompt])
   (display-error [this title content])
   (display-statement-property
    [this path id maptitle stmt stmt-fmt status proofstandard acceptable complement-acceptable])
