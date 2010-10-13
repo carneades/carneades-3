@@ -19,6 +19,7 @@
 (defvar- *current-ag* (atom nil))
 
 (defn- update-file-menu [isdirty]
+  (prn "update-file-menu")
   (if isdirty
     (do
       (enable-save-filemenuitem)
@@ -86,7 +87,8 @@
     (update-save-button isdirty)
     (update-tab path id isdirty)
     (update-tree path id isdirty)
-    (update-file-menu isdirty)))
+    (update-file-menu isdirty)
+    ))
 
 (defn set-ag-canundo [path id canundo]
   (if canundo
@@ -118,7 +120,8 @@
   (disable-save-button)
   (disable-undo-button)
   (disable-redo-button)
-  (disable-diagram-buttons-and-menus))
+  (disable-diagram-buttons-and-menus)
+  (disable-file-items))
 
 (defn set-current-ag-context [path id]
   {:pre [(not (nil? path))]}

@@ -18,7 +18,7 @@
         carneades.editor.view.aboutbox
         carneades.editor.view.printpreview.preview)
   (:import java.io.File
-           (carneades.editor.uicomponents EditorApplicationView)
+           (carneades.editor.uicomponents EditorApplicationView ReadSentenceDialog)
            (java.awt EventQueue Cursor Color)
            (javax.swing UIManager JFrame JFileChooser JOptionPane SwingUtilities)
            (carneades.mapcomponent.map StatementCell ArgumentCell PremiseCell)))
@@ -116,6 +116,21 @@
        JOptionPane/NO_OPTION :no
        JOptionPane/CANCEL_OPTION :cancel
        JOptionPane/CLOSED_OPTION :cancel))
+
+  (read-sentence
+   [this title content]
+   (let [dialog (ReadSentenceDialog. *frame* true)
+         okbutton (.okButton dialog)
+         textField (.textField dialog)
+         textLabel (.textLabel dialog)
+         textcontent (atom nil)]
+     (.setTitle dialog title)
+     (.setText textLabel content)
+     (add-action-listener okbutton (fn [event]
+                              (reset! textcontent (.getText textField))))
+     (.setLocationRelativeTo dialog *frame*)
+     (.setVisible dialog true)
+     (deref textcontent)))
   
   (show
    [this]
@@ -406,10 +421,6 @@
   (add-close-file-menuitem-listener
    [this f args]
    (apply add-action-listener *closeFileMenuItem* f args))
-
-  (export-file-menuitem-listener
-   [this f args]
-   (apply add-action-listener *exportFileMenuItem* f args))
 
   (add-export-lkif-filemenuitem-listener
    [this f args]
