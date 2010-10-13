@@ -218,15 +218,44 @@
     ;(println "lkif-wff->sexpr" lkif-wff)
     (f lkif-wff)))
 
+(defn import-class
+  [lkif-class]
+  (let [pred (symbol (attr lkif-class :pred)),
+        v (lkif-term->sexpr (xml1-> lkif-class :v))]
+    (list pred v)))
+
+(defn import-property
+  [lkif-property]
+  (let [pred (symbol (attr lkif-property :pred)),
+        term_text* (filter/children-auto lkif-property),
+        term* (filter (fn [xml] (zip/branch? xml)) term_text*)]
+    (cons pred (map lkif-term->sexpr term*))))
+
+
+(defn import-domain
+  [lkif-domain]
+  (cond
+    ((tag= :class) lkif-domain) (import-class lkif-domain),
+    ((tag= :property) lkif-domain) (import-property lkif-domain),
+    true (println "no domain found" lkif-domain)))
+
+(defn import-domains
+  [lkif-domains]
+  (if (nil? lkif-domains)
+    '()
+    (let [domains (map import-domain (filter/children-auto lkif-domains))]
+      domains)))
+
 (defn import-rule
   [lkif-rule]  
-  (let* [id (symbol (attr lkif-rule :id)),
+  (let [id (symbol (attr lkif-rule :id)),
          lkif-strict (attr lkif-rule :strict),
          strict (condp = lkif-strict
                   "true" true,
                   "false" false,
                   false),
          head (xml1-> lkif-rule :head),
+         domains (import-domains (xml1-> lkif-rule :domains)),
          lkif-body (xml1-> lkif-rule :body),
          body (if lkif-body
                 (map lkif-wff->sexpr (filter/children-auto lkif-body))
@@ -234,6 +263,7 @@
     (make-rule
       id
       strict
+      domains
       (make-rule-head (cons 'and (map lkif-wff->sexpr (filter/children-auto head))))
       (condp = (count body)
         0 '()
@@ -448,4 +478,8 @@
            ]
       {:sources source-list :rb rb :ags (concat ags ag)}
       )))
+
+(def path "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\src\\CarneadesExamples\\src\\carneades\\examples\\open_source_licensing\\oss-rules.xml")
+
+(def i (lkif-import path))
 

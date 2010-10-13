@@ -99,7 +99,7 @@ the statement of a condition"
 (defstruct- rule-struct
   :id ;; symbol
   :strict ;; boolean, critical questions apply only if this is #f
-  :guards ;; (seq-of statement)
+  :domains ;; (seq-of statement)
   :head   ;; (seq-of statement), allow multiple conclusions
   :body ;; (seq-of clause)
   ;; disjunction of conjunctions, i.e. disjunctive normal form
@@ -300,14 +300,14 @@ with some goal."
                                                                 (get-clause-number)
                                                                 (:id rule)
                                                                 (:strict rule)
-                                                                (:guards rule)
+                                                                (:domains rule)
                                                                 (:head rule)
                                                                 '()))
                                                         (map #(struct named-clause
                                                                 (get-clause-number)
                                                                 (:id rule)
                                                                 (:strict rule)
-                                                                (:guards rule)
+                                                                (:domains rule)
                                                                 (:head rule)
                                                                 %)
                                                           rule-clauses))))
