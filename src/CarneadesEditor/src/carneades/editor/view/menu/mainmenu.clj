@@ -51,7 +51,8 @@
   (.setEnabled *closeFileMenuItem* state)
   (.setEnabled *saveAsFileMenuItem* state)
   (.setEnabled *saveFileMenuItem* state)
-  (.setEnabled *exportFileMenuItem* state))
+  (.setEnabled *exportFileMenuItem* state)
+  )
 
 (defn disable-file-items []
   (set-enable-file-items false))
