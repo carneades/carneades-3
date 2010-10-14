@@ -196,9 +196,9 @@
                      acceptable complement-acceptable)))
 
   (display-premise-property
-   [this path id maptitle arg polarity type atom]
+   [this path id maptitle arg polarity type role atom]
    (show-properties
-    (get-premise-properties-panel path id maptitle arg polarity type atom)))
+    (get-premise-properties-panel path id maptitle arg polarity type role atom)))
     
   (display-argument-property
    [this path id maptitle argid title applicable weight direction scheme]
@@ -237,6 +237,11 @@
    [this path ag oldarg arg pm]
    (when-let [component (get-component path (:id ag))]
      (change-premise-type component ag oldarg arg pm)))
+
+  (premise-role-changed
+   [this path ag oldarg arg pm]
+   (when-let [component (get-component path (:id ag))]
+     (change-premise-role component ag oldarg arg pm)))
 
   (argument-title-changed
    [this path ag arg title]
@@ -521,6 +526,10 @@
   (add-premise-edit-type-listener
    [this f args]
    (apply add-action-listener *typeComboBox* f args))
+
+  (add-premise-edit-role-listener
+   [this f args]
+   (apply add-action-listener *roleText* f args))
 
   (add-argument-edit-title-listener
    [this f args]

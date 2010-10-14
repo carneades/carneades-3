@@ -280,7 +280,7 @@
   (let [type (:type pm)]
     (display-premise-property view path id (:title (get-ag path id))
                               arg
-                              (:polarity pm) type (:atom pm))))
+                              (:polarity pm) type (:role pm) (:atom pm))))
 
 (defn on-open-statement [view path id stmt]
   (prn "on-open-statement")
@@ -416,22 +416,38 @@
           (premise-polarity-changed view path ag oldarg arg (get-premise arg atom))
           (display-premise-property view path id title
                               arg
-                              polarity (:previous-type pm-info) atom))))))
+                              polarity
+                              (:previous-type pm-info)
+                              (:previous-role pm-info) atom))))))
 
 (defn on-premise-edit-type [view path id pm-info]
+  (prn "on premise edit type")
   (when-let [ag (get-ag path id)]
-    (let [{:keys [previous-type type arg atom pm]} pm-info]
+    (let [{:keys [previous-type type previous-role arg atom]} pm-info]
       (when (not= previous-type type)
         (let [ag (update-premise-type ag arg atom type)
-              newarg (get-argument ag (:id arg))]
+              newarg (get-argument ag (:id arg))
+              pm (get-premise newarg atom)]
           (do-update-section view [path :ags (:id ag)] ag)
           (premise-type-changed view path ag arg newarg (get-premise newarg atom))
-          (display-premise-property view path id (:title ag) arg (:polarity pm) type atom))))))
+          (display-premise-property view path id (:title ag) arg
+                                    (:polarity pm) type (:previous-role pm) atom))))))
+
+(defn on-premise-edit-role [view path id pm-info]
+  (prn "on premise edit role")
+  (when-let [ag (get-ag path id)]
+    (let [{:keys [previous-role previous-type role arg atom]} pm-info]
+      (when (not= previous-role role)
+        (let [ag (update-premise-role ag arg atom role)
+              newarg (get-argument ag (:id arg))
+              pm (get-premise newarg atom)]
+          (do-update-section view [path :ags (:id ag)] ag)
+          (premise-role-changed view path ag arg newarg (get-premise newarg atom))
+          (display-premise-property view path id (:title ag) arg (:polarity pm)
+                                    previous-type role atom))))))
 
 (defn on-argument-edit-title [view path id arg-info]
   (prn "on argument edit")
-  (prn "info =")
-  (prn arg-info)
   (when-let [ag (get-ag path id)]
     (let [{:keys [argid previous-title title]} arg-info]
       (when (not= previous-title title)

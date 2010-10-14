@@ -148,6 +148,11 @@
     (with-transaction component
      (change-premise-content-and-style component ag oldarg arg pm))))
 
+(defn change-premise-role [graphcomponent ag oldarg arg pm]
+  (let [component (:component graphcomponent)]
+    (with-transaction component
+      (change-premise-content-and-style component ag oldarg arg pm))))
+
 (defn change-argument-title [graphcomponent ag arg title]
   (let [component (:component graphcomponent)]
     (with-transaction component
