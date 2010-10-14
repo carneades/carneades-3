@@ -300,6 +300,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
         fileMenu.add(newFileMenuItem);
         fileMenu.add(jSeparator11);
 
+        openFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         openFileMenuItem.setText("Open...");
         fileMenu.add(openFileMenuItem);
 

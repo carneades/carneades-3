@@ -61,6 +61,7 @@
   (add-title-edit-listener view title-edit-listener [view])
   (add-premise-edit-polarity-listener view premise-edit-polarity-listener [view])
   (add-premise-edit-type-listener view premise-edit-type-listener [view])
+  (add-premise-edit-role-listener view premise-edit-role-listener [view])
   (add-argument-edit-title-listener view argument-edit-title-listener [view])
   (add-argument-edit-weight-listener view argument-edit-weight-listener [view])
   (add-argument-edit-direction-listener view argument-edit-direction-listener [view])
