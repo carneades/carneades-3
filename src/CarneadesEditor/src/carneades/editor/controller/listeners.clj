@@ -57,8 +57,8 @@
             (init-counters path)
             (display-lkif-content view file (create-lkifinfo path))
             (display-lkif-property view path))
-          (catch IllegalArgumentException
-              e (display-error view *open-error* (str *invalid-content* ".")))
+          ;; (catch IllegalArgumentException
+          ;;     e (display-error view *open-error* (str *invalid-content* ".")))
           (catch java.io.IOException
               e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
           (catch org.xml.sax.SAXException

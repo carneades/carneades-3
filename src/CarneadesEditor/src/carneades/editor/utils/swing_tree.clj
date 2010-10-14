@@ -12,6 +12,12 @@
   "returns a sequence of children for the TreeNode node"
   (enumeration-seq (.children node)))
 
+(defn make-path [& nodes]
+  "Creates a path from the nodes"
+  (reduce (fn [path node] (.pathByAddingChild path node))
+          (TreePath. (first nodes))
+          (rest nodes)))
+
 (defn rebuild-treepath [path model]
   "rebuilds a TreePath that has being invalided by a change to the model
    by comparing the userobjects of the old path and of the new model
@@ -92,13 +98,3 @@
 (defn jtreemodel-zip [model]
   "returns a zipper from the userobjects of a JTree model. See clojure.zip"
   (zip/seq-zip (jtreemodel-seq model)))
-
-;; (defn upper-case [loc]
-;;   (if (zip/end? loc)
-;;     (zip/root loc)
-;;     (upper-case
-;;      (zip/next
-;;       (let [content (zip/node loc)]
-;;        (if (string? content)
-;;          (zip/replace loc (.toUpperCase content))
-;;          loc))))))
