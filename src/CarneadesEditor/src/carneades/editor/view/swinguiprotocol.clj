@@ -52,6 +52,7 @@
   (add-statement-edit-proofstandard-listener [this f args])
   (add-premise-edit-polarity-listener [this f args])
   (add-premise-edit-type-listener [this f args])
+  (add-premise-edit-role-listener [this f args])
   (add-argument-edit-title-listener [this f args])
   (add-argument-edit-weight-listener [this f args])
   (add-argument-edit-direction-listener [this f args])
