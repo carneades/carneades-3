@@ -128,7 +128,7 @@
        (expand-select-path path)))))
 
 (defn sort-children-by [loc keyfn]
-  "Sorts the children of the zipper by (keyfn item)"
+  "Sorts the children of the location by (keyfn item)"
   ;; (prn "sort-children-by")
   ;; (prn "node =")
   ;; (prn (zip/node loc))
@@ -231,12 +231,32 @@
     (change-ag-object-in-tree path id update)))
 
 (defn change-ag-in-tree-title [path id newtitle]
-  (letfn [(update
-           [userobject]
-           (let [dirty (:dirty userobject)
-                 lkifinfo (:lkifinfo userobject)
-                 id (:id userobject)
-                 dirty (:dirty userobject)]
-             (GraphInfo. lkifinfo id newtitle dirty)))]
-   (change-ag-object-in-tree path id update)))
-
+  (with-tree *lkifsTree*
+    (letfn [(update
+             [userobject]
+             (let [dirty (:dirty userobject)
+                   lkifinfo (:lkifinfo userobject)
+                   id (:id userobject)
+                   dirty (:dirty userobject)]
+               (GraphInfo. lkifinfo id newtitle dirty)))]
+      (let [model (.getModel *lkifsTree*)
+            loc (jtreemodel-zip model)]
+        (when-let [loc (first (filter
+                               (fn [loc]
+                                 (let [userobject (zip/node loc)]
+                                   (graphinfo-pred path id userobject)))
+                               (zipper-seqloc loc)))]
+          (let [loc (zip/edit loc update)
+                loc (-> loc zip/up zip/up)
+                loc (sort-children-by loc :title)
+                root (seq-jtreenodes (zip/root loc) make-node)]
+            (.setRoot model root)
+            ;; select renamed node:
+            (let [added (find-node model #(and (graphinfo-pred path id %)
+                                               (= (:title %) newtitle)))
+                  graphinfo (.getUserObject added)
+                  lkifnode (find-node model #(= (:lkifinfo graphinfo) %))
+                  path (.. (TreePath. root) (pathByAddingChild lkifnode)
+                           (pathByAddingChild added))]
+              (.setSelectionPath (.getSelectionModel *lkifsTree*) path)
+              (.scrollPathToVisible *lkifsTree* path))))))))
