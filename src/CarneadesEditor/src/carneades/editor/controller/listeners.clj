@@ -57,12 +57,12 @@
             (init-counters path)
             (display-lkif-content view file (create-lkifinfo path))
             (display-lkif-property view path))
-          ;; (catch IllegalArgumentException
-          ;;     e (display-error view *open-error* (str *invalid-content* ".")))
-          ;; (catch java.io.IOException
-          ;;     e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
-          ;; (catch org.xml.sax.SAXException
-          ;;     e (display-error view *open-error* (str *invalid-content* ".")))
+          (catch IllegalArgumentException
+              e (display-error view *open-error* (str *invalid-content* ".")))
+          (catch java.io.IOException
+              e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
+          (catch org.xml.sax.SAXException
+              e (display-error view *open-error* (str *invalid-content* ".")))
           (finally
            (set-busy view false)))))))
 
@@ -163,12 +163,12 @@
   (prn "saving id =")
   (prn id)
   (delete-section-history *docmanager* [path :ags id])
-  (update-dirty-state view path (get-ag path id) false)
   (update-undo-redo-statuses view path id)
-  (save-lkif view path)
-  true
-  ;; TODO: fix bug when save-lkif fails
-  )
+  (if (save-lkif view path)
+    (do
+     (update-dirty-state view path (get-ag path id) false)
+     true)
+    false))
 
 (defn on-saveas [view path id]
   (when-let [title (read-sentence view *save-as* "Graph title:")]
@@ -392,9 +392,15 @@
           (let [ag (assoc ag :title title)]
             (update-section *docmanager* [path :ags id] ag)
             (delete-section-history *docmanager* [path :ags id])
-            (save-lkif view path)
-            (display-graph-property view path id title (:main-issue ag))
-            (title-changed view path ag title)))))))
+            ;; bug here: if the graph can't be saved, the title won't be changed
+            ;; on disk and the user won't be able to force a second save
+            ;; since the save button is only for the graph editor
+            ;; as a workaround we open the graph, to allow a second save!
+            (title-changed view path ag title)
+            (when (not (save-lkif view path))
+              (open-graph view path ag statement-formatted)
+              (update-dirty-state view path ag true))
+            (display-graph-property view path id title (:main-issue ag))))))))
 
 (defn on-premise-edit-polarity [view path id pm-info]
   (when-let [ag (get-ag path id)]

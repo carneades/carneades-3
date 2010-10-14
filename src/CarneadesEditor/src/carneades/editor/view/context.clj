@@ -80,9 +80,18 @@
   (deref *current-ag*))
 
 (defn set-ag-dirty [path id isdirty]
+  (prn "setting ag dirty:")
+  (prn "path =")
+  (prn path)
+  (prn "id =")
+  (prn id)
+  (prn "isdirty =")
+  (prn isdirty)
   (if isdirty
     (swap! *dirty-ags* conj [path id])
     (swap! *dirty-ags* disj [path id]))
+  (prn "current ag context =")
+  (prn (current-ag-context))
   (when (= (current-ag-context) [path id])
     (update-save-button isdirty)
     (update-tab path id isdirty)
@@ -126,6 +135,11 @@
 (defn set-current-ag-context [path id]
   {:pre [(not (nil? path))]}
   (reset! *current-ag* [path id])
+  (prn "setting current context to")
+  (prn "path =")
+  (prn path)
+  (prn "id =")
+  (prn id)
   (let [isdirty (is-dirty? path id)
         canundo (can-undo? path id)
         canredo (can-redo? path id)]
