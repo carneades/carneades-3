@@ -192,11 +192,13 @@
               newag (assoc newag :id newid)]
           (add-section *docmanager* [path :ags newid] newag)
           (init-stmt-counter path (:id newag))
-          (on-save view path newid)
-          (new-graph-added view path newag statement-formatted)
-          (open-graph view path newag statement-formatted)
-          (display-graph-property view path (:id newag) (:title newag)
-                                  (:main-issue newag))))))))
+          (let [success (on-save view path newid)]
+            (new-graph-added view path newag statement-formatted)
+            (open-graph view path newag statement-formatted)
+            (when (not success)
+              (update-dirty-state view path ag true))
+            (display-graph-property view path (:id newag) (:title newag)
+                                    (:main-issue newag)))))))))
 
 (defn on-close-graph [view path id]
   (prn "on-close-graph")
@@ -581,9 +583,7 @@
           ag (update-statement ag stmt)]
       (do-update-section view [path :ags (:id ag)] ag)
       (new-statement-added view path ag stmt statement-formatted)
-      (display-statement view path ag stmt statement-formatted)
-      )
-    ))
+      (display-statement view path ag stmt statement-formatted))))
 
 (defn on-new-argument [view path id stmt]
   (prn "on new argument")
@@ -604,16 +604,20 @@
         ag (assoc ag :title title)]
     (add-section *docmanager* [path :ags (:id ag)] ag)
     (init-stmt-counter path (:id ag))
-    (save-lkif view path)
-    (new-graph-added view path ag statement-formatted)
-    (open-graph view path ag statement-formatted)
-    (display-graph-property view path (:id ag) (:title ag) (:main-issue ag))))
+    (let [success (save-lkif view path)]
+      (new-graph-added view path ag statement-formatted)
+      (open-graph view path ag statement-formatted)
+      (when (not success)
+        (update-dirty-state view path ag true))
+      (display-graph-property view path (:id ag) (:title ag) (:main-issue ag)))))
 
 (defn on-delete-graph [view path id]
   (when (ask-confirmation view "Delete" "Permanently delete the graph?")
     (close-graph view path id)
     (remove-section *docmanager* [path :ags id])
     (save-lkif view path)
+    ;; here if an error occurs the graph won't be deleted
+    ;; on disk and and forcing a save cannot be done
     (graph-deleted view path id)))
 
 (defn on-new-file [view]
