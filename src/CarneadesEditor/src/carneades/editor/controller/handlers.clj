@@ -1,7 +1,7 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.controller.listeners
+(ns carneades.editor.controller.handlers
   (:use clojure.contrib.def
         clojure.contrib.pprint
         [clojure.contrib.swing-utils :only (do-swing do-swing-and-wait)]
@@ -687,3 +687,4 @@
             :no (close-all view path)
             :cancel nil)
       (close-all view path))))
+

@@ -1,10 +1,10 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.context
+(ns carneades.editor.view.application.context
   (:use clojure.contrib.def
-        (carneades.editor.view tabs tree)
-        carneades.editor.view.menu.mainmenu)
+        (carneades.editor.view.components tabs tree)
+        carneades.editor.view.menus.mainmenu)
   (:import (javax.swing.event ChangeListener)))
 
 ;; represents the context within which the user interacts:

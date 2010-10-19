@@ -1,7 +1,7 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.search
+(ns carneades.editor.view.components.search
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.utils.swing

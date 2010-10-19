@@ -1,12 +1,13 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.tree
+(ns carneades.editor.view.components.tree
   (:use clojure.contrib.def
         clojure.contrib.pprint
         carneades.editor.view.swinguiprotocol
-        [carneades.editor.view.tabs :only (get-component)]
-        carneades.editor.view.menu.mainmenu
+        carneades.editor.view.components.uicomponents
+        [carneades.editor.view.components.tabs :only (get-component)]
+        carneades.editor.view.menus.mainmenu
         (carneades.editor.utils swing swing-tree seq))
   (:require [clojure.zip :as zip])
   (:import (javax.swing.tree DefaultMutableTreeNode
@@ -23,7 +24,6 @@
 
 (defvar- *lkifFilePopupMenu* (.lkifFilePopupMenu *viewinstance*))
 (defvar- *graphPopupMenu* (.graphPopupMenu *viewinstance*))
-(defvar- *closeGraphMenuItem* (.closeGraphMenuItem *viewinstance*))
 
 (defvar *lkifsTree* (.lkifsTree *viewinstance*))
 
