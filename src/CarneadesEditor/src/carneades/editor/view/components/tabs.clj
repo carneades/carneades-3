@@ -1,7 +1,7 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.tabs
+(ns carneades.editor.view.components.tabs
   (:use clojure.contrib.def
         clojure.contrib.swing-utils)
   (:import (java.awt EventQueue event.MouseListener Dimension FlowLayout)
