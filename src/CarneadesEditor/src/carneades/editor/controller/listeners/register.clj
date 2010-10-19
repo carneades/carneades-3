@@ -1,15 +1,14 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.controller.listeners-register
+(ns carneades.editor.controller.listeners.register
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.view.viewprotocol
         carneades.editor.view.swinguiprotocol
-        carneades.editor.controller.swing-listeners
-        carneades.editor.controller.listeners
-        carneades.editor.utils.swing
-        carneades.editor.view.tabs))
+        carneades.editor.controller.listeners.swing-listeners
+        carneades.editor.controller.handlers
+        carneades.editor.utils.swing))
 
 ;;
 ;; For the seperation of concerns, we follow here the MVC pattern,

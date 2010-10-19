@@ -1,27 +1,16 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.editor-helpers
+(ns carneades.editor.view.application.editor-helpers
   (:use clojure.contrib.def
+        carneades.editor.view.components.uicomponents
+        carneades.editor.view.application.context
         (carneades.mapcomponent map map-edit)
-        (carneades.editor.view search viewprotocol swinguiprotocol tabs tree context))
+        (carneades.editor.view viewprotocol swinguiprotocol)
+        (carneades.editor.view.components search tabs tree))
   (:import (javax.swing UIManager JFrame JFileChooser JOptionPane SwingUtilities)
            (carneades.editor.uicomponents EditorApplicationView)
            (carneades.mapcomponent.map StatementCell ArgumentCell PremiseCell)))
-
-(defvar *frame* (EditorApplicationView/instance))
-(defvar *mainIssueMenuItem* (.mainIssueMenuItem *frame*))
-
-(defvar- *argumentPopupMenu* (.argumentPopupMenu *frame*))
-(defvar- *premisePopupMenu* (.premisePopupMenu *frame*))
-(defvar- *statementPopupMenu* (.statementPopupMenu *frame*))
-(defvar- *mapPopupMenu* (.mapPopupMenu *frame*))
-(defvar *addExistingPremiseMenuItem* (.addExistingPremiseMenuItem *frame*))
-(defvar *newStatementMenuItem* (.newStatementMenuItem *frame*))
-(defvar *newArgumentMenuItem* (.newArgumentMenuItem *frame*))
-(defvar *newGraphMenuItem* (.newGraphMenuItem *frame*))
-(defvar *deleteGraphMenuItem* (.deleteGraphMenuItem *frame*))
-(defvar *newFileMenuItem* (.newFileMenuItem *frame*))
 
 (defvar *add-existing-premise-data* (atom {:path nil :id nil :src nil}))
 
@@ -108,3 +97,18 @@
       (set-current-ag-context path (:id ag)))
     (finally
      (set-busy this false))))
+
+
+(defn on-zoom-in [event]
+  (zoom-in (.getSelectedComponent *mapPanel*)))
+
+(defn on-zoom-out [event]
+  (zoom-out (.getSelectedComponent *mapPanel*)))
+
+(defn on-zoom-reset [event]
+  (zoom-reset (.getSelectedComponent *mapPanel*)))
+
+(defn select-all-listener [event this]
+  (let [[path id] (current-graph this)]
+    (when-let [component (get-component path id)]
+      (select-all component))))

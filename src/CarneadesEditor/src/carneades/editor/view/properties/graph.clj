@@ -17,7 +17,7 @@
   (doseq [{:keys [listener args]} (deref *graph-edit-listeners*)]
     (apply listener event args)))
 
-(defn graph-properties-init []
+(defn init-graph-properties []
   (ArgumentGraphPropertiesView/reset)
   (add-action-listener *titleText* title-action-listener))
 

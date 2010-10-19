@@ -1,34 +1,12 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.menu.mainmenu
+(ns carneades.editor.view.menus.mainmenu
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
+        carneades.editor.view.components.uicomponents
         carneades.mapcomponent.map)
   (:import carneades.editor.uicomponents.EditorApplicationView))
-
-(defvar- *viewinstance* (EditorApplicationView/instance))
-
-(defvar *zoomInButton* (.zoomInButton *viewinstance*))
-(defvar *zoomOutButton* (.zoomOutButton *viewinstance*))
-(defvar *zoomResetButton* (.zoomResetButton *viewinstance*))
-(defvar *saveButton* (.saveButton *viewinstance*))
-(defvar *copyClipboardEditMenuItem* (.copyClipboardEditMenuItem *viewinstance*))
-(defvar *selectAllEditMenuItem* (.selectAllEditMenuItem *viewinstance*))
-
-(defvar- *undoButton* (.undoButton *viewinstance*))
-(defvar- *redoButton* (.redoButton *viewinstance*))
-(defvar- *refreshButton* (.refreshButton *viewinstance*))
-
-(defvar- *closeFileMenuItem* (.closeFileMenuItem *viewinstance*))
-(defvar *saveFileMenuItem* (.saveFileMenuItem *viewinstance*))
-(defvar *saveAsFileMenuItem* (.saveAsFileMenuItem *viewinstance*))
-(defvar- *exportFileMenuItem* (.exportFileMenuItem *viewinstance*))
-(defvar- *printPreviewFileMenuItem* (.printPreviewFileMenuItem *viewinstance*))
-(defvar- *printFileMenuItem* (.printFileMenuItem *viewinstance*))
-
-(defvar *undoEditMenuItem* (.undoEditMenuItem *viewinstance*))
-(defvar *redoEditMenuItem* (.redoEditMenuItem *viewinstance*))
 
 (defn- set-enable-diagram-buttons-and-menus [state]
   (.setEnabled *refreshButton* state)
