@@ -160,39 +160,35 @@
                (:candidates stat)))
         pro-goals (get-pro-goals stat premises assumptions exceptions conclusion goal-proc)
         con-goals (get-con-goals stat premises assumptions exceptions conclusion goal-proc)
-        new-state (state (:topic stat)
-
-
-
-           (:viewpoint stat)
-           pro-goals
-           con-goals
-
-
-           ;; new argument graph
-           newag
-           ;; new subs
-           newsubs
-           ;; new candidates
-           newcandidates)]
-;    (println "-------------")
-;    ;(println "state" stat)
-;    (println "argument" (:id arg))
-;    (println "conclusion" conclusion)
-;    (println "gesubt" (newsubs conclusion))
-;    (println "assumptions" assumptions)
-;    (println "premises" premises)
-;    (println "exceptions" exceptions)
-;    (println "old pro-goals" (:pro-goals stat))
-;    (println "new pro-goals" pro-goals)
-;    (println "old con-goals" (:con-goals stat))
-;    (println "new con-goals" con-goals)
-;    (println "goal process" goal-proc)
-;;    (view (let [cand-args (map :argument (:candidates new-state)),
-;;                inst-cands (map (fn [a] (arg/instantiate-argument a newsubs)) cand-args),
-;;                agwc (arg/assert-arguments newag inst-cands)]
-;;            agwc))
-;    (println "-------------")
+        new-state (state 
+                    (:topic stat)
+                    (:viewpoint stat)
+                    pro-goals
+                    con-goals
+                    ;; new argument graph
+                    newag
+                    ;; new subs
+                    newsubs
+                    ;; new candidates
+                    newcandidates)]
+;            (println "-------------")
+;            ;(println "state" stat)
+;            (println "argument" (:id arg))
+;            (println "conclusion" conclusion)
+;            (println "gesubt" (newsubs conclusion))
+;            (println "assumptions" assumptions)
+;            (println "premises" premises)
+;            (println "exceptions" exceptions)
+;            (println "old pro-goals" (:pro-goals stat))
+;            (println "new pro-goals" pro-goals)
+;            (println "old con-goals" (:con-goals stat))
+;            (println "new con-goals" con-goals)
+;            (println "goal process" goal-proc)
+;        (view (let [cand-args (map :argument (:candidates new-state)),
+;                    inst-cands (map (fn [a] (arg/instantiate-argument a newsubs)) cand-args),
+;                    agwc (arg/assert-arguments newag inst-cands)]
+;                agwc))
+;        (println "-------------")
     new-state
     )))
 
