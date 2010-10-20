@@ -3,7 +3,7 @@
 
 (ns carneades.editor.view.application.context
   (:use clojure.contrib.def
-        (carneades.editor.view.components tabs tree)
+        (carneades.editor.view.components uicomponents tabs tree)
         carneades.editor.view.menus.mainmenu)
   (:import (javax.swing.event ChangeListener)))
 
@@ -22,21 +22,19 @@
   (prn "update-file-menu")
   (if isdirty
     (do
-      (enable-save-filemenuitem)
-      (enable-saveas-filemenuitem))
+      (enable-items *saveFileMenuItem* *saveAsFileMenuItem*))
     (do
-      (disable-save-filemenuitem)
-      (disable-saveas-filemenuitem))))
+      (disable-items *saveFileMenuItem* *saveAsFileMenuItem*))))
 
 (defn- update-undo-item [canundo]
   (if canundo
-    (enable-undo-editmenuitem)
-    (disable-undo-editmenuitem)))
+    (enable-items *undoEditMenuItem*)
+    (disable-items *undoEditMenuItem*)))
 
 (defn- update-redo-item [canredo]
   (if canredo
-    (enable-redo-editmenuitem)
-    (disable-redo-editmenuitem)))
+    (enable-items *redoEditMenuItem*)
+    (disable-items *redoEditMenuItem*)))
 
 (defn- update-edit-menu [canundo canredo]
   (update-undo-item canundo)
@@ -48,13 +46,13 @@
 
 (defn- update-undo-button [canundo]
   (if canundo
-    (enable-undo-button)
-    (disable-undo-button)))
+    (enable-items *undoButton*)
+    (disable-items *undoButton*)))
 
 (defn- update-redo-button [canredo]
   (if canredo
-    (enable-redo-button)
-    (disable-redo-button)))
+    (enable-items *redoButton*)
+    (disable-items *redoButton*)))
 
 (defn- update-undo-redo-buttons [canundo canredo]
   (update-undo-button canundo)
@@ -62,8 +60,8 @@
 
 (defn- update-save-button [isdirty]
   (if isdirty
-    (enable-save-button)
-    (disable-save-button)))
+    (enable-items *saveButton*)
+    (disable-items *saveButton*)))
 
 (defn- update-buttons [isdirty canundo canredo]
   (update-save-button isdirty)
@@ -80,18 +78,9 @@
   (deref *current-ag*))
 
 (defn set-ag-dirty [path id isdirty]
-  (prn "setting ag dirty:")
-  (prn "path =")
-  (prn path)
-  (prn "id =")
-  (prn id)
-  (prn "isdirty =")
-  (prn isdirty)
   (if isdirty
     (swap! *dirty-ags* conj [path id])
     (swap! *dirty-ags* disj [path id]))
-  (prn "current ag context =")
-  (prn (current-ag-context))
   (when (= (current-ag-context) [path id])
     (update-save-button isdirty)
     (update-tab path id isdirty)
@@ -124,28 +113,43 @@
 (defn is-dirty? [path id]
   (contains? (deref *dirty-ags*) [path id]))
 
-(defn set-current-context-empty []
+(defvar- *ag-items* [*saveButton*
+                     *zoomInButton*
+                     *zoomOutButton*
+                     *zoomResetButton*
+                     *undoButton*
+                     *redoButton*
+                     *refreshButton*
+                     *saveFileMenuItem*
+                     *saveAsFileMenuItem*
+                     *exportFileMenuItem*
+                     *undoEditMenuItem*
+                     *redoEditMenuItem*
+                     *copyClipboardEditMenuItem*
+                     *printPreviewFileMenuItem*
+                     *printFileMenuItem*
+                     *assistantFindGoalMenuItem*
+                     *selectAllEditMenuItem*])
+
+(defn set-current-ag-context-empty []
   (reset! *current-ag* nil)
-  (disable-save-button)
-  (disable-undo-button)
-  (disable-redo-button)
-  (disable-diagram-buttons-and-menus)
-  (disable-file-items))
+  (apply disable-items *ag-items*))
 
 (defn set-current-ag-context [path id]
   {:pre [(not (nil? path))]}
   (reset! *current-ag* [path id])
-  (prn "setting current context to")
-  (prn "path =")
-  (prn path)
-  (prn "id =")
-  (prn id)
   (let [isdirty (is-dirty? path id)
         canundo (can-undo? path id)
         canredo (can-redo? path id)]
+    (apply enable-items *ag-items*)
     (update-buttons isdirty canundo canredo)
-    (enable-diagram-buttons-and-menus)
     (update-menus isdirty canundo canredo)))
+
+(defn set-current-lkif-context [lkif]
+  (enable-items *closeFileMenuItem*))
+
+(defn set-current-lkif-context-empty []
+  (disable-items *closeFileMenuItem*))
 
 (defn remove-ag-context [path id]
   (swap! *dirty-ags* disj [path id])
@@ -158,18 +162,12 @@
      [evt]
      (let [idx (.getSelectedIndex *mapPanel*)]
        (if (= idx -1)
-         (set-current-context-empty)
+         (set-current-ag-context-empty)
          (let [component (.getComponentAt *mapPanel* idx)]
            (when-let [[path id] (get-graphinfo component)]
              (set-current-ag-context path id))))))))
 
 (defn init-context []
-  (disable-diagram-buttons-and-menus)
-  (disable-undo-button)
-  (disable-redo-button)
-  (disable-file-items)
-  (disable-save-button)
-  (disable-undo-button)
-  (disable-redo-button)
+  (apply disable-items *closeFileMenuItem* *ag-items*)
   (register-tab-change-listener *tab-change-listener*))
 

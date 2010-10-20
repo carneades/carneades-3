@@ -3,17 +3,24 @@
 
 (ns carneades.editor.view.application.editorapplication
   (:use carneades.editor.utils.type
-        (carneades.editor.view viewprotocol swinguiprotocol)
-        (carneades.editor.view.application editorview editorswingui))
+        (carneades.editor.view viewprotocol swinguiprotocol wizardsprotocol)
+        (carneades.editor.view.application editorview editorswingui)
+        (carneades.editor.view.application.wizards goal))
   (:import carneades.editor.view.application.editorview.EditorView
-           carneades.editor.view.application.editorswingui.EditorSwingUI))
+           carneades.editor.view.application.editorswingui.EditorSwingUI
+           carneades.editor.view.application.wizards.goal.EditorSwingGoalWizard))
 
-(defrecord SwingView [view swingui])
+(defrecord SwingView [view swingui swinggoalwizard])
 
-(auto-extend SwingView carneades.editor.view.viewprotocol/View (:view this))
-(auto-extend SwingView carneades.editor.view.swinguiprotocol/SwingUI (:swingui this))
+(auto-extend SwingView carneades.editor.view.viewprotocol/View
+             (:view this))
+(auto-extend SwingView carneades.editor.view.swinguiprotocol/SwingUI
+             (:swingui this))
+(auto-extend SwingView carneades.editor.view.wizardsprotocol/SwingGoalWizard
+             (:swinggoalwizard this))
 
 (defn create-swingview []
   (let [view (EditorView.)
-        swingui (EditorSwingUI.)]
-    (SwingView. view swingui)))
+        swingui (EditorSwingUI.)
+        swinggoalwizard (EditorSwingGoalWizard.)]
+    (SwingView. view swingui swinggoalwizard)))

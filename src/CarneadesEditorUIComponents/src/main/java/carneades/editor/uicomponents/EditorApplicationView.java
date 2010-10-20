@@ -58,6 +58,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         editMenu = new javax.swing.JMenu();
         jSeparator9 = new javax.swing.JPopupMenu.Separator();
+        assistantMenu = new javax.swing.JMenu();
         helpMenu = new javax.swing.JMenu();
 
         tabPopupMenu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -201,7 +202,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
         );
 
         leftTabbedPane.addTab("Files", jPanel1);
@@ -277,7 +278,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(resultPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE))
+                .addComponent(resultPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE))
         );
 
         searchScrollPane.setViewportView(searchPanel);
@@ -353,6 +354,13 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         menuBar.add(editMenu);
 
+        assistantMenu.setText("Assistant");
+
+        assistantFindGoalMenuItem.setText("Find Goal...");
+        assistantMenu.add(assistantFindGoalMenuItem);
+
+        menuBar.add(assistantMenu);
+
         helpMenu.setText("Help");
 
         aboutHelpMenuItem.setText("About");
@@ -374,7 +382,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(toolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 609, Short.MAX_VALUE))
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 611, Short.MAX_VALUE))
         );
 
         pack();
@@ -403,6 +411,8 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JMenuItem aboutHelpMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem addExistingPremiseMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JPopupMenu argumentPopupMenu = new javax.swing.JPopupMenu();
+    public final javax.swing.JMenuItem assistantFindGoalMenuItem = new javax.swing.JMenuItem();
+    private javax.swing.JMenu assistantMenu;
     public final javax.swing.JMenuItem closeFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem closeGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem closeLkifFileMenuItem = new javax.swing.JMenuItem();

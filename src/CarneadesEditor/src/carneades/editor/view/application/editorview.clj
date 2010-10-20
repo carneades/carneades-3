@@ -30,9 +30,9 @@
    (System/setProperty "apple.laf.useScreenMenuBar" "true")
    (System/setProperty "com.apple.mrj.application.apple.menu.about.name"
                        *application-name*)
-
-   ;; make a new instance (without listeners!)
    (set-look-and-feel "Nimbus")
+   
+   ;; make a new instance (without listeners!)
    (EditorApplicationView/reset)
    (add-action-listener *zoomInButton* on-zoom-in)
    (add-action-listener *zoomOutButton* on-zoom-out)
@@ -79,7 +79,7 @@
      (remove-component component)
      (remove-ag-context path id))
    (if (tabs-empty?)
-     (set-current-context-empty)
+     (set-current-ag-context-empty)
      (let [[path id] (current-graph this)]
        (set-current-ag-context path id))))
 
@@ -170,13 +170,13 @@
   (display-lkif-content
    [this file graphinfos]
    (add-lkif-content file graphinfos)
-   (enable-file-items))
+   (set-current-lkif-context file))
 
   (hide-lkif-content
    [this path]
    (remove-lkif-content path)
    (when-not (tree-has-content)
-     (disable-file-items))
+     (set-current-lkif-context-empty))
    (hide-properties))
 
   (print-preview
