@@ -220,23 +220,28 @@
 
 (defn import-class
   [lkif-class]
+  ;(println "importing class" lkif-class)
   (let [pred (symbol (attr lkif-class :pred)),
         v (lkif-term->sexpr (xml1-> lkif-class :v))]
     (list pred v)))
 
 (defn import-property
   [lkif-property]
+  ;(print "importing property" lkif-property)
   (let [pred (symbol (attr lkif-property :pred)),
         term_text* (filter/children-auto lkif-property),
-        term* (filter (fn [xml] (zip/branch? xml)) term_text*)]
-    (cons pred (map lkif-term->sexpr term*))))
+        term* (filter (fn [xml] (zip/branch? xml)) term_text*),
+        sexpr (cons pred (map lkif-term->sexpr term*))]
+    ;(println " - " sexpr)
+    sexpr))
 
 
 (defn import-domain
   [lkif-domain]
-  (cond
-    ((tag= :class) lkif-domain) (import-class lkif-domain),
-    ((tag= :property) lkif-domain) (import-property lkif-domain),
+  ;(print "importing domain" lkif-domain)
+  (condp = (:tag (first lkif-domain))
+    :class (import-class lkif-domain),
+    :property (import-property lkif-domain),
     true (println "no domain found" lkif-domain)))
 
 (defn import-domains
@@ -479,7 +484,7 @@
       {:sources source-list :rb rb :ags (concat ags ag)}
       )))
 
-(def path "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\src\\CarneadesExamples\\src\\carneades\\examples\\open_source_licensing\\oss-rules.xml")
+;(def path "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\src\\CarneadesExamples\\src\\carneades\\examples\\open_source_licensing\\oss-rules.xml")
 
-(def i (lkif-import path))
+;(def i (lkif-import path))
 

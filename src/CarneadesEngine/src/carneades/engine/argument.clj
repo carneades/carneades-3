@@ -681,15 +681,20 @@
 
 (defn- unite-graphs
   [ag1 ag2]
+  ;(print "uniting graphs:" (:id ag1) (:id ag2))
   (let [all-nodes (get-nodes ag2),
         accepted-nodes (filter (fn [n] (= (:status n) :accepted)) all-nodes),
         rejected-nodes (filter (fn [n] (= (:status n) :rejected)) all-nodes)]
+    ;(println " - " (count all-nodes))
     (reject (accept (reduce unite-args ag1 (arguments ag2)) (map :statement accepted-nodes)) (map :statement rejected-nodes))))
 
 
 (defn unite-argument-graphs
   [l]
-  (assoc (reduce unite-graphs *empty-argument-graph* l) :id (gensym "a")))
+  ;(println "uniting argument-graphs:" (count l))
+  (let [r (assoc (reduce unite-graphs *empty-argument-graph* l) :id (gensym "a"))]
+    ;(println "finished" (count (:arguments r)))
+    r))
 
 (defn depth-in
   [n ag]
