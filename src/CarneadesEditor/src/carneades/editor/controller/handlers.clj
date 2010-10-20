@@ -1,7 +1,7 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.controller.listeners
+(ns carneades.editor.controller.handlers
   (:use clojure.contrib.def
         clojure.contrib.pprint
         [clojure.contrib.swing-utils :only (do-swing do-swing-and-wait)]
@@ -25,6 +25,7 @@
 (defvar- *edit-error* "Edit Error")
 (defvar- *open-error* "Open Error")
 (defvar- *save-error* "Save Error")
+(defvar- *save-as* "Save As")
 (defvar- *statement-already-exists* "Statement already exists.")
 (defvar- *file-already-opened* "File %s is already opened.")
 (defvar- *file-format-not-supported* "This file format is not supported.")
@@ -35,6 +36,13 @@
   (sort-by second
            (map (fn [id] [id (:title (get-ag path id))])
                 (get-ags-id path))))
+
+(defn- close-all [view path]
+  "closes all graphs without saving, removes LKIF from tree"
+  (doseq [id (get-ags-id path)]
+    (close-graph view path id))
+  (hide-lkif-content view path)
+  (remove-section *docmanager* [path]))
 
 (defn on-open-file [view]
   (prn "ask-lkif-file-to-open...")
@@ -49,8 +57,8 @@
             (init-counters path)
             (display-lkif-content view file (create-lkifinfo path))
             (display-lkif-property view path))
-          (catch IllegalArgumentException
-              e (display-error view *open-error* (str *invalid-content* ".")))
+          ;; (catch IllegalArgumentException
+          ;;     e (display-error view *open-error* (str *invalid-content* ".")))
           (catch java.io.IOException
               e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
           (catch org.xml.sax.SAXException
@@ -77,20 +85,6 @@
 (defn on-select-lkif-file [view path]
   (prn "on-select-lkif-file")
   (display-lkif-property view path))
-
-(defn on-close-file [view path]
-  (prn "on close file")
-  (letfn [(close-all
-           [ids]
-           (doseq [id ids]
-             (close-graph view path id))
-           (hide-lkif-content view path)
-           (remove-section *docmanager* [path]))]
-   (let [ids (get-ags-id path)]
-     (if (not (empty? (filter #(is-ag-dirty path %) ids)))
-       (when (ask-confirmation view "Close" "Close unsaved file?")
-         (close-all ids))
-       (close-all ids)))))
 
 (defn on-open-graph [view path id]
   (open-graph view path (get-ag path id) statement-formatted))
@@ -156,32 +150,64 @@
     (finally
      (set-busy view false))))
 
+(defn- do-close-graph [view path id]
+  "close graph without saving it"
+  (cancel-updates-section *docmanager* [path :ags id])
+  (update-dirty-state view path (get-ag path id) false)
+  (update-undo-redo-statuses view path id)
+  (close-graph view path id))
+
 (defn on-save [view path id]
   "returns false if an error occured, true otherwise"
   (prn "on-save")
   (prn "saving id =")
   (prn id)
   (delete-section-history *docmanager* [path :ags id])
-  (update-dirty-state view path (get-ag path id) false)
   (update-undo-redo-statuses view path id)
-  (save-lkif view path)
-  true
-  ;; TODO: fix bug when save-lkif fails
-  )
+  (if (save-lkif view path)
+    (do
+     (update-dirty-state view path (get-ag path id) false)
+     true)
+    false))
+
+(defn on-saveas [view path id]
+  (when-let [title (read-sentence view *save-as* "Graph title:")]
+    (cond
+     
+     (empty? title)
+     (do
+       (display-error view *save-as* "Name is empty.")
+       (on-saveas view path id))
+     
+     (contains? (get-graphs-titles path) title)
+     (do
+       (display-error view *save-as* (format "Title '%s' is already used." title))
+       (on-saveas view path id))
+
+     :else
+     (do
+       (when-let [ag (get-ag path id)]
+        (let [newag (assoc ag :title title)
+              newid (gen-graph-id path)
+              newag (assoc newag :id newid)]
+          (add-section *docmanager* [path :ags newid] newag)
+          (init-stmt-counter path (:id newag))
+          (let [success (on-save view path newid)]
+            (new-graph-added view path newag statement-formatted)
+            (open-graph view path newag statement-formatted)
+            (when (not success)
+              (update-dirty-state view path ag true))
+            (display-graph-property view path (:id newag) (:title newag)
+                                    (:main-issue newag)))))))))
 
 (defn on-close-graph [view path id]
   (prn "on-close-graph")
   (if (is-ag-dirty path id)
-    ;; TODO "Save graph before closing it?" [yes] [no] [cancel]
     (case (ask-yesnocancel-question view "Close" "Save graph before closing?")
           :yes (when (on-save view path id)
                  (close-graph view path id))
           
-          :no (do
-                (cancel-updates-section *docmanager* [path :ags id])
-                (update-dirty-state view path (get-ag path id) false)
-                (update-undo-redo-statuses view path id)
-                (close-graph view path id))
+          :no (do-close-graph view path id)
           
           :cancel nil)
     (close-graph view path id)))
@@ -254,7 +280,7 @@
   (let [type (:type pm)]
     (display-premise-property view path id (:title (get-ag path id))
                               arg
-                              (:polarity pm) type (:atom pm))))
+                              (:polarity pm) type (:role pm) (:atom pm))))
 
 (defn on-open-statement [view path id stmt]
   (prn "on-open-statement")
@@ -356,9 +382,6 @@
   (update-dirty-state view path (get-ag path id) true)
   (edit-redone view path id))
 
-(defn on-saveas [view path id]
-  (prn "on save as!"))
-
 (defn on-copyclipboard [view path id]
   (copyselection-clipboard view path id))
 
@@ -371,9 +394,15 @@
           (let [ag (assoc ag :title title)]
             (update-section *docmanager* [path :ags id] ag)
             (delete-section-history *docmanager* [path :ags id])
-            (save-lkif view path)
-            (display-graph-property view path id title (:main-issue ag))
-            (title-changed view path ag title)))))))
+            ;; bug here: if the graph can't be saved, the title won't be changed
+            ;; on disk and the user won't be able to force a second save
+            ;; since the save button is only for the graph editor
+            ;; as a workaround we open the graph, to allow a second save!
+            (title-changed view path ag title)
+            (when (not (save-lkif view path))
+              (open-graph view path ag statement-formatted)
+              (update-dirty-state view path ag true))
+            (display-graph-property view path id title (:main-issue ag))))))))
 
 (defn on-premise-edit-polarity [view path id pm-info]
   (when-let [ag (get-ag path id)]
@@ -387,22 +416,38 @@
           (premise-polarity-changed view path ag oldarg arg (get-premise arg atom))
           (display-premise-property view path id title
                               arg
-                              polarity (:previous-type pm-info) atom))))))
+                              polarity
+                              (:previous-type pm-info)
+                              (:previous-role pm-info) atom))))))
 
 (defn on-premise-edit-type [view path id pm-info]
+  (prn "on premise edit type")
   (when-let [ag (get-ag path id)]
-    (let [{:keys [previous-type type arg atom pm]} pm-info]
+    (let [{:keys [previous-type type previous-role arg atom]} pm-info]
       (when (not= previous-type type)
         (let [ag (update-premise-type ag arg atom type)
-              newarg (get-argument ag (:id arg))]
+              newarg (get-argument ag (:id arg))
+              pm (get-premise newarg atom)]
           (do-update-section view [path :ags (:id ag)] ag)
           (premise-type-changed view path ag arg newarg (get-premise newarg atom))
-          (display-premise-property view path id (:title ag) arg (:polarity pm) type atom))))))
+          (display-premise-property view path id (:title ag) arg
+                                    (:polarity pm) type (:previous-role pm) atom))))))
+
+(defn on-premise-edit-role [view path id pm-info]
+  (prn "on premise edit role")
+  (when-let [ag (get-ag path id)]
+    (let [{:keys [previous-role previous-type role arg atom]} pm-info]
+      (when (not= previous-role role)
+        (let [ag (update-premise-role ag arg atom role)
+              newarg (get-argument ag (:id arg))
+              pm (get-premise newarg atom)]
+          (do-update-section view [path :ags (:id ag)] ag)
+          (premise-role-changed view path ag arg newarg (get-premise newarg atom))
+          (display-premise-property view path id (:title ag) arg (:polarity pm)
+                                    previous-type role atom))))))
 
 (defn on-argument-edit-title [view path id arg-info]
   (prn "on argument edit")
-  (prn "info =")
-  (prn arg-info)
   (when-let [ag (get-ag path id)]
     (let [{:keys [argid previous-title title]} arg-info]
       (when (not= previous-title title)
@@ -554,9 +599,7 @@
           ag (update-statement ag stmt)]
       (do-update-section view [path :ags (:id ag)] ag)
       (new-statement-added view path ag stmt statement-formatted)
-      (display-statement view path ag stmt statement-formatted)
-      )
-    ))
+      (display-statement view path ag stmt statement-formatted))))
 
 (defn on-new-argument [view path id stmt]
   (prn "on new argument")
@@ -577,16 +620,20 @@
         ag (assoc ag :title title)]
     (add-section *docmanager* [path :ags (:id ag)] ag)
     (init-stmt-counter path (:id ag))
-    (save-lkif view path)
-    (new-graph-added view path ag statement-formatted)
-    (open-graph view path ag statement-formatted)
-    (display-graph-property view path (:id ag) (:title ag) (:main-issue ag))))
+    (let [success (save-lkif view path)]
+      (new-graph-added view path ag statement-formatted)
+      (open-graph view path ag statement-formatted)
+      (when (not success)
+        (update-dirty-state view path ag true))
+      (display-graph-property view path (:id ag) (:title ag) (:main-issue ag)))))
 
 (defn on-delete-graph [view path id]
   (when (ask-confirmation view "Delete" "Permanently delete the graph?")
     (close-graph view path id)
     (remove-section *docmanager* [path :ags id])
     (save-lkif view path)
+    ;; here if an error occurs the graph won't be deleted
+    ;; on disk and and forcing a save cannot be done
     (graph-deleted view path id)))
 
 (defn on-new-file [view]
@@ -597,6 +644,9 @@
       ;; (prn file)
       ;; (prn "new path =")
       ;; (prn path)
+      (when (section-exists? *docmanager* [path])
+        (prn "already exists!")
+        (close-all view path))
       (lkif/add-lkif-to-docmanager path lkif/*empty-lkif-content* *docmanager*)
       (init-counters path)
       (save-lkif view path)
@@ -622,3 +672,19 @@
                      (exit)))
             :no (exit)
             :cancel nil))))
+
+(defn on-close-file [view path]
+  (prn "on close file")
+  (let [unsaved (get-unsaved-graphs path)]
+    (if (not (empty? unsaved))
+      (case (ask-yesnocancel-question view "Close" "Save all graphs before closing?")
+            :yes (loop [unsaved unsaved]
+                   (if-let [id (first unsaved)]
+                     (when (on-save view path id)
+                       ;; save without problem? yes, we continue
+                       (recur (rest unsaved)))
+                     (close-all view path)))
+            :no (close-all view path)
+            :cancel nil)
+      (close-all view path))))
+

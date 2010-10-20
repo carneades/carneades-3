@@ -12,6 +12,7 @@
 (defvar- *mapTitleText* (.mapTitleText *premiseProperties*))
 (defvar *negatedCheckBox* (.negatedCheckBox *premiseProperties*))
 (defvar *typeComboBox* (.typeComboBox *premiseProperties*))
+(defvar *roleText* (.roleText *premiseProperties*))
 
 (defn init-premise-properties []
   (PremisePropertiesView/reset))
@@ -24,14 +25,16 @@
 
 (defvar- *previous-premise-content* (atom {}))
 
-(defn get-premise-properties-panel [path id maptitle arg polarity type atom]
+(defn get-premise-properties-panel [path id maptitle arg polarity type role atom]
   (reset! *previous-premise-content* {:id id
                                       :previous-polarity polarity
                                       :previous-type type
+                                      :previous-role role
                                       :arg arg
                                       :atom atom})
   (.setText *pathText* path)
   (.setText *mapTitleText* maptitle)
+  (.setText *roleText* role)
   (.setSelected *negatedCheckBox* (not polarity))
   (.setSelectedItem *typeComboBox* (*type-to-str* type))
   *premiseProperties*)
@@ -40,5 +43,6 @@
   (merge
    {:path (.getText *pathText*)
     :polarity (not (.isSelected *negatedCheckBox*))
-    :type (*str-to-type* (.getSelectedItem *typeComboBox*))}
+    :type (*str-to-type* (.getSelectedItem *typeComboBox*))
+    :role (.getText *roleText*)}
    (deref *previous-premise-content*)))

@@ -8,7 +8,7 @@
 (defvar- *lkifProperties* (LkifFilePropertiesView/instance))
 (defvar- *lkifPathText* (.pathTextField *lkifProperties*))
 
-(defn lkif-properties-init []
+(defn init-lkif-properties []
   (LkifFilePropertiesView/reset))
 
 (defn get-lkif-properties-panel [path]
