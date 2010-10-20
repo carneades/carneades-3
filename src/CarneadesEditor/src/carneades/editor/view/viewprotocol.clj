@@ -31,11 +31,12 @@
   (display-about [this])
   (ask-confirmation [this title content])
   (ask-yesnocancel-question [this title content])
+  (read-sentence [this title prompt])
   (display-error [this title content])
   (display-statement-property
    [this path id maptitle stmt stmt-fmt status proofstandard acceptable complement-acceptable])
   (display-premise-property
-   [this path id maptitle arg polarity type atom])
+   [this path id maptitle arg polarity type role atom])
   (display-argument-property
    [this path id maptitle argid title applicable weight direction scheme])
   (display-search-state [this inprogress])
@@ -69,6 +70,7 @@
   (title-changed [this path ag title])
   (premise-polarity-changed [this path ag old arg pm])
   (premise-type-changed [this path ag oldarg arg pm])
+  (premise-role-changed [this path ag oldarg arg pm])
   (argument-title-changed [this path ag arg title])
   (argument-weight-changed [this path ag arg weight])
   (argument-direction-changed [this path ag arg direction])

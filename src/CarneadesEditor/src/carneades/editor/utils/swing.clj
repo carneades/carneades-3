@@ -2,6 +2,7 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.editor.utils.swing
+  (:require [clojure.zip :as zip])
   (:import java.beans.PropertyChangeListener
            (javax.swing.event ListSelectionListener
                               TreeSelectionListener
@@ -9,7 +10,10 @@
            (javax.swing UIManager
                         JFileChooser
                         filechooser.FileFilter)
-           (javax.swing.tree.TreePath)
+           (javax.swing.tree DefaultMutableTreeNode
+                             TreePath
+                             TreeSelectionModel
+                             DefaultTreeModel)
            (java.awt.event WindowAdapter
                            MouseAdapter)))
 
@@ -22,20 +26,6 @@
       (accept [#^java.io.File f]
               (or (.isDirectory f)
                   (contains? extensions (get-extension (.getName f))))))))
-
-(defmacro with-tree [tree & body]
-  "works on a JTree and restores its expanded paths after executing body"
-  `(let [tree# ~tree
-         root# (.getRoot (.getModel tree#))
-         expanded# (if-let [x# (.getExpandedDescendants
-                                tree# (TreePath. root#))]
-                     (enumeration-seq x#)
-                     ())
-         selectionmodel# (.getSelectionModel tree#)
-         selectionpaths# (. selectionmodel# getSelectionPaths)]
-     ~@body
-     (doseq [path# expanded#]
-       (.expandPath tree# path#))))
 
 (defn add-propertychange-listener
   [component f & args]
