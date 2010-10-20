@@ -39,51 +39,34 @@
               template</s>
           </not>
         </head>
-        <body>
-          <exists>
-            <v>SE2</v>
-            <!-- <s pred="&oss;uses"><v>SE1</v> uses <v>SE2</v></s> -->
-            <property pred="&oss;uses"><v>SE1</v> uses <v>SE2</v></property>
-            <exists>
-              <v>L</v>
-              <!-- <s pred="&oss;hasLicense"><v>SE2</v> is licensed under <v>L</v></s> -->
-              <property pred="&oss;hasLicense"><v>SE2</v> is licensed under <v>L</v></property>
-              <s pred="isReciprocalDerivedAndNotCompatible">
-                <v>T1</v>
-                <v>L</v>
-                <v>SE1</v>
-                <v>SE2</v>
-              </s>
-            </exists>
-          </exists>
-        </body>
-      </rule>
-
-      <rule id="isReciprocalDerivedAndNotCompatible">
-        <head>
-          <s pred="isReciprocalDerivedAndNotCompatible">
-            <v>T1</v>
-            <v>L</v>
+        <domains>
+          <property pred="&oss;uses">
             <v>SE1</v>
             <v>SE2</v>
-          </s>
-        </head>
-        <body>
+          </property>
+          <property pred="&oss;hasLicense">
+            <v>SE2</v>
+            <v>L</v>
+          </property>
+        </domains>
+        <body>          
           <s pred="&oss;ReciprocalLicense">
             <v>L</v> is reciprocal </s>
           <s pred="&oss;isDerivedFrom"><v>SE1</v> is derived from <v>SE2</v></s>
           <not exception="true">
             <exists>
               <v>T2</v>
-              <!-- <s pred="&oss;instanceOfTemplate"><v>L</v> is an instance of the <v>T2</v>
-              template license</s> -->
-              <property pred="&oss;instanceOfTemplate"><v>L</v> is an instance of the <v>T2</v>
-                template license</property>
+              <s pred="&oss;instanceOfTemplate">
+                <v>L</v>
+                <v>T2</v>
+              </s>
               <s pred="&oss;isCompatibleWith"><v>T1</v> is compatible with <v>T2</v></s>
-            </exists>
+            </exists>            
           </not>
         </body>
       </rule>
+
+      
 
       <rule id="ReflexivityOfIsCompatibleWith">
         <!-- Every license template is compatible with itself. (reflexivity) -->
@@ -91,6 +74,8 @@
           <s pred="&oss;isCompatibleWith"><v>T1</v> is compatible with <v>T1</v></s>
         </head>
       </rule>
+      
+      
       <rule id="ModificationsAreDerivateWorks">
         <!-- 
             A software entity, SE1, is derived from another software entity, SE2, if
@@ -104,6 +89,8 @@
             code of <v>SE2</v></s>
         </body>
       </rule>
+      
+      
       <rule id="FSFTheoryOfLinking">
         <!--
 	According to the legal theory of the FSF, linking creates a derivative work.
@@ -117,6 +104,8 @@
           <s pred="valid">The <i value="FSFTheoryOfLinking">FSF theory of linking</i> is valid</s>
         </body>
       </rule>
+      
+      
       <rule id="RosenTheoryOfLinking">
         <!--
           According to the legal theory of Lawrence Rosen, linking is not sufficient to create a derivative work.
@@ -134,6 +123,8 @@
             valid</s>
         </body>
       </rule>
+      
+      
       <rule id="hasNoncompliantLicense">
         <!-- 
           A work has a noncompliant license if the license is an instance of a template which may not be used.
