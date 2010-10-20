@@ -56,3 +56,5 @@
 (defvar *newGraphMenuItem* (.newGraphMenuItem *frame*))
 (defvar *deleteGraphMenuItem* (.deleteGraphMenuItem *frame*))
 (defvar *newFileMenuItem* (.newFileMenuItem *frame*))
+
+(defvar *assistantFindGoalMenuItem* (.assistantFindGoalMenuItem *frame*))

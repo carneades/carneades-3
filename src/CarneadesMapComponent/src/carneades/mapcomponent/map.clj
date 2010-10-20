@@ -76,7 +76,9 @@
                              10.0
                              (into-array Float/TYPE [3 3])
                              0.0)
-        color Color/orange]
+        color (Color. 246 0 255)
+        ;; Color/cyan
+        ]
     (set! mxConstants/VERTEX_SELECTION_COLOR color)
     (set! mxConstants/EDGE_SELECTION_COLOR color)
     (set! mxConstants/VERTEX_SELECTION_STROKE stroke)
@@ -352,6 +354,16 @@
    (when (= DataFlavor/imageFlavor flavor)
      (.getImage (ImageIcon. data)))))
 
+(defn- add-refresh-listener [component]
+  "refresh the graph on each selection changes. This fix the problem with the selection
+   being not correctly refreshed"
+  (let [selectionmodel (.getSelectionModel (.getGraph component))]
+    (.addListener selectionmodel mxEvent/CHANGE
+                  (proxy [mxEventSource$mxIEventListener] []
+                    (invoke
+                     [sender event]
+                     (.refresh component))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; public functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -391,7 +403,6 @@
                             getDocumentElement))
                        filename)))
 
-
 (defn undo [graphcomponent]
   (prn "map-undo!")
   (.undo (:undomanager graphcomponent))
@@ -415,6 +426,7 @@
         rubberband (mxRubberband. graphcomponent)]
     (.setConnectable graphcomponent false)
     (add-mouse-zoom g graphcomponent)
+    (add-refresh-listener graphcomponent)
     {:component graphcomponent :undomanager undomanager}))
 
 (defn- find-vertex [graph pred]

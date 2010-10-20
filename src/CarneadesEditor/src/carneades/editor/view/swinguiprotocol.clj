@@ -44,6 +44,7 @@
   (add-delete-graph-menuitem-listener [this f args])
   (add-new-file-menuitem-listener [this f args])
   (add-windowclosing-listener [this f args])
+  (add-findgoal-assistantmenuitem-listener [this f args])
   
   ;; properties edit listeners
   (add-statement-edit-listener [this f args])
@@ -66,6 +67,10 @@
   (get-premise-being-edited-info [this])
   (get-argument-being-edited-info [this])
   (get-selected-node [this path id])
+
+  ;; wizards:
+  (display-wizard [this title panels])
+  (display-wizard-with-listener [this listener panels])
   )
 
 ;; records stored in the element of the tree:

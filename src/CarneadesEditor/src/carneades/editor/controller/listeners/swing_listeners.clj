@@ -6,7 +6,7 @@
         clojure.contrib.swing-utils
         carneades.editor.view.viewprotocol
         carneades.editor.view.swinguiprotocol
-        carneades.editor.controller.handlers
+        carneades.editor.controller.handlers.handlers
         carneades.editor.utils.swing)
   (:import (carneades.editor.uicomponents EditorApplicationView)
            (carneades.editor.view.swinguiprotocol GraphInfo

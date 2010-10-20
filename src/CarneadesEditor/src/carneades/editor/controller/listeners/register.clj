@@ -7,7 +7,8 @@
         carneades.editor.view.viewprotocol
         carneades.editor.view.swinguiprotocol
         carneades.editor.controller.listeners.swing-listeners
-        carneades.editor.controller.handlers
+        carneades.editor.controller.listeners.swing-wizards-listeners
+        carneades.editor.controller.handlers.handlers
         carneades.editor.utils.swing))
 
 ;;
@@ -85,6 +86,7 @@
   (add-delete-graph-menuitem-listener view delete-graph-menuitem-listener [view])
   (add-new-file-menuitem-listener view new-file-menuitem-listener [view])
   (add-windowclosing-listener view windowclosing-listener [view])
+  (add-findgoal-assistantmenuitem-listener view findgoal-assistantmenuitem-listener [view])
   
   ;; we don't need to extract information from the UI,
   ;; dispatch to the listeners:
