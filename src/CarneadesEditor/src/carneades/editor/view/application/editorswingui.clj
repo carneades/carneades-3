@@ -9,7 +9,11 @@
         (carneades.editor.view.properties statement graph argument premise)
         (carneades.editor.view.components tabs tree search)
         carneades.mapcomponent.map)
-  (:import (carneades.mapcomponent.map StatementCell ArgumentCell PremiseCell)))
+  (:import java.awt.BorderLayout
+           (org.netbeans.spi.wizard WizardPage WizardPage$WizardResultProducer
+                                    WizardObserver)
+           org.netbeans.api.wizard.WizardDisplayer
+           (carneades.mapcomponent.map StatementCell ArgumentCell PremiseCell)))
 
 (deftype EditorSwingUI []
   SwingUI
@@ -209,6 +213,10 @@
   (add-windowclosing-listener
    [this f args]
    (apply add-windowclose-listener *frame* f args))
+
+  (add-findgoal-assistantmenuitem-listener
+   [this f args]
+   (apply add-action-listener *assistantFindGoalMenuItem* f args))
   
   (get-statement-being-edited-info
    [this]
@@ -241,12 +249,51 @@
              (:arg obj)
 
              (instance? StatementCell obj)
-             (:stmt obj)
-             )
-       )))
-  
-  
-  
-  
-  
+             (:stmt obj)))))
+
+    (display-wizard
+     [this title panels]
+     (System/setProperty "wizard.sidebar.image" "carneades-bright.png")
+     (let [wizardpages (map (fn [panel]
+                              (let [{:keys [panel desc validator listener args]} panel
+                                    wizardpage
+                                    (proxy [WizardPage] [desc]
+                                      (validateContents
+                                       [comp event]
+                                       (validator (proxy-super getWizardDataMap)))
+                                      (getWizardDataMap
+                                       []
+                                       (proxy-super getWizardDataMap)))]
+                                (doto wizardpage
+                                  (.setLayout (BorderLayout.))
+                                  (.add panel))
+                                {:desc desc :page wizardpage :listener listener :args args}))
+                            panels)
+           producer (reify WizardPage$WizardResultProducer
+                      (finish [this data]
+                              data)
+                      (cancel [this settings]
+                              true))
+           wizard (WizardPage/createWizard title
+                                           (into-array (map :page wizardpages)) producer)]
+       (.addWizardObserver wizard (reify WizardObserver
+                                    (navigabilityChanged [this wizard])
+                                    (selectionChanged
+                                     [this wizard]
+                                     (let [step (.getStepDescription
+                                                 wizard
+                                                 (.getCurrentStep wizard))]
+                                       (when-let [pagedata (first (filter #(= (:desc %) step) wizardpages) )]
+                                         (when-let [listener (:listener pagedata)]
+                                           (let [args (:args pagedata)
+                                                 wizardpage (:page pagedata)
+                                                 datamap (.getWizardDataMap wizardpage)]
+                                             (apply listener datamap args))))))
+                                    (stepsChanged [this wizard])))
+       
+       (WizardDisplayer/showWizard wizard)))
+    
+    (display-wizard-with-listener
+      [this listener panels])
+
   )
