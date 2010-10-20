@@ -9,7 +9,7 @@
     carneades.engine.utils
     carneades.engine.argument
     carneades.engine.statement
-    carneades.engine.guard
+    carneades.engine.domain
     [carneades.engine.search :only (breadth-first search)]
     [carneades.engine.dnf :only (to-dnf)]
     [carneades.engine.unify :only (genvar unify rename-variables)])
@@ -162,10 +162,10 @@ the statement of a condition"
                    ifsymbol))))),
     (and (not (empty? body))
       (= (count body) 4))
-    (let [[ifsymbol guards conditions conclusions] body]
+    (let [[ifsymbol domains conditions conclusions] body]
       (if (= ifsymbol 'if)
         `(make-rule '~id ~strict
-           '~guards
+           '~domains
            '~(make-rule-head conclusions)
            '~(make-rule-body conditions))
         (throw (IllegalArgumentException.
@@ -237,9 +237,10 @@ The assumptions in a clause"
         (assoc r :head head :body body)))
 
     (defn rename-clause-variables [r]
-      (let [[m head] (rename-variables {} (:head r))
-            [m2 clause] (rename-variables m (:clause r))]
-        (assoc r :head head :clause clause)))
+      (let [[m head] (rename-variables {} (:head r)),
+            [m2 clause] (rename-variables m (:clause r)),
+            [m3 domains] (rename-variables m2 (:domains r))]
+        (assoc r :head head :clause clause :domains domains)))
 
     (defstruct rulebase-struct
       :table ;; map: predicate -> (seq-of rules)
@@ -277,101 +278,122 @@ with some goal."
         rb
         l))
 
-    (defn rulebase [& l]
-      (add-rules *empty-rulebase* l))
+(defn rulebase [& l]
+  (add-rules *empty-rulebase* l))
 
-    (let [counter (atom 0)]
-      (letfn [(reset-counter []
-                (reset! counter 0))
-              (get-clause-number []
-                (swap! counter inc)
-                (symbol (str "-c" @counter)))]
+(defn- concat-scheme
+  [l]
+  (condp = (count l)
+    0 "",
+    1 (first l),
+    (str (first l) "-" (concat-scheme (rest l)))))
 
-        (defn get-clauses [args rb goal subs]
-          (let [pred (predicate (subs goal))
-                applicable-rules ((:table rb) pred)
-                applicable-clauses (mapinterleave (fn [rule]
-                                                    (reset-counter)
-                                                    (let [rule-clauses (:body rule)]
-                                                      (if (empty? rule-clauses)
-                                                        ;; force execution to keep
-                                                        ;; meaningfull clause number
-                                                        (list (struct named-clause
-                                                                (get-clause-number)
-                                                                (:id rule)
-                                                                (:strict rule)
-                                                                (:domains rule)
-                                                                (:head rule)
-                                                                '()))
-                                                        (map #(struct named-clause
-                                                                (get-clause-number)
-                                                                (:id rule)
-                                                                (:strict rule)
-                                                                (:domains rule)
-                                                                (:head rule)
-                                                                %)
-                                                          rule-clauses))))
-                                     applicable-rules)
-                applied-clauses (map symbol
-                                  (schemes-applied args
-                                    (subs (statement-atom goal))))
-                remaining-clauses (filter (fn [c]
-                                            (not (.contains applied-clauses
-                                                   (symbol
-                                                     (str (:rule c)
-                                                       (:id c))))))
-                                    applicable-clauses)]
-;                    (println "--------")
-;                    (println "get clauses for goal:" goal)
-;                    (println "remaining clauses:" remaining-clauses)
-;                    (println "--------")
-            remaining-clauses))))
+(defn- remove-inst
+  [s]
+  (let [sl (.split s "-"),
+        slr (reverse (rest (reverse sl)))]
+    (concat-scheme slr)))
 
-    (defn generate-arguments-from-rules
-      ([rb qs] (generate-arguments-from-rules rb qs nil))
-      ([rb qs ont]
-      (fn [subgoal state]
-        (let [args (:arguments state)
-              subs (:substitutions state),
-              all-args (assert-arguments
-                         args
-                         (map
-                           (fn [c] (instantiate-argument (:argument c) subs))
-                           (:candidates state)))]
 
-          (letfn [(apply-for-conclusion
-                    [clause c]
-                    ;; apply the clause for conclusion
-                    ;; in the head of the rule
-                    (let [subs2 (or (unify c subgoal subs)
-                                  (unify `(~'unless ~c)
-                                    subgoal subs)
-                                  (unify `(~'assuming ~c)
-                                    subgoal subs)
-                                  (unify `(~'applies ~(:rule clause) ~c) subgoal subs))]
-                      (if (not subs2)
-                        ;; fail
-                        false
-                        (let [arg-id (gensym "a")
-                              direction (if (= (first subgoal) 'not) :con :pro)
-                              conclusion (statement-atom (condition-statement subgoal))
-                              premises (concat (map statement-to-premise (:clause clause))
-                                         (rule-critical-questions (:rule clause) qs subgoal (:strict clause)))
-                              scheme (str (:rule clause) (:id clause))]
-;                          (println "rule instantiated:" (str (:rule clause) (:id clause)))
-                          (as/response subs2
-                            (argument arg-id
-                              false
-                              *default-weight*
-                              direction
-                              conclusion
-                              premises
-                              scheme
-                              ))))))
-                  (apply-clause [clause]
-                    (filter identity (map #(apply-for-conclusion clause %) (:head clause)) ))]
-            (mapinterleave
-              (fn [c] (apply-clause c))
-              (map rename-clause-variables
-                (apply concat (map (fn [nc] (instantiate-guards nc ont)) (get-clauses all-args rb subgoal subs))))))))))
+(let [counter (atom 0)]
+  (letfn [(reset-counter []
+            (reset! counter 0))
+          (get-clause-number []
+            (swap! counter inc)
+            (symbol (str "-c" @counter)))]
+
+    (defn get-clauses [args rb goal subs]
+      (let [pred (predicate (subs goal))
+            applicable-rules ((:table rb) pred)
+            applicable-clauses (mapinterleave (fn [rule]
+                                                (reset-counter)
+                                                (let [rule-clauses (:body rule)]
+                                                  (if (empty? rule-clauses)
+                                                    ;; force execution to keep
+                                                    ;; meaningfull clause number
+                                                    (list (struct named-clause
+                                                            (get-clause-number)
+                                                            (:id rule)
+                                                            (:strict rule)
+                                                            (:domains rule)
+                                                            (:head rule)
+                                                            '()))
+                                                    (map #(struct named-clause
+                                                            (get-clause-number)
+                                                            (:id rule)
+                                                            (:strict rule)
+                                                            (:domains rule)
+                                                            (:head rule)
+                                                            %)
+                                                      rule-clauses))))
+                                 applicable-rules)
+            applied-clauses (map symbol
+                              (map remove-inst
+                                (schemes-applied args
+                                  (subs (statement-atom goal)))))
+            remaining-clauses (filter (fn [c]
+                                        (not (.contains applied-clauses
+                                               (symbol
+                                                 (str (:rule c)
+                                                   (:id c))))))
+                                applicable-clauses)]
+;        (println "--------")
+;        (println "get clauses for goal:" goal)
+;        (println "apllied-clauses   :" applied-clauses)
+;        (println "applicable-clauses:" (map (fn [c] (str (:rule c) (:id c))) applicable-clauses))
+;        (println "remaining clauses :" (map (fn [c] (str (:rule c) (:id c))) remaining-clauses))
+;        (println "--------")
+        remaining-clauses))))
+
+(defn generate-arguments-from-rules
+  ([rb qs] (generate-arguments-from-rules rb qs nil))
+  ([rb qs ont]
+    (fn [subgoal state]
+      (let [args (:arguments state)
+            subs (:substitutions state),
+            all-args (assert-arguments
+                       args
+                       (map
+                         (fn [c] (instantiate-argument (:argument c) subs))
+                         (:candidates state)))]
+
+        (letfn [(apply-for-conclusion
+                  [clause c]
+                  ;; apply the clause for conclusion
+                  ;; in the head of the rule
+                  (let [subs2 (or (unify c subgoal subs)
+                                (unify `(~'unless ~c)
+                                  subgoal subs)
+                                (unify `(~'assuming ~c)
+                                  subgoal subs)
+                                (unify `(~'applies ~(:rule clause) ~c) subgoal subs))]
+                    (if (not subs2)
+                      ;; fail
+                      false
+                      ;; instantiate domains
+                      (let [inst-clauses (instantiate-domains clause ont subs2)]
+                        (map (fn [ic]
+                               (let [arg-id (gensym "a")
+                                     direction (if (= (first subgoal) 'not) :con :pro)
+                                     conclusion (statement-atom (condition-statement subgoal))
+                                     premises (concat (map statement-to-premise (:clause ic))
+                                                (rule-critical-questions (:rule ic) qs subgoal (:strict ic)))
+                                     scheme (str (:rule ic) (:id ic))]
+                                 ;(println "rule instantiated:" (str (:rule ic) (:id ic)))
+                                 (as/response subs2
+                                   (argument arg-id
+                                     false
+                                     *default-weight*
+                                     direction
+                                     conclusion
+                                     premises
+                                     scheme
+                                     ))))
+                               inst-clauses)))))
+                (apply-clause [clause]
+                  (apply concat (filter identity (map #(apply-for-conclusion clause %) (:head clause)))))]
+          (mapinterleave
+            (fn [c] (apply-clause c))
+            (map rename-clause-variables
+              (get-clauses all-args rb subgoal subs))))))))
 

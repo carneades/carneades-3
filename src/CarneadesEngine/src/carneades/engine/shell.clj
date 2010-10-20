@@ -4,7 +4,7 @@
 (ns carneades.engine.shell
   (:use clojure.set
         clojure.contrib.pprint
-    ;clojure.contrib.profile
+        clojure.contrib.profile
         carneades.engine.utils
         [carneades.engine.abduction :as abd]
         carneades.engine.argument-search
@@ -72,12 +72,13 @@
     (condp = max-turns
       0 ag,
       1 (unite-solutions (construct-arguments goal max-nodes ag generators)),
-      (let [ag2 (unite-solutions (construct-arguments goal max-nodes ag generators)),
+      (let [ag2 (prof :unite (unite-solutions (construct-arguments goal max-nodes ag generators))),
             asmpts (abd/assume-decided-statements ag2),
-            new-goals (apply union
+            new-goals (prof :abduction
+                        (apply union
                     (if (= viewpoint :con)
                         (abd/statement-in-label ag2 asmpts main-issue)
-                        (abd/statement-out-label ag2 asmpts main-issue))),
+                        (abd/statement-out-label ag2 asmpts main-issue)))),
             goals (difference new-goals applied-goals),
             new-vp (if (= viewpoint :pro)
                      :con
