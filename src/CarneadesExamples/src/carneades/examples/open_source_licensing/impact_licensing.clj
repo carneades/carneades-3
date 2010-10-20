@@ -39,9 +39,9 @@
 
 (def generators
   (list
-    (generate-arguments-from-rules oss-kb '())
+    (generate-arguments-from-rules oss-kb '() impact-ont)
     (generate-arguments-from-owl impact-ont :reasoner)
-    (builtins (list (generate-arguments-fcarom-owl impact-ont :reasoner)))
+    (builtins (list (generate-arguments-from-owl impact-ont :reasoner)))
     ))
 
 
@@ -62,7 +62,8 @@
   (def ag1 (construct-arguments-abductively goal1 100 3 ag0 generators))
 
   ; exporting results to lkif
-  (lkif-export {:ag [ag1]} "impact-licensing.xml"))
+  (lkif-export {:ags [ag1]} "impact-licensing.xml")
+)
 
 ;(profile (main))
 (main)
