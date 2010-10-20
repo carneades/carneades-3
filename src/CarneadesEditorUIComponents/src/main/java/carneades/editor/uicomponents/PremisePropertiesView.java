@@ -36,6 +36,7 @@ public class PremisePropertiesView extends javax.swing.JPanel {
         jSeparator1 = new javax.swing.JSeparator();
         jLabel6 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         jLabel1.setText("Type:");
 
@@ -55,6 +56,8 @@ public class PremisePropertiesView extends javax.swing.JPanel {
 
         jLabel5.setText("Graph:");
 
+        jLabel2.setText("Role:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -72,9 +75,13 @@ public class PremisePropertiesView extends javax.swing.JPanel {
                             .addComponent(pathText, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
                             .addComponent(mapTitleText, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2))
                         .addGap(18, 18, 18)
-                        .addComponent(typeComboBox, 0, 181, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(roleText, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
+                            .addComponent(typeComboBox, 0, 181, Short.MAX_VALUE)))
                     .addComponent(negatedCheckBox))
                 .addContainerGap())
         );
@@ -95,14 +102,19 @@ public class PremisePropertiesView extends javax.swing.JPanel {
                     .addComponent(jLabel1)
                     .addComponent(typeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(roleText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(negatedCheckBox)
-                .addContainerGap(123, Short.MAX_VALUE))
+                .addContainerGap(90, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JSeparator jSeparator1;
@@ -110,6 +122,7 @@ public class PremisePropertiesView extends javax.swing.JPanel {
     public final javax.swing.JCheckBox negatedCheckBox = new javax.swing.JCheckBox();
     public final javax.swing.JTextField pathText = new javax.swing.JTextField();
     private javax.swing.ButtonGroup proConGroup;
+    public final javax.swing.JTextField roleText = new javax.swing.JTextField();
     public final javax.swing.JComboBox typeComboBox = new javax.swing.JComboBox();
     // End of variables declaration//GEN-END:variables
 

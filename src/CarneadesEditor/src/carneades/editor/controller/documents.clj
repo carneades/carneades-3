@@ -37,13 +37,17 @@
 (defn get-allpaths []
   (get-all-sectionskeys *docmanager* []))
 
-(defn get-unsaved-graphs []
-  "returns a ([path id] [path id] ...) seq "
-  (mapcat (fn [path]
-            (partition 2
-                       (interleave (repeat path)
-                                   (filter #(is-ag-dirty path %) (get-ags-id path)))))
-          (get-allpaths)))
+(defn get-unsaved-graphs 
+  "returns a ([path id] [path id] ...) seq
+   or (id1 id2 id3) when called with one argument "
+  ([]
+     (mapcat (fn [path]
+               (partition 2
+                          (interleave (repeat path)
+                                      (filter #(is-ag-dirty path %) (get-ags-id path)))))
+             (get-allpaths)))
+  ([path]
+     (filter #(is-ag-dirty path %) (get-ags-id path))))
 
 (defn init-counters [path]
   (add-section *docmanager* [path :graph-counter] 1)
@@ -87,3 +91,7 @@
     (if (get-ag path id)
       (gen-graph-id path)
       id)))
+
+(defn get-graphs-titles [path]
+  "returns a set of all titles"
+  (set (map :title (map #(get-ag path %) (get-ags-id path)))))

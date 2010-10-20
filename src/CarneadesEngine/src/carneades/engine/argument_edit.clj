@@ -92,6 +92,18 @@
           newarg (get-argument ag (:id arg))]
       (update-argument ag newarg))))
 
+(defn update-premise-role [ag arg atom role]
+  (letfn [(update-pm-role
+           [arg]
+           (let [pms (:premises arg)
+                 pms (group-by (fn [pm]
+                                 (= (:atom pm) atom)) pms)
+                 toupdate (first (get pms true))
+                 tokeep (get pms false)
+                 updated (assoc toupdate :role role)]
+             (assoc arg :premises (conj tokeep updated))))]
+    (update-in ag [:arguments (:id arg)] update-pm-role)))
+
 (defn update-argument-title [ag arg title]
   (letfn [(update-arg-title
            [arg]

@@ -1,12 +1,12 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.controller.swing-listeners
+(ns carneades.editor.controller.listeners.swing-listeners
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.view.viewprotocol
         carneades.editor.view.swinguiprotocol
-        carneades.editor.controller.listeners
+        carneades.editor.controller.handlers
         carneades.editor.utils.swing)
   (:import (carneades.editor.uicomponents EditorApplicationView)
            (carneades.editor.view.swinguiprotocol GraphInfo
@@ -177,6 +177,10 @@
 (defn premise-edit-type-listener [event view]
   (let [info (get-premise-being-edited-info view)]
     (on-premise-edit-type view (:path info) (:id info) info)))
+
+(defn premise-edit-role-listener [event view]
+  (let [info (get-premise-being-edited-info view)]
+    (on-premise-edit-role view (:path info) (:id info) info)))
 
 (defn argument-edit-title-listener [event view]
   (let [info (get-argument-being-edited-info view)]
