@@ -19,7 +19,7 @@
            com.mxgraph.swing.mxGraphOutline
            java.awt.print.PrinterJob
            java.awt.Toolkit
-           java.io.ByteArrayOutputStream
+           (java.io ByteArrayOutputStream OutputStreamWriter FileOutputStream)
            javax.imageio.ImageIO
            javax.swing.ImageIcon
            (java.awt.event MouseAdapter MouseWheelListener)
@@ -364,6 +364,14 @@
                      [sender event]
                      (.refresh component))))))
 
+(defn- write-file [filename encoding content]
+  ;; maybe use clojure.contrib here?
+  (let [os (OutputStreamWriter. (FileOutputStream. filename) encoding)]
+    (doto os
+      (.write content)
+      (.flush)
+      (.close))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; public functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -398,10 +406,10 @@
 
    Throws java.io.IOException"
   (let [g (.getGraph (:component graphcomponent))]
-    (mxUtils/writeFile (mxUtils/getXml
-                        (.. (mxCellRenderer/createSvgDocument g nil 1 nil nil)
-                            getDocumentElement))
-                       filename)))
+    (write-file filename "UTF-8"
+                (mxUtils/getXml
+                 (.. (mxCellRenderer/createSvgDocument g nil 1 nil nil)
+                     getDocumentElement)))))
 
 (defn undo [graphcomponent]
   (prn "map-undo!")
