@@ -9,7 +9,7 @@
 ;; Based on the implementation of the unification algorithm from
 ;; the book "The Scheme Programming Language", by Kent Dybvig.
 
-(defn occurs? [u t]
+(defn- occurs? [u t]
   "Returns true iff u occurs in v"
   (and (compound-term? t)
        (loop [args (term-args t)]
@@ -18,31 +18,38 @@
                   (occurs? u (term-functor args))
                   (recur (term-args args)))))))
 
-(defn sigma [u v s]
-  "Returns a new substitution procedure extending s by
+(defn apply-substitution
+  [s t]
+  (let [t2 (cond
+             (variable? t) (get s t t),
+             (nonemptyseq? t) (cons (first t) (map (fn [x] (apply-substitution s x)) (rest t))),
+             (fatom? t) (struct fatom (:form t)
+                          (cons (first (:term t))
+                            (map (fn [x] (apply-substitution s x)) (rest (:term t))))),
+             :else t)]
+    (if (and (variable? t2) (contains? s t2))
+      (apply-substitution s t2)
+      t2)))
+
+(def *identity* (hash-map))
+
+(defn- sigma [u v s]
+  "Returns a new substitution table extending s by
    the substitution of u with v"
-  (letfn [(sig [x]
-               (cond (variable? x) (if (= x u) v x)
-                     (nonemptyseq? x) (cons (first x) (map sig (rest x)))
-                     (fatom? x) (struct fatom (:form x)
-                                        (cons (first (:term x))
-                                              (map sig (rest (:term x)))))
-                     :else x))]
-    (fn [x]
-      (sig (s x)))))
+  (assoc s u v))
 
 (declare unify)
 ; mutual recursive: it may be useful to use (trampoline)
 ; in a near future
 
-(defn try-subst [u v s ks kf occurs-check]
+(defn- try-subst [u v s ks kf occurs-check]
   "Tries to substitute u for v but may require a
    full unification if (s u) is not a variable, and it may
    fail if it sees that u occurs in v."
-  (let [u (s u)]
+  (let [u (apply-substitution s u)]
     (if-not (variable? u)
       (unify u v s ks kf occurs-check)
-      (let [v (s v)]
+      (let [v (apply-substitution s v)]
         (cond (= u v) (ks s)
               (and occurs-check (occurs? u v)) (kf :cycle)
               :else (ks (sigma u v s)))))))
@@ -82,7 +89,7 @@
   ([u v s]
      (unify u v s identity (fn [state] nil) false))
   ([u v]
-     (unify u v identity identity (fn [state] nil) false)))
+     (unify u v *identity* identity (fn [state] nil) false)))
 
 (defn genvar []
   "generate a fresh, unique variable"
@@ -111,6 +118,6 @@
   (is (= '(f (h) (h)) (unify '(f ?x (h)) '(f (h) ?y))))
   (is (let [stm '(f (g ?x) ?y)]
         (nil? (unify stm '(f ?y ?x)
-                     identity #(% stm) (fn [state] nil) true))))
+                     *identity* #(% stm) (fn [state] nil) true))))
   (is (= '(f (g ?x) (g ?x)) (unify '(f (g ?x) ?y) '(f ?y (g ?x)))))
   (is (= '(f (g ?x) (g ?x)) (unify '(f (g ?x) ?y) '(f ?y ?z)))))
