@@ -3,20 +3,26 @@
 
 (ns carneades.editor.view.application.wizards.goal
   (:use clojure.contrib.def
-        [clojure.string :only (join)]
-        carneades.editor.view.wizardsprotocol)
-  (:import (carneades.editor.uicomponents.wizards.goal ProponentPanel
-                                                       AbductionPanel
-                                                       StatementPanel)))
+        clojure.contrib.swing-utils
+        carneades.editor.view.wizardsprotocol
+        carneades.editor.view.application.wizards.messages
+        carneades.editor.utils.swing)
+  (:require [clojure.string :as str])
+  (:import carneades.editor.view.wizardsprotocol.StatementItem
+           (carneades.editor.uicomponents.wizards.goal ProponentPanel
+                                                       AbductionPanel)))
 
 (defvar- *proponentPanel* (ProponentPanel/instance))
 (defvar- *mainIssueTextArea* (.mainIssueTextArea *proponentPanel*))
 
 (defvar- *abductionPanel* (AbductionPanel/instance))
-(defvar- *positionsList* (.positionsList *abductionPanel*))
+(defvar- *statementList* (.statementsList *abductionPanel*))
+(defvar- *positionLabel* (.positionLabel *abductionPanel*))
 
-(defvar- *statementPanel* (StatementPanel/instance))
-(defvar- *statementsList* (.statementsList *statementPanel*))
+(defvar- *firstPositionButton* (.firstPositionButton *abductionPanel*))
+(defvar- *lastPositionButton* (.lastPositionButton *abductionPanel*))
+(defvar- *previousPositionButton* (.previousPositionButton *abductionPanel*))
+(defvar- *nextPositionButton* (.nextPositionButton *abductionPanel*))
 
 (deftype EditorSwingGoalWizard []
   SwingGoalWizard
@@ -32,26 +38,43 @@
    [this mainissue]
    (.setText *mainIssueTextArea* mainissue))
 
-  (get-statements-panel
+  (reset-position
    [this]
-   *statementPanel*)
+   (.setText *positionLabel* *position*)
+   (.setListData *statementList* (to-array [""]))
+   (.setSelectedIndex *statementList* 0))
+  
+  (display-position
+   [this position posindex nbpos statement-formatted]
+   (let [items (to-array (map #(StatementItem.
+                                %
+                                (str "<html>"
+                                     (str/replace (statement-formatted %) "\n" "<br>")
+                                     "<br>&nbsp"))
+                              position))]
+     (.setListData *statementList* items)
+     (.setSelectedIndex *statementList* 0)
+     (.setText *positionLabel* (format *position-n-of* (inc posindex) nbpos))))
 
-  (display-abduction-result
-   [this positions statement-formatted]
-   (prn "positions =")
-   (prn positions)
-   (let [data (map #(str (join ", " (concat (map statement-formatted (drop-last %))))
-                         (statement-formatted (last %)))
-                   positions)]
-     (prn "data =")
-     (prn data)
-    (.setListData *positionsList*
-                  (to-array data))))
-
-  (display-statements
-   [this statements statement-formatted]
-   (.setListData *statementsList*
-                 (to-array (map #(statement-formatted %) statements)))
-   )
+  (set-first-position-button-listener
+   [this f args]
+   (remove-action-listeners *firstPositionButton*)
+   (apply add-action-listener *firstPositionButton* f args))
+  
+  (set-last-position-button-listener
+   [this f args]
+   (remove-action-listeners *lastPositionButton*)
+   (apply add-action-listener *lastPositionButton* f args))
+  
+  (set-previous-position-button-listener
+   [this f args]
+   (remove-action-listeners *previousPositionButton*)
+   (apply add-action-listener *previousPositionButton* f args))
+  
+  (set-next-position-button-listener
+   [this f args]
+   (remove-action-listeners *nextPositionButton*)
+   (apply add-action-listener *nextPositionButton* f args))
+  
   )
 
