@@ -131,7 +131,7 @@
   (fn [subgoal state]    
     (let [manager (OWLManager/createOWLOntologyManager),          
           subs (:substitutions state),
-          wff (subs (statement-wff subgoal))]
+          wff (apply-substitution subs (statement-wff subgoal))]
       (cond
         (and
           (seq? wff)
