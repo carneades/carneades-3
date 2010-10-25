@@ -87,7 +87,7 @@
                (display-position view position 0 npos statement-formatted)))))))))
 
 (defn- try-stop-abduction []
- (let [abduction-future (deref *abduction-future*)]
+ (when-let [abduction-future (deref *abduction-future*)]
    (reset! *abduction-state* :stopping)
    (future-cancel abduction-future)
    (when (future-cancelled? abduction-future)
