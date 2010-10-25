@@ -10,8 +10,10 @@
 
 (defvar *point-of-view* "Choose A Point Of View")
 (defvar *choose-point-of-view* "Choose a point of view")
-(defvar *positions* "Choose A Position")
-(defvar *select-position* "Select a position")
+;; (defvar *positions* "Choose A Position")
+;; (defvar *select-position* "Select a position")
 
 (defvar *statements* "Choose A Statement")
 (defvar *select-statement* "Select a statement")
+(defvar *goal-achieved* "Your goal has already been achieved.")
+(defvar *searching-positions* "Searching positions... Please wait...")

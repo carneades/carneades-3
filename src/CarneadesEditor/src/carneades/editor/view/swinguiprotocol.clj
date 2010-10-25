@@ -69,8 +69,11 @@
   (get-selected-node [this path id])
 
   ;; wizards:
-  (display-wizard [this title panels])
-  (display-wizard-with-listener [this listener panels])
+  (create-wizard [this title panels]
+                 [this title panels cancel-fn args])
+  (display-wizard [this wizard]
+                  [this title panels])
+  (display-branched-wizard [this basepanels selector args])
   )
 
 ;; records stored in the element of the tree:
