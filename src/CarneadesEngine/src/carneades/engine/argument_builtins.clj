@@ -70,7 +70,7 @@
 (defn- dispatch-exists
   [state stmt wff generators]
   (let [subs (:substitutions state),
-        [e v t p] (subs wff),
+        [e v t p] (apply-substitution subs wff),
         v2 (gensym "?"),
         t2 (replace-var v v2 t),
         p2 (replace-var v v2 p),
@@ -107,8 +107,8 @@
                    :pro 
                    stmt
                    (list
-                     (pm (new-subs p2))
-                     (am (new-subs t2)))
+                     (pm (apply-substitution new-subs p2))
+                     (am (apply-substitution new-subs t2)))
                    "exists")
                  (arguments (:arguments s))))))
       type-states)))
@@ -117,14 +117,14 @@
   [s t p]
   (let [subs (:substitutions s)]
     (list
-      (pm (subs p))
-      (am (subs t)))))
+      (pm (apply-substitution subs p))
+      (am (apply-substitution subs t)))))
 
 (defn- dispatch-all
   [state stmt wff generators]
   (println "dispatch-all" wff)
   (let [subs (:substitutions state),
-        [e v t p] (subs wff),
+        [e v t p] (apply-substitution subs wff),
         v2 (gensym "?"),
         t2 (replace-var v v2 t),
         p2 (replace-var v v2 p),

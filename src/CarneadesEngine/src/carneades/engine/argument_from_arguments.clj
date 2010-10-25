@@ -21,7 +21,7 @@
   "generate-arguments: argument-graph -> generator"
   (fn [goal state]
     (let [subs (sget state :substitutions)
-          proposition (subs goal)
+          proposition (apply-substitution subs goal)
           pro-args (pro-arguments ag-as-kb proposition)]
       (map (fn [arg]
              ;; no new substitutions, since propositional

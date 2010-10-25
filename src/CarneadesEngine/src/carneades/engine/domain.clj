@@ -9,7 +9,7 @@
     carneades.engine.owl.reasoner
     [carneades.engine.search :only (breadth-first search)]
     ;[carneades.engine.dnf :only (to-dnf)]
-    ;[carneades.engine.unify :only (genvar unify rename-variables)]
+    carneades.engine.unify
     )
   (:require [carneades.engine.argument-search :as as]))
 
@@ -60,6 +60,7 @@
       (let [domains (:domains nc),
             subs (reduce (fn [s g] (get-subs g s ont)) (list old-subs) domains)]
 ;        (println "instantiating" (count domains) "domains")
+;        (println "old subs:" old-subs)
 ;        (println (count subs) "instantiations found:")
 ;        (println subs)
         (reset-domain-counter)
@@ -68,15 +69,16 @@
             (fn [s]
               (let [new-id (get-domain-number (:id nc))]
 ;                (println new-id)
-;                (println "instantiated domains:" (map s domains))
-;                (println "instantiated-clause:" (map s (:clause nc)))
+;                (println s)
+;                (println "instantiated domains:" (map (fn [t] (apply-substitution s t)) domains))
+;                (println "instantiated-clause:" (map (fn [t] (apply-substitution s t)) (:clause nc)))
                 (struct named-clause
                   new-id
                   (:rule nc)
                   (:strict nc)
                   (:domains nc)
-                  (map s (:head nc))
-                  (map s (:clause nc)))))
+                  (map (fn [t] (apply-substitution s t)) (:head nc))
+                  (map (fn [t] (apply-substitution s t)) (:clause nc)))))
             subs)
 ;          )
         ))))

@@ -8,6 +8,7 @@
   (:use clojure.contrib.def
         carneades.engine.utils
         carneades.engine.statement
+        carneades.engine.unify
         clojure.contrib.pprint
         carneades.ui.diagram.viewer ; for debugging
         ;clojure.contrib.profile ; for testing
@@ -56,7 +57,7 @@
 
 (defn initial-state [topic ag]
   "statement argument-graph -> state"
-  (state topic :pro (list (list topic)) '() ag identity '()))
+  (state topic :pro (list (list topic)) '() ag *identity* '()))
 
 (defn next-goals [state]
   "state -> (seq-of (seq-of statement)) 
@@ -81,7 +82,7 @@
    (reduce
     (fn [acc c]
       (let [[ag2 candidates2] acc]
-        (if (ground? (subs (:guard c)))
+        (if (ground? (apply-substitution subs (:guard c)))
           (let [arg (arg/instantiate-argument (:argument c)  subs)]
             [(arg/assert-argument (arg/question
                                    ag2
@@ -264,7 +265,7 @@
 (defn- goal-state? [state]
   {:pre [(not (nil? state))]}
   (let [in (arg/in? (:arguments state)
-                    ((:substitutions state) (:topic state)))]
+                    (apply-substitution (:substitutions state) (:topic state)))]
     (condp = (:viewpoint state)
         :pro in
         :con (not in))))

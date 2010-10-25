@@ -11,6 +11,7 @@
         ;clojure.contrib.profile ; for testing
         carneades.engine.utils
         carneades.engine.statement
+        carneades.engine.unify
         carneades.engine.proofstandard))
 
 (declare update-statement assert-arguments) ; forward declaration
@@ -201,8 +202,8 @@
 
    Instanciate the variable of an argument by applying substitions"
   (assoc arg
-    :premises (map #(update-in % [:atom] subs) (:premises arg))
-    :conclusion (subs (:conclusion arg))))
+    :premises (map #(update-in % [:atom] (fn [a] (apply-substitution subs a))) (:premises arg))
+    :conclusion (apply-substitution subs (:conclusion arg))))
 
 ;; (defn add-premise [arg p]
 ;;   (assoc arg :applicable false :premises (cons p (:premises arg))))

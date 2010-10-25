@@ -8,6 +8,7 @@
         carneades.engine.utils
         [carneades.engine.abduction :as abd]
         carneades.engine.argument-search
+        carneades.engine.unify
         [carneades.engine.argument :only (node-statement get-nodes arguments)]
         [carneades.engine.search :only (depth-first resource search traverse)]
         carneades.ui.diagram.viewer)
@@ -18,7 +19,7 @@
 
   A state is a \"solution\" if the instantiated topic of the state is in."
   (filter (fn [s]
-            (let [sub ((:substitutions s) (:topic s))]
+            (let [sub (apply-substitution (:substitutions s) (:topic s))]
               (arg/in? (:arguments s) sub)))
           states))
 
@@ -109,7 +110,7 @@
     Always terminates, as only states found given the resource limit of the
     inference engine will be displayed."
   [query engine]
-  (map (fn [s] (pprint ((:substitutions s) query))) (solutions (engine query))))
+  (map (fn [s] (pprint (apply-substitution (:substitutions s) query))) (solutions (engine query))))
 
 ; (defn show-state [state]
 ;   "view a diagram of the argument graph of a state"

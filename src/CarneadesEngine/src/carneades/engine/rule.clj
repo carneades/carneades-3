@@ -12,7 +12,7 @@
     carneades.engine.domain
     [carneades.engine.search :only (breadth-first search)]
     [carneades.engine.dnf :only (to-dnf)]
-    [carneades.engine.unify :only (genvar unify rename-variables)])
+    [carneades.engine.unify :only (genvar unify rename-variables apply-substitution)])
   (:require [carneades.engine.argument-search :as as]))
 
 
@@ -303,7 +303,7 @@ with some goal."
             (symbol (str "-c" @counter)))]
 
     (defn get-clauses [args rb goal subs]
-      (let [pred (predicate (subs goal))
+      (let [pred (predicate (apply-substitution subs goal))
             applicable-rules ((:table rb) pred)
             applicable-clauses (mapinterleave (fn [rule]
                                                 (reset-counter)
@@ -330,7 +330,7 @@ with some goal."
             applied-clauses (map symbol
                               (map remove-inst
                                 (schemes-applied args
-                                  (subs (statement-atom goal)))))
+                                  (apply-substitution subs (statement-atom goal)))))
             remaining-clauses (filter (fn [c]
                                         (not (.contains applied-clauses
                                                (symbol
