@@ -329,7 +329,7 @@
     (string->symbol (string-append "-c" (number->string clause-counter))))
   
   (define (get-clauses args rb1 goal subs)
-    (let* ((pred (predicate (subs goal)))
+    (let* ((pred (predicate (apply-substitution subs goal)))
            (applicable-rules (table:lookup (%rulebase-table rb1)
                                            pred
                                            null))
@@ -349,14 +349,14 @@
                                                                                     c))
                                                      rule-clauses))))
                                         applicable-rules))
-           (applied-clauses (map string->symbol (argument:schemes-applied args (subs (statement-atom goal)))))
+           (applied-clauses (map string->symbol (argument:schemes-applied args (apply-substitution subs (statement-atom goal)))))
            (remaining-clauses (filter (lambda (c)
                                         (not (member (string->symbol (string-append (symbol->string (named-clause-rule c))
                                                                                     (symbol->string (named-clause-id c))
                                                                                     ))
                                                      applied-clauses)))
                                       applicable-clauses)))
-      ; (if *debug* (printf "get-clauses: goal ~a has ~a remaining clauses~%" (subs goal) (length remaining-clauses)))
+      ; (if *debug* (printf "get-clauses: goal ~a has ~a remaining clauses~%" (apply-substitution subs goal) (length remaining-clauses)))
       remaining-clauses
       ))
   

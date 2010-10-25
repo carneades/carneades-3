@@ -68,7 +68,7 @@
                     ; fail if any exception is raised
                     (lambda (exn) (escape (stream)))
                     (lambda ()
-                      (let* ((result (eval (subs (statement-wff expr))
+                      (let* ((result (eval (apply-substitution subs (statement-wff expr))
                                            (environment '(rnrs)))) ; to do: use safer environment
                              (subs2 (unify* term
                                             result 
@@ -103,7 +103,7 @@
                              #f)))
           (if *debug* (begin (display "builtins: matched =")
                              (newline)))
-          (if *debug* (printf "(= ~a ~a) => ~a~%" (subs term1) (subs term2) (if subs2 #t #f)))
+          (if *debug* (printf "(= ~a ~a) => ~a~%" (apply-substitution subs term1) (apply-substitution subs term2) (if subs2 #t #f)))
           (if (not subs2)
               (stream) ; fail
               (stream (make-response subs2 
