@@ -84,7 +84,7 @@
  (define  (lkif-import path . optionals)
    (if (null? optionals)
        (%lkif-import path (list path) '())
-       (%lkif-import path (list path) (car optionals))))
+       (%lkif-import path (list path) optionals)))
  
  ; %lkif-import: file-path (list-of string) [(list-of symbol)] -> lkif-data
  (define (%lkif-import path files optionals)
@@ -458,13 +458,10 @@
           (url (if (not (null? *url*))
                    (car *url*)
                    (error "import-rb/ags" "couldn't find url" import))))
-     (display "optionals: ")
-     (display optionals)
-     (newline)
      (if (member url files)
          (cons empty-rulebase '())
          (cond ((owl? url) (cons (owl-import url optionals) '()))
-               ((lkif? url) (let ((i-data (%lkif-import url (cons url files) optionals)))
+               ((lkif? url) (let ((i-data (%lkif-import url optionals (cons url files))))
                               (cons (lkif-data-rulebase i-data) (lkif-data-argument-graphs i-data))))
                (else (error "import-rb/ags" "no owl- or lkif-file" import))))))
 

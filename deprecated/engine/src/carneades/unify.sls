@@ -50,7 +50,7 @@
                                       (map (lambda (x) (apply-substitution s x)) (cdr (fatom-term t))))))
                    (else t))))
      (if (and (variable? t2)
-              (rkt:hash-ref s t2 #f))
+              (rkt:hash-has-key? s t2))
          (apply-substitution s t2)
          t2)))
    
