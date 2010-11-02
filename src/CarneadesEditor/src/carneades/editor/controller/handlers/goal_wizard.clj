@@ -4,6 +4,7 @@
 (ns carneades.editor.controller.handlers.goal-wizard
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
+        ;; carneades.engine.utils
         carneades.editor.view.viewprotocol
         carneades.editor.view.wizardsprotocol
         carneades.editor.view.swinguiprotocol
