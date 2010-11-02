@@ -106,22 +106,13 @@
          lkifinfo (LkifFileInfo. (.getPath file)
                                  (.getName file))
          ztree (jtreemodel-zip model)
-         ;; xyz (prn "before edition, root =")
-         ;; xyz (prn (zip/root ztree))
          ztree (zip/rightmost (zip/down (zip/append-child ztree (list lkifinfo))))
-         ;; xyz (prn "after adding lkifinfo, =")
-         ;; xyz (prn (zip/root ztree))
-         ;; xyz (prn "after adding, node =")
-         ;; xyz (prn (zip/node ztree))
          ztree (reduce
                 (fn [ztree graphinfo]
                   (let [[id title] graphinfo]
                     (zip/append-child ztree (list (GraphInfo. lkifinfo id title false)))))
                 ztree graphinfos)
          newroot (seq-jtreenodes (zip/root ztree) make-node)]
-     ;; (prn "root =")
-     ;; (pprint (zip/root ztree))
-     ;; (prn)
      (.setRoot model newroot)
      (let [added (find-node model #(= lkifinfo %))
            path (make-path newroot added)]
@@ -176,6 +167,9 @@
           (.scrollPathToVisible *lkifsTree* path))))))
 
 (defn- graphinfo-pred [path id userobject]
+  (prn "graphinfo-pred")
+  (prn "userobject =")
+  (prn userobject)
   (and (instance? GraphInfo userobject)
        (= path (-> userobject :lkifinfo :path))
        (= id (:id userobject))))
@@ -249,12 +243,12 @@
                 loc (-> loc zip/up zip/up)
                 loc (sort-children-by loc :title)
                 root (seq-jtreenodes (zip/root loc) make-node)
+                _ (.setRoot model root)
                 added (find-node model #(and (graphinfo-pred path id %)
                                              (= (:title %) newtitle)))
                 graphinfo (.getUserObject added)
                 lkifnode (find-node model #(= (:lkifinfo graphinfo) %))
                 path (make-path root lkifnode added)]
-            (.setRoot model root)
             ;; select renamed node:
             (.setSelectionPath (.getSelectionModel *lkifsTree*) path)
             (.scrollPathToVisible *lkifsTree* path)))))))

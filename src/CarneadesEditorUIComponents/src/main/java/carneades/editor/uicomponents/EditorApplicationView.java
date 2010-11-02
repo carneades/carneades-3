@@ -327,13 +327,13 @@ public class EditorApplicationView extends javax.swing.JFrame {
         fileMenu.add(printFileMenuItem);
         fileMenu.add(jSeparator1);
 
-        exitFileMenuItem.setText("Quit");
-        exitFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        quitFileMenuItem.setText("Quit");
+        quitFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exitFileMenuItemActionPerformed(evt);
+                quitFileMenuItemActionPerformed(evt);
             }
         });
-        fileMenu.add(exitFileMenuItem);
+        fileMenu.add(quitFileMenuItem);
 
         menuBar.add(fileMenu);
 
@@ -388,9 +388,9 @@ public class EditorApplicationView extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void exitFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitFileMenuItemActionPerformed
+    private void quitFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quitFileMenuItemActionPerformed
         System.exit(0);
-    }//GEN-LAST:event_exitFileMenuItemActionPerformed
+    }//GEN-LAST:event_quitFileMenuItemActionPerformed
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
         // TODO add your handling code here:
@@ -423,7 +423,6 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JMenuItem deletePremiseMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem deleteStatementMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenu editMenu;
-    public final javax.swing.JMenuItem exitFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem exportFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem exportGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem exportLkifFileMenuItem = new javax.swing.JMenuItem();
@@ -467,6 +466,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JMenuItem printFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem printPreviewFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JPanel propertiesPanel = new javax.swing.JPanel();
+    public final javax.swing.JMenuItem quitFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JButton redoButton = new javax.swing.JButton();
     public final javax.swing.JMenuItem redoEditMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JButton refreshButton = new javax.swing.JButton();

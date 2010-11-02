@@ -67,8 +67,7 @@
    If no goals remain for the current viewpoint, the empty list is returned."
   (condp = (:viewpoint state)
       :pro (:pro-goals state)
-      :con (:con-goals state)
-      (throw (Exception. "Invalid value"))))
+      :con (:con-goals state)))
 
 (defn questioned-assumptions [assumptions ag]
   "(seq-of statement) argument-graph -> (seq-of statement)"
