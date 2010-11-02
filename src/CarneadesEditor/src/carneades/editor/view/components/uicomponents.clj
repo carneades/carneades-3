@@ -13,6 +13,7 @@
 (defvar *undoButton* (.undoButton *frame*))
 (defvar *redoButton* (.redoButton *frame*))
 (defvar *refreshButton* (.refreshButton *frame*))
+(defvar *quitFileMenuItem* (.quitFileMenuItem *frame*))
 
 (defvar *exportFileMenuItem* (.exportFileMenuItem *frame*))
 (defvar *printPreviewFileMenuItem* (.printPreviewFileMenuItem *frame*))
