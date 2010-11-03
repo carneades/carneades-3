@@ -45,6 +45,7 @@
   (add-new-file-menuitem-listener [this f args])
   (add-windowclosing-listener [this f args])
   (add-findgoal-assistantmenuitem-listener [this f args])
+  (add-quit-filemenuitem-listener [this f args])
   
   ;; properties edit listeners
   (add-statement-edit-listener [this f args])

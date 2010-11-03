@@ -10,6 +10,7 @@
   (init [this] "init the view")
   (show [this] "display the main view, take the command lines arguments
                        as second argument")
+  (hide [this])
   (open-graph [this path ag stmt-fmt] "open the graph for edition")
   (redisplay-graph [this path ag stmt-fmt])
   (close-graph [this path id])
