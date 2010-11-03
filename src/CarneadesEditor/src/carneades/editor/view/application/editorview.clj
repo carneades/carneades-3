@@ -439,4 +439,8 @@
    [this l args]
    (swap! *premise-selection-listeners* conj {:listener l :args args}))
 
+  (hide
+   [this]
+   (.setVisible *frame* true)
+   (.dispose *frame*))
   )
