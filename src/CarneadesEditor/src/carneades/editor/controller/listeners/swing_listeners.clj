@@ -24,7 +24,7 @@
                 LkifFileInfo (on-select-lkif-file view (:path info))
                 nil)
             2 (condp instance? info
-                GraphInfo (on-edit-graphid view (:path (:lkifinfo info))
+                GraphInfo (on-open-graph view (:path (:lkifinfo info))
                                            (:id info))
                 nil)
             nil))))
@@ -77,15 +77,8 @@
       nil)))
 
 (defn export-file-listener [event view]
-  (when-let [info (get-selected-object-in-tree view)]
-    (condp instance? info
-      GraphInfo (if-let [[path id] (current-graph view)]
-                  (on-export-graph view path id)
-                  (on-export-graph view (:path (:lkifinfo info)) (:id info)))
-      LkifFileInfo (if-let [[path id] (current-graph view)]
-                     (on-export-graph view path id)
-                     (on-export-file view (:path info)))
-      nil)))
+  (when-let [[path id] (current-graph view)]
+    (on-export-graph view path id)))
 
 (defn export-element-listener [event view]
   (when-let [info (get-selected-object-in-tree view)]
@@ -95,11 +88,11 @@
       nil)))
 
 (defn printpreview-listener [event view]
-  (if-let [[path id] (current-graph view)]
+  (when-let [[path id] (current-graph view)]
     (on-printpreview-graph view path id)))
 
 (defn print-listener [event view]
-  (if-let [[path id] (current-graph view)]
+  (when-let [[path id] (current-graph view)]
     (on-print-graph view path id)))
 
 (defn search-result-selection-listener [event view]
@@ -249,4 +242,7 @@
   (on-new-file view))
 
 (defn windowclosing-listener [event view]
+  (on-exit view event))
+
+(defn quit-filemenuitem-listener [event view]
   (on-exit view event))

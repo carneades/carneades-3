@@ -219,6 +219,10 @@
   (add-findgoal-assistantmenuitem-listener
    [this f args]
    (apply add-action-listener *assistantFindGoalMenuItem* f args))
+
+  (add-quit-filemenuitem-listener
+   [this f args]
+   (apply add-action-listener *quitFileMenuItem* f args))
   
   (get-statement-being-edited-info
    [this]
@@ -253,58 +257,57 @@
              (instance? StatementCell obj)
              (:stmt obj)))))
 
-    (create-wizard
-     [this title panels]
-     (create-wizard this title nil))
+  (create-wizard
+   [this title panels]
+   (create-wizard this title nil))
 
-     (create-wizard
-      [this title panels cancel-fn args]
-      (System/setProperty "wizard.sidebar.image" "carneades-bright.png")
-      (let [wizardpages (create-wizardpages panels)
-            producer (reify WizardPage$WizardResultProducer
-                       (finish [this data]
-                               data)
-                       (cancel [this settings]
-                               (if cancel-fn
-                                 (apply cancel-fn settings args)
-                                 true)))
-            wizard (WizardPage/createWizard title
-                                            (into-array (map :page wizardpages)) producer)]
-        (.addWizardObserver wizard (reify WizardObserver
-                                     (navigabilityChanged [this wizard])
-                                     (selectionChanged
-                                      [this wizard]
-                                      (let [step (.getStepDescription
-                                                  wizard
-                                                  (.getCurrentStep wizard))]
-                                        (when-let [pagedata (first (filter #(= (:desc %) step) wizardpages) )]
-                                          (when-let [listener (:listener pagedata)]
-                                            (let [args (:args pagedata)
-                                                  wizardpage (:page pagedata)
-                                                  datamap (.getWizardDataMap wizardpage)]
-                                              (apply listener datamap args))))))
-                                     (stepsChanged [this wizard])))
-        wizard))
+  (create-wizard
+   [this title panels cancel-fn args]
+   (System/setProperty "wizard.sidebar.image" "carneades-bright.png")
+   (let [wizardpages (create-wizardpages panels)
+         producer (reify WizardPage$WizardResultProducer
+                    (finish [this data]
+                            data)
+                    (cancel [this settings]
+                            (if cancel-fn
+                              (apply cancel-fn settings args)
+                              true)))
+         wizard (WizardPage/createWizard title
+                                         (into-array (map :page wizardpages)) producer)]
+     (.addWizardObserver wizard (reify WizardObserver
+                                  (navigabilityChanged [this wizard])
+                                  (selectionChanged
+                                   [this wizard]
+                                   (let [step (.getStepDescription
+                                               wizard
+                                               (.getCurrentStep wizard))]
+                                     (when-let [pagedata (first (filter #(= (:desc %) step) wizardpages) )]
+                                       (when-let [listener (:listener pagedata)]
+                                         (let [args (:args pagedata)
+                                               wizardpage (:page pagedata)
+                                               datamap (.getWizardDataMap wizardpage)]
+                                           (apply listener datamap args))))))
+                                  (stepsChanged [this wizard])))
+     wizard))
 
-    (display-wizard
-     [this wizard]
-     (WizardDisplayer/showWizard wizard))
+  (display-wizard
+   [this wizard]
+   (WizardDisplayer/showWizard wizard))
 
-    (display-wizard
-     [this title panels]
-     (WizardDisplayer/showWizard (create-wizard this title panels)))
+  (display-wizard
+   [this title panels]
+   (WizardDisplayer/showWizard (create-wizard this title panels)))
 
-    (display-branched-wizard
-     [this basepanels selector args]
-     (let [pages (into-array (map :page (create-wizardpages basepanels)))]
-      (let [brancher (proxy [WizardBranchController] [pages]
-                       (getWizardForStep
-                        [step settings]
-                        (let [wizard (proxy-super createWizard)
-                              step (.getStepDescription wizard step)]
+  (display-branched-wizard
+   [this basepanels selector args]
+   (let [pages (into-array (map :page (create-wizardpages basepanels)))]
+     (let [brancher (proxy [WizardBranchController] [pages]
+                      (getWizardForStep
+                       [step settings]
+                       (let [wizard (proxy-super createWizard)
+                             step (.getStepDescription wizard step)]
                          (apply selector step settings args))))
-            wizard (.createWizard brancher)]
-        (display-wizard this wizard)))
-     )
-    
+           wizard (.createWizard brancher)]
+       (display-wizard this wizard))))
+  
   )

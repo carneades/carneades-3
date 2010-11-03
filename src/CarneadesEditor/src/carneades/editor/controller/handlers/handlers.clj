@@ -76,18 +76,16 @@
     ;; (prn)
     (display-graph-property view path id title mainissue)))
 
-(defn on-edit-graphid [view path graphid]
-  (prn "on-edit-graphid")
-  (prn graphid)
-  (when-let [ag (get-ag path graphid)]
-    (open-graph view path ag statement-formatted)))
-
 (defn on-select-lkif-file [view path]
   (prn "on-select-lkif-file")
   (display-lkif-property view path))
 
 (defn on-open-graph [view path id]
-  (open-graph view path (get-ag path id) statement-formatted))
+  (prn "on-open-graph")
+  (when-let [ag (get-ag path id)]
+   (open-graph view path ag statement-formatted)
+   (when-let [mainissue (:main-issue ag)]
+     (display-statement view path ag mainissue statement-formatted))))
 
 (defvar- *dot-description* "DOT Files")
 (defvar- *svg-description* "SVG Files")
@@ -283,7 +281,6 @@
                               (:polarity pm) type (:role pm) (:atom pm))))
 
 (defn on-open-statement [view path id stmt]
-  (prn "on-open-statement")
   (when-let [ag (get-ag path id)]
     (display-statement view path ag stmt statement-formatted)))
 
@@ -307,7 +304,7 @@
     (try
       (let [previous-content-as-obj (read-string previous-content) 
             newcontent (read-string content)]
-        (if (not (statement? newcontent))
+        (if (or (not (statement? newcontent)) (empty? newcontent))
           (display-error view *edit-error* "Content is invalid.")
           (if (statement-node oldag newcontent)
             (display-error view *edit-error* *statement-already-exists*)
@@ -537,13 +534,13 @@
   (prn pm)
   (when-let [ag (get-ag path id)]
     (let [arg (get-argument ag (:id arg))
-          newag (delete-premise ag arg pm)
-          newarg (get-argument ag (:id arg))]
-      (do-update-section view [path :ags (:id ag)] newag)
+          ag (delete-premise ag arg pm)
+          arg (get-argument ag (:id arg))]
+      (do-update-section view [path :ags (:id ag)] ag)
       (prn "ag after delete premise = ")
       (pprint ag)
       (prn)
-      (premise-deleted view path newag arg pm))))
+      (premise-deleted view path ag arg pm))))
 
 (defn on-new-premise [view path id arg]
   (prn "on new premise")
@@ -594,14 +591,17 @@
         (mainissue-changed view path ag stmt)))))
 
 (defn on-new-statement [view path id]
+  "creates a new statements and returns it"
   (when-let [ag (get-ag path id)]
     (let [stmt (gen-statement-content path ag)
           ag (update-statement ag stmt)]
       (do-update-section view [path :ags (:id ag)] ag)
       (new-statement-added view path ag stmt statement-formatted)
-      (display-statement view path ag stmt statement-formatted))))
+      (display-statement view path ag stmt statement-formatted)
+      stmt)))
 
 (defn on-new-argument [view path id stmt]
+  "creates a new argument and returns it"
   (prn "on new argument")
   (prn "stmt = ")
   (prn stmt)
@@ -610,9 +610,11 @@
           ag (assert-argument ag arg)]
       (do-update-section view [path :ags (:id ag)] ag)
       (new-argument-added view path ag arg)
-      (display-argument view path ag arg statement-formatted))))
+      (display-argument view path ag arg statement-formatted)
+      arg)))
 
 (defn on-new-graph [view path]
+  "creates a new graph and returns its id"
   (prn "on new graph")
   (let [title (gen-graph-title path)
         id (gen-graph-id path)
@@ -625,7 +627,8 @@
       (open-graph view path ag statement-formatted)
       (when (not success)
         (update-dirty-state view path ag true))
-      (display-graph-property view path (:id ag) (:title ag) (:main-issue ag)))))
+      (display-graph-property view path (:id ag) (:title ag) (:main-issue ag))
+      id)))
 
 (defn on-delete-graph [view path id]
   (when (ask-confirmation view "Delete" "Permanently delete the graph?")
@@ -636,32 +639,47 @@
     ;; on disk and and forcing a save cannot be done
     (graph-deleted view path id)))
 
+(defn- create-template [view path]
+  (let [id (on-new-graph view path)
+        stmt (on-new-statement view path id)
+        stmt2 (on-new-statement view path id)
+        arg (on-new-argument view path id stmt)
+        ag (get-ag path id)]
+    (on-change-mainissue view path id stmt)
+    (on-add-existing-premise view path id arg stmt2)
+    (on-refresh view path id)
+    (on-save view path id)
+    (display-statement view path ag stmt statement-formatted)))
+
 (defn on-new-file [view]
   (when-let [[file desc] (ask-file-to-save view {"LKIF files (.xml)" "xml"}
                                            (File. "lkif1.xml"))]
     (let [path (.getPath file)]
-      ;; (prn "new file =")
-      ;; (prn file)
-      ;; (prn "new path =")
-      ;; (prn path)
       (when (section-exists? *docmanager* [path])
-        (prn "already exists!")
         (close-all view path))
       (lkif/add-lkif-to-docmanager path lkif/*empty-lkif-content* *docmanager*)
       (init-counters path)
       (save-lkif view path)
       (display-lkif-content view file (create-lkifinfo path))
-      (display-lkif-property view path)
-      )))
+      (create-template view path))))
 
-(defn- exit []
-  (System/exit 0))
+(defn- exit [view]
+  (letfn [(in-swank?
+           []
+           (try
+             (require 'swank.core)
+             true
+             (catch Exception e
+               false)))]
+    (hide view)
+    (when (not (in-swank?))
+      (System/exit 0))))
 
 (defn on-exit [view event]
   (prn "on exit")
   (let [unsavedgraphs (get-unsaved-graphs)]
     (if (empty? unsavedgraphs)
-      (exit)
+      (exit view)
       (case (ask-yesnocancel-question view "Close" "Save all graphs before closing?")
             :yes (loop [unsavedgraphs unsavedgraphs]
                    (if-let [[path id] (first unsavedgraphs)]
@@ -669,8 +687,8 @@
                        ;; if we save successfully we continue
                        (recur (rest unsavedgraphs)))
                      ;; all saved, exit
-                     (exit)))
-            :no (exit)
+                     (exit view)))
+            :no (exit view)
             :cancel nil))))
 
 (defn on-close-file [view path]
