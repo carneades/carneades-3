@@ -17,17 +17,17 @@
 (deftest test-rule
   (is (= {:id 'r1,
           :strict false,
-          :guards '(),
+          :domains '(),
           :head '((goods ?c)),
           :body '(((movable ?c) (unless (money ?c))))}
          (rule r1 (if (and (movable ?c)
                            (unless (money ?c)))
                     (goods ?c)))))
-  (is (= {:id 'r3, :strict false, :guards '(), :head '((money ?x)), :body '(((coins ?x)))}
+  (is (= {:id 'r3, :strict false, :domains '(), :head '((money ?x)), :body '(((coins ?x)))}
          (rule r3 (if (coins ?x) (money ?x)))))
   (is (= {:id 'r4,
           :strict false,
-          :guards '(),
+          :domains '(),
           :head '((light ?x) (shipable ?x)),
           :body '(((movable ?x)))}
          (rule r4
@@ -36,7 +36,7 @@
                       (shipable ?x))))))
   (is (= {:id 'r5,
           :strict false,
-          :guards '(),
+          :domains '(),
           :head '((convenient ?x)),
           :body '(((light ?x) (shipable ?x)))}
          (rule r5
@@ -45,7 +45,7 @@
                  (convenient ?x)))))
   (is (= {:id 'r6,
           :strict false,
-          :guards '(),
+          :domains '(),
           :head '((not (goods ?x))),
           :body '(((edible ?x)))}
          (rule r6 

@@ -6,6 +6,7 @@
   (:use clojure.contrib.pprint
         carneades.engine.utils
         carneades.engine.argument
+        carneades.engine.unify
         [carneades.engine.argument-search :only (response)]))
 
 ;; generator for arguments from argument graphs

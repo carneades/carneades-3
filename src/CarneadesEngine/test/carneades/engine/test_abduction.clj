@@ -31,7 +31,7 @@
                              (accept *empty-argument-graph* [s w])
                              [q v t])
                             [a1 a2 a3 a4 a5])
-                           :ba
+                           :pe
                            [u v t w r s q p])
         asm #{(statement-complement q)
               (statement-complement v)
