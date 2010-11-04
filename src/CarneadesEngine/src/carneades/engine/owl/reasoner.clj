@@ -59,13 +59,13 @@
       (let []
         (if *debug* (println iname "is instance of" cname))
         (list (as/response
-              subs
-              (arg/argument
-                (gensym "a")
-                :pro
-                wff
-                (list (arg/am (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
-                "HermiT"))))
+                subs
+                (arg/argument
+                  (gensym "a")
+                  :pro
+                  wff
+                  (list (arg/am (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
+                  "HermiT"))))
       nil)))
 
 (defn property-instances-to-responses

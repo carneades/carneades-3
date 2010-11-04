@@ -19,7 +19,7 @@
     carneades.engine.statement
     carneades.engine.argument
     carneades.engine.rule
-    carneades.engine.owl.rule
+    ;carneades.engine.owl.rule
     carneades.engine.owl)
   ;(:import )
   )
@@ -281,58 +281,73 @@
     (map import-rule (xml-> lkif-rules :rule))
     nil))
 
-(defn import-rb_ag
-  [i optionals files]  
-  (if i
-    (let [url (attr i :url)]      
+(defn import-import
+  [i files]
+    (let [url (attr i :url)]
+      ;(println "i:" i)
+      ;(println "uri:" url)
       (if (some #{url} files)
-        {:rb *empty-rulebase*, :ag nil}
+        {:name url,
+         :import-tree nil,
+         :import-kbs {},
+         :import-ags {}}
         (cond
-          (lkif? url) (let [i (lkif-import url optionals (cons url files)),
+          (lkif? url) (let [i (lkif-import url (cons url files)),
                             rb (:rb i),
-                            ags (:ags i)]                        
-                        {:rb rb, :ag ags}),
-          (owl? url) {:rb (map-ontology (load-ontology url) optionals),
-                      :ag nil} )))
-    {:rb *empty-rulebase*, :ag nil}))
+                            ags (:ags i),                            
+                            imp-kbs (assoc (:import-kbs i) url rb),
+                            imp-ags (assoc (:import-ags i) url ags)
+                            ]
+                        {:name url,
+                         :import-tree (:import-tree i),
+                         :import-kbs imp-kbs,
+                         :import-ags imp-ags}),
+          (owl? url) {:name url,
+                         :import-tree nil,
+                         :import-kbs (assoc {} url (load-ontology url)),
+                         :import-ags {}}))))
 
-(defn import-rbs_ags
-  [theory optionals files]
+(defn import-imports
+  [theory filename files]
   (if theory
     (let* [imports (xml1-> theory :imports),
-           import-list (if imports (xml-> imports :import) nil),
-           rb_ag-list (map (fn [i] (import-rb_ag i optionals files)) import-list),
-           result (reduce (fn [s rb_ag]
-                            ;(println "reducing:" rb_ag "\n   " s)
-                            {:rb (add-rules (:rb s) (:rules (:rb rb_ag))),
-                             :ag (lazy-cat (:ag s) (:ag rb_ag))})
-                    {:rb *empty-rulebase*,
-                     :ag nil}
-                    rb_ag-list)]
-      ;(println "imported files:" (count import-list))
-      ;(println "imported list:" rb_ag-list)
-      ;(println "result:" result)
-      result)
-    {:rb *empty-rulebase*,
-     :ag nil}))
+           filename-list (if imports (xml-> imports :import) nil),
+           import-list (map (fn [i] (import-import i files)) filename-list),
+           imp-tree (map (fn [i] (dissoc i :import-kbs :import-ags)) import-list),
+           imp-kbs (apply merge (map :import-kbs import-list)),
+           imp-ags (apply merge (map :import-ags import-list))
+           ]
+      ;(println "imported from:" filename)
+      ;(println "imported files:" (count filename-list))
+      ;(println "imported list:" import-list)
+      ;(println "imported tree:" imp-tree)
+      {:import-tree imp-tree,
+       :import-kbs imp-kbs,
+       :import-ags imp-ags}
+      )
+    {:import-tree nil,
+     :import-kbs {},
+     :import-ags {}}))
 
-(defn theory->rb_ags
-  [theory optionals files]
+(defn import-theory
+  [theory filename files]
   (if theory
-    (let* [imported-rb_ags (import-rbs_ags theory optionals files),
-           imported-rb (:rb imported-rb_ags),
-           imported-ags (:ag imported-rb_ags),
+    (let* [imp (import-imports theory filename files),
+           ;imported-rb (:rb imported-rb_ags),
+           ;imported-ags (:ag imported-rb_ags),
            defined-rules (import-rules (xml1-> theory :rules)),
            axioms (axioms->rules (xml1-> theory :axioms)),
-           rb (add-rules imported-rb (lazy-cat defined-rules axioms))]
-      ;(println "theory loaded")
+           rb (apply rulebase (concat defined-rules axioms))
+           ]
+      ;(println "theory loaded:" filename)
       ;(println "imported-rb: " (count imported-rb))
       ;(println "imported-ags " (count imported-ags))
-      ;(println "defined-rules: " (count defined-rules))
+      ;(println "defined-rules: " defined-rules)
       ;(println "axioms: " axioms)
-      {:rb rb :ag imported-ags}
+      ;(println "rb:" rb)
+      (assoc imp :rb rb)
       )
-    nil
+    {}
     ))
 
 (defn lkif-premise->premise
@@ -467,22 +482,62 @@
 ;    - java.io.IOException
 (defn lkif-import
   "Reads an lkif-file from path and returns a lkif-struct"
-  ([filename] (lkif-import filename '()))
-  ([filename optionals]
-    (lkif-import filename optionals (list filename)))
-  ([filename optionals files]
+  ([filename]
+    (lkif-import filename '()))
+  ([filename files]
     (let* [document (zip/xml-zip (xml/parse filename)),
            lkif-sources (xml1-> document :sources),
            lkif-theory (xml1-> document :theory),
            lkif-arg-graphs (xml1-> document :argument-graphs),
            source-list (sources->list lkif-sources),
-           theory-rb_ag (theory->rb_ags lkif-theory optionals (cons filename files)),
+           theory (import-theory lkif-theory filename (cons filename files)),
            ags (parse-arg-graphs lkif-arg-graphs),
-           rb (:rb theory-rb_ag),
-           ag (:ag theory-rb_ag)
+           ;rb (:rb theory),
+           ;imp-tree (:import-tree theory),
+           ;imp-rbs (:import-rbs theory),
+           ;imp-ags (:import-ags theory)
            ]
-      {:sources source-list :rb rb :ags (concat ags ag)}
+      ;{:sources source-list, :rb rb, :import-tree imp-tree, :import-rbs imp-rbs, :import-ags imp-ags, :ags ags}
+      ;(println "theory:" theory)
+      (assoc theory :sources source-list :ags ags)
       )))
+
+; TODO
+(defn- get-imported-ont
+  [imp-tree imp-kbs rb-name]
+  (let [i (some (fn [i] (and (= (:name i) rb-name) i)) imp-tree)]
+    (if i
+      (some (fn [i2] (let [kb (get imp-kbs (:name i2))]
+                       (and (contains? kb :ontology) kb)))
+        (:import-tree i))
+      (some (fn [i2] (get-imported-ont i2 imp-kbs rb-name)) (map :import-tree imp-tree)))))
+
+(defn generate-arguments-from-lkif
+  ([lkif]
+    (generate-arguments-from-lkif lkif :reasoner nil nil nil))
+  ([lkif type]
+    (generate-arguments-from-lkif lkif type nil nil nil))
+  ([lkif type ont]
+    (generate-arguments-from-lkif lkif type nil nil ont))
+  ([lkif type cq opt ont]
+    (let [imp-kbs (:import-kbs lkif)
+          rb (:rb lkif)]
+  (fn [subgoal state]
+    (concat 
+      ((generate-arguments-from-rules rb cq ont) subgoal state) ; direct rules
+      (apply concat
+        (map                                                      ; imported kbs
+        (fn [kbe]
+          (let [name (key kbe),
+                kb (val kbe)]
+          (if (contains? kb :ontology)
+            ;owl
+            ((generate-arguments-from-owl kb type) subgoal state)
+            ;rb
+            (let [d-ont (or (get-imported-ont (:import-tree lkif) imp-kbs name) ont)] ; todo : maybe other way around
+              ;(println "domain ontology:" d-ont)
+              ((generate-arguments-from-rules kb cq d-ont) subgoal state)))))
+        imp-kbs)))))))
 
 ;(def path "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\src\\CarneadesExamples\\src\\carneades\\examples\\open_source_licensing\\oss-rules.xml")
 
