@@ -72,13 +72,14 @@
 ;                (println s)
 ;                (println "instantiated domains:" (map (fn [t] (apply-substitution s t)) domains))
 ;                (println "instantiated-clause:" (map (fn [t] (apply-substitution s t)) (:clause nc)))
-                (struct named-clause
-                  new-id
-                  (:rule nc)
-                  (:strict nc)
-                  (:domains nc)
-                  (map (fn [t] (apply-substitution s t)) (:head nc))
-                  (map (fn [t] (apply-substitution s t)) (:clause nc)))))
+                {:clause (struct named-clause
+                           new-id
+                           (:rule nc)
+                           (:strict nc)
+                           (:domains nc)
+                           (map (fn [t] (apply-substitution s t)) (:head nc))
+                           (map (fn [t] (apply-substitution s t)) (:clause nc))),
+                 :subs s}))
             subs)
 ;          )
         ))))

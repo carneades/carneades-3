@@ -138,8 +138,6 @@
     (make-successor-state-putforward stat newsubs arg :update))
   ([stat newsubs arg goal-proc]
   (let [conclusion (:conclusion arg) ; maybe use complement regarding argument-dirction?
-
-
         assumptions (questioned-assumptions
                      (map arg/premise-statement
                           (filter arg/assumption?

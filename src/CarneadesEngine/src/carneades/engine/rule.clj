@@ -372,15 +372,17 @@ with some goal."
                       false
                       ;; instantiate domains
                       (let [inst-clauses (instantiate-domains clause ont subs2)]
-                        (map (fn [ic]
-                               (let [arg-id (gensym "a")
+                        (map (fn [inst-clause-map]
+                               (let [ic (:clause inst-clause-map),
+                                     subs3 (:subs inst-clause-map),
+                                     arg-id (gensym "a")
                                      direction (if (= (first subgoal) 'not) :con :pro)
                                      conclusion (statement-atom (condition-statement subgoal))
                                      premises (concat (map statement-to-premise (:clause ic))
                                                 (rule-critical-questions (:rule ic) qs subgoal (:strict ic)))
                                      scheme (str (:rule ic) (:id ic))]
                                  ;(println "rule instantiated:" (str (:rule ic) (:id ic)))
-                                 (as/response subs2
+                                 (as/response subs3
                                    (argument arg-id
                                      false
                                      *default-weight*
