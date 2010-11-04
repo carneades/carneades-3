@@ -190,11 +190,23 @@
   [head]
   [:head (map wff->sxml head)])
 
+(defn domain->sxml
+  [domain]
+  (condp = (count domain)
+    2 [:class {:pred (first domain)} [:v (.substring (str (second domain)) 1)]],
+    3 [:property {:pred (first domain)} (text_term->sxml (second domain)) [:v (.substring (str (nth domain 2)) 1)]],
+    (println "no valid domain" domain)))
+
+(defn domains->sxml
+  [domains]
+  [:domains (map domain->sxml domains)])
+
 (defn rule->sxml
   [rule]
   [:rule
    {:id (:id rule), :strict (or (:strict rule) false)}
    (head->sxml (:head rule))
+   (domains->sxml (:domains rule))
    (body->sxml (:body rule))])
 
 (defn rules->sxml
@@ -212,18 +224,28 @@
     nil
     [:axioms (map axiom->sxml axioms)]))
 
-(defn rulebase->sxml
-  [rb]
+(defn imports->sxml
+  [imp-tree]
+  (let [imp-names (map :name imp-tree)]
+    [:imports
+     (map (fn [n]
+           [:import {:url n}])
+            imp-names)]))
+
+
+(defn theory->sxml
+  [imp-tree rb]
   (and rb
     (let [id (gensym "theory"),
+          imports (imports->sxml imp-tree),
           all-rules (:rules rb),
           axioms (filter (fn [r] (nil? (:body r))) all-rules),
           rules (filter (fn [r] (not (nil? (:body r)))) all-rules)]
-      [:theory {:id id} (axioms->sxml axioms) (rules->sxml rules)])))
+      [:theory {:id id} imports (axioms->sxml axioms) (rules->sxml rules)])))
 
 (defn source->sxml
   [source]
-  [:source source])
+  [:source {:element (first source), :uri (second source)}])
 
 (defn sources->sxml
   [sources]
@@ -233,20 +255,20 @@
 
 (defn data->sxml
   [data]
-  (let [sources (sources->sxml (:sources data)),
-        theory (rulebase->sxml (:rb data)),
+  (let [sources (sources->sxml (:sources data)),        ,
+        theory (theory->sxml (:import-tree data) (:rb data)),
         arg-graphs (arg-graphs->sxml (:ags data))]
     [:lkif sources theory arg-graphs]))
 
 
 ; can throw:
 ;   - java.io.IOException
-(defn lkif-export
+(defn lkif-export*
   ([export-data]
     (binding [prx/*prxml-indent* 3]
       (with-out-str (prx/prxml (data->sxml export-data))))
     )
   ([export-data port]
-    (io/write-lines port (list (lkif-export export-data)))
+    (io/write-lines port (list (lkif-export* export-data)))
     )
   )
