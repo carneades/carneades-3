@@ -65,7 +65,7 @@
           ontology (. manager loadOntology documentIRI),
           reasoner (. (new Reasoner$ReasonerFactory) createReasoner ontology)]
       (. reasoner prepareReasoner)
-      (println "ontology loaded")
+      ;(println "ontology loaded")
       ;(println "direct imports" (count (.getDirectImports manager ontology)))
       ;(println "processing goal:" wff)
       ;      (println "consistent ontology?:" (.isConsistent reasoner))
