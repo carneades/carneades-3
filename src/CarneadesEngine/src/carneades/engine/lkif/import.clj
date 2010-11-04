@@ -11,11 +11,11 @@
     clojure.contrib.pprint
     clojure.contrib.def
     clojure.contrib.zip-filter.xml
-    carneades.engine.argument-builtins ; for testing
-    carneades.engine.shell    ; for testing
-    carneades.ui.diagram.viewer ; for testing
-    carneades.engine.argument-builtins ; for testing
-    carneades.engine.utils
+;    carneades.engine.argument-builtins ; for testing
+;    carneades.engine.shell    ; for testing
+;    carneades.ui.diagram.viewer ; for testing
+;    carneades.engine.argument-builtins ; for testing
+;    carneades.engine.utils
     carneades.engine.statement
     carneades.engine.argument
     carneades.engine.rule
@@ -24,7 +24,7 @@
   ;(:import )
   )
 
-(declare lkif-wff->sexpr lkif-atom->sexpr lkif-term->sexpr lkif-import)
+(declare lkif-wff->sexpr lkif-atom->sexpr lkif-term->sexpr lkif-import*)
 
 (defn lkif?
   [url]
@@ -292,7 +292,7 @@
          :import-kbs {},
          :import-ags {}}
         (cond
-          (lkif? url) (let [i (lkif-import url (cons url files)),
+          (lkif? url) (let [i (lkif-import* url (cons url files)),
                             rb (:rb i),
                             ags (:ags i),                            
                             imp-kbs (assoc (:import-kbs i) url rb),
@@ -480,10 +480,10 @@
 ;    - java.lang.IllegalArgumentException
 ;    - org.xml.sax.SAXException
 ;    - java.io.IOException
-(defn lkif-import
+(defn lkif-import*
   "Reads an lkif-file from path and returns a lkif-struct"
   ([filename]
-    (lkif-import filename '()))
+    (lkif-import* filename '()))
   ([filename files]
     (let* [document (zip/xml-zip (xml/parse filename)),
            lkif-sources (xml1-> document :sources),
@@ -501,43 +501,6 @@
       ;(println "theory:" theory)
       (assoc theory :sources source-list :ags ags)
       )))
-
-; TODO
-(defn- get-imported-ont
-  [imp-tree imp-kbs rb-name]
-  (let [i (some (fn [i] (and (= (:name i) rb-name) i)) imp-tree)]
-    (if i
-      (some (fn [i2] (let [kb (get imp-kbs (:name i2))]
-                       (and (contains? kb :ontology) kb)))
-        (:import-tree i))
-      (some (fn [i2] (get-imported-ont i2 imp-kbs rb-name)) (map :import-tree imp-tree)))))
-
-(defn generate-arguments-from-lkif
-  ([lkif]
-    (generate-arguments-from-lkif lkif :reasoner nil nil nil))
-  ([lkif type]
-    (generate-arguments-from-lkif lkif type nil nil nil))
-  ([lkif type ont]
-    (generate-arguments-from-lkif lkif type nil nil ont))
-  ([lkif type cq opt ont]
-    (let [imp-kbs (:import-kbs lkif)
-          rb (:rb lkif)]
-  (fn [subgoal state]
-    (concat 
-      ((generate-arguments-from-rules rb cq ont) subgoal state) ; direct rules
-      (apply concat
-        (map                                                      ; imported kbs
-        (fn [kbe]
-          (let [name (key kbe),
-                kb (val kbe)]
-          (if (contains? kb :ontology)
-            ;owl
-            ((generate-arguments-from-owl kb type) subgoal state)
-            ;rb
-            (let [d-ont (or (get-imported-ont (:import-tree lkif) imp-kbs name) ont)] ; todo : maybe other way around
-              ;(println "domain ontology:" d-ont)
-              ((generate-arguments-from-rules kb cq d-ont) subgoal state)))))
-        imp-kbs)))))))
 
 ;(def path "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\src\\CarneadesExamples\\src\\carneades\\examples\\open_source_licensing\\oss-rules.xml")
 
