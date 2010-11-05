@@ -48,6 +48,7 @@
   (add-quit-filemenuitem-listener [this f args])
   
   ;; properties edit listeners
+  (add-statement-editor-listener [this f args])
   (add-statement-edit-listener [this f args])
   (add-title-edit-listener [this f args])
   (add-statement-edit-status-listener [this f args])
@@ -64,6 +65,7 @@
   (get-selected-object-in-search-result [this])
   (get-graphinfo-being-closed [this event])
   (get-statement-being-edited-info [this])
+  (get-statement-being-edited-editor-info [this])
   (get-graph-being-edited-info [this])
   (get-premise-being-edited-info [this])
   (get-argument-being-edited-info [this])

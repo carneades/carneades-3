@@ -14,6 +14,9 @@
     (register-listeners view)
     (show view)))
 
+;; (alter-var-root #'*out* (fn [_] *out*))
+;; (alter-var-root #'*err* (fn [_] *err*))
+
 (defn -main [& args]
   (start))
 

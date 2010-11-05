@@ -5,6 +5,7 @@
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.view.application.editorswingui-helpers
+        carneades.editor.view.dialogs.statement-editor
         carneades.editor.utils.swing
         carneades.editor.view.swinguiprotocol
         carneades.editor.view.components.uicomponents
@@ -123,6 +124,10 @@
    [this f args]
    (register-statement-edit-listener f args))
 
+  (add-statement-editor-listener
+   [this f args]
+   (register-statement-editor-listener f args))
+
   (add-title-edit-listener
    [this f args]
    (register-graph-edit-listener f args))
@@ -240,6 +245,10 @@
    [this event]
    (graphinfo-being-closed event))
 
+  (get-statement-being-edited-editor-info
+   [this]
+   (deref *statement-being-edited-editor-info*))
+  
   (get-premise-being-edited-info
    [this]
    (premise-being-edited-info))

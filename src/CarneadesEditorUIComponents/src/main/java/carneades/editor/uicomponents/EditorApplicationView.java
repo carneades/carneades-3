@@ -328,11 +328,6 @@ public class EditorApplicationView extends javax.swing.JFrame {
         fileMenu.add(jSeparator1);
 
         quitFileMenuItem.setText("Quit");
-        quitFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                quitFileMenuItemActionPerformed(evt);
-            }
-        });
         fileMenu.add(quitFileMenuItem);
 
         menuBar.add(fileMenu);
@@ -387,10 +382,6 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void quitFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quitFileMenuItemActionPerformed
-        System.exit(0);
-    }//GEN-LAST:event_quitFileMenuItemActionPerformed
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
         // TODO add your handling code here:
