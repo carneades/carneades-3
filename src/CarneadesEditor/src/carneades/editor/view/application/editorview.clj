@@ -4,6 +4,7 @@
 (ns carneades.editor.view.application.editorview
   (:use (clojure.contrib def swing-utils)
         carneades.ui.diagram.graphvizviewer
+        carneades.editor.view.dialogs.statement-editor
         carneades.editor.view.application.context
         carneades.editor.utils.swing
         carneades.editor.view.application.editor-helpers
@@ -236,6 +237,10 @@
      (.setLocationRelativeTo dialog *frame*)
      (.setVisible dialog true)
      (deref textcontent)))
+
+  (read-statement
+   [this content]
+   (show-statement-editor content false))
 
   (display-error
    [this title content]

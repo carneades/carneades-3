@@ -246,3 +246,11 @@
 
 (defn quit-filemenuitem-listener [event view]
   (on-exit view event))
+
+(defn statement-editor-listener [event view]
+  (prn "statement-editor-listener")
+  (when-let [[path id] (current-graph view)]
+    (let [info (get-statement-being-edited-editor-info view)]
+      (prn "info =")
+      (prn info)
+      (on-edit-statement view path id info))))
