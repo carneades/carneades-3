@@ -3,13 +3,14 @@
 
 (ns carneades.editor.view.application.editor-helpers
   (:use clojure.contrib.def
+        carneades.editor.view.dialogs.statement-editor
         carneades.editor.view.components.uicomponents
         carneades.editor.view.application.context
         (carneades.mapcomponent map map-edit)
         (carneades.editor.view viewprotocol swinguiprotocol)
         (carneades.editor.view.components search tabs tree))
   (:import (javax.swing UIManager JFrame JFileChooser JOptionPane SwingUtilities)
-           (carneades.editor.uicomponents EditorApplicationView)
+           (carneades.editor.uicomponents EditorApplicationView EditStatementDialog)
            (carneades.mapcomponent.map StatementCell ArgumentCell PremiseCell)))
 
 (defvar *add-existing-premise-data* (atom {:path nil :id nil :src nil}))
@@ -36,10 +37,6 @@
         (do
           (let [stmt (:stmt obj)]
             (check-link-premise view path id obj)
-            (prn "get = ")
-            (prn (get (deref *main-issues*) [path id]))
-            (prn "stmt =")
-            (prn stmt)
             (if (= (get (deref *main-issues*) [path id]) stmt)
               (.setSelected *mainIssueMenuItem* true)
               (.setSelected *mainIssueMenuItem* false))
@@ -80,6 +77,10 @@
           (.show *mapPopupMenu* component x y)
           )))
 
+(defn double-click-listener [path id component event obj]
+  (when (instance? StatementCell obj)
+    (show-statement-editor (str (:stmt obj)))))
+
 (defn create-tabgraph-component [this path ag stmt-fmt]
   (try
     (set-busy this true)
@@ -93,6 +94,8 @@
                                                         (:component component)
                                                         event
                                                         obj)))
+      (add-double-click-listener component (fn [event obj]
+                                             (double-click-listener path (:id ag) component event obj)))
       (add-component component path ag (is-dirty? path (:id ag)))
       (set-current-ag-context path (:id ag)))
     (finally

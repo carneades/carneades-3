@@ -167,9 +167,6 @@
           (.scrollPathToVisible *lkifsTree* path))))))
 
 (defn- graphinfo-pred [path id userobject]
-  (prn "graphinfo-pred")
-  (prn "userobject =")
-  (prn userobject)
   (and (instance? GraphInfo userobject)
        (= path (-> userobject :lkifinfo :path))
        (= id (:id userobject))))

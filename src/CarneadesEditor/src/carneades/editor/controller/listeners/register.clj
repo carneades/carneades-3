@@ -55,6 +55,7 @@
                                           [view])
 
   ;; properties listeners:
+  (add-statement-editor-listener view statement-editor-listener [view])
   (add-statement-edit-listener view statement-button-edit-listener [view])
   (add-statement-edit-status-listener view statement-status-edit-listener [view])
   (add-statement-edit-proofstandard-listener view statement-proofstandard-edit-listener [view])
@@ -104,4 +105,5 @@
                                      (on-search-begins view searchinfo)
                                      (on-search-ends view))) [])
   (register-add-existing-premise-listener view on-add-existing-premise [])
-  )
+  
+)
