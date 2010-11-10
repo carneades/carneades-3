@@ -8,7 +8,7 @@
         carneades.editor.view.application.context
         (carneades.mapcomponent map map-edit)
         (carneades.editor.view viewprotocol swinguiprotocol)
-        (carneades.editor.view.components search tabs tree))
+        (carneades.editor.view.components search tabs))
   (:import (javax.swing UIManager JFrame JFileChooser JOptionPane SwingUtilities)
            (carneades.editor.uicomponents EditorApplicationView EditStatementDialog)
            (carneades.mapcomponent.map StatementCell ArgumentCell PremiseCell)))
@@ -77,9 +77,12 @@
           (.show *mapPopupMenu* component x y)
           )))
 
-(defn double-click-listener [path id component event obj]
-  (when (instance? StatementCell obj)
-    (show-statement-editor (str (:stmt obj)))))
+(defn statement-edit-menuitem-listener [event view]
+  (when-let [[path id] (current-graph view)]
+    (let [component (get-component path id)]
+      (when-let [obj (current-selected-object component)]
+        (when (instance? StatementCell obj)
+          (show-statement-editor (str (:stmt obj))))))))
 
 (defn create-tabgraph-component [this path ag stmt-fmt]
   (try
@@ -94,8 +97,6 @@
                                                         (:component component)
                                                         event
                                                         obj)))
-      (add-double-click-listener component (fn [event obj]
-                                             (double-click-listener path (:id ag) component event obj)))
       (add-component component path ag (is-dirty? path (:id ag)))
       (set-current-ag-context path (:id ag)))
     (finally

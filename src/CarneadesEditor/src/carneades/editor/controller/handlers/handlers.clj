@@ -57,7 +57,7 @@
 
 (defn on-open-file [view]
   (prn "ask-lkif-file-to-open...")
-  (when-let [file (ask-lkif-file-to-open view)]
+  (when-let [file (ask-file-to-open view "LKIF files"  #{"xml" "lkif"})]
     (let [path (.getPath file)]
       (if (section-exists? *docmanager* [path])
         (display-error view *file-error* (format *file-already-opened* path))
@@ -231,6 +231,15 @@
   (prn "search ends")
   (reset! *end-search* true))
 
+(defn do-display-statement-property
+   [view path id maptitle stmt stmt-fmt status proofstandard acceptable complement-acceptable]
+   (display-statement-property
+    view path id maptitle stmt stmt-fmt status
+    proofstandard acceptable complement-acceptable)
+   (set-current-statement-property
+    view path id maptitle stmt stmt-fmt status
+    proofstandard acceptable complement-acceptable))
+
 (defn on-select-statement [path id stmt view]
   (prn "on select statement")
   (when-let [ag (get-ag path id)]
@@ -239,8 +248,7 @@
           proofstandard (:standard node)
           acceptable (:acceptable node)
           complement-acceptable (:complement-acceptable node)]
-      (prn node)
-      (display-statement-property view path id (:title ag)
+      (do-display-statement-property view path id (:title ag)
                                   (str stmt) statement-formatted status
                                   proofstandard acceptable complement-acceptable))))
 
@@ -310,7 +318,7 @@
           acceptable (:acceptable node)
           complement-acceptable (:complement-acceptable node)]
       (do-update-section view [path :ags (:id ag)] ag)
-      (display-statement-property view path id (:title ag)
+      (do-display-statement-property view path id (:title ag)
                                   (str newcontent) statement-formatted status
                                   proofstandard acceptable complement-acceptable)
       (statement-content-changed view path ag previous-content-as-obj newcontent)
@@ -344,9 +352,11 @@
 
 (defn on-edit-statement-status [view path id stmt-info]
   (prn "on-edit-statement-status")
-  (let [{:keys [status content previous-status]} stmt-info
+  (prn "info = ")
+  (prn stmt-info)
+  (let [{:keys [status previous-content previous-status]} stmt-info
         oldag (get-ag path id)
-        content (str-to-stmt content)]
+        content (str-to-stmt previous-content)]
     (when (and (not= status previous-status)
                (statement-node oldag content))
       (let [ag (update-statement oldag content status)
@@ -356,9 +366,9 @@
             acceptable (:acceptable node)
             complement-acceptable (:complement-acceptable node)]
         (do-update-section view [path :ags (:id oldag)] ag)
-        (display-statement-property view path id (:title ag)
-                                    (str content) statement-formatted status
-                                    proofstandard acceptable complement-acceptable)
+        (do-display-statement-property view path id (:title ag)
+                                       (str content) statement-formatted status
+                                       proofstandard acceptable complement-acceptable)
         (statement-status-changed view path ag content)
         (display-statement view path ag content statement-formatted)))))
 
@@ -377,9 +387,9 @@
               acceptable (:acceptable node)
               complement-acceptable (:complement-acceptable node)]
           (do-update-section view [path :ags (:id ag)] ag)
-          (display-statement-property view path id (:title ag)
-                                      (str content) statement-formatted status
-                                      proofstandard acceptable complement-acceptable)
+          (do-display-statement-property view path id (:title ag)
+                                         (str content) statement-formatted status
+                                         proofstandard acceptable complement-acceptable)
           (statement-proofstandard-changed view path ag content)
           (display-statement view path ag content statement-formatted))))))
 
@@ -750,4 +760,15 @@
             :no (close-all view path)
             :cancel nil)
       (close-all view path))))
+
+(defn on-import-theory [view path]
+  (prn "on-import-theory")
+  (when-let [pathname (ask-file-to-open view "LKIF or OWL files"  #{"xml" "lkif" "owl"})]
+    (prn "pathname =")
+    (prn pathname)
+    ))
+
+(defn on-remove-imports [view path imports]
+  (prn "on remove import")
+  (prn imports))
 

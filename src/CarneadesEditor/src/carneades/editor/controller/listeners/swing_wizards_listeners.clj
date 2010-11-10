@@ -6,7 +6,8 @@
         carneades.editor.view.wizardsprotocol
         carneades.editor.view.swinguiprotocol
         carneades.editor.controller.handlers.messages
-        carneades.editor.controller.handlers.goal-wizard))
+        (carneades.editor.controller.handlers goal-wizard
+                                              findarguments-wizard)))
 
 (defn findgoal-assistantmenuitem-listener [event view]
   (when-let [[path id] (current-graph view)]
@@ -32,13 +33,15 @@
                                     :args [view path id]}]
                                   on-cancel-goal-wizard
                                   [view path id])
-            settings (display-wizard view wizard)
-            ;; settings
-            ;; (display-branched-wizard view []
-                     ;;                          (fn [step settings]
-                     ;;                            (goal-wizard-selector view path
-                     ;;                                                  id step
-                     ;;                                                  settings abduction-wizard))
-                     ;;                          [])
-            ]
+            settings (display-wizard view wizard)]
         (on-post-goalwizard settings view path id)))))
+
+(defn findarguments-assistantmenuitem-listener [event view]
+  (prn "findarguments-assistantmenuitem-listener")
+  (when-let [[path id] (current-graph view)]
+    (when (on-pre-findarguments-wizard view path id)
+      (let [searchparameters-panel (get-searchparameters-panel view)
+            res (display-wizard view *findargumentswizard-title*
+                                [{:panel searchparameters-panel
+                                  :desc *search-parameters*}])]
+        (prn res)))))

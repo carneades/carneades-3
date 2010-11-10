@@ -3,8 +3,9 @@
 
 (ns carneades.editor.view.application.context
   (:use clojure.contrib.def
-        (carneades.editor.view.components uicomponents tabs tree)
+        (carneades.editor.view.components uicomponents tabs)
         carneades.editor.view.menus.mainmenu)
+  (:require [carneades.editor.view.components.tree :as tree])
   (:import (javax.swing.event ChangeListener)))
 
 ;; represents the context within which the user interacts:
@@ -68,7 +69,7 @@
   (update-undo-redo-buttons canundo canredo))
 
 (defn- update-tree [path id isdirty]
-  (set-ag-in-tree-dirty path id isdirty))
+  (tree/set-ag-dirty path id isdirty))
 
 (defn- update-tab [path id isdirty]
   (set-tab-dirty path id isdirty))
@@ -129,6 +130,7 @@
                      *printPreviewFileMenuItem*
                      *printFileMenuItem*
                      *assistantFindGoalMenuItem*
+                     *assistantFindArgumentsMenuItem*
                      *selectAllEditMenuItem*])
 
 (defn set-current-ag-context-empty []
