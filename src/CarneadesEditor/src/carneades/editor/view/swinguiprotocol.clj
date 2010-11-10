@@ -45,7 +45,14 @@
   (add-new-file-menuitem-listener [this f args])
   (add-windowclosing-listener [this f args])
   (add-findgoal-assistantmenuitem-listener [this f args])
+  (add-findarguments-assistantmenuitem-listener [this f args])
   (add-quit-filemenuitem-listener [this f args])
+  (add-import-button-listener [this f args])
+  (add-remove-import-button-listener [this f args])
+  (add-stated-menuitem-listener [this f args])
+  (add-questioned-menuitem-listener [this f args])
+  (add-accepted-menuitem-listener [this f args])
+  (add-rejected-menuitem-listener [this f args])
   
   ;; properties edit listeners
   (add-statement-editor-listener [this f args])
@@ -65,10 +72,11 @@
   (get-selected-object-in-search-result [this])
   (get-graphinfo-being-closed [this event])
   (get-statement-being-edited-info [this])
-  (get-statement-being-edited-editor-info [this])
+  (get-statement-being-edited-menu-info [this])
   (get-graph-being-edited-info [this])
   (get-premise-being-edited-info [this])
   (get-argument-being-edited-info [this])
+  (get-lkif-being-edited-info [this])
   (get-selected-node [this path id])
 
   ;; wizards:

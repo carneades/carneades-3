@@ -19,6 +19,8 @@
 (defvar *cycle-error* "This premise can not be added as this would introduce a cycle.")
 
 (defvar *goalwizard-title* "Goal Assistant")
+(defvar *findargumentswizard-title* "Find Arguments")
+(defvar *findargumentswizard-error* "Find Arguments Error")
 (defvar *goalwizard-error* "Goal Assistant Error")
 (defvar *no-mainissue* "The main issue is not defined. Please assign a main issue to the graph first.")
 
@@ -32,3 +34,6 @@
 (defvar *goal-achieved* "Your goal has already been achieved.")
 (defvar *searching-positions* "Searching positions... Please wait...")
 (defvar *invalid-content* "Content is invalid.")
+
+(defvar *search-parameters* "Choose Search Parameters")
+(defvar *no-statementselected* "Please select a statement first.")

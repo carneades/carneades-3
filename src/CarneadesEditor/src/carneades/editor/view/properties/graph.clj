@@ -3,7 +3,8 @@
 
 (ns carneades.editor.view.properties.graph
   (:use clojure.contrib.def
-        clojure.contrib.swing-utils)
+        clojure.contrib.swing-utils
+        carneades.editor.utils.listeners)
   (:import carneades.editor.uicomponents.ArgumentGraphPropertiesView))
 
 (defvar- *graphProperties* (ArgumentGraphPropertiesView/instance))
@@ -11,11 +12,10 @@
 (defvar- *pathText* (.pathText *graphProperties*))
 (defvar- *mainIssueTextArea* (.mainIssueTextArea *graphProperties*))
 
-(defvar- *graph-edit-listeners* (atom ()))
+(gen-listeners-fns "graph-edit")
 
 (defn- title-action-listener [event]
-  (doseq [{:keys [listener args]} (deref *graph-edit-listeners*)]
-    (apply listener event args)))
+  (call-graph-edit-listeners event))
 
 (defn init-graph-properties []
   (ArgumentGraphPropertiesView/reset)
@@ -37,5 +37,3 @@
     :title (.getText *titleText*)}
    (deref *previous-graph-content*)))
 
-(defn register-graph-edit-listener [f args]
-  (swap! *graph-edit-listeners* conj {:listener f :args args}))
