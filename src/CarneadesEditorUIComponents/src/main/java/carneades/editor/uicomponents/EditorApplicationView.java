@@ -39,6 +39,8 @@ public class EditorApplicationView extends javax.swing.JFrame {
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
         jSeparator10 = new javax.swing.JPopupMenu.Separator();
         searchInButtonGroup = new javax.swing.ButtonGroup();
+        jSeparator12 = new javax.swing.JPopupMenu.Separator();
+        statusButtonGroup = new javax.swing.ButtonGroup();
         jSeparator4 = new javax.swing.JToolBar.Separator();
         jSeparator8 = new javax.swing.JToolBar.Separator();
         jSplitPane1 = new javax.swing.JSplitPane();
@@ -106,20 +108,45 @@ public class EditorApplicationView extends javax.swing.JFrame {
         deletePremiseMenuItem.setText("Delete");
         premisePopupMenu.add(deletePremiseMenuItem);
 
+        statusPopupMenu.setText("Status");
+
+        statusButtonGroup.add(statedMenuItem);
+        statedMenuItem.setText("Stated");
+        statusPopupMenu.add(statedMenuItem);
+
+        statusButtonGroup.add(questionedMenuItem);
+        questionedMenuItem.setText("Questioned");
+        statusPopupMenu.add(questionedMenuItem);
+
+        statusButtonGroup.add(acceptedMenuItem);
+        acceptedMenuItem.setText("Accepted");
+        statusPopupMenu.add(acceptedMenuItem);
+
+        statusButtonGroup.add(rejectedMenuItem);
+        rejectedMenuItem.setText("Rejected");
+        statusPopupMenu.add(rejectedMenuItem);
+
+        statementPopupMenu.add(statusPopupMenu);
+
+        editStatementMenuItem.setText("Edit");
+        statementPopupMenu.add(editStatementMenuItem);
+
         newArgumentMenuItem.setText("New argument");
         statementPopupMenu.add(newArgumentMenuItem);
+
+        deleteStatementMenuItem.setText("Delete");
+        statementPopupMenu.add(deleteStatementMenuItem);
+        statementPopupMenu.add(jSeparator12);
 
         mainIssueMenuItem.setSelected(true);
         mainIssueMenuItem.setText("Main issue");
         statementPopupMenu.add(mainIssueMenuItem);
 
-        deleteStatementMenuItem.setText("Delete");
-        statementPopupMenu.add(deleteStatementMenuItem);
-
         newStatementMenuItem.setText("New statement");
         mapPopupMenu.add(newStatementMenuItem);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setTitle("Carneades Editor");
 
         toolBar.setFloatable(false);
         toolBar.setRollover(true);
@@ -351,6 +378,9 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         assistantMenu.setText("Assistant");
 
+        assistantFindArgumentsMenuItem.setText("Find Arguments...");
+        assistantMenu.add(assistantFindArgumentsMenuItem);
+
         assistantFindGoalMenuItem.setText("Find Goal...");
         assistantMenu.add(assistantFindGoalMenuItem);
 
@@ -400,8 +430,10 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public final javax.swing.JMenuItem aboutHelpMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JRadioButtonMenuItem acceptedMenuItem = new javax.swing.JRadioButtonMenuItem();
     public final javax.swing.JMenuItem addExistingPremiseMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JPopupMenu argumentPopupMenu = new javax.swing.JPopupMenu();
+    public final javax.swing.JMenuItem assistantFindArgumentsMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem assistantFindGoalMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenu assistantMenu;
     public final javax.swing.JMenuItem closeFileMenuItem = new javax.swing.JMenuItem();
@@ -414,6 +446,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JMenuItem deletePremiseMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem deleteStatementMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenu editMenu;
+    public final javax.swing.JMenuItem editStatementMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem exportFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem exportGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem exportLkifFileMenuItem = new javax.swing.JMenuItem();
@@ -427,6 +460,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator11;
+    private javax.swing.JPopupMenu.Separator jSeparator12;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JToolBar.Separator jSeparator4;
@@ -457,10 +491,12 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JMenuItem printFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem printPreviewFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JPanel propertiesPanel = new javax.swing.JPanel();
+    public final javax.swing.JRadioButtonMenuItem questionedMenuItem = new javax.swing.JRadioButtonMenuItem();
     public final javax.swing.JMenuItem quitFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JButton redoButton = new javax.swing.JButton();
     public final javax.swing.JMenuItem redoEditMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JButton refreshButton = new javax.swing.JButton();
+    public final javax.swing.JRadioButtonMenuItem rejectedMenuItem = new javax.swing.JRadioButtonMenuItem();
     private javax.swing.JPanel resultPanel;
     public final javax.swing.JMenuItem saveAsFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JButton saveButton = new javax.swing.JButton();
@@ -473,7 +509,10 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JTable searchResultTable = new javax.swing.JTable();
     public final javax.swing.JScrollPane searchScrollPane = new javax.swing.JScrollPane();
     public final javax.swing.JMenuItem selectAllEditMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JRadioButtonMenuItem statedMenuItem = new javax.swing.JRadioButtonMenuItem();
     public final javax.swing.JPopupMenu statementPopupMenu = new javax.swing.JPopupMenu();
+    private javax.swing.ButtonGroup statusButtonGroup;
+    public final javax.swing.JMenu statusPopupMenu = new javax.swing.JMenu();
     public final javax.swing.JPopupMenu tabPopupMenu = new javax.swing.JPopupMenu();
     public final javax.swing.JToolBar toolBar = new javax.swing.JToolBar();
     public final javax.swing.JButton undoButton = new javax.swing.JButton();
@@ -487,6 +526,11 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
     // our modifications:
     static {
+        // mac os x:
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name",
+                APPLICATION_NAME);
+
         // set nimbus theme
         try {
             for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -498,10 +542,6 @@ public class EditorApplicationView extends javax.swing.JFrame {
         } catch (Exception e) {
         }
 
-        // mac os x:
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name",
-                APPLICATION_NAME);
     }
 
     public static EditorApplicationView viewInstance = new EditorApplicationView();

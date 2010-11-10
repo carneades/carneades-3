@@ -89,7 +89,16 @@
   (add-windowclosing-listener view windowclosing-listener [view])
   (add-quit-filemenuitem-listener view quit-filemenuitem-listener [view])
   (add-findgoal-assistantmenuitem-listener view findgoal-assistantmenuitem-listener [view])
+  (add-findarguments-assistantmenuitem-listener
+   view findarguments-assistantmenuitem-listener [view])
   
+  (add-import-button-listener view import-button-listener [view])
+  (add-remove-import-button-listener view remove-import-button-listener [view])
+  (add-stated-menuitem-listener view stated-menuitem-listener [view])
+  (add-questioned-menuitem-listener view questioned-menuitem-listener [view])
+  (add-accepted-menuitem-listener view accepted-menuitem-listener [view])
+  (add-rejected-menuitem-listener view rejected-menuitem-listener [view])
+ 
   ;; we don't need to extract information from the UI,
   ;; dispatch to the listeners:
   (add-about-helpmenuitem-listener view (fn [event] (on-about view)) [])

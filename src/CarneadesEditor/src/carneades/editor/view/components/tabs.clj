@@ -3,7 +3,8 @@
 
 (ns carneades.editor.view.components.tabs
   (:use clojure.contrib.def
-        clojure.contrib.swing-utils)
+        clojure.contrib.swing-utils
+        carneades.editor.utils.listeners)
   (:import (java.awt EventQueue event.MouseListener Dimension FlowLayout)
            (javax.swing UIManager JTabbedPane JLabel JButton JFrame JPanel
                         ImageIcon
@@ -28,7 +29,7 @@
 (defvar- *closebutton-rollover-url*
   "close-button-rollover.png")
 
-(defvar- *close-button-listeners* (atom ()))
+(gen-listeners-fns "close-button")
 
 (defvar- *swingcomponents-to-ags* (ref {}) "components -> [path graphid]")
 (defvar- *ags-to-components* (ref {}) "[path id] -> component")
@@ -39,9 +40,6 @@
 
 (defn init-tabs []
   (.setTabLayoutPolicy *mapPanel* JTabbedPane/SCROLL_TAB_LAYOUT))
-
-(defn register-close-button-listener [l args]
-  (swap! *close-button-listeners* conj {:listener l :args args}))
 
 (defn graphinfo-being-closed [event]
   "returns [path id]"

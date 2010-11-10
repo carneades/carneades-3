@@ -248,9 +248,34 @@
   (on-exit view event))
 
 (defn statement-editor-listener [event view]
-  (prn "statement-editor-listener")
   (when-let [[path id] (current-graph view)]
-    (let [info (get-statement-being-edited-editor-info view)]
-      (prn "info =")
-      (prn info)
+    (let [info (get-statement-being-edited-menu-info view)]
       (on-edit-statement view path id info))))
+
+(defn import-button-listener [event view]
+  (let [info (get-lkif-being-edited-info view)]
+    (on-import-theory view (:path info))))
+
+(defn remove-import-button-listener [event view]
+  (let [info (get-lkif-being-edited-info view)]
+    (on-remove-imports view (:path info) (:imports info))))
+
+(defn stated-menuitem-listener [event view]
+  (when-let [[path id] (current-graph view)]
+    (let [info (get-statement-being-edited-menu-info view)]
+      (on-edit-statement-status view path id (assoc info :status :stated)))))
+
+(defn questioned-menuitem-listener [event view]
+  (when-let [[path id] (current-graph view)]
+    (let [info (get-statement-being-edited-menu-info view)]
+      (on-edit-statement-status view path id (assoc info :status :questioned)))))
+
+(defn accepted-menuitem-listener [event view]
+  (when-let [[path id] (current-graph view)]
+    (let [info (get-statement-being-edited-menu-info view)]
+      (on-edit-statement-status view path id (assoc info :status :accepted)))))
+
+(defn rejected-menuitem-listener [event view]
+  (when-let [[path id] (current-graph view)]
+    (let [info (get-statement-being-edited-menu-info view)]
+      (on-edit-statement-status view path id (assoc info :status :rejected)))))
