@@ -261,8 +261,10 @@ returns [labels dis-is-true dis-is-false]"
                                 (combine-conjunction-of-dnf
                                   (conj (remove #(= *verum* %) con-labels)
                                     (if (= pro-label *verum*)
-                                      #{#{}}
-                                      pro-label))))]
+                                      #{}
+                                      pro-label
+                                    )
+                                  )))]
 ;          (println "------------")
 ;          (println "pro-goals for       :" (statement-formatted s))
 ;          (println "pro-label           :" pro-label)
