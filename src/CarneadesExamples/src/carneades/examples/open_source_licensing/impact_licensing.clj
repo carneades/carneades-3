@@ -34,8 +34,8 @@
 (def oss "http://carneades.berlios.de/oss-licenses#")
 
 ; do copyright licenses exist that we may use for the carneades engine?
-;(def goal1 (list 'exists 'LT (list (c oss "CopyrightLicenseTemplate") 'LT) (list (c oss "mayUseLicenseTemplate") (c il "CarneadesEngine") 'LT)))
-(def goal1 (list (c oss "mayUseLicenseTemplate") (c il "CarneadesEngine") (c oss "GPL_Template")))
+(def goal1 (list 'exists 'LT (list (c oss "CopyrightLicenseTemplate") 'LT) (list (c oss "mayUseLicenseTemplate") (c il "CarneadesEngine") 'LT)))
+;(def goal1 (list (c oss "mayUseLicenseTemplate") (c il "CarneadesEngine") (c oss "GPL_Template")))
 
 (def generators
   (list
@@ -63,9 +63,12 @@
 
   ; exporting results to lkif
   (lkif-export {:ags [ag1]} "impact-licensing.xml")
+
+  ;(println (count (prof :abd (abd/statement-in-label ag1 (abd/assume-decided-statements ag1) goal1))))
+
 )
 
-;(profile (main))
-(main)
+(profile (main))
+;(main)
 
 ;(view ag1)

@@ -5,11 +5,9 @@
 <?oxygen RNGSchema="../../../../../../schemas/LKIF.rnc" type="compact"?>
 <lkif>
   <theory id="oss-rules">
-    <!--
     <imports>
-      <import url="./src/carneades/examples/open_source_licensing/oss-licenses.owl"/>
+      <import url="impact-licensing.owl"/>
     </imports>
-    -->
     <!--
     <axioms>
       <axiom id="f1"><s pred="valid">The <i value="FSFTheoryOfLinking">FSF theory of linking</i> is
