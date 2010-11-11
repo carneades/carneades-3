@@ -56,6 +56,7 @@
     (make-rule
       id
       true
+      '()
       (list wff)
       '())))
 
@@ -294,9 +295,10 @@
          :import-kbs {},
          :import-ags {}}
         (let [is-url? (try (new URL url) (catch MalformedURLException e false)),
+              prepath (str (.getAbsolutePath (. (new File path) getParentFile)) "/")
               url (if (or is-url? (. (new File url) isAbsolute))
                     url
-                    (.getAbsolutePath (new File (str (. (new File path) getParent) "/" url))))]
+                    (str prepath url))]
           ;(println "uri:" url)
           (cond
             (lkif? url) (let [i (lkif-import* url (cons url files)),
@@ -305,7 +307,9 @@
                               imp-kbs (if rb
                                         (assoc (:import-kbs i) url rb)
                                         (:import-kbs i)),
-                              imp-ags (assoc (:import-ags i) url ags)
+                              imp-ags (if ags
+                                        (assoc (:import-ags i) url ags)
+                                        (:import-ags i))
                               ]
                           {:name url,
                            :import-tree (:import-tree i),
@@ -313,7 +317,7 @@
                            :import-ags imp-ags}),
             (owl? url) {:name url,
                         :import-tree nil,
-                        :import-kbs (assoc {} url (load-ontology url)),
+                        :import-kbs (assoc {} url (load-ontology (.getName (new File url)) prepath)),
                         :import-ags {}})))))
 
 (defn import-imports
@@ -483,7 +487,7 @@
   [lkif-arg-graphs]
   (if lkif-arg-graphs
     (map parse-arg-graph (xml-> lkif-arg-graphs :argument-graph))
-    (argument-graph)))
+    nil))
 
 ; can throw:
 ;    - java.lang.IllegalArgumentException

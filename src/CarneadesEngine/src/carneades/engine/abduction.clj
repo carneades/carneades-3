@@ -138,12 +138,13 @@ returns [labels dis-is-true dis-is-false]"
               (empty? pr-labels) ex-labels
               :else (set (map true-filter (union pr-labels ex-labels))))]
 ;      (println "------------")
-;      (println "out-goals for       :" (str (:scheme arg) "-" (:id arg)))
+;      (println "out-goals for      :" (str (:scheme arg) "-" (:id arg)))
+;      (println "premises           :" (map statement-formatted (map :atom pr)))
 ;      (println "pr-labels          :" pr-labels)
 ;      (println "pr-labels-true     :" pr-labels-true)
 ;      (println "ex-labels          :" ex-labels)
 ;      (println "ex-labels-true     :" ex-labels-true)
-;      (println "label               :" (format-label l))
+;      (println "label              :" (format-label l))
 ;      (println "------------")
       l
       )))
@@ -259,12 +260,12 @@ returns [labels dis-is-true dis-is-false]"
               collectedlabels (if onefalse
                                 *falsum*
                                 (combine-conjunction-of-dnf
-                                  (conj (remove #(= *verum* %) con-labels)
-                                    (if (= pro-label *verum*)
-                                      #{}
+                                  (if (= pro-label *verum*)
+                                    (remove #(= *verum* %) con-labels)
+                                    (conj (remove #(= *verum* %) con-labels)
                                       pro-label
-                                    )
-                                  )))]
+                                      )
+                                    )))]
 ;          (println "------------")
 ;          (println "pro-goals for       :" (statement-formatted s))
 ;          (println "pro-label           :" pro-label)
@@ -284,8 +285,8 @@ returns [labels dis-is-true dis-is-false]"
   {:pre [(set? asm)]}
   ;(println "computing pe-out-label for" s)
   (let [pro-args (pro-arguments ag s)
-        con-args (con-arguments ag s)]
-    (loop [pro-args pro-args
+        con-args (con-arguments ag s)
+        l (loop [pro-args pro-args
            labels #{}]
       (if (empty? pro-args)
         (if (empty? labels)
@@ -310,7 +311,12 @@ returns [labels dis-is-true dis-is-false]"
                                (conj labels pro-label)),
             :else (recur (set (next pro-args))
                     (conj labels
-                      (union pro-label con-labels)))))))))
+                      (union pro-label con-labels)))))))]
+;    (println "------------")
+;    (println "out-label for       :" (statement-formatted s))
+;    (println "label               :" (format-label l))
+;    (println "------------")
+    l))
 
 (defn assume-decided-statements
   [ag]
@@ -327,3 +333,16 @@ returns [labels dis-is-true dis-is-false]"
         premises (apply concat (map :premises args)),
         assmptns (map premise-statement (filter assumption? premises))]
     (set assmptns)))
+
+;(def path "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\src\\CarneadesExamples\\src\\carneades\\examples\\open_source_licensing\\impact-full.xml")
+;;(def path "C:\\Users\\stb\\Desktop\\contract.xml")
+;(def i (lkif-import path))
+;
+;(def ag1 (first (:ags i)))
+;
+;(defn c [n s] (symbol (str n s)))
+;(def il "http://carneades.berlios.de/impact-licensing#")
+;(def oss "http://carneades.berlios.de/oss-licenses#")
+;(def goal1 (list (c oss "mayUseLicenseTemplate") (c il "CarneadesEngine") (c oss "GPL_Template")))
+;;(def goal1 "contract")
+;;(def l (statement-in-label ag1 #{} goal1))

@@ -7,6 +7,7 @@
     carneades.engine.lkif.export
     carneades.engine.owl
     carneades.engine.rule
+    carneades.engine.argument-builtins
     )
   ;(:import )
   )
@@ -89,6 +90,10 @@
           rb (:rb lkif)]
       (fn [subgoal state]
         (concat
+          (let [d-ont (or ont (get-imported-ont (:import-tree lkif) imp-kbs))]
+            ;(println "domain ontology:" d-ont)
+            ;(println "generating from rules" rb)
+            ((builtins (list (generate-arguments-from-owl d-ont :reasoner))) subgoal state)) ; builtins
           (let [d-ont (or ont (get-imported-ont (:import-tree lkif) imp-kbs))]
             ;(println "domain ontology:" d-ont)
             ;(println "generating from rules" rb)
