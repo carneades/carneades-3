@@ -84,7 +84,8 @@
   ([ontology type]
     (generate-arguments-from-owl ontology type '()))
   ([ontology type optionals]
-    (condp = type
-      :reasoner (generate-arguments-from-reasoner (:ontology ontology) (:reasoner ontology)),
-      :rule (generate-arguments-from-rules (map-ontology (:ontology ontology) optionals) '()),
-      (throw (Exception. "Invalid type value for owl generator")))))
+    (and (:ontology ontology)
+      (condp = type
+        :reasoner (generate-arguments-from-reasoner (:ontology ontology) (:reasoner ontology)),
+        :rule (generate-arguments-from-rules (map-ontology (:ontology ontology) optionals) '()),
+        (throw (Exception. "Invalid type value for owl generator"))))))

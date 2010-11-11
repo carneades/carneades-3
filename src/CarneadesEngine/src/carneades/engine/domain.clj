@@ -43,7 +43,8 @@
 (defn get-subs
   [domain old-subs ont]
   (let [new-subs (map (fn [s]
-                        (inst-domain domain s ont))
+                        ;(println "get-subs" ont)
+                        (and (:ontology ont) (inst-domain domain s ont)))
                    old-subs)]
     (apply concat new-subs)))
 

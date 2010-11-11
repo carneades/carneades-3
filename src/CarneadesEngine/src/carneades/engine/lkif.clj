@@ -17,7 +17,11 @@
 ; TODO
 (defn- get-imported-ont
   ([imp-tree imp-kbs]
+    ;(println "get-imported ont")
+    ;(println "imp-tree" imp-tree)
+    ;(println "imp-kbs" imp-kbs)
     (some (fn [i] (let [kb (get imp-kbs (:name i))]
+                    ;(println "checking kb" (:name i) kb)
                     (and (contains? kb :ontology) kb)))
       imp-tree)
     )
@@ -34,8 +38,16 @@
   (if (lkif? i-path)
     (let [i (lkif-import i-path),
           new-i-tree (cons {:name i-path, :import-tree (:import-tree i)} (:import-tree lkif)),
-          new-i-kbs (merge (:import-kbs lkif) (assoc (:import-kbs i) i-path (:rb i))),
-          new-i-ags (merge (:import-ags lkif) (assoc (:import-ags i) i-path (:ags i)))]
+          irb (:rb i),
+          i-kbs (if irb
+                  (assoc (:import-kbs i) i-path irb)
+                  (:import-kbs i)),
+          new-i-kbs (merge (:import-kbs lkif) i-kbs),
+          iags (:ags i),
+          i-ags (if iags
+                  (assoc (:import-ags i) i-path iags)
+                  (:import-ags i)),
+          new-i-ags (merge (:import-ags lkif) i-ags),]
       (assoc lkif :import-tree new-i-tree :import-kbs new-i-kbs :import-ags new-i-ags))
     (let [o (load-ontology i-path),
           new-i-tree (cons {:name i-path, :import-tree nil} (:import-tree lkif)),
@@ -73,12 +85,13 @@
   ([lkif type ont]
     (generate-arguments-from-lkif lkif type nil nil ont))
   ([lkif type cq opt ont]
-    (let [imp-kbs (:import-kbs lkif)
+    (let [imp-kbs (:import-kbs lkif),
           rb (:rb lkif)]
       (fn [subgoal state]
         (concat
           (let [d-ont (or ont (get-imported-ont (:import-tree lkif) imp-kbs))]
             ;(println "domain ontology:" d-ont)
+            ;(println "generating from rules" rb)
             ((generate-arguments-from-rules rb cq d-ont) subgoal state)) ; direct rules
           (apply concat
             (map                                                      ; imported kbs
@@ -87,10 +100,13 @@
                       kb (val kbe)]
                   (if (contains? kb :ontology)
                     ;owl
-                    ((generate-arguments-from-owl kb type) subgoal state)
+                    (do
+                      ;(println "generating from ontology" name)
+                      ((generate-arguments-from-owl kb type) subgoal state))
                     ;rb
                     (let [d-ont (or ont (get-imported-ont (:import-tree lkif) imp-kbs name))] ; todo : maybe other way around
                       ;(println "domain ontology:" d-ont)
+                      ;(println "generating from rules" name)
                       ((generate-arguments-from-rules kb cq d-ont) subgoal state)))))
               imp-kbs)))))))
 
