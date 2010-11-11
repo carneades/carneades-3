@@ -21,7 +21,9 @@
     carneades.engine.rule
     ;carneades.engine.owl.rule
     carneades.engine.owl)
-  ;(:import )
+  (:import
+    (java.net MalformedURLException URL)
+    (java.io File))
   )
 
 (declare lkif-wff->sexpr lkif-atom->sexpr lkif-term->sexpr lkif-import*)
@@ -282,7 +284,7 @@
     nil))
 
 (defn import-import
-  [i files]
+  [i files path]
     (let [url (attr i :url)]
       ;(println "i:" i)
       ;(println "uri:" url)
@@ -291,28 +293,35 @@
          :import-tree nil,
          :import-kbs {},
          :import-ags {}}
-        (cond
-          (lkif? url) (let [i (lkif-import* url (cons url files)),
-                            rb (:rb i),
-                            ags (:ags i),                            
-                            imp-kbs (assoc (:import-kbs i) url rb),
-                            imp-ags (assoc (:import-ags i) url ags)
-                            ]
-                        {:name url,
-                         :import-tree (:import-tree i),
-                         :import-kbs imp-kbs,
-                         :import-ags imp-ags}),
-          (owl? url) {:name url,
-                         :import-tree nil,
-                         :import-kbs (assoc {} url (load-ontology url)),
-                         :import-ags {}}))))
+        (let [is-url? (try (new URL url) (catch MalformedURLException e false)),
+              url (if (or is-url? (. (new File url) isAbsolute))
+                    url
+                    (.getAbsolutePath (new File (str (. (new File path) getParent) "/" url))))]
+          ;(println "uri:" url)
+          (cond
+            (lkif? url) (let [i (lkif-import* url (cons url files)),
+                              rb (:rb i),
+                              ags (:ags i),
+                              imp-kbs (if rb
+                                        (assoc (:import-kbs i) url rb)
+                                        (:import-kbs i)),
+                              imp-ags (assoc (:import-ags i) url ags)
+                              ]
+                          {:name url,
+                           :import-tree (:import-tree i),
+                           :import-kbs imp-kbs,
+                           :import-ags imp-ags}),
+            (owl? url) {:name url,
+                        :import-tree nil,
+                        :import-kbs (assoc {} url (load-ontology url)),
+                        :import-ags {}})))))
 
 (defn import-imports
   [theory filename files]
   (if theory
     (let* [imports (xml1-> theory :imports),
            filename-list (if imports (xml-> imports :import) nil),
-           import-list (map (fn [i] (import-import i files)) filename-list),
+           import-list (map (fn [i] (import-import i files filename)) filename-list),
            imp-tree (map (fn [i] (dissoc i :import-kbs :import-ags)) import-list),
            imp-kbs (apply merge (map :import-kbs import-list)),
            imp-ags (apply merge (map :import-ags import-list))
