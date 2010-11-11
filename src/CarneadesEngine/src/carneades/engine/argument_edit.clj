@@ -127,14 +127,18 @@
       (update-statement ag (:conclusion arg)))))
 
 (defn add-premise [ag arg stmt]
+  "add a premise and returns the new argument graph or nil
+   if the premise would introduce a cycle"
   (letfn [(add-premise-to-arg
            [arg]
            (update-in arg [:premises] conj (pm stmt)))]
-    (let [ag (update-in ag [:arguments (:id arg)] add-premise-to-arg)
-          key (statement-symbol stmt)
-          ag (update-in ag [:nodes key (statement-atom stmt) :premise-of] conj (:id arg))
-          newarg (get-argument ag (:id arg))]
-      (update-argument ag newarg))))
+    (let [newarg (update-in arg [:premises] conj (pm stmt))]
+      (when (cycle-free? ag newarg)
+        (let [ag (update-in ag [:arguments (:id arg)] (fn [_] newarg))
+              key (statement-symbol stmt)
+              ag (update-in ag [:nodes key (statement-atom stmt) :premise-of] conj (:id arg))
+              newarg (get-argument ag (:id arg))]
+          (update-argument ag newarg))))))
 
 (defn delete-premise [ag arg pm]
   (letfn [(delete-premise-from-arg

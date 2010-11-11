@@ -3,13 +3,14 @@
 
 (ns carneades.editor.view.application.editor-helpers
   (:use clojure.contrib.def
+        carneades.editor.view.dialogs.statement-editor
         carneades.editor.view.components.uicomponents
         carneades.editor.view.application.context
         (carneades.mapcomponent map map-edit)
         (carneades.editor.view viewprotocol swinguiprotocol)
-        (carneades.editor.view.components search tabs tree))
+        (carneades.editor.view.components search tabs))
   (:import (javax.swing UIManager JFrame JFileChooser JOptionPane SwingUtilities)
-           (carneades.editor.uicomponents EditorApplicationView)
+           (carneades.editor.uicomponents EditorApplicationView EditStatementDialog)
            (carneades.mapcomponent.map StatementCell ArgumentCell PremiseCell)))
 
 (defvar *add-existing-premise-data* (atom {:path nil :id nil :src nil}))
@@ -36,10 +37,6 @@
         (do
           (let [stmt (:stmt obj)]
             (check-link-premise view path id obj)
-            (prn "get = ")
-            (prn (get (deref *main-issues*) [path id]))
-            (prn "stmt =")
-            (prn stmt)
             (if (= (get (deref *main-issues*) [path id]) stmt)
               (.setSelected *mainIssueMenuItem* true)
               (.setSelected *mainIssueMenuItem* false))
@@ -79,6 +76,13 @@
           (nil? obj)
           (.show *mapPopupMenu* component x y)
           )))
+
+(defn statement-edit-menuitem-listener [event view]
+  (when-let [[path id] (current-graph view)]
+    (let [component (get-component path id)]
+      (when-let [obj (current-selected-object component)]
+        (when (instance? StatementCell obj)
+          (show-statement-editor (str (:stmt obj))))))))
 
 (defn create-tabgraph-component [this path ag stmt-fmt]
   (try

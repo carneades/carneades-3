@@ -6,7 +6,8 @@
         clojure.contrib.swing-utils
         carneades.editor.utils.swing
         carneades.editor.view.swinguiprotocol
-        [clojure.string :only (trim split)])
+        [clojure.string :only (trim split)]
+        carneades.editor.utils.listeners)
   (:import (java.awt.event KeyEvent KeyAdapter)
            (javax.swing JScrollPane table.DefaultTableModel KeyStroke JTable)
            (carneades.editor.uicomponents EditorApplicationView SearchOptionsDialog)
@@ -36,7 +37,10 @@
 
 (defvar- *state* (atom false))
 (defvar- *searchactive* (atom false))
-(defvar- *searchresult-selection-listeners* (atom ()))
+
+(gen-listeners-fns "searchresult-selection")
+(gen-listeners-fns "keyenter-searchresult")
+(gen-listeners-fns "search-button")
 
 (defn- update-scrollbar-size []
   ;; see http://forums.sun.com/thread.jspa?threadID=5426991
@@ -49,8 +53,6 @@
     (.setVisible scrollbar true)
     (.setPreferredSize scrollbar dim)
     (.setSize scrollbar dim)))
-
-(defvar- *search-button-listeners* (atom ()))
 
 (defvar- *search-options* (atom {:search-for-statements true
                                  :search-for-arguments true
@@ -121,32 +123,24 @@
     (when-not was-active
       (when-let [text (.getSelectedItem *searchComboBox*)]
         (add-item-to-search-box (trim text))))
-    (doseq [{:keys [listener args]} (deref *search-button-listeners*)]
-      (if was-active
-        (apply listener false nil args)
-        (apply listener true (get-searched-info) args)))))
+    (if was-active
+      (call-search-button-listeners false nil)
+      (call-search-button-listeners true (get-searched-info)))))
 
 (defn selected-object-in-search-result []
   (when-let [row (first (.getSelectedRows *searchResultTable*))]
     (.getValueAt *modelTable* row 0)))
 
 (defn search-result-selection-listener [event]
-  (doseq [{:keys [listener args]} (deref *searchresult-selection-listeners*)]
-    (apply listener event args)))
-
-(defvar- *keyenter-searchresult-listeners* (atom ()))
-
-(defn register-keyenter-searchresult-listener [f args]
-  (swap! *keyenter-searchresult-listeners* conj {:listener f :args args}))
+  (call-searchresult-selection-listeners event))
 
 (defn- create-search-result-keylistener []
   (proxy [KeyAdapter] []
     (keyPressed
      [keyevent]
      (when (= (.getKeyCode keyevent) KeyEvent/VK_ENTER)
-       (doseq [{:keys [listener args]} (deref *keyenter-searchresult-listeners*)]
-         (apply listener keyevent args)
-         (.consume keyevent))))))
+       (call-keyenter-searchresult-listeners keyevent)
+       (.consume keyevent)))))
 
 (defn init-search []
   (doseq [col ["Results"]]
@@ -174,9 +168,6 @@
   (add-action-listener *optionsButton* showoptions-button-listener)
   (add-action-listener *searchButton* search-button-listener))
 
-(defn register-search-button-listener [f args]
-  (swap! *search-button-listeners* conj {:listener f :args args}))
-
 (defn file-from-path [path]
   (last (split path (re-pattern java.io.File/pathSeparator))))
 
@@ -190,5 +181,3 @@
     (.insertRow *modelTable* (.getRowCount *modelTable*)
                 (to-array [obj]))))
 
-(defn register-searchresult-selection-listener [l args]
-  (swap! *searchresult-selection-listeners* conj {:listener l :args args}))

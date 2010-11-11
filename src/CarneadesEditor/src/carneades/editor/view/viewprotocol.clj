@@ -15,7 +15,7 @@
   (redisplay-graph [this path ag stmt-fmt])
   (close-graph [this path id])
   (current-graph [this] "returns [path id] for the graph currently edited")
-  (ask-lkif-file-to-open [this] "ask the user the LKIF file to open. 
+  (ask-file-to-open [this desc exts] "ask the user the LKIF file to open. 
                                  Returns File or nil")
   (ask-file-to-save [this descriptions suggested])
   (export-graph-to-svg [this ag stmt-fmt filename])
@@ -33,7 +33,10 @@
   (ask-confirmation [this title content])
   (ask-yesnocancel-question [this title content])
   (read-sentence [this title prompt])
+  (read-statement [this content])
   (display-error [this title content])
+  (set-current-statement-property
+   [this path id maptitle stmt stmt-fmt status proofstandard acceptable complement-acceptable])
   (display-statement-property
    [this path id maptitle stmt stmt-fmt status proofstandard acceptable complement-acceptable])
   (display-premise-property
