@@ -32,6 +32,12 @@
 (defvar *deletePremiseMenuItem* (.deletePremiseMenuItem *frame*))
 (defvar *deleteStatementMenuItem* (.deleteStatementMenuItem *frame*))
 
+(defvar *editStatementMenuItem* (.editStatementMenuItem *frame*))
+(defvar *statedMenuItem* (.statedMenuItem *frame*))
+(defvar *questionedMenuItem* (.questionedMenuItem *frame*))
+(defvar *acceptedMenuItem* (.acceptedMenuItem *frame*))
+(defvar *rejectedMenuItem* (.rejectedMenuItem *frame*))
+
 (defvar *zoomInButton* (.zoomInButton *frame*))
 (defvar *zoomOutButton* (.zoomOutButton *frame*))
 (defvar *zoomResetButton* (.zoomResetButton *frame*))
@@ -59,3 +65,5 @@
 (defvar *newFileMenuItem* (.newFileMenuItem *frame*))
 
 (defvar *assistantFindGoalMenuItem* (.assistantFindGoalMenuItem *frame*))
+(defvar *assistantFindArgumentsMenuItem* (.assistantFindArgumentsMenuItem *frame*))
+

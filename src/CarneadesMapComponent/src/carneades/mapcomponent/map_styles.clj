@@ -18,7 +18,11 @@
   (make-style
    "globalStyle"
    {mxConstants/STYLE_FONTCOLOR "#000000"
-    mxConstants/STYLE_STROKEWIDTH 1.5}))
+    mxConstants/STYLE_STROKEWIDTH 1.5
+    mxConstants/STYLE_WHITE_SPACE "wrap"
+    ;; mxConstants/STYLE_LABEL_BACKGROUNDCOLOR "#ccd151"
+    mxConstants/STYLE_SPACING 0
+    }))
 
 (defvar- *argument-style*
   (make-style
@@ -82,10 +86,11 @@
            mxConstants/STYLE_STROKECOLOR "#000000"
            mxConstants/STYLE_FILLCOLOR "#ffffff"
            mxConstants/STYLE_PERIMETER mxConstants/PERIMETER_RECTANGLE
-           mxConstants/STYLE_SPACING_TOP 10
-           mxConstants/STYLE_SPACING_BOTTOM 10
-           mxConstants/STYLE_SPACING_LEFT 10
-           mxConstants/STYLE_SPACING_RIGHT 10})))
+           mxConstants/STYLE_SPACING_TOP 0
+           mxConstants/STYLE_SPACING_BOTTOM 0
+           mxConstants/STYLE_SPACING_LEFT 0
+           mxConstants/STYLE_SPACING_RIGHT 0
+           })))
 
 (defvar- *out-out-statement-style*
   (make-style

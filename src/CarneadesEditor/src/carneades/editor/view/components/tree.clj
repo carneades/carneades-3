@@ -27,11 +27,11 @@
 
 (defvar *lkifsTree* (.lkifsTree *viewinstance*))
 
-(defn selected-object-in-tree []
+(defn selected-object []
   (when-let [node (.getLastSelectedPathComponent *lkifsTree*)]
     (.getUserObject node)))
 
-(defn tree-has-content []
+(defn has-content []
   (let [model (.getModel *lkifsTree*)
         root (.getRoot model)]
     (pos? (.getChildCount root))))
@@ -43,7 +43,7 @@
 ;;       (when (tree-has-content)
 ;;         (enable-file-items)))))
 
-(defn create-tree-mouse-listener []
+(defn create-mouse-listener []
   (letfn [(showpopup
            [event]
            (let [x (.getX event)
@@ -51,7 +51,7 @@
              (when-let [path (.getPathForLocation *lkifsTree* x y)]
                (let [selectedpath (.getSelectionPath *lkifsTree*)]
                  (when (= path selectedpath)
-                   (when-let [info (selected-object-in-tree)]
+                   (when-let [info (selected-object)]
                      (condp instance? info
                        GraphInfo
                        (do
@@ -82,7 +82,7 @@
 
 (defn init-tree []
   ;; (add-treeselection-listener *lkifsTree* on-tree-selection)
-  (.addMouseListener *lkifsTree* (create-tree-mouse-listener))
+  (.addMouseListener *lkifsTree* (create-mouse-listener))
   (.setRootVisible *lkifsTree* false)
   (let [model (.getModel *lkifsTree*)]
     (.setRoot model (make-node "root")))
@@ -135,7 +135,7 @@
     ;; (prn)
     (zip/replace loc newnode)))
 
-(defn add-ag-in-tree [path id title]
+(defn add-ag [path id title]
   (with-tree *lkifsTree*
     (let [model (.getModel *lkifsTree*)]
       ;; find the parent to insert the new child:
@@ -167,14 +167,11 @@
           (.scrollPathToVisible *lkifsTree* path))))))
 
 (defn- graphinfo-pred [path id userobject]
-  (prn "graphinfo-pred")
-  (prn "userobject =")
-  (prn userobject)
   (and (instance? GraphInfo userobject)
        (= path (-> userobject :lkifinfo :path))
        (= id (:id userobject))))
 
-(defn remove-ag-in-tree [path id]
+(defn remove-ag [path id]
   (with-tree *lkifsTree*
     (let [model (.getModel *lkifsTree*)
           loc (jtreemodel-zip model)]
@@ -201,17 +198,17 @@
               root (seq-jtreenodes (zip/root loc) make-node)]
           (.setRoot model root))))))
 
-(defn- change-ag-object-in-tree [path id f]
+(defn- change-ag-object [path id f]
   "change the object identified by path and id and set it's value to 
   (f olduserobjectvalue)"
   (with-tree *lkifsTree*
     (let [model (.getModel *lkifsTree*)]
-     (when-let [node (find-node model #(graphinfo-pred path id %))]
-       (let [userobject (.getUserObject node)]
-        (.setUserObject node (f userobject))
-        (.reload model))))))
+      (when-let [node (find-node model #(graphinfo-pred path id %))]
+        (let [userobject (.getUserObject node)]
+          (.setUserObject node (f userobject))
+          (.reload model))))))
 
-(defn set-ag-in-tree-dirty [path id isdirty]
+(defn set-ag-dirty [path id isdirty]
   (letfn [(update
            [userobject]
            (let [dirty (:dirty userobject)
@@ -221,9 +218,9 @@
              (if (not= dirty isdirty)
                (GraphInfo. lkifinfo id title isdirty)
                (GraphInfo. lkifinfo id title dirty))))]
-    (change-ag-object-in-tree path id update)))
+    (change-ag-object path id update)))
 
-(defn change-ag-in-tree-title [path id newtitle]
+(defn change-ag-title [path id newtitle]
   (with-tree *lkifsTree*
     (letfn [(update
              [userobject]
@@ -252,3 +249,12 @@
             ;; select renamed node:
             (.setSelectionPath (.getSelectionModel *lkifsTree*) path)
             (.scrollPathToVisible *lkifsTree* path)))))))
+
+(defn select-ag [path id]
+  (let [model (.getModel *lkifsTree*)
+        root (.getRoot model)]
+    (when-let [nodelkif (find-node model #(= path (:path %)))]
+      (when-let [node (find-node model #(graphinfo-pred path id %))]
+        (let [path (make-path root nodelkif node)]
+          (.setSelectionPath (.getSelectionModel *lkifsTree*) path)
+          (.scrollPathToVisible *lkifsTree* path))))))
