@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE rb [
+	<!ENTITY oss "http://carneades.berlios.de/oss-licenses#" >
+        <!ENTITY il "http://carneades.berlios.de/impact-licensing#" >
+]>
+<?oxygen RNGSchema="../../../../../../schemas/LKIF.rnc" type="compact"?>
+<lkif>
+
+    <theory id="t1">        
+        <imports>
+            <import url="oss-rules.xml"/>
+            <import url="impact-licensing.owl"/>
+        </imports>
+    </theory>
+
+    <argument-graphs>
+        <argument-graph id="ImpactLicensing"  title="Impact Licensing" main-issue="s1">
+            <statements>
+                <statement id="s1" value="unknown" assumption="true" standard="PE">
+                    <s pred="&oss;mayUseLicenseTemplate">
+                        <c>&il;CarneadesEngine</c>
+                        <c>&oss;GPL_Template</c>
+                    </s>
+                </statement>
+                <statement id="fact1" value="true" assumption="false" standard="PE">
+                    <s pred="valid">
+                        <c>FSFTheoryOfLinking</c>
+                    </s>
+                </statement>
+                <statement id="fact2" value="true" assumption="false" standard="PE">
+                    <s pred="valid">
+                        <c>http://carneades.berlios.de/impact-licensing</c>
+                    </s>
+                </statement>
+            </statements>
+            <arguments>
+            </arguments>
+        </argument-graph>
+    </argument-graphs>
+
+</lkif>
