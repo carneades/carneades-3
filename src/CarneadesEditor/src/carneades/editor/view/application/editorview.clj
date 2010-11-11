@@ -4,6 +4,7 @@
 (ns carneades.editor.view.application.editorview
   (:use (clojure.contrib def swing-utils)
         carneades.ui.diagram.graphvizviewer
+        carneades.editor.view.dialogs.statement-editor
         carneades.editor.view.application.context
         carneades.editor.utils.swing
         carneades.editor.view.application.editor-helpers
@@ -11,10 +12,11 @@
         carneades.editor.view.menus.mainmenu
         carneades.editor.view.printing.preview
         carneades.editor.view.dialogs.aboutbox
-        (carneades.editor.view.components uicomponents search tabs tree)
+        (carneades.editor.view.components uicomponents search tabs)
         (carneades.editor.view.properties lkif statement argument premise graph
                                           properties)
         (carneades.mapcomponent map map-edit))
+  (:require [carneades.editor.view.components.tree :as tree])
   (:import java.io.File
            (carneades.editor.uicomponents EditorApplicationView ReadSentenceDialog)
            (java.awt EventQueue Cursor)
@@ -40,13 +42,14 @@
    (add-action-listener *selectAllEditMenuItem* select-all-listener this)
    (add-action-listener *addExistingPremiseMenuItem*
                         add-existing-premise-menuitem-listener this)
+   (add-action-listener *editStatementMenuItem* statement-edit-menuitem-listener this)
    
    (init-lkif-properties)
    (init-graph-properties)
    (init-statement-properties)
    (init-premise-properties)
    (init-menu)
-   (init-tree)
+   (tree/init-tree)
    (init-tabs)
    (init-search)
    (init-context))
@@ -66,7 +69,8 @@
        (do
          (select-component component)
          (set-current-ag-context path (:id ag)))
-       (create-tabgraph-component this path ag stmt-fmt))))
+       (create-tabgraph-component this path ag stmt-fmt))
+     (tree/select-ag path (:id ag))))
 
   (redisplay-graph
    [this path ag stmt-fmt]
@@ -87,10 +91,10 @@
    [this]
    (get-graphinfo (.getSelectedComponent *mapPanel*)))
 
-  (ask-lkif-file-to-open
-   [this]
+  (ask-file-to-open
+   [this desc exts]
    (let [jc (JFileChooser.)]
-     (.setFileFilter jc (create-file-filter "LKIF files"  #{"xml" "lkif"} ))
+     (.setFileFilter jc (create-file-filter desc exts))
      (when-let [dir (deref *dialog-current-directory*)]
        (.setCurrentDirectory jc dir))
      (let [val (.showOpenDialog jc *frame*)]
@@ -169,13 +173,13 @@
 
   (display-lkif-content
    [this file graphinfos]
-   (add-lkif-content file graphinfos)
+   (tree/add-lkif-content file graphinfos)
    (set-current-lkif-context file))
 
   (hide-lkif-content
    [this path]
-   (remove-lkif-content path)
-   (when-not (tree-has-content)
+   (tree/remove-lkif-content path)
+   (when-not (tree/has-content)
      (set-current-lkif-context-empty))
    (hide-properties))
 
@@ -237,6 +241,10 @@
      (.setVisible dialog true)
      (deref textcontent)))
 
+  (read-statement
+   [this content]
+   (show-statement-editor content false))
+
   (display-error
    [this title content]
    (JOptionPane/showMessageDialog *frame* content title
@@ -247,6 +255,17 @@
                      path id maptitle
                      stmt stmt-fmt status proofstandard
                      acceptable complement-acceptable)))
+  
+  (set-current-statement-property
+   [this path id maptitle stmt stmt-fmt status proofstandard acceptable complement-acceptable]
+   (swap! *statement-being-edited-menu-info* assoc
+          :content stmt
+          :previous-content stmt
+          :previous-status status)
+   (.setSelected *statedMenuItem* (= status :stated))
+   (.setSelected *questionedMenuItem* (= status :questioned))
+   (.setSelected *acceptedMenuItem* (= status :accepted))
+   (.setSelected *rejectedMenuItem* (= status :rejected)))
 
   (display-premise-property
    [this path id maptitle arg polarity type role atom]
@@ -338,7 +357,7 @@
    (when-let [component (get-component path (:id ag))]
      (change-title component ag title)
      (change-tab-title component title))
-   (change-ag-in-tree-title path (:id ag) title))
+   (tree/change-ag-title path (:id ag) title))
 
   (premise-polarity-changed
    [this path ag oldarg arg pm]
@@ -413,11 +432,11 @@
 
   (new-graph-added
    [this path ag stmt-fmt]
-   (add-ag-in-tree path (:id ag) (:title ag)))
+   (tree/add-ag path (:id ag) (:title ag)))
 
   (graph-deleted
    [this path id]
-   (remove-ag-in-tree path id))
+   (tree/remove-ag path id))
 
   (register-statement-selection-listener
    [this l args]

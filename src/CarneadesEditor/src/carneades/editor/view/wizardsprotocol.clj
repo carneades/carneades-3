@@ -20,3 +20,7 @@
   (set-last-position-button-listener [this f args])
   (set-previous-position-button-listener [this f args])
   (set-next-position-button-listener [this f args]))
+
+(defprotocol SwingFindArgumentsWizard
+  (set-goal [this text])
+  (get-searchparameters-panel [this]))

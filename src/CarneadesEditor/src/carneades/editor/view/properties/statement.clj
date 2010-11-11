@@ -4,7 +4,7 @@
 (ns carneades.editor.view.properties.statement
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
-        carneades.editor.utils.seq)
+        (carneades.editor.utils seq listeners))
   (:import carneades.editor.uicomponents.StatementPropertiesView
            (javax.swing KeyStroke Action AbstractAction)))
 
@@ -34,7 +34,7 @@
 
 (defvar- *txt-to-proofstandard* (reverse-map *proofstandards*))
 
-(defvar- *statement-edit-listeners* (atom ()))
+(gen-listeners-fns "statement-edit")
 
 (defn init-statement-properties []
   (StatementPropertiesView/reset))
@@ -54,8 +54,7 @@
     (.put actions txtsubmit (proxy [AbstractAction] []
                               (actionPerformed
                                [event]
-                               (doseq [{:keys [listener args]} (deref *statement-edit-listeners*)]
-                                 (apply listener event args)))))))
+                               (call-statement-edit-listeners event))))))
 
 (defn get-statement-properties-panel [path id maptitle stmt stmt-str status proofstandard acceptable complement-acceptable]
   (.setText *pathText* path)
@@ -83,5 +82,3 @@
           :proofstandard (*txt-to-proofstandard* (.getSelectedItem *statementProofstandardComboBox*))}
          (deref *previous-statement-content*)))
 
-(defn register-statement-edit-listener [f args]
-  (swap! *statement-edit-listeners* conj {:listener f :args args}))

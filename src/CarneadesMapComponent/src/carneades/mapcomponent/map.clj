@@ -92,6 +92,9 @@
     (.setVertexLabelsMovable false)
     (.setCellsDisconnectable false)
     (.setCellsBendable false)
+
+    (.setHtmlLabels false)
+    ;; (.setLabelsClipped true)
     ))
 
 (defvar- *mincellwidth* 70)
@@ -421,7 +424,8 @@
   (.redo (:undomanager graphcomponent))
   (select-current-cell (:component graphcomponent)))
 
-(defn create-graph-component [ag stmt-str]
+(defn create-graph-component
+  [ag stmt-str]
   (let [g (create-graph ag stmt-str)
         graphcomponent (proxy [mxGraphComponent] [g]
                          ;; no icon for groups
@@ -541,6 +545,21 @@
                          (mousePressed
                           [event]
                           (when (.isPopupTrigger event)
+                            (let [userobject (current-selected-object graphcomponent)]
+                              (listener event userobject))))))))
+
+(defn add-double-click-listener [graphcomponent listener]
+  (let [component (:component graphcomponent)
+        graphcontrol (.getGraphControl component)]
+    (.addMouseListener graphcontrol
+                       (proxy [MouseAdapter] []
+                         (mouseReleased
+                          [event]
+                          (.mousePressed this event))
+    
+                         (mousePressed
+                          [event]
+                          (when (= (.getClickCount event) 2)
                             (let [userobject (current-selected-object graphcomponent)]
                               (listener event userobject))))))))
 

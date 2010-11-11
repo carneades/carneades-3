@@ -5,12 +5,14 @@
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.view.application.editorswingui-helpers
+        carneades.editor.view.dialogs.statement-editor
         carneades.editor.utils.swing
         carneades.editor.view.swinguiprotocol
         carneades.editor.view.components.uicomponents
-        (carneades.editor.view.properties statement graph argument premise)
+        (carneades.editor.view.properties lkif graph statement argument premise)
         (carneades.editor.view.components tabs tree search)
         carneades.mapcomponent.map)
+  (:require [carneades.editor.view.components.tree :as tree])
   (:import java.awt.BorderLayout
            (org.netbeans.spi.wizard WizardPage WizardPage$WizardResultProducer
                                     WizardObserver WizardBranchController)
@@ -123,6 +125,10 @@
    [this f args]
    (register-statement-edit-listener f args))
 
+  (add-statement-editor-listener
+   [this f args]
+   (register-statement-editor-listener f args))
+
   (add-title-edit-listener
    [this f args]
    (register-graph-edit-listener f args))
@@ -220,9 +226,37 @@
    [this f args]
    (apply add-action-listener *assistantFindGoalMenuItem* f args))
 
+  (add-findarguments-assistantmenuitem-listener
+   [this f args]
+   (apply add-action-listener *assistantFindArgumentsMenuItem* f args))
+
   (add-quit-filemenuitem-listener
    [this f args]
    (apply add-action-listener *quitFileMenuItem* f args))
+
+  (add-import-button-listener
+   [this f args]
+   (register-import-button-listener f args))
+
+  (add-remove-import-button-listener
+   [this f args]
+   (register-remove-import-button-listener f args))
+
+  (add-stated-menuitem-listener
+   [this f args]
+   (apply add-action-listener *statedMenuItem* f args))
+  
+  (add-questioned-menuitem-listener
+   [this f args]
+   (apply add-action-listener *questionedMenuItem* f args))
+  
+  (add-accepted-menuitem-listener
+   [this f args]
+   (apply add-action-listener *acceptedMenuItem* f args))
+  
+  (add-rejected-menuitem-listener
+   [this f args]
+   (apply add-action-listener *rejectedMenuItem* f args))
   
   (get-statement-being-edited-info
    [this]
@@ -230,7 +264,7 @@
   
   (get-selected-object-in-tree
    [this]
-   (selected-object-in-tree))
+   (tree/selected-object))
 
   (get-selected-object-in-search-result
    [this]
@@ -240,9 +274,17 @@
    [this event]
    (graphinfo-being-closed event))
 
+  (get-statement-being-edited-menu-info
+   [this]
+   (deref *statement-being-edited-menu-info*))
+  
   (get-premise-being-edited-info
    [this]
    (premise-being-edited-info))
+
+  (get-lkif-being-edited-info
+   [this]
+   (lkif-being-edited-info))
 
   (get-selected-node
    [this path id]
@@ -259,7 +301,7 @@
 
   (create-wizard
    [this title panels]
-   (create-wizard this title nil))
+   (create-wizard this title panels nil nil))
 
   (create-wizard
    [this title panels cancel-fn args]
