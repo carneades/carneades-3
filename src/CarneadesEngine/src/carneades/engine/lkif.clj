@@ -29,6 +29,42 @@
           (:import-tree i))
         (some (fn [i2] (get-imported-ont i2 imp-kbs rb-name)) (map :import-tree imp-tree))))))
 
+(defn add-import
+  [lkif i-path]
+  (if (lkif? i-path)
+    (let [i (lkif-import i-path),
+          new-i-tree (cons {:name i-path, :import-tree (:import-tree i)} (:import-tree lkif)),
+          new-i-kbs (merge (:import-kbs lkif) (assoc (:import-kbs i) i-path (:rb i))),
+          new-i-ags (merge (:import-ags lkif) (assoc (:import-ags i) i-path (:ags i)))]
+      (assoc lkif :import-tree new-i-tree :import-kbs new-i-kbs :import-ags new-i-ags))
+    (let [o (load-ontology i-path),
+          new-i-tree (cons {:name i-path, :import-tree nil} (:import-tree lkif)),
+          new-i-kbs (assoc (:import-kbs lkif) i-path o)]
+      (assoc lkif :import-tree new-i-tree :import-kbs new-i-kbs))))
+
+(defn- flatten-import-tree
+  [i-tree]
+  (apply concat (map (fn [i] (cons (:name i) (flatten-import-tree (:import-tree i)))) i-tree)))
+
+(defn- occurs-in?
+  [i-tree i-name]
+  (let [imp-names (flatten-import-tree i-tree)]
+    ;(println "occurs in?" imp-names i-name)
+    (some #{i-name} imp-names)))
+
+(defn remove-import
+  [lkif i-path]
+  (let [r-path (some (fn [e] (and (= (:name e) i-path) (:import-path e))) (:import-tree lkif)),
+        new-i-tree (filter (fn [e] (not (= (:name e) i-path))) (:import-tree lkif)),
+        rec-imps (cons i-path (flatten-import-tree r-path)),
+        unused-imps (filter (fn [i] (not (occurs-in? new-i-tree i))) rec-imps),
+        new-i-kbs (reduce dissoc (:import-kbs lkif) unused-imps),
+        new-i-ags (reduce dissoc (:import-ags lkif) unused-imps)]
+    ;(println "recursive imports" rec-imps)
+    ;(println "new import tree" new-i-tree)
+    ;(println "unused imports" unused-imps)
+    (assoc lkif :import-tree new-i-tree :import-kbs new-i-kbs :import-ags new-i-ags)))
+
 (defn generate-arguments-from-lkif
   ([lkif]
     (generate-arguments-from-lkif lkif :reasoner nil nil nil))
