@@ -10,4 +10,5 @@ various argumentation tasks. This is the Swing Argument Map Component."
                  [org.clojars.pallix/jgraphx "1.4.2.3"]
                  [carneades-engine "1.0.0-SNAPSHOT"]]
   :dev-dependencies [[swank-clojure "1.2.0"]]
-  :aot [carneades.mapcomponent.negconnectorshape])
+ ;; :aot [carneades.mapcomponent.negconnectorshape]
+)
