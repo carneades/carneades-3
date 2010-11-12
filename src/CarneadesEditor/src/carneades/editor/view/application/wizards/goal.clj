@@ -24,6 +24,8 @@
 (defvar- *previousPositionButton* (.previousPositionButton *abductionPanel*))
 (defvar- *nextPositionButton* (.nextPositionButton *abductionPanel*))
 
+(defvar- *progressBar* (.progressBar *abductionPanel*))
+
 (deftype EditorSwingGoalWizard []
   SwingGoalWizard
   (get-proponent-panel
@@ -38,6 +40,10 @@
    [this mainissue]
    (.setText *mainIssueTextArea* mainissue))
 
+  (set-abduction-busy
+   [this busy]
+   (.setIndeterminate *progressBar* busy))
+  
   (reset-position
    [this]
    (.setText *positionLabel* *position*)

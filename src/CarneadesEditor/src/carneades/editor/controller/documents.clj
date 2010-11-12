@@ -5,6 +5,7 @@
   (:use clojure.contrib.def
         carneades.engine.argument
         carneades.editor.model.docmanager
+        carneades.editor.model.lkif-utils
         carneades.editor.view.viewprotocol))
 
 (defvar *docmanager* (create-docmanager))
@@ -29,6 +30,9 @@
 
 (defn get-ag [lkifpath id]
   (get-section-content *docmanager* [lkifpath :ags id]))
+
+(defn get-lkif [lkifpath]
+  (extract-lkif-from-docmanager lkifpath *docmanager*))
 
 (defn get-ags-id [lkifpath]
   (let [agsid (get-all-sectionskeys *docmanager* [lkifpath :ags])]
@@ -95,3 +99,11 @@
 (defn get-graphs-titles [path]
   "returns a set of all titles"
   (set (map :title (map #(get-ag path %) (get-ags-id path)))))
+
+(defn do-update-section [view keys ag]
+  "updates section content in the model and dirty markers in the view"
+  ;; the first key is the path
+  (let [path (first keys)]
+    (update-section *docmanager* keys ag)
+    (update-undo-redo-statuses view path (:id ag))
+    (update-dirty-state view path ag true)))

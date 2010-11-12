@@ -327,3 +327,12 @@
                      stmtcell
                      (get-conclusion-edge-style arg)))
       (do-layout graph p (get-vertices graph p)))))
+
+(defn replace-graph [graphcomponent ag stmt-fmt]
+  (prn "replace graph")
+  (let [component (:component graphcomponent)
+        graph (.getGraph component)
+        p (.getDefaultParent graph)]
+    (with-transaction component
+      (.removeCells graph (into-array (get-vertices graph p)) true)
+      (fill-graph graph p ag stmt-fmt))))

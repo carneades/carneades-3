@@ -288,14 +288,6 @@
   (when-let [ag (get-ag path id)]
     (display-argument view path ag arg statement-formatted)))
 
-(defn- do-update-section [view keys ag]
-  "updates section content in the model and dirty markers in the view"
-  ;; the first key is the path
-  (let [path (first keys)]
-    (update-section *docmanager* keys ag)
-    (update-undo-redo-statuses view path (:id ag))
-    (update-dirty-state view path ag true)))
-
 (defn str-to-stmt [s]
   (letfn [(sexp? [s] (= \( (first s)))
           (check-stmt [s] (when (and (statement? s) (not (empty? s))) s))]
@@ -556,6 +548,8 @@
 (defn on-refresh [view path id]
   (when-let [ag (get-ag path id)]
     (do-update-section view [path :ags (:id ag)] ag)
+    (prn "on-refresh")
+    (pprint ag)
     (redisplay-graph view path ag statement-formatted)))
 
 (defn on-delete-premise [view path id arg pm]
@@ -571,19 +565,39 @@
       ;; (prn)
       (premise-deleted view path ag arg pm))))
 
+(defn- prompt-statement-content [view ag suggestion]
+  (let [stmt (read-statement view suggestion)
+        stmt-as-obj (str-to-stmt stmt)]
+    (cond (nil? stmt)
+          nil
+
+          (nil? stmt-as-obj)
+          (do
+            (display-error view *edit-error* *invalid-content*)
+            (prompt-statement-content view ag stmt))
+
+          (statement-node ag stmt-as-obj)
+          (do
+            (display-error view *edit-error* *statement-already-exists*)
+            (prompt-statement-content view ag stmt))
+
+          :else
+          stmt-as-obj)))
+
 (defn on-new-premise [view path id arg]
   (prn "on new premise")
   (when-let [ag (get-ag path id)]
-    (let [arg (get-argument ag (:id arg))
-          stmt (gen-statement-content path ag)
-          ag (update-statement ag stmt)
-          arg (get-argument ag (:id arg))]
-      (if-let [ag (add-premise ag arg stmt)]
-        (do
-          (do-update-section view [path :ags (:id ag)] ag)
-          (new-premise-added view path ag arg stmt statement-formatted)
-          (display-statement view path ag stmt statement-formatted))
-        (display-error view *edit-error* *cycle-error*)))))
+    (let [arg (get-argument ag (:id arg))]
+          ;; stmt (gen-statement-content path ag)]
+      (when-let [stmt (prompt-statement-content view ag "")]
+        (let [ag (update-statement ag stmt)
+              arg (get-argument ag (:id arg))]
+          (if-let [ag (add-premise ag arg stmt)]
+            (do
+              (do-update-section view [path :ags (:id ag)] ag)
+              (new-premise-added view path ag arg stmt statement-formatted)
+              (display-statement view path ag stmt statement-formatted))
+            (display-error view *edit-error* *cycle-error*)))))))
 
 (defn on-delete-statement [view path id stmt]
   (prn "on delete stmt")
@@ -617,25 +631,6 @@
       (let [ag (change-mainissue ag stmt)]
         (do-update-section view [path :ags (:id ag)] ag)
         (mainissue-changed view path ag stmt)))))
-
-(defn- prompt-statement-content [view ag suggestion]
-  (let [stmt (read-statement view suggestion)
-        stmt-as-obj (str-to-stmt stmt)]
-    (cond (nil? stmt)
-          nil
-
-          (nil? stmt-as-obj)
-          (do
-            (display-error view *edit-error* *invalid-content*)
-            (prompt-statement-content view ag stmt))
-
-          (statement-node ag stmt-as-obj)
-          (do
-            (display-error view *edit-error* *statement-already-exists*)
-            (prompt-statement-content view ag stmt))
-
-          :else
-          stmt-as-obj)))
 
 (defn- do-on-new-statement [view path ag stmt]
   (let [ag (update-statement ag stmt)]

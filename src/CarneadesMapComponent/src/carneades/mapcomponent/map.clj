@@ -161,7 +161,8 @@
 
 (defn print-debug [g]
   (let [defaultparent (.getDefaultParent g)
-        edges (.getChildCells g defaultparent false true)]
+        edges (.getChildCells g defaultparent false true)
+        nodes (.getChildCells g defaultparent true false)] 
     (doseq [edge edges]
       (let [x (getx edge)
             y (gety edge)
@@ -171,7 +172,9 @@
         (printf "control points = {")
         (doseq [point controlpoints]
           (printf "[%s %s], " (.getX point) (.getY point)))
-        (printf "}\n")))))
+        (printf "}\n")))
+    (doseq [node nodes]
+      (printf "node value = %s\n" (.getValue node)))))
 
 (defn move-cell [graph cell x y]
   (let [layout (mxHierarchicalLayout. graph SwingConstants/EAST)]
@@ -296,6 +299,12 @@
             (add-argument g p ag arg vertices))
           vertices (arguments ag)))
 
+(defn fill-graph [^mxGraph g p ag stmt-str]
+  (->> (add-statements g p ag stmt-str)
+       (add-arguments g p ag)
+       (add-edges g p ag)
+       (layout g p)))
+
 (defn- create-graph [ag stmt-str]
   (let [g (mxGraph.)
         p (.getDefaultParent g)]
@@ -303,10 +312,7 @@
      (register-styles (.getStylesheet g))
      (configure-graph g)
      (.. g getModel beginUpdate)
-     (->> (add-statements g p ag stmt-str)
-          (add-arguments g p ag)
-          (add-edges g p ag)
-          (layout g p))
+     (fill-graph g p ag stmt-str)
      (.setCellsLocked g true)
      (finally
       (.. g getModel endUpdate)))

@@ -59,11 +59,14 @@
                    (:substitutions s)))
       sols)))
 
-(defn construct-arguments [goal max-nodes ag generators]
-  "integer integer argument-graph (seq-of generator) -> statement ->
-(seq-of state)"  
-  (find-best-arguments traverse depth-first max-nodes 1
-    (initial-state goal ag) generators))
+(defn construct-arguments
+  "integer integer argument-graph (seq-of generator) -> statement -> (seq-of state)"
+  ([goal max-nodes ag generators]
+     (find-best-arguments traverse depth-first max-nodes 1
+                          (initial-state goal ag) generators))
+  ([goal max-nodes max-turns strategy ag generators]
+     (find-best-arguments traverse strategy max-nodes max-turns
+                          (initial-state goal ag) generators)))
 
 (defn construct-arguments-abductively
   ([goal max-nodes max-turns ag generators]
