@@ -160,11 +160,12 @@
                               stmt (statement-atom (:atom pm))]
                           (update-in ag [:nodes key stmt :premise-of] disj (:id arg))))
                       ag
-                      (:premises arg))]
-    (reduce (fn [ag pm]
-              (update-statement ag (:atom pm)))
-            ag
-            (:premises arg))))
+                      (:premises arg))
+        ag (reduce (fn [ag pm]
+                     (update-statement ag (:atom pm)))
+                   ag
+                   (:premises arg))]
+    (update-statement ag (:conclusion arg))))
 
 (defn delete-statement [ag stmt]
   (when-let [node (statement-node ag stmt)]

@@ -77,6 +77,11 @@
    (when-let [component (get-component path (:id ag))]
      (layout-map component)))
 
+  (graph-changed
+   [this path ag stmt-fmt]
+   (when-let [component (get-component path (:id ag))]
+     (replace-graph component ag stmt-fmt)))
+  
   (close-graph
    [this path id]
    (let [component (get-component path id)]

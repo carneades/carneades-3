@@ -65,6 +65,7 @@
   ;; these fine grained modifications avoid to redisplay the whole
   ;; argument graph each time, which takes too much time with
   ;; big graphs
+  (graph-changed [this path ag stmt-fmt])
   (statement-content-changed
    [this path ag oldstmt newstmt])
   (statement-status-changed

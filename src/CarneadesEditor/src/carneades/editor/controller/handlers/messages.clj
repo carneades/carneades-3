@@ -22,7 +22,7 @@
 (defvar *findargumentswizard-title* "Find Arguments")
 (defvar *findargumentswizard-error* "Find Arguments Error")
 (defvar *goalwizard-error* "Goal Assistant Error")
-(defvar *no-mainissue* "The main issue is not defined. Please assign a main issue to the graph first.")
+(defvar *no-mainissue* "Please assign a main issue to the graph first.")
 
 (defvar *point-of-view* "Choose A Point Of View")
 (defvar *choose-point-of-view* "Choose a point of view")

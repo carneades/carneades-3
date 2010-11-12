@@ -299,7 +299,7 @@
               url (if (or is-url? (. (new File url) isAbsolute))
                     url
                     (str prepath url))]
-          ;(println "uri:" url)
+          (println "uri:" url)
           (cond
             (lkif? url) (let [i (lkif-import* url (cons url files)),
                               rb (:rb i),
