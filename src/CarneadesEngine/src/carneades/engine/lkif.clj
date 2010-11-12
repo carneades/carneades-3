@@ -116,3 +116,5 @@
               imp-kbs)))))))
 
 
+(def *empty-lkif*
+  {:sources nil, :rb *empty-rulebase*, :ags '(), :import-tree '(), :import-kbs {}, :import-ags {}})
