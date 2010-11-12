@@ -35,7 +35,9 @@
   (prn settings)
   (when settings
    (when-let [ag (get-ag path id)]
-     (let [goal (deref *goal*)
+     (let [complement (get settings "complement")
+           goal (deref *goal*)
+           goal (if complement (statement-complement goal) goal)
            lkif (get-lkif path)
            max-nodes (get settings "max-nodes")
            max-turns (get settings "max-turns")
@@ -51,11 +53,11 @@
                 :title (:title ag))]
        ;; (prn "lkif = ")
        ;; (prn lkif)
-       (prn "solutions =")
-       (pprint solutions)
-       (prn "ag =")
-       (pprint ag2)
-       (prn)
+       ;; (prn "solutions =")
+       ;; (pprint solutions)
+       ;; (prn "ag =")
+       ;; (pprint ag2)
+       ;; (prn)
        ;; (if (empty? (:arguments ag2))
        ;;   ag
        ;;   ag2)
