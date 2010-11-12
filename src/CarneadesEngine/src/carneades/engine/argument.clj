@@ -698,25 +698,25 @@
     r))
 
 (defn depth-in
-  [n ag]
+  [ag n]
   (let [parent-args (:premise-of n),
         parent-stmts (map (fn [aid] (:conclusion (get-argument ag aid))) parent-args)]
     (if (empty? parent-stmts)
       0
-      (+ 1 (apply min (map (fn [s] (depth-in (get-node ag s) ag)) parent-stmts))))))
+      (+ 1 (apply min (map (fn [s] (depth-in ag (get-node ag s))) parent-stmts))))))
 
 (defn height-in
-  [n ag]
+  [ag n]
   (let [child-args (:conclusion-of n),
         child-stmts (apply concat (map (fn [aid] (map :atom (:premises (get-argument ag aid)))) child-args))]
     ;(println "child-stmts" (:statement n) child-stmts)
     (if (empty? child-stmts)
       0
-      (+ 1 (apply max (map (fn [s] (height-in (get-node ag s) ag)) child-stmts))))))
+      (+ 1 (apply max (map (fn [s] (height-in ag (get-node ag s))) child-stmts))))))
 
 
 (defn graph-depth
   [ag]
   (let [main-issues (filter (fn [n] (empty? (:premise-of n))) (get-nodes ag))]
-    (apply max (map (fn [n] (height-in n ag)) main-issues))))
+    (apply max (map (fn [n] (height-in ag n)) main-issues))))
 
