@@ -34,14 +34,15 @@
                                   on-cancel-goal-wizard
                                   [view path id])
             settings (display-wizard view wizard)]
-        (on-post-goalwizard settings view path id)))))
+        (on-post-goalwizard view path id settings)))))
 
 (defn findarguments-assistantmenuitem-listener [event view]
   (prn "findarguments-assistantmenuitem-listener")
   (when-let [[path id] (current-graph view)]
     (when (on-pre-findarguments-wizard view path id)
       (let [searchparameters-panel (get-searchparameters-panel view)
-            res (display-wizard view *findargumentswizard-title*
+            settings (display-wizard view *findargumentswizard-title*
                                 [{:panel searchparameters-panel
                                   :desc *search-parameters*}])]
-        (prn res)))))
+        (prn "calling on-post")
+        (on-post-findarguments-wizard view path id settings)))))

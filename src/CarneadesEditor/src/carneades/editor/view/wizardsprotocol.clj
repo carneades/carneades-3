@@ -10,6 +10,7 @@
 
 (defprotocol SwingGoalWizard
   (set-main-issue [this mainissue])
+  (set-abduction-busy [this busy])
   (get-proponent-panel [this])
   (get-abduction-panel [this])
   (get-positions-panel [this])

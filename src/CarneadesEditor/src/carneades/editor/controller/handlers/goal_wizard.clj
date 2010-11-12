@@ -77,14 +77,15 @@
               (do-swing-and-wait
                (reset! *abduction-state* :stopped)
                (reset! *positions* nil)
-               (prn "display error")
                (display-error view *goalwizard-title* *goal-achieved*)
+               (set-abduction-busy view false)
                ;; force an event so that the validator is called again:
                (reset-position view)))
             (do
               (reset! *positions* {:positions positions :index 0 :npos npos})
               (do-swing-and-wait
                (reset! *abduction-state* :stopped)
+               (set-abduction-busy view false)
                (display-position view position 0 npos statement-formatted)))))))))
 
 (defn- try-stop-abduction []
@@ -102,6 +103,7 @@
    (reset-position view)
    (letfn [(start-abduction
             []
+            (set-abduction-busy view true)
             (reset! *abduction-state* :running)
             (reset! *abduction-future*
                     (future (run-abduction settings view path id))))
@@ -126,10 +128,11 @@
 
          :stopping (wait-then-start-abduction)))))
 
-(defn on-post-goalwizard [settings view path id]
-  (when-let [ag (get-ag path id)]
-    (let [statement (:stmt (get settings "statements"))]
-      (display-statement view path ag (statement-atom statement) statement-formatted))))
+(defn on-post-goalwizard [view path id settings]
+  (when settings
+   (when-let [ag (get-ag path id)]
+     (let [statement (:stmt (get settings "statements"))]
+       (display-statement view path ag (statement-atom statement) statement-formatted)))))
 
 (defn on-first-position [view path id]
   (let [positions (deref *positions*)]
