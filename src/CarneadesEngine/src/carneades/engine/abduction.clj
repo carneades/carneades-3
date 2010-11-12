@@ -334,6 +334,15 @@ returns [labels dis-is-true dis-is-false]"
         assmptns (map premise-statement (filter assumption? premises))]
     (set assmptns)))
 
+(defn make-minimal
+  ([label]
+    (reduce make-minimal label label))
+  ([label position]
+    (doall (filter (fn [p]
+              ;(println "comparing positions" (map statement-formatted position) (map statement-formatted p) (= (union position p) p))
+              (or (= position p) (not (subset? position p))))
+      label))))
+
 ;(def path "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\src\\CarneadesExamples\\src\\carneades\\examples\\open_source_licensing\\impact-full.xml")
 ;;(def path "C:\\Users\\stb\\Desktop\\contract.xml")
 ;(def i (lkif-import path))
@@ -345,4 +354,7 @@ returns [labels dis-is-true dis-is-false]"
 ;(def oss "http://carneades.berlios.de/oss-licenses#")
 ;(def goal1 (list (c oss "mayUseLicenseTemplate") (c il "CarneadesEngine") (c oss "GPL_Template")))
 ;;(def goal1 "contract")
-;;(def l (statement-in-label ag1 #{} goal1))
+;(def l (statement-in-label ag1 (assume-decided-statements ag1) goal1))
+
+;(def l #{#{:a :b :c} #{:a :c} #{:a} #{:b} #{:c :d} #{:a :c :b :d}})
+;(def l #{#{:a :b :c} #{:a :c}})
