@@ -3,6 +3,7 @@
 
 (ns carneades.editor.controller.handlers.goal-wizard
   (:use clojure.contrib.def
+        clojure.contrib.pprint
         clojure.contrib.swing-utils
         ;; carneades.engine.utils
         carneades.editor.view.viewprotocol
@@ -12,10 +13,12 @@
         carneades.editor.controller.documents
         [carneades.engine.statement :only (statement-formatted statement-complement
                                                                statement-atom)]
+        carneades.engine.position-sort
         [carneades.engine.abduction :only (*verum-clause*
                                            statement-in-label
                                            statement-out-label
-                                           assume-decided-statements)])
+                                           assume-decided-statements
+                                           make-minimal)])
   (:import carneades.editor.view.wizardsprotocol.StatementItem))
 
 (defn on-pre-goalwizard [view path id]
@@ -63,11 +66,11 @@
 
                           (and negative in)
                           (statement-in-label ag (assume-decided-statements ag)
-                                              (statement-complement mainissue))
+                                    (statement-complement mainissue))
 
                           (and negative out)
                           (statement-out-label ag (assume-decided-statements ag)
-                                               (statement-complement mainissue)))]
+                                     (statement-complement mainissue)))]
       (let [positions  (apply vector (sort-by count positions))
             position (first positions)
             npos (count positions)]
@@ -77,12 +80,15 @@
               (do-swing-and-wait
                (reset! *abduction-state* :stopped)
                (reset! *positions* nil)
-               (display-error view *goalwizard-title* *goal-achieved*)
-               (set-abduction-busy view false)
                ;; force an event so that the validator is called again:
-               (reset-position view)))
+               (reset-position view)
+               (display-position view nil 0 0 nil)
+               (set-abduction-busy view false)))
             (do
-              (reset! *positions* {:positions positions :index 0 :npos npos})
+              (prn "first position =")
+              (pprint position)
+              (reset! *positions* {:positions positions :index 0 :npos npos
+                                   :posnotminimized positions})
               (do-swing-and-wait
                (reset! *abduction-state* :stopped)
                (set-abduction-busy view false)
@@ -172,12 +178,34 @@
           (swap! *positions* assoc :index index)
           (display-position view position index npos statement-formatted))))))
 
-;; (defn goal-wizard-selector [view path id step settings abduction-wizard]
-;;   (prn "goal-wizard-selector")
-;;   abduction-wizard)
+(defn on-sort-by [view path id sort-by-val]
+  (when-let [positions (deref *positions*)]
+    (let [npos (:npos positions)
+          positions (:positions positions)
+          ag (get-ag path id)
+          positions (apply vector
+                           (case sort-by-val
+                                 "Size" (sort-by count positions)
+                                 "Depth" (sort-by #(position-depth ag %) positions)
+                                 "Height" (sort-by #(position-height ag %) positions)))
+          position (first positions)]
+      (swap! *positions* assoc :positions positions :index 0)
+      (display-position view position 0 npos statement-formatted))))
+
+(defn on-minimize-positions [view path id minimize]
+  (when-let [positions (deref *positions*)]
+    (let [positions (if minimize
+                      (apply vector (make-minimal (:positions positions)))
+                      (:posnotminimized positions))
+          npos (count positions)]
+      (swap! *positions* assoc :positions positions :npos npos :index 0)
+      (display-position view (first positions) 0 npos statement-formatted))))
 
 (defn on-cancel-goal-wizard [settings view path id]
   (prn "on cancel")
   (try-stop-abduction)
   true)
 
+;; (defn goal-wizard-selector [view path id step settings abduction-wizard]
+;;   (prn "goal-wizard-selector")
+;;   abduction-wizard)

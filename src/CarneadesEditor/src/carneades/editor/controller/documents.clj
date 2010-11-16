@@ -34,6 +34,9 @@
 (defn get-lkif [lkifpath]
   (extract-lkif-from-docmanager lkifpath *docmanager*))
 
+(defn get-kbs-locations [lkifpath]
+  (map first (get-section-content *docmanager* [lkifpath :import-kbs])))
+
 (defn get-ags-id [lkifpath]
   (let [agsid (get-all-sectionskeys *docmanager* [lkifpath :ags])]
     agsid))

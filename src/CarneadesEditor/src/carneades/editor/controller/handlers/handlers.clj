@@ -46,7 +46,9 @@
 
 (defn on-select-lkif-file [view path]
   (prn "on-select-lkif-file")
-  (display-lkif-property view path))
+  (prn "kbs =")
+  (let [importurls (get-kbs-locations path)]
+    (display-lkif-property view path importurls)))
 
 (defn on-open-graph [view path id]
   (prn "on-open-graph")
@@ -757,13 +759,24 @@
       (close-all view path))))
 
 (defn on-import-theory [view path]
-  (prn "on-import-theory")
-  (when-let [pathname (ask-file-to-open view "LKIF or OWL files"  #{"xml" "lkif" "owl"})]
-    (prn "pathname =")
-    (prn pathname)
-    ))
+  (when-let [info (ask-location-to-open view)]
+    (prn "info =")
+    (prn info)
+   (let [url (:location info)
+         lkif (add-import (get-lkif path) url)]
+     (lkif/update-imports path *docmanager* lkif)
+     (save-lkif view path)
+     (let [importurls (get-kbs-locations path)]
+       (display-lkif-property view path importurls))
+     )))
 
 (defn on-remove-imports [view path imports]
-  (prn "on remove import")
-  (prn imports))
+  (when (and (not (empty? imports)) (ask-confirmation view *imports* *remove-imports*))
+    (let [lkif (get-lkif path)
+          lkif (reduce (fn [lkif importurl]
+                         (remove-import lkif importurl)) lkif imports)]
+      (lkif/update-imports path *docmanager* lkif)
+      (save-lkif view path)
+      (let [importurls (get-kbs-locations path)]
+        (display-lkif-property view path importurls)))))
 

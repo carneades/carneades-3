@@ -336,12 +336,12 @@ returns [labels dis-is-true dis-is-false]"
 
 (defn make-minimal
   ([label]
-    (reduce make-minimal label label))
+     (reduce make-minimal label label))
   ([label position]
-    (doall (filter (fn [p]
+     (doall (filter (fn [p]
               ;(println "comparing positions" (map statement-formatted position) (map statement-formatted p) (= (union position p) p))
               (or (= position p) (not (subset? position p))))
-      label))))
+                   label))))
 
 ;(def path "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\src\\CarneadesExamples\\src\\carneades\\examples\\open_source_licensing\\impact-full.xml")
 ;;(def path "C:\\Users\\stb\\Desktop\\contract.xml")

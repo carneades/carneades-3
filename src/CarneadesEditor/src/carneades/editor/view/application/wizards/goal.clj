@@ -18,11 +18,15 @@
 (defvar- *abductionPanel* (AbductionPanel/instance))
 (defvar- *statementList* (.statementsList *abductionPanel*))
 (defvar- *positionLabel* (.positionLabel *abductionPanel*))
+(defvar- *resultsPanel* (.resultsPanel *abductionPanel*))
+(defvar- *cardLayout* (.getLayout *resultsPanel*))
 
 (defvar- *firstPositionButton* (.firstPositionButton *abductionPanel*))
 (defvar- *lastPositionButton* (.lastPositionButton *abductionPanel*))
 (defvar- *previousPositionButton* (.previousPositionButton *abductionPanel*))
 (defvar- *nextPositionButton* (.nextPositionButton *abductionPanel*))
+(defvar- *sortByComboBox* (.sortByComboBox *abductionPanel*))
+(defvar- *minimizePositionsButton* (.minimizePositionsButton *abductionPanel*))
 
 (defvar- *progressBar* (.progressBar *abductionPanel*))
 
@@ -46,21 +50,27 @@
   
   (reset-position
    [this]
+   (.setSelected *minimizePositionsButton* false)
+   (.setSelectedIndex *sortByComboBox* 0)
+   (.show *cardLayout* *resultsPanel* "statementsCard")
    (.setText *positionLabel* *position*)
    (.setListData *statementList* (to-array [""]))
    (.setSelectedIndex *statementList* 0))
   
   (display-position
    [this position posindex nbpos statement-formatted]
-   (let [items (to-array (map #(StatementItem.
-                                %
-                                (str "<html>"
-                                     (str/replace (statement-formatted %) "\n" "<br>")
-                                     "<br>&nbsp"))
-                              position))]
-     (.setListData *statementList* items)
-     (.setSelectedIndex *statementList* 0)
-     (.setText *positionLabel* (format *position-n-of* (inc posindex) nbpos))))
+   (if (zero? nbpos)
+     (.show *cardLayout* *resultsPanel* "noResultCard")
+     (let [items (to-array (map #(StatementItem.
+                                  %
+                                  (str "<html>"
+                                       (str/replace (statement-formatted %) "\n" "<br>")
+                                       "<br>&nbsp"))
+                                position))]
+       (.show *cardLayout* *resultsPanel* "statementsCard")
+       (.setListData *statementList* items)
+       (.setSelectedIndex *statementList* 0)
+       (.setText *positionLabel* (format *position-n-of* (inc posindex) nbpos)))))
 
   (set-first-position-button-listener
    [this f args]
@@ -81,6 +91,22 @@
    [this f args]
    (remove-action-listeners *nextPositionButton*)
    (apply add-action-listener *nextPositionButton* f args))
-  
-  )
+
+  (set-sort-by-listener
+   [this f args]
+   (remove-action-listeners *sortByComboBox*)
+   (apply add-action-listener *sortByComboBox* f args))
+
+  (get-sort-by-value
+   [this]
+   (.getSelectedItem *sortByComboBox*))
+
+  (set-minimize-button-listener
+   [this f args]
+   (remove-action-listeners *minimizePositionsButton*)
+   (apply add-action-listener *minimizePositionsButton* f args))
+
+  (get-minimize-value
+   [this]
+   (.isSelected *minimizePositionsButton*)))
 
