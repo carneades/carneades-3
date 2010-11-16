@@ -17,6 +17,7 @@
   (current-graph [this] "returns [path id] for the graph currently edited")
   (ask-file-to-open [this desc exts] "ask the user the LKIF file to open. 
                                  Returns File or nil")
+  (ask-location-to-open [this])
   (ask-file-to-save [this descriptions suggested])
   (export-graph-to-svg [this ag stmt-fmt filename])
   (export-graph-to-dot [this ag statement-formatted filename])
@@ -27,7 +28,7 @@
   (hide-lkif-content [this path])
   (print-preview [this path ag stmt-fmt])
   (print-graph [this path ag stmt-fmt])
-  (display-lkif-property [this path])
+  (display-lkif-property [this path importurls])
   (display-graph-property [this path id title mainissue])
   (display-about [this])
   (ask-confirmation [this title content])
