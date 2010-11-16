@@ -20,6 +20,13 @@
        view (fn [event] (on-next-position view path id)) [])
       (set-last-position-button-listener
        view (fn [event] (on-last-position view path id)) [])
+      (set-sort-by-listener view (fn [event]
+                                   (on-sort-by view path id
+                                               (get-sort-by-value view))) [])
+      (set-minimize-button-listener view (fn [event]
+                                           (on-minimize-positions
+                                            view path id
+                                            (get-minimize-value view))) [])
       (let [proponent-panel (get-proponent-panel view)
             abduction-panel (get-abduction-panel view)
             wizard (create-wizard view *goalwizard-title*
@@ -41,8 +48,18 @@
   (when-let [[path id] (current-graph view)]
     (when (on-pre-findarguments-wizard view path id)
       (let [searchparameters-panel (get-searchparameters-panel view)
-            settings (display-wizard view *findargumentswizard-title*
+            searcharguments-panel (get-searcharguments-panel view)
+            wizard (create-wizard view *findargumentswizard-title*
                                 [{:panel searchparameters-panel
-                                  :desc *search-parameters*}])]
-        (prn "calling on-post")
+                                  :desc *search-parameters*}
+
+                                 {:panel searcharguments-panel
+                                  :desc *search-arguments*
+                                  :validator on-searcharguments-panel-validation
+                                  :listener on-searcharguments-panel
+                                  :args [view path id]}
+                                 ]
+                                on-cancel-findarguments-wizard
+                                [view path id])
+            settings (display-wizard view wizard)]
         (on-post-findarguments-wizard view path id settings)))))

@@ -305,6 +305,8 @@
 
   (create-wizard
    [this title panels cancel-fn args]
+   "cancel-fn must return true when cancel is possible
+    cancel-fn is called with (apply cancel-fn settings args)"
    (System/setProperty "wizard.sidebar.image" "carneades-bright.png")
    (let [wizardpages (create-wizardpages panels)
          producer (reify WizardPage$WizardResultProducer
