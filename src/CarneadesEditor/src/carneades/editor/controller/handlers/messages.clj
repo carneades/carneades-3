@@ -37,3 +37,8 @@
 
 (defvar *search-parameters* "Choose Search Parameters")
 (defvar *no-statementselected* "Please select a statement first.")
+(defvar *search-arguments* "Arguments Search")
+(defvar *searching-arguments* "Searching arguments... Please wait...")
+
+(defvar *imports* "Imports")
+(defvar *remove-imports* "Permanently remove all selected imports?")
