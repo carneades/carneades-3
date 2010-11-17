@@ -3,13 +3,14 @@
 
 (ns carneades.mapcomponent.map-styles
   (:use clojure.contrib.def
-        carneades.mapcomponent.negconnectorshape
+        ;; carneades.mapcomponent.negconnectorshape
         carneades.engine.argument
         carneades.engine.statement)
   (:import com.mxgraph.util.mxConstants
            com.mxgraph.view.mxStylesheet
            com.mxgraph.canvas.mxGraphics2DCanvas
-           carneades.mapcomponent.negconnectorshape))
+           ;; carneades.mapcomponent.negconnectorshape
+           ))
 
 (defn- make-style [name style]
   {:name name :style style})
@@ -186,8 +187,9 @@
   (make-style
    "negPremiseEdgeStyle"
    (merge (:style *premise-edge-style*)
-          {mxConstants/STYLE_SHAPE *carneades-shape-connector*
-           mxConstants/STYLE_ENDARROW *carneades-negarrow*
+          {;; mxConstants/STYLE_SHAPE *carneades-shape-connector*
+           mxConstants/STYLE_STARTARROW mxConstants/ARROW_OVAL
+                                        ;;  *carneades-negarrow*
            mxConstants/STYLE_STROKECOLOR *con-arg-color*})))
 
 (defvar- *neg-assumption-edge-style*
@@ -232,9 +234,9 @@
    *neg-assumption-edge-style*
    *neg-exception-edge-style*])
 
-(defvar- *shape-registered* (mxGraphics2DCanvas/putShape
-                             *carneades-shape-connector*
-                             (negconnectorshape.)))
+;; (defvar- *shape-registered* (mxGraphics2DCanvas/putShape
+;;                              *carneades-shape-connector*
+;;                              (negconnectorshape.)))
 
 (defn register-styles [#^mxStylesheet stylesheet]
   (dorun (map (fn [{:keys [name style]}] (.putCellStyle stylesheet name style))

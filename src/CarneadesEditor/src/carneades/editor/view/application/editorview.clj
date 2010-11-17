@@ -4,7 +4,7 @@
 (ns carneades.editor.view.application.editorview
   (:use (clojure.contrib def swing-utils)
         carneades.ui.diagram.graphvizviewer
-        carneades.editor.view.dialogs.statement-editor
+        (carneades.editor.view.dialogs statement-editor location)
         carneades.editor.view.application.context
         carneades.editor.utils.swing
         carneades.editor.view.application.editor-helpers
@@ -107,6 +107,10 @@
          (reset! *dialog-current-directory* (.getCurrentDirectory jc))
          (.getSelectedFile jc)))))
 
+  (ask-location-to-open
+   [this]
+   (show-location-dialog this))
+
   (ask-file-to-save
    [this-view descriptions suggested]
    (letfn [(changeextension
@@ -201,8 +205,8 @@
      (print-document (:component component))))
 
   (display-lkif-property
-   [this path]
-   (show-properties (get-lkif-properties-panel path)))
+   [this path importurls]
+   (show-properties (get-lkif-properties-panel path importurls)))
 
   (display-graph-property
    [this path id title mainissue]

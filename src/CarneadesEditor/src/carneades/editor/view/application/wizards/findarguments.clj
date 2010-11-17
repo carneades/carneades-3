@@ -4,10 +4,17 @@
 (ns carneades.editor.view.application.wizards.findarguments
   (:use clojure.contrib.def
         carneades.editor.view.wizardsprotocol)
-  (:import (carneades.editor.uicomponents.wizards.findarguments SearchParametersPanel)))
+  (:import (carneades.editor.uicomponents.wizards.findarguments SearchParametersPanel
+                                                                SearchArgumentsPanel)))
 
 (defvar- *searchParametersPanel* (SearchParametersPanel/instance))
 (defvar- *goalTextArea* (.goalTextArea *searchParametersPanel*))
+
+(defvar- *searchArgumentsPanel* (SearchArgumentsPanel/instance))
+(defvar- *searchResultsPanel* (.searchResultsPanel *searchArgumentsPanel*))
+(defvar- *cardLayout* (.getLayout *searchResultsPanel*))
+
+(defvar- *dummyValidatorTrigger* (.dummyValidatorTrigger *searchArgumentsPanel*))
 
 (deftype EditorSwingFindArgumentsWizard []
   SwingFindArgumentsWizard
@@ -17,4 +24,21 @@
 
   (get-searchparameters-panel
    [this]
-   *searchParametersPanel*))
+   *searchParametersPanel*)
+
+  (get-searcharguments-panel
+   [this]
+   (.setVisible *dummyValidatorTrigger* false)
+   *searchArgumentsPanel*)
+
+  (set-argumentsearch-busy
+   [this busy]
+   (.setText *dummyValidatorTrigger* "xyz")
+   (if busy
+     (.show *cardLayout* *searchResultsPanel* "searchingArguments")
+     (.show *cardLayout* *searchResultsPanel* "searchFinishedWithResults")))
+
+  (arguments-found
+   [this found]
+   (when found
+     (.show *cardLayout* *searchResultsPanel* "searchFinishedWithResults"))))

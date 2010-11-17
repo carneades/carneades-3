@@ -20,8 +20,15 @@
   (set-first-position-button-listener [this f args])
   (set-last-position-button-listener [this f args])
   (set-previous-position-button-listener [this f args])
-  (set-next-position-button-listener [this f args]))
+  (set-next-position-button-listener [this f args])
+  (set-sort-by-listener [this f args])
+  (get-sort-by-value [this])
+  (set-minimize-button-listener [this f args])
+  (get-minimize-value [this]))
 
 (defprotocol SwingFindArgumentsWizard
   (set-goal [this text])
-  (get-searchparameters-panel [this]))
+  (get-searchparameters-panel [this])
+  (get-searcharguments-panel [this])
+  (arguments-found [this found])
+  (set-argumentsearch-busy [this busy]))

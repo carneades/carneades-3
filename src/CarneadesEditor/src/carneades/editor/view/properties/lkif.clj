@@ -18,9 +18,10 @@
 
 (defvar- *lkif-info* (atom {}))
 
-(defn get-lkif-properties-panel [path]
+(defn get-lkif-properties-panel [path importurls]
   (reset! *lkif-info* {:path path})
   (.setText *lkifPathText* path)
+  (.setListData *importsList* (to-array importurls))
   *lkifProperties*)
 
 (defn register-import-button-listener [f args]
