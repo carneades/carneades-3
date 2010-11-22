@@ -5,10 +5,10 @@
 
 package org.fokus.carneades;
 
+import java.util.List;
 import javax.ejb.Remote;
-import javax.jws.WebMethod;
-import javax.jws.WebService;
 import org.fokus.carneades.api.CarneadesMessage;
+import org.fokus.carneades.api.Statement;
 
 /**
  *
@@ -16,9 +16,8 @@ import org.fokus.carneades.api.CarneadesMessage;
  */
 
 @Remote
-@WebService
 public interface CarneadesService {
 
-    @WebMethod CarneadesMessage askEngine(String s);
+    CarneadesMessage askEngine(Statement query, String kb, List<Statement> answers);
 
 }
