@@ -14,6 +14,7 @@ public class Question {
     
     private String question = "";
     private String hint = "";
+    private String category = "";    
     private String type = "default";
 
     public Question() {
@@ -43,6 +44,12 @@ public class Question {
         this.type = type;
     }
     
-    
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
 }
