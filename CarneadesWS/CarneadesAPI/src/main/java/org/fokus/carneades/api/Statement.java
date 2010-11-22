@@ -32,6 +32,14 @@ public class Statement {
         this.predicate = predicate;
     }
 
-
+    @Override
+    public String toString() {
+        String r = "(" + this.predicate;
+        for(String s : this.args) {
+            r = r + " " + s;
+        }
+        r = r + ")";
+        return r;
+    }
 
 }

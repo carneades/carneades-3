@@ -5,24 +5,27 @@
 
 package org.fokus.carneades.api;
 
+import clojure.lang.PersistentStructMap;
+
 /**
  *
  * @author stb
  */
 public class CarneadesMessage {
 
-    private Object State;
+    private PersistentStructMap AG;
     private Statement message;
+    private MessageType type;
 
-    public CarneadesMessage() {
+       public CarneadesMessage() {
     }
 
-    public Object getState() {
-        return State;
+    public Object getAG() {
+        return AG;
     }
 
-    public void setState(Object State) {
-        this.State = State;
+    public void setAG(PersistentStructMap State) {
+        this.AG = State;
     }
 
     public Statement getMessage() {
@@ -33,5 +36,12 @@ public class CarneadesMessage {
         this.message = message;
     }
 
+     public MessageType getType() {
+        return type;
+    }
+
+    public void setType(MessageType type) {
+        this.type = type;
+    }
     
 }
