@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>IMPACT - Webinterface</title>
+		<link type="text/css" href="css/custom-theme/jquery-ui-1.8.6.custom.css" rel="stylesheet" />	
+		<script type="text/javascript" src="js/jquery-1.4.4.js"></script>
+		<script type="text/javascript" src="js/jquery-ui-1.8.6.custom.min.js"></script>
+                <script type="text/javascript" src="js/main.js"></script>
+		<script type="text/javascript">
+		//<![CDATA[
+
+		//]]>
+		</script>
+		<style type="text/css">
+			/*demo page css*/
+			body{ font: 62.5% "Trebuchet MS", sans-serif; margin: 50px;}
+			.demoHeaders { margin-top: 2em; }
+			#dialog_link {padding: .4em 1em .4em 20px;text-decoration: none;position: relative;}
+			#dialog_link span.ui-icon {margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
+			/* blabla */
+			#datepicker { display:none; }
+			#progressbar { clear:both; }
+			#questions-box {
+				min-height:200px;
+				clear:both;
+			}
+
+			#questionlist {
+				list-style:none;
+				margin:0;
+				padding:0;
+				max-height:490px;
+				overflow:auto;
+			}
+			#questionlist li {
+				margin:0;
+				padding:2px 10px;
+			}
+			#questionlist li:hover {
+				font-weight:bold;
+				cursor:pointer;
+				padding: 2px 10px;
+			}
+			#questions {
+				margin-left:200px;
+				width:auto !important;
+			}
+			#status {
+				padding: 0 .7em; 
+				position:absolute; right:53px; top:88px;
+				display:none;
+			}
+		</style>
+	</head>
+	<body>
+<div id="tabs">
+	<ul>
+		<li><a href="#tabs-1">English</a></li>
+		<li><a href="#tabs-2">German</a></li>
+		<li><a href="#tabs-3">Spanish</a></li>
+	</ul>
+<div id="tabs-1">
+
+	<h1>IMPACT Questions</h1>
+	<p style="font-size: 1.3em; line-height: 1.5; margin: 1em 0; width: 50%;">
+	Please answer all questions to proceed.
+	</p>
+	
+	<h2 class="demoHeaders">Questions</h2>
+		
+	<div id="questions-box">
+		
+		<div style="float:left;width:200px;margin:0px;">
+			<ul class="ui-widget ui-widget-content ui-corner-all" id="questionlist">
+				<li>#1 - general information</li>
+				<li>#2 - familiar state</li>
+				<li>#3 - duration of ...</li>
+				<li>#x - another question</li>
+			</ul>
+		</div>
+		
+		<!-- Accordion -->
+		<form action="" id="questions">
+			<div>
+				<h3><a href="#">#1 - general information</a></h3>
+				<div>
+					<p>
+						Your name: <input type="text" value="" name="q1_1"></input><br/>
+						Your country:
+						<select name="locate" id="locate">
+							<option value="at">Austria</option>
+							<option value="bg">Bulgarian (&#1073;&#1098;&#1083;&#1075;&#1072;&#1088;&#1089;&#1082;&#1080; &#1077;&#1079;&#1080;&#1082;)</option>
+							<option value="hr">Croatian (Hrvatski jezik)</option>
+							<option value="cs">Czech (&#269;e&#353;tina)</option>
+							<option value="da">Danish (Dansk)</option>
+							<option value="nl">Dutch (Nederlands)</option>
+							<option value="en-GB">English/UK</option>
+							<option value="eo">Esperanto</option>
+							<option value="et">Estonian (eesti keel)</option>
+							<option value="fi">Finnish (suomi)</option>
+							<option value="fr">French (Fran&ccedil;ais)</option>
+							<option value="fr-CH">French/Swiss (Fran&ccedil;ais de Suisse)</option>
+							<option value="gl">Galician</option>
+							<option value="de" selected="selected">German (Deutsch)</option>
+							<option value="el">Greek (&#917;&#955;&#955;&#951;&#957;&#953;&#954;&#940;)</option>
+							<option value="hu">Hungarian (Magyar)</option>
+							<option value="is">Icelandic (&Otilde;slenska)</option>
+							<option value="it">Italian (Italiano)</option>
+							<option value="lv">Latvian (Latvie&ouml;u Valoda)</option>
+							<option value="lt">Lithuanian (lietuviu kalba)</option>
+							<option value="pl">Polish (Polski)</option>
+							<option value="pt">Portuguese (Portugu&ecirc;s)</option>
+							<option value="ro">Romanian (Rom&acirc;n&#259;)</option>
+							<option value="sk">Slovak (Slovencina)</option>
+							<option value="sl">Slovenian (Slovenski Jezik)</option>
+							<option value="es">Spanish (Espa&ntilde;ol)</option>
+							<option value="sv">Swedish (Svenska)</option>
+							<option value="uk">Ukranian (&#1059;&#1082;&#1088;&#1072;&#1111;&#1085;&#1089;&#1100;&#1082;&#1072;)</option>
+						</select>
+					</p>
+					<input type="button" class="ui-button next" value="next"></input>
+				</div>
+			</div>
+			<div>
+				<h3><a href="#">#2 - familiar state</a></h3>
+				<div>
+					<p>
+						<input type="radio" name="fam_sta" value="not_mar">not married</input>
+						<input type="radio" name="fam_sta" value="mar">married</input>
+						<input type="radio" name="fam_sta" value="div">divorced</input>
+					</p>
+					<input type="button" class="ui-button next" value="next"></input>
+				</div>
+			</div>
+			<div>
+				<h3><a href="#">#3 - duration of ...</a></h3>
+				<div>
+					<p>
+						from: <input type="text" name="q3_1" value="" class="datefield" size="8" /> <br/>
+						until: <input type="text" name="q3_1" value="" class="datefield" size="8"/> <br/>
+					</p>
+					<input type="button" class="ui-button next" value="next"></input>
+				</div>
+			</div>
+			<div>
+				<h3><a href="#">#x - another question</a></h3>
+				<div>
+					<p>
+						Nam dui erat, auctor a, dignissim quis.
+					</p>
+					<input type="button" class="ui-button next" value="next"></input>
+				</div>
+			</div>
+		</form>
+		
+	</div>
+	
+		<!-- Progressbar -->
+		<p style="margin-bottom:2px;padding-top:10px;clear:both;">Progress question 1 of 10</p>	
+		<div id="progressbar"></div>
+</div>
+<div id="tabs-2">Die Seite ist noch nicht verfügbar.</div>
+<div id="tabs-3">El sitio todavía no está disponible.</div>
+</div>
+	
+
+			
+		<!-- Highlight / Error -->
+		<div id="status" class="ui-widget ui-state-error ui-corner-all" style="width:auto !important;" onclick="$(this).fadeOut('slow');"> 
+			<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> 
+			<strong>Alert:</strong> Sample ui-state-error style.</p>
+		</div>
+
+
+	</body>
+</html>
+
+
