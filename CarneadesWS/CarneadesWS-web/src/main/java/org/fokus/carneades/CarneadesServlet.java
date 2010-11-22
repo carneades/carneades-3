@@ -46,21 +46,24 @@ public class CarneadesServlet extends HttpServlet {
     throws ServletException, IOException {
         // INPUT
         HttpSession session = request.getSession();
-        String answer = request.getParameter("answers");
+        // getting Session Bean
+        CarneadesServiceManager manager = (CarneadesServiceManager) session.getAttribute(CARNEADES_MANAGER);
+        if (manager == null) {
+            manager = EjbLocator.getCarneadesService();
+        }
+        // getting answers
+        String a = request.getParameter("answers");
+        List<Statement> answers = handleRequestAnswers(a);
 
         // OUTPUT
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String outMsg = "";
         try {
-            // if no answers given with the request
-                // getting Session Bean
-                CarneadesServiceManager manager = (CarneadesServiceManager) session.getAttribute(CARNEADES_MANAGER);
-                if (manager == null) {
-                    manager = EjbLocator.getCarneadesService();
-                }
+            // if no answers given with the request               
+                
                 // TODO : getting answers
-                outMsg = askEngine(manager);
+                outMsg = askEngine(manager,answers);
 
                 out.println(outMsg);
 
@@ -89,38 +92,24 @@ public class CarneadesServlet extends HttpServlet {
             out.close();
         }
     }
-
-    private String getTopics() {
-        String result = "";
-        // TODO : DB Zugriff hier
-        try {
-            JSONObject categories = new JSONObject(
-                    "{{id:1,name:'Personal Information',len:3},"
-                    + "{id:2,name:'Income',len:2},"
-                    + "{id:3,name:'Family',len:2},"
-                    + "{id:4,name:'Child I',len:3}}");
-            result = categories.toString();
-        } catch (JSONException ee) {
-            log.error("could not create json object", ee.toString());
-            result = "Error: " + ee.toString();
-        }
-        return result;
-    }
     
-    private String askEngine(CarneadesServiceManager manager) {
+    private String askEngine(CarneadesServiceManager manager, List<Statement> answers) {
         String result = "";        
-        // creating query
-        Statement query = null;
-        String kb = "foo.xml";
-        List<Statement> answers = new ArrayList<Statement>();
+        // creating query        
+        // TODO : get query for discussion
+        Statement query = new Statement();
+        query.setPredicate("p");
+        query.getArgs().add("?x");
+        // TODO : get kb for discussion
+        String kb = "http://localhost:8080/CarneadesWS-web/kb/lkif.xml";
         // ask
         CarneadesMessage msg = manager.askEngine(query, kb, answers);
         // evaluate answer
         if (MessageType.ASKUSER.equals(msg.getType())) {
             // new question
-            Question q = QuestionHelper.getQuestionFromStatement(msg.getMessage());
+            List<Question> qList = QuestionHelper.getQuestionsFromStatement(msg.getMessage());
             try {
-                JSONObject question = QuestionHelper.getJSONFromQuestion(q);
+                JSONObject question = QuestionHelper.getJSONFromQuestions(qList);
                 result = question.toString();
             } catch (JSONException e) {
                 log.error("could not create json object", e.toString());
@@ -137,6 +126,12 @@ public class CarneadesServlet extends HttpServlet {
             result = "Error: unknown message type received from ask";
         }
         
+        return result;
+    }
+    
+    private List<Statement> handleRequestAnswers(String a) {
+        List<Statement> result = new ArrayList<Statement>();
+        // TODO : implement answer handling
         return result;
     }
 
