@@ -46,23 +46,14 @@ public class CarneadesServlet extends HttpServlet {
     throws ServletException, IOException {
         // INPUT
         HttpSession session = request.getSession();
-        // TODO : what is test for?
-        String test = request.getParameter("test");
-        String requestType = request.getParameter("reqType");
+        String answer = request.getParameter("answers");
 
         // OUTPUT
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String outMsg = "";
         try {
-            // request for topics 
-            // TODO : what is this for?
-            if ("topics".equals(requestType)) {
-                int topic_ID = Integer.parseInt(request.getParameter("id"));
-                outMsg = getTopics();                
-            }
-            // request for carneades engine
-            else if ("askEngine".equals(requestType)) {
+            // if no answers given with the request
                 // getting Session Bean
                 CarneadesServiceManager manager = (CarneadesServiceManager) session.getAttribute(CARNEADES_MANAGER);
                 if (manager == null) {
@@ -70,20 +61,15 @@ public class CarneadesServlet extends HttpServlet {
                 }
                 // TODO : getting answers
                 outMsg = askEngine(manager);
-            }
-            // Fragen holen
-            // TODO : what is this for?
-            else if("questions".equals(requestType)) {
-                int category = Integer.parseInt(request.getParameter("id"));
-                outMsg = questions(category);
-            }
+
+                out.println(outMsg);
+
             
-            out.println(outMsg);
-            
-            // Fragen abliefern
-            // TODO : what happens here?
-            if ("topics".equals(requestType)) {
-                String[] answers = request.getParameter("answers").split("/\"\\s*,\\s*\"/"); // split bei ","
+            // Questions interpretation
+            // TODO : read last answer here
+            /*
+            else if (answer.indexOf("\",")) {
+                String[] answers = answer.split("/\"\\s*,\\s*\"/"); // split at ","
                 answers[0]=answers[0].substring(2);
                 if (answers.length > 1) answers[answers.length-1]=answers[0].substring(0,answers[0].length()-3);
                 // DB Zugriff hier
@@ -91,32 +77,10 @@ public class CarneadesServlet extends HttpServlet {
                     JSONArray answers2 = new JSONArray(answers);
                     out.println(answers2.toString());
                 } catch (JSONException ee) {
-                    log.error("could not create json object",ee.toString());
+                    log.error("could not create json object: ",ee.toString());
                     out.println("Error: "+ee.toString());
                 }
-            }
-            /* default */
-            // does this combination of json and html work?
-            if (requestType == null || requestType.equals("")) {
-                out.println("<html>");
-                out.println("<head>");
-                out.println("<title>Servlet carnserv</title>");
-                out.println("</head>");
-                out.println("<body>");
-                out.println("<h1>Pfad: " + request.getContextPath () + "</h1>");
-                out.println("<p>test</p>");
-                // TODO : ???
-                if (test != null && (test == null ? "" != null : !test.equals(""))) {
-                    out.println("Ausgewählt: <pre>"+test+"</pre>");
-                }
-                out.println("<form action=\"/carn-dummy-serv/carnserv\" method=\"POST\">");
-                out.println("<input type=\"checkbox\" name=\"test\" value=\"123\">wert 1</input>");
-                out.println("<input type=\"checkbox\" name=\"test\" value=\"124\">wert 2</input>");
-                out.println("<input type=\"submit\" value=\"Ok\"></input>");
-                out.println("</form>");
-                out.println("</body>");
-                out.println("</html>");
-            }
+            }*/
         } catch (NumberFormatException e) {
             out.println("<pre>"+e.toString() +"</pre>");
         } catch (Exception e) {
@@ -175,57 +139,6 @@ public class CarneadesServlet extends HttpServlet {
         
         return result;
     }
-    
-    private String questions(int category) {
-        String result = "";
-        // TODO : DB Zugriff hier
-        if (category == 1) { // Personal Information
-            try {
-                JSONObject questions = new JSONObject(
-                        "{{id:1,type:'text',question:'Forename: ',answers:['']},"
-                        + "{id:2,type:'text',question:'Last name: ',answers:['']},"
-                        + "{id:3,type:'select',question:'Country: ',answers:['Austria', 'Bulgarian (&#1073;&#1098;&#1083;&#1075;&#1072;&#1088;&#1089;&#1082;&#1080; &#1077;&#1079;&#1080;&#1082;)','Germany (Deutschland)','Polish (Polski)']}},");
-                result = questions.toString();
-            } catch (JSONException ee) {
-                log.error("could not create json object", ee.toString());
-                result = "Error: " + ee.toString();
-            }
-        } else if (category == 2) { // Income
-            try {
-                JSONObject questions = new JSONObject(
-                        "{{id:1,type:'int',question:'Your last Month-Income: ',answers:['']},"
-                        + "{id:2,type:'int',question:'Your estimated income this year: ',answers:['']},");
-                result = questions.toString();
-            } catch (JSONException ee) {
-                log.error("could not create json object", ee.toString());
-                result = "Error: " + ee.toString();
-            }
-        } else if (category == 3) { // Family
-            try {
-                JSONObject questions = new JSONObject(
-                        "{{id:1,type:'radio',question:'family status: ',answers:['not married',married','divorced']},"
-                        + "{id:2,type:'int',question:'How many children do you have: ',answers:['']},");
-                result = questions.toString();
-            } catch (JSONException ee) {
-                log.error("could not create json object", ee.toString());
-                result = "Error: " + ee.toString();
-            }
-        } else if (category == 3) { // Child I
-            try {
-                JSONObject questions = new JSONObject(
-                        "{{id:1,type:'text',question:'Child name: ',answers:['']},"
-                        + "{{id:2,type:'date',question:'When was your Child born: ',answers:['']},"
-                        + "{{id:3,type:'int',question:'Your childs last Month-Income: ',answers:['']},"
-                        + "{id:4,type:'int',question:'Your childs estimated income this year: ',answers:['']},");
-                result = questions.toString();
-            } catch (JSONException ee) {
-                log.error("could not create json object", ee.toString());
-                result = "Error: " + ee.toString();
-            }
-        }
-        return result;
-    }
-   
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
