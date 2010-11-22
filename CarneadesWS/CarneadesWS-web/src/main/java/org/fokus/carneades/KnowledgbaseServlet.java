@@ -6,6 +6,7 @@
 package org.fokus.carneades;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -36,11 +37,16 @@ public class KnowledgbaseServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
+        
+        response.setContentType("text;charset=UTF-8");
+        PrintWriter out = response.getWriter();        
         try {
+            log.debug("in the kb servlet now");
             String result = null;
             String query = request.getPathInfo();
+            
+            log.info("getting knowledgebase : "+query);
+            
             StringTokenizer t = new StringTokenizer(query, "/");
 
             if (t.countTokens() == 1) {
@@ -60,22 +66,27 @@ public class KnowledgbaseServlet extends HttpServlet {
         
         String rulePart = null;
         String result = "";
+        String prePath = "/tmp/";        
 	if (t.hasMoreTokens()) {
 		rulePart =  t.nextToken();
 	}
-        // TODO : make some DB request here
+        String kbPath = prePath.concat(rulePart);
+        // TODO : make some DB request here        
         try {
-            BufferedReader fIn = new BufferedReader(new FileReader(rulePart));
+            File f = new File(kbPath);
+            log.debug(f.getAbsolutePath());
+            BufferedReader fIn = new BufferedReader(new FileReader(f));
             String l;
             while ((l = fIn.readLine()) != null) {
-                result.concat(l);
+                result = result.concat(l);
             }
             fIn.close();
+            log.debug(result);
         } catch (IOException e) {
             log.error(e.toString());
         }
         
-        return result;
+        return result;     
         
     }
 
