@@ -44,12 +44,17 @@ public class CarneadesServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        log.info("request in Carneses Servlet");
         // INPUT
         HttpSession session = request.getSession();
         // getting Session Bean
-        CarneadesServiceManager manager = (CarneadesServiceManager) session.getAttribute(CARNEADES_MANAGER);
-        if (manager == null) {
-            manager = EjbLocator.getCarneadesService();
+        log.info("getting stateful session bean");
+        CarneadesService service = (CarneadesService) session.getAttribute(CARNEADES_MANAGER);
+        if (service == null) {
+            log.info("creating new session bean");
+            service = EjbLocator.getCarneadesService();
+        } else {
+            log.info("existing bean found");
         }
         // getting answers
         String a = request.getParameter("answers");
@@ -63,7 +68,7 @@ public class CarneadesServlet extends HttpServlet {
             // if no answers given with the request               
                 
                 // TODO : getting answers
-                outMsg = askEngine(manager,answers);
+                outMsg = askEngine(service,answers);
 
                 out.println(outMsg);
 
@@ -93,22 +98,26 @@ public class CarneadesServlet extends HttpServlet {
         }
     }
     
-    private String askEngine(CarneadesServiceManager manager, List<Statement> answers) {
+    private String askEngine(CarneadesService manager, List<Statement> answers) {
         String result = "";        
         // creating query        
         // TODO : get query for discussion
+        log.info("creating query");
         Statement query = new Statement();
         query.setPredicate("p");
         query.getArgs().add("?x");
         // TODO : get kb for discussion
         String kb = "http://localhost:8080/CarneadesWS-web/kb/lkif.xml";
         // ask
+        log.info("calling ask from ejb");
         CarneadesMessage msg = manager.askEngine(query, kb, answers);
         // evaluate answer
+        log.info("call from ejb returned:"+msg.getType().toString());
         if (MessageType.ASKUSER.equals(msg.getType())) {
             // new question
             List<Question> qList = QuestionHelper.getQuestionsFromStatement(msg.getMessage());
             try {
+                log.info("sending question to user");
                 JSONObject question = QuestionHelper.getJSONFromQuestions(qList);
                 result = question.toString();
             } catch (JSONException e) {
@@ -119,6 +128,7 @@ public class CarneadesServlet extends HttpServlet {
         } else if (MessageType.SOLUTION.equals(msg.getType())) {
             // solution
             // TODO : implement solution case
+            log.info("sending solution to user");
             result = "solution found";
         } else {
             // error
