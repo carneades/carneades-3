@@ -62,14 +62,14 @@ public class CarneadesServlet extends HttpServlet {
                 outMsg = getTopics();                
             }
             // request for carneades engine
-            else if ("ask".equals(requestType)) {
+            else if ("askEngine".equals(requestType)) {
                 // getting Session Bean
                 CarneadesServiceManager manager = (CarneadesServiceManager) session.getAttribute(CARNEADES_MANAGER);
                 if (manager == null) {
                     manager = EjbLocator.getCarneadesService();
                 }
                 // TODO : getting answers
-                outMsg = ask(manager);
+                outMsg = askEngine(manager);
             }
             // Fragen holen
             // TODO : what is this for?
@@ -143,7 +143,7 @@ public class CarneadesServlet extends HttpServlet {
         return result;
     }
     
-    private String ask(CarneadesServiceManager manager) {
+    private String askEngine(CarneadesServiceManager manager) {
         String result = "";        
         // creating query
         Statement query = null;
@@ -169,7 +169,7 @@ public class CarneadesServlet extends HttpServlet {
             result = "solution found";
         } else {
             // error
-            log.error("unknown message type received from ask", msg);
+            log.error("unknown message type received from ask", msg);            
             result = "Error: unknown message type received from ask";
         }
         

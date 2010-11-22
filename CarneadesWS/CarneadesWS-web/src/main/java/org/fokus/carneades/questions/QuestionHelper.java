@@ -20,13 +20,15 @@ public class QuestionHelper {
         Question question = new Question();
         String q = stmt.toString();
         question.setQuestion(q);
-        question.setHint(q);   
+        question.setHint(q);
+        question.setCategory("default");
         return question;
     }
     
     public static JSONObject getJSONFromQuestion(Question q) throws JSONException{
         // TODO : what to do with id?
-        JSONObject jsonObj = new JSONObject("{{id:1, question:'"+q.getQuestion()+": ', hint:'"+q.getHint()+"', type:'"+q.getType()+"'}}");
+        // TODO : possible answers
+        JSONObject jsonObj = new JSONObject("{ \"question\" : {\"id\":1, \"question\":'"+q.getQuestion()+": ', \"hint\":'"+q.getHint()+"', \"type\":'"+q.getType()+"'}}");
         return jsonObj;        
     }
 
