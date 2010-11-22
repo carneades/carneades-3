@@ -26,9 +26,9 @@ public class QuestionHelper {
     }
     
     public static JSONObject getJSONFromQuestion(Question q) throws JSONException{
-        // TODO : what to do with id?
+        // TODO : what to do with id? - ID simply numbered, e.g. 1st question's id = 1, 2nd = 2 etc.
         // TODO : possible answers
-        JSONObject jsonObj = new JSONObject("{ \"question\" : {\"id\":1, \"question\":'"+q.getQuestion()+": ', \"hint\":'"+q.getHint()+"', \"type\":'"+q.getType()+"'}}");
+        JSONObject jsonObj = new JSONObject("{ \"question\" : {\"id\":1, \"question\":\""+q.getQuestion()+": \", \"hint\":\""+q.getHint()+"\", \"type\":\""+q.getType()+"\", \"category\" : \""+q.getCategory()+"\"}}");
         return jsonObj;        
     }
 
