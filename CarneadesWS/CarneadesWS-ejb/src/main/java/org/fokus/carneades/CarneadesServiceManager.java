@@ -40,13 +40,19 @@ public class CarneadesServiceManager implements CarneadesService{
     private List<Statement> answers = new ArrayList<Statement>();
 
     public CarneadesServiceManager() {
+        log.info("constructing stateful session bean");
         try {
             // loading scripts
+            log.info("loading lkif.clj");
             RT.loadResourceScript("carneades/engine/lkif.clj");
+            log.info("loading ask.clj");
             RT.loadResourceScript("carneades/engine/ask.clj");
             // RT.loadResourceScript("carneades/engine/argument-search.clj");
+            log.info("loading shell.clj");
             RT.loadResourceScript("carneades/engine/shell.clj");
+            log.info("loading viewer.clj");
             RT.loadResourceScript("carneades/ui/diagram/viewer.clj");
+            log.info("loading clojure files finished");
         } catch(Exception e) {
             log.error(e.toString());
         }
@@ -56,8 +62,8 @@ public class CarneadesServiceManager implements CarneadesService{
 
         CarneadesMessage cm = null;
 
-        log.debug("starting engine with kb: "+kb);
-        log.debug("query: "+query.toString());
+        log.info("starting engine with kb: "+kb);
+        log.info("query: "+query.toString());
 
         this.answers.addAll(answers);
 
@@ -81,14 +87,14 @@ public class CarneadesServiceManager implements CarneadesService{
             } else {
                 solutions = (LazySeq)RT.var("carneades.engine.shell", "continue-construction").invoke(goal, 50, this.state, generators);
             }
-            log.debug("solution found");
+            log.info("solution found");
             PersistentStructMap solAG = (PersistentStructMap)RT.var("carneades.engine.shell", "unite-solutions").invoke(solutions);
             cm = new CarneadesMessage();
             cm.setMessage(query);
             cm.setAG(solAG);
             cm.setType(MessageType.SOLUTION);
         }catch(AskException e) {
-            log.debug("question from engine");
+            log.info("question from engine");
             Statement goal = ClojureUtil.getStatementFromSeq(e.getGoal());
             this.state = e.getState();
             cm = new CarneadesMessage();
