@@ -59,6 +59,11 @@
                    (:substitutions s)))
       sols)))
 
+(defn continue-construction
+  ([goal max-nodes state generators]
+     (find-best-arguments traverse depth-first max-nodes 1
+                          state generators))
+
 (defn construct-arguments
   "integer integer argument-graph (seq-of generator) -> statement -> (seq-of state)"
   ([goal max-nodes ag generators]
