@@ -1,4 +1,4 @@
-package org.fokus.carneades.carneadesclient;
+package org.fokus.carneades.clojureutil;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
