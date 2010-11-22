@@ -93,23 +93,64 @@ $(function(){ // Init
                    statusupdate(1,textStatus);
            },
            timeout : 60000,
-           dataType: 'json',
+           dataType: "json",
            type: "POST"
         });
 
         $.ajax({
           data: {
-              doWhat : "topics"
-          },
-          success: function(data){
-              var qlist = $("#questionlist");
+            doWhat : "topics"
+        },
+        success: function(data){
+            alert(data);
+            var qbox = $("#questions");
+            var output;
+            qbox.empty();
+            $.each(data.questions, function(i,item){
+                output = "<div>";
+                output += "<h3><a href=\"#\">"+item.question+"</a></h3>";
+                if (item.type == "select") {
+                    output += "<select id=\"qID"+item.id+"\" name=\"qID"+item.id+"\">";
+                    $.each(item.answers, function(answindex, answer) {
+                        output += "<option value=\""+answer+"\">"+answer+"</option>";
+                    });
+                    output += "</select>";
+                }
+                else if (item.type == "date") {
+                    output += "<input type=\"text\" class=\"datefield\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\"/>";
+                }
+                else if (item.type == "int") {
+                    output += "<input type=\"text\" class=\"integer\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\"/>";
+                }
+                else output += "<input type=\""+item.type+"\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\"/>";
+                output += "</div>";
+                qbox.append(output);
+            });
+            $('.datefield').datepicker({
+                regional: "de",
+                changeMonth: true,
+                changeYear: true
+            });
+            $('.integer').change(function(){
+                if (this.value.search(/\D/) != -1) {
+                    qwarn(this,"Please insert a integer. No characters or whitespaces allowed.");
+                }
+
+            });
+        }
+    });
+});
+
+
+/*
+ *  liste bearbeiten.
+              var qlist = $("#question");
               qlist.empty();
-              $.each(data.content, function(i,item){
+              $.each(data.questions, function(i,item){
                   qlist.append("<li onclick=\"loadQuestions('"+item.id+"')\">"+item.name+" ("+item.len+")</li>");
               });
-          }
-        });
-});
+ *
+ **/
 
 function statusupdate(type, text) {
     var icon="";
