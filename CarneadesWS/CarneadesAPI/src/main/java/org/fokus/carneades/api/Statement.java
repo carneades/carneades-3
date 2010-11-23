@@ -5,6 +5,7 @@
 
 package org.fokus.carneades.api;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
  *
  * @author stb
  */
-public class Statement {
+public class Statement implements Serializable{
 
     private String predicate;
     private List<String> args = new ArrayList<String>();

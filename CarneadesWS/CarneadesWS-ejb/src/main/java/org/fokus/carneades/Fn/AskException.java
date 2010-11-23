@@ -5,8 +5,8 @@
 
 package org.fokus.carneades.Fn;
 
-import clojure.lang.LazySeq;
 import clojure.lang.PersistentStructMap;
+import java.util.List;
 
 /**
  *
@@ -14,15 +14,15 @@ import clojure.lang.PersistentStructMap;
  */
 public class AskException extends Exception{
 
-    private LazySeq goal;
+    private List goal;
     private PersistentStructMap state;
 
-    public AskException(LazySeq goal, PersistentStructMap state) {
+    public AskException(List goal, PersistentStructMap state) {
         this.goal = goal;
         this.state = state;
     }
 
-    public LazySeq getGoal() {
+    public List getGoal() {
         return goal;
     }
 

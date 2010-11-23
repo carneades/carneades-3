@@ -295,11 +295,13 @@
          :import-kbs {},
          :import-ags {}}
         (let [is-url? (try (new URL url) (catch MalformedURLException e false)),
-              prepath (str (.getAbsolutePath (. (new File path) getParentFile)) "/")
+              prepath (if is-url?
+                        nil
+                        (str (.getAbsolutePath (. (new File path) getParentFile)) "/")),
               url (if (or is-url? (. (new File url) isAbsolute))
                     url
                     (str prepath url))]
-          (println "uri:" url)
+          ;(println "uri:" url)
           (cond
             (lkif? url) (let [i (lkif-import* url (cons url files)),
                               rb (:rb i),
@@ -317,7 +319,7 @@
                            :import-ags imp-ags}),
             (owl? url) {:name url,
                         :import-tree nil,
-                        :import-kbs (assoc {} url (load-ontology (.getName (new File url)) prepath)),
+                        :import-kbs (assoc {} url (load-ontology url prepath)),
                         :import-ags {}})))))
 
 (defn import-imports

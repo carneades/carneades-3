@@ -7,14 +7,11 @@ package org.fokus.carneades;
 
 import clojure.lang.Fn;
 import clojure.lang.Keyword;
-import clojure.lang.LazySeq;
-import clojure.lang.PersistentArrayMap;
-import clojure.lang.PersistentList;
-import clojure.lang.PersistentStructMap;
 import clojure.lang.RT;
 import clojure.lang.Symbol;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.Stateful;
 import org.fokus.carneades.Fn.AskException;
 import org.fokus.carneades.Fn.Askable;
@@ -23,6 +20,7 @@ import org.fokus.carneades.api.CarneadesMessage;
 import org.fokus.carneades.api.MessageType;
 import org.fokus.carneades.api.Statement;
 import org.fokus.carneades.clojureutil.ClojureUtil;
+import org.fokus.carneades.common.ExceptionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +34,7 @@ public class CarneadesServiceManager implements CarneadesService{
 
     private static final Logger log = LoggerFactory.getLogger(CarneadesServiceManager.class);
 
-    private PersistentStructMap state = null;
+    private Map state = null;
     private List<Statement> answers = new ArrayList<Statement>();
 
     public CarneadesServiceManager() {
@@ -63,50 +61,78 @@ public class CarneadesServiceManager implements CarneadesService{
         CarneadesMessage cm = null;
 
         log.info("starting engine with kb: "+kb);
-        log.info("query: "+query.toString());
+        log.info("query: " + query.toString());
 
         this.answers.addAll(answers);
 
-        try{
+        try {
             // importing lkif
-            PersistentArrayMap lkif = (PersistentArrayMap)RT.var("carneades.engine.lkif", "lkif-import").invoke(kb);
+            log.info("loading lkif");
+            Map lkif = (Map) RT.var("carneades.engine.lkif", "lkif-import").invoke(kb);
 
             // constructing arguments
-            LazySeq argGraphs = (LazySeq)lkif.get(Keyword.intern("ags"));            
-            PersistentList goal = (PersistentList)RT.var("clojure.core","list").invoke(Symbol.intern("p"), Symbol.intern("?x"));
-            Fn lkifGen = (Fn)RT.var("carneades.engine.lkif", "generate-arguments-from-lkif").invoke(lkif);
+            List argGraphs = (List) lkif.get(Keyword.intern("ags"));
+            log.info("creating goal");
+            List goal = (List) RT.var("clojure.core", "list").invoke(Symbol.intern("p"), Symbol.intern("?x"));
+            log.info("creating lkif generator");
+            Fn lkifGen = (Fn) RT.var("carneades.engine.lkif", "generate-arguments-from-lkif").invoke(lkif);
+            log.info("creating askable? function");
             Askable askFn = new Askable();
-            List<LazySeq> cljAnswers = ClojureUtil.getSeqFromStatementList(this.answers);
+            log.info("creating answers");
+            List<List> cljAnswers = ClojureUtil.getSeqFromStatementList(this.answers);
             GetAnswer getAnswerFn = new GetAnswer(cljAnswers);
-            Fn askGen = (Fn)RT.var("carneades.engine.ask","").invoke(askFn, getAnswerFn);
-            PersistentList generators = (PersistentList)RT.var("clojure.core", "list").invoke(askGen, lkifGen);
-            LazySeq solutions;
-            if(this.state == null){
-                PersistentStructMap ag = (PersistentStructMap)argGraphs.first();
-                solutions = (LazySeq)RT.var("carneades.engine.shell", "construct-arguments").invoke(goal, 50, ag, generators);
+            log.info("creating ask generator");
+            Fn askGen = (Fn) RT.var("carneades.engine.ask", "ask-user").invoke(askFn, getAnswerFn);
+            log.info("combining generators");
+            List generators = (List) RT.var("clojure.core", "list").invoke(askGen, lkifGen);
+            List solutions;
+            if (this.state == null) {
+                log.info("starting engine for the first time");
+                Map ag = (Map) argGraphs.get(0);
+                solutions = (List) RT.var("clojure.core", "doall").invoke(RT.var("carneades.engine.shell", "construct-arguments").invoke(goal, 50, ag, generators));
             } else {
-                solutions = (LazySeq)RT.var("carneades.engine.shell", "continue-construction").invoke(goal, 50, this.state, generators);
+                log.info("starting engine again");
+                solutions = (List) RT.var("clojure.core", "doall").invoke(RT.var("carneades.engine.shell", "continue-construction").invoke(goal, 50, this.state, generators));
             }
-            log.info("solution found");
-            PersistentStructMap solAG = (PersistentStructMap)RT.var("carneades.engine.shell", "unite-solutions").invoke(solutions);
+            // solution found
+            log.info("solution found: " + solutions.getClass().getName());
+            log.info("uniting solutions");
+            Map solAG = (Map) RT.var("carneades.engine.shell", "unite-solutions").invoke(solutions);
+            log.info("creating CarneadesMessage");
             cm = new CarneadesMessage();
             cm.setMessage(query);
             cm.setAG(solAG);
             cm.setType(MessageType.SOLUTION);
-        }catch(AskException e) {
-            log.info("question from engine");
-            Statement goal = ClojureUtil.getStatementFromSeq(e.getGoal());
-            this.state = e.getState();
-            cm = new CarneadesMessage();
-            cm.setMessage(goal);
-            cm.setAG(null);
-            cm.setType(MessageType.ASKUSER);
-        }catch (Exception e) {
-            log.error("Error during argumentation construction");            
-        }
+        } catch (RuntimeException e) {
+            Throwable cause = ExceptionHelper.skipRuntimeExceptions(e);
+            if (cause instanceof AskException) {
+                // asking user
+                AskException ae = (AskException)cause;
+                log.info("question from engine");
+                Statement subgoal = ClojureUtil.getStatementFromSeq(ae.getGoal());
+                this.state = ae.getState();
+                cm = new CarneadesMessage();
+                cm.setMessage(subgoal);
+                cm.setAG(null);
+                cm.setType(MessageType.ASKUSER);
+            } else {
+                // other runtime exception
+                handleStandardError(e);
+            }
+   
+        } catch (Exception e) {
+            handleStandardError(e);
+        } finally {
 
-        return cm;
+            return cm;
+            
+        }
         
+    }
+    
+    private static void handleStandardError(Exception e) {
+        log.error("Error during argumentation construction: " + e.getClass().getName() + " " + e.getCause().getMessage());
+        e.printStackTrace();
     }
 
 }

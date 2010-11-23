@@ -92,8 +92,11 @@ public class CarneadesServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             out.println("<pre>"+e.toString() +"</pre>");
         } catch (UndeclaredThrowableException e){
-            log.info(e.getUndeclaredThrowable().getMessage());
-            out.println("<pre>"+e.toString() +"</pre>");
+            log.error(e.getUndeclaredThrowable().getMessage());
+            out.println("<pre>"+e.toString());
+            e.getCause().printStackTrace(out);
+            out.println("</pre>");
+            e.printStackTrace();
         } catch (Exception e) {
             log.error(e.getMessage());
             out.println("<pre>"+e.toString() +"</pre>");
