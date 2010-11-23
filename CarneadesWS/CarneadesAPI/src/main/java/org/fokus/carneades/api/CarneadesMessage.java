@@ -5,15 +5,16 @@
 
 package org.fokus.carneades.api;
 
-import clojure.lang.PersistentStructMap;
+import java.io.Serializable;
+import java.util.Map;
 
 /**
  *
  * @author stb
  */
-public class CarneadesMessage {
+public class CarneadesMessage implements Serializable{
 
-    private PersistentStructMap AG;
+    private Map AG;
     private Statement message;
     private MessageType type;
 
@@ -24,7 +25,7 @@ public class CarneadesMessage {
         return AG;
     }
 
-    public void setAG(PersistentStructMap State) {
+    public void setAG(Map State) {
         this.AG = State;
     }
 

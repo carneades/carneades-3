@@ -25,17 +25,19 @@
   (= (:tag (xml/parse url)) :rdf:RDF))
 
 (defn- path->uri
-  [path]
+  [path prepath]
   (let [file (new File path)]
     (if (. file exists)
       (. file toURI)
-      (new URI path))))
+      (if prepath
+        (path->uri (str prepath path) nil)
+        (new URI path)))))
 
 (defn- iri-to-file-mapper [prepath]
   (proxy [OWLOntologyIRIMapper] []
     (getDocumentIRI [ontIRI]
       ;(println "mapper in: ontURI:" ontIRI (.getScheme ontIRI))
-      (if (= (.getScheme ontIRI) "file")
+      (if (or (nil? prepath) (= (.getScheme ontIRI) "file"))
         (do
           ;(println "mapper map: no map")
           ontIRI)
@@ -44,7 +46,7 @@
               uriPath (if (= (.indexOf uriPath* ".") -1)
                         (str uriPath* ".owl")
                         uriPath*),
-              iri (IRI/create (path->uri (str prepath uriPath)))]
+              iri (IRI/create (path->uri uriPath prepath))]
           ;(println "mapper map:" ontIRI "->" iri)
           iri)))))
 
@@ -55,13 +57,14 @@
         (println "!!! could not load ontology " uri "!!!")))))
 
 (defn load-ontology
-  ([path] (load-ontology path ""))
+  ([path] (load-ontology path nil))
   ([path pre-path]
+    ;(println "loading ontology" path pre-path)
     (let [manager (OWLManager/createOWLOntologyManager),
           se (. manager setSilentMissingImportsHandling true)
           mih (. manager addMissingImportListener missing-import-handler),
-          iri-map (. manager addIRIMapper (iri-to-file-mapper pre-path)),
-          documentIRI (IRI/create (path->uri (str pre-path path))),
+          iri-map (. manager addIRIMapper (iri-to-file-mapper pre-path)),          
+          documentIRI (IRI/create (path->uri path pre-path)),
           ontology (. manager loadOntology documentIRI),
           reasoner (. (new Reasoner$ReasonerFactory) createReasoner ontology)]
       (. reasoner prepareReasoner)
