@@ -1,6 +1,7 @@
 package org.fokus.carneades.common;
 
 
+import org.fokus.carneades.CarneadesService;
 import org.fokus.carneades.CarneadesServiceManager;
 
 /**
@@ -14,8 +15,8 @@ public class EjbLocator extends AbstractJndiServiceLocator{
 	private static final String APPLICATION_NAME = "CarneadesWS-ear";
 
 		
-	public static CarneadesServiceManager getCarneadesService(){
-		return (CarneadesServiceManager) getRemoteReference(getRefName(CarneadesServiceManager.class, APPLICATION_NAME));
+	public static CarneadesService getCarneadesService(){
+		return (CarneadesService) getRemoteReference(getRefName(CarneadesServiceManager.class, APPLICATION_NAME));
 	}
 
 }

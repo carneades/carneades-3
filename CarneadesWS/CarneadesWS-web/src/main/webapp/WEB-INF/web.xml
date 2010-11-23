@@ -15,7 +15,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>KnowledgbaseServlet</servlet-name>
-        <url-pattern>/kb</url-pattern>
+        <url-pattern>/kb/*</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

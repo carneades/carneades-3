@@ -4,26 +4,27 @@
   (:use
     carneades.engine.unify
     carneades.engine.argument-search
+    ;carneades.engine.argument
     )
   ;(:import )
   )
 
 (defn ask-user
   [askable? get-answer]
-  (fn [goal state]
-    (let [g (apply-substitution (:substitution state) goal)]
+  (fn [goal s]
+    (let [g (apply-substitution (:substitution s) goal)]
       (if (askable? g)
-        (get-answer g state)
+        (get-answer g s)
         nil))))
 
 (defn reply
-  [state goal answer]
-  (let [subs1 (:substitutions state),
+  [s goal answer]
+  (let [subs1 (:substitutions s),
         subs2 (unify goal answer subs1)]
     (if subs2
-      (make-response
+      (response
         subs2
-        (argument
+        (carneades.engine.argument/argument
           (gensym 'a)
           'pro
           answer
