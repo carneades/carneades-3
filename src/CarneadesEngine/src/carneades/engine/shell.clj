@@ -60,7 +60,7 @@
       sols)))
 
 (defn continue-construction
-  ([goal max-nodes state generators]
+  [goal max-nodes state generators]
      (find-best-arguments traverse depth-first max-nodes 1
                           state generators))
 
