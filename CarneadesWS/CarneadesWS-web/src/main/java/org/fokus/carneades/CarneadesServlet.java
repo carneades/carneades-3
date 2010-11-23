@@ -7,6 +7,7 @@ package org.fokus.carneades;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -20,7 +21,6 @@ import org.fokus.carneades.api.Statement;
 import org.fokus.carneades.common.EjbLocator;
 import org.fokus.carneades.questions.Question;
 import org.fokus.carneades.questions.QuestionHelper;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -91,14 +91,18 @@ public class CarneadesServlet extends HttpServlet {
             }*/
         } catch (NumberFormatException e) {
             out.println("<pre>"+e.toString() +"</pre>");
+        } catch (UndeclaredThrowableException e){
+            log.info(e.getUndeclaredThrowable().getMessage());
+            out.println("<pre>"+e.toString() +"</pre>");
         } catch (Exception e) {
+            log.error(e.getMessage());
             out.println("<pre>"+e.toString() +"</pre>");
         } finally {
             out.close();
         }
     }
     
-    private String askEngine(CarneadesService manager, List<Statement> answers) {
+    private String askEngine(CarneadesService service, List<Statement> answers) {
         String result = "";        
         // creating query        
         // TODO : get query for discussion
@@ -109,8 +113,8 @@ public class CarneadesServlet extends HttpServlet {
         // TODO : get kb for discussion
         String kb = "http://localhost:8080/CarneadesWS-web/kb/lkif.xml";
         // ask
-        log.info("calling ask from ejb");
-        CarneadesMessage msg = manager.askEngine(query, kb, answers);
+        log.info("calling ask from ejb: " + query.toString());        
+        CarneadesMessage msg = service.askEngine(query, kb, answers);
         // evaluate answer
         log.info("call from ejb returned:"+msg.getType().toString());
         if (MessageType.ASKUSER.equals(msg.getType())) {
