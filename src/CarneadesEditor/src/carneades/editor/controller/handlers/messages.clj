@@ -24,7 +24,7 @@
 (defvar *goalwizard-error* "Goal Assistant Error")
 (defvar *no-mainissue* "Please assign a main issue to the graph first.")
 
-(defvar *point-of-view* "Choose A Point Of View")
+(defvar *point-of-view* "Choose a Point Of View")
 (defvar *choose-point-of-view* "Choose a point of view")
 ;; (defvar *positions* "Choose A Position")
 ;; (defvar *select-position* "Select a position")
@@ -42,3 +42,13 @@
 
 (defvar *imports* "Imports")
 (defvar *remove-imports* "Permanently remove all selected imports?")
+
+(defvar *instantiatescheme-title* "Instantiate Scheme")
+(defvar *schemes-panel* "Choose a Scheme")
+(defvar *select-a-scheme* "Select a Scheme")
+
+(defvar *clauses-panel-desc* "Choose a Clause")
+;; (defvar *literal-panel-desc* "Choose a Literal")
+(defvar *complete-form-n* "Fill in Literal %s")
+        
+(defvar *fillin-form* "Fill in the form")

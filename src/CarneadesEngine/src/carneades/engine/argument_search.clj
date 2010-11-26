@@ -238,10 +238,7 @@
          (map (fn [response]
                 (make-successor-state (:state node) response))
               (mapinterleave (fn [clause]
-                               (let [goal (first clause)
-                                     ;dummy-states (binding [*out* (new PrintWriter "test.txt")] (generator goal state1))
-                                     ]
-                                 ;(println "generating for goal:" goal (count dummy-states) generator)
+                               (let [goal (first clause)]
                                  (generator goal state1)))
                              (next-goals state1))))))
 

@@ -8,6 +8,8 @@
    [this]
    formatted))
 
+(defrecord LiteralFormular [formid panel textfields])
+
 (defprotocol SwingGoalWizard
   (set-main-issue [this mainissue])
   (set-abduction-busy [this busy])
@@ -32,3 +34,21 @@
   (get-searcharguments-panel [this])
   (arguments-found [this found])
   (set-argumentsearch-busy [this busy]))
+
+(defprotocol SwingInstantiateSchemeWizard
+  (display-clause [this clause clauseidx nb-clauses statement-formatted])
+  (conclusionmatches-button-selected? [this])
+  (conclusionmatches-button-enabled? [this])
+  (set-conclusionmatches-button-enabled [this enabled])
+  (set-conclusionmatches-button-listener [this f args])
+  (set-conclusion-statement [this stmt])
+  (get-schemes-panel [this])
+  (get-clauses-panel [this])
+  (display-schemes [this descs])
+  (set-filter-text-listener [this f args])
+  (get-filter-text [this])
+  (set-previous-clause-button-listener [this f args])
+  (set-next-clause-button-listener [this f args])
+  (create-literal-formular [this formid literal suggestions variables suffix listener args])
+  (fillin-formular [this form var-values] "does nothing if var does not exist for the form")
+  )

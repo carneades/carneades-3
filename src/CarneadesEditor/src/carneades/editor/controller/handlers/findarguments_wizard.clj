@@ -9,26 +9,20 @@
         carneades.editor.controller.handlers.messages
         (carneades.engine shell statement lkif)
         [carneades.engine.search :only (depth-first breadth-first)]
-        (carneades.editor.view swinguiprotocol viewprotocol wizardsprotocol)))
-
-(defn- get-selected-statement [view path id]
-  (when-let [node (get-selected-node view path id)]
-    (when (statement? node)
-      node)))
+        (carneades.editor.view viewprotocol wizardsprotocol)))
 
 (defvar- *goal* (atom nil))
 
-(defn on-pre-findarguments-wizard [view path id]
+(defn on-pre-findarguments-wizard [view path id goal]
   (when-let [ag (get-ag path id)]
-    (let [goal (get-selected-statement view path id)]
-      (if (nil? goal)
-        (do
-          (display-error view *findargumentswizard-error* *no-statementselected*)
-          false)
-        (do
-          (reset! *goal* goal)
-          (set-goal view (statement-formatted goal))
-          true)))))
+    (if (nil? goal)
+      (do
+        (display-error view *findargumentswizard-error* *no-statementselected*)
+        false)
+      (do
+        (reset! *goal* goal)
+        (set-goal view (statement-formatted goal))
+        true))))
 
 (defvar- *newag* (atom nil))
 (defvar- *search-state* (atom :stopped) ":stopped, :running or :stopping")
@@ -48,26 +42,28 @@
   (when-let [ag (get-ag path id)]
     (do-swing-and-wait
      (set-argumentsearch-busy view true))
-    (let [complement (get settings "complement")
-          goal (deref *goal*)
-          goal (if complement (statement-complement goal) goal)
-          lkif (get-lkif path)
-          max-nodes (get settings "max-nodes")
-          max-turns (get settings "max-turns")
-          search-strategy (get settings "search-strategy")
-          strategy (case search-strategy
-                         "Depth first" depth-first
-                         "Breadth first" breadth-first)
-          solutions (construct-arguments goal max-nodes max-turns strategy ag
-                                         (list (generate-arguments-from-lkif lkif)))
-          ag2 (assoc (unite-solutions solutions)
-                :id (:id ag)
-                :main-issue (:main-issue ag)
-                :title (:title ag))]
-      (when (= (deref *search-state*) :running)
-        (do
-          (reset! *newag* ag2)
-          (prn "setting state to stopped")
+    (letfn [(arguments-found?
+             [ag ag2]
+             (not= (count (:arguments ag)) (count (:arguments ag2))))]
+      (let [complement (get settings "complement")
+            goal (deref *goal*)
+            goal (if complement (statement-complement goal) goal)
+            lkif (get-lkif path)
+            max-nodes (get settings "max-nodes")
+            max-turns (get settings "max-turns")
+            search-strategy (get settings "search-strategy")
+            strategy (case search-strategy
+                           "Depth first" depth-first
+                           "Breadth first" breadth-first)
+            solutions (construct-arguments goal max-nodes max-turns strategy ag
+                                           (list (generate-arguments-from-lkif lkif)))
+            ag2 (assoc (unite-solutions solutions)
+                  :id (:id ag)
+                  :main-issue (:main-issue ag)
+                  :title (:title ag))]
+        (when (= (deref *search-state*) :running)
+          (when (arguments-found? ag ag2)
+            (reset! *newag* ag2))
           (reset! *search-state* :stopped)
           (do-swing-and-wait
            (arguments-found view true)
