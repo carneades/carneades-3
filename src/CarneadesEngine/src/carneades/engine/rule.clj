@@ -13,7 +13,8 @@
     [carneades.engine.search :only (breadth-first search)]
     [carneades.engine.dnf :only (to-dnf)]
     [carneades.engine.unify :only (genvar unify rename-variables apply-substitution)])
-  (:require [carneades.engine.argument-search :as as]))
+  (:require [clojure.string :as str]
+            [carneades.engine.argument-search :as as]))
 
 
 ;; This is an implementation of the argumentation scheme for
@@ -281,19 +282,12 @@ with some goal."
 (defn rulebase [& l]
   (add-rules *empty-rulebase* l))
 
-(defn- concat-scheme
-  [l]
-  (condp = (count l)
-    0 "",
-    1 (first l),
-    (str (first l) "-" (concat-scheme (rest l)))))
+(defn- concat-scheme [l]
+  (str/join "-" l))
 
-(defn- remove-inst
-  [s]
-  (let [sl (.split s "-"),
-        slr (reverse (rest (reverse sl)))]
-    (concat-scheme slr)))
-
+(defn- remove-inst [s]
+  (let [sl (.split s "-")]
+    (concat-scheme (butlast sl))))
 
 (let [counter (atom 0)]
   (letfn [(reset-counter []
