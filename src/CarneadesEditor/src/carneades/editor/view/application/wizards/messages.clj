@@ -6,3 +6,5 @@
 
 (defvar *position-n-of* "Position %d of %d:")
 (defvar *position* "Position:")
+
+(defvar *clause-n-of* "Clause %d of %d:")

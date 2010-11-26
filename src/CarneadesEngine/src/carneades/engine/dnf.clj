@@ -391,3 +391,11 @@
         (implication-conversion 
          (equivalence-conversion formula))))))
     formula))
+
+;; (defn filter-literals [dnf]
+;;   "returns a set of all literals contained in a dnf"
+;;   (set (mapcat identity dnf)))
+
+;; (defn filter-literals [clause]
+;;   "returns a set of all literals contained in a clause"
+;;   (set (mapcat identity clause)))

@@ -384,6 +384,12 @@ public class EditorApplicationView extends javax.swing.JFrame {
         assistantFindGoalMenuItem.setText("Find Goal...");
         assistantMenu.add(assistantFindGoalMenuItem);
 
+        assistantFormalizeStatementMenuItem.setText("Formalize Statement...");
+        assistantMenu.add(assistantFormalizeStatementMenuItem);
+
+        assistantInstantiateSchemeMenuItem.setText("Instantiate Scheme...");
+        assistantMenu.add(assistantInstantiateSchemeMenuItem);
+
         menuBar.add(assistantMenu);
 
         helpMenu.setText("Help");
@@ -435,6 +441,8 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JPopupMenu argumentPopupMenu = new javax.swing.JPopupMenu();
     public final javax.swing.JMenuItem assistantFindArgumentsMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem assistantFindGoalMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem assistantFormalizeStatementMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem assistantInstantiateSchemeMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenu assistantMenu;
     public final javax.swing.JMenuItem closeFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem closeGraphMenuItem = new javax.swing.JMenuItem();
