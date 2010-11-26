@@ -66,4 +66,4 @@
 
 (defvar *assistantFindGoalMenuItem* (.assistantFindGoalMenuItem *frame*))
 (defvar *assistantFindArgumentsMenuItem* (.assistantFindArgumentsMenuItem *frame*))
-
+(defvar *assistantInstantiateSchemeMenuItem* (.assistantInstantiateSchemeMenuItem *frame*))

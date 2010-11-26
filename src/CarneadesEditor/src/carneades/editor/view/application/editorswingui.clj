@@ -3,6 +3,7 @@
 
 (ns carneades.editor.view.application.editorswingui
   (:use clojure.contrib.def
+        clojure.contrib.pprint
         clojure.contrib.swing-utils
         carneades.editor.view.application.editorswingui-helpers
         carneades.editor.view.dialogs.statement-editor
@@ -18,6 +19,8 @@
                                     WizardObserver WizardBranchController)
            org.netbeans.api.wizard.WizardDisplayer
            (carneades.mapcomponent.map StatementCell ArgumentCell PremiseCell)))
+
+(defvar- do-once (System/setProperty "wizard.sidebar.image" "carneades-bright.png"))
 
 (deftype EditorSwingUI []
   SwingUI
@@ -42,8 +45,9 @@
    [this f args]
    (register-keyenter-searchresult-listener f args))
 
-  (add-open-file-menuitem-listener [this f args]
-                                   (apply add-action-listener *openFileMenuItem* f args))
+  (add-open-file-menuitem-listener
+   [this f args]
+   (apply add-action-listener *openFileMenuItem* f args))
 
   (add-close-file-menuitem-listener
    [this f args]
@@ -230,6 +234,10 @@
    [this f args]
    (apply add-action-listener *assistantFindArgumentsMenuItem* f args))
 
+  (add-instantiatescheme-assistantmenuitem-listener
+   [this f args]
+   (apply add-action-listener *assistantInstantiateSchemeMenuItem* f args))
+
   (add-quit-filemenuitem-listener
    [this f args]
    (apply add-action-listener *quitFileMenuItem* f args))
@@ -306,8 +314,18 @@
   (create-wizard
    [this title panels cancel-fn args]
    "cancel-fn must return true when cancel is possible
-    cancel-fn is called with (apply cancel-fn settings args)"
-   (System/setProperty "wizard.sidebar.image" "carneades-bright.png")
+    cancel-fn is called with (apply cancel-fn settings args)
+
+    panels is a vector of panel. A panel is a structmap with the following keys,
+    :panel the Swing JPanel, :desc a string describing the panel 
+    :id an optional string id, used for branched wizards
+    :validator a validator function
+    :args the argument to pass to the validator and the listener in addition to
+    the first settings argument
+
+    NOTE that the :listener of the first panel will not be called
+    when the wizard is displayed, only when the user goes back
+    from the second panel"
    (let [wizardpages (create-wizardpages panels)
          producer (reify WizardPage$WizardResultProducer
                     (finish [this data]
@@ -318,20 +336,7 @@
                               true)))
          wizard (WizardPage/createWizard title
                                          (into-array (map :page wizardpages)) producer)]
-     (.addWizardObserver wizard (reify WizardObserver
-                                  (navigabilityChanged [this wizard])
-                                  (selectionChanged
-                                   [this wizard]
-                                   (let [step (.getStepDescription
-                                               wizard
-                                               (.getCurrentStep wizard))]
-                                     (when-let [pagedata (first (filter #(= (:desc %) step) wizardpages) )]
-                                       (when-let [listener (:listener pagedata)]
-                                         (let [args (:args pagedata)
-                                               wizardpage (:page pagedata)
-                                               datamap (.getWizardDataMap wizardpage)]
-                                           (apply listener datamap args))))))
-                                  (stepsChanged [this wizard])))
+     (.addWizardObserver wizard (create-wizardobserver wizardpages))
      wizard))
 
   (display-wizard
@@ -344,14 +349,14 @@
 
   (display-branched-wizard
    [this basepanels selector args]
-   (let [pages (into-array (map :page (create-wizardpages basepanels)))]
+   (let [wizardpages (create-wizardpages basepanels)
+         pages (into-array (map :page wizardpages))]
      (let [brancher (proxy [WizardBranchController] [pages]
                       (getWizardForStep
                        [step settings]
-                       (let [wizard (proxy-super createWizard)
-                             step (.getStepDescription wizard step)]
-                         (apply selector step settings args))))
+                       (apply selector settings step args)))
            wizard (.createWizard brancher)]
+       (.addWizardObserver wizard (create-wizardobserver wizardpages))
        (display-wizard this wizard))))
-  
-  )
+)
+
