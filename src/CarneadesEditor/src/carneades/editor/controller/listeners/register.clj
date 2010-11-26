@@ -91,6 +91,8 @@
   (add-findgoal-assistantmenuitem-listener view findgoal-assistantmenuitem-listener [view])
   (add-findarguments-assistantmenuitem-listener
    view findarguments-assistantmenuitem-listener [view])
+  (add-instantiatescheme-assistantmenuitem-listener
+   view instantiatescheme-assistantmenuitem-listener [view])
   
   (add-import-button-listener view import-button-listener [view])
   (add-remove-import-button-listener view remove-import-button-listener [view])

@@ -10,19 +10,31 @@
 
 (defn create-wizardpages [panels]
   (map (fn [panel]
-         (let [{:keys [panel desc validator listener args]} panel
+         (let [{:keys [panel desc validator listener args id]} panel
+               id (if (nil? id) (str (gensym desc)) id)
                wizardpage
-               (proxy [WizardPage] [desc]
+               (proxy [WizardPage] [id desc]
                  (validateContents
                   [comp event]
                   (if validator
                     (apply validator (proxy-super getWizardDataMap) args)
-                    nil))
-                 (getWizardDataMap
-                  []
-                  (proxy-super getWizardDataMap)))]
+                    nil)))]
            (doto wizardpage
              (.setLayout (BorderLayout.))
              (.add panel))
-           {:desc desc :page wizardpage :listener listener :args args}))
+           {:desc desc :id id :page wizardpage :listener listener :args args}))
        panels))
+
+(defn create-wizardobserver [wizardpages]
+  (reify WizardObserver
+    (navigabilityChanged [this wizard])
+    (selectionChanged
+     [this wizard]
+     (let [stepid (.getCurrentStep wizard)]
+       (when-let [pagedata (first (filter #(= (:id %) stepid) wizardpages))]
+         (when-let [listener (:listener pagedata)]
+           (let [args (:args pagedata)
+                 wizardpage (:page pagedata)
+                 datamap (.getWizardDataMap wizardpage)]
+             (apply listener datamap args))))))
+    (stepsChanged [this wizard])))

@@ -131,6 +131,7 @@
                      *printFileMenuItem*
                      *assistantFindGoalMenuItem*
                      *assistantFindArgumentsMenuItem*
+                     *assistantInstantiateSchemeMenuItem*
                      *selectAllEditMenuItem*])
 
 (defn set-current-ag-context-empty []
