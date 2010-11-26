@@ -5,13 +5,15 @@
   (:use carneades.editor.utils.type
         (carneades.editor.view viewprotocol swinguiprotocol wizardsprotocol)
         (carneades.editor.view.application editorview editorswingui)
-        (carneades.editor.view.application.wizards goal findarguments))
+        (carneades.editor.view.application.wizards goal findarguments instantiatescheme))
   (:import carneades.editor.view.application.editorview.EditorView
            carneades.editor.view.application.editorswingui.EditorSwingUI
            carneades.editor.view.application.wizards.goal.EditorSwingGoalWizard
-           carneades.editor.view.application.wizards.findarguments.EditorSwingFindArgumentsWizard))
+           carneades.editor.view.application.wizards.findarguments.EditorSwingFindArgumentsWizard
+           carneades.editor.view.application.wizards.instantiatescheme.EditorInstantiateSchemeWizard))
 
-(defrecord SwingView [view swingui swinggoalwizard swingfindargumentswizard])
+(defrecord SwingView [view swingui swinggoalwizard
+                      swingfindargumentswizard swinginstantiateschemewizard])
 
 (auto-extend SwingView carneades.editor.view.viewprotocol/View
              (:view this))
@@ -21,10 +23,18 @@
              (:swinggoalwizard this))
 (auto-extend SwingView carneades.editor.view.wizardsprotocol/SwingFindArgumentsWizard
              (:swingfindargumentswizard this))
+(auto-extend SwingView carneades.editor.view.wizardsprotocol/SwingInstantiateSchemeWizard
+             (:swinginstantiateschemewizard this))
 
 (defn create-swingview []
   (let [view (EditorView.)
         swingui (EditorSwingUI.)
         swinggoalwizard (EditorSwingGoalWizard.)
-        swingfindargumentswizard (EditorSwingFindArgumentsWizard.)]
-    (SwingView. view swingui swinggoalwizard swingfindargumentswizard)))
+        swingfindargumentswizard (EditorSwingFindArgumentsWizard.)
+        swinginstantiateschemewizard (EditorInstantiateSchemeWizard.)]
+    (SwingView. view
+                swingui
+                swinggoalwizard
+                swingfindargumentswizard
+                swinginstantiateschemewizard)))
+

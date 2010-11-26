@@ -46,6 +46,7 @@
   (add-windowclosing-listener [this f args])
   (add-findgoal-assistantmenuitem-listener [this f args])
   (add-findarguments-assistantmenuitem-listener [this f args])
+  (add-instantiatescheme-assistantmenuitem-listener [this f args])
   (add-quit-filemenuitem-listener [this f args])
   (add-import-button-listener [this f args])
   (add-remove-import-button-listener [this f args])

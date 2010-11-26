@@ -26,12 +26,13 @@
   (doseq [[keys section] (dissect lkifcontent)]
     (add-section docmanager (concat [lkifpath] keys) section)))
 
-(defn extract-lkif-from-docmanager [lkifpath docmanager]
+(defn extract-lkif-from-docmanager [lkifpath docmanager excluded-ags]
   (prn "get all sections keys =")
   (let [rb (get-section-first-content docmanager [lkifpath :rb])
         sources (get-section-first-content docmanager [lkifpath :sources])
         agids (get-all-sectionskeys docmanager [lkifpath :ags])
-        ags (map #(get-section-first-content docmanager [lkifpath :ags %]) agids)
+        ags (filter #(not (contains? excluded-ags (:id %)))
+                    (map #(get-section-first-content docmanager [lkifpath :ags %]) agids))
         import-tree (get-section-first-content docmanager [lkifpath :import-tree])
         import-kbs (get-section-first-content docmanager [lkifpath :import-kbs])
         import-ags (get-section-first-content docmanager [lkifpath :import-ags])]
@@ -41,7 +42,7 @@
      :import-ags import-ags}))
 
 (defn update-imports [lkifpath docmanager lkifcontent]
-  (doseq [key [:import-tree :import-ags :import-kbs]]
+  (doseq [key [:import-tree :import-ags :import-kbs :sources]]
     (update-section docmanager [lkifpath key] (key lkifcontent))
     (delete-section-history docmanager [lkifpath key])))
 

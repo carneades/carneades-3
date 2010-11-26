@@ -11,6 +11,30 @@
 (defvar *docmanager* (create-docmanager))
 (defvar- *dirtyags* (atom #{}))
 
+(defvar *fresh-ags-id* (atom {}))
+
+(defn add-fresh-ag [path id]
+  "adds the id of an argument graph to the map
+   of newly created ags."
+  ;; These ags are not extracted
+  ;; from the docmanager when saving the lkif files,
+  ;; thus not saved in the LKIF until the user asks
+  ;; explicitely to save them
+  (let [fresh (deref *fresh-ags-id*)]
+    (if-let [ids (get fresh path)]
+      (let [ids (conj ids id)]
+        (swap! *fresh-ags-id* assoc path ids))
+      (swap! *fresh-ags-id* assoc path #{id}))))
+
+(defn remove-fresh-ag [path id]
+  (let [fresh (deref *fresh-ags-id*)]
+    (when-let [ids (get fresh path)]
+      (let [ids (disj ids id)]
+        (swap! *fresh-ags-id* assoc path ids)))))
+
+(defn get-fresh-ag-ids [path]
+  (get (deref *fresh-ags-id*) path #{}))
+
 (defn set-ag-dirty [path id isdirty]
   (if isdirty
     (swap! *dirtyags* conj [path id])
@@ -32,7 +56,10 @@
   (get-section-content *docmanager* [lkifpath :ags id]))
 
 (defn get-lkif [lkifpath]
-  (extract-lkif-from-docmanager lkifpath *docmanager*))
+  (extract-lkif-from-docmanager lkifpath *docmanager* #{}))
+
+(defn get-rules [lkifpath]
+  (:rules (:rb (get-lkif lkifpath))))
 
 (defn get-kbs-locations [lkifpath]
   (map first (get-section-content *docmanager* [lkifpath :import-kbs])))
@@ -49,9 +76,9 @@
    or (id1 id2 id3) when called with one argument "
   ([]
      (mapcat (fn [path]
-               (partition 2
-                          (interleave (repeat path)
-                                      (filter #(is-ag-dirty path %) (get-ags-id path)))))
+               (partition 2 (interleave
+                             (repeat path)
+                             (filter #(is-ag-dirty path %) (get-ags-id path)))))
              (get-allpaths)))
   ([path]
      (filter #(is-ag-dirty path %) (get-ags-id path))))
