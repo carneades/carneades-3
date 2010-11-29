@@ -12,6 +12,7 @@
         carneades.editor.view.menus.mainmenu
         carneades.editor.view.printing.preview
         carneades.editor.view.dialogs.aboutbox
+        carneades.editor.utils.core
         (carneades.editor.view.components uicomponents search tabs)
         (carneades.editor.view.properties lkif statement argument premise graph
                                           properties)
@@ -56,10 +57,14 @@
 
   (show
    [this]
-   (EventQueue/invokeLater
-    (proxy [Runnable] []
-      (run []
-           (.setVisible *frame* true)))))
+   (do-swing-and-wait
+    (.setVisible *frame* true)
+    )
+   ;; (EventQueue/invokeLater
+   ;;  (proxy [Runnable] []
+   ;;    (run []
+   ;;         )))
+   )
 
   (open-graph
    [this path ag stmt-fmt]
