@@ -1,5 +1,0 @@
-this a test - WRONG
-
-THIS IS A TEST
-
-*test*
