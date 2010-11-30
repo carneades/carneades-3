@@ -5,7 +5,9 @@
   (:use clojure.contrib.def
         carneades.mapcomponent.map-styles
         carneades.engine.argument
+        carneades.engine.utils
         carneades.engine.statement)
+  (:require [clojure.string :as str])
   (:import (javax.swing SwingConstants SwingUtilities)
            (com.mxgraph.util mxConstants mxUtils mxCellRenderer mxPoint mxEvent
                              mxEventSource$mxIEventListener mxUndoManager)
@@ -54,6 +56,14 @@
           (str "? " formatted)
            
           :else formatted)))
+
+(defvar- *max-len* 30)
+
+(defn trunk [s]
+  (let [[f r] (split-at 3 (split-str s *max-len*))
+        f (map str/trim f)
+        f (if (empty? r) f (concat (butlast f) [(str (last f) "...")]))]
+    (str/join "\n" f)))
 
 (defrecord StatementCell [ag stmt stmt-str formatted] Object
   (toString
@@ -250,7 +260,8 @@
 (defn- add-statement [g p ag stmt vertices stmt-str]
   (assoc vertices
     stmt
-    (insert-vertex g p (StatementCell. ag stmt stmt-str (stmt-to-str ag stmt stmt-str))
+    (insert-vertex g p (StatementCell. ag stmt stmt-str
+                                       (trunk (stmt-to-str ag stmt stmt-str)))
                    (get-statement-style ag stmt))))
 
 (defn- add-statements [g p ag stmt-str]
@@ -265,6 +276,8 @@
                (get-conclusion-edge-style arg)))
 
 (defn- add-argument-edge [g p arg premise argid vertices]
+  (prn "premise =")
+  (prn premise)
   (insert-edge g p (PremiseCell. arg premise) (vertices (premise-atom premise))
                (vertices argid) (get-edge-style premise)))
 

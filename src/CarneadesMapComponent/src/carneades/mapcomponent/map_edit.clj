@@ -62,7 +62,8 @@
 (defn- update-stmt-object [userobject newag]
   (let [stmt-str (:stmt-str userobject)
         stmt (:stmt userobject)]
-    (StatementCell. newag stmt stmt-str (stmt-to-str newag stmt stmt-str))))
+    (StatementCell. newag stmt stmt-str
+                    (trunk (stmt-to-str newag stmt stmt-str)))))
 
 (defn- update-stmt-style [userobject oldstyle ag]
   ;; (prn " * update-stmt-style*")
@@ -176,7 +177,8 @@
         graph (.getGraph component)
         cell (find-statement-cell graph oldstmt)
         stmt-str (:stmt-str (.getValue cell))
-        stmt (StatementCell. ag newstmt stmt-str (stmt-to-str ag newstmt stmt-str))
+        stmt (StatementCell. ag newstmt stmt-str
+                             (trunk (stmt-to-str ag newstmt stmt-str)))
         p (.getDefaultParent graph)
         model (.getModel graph)]
     (try
@@ -238,7 +240,8 @@
         (let [x (getx argcell)
               y (gety argcell)
               premise (get-premise (get-argument ag (:id arg)) (statement-atom stmt))
-              stmtcell (insert-vertex graph p (StatementCell. ag stmt stmt-str (stmt-to-str ag stmt stmt-str))
+              stmtcell (insert-vertex graph p (StatementCell. ag stmt stmt-str
+                                                              (trunk (stmt-to-str ag stmt stmt-str)))
                                       (get-statement-style ag stmt))
               premisescells (map #(find-premise-cell graph (:id arg) %) (:premises arg))]
           (prn "premise =")
@@ -310,7 +313,8 @@
         p (.getDefaultParent graph)]
     (with-transaction component
       (change-all-cell-and-styles component ag)
-      (insert-vertex graph p (StatementCell. ag stmt stmt-str (stmt-to-str ag stmt stmt-str))
+      (insert-vertex graph p (StatementCell. ag stmt stmt-str
+                                             (trunk (stmt-to-str ag stmt stmt-str)))
                    (get-statement-style ag stmt))
       (align-orphan-cells graph p (get-vertices graph p)))))
 

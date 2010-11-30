@@ -2,7 +2,8 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.engine.utils
-  (:use clojure.contrib.pprint))
+  (:use clojure.contrib.pprint)
+  (:require [clojure.contrib.string :as str]))
 
 
 (defn boolean? [x]
@@ -165,3 +166,11 @@
   ([]
     (dump-stack (get-clj-stack-trace))))
 
+(defn split-str [s n]
+  "splits string s in strings of length n"
+  (loop [[s r] [s s]
+         sq []]
+    (if (empty? r)
+      sq
+      (let [f (str/take n r)]
+        (recur [f (str/drop n r)] (conj sq f))))))

@@ -20,7 +20,7 @@
    "globalStyle"
    {mxConstants/STYLE_FONTCOLOR "#000000"
     mxConstants/STYLE_STROKEWIDTH 1.5
-    mxConstants/STYLE_WHITE_SPACE "wrap"
+    ;; mxConstants/STYLE_WHITE_SPACE "wrap"
     ;; mxConstants/STYLE_LABEL_BACKGROUNDCOLOR "#ccd151"
     mxConstants/STYLE_SPACING 0
     }))
@@ -84,6 +84,8 @@
    "statementStyle"
    (merge (:style *global-style*)
           {mxConstants/STYLE_SHAPE mxConstants/SHAPE_RECTANGLE
+           ;; mxConstants/STYLE_ALIGN mxConstants/ALIGN_LEFT
+           ;; mxConstants/STYLE_OVERFLOW "fill"
            mxConstants/STYLE_STROKECOLOR "#000000"
            mxConstants/STYLE_FILLCOLOR "#ffffff"
            mxConstants/STYLE_PERIMETER mxConstants/PERIMETER_RECTANGLE
