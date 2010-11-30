@@ -9,6 +9,10 @@
         <servlet-name>KnowledgbaseServlet</servlet-name>
         <servlet-class>org.fokus.carneades.KnowledgbaseServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CarneadesServletDemo</servlet-name>
+        <servlet-class>org.fokus.carneades.CarneadesServletDemo</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>CarneadesServlet</servlet-name>
         <url-pattern>/CarneadesServlet</url-pattern>
@@ -16,6 +20,10 @@
     <servlet-mapping>
         <servlet-name>KnowledgbaseServlet</servlet-name>
         <url-pattern>/kb/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CarneadesServletDemo</servlet-name>
+        <url-pattern>/CarneadesServletDemo</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

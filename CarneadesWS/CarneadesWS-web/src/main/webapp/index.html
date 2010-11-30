@@ -5,7 +5,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>IMPACT - Webinterface</title>
 		<link type="text/css" href="css/custom-theme/jquery-ui-1.8.6.custom.css" rel="stylesheet" />	
-		<script type="text/javascript" src="js/jquery-1.4.4.js"></script>
+		<script type="text/javascript" src="js/jquery-1.4.4.min.js"></script>
 		<script type="text/javascript" src="js/jquery-ui-1.8.6.custom.min.js"></script>
                 <script type="text/javascript" src="js/main.js"></script>
 		<script type="text/javascript">
@@ -49,12 +49,25 @@
 			}
                         #questions .hint {
                                 display:none;
+                                margin-left: 2px;
+                                background:url(images/qinfo_bg.png) repeat-x;
+                                height: 16px;
+                        }
+                        #questions .hint .qinfo {
+                                margin: 0; padding:0;
+                                height:16px; width:14px;
+                                background:url(images/qinfo.png) no-repeat;
+                                display:inline;
                         }
 			#status {
-				padding: 0 .7em; 
-				position:absolute; right:53px; top:88px;
+				padding: 0.7em; 
+				position:absolute; right: 53px; top: 88px;
 				display:none;
 			}
+                        #locatebox {
+				padding: 2px;
+				position:absolute; right: 10px; top: 8px;
+                        }
 		</style>
 	</head>
 	<body>
@@ -64,6 +77,40 @@
 		<li><a href="#tabs-2">Questions</a></li>
 		<li><a href="#tabs-3">Solution</a></li>
 	</ul>
+    <!-- language -->
+    <div id="locatebox">
+        <select name="locate" id="locate">
+                <option value="at">Austria</option>
+                <option value="bg">Bulgarian (&#1073;&#1098;&#1083;&#1075;&#1072;&#1088;&#1089;&#1082;&#1080; &#1077;&#1079;&#1080;&#1082;)</option>
+                <option value="hr">Croatian (Hrvatski jezik)</option>
+                <option value="cs">Czech (&#269;e&#353;tina)</option>
+                <option value="da">Danish (Dansk)</option>
+                <option value="nl">Dutch (Nederlands)</option>
+                <option value="en-GB" selected="selected">English/UK</option>
+                <option value="eo">Esperanto</option>
+                <option value="et">Estonian (eesti keel)</option>
+                <option value="fi">Finnish (suomi)</option>
+                <option value="fr">French (Fran&ccedil;ais)</option>
+                <option value="fr-CH">French/Swiss (Fran&ccedil;ais de Suisse)</option>
+                <option value="gl">Galician</option>
+                <option value="de" style="padding-left:16px; background: url('images/deutschland.gif') no-repeat 0 2px;">German (Deutsch)</option>
+                <option value="el">Greek (&#917;&#955;&#955;&#951;&#957;&#953;&#954;&#940;)</option>
+                <option value="hu">Hungarian (Magyar)</option>
+                <option value="is">Icelandic (&Otilde;slenska)</option>
+                <option value="it">Italian (Italiano)</option>
+                <option value="lv">Latvian (Latvie&ouml;u Valoda)</option>
+                <option value="lt">Lithuanian (lietuviu kalba)</option>
+                <option value="pl">Polish (Polski)</option>
+                <option value="pt">Portuguese (Portugu&ecirc;s)</option>
+                <option value="ro">Romanian (Rom&acirc;n&#259;)</option>
+                <option value="sk">Slovak (Slovencina)</option>
+                <option value="sl">Slovenian (Slovenski Jezik)</option>
+                <option value="es">Spanish (Espa&ntilde;ol)</option>
+                <option value="sv">Swedish (Svenska)</option>
+                <option value="uk">Ukranian (&#1059;&#1082;&#1088;&#1072;&#1111;&#1085;&#1089;&#1100;&#1082;&#1072;)</option>
+        </select>
+    </div>
+
 <div id="tabs-1">
 
 	<h1>IMPACT Questions</h1>
@@ -92,7 +139,7 @@
 					<p>
 						Your name: <input type="text" value="" name="q1_1"></input><br/>
 						Your country:
-						<select name="locate" id="locate">
+						<select name="locate">
 							<option value="at">Austria</option>
 							<option value="bg">Bulgarian (&#1073;&#1098;&#1083;&#1075;&#1072;&#1088;&#1089;&#1082;&#1080; &#1077;&#1079;&#1080;&#1082;)</option>
 							<option value="hr">Croatian (Hrvatski jezik)</option>
@@ -179,5 +226,3 @@
 
 	</body>
 </html>
-
-
