@@ -2,7 +2,7 @@
  * This is the AJAX-Engine for the IMPACT web application.
  *
  * @author bbr
- * @version 0.22
+ * @version 0.24
  */
 
 /**
@@ -88,7 +88,7 @@ $(function(){ // Init
 
     // Load Content
     $.ajaxSetup({
-       url: "/CarneadesWS-web/CarneadesServlet",
+       url: "/CarneadesWS-web/CarneadesServletDemo",
        async: true,
        beforeSend: function() {
            statusupdate(0,"Please be patient.");
@@ -137,14 +137,20 @@ function doAJAX(jsondata) {
                         });
                         output += "</select>";
                     }
+                    else if (item.type == "radio") {
+                        $.each(item.answers, function(answindex, answer) {
+                            output += "<p><input id=\"qID"+item.id+"\" name=\"qID"+item.id+"\" type=\"radio\">";
+                            output += "<span onclick=\"$(this).prev().click()\">"+answer+"</span></p>";
+                        });
+                    }
                     else if (item.type == "date") {
-                        output += "<input type=\"text\" class=\"datefield\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\" value=\""+item.answers[0]+"\"/>";
+                        output += "<input type=\"text\" class=\"datefield\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
                     }
                     else if (item.type == "int") {
-                        output += "<input type=\"text\" class=\"integer\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\" value=\""+item.answers[0]+"\"/>";
+                        output += "<input type=\"text\" class=\"integer\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
                     }
-                    else output += "<input type=\""+item.type+"\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\"/>"; //value=\""+item.answers[0]+"\"
-                    output += "<span class=\"hint\">"+item.hint+"</span>";
+                    else output += "<input type=\""+item.type+"\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
+                    output += "<span class=\"hint\"><div class=\"qinfo\"/> </div>"+((item.hint) ? item.hint : "")+"</span>";
                     output += "</p>";
                     $(qbox).append(output);
                     $("p:last", qbox).focusin(function(){
@@ -172,7 +178,7 @@ function doAJAX(jsondata) {
                 });
             }
             else /*if (typeof data == "string")*/ {
-                alert(data);
+                alert("FAILED: "+data);
             }
         }
     });
@@ -217,9 +223,7 @@ function statusupdate(type, text) {
  * @see doAJAX
  */
 function sendAnswers(obj) {
-    //alert(obj)
     var jsonA = new Array();
-    $(obj).css("backgroundColor","red");
     $(obj).children("p").children(":input").each(function(i, itemobj){ // Pseudoklassen nicht gefunden!
         var item = $(itemobj);
         if ( !item.val() ) return false;
