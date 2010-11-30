@@ -2,7 +2,7 @@
  * This is the AJAX-Engine for the IMPACT web application.
  *
  * @author bbr
- * @version 0.24
+ * @version 0.25
  */
 
 /**
@@ -15,6 +15,7 @@ Array.prototype.copy = function () {
 
 /**
  * Initialisation
+ * @constructor
  */
 $(function(){ // Init
 
@@ -112,9 +113,10 @@ $(function(){ // Init
 
 /**
  * Sends a ajax request to the server and manage the output of the reply.
- * @param json expects a json object with the given answers
- * @see sendAnswers
- * @see statusupdate
+ * @param {JSON} jsondata expects a json object with the given answers
+ * @see #sendAnswers
+ * @see #statusupdate
+ * @see #RadioCheckNewLine
  */
 function doAJAX(jsondata) {
     if (typeof jsondata == "undefined") var jsondata = null;
@@ -138,9 +140,11 @@ function doAJAX(jsondata) {
                         output += "</select>";
                     }
                     else if (item.type == "radio") {
+                        var newline = RadioCheckNewLine(item.answers);
                         $.each(item.answers, function(answindex, answer) {
-                            output += "<p><input id=\"qID"+item.id+"\" name=\"qID"+item.id+"\" type=\"radio\">";
-                            output += "<span onclick=\"$(this).prev().click()\">"+answer+"</span></p>";
+                            if (newline) output += "<br/>";
+                            output += "<input id=\"qID"+item.id+"\" name=\"qID"+item.id+"\" type=\"radio\">";
+                            output += "<span onclick=\"$(this).prev().click()\">"+answer+"</span>";
                         });
                     }
                     else if (item.type == "date") {
@@ -150,14 +154,16 @@ function doAJAX(jsondata) {
                         output += "<input type=\"text\" class=\"integer\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
                     }
                     else output += "<input type=\""+item.type+"\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
-                    output += "<span class=\"hint\"><div class=\"qinfo\"/> </div>"+((item.hint) ? item.hint : "")+"</span>";
+                    output += "<span class=\"hint\"><span class=\"qinfo\"> </span>"+((item.hint) ? item.hint : "")+"</span>";
                     output += "</p>";
                     $(qbox).append(output);
-                    $("p:last", qbox).focusin(function(){
-                        $(this).find("span").fadeIn(500);
-                    }).focusout(function(){
-                        $(this).find("span").fadeOut(1000);
-                    });
+                    if (item.type != "radio") {
+                        $(":input", qbox).focusin(function(){
+                            $(this).next(".hint").fadeIn(500);
+                        }).focusout(function(){
+                            $(this).next(".hint").fadeOut(1000);
+                        });
+                    }
                 });
                 $(qbox).append('<input type="button" class="ui-button next" value="next" onclick="sendAnswers(this.parentNode)"/>');
                 $('.datefield').datepicker({
@@ -169,7 +175,7 @@ function doAJAX(jsondata) {
                     if (this.value.search(/\D/) != -1) {
                         qwarn(this,"Please insert a integer. No characters or whitespaces allowed.");
                     }
-
+                    else qunwarn(this);
                 });
                 $("#questions").accordion({
                     header: "h3",
@@ -177,11 +183,27 @@ function doAJAX(jsondata) {
                     navigation: true
                 });
             }
-            else /*if (typeof data == "string")*/ {
+            else {
                 alert("FAILED: "+data);
             }
         }
     });
+}
+
+/**
+ * Checks if radio or checkbox input fields needs a new line to seperate them
+ * @param {Array} answers Array that contains all possible answers
+ * @see #doAJAX
+ */
+function RadioCheckNewLine(answers) {
+    var newline=false;
+    for (var i=0; i < answers.length; i++) {
+        if (answers[i].length > 12 || i > 4) {
+            newline=true;
+            break;
+        }
+    }
+    return newline;
 }
 
 /*
@@ -196,8 +218,8 @@ function doAJAX(jsondata) {
 
 /**
  * Updates the statusfield of the page.
- * @param type Expect a integer with the value of the status. 0 means loading 1 an error and -1 that there is everthing allright so loaded.
- * @param text Here goes the Text that will be displayed in the status.
+ * @param {integer} type Expect a integer with the value of the status. 0 means loading 1 an error and -1 that there is everthing allright so loaded.
+ * @param {String} text Here goes the Text that will be displayed in the status.
  */
 function statusupdate(type, text) {
     var icon="";
@@ -236,7 +258,7 @@ function sendAnswers(obj) {
         jsonA.push(jsonitem);
     });
     
-    var jsonZ = { "answers" : jsonA.copy() }
+    var jsonZ = {"answers" : jsonA.copy()}
     doAJAX(jsonZ);
 }
 
@@ -248,8 +270,9 @@ function sendAnswers(obj) {
  */
 function qwarn(obj,warning) {
     var o = $(obj);
+    o.next(".hint").hide();
     o.css("backgroundColor","#F78181");
-    o.after("<div class=\"qwarn\">"+warning+"</div>");
+    o.after("<p class=\"qwarn\">"+warning+"</p>");
 }
 
 /**
@@ -260,5 +283,5 @@ function qwarn(obj,warning) {
 function qunwarn(obj) {
     var o = $(obj);
     o.css("backgroundColor","#ffffff");
-    if (obj.nextSilbing.className == "qwarn") o.next().remove();
+    o.next(".qwarn").remove();
 }
