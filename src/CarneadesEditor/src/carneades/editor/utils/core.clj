@@ -36,3 +36,9 @@
                          (partition 2 bindings))
         body (cons 'do body)]
     `(->> ~body ~@whenlets)))
+
+(defmacro with-out-file [pathname & body]
+  `(with-open [stream# (java.io.FileWriter. ~pathname)]
+     (binding [*out* stream#
+               *err* stream#]
+       ~@body)))
