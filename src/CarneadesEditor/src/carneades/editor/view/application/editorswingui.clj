@@ -61,6 +61,10 @@
    [this f args]
    (apply add-action-listener *exportGraphMenuItem* f args))
 
+  (add-copy-graph-menuitem-listener
+   [this f args]
+   (apply add-action-listener *copyGraphMenuItem* f args))
+
   (add-about-helpmenuitem-listener
    [this f args]
    (apply add-action-listener *aboutHelpMenuItem* f args))

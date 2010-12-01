@@ -116,3 +116,11 @@
             (UIManager/setLookAndFeel (.getClassName info))
             (recur (rest infos))))))
     (catch Exception e (prn "Exception") (prn e))))
+
+(defn enable-items [ & items]
+  (doseq [item items]
+    (.setEnabled item true)))
+
+(defn disable-items [ & items]
+  (doseq [item items]
+    (.setEnabled item false)))

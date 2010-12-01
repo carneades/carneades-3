@@ -60,3 +60,12 @@
 
 (defn delete-section-history [docmanager keys]
   (delete-history  (get-in (deref docmanager) keys)))
+
+(defn mark-section-saved [docmanager keys]
+  (mark-saved (get-in (deref docmanager) keys)))
+
+(defn restore-section-to-last-saved [docmanager keys]
+  (restore-to-last-saved (get-in (deref docmanager) keys)))
+
+(defn section-dirty? [docmanager keys]
+  (dirty? (get-in (deref docmanager) keys)))

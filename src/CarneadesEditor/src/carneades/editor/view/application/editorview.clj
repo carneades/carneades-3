@@ -9,7 +9,6 @@
         carneades.editor.utils.swing
         carneades.editor.view.application.editor-helpers
         carneades.editor.view.viewprotocol
-        carneades.editor.view.menus.mainmenu
         carneades.editor.view.printing.preview
         carneades.editor.view.dialogs.aboutbox
         carneades.editor.utils.core
@@ -49,7 +48,6 @@
    (init-graph-properties)
    (init-statement-properties)
    (init-premise-properties)
-   (init-menu)
    (tree/init-tree)
    (init-tabs)
    (init-search)
@@ -58,13 +56,7 @@
   (show
    [this]
    (do-swing-and-wait
-    (.setVisible *frame* true)
-    )
-   ;; (EventQueue/invokeLater
-   ;;  (proxy [Runnable] []
-   ;;    (run []
-   ;;         )))
-   )
+    (.setVisible *frame* true)))
 
   (open-graph
    [this path ag stmt-fmt]
@@ -88,10 +80,12 @@
      (replace-graph component ag stmt-fmt)))
   
   (close-graph
-   [this path id]
+   [this path id isfresh]
    (let [component (get-component path id)]
      (remove-component component)
-     (remove-ag-context path id))
+     (remove-ag-context path id)
+     (when isfresh
+       (tree/remove-ag path id)))
    (if (tabs-empty?)
      (set-current-ag-context-empty)
      (let [[path id] (current-graph this)]
@@ -186,9 +180,9 @@
        (display-error this "Save error" (.getMessage e)))))
 
   (display-lkif-content
-   [this file graphinfos]
-   (tree/add-lkif-content file graphinfos)
-   (set-current-lkif-context file))
+   [this path filename graphinfos]
+   (tree/add-lkif-content path filename graphinfos)
+   (set-current-lkif-context path))
 
   (hide-lkif-content
    [this path]

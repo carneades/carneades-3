@@ -16,6 +16,7 @@
   (add-close-file-menuitem-listener [this f args])
   (add-export-lkif-filemenuitem-listener [this f args])
   (add-export-graph-menuitem-listener [this f args])
+  (add-copy-graph-menuitem-listener [this f args])
   (add-export-filemenuitem-listener [this f args])
   (add-about-helpmenuitem-listener [this f args])
   (add-printpreview-filemenuitem-listener [this f args])
