@@ -13,7 +13,7 @@
   (hide [this])
   (open-graph [this path ag stmt-fmt] "open the graph for edition")
   (redisplay-graph [this path ag stmt-fmt])
-  (close-graph [this path id])
+  (close-graph [this path id isfresh])
   (current-graph [this] "returns [path id] for the graph currently edited")
   (ask-file-to-open [this desc exts] "ask the user the LKIF file to open. 
                                  Returns File or nil")
@@ -22,7 +22,7 @@
   (export-graph-to-svg [this ag stmt-fmt filename])
   (export-graph-to-dot [this ag statement-formatted filename])
   (export-graph-to-graphviz-svg [this ag statement-formatted filename])
-  (display-lkif-content [this file graphinfos]
+  (display-lkif-content [this path filename graphinfos]
                         "display information relative to an LKIF file. 
                          graphinfos is a seq of [id title] ")
   (hide-lkif-content [this path])

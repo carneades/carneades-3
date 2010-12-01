@@ -7,7 +7,6 @@
         carneades.editor.view.swinguiprotocol
         carneades.editor.view.components.uicomponents
         [carneades.editor.view.components.tabs :only (get-component)]
-        carneades.editor.view.menus.mainmenu
         (carneades.editor.utils swing swing-tree seq))
   (:require [clojure.zip :as zip])
   (:import (javax.swing.tree DefaultMutableTreeNode
@@ -35,13 +34,6 @@
   (let [model (.getModel *lkifsTree*)
         root (.getRoot model)]
     (pos? (.getChildCount root))))
-
-;; (defn on-tree-selection [event]
-;;   (let [node (.getLastSelectedPathComponent *lkifsTree*)]
-;;     (if (nil? node)
-;;       (disable-file-items)
-;;       (when (tree-has-content)
-;;         (enable-file-items)))))
 
 (defn create-mouse-listener []
   (letfn [(showpopup
@@ -100,11 +92,10 @@
 ;; back-and-forth to have a better way of manipulating the tree
 ;; (see clojure.zip)
 
-(defn add-lkif-content [file graphinfos]
+(defn add-lkif-content [path filename graphinfos]
   (with-tree *lkifsTree*
    (let [model (.getModel *lkifsTree*)
-         lkifinfo (LkifFileInfo. (.getPath file)
-                                 (.getName file))
+         lkifinfo (LkifFileInfo. path filename)
          ztree (jtreemodel-zip model)
          ztree (zip/rightmost (zip/down (zip/append-child ztree (list lkifinfo))))
          ztree (reduce
@@ -136,6 +127,9 @@
     (zip/replace loc newnode)))
 
 (defn add-ag [path id title]
+  (prn "add-ag")
+  (prn "path =")
+  (prn path)
   (with-tree *lkifsTree*
     (let [model (.getModel *lkifsTree*)]
       ;; find the parent to insert the new child:

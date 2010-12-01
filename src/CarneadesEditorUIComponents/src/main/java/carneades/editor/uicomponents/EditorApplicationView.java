@@ -83,11 +83,19 @@ public class EditorApplicationView extends javax.swing.JFrame {
         graphPopupMenu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         openGraphMenuItem.setText("Open");
+        openGraphMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openGraphMenuItemActionPerformed(evt);
+            }
+        });
         graphPopupMenu.add(openGraphMenuItem);
 
         closeGraphMenuItem.setText("Close");
         graphPopupMenu.add(closeGraphMenuItem);
         graphPopupMenu.add(jSeparator6);
+
+        copyGraphMenuItem.setText("Copy...");
+        graphPopupMenu.add(copyGraphMenuItem);
 
         exportGraphMenuItem.setText("Export...");
         graphPopupMenu.add(exportGraphMenuItem);
@@ -423,6 +431,10 @@ public class EditorApplicationView extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_searchButtonActionPerformed
 
+    private void openGraphMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openGraphMenuItemActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_openGraphMenuItemActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -449,6 +461,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JMenuItem closeLkifFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem closeTabMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem copyClipboardEditMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem copyGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem deleteArgumentMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem deleteGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem deletePremiseMenuItem = new javax.swing.JMenuItem();

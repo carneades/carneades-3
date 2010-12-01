@@ -24,18 +24,19 @@
 
 (defn add-lkif-to-docmanager [lkifpath lkifcontent docmanager]
   (doseq [[keys section] (dissect lkifcontent)]
-    (add-section docmanager (concat [lkifpath] keys) section)))
+    (let [keys (concat [lkifpath] keys)]
+     (add-section docmanager keys section)
+     (mark-section-saved docmanager keys))))
 
-(defn extract-lkif-from-docmanager [lkifpath docmanager excluded-ags]
+(defn extract-lkif-from-docmanager [lkifpath docmanager]
   (prn "get all sections keys =")
-  (let [rb (get-section-first-content docmanager [lkifpath :rb])
+  (let [rb (get-section-content docmanager [lkifpath :rb])
         sources (get-section-first-content docmanager [lkifpath :sources])
         agids (get-all-sectionskeys docmanager [lkifpath :ags])
-        ags (filter #(not (contains? excluded-ags (:id %)))
-                    (map #(get-section-first-content docmanager [lkifpath :ags %]) agids))
-        import-tree (get-section-first-content docmanager [lkifpath :import-tree])
-        import-kbs (get-section-first-content docmanager [lkifpath :import-kbs])
-        import-ags (get-section-first-content docmanager [lkifpath :import-ags])]
+        ags (doall (map #(get-section-content docmanager [lkifpath :ags %]) agids))
+        import-tree (get-section-content docmanager [lkifpath :import-tree])
+        import-kbs (get-section-content docmanager [lkifpath :import-kbs])
+        import-ags (get-section-content docmanager [lkifpath :import-ags])]
     {:rb rb :sources sources :ags ags
      :import-tree import-tree
      :import-kbs import-kbs
