@@ -754,7 +754,6 @@
       (close-all view path))
     (lkif/add-lkif-to-docmanager path lkif/*empty-lkif-content* *docmanager*)
     (init-counters path)
-    (save-lkif view path)
     (display-lkif-content view path filename (create-lkifinfo path))
     (create-template view path)))
 
