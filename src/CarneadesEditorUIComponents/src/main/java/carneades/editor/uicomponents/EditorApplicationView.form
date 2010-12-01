@@ -92,6 +92,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Open"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openGraphMenuItemActionPerformed"/>
+          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
           </AuxValues>
@@ -106,6 +109,14 @@
         </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator6">
         </Component>
+        <MenuItem class="javax.swing.JMenuItem" name="copyGraphMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Copy..."/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
+          </AuxValues>
+        </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="exportGraphMenuItem">
           <Properties>
             <Property name="text" type="java.lang.String" value="Export..."/>

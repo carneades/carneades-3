@@ -26,6 +26,7 @@
 (defvar *openGraphMenuItem* (.openGraphMenuItem *frame*))
 (defvar *closeGraphMenuItem* (.closeGraphMenuItem *frame*))
 (defvar *exportGraphMenuItem* (.exportGraphMenuItem *frame*))
+(defvar *copyGraphMenuItem* (.copyGraphMenuItem *frame*))
 
 (defvar *newPremiseMenuItem* (.newPremiseMenuItem *frame*))
 (defvar *deleteArgumentMenuItem* (.deleteArgumentMenuItem *frame*))

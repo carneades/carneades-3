@@ -29,10 +29,23 @@
            (map (fn [id] [id (:title (get-ag path id))])
                 (get-ags-id path))))
 
+(deftrace do-close-graph [view path id savechanges]
+  "close graph without saving it"
+  (prn "do-close-graph")
+  (prn "graph before =")
+  (pprint (get-ag path id))
+  (when-not savechanges
+    (restore-section-to-last-saved *docmanager* [path :ags id]))
+  (prn "graph after =")
+  (pprint (get-ag path id))
+  (update-dirty-state view path (get-ag path id) false)
+  (update-undo-redo-statuses view path id)
+  (close-graph view path id (contains? (get-fresh-ag-ids path) id)))
+
 (deftrace close-all [view path]
   "closes all graphs without saving, removes LKIF from tree"
   (doseq [id (get-ags-id path)]
-    (close-graph view path id))
+    (do-close-graph view path id false))
   (hide-lkif-content view path)
   (remove-section *docmanager* [path]))
 
@@ -55,33 +68,43 @@
 (deftrace on-open-graph [view path id]
   (prn "on-open-graph")
   (when-let [ag (get-ag path id)]
-   (open-graph view path ag statement-formatted)
-   (when-let [mainissue (:main-issue ag)]
-     (display-statement view path ag mainissue statement-formatted))))
+    (prn "opening graph:")
+    (pprint ag)
+    (open-graph view path ag statement-formatted)
+    (when-let [mainissue (:main-issue ag)]
+      (display-statement view path ag mainissue statement-formatted))))
+
+(defn do-open-content [view path filename content]
+  (init-counters path)
+  (let [infos (create-lkifinfo path)]
+    (display-lkif-content view path filename infos)
+    (when-let [[id _] (first infos)]
+      (on-open-graph view path id))))
+
+(defn do-open-file [view path filename]
+  (if (section-exists? *docmanager* [path])
+    (display-error view *file-error* (format *file-already-opened* path))
+    (try
+      (set-busy view true)
+      (when-let [content (lkif-import path)]
+        (lkif/add-lkif-to-docmanager path content *docmanager*)
+        (do-open-content view path filename content)
+        )
+      ;; (catch IllegalArgumentException
+      ;;     e (display-error view *open-error* (str *invalid-content* ".")))
+      (catch java.io.IOException
+          e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
+      (catch org.xml.sax.SAXException
+          e (display-error view *open-error* (str *invalid-content* ".")))
+      (finally
+       (set-busy view false)))))
 
 (deftrace on-open-file [view]
   (prn "ask-lkif-file-to-open...")
   (when-let* [file (ask-file-to-open view "LKIF files"  #{"xml" "lkif"})
-              path (.getPath file)]
-    (if (section-exists? *docmanager* [path])
-      (display-error view *file-error* (format *file-already-opened* path))
-      (try
-        (set-busy view true)
-        (when-let [content (lkif-import path)]
-          (lkif/add-lkif-to-docmanager path content *docmanager*)
-          (init-counters path)
-          (let [infos (create-lkifinfo path)]
-            (display-lkif-content view file infos)
-            (when-let [[id _] (first infos)]
-              (on-open-graph view path id))))
-        ;; (catch IllegalArgumentException
-        ;;     e (display-error view *open-error* (str *invalid-content* ".")))
-        (catch java.io.IOException
-            e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
-        (catch org.xml.sax.SAXException
-            e (display-error view *open-error* (str *invalid-content* ".")))
-        (finally
-         (set-busy view false))))))
+              path (.getPath file)
+              filename (.getName file)]
+    (do-open-file view path filename)))
 
 (defvar- *dot-description* "DOT Files")
 (defvar- *svg-description* "SVG Files")
@@ -133,11 +156,17 @@
 
 (deftrace save-lkif [view path]
   "returns false if an error occured, true otherwise"
+  (prn "save-lkif")
   (try
     (set-busy view true)
-    (let [lkifdata (lkif/extract-lkif-from-docmanager path *docmanager*
-                                                      (get-fresh-ag-ids path))]
+    (let [lkifdata (lkif/extract-lkif-from-docmanager path *docmanager*)]
+      (prn "data = ")
+      (pprint lkifdata)
       (lkif-export lkifdata path)
+      (prn "after save")
+      (doseq [id (get-ags-id path)]
+        (prn "ag =")
+        (pprint (get-ag path id)))
       true)
     (catch java.io.IOException e
       (display-error view *save-error* (str *error-saving* ": " (.getMessage e)))
@@ -145,66 +174,79 @@
     (finally
      (set-busy view false))))
 
-(deftrace do-close-graph [view path id]
-  "close graph without saving it"
-  (cancel-updates-section *docmanager* [path :ags id])
-  (update-dirty-state view path (get-ag path id) false)
-  (update-undo-redo-statuses view path id)
-  (close-graph view path id))
+(deftrace on-saveas [view oldpath]
+  (when-let* [[file _] (ask-file-to-save view {"LKIF files (.xml)" "xml"}
+                                         (if (new-lkif? oldpath)
+                                           (File. (get-newlkif-filename oldpath))
+                                           (File. oldpath)))
+              path (.getPath file)
+              filename (.getName file)]
+    (let [content (lkif/extract-lkif-from-docmanager oldpath *docmanager*)]
+      (when (section-exists? *docmanager* [path])
+        (close-all view path))
+      (lkif/add-lkif-to-docmanager path content *docmanager*)
+      (save-lkif view path)
+      (do-open-content view path filename content)
+      true)))
 
-(deftrace on-save [view path id]
+(deftrace on-save [view path]
   "returns false if an error occured, true otherwise"
   (prn "on-save")
-  (delete-section-history *docmanager* [path :ags id])
-  (remove-fresh-ag path id)
-  (update-undo-redo-statuses view path id)
-  (if (save-lkif view path)
+  (remove-fresh-ags path)
+  (if (new-lkif? path)
     (do
-     (update-dirty-state view path (get-ag path id) false)
-     true)
-    false))
+      (prn "new-lkif path =")
+      (prn path)
+      (when (on-saveas view path)
+        (remove-newlkif path)
+        (close-all view path)))
+    (if (save-lkif view path)
+      (do
+        (doseq [id (filter #(is-ag-dirty path %) (get-ags-id path))]
+          (let [ag (get-ag path id)]
+            (mark-section-saved *docmanager* [path :ags id])
+            (update-dirty-state view path (get-ag path id) false)))
+        true)
+      false)))
 
-(deftrace on-saveas [view path id]
+(deftrace on-copy-graph [view path id]
   (when-let [title (read-sentence view *save-as* "Graph title:")]
     (cond
      
      (empty? title)
      (do
        (display-error view *save-as* "Name is empty.")
-       (on-saveas view path id))
+       (on-copy-graph view path id))
      
      (contains? (get-graphs-titles path) title)
      (do
        (display-error view *save-as* (format "Title '%s' is already used." title))
-       (on-saveas view path id))
+       (on-copy-graph view path id))
 
      :else
-     (do
-       (when-let [ag (get-ag path id)]
-        (let [newag (assoc ag :title title)
-              newid (gen-graph-id path)
-              newag (assoc newag :id newid)]
-          (add-section *docmanager* [path :ags newid] newag)
-          (init-stmt-counter path (:id newag))
-          (let [success (on-save view path newid)]
-            (new-graph-added view path newag statement-formatted)
-            (open-graph view path newag statement-formatted)
-            (when (not success)
-              (update-dirty-state view path ag true))
-            (display-graph-property view path (:id newag) (:title newag)
-                                    (:main-issue newag)))))))))
+     (when-let [ag (get-ag path id)]
+       (let [newag (assoc ag :title title)
+             newid (gen-graph-id path)
+             newag (assoc newag :id newid)]
+         (add-section *docmanager* [path :ags newid] newag)
+         (init-stmt-counter path (:id newag))
+         (new-graph-added view path newag statement-formatted)
+         (open-graph view path newag statement-formatted)
+         (update-dirty-state view path newag true)
+         (display-graph-property view path (:id newag) (:title newag)
+                                 (:main-issue newag)))))))
 
 (deftrace on-close-graph [view path id]
   (prn "on-close-graph")
   (if (is-ag-dirty path id)
-    (case (ask-yesnocancel-question view "Close" "Save graph before closing?")
-          :yes (when (on-save view path id)
-                 (close-graph view path id))
+    (case (ask-yesnocancel-question view "Close" "Save file before closing?")
+          :yes (when (on-save view path)
+                 (do-close-graph view path id true))
           
-          :no (do-close-graph view path id)
+          :no (do-close-graph view path id false)
           
           :cancel nil)
-    (close-graph view path id)))
+    (do-close-graph view path id true)))
 
 (deftrace on-export-file [view path]
   (when (ask-confirmation view "Export" "Export all the argument graphs?")
@@ -635,6 +677,9 @@
 (deftrace do-on-new-statement [view path ag stmt]
   (let [ag (update-statement ag stmt)]
     (do-update-section view [path :ags (:id ag)] ag)
+    (prn "after do-on-new-statement")
+    (prn "ag =")
+    (pprint (get-ag path (:id ag)))
     (new-statement-added view path ag stmt statement-formatted)
     (display-statement view path ag stmt statement-formatted)
     stmt))
@@ -677,7 +722,7 @@
 
 (deftrace on-delete-graph [view path id]
   (when (ask-confirmation view "Delete" "Permanently delete the graph?")
-    (close-graph view path id)
+    (do-close-graph view path id false)
     (remove-section *docmanager* [path :ags id])
     (save-lkif view path)
     ;; here if an error occurs the graph won't be deleted
@@ -687,27 +732,43 @@
 (deftrace create-template [view path]
   (let [id (on-new-graph view path)
         ag (get-ag path id)
-        stmt (do-on-new-statement view path ag "Here is the conclusion...")
-        stmt2 (do-on-new-statement view path ag "... and here a premise! Double-click to edit!")
+        stmt (do-on-new-statement view path ag "Conclusion")
+        stmt2 (do-on-new-statement view path ag "Premise")
         arg (on-new-argument view path id stmt)
         ag (get-ag path id)]
     (on-change-mainissue view path id stmt)
     (on-add-existing-premise view path id arg stmt2)
     (on-refresh view path id)
-    (on-save view path id)
+    (delete-section-history *docmanager* [path :ags id])
+    (update-undo-redo-statuses view path id)
     (display-statement view path ag stmt statement-formatted)))
 
 (deftrace on-new-file [view]
-  (when-let* [[file desc] (ask-file-to-save view {"LKIF files (.xml)" "xml"}
-                                            (File. "lkif1.xml"))
-              path (.getPath file)]
+  (when-let* [file (File/createTempFile "carneades" nil)
+              path (.getPath file)
+              filename (gen-newlkif-filename path)]
+    (.deleteOnExit file)
+    (prn "on-new-file, path =")
+    (prn path)
     (when (section-exists? *docmanager* [path])
       (close-all view path))
     (lkif/add-lkif-to-docmanager path lkif/*empty-lkif-content* *docmanager*)
     (init-counters path)
     (save-lkif view path)
-    (display-lkif-content view file (create-lkifinfo path))
+    (display-lkif-content view path filename (create-lkifinfo path))
     (create-template view path)))
+
+;; (deftrace on-new-file [view]
+;;   (when-let* [[file desc] (ask-file-to-save view {"LKIF files (.xml)" "xml"}
+;;                                             (File. "lkif1.xml"))
+;;               path (.getPath file)]
+;;     (when (section-exists? *docmanager* [path])
+;;       (close-all view path))
+;;     (lkif/add-lkif-to-docmanager path lkif/*empty-lkif-content* *docmanager*)
+;;     (init-counters path)
+;;     (save-lkif view path)
+;;     (display-lkif-content view file (create-lkifinfo path))
+;;     (create-template view path)))
 
 (deftrace exit [view]
   (letfn [(in-swank?
@@ -726,34 +787,29 @@
 
 (deftrace on-exit [view event]
   (prn "on exit")
-  (let [unsavedgraphs (get-unsaved-graphs)]
-    (if (empty? unsavedgraphs)
+  (let [unsavedlkifs (get-unsaved-lkifs)]
+    (prn "unsavedlkifs =")
+    (prn unsavedlkifs)
+    (if (empty? unsavedlkifs)
       (exit view)
-      (case (ask-yesnocancel-question view "Close" "Save all graphs before closing?")
-            :yes (loop [unsavedgraphs unsavedgraphs]
-                   (if-let [[path id] (first unsavedgraphs)]
-                     (when (on-save view path id)
-                       ;; if we save successfully we continue
-                       (recur (rest unsavedgraphs)))
-                     ;; all saved, exit
-                     (exit view)))
+      (case (ask-yesnocancel-question view "Close" "Save files before closing?")
+            :yes (do
+                   (doseq [path unsavedlkifs]
+                     (on-save view path))
+                   (exit view))
             :no (exit view)
             :cancel nil))))
 
 (deftrace on-close-file [view path]
   (prn "on close file")
-  (let [unsaved (get-unsaved-graphs path)]
-    (if (not (empty? unsaved))
-      (case (ask-yesnocancel-question view "Close" "Save all graphs before closing?")
-            :yes (loop [unsaved unsaved]
-                   (if-let [id (first unsaved)]
-                     (when (on-save view path id)
-                       ;; save without problem? yes, we continue
-                       (recur (rest unsaved)))
-                     (close-all view path)))
-            :no (close-all view path)
-            :cancel nil)
-      (close-all view path))))
+  (if (not (empty? (get-unsaved-graphs path)))
+    (case (ask-yesnocancel-question view "Close" "Save file before closing?")
+          :yes (do
+                 (on-save view path)
+                 (close-all view path))
+          :no (close-all view path)
+          :cancel nil)
+    (close-all view path)))
 
 (deftrace on-import-theory [view path]
   (when-let* [info (ask-location-to-open view)

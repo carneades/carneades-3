@@ -14,6 +14,12 @@
                                                   StatementInfo
                                                   ArgumentInfo)))
 
+(defn- current-lkif [view]
+  (when-let [info (get-selected-object-in-tree view)]
+    (condp instance? info
+      LkifFileInfo (:path info)
+      GraphInfo (-> info :lkifinfo :path))))
+
 (defn mouse-click-in-tree-listener [event view]
   (let [clickcount (.getClickCount event)]
     (when-let [info (get-selected-object-in-tree view)]
@@ -87,6 +93,12 @@
       LkifFileInfo (on-export-file view (:path info))
       nil)))
 
+(defn copy-graph-listener [event view]
+  (when-let [info (get-selected-object-in-tree view)]
+    (condp instance? info
+      GraphInfo (on-copy-graph view (:path (:lkifinfo info)) (:id info))
+      nil)))
+
 (defn printpreview-listener [event view]
   (when-let [[path id] (current-graph view)]
     (on-printpreview-graph view path id)))
@@ -145,8 +157,10 @@
   (redo-button-listener event view))
 
 (defn save-button-listener [event view]
-  (when-let [[path id] (current-graph view)]
-    (on-save view path id)))
+  (if-let [[path _] (current-graph view)]
+    (on-save view path)
+    (when-let [path (current-lkif view)]
+      (on-save view path))))
 
 (defn copyclipboard-button-listener [event view]
   (when-let [[path id] (current-graph view)]
@@ -156,8 +170,10 @@
   (save-button-listener event view))
 
 (defn saveas-filemenuitem-listener [event view]
-  (when-let [[path id] (current-graph view)]
-    (on-saveas view path id)))
+  (if-let [[path _] (current-graph view)]
+    (on-saveas view path)
+    (when-let [path (current-lkif view)]
+      (on-saveas view path))))
 
 (defn title-edit-listener [event view]
   (let [info (get-graph-being-edited-info view)]

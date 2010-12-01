@@ -42,6 +42,7 @@
   (add-printpreview-filemenuitem-listener view printpreview-listener [view])
   (add-print-filemenuitem-listener view print-listener [view])
   (add-export-graph-menuitem-listener view export-element-listener [view])
+  (add-copy-graph-menuitem-listener view copy-graph-listener [view])
   (add-export-lkif-filemenuitem-listener view export-element-listener [view])
   (add-export-filemenuitem-listener view export-file-listener [view])
   (add-close-file-menuitem-listener view close-file-listener [view])
