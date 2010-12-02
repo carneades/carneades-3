@@ -181,12 +181,18 @@
                                            (File. oldpath)))
               path (.getPath file)
               filename (.getName file)]
-    (let [content (lkif/extract-lkif-from-docmanager oldpath *docmanager*)]
+    (let [content (lkif/extract-lkif-from-docmanager oldpath *docmanager*)
+          opened (map second (filter #(= (first %) oldpath) (opened-graphs view)))
+          currentid (second (current-graph view))]
       (when (section-exists? *docmanager* [path])
         (close-all view path))
       (lkif/add-lkif-to-docmanager path content *docmanager*)
-      (save-lkif view path)
+      (when (save-lkif view path)
+        (set-lkif-dirty view path false))
       (do-open-content view path filename content)
+      (doseq [id opened]
+        (on-open-graph view path id))
+      (on-open-graph view path currentid)
       true)))
 
 (deftrace on-save [view path]
@@ -195,13 +201,12 @@
   (remove-fresh-ags path)
   (if (new-lkif? path)
     (do
-      (prn "new-lkif path =")
-      (prn path)
       (when (on-saveas view path)
         (remove-newlkif path)
         (close-all view path)))
     (if (save-lkif view path)
       (do
+        (set-lkif-dirty view path false)
         (doseq [id (filter #(is-ag-dirty path %) (get-ags-id path))]
           (let [ag (get-ag path id)]
             (mark-section-saved *docmanager* [path :ags id])
@@ -452,19 +457,13 @@
   (let [{:keys [previous-title title]} ag-info]
     (when (not= previous-title title)
       (when-let [ag (get-ag path id)]
-        (if (is-ag-dirty path id)
-          (display-error view *edit-error* "Please save the graph first.")
+        (when (ask-confirmation view *rename* *warning-on-rename*)
           (let [ag (assoc ag :title title)]
             (update-section *docmanager* [path :ags id] ag)
             (delete-section-history *docmanager* [path :ags id])
-            ;; bug here: if the graph can't be saved, the title won't be changed
-            ;; on disk and the user won't be able to force a second save
-            ;; since the save button is only for the graph editor
-            ;; as a workaround we open the graph, to allow a second save!
+            (update-undo-redo-statuses view path id)
             (title-changed view path ag title)
-            (when (not (save-lkif view path))
-              (open-graph view path ag statement-formatted)
-              (update-dirty-state view path ag true))
+            (update-dirty-state view path ag true)
             (display-graph-property view path id title (:main-issue ag))))))))
 
 (deftrace on-premise-edit-polarity [view path id pm-info]
@@ -724,9 +723,7 @@
   (when (ask-confirmation view "Delete" "Permanently delete the graph?")
     (do-close-graph view path id false)
     (remove-section *docmanager* [path :ags id])
-    (save-lkif view path)
-    ;; here if an error occurs the graph won't be deleted
-    ;; on disk and and forcing a save cannot be done
+    (set-lkif-dirty view path true)
     (graph-deleted view path id)))
 
 (deftrace create-template [view path]

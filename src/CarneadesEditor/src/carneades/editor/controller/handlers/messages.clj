@@ -52,3 +52,6 @@
 (defvar *complete-form-n* "Fill in Literal %s")
         
 (defvar *fillin-form* "Fill in the form")
+
+(defvar *rename* "Rename")
+(defvar *warning-on-rename* "After renaming you will not be able to undo the last changes.\nRename the graph?")
