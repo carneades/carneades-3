@@ -95,7 +95,7 @@
 (defn add-lkif-content [path filename graphinfos]
   (with-tree *lkifsTree*
    (let [model (.getModel *lkifsTree*)
-         lkifinfo (LkifFileInfo. path filename)
+         lkifinfo (LkifFileInfo. path filename false)
          ztree (jtreemodel-zip model)
          ztree (zip/rightmost (zip/down (zip/append-child ztree (list lkifinfo))))
          ztree (reduce
@@ -165,6 +165,10 @@
        (= path (-> userobject :lkifinfo :path))
        (= id (:id userobject))))
 
+(defn- lkifinfo-pred [path userobject]
+  (and (instance? LkifFileInfo userobject)
+       (= path (-> userobject :path))))
+
 (defn remove-ag [path id]
   (with-tree *lkifsTree*
     (let [model (.getModel *lkifsTree*)
@@ -192,15 +196,31 @@
               root (seq-jtreenodes (zip/root loc) make-node)]
           (.setRoot model root))))))
 
-(defn- change-ag-object [path id f]
-  "change the object identified by path and id and set it's value to 
-  (f olduserobjectvalue)"
+(defn- change-object [f pred]
   (with-tree *lkifsTree*
     (let [model (.getModel *lkifsTree*)]
-      (when-let [node (find-node model #(graphinfo-pred path id %))]
+      (when-let [node (find-node model pred)]
         (let [userobject (.getUserObject node)]
           (.setUserObject node (f userobject))
           (.reload model))))))
+
+(defn- change-ag-object [path id f]
+  "change the object identified by path and id and set it's value to 
+  (f olduserobjectvalue)"
+  (change-object f #(graphinfo-pred path id %)))
+
+(defn- change-lkif-object [path f]
+  "change the object identified by path and set it's value to 
+  (f olduserobjectvalue)"
+  (change-object f #(lkifinfo-pred path %)))
+
+(defn set-lkif-dirty [path isdirty]
+  (prn "setting path dirty, path =")
+  (prn path)
+  (letfn [(update
+           [userobject]
+           (assoc userobject :dirty isdirty))]
+    (change-lkif-object path update)))
 
 (defn set-ag-dirty [path id isdirty]
   (letfn [(update

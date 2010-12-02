@@ -15,6 +15,7 @@
   (redisplay-graph [this path ag stmt-fmt])
   (close-graph [this path id isfresh])
   (current-graph [this] "returns [path id] for the graph currently edited")
+  (opened-graphs [this] "returns a sequence of [path id] for all graphs currently edited")
   (ask-file-to-open [this desc exts] "ask the user the LKIF file to open. 
                                  Returns File or nil")
   (ask-location-to-open [this])
@@ -60,6 +61,7 @@
   (set-can-undo [this path id state])
   (set-can-redo [this path id state])
   (set-dirty [this path ag state])
+  (set-lkif-dirty [this path state])
   (copyselection-clipboard [this path id])
 
   ;; notifications:

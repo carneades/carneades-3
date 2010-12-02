@@ -119,9 +119,6 @@
                      (.indexOfComponent *mapPanel* (:component component))))
 
 (defn set-tab-dirty [path id isdirty]
-  (prn "set-tab-dirty")
-  (prn "isdirty =")
-  (prn isdirty)
   (if-let [component (:component (get (deref *ags-to-components*) [path id]))]
     (if-let [label (get (deref *component-to-title*) component)]
       (let [oldtext (.getText label)]
