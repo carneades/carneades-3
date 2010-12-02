@@ -8,6 +8,7 @@
 /**
  * Fixes a javascript bug that makes copying of Arrays impossible
  * @return returns a copy of the array
+ * @type Array
  */
 Array.prototype.copy = function () {
     return ((new Array()).concat(this));
@@ -87,7 +88,7 @@ $(function(){ // Init
             });
     });
 
-    // Load Content
+    /** AJAX request config */
     $.ajaxSetup({
        url: "/CarneadesWS-web/CarneadesServletDemo",
        async: true,
@@ -106,7 +107,8 @@ $(function(){ // Init
        dataType: "json",
        type: "POST"
     });
-    
+
+    /** loads initial questions */
     $("#questions").empty();
     doAJAX(); // call for questions
 });
@@ -114,16 +116,18 @@ $(function(){ // Init
 /**
  * Sends a ajax request to the server and manage the output of the reply.
  * @param {JSON} jsondata expects a json object with the given answers
- * @see #sendAnswers
- * @see #statusupdate
- * @see #RadioCheckNewLine
+ * @see sendAnswers
+ * @see statusupdate
+ * @see RadioCheckNewLine
  */
 function doAJAX(jsondata) {
     if (typeof jsondata == "undefined") var jsondata = null;
-    else alert("sending = "+JSON.stringify(jsondata));
+    //else alert("sending = "+JSON.stringify(jsondata));
     $.ajax({
         dataType : "json",
-        data : jsondata,
+        data : {
+            json : JSON.stringify(jsondata)
+        },
         success : function(data){
             if (data != null && data.questions) { // getting questions
                 var qbox = $("#questions");
@@ -154,14 +158,14 @@ function doAJAX(jsondata) {
                         output += "<input type=\"text\" class=\"integer\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
                     }
                     else output += "<input type=\""+item.type+"\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
-                    output += "<span class=\"hint\"><span class=\"qinfo\"> </span>"+((item.hint) ? item.hint : "")+"</span>";
+                    if (item.hint) output += "<span class=\"hint qinfo\"><i></i>"+item.hint+"<b></b></span>";
                     output += "</p>";
                     $(qbox).append(output);
                     if (item.type != "radio") {
                         $(":input", qbox).focusin(function(){
-                            $(this).next(".hint").fadeIn(500);
+                            $(this).next(".hint").fadeIn(400);
                         }).focusout(function(){
-                            $(this).next(".hint").fadeOut(1000);
+                            $(this).next(".hint").fadeOut(600);
                         });
                     }
                 });
@@ -193,7 +197,7 @@ function doAJAX(jsondata) {
 /**
  * Checks if radio or checkbox input fields needs a new line to seperate them
  * @param {Array} answers Array that contains all possible answers
- * @see #doAJAX
+ * @see doAJAX
  */
 function RadioCheckNewLine(answers) {
     var newline=false;
@@ -218,8 +222,8 @@ function RadioCheckNewLine(answers) {
 
 /**
  * Updates the statusfield of the page.
- * @param {integer} type Expect a integer with the value of the status. 0 means loading 1 an error and -1 that there is everthing allright so loaded.
- * @param {String} text Here goes the Text that will be displayed in the status.
+ * @param {number} type Expect a integer with the value of the status. 0 means loading 1 an error and -1 that there is everthing allright so loaded.
+ * @param {string} text Here goes the Text that will be displayed in the status.
  */
 function statusupdate(type, text) {
     var icon="";
@@ -240,8 +244,8 @@ function statusupdate(type, text) {
 }
 
 /**
- * Collects the given answers and parse them as JSON before sending them to @link doAJAX .
- * @param obj expects a HTML object that includes the input fields for the given answers.
+ * Collects the given answers and parse them as JSON before sending them to {@link doAJAX}.
+ * @param {object} obj expects a HTML object that includes the input fields for the given answers.
  * @see doAJAX
  */
 function sendAnswers(obj) {
@@ -263,9 +267,9 @@ function sendAnswers(obj) {
 }
 
 /**
- * Displays a warning besides a form field when invalid data is used. To hide this use @link qunwarn
- * @param obj triggering form field HTML object
- * @param warning text that appears right besides the field
+ * Displays a warning besides a form field when invalid data is used. To hide this use {@link qunwarn}
+ * @param {object} obj triggering form field HTML object
+ * @param {string} warning text that appears right besides the field
  * @see qunwarn
  */
 function qwarn(obj,warning) {
@@ -276,8 +280,8 @@ function qwarn(obj,warning) {
 }
 
 /**
- * Hides a warning besides a form field. @link qwarn
- * @param obj triggering form field HTML object
+ * Hides a {@link qwarn}-warning.
+ * @param {Object} obj triggering form field HTML object
  * @see qwarn
  */
 function qunwarn(obj) {
