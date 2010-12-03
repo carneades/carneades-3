@@ -98,10 +98,6 @@
 
 (defn trunk [s]
   (let [words (str/split s #"\s+")
-        ;; words (map (fn [word]
-        ;;              (if (> (count word) *max-len*)
-        ;;                (str (subs word 0 (- *max-len* 2)) "..")
-        ;;                word)) words)
         {words :words line1 :line} (make-line words)
         {words :words line2 :line} (make-line words)
         {words :words line3 :line last-truncated :last-truncated} (make-line words)]
