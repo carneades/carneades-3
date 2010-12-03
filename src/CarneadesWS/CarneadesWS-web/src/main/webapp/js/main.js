@@ -2,17 +2,33 @@
  * This is the AJAX-Engine for the IMPACT web application.
  *
  * @author bbr
- * @version 0.25
+ * @version 0.26
  */
+
+/** Settings */
+var showhints = true;
+var jsloadstarted = new Date();
 
 /**
  * Fixes a javascript bug that makes copying of Arrays impossible
- * @return returns a copy of the array
+ * @returns returns a copy of the array
  * @type Array
  */
 Array.prototype.copy = function () {
     return ((new Array()).concat(this));
 };
+
+/**
+ * Returns the class of the given parameter.
+ * @param o can be anything
+ * @returns returns the class
+ * @type Boolean
+ */
+function classOf(o) {
+    if (undefined === o) return "Undefined";
+    if (null === o) return "Null";
+    return {}.toString.call(o).slice(8, -1);
+}
 
 /**
  * Initialisation
@@ -39,10 +55,12 @@ $(function(){ // Init
     $('#datepicker').datepicker({
             inline: true
     });
-    $('.datefield').datepicker({
+    $.datepicker.setDefaults({
             regional: "de",
             changeMonth: true,
-            changeYear: true
+            changeYear: true,
+            yearRange: (''+(jsloadstarted.getFullYear()-100)+':'+(jsloadstarted.getFullYear()+10)),
+            showAnim: 'slideDown'
     });
 
     //button
@@ -50,10 +68,15 @@ $(function(){ // Init
 
     // Land -> Datum
     $( "#locale" ).change(function() {
-            $( ".datepicker" ).each(function(index) {
-                    $(this).datepicker( "option",
-                    "regional", $("#locale").val() );
-            })
+        alert("? "+$(this).val() );
+        /*
+        $("body").append("<script src=\""+"http://jquery-ui.googlecode.com/svn/trunk/ui/i18n/jquery.ui.datepicker-"+$(this).val()+".js\" type=\"text/javascript\"></script>");
+        $.datepicker.setDefaults($.datepicker.regional[$(this).val()]);
+        /*$( ".datepicker" ).each(function(index) {
+                $(this).datepicker( "option",
+                "regional", $("#locale").val() );
+        })*/
+        alert("!");
     });
 
     // Fragen-Liste
@@ -163,24 +186,16 @@ function doAJAX(jsondata) {
                     $(qbox).append(output);
                     if (item.type != "radio") {
                         $(":input", qbox).focusin(function(){
-                            $(this).next(".hint").fadeIn(400);
+                            if (showhints) $(this).next(".hint").fadeIn(400);
                         }).focusout(function(){
                             $(this).next(".hint").fadeOut(600);
+                        }).change(function(){
+                            validateField(this);
                         });
                     }
                 });
                 $(qbox).append('<input type="button" class="ui-button next" value="next" onclick="sendAnswers(this.parentNode)"/>');
-                $('.datefield').datepicker({
-                    regional: "de",
-                    changeMonth: true,
-                    changeYear: true
-                });
-                $('.integer').change(function(){
-                    if (this.value.search(/\D/) != -1) {
-                        qwarn(this,"Please insert a integer. No characters or whitespaces allowed.");
-                    }
-                    else qunwarn(this);
-                });
+                $('.datefield').datepicker();
                 $("#questions").accordion({
                     header: "h3",
                     autoHeight: false,
@@ -195,9 +210,52 @@ function doAJAX(jsondata) {
 }
 
 /**
+ * Vaildates the formfield content.
+ * @param {object} obj Formfield was recently changed or a array that contains this objects
+ * @returns returns if a form-field or a set of fields has passed validation
+ * @type Boolean
+ * @see qwarn
+ * @see qunwarn
+ * @see sendAnswers
+ */
+function validateField(obj) {
+    if (classOf(obj) == "Array") {
+        for (var i=0;i < obj.length;i++) {
+            if (validateForm(obj[i])=== false) return false;
+        }
+    }
+    else if (classOf(obj).indexOf("HTML") == 0) {
+        qunwarn(this);
+        var o = $(obj);
+        if (o.hasClass("integer")) {
+            if (o.val().search(/\D/) != -1) {
+                qwarn(this,"Please insert a integer. No characters or whitespaces allowed.");
+                return false;
+            }
+        }
+        if (o.hasClass("datefield")) {
+            //if (o.val().search(/\d\d[.\/]\d\d[.\/]\d\d\d\d/) != -1) qwarn(this,"Please insert a integer. No characters or whitespaces allowed.");
+            alert("OH SHI-");
+        }
+        // empty field
+        if (o.val() == "" && !o.hasClass("optional")) {
+            qwarn(this,"This field is required.");
+            return false;
+        }
+        return true;
+    }
+    else {
+        alert("nothing to validate");
+        return false;
+    }
+}
+
+/**
  * Checks if radio or checkbox input fields needs a new line to seperate them
  * @param {Array} answers Array that contains all possible answers
  * @see doAJAX
+ * @returns true when a new line is required
+ * @type Boolean
  */
 function RadioCheckNewLine(answers) {
     var newline=false;
@@ -247,12 +305,17 @@ function statusupdate(type, text) {
  * Collects the given answers and parse them as JSON before sending them to {@link doAJAX}.
  * @param {object} obj expects a HTML object that includes the input fields for the given answers.
  * @see doAJAX
+ * @see validateField
  */
 function sendAnswers(obj) {
+    var doRequest = true;
     var jsonA = new Array();
     $(obj).children("p").children(":input").each(function(i, itemobj){ // Pseudoklassen nicht gefunden!
+        if (validateField(itemobj) === false) {
+            doRequest = false;
+            return false
+        }
         var item = $(itemobj);
-        if ( !item.val() ) return false;
         //alert(item.attr("name") + " : " + item.val());
         var jsonitem = new Object();
         jsonitem = {
@@ -261,9 +324,8 @@ function sendAnswers(obj) {
         }
         jsonA.push(jsonitem);
     });
-    
     var jsonZ = {"answers" : jsonA.copy()}
-    doAJAX(jsonZ);
+    if (doRequest) doAJAX(jsonZ);
 }
 
 /**
