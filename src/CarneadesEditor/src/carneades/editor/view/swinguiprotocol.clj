@@ -90,8 +90,10 @@
   )
 
 ;; records stored in the element of the tree:
-(defrecord LkifFileInfo [path filename] Object
-  (toString [this] filename))
+(defrecord LkifFileInfo [path filename dirty] Object
+  (toString
+   [this]
+   (str (when dirty "*") filename)))
 
 (defrecord GraphInfo [lkifinfo id title dirty] Object
   (toString

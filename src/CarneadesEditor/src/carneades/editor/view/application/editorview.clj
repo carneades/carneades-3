@@ -95,6 +95,11 @@
    [this]
    (get-graphinfo (.getSelectedComponent *mapPanel*)))
 
+  (opened-graphs
+   [this]
+   (let [ntab (.getTabCount *mapPanel*)]
+     (map #(get-graphinfo (.getComponentAt *mapPanel* %)) (range ntab))))
+
   (ask-file-to-open
    [this desc exts]
    (let [jc (JFileChooser.)]
@@ -336,7 +341,12 @@
 
   (set-dirty
    [this path ag state]
+   (tree/set-lkif-dirty path state)
    (set-ag-dirty path (:id ag) state))
+
+  (set-lkif-dirty
+   [this path state]
+   (tree/set-lkif-dirty path state))
 
   (copyselection-clipboard
    [this path id]
