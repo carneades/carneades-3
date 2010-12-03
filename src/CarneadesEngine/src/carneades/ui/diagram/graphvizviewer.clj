@@ -65,13 +65,13 @@
                   
                   :else (stmt-str n))
             (cond (and (in? ag n) (in? ag (statement-complement n)))
-                  "lightyellow"
+                  "gold"
                   
                   (in? ag n)
-                  "greenyellow"
+                  "limegreen"
                   
                   (in? ag (statement-complement n))
-                  "lightpink"
+                  "lightcoral"
                   
                   :else "white"))))
 
@@ -86,11 +86,11 @@
                (if (= (:direction arg) :pro) "forestgreen" "red")
                (cond (and (= :pro (:direction arg)) 
                           (applicable? ag arg))
-                     "greenyellow"
+                     "limegreen"
                      
                      (and (= :con (:direction arg)) 
                           (applicable? ag arg))
-                     "lightpink"
+                     "lightcoral"
                      
                      :else "white"))
        (format "    %s -> %s [arrowhead=\"%s\", color=\"%s\"];\n"
@@ -103,7 +103,7 @@
                      :pro "forestgreen"
                      :con "red"))
        (str-join "" (map
-                     #(format "    %s -> %s [style=\"%s\", color=\"%s\", arrowhead=\"%s\"];\n"
+                     #(format "    %s -> %s [style=\"%s\", color=\"%s\", arrowtail=\"%s\"];\n"
                               (get-id (premise-atom %))
                               (get-id (argument-id arg))
                               (cond (assumption? %) "dotted"
@@ -114,7 +114,7 @@
                                     
                                     (or (premise-neg? %) (exception? %)) "red"
                                     :else "forestgreen")
-                              (if (premise-neg? %) "tee" "none"))
+                              (if (premise-neg? %) "dot" "none"))
                          (argument-premises arg)))))
 
 (defn- arguments-graphvizstr [ag args]
