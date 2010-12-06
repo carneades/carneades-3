@@ -39,6 +39,7 @@
           (cond (instance? StatementCell val)
                 (do
                   (.setValue model cell (update-statement-object val))
+                  (adjust-size graph cell)
                   (.setStyle model cell (update-statement-style val (.getStyle cell))))
 
                 (instance? PremiseCell val)
@@ -185,7 +186,7 @@
       (.. model beginUpdate)
       (.setValue model cell stmt)
       (.setStyle model cell (get-statement-style ag newstmt))
-      (.updateCellSize graph cell)
+      ;; (.updateCellSize graph cell)
       (adjust-size cell)
       (do-layout graph p (get-vertices graph p))
       (finally

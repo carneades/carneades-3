@@ -175,8 +175,8 @@
 (defn- sety [^mxCell vertex y]
   (.. vertex getGeometry (setY y)))
 
-(defn adjust-size [v]
-  "the the vertex to minimum size"
+(defn adjust-size [g v]
+  (.updateCellSize g v)
   (let [geo (.getGeometry v)
         w (.getWidth geo)
         h (.getHeight geo)]
@@ -187,8 +187,7 @@
 
 (defn insert-vertex [^mxGraph g parent name style]
   (let [v (.insertVertex g parent (str (gensym)) name 10 10 40 40 style)]
-    (.updateCellSize g v)
-    (adjust-size v)
+    (adjust-size g v)
     v))
 
 (defn insert-edge [^mxGraph g parent userobject begin end style]
