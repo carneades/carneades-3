@@ -645,6 +645,8 @@
   (prn "on delete stmt")
   (prn "stmt =")
   (prn stmt)
+  ;; (prn "ag =")
+  ;; (pprint (get-ag path id))
   (when-let* [ag (get-ag path id)
               ag (delete-statement ag stmt)]
     (do-update-section view [path :ags (:id ag)] ag)
