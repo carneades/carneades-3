@@ -181,7 +181,7 @@
           ag (reduce (fn [ag argid]
                        (delete-argument ag (get-argument ag argid)))
                      ag conclusion-of)
-          ag (update-in ag [:nodes] dissoc key)]
+          ag (update-in ag [:nodes key] dissoc stmt)]
       (if (= main-issue stmt)
         (assoc ag :main-issue nil)
         ag))))
