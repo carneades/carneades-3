@@ -116,10 +116,10 @@
       ArgumentInfo (on-select-argument (:path info) (:id info) (:arg info) view)
       nil)))
 
-(defn statement-button-edit-listener [event view]
+(defn statement-content-edit-listener [event view]
   (let [info (get-statement-being-edited-info view)
         {:keys [path id]} info]
-    (on-edit-statement view path id info)))
+    (on-edit-statement view path id info false)))
 
 (defn statement-status-edit-listener [event view]
   (prn "statement-status-edit-listener")
@@ -266,7 +266,7 @@
 (defn statement-editor-listener [event view]
   (when-let [[path id] (current-graph view)]
     (let [info (get-statement-being-edited-menu-info view)]
-      (on-edit-statement view path id info))))
+      (on-edit-statement view path id info true))))
 
 (defn import-button-listener [event view]
   (let [info (get-lkif-being-edited-info view)]

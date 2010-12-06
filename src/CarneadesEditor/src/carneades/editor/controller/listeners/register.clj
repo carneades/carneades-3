@@ -57,7 +57,7 @@
 
   ;; properties listeners:
   (add-statement-editor-listener view statement-editor-listener [view])
-  (add-statement-edit-listener view statement-button-edit-listener [view])
+  (add-statement-edit-listener view statement-content-edit-listener [view])
   (add-statement-edit-status-listener view statement-status-edit-listener [view])
   (add-statement-edit-proofstandard-listener view statement-proofstandard-edit-listener [view])
   (add-title-edit-listener view title-edit-listener [view])
