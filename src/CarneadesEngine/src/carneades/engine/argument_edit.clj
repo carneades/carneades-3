@@ -50,7 +50,7 @@
   "returns the new ag or nil if oldsmt does not exist in ag"
   (when-let [n (statement-node ag oldstmt)]
     (let [key (statement-symbol oldstmt)
-          ag (update-in ag [:nodes] dissoc key)
+          ag (update-in ag [:nodes key] dissoc oldstmt)
           n (assoc n :statement newstmt)
           ag (add-node ag n)
           ag (update-conclusions ag (:conclusion-of n) newstmt)
