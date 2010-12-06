@@ -367,7 +367,7 @@
     (statement-content-changed view path ag previous-content-as-obj newcontent)
     (display-statement view path ag newcontent statement-formatted)))
 
-(deftrace on-edit-statement [view path id stmt-info]
+(deftrace on-edit-statement [view path id stmt-info retry-on-error]
   (prn "on-edit-statement")
   (prn stmt-info)
   (let [{:keys [content previous-content]} stmt-info
@@ -379,18 +379,19 @@
     (if (or isnil exists)
       (loop [msg (cond isnil *invalid-content* exists *statement-already-exists*)]
         (display-error view *edit-error* msg)
-        (let [content (read-statement view content)
-              newcontent (str-to-stmt content)]
-          (cond (nil? content)
-                nil
+        (when retry-on-error
+         (let [content (read-statement view content)
+               newcontent (str-to-stmt content)]
+           (cond (nil? content)
+                 nil
 
-                (nil? newcontent)
-                (recur msg)
+                 (nil? newcontent)
+                 (recur msg)
 
-                :else
-                (if (statement-node oldag newcontent)
-                  (recur *statement-already-exists*)
-                  (do-edit-statement view path id previous-content-as-obj newcontent oldag)))))
+                 :else
+                 (if (statement-node oldag newcontent)
+                   (recur *statement-already-exists*)
+                   (do-edit-statement view path id previous-content-as-obj newcontent oldag))))))
       (do-edit-statement view path id previous-content-as-obj newcontent oldag))))
 
 (deftrace on-edit-statement-status [view path id stmt-info]
