@@ -40,5 +40,6 @@
 
   (arguments-found
    [this found]
-   (when found
-     (.show *cardLayout* *searchResultsPanel* "searchFinishedWithResults"))))
+   (if found
+     (.show *cardLayout* *searchResultsPanel* "searchFinishedWithResults")
+     (.show *cardLayout* *searchResultsPanel* "searchFinishedWithNoResult"))))
