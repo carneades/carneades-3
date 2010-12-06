@@ -55,16 +55,13 @@
                               <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
                               <Component id="conButton" min="-2" max="-2" attributes="0"/>
                           </Group>
+                          <Component id="schemeText" alignment="0" pref="236" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="applicabilityText" alignment="1" min="-2" pref="116" max="-2" attributes="1"/>
-                                  <Component id="schemeText" alignment="0" min="-2" pref="134" max="-2" attributes="0"/>
-                              </Group>
                               <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                              <Component id="schemeEditButton" min="-2" pref="73" max="-2" attributes="0"/>
+                              <Component id="applicabilityText" pref="218" max="32767" attributes="1"/>
                           </Group>
                       </Group>
-                      <EmptySpace pref="11" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -105,7 +102,6 @@
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="schemeText" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="schemeEditButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -176,13 +172,11 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="schemeText">
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
-      </AuxValues>
-    </Component>
-    <Component class="javax.swing.JButton" name="schemeEditButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Edit..."/>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="de" green="de" red="de" type="rgb"/>
+        </Property>
+        <Property name="editable" type="boolean" value="false"/>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
