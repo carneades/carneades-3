@@ -40,6 +40,10 @@
 
 (defn- run-search [settings view path id]
   (when-let [ag (get-ag path id)]
+    (prn "searching argument in the graph =")
+    (prn (:title ag))
+    (prn "goal = ")
+    (prn (deref *goal*))
     (do-swing-and-wait
      (set-argumentsearch-busy view true))
     (letfn [(arguments-found?
@@ -62,12 +66,14 @@
                   :main-issue (:main-issue ag)
                   :title (:title ag))]
         (when (= (deref *search-state*) :running)
-          (when (arguments-found? ag ag2)
-            (reset! *newag* ag2))
-          (reset! *search-state* :stopped)
-          (do-swing-and-wait
-           (arguments-found view true)
-           (set-argumentsearch-busy view false)))))))
+          (let [found (arguments-found? ag ag2)]
+            (if found 
+              (reset! *newag* ag2)
+              (reset! *newag* nil))
+            (reset! *search-state* :stopped)
+            (do-swing-and-wait
+             (set-argumentsearch-busy view false)
+             (arguments-found view found))))))))
 
 (defn- try-stop-search []
   (when-let [search-future (deref *search-future*)]
