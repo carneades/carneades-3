@@ -3,6 +3,7 @@
 
 (ns carneades.editor.view.application.wizards.instantiatescheme
   (:use clojure.contrib.def
+        clojure.contrib.pprint
         clojure.contrib.swing-utils
         carneades.editor.view.application.wizards.messages
         carneades.editor.view.wizardsprotocol)
@@ -91,10 +92,20 @@
    (apply add-action-listener *nextClauseButton* f args))
 
   (create-literal-formular
-   [this formid literal suggestions variables suffix listener args]
-   (let [panel (LiteralPanel.)
+   [this formid literal suggestions variables suffix listeners args]
+   (let [{:keys [form-listener
+                 previous-suggestion-listener
+                 next-suggestion-listener
+                 use-suggestion-listener]} listeners
+         panel (LiteralPanel.)
          literalText (.literalText panel)
          variablesPanel (.variablesPanel panel)
+         suggestionText (.suggestionText panel)
+         suggestionLabel (.suggestionLabel panel)
+         previousSuggestionButton (.previousSuggestionButton panel)
+         nextSuggestionButton (.nextSuggestionButton panel)
+         useSuggestionButton (.useSuggestionButton panel)
+         trigger (.dummyValidatorTrigger panel)
          textfields (mapcat (fn [var]
                               (let [varpanel (VariablePanel.)
                                     label (.variableLabel varpanel)
@@ -106,19 +117,38 @@
                                                  (proxy [KeyAdapter] []
                                                    (keyReleased
                                                     [keyevent]
-                                                    (apply listener formid var (.getText text) args))))
+                                                    (apply form-listener formid var (.getText text) args))))
                                 [var text]))
                          variables)]
+     (add-action-listener previousSuggestionButton
+                          (fn [_] (apply previous-suggestion-listener formid args)))
+     (add-action-listener nextSuggestionButton
+                          (fn [_] (apply next-suggestion-listener formid args)))
+     (add-action-listener useSuggestionButton
+                          (fn [_] (apply use-suggestion-listener formid args)))
      (.setText literalText literal)
+     (.setVisible trigger false)
      (LiteralFormular. formid panel (apply hash-map textfields)))
    )
 
+  (display-suggestion
+   [this formular suggestion n nb-suggestions]
+   (let [panel (:panel formular)
+         suggestionText (.suggestionText panel)
+         suggestionLabel (.suggestionLabel panel)]
+     (.setText suggestionText suggestion)
+     (.setText suggestionLabel (format *suggestion-n-of* n nb-suggestions))))
+
   (fillin-formular
    [this formular var-values]
-   (let [textfields (:textfields formular)]
+   (let [textfields (:textfields formular)
+         panel (:panel formular)
+         trigger (.dummyValidatorTrigger panel)]
      (doseq [[var value] var-values]
        (when-let [text (get textfields var)]
-         (.setText text value)))))
+         (.setText text value)))
+     (.setText trigger "xyz")
+     ))
 
   (set-filter-text-listener
    [this f args]

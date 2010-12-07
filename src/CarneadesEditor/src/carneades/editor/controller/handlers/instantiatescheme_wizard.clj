@@ -27,8 +27,6 @@
   (map #(str (:id %)) rules))
 
 (defn on-schemes-panel [settings view path id]
-  (reset! *literal-wizards* {})
-  (reset! *formulars* {})
   (let [rules (get-rules path)]
     (display-schemes view (rules-name rules))))
 
@@ -62,6 +60,9 @@
       (filter #(.contains (str/lower-case %) filter-text) names))))
 
 (defn on-filter-schemes [view path id text conclusionmatches]
+  (prn "on-filter-schemes")
+  (prn "text =")
+  (prn text)
   (let [text (str/lower-case (str/trim text))
         names (filter-schemes (get-rules path) text conclusionmatches)]
     (display-schemes view names)))
@@ -81,6 +82,8 @@
 
 (defn on-clauses-panel [settings view path id]
   (prn "on-clauses-panel")
+  (reset! *literal-wizards* {})
+  (reset! *formulars* {})
   (let [rule (get-rule path (get settings "scheme")) 
         clauses (:body rule)
         clause (first clauses)
@@ -91,8 +94,6 @@
     (if conclusion-matches
       (reset! *current-substitution* (unify (first (:head rule)) (deref *conclusion*)))
       (reset! *current-substitution* nil))
-    (prn "current-subs =")
-    (prn (deref *current-substitution*))
     (reset! *clauses* {:clauses (apply vector clauses) :index 0 :nclauses nb-clauses})
     (display-clause view clause 0 nb-clauses statement-formatted))
   )
@@ -121,28 +122,65 @@
 (defn form-listener [formid val value view]
   (prn "form-listener")
   (printf "%s -> %s\n" val value)
+  (prn "value =")
+  (prn value)
+  (prn "")
   (let [form (get (deref *formulars*) formid)]
-    (swap! *current-substitution* assoc val value)
+    (if (empty? value)
+      (swap! *current-substitution* dissoc val)
+      (swap! *current-substitution* assoc val value))
     (doseq [form (vals (deref *formulars*))]
       (fillin-formular view form [[val (statement-formatted value)]])))
   )
+
+(defvar- *suggestions* (atom nil))
+
+(defn previous-suggestion [formid view]
+  (when-let* [form (get (deref *formulars*) formid)
+              suggestions (deref *suggestions*)
+              {:keys [current-idx suggestions size]} suggestions]
+    (when (pos? current-idx)
+      (let [idx (dec current-idx)
+            current (nth suggestions idx)]
+        (swap! *suggestions* assoc :current-idx idx)
+        (display-suggestion view form (statement-formatted current) (inc idx) size)))))
+
+(defn next-suggestion [formid view]
+  (when-let* [form (get (deref *formulars*) formid)
+              suggestions (deref *suggestions*)
+              {:keys [current-idx suggestions size]} suggestions]
+    (when (not= current-idx (dec size))
+      (let [idx (inc current-idx)
+            current (nth suggestions idx)]
+        (swap! *suggestions* assoc :current-idx idx)
+        (display-suggestion view form (statement-formatted current) (inc idx) size)))))
+
+(defn use-suggestion [view formid variables]
+  (when-let* [form (get (deref *formulars*) formid)
+              suggestions (deref *suggestions*)
+              {:keys [current-idx suggestions]} suggestions
+              current (nth suggestions current-idx)
+              values (map str (filter (complement variable?) (term-args current)))
+              var-values (partition 2 (interleave variables values))]
+    (swap! *current-substitution* merge (apply hash-map (apply concat var-values)))
+    (fillin-formular view form var-values)))
 
 (defn get-literal-formular [view clause-number literal literal-nb]
   (let [formid (gen-form-id clause-number literal-nb)]
     (if-let [panel (get (deref *formulars*) formid)]
       panel
-      (let [form (create-literal-formular view
+      (let [variables (filter variable? literal)
+            form (create-literal-formular view
                                           formid (statement-formatted literal) []
-                                          (filter variable? literal)
+                                          variables
                                           (str literal-nb)
-                                          form-listener
-                                          [view])
-            ;; current-subs (deref *current-substitution*)
-            ;; var-values (map (fn [[var values]] [var (statement-formatted values)]) current-subs)
-            ]
-        ;; (prn "var-values =")
-        ;; (prn var-values)
-        ;; (fillin-formular view form var-values)
+                                          {:form-listener form-listener
+                                           :previous-suggestion-listener previous-suggestion
+                                           :next-suggestion-listener next-suggestion
+                                           :use-suggestion-listener
+                                           (fn [formid view]
+                                             (use-suggestion view formid variables))}
+                                          [view])]
         (swap! *formulars* assoc formid form)
         form))))
 
@@ -151,7 +189,8 @@
 
 (defn create-literal-validator [literal idx]
   (fn [settings]
-    (prn "validator!")
+    (prn "validator")
+    (prn "settings =")
     (prn settings)
     (let [variables (filter variable? literal)
           formvariables (keep (fn [var]
@@ -164,29 +203,40 @@
           current-substitution (deref *current-substitution*)
           ;; validator is called before our listener so we need to merge the values
           sub (merge current-substitution (apply hash-map (apply concat formvariables)))]
-      (prn "sub =")
-      (prn sub)
-      (prn "apply =")
-      (prn (apply-substitution sub literal))
+      (printf "current-sub = %s\n" sub)
       (if (ground? (apply-substitution sub literal))
-        (do
-          (prn "can substitute!")
-          (prn "result =")
-          (prn (apply-substitution sub literal))
-          nil)
-        *fillin-form*)
-      )))
+        nil
+        *fillin-form*))))
 
-(defn on-literal-panel [view form settings]
+(defn unifiable-statements [ag literal current-subs]
+  (prn "unifiable-statements")
+  (prn "literal =")
+  (prn literal)
+  (let [stmts (map node-statement (get-nodes ag))
+        suggestions (filter #(unify literal %) stmts)]
+    (prn "suggestions =")
+    (pprint suggestions)
+    
+    suggestions
+    ))
+
+(defn on-literal-panel [view path id form literal settings]
   (prn "on-literal-panel")
-  (let [current-subs (deref *current-substitution*)
+  (let [ag (get-ag path id)
+        current-subs (deref *current-substitution*)
         var-values (map (fn [[var values]] [var (statement-formatted values)]) current-subs)]
     (fillin-formular view form var-values)
-
+    (let [suggestions (unifiable-statements ag literal current-subs)
+          size (count suggestions)]
+      (if (zero? size)
+        (reset! *suggestions* nil)
+        (reset! *suggestions* {:current-idx 0 :suggestions suggestions :size size}))
+      (when-not (empty? suggestions)
+        (display-suggestion view form (statement-formatted (first suggestions)) 1 size)))
     )
   )
 
-(defn get-literals-wizard [view clause-number]
+(defn get-literals-wizard [view path id clause-number]
   (if-let [wizard (get (deref *literal-wizards*) clause-number)]
     wizard
     (when-let* [clauses (deref *clauses*)
@@ -198,13 +248,15 @@
                                    literals) 
                 wizard (create-wizard view ""
                                       (map-indexed (fn [idx form]
-                                                     {:panel (:panel form)
-                                                      :desc (get-desc form (inc idx))
-                                                      :validator
-                                                      (create-literal-validator
-                                                       (nth literals idx) idx)
-                                                      :listener #(on-literal-panel view form %)
-                                                      })
+                                                     (let [literal (nth literals idx)]
+                                                       {:panel (:panel form)
+                                                        :desc (get-desc form (inc idx))
+                                                        :validator
+                                                        (create-literal-validator
+                                                         literal idx)
+                                                        :listener #(on-literal-panel view path id form
+                                                                                     literal %)
+                                                       }))
                                                    forms)
                                       (constantly true)
                                       [])]
@@ -220,7 +272,7 @@
                        nil
                        (let [wizard
                              (get-literals-wizard
-                              view
+                              view path id
                               (Integer/parseInt clause-number))]
                          wizard)))
       
@@ -238,27 +290,11 @@
     (display-statement view path ag conclusion statement-formatted)))
 
 (defn on-post-instantiatescheme-wizard [view path id settings]
-  (prn "on-post-instantiatescheme-wizard")
-  (prn "settings =")
-  (prn settings)
   (let [rule (get-rule path (get settings "scheme"))
         clause-number (Integer/parseInt (get settings "clause-number"))
         current-subs (deref *current-substitution*)
         clause (nth (:body rule) clause-number)
         clause (map #(apply-substitution current-subs %) clause)
         head (:head rule)
-        head (map #(apply-substitution current-subs %) head)
-        ]
-        (prn "rule =")
-    (prn rule)
-    (prn "current-subs =")
-    (prn current-subs)
-    (prn "head =")
-    (prn head)
-    (prn "clause =")
-    (prn clause)
-    (instantiate-scheme view path id (str (:id rule)) (first head) clause)
-
-
-)
-)
+        head (map #(apply-substitution current-subs %) head)]
+    (instantiate-scheme view path id (str (:id rule)) (first head) clause)))

@@ -187,7 +187,7 @@
       (.setValue model cell stmt)
       (.setStyle model cell (get-statement-style ag newstmt))
       ;; (.updateCellSize graph cell)
-      (adjust-size cell)
+      (adjust-size graph cell)
       (do-layout graph p (get-vertices graph p))
       (finally
        (.. model endUpdate)))))
