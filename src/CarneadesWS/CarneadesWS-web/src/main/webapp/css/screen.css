@@ -6,18 +6,26 @@
         Stylesheet for Screens
 */
 
-body{ font: 8pt "Trebuchet MS", sans-serif; margin: 50px; }
+/* general */
+body{ font: 8pt "Trebuchet MS", sans-serif; margin: 35px; }
 .demoHeaders { margin-top: 2em; }
 #dialog_link {padding: .4em 1em .4em 20px; text-decoration: none; position: relative;}
 #dialog_link span.ui-icon {margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
-/* blabla */
-#datepicker { display:none; }
 #progressbar { clear:both; }
+#status {
+        padding: 0.7em;
+        position:absolute; right: 53px; top: 88px;
+        display:none;
+}
+#locatebox {
+        padding: 2px;
+        position:absolute; right: 10px; top: 8px;
+}
+/* questions */
 #questions-box {
         min-height:200px;
         clear:both;
 }
-
 #questionlist {
         list-style:none;
         margin:0;
@@ -35,12 +43,46 @@ body{ font: 8pt "Trebuchet MS", sans-serif; margin: 50px; }
         padding: 2px 10px;
 }
 #questions {
-        margin-left:200px;
+        margin-left:201px;
         width:auto !important;
 }
-.qinfo {
+#questions div {
+        padding:2px;
+}
+#questions div div {
+        padding:10px 0 2px 20px !important;
+}
+#questions p {
+        margin:7px 0;
+}
+#questions h3 {
+        font-size:1.1em;
+        margin:0;
+        padding:3px 0 3px 20px !important;
+        background: url(../images/what.png) no-repeat center left;
+}
+/* hints */
+.hint {
         display:none;
-        background:transparent url(../images/qinfo_bg.png) repeat-x top right;
+}
+#hints {
+        float:right;
+        width:220px;
+        /*background-color:#dadada;*/
+}
+#hints h4 {
+        font-size:1.1em;
+        margin:0;
+        padding:3px 0 3px 20px !important;
+        background: url(../images/hints.png) no-repeat center left;
+}
+#hints p {
+        margin:15px 0 20px 0;
+}
+/* warning */
+.qwarn {
+        display:none;
+        background:transparent url(../images/qwarn_bg.png) repeat-x top right;
         color:#444;
         /*font-size: 16px;*/
         /*margin-left: 2px;*/
@@ -49,15 +91,15 @@ body{ font: 8pt "Trebuchet MS", sans-serif; margin: 50px; }
         font-size:11px;
         padding:2px 3px 2px 0px;
 }
-.qinfo i { /*left site */
+.qwarn i { /*left site */
         margin: 0;
         padding: 0 7px;
         height: 16px;
         line-height: 16px;
         font-size:13px;
-        background: transparent url(../images/qinfo.png) no-repeat;
+        background: transparent url(../images/qwarn.png) no-repeat;
 }
-.qinfo b { /* rigth site * /
+.qwarn b { /* rigth site * /
         margin: 0;
         padding: 0 7px;
         height: 16px;
@@ -66,13 +108,3 @@ body{ font: 8pt "Trebuchet MS", sans-serif; margin: 50px; }
         background: transparent url(../images/qinfo_r.png) no-repeat; */
 
 }
-#status {
-        padding: 0.7em;
-        position:absolute; right: 53px; top: 88px;
-        display:none;
-}
-#locatebox {
-        padding: 2px;
-        position:absolute; right: 10px; top: 8px;
-}
-
