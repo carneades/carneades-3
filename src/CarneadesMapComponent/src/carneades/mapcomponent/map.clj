@@ -582,15 +582,16 @@
   (let [component (:component graphcomponent)
         graph (.getGraph component)
         selectionmodel (.getSelectionModel graph)
-        selectedcells (.getCells selectionmodel)
-        bufferedimg (mxCellRenderer/createBufferedImage
-             graph selectedcells 1 Color/WHITE
-             (.isAntiAlias component) nil (.getCanvas component))
-        os (ByteArrayOutputStream.)
-        res (ImageIO/write bufferedimg "png" os)
-        imgselection (ImageSelection. (.toByteArray os))
-        clipboard (.getSystemClipboard (.getToolkit component))]
-    (.setContents clipboard imgselection nil)))
+        selectedcells (.getCells selectionmodel)]
+    (when-not (empty? selectedcells)
+      (let [bufferedimg  (mxCellRenderer/createBufferedImage
+                          graph selectedcells 1 Color/WHITE
+                          (.isAntiAlias component) nil (.getCanvas component))
+            os (ByteArrayOutputStream.)
+            res (ImageIO/write bufferedimg "png" os)
+            imgselection (ImageSelection. (.toByteArray os))
+            clipboard (.getSystemClipboard (.getToolkit component))]
+        (.setContents clipboard imgselection nil)))))
 
 (defn select-all [graphcomponent]
   (let [component (:component graphcomponent)
