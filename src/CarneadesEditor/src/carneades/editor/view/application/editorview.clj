@@ -10,7 +10,7 @@
         carneades.editor.view.application.editor-helpers
         carneades.editor.view.viewprotocol
         carneades.editor.view.printing.preview
-        carneades.editor.view.dialogs.aboutbox
+        (carneades.editor.view.dialogs aboutbox properties)
         carneades.editor.utils.core
         (carneades.editor.view.components uicomponents search tabs)
         (carneades.editor.view.properties lkif statement argument premise graph
@@ -253,6 +253,10 @@
      (.setLocationRelativeTo dialog *frame*)
      (.setVisible dialog true)
      (deref textcontent)))
+
+  (read-properties
+   [this properties]
+   (show-properties-dialog this properties))
 
   (read-statement
    [this content]

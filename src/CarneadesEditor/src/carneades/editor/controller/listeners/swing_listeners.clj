@@ -295,3 +295,6 @@
   (when-let [[path id] (current-graph view)]
     (let [info (get-statement-being-edited-menu-info view)]
       (on-edit-statement-status view path id (assoc info :status :rejected)))))
+
+(defn preferences-editmenuitem-listener [event view]
+  (on-edit-preferences view))

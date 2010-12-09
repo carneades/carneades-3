@@ -198,6 +198,10 @@
    [this f args]
    (apply add-action-listener *copyClipboardEditMenuItem* f args))
 
+  (add-preferences-editmenuitem-listener
+   [this f args]
+   (apply add-action-listener *preferencesEditMenuItem* f args))
+  
   (add-premise-edit-polarity-listener
    [this f args]
    (apply add-action-listener *negatedCheckBox* f args))
