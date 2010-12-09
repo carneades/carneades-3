@@ -21,7 +21,7 @@
 
 (defn start []
   (prn "Starting the Carneades Editor...")
-  (log false)
+  (log true)
   (let [view (create-swingview)]
     (init view)
     (register-listeners view)
