@@ -60,6 +60,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         editMenu = new javax.swing.JMenu();
         jSeparator9 = new javax.swing.JPopupMenu.Separator();
+        jSeparator13 = new javax.swing.JPopupMenu.Separator();
         assistantMenu = new javax.swing.JMenu();
         helpMenu = new javax.swing.JMenu();
 
@@ -381,6 +382,10 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         selectAllEditMenuItem.setText("Select All");
         editMenu.add(selectAllEditMenuItem);
+        editMenu.add(jSeparator13);
+
+        preferencesEditMenuItem.setText("Preferences...");
+        editMenu.add(preferencesEditMenuItem);
 
         menuBar.add(editMenu);
 
@@ -482,6 +487,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator11;
     private javax.swing.JPopupMenu.Separator jSeparator12;
+    private javax.swing.JPopupMenu.Separator jSeparator13;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JToolBar.Separator jSeparator4;
@@ -508,6 +514,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JMenuItem openFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem openGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JButton optionsButton = new javax.swing.JButton();
+    public final javax.swing.JMenuItem preferencesEditMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JPopupMenu premisePopupMenu = new javax.swing.JPopupMenu();
     public final javax.swing.JMenuItem printFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem printPreviewFileMenuItem = new javax.swing.JMenuItem();

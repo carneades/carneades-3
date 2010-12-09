@@ -4,7 +4,9 @@
 (ns carneades.editor.core
   (:use (carneades.editor.view viewprotocol)
         carneades.editor.view.application.editorapplication
-        carneades.editor.controller.listeners.register)
+        carneades.editor.controller.listeners.register
+        carneades.editor.view.dialogs.properties 
+        )
   (:gen-class))
 
 (defn- log [logging]
@@ -19,7 +21,7 @@
 
 (defn start []
   (prn "Starting the Carneades Editor...")
-  (log true)
+  (log false)
   (let [view (create-swingview)]
     (init view)
     (register-listeners view)

@@ -3,6 +3,7 @@
 
 (ns carneades.editor.controller.handlers.handlers
   (:use clojure.contrib.def
+        clojure.java.io
         clojure.contrib.trace
         clojure.contrib.pprint
         [clojure.contrib.swing-utils :only (do-swing do-swing-and-wait)]
@@ -11,7 +12,7 @@
         carneades.engine.lkif
         (carneades.engine argument argument-edit)
         [carneades.engine.statement :only (statement-formatted statement?)]
-        carneades.editor.model.docmanager
+        (carneades.editor.model docmanager properties)
         carneades.editor.utils.core
         ;; only the view.viewprotocol namespace is allowed to be imported
         carneades.editor.view.viewprotocol
@@ -830,3 +831,15 @@
       (let [importurls (get-kbs-locations path)]
         (display-lkif-property view path importurls)))))
 
+(defvar *properties* (atom (load-properties)))
+
+(defn on-edit-preferences [view]
+  (prn "on-edit-preferences")
+  (when-let* [properties (load-properties)
+              newproperties (read-properties view properties)]
+    (reset! *properties* newproperties)
+    (try
+      (store-properties newproperties)
+      (catch java.io.IOException e
+        (display-error view *save-error* (str *error-saving* ": " (.getMessage e)))
+        false))))

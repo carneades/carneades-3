@@ -34,6 +34,7 @@
   (add-save-filemenuitem-listener [this f args])
   (add-saveas-filemenuitem-listener [this f args])
   (add-copyclipboard-button-listener [this f args])
+  (add-preferences-editmenuitem-listener [this f args])
   (add-delete-premise-menuitem-listener [this f args])
   (add-delete-statement-menuitem-listener [this f args])
   (add-delete-argument-menuitem-listener [this f args])

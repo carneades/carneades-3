@@ -72,6 +72,7 @@
   (add-redo-button-listener view redo-button-listener [view])
   (add-save-button-listener view save-button-listener [view])
   (add-refresh-button-listener view refresh-button-listener [view])
+  (add-preferences-editmenuitem-listener view preferences-editmenuitem-listener [view])
   (add-copyclipboard-button-listener view copyclipboard-button-listener [view])
   (add-save-filemenuitem-listener view save-filemenuitem-listener [view])
   (add-saveas-filemenuitem-listener view saveas-filemenuitem-listener [view])
