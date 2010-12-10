@@ -35,13 +35,15 @@
   (prn "do-close-graph")
   (prn "graph before =")
   (pprint (get-ag path id))
-  (when-not savechanges
-    (restore-section-to-last-saved *docmanager* [path :ags id]))
-  (prn "graph after =")
-  (pprint (get-ag path id))
-  (update-dirty-state view path (get-ag path id) false)
-  (update-undo-redo-statuses view path id)
-  (close-graph view path id (contains? (get-fresh-ag-ids path) id)))
+  (let [isfresh (contains? (get-fresh-ag-ids path) id)]
+   (when-not savechanges
+     (if isfresh
+       (remove-section *docmanager* [path :ags id])
+       (do
+         (update-dirty-state view path (get-ag path id) false)
+         (update-undo-redo-statuses view path id)
+        (restore-section-to-last-saved *docmanager* [path :ags id]))))
+   (close-graph view path id isfresh)))
 
 (deftrace close-all [view path]
   "closes all graphs without saving, removes LKIF from tree"
@@ -199,14 +201,14 @@
 (deftrace on-save [view path]
   "returns false if an error occured, true otherwise"
   (prn "on-save")
-  (remove-fresh-ags path)
   (if (new-lkif? path)
-    (do
-      (when (on-saveas view path)
-        (remove-newlkif path)
-        (close-all view path)))
+    (when (on-saveas view path)
+      (remove-fresh-ags path)
+      (remove-newlkif path)
+      (close-all view path))
     (if (save-lkif view path)
       (do
+        (remove-fresh-ags path)
         (set-lkif-dirty view path false)
         (doseq [id (filter #(is-ag-dirty path %) (get-ags-id path))]
           (let [ag (get-ag path id)]
