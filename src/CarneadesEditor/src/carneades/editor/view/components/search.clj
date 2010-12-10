@@ -168,9 +168,6 @@
   (add-action-listener *optionsButton* showoptions-button-listener)
   (add-action-listener *searchButton* search-button-listener))
 
-(defn file-from-path [path]
-  (last (split path (re-pattern java.io.File/pathSeparator))))
-
 (defn add-stmt-search-result [path id stmt stmt-fmt]
   (let [obj (StatementInfo. path id stmt stmt-fmt)]
     (.insertRow *modelTable* (.getRowCount *modelTable*)
