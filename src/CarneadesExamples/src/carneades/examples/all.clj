@@ -1,17 +1,11 @@
 
 (ns carneades.examples.all
-  ;(:require )
-  (:use
-    carneades.engine.argument
-    carneades.engine.rule
-    carneades.engine.shell
-    carneades.engine.argument-builtins
-    carneades.ui.diagram.viewer
-    )
-  ;(:import )
-  )
-
-(declare type-gens)
+  (:use carneades.engine.argument
+        carneades.engine.rule
+        carneades.engine.shell
+        carneades.engine.argument-builtins
+        [carneades.engine.search :only (depth-first)]
+        carneades.ui.diagram.viewer))
 
 (def rb
   (rulebase
@@ -44,27 +38,31 @@
          (u 4 3)
          (u 5 2))))
 
-(def type-gens (list (generate-arguments-from-rules type-rb '())))
+(def type-gens (list (generate-arguments-from-rules type-rb ())))
 
 (def goal '(all x (t x) (q x)))
 ;(def goal '(exists x (t x) (u x ?y)))
 ;(def goal '(s ?y))
 
 (def sols (construct-arguments goal
-                                  200
-                                  1
-                                  *empty-argument-graph*
-                                  (list (generate-arguments-from-rules rb '())
-                                        (generate-arguments-from-rules type-rb '())
-                                        (builtins type-gens))))
+                               200
+                               1
+                               *empty-argument-graph*
+                               depth-first
+                               (list (generate-arguments-from-rules rb ())
+                                     (generate-arguments-from-rules type-rb ())
+                                     (builtins type-gens))))
+
+(prn "sol =")
+(prn sols)
 
 (def ag1 (unite-solutions sols))
 (def ag2 (unite-solutions-with-candidates sols))
 
 (def engine (make-engine* 200
-                                 0
-                                 *empty-argument-graph*
-                                 (list (generate-arguments-from-rules rb '())
-                                       (builtins type-gens))))
+                          0
+                          *empty-argument-graph*
+                          (list (generate-arguments-from-rules rb ())
+                                (builtins type-gens))))
 
 ;(def sol2 (engine goal))
