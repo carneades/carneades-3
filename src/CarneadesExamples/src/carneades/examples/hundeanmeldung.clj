@@ -66,7 +66,7 @@
 	       (vor-mehr-als-drei-jahren d1))))
 	       
 (def engine (make-engine* 100 1 ag1
-                (list (generate-arguments-from-rules rb1 '()) builtins)))
+                (list (generate-arguments-from-rules rb1 '()) (builtins))))
 
 ;;(view (:arguments (first (solutions (engine '(hundeanmeldung ?ha))))))
 (view (:arguments
