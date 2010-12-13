@@ -12,8 +12,7 @@
 	carneades.engine.owl
         carneades.engine.statement
         [carneades.engine.abduction :as abd]
-	carneades.engine.lkif.import
-        carneades.engine.lkif.export
+	carneades.engine.lkif
         carneades.ui.diagram.viewer)
     (:require [carneades.engine.argument :as arg]))
 
@@ -71,4 +70,4 @@
 (profile (main))
 ;(main)
 
-;(view ag1)
+(view ag1)
