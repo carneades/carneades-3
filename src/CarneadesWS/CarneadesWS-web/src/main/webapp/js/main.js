@@ -2,7 +2,7 @@
  * This is the AJAX-Engine for the IMPACT web application.
  *
  * @author bbr
- * @version 0.26
+ * @version 0.35
  */
 
 /** Settings */
@@ -37,7 +37,7 @@ $(function(){ // Init
             inline: true
     });
     $.datepicker.setDefaults({
-            regional: "de",
+            //regional: "de",
             changeMonth: true,
             changeYear: true,
             yearRange: (''+(jsloadstarted.getFullYear()-100)+':'+(jsloadstarted.getFullYear()+10)),
@@ -48,10 +48,10 @@ $(function(){ // Init
      $(".ui-button").button();
 
     // Land -> Datum
-    $( "#locale" ).change(function() {
+    $("#locate").change(function(){
         alert("? "+$(this).val() );
-        /*
-        $("body").append("<script src=\""+"http://jquery-ui.googlecode.com/svn/trunk/ui/i18n/jquery.ui.datepicker-"+$(this).val()+".js\" type=\"text/javascript\"></script>");
+        
+        $("body").append("<script src=\"js/jquery/jquery.ui.datepicker-"+$(this).val()+".js\" type=\"text/javascript\"></script>");
         $.datepicker.setDefaults($.datepicker.regional[$(this).val()]);
         /*$( ".datepicker" ).each(function(index) {
                 $(this).datepicker( "option",
@@ -133,24 +133,27 @@ function doAJAX(jsondata) {
         success : function(data){
             if (data != null && data.questions) { // getting questions
                 var qbox = $("#questions");
+                var newline = false;
                 qbox.empty();
-                qbox.append("<div id=\"hints\"><h4>hints</h4></div>");
                 qbox.append("<div><h3>"+data.questions[0].category+"</h3><div id=\"qcontent\"></div></div>");
+                qbox.append("<div id=\"hints\"><h4>hints</h4></div>");
                 qbox = $("#qcontent", qbox);
                 $.each(data.questions, function(i,item){
+                    // pre append formatting
                     var output = "<p>"+item.question;
                     if (item.type == "select") {
                         output += "<select id=\"qID"+item.id+"\" name=\"qID"+item.id+"\">";
+                        output += "<option value=\"\" selected=\"selected\">-- please choose --</option>";
                         $.each(item.answers, function(answindex, answer) {
                             output += "<option value=\""+answer+"\">"+answer+"</option>";
                         });
                         output += "</select>";
                     }
-                    else if (item.type == "radio") {
-                        var newline = radioCheckNewLine(item.answers);
+                    else if (item.type == "radio" || item.type == "checkbox") {
+                        newline = radioCheckNewLine(item.answers);
                         $.each(item.answers, function(answindex, answer) {
                             if (newline) output += "<br/>";
-                            output += "<input id=\"qID"+item.id+"\" name=\"qID"+item.id+"\" type=\"radio\">";
+                            output += "<input name=\"qID"+item.id+"\" type=\""+item.type+"\" value=\""+answer+"\">";
                             output += "<span onclick=\"$(this).prev().click()\">"+answer+"</span>";
                         });
                     }
@@ -160,10 +163,15 @@ function doAJAX(jsondata) {
                     else if (item.type == "int") {
                         output += "<input type=\"text\" class=\"integer\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
                     }
+                    else if (item.type == "float") {
+                        output += "<input type=\"text\" class=\"float\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
+                    }
                     else output += "<input type=\""+item.type+"\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
                     if (item.hint) $("#hints").append("<p id=\"qHINT"+item.id+"\" class=\"hint\">"+item.hint+"</p>");
                     output += "</p>";
                     qbox.append(output);
+                    // post append formatting
+                    if (item.optional) $("p:last :input:first", qbox).addClass("optional");
                     if (item.type != "radio") {
                         $(":input", qbox).focus(function(){
                             if (showhints) {
@@ -174,12 +182,13 @@ function doAJAX(jsondata) {
                             $("#qHINT"+this.id.substring(3)).css('display','none');
                         })
                         $(":input", qbox).change(function(){
-                            validateField(this);
+                            if (item.type == "radio" || item.type == "checkbox") validateField($("input:first", this.parentNode)[0]);
+                            else validateField(this);
                         });
                     }
                 });
                 qbox.append('<input type="button" class="ui-button next" value="next" onclick="sendAnswers(this.parentNode)"/>');
-                $('.datefield').datepicker();
+                $('.datefield', qbox).datepicker();
             }
             else {
                 alert("FAILED: "+data);
@@ -217,21 +226,44 @@ function validateField(obj) {
     else if ($.type(obj) == "object" && (obj.nodeName == "INPUT"
              || obj.nodeName == "SELECT" || obj.nodeName == "TEXTFIELD") ) {
         var o = $(obj);
-        if (obj.type == "button") return true; // buttons ignorieren
+        if (obj.type && obj.type == "button") return true; // buttons ignorieren
         if (o.hasClass("integer")) {
             if (o.val().search(/\D/) != -1) {
                 qwarn(obj,"Please insert a integer. No characters or whitespaces allowed.");
                 return false;
             }
         }
+        if (o.hasClass("float")) {
+            if (o.val() != "" && o.val().search(/[\sa-zA-Z]/i) != -1 ||
+               (null == /(^-?\d*\.?\d*$)/.exec(o.val()) ? true : /(^-?\d*\.?\d*$)/.exec(o.val())[0] !== o.val() ) ) {
+                qwarn(obj,"No valid number found.");
+                return false;
+            }
+        }
         if (o.hasClass("datefield")) {
-            //if (o.val().search(/\d\d[.\/]\d\d[.\/]\d\d\d\d/) != -1) qwarn(this,"Please insert a integer. No characters or whitespaces allowed.");
+            if (o.val() != "" && o.val().search(/[\sa-zA-Z]/i) != -1 || o.val().search(/\d\d[\.\/]\d\d[\.\/]\d\d\d\d/i) != -1
+                && (null == /(\d\d[\.\/]\d\d[\.\/]\d\d\d\d)/i.exec(o.val()) ? true : /(\d\d[\.\/]\d\d[\.\/]\d\d\d\d)/i.exec(o.val())[0] !== o.val() ) ) {
+                qwarn(obj,"Invalid date.");
+                return false;
+            }
+        }
+        // empty radio/box
+        if ( obj.type && (obj.type == "radio" || obj.type == "checkbox") ) {
+            if (obj.parentNode.getElementsByTagName("input")[0] == obj && !o.hasClass("optional")) {
+                if ($("input:checked[name='"+obj.name+"']").length == 0) {
+                    qwarn(obj,"This field is required.");
+                    return false;
+                }
+                // something is selected
+            }
+            else return true; // abort validation because it already has been validated
         }
         // empty field
-        if (o.val() == "" && !o.hasClass("optional")) {
+        else if (o.val() == "" && !o.hasClass("optional")) {
             qwarn(obj,"This field is required.");
             return false;
         }
+        // valid content
         qunwarn(obj);
         return true;
     }
@@ -325,8 +357,21 @@ function sendAnswers(obj) {
  */
 function qwarn(obj,warning) {
     var o = $(obj);
-    if (o.next(".qwarn").length > 0) {
-        o.next(".qwarn").html("<i></i>"+warning+"<b></b>")
+    if ($(".qwarn", obj.parentNode).length > 0) {
+        $(".qwarn", obj.parentNode).html("<i></i>"+warning+"<b></b>");
+    }
+    else if (obj.type == "radio" || obj.type == "checkbox") {
+        $("span", obj.parentNode).css("backgroundColor","#F78181");
+        if ($("br", obj.parentNode).length > 0) { // newline checkbox/radio
+            o=$("br:first", obj.parentNode);
+            o.before("<span class=\"qwarn\"><i></i>"+warning+"<b></b></span>");
+            o.prev().fadeIn(500);
+        }
+        else {
+            o=$(":last-child", obj.parentNode);
+            o.after("<span class=\"qwarn\"><i></i>"+warning+"<b></b></span>");
+            o.next().fadeIn(500);
+        }
     }
     else {
         o.css("backgroundColor","#F78181");
@@ -342,6 +387,11 @@ function qwarn(obj,warning) {
  */
 function qunwarn(obj) {
     var o = $(obj);
-    o.css("backgroundColor","#ffffff");
-    o.next(".qwarn").fadeOut(500, function() { $(this).remove(); });
+    if (obj.type == "radio" || obj.type == "checkbox") {
+        $("span", obj.parentNode).css("backgroundColor","");
+    }
+    else {
+        o.css("backgroundColor","");
+    }
+    $(".qwarn", obj.parentNode).fadeOut(500, function() {$(this).remove();});
 }

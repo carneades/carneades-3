@@ -8,7 +8,7 @@
 
 /* general */
 body{ font: 8pt "Trebuchet MS", sans-serif; margin: 35px; }
-.demoHeaders { margin-top: 2em; }
+h2 { margin: 1.5em 0 1em 0; }
 #dialog_link {padding: .4em 1em .4em 20px; text-decoration: none; position: relative;}
 #dialog_link span.ui-icon {margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
 #progressbar { clear:both; }
@@ -77,7 +77,7 @@ body{ font: 8pt "Trebuchet MS", sans-serif; margin: 35px; }
         background: url(../images/hints.png) no-repeat center left;
 }
 #hints p {
-        margin:15px 0 20px 0;
+        margin:20px 0 20px 0;
 }
 /* warning */
 .qwarn {
