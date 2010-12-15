@@ -46,7 +46,14 @@
   (if conclusion
     (filter #(do
                ;; TODO: multiple conclusion?
-               ;; (printf "unify %s and %s\n" (first (:head %)) conclusion)
+               (printf "unify %s and %s => %s\n" (first (:head %)) conclusion
+                       (unify (first (:head %)) conclusion))
+               (prn "rule =")
+               (prn %)
+               (prn "fhead =")
+               (prn (first (:head %)))
+               (prn "conclusion =")
+               (prn conclusion)
                (unify (first (:head %)) conclusion)) rules)
     rules))
 
@@ -156,13 +163,17 @@
         (display-suggestion view form (statement-formatted current) (inc idx) size)))))
 
 (defn use-suggestion [view formid vars]
+  (prn "use suggestion")
   (when-let* [form (get (deref *formulars*) formid)
               suggestions (deref *suggestions*)
               {:keys [current-idx suggestions]} suggestions
               current (nth suggestions current-idx)
-              values (map str (filter (complement variable?) (term-args current)))
-              var-values (partition 2 (interleave vars values))]
-    (swap! *current-substitution* merge (apply hash-map (apply concat var-values)))
+              values (filter (complement variable?) (term-args current))
+              formatted-values (map statement-formatted values)
+              var-values (partition 2 (interleave vars formatted-values))]
+    (swap! *current-substitution* merge (apply hash-map (interleave vars values)))
+    (prn "current-substitution =")
+    (prn (deref *current-substitution*))
     (fillin-formular view form var-values)))
 
 (defn get-literal-formular [view clause-number literal literal-nb]
@@ -231,7 +242,8 @@
       (if (zero? size)
         (reset! *suggestions* nil)
         (reset! *suggestions* {:current-idx 0 :suggestions suggestions :size size}))
-      (when-not (empty? suggestions)
+      (if (empty? suggestions)
+        (display-no-suggestion view form)
         (display-suggestion view form (statement-formatted (first suggestions)) 1 size)))
     )
   )
@@ -283,7 +295,7 @@
               ag (update-statement ag conclusion)
               ag (reduce (fn [ag premise]
                            (update-statement ag premise)) ag premises)
-              arg (argument (gen-argument-id ag) :pro conclusion (map #(pm %) premises) scheme)
+              arg (argument (gen-argument-id ag) :pro conclusion (map premise premises) scheme)
               ag (assert-argument ag arg)]
     (do-update-section view [path :ags (:id ag)] ag)
     (graph-changed view path ag statement-formatted)
