@@ -43,7 +43,7 @@
   (cond
     (= Boolean (type t)) [:c t],
     (number? t) [:c (str t)],
-    (string? t) t,
+    (string? t) [:c (str "\"" t "\"")],
     (fatom? t) [:s {:pred (statement-predicate t)} (combine-expression-format (:term t) (:form t))],
     (variable? t) [:v (.substring (str t) 1)],
     (symbol? t) [:c (str t)],
