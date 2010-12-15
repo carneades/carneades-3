@@ -155,13 +155,13 @@
         (swap! *suggestions* assoc :current-idx idx)
         (display-suggestion view form (statement-formatted current) (inc idx) size)))))
 
-(defn use-suggestion [view formid variables]
+(defn use-suggestion [view formid vars]
   (when-let* [form (get (deref *formulars*) formid)
               suggestions (deref *suggestions*)
               {:keys [current-idx suggestions]} suggestions
               current (nth suggestions current-idx)
               values (map str (filter (complement variable?) (term-args current)))
-              var-values (partition 2 (interleave variables values))]
+              var-values (partition 2 (interleave vars values))]
     (swap! *current-substitution* merge (apply hash-map (apply concat var-values)))
     (fillin-formular view form var-values)))
 
@@ -169,17 +169,17 @@
   (let [formid (gen-form-id clause-number literal-nb)]
     (if-let [panel (get (deref *formulars*) formid)]
       panel
-      (let [variables (filter variable? literal)
+      (let [vars (variables literal)
             form (create-literal-formular view
                                           formid (statement-formatted literal) []
-                                          variables
+                                          vars
                                           (str literal-nb)
                                           {:form-listener form-listener
                                            :previous-suggestion-listener previous-suggestion
                                            :next-suggestion-listener next-suggestion
                                            :use-suggestion-listener
                                            (fn [formid view]
-                                             (use-suggestion view formid variables))}
+                                             (use-suggestion view formid vars))}
                                           [view])]
         (swap! *formulars* assoc formid form)
         form))))

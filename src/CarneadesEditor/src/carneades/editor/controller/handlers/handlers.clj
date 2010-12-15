@@ -9,7 +9,7 @@
         [clojure.contrib.swing-utils :only (do-swing do-swing-and-wait)]
         carneades.editor.controller.handlers.messages
         (carneades.editor.controller search documents)
-        carneades.engine.lkif
+        (carneades.engine lkif utils)
         (carneades.engine argument argument-edit)
         [carneades.engine.statement :only (statement-formatted statement?)]
         (carneades.editor.model docmanager properties)
@@ -95,10 +95,12 @@
         )
       ;; (catch IllegalArgumentException
       ;;     e (display-error view *open-error* (str *invalid-content* ".")))
+      (catch java.io.FileNotFoundException
+          e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
       (catch java.io.IOException
           e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
       (catch org.xml.sax.SAXException
-          e (display-error view *open-error* (str *invalid-content* ".")))
+          e (display-error view *open-error* *invalid-content*))
       (finally
        (set-busy view false)))))
 
