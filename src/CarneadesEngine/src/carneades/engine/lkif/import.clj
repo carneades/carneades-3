@@ -21,6 +21,7 @@
     carneades.engine.rule
     ;carneades.engine.owl.rule
     carneades.engine.owl)
+  (:require [clojure.string :as str])
   (:import
     (java.net MalformedURLException URL)
     (java.io File))
@@ -80,12 +81,14 @@
 (defn lkif-constant->sexpr
   [lkif-constant]
   (let [c (text lkif-constant),
+        len (count c)
         n (try (Integer/parseInt c) (catch NumberFormatException e false)),
         v (cond
-            n n,
-            (= c "true") true,
-            (= c "false") false,
-            true (symbol c))]
+           (and (.startsWith c "\"") (.endsWith c "\"")) (subs c 1 (dec len))
+           n n,
+           (= c "true") true,
+           (= c "false") false,
+           :else (symbol c))]
     ;(println "lkif-constant->sexpr" lkif-constant c n v)
     v
     ))
