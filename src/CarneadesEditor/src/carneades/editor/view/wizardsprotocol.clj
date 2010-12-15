@@ -52,4 +52,5 @@
   (create-literal-formular [this formid literal suggestions variables suffix listener args])
   (fillin-formular [this form var-values] "does nothing if var does not exist for the form")
   (display-suggestion [this formular suggestion n nb-suggestions])
+  (display-no-suggestion [this formular])
   )

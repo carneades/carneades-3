@@ -183,15 +183,6 @@ the statement of a condition"
   "create a strict rule"
   (rule-macro-helper id body true))
 
-(defn statement-to-premise [s]
-  (if (seq? s)
-    (let [[predicate stmt] s]
-      (condp = predicate
-        'unless (ex stmt)
-        'assuming (am stmt)
-        (pm s)))
-    (pm s)))
-
 (defvar *question-types* #{'excluded 'priority 'valid}
   "question-type = excluded | priority | valid")
 
@@ -372,7 +363,7 @@ with some goal."
                                      arg-id (gensym "a")
                                      direction (if (= (first subgoal) 'not) :con :pro)
                                      conclusion (statement-atom (condition-statement subgoal))
-                                     premises (concat (map statement-to-premise (:clause ic))
+                                     premises (concat (map premise (:clause ic))
                                                 (rule-critical-questions (:rule ic) qs subgoal (:strict ic)))
                                      scheme (str (:rule ic) (:id ic))]
                                  ;(println "rule instantiated:" (str (:rule ic) (:id ic)))

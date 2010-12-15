@@ -135,9 +135,31 @@
    [this formular suggestion n nb-suggestions]
    (let [panel (:panel formular)
          suggestionText (.suggestionText panel)
-         suggestionLabel (.suggestionLabel panel)]
+         suggestionLabel (.suggestionLabel panel)
+         previousSuggestionButton (.previousSuggestionButton panel)
+         nextSuggestionButton (.nextSuggestionButton panel)
+         useSuggestionButton (.useSuggestionButton panel)]
+     (.setEnabled suggestionLabel true)
+     (.setEnabled suggestionText true)
+     (.setEnabled previousSuggestionButton true)
+     (.setEnabled nextSuggestionButton true)
+     (.setEnabled useSuggestionButton true)
      (.setText suggestionText suggestion)
      (.setText suggestionLabel (format *suggestion-n-of* n nb-suggestions))))
+
+  (display-no-suggestion
+   [this form]
+   (let [panel (:panel form)
+         suggestionText (.suggestionText panel)
+         suggestionLabel (.suggestionLabel panel)
+         previousSuggestionButton (.previousSuggestionButton panel)
+         nextSuggestionButton (.nextSuggestionButton panel)
+         useSuggestionButton (.useSuggestionButton panel)]
+     (.setEnabled suggestionLabel false)
+     (.setEnabled suggestionText false)
+     (.setEnabled previousSuggestionButton false)
+     (.setEnabled nextSuggestionButton false)
+     (.setEnabled useSuggestionButton false)))
 
   (fillin-formular
    [this formular var-values]
