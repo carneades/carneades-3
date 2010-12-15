@@ -87,6 +87,7 @@ Returns true if x is a constant"
                          (ground? (term-args t)))
     :else true))
 
+;; could be rewritten (filter variable? (tree-seq seq? identity s)) ?
 (defn variables [t]
   "term -> (seq-of symbol)
 Returns a sequence of the variables in the term"
@@ -196,3 +197,4 @@ is one"
     true (if (= stmt from)
            to
            stmt)))
+
