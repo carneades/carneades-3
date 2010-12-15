@@ -61,6 +61,17 @@
   "statement -> exception"
   (exception (statement-atom s) (statement-pos? s) nil))
 
+(defn premise [s]
+  "builds a premise, an assumption or an exception
+   depending of the value of the predicate of the statement"
+  (if (seq? s)
+    (let [[predicate stmt] s]
+      (condp = predicate
+        'unless (ex stmt)
+        'assuming (am stmt)
+        (pm s)))
+    (pm s)))
+
 (defn premise-pos? [p]
   (:polarity p))
 
@@ -80,12 +91,6 @@
   (if (premise-pos? p)
     (:atom p)
     (statement-complement (:atom p))))
-
-
-
-
-
-
 
 (defn premise-atom [p]
   (:atom p))
