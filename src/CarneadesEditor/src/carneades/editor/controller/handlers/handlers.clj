@@ -381,23 +381,27 @@
         newcontent (str-to-stmt content)
         isnil (nil? newcontent)
         exists (statement-node oldag newcontent)]
-    (if (or isnil exists)
-      (loop [msg (cond isnil *invalid-content* exists *statement-already-exists*)]
-        (display-error view *edit-error* msg)
-        (when retry-on-error
-         (let [content (read-statement view content)
-               newcontent (str-to-stmt content)]
-           (cond (nil? content)
-                 nil
+    (cond isnil
+          (loop [msg (cond isnil *invalid-content* exists *statement-already-exists*)]
+            (display-error view *edit-error* msg)
+            (when retry-on-error
+              (let [content (read-statement view content)
+                    newcontent (str-to-stmt content)]
+                (cond (nil? content)
+                      nil
 
-                 (nil? newcontent)
-                 (recur msg)
+                      (nil? newcontent)
+                      (recur msg)
 
-                 :else
-                 (if (statement-node oldag newcontent)
-                   (recur *statement-already-exists*)
-                   (do-edit-statement view path id previous-content-as-obj newcontent oldag))))))
-      (do-edit-statement view path id previous-content-as-obj newcontent oldag))))
+                      :else
+                      (if (statement-node oldag newcontent)
+                        (recur *statement-already-exists*)
+                        (do-edit-statement view path id previous-content-as-obj newcontent oldag))))))
+
+          exists
+          (display-statement view path oldag newcontent statement-formatted)
+          
+          :else (do-edit-statement view path id previous-content-as-obj newcontent oldag))))
 
 (deftrace on-edit-statement-status [view path id stmt-info]
   (prn "on-edit-statement-status")
@@ -614,6 +618,8 @@
     (premise-deleted view path ag arg pm)))
 
 (deftrace prompt-statement-content [view ag suggestion]
+  "asks the user the content of a new statement. Prompts
+   again if the content is invalid or already exists"
   (let [stmt (read-statement view suggestion)
         stmt-as-obj (str-to-stmt stmt)]
     (cond (nil? stmt)
