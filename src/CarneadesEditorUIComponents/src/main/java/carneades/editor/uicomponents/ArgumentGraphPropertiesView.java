@@ -111,16 +111,5 @@ public class ArgumentGraphPropertiesView extends javax.swing.JPanel {
     public final javax.swing.JTextField titleText = new javax.swing.JTextField();
     // End of variables declaration//GEN-END:variables
 
-    // our modifications:
-    public static ArgumentGraphPropertiesView viewInstance = new ArgumentGraphPropertiesView();
 
-    public static synchronized ArgumentGraphPropertiesView instance()
-    {
-        return viewInstance;
-    }
-
-    public static synchronized void reset()
-    {
-        viewInstance = new ArgumentGraphPropertiesView();
-    }
 }

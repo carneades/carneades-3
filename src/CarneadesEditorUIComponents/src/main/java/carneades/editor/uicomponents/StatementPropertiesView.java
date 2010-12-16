@@ -185,16 +185,4 @@ public class StatementPropertiesView extends javax.swing.JPanel {
     private javax.swing.ButtonGroup statusGroup;
     // End of variables declaration//GEN-END:variables
 
-    // our modifications:
-    public static StatementPropertiesView viewInstance = new StatementPropertiesView();
-
-    public static synchronized StatementPropertiesView instance()
-    {
-        return viewInstance;
-    }
-
-    public static synchronized void reset()
-    {
-        viewInstance = new StatementPropertiesView();
-    }
 }

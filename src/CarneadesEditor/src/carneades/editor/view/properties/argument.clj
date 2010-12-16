@@ -7,7 +7,7 @@
         carneades.editor.utils.swing)
   (:import carneades.editor.uicomponents.ArgumentPropertiesView))
 
-(defvar- *argumentProperties* (ArgumentPropertiesView/instance))
+(defvar- *argumentProperties* (ArgumentPropertiesView.))
 
 (defvar *titleText* (.titleText *argumentProperties*))
 (defvar *proButton* (.proButton *argumentProperties*))
@@ -37,8 +37,7 @@
 ;;; public functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn init-argument-properties []
-  (ArgumentPropertiesView/reset))
+(defn init-argument-properties [])
 
 (defvar- *previous-argument-content* (atom {}))
 

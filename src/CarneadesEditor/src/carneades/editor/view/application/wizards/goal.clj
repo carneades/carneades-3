@@ -12,10 +12,10 @@
            (carneades.editor.uicomponents.wizards.goal ProponentPanel
                                                        AbductionPanel)))
 
-(defvar- *proponentPanel* (ProponentPanel/instance))
+(defvar- *proponentPanel* (ProponentPanel.))
 (defvar- *mainIssueTextArea* (.mainIssueTextArea *proponentPanel*))
 
-(defvar- *abductionPanel* (AbductionPanel/instance))
+(defvar- *abductionPanel* (AbductionPanel.))
 (defvar- *statementList* (.statementsList *abductionPanel*))
 (defvar- *positionLabel* (.positionLabel *abductionPanel*))
 (defvar- *resultsPanel* (.resultsPanel *abductionPanel*))

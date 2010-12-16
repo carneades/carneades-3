@@ -7,10 +7,10 @@
   (:import (carneades.editor.uicomponents.wizards.findarguments SearchParametersPanel
                                                                 SearchArgumentsPanel)))
 
-(defvar- *searchParametersPanel* (SearchParametersPanel/instance))
+(defvar- *searchParametersPanel* (SearchParametersPanel.))
 (defvar- *goalTextArea* (.goalTextArea *searchParametersPanel*))
 
-(defvar- *searchArgumentsPanel* (SearchArgumentsPanel/instance))
+(defvar- *searchArgumentsPanel* (SearchArgumentsPanel.))
 (defvar- *searchResultsPanel* (.searchResultsPanel *searchArgumentsPanel*))
 (defvar- *cardLayout* (.getLayout *searchResultsPanel*))
 

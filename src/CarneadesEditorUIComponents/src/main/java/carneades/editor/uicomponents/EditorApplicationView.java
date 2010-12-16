@@ -572,15 +572,4 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
     }
 
-    public static EditorApplicationView viewInstance = new EditorApplicationView();
-
-    public static synchronized EditorApplicationView instance()
-    {
-        return viewInstance;
-    }
-
-    public static synchronized void reset()
-    {
-        viewInstance = new EditorApplicationView();
-    }
 }

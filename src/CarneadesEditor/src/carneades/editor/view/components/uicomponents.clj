@@ -5,7 +5,7 @@
   (:use clojure.contrib.def)
   (:import carneades.editor.uicomponents.EditorApplicationView))
 
-(defvar *frame* (EditorApplicationView/instance))
+(defvar *frame* (EditorApplicationView.))
 
 (defvar *openFileButton* (.openFileButton *frame*))
 (defvar *openFileMenuItem* (.openFileMenuItem *frame*))
