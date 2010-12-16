@@ -4,7 +4,8 @@
 (ns carneades.editor.view.components.tabs
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
-        carneades.editor.utils.listeners)
+        carneades.editor.utils.listeners
+        carneades.editor.view.components.uicomponents)
   (:import (java.awt EventQueue event.MouseListener Dimension FlowLayout)
            (javax.swing UIManager JTabbedPane JLabel JButton JFrame JPanel
                         ImageIcon
@@ -18,9 +19,8 @@
            (javax.swing.event ChangeListener)
            (carneades.editor.uicomponents EditorApplicationView)))
 
-(defvar- *viewinstance* (EditorApplicationView/instance))
 
-(defvar *mapPanel* (.mapPanel *viewinstance*))
+(defvar *mapPanel* (.mapPanel *frame*))
 
 ;; (defvar- *closebutton-url* "carneades/editor/view/close-button.png")
 (defvar- *closebutton-url* "close-button.png")

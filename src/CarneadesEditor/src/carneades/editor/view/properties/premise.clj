@@ -7,15 +7,14 @@
         carneades.editor.utils.seq)
   (:import carneades.editor.uicomponents.PremisePropertiesView))
 
-(defvar- *premiseProperties* (PremisePropertiesView/instance))
+(defvar- *premiseProperties* (PremisePropertiesView.))
 (defvar- *pathText* (.pathText *premiseProperties*))
 (defvar- *mapTitleText* (.mapTitleText *premiseProperties*))
 (defvar *negatedCheckBox* (.negatedCheckBox *premiseProperties*))
 (defvar *typeComboBox* (.typeComboBox *premiseProperties*))
 (defvar *roleText* (.roleText *premiseProperties*))
 
-(defn init-premise-properties []
-  (PremisePropertiesView/reset))
+(defn init-premise-properties [])
 
 (defvar- *type-to-str* {:carneades.engine.argument/ordinary-premise "Premise"
                         :carneades.engine.argument/assumption "Assumption"

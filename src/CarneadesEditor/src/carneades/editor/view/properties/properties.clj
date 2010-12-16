@@ -5,12 +5,10 @@
 ;;; panel properties
 
 (ns carneades.editor.view.properties.properties
-  (:use clojure.contrib.def)
-  (:import carneades.editor.uicomponents.EditorApplicationView))
+  (:use clojure.contrib.def
+        carneades.editor.view.components.uicomponents))
 
-(defvar- *viewinstance* (EditorApplicationView/instance))
-
-(defvar- *propertiesPanel* (.propertiesPanel *viewinstance*))
+(defvar- *propertiesPanel* (.propertiesPanel *frame*))
 
 (defvar- *properties* (atom nil))
 

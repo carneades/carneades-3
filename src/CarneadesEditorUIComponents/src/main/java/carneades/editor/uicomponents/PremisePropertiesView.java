@@ -126,16 +126,4 @@ public class PremisePropertiesView extends javax.swing.JPanel {
     public final javax.swing.JComboBox typeComboBox = new javax.swing.JComboBox();
     // End of variables declaration//GEN-END:variables
 
-    // our modifications:
-    public static PremisePropertiesView viewInstance = new PremisePropertiesView();
-
-    public static synchronized PremisePropertiesView instance()
-    {
-        return viewInstance;
-    }
-
-    public static synchronized void reset()
-    {
-        viewInstance = new PremisePropertiesView();
-    }
 }

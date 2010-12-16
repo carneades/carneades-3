@@ -6,14 +6,13 @@
         clojure.contrib.swing-utils
         carneades.editor.utils.swing
         carneades.editor.view.swinguiprotocol
+        carneades.editor.view.components.uicomponents
         [clojure.string :only (trim split)]
         carneades.editor.utils.listeners)
   (:import (java.awt.event KeyEvent KeyAdapter)
            (javax.swing JScrollPane table.DefaultTableModel KeyStroke JTable)
            (carneades.editor.uicomponents EditorApplicationView SearchOptionsDialog)
            (carneades.editor.view.swinguiprotocol StatementInfo ArgumentInfo)))
-
-(defvar- *frame* (EditorApplicationView/instance))
 
 (defvar- *searchButton* (.searchButton *frame*))
 (defvar- *searchComboBox* (.searchComboBox *frame*))

@@ -7,14 +7,13 @@
         carneades.editor.utils.listeners)
   (:import carneades.editor.uicomponents.LkifFilePropertiesView))
 
-(defvar- *lkifProperties* (LkifFilePropertiesView/instance))
+(defvar- *lkifProperties* (LkifFilePropertiesView.))
 (defvar- *lkifPathText* (.pathTextField *lkifProperties*))
 (defvar- *importButton* (.importButton *lkifProperties*))
 (defvar- *removeButton* (.removeButton *lkifProperties*))
 (defvar- *importsList* (.importsList *lkifProperties*))
 
-(defn init-lkif-properties []
-  (LkifFilePropertiesView/reset))
+(defn init-lkif-properties [])
 
 (defvar- *lkif-info* (atom {}))
 

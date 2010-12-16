@@ -19,12 +19,10 @@
            (carneades.editor.uicomponents EditorApplicationView)
            (carneades.editor.view.swinguiprotocol GraphInfo LkifFileInfo)))
 
-(defvar- *viewinstance* (EditorApplicationView/instance))
+(defvar- *lkifFilePopupMenu* (.lkifFilePopupMenu *frame*))
+(defvar- *graphPopupMenu* (.graphPopupMenu *frame*))
 
-(defvar- *lkifFilePopupMenu* (.lkifFilePopupMenu *viewinstance*))
-(defvar- *graphPopupMenu* (.graphPopupMenu *viewinstance*))
-
-(defvar *lkifsTree* (.lkifsTree *viewinstance*))
+(defvar *lkifsTree* (.lkifsTree *frame*))
 
 (defn selected-object []
   (when-let [node (.getLastSelectedPathComponent *lkifsTree*)]
