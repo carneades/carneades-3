@@ -176,16 +176,5 @@ public class ArgumentPropertiesView extends javax.swing.JPanel {
     public final javax.swing.JSpinner weightSpinner = new javax.swing.JSpinner();
     // End of variables declaration//GEN-END:variables
 
-    // our modifications:
-    public static ArgumentPropertiesView viewInstance = new ArgumentPropertiesView();
 
-    public static synchronized ArgumentPropertiesView instance()
-    {
-        return viewInstance;
-    }
-
-    public static synchronized void reset()
-    {
-        viewInstance = new ArgumentPropertiesView();
-    }
 }

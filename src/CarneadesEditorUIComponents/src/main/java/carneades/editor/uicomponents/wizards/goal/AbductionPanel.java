@@ -224,16 +224,4 @@ public class AbductionPanel extends javax.swing.JPanel {
     public final javax.swing.JList statementsList = new javax.swing.JList();
     // End of variables declaration//GEN-END:variables
 
-     // our modifications:
-    public static AbductionPanel panelInstance = new AbductionPanel();
-
-    public static synchronized AbductionPanel instance()
-    {
-        return panelInstance;
-    }
-
-    public static synchronized void reset()
-    {
-        panelInstance = new AbductionPanel();
-    }
 }

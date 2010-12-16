@@ -105,16 +105,5 @@ public class LkifFilePropertiesView extends javax.swing.JPanel {
     public final javax.swing.JButton removeButton = new javax.swing.JButton();
     // End of variables declaration//GEN-END:variables
 
-    // our modifications:
-    public static LkifFilePropertiesView viewInstance = new LkifFilePropertiesView();
 
-    public static synchronized LkifFilePropertiesView instance()
-    {
-        return viewInstance;
-    }
-
-    public static synchronized void reset()
-    {
-        viewInstance = new LkifFilePropertiesView();
-    }
 }

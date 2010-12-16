@@ -8,7 +8,7 @@
   (:import carneades.editor.uicomponents.StatementPropertiesView
            (javax.swing KeyStroke Action AbstractAction)))
 
-(defvar- *statementProperties* (StatementPropertiesView/instance))
+(defvar- *statementProperties* (StatementPropertiesView.))
 (defvar- *statementTextArea* (.statementTextArea *statementProperties*))
 (defvar *statementStatusComboBox* (.statusComboBox *statementProperties*))
 (defvar *statementProofstandardComboBox* (.proofstandardComboBox *statementProperties*))
@@ -36,8 +36,7 @@
 
 (gen-listeners-fns "statement-edit")
 
-(defn init-statement-properties []
-  (StatementPropertiesView/reset))
+(defn init-statement-properties [])
 
 (defvar- *previous-statement-content* (atom {}))
 

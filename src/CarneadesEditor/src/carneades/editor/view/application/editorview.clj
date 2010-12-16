@@ -35,7 +35,6 @@
    (set-look-and-feel "Nimbus")
    
    ;; make a new instance (without listeners!)
-   (EditorApplicationView/reset)
    (add-action-listener *zoomInButton* on-zoom-in)
    (add-action-listener *zoomOutButton* on-zoom-out)
    (add-action-listener *zoomResetButton* on-zoom-reset)
@@ -214,7 +213,11 @@
 
   (display-graph-property
    [this path id title mainissue]
-   (show-properties (get-graph-properties-panel path id title mainissue)))
+   (prn "display-graph-property")
+   (let [properties (get-graph-properties-panel path id title mainissue)]
+     (prn "properties =")
+     (prn properties)
+     (show-properties properties)))
 
   (display-about
    [this]

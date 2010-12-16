@@ -152,16 +152,4 @@ public class SearchArgumentsPanel extends javax.swing.JPanel {
     public final javax.swing.JPanel searchResultsPanel = new javax.swing.JPanel();
     // End of variables declaration//GEN-END:variables
 
-    // our modifications:
-    public static SearchArgumentsPanel panelInstance = new SearchArgumentsPanel();
-
-    public static synchronized SearchArgumentsPanel instance()
-    {
-        return panelInstance;
-    }
-
-    public static synchronized void reset()
-    {
-        panelInstance = new SearchArgumentsPanel();
-    }
 }
