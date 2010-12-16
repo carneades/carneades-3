@@ -381,7 +381,10 @@
         newcontent (str-to-stmt content)
         isnil (nil? newcontent)
         exists (statement-node oldag newcontent)]
-    (cond isnil
+    (cond (= previous-content-as-obj newcontent)
+          (display-statement view path oldag newcontent statement-formatted)
+          
+          (or isnil exists)
           (loop [msg (cond isnil *invalid-content* exists *statement-already-exists*)]
             (display-error view *edit-error* msg)
             (when retry-on-error
@@ -391,15 +394,16 @@
                       nil
 
                       (nil? newcontent)
-                      (recur msg)
+                      (recur *invalid-content*)
 
+                      (= newcontent previous-content-as-obj)
+                      (display-statement view path oldag newcontent statement-formatted)
+
+                      (statement-node oldag newcontent)
+                      (recur *statement-already-exists*)
+                      
                       :else
-                      (if (statement-node oldag newcontent)
-                        (recur *statement-already-exists*)
-                        (do-edit-statement view path id previous-content-as-obj newcontent oldag))))))
-
-          exists
-          (display-statement view path oldag newcontent statement-formatted)
+                      (do-edit-statement view path id previous-content-as-obj newcontent oldag)))))
           
           :else (do-edit-statement view path id previous-content-as-obj newcontent oldag))))
 
