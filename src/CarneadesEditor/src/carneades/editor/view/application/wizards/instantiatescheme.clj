@@ -172,6 +172,12 @@
      (.setText trigger "xyz")
      ))
 
+  (trigger-formpanel-validator
+   [this formular]
+   (let [panel (:panel formular)
+         trigger (.dummyValidatorTrigger panel)]
+     (.setText trigger "xyz")))
+
   (set-filter-text-listener
    [this f args]
    (doseq [l (.getKeyListeners *filterText*)]

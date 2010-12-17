@@ -53,4 +53,5 @@
   (fillin-formular [this form var-values] "does nothing if var does not exist for the form")
   (display-suggestion [this formular suggestion n nb-suggestions])
   (display-no-suggestion [this formular])
+  (trigger-formpanel-validator [this formular])
   )
