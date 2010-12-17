@@ -4,6 +4,7 @@
 (ns carneades.editor.controller.listeners.swing-wizards-listeners
   (:use carneades.editor.view.viewprotocol
         carneades.editor.view.wizardsprotocol
+        carneades.editor.utils.state
         [carneades.engine.statement :only (statement?)]
         carneades.editor.view.swinguiprotocol
         carneades.editor.controller.handlers.messages
@@ -71,42 +72,53 @@
             settings (display-wizard view wizard)]
         (on-post-findarguments-wizard view path id settings)))))
 
+(defn state-wrapper [f state]
+  (fn [settings]
+    (swap! state assoc :settings settings)
+    (state-call f state)))
+
 (defn instantiatescheme-assistantmenuitem-listener [event view]
+  (prn "instantiatescheme-assistantmenuitem-listener")
   (when-let [[path id] (current-graph view)]
-    (on-pre-instantiatescheme-wizard view path id
-                                     (get-selected-statement view path id))
-    (set-filter-text-listener view (fn [event]
-                                     (on-filter-schemes
-                                      view path id
-                                      (get-filter-text view)
-                                      (and
-                                       (conclusionmatches-button-enabled? view)
-                                       (conclusionmatches-button-selected? view))))
-                              [])
-    (set-conclusionmatches-button-listener
-     view
-     (fn [event]
-       (on-conclusionmatches view path id
-                             (get-filter-text view)
-                             (conclusionmatches-button-selected? view)))
-     [])
-    (set-previous-clause-button-listener view (fn [event]
-                                                (on-previous-clause-button-listener view path id)) [])
-    (set-next-clause-button-listener view (fn [event]
-                                            (on-next-clause-button-listener view path id)) [])
-    (let [schemes-panel (get-schemes-panel view)
-          clauses-panel (get-clauses-panel view)
-          settings (display-branched-wizard view [{:panel schemes-panel
-                                                   :desc *schemes-panel*
-                                                   :listener on-schemes-panel ;; todo reinit on each call
-                                                   :validator schemes-panel-validator
-                                                   :args [view path id]}
-                                                  {:panel clauses-panel
-                                                   :desc *clauses-panel-desc*
-                                                   :id *clauses-id*
-                                                   :listener on-clauses-panel
-                                                   :args [view path id]}]
-                                            instantiatescheme-panel-selector
-                                            [view path id])]
-      (when settings
-       (on-post-instantiatescheme-wizard view path id settings)))))
+    (prn "current path =")
+    (prn path)
+    (let [conclusion (get-selected-statement view path id)
+          state (atom (create-instantiatescheme-state view path id conclusion))]
+      (prn "conclusion =")
+      (prn conclusion)
+      (on-pre-instantiatescheme-wizard (deref state))
+      (set-filter-text-listener view (fn [event]
+                                       (swap! state assoc
+                                              :filter-text (get-filter-text view)
+                                              :conclusion-matches (and
+                                                                   (conclusionmatches-button-enabled? view)
+                                                                   (conclusionmatches-button-selected? view)))
+                                       (state-call on-filter-schemes state))
+                                [])
+      (set-conclusionmatches-button-listener
+       view
+       (fn [event]
+         (swap! state assoc :conclusion-matches (conclusionmatches-button-selected? view))
+         (state-call on-conclusionmatches state))
+       [])
+      (set-previous-clause-button-listener view (fn [event]
+                                                  (state-call on-previous-clause-button-listener state)) [])
+      (set-next-clause-button-listener view (fn [event]
+                                              (state-call on-next-clause-button-listener state)) [])
+      (let [schemes-panel (get-schemes-panel view)
+            clauses-panel (get-clauses-panel view)
+            settings (display-branched-wizard view [{:panel schemes-panel
+                                                     :desc *schemes-panel*
+                                                     :listener (state-wrapper on-schemes-panel state)
+                                                     :validator schemes-panel-validator}
+                                                    {:panel clauses-panel
+                                                     :desc *clauses-panel-desc*
+                                                     :id *clauses-id*
+                                                     :listener (state-wrapper on-clauses-panel state)}]
+                                              (fn [settings stepid]
+                                                (swap! state assoc :settings settings)
+                                                (instantiatescheme-panel-selector state stepid))
+                                              [])]
+        (when settings
+          (swap! state assoc :settings settings)
+          (state-call on-post-instantiatescheme-wizard state))))))
