@@ -690,9 +690,17 @@
   ;(print "uniting graphs:" (:id ag1) (:id ag2))
   (let [all-nodes (get-nodes ag2),
         accepted-nodes (filter (fn [n] (= (:status n) :accepted)) all-nodes),
-        rejected-nodes (filter (fn [n] (= (:status n) :rejected)) all-nodes)]
+        rejected-nodes (filter (fn [n] (= (:status n) :rejected)) all-nodes),
+        questioned-nodes (filter (fn [n] (= (:status n) :questioned)) all-nodes),
+        stated-nodes (filter (fn [n] (= (:status n) :stated)) all-nodes),]
     ;(println " - " (count all-nodes))
-    (reject (accept (reduce unite-args ag1 (arguments ag2)) (map :statement accepted-nodes)) (map :statement rejected-nodes))))
+    (state
+      (question
+        (reject
+          (accept (reduce unite-args ag1 (arguments ag2)) (map :statement accepted-nodes))
+          (map :statement rejected-nodes))
+        (map :statement questioned-nodes))
+      (map :statement stated-nodes))))
 
 
 (defn unite-argument-graphs
