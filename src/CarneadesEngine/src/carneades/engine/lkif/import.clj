@@ -220,6 +220,7 @@
             :iff lkif-iff->sexpr,
             :all lkif-all->sexpr,
             :exists lkif-exists->sexpr
+            :v lkif-var->sexpr
             (println "no wff found" lkif-wff))]
     ;(println "lkif-wff->sexpr" lkif-wff)
     (f lkif-wff)))
@@ -454,7 +455,7 @@
     ag
     (let* [lkif-stmt (first lkif-stmt*),
            atom (lkif-atom->sexpr (xml1-> lkif-stmt :s)),
-           value (attr lkif-stmt :value),
+           value (or (attr lkif-stmt :value) "unknown"),
            assumption (= (attr lkif-stmt :assumption) "true"),
            lkif-standard (attr lkif-stmt :standard)
            standard (if lkif-standard
