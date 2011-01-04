@@ -345,9 +345,8 @@
 (defn instantiate-scheme [view path id scheme conclusion premises]
   (when-let* [ag (get-ag path id)
               ag (update-statement ag conclusion)
-              ag (reduce (fn [ag premise]
-                           (update-statement ag premise)) ag premises)
-              arg (argument (gen-argument-id ag) :pro conclusion (map premise premises) scheme)
+              pms (map premise premises)
+              arg (argument (gen-argument-id ag) :pro conclusion pms scheme)
               ag (assert-argument ag arg)]
     (do-update-section view [path :ags (:id ag)] ag)
     (graph-changed view path ag statement-formatted)
