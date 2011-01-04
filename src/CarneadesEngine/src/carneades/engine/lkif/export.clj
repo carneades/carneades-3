@@ -57,7 +57,8 @@
   ;(println "wff->sxml" wff)
   ; TODO: exists and all
   (cond
-    (string? wff) [:s wff],
+    (string? wff) [:s (str "\"" wff "\"")],
+    (variable? wff) [:v (.substring (str wff) 1)],
     (symbol? wff) [:s wff],
     (fatom? wff) [:s {:pred (statement-predicate wff)} (combine-expression-format (:term wff) (:form wff))],
     (seq? wff) (condp = (first wff)
