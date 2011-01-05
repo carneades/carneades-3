@@ -11,7 +11,8 @@
         (carneades.editor.controller search documents)
         (carneades.engine lkif utils)
         (carneades.engine argument argument-edit)
-        [carneades.engine.statement :only (statement-formatted statement?)]
+        [carneades.engine.statement
+         :only (statement-formatted statement? str-stmt stmt-str)]
         (carneades.editor.model docmanager properties)
         carneades.editor.utils.core
         ;; only the view.viewprotocol namespace is allowed to be imported
@@ -305,7 +306,7 @@
               acceptable (:acceptable node)
               complement-acceptable (:complement-acceptable node)]
     (do-display-statement-property view path id (:title ag)
-                                   (str stmt) statement-formatted status
+                                   (stmt-str stmt) statement-formatted status
                                    proofstandard acceptable complement-acceptable)))
 
 (deftrace on-select-argument [path id arg view]
@@ -344,19 +345,6 @@
   (when-let [ag (get-ag path id)]
     (display-argument view path ag arg statement-formatted)))
 
-(deftrace str-to-stmt [s]
-  (letfn [(sexp? [s] (= \( (first s)))
-          (check-stmt [s] (when (and (statement? s) (not (empty? s))) s))]
-    (when (not (nil? s))
-      (let [s (str/trim s)]
-        (if (sexp? s)
-          (try
-            (let [sexp (read-string s)]
-              (check-stmt sexp))
-            (catch Exception e
-              nil))
-          (check-stmt s))))))
-
 (deftrace do-edit-statement [view path id previous-content-as-obj newcontent oldag]
   (prn "do edit statement")
   (when-let* [ag (update-statement-content oldag previous-content-as-obj newcontent)
@@ -367,7 +355,7 @@
               complement-acceptable (:complement-acceptable node)]
     (do-update-section view [path :ags (:id ag)] ag)
     (do-display-statement-property view path id (:title ag)
-                                   (str newcontent) statement-formatted status
+                                   (stmt-str newcontent) statement-formatted status
                                    proofstandard acceptable complement-acceptable)
     (statement-content-changed view path ag previous-content-as-obj newcontent)
     (display-statement view path ag newcontent statement-formatted)))
@@ -377,19 +365,24 @@
   (prn stmt-info)
   (let [{:keys [content previous-content]} stmt-info
         oldag (get-ag path id)
-        previous-content-as-obj (str-to-stmt previous-content) 
-        newcontent (str-to-stmt content)
+        previous-content-as-obj (str-stmt previous-content) 
+        newcontent (str-stmt content)
         isnil (nil? newcontent)
-        exists (statement-node oldag newcontent)]
-    (cond (= previous-content-as-obj newcontent)
+        exists (statement-node oldag newcontent)
+        ]
+    (prn "previous-content-as-obj =")
+    (prn previous-content-as-obj)
+    (prn "newcontent =")
+    (prn newcontent)
+    (cond exists
           (display-statement view path oldag newcontent statement-formatted)
-          
-          (or isnil exists)
-          (loop [msg (cond isnil *invalid-content* exists *statement-already-exists*)]
+
+          isnil
+          (loop [msg *invalid-content*]
             (display-error view *edit-error* msg)
             (when retry-on-error
               (let [content (read-statement view content)
-                    newcontent (str-to-stmt content)]
+                    newcontent (str-stmt content)]
                 (cond (nil? content)
                       nil
 
@@ -407,13 +400,25 @@
           
           :else (do-edit-statement view path id previous-content-as-obj newcontent oldag))))
 
+(defn on-statement-editor [view path id stmt]
+  (prn "on-statement-editor")
+  (when-let* [ag (get-ag path id)
+              newcontent (read-statement view (stmt-str stmt))
+              previous-content (stmt-str stmt)]
+    (prn "newcontent =")
+    (prn newcontent)
+    (prn "previous content =")
+    (prn previous-content)
+    (on-edit-statement view path id
+                       {:previous-content previous-content :content newcontent} true)))
+
 (deftrace on-edit-statement-status [view path id stmt-info]
   (prn "on-edit-statement-status")
   (prn "info = ")
   (prn stmt-info)
   (let [{:keys [status previous-content previous-status]} stmt-info
         oldag (get-ag path id)
-        content (str-to-stmt previous-content)]
+        content (str-stmt previous-content)]
     (when (and (not= status previous-status)
                (statement-node oldag content))
       (let [ag (update-statement oldag content status)
@@ -434,7 +439,7 @@
   (prn "stmt-info")
   (prn stmt-info)
   (let [{:keys [proofstandard content previous-proofstandard]} stmt-info
-        content (str-to-stmt content)]
+        content (str-stmt content)]
     (when (not= proofstandard previous-proofstandard)
       (when-let* [ag (update-statement-proofstandard (get-ag path id)
                                                      content proofstandard)
@@ -625,7 +630,7 @@
   "asks the user the content of a new statement. Prompts
    again if the content is invalid or already exists"
   (let [stmt (read-statement view suggestion)
-        stmt-as-obj (str-to-stmt stmt)]
+        stmt-as-obj (str-stmt stmt)]
     (cond (nil? stmt)
           nil
 

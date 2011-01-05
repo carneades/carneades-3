@@ -203,3 +203,28 @@ is one"
            to
            stmt)))
 
+;; OLD one:
+;; (deftrace str-to-stmt [s]
+;;   (letfn [(sexp? [s] (= \( (first s)))
+;;           (check-stmt [s] (when (and (statement? s) (not (empty? s))) s))]
+;;     (when (not (nil? s))
+;;       (let [s (str/trim s)]
+;;         (if (sexp? s)
+;;           (try
+;;             (let [sexp (read-string s)]
+;;               (check-stmt sexp))
+;;             (catch Exception e
+;;               nil))
+;;           (check-stmt s))))))
+
+(defn str-stmt [s]
+  "converts the string s into a statement"
+  (try
+    (let [stmt (read-string s)]
+      (if (statement? stmt)
+        stmt
+        nil))
+    (catch Exception e nil)))
+
+(defn stmt-str [stmt]
+  (pr-str stmt))
