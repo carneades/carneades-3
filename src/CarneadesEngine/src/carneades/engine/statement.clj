@@ -175,18 +175,23 @@ is one"
   (let [l (.split s " ")]
     (s/join "\n " l)))
 
-(defn statement-formatted [s]
-  (cond (string? s) (short-str s)
-    (symbol? s) (short-str (str s))
-    (fatom? s) (apply format `(~(:form s)
-                                ~@(map term-formatted (rest (:term s)))))
-    (nonemptyseq? s) (s/join " " (map term-formatted s))
-    true s))
+(defn statement-formatted
+  ([s] (statement-formatted s false))
+  ([s parentheses?]
+    (cond
+      (string? s) (short-str s),
+      (symbol? s) (short-str (str s)),
+      (fatom? s) (apply format `(~(:form s)
+                                  ~@(map term-formatted (rest (:term s))))),
+      (nonemptyseq? s) (if parentheses?
+                         (str "(" (s/join " " (map term-formatted s)) ")")
+                         (s/join " " (map term-formatted s))),
+      true s)))
 
 (defn term-formatted [t]
   (cond (or (variable? t) (constant? t) ) (short-str (str t))
-    (nonemptyseq? t) (s/join " " (map term-formatted t))
-    (fatom? t) (str \" (statement-formatted t) \")
+    (nonemptyseq? t) (str "(" (s/join " " (map term-formatted t)) ")")
+    (fatom? t) (str \" (statement-formatted t true) \")
     true t))
 
 (defn replace-var
