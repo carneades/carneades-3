@@ -4,6 +4,7 @@
 (ns carneades.editor.utils.swing
   (:require [clojure.zip :as zip])
   (:import java.beans.PropertyChangeListener
+           (java.awt Toolkit EventQueue)
            (javax.swing.event ListSelectionListener
                               TreeSelectionListener
                               ChangeListener)
@@ -124,3 +125,17 @@
 (defn disable-items [ & items]
   (doseq [item items]
     (.setEnabled item false)))
+
+(defn set-swing-exception-handler [f]
+  "forces Swing to calls the function f when an uncaught exception occurred.
+   f takes one argument, the uncaught exception"
+  ;; http://ruben42.wordpress.com/2009/03/30/catching-all-runtime-exceptions-in-swing/
+  (let [toolkit (Toolkit/getDefaultToolkit)
+        queue (.getSystemEventQueue toolkit)]
+    (.push queue (proxy [EventQueue] []
+                   (dispatchEvent
+                    [event]
+                    (try
+                      (proxy-super dispatchEvent event)
+                      (catch Throwable e
+                        (f e))))))))
