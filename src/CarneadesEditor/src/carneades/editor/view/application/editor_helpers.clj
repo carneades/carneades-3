@@ -77,13 +77,6 @@
           (.show *mapPopupMenu* component x y)
           )))
 
-(defn statement-edit-menuitem-listener [event view]
-  (when-let [[path id] (current-graph view)]
-    (let [component (get-component path id)]
-      (when-let [obj (current-selected-object component)]
-        (when (instance? StatementCell obj)
-          (show-statement-editor (str (:stmt obj))))))))
-
 (defn create-tabgraph-component [this path ag stmt-fmt]
   (try
     (set-busy this true)

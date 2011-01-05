@@ -54,9 +54,9 @@
                                           [view])
   (add-keyenter-searchresult-listener view keyenter-in-searchresult
                                           [view])
+  (add-edit-statement-menuitem-listener view edit-statement-menuitem-listener [view])
 
   ;; properties listeners:
-  (add-statement-editor-listener view statement-editor-listener [view])
   (add-statement-edit-listener view statement-content-edit-listener [view])
   (add-statement-edit-status-listener view statement-status-edit-listener [view])
   (add-statement-edit-proofstandard-listener view statement-proofstandard-edit-listener [view])

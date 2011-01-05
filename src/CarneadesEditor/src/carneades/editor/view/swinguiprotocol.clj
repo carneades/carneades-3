@@ -37,6 +37,7 @@
   (add-preferences-editmenuitem-listener [this f args])
   (add-delete-premise-menuitem-listener [this f args])
   (add-delete-statement-menuitem-listener [this f args])
+  (add-edit-statement-menuitem-listener [this f args])
   (add-delete-argument-menuitem-listener [this f args])
   (add-mainissue-menuitem-listener [this f args])
   (add-new-statement-menuitem-listener [this f args])
@@ -58,7 +59,7 @@
   (add-rejected-menuitem-listener [this f args])
   
   ;; properties edit listeners
-  (add-statement-editor-listener [this f args])
+  ;; (add-statement-editor-listener [this f args])
   (add-statement-edit-listener [this f args])
   (add-title-edit-listener [this f args])
   (add-statement-edit-status-listener [this f args])
