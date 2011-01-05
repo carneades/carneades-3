@@ -150,15 +150,17 @@
   (let [{:keys [view formulars current-substitution
                 formid val value]} state
         form (get formulars formid)
-        current-substitution (if (empty? value)
-                               (dissoc  current-substitution val)
+        value (str-stmt value)
+        current-substitution (if (nil? value)
+                               (dissoc current-substitution val)
                                (assoc current-substitution val value))]
     (printf "%s -> %s\n" val value)
     (prn "value =")
     (prn value)
     (prn "")
     (doseq [form (vals formulars)]
-      (fillin-formular view form [[val (statement-formatted value)]]))
+      (when (not (nil? value))
+       (fillin-formular view form [[val (stmt-str value)]])))
     (assoc state :current-substitution current-substitution)))
 
 (defn previous-suggestion [state]
@@ -190,11 +192,11 @@
               {:keys [current-idx suggestions]} suggestions
               current (nth suggestions current-idx)
               values (filter (complement variable?) (term-args current))
-              formatted-values (map statement-formatted values)
+              formatted-values (map stmt-str values)
               var-values (partition 2 (interleave vars formatted-values))]
     (fillin-formular view form var-values)
     (update-in state [:current-substitution] merge
-               (apply hash-map (interleave vars values)))))
+               (apply hash-map (interleave vars (str-stmt values))))))
 
 (defn get-literal-formular [state-atom view clause-number literal literal-nb]
   (prn "get-literal-formular")
@@ -240,23 +242,34 @@
   (format *complete-form-n* idx))
 
 (defn literal-validator [settings current-substitution literal idx]
+  (prn "literal-validator")
   (prn "validator")
   (prn "settings =")
   (prn settings)
   (let [variables (filter variable? literal)
         formvariables (keep (fn [var]
-                              (let [name (str var "-" "";; idx
-                                              )
+                              (let [name (str var "-")
                                     val (get settings name)]
-                                (when (not (empty? val))
+                                (when (not (nil? (str-stmt val)))
                                   [var val])))
                             variables)
+        invalid-vars (some #(and (not (empty? %))
+                                 (nil? (str-stmt %)))
+                           (keep #(get settings (str % "-")) variables))
         ;; validator is called before our listener so we need to merge the values
         sub (merge current-substitution (apply hash-map (apply concat formvariables)))]
     (printf "current-sub = %s\n" sub)
-    (if (ground? (apply-substitution sub literal))
-      nil
-      *fillin-form*)))
+    (prn "variables =")
+    (prn variables)
+    (prn "invalid vars =")
+    (prn invalid-vars)
+    (cond invalid-vars
+          *invalid-content*
+
+          (ground? (apply-substitution sub literal))
+          nil
+
+          :else *fillin-form*)))
 
 (defn unifiable-statements [ag literal current-subs]
   (prn "unifiable-statements")
@@ -274,7 +287,7 @@
   (prn "on-literal-panel")
   (let [{:keys [view path id form literal settings current-substitution]} state
         ag (get-ag path id)
-        var-values (map (fn [[var values]] [var (statement-formatted values)])
+        var-values (map (fn [[var values]] [var (stmt-str values)])
                         current-substitution)]
     (fillin-formular view form var-values)
     (let [suggestions (unifiable-statements ag literal current-substitution)
