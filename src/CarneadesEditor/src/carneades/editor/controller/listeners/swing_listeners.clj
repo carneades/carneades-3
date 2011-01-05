@@ -117,6 +117,7 @@
       nil)))
 
 (defn statement-content-edit-listener [event view]
+  ;; call from the properties
   (let [info (get-statement-being-edited-info view)
         {:keys [path id]} info]
     (on-edit-statement view path id info false)))
@@ -263,10 +264,10 @@
 (defn quit-filemenuitem-listener [event view]
   (on-exit view event))
 
-(defn statement-editor-listener [event view]
+(defn edit-statement-menuitem-listener [event view]
   (when-let [[path id] (current-graph view)]
-    (let [info (get-statement-being-edited-menu-info view)]
-      (on-edit-statement view path id info true))))
+    (let [stmt (get-selected-node view path id)]
+      (on-statement-editor view path id stmt))))
 
 (defn import-button-listener [event view]
   (let [info (get-lkif-being-edited-info view)]

@@ -117,6 +117,10 @@
    [this f args]
    (apply add-action-listener *deleteArgumentMenuItem* f args))
 
+  (add-edit-statement-menuitem-listener
+   [this f args]
+   (apply add-action-listener *editStatementMenuItem* f args))
+
   (add-delete-statement-menuitem-listener
    [this f args]
    (apply add-action-listener *deleteStatementMenuItem* f args))
@@ -133,9 +137,9 @@
    [this f args]
    (register-statement-edit-listener f args))
 
-  (add-statement-editor-listener
-   [this f args]
-   (register-statement-editor-listener f args))
+  ;; (add-statement-editor-listener
+  ;;  [this f args]
+  ;;  (register-statement-editor-listener f args))
 
   (add-title-edit-listener
    [this f args]

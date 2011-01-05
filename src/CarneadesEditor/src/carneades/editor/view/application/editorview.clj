@@ -41,7 +41,7 @@
    (add-action-listener *selectAllEditMenuItem* select-all-listener this)
    (add-action-listener *addExistingPremiseMenuItem*
                         add-existing-premise-menuitem-listener this)
-   (add-action-listener *editStatementMenuItem* statement-edit-menuitem-listener this)
+   ;; (add-action-listener *editStatementMenuItem* statement-edit-menuitem-listener this)
    
    (init-lkif-properties)
    (init-graph-properties)
@@ -263,7 +263,7 @@
 
   (read-statement
    [this content]
-   (show-statement-editor content false))
+   (show-statement-editor content))
 
   (display-error
    [this title content]
