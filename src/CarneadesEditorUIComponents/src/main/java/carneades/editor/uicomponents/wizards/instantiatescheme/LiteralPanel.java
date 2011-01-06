@@ -47,6 +47,8 @@ public class LiteralPanel extends javax.swing.JPanel {
         variablesPanel.setLayout(new javax.swing.BoxLayout(variablesPanel, javax.swing.BoxLayout.Y_AXIS));
         jScrollPane1.setViewportView(variablesPanel);
 
+        jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
         suggestionText.setColumns(20);
         suggestionText.setEditable(false);
         suggestionText.setRows(5);
