@@ -8,12 +8,12 @@ package org.fokus.carneades.questions;
 import java.util.ArrayList;
 import java.util.List;
 import org.fokus.carneades.api.Statement;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.codehaus.jackson.map.ObjectMapper;
+
 
 /**
  *
- * @author stb
+ * @author stb, bbr
  */
 // TODO : implement some useful mapping using ontology annotations
 public class QuestionHelper {
@@ -30,13 +30,27 @@ public class QuestionHelper {
         return result;
     }
     
-    public static JSONObject getJSONFromQuestions(List<Question> qList) throws JSONException{
+    public static String getJSONFromQuestions(List<Question> qList) {
         // TODO : what to do with id? - ID simply numbered, e.g. 1st question's id = 1, 2nd = 2 etc.
         // TODO : possible answers
         // TODO : multiple questions
-        Question q = qList.get(0);
-        JSONObject jsonObj = new JSONObject("{ \"questions\" : [{\"id\":1, \"question\":\""+q.getQuestion()+": \", \"hint\":\""+q.getHint()+"\", \"type\":\""+q.getType()+"\", \"category\" : \""+q.getCategory()+"\"}]}");
-        return jsonObj;        
+        
+        //OLD: JSONObject jsonObj = new JSONObject("{ \"questions\" : [{\"id\":1, \"question\":\""+q.getQuestion()+": \", \"hint\":\""+q.getHint()+"\", \"type\":\""+q.getType()+"\", \"category\" : \""+q.getCategory()+"\"}]}");
+
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonObj = "{\"questions\":[";
+        for (int i=0; i < qList.size(); i++) {
+            Question q = qList.get(i);
+            if (i > 0) jsonObj += ",";
+            try {
+                jsonObj += mapper.writeValueAsString(q);
+            }
+            catch (Exception e) {
+            }
+        }
+        jsonObj += "]}";
+
+        return jsonObj;
     }
 
 }

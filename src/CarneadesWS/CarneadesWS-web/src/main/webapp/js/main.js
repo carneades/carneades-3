@@ -2,7 +2,7 @@
  * This is the AJAX-Engine for the IMPACT web application.
  *
  * @author bbr
- * @version 0.35
+ * @version 0.40
  */
 
 /** Settings */
@@ -68,32 +68,10 @@ $(function(){ // Init
             });
     });
 
-    // Next-Button
-    $(".next").each(function(index){
-            var nx_i = index;
-            $(this).click(function(){
-                    // Ergebnis validieren
-
-                    // Daten an Server senden! --AJAX REQUEST HERE--
-
-                    // Neue Fragen Hinzufuegen? --DOM MANIPULATION--
-
-                    // Naechste Frage oeffnen oder Ende?
-                    if (document.getElementsByTagName("h3")[nx_i+1]) {
-                            $(document.getElementsByTagName("h3")[nx_i+1].firstChild).click();
-                    }
-                    else { // Ende
-                            alert('done.');
-                            $("#tabs-1").html("<h1>Analysis</h1>"+
-                            "<p>Not able to start analysis.</p>" /* Server-Antwort */ );
-                            statusupdate(1,"Server did not respond.");
-                    }
-            });
-    });
-
     /** AJAX request config */
     $.ajaxSetup({
-       url: "/CarneadesWS-web/CarneadesServletDemo",
+       //url: "/CarneadesWS-web/CarneadesServletDemo",
+       url: "/CarneadesWS-web/CarneadesServlet",
        async: true,
        beforeSend: function() {
            statusupdate(0,"Please be patient.");
@@ -135,12 +113,12 @@ function doAJAX(jsondata) {
                 var qbox = $("#questions");
                 var newline = false;
                 qbox.empty();
-                qbox.append("<div><h3>"+data.questions[0].category+"</h3><div id=\"qcontent\"></div></div>");
                 qbox.append("<div id=\"hints\"><h4>hints</h4></div>");
+                qbox.append("<div><h3>"+data.questions[0].category+"</h3><div id=\"qcontent\"></div></div>");
                 qbox = $("#qcontent", qbox);
                 $.each(data.questions, function(i,item){
                     // pre append formatting
-                    var output = "<p>"+item.question;
+                    var output = "<p><label for=\"qID"+item.id+"\">"+item.question+"</label>";
                     if (item.type == "select") {
                         output += "<select id=\"qID"+item.id+"\" name=\"qID"+item.id+"\">";
                         output += "<option value=\"\" selected=\"selected\">-- please choose --</option>";
@@ -167,24 +145,39 @@ function doAJAX(jsondata) {
                         output += "<input type=\"text\" class=\"float\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
                     }
                     else output += "<input type=\""+item.type+"\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
-                    if (item.hint) $("#hints").append("<p id=\"qHINT"+item.id+"\" class=\"hint\">"+item.hint+"</p>");
                     output += "</p>";
                     qbox.append(output);
+                    if (item.hint) $("#hints").append("<p id=\"qHINT"+item.id+"\" class=\"hint\">"+item.hint+"</p>");
                     // post append formatting
                     if (item.optional) $("p:last :input:first", qbox).addClass("optional");
-                    if (item.type != "radio") {
-                        $(":input", qbox).focus(function(){
+                    // focus and blur does not work on radio/checkbox
+                    if (item.type != "radio" && item.type != "checkbox") {
+                        $(":input:last", qbox).focus(function(){
                             if (showhints) {
+                                $("#hints p").css('display','none');
                                 $("#qHINT"+this.id.substring(3)).show();
                             }
-                        })
-                        $(":input", qbox).blur(function(){
-                            $("#qHINT"+this.id.substring(3)).css('display','none');
-                        })
-                        $(":input", qbox).change(function(){
-                            if (item.type == "radio" || item.type == "checkbox") validateField($("input:first", this.parentNode)[0]);
-                            else validateField(this);
                         });
+                        $(":input:last", qbox).blur(function(){
+                            $("#qHINT"+this.id.substring(3)).css('display','none');
+                        });
+                        // validation
+                        $(":input:last", qbox).change(function(){ validateField(this); });
+                    }
+                    else { // radios & checkboxes
+                        $("input:last", qbox).parent().mouseover(function(){
+                            if (showhints) {
+                                var hinton=$("#hints > p:not(:hidden)");
+                                statusupdate(1,"Verstecke: "+((hinton.length > 0)?"#qID"+hinton.attr("id").substring(5):"-")+" | Zeige: "+"#qHINT"+$(this).children("input:first").attr("name").substring(3));
+                                if (hinton.length > 0) $("#qID"+hinton.attr("id").substring(5)).blur();
+                                $("#qHINT"+$(this).children("input:first").attr("name").substring(3)).show();                               
+                            }
+                        });
+                        $("input:last", qbox).parent().mouseout(function(){
+                            $("#qHINT"+$(this).children("input:first").attr("name").substring(3)).css('display','none');
+                        });
+                        // validation
+                        $("input[name='qID"+item.id+"']", qbox).change(function(){ validateField($("input:first", this.parentNoded)[0]); });
                     }
                 });
                 qbox.append('<input type="button" class="ui-button next" value="next" onclick="sendAnswers(this.parentNode)"/>');
@@ -199,7 +192,7 @@ function doAJAX(jsondata) {
 
 /**
  * Vaildates the formfield content.
- * @param {object} obj Formfield was recently changed or a array that contains this objects
+ * @param {object} obj a question formfield or a array or DIV-element that contains this HTML nodes
  * @returns returns if a form-field or a set of fields has passed validation
  * @type Boolean
  * @see qwarn
@@ -211,22 +204,28 @@ function validateField(obj) {
     // Array
     if ($.type(obj) == "array") {
         for (var i=0;i < obj.length;i++) {
-            if (validateForm(obj[i])=== false) result = false;
+            if (validateForm(obj[i])=== false) {
+                result = false;
+                return false;
+            }
         }
         return result;
     }
     // DIV (qcontent)
     else if ($.type(obj) == "object" && obj.nodeName == "DIV") {
         $(":input", obj).each( function(i, elem) {
-            if ( !validateField(elem) ) result = false;
+            if ( !validateField(elem) ) {
+                result = false;
+                //return false;
+            }
         });
         return result;
     }
-    // input
+    // validation:
     else if ($.type(obj) == "object" && (obj.nodeName == "INPUT"
              || obj.nodeName == "SELECT" || obj.nodeName == "TEXTFIELD") ) {
         var o = $(obj);
-        if (obj.type && obj.type == "button") return true; // buttons ignorieren
+        if (obj.type && obj.type == "button") return true; // ignore buttons
         if (o.hasClass("integer")) {
             if (o.val().search(/\D/) != -1) {
                 qwarn(obj,"Please insert a integer. No characters or whitespaces allowed.");
@@ -248,7 +247,7 @@ function validateField(obj) {
             }
         }
         // empty radio/box
-        if ( obj.type && (obj.type == "radio" || obj.type == "checkbox") ) {
+        if ( obj.type == "radio" || obj.type == "checkbox") {
             if (obj.parentNode.getElementsByTagName("input")[0] == obj && !o.hasClass("optional")) {
                 if ($("input:checked[name='"+obj.name+"']").length == 0) {
                     qwarn(obj,"This field is required.");
@@ -256,7 +255,9 @@ function validateField(obj) {
                 }
                 // something is selected
             }
-            else return true; // abort validation because it already has been validated
+            else { // abort validation because it already has been validated or is optional
+                return true;
+            }
         }
         // empty field
         else if (o.val() == "" && !o.hasClass("optional")) {
@@ -268,7 +269,7 @@ function validateField(obj) {
         return true;
     }
     else {
-        alert("nothing to validate");
+        alert("nothing to validate on field: "+obj.nodeName+" of type "+$.type(obj));
         return false;
     }
 }
@@ -334,16 +335,37 @@ function sendAnswers(obj) {
     var doRequest = true;
     var jsonA = new Array();
     $(":input", obj).each(function(i, itemobj){
-        if (validateField(itemobj) === false) {
-            doRequest = false;
-        }
         var item = $(itemobj);
-        var jsonitem = new Object();
-        jsonitem = {
-            "id" : item.attr("name"),
-            "value" : item.val()
+        var jsonitem;
+        if (itemobj.type == "radio" || itemobj.type == "checkbox") {
+            if (itemobj.parentNode.getElementsByTagName("input")[0] == obj) {
+                if (validateField(itemobj) == false) {
+                    doRequest = false;
+                    return true;
+                }
+                var valArray = new Array();
+                $(":input:checked[name='"+itemobj.name+"']", itemobj.parentNode).each(function(i, valobj) {
+                    valArray.push(valobj.value);
+                });
+                jsonitem = {
+                    "id" : item.attr("name"),
+                    "value" : valArray.copy()
+                }
+                jsonA.push(jsonitem);
+            }
+            else return true;
         }
-        jsonA.push(jsonitem);
+        else {
+            if (validateField(itemobj) === false) {
+                doRequest = false;
+                return true;
+            }
+            jsonitem = {
+                "id" : item.attr("name"),
+                "value" : item.val()
+            }
+            jsonA.push(jsonitem);
+        }
     });
     var jsonZ = {"answers" : jsonA.copy()}
     if (doRequest) doAJAX(jsonZ);

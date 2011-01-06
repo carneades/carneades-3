@@ -33,12 +33,6 @@
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20090211</version>
-        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>CarneadesWS-ejb</artifactId>
@@ -52,6 +46,23 @@
             <version>1.0.1</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-lgpl</artifactId>
+            <version>1.6.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-lgpl</artifactId>
+            <version>1.6.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+
+
     </dependencies>
     <build>
         <plugins>
@@ -67,4 +78,7 @@
         </plugins>
         <finalName>CarneadesWS-web</finalName>
     </build>
+    <properties>
+        <netbeans.hint.deploy.server>JBoss4</netbeans.hint.deploy.server>
+    </properties>
 </project>

@@ -54,12 +54,17 @@ h2 { margin: 1.5em 0 1em 0; }
 }
 #questions p {
         margin:7px 0;
+        min-height: 16px;
 }
 #questions h3 {
         font-size:1.1em;
         margin:0;
         padding:3px 0 3px 20px !important;
         background: url(../images/what.png) no-repeat center left;
+}
+#questions label {
+        font-size:1em;
+        margin:0; padding:0;
 }
 /* hints */
 .hint {

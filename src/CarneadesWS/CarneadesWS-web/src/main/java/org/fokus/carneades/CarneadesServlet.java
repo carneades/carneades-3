@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,8 +22,7 @@ import org.fokus.carneades.api.Statement;
 import org.fokus.carneades.common.EjbLocator;
 import org.fokus.carneades.questions.Question;
 import org.fokus.carneades.questions.QuestionHelper;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,9 +56,68 @@ public class CarneadesServlet extends HttpServlet {
         } else {
             log.info("existing bean found");
         }
-        // getting answers
-        String a = request.getParameter("answers");
-        List<Statement> answers = handleRequestAnswers(a);
+        // incoming request
+        String jsonIN = request.getParameter("json");
+        String jsonOUT = "";
+        // DO WHAT?
+        if ( jsonIN.matches("\s*{\s*\"request\"\s*:.+") ) {
+            // initial request
+            if ( jsonIN.matches("\s*{\s*\"request\"\s*:\s*\"demo\"\s*}\s*") ) {
+                // give back demo content
+                jsonOUT = "{\"questions\" : ["
+                + "{\"id\":1,\"type\":\"text\",\"question\":\"Forename: \",\"answers\":[\"\"],\"category\":\"Personal Information\", \"hint\":\"enter your full first name\"},"
+                + "{\"id\":2,\"type\":\"text\",\"question\":\"Last name: \",\"answers\":[\"\"],\"category\":\"Personal Information\", \"hint\":\"enter your full family name\"},"
+                + "{\"id\":3,\"type\":\"select\",\"question\":\"Country: \",\"answers\":[\"Austria\", \"Bulgarian (&#1073;&#1098;&#1083;&#1075;&#1072;&#1088;&#1089;&#1082;&#1080; &#1077;&#1079;&#1080;&#1082;)\",\"Germany (Deutschland)\",\"Polish (Polski)\"],\"category\":\"Personal Information\", \"hint\":\"where do you life\"},"
+                + "{\"id\":4,\"type\":\"radio\",\"question\":\"family status: \",\"answers\":[\"not married\",\"married\",\"divorced\"],\"category\":\"Family\", \"hint\":\"\"},"
+                + "{\"id\":5,\"type\":\"int\",\"question\":\"Number of children: \",\"answers\":[\"\"],\"category\":\"Family\", \"hint\":\"Please enter the number of children.\",\"optional\":true},"
+                + "{\"id\":6,\"type\":\"date\",\"question\":\"Birthday: \",\"answers\":[\"\"],\"category\":\"Family\"},"
+                + "{\"id\":7,\"type\":\"checkbox\",\"question\":\"Hobbies: \",\"answers\":[\"Paragliding\",\"boongie jumping\",\"sharkhunting\",\"jackass-like-stuns\",\"rocket science\"],\"category\":\"Personal Information\",\"hint:\":\"Please be honest.\"}"
+                + "]}";
+            }
+            else if(jsonIN.matches("\s*{\s*\"request\"\s*:\s*\"\w\"\s*}\s*")) {
+                // finding requested topic
+                String topic = jsonIN.replaceFirst("\s*{\s*\"request\"\s*:\s*\"","");
+                topic = topic.replaceFirst("\"\s*}\s*","");
+                // getting the topic
+                Map<Statement, Object> statement_value;
+                // TODO : DB access to access statementlist and knowledgebase
+                    // TODO : getting the topic's statements
+                    Statement statement1 = new Statement();
+                    statement1.setPredicate("p");
+                    statement1.getArgs().add("?x");
+                    statement_value.put(statement1, null); // null cuz there is no answer given yet
+                    // TODO : get kb for discussion
+                    String kb = "http://localhost:8080/CarneadesWS-web/kb/lkif.xml";
+                // TODO : generate Questions and save them in the session
+                jsonOUT = askEngine(service,statement_value,kb); // engine needed here?
+            }
+        }
+        else if(jsonIN.matches("\s*{\s*\"answers\"\s*:.+")) {
+            // reply
+            Map<Statement, Object> statement_value;
+            // TODO : put saved statement (stored in question) and given answer in a map
+            Questions questions = session.getAttribute("LatestQuestions");
+            List<Question> qList = questions.get(questions.keySet()[0]);
+            Answers answers = mapper.readValue(jsonIN, Answers.class);
+            List<Answer> aList = answers.get(answers.keySet()[0]);
+            for (int i=0; i<aList.size();i++) {
+                int id = aList.get(i).getId();
+                for (int i=0; i<qList.size();i++) {
+                    if (id == qList.get(i).getId()) {
+                        // found matching question
+                        statement_value.put(qList.get(i).getStatement(),
+                                            aList.get(i).getAnswer());
+                        break;
+                    }
+                }
+            }
+
+        }
+        else if (jsonIN == null || jsonIN.equals("null")) {
+            // null
+        }
+
+        List<Statement> answers = handleRequestAnswers(jsonIN);
 
         // OUTPUT
         response.setContentType("text/html;charset=UTF-8");
@@ -105,48 +164,43 @@ public class CarneadesServlet extends HttpServlet {
         }
     }
     
-    private String askEngine(CarneadesService service, List<Statement> answers) {
-        String result = "";        
+    private String askEngine(CarneadesService service, Map<Statement, Object> statement_value, String kb) {
+        String result = "";
+        List<Question> qList;
+        List<Statement> sList = statement_value.keySet();
         // creating query        
-        // TODO : get query for discussion
         log.info("creating query");
-        Statement query = new Statement();
-        query.setPredicate("p");
-        query.getArgs().add("?x");
-        // TODO : get kb for discussion
-        String kb = "http://localhost:8080/CarneadesWS-web/kb/lkif.xml";
-        // ask
-        log.info("calling ask from ejb: " + query.toString());        
-        CarneadesMessage msg = service.askEngine(query, kb, answers);
-        // evaluate answer
-        log.info("call from ejb returned:"+msg.getType().toString());
-        if (MessageType.ASKUSER.equals(msg.getType())) {
-            // new question
-            List<Question> qList = QuestionHelper.getQuestionsFromStatement(msg.getMessage());
-            try {
+        for (int i=0; sList.size() < i; i++) {
+            Statement query = sList[i];
+            Object answer = statement_value.get(query); // can be String / int / float / etc.
+            // ask
+            log.info("calling ask from ejb: " + query.toString());
+            CarneadesMessage msg = service.askEngine(query, kb, answer);
+            // evaluate answer
+            log.info("call from ejb returned:"+msg.getType().toString());
+            if (MessageType.ASKUSER.equals(msg.getType())) {
+                // new question
+                qList.add(QuestionHelper.getQuestionsFromStatement(msg.getMessage()));
                 log.info("sending question to user");
-                JSONObject question = QuestionHelper.getJSONFromQuestions(qList);
-                result = question.toString();
-            } catch (JSONException e) {
-                log.error("could not create json object", e.toString());
-                result = "Error: " + e.toString();
+                result = QuestionHelper.getJSONFromQuestions(qList);
+            } else if (MessageType.SOLUTION.equals(msg.getType())) {
+                // solution
+                // TODO : implement solution case
+                log.info("sending solution to user");
+                result = "solution found";
+            } else {
+                // error
+                log.error("unknown message type received from ask: {}", msg);
+                result = "Error: unknown message type received from ask";
             }
-
-        } else if (MessageType.SOLUTION.equals(msg.getType())) {
-            // solution
-            // TODO : implement solution case
-            log.info("sending solution to user");
-            result = "solution found";
-        } else {
-            // error
-            log.error("unknown message type received from ask", msg);            
-            result = "Error: unknown message type received from ask";
         }
-        
         return result;
     }
     
     private List<Statement> handleRequestAnswers(String a) {
+        //Questions qList = mapper.readValue(a, Questions.class);
+        Answers rootAsMap = mapper.readValue(a, Answers.class);
+        ArrayList<Answer> = rootAsMap.get("answers");
         List<Statement> result = new ArrayList<Statement>();
         // TODO : implement answer handling
         return result;
