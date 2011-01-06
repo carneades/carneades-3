@@ -159,9 +159,9 @@
     (prn "value =")
     (prn value)
     (prn "")
-    (doseq [form (vals formulars)]
-      (when (not (nil? value))
-       (fillin-formular view form [[val (stmt-str value)]])))
+    ;; (doseq [form (vals formulars)]
+    ;;   (when (not (nil? value))
+    ;;    (fillin-formular view form [[val (stmt-str value)]])))
     (assoc state :current-substitution current-substitution)))
 
 (defn previous-suggestion [state]
@@ -195,9 +195,12 @@
               values (filter (complement variable?) (term-args current))
               formatted-values (map stmt-str values)
               var-values (partition 2 (interleave vars formatted-values))]
+    (prn "var-values =")
+    (prn var-values)
+    (prn (apply hash-map (interleave vars values)))
     (fillin-formular view form var-values)
     (update-in state [:current-substitution] merge
-               (apply hash-map (interleave vars (str-stmt values))))))
+               (apply hash-map (interleave vars values)))))
 
 (defn get-literal-formular [state-atom view clause-number literal literal-nb]
   (prn "get-literal-formular")
@@ -232,8 +235,14 @@
                                              (state-call next-suggestion state-atom))
                                            :use-suggestion-listener
                                            (fn [formid]
+                                             (prn "before use-suggestion")
+                                             (prn "state =")
+                                             (pprint (deref state-atom))
                                              (swap! state-atom assoc :formid formid :vars vars)
-                                             (state-call use-suggestion state-atom))}
+                                             (state-call use-suggestion state-atom)
+                                             (prn "after use-suggestion")
+                                             (prn "state =")
+                                             (pprint (deref state-atom)))}
                                           [])
             formulars (assoc formulars formid form)]
         (swap! state-atom assoc :formulars formulars)
