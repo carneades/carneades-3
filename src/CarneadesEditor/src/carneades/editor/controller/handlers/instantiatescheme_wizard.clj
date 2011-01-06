@@ -4,13 +4,14 @@
 (ns carneades.editor.controller.handlers.instantiatescheme-wizard
   (:use clojure.contrib.def
         carneades.editor.utils.state
-        (carneades.engine statement argument)
+        (carneades.engine statement argument lkif)
         carneades.editor.utils.core
         [carneades.engine.unify :only (unify apply-substitution)]
         carneades.editor.controller.handlers.messages
         clojure.contrib.pprint
         (carneades.editor.view wizardsprotocol viewprotocol swinguiprotocol)
-        carneades.editor.controller.documents)
+        carneades.editor.controller.documents
+        carneades.editor.model.properties)
   (:require [clojure.string :as str]))
 
 (defvar *clauses-id* (str (gensym "clauses-panel-id")))
@@ -56,30 +57,50 @@
   (prn "on-schemes-panel")
   (prn "state =")
   (prn state)
-  (let [{:keys [view path conclusion conclusion-matches filter-text]} state
-        names (filter-schemes (get-rules path) filter-text
-                              conclusion conclusion-matches)]
+  (let [{:keys [view path conclusion rules conclusion-matches filter-text]} state
+        scheme-pathname (get-property *argumentation-scheme-file*)
+        names (filter-schemes rules filter-text conclusion conclusion-matches)]
     (display-schemes view names)
     state))
 
 (defn on-pre-instantiatescheme-wizard [state]
-  (let [{:keys [view path id conclusion]} state]
-    ;; (on-schemes-panel nil view path id)
-    (if (nil? conclusion)
-      (do
-        (set-conclusion-statement view "")
-        (set-conclusionmatches-button-enabled view false)
-        state)
-      (do
-        (set-conclusion-statement view (statement-formatted conclusion))
-        (set-conclusionmatches-button-enabled view true)
-        state))))
+  (let [{:keys [view path id conclusion]} state
+        scheme-pathname (get-property *argumentation-scheme-file*)]
+    (try
+      (let [content (lkif-import scheme-pathname)
+            rules (:rules (:rb content))
+            state (assoc state :rules rules)]
+        (if (nil? conclusion)
+          (do
+            (set-conclusion-statement view "")
+            (set-conclusionmatches-button-enabled view false)
+            state)
+          (do
+            (set-conclusion-statement view (statement-formatted conclusion))
+            (set-conclusionmatches-button-enabled view true)
+            state)))
+      (catch IllegalArgumentException
+          e (display-error view *open-error* (str (format *cannot-open* scheme-pathname)
+                                                  ".\n" *invalid-content* ": " (.getMessage e)))
+          nil)
+      (catch java.io.FileNotFoundException
+          e (display-error view *open-error* (str (format *cannot-open* scheme-pathname)
+                                                  ".\n " (.getMessage e)))
+          nil)
+      (catch java.io.IOException
+          e (display-error view *open-error* (str (format *cannot-open* scheme-pathname)
+                                                  ".\n" *invalid-content* ": " (.getMessage e)))
+          nil)
+      (catch org.xml.sax.SAXException
+          e (display-error view *open-error* (str (format *cannot-open* scheme-pathname)
+                                                  ".\n" *invalid-content*))
+          nil))))
 
 (defn on-filter-schemes [state]
   (prn "on-filter-schemes")
-  (let [{:keys [view path id filter-text conclusion conclusionmatches]} state]
+  (let [{:keys [view path id filter-text conclusion conclusionmatches rules]} state]
     (let [text (str/lower-case (str/trim filter-text))
-          names (filter-schemes (get-rules path) filter-text conclusion
+          names (filter-schemes rules filter-text conclusion
                                 conclusionmatches)]
       (display-schemes view names))
     state))
@@ -92,20 +113,20 @@
 (defn on-conclusionmatches [state]
   (prn "on-conclusionmatches")
   (prn state)
-  (let [{:keys [view path conclusion conclusion-matches filter-text]} state
-        names (filter-schemes (get-rules path) filter-text
+  (let [{:keys [view path conclusion conclusion-matches filter-text rules]} state
+        names (filter-schemes rules filter-text
                               conclusion conclusion-matches)]
     (display-schemes view names)
     state))
 
-(defn get-rule [path scheme]
-  (first (filter #(= (str (:id %)) scheme) (get-rules path))))
+(defn get-rule [scheme rules]
+  (first (filter #(= (str (:id %)) scheme) rules)))
 
 (defn on-clauses-panel [state]
   (prn "on-clauses-panel")
   (prn state)
-  (let [{:keys [settings view path conclusion conclusion-matches]} state]
-    (let [rule (get-rule path (get settings "scheme")) 
+  (let [{:keys [settings view path conclusion conclusion-matches rules]} state]
+    (let [rule (get-rule (get settings "scheme") rules) 
           clauses (:body rule)
           clause (first clauses)
           nb-clauses (count clauses)
@@ -376,8 +397,8 @@
     (display-statement view path ag conclusion statement-formatted)))
 
 (defn on-post-instantiatescheme-wizard [state]
-  (let [{:keys [view path id settings current-substitution]} state
-        rule (get-rule path (get settings "scheme"))
+  (let [{:keys [view path id settings current-substitution rules]} state
+        rule (get-rule (get settings "scheme") rules)
         clause-number (Integer/parseInt (get settings "clause-number"))
         clause (nth (:body rule) clause-number)
         clause (map #(apply-substitution current-substitution %) clause)
