@@ -49,7 +49,8 @@
         names (rules-name rules)]
     (if (empty? filter-text)
       names
-      (filter #(.contains (str/lower-case %) filter-text) names))))
+      (let [filter-text (str/lower-case filter-text)]
+        (filter #(.contains (str/lower-case %) filter-text) names)))))
 
 (defn on-schemes-panel [state]
   (prn "on-schemes-panel")
