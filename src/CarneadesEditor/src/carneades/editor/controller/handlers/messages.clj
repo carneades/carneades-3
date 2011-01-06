@@ -33,7 +33,8 @@
 (defvar *select-statement* "Select a statement")
 (defvar *goal-achieved* "Your goal has already been achieved.")
 (defvar *searching-positions* "Searching positions... Please wait...")
-(defvar *invalid-content* "Content is invalid.")
+(defvar *invalid-content* "Content is invalid")
+(defvar *cannot-open* "Argumentation Schemes File '%s' cannot be open")
 
 (defvar *search-parameters* "Choose Search Parameters")
 (defvar *no-statementselected* "Please select a statement first.")

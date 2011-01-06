@@ -94,8 +94,8 @@
         (lkif/add-lkif-to-docmanager path content *docmanager*)
         (do-open-content view path filename content)
         )
-      ;; (catch IllegalArgumentException
-      ;;     e (display-error view *open-error* (str *invalid-content* ".")))
+      (catch IllegalArgumentException
+          e (display-error view *open-error* (str *invalid-content* ".")))
       (catch java.io.FileNotFoundException
           e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
       (catch java.io.IOException
@@ -427,6 +427,8 @@
             proofstandard (:standard node)
             acceptable (:acceptable node)
             complement-acceptable (:complement-acceptable node)]
+        (prn "ag after update status =")
+        (pprint ag)
         (do-update-section view [path :ags (:id oldag)] ag)
         (do-display-statement-property view path id (:title ag)
                                        (str content) statement-formatted status
@@ -849,8 +851,6 @@
       (save-lkif view path)
       (let [importurls (get-kbs-locations path)]
         (display-lkif-property view path importurls)))))
-
-(defvar *properties* (atom (load-properties)))
 
 (defn on-edit-preferences [view]
   (prn "on-edit-preferences")

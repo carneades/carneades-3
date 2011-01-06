@@ -47,6 +47,7 @@
   (extract-lkif-from-docmanager lkifpath *docmanager*))
 
 (defn get-rules [lkifpath]
+  ;; to delete
   (:rules (:rb (get-lkif lkifpath))))
 
 (defn get-kbs-locations [lkifpath]

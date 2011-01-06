@@ -9,11 +9,13 @@
                                java.io.File/separator
                                ".carneades.properties"))
 
+(defvar *argumentation-scheme-file* "argumentation-schemes-file")
+
 (defvar *default-values*
   (into (sorted-map)
-        {"argumentation-schemes-file" {:value ""
-                                       :name "Argumentation Schemes File"
-                                       :type :file}
+        {*argumentation-scheme-file* {:value ""
+                                      :name "Argumentation Schemes File"
+                                      :type :file}
          "rules-directory" {:value ""
                             :name "Rules Directory"
                             :type :directory}}))
@@ -60,3 +62,7 @@
      (prn props)
      (carneades.config.reader/save-properties props *properties-path*))))
 
+(defvar *properties* (atom (load-properties)))
+
+(defn get-property [p]
+  (:value (get (deref *properties*) p)))
