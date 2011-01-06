@@ -54,8 +54,8 @@ Returns true if x is a constant"
 (defn term? [x]
   "datum -> boolean"
   (or (variable? x)
-    (constant? x)
-    (compound-term? x)))
+      (constant? x)
+      (compound-term? x)))
 
 (defn term-functor [t]
   "term -> symbol | nil "
@@ -228,3 +228,15 @@ is one"
 
 (defn stmt-str [stmt]
   (pr-str stmt))
+
+(defn str-term [s]
+  "converts the string s into a term"
+  (try
+    (let [term (read-string s)]
+      (if (term? term)
+        term
+        nil))
+    (catch Exception e nil)))
+
+(defn term-str [term]
+  (pr-str term))
