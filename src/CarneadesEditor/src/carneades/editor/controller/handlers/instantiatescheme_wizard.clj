@@ -151,7 +151,7 @@
   (let [{:keys [view formulars current-substitution
                 formid val value]} state
         form (get formulars formid)
-        value (str-stmt value)
+        value (str-term value)
         current-substitution (if (nil? value)
                                (dissoc current-substitution val)
                                (assoc current-substitution val value))]
@@ -193,7 +193,7 @@
               {:keys [current-idx suggestions]} suggestions
               current (nth suggestions current-idx)
               values (filter (complement variable?) (term-args current))
-              formatted-values (map stmt-str values)
+              formatted-values (map term-str values)
               var-values (partition 2 (interleave vars formatted-values))]
     (prn "var-values =")
     (prn var-values)
@@ -260,11 +260,11 @@
         formvariables (keep (fn [var]
                               (let [name (str var "-")
                                     val (get settings name)]
-                                (when (not (nil? (str-stmt val)))
+                                (when (not (nil? (str-term val)))
                                   [var val])))
                             variables)
         invalid-vars (some #(and (not (empty? %))
-                                 (nil? (str-stmt %)))
+                                 (nil? (str-term %)))
                            (keep #(get settings (str % "-")) variables))
         ;; validator is called before our listener so we need to merge the values
         sub (merge current-substitution (apply hash-map (apply concat formvariables)))]
@@ -297,7 +297,7 @@
   (prn "on-literal-panel")
   (let [{:keys [view path id form literal settings current-substitution]} state
         ag (get-ag path id)
-        var-values (map (fn [[var values]] [var (stmt-str values)])
+        var-values (map (fn [[var values]] [var (term-str values)])
                         current-substitution)]
     (fillin-formular view form var-values)
     (let [suggestions (unifiable-statements ag literal current-substitution)
