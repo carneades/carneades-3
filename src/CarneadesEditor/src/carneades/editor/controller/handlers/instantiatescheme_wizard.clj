@@ -11,7 +11,8 @@
         clojure.contrib.pprint
         (carneades.editor.view wizardsprotocol viewprotocol swinguiprotocol)
         carneades.editor.controller.documents
-        carneades.editor.model.properties)
+        carneades.editor.model.properties
+        carneades.engine.owl)
   (:require [clojure.string :as str]))
 
 (defvar *clauses-id* (str (gensym "clauses-panel-id")))
@@ -69,7 +70,9 @@
     (try
       (let [content (lkif-import scheme-pathname)
             rules (:rules (:rb content))
-            state (assoc state :rules rules)]
+            ontologies (map :ontology (vals (:import-kbs content)))
+            individuals (mapcat individuals-sexp ontologies)
+            state (assoc state :rules rules :individuals individuals)]
         (if (nil? conclusion)
           (do
             (set-conclusion-statement view "")
@@ -188,10 +191,10 @@
 (defn previous-suggestion [state]
   (let [{:keys [view formid formulars suggestions]} state]
     (when-let* [form (get formulars formid)
-                {:keys [current-idx suggestions size]} suggestions]
+                {:keys [current-idx values size]} suggestions]
       (when (pos? current-idx)
         (let [idx (dec current-idx)
-              current (nth suggestions idx)
+              current (nth values idx)
               suggestions (assoc suggestions :current-idx idx)]
           (display-suggestion view form (statement-formatted current) (inc idx) size)
           (assoc state :suggestions suggestions))))))
@@ -199,10 +202,13 @@
 (defn next-suggestion [state]
   (let [{:keys [view formid formulars suggestions]} state]
    (when-let* [form (get formulars formid)
-               {:keys [current-idx suggestions size]} suggestions]
+               {:keys [current-idx values size]} suggestions]
+     (prn "next suggestion")
+     (prn "suggestions =")
+     (prn suggestions)
      (when (not= current-idx (dec size))
        (let [idx (inc current-idx)
-             current (nth suggestions idx)
+             current (nth values idx)
              suggestions (assoc suggestions :current-idx idx)]
          (display-suggestion view form (statement-formatted current) (inc idx) size)
          (assoc state :suggestions suggestions))))))
@@ -211,8 +217,8 @@
   (prn "use suggestion")
   (when-let* [{:keys [view formid formulars suggestions vars]} state
               form (get formulars formid)
-              {:keys [current-idx suggestions]} suggestions
-              current (nth suggestions current-idx)
+              {:keys [current-idx values]} suggestions
+              current (nth values current-idx)
               values (filter (complement variable?) (term-args current))
               formatted-values (map term-str values)
               var-values (partition 2 (interleave vars formatted-values))]
@@ -314,21 +320,33 @@
     suggestions
     ))
 
+(defn unifiable-individuals [literal individuals]
+  (prn "unifiable-individuals")
+  (prn "literal =")
+  (prn literal)
+  (prn (type (first literal)))
+  (prn "individuals =")
+  (prn individuals)
+  (filter #(unify literal %) individuals))
+
 (defn on-literal-panel [state]
   (prn "on-literal-panel")
-  (let [{:keys [view path id form literal settings current-substitution]} state
+  (let [{:keys [view path id form literal settings current-substitution
+                individuals]} state
         ag (get-ag path id)
         var-values (map (fn [[var values]] [var (term-str values)])
                         current-substitution)]
     (fillin-formular view form var-values)
-    (let [suggestions (unifiable-statements ag literal current-substitution)
+    (let [suggestions (concat
+                       (unifiable-statements ag literal current-substitution)
+                       (unifiable-individuals literal individuals))
           size (count suggestions)]
       (if (empty? suggestions)
         (display-no-suggestion view form)
         (display-suggestion view form (statement-formatted (first suggestions)) 1 size))
       (if (zero? size)
         (assoc state :suggestions nil)
-        (assoc state :suggestions {:current-idx 0 :suggestions suggestions :size size})))))
+        (assoc state :suggestions {:current-idx 0 :values suggestions :size size})))))
 
 (defn get-literals-wizard [state-atom view path id clause-number]
   (prn "get-literals-wizard")
@@ -361,7 +379,10 @@
                                                      :form form
                                                      :literal literal
                                                      :settings settings)
-                                              (state-call on-literal-panel state-atom))
+                                              (state-call on-literal-panel state-atom)
+                                              (prn "after on-literal-panel")
+                                              (prn "(:suggestions state =")
+                                              (prn (:suggestions (deref state-atom))))
                                             }))
                                        forms)
                           (constantly true)
