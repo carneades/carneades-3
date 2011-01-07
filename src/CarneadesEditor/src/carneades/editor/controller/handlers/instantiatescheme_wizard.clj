@@ -11,7 +11,10 @@
         clojure.contrib.pprint
         (carneades.editor.view wizardsprotocol viewprotocol swinguiprotocol)
         carneades.editor.controller.documents
-        carneades.editor.model.properties)
+        carneades.editor.model.properties
+        ;; move this function to statement.clj ?
+        [carneades.engine.rule :only (predicate)]
+        )
   (:require [clojure.string :as str]
             [carneades.engine.owl :as owl]))
 
@@ -321,11 +324,10 @@
 
 ;; defmemo ?
 (defn possible-individuals-statements [literal reasoners]
-  (prn "unifiable-individuals")
-  (prn "literal =")
-  (prn literal)
-  (prn (type (first literal)))
-  (let [class-symbol (first literal)
+  (prn "possible-individuals-statements")
+  (prn "predicate literal =")
+  (prn (predicate literal))
+  (let [class-symbol (predicate literal)
         class-iri (owl/create-iri (str class-symbol))
         individuals (mapcat (fn [reasoner]
                               (let [ontology (owl/root-ontology reasoner)
