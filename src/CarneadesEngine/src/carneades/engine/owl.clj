@@ -1,24 +1,17 @@
+;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Licensed under the EUPL V.1.1
 
 (ns carneades.engine.owl
-  (:require 
-    [clojure.xml :as xml])
-  (:use
-    clojure.contrib.def
-    ;clojure.contrib.profile
-    carneades.engine.owl.reasoner
-    carneades.engine.owl.rule
-    carneades.engine.rule
-    )
-  (:import
-    ;(com.clarkparsia.pellet.owlapiv3 PelletReasoner PelletReasonerFactory)
-    (org.semanticweb.owlapi.apibinding OWLManager)
-    (org.semanticweb.owlapi.model IRI MissingImportListener OWLOntologyIRIMapper)
-    ;(org.semanticweb.owlapi.vocab OWLRDFVocabulary)
-    ;(org.semanticweb.owlapi.util SimpleIRIMapper)
-    (org.semanticweb.HermiT Reasoner$ReasonerFactory)
-    (java.net URI)
-    (java.io File)))
-
+  (:require [clojure.xml :as xml])
+  (:use clojure.contrib.def
+        carneades.engine.owl.reasoner
+        carneades.engine.owl.rule
+        carneades.engine.rule)
+  (:import (java.net URI)
+           (java.io File)
+           (org.semanticweb.owlapi.apibinding OWLManager)
+           (org.semanticweb.owlapi.model IRI MissingImportListener OWLOntologyIRIMapper OWLClass)
+           (org.semanticweb.HermiT Reasoner$ReasonerFactory)))
 
 (defn owl?
   [url]
@@ -93,14 +86,30 @@
         :rule (generate-arguments-from-rules (map-ontology (:ontology ontology) optionals) '()),
         (throw (Exception. "Invalid type value for owl generator"))))))
 
-(defn individuals-sexp [ontology]
-  (apply concat
-         (keep (fn [class]
-                 (let [individuals (.getIndividuals class ontology)
-                       sid (symbol (.toStringID class))]
-                   (prn (bean class))
-                   (when (not (empty? individuals))
-                     (map (fn [individual]
-                            (list sid (symbol (.toStringID individual))))
-                          individuals))))
-               (.getClassesInSignature ontology))))
+(defn individuals [ontology]
+  "returns all individuals in the ontology as a list of (class individual)"
+  (mapcat (fn [class]
+            (let [individuals (.getIndividuals class ontology)
+                  sid (symbol (.toStringID class))]
+              (prn (bean class))
+              (if (not (empty? individuals))
+                (map (fn [individual]
+                       (list sid (symbol (.toStringID individual))))
+                     individuals)
+                ())))
+          (.getClassesInSignature ontology)))
+
+(defn create-iri [s]
+  (IRI/create s))
+
+(defn classes [ontology iri]
+  (seq (filter #(do (prn "obj =") (prn %) (instance? OWLClass %))
+               (.getEntitiesInSignature ontology iri))))
+
+(defn root-ontology [reasoner]
+  (.getRootOntology reasoner))
+
+(defn instances [reasoner class]
+  "returns instances of class"
+  (seq (.getFlattened (.getInstances reasoner class false))))
+
