@@ -7,7 +7,6 @@ package org.fokus.carneades;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +19,7 @@ import org.fokus.carneades.api.CarneadesMessage;
 import org.fokus.carneades.api.MessageType;
 import org.fokus.carneades.api.Statement;
 import org.fokus.carneades.common.EjbLocator;
-import org.fokus.carneades.questions.Question;
-import org.fokus.carneades.questions.QuestionHelper;
+import org.fokus.carneades.questions.*;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,9 +58,10 @@ public class CarneadesServlet extends HttpServlet {
         String jsonIN = request.getParameter("json");
         String jsonOUT = "";
         // DO WHAT?
-        if ( jsonIN.matches("\s*{\s*\"request\"\s*:.+") ) {
+        ObjectMapper mapper = new ObjectMapper();
+        if ( jsonIN.matches("\\s*{\\s*\"request\"\\s*:.+") ) {
             // initial request
-            if ( jsonIN.matches("\s*{\s*\"request\"\s*:\s*\"demo\"\s*}\s*") ) {
+            if ( jsonIN.matches("\\s*{\\s*\"request\"\\s*:\\s*\"demo\"\\s*}\\s*") ) {
                 // give back demo content
                 jsonOUT = "{\"questions\" : ["
                 + "{\"id\":1,\"type\":\"text\",\"question\":\"Forename: \",\"answers\":[\"\"],\"category\":\"Personal Information\", \"hint\":\"enter your full first name\"},"
@@ -74,88 +73,100 @@ public class CarneadesServlet extends HttpServlet {
                 + "{\"id\":7,\"type\":\"checkbox\",\"question\":\"Hobbies: \",\"answers\":[\"Paragliding\",\"boongie jumping\",\"sharkhunting\",\"jackass-like-stuns\",\"rocket science\"],\"category\":\"Personal Information\",\"hint:\":\"Please be honest.\"}"
                 + "]}";
             }
-            else if(jsonIN.matches("\s*{\s*\"request\"\s*:\s*\"\w\"\s*}\s*")) {
+            else if(jsonIN.matches("\\s*{\\s*\"request\"\\s*:\\s*\"\\w\"\\s*}\\s*")) {
                 // finding requested topic
-                String topic = jsonIN.replaceFirst("\s*{\s*\"request\"\s*:\s*\"","");
-                topic = topic.replaceFirst("\"\s*}\s*","");
+                String topic = jsonIN.replaceFirst("\\s*{\\s*\"request\"\\s*:\\s*\"","");
+                topic = topic.replaceFirst("\"\\s*}\\s*","");
                 // getting the topic
-                Map<Statement, Object> statement_value;
+                Map<Statement, String> statement_value;
                 // TODO : DB access to access statementlist and knowledgebase
-                    // TODO : getting the topic's statements
+                    // getting the topic's statements
                     Statement statement1 = new Statement();
                     statement1.setPredicate("p");
                     statement1.getArgs().add("?x");
                     statement_value.put(statement1, null); // null cuz there is no answer given yet
-                    // TODO : get kb for discussion
+                    // get kb for discussion
                     String kb = "http://localhost:8080/CarneadesWS-web/kb/lkif.xml";
-                // TODO : generate Questions and save them in the session
-                jsonOUT = askEngine(service,statement_value,kb); // engine needed here?
+                ArrayList<Question> qList;
+                try {
+                    // engine really needed here?
+                    qList = askEngine(service,statement_value,kb);
+                    jsonOUT = QuestionHelper.getJSONFromQuestions(qList);
+                } catch (CarneadesException e) {
+                    log.error(e.getMessage());
+                    jsonOUT = e.getMessage();
+                }
+                // save questions in session
+                if (qList.size() > 0) {
+                    Questions qListSave = new Questions();
+                    qListSave.put("questions", qList);
+                    qListSave.setKB(kb);
+                    session.setAttribute("LatestQuestions", qListSave);
+                    jsonOUT = QuestionHelper.getJSONFromQuestions(qList);
+                    log.info("sending question to user");
+                }
             }
         }
-        else if(jsonIN.matches("\s*{\s*\"answers\"\s*:.+")) {
-            // reply
-            Map<Statement, Object> statement_value;
-            // TODO : put saved statement (stored in question) and given answer in a map
-            Questions questions = session.getAttribute("LatestQuestions");
-            List<Question> qList = questions.get(questions.keySet()[0]);
+        else if(jsonIN.matches("\\s*{\\s*\"answers\"\\s*:.+")) {
+            // client replies
+            Map<Statement, String> statement_value = null;
+            // put saved statement (stored in question) and given answer in a map
+            Questions questions = (Questions) session.getAttribute("LatestQuestions");
+            String kb = questions.getKB();
+            ArrayList<Question> qList = questions.get(((ArrayList)questions.keySet()).get(0));
             Answers answers = mapper.readValue(jsonIN, Answers.class);
-            List<Answer> aList = answers.get(answers.keySet()[0]);
+            ArrayList<Answer> aList = answers.get(((ArrayList)answers.keySet()).get(0));
             for (int i=0; i<aList.size();i++) {
                 int id = aList.get(i).getId();
-                for (int i=0; i<qList.size();i++) {
-                    if (id == qList.get(i).getId()) {
+                for (int j=0; j<qList.size();j++) {
+                    if (id == qList.get(j).getId()) {
                         // found matching question
-                        statement_value.put(qList.get(i).getStatement(),
+                        statement_value.put(qList.get(j).getStatement(),
                                             aList.get(i).getAnswer());
                         break;
                     }
                 }
             }
-
+            ArrayList<Question> qListNew = new ArrayList();
+            try {
+                qListNew = askEngine(service,statement_value,kb);
+            } catch (CarneadesException e) {
+                log.error(e.getMessage());
+                jsonOUT = e.getMessage();
+            }
+            // save questions in session
+            if (qListNew.size() > 0) {
+                Questions qListNewSave = new Questions();
+                qListNewSave.put("questions", qListNew);
+                qListNewSave.setKB(kb);
+                session.setAttribute("LatestQuestions", qListNewSave);
+                jsonOUT = QuestionHelper.getJSONFromQuestions(qListNew);
+                log.info("sending question to user");
+            }
+            else jsonOUT = "Solution found.";
         }
         else if (jsonIN == null || jsonIN.equals("null")) {
             // null
+            jsonOUT = "null can not be handled";
         }
-
-        List<Statement> answers = handleRequestAnswers(jsonIN);
+        else {
+            // no "json" request
+            jsonOUT = "An error with your request has occurred.";
+        }
 
         // OUTPUT
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String outMsg = "";
         try {
-            // if no answers given with the request               
-                
-                // TODO : getting answers
-                outMsg = askEngine(service,answers);
-
-                out.println(outMsg);
-
-            
-            // Questions interpretation
-            // TODO : read last answer here
-            /*
-            else if (answer.indexOf("\",")) {
-                String[] answers = answer.split("/\"\\s*,\\s*\"/"); // split at ","
-                answers[0]=answers[0].substring(2);
-                if (answers.length > 1) answers[answers.length-1]=answers[0].substring(0,answers[0].length()-3);
-                // DB Zugriff hier
-                try {
-                    JSONArray answers2 = new JSONArray(answers);
-                    out.println(answers2.toString());
-                } catch (JSONException ee) {
-                    log.error("could not create json object: ",ee.toString());
-                    out.println("Error: "+ee.toString());
-                }
-            }*/
-        } catch (NumberFormatException e) {
+            out.println(jsonOUT);
+        /*} catch (NumberFormatException e) {
             out.println("<pre>"+e.toString() +"</pre>");
         } catch (UndeclaredThrowableException e){
             log.error(e.getUndeclaredThrowable().getMessage());
             out.println("<pre>"+e.toString());
             e.getCause().printStackTrace(out);
             out.println("</pre>");
-            e.printStackTrace();
+            e.printStackTrace();*/
         } catch (Exception e) {
             log.error(e.getMessage());
             out.println("<pre>"+e.toString() +"</pre>");
@@ -164,15 +175,14 @@ public class CarneadesServlet extends HttpServlet {
         }
     }
     
-    private String askEngine(CarneadesService service, Map<Statement, Object> statement_value, String kb) {
-        String result = "";
-        List<Question> qList;
-        List<Statement> sList = statement_value.keySet();
+    private ArrayList<Question> askEngine(CarneadesService service, Map<Statement, String> statement_value, String kb) throws CarneadesException {
+        ArrayList<Question> qList = new ArrayList();
+        ArrayList<Statement> sList = (ArrayList) statement_value.keySet();
         // creating query        
         log.info("creating query");
         for (int i=0; sList.size() < i; i++) {
-            Statement query = sList[i];
-            Object answer = statement_value.get(query); // can be String / int / float / etc.
+            Statement query = sList.get(i);
+            String answer = statement_value.get(query); // can be String / int / float / etc.
             // ask
             log.info("calling ask from ejb: " + query.toString());
             CarneadesMessage msg = service.askEngine(query, kb, answer);
@@ -180,31 +190,29 @@ public class CarneadesServlet extends HttpServlet {
             log.info("call from ejb returned:"+msg.getType().toString());
             if (MessageType.ASKUSER.equals(msg.getType())) {
                 // new question
-                qList.add(QuestionHelper.getQuestionsFromStatement(msg.getMessage()));
-                log.info("sending question to user");
-                result = QuestionHelper.getJSONFromQuestions(qList);
+                qList.addAll(QuestionHelper.getQuestionsFromStatement(msg.getMessage()));
             } else if (MessageType.SOLUTION.equals(msg.getType())) {
                 // solution
                 // TODO : implement solution case
                 log.info("sending solution to user");
-                result = "solution found";
+                // SolutionToAJAX()
             } else {
                 // error
                 log.error("unknown message type received from ask: {}", msg);
-                result = "Error: unknown message type received from ask";
+                throw new CarneadesException("Unknown message type received from ask: "+msg);
             }
         }
-        return result;
+        return qList;
     }
     
-    private List<Statement> handleRequestAnswers(String a) {
+    /*private List<Statement> handleRequestAnswers(String a) { // is this function still needed?
         //Questions qList = mapper.readValue(a, Questions.class);
         Answers rootAsMap = mapper.readValue(a, Answers.class);
-        ArrayList<Answer> = rootAsMap.get("answers");
-        List<Statement> result = new ArrayList<Statement>();
+        List<Answer> = rootAsMap.get("answers");
+        List<Statement> result = new List<Statement>();
         // TODO : implement answer handling
         return result;
-    }
+    }*/
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 

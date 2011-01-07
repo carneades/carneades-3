@@ -5,7 +5,9 @@
 
 package org.fokus.carneades.questions;
 
+import java.util.List;
 import java.util.ArrayList;
+import org.fokus.carneades.api.Statement;
 
 /**
  *
@@ -17,11 +19,10 @@ public class Question {
     private int id = 0;             // required, unique (at least for one request)
     private String question = "";   // required
     private String type = "text";   // required
-    //private String[] answers;       // required
-    private ArrayList<String> answers = new ArrayList<String>(); // required
+    private List<String> answers = new ArrayList<String>(); // required
     private Statement statement;    // required
-    private String hint = "";       // optional
-    private String category = "";   // optional
+    private String hint;            // optional
+    private String category;        // optional
 
 
     public Question() {
@@ -72,11 +73,11 @@ public class Question {
         this.category = category;
     }
 
-    public String[] getAnswers() {
-        return answers.toArray();
+    public List<String> getAnswers() {
+        return answers;
     }
 
-    public void setAnswers(ArrayList answers) {
+    public void setAnswers(List<String> answers) {
         this.answers = answers;
     }
 
@@ -98,11 +99,12 @@ public class Question {
         result += "\"id\":\""+getId()+"\"";
         result += ",\"question\":\""+getQuestion()+"\"";
         result += ",\"type\":\""+getType()+"\"";
-        result += ",\"answers\":";
-        String[] answers2 = getAnswers();
-        for (int i=0;i < answers2.length; i++) {
-            result += "\""+answers2[i]+"\"";
+        result += ",\"answers\":[";
+        for (int i=0;i < answers.size(); i++) {
+            result += "\""+answers.get(i)+"\"";
+            if (i+1 < answers.size()) result += ",";
         }
+        result += "]";
         if (!hint.isEmpty()) result += ",\"hint\":\""+getHint()+"\"";
         if (!category.isEmpty()) result += ",\"category\":\""+getCategory()+"\"";
         result += "}";

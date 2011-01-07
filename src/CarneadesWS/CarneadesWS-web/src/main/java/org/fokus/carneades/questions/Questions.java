@@ -11,6 +11,14 @@ public class Questions extends HashMap<String,ArrayList<Question>>
 {
         private String knowledgebase = "";
 
+        public Questions(){
+            // do nothing
+        }
+        
+        public Questions(String kb) {
+            this.knowledgebase = kb;
+        }
+
         public String getKnowledgebase(){
             return this.knowledgebase;
         }
@@ -21,6 +29,10 @@ public class Questions extends HashMap<String,ArrayList<Question>>
 
         public String getKB() {
             return this.getKnowledgebase();
+        }
+
+        public void setKB(String kb) {
+            this.setKnowledgebase(kb);
         }
 
 }

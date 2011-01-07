@@ -19,13 +19,15 @@ import org.codehaus.jackson.map.ObjectMapper;
 public class QuestionHelper {
     
     public static List<Question> getQuestionsFromStatement(Statement stmt) {
+        // TODO : generate multiple questions out of one statement (DB?)
         List<Question> result = new ArrayList<Question>();
         Question question = new Question();
         String q = stmt.toString();
         question.setQuestion(q);
-        question.setHint(q);
         question.setType("text");
+        question.setStatement(stmt);
         question.setCategory("foo");
+        question.setHint(q);
         result.add(question);
         return result;
     }

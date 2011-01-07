@@ -2,12 +2,15 @@
  * This is the AJAX-Engine for the IMPACT web application.
  *
  * @author bbr
- * @version 0.40
+ * @version 0.41
  */
 
 /** Settings */
-var showhints = true;
 var jsloadstarted = new Date();
+var showhints = true;
+
+// adding JSON parser when browser is too old to have a build-in one (pre-IE8, pre-FF3.5, ...)
+if( typeof( window[ 'JSON' ] ) == "undefined" ) document.write('<script type="text/javascript" src="https://github.com/douglascrockford/JSON-js/raw/master/json2.js"/>');
 
 /**
  * Fixes a javascript bug that makes copying of Arrays impossible
@@ -90,7 +93,7 @@ $(function(){ // Init
     });
 
     /** loads initial questions */
-    doAJAX(); // call for questions
+    doAJAX( {"request":"demo"} ); // call for questions
 });
 
 /**
