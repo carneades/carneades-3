@@ -89,6 +89,18 @@
   ([ontology type optionals]
     (and (:ontology ontology)
       (condp = type
-        :reasoner (generate-arguments-from-reasoner (:ontology ontology) (:reasoner ontology)),
+          :reasoner (generate-arguments-from-reasoner (:ontology ontology) (:reasoner ontology)),
         :rule (generate-arguments-from-rules (map-ontology (:ontology ontology) optionals) '()),
         (throw (Exception. "Invalid type value for owl generator"))))))
+
+(defn individuals-sexp [ontology]
+  (apply concat
+         (keep (fn [class]
+                 (let [individuals (.getIndividuals class ontology)
+                       sid (symbol (.toStringID class))]
+                   (prn (bean class))
+                   (when (not (empty? individuals))
+                     (map (fn [individual]
+                            (list sid (symbol (.toStringID individual))))
+                          individuals))))
+               (.getClassesInSignature ontology))))

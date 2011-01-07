@@ -91,6 +91,8 @@
     (try
       (set-busy view true)
       (when-let [content (lkif-import path)]
+        (prn "content =")
+        (pprint content)
         (lkif/add-lkif-to-docmanager path content *docmanager*)
         (do-open-content view path filename content)
         )
