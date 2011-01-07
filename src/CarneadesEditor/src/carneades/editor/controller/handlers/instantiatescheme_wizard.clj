@@ -11,9 +11,9 @@
         clojure.contrib.pprint
         (carneades.editor.view wizardsprotocol viewprotocol swinguiprotocol)
         carneades.editor.controller.documents
-        carneades.editor.model.properties
-        carneades.engine.owl)
-  (:require [clojure.string :as str]))
+        carneades.editor.model.properties)
+  (:require [clojure.string :as str]
+            [carneades.engine.owl :as owl]))
 
 (defvar *clauses-id* (str (gensym "clauses-panel-id")))
 
@@ -70,9 +70,8 @@
     (try
       (let [content (lkif-import scheme-pathname)
             rules (:rules (:rb content))
-            ontologies (map :ontology (vals (:import-kbs content)))
-            individuals (mapcat individuals-sexp ontologies)
-            state (assoc state :rules rules :individuals individuals)]
+            reasoners (map :reasoner (vals (:import-kbs content)))
+            state (assoc state :rules rules :reasoners reasoners)]
         (if (nil? conclusion)
           (do
             (set-conclusion-statement view "")
@@ -320,27 +319,43 @@
     suggestions
     ))
 
-(defn unifiable-individuals [literal individuals]
+;; defmemo ?
+(defn possible-individuals-statements [literal reasoners]
   (prn "unifiable-individuals")
   (prn "literal =")
   (prn literal)
   (prn (type (first literal)))
-  (prn "individuals =")
-  (prn individuals)
-  (filter #(unify literal %) individuals))
+  (let [class-symbol (first literal)
+        class-iri (owl/create-iri (str class-symbol))
+        individuals (mapcat (fn [reasoner]
+                              (let [ontology (owl/root-ontology reasoner)
+                                    class (first (owl/classes ontology class-iri))]
+                                (if (not (nil? class))
+                                  (map (fn [individual]
+                                         (list class-symbol (symbol (.toStringID individual))))
+                                       (owl/instances reasoner class))
+                                  ())))
+                            reasoners)]
+    (prn "individuals =")
+    (prn individuals)
+    individuals
+    )
+  )
 
 (defn on-literal-panel [state]
   (prn "on-literal-panel")
   (let [{:keys [view path id form literal settings current-substitution
-                individuals]} state
+                reasoners]} state
         ag (get-ag path id)
         var-values (map (fn [[var values]] [var (term-str values)])
                         current-substitution)]
     (fillin-formular view form var-values)
     (let [suggestions (concat
                        (unifiable-statements ag literal current-substitution)
-                       (unifiable-individuals literal individuals))
+                       (possible-individuals-statements literal reasoners))
           size (count suggestions)]
+      (prn "suggestions =")
+      (prn suggestions)
       (if (empty? suggestions)
         (display-no-suggestion view form)
         (display-suggestion view form (statement-formatted (first suggestions)) 1 size))
