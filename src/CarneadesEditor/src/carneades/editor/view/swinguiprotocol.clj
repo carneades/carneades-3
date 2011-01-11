@@ -70,6 +70,7 @@
   (add-argument-edit-title-listener [this f args])
   (add-argument-edit-weight-listener [this f args])
   (add-argument-edit-direction-listener [this f args])
+  (add-argument-edit-scheme-listener [this f args])
   
   ;; functions to get information from the Swing UI
   (get-selected-object-in-tree [this])

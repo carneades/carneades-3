@@ -104,27 +104,27 @@
              (assoc arg :premises (conj tokeep updated))))]
     (update-in ag [:arguments (:id arg)] update-pm-role)))
 
-(defn update-argument-title [ag arg title]
-  (letfn [(update-arg-title
+(defn- update-argument-val [ag arg k v]
+  (letfn [(update-arg-val
            [arg]
-           (assoc arg :title title))]
-    (update-in ag [:arguments (:id arg)] update-arg-title)))
+           (assoc arg k v))]
+    (update-in ag [:arguments (:id arg)] update-arg-val)))
+
+(defn update-argument-title [ag arg title]
+  (update-argument-val ag arg :title title))
+
+(defn update-argument-scheme [ag arg scheme]
+  (update-argument-val ag arg :scheme scheme))
 
 (defn update-argument-weight [ag arg weight]
-  (letfn [(update-arg-weight
-           [arg]
-           (assoc arg :weight weight))]
-    (let [ag (update-in ag [:arguments (:id arg)] update-arg-weight)
-          arg (get-argument ag (:id arg))]
-      (update-statement ag (:conclusion arg)))))
+  (let [ag  (update-argument-val ag arg :weight weight) 
+        arg (get-argument ag (:id arg))]
+    (update-statement ag (:conclusion arg))))
 
 (defn update-argument-direction [ag arg direction]
-  (letfn [(update-arg-direction
-           [arg]
-           (assoc arg :direction direction))]
-    (let [ag (update-in ag [:arguments (:id arg)] update-arg-direction)
-          arg (get-argument ag (:id arg))]
-      (update-statement ag (:conclusion arg)))))
+  (let [ag (update-argument-val ag arg :direction direction)
+        arg (get-argument ag (:id arg))]
+    (update-statement ag (:conclusion arg))))
 
 (defn add-premise [ag arg stmt]
   "add a premise and returns the new argument graph or nil

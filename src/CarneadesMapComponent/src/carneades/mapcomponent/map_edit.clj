@@ -164,6 +164,15 @@
                              #(update-arg % arg) do-not-change-style
                              do-not-change-style))))
 
+(defn change-argument-scheme [graphcomponent ag arg scheme]
+  (let [component (:component graphcomponent)]
+    (with-transaction component
+     (change-cell-and-styles component ag
+                             #(update-stmt-object % ag) do-not-change-style
+                             #(update-arg-in-pm % arg) do-not-change-style
+                             #(update-arg % arg) do-not-change-style
+                             do-not-change-style))))
+
 (defn change-argument-weight [graphcomponent ag arg title]
   (let [component (:component graphcomponent)]
     (with-transaction component
