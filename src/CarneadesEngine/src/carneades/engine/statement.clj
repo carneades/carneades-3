@@ -3,11 +3,10 @@
 
 
 (ns carneades.engine.statement
-  (:use clojure.test clojure.contrib.def
-    carneades.engine.utils)
-  (:require [clojure.contrib.str-utils2 :as s])
-  (:import
-    (java.net URI)))
+  (:use clojure.contrib.def
+        carneades.engine.utils)
+  (:require [clojure.string :as str])
+  (:import (java.net URI)))
 
 (defn variable? [x]
   "object -> boolean
@@ -173,7 +172,7 @@ is one"
 
 (defn break-str [s]
   (let [l (.split s " ")]
-    (s/join "\n " l)))
+    (str/join "\n " l)))
 
 (defn statement-formatted
   ([s] (statement-formatted s false))
@@ -184,13 +183,13 @@ is one"
       (fatom? s) (apply format `(~(:form s)
                                   ~@(map term-formatted (rest (:term s))))),
       (nonemptyseq? s) (if parentheses?
-                         (str "(" (s/join " " (map term-formatted s)) ")")
-                         (s/join " " (map term-formatted s))),
+                         (str "(" (str/join " " (map term-formatted s)) ")")
+                         (str/join " " (map term-formatted s))),
       true s)))
 
 (defn term-formatted [t]
   (cond (or (variable? t) (constant? t) ) (short-str (str t))
-    (nonemptyseq? t) (str "(" (s/join " " (map term-formatted t)) ")")
+    (nonemptyseq? t) (str "(" (str/join " " (map term-formatted t)) ")")
     (fatom? t) (str \" (statement-formatted t true) \")
     true t))
 
@@ -203,27 +202,19 @@ is one"
            to
            stmt)))
 
-;; OLD one:
-;; (deftrace str-to-stmt [s]
-;;   (letfn [(sexp? [s] (= \( (first s)))
-;;           (check-stmt [s] (when (and (statement? s) (not (empty? s))) s))]
-;;     (when (not (nil? s))
-;;       (let [s (str/trim s)]
-;;         (if (sexp? s)
-;;           (try
-;;             (let [sexp (read-string s)]
-;;               (check-stmt sexp))
-;;             (catch Exception e
-;;               nil))
-;;           (check-stmt s))))))
+(defn sentence? [s]
+  "returns true if the string s contains at least two words"
+  (> (count (str/split s #"\s+")) 1))
 
 (defn str-stmt [s]
   "converts the string s into a statement"
   (try
-    (let [stmt (read-string s)]
-      (if (statement? stmt)
-        stmt
-        nil))
+    (if (sentence? s)
+      s
+      (let [stmt (read-string s)]
+        (if (statement? stmt)
+          stmt
+          nil)))
     (catch Exception e nil)))
 
 (defn stmt-str [stmt]
@@ -232,10 +223,12 @@ is one"
 (defn str-term [s]
   "converts the string s into a term"
   (try
-    (let [term (read-string s)]
-      (if (term? term)
-        term
-        nil))
+    (if (sentence? s)
+      s
+      (let [term (read-string s)]
+        (if (term? term)
+          term
+          nil)))
     (catch Exception e nil)))
 
 (defn term-str [term]

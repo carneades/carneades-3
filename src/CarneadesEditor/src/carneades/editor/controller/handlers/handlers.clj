@@ -554,6 +554,28 @@
          (:scheme arg))
         (display-argument view path ag arg statement-formatted)))))
 
+(deftrace on-argument-edit-scheme [view path id arg-info]
+  (when-let* [ag (get-ag path id)
+              {:keys [argid previous-scheme scheme]} arg-info]
+    (when (not= previous-scheme scheme)
+      (let [arg (get-argument ag argid)
+            ag (update-argument-scheme ag arg scheme)]
+        (do-update-section view [path :ags (:id ag)] ag)
+        (argument-scheme-changed view path ag arg scheme)
+        (display-argument-property
+         view
+         path
+         id
+         (:title ag)
+         argid
+         (:title arg)
+         (:applicable arg)
+         (:weight arg)
+         (:direction arg)
+         (:scheme arg))
+        (display-argument view path ag arg statement-formatted))
+      )))
+
 (deftrace on-argument-edit-weight [view path id arg-info]
   (prn "on argument edit weight")
   (prn arg-info)
