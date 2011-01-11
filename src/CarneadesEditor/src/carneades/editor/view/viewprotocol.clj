@@ -81,6 +81,7 @@
   (premise-type-changed [this path ag oldarg arg pm])
   (premise-role-changed [this path ag oldarg arg pm])
   (argument-title-changed [this path ag arg title])
+  (argument-scheme-changed [this path ag arg scheme])
   (argument-weight-changed [this path ag arg weight])
   (argument-direction-changed [this path ag arg direction])
   (premise-added [this path ag arg stmt])

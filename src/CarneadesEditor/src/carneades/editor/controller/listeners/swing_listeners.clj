@@ -196,6 +196,10 @@
   (let [info (get-argument-being-edited-info view)]
     (on-argument-edit-title view (:path info) (:id info) info)))
 
+(defn argument-edit-scheme-listener [event view]
+  (let [info (get-argument-being-edited-info view)]
+    (on-argument-edit-scheme view (:path info) (:id info) info)))
+
 (defn argument-edit-weight-listener [event view]
   (let [info (get-argument-being-edited-info view)]
     (on-argument-edit-weight view (:path info) (:id info) info)))

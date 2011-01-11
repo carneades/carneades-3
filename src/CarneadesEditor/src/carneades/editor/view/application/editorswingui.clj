@@ -181,6 +181,10 @@
    [this f args]
    (apply add-action-listener *proButton* f args)
    (apply add-action-listener *conButton* f args))
+
+  (add-argument-edit-scheme-listener
+   [this f args]
+   (apply add-action-listener *schemeText* f args))
   
   (add-undo-button-listener
    [this f args]

@@ -18,7 +18,7 @@
 (defvar- *mapTitleText* (.mapTitleText *argumentProperties*))
 (defvar- *applicabilityText* (.applicabilityText *argumentProperties*))
 
-(defvar- *schemeText* (.schemeText *argumentProperties*))
+(defvar *schemeText* (.schemeText *argumentProperties*))
 
 (defvar- *change-listeners* (atom #{}))
 

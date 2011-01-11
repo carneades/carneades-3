@@ -404,6 +404,11 @@
    (when-let [component (get-component path (:id ag))]
      (change-argument-title component ag arg title)))
 
+  (argument-scheme-changed
+   [this path ag arg scheme]
+   (when-let [component (get-component path (:id ag))]
+     (change-argument-scheme component ag arg scheme)))
+
   (argument-weight-changed
    [this path ag arg weight]
    (when-let [component (get-component path (:id ag))]

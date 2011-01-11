@@ -57,9 +57,6 @@ public class ArgumentPropertiesView extends javax.swing.JPanel {
 
         jLabel4.setText("Scheme:");
 
-        schemeText.setBackground(new java.awt.Color(222, 222, 222));
-        schemeText.setEditable(false);
-
         mapTitleText.setBackground(new java.awt.Color(222, 222, 222));
         mapTitleText.setEditable(false);
         mapTitleText.setDisabledTextColor(new java.awt.Color(1, 1, 1));
@@ -114,8 +111,7 @@ public class ArgumentPropertiesView extends javax.swing.JPanel {
                             .addComponent(schemeText, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(18, 18, 18)
-                                .addComponent(applicabilityText, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                                .addComponent(applicabilityText, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
