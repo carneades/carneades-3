@@ -13,7 +13,7 @@
         carneades.editor.controller.documents
         carneades.editor.model.properties
         ;; move this function to statement.clj ?
-        [carneades.engine.rule :only (predicate)]
+        [carneades.engine.rule :only (predicate condition-statement)]
         )
   (:require [clojure.string :as str]
             [carneades.engine.owl :as owl]))
@@ -73,7 +73,7 @@
     (try
       (let [content (lkif-import scheme-pathname)
             rules (:rules (:rb content))
-            reasoners (map :reasoner (vals (:import-kbs content)))
+            reasoners (map :reasoner (vals (:import-kbs (get-lkif path))))
             state (assoc state :rules rules :reasoners reasoners)]
         (if (nil? conclusion)
           (do
@@ -325,29 +325,42 @@
 ;; defmemo ?
 (defn possible-individuals-statements [literal reasoners]
   (prn "possible-individuals-statements")
-  (prn "predicate literal =")
-  (prn (predicate literal))
-  (let [class-symbol (predicate literal)
-        class-iri (owl/create-iri (str class-symbol))
-        individuals (mapcat (fn [reasoner]
-                              (let [ontology (owl/root-ontology reasoner)
-                                    class (first (owl/classes ontology class-iri))]
-                                (if (not (nil? class))
-                                  (map (fn [individual]
-                                         (list class-symbol (symbol (.toStringID individual))))
-                                       (owl/instances reasoner class))
-                                  ())))
-                            reasoners)]
-    (prn "individuals =")
-    (prn individuals)
-    individuals
-    )
-  )
+  (let [owl-symbol (predicate literal)
+        statement (condition-statement literal)
+        iri (owl/create-iri (str owl-symbol))
+        nb-args (count (term-args statement))]
+    (prn "owl-symbol =")
+    (prn owl-symbol)
+    (prn "term args")
+    (prn (term-args statement))
+    (prn "reasoners =")
+    (prn reasoners)
+    (doall
+     (mapcat (fn [reasoner]
+               (let [ontology (owl/root-ontology reasoner)]
+                 (prn "before condp")
+                 (condp = nb-args
+                     1 (let [class (first (owl/classes ontology iri))]
+                         (prn "choice one!!!!!!!!!!!!!!!!!!!!!!!!")
+                         (if (not (nil? class))
+                           (map (fn [individual]
+                                  (list owl-symbol (symbol (.toStringID individual))))
+                                (owl/instances reasoner class))
+                           ()))
+                    
+                     2 (doall (do
+                                (prn "choice two!!!!!!!!!!!!!!!!!!!!!!!")
+                                (prn "mapcat!")
+                                (mapcat #(owl/instances-with-property % owl-symbol) reasoners)))
+                     
+                     ())))
+             reasoners))))
 
 (defn on-literal-panel [state]
   (prn "on-literal-panel")
-  (let [{:keys [view path id form literal settings current-substitution
-                reasoners]} state
+  (prn "STATE =")
+  (prn state)
+  (let [{:keys [view path id form literal settings current-substitution reasoners]} state
         ag (get-ag path id)
         var-values (map (fn [[var values]] [var (term-str values)])
                         current-substitution)]
