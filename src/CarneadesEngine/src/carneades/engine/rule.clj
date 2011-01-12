@@ -75,6 +75,9 @@ the statement of a condition"
     (condp = predicate
       'unless statement
       'assuming statement
+      ;; added:
+      'not statement
+      'applies (second statement)
       c)))
 
 ;; TO DO: represent the roles of conditions, e.g. "major", "minor"
