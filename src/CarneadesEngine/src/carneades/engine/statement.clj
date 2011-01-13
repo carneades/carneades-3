@@ -203,8 +203,12 @@ is one"
            stmt)))
 
 (defn sentence? [s]
-  "returns true if the string s contains at least two words"
-  (> (count (str/split s #"\s+")) 1))
+  "returns true if the string s contains at least two words and does
+   not begin with a parenthesis or a double quote"
+  (let [s (str/trim s)]
+    (and (not= (first s) \()
+         (not= (first s) \")
+         (> (count (str/split s #"\s+")) 1))))
 
 (defn str-stmt [s]
   "converts the string s into a statement"
