@@ -12,7 +12,7 @@
 
 (defvar- *recipient*
   (String. (.decodeBuffer (BASE64Decoder.)
-                          "dGhvbWFzLmdvcmRvbkBmb2t1cy5mcmF1bmhvZmVyLmRl")))
+                          "Y2FybmVhZGVzLWJ1Z3NAbGlzdHMuYmVybGlvcy5kZQ==")))
 
 (defvar- *mail-content*
   (str
