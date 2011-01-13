@@ -92,8 +92,11 @@ $(function(){ // Init
        type: "POST"
     });
 
-    /** loads initial questions */
-    doAJAX( {"request":"demo"} ); // call for questions
+    function loadTopic(t) {
+        /** loads initial questions */
+        doAJAX( {"request":"demo"} ); // call for questions
+    }
+
 });
 
 /**

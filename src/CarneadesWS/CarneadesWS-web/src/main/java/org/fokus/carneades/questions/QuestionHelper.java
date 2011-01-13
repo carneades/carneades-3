@@ -20,6 +20,8 @@ public class QuestionHelper {
     
     public static List<Question> getQuestionsFromStatement(Statement stmt) {
         // TODO : generate multiple questions out of one statement (DB?)
+        // statement to multiple statemens: name --> forename, last name
+        // in normal case only one question per statement
         List<Question> result = new ArrayList<Question>();
         Question question = new Question();
         String q = stmt.toString();
@@ -45,7 +47,7 @@ public class QuestionHelper {
             Question q = qList.get(i);
             if (i > 0) jsonObj += ",";
             try {
-                jsonObj += mapper.writeValueAsString(q);
+                jsonObj += mapper.writeValueAsString(q); // or just q.toString()
             }
             catch (Exception e) {
             }
@@ -53,6 +55,38 @@ public class QuestionHelper {
         jsonObj += "]}";
 
         return jsonObj;
+    }
+
+    public static List<Statement> mapAnswersAndQuestionsToStatement (List<Question> qList, List<Answer> aList) {
+        // blah blah
+        List<Statement> result = new ArrayList();
+        for (Answer a : aList) {
+            int id = a.getId();
+            Question q = null;
+            for (Question q1 : qList) {
+                if (id == q1.getId()) q = q1;
+            }
+            Statement stmt = q.getStatement();
+            //for (String arg : stmt.getArgs()) {
+            List<String> args = stmt.getArgs();
+            for (int i=0; i < args.size(); i++) {
+                String arg = args.get(i);
+                if (arg.indexOf("?") == 0) {
+                    // found asked argument
+                    arg = a.getAnswer();
+                    break;
+                }
+            }
+            stmt.setArgs(args);
+            result.add(stmt);
+        }
+        return result;
+    }
+
+    public static List<Statement> mapAnswersAndQuestionsToStatement (Questions questions, Answers answers) {
+        ArrayList<Question> qList = questions.get(((ArrayList)questions.keySet()).get(0));
+        ArrayList<Answer> aList = answers.get(((ArrayList)answers.keySet()).get(0));
+        return mapAnswersAndQuestionsToStatement(qList, aList);
     }
 
 }

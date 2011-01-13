@@ -25,6 +25,10 @@ public class Statement implements Serializable{
         return args;
     }
 
+    public void setArgs(List<String> args) {
+        this.args = args;
+    }
+
     public String getPredicate() {
         return predicate;
     }
