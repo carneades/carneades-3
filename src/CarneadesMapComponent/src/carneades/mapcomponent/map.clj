@@ -118,7 +118,7 @@
                      :else nil
                      )))))
 
-(defrecord StatementCell [ag stmt stmt-str formatted] Object
+(defrecord StatementCell [ag stmt stmt-str formatted full] Object
   (toString
    [this]
    formatted))
@@ -312,9 +312,9 @@
 (defn- add-statement [g p ag stmt vertices stmt-str]
   (assoc vertices
     stmt
-    (insert-vertex g p (StatementCell. ag stmt stmt-str
-                                       (trunk (stmt-to-str ag stmt stmt-str)))
-                   (get-statement-style ag stmt))))
+    (let [full (stmt-to-str ag stmt stmt-str)]
+     (insert-vertex g p (StatementCell. ag stmt stmt-str (trunk full) full)
+                    (get-statement-style ag stmt)))))
 
 (defn- add-statements [g p ag stmt-str]
   "add statements and returns a map statement -> vertex"
@@ -370,8 +370,23 @@
        (add-edges g p ag)
        (layout g p)))
 
+(defn tooltip [cell]
+  "this is a tooltip"
+  (when-let [userobject (.getValue cell)]
+    (cond
+     (instance? StatementCell userobject)
+     (:full userobject)
+
+     (instance? ArgumentCell userobject)
+     (-> userobject :arg :scheme)
+     
+     :else nil)))
+         
 (defn- create-graph [ag stmt-str]
-  (let [g (mxGraph.)
+  (let [g (proxy [mxGraph] []
+            (getToolTipForCell
+             [cell]
+             (tooltip cell)))
         p (.getDefaultParent g)]
     (try
      (register-styles (.getStylesheet g))
@@ -507,6 +522,7 @@
                          )
         undomanager (add-undo-manager g)
         rubberband (mxRubberband. graphcomponent)]
+    (.setToolTips graphcomponent true)
     (.setConnectable graphcomponent false)
     (add-mouse-zoom g graphcomponent)
     (add-refresh-listener graphcomponent)
