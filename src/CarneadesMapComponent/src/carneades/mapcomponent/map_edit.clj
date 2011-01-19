@@ -63,8 +63,9 @@
 (defn- update-stmt-object [userobject newag]
   (let [stmt-str (:stmt-str userobject)
         stmt (:stmt userobject)]
-    (StatementCell. newag stmt stmt-str
-                    (trunk (stmt-to-str newag stmt stmt-str)))))
+    (let [full (stmt-to-str newag stmt stmt-str)]
+     (StatementCell. newag stmt stmt-str
+                     (trunk full) full))))
 
 (defn- update-stmt-style [userobject oldstyle ag]
   ;; (prn " * update-stmt-style*")
@@ -187,8 +188,9 @@
         graph (.getGraph component)
         cell (find-statement-cell graph oldstmt)
         stmt-str (:stmt-str (.getValue cell))
+        full (stmt-to-str ag newstmt stmt-str)
         stmt (StatementCell. ag newstmt stmt-str
-                             (trunk (stmt-to-str ag newstmt stmt-str)))
+                             (trunk full) full)
         p (.getDefaultParent graph)
         model (.getModel graph)]
     (try
@@ -250,8 +252,9 @@
         (let [x (getx argcell)
               y (gety argcell)
               premise (get-premise (get-argument ag (:id arg)) (statement-atom stmt))
+              full (stmt-to-str ag stmt stmt-str)
               stmtcell (insert-vertex graph p (StatementCell. ag stmt stmt-str
-                                                              (trunk (stmt-to-str ag stmt stmt-str)))
+                                                              (trunk full) full)
                                       (get-statement-style ag stmt))
               premisescells (map #(find-premise-cell graph (:id arg) %) (:premises arg))]
           (prn "premise =")
@@ -323,8 +326,9 @@
         p (.getDefaultParent graph)]
     (with-transaction component
       (change-all-cell-and-styles component ag)
-      (insert-vertex graph p (StatementCell. ag stmt stmt-str
-                                             (trunk (stmt-to-str ag stmt stmt-str)))
+      (insert-vertex graph p (let [full (stmt-to-str ag stmt stmt-str)]
+                               (StatementCell. ag stmt stmt-str
+                                               (trunk full) full))
                    (get-statement-style ag stmt))
       (align-orphan-cells graph p (get-vertices graph p)))))
 
