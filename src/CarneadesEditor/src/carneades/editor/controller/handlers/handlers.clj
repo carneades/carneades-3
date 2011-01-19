@@ -35,7 +35,6 @@
   "close graph without saving it"
   (prn "do-close-graph")
   (prn "graph before =")
-  (pprint (get-ag path id))
   (let [isfresh (contains? (get-fresh-ag-ids path) id)]
    (when-not savechanges
      (if isfresh
@@ -72,8 +71,6 @@
 (deftrace on-open-graph [view path id]
   (prn "on-open-graph")
   (when-let [ag (get-ag path id)]
-    (prn "opening graph:")
-    (pprint ag)
     (open-graph view path ag statement-formatted)
     (when-let [mainissue (:main-issue ag)]
       (display-statement view path ag mainissue statement-formatted))))
@@ -92,7 +89,6 @@
       (set-busy view true)
       (when-let [content (lkif-import path)]
         (prn "content =")
-        (pprint content)
         (lkif/add-lkif-to-docmanager path content *docmanager*)
         (do-open-content view path filename content)
         )
@@ -169,12 +165,9 @@
     (set-busy view true)
     (let [lkifdata (lkif/extract-lkif-from-docmanager path *docmanager*)]
       (prn "data = ")
-      (pprint lkifdata)
       (lkif-export lkifdata path)
       (prn "after save")
-      (doseq [id (get-ags-id path)]
-        (prn "ag =")
-        (pprint (get-ag path id)))
+      
       true)
     (catch java.io.IOException e
       (display-error view *save-error* (str *error-saving* ": " (.getMessage e)))
@@ -429,8 +422,6 @@
             proofstandard (:standard node)
             acceptable (:acceptable node)
             complement-acceptable (:complement-acceptable node)]
-        (prn "ag after update status =")
-        (pprint ag)
         (do-update-section view [path :ags (:id oldag)] ag)
         (do-display-statement-property view path id (:title ag)
                                        (str content) statement-formatted status
@@ -639,7 +630,6 @@
   (when-let [ag (get-ag path id)]
     (do-update-section view [path :ags (:id ag)] ag)
     (prn "on-refresh")
-    (pprint ag)
     (redisplay-graph view path ag statement-formatted)))
 
 (deftrace on-delete-premise [view path id arg pm]
@@ -704,9 +694,6 @@
               arg (get-argument ag (:id arg))
               ag (delete-argument ag arg)]
     (do-update-section view [path :ags (:id ag)] ag)
-    (prn "ag after delete argument = ")
-    (pprint ag)
-    (prn)
     (argument-deleted view path ag arg)))
 
 (deftrace on-change-mainissue [view path id stmt]
@@ -722,9 +709,6 @@
 (deftrace do-on-new-statement [view path ag stmt]
   (let [ag (update-statement ag stmt)]
     (do-update-section view [path :ags (:id ag)] ag)
-    (prn "after do-on-new-statement")
-    (prn "ag =")
-    (pprint (get-ag path (:id ag)))
     (new-statement-added view path ag stmt statement-formatted)
     (display-statement view path ag stmt statement-formatted)
     stmt))
