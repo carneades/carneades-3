@@ -391,17 +391,17 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         assistantMenu.setText("Assistant");
 
-        assistantFindArgumentsMenuItem.setText("Find Arguments...");
-        assistantMenu.add(assistantFindArgumentsMenuItem);
+        findArgumentsAssistantMenuItem.setText("Find Arguments...");
+        assistantMenu.add(findArgumentsAssistantMenuItem);
 
-        assistantFindGoalMenuItem.setText("Find Goal...");
-        assistantMenu.add(assistantFindGoalMenuItem);
+        findGoalAssistantMenuItem.setText("Find Goal...");
+        assistantMenu.add(findGoalAssistantMenuItem);
 
-        assistantFormalizeStatementMenuItem.setText("Formalize Statement...");
-        assistantMenu.add(assistantFormalizeStatementMenuItem);
+        formalizeStatementAssistantMenuItem.setText("Formalize Statement...");
+        assistantMenu.add(formalizeStatementAssistantMenuItem);
 
-        assistantInstantiateSchemeMenuItem.setText("Instantiate Scheme...");
-        assistantMenu.add(assistantInstantiateSchemeMenuItem);
+        instantiateSchemeAssistantMenuItem.setText("Instantiate Scheme...");
+        assistantMenu.add(instantiateSchemeAssistantMenuItem);
 
         menuBar.add(assistantMenu);
 
@@ -456,10 +456,6 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JRadioButtonMenuItem acceptedMenuItem = new javax.swing.JRadioButtonMenuItem();
     public final javax.swing.JMenuItem addExistingPremiseMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JPopupMenu argumentPopupMenu = new javax.swing.JPopupMenu();
-    public final javax.swing.JMenuItem assistantFindArgumentsMenuItem = new javax.swing.JMenuItem();
-    public final javax.swing.JMenuItem assistantFindGoalMenuItem = new javax.swing.JMenuItem();
-    public final javax.swing.JMenuItem assistantFormalizeStatementMenuItem = new javax.swing.JMenuItem();
-    public final javax.swing.JMenuItem assistantInstantiateSchemeMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenu assistantMenu;
     public final javax.swing.JMenuItem closeFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem closeGraphMenuItem = new javax.swing.JMenuItem();
@@ -477,8 +473,12 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JMenuItem exportGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem exportLkifFileMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenu fileMenu;
+    public final javax.swing.JMenuItem findArgumentsAssistantMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem findGoalAssistantMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem formalizeStatementAssistantMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JPopupMenu graphPopupMenu = new javax.swing.JPopupMenu();
     private javax.swing.JMenu helpMenu;
+    public final javax.swing.JMenuItem instantiateSchemeAssistantMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;

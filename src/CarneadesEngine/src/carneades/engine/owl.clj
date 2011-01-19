@@ -107,9 +107,12 @@
 (defn create-iri [s]
   (IRI/create s))
 
-(defn classes [ontology iri]
-  (seq (filter #(do (prn "obj =") (prn %) (instance? OWLClass %))
-               (.getEntitiesInSignature ontology iri))))
+(defn classes
+  ([ontology]
+     (seq (.getClassesInSignature ontology)))
+  ([ontology iri]
+     (seq (filter #(do (prn "obj =") (prn %) (instance? OWLClass %))
+                  (.getEntitiesInSignature ontology iri)))))
 
 (defn root-ontology [reasoner]
   (.getRootOntology reasoner))
@@ -130,12 +133,18 @@
           {}
           (into {} (f individual ontology))))
 
-(defn object-properties [ontology individual]
-  "returns a hashmap of property -> vals"
-  (x-properties ontology individual (memfn getObjectPropertyValues ontology)))
+(defn object-properties
+  ([ontology]
+     (seq (.getObjectPropertiesInSignature ontology)))
+  ([ontology individual]
+     "returns a hashmap of property -> vals"
+     (x-properties ontology individual (memfn getObjectPropertyValues ontology))))
 
-(defn data-properties [ontology individual]
-  (x-properties ontology individual (memfn getDataPropertyValues ontology)))
+(defn data-properties
+  ([ontology]
+     (seq (.getDataPropertiesInSignature ontology)))
+  ([ontology individual]
+     (x-properties ontology individual (memfn getDataPropertyValues ontology))))
 
 (defn x-properties-seq [ontology individual f]
   "returns a seq of (property indivi val) from the individual"
@@ -167,9 +176,12 @@
       (.parseClassExpression parser))
     (catch ParserException e nil)))
 
+(defn shorten [sym]
+  (last (clojure.string/split (str sym) #"#")))
+
 (defn instances-with-property [reasoner property]
   "returns a list of (property indiv val) "
-  (let [prop (last (clojure.string/split (str property) #"#"))
+  (let [prop (shorten property)
         ontology (root-ontology reasoner)]
     (prn "prop =")
     (prn prop)

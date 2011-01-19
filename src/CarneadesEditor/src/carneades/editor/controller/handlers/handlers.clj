@@ -696,9 +696,6 @@
   (when-let* [ag (get-ag path id)
               ag (delete-statement ag stmt)]
     (do-update-section view [path :ags (:id ag)] ag)
-    ;; (prn "after delete stmt =")
-    ;; (pprint ag)
-    ;; (prn)
     (statement-deleted view path ag stmt)))
 
 (deftrace on-delete-argument [view path id arg]

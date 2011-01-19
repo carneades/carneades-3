@@ -48,6 +48,12 @@
 (defvar *schemes-panel* "Choose a Scheme")
 (defvar *select-a-scheme* "Select a Scheme")
 
+(defvar *formalizestatement-title* "Formalize Statement")
+(defvar *formalizestatementwizard-error* "Formalize Statement Assistant Error")
+(defvar *entities-panel-desc* "Choose a Class or Property")
+(defvar *select-an-entity* "Select an Entity")
+(defvar *statement-panel-desc* "Complete the Formular")
+
 (defvar *clauses-panel-desc* "Choose a Clause")
 ;; (defvar *literal-panel-desc* "Choose a Literal")
 (defvar *complete-form-n* "Fill in Literal %s")

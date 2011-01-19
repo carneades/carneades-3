@@ -96,6 +96,8 @@
    view findarguments-assistantmenuitem-listener [view])
   (add-instantiatescheme-assistantmenuitem-listener
    view instantiatescheme-assistantmenuitem-listener [view])
+  (add-formalizestatement-assistantmenuitem-listener
+   view formalizestatement-assistantmenuitem-listener [view])
   
   (add-import-button-listener view import-button-listener [view])
   (add-remove-import-button-listener view remove-import-button-listener [view])

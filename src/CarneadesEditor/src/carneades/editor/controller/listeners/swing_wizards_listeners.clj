@@ -4,13 +4,18 @@
 (ns carneades.editor.controller.listeners.swing-wizards-listeners
   (:use carneades.editor.view.viewprotocol
         carneades.editor.view.wizardsprotocol
-        carneades.editor.utils.state
-        [carneades.engine.statement :only (statement?)]
+        (carneades.editor.utils state core)
+        [carneades.engine.statement :only (statement? statement-formatted)]
         carneades.editor.view.swinguiprotocol
         carneades.editor.controller.handlers.messages
         (carneades.editor.controller.handlers goal-wizard
                                               findarguments-wizard
-                                              instantiatescheme-wizard)))
+                                              instantiatescheme-wizard
+                                              formalizestatement-wizard)))
+
+;; if you plan to add a new wizard, take the formalize statement wizard as example
+;; it is the one with the cleanest functional design
+
 (defn- get-selected-statement [view path id]
   (when-let [node (get-selected-node view path id)]
     (when (statement? node)
@@ -77,45 +82,104 @@
     (swap! state assoc :settings settings)
     (state-call f state)))
 
+(defn state-listener-wrapper [f state]
+  (fn [event]
+    (state-call f state)))
+
 (defn instantiatescheme-assistantmenuitem-listener [event view]
   (prn "instantiatescheme-assistantmenuitem-listener")
-  (when-let [[path id] (current-graph view)]
-    (let [conclusion (get-selected-statement view path id)
-          state (atom (create-instantiatescheme-state view path id conclusion))]
-      (when-let [newstate (on-pre-instantiatescheme-wizard (deref state))]
-        (reset! state newstate)
-        (set-filter-text-listener view (fn [event]
-                                         (swap! state assoc
-                                                :filter-text (get-filter-text view)
-                                                :conclusion-matches (and
-                                                                     (conclusionmatches-button-enabled? view)
-                                                                     (conclusionmatches-button-selected? view)))
-                                         (state-call on-filter-schemes state))
-                                  [])
-        (set-conclusionmatches-button-listener
-         view
-         (fn [event]
-           (swap! state assoc :conclusion-matches (conclusionmatches-button-selected? view))
-           (state-call on-conclusionmatches state))
-         [])
-        (set-previous-clause-button-listener view (fn [event]
-                                                    (state-call on-previous-clause-button-listener state)) [])
-        (set-next-clause-button-listener view (fn [event]
-                                                (state-call on-next-clause-button-listener state)) [])
-        (let [schemes-panel (get-schemes-panel view)
-              clauses-panel (get-clauses-panel view)
-              settings (display-branched-wizard view [{:panel schemes-panel
-                                                       :desc *schemes-panel*
-                                                       :listener (state-wrapper on-schemes-panel state)
-                                                       :validator schemes-panel-validator}
-                                                      {:panel clauses-panel
-                                                       :desc *clauses-panel-desc*
-                                                       :id *clauses-id*
-                                                       :listener (state-wrapper on-clauses-panel state)}]
-                                                (fn [settings stepid]
-                                                  (swap! state assoc :settings settings)
-                                                  (instantiatescheme-panel-selector state stepid))
-                                                [])]
-          (when settings
-            (swap! state assoc :settings settings)
-            (state-call on-post-instantiatescheme-wizard state)))))))
+  (when-let* [[path id] (current-graph view)
+              conclusion (get-selected-statement view path id)
+              state (atom (create-instantiatescheme-state view path id conclusion))
+              newstate (on-pre-instantiatescheme-wizard (deref state))]
+    (reset! state newstate)
+    (set-filter-text-listener
+     view
+     (fn [event]
+       (swap! state assoc
+              :filter-text (get-filter-text view)
+              :conclusion-matches (and
+                                   (conclusionmatches-button-enabled? view)
+                                   (conclusionmatches-button-selected? view)))
+       (state-call on-filter-schemes state))
+     [])
+    (set-conclusionmatches-button-listener
+     view
+     (fn [event]
+       (swap! state assoc
+              :conclusion-matches (conclusionmatches-button-selected? view))
+       (state-call on-conclusionmatches state))
+     [])
+    (set-previous-clause-button-listener
+     view (fn [event]
+            (state-call on-previous-clause-button-listener state)) [])
+    (set-next-clause-button-listener
+     view (fn [event]
+            (state-call on-next-clause-button-listener state)) [])
+    (let [schemes-panel (get-schemes-panel view)
+          clauses-panel (get-clauses-panel view)
+          settings (display-branched-wizard
+                    view [{:panel schemes-panel
+                           :desc *schemes-panel*
+                           :listener (state-wrapper on-schemes-panel state)
+                           :validator schemes-panel-validator}
+                          {:panel clauses-panel
+                           :desc *clauses-panel-desc*
+                           :id *clauses-id*
+                           :listener (state-wrapper on-clauses-panel state)}]
+                    (fn [settings stepid]
+                      (swap! state assoc :settings settings)
+                      (instantiatescheme-panel-selector state stepid))
+                    [])]
+      (when settings
+        (swap! state assoc :settings settings)
+        (state-call on-post-instantiatescheme-wizard state)))))
+
+(defn formalizestatement-assistantmenuitem-listener [event view]
+  (let [[path id] (current-graph view)
+        statement (get-selected-statement view path id)]
+    (when-let* [state (atom {:view view
+                             :path path
+                             :id id
+                             :statement statement})
+                listeners {:form-listener
+                           (state-listener-wrapper on-form-listener state)
+                           :previous-suggestion-listener
+                           (state-listener-wrapper on-previous-suggestion-listener state)
+                           :next-suggestion-listener
+                           (state-listener-wrapper on-next-suggestion-listener state)
+                           :use-suggestion-listener
+                           (state-listener-wrapper on-use-suggestion-listener state)}
+                [statement-panel formular]
+                (get-statement-panel view (statement-formatted statement) listeners)
+                _ (swap! state assoc :formular formular)
+                _ (state-call on-pre-formalizestatement-wizard state)
+                entitiespanel (get-entitiespanel view)
+                wizard (create-wizard view *formalizestatement-title*
+                                      [{:panel entitiespanel
+                                        :desc *entities-panel-desc*
+                                        :listener (state-wrapper on-entities-panel state)
+                                        :validator entities-panel-validator
+                                        }
+                                       {:panel statement-panel
+                                        :desc *statement-panel-desc*
+                                        :listener (state-wrapper on-statement-panel state)
+                                        :validator statement-panel-validator
+                                        }]
+                                      (constantly true)
+                                      [])
+                listener-wrapper (fn [event]
+                                   (swap! state assoc
+                                          :classes-button-selected
+                                          (classes-button-selected? view)
+                                          :properties-button-selected
+                                          (properties-button-selected? view)
+                                          :filter-text
+                                          (get-entities-filter-text view))
+                                   (state-call on-listener state))]
+      (set-classes-button-listener view listener-wrapper [])
+      (set-properties-button-listener view listener-wrapper [])
+      (set-filterentities-text-listener view listener-wrapper [])
+      (when-let [settings (display-wizard view wizard 500 600)]
+        (swap! state assoc :settings settings)
+        (state-call on-post-formalizestatement-wizard state)))))

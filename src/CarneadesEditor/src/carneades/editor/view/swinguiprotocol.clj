@@ -50,6 +50,7 @@
   (add-findgoal-assistantmenuitem-listener [this f args])
   (add-findarguments-assistantmenuitem-listener [this f args])
   (add-instantiatescheme-assistantmenuitem-listener [this f args])
+  (add-formalizestatement-assistantmenuitem-listener [this f args])
   (add-quit-filemenuitem-listener [this f args])
   (add-import-button-listener [this f args])
   (add-remove-import-button-listener [this f args])
@@ -88,7 +89,8 @@
   (create-wizard [this title panels]
                  [this title panels cancel-fn args])
   (display-wizard [this wizard]
-                  [this title panels])
+                  [this title panels]
+                  [this wizard height width])
   (display-branched-wizard [this basepanels selector args])
   )
 
