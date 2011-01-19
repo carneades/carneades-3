@@ -31,14 +31,13 @@ public class LiteralPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         jButton1 = new javax.swing.JButton();
         buttonsPanel = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
 
-        jLabel1.setText("Literal:");
+        literalLabel.setText("Literal:");
 
         literalText.setBackground(new java.awt.Color(222, 222, 222));
         literalText.setEditable(false);
@@ -152,7 +151,7 @@ public class LiteralPanel extends javax.swing.JPanel {
                             .addComponent(suggestionPanel, 0, 350, Short.MAX_VALUE)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                    .addComponent(jLabel1)
+                                    .addComponent(literalLabel)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(literalText))
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)))))
@@ -164,7 +163,7 @@ public class LiteralPanel extends javax.swing.JPanel {
                 .addComponent(dummyValidatorTrigger, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
+                    .addComponent(literalLabel)
                     .addComponent(literalText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -179,10 +178,10 @@ public class LiteralPanel extends javax.swing.JPanel {
     private javax.swing.JPanel buttonsPanel;
     public final javax.swing.JTextField dummyValidatorTrigger = new javax.swing.JTextField();
     private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    public final javax.swing.JLabel literalLabel = new javax.swing.JLabel();
     public final javax.swing.JTextField literalText = new javax.swing.JTextField();
     public final javax.swing.JButton nextSuggestionButton = new javax.swing.JButton();
     public final javax.swing.JButton previousSuggestionButton = new javax.swing.JButton();

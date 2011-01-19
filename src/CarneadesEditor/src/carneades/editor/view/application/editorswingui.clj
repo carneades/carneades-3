@@ -15,6 +15,7 @@
         carneades.mapcomponent.map)
   (:require [carneades.editor.view.components.tree :as tree])
   (:import java.awt.BorderLayout
+           java.awt.Toolkit
            (org.netbeans.spi.wizard WizardPage WizardPage$WizardResultProducer
                                     WizardObserver WizardBranchController)
            org.netbeans.api.wizard.WizardDisplayer
@@ -244,16 +245,20 @@
 
   (add-findgoal-assistantmenuitem-listener
    [this f args]
-   (apply add-action-listener *assistantFindGoalMenuItem* f args))
+   (apply add-action-listener *findGoalAssistantMenuItem* f args))
 
   (add-findarguments-assistantmenuitem-listener
    [this f args]
-   (apply add-action-listener *assistantFindArgumentsMenuItem* f args))
+   (apply add-action-listener *findArgumentsAssistantMenuItem* f args))
 
   (add-instantiatescheme-assistantmenuitem-listener
    [this f args]
-   (apply add-action-listener *assistantInstantiateSchemeMenuItem* f args))
+   (apply add-action-listener *instantiateSchemeAssistantMenuItem* f args))
 
+  (add-formalizestatement-assistantmenuitem-listener
+   [this f args]
+   (apply add-action-listener *formalizeStatementAssistantMenuItem* f args))
+  
   (add-quit-filemenuitem-listener
    [this f args]
    (apply add-action-listener *quitFileMenuItem* f args))
@@ -361,7 +366,16 @@
 
   (display-wizard
    [this title panels]
-   (WizardDisplayer/showWizard (create-wizard this title panels)))
+   (display-wizard this (create-wizard this title panels)))
+
+  (display-wizard
+   [this wizard height width]
+   (let [w width
+         l height
+         size (.getScreenSize (Toolkit/getDefaultToolkit))
+         x (int (/ (- (.width size) width) 2))
+         y (int (/ (- (.height size) height) 2))]
+     (WizardDisplayer/showWizard wizard (java.awt.Rectangle. x y width height))))
 
   (display-branched-wizard
    [this basepanels selector args]

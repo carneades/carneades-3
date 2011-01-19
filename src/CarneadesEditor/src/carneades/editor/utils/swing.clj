@@ -16,6 +16,7 @@
                              TreeSelectionModel
                              DefaultTreeModel)
            (java.awt.event WindowAdapter
+                           KeyAdapter
                            MouseAdapter)))
 
 (defn create-file-filter [description extensions]
@@ -139,3 +140,14 @@
                       (proxy-super dispatchEvent event)
                       (catch Throwable e
                         (f e))))))))
+
+(defn add-key-released-listener [component f & args]
+  (.addKeyListener component
+                   (proxy [KeyAdapter] []
+                     (keyReleased
+                      [keyevent]
+                      (apply f keyevent args)))))
+
+(defn remove-key-listeners [component]
+  (doseq [l (.getKeyListeners component)]
+    (.removeKeyListener component l)))
