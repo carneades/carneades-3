@@ -50,6 +50,9 @@
   ;; to delete
   (:rules (:rb (get-lkif lkifpath))))
 
+(defn get-reasoners [path]
+  (map :reasoner (vals (:import-kbs (get-lkif path)))))
+
 (defn get-kbs-locations [lkifpath]
   (map first (get-section-content *docmanager* [lkifpath :import-kbs])))
 

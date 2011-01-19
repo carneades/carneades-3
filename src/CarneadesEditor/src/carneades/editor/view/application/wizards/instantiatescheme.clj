@@ -5,11 +5,12 @@
   (:use clojure.contrib.def
         clojure.contrib.pprint
         clojure.contrib.swing-utils
+        carneades.editor.utils.swing
         carneades.editor.view.application.wizards.messages
+        carneades.editor.view.application.wizards.formular-utils
         carneades.editor.view.wizardsprotocol)
   (:require [clojure.string :as str])
-  (:import (java.awt.event KeyAdapter)
-           (javax.swing JPanel JTextField JLabel BoxLayout SpringLayout)
+  (:import (javax.swing JPanel JTextField JLabel BoxLayout SpringLayout)
            java.awt.FlowLayout
            (carneades.editor.view.wizardsprotocol StatementItem LiteralFormular)
            (carneades.editor.uicomponents.wizards.instantiatescheme
@@ -68,6 +69,7 @@
   
   (set-conclusionmatches-button-listener
    [this f args]
+   (remove-action-listeners *conclusionmatchesButton*)
    (apply add-action-listener *conclusionmatchesButton* f args))
 
   (display-clause
@@ -93,43 +95,7 @@
 
   (create-literal-formular
    [this formid literal suggestions variables suffix listeners args]
-   (let [{:keys [form-listener
-                 previous-suggestion-listener
-                 next-suggestion-listener
-                 use-suggestion-listener]} listeners
-         panel (LiteralPanel.)
-         literalText (.literalText panel)
-         variablesPanel (.variablesPanel panel)
-         suggestionText (.suggestionText panel)
-         suggestionLabel (.suggestionLabel panel)
-         previousSuggestionButton (.previousSuggestionButton panel)
-         nextSuggestionButton (.nextSuggestionButton panel)
-         useSuggestionButton (.useSuggestionButton panel)
-         trigger (.dummyValidatorTrigger panel)
-         textfields (mapcat (fn [var]
-                              (let [varpanel (VariablePanel.)
-                                    label (.variableLabel varpanel)
-                                    text (.variableText varpanel)]
-                                (.setText label (str var))
-                                (.setName text (str var "-" suffix))
-                                (.add variablesPanel varpanel)
-                                (.addKeyListener text
-                                                 (proxy [KeyAdapter] []
-                                                   (keyReleased
-                                                    [keyevent]
-                                                    (apply form-listener formid var (.getText text) args))))
-                                [var text]))
-                         variables)]
-     (add-action-listener previousSuggestionButton
-                          (fn [_] (apply previous-suggestion-listener formid args)))
-     (add-action-listener nextSuggestionButton
-                          (fn [_] (apply next-suggestion-listener formid args)))
-     (add-action-listener useSuggestionButton
-                          (fn [_] (apply use-suggestion-listener formid args)))
-     (.setText literalText literal)
-     (.setVisible trigger false)
-     (LiteralFormular. formid panel (apply hash-map textfields)))
-   )
+   (create-formular formid *literal* literal suggestions variables suffix listeners args))
 
   (display-suggestion
    [this formular suggestion n nb-suggestions]
@@ -163,14 +129,7 @@
 
   (fillin-formular
    [this formular var-values]
-   (let [textfields (:textfields formular)
-         panel (:panel formular)
-         trigger (.dummyValidatorTrigger panel)]
-     (doseq [[var value] var-values]
-       (when-let [text (get textfields var)]
-         (.setText text value)))
-     (.setText trigger "xyz")
-     ))
+   (fill-formular formular var-values))
 
   (trigger-formpanel-validator
    [this formular]
@@ -180,10 +139,5 @@
 
   (set-filter-text-listener
    [this f args]
-   (doseq [l (.getKeyListeners *filterText*)]
-     (.removeKeyListener *filterText* l))
-   (.addKeyListener *filterText*
-                    (proxy [KeyAdapter] []
-                      (keyReleased
-                       [keyevent]
-                       (apply f keyevent args))))))
+   (remove-key-listeners *filterText*)
+   (apply add-key-released-listener *filterText* f args)))

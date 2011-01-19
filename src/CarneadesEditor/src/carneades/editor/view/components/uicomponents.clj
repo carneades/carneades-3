@@ -65,8 +65,9 @@
 (defvar *deleteGraphMenuItem* (.deleteGraphMenuItem *frame*))
 (defvar *newFileMenuItem* (.newFileMenuItem *frame*))
 
-(defvar *assistantFindGoalMenuItem* (.assistantFindGoalMenuItem *frame*))
-(defvar *assistantFindArgumentsMenuItem* (.assistantFindArgumentsMenuItem *frame*))
-(defvar *assistantInstantiateSchemeMenuItem* (.assistantInstantiateSchemeMenuItem *frame*))
+(defvar *findGoalAssistantMenuItem* (.findGoalAssistantMenuItem *frame*))
+(defvar *findArgumentsAssistantMenuItem* (.findArgumentsAssistantMenuItem *frame*))
+(defvar *instantiateSchemeAssistantMenuItem* (.instantiateSchemeAssistantMenuItem *frame*))
+(defvar *formalizeStatementAssistantMenuItem* (.formalizeStatementAssistantMenuItem *frame*))
 
 (defvar *preferencesEditMenuItem* (.preferencesEditMenuItem *frame*))

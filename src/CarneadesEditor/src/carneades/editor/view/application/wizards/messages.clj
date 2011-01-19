@@ -9,3 +9,6 @@
 
 (defvar *clause-n-of* "Clause %d of %d:")
 (defvar *suggestion-n-of* "Suggestion %d of %d:")
+
+(defvar *literal* "Literal:")
+(defvar *predicate* "Predicate:")

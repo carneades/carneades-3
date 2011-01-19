@@ -464,7 +464,7 @@
             <Property name="text" type="java.lang.String" value="Assistant"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="assistantFindArgumentsMenuItem">
+            <MenuItem class="javax.swing.JMenuItem" name="findArgumentsAssistantMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Find Arguments..."/>
               </Properties>
@@ -472,7 +472,7 @@
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
               </AuxValues>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="assistantFindGoalMenuItem">
+            <MenuItem class="javax.swing.JMenuItem" name="findGoalAssistantMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Find Goal..."/>
               </Properties>
@@ -480,7 +480,7 @@
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
               </AuxValues>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="assistantFormalizeStatementMenuItem">
+            <MenuItem class="javax.swing.JMenuItem" name="formalizeStatementAssistantMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Formalize Statement..."/>
               </Properties>
@@ -488,7 +488,7 @@
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
               </AuxValues>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="assistantInstantiateSchemeMenuItem">
+            <MenuItem class="javax.swing.JMenuItem" name="instantiateSchemeAssistantMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Instantiate Scheme..."/>
               </Properties>

@@ -10,6 +10,11 @@
 
 (defrecord LiteralFormular [formid panel textfields])
 
+(defrecord EntityItem [entity formatted type] Object
+  (toString
+   [this]
+   formatted))
+
 (defprotocol SwingGoalWizard
   (set-main-issue [this mainissue])
   (set-abduction-busy [this busy])
@@ -53,5 +58,17 @@
   (fillin-formular [this form var-values] "does nothing if var does not exist for the form")
   (display-suggestion [this formular suggestion n nb-suggestions])
   (display-no-suggestion [this formular])
-  (trigger-formpanel-validator [this formular])
+  (trigger-formpanel-validator [this formular]))
+
+(defprotocol SwingFormalizeStatementWizard
+  (get-entitiespanel [this])
+  (get-statement-panel [this statement listeners] "returns both the panel and its formular")
+  (set-filterentities-text-listener [this f args])
+  (set-classes-button-listener [this f args])
+  (set-properties-button-listener [this f args])
+  (display-entities [this descs])
+  (classes-button-selected? [this])
+  (properties-button-selected? [this])
+  (get-entities-filter-text [this])
+  (prepare-statement-formular [this formular stmt entity])
   )

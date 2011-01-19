@@ -114,9 +114,10 @@
                      *copyClipboardEditMenuItem*
                      *printPreviewFileMenuItem*
                      *printFileMenuItem*
-                     *assistantFindGoalMenuItem*
-                     *assistantFindArgumentsMenuItem*
-                     *assistantInstantiateSchemeMenuItem*
+                     *findGoalAssistantMenuItem*
+                     *findArgumentsAssistantMenuItem*
+                     *instantiateSchemeAssistantMenuItem*
+                     *formalizeStatementAssistantMenuItem*
                      *selectAllEditMenuItem*])
 
 (defvar- *lkif-items* [*saveButton*
