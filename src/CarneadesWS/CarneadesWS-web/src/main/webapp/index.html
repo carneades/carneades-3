@@ -25,7 +25,7 @@
                         @import url("css/screen.css") screen;
 		</style>
 	</head>
-	<body>
+<body>
 <div id="tabs">
 	<ul>
 		<li><a href="#tabs-1">Topics</a></li>
@@ -35,137 +35,84 @@
     <!-- language -->
     <div id="locatebox">
         <select name="locate" id="locate">
-                <option value="at">Austria</option>
-                <option value="bg">Bulgarian (&#1073;&#1098;&#1083;&#1075;&#1072;&#1088;&#1089;&#1082;&#1080; &#1077;&#1079;&#1080;&#1082;)</option>
-                <option value="hr">Croatian (Hrvatski jezik)</option>
-                <option value="cs">Czech (&#269;e&#353;tina)</option>
-                <option value="da">Danish (Dansk)</option>
-                <option value="nl">Dutch (Nederlands)</option>
-                <option value="en-GB" selected="selected">English/UK</option>
-                <option value="eo">Esperanto</option>
-                <option value="et">Estonian (eesti keel)</option>
-                <option value="fi">Finnish (suomi)</option>
-                <option value="fr">French (Fran&ccedil;ais)</option>
-                <option value="fr-CH">French/Swiss (Fran&ccedil;ais de Suisse)</option>
-                <option value="gl">Galician</option>
-                <option value="de" style="padding-left:16px; background: url('images/deutschland.gif') no-repeat 0 2px;">German (Deutsch)</option>
-                <option value="el">Greek (&#917;&#955;&#955;&#951;&#957;&#953;&#954;&#940;)</option>
-                <option value="hu">Hungarian (Magyar)</option>
-                <option value="is">Icelandic (&Otilde;slenska)</option>
-                <option value="it">Italian (Italiano)</option>
-                <option value="lv">Latvian (Latvie&ouml;u Valoda)</option>
-                <option value="lt">Lithuanian (lietuviu kalba)</option>
-                <option value="pl">Polish (Polski)</option>
-                <option value="pt">Portuguese (Portugu&ecirc;s)</option>
-                <option value="ro">Romanian (Rom&acirc;n&#259;)</option>
-                <option value="sk">Slovak (Slovencina)</option>
-                <option value="sl">Slovenian (Slovenski Jezik)</option>
-                <option value="es">Spanish (Espa&ntilde;ol)</option>
-                <option value="sv">Swedish (Svenska)</option>
-                <option value="uk">Ukranian (&#1059;&#1082;&#1088;&#1072;&#1111;&#1085;&#1089;&#1100;&#1082;&#1072;)</option>
+            <option value="at">Austria</option>
+            <option value="bg">Bulgarian (&#1073;&#1098;&#1083;&#1075;&#1072;&#1088;&#1089;&#1082;&#1080; &#1077;&#1079;&#1080;&#1082;)</option>
+            <option value="hr">Croatian (Hrvatski jezik)</option>
+            <option value="cs">Czech (&#269;e&#353;tina)</option>
+            <option value="da">Danish (Dansk)</option>
+            <option value="nl">Dutch (Nederlands)</option>
+            <option value="en-GB" selected="selected">English/UK</option>
+            <option value="eo">Esperanto</option>
+            <option value="et">Estonian (eesti keel)</option>
+            <option value="fi">Finnish (suomi)</option>
+            <option value="fr">French (Fran&ccedil;ais)</option>
+            <option value="fr-CH">French/Swiss (Fran&ccedil;ais de Suisse)</option>
+            <option value="gl">Galician</option>
+            <option value="de" style="padding-left:16px; background: url('images/deutschland.gif') no-repeat 0 2px;">German (Deutsch)</option>
+            <option value="el">Greek (&#917;&#955;&#955;&#951;&#957;&#953;&#954;&#940;)</option>
+            <option value="hu">Hungarian (Magyar)</option>
+            <option value="is">Icelandic (&Otilde;slenska)</option>
+            <option value="it">Italian (Italiano)</option>
+            <option value="lv">Latvian (Latvie&ouml;u Valoda)</option>
+            <option value="lt">Lithuanian (lietuviu kalba)</option>
+            <option value="pl">Polish (Polski)</option>
+            <option value="pt">Portuguese (Portugu&ecirc;s)</option>
+            <option value="ro">Romanian (Rom&acirc;n&#259;)</option>
+            <option value="sk">Slovak (Slovencina)</option>
+            <option value="sl">Slovenian (Slovenski Jezik)</option>
+            <option value="es">Spanish (Espa&ntilde;ol)</option>
+            <option value="sv">Swedish (Svenska)</option>
+            <option value="uk">Ukranian (&#1059;&#1082;&#1088;&#1072;&#1111;&#1085;&#1089;&#1100;&#1082;&#1072;)</option>
         </select>
     </div>
-
 <div id="tabs-1">
+        <h1>IMPACT Questions</h1>
+        <p style="font-size: 1.3em; line-height: 1.5; margin: 1em 0; width: 50%;">
+	Please choose a topic.
+	</p>
+        <h2>Topics</h2>
+
+        <div>
+            <form action="" class="ui-widget ui-widget-content ui-corner-all" onsubmit="loadTopic($('input[name=\'topic\']:checked').val());$('#tabs a[href=\'#tabs-2\']').click();">
+                <p>
+                    <input name="topic" value="demo" type="radio"><span onclick="$(this).prev().click()">demo (no solution)</span><br/>
+                    <input name="topic" value="topicXY" type="radio"><span onclick="$(this).prev().click()">easy example</span>
+                </p>
+                <p><input type="button" class="ui-button next" value="next" onclick="loadTopic($('input[name=\'topic\']:checked').val());$('#tabs a[href=\'#tabs-2\']').click();"></input></p>
+            </form>
+        </div>
+</div>
+<div id="tabs-2">
 
 	<h1>IMPACT Questions</h1>
 	<p style="font-size: 1.3em; line-height: 1.5; margin: 1em 0; width: 50%;">
-	Please answer all questions to proceed.
+	Please choose a topic first
 	</p>
 	
 	<h2>Questions</h2>
 		
-	<div id="questions-box">
+	<div id="questionslistbox">
 		
 		<div style="float:left;width:200px;margin:0px;">
 			<ul class="ui-widget ui-widget-content ui-corner-all" id="questionlist">
-				<li>#1 - general information</li>
-				<li>#2 - familiar state</li>
-				<li>#3 - duration of ...</li>
-				<li>#x - another question</li>
+				<li>not loaded yet</li>
 			</ul>
 		</div>
 		
 		<!-- Questions -->
 		<form action="" id="questions" class="ui-widget ui-widget-content ui-corner-all">
 			<div>
-				<h3>#1 - general information</h3>
+				<h3></h3>
 				<div>
-                                        Your name: <input type="text" value="" name="q1_1"></input><br/>
-                                        Your country:
-                                        <select name="locate">
-                                                <option value="at">Austria</option>
-                                                <option value="bg">Bulgarian (&#1073;&#1098;&#1083;&#1075;&#1072;&#1088;&#1089;&#1082;&#1080; &#1077;&#1079;&#1080;&#1082;)</option>
-                                                <option value="hr">Croatian (Hrvatski jezik)</option>
-                                                <option value="cs">Czech (&#269;e&#353;tina)</option>
-                                                <option value="da">Danish (Dansk)</option>
-                                                <option value="nl">Dutch (Nederlands)</option>
-                                                <option value="en-GB">English/UK</option>
-                                                <option value="eo">Esperanto</option>
-                                                <option value="et">Estonian (eesti keel)</option>
-                                                <option value="fi">Finnish (suomi)</option>
-                                                <option value="fr">French (Fran&ccedil;ais)</option>
-                                                <option value="fr-CH">French/Swiss (Fran&ccedil;ais de Suisse)</option>
-                                                <option value="gl">Galician</option>
-                                                <option value="de" selected="selected">German (Deutsch)</option>
-                                                <option value="el">Greek (&#917;&#955;&#955;&#951;&#957;&#953;&#954;&#940;)</option>
-                                                <option value="hu">Hungarian (Magyar)</option>
-                                                <option value="is">Icelandic (&Otilde;slenska)</option>
-                                                <option value="it">Italian (Italiano)</option>
-                                                <option value="lv">Latvian (Latvie&ouml;u Valoda)</option>
-                                                <option value="lt">Lithuanian (lietuviu kalba)</option>
-                                                <option value="pl">Polish (Polski)</option>
-                                                <option value="pt">Portuguese (Portugu&ecirc;s)</option>
-                                                <option value="ro">Romanian (Rom&acirc;n&#259;)</option>
-                                                <option value="sk">Slovak (Slovencina)</option>
-                                                <option value="sl">Slovenian (Slovenski Jezik)</option>
-                                                <option value="es">Spanish (Espa&ntilde;ol)</option>
-                                                <option value="sv">Swedish (Svenska)</option>
-                                                <option value="uk">Ukranian (&#1059;&#1082;&#1088;&#1072;&#1111;&#1085;&#1089;&#1100;&#1082;&#1072;)</option>
-                                        </select>
-					<input type="button" class="ui-button next" value="next"></input>
-				</div>
-			</div>
-			<div>
-				<h3><a href="#">#2 - familiar state</a></h3>
-				<div>
-					<p>
-						<input type="radio" name="fam_sta" value="not_mar">not married</input>
-						<input type="radio" name="fam_sta" value="mar">married</input>
-						<input type="radio" name="fam_sta" value="div">divorced</input>
-					</p>
-					<input type="button" class="ui-button next" value="next"></input>
-				</div>
-			</div>
-			<div>
-				<h3><a href="#">#3 - duration of ...</a></h3>
-				<div>
-					<p>
-						from: <input type="text" name="q3_1" value="" class="datefield" size="8" /> <br/>
-						until: <input type="text" name="q3_1" value="" class="datefield" size="8"/> <br/>
-					</p>
-					<input type="button" class="ui-button next" value="next"></input>
-				</div>
-			</div>
-			<div>
-				<h3><a href="#">#x - another question</a></h3>
-				<div>
-					<p>
-						Nam dui erat, auctor a, dignissim quis.
-					</p>
-					<input type="button" class="ui-button next" value="next"></input>
+                                        <p>not loaded yet</p>
 				</div>
 			</div>
 		</form>
-		
+
 	</div>
-	
-		<!-- Progressbar -->
-		<p style="margin-bottom:2px;padding-top:10px;clear:both;">Progress: question 1 of 10</p>
-		<div id="progressbar"></div>
+
 </div>
-<div id="tabs-2">Die Seite ist noch nicht verfügbar.</div>
-<div id="tabs-3">El sitio todavía no está disponible.</div>
+<div id="tabs-3">solution not loaded yet</div>
 </div>
 	
 

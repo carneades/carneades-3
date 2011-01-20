@@ -56,14 +56,14 @@ public class CarneadesServiceManager implements CarneadesService{
         }
     }
 
-    public CarneadesMessage askEngine(Statement query, String kb, List<Statement> answers) {
+    public CarneadesMessage askEngine(Statement query, String kb, List<Statement> answers2) {
 
         CarneadesMessage cm = null;
 
         log.info("starting engine with kb: "+kb);
         log.info("query: " + query.toString());
 
-        this.answers.addAll(answers);
+        if (answers2 != null) this.answers.addAll(answers2); // saves given answers
 
         try {
             // importing lkif

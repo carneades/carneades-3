@@ -13,7 +13,7 @@ public class Answer {
     
     
     private int id = 0;             // required, unique (at least for one request)
-    private String answer = "";     // required
+    private String value = "";     // required
     // TODO: String as type? maybe change the type arcording to type in Question.
 
 
@@ -33,12 +33,12 @@ public class Answer {
         this.id = id;
     }
 
-    public String getAnswer() {
-        return answer;
+    public String getValue() {
+        return value;
     }
 
-    public void setAnswer(String answer) {
-        this.answer = answer;
+    public void setValue(String answer) {
+        this.value = answer;
     }
 
 }

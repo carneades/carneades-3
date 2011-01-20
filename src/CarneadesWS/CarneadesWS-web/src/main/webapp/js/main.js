@@ -35,12 +35,9 @@ $(function(){ // Init
     // Tabs
     $('#tabs').tabs();
 
-    // Datepicker
-    $('#datepicker').datepicker({
-            inline: true
-    });
     $.datepicker.setDefaults({
             //regional: "de",
+            inline: true,
             changeMonth: true,
             changeYear: true,
             yearRange: (''+(jsloadstarted.getFullYear()-100)+':'+(jsloadstarted.getFullYear()+10)),
@@ -92,12 +89,19 @@ $(function(){ // Init
        type: "POST"
     });
 
-    function loadTopic(t) {
-        /** loads initial questions */
-        doAJAX( {"request":"demo"} ); // call for questions
-    }
+    /** loads initial questions */
+    //loadTopic("demo");
 
 });
+
+/**
+ * loads questions for requested topic
+ * @param {string} t name of the topic
+ * @see doAJAX
+ */
+function loadTopic(t) {
+    doAJAX( {"request":t} );
+}
 
 /**
  * Sends a ajax request to the server and manage the output of the reply.
@@ -120,7 +124,7 @@ function doAJAX(jsondata) {
                 var newline = false;
                 qbox.empty();
                 qbox.append("<div id=\"hints\"><h4>hints</h4></div>");
-                qbox.append("<div><h3>"+data.questions[0].category+"</h3><div id=\"qcontent\"></div></div>");
+                qbox.append("<div id=\""+data.questions[0].category.replace(/\s/,"_")+"\"><h3>"+data.questions[0].category+"</h3><div id=\"qcontent\"></div></div>");
                 qbox = $("#qcontent", qbox);
                 $.each(data.questions, function(i,item){
                     // pre append formatting
@@ -168,7 +172,7 @@ function doAJAX(jsondata) {
                             $("#qHINT"+this.id.substring(3)).css('display','none');
                         });
                         // validation
-                        $(":input:last", qbox).change(function(){ validateField(this); });
+                        $(":input:last", qbox).change(function(){validateField(this);});
                     }
                     else { // radios & checkboxes
                         $("input:last", qbox).parent().mouseover(function(){
@@ -183,11 +187,12 @@ function doAJAX(jsondata) {
                             $("#qHINT"+$(this).children("input:first").attr("name").substring(3)).css('display','none');
                         });
                         // validation
-                        $("input[name='qID"+item.id+"']", qbox).change(function(){ validateField($("input:first", this.parentNoded)[0]); });
+                        $("input[name='qID"+item.id+"']", qbox).change(function(){validateField($("input:first", this.parentNoded)[0]);});
                     }
                 });
                 qbox.append('<input type="button" class="ui-button next" value="next" onclick="sendAnswers(this.parentNode)"/>');
                 $('.datefield', qbox).datepicker();
+                updateTopicList(data.questions[0].category);
             }
             else {
                 alert("FAILED: "+data);
@@ -231,7 +236,8 @@ function validateField(obj) {
     else if ($.type(obj) == "object" && (obj.nodeName == "INPUT"
              || obj.nodeName == "SELECT" || obj.nodeName == "TEXTFIELD") ) {
         var o = $(obj);
-        if (obj.type && obj.type == "button") return true; // ignore buttons
+        // ignore buttons:
+        if (obj.type && (obj.type == "button" || obj.type == "submit" || obj.type == "reset") ) return true;
         if (o.hasClass("integer")) {
             if (o.val().search(/\D/) != -1) {
                 qwarn(obj,"Please insert a integer. No characters or whitespaces allowed.");
@@ -342,6 +348,8 @@ function sendAnswers(obj) {
     var jsonA = new Array();
     $(":input", obj).each(function(i, itemobj){
         var item = $(itemobj);
+        // skip buttons
+        if (item.hasClass("ui-button") || obj.type && (itemobj.type == "button" || itemobj.type == "submit" || itemobj.type == "reset") ) return true;
         var jsonitem;
         if (itemobj.type == "radio" || itemobj.type == "checkbox") {
             if (itemobj.parentNode.getElementsByTagName("input")[0] == obj) {
@@ -354,7 +362,7 @@ function sendAnswers(obj) {
                     valArray.push(valobj.value);
                 });
                 jsonitem = {
-                    "id" : item.attr("name"),
+                    "id" : item.attr("name").substring(3),
                     "value" : valArray.copy()
                 }
                 jsonA.push(jsonitem);
@@ -367,7 +375,7 @@ function sendAnswers(obj) {
                 return true;
             }
             jsonitem = {
-                "id" : item.attr("name"),
+                "id" : item.attr("name").substring(3),
                 "value" : item.val()
             }
             jsonA.push(jsonitem);
@@ -410,7 +418,7 @@ function qwarn(obj,warning) {
 
 /**
  * Hides a {@link qwarn}-warning.
- * @param {Object} obj triggering form field HTML object
+ * @param {object} obj triggering form field HTML object
  * @see qwarn
  */
 function qunwarn(obj) {
@@ -422,4 +430,20 @@ function qunwarn(obj) {
         o.css("backgroundColor","");
     }
     $(".qwarn", obj.parentNode).fadeOut(500, function() {$(this).remove();});
+}
+
+/**
+ * adding a new topic to the question-topic-list
+ * @param {string} topic name of the topic (must equal the id of the DIV)
+ */
+function updateTopicList(topic) {
+    // first run:
+    topic = topic.replace(/_/, " ");
+    if ($("#questionslist li:first").text() == "not loaded yet") $("#questionslist").empty();
+    $("#questionslist").add("<li>"+topic+"</li>").click(function() {
+        var t = this.innerHTML; // topic
+        if (t.indexOf(" ") != -1) t = t.replace(/\s/, "_");
+        $("#questions div").hide();
+        $("#"+t).show();
+    });
 }

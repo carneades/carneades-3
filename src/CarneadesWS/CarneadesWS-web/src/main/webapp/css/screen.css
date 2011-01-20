@@ -22,7 +22,7 @@ h2 { margin: 1.5em 0 1em 0; }
         position:absolute; right: 10px; top: 8px;
 }
 /* questions */
-#questions-box {
+#questionslistbox {
         min-height:200px;
         clear:both;
 }
