@@ -18,11 +18,12 @@
 (defvar- *global-style*
   (make-style
    "globalStyle"
-   {mxConstants/STYLE_FONTCOLOR "#000000"
-    mxConstants/STYLE_STROKEWIDTH 1.5
+   {mxConstants/STYLE_STROKEWIDTH 1.5
     ;; mxConstants/STYLE_WHITE_SPACE "wrap"
     ;; mxConstants/STYLE_LABEL_BACKGROUNDCOLOR "#ccd151"
     mxConstants/STYLE_SPACING 0
+    ;; mxConstants/STYLE_EXIT_PERIMETER false
+    ;; mxConstants/STYLE_ENTRY_PERIMETER false
     }))
 
 (defvar- *argument-style*
@@ -30,17 +31,30 @@
    "argumentStyle"
    (merge (:style *global-style*)
           {mxConstants/STYLE_VERTICAL_ALIGN mxConstants/ALIGN_BOTTOM
-           mxConstants/STYLE_STROKEWIDTH 2
-           mxConstants/STYLE_FONTSIZE 16
-           mxConstants/STYLE_FONTSTYLE mxConstants/FONT_BOLD
-           mxConstants/STYLE_SHAPE mxConstants/SHAPE_ELLIPSE
-           mxConstants/STYLE_PERIMETER mxConstants/PERIMETER_ELLIPSE
+           ;; mxConstants/STYLE_STROKEWIDTH 2
+           ;; mxConstants/STYLE_FONTSIZE 16
+           ;; mxConstants/STYLE_FONTSTYLE mxConstants/FONT_BOLD
            mxConstants/STYLE_GRADIENT_DIRECTION mxConstants/DIRECTION_SOUTH
            mxConstants/STYLE_FILLCOLOR "#ffffff"
-           mxConstants/STYLE_STROKECOLOR "#000000"})))
+           mxConstants/STYLE_STROKECOLOR "#000000"
+           mxConstants/STYLE_NOLABEL false
+           mxConstants/STYLE_VERTICAL_LABEL_POSITION mxConstants/ALIGN_BOTTOM
+           mxConstants/STYLE_ROUNDED true
+           mxConstants/STYLE_SHAPE mxConstants/SHAPE_IMAGE
+           })))
 
 (defvar- *pro-arg-color* "#0e5200")
 (defvar- *con-arg-color* "#e10005")
+
+(defvar- *pro-argument-style*
+  (make-style "proArgumentStyle"
+              {mxConstants/STYLE_IMAGE "/pro-arg.png"
+               mxConstants/STYLE_STROKECOLOR *pro-arg-color*}))
+
+(defvar- *con-argument-style*
+  (make-style "conArgumentStyle"
+              {mxConstants/STYLE_IMAGE "/con-arg.png"
+               mxConstants/STYLE_STROKECOLOR *con-arg-color*}))
 
 (defvar- *applicable-argument-style*
   (make-style
@@ -52,14 +66,17 @@
   (make-style
    "proApplicableArgumentStyle"
    (merge (:style *applicable-argument-style*)
-          {mxConstants/STYLE_STROKECOLOR *pro-arg-color*})))
+          (:style *pro-argument-style*)
+          {mxConstants/STYLE_IMAGE "/pro-applicable-arg.png"})))
 
 (defvar- *tomato* "#ff7e7e")
 
 (defvar- *con-applicable-argument-style*
   (make-style "conApplicableArgumentStyle"
    (merge (:style *applicable-argument-style*)
-          {mxConstants/STYLE_STROKECOLOR "#ff383d"
+          (:style *con-argument-style*)
+          {mxConstants/STYLE_IMAGE "/con-applicable-arg.png"
+           mxConstants/STYLE_STROKECOLOR "#ff383d"
            mxConstants/STYLE_FILLCOLOR *tomato*})))
 
 (defvar- *not-applicable-argument-style*
@@ -71,19 +88,24 @@
   (make-style
    "proNotApplicableArgumentStyle"
    (merge (:style *not-applicable-argument-style*)
-          {mxConstants/STYLE_STROKECOLOR *pro-arg-color*})))
+          (:style *pro-argument-style*)
+          {mxConstants/STYLE_IMAGE "/pro-notapplicable-arg.png"
+           mxConstants/STYLE_STROKECOLOR *pro-arg-color*})))
 
 (defvar- *con-not-applicable-argument-style*
   (make-style
    "notApplicableArgumentStyle"
    (merge (:style *not-applicable-argument-style*)
-          {mxConstants/STYLE_STROKECOLOR *con-arg-color*})))
+          (:style *con-argument-style*)
+          {mxConstants/STYLE_IMAGE "/con-notapplicable-arg.png"
+           mxConstants/STYLE_STROKECOLOR *con-arg-color*})))
 
 (defvar- *statement-style*
   (make-style
    "statementStyle"
    (merge (:style *global-style*)
-          {mxConstants/STYLE_SHAPE mxConstants/SHAPE_RECTANGLE
+          {mxConstants/STYLE_FONTCOLOR "#000000"
+           mxConstants/STYLE_SHAPE mxConstants/SHAPE_RECTANGLE
            ;; mxConstants/STYLE_ALIGN mxConstants/ALIGN_LEFT
            ;; mxConstants/STYLE_OVERFLOW "fill"
            mxConstants/STYLE_STROKECOLOR "#000000"
@@ -140,11 +162,15 @@
 (defvar- *edge-style*
   (make-style
    "edgeStyle"
-   {mxConstants/STYLE_ENDARROW mxConstants/NONE
-    mxConstants/STYLE_STROKECOLOR "#000000"
-    mxConstants/STYLE_STROKEWIDTH 1.25
-    mxConstants/STYLE_ROUNDED true
-    mxConstants/STYLE_NOLABEL true}))
+   (merge (:style *global-style*)
+          {;; mxConstants/STYLE_EDGE mxConstants/EDGESTYLE_ENTITY_RELATION
+           ;; mxConstants/STYLE_SEGMENT 1000
+           ;; mxConstants/STYLE_ORTHOGONAL false
+           mxConstants/STYLE_ENDARROW mxConstants/NONE
+           mxConstants/STYLE_STROKECOLOR "#000000"
+           mxConstants/STYLE_STROKEWIDTH 1.25
+           mxConstants/STYLE_ROUNDED true
+           mxConstants/STYLE_NOLABEL true})))
 
 (defvar- *conclusion-edge-style*
   (make-style
