@@ -27,8 +27,8 @@
   (get-entitiespanel
    [this]
    (.setText *filterText* "")
-   (.setSelected *classesButton* false)
-   (.setSelected *propertiesButton* false)
+   (.setSelected *classesButton* true)
+   (.setSelected *propertiesButton* true)
    *entitiesPanel*)
 
   (get-statement-panel
