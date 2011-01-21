@@ -9,8 +9,10 @@
         carneades.engine.statement)
   (:require [clojure.string :as str])
   (:import (javax.swing SwingConstants SwingUtilities)
-           (com.mxgraph.util mxConstants mxUtils mxCellRenderer mxPoint mxEvent
+           (com.mxgraph.util mxConstants mxUtils mxCellRenderer mxCellRenderer$CanvasFactory
+                             mxPoint mxEvent
                              mxEventSource$mxIEventListener mxUndoManager)
+           com.mxgraph.canvas.mxSvgCanvas
            com.mxgraph.swing.util.mxGraphTransferable
            com.mxgraph.swing.handler.mxRubberband
            (com.mxgraph.view mxGraph mxStylesheet)
@@ -126,7 +128,9 @@
 (defrecord ArgumentCell [arg] Object
   (toString
    [this]
-   (if (= (:direction arg) :pro) "+" "‒")))
+   (or (:scheme arg) "")
+   ;; (if (= (:direction arg) :pro) "+" "‒")
+   ))
 
 (defrecord PremiseCell [arg pm] Object
   (toString
@@ -145,7 +149,9 @@
     (set! mxConstants/VERTEX_SELECTION_COLOR color)
     (set! mxConstants/EDGE_SELECTION_COLOR color)
     (set! mxConstants/VERTEX_SELECTION_STROKE stroke)
-    (set! mxConstants/EDGE_SELECTION_STROKE stroke))
+    (set! mxConstants/EDGE_SELECTION_STROKE stroke)
+    (set! mxConstants/LINE_ARCSIZE 50)
+    (set! mxConstants/ARROW_SPACING 50))
   (doto g
     ;; (.setAllowNegativeCoordinates false)
     ;; seems there is a bug with stacklayout and setCellsLocked
@@ -490,6 +496,37 @@
 (defn- add-mouse-zoom [g graphcomponent]
   (.addMouseWheelListener graphcomponent (MouseListener. g graphcomponent)))
 
+;;
+;; public static Document createSvgDocument(mxGraph graph, Object[] cells,
+;; 			double scale, Color background, mxRectangle clip)
+;; 	{
+;; 		mxSvgCanvas canvas = (mxSvgCanvas) drawCells(graph, cells, scale, clip,
+;; 				new CanvasFactory()
+;; 				{
+;; 					public mxICanvas createCanvas(int width, int height)
+;; 					{
+;; 						return new mxSvgCanvas(mxUtils.createSvgDocument(width,
+;; 								height));
+;; 					}
+
+;; 				});
+
+;; 		return canvas.getDocument();
+;; 	}
+
+(defn- create-svg-document [graph cells scale clip]
+  ;; like mxCellRendered/createSvgDocument but with embedded
+  ;; images
+  (let [canvasfactory (proxy [mxCellRenderer$CanvasFactory] []
+                        (createCanvas
+                         [w h]
+                         (let [canvas (mxSvgCanvas. (mxUtils/createSvgDocument w h))]
+                           (.setEmbedded canvas true)
+                           canvas)))
+        canvas (mxCellRenderer/drawCells graph cells scale clip canvasfactory)]
+    (.setEmbedded canvas true)
+    (.getDocument canvas)))
+
 (defn export-graph [graphcomponent filename]
   "Saves the graph on disk. Only SVG format is supported now.
 
@@ -497,7 +534,7 @@
   (let [g (.getGraph (:component graphcomponent))]
     (write-file filename "UTF-8"
                 (mxUtils/getXml
-                 (.. (mxCellRenderer/createSvgDocument g nil 1 nil nil)
+                 (.. (create-svg-document g nil 1 nil)
                      getDocumentElement)))))
 
 (defn undo [graphcomponent]
