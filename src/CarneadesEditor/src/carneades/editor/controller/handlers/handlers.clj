@@ -550,7 +550,8 @@
               {:keys [argid previous-scheme scheme]} arg-info]
     (when (not= previous-scheme scheme)
       (let [arg (get-argument ag argid)
-            ag (update-argument-scheme ag arg scheme)]
+            ag (update-argument-scheme ag arg scheme)
+            arg (get-argument ag argid)]
         (do-update-section view [path :ags (:id ag)] ag)
         (argument-scheme-changed view path ag arg scheme)
         (display-argument-property
