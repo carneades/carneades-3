@@ -109,19 +109,11 @@
 
 (defn sort-children-by [loc keyfn]
   "Sorts the children of the location by (keyfn item)"
-  ;; (prn "sort-children-by")
-  ;; (prn "node =")
-  ;; (prn (zip/node loc))
   (let [elements (zip/children loc)
         parent (first elements)
         children (rest elements)
         children (sort-by (comp keyfn first) children)
         newnode (cons parent children)]
-    ;; (prn "children =")
-    ;; (pprint children)
-    ;; (prn "replace =")
-    ;; (pprint (zip/root (zip/replace loc newnode)))
-    ;; (prn)
     (zip/replace loc newnode)))
 
 (defn add-ag [path id title]
@@ -140,20 +132,16 @@
                            (= path (:path userobject)))
                     (let [graphinfo (GraphInfo. userobject id title false)
                           loc (zip/up loc)
-                          ;; xyz (prn "node up =")
-                          ;; xyz (prn (zip/node loc))
                           loc (zip/append-child loc (list graphinfo))
                           loc (sort-children-by loc :title)]
                       [loc graphinfo])
                     (recur (zip/next loc))))))
             root (seq-jtreenodes (zip/root loc) make-node)]
-        ;; (prn "after addition, root =")
-        ;; (pprint (zip/root loc))
-        ;; (prn)
         (.setRoot model root)
         ;; select the inserted item
         (let [added (find-node model #(= graphinfo %))
-              lkifnode (find-node model #(= (:lkifinfo graphinfo) %))
+              path (-> graphinfo :lkifinfo :path)
+              lkifnode (find-node model #(= path (:path %)))
               path (make-path root lkifnode added)]
           (.setSelectionPath (.getSelectionModel *lkifsTree*) path)
           (.scrollPathToVisible *lkifsTree* path))))))
@@ -256,7 +244,8 @@
                 added (find-node model #(and (graphinfo-pred path id %)
                                              (= (:title %) newtitle)))
                 graphinfo (.getUserObject added)
-                lkifnode (find-node model #(= (:lkifinfo graphinfo) %))
+                path (-> graphinfo :lkifinfo :path)
+                lkifnode (find-node model #(= path (:path %)))
                 path (make-path root lkifnode added)]
             ;; select renamed node:
             (.setSelectionPath (.getSelectionModel *lkifsTree*) path)
