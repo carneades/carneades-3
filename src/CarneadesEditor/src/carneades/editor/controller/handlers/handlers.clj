@@ -240,7 +240,7 @@
          (open-graph view path newag statement-formatted)
          (update-dirty-state view path newag true)
          (display-graph-property view path (:id newag) (:title newag)
-                                 (:main-issue newag)))))))
+                                 (statement-formatted (:main-issue newag))))))))
 
 (deftrace on-close-graph [view path id]
   (prn "on-close-graph")
@@ -478,7 +478,8 @@
             (update-undo-redo-statuses view path id)
             (title-changed view path ag title)
             (update-dirty-state view path ag true)
-            (display-graph-property view path id title (:main-issue ag))))))))
+            (display-graph-property view path id title
+                                    (statement-formatted (:main-issue ag)))))))))
 
 (deftrace on-premise-edit-polarity [view path id pm-info]
   (when-let* [ag (get-ag path id)
@@ -747,7 +748,8 @@
     (new-graph-added view path ag statement-formatted)
     (open-graph view path ag statement-formatted)
     (update-dirty-state view path ag true)
-    (display-graph-property view path (:id ag) (:title ag) (:main-issue ag))
+    (display-graph-property view path (:id ag) (:title ag)
+                            (statement-formatted (:main-issue ag)))
     id))
 
 (deftrace on-delete-graph [view path id]
@@ -843,7 +845,8 @@
               url (:location info)
               lkif (add-import (get-lkif path) url)]
     (lkif/update-imports path *docmanager* lkif)
-    (save-lkif view path)
+    ;; TODO mark dirty?
+    ;; (save-lkif view path)
     (let [importurls (get-kbs-locations path)]
       (display-lkif-property view path importurls))
     ))
