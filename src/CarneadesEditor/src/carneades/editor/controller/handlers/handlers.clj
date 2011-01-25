@@ -65,7 +65,7 @@
 (deftrace on-select-lkif-file [view path]
   (prn "on-select-lkif-file")
   (prn "kbs =")
-  (let [importurls (get-kbs-locations path)]
+  (let [importurls (get-imports-locations path)]
     (display-lkif-property view path importurls)))
 
 (deftrace on-open-graph [view path id]
@@ -82,33 +82,37 @@
     (when-let [[id _] (first infos)]
       (on-open-graph view path id))))
 
-(defn do-open-file [view path filename]
+(defn do-open-file [view path filename rules-directory]
   (if (section-exists? *docmanager* [path])
     (display-error view *file-error* (format *file-already-opened* path))
     (try
       (set-busy view true)
-      (when-let [content (lkif-import path)]
+      (when-let [content (import-lkif-relative path rules-directory)]
         (prn "content =")
         (lkif/add-lkif-to-docmanager path content *docmanager*)
-        (do-open-content view path filename content)
-        )
-      (catch IllegalArgumentException
-          e (display-error view *open-error* (str *invalid-content* ".")))
-      (catch java.io.FileNotFoundException
-          e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
-      (catch java.io.IOException
-          e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
-      (catch org.xml.sax.SAXException
-          e (display-error view *open-error* *invalid-content*))
+        (do-open-content view path filename content))
+      ;; (catch IllegalArgumentException
+      ;;     e (display-error view *open-error* (str *invalid-content* ".")))
+      ;; (catch java.io.FileNotFoundException
+      ;;     e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
+      ;; (catch java.io.IOException
+      ;;     e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
+      ;; (catch org.xml.sax.SAXException
+      ;;     e (display-error view *open-error* *invalid-content*))
       (finally
        (set-busy view false)))))
 
 (deftrace on-open-file [view]
   (prn "ask-lkif-file-to-open...")
-  (when-let* [file (ask-file-to-open view "LKIF files"  #{"xml" "lkif"})
-              path (.getPath file)
-              filename (.getName file)]
-    (do-open-file view path filename)))
+  (let [rules-directory (get-property *rules-directory*)]
+    (prn "rules-directory =")
+    (prn rules-directory)
+    (if (empty? rules-directory)
+      (display-error view *config-error* *no-rule-directory*)
+      (when-let* [file (ask-file-to-open view "LKIF files"  #{"xml" "lkif"})
+                  path (.getPath file)
+                  filename (.getName file)]
+        (do-open-file view path filename rules-directory)))))
 
 (defvar- *dot-description* "DOT Files")
 (defvar- *svg-description* "SVG Files")
@@ -841,24 +845,61 @@
     (close-all view path)))
 
 (deftrace on-import-theory [view path]
-  (when-let* [info (ask-location-to-open view)
-              url (:location info)
-              lkif (add-import (get-lkif path) url)]
-    (lkif/update-imports path *docmanager* lkif)
-    ;; TODO mark dirty?
-    ;; (save-lkif view path)
-    (let [importurls (get-kbs-locations path)]
-      (display-lkif-property view path importurls))
-    ))
+  (let [rules-directory (get-property *rules-directory*)]
+    (if (empty? rules-directory)
+      (display-error view *config-error* *no-rule-directory*)
+      (when-let* [info (ask-location-to-open view)
+                  {:keys [location relative]} info
+                  make-relative (fn [relative pathname root-lkif-dir root-lkif-path rules-directory]
+                                  (if-not relative
+                                    {:relative-path nil :failed false}
+                                    (cond (same-directory? pathname root-lkif-path)
+                                          {:relative-path (carneades.engine.utils/make-relative
+                                                           pathname root-lkif-dir)
+                                           :failed false}
+
+                                          (.startsWith pathname rules-directory)
+                                          {:relative-path (carneades.engine.utils/make-relative
+                                                           pathname rules-directory)}
+
+                                          :else {:relative-path nil :failed true}
+                                          )))
+                  root-lkif-dir (.getParent (file path))
+                  relative-info (make-relative relative location root-lkif-dir path rules-directory)]
+        (prn "relative-info =")
+        (prn relative-info)
+        (prn "relative =")
+        (prn relative)
+        (if (:failed relative-info)
+          (do
+           (display-error view *import-error*
+                          (format *cannot-be-relative* location rules-directory root-lkif-dir))
+           (on-import-theory view path))
+          (let [lkif (if relative
+                       (add-relative-import (get-lkif path)
+                                            location
+                                            (:relative-path relative-info)
+                                            path
+                                            rules-directory)
+                       (add-import (get-lkif path) location))]
+            (lkif/update-imports path *docmanager* lkif)
+            ;; TODO mark dirty?
+            ;; (save-lkif view path)
+            (let [importurls (get-imports-locations path)]
+              (display-lkif-property view path importurls))))))))
 
 (deftrace on-remove-imports [view path imports]
   (when (and (not (empty? imports)) (ask-confirmation view *imports* *remove-imports*))
     (let [lkif (get-lkif path)
           lkif (reduce (fn [lkif importurl]
-                         (remove-import lkif importurl)) lkif imports)]
+                         (let [absolute (as-absolute-import path importurl)]
+                           (prn "absolute =")
+                           (prn absolute)
+                           (remove-import lkif absolute)))
+                       lkif imports)]
       (lkif/update-imports path *docmanager* lkif)
       (save-lkif view path)
-      (let [importurls (get-kbs-locations path)]
+      (let [importurls (get-imports-locations path)]
         (display-lkif-property view path importurls)))))
 
 (defn on-edit-preferences [view]

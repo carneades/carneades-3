@@ -2,30 +2,18 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.engine.lkif.import
-  (:require
-    [clojure.zip :as zip]
-    [clojure.xml :as xml]
-    [clojure.contrib.zip-filter :as filter])
-  (:use
-    clojure.xml
-    clojure.contrib.pprint
-    clojure.contrib.def
-    clojure.contrib.zip-filter.xml
-;    carneades.engine.argument-builtins ; for testing
-;    carneades.engine.shell    ; for testing
-;    carneades.ui.diagram.viewer ; for testing
-;    carneades.engine.argument-builtins ; for testing
-;    carneades.engine.utils
-    carneades.engine.statement
-    carneades.engine.argument
-    carneades.engine.rule
-    ;carneades.engine.owl.rule
-    carneades.engine.owl)
-  (:require [clojure.string :as str])
-  (:import
-    (java.net MalformedURLException URL)
-    (java.io File))
-  )
+  (:use clojure.xml
+        clojure.java.io
+        clojure.contrib.pprint
+        clojure.contrib.def
+        clojure.contrib.zip-filter.xml
+        (carneades.engine statement argument rule owl))
+  (:require [clojure.string :as str]
+            [clojure.zip :as zip]
+            [clojure.xml :as xml]
+            [clojure.contrib.zip-filter :as filter])
+  (:import (java.net MalformedURLException URL)
+           java.io.File))
 
 (declare lkif-wff->sexpr lkif-atom->sexpr lkif-term->sexpr lkif-import*)
 
@@ -289,75 +277,87 @@
     nil))
 
 (defn import-import
-  [i files path]
+  [i files path resolve-path]
+  (prn "import-import")
     (let [url (attr i :url)]
       ;(println "i:" i)
       ;(println "uri:" url)
+      (prn "url =")
+      (prn url)
+      (prn "files =")
+      (prn files)
+      (prn "path =")
+      (prn path)
       (if (some #{url} files)
-        {:name url,
-         :import-tree nil,
-         :import-kbs {},
-         :import-ags {}}
-        (let [is-url? (try (new URL url) (catch MalformedURLException e false)),
-              prepath (if is-url?
-                        nil
-                        (str (.getAbsolutePath (. (new File path) getParentFile)) "/")),
-              url (if (or is-url? (. (new File url) isAbsolute))
-                    url
-                    (str prepath url))]
+        (do
+          (prn "url in files")
+          {:name url,
+           :import-tree nil,
+           :import-kbs {},
+           :import-ags {}})
+        (let [is-url (try (new URL url) (catch MalformedURLException e false)),
+              ;; TODO http urls?
+              [resolved relative] (if resolve-path
+                                    (resolve-path url path)
+                                    [url nil])
+              prepath (if is-url
+                         nil
+                         (.getParent (file resolved)))]
           ;(println "uri:" url)
+          (printf "resolved = %s relative = %s prepath = %s\n" resolved relative prepath)
+          (prn "after resolved")
           (cond
-            (lkif? url) (let [i (lkif-import* url (cons url files)),
+            (lkif? resolved) (let [i (lkif-import* resolved (cons url files) resolve-path),
                               rb (:rb i),
                               ags (:ags i),
                               imp-kbs (if rb
-                                        (assoc (:import-kbs i) url rb)
+                                        (assoc (:import-kbs i) resolved rb)
                                         (:import-kbs i)),
                               imp-ags (if ags
-                                        (assoc (:import-ags i) url ags)
-                                        (:import-ags i))
-                              ]
-                          {:name url,
-                           :import-tree (:import-tree i),
-                           :import-kbs imp-kbs,
-                           :import-ags imp-ags}),
-            (owl? url) {:name url,
-                        :import-tree nil,
-                        :import-kbs (assoc {} url (load-ontology url prepath)),
-                        :import-ags {}})))))
+                                        (assoc (:import-ags i) resolved ags)
+                                        (:import-ags i))]
+                               {:name resolved
+                                :relative-path relative
+                                :import-tree (:import-tree i)
+                                :import-kbs imp-kbs
+                                :import-ags imp-ags})
+            (owl? resolved) {:name resolved
+                             :relative-path relative
+                             :import-tree nil
+                             :import-kbs (assoc {} resolved (load-ontology
+                                                             resolved prepath))
+                             :import-ags {}})))))
 
 (defn import-imports
-  [theory filename files]
+  [theory filename files resolve-path]
   (if theory
-    (let* [imports (xml1-> theory :imports),
-           filename-list (if imports (xml-> imports :import) nil),
-           import-list (map (fn [i] (import-import i files filename)) filename-list),
-           imp-tree (map (fn [i] (dissoc i :import-kbs :import-ags)) import-list),
-           imp-kbs (apply merge (map :import-kbs import-list)),
-           imp-ags (apply merge (map :import-ags import-list))
-           ]
-      ;(println "imported from:" filename)
-      ;(println "imported files:" (count filename-list))
-      ;(println "imported list:" import-list)
-      ;(println "imported tree:" imp-tree)
-      {:import-tree imp-tree,
-       :import-kbs imp-kbs,
-       :import-ags imp-ags}
-      )
+    (let [imports (xml1-> theory :imports),
+          filename-list (if imports (xml-> imports :import) nil)
+          import-list (map (fn [i] (import-import i files filename resolve-path)) filename-list)
+          imp-tree (map (fn [i] (dissoc i :import-kbs :import-ags)) import-list)
+          imp-kbs (apply merge (map :import-kbs import-list))
+          imp-ags (apply merge (map :import-ags import-list))]
+                                        ;(println "imported from:" filename)
+                                        ;(println "imported files:" (count filename-list))
+                                        ;(println "imported list:" import-list)
+                                        ;(println "imported tree:" imp-tree)
+          {:import-tree imp-tree,
+           :import-kbs imp-kbs,
+           :import-ags imp-ags}
+          )
     {:import-tree nil,
      :import-kbs {},
      :import-ags {}}))
 
 (defn import-theory
-  [theory filename files]
+  [theory filename files resolve-path]
   (if theory
-    (let* [imp (import-imports theory filename files),
+    (let* [imp (import-imports theory filename files resolve-path)
            ;imported-rb (:rb imported-rb_ags),
            ;imported-ags (:ag imported-rb_ags),
-           defined-rules (import-rules (xml1-> theory :rules)),
-           axioms (axioms->rules (xml1-> theory :axioms)),
-           rb (apply rulebase (concat defined-rules axioms))
-           ]
+           defined-rules (import-rules (xml1-> theory :rules))
+           axioms (axioms->rules (xml1-> theory :axioms))
+           rb (apply rulebase (concat defined-rules axioms))]
       ;(println "theory loaded:" filename)
       ;(println "imported-rb: " (count imported-rb))
       ;(println "imported-ags " (count imported-ags))
@@ -502,14 +502,17 @@
 (defn lkif-import*
   "Reads an lkif-file from path and returns a lkif-struct"
   ([filename]
-    (lkif-import* filename '()))
+     (lkif-import* filename () nil))
   ([filename files]
+     (lkif-import* filename files nil))
+  ([filename files resolve-path]
     (let* [document (zip/xml-zip (xml/parse filename)),
            lkif-sources (xml1-> document :sources),
            lkif-theory (xml1-> document :theory),
            lkif-arg-graphs (xml1-> document :argument-graphs),
            source-list (sources->list lkif-sources),
-           theory (import-theory lkif-theory filename (cons filename files)),
+           theory (import-theory lkif-theory filename (cons filename files)
+                                 resolve-path),
            ags (parse-arg-graphs lkif-arg-graphs),
            ;rb (:rb theory),
            ;imp-tree (:import-tree theory),

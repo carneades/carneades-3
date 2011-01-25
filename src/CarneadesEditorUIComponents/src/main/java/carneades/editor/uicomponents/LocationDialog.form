@@ -110,7 +110,7 @@
     <Component class="javax.swing.JCheckBox" name="relativePathsButton">
       <Properties>
         <Property name="selected" type="boolean" value="true"/>
-        <Property name="text" type="java.lang.String" value="Use relative paths for local files"/>
+        <Property name="text" type="java.lang.String" value="Relative to the Rules Directory"/>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>

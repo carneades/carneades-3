@@ -17,9 +17,9 @@
          location (atom nil)]
     (add-action-listener relativebutton
                          (fn [event]
-                           (when-let [location (deref location)]
+                           (when-let [_ (deref location)]
                              (swap! location assoc
-                                    :relative (.getSelected relativebutton)))))
+                                    :relative (.isSelected relativebutton)))))
     (add-action-listener cancelbutton
                          (fn [event]
                            (.dispose dialog)

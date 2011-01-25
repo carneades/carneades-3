@@ -48,7 +48,7 @@ public class LocationDialog extends javax.swing.JDialog {
         browseButton.setText("Browse...");
 
         relativePathsButton.setSelected(true);
-        relativePathsButton.setText("Use relative paths for local files");
+        relativePathsButton.setText("Relative to the Rules Directory");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

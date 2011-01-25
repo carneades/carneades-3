@@ -10,13 +10,14 @@
                                ".carneades.properties"))
 
 (defvar *argumentation-scheme-file* "argumentation-schemes-file")
+(defvar *rules-directory* "rules-directory")
 
 (defvar *default-values*
   (into (sorted-map)
         {*argumentation-scheme-file* {:value ""
                                       :name "Argumentation Schemes File"
                                       :type :file}
-         "rules-directory" {:value ""
+         *rules-directory* {:value ""
                             :name "Rules Directory"
                             :type :directory}}))
 
