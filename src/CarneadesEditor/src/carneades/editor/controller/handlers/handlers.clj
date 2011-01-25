@@ -91,14 +91,14 @@
         (prn "content =")
         (lkif/add-lkif-to-docmanager path content *docmanager*)
         (do-open-content view path filename content))
-      ;; (catch IllegalArgumentException
-      ;;     e (display-error view *open-error* (str *invalid-content* ".")))
-      ;; (catch java.io.FileNotFoundException
-      ;;     e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
-      ;; (catch java.io.IOException
-      ;;     e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
-      ;; (catch org.xml.sax.SAXException
-      ;;     e (display-error view *open-error* *invalid-content*))
+      (catch IllegalArgumentException
+          e (display-error view *open-error* (str *invalid-content* ".")))
+      (catch java.io.FileNotFoundException
+          e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
+      (catch java.io.IOException
+          e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
+      (catch org.xml.sax.SAXException
+          e (display-error view *open-error* *invalid-content*))
       (finally
        (set-busy view false)))))
 
