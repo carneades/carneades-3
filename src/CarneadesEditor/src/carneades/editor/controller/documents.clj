@@ -3,6 +3,7 @@
 
 (ns carneades.editor.controller.documents
   (:use clojure.contrib.def
+        clojure.java.io
         carneades.editor.utils.core
         carneades.engine.argument
         carneades.editor.model.docmanager
@@ -53,8 +54,15 @@
 (defn get-reasoners [path]
   (map :reasoner (vals (:import-kbs (get-lkif path)))))
 
-(defn get-kbs-locations [lkifpath]
-  (map first (get-section-content *docmanager* [lkifpath :import-kbs])))
+;; (defn get-kbs-locations [lkifpath]
+;;   (map first (get-section-content *docmanager* [lkifpath :import-kbs])))
+
+(defn get-imports-locations [lkifpath]
+  (prn "section content =")
+  (prn (get-section-content *docmanager* [lkifpath :import-tree]))
+  (map (fn [{:keys [name relative-path]}]
+         (or relative-path name))
+       (get-section-content *docmanager* [lkifpath :import-tree])))
 
 (defn get-ags-id [lkifpath]
   (get-all-sectionskeys *docmanager* [lkifpath :ags]))
@@ -175,3 +183,12 @@
     (update-section *docmanager* keys ag)
     (update-undo-redo-statuses view path (:id ag))
     (update-dirty-state view path ag true)))
+
+(defn as-absolute-import [lkifpath importurl]
+  (if (.isAbsolute (file importurl))
+    importurl
+    (:name
+     (first (filter (fn [{:keys [relative-path]}]
+                      (or (= relative-path importurl)))
+                    (get-section-content *docmanager* [lkifpath :import-tree]))))))
+

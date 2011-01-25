@@ -61,7 +61,6 @@
   (prn "state =")
   (prn state)
   (let [{:keys [view path conclusion rules conclusion-matches filter-text]} state
-        scheme-pathname (get-property *argumentation-scheme-file*)
         names (filter-schemes rules filter-text conclusion conclusion-matches)]
     (display-schemes view names)
     state))

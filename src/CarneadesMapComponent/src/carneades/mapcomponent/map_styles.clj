@@ -164,6 +164,7 @@
    "edgeStyle"
    (merge (:style *global-style*)
           {;; mxConstants/STYLE_EDGE mxConstants/EDGESTYLE_ENTITY_RELATION
+           mxConstants/STYLE_EDGE mxConstants/EDGESTYLE_LOOP
            ;; mxConstants/STYLE_SEGMENT 1000
            ;; mxConstants/STYLE_ORTHOGONAL false
            mxConstants/STYLE_ENDARROW mxConstants/NONE

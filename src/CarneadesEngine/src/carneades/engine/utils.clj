@@ -2,7 +2,8 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.engine.utils
-  (:use clojure.contrib.pprint)
+  (:use clojure.java.io
+        clojure.contrib.pprint)
   (:require [clojure.contrib.string :as str]))
 
 
@@ -174,3 +175,28 @@
       sq
       (let [f (str/take n r)]
         (recur [f (str/drop n r)] (conj sq f))))))
+
+(defn same-directory? [lkif-path path]
+  (= (.getParent (file lkif-path)) (.getParent (file path))))
+
+(defn make-relative [path relative-to]
+  (printf "make-relative\n")
+  (printf "path = %s, relative-to = %s\n" path relative-to)
+  (printf "result = %s\n"
+          (let [f (file path)
+                f2 (file relative-to)
+                dirsize (count (.getPath f2))
+                dirsize (+ dirsize (count (java.io.File/separator)))]
+            (subs (.getPath f) dirsize)))
+  (let [f (file path)
+        f2 (file relative-to)
+        dirsize (count (.getPath f2))
+        dirsize (+ dirsize (count (java.io.File/separator)))]
+    (subs (.getPath f) dirsize)))
+
+(defn make-absolute [path relative-to]
+  (.getPath (file (str relative-to java.io.File/separator path))))
+
+(defn in-directory? [path dir]
+  "returns true if path is directly under or below directory dir"
+  (throw (Exception. "NYI")))
