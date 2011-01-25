@@ -9,12 +9,14 @@
 (defvar *edit-error* "Edit Error")
 (defvar *open-error* "Open Error")
 (defvar *save-error* "Save Error")
+(defvar *import-error* "Import Error")
 (defvar *save-as* "Save As")
 (defvar *statement-already-exists* "Statement already exists.")
 (defvar *file-already-opened* "File %s is already opened.")
 (defvar *file-format-not-supported* "This file format is not supported.")
 (defvar *invalid-content* "The content of the file is invalid")
 (defvar *error-saving* "Error while saving")
+(defvar *config-error* "Configuration Error")
 
 (defvar *cycle-error* "This premise can not be added as this would introduce a cycle.")
 
@@ -62,3 +64,6 @@
 
 (defvar *rename* "Rename")
 (defvar *warning-on-rename* "After renaming you will not be able to undo the last changes.\nRename the graph?")
+
+(defvar *no-rule-directory* "Please specify a Rule Directory in the Preferences first.")
+(defvar *cannot-be-relative* "%s must be under %s or %s to be relative.")

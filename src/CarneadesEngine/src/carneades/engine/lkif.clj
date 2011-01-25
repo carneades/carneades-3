@@ -1,16 +1,15 @@
+;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Licensed under the EUPL V.1.1
 
 (ns carneades.engine.lkif
-  ;(:require )
-  (:use
-    clojure.contrib.def
-    carneades.engine.lkif.import
-    carneades.engine.lkif.export
-    carneades.engine.owl
-    carneades.engine.rule
-    carneades.engine.argument-builtins
-    )
-  ;(:import )
-  )
+  (:use clojure.contrib.def
+        clojure.java.io
+        carneades.engine.lkif.import
+        carneades.engine.lkif.export
+        carneades.engine.owl
+        carneades.engine.rule
+        carneades.engine.argument-builtins
+        carneades.engine.utils))
 
 (def lkif-import lkif-import*)
 (def lkif-export lkif-export*)
@@ -34,26 +33,79 @@
           (:import-tree i))
         (some (fn [i2] (get-imported-ont i2 imp-kbs rb-name)) (map :import-tree imp-tree))))))
 
+(defn resolve-path
+  ([pathname current-lkif root-lkif-path relative-to]
+     (resolve-path pathname current-lkif root-lkif-path relative-to true))
+  ([pathname current-lkif root-lkif-path relative-to check-local]
+     "resolves pathnames. Absolute paths are already resolved, relative paths
+      are resolved with the following rules: first search in the directory
+      of the root lkif then in the relative-to directory.
+      If the current-lkif is in the relative-to directory we don't search
+      in the root lkif"
+     (prn "resolve-path")
+     (printf "pathname = %s current-lkif = %s root-lkif-path = %s relative-to = %s check-local = %s\n\n"
+             pathname current-lkif root-lkif-path relative-to check-local)
+     (let [f (file pathname)]
+       (if  (.isAbsolute f)
+         [pathname nil]
+         (if (and check-local (not (.startsWith current-lkif relative-to)))
+           ;; try first to find the file directly under the directory
+           ;; of the root lkif
+           (let [root-parent (.getParent (file root-lkif-path))
+                 resolved (make-absolute pathname root-parent)
+                 fresolved (file resolved)]
+             (if (.exists fresolved)
+               [resolved pathname]
+               ;; fails? try in the relative-to directory
+               (resolve-path pathname current-lkif root-lkif-path relative-to false)))
+           ;; else resolves relative to the relative-to directory
+           [(make-absolute pathname relative-to) pathname])))))
+
+(defn import-lkif-relative [root-lkif-path relative-to]
+  (prn "import-lkif-relative")
+  (prn "root-lkif-path =")
+  (prn root-lkif-path)
+  (prn "relative-to =")
+  (prn relative-to)
+  (lkif-import root-lkif-path ()
+               (fn [pathname current-lkif]
+                 (resolve-path pathname current-lkif root-lkif-path relative-to true))))
+
 (defn add-import
-  [lkif i-path]
-  (if (lkif? i-path)
-    (let [i (lkif-import i-path),
-          new-i-tree (cons {:name i-path, :import-tree (:import-tree i)} (:import-tree lkif)),
-          irb (:rb i),
-          i-kbs (if irb
-                  (assoc (:import-kbs i) i-path irb)
-                  (:import-kbs i)),
-          new-i-kbs (merge (:import-kbs lkif) i-kbs),
-          iags (:ags i),
-          i-ags (if iags
-                  (assoc (:import-ags i) i-path iags)
-                  (:import-ags i)),
-          new-i-ags (merge (:import-ags lkif) i-ags),]
-      (assoc lkif :import-tree new-i-tree :import-kbs new-i-kbs :import-ags new-i-ags))
-    (let [o (load-ontology i-path),
-          new-i-tree (cons {:name i-path, :import-tree nil} (:import-tree lkif)),
-          new-i-kbs (assoc (:import-kbs lkif) i-path o)]
-      (assoc lkif :import-tree new-i-tree :import-kbs new-i-kbs))))
+  ([lkif i-path relative-path resolve-path]
+     (if (lkif? i-path)
+       (let [i (if resolve-path
+                 (lkif-import i-path () resolve-path)
+                 (lkif-import i-path))
+             new-i-tree (cons {:name i-path
+                               :relative-path relative-path
+                               :import-tree (:import-tree i)}
+                              (:import-tree lkif))
+             irb (:rb i)
+             i-kbs (if irb
+                     (assoc (:import-kbs i) i-path irb)
+                     (:import-kbs i))
+             new-i-kbs (merge (:import-kbs lkif) i-kbs)
+             iags (:ags i)
+             i-ags (if iags
+                     (assoc (:import-ags i) i-path iags)
+                     (:import-ags i))
+             new-i-ags (merge (:import-ags lkif) i-ags)]
+         (assoc lkif :import-tree new-i-tree :import-kbs new-i-kbs :import-ags new-i-ags))
+       (let [o (load-ontology i-path)
+             new-i-tree (cons {:name i-path
+                               :relative-path relative-path
+                               :import-tree nil}
+                              (:import-tree lkif))
+             new-i-kbs (assoc (:import-kbs lkif) i-path o)]
+         (assoc lkif :import-tree new-i-tree :import-kbs new-i-kbs))))
+  ([lkif i-path]
+     (add-import lkif i-path nil nil)))
+
+(defn add-relative-import [lkif pathname relative-pathname root-lkif-path relative-to]
+  (add-import lkif pathname relative-pathname
+              (fn [pathname current-lkif]
+                (resolve-path pathname current-lkif root-lkif-path relative-to))))
 
 (defn- flatten-import-tree
   [i-tree]
@@ -67,7 +119,8 @@
 
 (defn remove-import
   [lkif i-path]
-  (let [r-path (some (fn [e] (and (= (:name e) i-path) (:import-path e))) (:import-tree lkif)),
+  (let [r-path (some (fn [e] (and (= (:name e) i-path) (:import-path e))) (:import-tree lkif))
+        _ (do (prn "r-path =") (prn r-path) true)
         new-i-tree (filter (fn [e] (not (= (:name e) i-path))) (:import-tree lkif)),
         rec-imps (cons i-path (flatten-import-tree r-path)),
         unused-imps (filter (fn [i] (not (occurs-in? new-i-tree i))) rec-imps),

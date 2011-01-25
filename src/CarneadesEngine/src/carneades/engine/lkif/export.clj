@@ -2,18 +2,10 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.engine.lkif.export
-  (:require
-    [clojure.contrib.io :as io]
-    [clojure.contrib.prxml :as prx]
-    )
-  (:use
-    carneades.engine.statement
-    carneades.engine.argument
-    carneades.ui.diagram.viewer ; for testing
-    carneades.engine.rule ; for testing
-    )
-  ;(:import )
-  )
+  (:use carneades.engine.statement
+        carneades.engine.argument)
+  (:require [clojure.contrib.io :as io]
+            [clojure.contrib.prxml :as prx]))
 
 (declare text_term->sxml)
 
@@ -227,7 +219,8 @@
 
 (defn imports->sxml
   [imp-tree]
-  (let [imp-names (map :name imp-tree)]
+  (let [imp-names (map (fn [{:keys [name relative-path]}]
+                         (or relative-path name)) imp-tree)]
     [:imports
      (map (fn [n]
            [:import {:url n}])
