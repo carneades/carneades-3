@@ -88,52 +88,52 @@
 
 (defn instantiatescheme-assistantmenuitem-listener [event view]
   (prn "instantiatescheme-assistantmenuitem-listener")
-  (when-let* [[path id] (current-graph view)
-              conclusion (get-selected-statement view path id)
-              state (atom (create-instantiatescheme-state view path id conclusion))
-              newstate (on-pre-instantiatescheme-wizard (deref state))]
-    (reset! state newstate)
-    (set-filter-text-listener
-     view
-     (fn [event]
-       (swap! state assoc
-              :filter-text (get-filter-text view)
-              :conclusion-matches (and
-                                   (conclusionmatches-button-enabled? view)
-                                   (conclusionmatches-button-selected? view)))
-       (state-call on-filter-schemes state))
-     [])
-    (set-conclusionmatches-button-listener
-     view
-     (fn [event]
-       (swap! state assoc
-              :conclusion-matches (conclusionmatches-button-selected? view))
-       (state-call on-conclusionmatches state))
-     [])
-    (set-previous-clause-button-listener
-     view (fn [event]
-            (state-call on-previous-clause-button-listener state)) [])
-    (set-next-clause-button-listener
-     view (fn [event]
-            (state-call on-next-clause-button-listener state)) [])
-    (let [schemes-panel (get-schemes-panel view)
-          clauses-panel (get-clauses-panel view)
-          settings (display-branched-wizard
-                    view [{:panel schemes-panel
-                           :desc *schemes-panel*
-                           :listener (state-wrapper on-schemes-panel state)
-                           :validator schemes-panel-validator}
-                          {:panel clauses-panel
-                           :desc *clauses-panel-desc*
-                           :id *clauses-id*
-                           :listener (state-wrapper on-clauses-panel state)}]
-                    (fn [settings stepid]
-                      (swap! state assoc :settings settings)
-                      (instantiatescheme-panel-selector state stepid))
-                    [])]
-      (when settings
-        (swap! state assoc :settings settings)
-        (state-call on-post-instantiatescheme-wizard state)))))
+  (let [[path id] (current-graph view)
+        conclusion (get-selected-statement view path id)
+        state (atom (create-instantiatescheme-state view path id conclusion))]
+    (when-let [newstate (on-pre-instantiatescheme-wizard (deref state))]
+      (reset! state newstate)
+      (set-filter-text-listener
+       view
+       (fn [event]
+         (swap! state assoc
+                :filter-text (get-filter-text view)
+                :conclusion-matches (and
+                                     (conclusionmatches-button-enabled? view)
+                                     (conclusionmatches-button-selected? view)))
+         (state-call on-filter-schemes state))
+       [])
+      (set-conclusionmatches-button-listener
+       view
+       (fn [event]
+         (swap! state assoc
+                :conclusion-matches (conclusionmatches-button-selected? view))
+         (state-call on-conclusionmatches state))
+       [])
+      (set-previous-clause-button-listener
+       view (fn [event]
+              (state-call on-previous-clause-button-listener state)) [])
+      (set-next-clause-button-listener
+       view (fn [event]
+              (state-call on-next-clause-button-listener state)) [])
+      (let [schemes-panel (get-schemes-panel view)
+            clauses-panel (get-clauses-panel view)
+            settings (display-branched-wizard
+                      view [{:panel schemes-panel
+                             :desc *schemes-panel*
+                             :listener (state-wrapper on-schemes-panel state)
+                             :validator schemes-panel-validator}
+                            {:panel clauses-panel
+                             :desc *clauses-panel-desc*
+                             :id *clauses-id*
+                             :listener (state-wrapper on-clauses-panel state)}]
+                      (fn [settings stepid]
+                        (swap! state assoc :settings settings)
+                        (instantiatescheme-panel-selector state stepid))
+                      [])]
+        (when settings
+          (swap! state assoc :settings settings)
+          (state-call on-post-instantiatescheme-wizard state))))))
 
 (defn formalizestatement-assistantmenuitem-listener [event view]
   (let [[path id] (current-graph view)
