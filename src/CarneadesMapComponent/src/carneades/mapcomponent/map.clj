@@ -120,6 +120,14 @@
                      :else nil
                      )))))
 
+(defn trunk-scheme [s]
+  (when-not (nil? s)
+    (let [len (count s)
+          max-size 20]
+      (if (<= len max-size)
+        s
+        (str (subs s 0 (- max-size 3)) "...")))))
+
 (defrecord StatementCell [ag stmt stmt-str formatted full] Object
   (toString
    [this]
@@ -128,7 +136,7 @@
 (defrecord ArgumentCell [arg] Object
   (toString
    [this]
-   (or (:scheme arg) "")
+   (or (trunk-scheme (:scheme arg)) "")
    ;; (if (= (:direction arg) :pro) "+" "‒")
    ))
 
