@@ -3,6 +3,7 @@
 
 (ns carneades.editor.controller.documents
   (:use clojure.contrib.def
+        clojure.pprint
         clojure.java.io
         carneades.editor.utils.core
         carneades.engine.argument
@@ -52,7 +53,7 @@
   (:rules (:rb (get-lkif lkifpath))))
 
 (defn get-reasoners [path]
-  (map :reasoner (vals (:import-kbs (get-lkif path)))))
+  (keep :reasoner (vals (:import-kbs (get-lkif path)))))
 
 ;; (defn get-kbs-locations [lkifpath]
 ;;   (map first (get-section-content *docmanager* [lkifpath :import-kbs])))
