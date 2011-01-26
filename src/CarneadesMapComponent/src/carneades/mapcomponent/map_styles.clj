@@ -22,6 +22,7 @@
     ;; mxConstants/STYLE_WHITE_SPACE "wrap"
     ;; mxConstants/STYLE_LABEL_BACKGROUNDCOLOR "#ccd151"
     mxConstants/STYLE_SPACING 0
+    mxConstants/STYLE_FONTCOLOR "#000000"
     ;; mxConstants/STYLE_EXIT_PERIMETER false
     ;; mxConstants/STYLE_ENTRY_PERIMETER false
     }))
