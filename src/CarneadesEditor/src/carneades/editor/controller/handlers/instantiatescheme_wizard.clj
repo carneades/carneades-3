@@ -69,7 +69,7 @@
   (let [{:keys [view path id conclusion]} state
         scheme-pathname (get-property *argumentation-scheme-file*)]
     (try
-      (let [content (lkif-import scheme-pathname)
+      (let [content (import-lkif scheme-pathname)
             rules (:rules (:rb content))
             reasoners (get-reasoners path)
             state (assoc state :rules rules :reasoners reasoners)]
