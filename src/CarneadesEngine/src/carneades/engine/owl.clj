@@ -28,7 +28,10 @@
     (if (. file exists)
       (. file toURI)
       (if prepath
-        (path->uri (str prepath path) nil)
+        (let [fullpath (if (.endsWith prepath java.io.File/separator)
+                         (str prepath path)
+                         (str prepath java.io.File/separator path))]
+         (path->uri fullpath nil))
         (new URI path)))))
 
 (defn- iri-to-file-mapper [prepath]
