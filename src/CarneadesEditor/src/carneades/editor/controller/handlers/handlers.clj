@@ -866,6 +866,8 @@
                                           )))
                   root-lkif-dir (.getParent (file path))
                   relative-info (make-relative relative location root-lkif-dir path rules-directory)]
+        (prn "location =")
+        (prn location)
         (prn "relative-info =")
         (prn relative-info)
         (prn "relative =")
@@ -875,13 +877,11 @@
            (display-error view *import-error*
                           (format *cannot-be-relative* location rules-directory root-lkif-dir))
            (on-import-theory view path))
-          (let [lkif (if relative
-                       (add-relative-import (get-lkif path)
-                                            location
-                                            (:relative-path relative-info)
-                                            path
-                                            rules-directory)
-                       (add-import (get-lkif path) location))]
+          (let [lkif (add-relative-import (get-lkif path)
+                                          location
+                                          (:relative-path relative-info)
+                                          path
+                                          rules-directory)]
             (lkif/update-imports path *docmanager* lkif)
             ;; TODO mark dirty?
             ;; (save-lkif view path)
