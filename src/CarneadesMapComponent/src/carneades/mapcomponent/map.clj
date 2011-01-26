@@ -262,6 +262,9 @@
     (.setAllowNegativeCoordinates g false)
     (doto layout
       (.setFineTuning true)
+      ;; (.setParallelEdgeSpacing 300.0)
+      (.setInterRankCellSpacing 90.0)
+      ;; (.setInterHierarchySpacing 300.0)
       (.setMoveParent true)
       (.setResizeParent true))
     (if (empty? roots)
