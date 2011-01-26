@@ -229,6 +229,7 @@ public class CarneadesServlet extends HttpServlet {
             }
         } else {
             log.info("call from ejb returned: null");
+            throw new CarneadesException("engine returned null.");
         }
         return qList;
     }
