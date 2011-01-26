@@ -87,7 +87,7 @@
     (display-error view *file-error* (format *file-already-opened* path))
     (try
       (set-busy view true)
-      (when-let [content (import-lkif-relative path rules-directory)]
+      (when-let [content (import-lkif path rules-directory)]
         (prn "content =")
         (lkif/add-lkif-to-docmanager path content *docmanager*)
         (do-open-content view path filename content))
@@ -169,7 +169,7 @@
     (set-busy view true)
     (let [lkifdata (lkif/extract-lkif-from-docmanager path *docmanager*)]
       (prn "data = ")
-      (lkif-export lkifdata path)
+      (export-lkif lkifdata path)
       (prn "after save")
       
       true)
@@ -877,11 +877,15 @@
            (display-error view *import-error*
                           (format *cannot-be-relative* location rules-directory root-lkif-dir))
            (on-import-theory view path))
-          (let [lkif (add-relative-import (get-lkif path)
-                                          location
-                                          (:relative-path relative-info)
-                                          path
-                                          rules-directory)]
+          (let [lkif (if relative
+                       (add-import (get-lkif path)
+                                   path
+                                   location
+                                   (:relative-path relative-info)
+                                   rules-directory)
+                       (add-import (get-lkif path)
+                                   path
+                                   location))]
             (lkif/update-imports path *docmanager* lkif)
             ;; TODO mark dirty?
             ;; (save-lkif view path)

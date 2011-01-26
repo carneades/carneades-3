@@ -200,3 +200,15 @@
 (defn in-directory? [path dir]
   "returns true if path is directly under or below directory dir"
   (throw (Exception. "NYI")))
+
+(defn absolute? [pathname]
+  (.isAbsolute (file pathname)))
+
+(defn absolute [pathname]
+  (.getPath (.getAbsoluteFile (file pathname))))
+
+(defn parent [pathname]
+  (.getParent (file pathname)))
+
+(defn exists? [pathname]
+  (.exists (file pathname)))

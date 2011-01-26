@@ -5,7 +5,7 @@
     <theory id="t2">
 
         <imports>
-            <import url="src/carneades/examples/lkif/ont.owl"/>
+            <import url="ont.owl"/>
         </imports>
 
         <rules>
