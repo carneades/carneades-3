@@ -4,15 +4,16 @@
 (ns carneades.engine.lkif
   (:use clojure.contrib.def
         clojure.java.io
-        carneades.engine.lkif.import
         carneades.engine.lkif.export
         carneades.engine.owl
         carneades.engine.rule
         carneades.engine.argument-builtins
-        carneades.engine.utils))
+        carneades.engine.utils)
+  (:require carneades.engine.lkif.import))
 
-(def lkif-import lkif-import*)
-(def lkif-export lkif-export*)
+(def import-lkif carneades.engine.lkif.import/import-lkif)
+;; (def import-lkif /import-lkif)
+(def export-lkif lkif-export*)
 
 ; TODO
 (defn- get-imported-ont
@@ -33,50 +34,20 @@
           (:import-tree i))
         (some (fn [i2] (get-imported-ont i2 imp-kbs rb-name)) (map :import-tree imp-tree))))))
 
-(defn resolve-path
-  ([pathname current-lkif root-lkif-path relative-to]
-     (resolve-path pathname current-lkif root-lkif-path relative-to true))
-  ([pathname current-lkif root-lkif-path relative-to check-local]
-     "resolves pathnames. Absolute paths are already resolved, relative paths
-      are resolved with the following rules: first search in the directory
-      of the root lkif then in the relative-to directory.
-      If the current-lkif is in the relative-to directory we don't search
-      in the root lkif"
-     (prn "resolve-path")
-     (printf "pathname = %s current-lkif = %s root-lkif-path = %s relative-to = %s check-local = %s\n\n"
-             pathname current-lkif root-lkif-path relative-to check-local)
-     (let [f (file pathname)]
-       (if  (.isAbsolute f)
-         [pathname nil]
-         (if (and check-local (not (.startsWith current-lkif relative-to)))
-           ;; try first to find the file directly under the directory
-           ;; of the root lkif
-           (let [root-parent (.getParent (file root-lkif-path))
-                 resolved (make-absolute pathname root-parent)
-                 fresolved (file resolved)]
-             (if (.exists fresolved)
-               [resolved pathname]
-               ;; fails? try in the relative-to directory
-               (resolve-path pathname current-lkif root-lkif-path relative-to false)))
-           ;; else resolves relative to the relative-to directory
-           [(make-absolute pathname relative-to) pathname])))))
+;; (defn import-lkif-relative [root-lkif-path relative-to]
+;;   (prn "import-lkif-relative")
+;;   (prn "root-lkif-path =")
+;;   (prn root-lkif-path)
+;;   (prn "relative-to =")
+;;   (prn relative-to)
+;;   (lkif-import root-lkif-path ()
+;;                (fn [pathname current-lkif]
+;;                  (resolve-path pathname current-lkif root-lkif-path relative-to true))))
 
-(defn import-lkif-relative [root-lkif-path relative-to]
-  (prn "import-lkif-relative")
-  (prn "root-lkif-path =")
-  (prn root-lkif-path)
-  (prn "relative-to =")
-  (prn relative-to)
-  (lkif-import root-lkif-path ()
-               (fn [pathname current-lkif]
-                 (resolve-path pathname current-lkif root-lkif-path relative-to true))))
-
-(defn add-import
+(defn add-import-helper
   ([lkif i-path relative-path resolve-path]
-     (if (lkif? i-path)
-       (let [i (if resolve-path
-                 (lkif-import i-path () resolve-path)
-                 (lkif-import i-path))
+     (if (carneades.engine.lkif.import/lkif? i-path)
+       (let [i (carneades.engine.lkif.import/import-lkif-helper i-path resolve-path ())
              new-i-tree (cons {:name i-path
                                :relative-path relative-path
                                :import-tree (:import-tree i)}
@@ -98,14 +69,22 @@
                                :import-tree nil}
                               (:import-tree lkif))
              new-i-kbs (assoc (:import-kbs lkif) i-path o)]
-         (assoc lkif :import-tree new-i-tree :import-kbs new-i-kbs))))
-  ([lkif i-path]
-     (add-import lkif i-path nil nil)))
+         (assoc lkif :import-tree new-i-tree :import-kbs new-i-kbs)))))
 
-(defn add-relative-import [lkif pathname relative-pathname root-lkif-path relative-to]
-  (add-import lkif pathname relative-pathname
-              (fn [pathname current-lkif]
-                (resolve-path pathname current-lkif root-lkif-path relative-to))))
+(defn add-import
+  "see import-lkif"
+  ([lkif root-lkif-path pathname]
+     (let [root-lkif-dir (parent pathname)]
+       (add-import-helper lkif pathname nil
+                          (fn [pathname parent-pathname]
+                            (carneades.engine.lkif.import/local-resolve pathname parent-pathname
+                                                                        root-lkif-dir)))))
+  ([lkif root-lkif-path pathname relative-pathname basedir]
+     (let [root-lkif-dir (parent pathname)]
+      (add-import-helper lkif pathname relative-pathname
+                         (fn [pathname parent-pathname]
+                           (carneades.engine.lkif.import/local-then-base-dir-resolve
+                            pathname parent-pathname root-lkif-dir basedir))))))
 
 (defn- flatten-import-tree
   [i-tree]

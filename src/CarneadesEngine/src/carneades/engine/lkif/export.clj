@@ -3,7 +3,8 @@
 
 (ns carneades.engine.lkif.export
   (:use carneades.engine.statement
-        carneades.engine.argument)
+        carneades.engine.argument
+        carneades.engine.utils)
   (:require [clojure.contrib.io :as io]
             [clojure.contrib.prxml :as prx]))
 
@@ -262,7 +263,7 @@
     (binding [prx/*prxml-indent* 3]
       (with-out-str (prx/prxml (data->sxml export-data))))
     )
-  ([export-data port]
-    (io/write-lines port (list (lkif-export* export-data)))
+  ([export-data pathname]
+    (io/write-lines (absolute pathname) (list (lkif-export* export-data)))
     )
   )

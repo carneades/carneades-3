@@ -10,9 +10,9 @@
     <theory id="t1">
 
         <imports>
-            <import url="src/carneades/examples/lkif/lkif2.xml"/>
-            <import url="src/carneades/examples/lkif/lkif3.xml"/>
-            <import url="src/carneades/examples/lkif/ont.owl"/>
+            <import url="lkif2.xml"/>
+            <import url="lkif3.xml"/>
+            <import url="ont.owl"/>
         </imports>
 
         <axioms>

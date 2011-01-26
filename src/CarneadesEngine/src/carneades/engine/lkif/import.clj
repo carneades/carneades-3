@@ -3,11 +3,12 @@
 
 (ns carneades.engine.lkif.import
   (:use clojure.xml
+        clojure.contrib.trace
         clojure.java.io
         clojure.contrib.pprint
         clojure.contrib.def
         clojure.contrib.zip-filter.xml
-        (carneades.engine statement argument rule owl))
+        (carneades.engine statement argument rule owl utils))
   (:require [clojure.string :as str]
             [clojure.zip :as zip]
             [clojure.xml :as xml]
@@ -15,7 +16,7 @@
   (:import (java.net MalformedURLException URL)
            java.io.File))
 
-(declare lkif-wff->sexpr lkif-atom->sexpr lkif-term->sexpr lkif-import*)
+(declare lkif-wff->sexpr lkif-atom->sexpr lkif-term->sexpr import-lkif-helper)
 
 (defn lkif?
   [url]
@@ -307,7 +308,7 @@
           (printf "resolved = %s relative = %s prepath = %s\n" resolved relative prepath)
           (prn "after resolved")
           (cond
-            (lkif? resolved) (let [i (lkif-import* resolved (cons url files) resolve-path),
+            (lkif? resolved) (let [i (import-lkif-helper resolved resolve-path (cons url files)),
                               rb (:rb i),
                               ags (:ags i),
                               imp-kbs (if rb
@@ -495,36 +496,57 @@
     (map parse-arg-graph (xml-> lkif-arg-graphs :argument-graph))
     nil))
 
-; can throw:
-;    - java.lang.IllegalArgumentException
-;    - org.xml.sax.SAXException
-;    - java.io.IOException
-(defn lkif-import*
-  "Reads an lkif-file from path and returns a lkif-struct"
-  ([filename]
-     (lkif-import* filename () nil))
-  ([filename files]
-     (lkif-import* filename files nil))
-  ([filename files resolve-path]
-    (let* [document (zip/xml-zip (xml/parse filename)),
-           lkif-sources (xml1-> document :sources),
-           lkif-theory (xml1-> document :theory),
-           lkif-arg-graphs (xml1-> document :argument-graphs),
-           source-list (sources->list lkif-sources),
-           theory (import-theory lkif-theory filename (cons filename files)
-                                 resolve-path),
-           ags (parse-arg-graphs lkif-arg-graphs),
-           ;rb (:rb theory),
-           ;imp-tree (:import-tree theory),
-           ;imp-rbs (:import-rbs theory),
-           ;imp-ags (:import-ags theory)
-           ]
-      ;{:sources source-list, :rb rb, :import-tree imp-tree, :import-rbs imp-rbs, :import-ags imp-ags, :ags ags}
-      ;(println "theory:" theory)
-      (assoc theory :sources source-list :ags ags)
-      )))
+(defn local-resolve [pathname parent-pathname root-lkif-dir]
+  (if (absolute? pathname)
+    [pathname nil]
+    [(make-absolute pathname root-lkif-dir) pathname]))
 
-;(def path "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\src\\CarneadesExamples\\src\\carneades\\examples\\open_source_licensing\\oss-rules.xml")
+(defn local-then-base-dir-resolve [pathname current-lkif root-lkif-dir basedir]
+  (if (absolute? pathname)
+    [pathname nil]
+    (let [[resolved relative] (local-resolve pathname current-lkif root-lkif-dir)]
+      (if (exists? resolved)
+        [resolved relative]
+        [(make-absolute pathname basedir) pathname]))))
 
-;(def i (lkif-import path))
+(defn import-lkif-helper
+  [pathname resolve-path files]
+  (let [document (zip/xml-zip (xml/parse pathname))
+           lkif-sources (xml1-> document :sources)
+           lkif-theory (xml1-> document :theory)
+           lkif-arg-graphs (xml1-> document :argument-graphs)
+           source-list (sources->list lkif-sources)
+           theory (import-theory lkif-theory pathname (cons pathname files)
+                                 resolve-path)
+           ags (parse-arg-graphs lkif-arg-graphs)]
+           (assoc theory :sources source-list :ags ags)))
 
+(defn import-lkif
+  "reads a LKIF file and returns a LKIF structure.  
+   Imported files with a relative path with only one segment
+   are searched in the directory of pathname, other imports 
+   are searched in basedir (if specified).
+   If pathname itself is relative, then it is relative
+   to the current JVM directory. Same for basedir.
+
+   throws:
+     - java.lang.IllegalArgumentException
+     - org.xml.sax.SAXException
+     - java.io.IOException"
+  ([pathname]
+     (let [pathname (absolute pathname)
+           root-lkif-dir (parent pathname)]
+       (import-lkif-helper pathname
+                           (fn [pathname parent-pathname]
+                             (local-resolve pathname parent-pathname
+                                            root-lkif-dir))
+                           ())))
+  ([pathname basedir]
+     (let [pathname (absolute pathname)
+           basedir (absolute basedir)
+           root-lkif-dir (parent pathname)]
+       (import-lkif-helper pathname
+                           (fn [pathname parent-pathname]
+                             (local-then-base-dir-resolve
+                              pathname parent-pathname root-lkif-dir basedir))
+                           ()))))
