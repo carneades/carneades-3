@@ -3,6 +3,7 @@
 
 (ns carneades.engine.lkif
   (:use clojure.contrib.def
+        clojure.pprint
         clojure.java.io
         carneades.engine.lkif.export
         carneades.engine.owl
@@ -98,13 +99,19 @@
 
 (defn remove-import
   [lkif i-path]
-  (let [r-path (some (fn [e] (and (= (:name e) i-path) (:import-path e))) (:import-tree lkif))
-        _ (do (prn "r-path =") (prn r-path) true)
+  (let [r-path (filter #(= (:name %) i-path) (:import-tree lkif))
+        ;; _ (do (prn "r-path =") (prn r-path) true)
         new-i-tree (filter (fn [e] (not (= (:name e) i-path))) (:import-tree lkif)),
-        rec-imps (cons i-path (flatten-import-tree r-path)),
+        ;; _ (do (prn "new-i-tree =") (pprint new-i-tree) true)
+        rec-imps (cons i-path (flatten-import-tree r-path))
+        ;; _ (do (prn "rec-imps =") (pprint rec-imps) true)
         unused-imps (filter (fn [i] (not (occurs-in? new-i-tree i))) rec-imps),
-        new-i-kbs (reduce dissoc (:import-kbs lkif) unused-imps),
-        new-i-ags (reduce dissoc (:import-ags lkif) unused-imps)]
+        ;; _ (do (prn "unused-imps =") (pprint unused-imps) true)
+        new-i-kbs (reduce dissoc (:import-kbs lkif) unused-imps)
+        ;; _ (do (prn "new-i-kbs =") (pprint new-i-kbs) true)
+        new-i-ags (reduce dissoc (:import-ags lkif) unused-imps)
+        ;; _ (do (prn "new-i-ags =") (pprint new-i-ags) true)
+        ]
     ;(println "recursive imports" rec-imps)
     ;(println "new import tree" new-i-tree)
     ;(println "unused imports" unused-imps)
