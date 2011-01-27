@@ -124,7 +124,7 @@
     (when-let* [ag (get-ag path id)
                 ag (delete-statement ag statement)
                 ag (update-statement ag stmt)]
-      (do-update-section view [path :ags (:id ag)] ag)
+      (do-ag-update view [path :ags (:id ag)] ag)
       (graph-changed view path ag statement-formatted)
       (display-statement view path ag stmt statement-formatted))))
 

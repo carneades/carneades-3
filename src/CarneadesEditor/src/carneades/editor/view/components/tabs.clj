@@ -3,6 +3,7 @@
 
 (ns carneades.editor.view.components.tabs
   (:use clojure.contrib.def
+        clojure.contrib.trace
         clojure.contrib.swing-utils
         carneades.editor.utils.listeners
         carneades.editor.view.components.uicomponents)
@@ -121,18 +122,12 @@
 (defn set-tab-dirty [path id isdirty]
   (if-let [component (:component (get (deref *ags-to-components*) [path id]))]
     (if-let [label (get (deref *component-to-title*) component)]
-      (let [oldtext (.getText label)]
-        (prn "oldtext =")
-        (prn oldtext)
-        (cond (and isdirty (not= (first oldtext) \*))
-              (.setText label (str "*" oldtext))
-
-              (not isdirty)
-              (.setText label (.substring oldtext 1))))
-      (do
-        (prn "title not found")))
-    (do
-      (prn "component not found"))))
+      (let [oldtext (.getText label)
+            olddirty (= (first oldtext) \*)]
+        (when-not (= olddirty isdirty)
+          (if isdirty
+            (.setText label (str "*" oldtext))
+            (.setText label (.substring oldtext 1))))))))
 
 (defn register-tab-change-listener [listener]
   (.addChangeListener *mapPanel* listener))
