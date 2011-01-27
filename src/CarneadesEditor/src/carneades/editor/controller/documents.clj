@@ -15,6 +15,7 @@
 
 (defvar *docmanager* (create-docmanager))
 
+;; TODO moves this info to the docmanager?
 (defvar *fresh-ags-id* (atom {}))
 
 (defn add-fresh-ag [path id]
@@ -71,7 +72,7 @@
   (get-all-sectionskeys *docmanager* [lkifpath :ags]))
 
 (defn get-allpaths []
-  (get-all-sectionskeys *docmanager* []))
+  (filter string? (get-all-sectionskeys *docmanager* [])))
 
 (defn get-unsaved-graphs 
   "returns a ([path id] [path id] ...) seq
