@@ -407,7 +407,7 @@
               pms (map premise premises)
               arg (argument (gen-argument-id ag) :pro conclusion pms scheme)
               ag (assert-argument ag arg)]
-    (do-update-section view [path :ags (:id ag)] ag)
+    (do-ag-update view [path :ags (:id ag)] ag)
     (graph-changed view path ag statement-formatted)
     (display-statement view path ag conclusion statement-formatted)))
 

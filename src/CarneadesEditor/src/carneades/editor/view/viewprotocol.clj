@@ -61,7 +61,7 @@
   (edit-redone [this path id])
   (set-can-undo [this path id state])
   (set-can-redo [this path id state])
-  (set-dirty [this path ag state])
+  (set-dirty [this path id state])
   (set-lkif-dirty [this path state])
   (copyselection-clipboard [this path id])
 

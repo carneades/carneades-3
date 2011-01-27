@@ -3,10 +3,12 @@
 
 (ns carneades.editor.controller.documents
   (:use clojure.contrib.def
+        clojure.contrib.trace
         clojure.pprint
         clojure.java.io
         carneades.editor.utils.core
         carneades.engine.argument
+        carneades.engine.lkif
         carneades.editor.model.docmanager
         carneades.editor.model.lkif-utils
         carneades.editor.view.viewprotocol))
@@ -31,15 +33,15 @@
 (defn get-fresh-ag-ids [path]
   (get (deref *fresh-ags-id*) path #{}))
 
-(defn update-dirty-state [view path ag isdirty]
-  (set-dirty view path ag isdirty))
+(defn update-dirty-state [view path id isdirty]
+  (set-dirty view path id isdirty))
 
 (defn update-undo-redo-statuses [view path id]
   (prn "update-undo-redo-statuses")
   (set-can-undo view path id (can-undo-section? *docmanager* [path :ags id]))
   (set-can-redo view path id (can-redo-section? *docmanager* [path :ags id])))
 
-(defn is-ag-dirty [path id]
+(defn ag-dirty? [path id]
   (section-dirty? *docmanager* [path :ags id]))
 
 (defn get-ag [lkifpath id]
@@ -78,16 +80,33 @@
      (mapcat (fn [path]
                (partition 2 (interleave
                              (repeat path)
-                             (filter #(is-ag-dirty path %) (get-ags-id path)))))
+                             (filter #(ag-dirty? path %) (get-ags-id path)))))
              (get-allpaths)))
   ([path]
-     (filter #(is-ag-dirty path %) (get-ags-id path))))
+     (filter #(ag-dirty? path %) (get-ags-id path))))
 
+(defvar- *non-ag-sections* (keys (dissoc *empty-lkif* :ags)))
+
+(defn mark-lkif-saved [view path]
+  (doseq [s *non-ag-sections*]
+   (mark-section-saved *docmanager* [path s]))
+  (doseq [id (get-ags-id path)]
+    (let [ag (get-ag path id)]
+      (mark-section-saved *docmanager* [path :ags id])
+      (update-dirty-state view path id false)))
+  (set-lkif-dirty view path false))
+
+(deftrace lkif-dirty? [path]
+  (or (some #(section-dirty? *docmanager* [path %]) *non-ag-sections*)
+      (some #(section-dirty? *docmanager* [path :ags %]) (get-ags-id path))))
+
+;; (defn get-unsaved-lkifs []
+;;   (keep (fn [path]
+;;           (when-not (empty? (get-unsaved-graphs path))
+;;             path))
+;;         (get-allpaths)))
 (defn get-unsaved-lkifs []
-  (keep (fn [path]
-          (when-not (empty? (get-unsaved-graphs path))
-            path))
-        (get-allpaths)))
+  (filter lkif-dirty? (get-allpaths)))
 
 (defn init-counters [path]
   (add-section *docmanager* [path :graph-counter] 1)
@@ -177,13 +196,21 @@
   "returns a set of all titles"
   (set (map :title (map #(get-ag path %) (get-ags-id path)))))
 
-(defn do-update-section [view keys ag]
+(defn do-ag-update [view keys ag]
   "updates section content in the model and dirty markers in the view"
   ;; the first key is the path
   (let [path (first keys)]
     (update-section *docmanager* keys ag)
     (update-undo-redo-statuses view path (:id ag))
-    (update-dirty-state view path ag true)))
+    (update-dirty-state view path (:id ag) true)))
+
+(defn update-imports [view path lkif]
+  (prn "non-ag-sections = ")
+  (prn *non-ag-sections*)
+  (doseq [k *non-ag-sections*]
+    (update-section *docmanager* [path k] (get lkif k))
+    (delete-section-history *docmanager* [path k]))
+  (set-lkif-dirty view path true))
 
 (defn as-absolute-import [lkifpath importurl]
   (if (.isAbsolute (file importurl))

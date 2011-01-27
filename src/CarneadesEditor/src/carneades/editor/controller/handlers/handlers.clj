@@ -212,10 +212,7 @@
       (do
         (remove-fresh-ags path)
         (set-lkif-dirty view path false)
-        (doseq [id (filter #(is-ag-dirty path %) (get-ags-id path))]
-          (let [ag (get-ag path id)]
-            (mark-section-saved *docmanager* [path :ags id])
-            (update-dirty-state view path (get-ag path id) false)))
+        (mark-lkif-saved view path)
         true)
       false)))
 
@@ -248,7 +245,7 @@
 
 (deftrace on-close-graph [view path id]
   (prn "on-close-graph")
-  (if (is-ag-dirty path id)
+  (if (ag-dirty? path id)
     (case (ask-yesnocancel-question view "Close" "Save file before closing?")
           :yes (when (on-save view path)
                  (do-close-graph view path id true))
@@ -352,7 +349,7 @@
               proofstandard (:standard node)
               acceptable (:acceptable node)
               complement-acceptable (:complement-acceptable node)]
-    (do-update-section view [path :ags (:id ag)] ag)
+    (do-ag-update view [path :ags (:id ag)] ag)
     (do-display-statement-property view path id (:title ag)
                                    (stmt-str newcontent) statement-formatted status
                                    proofstandard acceptable complement-acceptable)
@@ -426,7 +423,7 @@
             proofstandard (:standard node)
             acceptable (:acceptable node)
             complement-acceptable (:complement-acceptable node)]
-        (do-update-section view [path :ags (:id oldag)] ag)
+        (do-ag-update view [path :ags (:id oldag)] ag)
         (do-display-statement-property view path id (:title ag)
                                        (str content) statement-formatted status
                                        proofstandard acceptable complement-acceptable)
@@ -447,7 +444,7 @@
                   proofstandard (:standard node)
                   acceptable (:acceptable node)
                   complement-acceptable (:complement-acceptable node)]
-        (do-update-section view [path :ags (:id ag)] ag)
+        (do-ag-update view [path :ags (:id ag)] ag)
         (do-display-statement-property view path id (:title ag)
                                        (str content) statement-formatted status
                                        proofstandard acceptable complement-acceptable)
@@ -493,7 +490,7 @@
             ag (update-premise-polarity ag oldarg atom polarity)
             arg (get-argument ag (:id oldarg))
             title (:title ag)]
-        (do-update-section view [path :ags (:id ag)] ag)
+        (do-ag-update view [path :ags (:id ag)] ag)
         (premise-polarity-changed view path ag oldarg arg (get-premise arg atom))
         (display-premise-property view path id title
                                   arg
@@ -509,7 +506,7 @@
       (let [ag (update-premise-type ag arg atom type)
             newarg (get-argument ag (:id arg))
             pm (get-premise newarg atom)]
-        (do-update-section view [path :ags (:id ag)] ag)
+        (do-ag-update view [path :ags (:id ag)] ag)
         (premise-type-changed view path ag arg newarg (get-premise newarg atom))
         (display-premise-property view path id (:title ag) arg
                                   (:polarity pm) type (:previous-role pm) atom)))))
@@ -522,7 +519,7 @@
       (let [ag (update-premise-role ag arg atom role)
             newarg (get-argument ag (:id arg))
             pm (get-premise newarg atom)]
-        (do-update-section view [path :ags (:id ag)] ag)
+        (do-ag-update view [path :ags (:id ag)] ag)
         (premise-role-changed view path ag arg newarg (get-premise newarg atom))
         (display-premise-property view path id (:title ag) arg (:polarity pm)
                                   previous-type role atom)))))
@@ -535,7 +532,7 @@
       (let [arg (get-argument ag argid)
             ag (update-argument-title ag arg title)
             arg (get-argument ag argid)]
-        (do-update-section view [path :ags (:id ag)] ag)
+        (do-ag-update view [path :ags (:id ag)] ag)
         (argument-title-changed view path ag arg title)
         (display-argument-property
          view
@@ -557,7 +554,7 @@
       (let [arg (get-argument ag argid)
             ag (update-argument-scheme ag arg scheme)
             arg (get-argument ag argid)]
-        (do-update-section view [path :ags (:id ag)] ag)
+        (do-ag-update view [path :ags (:id ag)] ag)
         (argument-scheme-changed view path ag arg scheme)
         (display-argument-property
          view
@@ -582,7 +579,7 @@
       (let [arg (get-argument ag argid)
             newag (update-argument-weight ag arg weight)
             arg (get-argument newag argid)]
-        (do-update-section view [path :ags (:id ag)] newag)
+        (do-ag-update view [path :ags (:id ag)] newag)
         (argument-weight-changed view path newag arg weight)
         (display-argument-property
          view
@@ -606,7 +603,7 @@
       (let [arg (get-argument ag argid)
             ag (update-argument-direction ag arg direction)
             arg (get-argument ag argid)]
-        (do-update-section view [path :ags (:id ag)] ag)
+        (do-ag-update view [path :ags (:id ag)] ag)
         (argument-direction-changed view path ag arg direction)
         (display-argument-property
          view
@@ -628,13 +625,13 @@
       (let [arg (get-argument ag (:id arg))]
         (if-let [ag (add-premise ag arg stmt)]
           (let [arg (get-argument ag (:id arg))]
-            (do-update-section view [path :ags (:id ag)] ag)
+            (do-ag-update view [path :ags (:id ag)] ag)
             (premise-added view path ag arg stmt))
           (display-error view *edit-error* *cycle-error*))))))
 
 (deftrace on-refresh [view path id]
   (when-let [ag (get-ag path id)]
-    (do-update-section view [path :ags (:id ag)] ag)
+    (do-ag-update view [path :ags (:id ag)] ag)
     (prn "on-refresh")
     (redisplay-graph view path ag statement-formatted)))
 
@@ -645,7 +642,7 @@
               arg (get-argument ag (:id arg))
               ag (delete-premise ag arg pm)
               arg (get-argument ag (:id arg))]
-    (do-update-section view [path :ags (:id ag)] ag)
+    (do-ag-update view [path :ags (:id ag)] ag)
     (premise-deleted view path ag arg pm)))
 
 (deftrace prompt-statement-content [view ag suggestion]
@@ -678,7 +675,7 @@
               arg (get-argument ag (:id arg))]
     (if-let [ag (add-premise ag arg stmt)]
       (do
-        (do-update-section view [path :ags (:id ag)] ag)
+        (do-ag-update view [path :ags (:id ag)] ag)
         (new-premise-added view path ag arg stmt statement-formatted)
         (display-statement view path ag stmt statement-formatted))
       (display-error view *edit-error* *cycle-error*))))
@@ -691,7 +688,7 @@
   ;; (pprint (get-ag path id))
   (when-let* [ag (get-ag path id)
               ag (delete-statement ag stmt)]
-    (do-update-section view [path :ags (:id ag)] ag)
+    (do-ag-update view [path :ags (:id ag)] ag)
     (statement-deleted view path ag stmt)))
 
 (deftrace on-delete-argument [view path id arg]
@@ -699,7 +696,7 @@
   (when-let* [ag (get-ag path id)
               arg (get-argument ag (:id arg))
               ag (delete-argument ag arg)]
-    (do-update-section view [path :ags (:id ag)] ag)
+    (do-ag-update view [path :ags (:id ag)] ag)
     (argument-deleted view path ag arg)))
 
 (deftrace on-change-mainissue [view path id stmt]
@@ -709,12 +706,12 @@
   (when-let [ag (get-ag path id)]
     (when (or (nil? stmt) (statement-node ag stmt))
       (let [ag (change-mainissue ag stmt)]
-        (do-update-section view [path :ags (:id ag)] ag)
+        (do-ag-update view [path :ags (:id ag)] ag)
         (mainissue-changed view path ag stmt)))))
 
 (deftrace do-on-new-statement [view path ag stmt]
   (let [ag (update-statement ag stmt)]
-    (do-update-section view [path :ags (:id ag)] ag)
+    (do-ag-update view [path :ags (:id ag)] ag)
     (new-statement-added view path ag stmt statement-formatted)
     (display-statement view path ag stmt statement-formatted)
     stmt))
@@ -734,7 +731,7 @@
   (when-let* [ag (get-ag path id)
               arg (pro (gen-argument-id ag) stmt ())
               ag (assert-argument ag arg)]
-    (do-update-section view [path :ags (:id ag)] ag)
+    (do-ag-update view [path :ags (:id ag)] ag)
     (new-argument-added view path ag arg)
     (display-argument view path ag arg statement-formatted)
     arg))
@@ -786,22 +783,10 @@
     (prn path)
     (when (section-exists? *docmanager* [path])
       (close-all view path))
-    (lkif/add-lkif-to-docmanager path lkif/*empty-lkif-content* *docmanager*)
+    (lkif/add-lkif-to-docmanager path *empty-lkif* *docmanager*)
     (init-counters path)
     (display-lkif-content view path filename (create-lkifinfo path))
     (create-template view path)))
-
-;; (deftrace on-new-file [view]
-;;   (when-let* [[file desc] (ask-file-to-save view {"LKIF files (.xml)" "xml"}
-;;                                             (File. "lkif1.xml"))
-;;               path (.getPath file)]
-;;     (when (section-exists? *docmanager* [path])
-;;       (close-all view path))
-;;     (lkif/add-lkif-to-docmanager path lkif/*empty-lkif-content* *docmanager*)
-;;     (init-counters path)
-;;     (save-lkif view path)
-;;     (display-lkif-content view file (create-lkifinfo path))
-;;     (create-template view path)))
 
 (deftrace exit [view]
   (letfn [(in-swank?
@@ -835,7 +820,7 @@
 
 (deftrace on-close-file [view path]
   (prn "on close file")
-  (if (not (empty? (get-unsaved-graphs path)))
+  (if (lkif-dirty? path)
     (case (ask-yesnocancel-question view "Close" "Save file before closing?")
           :yes (do
                  (on-save view path)
@@ -886,23 +871,21 @@
                        (add-import (get-lkif path)
                                    path
                                    location))]
-            (lkif/update-imports path *docmanager* lkif)
-            ;; TODO mark dirty?
-            ;; (save-lkif view path)
+            (update-imports view path lkif)
             (let [importurls (get-imports-locations path)]
               (display-lkif-property view path importurls))))))))
 
 (deftrace on-remove-imports [view path imports]
   (when (and (not (empty? imports)) (ask-confirmation view *imports* *remove-imports*))
     (let [lkif (get-lkif path)
+          _ (do (prn "before remove import, lkif =") (pprint lkif) true)
           lkif (reduce (fn [lkif importurl]
                          (let [absolute (as-absolute-import path importurl)]
                            (prn "absolute =")
                            (prn absolute)
                            (remove-import lkif absolute)))
                        lkif imports)]
-      (lkif/update-imports path *docmanager* lkif)
-      (save-lkif view path)
+      (update-imports view path lkif)
       (let [importurls (get-imports-locations path)]
         (display-lkif-property view path importurls)))))
 

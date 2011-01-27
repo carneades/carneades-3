@@ -347,9 +347,9 @@
    (set-ag-canredo path id state))
 
   (set-dirty
-   [this path ag state]
+   [this path id state]
    (tree/set-lkif-dirty path state)
-   (set-ag-dirty path (:id ag) state))
+   (set-ag-dirty path id state))
 
   (set-lkif-dirty
    [this path state]
