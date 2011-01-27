@@ -118,7 +118,7 @@
   (prn settings)
   (when settings
     (when-let [ag (deref *newag*)]
-      (do-update-section view [path :ags (:id ag)] ag)
+      (do-ag-update view [path :ags (:id ag)] ag)
       (graph-changed view path ag statement-formatted)
       (display-statement view path ag (deref *goal*) statement-formatted))))
 

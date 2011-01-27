@@ -42,10 +42,4 @@
      :import-kbs import-kbs
      :import-ags import-ags}))
 
-(defn update-imports [lkifpath docmanager lkifcontent]
-  (doseq [key [:import-tree :import-ags :import-kbs :sources]]
-    (update-section docmanager [lkifpath key] (key lkifcontent))
-    (delete-section-history docmanager [lkifpath key])))
 
-(defvar *empty-lkif-content*
-  {:sources nil :rb *empty-rulebase* :ags ()})
