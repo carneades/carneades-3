@@ -331,64 +331,88 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         jSplitPane1.setLeftComponent(jSplitPane2);
 
+        fileMenu.setMnemonic('f');
         fileMenu.setText("File");
 
-        newFileMenuItem.setText("New File...");
+        newFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        newFileMenuItem.setMnemonic('n');
+        newFileMenuItem.setText("New");
         fileMenu.add(newFileMenuItem);
         fileMenu.add(jSeparator11);
 
         openFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        openFileMenuItem.setMnemonic('o');
         openFileMenuItem.setText("Open...");
         fileMenu.add(openFileMenuItem);
 
+        closeFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
+        closeFileMenuItem.setMnemonic('c');
         closeFileMenuItem.setText("Close");
         fileMenu.add(closeFileMenuItem);
         fileMenu.add(jSeparator2);
 
+        saveFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        saveFileMenuItem.setMnemonic('s');
         saveFileMenuItem.setText("Save");
         fileMenu.add(saveFileMenuItem);
 
+        saveAsFileMenuItem.setMnemonic('a');
         saveAsFileMenuItem.setText("Save As...");
         fileMenu.add(saveAsFileMenuItem);
         fileMenu.add(jSeparator3);
 
+        exportFileMenuItem.setMnemonic('e');
         exportFileMenuItem.setText("Export...");
         fileMenu.add(exportFileMenuItem);
         fileMenu.add(jSeparator7);
 
+        printPreviewFileMenuItem.setMnemonic('v');
         printPreviewFileMenuItem.setText("Print Preview");
         fileMenu.add(printPreviewFileMenuItem);
 
+        printFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
+        printFileMenuItem.setMnemonic('p');
         printFileMenuItem.setText("Print...");
         fileMenu.add(printFileMenuItem);
         fileMenu.add(jSeparator1);
 
+        quitFileMenuItem.setMnemonic('q');
         quitFileMenuItem.setText("Quit");
         fileMenu.add(quitFileMenuItem);
 
         menuBar.add(fileMenu);
 
+        editMenu.setMnemonic('e');
         editMenu.setText("Edit");
 
+        undoEditMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_MASK));
+        undoEditMenuItem.setMnemonic('u');
         undoEditMenuItem.setText("Undo");
         editMenu.add(undoEditMenuItem);
 
+        redoEditMenuItem.setMnemonic('r');
         redoEditMenuItem.setText("Redo");
         editMenu.add(redoEditMenuItem);
         editMenu.add(jSeparator9);
 
+        copyClipboardEditMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
+        copyClipboardEditMenuItem.setMnemonic('c');
         copyClipboardEditMenuItem.setText("Copy to clipboard");
         editMenu.add(copyClipboardEditMenuItem);
 
+        selectAllEditMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
+        selectAllEditMenuItem.setMnemonic('s');
         selectAllEditMenuItem.setText("Select All");
         editMenu.add(selectAllEditMenuItem);
         editMenu.add(jSeparator13);
 
+        preferencesEditMenuItem.setMnemonic('p');
         preferencesEditMenuItem.setText("Preferences...");
         editMenu.add(preferencesEditMenuItem);
 
         menuBar.add(editMenu);
 
+        assistantMenu.setMnemonic('a');
         assistantMenu.setText("Assistant");
 
         findArgumentsAssistantMenuItem.setText("Find Arguments...");
@@ -397,16 +421,20 @@ public class EditorApplicationView extends javax.swing.JFrame {
         findGoalAssistantMenuItem.setText("Find Goal...");
         assistantMenu.add(findGoalAssistantMenuItem);
 
+        formalizeStatementAssistantMenuItem.setMnemonic('s');
         formalizeStatementAssistantMenuItem.setText("Formalize Statement...");
         assistantMenu.add(formalizeStatementAssistantMenuItem);
 
+        instantiateSchemeAssistantMenuItem.setMnemonic('c');
         instantiateSchemeAssistantMenuItem.setText("Instantiate Scheme...");
         assistantMenu.add(instantiateSchemeAssistantMenuItem);
 
         menuBar.add(assistantMenu);
 
+        helpMenu.setMnemonic('h');
         helpMenu.setText("Help");
 
+        aboutHelpMenuItem.setMnemonic('a');
         aboutHelpMenuItem.setText("About");
         helpMenu.add(aboutHelpMenuItem);
 

@@ -45,7 +45,10 @@
                       </Group>
                       <EmptySpace min="-2" pref="116" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="closeButton" alignment="0" min="-2" pref="386" max="-2" attributes="1"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="256" max="-2" attributes="0"/>
+                      <Component id="closeButton" min="-2" pref="130" max="-2" attributes="1"/>
+                  </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -181,7 +184,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="&lt;html&gt;Copyright &amp;copy; 2008-2010 by Fraunhofer Gesellschaft "/>
+        <Property name="text" type="java.lang.String" value="&lt;html&gt;Copyright &amp;copy; 2008-2011 by Fraunhofer Gesellschaft "/>
       </Properties>
     </Component>
   </SubComponents>
