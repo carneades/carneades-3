@@ -68,7 +68,7 @@ public class CarneadesAboutBox extends javax.swing.JDialog {
         urlButton.setRequestFocusEnabled(false);
         urlButton.setRolloverEnabled(false);
 
-        jLabel1.setText("<html>Copyright &copy; 2008-2010 by Fraunhofer Gesellschaft ");
+        jLabel1.setText("<html>Copyright &copy; 2008-2011 by Fraunhofer Gesellschaft ");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -93,7 +93,9 @@ public class CarneadesAboutBox extends javax.swing.JDialog {
                             .addComponent(urlButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(appVendorLabel))
                         .addGap(116, 116, 116))
-                    .addComponent(closeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(256, 256, 256)
+                        .addComponent(closeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(

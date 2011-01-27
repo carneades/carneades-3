@@ -25,7 +25,7 @@
 
 (defn start []
   (prn "Starting the Carneades Editor...")
-  (log true)
+  (log false)
   (let [view (create-swingview)]
     (set-swing-exception-handler #(on-exception view %))
     (try

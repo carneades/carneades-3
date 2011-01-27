@@ -318,12 +318,17 @@
       <SubComponents>
         <Menu class="javax.swing.JMenu" name="fileMenu">
           <Properties>
+            <Property name="mnemonic" type="int" value="102"/>
             <Property name="text" type="java.lang.String" value="File"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="newFileMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="New File..."/>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+N"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="110"/>
+                <Property name="text" type="java.lang.String" value="New"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
@@ -336,6 +341,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+O"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="111"/>
                 <Property name="text" type="java.lang.String" value="Open..."/>
               </Properties>
               <AuxValues>
@@ -344,6 +350,10 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="closeFileMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+W"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="99"/>
                 <Property name="text" type="java.lang.String" value="Close"/>
               </Properties>
               <AuxValues>
@@ -354,6 +364,10 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="saveFileMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+S"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="115"/>
                 <Property name="text" type="java.lang.String" value="Save"/>
               </Properties>
               <AuxValues>
@@ -362,6 +376,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="saveAsFileMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" value="97"/>
                 <Property name="text" type="java.lang.String" value="Save As..."/>
               </Properties>
               <AuxValues>
@@ -372,6 +387,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="exportFileMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" value="101"/>
                 <Property name="text" type="java.lang.String" value="Export..."/>
               </Properties>
               <AuxValues>
@@ -382,6 +398,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="printPreviewFileMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" value="118"/>
                 <Property name="text" type="java.lang.String" value="Print Preview"/>
               </Properties>
               <AuxValues>
@@ -390,6 +407,10 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="printFileMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+P"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="112"/>
                 <Property name="text" type="java.lang.String" value="Print..."/>
               </Properties>
               <AuxValues>
@@ -400,6 +421,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="quitFileMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" value="113"/>
                 <Property name="text" type="java.lang.String" value="Quit"/>
               </Properties>
               <AuxValues>
@@ -410,11 +432,16 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="editMenu">
           <Properties>
+            <Property name="mnemonic" type="int" value="101"/>
             <Property name="text" type="java.lang.String" value="Edit"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="undoEditMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+Z"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="117"/>
                 <Property name="text" type="java.lang.String" value="Undo"/>
               </Properties>
               <AuxValues>
@@ -423,6 +450,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="redoEditMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" value="114"/>
                 <Property name="text" type="java.lang.String" value="Redo"/>
               </Properties>
               <AuxValues>
@@ -433,6 +461,10 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="copyClipboardEditMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+C"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="99"/>
                 <Property name="text" type="java.lang.String" value="Copy to clipboard"/>
               </Properties>
               <AuxValues>
@@ -441,6 +473,10 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="selectAllEditMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+A"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="115"/>
                 <Property name="text" type="java.lang.String" value="Select All"/>
               </Properties>
               <AuxValues>
@@ -451,6 +487,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="preferencesEditMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" value="112"/>
                 <Property name="text" type="java.lang.String" value="Preferences..."/>
               </Properties>
               <AuxValues>
@@ -461,6 +498,7 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="assistantMenu">
           <Properties>
+            <Property name="mnemonic" type="int" value="97"/>
             <Property name="text" type="java.lang.String" value="Assistant"/>
           </Properties>
           <SubComponents>
@@ -482,6 +520,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="formalizeStatementAssistantMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" value="115"/>
                 <Property name="text" type="java.lang.String" value="Formalize Statement..."/>
               </Properties>
               <AuxValues>
@@ -490,6 +529,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="instantiateSchemeAssistantMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" value="99"/>
                 <Property name="text" type="java.lang.String" value="Instantiate Scheme..."/>
               </Properties>
               <AuxValues>
@@ -500,11 +540,13 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="helpMenu">
           <Properties>
+            <Property name="mnemonic" type="int" value="104"/>
             <Property name="text" type="java.lang.String" value="Help"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="aboutHelpMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" value="97"/>
                 <Property name="text" type="java.lang.String" value="About"/>
               </Properties>
               <AuxValues>
