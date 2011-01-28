@@ -878,7 +878,6 @@
 (deftrace on-remove-imports [view path imports]
   (when (and (not (empty? imports)) (ask-confirmation view *imports* *remove-imports*))
     (let [lkif (get-lkif path)
-          _ (do (prn "before remove import, lkif =") (pprint lkif) true)
           lkif (reduce (fn [lkif importurl]
                          (let [absolute (as-absolute-import path importurl)]
                            (prn "absolute =")

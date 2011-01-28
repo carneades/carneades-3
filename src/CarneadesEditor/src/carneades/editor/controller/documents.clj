@@ -2,15 +2,12 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.editor.controller.documents
-  (:use clojure.contrib.def
-        clojure.contrib.trace
-        clojure.pprint
+  (:use clojure.pprint
         clojure.java.io
+        (clojure.contrib def trace)
+        (carneades.engine utils argument lkif)
         carneades.editor.utils.core
-        carneades.engine.argument
-        carneades.engine.lkif
-        carneades.editor.model.docmanager
-        carneades.editor.model.lkif-utils
+        (carneades.editor.model docmanager lkif-utils)
         carneades.editor.view.viewprotocol))
 
 (defvar *docmanager* (create-docmanager))
@@ -214,7 +211,7 @@
   (set-lkif-dirty view path true))
 
 (defn as-absolute-import [lkifpath importurl]
-  (if (.isAbsolute (file importurl))
+  (if (or (url? importurl) (.isAbsolute (file importurl)))
     importurl
     (:name
      (first (filter (fn [{:keys [relative-path]}]

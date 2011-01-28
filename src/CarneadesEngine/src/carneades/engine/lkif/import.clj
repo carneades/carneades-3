@@ -296,8 +296,7 @@
            :import-tree nil,
            :import-kbs {},
            :import-ags {}})
-        (let [is-url (try (new URL url) (catch MalformedURLException e false)),
-              ;; TODO http urls?
+        (let [is-url (url? url)
               [resolved relative] (if resolve-path
                                     (resolve-path url path)
                                     [url nil])
