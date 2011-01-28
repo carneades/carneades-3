@@ -833,47 +833,38 @@
   (let [rules-directory (get-property *rules-directory*)]
     (if (empty? rules-directory)
       (display-error view *config-error* *no-rule-directory*)
-      (when-let* [info (ask-location-to-open view)
-                  {:keys [location relative]} info
-                  make-relative (fn [relative pathname root-lkif-dir root-lkif-path rules-directory]
-                                  (if-not relative
-                                    {:relative-path nil :failed false}
-                                    (cond (same-directory? pathname root-lkif-path)
-                                          {:relative-path (carneades.engine.utils/make-relative
-                                                           pathname root-lkif-dir)
-                                           :failed false}
+      (when-let* [location (:location (ask-location-to-open view))
+                  make-relative (fn [location root-lkif-dir rules-directory]
+                                  (cond (url? location)
+                                        {:relative-path nil :failed false}
 
-                                          (.startsWith pathname rules-directory)
-                                          {:relative-path (carneades.engine.utils/make-relative
-                                                           pathname rules-directory)}
+                                        (in-directory? location rules-directory)
+                                        {:relative-path (carneades.engine.utils/make-relative
+                                                         location rules-directory)}
 
-                                          :else {:relative-path nil :failed true}
-                                          )))
-                  root-lkif-dir (.getParent (file path))
-                  relative-info (make-relative relative location root-lkif-dir path rules-directory)]
-        (prn "location =")
-        (prn location)
+                                        (in-directory? location root-lkif-dir)
+                                        {:relative-path (carneades.engine.utils/make-relative
+                                                         location root-lkif-dir)
+                                         :failed false}
+                                        
+                                        :else {:relative-path nil :failed false}
+                                        ))
+                  root-lkif-dir (parent path)
+                  relative-info (make-relative location root-lkif-dir rules-directory)]
         (prn "relative-info =")
         (prn relative-info)
-        (prn "relative =")
-        (prn relative)
-        (if (:failed relative-info)
-          (do
-           (display-error view *import-error*
-                          (format *cannot-be-relative* location rules-directory root-lkif-dir))
-           (on-import-theory view path))
-          (let [lkif (if relative
-                       (add-import (get-lkif path)
-                                   path
-                                   location
-                                   (:relative-path relative-info)
-                                   rules-directory)
-                       (add-import (get-lkif path)
-                                   path
-                                   location))]
-            (update-imports view path lkif)
-            (let [importurls (get-imports-locations path)]
-              (display-lkif-property view path importurls))))))))
+        (let [lkif (if (:relative-path relative-info)
+                     (add-import (get-lkif path)
+                                 path
+                                 location
+                                 (:relative-path relative-info)
+                                 rules-directory)
+                     (add-import (get-lkif path)
+                                 path
+                                 location))]
+          (update-imports view path lkif)
+          (let [importurls (get-imports-locations path)]
+            (display-lkif-property view path importurls)))))))
 
 (deftrace on-remove-imports [view path imports]
   (when (and (not (empty? imports)) (ask-confirmation view *imports* *remove-imports*))

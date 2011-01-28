@@ -3,7 +3,8 @@
 
 (ns carneades.engine.utils
   (:use clojure.java.io
-        clojure.contrib.pprint)
+        clojure.pprint
+        clojure.contrib.trace)
   (:require [clojure.contrib.string :as str]))
 
 
@@ -197,9 +198,9 @@
 (defn make-absolute [path relative-to]
   (.getPath (file (str relative-to java.io.File/separator path))))
 
-(defn in-directory? [path dir]
+(deftrace in-directory? [path dir]
   "returns true if path is directly under or below directory dir"
-  (throw (Exception. "NYI")))
+  (.startsWith path dir))
 
 (defn absolute? [pathname]
   (.isAbsolute (file pathname)))
