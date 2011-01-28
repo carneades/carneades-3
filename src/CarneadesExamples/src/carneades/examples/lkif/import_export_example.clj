@@ -9,7 +9,7 @@
         carneades.engine.lkif
         carneades.engine.utils
         carneades.engine.shell
-        carneades.ui.diagram.viewer))
+        carneades.mapcomponent.viewer))
 
 ;; run with "lein run carneades.examples.lkif.import-export-example"
 (defn -main []
@@ -22,4 +22,5 @@
         lkif2 (assoc lkif :ags (cons ag (:ags lkif)))]
     ;; (prn "lkif =")
     ;; (pprint lkif)
+    ;; (view ag)
     (export-lkif lkif "src/carneades/examples/lkif/export.xml")))
