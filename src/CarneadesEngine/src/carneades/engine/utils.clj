@@ -212,3 +212,10 @@
 
 (defn exists? [pathname]
   (.exists (file pathname)))
+
+(defn url? [s]
+  (try
+    (java.net.URL. s)
+    true
+    (catch java.net.MalformedURLException e
+      false)))
