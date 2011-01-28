@@ -415,10 +415,12 @@ public class EditorApplicationView extends javax.swing.JFrame {
         assistantMenu.setMnemonic('a');
         assistantMenu.setText("Assistant");
 
+        findArgumentsAssistantMenuItem.setMnemonic('a');
         findArgumentsAssistantMenuItem.setText("Find Arguments...");
         assistantMenu.add(findArgumentsAssistantMenuItem);
 
-        findGoalAssistantMenuItem.setText("Find Goal...");
+        findGoalAssistantMenuItem.setMnemonic('p');
+        findGoalAssistantMenuItem.setText("Find Positions...");
         assistantMenu.add(findGoalAssistantMenuItem);
 
         formalizeStatementAssistantMenuItem.setMnemonic('s');
