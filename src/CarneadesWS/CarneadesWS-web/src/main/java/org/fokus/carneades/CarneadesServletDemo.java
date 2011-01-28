@@ -19,8 +19,8 @@ import org.fokus.carneades.api.CarneadesMessage;
 import org.fokus.carneades.api.MessageType;
 import org.fokus.carneades.api.Statement;
 import org.fokus.carneades.common.EjbLocator;
-import org.fokus.carneades.questions.Question;
-import org.fokus.carneades.questions.QuestionHelper;
+import org.fokus.carneades.simulation.Question;
+import org.fokus.carneades.simulation.QuestionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

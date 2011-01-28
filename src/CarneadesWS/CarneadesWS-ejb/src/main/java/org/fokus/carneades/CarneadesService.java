@@ -18,6 +18,6 @@ import org.fokus.carneades.api.Statement;
 @Remote
 public interface CarneadesService {
 
-    CarneadesMessage askEngine(Statement query, String kb, List<Statement> answers);
+    CarneadesMessage askEngine(Statement query, String kb, List<String> askables, List<Statement> answers);
 
 }

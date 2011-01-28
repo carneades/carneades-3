@@ -42,13 +42,15 @@ public class GetAnswer extends AFn{
             List goal = (List) arg1;            
             PersistentStructMap state = (PersistentStructMap)arg2;
             log.info("getting predicate of goal");
-            String p = goal.get(0).toString();
-            log.info("checking if predicate is already answered: "+p);
-            if(this.answers.containsKey(p)) {
+            String pred = goal.get(0).toString();
+            log.info("checking if predicate has already been answered: "+pred);
+            if(this.answers.containsKey(pred)) {
                 // already answered
-                log.info("predicate is already answered");
+                List answer = this.answers.get(pred);                
+                log.info("predicate has already been answered: "+(String)RT.var("clojure.core", "print-str").invoke(answer));
                 log.info("replying to engine");
-                Object o = RT.var("carneades.engine.ask","reply").invoke(state, goal, this.answers.get(p));
+                Object o = RT.var("carneades.engine.ask","reply").invoke(state, goal, answer, log);
+                RT.var("clojure.core", "println").invoke(o);
                 return o;
             } else {
                 log.info("predicate was not answered yet; asking user");

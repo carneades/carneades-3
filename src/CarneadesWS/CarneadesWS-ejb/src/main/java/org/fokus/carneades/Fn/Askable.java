@@ -6,6 +6,13 @@
 package org.fokus.carneades.Fn;
 
 import clojure.lang.AFn;
+import clojure.lang.RT;
+import clojure.lang.Symbol;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -13,11 +20,26 @@ import clojure.lang.AFn;
  */
 public class Askable extends AFn{
 
-    // TODO : implement askable
+    private static final Logger log = LoggerFactory.getLogger(Askable.class);
+    private Map<Symbol,Boolean> predicates = new HashMap<Symbol,Boolean>();
+    
+    public Askable(List<String> preds) {
+        for(String p : preds) {
+            Symbol s = Symbol.intern(p);
+            this.predicates.put(s,true);
+        }
+    }
 
     @Override
     public Object invoke(Object arg1) throws Exception {
-        return true;
+        Boolean ask = false;
+        Symbol predicate = Symbol.intern("noValidArgument");
+        if(arg1 instanceof List) {            
+            predicate = (Symbol)RT.first(arg1);            
+            ask = this.predicates.containsKey(predicate);
+        }        
+        log.info("askable? "+(String)RT.var("clojure.core","str").invoke(predicate)+" : "+ask.toString());
+        return ask;
     }
 
 

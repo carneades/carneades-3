@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.net.URLDecoder;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,9 +19,11 @@ import org.fokus.carneades.api.CarneadesMessage;
 import org.fokus.carneades.api.MessageType;
 import org.fokus.carneades.api.Statement;
 import org.fokus.carneades.common.EjbLocator;
-import org.fokus.carneades.questions.*;
-import org.fokus.carneades.CarneadesDatabase;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.fokus.carneades.simulation.Answers;
+import org.fokus.carneades.simulation.Question;
+import org.fokus.carneades.simulation.QuestionHelper;
+import org.fokus.carneades.simulation.Questions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +36,7 @@ public class CarneadesServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(CarneadesServlet.class);
     private HttpSession session;
     // session content keys:
+    // TODO : add kb and query
     private static final String CARNEADES_MANAGER = "CARNEADES_MANAGER";
     private static final String LATEST_QUESTIONS = "LATEST_QUESTIONS";
     
@@ -207,8 +209,12 @@ public class CarneadesServlet extends HttpServlet {
     private List<Question> askEngine(CarneadesService service, Statement query, String kb, List<Statement> answer) throws CarneadesException, CarneadesSolutionException {
         List<Question> qList = new ArrayList<Question>();
         // ask
+        // TODO : get askables from CMS
+        List<String> askables = new ArrayList<String>();
+        askables.add("http://carneades/test/ont#r");
+        askables.add("http://carneades/test/ont#s");
         log.info("calling ask from ejb: " + query.toString());
-        CarneadesMessage msg = service.askEngine(query,kb,answer);
+        CarneadesMessage msg = service.askEngine(query,kb,askables,answer);
         // evaluate answer
         if(msg != null) {
             log.info("call from ejb returned:"+msg.getType().toString());
@@ -220,7 +226,7 @@ public class CarneadesServlet extends HttpServlet {
                 // solution
                 // TODO : implement solution case (maybe throw a CarneadesSolutionException in askEngine)
                 log.info("sending solution to user");
-                throw new CarneadesSolutionException(msg.getMessage().toString());
+                throw new CarneadesSolutionException(msg.getAG());
                 // SolutionToAJAX()
             } else {
                 // error

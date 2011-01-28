@@ -8,8 +8,8 @@ package org.fokus.carneades;
 import java.util.List;
 import java.util.ArrayList;
 import org.fokus.carneades.api.Statement;
-import org.fokus.carneades.questions.Question;
-import org.fokus.carneades.questions.Questions;
+import org.fokus.carneades.simulation.Question;
+import org.fokus.carneades.simulation.Questions;
 /**
  *
  * @author bbr

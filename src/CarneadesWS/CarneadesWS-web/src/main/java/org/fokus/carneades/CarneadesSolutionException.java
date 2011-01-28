@@ -1,22 +1,20 @@
 /*
- * Generel Exception for the Carneades engine
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
  */
 
 package org.fokus.carneades;
 
 /**
  *
- * @author bbr
+ * @author stb
  */
-public class CarneadesSolutionException extends RuntimeException
-{
-  public CarneadesSolutionException()
-  {
-    super();
-  }
+public class CarneadesSolutionException extends Exception{
 
-  public CarneadesSolutionException( String s )
-  {
-    super( s );
-  }
+    public CarneadesSolutionException(String message) {
+        super(message);
+    }
+    
+    
+
 }

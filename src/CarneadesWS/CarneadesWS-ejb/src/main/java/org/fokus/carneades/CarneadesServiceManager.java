@@ -9,6 +9,7 @@ import clojure.lang.Fn;
 import clojure.lang.Keyword;
 import clojure.lang.RT;
 import clojure.lang.Symbol;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -56,14 +57,21 @@ public class CarneadesServiceManager implements CarneadesService{
         }
     }
 
-    public CarneadesMessage askEngine(Statement query, String kb, List<Statement> answers2) {
+    public CarneadesMessage askEngine(Statement query, String kb, List<String> askables, List<Statement> answers2) {
 
         CarneadesMessage cm = null;
 
         log.info("starting engine with kb: "+kb);
-        log.info("query: " + query.toString());
+        log.info("query: " + query.toString());        
 
-        if (answers2 != null) this.answers.addAll(answers2); // saves given answers
+        if (answers2 != null) {
+            log.info("number of new answers: " + Integer.toString(answers2.size()));
+            this.answers.addAll(answers2);            
+        } else {
+            log.info("no new answers");
+        }
+        
+        log.info("number of total answers: " + Integer.toString(this.answers.size()));
 
         try {
             // importing lkif
@@ -73,13 +81,15 @@ public class CarneadesServiceManager implements CarneadesService{
             // constructing arguments
             List argGraphs = (List) lkif.get(Keyword.intern("ags"));
             log.info("creating goal");
+            // TODO : the goal has to be general
             List goal = (List) RT.var("clojure.core", "list").invoke(Symbol.intern("p"), Symbol.intern("?x"));
             log.info("creating lkif generator");
             Fn lkifGen = (Fn) RT.var("carneades.engine.lkif", "generate-arguments-from-lkif").invoke(lkif);
             log.info("creating askable? function");
-            Askable askFn = new Askable();
-            log.info("creating answers");
+            Askable askFn = new Askable(askables);
+            log.info("creating answers", this.answers);
             List<List> cljAnswers = ClojureUtil.getSeqFromStatementList(this.answers);
+            log.info("creating answer function");
             GetAnswer getAnswerFn = new GetAnswer(cljAnswers);
             log.info("creating ask generator");
             Fn askGen = (Fn) RT.var("carneades.engine.ask", "ask-user").invoke(askFn, getAnswerFn);
@@ -88,22 +98,38 @@ public class CarneadesServiceManager implements CarneadesService{
             List solutions;
             if (this.state == null) {
                 log.info("starting engine for the first time");
-                Map ag = (Map) argGraphs.get(0);
+                Map ag; 
+                if(argGraphs == null) {
+                    ag = (Map)RT.var("carneades.argument", "*empty-argument-graph*").invoke();
+                } else {
+                    ag = (Map) argGraphs.get(0);
+                }
                 solutions = (List) RT.var("clojure.core", "doall").invoke(RT.var("carneades.engine.shell", "construct-arguments").invoke(goal, 50, ag, generators));
             } else {
                 log.info("starting engine again");
                 solutions = (List) RT.var("clojure.core", "doall").invoke(RT.var("carneades.engine.shell", "continue-construction").invoke(goal, 50, this.state, generators));
             }
             // solution found
-            log.info("solution found: " + solutions.getClass().getName());
+            int solNr = (Integer)RT.var("clojure.core", "count").invoke(solutions);
+            log.info("solution found: " + Integer.toString(solNr) + " - "+solutions.getClass().getName() );
             log.info("uniting solutions");
-            Map solAG = (Map) RT.var("carneades.engine.shell", "unite-solutions").invoke(solutions);
+            Map solAG = (Map) RT.var("clojure.core","doall").invoke(RT.var("carneades.engine.shell", "unite-solutions").invoke(solutions));
+            log.info("serializing argument graph");
+            StringWriter lkifWriter = new StringWriter();
+            String lkifString = "";
+            // {:ags (solAG)}
+            Map lkifMap = (Map)RT.map(Keyword.intern("ags"),RT.var("clojure.core", "list").invoke(solAG));
+            RT.var("carneades.engine.lkif","lkif-export").invoke(lkifMap, lkifWriter);
+            RT.var("clojure.core", "println").invoke(lkifMap);
+            lkifString = lkifWriter.toString();
+            log.info(lkifString);
             log.info("creating CarneadesMessage");
             cm = new CarneadesMessage();
             cm.setMessage(query);
-            cm.setAG(solAG);
+            cm.setAG(lkifString);
             cm.setType(MessageType.SOLUTION);
         } catch (RuntimeException e) {
+            e.printStackTrace();
             Throwable cause = ExceptionHelper.skipRuntimeExceptions(e);
             if (cause instanceof AskException) {
                 // asking user
@@ -124,6 +150,7 @@ public class CarneadesServiceManager implements CarneadesService{
             handleStandardError(e);
         } finally {
 
+            log.info("sending Carneades Message back");
             return cm;
             
         }
@@ -131,7 +158,7 @@ public class CarneadesServiceManager implements CarneadesService{
     }
     
     private static void handleStandardError(Exception e) {
-        log.error("Error during argumentation construction: " + e.getClass().getName() + " " + e.getCause().getMessage());
+        log.info("Error during argumentation construction: " + e.getClass().getName() + " " + e.getCause().getMessage());
         e.printStackTrace();
     }
 

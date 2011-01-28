@@ -18,16 +18,22 @@
         nil))))
 
 (defn reply
-  [s goal answer]
+  [s goal answer log]
   (let [subs1 (:substitutions s),
         subs2 (unify goal answer subs1)]
+    (. log info (str "checking reply: " (print-str goal) " - " (print-str answer) " - " (print-str subs2)))
+    (. log info (str "checking reply: " (print-str (map type goal)) " - " (print-str (map type answer)) " - " (print-str subs2)))
+    (. log info (str "checking reply: " (print-str (type goal)) " - " (print-str (type answer)) " - " (print-str subs2)))
     (if subs2
-      (response
-        subs2
-        (carneades.engine.argument/argument
-          (gensym 'a)
-          'pro
-          answer
-          nil
-          "claim"))
+      (do
+        (. log info (str "constructing response from reply: " answer))
+        (list 
+          (response
+            subs2
+            (carneades.engine.argument/argument
+              (gensym 'a)
+              :pro
+              answer
+              nil
+              "claim"))))
       nil)))

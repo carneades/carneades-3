@@ -14,18 +14,21 @@ import java.util.Map;
  */
 public class CarneadesMessage implements Serializable{
 
-    private Map AG;
+    private String AG;
     private Statement message;
     private MessageType type;
 
-       public CarneadesMessage() {
+    public CarneadesMessage() {
+        this.AG = null;
+        this.message = null;
+        this.type = MessageType.SOLUTION;
     }
 
-    public Object getAG() {
+    public String getAG() {
         return AG;
     }
 
-    public void setAG(Map State) {
+    public void setAG(String State) {
         this.AG = State;
     }
 

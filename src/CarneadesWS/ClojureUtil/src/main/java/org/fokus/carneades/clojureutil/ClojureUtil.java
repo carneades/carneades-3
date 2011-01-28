@@ -6,7 +6,7 @@
 package org.fokus.carneades.clojureutil;
 
 import clojure.lang.RT;
-import java.util.ArrayList;
+import clojure.lang.Symbol;
 import java.util.List;
 import org.fokus.carneades.api.Statement;
 
@@ -27,17 +27,20 @@ public class ClojureUtil {
     }
 
     public static List getSeqFromStatement(Statement s) throws Exception{
-        List seq = (List)RT.var("clojure.core", "list").invoke(s.getPredicate());
+        Symbol pred = Symbol.intern(s.getPredicate());
+        List seq = (List)RT.var("clojure.core","list").invoke(pred);
         for(String o : s.getArgs()) {
-            seq.add(o);
+            Symbol arg = Symbol.intern(o);
+            seq = (List)RT.var("clojure.core", "concat").invoke(seq, RT.var("clojure.core", "list").invoke(arg));
         }
         return seq;
     }
 
     public static List<List> getSeqFromStatementList(List<Statement> l) throws Exception{
-        List<List> r = new ArrayList<List>();
+        List<List> r = (List)RT.var("clojure.core","list").invoke();
         for(Statement s : l) {
-            r.add(getSeqFromStatement(s));
+            List stmtSeq = getSeqFromStatement(s);
+            r = (List)RT.var("clojure.core", "concat").invoke(r, RT.var("clojure.core", "list").invoke(stmtSeq));
         }
         return r;
     }
