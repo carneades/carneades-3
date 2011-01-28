@@ -20,10 +20,10 @@
 
 (defvar *cycle-error* "This premise can not be added as this would introduce a cycle.")
 
-(defvar *goalwizard-title* "Goal Assistant")
+(defvar *goalwizard-title* "Positions Assistant")
 (defvar *findargumentswizard-title* "Find Arguments")
 (defvar *findargumentswizard-error* "Find Arguments Error")
-(defvar *goalwizard-error* "Goal Assistant Error")
+(defvar *goalwizard-error* "Positions Assistant Error")
 (defvar *no-mainissue* "Please assign a main issue to the graph first.")
 
 (defvar *point-of-view* "Choose a Point Of View")

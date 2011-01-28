@@ -504,6 +504,7 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="findArgumentsAssistantMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" value="97"/>
                 <Property name="text" type="java.lang.String" value="Find Arguments..."/>
               </Properties>
               <AuxValues>
@@ -512,7 +513,8 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="findGoalAssistantMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Find Goal..."/>
+                <Property name="mnemonic" type="int" value="112"/>
+                <Property name="text" type="java.lang.String" value="Find Positions..."/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
