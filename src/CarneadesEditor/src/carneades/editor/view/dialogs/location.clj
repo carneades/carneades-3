@@ -13,13 +13,7 @@
          cancelbutton (.cancelbutton dialog)
          locationtext (.locationText dialog)
          browsebutton (.browseButton dialog)
-         relativebutton (.relativePathsButton dialog)
          location (atom nil)]
-    (add-action-listener relativebutton
-                         (fn [event]
-                           (when-let [_ (deref location)]
-                             (swap! location assoc
-                                    :relative (.isSelected relativebutton)))))
     (add-action-listener cancelbutton
                          (fn [event]
                            (.dispose dialog)
@@ -27,8 +21,7 @@
     (add-action-listener okbutton
                          (fn [event]
                            (.dispose dialog)
-                           (reset! location {:location (.getText locationtext)
-                                             :relative (.isSelected relativebutton)})))
+                           (reset! location {:location (.getText locationtext)})))
     (add-action-listener browsebutton
                          (fn [event]
                            (when-let [path
@@ -37,8 +30,7 @@
                                                         #{"xml" "lkif" "owl"})]
                              (let [path (.getPath path)]
                                (.setText locationtext path)
-                               (reset! location {:location path
-                                                 :relative (.isSelected relativebutton)})))))
+                               (reset! location {:location path})))))
     (.setLocationRelativeTo dialog *frame*)
     (.setVisible dialog true)
     (deref location)))

@@ -47,9 +47,6 @@ public class LocationDialog extends javax.swing.JDialog {
 
         browseButton.setText("Browse...");
 
-        relativePathsButton.setSelected(true);
-        relativePathsButton.setText("Relative to the Rules Directory");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -67,8 +64,7 @@ public class LocationDialog extends javax.swing.JDialog {
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(browseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(cancelbutton, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)))
-                    .addComponent(relativePathsButton))
+                            .addComponent(cancelbutton, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -80,9 +76,7 @@ public class LocationDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(locationText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(browseButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(relativePathsButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelbutton)
                     .addComponent(okbutton))
@@ -115,7 +109,6 @@ public class LocationDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel1;
     public final javax.swing.JTextField locationText = new javax.swing.JTextField();
     public final javax.swing.JButton okbutton = new javax.swing.JButton();
-    public final javax.swing.JCheckBox relativePathsButton = new javax.swing.JCheckBox();
     // End of variables declaration//GEN-END:variables
 
 }
