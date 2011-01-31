@@ -114,60 +114,6 @@
   (fn [& args]
     (or (apply f args) nil)))
 
-;; from
-;; http://bitumenframework.blogspot.com/2010/10/stack-traces-for-clojure-app.html
-
-(defn get-stack-trace
-  ([stack-trace]
-     (map #(let [class-name  (or (.getClassName  %) "")
-                 method-name (or (.getMethodName %) "")
-                 file-name   (or (.getFileName   %) "")
-                 line-number (.getLineNumber %)]
-             [file-name line-number class-name method-name])
-          (into [] stack-trace)))
-  ([]
-     (get-stack-trace (.getStackTrace (Thread/currentThread)))))
-
-
-(defn get-clj-stack-trace
-  ([classname-begin-tokens classname-not-begin-tokens]
-    (let [clj-stacktrace? (fn [[file-name line-number class-name method-name]]
-                            (and (.contains file-name ".clj")
-                              (or (empty? classname-begin-tokens)
-                                (some #(.startsWith class-name %)
-                                  classname-begin-tokens))
-                              (every? #(not (.startsWith class-name %))
-                                classname-not-begin-tokens)))]
-      (filter clj-stacktrace? (get-stack-trace))))
-  ([]
-    (get-clj-stack-trace [] ["clojure."])))
-
-
-(defn print-table
-  [width-vector title-vector many-value-vectors]
-  (assert (= (type width-vector) (type title-vector) (type many-value-vectors)
-            (type [])))
-  (let [col-count (count width-vector)]
-    (assert (every? #(= (count %) col-count) many-value-vectors)))
-  (assert (= (count width-vector) (count title-vector)))
-  (let [fix-width (fn [text width]
-                    (apply str
-                      (take width (apply str text (take width (repeat " "))))))
-        sep-vector (into [] (map #(apply str (repeat % "-")) width-vector))]
-    (doseq [each (into [title-vector sep-vector] many-value-vectors)]
-      (doseq [i (take (count width-vector) (iterate inc 0))]
-        (print (fix-width (each i) (width-vector i)))
-        (print " | "))
-      (println))))
-
-
-(defn dump-stack
-  ([stack-trace-vector]
-    (print-table [20 5 45 10] ["File" "Line#" "Class" "Method"]
-      (into [] stack-trace-vector)))
-  ([]
-    (dump-stack (get-clj-stack-trace))))
-
 (defn split-str [s n]
   "splits string s in strings of length n"
   (loop [[s r] [s s]
@@ -177,18 +123,12 @@
       (let [f (str/take n r)]
         (recur [f (str/drop n r)] (conj sq f))))))
 
+;;; files
+
 (defn same-directory? [lkif-path path]
   (= (.getParent (file lkif-path)) (.getParent (file path))))
 
 (defn make-relative [path relative-to]
-  (printf "make-relative\n")
-  (printf "path = %s, relative-to = %s\n" path relative-to)
-  (printf "result = %s\n"
-          (let [f (file path)
-                f2 (file relative-to)
-                dirsize (count (.getPath f2))
-                dirsize (+ dirsize (count (java.io.File/separator)))]
-            (subs (.getPath f) dirsize)))
   (let [f (file path)
         f2 (file relative-to)
         dirsize (count (.getPath f2))
@@ -198,7 +138,7 @@
 (defn make-absolute [path relative-to]
   (.getPath (file (str relative-to java.io.File/separator path))))
 
-(deftrace in-directory? [path dir]
+(defn in-directory? [path dir]
   "returns true if path is directly under or below directory dir"
   (.startsWith path dir))
 
@@ -220,3 +160,71 @@
     true
     (catch java.net.MalformedURLException e
       false)))
+
+;;; exceptions
+
+(defn first-cause
+  ([exception]
+     (first-cause exception (.getCause exception)))
+  ([exception cause]
+     (if (nil? cause)
+       exception
+       (recur cause (.getCause exception)))))
+
+(defmacro unwrap-exceptions [& body]
+  "catchs any exception and rethrows its first initial cause"
+  `(try
+     ~@body
+     (catch Exception e#
+       (throw (first-cause e#)))))
+
+;; from
+;; http://bitumenframework.blogspot.com/2010/10/stack-traces-for-clojure-app.html
+
+(defn get-stack-trace
+  ([stack-trace]
+     (map #(let [class-name  (or (.getClassName  %) "")
+                 method-name (or (.getMethodName %) "")
+                 file-name   (or (.getFileName   %) "")
+                 line-number (.getLineNumber %)]
+             [file-name line-number class-name method-name])
+          (into [] stack-trace)))
+  ([]
+     (get-stack-trace (.getStackTrace (Thread/currentThread)))))
+
+(defn get-clj-stack-trace
+  ([classname-begin-tokens classname-not-begin-tokens]
+    (let [clj-stacktrace? (fn [[file-name line-number class-name method-name]]
+                            (and (.contains file-name ".clj")
+                              (or (empty? classname-begin-tokens)
+                                (some #(.startsWith class-name %)
+                                  classname-begin-tokens))
+                              (every? #(not (.startsWith class-name %))
+                                classname-not-begin-tokens)))]
+      (filter clj-stacktrace? (get-stack-trace))))
+  ([]
+    (get-clj-stack-trace [] ["clojure."])))
+
+(defn print-table
+  [width-vector title-vector many-value-vectors]
+  (assert (= (type width-vector) (type title-vector) (type many-value-vectors)
+            (type [])))
+  (let [col-count (count width-vector)]
+    (assert (every? #(= (count %) col-count) many-value-vectors)))
+  (assert (= (count width-vector) (count title-vector)))
+  (let [fix-width (fn [text width]
+                    (apply str
+                      (take width (apply str text (take width (repeat " "))))))
+        sep-vector (into [] (map #(apply str (repeat % "-")) width-vector))]
+    (doseq [each (into [title-vector sep-vector] many-value-vectors)]
+      (doseq [i (take (count width-vector) (iterate inc 0))]
+        (print (fix-width (each i) (width-vector i)))
+        (print " | "))
+      (println))))
+
+(defn dump-stack
+  ([stack-trace-vector]
+    (print-table [20 5 45 10] ["File" "Line#" "Class" "Method"]
+      (into [] stack-trace-vector)))
+  ([]
+    (dump-stack (get-clj-stack-trace))))
