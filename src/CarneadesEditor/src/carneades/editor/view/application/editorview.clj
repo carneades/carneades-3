@@ -3,6 +3,8 @@
 
 (ns carneades.editor.view.application.editorview
   (:use (clojure.contrib def swing-utils)
+        clojure.java.io
+        carneades.engine.utils ;; 
         carneades.ui.diagram.graphvizviewer
         (carneades.editor.view.dialogs statement-editor location)
         carneades.editor.view.application.context
@@ -127,12 +129,26 @@
            jc (proxy [JFileChooser] []
                 (approveSelection
                  []
-                 (when-let [selected (proxy-super getSelectedFile)]
-                   (if (.exists selected)
-                     (when (ask-confirmation this-view "Save"
+                 (let [selected (proxy-super getSelectedFile)
+                       pathname (.getPath selected)]
+                   (cond
+                    (nil? (extension pathname))
+                    (let [desc (.getDescription (proxy-super getFileFilter))]
+                      (if-let [suggested-extension (get descriptions desc)]
+                        (do
+                          (prn "suggested extension =")
+                          (prn suggested-extension)
+                          (proxy-super setSelectedFile (file
+                                                        (add-extension pathname suggested-extension))))
+                        (display-error this-view "Save" "File name must have an extension")))
+                    
+                    (.exists selected)
+                    (when (ask-confirmation this-view "Save"
                                              "Overwrite existing file?")
                        (proxy-super approveSelection))
-                     (proxy-super approveSelection)))))]
+                    
+                    :else
+                    (proxy-super approveSelection)))))]
        (doseq [[description extension] descriptions]
          (.addChoosableFileFilter jc (create-file-filter description (set [extension]))))
        (when-let [dir (deref *dialog-current-directory*)]
