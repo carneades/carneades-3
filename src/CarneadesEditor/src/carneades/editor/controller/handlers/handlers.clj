@@ -765,10 +765,17 @@
         ag (get-ag path id)
         stmt (do-on-new-statement view path ag "Conclusion")
         stmt2 (do-on-new-statement view path ag "Premise")
+        stmt3 (do-on-new-statement view path ag "Assumption")
         arg (on-new-argument view path id stmt)
         ag (get-ag path id)]
     (on-change-mainissue view path id stmt)
     (on-add-existing-premise view path id arg stmt2)
+    (on-add-existing-premise view path id arg stmt3)
+    (on-premise-edit-type view path id {:previous-role nil
+                                        :previous-type :carneades.engine.argument/ordinary-premise
+                                        :type :carneades.engine.argument/assumption
+                                        :arg arg
+                                        :atom stmt3})
     (on-refresh view path id)
     (delete-section-history *docmanager* [path :ags id])
     (update-undo-redo-statuses view path id)
