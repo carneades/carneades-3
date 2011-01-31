@@ -68,6 +68,7 @@
 (def engine (make-engine* 100 1 ag1
                 (list (generate-arguments-from-rules rb1 '()) (builtins))))
 
-;;(view (:arguments (first (solutions (engine '(hundeanmeldung ?ha))))))
-(view (:arguments
-       (first (solutions (engine '(hund-muss-neuangemeldet-werden ?h))))))
+(defn -main []
+  ;;(view (:arguments (first (solutions (engine '(hundeanmeldung ?ha))))))
+  (view (:arguments
+         (first (solutions (engine '(hund-muss-neuangemeldet-werden ?h)))))))
