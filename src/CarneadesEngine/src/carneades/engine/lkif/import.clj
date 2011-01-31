@@ -307,47 +307,50 @@
           (printf "resolved = %s relative = %s prepath = %s\n" resolved relative prepath)
           (prn "after resolved")
           (cond
-            (lkif? resolved) (let [i (import-lkif-helper resolved resolve-path (cons url files)),
-                              rb (:rb i),
-                              ags (:ags i),
-                              imp-kbs (if rb
-                                        (assoc (:import-kbs i) resolved rb)
-                                        (:import-kbs i)),
-                              imp-ags (if ags
-                                        (assoc (:import-ags i) resolved ags)
-                                        (:import-ags i))]
-                               {:name resolved
-                                :relative-path relative
-                                :import-tree (:import-tree i)
-                                :import-kbs imp-kbs
-                                :import-ags imp-ags})
-            (owl? resolved) {:name resolved
-                             :relative-path relative
-                             :import-tree nil
-                             :import-kbs (assoc {} resolved (load-ontology
-                                                             resolved prepath))
-                             :import-ags {}})))))
+           (not (exists? resolved))
+           (throw (java.io.FileNotFoundException.
+                   (format "file %s can not be found" resolved)))
+           
+           (lkif? resolved)
+           (let [i (import-lkif-helper resolved resolve-path (cons url files)),
+                 rb (:rb i),
+                 ags (:ags i),
+                 imp-kbs (if rb
+                           (assoc (:import-kbs i) resolved rb)
+                           (:import-kbs i)),
+                 imp-ags (if ags
+                           (assoc (:import-ags i) resolved ags)
+                           (:import-ags i))]
+             {:name resolved
+              :relative-path relative
+              :import-tree (:import-tree i)
+              :import-kbs imp-kbs
+              :import-ags imp-ags})
+           
+           (owl? resolved)
+           {:name resolved
+            :relative-path relative
+            :import-tree nil
+            :import-kbs (assoc {} resolved (load-ontology
+                                            resolved prepath))
+            :import-ags {}})))))
 
 (defn import-imports
   [theory filename files resolve-path]
-  (if theory
-    (let [imports (xml1-> theory :imports),
-          filename-list (if imports (xml-> imports :import) nil)
-          import-list (map (fn [i] (import-import i files filename resolve-path)) filename-list)
-          imp-tree (map (fn [i] (dissoc i :import-kbs :import-ags)) import-list)
-          imp-kbs (apply merge (map :import-kbs import-list))
-          imp-ags (apply merge (map :import-ags import-list))]
-                                        ;(println "imported from:" filename)
-                                        ;(println "imported files:" (count filename-list))
-                                        ;(println "imported list:" import-list)
-                                        ;(println "imported tree:" imp-tree)
-          {:import-tree imp-tree,
-           :import-kbs imp-kbs,
-           :import-ags imp-ags}
-          )
-    {:import-tree nil,
-     :import-kbs {},
-     :import-ags {}}))
+  (unwrap-exceptions ;; because map wraps exceptions into RuntimeExceptions ?!
+    (if theory
+      (let [imports (xml1-> theory :imports),
+            filename-list (if imports (xml-> imports :import) nil)
+            import-list (map (fn [i] (import-import i files filename resolve-path)) filename-list)
+            imp-tree (map (fn [i] (dissoc i :import-kbs :import-ags)) import-list)
+            imp-kbs (apply merge (map :import-kbs import-list))
+            imp-ags (apply merge (map :import-ags import-list))]
+        {:import-tree imp-tree,
+         :import-kbs imp-kbs,
+         :import-ags imp-ags})
+      {:import-tree nil,
+       :import-kbs {},
+       :import-ags {}})))
 
 (defn import-theory
   [theory filename files resolve-path]
@@ -531,7 +534,8 @@
    throws:
      - java.lang.IllegalArgumentException
      - org.xml.sax.SAXException
-     - java.io.IOException"
+     - java.io.IOException
+     - java.io.FileNotFoundException"
   ([pathname]
      (let [pathname (absolute pathname)
            root-lkif-dir (parent pathname)]
