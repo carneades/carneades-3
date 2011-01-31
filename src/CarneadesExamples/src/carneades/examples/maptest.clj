@@ -41,5 +41,6 @@
 ;; (def ld (make-lkif-data '() (rulebase) (list ag1)))
 ;; (lkif-export '() ld "argument-map-tests2.xml")
 
-(jgraphx/view ag1)
-(graphviz/view ag1)
+(defn -main []
+  (jgraphx/view ag1)
+  (graphviz/view ag1))

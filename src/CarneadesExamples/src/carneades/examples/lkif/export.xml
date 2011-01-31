@@ -4,7 +4,7 @@
       <source element="p" uri="http://fokus.lkif.test.de"/>
       <source element="q" uri="http://fokus.lkif.test.de"/>
    </sources>
-   <theory id="theory3783">
+   <theory id="theory4127">
       <imports>
          <import url="lkif2.xml"/>
          <import url="lkif3.xml"/>
@@ -42,37 +42,37 @@
       </rules>
    </theory>
    <argument-graphs>
-      <argument-graph id="Tweety Graph" title="Can Tweety fly?" main-issue="s3788">
+      <argument-graph id="Tweety Graph" title="Can Tweety fly?" main-issue="s4132">
          <statements>
-            <statement id="s3788" value="unknown" assumption="true" standard="PE">
+            <statement id="s4132" value="unknown" assumption="true" standard="PE">
                <s>Tweety can fly.</s>
             </statement>
-            <statement id="s3787" value="true" assumption="false" standard="PE">
+            <statement id="s4131" value="true" assumption="false" standard="PE">
                <s>Tweety is a bird.</s>
             </statement>
-            <statement id="s3786" value="true" assumption="false" standard="PE">
+            <statement id="s4130" value="true" assumption="false" standard="PE">
                <s>Birds normally fly.</s>
             </statement>
-            <statement id="s3785" value="unknown" assumption="true" standard="PE">
+            <statement id="s4129" value="unknown" assumption="true" standard="PE">
                <s>Tweety is an abnormal bird.</s>
             </statement>
-            <statement id="s3784" value="unknown" assumption="true" standard="PE">
+            <statement id="s4128" value="unknown" assumption="true" standard="PE">
                <s>Tweety is a penguin.</s>
             </statement>
          </statements>
          <arguments>
             <argument id="a2" title="" direction="pro" scheme="" weight="0.5">
-               <conclusion statement="s3785"/>
+               <conclusion statement="s4129"/>
                <premises>
-                  <premise polarity="positive" type="ordinary" role="" statement="s3784"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s4128"/>
                </premises>
             </argument>
             <argument id="a1" title="" direction="pro" scheme="" weight="0.5">
-               <conclusion statement="s3788"/>
+               <conclusion statement="s4132"/>
                <premises>
-                  <premise polarity="positive" type="ordinary" role="" statement="s3787"/>
-                  <premise polarity="positive" type="ordinary" role="" statement="s3786"/>
-                  <premise polarity="positive" type="exception" role="" statement="s3785"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s4131"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s4130"/>
+                  <premise polarity="positive" type="exception" role="" statement="s4129"/>
                </premises>
             </argument>
          </arguments>
