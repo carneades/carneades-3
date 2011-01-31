@@ -161,6 +161,14 @@
     (catch java.net.MalformedURLException e
       false)))
 
+(defn extension [pathname]
+  (last (re-find #".*\.(.*)" pathname)))
+
+(defn add-extension [pathname ext]
+  (if (= (last pathname) \.)
+    (str pathname ext)
+    (str pathname "." ext)))
+
 ;;; exceptions
 
 (defn first-cause
