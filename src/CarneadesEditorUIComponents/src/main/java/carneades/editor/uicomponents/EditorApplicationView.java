@@ -187,6 +187,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
         toolBar.add(jSeparator8);
 
         refreshButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view-refresh.png"))); // NOI18N
+        refreshButton.setMnemonic(java.awt.event.KeyEvent.VK_F5);
         refreshButton.setFocusable(false);
         refreshButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         refreshButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -390,6 +391,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
         undoEditMenuItem.setText("Undo");
         editMenu.add(undoEditMenuItem);
 
+        redoEditMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Y, java.awt.event.InputEvent.CTRL_MASK));
         redoEditMenuItem.setMnemonic('r');
         redoEditMenuItem.setText("Redo");
         editMenu.add(redoEditMenuItem);
