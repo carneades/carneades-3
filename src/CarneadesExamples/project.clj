@@ -9,5 +9,4 @@ various argumentation tasks. This are the examples"
                  [org.clojure/clojure-contrib "1.2.0"]
                  [carneades-engine "1.0.0-SNAPSHOT"]
                  [carneades-mapcomponent "1.0.0-SNAPSHOT"]]
-  :dev-dependencies [[swank-clojure "1.3.0-SNAPSHOT"]
-                     [lein-run "1.0.0-SNAPSHOT"]])
+  :dev-dependencies [[swank-clojure "1.3.0-SNAPSHOT"]])

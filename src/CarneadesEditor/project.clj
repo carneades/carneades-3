@@ -9,10 +9,8 @@
                  [carneades-editor-uicomponents "1.0.0-SNAPSHOT"]
                  [carneades-mapcomponent "1.0.0-SNAPSHOT"]
                  [org.clojars.pallix/wizard "0.9.0-SNAPSHOT"]]
-  :dev-dependencies [[swank-clojure "1.2.0"]
-                     [lein-run "1.0.0-SNAPSHOT"]]
-  ;; uncomment the following line to create a self-executing JAR
-  ;; and then invoke "cake uberjar" and pray.
+  :dev-dependencies [[swank-clojure "1.2.0"]]
+  ;; to create a self-executing JAR
+  ;; invoke "cake uberjar" and pray.
   ;; "lein uberjar" does not work because of a bug.
-  ;; :main carneades.editor.core
-  )
+  :main ^{:skip-aot true} carneades.editor.core)
