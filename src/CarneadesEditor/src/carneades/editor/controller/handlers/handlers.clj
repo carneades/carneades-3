@@ -71,7 +71,10 @@
 (deftrace on-open-graph [view path id]
   (prn "on-open-graph")
   (when-let [ag (get-ag path id)]
+    (prn "on-open, ag =")
+    (pprint ag)
     (open-graph view path ag statement-formatted)
+    (prn "graph opened")
     (when-let [mainissue (:main-issue ag)]
       (display-statement view path ag mainissue statement-formatted))))
 
@@ -764,8 +767,11 @@
   (let [id (on-new-graph view path)
         ag (get-ag path id)
         stmt (do-on-new-statement view path ag "Conclusion")
+        ag (get-ag path id)
         stmt2 (do-on-new-statement view path ag "Premise")
+        ag (get-ag path id)
         stmt3 (do-on-new-statement view path ag "Assumption")
+        ag (get-ag path id)
         arg (on-new-argument view path id stmt)
         ag (get-ag path id)]
     (on-change-mainissue view path id stmt)
@@ -779,7 +785,9 @@
     (on-refresh view path id)
     (delete-section-history *docmanager* [path :ags id])
     (update-undo-redo-statuses view path id)
-    (display-statement view path ag stmt statement-formatted)))
+    (prn "ag after template =")
+    (pprint ag)
+    (display-statement view path (get-ag path id) stmt statement-formatted)))
 
 (deftrace on-new-file [view]
   (when-let* [file (File/createTempFile "carneades" nil)
