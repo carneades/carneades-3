@@ -68,8 +68,6 @@
   (let [tabcomponent (JPanel.)
         label (JLabel. title)
         closebutton (create-close-button)]
-    (prn "creating label, title =")
-    (prn title)
     (.setOpaque tabcomponent false)
     (.setFocusable label false)
     (.setFocusable tabcomponent false)
@@ -134,6 +132,5 @@
 
 (defn change-tab-title [component newtitle]
   "change the title of a clean component"
-  (prn "change-tab-title")
   (when-let [label (get (deref *component-to-title*) (:component component))]
     (.setText label newtitle)))

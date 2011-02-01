@@ -135,11 +135,8 @@
                     (nil? (extension pathname))
                     (let [desc (.getDescription (proxy-super getFileFilter))]
                       (if-let [suggested-extension (get descriptions desc)]
-                        (do
-                          (prn "suggested extension =")
-                          (prn suggested-extension)
-                          (proxy-super setSelectedFile (file
-                                                        (add-extension pathname suggested-extension))))
+                        (proxy-super setSelectedFile (file
+                                                      (add-extension pathname suggested-extension)))
                         (display-error this-view "Save" "File name must have an extension")))
                     
                     (.exists selected)
@@ -193,7 +190,6 @@
 
   (export-graph-to-graphviz-svg
    [this ag statement-formatted filename]
-   (prn "export to graphviz svg")
    (try
      (gen-image ag statement-formatted filename)
      (catch java.io.IOException e
@@ -229,10 +225,7 @@
 
   (display-graph-property
    [this path id title mainissue]
-   (prn "display-graph-property")
    (let [properties (get-graph-properties-panel path id title mainissue)]
-     (prn "properties =")
-     (prn properties)
      (show-properties properties)))
 
   (display-about
@@ -323,7 +316,6 @@
 
   (display-statement
    [this path ag stmt stmt-fmt]
-   (prn "display statement")
    (open-graph this path ag stmt-fmt)
    (let [component (get-component path (:id ag))]
      (select-statement component stmt stmt-fmt)))
@@ -383,8 +375,6 @@
 
   (statement-status-changed
    [this path ag stmt]
-   (prn "statement-statuts-changed: stmt =")
-   (prn stmt)
    (when-let [component (get-component path (:id ag))]
      (change-statement-status component ag stmt)))
 

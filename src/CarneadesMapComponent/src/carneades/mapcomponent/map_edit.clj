@@ -68,9 +68,6 @@
                      (trunk full) full))))
 
 (defn- update-stmt-style [userobject oldstyle ag]
-  ;; (prn " * update-stmt-style*")
-  ;; (prn "stmt = " (:stmt userobject))
-  ;; (prn "statement style = " (get-statement-style ag (:stmt userobject)))
   (get-statement-style ag (:stmt userobject)))
 
 (defn- update-argument-style [userobject oldstyle ag]
@@ -257,37 +254,10 @@
                                                               (trunk full) full)
                                       (get-statement-style ag stmt))
               premisescells (map #(find-premise-cell graph (:id arg) %) (:premises arg))]
-          (prn "premise =")
-          (prn premise)
-          (prn "premise cell =")
-          (prn premisescells)
           (insert-edge graph p (PremiseCell. arg premise) stmtcell argcell
                        (get-edge-style premise))
           (change-all-cell-and-styles component ag)
-          (do-layout graph p (get-vertices graph p))
-          ;; (prn "children of arg =")
-          ;; (prn (alength (.getChildCells graph argcell)))
-          ;; (move-cell graph stmtcell x y)
-
-          ;; (let [children (to-array (concat premisescells [argcell stmtcell]))
-          ;;       group (.createGroupCell graph children)
-          ;;       grouped (.groupCells graph group 5 )]
-          ;;   (do-layout graph grouped (get-vertices graph p))
-          ;;   )
-          ;; (do-layout graph argcell (get-vertices graph p))
-          ;; (let [father (mxCell.)]
-          ;;   (doseq [cell premisescells]
-          ;;     (.insert father cell 0))
-          ;;   (.insert father stmtcell 0)
-          ;; ;; (test-layout graph p)
-          ;;  (do-layout graph father (get-vertices graph p))
-          ;;  (.remove model father)
-          ;;  (doseq [cell premisescells]
-          ;;     (.insert p cell 0))
-          ;;   (.insert p stmtcell 0)
-          ;;  )
-          )
-        ))))
+          (do-layout graph p (get-vertices graph p)))))))
 
 (defn delete-argument [graphcomponent ag arg]
   (let [component (:component graphcomponent)
@@ -347,7 +317,6 @@
       (do-layout graph p (get-vertices graph p)))))
 
 (defn replace-graph [graphcomponent ag stmt-fmt]
-  (prn "replace graph")
   (let [component (:component graphcomponent)
         graph (.getGraph component)
         p (.getDefaultParent graph)]

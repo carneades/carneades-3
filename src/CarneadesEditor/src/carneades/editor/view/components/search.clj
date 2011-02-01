@@ -93,8 +93,6 @@
           (recur (dec n)))))
 
 (defn- get-searched-info []
-  (prn "get-searched-info")
-  (prn (deref *search-options*))
   (let [text (.getSelectedItem *searchComboBox*)]
     (if (nil? text)
      nil
@@ -115,8 +113,6 @@
       (.setIndeterminate *searchProgressBar* false))))
 
 (defn- search-button-listener [event]
-  (prn "event")
-  (prn event)
   (Thread/sleep 50)
   (let [was-active (deref *searchactive*)]
     (when-not was-active

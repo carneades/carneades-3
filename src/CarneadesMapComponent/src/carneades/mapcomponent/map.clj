@@ -345,8 +345,6 @@
                (get-conclusion-edge-style arg)))
 
 (defn- add-argument-edge [g p arg premise argid vertices]
-  (prn "premise =")
-  (prn premise)
   (insert-edge g p (PremiseCell. arg premise) (vertices (premise-atom premise))
                (vertices argid) (get-edge-style premise)))
 
@@ -420,7 +418,6 @@
         undo-handler (proxy [mxEventSource$mxIEventListener] []
                        (invoke
                         [sender event]
-                        (prn "undo-handler!")
                         (.undoableEditHappened undomanager
                                                (.getProperty event "edit"))))
         undo-sync-handler (proxy [mxEventSource$mxIEventListener] []
@@ -428,8 +425,6 @@
                              [sender event]
                              ;; Keeps the selection in sync with the command history
                              (let [changes (.getChanges (.getProperty event "edit"))]
-                               (prn "changes = ")
-                               (prn changes)
                               (.setSelectionCells
                                g (.getSelectionCellsForChanges g changes)))))]
     (.. g getModel (addListener mxEvent/UNDO undo-handler))
@@ -549,12 +544,10 @@
                      getDocumentElement)))))
 
 (defn undo [graphcomponent]
-  (prn "map-undo!")
   (.undo (:undomanager graphcomponent))
   (select-current-cell (:component graphcomponent)))
 
 (defn redo [graphcomponent]
-  (prn "map-redo!")
   (.redo (:undomanager graphcomponent))
   (select-current-cell (:component graphcomponent)))
 

@@ -55,7 +55,9 @@
   (proxy [MissingImportListener] []
     (importMissing [event]
       (let [uri (.getImportedOntologyURI event)]
-        (println "!!! could not load ontology " uri "!!!")))))
+        (throw (java.io.FileNotFoundException. (format "no such file %s" (str uri))))
+        ;; (println "!!! could not load ontology " uri "!!!")
+        ))))
 
 (defn load-ontology
   ([path] (load-ontology path nil))
@@ -99,7 +101,6 @@
   (mapcat (fn [class]
             (let [individuals (.getIndividuals class ontology)
                   sid (symbol (.toStringID class))]
-              (prn (bean class))
               (if (not (empty? individuals))
                 (map (fn [individual]
                        (list sid (symbol (.toStringID individual))))
@@ -114,7 +115,7 @@
   ([ontology]
      (seq (.getClassesInSignature ontology)))
   ([ontology iri]
-     (seq (filter #(do (prn "obj =") (prn %) (instance? OWLClass %))
+     (seq (filter #(instance? OWLClass %)
                   (.getEntitiesInSignature ontology iri)))))
 
 (defn root-ontology [reasoner]
@@ -166,6 +167,7 @@
   (x-properties-seq ontology individual data-properties))
 
 (defn parse-class-expression [ontology s]
+  "returns an Expression from the Manchester query"
   (try
     (let [data-factory (.. ontology getOWLOntologyManager getOWLDataFactory)
           manager (.getOWLOntologyManager ontology)
@@ -186,18 +188,12 @@
   "returns a list of (property indiv val) "
   (let [prop (shorten property)
         ontology (root-ontology reasoner)]
-    (prn "prop =")
-    (prn prop)
     (if-let [ex (parse-class-expression ontology (format "(%s SOME Thing)" prop))]
      (let [individuals (into #{} (.getFlattened (.getInstances reasoner ex true)))]
-       (prn "ex =")
-       (prn ex)
        (mapcat (fn [individual]
                  ;; TODO extract the good property with the OWL API
                  (let [object-properties (object-properties-seq ontology individual)
                        data-properties (data-properties-seq ontology individual)]
-                   (prn "obj props =")
-                   (prn object-properties)
                    (concat (filter #(= (first %) property) object-properties)
                            (filter #(= (first %) property) data-properties))))
         individuals))

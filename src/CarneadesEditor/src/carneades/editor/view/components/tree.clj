@@ -117,9 +117,6 @@
     (zip/replace loc newnode)))
 
 (defn add-ag [path id title]
-  (prn "add-ag")
-  (prn "path =")
-  (prn path)
   (with-tree *lkifsTree*
     (let [model (.getModel *lkifsTree*)]
       ;; find the parent to insert the new child:
@@ -201,8 +198,6 @@
   (change-object f #(lkifinfo-pred path %)))
 
 (defn set-lkif-dirty [path isdirty]
-  (prn "setting path dirty, path =")
-  (prn path)
   (letfn [(update
            [userobject]
            (assoc userobject :dirty isdirty))]

@@ -38,7 +38,6 @@
 (defvar- *abduction-future* (atom nil))
 
 (defn on-abduction-panel-validation [settings view path id]
-  (prn "on-abduction-panel-validation")
   (let [state (deref *abduction-state*)]
    (cond (or (= state :running) (= state :stopping))
          *searching-positions*
@@ -86,8 +85,6 @@
            (display-position view nil 0 0 nil)
            (set-abduction-busy view false)))
         (do
-          (prn "first position =")
-          (pprint position)
           (reset! *positions* {:positions positions :index 0 :npos npos
                                :posnotminimized positions})
           (do-swing-and-wait
@@ -100,13 +97,10 @@
    (reset! *abduction-state* :stopping)
    (future-cancel abduction-future)
    (when (future-cancelled? abduction-future)
-     (prn "future cancelled with success")
      (reset! *abduction-state* :stopped))))
 
 (defn on-abduction-panel [settings view path id]
   (locking *abduction-state*
-   (prn "on-abduction-panel")
-   (prn settings)
    (reset-position view)
    (letfn [(start-abduction
             []
@@ -203,10 +197,5 @@
     (display-position view (first positions) 0 npos statement-formatted)))
 
 (defn on-cancel-goal-wizard [settings view path id]
-  (prn "on cancel")
   (try-stop-abduction)
   true)
-
-;; (defn goal-wizard-selector [view path id step settings abduction-wizard]
-;;   (prn "goal-wizard-selector")
-;;   abduction-wizard)

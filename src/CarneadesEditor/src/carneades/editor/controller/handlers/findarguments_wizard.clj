@@ -29,9 +29,6 @@
 (defvar- *search-future* (atom nil))
 
 (defn on-searcharguments-panel-validation [settings view path id]
-  (prn "on-searcharguments-panel-validation")
-  (prn "settings =")
-  (prn settings)
   (let [state (deref *search-state*)]
    (cond (or (= state :running) (= state :stopping))
          *searching-arguments*
@@ -40,10 +37,6 @@
 
 (defn- run-search [settings view path id]
   (when-let [ag (get-ag path id)]
-    (prn "searching argument in the graph =")
-    (prn (:title ag))
-    (prn "goal = ")
-    (prn (deref *goal*))
     (do-swing-and-wait
      (set-argumentsearch-busy view true))
     (letfn [(arguments-found?
@@ -80,11 +73,9 @@
     (reset! *search-state* :stopping)
     (future-cancel search-future)
     (when (future-cancelled? search-future)
-      (prn "future cancelled with success")
       (reset! *search-state* :stopped))))
 
 (defn on-searcharguments-panel [settings view path id]
-  (prn "on-searcharguments-panel")
   (letfn [(start-search
             []
             (reset! *search-state* :running)
@@ -113,9 +104,6 @@
          :stopping (wait-then-start-search))))
 
 (defn on-post-findarguments-wizard [view path id settings]
-  (prn "on-post-findarguments-wizard")
-  (prn "settings")
-  (prn settings)
   (when settings
     (when-let [ag (deref *newag*)]
       (do-ag-update view [path :ags (:id ag)] ag)
