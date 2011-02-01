@@ -117,7 +117,7 @@
           (if (= name (.getName info))
             (UIManager/setLookAndFeel (.getClassName info))
             (recur (rest infos))))))
-    (catch Exception e (prn "Exception") (prn e))))
+    (catch Exception e nil)))
 
 (defn enable-items [ & items]
   (doseq [item items]

@@ -35,14 +35,13 @@
           
           (extract-meta-data
            [fileproperties property]
-           (prn fileproperties)
            (let [[k v] property]
              {k {:value v
                  :name (fileproperties (str k ".name"))
                  :type (str-type (fileproperties (str k ".type")))}}))]
     (let [fileproperties (try (carneades.config.reader/read-properties
                                *properties-path*)
-                              (catch java.io.FileNotFoundException e (prn e) nil))
+                              (catch java.io.FileNotFoundException e nil))
           properties (remove-meta-data fileproperties)
           properties (apply merge
                             (map #(extract-meta-data fileproperties %) properties))]
@@ -59,8 +58,6 @@
                              (str k ".name") name
                              (str k ".type") (type-str type))))
                        {} properties)]
-     (prn "props =")
-     (prn props)
      (carneades.config.reader/save-properties props *properties-path*))))
 
 (defvar *properties* (atom (load-properties)))

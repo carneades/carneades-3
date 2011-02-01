@@ -10,8 +10,6 @@
 (defn- dissect [lkifcontent]
   "takes the content of an LKIF representation and returns a sequence of [keys sectioncontent]
    suitable for the docmanager. Keys is a vector"
-  (prn "dissect")
-  ;; (pprint lkifcontent)
   (let [sources (:sources lkifcontent)
         rb (:rb lkifcontent)
         ags (:ags lkifcontent)
@@ -29,7 +27,6 @@
      (mark-section-saved docmanager keys))))
 
 (defn extract-lkif-from-docmanager [lkifpath docmanager]
-  (prn "get all sections keys =")
   (let [rb (get-section-content docmanager [lkifpath :rb])
         sources (get-section-first-content docmanager [lkifpath :sources])
         agids (get-all-sectionskeys docmanager [lkifpath :ags])

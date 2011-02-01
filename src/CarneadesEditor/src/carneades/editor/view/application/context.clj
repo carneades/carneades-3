@@ -68,9 +68,6 @@
   (deref *current-ag*))
 
 (defn set-ag-dirty [path id isdirty]
-  (prn "set-ag-dirty")
-  (prn "isdirty =")
-  (prn isdirty)
   (if isdirty
     (swap! *dirty-ags* conj [path id])
     (swap! *dirty-ags* disj [path id]))
@@ -146,7 +143,6 @@
   (apply enable-items *lkif-items*))
 
 (defn set-current-lkif-context-empty []
-  (prn "set-current-lkif-context-empty")
   (reset! *current-lkif* nil)
   (when-not (deref *current-ag*)
     (apply disable-items *lkif-items*)))

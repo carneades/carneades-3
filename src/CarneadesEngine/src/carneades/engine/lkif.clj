@@ -35,16 +35,6 @@
           (:import-tree i))
         (some (fn [i2] (get-imported-ont i2 imp-kbs rb-name)) (map :import-tree imp-tree))))))
 
-;; (defn import-lkif-relative [root-lkif-path relative-to]
-;;   (prn "import-lkif-relative")
-;;   (prn "root-lkif-path =")
-;;   (prn root-lkif-path)
-;;   (prn "relative-to =")
-;;   (prn relative-to)
-;;   (lkif-import root-lkif-path ()
-;;                (fn [pathname current-lkif]
-;;                  (resolve-path pathname current-lkif root-lkif-path relative-to true))))
-
 (defn add-import-helper
   ([lkif i-path relative-path resolve-path]
      (if (carneades.engine.lkif.import/lkif? i-path)

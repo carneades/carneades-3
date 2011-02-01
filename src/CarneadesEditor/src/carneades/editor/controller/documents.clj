@@ -35,7 +35,6 @@
   (set-dirty view path id isdirty))
 
 (defn update-undo-redo-statuses [view path id]
-  (prn "update-undo-redo-statuses")
   (set-can-undo view path id (can-undo-section? *docmanager* [path :ags id]))
   (set-can-redo view path id (can-redo-section? *docmanager* [path :ags id])))
 
@@ -59,8 +58,6 @@
 ;;   (map first (get-section-content *docmanager* [lkifpath :import-kbs])))
 
 (defn get-imports-locations [lkifpath]
-  (prn "section content =")
-  (prn (get-section-content *docmanager* [lkifpath :import-tree]))
   (map (fn [{:keys [name relative-path]}]
          (or relative-path name))
        (get-section-content *docmanager* [lkifpath :import-tree])))
@@ -94,15 +91,10 @@
       (update-dirty-state view path id false)))
   (set-lkif-dirty view path false))
 
-(deftrace lkif-dirty? [path]
+(defn lkif-dirty? [path]
   (or (some #(section-dirty? *docmanager* [path %]) *non-ag-sections*)
       (some #(section-dirty? *docmanager* [path :ags %]) (get-ags-id path))))
 
-;; (defn get-unsaved-lkifs []
-;;   (keep (fn [path]
-;;           (when-not (empty? (get-unsaved-graphs path))
-;;             path))
-;;         (get-allpaths)))
 (defn get-unsaved-lkifs []
   (filter lkif-dirty? (get-allpaths)))
 
@@ -181,12 +173,6 @@
               index (get paths path)
               paths (dissoc paths path)
               idx (disj idx index)]
-    (prn "remove-newlkif, path =")
-    (prn path)
-    (prn "idx =")
-    (prn idx)
-    (prn "index =")
-    (prn index)
     (update-section *docmanager* [:newlkif-indexes] idx)
     (update-section *docmanager* [:newlkif-paths] paths)))
 
@@ -203,8 +189,6 @@
     (update-dirty-state view path (:id ag) true)))
 
 (defn update-imports [view path lkif]
-  (prn "non-ag-sections = ")
-  (prn *non-ag-sections*)
   (doseq [k *non-ag-sections*]
     (update-section *docmanager* [path k] (get lkif k))
     (delete-section-history *docmanager* [path k]))
