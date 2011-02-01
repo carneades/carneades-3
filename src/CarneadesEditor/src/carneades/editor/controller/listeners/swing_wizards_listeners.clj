@@ -136,44 +136,44 @@
 (defn formalizestatement-assistantmenuitem-listener [event view]
   (let [[path id] (current-graph view)
         statement (get-selected-statement view path id)]
-    (when-let* [state (atom {:view view
-                             :path path
-                             :id id
-                             :statement statement})
-                listeners {:form-listener nil
-                           :previous-suggestion-listener
-                           (state-listener-wrapper on-previous-suggestion-listener state)
-                           :next-suggestion-listener
-                           (state-listener-wrapper on-next-suggestion-listener state)
-                           :use-suggestion-listener
-                           (state-listener-wrapper on-use-suggestion-listener state)}
-                [statement-panel formular]
-                (get-statement-panel view (statement-formatted statement) listeners)
-                _ (swap! state assoc :formular formular)
-                _ (state-call on-pre-formalizestatement-wizard state)
-                entitiespanel (get-entitiespanel view)
-                wizard (create-wizard view *formalizestatement-title*
-                                      [{:panel entitiespanel
-                                        :desc *entities-panel-desc*
-                                        :listener (state-wrapper on-entities-panel state)
-                                        :validator entities-panel-validator
-                                        }
-                                       {:panel statement-panel
-                                        :desc *statement-panel-desc*
-                                        :listener (state-wrapper on-statement-panel state)
-                                        :validator statement-panel-validator
-                                        }]
-                                      (constantly true)
-                                      [])
-                listener-wrapper (fn [event]
-                                   (swap! state assoc
-                                          :classes-button-selected
-                                          (classes-button-selected? view)
-                                          :properties-button-selected
-                                          (properties-button-selected? view)
-                                          :filter-text
-                                          (get-entities-filter-text view))
-                                   (state-call on-listener state))]
+    (m-let [state (atom {:view view
+                         :path path
+                         :id id
+                         :statement statement})
+            listeners {:form-listener nil
+                       :previous-suggestion-listener
+                       (state-listener-wrapper on-previous-suggestion-listener state)
+                       :next-suggestion-listener
+                       (state-listener-wrapper on-next-suggestion-listener state)
+                       :use-suggestion-listener
+                       (state-listener-wrapper on-use-suggestion-listener state)}
+            [statement-panel formular]
+            (get-statement-panel view (statement-formatted statement) listeners)
+            _ (swap! state assoc :formular formular)
+            _ (state-call on-pre-formalizestatement-wizard state)
+            entitiespanel (get-entitiespanel view)
+            wizard (create-wizard view *formalizestatement-title*
+                                  [{:panel entitiespanel
+                                    :desc *entities-panel-desc*
+                                    :listener (state-wrapper on-entities-panel state)
+                                    :validator entities-panel-validator
+                                    }
+                                   {:panel statement-panel
+                                    :desc *statement-panel-desc*
+                                    :listener (state-wrapper on-statement-panel state)
+                                    :validator statement-panel-validator
+                                    }]
+                                  (constantly true)
+                                  [])
+            listener-wrapper (fn [event]
+                               (swap! state assoc
+                                      :classes-button-selected
+                                      (classes-button-selected? view)
+                                      :properties-button-selected
+                                      (properties-button-selected? view)
+                                      :filter-text
+                                      (get-entities-filter-text view))
+                               (state-call on-listener state))]
       (set-classes-button-listener view listener-wrapper [])
       (set-properties-button-listener view listener-wrapper [])
       (set-filterentities-text-listener view listener-wrapper [])
