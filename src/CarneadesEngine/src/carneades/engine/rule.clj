@@ -96,9 +96,7 @@ the statement of a condition"
                              'assuming stmt
                              'applies (nth s 2)
                              s)))
-    (do
-      (println "predicate - no seq! :" s)
-      s)))
+    s))
 
 (defstruct- rule-struct
   :id ;; symbol

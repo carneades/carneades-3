@@ -42,7 +42,8 @@
     (symbol? t) [:c (str t)],
     (and (seq? t) (functor? (first t))) [:expr {:functor (first t)} (map text_term->sxml (rest t))],
     (seq? t) [:s {:pred (first t)} (map text_term->sxml (rest t))],
-    true (println "no valid text/term" t)))
+    :else nil;; (println "no valid text/term" t)
+    ))
 
 
 (defn wff->sxml
@@ -66,7 +67,8 @@
                                 (concat [(first sxml) {:assumable true}] (next sxml)))),
                   'unless [:not {:exception true} (wff->sxml (second wff))],
                   [:s {:pred (first wff)} (map text_term->sxml (rest wff))]),
-    true (println "no valid wff" wff)))
+    :else nil;; (println "no valid wff" wff)
+    ))
 
 (defn make-lkif-statement
   [s]
@@ -117,7 +119,8 @@
     (seq? s) (if (assumption-premise? s ag)
                 [:s {:pred (statement-predicate s), :assumable true} (map text_term->sxml (rest s))]
                 [:s {:pred (statement-predicate s)} (map text_term->sxml (rest s))]),
-    true (println "no valid atom" s)))
+    :else nil;; (println "no valid atom" s)
+    ))
 
 (defn statement->sxml
   [s st-map ag]
@@ -189,7 +192,8 @@
   (condp = (count domain)
     2 [:class {:pred (first domain)} [:v (.substring (str (second domain)) 1)]],
     3 [:property {:pred (first domain)} (text_term->sxml (second domain)) [:v (.substring (str (nth domain 2)) 1)]],
-    (println "no valid domain" domain)))
+    ;; (println "no valid domain" domain)
+    ))
 
 (defn domains->sxml
   [domains]

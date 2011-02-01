@@ -56,7 +56,6 @@
         (on-post-goalwizard view path id settings)))))
 
 (defn findarguments-assistantmenuitem-listener [event view]
-  (prn "findarguments-assistantmenuitem-listener")
   (when-let [[path id] (current-graph view)]
     (when (on-pre-findarguments-wizard view path id
                                        (get-selected-statement view path id))
@@ -87,7 +86,6 @@
     (state-call f state)))
 
 (defn instantiatescheme-assistantmenuitem-listener [event view]
-  (prn "instantiatescheme-assistantmenuitem-listener")
   (let [[path id] (current-graph view)
         conclusion (get-selected-statement view path id)
         state (atom (create-instantiatescheme-state view path id conclusion))]
@@ -142,8 +140,7 @@
                              :path path
                              :id id
                              :statement statement})
-                listeners {:form-listener
-                           (state-listener-wrapper on-form-listener state)
+                listeners {:form-listener nil
                            :previous-suggestion-listener
                            (state-listener-wrapper on-previous-suggestion-listener state)
                            :next-suggestion-listener

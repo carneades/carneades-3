@@ -279,23 +279,12 @@
 
 (defn import-import
   [i files path resolve-path]
-  (prn "import-import")
     (let [url (attr i :url)]
-      ;(println "i:" i)
-      ;(println "uri:" url)
-      (prn "url =")
-      (prn url)
-      (prn "files =")
-      (prn files)
-      (prn "path =")
-      (prn path)
       (if (some #{url} files)
-        (do
-          (prn "url in files")
-          {:name url,
-           :import-tree nil,
-           :import-kbs {},
-           :import-ags {}})
+        {:name url,
+         :import-tree nil,
+         :import-kbs {},
+         :import-ags {}}
         (let [is-url (url? url)
               [resolved relative] (if resolve-path
                                     (resolve-path url path)
@@ -303,9 +292,6 @@
               prepath (if is-url
                          nil
                          (.getParent (file resolved)))]
-          ;(println "uri:" url)
-          (printf "resolved = %s relative = %s prepath = %s\n" resolved relative prepath)
-          (prn "after resolved")
           (cond
            (not (exists? resolved))
            (throw (java.io.FileNotFoundException.

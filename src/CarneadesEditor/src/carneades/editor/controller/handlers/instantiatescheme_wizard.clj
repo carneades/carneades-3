@@ -33,17 +33,7 @@
 
 (defn- get-unifiable-rules [rules conclusion]
   (if conclusion
-    (filter #(do
-               ;; TODO: multiple conclusion?
-               ;; (printf "unify %s and %s => %s\n" (first (:head %)) conclusion
-               ;;         (unify (first (:head %)) conclusion))
-               ;; (prn "rule =")
-               ;; (prn %)
-               ;; (prn "fhead =")
-               ;; (prn (first (:head %)))
-               ;; (prn "conclusion =")
-               ;; (prn conclusion)
-               (unify (first (:head %)) conclusion)) rules)
+    (filter #(unify (first (:head %)) conclusion) rules)
     rules))
 
 (defn- filter-schemes [rules filter-text conclusion conclusionmatches]
@@ -57,9 +47,6 @@
         (filter #(.contains (str/lower-case %) filter-text) names)))))
 
 (defn on-schemes-panel [state]
-  (prn "on-schemes-panel")
-  (prn "state =")
-  (prn state)
   (let [{:keys [view path conclusion rules conclusion-matches filter-text]} state
         names (filter-schemes rules filter-text conclusion conclusion-matches)]
     (display-schemes view names)
@@ -100,7 +87,6 @@
           nil))))
 
 (defn on-filter-schemes [state]
-  (prn "on-filter-schemes")
   (let [{:keys [view path id filter-text conclusion conclusionmatches rules]} state]
     (let [text (str/lower-case (str/trim filter-text))
           names (filter-schemes rules filter-text conclusion
@@ -114,8 +100,6 @@
       *select-a-scheme*)))
 
 (defn on-conclusionmatches [state]
-  (prn "on-conclusionmatches")
-  (prn state)
   (let [{:keys [view path conclusion conclusion-matches filter-text rules]} state
         names (filter-schemes rules filter-text
                               conclusion conclusion-matches)]
@@ -126,8 +110,6 @@
   (first (filter #(= (str (:id %)) scheme) rules)))
 
 (defn on-clauses-panel [state]
-  (prn "on-clauses-panel")
-  (prn state)
   (let [{:keys [settings view path conclusion conclusion-matches rules]} state]
     (let [rule (get-rule (get settings "scheme") rules) 
           clauses (:body rule)
@@ -145,9 +127,6 @@
         :clauses clauses))))
 
 (defn on-previous-clause-button-listener [state]
-  (prn "on-previous-clause-button-listener")
-  (prn "state =")
-  (prn state)
   (let [{:keys [view clauses]} state
         {:keys [clauses index nclauses]} clauses]
     (when (pos? index)
@@ -171,7 +150,6 @@
   (str clause-number "-" (gensym literal-nb)))
 
 (defn form-listener [state]
-  (prn "form-listener")
   (let [{:keys [view formulars current-substitution
                 formid val value]} state
         form (get formulars formid)
@@ -179,13 +157,6 @@
         current-substitution (if (nil? value)
                                (dissoc current-substitution val)
                                (assoc current-substitution val value))]
-    (printf "%s -> %s\n" val value)
-    (prn "value =")
-    (prn value)
-    (prn "")
-    ;; (doseq [form (vals formulars)]
-    ;;   (when (not (nil? value))
-    ;;    (fillin-formular view form [[val (stmt-str value)]])))
     (assoc state :current-substitution current-substitution)))
 
 (defn previous-suggestion [state]
@@ -203,9 +174,6 @@
   (let [{:keys [view formid formulars suggestions]} state]
    (when-let* [form (get formulars formid)
                {:keys [current-idx values size]} suggestions]
-     (prn "next suggestion")
-     (prn "suggestions =")
-     (prn suggestions)
      (when (not= current-idx (dec size))
        (let [idx (inc current-idx)
              current (nth values idx)
@@ -214,7 +182,6 @@
          (assoc state :suggestions suggestions))))))
 
 (defn use-suggestion [state]
-  (prn "use suggestion")
   (when-let* [{:keys [view formid formulars suggestions vars]} state
               form (get formulars formid)
               {:keys [current-idx values]} suggestions
@@ -222,15 +189,11 @@
               values (filter (complement variable?) (term-args current))
               formatted-values (map term-str values)
               var-values (partition 2 (interleave vars formatted-values))]
-    (prn "var-values =")
-    (prn var-values)
-    (prn (apply hash-map (interleave vars values)))
     (fillin-formular view form var-values)
     (update-in state [:current-substitution] merge
                (apply hash-map (interleave vars values)))))
 
 (defn get-literal-formular [state-atom view clause-number literal literal-nb]
-  (prn "get-literal-formular")
   (let [formid (gen-form-id clause-number literal-nb)
         formulars (:formulars (deref state-atom)) ]
     (if-let [panel (get formulars formid)]
@@ -262,14 +225,8 @@
                                              (state-call next-suggestion state-atom))
                                            :use-suggestion-listener
                                            (fn [formid]
-                                             (prn "before use-suggestion")
-                                             (prn "state =")
-                                             (pprint (deref state-atom))
                                              (swap! state-atom assoc :formid formid :vars vars)
-                                             (state-call use-suggestion state-atom)
-                                             (prn "after use-suggestion")
-                                             (prn "state =")
-                                             (pprint (deref state-atom)))}
+                                             (state-call use-suggestion state-atom))}
                                           [])
             formulars (assoc formulars formid form)]
         (swap! state-atom assoc :formulars formulars)
@@ -279,10 +236,6 @@
   (format *complete-form-n* idx))
 
 (defn literal-validator [settings current-substitution literal idx]
-  (prn "literal-validator")
-  (prn "validator")
-  (prn "settings =")
-  (prn settings)
   (let [variables (filter variable? literal)
         formvariables (keep (fn [var]
                               (let [name (str var "-")
@@ -295,11 +248,6 @@
                            (keep #(get settings (str % "-")) variables))
         ;; validator is called before our listener so we need to merge the values
         sub (merge current-substitution (apply hash-map (apply concat formvariables)))]
-    (printf "current-sub = %s\n" sub)
-    (prn "variables =")
-    (prn variables)
-    (prn "invalid vars =")
-    (prn invalid-vars)
     (cond invalid-vars
           *invalid-content*
 
@@ -309,21 +257,11 @@
           :else *fillin-form*)))
 
 (defn unifiable-statements [ag literal current-subs]
-  (prn "unifiable-statements")
-  (prn "literal =")
-  (prn literal)
   (let [stmts (map node-statement (get-nodes ag))
         suggestions (filter #(unify literal %) stmts)]
-    (prn "suggestions =")
-    (pprint suggestions)
-    
-    suggestions
-    ))
+    suggestions))
 
 (defn on-literal-panel [state]
-  (prn "on-literal-panel")
-  (prn "STATE =")
-  (prn state)
   (let [{:keys [view path id form literal settings current-substitution reasoners]} state
         ag (get-ag path id)
         var-values (map (fn [[var values]] [var (term-str values)])
@@ -333,8 +271,6 @@
                        (unifiable-statements ag literal current-substitution)
                        (possible-individuals-statements literal reasoners))
           size (count suggestions)]
-      (prn "suggestions =")
-      (prn suggestions)
       (if (empty? suggestions)
         (display-no-suggestion view form)
         (display-suggestion view form (statement-formatted (first suggestions)) 1 size))
@@ -343,10 +279,7 @@
         (assoc state :suggestions {:current-idx 0 :values suggestions :size size})))))
 
 (defn get-literals-wizard [state-atom view path id clause-number]
-  (prn "get-literals-wizard")
   (let [{:keys [literal-wizards clauses]} (deref state-atom)]
-    (prn "literal-wizards =")
-    (pprint literal-wizards)
     (if-let [wizard (get literal-wizards clause-number)]
       wizard
       (when-let* [{:keys [clauses index nclauses]} clauses
@@ -373,11 +306,7 @@
                                                      :form form
                                                      :literal literal
                                                      :settings settings)
-                                              (state-call on-literal-panel state-atom)
-                                              (prn "after on-literal-panel")
-                                              (prn "(:suggestions state =")
-                                              (prn (:suggestions (deref state-atom))))
-                                            }))
+                                              (state-call on-literal-panel state-atom))}))
                                        forms)
                           (constantly true)
                           [])
@@ -395,8 +324,6 @@
                               (get-literals-wizard
                                state-atom view path id
                                (Integer/parseInt clause-number))]
-                          (prn "wizard =")
-                          (prn wizard)
                           wizard)))
       
        nil)))

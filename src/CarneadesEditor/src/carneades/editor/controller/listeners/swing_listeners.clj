@@ -56,7 +56,6 @@
       nil)))
 
 (defn close-file-listener [event view]
-  (prn "close file listener")
   (when-let [info (get-selected-object-in-tree view)]
     (condp instance? info
       LkifFileInfo (on-close-file view (:path info))
@@ -64,19 +63,16 @@
       nil)))
 
 (defn close-button-listener [event view]
-  (prn "close-button-listener")
   (let [[path id] (get-graphinfo-being-closed view event)]
     (on-close-graph view path id)))
 
 (defn open-graph-listener [event view]
-  (prn "open-graph-listener")
   (when-let [info (get-selected-object-in-tree view)]
     (condp instance? info
       GraphInfo (on-open-graph view (:path (:lkifinfo info)) (:id info))
       nil)))
 
 (defn close-graph-listener [event view]
-  (prn "close-graph-listener")
   (when-let [info (get-selected-object-in-tree view)]
     (condp instance? info
       GraphInfo (on-close-graph view (:path (:lkifinfo info)) (:id info))
@@ -123,7 +119,6 @@
     (on-edit-statement view path id info false)))
 
 (defn statement-status-edit-listener [event view]
-  (prn "statement-status-edit-listener")
   (when (.isFocusOwner (.getSource event))
     ;; comboBox fires twice the action event...
     (let [info (get-statement-being-edited-info view)

@@ -74,8 +74,6 @@
   *statementProperties*)
 
 (defn statement-being-edited-info []
-  (prn "selected proofstandard =")
-  (prn (.getSelectedItem *statementProofstandardComboBox*))
   (merge {:content (.getText *statementTextArea*)
           :status (*txt-to-status* (.getSelectedItem *statementStatusComboBox*))
           :proofstandard (*txt-to-proofstandard* (.getSelectedItem *statementProofstandardComboBox*))}

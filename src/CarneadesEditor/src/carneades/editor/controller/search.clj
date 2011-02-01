@@ -21,7 +21,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn- do-one-search-stmt [state view]
-  (prn "do one search!")
   (let [{:keys [results path id]} state]
     (loop [res results]
       (let [stmt (first res)]
@@ -34,7 +33,6 @@
           (recur (rest res)))))))
 
 (defn- do-one-search-arg [state view]
-  (prn "do one search arg")
   (let [{:keys [results path id]} state]
     (loop [res results]
       (let [arg (first res)]
@@ -44,7 +42,6 @@
           (recur (rest res)))))))
 
 (defn- do-one-search-all [state view]
-  (prn "do-one-search-all")
   (let [{:keys [results path id]} state]
     (loop [res results]
       (let [[type obj] (first res)]
@@ -60,15 +57,12 @@
 
 (defn- wait-for-futures []
   (doseq [future (deref *running-futures*)]
-    (prn "waiting for one future...")
     (deref future)))
 
 (defn- create-search-future [view path ag id search-for-statements
                              search-for-arguments text]
-  (prn "create-search-future!")
   (cond (and search-for-statements search-for-arguments)
         (let [res (search-all ag statement-formatted text {})]
-          (prn "after res")
           (future (do-one-search-all
                    {:results
                     res
@@ -80,7 +74,6 @@
         (let [res (search-statements ag
                                      statement-formatted
                                      text {})]
-          (prn "after res")
           (future (do-one-search-stmt
                    {:results
                     res
@@ -90,7 +83,6 @@
 
         search-for-arguments
         (let [res (search-arguments ag text {})]
-          (prn "after res")(prn "after res")
           (future (do-one-search-arg
                    {:results
                     res
@@ -103,16 +95,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn do-search [view path id text options]
-  (prn "do-search")
   (let [{:keys [search-in search-for-statements search-for-arguments]} options]
-    (prn "options =")
-    (prn options)
-    (prn "text =")
-    (prn text)
     (when (and (not (empty? text))
                (or (and path (= search-in :current-graph))
                    (= search-in :all-lkif-files)))
-      (prn "Search begins")
       (wait-for-futures)
       (let [path-to-id (if (= search-in :all-lkif-files)
                          (mapcat (fn [path]
@@ -130,17 +116,12 @@
               (doall
                (map (fn [[path id]]
                        (let [ag (get-ag path id)]
-                         (prn "ag not nil")
-                         (prn (not (nil? ag)))
                          (create-search-future view path ag id
                                                search-for-statements
                                                search-for-arguments
                                                text)
                          )) path-to-id))]
           (reset! *running-futures* searchfutures)
-          (let [f (future (wait-for-futures)
-                   (do-swing-and-wait
-                    (display-search-state view false)))]
-            (prn "f = ")
-            (prn f)
-            f))))))
+          (future (wait-for-futures)
+                  (do-swing-and-wait
+                   (display-search-state view false))))))))

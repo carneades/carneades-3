@@ -31,9 +31,10 @@
                                        (.setText label (str var))
                                        (.setName text (str var "-" suffix))
                                        (.add variablesPanel varpanel)
-                                       (add-key-released-listener
-                                        text
-                                        (fn [_] (apply form-listener formid var (.getText text) args))) 
+                                       (when form-listener
+                                         (add-key-released-listener
+                                          text
+                                          (fn [_] (apply form-listener formid var (.getText text) args)))) 
                                        [var {:text text :label label}]))
                                    variables)]
     (.setText literalLabel literal-label)

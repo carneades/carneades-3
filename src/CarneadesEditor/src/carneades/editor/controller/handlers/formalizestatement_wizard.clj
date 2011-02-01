@@ -33,9 +33,6 @@
 (defn on-pre-formalizestatement-wizard [state]
   (let [{:keys [view path id statement]} state
         reasoners (get-reasoners path)]
-    (prn "on-pre-formalizestatement-wizard")
-    (prn "reasoners =")
-    (prn reasoners)
     (if (nil? statement)
       (do
         (display-error view *formalizestatementwizard-error*
@@ -127,9 +124,6 @@
       (do-ag-update view [path :ags (:id ag)] ag)
       (graph-changed view path ag statement-formatted)
       (display-statement view path ag stmt statement-formatted))))
-
-(defn on-form-listener [state]
-  state)
 
 (defn on-previous-suggestion-listener [state]
   (when-let* [{:keys [view formular suggestions]} state

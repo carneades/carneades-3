@@ -7,17 +7,10 @@
   (:require [carneades.engine.owl :as owl]))
 
 (defn possible-individuals-statements [literal reasoners]
-  (prn "possible-individuals-statements")
   (let [owl-symbol (predicate literal)
         statement (condition-statement literal)
         iri (owl/create-iri (str owl-symbol))
         nb-args (count (term-args statement))]
-    (prn "owl-symbol =")
-    (prn owl-symbol)
-    (prn "term args")
-    (prn (term-args statement))
-    (prn "reasoners =")
-    (prn reasoners)
     (doall
      (mapcat (fn [reasoner]
                (let [ontology (owl/root-ontology reasoner)]
