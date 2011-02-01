@@ -10,8 +10,7 @@
         (carneades.editor.view wizardsprotocol viewprotocol)
         carneades.editor.controller.handlers.suggestions
         carneades.engine.statement
-        [carneades.engine.argument :only (update-statement)]
-        [carneades.engine.argument-edit :only (delete-statement)])
+        [carneades.engine.argument-edit :only (update-statement-content)])
   (:require [carneades.engine.owl :as owl]
             [clojure.string :as str])
   (:import carneades.editor.view.wizardsprotocol.EntityItem))
@@ -109,22 +108,6 @@
                         (or (nil? xval) (nil? yval))
                         *invalid-content*))))
 
-(defn on-post-formalizestatement-wizard [state]
-  (let [{:keys [view path id statement settings entity]} state
-        x (get settings "?x-")
-        y (get settings "?y-")
-        xval (str-term x)
-        yval (str-term y)
-        stmt (condp = (:type entity)
-                 :class (list (:entity entity) xval)
-                 :property (list (:entity entity) xval yval))]
-    (m-let [ag (get-ag path id)
-            ag (delete-statement ag statement)
-            ag (update-statement ag stmt)]
-      (do-ag-update view [path :ags (:id ag)] ag)
-      (graph-changed view path ag statement-formatted)
-      (display-statement view path ag stmt statement-formatted))))
-
 (defn on-previous-suggestion-listener [state]
   (m-let [{:keys [view formular suggestions]} state
           {:keys [current-idx values size]} suggestions]
@@ -157,5 +140,18 @@
     (fillin-formular view formular var-values)
     state))
 
-
+(defn on-post-formalizestatement-wizard [state]
+  (let [{:keys [view path id statement settings entity]} state
+        x (get settings "?x-")
+        y (get settings "?y-")
+        xval (str-term x)
+        yval (str-term y)
+        stmt (condp = (:type entity)
+                 :class (list (:entity entity) xval)
+                 :property (list (:entity entity) xval yval))]
+    (m-let [ag (get-ag path id)
+            ag (update-statement-content ag statement stmt)]
+      (do-ag-update view [path :ags (:id ag)] ag)
+      (graph-changed view path ag statement-formatted)
+      (display-statement view path ag stmt statement-formatted))))
 
