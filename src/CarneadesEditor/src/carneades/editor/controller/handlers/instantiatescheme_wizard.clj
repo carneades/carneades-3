@@ -152,17 +152,17 @@
 (defn form-listener [state]
   (let [{:keys [view formulars current-substitution
                 formid val value]} state
-        form (get formulars formid)
-        value (str-term value)
-        current-substitution (if (nil? value)
-                               (dissoc current-substitution val)
-                               (assoc current-substitution val value))]
+                form (get formulars formid)
+                value (str-term value)
+                current-substitution (if (nil? value)
+                                       (dissoc current-substitution val)
+                                       (assoc current-substitution val value))]
     (assoc state :current-substitution current-substitution)))
 
 (defn previous-suggestion [state]
   (let [{:keys [view formid formulars suggestions]} state]
-    (when-let* [form (get formulars formid)
-                {:keys [current-idx values size]} suggestions]
+    (m-let [form (get formulars formid)
+            {:keys [current-idx values size]} suggestions]
       (when (pos? current-idx)
         (let [idx (dec current-idx)
               current (nth values idx)
@@ -172,23 +172,23 @@
 
 (defn next-suggestion [state]
   (let [{:keys [view formid formulars suggestions]} state]
-   (when-let* [form (get formulars formid)
-               {:keys [current-idx values size]} suggestions]
-     (when (not= current-idx (dec size))
-       (let [idx (inc current-idx)
-             current (nth values idx)
-             suggestions (assoc suggestions :current-idx idx)]
-         (display-suggestion view form (statement-formatted current) (inc idx) size)
-         (assoc state :suggestions suggestions))))))
+    (m-let [form (get formulars formid)
+            {:keys [current-idx values size]} suggestions]
+      (when (not= current-idx (dec size))
+        (let [idx (inc current-idx)
+              current (nth values idx)
+              suggestions (assoc suggestions :current-idx idx)]
+          (display-suggestion view form (statement-formatted current) (inc idx) size)
+          (assoc state :suggestions suggestions))))))
 
 (defn use-suggestion [state]
-  (when-let* [{:keys [view formid formulars suggestions vars]} state
-              form (get formulars formid)
-              {:keys [current-idx values]} suggestions
-              current (nth values current-idx)
-              values (filter (complement variable?) (term-args current))
-              formatted-values (map term-str values)
-              var-values (partition 2 (interleave vars formatted-values))]
+  (m-let [{:keys [view formid formulars suggestions vars]} state
+          form (get formulars formid)
+          {:keys [current-idx values]} suggestions
+          current (nth values current-idx)
+          values (filter (complement variable?) (term-args current))
+          formatted-values (map term-str values)
+          var-values (partition 2 (interleave vars formatted-values))]
     (fillin-formular view form var-values)
     (update-in state [:current-substitution] merge
                (apply hash-map (interleave vars values)))))
@@ -282,58 +282,58 @@
   (let [{:keys [literal-wizards clauses]} (deref state-atom)]
     (if-let [wizard (get literal-wizards clause-number)]
       wizard
-      (when-let* [{:keys [clauses index nclauses]} clauses
-                  literals (get clauses clause-number)
-                  forms (map-indexed (fn [idx literal]
-                                       (get-literal-formular state-atom view clause-number literal ""))
-                                     literals)
-                  wizard (create-wizard
-                          view ""
-                          (map-indexed (fn [idx form]
-                                         (let [literal (nth literals idx)]
-                                           {:panel (:panel form)
-                                            :desc (get-desc form (inc idx))
-                                            :validator
-                                            (fn [settings]
-                                              (literal-validator
-                                               settings
-                                               (:current-substitution (deref state-atom))
-                                               literal
-                                               idx))
-                                            :listener
-                                            (fn [settings]
-                                              (swap! state-atom assoc
-                                                     :form form
-                                                     :literal literal
-                                                     :settings settings)
-                                              (state-call on-literal-panel state-atom))}))
-                                       forms)
-                          (constantly true)
-                          [])
-                  literal-wizards (assoc literal-wizards clause-number wizard)]
+      (m-let [{:keys [clauses index nclauses]} clauses
+              literals (get clauses clause-number)
+              forms (map-indexed (fn [idx literal]
+                                   (get-literal-formular state-atom view clause-number literal ""))
+                                 literals)
+              wizard (create-wizard
+                      view ""
+                      (map-indexed (fn [idx form]
+                                     (let [literal (nth literals idx)]
+                                       {:panel (:panel form)
+                                        :desc (get-desc form (inc idx))
+                                        :validator
+                                        (fn [settings]
+                                          (literal-validator
+                                           settings
+                                           (:current-substitution (deref state-atom))
+                                           literal
+                                           idx))
+                                        :listener
+                                        (fn [settings]
+                                          (swap! state-atom assoc
+                                                 :form form
+                                                 :literal literal
+                                                 :settings settings)
+                                          (state-call on-literal-panel state-atom))}))
+                                   forms)
+                      (constantly true)
+                      [])
+              literal-wizards (assoc literal-wizards clause-number wizard)]
         (swap! state-atom assoc :literal-wizards literal-wizards)
         wizard))))
 
 (defn instantiatescheme-panel-selector [state-atom stepid]
   (let [{:keys [settings view path id]} (deref state-atom)]
-   (condp = stepid
-       *clauses-id* (let [clause-number (get settings "clause-number")]
-                      (if (empty? clause-number)
-                        nil
-                        (let [wizard
-                              (get-literals-wizard
-                               state-atom view path id
-                               (Integer/parseInt clause-number))]
-                          wizard)))
-      
-       nil)))
+    (condp = stepid
+        *clauses-id* (let [clause-number (get settings "clause-number")]
+                       (if (empty? clause-number)
+                         nil
+                         (let [wizard
+                               (get-literals-wizard
+                                state-atom view path id
+                                (Integer/parseInt clause-number))]
+                           wizard)))
+        
+        nil)))
 
 (defn instantiate-scheme [view path id scheme conclusion premises]
-  (when-let* [ag (get-ag path id)
-              ag (update-statement ag conclusion)
-              pms (map premise premises)
-              arg (argument (gen-argument-id ag) :pro conclusion pms scheme)
-              ag (assert-argument ag arg)]
+  (m-let [ag (get-ag path id)
+          ag (update-statement ag conclusion)
+          pms (map premise premises)
+          arg (argument (gen-argument-id ag) :pro conclusion pms scheme)
+          ag (assert-argument ag arg)]
     (do-ag-update view [path :ags (:id ag)] ag)
     (graph-changed view path ag statement-formatted)
     (display-statement view path ag conclusion statement-formatted)))
