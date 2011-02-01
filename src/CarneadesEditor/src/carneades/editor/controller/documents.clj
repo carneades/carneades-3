@@ -168,11 +168,11 @@
     (contains? paths path)))
 
 (defn remove-newlkif [path]
-  (when-let* [paths (get-section-content *docmanager* [:newlkif-paths])
-              idx (get-section-content *docmanager* [:newlkif-indexes])
-              index (get paths path)
-              paths (dissoc paths path)
-              idx (disj idx index)]
+  (m-let [paths (get-section-content *docmanager* [:newlkif-paths])
+          idx (get-section-content *docmanager* [:newlkif-indexes])
+          index (get paths path)
+          paths (dissoc paths path)
+          idx (disj idx index)]
     (update-section *docmanager* [:newlkif-indexes] idx)
     (update-section *docmanager* [:newlkif-paths] paths)))
 

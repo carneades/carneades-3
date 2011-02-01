@@ -46,13 +46,13 @@
         classes (mapcat
                  (fn [reasoner]
                    (map owl/to-symbol (owl/classes (owl/root-ontology reasoner))))
-                        reasoners)
+                 reasoners)
         properties (mapcat
                     (fn [reasoner]
                       (let [ontology (owl/root-ontology reasoner)]
                         (concat (map owl/to-symbol (owl/data-properties ontology))
                                 (map owl/to-symbol (owl/object-properties ontology)))))
-                           reasoners)
+                    reasoners)
         entities (concat (map #(EntityItem. % (owl/shorten %) :class) classes)
                          (map #(EntityItem. % (owl/shorten %) :property) properties))]
     (display-entities view entities)
@@ -61,8 +61,8 @@
 (defn on-listener [state]
   (let [{:keys [view entities classes-button-selected
                 properties-button-selected filter-text]} state
-        entities (filter-entities entities classes-button-selected
-                                  properties-button-selected filter-text)]
+                entities (filter-entities entities classes-button-selected
+                                          properties-button-selected filter-text)]
     (display-entities view entities)
     state))
 
@@ -75,8 +75,8 @@
         entity (get settings "entity")
         suggestions (possible-individuals-statements
                      (if (= (:type entity) :class)
-                            (list (:entity entity) '?x)
-                            (list (:entity entity) '?x '?y))
+                       (list (:entity entity) '?x)
+                       (list (:entity entity) '?x '?y))
                      reasoners)]
     (prepare-statement-formular view formular
                                 (statement-formatted statement) entity)
@@ -104,10 +104,10 @@
                      (nil? xval)
                      *invalid-content*)
         :property (cond (or (empty? x) (empty? y))
-                      *fillin-form*
-                      
-                      (or (nil? xval) (nil? yval))
-                      *invalid-content*))))
+                        *fillin-form*
+                        
+                        (or (nil? xval) (nil? yval))
+                        *invalid-content*))))
 
 (defn on-post-formalizestatement-wizard [state]
   (let [{:keys [view path id statement settings entity]} state
@@ -118,16 +118,16 @@
         stmt (condp = (:type entity)
                  :class (list (:entity entity) xval)
                  :property (list (:entity entity) xval yval))]
-    (when-let* [ag (get-ag path id)
-                ag (delete-statement ag statement)
-                ag (update-statement ag stmt)]
+    (m-let [ag (get-ag path id)
+            ag (delete-statement ag statement)
+            ag (update-statement ag stmt)]
       (do-ag-update view [path :ags (:id ag)] ag)
       (graph-changed view path ag statement-formatted)
       (display-statement view path ag stmt statement-formatted))))
 
 (defn on-previous-suggestion-listener [state]
-  (when-let* [{:keys [view formular suggestions]} state
-              {:keys [current-idx values size]} suggestions]
+  (m-let [{:keys [view formular suggestions]} state
+          {:keys [current-idx values size]} suggestions]
     (when (pos? current-idx)
       (let [idx (dec current-idx)
             current (nth values idx)
@@ -136,8 +136,8 @@
         (assoc state :suggestions suggestions)))))
 
 (defn on-next-suggestion-listener [state]
-  (when-let* [{:keys [view formular suggestions]} state
-              {:keys [current-idx values size]} suggestions]
+  (m-let [{:keys [view formular suggestions]} state
+          {:keys [current-idx values size]} suggestions]
     (when (not= current-idx (dec size))
       (let [idx (inc current-idx)
             current (nth values idx)
@@ -146,14 +146,14 @@
         (assoc state :suggestions suggestions)))))
 
 (defn on-use-suggestion-listener [state]
-  (when-let* [{:keys [view formular suggestions]} state
-              {:keys [current-idx values]} suggestions
-              suggestion (nth values current-idx)
-              values (filter (complement variable?) (term-args suggestion))
-              formatted-values (map term-str values)
-              var-values (partition 2 (interleave (if (= (count values) 1)
-                                                    '[?x]
-                                                    '[?x ?y]) formatted-values))]
+  (m-let [{:keys [view formular suggestions]} state
+          {:keys [current-idx values]} suggestions
+          suggestion (nth values current-idx)
+          values (filter (complement variable?) (term-args suggestion))
+          formatted-values (map term-str values)
+          var-values (partition 2 (interleave (if (= (count values) 1)
+                                                '[?x]
+                                                '[?x ?y]) formatted-values))]
     (fillin-formular view formular var-values)
     state))
 
