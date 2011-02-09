@@ -236,3 +236,9 @@
       (into [] stack-trace-vector)))
   ([]
     (dump-stack (get-clj-stack-trace))))
+
+;; resources
+(defn get-resource [name]
+ (-> (Thread/currentThread)
+     (.getContextClassLoader)
+     (.getResource name)))
