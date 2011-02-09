@@ -31,6 +31,11 @@
            (map (fn [id] [id (:title (get-ag path id))])
                 (get-ags-id path))))
 
+(defn on-refresh [view path id]
+  (when-let [ag (get-ag path id)]
+    (do-ag-update view [path :ags (:id ag)] ag)
+    (redisplay-graph view path ag statement-formatted)))
+
 (defn do-close-graph [view path id savechanges]
   "close graph without saving it"
   (let [isfresh (contains? (get-fresh-ag-ids path) id)]
@@ -380,7 +385,9 @@
                                        (str content) statement-formatted status
                                        proofstandard acceptable complement-acceptable)
         (statement-status-changed view path ag content)
-        (display-statement view path ag content statement-formatted)))))
+        (display-statement view path ag content statement-formatted)
+        ;; TODO: remove this when the layout bug is fixed in JGraphX
+        (on-refresh view path id)))))
 
 (defn on-edit-statement-proofstandard [view path id stmt-info]
   (let [{:keys [proofstandard content previous-proofstandard]} stmt-info
@@ -568,11 +575,6 @@
             (do-ag-update view [path :ags (:id ag)] ag)
             (premise-added view path ag arg stmt))
           (display-error view *edit-error* *cycle-error*))))))
-
-(defn on-refresh [view path id]
-  (when-let [ag (get-ag path id)]
-    (do-ag-update view [path :ags (:id ag)] ag)
-    (redisplay-graph view path ag statement-formatted)))
 
 (defn on-delete-premise [view path id arg pm]
   (m-let [ag (get-ag path id)
