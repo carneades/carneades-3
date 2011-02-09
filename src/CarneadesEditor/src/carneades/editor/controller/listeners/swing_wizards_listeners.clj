@@ -135,23 +135,32 @@
 
 (defn formalizestatement-assistantmenuitem-listener [event view]
   (let [[path id] (current-graph view)
-        statement (get-selected-statement view path id)]
-    (m-let [state (atom {:view view
-                         :path path
-                         :id id
-                         :statement statement})
-            listeners {:form-listener nil
-                       :previous-suggestion-listener
-                       (state-listener-wrapper on-previous-suggestion-listener state)
-                       :next-suggestion-listener
-                       (state-listener-wrapper on-next-suggestion-listener state)
-                       :use-suggestion-listener
-                       (state-listener-wrapper on-use-suggestion-listener state)}
-            [statement-panel formular]
-            (get-statement-panel view (statement-formatted statement) listeners)
-            _ (swap! state assoc :formular formular)
-            _ (state-call on-pre-formalizestatement-wizard state)
-            entitiespanel (get-entitiespanel view)
+        statement (get-selected-statement view path id)
+        state (atom {:view view
+                     :path path
+                     :id id
+                     :statement statement})
+        listeners {:form-listener nil
+                   :previous-suggestion-listener
+                   (state-listener-wrapper on-previous-suggestion-listener state)
+                   :next-suggestion-listener
+                   (state-listener-wrapper on-next-suggestion-listener state)
+                   :use-suggestion-listener
+                   (state-listener-wrapper on-use-suggestion-listener state)}
+        [statement-panel formular]
+        (get-statement-panel view (statement-formatted statement) listeners)]
+    (swap! state assoc :formular formular)
+    (when (state-call on-pre-formalizestatement-wizard state)
+      (let [entitiespanel (get-entitiespanel view) 
+            listener-wrapper (fn [event]
+                               (swap! state assoc
+                                      :classes-button-selected
+                                      (classes-button-selected? view)
+                                      :properties-button-selected
+                                      (properties-button-selected? view)
+                                      :filter-text
+                                      (get-entities-filter-text view))
+                               (state-call on-listener state))
             wizard (create-wizard view *formalizestatement-title*
                                   [{:panel entitiespanel
                                     :desc *entities-panel-desc*
@@ -164,19 +173,11 @@
                                     :validator statement-panel-validator
                                     }]
                                   (constantly true)
-                                  [])
-            listener-wrapper (fn [event]
-                               (swap! state assoc
-                                      :classes-button-selected
-                                      (classes-button-selected? view)
-                                      :properties-button-selected
-                                      (properties-button-selected? view)
-                                      :filter-text
-                                      (get-entities-filter-text view))
-                               (state-call on-listener state))]
-      (set-classes-button-listener view listener-wrapper [])
-      (set-properties-button-listener view listener-wrapper [])
-      (set-filterentities-text-listener view listener-wrapper [])
-      (when-let [settings (display-wizard view wizard 500 600)]
-        (swap! state assoc :settings settings)
-        (state-call on-post-formalizestatement-wizard state)))))
+                                  [])]
+        (do
+          (set-classes-button-listener view listener-wrapper [])
+          (set-properties-button-listener view listener-wrapper [])
+          (set-filterentities-text-listener view listener-wrapper [])
+          (when-let [settings (display-wizard view wizard 500 600)]
+            (swap! state assoc :settings settings)
+            (state-call on-post-formalizestatement-wizard state)))))))
