@@ -688,28 +688,11 @@
     (graph-deleted view path id)))
 
 (defn create-template [view path]
-  (let [id (on-new-graph view path)
-        ag (get-ag path id)
-        stmt (do-on-new-statement view path ag "Conclusion")
-        ag (get-ag path id)
-        stmt2 (do-on-new-statement view path ag "Premise")
-        ag (get-ag path id)
-        stmt3 (do-on-new-statement view path ag "Assumption")
-        ag (get-ag path id)
-        arg (on-new-argument view path id stmt)
-        ag (get-ag path id)]
-    (on-change-mainissue view path id stmt)
-    (on-add-existing-premise view path id arg stmt2)
-    (on-add-existing-premise view path id arg stmt3)
-    (on-premise-edit-type view path id {:previous-role nil
-                                        :previous-type :carneades.engine.argument/ordinary-premise
-                                        :type :carneades.engine.argument/assumption
-                                        :arg arg
-                                        :atom stmt3})
-    (on-refresh view path id)
-    (delete-section-history *docmanager* [path :ags id])
-    (update-undo-redo-statuses view path id)
-    (display-statement view path (get-ag path id) stmt statement-formatted)))
+  (m-let [content (import-lkif (.getPath (get-resource "templates/template.xml")))
+          ag (first (:ags content))
+          id (:id ag)]
+    (lkif/add-lkif-to-docmanager path content *docmanager*)
+    (on-open-graph view path id)))
 
 (defn on-new-file [view]
   (m-let [file (File/createTempFile "carneades" nil)
@@ -718,10 +701,9 @@
     (.deleteOnExit file)
     (when (section-exists? *docmanager* [path])
       (close-all view path))
-    (lkif/add-lkif-to-docmanager path *empty-lkif* *docmanager*)
     (init-counters path)
-    (display-lkif-content view path filename (create-lkifinfo path))
-    (create-template view path)))
+    (create-template view path)
+    (display-lkif-content view path filename (create-lkifinfo path))))
 
 (defn exit [view]
   (letfn [(in-swank?
