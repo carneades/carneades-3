@@ -580,7 +580,9 @@
           ag (delete-premise ag arg pm)
           arg (get-argument ag (:id arg))]
     (do-ag-update view [path :ags (:id ag)] ag)
-    (premise-deleted view path ag arg pm)))
+    (premise-deleted view path ag arg pm)
+    ;; TODO: remove this when the layout bug is fixed in JGraphX
+    (on-refresh view path id)))
 
 (defn prompt-statement-content [view ag suggestion]
   "asks the user the content of a new statement. Prompts
@@ -620,7 +622,9 @@
   (m-let [ag (get-ag path id)
           ag (delete-statement ag stmt)]
     (do-ag-update view [path :ags (:id ag)] ag)
-    (statement-deleted view path ag stmt)))
+    (statement-deleted view path ag stmt)
+    ;; TODO: remove this when the layout bug is fixed in JGraphX
+    (on-refresh view path id)))
 
 (defn on-delete-argument [view path id arg]
   (m-let [ag (get-ag path id)
