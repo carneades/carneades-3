@@ -5,7 +5,8 @@
   (:use clojure.java.io
         clojure.pprint
         clojure.contrib.trace)
-  (:require [clojure.contrib.string :as str]))
+  (:require [clojure.string :as str]
+            [clojure.contrib.string :as s]))
 
 
 (defn boolean? [x]
@@ -120,10 +121,12 @@
          sq []]
     (if (empty? r)
       sq
-      (let [f (str/take n r)]
-        (recur [f (str/drop n r)] (conj sq f))))))
+      (let [f (s/take n r)]
+        (recur [f (s/drop n r)] (conj sq f))))))
 
 ;;; files
+
+(def *file-separator* java.io.File/separator)
 
 (defn same-directory? [lkif-path path]
   (= (.getParent (file lkif-path)) (.getParent (file path))))
@@ -132,11 +135,14 @@
   (let [f (file path)
         f2 (file relative-to)
         dirsize (count (.getPath f2))
-        dirsize (+ dirsize (count (java.io.File/separator)))]
+        dirsize (+ dirsize (count (*file-separator*)))]
     (subs (.getPath f) dirsize)))
 
+(defn create-path [& segments]
+  (.getPath (file (str/join *file-separator* segments))))
+
 (defn make-absolute [path relative-to]
-  (.getPath (file (str relative-to java.io.File/separator path))))
+  (.getPath (file (str relative-to *file-separator* path))))
 
 (defn in-directory? [path dir]
   "returns true if path is directly under or below directory dir"
@@ -168,6 +174,9 @@
   (if (= (last pathname) \.)
     (str pathname ext)
     (str pathname "." ext)))
+
+(defn last-segment [pathname]
+  (last (str/split pathname (re-pattern *file-separator*))))
 
 ;;; exceptions
 

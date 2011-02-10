@@ -773,18 +773,27 @@
                                     ))
               root-lkif-dir (parent path)
               relative-info (make-relative location root-lkif-dir rules-directory)]
-        (let [lkif (if (:relative-path relative-info)
-                     (add-import (get-lkif path)
-                                 path
-                                 location
-                                 (:relative-path relative-info)
-                                 rules-directory)
-                     (add-import (get-lkif path)
-                                 path
-                                 location))]
-          (update-imports view path lkif)
-          (let [importurls (get-imports-locations path)]
-            (display-lkif-property view path importurls)))))))
+        (try
+          (let [lkif (if (:relative-path relative-info)
+                      (add-import (get-lkif path)
+                                  path
+                                  location
+                                  (:relative-path relative-info)
+                                  rules-directory)
+                      (add-import (get-lkif path)
+                                  path
+                                  location))]
+           (update-imports view path lkif)
+           (let [importurls (get-imports-locations path)]
+             (display-lkif-property view path importurls)))
+          (catch IllegalArgumentException
+              e (display-error view *open-error* (str *invalid-content* ".")))
+          (catch java.io.FileNotFoundException
+              e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
+          (catch java.io.IOException
+              e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
+          (catch org.xml.sax.SAXException
+              e (display-error view *open-error* *invalid-content*)))))))
 
 (defn on-remove-imports [view path imports]
   (when (and (not (empty? imports)) (ask-confirmation view *imports* *remove-imports*))
