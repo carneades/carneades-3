@@ -405,7 +405,9 @@
                                        (str content) statement-formatted status
                                        proofstandard acceptable complement-acceptable)
         (statement-proofstandard-changed view path ag content)
-        (display-statement view path ag content statement-formatted)))))
+        (display-statement view path ag content statement-formatted)
+        ;; TODO: remove this when the layout bug is fixed in JGraphX
+        (on-refresh view path id)))))
 
 (defn on-undo [view path id]
   (undo-section *docmanager* [path :ags id])
@@ -450,7 +452,9 @@
                                   arg
                                   polarity
                                   (:previous-type pm-info)
-                                  (:previous-role pm-info) atom)))))
+                                  (:previous-role pm-info) atom)
+        ;; TODO: remove this when the layout bug is fixed in JGraphX
+        (on-refresh view path id)))))
 
 (defn on-premise-edit-type [view path id pm-info]
   (m-let [ag (get-ag path id)
@@ -462,7 +466,9 @@
         (do-ag-update view [path :ags (:id ag)] ag)
         (premise-type-changed view path ag arg newarg (get-premise newarg atom))
         (display-premise-property view path id (:title ag) arg
-                                  (:polarity pm) type (:previous-role pm) atom)))))
+                                  (:polarity pm) type (:previous-role pm) atom)
+        ;; TODO: remove this when the layout bug is fixed in JGraphX
+        (on-refresh view path id)))))
 
 (defn on-premise-edit-role [view path id pm-info]
   (m-let [ag (get-ag path id)
@@ -474,7 +480,9 @@
         (do-ag-update view [path :ags (:id ag)] ag)
         (premise-role-changed view path ag arg newarg (get-premise newarg atom))
         (display-premise-property view path id (:title ag) arg (:polarity pm)
-                                  previous-type role atom)))))
+                                  previous-type role atom)
+        ;; TODO: remove this when the layout bug is fixed in JGraphX
+        (on-refresh view path id)))))
 
 (defn on-argument-edit-title [view path id arg-info]
   (m-let [ag (get-ag path id)
@@ -563,7 +571,9 @@
          (:weight arg)
          (:direction arg)
          (:scheme arg))
-        (display-argument view path ag arg statement-formatted)))))
+        (display-argument view path ag arg statement-formatted)
+        ;; TODO: remove this when the layout bug is fixed in JGraphX
+        (on-refresh view path id)))))
 
 (defn on-add-existing-premise [view path id arg stmt]
   (when-let [ag (get-ag path id)]
