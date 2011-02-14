@@ -254,19 +254,20 @@
 
 (defn move-cell [graph cell x y]
   (let [layout (mxHierarchicalLayout. graph SwingConstants/EAST)]
-    (.moveCell layout cell x y)
-    ))
+    (.moveCell layout cell x y)))
 
 (defn- hierarchicallayout [^mxGraph g p vertices roots]
   (let [layout (mxHierarchicalLayout. g SwingConstants/EAST)]
     (.setAllowNegativeCoordinates g false)
     (doto layout
-      (.setFineTuning true)
+      (.setDeterministic true)
+      ;; (.setFineTuning true)
       ;; (.setParallelEdgeSpacing 300.0)
       (.setInterRankCellSpacing 90.0)
       ;; (.setInterHierarchySpacing 300.0)
-      (.setMoveParent true)
-      (.setResizeParent true))
+      ;; (.setMoveParent true)
+      ;; (.setResizeParent true)
+      )
     (if (empty? roots)
       (.execute layout p)
       (.execute layout p (to-array roots)))
