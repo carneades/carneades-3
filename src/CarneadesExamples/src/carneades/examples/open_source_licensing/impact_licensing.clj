@@ -13,10 +13,11 @@
         carneades.engine.statement
         [carneades.engine.abduction :as abd]
 	carneades.engine.lkif
-        carneades.ui.diagram.viewer)
+        carneades.engine.utils
+        carneades.mapcomponent.viewer)
     (:require [carneades.engine.argument :as arg]))
 
-;; run with 'lein run carneades.examples.open-source-licensing.impact-licensing'
+;; run with 'lein run -m carneades.examples.open-source-licensing.impact-licensing'
 (defn -main []
   (let [basedir "src/carneades/examples/open_source_licensing/" 
         oss-path (str basedir "oss-rules.xml")
@@ -39,7 +40,7 @@
              '((valid FSFTheoryOfLinking)
                 (valid http://carneades.berlios.de/impact-licensing)))
         ;; constructing arguments
-        ag1 (construct-arguments-abductively goal1 100 3 ag0 generators)]
+        ag1 (construct-arguments-abductively goal1 100 3 ag generators)]
     ;; exporting results to lkif
     (export-lkif {:ags [ag1]} "impact-licensing.xml")
     (view ag1)))
