@@ -64,6 +64,7 @@
   (set-dirty [this path id state])
   (set-lkif-dirty [this path state])
   (copyselection-clipboard [this path id])
+  (set-current-premise-properties [this path id arg atom polarity type])
 
   ;; notifications:
   ;; these fine grained modifications avoid to redisplay the whole

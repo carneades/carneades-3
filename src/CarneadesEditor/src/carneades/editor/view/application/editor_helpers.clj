@@ -19,6 +19,8 @@
 (defvar *argument-selection-listeners* (atom ()))
 (defvar *premise-selection-listeners* (atom ()))
 (defvar *add-existing-premise-listeners* (atom ()))
+(defvar *current-premise-properties* (atom {}))
+(defvar *premise-being-edited-menu-info* (atom {}))
 
 (defvar *main-issues* (atom {}))
 
@@ -32,6 +34,14 @@
           (apply listener view path id (:arg src) (:stmt obj) args)))
       (swap! *add-existing-premise-data* assoc :src nil))))
 
+(defn- update-premise-context-menu []
+  (let [{:keys [polarity type]} (deref *current-premise-properties*)]
+    (condp = type
+        :carneades.engine.argument/ordinary-premise (.setSelected *premisePremiseMenuItem* true)
+        :carneades.engine.argument/assumption (.setSelected *assumptionPremiseMenuItem* true)
+        :carneades.engine.argument/exception (.setSelected *exceptionPremiseMenuItem* true)
+        (nil? type))))
+
 (defn- node-selection-listener [view path id obj]
   (cond (instance? StatementCell obj)
         (do
@@ -44,12 +54,15 @@
               (apply listener path id stmt args))))
 
         (instance? ArgumentCell obj)
-        (doseq [{:keys [listener args]} (deref *argument-selection-listeners*)]
-          (apply listener path id (:arg obj) args))
+        (do
+          (doseq [{:keys [listener args]} (deref *argument-selection-listeners*)]
+            (apply listener path id (:arg obj) args)))
 
         (instance? PremiseCell obj)
-        (doseq [{:keys [listener args]} (deref *premise-selection-listeners*)]
-          (apply listener path id (:arg obj) (:pm obj) args))))
+        (do
+          (doseq [{:keys [listener args]} (deref *premise-selection-listeners*)]
+            (apply listener path id (:arg obj) (:pm obj) args))
+          (update-premise-context-menu))))
 
 (defn add-existing-premise-menuitem-listener [event view]
   (let [[path id] (current-graph view)]
@@ -81,8 +94,6 @@
   (try
     (set-busy this true)
     (let [component (create-graph-component ag stmt-fmt)]
-      (add-node-selection-listener component #(node-selection-listener
-                                               this path (:id ag) %))
       (add-right-click-listener component
                                 (fn [event obj]
                                   (right-click-listener path
@@ -90,6 +101,9 @@
                                                         (:component component)
                                                         event
                                                         obj)))
+      (add-node-selection-listener component #(node-selection-listener
+                                               this path (:id ag) %))
+      
       (add-component component path ag (is-dirty? path (:id ag)))
       (set-current-ag-context path (:id ag)))
     (finally

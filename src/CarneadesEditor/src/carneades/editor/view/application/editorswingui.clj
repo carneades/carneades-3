@@ -12,6 +12,7 @@
         carneades.editor.view.components.uicomponents
         (carneades.editor.view.properties lkif graph statement argument premise)
         (carneades.editor.view.components tabs tree search)
+        carneades.editor.view.application.editor-helpers
         carneades.mapcomponent.map)
   (:require [carneades.editor.view.components.tree :as tree])
   (:import java.awt.BorderLayout
@@ -219,6 +220,18 @@
    [this f args]
    (apply add-action-listener *mainIssueMenuItem* f args))
 
+  (add-premise-premisemenuitem-listener
+   [this f args]
+   (apply add-action-listener *premisePremiseMenuItem* f args))
+  
+  (add-assumption-premisemenuitem-listener
+   [this f args]
+   (apply add-action-listener *assumptionPremiseMenuItem* f args))
+  
+  (add-exception-premisemenuitem-listener
+   [this f args]
+   (apply add-action-listener *exceptionPremiseMenuItem* f args))
+
   (add-new-statement-menuitem-listener
    [this f args]
    (apply add-action-listener *newStatementMenuItem* f args))
@@ -306,6 +319,10 @@
   (get-statement-being-edited-menu-info
    [this]
    (deref *statement-being-edited-menu-info*))
+
+  (get-premise-being-edited-menu-info
+   [this]
+   (deref *premise-being-edited-menu-info*))
   
   (get-premise-being-edited-info
    [this]

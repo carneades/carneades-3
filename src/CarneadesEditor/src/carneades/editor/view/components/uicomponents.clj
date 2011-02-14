@@ -71,3 +71,7 @@
 (defvar *formalizeStatementAssistantMenuItem* (.formalizeStatementAssistantMenuItem *frame*))
 
 (defvar *preferencesEditMenuItem* (.preferencesEditMenuItem *frame*))
+
+(defvar *premisePremiseMenuItem* (.premisePremiseMenuItem *frame*))
+(defvar *assumptionPremiseMenuItem* (.assumptionPremiseMenuItem *frame*))
+(defvar *exceptionPremiseMenuItem* (.exceptionPremiseMenuItem *frame*))
