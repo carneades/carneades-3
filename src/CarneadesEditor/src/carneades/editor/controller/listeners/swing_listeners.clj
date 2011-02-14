@@ -298,3 +298,25 @@
 
 (defn preferences-editmenuitem-listener [event view]
   (on-edit-preferences view))
+
+(defn- premisemenuitem-listener-helper [event view type]
+  (when-let [[path id] (current-graph view)]
+    (let [pm (get-selected-node view path id)
+          selected (.isSelected (.getSource event))
+          info (get-premise-being-edited-menu-info view)]
+      (when selected
+        (on-premise-edit-type view path id
+                        (assoc info :type type))))))
+
+(defn premise-premisemenuitem-listener [event view]
+  (premisemenuitem-listener-helper
+   event view :carneades.engine.argument/ordinary-premise))
+
+(defn assumption-premisemenuitem-listener [event view]
+  (premisemenuitem-listener-helper
+   event view :carneades.engine.argument/assumption))
+
+(defn exception-premisemenuitem-listener [event view]
+  (premisemenuitem-listener-helper
+   event view :carneades.engine.argument/exception))
+

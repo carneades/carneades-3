@@ -8,6 +8,7 @@
         carneades.editor.utils.listeners)
   (:import (carneades.editor.uicomponents EditStatementDialog)))
 
+;; move to _helper?
 (defvar *statement-being-edited-menu-info* (atom nil))
 
 (defn show-statement-editor

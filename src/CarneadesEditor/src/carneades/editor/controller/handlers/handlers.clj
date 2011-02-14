@@ -304,7 +304,8 @@
   (let [type (:type pm)]
     (display-premise-property view path id (:title (get-ag path id))
                               arg
-                              (:polarity pm) type (:role pm) (:atom pm))))
+                              (:polarity pm) type (:role pm) (:atom pm))
+    (set-current-premise-properties view path id arg (:atom pm) (:polarity pm) type)))
 
 (defn on-open-statement [view path id stmt]
   (when-let [ag (get-ag path id)]
@@ -441,9 +442,11 @@
       (let [oldarg (:arg pm-info)
             ag (update-premise-polarity ag oldarg atom polarity)
             arg (get-argument ag (:id oldarg))
-            title (:title ag)]
+            title (:title ag)
+            pm (get-premise arg atom)]
         (do-ag-update view [path :ags (:id ag)] ag)
-        (premise-polarity-changed view path ag oldarg arg (get-premise arg atom))
+        (premise-polarity-changed view path ag oldarg arg pm)
+        (set-current-premise-properties view path id arg (:atom pm) (:polarity pm) (:type pm))
         (display-premise-property view path id title
                                   arg
                                   polarity
@@ -459,6 +462,7 @@
             pm (get-premise newarg atom)]
         (do-ag-update view [path :ags (:id ag)] ag)
         (premise-type-changed view path ag arg newarg (get-premise newarg atom))
+        (set-current-premise-properties view path id arg (:atom pm) (:polarity pm) (:type pm))
         (display-premise-property view path id (:title ag) arg
                                   (:polarity pm) type (:previous-role pm) atom)))))
 
@@ -569,9 +573,12 @@
       ;; premise does not already exists!
       (let [arg (get-argument ag (:id arg))]
         (if-let [ag (add-premise ag arg stmt)]
-          (let [arg (get-argument ag (:id arg))]
+          (let [arg (get-argument ag (:id arg))
+                pm (get-premise arg stmt)]
             (do-ag-update view [path :ags (:id ag)] ag)
-            (premise-added view path ag arg stmt))
+            (premise-added view path ag arg stmt)
+            (set-current-premise-properties view path id arg
+                                            (:atom pm) (:polarity pm) (:type pm)))
           (display-error view *edit-error* *cycle-error*))))))
 
 (defn on-delete-premise [view path id arg pm]

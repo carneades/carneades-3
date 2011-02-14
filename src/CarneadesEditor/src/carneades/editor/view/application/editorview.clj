@@ -367,7 +367,17 @@
    [this path id]
    (when-let [component (get-component path id)]
      (copyselection-toclipboard component)))
-  
+
+  (set-current-premise-properties
+   [this path id arg atom polarity type]
+   (swap! *premise-being-edited-menu-info* assoc
+          :arg arg
+          :previous-polarity polarity
+          :previous-type type
+          :atom atom)
+   (reset! *current-premise-properties* {:polarity polarity
+                                         :type type}))
+    
   (statement-content-changed
    [this path ag oldstmt newstmt]
    (when-let [component (get-component path (:id ag))]

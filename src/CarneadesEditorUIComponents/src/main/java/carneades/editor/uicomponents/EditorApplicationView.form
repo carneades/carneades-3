@@ -183,6 +183,49 @@
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
+        <Menu class="javax.swing.JMenu" name="jMenu1">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Type"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="premisePremiseMenuItem">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="premiseTypeGroup"/>
+                </Property>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" value="Premise"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
+              </AuxValues>
+            </MenuItem>
+            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="assumptionPremiseMenuItem">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="premiseTypeGroup"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Assumption"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
+              </AuxValues>
+            </MenuItem>
+            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="exceptionPremiseMenuItem">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="premiseTypeGroup"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Exception"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
+              </AuxValues>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator14">
+        </Component>
         <MenuItem class="javax.swing.JMenuItem" name="deletePremiseMenuItem">
           <Properties>
             <Property name="text" type="java.lang.String" value="Delete"/>
@@ -272,9 +315,10 @@
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
           </AuxValues>
         </MenuItem>
-        <MenuItem class="javax.swing.JMenuItem" name="deleteStatementMenuItem">
+        <MenuItem class="javax.swing.JCheckBoxMenuItem" name="mainIssueMenuItem">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Delete"/>
+            <Property name="selected" type="boolean" value="true"/>
+            <Property name="text" type="java.lang.String" value="Main issue"/>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
@@ -282,10 +326,9 @@
         </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator12">
         </Component>
-        <MenuItem class="javax.swing.JCheckBoxMenuItem" name="mainIssueMenuItem">
+        <MenuItem class="javax.swing.JMenuItem" name="deleteStatementMenuItem">
           <Properties>
-            <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" value="Main issue"/>
+            <Property name="text" type="java.lang.String" value="Delete"/>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
@@ -313,6 +356,8 @@
       </SubComponents>
     </Container>
     <Component class="javax.swing.ButtonGroup" name="statusButtonGroup">
+    </Component>
+    <Component class="javax.swing.ButtonGroup" name="premiseTypeGroup">
     </Component>
     <Menu class="javax.swing.JMenuBar" name="menuBar">
       <SubComponents>
