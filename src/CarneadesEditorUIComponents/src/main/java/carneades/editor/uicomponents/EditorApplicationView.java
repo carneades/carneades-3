@@ -377,6 +377,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
         fileMenu.add(printFileMenuItem);
         fileMenu.add(jSeparator1);
 
+        quitFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
         quitFileMenuItem.setMnemonic('q');
         quitFileMenuItem.setText("Quit");
         fileMenu.add(quitFileMenuItem);
