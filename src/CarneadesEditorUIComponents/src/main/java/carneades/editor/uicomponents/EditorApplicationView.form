@@ -421,6 +421,9 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="quitFileMenuItem">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+Q"/>
+                </Property>
                 <Property name="mnemonic" type="int" value="113"/>
                 <Property name="text" type="java.lang.String" value="Quit"/>
               </Properties>
