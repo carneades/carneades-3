@@ -30,7 +30,7 @@
   (let [file (File. path)]
     (if (.exists file)
       (.toURI file)
-      (if prepath
+      (if (and prepath (not (url? path)))
         (let [fullpath (if (.endsWith prepath java.io.File/separator)
                          (str prepath path)
                          (str prepath java.io.File/separator path))]
@@ -46,7 +46,12 @@
        (let [uri (.toURI ontIRI)
              rawfilename (last-segment (str uri))
              filename (add-extension rawfilename "owl")
-             localfile (create-path (parent path) filename)]
+             parentdir (or (parent path) prepath)
+             localfile (if parentdir
+                         (create-path parentdir filename)
+                         filename)]
+         ;; (printf "path = %s prepath = %s parentdir = %s uri = %s\nlocalfile = %s\n"
+         ;;         path prepath parentdir uri localfile)
          (if (exists? localfile)
            ;; if the file exists locally to the currently imported file we use it
            (IRI/create (path->uri localfile prepath))
