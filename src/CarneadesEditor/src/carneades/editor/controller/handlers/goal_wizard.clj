@@ -180,9 +180,9 @@
           ag (get-ag path id)
           positions (apply vector
                            (condp = sort-by-val
-                                 "Size" (sort-by count positions)
-                                 "Depth" (sort-by #(position-depth ag %) positions)
-                                 "Height" (sort-by #(position-height ag %) positions)))
+                                 "smaller first" (sort-by count positions)
+                                 "closer to issue first" (sort-by #(position-depth ag %) positions)
+                                 "farther from issue first" (sort-by #(position-height ag %) positions)))
           position (first positions)]
     (swap! *positions* assoc :positions positions :index 0)
     (display-position view position 0 npos statement-formatted)))
