@@ -238,13 +238,18 @@
 (defn print-debug [g]
   (let [defaultparent (.getDefaultParent g)
         edges (.getChildCells g defaultparent false true)
-        nodes (.getChildCells g defaultparent true false)] 
+        nodes (.getChildCells g defaultparent true false)
+        view (.getView g)] 
     (doseq [edge edges]
       (let [x (getx edge)
             y (gety edge)
             controlpoints (or (.. edge getGeometry getPoints) ())]
         (printf "edge %s [%s %s] = " edge x y)
         (prn (.getValue edge))
+        (prn "state.style =")
+        (let [style (.getStyle (.getState view edge))]
+          (prn style)
+          )
         (printf "control points = {")
         (doseq [point controlpoints]
           (printf "[%s %s], " (.getX point) (.getY point)))
@@ -321,8 +326,7 @@
      (hierarchicallayout g p cells roots))
   ([g p cells]
      (hierarchicallayout g p cells ())
-     (align-orphan-cells g p cells)
-     ))
+     (align-orphan-cells g p cells)))
 
 (defn- layout [g p vertices]
   (do-layout g p (vals vertices)))
