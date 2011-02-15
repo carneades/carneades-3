@@ -1,4 +1,4 @@
-;;; Copyright © 2010 Fraunhofer Gesellschaft 
+>;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.engine.lkif.import
@@ -523,8 +523,11 @@
      - java.io.IOException
      - java.io.FileNotFoundException"
   ([pathname]
-     (let [pathname (absolute pathname)
-           root-lkif-dir (parent pathname)]
+     (let [pathname (if (string? pathname) ;; to allow streams
+                      (absolute pathname)
+                      pathname)
+           root-lkif-dir (when (string? pathname)
+                           (parent pathname))]
        (import-lkif-helper pathname
                            (fn [pathname parent-pathname]
                              (local-resolve pathname parent-pathname

@@ -248,6 +248,11 @@
 
 ;; resources
 (defn get-resource [name]
- (-> (Thread/currentThread)
-     (.getContextClassLoader)
-     (.getResource name)))
+  (-> (Thread/currentThread)
+      (.getContextClassLoader)
+      (.getResource name)))
+
+(defn get-resource-as-stream [name]
+  (-> (Thread/currentThread)
+      (.getContextClassLoader)
+      (.getResourceAsStream name)))
