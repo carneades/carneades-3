@@ -691,7 +691,7 @@
     (graph-deleted view path id)))
 
 (defn create-template [view path]
-  (m-let [content (import-lkif (.getPath (get-resource "templates/template.xml")))
+  (m-let [content (import-lkif (get-resource-as-stream "templates/template.xml"))
           ag (first (:ags content))
           id (:id ag)]
     (lkif/add-lkif-to-docmanager path content *docmanager*)
@@ -704,8 +704,8 @@
     (.deleteOnExit file)
     (when (section-exists? *docmanager* [path])
       (close-all view path))
-    (init-counters path)
     (create-template view path)
+    (init-counters path)
     (display-lkif-content view path filename (create-lkifinfo path))))
 
 (defn exit [view]
