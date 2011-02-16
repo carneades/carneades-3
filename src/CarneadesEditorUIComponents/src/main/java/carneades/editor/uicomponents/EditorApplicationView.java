@@ -39,7 +39,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
         jSeparator10 = new javax.swing.JPopupMenu.Separator();
         searchInButtonGroup = new javax.swing.ButtonGroup();
-        jMenu1 = new javax.swing.JMenu();
+        typePremiseMenuItem = new javax.swing.JMenu();
         jSeparator14 = new javax.swing.JPopupMenu.Separator();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
         statusButtonGroup = new javax.swing.ButtonGroup();
@@ -117,22 +117,26 @@ public class EditorApplicationView extends javax.swing.JFrame {
         deleteArgumentMenuItem.setText("Delete");
         argumentPopupMenu.add(deleteArgumentMenuItem);
 
-        jMenu1.setText("Type");
+        typePremiseMenuItem.setText("Type");
 
         premiseTypeGroup.add(premisePremiseMenuItem);
         premisePremiseMenuItem.setSelected(true);
         premisePremiseMenuItem.setText("Premise");
-        jMenu1.add(premisePremiseMenuItem);
+        typePremiseMenuItem.add(premisePremiseMenuItem);
 
         premiseTypeGroup.add(assumptionPremiseMenuItem);
         assumptionPremiseMenuItem.setText("Assumption");
-        jMenu1.add(assumptionPremiseMenuItem);
+        typePremiseMenuItem.add(assumptionPremiseMenuItem);
 
         premiseTypeGroup.add(exceptionPremiseMenuItem);
         exceptionPremiseMenuItem.setText("Exception");
-        jMenu1.add(exceptionPremiseMenuItem);
+        typePremiseMenuItem.add(exceptionPremiseMenuItem);
 
-        premisePopupMenu.add(jMenu1);
+        premisePopupMenu.add(typePremiseMenuItem);
+
+        negatedPremiseMenuItem.setSelected(true);
+        negatedPremiseMenuItem.setText("Negated");
+        premisePopupMenu.add(negatedPremiseMenuItem);
         premisePopupMenu.add(jSeparator14);
 
         deletePremiseMenuItem.setText("Delete");
@@ -535,7 +539,6 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JPopupMenu graphPopupMenu = new javax.swing.JPopupMenu();
     private javax.swing.JMenu helpMenu;
     public final javax.swing.JMenuItem instantiateSchemeAssistantMenuItem = new javax.swing.JMenuItem();
-    private javax.swing.JMenu jMenu1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;
@@ -563,6 +566,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JTabbedPane mapPanel = new javax.swing.JTabbedPane();
     public final javax.swing.JPopupMenu mapPopupMenu = new javax.swing.JPopupMenu();
     private javax.swing.JMenuBar menuBar;
+    public final javax.swing.JCheckBoxMenuItem negatedPremiseMenuItem = new javax.swing.JCheckBoxMenuItem();
     public final javax.swing.JMenuItem newArgumentMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem newFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem newGraphMenuItem = new javax.swing.JMenuItem();
@@ -603,6 +607,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JMenu statusPopupMenu = new javax.swing.JMenu();
     public final javax.swing.JPopupMenu tabPopupMenu = new javax.swing.JPopupMenu();
     public final javax.swing.JToolBar toolBar = new javax.swing.JToolBar();
+    private javax.swing.JMenu typePremiseMenuItem;
     public final javax.swing.JButton undoButton = new javax.swing.JButton();
     public final javax.swing.JMenuItem undoEditMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JButton zoomInButton = new javax.swing.JButton();

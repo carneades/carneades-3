@@ -87,6 +87,7 @@
   (add-premise-premisemenuitem-listener view premise-premisemenuitem-listener [view])
   (add-assumption-premisemenuitem-listener view assumption-premisemenuitem-listener [view])
   (add-exception-premisemenuitem-listener view exception-premisemenuitem-listener [view])
+  (add-negated-premisemenuitem-listener view negated-premisemenuitem-listener [view])
   (add-new-statement-menuitem-listener view new-statement-menuitem-listener [view])
   (add-new-argument-menuitem-listener view new-argument-menuitem-listener [view])
   (add-new-graph-menuitem-listener view new-graph-menuitem-listener [view])
