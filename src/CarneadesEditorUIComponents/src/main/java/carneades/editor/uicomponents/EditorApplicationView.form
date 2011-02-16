@@ -183,7 +183,7 @@
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
-        <Menu class="javax.swing.JMenu" name="jMenu1">
+        <Menu class="javax.swing.JMenu" name="typePremiseMenuItem">
           <Properties>
             <Property name="text" type="java.lang.String" value="Type"/>
           </Properties>
@@ -224,6 +224,15 @@
             </MenuItem>
           </SubComponents>
         </Menu>
+        <MenuItem class="javax.swing.JCheckBoxMenuItem" name="negatedPremiseMenuItem">
+          <Properties>
+            <Property name="selected" type="boolean" value="true"/>
+            <Property name="text" type="java.lang.String" value="Negated"/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
+          </AuxValues>
+        </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator14">
         </Component>
         <MenuItem class="javax.swing.JMenuItem" name="deletePremiseMenuItem">
