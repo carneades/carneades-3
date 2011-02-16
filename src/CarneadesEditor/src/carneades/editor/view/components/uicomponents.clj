@@ -77,3 +77,6 @@
 (defvar *exceptionPremiseMenuItem* (.exceptionPremiseMenuItem *frame*))
 
 (defvar *negatedPremiseMenuItem* (.negatedPremiseMenuItem *frame*))
+
+(defvar *proArgumentMenuItem* (.proArgumentMenuItem *frame*))
+(defvar *conArgumentMenuItem* (.conArgumentMenuItem *frame*))

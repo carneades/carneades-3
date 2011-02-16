@@ -327,3 +327,17 @@
           previous-polarity (:previous-polarity info)]
       (on-premise-edit-polarity view path id
                                 (assoc info :polarity (not previous-polarity))))))
+
+(defn- argument-menuitem-listener [event view direction]
+  (when-let [[path id] (current-graph view)]
+    (let [pm (get-selected-node view path id)
+          info (get-argument-being-edited-menu-info view)]
+      (on-argument-edit-direction view path id
+                                  (assoc info :direction direction)))))
+
+(defn pro-argumentmenuitem-listener [event view]
+  (argument-menuitem-listener event view :pro))
+
+(defn con-argumentmenuitem-listener [event view]
+  (argument-menuitem-listener event view :con))
+
