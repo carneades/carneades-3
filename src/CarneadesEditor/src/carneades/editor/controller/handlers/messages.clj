@@ -67,3 +67,5 @@
 
 (defvar *no-rule-directory* "Please specify a Rule Directory in the Preferences first.")
 (defvar *cannot-be-relative* "%s must be under %s or %s to be relative.")
+
+(defvar *no-scheme-file* "Please specify an Argumentation Schemes File in the Preferences first.")

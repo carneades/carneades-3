@@ -55,36 +55,40 @@
 (defn on-pre-instantiatescheme-wizard [state]
   (let [{:keys [view path id conclusion]} state
         scheme-pathname (get-property *argumentation-scheme-file*)]
-    (try
-      (let [content (import-lkif scheme-pathname)
-            rules (:rules (:rb content))
-            reasoners (get-reasoners path)
-            state (assoc state :rules rules :reasoners reasoners)]
-        (if (nil? conclusion)
-          (do
-            (set-conclusion-statement view "")
-            (set-conclusionmatches-button-enabled view false)
-            state)
-          (do
-            (set-conclusion-statement view (statement-formatted conclusion))
-            (set-conclusionmatches-button-enabled view true)
-            state)))
-      (catch IllegalArgumentException
-          e (display-error view *open-error* (str (format *cannot-open* scheme-pathname)
-                                                  ".\n" *invalid-content* ": " (.getMessage e)))
-          nil)
-      (catch java.io.FileNotFoundException
-          e (display-error view *open-error* (str (format *cannot-open* scheme-pathname)
-                                                  ".\n " (.getMessage e)))
-          nil)
-      (catch java.io.IOException
-          e (display-error view *open-error* (str (format *cannot-open* scheme-pathname)
-                                                  ".\n" *invalid-content* ": " (.getMessage e)))
-          nil)
-      (catch org.xml.sax.SAXException
-          e (display-error view *open-error* (str (format *cannot-open* scheme-pathname)
-                                                  ".\n" *invalid-content*))
-          nil))))
+    (if (empty? scheme-pathname)
+      (do
+        (display-error view *open-error* *no-scheme-file*)
+        nil)
+      (try
+        (let [content (import-lkif scheme-pathname)
+              rules (:rules (:rb content))
+              reasoners (get-reasoners path)
+              state (assoc state :rules rules :reasoners reasoners)]
+          (if (nil? conclusion)
+            (do
+              (set-conclusion-statement view "")
+              (set-conclusionmatches-button-enabled view false)
+              state)
+            (do
+              (set-conclusion-statement view (statement-formatted conclusion))
+              (set-conclusionmatches-button-enabled view true)
+              state)))
+        (catch IllegalArgumentException
+            e (display-error view *open-error* (str (format *cannot-open* scheme-pathname)
+                                                    ".\n" *invalid-content* ": " (.getMessage e)))
+            nil)
+        (catch java.io.FileNotFoundException
+            e (display-error view *open-error* (str (format *cannot-open* scheme-pathname)
+                                                    ".\n " (.getMessage e)))
+            nil)
+        (catch java.io.IOException
+            e (display-error view *open-error* (str (format *cannot-open* scheme-pathname)
+                                                    ".\n" *invalid-content* ": " (.getMessage e)))
+            nil)
+        (catch org.xml.sax.SAXException
+            e (display-error view *open-error* (str (format *cannot-open* scheme-pathname)
+                                                    ".\n" *invalid-content*))
+            nil)))))
 
 (defn on-filter-schemes [state]
   (let [{:keys [view path id filter-text conclusion conclusionmatches rules]} state]
