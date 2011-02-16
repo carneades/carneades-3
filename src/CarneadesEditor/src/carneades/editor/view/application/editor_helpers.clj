@@ -40,7 +40,8 @@
         :carneades.engine.argument/ordinary-premise (.setSelected *premisePremiseMenuItem* true)
         :carneades.engine.argument/assumption (.setSelected *assumptionPremiseMenuItem* true)
         :carneades.engine.argument/exception (.setSelected *exceptionPremiseMenuItem* true)
-        (nil? type))))
+        (nil? type))
+    (.setSelected *negatedPremiseMenuItem* (not polarity))))
 
 (defn- node-selection-listener [view path id obj]
   (cond (instance? StatementCell obj)
@@ -54,9 +55,8 @@
               (apply listener path id stmt args))))
 
         (instance? ArgumentCell obj)
-        (do
-          (doseq [{:keys [listener args]} (deref *argument-selection-listeners*)]
-            (apply listener path id (:arg obj) args)))
+        (doseq [{:keys [listener args]} (deref *argument-selection-listeners*)]
+          (apply listener path id (:arg obj) args))
 
         (instance? PremiseCell obj)
         (do

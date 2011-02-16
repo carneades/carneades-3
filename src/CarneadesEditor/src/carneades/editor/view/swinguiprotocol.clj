@@ -43,6 +43,7 @@
   (add-premise-premisemenuitem-listener [this f args])
   (add-assumption-premisemenuitem-listener [this f args])
   (add-exception-premisemenuitem-listener [this f args])
+  (add-negated-premisemenuitem-listener [this f args])
   (add-new-statement-menuitem-listener [this f args])
   (add-new-argument-menuitem-listener [this f args])
   (add-new-premise-menuitem-listener [this f args])
