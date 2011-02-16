@@ -232,6 +232,10 @@
    [this f args]
    (apply add-action-listener *exceptionPremiseMenuItem* f args))
 
+  (add-negated-premisemenuitem-listener
+   [this f args]
+   (apply add-action-listener *negatedPremiseMenuItem* f args))
+
   (add-new-statement-menuitem-listener
    [this f args]
    (apply add-action-listener *newStatementMenuItem* f args))

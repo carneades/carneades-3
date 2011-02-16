@@ -75,3 +75,5 @@
 (defvar *premisePremiseMenuItem* (.premisePremiseMenuItem *frame*))
 (defvar *assumptionPremiseMenuItem* (.assumptionPremiseMenuItem *frame*))
 (defvar *exceptionPremiseMenuItem* (.exceptionPremiseMenuItem *frame*))
+
+(defvar *negatedPremiseMenuItem* (.negatedPremiseMenuItem *frame*))

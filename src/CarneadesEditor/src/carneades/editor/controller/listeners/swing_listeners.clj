@@ -320,3 +320,10 @@
   (premisemenuitem-listener-helper
    event view :carneades.engine.argument/exception))
 
+(defn negated-premisemenuitem-listener [event view]
+  (when-let [[path id] (current-graph view)]
+    (let [pm (get-selected-node view path id)
+          info (get-premise-being-edited-menu-info view)
+          previous-polarity (:previous-polarity info)]
+      (on-premise-edit-polarity view path id
+                                (assoc info :polarity (not previous-polarity))))))
