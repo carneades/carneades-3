@@ -164,6 +164,38 @@
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
           </AuxValues>
         </MenuItem>
+        <Menu class="javax.swing.JMenu" name="directionArgumentMenu">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Direction"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="proArgumentMenuItem">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="directionButtonGroup"/>
+                </Property>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" value="Pro"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
+              </AuxValues>
+            </MenuItem>
+            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="conArgumentMenuItem">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="directionButtonGroup"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Con"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="17"/>
+              </AuxValues>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator15">
+        </Component>
         <MenuItem class="javax.swing.JMenuItem" name="deleteArgumentMenuItem">
           <Properties>
             <Property name="text" type="java.lang.String" value="Delete"/>
@@ -367,6 +399,8 @@
     <Component class="javax.swing.ButtonGroup" name="statusButtonGroup">
     </Component>
     <Component class="javax.swing.ButtonGroup" name="premiseTypeGroup">
+    </Component>
+    <Component class="javax.swing.ButtonGroup" name="directionButtonGroup">
     </Component>
     <Menu class="javax.swing.JMenuBar" name="menuBar">
       <SubComponents>

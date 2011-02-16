@@ -298,7 +298,14 @@
      (:applicable arg)
      (:weight arg)
      (:direction arg)
-     (:scheme arg))))
+     (:scheme arg))
+    (set-current-argument-properties
+     view
+     path
+     id
+     (:id arg)
+     (:direction arg)
+     (:weight arg))))
 
 (defn on-select-premise [path id arg pm view]
   (let [type (:type pm)]
