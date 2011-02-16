@@ -65,6 +65,7 @@
   (set-lkif-dirty [this path state])
   (copyselection-clipboard [this path id])
   (set-current-premise-properties [this path id arg atom polarity type])
+  (set-current-argument-properties [this path id argid direction weight])
 
   ;; notifications:
   ;; these fine grained modifications avoid to redisplay the whole

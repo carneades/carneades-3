@@ -377,6 +377,13 @@
           :atom atom)
    (reset! *current-premise-properties* {:polarity polarity
                                          :type type}))
+
+  (set-current-argument-properties
+   [this path id argid direction weight]
+   (reset! *argument-being-edited-menu-info*
+           {:argid argid
+            :previous-direction direction
+            :previous-weight weight}))
     
   (statement-content-changed
    [this path ag oldstmt newstmt]

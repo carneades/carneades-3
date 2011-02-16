@@ -19,8 +19,12 @@
 (defvar *argument-selection-listeners* (atom ()))
 (defvar *premise-selection-listeners* (atom ()))
 (defvar *add-existing-premise-listeners* (atom ()))
+
+;; TODO: one variable should be enough
 (defvar *current-premise-properties* (atom {}))
 (defvar *premise-being-edited-menu-info* (atom {}))
+
+(defvar *argument-being-edited-menu-info* (atom {}))
 
 (defvar *main-issues* (atom {}))
 
@@ -43,6 +47,11 @@
         (nil? type))
     (.setSelected *negatedPremiseMenuItem* (not polarity))))
 
+(defn- update-argument-context-menu []
+  (let [{:keys [previous-direction]} (deref *argument-being-edited-menu-info*)]
+    (.setSelected *proArgumentMenuItem* (= previous-direction :pro))
+    (.setSelected *conArgumentMenuItem* (= previous-direction :con))))
+
 (defn- node-selection-listener [view path id obj]
   (cond (instance? StatementCell obj)
         (do
@@ -55,8 +64,10 @@
               (apply listener path id stmt args))))
 
         (instance? ArgumentCell obj)
-        (doseq [{:keys [listener args]} (deref *argument-selection-listeners*)]
-          (apply listener path id (:arg obj) args))
+        (do
+          (doseq [{:keys [listener args]} (deref *argument-selection-listeners*)]
+            (apply listener path id (:arg obj) args))
+          (update-argument-context-menu))
 
         (instance? PremiseCell obj)
         (do

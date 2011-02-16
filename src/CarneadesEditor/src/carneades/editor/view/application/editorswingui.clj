@@ -151,10 +151,6 @@
    [this]
    (graph-being-edited-info))
 
-  (get-argument-being-edited-info
-   [this]
-   (argument-being-edited-info))
-  
   (add-statement-edit-status-listener
    [this f args]
    (apply add-action-listener *statementStatusComboBox* f args))
@@ -236,6 +232,14 @@
    [this f args]
    (apply add-action-listener *negatedPremiseMenuItem* f args))
 
+  (add-pro-argumentmenuitem-listener
+   [this f args]
+   (apply add-action-listener *proArgumentMenuItem* f args))
+
+  (add-con-argumentmenuitem-listener
+   [this f args]
+   (apply add-action-listener *conArgumentMenuItem* f args))
+  
   (add-new-statement-menuitem-listener
    [this f args]
    (apply add-action-listener *newStatementMenuItem* f args))
@@ -327,6 +331,14 @@
   (get-premise-being-edited-menu-info
    [this]
    (deref *premise-being-edited-menu-info*))
+
+  (get-argument-being-edited-menu-info
+   [this]
+   (deref *argument-being-edited-menu-info*))
+
+  (get-argument-being-edited-info
+   [this]
+   (argument-being-edited-info))
   
   (get-premise-being-edited-info
    [this]

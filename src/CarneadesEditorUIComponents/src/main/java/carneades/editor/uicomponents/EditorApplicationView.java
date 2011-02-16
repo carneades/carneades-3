@@ -39,11 +39,14 @@ public class EditorApplicationView extends javax.swing.JFrame {
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
         jSeparator10 = new javax.swing.JPopupMenu.Separator();
         searchInButtonGroup = new javax.swing.ButtonGroup();
+        directionArgumentMenu = new javax.swing.JMenu();
+        jSeparator15 = new javax.swing.JPopupMenu.Separator();
         typePremiseMenuItem = new javax.swing.JMenu();
         jSeparator14 = new javax.swing.JPopupMenu.Separator();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
         statusButtonGroup = new javax.swing.ButtonGroup();
         premiseTypeGroup = new javax.swing.ButtonGroup();
+        directionButtonGroup = new javax.swing.ButtonGroup();
         jSeparator4 = new javax.swing.JToolBar.Separator();
         jSeparator8 = new javax.swing.JToolBar.Separator();
         jSplitPane1 = new javax.swing.JSplitPane();
@@ -113,6 +116,20 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         addExistingPremiseMenuItem.setText("Link premise");
         argumentPopupMenu.add(addExistingPremiseMenuItem);
+
+        directionArgumentMenu.setText("Direction");
+
+        directionButtonGroup.add(proArgumentMenuItem);
+        proArgumentMenuItem.setSelected(true);
+        proArgumentMenuItem.setText("Pro");
+        directionArgumentMenu.add(proArgumentMenuItem);
+
+        directionButtonGroup.add(conArgumentMenuItem);
+        conArgumentMenuItem.setText("Con");
+        directionArgumentMenu.add(conArgumentMenuItem);
+
+        argumentPopupMenu.add(directionArgumentMenu);
+        argumentPopupMenu.add(jSeparator15);
 
         deleteArgumentMenuItem.setText("Delete");
         argumentPopupMenu.add(deleteArgumentMenuItem);
@@ -520,12 +537,15 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JMenuItem closeGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem closeLkifFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem closeTabMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JRadioButtonMenuItem conArgumentMenuItem = new javax.swing.JRadioButtonMenuItem();
     public final javax.swing.JMenuItem copyClipboardEditMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem copyGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem deleteArgumentMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem deleteGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem deletePremiseMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem deleteStatementMenuItem = new javax.swing.JMenuItem();
+    private javax.swing.JMenu directionArgumentMenu;
+    private javax.swing.ButtonGroup directionButtonGroup;
     private javax.swing.JMenu editMenu;
     public final javax.swing.JMenuItem editStatementMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JRadioButtonMenuItem exceptionPremiseMenuItem = new javax.swing.JRadioButtonMenuItem();
@@ -549,6 +569,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator12;
     private javax.swing.JPopupMenu.Separator jSeparator13;
     private javax.swing.JPopupMenu.Separator jSeparator14;
+    private javax.swing.JPopupMenu.Separator jSeparator15;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JToolBar.Separator jSeparator4;
@@ -582,6 +603,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     private javax.swing.ButtonGroup premiseTypeGroup;
     public final javax.swing.JMenuItem printFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem printPreviewFileMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JRadioButtonMenuItem proArgumentMenuItem = new javax.swing.JRadioButtonMenuItem();
     public final javax.swing.JPanel propertiesPanel = new javax.swing.JPanel();
     public final javax.swing.JRadioButtonMenuItem questionedMenuItem = new javax.swing.JRadioButtonMenuItem();
     public final javax.swing.JMenuItem quitFileMenuItem = new javax.swing.JMenuItem();
