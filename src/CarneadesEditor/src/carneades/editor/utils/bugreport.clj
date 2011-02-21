@@ -21,7 +21,6 @@
    "[Description]\n\n"
    "[Steps to reproduce]\n\n"
    "[Additional information]\n\n"
-   "Log file: PLEASE ATTACH YOUR LOGFILE\n\n"
    "Exception message: %s\n\n"
    "Stacktrace:\n\n"
    "%s\n"))
