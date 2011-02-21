@@ -99,26 +99,28 @@
                     (append line word)))))))
 
 (defn trunk [s]
-  (let [words (str/split s #"\s+")
-        {words :words line1 :line} (make-line words)
-        {words :words line2 :line} (make-line words)
-        {words :words line3 :line last-truncated :last-truncated} (make-line words)]
-    (cond (and (nil? line2) (nil? line3))
-          line1
+  (if (nil? s)
+    ""
+    (let [words (str/split s #"\s+")
+          {words :words line1 :line} (make-line words)
+          {words :words line2 :line} (make-line words)
+          {words :words line3 :line last-truncated :last-truncated} (make-line words)]
+      (cond (and (nil? line2) (nil? line3))
+            line1
 
-          (nil? line3)
-          (str line1 "\n" line2)
-          
-          :else
-          (str line1 "\n" line2 "\n" line3
-               (cond (and last-truncated (not (empty? words)))
-                     "."
+            (nil? line3)
+            (str line1 "\n" line2)
+            
+            :else
+            (str line1 "\n" line2 "\n" line3
+                 (cond (and last-truncated (not (empty? words)))
+                       "."
 
-                     (not (empty? words))
-                     "..."
-                     
-                     :else nil
-                     )))))
+                       (not (empty? words))
+                       "..."
+                       
+                       :else nil
+                       ))))))
 
 (defn trunk-scheme [s]
   (when-not (nil? s)
