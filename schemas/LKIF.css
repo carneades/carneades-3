@@ -161,7 +161,7 @@ and > s {
     margin-left: 1em;
 }
 
-head > s, head > not {
+head > s, head > v, head > not {
     display: block;
     margin-left: 1em;
 }
