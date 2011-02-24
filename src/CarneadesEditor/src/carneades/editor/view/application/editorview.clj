@@ -4,7 +4,8 @@
 (ns carneades.editor.view.application.editorview
   (:use (clojure.contrib def swing-utils)
         clojure.java.io
-        carneades.engine.utils ;; 
+        carneades.engine.utils ;; TODO: this part of the UI should be independant
+                               ;; of the engine
         carneades.ui.diagram.graphvizviewer
         (carneades.editor.view.dialogs statement-editor location)
         carneades.editor.view.application.context
@@ -24,17 +25,12 @@
            (java.awt EventQueue Cursor)
            (javax.swing JFileChooser JOptionPane)))
 
-(defvar- *application-name* "Carneades Editor")
 (defvar- *dialog-current-directory* (atom nil))
 
 (deftype EditorView []
   View
   (init
    [this]
-   (System/setProperty "apple.laf.useScreenMenuBar" "true")
-   (System/setProperty "com.apple.mrj.application.apple.menu.about.name"
-                       *application-name*)
-   (set-look-and-feel "Nimbus")
    
    ;; make a new instance (without listeners!)
    (add-action-listener *zoomInButton* on-zoom-in)
