@@ -12,8 +12,7 @@
         (carneades.editor.view wizardsprotocol viewprotocol swinguiprotocol)
         carneades.editor.controller.documents
         carneades.editor.model.properties
-        carneades.editor.controller.handlers.suggestions
-        [carneades.engine.rule :only (predicate condition-statement)])
+        carneades.editor.controller.handlers.suggestions)
   (:require [clojure.string :as str]
             [carneades.engine.owl :as owl]))
 

@@ -75,9 +75,6 @@ the statement of a condition"
     (condp = predicate
       'unless statement
       'assuming statement
-      ;; added:
-      'not statement
-      'applies (second statement)
       c)))
 
 ;; TO DO: represent the roles of conditions, e.g. "major", "minor"
@@ -88,14 +85,15 @@ the statement of a condition"
 
 (defn predicate [s]
   (if (seq? s)
-    (statement-predicate (let [pred (first s)
-                               stmt (second s)]
-                           (condp = pred
-                             'not stmt
-                             'unless stmt
-                             'assuming stmt
-                             'applies (nth s 2)
-                             s)))
+    (let [pred (first s)
+          stmt (second s)]
+      (statement-predicate
+       (condp = pred
+           'not stmt
+           'unless stmt
+           'assuming stmt
+           'applies (nth s 2)
+           s)))
     s))
 
 (defstruct- rule-struct
