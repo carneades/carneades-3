@@ -98,7 +98,8 @@ public class CarneadesServlet extends HttpServlet {
                     // creating query for topic
                     log.info("creating query");
                     Statement query = new Statement();
-                    query.setPredicate("p");
+                    query.setPredicate("isGrandfather");
+                    query.getArgs().add("Peter");
                     query.getArgs().add("?x");
                     // get kb for discussion
                     String kb = "http://localhost:8080/CarneadesWS-web/kb/lkif.xml";
@@ -211,8 +212,8 @@ public class CarneadesServlet extends HttpServlet {
         // ask
         // TODO : get askables from CMS
         List<String> askables = new ArrayList<String>();
-        askables.add("http://carneades/test/ont#r");
-        askables.add("http://carneades/test/ont#s");
+        askables.add("isFather");
+        // askables.add("http://carneades/test/ont#s");
         log.info("calling ask from ejb: " + query.toString());
         CarneadesMessage msg = service.askEngine(query,kb,askables,answer);
         // evaluate answer
