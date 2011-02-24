@@ -3,11 +3,13 @@
 
 (ns carneades.engine.shell
   (:use clojure.set
-        clojure.contrib.pprint
+        ;clojure.contrib.pprint
         clojure.contrib.profile
+        clojure.contrib.monads
         carneades.engine.utils
         [carneades.engine.abduction :as abd]
         carneades.engine.argument-search
+        carneades.engine.ask
         carneades.engine.unify
         [carneades.engine.argument :only (node-statement get-nodes arguments)]
         [carneades.engine.search :only (depth-first resource search traverse)]
@@ -58,6 +60,18 @@
                    (:candidates s)
                    (:substitutions s)))
       sols)))
+
+(defn monadic-construction
+    [goal max-nodes ag generators askable? get-answer-cont]
+    (println "monadic construction started:" get-answer-cont (type get-answer-cont))
+    (run-cont
+      (domonad cont-m
+        [ga (call-cc (fn [c] 
+                       ;(def continuation c)
+                       (get-answer-cont c)))]
+        (do (println "domonad" ga " - " (type ga))
+            (find-best-arguments traverse depth-first max-nodes 1
+                          (initial-state goal ag) (cons (ask-user askable? ga) generators))))))
 
 (defn continue-construction
   [goal max-nodes state generators]
@@ -118,7 +132,7 @@
     Always terminates, as only states found given the resource limit of the
     inference engine will be displayed."
   [query engine]
-  (map (fn [s] (pprint (apply-substitution (:substitutions s) query))) (solutions (engine query))))
+  (map (fn [s] (clojure.contrib.pprint/pprint (apply-substitution (:substitutions s) query))) (solutions (engine query))))
 
 ; (defn show-state [state]
 ;   "view a diagram of the argument graph of a state"
