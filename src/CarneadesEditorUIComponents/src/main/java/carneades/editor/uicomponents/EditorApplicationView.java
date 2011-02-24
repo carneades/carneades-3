@@ -639,24 +639,4 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
     private final static String APPLICATION_NAME = "Carneades Editor";
 
-    // our modifications:
-    static {
-        // mac os x:
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name",
-                APPLICATION_NAME);
-
-        // set nimbus theme
-        try {
-            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (Exception e) {
-        }
-
-    }
-
 }
