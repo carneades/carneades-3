@@ -2,7 +2,8 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.editor.core
-  (:use (carneades.editor.view viewprotocol)
+  (:use carneades.editor.init
+        (carneades.editor.view viewprotocol)
         carneades.editor.view.application.editorapplication
         carneades.editor.controller.listeners.register
         carneades.editor.view.dialogs.properties
