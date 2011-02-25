@@ -21,6 +21,7 @@ import org.fokus.carneades.api.Statement;
 import org.fokus.carneades.common.EjbLocator;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.fokus.carneades.simulation.Answers;
+import org.fokus.carneades.simulation.Answer;
 import org.fokus.carneades.simulation.Question;
 import org.fokus.carneades.simulation.QuestionHelper;
 import org.fokus.carneades.simulation.Questions;
@@ -36,9 +37,10 @@ public class CarneadesServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(CarneadesServlet.class);
     private HttpSession session;
     // session content keys:
-    // TODO : add kb and query
     private static final String CARNEADES_MANAGER = "CARNEADES_MANAGER";
     private static final String LATEST_QUESTIONS = "LATEST_QUESTIONS";
+    private static final String KNOWLEDGE_BASE = "KNOWLEDGE_BASE";
+    private static final String QUERY = "QUERY";
     
 
     /** 
@@ -82,66 +84,49 @@ public class CarneadesServlet extends HttpServlet {
                 + "{\"id\":6,\"type\":\"date\",\"question\":\"Birthday: \",\"answers\":[\"\"],\"category\":\"Family\", \"hint\":\"\"},"
                 + "{\"id\":7,\"type\":\"checkbox\",\"question\":\"Hobbies: \",\"answers\":[\"Paragliding\",\"boongie jumping\",\"sharkhunting\",\"jackass-like-stuns\",\"rocket science\"],\"category\":\"Personal Information\",\"hint:\":\"Please be honest.\"}"
                 + "]}";
-                Questions questions = mapper.readValue(jsonOUT, Questions.class);
-                saveQuestionsToSession((List)questions.getQuestions(),
-                        "http://localhost:8080/CarneadesWS-web/kb/lkif.xml",
-                        new Statement()
-                );
+                //Questions questions = mapper.readValue(jsonOUT, Questions.class);
+                //saveQuestionsToSession(questions.getQuestions());
             }
             else if(jsonIN.matches("\\s*\\{\\s*\"request\"\\s*:\\s*\"\\w+\"\\s*\\}\\s*")) {
                 // finding requested topic
-                String topic = jsonIN.replaceFirst("\\s*\\{\\s*\"request\"\\s*:\\s*\"","");
-                topic = topic.replaceFirst("\"\\s*\\}\\s*","");
+                String topic = jsonIN.replaceFirst("\\s*\\{\\s*\"request\"\\s*:\\s*\"", "");
+                topic = topic.replaceFirst("\"\\s*\\}\\s*", "");
                 // getting the topic
-                log.info("getting args for topic:  "+topic);
-                // TODO : DB: topic -> statement, kb
-                    // creating query for topic
-                    log.info("creating query");
-                    Statement query = new Statement();
-                    query.setPredicate("p");
-                    query.getArgs().add("?x");
-                    // get kb for discussion
-                    String kb = "http://localhost:8080/CarneadesWS-web/kb/lkif.xml";
-                List<Question> qList = new ArrayList<Question>();
+                log.info("getting args for topic:  " + topic);
+                // TODO : CMS: query & kb for topic
+                // creating query for topic
+                log.info("creating query");
+                Statement query = new Statement();
+                query.setPredicate("p");
+                query.getArgs().add("?x");
+                session.setAttribute(QUERY, query);
+                // get kb for discussion
+                String kb = "http://localhost:8080/CarneadesWS-web/kb/lkif.xml";
+                session.setAttribute(KNOWLEDGE_BASE, kb);
                 try {
-                    qList = askEngine(service,query, kb, null); // empty = no questions yet
+                    jsonOUT = askEngine(service, query, kb, null); // empty = no questions yet
                 } catch (CarneadesException e) {
                     log.error(e.getMessage());
                     jsonOUT = e.getMessage();
-                } catch (CarneadesSolutionException e) {
-                    jsonOUT = e.getMessage();
                 }
-                // save questions in session
-                if (qList.size() > 0) {
-                    saveQuestionsToSession(qList, kb, query);
-                    jsonOUT = QuestionHelper.getJSONFromQuestions(qList);
-                    log.info("sending question to user");
-                }
-            }
-            else jsonOUT = "Your request doesn't match.";
+            } else
+                jsonOUT = "Your request doesn't match.";
         }
         else if(jsonIN.matches("\\s*\\{\\s*\"answers\"\\s*:.+")) {
             // client replies
-            Questions questions = (Questions) session.getAttribute(LATEST_QUESTIONS);
-            String kb = questions.getKB();
-            Statement query = questions.getQuery();
+            List<Question> qList = (ArrayList<Question>) session.getAttribute(LATEST_QUESTIONS);
+            String kb = (String) session.getAttribute(KNOWLEDGE_BASE);
+            Statement query = (Statement) session.getAttribute(QUERY);
             Answers answers = mapper.readValue(jsonIN, Answers.class);
-            List<Statement> answer = QuestionHelper.mapAnswersAndQuestionsToStatement(questions, answers);
-            List<Question> qList = new ArrayList<Question>();
+            List<Answer> aList = answers.getAnswers();
+            List<Statement> answer = QuestionHelper.mapAnswersAndQuestionsToStatement(qList, aList);
             try {
-                qList = askEngine(service,query,kb,answer);
+                jsonOUT =askEngine(service,query,kb,answer);
             } catch (CarneadesException e) {
                 log.error(e.getMessage());
                 jsonOUT = e.getMessage();
-            } catch (CarneadesSolutionException e) {
-                jsonOUT = "solution found: "+e.getMessage().toString();
             }
-            // save questions in session
-            if (qList.size() > 0) {
-                saveQuestionsToSession(qList, kb, query);
-                jsonOUT = QuestionHelper.getJSONFromQuestions(qList);
-                log.info("sending question to user");
-            }
+            
         }
         else if (jsonIN == null || jsonIN.equals("null")) {
             // null
@@ -175,16 +160,10 @@ public class CarneadesServlet extends HttpServlet {
 
     /**
      * saves the current questions, kb and query in the user session
-     * @param qList list with questions that haven't answered yet
-     * @param kb location of the knowlegebase (rulebase) in the file system
-     * @param query overall goal of the request (solution that has to be found)
+     * @param q questions including knowledgebase and query
      */
-    private void saveQuestionsToSession(List<Question> qList, String kb, Statement query) {
-        Questions qListNew = new Questions();
-        qListNew.setQuestions(qList);
-        qListNew.setKB(kb);
-        qListNew.setQuery(query);
-        session.setAttribute(LATEST_QUESTIONS, qListNew);
+    private void saveQuestionsToSession(List<Question> qList) {
+        session.setAttribute(LATEST_QUESTIONS, qList);
         log.info("user session updated");
     }
 
@@ -193,7 +172,7 @@ public class CarneadesServlet extends HttpServlet {
      * @param q questions including knowledgebase and query
      */
     private void saveQuestionsToSession(Questions q) {
-        session.setAttribute(LATEST_QUESTIONS, q);
+        session.setAttribute(LATEST_QUESTIONS, q.getQuestions());
         log.info("user session updated");
     }
 
@@ -203,11 +182,12 @@ public class CarneadesServlet extends HttpServlet {
      * @param query overall goal of the request (solution that has to be found)
      * @param kb location of the knowlegebase (rulebase) in the file system
      * @param answer actual list of questions including or not including the given answers by the user in the statement form
+     * @return returns json representing either questions or solution
      * @throws CarneadesException if the request was not successful
-     * @throws CarneadesSolutionException if a solution was found
      */
-    private List<Question> askEngine(CarneadesService service, Statement query, String kb, List<Statement> answer) throws CarneadesException, CarneadesSolutionException {
+    private String askEngine(CarneadesService service, Statement query, String kb, List<Statement> answer) throws CarneadesException {
         List<Question> qList = new ArrayList<Question>();
+        String jsonOUT = "";
         // ask
         // TODO : get askables from CMS
         List<String> askables = new ArrayList<String>();
@@ -222,11 +202,13 @@ public class CarneadesServlet extends HttpServlet {
             if (MessageType.ASKUSER.equals(msg.getType())) {
                 // convert Statement to question
                 qList.addAll(CarneadesDatabase.getQuestionsFromStatement(msg.getMessage()));
+                // save questions in session
+                saveQuestionsToSession(qList);
+                jsonOUT = QuestionHelper.getJSONFromQuestions(qList);
             } else if (MessageType.SOLUTION.equals(msg.getType())) {
                 // solution
-                // TODO : implement solution case (maybe throw a CarneadesSolutionException in askEngine)
                 log.info("sending solution to user");
-                throw new CarneadesSolutionException(msg.getAG());
+                jsonOUT = "{\"solution\":\""+msg.getAG().replaceAll("\"", "'") +"\"}";
                 // SolutionToAJAX()
             } else {
                 // error
@@ -237,7 +219,7 @@ public class CarneadesServlet extends HttpServlet {
             log.info("call from ejb returned: null");
             throw new CarneadesException("engine returned null.");
         }
-        return qList;
+        return jsonOUT;
     }
     
     /*private List<Statement> handleRequestAnswers(String a) { // is this function still needed?

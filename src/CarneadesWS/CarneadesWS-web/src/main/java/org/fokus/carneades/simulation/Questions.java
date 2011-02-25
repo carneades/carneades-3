@@ -10,49 +10,11 @@ import org.fokus.carneades.api.Statement;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 public class Questions {
-    // TODO : knowledgebase and query should not be part of Questions
     // { "questions" : [ { question } , ... ] }
     private List<Question> questions = new ArrayList();
-    private String knowledgebase = "";
-    private Statement query;
 
     public Questions(){
         // do nothing
-    }
-
-    @JsonIgnore
-    public Questions(String kb) {
-        this.knowledgebase = kb;
-    }
-
-    @JsonIgnore
-    public String getKnowledgebase(){
-        return this.knowledgebase;
-    }
-
-    @JsonIgnore
-    public void setKnowledgebase(String kb) {
-        this.knowledgebase = kb;
-    }
-
-    @JsonIgnore
-    public String getKB() {
-        return this.getKnowledgebase();
-    }
-
-    @JsonIgnore
-    public void setKB(String kb) {
-        this.setKnowledgebase(kb);
-    }
-
-    @JsonIgnore
-    public Statement getQuery(){
-        return this.query;
-    }
-
-    @JsonIgnore
-    public void setQuery(Statement q) {
-        this.query = q;
     }
 
     /**
@@ -91,9 +53,6 @@ public class Questions {
     @JsonIgnore
     public void addAll(Questions q) {
         this.questions.addAll(q.getQuestions());
-        // TODO : why isEmpty?
-        if (this.knowledgebase.isEmpty()) this.knowledgebase = q.getKnowledgebase();
-        if (this.query.getArgs().isEmpty()) this.query = q.getQuery(); 
     }
 
 }

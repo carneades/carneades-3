@@ -2,7 +2,7 @@
  * This is the AJAX-Engine for the IMPACT web application.
  *
  * @author bbr
- * @version 0.41
+ * @version 0.50
  */
 
 /** Settings */
@@ -70,7 +70,6 @@ $(function(){ // Init
 
     /** AJAX request config */
     $.ajaxSetup({
-       //url: "/CarneadesWS-web/CarneadesServletDemo",
        url: "/CarneadesWS-web/CarneadesServlet",
        async: true,
        beforeSend: function() {
@@ -118,87 +117,120 @@ function doAJAX(jsondata) {
         data : {
             json : JSON.stringify(jsondata)
         },
-        success : function(data){
-            if (data != null && data.questions) { // getting questions
-                var qbox = $("#questions");
-                var newline = false;
-                qbox.empty();
-                qbox.append("<div id=\"hints\"><h4>hints</h4></div>");
-                qbox.append("<div id=\""+data.questions[0].category.replace(/\s/,"_")+"\"><h3>"+data.questions[0].category+"</h3><div id=\"qcontent\"></div></div>");
-                qbox = $("#qcontent", qbox);
-                $.each(data.questions, function(i,item){
-                    // pre append formatting
-                    var output = "<p><label for=\"qID"+item.id+"\">"+item.question+"</label>";
-                    if (item.type == "select") {
-                        output += "<select id=\"qID"+item.id+"\" name=\"qID"+item.id+"\">";
-                        output += "<option value=\"\" selected=\"selected\">-- please choose --</option>";
-                        $.each(item.answers, function(answindex, answer) {
-                            output += "<option value=\""+answer+"\">"+answer+"</option>";
-                        });
-                        output += "</select>";
-                    }
-                    else if (item.type == "radio" || item.type == "checkbox") {
-                        newline = radioCheckNewLine(item.answers);
-                        $.each(item.answers, function(answindex, answer) {
-                            if (newline) output += "<br/>";
-                            output += "<input name=\"qID"+item.id+"\" type=\""+item.type+"\" value=\""+answer+"\">";
-                            output += "<span onclick=\"$(this).prev().click()\">"+answer+"</span>";
-                        });
-                    }
-                    else if (item.type == "date") {
-                        output += "<input type=\"text\" class=\"datefield\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
-                    }
-                    else if (item.type == "int") {
-                        output += "<input type=\"text\" class=\"integer\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
-                    }
-                    else if (item.type == "float") {
-                        output += "<input type=\"text\" class=\"float\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
-                    }
-                    else output += "<input type=\""+item.type+"\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
-                    output += "</p>";
-                    qbox.append(output);
-                    if (item.hint) $("#hints").append("<p id=\"qHINT"+item.id+"\" class=\"hint\">"+item.hint+"</p>");
-                    // post append formatting
-                    if (item.optional) $("p:last :input:first", qbox).addClass("optional");
-                    // focus and blur does not work on radio/checkbox
-                    if (item.type != "radio" && item.type != "checkbox") {
-                        $(":input:last", qbox).focus(function(){
-                            if (showhints) {
-                                $("#hints p").css('display','none');
-                                $("#qHINT"+this.id.substring(3)).show();
-                            }
-                        });
-                        $(":input:last", qbox).blur(function(){
-                            $("#qHINT"+this.id.substring(3)).css('display','none');
-                        });
-                        // validation
-                        $(":input:last", qbox).change(function(){validateField(this);});
-                    }
-                    else { // radios & checkboxes
-                        $("input:last", qbox).parent().mouseover(function(){
-                            if (showhints) {
-                                var hinton=$("#hints > p:not(:hidden)");
-                                statusupdate(1,"Verstecke: "+((hinton.length > 0)?"#qID"+hinton.attr("id").substring(5):"-")+" | Zeige: "+"#qHINT"+$(this).children("input:first").attr("name").substring(3));
-                                if (hinton.length > 0) $("#qID"+hinton.attr("id").substring(5)).blur();
-                                $("#qHINT"+$(this).children("input:first").attr("name").substring(3)).show();                               
-                            }
-                        });
-                        $("input:last", qbox).parent().mouseout(function(){
-                            $("#qHINT"+$(this).children("input:first").attr("name").substring(3)).css('display','none');
-                        });
-                        // validation
-                        $("input[name='qID"+item.id+"']", qbox).change(function(){validateField($("input:first", this.parentNoded)[0]);});
-                    }
-                });
-                qbox.append('<input type="button" class="ui-button next" value="next" onclick="sendAnswers(this.parentNode)"/>');
-                $('.datefield', qbox).datepicker();
-                updateTopicList(data.questions[0].category);
+        success : function(data) {
+            if (data == null || data == "") alert("Empty Server Answer!")
+            // getting questions
+            else if (data.questions && data.questions.length >= 1) {
+                showQuestions(data.questions);
+            }
+            // getting solution
+            else if (data.solution && data.solution.length >= 1) {
+                showSolution(data.solution);
             }
             else {
-                alert("FAILED: "+data);
+                alert("Can not resolve: "+JSON.stringify(data));
             }
         }
     });
+}
+
+/**
+ * Displays a list of questions
+ * @param {object} qList json object representing the questions
+ * @see doAJAX
+ */
+function showQuestions(qList) {
+    var qbox = $("#questions");
+    var newline = false;
+    qbox.empty();
+    qbox.append("<div id=\"hints\"><h4>hints</h4></div>");
+    qbox.append("<div id=\""+qList[0].category.replace(/\s/,"_")+"\"><h3>"+qList[0].category+"</h3><div id=\"qcontent\"></div></div>");
+    qbox = $("#qcontent", qbox);
+    $.each(qList, function(i,item){
+        // pre append formatting
+        var output = "<p><label for=\"qID"+item.id+"\">"+item.question+"</label>";
+        if (item.type == "select") {
+            output += "<select id=\"qID"+item.id+"\" name=\"qID"+item.id+"\">";
+            output += "<option value=\"\" selected=\"selected\">-- please choose --</option>";
+            $.each(item.answers, function(answindex, answer) {
+                output += "<option value=\""+answer+"\">"+answer+"</option>";
+            });
+            output += "</select>";
+        }
+        else if (item.type == "radio" || item.type == "checkbox") {
+            newline = radioCheckNewLine(item.answers);
+            $.each(item.answers, function(answindex, answer) {
+                if (newline) output += "<br/>";
+                output += "<input name=\"qID"+item.id+"\" type=\""+item.type+"\" value=\""+answer+"\">";
+                output += "<span onclick=\"$(this).prev().click()\">"+answer+"</span>";
+            });
+        }
+        else if (item.type == "date") {
+            output += "<input type=\"text\" class=\"datefield\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
+        }
+        else if (item.type == "int") {
+            output += "<input type=\"text\" class=\"integer\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
+        }
+        else if (item.type == "float") {
+            output += "<input type=\"text\" class=\"float\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
+        }
+        else output += "<input type=\""+item.type+"\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
+        output += "</p>";
+        qbox.append(output);
+        if (item.hint) $("#hints").append("<p id=\"qHINT"+item.id+"\" class=\"hint\">"+item.hint+"</p>");
+        // post append formatting
+        if (item.optional) $("p:last :input:first", qbox).addClass("optional");
+        // focus and blur does not work on radio/checkbox
+        if (item.type != "radio" && item.type != "checkbox") {
+            $(":input:last", qbox).focus(function(){
+                if (showhints) {
+                    $("#hints p").css('display','none');
+                    $("#qHINT"+this.id.substring(3)).show();
+                }
+            });
+            $(":input:last", qbox).blur(function(){
+                $("#qHINT"+this.id.substring(3)).css('display','none');
+            });
+            // validation
+            $(":input:last", qbox).change(function(){
+                validateField(this);
+            });
+        }
+        else { // radios & checkboxes
+            $("input:last", qbox).parent().mouseover(function(){
+                if (showhints) {
+                    var hinton=$("#hints > p:not(:hidden)");
+                    statusupdate(1,"Verstecke: "+((hinton.length > 0)?"#qID"+hinton.attr("id").substring(5):"-")+" | Zeige: "+"#qHINT"+$(this).children("input:first").attr("name").substring(3));
+                    if (hinton.length > 0) $("#qID"+hinton.attr("id").substring(5)).blur();
+                    $("#qHINT"+$(this).children("input:first").attr("name").substring(3)).show();
+                }
+            });
+            $("input:last", qbox).parent().mouseout(function(){
+                $("#qHINT"+$(this).children("input:first").attr("name").substring(3)).css('display','none');
+            });
+            // validation
+            $("input[name='qID"+item.id+"']", qbox).change(function(){
+                validateField($("input:first", this.parentNoded)[0]);
+            });
+        }
+    });
+    qbox.append('<input type="button" class="ui-button next" value="next" onclick="sendAnswers(this.parentNode)"/>');
+    $('.datefield', qbox).datepicker();
+    updateTopicList(qList[0].category);
+}
+
+/**
+ * Displays the solution
+ * @param {object} solution XML / LKIF file representing the solution
+ * @see doAJAX
+ */
+function showSolution(solution) {
+    alert("LÖSUNG!");
+    $("#tabs a[href='#tabs-3']").click();
+    $("#tabs-3").html("<p>You can save the solution as XML or LKIF file on your computer and display it with the Carneades Editor.</p><pre id=\"solution-xml\"><\/pre>");
+    var solutionNew = solution;
+    solutionNew = solutionNew.replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/'/g,"\"");
+    $("#solution-xml").html(new_solution);
 }
 
 /**
