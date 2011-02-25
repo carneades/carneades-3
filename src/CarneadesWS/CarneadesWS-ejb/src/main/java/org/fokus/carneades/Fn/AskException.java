@@ -5,8 +5,9 @@
 
 package org.fokus.carneades.Fn;
 
-import clojure.lang.PersistentStructMap;
+import clojure.lang.AFn;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -15,19 +16,26 @@ import java.util.List;
 public class AskException extends Exception{
 
     private List goal;
-    private PersistentStructMap state;
+    private Map state;
+    private AFn returnFn;
 
-    public AskException(List goal, PersistentStructMap state) {
+    public AskException(List goal, Map state, AFn returnFn) {
         this.goal = goal;
         this.state = state;
+        this.returnFn = returnFn;
     }
 
     public List getGoal() {
         return goal;
     }
 
-    public PersistentStructMap getState() {
+    public Map getState() {
         return state;
     }
+
+    public AFn getReturnFn() {
+        return returnFn;
+    }
+        
 
 }
