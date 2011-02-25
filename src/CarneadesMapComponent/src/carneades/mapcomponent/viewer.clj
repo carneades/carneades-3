@@ -58,7 +58,7 @@
     (.add menuBar fileMenu)
     menuBar))
 
-(defn set-look-and-feel [name]
+(defn- set-look-and-feel [name]
   (try
     (loop [infos (UIManager/getInstalledLookAndFeels)]
       (let [info (first infos)]
