@@ -9,6 +9,7 @@ import clojure.lang.AFn;
 import clojure.lang.Fn;
 import clojure.lang.Keyword;
 import clojure.lang.RT;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,8 @@ public class CarneadesServiceManager implements CarneadesService{
             RT.loadResourceScript("carneades/engine/shell.clj");
             log.info("loading viewer.clj");
             RT.loadResourceScript("carneades/ui/diagram/viewer.clj");
+            log.info("loading json.clj");
+            RT.loadResourceScript("clojure/contrib/json.clj");
             log.info("loading clojure files finished");
         } catch(Exception e) {
             log.error(e.toString());
@@ -120,21 +123,30 @@ public class CarneadesServiceManager implements CarneadesService{
             // solution found
             int solNr = (Integer)RT.var(NS.CORE, "count").invoke(solutions);
             log.info("solution found: " + Integer.toString(solNr) + " - "+solutions.getClass().getName() );
+            Map firstSol = (Map)solutions.get(solutions.size()-1);
+            Map firstSubs = (Map)firstSol.get(Keyword.intern("substitutions"));
+            List firstSolStmt = (List) RT.var(NS.UNIFY, "apply-substitution").invoke(firstSubs,goal);
             log.info("uniting solutions");
             Map solAG = (Map) RT.var(NS.CORE,"doall").invoke(RT.var(NS.SHELL, "unite-solutions").invoke(solutions));
+            solAG = (Map)RT.var(NS.CORE, "assoc").invoke(solAG, Keyword.intern("main-issue"), firstSolStmt);
             log.info("serializing argument graph");
-            StringWriter lkifWriter = new StringWriter();
-            String lkifString = "";
+            //PrintWriter jsonWriter = new PrintWriter(new StringWriter());
+            //String jsonString = "";
+            //RT.var(NS.JSON, "write-json") .invoke(solAG, jsonWriter);
             // {:ags (solAG)}
-            Map lkifMap = (Map)RT.map(Keyword.intern("ags"),RT.var(NS.CORE, "list").invoke(solAG));
-            RT.var(NS.LKIF,"lkif-export").invoke(lkifMap, lkifWriter);
-            RT.var(NS.CORE, "println").invoke(lkifMap);
-            lkifString = lkifWriter.toString();
-            log.info(lkifString);
+            //Map lkifMap = (Map)RT.map(Keyword.intern("ags"),RT.var(NS.CORE, "list").invoke(solAG));
+            //RT.var(NS.LKIF,"lkif-export").invoke(lkifMap, lkifWriter);
+            //RT.var(NS.CORE, "println").invoke(lkifMap);
+            //jsonString = jsonWriter.toString();
+            //log.info(lkifString);
+            String ag = (String)RT.var(NS.JSON,"json-str").invoke(solAG);
+            //log.info(jsonString);
+            log.info(ag);
             log.info("creating CarneadesMessage");
             cm = new CarneadesMessage();
             cm.setMessage(query);
-            cm.setAG(lkifString);
+            //cm.setAG(jsonString);
+            cm.setAG(ag);
             cm.setType(MessageType.SOLUTION);
         } catch (RuntimeException e) {
             // e.printStackTrace();

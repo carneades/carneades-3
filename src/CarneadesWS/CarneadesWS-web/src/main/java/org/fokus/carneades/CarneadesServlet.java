@@ -210,7 +210,7 @@ public class CarneadesServlet extends HttpServlet {
             } else if (MessageType.SOLUTION.equals(msg.getType())) {
                 // solution
                 log.info("sending solution to user");
-                jsonOUT = "{\"solution\":\""+msg.getAG().replaceAll("\"", "'") +"\"}";
+                jsonOUT = "{\"solution\":"+msg.getAG()+"}";
                 // SolutionToAJAX()
             } else {
                 // error

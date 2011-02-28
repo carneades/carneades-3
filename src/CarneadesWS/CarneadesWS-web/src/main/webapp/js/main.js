@@ -124,11 +124,11 @@ function doAJAX(jsondata) {
                 showQuestions(data.questions);
             }
             // getting solution
-            else if (data.solution && data.solution.length >= 1) {
+            else if (data.solution) {
                 showSolution(data.solution);
             }
             else {
-                alert("Can not resolve: "+JSON.stringify(data));
+                alert("Can not resolve: "+JSON.stringify(data,null,"  "));
             }
         }
     });
@@ -221,16 +221,15 @@ function showQuestions(qList) {
 
 /**
  * Displays the solution
- * @param {object} solution XML / LKIF file representing the solution
+ * @param {object} solution json object representing the solution
  * @see doAJAX
  */
 function showSolution(solution) {
     alert("LÖSUNG!");
     $("#tabs a[href='#tabs-3']").click();
     $("#tabs-3").html("<p>You can save the solution as XML or LKIF file on your computer and display it with the Carneades Editor.</p><pre id=\"solution-xml\"><\/pre>");
-    var solutionNew = solution;
-    solutionNew = solutionNew.replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/'/g,"\"");
-    $("#solution-xml").html(new_solution);
+    var solutionNew = JSON.stringify(solution, null, "\t");
+    $("#solution-xml").html(solutionNew);
 }
 
 /**
