@@ -37,7 +37,12 @@ public class CarneadesDatabase {
         question.setType("text");
         question.setStatement(stmt);
         question.setCategory("foo");
-        question.setHint(q);
+        if (stmt.getArgs().size() >= 2) {
+            String pred = stmt.getPredicate();
+            String subj = stmt.getArgs().get(0);
+            String obj = stmt.getArgs().get(1);
+            question.setHint(subj + " " + pred + " " +obj);
+        }
         question.addAnswer("");
 
         questions.add(question);

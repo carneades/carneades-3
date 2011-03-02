@@ -7,14 +7,38 @@
 */
 
 /* general */
-body{ font: 8pt "Trebuchet MS", sans-serif; margin: 35px; }
-h2 { margin: 1.5em 0 1em 0; }
+
+body{ 
+    color: #242529;
+    font-size: 8pt;
+    font-family: "Fontin Sans", Verdana, Sans-Serif;
+    margin: 10px;
+}
+h1 {
+    font-size:1.9em;
+}
+h2 {
+    margin: 1.5em 0 1em 0;
+    font-size:1.5em;
+    color: #5a5863;
+}
+#header {
+    margin-bottom: 7px;
+}
+#header a {
+    text-indent: -900em;
+    width: 300px;
+    height: 81px;
+    display: block;
+    border: 0;
+    background: url(../images/Logo_300pixel.png) no-repeat center;
+}
 #dialog_link {padding: .4em 1em .4em 20px; text-decoration: none; position: relative;}
 #dialog_link span.ui-icon {margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
 #progressbar { clear:both; }
 #status {
         padding: 0.7em;
-        position:absolute; right: 53px; top: 88px;
+        position:absolute; right: 10px; top: 21px;
         display:none;
 }
 #locatebox {
