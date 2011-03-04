@@ -49,8 +49,11 @@
 
 ;; abbreviations for constructing premises with empty roles
 
-(defn pm [s]
-  "statement -> ordinary-premise"
+(defn pm
+  "statement -> ordinary-premise
+
+   Constructs an ordinary premise "
+  [s]
   (ordinary-premise (statement-atom s) (statement-pos? s) nil))
 
 (defn am [s]
@@ -61,9 +64,10 @@
   "statement -> exception"
   (exception (statement-atom s) (statement-pos? s) nil))
 
-(defn premise [s]
+(defn premise
   "builds a premise, an assumption or an exception
    depending of the value of the predicate of the statement"
+  [s]
   (if (seq? s)
     (let [[predicate stmt] s]
       (condp = predicate

@@ -13,4 +13,5 @@ various argumentation tasks. This is the software library (the engine)."
                                  ;; [clj-sandbox "0.3.8"]
                                  ]
   :dev-dependencies [[swank-clojure "1.2.0"]
-                     [lein-run "1.0.0-SNAPSHOT"]])
+                     [lein-run "1.0.0-SNAPSHOT"]
+                     [autodoc "0.7.1"]])
