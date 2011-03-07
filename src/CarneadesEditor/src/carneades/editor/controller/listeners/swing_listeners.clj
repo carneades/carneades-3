@@ -258,10 +258,10 @@
   (on-new-file view))
 
 (defn windowclosing-listener [event view]
-  (on-exit view event))
+  (on-exit view))
 
 (defn quit-filemenuitem-listener [event view]
-  (on-exit view event))
+  (on-exit view))
 
 (defn edit-statement-menuitem-listener [event view]
   (when-let [[path id] (current-graph view)]
