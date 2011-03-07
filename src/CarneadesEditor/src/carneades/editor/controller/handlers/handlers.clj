@@ -727,7 +727,7 @@
     (when (not (in-swank?))
       (System/exit 0))))
 
-(defn on-exit [view event]
+(defn on-exit [view]
   (let [unsavedlkifs (get-unsaved-lkifs)]
     (if (empty? unsavedlkifs)
       (exit view)

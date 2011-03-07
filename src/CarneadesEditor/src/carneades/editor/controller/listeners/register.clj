@@ -9,7 +9,7 @@
         carneades.editor.controller.listeners.swing-listeners
         carneades.editor.controller.listeners.swing-wizards-listeners
         carneades.editor.controller.handlers.handlers
-        carneades.editor.utils.swing))
+        (carneades.editor.utils swing macos)))
 
 ;;
 ;; For the seperation of concerns, we follow here the MVC pattern,
@@ -127,5 +127,6 @@
                                      (on-search-begins view searchinfo)
                                      (on-search-ends view))) [])
   (register-add-existing-premise-listener view on-add-existing-premise [])
-  
-)
+
+  ;; mac os specific:
+  (register-quit-handler on-exit view))
