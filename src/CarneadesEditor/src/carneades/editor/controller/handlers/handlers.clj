@@ -149,8 +149,9 @@
 
             (display-error view *file-error* *file-format-not-supported*)))))))
 
-(defn save-lkif [view path]
+(defn save-lkif 
   "returns false if an error occured, true otherwise"
+  [view path]
   (try
     (set-busy view true)
     (let [lkifdata (lkif/extract-lkif-from-docmanager path *docmanager*)]
@@ -187,10 +188,13 @@
 (defn on-save [view path]
   "returns false if an error occured, true otherwise"
   (if (new-lkif? path)
-    (when (on-saveas view path)
-      (remove-fresh-ags path)
-      (remove-newlkif path)
-      (close-all view path))
+    (if (on-saveas view path)
+      (do
+        (remove-fresh-ags path)
+        (remove-newlkif path)
+        (close-all view path)
+        true)
+      false)
     (if (save-lkif view path)
       (do
         (remove-fresh-ags path)
@@ -732,10 +736,10 @@
     (if (empty? unsavedlkifs)
       (exit view)
       (case (ask-yesnocancel-question view "Close" "Save files before closing?")
-            :yes (do
-                   (doseq [path unsavedlkifs]
-                     (on-save view path))
-                   (exit view))
+            :yes (let [save-results (map (fn [path] (on-save view path))
+                                         unsavedlkifs)]
+                   (when (every? true? save-results)
+                     (exit view)))
             :no (exit view)
             :cancel nil))))
 
