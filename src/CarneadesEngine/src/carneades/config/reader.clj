@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.config.reader
+(ns ^{:doc "Read and save properties from the properties file"}
+    carneades.config.reader
   (:use clojure.contrib.def
         clojure.java.io))
 
@@ -19,13 +20,15 @@
 (defvar- #^java.util.Properties *properties*
   (read-bundled-properties *configfilename*))
 
-(defn configvalue [s]
+(defn configvalue
   "Returns the value of the configuration property named s"
+  [s]
   (.getProperty *properties* s))
 
-(defn read-properties [pathname]
-  "reads the properties contained in pathname and returns a hashmap.
+(defn read-properties
+  "Reads the properties contained in pathname and returns a hashmap.
    throws java.io.FileNotFoundException"
+  [pathname]
   (into {}
         (let [properties (java.util.Properties.)]
          (.load properties (input-stream pathname))
