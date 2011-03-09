@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.engine.lkif.export
+(ns ^{:doc "Export LKIF functions"}
+    carneades.engine.lkif.export
   (:use carneades.engine.statement
         carneades.engine.argument
         carneades.engine.utils)

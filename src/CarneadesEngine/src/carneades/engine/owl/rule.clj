@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.engine.owl.rule  
+(ns ^{:doc "Conversion from an ontology to rules."}
+  carneades.engine.owl.rule  
   (:use 
     carneades.engine.statement
     carneades.engine.argument
@@ -352,7 +353,7 @@
 
 
 (defn map-ontology
-  "takes an owl ontology from and translates it to rules"
+  "Takes an owl ontology from and translates it to rules"
   [ontology optionals]
   (let [axioms (. ontology getLogicalAxioms),
         rules (apply concat (map axiom->rules axioms))]
