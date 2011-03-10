@@ -1,7 +1,10 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.utils.listeners)
+(ns ^{:doc "Macro to generate simple listeners. These listeners
+            have no link with Swing listeners. They are more like
+            the Observer design pattern."}
+  carneades.editor.utils.listeners)
 
 (defmacro gen-listeners-fns [name]
   "Called with (gen-listener-fns name)

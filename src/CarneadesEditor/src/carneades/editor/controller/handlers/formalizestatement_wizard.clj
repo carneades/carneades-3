@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.controller.handlers.formalizestatement-wizard
+(ns ^{:doc "Implementation of the Formalize Statement assistant."}
+  carneades.editor.controller.handlers.formalizestatement-wizard
   (:use clojure.pprint
         clojure.contrib.def
         carneades.editor.controller.documents

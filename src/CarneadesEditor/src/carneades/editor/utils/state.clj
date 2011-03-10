@@ -1,7 +1,9 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.utils.state)
+(ns ^{:doc "Utilities to keep the state of wizards while 
+            preserving a functional style."}
+  carneades.editor.utils.state)
 
 (defn state-call [f state]
   "calls f with the value of the atom state.

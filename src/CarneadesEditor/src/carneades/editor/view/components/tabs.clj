@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.components.tabs
+(ns ^{:doc "Implementation of the tabulations to display argument graphs."}
+  carneades.editor.view.components.tabs
   (:use clojure.contrib.def
         clojure.contrib.trace
         clojure.contrib.swing-utils

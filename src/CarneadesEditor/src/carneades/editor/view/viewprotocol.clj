@@ -1,7 +1,11 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.viewprotocol)
+(ns ^{:doc "Definition of the View protcol. The View protocol abstracts
+            the concrete implementation of the View, independantly of a given
+            UI framework. Functions specific to Swing 
+            are defined in the SwingUI protocol."}
+  carneades.editor.view.viewprotocol)
 
 ;; defines functions that must be implemented by the UI
 ;; and are independant of a specific GUI library

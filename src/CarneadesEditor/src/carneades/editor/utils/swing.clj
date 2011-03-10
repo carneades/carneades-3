@@ -1,7 +1,9 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.utils.swing
+(ns ^{:doc "Various Swing utilities functions 
+            that are lacking in clojure.contrib.swing-utils"}
+  carneades.editor.utils.swing
   (:require [clojure.zip :as zip])
   (:import java.beans.PropertyChangeListener
            (java.awt Toolkit EventQueue)
