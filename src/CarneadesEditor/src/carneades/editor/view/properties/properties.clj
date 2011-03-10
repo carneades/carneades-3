@@ -11,8 +11,9 @@
 
 (defvar- *properties* (atom nil))
 
-(defn show-properties [propertypanel]
+(defn show-properties
   "show a given property panel"
+  [propertypanel]
   (.removeAll *propertiesPanel*)
   (reset! *properties* propertypanel)
   (.add *propertiesPanel* propertypanel)

@@ -43,8 +43,9 @@
 (defn init-tabs []
   (.setTabLayoutPolicy *mapPanel* JTabbedPane/SCROLL_TAB_LAYOUT))
 
-(defn graphinfo-being-closed [event]
+(defn graphinfo-being-closed
   "returns [path id]"
+  [event]
   (let [button (.getSource event)
         tabcomponent (.getParent button)
         idx (.indexOfTabComponent *mapPanel* tabcomponent)
@@ -110,8 +111,9 @@
      (alter *component-to-title* dissoc component)
      (alter *ags-to-components* dissoc info))))
 
-(defn tabs-empty? []
+(defn tabs-empty?
   "true if no tabs"
+  []
   (empty? (deref *swingcomponents-to-ags*)))
 
 (defn select-component [component]
@@ -131,7 +133,8 @@
 (defn register-tab-change-listener [listener]
   (.addChangeListener *mapPanel* listener))
 
-(defn change-tab-title [component newtitle]
-  "change the title of a clean component"
+(defn change-tab-title
+  "changes the title of a clean component"
+  [component newtitle]
   (when-let [label (get (deref *component-to-title*) (:component component))]
     (.setText label newtitle)))
