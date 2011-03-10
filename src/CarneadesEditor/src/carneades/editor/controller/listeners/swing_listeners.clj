@@ -1,7 +1,11 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.controller.listeners.swing-listeners
+(ns ^{:doc "These listeners have notions of the Swing events, they
+             retrieve information from the UI via the protocols
+             and call handlers. Handlers do not know anything
+             about Swing, only about the View protocol."}
+  carneades.editor.controller.listeners.swing-listeners
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.view.viewprotocol

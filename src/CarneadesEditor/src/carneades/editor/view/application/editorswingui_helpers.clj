@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.application.editorswingui-helpers
+(ns ^{:doc "Helper functions for the implementation of the SwingUI protocol"}
+  carneades.editor.view.application.editorswingui-helpers
   (:use clojure.contrib.def)
   (:import java.awt.BorderLayout
            (org.netbeans.spi.wizard WizardPage WizardPage$WizardResultProducer

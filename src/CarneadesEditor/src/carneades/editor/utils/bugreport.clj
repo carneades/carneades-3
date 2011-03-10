@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.utils.bugreport
+(ns ^{:doc "Launches the defaut email program to report a bug."}
+  carneades.editor.utils.bugreport
   (:use clojure.contrib.def)
   (:import java.awt.Desktop
            java.net.URI

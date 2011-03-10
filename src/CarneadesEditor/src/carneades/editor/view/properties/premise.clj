@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.properties.premise
+(ns ^{:doc "Functions to display premise properties in the panel properties."}
+  carneades.editor.view.properties.premise
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.utils.seq)

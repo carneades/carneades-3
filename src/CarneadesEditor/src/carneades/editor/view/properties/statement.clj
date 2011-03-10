@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.properties.statement
+(ns ^{:doc "Function to display statement properties in the panel properties."}
+  carneades.editor.view.properties.statement
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         (carneades.editor.utils seq listeners))

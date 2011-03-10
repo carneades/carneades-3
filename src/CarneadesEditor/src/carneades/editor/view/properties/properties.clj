@@ -2,9 +2,8 @@
 ;;; Licensed under the EUPL V.1.1
 
 
-;;; panel properties
-
-(ns carneades.editor.view.properties.properties
+(ns ^{:doc "Functions to show/hide properties in the panel properties."}
+  carneades.editor.view.properties.properties
   (:use clojure.contrib.def
         carneades.editor.view.components.uicomponents))
 

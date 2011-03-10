@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.application.wizards.instantiatescheme
+(ns ^{:doc "Implementation of the view of the Instantiate Scheme assistant."}
+  carneades.editor.view.application.wizards.instantiatescheme
   (:use clojure.contrib.def
         clojure.contrib.pprint
         clojure.contrib.swing-utils
