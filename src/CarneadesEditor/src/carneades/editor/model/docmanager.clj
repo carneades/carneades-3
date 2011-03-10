@@ -12,9 +12,10 @@
 (defn create-docmanager []
      (atom {}))
 
-(defn add-section [docmanager keys content]
+(defn add-section
   "keys is a vector. The first key identifies the document the next 
    the sections or subsections"
+  [docmanager keys content]
   (swap! docmanager assoc-in keys (create-history content)))
 
 (defn update-section [docmanager keys content]

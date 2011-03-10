@@ -40,8 +40,9 @@
     (do-ag-update view [path :ags (:id ag)] ag)
     (redisplay-graph view path ag statement-formatted)))
 
-(defn do-close-graph [view path id savechanges]
+(defn do-close-graph
   "close graph without saving it"
+  [view path id savechanges]
   (let [isfresh (contains? (get-fresh-ag-ids path) id)]
     (when-not savechanges
       (if isfresh
@@ -52,8 +53,9 @@
           (restore-section-to-last-saved *docmanager* [path :ags id]))))
     (close-graph view path id isfresh)))
 
-(defn close-all [view path]
+(defn close-all
   "closes all graphs without saving, removes LKIF from tree"
+  [view path]
   (doseq [id (get-ags-id path)]
     (do-close-graph view path id false))
   (hide-lkif-content view path)
@@ -189,8 +191,9 @@
       (on-open-graph view path currentid)
       true)))
 
-(defn on-save [view path]
+(defn on-save
   "returns false if an error occured, true otherwise"
+  [view path]
   (if (new-lkif? path)
     (if (on-saveas view path)
       (do
@@ -604,9 +607,10 @@
     (do-ag-update view [path :ags (:id ag)] ag)
     (premise-deleted view path ag arg pm)))
 
-(defn prompt-statement-content [view ag suggestion]
+(defn prompt-statement-content
   "asks the user the content of a new statement. Prompts
    again if the content is invalid or already exists"
+  [view ag suggestion]
   (let [stmt (read-statement view suggestion)
         stmt-as-obj (str-stmt stmt)]
     (cond (nil? stmt)

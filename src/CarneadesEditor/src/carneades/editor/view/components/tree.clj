@@ -109,8 +109,9 @@
            path (make-path newroot added)]
        (expand-select-path path)))))
 
-(defn sort-children-by [loc keyfn]
+(defn sort-children-by
   "Sorts the children of the location by (keyfn item)"
+  [loc keyfn]
   (let [elements (zip/children loc)
         parent (first elements)
         children (rest elements)
@@ -189,14 +190,16 @@
           (.setUserObject node (f userobject))
           (.reload model))))))
 
-(defn- change-ag-object [path id f]
+(defn- change-ag-object
   "change the object identified by path and id and set it's value to 
   (f olduserobjectvalue)"
+  [path id f]
   (change-object f #(graphinfo-pred path id %)))
 
-(defn- change-lkif-object [path f]
+(defn- change-lkif-object
   "change the object identified by path and set it's value to 
   (f olduserobjectvalue)"
+  [path f]
   (change-object f #(lkifinfo-pred path %)))
 
 (defn set-lkif-dirty [path isdirty]

@@ -5,10 +5,11 @@
             preserving a functional style."}
   carneades.editor.utils.state)
 
-(defn state-call [f state]
+(defn state-call
   "calls f with the value of the atom state.
    The value returns by f becomes the new state value 
    if it is not nil."
+  [f state]
   (when-let [rval (f (deref state))]
     (reset! state rval)))
 
