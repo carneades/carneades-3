@@ -1,7 +1,9 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.components.tree
+(ns ^{:doc "Implementation of the project tree where LKIF files 
+            and arguments graphs names are displayed."}
+  carneades.editor.view.components.tree
   (:use clojure.contrib.def
         clojure.contrib.pprint
         carneades.editor.view.swinguiprotocol

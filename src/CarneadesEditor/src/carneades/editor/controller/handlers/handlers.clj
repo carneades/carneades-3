@@ -1,7 +1,11 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.controller.handlers.handlers
+(ns ^{:doc "Swing listeners dispatch to the handlers functions defined in this 
+            namespace. The handlers only interact with the view via the View 
+            protocol. All UI specific (SwingUI protocol, javax etc) imports 
+            are disallowed."}
+  carneades.editor.controller.handlers.handlers
   (:use clojure.contrib.def
         clojure.java.io
         clojure.contrib.trace

@@ -8,7 +8,9 @@
 (System/setProperty "com.apple.mrj.application.apple.menu.about.name"
                     "Carneades Editor")
 
-(ns carneades.editor.init
+(ns ^{:doc "Include this namespace first to unsure operations below
+            are executed before anything else."}
+    carneades.editor.init
   (:use clojure.contrib.def
         carneades.editor.utils.swing))
 

@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.controller.handlers.instantiatescheme-wizard
+(ns ^{:doc "Implementation of the Instantiate Scheme assistant"}
+  carneades.editor.controller.handlers.instantiatescheme-wizard
   (:use clojure.contrib.def
         carneades.editor.utils.state
         (carneades.engine statement argument lkif)

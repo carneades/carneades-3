@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.application.editorview
+(ns ^{:doc "Implementation of the View protocol."}
+  carneades.editor.view.application.editorview
   (:use (clojure.contrib def swing-utils)
         clojure.java.io
         carneades.engine.utils ;; TODO: this part of the UI should be independant

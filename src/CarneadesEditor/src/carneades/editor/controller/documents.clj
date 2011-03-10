@@ -1,7 +1,11 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.controller.documents
+(ns ^{:doc "Store information about the current opened LKIF, via a reference the 
+             docmanager and functions to generate statement names, arguments id etc.
+             Contains also some utilities function to extract information 
+             from a LKIF structure"}
+  carneades.editor.controller.documents
   (:use clojure.pprint
         clojure.java.io
         (clojure.contrib def trace)

@@ -1,7 +1,9 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.model.history
+(ns ^{:doc "Implementation of atomic modifications of data with an history of 
+            changes and a dirty marker. This is used to manage undo/redo in the application."}
+  carneades.editor.model.history
   (:use clojure.contrib.def))
 
 (defn create-history [content]

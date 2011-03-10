@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.controller.handlers.messages
+(ns ^{:doc "Messages used by the handlers and assistants."}
+  carneades.editor.controller.handlers.messages
   (:use clojure.contrib.def))
 
 
