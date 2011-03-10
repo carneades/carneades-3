@@ -19,9 +19,10 @@
 ;; TODO moves this info to the docmanager?
 (defvar *fresh-ags-id* (atom {}))
 
-(defn add-fresh-ag [path id]
+(defn add-fresh-ag
   "adds the id of an argument graph to the map
    of newly created ags."
+  [path id]
   (let [fresh (deref *fresh-ags-id*)]
     (if-let [ids (get fresh path)]
       (let [ids (conj ids id)]
@@ -180,12 +181,14 @@
     (update-section *docmanager* [:newlkif-indexes] idx)
     (update-section *docmanager* [:newlkif-paths] paths)))
 
-(defn get-graphs-titles [path]
+(defn get-graphs-titles
   "returns a set of all titles"
+  [path]
   (set (map :title (map #(get-ag path %) (get-ags-id path)))))
 
-(defn do-ag-update [view keys ag]
+(defn do-ag-update
   "updates section content in the model and dirty markers in the view"
+  [view keys ag]
   ;; the first key is the path
   (let [path (first keys)]
     (update-section *docmanager* keys ag)
