@@ -1,7 +1,9 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.wizardsprotocol)
+(ns ^{:doc "Definition of the assistants (also internally called wizards) protocols
+            and of the various Records they use."}
+  carneades.editor.view.wizardsprotocol)
 
 (defrecord StatementItem [stmt formatted] Object
   (toString

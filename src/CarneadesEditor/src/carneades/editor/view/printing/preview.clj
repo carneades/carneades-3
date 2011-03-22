@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.printing.preview
+(ns ^{:doc "Swing dialog to have a preview before printing."}
+  carneades.editor.view.printing.preview
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.mapcomponent.map

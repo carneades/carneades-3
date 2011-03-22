@@ -1,7 +1,9 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.controller.handlers.suggestions
+(ns ^{:doc "Provides suggestions of statements for formular 
+            by looking into ontologies"}
+  carneades.editor.controller.handlers.suggestions
   (:use carneades.engine.statement
         [carneades.engine.rule :only (predicate condition-statement)])
   (:require [carneades.engine.owl :as owl]))

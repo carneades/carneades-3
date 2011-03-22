@@ -1,7 +1,9 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.application.context
+(ns ^{:doc "Update of the UI elements (enabled buttons, menus etc.) depending of
+            the context of the edition (tab opened, closed, selected etc.)."}
+  carneades.editor.view.application.context
   (:use clojure.contrib.def
         (carneades.editor.view.components uicomponents tabs)
         carneades.editor.utils.swing)

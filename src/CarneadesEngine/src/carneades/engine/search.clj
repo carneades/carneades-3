@@ -2,7 +2,8 @@
 ;;; Licensed under the EUPL V.1.1
 
 
-(ns carneades.engine.search
+(ns ^{:doc "Generic search and explore functions: depth-first, breadth-first etc."}
+    carneades.engine.search
   (:use clojure.contrib.pprint))
 
 (defstruct node :depth :label :parent :state)
@@ -91,6 +92,7 @@
 				    
 ; to do: other search strategies
 
+;;; TODO: move this to a test file
 ;; Tests 
 
 (comment

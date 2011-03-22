@@ -2,26 +2,28 @@
 ;;; Licensed under the EUPL V.1.1
 
 
-(ns carneades.engine.statement
+(ns ^{:doc "Functions for the statements in an argument graph."}
+    carneades.engine.statement
   (:use clojure.contrib.def
         carneades.engine.utils)
   (:require [clojure.string :as str])
   (:import (java.net URI)))
 
-(defn variable? [x]
+(defn variable?
   "object -> boolean
-Returns true if x is a variable
-A logic variable is represented as a symbol prefixed with a
-question mark.  For example: '?x
-"
+  Returns true if x is a variable
+  A logic variable is represented as a symbol prefixed with a
+  question mark.  For example: '?x "
+  [x]
   (and (symbol? x)
     (let [s (str x)]
       (and (pos? (.length s))
         (= (.charAt s 0) \?)))))
 
-(defn constant? [x]
+(defn constant?
   "object -> boolean
-Returns true if x is a constant"
+   Returns true if x is a constant"
+  [x]
   (or (and (symbol? x) (not (variable? x)))
     (number? x)
     (string? x)
@@ -50,19 +52,22 @@ Returns true if x is a constant"
   (or (nonemptyseq? x)
     (fatom? x)))
 
-(defn term? [x]
+(defn term?
   "datum -> boolean"
+  [x]
   (or (variable? x)
       (constant? x)
       (compound-term? x)))
 
-(defn term-functor [t]
+(defn term-functor
   "term -> symbol | nil "
+  [t]
   (cond (nonemptyseq? t) (first t)
     (fatom? t) (first (:term t))))
 
-(defn term-args [t]
+(defn term-args
   "term -> (seq-of term)"
+  [t]
   (cond (nonemptyseq? t) (rest t)
     (fatom? t) (rest (:term t))
     :else '()))
@@ -87,9 +92,10 @@ Returns true if x is a constant"
     :else true))
 
 ;; could be rewritten (filter variable? (tree-seq seq? identity s)) ?
-(defn variables [t]
+(defn variables
   "term -> (seq-of symbol)
-Returns a sequence of the variables in the term"
+   Returns a sequence of the variables in the term"
+  [t]
   (letfn [(vars [t]
             (cond (variable? t) (list t)
               (constant? t) nil
@@ -117,10 +123,11 @@ Returns a sequence of the variables in the term"
       (fnext s))
     (list 'not s)))
 
-(defn statement-atom [s]
+(defn statement-atom
   "statement -> statement
-Returns the atom of the statement, i.e strips the negation operator if there
-is one"
+   Returns the atom of the statement, i.e strips the negation operator if there
+   is one"
+  [s]
   (if (statement-neg? s)
     (fnext s)
     s))
@@ -202,16 +209,18 @@ is one"
            to
            stmt)))
 
-(defn sentence? [s]
-  "returns true if the string s contains at least two words and does
+(defn sentence?
+  "Returns true if the string s contains at least two words and does
    not begin with a parenthesis or a double quote"
+  [s]
   (let [s (str/trim s)]
     (and (not= (first s) \()
          (not= (first s) \")
          (> (count (str/split s #"\s+")) 1))))
 
-(defn str-stmt [s]
-  "converts the string s into a statement"
+(defn str-stmt
+  "Converts the string s into a statement"
+  [s]
   (try
     (if (sentence? s)
       s
@@ -224,8 +233,9 @@ is one"
 (defn stmt-str [stmt]
   (pr-str stmt))
 
-(defn str-term [s]
-  "converts the string s into a term"
+(defn str-term
+  "Converts the string s into a term"
+  [s]
   (try
     (if (sentence? s)
       s

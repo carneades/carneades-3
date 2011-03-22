@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.controller.search
+(ns ^{:doc "Functions to implement a search in background."}
+  carneades.editor.controller.search
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         [carneades.engine.statement :only (statement-formatted)]

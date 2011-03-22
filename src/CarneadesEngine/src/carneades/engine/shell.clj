@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.engine.shell
+(ns ^{:doc "Utilities functions acting as an Expert System Shell for the Carneades engine"}
+    carneades.engine.shell
   (:use clojure.set
         clojure.contrib.pprint
         clojure.contrib.profile
@@ -14,27 +15,30 @@
         carneades.ui.diagram.viewer)
   (:require [carneades.engine.argument :as arg]))
 
-(defn solutions [states]
+(defn solutions
   "(seq-of state) -> (seq-of state)
 
   A state is a \"solution\" if the instantiated topic of the state is in."
+  [states]
   (filter (fn [s]
             (let [sub (apply-substitution (:substitutions s) (:topic s))]
               (arg/in? (:arguments s) sub)))
           states))
 
-(defn succeed? [query engine]
+(defn succeed?
   "engine -> boolean
 
     True if at least one goal state was found by the engine
   "
+  [query engine]
   (not (empty? (solutions (engine query)))))
 
-(defn fail? [query engine]
+(defn fail?
   "engine -> boolean
 
     True if no state found by the engine is a goal state
   "
+  [query engine]
   (empty? (solutions (engine query))))
 
 (defn unite-solutions
@@ -97,17 +101,19 @@
         ;(println "goals    :" goals)
         (reduce (fn [ag3 g] (construct-arguments-abductively main-issue g max-nodes (- max-turns 1) ag3 generators new-vp (union applied-goals goals))) ag2 goals)))))
 
-(defn make-engine* [max-nodes max-turns ag generators]
+(defn make-engine*
   "integer integer argument-graph (seq-of generator) -> statement -> 
    (seq-of state)"
+  [max-nodes max-turns ag generators]
   (fn [goal]
     (find-best-arguments search depth-first max-nodes max-turns
                          (initial-state goal ag) generators)))
 
-(defn make-engine [max-nodes max-turns generators]
+(defn make-engine
   "integer integer (seq-of generator) -> statement -> (seq-of state)
  
    a simplified version of make-engine*, using the default-context "
+  [max-nodes max-turns generators]
   (make-engine* max-nodes max-turns arg/*empty-argument-graph* generators))
 
 (defn ask
@@ -155,24 +161,27 @@
       (.contains (.toLowerCase title) to-search)
       false)))
 
-(defn search-statements [ag stmt-fmt search-content options]
+(defn search-statements
   "Produces a sequence of statements satisfying the search options.
    The sequence is produced in the background with seque. The 
    reading from the sequence can block if the reader gets ahead of the
    search
 
    The keys for options are ..."
+  [ag stmt-fmt search-content options]
   (let [to-search (.toLowerCase search-content)
         stmts (map node-statement (get-nodes ag))]
     (search-graph #(stmt-pred % stmt-fmt to-search) stmts)))
 
-(defn search-arguments [ag search-content options]
+(defn search-arguments
   "See search-statements"
+  [ag search-content options]
   (let [to-search (.toLowerCase search-content)]
     (search-graph #(arg-pred % to-search) (arguments ag))))
 
-(defn search-all [ag stmt-fmt search-content options]
-  "returns a seq of the form ((:stmt stmt1) (:arg arg1) (:stmt stmt2) ...)"
+(defn search-all
+  "Returns a seq of the form ((:stmt stmt1) (:arg arg1) (:stmt stmt2) ...)"
+  [ag stmt-fmt search-content options]
   (let [to-search (.toLowerCase search-content)
         stmts (search-statements ag stmt-fmt search-content options)
         args (search-arguments ag search-content options)]
