@@ -1,7 +1,9 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.engine.lkif
+(ns ^{:doc "Import and export of argument graphs and rules 
+            from/to the LKIF format"}
+  carneades.engine.lkif
   (:use clojure.contrib.def
         clojure.pprint
         clojure.java.io
@@ -12,9 +14,11 @@
         carneades.engine.utils)
   (:require carneades.engine.lkif.import))
 
-(def import-lkif carneades.engine.lkif.import/import-lkif)
+(def ^{:doc "Import from a LKIF. See the documentation in the import namespace"}
+  import-lkif carneades.engine.lkif.import/import-lkif)
 ;; (def import-lkif /import-lkif)
-(def export-lkif lkif-export*)
+(def ^{:doc "Export to LKIF. See the documentation in the export namespace"}
+  export-lkif lkif-export*)
 
 ; TODO
 (defn- get-imported-ont

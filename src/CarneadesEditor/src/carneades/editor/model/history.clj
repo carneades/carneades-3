@@ -1,7 +1,9 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.model.history
+(ns ^{:doc "Implementation of atomic modifications of data with an history of 
+            changes and a dirty marker. This is used to manage undo/redo in the application."}
+  carneades.editor.model.history
   (:use clojure.contrib.def))
 
 (defn create-history [content]
@@ -70,8 +72,9 @@
         content (get contents (:index hist))]
     (assoc hist :index 0 :contents [content] :dirty true :saved-point nil)))
 
-(defn delete-history [history]
+(defn delete-history
   "delete the history but keeps the current content"
+  [history]
   (swap! history delete-hist))
 
 (defn- cancel-upd [hist]
@@ -82,9 +85,10 @@
   (swap! history cancel-upd)
   (current-content history))
 
-(defn restore-to-last-saved [history]
+(defn restore-to-last-saved
   "restore to last saved point and destroy modification
    since the last saved point"
+  [history]
   (let [{:keys [index contents saved-point]} (deref history)
         saved-point (if (nil? saved-point) 0 saved-point)
         contents (subvec contents 0 (inc saved-point))]

@@ -1,7 +1,9 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.components.tree
+(ns ^{:doc "Implementation of the project tree where LKIF files 
+            and arguments graphs names are displayed."}
+  carneades.editor.view.components.tree
   (:use clojure.contrib.def
         clojure.contrib.pprint
         carneades.editor.view.swinguiprotocol
@@ -107,8 +109,9 @@
            path (make-path newroot added)]
        (expand-select-path path)))))
 
-(defn sort-children-by [loc keyfn]
+(defn sort-children-by
   "Sorts the children of the location by (keyfn item)"
+  [loc keyfn]
   (let [elements (zip/children loc)
         parent (first elements)
         children (rest elements)
@@ -187,14 +190,16 @@
           (.setUserObject node (f userobject))
           (.reload model))))))
 
-(defn- change-ag-object [path id f]
+(defn- change-ag-object
   "change the object identified by path and id and set it's value to 
   (f olduserobjectvalue)"
+  [path id f]
   (change-object f #(graphinfo-pred path id %)))
 
-(defn- change-lkif-object [path f]
+(defn- change-lkif-object
   "change the object identified by path and set it's value to 
   (f olduserobjectvalue)"
+  [path f]
   (change-object f #(lkifinfo-pred path %)))
 
 (defn set-lkif-dirty [path isdirty]

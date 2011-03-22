@@ -1,7 +1,28 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.controller.listeners.register
+(ns ^{:doc "Function to register all necessary listeners.
+
+            For the seperation of concerns, we follow here the MVC pattern,
+            with the controller acting as a mediator between the View and the Model.
+            The View does not have direct access to the Model.
+            
+            http://java.sun.com/developer/technicalArticles/javase/mvc/
+            
+            
+            This namespace directly access the GUI to register Swing listeners and
+            dispatch the calls in an UI-independent way to the listeners in listeners.clj
+            
+            This is the only namespace, with the swing-listeners,
+            that should be given direct access to the Swing UI and only through
+            the SwingUI protocol.
+            
+            All other accesses must be made within listeners.clj
+            and only through the View protocol.
+            
+            This allow to keep the model and the listeners logic independant
+            from the specific Swing GUI implementation."}
+  carneades.editor.controller.listeners.register
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.view.viewprotocol
@@ -9,29 +30,7 @@
         carneades.editor.controller.listeners.swing-listeners
         carneades.editor.controller.listeners.swing-wizards-listeners
         carneades.editor.controller.handlers.handlers
-        carneades.editor.utils.swing))
-
-;;
-;; For the seperation of concerns, we follow here the MVC pattern,
-;; with the controller acting as a mediator between the View and the Model.
-;; The View does not have direct access to the Model.
-;;
-;; http://java.sun.com/developer/technicalArticles/javase/mvc/
-;;
-;;
-;; This namespace directly access the GUI to register Swing listeners and
-;; dispatch the calls in an UI-independent way to the listeners in listeners.clj
-;;
-;; This is the only namespace, with the swing-listeners,
-;; that should be given direct access to the Swing UI and only through
-;; the SwingUI protocol.
-;;
-;; All other accesses must be made within listeners.clj
-;; and only through the View protocol.
-;;
-;; This allow to keep the model and the listeners logic independant
-;; from the specific Swing GUI implementation.
-;;
+        (carneades.editor.utils swing macos)))
 
 (defn register-listeners [view]
   ;; we need to extract some information from the UI,
@@ -127,5 +126,6 @@
                                      (on-search-begins view searchinfo)
                                      (on-search-ends view))) [])
   (register-add-existing-premise-listener view on-add-existing-premise [])
-  
-)
+
+  ;; mac os specific:
+  (register-quit-handler on-exit view))

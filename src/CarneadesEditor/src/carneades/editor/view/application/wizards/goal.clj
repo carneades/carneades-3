@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.application.wizards.goal
+(ns ^{:doc "Implementation of the view of the Find Position assistant."}
+  carneades.editor.view.application.wizards.goal
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.view.wizardsprotocol
