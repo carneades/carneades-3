@@ -1,8 +1,7 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Utilities functions to manipulate sequences and files."}
-  carneades.engine.utils
+(ns carneades.engine.utils
   (:use clojure.java.io
         clojure.pprint
         clojure.contrib.trace)
@@ -13,18 +12,26 @@
 (defn boolean? [x]
   (instance? Boolean x))
 
-(defn nonemptyseq?
+(defn nonemptyseq? [x]
   "Returns true if x is a nonempty sequence"
-  [x]
   (and (seq? x) (not (empty? x))))
 
-(defn conj-ifnot
-  "Conjoins col and x if the binary predicate pred is false
-   for all values in col else returns col"
-  [pred col x]
+(defn conj-ifnot [pred col x]
+  "conjoin col and x if the binary predicate pred is false
+   for all values in col "
   (if (some #(pred x %) col)
     col
     (conj col x)))
+
+;; Example:
+;;(conj-ifnot premise= (list (pm '(father T D))
+;; (pm '(mother Pierre XYZ)))
+;; (pm (struct fatom "%s -> %s" '(father T D))))
+;; returns:
+;; ({:atom (father T D), :polarity true, :role nil, :type
+;; :carneades.engine.argument/ordinary-premise}
+;; {:atom (mother Pierre XYZ), :polarity true, :role nil,
+;; :type :carneades.engine.argument/ordinary-premise})
 
 (defn union-if
   "Returns the union of s1 and s2, (pred x y) is true for each
@@ -35,6 +42,10 @@
      (if (< (count s1) (count s2))
        (reduce #(conj-ifnot pred %1 %2) s1 s2)
        (reduce #(conj-ifnot pred %1 %2) s2 s1))))
+
+;; (union-if premise= (list (pm '(father T D))
+;; (pm '(mother Pierre XYZ)))
+;; (list (pm (struct fatom "x y z" '(father T D) ))))
 
 (defn interleaveall 
   "Returns a lazy seq of the first item in each coll, then the second etc.
@@ -58,21 +69,19 @@
                       '()
                       (apply interleaveall notemptyrest)))))))))
 
-(defn mapinterleave
+(defn mapinterleave [f & colls]
   "Returns the result of applying interleaveall to the result of applying map
    to f and colls. If the result of applying map is a sequence with one element
    then the sequence is returned"
-  [f & colls]
   (let [col (apply map f colls)]
     (cond (empty? col) col
           (= (count col) 1) (first col)
           :else (apply interleaveall col))))
 
 ;; safe get
-(defmacro sget
+(defmacro sget [map key]
   "Like get but if *assert* is true, throws an exception if the key is 
    not present "
-  [map key]
   (if *assert*
     `(let [notfound# (gensym)
            v# (get ~map ~key notfound#)]
@@ -81,37 +90,33 @@
          v#))
     `(get ~map ~key)))
 
-(defn conjoin
-  "Returns a predicate that returns true when all of the predicates return true.
+(defn conjoin [f & fs]
+  "returns a predicate that returns true when all of the predicates return true.
 
    Translated from the book Ansi Common Lisp, Prentice Hall, Paul Graham"
-  [f & fs]
   (if (empty? fs)
     f
     (let [conjoined (apply conjoin fs)]
       (fn [& args]
         (and (apply f args) (apply conjoined args))))))
 
-(defn disjoin
-  "Returns a predicate that returns true when one of the predicates return true.
+(defn disjoin [f & fs]
+  "returns a predicate that returns true when one of the predicates return true.
 
    Translated from the book Ansi Common Lisp, Prentice Hall, Paul Graham"
-  [f & fs]
   (if (empty? fs)
     f
     (let [conjoined (apply conjoin fs)]
       (fn [& args]
         (or (apply f args) (apply conjoined args))))))
 
-(defn nilify
-  "Returns a predicate that returns true when f returns true, nil otherwise"
-  [f]
+(defn nilify [f]
+  "returns a predicate that returns true when f returns true, nil otherwise"
   (fn [& args]
     (or (apply f args) nil)))
 
-(defn split-str
-  "Splits string s in strings of length n"
-  [s n]
+(defn split-str [s n]
+  "splits string s in strings of length n"
   (loop [[s r] [s s]
          sq []]
     (if (empty? r)
@@ -121,70 +126,48 @@
 
 ;;; files
 
-(def ^{:doc "the platform dependant file separator"}
-  *file-separator* java.io.File/separator)
+(def *file-separator* java.io.File/separator)
 
-(defn same-directory?
-  "Returns true when filename and filename2 have the same parent directory"
-  [filename filename2]
-  (= (.getParent (file filename)) (.getParent (file filename2))))
+(defn same-directory? [lkif-path path]
+  (= (.getParent (file lkif-path)) (.getParent (file path))))
 
-(defn make-relative
-  "Makes path relative to relative-to"
-  [path relative-to]
+(defn make-relative [path relative-to]
   (let [f (file path)
         f2 (file relative-to)
         dirsize (count (.getPath f2))
         dirsize (+ dirsize (count (*file-separator*)))]
     (subs (.getPath f) dirsize)))
 
-(defn create-path
-  "Creates a Path from the (string) segments"
-  [& segments]
+(defn create-path [& segments]
   (.getPath (file (str/join *file-separator* segments))))
 
-(defn make-absolute
-  "Makes relative path absolute to relative-to"
-  [path relative-to]
+(defn make-absolute [path relative-to]
   (.getPath (file (str relative-to *file-separator* path))))
 
-(defn in-directory?
-  "Returns true if path is directly under or below directory dir"
-  [path dir]
+(defn in-directory? [path dir]
+  "returns true if path is directly under or below directory dir"
   (.startsWith path dir))
 
-(defn absolute?
-  "Returns true if pathname is absolute"
-  [pathname]
+(defn absolute? [pathname]
   (.isAbsolute (file pathname)))
 
-(defn absolute
-  "Makes pathname absolute"
-  [pathname]
+(defn absolute [pathname]
   (.getPath (.getAbsoluteFile (file pathname))))
 
-(defn parent
-  "Returns the parent of pathname"
-  [pathname]
+(defn parent [pathname]
   (.getParent (file pathname)))
 
-(defn exists?
-  "Returns true if pathname exists on the file system"
-  [pathname]
+(defn exists? [pathname]
   (.exists (file pathname)))
 
-(defn url?
-  "Returns true if s is a well-formed URL"
-  [s]
+(defn url? [s]
   (try
     (java.net.URL. s)
     true
     (catch java.net.MalformedURLException e
       false)))
 
-(defn extension
-  "Returns the extension of pathname"
-  [pathname]
+(defn extension [pathname]
   (last (re-find #".*\.(.*)" pathname)))
 
 (defn add-extension [pathname ext]
@@ -192,9 +175,7 @@
     (str pathname ext)
     (str pathname "." ext)))
 
-(defn last-segment
-  "Returns the last segment of pathname"
-  [pathname]
+(defn last-segment [pathname]
   (last (str/split pathname (re-pattern *file-separator*))))
 
 ;;; exceptions
@@ -207,9 +188,8 @@
        exception
        (recur cause (.getCause exception)))))
 
-(defmacro unwrap-exceptions
-  "Catchs any exception and rethrows its first initial cause"
-  [& body]
+(defmacro unwrap-exceptions [& body]
+  "catchs any exception and rethrows its first initial cause"
   `(try
      ~@body
      (catch Exception e#
@@ -267,16 +247,12 @@
     (dump-stack (get-clj-stack-trace))))
 
 ;; resources
-(defn get-resource
-  "Get the resource identified by name"
-  [name]
+(defn get-resource [name]
   (-> (Thread/currentThread)
       (.getContextClassLoader)
       (.getResource name)))
 
-(defn get-resource-as-stream
-  "Returns the resource identified by 'name' as a stream"
-  [name]
+(defn get-resource-as-stream [name]
   (-> (Thread/currentThread)
       (.getContextClassLoader)
       (.getResourceAsStream name)))

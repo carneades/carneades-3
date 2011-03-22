@@ -1,9 +1,7 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Implementation of a dialog to prompt the user 
-            for a location (URL, file)."}
-  carneades.editor.view.dialogs.location
+(ns carneades.editor.view.dialogs.location
   (:use clojure.contrib.swing-utils
         carneades.editor.view.viewprotocol
         [carneades.editor.view.components.uicomponents :only (*frame*)])

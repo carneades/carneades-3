@@ -1,8 +1,7 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Function to display LKIF properties in the panel properties."}
-  carneades.editor.view.properties.lkif
+(ns carneades.editor.view.properties.lkif
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.utils.listeners)

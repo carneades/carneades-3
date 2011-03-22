@@ -1,8 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Search arguments in a search space."}
-  carneades.engine.argument-search
+
+(ns carneades.engine.argument-search
   (:import (java.io PrintWriter) ; for debugging
     )
   (:use clojure.contrib.def
@@ -17,32 +17,19 @@
             [carneades.engine.search :as search]))
 
 
-(defstruct ^{:doc "Struct.
-
-  A candidate argument is an argument which might have uninstantiated
-  variables. The candidate argument is asserted into an argument graph
-  of a state only when the guard is ground in the substitution environment
-  of the state, by substituting all the variables in the argument with
-  their values in the substitution environment.  If the guard is correct,
-  the argument put forward will contain only ground statements,
-  i.e. with no variables.
-
-  :guard is a statement containing all the variables used by the argument
-  :argument is the argument"}
-  candidate
-  :guard
+(defstruct candidate
+  ;; A candidate argument is an argument which might have uninstantiated
+  ;; variables. The candidate argument is asserted into an argument graph
+  ;; of a state only when the guard is ground in the substitution environment
+  ;; of the state, by substituting all the variables in the argument with
+  ;; their values in the substitution environment.  If the guard is correct,
+  ;; the argument put forward will contain only ground statements,
+  ;; i.e. with no variables.
+  
+  :guard ;; statement containing all the variables used by the argument
   :argument)
 
-(defstruct- ^{:doc "Struct.
-
-  :topic      statement for the main issue or thesis
-  :viewpoint  pro | con the topic
-  :pro-goals  (seq-of (seq-of statement)) ; disjunctive normal form
-  :con-goals  (seq-of (seq-of statement)) ; disjunctive normal form
-  :arguments  argument-graph 
-  :substitutions  substitution
-  :candidates     (seq-of candidate)"}
-  state-struct
+(defstruct- state-struct
   :topic     ;; statement for the main issue or thesis
   :viewpoint ;; pro | con the topic
   :pro-goals ;; (seq-of (seq-of statement)) ; disjunctive normal form
@@ -68,33 +55,29 @@
   {:pre [(not (nil? subs))]}
   (struct response-struct subs arg))
 
-(defn initial-state
+(defn initial-state [topic ag]
   "statement argument-graph -> state"
-  [topic ag]
   (state topic :pro (list (list topic)) '() ag *identity* '()))
 
-(defn next-goals
+(defn next-goals [state]
   "state -> (seq-of (seq-of statement)) 
 
    Returns a list representing a disjunction of a conjunction of 
    goal statements for the current viewpoint to try to solve in the state
    If no goals remain for the current viewpoint, the empty list is returned."
-  [state]
   (condp = (:viewpoint state)
       :pro (:pro-goals state)
       :con (:con-goals state)))
 
-(defn questioned-assumptions
+(defn questioned-assumptions [assumptions ag]
   "(seq-of statement) argument-graph -> (seq-of statement)"
-  [assumptions ag]
   (filter (partial arg/questioned? ag) assumptions))
 
-(defn apply-candidates
-  "substitutions argument-graph (list-of candidate)
-   -> [ag candidate]"
-  [subs ag candidates]
+(defn apply-candidates [subs ag candidates]
   {:pre [(not (nil? subs))
          (not (nil? ag))]}
+  "substitutions argument-graph (list-of candidate)
+   -> [ag candidate]"
    (reduce
     (fn [acc c]
       (let [[ag2 candidates2] acc]
@@ -109,7 +92,7 @@
     [ag '()]
     candidates))
 
-(defn update-goals
+(defn update-goals [dis-of-con replacements]
   "(seq-of (seq-of statement)) (seq-of statement)  ->
               (seq-of (seq-of statement))
 
@@ -117,7 +100,6 @@
    with the given replacement statements. If the resulting clause is empty
    return the remaining clauses, otherwise return the result of
    replacing the first clause with the updated clause."
-  [dis-of-con replacements]
   (let [clause (concat replacements (rest (first dis-of-con)))]
     (if (empty? clause)
       (rest dis-of-con)
@@ -209,11 +191,10 @@
     )))
 
 
-(defn- make-successor-state-noforward
-  "Creates a successor state by modifying the substitutions of the state, 
-   but without putting forward a new argument."
-  [stat newsubs]
+(defn- make-successor-state-noforward [stat newsubs]
   {:pre [(not (nil? newsubs))]}
+  "create a successor state by modifying the substitutions of the state, 
+   but without putting forward a new argument."
   (let [[newag newcandidates]
         (apply-candidates newsubs (:arguments stat) (:candidates stat))]
     (state
@@ -234,10 +215,9 @@
      ;; new candidates
      newcandidates)))
 
-(defn make-successor-state
-  "state response -> state"
-  [state response]
+(defn make-successor-state [state response]
   {:post [(not (nil? %))]}
+  "state response -> state"
   (let [newsubs (:substitutions response)]
     (if-let [arg (:argument response)]
       (if (seq? arg)
@@ -271,9 +251,8 @@
 ;; the generator should return an empty stream.
 ;; 
 ;; Uses mapinterleave to interleave the application of the argument generators.
-(defn make-transitions
+(defn make-transitions [l]
   "(seq-of generator) -> (node -> (seq-of node))"
-  [l]
   (fn [node]
     (mapinterleave (fn [g]  (apply-generator g node)) l)))
 
@@ -285,9 +264,8 @@
         :pro in
         :con (not in))))
 
-(defn find-arguments
+(defn find-arguments [strategy initial-state generators]
   "strategy state (seq-of generator) -> (seq-of state)"
-  [strategy initial-state generators]
   (let [root (search/make-root initial-state)
         r (search/search (struct search/problem
                                  root
@@ -296,9 +274,8 @@
                          strategy)]
     (doall (map :state r))))
 
-(defn switch-viewpoint
+(defn switch-viewpoint [s]
   "state -> state"
-  [s]
   (letfn [(opposing-viewpoint
            [vp]
            (condp = vp
@@ -306,9 +283,8 @@
                :con :pro))]
     (update-in s [:viewpoint] opposing-viewpoint)))
 
-(defn find-arguments
+(defn find-arguments [type strategy max-nodes initial-state generators]
   "strategy state (seq-of generator) -> (seq-of state)"
-  [type strategy max-nodes initial-state generators]
   (let [root (search/make-root initial-state)
         r (type (struct search/problem
                                  root
@@ -339,7 +315,7 @@
                                     generators))))
                    arguments)))
 
-(defn find-best-arguments
+(defn find-best-arguments [type strategy max-nodes max-turns state1 generators]
   "strategy int state (seq-of generator) -> (seq-of state)
   
   find the best arguments for *both* viewpoints, starting with the viewpoint of
@@ -348,8 +324,7 @@
   generators, within the given search limits.  find-best-arguments allows
   negative conclusions to be explained, since it includes successful
   counterarguments in its resulting stream of arguments."
-  [type strategy max-nodes max-turns state1 generators]
-    (if (neg? max-turns)
+  (if (neg? max-turns)
     '()
     (searcharg type strategy max-nodes (dec max-turns)
                (find-arguments type strategy max-nodes state1 generators)

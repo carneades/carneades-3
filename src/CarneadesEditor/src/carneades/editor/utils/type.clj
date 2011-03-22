@@ -1,9 +1,7 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Utilities to split the implementation of a protocol into
-            several files."}
-  carneades.editor.utils.type
+(ns carneades.editor.utils.type
   (:use clojure.contrib.def
         [clojure.walk :only (postwalk-replace)]))
 

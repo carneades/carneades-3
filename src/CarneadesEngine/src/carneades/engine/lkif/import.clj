@@ -1,8 +1,7 @@
-;;; Copyright © 2010 Fraunhofer Gesellschaft 
+>;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Import LKIF functions"}
-    carneades.engine.lkif.import
+(ns carneades.engine.lkif.import
   (:use clojure.xml
         clojure.contrib.trace
         clojure.java.io
