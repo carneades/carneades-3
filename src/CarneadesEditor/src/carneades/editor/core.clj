@@ -1,12 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "The main function. 
-             This get compiled into a static main method when
-             doing 'lein uberjar'"}
-  carneades.editor.core
-  (:use carneades.editor.init
-        (carneades.editor.view viewprotocol)
+(ns carneades.editor.core
+  (:use (carneades.editor.view viewprotocol)
         carneades.editor.view.application.editorapplication
         carneades.editor.controller.listeners.register
         carneades.editor.view.dialogs.properties

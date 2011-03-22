@@ -1,9 +1,7 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Clojure variables to hold instances of 
-            the Swing components defined in the NetBeans project."}
-  carneades.editor.view.components.uicomponents
+(ns carneades.editor.view.components.uicomponents
   (:use clojure.contrib.def)
   (:import carneades.editor.uicomponents.EditorApplicationView))
 

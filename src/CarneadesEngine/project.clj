@@ -9,6 +9,8 @@ various argumentation tasks. This is the software library (the engine)."
   :dependencies [[org.clojure/clojure "1.2.0"]
                  [org.clojure/clojure-contrib "1.2.0"]
                  [org.clojars.pallix/owlapi "3.0.0"]
-                 [org.clojars.pallix/hermit "1.2.4"]]
+				 [org.clojars.pallix/hermit "1.2.4"]
+                                 ;; [clj-sandbox "0.3.8"]
+                                 ]
   :dev-dependencies [[swank-clojure "1.2.0"]
-                     [org.clojars.rayne/autodoc "0.8.0-SNAPSHOT"]])
+                     [lein-run "1.0.0-SNAPSHOT"]])

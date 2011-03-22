@@ -1,31 +1,27 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Utilities to manipulate a JTree conveniently"}
-  carneades.editor.utils.swing-tree
+(ns carneades.editor.utils.swing-tree
   (:require [clojure.zip :as zip])
   (:import (javax.swing.tree DefaultMutableTreeNode
                              TreePath
                              TreeSelectionModel
                              DefaultTreeModel)))
 
-(defn children-seq
+(defn children-seq [node]
   "returns a sequence of children for the TreeNode node"
-  [node]
   (enumeration-seq (.children node)))
 
-(defn make-path
+(defn make-path [& nodes]
   "Creates a path from the nodes"
-  [& nodes]
   (reduce (fn [path node] (.pathByAddingChild path node))
           (TreePath. (first nodes))
           (rest nodes)))
 
-(defn rebuild-treepath
+(defn rebuild-treepath [path model]
   "rebuilds a TreePath that has being invalided by a change to the model
    by comparing the userobjects of the old path and of the new model
    Returns nil if the path cannot be rebuilt"
-  [path model]
   (let [oldnodes (seq (.getPath path))
         root (.getRoot model)]
     (loop [path (TreePath. root)
@@ -38,11 +34,10 @@
             (recur (.pathByAddingChild path corresponding) (rest oldnodes) corresponding)))
         path))))
 
-(defmacro with-tree
+(defmacro with-tree [tree & body]
   "works on a JTree and restores its expanded paths after executing body
    Paths are retrieved using the userobjects, making them robust 
    to nodes changes in the model as long as the objects are the same"
-  [tree & body]
   `(let [tree# ~tree
          root# (.getRoot (.getModel tree#))
          expanded# (if-let [x# (.getExpandedDescendants
@@ -56,11 +51,10 @@
        (when-let [path# (rebuild-treepath path# (.getModel tree#))]
         (.expandPath tree# path#)))))
 
-(defn find-node
+(defn find-node [model pred]
   "finds, in the model of a Jtree, the first node for 
    which (pred (.getUserObject node)) is true
    returns nil on failure"
-  [model pred]
   (let [nodes (tree-seq (fn [x] true) children-seq (.getRoot model))]
     (first (filter #(pred (.getUserObject %)) nodes))))
 
@@ -77,13 +71,12 @@
          (list (.getUserObject node))
          (cons userobject (map #(jtreemodel-seq model %) children))))))
 
-(defn seq-jtreenodes
+(defn seq-jtreenodes [col fn]
   "Converts a nested sequence of userobjects 
    into a tree of DefaultMutableTreeNode containing the objects
 
    (fn userobject) is a constructor that returns an instance of DefaultMutableTreeNode 
    (or descendant) with the given userobject"
-  [col fn]
   (let [root (first col)
         children (rest col)]
     (let [rootnode (fn root)]
@@ -102,7 +95,6 @@
 ;;   (let [root (seq-jtreenodes col)]
 ;;     (DefaultTreeModel. root)))
 
-(defn jtreemodel-zip
+(defn jtreemodel-zip [model]
   "returns a zipper from the userobjects of a JTree model. See clojure.zip"
-  [model]
   (zip/seq-zip (jtreemodel-seq model)))

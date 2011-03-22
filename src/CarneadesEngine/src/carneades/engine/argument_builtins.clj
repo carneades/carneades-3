@@ -2,8 +2,7 @@
 ;;; Licensed under the EUPL V.1.1
 
 
-(ns ^{:doc "Built-in predicates for the rules: eval, =, not= etc."}
-  carneades.engine.argument-builtins
+(ns carneades.engine.argument-builtins
   (:use clojure.contrib.def
         clojure.contrib.pprint
         carneades.engine.utils
@@ -166,9 +165,8 @@
         (cons arg
             (apply concat (map arguments (map :arguments type-states))))))))
 
-(defn dispatch
+(defn dispatch [stmt state generators]
   "stmt state (list-of generator) -> (stream-of response)"
-  [stmt state generators]
   (let [wff (statement-wff stmt)]
     (if (seq? wff)
       (let [args (:arguments state)
@@ -184,9 +182,9 @@
       nil)))
 
 (defn builtins
-  "(list-of generator) -> (statement state -> (seq-of response))"
   ([] (builtins '()))
   ([generators]
+    "(list-of generator) -> (statement state -> (seq-of response))"
     (fn [goal state]
       (interleaveall
         ((generate-arguments-from-rules *builtin-rules* []) goal state)

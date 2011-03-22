@@ -1,9 +1,7 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Decodes and encodes the properties of the application in a property 
-            file and provides query functions."}
-  carneades.editor.model.properties
+(ns carneades.editor.model.properties
   (:use clojure.contrib.def)
   (:require carneades.config.reader))
 

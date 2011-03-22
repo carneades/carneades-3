@@ -1,9 +1,7 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Helper functions to take the content of a LKIF structure and put
-            it in the document manager."}
-  carneades.editor.model.lkif-utils
+(ns carneades.editor.model.lkif-utils
   (:use clojure.contrib.def
         clojure.contrib.pprint
         carneades.engine.rule

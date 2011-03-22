@@ -1,13 +1,7 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Abductive reasoning.
-
-            See:
-            Ballnat, S. and Gordon, T.F. Goal Selection in Argumentation Processes 
-            - A Formal Model of Abduction in Argument Evaluation Structures. Computational Models of Argument 
-            - Proceedings of COMMA 2010, IOS Press (2010), 51-62."}
-  carneades.engine.abduction
+(ns carneades.engine.abduction
   (:use clojure.contrib.def
     clojure.contrib.pprint
     clojure.set
@@ -115,11 +109,10 @@ alltrue is true if coll is empty or if each value is equal to *verum*"
             (recur (set (next coll)) (conj labels label) false onefalse)
             (recur (set (next coll)) (conj labels label) alltrue onefalse)))))))
 
-(defn collect-labels-disj
-  "Stops collecting when a seq of label contains *verum-clause*
-   returns [labels dis-is-true dis-is-false]"
-  [get-label coll]
+(defn collect-labels-disj [get-label coll]
   {:pre [(not (nil? coll))]}
+  "stop collecting when a seq of label contains *verum-clause*
+returns [labels dis-is-true dis-is-false]"
   (loop [coll coll
          labels ()]
     (if (empty? coll)

@@ -1,10 +1,7 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Definition of the SwingUI protocol and the Records it uses
-            to communicate information. The SwingUI protocol abstracts all
-            that is specific to Swing."}
-  carneades.editor.view.swinguiprotocol)
+(ns carneades.editor.view.swinguiprotocol)
 
 ;; defines protocols and records required for the swing_listeners
 
