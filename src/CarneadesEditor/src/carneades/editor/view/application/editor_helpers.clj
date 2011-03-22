@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.application.editor-helpers
+(ns ^{:doc "Helper functions for the implementation of the View protocol."}
+  carneades.editor.view.application.editor-helpers
   (:use clojure.contrib.def
         carneades.editor.view.dialogs.statement-editor
         carneades.editor.view.components.uicomponents

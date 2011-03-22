@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.properties.graph
+(ns ^{:doc "Function to display argument graph properties in the panel properties."}
+  carneades.editor.view.properties.graph
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.utils.swing

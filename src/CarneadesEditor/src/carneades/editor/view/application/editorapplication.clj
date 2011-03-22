@@ -1,7 +1,9 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.application.editorapplication
+(ns ^{:doc "Assemblage of the various implementations of the view, swingui and 
+            wizards protocols."}
+  carneades.editor.view.application.editorapplication
   (:use carneades.editor.utils.type
         (carneades.editor.view viewprotocol swinguiprotocol wizardsprotocol)
         (carneades.editor.view.application editorview editorswingui)

@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.dialogs.statement-editor
+(ns ^{:doc "Implementation of the dialog to edit statements."}
+  carneades.editor.view.dialogs.statement-editor
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.view.components.uicomponents

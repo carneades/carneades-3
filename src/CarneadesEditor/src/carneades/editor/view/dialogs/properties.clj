@@ -1,7 +1,9 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.dialogs.properties
+(ns ^{:doc "Decodes and encodes the properties of the application in a property 
+            file and provides query functions."}
+  carneades.editor.view.dialogs.properties
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.view.viewprotocol

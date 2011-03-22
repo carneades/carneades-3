@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.controller.handlers.instantiatescheme-wizard
+(ns ^{:doc "Implementation of the Instantiate Scheme assistant"}
+  carneades.editor.controller.handlers.instantiatescheme-wizard
   (:use clojure.contrib.def
         carneades.editor.utils.state
         (carneades.engine statement argument lkif)
@@ -12,8 +13,7 @@
         (carneades.editor.view wizardsprotocol viewprotocol swinguiprotocol)
         carneades.editor.controller.documents
         carneades.editor.model.properties
-        carneades.editor.controller.handlers.suggestions
-        [carneades.engine.rule :only (predicate condition-statement)])
+        carneades.editor.controller.handlers.suggestions)
   (:require [clojure.string :as str]
             [carneades.engine.owl :as owl]))
 

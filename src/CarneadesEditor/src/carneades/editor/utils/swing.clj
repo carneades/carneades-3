@@ -1,7 +1,9 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.utils.swing
+(ns ^{:doc "Various Swing utilities functions 
+            that are lacking in clojure.contrib.swing-utils"}
+  carneades.editor.utils.swing
   (:require [clojure.zip :as zip])
   (:import java.beans.PropertyChangeListener
            (java.awt Toolkit EventQueue)
@@ -127,9 +129,10 @@
   (doseq [item items]
     (.setEnabled item false)))
 
-(defn set-swing-exception-handler [f]
+(defn set-swing-exception-handler
   "forces Swing to calls the function f when an uncaught exception occurred.
    f takes one argument, the uncaught exception"
+  [f]
   ;; http://ruben42.wordpress.com/2009/03/30/catching-all-runtime-exceptions-in-swing/
   (let [toolkit (Toolkit/getDefaultToolkit)
         queue (.getSystemEventQueue toolkit)]

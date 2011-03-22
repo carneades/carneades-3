@@ -1,7 +1,10 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.model.docmanager
+(ns ^{:doc "The document manager stores a (splitted) LKIF structure and allows
+            accesses and modifications to values indexed by a key with transparent
+            history and undo / redo support."}
+  carneades.editor.model.docmanager
   (:use clojure.contrib.def
         [clojure.contrib.core :only (dissoc-in)]
         carneades.editor.model.history))
@@ -9,9 +12,10 @@
 (defn create-docmanager []
      (atom {}))
 
-(defn add-section [docmanager keys content]
+(defn add-section
   "keys is a vector. The first key identifies the document the next 
    the sections or subsections"
+  [docmanager keys content]
   (swap! docmanager assoc-in keys (create-history content)))
 
 (defn update-section [docmanager keys content]

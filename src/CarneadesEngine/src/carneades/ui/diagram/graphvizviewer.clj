@@ -2,7 +2,10 @@
 ;;; Licensed under the EUPL V.1.1
 
 
-(ns carneades.ui.diagram.graphvizviewer
+(ns ^{:doc "Functions that convert an argument graph to the DOT (graphviz) 
+            and PNG format by invoking the external 'dot' program.
+            Graphviz needs to be installed http://www.graphviz.org/"}
+  carneades.ui.diagram.graphvizviewer
   (:use clojure.contrib.def
         clojure.contrib.str-utils
         carneades.ui.diagram.viewerdef
@@ -36,11 +39,12 @@
 (defn- reset-ids []
   (reset! *ids* {}))
 
-(defn- get-id [expr]
-   "Get the symbol used to identify some expr, generating
+(defn- get-id
+  "Get the symbol used to identify some expr, generating
     one if the expr does not yet have an identifier.
     The identifers are suitable for naming nodes and arrows 
     in the DOT language, for use with GraphViz"
+  [expr]
    (if-let [id (@*ids* expr)]
      id
      (let [newid (gensym "g")]
@@ -147,12 +151,15 @@
     (gen-image ag stmt-str imgfile)
     (shell/sh *viewer* imgfile)))
 
-(defmethod view-graph "graphviz" [viewer ag stmt-str]
-  "argument-graph (statement -> string) -> nil
+(defmethod
+  ^{:doc "argument-graph (statement -> string) -> nil
 
    Provides a convenient way to display an argument graph. 
-   Based on code contributed by András Förhécz <fandrew@mit.bme.hu>.
+   Based on code contributed by András Förhécz <fandrew@mit.bme.hu> 
+   (in the original scheme version).
    To do: find a way to put the viewer process in the background,
-   but still have the temporary files deleted after use."
+   but still have the temporary files deleted after use."}
+  ;; note: this can be done with temporary java files
+  view-graph "graphviz"
+  [viewer ag stmt-str]
   (view-graphviz ag stmt-str))
-
