@@ -379,7 +379,7 @@
 
 
 (defn to-dnf [formula]
-  ;{:pre [(formula? formula)]}
+  {:pre [(formula? formula)]}
   " <formula> -> <formula>
     
    Converts every valid logical formula into disjunctive normalform"
