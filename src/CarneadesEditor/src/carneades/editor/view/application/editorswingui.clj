@@ -1,8 +1,7 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Impplementation of the SwingUI protocol."}
-  carneades.editor.view.application.editorswingui
+(ns carneades.editor.view.application.editorswingui
   (:use clojure.contrib.def
         clojure.contrib.pprint
         clojure.contrib.swing-utils

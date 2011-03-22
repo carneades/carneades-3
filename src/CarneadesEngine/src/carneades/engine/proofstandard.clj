@@ -2,8 +2,7 @@
 ;;; Licensed under the EUPL V.1.1
 
 
-(ns ^{:doc "Implementations of the various proof standards."}
-    carneades.engine.proofstandard
+(ns carneades.engine.proofstandard
   (:refer-clojure :exclude [satisfies?])
   (:use clojure.contrib.def))
 

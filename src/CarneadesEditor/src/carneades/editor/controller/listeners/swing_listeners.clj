@@ -1,11 +1,7 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "These listeners have notions of the Swing events, they
-             retrieve information from the UI via the protocols
-             and call handlers. Handlers do not know anything
-             about Swing, only about the View protocol."}
-  carneades.editor.controller.listeners.swing-listeners
+(ns carneades.editor.controller.listeners.swing-listeners
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.view.viewprotocol
@@ -262,10 +258,10 @@
   (on-new-file view))
 
 (defn windowclosing-listener [event view]
-  (on-exit view))
+  (on-exit view event))
 
 (defn quit-filemenuitem-listener [event view]
-  (on-exit view))
+  (on-exit view event))
 
 (defn edit-statement-menuitem-listener [event view]
   (when-let [[path id] (current-graph view)]

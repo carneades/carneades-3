@@ -1,9 +1,7 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Functions to maanage and query an OWL reasoner"}
-  ;;; TODO merge / replace with owl.clj ?
-    carneades.engine.owl.reasoner
+(ns carneades.engine.owl.reasoner
   (:require     
     [carneades.engine.argument-search :as as] ; for testing only
     )   
@@ -129,7 +127,6 @@
 
 
 (defn generate-arguments-from-reasoner
-  "Generates argument from a OWL reasoner"
   [ontology reasoner]
   (fn [subgoal state]    
     (let [manager (OWLManager/createOWLOntologyManager),          

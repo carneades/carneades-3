@@ -1,8 +1,7 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Implementation of the tabulations to display argument graphs."}
-  carneades.editor.view.components.tabs
+(ns carneades.editor.view.components.tabs
   (:use clojure.contrib.def
         clojure.contrib.trace
         clojure.contrib.swing-utils
@@ -43,9 +42,8 @@
 (defn init-tabs []
   (.setTabLayoutPolicy *mapPanel* JTabbedPane/SCROLL_TAB_LAYOUT))
 
-(defn graphinfo-being-closed
+(defn graphinfo-being-closed [event]
   "returns [path id]"
-  [event]
   (let [button (.getSource event)
         tabcomponent (.getParent button)
         idx (.indexOfTabComponent *mapPanel* tabcomponent)
@@ -111,9 +109,8 @@
      (alter *component-to-title* dissoc component)
      (alter *ags-to-components* dissoc info))))
 
-(defn tabs-empty?
+(defn tabs-empty? []
   "true if no tabs"
-  []
   (empty? (deref *swingcomponents-to-ags*)))
 
 (defn select-component [component]
@@ -133,8 +130,7 @@
 (defn register-tab-change-listener [listener]
   (.addChangeListener *mapPanel* listener))
 
-(defn change-tab-title
-  "changes the title of a clean component"
-  [component newtitle]
+(defn change-tab-title [component newtitle]
+  "change the title of a clean component"
   (when-let [label (get (deref *component-to-title*) (:component component))]
     (.setText label newtitle)))

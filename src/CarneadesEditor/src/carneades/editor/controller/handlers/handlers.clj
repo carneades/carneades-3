@@ -1,11 +1,7 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Swing listeners dispatch to the handlers functions defined in this 
-            namespace. The handlers only interact with the view via the View 
-            protocol. All UI specific (SwingUI protocol, javax etc) imports 
-            are disallowed."}
-  carneades.editor.controller.handlers.handlers
+(ns carneades.editor.controller.handlers.handlers
   (:use clojure.contrib.def
         clojure.java.io
         clojure.contrib.trace
@@ -40,9 +36,8 @@
     (do-ag-update view [path :ags (:id ag)] ag)
     (redisplay-graph view path ag statement-formatted)))
 
-(defn do-close-graph
+(defn do-close-graph [view path id savechanges]
   "close graph without saving it"
-  [view path id savechanges]
   (let [isfresh (contains? (get-fresh-ag-ids path) id)]
     (when-not savechanges
       (if isfresh
@@ -53,9 +48,8 @@
           (restore-section-to-last-saved *docmanager* [path :ags id]))))
     (close-graph view path id isfresh)))
 
-(defn close-all
+(defn close-all [view path]
   "closes all graphs without saving, removes LKIF from tree"
-  [view path]
   (doseq [id (get-ags-id path)]
     (do-close-graph view path id false))
   (hide-lkif-content view path)
@@ -155,9 +149,8 @@
 
             (display-error view *file-error* *file-format-not-supported*)))))))
 
-(defn save-lkif 
+(defn save-lkif [view path]
   "returns false if an error occured, true otherwise"
-  [view path]
   (try
     (set-busy view true)
     (let [lkifdata (lkif/extract-lkif-from-docmanager path *docmanager*)]
@@ -191,17 +184,13 @@
       (on-open-graph view path currentid)
       true)))
 
-(defn on-save
+(defn on-save [view path]
   "returns false if an error occured, true otherwise"
-  [view path]
   (if (new-lkif? path)
-    (if (on-saveas view path)
-      (do
-        (remove-fresh-ags path)
-        (remove-newlkif path)
-        (close-all view path)
-        true)
-      false)
+    (when (on-saveas view path)
+      (remove-fresh-ags path)
+      (remove-newlkif path)
+      (close-all view path))
     (if (save-lkif view path)
       (do
         (remove-fresh-ags path)
@@ -607,10 +596,9 @@
     (do-ag-update view [path :ags (:id ag)] ag)
     (premise-deleted view path ag arg pm)))
 
-(defn prompt-statement-content
+(defn prompt-statement-content [view ag suggestion]
   "asks the user the content of a new statement. Prompts
    again if the content is invalid or already exists"
-  [view ag suggestion]
   (let [stmt (read-statement view suggestion)
         stmt-as-obj (str-stmt stmt)]
     (cond (nil? stmt)
@@ -739,15 +727,15 @@
     (when (not (in-swank?))
       (System/exit 0))))
 
-(defn on-exit [view]
+(defn on-exit [view event]
   (let [unsavedlkifs (get-unsaved-lkifs)]
     (if (empty? unsavedlkifs)
       (exit view)
       (case (ask-yesnocancel-question view "Close" "Save files before closing?")
-            :yes (let [save-results (map (fn [path] (on-save view path))
-                                         unsavedlkifs)]
-                   (when (every? true? save-results)
-                     (exit view)))
+            :yes (do
+                   (doseq [path unsavedlkifs]
+                     (on-save view path))
+                   (exit view))
             :no (exit view)
             :cancel nil))))
 

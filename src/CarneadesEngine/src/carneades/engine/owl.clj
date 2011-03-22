@@ -1,8 +1,7 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Functions to load an ontology and query it."}
-    carneades.engine.owl
+(ns carneades.engine.owl
   (:use clojure.contrib.def
         clojure.contrib.trace
         carneades.engine.owl.reasoner
@@ -72,7 +71,6 @@
         ))))
 
 (defn load-ontology
-  "Loads an ontology from a file or URL"
   ([path] (load-ontology path nil))
   ([path pre-path]
      (try
@@ -89,7 +87,6 @@
          (throw (FileNotFoundException. (.getMessage e)))))))
 
 (defn generate-arguments-from-owl
-  "Generates argument from an OWL ontology"
   ([ontology type]
     (generate-arguments-from-owl ontology type '()))
   ([ontology type optionals]
@@ -99,9 +96,8 @@
         :rule (generate-arguments-from-rules (map-ontology (:ontology ontology) optionals) '()),
         (throw (Exception. "Invalid type value for owl generator"))))))
 
-(defn individuals
+(defn individuals [ontology]
   "returns all individuals in the ontology as a list of (class individual)"
-  [ontology]
   (mapcat (fn [class]
             (let [individuals (.getIndividuals class ontology)
                   sid (symbol (.toStringID class))]
@@ -116,21 +112,17 @@
   (IRI/create s))
 
 (defn classes
-  "Returns the classes of the ontology"
   ([ontology]
      (seq (.getClassesInSignature ontology)))
   ([ontology iri]
      (seq (filter #(instance? OWLClass %)
                   (.getEntitiesInSignature ontology iri)))))
 
-(defn root-ontology
-  "Returns the root ontology of the reasoner"
-  [reasoner]
+(defn root-ontology [reasoner]
   (.getRootOntology reasoner))
 
-(defn instances
-  "Returns instances of class"
-  [reasoner class]
+(defn instances [reasoner class]
+  "returns instances of class"
   (seq (.getFlattened (.getInstances reasoner class false))))
 
 (defn individuals [ontology]
@@ -146,10 +138,10 @@
           (into {} (f individual ontology))))
 
 (defn object-properties
-  "Returns a hashmap of property -> vals"
   ([ontology]
      (seq (.getObjectPropertiesInSignature ontology)))
   ([ontology individual]
+     "returns a hashmap of property -> vals"
      (x-properties ontology individual (memfn getObjectPropertyValues ontology))))
 
 (defn data-properties
@@ -158,29 +150,24 @@
   ([ontology individual]
      (x-properties ontology individual (memfn getDataPropertyValues ontology))))
 
-(defn- x-properties-seq
-  "Returns a seq of (property indivi val) from the individual"
-  [ontology individual f]
+(defn x-properties-seq [ontology individual f]
+  "returns a seq of (property indivi val) from the individual"
   (map (fn [[k v]]
          (list k (to-symbol individual) v))
        (mapcat (fn [[k v]]
                  (cartesian-product [k] v))
                (f ontology individual))))
 
-(defn object-properties-seq
-  "Returns a seq of (property indiv val) from the individual"
-  [ontology individual]
+(defn object-properties-seq [ontology individual]
+  "returns a seq of (property indiv val) from the individual"
   (x-properties-seq ontology individual object-properties))
 
-(defn data-properties-seq
-  "Returns a seq of (property indiv val) from the individual"
-  [ontology individual]
+(defn data-properties-seq [ontology individual]
+  "returns a seq of (property indiv val) from the individual"
   (x-properties-seq ontology individual data-properties))
 
-(defn parse-class-expression
-  "Returns an Expression from the Manchester query. This can then be used to
-   query the ontology"
-  [ontology s]
+(defn parse-class-expression [ontology s]
+  "returns an Expression from the Manchester query"
   (try
     (let [data-factory (.. ontology getOWLOntologyManager getOWLDataFactory)
           manager (.getOWLOntologyManager ontology)
@@ -197,9 +184,8 @@
 (defn shorten [sym]
   (last (clojure.string/split (str sym) #"#")))
 
-(defn instances-with-property
-  "Returns a list of (property indiv val)"
-  [reasoner property]
+(defn instances-with-property [reasoner property]
+  "returns a list of (property indiv val) "
   (let [prop (shorten property)
         ontology (root-ontology reasoner)]
     (if-let [ex (parse-class-expression ontology (format "(%s SOME Thing)" prop))]

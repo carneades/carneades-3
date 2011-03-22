@@ -1,10 +1,5 @@
-;;; Copyright © 2010 Fraunhofer Gesellschaft 
-;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Implementation of domains, 
-            i.e. semantics to link or restrict the applicability of rules
-            certain ontologies"}
-  carneades.engine.domain
+(ns carneades.engine.domain
   (:use clojure.contrib.def
     ;clojure.contrib.pprint
     ;[clojure.set :only (intersection)]
