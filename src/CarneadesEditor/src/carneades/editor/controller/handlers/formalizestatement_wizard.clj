@@ -107,7 +107,8 @@
                         *fillin-form*
                         
                         (or (nil? xval) (nil? yval))
-                        *invalid-content*))))
+                        *invalid-content*)
+        *fillin-form*)))
 
 (defn on-previous-suggestion-listener [state]
   (m-let [{:keys [view formular suggestions]} state
