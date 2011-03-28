@@ -135,7 +135,7 @@
   (let [f (file path)
         f2 (file relative-to)
         dirsize (count (.getPath f2))
-        dirsize (+ dirsize (count (*file-separator*)))]
+        dirsize (+ dirsize (count *file-separator*))]
     (subs (.getPath f) dirsize)))
 
 (defn create-path
