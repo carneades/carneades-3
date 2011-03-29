@@ -16,7 +16,7 @@
 (defn ask-user
   [askable? to-engine-atom from-engine-atom]
   (fn [goal s]
-    (let [g (apply-substitution (:substitution s) goal)]
+    (let [g (apply-substitution (:substitutions s) goal)]
       (if (askable? g)
         ;(call-cc (fn [return] (get-answer g s return)))
         (let [new-from (promise),
