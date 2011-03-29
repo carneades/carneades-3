@@ -15,14 +15,18 @@ import java.util.Map;
  */
 public class AskException extends Exception{
 
+    /*
     private List goal;
     private Map state;
-    private AFn returnFn;
+    //private AFn returnFn;
+    private AFn toEnginePromise;
+    private AFn fromEnginePromise;
 
-    public AskException(List goal, Map state, AFn returnFn) {
+    public AskException(List goal, Map state, AFn toEngine, AFn fromEngine) {
         this.goal = goal;
         this.state = state;
-        this.returnFn = returnFn;
+        this.toEnginePromise = toEngine;
+        this.fromEnginePromise = fromEngine;
     }
 
     public List getGoal() {
@@ -33,9 +37,14 @@ public class AskException extends Exception{
         return state;
     }
 
-    public AFn getReturnFn() {
-        return returnFn;
+    public AFn getFromEnginePromise() {
+        return fromEnginePromise;
     }
-        
+
+    public AFn getToEnginePromise() {
+        return toEnginePromise;
+    }   
+      
+     */
 
 }

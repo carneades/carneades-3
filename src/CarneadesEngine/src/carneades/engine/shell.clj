@@ -73,6 +73,20 @@
             (find-best-arguments traverse depth-first max-nodes 1
                           (initial-state goal ag) (cons (ask-user askable? ga) generators))))))
 
+(defn future-construction
+    [to-engine from-engine]    
+    (println "future construction started:")
+    (future-call
+        (fn []
+            (println "future-construction waiting for initial request")
+            (let [to (atom to-engine),
+                     from (atom from-engine),
+                     [goal max-nodes ag generators askable?] @@to, ; read
+                      sol (doall (find-best-arguments traverse depth-first max-nodes 1
+                                       (initial-state goal ag) (cons (ask-user askable? to from) generators)))]
+                   (println "engine has found solution" sol)
+                   (deliver @from (list 'solution sol))))))
+
 (defn continue-construction
   [goal max-nodes state generators]
      (find-best-arguments traverse depth-first max-nodes 1
