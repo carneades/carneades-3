@@ -120,12 +120,12 @@ grammar {
                         
     All = element all { 
         attribute assumable { xsd:boolean }?,  #default: false
-        Variable, Atom?, Wff 
+        Variable, Atom, Wff 
     }
                         
     Exists = element exists { 
         attribute assumable { xsd:boolean }?,  #default: false,
-        Variable, Atom?, Wff 
+        Variable, Atom, Wff 
      }
     
     # Terms include wffs, to support meta-level statements
