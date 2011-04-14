@@ -52,7 +52,7 @@ public class CarneadesAboutBox extends javax.swing.JDialog {
         imageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/fokus_weg.jpg"))); // NOI18N
 
         appTitleLabel.setFont(appTitleLabel.getFont().deriveFont(appTitleLabel.getFont().getStyle() | java.awt.Font.BOLD, appTitleLabel.getFont().getSize()+4));
-        appTitleLabel.setText("Carneades Editor v1.0.0");
+        appTitleLabel.setText("Carneades Editor v1.0.1");
 
         vendorLabel.setFont(vendorLabel.getFont().deriveFont(vendorLabel.getFont().getStyle() | java.awt.Font.BOLD));
         vendorLabel.setText("License:");
