@@ -45,14 +45,14 @@
      (if (= (.getScheme ontIRI) "file")
        ontIRI
        (let [uri (.toURI ontIRI)
-             rawfilename (last-segment (str uri))
+             rawfilename (last-uri-segment (str uri))
              filename (add-extension rawfilename "owl")
              parentdir (or (parent path) prepath)
              localfile (if parentdir
                          (create-path parentdir filename)
                          filename)]
-         ;; (printf "path = %s prepath = %s parentdir = %s uri = %s\nlocalfile = %s\n"
-         ;;         path prepath parentdir uri localfile)
+         ;(printf "path = %s prepath = %s parentdir = %s uri = %s\nlocalfile = %s\n"
+         ;         path prepath parentdir uri localfile)
          (if (exists? localfile)
            ;; if the file exists locally to the currently imported file we use it
            (IRI/create (path->uri localfile prepath))
@@ -68,7 +68,7 @@
     (importMissing [event]
       (let [uri (.getImportedOntologyURI event)]
         (throw (java.io.FileNotFoundException. (format "no such file %s" (str uri))))
-        ;; (println "!!! could not load ontology " uri "!!!")
+        ;(println "!!! could not load ontology " uri "!!!")
         ))))
 
 (defn load-ontology

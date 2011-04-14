@@ -197,6 +197,11 @@
   [pathname]
   (last (str/split pathname (re-pattern *file-separator*))))
 
+(defn last-uri-segment
+  "Returns the last segment of uri"
+  [uri]
+  (last (str/split uri (re-pattern "/"))))
+
 ;;; exceptions
 
 (defn first-cause
