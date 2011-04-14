@@ -142,7 +142,7 @@
                       ;(println "generating from ontology" name)
                       ((generate-arguments-from-owl kb type) subgoal state))
                     ;rb
-                    (let [d-ont (or ont (get-imported-ont (:import-tree lkif) imp-kbs name))] ; todo : maybe other way around
+                    (let [d-ont (or ont (get-imported-ont (:import-tree lkif) imp-kbs name) (get-imported-ont (:import-tree lkif) imp-kbs))] ; todo : maybe other way around
                       ;(println "domain ontology:" d-ont)
                       ;(println "generating from rules" name)
                       ((generate-arguments-from-rules kb cq d-ont) subgoal state)))))
