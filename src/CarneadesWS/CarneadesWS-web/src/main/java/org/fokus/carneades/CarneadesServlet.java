@@ -5,6 +5,7 @@
 
 package org.fokus.carneades;
 
+import org.fokus.carneades.simulation.Translator;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class CarneadesServlet extends HttpServlet {
     private static final String LATEST_QUESTIONS = "LATEST_QUESTIONS";
     private static final String KNOWLEDGE_BASE = "KNOWLEDGE_BASE";
     private static final String QUERY = "QUERY";
+    private static final String TRANSLATOR = "TRANSLATOR";
     
 
     /** 
@@ -52,19 +54,34 @@ public class CarneadesServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        
         log.info("request in Carneses Servlet");
+        
         // INPUT
         session = request.getSession();
+        
         // getting Session Bean
         log.info("getting stateful session bean");
         CarneadesService service = (CarneadesService) session.getAttribute(CARNEADES_MANAGER);
         if (service == null) {
             log.info("creating new session bean");
             service = EjbLocator.getCarneadesService();
-            session.setAttribute(CARNEADES_MANAGER, service);
+            session.setAttribute(CARNEADES_MANAGER, service);            
         } else {
             log.info("existing bean found");
         }
+        
+        // getting translator
+        // TODO : get translation file
+        Translator translator = (Translator) session.getAttribute(TRANSLATOR);
+        if(translator == null) {
+            String translatorFile = "C:\\tmp\\translations.xml";
+            translator = new Translator(translatorFile);
+            session.setAttribute(TRANSLATOR, translator);
+        } else {
+            log.info("existing translator found");
+        }
+        
         // incoming request
         String jsonIN = URLDecoder.decode(request.getParameter("json"),"UTF-8");
         //log.info(jsonIN);
@@ -92,21 +109,23 @@ public class CarneadesServlet extends HttpServlet {
                 String topic = jsonIN.replaceFirst("\\s*\\{\\s*\"request\"\\s*:\\s*\"", "");
                 topic = topic.replaceFirst("\"\\s*\\}\\s*", "");
                 // getting the topic
-                log.info("getting args for topic:  "+topic);
+                log.info("getting args for topic:  " + topic);
                 // TODO : DB: topic -> statement, kb
-                    // creating query for topic
-                    log.info("creating query");
-                    Statement query = new Statement();
-                    query.setPredicate("isGrandfather");
-                    query.getArgs().add("Peter");
-                    query.getArgs().add("?x");
-                    // get kb for discussion
-                    String kb = "http://localhost:8080/CarneadesWS-web/kb/lkif.xml";
+                // creating query for topic
+                log.info("creating query");
+                Statement query = new Statement();
+                query.setPredicate("timeForFatherAndGrandfather");
+                query.getArgs().add("Peter");
+                query.getArgs().add("?x");
+                query.getArgs().add("?y");
+                query.getArgs().add("?z");
+                // get kb for discussion
+                String kb = "http://localhost:8080/CarneadesWS-web/kb/lkif.xml";
                 List<Question> qList = new ArrayList<Question>();
                 session.setAttribute(QUERY, query);
                 session.setAttribute(KNOWLEDGE_BASE, kb);
                 try {
-                    jsonOUT = askEngine(service, query, kb, null); // empty = no questions yet
+                    jsonOUT = askEngine(service, query, kb, null, translator); // empty = no questions yet
                 } catch (CarneadesException e) {
                     log.error(e.getMessage());
                     jsonOUT = e.getMessage();
@@ -116,6 +135,7 @@ public class CarneadesServlet extends HttpServlet {
         }
         else if(jsonIN.matches("\\s*\\{\\s*\"answers\"\\s*:.+")) {
             // client replies
+            log.info("answers received from client: "+jsonIN);
             List<Question> qList = (ArrayList<Question>) session.getAttribute(LATEST_QUESTIONS);
             String kb = (String) session.getAttribute(KNOWLEDGE_BASE);
             Statement query = (Statement) session.getAttribute(QUERY);
@@ -123,7 +143,7 @@ public class CarneadesServlet extends HttpServlet {
             List<Answer> aList = answers.getAnswers();
             List<Statement> answer = QuestionHelper.mapAnswersAndQuestionsToStatement(qList, aList);
             try {
-                jsonOUT =askEngine(service,query,kb,answer);
+                jsonOUT =askEngine(service,query,kb,answer, translator);
             } catch (CarneadesException e) {
                 log.error(e.getMessage());
                 jsonOUT = e.getMessage();
@@ -173,10 +193,10 @@ public class CarneadesServlet extends HttpServlet {
      * saves the current questions, kb and query in the user session
      * @param q questions including knowledgebase and query
      */
-    private void saveQuestionsToSession(Questions q) {
+ /*   private void saveQuestionsToSession(Questions q) {
         session.setAttribute(LATEST_QUESTIONS, q.getQuestions());
         log.info("user session updated");
-    }
+    }*/
 
     /**
      * Sends requests to the carneades-engine
@@ -187,13 +207,14 @@ public class CarneadesServlet extends HttpServlet {
      * @return returns json representing either questions or solution
      * @throws CarneadesException if the request was not successful
      */
-    private String askEngine(CarneadesService service, Statement query, String kb, List<Statement> answer) throws CarneadesException {
+    private String askEngine(CarneadesService service, Statement query, String kb, List<Statement> answer, Translator translator) throws CarneadesException {
         List<Question> qList = new ArrayList<Question>();
         String jsonOUT = "";
         // ask
         // TODO : get askables from CMS
         List<String> askables = new ArrayList<String>();
         askables.add("isFather");
+        askables.add("hasAge");
         // askables.add("http://carneades/test/ont#s");
         log.info("calling ask from ejb: " + query.toString());
         CarneadesMessage msg = service.askEngine(query,kb,askables,answer);
@@ -203,14 +224,18 @@ public class CarneadesServlet extends HttpServlet {
         
             if (MessageType.ASKUSER.equals(msg.getType())) {
                 // convert Statement to question
-                qList.addAll(CarneadesDatabase.getQuestionsFromStatement(msg.getMessage()));
+                //qList.addAll(CarneadesDatabase.getQuestionsFromStatement(msg.getMessage())); 
+                Statement qStmt = msg.getMessage();
+                List<Question> questionList = translator.getQuestions(qStmt, jsonOUT);
+                qList.addAll(questionList);
                 // save questions in session
                 saveQuestionsToSession(qList);
                 jsonOUT = QuestionHelper.getJSONFromQuestions(qList);
             } else if (MessageType.SOLUTION.equals(msg.getType())) {
                 // solution
                 log.info("sending solution to user");
-                jsonOUT = "{\"solution\":"+msg.getAG()+"}";
+                // jsonOUT = "{\"solution\":"+msg.getAG()+"}";
+                jsonOUT = "{\"solution\":\""+translator.getStatementText(msg.getMessage(), "english")+"\"}";
                 // SolutionToAJAX()
             } else {
                 // error

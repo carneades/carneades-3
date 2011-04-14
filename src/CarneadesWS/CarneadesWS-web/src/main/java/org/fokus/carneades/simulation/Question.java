@@ -14,11 +14,12 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  *
  * @author stb, bbr
  */
+// TODO : check all the @JsonIgnore annotations
 public class Question {
     
-    
+    // TODO : why id ?
     private int id = 0;              // required, unique (at least for one request)
-    private String question = "";    // required
+    private FormatText question = null;    // required
     private String type = "text";    // required
     private List<String> answers = new ArrayList<String>(); // required
     private Statement statement;     // required
@@ -54,11 +55,11 @@ public class Question {
         this.hint = hint;
     }
 
-    public String getQuestion() {
+    public FormatText getQuestion() {
         return question;
     }
 
-    public void setQuestion(String question) {
+    public void setQuestion(FormatText question) {
         this.question = question;
     }
 
@@ -112,21 +113,23 @@ public class Question {
         this.optional = optional;
     }
     
-    @Override
-    public String toString() {
+    // TODO : revise Question.toString() method
+    public String toJSON() {
         String result = "{";
-        result += "\"id\":"+getId()+"";
-        result += ",\"question\":\""+getQuestion()+"\"";
-        result += ",\"type\":\""+getType()+"\"";
-        result += ",\"answers\":[";
-        for (int i=0;i < answers.size(); i++) {
-            result += "\""+answers.get(i)+"\"";
-            if (i+1 < answers.size()) result += ",";
+        result += "\"id\":"+this.id+"";
+        result += ",\"question\":\""+this.question.format(this.statement.getArgs()) +"\"";
+        result += ",\"type\":\""+this.type+"\"";
+        if(this.answers.size() > 0) {
+            result += ",\"answers\":[";
+            for (int i=0;i < this.answers.size(); i++) {
+                result += "\""+this.answers.get(i)+"\"";
+                if (i+1 < this.answers.size()) result += ",";
+            }
+            result += "]"; 
         }
-        result += "]";
-        if (!hint.isEmpty()) result += ",\"hint\":\""+getHint()+"\"";
-        if (!category.isEmpty()) result += ",\"category\":\""+getCategory()+"\"";
-        if (optional) result += ",\"optional\":"+getOptional()+"";
+        if (!this.hint.isEmpty()) result += ",\"hint\":\""+this.hint+"\"";
+        if (!this.category.isEmpty()) result += ",\"category\":\""+this.category+"\"";
+        if (this.optional) result += ",\"optional\":"+this.optional+"";
         result += "}";
         return result;
     }

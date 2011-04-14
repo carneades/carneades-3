@@ -227,11 +227,14 @@ function showQuestions(qList) {
  */
 function showSolution(solution) {
     $("#tabs a[href='#tabs-3']").click();
-    $("#tabs-3").html("<h2>Solution</h2>"+
+ /*   $("#tabs-3").html("<h2>Solution</h2>"+
         "<h3>"+solution["main-issue"][1]+" "+solution["main-issue"][0]+" "+solution["main-issue"][2]+"</h3>"+
-        "<p>Below you ind the full JSON solution output.</p><pre id=\"solution-xml\"><\/pre>");
+        "<p>Below you ind the full JSON solution output.</p><pre id=\"solution-xml\"><\/pre>");  
     var solutionNew = JSON.stringify(solution, null, "\t");
-    $("#solution-xml").html(solutionNew);
+    $("#solution-xml").html(solutionNew); */
+    $("#tabs-3").html("<h2>Solution</h2>"+
+        "<h3>"+solution+"</h3>");
+    //$("#solution-xml").html(solution);
 }
 
 /**

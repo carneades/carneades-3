@@ -26,13 +26,13 @@ public class QuestionHelper {
         //OLD: JSONObject jsonObj = new JSONObject("{ \"questions\" : [{\"id\":1, \"question\":\""+q.getQuestion()+": \", \"hint\":\""+q.getHint()+"\", \"type\":\""+q.getType()+"\", \"category\" : \""+q.getCategory()+"\"}]}");
 
         // TODO : mapper not used
-        ObjectMapper mapper = new ObjectMapper();
+        //ObjectMapper mapper = new ObjectMapper();
         String jsonObj = "{\"questions\":[";
         for (int i=0; i < qList.size(); i++) {
             Question q = qList.get(i);
             if (i > 0) jsonObj += ",";
             try {
-                jsonObj += q.toString(); // mapper.writeValueAsString(q);
+                jsonObj += q.toJSON(); // mapper.writeValueAsString(q);
             }
             catch (Exception e) {
                 // TODO : handle Exception
@@ -46,8 +46,8 @@ public class QuestionHelper {
     public static List<Statement> mapAnswersAndQuestionsToStatement (List<Question> qList, List<Answer> aList) {
         // blah blah
         List<Statement> result = new ArrayList<Statement>();
-        for (Answer a : aList) {
-            int id = a.getId();
+        for (Answer answer : aList) {
+            int id = answer.getId();
             Question q = null;
             for (Question q1 : qList) {
                 if (id == q1.getId()) q = q1;
@@ -55,10 +55,11 @@ public class QuestionHelper {
             Statement stmt = q.getStatement();
             //for (String arg : stmt.getArgs()) {
             List<String> args = stmt.getArgs();
+            // TODO : use collection iteration
             for (int i=0; i < args.size(); i++) {
                 if (args.get(i).indexOf("?") == 0) {
                     // found asked argument
-                    args.set(i, a.getValue());
+                    args.set(i, answer.getValue());
                     break;
                 }
             }

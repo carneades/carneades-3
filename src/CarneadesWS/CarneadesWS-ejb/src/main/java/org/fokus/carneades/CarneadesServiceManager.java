@@ -5,6 +5,7 @@
 
 package org.fokus.carneades;
 
+import org.fokus.carneades.clojureutil.NS;
 import clojure.lang.IFn;
 import clojure.lang.Keyword;
 import clojure.lang.RT;
@@ -230,11 +231,11 @@ public class CarneadesServiceManager implements CarneadesService{
                 // get last solution for substitution
                 Map lastSol = (Map)solutions.get(solutions.size()-1);
                 Map lastSubs = (Map)lastSol.get(Keyword.intern("substitutions"));
-                List firstSolStmt = (List) RT.var(NS.UNIFY, "apply-substitution").invoke(lastSubs,this.goal);
+                List lastSolStmt = (List) RT.var(NS.UNIFY, "apply-substitution").invoke(lastSubs,this.goal);
                 log.info("uniting solutions");
                 Map solAG = (Map) RT.var(NS.CORE,"doall").invoke(RT.var(NS.SHELL, "unite-solutions").invoke(solutions));
-                solAG = (Map)RT.var(NS.CORE, "assoc").invoke(solAG, Keyword.intern("main-issue"), firstSolStmt);
-                log.info("serializing argument graph");
+                solAG = (Map)RT.var(NS.CORE, "assoc").invoke(solAG, Keyword.intern("main-issue"), lastSolStmt);
+                log.info("serializing argument graph");                
                 //PrintWriter jsonWriter = new PrintWriter(new StringWriter());
                 //String jsonString = "";
                 //RT.var(NS.JSON, "write-json") .invoke(solAG, jsonWriter);
@@ -249,7 +250,7 @@ public class CarneadesServiceManager implements CarneadesService{
                 log.info(ag);
                 log.info("creating CarneadesMessage");
                 cm = new CarneadesMessage();
-                cm.setMessage(this.query);
+                cm.setMessage(ClojureUtil.getStatementFromSeq(lastSolStmt));
                 //cm.setAG(jsonString);
                 cm.setAG(ag);
                 cm.setType(MessageType.SOLUTION);

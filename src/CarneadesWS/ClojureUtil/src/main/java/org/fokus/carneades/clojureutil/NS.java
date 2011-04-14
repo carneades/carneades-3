@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.fokus.carneades;
+package org.fokus.carneades.clojureutil;
 
 /**
  *

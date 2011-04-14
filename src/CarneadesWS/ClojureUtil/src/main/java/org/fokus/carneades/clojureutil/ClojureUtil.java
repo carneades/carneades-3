@@ -29,8 +29,8 @@ public class ClojureUtil {
     public static List getSeqFromStatement(Statement s) throws Exception{
         Symbol pred = Symbol.intern(s.getPredicate());
         List seq = (List)RT.var("clojure.core","list").invoke(pred);
-        for(String o : s.getArgs()) {
-            Symbol arg = Symbol.intern(o);
+        for(String o : s.getArgs()) {            
+            Object arg = RT.var(NS.CORE,"read-string").invoke(o);
             seq = (List)RT.var("clojure.core", "concat").invoke(seq, RT.var("clojure.core", "list").invoke(arg));
         }
         return seq;

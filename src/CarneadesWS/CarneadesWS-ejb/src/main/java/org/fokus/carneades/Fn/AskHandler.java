@@ -9,7 +9,7 @@ import clojure.lang.RT;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.fokus.carneades.NS;
+import org.fokus.carneades.clojureutil.NS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
