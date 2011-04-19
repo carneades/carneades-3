@@ -1,0 +1,63 @@
+datatypes xsd = "http://www.w3.org/2001/XMLSchema-datatypes"
+
+grammar {
+    start = element translations { 
+        Predicate+ 
+    }
+    
+    Predicate = element predicate {
+        attribute pred { xsd:string },
+        attribute args { xsd:int },
+        Statements, Question*
+        }
+    
+    Statements = element statements {         
+        Format+
+        }
+        
+    Question = element question { 
+        attribute arg { xsd:int },        
+        attribute type { xsd:string },
+        Format+, Hint, Category, Answers?, Questionrefs?
+    }
+
+    Format = element format {  
+        attribute lang { xsd:string },
+        Text, Args
+    }
+    
+    Text = element text {
+        text
+    }
+    
+    Args = element args {
+        Arg+
+        }
+    
+    Arg = element arg {
+        attribute nr { xsd:int }
+    }
+    
+    Hint = element hint {
+        text
+    }
+    
+    Category = element category {
+        text
+    }
+    
+    Answers = element answers {
+        Text+
+    }
+    
+    Questionrefs = element qrefs {
+        Questionref+
+    }
+    
+    Questionref = element qref {
+        attribute pred { xsd:string },
+        attribute arg { xsd:int },
+        Args
+    }
+    
+}
