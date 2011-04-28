@@ -23,9 +23,8 @@ public class AskHandler {
         
         public Map<String, List> map = new HashMap<String, List>();
         
-    }
+    }    
     
-    // TODO : we need a map of a map
     private Map<String,PredicateMap> answers = new HashMap<String,PredicateMap>();
     
     private static final Logger log = LoggerFactory.getLogger(AskHandler.class);

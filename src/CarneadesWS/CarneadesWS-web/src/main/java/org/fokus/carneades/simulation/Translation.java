@@ -18,23 +18,15 @@ public class Translation {
     private int args;
     //  Statement stmt;
     private Map<Integer, Question> questions;
-    private Map<Question, List<QuestionRef>> questionRefs;
+    //private Map<Question, List<QuestionRef>> questionRefs;
     private Map<String, FormatText> text;
 
-    public Translation(String predicate, int args, Map<Integer, Question> questions, Map<Question, List<QuestionRef>> questionRefs, Map<String, FormatText> text) {
+    public Translation(String predicate, int args, Map<Integer, Question> questions, Map<String, FormatText> text) {
         this.predicate = predicate;
         this.args = args;
         this.questions = questions;
-        this.questionRefs = questionRefs;
+        //this.questionRefs = questionRefs;
         this.text = text;
-    }
-
-    public Map<Question, List<QuestionRef>> getQuestionRefs() {
-        return questionRefs;
-    }
-
-    public void setQuestionRefs(Map<Question, List<QuestionRef>> questionRefs) {
-        this.questionRefs = questionRefs;
     }
     
     public int getArgs() {

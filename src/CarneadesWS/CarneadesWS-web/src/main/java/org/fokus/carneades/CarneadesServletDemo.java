@@ -8,19 +8,12 @@ package org.fokus.carneades;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.UndeclaredThrowableException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import org.fokus.carneades.api.CarneadesMessage;
-import org.fokus.carneades.api.MessageType;
-import org.fokus.carneades.api.Statement;
-import org.fokus.carneades.common.EjbLocator;
-import org.fokus.carneades.simulation.Question;
-import org.fokus.carneades.simulation.QuestionHelper;
+import org.fokus.carneades.simulation.GoogleTranslate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +38,11 @@ public class CarneadesServletDemo extends HttpServlet {
         log.info("request in Carneses Servlet");
         // INPUT
         String a = request.getParameter("answers");
+        
+        List<String> languages = GoogleTranslate.getLanguages();
+        for(String l : languages) {
+            log.info(l);
+        }
 
         // OUTPUT
         response.setContentType("text/html;charset=UTF-8");
@@ -54,9 +52,10 @@ public class CarneadesServletDemo extends HttpServlet {
             // if no answers given with the request               
                 
                 // TODO : getting answers
-                outMsg = askEngine();
+          //      outMsg = askEngine();
 
-                out.println(outMsg);
+          //      out.println(outMsg);
+            out.println("foo bar");
 
             
             // Questions interpretation
@@ -106,11 +105,12 @@ public class CarneadesServletDemo extends HttpServlet {
         return result;
     }
     
+    /*
     private List<Statement> handleRequestAnswers(String a) {
         List<Statement> result = new ArrayList<Statement>();
         // TODO : implement answer handling
         return result;
-    }
+    }*/
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 

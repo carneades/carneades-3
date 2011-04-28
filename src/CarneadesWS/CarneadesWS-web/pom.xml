@@ -12,6 +12,13 @@
     <version>1.0</version>
     <name>CarneadesWS-web JEE5 Webapp</name>
     <dependencies>
+        
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.1.1</version>
+        </dependency>
+
 
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -47,17 +54,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-core-lgpl</artifactId>
-            <version>1.6.4</version>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20090211</version>
         </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-lgpl</artifactId>
-            <version>1.6.4</version>
-        </dependency>
-
-
     </dependencies>
     <build>
         <plugins>

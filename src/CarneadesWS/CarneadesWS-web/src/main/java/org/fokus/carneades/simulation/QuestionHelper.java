@@ -8,7 +8,11 @@ package org.fokus.carneades.simulation;
 import java.util.ArrayList;
 import java.util.List;
 import org.fokus.carneades.api.Statement;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -17,34 +21,27 @@ import org.codehaus.jackson.map.ObjectMapper;
  */
 // TODO : implement some useful mapping using ontology annotations
 public class QuestionHelper {
+    
+    private static final Logger log = LoggerFactory.getLogger(QuestionHelper.class);
        
-    public static String getJSONFromQuestions(List<Question> qList) {
+    public static JSONObject getJSONFromQuestions(List<Question> qList, String lang) {
         // TODO : what to do with id? - ID simply numbered, e.g. 1st question's id = 1, 2nd = 2 etc.
-        // TODO : possible answers
-        // TODO : multiple questions
-        
-        //OLD: JSONObject jsonObj = new JSONObject("{ \"questions\" : [{\"id\":1, \"question\":\""+q.getQuestion()+": \", \"hint\":\""+q.getHint()+"\", \"type\":\""+q.getType()+"\", \"category\" : \""+q.getCategory()+"\"}]}");
 
-        // TODO : mapper not used
-        //ObjectMapper mapper = new ObjectMapper();
-        String jsonObj = "{\"questions\":[";
-        for (int i=0; i < qList.size(); i++) {
-            Question q = qList.get(i);
-            if (i > 0) jsonObj += ",";
-            try {
-                jsonObj += q.toJSON(); // mapper.writeValueAsString(q);
+        JSONObject jsonQuestions = new JSONObject();
+        try {            
+            JSONArray qArray = new JSONArray();
+            for(Question q : qList) {
+                qArray.put(q.toJSON(lang));
             }
-            catch (Exception e) {
-                // TODO : handle Exception
-            }
+            jsonQuestions.put("questions", qArray);
+        } catch (JSONException e) {
+            log.error("could not transform questions: " + e.getMessage(), qList);
+        } finally {
+            return jsonQuestions;
         }
-        jsonObj += "]}";
-
-        return jsonObj;
     }
 
     public static List<Statement> mapAnswersAndQuestionsToStatement (List<Question> qList, List<Answer> aList) {
-        // blah blah
         List<Statement> result = new ArrayList<Statement>();
         for (Answer answer : aList) {
             int id = answer.getId();
@@ -53,26 +50,18 @@ public class QuestionHelper {
                 if (id == q1.getId()) q = q1;
             }
             Statement stmt = q.getStatement();
-            //for (String arg : stmt.getArgs()) {
-            List<String> args = stmt.getArgs();
-            // TODO : use collection iteration
-            for (int i=0; i < args.size(); i++) {
-                if (args.get(i).indexOf("?") == 0) {
-                    // found asked argument
-                    args.set(i, answer.getValue());
-                    break;
+            List<String> newArgs = new ArrayList<String>();
+            for (String arg : stmt.getArgs()) {
+                if (arg.startsWith("?")) {
+                    newArgs.add(answer.getValue());
+                } else {
+                    newArgs.add(arg);
                 }
             }
-            stmt.setArgs(args);
+            stmt.setArgs(newArgs);
             result.add(stmt);
         }
         return result;
-    }
-
-    public static List<Statement> mapAnswersAndQuestionsToStatement (Questions questions, Answers answers) {
-        List<Question> qList = questions.getQuestions();
-        List<Answer> aList = answers.getAnswers();
-        return mapAnswersAndQuestionsToStatement(qList, aList);
     }
 
 }

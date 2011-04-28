@@ -46,8 +46,12 @@
     (in-statements args (statement-predicate stmt))))
 
 (defn- dispatch-eval [subs stmt term expr]
+  (println "eval:" subs stmt term expr)
+  (println "eval:" (type subs) (type stmt) (type term) (type expr))
+  (println "eval:" (apply-substitution subs (statement-wff expr)))
+  (println "eval:" (eval-expr (apply-substitution subs (statement-wff expr))))
   (try
-    (let [result (eval-expr (subs (statement-wff expr)))]
+    (let [result (eval-expr (apply-substitution subs (statement-wff expr)))]
       (if-let [subs2 (unify term result subs)]
         (list (as/response subs2 (argument (gensym "a") :pro stmt '()
                                    "builtin:eval")))

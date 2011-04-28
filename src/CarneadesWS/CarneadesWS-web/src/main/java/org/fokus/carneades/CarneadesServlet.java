@@ -5,6 +5,7 @@
 
 package org.fokus.carneades;
 
+import java.util.logging.Level;
 import org.fokus.carneades.simulation.Translator;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,12 +21,11 @@ import org.fokus.carneades.api.CarneadesMessage;
 import org.fokus.carneades.api.MessageType;
 import org.fokus.carneades.api.Statement;
 import org.fokus.carneades.common.EjbLocator;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.fokus.carneades.simulation.Answers;
 import org.fokus.carneades.simulation.Answer;
 import org.fokus.carneades.simulation.Question;
 import org.fokus.carneades.simulation.QuestionHelper;
-import org.fokus.carneades.simulation.Questions;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,11 +39,15 @@ public class CarneadesServlet extends HttpServlet {
     private HttpSession session;
     // session content keys:
     private static final String CARNEADES_MANAGER = "CARNEADES_MANAGER";
-    private static final String LATEST_QUESTIONS = "LATEST_QUESTIONS";
+    private static final String LAST_QUESTIONS = "LAST_QUESTIONS";
+    private static final String LAST_SOLUTION = "LAST_SOLUTION";
+    private static final String LAST_OUT = "LAST_OUT";
     private static final String KNOWLEDGE_BASE = "KNOWLEDGE_BASE";
     private static final String QUERY = "QUERY";
     private static final String TRANSLATOR = "TRANSLATOR";
+    private static final String LANGUAGE = "LANGUAGE";
     
+    private static final String defaultLanguage = "en";
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -54,149 +58,166 @@ public class CarneadesServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        
-        log.info("request in Carneses Servlet");
-        
-        // INPUT
-        session = request.getSession();
-        
-        // getting Session Bean
-        log.info("getting stateful session bean");
-        CarneadesService service = (CarneadesService) session.getAttribute(CARNEADES_MANAGER);
-        if (service == null) {
-            log.info("creating new session bean");
-            service = EjbLocator.getCarneadesService();
-            session.setAttribute(CARNEADES_MANAGER, service);            
-        } else {
-            log.info("existing bean found");
-        }
-        
-        // getting translator
-        // TODO : get translation file
-        Translator translator = (Translator) session.getAttribute(TRANSLATOR);
-        if(translator == null) {
-            String translatorFile = "C:\\tmp\\translations.xml";
-            translator = new Translator(translatorFile);
-            session.setAttribute(TRANSLATOR, translator);
-        } else {
-            log.info("existing translator found");
-        }
-        
-        // incoming request
-        String jsonIN = URLDecoder.decode(request.getParameter("json"),"UTF-8");
-        //log.info(jsonIN);
-        String jsonOUT = "";
-        // DO WHAT?
-        ObjectMapper mapper = new ObjectMapper();
-        if ( jsonIN.matches("\\s*\\{\\s*\"request\"\\s*:.+") ) {
-            // initial request
-            if ( jsonIN.matches("\\s*\\{\\s*\"request\"\\s*:\\s*\"demo\"\\s*\\}\\s*") ) {
-                // return demo content
-                jsonOUT = "{\"questions\" : ["
-                + "{\"id\":1,\"type\":\"text\",\"question\":\"Forename: \",\"answers\":[\"\"],\"category\":\"Personal Information\", \"hint\":\"enter your full first name\"},"
-                + "{\"id\":2,\"type\":\"text\",\"question\":\"Last name: \",\"answers\":[\"\"],\"category\":\"Personal Information\", \"hint\":\"enter your full family name\"},"
-                + "{\"id\":3,\"type\":\"select\",\"question\":\"Country: \",\"answers\":[\"Austria\", \"Bulgarian (&#1073;&#1098;&#1083;&#1075;&#1072;&#1088;&#1089;&#1082;&#1080; &#1077;&#1079;&#1080;&#1082;)\",\"Germany (Deutschland)\",\"Polish (Polski)\"],\"category\":\"Personal Information\", \"hint\":\"where do you life\"},"
-                + "{\"id\":4,\"type\":\"radio\",\"question\":\"family status: \",\"answers\":[\"not married\",\"married\",\"divorced\"],\"category\":\"Family\", \"hint\":\"\"},"
-                + "{\"id\":5,\"type\":\"int\",\"question\":\"Number of children: \",\"answers\":[\"\"],\"category\":\"Family\", \"hint\":\"Please enter the number of children.\",\"optional\":true},"
-                + "{\"id\":6,\"type\":\"date\",\"question\":\"Birthday: \",\"answers\":[\"\"],\"category\":\"Family\", \"hint\":\"\"},"
-                + "{\"id\":7,\"type\":\"checkbox\",\"question\":\"Hobbies: \",\"answers\":[\"Paragliding\",\"boongie jumping\",\"sharkhunting\",\"jackass-like-stuns\",\"rocket science\"],\"category\":\"Personal Information\",\"hint:\":\"Please be honest.\"}"
-                + "]}";
-                //Questions questions = mapper.readValue(jsonOUT, Questions.class);
-                //saveQuestionsToSession(questions.getQuestions());
-            }
-            else if(jsonIN.matches("\\s*\\{\\s*\"request\"\\s*:\\s*\"\\w+\"\\s*\\}\\s*")) {
-                // finding requested topic
-                String topic = jsonIN.replaceFirst("\\s*\\{\\s*\"request\"\\s*:\\s*\"", "");
-                topic = topic.replaceFirst("\"\\s*\\}\\s*", "");
-                // getting the topic
-                log.info("getting args for topic:  " + topic);
-                // TODO : DB: topic -> statement, kb
-                // creating query for topic
-                log.info("creating query");
-                Statement query = new Statement();
-                query.setPredicate("timeForFatherAndGrandfather");
-                query.getArgs().add("Peter");
-                query.getArgs().add("?x");
-                query.getArgs().add("?y");
-                query.getArgs().add("?z");
-                // get kb for discussion
-                String kb = "http://localhost:8080/CarneadesWS-web/kb/lkif.xml";
-                List<Question> qList = new ArrayList<Question>();
-                session.setAttribute(QUERY, query);
-                session.setAttribute(KNOWLEDGE_BASE, kb);
-                try {
-                    jsonOUT = askEngine(service, query, kb, null, translator); // empty = no questions yet
-                } catch (CarneadesException e) {
-                    log.error(e.getMessage());
-                    jsonOUT = e.getMessage();
-                }
-            } else
-                jsonOUT = "Your request doesn't match.";
-        }
-        else if(jsonIN.matches("\\s*\\{\\s*\"answers\"\\s*:.+")) {
-            // client replies
-            log.info("answers received from client: "+jsonIN);
-            List<Question> qList = (ArrayList<Question>) session.getAttribute(LATEST_QUESTIONS);
-            String kb = (String) session.getAttribute(KNOWLEDGE_BASE);
-            Statement query = (Statement) session.getAttribute(QUERY);
-            Answers answers = mapper.readValue(jsonIN, Answers.class);
-            List<Answer> aList = answers.getAnswers();
-            List<Statement> answer = QuestionHelper.mapAnswersAndQuestionsToStatement(qList, aList);
-            try {
-                jsonOUT =askEngine(service,query,kb,answer, translator);
-            } catch (CarneadesException e) {
-                log.error(e.getMessage());
-                jsonOUT = e.getMessage();
+        try {
+            
+            log.info("request in Carneses Servlet");
+            
+            // INPUT
+            session = request.getSession();
+            
+            // getting Session Bean
+            log.info("getting stateful session bean");
+            CarneadesService service = (CarneadesService) session.getAttribute(CARNEADES_MANAGER);
+            if (service == null) {
+                log.info("creating new session bean");
+                service = EjbLocator.getCarneadesService();
+                session.setAttribute(CARNEADES_MANAGER, service);            
+            } else {
+                log.info("existing bean found");
             }
             
-        }
-        else if (jsonIN == null || jsonIN.equals("null")) {
-            // null
-            jsonOUT = "null can not be handled";
-        }
-        else {
-            // no "json" request
-            jsonOUT = "An error with your request has occurred.";
-        }
+            // getting translator
+            // TODO : get translation file
+            Translator translator = (Translator) session.getAttribute(TRANSLATOR);
+            if(translator == null) {
+                String translatorFile = "C:\\tmp\\translations.xml";
+                translator = new Translator(translatorFile);
+                session.setAttribute(TRANSLATOR, translator);
+            } else {
+                log.info("existing translator found");
+            } 
+            
+            // getting language
+            String language = (String)session.getAttribute(LANGUAGE);
+            if(language == null) {
+                language = defaultLanguage;
+                session.setAttribute(LANGUAGE, defaultLanguage);
+            } else {
+                log.info("language found: "+language);
+            }
+            
+            // incoming request
+            String jsonINString = URLDecoder.decode(request.getParameter("json"),"UTF-8");
+            JSONObject jsonIN = new JSONObject(jsonINString);
+            
+            //log.info(jsonIN);
+            String jsonOUTString = "";
+            JSONObject jsonOUT = new JSONObject();
+            // DO WHAT?
+            // ObjectMapper mapper = new ObjectMapper();
+            // TODO : clean code in Servlet
+            //if ( jsonINString.matches("\\s*\\{\\s*\"request\"\\s*:.+") ) {
+            if (jsonIN.has("request")) {
+                // initial request
+                String topic = jsonIN.getString("request");
+                if ("demo".equals(topic)) {
+                    // return demo content
+                    jsonOUTString = "{\"questions\" : ["
+                    + "{\"id\":1,\"type\":\"text\",\"question\":\"Forename: \",\"answers\":[\"\"],\"category\":\"Personal Information\", \"hint\":\"enter your full first name\"},"
+                    + "{\"id\":2,\"type\":\"text\",\"question\":\"Last name: \",\"answers\":[\"\"],\"category\":\"Personal Information\", \"hint\":\"enter your full family name\"},"
+                    + "{\"id\":3,\"type\":\"select\",\"question\":\"Country: \",\"answers\":[\"Austria\", \"Bulgarian (&#1073;&#1098;&#1083;&#1075;&#1072;&#1088;&#1089;&#1082;&#1080; &#1077;&#1079;&#1080;&#1082;)\",\"Germany (Deutschland)\",\"Polish (Polski)\"],\"category\":\"Personal Information\", \"hint\":\"where do you life\"},"
+                    + "{\"id\":4,\"type\":\"radio\",\"question\":\"family status: \",\"answers\":[\"not married\",\"married\",\"divorced\"],\"category\":\"Family\", \"hint\":\"\"},"
+                    + "{\"id\":5,\"type\":\"int\",\"question\":\"Number of children: \",\"answers\":[\"\"],\"category\":\"Family\", \"hint\":\"Please enter the number of children.\",\"optional\":true},"
+                    + "{\"id\":6,\"type\":\"date\",\"question\":\"Birthday: \",\"answers\":[\"\"],\"category\":\"Family\", \"hint\":\"\"},"
+                    + "{\"id\":7,\"type\":\"checkbox\",\"question\":\"Hobbies: \",\"answers\":[\"Paragliding\",\"boongie jumping\",\"sharkhunting\",\"jackass-like-stuns\",\"rocket science\"],\"category\":\"Personal Information\",\"hint:\":\"Please be honest.\"}"
+                    + "]}";
+                    //Questions questions = mapper.readValue(jsonOUT, Questions.class);
+                    //saveQuestionsToSession(questions.getQuestions());
+                }
+                else {
+                    log.info("getting args for topic:  " + topic);
+                    // TODO : DB: topic -> statement, kb
+                    // creating query for topic
+                    log.info("creating query");
+                    Statement query = new Statement();
+                    query.setPredicate("timeForFatherAndGrandfather");
+                    query.getArgs().add("Peter");
+                    query.getArgs().add("?x");
+                    query.getArgs().add("?y");
+                    query.getArgs().add("?z");
+                    // get kb for discussion
+                    String kb = "http://localhost:8080/CarneadesWS-web/kb/lkif.xml";
+                    //List<Question> qList = new ArrayList<Question>();
+                    session.setAttribute(QUERY, query);
+                    session.setAttribute(KNOWLEDGE_BASE, kb);
+                    try {
+                        jsonOUT = askEngine(service, query, kb, null, translator,language);
+                    } catch (CarneadesException e) {
+                        log.error(e.getMessage());
+                        jsonOUTString = e.getMessage();
+                    }
+                }
+            }
+            else if(jsonIN.has("answers")) {
+                // client replies
+                log.info("answers received from client: "+jsonINString);
+                List<Question> qList = (ArrayList<Question>) session.getAttribute(LAST_QUESTIONS);
+                String kb = (String) session.getAttribute(KNOWLEDGE_BASE);
+                Statement query = (Statement) session.getAttribute(QUERY);
+                List<Answer> answers = Answer.fromJSON(jsonIN);            
+                List<Statement> answer = QuestionHelper.mapAnswersAndQuestionsToStatement(qList, answers);
+                try {
+                    jsonOUT =askEngine(service,query,kb,answer, translator,language);
+                } catch (CarneadesException e) {
+                    log.error(e.getMessage());
+                    jsonOUTString = e.getMessage();
+                }
+                
+            } else if (jsonIN.has("language")) {
+                String newLang = jsonIN.getString("language");
+                session.setAttribute(LANGUAGE, newLang);
+                MessageType lastMsg = (MessageType)session.getAttribute(LAST_OUT);
+                if(MessageType.ASKUSER.equals(lastMsg)) {
+                    List<Question> qList = (List<Question>)session.getAttribute(LAST_QUESTIONS);
+                    jsonOUT = QuestionHelper.getJSONFromQuestions(qList, newLang);
+                } else if (MessageType.SOLUTION.equals(lastMsg)) {
+                    Statement sol = (Statement)session.getAttribute(LAST_SOLUTION);
+                    jsonOUT.put("solution", translator.getStatementText(sol, newLang));
+                } else {
+                    jsonOUT = new JSONObject();
+                    jsonOUT.put("language", newLang);
+                }
+                log.info("language updated: "+newLang);
+            }
+            else if (jsonIN == null || jsonIN.equals("null")) {
+                // TODO : implement null case for jsonIN
+                // null
+                jsonOUTString = "null can not be handled";
+            }
+            else {
+                // no "json" request
+                jsonOUTString = "An error with your request has occurred.";
+            }
 
-        // OUTPUT
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        try {
-            out.println(jsonOUT);
-        /*} catch (NumberFormatException e) {
-            out.println("<pre>"+e.toString() +"</pre>");
-        } catch (UndeclaredThrowableException e){
-            log.error(e.getUndeclaredThrowable().getMessage());
-            out.println("<pre>"+e.toString());
-            e.getCause().printStackTrace(out);
-            out.println("</pre>");
-            e.printStackTrace();*/
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            out.println("<pre>"+e.toString() +"</pre>");
-        } finally {
-            out.close();
+            // OUTPUT
+            response.setContentType("text/html;charset=UTF-8");
+            PrintWriter out = response.getWriter();
+            try {
+                if(jsonOUT != null) {
+                    out.println(jsonOUT.toString());
+                } else {
+                    out.println(jsonOUTString);
+                }
+            /*} catch (NumberFormatException e) {
+                out.println("<pre>"+e.toString() +"</pre>");
+            } catch (UndeclaredThrowableException e){
+                log.error(e.getUndeclaredThrowable().getMessage());
+                out.println("<pre>"+e.toString());
+                e.getCause().printStackTrace(out);
+                out.println("</pre>");
+                e.printStackTrace();*/
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                out.println("<pre>"+e.toString() +"</pre>");
+            } finally {
+                out.close();
+            }
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+            log.error(ex.getMessage());
         }
     }
 
-    /**
-     * saves the current questions, kb and query in the user session
-     * @param q questions including knowledgebase and query
-     */
-    private void saveQuestionsToSession(List<Question> qList) {
-        session.setAttribute(LATEST_QUESTIONS, qList);
-        log.info("user session updated");
-    }
-
-    /**
-     * saves the current questions, kb and query in the user session
-     * @param q questions including knowledgebase and query
-     */
- /*   private void saveQuestionsToSession(Questions q) {
-        session.setAttribute(LATEST_QUESTIONS, q.getQuestions());
-        log.info("user session updated");
-    }*/
 
     /**
      * Sends requests to the carneades-engine
@@ -207,9 +228,9 @@ public class CarneadesServlet extends HttpServlet {
      * @return returns json representing either questions or solution
      * @throws CarneadesException if the request was not successful
      */
-    private String askEngine(CarneadesService service, Statement query, String kb, List<Statement> answer, Translator translator) throws CarneadesException {
+    private JSONObject askEngine(CarneadesService service, Statement query, String kb, List<Statement> answer, Translator translator, String lang) throws CarneadesException {
         List<Question> qList = new ArrayList<Question>();
-        String jsonOUT = "";
+        JSONObject jsonOUT = new JSONObject();
         // ask
         // TODO : get askables from CMS
         List<String> askables = new ArrayList<String>();
@@ -226,16 +247,26 @@ public class CarneadesServlet extends HttpServlet {
                 // convert Statement to question
                 //qList.addAll(CarneadesDatabase.getQuestionsFromStatement(msg.getMessage())); 
                 Statement qStmt = msg.getMessage();
-                List<Question> questionList = translator.getQuestions(qStmt, jsonOUT);
+                List<Question> questionList = translator.getQuestions(qStmt);
                 qList.addAll(questionList);
                 // save questions in session
-                saveQuestionsToSession(qList);
-                jsonOUT = QuestionHelper.getJSONFromQuestions(qList);
+                session.setAttribute(LAST_QUESTIONS, qList);
+                session.setAttribute(LAST_OUT, MessageType.ASKUSER);
+                jsonOUT = QuestionHelper.getJSONFromQuestions(qList, lang);
             } else if (MessageType.SOLUTION.equals(msg.getType())) {
                 // solution
                 log.info("sending solution to user");
-                // jsonOUT = "{\"solution\":"+msg.getAG()+"}";
-                jsonOUT = "{\"solution\":\""+translator.getStatementText(msg.getMessage(), "english")+"\"}";
+                // jsonOUT = "{\"solution\":"+msg.getAG()+"}";   
+                try {
+                    Statement solution = msg.getMessage();
+                    session.setAttribute(LAST_SOLUTION, solution);
+                    session.setAttribute(LAST_OUT, MessageType.SOLUTION);
+                    jsonOUT.put("solution", translator.getStatementText(solution, lang));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    log.error("could not transform to json: "+e.getMessage());
+                }
+                // jsonOUT = "{\"solution\":\""+translator.getStatementText(msg.getMessage(), "english")+"\"}";
                 // SolutionToAJAX()
             } else {
                 // error
@@ -248,15 +279,6 @@ public class CarneadesServlet extends HttpServlet {
         }
         return jsonOUT;
     }
-    
-    /*private List<Statement> handleRequestAnswers(String a) { // is this function still needed?
-        //Questions qList = mapper.readValue(a, Questions.class);
-        Answers rootAsMap = mapper.readValue(a, Answers.class);
-        List<Answer> = rootAsMap.get("answers");
-        List<Statement> result = new List<Statement>();
-        // TODO : implement answer handling
-        return result;
-    }*/
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 

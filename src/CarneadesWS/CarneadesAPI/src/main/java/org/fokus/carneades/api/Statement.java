@@ -16,9 +16,11 @@ import java.util.List;
 public class Statement implements Serializable{
 
     private String predicate;
-    private List<String> args = new ArrayList<String>();
+    private List<String> args;
 
     public Statement() {
+        predicate = "";
+        args = new ArrayList<String>();
     }
 
     public List<String> getArgs() {

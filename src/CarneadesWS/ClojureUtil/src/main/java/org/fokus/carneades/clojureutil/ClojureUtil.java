@@ -19,7 +19,9 @@ public class ClojureUtil {
     public static Statement getStatementFromSeq(List s) {
         Statement stmt = new Statement();
         stmt.setPredicate(s.get(0).toString());
+        System.out.println("stmt: "+stmt);
         for(Object o : s.subList(1, s.size())) {
+            System.out.println("o: "+o);
             stmt.getArgs().add(o.toString());
         }
         return stmt;

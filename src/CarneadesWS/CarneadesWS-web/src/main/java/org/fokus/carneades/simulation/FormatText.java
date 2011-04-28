@@ -14,18 +14,18 @@ import java.util.List;
 public class FormatText {
     
     private String format;
-    private Integer[] args;
+    private List<Integer> args;
 
-    public FormatText(String format, Integer[] args) {
+    public FormatText(String format, List<Integer> args) {
         this.format = format;
         this.args = args;
     }
 
-    public Object[] getArgs() {
+    public List<Integer> getArgs() {
         return args;
     }
 
-    public void setArgs(Integer[] args) {
+    public void setArgs(List<Integer> args) {
         this.args = args;
     }
 
@@ -38,12 +38,14 @@ public class FormatText {
     }
     
     public String format(List<String> stmtArgs) {
-        int l = this.args.length;
+        int l = this.args.size();
         String[] finalArgs = new String[l];
-        for(int i=0; i<l; i++) {
-            finalArgs[i] = stmtArgs.get(this.args[i]);
+        for(Integer i :this.args) {
+            finalArgs[i] = stmtArgs.get(this.args.get(i));
         }
-        return String.format(this.format, (Object)finalArgs);
+        System.out.println("format   : "+this.format);
+        System.out.println("finalArgs: "+finalArgs);
+        return String.format(this.format, (Object[])finalArgs);
     }
 
 }

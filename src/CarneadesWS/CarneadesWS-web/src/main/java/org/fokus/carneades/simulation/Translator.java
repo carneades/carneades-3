@@ -27,26 +27,30 @@ import org.w3c.dom.NodeList;
  */
 public class Translator {
     
-    private Map<String, Translation> translations = new HashMap<String, Translation>();
+    private Map<String, Translation> translations;
     
-    private static final String PRED_ELEM = "predicate";
-    private static final String STMTS_ELEM = "statements";
-    private static final String QUESTION_ELEM = "question";
-    private static final String FORMAT_ELEM = "format";
-    private static final String ARGS_ELEM = "args";
-    private static final String ARG_ELEM = "arg";
-    private static final String HINT_ELEM = "hint";
-    private static final String CAT_ELEM = "category";
-    private static final String QREFS_ELEM = "qrefs";
-    private static final String QREF_ELEM = "qref";
-    public static final String TEXT_ELEM = "text";
+    private final String PRED_ELEM = "predicate";
+    private final String STMTS_ELEM = "statements";
+    private final String QUESTION_ELEM = "question";
+    private final String FORMAT_ELEM = "format";
+    private final String ARGS_ELEM = "args";
+    private final String ARG_ELEM = "arg";
+    private final String HINT_ELEM = "hint";
+    private final String CAT_ELEM = "category";
+    private final String QREFS_ELEM = "qrefs";
+    private final String QREF_ELEM = "qref";
+    private final String TEXT_ELEM = "text";
+    private final String TRANSL_ELEM = "translations";
+    private final String ANSWERS_ELEM = "answers";
     
-    private static final String LANG_ATTR = "lang";
-    private static final String PRED_ATTR = "pred";
-    private static final String ARGS_ATTR = "args";
-    private static final String ARG_ATTR = "arg";
-    private static final String NR_ATTR = "nr";
-    private static final String TYPE_ATTR = "type";
+    private final String LANG_ATTR = "lang";
+    private final String PRED_ATTR = "pred";
+    private final String ARGS_ATTR = "args";
+    private final String ARG_ATTR = "arg";
+    private final String NR_ATTR = "nr";
+    private final String TYPE_ATTR = "type";
+    
+    private int qid = 0;
     
     private static final Logger log = LoggerFactory.getLogger(Translator.class);
     
@@ -58,10 +62,11 @@ public class Translator {
             Document document = builder.parse(new File(filename));
             
             // putting translations into map
-            NodeList predicates = document.getElementsByTagName(PRED_ELEM);
-            int qid = 0;
+            this.translations = new HashMap<String, Translation>();
+            NodeList predicates = document.getElementsByTagName(PRED_ELEM);            
             for(int i=0; i<predicates.getLength(); i++) {
-                Node pNode = predicates.item(i);
+                
+                Node pNode = predicates.item(i);                
                 
                 // getting atrributes of predicate
                 NamedNodeMap attr = pNode.getAttributes();
@@ -70,106 +75,25 @@ public class Translator {
                 String argVal = argsAttr.getNodeValue();
                 int args = Integer.parseInt(argVal);
                 
-                // handling children
-                Map<Integer, Question> questions = new HashMap<Integer, Question>();
-                Map<Question, List<QuestionRef>> questionRefs = new HashMap<Question, List<QuestionRef>>();               
+                // handling statements                
+                Node stmtsNode = findChild(this.STMTS_ELEM, pNode);
+                Map<String, FormatText> text = handleFormat(stmtsNode);
                 
-                Map<String, FormatText> text = new HashMap<String, FormatText>();
-                NodeList predChildren = pNode.getChildNodes();
-                for(int j=0; j<predChildren.getLength(); j++) {
-                    Node n = predChildren.item(j);
-                    String nName = n.getNodeName();
-                    NamedNodeMap nodeAttr = n.getAttributes();
-                    if(STMTS_ELEM.equals(nName)) {
-                        // adding statement text                        
-                        String lang = nodeAttr.getNamedItem(LANG_ATTR).getNodeValue();
-                        // NodeList stmtChildren = n.getChildNodes();
-                        Node formatNode = findChild(FORMAT_ELEM, n);
-                        String format = formatNode.getTextContent();
-                        Node argsNode = findChild(ARGS_ELEM, n);
-                        List<Node> argsList = findChildren(ARG_ELEM, argsNode);
-                        int argsLength = argsList.size();
-                        Integer[] formatArgs = new Integer[argsLength];
-                        for(int k=0; k<argsLength; k++) {
-                            formatArgs[k] = Integer.parseInt(argsList.get(k).getAttributes().getNamedItem(NR_ATTR).getNodeValue());
-                        }
-                        FormatText ft = new FormatText(format, formatArgs);
-                        text.put(lang, ft);
-                    } else if (QUESTION_ELEM.equals(nName)) {
-                        // adding Question
-                        // TODO : handle languages in questions
-                        String lang = nodeAttr.getNamedItem(LANG_ATTR).getNodeValue();
-                        Integer arg = Integer.parseInt(nodeAttr.getNamedItem(ARG_ATTR).getNodeValue()); 
-                        String type = nodeAttr.getNamedItem(TYPE_ATTR).getNodeValue();
-                        Node formatNode = findChild(FORMAT_ELEM, n);                        
-                        Question q = new Question();       
-                        // id
-                        q.setId(qid);
-                        qid++;
-                        // type
-                        q.setType(type);
-                        // question
-                        String format = formatNode.getTextContent();
-                        Node argsNode = findChild(ARGS_ELEM, n);
-                        List<Node> argsList = findChildren(ARG_ELEM, argsNode);
-                        int argsLength = argsList.size();
-                        Integer[] formatArgs = new Integer[argsLength];
-                        for(int k=0; k<argsLength; k++) {
-                            formatArgs[k] = Integer.parseInt(argsList.get(k).getAttributes().getNamedItem(NR_ATTR).getNodeValue());
-                        }
-                        FormatText ft = new FormatText(format, formatArgs);
-                        q.setQuestion(ft);
-                        // hint
-                        String hint = findChild(HINT_ELEM,n).getTextContent();
-                        q.setHint(hint);
-                        // statement
-                        /*Statement stmt = new Statement();
-                        stmt.setPredicate(pred);
-                        for(int k=0; k<args; k++) {
-                            stmt.getArgs().add("?x"+Integer.toString(k));
-                        }
-                        q.setStatement(stmt);*/
-                        // category
-                        String category = findChild(CAT_ELEM, n).getTextContent();
-                        // TODO : add possible answers to question
-                        q.setCategory(category);
-                        // question refs
-                        Node refsNode = findChild(QREFS_ELEM, n);
-                        if(refsNode != null) {
-                            List<Node> refNodes = findChildren(QREF_ELEM, refsNode);
-                            List<QuestionRef> refs = new ArrayList<QuestionRef>();
-                            for(Node rNode : refNodes) {
-                                NamedNodeMap refAttr = rNode.getAttributes();
-                                String refPred = refAttr.getNamedItem(PRED_ATTR).getNodeValue();
-                                Integer refArg = Integer.parseInt(refAttr.getNamedItem(ARG_ATTR).getNodeValue());
-                                List<Node> refArgNodes = findChildren(ARG_ELEM, findChild(ARGS_ELEM, rNode));
-                                List<Integer> refArgs  = new ArrayList<Integer>();
-                                for(Node refArgNode : refArgNodes) {
-                                    Integer refArgNr = Integer.parseInt(refArgNode.getAttributes().getNamedItem(NR_ATTR).getNodeValue());
-                                    refArgs.add(refArgNr);
-                                }
-                                QuestionRef ref = new QuestionRef(refPred, refArg, refArgs);
-                                refs.add(ref);
-                            }
-                            questionRefs.put(q, refs);
-                        }
-                        // add question to question map
-                        questions.put(arg, q);
-                    } else {
-                        log.info("unknown child node in "+PRED_ELEM+": "+nName);
-                    }
+                // handling questions
+                Map<Integer, Question> questions = handleQuestions(pNode);
+                for(Question q : questions.values()) {
+                    log.info("qid: "+Integer.toString(q.getId()));
                 }
                 
-                Translation trl = new Translation(pred, args, questions, questionRefs, text);
+                // adding translation
+                Translation trl = new Translation(pred, args, questions, text);
                 this.translations.put(pred, trl);
-            }
-            
+            }            
             
         } catch (Exception e) {  
             e.printStackTrace();
             log.error("something happened while creating translator:" + e);            
-        }
-    
+        }    
     }
     
     private static Node findChild(String c, Node p) {
@@ -196,16 +120,27 @@ public class Translator {
     }
     
     public String getStatementText(Statement stmt, String language) {
-                
+
+        String text = "undefined";
         String pred = stmt.getPredicate();
         Translation t = this.translations.get(pred);
-        FormatText text = t.getText().get(language);
-        log.info("getStatementText: "+stmt.toString());
-        return text.format(stmt.getArgs());
+        Map<String, FormatText> textMap = t.getText();
+        FormatText form = textMap.get(language);
+        if(form == null) {
+            String fallbackLang = textMap.keySet().iterator().next();
+            form = textMap.get(fallbackLang);
+            log.warn("could not find language for question: "+language);
+            log.warn("using language: "+fallbackLang);
+            text = GoogleTranslate.translate(form.format(stmt.getArgs()), fallbackLang, language);
+        } else {
+            text = form.format(stmt.getArgs());
+        }
+        log.info("getStatementText: "+text);
+        return text;
     }
     
     
-    public List<Question> getQuestions(Statement stmt, String language) {
+    public List<Question> getQuestions(Statement stmt) {
         
         List<Question> questions = new ArrayList<Question>();
         
@@ -215,20 +150,13 @@ public class Translator {
         List<String> args = stmt.getArgs();
         
         // getting question
-        Question q = null;   
-        int varPos = 0;
-        for(String arg : args) {
-            if(arg.startsWith("?")) {
-                q = translation.getQuestions().get(varPos);                 
-            }
-            varPos++;
-        }
         log.info("getQuestion: "+stmt.toString());
+        Question q = getQuestion(translation, args);
         q.setStatement(stmt);
         questions.add(q);
         
         // getting linked questions
-        List<QuestionRef> refs = translation.getQuestionRefs().get(q);
+        List<QuestionRef> refs = q.getRefs();
         if (refs != null) {
             for(QuestionRef ref : refs) {
                 String refPred = ref.getPred();
@@ -243,12 +171,17 @@ public class Translator {
                 refStmt.setPredicate(refPred);
                 String[] refArgsArray = new String[refTranslation.getArgs()];
                 int c = 0;
+                System.out.println("stmt : "+stmt);
                 for(Integer a : refArgs) {
+                    System.out.println("a    : "+a);
+                    System.out.println("c    : "+c);
+                    System.out.println("stmt : "+stmt.getArgs().get(a));
                     refArgsArray[c] = stmt.getArgs().get(a);
                     c++;
                 }
                 refArgsArray[refArg] = "?x";
                 refStmt.setArgs(Arrays.asList(refArgsArray));
+                System.out.println("refstmt: "+refStmt);
                 refQuestion.setStatement(refStmt);
                 // add ref
                 questions.add(refQuestion);
@@ -258,5 +191,112 @@ public class Translator {
         
         return questions;
     }
+
+    private Map<String, FormatText> handleFormat(Node node) {
+        Map<String, FormatText> text = new HashMap<String, FormatText>();
+        List<Node> stmtFormatNodes = findChildren(this.FORMAT_ELEM, node);        
+        for(Node stmtFormatNode : stmtFormatNodes) {
+            // language
+            NamedNodeMap stmtFormatAttr = stmtFormatNode.getAttributes();
+            String lang = stmtFormatAttr.getNamedItem(LANG_ATTR).getNodeValue();
+            // text & args 
+            String t = findChild(this.TEXT_ELEM, stmtFormatNode).getTextContent();
+            List<Integer> args = handleArgs(stmtFormatNode);
+            FormatText ft = new FormatText(t, args);
+            text.put(lang, ft);
+        }
+        return text;       
+    }
+
+    private List<Integer> handleArgs(Node node) {
+        Node argsNode = findChild(this.ARGS_ELEM, node);
+        List<Node> argNodes = findChildren(this.ARG_ELEM, argsNode);
+        List<Integer> args = new ArrayList<Integer>();
+        for(Node argNode : argNodes) {
+            NamedNodeMap argAttr = argNode.getAttributes();
+            String nrString = argAttr.getNamedItem(this.NR_ATTR).getNodeValue();
+            args.add(Integer.parseInt(nrString));
+        }
+        return args;
+    }
+
+    private Map<Integer, Question> handleQuestions(Node predicateNode) {        
+        Map<Integer, Question> questions = new HashMap<Integer, Question>();
+        
+        List<Node> questionNodes = findChildren(this.QUESTION_ELEM, predicateNode);
+        
+        for(Node questionNode : questionNodes) {
+            // attributes
+            NamedNodeMap qAttr = questionNode.getAttributes();
+            int arg = Integer.parseInt(qAttr.getNamedItem(this.ARG_ATTR).getNodeValue());
+            String type = qAttr.getNamedItem(this.TYPE_ATTR).getNodeValue();
+            
+            // format+
+            Map<String, FormatText> text = handleFormat(questionNode);
+            
+            // hint
+            String hint = findChild(this.HINT_ELEM, questionNode).getTextContent();
+            
+            // category
+            String category = findChild(this.CAT_ELEM, questionNode).getTextContent();
+            
+            // answers?
+            List<String> answers = handleAnswers(questionNode);
+            
+            // questionrefs?
+            List<QuestionRef> refs = handleRefs(questionNode);
+            
+            Question q = new Question(arg, type, text, hint, category, answers, refs);
+            q.setId(qid++);
+            questions.put(arg, q);
+        }
+        
+        return questions;        
+    }
+
+    private List<String> handleAnswers(Node node) {
+        List<String> answers = new ArrayList<String>();        
+        Node answersNode = findChild(this.ANSWERS_ELEM, node);
+        if(answersNode != null) {
+            List<Node> textNodes = findChildren(this.TEXT_ELEM, answersNode);
+            for(Node textNode : textNodes) {
+                answers.add(textNode.getTextContent());
+            }
+        }        
+        return answers;
+    }
+
+    private List<QuestionRef> handleRefs(Node node) {
+        List<QuestionRef> refs = new ArrayList<QuestionRef>();
+        
+        Node qrefsNode = findChild(this.QREFS_ELEM, node);
+        if(qrefsNode != null) {
+            List<Node> qrefNodes = findChildren(this.QREF_ELEM, qrefsNode);
+            for(Node refNode : qrefNodes) {
+                // attributes
+                NamedNodeMap refAttr = refNode.getAttributes();
+                String pred = refAttr.getNamedItem(this.PRED_ATTR).getNodeValue();
+                Integer arg = Integer.parseInt(refAttr.getNamedItem(this.ARG_ATTR).getNodeValue());
+                // args
+                List<Integer> args = handleArgs(refNode);
+                refs.add(new QuestionRef(pred, arg, args));
+            }
+        }
+        
+        return refs;
+    }
+
+    private Question getQuestion(Translation translation, List<String> args) {
+        int varPos = 0;
+        for(String arg : args) {
+            if(arg.startsWith("?")) {
+                return translation.getQuestions().get(varPos);                                 
+            }
+            varPos++;
+        }        
+        return null;
+    }
+
+        
 
 }
