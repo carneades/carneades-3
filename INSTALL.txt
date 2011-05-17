@@ -8,13 +8,13 @@ and the Carneades Editor, implemented in the Clojure programming language.
 1. Prerequisites
 
 - The Java Runtime Environment (JRE) 6 <http://java.sun.com/>
-- Leiningen 1.4.2 <http://github.com/technomancy/leiningen>
+- Leiningen 1.4.2 or superior <http://github.com/technomancy/leiningen>
 - Apache Maven <http://maven.apache.org/>
 
 2. Downloading Carneades
 
 The Carneades Editor is available for downloading from
-	<http://carneades.berlios.de>
+     <https://github.com/carneades/carneades>
 
 To launch the Carneades Editor, you can double-click on the executable JAR
 or excutes the JAR from the command line:
@@ -27,7 +27,7 @@ Alternatively, you can install Carneades from the sources.
 
 - Download the sources using the Git source code management system:
 
-  $ git clone git://git.berlios.de/carneades 
+  $ git clone git://github.com/carneades/carneades.git
 
 - Change directory to the src subdirectory of the carneades project.
 
@@ -41,6 +41,8 @@ Alternatively, you can install Carneades from the sources.
 go in the project directory in which you want to work and type:
 
   $ lein swank
+
+and then use M-x slime-connect within Emacs.
 
 4. Trying it out
 
