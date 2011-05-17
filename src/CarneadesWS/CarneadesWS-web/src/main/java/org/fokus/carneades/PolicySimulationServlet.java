@@ -5,7 +5,6 @@
 
 package org.fokus.carneades;
 
-import java.util.logging.Level;
 import org.fokus.carneades.simulation.Translator;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -33,14 +32,15 @@ import org.slf4j.LoggerFactory;
  *
  * @author stb
  */
-public class CarneadesServlet extends HttpServlet {
+public class PolicySimulationServlet extends HttpServlet {
 
-    private static final Logger log = LoggerFactory.getLogger(CarneadesServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(PolicySimulationServlet.class);
     private HttpSession session;
     // session content keys:
     private static final String CARNEADES_MANAGER = "CARNEADES_MANAGER";
     private static final String LAST_QUESTIONS = "LAST_QUESTIONS";
     private static final String LAST_SOLUTION = "LAST_SOLUTION";
+    private static final String SOLUTION_PATH = "SOLUTION_PATH";
     private static final String LAST_OUT = "LAST_OUT";
     private static final String KNOWLEDGE_BASE = "KNOWLEDGE_BASE";
     private static final String QUERY = "QUERY";
@@ -60,7 +60,7 @@ public class CarneadesServlet extends HttpServlet {
     throws ServletException, IOException {
         try {
             
-            log.info("request in Carneses Servlet");
+            log.info("request in Policy Simulation Servlet");
             
             // INPUT
             session = request.getSession();
@@ -100,27 +100,18 @@ public class CarneadesServlet extends HttpServlet {
             String jsonINString = URLDecoder.decode(request.getParameter("json"),"UTF-8");
             JSONObject jsonIN = new JSONObject(jsonINString);
             
-            //log.info(jsonIN);
-            String jsonOUTString = "";
+            log.info("jsonIN : "+jsonINString);
+            
+            // output
+            // String jsonOUTString = "";
             JSONObject jsonOUT = new JSONObject();
-            // DO WHAT?
-            // ObjectMapper mapper = new ObjectMapper();
-            // TODO : clean code in Servlet
-            //if ( jsonINString.matches("\\s*\\{\\s*\"request\"\\s*:.+") ) {
+            
             if (jsonIN.has("request")) {
                 // initial request
                 String topic = jsonIN.getString("request");
                 if ("demo".equals(topic)) {
                     // return demo content
-                    jsonOUTString = "{\"questions\" : ["
-                    + "{\"id\":1,\"type\":\"text\",\"question\":\"Forename: \",\"answers\":[\"\"],\"category\":\"Personal Information\", \"hint\":\"enter your full first name\"},"
-                    + "{\"id\":2,\"type\":\"text\",\"question\":\"Last name: \",\"answers\":[\"\"],\"category\":\"Personal Information\", \"hint\":\"enter your full family name\"},"
-                    + "{\"id\":3,\"type\":\"select\",\"question\":\"Country: \",\"answers\":[\"Austria\", \"Bulgarian (&#1073;&#1098;&#1083;&#1075;&#1072;&#1088;&#1089;&#1082;&#1080; &#1077;&#1079;&#1080;&#1082;)\",\"Germany (Deutschland)\",\"Polish (Polski)\"],\"category\":\"Personal Information\", \"hint\":\"where do you life\"},"
-                    + "{\"id\":4,\"type\":\"radio\",\"question\":\"family status: \",\"answers\":[\"not married\",\"married\",\"divorced\"],\"category\":\"Family\", \"hint\":\"\"},"
-                    + "{\"id\":5,\"type\":\"int\",\"question\":\"Number of children: \",\"answers\":[\"\"],\"category\":\"Family\", \"hint\":\"Please enter the number of children.\",\"optional\":true},"
-                    + "{\"id\":6,\"type\":\"date\",\"question\":\"Birthday: \",\"answers\":[\"\"],\"category\":\"Family\", \"hint\":\"\"},"
-                    + "{\"id\":7,\"type\":\"checkbox\",\"question\":\"Hobbies: \",\"answers\":[\"Paragliding\",\"boongie jumping\",\"sharkhunting\",\"jackass-like-stuns\",\"rocket science\"],\"category\":\"Personal Information\",\"hint:\":\"Please be honest.\"}"
-                    + "]}";
+                    jsonOUT = handleDemoRequest();
                     //Questions questions = mapper.readValue(jsonOUT, Questions.class);
                     //saveQuestionsToSession(questions.getQuestions());
                 }
@@ -144,7 +135,7 @@ public class CarneadesServlet extends HttpServlet {
                         jsonOUT = askEngine(service, query, kb, null, translator,language);
                     } catch (CarneadesException e) {
                         log.error(e.getMessage());
-                        jsonOUTString = e.getMessage();
+                        jsonOUT.put("error", e.getMessage());
                     }
                 }
             }
@@ -160,7 +151,7 @@ public class CarneadesServlet extends HttpServlet {
                     jsonOUT =askEngine(service,query,kb,answer, translator,language);
                 } catch (CarneadesException e) {
                     log.error(e.getMessage());
-                    jsonOUTString = e.getMessage();
+                    jsonOUT.put("error", e.getMessage());
                 }
                 
             } else if (jsonIN.has("language")) {
@@ -172,40 +163,30 @@ public class CarneadesServlet extends HttpServlet {
                     jsonOUT = QuestionHelper.getJSONFromQuestions(qList, newLang);
                 } else if (MessageType.SOLUTION.equals(lastMsg)) {
                     Statement sol = (Statement)session.getAttribute(LAST_SOLUTION);
+                    String solPath = (String)session.getAttribute(SOLUTION_PATH);
                     jsonOUT.put("solution", translator.getStatementText(sol, newLang));
+                    jsonOUT.put("path", solPath);
                 } else {
                     jsonOUT = new JSONObject();
                     jsonOUT.put("language", newLang);
                 }
                 log.info("language updated: "+newLang);
             }
-            else if (jsonIN == null || jsonIN.equals("null")) {
+            else if (jsonIN == null || jsonINString.equals("null")) {
                 // TODO : implement null case for jsonIN
                 // null
-                jsonOUTString = "null can not be handled";
+                jsonOUT.put("error", "null can not be handled");
             }
             else {
                 // no "json" request
-                jsonOUTString = "An error with your request has occurred.";
+                jsonOUT.put("error", "An error with your request has occurred");
             }
 
-            // OUTPUT
+            // sending OUTPUT
             response.setContentType("text/html;charset=UTF-8");
             PrintWriter out = response.getWriter();
             try {
-                if(jsonOUT != null) {
-                    out.println(jsonOUT.toString());
-                } else {
-                    out.println(jsonOUTString);
-                }
-            /*} catch (NumberFormatException e) {
-                out.println("<pre>"+e.toString() +"</pre>");
-            } catch (UndeclaredThrowableException e){
-                log.error(e.getUndeclaredThrowable().getMessage());
-                out.println("<pre>"+e.toString());
-                e.getCause().printStackTrace(out);
-                out.println("</pre>");
-                e.printStackTrace();*/
+                out.println(jsonOUT.toString());                            
             } catch (Exception e) {
                 log.error(e.getMessage());
                 out.println("<pre>"+e.toString() +"</pre>");
@@ -228,7 +209,7 @@ public class CarneadesServlet extends HttpServlet {
      * @return returns json representing either questions or solution
      * @throws CarneadesException if the request was not successful
      */
-    private JSONObject askEngine(CarneadesService service, Statement query, String kb, List<Statement> answer, Translator translator, String lang) throws CarneadesException {
+    private JSONObject askEngine(CarneadesService service, Statement query, String kb, List<Statement> answer, Translator translator, String lang) throws CarneadesException, JSONException{
         List<Question> qList = new ArrayList<Question>();
         JSONObject jsonOUT = new JSONObject();
         // ask
@@ -256,18 +237,14 @@ public class CarneadesServlet extends HttpServlet {
             } else if (MessageType.SOLUTION.equals(msg.getType())) {
                 // solution
                 log.info("sending solution to user");
-                // jsonOUT = "{\"solution\":"+msg.getAG()+"}";   
-                try {
-                    Statement solution = msg.getMessage();
-                    session.setAttribute(LAST_SOLUTION, solution);
-                    session.setAttribute(LAST_OUT, MessageType.SOLUTION);
-                    jsonOUT.put("solution", translator.getStatementText(solution, lang));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    log.error("could not transform to json: "+e.getMessage());
-                }
-                // jsonOUT = "{\"solution\":\""+translator.getStatementText(msg.getMessage(), "english")+"\"}";
-                // SolutionToAJAX()
+                // jsonOUT = "{\"solution\":"+msg.getAG()+"}";
+                Statement solution = msg.getMessage();
+                String solPath = msg.getAG();
+                session.setAttribute(LAST_SOLUTION, solution);
+                session.setAttribute(LAST_OUT, MessageType.SOLUTION);
+                session.setAttribute(SOLUTION_PATH, solPath);
+                jsonOUT.put("solution", translator.getStatementText(solution, lang));    
+                jsonOUT.put("path", solPath);
             } else {
                 // error
                 log.error("unknown message type received from ask: {}", msg.getMessage().toString());
@@ -315,5 +292,18 @@ public class CarneadesServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private JSONObject handleDemoRequest() throws JSONException {
+        String r = "{\"questions\" : ["
+                    + "{\"id\":1,\"type\":\"text\",\"question\":\"Forename: \",\"answers\":[\"\"],\"category\":\"Personal Information\", \"hint\":\"enter your full first name\"},"
+                    + "{\"id\":2,\"type\":\"text\",\"question\":\"Last name: \",\"answers\":[\"\"],\"category\":\"Personal Information\", \"hint\":\"enter your full family name\"},"
+                    + "{\"id\":3,\"type\":\"select\",\"question\":\"Country: \",\"answers\":[\"Austria\", \"Bulgarian (&#1073;&#1098;&#1083;&#1075;&#1072;&#1088;&#1089;&#1082;&#1080; &#1077;&#1079;&#1080;&#1082;)\",\"Germany (Deutschland)\",\"Polish (Polski)\"],\"category\":\"Personal Information\", \"hint\":\"where do you life\"},"
+                    + "{\"id\":4,\"type\":\"radio\",\"question\":\"family status: \",\"answers\":[\"not married\",\"married\",\"divorced\"],\"category\":\"Family\", \"hint\":\"\"},"
+                    + "{\"id\":5,\"type\":\"int\",\"question\":\"Number of children: \",\"answers\":[\"\"],\"category\":\"Family\", \"hint\":\"Please enter the number of children.\",\"optional\":true},"
+                    + "{\"id\":6,\"type\":\"date\",\"question\":\"Birthday: \",\"answers\":[\"\"],\"category\":\"Family\", \"hint\":\"\"},"
+                    + "{\"id\":7,\"type\":\"checkbox\",\"question\":\"Hobbies: \",\"answers\":[\"Paragliding\",\"boongie jumping\",\"sharkhunting\",\"jackass-like-stuns\",\"rocket science\"],\"category\":\"Personal Information\",\"hint:\":\"Please be honest.\"}"
+                    + "]}";
+        return new JSONObject(r);
+    }
 
 }

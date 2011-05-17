@@ -10,11 +10,10 @@ import clojure.lang.IFn;
 import clojure.lang.Keyword;
 import clojure.lang.RT;
 import clojure.lang.Symbol;
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.ejb.Stateful;
 import org.fokus.carneades.Fn.AskException;
 import org.fokus.carneades.Fn.AskHandler;
@@ -23,6 +22,7 @@ import org.fokus.carneades.api.CarneadesMessage;
 import org.fokus.carneades.api.MessageType;
 import org.fokus.carneades.api.Statement;
 import org.fokus.carneades.clojureutil.ClojureUtil;
+import org.fokus.carneades.lkif.LKIFHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +64,95 @@ public class CarneadesServiceManager implements CarneadesService{
             log.error(e.toString());
         }
     }
+
+    public CarneadesMessage getPolicySchemes(String argGraph) {
+        
+        CarneadesMessage cm = new CarneadesMessage();
+        
+        try {
+            
+            // importing lkif
+            log.info("loading lkif");
+            Map lkif = (Map) RT.var(NS.LKIF, "lkif-import").invoke(argGraph);
+            log.info("get arg graphs");
+            List argGraphs = (List) lkif.get(Keyword.intern("ags"));
+            log.info("get first graph");
+            Map ag = (Map)argGraphs.get(0);
+            
+            log.info("get argument map");
+            Map argumentMap = (Map)ag.get(Keyword.intern("arguments"));
+            log.info("get arguments");
+            List arguments = (List)RT.var(NS.CORE, "vals").invoke(argumentMap);
+            
+            List<String> policySchemes = new ArrayList<String>();
+            log.info("start argument loop");
+            for(Object o : arguments) {
+                log.info(o.toString());
+                Map arg = (Map)o;
+                String scheme = (String)arg.get(Keyword.intern("scheme"));
+                log.info("scheme : "+scheme);
+                if(scheme.startsWith("policy")) {
+                    policySchemes.add(scheme);
+                }
+            }
+            
+            log.info("found "+Integer.toString(policySchemes.size()) + " policy rules");
+            
+            cm.setSchemes(policySchemes);
+            cm.setType(MessageType.SCHEMES);
+            
+        } catch (Exception e) {
+            handleStandardError(e);
+        } finally {
+            return cm;
+        }
+    }
+    
+    
+
+    public CarneadesMessage evaluateArgGraph(String argGraph, List<String> accepts, List<String> rejects) {
+        
+        CarneadesMessage cm = null;
+        
+        try {
+                    
+            // importing lkif
+            log.info("loading lkif");
+            Map lkif = (Map) RT.var(NS.LKIF, "lkif-import").invoke(argGraph);
+            List argGraphs = (List) lkif.get(Keyword.intern("ags"));
+            Map ag = (Map)argGraphs.get(0);
+            Map<String, Statement> stmtIDs = LKIFHelper.getStmtIDs(argGraph);
+
+            // evaluate
+            List<Statement> accStmts = new ArrayList<Statement>();
+            for(String a : accepts) {
+                accStmts.add(stmtIDs.get(a));
+            }
+            List accSExpr = ClojureUtil.getSeqFromStatementList(accStmts); 
+            Map accAG = (Map)RT.var(NS.ARGUMENT, "accept").invoke(ag, accSExpr);
+            
+            List<Statement> rejStmts = new ArrayList<Statement>();
+            for(String r : rejects) {
+                rejStmts.add(stmtIDs.get(r));
+            }
+            List rejSExpr = ClojureUtil.getSeqFromStatementList(rejStmts);
+            Map evaluatedAG = (Map)RT.var(NS.ARGUMENT, "reject").invoke(accAG, rejSExpr);
+                        
+
+            // save & return evaluated graph
+            String evaluatePath = storeArgGraph(evaluatedAG);
+            cm.setAG(evaluatePath);            
+            cm.setType(MessageType.GRAPH);
+        
+        } catch (Exception e) {
+            handleStandardError(e);
+        } finally { 
+            log.info("sending Carneades Message back");
+            return cm;
+        }
+    }
+    
+    
 
     public CarneadesMessage askEngine(Statement query, String kb, List<String> askables, List<Statement> answers2) {
 
@@ -245,14 +334,15 @@ public class CarneadesServiceManager implements CarneadesService{
                 //RT.var(NS.CORE, "println").invoke(lkifMap);
                 //jsonString = jsonWriter.toString();
                 //log.info(lkifString);
-                String ag = (String)RT.var(NS.JSON,"json-str").invoke(solAG);
+                String agPath = storeArgGraph(solAG);
+                //String ag = (String)RT.var(NS.JSON,"json-str").invoke(solAG);
                 //log.info(jsonString);
-                log.info(ag);
+                log.info(agPath);
                 log.info("creating CarneadesMessage");
                 cm = new CarneadesMessage();
                 cm.setMessage(ClojureUtil.getStatementFromSeq(lastSolStmt));
                 //cm.setAG(jsonString);
-                cm.setAG(ag);
+                cm.setAG(agPath);
                 cm.setType(MessageType.SOLUTION);
                 
             } else if (isAsk) {
@@ -294,9 +384,38 @@ public class CarneadesServiceManager implements CarneadesService{
         
     }
     
-    private static void handleStandardError(Exception e) {
+    private void handleStandardError(Exception e) {
         log.error("Error during argumentation construction: " + e.getClass().getName() + " " + e.getCause().getMessage());
         e.printStackTrace();
+    }
+    
+    private String storeArgGraph(Map argGraph) throws Exception{
+        
+        // TODO : replace with CMS
+        
+        log.info("storing argument graph");
+        
+        int c = 0;
+        String prepath = "/tmp/";
+        String path = prepath + "graph0.lkif";
+        File f = new File(path);
+        while(f.exists()) {
+            c++;
+            path = prepath + "graph" + Integer.toString(c) + ".lkif";            
+            f = new File(path);
+        }          
+        
+        storeArgGraph(argGraph, path);
+        
+        return path;
+        
+    }
+    
+    private void storeArgGraph(Map argGraph, String path) throws Exception{        
+        log.info(path);                
+        // {:ags (solAG)}
+        Map lkifMap = (Map)RT.map(Keyword.intern("ags"),RT.var(NS.CORE, "list").invoke(argGraph));
+        RT.var(NS.LKIF,"lkif-export").invoke(lkifMap, path);        
     }
 
 }

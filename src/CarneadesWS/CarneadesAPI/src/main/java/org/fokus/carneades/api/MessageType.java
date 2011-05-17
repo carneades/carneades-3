@@ -12,6 +12,8 @@ package org.fokus.carneades.api;
 public enum MessageType {
 
     ASKUSER,
+    SCHEMES,
+    GRAPH,
     SOLUTION;
 
     public String value() {

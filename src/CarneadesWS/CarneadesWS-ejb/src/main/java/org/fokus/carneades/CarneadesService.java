@@ -19,5 +19,9 @@ import org.fokus.carneades.api.Statement;
 public interface CarneadesService {
 
     CarneadesMessage askEngine(Statement query, String kb, List<String> askables, List<Statement> answers);
+    
+    CarneadesMessage evaluateArgGraph(String argGraph, List<String> accepts, List<String> rejects);
+    
+    CarneadesMessage getPolicySchemes(String argGraph);
 
 }

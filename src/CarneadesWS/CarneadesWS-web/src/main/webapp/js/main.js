@@ -72,7 +72,7 @@ $(function(){ // Init
 
     /** AJAX request config */
     $.ajaxSetup({
-       url: "/CarneadesWS-web/CarneadesServlet",
+       url: "/CarneadesWS-web/PolicySimulation",
        async: true,
        beforeSend: function() {
            statusupdate(0,"Please be patient.");
@@ -101,7 +101,7 @@ $(function(){ // Init
  * @see doAJAX
  */
 function loadTopic(t) {
-    doAJAX( { "request" : t } );
+    doAJAX( {"request" : t} );
 }
 
 /**
@@ -127,10 +127,16 @@ function doAJAX(jsondata) {
             }
             // getting solution
             else if (data.solution) {
-                showSolution(data.solution);
+                showSolution(data.solution, data.path);
             }
             else if (data.language) {
                 alert("Language set to: "+data.language);
+            } else if(data.schemes) {
+                showPolicyRules(data.schemes);
+            } else if(data.evaluated) {
+                showGraph(data.evaluated);
+            } else if (data.error) {
+                showError(data.error);
             }
             else {
                 alert("Can not resolve: "+JSON.stringify(data,null,"  "));
@@ -230,7 +236,7 @@ function showQuestions(qList) {
  * @param {object} solution json object representing the solution
  * @see doAJAX
  */
-function showSolution(solution) {
+function showSolution(solution, path) {
     $("#tabs a[href='#tabs-3']").click();
  /*   $("#tabs-3").html("<h2>Solution</h2>"+
         "<h3>"+solution["main-issue"][1]+" "+solution["main-issue"][0]+" "+solution["main-issue"][2]+"</h3>"+
@@ -238,7 +244,10 @@ function showSolution(solution) {
     var solutionNew = JSON.stringify(solution, null, "\t");
     $("#solution-xml").html(solutionNew); */
     $("#tabs-3").html("<h2>Solution</h2>"+
-        "<h3>"+solution+"</h3>");
+        "<h3>"+solution+"</h3><div id=\"policyrules\"></div>");
+    $.ajaxSetup({url: "/CarneadesWS-web/PolicyEvaluation"});
+    var json = {"policyrules" : path}
+    doAJAX(json);
     //$("#solution-xml").html(solution);
 }
 
@@ -487,4 +496,23 @@ function updateTopicList(topic) {
         $("#questions div").hide();
         $("#"+t).show();
     });
+}
+
+function showPolicyRules(rules) {
+    var policyList = $("#policyrules");
+    // policyList.remove();
+    policyList.append("<ul>")
+    $.each(rules, function(ruleindex, r) {
+       policyList.append("<li>"+ruleindex+" - "+r+"</li>"); 
+    });
+    policyList.append("</ul>");
+}
+
+function showGraph(path) {
+    // TODO : implement show graph
+}
+
+function showError(error) {
+    // TODO : handle errors
+    alert(error);
 }
