@@ -120,6 +120,7 @@ function doAJAX(jsondata) {
             json : JSON.stringify(jsondata)
         },
         success : function(data) {
+            // alert("ajax success"+data);
             if (data == null || data == "") alert("Empty Server Answer!")
             // getting questions
             else if (data.questions && data.questions.length >= 1) {
@@ -130,11 +131,13 @@ function doAJAX(jsondata) {
                 showSolution(data.solution, data.path);
             }
             else if (data.language) {
-                alert("Language set to: "+data.language);
+                // alert("Language set to: "+data.language);
             } else if(data.schemes) {
                 showPolicyRules(data.schemes);
             } else if(data.evaluated) {
-                showGraph(data.evaluated);
+                showArgGraph(data.evaluated);
+            } else if(data.graphpath) {
+                showSVGGraph(data.graphpath)
             } else if (data.error) {
                 showError(data.error);
             }
@@ -243,11 +246,13 @@ function showSolution(solution, path) {
         "<p>Below you ind the full JSON solution output.</p><pre id=\"solution-xml\"><\/pre>");  
     var solutionNew = JSON.stringify(solution, null, "\t");
     $("#solution-xml").html(solutionNew); */
-    $("#tabs-3").html("<h2>Solution</h2>"+
-        "<h3>"+solution+"</h3><div id=\"policyrules\"></div>");
+  /*  $("#tabs-3").html("<h2>Solution</h2>"+
+        "<h3>"+solution+"</h3><div id=\"policyrules\"></div>");  */
+    $("#solutionstatement").append(solution);
     $.ajaxSetup({url: "/CarneadesWeb-web/PolicyEvaluation"});
     var json = {"policyrules" : path}
     doAJAX(json);
+    showArgGraph(path);
     //$("#solution-xml").html(solution);
 }
 
@@ -505,11 +510,22 @@ function showPolicyRules(rules) {
     $.each(rules, function(ruleindex, r) {
        policyList.append("<li>"+ruleindex+" - "+r+"</li>"); 
     });
-    policyList.append("</ul>");
+    policyList.append("</ul>");    
 }
 
-function showGraph(path) {
-    // TODO : implement show graph
+/**
+ * creating svg representation of an argument graph
+ * @param {string} path path to lkif with argument graph
+ */
+function showArgGraph(path) {
+    //alert("converting argument graph: "+path);
+    var json = {"showgraph" : path};
+    doAJAX(json);
+}
+
+function showSVGGraph(path) {
+    // alert("showing svg file : "+path);
+    $("#graph").append("<object data=" + path + " width=\"900\" height=\"900\" type=\"image/svg+xml\" />");
 }
 
 function showError(error) {

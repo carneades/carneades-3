@@ -23,5 +23,7 @@ public interface CarneadesService {
     CarneadesMessage evaluateArgGraph(String argGraph, List<String> accepts, List<String> rejects);
     
     CarneadesMessage getPolicySchemes(String argGraph);
+    
+    CarneadesMessage getSVGFromGraph(String argGraph);
 
 }

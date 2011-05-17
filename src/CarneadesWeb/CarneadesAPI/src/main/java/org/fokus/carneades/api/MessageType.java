@@ -14,6 +14,7 @@ public enum MessageType {
     ASKUSER,
     SCHEMES,
     GRAPH,
+    SVG,
     SOLUTION;
 
     public String value() {

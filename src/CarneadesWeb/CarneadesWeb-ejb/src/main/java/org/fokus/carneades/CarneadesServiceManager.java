@@ -55,8 +55,10 @@ public class CarneadesServiceManager implements CarneadesService{
             // RT.loadResourceScript("carneades/engine/argument-search.clj");
             log.info("loading shell.clj");
             RT.loadResourceScript("carneades/engine/shell.clj");
-            log.info("loading viewer.clj");
-            RT.loadResourceScript("carneades/ui/diagram/viewer.clj");
+            //log.info("loading viewer.clj");
+            //RT.loadResourceScript("carneades/ui/diagram/viewer.clj");
+            log.info("loading viewer2.clj");
+            RT.loadResourceScript("carneades/ui/diagram/graphvizviewer.clj");
             log.info("loading json.clj");
             RT.loadResourceScript("clojure/contrib/json.clj");
             log.info("loading clojure files finished");
@@ -64,6 +66,51 @@ public class CarneadesServiceManager implements CarneadesService{
             log.error(e.toString());
         }
     }
+
+    public CarneadesMessage getSVGFromGraph(String argGraph) {        
+        
+        CarneadesMessage cm = new CarneadesMessage();
+        
+        try {
+            
+            log.info("get svg from lkif") ;
+            
+            // importing lkif
+            log.info("loading lkif");
+            Map lkif = (Map) RT.var(NS.LKIF, "lkif-import").invoke(argGraph);
+            log.info("get arg graphs");
+            List argGraphs = (List) lkif.get(Keyword.intern("ags"));
+            log.info("get first graph");
+            Map ag = (Map)argGraphs.get(0);
+            
+            int c = 0;
+            String prepath = "/tmp/";
+            String svgPath = prepath + "graph0.svg";
+            File f = new File(svgPath);
+            while(f.exists()) {
+                c++;
+                svgPath = prepath + "graph" + Integer.toString(c) + ".svg";            
+                f = new File(svgPath);
+            } 
+            
+            log.info("svg path : "+svgPath);
+            
+            Object stmtStr = RT.var(NS.STATEMENT, "statement-formatted");
+            
+            RT.var(NS.VIEWER, "gen-image").invoke(ag, stmtStr, svgPath);
+            log.info("image saved");
+            
+            cm.setAG(svgPath);
+            cm.setType(MessageType.SVG);
+            
+        } catch (Exception e) {
+            handleStandardError(e);
+        } finally {
+            return cm;
+        }
+    }
+    
+    
 
     public CarneadesMessage getPolicySchemes(String argGraph) {
         
@@ -85,12 +132,12 @@ public class CarneadesServiceManager implements CarneadesService{
             List arguments = (List)RT.var(NS.CORE, "vals").invoke(argumentMap);
             
             List<String> policySchemes = new ArrayList<String>();
-            log.info("start argument loop");
+            // log.info("start argument loop");
             for(Object o : arguments) {
-                log.info(o.toString());
+                //log.info(o.toString());
                 Map arg = (Map)o;
                 String scheme = (String)arg.get(Keyword.intern("scheme"));
-                log.info("scheme : "+scheme);
+                // log.info("scheme : "+scheme);
                 if(scheme.startsWith("policy")) {
                     policySchemes.add(scheme);
                 }

@@ -4,6 +4,7 @@
  */
 package org.fokus.carneades;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
@@ -16,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.fokus.carneades.api.CarneadesMessage;
 import org.fokus.carneades.api.MessageType;
-import org.fokus.carneades.api.Statement;
 import org.fokus.carneades.common.EjbLocator;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,14 +58,15 @@ public class PolicyEvaluationServlet extends HttpServlet {
             JSONObject jsonOUT = new JSONObject();
             
             // Carneades Engine
-            log.info("getting CarenadesService");
+            log.info("getting CarneadesService");
             CarneadesService service = EjbLocator.getCarneadesService();
             
             if(jsonIN.has("policyrules")) {                
                 jsonOUT = handlePolicyRules(service, jsonIN.getString("policyrules"));
-            }else if(jsonIN.has("evaluate")) {
-                jsonOUT = handleEvaluate(service, jsonIN.getJSONObject("evaluate"));
-                
+            } else if(jsonIN.has("showgraph")) {
+                jsonOUT = handleShowGraph(service, jsonIN.getString("showgraph"));
+            } else if(jsonIN.has("evaluate")) {
+                jsonOUT = handleEvaluate(service, jsonIN.getJSONObject("evaluate"));                
             } else if (jsonIN.has("abduction")) {
                 jsonOUT = handleAbduction(service, jsonIN.getJSONObject("abduction"));
             } else {
@@ -193,6 +194,26 @@ public class PolicyEvaluationServlet extends HttpServlet {
         }
         
         return o;
+        
+    }
+
+    private JSONObject handleShowGraph(CarneadesService service, String agPath) throws JSONException {
+        
+        JSONObject o = new JSONObject();
+        
+        log.info("showGraph : "+agPath);
+        
+        CarneadesMessage cm = service.getSVGFromGraph(agPath);
+        if(MessageType.SVG.equals(cm.getType())) {
+            String localPath = cm.getAG();
+            File f = new File(localPath);            
+            String webPath = "http://localhost:8080/CarneadesWeb-web/svg/"+f.getName();
+            o.put("graphpath", webPath);
+        } else {
+            o.put("error", "unexpected message type (SVG expected) : "+cm.getType().name());
+        }
+        
+        return o;        
         
     }
 }
