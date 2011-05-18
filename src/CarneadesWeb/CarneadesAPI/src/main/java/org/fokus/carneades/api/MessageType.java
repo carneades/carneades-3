@@ -12,7 +12,7 @@ package org.fokus.carneades.api;
 public enum MessageType {
 
     ASKUSER,
-    SCHEMES,
+    RULES,
     GRAPH,
     SVG,
     SOLUTION;

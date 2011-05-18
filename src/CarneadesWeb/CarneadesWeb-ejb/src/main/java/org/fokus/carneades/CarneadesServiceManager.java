@@ -126,27 +126,25 @@ public class CarneadesServiceManager implements CarneadesService{
             log.info("get first graph");
             Map ag = (Map)argGraphs.get(0);
             
-            log.info("get argument map");
-            Map argumentMap = (Map)ag.get(Keyword.intern("arguments"));
-            log.info("get arguments");
-            List arguments = (List)RT.var(NS.CORE, "vals").invoke(argumentMap);
+            log.info("get \"valid\" nodes");
+            List validNodes = (List)RT.var(NS.ARGUMENT, "get-nodes").invoke(ag, Symbol.intern("valid"));
+            log.info("get \"valid\" statements");
+            List validStmts = (List)RT.var(NS.CORE, "map").invoke(Keyword.intern("statement"),validNodes);
             
-            List<String> policySchemes = new ArrayList<String>();
+            List<Statement> policyRules = new ArrayList<Statement>();
             // log.info("start argument loop");
-            for(Object o : arguments) {
+            for(Object o : validStmts) {
                 //log.info(o.toString());
-                Map arg = (Map)o;
-                String scheme = (String)arg.get(Keyword.intern("scheme"));
+                List stmtSExpr = (List)o;
+                Statement stmt = ClojureUtil.getStatementFromSeq(stmtSExpr) ;
                 // log.info("scheme : "+scheme);
-                if(scheme.startsWith("policy")) {
-                    policySchemes.add(scheme);
-                }
+                policyRules.add(stmt);
             }
             
-            log.info("found "+Integer.toString(policySchemes.size()) + " policy rules");
+            log.info("found "+Integer.toString(policyRules.size()) + " policy rules");
             
-            cm.setSchemes(policySchemes);
-            cm.setType(MessageType.SCHEMES);
+            cm.setStatements(policyRules);
+            cm.setType(MessageType.RULES);
             
         } catch (Exception e) {
             handleStandardError(e);

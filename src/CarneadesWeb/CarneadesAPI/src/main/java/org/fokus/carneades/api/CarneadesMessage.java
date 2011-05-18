@@ -16,23 +16,24 @@ public class CarneadesMessage implements Serializable{
 
     private String AG;
     private Statement message;
-    private List<String> schemes;
+    private List<Statement> statements;
     private MessageType type;
 
     public CarneadesMessage() {
         this.AG = null;
         this.message = null;
         this.type = MessageType.SOLUTION;
-        this.schemes = null;
+        this.statements = null;
     }
 
-    public List<String> getSchemes() {
-        return schemes;
+    public List<Statement> getStatements() {
+        return statements;
     }
 
-    public void setSchemes(List<String> schemes) {
-        this.schemes = schemes;
+    public void setStatements(List<Statement> statements) {
+        this.statements = statements;
     }
+
 
     public String getAG() {
         return AG;

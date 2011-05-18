@@ -17,7 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.fokus.carneades.api.CarneadesMessage;
 import org.fokus.carneades.api.MessageType;
+import org.fokus.carneades.api.Statement;
 import org.fokus.carneades.common.EjbLocator;
+import org.fokus.carneades.simulation.Translator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -173,7 +175,7 @@ public class PolicyEvaluationServlet extends HttpServlet {
     }
 
     private JSONObject handlePolicyRules(CarneadesService service, String lkifPath) throws JSONException {
-        
+                        
         log.info("handlePolicyRules");
         
         JSONObject o = new JSONObject();
@@ -181,16 +183,19 @@ public class PolicyEvaluationServlet extends HttpServlet {
         log.info("call service with path: "+lkifPath);
         CarneadesMessage cm = service.getPolicySchemes(lkifPath);
         
-        if(MessageType.SCHEMES.equals(cm.getType())) {
+        if(MessageType.RULES.equals(cm.getType())) {
             
             JSONArray schemesArray = new JSONArray();
-            for(String s : cm.getSchemes()) {
-                schemesArray.put(s);
+            for(Statement stmt : cm.getStatements()) {
+                String policyRule = stmt.getArgs().get(0);
+                //JSONObject stmtJSON = new JSONObject();
+                //stmtJSON.put("rule", policyRule);
+                schemesArray.put(policyRule);
             }
-            o.put("schemes", schemesArray);
+            o.put("rules", schemesArray);
             
         } else {
-            o.put("error", "unexpected message type (SCHEMES expected) : "+cm.getType().name());
+            o.put("error", "unexpected message type (RULES expected) : "+cm.getType().name());
         }
         
         return o;
