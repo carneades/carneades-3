@@ -202,6 +202,19 @@
   [uri]
   (last (str/split uri (re-pattern "/"))))
 
+;;; strings
+(defn break-line
+  "Breaks line in chunk of line-length length."
+  [s line-length]
+  (let [len (count s)
+        lastpartstart (* (quot len line-length) line-length) 
+        sparts (if (<= len line-length)
+                 [[0 len]]
+                 (concat (partition 2 1 (range 0 len line-length))
+                         [[lastpartstart len]]))]
+    (map (fn [[start end]]
+           (subs s start end)) sparts)))
+
 ;;; exceptions
 
 (defn first-cause
