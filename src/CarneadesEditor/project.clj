@@ -15,5 +15,5 @@
   ;; to create a self-executing JAR comment {:skip-aot true}
   ;; then invoke "cake uberjar" and pray.
   ;; "lein uberjar" does not work because of a bug.
-  :main ;; ^{:skip-aot true}
+  :main ^{:skip-aot true}
   carneades.editor.core)
