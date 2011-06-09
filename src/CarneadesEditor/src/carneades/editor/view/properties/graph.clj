@@ -1,13 +1,15 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.properties.graph
+(ns ^{:doc "Function to display argument graph properties in the panel properties."}
+  carneades.editor.view.properties.graph
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
+        carneades.editor.utils.swing
         carneades.editor.utils.listeners)
   (:import carneades.editor.uicomponents.ArgumentGraphPropertiesView))
 
-(defvar- *graphProperties* (ArgumentGraphPropertiesView/instance))
+(defvar- *graphProperties* (ArgumentGraphPropertiesView.))
 (defvar- *titleText* (.titleText *graphProperties*))
 (defvar- *pathText* (.pathText *graphProperties*))
 (defvar- *mainIssueTextArea* (.mainIssueTextArea *graphProperties*))
@@ -18,7 +20,7 @@
   (call-graph-edit-listeners event))
 
 (defn init-graph-properties []
-  (ArgumentGraphPropertiesView/reset)
+  (remove-action-listeners *titleText*)
   (add-action-listener *titleText* title-action-listener))
 
 (defvar- *previous-graph-content* (atom {}))

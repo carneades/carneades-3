@@ -1,10 +1,13 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.components.tabs
+(ns ^{:doc "Implementation of the tabulations to display argument graphs."}
+  carneades.editor.view.components.tabs
   (:use clojure.contrib.def
+        clojure.contrib.trace
         clojure.contrib.swing-utils
-        carneades.editor.utils.listeners)
+        carneades.editor.utils.listeners
+        carneades.editor.view.components.uicomponents)
   (:import (java.awt EventQueue event.MouseListener Dimension FlowLayout)
            (javax.swing UIManager JTabbedPane JLabel JButton JFrame JPanel
                         ImageIcon
@@ -18,9 +21,8 @@
            (javax.swing.event ChangeListener)
            (carneades.editor.uicomponents EditorApplicationView)))
 
-(defvar- *viewinstance* (EditorApplicationView/instance))
 
-(defvar *mapPanel* (.mapPanel *viewinstance*))
+(defvar *mapPanel* (.mapPanel *frame*))
 
 ;; (defvar- *closebutton-url* "carneades/editor/view/close-button.png")
 (defvar- *closebutton-url* "close-button.png")
@@ -41,8 +43,9 @@
 (defn init-tabs []
   (.setTabLayoutPolicy *mapPanel* JTabbedPane/SCROLL_TAB_LAYOUT))
 
-(defn graphinfo-being-closed [event]
+(defn graphinfo-being-closed
   "returns [path id]"
+  [event]
   (let [button (.getSource event)
         tabcomponent (.getParent button)
         idx (.indexOfTabComponent *mapPanel* tabcomponent)
@@ -67,8 +70,6 @@
   (let [tabcomponent (JPanel.)
         label (JLabel. title)
         closebutton (create-close-button)]
-    (prn "creating label, title =")
-    (prn title)
     (.setOpaque tabcomponent false)
     (.setFocusable label false)
     (.setFocusable tabcomponent false)
@@ -110,8 +111,9 @@
      (alter *component-to-title* dissoc component)
      (alter *ags-to-components* dissoc info))))
 
-(defn tabs-empty? []
+(defn tabs-empty?
   "true if no tabs"
+  []
   (empty? (deref *swingcomponents-to-ags*)))
 
 (defn select-component [component]
@@ -119,29 +121,20 @@
                      (.indexOfComponent *mapPanel* (:component component))))
 
 (defn set-tab-dirty [path id isdirty]
-  (prn "set-tab-dirty")
-  (prn "isdirty =")
-  (prn isdirty)
   (if-let [component (:component (get (deref *ags-to-components*) [path id]))]
     (if-let [label (get (deref *component-to-title*) component)]
-      (let [oldtext (.getText label)]
-        (prn "oldtext =")
-        (prn oldtext)
-        (cond (and isdirty (not= (first oldtext) \*))
-              (.setText label (str "*" oldtext))
-
-              (not isdirty)
-              (.setText label (.substring oldtext 1))))
-      (do
-        (prn "title not found")))
-    (do
-      (prn "component not found"))))
+      (let [oldtext (.getText label)
+            olddirty (= (first oldtext) \*)]
+        (when-not (= olddirty isdirty)
+          (if isdirty
+            (.setText label (str "*" oldtext))
+            (.setText label (.substring oldtext 1))))))))
 
 (defn register-tab-change-listener [listener]
   (.addChangeListener *mapPanel* listener))
 
-(defn change-tab-title [component newtitle]
-  "change the title of a clean component"
-  (prn "change-tab-title")
+(defn change-tab-title
+  "changes the title of a clean component"
+  [component newtitle]
   (when-let [label (get (deref *component-to-title*) (:component component))]
     (.setText label newtitle)))

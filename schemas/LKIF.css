@@ -105,13 +105,33 @@ rule {
     display: block;
 }
 
+head:before {
+    content: "head";
+    font-weight: bold;
+}
+
 head {
     display: block;
-    margin-left: 1.5em;
+    margin-left: 1em;
+}
+
+domains:before {
+	content: "domains";
+	font-weight: bold;
+}
+
+domains {
+    display: block;
+    margin-left: 1em;
+}
+
+property, class {
+	display: block;
+    margin-left: 2em;
 }
 
 body:before {
-    content: "given";
+    content: "body";
     font-weight: bold;
 }
 
@@ -141,7 +161,10 @@ and > s {
     margin-left: 1em;
 }
 
-
+head > s, head > v, head > not {
+    display: block;
+    margin-left: 1em;
+}
 
 body > s {
     display: block;
@@ -198,6 +221,9 @@ and {
     margin-left: 1em;
 }
 
+exists:before {
+	content: " exists ";
+}
 
 not[exception="false"]:before {
     content:"not: ";
@@ -219,8 +245,17 @@ s, statement > s {
 s > s:before { content: open-quote }
 s > s:after { content: close-quote }
 
+exists > s+s:before {
+	content: " such that "
+}
+
 v {
     text-decoration: underline;
+}
+
+exists > v:after {
+	content: " : ";
+	text-decoration: none;
 }
 
 c {

@@ -36,6 +36,8 @@ public class SearchArgumentsPanel extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
 
         searchResultsPanel.setName("search-results-panel"); // NOI18N
         searchResultsPanel.setLayout(new java.awt.CardLayout());
@@ -88,6 +90,28 @@ public class SearchArgumentsPanel extends javax.swing.JPanel {
 
         searchResultsPanel.add(jPanel3, "searchFinishedWithResults");
 
+        jLabel3.setForeground(new java.awt.Color(255, 0, 0));
+        jLabel3.setText("No arguments were found.");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(127, 127, 127)
+                .addComponent(jLabel3)
+                .addContainerGap(157, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(27, Short.MAX_VALUE)
+                .addComponent(jLabel3)
+                .addGap(25, 25, 25))
+        );
+
+        searchResultsPanel.add(jPanel2, "searchFinishedWithNoResult");
+
         dummyValidatorTrigger.setText("jTextField1");
         dummyValidatorTrigger.setName("dummy-validator-trigger"); // NOI18N
 
@@ -120,22 +144,12 @@ public class SearchArgumentsPanel extends javax.swing.JPanel {
     public final javax.swing.JTextField dummyValidatorTrigger = new javax.swing.JTextField();
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JProgressBar jProgressBar1;
     public final javax.swing.JPanel searchResultsPanel = new javax.swing.JPanel();
     // End of variables declaration//GEN-END:variables
 
-    // our modifications:
-    public static SearchArgumentsPanel panelInstance = new SearchArgumentsPanel();
-
-    public static synchronized SearchArgumentsPanel instance()
-    {
-        return panelInstance;
-    }
-
-    public static synchronized void reset()
-    {
-        panelInstance = new SearchArgumentsPanel();
-    }
 }

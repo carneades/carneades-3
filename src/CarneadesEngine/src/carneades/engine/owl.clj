@@ -1,94 +1,214 @@
+;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Licensed under the EUPL V.1.1
 
-(ns carneades.engine.owl
-  (:require 
-    [clojure.xml :as xml])
-  (:use
-    clojure.contrib.def
-    ;clojure.contrib.profile
-    carneades.engine.owl.reasoner
-    carneades.engine.owl.rule
-    carneades.engine.rule
-    )
-  (:import
-    ;(com.clarkparsia.pellet.owlapiv3 PelletReasoner PelletReasonerFactory)
-    (org.semanticweb.owlapi.apibinding OWLManager)
-    (org.semanticweb.owlapi.model IRI MissingImportListener OWLOntologyIRIMapper)
-    ;(org.semanticweb.owlapi.vocab OWLRDFVocabulary)
-    ;(org.semanticweb.owlapi.util SimpleIRIMapper)
-    (org.semanticweb.HermiT Reasoner$ReasonerFactory)
-    (java.net URI)
-    (java.io File)))
-
+(ns ^{:doc "Functions to load an ontology and query it."}
+    carneades.engine.owl
+  (:use clojure.contrib.def
+        clojure.contrib.trace
+        carneades.engine.owl.reasoner
+        carneades.engine.owl.rule
+        carneades.engine.rule
+        carneades.engine.utils
+        clojure.contrib.combinatorics)
+  (:require [clojure.xml :as xml])
+  (:import (java.net URI)
+           (java.io File FileNotFoundException)
+           (org.semanticweb.owlapi.expression ParserException ShortFormEntityChecker)
+           org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxEditorParser
+           (org.semanticweb.owlapi.util ShortFormProvider SimpleShortFormProvider
+                                        BidirectionalShortFormProviderAdapter)
+           (org.semanticweb.owlapi.apibinding OWLManager)
+           org.semanticweb.owlapi.io.OWLOntologyCreationIOException
+           (org.semanticweb.owlapi.model IRI MissingImportListener OWLOntologyIRIMapper OWLClass)
+           (org.semanticweb.HermiT Reasoner$ReasonerFactory)))
 
 (defn owl?
   [url]
   (= (:tag (xml/parse url)) :rdf:RDF))
 
-(defn- path->uri
+(defn path->uri
   [path prepath]
-  (let [file (new File path)]
-    (if (. file exists)
-      (. file toURI)
-      (if prepath
-        (path->uri (str prepath path) nil)
-        (new URI path)))))
+  (let [file (File. path)]
+    (if (.exists file)
+      (.toURI file)
+      (if (and prepath (not (url? path)))
+        (let [fullpath (if (.endsWith prepath java.io.File/separator)
+                         (str prepath path)
+                         (str prepath java.io.File/separator path))]
+         (path->uri fullpath nil))
+        (URI. path)))))
 
-(defn- iri-to-file-mapper [prepath]
+(defn iri-to-file-mapper [path prepath]
   (proxy [OWLOntologyIRIMapper] []
-    (getDocumentIRI [ontIRI]
-      ;(println "mapper in: ontURI:" ontIRI (.getScheme ontIRI))
-      (if (or (nil? prepath) (= (.getScheme ontIRI) "file"))
-        (do
-          ;(println "mapper map: no map")
-          ontIRI)
-        (let [ontURI (.toURI ontIRI),
-              uriPath* (last (.split (.getPath ontURI) "/")),
-              uriPath (if (= (.indexOf uriPath* ".") -1)
-                        (str uriPath* ".owl")
-                        uriPath*),
-              iri (IRI/create (path->uri uriPath prepath))]
-          ;(println "mapper map:" ontIRI "->" iri)
-          iri)))))
+    (getDocumentIRI
+     [ontIRI]
+     (if (= (.getScheme ontIRI) "file")
+       ontIRI
+       (let [uri (.toURI ontIRI)
+             rawfilename (last-uri-segment (str uri))
+             filename (add-extension rawfilename "owl")
+             parentdir (or (parent path) prepath)
+             localfile (if parentdir
+                         (create-path parentdir filename)
+                         filename)]
+         ;(printf "path = %s prepath = %s parentdir = %s uri = %s\nlocalfile = %s\n"
+         ;         path prepath parentdir uri localfile)
+         (if (exists? localfile)
+           ;; if the file exists locally to the currently imported file we use it
+           (IRI/create (path->uri localfile prepath))
+           ;; else we use the URI
+           (let [uripath (str uri)
+                 resolved (if (nil? (extension rawfilename))
+                            (add-extension uripath "owl")
+                            uripath)]
+             (IRI/create (path->uri resolved prepath)))))))))
 
 (defvar- missing-import-handler
   (proxy [MissingImportListener] []
     (importMissing [event]
       (let [uri (.getImportedOntologyURI event)]
-        (println "!!! could not load ontology " uri "!!!")))))
+        (throw (java.io.FileNotFoundException. (format "no such file %s" (str uri))))
+        ;(println "!!! could not load ontology " uri "!!!")
+        ))))
 
 (defn load-ontology
+  "Loads an ontology from a file or URL"
   ([path] (load-ontology path nil))
   ([path pre-path]
-    ;(println "loading ontology" path pre-path)
-    (let [manager (OWLManager/createOWLOntologyManager),
-          se (. manager setSilentMissingImportsHandling true)
-          mih (. manager addMissingImportListener missing-import-handler),
-          iri-map (. manager addIRIMapper (iri-to-file-mapper pre-path)),          
-          documentIRI (IRI/create (path->uri path pre-path)),
-          ontology (. manager loadOntology documentIRI),
-          reasoner (. (new Reasoner$ReasonerFactory) createReasoner ontology)]
-      (. reasoner prepareReasoner)
-      ;(println "ontology loaded")
-      ;(println "direct imports" (count (.getDirectImports manager ontology)))
-      ;(println "processing goal:" wff)
-      ;      (println "consistent ontology?:" (.isConsistent reasoner))
-      ;      (println "number of axioms:" (.getLogicalAxiomCount ontology))
-      ;      (println "axioms:" (map (memfn toString) (.getLogicalAxioms ontology)))
-      ;      (println "object-properties:" (map (memfn toString) (.getObjectPropertiesInSignature ontology true)))
-      ;      (println "number of object-properties:" (count (.getObjectPropertiesInSignature ontology true)))
-      ;      (println "number of data-properties:" (count (.getDataPropertiesInSignature ontology true)))
-      ;      (println "individuals:" (map (memfn toString) (.getIndividualsInSignature ontology true)))
-      ;      (println "number of individuals:" (count (.getIndividualsInSignature ontology true)))
-      ;      (println "classes:" (map (memfn toString) (.getFlattened (.getSubClasses reasoner (. (. manager getOWLDataFactory) getOWLThing) false))))
-      ;      (println "number of classes:" (count (.getFlattened (.getSubClasses reasoner (. (. manager getOWLDataFactory) getOWLThing) false))))
-       {:ontology ontology, :reasoner reasoner})))
+     (try
+       (let [manager (OWLManager/createOWLOntologyManager)
+             se (. manager setSilentMissingImportsHandling true)
+             mih (. manager addMissingImportListener missing-import-handler)
+             iri-map (. manager addIRIMapper (iri-to-file-mapper path pre-path))
+             documentIRI (IRI/create (path->uri path pre-path))
+             ontology (. manager loadOntology documentIRI)
+             reasoner (. (new Reasoner$ReasonerFactory) createReasoner ontology)]
+         (. reasoner prepareReasoner)
+         {:ontology ontology, :reasoner reasoner})
+       (catch OWLOntologyCreationIOException e
+         (throw (FileNotFoundException. (.getMessage e)))))))
 
 (defn generate-arguments-from-owl
+  "Generates argument from an OWL ontology"
   ([ontology type]
     (generate-arguments-from-owl ontology type '()))
   ([ontology type optionals]
     (and (:ontology ontology)
       (condp = type
-        :reasoner (generate-arguments-from-reasoner (:ontology ontology) (:reasoner ontology)),
+          :reasoner (generate-arguments-from-reasoner (:ontology ontology) (:reasoner ontology)),
         :rule (generate-arguments-from-rules (map-ontology (:ontology ontology) optionals) '()),
         (throw (Exception. "Invalid type value for owl generator"))))))
+
+(defn individuals
+  "returns all individuals in the ontology as a list of (class individual)"
+  [ontology]
+  (mapcat (fn [class]
+            (let [individuals (.getIndividuals class ontology)
+                  sid (symbol (.toStringID class))]
+              (if (not (empty? individuals))
+                (map (fn [individual]
+                       (list sid (symbol (.toStringID individual))))
+                     individuals)
+                ())))
+          (.getClassesInSignature ontology)))
+
+(defn create-iri [s]
+  (IRI/create s))
+
+(defn classes
+  "Returns the classes of the ontology"
+  ([ontology]
+     (seq (.getClassesInSignature ontology)))
+  ([ontology iri]
+     (seq (filter #(instance? OWLClass %)
+                  (.getEntitiesInSignature ontology iri)))))
+
+(defn root-ontology
+  "Returns the root ontology of the reasoner"
+  [reasoner]
+  (.getRootOntology reasoner))
+
+(defn instances
+  "Returns instances of class"
+  [reasoner class]
+  (seq (.getFlattened (.getInstances reasoner class false))))
+
+(defn individuals [ontology]
+  (seq (.getIndividualsInSignature ontology)))
+
+(defn to-symbol [obj]
+  (symbol (.toStringID obj)))
+
+(defn- x-properties [ontology individual f]
+  (reduce (fn [acc [k v]]
+            (assoc acc (to-symbol k) (map #(to-symbol %) v)))
+          {}
+          (into {} (f individual ontology))))
+
+(defn object-properties
+  "Returns a hashmap of property -> vals"
+  ([ontology]
+     (seq (.getObjectPropertiesInSignature ontology)))
+  ([ontology individual]
+     (x-properties ontology individual (memfn getObjectPropertyValues ontology))))
+
+(defn data-properties
+  ([ontology]
+     (seq (.getDataPropertiesInSignature ontology)))
+  ([ontology individual]
+     (x-properties ontology individual (memfn getDataPropertyValues ontology))))
+
+(defn- x-properties-seq
+  "Returns a seq of (property indivi val) from the individual"
+  [ontology individual f]
+  (map (fn [[k v]]
+         (list k (to-symbol individual) v))
+       (mapcat (fn [[k v]]
+                 (cartesian-product [k] v))
+               (f ontology individual))))
+
+(defn object-properties-seq
+  "Returns a seq of (property indiv val) from the individual"
+  [ontology individual]
+  (x-properties-seq ontology individual object-properties))
+
+(defn data-properties-seq
+  "Returns a seq of (property indiv val) from the individual"
+  [ontology individual]
+  (x-properties-seq ontology individual data-properties))
+
+(defn parse-class-expression
+  "Returns an Expression from the Manchester query. This can then be used to
+   query the ontology"
+  [ontology s]
+  (try
+    (let [data-factory (.. ontology getOWLOntologyManager getOWLDataFactory)
+          manager (.getOWLOntologyManager ontology)
+          import-closures (.getImportsClosure ontology)
+          short-form-provider (SimpleShortFormProvider.)
+          bidi (BidirectionalShortFormProviderAdapter. manager import-closures short-form-provider)
+          parser (ManchesterOWLSyntaxEditorParser. data-factory s)
+          entity-checker (ShortFormEntityChecker. bidi)]
+      (.setDefaultOntology parser ontology)
+      (.setOWLEntityChecker parser entity-checker)
+      (.parseClassExpression parser))
+    (catch ParserException e nil)))
+
+(defn shorten [sym]
+  (last (clojure.string/split (str sym) #"#")))
+
+(defn instances-with-property
+  "Returns a list of (property indiv val)"
+  [reasoner property]
+  (let [prop (shorten property)
+        ontology (root-ontology reasoner)]
+    (if-let [ex (parse-class-expression ontology (format "(%s SOME Thing)" prop))]
+     (let [individuals (into #{} (.getFlattened (.getInstances reasoner ex true)))]
+       (mapcat (fn [individual]
+                 ;; TODO extract the good property with the OWL API
+                 (let [object-properties (object-properties-seq ontology individual)
+                       data-properties (data-properties-seq ontology individual)]
+                   (concat (filter #(= (first %) property) object-properties)
+                           (filter #(= (first %) property) data-properties))))
+        individuals))
+     ())))

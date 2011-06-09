@@ -1,5 +1,8 @@
+;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Licensed under the EUPL V.1.1
 
-(ns carneades.engine.ask
+(ns ^{:doc "Allows an external entity to be asked for information during a search. Experimental."}
+    carneades.engine.ask
   ;(:require )
   (:use
     carneades.engine.unify

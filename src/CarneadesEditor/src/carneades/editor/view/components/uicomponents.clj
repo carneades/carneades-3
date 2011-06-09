@@ -1,11 +1,13 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.components.uicomponents
+(ns ^{:doc "Clojure variables to hold instances of 
+            the Swing components defined in the NetBeans project."}
+  carneades.editor.view.components.uicomponents
   (:use clojure.contrib.def)
   (:import carneades.editor.uicomponents.EditorApplicationView))
 
-(defvar *frame* (EditorApplicationView/instance))
+(defvar *frame* (EditorApplicationView.))
 
 (defvar *openFileButton* (.openFileButton *frame*))
 (defvar *openFileMenuItem* (.openFileMenuItem *frame*))
@@ -26,6 +28,7 @@
 (defvar *openGraphMenuItem* (.openGraphMenuItem *frame*))
 (defvar *closeGraphMenuItem* (.closeGraphMenuItem *frame*))
 (defvar *exportGraphMenuItem* (.exportGraphMenuItem *frame*))
+(defvar *copyGraphMenuItem* (.copyGraphMenuItem *frame*))
 
 (defvar *newPremiseMenuItem* (.newPremiseMenuItem *frame*))
 (defvar *deleteArgumentMenuItem* (.deleteArgumentMenuItem *frame*))
@@ -64,6 +67,18 @@
 (defvar *deleteGraphMenuItem* (.deleteGraphMenuItem *frame*))
 (defvar *newFileMenuItem* (.newFileMenuItem *frame*))
 
-(defvar *assistantFindGoalMenuItem* (.assistantFindGoalMenuItem *frame*))
-(defvar *assistantFindArgumentsMenuItem* (.assistantFindArgumentsMenuItem *frame*))
-(defvar *assistantInstantiateSchemeMenuItem* (.assistantInstantiateSchemeMenuItem *frame*))
+(defvar *findGoalAssistantMenuItem* (.findGoalAssistantMenuItem *frame*))
+(defvar *findArgumentsAssistantMenuItem* (.findArgumentsAssistantMenuItem *frame*))
+(defvar *instantiateSchemeAssistantMenuItem* (.instantiateSchemeAssistantMenuItem *frame*))
+(defvar *formalizeStatementAssistantMenuItem* (.formalizeStatementAssistantMenuItem *frame*))
+
+(defvar *preferencesEditMenuItem* (.preferencesEditMenuItem *frame*))
+
+(defvar *premisePremiseMenuItem* (.premisePremiseMenuItem *frame*))
+(defvar *assumptionPremiseMenuItem* (.assumptionPremiseMenuItem *frame*))
+(defvar *exceptionPremiseMenuItem* (.exceptionPremiseMenuItem *frame*))
+
+(defvar *negatedPremiseMenuItem* (.negatedPremiseMenuItem *frame*))
+
+(defvar *proArgumentMenuItem* (.proArgumentMenuItem *frame*))
+(defvar *conArgumentMenuItem* (.conArgumentMenuItem *frame*))

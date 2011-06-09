@@ -4,8 +4,10 @@
 (ns carneades.examples.piersonpost
   (:use carneades.engine.statement
         carneades.engine.argument
-        carneades.ui.diagram.graphvizviewer
-    ))
+        carneades.mapcomponent.viewer))
+
+
+
 
 ;; The Pierson vs. Post case.  Used to illustrate the use of
 ;;   a scheme for "practical reasoning" in legal argument.
@@ -192,4 +194,5 @@ and noxious beast.")
 (def fig4-args (argument-graph [a9 a10 a11]))
 (def fig5-args (argument-graph [a12 a13]))
 
-;(view both)
+(defn -main []
+  (view both))

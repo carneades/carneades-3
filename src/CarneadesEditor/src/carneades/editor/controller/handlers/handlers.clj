@@ -1,17 +1,23 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.controller.handlers.handlers
+(ns ^{:doc "Swing listeners dispatch to the handlers functions defined in this 
+            namespace. The handlers only interact with the view via the View 
+            protocol. All UI specific (SwingUI protocol, javax etc) imports 
+            are disallowed."}
+  carneades.editor.controller.handlers.handlers
   (:use clojure.contrib.def
+        clojure.java.io
         clojure.contrib.trace
         clojure.contrib.pprint
         [clojure.contrib.swing-utils :only (do-swing do-swing-and-wait)]
         carneades.editor.controller.handlers.messages
         (carneades.editor.controller search documents)
-        carneades.engine.lkif
+        (carneades.engine lkif utils)
         (carneades.engine argument argument-edit)
-        [carneades.engine.statement :only (statement-formatted statement?)]
-        carneades.editor.model.docmanager
+        [carneades.engine.statement
+         :only (statement-formatted statement? str-stmt stmt-str)]
+        (carneades.editor.model docmanager properties)
         carneades.editor.utils.core
         ;; only the view.viewprotocol namespace is allowed to be imported
         carneades.editor.view.viewprotocol
@@ -24,80 +30,104 @@
 
 ;;; in this namespace we define the Swing independant listeners
 
-(deftrace create-lkifinfo [path]
+(defn create-lkifinfo [path]
   (sort-by second
            (map (fn [id] [id (:title (get-ag path id))])
                 (get-ags-id path))))
 
-(deftrace close-all [view path]
+(defn on-refresh [view path id]
+  (when-let [ag (get-ag path id)]
+    (do-ag-update view [path :ags (:id ag)] ag)
+    (redisplay-graph view path ag statement-formatted)))
+
+(defn do-close-graph
+  "close graph without saving it"
+  [view path id savechanges]
+  (let [isfresh (contains? (get-fresh-ag-ids path) id)]
+    (when-not savechanges
+      (if isfresh
+        (remove-section *docmanager* [path :ags id])
+        (do
+          (update-dirty-state view path (get-ag path id) false)
+          (update-undo-redo-statuses view path id)
+          (restore-section-to-last-saved *docmanager* [path :ags id]))))
+    (close-graph view path id isfresh)))
+
+(defn close-all
   "closes all graphs without saving, removes LKIF from tree"
+  [view path]
   (doseq [id (get-ags-id path)]
-    (close-graph view path id))
+    (do-close-graph view path id false))
   (hide-lkif-content view path)
   (remove-section *docmanager* [path]))
 
-(deftrace on-select-graphid [view path graphid]
+(defn on-select-graphid [view path graphid]
   (let [ag (get-ag path graphid)
         id (:id ag)
         title (:title ag)
         mainissue (statement-formatted (:main-issue ag))]
-    ;; (pprint "ag = ")
-    ;; (pprint ag)
-    ;; (prn)
     (display-graph-property view path id title mainissue)))
 
-(deftrace on-select-lkif-file [view path]
-  (prn "on-select-lkif-file")
-  (prn "kbs =")
-  (let [importurls (get-kbs-locations path)]
+(defn on-select-lkif-file [view path]
+  (let [importurls (get-imports-locations path)]
     (display-lkif-property view path importurls)))
 
-(deftrace on-open-graph [view path id]
-  (prn "on-open-graph")
+(defn on-open-graph [view path id]
   (when-let [ag (get-ag path id)]
-   (open-graph view path ag statement-formatted)
-   (when-let [mainissue (:main-issue ag)]
-     (display-statement view path ag mainissue statement-formatted))))
+    (open-graph view path ag statement-formatted)
+    (when-let [mainissue (:main-issue ag)]
+      (display-statement view path ag mainissue statement-formatted))))
 
-(deftrace on-open-file [view]
-  (prn "ask-lkif-file-to-open...")
-  (when-let* [file (ask-file-to-open view "LKIF files"  #{"xml" "lkif"})
-              path (.getPath file)]
-    (if (section-exists? *docmanager* [path])
-      (display-error view *file-error* (format *file-already-opened* path))
-      (try
-        (set-busy view true)
-        (when-let [content (lkif-import path)]
-          (lkif/add-lkif-to-docmanager path content *docmanager*)
-          (init-counters path)
-          (let [infos (create-lkifinfo path)]
-            (display-lkif-content view file infos)
-            (when-let [[id _] (first infos)]
-              (on-open-graph view path id))))
-        ;; (catch IllegalArgumentException
-        ;;     e (display-error view *open-error* (str *invalid-content* ".")))
-        (catch java.io.IOException
-            e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
-        (catch org.xml.sax.SAXException
-            e (display-error view *open-error* (str *invalid-content* ".")))
-        (finally
-         (set-busy view false))))))
+(defn do-open-content [view path filename content]
+  (init-counters path)
+  (let [infos (create-lkifinfo path)]
+    (display-lkif-content view path filename infos)
+    (when-let [[id _] (first infos)]
+      (on-open-graph view path id))))
+
+(defn do-open-file [view path filename rules-directory]
+  (if (section-exists? *docmanager* [path])
+    (display-error view *file-error* (format *file-already-opened* path))
+    (try
+      (set-busy view true)
+      (when-let [content (import-lkif path rules-directory)]
+        (lkif/add-lkif-to-docmanager path content *docmanager*)
+        (do-open-content view path filename content))
+      (catch IllegalArgumentException
+          e (display-error view *open-error* (str *invalid-content* ".")))
+      (catch java.io.FileNotFoundException
+          e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
+      (catch java.io.IOException
+          e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
+      (catch org.xml.sax.SAXException
+          e (display-error view *open-error* *invalid-content*))
+      (finally
+       (set-busy view false)))))
+
+(defn on-open-file [view]
+  (let [rules-directory (get-property *rules-directory*)]
+    (if (empty? rules-directory)
+      (display-error view *config-error* *no-rule-directory*)
+      (m-let [file (ask-file-to-open view "LKIF files"  #{"xml" "lkif"})
+              path (.getPath file)
+              filename (.getName file)]
+        (do-open-file view path filename rules-directory)))))
 
 (defvar- *dot-description* "DOT Files")
 (defvar- *svg-description* "SVG Files")
 (defvar- *graphviz-svg-description* "Graphviz SVG Files")
 
-(deftrace suggested-filename [title id ext]
+(defn suggested-filename [title id ext]
   (if (nil? title)
     (File. (str id "." ext))
     (File. (str (str/join "_" (str/split (str/trim title) #"\s")) "." ext))))
 
-(deftrace get-extension [filename]
+(defn get-extension [filename]
   (let [idx (.lastIndexOf filename ".")]
     (when (not= idx -1)
-     (subs filename (inc idx)))))
+      (subs filename (inc idx)))))
 
-(deftrace on-export-graph [view path id]
+(defn on-export-graph [view path id]
   (when-let [ag (get-ag path id)]
     (when-let [[file desc] (ask-file-to-save view {*dot-description* "dot"
                                                    ;; *graphviz-svg-description* "svg"
@@ -105,8 +135,6 @@
                                              (suggested-filename (:title ag) id "svg"))]
       (let [filename (.getPath file)
             extension (get-extension filename)]
-        (prn "desc = ")
-        (prn desc)
         (condp = desc
             *svg-description*
           (export-graph-to-svg view ag statement-formatted filename)
@@ -115,9 +143,7 @@
           (export-graph-to-dot view ag statement-formatted filename)
 
           *graphviz-svg-description*
-          (do
-            (prn "export graphviz")
-            (export-graph-to-graphviz-svg view ag statement-formatted filename))
+          (export-graph-to-graphviz-svg view ag statement-formatted filename)
 
           ;; for the "All files filter":
           (condp = extension
@@ -125,19 +151,18 @@
             (export-graph-to-dot view ag statement-formatted filename)
 
             "svg"
-            (do
-              (prn "here")
-              (export-graph-to-svg view ag statement-formatted filename))
+            (export-graph-to-svg view ag statement-formatted filename)
 
             (display-error view *file-error* *file-format-not-supported*)))))))
 
-(deftrace save-lkif [view path]
+(defn save-lkif 
   "returns false if an error occured, true otherwise"
+  [view path]
   (try
     (set-busy view true)
-    (let [lkifdata (lkif/extract-lkif-from-docmanager path *docmanager*
-                                                      (get-fresh-ag-ids path))]
-      (lkif-export lkifdata path)
+    (let [lkifdata (lkif/extract-lkif-from-docmanager path *docmanager*)]
+      (export-lkif lkifdata path)
+      
       true)
     (catch java.io.IOException e
       (display-error view *save-error* (str *error-saving* ": " (.getMessage e)))
@@ -145,84 +170,101 @@
     (finally
      (set-busy view false))))
 
-(deftrace do-close-graph [view path id]
-  "close graph without saving it"
-  (cancel-updates-section *docmanager* [path :ags id])
-  (update-dirty-state view path (get-ag path id) false)
-  (update-undo-redo-statuses view path id)
-  (close-graph view path id))
+(defn on-saveas [view oldpath]
+  (m-let [[file _] (ask-file-to-save view {"LKIF files (.xml)" "xml"}
+                                     (if (new-lkif? oldpath)
+                                       (File. (get-newlkif-filename oldpath))
+                                       (File. oldpath)))
+          path (.getPath file)
+          filename (.getName file)]
+    (let [content (lkif/extract-lkif-from-docmanager oldpath *docmanager*)
+          opened (map second (filter #(= (first %) oldpath) (opened-graphs view)))
+          currentid (second (current-graph view))]
+      (when (section-exists? *docmanager* [path])
+        (close-all view path))
+      (lkif/add-lkif-to-docmanager path content *docmanager*)
+      (when (save-lkif view path)
+        (set-lkif-dirty view path false))
+      (do-open-content view path filename content)
+      (doseq [id opened]
+        (on-open-graph view path id))
+      (on-open-graph view path currentid)
+      true)))
 
-(deftrace on-save [view path id]
+(defn on-save
   "returns false if an error occured, true otherwise"
-  (prn "on-save")
-  (delete-section-history *docmanager* [path :ags id])
-  (remove-fresh-ag path id)
-  (update-undo-redo-statuses view path id)
-  (if (save-lkif view path)
-    (do
-     (update-dirty-state view path (get-ag path id) false)
-     true)
-    false))
+  [view path]
+  (if (new-lkif? path)
+    (if (on-saveas view path)
+      (do
+        (remove-fresh-ags path)
+        (remove-newlkif path)
+        (close-all view path)
+        true)
+      false)
+    (if (save-lkif view path)
+      (do
+        (remove-fresh-ags path)
+        (set-lkif-dirty view path false)
+        (mark-lkif-saved view path)
+        true)
+      false)))
 
-(deftrace on-saveas [view path id]
+(defn on-copy-graph [view path id]
   (when-let [title (read-sentence view *save-as* "Graph title:")]
     (cond
      
      (empty? title)
      (do
        (display-error view *save-as* "Name is empty.")
-       (on-saveas view path id))
+       (on-copy-graph view path id))
      
      (contains? (get-graphs-titles path) title)
      (do
        (display-error view *save-as* (format "Title '%s' is already used." title))
-       (on-saveas view path id))
+       (on-copy-graph view path id))
 
      :else
-     (do
-       (when-let [ag (get-ag path id)]
-        (let [newag (assoc ag :title title)
-              newid (gen-graph-id path)
-              newag (assoc newag :id newid)]
-          (add-section *docmanager* [path :ags newid] newag)
-          (init-stmt-counter path (:id newag))
-          (let [success (on-save view path newid)]
-            (new-graph-added view path newag statement-formatted)
-            (open-graph view path newag statement-formatted)
-            (when (not success)
-              (update-dirty-state view path ag true))
-            (display-graph-property view path (:id newag) (:title newag)
-                                    (:main-issue newag)))))))))
+     (when-let [ag (get-ag path id)]
+       (let [newag (assoc ag :title title)
+             newid (gen-graph-id path)
+             newag (assoc newag :id newid)]
+         (add-section *docmanager* [path :ags newid] newag)
+         (init-stmt-counter path (:id newag))
+         (new-graph-added view path newag statement-formatted)
+         (open-graph view path newag statement-formatted)
+         (update-dirty-state view path newag true)
+         (display-graph-property view path (:id newag) (:title newag)
+                                 (statement-formatted (:main-issue newag))))))))
 
-(deftrace on-close-graph [view path id]
-  (prn "on-close-graph")
-  (if (is-ag-dirty path id)
-    (case (ask-yesnocancel-question view "Close" "Save graph before closing?")
-          :yes (when (on-save view path id)
-                 (close-graph view path id))
+(defn on-close-graph [view path id]
+  (if (ag-dirty? path id)
+    (case (ask-yesnocancel-question view "Close" "Save file before closing?")
+          :yes (when (on-save view path)
+                 (do-close-graph view path id true))
           
-          :no (do-close-graph view path id)
+          :no (do-close-graph view path id false)
           
           :cancel nil)
-    (close-graph view path id)))
+    (do-close-graph view path id true)))
 
-(deftrace on-export-file [view path]
+(defn on-export-file [view path]
   (when (ask-confirmation view "Export" "Export all the argument graphs?")
     (doseq [id (get-ags-id path)]
       (on-export-graph view path id))))
 
-(deftrace on-about [view]
+(defn on-about [view]
   (display-about view))
 
-(deftrace on-printpreview-graph [view path id]
+(defn on-printpreview-graph [view path id]
   (let [ag (get-ag path id)]
     (print-preview view path ag statement-formatted)))
 
-(deftrace on-print-graph [view path id]
+(defn on-print-graph [view path id]
   (let [ag (get-ag path id)]
     (print-graph view path ag statement-formatted)))
 
-(deftrace on-search-begins [view searchinfo]
+(defn on-search-begins [view searchinfo]
   (let [text (first searchinfo)
         options (second searchinfo)
         [path id] (current-graph view)]
@@ -231,36 +273,32 @@
     ;; wait + access from the do-search function)
     (.start (Thread. #(do-search view path id text options)))))
 
-(deftrace on-search-ends [view]
-  (prn "search ends")
+(defn on-search-ends [view]
   (reset! *end-search* true))
 
-(deftrace do-display-statement-property
-   [view path id maptitle stmt stmt-fmt status proofstandard acceptable complement-acceptable]
-   (display-statement-property
-    view path id maptitle stmt stmt-fmt status
-    proofstandard acceptable complement-acceptable)
-   (set-current-statement-property
-    view path id maptitle stmt stmt-fmt status
-    proofstandard acceptable complement-acceptable))
+(defn do-display-statement-property
+  [view path id maptitle stmt stmt-fmt status proofstandard acceptable complement-acceptable]
+  (display-statement-property
+   view path id maptitle stmt stmt-fmt status
+   proofstandard acceptable complement-acceptable)
+  (set-current-statement-property
+   view path id maptitle stmt stmt-fmt status
+   proofstandard acceptable complement-acceptable))
 
-(deftrace on-select-statement [path id stmt view]
-  (prn "on select statement")
-  (when-let* [ag (get-ag path id)
-              node (get-node ag stmt)
-              status (:status node)
-              proofstandard (:standard node)
-              acceptable (:acceptable node)
-              complement-acceptable (:complement-acceptable node)]
+(defn on-select-statement [path id stmt view]
+  (m-let [ag (get-ag path id)
+          node (get-node ag stmt)
+          status (:status node)
+          proofstandard (:standard node)
+          acceptable (:acceptable node)
+          complement-acceptable (:complement-acceptable node)]
     (do-display-statement-property view path id (:title ag)
-                                   (str stmt) statement-formatted status
+                                   (stmt-str stmt) statement-formatted status
                                    proofstandard acceptable complement-acceptable)))
 
-(deftrace on-select-argument [path id arg view]
-  (prn "on select argument")
-  (when-let* [ag (get-ag path id)
-             arg (get-argument ag (:id arg))]
-    (prn arg)
+(defn on-select-argument [path id arg view]
+  (m-let [ag (get-ag path id)
+          arg (get-argument ag (:id arg))]
     (display-argument-property
      view
      path
@@ -271,88 +309,88 @@
      (:applicable arg)
      (:weight arg)
      (:direction arg)
-     (:scheme arg))))
+     (:scheme arg))
+    (set-current-argument-properties
+     view
+     path
+     id
+     (:id arg)
+     (:direction arg)
+     (:weight arg))))
 
-(deftrace on-select-premise [path id arg pm view]
-  (prn "on select premise")
-  (prn "arg")
-  (prn arg)
-  (prn "premise")
-  (prn pm)
+(defn on-select-premise [path id arg pm view]
   (let [type (:type pm)]
     (display-premise-property view path id (:title (get-ag path id))
                               arg
-                              (:polarity pm) type (:role pm) (:atom pm))))
+                              (:polarity pm) type (:role pm) (:atom pm))
+    (set-current-premise-properties view path id arg (:atom pm) (:polarity pm) type)))
 
-(deftrace on-open-statement [view path id stmt]
+(defn on-open-statement [view path id stmt]
   (when-let [ag (get-ag path id)]
     (display-statement view path ag stmt statement-formatted)))
 
-(deftrace on-open-argument [view path id arg]
+(defn on-open-argument [view path id arg]
   (when-let [ag (get-ag path id)]
     (display-argument view path ag arg statement-formatted)))
 
-(deftrace str-to-stmt [s]
-  (letfn [(sexp? [s] (= \( (first s)))
-          (check-stmt [s] (when (and (statement? s) (not (empty? s))) s))]
-    (when (not (nil? s))
-      (let [s (str/trim s)]
-        (if (sexp? s)
-          (try
-            (let [sexp (read-string s)]
-              (check-stmt sexp))
-            (catch Exception e
-              nil))
-          (check-stmt s))))))
-
-(deftrace do-edit-statement [view path id previous-content-as-obj newcontent oldag]
-  (prn "do edit statement")
-  (when-let* [ag (update-statement-content oldag previous-content-as-obj newcontent)
-              node (get-node ag previous-content-as-obj)
-              status (:status node)
-              proofstandard (:standard node)
-              acceptable (:acceptable node)
-              complement-acceptable (:complement-acceptable node)]
-    (do-update-section view [path :ags (:id ag)] ag)
+(defn do-edit-statement [view path id previous-content-as-obj newcontent oldag]
+  (m-let [ag (update-statement-content oldag previous-content-as-obj newcontent)
+          node (get-node ag previous-content-as-obj)
+          status (:status node)
+          proofstandard (:standard node)
+          acceptable (:acceptable node)
+          complement-acceptable (:complement-acceptable node)]
+    (do-ag-update view [path :ags (:id ag)] ag)
     (do-display-statement-property view path id (:title ag)
-                                   (str newcontent) statement-formatted status
+                                   (stmt-str newcontent) statement-formatted status
                                    proofstandard acceptable complement-acceptable)
     (statement-content-changed view path ag previous-content-as-obj newcontent)
     (display-statement view path ag newcontent statement-formatted)))
 
-(deftrace on-edit-statement [view path id stmt-info]
-  (prn "on-edit-statement")
-  (prn stmt-info)
+(defn on-edit-statement [view path id stmt-info retry-on-error]
   (let [{:keys [content previous-content]} stmt-info
         oldag (get-ag path id)
-        previous-content-as-obj (str-to-stmt previous-content) 
-        newcontent (str-to-stmt content)
+        previous-content-as-obj (str-stmt previous-content) 
+        newcontent (str-stmt content)
         isnil (nil? newcontent)
         exists (statement-node oldag newcontent)]
-    (if (or isnil exists)
-      (loop [msg (cond isnil *invalid-content* exists *statement-already-exists*)]
-        (display-error view *edit-error* msg)
-        (let [content (read-statement view content)
-              newcontent (str-to-stmt content)]
-          (cond (nil? content)
-                nil
+    (cond exists
+          (display-statement view path oldag newcontent statement-formatted)
 
-                (nil? newcontent)
-                (recur msg)
+          isnil
+          (loop [msg *invalid-content*]
+            (display-error view *edit-error* msg)
+            (when retry-on-error
+              (let [content (read-statement view content)
+                    newcontent (str-stmt content)]
+                (cond (nil? content)
+                      nil
 
-                :else
-                (if (statement-node oldag newcontent)
-                  (recur *statement-already-exists*)
-                  (do-edit-statement view path id previous-content-as-obj newcontent oldag)))))
-      (do-edit-statement view path id previous-content-as-obj newcontent oldag))))
+                      (nil? newcontent)
+                      (recur *invalid-content*)
 
-(deftrace on-edit-statement-status [view path id stmt-info]
-  (prn "on-edit-statement-status")
-  (prn "info = ")
-  (prn stmt-info)
+                      (= newcontent previous-content-as-obj)
+                      (display-statement view path oldag newcontent statement-formatted)
+
+                      (statement-node oldag newcontent)
+                      (recur *statement-already-exists*)
+                      
+                      :else
+                      (do-edit-statement view path id previous-content-as-obj newcontent oldag)))))
+          
+          :else (do-edit-statement view path id previous-content-as-obj newcontent oldag))))
+
+(defn on-statement-editor [view path id stmt]
+  (m-let [ag (get-ag path id)
+          newcontent (read-statement view (stmt-str stmt))
+          previous-content (stmt-str stmt)]
+    (on-edit-statement view path id
+                       {:previous-content previous-content :content newcontent} true)))
+
+(defn on-edit-statement-status [view path id stmt-info]
   (let [{:keys [status previous-content previous-status]} stmt-info
         oldag (get-ag path id)
-        content (str-to-stmt previous-content)]
+        content (str-stmt previous-content)]
     (when (and (not= status previous-status)
                (statement-node oldag content))
       (let [ag (update-statement oldag content status)
@@ -361,121 +399,111 @@
             proofstandard (:standard node)
             acceptable (:acceptable node)
             complement-acceptable (:complement-acceptable node)]
-        (do-update-section view [path :ags (:id oldag)] ag)
+        (do-ag-update view [path :ags (:id oldag)] ag)
         (do-display-statement-property view path id (:title ag)
                                        (str content) statement-formatted status
                                        proofstandard acceptable complement-acceptable)
         (statement-status-changed view path ag content)
         (display-statement view path ag content statement-formatted)))))
 
-(deftrace on-edit-statement-proofstandard [view path id stmt-info]
-  (prn "on-edit-statement-proofstandard")
-  (prn "stmt-info")
-  (prn stmt-info)
+(defn on-edit-statement-proofstandard [view path id stmt-info]
   (let [{:keys [proofstandard content previous-proofstandard]} stmt-info
-        content (str-to-stmt content)]
+        content (str-stmt content)]
     (when (not= proofstandard previous-proofstandard)
-      (when-let* [ag (update-statement-proofstandard (get-ag path id)
-                                                     content proofstandard)
-                  node (get-node ag content)
-                  status (:status node)
-                  proofstandard (:standard node)
-                  acceptable (:acceptable node)
-                  complement-acceptable (:complement-acceptable node)]
-        (do-update-section view [path :ags (:id ag)] ag)
+      (m-let [ag (update-statement-proofstandard (get-ag path id)
+                                                 content proofstandard)
+              node (get-node ag content)
+              status (:status node)
+              proofstandard (:standard node)
+              acceptable (:acceptable node)
+              complement-acceptable (:complement-acceptable node)]
+        (do-ag-update view [path :ags (:id ag)] ag)
         (do-display-statement-property view path id (:title ag)
                                        (str content) statement-formatted status
                                        proofstandard acceptable complement-acceptable)
         (statement-proofstandard-changed view path ag content)
         (display-statement view path ag content statement-formatted)))))
 
-(deftrace on-undo [view path id]
-  (prn "on undo")
+(defn on-undo [view path id]
   (undo-section *docmanager* [path :ags id])
   (update-undo-redo-statuses view path id)
   (update-dirty-state view path (get-ag path id) true)
   (edit-undone view path id))
 
-(deftrace on-redo [view path id]
-  (prn "on redo")
+(defn on-redo [view path id]
   (redo-section *docmanager* [path :ags id])
   (update-undo-redo-statuses view path id)
   (update-dirty-state view path (get-ag path id) true)
   (edit-redone view path id))
 
-(deftrace on-copyclipboard [view path id]
+(defn on-copyclipboard [view path id]
   (copyselection-clipboard view path id))
 
-(deftrace on-title-edit [view path id ag-info]
+(defn on-title-edit [view path id ag-info]
   (let [{:keys [previous-title title]} ag-info]
     (when (not= previous-title title)
       (when-let [ag (get-ag path id)]
-        (if (is-ag-dirty path id)
-          (display-error view *edit-error* "Please save the graph first.")
+        (when (ask-confirmation view *rename* *warning-on-rename*)
           (let [ag (assoc ag :title title)]
             (update-section *docmanager* [path :ags id] ag)
             (delete-section-history *docmanager* [path :ags id])
-            ;; bug here: if the graph can't be saved, the title won't be changed
-            ;; on disk and the user won't be able to force a second save
-            ;; since the save button is only for the graph editor
-            ;; as a workaround we open the graph, to allow a second save!
+            (update-undo-redo-statuses view path id)
             (title-changed view path ag title)
-            (when (not (save-lkif view path))
-              (open-graph view path ag statement-formatted)
-              (update-dirty-state view path ag true))
-            (display-graph-property view path id title (:main-issue ag))))))))
+            (update-dirty-state view path ag true)
+            (display-graph-property view path id title
+                                    (statement-formatted (:main-issue ag)))))))))
 
-(deftrace on-premise-edit-polarity [view path id pm-info]
-  (when-let* [ag (get-ag path id)
-              {:keys [atom previous-polarity polarity]} pm-info]
+(defn on-premise-edit-polarity [view path id pm-info]
+  (m-let [ag (get-ag path id)
+          {:keys [atom previous-polarity polarity]} pm-info]
     (when (not= previous-polarity polarity)
       (let [oldarg (:arg pm-info)
             ag (update-premise-polarity ag oldarg atom polarity)
             arg (get-argument ag (:id oldarg))
-            title (:title ag)]
-        (do-update-section view [path :ags (:id ag)] ag)
-        (premise-polarity-changed view path ag oldarg arg (get-premise arg atom))
+            title (:title ag)
+            pm (get-premise arg atom)]
+        (do-ag-update view [path :ags (:id ag)] ag)
+        (premise-polarity-changed view path ag oldarg arg pm)
+        (set-current-premise-properties view path id arg (:atom pm) (:polarity pm) (:type pm))
         (display-premise-property view path id title
                                   arg
                                   polarity
                                   (:previous-type pm-info)
                                   (:previous-role pm-info) atom)))))
 
-(deftrace on-premise-edit-type [view path id pm-info]
-  (prn "on premise edit type")
-  (when-let* [ag (get-ag path id)
-              {:keys [previous-type type previous-role arg atom]} pm-info]
+(defn on-premise-edit-type [view path id pm-info]
+  (m-let [ag (get-ag path id)
+          {:keys [previous-type type previous-role arg atom]} pm-info]
     (when (not= previous-type type)
       (let [ag (update-premise-type ag arg atom type)
             newarg (get-argument ag (:id arg))
             pm (get-premise newarg atom)]
-        (do-update-section view [path :ags (:id ag)] ag)
+        (do-ag-update view [path :ags (:id ag)] ag)
         (premise-type-changed view path ag arg newarg (get-premise newarg atom))
+        (set-current-premise-properties view path id arg (:atom pm) (:polarity pm) (:type pm))
         (display-premise-property view path id (:title ag) arg
                                   (:polarity pm) type (:previous-role pm) atom)))))
 
-(deftrace on-premise-edit-role [view path id pm-info]
-  (prn "on premise edit role")
-  (when-let* [ag (get-ag path id)
-              {:keys [previous-role previous-type role arg atom]} pm-info]
+(defn on-premise-edit-role [view path id pm-info]
+  (m-let [ag (get-ag path id)
+          {:keys [previous-role previous-type role arg atom]} pm-info]
     (when (not= previous-role role)
       (let [ag (update-premise-role ag arg atom role)
             newarg (get-argument ag (:id arg))
             pm (get-premise newarg atom)]
-        (do-update-section view [path :ags (:id ag)] ag)
+        (do-ag-update view [path :ags (:id ag)] ag)
         (premise-role-changed view path ag arg newarg (get-premise newarg atom))
         (display-premise-property view path id (:title ag) arg (:polarity pm)
                                   previous-type role atom)))))
 
-(deftrace on-argument-edit-title [view path id arg-info]
-  (prn "on argument edit")
-  (when-let* [ag (get-ag path id)
-              {:keys [argid previous-title title]} arg-info]
+(defn on-argument-edit-title [view path id arg-info]
+  (m-let [ag (get-ag path id)
+          {:keys [argid previous-title title]} arg-info]
     (when (not= previous-title title)
       (let [arg (get-argument ag argid)
             ag (update-argument-title ag arg title)
             arg (get-argument ag argid)]
-        (do-update-section view [path :ags (:id ag)] ag)
+        (do-ag-update view [path :ags (:id ag)] ag)
         (argument-title-changed view path ag arg title)
         (display-argument-property
          view
@@ -490,16 +518,37 @@
          (:scheme arg))
         (display-argument view path ag arg statement-formatted)))))
 
-(deftrace on-argument-edit-weight [view path id arg-info]
-  (prn "on argument edit weight")
-  (prn arg-info)
-  (when-let* [ag (get-ag path id)
-              {:keys [previous-weight weight argid]} arg-info]
+(defn on-argument-edit-scheme [view path id arg-info]
+  (m-let [ag (get-ag path id)
+          {:keys [argid previous-scheme scheme]} arg-info]
+    (when (not= previous-scheme scheme)
+      (let [arg (get-argument ag argid)
+            ag (update-argument-scheme ag arg scheme)
+            arg (get-argument ag argid)]
+        (do-ag-update view [path :ags (:id ag)] ag)
+        (argument-scheme-changed view path ag arg scheme)
+        (display-argument-property
+         view
+         path
+         id
+         (:title ag)
+         argid
+         (:title arg)
+         (:applicable arg)
+         (:weight arg)
+         (:direction arg)
+         (:scheme arg))
+        (display-argument view path ag arg statement-formatted))
+      )))
+
+(defn on-argument-edit-weight [view path id arg-info]
+  (m-let [ag (get-ag path id)
+          {:keys [previous-weight weight argid]} arg-info]
     (when (not= previous-weight weight)
       (let [arg (get-argument ag argid)
             newag (update-argument-weight ag arg weight)
             arg (get-argument newag argid)]
-        (do-update-section view [path :ags (:id ag)] newag)
+        (do-ag-update view [path :ags (:id ag)] newag)
         (argument-weight-changed view path newag arg weight)
         (display-argument-property
          view
@@ -514,16 +563,14 @@
          (:scheme arg))
         (display-argument view path ag arg statement-formatted)))))
 
-(deftrace on-argument-edit-direction [view path id arg-info]
-  (prn "on-argument-edit-direction")
-  (prn arg-info)
-  (when-let* [ag (get-ag path id)
-              {:keys [previous-direction direction argid]} arg-info]
+(defn on-argument-edit-direction [view path id arg-info]
+  (m-let [ag (get-ag path id)
+          {:keys [previous-direction direction argid]} arg-info]
     (when (not= previous-direction direction)
       (let [arg (get-argument ag argid)
             ag (update-argument-direction ag arg direction)
             arg (get-argument ag argid)]
-        (do-update-section view [path :ags (:id ag)] ag)
+        (do-ag-update view [path :ags (:id ag)] ag)
         (argument-direction-changed view path ag arg direction)
         (display-argument-property
          view
@@ -538,37 +585,34 @@
          (:scheme arg))
         (display-argument view path ag arg statement-formatted)))))
 
-(deftrace on-add-existing-premise [view path id arg stmt]
+(defn on-add-existing-premise [view path id arg stmt]
   (when-let [ag (get-ag path id)]
     (when (nil? (get-premise arg stmt))
       ;; premise does not already exists!
       (let [arg (get-argument ag (:id arg))]
         (if-let [ag (add-premise ag arg stmt)]
-          (let [arg (get-argument ag (:id arg))]
-            (do-update-section view [path :ags (:id ag)] ag)
-            (premise-added view path ag arg stmt))
+          (let [arg (get-argument ag (:id arg))
+                pm (get-premise arg stmt)]
+            (do-ag-update view [path :ags (:id ag)] ag)
+            (premise-added view path ag arg stmt)
+            (set-current-premise-properties view path id arg
+                                            (:atom pm) (:polarity pm) (:type pm)))
           (display-error view *edit-error* *cycle-error*))))))
 
-(deftrace on-refresh [view path id]
-  (when-let [ag (get-ag path id)]
-    (do-update-section view [path :ags (:id ag)] ag)
-    (prn "on-refresh")
-    (pprint ag)
-    (redisplay-graph view path ag statement-formatted)))
-
-(deftrace on-delete-premise [view path id arg pm]
-  (prn "pm =")
-  (prn pm)
-  (when-let* [ag (get-ag path id)
-              arg (get-argument ag (:id arg))
-              ag (delete-premise ag arg pm)
-              arg (get-argument ag (:id arg))]
-    (do-update-section view [path :ags (:id ag)] ag)
+(defn on-delete-premise [view path id arg pm]
+  (m-let [ag (get-ag path id)
+          arg (get-argument ag (:id arg))
+          ag (delete-premise ag arg pm)
+          arg (get-argument ag (:id arg))]
+    (do-ag-update view [path :ags (:id ag)] ag)
     (premise-deleted view path ag arg pm)))
 
-(deftrace prompt-statement-content [view ag suggestion]
+(defn prompt-statement-content
+  "asks the user the content of a new statement. Prompts
+   again if the content is invalid or already exists"
+  [view ag suggestion]
   (let [stmt (read-statement view suggestion)
-        stmt-as-obj (str-to-stmt stmt)]
+        stmt-as-obj (str-stmt stmt)]
     (cond (nil? stmt)
           nil
 
@@ -585,83 +629,65 @@
           :else
           stmt-as-obj)))
 
-(deftrace on-new-premise [view path id arg]
-  (prn "on new premise")
-  (when-let* [ag (get-ag path id)
-              arg (get-argument ag (:id arg))
-              stmt (prompt-statement-content view ag "")
-              ag (update-statement ag stmt)
-              arg (get-argument ag (:id arg))]
+(defn on-new-premise [view path id arg]
+  (m-let [ag (get-ag path id)
+          arg (get-argument ag (:id arg))
+          stmt (prompt-statement-content view ag "")
+          ag (update-statement ag stmt)
+          arg (get-argument ag (:id arg))]
     (if-let [ag (add-premise ag arg stmt)]
       (do
-        (do-update-section view [path :ags (:id ag)] ag)
+        (do-ag-update view [path :ags (:id ag)] ag)
         (new-premise-added view path ag arg stmt statement-formatted)
         (display-statement view path ag stmt statement-formatted))
       (display-error view *edit-error* *cycle-error*))))
 
-(deftrace on-delete-statement [view path id stmt]
-  (prn "on delete stmt")
-  (prn "stmt =")
-  (prn stmt)
-  (when-let* [ag (get-ag path id)
-              ag (delete-statement ag stmt)]
-    (do-update-section view [path :ags (:id ag)] ag)
-    ;; (prn "after delete stmt =")
-    ;; (pprint ag)
-    ;; (prn)
+(defn on-delete-statement [view path id stmt]
+  (m-let [ag (get-ag path id)
+          ag (delete-statement ag stmt)]
+    (do-ag-update view [path :ags (:id ag)] ag)
     (statement-deleted view path ag stmt)))
 
-(deftrace on-delete-argument [view path id arg]
-  (prn "on-delete-argument")
-  (when-let* [ag (get-ag path id)
-              arg (get-argument ag (:id arg))
-              ag (delete-argument ag arg)]
-    (do-update-section view [path :ags (:id ag)] ag)
-    (prn "ag after delete argument = ")
-    (pprint ag)
-    (prn)
+(defn on-delete-argument [view path id arg]
+  (m-let [ag (get-ag path id)
+          arg (get-argument ag (:id arg))
+          ag (delete-argument ag arg)]
+    (do-ag-update view [path :ags (:id ag)] ag)
     (argument-deleted view path ag arg)))
 
-(deftrace on-change-mainissue [view path id stmt]
-  (prn "on change mainissue")
-  (prn "stmt =")
-  (prn stmt)
+(defn on-change-mainissue [view path id stmt]
   (when-let [ag (get-ag path id)]
     (when (or (nil? stmt) (statement-node ag stmt))
       (let [ag (change-mainissue ag stmt)]
-        (do-update-section view [path :ags (:id ag)] ag)
+        (do-ag-update view [path :ags (:id ag)] ag)
         (mainissue-changed view path ag stmt)))))
 
-(deftrace do-on-new-statement [view path ag stmt]
+(defn do-on-new-statement [view path ag stmt]
   (let [ag (update-statement ag stmt)]
-    (do-update-section view [path :ags (:id ag)] ag)
+    (do-ag-update view [path :ags (:id ag)] ag)
     (new-statement-added view path ag stmt statement-formatted)
     (display-statement view path ag stmt statement-formatted)
     stmt))
 
-(deftrace on-new-statement [view path id]
+(defn on-new-statement [view path id]
   "creates a new statements and returns it"
   (when-let [ag (get-ag path id)]
     (let [stmt (gen-statement-content path ag)]
       (when-let [stmt (prompt-statement-content view ag "")]
         (do-on-new-statement view path ag stmt)))))
 
-(deftrace on-new-argument [view path id stmt]
+(defn on-new-argument [view path id stmt]
   "creates a new argument and returns it"
-  (prn "on new argument")
-  (prn "stmt = ")
-  (prn stmt)
-  (when-let* [ag (get-ag path id)
-              arg (pro (gen-argument-id ag) stmt ())
-              ag (assert-argument ag arg)]
-    (do-update-section view [path :ags (:id ag)] ag)
+  (m-let [ag (get-ag path id)
+          arg (pro (gen-argument-id ag) stmt ())
+          ag (assert-argument ag arg)]
+    (do-ag-update view [path :ags (:id ag)] ag)
     (new-argument-added view path ag arg)
     (display-argument view path ag arg statement-formatted)
     arg))
 
-(deftrace on-new-graph [view path]
+(defn on-new-graph [view path]
   "creates a new graph and returns its id"
-  (prn "on new graph")
   (let [title (gen-graph-title path)
         id (gen-graph-id path)
         ag (argument-graph id title nil)
@@ -672,44 +698,36 @@
     (new-graph-added view path ag statement-formatted)
     (open-graph view path ag statement-formatted)
     (update-dirty-state view path ag true)
-    (display-graph-property view path (:id ag) (:title ag) (:main-issue ag))
+    (display-graph-property view path (:id ag) (:title ag)
+                            (statement-formatted (:main-issue ag)))
     id))
 
-(deftrace on-delete-graph [view path id]
+(defn on-delete-graph [view path id]
   (when (ask-confirmation view "Delete" "Permanently delete the graph?")
-    (close-graph view path id)
+    (do-close-graph view path id false)
     (remove-section *docmanager* [path :ags id])
-    (save-lkif view path)
-    ;; here if an error occurs the graph won't be deleted
-    ;; on disk and and forcing a save cannot be done
+    (set-lkif-dirty view path true)
     (graph-deleted view path id)))
 
-(deftrace create-template [view path]
-  (let [id (on-new-graph view path)
-        ag (get-ag path id)
-        stmt (do-on-new-statement view path ag "Here is the conclusion...")
-        stmt2 (do-on-new-statement view path ag "... and here a premise! Double-click to edit!")
-        arg (on-new-argument view path id stmt)
-        ag (get-ag path id)]
-    (on-change-mainissue view path id stmt)
-    (on-add-existing-premise view path id arg stmt2)
-    (on-refresh view path id)
-    (on-save view path id)
-    (display-statement view path ag stmt statement-formatted)))
+(defn create-template [view path]
+  (m-let [content (import-lkif (get-resource-as-stream "templates/template.xml"))
+          ag (first (:ags content))
+          id (:id ag)]
+    (lkif/add-lkif-to-docmanager path content *docmanager*)
+    (on-open-graph view path id)))
 
-(deftrace on-new-file [view]
-  (when-let* [[file desc] (ask-file-to-save view {"LKIF files (.xml)" "xml"}
-                                            (File. "lkif1.xml"))
-              path (.getPath file)]
+(defn on-new-file [view]
+  (m-let [file (File/createTempFile "carneades" nil)
+          path (.getPath file)
+          filename (gen-newlkif-filename path)]
+    (.deleteOnExit file)
     (when (section-exists? *docmanager* [path])
       (close-all view path))
-    (lkif/add-lkif-to-docmanager path lkif/*empty-lkif-content* *docmanager*)
+    (create-template view path)
     (init-counters path)
-    (save-lkif view path)
-    (display-lkif-content view file (create-lkifinfo path))
-    (create-template view path)))
+    (display-lkif-content view path filename (create-lkifinfo path))))
 
-(deftrace exit [view]
+(defn exit [view]
   (letfn [(in-swank?
            []
            (try
@@ -718,60 +736,92 @@
              (catch Exception e
                false)))]
     (hide view)
-    (if (not (in-swank?))
-      (do
-        (prn "not in swank")
-        (System/exit 0))
-      (prn "in swank"))))
+    (when (not (in-swank?))
+      (System/exit 0))))
 
-(deftrace on-exit [view event]
-  (prn "on exit")
-  (let [unsavedgraphs (get-unsaved-graphs)]
-    (if (empty? unsavedgraphs)
+(defn on-exit [view]
+  (let [unsavedlkifs (get-unsaved-lkifs)]
+    (if (empty? unsavedlkifs)
       (exit view)
-      (case (ask-yesnocancel-question view "Close" "Save all graphs before closing?")
-            :yes (loop [unsavedgraphs unsavedgraphs]
-                   (if-let [[path id] (first unsavedgraphs)]
-                     (when (on-save view path id)
-                       ;; if we save successfully we continue
-                       (recur (rest unsavedgraphs)))
-                     ;; all saved, exit
+      (case (ask-yesnocancel-question view "Close" "Save files before closing?")
+            :yes (let [save-results (map (fn [path] (on-save view path))
+                                         unsavedlkifs)]
+                   (when (every? true? save-results)
                      (exit view)))
             :no (exit view)
             :cancel nil))))
 
-(deftrace on-close-file [view path]
-  (prn "on close file")
-  (let [unsaved (get-unsaved-graphs path)]
-    (if (not (empty? unsaved))
-      (case (ask-yesnocancel-question view "Close" "Save all graphs before closing?")
-            :yes (loop [unsaved unsaved]
-                   (if-let [id (first unsaved)]
-                     (when (on-save view path id)
-                       ;; save without problem? yes, we continue
-                       (recur (rest unsaved)))
-                     (close-all view path)))
-            :no (close-all view path)
-            :cancel nil)
-      (close-all view path))))
+(defn on-close-file [view path]
+  (if (lkif-dirty? path)
+    (case (ask-yesnocancel-question view "Close" "Save file before closing?")
+          :yes (do
+                 (on-save view path)
+                 (close-all view path))
+          :no (close-all view path)
+          :cancel nil)
+    (close-all view path)))
 
-(deftrace on-import-theory [view path]
-  (when-let* [info (ask-location-to-open view)
-              url (:location info)
-              lkif (add-import (get-lkif path) url)]
-    (lkif/update-imports path *docmanager* lkif)
-    (save-lkif view path)
-    (let [importurls (get-kbs-locations path)]
-      (display-lkif-property view path importurls))
-    ))
+(defn on-import-theory [view path]
+  (let [rules-directory (get-property *rules-directory*)]
+    (if (empty? rules-directory)
+      (display-error view *config-error* *no-rule-directory*)
+      (m-let [location (:location (ask-location-to-open view))
+              make-relative (fn [location root-lkif-dir rules-directory]
+                              (cond (url? location)
+                                    {:relative-path nil :failed false}
 
-(deftrace on-remove-imports [view path imports]
+                                    (in-directory? location rules-directory)
+                                    {:relative-path (carneades.engine.utils/make-relative
+                                                     location rules-directory)}
+
+                                    (in-directory? location root-lkif-dir)
+                                    {:relative-path (carneades.engine.utils/make-relative
+                                                     location root-lkif-dir)
+                                     :failed false}
+                                    
+                                    :else {:relative-path nil :failed false}
+                                    ))
+              root-lkif-dir (parent path)
+              relative-info (make-relative location root-lkif-dir rules-directory)]
+        (try
+          (let [lkif (if (:relative-path relative-info)
+                      (add-import (get-lkif path)
+                                  path
+                                  location
+                                  (:relative-path relative-info)
+                                  rules-directory)
+                      (add-import (get-lkif path)
+                                  path
+                                  location))]
+           (update-imports view path lkif)
+           (let [importurls (get-imports-locations path)]
+             (display-lkif-property view path importurls)))
+          (catch IllegalArgumentException
+              e (display-error view *open-error* (str *invalid-content* ".")))
+          (catch java.io.FileNotFoundException
+              e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
+          (catch java.io.IOException
+              e (display-error view *open-error* (str *invalid-content* ": " (.getMessage e))))
+          (catch org.xml.sax.SAXException
+              e (display-error view *open-error* *invalid-content*)))))))
+
+(defn on-remove-imports [view path imports]
   (when (and (not (empty? imports)) (ask-confirmation view *imports* *remove-imports*))
     (let [lkif (get-lkif path)
           lkif (reduce (fn [lkif importurl]
-                         (remove-import lkif importurl)) lkif imports)]
-      (lkif/update-imports path *docmanager* lkif)
-      (save-lkif view path)
-      (let [importurls (get-kbs-locations path)]
+                         (let [absolute (as-absolute-import path importurl)]
+                           (remove-import lkif absolute)))
+                       lkif imports)]
+      (update-imports view path lkif)
+      (let [importurls (get-imports-locations path)]
         (display-lkif-property view path importurls)))))
 
+(defn on-edit-preferences [view]
+  (m-let [properties (load-properties)
+          newproperties (read-properties view properties)]
+    (reset! *properties* newproperties)
+    (try
+      (store-properties newproperties)
+      (catch java.io.IOException e
+        (display-error view *save-error* (str *error-saving* ": " (.getMessage e)))
+        false))))

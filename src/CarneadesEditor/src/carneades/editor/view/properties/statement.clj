@@ -1,14 +1,15 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.properties.statement
+(ns ^{:doc "Function to display statement properties in the panel properties."}
+  carneades.editor.view.properties.statement
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         (carneades.editor.utils seq listeners))
   (:import carneades.editor.uicomponents.StatementPropertiesView
            (javax.swing KeyStroke Action AbstractAction)))
 
-(defvar- *statementProperties* (StatementPropertiesView/instance))
+(defvar- *statementProperties* (StatementPropertiesView.))
 (defvar- *statementTextArea* (.statementTextArea *statementProperties*))
 (defvar *statementStatusComboBox* (.statusComboBox *statementProperties*))
 (defvar *statementProofstandardComboBox* (.proofstandardComboBox *statementProperties*))
@@ -36,8 +37,7 @@
 
 (gen-listeners-fns "statement-edit")
 
-(defn init-statement-properties []
-  (StatementPropertiesView/reset))
+(defn init-statement-properties [])
 
 (defvar- *previous-statement-content* (atom {}))
 
@@ -75,8 +75,6 @@
   *statementProperties*)
 
 (defn statement-being-edited-info []
-  (prn "selected proofstandard =")
-  (prn (.getSelectedItem *statementProofstandardComboBox*))
   (merge {:content (.getText *statementTextArea*)
           :status (*txt-to-status* (.getSelectedItem *statementStatusComboBox*))
           :proofstandard (*txt-to-proofstandard* (.getSelectedItem *statementProofstandardComboBox*))}

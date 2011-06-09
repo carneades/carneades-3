@@ -105,20 +105,22 @@
   (make-engine* max-nodes max-turns ag1
                 (list (generate-arguments-from-rules rb1 critical-questions)
                       (builtins))))
-(time
- (do
-  (printf "succeed? %s\n"(succeed? '(bird Tweety) (engine 20 1 [])))
-  (printf "succeed? %s\n" (succeed? '(bird ?x) (engine 20 1 [])))
-  (printf "succeed? %s\n" (succeed? '(money item1) (engine 20 1 [])))
-  (printf "succeed? %s\n" (succeed? '(prior ?r1 ?r2) (engine 20 1 [])))
-  (printf "succeed? %s\n" (succeed? '(p3 a) (engine 20 1 [])))
-  (printf "succeed ? %s\n" (succeed? '(p9 a) (engine 20 1 [])))
-  (printf "fail? %s\n" (fail? '(goods item1) (engine 20 2 [])))
-  (printf "fail? %s\n" (fail? '(goods item2) (engine 20 3 [])))
-  (printf "fail? %s\n" (fail? '(convenient item1) (engine 20 2 '(valid))))
-  (printf "fail? %s\n" (fail? '(goods item2) (engine 20 2 '(priority))))
-  (printf "succeed? %s\n" (succeed? '(not (goods item2)) (engine 20 3 [])))
-  (printf "fail? %s\n" (fail? '(flies Tweety) (engine 20 2 '(excluded))))
-  (printf "succeed? %s\n" (succeed? '(applies ?r (goods ?x)) (engine 20 2 [])))
-  (printf "succeed? %s\n" (succeed? '(p11 ?x) (engine 20 1 [])))
-  (printf "succeed? %s\n" (succeed? '(taxable-income Sam ?x) (engine 20 1 [])))))
+
+(defn -main []
+ (time
+  (do
+    (printf "succeed? %s\n"(succeed? '(bird Tweety) (engine 20 1 [])))
+    (printf "succeed? %s\n" (succeed? '(bird ?x) (engine 20 1 [])))
+    (printf "succeed? %s\n" (succeed? '(money item1) (engine 20 1 [])))
+    (printf "succeed? %s\n" (succeed? '(prior ?r1 ?r2) (engine 20 1 [])))
+    (printf "succeed? %s\n" (succeed? '(p3 a) (engine 20 1 [])))
+    (printf "succeed ? %s\n" (succeed? '(p9 a) (engine 20 1 [])))
+    (printf "fail? %s\n" (fail? '(goods item1) (engine 20 2 [])))
+    (printf "fail? %s\n" (fail? '(goods item2) (engine 20 3 [])))
+    (printf "fail? %s\n" (fail? '(convenient item1) (engine 20 2 '(valid))))
+    (printf "fail? %s\n" (fail? '(goods item2) (engine 20 2 '(priority))))
+    (printf "succeed? %s\n" (succeed? '(not (goods item2)) (engine 20 3 [])))
+    (printf "fail? %s\n" (fail? '(flies Tweety) (engine 20 2 '(excluded))))
+    (printf "succeed? %s\n" (succeed? '(applies ?r (goods ?x)) (engine 20 2 [])))
+    (printf "succeed? %s\n" (succeed? '(p11 ?x) (engine 20 1 [])))
+    (printf "succeed? %s\n" (succeed? '(taxable-income Sam ?x) (engine 20 1 []))))))

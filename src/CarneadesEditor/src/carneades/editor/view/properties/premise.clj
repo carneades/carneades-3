@@ -1,21 +1,21 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.properties.premise
+(ns ^{:doc "Functions to display premise properties in the panel properties."}
+  carneades.editor.view.properties.premise
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.utils.seq)
   (:import carneades.editor.uicomponents.PremisePropertiesView))
 
-(defvar- *premiseProperties* (PremisePropertiesView/instance))
+(defvar- *premiseProperties* (PremisePropertiesView.))
 (defvar- *pathText* (.pathText *premiseProperties*))
 (defvar- *mapTitleText* (.mapTitleText *premiseProperties*))
 (defvar *negatedCheckBox* (.negatedCheckBox *premiseProperties*))
 (defvar *typeComboBox* (.typeComboBox *premiseProperties*))
 (defvar *roleText* (.roleText *premiseProperties*))
 
-(defn init-premise-properties []
-  (PremisePropertiesView/reset))
+(defn init-premise-properties [])
 
 (defvar- *type-to-str* {:carneades.engine.argument/ordinary-premise "Premise"
                         :carneades.engine.argument/assumption "Assumption"

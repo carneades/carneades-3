@@ -161,16 +161,4 @@ public class SearchParametersPanel extends javax.swing.JPanel {
     private javax.swing.JSpinner jSpinner2;
     // End of variables declaration//GEN-END:variables
 
-     // our modifications:
-    public static SearchParametersPanel panelInstance = new SearchParametersPanel();
-
-    public static synchronized SearchParametersPanel instance()
-    {
-        return panelInstance;
-    }
-
-    public static synchronized void reset()
-    {
-        panelInstance = new SearchParametersPanel();
-    }
 }

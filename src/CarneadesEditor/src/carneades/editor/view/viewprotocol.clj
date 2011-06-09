@@ -1,7 +1,11 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.viewprotocol)
+(ns ^{:doc "Definition of the View protcol. The View protocol abstracts
+            the concrete implementation of the View, independantly of a given
+            UI framework. Functions specific to Swing 
+            are defined in the SwingUI protocol."}
+  carneades.editor.view.viewprotocol)
 
 ;; defines functions that must be implemented by the UI
 ;; and are independant of a specific GUI library
@@ -13,8 +17,9 @@
   (hide [this])
   (open-graph [this path ag stmt-fmt] "open the graph for edition")
   (redisplay-graph [this path ag stmt-fmt])
-  (close-graph [this path id])
+  (close-graph [this path id isfresh])
   (current-graph [this] "returns [path id] for the graph currently edited")
+  (opened-graphs [this] "returns a sequence of [path id] for all graphs currently edited")
   (ask-file-to-open [this desc exts] "ask the user the LKIF file to open. 
                                  Returns File or nil")
   (ask-location-to-open [this])
@@ -22,7 +27,7 @@
   (export-graph-to-svg [this ag stmt-fmt filename])
   (export-graph-to-dot [this ag statement-formatted filename])
   (export-graph-to-graphviz-svg [this ag statement-formatted filename])
-  (display-lkif-content [this file graphinfos]
+  (display-lkif-content [this path filename graphinfos]
                         "display information relative to an LKIF file. 
                          graphinfos is a seq of [id title] ")
   (hide-lkif-content [this path])
@@ -35,6 +40,7 @@
   (ask-yesnocancel-question [this title content])
   (read-sentence [this title prompt])
   (read-statement [this content])
+  (read-properties [this properties])
   (display-error [this title content])
   (set-current-statement-property
    [this path id maptitle stmt stmt-fmt status proofstandard acceptable complement-acceptable])
@@ -59,8 +65,11 @@
   (edit-redone [this path id])
   (set-can-undo [this path id state])
   (set-can-redo [this path id state])
-  (set-dirty [this path ag state])
+  (set-dirty [this path id state])
+  (set-lkif-dirty [this path state])
   (copyselection-clipboard [this path id])
+  (set-current-premise-properties [this path id arg atom polarity type])
+  (set-current-argument-properties [this path id argid direction weight])
 
   ;; notifications:
   ;; these fine grained modifications avoid to redisplay the whole
@@ -78,6 +87,7 @@
   (premise-type-changed [this path ag oldarg arg pm])
   (premise-role-changed [this path ag oldarg arg pm])
   (argument-title-changed [this path ag arg title])
+  (argument-scheme-changed [this path ag arg scheme])
   (argument-weight-changed [this path ag arg weight])
   (argument-direction-changed [this path ag arg direction])
   (premise-added [this path ag arg stmt])

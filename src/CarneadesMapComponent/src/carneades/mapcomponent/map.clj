@@ -5,10 +5,14 @@
   (:use clojure.contrib.def
         carneades.mapcomponent.map-styles
         carneades.engine.argument
+        carneades.engine.utils
         carneades.engine.statement)
+  (:require [clojure.string :as str])
   (:import (javax.swing SwingConstants SwingUtilities)
-           (com.mxgraph.util mxConstants mxUtils mxCellRenderer mxPoint mxEvent
+           (com.mxgraph.util mxConstants mxUtils mxCellRenderer mxCellRenderer$CanvasFactory
+                             mxPoint mxEvent
                              mxEventSource$mxIEventListener mxUndoManager)
+           com.mxgraph.canvas.mxSvgCanvas
            com.mxgraph.swing.util.mxGraphTransferable
            com.mxgraph.swing.handler.mxRubberband
            (com.mxgraph.view mxGraph mxStylesheet)
@@ -55,7 +59,78 @@
            
           :else formatted)))
 
-(defrecord StatementCell [ag stmt stmt-str formatted] Object
+(defvar- *max-len* 30)
+
+(defn shorten [word]
+  (if (> (count word) *max-len*)
+    (str (subs word 0 (- *max-len* 2)) "..")
+    word))
+
+(defn make-line [words]
+  (letfn [(append
+           [line word]
+           (if (empty? line)
+             word
+             (str line " " word)))]
+   (loop [taken 0
+          len 0
+          words words
+          line ""]
+     (let [word (first words)
+           l (count word)]
+       (cond (empty? words)
+             {:words words :line line :taken taken}
+
+             (> l *max-len*)
+             (if (zero? taken)
+               (let [word (shorten word)
+                     line (append line word)]
+                 {:words (rest words) :line line :taken (inc taken)
+                  :last-truncated true})
+               {:words words :line line :taken taken})
+
+             (> (+ len l) *max-len*)
+             {:words words :line line :taken taken}
+            
+             :else
+             (recur (inc taken)
+                    (+ len l)
+                    (rest words)
+                    (append line word)))))))
+
+(defn trunk [s]
+  (if (nil? s)
+    ""
+    (let [words (str/split s #"\s+")
+          {words :words line1 :line} (make-line words)
+          {words :words line2 :line} (make-line words)
+          {words :words line3 :line last-truncated :last-truncated} (make-line words)]
+      (cond (and (nil? line2) (nil? line3))
+            line1
+
+            (nil? line3)
+            (str line1 "\n" line2)
+            
+            :else
+            (str line1 "\n" line2 "\n" line3
+                 (cond (and last-truncated (not (empty? words)))
+                       "."
+
+                       (not (empty? words))
+                       "..."
+                       
+                       :else nil
+                       ))))))
+
+(defn trunk-scheme [s]
+  (when-not (nil? s)
+    (let [len (count s)
+          max-size 20]
+      (if (<= len max-size)
+        s
+        (str (subs s 0 (- max-size 3)) "...")))))
+
+(defrecord StatementCell [ag stmt stmt-str formatted full] Object
   (toString
    [this]
    formatted))
@@ -63,7 +138,9 @@
 (defrecord ArgumentCell [arg] Object
   (toString
    [this]
-   (if (= (:direction arg) :pro) "+" "‒")))
+   (or (trunk-scheme (:scheme arg)) "")
+   ;; (if (= (:direction arg) :pro) "+" "‒")
+   ))
 
 (defrecord PremiseCell [arg pm] Object
   (toString
@@ -82,7 +159,9 @@
     (set! mxConstants/VERTEX_SELECTION_COLOR color)
     (set! mxConstants/EDGE_SELECTION_COLOR color)
     (set! mxConstants/VERTEX_SELECTION_STROKE stroke)
-    (set! mxConstants/EDGE_SELECTION_STROKE stroke))
+    (set! mxConstants/EDGE_SELECTION_STROKE stroke)
+    (set! mxConstants/LINE_ARCSIZE 50)
+    (set! mxConstants/ARROW_SPACING 50))
   (doto g
     ;; (.setAllowNegativeCoordinates false)
     ;; seems there is a bug with stacklayout and setCellsLocked
@@ -112,8 +191,8 @@
 (defn- sety [^mxCell vertex y]
   (.. vertex getGeometry (setY y)))
 
-(defn adjust-size [v]
-  "the the vertex to minimum size"
+(defn adjust-size [g v]
+  (.updateCellSize g v)
   (let [geo (.getGeometry v)
         w (.getWidth geo)
         h (.getHeight geo)]
@@ -124,8 +203,7 @@
 
 (defn insert-vertex [^mxGraph g parent name style]
   (let [v (.insertVertex g parent (str (gensym)) name 10 10 40 40 style)]
-    (.updateCellSize g v)
-    (adjust-size v)
+    (adjust-size g v)
     v))
 
 (defn insert-edge [^mxGraph g parent userobject begin end style]
@@ -162,13 +240,18 @@
 (defn print-debug [g]
   (let [defaultparent (.getDefaultParent g)
         edges (.getChildCells g defaultparent false true)
-        nodes (.getChildCells g defaultparent true false)] 
+        nodes (.getChildCells g defaultparent true false)
+        view (.getView g)] 
     (doseq [edge edges]
       (let [x (getx edge)
             y (gety edge)
             controlpoints (or (.. edge getGeometry getPoints) ())]
         (printf "edge %s [%s %s] = " edge x y)
         (prn (.getValue edge))
+        (prn "state.style =")
+        (let [style (.getStyle (.getState view edge))]
+          (prn style)
+          )
         (printf "control points = {")
         (doseq [point controlpoints]
           (printf "[%s %s], " (.getX point) (.getY point)))
@@ -178,16 +261,20 @@
 
 (defn move-cell [graph cell x y]
   (let [layout (mxHierarchicalLayout. graph SwingConstants/EAST)]
-    (.moveCell layout cell x y)
-    ))
+    (.moveCell layout cell x y)))
 
 (defn- hierarchicallayout [^mxGraph g p vertices roots]
   (let [layout (mxHierarchicalLayout. g SwingConstants/EAST)]
     (.setAllowNegativeCoordinates g false)
     (doto layout
-      (.setFineTuning true)
-      (.setMoveParent true)
-      (.setResizeParent true))
+      (.setDeterministic true)
+      ;; (.setFineTuning true)
+      ;; (.setParallelEdgeSpacing 300.0)
+      (.setInterRankCellSpacing 90.0)
+      ;; (.setInterHierarchySpacing 300.0)
+      ;; (.setMoveParent true)
+      ;; (.setResizeParent true)
+      )
     (if (empty? roots)
       (.execute layout p)
       (.execute layout p (to-array roots)))
@@ -241,8 +328,7 @@
      (hierarchicallayout g p cells roots))
   ([g p cells]
      (hierarchicallayout g p cells ())
-     (align-orphan-cells g p cells)
-     ))
+     (align-orphan-cells g p cells)))
 
 (defn- layout [g p vertices]
   (do-layout g p (vals vertices)))
@@ -250,8 +336,9 @@
 (defn- add-statement [g p ag stmt vertices stmt-str]
   (assoc vertices
     stmt
-    (insert-vertex g p (StatementCell. ag stmt stmt-str (stmt-to-str ag stmt stmt-str))
-                   (get-statement-style ag stmt))))
+    (let [full (stmt-to-str ag stmt stmt-str)]
+     (insert-vertex g p (StatementCell. ag stmt stmt-str (trunk full) full)
+                    (get-statement-style ag stmt)))))
 
 (defn- add-statements [g p ag stmt-str]
   "add statements and returns a map statement -> vertex"
@@ -305,8 +392,23 @@
        (add-edges g p ag)
        (layout g p)))
 
+(defn tooltip [cell]
+  "this is a tooltip"
+  (when-let [userobject (.getValue cell)]
+    (cond
+     (instance? StatementCell userobject)
+     (:full userobject)
+
+     (instance? ArgumentCell userobject)
+     (-> userobject :arg :scheme)
+     
+     :else nil)))
+         
 (defn- create-graph [ag stmt-str]
-  (let [g (mxGraph.)
+  (let [g (proxy [mxGraph] []
+            (getToolTipForCell
+             [cell]
+             (tooltip cell)))
         p (.getDefaultParent g)]
     (try
      (register-styles (.getStylesheet g))
@@ -323,7 +425,6 @@
         undo-handler (proxy [mxEventSource$mxIEventListener] []
                        (invoke
                         [sender event]
-                        (prn "undo-handler!")
                         (.undoableEditHappened undomanager
                                                (.getProperty event "edit"))))
         undo-sync-handler (proxy [mxEventSource$mxIEventListener] []
@@ -331,8 +432,6 @@
                              [sender event]
                              ;; Keeps the selection in sync with the command history
                              (let [changes (.getChanges (.getProperty event "edit"))]
-                               (prn "changes = ")
-                               (prn changes)
                               (.setSelectionCells
                                g (.getSelectionCellsForChanges g changes)))))]
     (.. g getModel (addListener mxEvent/UNDO undo-handler))
@@ -410,6 +509,37 @@
 (defn- add-mouse-zoom [g graphcomponent]
   (.addMouseWheelListener graphcomponent (MouseListener. g graphcomponent)))
 
+;;
+;; public static Document createSvgDocument(mxGraph graph, Object[] cells,
+;; 			double scale, Color background, mxRectangle clip)
+;; 	{
+;; 		mxSvgCanvas canvas = (mxSvgCanvas) drawCells(graph, cells, scale, clip,
+;; 				new CanvasFactory()
+;; 				{
+;; 					public mxICanvas createCanvas(int width, int height)
+;; 					{
+;; 						return new mxSvgCanvas(mxUtils.createSvgDocument(width,
+;; 								height));
+;; 					}
+
+;; 				});
+
+;; 		return canvas.getDocument();
+;; 	}
+
+(defn- create-svg-document [graph cells scale clip]
+  ;; like mxCellRendered/createSvgDocument but with embedded
+  ;; images
+  (let [canvasfactory (proxy [mxCellRenderer$CanvasFactory] []
+                        (createCanvas
+                         [w h]
+                         (let [canvas (mxSvgCanvas. (mxUtils/createSvgDocument w h))]
+                           (.setEmbedded canvas true)
+                           canvas)))
+        canvas (mxCellRenderer/drawCells graph cells scale clip canvasfactory)]
+    (.setEmbedded canvas true)
+    (.getDocument canvas)))
+
 (defn export-graph [graphcomponent filename]
   "Saves the graph on disk. Only SVG format is supported now.
 
@@ -417,16 +547,14 @@
   (let [g (.getGraph (:component graphcomponent))]
     (write-file filename "UTF-8"
                 (mxUtils/getXml
-                 (.. (mxCellRenderer/createSvgDocument g nil 1 nil nil)
+                 (.. (create-svg-document g nil 1 nil)
                      getDocumentElement)))))
 
 (defn undo [graphcomponent]
-  (prn "map-undo!")
   (.undo (:undomanager graphcomponent))
   (select-current-cell (:component graphcomponent)))
 
 (defn redo [graphcomponent]
-  (prn "map-redo!")
   (.redo (:undomanager graphcomponent))
   (select-current-cell (:component graphcomponent)))
 
@@ -442,6 +570,7 @@
                          )
         undomanager (add-undo-manager g)
         rubberband (mxRubberband. graphcomponent)]
+    (.setToolTips graphcomponent true)
     (.setConnectable graphcomponent false)
     (add-mouse-zoom g graphcomponent)
     (add-refresh-listener graphcomponent)
@@ -517,15 +646,16 @@
   (let [component (:component graphcomponent)
         graph (.getGraph component)
         selectionmodel (.getSelectionModel graph)
-        selectedcells (.getCells selectionmodel)
-        bufferedimg (mxCellRenderer/createBufferedImage
-             graph selectedcells 1 Color/WHITE
-             (.isAntiAlias component) nil (.getCanvas component))
-        os (ByteArrayOutputStream.)
-        res (ImageIO/write bufferedimg "png" os)
-        imgselection (ImageSelection. (.toByteArray os))
-        clipboard (.getSystemClipboard (.getToolkit component))]
-    (.setContents clipboard imgselection nil)))
+        selectedcells (.getCells selectionmodel)]
+    (when-not (empty? selectedcells)
+      (let [bufferedimg  (mxCellRenderer/createBufferedImage
+                          graph selectedcells 1 Color/WHITE
+                          (.isAntiAlias component) nil (.getCanvas component))
+            os (ByteArrayOutputStream.)
+            res (ImageIO/write bufferedimg "png" os)
+            imgselection (ImageSelection. (.toByteArray os))
+            clipboard (.getSystemClipboard (.getToolkit component))]
+        (.setContents clipboard imgselection nil)))))
 
 (defn select-all [graphcomponent]
   (let [component (:component graphcomponent)

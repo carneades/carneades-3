@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.application.editor-helpers
+(ns ^{:doc "Helper functions for the implementation of the View protocol."}
+  carneades.editor.view.application.editor-helpers
   (:use clojure.contrib.def
         carneades.editor.view.dialogs.statement-editor
         carneades.editor.view.components.uicomponents
@@ -20,6 +21,12 @@
 (defvar *premise-selection-listeners* (atom ()))
 (defvar *add-existing-premise-listeners* (atom ()))
 
+;; TODO: one variable should be enough
+(defvar *current-premise-properties* (atom {}))
+(defvar *premise-being-edited-menu-info* (atom {}))
+
+(defvar *argument-being-edited-menu-info* (atom {}))
+
 (defvar *main-issues* (atom {}))
 
 (defn- check-link-premise [view path id obj]
@@ -31,6 +38,20 @@
         (doseq [{:keys [listener args]} (deref *add-existing-premise-listeners*)]
           (apply listener view path id (:arg src) (:stmt obj) args)))
       (swap! *add-existing-premise-data* assoc :src nil))))
+
+(defn- update-premise-context-menu []
+  (let [{:keys [polarity type]} (deref *current-premise-properties*)]
+    (condp = type
+        :carneades.engine.argument/ordinary-premise (.setSelected *premisePremiseMenuItem* true)
+        :carneades.engine.argument/assumption (.setSelected *assumptionPremiseMenuItem* true)
+        :carneades.engine.argument/exception (.setSelected *exceptionPremiseMenuItem* true)
+        (nil? type))
+    (.setSelected *negatedPremiseMenuItem* (not polarity))))
+
+(defn- update-argument-context-menu []
+  (let [{:keys [previous-direction]} (deref *argument-being-edited-menu-info*)]
+    (.setSelected *proArgumentMenuItem* (= previous-direction :pro))
+    (.setSelected *conArgumentMenuItem* (= previous-direction :con))))
 
 (defn- node-selection-listener [view path id obj]
   (cond (instance? StatementCell obj)
@@ -44,12 +65,16 @@
               (apply listener path id stmt args))))
 
         (instance? ArgumentCell obj)
-        (doseq [{:keys [listener args]} (deref *argument-selection-listeners*)]
-          (apply listener path id (:arg obj) args))
+        (do
+          (doseq [{:keys [listener args]} (deref *argument-selection-listeners*)]
+            (apply listener path id (:arg obj) args))
+          (update-argument-context-menu))
 
         (instance? PremiseCell obj)
-        (doseq [{:keys [listener args]} (deref *premise-selection-listeners*)]
-          (apply listener path id (:arg obj) (:pm obj) args))))
+        (do
+          (doseq [{:keys [listener args]} (deref *premise-selection-listeners*)]
+            (apply listener path id (:arg obj) (:pm obj) args))
+          (update-premise-context-menu))))
 
 (defn add-existing-premise-menuitem-listener [event view]
   (let [[path id] (current-graph view)]
@@ -77,19 +102,10 @@
           (.show *mapPopupMenu* component x y)
           )))
 
-(defn statement-edit-menuitem-listener [event view]
-  (when-let [[path id] (current-graph view)]
-    (let [component (get-component path id)]
-      (when-let [obj (current-selected-object component)]
-        (when (instance? StatementCell obj)
-          (show-statement-editor (str (:stmt obj))))))))
-
 (defn create-tabgraph-component [this path ag stmt-fmt]
   (try
     (set-busy this true)
     (let [component (create-graph-component ag stmt-fmt)]
-      (add-node-selection-listener component #(node-selection-listener
-                                               this path (:id ag) %))
       (add-right-click-listener component
                                 (fn [event obj]
                                   (right-click-listener path
@@ -97,6 +113,9 @@
                                                         (:component component)
                                                         event
                                                         obj)))
+      (add-node-selection-listener component #(node-selection-listener
+                                               this path (:id ag) %))
+      
       (add-component component path ag (is-dirty? path (:id ag)))
       (set-current-ag-context path (:id ag)))
     (finally

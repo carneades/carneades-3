@@ -1,19 +1,13 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.engine.lkif.export
-  (:require
-    [clojure.contrib.io :as io]
-    [clojure.contrib.prxml :as prx]
-    )
-  (:use
-    carneades.engine.statement
-    carneades.engine.argument
-    carneades.ui.diagram.viewer ; for testing
-    carneades.engine.rule ; for testing
-    )
-  ;(:import )
-  )
+(ns ^{:doc "Export LKIF functions"}
+    carneades.engine.lkif.export
+  (:use carneades.engine.statement
+        carneades.engine.argument
+        carneades.engine.utils)
+  (:require [clojure.contrib.io :as io]
+            [clojure.contrib.prxml :as prx]))
 
 (declare text_term->sxml)
 
@@ -43,13 +37,14 @@
   (cond
     (= Boolean (type t)) [:c t],
     (number? t) [:c (str t)],
-    (string? t) t,
+    (string? t) [:c (str "\"" t "\"")],
     (fatom? t) [:s {:pred (statement-predicate t)} (combine-expression-format (:term t) (:form t))],
     (variable? t) [:v (.substring (str t) 1)],
     (symbol? t) [:c (str t)],
     (and (seq? t) (functor? (first t))) [:expr {:functor (first t)} (map text_term->sxml (rest t))],
     (seq? t) [:s {:pred (first t)} (map text_term->sxml (rest t))],
-    true (println "no valid text/term" t)))
+    :else nil;; (println "no valid text/term" t)
+    ))
 
 
 (defn wff->sxml
@@ -57,7 +52,8 @@
   ;(println "wff->sxml" wff)
   ; TODO: exists and all
   (cond
-    (string? wff) [:s wff],
+    (string? wff) [:s (str "\"" wff "\"")],
+    (variable? wff) [:v (.substring (str wff) 1)],
     (symbol? wff) [:s wff],
     (fatom? wff) [:s {:pred (statement-predicate wff)} (combine-expression-format (:term wff) (:form wff))],
     (seq? wff) (condp = (first wff)
@@ -72,7 +68,8 @@
                                 (concat [(first sxml) {:assumable true}] (next sxml)))),
                   'unless [:not {:exception true} (wff->sxml (second wff))],
                   [:s {:pred (first wff)} (map text_term->sxml (rest wff))]),
-    true (println "no valid wff" wff)))
+    :else nil;; (println "no valid wff" wff)
+    ))
 
 (defn make-lkif-statement
   [s]
@@ -123,7 +120,8 @@
     (seq? s) (if (assumption-premise? s ag)
                 [:s {:pred (statement-predicate s), :assumable true} (map text_term->sxml (rest s))]
                 [:s {:pred (statement-predicate s)} (map text_term->sxml (rest s))]),
-    true (println "no valid atom" s)))
+    :else nil;; (println "no valid atom" s)
+    ))
 
 (defn statement->sxml
   [s st-map ag]
@@ -195,7 +193,8 @@
   (condp = (count domain)
     2 [:class {:pred (first domain)} [:v (.substring (str (second domain)) 1)]],
     3 [:property {:pred (first domain)} (text_term->sxml (second domain)) [:v (.substring (str (nth domain 2)) 1)]],
-    (println "no valid domain" domain)))
+    ;; (println "no valid domain" domain)
+    ))
 
 (defn domains->sxml
   [domains]
@@ -226,7 +225,8 @@
 
 (defn imports->sxml
   [imp-tree]
-  (let [imp-names (map :name imp-tree)]
+  (let [imp-names (map (fn [{:keys [name relative-path]}]
+                         (or relative-path name)) imp-tree)]
     [:imports
      (map (fn [n]
            [:import {:url n}])
@@ -268,7 +268,7 @@
     (binding [prx/*prxml-indent* 3]
       (with-out-str (prx/prxml (data->sxml export-data))))
     )
-  ([export-data port]
-    (io/write-lines port (list (lkif-export* export-data)))
+  ([export-data pathname]
+    (io/write-lines (absolute pathname) (list (lkif-export* export-data)))
     )
   )

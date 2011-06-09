@@ -57,8 +57,6 @@ public class ArgumentPropertiesView extends javax.swing.JPanel {
 
         jLabel4.setText("Scheme:");
 
-        schemeEditButton.setText("Edit...");
-
         mapTitleText.setBackground(new java.awt.Color(222, 222, 222));
         mapTitleText.setEditable(false);
         mapTitleText.setDisabledTextColor(new java.awt.Color(1, 1, 1));
@@ -110,13 +108,10 @@ public class ArgumentPropertiesView extends javax.swing.JPanel {
                                 .addComponent(proButton)
                                 .addGap(9, 9, 9)
                                 .addComponent(conButton))
+                            .addComponent(schemeText, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(applicabilityText, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(schemeText, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
-                                .addComponent(schemeEditButton, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)))
+                                .addComponent(applicabilityText, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -147,8 +142,7 @@ public class ArgumentPropertiesView extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(schemeText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(schemeEditButton))
+                    .addComponent(schemeText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(applicabilityText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -173,22 +167,10 @@ public class ArgumentPropertiesView extends javax.swing.JPanel {
     public final javax.swing.JTextField pathText = new javax.swing.JTextField();
     public final javax.swing.JRadioButton proButton = new javax.swing.JRadioButton();
     private javax.swing.ButtonGroup proConGroup;
-    public final javax.swing.JButton schemeEditButton = new javax.swing.JButton();
     public final javax.swing.JTextField schemeText = new javax.swing.JTextField();
     public final javax.swing.JTextField titleText = new javax.swing.JTextField();
     public final javax.swing.JSpinner weightSpinner = new javax.swing.JSpinner();
     // End of variables declaration//GEN-END:variables
 
-    // our modifications:
-    public static ArgumentPropertiesView viewInstance = new ArgumentPropertiesView();
 
-    public static synchronized ArgumentPropertiesView instance()
-    {
-        return viewInstance;
-    }
-
-    public static synchronized void reset()
-    {
-        viewInstance = new ArgumentPropertiesView();
-    }
 }

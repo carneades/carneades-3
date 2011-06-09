@@ -1,7 +1,13 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.engine.abduction
+(ns ^{:doc "Abductive reasoning.
+
+            See:
+            Ballnat, S. and Gordon, T.F. Goal Selection in Argumentation Processes 
+            - A Formal Model of Abduction in Argument Evaluation Structures. Computational Models of Argument 
+            - Proceedings of COMMA 2010, IOS Press (2010), 51-62."}
+  carneades.engine.abduction
   (:use clojure.contrib.def
     clojure.contrib.pprint
     clojure.set
@@ -11,7 +17,7 @@
 
 (defn format-label
   [l]
-  (set (map (fn [p] (set (map (fn [s] (statement-formatted s)) p))) l)))
+  (map (fn [p] (map (fn [s] (statement-formatted s)) p)) l))
 
 (defvar *verum-clause* #{true})
 (defvar *verum* #{*verum-clause*})
@@ -59,7 +65,7 @@
           pr (set (get groups false ()))
           [pr-labels pr-labels-true] (collect-labels statement-in-label pr)
           [ex-labels ex-labels-true] (collect-labels statement-out-label ex)
-          l (cond (and (= pr-labels-true ex-labels-true)) *verum*
+          l (cond (and pr-labels-true ex-labels-true) *verum*
               pr-labels-true (set (map true-filter
                                (combine-conjunction-of-dnf ex-labels)))
               ex-labels-true (set (map true-filter
@@ -68,10 +74,12 @@
                                        (union pr-labels ex-labels)))))]
 ;      (println "------------")
 ;      (println "out-goals for       :" (str (:scheme arg) "-" (:id arg)))
-;      (println "pr-labels          :" pr-labels)
-;      (println "pr-labels-true     :" pr-labels-true)
-;      (println "ex-labels          :" ex-labels)
-;      (println "ex-labels-true     :" ex-labels-true)
+;      (println "pr-labels           :" (map format-label pr-labels))
+;      (println "pr-labels-true      :" pr-labels-true)
+;      (println "ex-labels           :" (map format-label ex-labels))
+;      (println "ex-labels-true      :" ex-labels-true)
+;      (println "combination         :" (combine-conjunction-of-dnf
+;                                        (union pr-labels ex-labels)))
 ;      (println "label               :" (format-label l))
 ;      (println "------------")
       l)))
@@ -107,10 +115,11 @@ alltrue is true if coll is empty or if each value is equal to *verum*"
             (recur (set (next coll)) (conj labels label) false onefalse)
             (recur (set (next coll)) (conj labels label) alltrue onefalse)))))))
 
-(defn collect-labels-disj [get-label coll]
+(defn collect-labels-disj
+  "Stops collecting when a seq of label contains *verum-clause*
+   returns [labels dis-is-true dis-is-false]"
+  [get-label coll]
   {:pre [(not (nil? coll))]}
-  "stop collecting when a seq of label contains *verum-clause*
-returns [labels dis-is-true dis-is-false]"
   (loop [coll coll
          labels ()]
     (if (empty? coll)
@@ -243,7 +252,7 @@ returns [labels dis-is-true dis-is-false]"
 
 (defmethod ps-in-label :pe [ag asm s]
   {:pre [(set? asm)]}
-  ;s(println "computing pe-in-label for" s)
+  ;(println "computing pe-in-label for" s)
   (let [pro-args (pro-arguments ag s)
         con-args (con-arguments ag s)]
     (loop [pro-args pro-args
@@ -287,33 +296,40 @@ returns [labels dis-is-true dis-is-false]"
   (let [pro-args (pro-arguments ag s)
         con-args (con-arguments ag s)
         l (loop [pro-args pro-args
-           labels #{}]
-      (if (empty? pro-args)
-        (if (empty? labels)
-          *verum*
-          (conj (combine-conjunction-of-dnf labels)
-            #{(statement-complement s)}))
-        (let [pro-arg (first pro-args)
-              w (sget pro-arg :weight)
-              greater-cons (filter #(<= w (sget % :weight)) con-args)
-              pro-label (argument-out-label ag asm pro-arg)
-              [con-labels con-labels-true con-labels-false]
-              (collect-labels-disj #(argument-in-label ag asm %)
-                greater-cons)]
-          (cond
-            (or (= pro-label *verum*) con-labels-true)
-            (recur (set (next pro-args)) labels),
-            (and (= pro-label *falsum*) con-labels-false)
-            #{#{(statement-complement s)}},
-            (= pro-label *falsum*) (recur (set (next pro-args))
-                                     (conj labels con-labels)),
-            con-labels-false (recur (set (next pro-args))
-                               (conj labels pro-label)),
-            :else (recur (set (next pro-args))
-                    (conj labels
-                      (union pro-label con-labels)))))))]
+                 labels #{}]
+            (if (empty? pro-args)
+              (if (empty? labels)
+                *verum*
+                (conj (combine-conjunction-of-dnf labels)
+                    #{(statement-complement s)}))
+              (let [pro-arg (first pro-args)
+                    w (sget pro-arg :weight)
+                    greater-cons (filter #(<= w (sget % :weight)) con-args)
+                    pro-label (argument-out-label ag asm pro-arg)
+                    [con-labels con-labels-true con-labels-false]
+                    (collect-labels-disj #(argument-in-label ag asm %)
+                      greater-cons)]
+;                (println "pro-arg            :" (:id pro-arg))
+;                (println "argument-out-label :" pro-label)
+;                (println "verum?             :" (= pro-label *verum*))
+;                (println "falsum?            :" (= pro-label *falsum*))
+;                (println "con-labels         :" (map format-label con-labels))
+;                (println "con-labels-false   :" con-labels-false)
+;                (println "con-labels-true    :" con-labels-true)
+                (cond
+                  (or (= pro-label *verum*) con-labels-true) (recur (set (next pro-args)) labels),
+                  (and (= pro-label *falsum*) con-labels-false) #{#{(statement-complement s)}},
+                  (= pro-label *falsum*) (recur (set (next pro-args))
+                                            (conj labels con-labels)),
+                  con-labels-false (recur (set (next pro-args))
+                                     (conj labels pro-label)),
+                  :else (recur (set (next pro-args))
+                          (conj labels
+                            (union pro-label con-labels)))))))]
 ;    (println "------------")
 ;    (println "out-label for       :" (statement-formatted s))
+;    (println "pro-arguments       :" (map :id pro-args))
+;    (println "con-arguments       :" (map :id con-args))
 ;    (println "label               :" (format-label l))
 ;    (println "------------")
     l))

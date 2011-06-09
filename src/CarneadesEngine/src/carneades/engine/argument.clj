@@ -2,7 +2,8 @@
 ;;; Licensed under the EUPL V.1.1
 
 
-(ns carneades.engine.argument
+(ns ^{:doc "Function to create an argument graph."}
+  carneades.engine.argument
   (:refer-clojure :exclude [satisfies?])
   (:use clojure.test
         clojure.set
@@ -49,17 +50,34 @@
 
 ;; abbreviations for constructing premises with empty roles
 
-(defn pm [s]
-  "statement -> ordinary-premise"
+(defn pm
+  "statement -> ordinary-premise
+
+   Constructs an ordinary premise "
+  [s]
   (ordinary-premise (statement-atom s) (statement-pos? s) nil))
 
-(defn am [s]
+(defn am
   "statement -> assumption"
+  [s]
   (assumption (statement-atom s) (statement-pos? s) nil))
 
-(defn ex [s]
+(defn ex
   "statement -> exception"
+  [s]
   (exception (statement-atom s) (statement-pos? s) nil))
+
+(defn premise
+  "builds a premise, an assumption or an exception
+   depending of the value of the predicate of the statement"
+  [s]
+  (if (seq? s)
+    (let [[predicate stmt] s]
+      (condp = predicate
+        'unless (ex stmt)
+        'assuming (am stmt)
+        (pm s)))
+    (pm s)))
 
 (defn premise-pos? [p]
   (:polarity p))
@@ -80,12 +98,6 @@
   (if (premise-pos? p)
     (:atom p)
     (statement-complement (:atom p))))
-
-
-
-
-
-
 
 (defn premise-atom [p]
   (:atom p))
@@ -139,8 +151,9 @@
 (defn argument-premises [a]
   (:premises a))
 
-(defn get-premise [arg atom]
-  "return the premise of arg which has the :atom equals to atom"
+(defn get-premise
+  "Returns the premise of arg which has the :atom equals to atom"
+  [arg atom]
   (let [pms (:premises arg)
         pms (group-by (fn [pm]
                         (= (:atom pm) atom)) pms)]
@@ -155,18 +168,21 @@
 (defn con [id conclusion premises]
   (argument id false *default-weight* :con conclusion premises nil))
 
-(defn assoc-applicability [arg applicability]
+(defn assoc-applicability
   "argument boolean -> argument"
+  [arg applicability]
   (assoc arg :applicable applicability))
 
-(defmacro defargument [id definition]
-  "Define an argument with identifiant id and 
+(defmacro defargument
+  "Defines an argument with identifiant id and 
    assign it to the variable named id with the def method
 
    Example: (defargument b1 (pro not-property 
                               (pm possession-required)
                               (pm no-possession)
                               (pm foxes-are-wild)))"
+  [id definition]
+  
   `(def ~id (make-arg ~id ~definition)))
 
 (defmacro make-arg
@@ -190,17 +206,19 @@
 ;; use (prn-str object) and (read-string s) to read/write argument
 ;; structures
 
-(defn argument-variables [arg]
+(defn argument-variables
   "argument -> (seq-of symbol)
 
    Returns a sequence containing the variables of the argument arg"
+  [arg]
   (distinct (concat (mapcat #(variables (:atom %)) (:premises arg))
                     (variables (:conclusion arg)))))
 
-(defn instantiate-argument [arg subs]
+(defn instantiate-argument
   "argument substitutions -> argument
 
    Instanciate the variable of an argument by applying substitions"
+  [arg subs]
   (assoc arg
     :premises (map #(update-in % [:atom] (fn [a] (apply-substitution subs a))) (:premises arg))
     :conclusion (apply-substitution subs (:conclusion arg))))
@@ -225,8 +243,9 @@
   :conclusion-of ; (set-of symbol) where each symbol is an argument id
   )
 
-(defn node [s]
+(defn node
   "Builds a new node from a statement with no pro- or con-arguments"
+  [s]
   (struct node-struct
           s
           :stated
@@ -236,11 +255,12 @@
           #{}
           #{}))
 
-(defn nodes [s]
-  ;; this function is not used!
+(defn nodes
   "(seq-of statement) -> node table
 
    Builds a node-table from a list of statements "
+  [s]
+  ;; this function is not used!
   ; take care here, = is used by the map, not statement=, to
   ; order element
   (reduce (fn [nodes x]
@@ -275,20 +295,23 @@
 
 (defvar *empty-argument-graph* (argument-graph))
 
-(defn statement-node [ag s]
-  "returns the node of s if it exists, nil otherwise"
+(defn statement-node
+  "Returns the node of s if it exists, nil otherwise"
+  [ag s]
   (get-in ag
           [:nodes (statement-symbol (statement-atom s))
            (statement-atom s)]))
 
-(defn get-node [ag s]
+(defn get-node
   "argument-graph statement -> node"
+  [ag s]
   (if-let [n (statement-node ag s)]
     n
     (node s)))
 
-(defn status [ag s]
+(defn status
   "argument-graph statement -> status"
+  [ag s]
   (let [n (get-node ag s)
         st (:status n)]
     (if (statement-pos? s)
@@ -308,34 +331,38 @@
   (> (:weight a1)
      (:weight a2)))
 
-(defn add-node [ag n]
-  {:pre [(not (nil? ag))]}
+(defn add-node
   "argument-graph node -> argument-graph 
 
    Add a node to the nodes table of an argument graph and replace 
    the nodes table of the argument graph with this new table "
+  [ag n]
+  {:pre [(not (nil? ag))]}
   (assoc-in ag [:nodes (statement-symbol (:statement n)) (:statement n)] n))
 
-(defn- node-in? [n positive]
-  "argument-graph node boolean -> boolean"
+(defn- node-in?
+ "argument-graph node boolean -> boolean"
+ [n positive]
   (if positive
     (or (= (:status n) :accepted)
         (:acceptable n))
     (or (= (:status n) :rejected)
         (:complement-acceptable n))))
 
-(defn in? [ag s]
-  {:pre [(not (nil? ag))]}
+(defn in?
   "looks up the cached 'in' status of the statement in the agreement graph
    argument-graph statement -> boolean "
+  [ag s]
+  {:pre [(not (nil? ag))]}
   (let [n (get-node ag s)]
     (node-in? n (statement-pos? s))))
 
 (defn out? [ag s]
   (not (in? ag s)))
 
-(defn- holds? [ag p]
+(defn- holds?
   "argument-graph premise -> boolean"
+  [ag p]
   (let [n (get-node ag (:atom p))]
     (cond (ordinary-premise? p)
           (condp = (:status n)
@@ -363,24 +390,28 @@
             false)
           :else (throw (Exception. (format "not a premise %s" p))))))
 
-(defn- all-premises-hold? [ag arg]
+(defn- all-premises-hold?
   "argument-graph argument -> boolean"
+  [ag arg]
   (every? #(holds? ag %) (:premises arg)))
 
-(defn state [ag statements]
+(defn state
   "argument-graph (seq-of statement) -> argument-graph
 
    Changes, non-destructively, the status of each statement in the list to 
    stated in the argument graph.  Statements in the list which do not
    have a node in the argument graph are ignored. "
+  [ag statements]
   (reduce #(update-statement %1 %2 :stated) ag statements))
 
-(defn question [ag statements]
+(defn question
   "argument-graph (seq-of statement) -> argument-graph"
+  [ag statements]
   (reduce #(update-statement %1 %2 :questioned) ag statements))
 
-(defn accept [ag statements]
+(defn accept
   "argument-graph (collection-of statement) -> argument-graph"
+  [ag statements]
   (reduce #(update-statement %1 %2 (if (statement-pos? %2)
                                      :accepted
                                      :rejected)) ag statements))
@@ -390,8 +421,9 @@
                                      :rejected
                                      :accepted)) ag statements))
 
-(defn assoc-standard [ag ps statements]
+(defn assoc-standard
   "argument-graph  proof-standard (list-of statement) -> argument-graph"
+  [ag ps statements]
   (reduce (fn [ag s]
             (let [n (get-node ag s)]
               (update-statement (add-node ag (assoc n :standard ps))
@@ -399,16 +431,18 @@
                                 (:status n))))
           ag statements))
 
-(defn get-argument [ag id]
+(defn get-argument
   "argument-graph symbol -> argument | nil"
+  [ag id]
   ((:arguments ag) id))
 
-(defn get-arguments [ag ids]
+(defn get-arguments
   "argument-graph (seq-of symbol) -> (seq-of argument)"
+  [ag ids]
   (filter identity (map #(get-argument ag %) ids)))
 
 (defn arguments 
-   " Returns all arguments pro and con of some statement in an argument graph,
+  " Returns all arguments pro and con of some statement in an argument graph,
      or all arguments in the argument graph, if no statement is provided
      argument-graph [statement] -> (seq-of argument)"
    ([ag s]
@@ -420,43 +454,50 @@
         args
         ())))
 
-(defn pro-arguments [ag s]
+(defn pro-arguments
   "argument-graph statement  -> (seq-of argument)"
+  [ag s]
   (let [args (arguments ag s)]
     (if (statement-pos? s)
       (filter #(= (:direction %) :pro) args)
       (filter #(= (:direction %) :con) args))))
 
-(defn con-arguments [ag s]
+(defn con-arguments
   "argument-graph statement -> (seq-of argument)"
+  [ag s]
   (pro-arguments ag (statement-complement s)))
 
-(defn schemes-applied [ag s]
+(defn schemes-applied
   "argument-graph statement -> (seq-of symbol)"
+  [ag s]
   (let [n (get-node ag s)]
     (map (fn [x]
            (:scheme x)) (get-arguments ag (:conclusion-of n)) )))
 
-(defn accepted? [ag s]
+(defn accepted?
   "argument-graph statement -> boolean"
+  [ag s]
   (let [n (get-node ag s)]
     (if (statement-pos? s)
       (= (:status n) :accepted)
       (= (:status n) :rejected))))
 
-(defn rejected? [ag s]
+(defn rejected?
   "argument-graph statement -> boolean"
+  [ag s]
   (let [n (get-node ag s)]
     (if (statement-pos? s)
       (= (:status n) :rejected)
       (= (:status n) :accepted))))
 
-(defn decided? [ag s]
+(defn decided?
   "argument-graph statement -> boolean"
+  [ag s]
   (or (accepted? ag s) (rejected? ag s)))
 
-(defn questioned? [ag s]
+(defn questioned?
   "argument-graph statement -> boolean"
+  [ag s]
   (let [n (get-node ag s)]
     (= (:status n) :questioned)))
 
@@ -464,64 +505,72 @@
   (let [n (get-node ag s)]
     (= (:status n) :stated)))
 
-(defn issue? [ag s]
-   "argument-graph statement -> boolean
+(defn issue?
+  "argument-graph statement -> boolean
    
    An statement is an issue if it is undecided in the argument graph
    An acceptable statement is still an issue, due to nonmonotonicity:
    Additional arguments may make the statement unacceptable again."
+  [ag s]
    (not (decided? ag s)))
 
-(defn all-premises [ag s]
- "all-premises: argument-graph statement -> (list-of premise)
+(defn all-premises
+  "all-premises: argument-graph statement -> (list-of premise)
 
   Returns the set of all the premises of all arguments pro or con the 
   statement s in the argument graph ag. The set of premises is represented
   as a list."
+  [ag s]
  (reduce #(union-if premise= (:premises %2) %1)  '() (arguments ag s)))
 
-(defn check-acceptability [ag s]
+(defn check-acceptability
   "argument-graph statement -> boolean"
+  [ag s]
   (let [ps (proof-standard ag s)]
     (satisfies? ag ps (pro-arguments ag s) (con-arguments ag s)
                 all-premises-hold?)))
 
-(defn acceptable? [ag s]
+(defn acceptable?
   "argument-graph statement -> boolean"
+  [ag s]
   (let [n (get-node ag s)]
     (if (statement-pos? s)
       (:acceptable n)
       (:complement-acceptable n))))
 
-(defn applicable? [ag arg]
-  {:post [(not (nil? %))]}
+(defn applicable?
   "argument-graph argument -> boolean
 
    Assumes that the applicability of the argument has been 
    previously computed or updated"
+  [ag arg]
+  {:post [(not (nil? %))]}
   (:applicable (get-argument ag (:id arg))))
 
-(defn depends-on? [ag s1 s2]
+(defn depends-on?
   "argument-graph statement statement -> boolean
 
    s1 depends on s2 in ag if s1 equals s2 or, recursively, some premise 
    of some argument pro or con s1 depends on s2 in ag."
+  [ag s1 s2]
   (or (statement= s1 s2)
       (some #(depends-on? ag (:atom %) s2) (all-premises ag s1))))
 
-(defn cycle-free? [ag arg]
+(defn cycle-free?
   "argument-graph argument -> boolean
 
   (cycle-free arg ag) checks whether an argument arg will not introduce a cycle
   into the argument graph ag.  An argument will not introduce a cycle if
   none of its premises depend on its conclusion in ag."
+  [ag arg]
   (not-any? #(depends-on? ag (:atom %) (:conclusion arg)) (:premises arg)))
 
-(defn relevant? [ag s g]
+(defn relevant?
   "argument-graph statement statement -> boolean
 
   A sentence s is relevant for proving a 
   goal sentence g in ag if g depends on s in ag"
+  [ag s g]
   (depends-on? ag g s))
 
 (defn get-nodes
@@ -535,18 +584,19 @@
      ;; predicate is the symbol used as a key for statements
      (vals (get-in ag [:nodes predicate]))))
 
-(defn in-node-statements [ag n]
+(defn in-node-statements
   "argument-graph node -> (seq-of statement)
 
    For a node whose statement is P, returns a list of the members of
    '(P (not P)) which are in."
+  [ag n]
   (filter identity (list (if (node-in? n true)
                            (:statement n))
                          (if (node-in? n false)
                            (statement-complement (statement-atom n))))))
 
 (defn in-statements
- "argument-graph [symbol] -> (list-of statement)
+  "argument-graph [symbol] -> (list-of statement)
  
   returns the list of all the in statements (literals) in the argument graph,
   or all in statements with the given predicate, if one is provided.
@@ -558,22 +608,24 @@
  ([ag predicate]
     (mapcat #(in-node-statements ag %) (get-nodes ag predicate))))
 
-(defn relevant-statements [ag g]
- "argument-graph statement -> (seq-of statement)
+(defn relevant-statements
+  "argument-graph statement -> (seq-of statement)
 
   Finds the statements in ag which are 
   relevant for proving g. Since only nodes in the graph are 
   considered, g itself will be a member of the resulting list
   only if it has a node in the argument graph."
+  [ag g]
  (filter #(relevant? ag % g) (map #(:statement %) (get-nodes ag))))
 
-(defn update-argument [ag arg]
-  {:pre [(not (nil? (:id arg)))]}
+(defn update-argument
   "argument-graph argument -> argument-graph 
 
    updates the applicability of an argument in an argument graph and propogates 
    this change by updating the argument graph for the conclusion
    of the argument. "
+  [ag arg]
+  {:pre [(not (nil? (:id arg)))]}
   (let [old-applicability (:applicable arg)
         new-applicability (all-premises-hold? ag arg)
         ag2 (assoc-in ag [:arguments (:id arg)]
@@ -584,8 +636,7 @@
       ;; by updating the conclusion of the argument
       (update-statement ag2 (:conclusion arg)))))
 
-(defn assert-argument [ag arg]
-  {:pre [(not (nil? ag))]}
+(defn assert-argument
   "argument-graph argument -> argument-graph
 
    Add the argument, arg, to the argument graph, ag,
@@ -597,6 +648,9 @@
    argument, if this is wanted. The \"applicable\" field of the argument is 
    changed to false before it is updated toassure the the acceptabiity of its 
    conclusion is checked if the argument is in fact applicable."
+  [ag arg]
+  {:pre [(not (nil? ag))]}
+  
   (if (not (cycle-free? ag arg))
     ag
     (let [n (get-node ag (:conclusion arg))
@@ -614,11 +668,12 @@
                       ag1 (:premises arg))]
       (update-argument ag2 (assoc arg :applicable false)))))
 
-(defn assert-arguments [ag args]
-  {:pre [(not (nil? ag))]}
+(defn assert-arguments
   "argument-graph (collection-of argument) -> argument-graph
 
    asserts a list of arguments"
+  [ag args]
+  {:pre [(not (nil? ag))]}
   (reduce (fn [ag arg] (assert-argument ag arg)) ag args))
 
 (defn update-statement
@@ -645,7 +700,7 @@
            ag2 (add-node ag n2)]
        (if (and (= (node-in? n1 true) (node-in? n2 true))
                 (= (node-in? n1 false) (node-in? n2 false))
-                (not= new-status :questioned))
+                (= new-status old-status))
          ;; then the "in" status of the statement hasn't changed and there's no
          ;; need to propogate further unless an assumption has been questioned
          ag2
@@ -685,9 +740,17 @@
   ;(print "uniting graphs:" (:id ag1) (:id ag2))
   (let [all-nodes (get-nodes ag2),
         accepted-nodes (filter (fn [n] (= (:status n) :accepted)) all-nodes),
-        rejected-nodes (filter (fn [n] (= (:status n) :rejected)) all-nodes)]
+        rejected-nodes (filter (fn [n] (= (:status n) :rejected)) all-nodes),
+        questioned-nodes (filter (fn [n] (= (:status n) :questioned)) all-nodes),
+        stated-nodes (filter (fn [n] (= (:status n) :stated)) all-nodes),]
     ;(println " - " (count all-nodes))
-    (reject (accept (reduce unite-args ag1 (arguments ag2)) (map :statement accepted-nodes)) (map :statement rejected-nodes))))
+    (state
+      (question
+        (reject
+          (accept (reduce unite-args ag1 (arguments ag2)) (map :statement accepted-nodes))
+          (map :statement rejected-nodes))
+        (map :statement questioned-nodes))
+      (map :statement stated-nodes))))
 
 
 (defn unite-argument-graphs

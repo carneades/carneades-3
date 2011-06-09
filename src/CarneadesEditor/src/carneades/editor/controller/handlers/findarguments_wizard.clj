@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.controller.handlers.findarguments-wizard
+(ns ^{:doc "Implementation of the Find Arguments assistant."}
+  carneades.editor.controller.handlers.findarguments-wizard
   (:use clojure.contrib.def
         clojure.contrib.pprint
         clojure.contrib.swing-utils
@@ -29,9 +30,6 @@
 (defvar- *search-future* (atom nil))
 
 (defn on-searcharguments-panel-validation [settings view path id]
-  (prn "on-searcharguments-panel-validation")
-  (prn "settings =")
-  (prn settings)
   (let [state (deref *search-state*)]
    (cond (or (= state :running) (= state :stopping))
          *searching-arguments*
@@ -62,23 +60,23 @@
                   :main-issue (:main-issue ag)
                   :title (:title ag))]
         (when (= (deref *search-state*) :running)
-          (when (arguments-found? ag ag2)
-            (reset! *newag* ag2))
-          (reset! *search-state* :stopped)
-          (do-swing-and-wait
-           (arguments-found view true)
-           (set-argumentsearch-busy view false)))))))
+          (let [found (arguments-found? ag ag2)]
+            (if found 
+              (reset! *newag* ag2)
+              (reset! *newag* nil))
+            (reset! *search-state* :stopped)
+            (do-swing-and-wait
+             (set-argumentsearch-busy view false)
+             (arguments-found view found))))))))
 
 (defn- try-stop-search []
   (when-let [search-future (deref *search-future*)]
     (reset! *search-state* :stopping)
     (future-cancel search-future)
     (when (future-cancelled? search-future)
-      (prn "future cancelled with success")
       (reset! *search-state* :stopped))))
 
 (defn on-searcharguments-panel [settings view path id]
-  (prn "on-searcharguments-panel")
   (letfn [(start-search
             []
             (reset! *search-state* :running)
@@ -107,12 +105,9 @@
          :stopping (wait-then-start-search))))
 
 (defn on-post-findarguments-wizard [view path id settings]
-  (prn "on-post-findarguments-wizard")
-  (prn "settings")
-  (prn settings)
   (when settings
     (when-let [ag (deref *newag*)]
-      (do-update-section view [path :ags (:id ag)] ag)
+      (do-ag-update view [path :ags (:id ag)] ag)
       (graph-changed view path ag statement-formatted)
       (display-statement view path ag (deref *goal*) statement-formatted))))
 

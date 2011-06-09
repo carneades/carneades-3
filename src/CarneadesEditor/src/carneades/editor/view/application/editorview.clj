@@ -1,17 +1,20 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.application.editorview
+(ns ^{:doc "Implementation of the View protocol."}
+  carneades.editor.view.application.editorview
   (:use (clojure.contrib def swing-utils)
+        clojure.java.io
+        carneades.engine.utils ;; TODO: this part of the UI should be independant
+                               ;; of the engine
         carneades.ui.diagram.graphvizviewer
         (carneades.editor.view.dialogs statement-editor location)
         carneades.editor.view.application.context
         carneades.editor.utils.swing
         carneades.editor.view.application.editor-helpers
         carneades.editor.view.viewprotocol
-        carneades.editor.view.menus.mainmenu
         carneades.editor.view.printing.preview
-        carneades.editor.view.dialogs.aboutbox
+        (carneades.editor.view.dialogs aboutbox properties)
         carneades.editor.utils.core
         (carneades.editor.view.components uicomponents search tabs)
         (carneades.editor.view.properties lkif statement argument premise graph
@@ -23,33 +26,26 @@
            (java.awt EventQueue Cursor)
            (javax.swing JFileChooser JOptionPane)))
 
-(defvar- *application-name* "Carneades Editor")
 (defvar- *dialog-current-directory* (atom nil))
 
 (deftype EditorView []
   View
   (init
    [this]
-   (System/setProperty "apple.laf.useScreenMenuBar" "true")
-   (System/setProperty "com.apple.mrj.application.apple.menu.about.name"
-                       *application-name*)
-   (set-look-and-feel "Nimbus")
    
    ;; make a new instance (without listeners!)
-   (EditorApplicationView/reset)
    (add-action-listener *zoomInButton* on-zoom-in)
    (add-action-listener *zoomOutButton* on-zoom-out)
    (add-action-listener *zoomResetButton* on-zoom-reset)
    (add-action-listener *selectAllEditMenuItem* select-all-listener this)
    (add-action-listener *addExistingPremiseMenuItem*
                         add-existing-premise-menuitem-listener this)
-   (add-action-listener *editStatementMenuItem* statement-edit-menuitem-listener this)
+   ;; (add-action-listener *editStatementMenuItem* statement-edit-menuitem-listener this)
    
    (init-lkif-properties)
    (init-graph-properties)
    (init-statement-properties)
    (init-premise-properties)
-   (init-menu)
    (tree/init-tree)
    (init-tabs)
    (init-search)
@@ -58,13 +54,7 @@
   (show
    [this]
    (do-swing-and-wait
-    (.setVisible *frame* true)
-    )
-   ;; (EventQueue/invokeLater
-   ;;  (proxy [Runnable] []
-   ;;    (run []
-   ;;         )))
-   )
+    (.setVisible *frame* true)))
 
   (open-graph
    [this path ag stmt-fmt]
@@ -88,10 +78,12 @@
      (replace-graph component ag stmt-fmt)))
   
   (close-graph
-   [this path id]
+   [this path id isfresh]
    (let [component (get-component path id)]
      (remove-component component)
-     (remove-ag-context path id))
+     (remove-ag-context path id)
+     (when isfresh
+       (tree/remove-ag path id)))
    (if (tabs-empty?)
      (set-current-ag-context-empty)
      (let [[path id] (current-graph this)]
@@ -100,6 +92,11 @@
   (current-graph
    [this]
    (get-graphinfo (.getSelectedComponent *mapPanel*)))
+
+  (opened-graphs
+   [this]
+   (let [ntab (.getTabCount *mapPanel*)]
+     (map #(get-graphinfo (.getComponentAt *mapPanel* %)) (range ntab))))
 
   (ask-file-to-open
    [this desc exts]
@@ -129,12 +126,23 @@
            jc (proxy [JFileChooser] []
                 (approveSelection
                  []
-                 (when-let [selected (proxy-super getSelectedFile)]
-                   (if (.exists selected)
-                     (when (ask-confirmation this-view "Save"
+                 (let [selected (proxy-super getSelectedFile)
+                       pathname (.getPath selected)]
+                   (cond
+                    (nil? (extension pathname))
+                    (let [desc (.getDescription (proxy-super getFileFilter))]
+                      (if-let [suggested-extension (get descriptions desc)]
+                        (proxy-super setSelectedFile (file
+                                                      (add-extension pathname suggested-extension)))
+                        (display-error this-view "Save" "File name must have an extension")))
+                    
+                    (.exists selected)
+                    (when (ask-confirmation this-view "Save"
                                              "Overwrite existing file?")
                        (proxy-super approveSelection))
-                     (proxy-super approveSelection)))))]
+                    
+                    :else
+                    (proxy-super approveSelection)))))]
        (doseq [[description extension] descriptions]
          (.addChoosableFileFilter jc (create-file-filter description (set [extension]))))
        (when-let [dir (deref *dialog-current-directory*)]
@@ -179,16 +187,15 @@
 
   (export-graph-to-graphviz-svg
    [this ag statement-formatted filename]
-   (prn "export to graphviz svg")
    (try
      (gen-image ag statement-formatted filename)
      (catch java.io.IOException e
        (display-error this "Save error" (.getMessage e)))))
 
   (display-lkif-content
-   [this file graphinfos]
-   (tree/add-lkif-content file graphinfos)
-   (set-current-lkif-context file))
+   [this path filename graphinfos]
+   (tree/add-lkif-content path filename graphinfos)
+   (set-current-lkif-context path))
 
   (hide-lkif-content
    [this path]
@@ -215,7 +222,8 @@
 
   (display-graph-property
    [this path id title mainissue]
-   (show-properties (get-graph-properties-panel path id title mainissue)))
+   (let [properties (get-graph-properties-panel path id title mainissue)]
+     (show-properties properties)))
 
   (display-about
    [this]
@@ -255,9 +263,13 @@
      (.setVisible dialog true)
      (deref textcontent)))
 
+  (read-properties
+   [this properties]
+   (show-properties-dialog this properties))
+
   (read-statement
    [this content]
-   (show-statement-editor content false))
+   (show-statement-editor content))
 
   (display-error
    [this title content]
@@ -301,7 +313,6 @@
 
   (display-statement
    [this path ag stmt stmt-fmt]
-   (prn "display statement")
    (open-graph this path ag stmt-fmt)
    (let [component (get-component path (:id ag))]
      (select-statement component stmt stmt-fmt)))
@@ -341,14 +352,36 @@
    (set-ag-canredo path id state))
 
   (set-dirty
-   [this path ag state]
-   (set-ag-dirty path (:id ag) state))
+   [this path id state]
+   (tree/set-lkif-dirty path state)
+   (set-ag-dirty path id state))
+
+  (set-lkif-dirty
+   [this path state]
+   (tree/set-lkif-dirty path state))
 
   (copyselection-clipboard
    [this path id]
    (when-let [component (get-component path id)]
      (copyselection-toclipboard component)))
-  
+
+  (set-current-premise-properties
+   [this path id arg atom polarity type]
+   (swap! *premise-being-edited-menu-info* assoc
+          :arg arg
+          :previous-polarity polarity
+          :previous-type type
+          :atom atom)
+   (reset! *current-premise-properties* {:polarity polarity
+                                         :type type}))
+
+  (set-current-argument-properties
+   [this path id argid direction weight]
+   (reset! *argument-being-edited-menu-info*
+           {:argid argid
+            :previous-direction direction
+            :previous-weight weight}))
+    
   (statement-content-changed
    [this path ag oldstmt newstmt]
    (when-let [component (get-component path (:id ag))]
@@ -356,8 +389,6 @@
 
   (statement-status-changed
    [this path ag stmt]
-   (prn "statement-statuts-changed: stmt =")
-   (prn stmt)
    (when-let [component (get-component path (:id ag))]
      (change-statement-status component ag stmt)))
 
@@ -392,6 +423,11 @@
    [this path ag arg title]
    (when-let [component (get-component path (:id ag))]
      (change-argument-title component ag arg title)))
+
+  (argument-scheme-changed
+   [this path ag arg scheme]
+   (when-let [component (get-component path (:id ag))]
+     (change-argument-scheme component ag arg scheme)))
 
   (argument-weight-changed
    [this path ag arg weight]

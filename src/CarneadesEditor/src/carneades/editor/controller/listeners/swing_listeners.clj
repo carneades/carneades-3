@@ -1,7 +1,11 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.controller.listeners.swing-listeners
+(ns ^{:doc "These listeners have notions of the Swing events, they
+             retrieve information from the UI via the protocols
+             and call handlers. Handlers do not know anything
+             about Swing, only about the View protocol."}
+  carneades.editor.controller.listeners.swing-listeners
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.view.viewprotocol
@@ -13,6 +17,12 @@
                                                   LkifFileInfo
                                                   StatementInfo
                                                   ArgumentInfo)))
+
+(defn- current-lkif [view]
+  (when-let [info (get-selected-object-in-tree view)]
+    (condp instance? info
+      LkifFileInfo (:path info)
+      GraphInfo (-> info :lkifinfo :path))))
 
 (defn mouse-click-in-tree-listener [event view]
   (let [clickcount (.getClickCount event)]
@@ -50,7 +60,6 @@
       nil)))
 
 (defn close-file-listener [event view]
-  (prn "close file listener")
   (when-let [info (get-selected-object-in-tree view)]
     (condp instance? info
       LkifFileInfo (on-close-file view (:path info))
@@ -58,19 +67,16 @@
       nil)))
 
 (defn close-button-listener [event view]
-  (prn "close-button-listener")
   (let [[path id] (get-graphinfo-being-closed view event)]
     (on-close-graph view path id)))
 
 (defn open-graph-listener [event view]
-  (prn "open-graph-listener")
   (when-let [info (get-selected-object-in-tree view)]
     (condp instance? info
       GraphInfo (on-open-graph view (:path (:lkifinfo info)) (:id info))
       nil)))
 
 (defn close-graph-listener [event view]
-  (prn "close-graph-listener")
   (when-let [info (get-selected-object-in-tree view)]
     (condp instance? info
       GraphInfo (on-close-graph view (:path (:lkifinfo info)) (:id info))
@@ -85,6 +91,12 @@
     (condp instance? info
       GraphInfo (on-export-graph view (:path (:lkifinfo info)) (:id info))
       LkifFileInfo (on-export-file view (:path info))
+      nil)))
+
+(defn copy-graph-listener [event view]
+  (when-let [info (get-selected-object-in-tree view)]
+    (condp instance? info
+      GraphInfo (on-copy-graph view (:path (:lkifinfo info)) (:id info))
       nil)))
 
 (defn printpreview-listener [event view]
@@ -104,13 +116,13 @@
       ArgumentInfo (on-select-argument (:path info) (:id info) (:arg info) view)
       nil)))
 
-(defn statement-button-edit-listener [event view]
+(defn statement-content-edit-listener [event view]
+  ;; call from the properties
   (let [info (get-statement-being-edited-info view)
         {:keys [path id]} info]
-    (on-edit-statement view path id info)))
+    (on-edit-statement view path id info false)))
 
 (defn statement-status-edit-listener [event view]
-  (prn "statement-status-edit-listener")
   (when (.isFocusOwner (.getSource event))
     ;; comboBox fires twice the action event...
     (let [info (get-statement-being-edited-info view)
@@ -145,8 +157,10 @@
   (redo-button-listener event view))
 
 (defn save-button-listener [event view]
-  (when-let [[path id] (current-graph view)]
-    (on-save view path id)))
+  (if-let [[path _] (current-graph view)]
+    (on-save view path)
+    (when-let [path (current-lkif view)]
+      (on-save view path))))
 
 (defn copyclipboard-button-listener [event view]
   (when-let [[path id] (current-graph view)]
@@ -156,8 +170,10 @@
   (save-button-listener event view))
 
 (defn saveas-filemenuitem-listener [event view]
-  (when-let [[path id] (current-graph view)]
-    (on-saveas view path id)))
+  (if-let [[path _] (current-graph view)]
+    (on-saveas view path)
+    (when-let [path (current-lkif view)]
+      (on-saveas view path))))
 
 (defn title-edit-listener [event view]
   (let [info (get-graph-being-edited-info view)]
@@ -178,6 +194,10 @@
 (defn argument-edit-title-listener [event view]
   (let [info (get-argument-being-edited-info view)]
     (on-argument-edit-title view (:path info) (:id info) info)))
+
+(defn argument-edit-scheme-listener [event view]
+  (let [info (get-argument-being-edited-info view)]
+    (on-argument-edit-scheme view (:path info) (:id info) info)))
 
 (defn argument-edit-weight-listener [event view]
   (let [info (get-argument-being-edited-info view)]
@@ -242,15 +262,15 @@
   (on-new-file view))
 
 (defn windowclosing-listener [event view]
-  (on-exit view event))
+  (on-exit view))
 
 (defn quit-filemenuitem-listener [event view]
-  (on-exit view event))
+  (on-exit view))
 
-(defn statement-editor-listener [event view]
+(defn edit-statement-menuitem-listener [event view]
   (when-let [[path id] (current-graph view)]
-    (let [info (get-statement-being-edited-menu-info view)]
-      (on-edit-statement view path id info))))
+    (let [stmt (get-selected-node view path id)]
+      (on-statement-editor view path id stmt))))
 
 (defn import-button-listener [event view]
   (let [info (get-lkif-being-edited-info view)]
@@ -279,3 +299,49 @@
   (when-let [[path id] (current-graph view)]
     (let [info (get-statement-being-edited-menu-info view)]
       (on-edit-statement-status view path id (assoc info :status :rejected)))))
+
+(defn preferences-editmenuitem-listener [event view]
+  (on-edit-preferences view))
+
+(defn- premisemenuitem-listener-helper [event view type]
+  (when-let [[path id] (current-graph view)]
+    (let [pm (get-selected-node view path id)
+          selected (.isSelected (.getSource event))
+          info (get-premise-being-edited-menu-info view)]
+      (when selected
+        (on-premise-edit-type view path id
+                        (assoc info :type type))))))
+
+(defn premise-premisemenuitem-listener [event view]
+  (premisemenuitem-listener-helper
+   event view :carneades.engine.argument/ordinary-premise))
+
+(defn assumption-premisemenuitem-listener [event view]
+  (premisemenuitem-listener-helper
+   event view :carneades.engine.argument/assumption))
+
+(defn exception-premisemenuitem-listener [event view]
+  (premisemenuitem-listener-helper
+   event view :carneades.engine.argument/exception))
+
+(defn negated-premisemenuitem-listener [event view]
+  (when-let [[path id] (current-graph view)]
+    (let [pm (get-selected-node view path id)
+          info (get-premise-being-edited-menu-info view)
+          previous-polarity (:previous-polarity info)]
+      (on-premise-edit-polarity view path id
+                                (assoc info :polarity (not previous-polarity))))))
+
+(defn- argument-menuitem-listener [event view direction]
+  (when-let [[path id] (current-graph view)]
+    (let [pm (get-selected-node view path id)
+          info (get-argument-being-edited-menu-info view)]
+      (on-argument-edit-direction view path id
+                                  (assoc info :direction direction)))))
+
+(defn pro-argumentmenuitem-listener [event view]
+  (argument-menuitem-listener event view :pro))
+
+(defn con-argumentmenuitem-listener [event view]
+  (argument-menuitem-listener event view :con))
+

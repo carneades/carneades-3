@@ -1,7 +1,10 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.swinguiprotocol)
+(ns ^{:doc "Definition of the SwingUI protocol and the Records it uses
+            to communicate information. The SwingUI protocol abstracts all
+            that is specific to Swing."}
+  carneades.editor.view.swinguiprotocol)
 
 ;; defines protocols and records required for the swing_listeners
 
@@ -16,6 +19,7 @@
   (add-close-file-menuitem-listener [this f args])
   (add-export-lkif-filemenuitem-listener [this f args])
   (add-export-graph-menuitem-listener [this f args])
+  (add-copy-graph-menuitem-listener [this f args])
   (add-export-filemenuitem-listener [this f args])
   (add-about-helpmenuitem-listener [this f args])
   (add-printpreview-filemenuitem-listener [this f args])
@@ -33,10 +37,18 @@
   (add-save-filemenuitem-listener [this f args])
   (add-saveas-filemenuitem-listener [this f args])
   (add-copyclipboard-button-listener [this f args])
+  (add-preferences-editmenuitem-listener [this f args])
   (add-delete-premise-menuitem-listener [this f args])
   (add-delete-statement-menuitem-listener [this f args])
+  (add-edit-statement-menuitem-listener [this f args])
   (add-delete-argument-menuitem-listener [this f args])
   (add-mainissue-menuitem-listener [this f args])
+  (add-premise-premisemenuitem-listener [this f args])
+  (add-assumption-premisemenuitem-listener [this f args])
+  (add-exception-premisemenuitem-listener [this f args])
+  (add-negated-premisemenuitem-listener [this f args])
+  (add-pro-argumentmenuitem-listener [this f args])
+  (add-con-argumentmenuitem-listener [this f args])
   (add-new-statement-menuitem-listener [this f args])
   (add-new-argument-menuitem-listener [this f args])
   (add-new-premise-menuitem-listener [this f args])
@@ -47,6 +59,7 @@
   (add-findgoal-assistantmenuitem-listener [this f args])
   (add-findarguments-assistantmenuitem-listener [this f args])
   (add-instantiatescheme-assistantmenuitem-listener [this f args])
+  (add-formalizestatement-assistantmenuitem-listener [this f args])
   (add-quit-filemenuitem-listener [this f args])
   (add-import-button-listener [this f args])
   (add-remove-import-button-listener [this f args])
@@ -56,7 +69,7 @@
   (add-rejected-menuitem-listener [this f args])
   
   ;; properties edit listeners
-  (add-statement-editor-listener [this f args])
+  ;; (add-statement-editor-listener [this f args])
   (add-statement-edit-listener [this f args])
   (add-title-edit-listener [this f args])
   (add-statement-edit-status-listener [this f args])
@@ -67,6 +80,7 @@
   (add-argument-edit-title-listener [this f args])
   (add-argument-edit-weight-listener [this f args])
   (add-argument-edit-direction-listener [this f args])
+  (add-argument-edit-scheme-listener [this f args])
   
   ;; functions to get information from the Swing UI
   (get-selected-object-in-tree [this])
@@ -74,6 +88,8 @@
   (get-graphinfo-being-closed [this event])
   (get-statement-being-edited-info [this])
   (get-statement-being-edited-menu-info [this])
+  (get-premise-being-edited-menu-info [this])
+  (get-argument-being-edited-menu-info [this])
   (get-graph-being-edited-info [this])
   (get-premise-being-edited-info [this])
   (get-argument-being-edited-info [this])
@@ -84,13 +100,16 @@
   (create-wizard [this title panels]
                  [this title panels cancel-fn args])
   (display-wizard [this wizard]
-                  [this title panels])
+                  [this title panels]
+                  [this wizard height width])
   (display-branched-wizard [this basepanels selector args])
   )
 
 ;; records stored in the element of the tree:
-(defrecord LkifFileInfo [path filename] Object
-  (toString [this] filename))
+(defrecord LkifFileInfo [path filename dirty] Object
+  (toString
+   [this]
+   (str (when dirty "*") filename)))
 
 (defrecord GraphInfo [lkifinfo id title dirty] Object
   (toString

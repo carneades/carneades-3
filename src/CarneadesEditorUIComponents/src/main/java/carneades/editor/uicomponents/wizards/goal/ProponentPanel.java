@@ -141,16 +141,4 @@ public class ProponentPanel extends javax.swing.JPanel {
     private javax.swing.JRadioButton positiveRadioButton;
     // End of variables declaration//GEN-END:variables
 
-    // our modifications:
-    public static ProponentPanel panelInstance = new ProponentPanel();
-
-    public static synchronized ProponentPanel instance()
-    {
-        return panelInstance;
-    }
-
-    public static synchronized void reset()
-    {
-        panelInstance = new ProponentPanel();
-    }
 }

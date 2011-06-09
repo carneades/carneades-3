@@ -2,7 +2,10 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.examples.maptest
-  (:use carneades.engine.argument)
+  (:use carneades.engine.argument
+        carneades.engine.statement
+        carneades.engine.lkif
+        carneades.mapcomponent.export)
   (:require [carneades.mapcomponent.viewer :as jgraphx]
             [carneades.ui.diagram.viewer :as graphviz]))
 
@@ -41,5 +44,8 @@
 ;; (def ld (make-lkif-data '() (rulebase) (list ag1)))
 ;; (lkif-export '() ld "argument-map-tests2.xml")
 
-(jgraphx/view ag1)
-(graphviz/view ag1)
+(defn -main []
+  ;; (jgraphx/view ag1)
+  ;; (graphviz/view ag1)
+  (export-ag ag1 statement-formatted "/tmp/maptest.svg" :layout :radial)
+  (export-lkif {:ags [ag1]} "/tmp/maptest.lkif"))

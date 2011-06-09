@@ -1,14 +1,17 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.application.wizards.instantiatescheme
+(ns ^{:doc "Implementation of the view of the Instantiate Scheme assistant."}
+  carneades.editor.view.application.wizards.instantiatescheme
   (:use clojure.contrib.def
+        clojure.contrib.pprint
         clojure.contrib.swing-utils
+        carneades.editor.utils.swing
         carneades.editor.view.application.wizards.messages
+        carneades.editor.view.application.wizards.formular-utils
         carneades.editor.view.wizardsprotocol)
   (:require [clojure.string :as str])
-  (:import (java.awt.event KeyAdapter)
-           (javax.swing JPanel JTextField JLabel BoxLayout SpringLayout)
+  (:import (javax.swing JPanel JTextField JLabel BoxLayout SpringLayout)
            java.awt.FlowLayout
            (carneades.editor.view.wizardsprotocol StatementItem LiteralFormular)
            (carneades.editor.uicomponents.wizards.instantiatescheme
@@ -67,6 +70,7 @@
   
   (set-conclusionmatches-button-listener
    [this f args]
+   (remove-action-listeners *conclusionmatchesButton*)
    (apply add-action-listener *conclusionmatchesButton* f args))
 
   (display-clause
@@ -91,41 +95,50 @@
    (apply add-action-listener *nextClauseButton* f args))
 
   (create-literal-formular
-   [this formid literal suggestions variables suffix listener args]
-   (let [panel (LiteralPanel.)
-         literalText (.literalText panel)
-         variablesPanel (.variablesPanel panel)
-         textfields (mapcat (fn [var]
-                              (let [varpanel (VariablePanel.)
-                                    label (.variableLabel varpanel)
-                                    text (.variableText varpanel)]
-                                (.setText label (str var))
-                                (.setName text (str var "-" suffix))
-                                (.add variablesPanel varpanel)
-                                (.addKeyListener text
-                                                 (proxy [KeyAdapter] []
-                                                   (keyReleased
-                                                    [keyevent]
-                                                    (apply listener formid var (.getText text) args))))
-                                [var text]))
-                         variables)]
-     (.setText literalText literal)
-     (LiteralFormular. formid panel (apply hash-map textfields)))
-   )
+   [this formid literal suggestions variables suffix listeners args]
+   (create-formular formid *literal* literal suggestions variables suffix listeners args))
+
+  (display-suggestion
+   [this formular suggestion n nb-suggestions]
+   (let [panel (:panel formular)
+         suggestionText (.suggestionText panel)
+         suggestionLabel (.suggestionLabel panel)
+         previousSuggestionButton (.previousSuggestionButton panel)
+         nextSuggestionButton (.nextSuggestionButton panel)
+         useSuggestionButton (.useSuggestionButton panel)]
+     (.setEnabled suggestionLabel true)
+     (.setEnabled suggestionText true)
+     (.setEnabled previousSuggestionButton true)
+     (.setEnabled nextSuggestionButton true)
+     (.setEnabled useSuggestionButton true)
+     (.setText suggestionText suggestion)
+     (.setText suggestionLabel (format *suggestion-n-of* n nb-suggestions))))
+
+  (display-no-suggestion
+   [this form]
+   (let [panel (:panel form)
+         suggestionText (.suggestionText panel)
+         suggestionLabel (.suggestionLabel panel)
+         previousSuggestionButton (.previousSuggestionButton panel)
+         nextSuggestionButton (.nextSuggestionButton panel)
+         useSuggestionButton (.useSuggestionButton panel)]
+     (.setEnabled suggestionLabel false)
+     (.setEnabled suggestionText false)
+     (.setEnabled previousSuggestionButton false)
+     (.setEnabled nextSuggestionButton false)
+     (.setEnabled useSuggestionButton false)))
 
   (fillin-formular
    [this formular var-values]
-   (let [textfields (:textfields formular)]
-     (doseq [[var value] var-values]
-       (when-let [text (get textfields var)]
-         (.setText text value)))))
+   (fill-formular formular var-values))
+
+  (trigger-formpanel-validator
+   [this formular]
+   (let [panel (:panel formular)
+         trigger (.dummyValidatorTrigger panel)]
+     (.setText trigger "xyz")))
 
   (set-filter-text-listener
    [this f args]
-   (doseq [l (.getKeyListeners *filterText*)]
-     (.removeKeyListener *filterText* l))
-   (.addKeyListener *filterText*
-                    (proxy [KeyAdapter] []
-                      (keyReleased
-                       [keyevent]
-                       (apply f keyevent args))))))
+   (remove-key-listeners *filterText*)
+   (apply add-key-released-listener *filterText* f args)))

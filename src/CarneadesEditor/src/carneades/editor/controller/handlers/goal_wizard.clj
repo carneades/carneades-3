@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.controller.handlers.goal-wizard
+(ns ^{:doc "Implementation of the Find Positions assistant."}
+  carneades.editor.controller.handlers.goal-wizard
   (:use clojure.contrib.def
         clojure.contrib.pprint
         clojure.contrib.swing-utils
@@ -38,43 +39,42 @@
 (defvar- *abduction-future* (atom nil))
 
 (defn on-abduction-panel-validation [settings view path id]
-  (prn "on-abduction-panel-validation")
   (let [state (deref *abduction-state*)]
-   (cond (or (= state :running) (= state :stopping))
-         *searching-positions*
+    (cond (or (= state :running) (= state :stopping))
+          *searching-positions*
 
-         (nil? (deref *positions*)) nil
+          (nil? (deref *positions*)) nil
 
-         :else (let [statement (get settings "statements")]
-                 (if (nil? statement)
-                   *select-statement*
-                   nil)))))
+          :else (let [statement (get settings "statements")]
+                  (if (nil? statement)
+                    *select-statement*
+                    nil)))))
 
 (defn- run-abduction [settings view path id]
-  (when-let* [ag (get-ag path id)
-              positive (get settings "positive")
-              negative (get settings "negative")
-              in (get settings "in")
-              out (get settings "out")
-              mainissue (:main-issue ag)
-              positions (cond (and positive in)
-                              (statement-in-label ag (assume-decided-statements ag)
-                                                  mainissue)
+  (m-let [ag (get-ag path id)
+          positive (get settings "positive")
+          negative (get settings "negative")
+          in (get settings "in")
+          out (get settings "out")
+          mainissue (:main-issue ag)
+          positions (cond (and positive in)
+                          (statement-in-label ag (assume-decided-statements ag)
+                                              mainissue)
 
-                              (and positive out)
-                              (statement-out-label ag (assume-decided-statements ag)
-                                                   mainissue)
+                          (and positive out)
+                          (statement-out-label ag (assume-decided-statements ag)
+                                               mainissue)
 
-                              (and negative in)
-                              (statement-in-label ag (assume-decided-statements ag)
-                                                  (statement-complement mainissue))
+                          (and negative in)
+                          (statement-in-label ag (assume-decided-statements ag)
+                                              (statement-complement mainissue))
 
-                              (and negative out)
-                              (statement-out-label ag (assume-decided-statements ag)
-                                                   (statement-complement mainissue)))
-              positions  (apply vector (sort-by count positions))
-              position (first positions)
-              npos (count positions)]
+                          (and negative out)
+                          (statement-out-label ag (assume-decided-statements ag)
+                                               (statement-complement mainissue)))
+          positions  (apply vector (sort-by count positions))
+          position (first positions)
+          npos (count positions)]
     (when (= (deref *abduction-state*) :running)
       (if (= positions [*verum-clause*])
         (do
@@ -86,8 +86,6 @@
            (display-position view nil 0 0 nil)
            (set-abduction-busy view false)))
         (do
-          (prn "first position =")
-          (pprint position)
           (reset! *positions* {:positions positions :index 0 :npos npos
                                :posnotminimized positions})
           (do-swing-and-wait
@@ -96,79 +94,76 @@
            (display-position view position 0 npos statement-formatted)))))))
 
 (defn- try-stop-abduction []
- (when-let [abduction-future (deref *abduction-future*)]
-   (reset! *abduction-state* :stopping)
-   (future-cancel abduction-future)
-   (when (future-cancelled? abduction-future)
-     (prn "future cancelled with success")
-     (reset! *abduction-state* :stopped))))
+  (when-let [abduction-future (deref *abduction-future*)]
+    (reset! *abduction-state* :stopping)
+    (future-cancel abduction-future)
+    (when (future-cancelled? abduction-future)
+      (reset! *abduction-state* :stopped))))
 
 (defn on-abduction-panel [settings view path id]
   (locking *abduction-state*
-   (prn "on-abduction-panel")
-   (prn settings)
-   (reset-position view)
-   (letfn [(start-abduction
-            []
-            (set-abduction-busy view true)
-            (reset! *abduction-state* :running)
-            (reset! *abduction-future*
-                    (future (run-abduction settings view path id))))
+    (reset-position view)
+    (letfn [(start-abduction
+             []
+             (set-abduction-busy view true)
+             (reset! *abduction-state* :running)
+             (reset! *abduction-future*
+                     (future (run-abduction settings view path id))))
+            
+            (wait-for-abduction
+             []
+             (deref *abduction-future*)
+             (reset! *abduction-state* :stopped))
+
+            (wait-then-start-abduction
+             []
+             (wait-for-abduction)
+             (start-abduction))]
+      (condp = (deref *abduction-state*)
+          :running (do
+                     (try-stop-abduction)
+                     (when (not= (deref *abduction-state*) :stopped)
+                       (wait-for-abduction))
+                     (start-abduction))
           
-           (wait-for-abduction
-            []
-            (deref *abduction-future*)
-            (reset! *abduction-state* :stopped))
+          :stopped (start-abduction)
 
-           (wait-then-start-abduction
-            []
-            (wait-for-abduction)
-            (start-abduction))]
-     (condp = (deref *abduction-state*)
-         :running (do
-                    (try-stop-abduction)
-                    (when (not= (deref *abduction-state*) :stopped)
-                      (wait-for-abduction))
-                    (start-abduction))
-       
-         :stopped (start-abduction)
-
-         :stopping (wait-then-start-abduction)))))
+          :stopping (wait-then-start-abduction)))))
 
 (defn on-post-goalwizard [view path id settings]
   (when settings
-   (when-let* [ag (get-ag path id)
-               statement (:stmt (get settings "statements"))]
-     (display-statement view path ag (statement-atom statement) statement-formatted))))
+    (m-let [ag (get-ag path id)
+            statement (:stmt (get settings "statements"))]
+      (display-statement view path ag (statement-atom statement) statement-formatted))))
 
 (defn on-first-position [view path id]
   (let [positions (deref *positions*)]
-   (when (and (future-done? (deref *abduction-future*)) (not (nil? positions)))
-     (let [{:keys [positions npos]} positions
-           index 0
-           position (get positions index)]
-       (swap! *positions* assoc :index index)
-       (display-position view position index npos statement-formatted)))))
+    (when (and (future-done? (deref *abduction-future*)) (not (nil? positions)))
+      (let [{:keys [positions npos]} positions
+            index 0
+            position (get positions index)]
+        (swap! *positions* assoc :index index)
+        (display-position view position index npos statement-formatted)))))
 
 (defn on-previous-position [view path id]
   (let [positions (deref *positions*)]
-   (when (and (future-done? (deref *abduction-future*)) (not (nil? positions)))
-     (let [{:keys [index positions npos]} positions]
-       (when (pos? index)
-         (let [index (dec index)
-               position (get positions index)]
-           (swap! *positions* assoc :index index)
-           (display-position view position index npos statement-formatted)))))))
+    (when (and (future-done? (deref *abduction-future*)) (not (nil? positions)))
+      (let [{:keys [index positions npos]} positions]
+        (when (pos? index)
+          (let [index (dec index)
+                position (get positions index)]
+            (swap! *positions* assoc :index index)
+            (display-position view position index npos statement-formatted)))))))
 
 (defn on-next-position [view path id]
   (let [positions (deref *positions*)]
-   (when (and (future-done? (deref *abduction-future*)) (not (nil? positions)))
-     (let [{:keys [index positions npos]} positions]
-       (when (< index (dec npos))
-         (let [index (inc index)
-               position (get positions index)]
-           (swap! *positions* assoc :index index)
-           (display-position view position index npos statement-formatted)))))))
+    (when (and (future-done? (deref *abduction-future*)) (not (nil? positions)))
+      (let [{:keys [index positions npos]} positions]
+        (when (< index (dec npos))
+          (let [index (inc index)
+                position (get positions index)]
+            (swap! *positions* assoc :index index)
+            (display-position view position index npos statement-formatted)))))))
 
 (defn on-last-position [view path id]
   (let [positions (deref *positions*)]
@@ -180,33 +175,28 @@
           (display-position view position index npos statement-formatted))))))
 
 (defn on-sort-by [view path id sort-by-val]
-  (when-let* [positions (deref *positions*)
-              npos (:npos positions)
-              positions (:positions positions)
-              ag (get-ag path id)
-              positions (apply vector
-                               (case sort-by-val
-                                     "Size" (sort-by count positions)
-                                     "Depth" (sort-by #(position-depth ag %) positions)
-                                     "Height" (sort-by #(position-height ag %) positions)))
-              position (first positions)]
+  (m-let [positions (deref *positions*)
+          npos (:npos positions)
+          positions (:positions positions)
+          ag (get-ag path id)
+          positions (apply vector
+                           (condp = sort-by-val
+                                 "smaller first" (sort-by count positions)
+                                 "closer to issue first" (sort-by #(position-depth ag %) positions)
+                                 "farther from issue first" (sort-by #(position-height ag %) positions)))
+          position (first positions)]
     (swap! *positions* assoc :positions positions :index 0)
     (display-position view position 0 npos statement-formatted)))
 
 (defn on-minimize-positions [view path id minimize]
-  (when-let* [positions (deref *positions*)
-              positions (if minimize
-                          (apply vector (make-minimal (:positions positions)))
+  (m-let [positions (deref *positions*)
+          positions (if minimize
+                      (apply vector (make-minimal (:positions positions)))
                       (:posnotminimized positions))
-              npos (count positions)]
+          npos (count positions)]
     (swap! *positions* assoc :positions positions :npos npos :index 0)
     (display-position view (first positions) 0 npos statement-formatted)))
 
 (defn on-cancel-goal-wizard [settings view path id]
-  (prn "on cancel")
   (try-stop-abduction)
   true)
-
-;; (defn goal-wizard-selector [view path id step settings abduction-wizard]
-;;   (prn "goal-wizard-selector")
-;;   abduction-wizard)

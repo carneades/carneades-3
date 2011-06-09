@@ -1,75 +1,77 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.controller.documents
-  (:use clojure.contrib.def
-        carneades.engine.argument
-        carneades.editor.model.docmanager
-        carneades.editor.model.lkif-utils
+(ns ^{:doc "Store information about the current opened LKIF, via a reference the 
+             docmanager and functions to generate statement names, arguments id etc.
+             Contains also some utilities function to extract information 
+             from a LKIF structure"}
+  carneades.editor.controller.documents
+  (:use clojure.pprint
+        clojure.java.io
+        (clojure.contrib def trace)
+        (carneades.engine utils argument lkif)
+        carneades.editor.utils.core
+        (carneades.editor.model docmanager lkif-utils)
         carneades.editor.view.viewprotocol))
 
 (defvar *docmanager* (create-docmanager))
-(defvar- *dirtyags* (atom #{}))
 
+;; TODO moves this info to the docmanager?
 (defvar *fresh-ags-id* (atom {}))
 
-(defn add-fresh-ag [path id]
+(defn add-fresh-ag
   "adds the id of an argument graph to the map
    of newly created ags."
-  ;; These ags are not extracted
-  ;; from the docmanager when saving the lkif files,
-  ;; thus not saved in the LKIF until the user asks
-  ;; explicitely to save them
+  [path id]
   (let [fresh (deref *fresh-ags-id*)]
     (if-let [ids (get fresh path)]
       (let [ids (conj ids id)]
         (swap! *fresh-ags-id* assoc path ids))
       (swap! *fresh-ags-id* assoc path #{id}))))
 
-(defn remove-fresh-ag [path id]
+(defn remove-fresh-ags [path]
   (let [fresh (deref *fresh-ags-id*)]
-    (when-let [ids (get fresh path)]
-      (let [ids (disj ids id)]
-        (swap! *fresh-ags-id* assoc path ids)))))
+    (swap! *fresh-ags-id* assoc path #{})))
 
 (defn get-fresh-ag-ids [path]
   (get (deref *fresh-ags-id*) path #{}))
 
-(defn set-ag-dirty [path id isdirty]
-  (if isdirty
-    (swap! *dirtyags* conj [path id])
-    (swap! *dirtyags* disj [path id])))
-
-(defn update-dirty-state [view path ag isdirty]
-  (set-ag-dirty path (:id ag) isdirty)
-  (set-dirty view path ag isdirty))
+(defn update-dirty-state [view path id isdirty]
+  (set-dirty view path id isdirty))
 
 (defn update-undo-redo-statuses [view path id]
-  (prn "update-undo-redo-statuses")
   (set-can-undo view path id (can-undo-section? *docmanager* [path :ags id]))
   (set-can-redo view path id (can-redo-section? *docmanager* [path :ags id])))
 
-(defn is-ag-dirty [path id]
-  (contains? (deref *dirtyags*) [path id]))
+(defn ag-dirty? [path id]
+  (section-dirty? *docmanager* [path :ags id]))
 
 (defn get-ag [lkifpath id]
   (get-section-content *docmanager* [lkifpath :ags id]))
 
 (defn get-lkif [lkifpath]
-  (extract-lkif-from-docmanager lkifpath *docmanager* #{}))
+  (extract-lkif-from-docmanager lkifpath *docmanager*))
 
 (defn get-rules [lkifpath]
+  ;; to delete
   (:rules (:rb (get-lkif lkifpath))))
 
-(defn get-kbs-locations [lkifpath]
-  (map first (get-section-content *docmanager* [lkifpath :import-kbs])))
+(defn get-reasoners [path]
+  (keep :reasoner (vals (:import-kbs (get-lkif path)))))
+
+;; (defn get-kbs-locations [lkifpath]
+;;   (map first (get-section-content *docmanager* [lkifpath :import-kbs])))
+
+(defn get-imports-locations [lkifpath]
+  (map (fn [{:keys [name relative-path]}]
+         (or relative-path name))
+       (get-section-content *docmanager* [lkifpath :import-tree])))
 
 (defn get-ags-id [lkifpath]
-  (let [agsid (get-all-sectionskeys *docmanager* [lkifpath :ags])]
-    agsid))
+  (get-all-sectionskeys *docmanager* [lkifpath :ags]))
 
 (defn get-allpaths []
-  (get-all-sectionskeys *docmanager* []))
+  (filter string? (get-all-sectionskeys *docmanager* [])))
 
 (defn get-unsaved-graphs 
   "returns a ([path id] [path id] ...) seq
@@ -78,10 +80,28 @@
      (mapcat (fn [path]
                (partition 2 (interleave
                              (repeat path)
-                             (filter #(is-ag-dirty path %) (get-ags-id path)))))
+                             (filter #(ag-dirty? path %) (get-ags-id path)))))
              (get-allpaths)))
   ([path]
-     (filter #(is-ag-dirty path %) (get-ags-id path))))
+     (filter #(ag-dirty? path %) (get-ags-id path))))
+
+(defvar- *non-ag-sections* (keys (dissoc *empty-lkif* :ags)))
+
+(defn mark-lkif-saved [view path]
+  (doseq [s *non-ag-sections*]
+   (mark-section-saved *docmanager* [path s]))
+  (doseq [id (get-ags-id path)]
+    (let [ag (get-ag path id)]
+      (mark-section-saved *docmanager* [path :ags id])
+      (update-dirty-state view path id false)))
+  (set-lkif-dirty view path false))
+
+(defn lkif-dirty? [path]
+  (or (some #(section-dirty? *docmanager* [path %]) *non-ag-sections*)
+      (some #(section-dirty? *docmanager* [path :ags %]) (get-ags-id path))))
+
+(defn get-unsaved-lkifs []
+  (filter lkif-dirty? (get-allpaths)))
 
 (defn init-counters [path]
   (add-section *docmanager* [path :graph-counter] 1)
@@ -126,14 +146,66 @@
       (gen-graph-id path)
       id)))
 
-(defn get-graphs-titles [path]
+(defvar *newlkif-prefix* "untitled-file")
+(defvar *newlkif-suffix* ".xml")
+
+(defn get-newlkif-filename [idx-or-path]
+  (if (string? idx-or-path)
+    (let [paths (get-section-content *docmanager* [:newlkif-paths])]
+      (get-newlkif-filename (get paths idx-or-path)))
+    (str *newlkif-prefix* idx-or-path *newlkif-suffix*)))
+
+(defn gen-newlkif-filename [path]
+  (if-let [idx (get-section-content *docmanager* [:newlkif-indexes])]
+    (let [firstfree (first (filter #(not (contains? idx %)) (rest (range))))
+          filename (get-newlkif-filename firstfree)
+          newlkif-paths (get-section-content *docmanager* [:newlkif-paths])]
+      (update-section *docmanager* [:newlkif-indexes] (conj idx firstfree))
+      (update-section *docmanager* [:newlkif-paths] (assoc newlkif-paths path firstfree))
+      filename)
+    (let [filename (get-newlkif-filename 1)]
+      (add-section *docmanager* [:newlkif-indexes] #{1})
+      (add-section *docmanager* [:newlkif-paths] {path 1})
+      filename)))
+
+(defn new-lkif? [path]
+  (when-let [paths (set (keys (get-section-content *docmanager* [:newlkif-paths])))]
+    (contains? paths path)))
+
+(defn remove-newlkif [path]
+  (m-let [paths (get-section-content *docmanager* [:newlkif-paths])
+          idx (get-section-content *docmanager* [:newlkif-indexes])
+          index (get paths path)
+          paths (dissoc paths path)
+          idx (disj idx index)]
+    (update-section *docmanager* [:newlkif-indexes] idx)
+    (update-section *docmanager* [:newlkif-paths] paths)))
+
+(defn get-graphs-titles
   "returns a set of all titles"
+  [path]
   (set (map :title (map #(get-ag path %) (get-ags-id path)))))
 
-(defn do-update-section [view keys ag]
+(defn do-ag-update
   "updates section content in the model and dirty markers in the view"
+  [view keys ag]
   ;; the first key is the path
   (let [path (first keys)]
     (update-section *docmanager* keys ag)
     (update-undo-redo-statuses view path (:id ag))
-    (update-dirty-state view path ag true)))
+    (update-dirty-state view path (:id ag) true)))
+
+(defn update-imports [view path lkif]
+  (doseq [k *non-ag-sections*]
+    (update-section *docmanager* [path k] (get lkif k))
+    (delete-section-history *docmanager* [path k]))
+  (set-lkif-dirty view path true))
+
+(defn as-absolute-import [lkifpath importurl]
+  (if (or (url? importurl) (.isAbsolute (file importurl)))
+    importurl
+    (:name
+     (first (filter (fn [{:keys [relative-path]}]
+                      (or (= relative-path importurl)))
+                    (get-section-content *docmanager* [lkifpath :import-tree]))))))
+

@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.application.editorswingui
+(ns ^{:doc "Impplementation of the SwingUI protocol."}
+  carneades.editor.view.application.editorswingui
   (:use clojure.contrib.def
         clojure.contrib.pprint
         clojure.contrib.swing-utils
@@ -12,9 +13,11 @@
         carneades.editor.view.components.uicomponents
         (carneades.editor.view.properties lkif graph statement argument premise)
         (carneades.editor.view.components tabs tree search)
+        carneades.editor.view.application.editor-helpers
         carneades.mapcomponent.map)
   (:require [carneades.editor.view.components.tree :as tree])
   (:import java.awt.BorderLayout
+           java.awt.Toolkit
            (org.netbeans.spi.wizard WizardPage WizardPage$WizardResultProducer
                                     WizardObserver WizardBranchController)
            org.netbeans.api.wizard.WizardDisplayer
@@ -60,6 +63,10 @@
   (add-export-graph-menuitem-listener
    [this f args]
    (apply add-action-listener *exportGraphMenuItem* f args))
+
+  (add-copy-graph-menuitem-listener
+   [this f args]
+   (apply add-action-listener *copyGraphMenuItem* f args))
 
   (add-about-helpmenuitem-listener
    [this f args]
@@ -113,6 +120,10 @@
    [this f args]
    (apply add-action-listener *deleteArgumentMenuItem* f args))
 
+  (add-edit-statement-menuitem-listener
+   [this f args]
+   (apply add-action-listener *editStatementMenuItem* f args))
+
   (add-delete-statement-menuitem-listener
    [this f args]
    (apply add-action-listener *deleteStatementMenuItem* f args))
@@ -129,9 +140,9 @@
    [this f args]
    (register-statement-edit-listener f args))
 
-  (add-statement-editor-listener
-   [this f args]
-   (register-statement-editor-listener f args))
+  ;; (add-statement-editor-listener
+  ;;  [this f args]
+  ;;  (register-statement-editor-listener f args))
 
   (add-title-edit-listener
    [this f args]
@@ -141,10 +152,6 @@
    [this]
    (graph-being-edited-info))
 
-  (get-argument-being-edited-info
-   [this]
-   (argument-being-edited-info))
-  
   (add-statement-edit-status-listener
    [this f args]
    (apply add-action-listener *statementStatusComboBox* f args))
@@ -173,6 +180,10 @@
    [this f args]
    (apply add-action-listener *proButton* f args)
    (apply add-action-listener *conButton* f args))
+
+  (add-argument-edit-scheme-listener
+   [this f args]
+   (apply add-action-listener *schemeText* f args))
   
   (add-undo-button-listener
    [this f args]
@@ -194,6 +205,10 @@
    [this f args]
    (apply add-action-listener *copyClipboardEditMenuItem* f args))
 
+  (add-preferences-editmenuitem-listener
+   [this f args]
+   (apply add-action-listener *preferencesEditMenuItem* f args))
+  
   (add-premise-edit-polarity-listener
    [this f args]
    (apply add-action-listener *negatedCheckBox* f args))
@@ -202,6 +217,30 @@
    [this f args]
    (apply add-action-listener *mainIssueMenuItem* f args))
 
+  (add-premise-premisemenuitem-listener
+   [this f args]
+   (apply add-action-listener *premisePremiseMenuItem* f args))
+  
+  (add-assumption-premisemenuitem-listener
+   [this f args]
+   (apply add-action-listener *assumptionPremiseMenuItem* f args))
+  
+  (add-exception-premisemenuitem-listener
+   [this f args]
+   (apply add-action-listener *exceptionPremiseMenuItem* f args))
+
+  (add-negated-premisemenuitem-listener
+   [this f args]
+   (apply add-action-listener *negatedPremiseMenuItem* f args))
+
+  (add-pro-argumentmenuitem-listener
+   [this f args]
+   (apply add-action-listener *proArgumentMenuItem* f args))
+
+  (add-con-argumentmenuitem-listener
+   [this f args]
+   (apply add-action-listener *conArgumentMenuItem* f args))
+  
   (add-new-statement-menuitem-listener
    [this f args]
    (apply add-action-listener *newStatementMenuItem* f args))
@@ -228,16 +267,20 @@
 
   (add-findgoal-assistantmenuitem-listener
    [this f args]
-   (apply add-action-listener *assistantFindGoalMenuItem* f args))
+   (apply add-action-listener *findGoalAssistantMenuItem* f args))
 
   (add-findarguments-assistantmenuitem-listener
    [this f args]
-   (apply add-action-listener *assistantFindArgumentsMenuItem* f args))
+   (apply add-action-listener *findArgumentsAssistantMenuItem* f args))
 
   (add-instantiatescheme-assistantmenuitem-listener
    [this f args]
-   (apply add-action-listener *assistantInstantiateSchemeMenuItem* f args))
+   (apply add-action-listener *instantiateSchemeAssistantMenuItem* f args))
 
+  (add-formalizestatement-assistantmenuitem-listener
+   [this f args]
+   (apply add-action-listener *formalizeStatementAssistantMenuItem* f args))
+  
   (add-quit-filemenuitem-listener
    [this f args]
    (apply add-action-listener *quitFileMenuItem* f args))
@@ -285,6 +328,18 @@
   (get-statement-being-edited-menu-info
    [this]
    (deref *statement-being-edited-menu-info*))
+
+  (get-premise-being-edited-menu-info
+   [this]
+   (deref *premise-being-edited-menu-info*))
+
+  (get-argument-being-edited-menu-info
+   [this]
+   (deref *argument-being-edited-menu-info*))
+
+  (get-argument-being-edited-info
+   [this]
+   (argument-being-edited-info))
   
   (get-premise-being-edited-info
    [this]
@@ -345,7 +400,16 @@
 
   (display-wizard
    [this title panels]
-   (WizardDisplayer/showWizard (create-wizard this title panels)))
+   (display-wizard this (create-wizard this title panels)))
+
+  (display-wizard
+   [this wizard height width]
+   (let [w width
+         l height
+         size (.getScreenSize (Toolkit/getDefaultToolkit))
+         x (int (/ (- (.width size) width) 2))
+         y (int (/ (- (.height size) height) 2))]
+     (WizardDisplayer/showWizard wizard (java.awt.Rectangle. x y width height))))
 
   (display-branched-wizard
    [this basepanels selector args]

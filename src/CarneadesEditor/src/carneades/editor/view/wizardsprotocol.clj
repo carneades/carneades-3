@@ -1,7 +1,9 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.wizardsprotocol)
+(ns ^{:doc "Definition of the assistants (also internally called wizards) protocols
+            and of the various Records they use."}
+  carneades.editor.view.wizardsprotocol)
 
 (defrecord StatementItem [stmt formatted] Object
   (toString
@@ -9,6 +11,11 @@
    formatted))
 
 (defrecord LiteralFormular [formid panel textfields])
+
+(defrecord EntityItem [entity formatted type] Object
+  (toString
+   [this]
+   formatted))
 
 (defprotocol SwingGoalWizard
   (set-main-issue [this mainissue])
@@ -51,4 +58,19 @@
   (set-next-clause-button-listener [this f args])
   (create-literal-formular [this formid literal suggestions variables suffix listener args])
   (fillin-formular [this form var-values] "does nothing if var does not exist for the form")
+  (display-suggestion [this formular suggestion n nb-suggestions])
+  (display-no-suggestion [this formular])
+  (trigger-formpanel-validator [this formular]))
+
+(defprotocol SwingFormalizeStatementWizard
+  (get-entitiespanel [this])
+  (get-statement-panel [this statement listeners] "returns both the panel and its formular")
+  (set-filterentities-text-listener [this f args])
+  (set-classes-button-listener [this f args])
+  (set-properties-button-listener [this f args])
+  (display-entities [this descs])
+  (classes-button-selected? [this])
+  (properties-button-selected? [this])
+  (get-entities-filter-text [this])
+  (prepare-statement-formular [this formular stmt entity])
   )

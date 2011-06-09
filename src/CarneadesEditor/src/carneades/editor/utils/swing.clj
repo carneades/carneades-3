@@ -1,9 +1,12 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.utils.swing
+(ns ^{:doc "Various Swing utilities functions 
+            that are lacking in clojure.contrib.swing-utils"}
+  carneades.editor.utils.swing
   (:require [clojure.zip :as zip])
   (:import java.beans.PropertyChangeListener
+           (java.awt Toolkit EventQueue)
            (javax.swing.event ListSelectionListener
                               TreeSelectionListener
                               ChangeListener)
@@ -15,6 +18,7 @@
                              TreeSelectionModel
                              DefaultTreeModel)
            (java.awt.event WindowAdapter
+                           KeyAdapter
                            MouseAdapter)))
 
 (defn create-file-filter [description extensions]
@@ -115,4 +119,38 @@
           (if (= name (.getName info))
             (UIManager/setLookAndFeel (.getClassName info))
             (recur (rest infos))))))
-    (catch Exception e (prn "Exception") (prn e))))
+    (catch Exception e nil)))
+
+(defn enable-items [ & items]
+  (doseq [item items]
+    (.setEnabled item true)))
+
+(defn disable-items [ & items]
+  (doseq [item items]
+    (.setEnabled item false)))
+
+(defn set-swing-exception-handler
+  "forces Swing to calls the function f when an uncaught exception occurred.
+   f takes one argument, the uncaught exception"
+  [f]
+  ;; http://ruben42.wordpress.com/2009/03/30/catching-all-runtime-exceptions-in-swing/
+  (let [toolkit (Toolkit/getDefaultToolkit)
+        queue (.getSystemEventQueue toolkit)]
+    (.push queue (proxy [EventQueue] []
+                   (dispatchEvent
+                    [event]
+                    (try
+                      (proxy-super dispatchEvent event)
+                      (catch Throwable e
+                        (f e))))))))
+
+(defn add-key-released-listener [component f & args]
+  (.addKeyListener component
+                   (proxy [KeyAdapter] []
+                     (keyReleased
+                      [keyevent]
+                      (apply f keyevent args)))))
+
+(defn remove-key-listeners [component]
+  (doseq [l (.getKeyListeners component)]
+    (.removeKeyListener component l)))

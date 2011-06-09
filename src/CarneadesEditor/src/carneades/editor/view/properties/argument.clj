@@ -1,13 +1,14 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.properties.argument
+(ns ^{:doc "Function to display argument properties in the panel properties."}
+  carneades.editor.view.properties.argument
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.utils.swing)
   (:import carneades.editor.uicomponents.ArgumentPropertiesView))
 
-(defvar- *argumentProperties* (ArgumentPropertiesView/instance))
+(defvar- *argumentProperties* (ArgumentPropertiesView.))
 
 (defvar *titleText* (.titleText *argumentProperties*))
 (defvar *proButton* (.proButton *argumentProperties*))
@@ -18,7 +19,7 @@
 (defvar- *mapTitleText* (.mapTitleText *argumentProperties*))
 (defvar- *applicabilityText* (.applicabilityText *argumentProperties*))
 
-(defvar- *schemeText* (.schemeText *argumentProperties*))
+(defvar *schemeText* (.schemeText *argumentProperties*))
 
 (defvar- *change-listeners* (atom #{}))
 
@@ -37,8 +38,7 @@
 ;;; public functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn init-argument-properties []
-  (ArgumentPropertiesView/reset))
+(defn init-argument-properties [])
 
 (defvar- *previous-argument-content* (atom {}))
 

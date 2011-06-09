@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.engine.argument-edit
+(ns ^{:doc "Functions to modify an argument graph in a consistent way"}
+    carneades.engine.argument-edit
   (:use clojure.contrib.pprint
         carneades.engine.argument
         carneades.engine.statement
@@ -46,11 +47,12 @@
 ;;; public functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn update-statement-content [ag oldstmt newstmt]
-  "returns the new ag or nil if oldsmt does not exist in ag"
+(defn update-statement-content
+  "Returns the new ag or nil if oldsmt does not exist in ag"
+  [ag oldstmt newstmt]
   (when-let [n (statement-node ag oldstmt)]
     (let [key (statement-symbol oldstmt)
-          ag (update-in ag [:nodes] dissoc key)
+          ag (update-in ag [:nodes key] dissoc oldstmt)
           n (assoc n :statement newstmt)
           ag (add-node ag n)
           ag (update-conclusions ag (:conclusion-of n) newstmt)
@@ -58,13 +60,17 @@
           ag (update-premises ag (:premise-of n) oldstmt newstmt)]
       ag)))
 
-(defn update-statement-proofstandard [ag stmt proofstandard]
+(defn update-statement-proofstandard
+  "Updates the proofstandard of a statement (conclusion)"
+  [ag stmt proofstandard]
   (when-let [n (statement-node ag stmt)]
    (let [n (assoc n :standard proofstandard)
          ag (add-node ag n)]
      (update-statement ag stmt))))
 
-(defn update-premise-polarity [ag arg atom polarity]
+(defn update-premise-polarity
+  "Updates a premise polarity. Atom is a premise of arg."
+  [ag arg atom polarity]
   (letfn [(update-pm-polarity
            [arg]
            (let [pms (:premises arg)
@@ -78,7 +84,9 @@
           newarg (get-argument ag (:id arg))]
       (update-argument ag newarg))))
 
-(defn update-premise-type [ag arg atom type]
+(defn update-premise-type
+  "Updates a premise type. Atom is a premise of arg."
+  [ag arg atom type]
   (letfn [(update-pm-type
            [arg]
            (let [pms (:premises arg)
@@ -92,7 +100,9 @@
           newarg (get-argument ag (:id arg))]
       (update-argument ag newarg))))
 
-(defn update-premise-role [ag arg atom role]
+(defn update-premise-role
+  "Updates a premise role. Atom is a premise of arg."
+  [ag arg atom role]
   (letfn [(update-pm-role
            [arg]
            (let [pms (:premises arg)
@@ -104,31 +114,40 @@
              (assoc arg :premises (conj tokeep updated))))]
     (update-in ag [:arguments (:id arg)] update-pm-role)))
 
-(defn update-argument-title [ag arg title]
-  (letfn [(update-arg-title
+(defn- update-argument-val [ag arg k v]
+  (letfn [(update-arg-val
            [arg]
-           (assoc arg :title title))]
-    (update-in ag [:arguments (:id arg)] update-arg-title)))
+           (assoc arg k v))]
+    (update-in ag [:arguments (:id arg)] update-arg-val)))
 
-(defn update-argument-weight [ag arg weight]
-  (letfn [(update-arg-weight
-           [arg]
-           (assoc arg :weight weight))]
-    (let [ag (update-in ag [:arguments (:id arg)] update-arg-weight)
-          arg (get-argument ag (:id arg))]
-      (update-statement ag (:conclusion arg)))))
+(defn update-argument-title
+  "Updates an argument title"
+  [ag arg title]
+  (update-argument-val ag arg :title title))
 
-(defn update-argument-direction [ag arg direction]
-  (letfn [(update-arg-direction
-           [arg]
-           (assoc arg :direction direction))]
-    (let [ag (update-in ag [:arguments (:id arg)] update-arg-direction)
-          arg (get-argument ag (:id arg))]
-      (update-statement ag (:conclusion arg)))))
+(defn update-argument-scheme
+  "Updates an argument scheme"
+  [ag arg scheme]
+  (update-argument-val ag arg :scheme scheme))
 
-(defn add-premise [ag arg stmt]
-  "add a premise and returns the new argument graph or nil
+(defn update-argument-weight
+  "Updates an argument weight"
+ [ag arg weight]
+  (let [ag  (update-argument-val ag arg :weight weight) 
+        arg (get-argument ag (:id arg))]
+    (update-statement ag (:conclusion arg))))
+
+(defn update-argument-direction
+  "Updates an argument direction"
+  [ag arg direction]
+  (let [ag (update-argument-val ag arg :direction direction)
+        arg (get-argument ag (:id arg))]
+    (update-statement ag (:conclusion arg))))
+
+(defn add-premise
+  "Add a premise and returns the new argument graph or nil
    if the premise would introduce a cycle"
+  [ag arg stmt]
   (letfn [(add-premise-to-arg
            [arg]
            (update-in arg [:premises] conj (pm stmt)))]
@@ -140,7 +159,9 @@
               newarg (get-argument ag (:id arg))]
           (update-argument ag newarg))))))
 
-(defn delete-premise [ag arg pm]
+(defn delete-premise
+  "Deletes a premise"
+  [ag arg pm]
   (letfn [(delete-premise-from-arg
            [arg]
            (assoc arg :premises (filter #(not= pm %) (:premises arg))))]
@@ -150,7 +171,9 @@
          newarg (get-argument ag (:id arg))]
      (update-argument ag newarg))))
 
-(defn delete-argument [ag arg]
+(defn delete-argument
+  "Deletes an argument"
+  [ag arg]
   (let [conclusion (:conclusion arg)
         key (statement-symbol conclusion)
         ag (update-in ag [:nodes key conclusion :conclusion-of] disj (:id arg))
@@ -167,7 +190,9 @@
                    (:premises arg))]
     (update-statement ag (:conclusion arg))))
 
-(defn delete-statement [ag stmt]
+(defn delete-statement
+  "Deletes a statement"
+  [ag stmt]
   (when-let [node (statement-node ag stmt)]
     (let [premises-of (:premise-of node)
           conclusion-of (:conclusion-of node)
@@ -181,10 +206,12 @@
           ag (reduce (fn [ag argid]
                        (delete-argument ag (get-argument ag argid)))
                      ag conclusion-of)
-          ag (update-in ag [:nodes] dissoc key)]
+          ag (update-in ag [:nodes key] dissoc stmt)]
       (if (= main-issue stmt)
         (assoc ag :main-issue nil)
         ag))))
 
-(defn change-mainissue [ag stmt]
- (assoc ag :main-issue stmt))
+(defn change-mainissue
+  "Changes the main-issue"
+  [ag stmt]
+  (assoc ag :main-issue stmt))

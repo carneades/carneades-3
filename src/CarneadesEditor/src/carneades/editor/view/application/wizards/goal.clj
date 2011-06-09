@@ -1,7 +1,8 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.application.wizards.goal
+(ns ^{:doc "Implementation of the view of the Find Position assistant."}
+  carneades.editor.view.application.wizards.goal
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.view.wizardsprotocol
@@ -12,10 +13,10 @@
            (carneades.editor.uicomponents.wizards.goal ProponentPanel
                                                        AbductionPanel)))
 
-(defvar- *proponentPanel* (ProponentPanel/instance))
+(defvar- *proponentPanel* (ProponentPanel.))
 (defvar- *mainIssueTextArea* (.mainIssueTextArea *proponentPanel*))
 
-(defvar- *abductionPanel* (AbductionPanel/instance))
+(defvar- *abductionPanel* (AbductionPanel.))
 (defvar- *statementList* (.statementsList *abductionPanel*))
 (defvar- *positionLabel* (.positionLabel *abductionPanel*))
 (defvar- *resultsPanel* (.resultsPanel *abductionPanel*))

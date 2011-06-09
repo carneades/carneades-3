@@ -1,19 +1,19 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.components.search
+(ns ^{:doc "Implementation of the View components for the search."}
+  carneades.editor.view.components.search
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.utils.swing
         carneades.editor.view.swinguiprotocol
+        carneades.editor.view.components.uicomponents
         [clojure.string :only (trim split)]
         carneades.editor.utils.listeners)
   (:import (java.awt.event KeyEvent KeyAdapter)
            (javax.swing JScrollPane table.DefaultTableModel KeyStroke JTable)
            (carneades.editor.uicomponents EditorApplicationView SearchOptionsDialog)
            (carneades.editor.view.swinguiprotocol StatementInfo ArgumentInfo)))
-
-(defvar- *frame* (EditorApplicationView/instance))
 
 (defvar- *searchButton* (.searchButton *frame*))
 (defvar- *searchComboBox* (.searchComboBox *frame*))
@@ -94,8 +94,6 @@
           (recur (dec n)))))
 
 (defn- get-searched-info []
-  (prn "get-searched-info")
-  (prn (deref *search-options*))
   (let [text (.getSelectedItem *searchComboBox*)]
     (if (nil? text)
      nil
@@ -116,8 +114,6 @@
       (.setIndeterminate *searchProgressBar* false))))
 
 (defn- search-button-listener [event]
-  (prn "event")
-  (prn event)
   (Thread/sleep 50)
   (let [was-active (deref *searchactive*)]
     (when-not was-active
@@ -167,9 +163,6 @@
   ;; (set-options-visible (deref *state*))
   (add-action-listener *optionsButton* showoptions-button-listener)
   (add-action-listener *searchButton* search-button-listener))
-
-(defn file-from-path [path]
-  (last (split path (re-pattern java.io.File/pathSeparator))))
 
 (defn add-stmt-search-result [path id stmt stmt-fmt]
   (let [obj (StatementInfo. path id stmt stmt-fmt)]

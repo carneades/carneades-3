@@ -39,8 +39,14 @@ public class EditorApplicationView extends javax.swing.JFrame {
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
         jSeparator10 = new javax.swing.JPopupMenu.Separator();
         searchInButtonGroup = new javax.swing.ButtonGroup();
+        directionArgumentMenu = new javax.swing.JMenu();
+        jSeparator15 = new javax.swing.JPopupMenu.Separator();
+        typePremiseMenuItem = new javax.swing.JMenu();
+        jSeparator14 = new javax.swing.JPopupMenu.Separator();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
         statusButtonGroup = new javax.swing.ButtonGroup();
+        premiseTypeGroup = new javax.swing.ButtonGroup();
+        directionButtonGroup = new javax.swing.ButtonGroup();
         jSeparator4 = new javax.swing.JToolBar.Separator();
         jSeparator8 = new javax.swing.JToolBar.Separator();
         jSplitPane1 = new javax.swing.JSplitPane();
@@ -60,6 +66,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         editMenu = new javax.swing.JMenu();
         jSeparator9 = new javax.swing.JPopupMenu.Separator();
+        jSeparator13 = new javax.swing.JPopupMenu.Separator();
         assistantMenu = new javax.swing.JMenu();
         helpMenu = new javax.swing.JMenu();
 
@@ -83,11 +90,19 @@ public class EditorApplicationView extends javax.swing.JFrame {
         graphPopupMenu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         openGraphMenuItem.setText("Open");
+        openGraphMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openGraphMenuItemActionPerformed(evt);
+            }
+        });
         graphPopupMenu.add(openGraphMenuItem);
 
         closeGraphMenuItem.setText("Close");
         graphPopupMenu.add(closeGraphMenuItem);
         graphPopupMenu.add(jSeparator6);
+
+        copyGraphMenuItem.setText("Copy...");
+        graphPopupMenu.add(copyGraphMenuItem);
 
         exportGraphMenuItem.setText("Export...");
         graphPopupMenu.add(exportGraphMenuItem);
@@ -102,8 +117,44 @@ public class EditorApplicationView extends javax.swing.JFrame {
         addExistingPremiseMenuItem.setText("Link premise");
         argumentPopupMenu.add(addExistingPremiseMenuItem);
 
+        directionArgumentMenu.setText("Direction");
+
+        directionButtonGroup.add(proArgumentMenuItem);
+        proArgumentMenuItem.setSelected(true);
+        proArgumentMenuItem.setText("Pro");
+        directionArgumentMenu.add(proArgumentMenuItem);
+
+        directionButtonGroup.add(conArgumentMenuItem);
+        conArgumentMenuItem.setText("Con");
+        directionArgumentMenu.add(conArgumentMenuItem);
+
+        argumentPopupMenu.add(directionArgumentMenu);
+        argumentPopupMenu.add(jSeparator15);
+
         deleteArgumentMenuItem.setText("Delete");
         argumentPopupMenu.add(deleteArgumentMenuItem);
+
+        typePremiseMenuItem.setText("Type");
+
+        premiseTypeGroup.add(premisePremiseMenuItem);
+        premisePremiseMenuItem.setSelected(true);
+        premisePremiseMenuItem.setText("Premise");
+        typePremiseMenuItem.add(premisePremiseMenuItem);
+
+        premiseTypeGroup.add(assumptionPremiseMenuItem);
+        assumptionPremiseMenuItem.setText("Assumption");
+        typePremiseMenuItem.add(assumptionPremiseMenuItem);
+
+        premiseTypeGroup.add(exceptionPremiseMenuItem);
+        exceptionPremiseMenuItem.setText("Exception");
+        typePremiseMenuItem.add(exceptionPremiseMenuItem);
+
+        premisePopupMenu.add(typePremiseMenuItem);
+
+        negatedPremiseMenuItem.setSelected(true);
+        negatedPremiseMenuItem.setText("Negated");
+        premisePopupMenu.add(negatedPremiseMenuItem);
+        premisePopupMenu.add(jSeparator14);
 
         deletePremiseMenuItem.setText("Delete");
         premisePopupMenu.add(deletePremiseMenuItem);
@@ -134,13 +185,13 @@ public class EditorApplicationView extends javax.swing.JFrame {
         newArgumentMenuItem.setText("New argument");
         statementPopupMenu.add(newArgumentMenuItem);
 
-        deleteStatementMenuItem.setText("Delete");
-        statementPopupMenu.add(deleteStatementMenuItem);
-        statementPopupMenu.add(jSeparator12);
-
         mainIssueMenuItem.setSelected(true);
         mainIssueMenuItem.setText("Main issue");
         statementPopupMenu.add(mainIssueMenuItem);
+        statementPopupMenu.add(jSeparator12);
+
+        deleteStatementMenuItem.setText("Delete");
+        statementPopupMenu.add(deleteStatementMenuItem);
 
         newStatementMenuItem.setText("New statement");
         mapPopupMenu.add(newStatementMenuItem);
@@ -178,6 +229,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
         toolBar.add(jSeparator8);
 
         refreshButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view-refresh.png"))); // NOI18N
+        refreshButton.setMnemonic(java.awt.event.KeyEvent.VK_F5);
         refreshButton.setFocusable(false);
         refreshButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         refreshButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -322,78 +374,114 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
         jSplitPane1.setLeftComponent(jSplitPane2);
 
+        fileMenu.setMnemonic('f');
         fileMenu.setText("File");
 
-        newFileMenuItem.setText("New File...");
+        newFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        newFileMenuItem.setMnemonic('n');
+        newFileMenuItem.setText("New");
         fileMenu.add(newFileMenuItem);
         fileMenu.add(jSeparator11);
 
         openFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        openFileMenuItem.setMnemonic('o');
         openFileMenuItem.setText("Open...");
         fileMenu.add(openFileMenuItem);
 
+        closeFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
+        closeFileMenuItem.setMnemonic('c');
         closeFileMenuItem.setText("Close");
         fileMenu.add(closeFileMenuItem);
         fileMenu.add(jSeparator2);
 
+        saveFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        saveFileMenuItem.setMnemonic('s');
         saveFileMenuItem.setText("Save");
         fileMenu.add(saveFileMenuItem);
 
+        saveAsFileMenuItem.setMnemonic('a');
         saveAsFileMenuItem.setText("Save As...");
         fileMenu.add(saveAsFileMenuItem);
         fileMenu.add(jSeparator3);
 
+        exportFileMenuItem.setMnemonic('e');
         exportFileMenuItem.setText("Export...");
         fileMenu.add(exportFileMenuItem);
         fileMenu.add(jSeparator7);
 
+        printPreviewFileMenuItem.setMnemonic('v');
         printPreviewFileMenuItem.setText("Print Preview");
         fileMenu.add(printPreviewFileMenuItem);
 
+        printFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
+        printFileMenuItem.setMnemonic('p');
         printFileMenuItem.setText("Print...");
         fileMenu.add(printFileMenuItem);
         fileMenu.add(jSeparator1);
 
+        quitFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+        quitFileMenuItem.setMnemonic('q');
         quitFileMenuItem.setText("Quit");
         fileMenu.add(quitFileMenuItem);
 
         menuBar.add(fileMenu);
 
+        editMenu.setMnemonic('e');
         editMenu.setText("Edit");
 
+        undoEditMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_MASK));
+        undoEditMenuItem.setMnemonic('u');
         undoEditMenuItem.setText("Undo");
         editMenu.add(undoEditMenuItem);
 
+        redoEditMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Y, java.awt.event.InputEvent.CTRL_MASK));
+        redoEditMenuItem.setMnemonic('r');
         redoEditMenuItem.setText("Redo");
         editMenu.add(redoEditMenuItem);
         editMenu.add(jSeparator9);
 
+        copyClipboardEditMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
+        copyClipboardEditMenuItem.setMnemonic('c');
         copyClipboardEditMenuItem.setText("Copy to clipboard");
         editMenu.add(copyClipboardEditMenuItem);
 
+        selectAllEditMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
+        selectAllEditMenuItem.setMnemonic('s');
         selectAllEditMenuItem.setText("Select All");
         editMenu.add(selectAllEditMenuItem);
+        editMenu.add(jSeparator13);
+
+        preferencesEditMenuItem.setMnemonic('p');
+        preferencesEditMenuItem.setText("Preferences...");
+        editMenu.add(preferencesEditMenuItem);
 
         menuBar.add(editMenu);
 
+        assistantMenu.setMnemonic('a');
         assistantMenu.setText("Assistant");
 
-        assistantFindArgumentsMenuItem.setText("Find Arguments...");
-        assistantMenu.add(assistantFindArgumentsMenuItem);
+        findArgumentsAssistantMenuItem.setMnemonic('a');
+        findArgumentsAssistantMenuItem.setText("Find Arguments...");
+        assistantMenu.add(findArgumentsAssistantMenuItem);
 
-        assistantFindGoalMenuItem.setText("Find Goal...");
-        assistantMenu.add(assistantFindGoalMenuItem);
+        findGoalAssistantMenuItem.setMnemonic('p');
+        findGoalAssistantMenuItem.setText("Find Positions...");
+        assistantMenu.add(findGoalAssistantMenuItem);
 
-        assistantFormalizeStatementMenuItem.setText("Formalize Statement...");
-        assistantMenu.add(assistantFormalizeStatementMenuItem);
+        formalizeStatementAssistantMenuItem.setMnemonic('s');
+        formalizeStatementAssistantMenuItem.setText("Formalize Statement...");
+        assistantMenu.add(formalizeStatementAssistantMenuItem);
 
-        assistantInstantiateSchemeMenuItem.setText("Instantiate Scheme...");
-        assistantMenu.add(assistantInstantiateSchemeMenuItem);
+        instantiateSchemeAssistantMenuItem.setMnemonic('c');
+        instantiateSchemeAssistantMenuItem.setText("Instantiate Scheme...");
+        assistantMenu.add(instantiateSchemeAssistantMenuItem);
 
         menuBar.add(assistantMenu);
 
+        helpMenu.setMnemonic('h');
         helpMenu.setText("Help");
 
+        aboutHelpMenuItem.setMnemonic('a');
         aboutHelpMenuItem.setText("About");
         helpMenu.add(aboutHelpMenuItem);
 
@@ -423,6 +511,10 @@ public class EditorApplicationView extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_searchButtonActionPerformed
 
+    private void openGraphMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openGraphMenuItemActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_openGraphMenuItemActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -439,28 +531,34 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JRadioButtonMenuItem acceptedMenuItem = new javax.swing.JRadioButtonMenuItem();
     public final javax.swing.JMenuItem addExistingPremiseMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JPopupMenu argumentPopupMenu = new javax.swing.JPopupMenu();
-    public final javax.swing.JMenuItem assistantFindArgumentsMenuItem = new javax.swing.JMenuItem();
-    public final javax.swing.JMenuItem assistantFindGoalMenuItem = new javax.swing.JMenuItem();
-    public final javax.swing.JMenuItem assistantFormalizeStatementMenuItem = new javax.swing.JMenuItem();
-    public final javax.swing.JMenuItem assistantInstantiateSchemeMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenu assistantMenu;
+    public final javax.swing.JRadioButtonMenuItem assumptionPremiseMenuItem = new javax.swing.JRadioButtonMenuItem();
     public final javax.swing.JMenuItem closeFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem closeGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem closeLkifFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem closeTabMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JRadioButtonMenuItem conArgumentMenuItem = new javax.swing.JRadioButtonMenuItem();
     public final javax.swing.JMenuItem copyClipboardEditMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem copyGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem deleteArgumentMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem deleteGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem deletePremiseMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem deleteStatementMenuItem = new javax.swing.JMenuItem();
+    private javax.swing.JMenu directionArgumentMenu;
+    private javax.swing.ButtonGroup directionButtonGroup;
     private javax.swing.JMenu editMenu;
     public final javax.swing.JMenuItem editStatementMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JRadioButtonMenuItem exceptionPremiseMenuItem = new javax.swing.JRadioButtonMenuItem();
     public final javax.swing.JMenuItem exportFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem exportGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem exportLkifFileMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JMenu fileMenu;
+    public final javax.swing.JMenuItem findArgumentsAssistantMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem findGoalAssistantMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JMenuItem formalizeStatementAssistantMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JPopupMenu graphPopupMenu = new javax.swing.JPopupMenu();
     private javax.swing.JMenu helpMenu;
+    public final javax.swing.JMenuItem instantiateSchemeAssistantMenuItem = new javax.swing.JMenuItem();
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;
@@ -469,6 +567,9 @@ public class EditorApplicationView extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator11;
     private javax.swing.JPopupMenu.Separator jSeparator12;
+    private javax.swing.JPopupMenu.Separator jSeparator13;
+    private javax.swing.JPopupMenu.Separator jSeparator14;
+    private javax.swing.JPopupMenu.Separator jSeparator15;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JToolBar.Separator jSeparator4;
@@ -486,6 +587,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JTabbedPane mapPanel = new javax.swing.JTabbedPane();
     public final javax.swing.JPopupMenu mapPopupMenu = new javax.swing.JPopupMenu();
     private javax.swing.JMenuBar menuBar;
+    public final javax.swing.JCheckBoxMenuItem negatedPremiseMenuItem = new javax.swing.JCheckBoxMenuItem();
     public final javax.swing.JMenuItem newArgumentMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem newFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem newGraphMenuItem = new javax.swing.JMenuItem();
@@ -495,9 +597,13 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JMenuItem openFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem openGraphMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JButton optionsButton = new javax.swing.JButton();
+    public final javax.swing.JMenuItem preferencesEditMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JPopupMenu premisePopupMenu = new javax.swing.JPopupMenu();
+    public final javax.swing.JRadioButtonMenuItem premisePremiseMenuItem = new javax.swing.JRadioButtonMenuItem();
+    private javax.swing.ButtonGroup premiseTypeGroup;
     public final javax.swing.JMenuItem printFileMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JMenuItem printPreviewFileMenuItem = new javax.swing.JMenuItem();
+    public final javax.swing.JRadioButtonMenuItem proArgumentMenuItem = new javax.swing.JRadioButtonMenuItem();
     public final javax.swing.JPanel propertiesPanel = new javax.swing.JPanel();
     public final javax.swing.JRadioButtonMenuItem questionedMenuItem = new javax.swing.JRadioButtonMenuItem();
     public final javax.swing.JMenuItem quitFileMenuItem = new javax.swing.JMenuItem();
@@ -523,6 +629,7 @@ public class EditorApplicationView extends javax.swing.JFrame {
     public final javax.swing.JMenu statusPopupMenu = new javax.swing.JMenu();
     public final javax.swing.JPopupMenu tabPopupMenu = new javax.swing.JPopupMenu();
     public final javax.swing.JToolBar toolBar = new javax.swing.JToolBar();
+    private javax.swing.JMenu typePremiseMenuItem;
     public final javax.swing.JButton undoButton = new javax.swing.JButton();
     public final javax.swing.JMenuItem undoEditMenuItem = new javax.swing.JMenuItem();
     public final javax.swing.JButton zoomInButton = new javax.swing.JButton();
@@ -532,35 +639,4 @@ public class EditorApplicationView extends javax.swing.JFrame {
 
     private final static String APPLICATION_NAME = "Carneades Editor";
 
-    // our modifications:
-    static {
-        // mac os x:
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name",
-                APPLICATION_NAME);
-
-        // set nimbus theme
-        try {
-            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (Exception e) {
-        }
-
-    }
-
-    public static EditorApplicationView viewInstance = new EditorApplicationView();
-
-    public static synchronized EditorApplicationView instance()
-    {
-        return viewInstance;
-    }
-
-    public static synchronized void reset()
-    {
-        viewInstance = new EditorApplicationView();
-    }
 }

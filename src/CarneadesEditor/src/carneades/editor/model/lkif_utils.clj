@@ -1,7 +1,9 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.model.lkif-utils
+(ns ^{:doc "Helper functions to take the content of a LKIF structure and put
+            it in the document manager."}
+  carneades.editor.model.lkif-utils
   (:use clojure.contrib.def
         clojure.contrib.pprint
         carneades.engine.rule
@@ -10,8 +12,6 @@
 (defn- dissect [lkifcontent]
   "takes the content of an LKIF representation and returns a sequence of [keys sectioncontent]
    suitable for the docmanager. Keys is a vector"
-  (prn "dissect")
-  ;; (pprint lkifcontent)
   (let [sources (:sources lkifcontent)
         rb (:rb lkifcontent)
         ags (:ags lkifcontent)
@@ -24,27 +24,21 @@
 
 (defn add-lkif-to-docmanager [lkifpath lkifcontent docmanager]
   (doseq [[keys section] (dissect lkifcontent)]
-    (add-section docmanager (concat [lkifpath] keys) section)))
+    (let [keys (concat [lkifpath] keys)]
+     (add-section docmanager keys section)
+     (mark-section-saved docmanager keys))))
 
-(defn extract-lkif-from-docmanager [lkifpath docmanager excluded-ags]
-  (prn "get all sections keys =")
-  (let [rb (get-section-first-content docmanager [lkifpath :rb])
+(defn extract-lkif-from-docmanager [lkifpath docmanager]
+  (let [rb (get-section-content docmanager [lkifpath :rb])
         sources (get-section-first-content docmanager [lkifpath :sources])
         agids (get-all-sectionskeys docmanager [lkifpath :ags])
-        ags (filter #(not (contains? excluded-ags (:id %)))
-                    (map #(get-section-first-content docmanager [lkifpath :ags %]) agids))
-        import-tree (get-section-first-content docmanager [lkifpath :import-tree])
-        import-kbs (get-section-first-content docmanager [lkifpath :import-kbs])
-        import-ags (get-section-first-content docmanager [lkifpath :import-ags])]
+        ags (doall (map #(get-section-content docmanager [lkifpath :ags %]) agids))
+        import-tree (get-section-content docmanager [lkifpath :import-tree])
+        import-kbs (get-section-content docmanager [lkifpath :import-kbs])
+        import-ags (get-section-content docmanager [lkifpath :import-ags])]
     {:rb rb :sources sources :ags ags
      :import-tree import-tree
      :import-kbs import-kbs
      :import-ags import-ags}))
 
-(defn update-imports [lkifpath docmanager lkifcontent]
-  (doseq [key [:import-tree :import-ags :import-kbs :sources]]
-    (update-section docmanager [lkifpath key] (key lkifcontent))
-    (delete-section-history docmanager [lkifpath key])))
 
-(defvar *empty-lkif-content*
-  {:sources nil :rb *empty-rulebase* :ags ()})

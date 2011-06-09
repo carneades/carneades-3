@@ -39,6 +39,7 @@
           (cond (instance? StatementCell val)
                 (do
                   (.setValue model cell (update-statement-object val))
+                  (adjust-size graph cell)
                   (.setStyle model cell (update-statement-style val (.getStyle cell))))
 
                 (instance? PremiseCell val)
@@ -62,12 +63,11 @@
 (defn- update-stmt-object [userobject newag]
   (let [stmt-str (:stmt-str userobject)
         stmt (:stmt userobject)]
-    (StatementCell. newag stmt stmt-str (stmt-to-str newag stmt stmt-str))))
+    (let [full (stmt-to-str newag stmt stmt-str)]
+     (StatementCell. newag stmt stmt-str
+                     (trunk full) full))))
 
 (defn- update-stmt-style [userobject oldstyle ag]
-  ;; (prn " * update-stmt-style*")
-  ;; (prn "stmt = " (:stmt userobject))
-  ;; (prn "statement style = " (get-statement-style ag (:stmt userobject)))
   (get-statement-style ag (:stmt userobject)))
 
 (defn- update-argument-style [userobject oldstyle ag]
@@ -162,6 +162,15 @@
                              #(update-arg % arg) do-not-change-style
                              do-not-change-style))))
 
+(defn change-argument-scheme [graphcomponent ag arg scheme]
+  (let [component (:component graphcomponent)]
+    (with-transaction component
+     (change-cell-and-styles component ag
+                             #(update-stmt-object % ag) do-not-change-style
+                             #(update-arg-in-pm % arg) do-not-change-style
+                             #(update-arg % arg) do-not-change-style
+                             do-not-change-style))))
+
 (defn change-argument-weight [graphcomponent ag arg title]
   (let [component (:component graphcomponent)]
     (with-transaction component
@@ -176,15 +185,17 @@
         graph (.getGraph component)
         cell (find-statement-cell graph oldstmt)
         stmt-str (:stmt-str (.getValue cell))
-        stmt (StatementCell. ag newstmt stmt-str (stmt-to-str ag newstmt stmt-str))
+        full (stmt-to-str ag newstmt stmt-str)
+        stmt (StatementCell. ag newstmt stmt-str
+                             (trunk full) full)
         p (.getDefaultParent graph)
         model (.getModel graph)]
     (try
       (.. model beginUpdate)
       (.setValue model cell stmt)
       (.setStyle model cell (get-statement-style ag newstmt))
-      (.updateCellSize graph cell)
-      (adjust-size cell)
+      ;; (.updateCellSize graph cell)
+      (adjust-size graph cell)
       (do-layout graph p (get-vertices graph p))
       (finally
        (.. model endUpdate)))))
@@ -238,40 +249,15 @@
         (let [x (getx argcell)
               y (gety argcell)
               premise (get-premise (get-argument ag (:id arg)) (statement-atom stmt))
-              stmtcell (insert-vertex graph p (StatementCell. ag stmt stmt-str (stmt-to-str ag stmt stmt-str))
+              full (stmt-to-str ag stmt stmt-str)
+              stmtcell (insert-vertex graph p (StatementCell. ag stmt stmt-str
+                                                              (trunk full) full)
                                       (get-statement-style ag stmt))
               premisescells (map #(find-premise-cell graph (:id arg) %) (:premises arg))]
-          (prn "premise =")
-          (prn premise)
-          (prn "premise cell =")
-          (prn premisescells)
           (insert-edge graph p (PremiseCell. arg premise) stmtcell argcell
                        (get-edge-style premise))
           (change-all-cell-and-styles component ag)
-          (do-layout graph p (get-vertices graph p))
-          ;; (prn "children of arg =")
-          ;; (prn (alength (.getChildCells graph argcell)))
-          ;; (move-cell graph stmtcell x y)
-
-          ;; (let [children (to-array (concat premisescells [argcell stmtcell]))
-          ;;       group (.createGroupCell graph children)
-          ;;       grouped (.groupCells graph group 5 )]
-          ;;   (do-layout graph grouped (get-vertices graph p))
-          ;;   )
-          ;; (do-layout graph argcell (get-vertices graph p))
-          ;; (let [father (mxCell.)]
-          ;;   (doseq [cell premisescells]
-          ;;     (.insert father cell 0))
-          ;;   (.insert father stmtcell 0)
-          ;; ;; (test-layout graph p)
-          ;;  (do-layout graph father (get-vertices graph p))
-          ;;  (.remove model father)
-          ;;  (doseq [cell premisescells]
-          ;;     (.insert p cell 0))
-          ;;   (.insert p stmtcell 0)
-          ;;  )
-          )
-        ))))
+          (do-layout graph p (get-vertices graph p)))))))
 
 (defn delete-argument [graphcomponent ag arg]
   (let [component (:component graphcomponent)
@@ -310,7 +296,9 @@
         p (.getDefaultParent graph)]
     (with-transaction component
       (change-all-cell-and-styles component ag)
-      (insert-vertex graph p (StatementCell. ag stmt stmt-str (stmt-to-str ag stmt stmt-str))
+      (insert-vertex graph p (let [full (stmt-to-str ag stmt stmt-str)]
+                               (StatementCell. ag stmt stmt-str
+                                               (trunk full) full))
                    (get-statement-style ag stmt))
       (align-orphan-cells graph p (get-vertices graph p)))))
 
@@ -329,7 +317,6 @@
       (do-layout graph p (get-vertices graph p)))))
 
 (defn replace-graph [graphcomponent ag stmt-fmt]
-  (prn "replace graph")
   (let [component (:component graphcomponent)
         graph (.getGraph component)
         p (.getDefaultParent graph)]

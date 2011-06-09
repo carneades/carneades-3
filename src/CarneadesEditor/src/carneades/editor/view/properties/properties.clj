@@ -2,20 +2,18 @@
 ;;; Licensed under the EUPL V.1.1
 
 
-;;; panel properties
+(ns ^{:doc "Functions to show/hide properties in the panel properties."}
+  carneades.editor.view.properties.properties
+  (:use clojure.contrib.def
+        carneades.editor.view.components.uicomponents))
 
-(ns carneades.editor.view.properties.properties
-  (:use clojure.contrib.def)
-  (:import carneades.editor.uicomponents.EditorApplicationView))
-
-(defvar- *viewinstance* (EditorApplicationView/instance))
-
-(defvar- *propertiesPanel* (.propertiesPanel *viewinstance*))
+(defvar- *propertiesPanel* (.propertiesPanel *frame*))
 
 (defvar- *properties* (atom nil))
 
-(defn show-properties [propertypanel]
+(defn show-properties
   "show a given property panel"
+  [propertypanel]
   (.removeAll *propertiesPanel*)
   (reset! *properties* propertypanel)
   (.add *propertiesPanel* propertypanel)

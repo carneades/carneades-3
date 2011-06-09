@@ -1,7 +1,28 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.controller.listeners.register
+(ns ^{:doc "Function to register all necessary listeners.
+
+            For the seperation of concerns, we follow here the MVC pattern,
+            with the controller acting as a mediator between the View and the Model.
+            The View does not have direct access to the Model.
+            
+            http://java.sun.com/developer/technicalArticles/javase/mvc/
+            
+            
+            This namespace directly access the GUI to register Swing listeners and
+            dispatch the calls in an UI-independent way to the listeners in listeners.clj
+            
+            This is the only namespace, with the swing-listeners,
+            that should be given direct access to the Swing UI and only through
+            the SwingUI protocol.
+            
+            All other accesses must be made within listeners.clj
+            and only through the View protocol.
+            
+            This allow to keep the model and the listeners logic independant
+            from the specific Swing GUI implementation."}
+  carneades.editor.controller.listeners.register
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.view.viewprotocol
@@ -9,29 +30,7 @@
         carneades.editor.controller.listeners.swing-listeners
         carneades.editor.controller.listeners.swing-wizards-listeners
         carneades.editor.controller.handlers.handlers
-        carneades.editor.utils.swing))
-
-;;
-;; For the seperation of concerns, we follow here the MVC pattern,
-;; with the controller acting as a mediator between the View and the Model.
-;; The View does not have direct access to the Model.
-;;
-;; http://java.sun.com/developer/technicalArticles/javase/mvc/
-;;
-;;
-;; This namespace directly access the GUI to register Swing listeners and
-;; dispatch the calls in an UI-independent way to the listeners in listeners.clj
-;;
-;; This is the only namespace, with the swing-listeners,
-;; that should be given direct access to the Swing UI and only through
-;; the SwingUI protocol.
-;;
-;; All other accesses must be made within listeners.clj
-;; and only through the View protocol.
-;;
-;; This allow to keep the model and the listeners logic independant
-;; from the specific Swing GUI implementation.
-;;
+        (carneades.editor.utils swing macos)))
 
 (defn register-listeners [view]
   ;; we need to extract some information from the UI,
@@ -42,6 +41,7 @@
   (add-printpreview-filemenuitem-listener view printpreview-listener [view])
   (add-print-filemenuitem-listener view print-listener [view])
   (add-export-graph-menuitem-listener view export-element-listener [view])
+  (add-copy-graph-menuitem-listener view copy-graph-listener [view])
   (add-export-lkif-filemenuitem-listener view export-element-listener [view])
   (add-export-filemenuitem-listener view export-file-listener [view])
   (add-close-file-menuitem-listener view close-file-listener [view])
@@ -53,10 +53,10 @@
                                           [view])
   (add-keyenter-searchresult-listener view keyenter-in-searchresult
                                           [view])
+  (add-edit-statement-menuitem-listener view edit-statement-menuitem-listener [view])
 
   ;; properties listeners:
-  (add-statement-editor-listener view statement-editor-listener [view])
-  (add-statement-edit-listener view statement-button-edit-listener [view])
+  (add-statement-edit-listener view statement-content-edit-listener [view])
   (add-statement-edit-status-listener view statement-status-edit-listener [view])
   (add-statement-edit-proofstandard-listener view statement-proofstandard-edit-listener [view])
   (add-title-edit-listener view title-edit-listener [view])
@@ -64,6 +64,7 @@
   (add-premise-edit-type-listener view premise-edit-type-listener [view])
   (add-premise-edit-role-listener view premise-edit-role-listener [view])
   (add-argument-edit-title-listener view argument-edit-title-listener [view])
+  (add-argument-edit-scheme-listener view argument-edit-scheme-listener [view])
   (add-argument-edit-weight-listener view argument-edit-weight-listener [view])
   (add-argument-edit-direction-listener view argument-edit-direction-listener [view])
 
@@ -71,6 +72,7 @@
   (add-redo-button-listener view redo-button-listener [view])
   (add-save-button-listener view save-button-listener [view])
   (add-refresh-button-listener view refresh-button-listener [view])
+  (add-preferences-editmenuitem-listener view preferences-editmenuitem-listener [view])
   (add-copyclipboard-button-listener view copyclipboard-button-listener [view])
   (add-save-filemenuitem-listener view save-filemenuitem-listener [view])
   (add-saveas-filemenuitem-listener view saveas-filemenuitem-listener [view])
@@ -81,6 +83,12 @@
   (add-delete-statement-menuitem-listener view delete-statement-menuitem-listener [view])
   (add-delete-argument-menuitem-listener view delete-argument-menuitem-listener [view])
   (add-mainissue-menuitem-listener view mainissue-menuitem-listener [view])
+  (add-premise-premisemenuitem-listener view premise-premisemenuitem-listener [view])
+  (add-assumption-premisemenuitem-listener view assumption-premisemenuitem-listener [view])
+  (add-exception-premisemenuitem-listener view exception-premisemenuitem-listener [view])
+  (add-negated-premisemenuitem-listener view negated-premisemenuitem-listener [view])
+  (add-pro-argumentmenuitem-listener view pro-argumentmenuitem-listener [view])
+  (add-con-argumentmenuitem-listener view con-argumentmenuitem-listener [view])
   (add-new-statement-menuitem-listener view new-statement-menuitem-listener [view])
   (add-new-argument-menuitem-listener view new-argument-menuitem-listener [view])
   (add-new-graph-menuitem-listener view new-graph-menuitem-listener [view])
@@ -93,6 +101,8 @@
    view findarguments-assistantmenuitem-listener [view])
   (add-instantiatescheme-assistantmenuitem-listener
    view instantiatescheme-assistantmenuitem-listener [view])
+  (add-formalizestatement-assistantmenuitem-listener
+   view formalizestatement-assistantmenuitem-listener [view])
   
   (add-import-button-listener view import-button-listener [view])
   (add-remove-import-button-listener view remove-import-button-listener [view])
@@ -116,5 +126,6 @@
                                      (on-search-begins view searchinfo)
                                      (on-search-ends view))) [])
   (register-add-existing-premise-listener view on-add-existing-premise [])
-  
-)
+
+  ;; mac os specific:
+  (register-quit-handler on-exit view))

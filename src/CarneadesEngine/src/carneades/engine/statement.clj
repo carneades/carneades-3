@@ -2,27 +2,28 @@
 ;;; Licensed under the EUPL V.1.1
 
 
-(ns carneades.engine.statement
-  (:use clojure.test clojure.contrib.def
-    carneades.engine.utils)
-  (:require [clojure.contrib.str-utils2 :as s])
-  (:import
-    (java.net URI)))
+(ns ^{:doc "Functions for the statements in an argument graph."}
+    carneades.engine.statement
+  (:use clojure.contrib.def
+        carneades.engine.utils)
+  (:require [clojure.string :as str])
+  (:import (java.net URI)))
 
-(defn variable? [x]
+(defn variable?
   "object -> boolean
-Returns true if x is a variable
-A logic variable is represented as a symbol prefixed with a
-question mark.  For example: '?x
-"
+  Returns true if x is a variable
+  A logic variable is represented as a symbol prefixed with a
+  question mark.  For example: '?x "
+  [x]
   (and (symbol? x)
     (let [s (str x)]
       (and (pos? (.length s))
         (= (.charAt s 0) \?)))))
 
-(defn constant? [x]
+(defn constant?
   "object -> boolean
-Returns true if x is a constant"
+   Returns true if x is a constant"
+  [x]
   (or (and (symbol? x) (not (variable? x)))
     (number? x)
     (string? x)
@@ -51,19 +52,22 @@ Returns true if x is a constant"
   (or (nonemptyseq? x)
     (fatom? x)))
 
-(defn term? [x]
+(defn term?
   "datum -> boolean"
+  [x]
   (or (variable? x)
-    (constant? x)
-    (compound-term? x)))
+      (constant? x)
+      (compound-term? x)))
 
-(defn term-functor [t]
+(defn term-functor
   "term -> symbol | nil "
+  [t]
   (cond (nonemptyseq? t) (first t)
     (fatom? t) (first (:term t))))
 
-(defn term-args [t]
+(defn term-args
   "term -> (seq-of term)"
+  [t]
   (cond (nonemptyseq? t) (rest t)
     (fatom? t) (rest (:term t))
     :else '()))
@@ -87,9 +91,11 @@ Returns true if x is a constant"
                          (ground? (term-args t)))
     :else true))
 
-(defn variables [t]
+;; could be rewritten (filter variable? (tree-seq seq? identity s)) ?
+(defn variables
   "term -> (seq-of symbol)
-Returns a sequence of the variables in the term"
+   Returns a sequence of the variables in the term"
+  [t]
   (letfn [(vars [t]
             (cond (variable? t) (list t)
               (constant? t) nil
@@ -117,10 +123,11 @@ Returns a sequence of the variables in the term"
       (fnext s))
     (list 'not s)))
 
-(defn statement-atom [s]
+(defn statement-atom
   "statement -> statement
-Returns the atom of the statement, i.e strips the negation operator if there
-is one"
+   Returns the atom of the statement, i.e strips the negation operator if there
+   is one"
+  [s]
   (if (statement-neg? s)
     (fnext s)
     s))
@@ -172,20 +179,25 @@ is one"
 
 (defn break-str [s]
   (let [l (.split s " ")]
-    (s/join "\n " l)))
+    (str/join "\n " l)))
 
-(defn statement-formatted [s]
-  (cond (string? s) (short-str s)
-    (symbol? s) (short-str (str s))
-    (fatom? s) (apply format `(~(:form s)
-                                ~@(map term-formatted (rest (:term s)))))
-    (nonemptyseq? s) (s/join " " (map term-formatted s))
-    true s))
+(defn statement-formatted
+  ([s] (statement-formatted s false))
+  ([s parentheses?]
+    (cond
+      (string? s) (short-str s),
+      (symbol? s) (short-str (str s)),
+      (fatom? s) (apply format `(~(:form s)
+                                  ~@(map term-formatted (rest (:term s))))),
+      (nonemptyseq? s) (if parentheses?
+                         (str "(" (str/join " " (map term-formatted s)) ")")
+                         (str/join " " (map term-formatted s))),
+      true s)))
 
 (defn term-formatted [t]
   (cond (or (variable? t) (constant? t) ) (short-str (str t))
-    (nonemptyseq? t) (s/join " " (map term-formatted t))
-    (fatom? t) (str \" (statement-formatted t) \")
+    (nonemptyseq? t) (str "(" (str/join " " (map term-formatted t)) ")")
+    (fatom? t) (str \" (statement-formatted t true) \")
     true t))
 
 (defn replace-var
@@ -196,3 +208,42 @@ is one"
     true (if (= stmt from)
            to
            stmt)))
+
+(defn sentence?
+  "Returns true if the string s contains at least two words and does
+   not begin with a parenthesis or a double quote"
+  [s]
+  (let [s (str/trim s)]
+    (and (not= (first s) \()
+         (not= (first s) \")
+         (> (count (str/split s #"\s+")) 1))))
+
+(defn str-stmt
+  "Converts the string s into a statement"
+  [s]
+  (try
+    (if (sentence? s)
+      s
+      (let [stmt (read-string s)]
+        (if (statement? stmt)
+          stmt
+          nil)))
+    (catch Exception e nil)))
+
+(defn stmt-str [stmt]
+  (pr-str stmt))
+
+(defn str-term
+  "Converts the string s into a term"
+  [s]
+  (try
+    (if (sentence? s)
+      s
+      (let [term (read-string s)]
+        (if (term? term)
+          term
+          nil)))
+    (catch Exception e nil)))
+
+(defn term-str [term]
+  (pr-str term))

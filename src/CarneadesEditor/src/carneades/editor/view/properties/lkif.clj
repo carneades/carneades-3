@@ -1,20 +1,20 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.editor.view.properties.lkif
+(ns ^{:doc "Function to display LKIF properties in the panel properties."}
+  carneades.editor.view.properties.lkif
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
         carneades.editor.utils.listeners)
   (:import carneades.editor.uicomponents.LkifFilePropertiesView))
 
-(defvar- *lkifProperties* (LkifFilePropertiesView/instance))
+(defvar- *lkifProperties* (LkifFilePropertiesView.))
 (defvar- *lkifPathText* (.pathTextField *lkifProperties*))
 (defvar- *importButton* (.importButton *lkifProperties*))
 (defvar- *removeButton* (.removeButton *lkifProperties*))
 (defvar- *importsList* (.importsList *lkifProperties*))
 
-(defn init-lkif-properties []
-  (LkifFilePropertiesView/reset))
+(defn init-lkif-properties [])
 
 (defvar- *lkif-info* (atom {}))
 

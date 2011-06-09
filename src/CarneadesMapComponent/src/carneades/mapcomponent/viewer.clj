@@ -31,7 +31,7 @@
       (.setFileFilter (create-file-filter))
       (.showSaveDialog frame))
     (if-let [file (.getSelectedFile filechooser)]
-      (export-graph component (.getPath file)))))
+      (export-graph {:component component} (.getPath file)))))
 
 (defn- on-exit-item [^JFrame frame]
   (doto frame
@@ -58,7 +58,7 @@
     (.add menuBar fileMenu)
     menuBar))
 
-(defn set-look-and-feel [name]
+(defn- set-look-and-feel [name]
   (try
     (loop [infos (UIManager/getInstalledLookAndFeels)]
       (let [info (first infos)]
@@ -70,15 +70,14 @@
 
 (defn view-graph [ag stmt-str]
   (set-look-and-feel "Nimbus")
-  (let [frame (JFrame. *title*)]
-    (doto frame
-      (.setJMenuBar (create-menubar frame))
-      (.. getContentPane (add (create-graph-component ag stmt-str)))
-      ;;(.setDefaultCloseOperation JFrame/EXIT_ON_CLOSE)
-      (.setSize 800 800)
-      (.setVisible true))))
+  (let [frame (JFrame. *title*)
+        contentpane (.getContentPane frame)
+        component (:component (create-graph-component ag stmt-str))]
+    (.setJMenuBar frame (create-menubar frame))
+    (.add contentpane component)
+    ;;(.setDefaultCloseOperation JFrame/EXIT_ON_CLOSE)
+    (.setSize frame 800 800)
+    (.setVisible frame true)))
 
-;; (defmethod view-graph "jgraph" [viewer ag stmt-str]
-;;   (view-jgraph ag stmt-str))
 (defn view [ag]
   (view-graph ag statement-formatted))
