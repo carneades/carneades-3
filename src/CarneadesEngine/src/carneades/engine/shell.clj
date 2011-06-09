@@ -81,8 +81,8 @@
             (println "future-construction waiting for initial request")
             (let [to (atom to-engine),
                      from (atom from-engine),
-                     [goal max-nodes ag generators askable?] @@to, ; read
-                      sol (doall (find-best-arguments traverse depth-first max-nodes 1
+                     [goal max-nodes turns ag generators askable?] @@to, ; read
+                      sol (doall (find-best-arguments traverse depth-first max-nodes turns
                                        (initial-state goal ag) (cons (ask-user askable? to from) generators)))]
                    (println "engine has found solution" sol)
                    (deliver @from (list 'solution sol))))))
