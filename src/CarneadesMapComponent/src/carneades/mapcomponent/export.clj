@@ -13,7 +13,10 @@
             [carneades.mapcomponent.map :as oldmap]
             [analemma.xml :as xml]
             [analemma.svg :as svg]
-            [clojure.string :as s]))
+            [clojure.string :as s]
+            [tikkba.utils.dom :as dom])
+  (:import (java.io InputStreamReader ByteArrayInputStream
+                    ByteArrayOutputStream)))
 
 (defrecord PlusDecorator
     []
@@ -348,11 +351,7 @@
                                                    con-arg-color con-arg-color))
                      (xml/add-attrs :transform "scale (0.8)"))]])))
 
-(defn export-ag
-  "Exports an argument graph to a SVG file.
-
-   Options are :treeify, :full-duplication, :depth,
-   :layout and all options supported by the layout"
+(defn export-ag-helper
   [ag stmt-str filename & options]
   (let [pro-arg-color "#0e5200"
         con-arg-color "#e10005"
@@ -415,4 +414,28 @@
         map (add-entities map ag stmt-str params)
         map (time (apply layout map (:layout options-kv) options))
         map (build map)]
+    map
+    ))
+
+(defn export-ag
+  "Exports an argument graph to a SVG file.
+
+   Options are :treeify, :full-duplication, :depth,
+   :layout and all options supported by the layout"
+  [ag stmt-str filename & options]
+  (let [map (apply export-ag-helper ag stmt-str filename options)]
     (export map filename :indent "yes")))
+
+(defn export-ag-os
+  "Exports an argument graph to an InputStream.
+
+   Options are :treeify, :full-duplication, :depth,
+   :layout and all options supported by the layout"
+  [ag stmt-str filename & options]
+  (let [map (apply export-ag-helper ag stmt-str filename options)
+        os (ByteArrayOutputStream.)
+        v (view map)]
+    (dom/spit-xml os v :indent "yes")
+    (InputStreamReader.
+     (ByteArrayInputStream. (.toByteArray os))
+     "UTF8")))
