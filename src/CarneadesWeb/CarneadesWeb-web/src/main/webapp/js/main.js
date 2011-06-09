@@ -9,6 +9,11 @@
 var jsloadstarted = new Date();
 var showhints = true;
 
+/** global vars */
+var argGraph = "undefined";
+var policyrules = [];
+var langChange = false;
+
 // adding JSON parser when browser is too old to have a build-in one (pre-IE8, pre-FF3.5, ...)
 if( typeof( window[ 'JSON' ] ) == "undefined" ) document.write('<script type="text/javascript" src="https://github.com/douglascrockford/JSON-js/raw/master/json2.js"/>');
 
@@ -26,11 +31,6 @@ Array.prototype.copy = function () {
  * @constructor
  */
 $(function(){ // Init
-
-    // Progressbar
-    $("#progressbar").progressbar({
-            value: 0
-    });
 
     // Tabs
     $('#tabs').tabs();
@@ -51,6 +51,7 @@ $(function(){ // Init
     $("#locate").change(function(){
         alert("? "+$(this).val() );
         doAJAX({"language" : $(this).val()});
+        langChange = true;
         /*
         $("body").append("<script src=\"js/jquery/jquery.ui.datepicker-"+$(this).val()+".js\" type=\"text/javascript\"></script>");
         $.datepicker.setDefaults($.datepicker.regional[$(this).val()]);
@@ -132,8 +133,8 @@ function doAJAX(jsondata) {
             }
             else if (data.language) {
                 // alert("Language set to: "+data.language);
-            } else if(data.schemes) {
-                showPolicyRules(data.schemes);
+            } else if(data.policyrules) {
+                showPolicyRules(data.policyrules);
             } else if(data.evaluated) {
                 showArgGraph(data.evaluated);
             } else if(data.graphpath) {
@@ -150,18 +151,23 @@ function doAJAX(jsondata) {
 
 /**
  * Displays a list of questions
- * @param {object} qList json object representing the questions
+ * @param {object} questionArray json object representing the questions
  * @see doAJAX
  */
-function showQuestions(qList) {
+function showQuestions(questionArray) {
     $("#tabs a[href='#tabs-2']").click();
-    var qbox = $("#questions");
-    var newline = false;
-    qbox.empty();
-    qbox.append("<div id=\"hints\"><h4>hints</h4></div>");
-    qbox.append("<div id=\""+qList[0].category.replace(/\s/,"_")+"\"><h3>"+qList[0].category+"</h3><div id=\"qcontent\"></div></div>");
-    qbox = $("#qcontent", qbox);
-    $.each(qList, function(i,item){
+    // var qbox = $("#questions");
+    var newline = false;    
+    var topicName = questionArray[0].category;
+    var topicID = topicName.replace(/\s/,"_");
+    var qlist = $("#questionlist");
+    qlist.append('<div id="'+topicID+'"><h3>'+topicName+'</h3><div id="qcontent"></div></div>');
+    // qbox.empty();
+    // qbox.append("<div id=\"hints\"><h4>hints</h4></div>");
+    //qbox.append("<div id=\""+topicID+"\"><h3>"+topicName+"</h3><div id=\"qcontent\"></div></div>");
+    var qdiv = $("#"+topicID, qlist);
+    var qbox = $("#qcontent", qdiv);
+    $.each(questionArray, function(i,item){
         // pre append formatting
         var output = "<p><label for=\"qID"+item.id+"\">"+item.question+"</label>";
         if (item.type == "select") {
@@ -229,31 +235,31 @@ function showQuestions(qList) {
             });
         }
     });
-    qbox.append('<input type="button" class="ui-button next" value="next" onclick="sendAnswers(this.parentNode)"/>');
+    qbox.append('<input type="button" class="ui-button next" value="next" onclick="sendAnswers(\''+topicID+'\')"/>');
     $('.datefield', qbox).datepicker();
-    updateTopicList(qList[0].category);
+    if(!langChange) {
+        updateTopicList(topicName, topicID);
+    }
 }
 
 /**
  * Displays the solution
- * @param {object} solution json object representing the solution
+ * @param {string} solution string representing the main issue
+ * @param {string} path url pointing to solution lkif
  * @see doAJAX
  */
 function showSolution(solution, path) {
-    $("#tabs a[href='#tabs-3']").click();
- /*   $("#tabs-3").html("<h2>Solution</h2>"+
-        "<h3>"+solution["main-issue"][1]+" "+solution["main-issue"][0]+" "+solution["main-issue"][2]+"</h3>"+
-        "<p>Below you ind the full JSON solution output.</p><pre id=\"solution-xml\"><\/pre>");  
-    var solutionNew = JSON.stringify(solution, null, "\t");
-    $("#solution-xml").html(solutionNew); */
-  /*  $("#tabs-3").html("<h2>Solution</h2>"+
-        "<h3>"+solution+"</h3><div id=\"policyrules\"></div>");  */
+    // go to next tab
+    $("#tabs a[href='#tabs-3']").click(); 
+    // display solution statement
     $("#solutionstatement").append(solution);
+    // communicate with evaluation servlet
     $.ajaxSetup({url: "/CarneadesWeb-web/PolicyEvaluation"});
+    // get policy rules
     var json = {"policyrules" : path}
     doAJAX(json);
+    // display argument graph
     showArgGraph(path);
-    //$("#solution-xml").html(solution);
 }
 
 /**
@@ -359,15 +365,6 @@ function radioCheckNewLine(answers) {
     return newline;
 }
 
-/*
- *  liste bearbeiten.
-              var qlist = $("#question");
-              qlist.empty();
-              $.each(data.questions, function(i,item){
-                  qlist.append("<li onclick=\"loadQuestions('"+item.id+"')\">"+item.name+" ("+item.len+")</li>");
-              });
- *
- **/
 
 /**
  * Updates the statusfield of the page.
@@ -394,49 +391,56 @@ function statusupdate(type, text) {
 
 /**
  * Collects the given answers and parse them as JSON before sending them to {@link doAJAX}.
- * @param {object} obj expects a HTML object that includes the input fields for the given answers.
+ * @param {string} topicID the ID of the question div
  * @see doAJAX
  * @see validateField
  */
-function sendAnswers(obj) {
+function sendAnswers(topicID) {
     var doRequest = true;
     var jsonA = new Array();
-    $(":input", obj).each(function(i, itemobj){
+    var topicDiv = $("#"+topicID);
+    topicDiv.hide();
+    $("input", topicDiv).each(function(i, itemobj){
         var item = $(itemobj);
         // skip buttons
-        if (item.hasClass("ui-button") || obj.type && (itemobj.type == "button" || itemobj.type == "submit" || itemobj.type == "reset") ) return true;
-        var jsonitem;
-        if (itemobj.type == "radio" || itemobj.type == "checkbox") {
-            if (itemobj.parentNode.getElementsByTagName("input")[0] == obj) {
-                if (validateField(itemobj) == false) {
-                    doRequest = false;
-                    return true;
-                }
-                var valArray = new Array();
-                $(":input:checked[name='"+itemobj.name+"']", itemobj.parentNode).each(function(i, valobj) {
-                    valArray.push(valobj.value);
-                });
-                jsonitem = {
+        if (item.hasClass("ui-button") || itemobj.type && (itemobj.type == "button" || itemobj.type == "submit" || itemobj.type == "reset") ) return true;
+        
+        if (validateField(itemobj) == false) {
+            doRequest = false;
+            return true;
+        }
+        if (itemobj.type == "radio" || itemobj.type == "checkbox") {            
+            
+            /*var valArray = new Array();
+            $(":input:checked[name='"+itemobj.name+"']", itemobj.parentNode).each(function(i, valobj) {
+                valArray.push(valobj.value);
+            });*/
+            if(itemobj.checked) {
+                var jsonitem = {
                     "id" : item.attr("name").substring(3),
-                    "value" : valArray.copy()
+                    "value" : item.val()
                 }
                 jsonA.push(jsonitem);
-            }
-            else return true;
+            }            
         }
-        else {
-            if (validateField(itemobj) === false) {
-                doRequest = false;
-                return true;
-            }
-            jsonitem = {
+        else {            
+            var jsonitem = {
                 "id" : item.attr("name").substring(3),
                 "value" : item.val()
             }
             jsonA.push(jsonitem);
         }
     });
+    $("select", topicDiv).each(function(i, itemobj){
+        var item = $(itemobj);
+        var jsonitem = {
+            "id" : item.attr("name").substring(3),
+            "value" : item.val()
+        }
+        jsonA.push(jsonitem);
+    });
     var jsonZ = {"answers" : jsonA.copy()}
+    langChange = false;
     if (doRequest) doAJAX(jsonZ);
 }
 
@@ -491,26 +495,37 @@ function qunwarn(obj) {
  * adding a new topic to the question-topic-list
  * @param {string} topic name of the topic (must equal the id of the DIV)
  */
-function updateTopicList(topic) {
+function updateTopicList(topicName, topicID) {
     // first run:
-    topic = topic.replace(/_/, " ");
-    if ($("#questionslist li:first").text() == "not loaded yet") $("#questionslist").empty();
-    $("#questionslist").add("<li>"+topic+"</li>").click(function() {
-        var t = this.innerHTML; // topic
-        if (t.indexOf(" ") != -1) t = t.replace(/\s/, "_");
+    // topic = topic.replace(/_/, " ");
+    //if ($("#questionlinklist li:first").text() == "not loaded yet") $("#questionlinklist").empty();    
+    $("#questionlinklist").append("<li>"+topicName+"</li>").click(function() {
+        //var t = topic; // topic
+        //if (t.indexOf(" ") != -1) t = t.replace(/\s/, "_");
         $("#questions div").hide();
-        $("#"+t).show();
+        var d = $("#"+topicID);
+        d.show();
+        d.children().show();
+        $("#hints").show();
     });
 }
 
+/**
+ * list policy rules derived from argument graph as checkboxes
+ * @param {object} rules json array of policy rules
+ */
 function showPolicyRules(rules) {
-    var policyList = $("#policyrules");
+    var policyList = $("#policylist");
     // policyList.remove();
-    policyList.append("<ul>")
+    //policyList.append("<ol style=\"list-style-type:decimal\">")
+    policyrules = [];
     $.each(rules, function(ruleindex, r) {
-       policyList.append("<li>"+ruleindex+" - "+r+"</li>"); 
+       //policyList.append("<li>"+(ruleindex+1)+" - "+r+"</li>"); 
+       policyList.append('<li><input type="checkbox" name="'+r+'" />'+r+'</li>');       
+       policyrules.push(r);
     });
-    policyList.append("</ul>");    
+    //policyList.append("</ol>");    
+    $("#policyrules").append('<input type="button" class="ui-button evaluate" value="Evaluate" onclick="evaluateGraph()"/>');
 }
 
 /**
@@ -518,14 +533,38 @@ function showPolicyRules(rules) {
  * @param {string} path path to lkif with argument graph
  */
 function showArgGraph(path) {
-    //alert("converting argument graph: "+path);
+    // set global path to lkif argument graph
+    argGraph = path;
     var json = {"showgraph" : path};
     doAJAX(json);
 }
 
+/**
+ * display svg representation of an argument graph
+ * @param {string} path path to svg with argument graph
+ */
 function showSVGGraph(path) {
-    // alert("showing svg file : "+path);
-    $("#graph").append("<object data=" + path + " width=\"900\" height=\"900\" type=\"image/svg+xml\" />");
+    $("#graph").html("<object data=" + path + " width=\"1000\" height=\"700\" type=\"image/svg+xml\" />");
+}
+
+/**
+ * evaluate argument graph with selected policy rules
+ */
+function evaluateGraph() {
+    // get selected checkboxes / policyrules
+    var accArray = [];
+    var rejArray = [];
+    $.each(policyrules, function(index, r) {
+       if($('input[name='+r+']').attr('checked')) {
+           accArray.push(r);
+       } else {
+           rejArray.push(r);
+       }
+    }); 
+    
+    // call engine
+    var json = {evaluate : {argGraph : argGraph, accept : accArray, reject : rejArray}}
+    doAJAX(json);
 }
 
 function showError(error) {

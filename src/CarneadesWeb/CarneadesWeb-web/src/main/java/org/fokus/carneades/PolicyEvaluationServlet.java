@@ -82,6 +82,7 @@ public class PolicyEvaluationServlet extends HttpServlet {
             try {
                 out.println(jsonOUT.toString());                            
             } catch (Exception e) {
+                e.printStackTrace();
                 log.error(e.getMessage());
                 out.println("<pre>"+e.toString() +"</pre>");
             } finally {
@@ -145,24 +146,24 @@ public class PolicyEvaluationServlet extends HttpServlet {
         }
         
         List<String> rejectIDs = new ArrayList<String>();
-        for (int i = 0; i < jsonAccept.length(); i++) {
+        for (int i = 0; i < jsonReject.length(); i++) {
             rejectIDs.add(jsonReject.getString(i));
         }
 
         CarneadesMessage cm = service.evaluateArgGraph(argGraph, acceptIDs, rejectIDs);
 
         if (MessageType.GRAPH.equals(cm.getType())) {
-            // solution
-            log.info("sending evaluated graph to user");
+            // solution            
             // Statement solution = cm.getMessage();
             String evaluatedGraph = cm.getAG();
+            log.info("sending evaluated graph to user: " + evaluatedGraph);
             r.put("evaluated", evaluatedGraph);
         } else {
             r.put("error", "unexpected message type (GRAPH expected) : "+cm.getType().name());
         }
         
 
-        return null;
+        return r;
                 
     }
 
@@ -181,7 +182,7 @@ public class PolicyEvaluationServlet extends HttpServlet {
         JSONObject o = new JSONObject();
         
         log.info("call service with path: "+lkifPath);
-        CarneadesMessage cm = service.getPolicySchemes(lkifPath);
+        CarneadesMessage cm = service.getPolicyRules(lkifPath);
         
         if(MessageType.RULES.equals(cm.getType())) {
             
@@ -192,7 +193,7 @@ public class PolicyEvaluationServlet extends HttpServlet {
                 //stmtJSON.put("rule", policyRule);
                 schemesArray.put(policyRule);
             }
-            o.put("rules", schemesArray);
+            o.put("policyrules", schemesArray);
             
         } else {
             o.put("error", "unexpected message type (RULES expected) : "+cm.getType().name());

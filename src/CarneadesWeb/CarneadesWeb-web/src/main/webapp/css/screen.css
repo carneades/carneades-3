@@ -50,18 +50,18 @@ h2 {
         min-height:200px;
         clear:both;
 }
-#questionlist {
+#questionlinklist {
         list-style:none;
         margin:0;
         padding:0;
         max-height:490px;
         overflow:auto;
 }
-#questionlist li {
+#questionlinklist li {
         margin:0;
         padding:2px 10px;
 }
-#questionlist li:hover {
+#questionlinklist li:hover {
         font-weight:bold;
         cursor:pointer;
         padding: 2px 10px;
@@ -136,4 +136,27 @@ h2 {
         font-size:13px;
         background: transparent url(../images/qinfo_r.png) no-repeat; */
 
+}
+
+#solutionstatement {
+    margin: 1.5em 0 1em 0;
+    font-size:1.5em;
+    color: #5a5863;
+}
+
+#policylist {
+        list-style:none;
+        margin:0;
+        padding:0;
+        max-height:490px;
+        overflow:auto;
+}
+#policylist li {
+        margin:0;
+        padding:2px 10px;
+}
+#policylist li:hover {
+        font-weight:bold;
+        cursor:pointer;
+        padding: 2px 10px;
 }

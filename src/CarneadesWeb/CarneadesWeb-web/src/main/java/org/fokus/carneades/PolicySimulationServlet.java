@@ -47,7 +47,7 @@ public class PolicySimulationServlet extends HttpServlet {
     private static final String TRANSLATOR = "TRANSLATOR";
     private static final String LANGUAGE = "LANGUAGE";
     
-    private static final String defaultLanguage = "en";
+    private static final String defaultLanguage = "de";
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -121,13 +121,16 @@ public class PolicySimulationServlet extends HttpServlet {
                     // creating query for topic
                     log.info("creating query");
                     Statement query = new Statement();
-                    query.setPredicate("timeForFatherAndGrandfather");
-                    query.getArgs().add("Peter");
-                    query.getArgs().add("?x");
-                    query.getArgs().add("?y");
-                    query.getArgs().add("?z");
+                    //query.setPredicate("timeForFatherAndGrandfather");
+                    //query.setPredicate("legal-effect");
+                    query.setPredicate("hatAnspruchOeffentlicheZugaenglichmachung");
+                    query.getArgs().add("?Person");
+                    query.getArgs().add("?Werk");
+                    //query.getArgs().add("?x");
+                    //query.getArgs().add("?y");
+                    //query.getArgs().add("?z");
                     // get kb for discussion
-                    String kb = "http://localhost:8080/CarneadesWeb-web/kb/lkif.xml";
+                    String kb = "http://localhost:8080/CarneadesWeb-web/kb/IMPACT.xml";
                     //List<Question> qList = new ArrayList<Question>();
                     session.setAttribute(QUERY, query);
                     session.setAttribute(KNOWLEDGE_BASE, kb);
@@ -161,6 +164,7 @@ public class PolicySimulationServlet extends HttpServlet {
                 if(MessageType.ASKUSER.equals(lastMsg)) {
                     List<Question> qList = (List<Question>)session.getAttribute(LAST_QUESTIONS);
                     jsonOUT = QuestionHelper.getJSONFromQuestions(qList, newLang);
+                    // jsonOUT.put("update", "false");
                 } else if (MessageType.SOLUTION.equals(lastMsg)) {
                     Statement sol = (Statement)session.getAttribute(LAST_SOLUTION);
                     String solPath = (String)session.getAttribute(SOLUTION_PATH);
@@ -215,8 +219,13 @@ public class PolicySimulationServlet extends HttpServlet {
         // ask
         // TODO : get askables from CMS
         List<String> askables = new ArrayList<String>();
-        askables.add("isFather");
-        askables.add("hasAge");
+        //askables.add("isFather");
+        //askables.add("hasAge");
+        askables.add("hatName");
+        askables.add("betrifftWerk");
+        askables.add("zumZweck");
+        askables.add("UrheberSuche");
+        askables.add("Bekanntmachung");
         // askables.add("http://carneades/test/ont#s");
         log.info("calling ask from ejb: " + query.toString());
         CarneadesMessage msg = service.askEngine(query,kb,askables,answer);

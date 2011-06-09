@@ -44,24 +44,40 @@ public class QuestionHelper {
     public static List<Statement> mapAnswersAndQuestionsToStatement (List<Question> qList, List<Answer> aList) {
         List<Statement> result = new ArrayList<Statement>();
         for (Answer answer : aList) {
-            int id = answer.getId();
-            Question q = null;
-            for (Question q1 : qList) {
-                if (id == q1.getId()) q = q1;
-            }
-            Statement stmt = q.getStatement();
-            List<String> newArgs = new ArrayList<String>();
-            for (String arg : stmt.getArgs()) {
-                if (arg.startsWith("?")) {
-                    newArgs.add(answer.getValue());
-                } else {
-                    newArgs.add(arg);
-                }
-            }
-            stmt.setArgs(newArgs);
+            
+            // find corresponding question
+            Question q = findQuestion(answer.getId(), qList);
+            // find index for questioned object
+            Statement stmt = q.getStatement();                        
+            int index = findQuestionPos(stmt);
+            // replace object with answer
+            stmt.getArgs().set(index, answer.getValue());
+            
             result.add(stmt);
         }
+        for(Statement s : result) {
+            log.info(s.toString());
+        }
         return result;
+    }
+    
+    private static int findQuestionPos(Statement q) {
+        List<String> args = q.getArgs();
+        for(int i=0; i<args.size(); i++) {
+            if(args.get(i).startsWith("?")) {
+                return i;
+            }
+        }
+        return (args.size()-1);
+    }
+
+    private static Question findQuestion(int id, List<Question> qList) {
+        for(Question q : qList) {
+            if(q.getId() == id) {
+                return q;
+            }
+        }
+        return null;
     }
 
 }

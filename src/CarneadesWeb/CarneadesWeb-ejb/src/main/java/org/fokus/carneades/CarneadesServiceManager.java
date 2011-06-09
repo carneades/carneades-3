@@ -22,7 +22,6 @@ import org.fokus.carneades.api.CarneadesMessage;
 import org.fokus.carneades.api.MessageType;
 import org.fokus.carneades.api.Statement;
 import org.fokus.carneades.clojureutil.ClojureUtil;
-import org.fokus.carneades.lkif.LKIFHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,7 +94,7 @@ public class CarneadesServiceManager implements CarneadesService{
             
             log.info("svg path : "+svgPath);
             
-            Object stmtStr = RT.var(NS.STATEMENT, "statement-formatted");
+            Object stmtStr = RT.var(NS.STATEMENT, "statement-formatted").fn();
             
             RT.var(NS.VIEWER, "gen-image").invoke(ag, stmtStr, svgPath);
             log.info("image saved");
@@ -112,7 +111,7 @@ public class CarneadesServiceManager implements CarneadesService{
     
     
 
-    public CarneadesMessage getPolicySchemes(String argGraph) {
+    public CarneadesMessage getPolicyRules(String argGraph) {
         
         CarneadesMessage cm = new CarneadesMessage();
         
@@ -160,32 +159,44 @@ public class CarneadesServiceManager implements CarneadesService{
         CarneadesMessage cm = null;
         
         try {
+            
+            log.info("evaluating") ;
                     
             // importing lkif
             log.info("loading lkif");
             Map lkif = (Map) RT.var(NS.LKIF, "lkif-import").invoke(argGraph);
             List argGraphs = (List) lkif.get(Keyword.intern("ags"));
             Map ag = (Map)argGraphs.get(0);
-            Map<String, Statement> stmtIDs = LKIFHelper.getStmtIDs(argGraph);
+            
 
             // evaluate
             List<Statement> accStmts = new ArrayList<Statement>();
             for(String a : accepts) {
-                accStmts.add(stmtIDs.get(a));
+                Statement s = new Statement();
+                s.setPredicate("valid");
+                s.getArgs().add(a);
+                accStmts.add(s);
+                log.info("acceptable stmt: "+a);
             }
             List accSExpr = ClojureUtil.getSeqFromStatementList(accStmts); 
             Map accAG = (Map)RT.var(NS.ARGUMENT, "accept").invoke(ag, accSExpr);
             
             List<Statement> rejStmts = new ArrayList<Statement>();
             for(String r : rejects) {
-                rejStmts.add(stmtIDs.get(r));
+                Statement s = new Statement();
+                s.setPredicate("valid");
+                s.getArgs().add(r);
+                rejStmts.add(s);
+                log.info("rejectable stmt: "+r);
             }
             List rejSExpr = ClojureUtil.getSeqFromStatementList(rejStmts);
             Map evaluatedAG = (Map)RT.var(NS.ARGUMENT, "reject").invoke(accAG, rejSExpr);
-                        
-
+                     
+            
             // save & return evaluated graph
             String evaluatePath = storeArgGraph(evaluatedAG);
+            log.info("evaluated graph:"+evaluatePath);
+            cm = new CarneadesMessage();
             cm.setAG(evaluatePath);            
             cm.setType(MessageType.GRAPH);
         
@@ -249,8 +260,7 @@ public class CarneadesServiceManager implements CarneadesService{
             log.info("loading lkif");
             Map lkif = (Map) RT.var(NS.LKIF, "lkif-import").invoke(kb);
 
-            // getting goal
-            List argGraphs = (List) lkif.get(Keyword.intern("ags"));
+            // getting goal            
             log.info("creating goal");
             // TODO : the goal has to be general
             this.goal = ClojureUtil.getSeqFromStatement(query);//(List) RT.var("clojure.core", "list").invoke(Symbol.intern("p"), Symbol.intern("?x"));
@@ -271,17 +281,24 @@ public class CarneadesServiceManager implements CarneadesService{
                         
             // start engine
             log.info("starting engine for the first time");
+            List argGraphs = (List) lkif.get(Keyword.intern("ags"));
+            System.out.println(argGraphs);
             Map ag;
             if (argGraphs == null) {
-                ag = (Map) RT.var(NS.ARGUMENT, "*empty-argument-graph*").invoke();
+                ag = (Map) RT.var(NS.ARGUMENT, "*empty-argument-graph*").get();
             } else {
                 ag = (Map) argGraphs.get(0);
             }
+            System.out.println(ag);
+            
             //RT.var(NS.CORE, "doall").invoke(
             RT.var(NS.SHELL, "future-construction").invoke(toEngine, fromEngine);
             
             // sending first request
-            Object msg = RT.var(NS.CORE, "list").invoke(this.goal, 50, ag, generators, askableFn);
+            // TODO : max nodes and max turns
+            int maxTurns = 2;
+            int maxNodes = 50;
+            Object msg = RT.var(NS.CORE, "list").invoke(this.goal, maxNodes, maxTurns, ag, generators, askableFn);
             cm = communicateWithEngine(msg, askHandler);
             
    
@@ -328,23 +345,7 @@ public class CarneadesServiceManager implements CarneadesService{
             log.info("waiting for answer from engine");
             List o = (List)RT.var(NS.CORE, "deref").invoke(this.fromEngine);            
             log.info("answer received from engine: " + Integer.toString(o.size()));
-            /*
-            Map<Thread,StackTraceElement[]> traces = Thread.getAllStackTraces();
-            Set<Thread> threads = traces.keySet();
-            Iterator<Thread> it = threads.iterator();
-            while(it.hasNext()) {
-                Thread t = it.next();
-                String tName = t.getName();
-                if(tName.startsWith("http") || tName.startsWith("pool")) {
-                    String m = "Thread " + t.toString() + " " + tName + " " + Long.toString(t.getId());
-                    log.info(m);
-                    StackTraceElement[] stack = traces.get(t);
-                    for(int i=0; i<stack.length; i++) {
-                        System.out.println(stack[i].toString());
-                    }
-                }
-            }
-            System.out.println(Thread.currentThread().getName()); */
+            
             // log.info((String)RT.var(NS.CORE,"pr-str").invoke(o));
             // RT.var(NS.CORE, "println").invoke(o);
             

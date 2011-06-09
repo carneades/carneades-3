@@ -294,7 +294,7 @@ public class Translator {
             }
             varPos++;
         }        
-        return null;
+        return translation.getQuestions().get(translation.getArgs()-1);
     }
 
         
