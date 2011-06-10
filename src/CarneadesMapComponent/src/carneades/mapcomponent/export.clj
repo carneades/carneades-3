@@ -352,7 +352,7 @@
                      (xml/add-attrs :transform "scale (0.8)"))]])))
 
 (defn export-ag-helper
-  [ag stmt-str filename & options]
+  [ag stmt-str & options]
   (let [pro-arg-color "#0e5200"
         con-arg-color "#e10005"
         map (create-graph)
@@ -423,7 +423,7 @@
    Options are :treeify, :full-duplication, :depth,
    :layout and all options supported by the layout"
   [ag stmt-str filename & options]
-  (let [map (apply export-ag-helper ag stmt-str filename options)]
+  (let [map (apply export-ag-helper ag stmt-str options)]
     (export map filename :indent "yes")))
 
 (defn export-ag-os
@@ -431,8 +431,8 @@
 
    Options are :treeify, :full-duplication, :depth,
    :layout and all options supported by the layout"
-  [ag stmt-str filename & options]
-  (let [map (apply export-ag-helper ag stmt-str filename options)
+  [ag stmt-str & options]
+  (let [map (apply export-ag-helper ag stmt-str options)
         os (ByteArrayOutputStream.)
         v (view map)]
     (dom/spit-xml os v :indent "yes")
