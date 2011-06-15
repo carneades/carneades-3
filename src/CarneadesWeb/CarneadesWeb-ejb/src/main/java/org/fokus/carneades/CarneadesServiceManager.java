@@ -10,6 +10,7 @@ import clojure.lang.IFn;
 import clojure.lang.Keyword;
 import clojure.lang.RT;
 import clojure.lang.Symbol;
+import java.io.BufferedReader;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,10 +57,12 @@ public class CarneadesServiceManager implements CarneadesService{
             RT.loadResourceScript("carneades/engine/shell.clj");
             //log.info("loading viewer.clj");
             //RT.loadResourceScript("carneades/ui/diagram/viewer.clj");
-            log.info("loading viewer2.clj");
-            RT.loadResourceScript("carneades/ui/diagram/graphvizviewer.clj");
-            log.info("loading json.clj");
-            RT.loadResourceScript("clojure/contrib/json.clj");
+            log.info("loading clojure/main.clj");
+            RT.loadResourceScript("clojure/main.clj");
+            log.info("loading mapcomponent/export.clj");
+            RT.loadResourceScript("carneades/mapcomponent/export.clj");
+            //log.info("loading json.clj");
+            //RT.loadResourceScript("clojure/contrib/json.clj");
             log.info("loading clojure files finished");
         } catch(Exception e) {
             log.error(e.toString());
@@ -76,12 +79,14 @@ public class CarneadesServiceManager implements CarneadesService{
             
             // importing lkif
             log.info("loading lkif");
-            Map lkif = (Map) RT.var(NS.LKIF, "lkif-import").invoke(argGraph);
+            Map lkif = (Map) RT.var(NS.LKIF, "import-lkif").invoke(argGraph);
             log.info("get arg graphs");
             List argGraphs = (List) lkif.get(Keyword.intern("ags"));
             log.info("get first graph");
             Map ag = (Map)argGraphs.get(0);
             
+            // get output file 
+            // TODO : replace with CMS operations
             int c = 0;
             String prepath = "/tmp/";
             String svgPath = prepath + "graph0.svg";
@@ -96,8 +101,9 @@ public class CarneadesServiceManager implements CarneadesService{
             
             Object stmtStr = RT.var(NS.STATEMENT, "statement-formatted").fn();
             
-            RT.var(NS.VIEWER, "gen-image").invoke(ag, stmtStr, svgPath);
-            log.info("image saved");
+            // convert graph to svg
+            // TODO : use options for export            
+            RT.var(NS.MAP, "export-ag").invoke(ag, stmtStr, svgPath);            
             
             cm.setAG(svgPath);
             cm.setType(MessageType.SVG);
@@ -119,7 +125,7 @@ public class CarneadesServiceManager implements CarneadesService{
             
             // importing lkif
             log.info("loading lkif");
-            Map lkif = (Map) RT.var(NS.LKIF, "lkif-import").invoke(argGraph);
+            Map lkif = (Map) RT.var(NS.LKIF, "import-lkif").invoke(argGraph);
             log.info("get arg graphs");
             List argGraphs = (List) lkif.get(Keyword.intern("ags"));
             log.info("get first graph");
@@ -164,7 +170,7 @@ public class CarneadesServiceManager implements CarneadesService{
                     
             // importing lkif
             log.info("loading lkif");
-            Map lkif = (Map) RT.var(NS.LKIF, "lkif-import").invoke(argGraph);
+            Map lkif = (Map) RT.var(NS.LKIF, "import-lkif").invoke(argGraph);
             List argGraphs = (List) lkif.get(Keyword.intern("ags"));
             Map ag = (Map)argGraphs.get(0);
             
@@ -258,7 +264,7 @@ public class CarneadesServiceManager implements CarneadesService{
         try {
             // importing lkif
             log.info("loading lkif");
-            Map lkif = (Map) RT.var(NS.LKIF, "lkif-import").invoke(kb);
+            Map lkif = (Map) RT.var(NS.LKIF, "import-lkif").invoke(kb);
 
             // getting goal            
             log.info("creating goal");

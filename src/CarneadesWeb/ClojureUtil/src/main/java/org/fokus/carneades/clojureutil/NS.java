@@ -14,7 +14,7 @@ public class NS {
     public static final String CORE = "clojure.core";
     public static final String MONADS = "clojure.contrib.monads";
     public static final String STACKTRACE = "clojure.stacktrace";
-    public static final String JSON = "clojure.contrib.json";
+    // public static final String JSON = "clojure.contrib.json";
     
     public static final String LKIF = "carneades.engine.lkif";
     public static final String SHELL = "carneades.engine.shell";
@@ -22,6 +22,6 @@ public class NS {
     public static final String STATEMENT = "carneades.engine.statement";
     public static final String ASK = "carneades.engine.ask";    
     public static final String UNIFY = "carneades.engine.unify";
-    public static final String VIEWER = "carneades.ui.diagram.graphvizviewer";
+    public static final String MAP = "carneades.mapcomponent.export";
 
 }
