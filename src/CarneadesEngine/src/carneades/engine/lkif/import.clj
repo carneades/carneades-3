@@ -501,14 +501,14 @@
 (defn import-lkif-helper
   [pathname resolve-path files]
   (let [document (zip/xml-zip (xml/parse pathname))
-           lkif-sources (xml1-> document :sources)
-           lkif-theory (xml1-> document :theory)
-           lkif-arg-graphs (xml1-> document :argument-graphs)
-           source-list (sources->list lkif-sources)
-           theory (import-theory lkif-theory pathname (cons pathname files)
-                                 resolve-path)
-           ags (parse-arg-graphs lkif-arg-graphs)]
-           (assoc theory :sources source-list :ags ags)))
+        lkif-sources (xml1-> document :sources)
+        lkif-theory (xml1-> document :theory)
+        lkif-arg-graphs (xml1-> document :argument-graphs)
+        source-list (sources->list lkif-sources)
+        theory (import-theory lkif-theory pathname (cons pathname files)
+                              resolve-path)
+        ags (parse-arg-graphs lkif-arg-graphs)]
+    (assoc theory :sources source-list :ags ags)))
 
 (defn import-lkif
   "reads a LKIF file and returns a LKIF structure.  
@@ -524,10 +524,10 @@
      - java.io.IOException
      - java.io.FileNotFoundException"
   ([pathname]
-     (let [pathname (if (string? pathname) ;; to allow streams
+     (let [pathname (if (and (string? pathname) (not (url? pathname))) ;; to allow streams
                       (absolute pathname)
                       pathname)
-           root-lkif-dir (when (string? pathname)
+           root-lkif-dir (when (and (string? pathname) (not (url? pathname)))
                            (parent pathname))]
        (import-lkif-helper pathname
                            (fn [pathname parent-pathname]
