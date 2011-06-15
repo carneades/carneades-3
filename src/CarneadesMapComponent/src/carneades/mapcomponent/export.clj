@@ -180,7 +180,7 @@
                     (conj pms stmt)]
 
                    (and already-added (not (:treeify params)))
-                   [(add-premise-edge map pm stmt already-added argid params)
+                   [(add-premise-edge map pm already-added argid params)
                     mapinfo
                     pms]
                    
@@ -357,6 +357,7 @@
         con-arg-color "#e10005"
         map (create-graph)
         map (add-markers map pro-arg-color con-arg-color)
+38
         options-kv (apply hash-map options)
         stmt-params {:style {:fill "white"} :width 260 :height 45}
         arg-params {:style {:fill "white"} :shape :circle :r 16}
