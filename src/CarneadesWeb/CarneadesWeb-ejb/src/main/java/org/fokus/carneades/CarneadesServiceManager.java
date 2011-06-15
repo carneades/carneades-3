@@ -100,10 +100,12 @@ public class CarneadesServiceManager implements CarneadesService{
             log.info("svg path : "+svgPath);
             
             Object stmtStr = RT.var(NS.STATEMENT, "statement-formatted").fn();
+            log.info("stmt-frmt fn created");
             
             // convert graph to svg
             // TODO : use options for export            
-            RT.var(NS.MAP, "export-ag").invoke(ag, stmtStr, svgPath);            
+            RT.var(NS.MAP, "export-ag").invoke(ag, stmtStr, svgPath);
+            log.info("svg created");
             
             cm.setAG(svgPath);
             cm.setType(MessageType.SVG);
@@ -382,7 +384,7 @@ public class CarneadesServiceManager implements CarneadesService{
                 //RT.var(NS.JSON, "write-json") .invoke(solAG, jsonWriter);
                 // {:ags (solAG)}
                 //Map lkifMap = (Map)RT.map(Keyword.intern("ags"),RT.var(NS.CORE, "list").invoke(solAG));
-                //RT.var(NS.LKIF,"lkif-export").invoke(lkifMap, lkifWriter);
+                //RT.var(NS.LKIF,"export-lkif").invoke(lkifMap, lkifWriter);
                 //RT.var(NS.CORE, "println").invoke(lkifMap);
                 //jsonString = jsonWriter.toString();
                 //log.info(lkifString);
@@ -467,7 +469,7 @@ public class CarneadesServiceManager implements CarneadesService{
         log.info(path);                
         // {:ags (solAG)}
         Map lkifMap = (Map)RT.map(Keyword.intern("ags"),RT.var(NS.CORE, "list").invoke(argGraph));
-        RT.var(NS.LKIF,"lkif-export").invoke(lkifMap, path);        
+        RT.var(NS.LKIF,"export-lkif").invoke(lkifMap, path);        
     }
 
 }
