@@ -180,7 +180,7 @@
                     (conj pms stmt)]
 
                    (and already-added (not (:treeify params)))
-                   [(add-premise-edge map pm stmt already-added argid params)
+                   [(add-premise-edge map pm already-added argid params)
                     mapinfo
                     pms]
                    
