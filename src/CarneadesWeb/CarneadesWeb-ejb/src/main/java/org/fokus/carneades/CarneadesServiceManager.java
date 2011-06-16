@@ -103,8 +103,10 @@ public class CarneadesServiceManager implements CarneadesService{
             log.info("stmt-frmt fn created");
             
             // convert graph to svg
-            // TODO : use options for export            
-            RT.var(NS.MAP, "export-ag").invoke(ag, stmtStr, svgPath);
+            // TODO : use options for export     
+            Keyword layoutKW = Keyword.intern("layout");
+            Keyword radialKW = Keyword.intern("radial");
+            RT.var(NS.MAP, "export-ag").invoke(ag, stmtStr, svgPath, layoutKW, radialKW);
             log.info("svg created");
             
             cm.setAG(svgPath);
