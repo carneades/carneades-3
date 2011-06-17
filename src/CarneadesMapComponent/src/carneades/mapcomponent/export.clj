@@ -355,9 +355,11 @@
   [ag stmt-str & options]
   (let [pro-arg-color "#0e5200"
         con-arg-color "#e10005"
-        map (create-graph)
-        map (add-markers map pro-arg-color con-arg-color)
         options-kv (apply hash-map options)
+        width (get options-kv :width 1280)
+        height (get options-kv :height 1024)
+        map (create-graph :width width :height height)
+        map (add-markers map pro-arg-color con-arg-color)
         stmt-params {:style {:fill "white"} :width 260 :height 45}
         arg-params {:style {:fill "white"} :shape :circle :r 16}
         tomato "#ff7e7e"
