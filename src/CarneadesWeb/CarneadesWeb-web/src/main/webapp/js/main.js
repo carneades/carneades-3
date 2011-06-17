@@ -545,6 +545,8 @@ function showArgGraph(path) {
  */
 function showSVGGraph(path) {
     $("#graph").html("<object data=" + path + " width=\"1000\" height=\"700\" type=\"image/svg+xml\" />");
+    //$("#graph").html('<embed src=' + path + ' width="1000" height="700" type="image/svg+xml" codebase="http://www.adobe.com/svg/viewer/install/" />');
+    //$("#graph").html("<iframe src=" + path + " width=\"1000\" height=\"700\" type=\"image/svg+xml\" />");
 }
 
 /**
