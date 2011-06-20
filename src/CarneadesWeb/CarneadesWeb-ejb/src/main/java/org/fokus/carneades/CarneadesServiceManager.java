@@ -69,7 +69,7 @@ public class CarneadesServiceManager implements CarneadesService{
         }
     }
 
-    public CarneadesMessage getSVGFromGraph(String argGraph) {        
+    public CarneadesMessage getSVGFromGraph(String argGraph, int height, int width) {        
         
         CarneadesMessage cm = new CarneadesMessage();
         
@@ -106,7 +106,9 @@ public class CarneadesServiceManager implements CarneadesService{
             // TODO : use options for export     
             Keyword layoutKW = Keyword.intern("layout");
             Keyword radialKW = Keyword.intern("radial");
-            RT.var(NS.MAP, "export-ag").invoke(ag, stmtStr, svgPath, layoutKW, radialKW);
+            Keyword heightKW = Keyword.intern("height");
+            Keyword widthKW = Keyword.intern("width");
+            RT.var(NS.MAP, "export-ag").invoke(ag, stmtStr, svgPath, layoutKW, radialKW, heightKW, height, widthKW, width);
             log.info("svg created");
             
             cm.setAG(svgPath);

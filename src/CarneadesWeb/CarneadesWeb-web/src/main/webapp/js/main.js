@@ -13,6 +13,8 @@ var showhints = true;
 var argGraph = "undefined";
 var policyrules = [];
 var langChange = false;
+var svgHeight = 700;
+var svgWidth = 1000;
 
 // adding JSON parser when browser is too old to have a build-in one (pre-IE8, pre-FF3.5, ...)
 if( typeof( window[ 'JSON' ] ) == "undefined" ) document.write('<script type="text/javascript" src="https://github.com/douglascrockford/JSON-js/raw/master/json2.js"/>');
@@ -143,7 +145,7 @@ function doAJAX(jsondata) {
                 showError(data.error);
             }
             else {
-                alert("Can not resolve: "+JSON.stringify(data,null,"  "));
+                return data;
             }
         }
     });
@@ -535,7 +537,7 @@ function showPolicyRules(rules) {
 function showArgGraph(path) {
     // set global path to lkif argument graph
     argGraph = path;
-    var json = {"showgraph" : path};
+    var json = {"showgraph" : path, "height" : svgHeight, "width" : svgWidth};
     doAJAX(json);
 }
 
@@ -544,7 +546,9 @@ function showArgGraph(path) {
  * @param {string} path path to svg with argument graph
  */
 function showSVGGraph(path) {
-    $("#graph").html("<object data=" + path + " width=\"1000\" height=\"700\" type=\"image/svg+xml\" />");
+    //$("#graph").html('<object data=' + path + ' width="'+svgWidth+'" height="'+svgHeight+'" type="image/svg+xml" />');
+    var svg = $("#graph").svg();
+    svg.load(path);    
     //$("#graph").html('<embed src=' + path + ' width="1000" height="700" type="image/svg+xml" codebase="http://www.adobe.com/svg/viewer/install/" />');
     //$("#graph").html("<iframe src=" + path + " width=\"1000\" height=\"700\" type=\"image/svg+xml\" />");
 }

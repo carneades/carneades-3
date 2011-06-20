@@ -7,7 +7,10 @@
                 <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
 		<link type="text/css" href="css/custom-theme/jquery-ui-1.8.6.custom.css" rel="stylesheet" />	
 		<script type="text/javascript" src="js/jquery-1.4.4.js"></script>
-		<script type="text/javascript" src="js/jquery-ui-1.8.6.custom.min.js"></script>
+		<script type="text/javascript" src="js/jquery-ui-1.8.6.custom.min.js"></script>   
+                <script type="text/javascript" src="js/jquery.svg.js"></script>
+                <script type="text/javascript" src="js/jquery.svgdom.js"></script>
+                <script type="text/javascript" src="js/jquery.svganim.js"></script>
                 <!--script type="text/javascript" src="http://www.google.com/jsapi"></script-->
                 <script type="text/javascript" src="js/main.js"></script>
 		<script type="text/javascript">
@@ -16,11 +19,8 @@
 		//]]>
 		</script>
                 <style type="text/css">
-                    @font-face {
-                        font-family: "Fontin Sans" ;  
-                        src: url( "font/Fontin_Sans_R_45b.otf" ) format("opentype</option>  
-                    }
-                </style>
+                    @import "css/jquery.svg.css";                    
+                </style>                
                 <link type="text/css" href="css/screen.css" rel="stylesheet" />
 	</head>
 <body>
@@ -141,7 +141,7 @@
     <div id="policyrules"  style="float:left;width:200px;margin:0px;">
         <ol id="policylist" style="list-style-type:none" class="ui-widget ui-widget-content ui-corner-all"></ol>
     </div>
-    <div id="graph"></div>
+    <div id="graph" class="hasSVG ui-widget ui-widget-content ui-corner-all"></div>
 </div>
 </div>	
 		<!-- Highlight / Error -->

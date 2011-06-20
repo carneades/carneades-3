@@ -24,6 +24,6 @@ public interface CarneadesService {
     
     CarneadesMessage getPolicyRules(String argGraph);
     
-    CarneadesMessage getSVGFromGraph(String argGraph);
+    CarneadesMessage getSVGFromGraph(String argGraph, int height, int width);
 
 }

@@ -66,7 +66,10 @@ public class PolicyEvaluationServlet extends HttpServlet {
             if(jsonIN.has("policyrules")) {                
                 jsonOUT = handlePolicyRules(service, jsonIN.getString("policyrules"));
             } else if(jsonIN.has("showgraph")) {
-                jsonOUT = handleShowGraph(service, jsonIN.getString("showgraph"));
+                String agPath = jsonIN.getString("showgraph");
+                int height = jsonIN.getInt("height");
+                int width = jsonIN.getInt("width");
+                jsonOUT = handleShowGraph(service, agPath, height, width);
             } else if(jsonIN.has("evaluate")) {
                 jsonOUT = handleEvaluate(service, jsonIN.getJSONObject("evaluate"));                
             } else if (jsonIN.has("abduction")) {
@@ -203,13 +206,13 @@ public class PolicyEvaluationServlet extends HttpServlet {
         
     }
 
-    private JSONObject handleShowGraph(CarneadesService service, String agPath) throws JSONException {
+    private JSONObject handleShowGraph(CarneadesService service, String agPath, int height, int width) throws JSONException {
         
         JSONObject o = new JSONObject();
         
         log.info("showGraph : "+agPath);
         
-        CarneadesMessage cm = service.getSVGFromGraph(agPath);
+        CarneadesMessage cm = service.getSVGFromGraph(agPath, height, width);
         if(MessageType.SVG.equals(cm.getType())) {
             String localPath = cm.getAG();
             File f = new File(localPath);            
