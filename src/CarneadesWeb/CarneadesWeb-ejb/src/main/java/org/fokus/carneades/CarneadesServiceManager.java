@@ -106,9 +106,10 @@ public class CarneadesServiceManager implements CarneadesService{
             // TODO : use options for export     
             Keyword layoutKW = Keyword.intern("layout");
             Keyword radialKW = Keyword.intern("radial");
-            Keyword heightKW = Keyword.intern("height");
-            Keyword widthKW = Keyword.intern("width");
-            RT.var(NS.MAP, "export-ag").invoke(ag, stmtStr, svgPath, layoutKW, radialKW, heightKW, height, widthKW, width);
+            //Keyword heightKW = Keyword.intern("height");
+            //Keyword widthKW = Keyword.intern("width");
+            Keyword treeifyKW = Keyword.intern("treeify");
+            RT.var(NS.MAP, "export-ag").invoke(ag, stmtStr, svgPath, layoutKW, radialKW, treeifyKW, true);
             log.info("svg created");
             
             cm.setAG(svgPath);
