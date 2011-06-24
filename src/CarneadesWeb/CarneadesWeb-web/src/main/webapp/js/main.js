@@ -15,6 +15,7 @@ var policyrules = [];
 var langChange = false;
 var svgHeight = 700;
 var svgWidth = 1000;
+var svgScale = 1;
 
 // adding JSON parser when browser is too old to have a build-in one (pre-IE8, pre-FF3.5, ...)
 if( typeof( window[ 'JSON' ] ) == "undefined" ) document.write('<script type="text/javascript" src="https://github.com/douglascrockford/JSON-js/raw/master/json2.js"/>');
@@ -88,8 +89,7 @@ $(function(){ // Init
            else // "notmodified", "timeout", or "parsererror"
                statusupdate(1,textStatus);
        },
-       timeout : 60000,
-       dataType: "json",
+       timeout : 60000,       
        type: "POST"
     });
 
@@ -144,7 +144,8 @@ function doAJAX(jsondata) {
             } else if (data.error) {
                 showError(data.error);
             }
-            else {
+            else {    
+                // alert(data);
                 return data;
             }
         }
@@ -547,8 +548,22 @@ function showArgGraph(path) {
  */
 function showSVGGraph(path) {
     //$("#graph").html('<object data=' + path + ' width="'+svgWidth+'" height="'+svgHeight+'" type="image/svg+xml" />');
-    var svg = $("#graph").svg();
-    svg.load(path);    
+    var g = $("#graph");
+    g.svg();
+    //var onLoad = function(svgWrapper) {
+        //alert(svgWrapper);
+        //svgWrapper.configure({height: "700", width: "1000"}, true);
+    //};
+    var svgWrapper = g.svg('get').load(path);       
+    
+    /*g.bind("mousewheel", function(event, data){
+        if(delta > 0) {
+            svgWrapper.configure
+        } else {
+            
+        }
+    });*/
+    
     //$("#graph").html('<embed src=' + path + ' width="1000" height="700" type="image/svg+xml" codebase="http://www.adobe.com/svg/viewer/install/" />');
     //$("#graph").html("<iframe src=" + path + " width=\"1000\" height=\"700\" type=\"image/svg+xml\" />");
 }

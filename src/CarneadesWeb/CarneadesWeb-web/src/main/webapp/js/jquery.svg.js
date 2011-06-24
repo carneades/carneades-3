@@ -969,6 +969,7 @@ $.extend(SVGWrapper.prototype, {
 				success: function(xml) {
 					loadSVG($.browser.msie ? loadXML4IE(xml) : xml);
 				}, error: function(http, message, exc) {
+                                    alert(message + " " + "http" + exc);
 					reportError(message + (exc ? ' ' + exc.message : ''));
 				}});
 		}

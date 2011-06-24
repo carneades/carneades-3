@@ -160,3 +160,8 @@ h2 {
         cursor:pointer;
         padding: 2px 10px;
 }
+
+#graph {
+    height:700px;
+    width: auto !important;
+}
