@@ -554,15 +554,32 @@ function showSVGGraph(path) {
         //alert(svgWrapper);
         //svgWrapper.configure({height: "700", width: "1000"}, true);
     //};
-    var svgWrapper = g.svg('get').load(path);       
+    g.svg('get').load(path);     
+    svgScale = 1;
     
-    /*g.bind("mousewheel", function(event, data){
+    g.bind("mousewheel", function(event, delta){
         if(delta > 0) {
-            svgWrapper.configure
+            // zoom in
+            svgScale += 0.1;
+            //mainGroup.animate({svgTransform: 'scale('+svgScale+')'}, 2000);
+            $("#graph0").animate({svgTransform: 'scale('+svgScale+')'}, 100);
+            //mainGroup.setAttribute("transform", 'scale('+svgScale+')');
         } else {
-            
+            // zoom out
+            svgScale -= 0.1;
+            $("#graph0").animate({svgTransform: 'scale('+svgScale+')'}, 100);
+            // mainGroup.animate({svgTransform: 'scale('+svgScale+')'}, 2000);
+            //mainGroup.setAttribute("transform", 'scale('+svgScale+')');
         }
-    });*/
+        $("html:not(:animated), body:not(:animated)").animate({scrollTop: 0}, 500);  
+        return true;
+    });
+    
+    g.bind("drag", function(event){
+        var translate = 'translate(' + Math.round(event.offsetX/30)*20 + ', '+ Math.round(event.offsetY/30)*20 + ')';  
+        //$("#graph0").animate({svgTransform: translate + ' scale(' + svgScale + ')'}, 10);  
+        $("#graph").svg("get").getElementById("graph0").setAttribute("transform", translate + ' scale(' + svgScale + ')');  
+    });
     
     //$("#graph").html('<embed src=' + path + ' width="1000" height="700" type="image/svg+xml" codebase="http://www.adobe.com/svg/viewer/install/" />');
     //$("#graph").html("<iframe src=" + path + " width=\"1000\" height=\"700\" type=\"image/svg+xml\" />");
