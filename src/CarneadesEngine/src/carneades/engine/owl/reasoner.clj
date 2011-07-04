@@ -26,7 +26,7 @@
     )
   )
 
-(defvar- *debug* false)
+(defvar- *debug* true)
 
 (defn class-instances-to-responses
   [reasoner manager wff subs ontology]
@@ -105,16 +105,19 @@
   (let [pname (str (first wff)),
         prop-type (cond
                     (. ontology containsDataPropertyInSignature (IRI/create pname)) :data,
-                    (. ontology containsObjectPropertyInSignature (IRI/create pname) true) :object),
+                    (. ontology containsObjectPropertyInSignature (IRI/create pname) true) :object,
+                    :else false),
         prop (condp = prop-type
                :data (. (. manager getOWLDataFactory) getOWLDataProperty (IRI/create pname)),
-               :object (. (. manager getOWLDataFactory) getOWLObjectProperty (IRI/create pname))),
+               :object (. (. manager getOWLDataFactory) getOWLObjectProperty (IRI/create pname)),
+               false false),
         iname (str (second wff)),
         iname2 (str (nth wff 2)),
         ind (. (. manager getOWLDataFactory) getOWLNamedIndividual (IRI/create iname)),
         insts (condp = prop-type
                 :data (map (memfn getLiteral) (. reasoner getDataPropertyValues ind prop)),
-                :object (map (memfn toStringID) (. (. reasoner getObjectPropertyValues ind prop) getFlattened)))]
+                :object (map (memfn toStringID) (. (. reasoner getObjectPropertyValues ind prop) getFlattened)),
+                false '())]
     (if *debug* (println "# of instances found:" (count insts)))
     (if (some #{iname2} insts)
       (list (as/response
