@@ -19,6 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 
+ * Servlet class to simulate CMS. Enable to load lkif files located
+ * locally under /tmp/ via an url.
  *
  * @author stb
  */

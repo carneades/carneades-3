@@ -7,14 +7,16 @@ package org.fokus.carneades.simulation;
 import java.util.List;
 
 /**
+ * 
+ * Reference to another question
  *
  * @author stb
  */
 public class QuestionRef {
 
-    private String pred;
-    private Integer arg;
-    private List<Integer> args;
+    private String pred; // predicate of the referenced question
+    private Integer arg; // which argument of the statement will be asked?
+    private List<Integer> args; // order of other arguments
 
     public QuestionRef(String pred, Integer arg, List<Integer> args) {
         this.pred = pred;

@@ -6,6 +6,8 @@
 package org.fokus.carneades.clojureutil;
 
 /**
+ * 
+ * Utility class to define some clojure namespaces used when calling carneades
  *
  * @author stb
  */

@@ -27,6 +27,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 
+ * Servlet used as Policy Evaluation component responsible for communication
+ * between web client and CarneadesService. Calls the CarneadesService to extract
+ * policy rules from an argument graph, to evaluate an argument graph and to 
+ * visualize an argument graph.
  *
  * @author stb
  */
@@ -133,6 +138,15 @@ public class PolicyEvaluationServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    /**
+     * 
+     * Call carneades service to evaluate an argument graph.
+     * 
+     * @param service current carenades service to call
+     * @param jsonEvaluate json object containing path to lkif file with arg graph and stmts to be accepted/rejected
+     * @return json object containing path to lkif file containing evaluated argument graph
+     * @throws JSONException 
+     */
     private JSONObject handleEvaluate(CarneadesService service, JSONObject jsonEvaluate) throws JSONException{        
         
         log.info("handleEvaluate");
@@ -143,21 +157,23 @@ public class PolicyEvaluationServlet extends HttpServlet {
         JSONArray jsonAccept = jsonEvaluate.getJSONArray("accept");
         JSONArray jsonReject = jsonEvaluate.getJSONArray("reject");
         
+        // getting policy rules to be accepted
         List<String> acceptIDs = new ArrayList<String>();
         for(int i=0; i<jsonAccept.length(); i++) {
             acceptIDs.add(jsonAccept.getString(i));
         }
         
+        // getting policy rules to be rejected
         List<String> rejectIDs = new ArrayList<String>();
         for (int i = 0; i < jsonReject.length(); i++) {
             rejectIDs.add(jsonReject.getString(i));
         }
 
+        // call carneades service
         CarneadesMessage cm = service.evaluateArgGraph(argGraph, acceptIDs, rejectIDs);
 
         if (MessageType.GRAPH.equals(cm.getType())) {
-            // solution            
-            // Statement solution = cm.getMessage();
+            // evaluated graph
             String evaluatedGraph = cm.getAG();
             log.info("sending evaluated graph to user: " + evaluatedGraph);
             r.put("evaluated", evaluatedGraph);
@@ -170,6 +186,14 @@ public class PolicyEvaluationServlet extends HttpServlet {
                 
     }
 
+    /**
+     * Call carneades service to use abduction.
+     * 
+     * @param service current carenades service to call
+     * @param jSONObject json object
+     * @return json object
+     * @throws JSONException 
+     */
     private JSONObject handleAbduction(CarneadesService service, JSONObject jSONObject) throws JSONException{
         
         // TODO : implement handleAbduction
@@ -178,6 +202,15 @@ public class PolicyEvaluationServlet extends HttpServlet {
         
     }
 
+    /**
+     * 
+     * Call carneades service to extract policy rules from an argument graph. 
+     * 
+     * @param service current carenades service to call
+     * @param lkifPath path to lkif file containing argument graph
+     * @return
+     * @throws JSONException 
+     */
     private JSONObject handlePolicyRules(CarneadesService service, String lkifPath) throws JSONException {
                         
         log.info("handlePolicyRules");
@@ -206,6 +239,18 @@ public class PolicyEvaluationServlet extends HttpServlet {
         
     }
 
+    /**
+     * 
+     * Call carneades service to visualize an argument graph as svg.
+     * 
+     * @param service current carenades service to call
+     * @param agPath path to lkif file containing an argument graph
+     * @param height height of svg
+     * @param width width of svg
+     * @return json object containing path to svg
+     * @throws JSONException 
+     */
+    // TODO : maybe height and weight are obsolete?
     private JSONObject handleShowGraph(CarneadesService service, String agPath, int height, int width) throws JSONException {
         
         JSONObject o = new JSONObject();

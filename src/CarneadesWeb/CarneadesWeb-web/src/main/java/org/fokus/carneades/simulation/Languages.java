@@ -9,9 +9,12 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * 
+ * Utility class to map between language names and their abbrevations
  *
  * @author stb
  */
+// TODO : Languages should be mapped more intelligent and not be hard coded
 public class Languages {
     
     private Map<String, String> langRepresentations;

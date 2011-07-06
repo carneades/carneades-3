@@ -16,21 +16,32 @@ import org.slf4j.LoggerFactory;
 
 
 /**
+ * 
+ * Utility class to handle some operations on questions.
  *
  * @author stb, bbr
  */
 // TODO : implement some useful mapping using ontology annotations
+
 public class QuestionHelper {
     
     private static final Logger log = LoggerFactory.getLogger(QuestionHelper.class);
        
-    public static JSONObject getJSONFromQuestions(List<Question> qList, String lang) {
+    /**
+     * 
+     * Get JSON representation of a list of question
+     * 
+     * @param qList List of question objects.
+     * @param lang Language to be used
+     * @return json object representing the list of questions
+     */
+    public static JSONObject getJSONFromQuestions(List<StructuredQuestion> qList, String lang) {
         // TODO : what to do with id? - ID simply numbered, e.g. 1st question's id = 1, 2nd = 2 etc.
 
         JSONObject jsonQuestions = new JSONObject();
         try {            
             JSONArray qArray = new JSONArray();
-            for(Question q : qList) {
+            for(StructuredQuestion q : qList) {
                 qArray.put(q.toJSON(lang));
             }
             jsonQuestions.put("questions", qArray);
@@ -41,12 +52,20 @@ public class QuestionHelper {
         }
     }
 
-    public static List<Statement> mapAnswersAndQuestionsToStatement (List<Question> qList, List<Answer> aList) {
+    /**
+     * 
+     * Map answers from the web client to the questions.
+     * 
+     * @param qList List of questions that have been asked to the web client
+     * @param aList List of answers received from the web client
+     * @return  List of statements where answers and questions have been matched
+     */
+    public static List<Statement> mapAnswersAndQuestionsToStatement (List<StructuredQuestion> qList, List<Answer> aList) {
         List<Statement> result = new ArrayList<Statement>();
         for (Answer answer : aList) {
             
             // find corresponding question
-            Question q = findQuestion(answer.getId(), qList);
+            StructuredQuestion q = findQuestion(answer.getId(), qList);
             // find index for questioned object
             Statement stmt = q.getStatement();                        
             int index = findQuestionPos(stmt);
@@ -71,8 +90,8 @@ public class QuestionHelper {
         return (args.size()-1);
     }
 
-    private static Question findQuestion(int id, List<Question> qList) {
-        for(Question q : qList) {
+    private static StructuredQuestion findQuestion(int id, List<StructuredQuestion> qList) {
+        for(StructuredQuestion q : qList) {
             if(q.getId() == id) {
                 return q;
             }

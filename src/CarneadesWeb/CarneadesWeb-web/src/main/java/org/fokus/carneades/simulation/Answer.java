@@ -14,6 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 
+ * Representation of an user answer used to be received from web client. 
+ * Uses IDs to map answers to questions.
  *
  * @author bbr
  */
@@ -25,6 +28,13 @@ public class Answer {
     private String value;     // required
     // TODO: String as type? maybe change the type arcording to type in Question.
 
+    /**
+     * 
+     * parse JSON to create list of answers.
+     * 
+     * @param obj json object to be parsed
+     * @return  list of answer objects
+     */
     public static List<Answer> fromJSON(JSONObject obj) {
         List<Answer> answers = new ArrayList<Answer>();
         try {

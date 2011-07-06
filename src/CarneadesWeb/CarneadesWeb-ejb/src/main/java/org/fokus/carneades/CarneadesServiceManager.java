@@ -29,21 +29,39 @@ import org.slf4j.LoggerFactory;
 /**
  *
  * @author stb
+ * 
+ * implementation of the CarneadesService interface
+ * 
  */
 
 @Stateful
 public class CarneadesServiceManager implements CarneadesService{
 
+    // logging
     private static final Logger log = LoggerFactory.getLogger(CarneadesServiceManager.class);
 
+    /** 
+     * state variables of the engine
+     */    
+    // current search state
     private Map state = null;
+    // list of total answers
     private List<Statement> answers = new ArrayList<Statement>();
+    // query as clojure list
     private List goal = null;
+    // query as carneades.api.Statement
     private Statement query = null;
+    // current question from engine
     private List lastQuestion = null;
+    // promise used for communication to the engine
     private IFn toEngine = null;
+    // promise used for communication from the engine
     private IFn fromEngine = null;
 
+    /**
+     * constructor 
+     * compiles clojure files
+     */
     public CarneadesServiceManager() {
         log.info("constructing stateful session bean");
         try {
@@ -69,6 +87,14 @@ public class CarneadesServiceManager implements CarneadesService{
         }
     }
 
+    /**
+     * visualize alkif argument graph as svg
+     * 
+     * @param argGraph path to a lkif file containing an argument graph
+     * @param height height of svg
+     * @param width width of svg
+     * @return path to svg file
+     */
     public CarneadesMessage getSVGFromGraph(String argGraph, int height, int width) {        
         
         CarneadesMessage cm = new CarneadesMessage();
@@ -123,7 +149,12 @@ public class CarneadesServiceManager implements CarneadesService{
     }
     
     
-
+    /**
+     * extract policy rules from an argument graph
+     * 
+     * @param argGraph path to lkif file containing an argument graph
+     * @return returns a list of statements containing the policy proposals; (valid proposal1), (valid propsal2)
+     */
     public CarneadesMessage getPolicyRules(String argGraph) {
         
         CarneadesMessage cm = new CarneadesMessage();
@@ -166,7 +197,14 @@ public class CarneadesServiceManager implements CarneadesService{
     }
     
     
-
+    /**
+     * accept and reject statements in an argument graph
+     * 
+     * @param argGraph the path to a lkif file containing an argument graph
+     * @param accepts a list of strings representing the policy proposals to be accepted; (valid proposal1), (valid propsal2), ...
+     * @param rejects a list of strings representing the policy proposals to be rejected; (valid proposal1), (valid propsal2), ...
+     * @return path to a lkif file containing the evaluated argument graph
+     */
     public CarneadesMessage evaluateArgGraph(String argGraph, List<String> accepts, List<String> rejects) {
         
         CarneadesMessage cm = null;
@@ -183,6 +221,7 @@ public class CarneadesServiceManager implements CarneadesService{
             
 
             // evaluate
+            // accept
             List<Statement> accStmts = new ArrayList<Statement>();
             for(String a : accepts) {
                 Statement s = new Statement();
@@ -194,6 +233,7 @@ public class CarneadesServiceManager implements CarneadesService{
             List accSExpr = ClojureUtil.getSeqFromStatementList(accStmts); 
             Map accAG = (Map)RT.var(NS.ARGUMENT, "accept").invoke(ag, accSExpr);
             
+            // reject
             List<Statement> rejStmts = new ArrayList<Statement>();
             for(String r : rejects) {
                 Statement s = new Statement();
@@ -222,7 +262,16 @@ public class CarneadesServiceManager implements CarneadesService{
     }
     
     
-
+    /**
+     * construct arguments for the query with rules from kb. Interrupts for questions
+     * 
+     * @param query The main-issue to construct arguments pro and con this query.
+     * @param kb The path to the knowledge base containing the rules to construct arguments.
+     * @param askables A list of predicates where the engine will interrupt the argument construction process to ask for sub goals.
+     * @param answers A list of already answered statements from the last question
+     * @return returns either the final argument graph or a question
+     * 
+     */ 
     public CarneadesMessage askEngine(Statement query, String kb, List<String> askables, List<Statement> answers2) {
 
         CarneadesMessage cm = null;
@@ -260,6 +309,7 @@ public class CarneadesServiceManager implements CarneadesService{
         
     }
     
+    // start engine for the first time
     private CarneadesMessage startEngine(Statement query, String kb, List<String> askables, AskHandler askHandler) {
         
         CarneadesMessage cm = null;
@@ -323,6 +373,7 @@ public class CarneadesServiceManager implements CarneadesService{
         }
     }
     
+    // continue with current construction that has been interrupted by asking a question
     private CarneadesMessage continueEngine(AskHandler askHandler) {
         
         CarneadesMessage cm = null;
@@ -343,6 +394,7 @@ public class CarneadesServiceManager implements CarneadesService{
         
     }
     
+    // using promises to send and receive messages ro and from the engine
     private CarneadesMessage communicateWithEngine(Object msg, AskHandler askHandler) {
         
         CarneadesMessage cm = null;

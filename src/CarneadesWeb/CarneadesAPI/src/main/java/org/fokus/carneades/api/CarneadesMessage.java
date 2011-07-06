@@ -11,6 +11,9 @@ import java.util.List;
 /**
  *
  * @author stb
+ * 
+ * a class bundling several responses from the carneades service
+ * 
  */
 public class CarneadesMessage implements Serializable{
 

@@ -9,6 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 
+ * The Translation bundles all relevant information about a predicate:
+ *  - number of arguments
+ *  - a question object for each argument
+ *  - a format string for the statement
  *
  * @author stb
  */
@@ -17,11 +22,11 @@ public class Translation {
     private String predicate;
     private int args;
     //  Statement stmt;
-    private Map<Integer, Question> questions;
+    private Map<Integer, StructuredQuestion> questions;
     //private Map<Question, List<QuestionRef>> questionRefs;
     private Map<String, FormatText> text;
 
-    public Translation(String predicate, int args, Map<Integer, Question> questions, Map<String, FormatText> text) {
+    public Translation(String predicate, int args, Map<Integer, StructuredQuestion> questions, Map<String, FormatText> text) {
         this.predicate = predicate;
         this.args = args;
         this.questions = questions;
@@ -45,11 +50,11 @@ public class Translation {
         this.predicate = predicate;
     }
 
-    public Map<Integer, Question> getQuestions() {
+    public Map<Integer, StructuredQuestion> getQuestions() {
         return questions;
     }
 
-    public void setQuestions(Map<Integer, Question> questions) {
+    public void setQuestions(Map<Integer, StructuredQuestion> questions) {
         this.questions = questions;
     }
 

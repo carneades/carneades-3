@@ -11,11 +11,11 @@ package org.fokus.carneades.api;
  */
 public enum MessageType {
 
-    ASKUSER,
-    RULES,
-    GRAPH,
-    SVG,
-    SOLUTION;
+    ASKUSER, // question during construction process to be answered by the user
+    RULES, // policy rules contained in an arguemnt graph
+    GRAPH, // lkif argument graph
+    SVG, // graphical visualization of an argument graph in svg
+    SOLUTION; // solution of argument construction process
 
     public String value() {
         return name();

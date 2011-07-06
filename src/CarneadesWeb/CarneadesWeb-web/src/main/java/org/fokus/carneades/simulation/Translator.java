@@ -21,7 +21,21 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+
+// TODO : reconsider if it is better to use OWL annotations for this purpose
 /**
+ * 
+ * This class translates formal question statements coming the Carneades engine
+ * to question objects that can be easily send to the web client including:
+ * 
+ *  - natural language representation in any language
+ *  - type of question (text, number, date, radio, list, ...)
+ *  - category
+ *  - hint text explaining why this question is relevant for the policy
+ *  - other questions that should be shown on the same page connected to the initial question
+ *  - possible answers from which the user will choose
+ * 
+ * This mapping is defined in an XML file which uses the "IMPACT Translations" schema.
  *
  * @author stb
  */
@@ -29,6 +43,7 @@ public class Translator {
     
     private Map<String, Translation> translations;
     
+    // element names used for XMl parsing
     private final String PRED_ELEM = "predicate";
     private final String STMTS_ELEM = "statements";
     private final String QUESTION_ELEM = "question";
@@ -54,6 +69,12 @@ public class Translator {
     
     private static final Logger log = LoggerFactory.getLogger(Translator.class);
     
+    /**
+     * 
+     * reads the xml file and constructs internal representation for easy access
+     * 
+     * @param filename xml file containing the mapping
+     */
     public Translator(String filename) {
     
         try {
@@ -80,8 +101,8 @@ public class Translator {
                 Map<String, FormatText> text = handleFormat(stmtsNode);
                 
                 // handling questions
-                Map<Integer, Question> questions = handleQuestions(pNode);
-                for(Question q : questions.values()) {
+                Map<Integer, StructuredQuestion> questions = handleQuestions(pNode);
+                for(StructuredQuestion q : questions.values()) {
                     log.info("qid: "+Integer.toString(q.getId()));
                 }
                 
@@ -119,6 +140,14 @@ public class Translator {
         return r;
     }
     
+    /**
+     * 
+     * Get the formatted string in natural language representing the formal statement
+     * 
+     * @param stmt the statement to be represented
+     * @param language language
+     * @return string in natural language representing the statement
+     */
     public String getStatementText(Statement stmt, String language) {
 
         String text = "undefined";
@@ -139,10 +168,16 @@ public class Translator {
         return text;
     }
     
-    
-    public List<Question> getQuestions(Statement stmt) {
+    /**
+     * 
+     * Get the list of structured question objects for a formal question statement
+     * 
+     * @param stmt the question statement
+     * @return list of structured questions connected to the formal statement
+     */
+    public List<StructuredQuestion> getStructuredQuestions(Statement stmt) {
         
-        List<Question> questions = new ArrayList<Question>();
+        List<StructuredQuestion> questions = new ArrayList<StructuredQuestion>();
         
         // getting translation
         String pred = stmt.getPredicate();
@@ -151,7 +186,7 @@ public class Translator {
         
         // getting question
         log.info("getQuestion: "+stmt.toString());
-        Question q = getQuestion(translation, args);
+        StructuredQuestion q = getQuestion(translation, args);
         q.setStatement(stmt);
         questions.add(q);
         
@@ -165,7 +200,7 @@ public class Translator {
                 // get translation for ref
                 Translation refTranslation = this.translations.get(refPred);
                 // get right question for ref
-                Question refQuestion = refTranslation.getQuestions().get(refArg);
+                StructuredQuestion refQuestion = refTranslation.getQuestions().get(refArg);
                 // construct statement for ref
                 Statement refStmt = new Statement();
                 refStmt.setPredicate(refPred);
@@ -220,8 +255,8 @@ public class Translator {
         return args;
     }
 
-    private Map<Integer, Question> handleQuestions(Node predicateNode) {        
-        Map<Integer, Question> questions = new HashMap<Integer, Question>();
+    private Map<Integer, StructuredQuestion> handleQuestions(Node predicateNode) {        
+        Map<Integer, StructuredQuestion> questions = new HashMap<Integer, StructuredQuestion>();
         
         List<Node> questionNodes = findChildren(this.QUESTION_ELEM, predicateNode);
         
@@ -246,7 +281,7 @@ public class Translator {
             // questionrefs?
             List<QuestionRef> refs = handleRefs(questionNode);
             
-            Question q = new Question(arg, type, text, hint, category, answers, refs);
+            StructuredQuestion q = new StructuredQuestion(arg, type, text, hint, category, answers, refs);
             q.setId(qid++);
             questions.put(arg, q);
         }
@@ -286,7 +321,7 @@ public class Translator {
         return refs;
     }
 
-    private Question getQuestion(Translation translation, List<String> args) {
+    private StructuredQuestion getQuestion(Translation translation, List<String> args) {
         int varPos = 0;
         for(String arg : args) {
             if(arg.startsWith("?")) {

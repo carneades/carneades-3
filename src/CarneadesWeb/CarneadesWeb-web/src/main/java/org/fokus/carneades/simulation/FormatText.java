@@ -8,6 +8,8 @@ package org.fokus.carneades.simulation;
 import java.util.List;
 
 /**
+ * 
+ * Representation of a format string with an order on the arguments.
  *
  * @author stb
  */
@@ -37,6 +39,16 @@ public class FormatText {
         this.format = format;
     }
     
+    /**
+     * 
+     * Formatting a string with the given arguments using the defined order.
+     * 
+     * ("%s foo bar %s", 1, 0) applied to "s0", "s1" will get:
+     * "s1 foo bar s0"
+     * 
+     * @param stmtArgs list of arguments for the format string
+     * @return  formatted string with args applied in the defined order.
+     */
     public String format(List<String> stmtArgs) {
         int l = this.args.size();
         String[] finalArgs = new String[l];

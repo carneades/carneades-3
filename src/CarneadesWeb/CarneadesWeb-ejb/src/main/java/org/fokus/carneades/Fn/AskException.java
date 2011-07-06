@@ -12,7 +12,11 @@ import java.util.Map;
 /**
  *
  * @author stb
+ * 
+ * an exception thrown if question was not answered yet
+ * 
  */
+// TODO : could be replaced by just using null in AskHandler and CarneadesServiceManager
 public class AskException extends Exception{
 
     /*

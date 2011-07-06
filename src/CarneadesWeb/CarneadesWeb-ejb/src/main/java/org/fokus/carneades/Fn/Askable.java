@@ -17,6 +17,9 @@ import org.slf4j.LoggerFactory;
 /**
  *
  * @author stb
+ * 
+ * a function used in carneades engine to check if a sub goal can be asked to the user
+ * 
  */
 public class Askable extends AFn{
 
@@ -30,6 +33,12 @@ public class Askable extends AFn{
         }
     }
 
+    /**
+     * 
+     * @param arg1 sub goal that 
+     * @return true if statement predicate is in teh predicates map; else false
+     * @throws Exception 
+     */
     @Override
     public Object invoke(Object arg1) throws Exception {
         Boolean ask = false;

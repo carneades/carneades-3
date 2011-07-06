@@ -15,30 +15,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 
+ * Structured representation of a question to be asked to the user.
  *
  * @author stb, bbr
  */
 
-public class Question {
+public class StructuredQuestion {
     
-    private static final Logger log = LoggerFactory.getLogger(Question.class);
+    private static final Logger log = LoggerFactory.getLogger(StructuredQuestion.class);
     
     // TODO : why id ?
     private int id; 
     
     // Translation grammar
-    private int arg;
-    private String type;    
-    private Map<String, FormatText> formatMap;    
-    private String hint;
-    private String category;
-    private List<String> possibleAnswers;
-    private List<QuestionRef> refs;
+    private int arg; // which argument of the statement is asked? (pred subj ?x) -> 1 ; (pred ?x) -> 0
+    private String type; // string, int, date, ... 
+    private Map<String, FormatText> formatMap; // map of language to format text
+    private String hint; // hint text
+    private String category; // category
+    private List<String> possibleAnswers; // predefined answers, important for question type radio or list
+    private List<QuestionRef> refs; // references to other question to be asked simultaniously
     
-    private Statement statement;            
-    private boolean optional;
+    private Statement statement; // question as carneades.api.Statement       
+    private boolean optional; // flag for optional questions
 
-    public Question(int arg, String type, Map<String, FormatText> formatMap, String hint, String category, List<String> possibleAnswers, List<QuestionRef> refs, boolean optional) {
+    public StructuredQuestion(int arg, String type, Map<String, FormatText> formatMap, String hint, String category, List<String> possibleAnswers, List<QuestionRef> refs, boolean optional) {
         
         this.id = 0;
         
@@ -54,7 +56,7 @@ public class Question {
         this.statement = null;
     }
 
-    public Question(int arg, String type, Map<String, FormatText> formatMap, String hint, String category, List<String> possibleAnswers, List<QuestionRef> refs) {
+    public StructuredQuestion(int arg, String type, Map<String, FormatText> formatMap, String hint, String category, List<String> possibleAnswers, List<QuestionRef> refs) {
         
         this.id = 0;
         
@@ -150,15 +152,24 @@ public class Question {
         this.type = type;
     }
     
+    /**
+     * 
+     * Create JSON representation of the question object for given language.
+     * 
+     * @param lang language to be used
+     * @return  json object representing this question object in the given language
+     */
     public JSONObject toJSON(String lang) { 
         JSONObject jsonQuestion = new JSONObject();
         try {
             
             jsonQuestion.put("id", this.id);
+            
+            // format text in given language
             FormatText form = this.formatMap.get(lang);
-            String formText = "undefined";
+            String formText = "undefined";            
             if(form == null) {
-                // get first language                
+                // get format text in first language that is provided
                 String fallBackLang = this.formatMap.keySet().iterator().next();
                 form = this.formatMap.get(fallBackLang);
                 log.warn("could not find language for question: "+lang);
@@ -166,11 +177,13 @@ public class Question {
                 formText = GoogleTranslate.translate(form.format(this.statement.getArgs()), fallBackLang, lang);
             } else {
                 formText = form.format(this.statement.getArgs());
-            }
+            }            
             log.info("question to json: "+ formText);
             log.info("question to json: "+ this.statement.getArgs());
             jsonQuestion.put("question", formText);
+            // type
             jsonQuestion.put("type", this.type);
+            // possible answers
             if(!this.possibleAnswers.isEmpty()) {
                 JSONArray jsonAnswers = new JSONArray();
                 for(String s : this.possibleAnswers) {
@@ -178,8 +191,11 @@ public class Question {
                 }
                 jsonQuestion.put("answers", jsonAnswers);
             }
+            // hint
             jsonQuestion.put("hint", this.hint);
+            // category
             jsonQuestion.put("category", this.category);
+            // optional
             jsonQuestion.put("optional", this.optional);            
         } catch(JSONException e) {            
             log.error("could not transform question to json:" + e.getMessage(), this);

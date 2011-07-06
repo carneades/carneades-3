@@ -17,11 +17,21 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
+ * 
+ * Utility class to handle some LKIF parsing
  *
  * @author stb
  */
+// TODO : LKIFHelper may be obsolete?
 public class LKIFHelper {
     
+    /**
+     * 
+     * extracts the statements of an argument graph in an LKIF file
+     * 
+     * @param lkifPath path to lkif file containing an argument graph
+     * @return  map of statements in the graph (id -> statement)
+     */
     public static Map<String, Statement> getStmtIDs(String lkifPath) {
         
         Map<String, Statement> stmts = new HashMap<String, Statement>();

@@ -21,7 +21,7 @@ import org.fokus.carneades.api.MessageType;
 import org.fokus.carneades.api.Statement;
 import org.fokus.carneades.common.EjbLocator;
 import org.fokus.carneades.simulation.Answer;
-import org.fokus.carneades.simulation.Question;
+import org.fokus.carneades.simulation.StructuredQuestion;
 import org.fokus.carneades.simulation.QuestionHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,6 +29,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 
+ * Servlet used as Policy Simulation component responsible for communication
+ * between web client and CarneadesService. Calls the CarneadesService to construct
+ * arguments from an lkif file and present questions to the web client that arise 
+ * during the construction process.
  *
  * @author stb
  */
@@ -47,7 +52,7 @@ public class PolicySimulationServlet extends HttpServlet {
     private static final String TRANSLATOR = "TRANSLATOR";
     private static final String LANGUAGE = "LANGUAGE";
     
-    private static final String defaultLanguage = "de";
+    private static final String defaultLanguage = "en";
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -113,7 +118,7 @@ public class PolicySimulationServlet extends HttpServlet {
                     // return demo content
                     jsonOUT = handleDemoRequest();
                     //Questions questions = mapper.readValue(jsonOUT, Questions.class);
-                    //saveQuestionsToSession(questions.getQuestions());
+                    //saveQuestionsToSession(questions.getStructuredQuestions());
                 }
                 else {
                     log.info("getting args for topic:  " + topic);
@@ -145,7 +150,7 @@ public class PolicySimulationServlet extends HttpServlet {
             else if(jsonIN.has("answers")) {
                 // client replies
                 log.info("answers received from client: "+jsonINString);
-                List<Question> qList = (ArrayList<Question>) session.getAttribute(LAST_QUESTIONS);
+                List<StructuredQuestion> qList = (ArrayList<StructuredQuestion>) session.getAttribute(LAST_QUESTIONS);
                 String kb = (String) session.getAttribute(KNOWLEDGE_BASE);
                 Statement query = (Statement) session.getAttribute(QUERY);
                 List<Answer> answers = Answer.fromJSON(jsonIN);            
@@ -158,19 +163,24 @@ public class PolicySimulationServlet extends HttpServlet {
                 }
                 
             } else if (jsonIN.has("language")) {
+                // change language
                 String newLang = jsonIN.getString("language");
                 session.setAttribute(LANGUAGE, newLang);
+                // what was the last message?
                 MessageType lastMsg = (MessageType)session.getAttribute(LAST_OUT);
                 if(MessageType.ASKUSER.equals(lastMsg)) {
-                    List<Question> qList = (List<Question>)session.getAttribute(LAST_QUESTIONS);
+                    // sending user questions again in new language
+                    List<StructuredQuestion> qList = (List<StructuredQuestion>)session.getAttribute(LAST_QUESTIONS);
                     jsonOUT = QuestionHelper.getJSONFromQuestions(qList, newLang);
                     // jsonOUT.put("update", "false");
                 } else if (MessageType.SOLUTION.equals(lastMsg)) {
+                    // sending solution again in new language
                     Statement sol = (Statement)session.getAttribute(LAST_SOLUTION);
                     String solPath = (String)session.getAttribute(SOLUTION_PATH);
                     jsonOUT.put("solution", translator.getStatementText(sol, newLang));
                     jsonOUT.put("path", solPath);
                 } else {
+                    // don't know what was last
                     jsonOUT = new JSONObject();
                     jsonOUT.put("language", newLang);
                 }
@@ -210,14 +220,16 @@ public class PolicySimulationServlet extends HttpServlet {
      * @param query overall goal of the request (solution that has to be found)
      * @param kb location of the knowlegebase (rulebase) in the file system
      * @param answer actual list of questions including or not including the given answers by the user in the statement form
+     * @param translator translates formal statements and questions to natural language representations
+     * @param lang current language
      * @return returns json representing either questions or solution
      * @throws CarneadesException if the request was not successful
      */
     private JSONObject askEngine(CarneadesService service, Statement query, String kb, List<Statement> answer, Translator translator, String lang) throws CarneadesException, JSONException{
-        List<Question> qList = new ArrayList<Question>();
+        List<StructuredQuestion> qList = new ArrayList<StructuredQuestion>();
         JSONObject jsonOUT = new JSONObject();
-        // ask
-        // TODO : get askables from CMS
+        // askables
+        // TODO : get askables from CMS or maybe from translator?
         List<String> askables = new ArrayList<String>();
         //askables.add("isFather");
         //askables.add("hasAge");
@@ -227,17 +239,19 @@ public class PolicySimulationServlet extends HttpServlet {
         askables.add("UrheberSuche");
         askables.add("Bekanntmachung");
         // askables.add("http://carneades/test/ont#s");
+        // call carneades service
         log.info("calling ask from ejb: " + query.toString());
         CarneadesMessage msg = service.askEngine(query,kb,askables,answer);
         // evaluate answer
         if(msg != null) {
             log.info("call from ejb returned:"+msg.getType().toString());
         
-            if (MessageType.ASKUSER.equals(msg.getType())) {
+            if (MessageType.ASKUSER.equals(msg.getType())) { 
+                // user question                
                 // convert Statement to question
                 //qList.addAll(CarneadesDatabase.getQuestionsFromStatement(msg.getMessage())); 
                 Statement qStmt = msg.getMessage();
-                List<Question> questionList = translator.getQuestions(qStmt);
+                List<StructuredQuestion> questionList = translator.getStructuredQuestions(qStmt);
                 qList.addAll(questionList);
                 // save questions in session
                 session.setAttribute(LAST_QUESTIONS, qList);

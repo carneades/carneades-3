@@ -12,8 +12,15 @@ import java.util.List;
 /**
  *
  * @author stb
+ * 
+ * simple java representation of lkif statements having one predicate and several arguments (subject, objects)
+ * 
+ * in most cases (predicate subject object) 
+ * 
  */
 public class Statement implements Serializable{
+    
+    // TODO : maybe we need nested statements?
 
     private String predicate;
     private List<String> args;
