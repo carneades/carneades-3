@@ -1,0 +1,70 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Carneades Web GUI</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">        
+        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
+        <link type="text/css" href="css/ui-lightness/jquery-ui-1.8.14.custom.css" rel="stylesheet" />	
+        <script type="text/javascript" src="js/jquery-1.6.2.js"></script>
+        <script type="text/javascript" src="js/jquery-ui-1.8.14.custom.min.js"></script>   
+        <script type="text/javascript" src="js/jquery.svg.js"></script>
+        <script type="text/javascript" src="js/jquery.svgdom.js"></script>
+        <script type="text/javascript" src="js/jquery.svganim.js"></script>
+        <script type="text/javascript" src="js/jquery.mousewheel.js"></script>
+        <script type="text/javascript" src="js/jquery.event.drag-2.0.js"></script>
+        <!--script type="text/javascript" src="http://www.google.com/jsapi"></script-->
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+        //<![CDATA[
+
+        //]]>
+        </script>
+        <style type="text/css">
+            @import "css/jquery.svg.css";                    
+        </style>                
+        <link type="text/css" href="css/screen.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div id="container">
+            <div id="header">
+                <form class="ui-widget-header ui-corner-top">
+                    <h1>Carneades Web GUI</h1>
+                </form>                
+            </div> 
+            <div id="filechooser">
+                <form class="ui-widget-content" action="/UploadServlet" method="POST" enctype="multipart/form-data">
+                    <p>Upload LKIF : </p>
+                    <input name="lkifFile" type="file" size="50" accept="text/*">
+                    <button class="start" type="submit">Upload</button>
+                </form>
+            </div>
+            <div id="wrapper">
+                <div id="graphbox" class="ui-corner-left ui-corner-right">graph</div>
+            </div>
+            <div id="toolbar">
+                <form class="ui-widget-content ui-corner-right">                    
+                    <p>
+                        <input id="Option1" type="checkbox" name="Options" value="opt1">Option 1<br>
+                        <input id="Option2" type="checkbox" name="Options" value="opt2">Option 2<br>
+                        <input id="Option3" type="checkbox" name="Options" value="opt3">Option 3<br>
+                        <input id="Option4" type="checkbox" name="Options" value="opt4">Option 4<br>
+                    </p>                       
+                </form>
+            </div>
+            <div id="extra">
+                <form class="ui-corner-left">
+                    <p>extra</p>
+                </form>
+            </div>
+            <div id="footer">
+                <form class="ui-widget-header ui-corner-bottom">
+                    <p>footer</p>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

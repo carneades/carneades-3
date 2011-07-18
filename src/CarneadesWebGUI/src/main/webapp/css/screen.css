@@ -1,0 +1,61 @@
+
+body {
+    margin: 0px;
+    padding: 10px;
+    font-family:verdana, arial, helvetica, sans-serif;
+    color:#333;
+    background-color:white;
+}
+
+p {
+    padding-left: 10px;
+}
+
+
+div#header{
+
+    position: relative;
+    
+}
+
+div#header h1 {
+    padding-left: 10px;
+}
+
+div#filechooser {
+    width: 100%;
+    height: auto;       
+}
+
+div#filechooser form {
+    padding: 5px;
+    padding-left: 10px;
+}
+
+div#wrapper{
+    float:left;
+    width: 100%;
+}
+        
+div#toolbar{
+    float: left;
+    margin-left: -100%;
+    width: 200px;
+}
+
+
+
+div#graphbox{    
+    margin: 0 200px;
+}
+
+div#extra{
+    float: left;
+    margin-left: -200px;
+    width: 200px;
+}
+
+div#footer {
+    clear: left;
+    width: 100%;
+}
