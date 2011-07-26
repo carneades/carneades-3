@@ -1,61 +1,61 @@
 
 <lkif>
    <argument-graphs>
-      <argument-graph id="NewGraph" title="New Graph" main-issue="">
+      <argument-graph id="NewGraph" title="New Graph" main-issue="s1796">
          <statements>
-            <statement id="s11139" value="unknown" assumption="true" standard="PE">
-               <s>contract</s>
-            </statement>
-            <statement id="s11138" value="unknown" assumption="true" standard="PE">
-               <s>agreement</s>
-            </statement>
-            <statement id="s11137" value="unknown" assumption="true" standard="PE">
-               <s>minor</s>
-            </statement>
-            <statement id="s11136" value="unknown" assumption="true" standard="PE">
-               <s>writing</s>
-            </statement>
-            <statement id="s11135" value="unknown" assumption="true" standard="PE">
+            <statement id="s1801" value="unknown" assumption="true" standard="PE">
                <s>real estate</s>
             </statement>
-            <statement id="s11134" value="true" assumption="false" standard="PE">
+            <statement id="s1800" value="true" assumption="false" standard="PE">
+               <s>deed</s>
+            </statement>
+            <statement id="s1799" value="unknown" assumption="true" standard="PE">
+               <s>agreement</s>
+            </statement>
+            <statement id="s1798" value="unknown" assumption="true" standard="PE">
+               <s>writing</s>
+            </statement>
+            <statement id="s1797" value="true" assumption="false" standard="PE">
                <s>email</s>
             </statement>
-            <statement id="s11133" value="true" assumption="false" standard="PE">
-               <s>deed</s>
+            <statement id="s1796" value="unknown" assumption="true" standard="PE">
+               <s>contract</s>
+            </statement>
+            <statement id="s1795" value="unknown" assumption="true" standard="PE">
+               <s>minor</s>
             </statement>
          </statements>
          <arguments>
-            <argument id="a5" title="" direction="pro" scheme="" weight="0.5">
-               <conclusion statement="s11135"/>
+            <argument id="a1" title="" direction="pro" scheme="" weight="0.566">
+               <conclusion statement="s1796"/>
                <premises>
-                  <premise polarity="positive" type="ordinary" role="" statement="s11133"/>
-               </premises>
-            </argument>
-            <argument id="a4" title="" direction="pro" scheme="" weight="0.5">
-               <conclusion statement="s11138"/>
-               <premises>
-                  <premise polarity="positive" type="ordinary" role="" statement="s11133"/>
-               </premises>
-            </argument>
-            <argument id="a3" title="" direction="con" scheme="" weight="0.5">
-               <conclusion statement="s11136"/>
-               <premises>
-                  <premise polarity="positive" type="ordinary" role="" statement="s11134"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s1799"/>
+                  <premise polarity="positive" type="exception" role="" statement="s1795"/>
                </premises>
             </argument>
             <argument id="a2" title="" direction="con" scheme="" weight="0.5">
-               <conclusion statement="s11139"/>
+               <conclusion statement="s1796"/>
                <premises>
-                  <premise polarity="negative" type="ordinary" role="" statement="s11136"/>
-                  <premise polarity="positive" type="ordinary" role="" statement="s11135"/>
+                  <premise polarity="negative" type="ordinary" role="" statement="s1798"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s1801"/>
                </premises>
             </argument>
-            <argument id="a1" title="" direction="pro" scheme="" weight="0.566">
-               <conclusion statement="s11139"/>
+            <argument id="a3" title="" direction="con" scheme="" weight="0.5">
+               <conclusion statement="s1798"/>
                <premises>
-                  <premise polarity="positive" type="ordinary" role="" statement="s11138"/>
-                  <premise polarity="positive" type="exception" role="" statement="s11137"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s1797"/>
+               </premises>
+            </argument>
+            <argument id="a4" title="" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s1799"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s1800"/>
+               </premises>
+            </argument>
+            <argument id="a5" title="" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s1801"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s1800"/>
                </premises>
             </argument>
          </arguments>

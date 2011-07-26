@@ -1,37 +1,37 @@
 
 <lkif>
    <argument-graphs>
-      <argument-graph id="g1" title="New Graph" main-issue="">
+      <argument-graph id="g1" title="New Graph" main-issue="s1803">
          <statements>
-            <statement id="s11170" value="unknown" assumption="true" standard="PE">
-               <s>Work</s>
-            </statement>
-            <statement id="s11169" value="true" assumption="false" standard="PE">
-               <s>Workday</s>
-            </statement>
-            <statement id="s11168" value="unknown" assumption="true" standard="PE">
+            <statement id="s1806" value="unknown" assumption="true" standard="PE">
                <s>Excuse</s>
             </statement>
-            <statement id="s11167" value="unknown" assumption="true" standard="PE">
+            <statement id="s1805" value="unknown" assumption="true" standard="PE">
                <s>Ill</s>
             </statement>
-            <statement id="s11166" value="unknown" assumption="true" standard="PE">
+            <statement id="s1804" value="unknown" assumption="true" standard="PE">
                <s>Cold</s>
+            </statement>
+            <statement id="s1803" value="unknown" assumption="true" standard="PE">
+               <s>Work</s>
+            </statement>
+            <statement id="s1802" value="true" assumption="false" standard="PE">
+               <s>Workday</s>
             </statement>
          </statements>
          <arguments>
-            <argument id="a2" title="" direction="pro" scheme="" weight="0.5">
-               <conclusion statement="s11168"/>
+            <argument id="a1" title="" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s1803"/>
                <premises>
-                  <premise polarity="positive" type="ordinary" role="" statement="s11167"/>
-                  <premise polarity="positive" type="exception" role="" statement="s11166"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s1802"/>
+                  <premise polarity="positive" type="exception" role="" statement="s1806"/>
                </premises>
             </argument>
-            <argument id="a1" title="" direction="pro" scheme="" weight="0.5">
-               <conclusion statement="s11170"/>
+            <argument id="a2" title="" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s1806"/>
                <premises>
-                  <premise polarity="positive" type="ordinary" role="" statement="s11169"/>
-                  <premise polarity="positive" type="exception" role="" statement="s11168"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s1805"/>
+                  <premise polarity="positive" type="exception" role="" statement="s1804"/>
                </premises>
             </argument>
          </arguments>

@@ -1,7 +1,7 @@
 
 <lkif>
    <argument-graphs>
-      <argument-graph id="NewGraph" title="Court Opinion" main-issue="">
+      <argument-graph id="NewGraph" title="Court Opinion" main-issue="s7858">
          <statements>
             <statement id="s7835" value="unknown" assumption="false" standard="PE">
                <s>Actual corporal possession is required.</s>

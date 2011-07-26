@@ -1,50 +1,50 @@
 
 <lkif>
    <argument-graphs>
-      <argument-graph id="NewGraph" title="New Graph" main-issue="">
+      <argument-graph id="NewGraph" title="New Graph" main-issue="s1856">
          <statements>
-            <statement id="s11521" value="unknown" assumption="true" standard="BA">
-               <s>Harry is a British subject.</s>
-            </statement>
-            <statement id="s11520" value="unknown" assumption="true" standard="BA">
-               <s>Harry was born in Bermuda.</s>
-            </statement>
-            <statement id="s11519" value="unknown" assumption="true" standard="BA">
-               <s>A man born in Bermuda will generally be a Brisith subject.</s>
-            </statement>
-            <statement id="s11518" value="unknown" assumption="true" standard="BA">
+            <statement id="s1861" value="unknown" assumption="true" standard="BA">
                <s>Harry has become an American and thus is no longer a British subject.</s>
             </statement>
-            <statement id="s11517" value="unknown" assumption="true" standard="BA">
-               <s>Civil Code Section 123</s>
-            </statement>
-            <statement id="s11516" value="unknown" assumption="true" standard="BA">
+            <statement id="s1860" value="unknown" assumption="true" standard="BA">
                <s>Harry has become an American citizen.</s>
             </statement>
-            <statement id="s11515" value="unknown" assumption="true" standard="BA">
+            <statement id="s1859" value="unknown" assumption="true" standard="BA">
                <s>Persons who become American citizens are no longer British subjects.</s>
+            </statement>
+            <statement id="s1858" value="unknown" assumption="true" standard="BA">
+               <s>A man born in Bermuda will generally be a Brisith subject.</s>
+            </statement>
+            <statement id="s1857" value="unknown" assumption="true" standard="BA">
+               <s>Civil Code Section 123</s>
+            </statement>
+            <statement id="s1856" value="unknown" assumption="true" standard="BA">
+               <s>Harry is a British subject.</s>
+            </statement>
+            <statement id="s1855" value="unknown" assumption="true" standard="BA">
+               <s>Harry was born in Bermuda.</s>
             </statement>
          </statements>
          <arguments>
-            <argument id="a3" title="" direction="pro" scheme="" weight="0.5">
-               <conclusion statement="s11518"/>
+            <argument id="a1" title="" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s1856"/>
                <premises>
-                  <premise polarity="positive" type="ordinary" role="" statement="s11516"/>
-                  <premise polarity="positive" type="ordinary" role="" statement="s11515"/>
+                  <premise polarity="positive" type="ordinary" role="datum" statement="s1855"/>
+                  <premise polarity="positive" type="ordinary" role="warrant" statement="s1858"/>
+                  <premise polarity="positive" type="exception" role="" statement="s1861"/>
                </premises>
             </argument>
             <argument id="a2" title="" direction="pro" scheme="" weight="0.5">
-               <conclusion statement="s11519"/>
+               <conclusion statement="s1858"/>
                <premises>
-                  <premise polarity="positive" type="ordinary" role="backing" statement="s11517"/>
+                  <premise polarity="positive" type="ordinary" role="backing" statement="s1857"/>
                </premises>
             </argument>
-            <argument id="a1" title="" direction="pro" scheme="" weight="0.5">
-               <conclusion statement="s11521"/>
+            <argument id="a3" title="" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s1861"/>
                <premises>
-                  <premise polarity="positive" type="ordinary" role="datum" statement="s11520"/>
-                  <premise polarity="positive" type="ordinary" role="warrant" statement="s11519"/>
-                  <premise polarity="positive" type="exception" role="" statement="s11518"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s1860"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s1859"/>
                </premises>
             </argument>
          </arguments>

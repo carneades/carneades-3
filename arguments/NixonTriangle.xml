@@ -1,29 +1,29 @@
 
 <lkif>
    <argument-graphs>
-      <argument-graph id="g1" title="New Graph" main-issue="">
+      <argument-graph id="g1" title="New Graph" main-issue="s1833">
          <statements>
-            <statement id="s11286" value="unknown" assumption="true" standard="PE">
+            <statement id="s1833" value="unknown" assumption="true" standard="PE">
                <s>Hawk</s>
             </statement>
-            <statement id="s11285" value="true" assumption="false" standard="PE">
-               <s>Republican</s>
-            </statement>
-            <statement id="s11284" value="true" assumption="false" standard="PE">
+            <statement id="s1832" value="true" assumption="false" standard="PE">
                <s>Quaker</s>
+            </statement>
+            <statement id="s1831" value="true" assumption="false" standard="PE">
+               <s>Republican</s>
             </statement>
          </statements>
          <arguments>
-            <argument id="a2" title="" direction="con" scheme="" weight="0.5">
-               <conclusion statement="s11286"/>
+            <argument id="a1" title="" direction="pro" scheme="" weight="0.5">
+               <conclusion statement="s1833"/>
                <premises>
-                  <premise polarity="positive" type="ordinary" role="" statement="s11284"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s1831"/>
                </premises>
             </argument>
-            <argument id="a1" title="" direction="pro" scheme="" weight="0.5">
-               <conclusion statement="s11286"/>
+            <argument id="a2" title="" direction="con" scheme="" weight="0.5">
+               <conclusion statement="s1833"/>
                <premises>
-                  <premise polarity="positive" type="ordinary" role="" statement="s11285"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s1832"/>
                </premises>
             </argument>
          </arguments>
