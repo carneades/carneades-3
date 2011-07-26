@@ -36,9 +36,9 @@ and open the template in the editor.
                 </form>                
             </div> 
             <div id="filechooser">
-                <form class="ui-widget-content" action="/UploadServlet" method="POST" enctype="multipart/form-data">
+                <form class="ui-widget-content" action="/CarneadesWebGUI/files" method="POST" enctype="multipart/form-data" target="lkifSource">
                     <p>Upload LKIF : </p>
-                    <input name="lkifFile" type="file" size="50" accept="text/*">
+                    <input name="lkifFile" type="file" size="50" accept="text/xml">
                     <button class="start" type="submit">Upload</button>
                 </form>
             </div>
@@ -57,7 +57,8 @@ and open the template in the editor.
             </div>
             <div id="extra">
                 <form class="ui-corner-left">
-                    <p>extra</p>
+                    <p>Source</p>
+                    <iframe id="lkifSource" name="lkifSource" src="#" onload="sourceOnLoad()"></iframe>
                 </form>
             </div>
             <div id="footer">

@@ -53,6 +53,13 @@ div#extra{
     float: left;
     margin-left: -200px;
     width: 200px;
+    height: auto;
+}
+
+iframe#lkifSource {
+    width : 200px;
+    border: 0px;
+    height : 300px;
 }
 
 div#footer {
