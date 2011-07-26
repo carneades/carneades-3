@@ -360,7 +360,7 @@
         height (get options-kv :height 1024)
         map (create-graph :width width :height height)
         map (add-markers map pro-arg-color con-arg-color)
-        stmt-params {:style {:fill "white"} :width 260 :height 45}
+        stmt-params {:style {:fill "white"} :width 260 :height 70}
         arg-params {:style {:fill "white"} :shape :circle :r 16}
         tomato "#ff7e7e"
         lightgreen "#8ee888"
