@@ -1,0 +1,764 @@
+
+<lkif>   
+   <argument-graphs>
+      <argument-graph id="ImpactLicensing" title="Impact Licensing" main-issue="s3172">
+         <statements>
+            <statement id="s3179" value="unknown" assumption="true" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#modificationOf">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#Pellet</c>
+               </s>
+            </statement>
+            <statement id="s3176" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#instanceOfTemplate" assumable="true">
+                  <c>http://carneades.berlios.de/impact-licensing#ClojureLicense</c>
+                  <c>http://carneades.berlios.de/oss-licenses#EPL_Template</c>
+               </s>
+            </statement>
+            <statement id="s3209" value="unknown" assumption="true" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#linksTo">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#ClojureCompiler</c>
+               </s>
+            </statement>
+            <statement id="s3204" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#SoftwareLibrary">
+                  <c>http://carneades.berlios.de/impact-licensing#ClojureContrib</c>
+               </s>
+            </statement>
+            <statement id="s3173" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#instanceOfTemplate" assumable="true">
+                  <c>http://carneades.berlios.de/impact-licensing#PelletLicense</c>
+                  <c>http://carneades.berlios.de/oss-licenses#AGPL_Template</c>
+               </s>
+            </statement>
+            <statement id="s3202" value="unknown" assumption="true" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#SoftwareLibrary">
+                  <c>http://carneades.berlios.de/impact-licensing#ClojureCompiler</c>
+               </s>
+            </statement>
+            <statement id="s3178" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#instanceOfTemplate" assumable="true">
+                  <c>http://carneades.berlios.de/impact-licensing#OWL_API_ReferenceImplementationLicense</c>
+                  <c>http://carneades.berlios.de/oss-licenses#LGPL_Template</c>
+               </s>
+            </statement>
+            <statement id="s3197" value="unknown" assumption="true" standard="PE">
+               <s pred="exists">
+                  <c>T2</c>
+                  <s pred="http://carneades.berlios.de/oss-licenses#instanceOfTemplate">
+                     <c>http://carneades.berlios.de/impact-licensing#ClojureContribLicense</c>
+                     <c>T2</c>
+                  </s>
+                  <s pred="http://carneades.berlios.de/oss-licenses#isCompatibleWith">
+                     <c>http://carneades.berlios.de/oss-licenses#GPL_Template</c>
+                     <c>T2</c>
+                  </s>
+               </s>
+            </statement>
+            <statement id="s3214" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#isDerivedFrom">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#ClojureLib</c>
+               </s>
+            </statement>
+            <statement id="s3212" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#linksTo">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#OWL_API_ReferenceImplementation</c>
+               </s>
+            </statement>
+            <statement id="s3215" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#isDerivedFrom">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#cljSandbox</c>
+               </s>
+            </statement>
+            <statement id="s3224" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#ReciprocalLicense">
+                  <c>http://carneades.berlios.de/impact-licensing#ClojureLicense</c>
+               </s>
+            </statement>
+            <statement id="s3210" value="unknown" assumption="true" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#linksTo">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#Clojure</c>
+               </s>
+            </statement>
+            <statement id="s3221" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#ReciprocalLicense">
+                  <c>http://carneades.berlios.de/impact-licensing#PelletLicense</c>
+               </s>
+            </statement>
+            <statement id="s3205" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#SoftwareLibrary">
+                  <c>http://carneades.berlios.de/impact-licensing#OWL_API_ReferenceImplementation</c>
+               </s>
+            </statement>
+            <statement id="s3219" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#isDerivedFrom">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#ClojureContrib</c>
+               </s>
+            </statement>
+            <statement id="s3203" value="unknown" assumption="true" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#SoftwareLibrary">
+                  <c>http://carneades.berlios.de/impact-licensing#Clojure</c>
+               </s>
+            </statement>
+            <statement id="s3174" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#instanceOfTemplate" assumable="true">
+                  <c>http://carneades.berlios.de/impact-licensing#cljSandboxLicense</c>
+                  <c>http://carneades.berlios.de/oss-licenses#EPL_Template</c>
+               </s>
+            </statement>
+            <statement id="s3216" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#isDerivedFrom">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#ClojureCompiler</c>
+               </s>
+            </statement>
+            <statement id="s3223" value="unknown" assumption="true" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#ReciprocalLicense">
+                  <c>http://carneades.berlios.de/impact-licensing#JGraphXLicense</c>
+               </s>
+            </statement>
+            <statement id="s3217" value="unknown" assumption="true" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#isDerivedFrom">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#JGraphX</c>
+               </s>
+            </statement>
+            <statement id="s3181" value="unknown" assumption="true" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#modificationOf">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#cljSandbox</c>
+               </s>
+            </statement>
+            <statement id="s3220" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#isDerivedFrom">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#OWL_API_ReferenceImplementation</c>
+               </s>
+            </statement>
+            <statement id="s3180" value="unknown" assumption="true" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#modificationOf">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#ClojureLib</c>
+               </s>
+            </statement>
+            <statement id="s3187" value="true" assumption="false" standard="PE">
+               <s pred="valid">
+                  <c>FSFTheoryOfLinking</c>
+               </s>
+            </statement>
+            <statement id="s3188" value="true" assumption="false" standard="PE">
+               <s pred="valid" assumable="true">
+                  <c>http://carneades.berlios.de/impact-licensing</c>
+               </s>
+            </statement>
+            <statement id="s3218" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#isDerivedFrom">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#Clojure</c>
+               </s>
+            </statement>
+            <statement id="s3226" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#ReciprocalLicense">
+                  <c>http://carneades.berlios.de/impact-licensing#OWL_API_ReferenceImplementationLicense</c>
+               </s>
+            </statement>
+            <statement id="s3184" value="unknown" assumption="true" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#modificationOf">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#ClojureContrib</c>
+               </s>
+            </statement>
+            <statement id="s3186" value="unknown" assumption="true" standard="PE">
+               <s pred="valid">
+                  <c>RosenTheoryOfLinking</c>
+               </s>
+            </statement>
+            <statement id="s3182" value="unknown" assumption="true" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#modificationOf">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#ClojureCompiler</c>
+               </s>
+            </statement>
+            <statement id="s3172" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#mayUseLicenseTemplate">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/oss-licenses#GPL_Template</c>
+               </s>
+            </statement>
+            <statement id="s3194" value="unknown" assumption="true" standard="PE">
+               <s pred="exists">
+                  <c>T2</c>
+                  <s pred="http://carneades.berlios.de/oss-licenses#instanceOfTemplate">
+                     <c>http://carneades.berlios.de/impact-licensing#cljSandboxLicense</c>
+                     <c>T2</c>
+                  </s>
+                  <s pred="http://carneades.berlios.de/oss-licenses#isCompatibleWith">
+                     <c>http://carneades.berlios.de/oss-licenses#GPL_Template</c>
+                     <c>T2</c>
+                  </s>
+               </s>
+            </statement>
+            <statement id="s3225" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#ReciprocalLicense">
+                  <c>http://carneades.berlios.de/impact-licensing#ClojureContribLicense</c>
+               </s>
+            </statement>
+            <statement id="s3190" value="unknown" assumption="true" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#isCompatibleWith">
+                  <c>http://carneades.berlios.de/oss-licenses#GPL_Template</c>
+                  <c>http://carneades.berlios.de/oss-licenses#BSD_Template</c>
+               </s>
+            </statement>
+            <statement id="s3185" value="unknown" assumption="true" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#modificationOf">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#OWL_API_ReferenceImplementation</c>
+               </s>
+            </statement>
+            <statement id="s3206" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#linksTo">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#Pellet</c>
+               </s>
+            </statement>
+            <statement id="s3183" value="unknown" assumption="true" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#modificationOf">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#Clojure</c>
+               </s>
+            </statement>
+            <statement id="s3191" value="unknown" assumption="true" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#isCompatibleWith">
+                  <c>http://carneades.berlios.de/oss-licenses#GPL_Template</c>
+                  <c>http://carneades.berlios.de/oss-licenses#EPL_Template</c>
+               </s>
+            </statement>
+            <statement id="s3177" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#instanceOfTemplate" assumable="true">
+                  <c>http://carneades.berlios.de/impact-licensing#ClojureContribLicense</c>
+                  <c>http://carneades.berlios.de/oss-licenses#EPL_Template</c>
+               </s>
+            </statement>
+            <statement id="s3199" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#SoftwareLibrary">
+                  <c>http://carneades.berlios.de/impact-licensing#Pellet</c>
+               </s>
+            </statement>
+            <statement id="s3196" value="unknown" assumption="true" standard="PE">
+               <s pred="exists">
+                  <c>T2</c>
+                  <s pred="http://carneades.berlios.de/oss-licenses#instanceOfTemplate">
+                     <c>http://carneades.berlios.de/impact-licensing#ClojureLicense</c>
+                     <c>T2</c>
+                  </s>
+                  <s pred="http://carneades.berlios.de/oss-licenses#isCompatibleWith">
+                     <c>http://carneades.berlios.de/oss-licenses#GPL_Template</c>
+                     <c>T2</c>
+                  </s>
+               </s>
+            </statement>
+            <statement id="s3189" value="unknown" assumption="true" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#isCompatibleWith">
+                  <c>http://carneades.berlios.de/oss-licenses#GPL_Template</c>
+                  <c>http://carneades.berlios.de/oss-licenses#AGPL_Template</c>
+               </s>
+            </statement>
+            <statement id="s3193" value="unknown" assumption="true" standard="PE">
+               <s pred="exists">
+                  <c>T2</c>
+                  <s pred="http://carneades.berlios.de/oss-licenses#instanceOfTemplate">
+                     <c>http://carneades.berlios.de/impact-licensing#PelletLicense</c>
+                     <c>T2</c>
+                  </s>
+                  <s pred="http://carneades.berlios.de/oss-licenses#isCompatibleWith">
+                     <c>http://carneades.berlios.de/oss-licenses#GPL_Template</c>
+                     <c>T2</c>
+                  </s>
+               </s>
+            </statement>
+            <statement id="s3213" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#isDerivedFrom">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#Pellet</c>
+               </s>
+            </statement>
+            <statement id="s3195" value="unknown" assumption="false" standard="PE">
+               <s pred="exists">
+                  <c>T2</c>
+                  <s pred="http://carneades.berlios.de/oss-licenses#instanceOfTemplate">
+                     <c>http://carneades.berlios.de/impact-licensing#JGraphXLicense</c>
+                     <c>T2</c>
+                  </s>
+                  <s pred="http://carneades.berlios.de/oss-licenses#isCompatibleWith">
+                     <c>http://carneades.berlios.de/oss-licenses#GPL_Template</c>
+                     <c>T2</c>
+                  </s>
+               </s>
+            </statement>
+            <statement id="s3175" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#instanceOfTemplate" assumable="true">
+                  <c>http://carneades.berlios.de/impact-licensing#JGraphXLicense</c>
+                  <c>http://carneades.berlios.de/oss-licenses#BSD_Template</c>
+               </s>
+            </statement>
+            <statement id="s3207" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#linksTo">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#ClojureLib</c>
+               </s>
+            </statement>
+            <statement id="s3222" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#ReciprocalLicense">
+                  <c>http://carneades.berlios.de/impact-licensing#cljSandboxLicense</c>
+               </s>
+            </statement>
+            <statement id="s3208" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#linksTo">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#cljSandbox</c>
+               </s>
+            </statement>
+            <statement id="s3200" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#SoftwareLibrary">
+                  <c>http://carneades.berlios.de/impact-licensing#ClojureLib</c>
+               </s>
+            </statement>
+            <statement id="s3192" value="unknown" assumption="true" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#isCompatibleWith">
+                  <c>http://carneades.berlios.de/oss-licenses#GPL_Template</c>
+                  <c>http://carneades.berlios.de/oss-licenses#LGPL_Template</c>
+               </s>
+            </statement>
+            <statement id="s3201" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#SoftwareLibrary">
+                  <c>http://carneades.berlios.de/impact-licensing#cljSandbox</c>
+               </s>
+            </statement>
+            <statement id="s3211" value="unknown" assumption="false" standard="PE">
+               <s pred="http://carneades.berlios.de/oss-licenses#linksTo">
+                  <c>http://carneades.berlios.de/impact-licensing#CarneadesEngine</c>
+                  <c>http://carneades.berlios.de/impact-licensing#ClojureContrib</c>
+               </s>
+            </statement>
+            <statement id="s3198" value="unknown" assumption="true" standard="PE">
+               <s pred="exists">
+                  <c>T2</c>
+                  <s pred="http://carneades.berlios.de/oss-licenses#instanceOfTemplate">
+                     <c>http://carneades.berlios.de/impact-licensing#OWL_API_ReferenceImplementationLicense</c>
+                     <c>T2</c>
+                  </s>
+                  <s pred="http://carneades.berlios.de/oss-licenses#isCompatibleWith">
+                     <c>http://carneades.berlios.de/oss-licenses#GPL_Template</c>
+                     <c>T2</c>
+                  </s>
+               </s>
+            </statement>
+         </statements>
+         <arguments>
+            <argument id="a1672" title="" direction="pro" scheme="FSFTheoryOfLinking-c2-1" weight="0.5">
+               <conclusion statement="s3215"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3201"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3208"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3187"/>
+               </premises>
+            </argument>
+            <argument id="a1671" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3222"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a1806" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3175"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a1927" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3173"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a1674" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3208"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a1807" title="" direction="pro" scheme="exists" weight="0.5">
+               <conclusion statement="s3195"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3190"/>
+                  <premise polarity="positive" type="assumption" role="" statement="s3175"/>
+               </premises>
+            </argument>
+            <argument id="a1673" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3201"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a1928" title="" direction="pro" scheme="exists" weight="0.5">
+               <conclusion statement="s3193"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3189"/>
+                  <premise polarity="positive" type="assumption" role="" statement="s3173"/>
+               </premises>
+            </argument>
+            <argument id="a1677" title="" direction="pro" scheme="FSFTheoryOfLinking-c2-1" weight="0.5">
+               <conclusion statement="s3214"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3200"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3207"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3187"/>
+               </premises>
+            </argument>
+            <argument id="a1678" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3200"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a2152" title="" direction="con" scheme="RosenTheoryOfLinking-c1-1" weight="0.5">
+               <conclusion statement="s3213"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3199"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3206"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3186"/>
+               </premises>
+            </argument>
+            <argument id="a1675" title="" direction="pro" scheme="ModificationsAreDerivateWorks-c3-2" weight="0.5">
+               <conclusion statement="s3215"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3181"/>
+               </premises>
+            </argument>
+            <argument id="a1676" title="" direction="con" scheme="ReciprocityRule-c2-3" weight="0.5">
+               <conclusion statement="s3172"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3224"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3214"/>
+                  <premise polarity="positive" type="exception" role="" statement="s3196"/>
+               </premises>
+            </argument>
+            <argument id="a2006" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3192"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a1683" title="" direction="pro" scheme="FSFTheoryOfLinking-c2-1" weight="0.5">
+               <conclusion statement="s3213"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3199"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3206"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3187"/>
+               </premises>
+            </argument>
+            <argument id="a1682" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3221"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a1685" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3206"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a1834" title="" direction="pro" scheme="exists" weight="0.5">
+               <conclusion statement="s3194"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3191"/>
+                  <premise polarity="positive" type="assumption" role="" statement="s3174"/>
+               </premises>
+            </argument>
+            <argument id="a1679" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3207"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a1684" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3199"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a1833" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3174"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a1686" title="" direction="pro" scheme="ModificationsAreDerivateWorks-c3-2" weight="0.5">
+               <conclusion statement="s3213"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3179"/>
+               </premises>
+            </argument>
+            <argument id="a1642" title="" direction="pro" scheme="DefaultLicenseRule-c1-1" weight="0.5">
+               <conclusion statement="s3172"/>
+               <premises>
+               </premises>
+            </argument>
+            <argument id="a2071" title="" direction="con" scheme="RosenTheoryOfLinking-c1-1" weight="0.5">
+               <conclusion statement="s3216"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3202"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3209"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3186"/>
+               </premises>
+            </argument>
+            <argument id="a2022" title="" direction="con" scheme="RosenTheoryOfLinking-c1-1" weight="0.5">
+               <conclusion statement="s3219"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3204"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3211"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3186"/>
+               </premises>
+            </argument>
+            <argument id="a1650" title="" direction="con" scheme="ReciprocityRule-c2-1" weight="0.5">
+               <conclusion statement="s3172"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3226"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3220"/>
+                  <premise polarity="positive" type="exception" role="" statement="s3198"/>
+               </premises>
+            </argument>
+            <argument id="a2189" title="" direction="con" scheme="RosenTheoryOfLinking-c1-1" weight="0.5">
+               <conclusion statement="s3220"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3205"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3212"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3186"/>
+               </premises>
+            </argument>
+            <argument id="a1705" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3178"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a1706" title="" direction="pro" scheme="exists" weight="0.5">
+               <conclusion statement="s3198"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3192"/>
+                  <premise polarity="positive" type="assumption" role="" statement="s3178"/>
+               </premises>
+            </argument>
+            <argument id="a1669" title="" direction="pro" scheme="ModificationsAreDerivateWorks-c3-2" weight="0.5">
+               <conclusion statement="s3216"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3182"/>
+               </premises>
+            </argument>
+            <argument id="a1652" title="" direction="pro" scheme="FSFTheoryOfLinking-c2-1" weight="0.5">
+               <conclusion statement="s3220"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3205"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3212"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3187"/>
+               </premises>
+            </argument>
+            <argument id="a1668" title="" direction="pro" scheme="FSFTheoryOfLinking-c2-1" weight="0.5">
+               <conclusion statement="s3216"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3202"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3209"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3187"/>
+               </premises>
+            </argument>
+            <argument id="a1651" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3226"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a2119" title="" direction="con" scheme="RosenTheoryOfLinking-c1-1" weight="0.5">
+               <conclusion statement="s3214"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3200"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3207"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3186"/>
+               </premises>
+            </argument>
+            <argument id="a1655" title="" direction="pro" scheme="ModificationsAreDerivateWorks-c3-2" weight="0.5">
+               <conclusion statement="s3220"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3185"/>
+               </premises>
+            </argument>
+            <argument id="a1656" title="" direction="con" scheme="ReciprocityRule-c2-3" weight="0.5">
+               <conclusion statement="s3172"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3225"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3219"/>
+                  <premise polarity="positive" type="exception" role="" statement="s3197"/>
+               </premises>
+            </argument>
+            <argument id="a1653" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3205"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a1680" title="" direction="pro" scheme="ModificationsAreDerivateWorks-c3-2" weight="0.5">
+               <conclusion statement="s3214"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3180"/>
+               </premises>
+            </argument>
+            <argument id="a1654" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3212"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a2055" title="" direction="con" scheme="RosenTheoryOfLinking-c1-1" weight="0.5">
+               <conclusion statement="s3218"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3203"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3210"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3186"/>
+               </premises>
+            </argument>
+            <argument id="a1681" title="" direction="con" scheme="ReciprocityRule-c2-3" weight="0.5">
+               <conclusion statement="s3172"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3221"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3213"/>
+                  <premise polarity="positive" type="exception" role="" statement="s3193"/>
+               </premises>
+            </argument>
+            <argument id="a1782" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3176"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a1661" title="" direction="pro" scheme="ModificationsAreDerivateWorks-c3-2" weight="0.5">
+               <conclusion statement="s3219"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3184"/>
+               </premises>
+            </argument>
+            <argument id="a1660" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3211"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a1659" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3204"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a1658" title="" direction="pro" scheme="FSFTheoryOfLinking-c2-1" weight="0.5">
+               <conclusion statement="s3219"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3204"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3211"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3187"/>
+               </premises>
+            </argument>
+            <argument id="a1663" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3224"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a1735" title="" direction="pro" scheme="exists" weight="0.5">
+               <conclusion statement="s3197"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3191"/>
+                  <premise polarity="positive" type="assumption" role="" statement="s3177"/>
+               </premises>
+            </argument>
+            <argument id="a1783" title="" direction="pro" scheme="exists" weight="0.5">
+               <conclusion statement="s3196"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3191"/>
+                  <premise polarity="positive" type="assumption" role="" statement="s3176"/>
+               </premises>
+            </argument>
+            <argument id="a1657" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3225"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a1662" title="" direction="con" scheme="ReciprocityRule-c2-3" weight="0.5">
+               <conclusion statement="s3172"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3224"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3218"/>
+                  <premise polarity="positive" type="exception" role="" statement="s3196"/>
+               </premises>
+            </argument>
+            <argument id="a1734" title="" direction="pro" scheme="HermiT" weight="0.5">
+               <conclusion statement="s3177"/>
+               <premises>
+                  <premise polarity="positive" type="assumption" role="" statement="s3188"/>
+               </premises>
+            </argument>
+            <argument id="a1666" title="" direction="con" scheme="ReciprocityRule-c2-3" weight="0.5">
+               <conclusion statement="s3172"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3223"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3217"/>
+                  <premise polarity="positive" type="exception" role="" statement="s3195"/>
+               </premises>
+            </argument>
+            <argument id="a1667" title="" direction="con" scheme="ReciprocityRule-c2-4" weight="0.5">
+               <conclusion statement="s3172"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3224"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3216"/>
+                  <premise polarity="positive" type="exception" role="" statement="s3196"/>
+               </premises>
+            </argument>
+            <argument id="a2086" title="" direction="con" scheme="RosenTheoryOfLinking-c1-1" weight="0.5">
+               <conclusion statement="s3215"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3201"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3208"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3186"/>
+               </premises>
+            </argument>
+            <argument id="a1664" title="" direction="pro" scheme="FSFTheoryOfLinking-c2-1" weight="0.5">
+               <conclusion statement="s3218"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3203"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3210"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3187"/>
+               </premises>
+            </argument>
+            <argument id="a1665" title="" direction="pro" scheme="ModificationsAreDerivateWorks-c3-2" weight="0.5">
+               <conclusion statement="s3218"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3183"/>
+               </premises>
+            </argument>
+            <argument id="a1670" title="" direction="con" scheme="ReciprocityRule-c2-3" weight="0.5">
+               <conclusion statement="s3172"/>
+               <premises>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3222"/>
+                  <premise polarity="positive" type="ordinary" role="" statement="s3215"/>
+                  <premise polarity="positive" type="exception" role="" statement="s3194"/>
+               </premises>
+            </argument>
+         </arguments>
+      </argument-graph>
+   </argument-graphs>
+</lkif>
