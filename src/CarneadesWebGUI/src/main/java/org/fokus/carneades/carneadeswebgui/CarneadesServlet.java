@@ -37,6 +37,21 @@ public class CarneadesServlet extends HttpServlet {
     private static final Logger log = Logger.getLogger(CarneadesServlet.class.getName());
     
     private static final String LKIF_STRING = "LKIF_STRING";
+
+    public CarneadesServlet() {
+        super();
+        try  {
+            // loading carneades libraries
+            log.info("loading clojure/main.clj");
+            RT.loadResourceScript("clojure/main.clj");
+            log.info("loading lkif.clj");
+            RT.loadResourceScript("carneades/engine/lkif.clj");
+            log.info("loading mapcomponent/export.clj");
+            RT.loadResourceScript("carneades/mapcomponent/export.clj"); 
+        } catch (Exception e) {
+            log.severe(e.getMessage());
+        }
+    }       
     
     /** 
      * Handles the HTTP <code>GET</code> method.
@@ -56,14 +71,7 @@ public class CarneadesServlet extends HttpServlet {
             String type = request.getParameter("type");
             log.fine("GET".concat(type));
             if("svg".equals(type)) {
-                // GET SVG
-                // loading carneades libraries
-                log.info("loading clojure/main.clj");
-                RT.loadResourceScript("clojure/main.clj");
-                log.info("loading lkif.clj");
-                RT.loadResourceScript("carneades/engine/lkif.clj");
-                log.info("loading mapcomponent/export.clj");
-                RT.loadResourceScript("carneades/mapcomponent/export.clj");                        
+                // GET SVG                                      
                 // importing lkif    
                 // get lkif from session
                 String lkifString = (String)session.getAttribute(LKIF_STRING);
@@ -79,12 +87,15 @@ public class CarneadesServlet extends HttpServlet {
                 // statement format function
                 Object stmtStr = RT.var(NS.STATEMENT, "statement-formatted").fn();
                 log.info("stmt-frmt fn created");
-                // convert graph to svg
-                // TODO : use options for export     
+                // get options
                 Keyword layoutKW = Keyword.intern("layout");
-                Keyword radialKW = Keyword.intern("radial");
+                String layoutStr = request.getParameter("layout").toLowerCase();
+                Keyword radialKW = Keyword.intern(layoutStr);
                 Keyword treeifyKW = Keyword.intern("treeify");
-                InputStreamReader svgReader = (InputStreamReader)RT.var(NS.MAP, "export-ag-os").invoke(ag, stmtStr, layoutKW, radialKW, treeifyKW, true);
+                String treeifyStr = request.getParameter("treeify");
+                boolean treeify = "true".equals(treeifyStr);
+                // convert graph to svg                                  
+                InputStreamReader svgReader = (InputStreamReader)RT.var(NS.MAP, "export-ag-os").invoke(ag, stmtStr, layoutKW, radialKW, treeifyKW, treeify);
                 log.info("svg created");
                 BufferedReader svgBuffer = new BufferedReader(svgReader);
                 while(svgBuffer.ready()) {

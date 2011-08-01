@@ -37,21 +37,27 @@ and open the template in the editor.
             </div> 
             <div id="filechooser">
                 <form class="ui-widget-content" action="/CarneadesWebGUI/files" method="POST" enctype="multipart/form-data" target="lkifSource">
-                    <p>Upload LKIF : </p>
+                    Upload LKIF :
                     <input name="lkifFile" type="file" size="50" accept="text/xml">
                     <button class="start" type="submit">Upload</button>
                 </form>
             </div>
             <div id="wrapper">
-                <div id="graphbox" class="ui-corner-left ui-corner-right">graph</div>
+                <div id="graphbox" class="ui-corner-left ui-corner-right">                                        
+                </div>
             </div>
             <div id="toolbar">
                 <form class="ui-widget-content ui-corner-right">                    
                     <p>
-                        <input id="Option1" type="checkbox" name="Options" value="opt1">Option 1<br>
-                        <input id="Option2" type="checkbox" name="Options" value="opt2">Option 2<br>
-                        <input id="Option3" type="checkbox" name="Options" value="opt3">Option 3<br>
-                        <input id="Option4" type="checkbox" name="Options" value="opt4">Option 4<br>
+                        Layout
+                        <select id="Layout" name="Options" size="1">
+                            <option>Radial</option>
+                            <option>Random</option>
+                            <option>Naive</option>
+                        </select><br>
+                        Treeify
+                        <input id="Treeify" type="checkbox" name="Options" value="treeify"><br>                        
+                        <input id="UpdateButton" type="button" name="Options" value="Update" onclick="updateSVG()">
                     </p>                       
                 </form>
             </div>
