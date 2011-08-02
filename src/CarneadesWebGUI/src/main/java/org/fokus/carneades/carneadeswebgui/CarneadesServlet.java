@@ -75,33 +75,37 @@ public class CarneadesServlet extends HttpServlet {
                 // importing lkif    
                 // get lkif from session
                 String lkifString = (String)session.getAttribute(LKIF_STRING);
-                log.info("loading lkif : ".concat(Integer.toString(lkifString.length())));
-                byte[] lkifBytes = lkifString.getBytes("UTF-8");
-                InputStream lkifStream = new ByteArrayInputStream(lkifBytes);
-                Map lkif = (Map) RT.var(NS.LKIF, "import-lkif").invoke(lkifStream);
-                // get first argument graph
-                log.info("get arg graphs");
-                List argGraphs = (List) lkif.get(Keyword.intern("ags"));
-                log.info("get first graph");
-                Map ag = (Map)argGraphs.get(0);
-                // statement format function
-                Object stmtStr = RT.var(NS.STATEMENT, "statement-formatted").fn();
-                log.info("stmt-frmt fn created");
-                // get options
-                Keyword layoutKW = Keyword.intern("layout");
-                String layoutStr = request.getParameter("layout").toLowerCase();
-                Keyword radialKW = Keyword.intern(layoutStr);
-                Keyword treeifyKW = Keyword.intern("treeify");
-                String treeifyStr = request.getParameter("treeify");
-                boolean treeify = "true".equals(treeifyStr);
-                // convert graph to svg                                  
-                InputStreamReader svgReader = (InputStreamReader)RT.var(NS.MAP, "export-ag-os").invoke(ag, stmtStr, layoutKW, radialKW, treeifyKW, treeify);
-                log.info("svg created");
-                BufferedReader svgBuffer = new BufferedReader(svgReader);
-                while(svgBuffer.ready()) {
-                    out.println(svgBuffer.readLine());
+                if(lkifString != null) {
+                    log.info("loading lkif : ".concat(Integer.toString(lkifString.length())));
+                    byte[] lkifBytes = lkifString.getBytes("UTF-8");
+                    InputStream lkifStream = new ByteArrayInputStream(lkifBytes);
+                    Map lkif = (Map) RT.var(NS.LKIF, "import-lkif").invoke(lkifStream);
+                    // get first argument graph
+                    log.info("get arg graphs");
+                    List argGraphs = (List) lkif.get(Keyword.intern("ags"));
+                    log.info("get first graph");
+                    Map ag = (Map)argGraphs.get(0);
+                    // statement format function
+                    Object stmtStr = RT.var(NS.STATEMENT, "statement-formatted").fn();
+                    log.info("stmt-frmt fn created");
+                    // get options
+                    Keyword layoutKW = Keyword.intern("layout");
+                    String layoutStr = request.getParameter("layout").toLowerCase();
+                    Keyword radialKW = Keyword.intern(layoutStr);
+                    Keyword treeifyKW = Keyword.intern("treeify");
+                    String treeifyStr = request.getParameter("treeify");
+                    boolean treeify = "true".equals(treeifyStr);
+                    // convert graph to svg                                  
+                    InputStreamReader svgReader = (InputStreamReader)RT.var(NS.MAP, "export-ag-os").invoke(ag, stmtStr, layoutKW, radialKW, treeifyKW, treeify);
+                    log.info("svg created");
+                    BufferedReader svgBuffer = new BufferedReader(svgReader);
+                    while(svgBuffer.ready()) {
+                        out.println(svgBuffer.readLine());
+                    }
+                } else {
+                    out.println("");
                 }
-                out.close();
+                out.close(); 
             } else if ("lkif".equals(type)) {
                 // GET LKIF
                 String lkif = (String)session.getAttribute(LKIF_STRING);                

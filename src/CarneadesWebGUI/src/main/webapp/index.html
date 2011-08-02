@@ -5,10 +5,10 @@ and open the template in the editor.
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Carneades Web GUI</title>
+        <title>LKIF Argument Mapping Testbed</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">        
         <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
-        <link type="text/css" href="css/ui-lightness/jquery-ui-1.8.14.custom.css" rel="stylesheet" />	
+        <link type="text/css" href="css/custom-theme/jquery-ui-1.8.14.custom.css" rel="stylesheet" />	
         <script type="text/javascript" src="js/jquery-1.6.2.js"></script>
         <script type="text/javascript" src="js/jquery-ui-1.8.14.custom.min.js"></script>   
         <script type="text/javascript" src="js/jquery.svg.js"></script>
@@ -32,7 +32,7 @@ and open the template in the editor.
         <div id="container">
             <div id="header">
                 <form class="ui-widget-header ui-corner-top">
-                    <h1>Carneades Web GUI</h1>
+                    <h1>LKIF Argument Mapping Testbed</h1>
                 </form>                
             </div> 
             <div id="filechooser">
@@ -42,35 +42,42 @@ and open the template in the editor.
                     <button class="start" type="submit">Upload</button>
                 </form>
             </div>
-            <div id="wrapper">
-                <div id="graphbox" class="ui-corner-left ui-corner-right">                                        
+            <div id="tabs">
+                <ul>
+                    <li><a href="#tabs-1">Graph</a></li>
+                    <li><a href="#tabs-2">Source</a></li>                    
+                </ul>
+                <div id="tabs-1">
+                    <div id="wrapper">
+                        <div id="graphbox" class="ui-corner-left ui-corner-right">                                        
+                        </div>
+                    </div>
+                    <div id="toolbar">
+                        <form class="ui-widget-content ui-corner-right">                    
+                            <p>
+                                Layout
+                                <select id="Layout" name="Options" size="1">
+                                    <option>Radial</option>
+                                    <option>Random</option>
+                                    <option>Naive</option>
+                                </select><br>
+                                Treeify
+                                <input id="Treeify" type="checkbox" name="Options" value="treeify"><br>                        
+                                <input id="UpdateButton" type="button" name="Options" value="Update" onclick="updateSVG()">
+                            </p>                       
+                        </form>
+                    </div>
+                </div>
+                <div id="tabs-2">
+                    <div id="extra">                           
+                        <iframe id="lkifSource" name="lkifSource" src="#" onload="loadSVG()"></iframe>                        
+                    </div>
                 </div>
             </div>
-            <div id="toolbar">
-                <form class="ui-widget-content ui-corner-right">                    
-                    <p>
-                        Layout
-                        <select id="Layout" name="Options" size="1">
-                            <option>Radial</option>
-                            <option>Random</option>
-                            <option>Naive</option>
-                        </select><br>
-                        Treeify
-                        <input id="Treeify" type="checkbox" name="Options" value="treeify"><br>                        
-                        <input id="UpdateButton" type="button" name="Options" value="Update" onclick="updateSVG()">
-                    </p>                       
-                </form>
-            </div>
-            <div id="extra">
-                <form class="ui-corner-left">
-                    <p>Source</p>
-                    <iframe id="lkifSource" name="lkifSource" src="#" onload="sourceOnLoad()"></iframe>
-                </form>
-            </div>
             <div id="footer">
-                <form class="ui-widget-header ui-corner-bottom">
-                    <p>footer</p>
-                </form>
+                <div class="ui-widget-header ui-corner-bottom">
+                    <p>Fraunhofer FOKUS</p>
+                </div>
             </div>
         </div>
     </body>

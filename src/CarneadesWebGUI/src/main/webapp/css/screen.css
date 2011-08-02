@@ -32,6 +32,21 @@ div#filechooser form {
     padding-left: 10px;
 }
 
+div#tabs {
+    height : auto;
+    width : auto;
+}
+
+div#tabs-1 {
+    height : 300px;
+    width: auto;
+}
+
+div#tabs-2 {
+    height : 500px;
+    width: auto;
+}
+
 div#wrapper{
     float:left;
     width: 100%;
@@ -44,25 +59,25 @@ div#toolbar{
 }
 
 
-
 div#graphbox{    
     margin: 0 200px;
 }
 
 div#extra{
     float: left;
-    margin-left: -200px;
-    width: 200px;
+    /*margin-left: -200px;*/
+    width: auto;
     height: auto;
 }
 
 iframe#lkifSource {
-    width : 200px;
-    border: 0px;
+    width : 400px;
+    border: 0;
     height : 500px;
 }
 
 div#footer {
     clear: left;
     width: 100%;
+    text-align: center;
 }

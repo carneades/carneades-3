@@ -6,7 +6,13 @@ var svgLayout = "radial";
 var svgTreeify = "false";
 
 
-function sourceOnLoad() {
+$(function(){ // init
+    
+   $("#tabs").tabs();
+    
+});
+
+function loadSVG() {
     var graphBox = $("#graphbox");
     var path = "/CarneadesWebGUI/files?type=svg&layout="+svgLayout+"&treeify="+svgTreeify;
     
@@ -54,6 +60,8 @@ function onSVGLoad(svgW) {
                 }
     });
     
+    $("#tabs-1").height($("#wrapper").height());
+    
    /* graphBox.bind("drag", function(event, ui){          
         var translate = 'translate(' + svgDeltaX+ui.deltaX + ', '+ svgDeltaY+ui.deltaY + ')';   
         svgWrapper.getElementById("graph0").setAttribute("transform", translate + ' scale(' + svgScale + ')');  
@@ -85,6 +93,6 @@ function updateSVG() {
     
     $("#graphbox").svg("destroy");
     
-    sourceOnLoad();
+    loadSVG();
     
 }
