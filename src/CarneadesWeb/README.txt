@@ -10,16 +10,20 @@ Interactive argument construction and evaluation using the Carneades argumentati
 
 Installation:
 
-- download sources:
-  - https://github.com/carneades/carneades/tree/webservice-01/src
+- download & install git
+  - http://git-scm.com/
+
+- download sources and switch to webservice branch:
+  - git clone git://github.com/carneades/carneades.git
+  - git checkout -b webservice-01 remotes/origin/webservice-01
   
-- install leiningen:
+- download & install leiningen:
   - https://github.com/technomancy/leiningen
   
-- install maven (tested with maven 2.2.1):
+- download & install maven (tested with maven 2.2.1):
   - http://maven.apache.org/download.html
   
-- install jboss 5.1.0 GA:
+- download & install jboss 5.1.0 GA:
   - http://sourceforge.net/projects/jboss/files/JBoss/JBoss-5.1.0.GA/
   - remove xercesImpl.jar from jboss installation : jboss-5.1.0.GA/lib/endorsed/xercesImpl.jar
   
