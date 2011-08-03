@@ -28,7 +28,8 @@ Installation:
   - compile CarneadesWeb in src/CarneadesWeb/ : mvn install
   
 - copy test files to /tmp/:
-  - src/CarneadesWeb/test/IMPACT.xml and src/CarneadesWeb/test/translations.xml
+  - src/CarneadesWeb/test/IMPACT.xml 
+  - src/CarneadesWeb/test/translations.xml
   
 - copy EAR to jboss deployment:
   - src/CarneadesWeb/CarneadesWeb-ear/target/CarneadesWeb-ear-ear
