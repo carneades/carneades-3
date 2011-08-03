@@ -89,7 +89,7 @@ $(function(){ // Init
            else // "notmodified", "timeout", or "parsererror"
                statusupdate(1,textStatus);
        },
-       timeout : 60000,       
+       timeout : 600000,       
        type: "POST"
     });
 

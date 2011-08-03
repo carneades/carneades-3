@@ -85,7 +85,7 @@ public class PolicySimulationServlet extends HttpServlet {
             // TODO : get translation file
             Translator translator = (Translator) session.getAttribute(TRANSLATOR);
             if(translator == null) {
-                String translatorFile = "C:\\tmp\\translations.xml";
+                String translatorFile = "/tmp/translations.xml";
                 translator = new Translator(translatorFile);
                 session.setAttribute(TRANSLATOR, translator);
             } else {

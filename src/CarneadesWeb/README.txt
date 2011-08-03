@@ -36,7 +36,7 @@ Installation:
   - src/CarneadesWeb/test/translations.xml
   
 - copy EAR to jboss deployment:
-  - src/CarneadesWeb/CarneadesWeb-ear/target/CarneadesWeb-ear-ear
+  - src/CarneadesWeb/CarneadesWeb-ear/target/CarneadesWeb-ear.ear
   - to: jboss-5.1.0.GA/server/default/deploy/
   
 - run jboss:
