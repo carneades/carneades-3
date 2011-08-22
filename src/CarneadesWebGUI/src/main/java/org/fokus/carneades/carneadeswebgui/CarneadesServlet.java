@@ -129,8 +129,7 @@ public class CarneadesServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // TODO
-        initLogger();
+
         try {
             
             log.info("POST request in Web GUI Servlet");
@@ -204,10 +203,6 @@ public class CarneadesServlet extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }
-    
-    private void initLogger() {
-         // log.setLevel(Level.FINEST);
     }
     
 }
