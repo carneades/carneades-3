@@ -33,17 +33,17 @@ div#filechooser form {
 }
 
 div#tabs {
-    height : auto;
+    height : 100%;
     width : auto;
 }
 
 div#tabs-1 {
-    height : 300px;
+    height : 600px;
     width: auto;
 }
 
 div#tabs-2 {
-    height : 500px;
+    height : 600px;
     width: auto;
 }
 
@@ -61,7 +61,13 @@ div#toolbar{
 
 div#graphbox{    
     margin: 0 200px;
+    height: 600px;  
 }
+
+div#graphbox svg{     
+    overflow: auto;
+}
+
 
 div#extra{
     float: left;

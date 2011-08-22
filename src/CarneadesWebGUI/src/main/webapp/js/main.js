@@ -1,9 +1,8 @@
 var svgScale = 1;
 var svgWrapper = null;
-var svgDeltaX = 0;
-var svgDeltaY = 0;
 var svgLayout = "radial";
 var svgTreeify = "false";
+var translate = 'translate(0,0)';   
 
 
 $(function(){ // init
@@ -17,70 +16,43 @@ function loadSVG() {
     var path = "/CarneadesWebGUI/files?type=svg&layout="+svgLayout+"&treeify="+svgTreeify;
     
     graphBox.svg();    
-    graphBox.svg('get').load(path, onSVGLoad); 
+    graphBox.svg('get').load(path, onSVGLoad);     
     
 }
 
 function onSVGLoad(svgW) {
-    
+           
     svgWrapper = svgW;
     svgScale = 1;
-    svgDeltaX = 0;
-    svgDeltaY = 0;
-    
-    var graphBox = $("#graphbox");
-    
-    
-    //$("#graph0").animate({svgHeight: svgHeight, svgWidth: svgHeight}, 100);       
-    //$("graph0", svgWrapper.root()).attr("width", svgWidth);
-    //$("graph0", svgWrapper.root()).attr("height", svgHeight);
-    
-    graphBox.bind("mousewheel", function(event, delta){
+        
+    $("#graph0").bind("mousewheel", function(event, delta){
         if(delta > 0) {
             // zoom in
             svgScale = svgScale * 1.1;
-            $("#graph0").animate({svgTransform: 'scale('+svgScale+')'}, 100);
+            $("#graph0").animate({svgTransform: translate+'scale('+svgScale+')'}, 100);
         } else {
             // zoom out
             svgScale = svgScale * 0.9;
-            $("#graph0").animate({svgTransform: 'scale('+svgScale+')'}, 100);
+            $("#graph0").animate({svgTransform: translate+'scale('+svgScale+')'}, 100);
         }
         $("html:not(:animated), body:not(:animated)").animate({scrollTop: 0}, 500);  
         return true;
     });
     
-    graphBox.draggable({
+    $("#graph0").draggable({
         drag : function(event, ui){               
-                    var translate = 'translate(' + svgDeltaX+ui.deltaX + ', '+ svgDeltaY+ui.deltaY + ')';   
+                    translate = 'translate(' + (ui.position.left * 1.8) + ', '+ (ui.position.top * 1.8) + ')';   
                     svgWrapper.getElementById("graph0").setAttribute("transform", translate + ' scale(' + svgScale + ')');  
-                },
-        stop: function(event, ui){
-                   svgDeltaX = svgDeltaX + ui.deltaX;
-                   svgDeltaY = svgDeltaY + ui.deltaY; 
                 }
     });
     
     $("#tabs-1").height($("#wrapper").height());
     
-   /* graphBox.bind("drag", function(event, ui){          
-        var translate = 'translate(' + svgDeltaX+ui.deltaX + ', '+ svgDeltaY+ui.deltaY + ')';   
-        svgWrapper.getElementById("graph0").setAttribute("transform", translate + ' scale(' + svgScale + ')');  
-    });
-    
-    graphBox.bind("stop", function(event, ui){
-       svgDeltaX += ui.deltaX;
-       svgDeltaY += ui.deltaY; 
-    });
-    
-    // svgHeight = graphBox.height()-100;
-    setSize();*/
+   
     
 }
 
 function updateSVG() {
-    /*var svgWidth = graphBox.width() - 10;
-    var svgHeight = 350;
-    svgWrapper.configure({height: svgHeight, width: svgWidth},false);*/
         
     if ($("#Treeify").attr("checked")) {
         svgTreeify = "true";
