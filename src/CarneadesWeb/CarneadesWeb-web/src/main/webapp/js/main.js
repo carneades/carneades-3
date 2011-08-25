@@ -1,7 +1,7 @@
 /**
  * This is the AJAX-Engine for the IMPACT web application.
  *
- * @author bbr
+ * @author bbr stb
  * @version 0.50
  */
 
@@ -13,9 +13,11 @@ var showhints = true;
 var argGraph = "undefined";
 var policyrules = [];
 var langChange = false;
-var svgHeight = 700;
-var svgWidth = 1000;
 var svgScale = 1;
+var svgWrapper = null;
+var svgLayout = "hierarchical";
+var svgTreeify = "true";
+var translate = 'translate(0,0)'; 
 
 // adding JSON parser when browser is too old to have a build-in one (pre-IE8, pre-FF3.5, ...)
 if( typeof( window[ 'JSON' ] ) == "undefined" ) document.write('<script type="text/javascript" src="https://github.com/douglascrockford/JSON-js/raw/master/json2.js"/>');
@@ -54,20 +56,11 @@ $(function(){ // Init
     $("#locate").change(function(){
         alert("? "+$(this).val() );
         doAJAX({"language" : $(this).val()});
-        langChange = true;
-        /*
-        $("body").append("<script src=\"js/jquery/jquery.ui.datepicker-"+$(this).val()+".js\" type=\"text/javascript\"></script>");
-        $.datepicker.setDefaults($.datepicker.regional[$(this).val()]);
-        */
-        /*$( ".datepicker" ).each(function(index) {
-                $(this).datepicker( "option",
-                "regional", $("#locale").val() );
-        })*/
+        langChange = true;        
     });
 
     // Fragen-Liste
-    $("li", $("#questionlist")).each(function(index){
-            //this.style.backgroundColor="red";
+    $("li", $("#questionlist")).each(function(index){            
             var li_i = index;
             $(this).click(function(){
                     $(document.getElementsByTagName("h3")[li_i].firstChild).click();
@@ -92,9 +85,6 @@ $(function(){ // Init
        timeout : 600000,       
        type: "POST"
     });
-
-    /** loads initial questions */
-    //loadTopic("demo");
 
 });
 
@@ -158,90 +148,98 @@ function doAJAX(jsondata) {
  * @see doAJAX
  */
 function showQuestions(questionArray) {
-    $("#tabs a[href='#tabs-2']").click();
-    // var qbox = $("#questions");
-    var newline = false;    
+    $("#tabs a[href='#tabs-2']").click();        
     var topicName = questionArray[0].category;
     var topicID = topicName.replace(/\s/,"_");
     var qlist = $("#questionlist");
-    qlist.append('<div id="'+topicID+'"><h3>'+topicName+'</h3><div id="qcontent"></div></div>');
-    // qbox.empty();
-    // qbox.append("<div id=\"hints\"><h4>hints</h4></div>");
-    //qbox.append("<div id=\""+topicID+"\"><h3>"+topicName+"</h3><div id=\"qcontent\"></div></div>");
+    // add new div to questionlist with id = topic name
+    qlist.append('<div id="'+topicID+'"><h3>'+topicName+'</h3><div id="qcontent"></div></div>');    
     var qdiv = $("#"+topicID, qlist);
     var qbox = $("#qcontent", qdiv);
-    $.each(questionArray, function(i,item){
-        // pre append formatting
-        var output = "<p><label for=\"qID"+item.id+"\">"+item.question+"</label>";
-        if (item.type == "select") {
-            output += "<select id=\"qID"+item.id+"\" name=\"qID"+item.id+"\">";
-            output += "<option value=\"\" selected=\"selected\">-- please choose --</option>";
-            $.each(item.answers, function(answindex, answer) {
-                output += "<option value=\""+answer+"\">"+answer+"</option>";
-            });
-            output += "</select>";
-        }
-        else if (item.type == "radio" || item.type == "checkbox") {
-            newline = radioCheckNewLine(item.answers);
-            $.each(item.answers, function(answindex, answer) {
-                if (newline) output += "<br/>";
-                output += "<input name=\"qID"+item.id+"\" type=\""+item.type+"\" value=\""+answer+"\">";
-                output += "<span onclick=\"$(this).prev().click()\">"+answer+"</span>";
-            });
-        }
-        else if (item.type == "date") {
-            output += "<input type=\"text\" class=\"datefield\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
-        }
-        else if (item.type == "int") {
-            output += "<input type=\"text\" class=\"integer\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
-        }
-        else if (item.type == "float") {
-            output += "<input type=\"text\" class=\"float\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
-        }
-        else output += "<input type=\""+item.type+"\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
-        output += "</p>";
-        qbox.append(output);
-        if (item.hint) $("#hints").append("<p id=\"qHINT"+item.id+"\" class=\"hint\">"+item.hint+"</p>");
-        // post append formatting
-        if (item.optional) $("p:last :input:first", qbox).addClass("optional");
-        // focus and blur does not work on radio/checkbox
-        if (item.type != "radio" && item.type != "checkbox") {
-            $(":input:last", qbox).focus(function(){
-                if (showhints) {
-                    $("#hints p").css('display','none');
-                    $("#qHINT"+this.id.substring(3)).show();
-                }
-            });
-            $(":input:last", qbox).blur(function(){
-                $("#qHINT"+this.id.substring(3)).css('display','none');
-            });
-            // validation
-            $(":input:last", qbox).change(function(){
-                validateField(this);
-            });
-        }
-        else { // radios & checkboxes
-            $("input:last", qbox).parent().mouseover(function(){
-                if (showhints) {
-                    var hinton=$("#hints > p:not(:hidden)");
-                    statusupdate(1,"Verstecke: "+((hinton.length > 0)?"#qID"+hinton.attr("id").substring(5):"-")+" | Zeige: "+"#qHINT"+$(this).children("input:first").attr("name").substring(3));
-                    if (hinton.length > 0) $("#qID"+hinton.attr("id").substring(5)).blur();
-                    $("#qHINT"+$(this).children("input:first").attr("name").substring(3)).show();
-                }
-            });
-            $("input:last", qbox).parent().mouseout(function(){
-                $("#qHINT"+$(this).children("input:first").attr("name").substring(3)).css('display','none');
-            });
-            // validation
-            $("input[name='qID"+item.id+"']", qbox).change(function(){
-                validateField($("input:first", this.parentNoded)[0]);
-            });
-        }
+    // for each question
+    $.each(questionArray, function(i, item) {
+        showQuestion(item, qbox);
     });
     qbox.append('<input type="button" class="ui-button next" value="next" onclick="sendAnswers(\''+topicID+'\')"/>');
     $('.datefield', qbox).datepicker();
     if(!langChange) {
         updateTopicList(topicName, topicID);
+    }
+}
+
+/**
+ * Displays a question depending on type
+ * @param {object} question json object representing the question
+ * @param {object} qcontent div inside topic div
+ */
+function showQuestion(item, qbox){
+    var newline = false;
+    // pre append formatting
+    var output = "<p><label for=\"qID"+item.id+"\">"+item.question+"</label>";
+    // select
+    if (item.type == "select") {
+        output += "<select id=\"qID"+item.id+"\" name=\"qID"+item.id+"\">";
+        output += "<option value=\"\" selected=\"selected\">-- please choose --</option>";
+        $.each(item.answers, function(answindex, answer) {
+            output += "<option value=\""+answer+"\">"+answer+"</option>";
+        });
+        output += "</select>";
+    }
+    else if (item.type == "radio" || item.type == "checkbox") {
+        newline = radioCheckNewLine(item.answers);
+        $.each(item.answers, function(answindex, answer) {
+            if (newline) output += "<br/>";
+            output += "<input name=\"qID"+item.id+"\" type=\""+item.type+"\" value=\""+answer+"\">";
+            output += "<span onclick=\"$(this).prev().click()\">"+answer+"</span>";
+        });
+    }
+    else if (item.type == "date") {
+        output += "<input type=\"text\" class=\"datefield\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
+    }
+    else if (item.type == "int") {
+        output += "<input type=\"text\" class=\"integer\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
+    }
+    else if (item.type == "float") {
+        output += "<input type=\"text\" class=\"float\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
+    }
+    else output += "<input type=\""+item.type+"\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
+    output += "</p>";
+    qbox.append(output);
+    if (item.hint) $("#hints").append("<p id=\"qHINT"+item.id+"\" class=\"hint\">"+item.hint+"</p>");
+    // post append formatting
+    if (item.optional) $("p:last :input:first", qbox).addClass("optional");
+    // focus and blur does not work on radio/checkbox
+    if (item.type != "radio" && item.type != "checkbox") {
+        $(":input:last", qbox).focus(function(){
+            if (showhints) {
+                $("#hints p").css('display','none');
+                $("#qHINT"+this.id.substring(3)).show();
+            }
+        });
+        $(":input:last", qbox).blur(function(){
+            $("#qHINT"+this.id.substring(3)).css('display','none');
+        });
+        // validation
+        $(":input:last", qbox).change(function(){
+            validateField(this);
+        });
+    }
+    else { // radios & checkboxes
+        $("input:last", qbox).parent().mouseover(function(){
+            if (showhints) {
+                var hinton=$("#hints > p:not(:hidden)");
+                statusupdate(1,"Verstecke: "+((hinton.length > 0)?"#qID"+hinton.attr("id").substring(5):"-")+" | Zeige: "+"#qHINT"+$(this).children("input:first").attr("name").substring(3));
+                if (hinton.length > 0) $("#qID"+hinton.attr("id").substring(5)).blur();
+                $("#qHINT"+$(this).children("input:first").attr("name").substring(3)).show();
+            }
+        });
+        $("input:last", qbox).parent().mouseout(function(){
+            $("#qHINT"+$(this).children("input:first").attr("name").substring(3)).css('display','none');
+        });
+        // validation
+        $("input[name='qID"+item.id+"']", qbox).change(function(){
+            validateField($("input:first", this.parentNoded)[0]);
+        });
     }
 }
 
@@ -499,17 +497,13 @@ function qunwarn(obj) {
  * @param {string} topic name of the topic (must equal the id of the DIV)
  */
 function updateTopicList(topicName, topicID) {
-    // first run:
-    // topic = topic.replace(/_/, " ");
-    //if ($("#questionlinklist li:first").text() == "not loaded yet") $("#questionlinklist").empty();    
     $("#questionlinklist").append("<li>"+topicName+"</li>").click(function() {
-        //var t = topic; // topic
-        //if (t.indexOf(" ") != -1) t = t.replace(/\s/, "_");
-        $("#questions div").hide();
+        // TODO : debug
+        $("#questionlist div").hide();
         var d = $("#"+topicID);
         d.show();
         d.children().show();
-        $("#hints").show();
+        // $("#hints").show();
     });
 }
 
@@ -519,15 +513,11 @@ function updateTopicList(topicName, topicID) {
  */
 function showPolicyRules(rules) {
     var policyList = $("#policylist");
-    // policyList.remove();
-    //policyList.append("<ol style=\"list-style-type:decimal\">")
     policyrules = [];
     $.each(rules, function(ruleindex, r) {
-       //policyList.append("<li>"+(ruleindex+1)+" - "+r+"</li>"); 
        policyList.append('<li><input type="checkbox" name="'+r+'" />'+r+'</li>');       
        policyrules.push(r);
-    });
-    //policyList.append("</ol>");    
+    });   
     $("#policyrules").append('<input type="button" class="ui-button evaluate" value="Evaluate" onclick="evaluateGraph()"/>');
 }
 
@@ -538,7 +528,7 @@ function showPolicyRules(rules) {
 function showArgGraph(path) {
     // set global path to lkif argument graph
     argGraph = path;
-    var json = {"showgraph" : path, "height" : svgHeight, "width" : svgWidth};
+    var json = {"showgraph" : path};
     doAJAX(json);
 }
 
@@ -547,42 +537,52 @@ function showArgGraph(path) {
  * @param {string} path path to svg with argument graph
  */
 function showSVGGraph(path) {
-    //$("#graph").html('<object data=' + path + ' width="'+svgWidth+'" height="'+svgHeight+'" type="image/svg+xml" />');
-    var g = $("#graph");
-    g.svg();
-    //var onLoad = function(svgWrapper) {
-        //alert(svgWrapper);
-        //svgWrapper.configure({height: "700", width: "1000"}, true);
-    //};
-    g.svg('get').load(path);     
-    svgScale = 1;
+    var graphBox = $("#graph");
+    graphBox.svg();    
+    graphBox.svg('get').load(path, onSVGLoad);     
+}
+
+/**
+ * function called after svg is loaded; binds mousewheel and drag
+ * events to svg for zoom and dragging
+ * @param {svgWrapper} the svg wrapper
+ */
+function onSVGLoad(svgW) {
+           
+    svgWrapper = svgW;
     
-    g.bind("mousewheel", function(event, delta){
+    // reset scale and translate
+    svgScale = 1;
+    translate="translate(0, 0)";
+        
+    // mousewheel zoom
+    $("#graph0").bind("mousewheel", function(event, delta){
         if(delta > 0) {
             // zoom in
-            svgScale += 0.1;
-            //mainGroup.animate({svgTransform: 'scale('+svgScale+')'}, 2000);
-            $("#graph0").animate({svgTransform: 'scale('+svgScale+')'}, 100);
-            //mainGroup.setAttribute("transform", 'scale('+svgScale+')');
+            svgScale = svgScale * 1.1;
+            $("#graph0").animate({svgTransform: translate+' scale('+svgScale+')'}, 100);
         } else {
             // zoom out
-            svgScale -= 0.1;
-            $("#graph0").animate({svgTransform: 'scale('+svgScale+')'}, 100);
-            // mainGroup.animate({svgTransform: 'scale('+svgScale+')'}, 2000);
-            //mainGroup.setAttribute("transform", 'scale('+svgScale+')');
+            svgScale = svgScale * 0.9;
+            $("#graph0").animate({svgTransform: translate+' scale('+svgScale+')'}, 100);
         }
         $("html:not(:animated), body:not(:animated)").animate({scrollTop: 0}, 500);  
         return true;
     });
     
-    g.bind("drag", function(event){
-        var translate = 'translate(' + Math.round(event.offsetX/30)*20 + ', '+ Math.round(event.offsetY/30)*20 + ')';  
-        //$("#graph0").animate({svgTransform: translate + ' scale(' + svgScale + ')'}, 10);  
-        $("#graph").svg("get").getElementById("graph0").setAttribute("transform", translate + ' scale(' + svgScale + ')');  
+    // drag
+    $("#graph0").draggable({
+        drag : function(event, ui){  
+                    dragSpeed = 1.8 // a bit slow under firefox, but fast in chrome
+                    translate = 'translate(' + (ui.position.left * dragSpeed) + ', '+ (ui.position.top * dragSpeed) + ')';   
+                    svgWrapper.getElementById("graph0").setAttribute("transform", translate + ' scale(' + svgScale + ')');  
+                }
     });
     
-    //$("#graph").html('<embed src=' + path + ' width="1000" height="700" type="image/svg+xml" codebase="http://www.adobe.com/svg/viewer/install/" />');
-    //$("#graph").html("<iframe src=" + path + " width=\"1000\" height=\"700\" type=\"image/svg+xml\" />");
+    $("#tabs-1").height($("#wrapper").height());
+    
+   
+    
 }
 
 /**

@@ -95,7 +95,7 @@ public class CarneadesServiceManager implements CarneadesService{
      * @param width width of svg
      * @return path to svg file
      */
-    public CarneadesMessage getSVGFromGraph(String argGraph, int height, int width) {        
+    public CarneadesMessage getSVGFromGraph(String argGraph) {        
         
         CarneadesMessage cm = new CarneadesMessage();
         
@@ -131,7 +131,7 @@ public class CarneadesServiceManager implements CarneadesService{
             // convert graph to svg
             // TODO : use options for export     
             Keyword layoutKW = Keyword.intern("layout");
-            Keyword radialKW = Keyword.intern("radial");
+            Keyword radialKW = Keyword.intern("hierarchical");
             //Keyword heightKW = Keyword.intern("height");
             //Keyword widthKW = Keyword.intern("width");
             Keyword treeifyKW = Keyword.intern("treeify");

@@ -19,7 +19,6 @@ import org.fokus.carneades.api.CarneadesMessage;
 import org.fokus.carneades.api.MessageType;
 import org.fokus.carneades.api.Statement;
 import org.fokus.carneades.common.EjbLocator;
-import org.fokus.carneades.simulation.Translator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,9 +71,7 @@ public class PolicyEvaluationServlet extends HttpServlet {
                 jsonOUT = handlePolicyRules(service, jsonIN.getString("policyrules"));
             } else if(jsonIN.has("showgraph")) {
                 String agPath = jsonIN.getString("showgraph");
-                int height = jsonIN.getInt("height");
-                int width = jsonIN.getInt("width");
-                jsonOUT = handleShowGraph(service, agPath, height, width);
+                jsonOUT = handleShowGraph(service, agPath);
             } else if(jsonIN.has("evaluate")) {
                 jsonOUT = handleEvaluate(service, jsonIN.getJSONObject("evaluate"));                
             } else if (jsonIN.has("abduction")) {
@@ -251,13 +248,13 @@ public class PolicyEvaluationServlet extends HttpServlet {
      * @throws JSONException 
      */
     // TODO : maybe height and weight are obsolete?
-    private JSONObject handleShowGraph(CarneadesService service, String agPath, int height, int width) throws JSONException {
+    private JSONObject handleShowGraph(CarneadesService service, String agPath) throws JSONException {
         
         JSONObject o = new JSONObject();
         
         log.info("showGraph : "+agPath);
         
-        CarneadesMessage cm = service.getSVGFromGraph(agPath, height, width);
+        CarneadesMessage cm = service.getSVGFromGraph(agPath);
         if(MessageType.SVG.equals(cm.getType())) {
             String localPath = cm.getAG();
             File f = new File(localPath);            

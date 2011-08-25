@@ -60,6 +60,6 @@ public interface CarneadesService {
      * @param width width of svg
      * @return path to svg file
      */
-    CarneadesMessage getSVGFromGraph(String argGraph, int height, int width);
+    CarneadesMessage getSVGFromGraph(String argGraph);
 
 }
