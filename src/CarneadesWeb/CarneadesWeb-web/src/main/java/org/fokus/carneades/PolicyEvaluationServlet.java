@@ -53,7 +53,7 @@ public class PolicyEvaluationServlet extends HttpServlet {
             log.info("request in Policy Evaluation Servlet");
             
             // INPUT
-            session = request.getSession();
+            session = request.getSession();            
             // incoming request
             String jsonINString = URLDecoder.decode(request.getParameter("json"),"UTF-8");
             JSONObject jsonIN = new JSONObject(jsonINString);
@@ -71,7 +71,7 @@ public class PolicyEvaluationServlet extends HttpServlet {
                 jsonOUT = handlePolicyRules(service, jsonIN.getString("policyrules"));
             } else if(jsonIN.has("showgraph")) {
                 String agPath = jsonIN.getString("showgraph");
-                jsonOUT = handleShowGraph(service, agPath);
+                jsonOUT = handleShowGraph(service, agPath, request.getContextPath());
             } else if(jsonIN.has("evaluate")) {
                 jsonOUT = handleEvaluate(service, jsonIN.getJSONObject("evaluate"));                
             } else if (jsonIN.has("abduction")) {
@@ -248,17 +248,17 @@ public class PolicyEvaluationServlet extends HttpServlet {
      * @throws JSONException 
      */
     // TODO : maybe height and weight are obsolete?
-    private JSONObject handleShowGraph(CarneadesService service, String agPath) throws JSONException {
+    private JSONObject handleShowGraph(CarneadesService service, String agPath, String contextPath) throws JSONException {
         
         JSONObject o = new JSONObject();
         
-        log.info("showGraph : "+agPath);
+        log.info("showGraph : "+agPath+" - "+contextPath);
         
         CarneadesMessage cm = service.getSVGFromGraph(agPath);
         if(MessageType.SVG.equals(cm.getType())) {
             String localPath = cm.getAG();
-            File f = new File(localPath);            
-            String webPath = "http://localhost:8080/CarneadesWeb-web/svg/"+f.getName();
+            File f = new File(localPath);                
+            String webPath = contextPath+"/svg/"+f.getName();
             o.put("graphpath", webPath);
         } else {
             o.put("error", "unexpected message type (SVG expected) : "+cm.getType().name());
