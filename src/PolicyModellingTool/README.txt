@@ -1,16 +1,14 @@
 ;;; Copyright © 2010 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-DEPRECATED - please use PolicyModellingTool
-
-Carneades Web Project
+IMPACT Policy Modelling Tool
 
 Implementation of the Policy Modelling Tool for the European Framework 7 project IMPACT.
 
 Interactive argument construction and evaluation using the Carneades argumentation library
 
 
-Installation:
+Installation (using Tomcat):
 
 - download & install git
   - http://git-scm.com/
@@ -25,24 +23,24 @@ Installation:
 - download & install maven (tested with maven 2.2.1):
   - http://maven.apache.org/download.html
   
-- download & install jboss 5.1.0 GA:
-  - http://sourceforge.net/projects/jboss/files/JBoss/JBoss-5.1.0.GA/
-  - remove xercesImpl.jar from jboss installation : jboss-5.1.0.GA/lib/endorsed/xercesImpl.jar
+- download & install Apache Tomcat 7.0
+  - http://tomcat.apache.org/download-70.cgi
   
 - compile sources using maven 
   - compile Carneades in src/ :  mvn install
-  - compile CarneadesWeb in src/CarneadesWeb/ : mvn install
+  - compile PMT in src/PolicyModellingTool/ : mvn install
   
 - copy test files to /tmp/:
-  - src/CarneadesWeb/test/IMPACT.xml 
-  - src/CarneadesWeb/test/translations.xml
+  - src/PolicyModellingTool/test/IMPACT.xml 
+  - src/PolicyModellingTool/test/translations.xml
   
-- copy EAR to jboss deployment:
-  - src/CarneadesWeb/CarneadesWeb-ear/target/CarneadesWeb-ear.ear
-  - to: jboss-5.1.0.GA/server/default/deploy/
+- copy WAR to Tomcat deployment:
+  - src/PolicyModellingTool/target/PolicyModellingTool.war
+  - to: apache-tomcat-7.0.x/webapps/
   
-- run jboss:
-  - jboss-5.1.0.GA/bin/run
+- run Tomcat:
+  - apache-tomcat-7.0.x/bin/catalina run
   
 - open browser:
-  - http://localhost:8080/CarneadesWeb-web/index.html
+  - http://localhost:8080/PolicyModellingTool
+ 
