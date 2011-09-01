@@ -1,7 +1,7 @@
 
 <lkif>
    <argument-graphs>
-      <argument-graph id="NewGraph" title="New Graph" main-issue="">
+      <argument-graph id="NewGraph" title="New Graph" main-issue="s11521">
          <statements>
             <statement id="s11521" value="unknown" assumption="true" standard="BA">
                <s>Harry is a British subject.</s>

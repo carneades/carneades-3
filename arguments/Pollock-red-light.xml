@@ -1,7 +1,7 @@
 
 <lkif>
    <argument-graphs>
-      <argument-graph id="NewGraph" title="New Graph" main-issue="">
+      <argument-graph id="NewGraph" title="New Graph" main-issue="s11395">
          <statements>
             <statement id="s11395" value="unknown" assumption="true" standard="BA">
                <s>The object is red.</s>
