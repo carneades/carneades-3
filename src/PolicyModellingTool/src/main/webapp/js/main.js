@@ -122,6 +122,9 @@ function doAJAX(jsondata) {
             // getting solution
             else if (data.solution) {
                 showSolution(data.solution, data.path);
+            } else if (data.session) {
+                // alert(data.session);
+                resetContent();
             }
             else if (data.language) {
                 // alert("Language set to: "+data.language);
@@ -608,4 +611,23 @@ function evaluateGraph() {
 function showError(error) {
     // TODO : handle errors
     alert(error);
+}
+
+// calling server to reset JSSEIONID
+function resetSession() {
+    var j = {resetSession : true};
+    doAJAX(j);
+}
+
+// clean DOM after server response
+function resetContent() {
+    // clear question nav
+    $('#questionlinklist').empty();
+    // clear question forms
+    $('#questionlist').empty();
+    // clear question hints
+    $('#hints').empty();
+    $('#hints').append('<h4>hints</h4>');
+    // go to first tab
+    $("#tabs a[href='#tabs-1']").click(); 
 }
