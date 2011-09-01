@@ -18,7 +18,7 @@ Here's a brief description of the files in this directory:
 
 # Running the Application 
 
-1. From the [Carneades download directory]https://github.com/carneades/carneades/downloads) on Github, download the latest versions of:
+1. From the [Carneades download directory](https://github.com/carneades/carneades/downloads) on Github, download the latest versions of:
 
     - [The Carneades Editor](https://github.com/downloads/carneades/carneades/carneades-editor-1.0.1.jar),
     - [Walton.zip](https://github.com/downloads/carneades/carneades/Walton.zip)
@@ -37,7 +37,7 @@ Here's a brief description of the files in this directory:
 
 6. Open the "impact-kb.xml" file in the Carneades Editor, using the File/Open command.
 
-7. Select the box in the right panel containing the text "mayUseLicenseTemplate CarneadesEngine GPL_Template".  This the main issue we want to analyze.
+7. Select the box in the right panel containing the text "mayUseLicenseTemplate CarneadesEngine GPL_Template".  This is the main issue we want to analyze.
 
 8. Use the "Assistant/Find Arguments" command to search for arguments pro and con this issue. Set the maximum number of nodes to visit in the search space to 100 and the maximum number of turns taken by pro and con to 3. Then click on the "next" button.  Wait for the search process to complete. Then click on the "finish" button.  The arguments found should now be displayed in the argument map.
 
