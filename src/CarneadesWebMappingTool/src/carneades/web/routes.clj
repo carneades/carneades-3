@@ -29,7 +29,7 @@
       ;; (wrap-keyword-params) not working?
       (wrap-base-url)))
 
-(defonce server (run-jetty #'main-routes
-                           {:join? false
-                            :port 8080}))
+;; (defonce server (run-jetty #'main-routes
+;;                            {:join? false
+;;                             :port 8080}))
 
