@@ -140,7 +140,7 @@ public class PolicySimulation extends HttpServlet {
                     // get kb for discussion
                     String url = request.getRequestURL().toString();                 
                     String servletPath = request.getServletPath();
-                    String kb = url.replace(servletPath, "/kb/IMPACT.xml");
+                    String kb = url.replace(servletPath, "/kb/")+"IMPACT.xml";
                     log.info("kb path: "+servletPath + " - " + kb);
                     //List<Question> qList = new ArrayList<Question>();
                     session.setAttribute(QUERY, query);
@@ -168,6 +168,10 @@ public class PolicySimulation extends HttpServlet {
                     jsonOUT.put("error", e.getMessage());
                 }
                 
+            } else if (jsonIN.has("resetSession")){
+                session.invalidate();
+                session = request.getSession(true);
+                jsonOUT.put("session", session.getId());
             } else if (jsonIN.has("language")) {
                 // change language
                 String newLang = jsonIN.getString("language");

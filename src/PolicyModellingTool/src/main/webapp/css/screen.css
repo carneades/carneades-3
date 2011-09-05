@@ -33,6 +33,12 @@ h2 {
     border: 0;
     background: url(../images/Logo_300pixel.png) no-repeat center;
 }
+#ResetHeader {
+    
+}
+#header li {
+    
+}
 #dialog_link {padding: .4em 1em .4em 20px; text-decoration: none; position: relative;}
 #dialog_link span.ui-icon {margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
 #progressbar { clear:both; }
@@ -43,6 +49,7 @@ h2 {
 }
 #locatebox {
         padding: 2px;
+        padding-left: 5px;
         position:absolute; right: 10px; top: 8px;
 }
 /* questions */
