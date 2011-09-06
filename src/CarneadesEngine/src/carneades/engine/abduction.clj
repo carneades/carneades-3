@@ -175,6 +175,38 @@ alltrue is true if coll is empty or if each value is equal to *verum*"
 (defn true-filter [col]
   (set (remove true? col)))
 
+(defmethod ps-in-label :se [ag asm s]
+  {:pre [(set? asm)]}
+  (letfn [(collect-arguments-labels-disj
+            [f arguments]
+            (collect-labels-disj
+              #(f ag asm %) arguments))]
+    (let [pro-args (pro-arguments ag s)
+          [pro-labels pro-labels-true]
+          (collect-arguments-labels-disj argument-in-label pro-args)          
+          l (cond 
+              pro-labels-true *verum*
+              :else (conj pro-labels #{s}))]
+      l
+      )))
+
+(defmethod ps-out-label :se [ag asm s]
+  {:pre [(set? asm)]}
+  (letfn [(collect-arguments-labels-conj
+            [f arguments]
+            (collect-labels-conj-break #(f ag asm %) arguments))]
+    (let [pro-args (pro-arguments ag s)
+          [pro-labels pro-labels-true pro-labels-onefalse]
+          (collect-arguments-labels-conj argument-out-label pro-args)       
+          l (cond 
+              pro-labels-onefalse *falsum*                            
+              pro-labels-true *verum*
+              :else (set (map true-filter
+                            (combine-conjunction-of-dnf
+                              pro-labels))))]
+      l
+      )))
+
 (defmethod ps-in-label :dv [ag asm s]
   {:pre [(set? asm)]}
   (letfn [(collect-arguments-labels-disj
@@ -200,15 +232,6 @@ alltrue is true if coll is empty or if each value is equal to *verum*"
                             (combine-conjunction-of-dnf
                               (conj con-labels pro-labels))))
                       #{s}))]
-;      (println "------------")
-;      (println "pro-goals for       :" (statement-formatted s))
-;      (println "pro-labels          :" pro-labels)
-;      (println "pro-labels-true     :" pro-labels-true)
-;      (println "con-labels          :" con-labels)
-;      (println "con-labels-true     :" con-labels-true)
-;      (println "con-labels-one-false:" con-labels-onefalse)
-;      (println "label               :" (format-label l))
-;      (println "------------")
       l
       )))
 
@@ -232,21 +255,6 @@ alltrue is true if coll is empty or if each value is equal to *verum*"
                             (union con-labels
                               (combine-conjunction-of-dnf pro-labels))))
                       #{(statement-complement s)}))]
-;      (println "------------")
-;      (println "con-goals for       :" (statement-formatted s))
-;      (println "pro-labels          :" (count pro-labels))
-;      (println "pro-labels          :" (map format-label pro-labels))
-;      ;(println "pro-labels          :" pro-labels)
-;      (println "combined pro-labels :" (count (combine-conjunction-of-dnf pro-labels)))
-;      (println "combined pro-labels :" (format-label (combine-conjunction-of-dnf pro-labels)))
-;      ;(println "combined pro-labels :" (combine-conjunction-of-dnf pro-labels))
-;      (println "pro-labels-true     :" pro-labels-true)
-;      (println "pro-labels-one-false:" pro-labels-onefalse)
-;      (println "con-labels          :" con-labels)
-;      (println "con-labels-true     :" con-labels-true)
-;      (println "label               :" (count l))
-;      (println "label               :" (format-label l))
-;      (println "------------")
       l
       )))
 
@@ -275,16 +283,6 @@ alltrue is true if coll is empty or if each value is equal to *verum*"
                                       pro-label
                                       )
                                     )))]
-;          (println "------------")
-;          (println "pro-goals for       :" (statement-formatted s))
-;          (println "pro-label           :" pro-label)
-;          ;(println "pro-labels-true     :" pro-labels-true)
-;          (println "con-labels          :" con-labels)
-;          ;(println "con-labels-true     :" con-labels-true)
-;          (println "one-false           :" onefalse)
-;          (println "collected-labels    :" collectedlabels)
-;          ;(println "label               :" (format-label l))
-;          (println "------------")
           (cond (empty? collectedlabels) *verum*
             (= collectedlabels *falsum*) (recur (set (next pro-args)) labels)
             :else (recur (set (next pro-args))
@@ -309,13 +307,6 @@ alltrue is true if coll is empty or if each value is equal to *verum*"
                     [con-labels con-labels-true con-labels-false]
                     (collect-labels-disj #(argument-in-label ag asm %)
                       greater-cons)]
-;                (println "pro-arg            :" (:id pro-arg))
-;                (println "argument-out-label :" pro-label)
-;                (println "verum?             :" (= pro-label *verum*))
-;                (println "falsum?            :" (= pro-label *falsum*))
-;                (println "con-labels         :" (map format-label con-labels))
-;                (println "con-labels-false   :" con-labels-false)
-;                (println "con-labels-true    :" con-labels-true)
                 (cond
                   (or (= pro-label *verum*) con-labels-true) (recur (set (next pro-args)) labels),
                   (and (= pro-label *falsum*) con-labels-false) #{#{(statement-complement s)}},
@@ -326,12 +317,137 @@ alltrue is true if coll is empty or if each value is equal to *verum*"
                   :else (recur (set (next pro-args))
                           (conj labels
                             (union pro-label con-labels)))))))]
-;    (println "------------")
-;    (println "out-label for       :" (statement-formatted s))
-;    (println "pro-arguments       :" (map :id pro-args))
-;    (println "con-arguments       :" (map :id con-args))
-;    (println "label               :" (format-label l))
-;    (println "------------")
+    l))
+
+(defmethod ps-in-label :cce [ag asm s]
+  {:pre [(set? asm)]}
+  ;(println "computing pe-in-label for" s)
+  (let [alpha 0.5
+        beta 0.3
+        pro-args (filter (fn [a] (> (sget a :weight) alpha)) (pro-arguments ag s))
+        con-args (con-arguments ag s)]
+    (loop [pro-args pro-args
+           labels #{}]
+      (if (empty? pro-args)
+        (conj labels #{s})
+        (let [pro-arg (first pro-args)
+              w (sget pro-arg :weight)
+              greater-cons (filter #(<= (- w (sget % :weight)) beta) con-args)
+              pro-label (argument-in-label ag asm pro-arg)
+              [con-labels _ onefalse] (collect-labels-conj-break
+                                        #(argument-out-label ag asm %)
+                                        greater-cons)
+              collectedlabels (if onefalse
+                                *falsum*
+                                (combine-conjunction-of-dnf
+                                  (if (= pro-label *verum*)
+                                    (remove #(= *verum* %) con-labels)
+                                    (conj (remove #(= *verum* %) con-labels)
+                                      pro-label
+                                      )
+                                    )))]
+          (cond (empty? collectedlabels) *verum*
+            (= collectedlabels *falsum*) (recur (set (next pro-args)) labels)
+            :else (recur (set (next pro-args))
+                    (union labels collectedlabels))))))))
+
+(defmethod ps-out-label :cce [ag asm s]
+  {:pre [(set? asm)]}
+  ;(println "computing pe-out-label for" s)
+  (let [alpha 0.5
+        beta 0.3
+        pro-args (filter (fn [a] (> (sget a :weight) alpha)) (pro-arguments ag s))
+        con-args (con-arguments ag s)
+        l (loop [pro-args pro-args
+                 labels #{}]
+            (if (empty? pro-args)
+              (if (empty? labels)
+                *verum*
+                (conj (combine-conjunction-of-dnf labels)
+                    #{(statement-complement s)}))
+              (let [pro-arg (first pro-args)
+                    w (sget pro-arg :weight)
+                    greater-cons (filter #(<= (- w (sget % :weight)) beta) con-args)
+                    pro-label (argument-out-label ag asm pro-arg)
+                    [con-labels con-labels-true con-labels-false]
+                    (collect-labels-disj #(argument-in-label ag asm %)
+                      greater-cons)]
+                (cond
+                  (or (= pro-label *verum*) con-labels-true) (recur (set (next pro-args)) labels),
+                  (and (= pro-label *falsum*) con-labels-false) #{#{(statement-complement s)}},
+                  (= pro-label *falsum*) (recur (set (next pro-args))
+                                            (conj labels con-labels)),
+                  con-labels-false (recur (set (next pro-args))
+                                     (conj labels pro-label)),
+                  :else (recur (set (next pro-args))
+                          (conj labels
+                            (union pro-label con-labels)))))))]
+    l))
+
+(defmethod ps-in-label :brd [ag asm s]
+  {:pre [(set? asm)]}
+  (let [alpha 0.5
+        beta 0.3
+        gamma 0.2
+        pro-args (filter (fn [a] (> (sget a :weight) alpha)) (pro-arguments ag s))
+        con-args (con-arguments ag s)]
+    (loop [pro-args pro-args
+           labels #{}]
+      (if (empty? pro-args)
+        (conj labels #{s})
+        (let [pro-arg (first pro-args)
+              w (sget pro-arg :weight)
+              greater-cons (filter #(or (<= (- w (sget % :weight)) beta) (> (sget % :weight) gamma)) con-args)
+              pro-label (argument-in-label ag asm pro-arg)
+              [con-labels _ onefalse] (collect-labels-conj-break
+                                        #(argument-out-label ag asm %)
+                                        greater-cons)
+              collectedlabels (if onefalse
+                                *falsum*
+                                (combine-conjunction-of-dnf
+                                  (if (= pro-label *verum*)
+                                    (remove #(= *verum* %) con-labels)
+                                    (conj (remove #(= *verum* %) con-labels)
+                                      pro-label
+                                      )
+                                    )))]
+          (cond (empty? collectedlabels) *verum*
+            (= collectedlabels *falsum*) (recur (set (next pro-args)) labels)
+            :else (recur (set (next pro-args))
+                    (union labels collectedlabels))))))))
+
+(defmethod ps-out-label :brd [ag asm s]
+  {:pre [(set? asm)]}
+  ;(println "computing pe-out-label for" s)
+  (let [alpha 0.5
+        beta 0.3
+        gamma 0.2
+        pro-args (filter (fn [a] (> (sget a :weight) alpha)) (pro-arguments ag s))
+        con-args (con-arguments ag s)
+        l (loop [pro-args pro-args
+                 labels #{}]
+            (if (empty? pro-args)
+              (if (empty? labels)
+                *verum*
+                (conj (combine-conjunction-of-dnf labels)
+                    #{(statement-complement s)}))
+              (let [pro-arg (first pro-args)
+                    w (sget pro-arg :weight)
+                    greater-cons (filter #(or (<= (- w (sget % :weight)) beta) (> (sget % :weight) gamma))  con-args)
+                    pro-label (argument-out-label ag asm pro-arg)
+                    [con-labels con-labels-true con-labels-false]
+                    (collect-labels-disj #(argument-in-label ag asm %)
+                      greater-cons)]
+                (cond
+                  (or (= pro-label *verum*) con-labels-true) (recur (set (next pro-args)) labels),
+                  (and (= pro-label *falsum*) con-labels-false) #{#{(statement-complement s)}},
+                  (= pro-label *falsum*) (recur (set (next pro-args))
+                                            (conj labels con-labels)),
+                  con-labels-false (recur (set (next pro-args))
+                                     (conj labels pro-label)),
+                  :else (recur (set (next pro-args))
+                          (conj labels
+                            (union pro-label con-labels)))))))]
     l))
 
 (defn assume-decided-statements
