@@ -2,9 +2,7 @@
   (:use compojure.core
         carneades.web.views
         [hiccup.middleware :only (wrap-base-url)]
-        ring.adapter.jetty
         ring.middleware.session
-        ring.middleware.keyword-params
         ring.middleware.params)
   (:require [compojure.route :as route]
             [compojure.handler :as handler]
@@ -15,7 +13,7 @@
   (GET "/" [] (index-page))
   (mp/wrap-multipart-params
    (POST "/files" {params :params session :session}
-         (upload-file (get params "lkif-file") session)))
+         (upload-file (:lkif-file params) session)))
   (wrap-params
    (GET "/files" {params :params session :session} (view-file session params)))
   (GET "/session" {session :session} (view-session session))

@@ -20,7 +20,7 @@
 
 (defn index-page []
   (html5
-   (map include-css ["css/custom-theme/jquery-ui-1.8.14.custom.css"
+   (map include-css ["/css/custom-theme/jquery-ui-1.8.14.custom.css"
                      "/css/screen.css"
                      "/css/jquery.svg.css"])
    (include-all-js)
@@ -31,7 +31,7 @@
       [:div {:id "header" :class "ui-widget-header ui-corner-top"}
        [:h1 "LKIF Argument Mapping Testbed"]]
       [:div {:id "filechooser"}
-       [:form {:action "/files" :method "POST" :enctype "multipart/form-data" :target "lkif-source"}
+       [:form {:action "/CarneadesWebMappingTool/files" :method "POST" :enctype "multipart/form-data" :target "lkif-source"}
         "LKIF to upload:"
         (file-upload "lkif-file")
         [:button  {:class "start" :type "submit"} "Upload"]]]
@@ -71,10 +71,8 @@
 
 (defn output-svg
   [session params]
-  ;; (prn "params =")
-  ;; (prn params)
   (let [lkif (import-lkif (input-stream (.getBytes (:lkif-file session))))
-        {:keys [layout treeify radius depth]} (keywordify params)
+        {:keys [layout treeify radius depth]} params;; (keywordify params)
         pa (merge {:layout :radial}
                   {:layout (keyword (s/lower-case layout))}
                   (if (nil? treeify)

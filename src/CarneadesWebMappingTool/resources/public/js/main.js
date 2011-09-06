@@ -14,7 +14,7 @@ $(function(){ // init
 function loadSVG() {
 
     var graphBox = $("#graphbox");
-    var path = "/files?layout="+svgLayout+"&treeify="+svgTreeify;
+    var path = "/CarneadesWebMappingTool/files?layout="+svgLayout+"&treeify="+svgTreeify;
 
     graphBox.svg();    
     graphBox.svg('get').load(path, onSVGLoad);     
