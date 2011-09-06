@@ -167,7 +167,9 @@
   -->
   <xs:element name="s" substitutionGroup="Wff">
     <xs:complexType mixed="true">
-      <xs:group minOccurs="0" maxOccurs="unbounded" ref="Term"/>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="Term"/>
+      </xs:sequence>
       <xs:attribute name="pred" type="xs:anyURI"/>
       <xs:attribute name="assumable" type="xs:boolean"/>
     </xs:complexType>
@@ -179,7 +181,7 @@
     Wffs may also be variables, i.e. variables may range over Wffs, to
     allow inference rules such as modus ponens to be represented.
   -->
-  <xs:element name="Wff" abstract="true"/>
+  <xs:element name="Wff" abstract="true" substitutionGroup="Term"/>
   <xs:element name="or" substitutionGroup="Wff">
     <xs:complexType>
       <xs:sequence>
@@ -246,22 +248,14 @@
     </xs:complexType>
   </xs:element>
   <!-- Terms include wffs, to support meta-level statements -->
-  <xs:group name="Term">
-    <xs:choice>
-      <xs:element ref="v"/>
-      <xs:element ref="i"/>
-      <xs:element ref="c"/>
-      <xs:element ref="expr"/>
-      <xs:element ref="Wff"/>
-    </xs:choice>
-  </xs:group>
+  <xs:element name="Term" abstract="true"/>
   <xs:element name="v" substitutionGroup="Wff" type="xs:Name"/>
-  <xs:element name="i">
+  <xs:element name="i" substitutionGroup="Term">
     <xs:complexType mixed="true">
       <xs:attribute name="value" use="required" type="xs:anyURI"/>
     </xs:complexType>
   </xs:element>
-  <xs:element name="c">
+  <xs:element name="c" substitutionGroup="Term">
     <xs:simpleType>
       <xs:union memberTypes="xs:Name xs:anyURI xs:string xs:boolean xs:integer xs:float"/>
     </xs:simpleType>
@@ -272,9 +266,11 @@
     declared in OWL ontologies.  Standard LKIF functions and operators
     could be part of the ontology of basic legal concepts.
   -->
-  <xs:element name="expr">
+  <xs:element name="expr" substitutionGroup="Term">
     <xs:complexType>
-      <xs:group minOccurs="0" maxOccurs="unbounded" ref="Term"/>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="Term"/>
+      </xs:sequence>
       <xs:attribute name="functor" use="required" type="xs:anyURI"/>
     </xs:complexType>
   </xs:element>
