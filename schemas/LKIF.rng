@@ -348,7 +348,6 @@
   <!-- Terms include wffs, to support meta-level statements -->
   <define name="Term">
     <choice>
-      <ref name="Variable"/>
       <ref name="Individual"/>
       <ref name="Constant"/>
       <ref name="Expression"/>

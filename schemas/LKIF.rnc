@@ -129,7 +129,7 @@ grammar {
      }
     
     # Terms include wffs, to support meta-level statements
-    Term = Variable | Individual | Constant | Expression | Wff
+    Term = Individual | Constant | Expression | Wff
     
     Variable = element v { xsd:Name }
     
