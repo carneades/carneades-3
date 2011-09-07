@@ -10,4 +10,4 @@
      [:h1 "Demo applications available: "]
      [:a {:href "/PolicyModellingTool"} "Policy Modelling and Analysis"]
      [:br]
-     [:a {:href "/CarneadesWebGUI"} "LKIF visualization"]]))
+     [:a {:href "/CarneadesWebMappingTool"} "LKIF visualization (Clojure)"]]))
