@@ -47,9 +47,7 @@
           [:p "Layout"]
           [:select {:id "Layout" :name "Options" :size 1}
            [:option "Radial"]
-           [:option "Hierarchical"]
-           [:option "Random"]
-           [:option "Naive"]]
+           [:option "Hierarchical"]]
           [:br]
           "Treeify"
           [:input {:id "Treeify" :type "checkbox" :name "Options" :value "treeify"}]
@@ -69,12 +67,19 @@
   [h]
   (apply hash-map (flatten (map (fn [[k v]] [(keyword k) v]) h))))
 
+(defn get-layout
+  [layoutparam]
+  (condp = (s/lower-case layoutparam)
+    "radial" :radial
+    "hierarchical" :hierarchical
+    ;; default to radial
+    :radial))
+
 (defn output-svg
   [session params]
   (let [lkif (import-lkif (input-stream (.getBytes (:lkif-file session))))
         {:keys [layout treeify radius depth]} params;; (keywordify params)
-        pa (merge {:layout :radial}
-                  {:layout (keyword (s/lower-case layout))}
+        pa (merge {:layout (get-layout layout)}
                   (if (nil? treeify)
                     nil
                     {:treeify (Boolean/valueOf treeify)})
