@@ -729,6 +729,7 @@
   (if (some (fn [arg2]
               (and
                  (= (:scheme arg) (:scheme arg2))
+                 (= (:direction arg) (:direction arg2))
                  (statement= (:conclusion arg) (:conclusion arg2))
                  (premises=? (:premises arg) (:premises arg2))))
         (vals (:arguments ag)))
