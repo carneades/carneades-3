@@ -26,7 +26,7 @@
     )
   )
 
-(defvar- *debug* true)
+(defvar- *debug* false)
 
 (defn class-instances-to-responses
   [reasoner manager wff subs ontology]
