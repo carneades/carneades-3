@@ -78,7 +78,7 @@
 (defn output-svg
   [session params]
   (let [lkif (import-lkif (input-stream (.getBytes (:lkif-file session))))
-        {:keys [layout treeify radius depth]} params;; (keywordify params)
+        {:keys [layout treeify radius depth]} (keywordify params)
         pa (merge {:layout (get-layout layout)}
                   (if (nil? treeify)
                     nil

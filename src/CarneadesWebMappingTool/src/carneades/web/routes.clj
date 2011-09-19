@@ -13,7 +13,8 @@
   (GET "/" [] (index-page))
   (mp/wrap-multipart-params
    (POST "/files" {params :params session :session}
-         (upload-file (:lkif-file params) session)))
+         ;; TODO: keyword when building a WAR but otherwise strings for keys??!
+         (upload-file (or (get params "lkif-file") (get params :lkif-file)) session)))
   (wrap-params
    (GET "/files" {params :params session :session} (view-file session params)))
   (GET "/session" {session :session} (view-session session))
