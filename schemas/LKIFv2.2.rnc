@@ -1,4 +1,4 @@
-# Copyright © 2008-2011 Fraunhofer Gesellschaft 
+# Copyright (C) 2008-2011 Fraunhofer Gesellschaft 
 # Licensed under the EUPL V.1.1
 
 # Version:  2.2
@@ -19,7 +19,7 @@ grammar {
     Creator = element creator { text }
     Date = element date { text }
     Description = element description {
-    	attribute lang { xsd:language }
+    	attribute lang { xsd:language },
     	text
     }
     Format = element format { text }
@@ -30,7 +30,7 @@ grammar {
     Rights = element rights { text }
     Subject = element subject { text }
     Title = element title { 
-        attribute lang { xsd:language }
+        attribute lang { xsd:language },
         text 
     }
     Type = element type { text }
@@ -47,7 +47,7 @@ grammar {
     
     Source = element source { 
         attribute uri { xsd:anyURI },     # of a source
-    	attribute element { xsd:anyURI }, # of an element derived from the source 
+    	attribute element { xsd:anyURI }  # of an element derived from the source 
     } 
     
     Sources = element sources { MetaData*, Source+ }                                       
