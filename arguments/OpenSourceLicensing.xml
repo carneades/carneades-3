@@ -1,6 +1,19 @@
 
+<<<<<<< HEAD
 <?oxygen RNGSchema="../schemas/LKIF.rnc" type="compact"?>
 <lkif>
+=======
+<?oxygen RNGSchema="../schemas/LKIFv2.2.rnc" type="compact"?>
+<lkif>
+   <!--
+      <theory id="theory161035">
+      <imports>
+          <import url="/home/pal/Documents/Projects/carneades/src/CarneadesExamples/src/carneades/examples/open_source_licensing/oss-rules.xml"/>
+          <import url="/home/pal/Documents/Projects/carneades/src/CarneadesExamples/src/carneades/examples/open_source_licensing/impact-licensing.owl"/>
+      </imports>
+      </theory>
+   -->
+>>>>>>> Cleaned up the Open Source license example argument graph.
    <argument-graphs>
       <!-- <argument-graph id="ImpactLicensing" title="Impact Licensing" main-issue="s161038"> -->
       <!--    <statements> -->
@@ -738,35 +751,6 @@
                <conclusion statement="s161073"/>
                <premises>
                   <premise polarity="positive" type="assumption" role="" statement="s161054"/>
-               </premises>
-            </argument>
-         </arguments>
-      </argument-graph>
-      <argument-graph id="ag24251" title="graph1" main-issue="">
-         <statements>
-            <statement id="s161095" value="unknown" assumption="true" standard="PE">
-               <s>e </s>
-            </statement>
-            <statement id="s161094" value="unknown" assumption="true" standard="PE">
-               <s>a
-               </s>
-            </statement>
-            <statement id="s161093" value="unknown" assumption="true" standard="PE">
-               <s>b
-               </s>
-            </statement>
-            <statement id="s161092" value="unknown" assumption="true" standard="PE">
-               <s>c
-               </s>
-            </statement>
-         </statements>
-         <arguments>
-            <argument id="a24259" title="" direction="pro" scheme="ExpertWitnessBlablaStuff" weight="0.5">
-               <conclusion statement="s161095"/>
-               <premises>
-                  <premise polarity="positive" type="ordinary" role="" statement="s161092"/>
-                  <premise polarity="positive" type="ordinary" role="" statement="s161093"/>
-                  <premise polarity="positive" type="ordinary" role="" statement="s161094"/>
                </premises>
             </argument>
          </arguments>
