@@ -6,19 +6,38 @@
         carneades.engine.shell
         carneades.engine.unify
         impact.web.translate
-        impact.web.answers))
+        impact.web.answers)
+  (:import java.io.File))
 
-(defn- on-solutions
-  [solutions goal]
-  (prn "ON-SOLUTIONS")
-  (let [lastsol (last solutions)
+(defn- on-solution
+  [solutions service-data]
+  (let [goal (:goal service-data)
+        ;; TODO: why two last?
+        lastsol (last (last solutions))
+        _ (do (prn "lastsol =") (pprint lastsol))
         lastsubs (:substitutions lastsol)
+        _ (do (prn "lastsubs =") (prn lastsubs))
         lastsolstmt (apply-substitution lastsubs goal)
-        solag (unite-solutions solutions)
+        _ (do (prn "lastsolstmt =") (prn lastsolstmt))
+        solag (unite-solutions (last solutions))
+        _ (do (prn "solag =") (pprint solag))
         solag (assoc solag :main-issue lastsolstmt)
-        ]))
+        pathname (.getPath (File/createTempFile "graph" ".lkif"))
+        service-data (assoc service-data
+                       :solution (str lastsolstmt) ;; TODO translate solution
+                       :lkifsol-pathname pathname
+                       :has-solution true)]
+    (export-lkif (assoc *empty-lkif* :ags [solag]) pathname)
+    service-data))
 
 (def send-engine-msg)
+
+(defn- on-askuser
+  [service-data]
+  (let [translations (load-translations "http://localhost:8080/kb/translations.xml")
+        [questions last-id] (get-structured-questions (:last-question service-data) "en" (:last-id service-data) translations)]
+    (assoc service-data :last-questions questions :last-id last-id
+           :has-solution false)))
 
 (defn- on-answer
   [answer service-data]
@@ -40,29 +59,18 @@
         ;; (prn "already-answered, answer is")
         ;; (prn answer)
         (send-engine-msg answer service-data))
-      (do
-        ;; (prn "not already answer")
-        {:type :askuser :service-data service-data}))))
+      (on-askuser service-data))))
 
 (defn- send-engine-msg
   [msg service-data]
-  ;; (prn "SENDING ------------------------>")
+  (prn "SENDING ------------------------>")
   (deliver (:to-engine service-data) msg)
   (let [response (deref (:from-engine service-data))]
-    ;; (prn "<------------------------------ RESPONSE")
-    ;; (prn "first of response =")
-    ;; (prn (first response))
+    (prn "<------------------------------ RESPONSE")
     (condp = (first response)
       ;; TODO replace by keywords
-      'solution (on-solutions (rest response) (first msg))
+      'solution (on-solution (rest response) service-data)
       'ask (on-answer (rest response) service-data))))
-
-(defn- on-askuser
-  [response service-data]
-  (let [translations (load-translations "http://localhost:8080/kb/translations.xml")
-        service-data (:service-data response)
-        [questions last-id] (get-structured-questions (:last-question service-data) "en" (:last-id service-data) translations)]
-    (assoc service-data :last-questions questions :last-id last-id)))
 
 (defn- start-engine
   [query kb askables service-data]
@@ -84,9 +92,9 @@
         response (send-engine-msg (list goal maxnodes maxturns ag generators askablefn) service-data)]
     response))
 
-(defn- pr-res
+(defn pr-service-data
   [res]
-  (dissoc res :to-engine :from-engine))
+  (prn (dissoc res :to-engine :from-engine)))
 
 (defn- continue-engine
   [service-data]
@@ -107,7 +115,5 @@
   {:pre [(not (nil? service-data))]}
   (let [askables '#{hatName betrifftWerk zumZweck UrheberSuche Bekanntmachung}
         response (call-engine service-data query kb askables)]
-    (condp :type response
-      :askuser (on-askuser response service-data)
-      )))
+    response))
 

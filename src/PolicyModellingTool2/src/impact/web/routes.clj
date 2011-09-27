@@ -1,32 +1,36 @@
 (ns impact.web.routes
   (:use compojure.core
         impact.web.views
-        impact.web.controllers
         ring.adapter.jetty ;; <- to remove when building WAR
         ring.middleware.params
         ring.middleware.session
         [hiccup.middleware :only (wrap-base-url)])
   (:require [compojure.route :as route]
             [compojure.handler :as handler]
-            [compojure.response :as response]))
+            [compojure.response :as response]
+            [impact.web.policy-simulation :as simulation]
+            [impact.web.policy-evaluation :as evaluation]
+            [impact.web.svg :as svg]))
 
 (defroutes main-routes
-  (GET "/" [] (init-page))
-  (GET "/resetsession" [] (reset-session))
-  (wrap-params
-   (POST "/PolicySimulation"
-         {session :session params :params}
-         (process-ajax-request session params)))
+  (GET "/" [] (simulation/init-page))
+  (GET "/resetsession" [] (simulation/reset-session))
+  (POST "/PolicySimulation"
+        {session :session params :params}
+        (simulation/process-ajax-request session params))
+  (POST "/PolicyEvaluation"
+        {session :session params :params}
+        (evaluation/process-ajax-request session params))
+  (POST "/svg/*"
+        {uri :uri session :session  params :params}
+        (svg/process-ajax-request uri session params))
   (route/resources "/")
   (route/not-found "Page not found"))
 
-(wrap! main-routes :session)
+;; (wrap! main-routes :session)
 
 (def app
   (-> (handler/site main-routes)
       (wrap-base-url)))
 
-(defonce server (run-jetty #'main-routes
-                           {:join? false
-                            :port 8080}))
-
+(defonce server (run-jetty #'app {:join? false :port 8080}))
