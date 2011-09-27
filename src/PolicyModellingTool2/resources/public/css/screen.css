@@ -8,11 +8,16 @@
 
 /* general */
 
+html{
+    height: 100%;
+}
+
 body{ 
     color: #242529;
     font-size: 8pt;
     font-family: "Fontin Sans", Verdana, Sans-Serif;
-    margin: 10px;
+    margin: 1%;
+    height: 85%;
 }
 h1 {
     font-size:1.9em;
@@ -169,6 +174,17 @@ h2 {
 }
 
 #graph {
-    height:700px;
+    height: 85%;
+    /* min-height:100%; */
     width: auto !important;
+}
+
+#tabs {
+    height: 100%;
+    /* min-height:100%; */
+}
+
+#tabs-3 {
+    height: 100%;
+    /* min-height:100%; */
 }

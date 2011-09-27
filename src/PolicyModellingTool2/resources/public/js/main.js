@@ -31,11 +31,9 @@ Array.prototype.copy = function () {
     return ((new Array()).concat(this));
 };
 
-/**
- * Initialisation
- * @constructor
- */
-$(function(){ // Init
+
+// when the document is ready, executes this code:
+$(function(){ 
 
     // Tabs
     $('#tabs').tabs();
@@ -259,7 +257,7 @@ function showSolution(solution, path) {
     // display solution statement
     $("#solutionstatement").append(solution);
     // communicate with evaluation servlet
-    $.ajaxSetup({url: "/PolicyModellingTool__DEBUG/PolicyEvaluation"});
+    $.ajaxSetup({url: "/PolicyEvaluation"});
     // get policy rules
     var json = {"policyrules" : path}
     doAJAX(json);
@@ -516,6 +514,7 @@ function updateTopicList(topicName, topicID) {
  * @param {object} rules json array of policy rules
  */
 function showPolicyRules(rules) {
+    /*
     var policyList = $("#policylist");
     policyrules = [];
     $.each(rules, function(ruleindex, r) {
@@ -523,6 +522,7 @@ function showPolicyRules(rules) {
        policyrules.push(r);
     });   
     $("#policyrules").append('<input type="button" class="ui-button evaluate" value="Evaluate" onclick="evaluateGraph()"/>');
+    */
 }
 
 /**
