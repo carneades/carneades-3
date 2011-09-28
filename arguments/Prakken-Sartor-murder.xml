@@ -1,42 +1,43 @@
 
+<?oxygen RNGSchema="../schemas/LKIF.rnc" type="compact"?>
 <lkif>
    <argument-graphs>
       <argument-graph id="NewGraph" title="New Graph" main-issue="s11470">
          <statements>
-            <statement id="s11464" value="unknown" assumption="true" standard="BA">
+            <statement id="s11464" value="unknown" assumption="true" standard="PE">
                <s>killing</s>
             </statement>
-            <statement id="s11470" value="unknown" assumption="true" standard="BA">
+            <statement id="s11470" value="unknown" assumption="true" standard="PE">
                <s>murder</s>
             </statement>
-            <statement id="s11461" value="unknown" assumption="true" standard="BA">
+            <statement id="s11461" value="unknown" assumption="true" standard="PE">
                <s>W1&apos;s testimony</s>
             </statement>
-            <statement id="s11460" value="unknown" assumption="true" standard="BA">
+            <statement id="s11460" value="unknown" assumption="true" standard="PE">
                <s>W2&apos;s testimony</s>
             </statement>
-            <statement id="s11469" value="unknown" assumption="true" standard="BA">
+            <statement id="s11469" value="unknown" assumption="true" standard="PE">
                <s>self defense</s>
             </statement>
-            <statement id="s11471" value="unknown" assumption="true" standard="BA">
+            <statement id="s11471" value="unknown" assumption="true" standard="PE">
                <s>W2 is not credible.</s>
             </statement>
-            <statement id="s11465" value="unknown" assumption="true" standard="BA">
+            <statement id="s11465" value="unknown" assumption="true" standard="PE">
                <s>W1 is not credible.</s>
             </statement>
-            <statement id="s11467" value="unknown" assumption="true" standard="BA">
+            <statement id="s11467" value="unknown" assumption="true" standard="PE">
                <s>malice</s>
             </statement>
-            <statement id="s11468" value="unknown" assumption="true" standard="BA">
+            <statement id="s11468" value="unknown" assumption="true" standard="PE">
                <s>Section 187 is excluded.</s>
             </statement>
-            <statement id="s11462" value="unknown" assumption="true" standard="BA">
+            <statement id="s11462" value="unknown" assumption="true" standard="PE">
                <s>Section 197 is excluded.</s>
             </statement>
-            <statement id="s11466" value="unknown" assumption="true" standard="BA">
+            <statement id="s11466" value="unknown" assumption="true" standard="PE">
                <s>Section 187 of the Criminal Code</s>
             </statement>
-            <statement id="s11463" value="unknown" assumption="true" standard="BA">
+            <statement id="s11463" value="unknown" assumption="true" standard="PE">
                <s>Section 197 of the Criminal Code</s>
             </statement>
          </statements>
