@@ -1,4 +1,4 @@
-
+<?oxygen RNGSchema="../schemas/LKIF.rnc" type="compact"?>
 <lkif>
    <argument-graphs>
       <argument-graph id="NewGraph" title="New Graph" main-issue="s11560">
@@ -6,16 +6,16 @@
             <statement id="s11560" value="unknown" assumption="false" standard="PE">
                <s>Tweety can fly.</s>
             </statement>
-            <statement id="s11559" value="false" assumption="false" standard="BA">
+            <statement id="s11559" value="false" assumption="false" standard="PE">
                <s>Tweety is a bird.</s>
             </statement>
-            <statement id="s11558" value="true" assumption="false" standard="BA">
+            <statement id="s11558" value="true" assumption="false" standard="PE">
                <s>Birds normally fly.</s>
             </statement>
-            <statement id="s11557" value="unknown" assumption="true" standard="BA">
+            <statement id="s11557" value="unknown" assumption="true" standard="PE">
                <s>Tweety is an abnormal bird.</s>
             </statement>
-            <statement id="s11556" value="unknown" assumption="true" standard="BA">
+            <statement id="s11556" value="unknown" assumption="true" standard="PE">
                <s>Tweety is a penguin.</s>
             </statement>
          </statements>
