@@ -1,4 +1,5 @@
 
+<?oxygen RNGSchema="../schemas/LKIF.rnc" type="compact"?>
 <lkif>
    <argument-graphs>
       <argument-graph id="g1" title="New Graph" main-issue="s11286">

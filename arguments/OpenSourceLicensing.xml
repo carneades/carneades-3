@@ -1,13 +1,6 @@
 
+<?oxygen RNGSchema="../schemas/LKIF.rnc" type="compact"?>
 <lkif>
-   <theory id="theory161035">
-      <!-- <imports> -->
-      <!--    <import url="/home/pal/Documents/Projects/carneades/src/CarneadesExamples/src/carneades/examples/open_source_licensing/oss-rules.xml"/> -->
-      <!--    <import url="/home/pal/Documents/Projects/carneades/src/CarneadesExamples/src/carneades/examples/open_source_licensing/impact-licensing.owl"/> -->
-      <!-- </imports> -->
-      <rules>
-      </rules>
-   </theory>
    <argument-graphs>
       <!-- <argument-graph id="ImpactLicensing" title="Impact Licensing" main-issue="s161038"> -->
       <!--    <statements> -->
