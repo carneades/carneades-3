@@ -192,8 +192,12 @@ grammar {
     Statement = element statement { 
         attribute id { xsd:ID },
         attribute value { "unknown" | "true" | "false" }?,  # default: unknown
-        attribute assumption { xsd:boolean }?, # default: false
-        attribute standard { "SE" | "DV" | "PE" | "BRD" | "CCE" }?, # default: PE
+        attribute assumption { xsd:boolean }?, # default: false = value is derived
+        # Note: if assumption=false then this now means the value was derived, not
+        # that it is an "fact".  Use to record evaluation results. See also the 
+        # new "applicable" attribute of arguments.
+        attribute standard { "SE" | "DV" | "PE" | "CCE" | "BRD" }?, # default: PE
+        # Note: SE is deprecated.  Use DV instead.
         Atom?, Description*
     }
              
@@ -204,6 +208,7 @@ grammar {
         attribute direction { "pro" | "con" }?,
         attribute scheme { xsd:anyURI | xsd:string }?,
         attribute weight { xsd:float }?,  # range: 0.0 bis 1.0; default: 0.5
+        attribute applicable { xsd:boolean }?, # use to record evaluation results
         Title*, Conclusion, Premises
     }
     
@@ -211,7 +216,8 @@ grammar {
     
     Premise = element premise { 
         attribute polarity { "positive" | "negative" }?, # default: positive
-        attribute type { "ordinary" | "exception" | "assumption" }?, # default: ordinary
+        attribute type { "ordinary" | "exception" | "assumption" }?, default: ordinary
+        # Note: The type attribute is deprecated. All premises will be ordinary.
         attribute role { xsd:anyURI | xsd:string }?,
         attribute statement { xsd:anyURI },
         Title*   # alternative natural language expressions of the role 
