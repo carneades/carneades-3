@@ -17,7 +17,8 @@ var svgScale = 1;
 var svgWrapper = null;
 var svgLayout = "hierarchical";
 var svgTreeify = "true";
-var translate = 'translate(0,0)'; 
+var translate = 'translate(0,0)';
+var debug = true;
 
 // adding JSON parser when browser is too old to have a build-in one (pre-IE8, pre-FF3.5, ...)
 if( typeof( window[ 'JSON' ] ) == "undefined" ) document.write('<script type="text/javascript" src="https://github.com/douglascrockford/JSON-js/raw/master/json2.js"/>');
@@ -68,7 +69,7 @@ $(function(){
     /** AJAX request config */
     $.ajaxSetup({
             //       url: "/PolicyModellingTool/PolicySimulation",
-            url: "/PolicySimulation",
+        url: debug ? "/PolicySimulation" : "/PolicyModellingTool2/PolicySimulation",
        async: true,
        beforeSend: function() {
            statusupdate(0,"Please be patient.");
@@ -257,7 +258,7 @@ function showSolution(solution, path) {
     // display solution statement
     $("#solutionstatement").append(solution);
     // communicate with evaluation servlet
-    $.ajaxSetup({url: "/PolicyEvaluation"});
+    $.ajaxSetup({url: debug ? "/PolicyEvaluation" : "/PolicyModellingTool2/PolicyEvaluation"});
     // get policy rules
     var json = {"policyrules" : path}
     doAJAX(json);
@@ -543,7 +544,9 @@ function showArgGraph(path) {
 function showSVGGraph(path) {
     var graphBox = $("#graph");
     graphBox.svg();    
-    graphBox.svg('get').load(path, onSVGLoad);     
+    graphBox.svg('get').load(path, onSVGLoad);
+    
+
 }
 
 /**
@@ -558,30 +561,13 @@ function onSVGLoad(svgW) {
     // reset scale and translate
     svgScale = 1;
     translate="translate(0, 0)";
-        
-    // mousewheel zoom
-    $("#graph0").bind("mousewheel", function(event, delta){
-        if(delta > 0) {
-            // zoom in
-            svgScale = svgScale * 1.1;
-            $("#graph0").animate({svgTransform: translate+' scale('+svgScale+')'}, 100);
-        } else {
-            // zoom out
-            svgScale = svgScale * 0.9;
-            $("#graph0").animate({svgTransform: translate+' scale('+svgScale+')'}, 100);
-        }
-        $("html:not(:animated), body:not(:animated)").animate({scrollTop: 0}, 500);  
-        return true;
-    });
-    
-    // drag
-    $("#graph0").draggable({
-        drag : function(event, ui){  
-                    dragSpeed = 1.8 // a bit slow under firefox, but fast in chrome
-                    translate = 'translate(' + (ui.position.left * dragSpeed) + ', '+ (ui.position.top * dragSpeed) + ')';   
-                    svgWrapper.getElementById("graph0").setAttribute("transform", translate + ' scale(' + svgScale + ')');  
-                }
-    });
+
+    var svgroot = document.getElementsByTagName('svg')[0];
+    // SVGPan has a problem if there is already a viewBox, so we remove it
+    svgroot.removeAttribute('viewBox');
+    setupHandlers(root);
+
+    setupHandlers(document.documentElement);
     
     $("#tabs-1").height($("#wrapper").height());
     

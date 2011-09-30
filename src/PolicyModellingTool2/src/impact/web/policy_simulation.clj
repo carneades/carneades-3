@@ -4,11 +4,14 @@
          impact.web.askengine
          impact.web.answers
          impact.web.views
+         impact.web.core
          [carneades.engine.statement :only (statement-predicate variable? statement-atom)]))
 
 (defmulti ajax-handler (fn [json _] (ffirst json)))
 
-(def kburl "http://localhost:8080/kb/impact.xml")
+(def kburl (if *debug*
+             "http://localhost:8080/kb/impact.xml"
+             "http://localhost:8080/PolicyModellingTool2/kb/impact.xml"))
 
 ;; TODO: get from a kb
 (def query '(hatAnspruchOeffentlicheZugaenglichmachung ?Person ?Werk))
@@ -92,7 +95,8 @@
 (defn init-page
   []
   (prn "init of session")
-  {:session {:service-data
+  {:headers {"Content-Type" "text/html;charset=UTF-8"}
+   :session {:service-data
              {:answers {}
               :state nil
               :to-engine (promise)

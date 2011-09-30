@@ -6,7 +6,8 @@
         carneades.engine.shell
         carneades.engine.unify
         impact.web.translate
-        impact.web.answers)
+        impact.web.answers
+        impact.web.core)
   (:import java.io.File))
 
 (defn- on-solution
@@ -32,9 +33,13 @@
 
 (def send-engine-msg)
 
+(def translation-url (if *debug*
+                       "http://localhost:8080/kb/translations.xml"
+                       "http://localhost:8080/PolicyModellingTool2/kb/translations.xml") )
+
 (defn- on-askuser
   [service-data]
-  (let [translations (load-translations "http://localhost:8080/kb/translations.xml")
+  (let [translations (load-translations translation-url)
         [questions last-id] (get-structured-questions (:last-question service-data) "en" (:last-id service-data) translations)]
     (assoc service-data :last-questions questions :last-id last-id
            :has-solution false)))
