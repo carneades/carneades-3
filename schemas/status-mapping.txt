@@ -1,6 +1,18 @@
+# Version 1
+
    assumption | true      false 
 value         |
 -------------------------------------
 unknown       | stated    questioned
 true          | stated    accepted
 false         | stated    rejected
+
+# Version 2
+
+   assumption | true        false 
+value         |
+-------------------------------------
+unknown       | issue       issue
+true          | accepted    P acceptable 
+false         | rejected    ÂP acceptable
+
