@@ -368,16 +368,16 @@
          stmt* (get stmt-map stmt-kw),
          stmt (if (and (list? stmt*) (= (first stmt*) 'assuming))
                 (first (rest stmt*))
-                stmt*),
-         pr (condp = pr_type
-              "exception" exception,
-              "assumption" assumption,
-              ordinary-premise)]
-    (pr
+                stmt*)]
+    (ordinary-premise
       stmt              ; atom
       (or               ; polarity
         (not polarity)
-        (not= polarity "negative"))
+        (and (or (= pr_type "ordinary") 
+                 (= pr_type "assumption"))
+             (= polarity "positive"))
+        (and (= pr_type "exception")
+             (= polarity "negative")))
       role              ; role
       )))
 
@@ -448,7 +448,8 @@
            value (or (attr lkif-stmt :value) "unknown"),
            assumption (= (attr lkif-stmt :assumption) "true"),
            lkif-standard (attr lkif-stmt :standard)
-           standard (if lkif-standard
+           standard (if (and lkif-standard 
+                             (not (= lkif-standard "SE")))
                       (keyword (.toLowerCase lkif-standard))
                       *default-proof-standard*),
            ; applying status
