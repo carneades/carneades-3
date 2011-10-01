@@ -197,7 +197,7 @@ grammar {
         # that it is an "fact".  Use to record evaluation results. See also the 
         # new "applicable" attribute of arguments.
         attribute standard { "SE" | "DV" | "PE" | "CCE" | "BRD" }?, # default: PE
-        # Note: SE is deprecated.  Use DV instead.
+        # Note: SE is deprecated.  Use PE instead.
         Atom?, Description*
     }
              
