@@ -4,14 +4,13 @@
 
 (ns ^{:doc "This is an implementation of the argumentation scheme
             for arguments from defeasible rules.  Rules may have multiple
-            conclusions, as in SWRL, and be subject to exceptions. Priorities are used
-            to resolve conflicts among rules.  Unlike in SWRL, compound terms
+            conclusions and be subject to exceptions. Priorities are used
+            to resolve conflicts among rules.  Compound terms
             are allowed in statements.  That is, this rule language is not restricted
             to 'datalog'.  Indeed, datalog may not be sufficient for modeling
             legal rules.  For example, we need to be able to reason about whether
             some statement hold at some time, using fluents in the event calculus.
             And we need to reason about the applicability of rules to statements.
-            
             
             Negation, exceptions and assumptions. Statements of the form (not P),
             (unless P) and (assuming P) have special meaning.
@@ -32,14 +31,12 @@
             not classical negation. (not P) is satisifed if the *complement of the
             proof standard* for P is met by P.  Where the complement of some proof
             standard is constructed by reversing the roles of pro and con arguments in
-            the standard. For example, the complement of SE is satisified iff there is a
-            least one defensible con argument.  And the complement
-            of DV is satisfied iff there is at least one defensible
-            con argument and no defensible pro arguments.
+            the standard. For example, the complement of DV is satisfied iff there 
+            is at least one applicable con argument and no applicable pro arguments.
             
             The form (unless P) is a weaker form of negation than (not P).
             Whereas (unless P) holds if P is not acceptable, (not P) holds only if
-            P is rejectable.
+            (not P) is acceptable.
             
             <condition> := <statement> | (unless <statement>) | (assuming <statement>)
             
@@ -50,8 +47,10 @@
             (applies <symbol> <statement>)
             (excluded <symbol> <statement>)
             (rebuts <symbol> <symbol> <statement>)"}
+            
   carneades.engine.rule
-  (:use clojure.contrib.def
+  (:use clojure.set
+    clojure.contrib.def
     clojure.contrib.pprint
     [clojure.set :only (intersection)]
     carneades.engine.utils
@@ -67,7 +66,6 @@
 
 (defn condition-statement
   "condition -> statement
-
    the statement of a condition"
   [c]
   (let [predicate (first c)
@@ -76,6 +74,18 @@
       'unless statement
       'assuming statement
       c)))
+
+(defn condition->premise
+  "condition -> premise
+   constructs a premise from a condition"
+  [c]
+  (if (seq? c)
+    (let [[predicate stmt] c]
+      (condp = predicate
+        'unless (pm (statement-complement stmt))
+        'assuming (pm stmt)
+        (pm c)))
+    (pm c)))
 
 ;; TO DO: represent the roles of conditions, e.g. "major", "minor"
 
@@ -185,28 +195,6 @@
 (defvar *question-types* #{'excluded 'priority 'valid}
   "question-type = excluded | priority | valid")
 
-(defn rule-critical-questions
-  "rule-id (seq-of question-type) statement bool -> (seq-of premise)
-
-   The critical questions for an argument about a statement s
-   generated from a rule r:
-   1) Is r a valid rule?
-   2) Is r excluded with respect to s?
-   3) Is there another rule of higher priority which rebuts r? "
-  [rid qs s strict]
-  (letfn [(questionfilter [question]
-            (condp = question
-              'excluded
-              (ex (list 'excluded rid s)),
-              'priority
-              (ex (list 'priority (genvar) rid s)),
-              'valid
-              (ex (list 'not (list 'valid rid)))))]
-    (if strict
-      '()
-      ;; filter out unknown questions
-      (map questionfilter (intersection (set qs) *question-types*)))))
-
 (defn- clause-x [cl type]
   (map condition-statement (filter #(= (first %) type) cl)))
 
@@ -221,6 +209,18 @@ The exceptions in a clause"
 
 The assumptions in a clause"
   (clause-x cl 'assuming))
+
+(defn- clause-assumptions [clause]
+  (reduce (fn [assumptions condition]
+            (if (seq? condition)
+              (let [[predicate stmt] condition]      
+                (condp = predicate
+                  'unless (union assumptions {(statement-complement stmt)})
+                  'assuming (union assumptions {stmt})
+                  assumptions))
+              (union assumptions {stmt})))
+          {}
+          clause))
 
 (defn rename-rule-variables [r]
   (let [[m head] (rename-variables {} (:head r))
@@ -333,8 +333,8 @@ The assumptions in a clause"
         remaining-clauses))))
 
 (defn generate-arguments-from-rules
-  ([rb qs] (generate-arguments-from-rules rb qs nil))
-  ([rb qs ont]
+  ([rb] (generate-arguments-from-rules rb nil))
+  ([rb ont]
      (fn [subgoal state]
        (let [args (:arguments state)
              subs (:substitutions state),
@@ -365,11 +365,10 @@ The assumptions in a clause"
                                      arg-id (gensym "a")
                                      direction (if (= (first subgoal) 'not) :con :pro)
                                      conclusion (statement-atom (condition-statement subgoal))
-                                     premises (concat (map premise (:clause ic))
-                                                      (rule-critical-questions (:rule ic) qs subgoal (:strict ic)))
+                                     premises (map condition->premise (:clause ic))
                                      scheme (str (:rule ic) (:id ic))]
-                                        ;(println "rule instantiated:" (str (:rule ic) (:id ic)))
                                  (as/response subs3
+                                              (clause-assumptions ic)
                                               (argument arg-id
                                                         false
                                                         *default-weight*

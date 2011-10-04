@@ -23,7 +23,7 @@
   (let [stmt "Foxes are wild animals."]
     (is (= stmt (premise-statement (pm stmt))))
     (is (= (list 'not stmt)
-           (premise-statement (ordinary-premise stmt false nil))))))
+           (premise-statement (struct premise stmt false nil))))))
 
 (deftest test-argument-variables
   (let [not-property
@@ -60,12 +60,10 @@
 ;;          '({:atom
 ;;             "Property rights in wild animals may be acquired only by possession",
 ;;             :polarity true,
-;;             :role nil,
-;;             :type :carneades.engine.argument/ordinary-premise}
+;;             :role nil}
 ;;            {:atom "Post did not have possession of the fox",
 ;;             :polarity true,
-;;             :role nil,
-;;             :type :carneades.engine.argument/ordinary-premise}),
+;;             :role nil}),
 ;;          :scheme nil
 ;;          :title nil}
 ;;         arg))
@@ -78,17 +76,14 @@
 ;;          :premises
 ;;          '({:atom "Foxes are wild animals",
 ;;             :polarity true,
-;;             :role nil,
-;;             :type :carneades.engine.argument/ordinary-premise}
+;;             :role nil}
 ;;            {:atom
 ;;             "Property rights in wild animals may be acquired only by possession",
 ;;             :polarity true,
-;;             :role nil,
-;;             :type :carneades.engine.argument/ordinary-premise}
+;;             :role nil}
 ;;            {:atom "Post did not have possession of the fox",
 ;;             :polarity true,
-;;             :role nil,
-;;             :type :carneades.engine.argument/ordinary-premise}),
+;;             :role nil}),
 ;;          :scheme nil
 ;;          :title nil}
 ;;         arg2))))
@@ -159,21 +154,21 @@
                         (pm no-possession)
                         (pm foxes-are-wild)))
         a2 (make-arg a2 (pro no-possession (pm pursuit-not-sufficient)))
-        a3 (make-arg a3 (pro pursuit-not-sufficient (am justinian)))
-        a4 (make-arg a4 (pro pursuit-not-sufficient (am fleta)))
-        a5 (make-arg a5 (pro pursuit-not-sufficient (am bracton)))
+        a3 (make-arg a3 (pro pursuit-not-sufficient (pm justinian)))
+        a4 (make-arg a4 (pro pursuit-not-sufficient (pm fleta)))
+        a5 (make-arg a5 (pro pursuit-not-sufficient (pm bracton)))
         a6 (make-arg a6 (pro no-possession (pm actual-possession-required)))
-        a7 (make-arg a7 (pro actual-possession-required (am puffendorf)))
-        a8 (make-arg a8 (pro puffendorf (am bynkershoek)))
+        a7 (make-arg a7 (pro actual-possession-required (pm puffendorf)))
+        a8 (make-arg a8 (pro puffendorf (pm bynkershoek)))
         a9 (make-arg a9 (con actual-possession-required 
                         (pm mortally-wounded-deemed-possessed)
                         (pm mortally-wounded)))
-        a10 (make-arg a10 (pro mortally-wounded-deemed-possessed (am grotius)))
-        a11 (make-arg a11 (pro mortally-wounded-deemed-possessed (am barbeyrac)))
+        a10 (make-arg a10 (pro mortally-wounded-deemed-possessed (pm grotius)))
+        a11 (make-arg a11 (pro mortally-wounded-deemed-possessed (pm barbeyrac)))
         a12 (make-arg a12 (con actual-possession-required
                           (pm land-owner-has-possession)
                           (pm livelihood-on-own-land)))
-        a13 (make-arg a13 (pro land-owner-has-possession (am keeble)))
+        a13 (make-arg a13 (pro land-owner-has-possession (pm keeble)))
         a14 (make-arg a14 (pro actual-possession-required 
                           (pm certainty)
                           (pm order)))

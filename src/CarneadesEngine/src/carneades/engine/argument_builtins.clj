@@ -40,7 +40,7 @@
 (defn- try-unify [stmt args subs]
   (mapinterleave (fn [stmt2]
                    (if-let [subs2 (unify stmt stmt2 subs)]
-                     (list (as/response subs2 nil))
+                     (list (as/response subs2 {} nil))
 
                      ;; fail:
                      '()))
@@ -50,7 +50,7 @@
   (try
     (let [result (eval-expr (subs (statement-wff expr)))]
       (if-let [subs2 (unify term result subs)]
-        (list (as/response subs2 (argument (gensym "a") :pro stmt '()
+        (list (as/response subs2 {} (argument (gensym "a") :pro stmt '()
                                    "builtin:eval")))
         '()))
     (catch java.lang.SecurityException e '())
@@ -58,14 +58,14 @@
 
 (defn- dispatch-equal [subs stmt term1 term2]
   (if-let [subs2 (unify term1 term2 subs)]
-    (list (as/response subs2 (argument (gensym "a") :pro stmt '()
+    (list (as/response subs2 {} (argument (gensym "a") :pro stmt '()
                                "builtin:=")))
     '()))
 
 (defn- dispatch-notequal [subs stmt term1 term2]
   (if-let [subs2 (unify term1 term2 subs)]
     '()
-    (list (as/response subs (argument (gensym "a") :pro stmt '()
+    (list (as/response subs {} (argument (gensym "a") :pro stmt '()
                               "builtin:not=")))))
 
 (defn- dispatch-exists
@@ -102,6 +102,7 @@
            (let [new-subs (:substitutions s)]
              (as/response
                new-subs
+               {}
                (cons
                  (argument
                    (gensym "exists")
@@ -109,7 +110,7 @@
                    stmt
                    (list
                      (pm (apply-substitution new-subs p2))
-                     (am (apply-substitution new-subs t2)))
+                     (pm (apply-substitution new-subs t2)))
                    "exists")
                  (arguments (:arguments s))))))
       type-states)))
@@ -119,7 +120,7 @@
   (let [subs (:substitutions s)]
     (list
       (pm (apply-substitution subs p))
-      (am (apply-substitution subs t)))))
+      (pm (apply-substitution subs t)))))
 
 (defn- dispatch-all
   [state stmt wff generators]
@@ -163,6 +164,7 @@
     (list
       (as/response
         subs
+        {}
         (cons arg
             (apply concat (map arguments (map :arguments type-states))))))))
 
@@ -189,5 +191,5 @@
   ([generators]
     (fn [goal state]
       (interleaveall
-        ((generate-arguments-from-rules *builtin-rules* []) goal state)
+        ((generate-arguments-from-rules *builtin-rules*) goal state)
         (dispatch goal state generators)))))

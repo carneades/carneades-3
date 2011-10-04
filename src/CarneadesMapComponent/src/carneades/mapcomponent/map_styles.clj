@@ -291,12 +291,8 @@
 
 (defn get-edge-style [p]
   (if (premise-neg? p)
-    (cond (assumption? p) (:name *neg-assumption-edge-style*)
-          (exception? p) (:name *neg-exception-edge-style*)
-          :else (:name *neg-premise-edge-style*))
-    (cond (assumption? p) (:name *assumption-edge-style*)
-          (exception? p) (:name *exception-edge-style*)
-          :else (:name *premise-edge-style*))))
+    (:name *neg-premise-edge-style*)
+    (:name *premise-edge-style*)))
 
 (defn get-conclusion-edge-style [arg]
   (if (= (argument-direction arg) :pro)

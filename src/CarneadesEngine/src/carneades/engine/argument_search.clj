@@ -6,6 +6,7 @@
   (:import (java.io PrintWriter) ; for debugging
     )
   (:use clojure.contrib.def
+        clojure.set
         carneades.engine.utils
         carneades.engine.statement
         carneades.engine.unify
@@ -41,7 +42,8 @@
   :con-goals  (seq-of (seq-of statement)) ; disjunctive normal form
   :arguments  argument-graph 
   :substitutions  substitution
-  :candidates     (seq-of candidate)"}
+  :candidates     (seq-of candidate)
+  :candidate-assumptions (seq-of statement)"}
   state-struct
   :topic     ;; statement for the main issue or thesis
   :viewpoint ;; pro | con the topic
@@ -50,6 +52,7 @@
   :arguments ;; argument-graph 
   :substitutions ;; substitution
   :candidates    ;; (seq-of candidate)
+  :candidate-assumptions ;; (set-of statement)
   )
 
 (defn state [topic viewpoint pro-goals con-goals
@@ -57,16 +60,17 @@
   {:pre [(not (nil? pro-goals))
          (not (nil? con-goals))]}
   (struct state-struct topic viewpoint pro-goals con-goals
-          arguments substitutions candidates))
+          arguments substitutions candidates {}))
 
 (defstruct- response-struct
   :substitutions ;; term -> term
+  :assumptions ;; set of statements
   :argument ;; argument | nil
   )
 
-(defn response [subs arg]
+(defn response [subs assumptions arg]
   {:pre [(not (nil? subs))]}
-  (struct response-struct subs arg))
+  (struct response-struct subs assumptions arg))
 
 (defn initial-state
   "statement argument-graph -> state"
@@ -123,90 +127,88 @@
       (rest dis-of-con)
       (cons clause (rest dis-of-con)))))
 
-(defn- get-pro-goals [state premises assumptions exceptions conclusion goal-proc]
-
+(defn- get-pro-goals [state premises conclusion goal-proc]
   {:post [(not (nil? %))]}
   (condp = (:viewpoint state)
-      :pro (if (= goal-proc :update)
-             (update-goals (:pro-goals state) premises)
-             (:pro-goals state)),
+    :pro (if (= goal-proc :update)
+           (update-goals (:pro-goals state) premises)
+           (:pro-goals state)),
+    :con  (concat (:pro-goals state)
+                  (list (list (statement-complement conclusion))))))
 
-      :con  (concat (:pro-goals state)
-                    (map list exceptions) ;; separate clause for each exception
-                    ;; rebutalls and rebuttals of assumptions
-                    (list (list (statement-complement conclusion)))
-                    (map list (map statement-complement assumptions)))))
-
-(defn- get-con-goals [state premises assumptions exceptions conclusion goal-proc]
-
+(defn- get-con-goals [state premises conclusion goal-proc]
   {:post [(not (nil? %))]}
   (condp = (:viewpoint state)
-      :pro (concat (:con-goals state)
-                   ;; separate clause for each exception
-                   (map list exceptions)
-                   (list (list (statement-complement conclusion)))
-                   (map list (map statement-complement assumptions)))
-      :con (if (= goal-proc :update)
-             (update-goals (:con-goals state) premises)
-             (:con-goals state))))
+    :pro (concat (:con-goals state)
+                 (list (list (statement-complement conclusion))))
+    :con (if (= goal-proc :update)
+           (update-goals (:con-goals state) premises)
+           (:con-goals state))))
 
+(defn- update-assumption 
+  "state statement -> state"
+  [state assumption]
+  (let [ag (:argument state)
+        subs (:substitutions state)
+        cas (:candidate-assumptions)]
+    (if (ground? (apply-substitution subs assumption))
+      (let [ag2 (condp = (arg/status ag assumption)
+                  :stated (arg/accept ag [assumption])
+                  :questioned ag
+                  :rejected (arg/question ag [assumption])
+                  :accepted ag)]
+         (assoc state :arguments ag2
+                      :candidate-assumptions (difference cas {assumption})))
+      (assoc state :candidate-assumptions (union cas {assumption})))))
+                
+(defn- update-assumptions
+  [state assumptions]
+  (reduce update-assumption state (union assumptions (:candidate-assumptions state))))
 
 (defn- make-successor-state-putforward 
   ([stat newsubs arg]
     (make-successor-state-putforward stat newsubs arg :update))
   ([stat newsubs arg goal-proc]
-  (let [conclusion (:conclusion arg) ; maybe use complement regarding argument-dirction?
-        assumptions (questioned-assumptions
-                     (map arg/premise-statement
-                          (filter arg/assumption?
-                                  (arg/argument-premises arg)))
-                     (:arguments state))
-        premises (concat (map arg/premise-statement
-                              (filter arg/ordinary-premise?
-                                      (arg/argument-premises arg)))
-                         assumptions)
-        exceptions (map arg/premise-statement
-                        (filter arg/exception? (arg/argument-premises arg)))
-        [newag newcandidates]
-        (apply-candidates
-         newsubs
-         (:arguments stat)
-         (cons (struct candidate
-                       `(~'guard ~@(arg/argument-variables arg)) arg)
-               (:candidates stat)))
-        pro-goals (get-pro-goals stat premises assumptions exceptions conclusion goal-proc)
-        con-goals (get-con-goals stat premises assumptions exceptions conclusion goal-proc)
-        new-state (state 
-                    (:topic stat)
-                    (:viewpoint stat)
-                    pro-goals
-                    con-goals
-                    ;; new argument graph
-                    newag
-                    ;; new subs
-                    newsubs
-                    ;; new candidates
-                    newcandidates)]
-;            (println "-------------")
-;            ;(println "state" stat)
-;            (println "argument" (:id arg))
-;            (println "conclusion" conclusion)
-;            (println "gesubt" (newsubs conclusion))
-;            (println "assumptions" assumptions)
-;            (println "premises" premises)
-;            (println "exceptions" exceptions)
-;            (println "old pro-goals" (:pro-goals stat))
-;            (println "new pro-goals" pro-goals)
-;            (println "old con-goals" (:con-goals stat))
-;            (println "new con-goals" con-goals)
-;            (println "goal process" goal-proc)
-;        (view (let [cand-args (map :argument (:candidates new-state)),
-;                    inst-cands (map (fn [a] (arg/instantiate-argument a newsubs)) cand-args),
-;                    agwc (arg/assert-arguments newag inst-cands)]
-;                agwc))
-;        (println "-------------")
-    new-state
-    )))
+    (let [conclusion (:conclusion arg) ; maybe use complement regarding argument-dirction?
+          premises (map arg/premise-statement (arg/argument-premises arg))
+          [newag newcandidates]
+          (apply-candidates
+            newsubs
+            (:arguments stat)
+            (cons (struct candidate
+                          `(~'guard ~@(arg/argument-variables arg)) arg)
+                  (:candidates stat)))
+          pro-goals (get-pro-goals stat premises conclusion goal-proc)
+          con-goals (get-con-goals stat premises conclusion goal-proc)
+          new-state (state 
+                      (:topic stat)
+                      (:viewpoint stat)
+                      pro-goals
+                      con-goals
+                      ;; new argument graph
+                      newag
+                      ;; new subs
+                      newsubs
+                      ;; new candidates
+                      newcandidates)]
+      ;            (println "-------------")
+      ;            ;(println "state" stat)
+      ;            (println "argument" (:id arg))
+      ;            (println "conclusion" conclusion)
+      ;            (println "gesubt" (newsubs conclusion))
+      ;            (println "premises" premises)
+      ;            (println "old pro-goals" (:pro-goals stat))
+      ;            (println "new pro-goals" pro-goals)
+      ;            (println "old con-goals" (:con-goals stat))
+      ;            (println "new con-goals" con-goals)
+      ;            (println "goal process" goal-proc)
+      ;        (view (let [cand-args (map :argument (:candidates new-state)),
+      ;                    inst-cands (map (fn [a] (arg/instantiate-argument a newsubs)) cand-args),
+      ;                    agwc (arg/assert-arguments newag inst-cands)]
+      ;                agwc))
+      ;        (println "-------------")
+      new-state
+      )))
 
 
 (defn- make-successor-state-noforward
@@ -238,15 +240,16 @@
   "state response -> state"
   [state response]
   {:post [(not (nil? %))]}
-  (let [newsubs (:substitutions response)]
-    (if-let [arg (:argument response)]
-      (if (seq? arg)
-        (let []
-          ;(println "reducing" (count arg) "states")
-          (reduce (fn [s a] (make-successor-state-putforward s newsubs a :none)) (make-successor-state-putforward state newsubs (first arg) :update) (rest arg)))
-        (make-successor-state-putforward state newsubs arg))
-
-      (make-successor-state-noforward state newsubs))))
+  (let [newsubs (:substitutions response)
+        state2  (if-let [arg (:argument response)]
+                  (if (seq? arg)
+                    (let []
+                      ;(println "reducing" (count arg) "states")
+                      (reduce (fn [s a] (make-successor-state-putforward s newsubs a :none)) 
+                              (make-successor-state-putforward state newsubs (first arg) :update) (rest arg)))
+                    (make-successor-state-putforward state newsubs arg))
+                  (make-successor-state-noforward state newsubs))]
+    (update-assumptions state2 (:assumptions response))))
 
 (defn apply-generator [generator node]
   (let [state1 (:state node)]

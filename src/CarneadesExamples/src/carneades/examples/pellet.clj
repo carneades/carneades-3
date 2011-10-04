@@ -2,16 +2,10 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.examples.pellet
-  ;(:require )
-  (:use
-    carneades.mapcomponent.viewer
-    carneades.engine.argument
-    carneades.engine.pellet
-    carneades.engine.shell)
-
-  ;(:import )
-  )
-
+  (:use carneades.mapcomponent.viewer
+        carneades.engine.argument
+        [carneades.engine.owl.reasoner :as owl]
+        carneades.engine.shell))
 
 (def owl "http://owl.man.ac.uk/2006/07/sssw/people.owl")
 (def cname "http://owl.man.ac.uk/2006/07/sssw/people#person")
@@ -29,6 +23,6 @@
 
 
 (def generators
-  (list (generate-arguments-from-owl owl)))
+  (list (owl/generate-arguments-from-reasoner owl)))
 
 (def e1 (make-engine* 5000 1 *empty-argument-graph* generators))

@@ -1,13 +1,9 @@
 
 (ns carneades.examples.abduction
   ;(:require )
-  (:use
-    carneades.engine.argument
-    carneades.engine.statement
-    carneades.engine.abduction
-    )
-  ;(:import )
-  )
+  (:use carneades.engine.argument
+        carneades.engine.statement
+        carneades.engine.abduction))
 
 
 (def u "u")
