@@ -95,29 +95,29 @@ an important social value.")
                          (pm foxes-are-wild)))
 
 (defargument a2 (pro no-possession (pm pursuit-not-sufficient)))
-(defargument a3 (pro pursuit-not-sufficient (am justinian)))
-(defargument a4 (pro pursuit-not-sufficient (am fleta)))
-(defargument a5 (pro pursuit-not-sufficient (am bracton)))
+(defargument a3 (pro pursuit-not-sufficient (pm justinian)))
+(defargument a4 (pro pursuit-not-sufficient (pm fleta)))
+(defargument a5 (pro pursuit-not-sufficient (pm bracton)))
 (defargument a6 (pro no-possession (pm actual-possession-required)))
 
-(defargument a7 (pro actual-possession-required (am puffendorf)))
-(defargument a8 (pro puffendorf (am bynkershoek)))
+(defargument a7 (pro actual-possession-required (pm puffendorf)))
+(defargument a8 (pro puffendorf (pm bynkershoek)))
 
 (defargument a9
   (con actual-possession-required 
        (pm mortally-wounded-deemed-possessed)
        (pm mortally-wounded)))
 
-(defargument a10 (pro mortally-wounded-deemed-possessed (am grotius)))
+(defargument a10 (pro mortally-wounded-deemed-possessed (pm grotius)))
 
-(defargument a11 (pro mortally-wounded-deemed-possessed (am barbeyrac)))
+(defargument a11 (pro mortally-wounded-deemed-possessed (pm barbeyrac)))
 
 (defargument a12 
   (con actual-possession-required
        (pm land-owner-has-possession)
        (pm livelihood-on-own-land)))
 
-(defargument a13 (pro land-owner-has-possession (am keeble)))
+(defargument a13 (pro land-owner-has-possession (pm keeble)))
 
 ; teleological argument 
 (defargument a14  
@@ -176,13 +176,12 @@ and noxious beast.")
        (pm encourage-hunting)))
 
 (defargument a17
-  (pro foxes-are-noxious (am admitted-in-the-pleadings)))
+  (pro foxes-are-noxious (pm admitted-in-the-pleadings)))
 
 (def args2 (argument-graph [a15 a16 a17]))
 (def facts2 [chased-by-big-dogs])
 (def livingston (accept args2 facts2))
-; (diagram livingston c2)
-; (view livingston c2)
+
 
 (def both (accept (assert-arguments tompkins [a15 a16 a17])
                      facts2))

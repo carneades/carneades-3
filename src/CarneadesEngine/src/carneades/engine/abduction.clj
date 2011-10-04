@@ -60,26 +60,14 @@
   (letfn [(collect-labels
             [f statements]
             (collect-labels-conj #(f ag asm (premise-statement %)) statements))]
-    (let [groups (group-by exception? (argument-premises arg))
-          ex (set (get groups true ()))
-          pr (set (get groups false ()))
+    (let [pr (argument-premises arg)
           [pr-labels pr-labels-true] (collect-labels statement-in-label pr)
-          [ex-labels ex-labels-true] (collect-labels statement-out-label ex)
-          l (cond (and pr-labels-true ex-labels-true) *verum*
-              pr-labels-true (set (map true-filter
-                               (combine-conjunction-of-dnf ex-labels)))
-              ex-labels-true (set (map true-filter
-                               (combine-conjunction-of-dnf pr-labels)))
-              :else (set (map true-filter (combine-conjunction-of-dnf
-                                       (union pr-labels ex-labels)))))]
+          l (set (map true-filter (combine-conjunction-of-dnf pr-labels)))]
 ;      (println "------------")
 ;      (println "out-goals for       :" (str (:scheme arg) "-" (:id arg)))
 ;      (println "pr-labels           :" (map format-label pr-labels))
 ;      (println "pr-labels-true      :" pr-labels-true)
-;      (println "ex-labels           :" (map format-label ex-labels))
-;      (println "ex-labels-true      :" ex-labels-true)
-;      (println "combination         :" (combine-conjunction-of-dnf
-;                                        (union pr-labels ex-labels)))
+;      (println "combination         :" (combine-conjunction-of-dnf pr-labels)
 ;      (println "label               :" (format-label l))
 ;      (println "------------")
       l)))
@@ -137,22 +125,16 @@ alltrue is true if coll is empty or if each value is equal to *verum*"
   (letfn [(collect-labels
             [f statements]
             (collect-labels-disj #(f ag asm (premise-statement %)) statements))]
-    (let [groups (group-by exception? (argument-premises arg))
-          ex (set (get groups true ()))
-          pr (set (get groups false ()))
+    (let [pr (argument-premises arg)
           [pr-labels pr-labels-true] (collect-labels statement-out-label pr)
-          [ex-labels ex-labels-true] (collect-labels statement-in-label ex)
-          l (cond (or pr-labels-true ex-labels-true) *verum*
-              (and (empty? pr-labels) (empty? ex-labels)) *falsum*
-              (empty? pr-labels) ex-labels
-              :else (set (map true-filter (union pr-labels ex-labels))))]
+          l (cond pr-labels-true *verum*
+              (empty? pr-labels) *falsum*
+              :else (set (map true-filter pr-labels)))]
 ;      (println "------------")
 ;      (println "out-goals for      :" (str (:scheme arg) "-" (:id arg)))
 ;      (println "premises           :" (map statement-formatted (map :atom pr)))
 ;      (println "pr-labels          :" pr-labels)
 ;      (println "pr-labels-true     :" pr-labels-true)
-;      (println "ex-labels          :" ex-labels)
-;      (println "ex-labels-true     :" ex-labels-true)
 ;      (println "label              :" (format-label l))
 ;      (println "------------")
       l
@@ -450,7 +432,7 @@ alltrue is true if coll is empty or if each value is equal to *verum*"
                             (union pro-label con-labels)))))))]
     l))
 
-(defn assume-decided-statements
+(defn assume-assumed-statements
   [ag]
   (let [all-nodes (get-nodes ag),
         accepted-nodes (filter (fn [n] (= (:status n) :accepted)) all-nodes),
@@ -458,13 +440,6 @@ alltrue is true if coll is empty or if each value is equal to *verum*"
     (set (concat
            (map :statement accepted-nodes)
            (map statement-complement (map :statement rejected-nodes))))))
-
-(defn assume-assumptions
-  [ag]
-  (let [args (arguments ag),
-        premises (apply concat (map :premises args)),
-        assmptns (map premise-statement (filter assumption? premises))]
-    (set assmptns)))
 
 (defn make-minimal
   ([label]
@@ -486,7 +461,7 @@ alltrue is true if coll is empty or if each value is equal to *verum*"
 ;(def oss "http://carneades.berlios.de/oss-licenses#")
 ;(def goal1 (list (c oss "mayUseLicenseTemplate") (c il "CarneadesEngine") (c oss "GPL_Template")))
 ;;(def goal1 "contract")
-;(def l (statement-in-label ag1 (assume-decided-statements ag1) goal1))
+;(def l (statement-in-label ag1 (assume-assumed-statements ag1) goal1))
 
 ;(def l #{#{:a :b :c} #{:a :c} #{:a} #{:b} #{:c :d} #{:a :c :b :d}})
 ;(def l #{#{:a :b :c} #{:a :c}})

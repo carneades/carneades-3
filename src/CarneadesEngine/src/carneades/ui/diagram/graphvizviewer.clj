@@ -110,15 +110,9 @@
                      #(format "    %s -> %s [style=\"%s\", color=\"%s\", arrowtail=\"%s\"];\n"
                               (get-id (premise-atom %))
                               (get-id (argument-id arg))
-                              (cond (assumption? %) "dotted"
-                                    (exception? %) "dashed"
-                                    :else "solid")
-                              (cond (and (exception? %) (premise-neg? %))
-                                    "forestgreen"
-                                    
-                                    (or (premise-neg? %) (exception? %)) "red"
-                                    :else "forestgreen")
-                              (if (premise-neg? %) "dot" "none"))
+                              (if (premise-neg? %) "dashed" "solid")
+                              (if (premise-neg? %) "red" "forestgreen")
+                              "none")
                          (argument-premises arg)))))
 
 (defn- arguments-graphvizstr [ag args]

@@ -76,7 +76,7 @@
   {:id (gensym "s"),
    :value "unknown",
    :assumption "false",
-   :standard "BA",
+   :standard "PE",
    :atom s})
 
 (defn nodes->map
@@ -99,28 +99,16 @@
   ;(println "status->assumption" st)
   (= :stated st))
 
-(defn assumption-premise?
-  [s ag]
-  (let [premises (apply concat (map :premises (vals (:arguments ag))))]
-    (some (fn [pr] (and (assumption? pr) (statement= (premise-statement pr) s))) premises)))
-
 (defn atom->sxml
   [s ag]
   ;(println "atom->sxml" s)
   (cond
-    (string? s) (if (assumption-premise? s ag)
-                  [:s {:assumable true} s]
-                  [:s s]),
-    (fatom? s) (if (assumption-premise? s ag)
-                 [:s {:pred (statement-predicate s), :assumable true} (combine-expression-format (:term s) (:form s))]
-                 [:s {:pred (statement-predicate s)} (combine-expression-format (:term s) (:form s))]),
-    (symbol? s) (if (assumption-premise? s ag)
-                  [:s {:assumable true} s]
-                  [:s s]),
-    (seq? s) (if (assumption-premise? s ag)
-                [:s {:pred (statement-predicate s), :assumable true} (map text_term->sxml (rest s))]
-                [:s {:pred (statement-predicate s)} (map text_term->sxml (rest s))]),
-    :else nil;; (println "no valid atom" s)
+    (string? s) [:s s],
+    (fatom? s) [:s {:pred (statement-predicate s)} 
+                   (combine-expression-format (:term s) (:form s))],
+    (symbol? s) [:s s],
+    (seq? s) [:s {:pred (statement-predicate s)} (map text_term->sxml (rest s))],
+    :else nil   ;; (println "no valid atom" s)
     ))
 
 (defn statement->sxml
@@ -140,13 +128,12 @@
   [p st-map]
   (let [polarity (if (premise-pos? p)
                    "positive"
-                   "negative"),
-        t (cond
-            (ordinary-premise? p) "ordinary",
-            (assumption? p) "assumption",
-            (exception? p) "exception")]
+                   "negative")]
     [:premise
-     {:polarity polarity, :type t, :role (:role p), :statement (:id (get st-map (premise-atom p)))}]))
+     {:polarity polarity, 
+      :type "ordinary", 
+      :role (:role p), 
+      :statement (:id (get st-map (premise-atom p)))}]))
 
 (defn argument->sxml
   [arg st-map]

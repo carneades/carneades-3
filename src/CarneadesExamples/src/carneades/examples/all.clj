@@ -38,7 +38,7 @@
          (u 4 3)
          (u 5 2))))
 
-(def type-gens (list (generate-arguments-from-rules type-rb ())))
+(def type-gens (list (generate-arguments-from-rules type-rb)))
 
 (def goal '(all x (t x) (q x)))
 ;(def goal '(exists x (t x) (u x ?y)))
@@ -49,8 +49,8 @@
                                1
                                *empty-argument-graph*
                                depth-first
-                               (list (generate-arguments-from-rules rb ())
-                                     (generate-arguments-from-rules type-rb ())
+                               (list (generate-arguments-from-rules rb)
+                                     (generate-arguments-from-rules type-rb)
                                      (builtins type-gens))))
 
 (prn "sol =")
@@ -62,7 +62,7 @@
 (def engine (make-engine* 200
                           0
                           *empty-argument-graph*
-                          (list (generate-arguments-from-rules rb ())
+                          (list (generate-arguments-from-rules rb)
                                 (builtins type-gens))))
 
 ;(def sol2 (engine goal))

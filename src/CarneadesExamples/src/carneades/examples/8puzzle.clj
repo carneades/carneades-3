@@ -136,10 +136,7 @@ move is one of :up, :down, :right, or :left."
 
 (defn -main []
   (show (search pr0 breadth-first 1000))
-  (show (search pr0 depth-first 100))
-
-  (show (search pr5 breadth-first 1000))
-  (show (search pr5 depth-first 200)))
+  (show (search pr5 breadth-first 1000)))
 
 
 

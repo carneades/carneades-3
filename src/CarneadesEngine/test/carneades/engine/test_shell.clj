@@ -13,11 +13,8 @@
 
 (defn engine
   ([rb ag max-nodes max-turns]
-     (engine rb ag max-nodes max-turns []))
-  ([rb ag max-nodes max-turns critical-questions]
      (make-engine* max-nodes max-turns ag
-                   (list (generate-arguments-from-rules rb critical-questions)
-                         (builtins)))))
+                   (list (generate-arguments-from-rules rb) (builtins)))))
 
 (deftest test-engine-01-fact
   (let [rb (rulebase)
@@ -114,34 +111,14 @@
         query '(goods item2)]
     (is (fail? query eng))))
 
-(deftest test-engine-09-critical-question
-  (let [rb (rulebase
-            (rule r4
-                  (if (movable ?x)
-                    (and (light ?x)
-                         (shipable ?x))))
-            
-            (rule r5
-                  (if (and (light ?x)
-                           (shipable ?x))
-                    (convenient ?x)))
-
-             (rule repeal
-                   (if (repealed ?r)
-                     (not (valid ?r)))))
-        ag (arg/accept arg/*empty-argument-graph*
-                       '((coins item1)
-                         (movable item1)
-                         (repealed r5)))
-        eng (engine rb ag 20 2 '(valid))
-        query '(convenient item1)]
-    (is (fail? query eng))))
+; test-engine-09-criticalquestion test deleted, since rule cqs no longer exist
 
 (deftest test-engine-10-lexposterior
   (let [rb (rulebase
             (rule r1 
                   (if (and (movable ?c)
-                           (unless (money ?c)))
+                           (unless (money ?c))
+                           (unless (prior ?r2 r1)))
                     (goods ?c)))
 
             (rule r6 
@@ -153,13 +130,14 @@
                             (enacted ?r2 ?d2)
                             (later ?d2 ?d1))
                      (prior ?r2 ?r1))))
+        
         ag (arg/accept arg/*empty-argument-graph*
                        '((movable item2)
                          (edible item2)
                          (enacted r1 d1)
                          (enacted r6 d2)
                          (later d2 d1)))
-        eng (engine rb ag 20 1 '(priority))
+        eng (engine rb ag 20 1)
         query '(goods item2)]
     (is (fail? query eng))))
 
@@ -191,12 +169,14 @@
 
 (deftest test-engine-12-excluded
   (let [rb (rulebase
-            (rule r14 (if (bird ?x) (flies ?x)))
+            (rule r14 (if (and (bird ?x) 
+                               (unless (excluded r14 (flies ?x))))
+                          (flies ?x)))
             (rule* r15 (if (penguin ?x) (excluded r14 (flies ?x)))))
         ag (arg/accept arg/*empty-argument-graph*
                        '((bird Tweety)
                          (penguin Tweety)))
-        eng (engine rb ag 20 2 '(excluded))
+        eng (engine rb ag 20 2)
         query '(flies Tweety)]
     (is (fail? query eng))))
 

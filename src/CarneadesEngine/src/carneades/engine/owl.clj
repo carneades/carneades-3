@@ -96,7 +96,7 @@
     (and (:ontology ontology)
       (condp = type
           :reasoner (generate-arguments-from-reasoner (:ontology ontology) (:reasoner ontology)),
-        :rule (generate-arguments-from-rules (map-ontology (:ontology ontology) optionals) '()),
+        :rule (generate-arguments-from-rules (map-ontology (:ontology ontology) optionals)),
         (throw (Exception. "Invalid type value for owl generator"))))))
 
 (defn individuals

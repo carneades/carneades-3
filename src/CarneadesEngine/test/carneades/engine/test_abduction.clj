@@ -21,7 +21,7 @@
         p "p"
         a4 (make-arg :a4 (pro r
                               (pm u)
-                              (ex v)))
+                              (pm `(not ~v))))
         a3 (argument :a3 false 0.6 :con r [(pm t)] nil)
         a5 (argument :a5 false 0.4 :con r [(pm w)] nil)
         a1 (argument :a1 false 0.6 :con p [(pm r)] nil)
