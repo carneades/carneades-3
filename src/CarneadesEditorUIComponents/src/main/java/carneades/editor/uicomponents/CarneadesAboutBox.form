@@ -136,7 +136,7 @@
             <Font bold="true" component="appTitleLabel" property="font" relativeSize="true" size="4"/>
           </FontInfo>
         </Property>
-        <Property name="text" type="java.lang.String" value="Carneades Editor v1.0.1"/>
+        <Property name="text" type="java.lang.String" value="Carneades Editor v1.0.2"/>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
