@@ -177,6 +177,7 @@ h2 {
     height: 85%;
     /* min-height:100%; */
     width: auto !important;
+    cursor: move;
 }
 
 #tabs {
