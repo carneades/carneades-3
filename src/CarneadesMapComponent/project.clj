@@ -9,7 +9,7 @@ various argumentation tasks. This is the Swing Argument Map Component."
                  [org.clojure/clojure-contrib "1.2.0"]
                  [org.clojars.pallix/jgraphx "1.5.1.11"]
                  [carneades-engine "1.0.0-SNAPSHOT"]
-                 [lacij "0.4.0"]
+                 [lacij "0.5.0-SNAPSHOT"]
                  ]
   :dev-dependencies [[swank-clojure "1.4.0-SNAPSHOT"]]
  ;; :aot [carneades.mapcomponent.negconnectorshape]
