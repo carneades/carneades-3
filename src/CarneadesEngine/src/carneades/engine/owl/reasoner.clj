@@ -40,11 +40,12 @@
                  subs2 (unify c wff subs)]
              (as/response
                (or subs2 subs)
+               {(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))}
                (arg/argument
                  (gensym "a")
                  :pro
                  c
-                 (list (arg/am (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
+                 (list (arg/pm (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
                  "HermiT"))))
       insts)))
 
@@ -62,11 +63,12 @@
         (if *debug* (println iname "is instance of" cname))
         (list (as/response
                 subs
+                {(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))}
                 (arg/argument
                   (gensym "a")
                   :pro
                   wff
-                  (list (arg/am (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
+                  (list (arg/pm (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
                   "HermiT"))))
       nil)))
 
@@ -91,11 +93,12 @@
                  subs2 (unify c wff subs)]
              (as/response
                subs2
+               {(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))}
                (arg/argument
                  (gensym "a")
                  :pro
                  c
-                 (list (arg/am (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
+                 (list (arg/pm (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
                  "HermiT"))))
       insts)))
 
@@ -119,11 +122,12 @@
     (if (some #{iname2} insts)
       (list (as/response
               subs
+              {(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI))))}
               (arg/argument
                 (gensym "a")
                 :pro
                 wff
-                (list (arg/am (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
+                (list (arg/pm (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
                 "HermiT")))
       nil)))
 

@@ -1,4 +1,4 @@
-;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Copyright ï¿½ 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
 
@@ -17,82 +17,26 @@
 
 (declare update-statement assert-arguments) ; forward declaration
 
-(defstruct- premise-struct
+(defstruct premise
   :atom ; an atomic statement
   :polarity      ; boolean true => positive premise | false => negative premise
   :role ; string, the role of the premise in the argumentation schemed applied
         ; nil if none
-  :type ; ::ordinary-premise | ::assumption | ::exception
   )
-
-(defvar- ordinary-premise-struct
-  (apply create-struct (keys (struct premise-struct))))
-
-(defvar- assumption-struct
-  (apply create-struct (keys (struct premise-struct))))
-
-(defvar- exception-struct
-  (apply create-struct (keys (struct premise-struct))))
-
-(derive ::ordinary-premise ::premise)
-(derive ::assumption ::premise)
-(derive ::exception ::premise)
-
-;; constructors for premises
-(defn ordinary-premise [& vals]
-     (apply struct ordinary-premise-struct (concat vals [::ordinary-premise])))
-
-(defn assumption [& vals]
-     (apply struct assumption-struct (concat vals [::assumption])))
-
-(defn exception [& vals]
-  (apply struct exception-struct (concat vals [::exception])))
 
 ;; abbreviations for constructing premises with empty roles
 
 (defn pm
-  "statement -> ordinary-premise
-
-   Constructs an ordinary premise "
+  "statement -> premise
+  Constructs a  premise "
   [s]
-  (ordinary-premise (statement-atom s) (statement-pos? s) nil))
-
-(defn am
-  "statement -> assumption"
-  [s]
-  (assumption (statement-atom s) (statement-pos? s) nil))
-
-(defn ex
-  "statement -> exception"
-  [s]
-  (exception (statement-atom s) (statement-pos? s) nil))
-
-(defn premise
-  "builds a premise, an assumption or an exception
-   depending of the value of the predicate of the statement"
-  [s]
-  (if (seq? s)
-    (let [[predicate stmt] s]
-      (condp = predicate
-        'unless (ex stmt)
-        'assuming (am stmt)
-        (pm s)))
-    (pm s)))
+  (struct premise (statement-atom s) (statement-pos? s) nil))
 
 (defn premise-pos? [p]
   (:polarity p))
 
 (defn premise-neg? [p]
   (not (:polarity p)))
-
-(defn ordinary-premise? [p]
-  (isa? (:type p) ::ordinary-premise))
-
-(defn assumption? [p]
-  (isa? (:type p) ::assumption))
-
-(defn exception? [p]
-  (isa? (:type p) ::exception))
 
 (defn premise-statement [p]
   (if (premise-pos? p)
@@ -103,9 +47,7 @@
   (:atom p))
 
 (defn premise= [p1 p2]
-  (and (or (= (:type p1) (:type p2))
-           (and (premise-neg? p1)
-                (premise-neg? p2)))
+  (and (= (:polarity p1) (:polarity p2))
        (statement= (:atom p1) (:atom p2))))
 
 (defstruct- argument-struct
@@ -216,8 +158,7 @@
 
 (defn instantiate-argument
   "argument substitutions -> argument
-
-   Instanciate the variable of an argument by applying substitions"
+   Instantiate the variable of an argument by applying substitions"
   [arg subs]
   (assoc arg
     :premises (map #(update-in % [:atom] (fn [a] (apply-substitution subs a))) (:premises arg))
@@ -226,7 +167,6 @@
 ;; (defn add-premise [arg p]
 ;;   (assoc arg :applicable false :premises (cons p (:premises arg))))
 
-;; se        ; scintilla of the evidence
 ;;                  dv        ; dialectical validity
 ;;                  pe        ; preponderance of the evidence
 ;;                  cce       ; clear and convincing evidence
@@ -350,8 +290,8 @@
         (:complement-acceptable n))))
 
 (defn in?
-  "looks up the cached 'in' status of the statement in the agreement graph
-   argument-graph statement -> boolean "
+  "argument-graph statement -> boolean 
+   looks up the cached 'in' status of the statement in the argument graph"
   [ag s]
   {:pre [(not (nil? ag))]}
   (let [n (get-node ag s)]
@@ -364,31 +304,13 @@
   "argument-graph premise -> boolean"
   [ag p]
   (let [n (get-node ag (:atom p))]
-    (cond (ordinary-premise? p)
-          (condp = (:status n)
-            :accepted (premise-pos? p)
-            :rejected (premise-neg? p)
-            :questioned (in? ag (premise-statement p))
-            :stated (in? ag (premise-statement p))
-            :unstated false
-            false)
-          (assumption? p)
-          (condp = (:status n)
-            :stated true  ; wether the premise is positive or negative
-            :unstated false
-            :accepted (premise-pos? p)
-            :rejected (premise-neg? p)
-            :questioned (in? ag (premise-statement p))
-            false)
-          (exception? p)
-          (condp = (:status n)
-            :accepted (premise-neg? p)
-            :rejected (premise-pos? p)
-            :stated (out? ag (premise-statement p))
-            :questioned (out? ag (premise-statement p))
-            :unstated false
-            false)
-          :else (throw (Exception. (format "not a premise %s" p))))))
+    (condp = (:status n)
+      :accepted (premise-pos? p)
+      :rejected (premise-neg? p)
+      :questioned (in? ag (premise-statement p))
+      :stated (in? ag (premise-statement p))
+      :unstated false
+      false)))
 
 (defn- all-premises-hold?
   "argument-graph argument -> boolean"
@@ -490,7 +412,7 @@
       (= (:status n) :rejected)
       (= (:status n) :accepted))))
 
-(defn decided?
+(defn assumed?  ; was called "decided?"
   "argument-graph statement -> boolean"
   [ag s]
   (or (accepted? ag s) (rejected? ag s)))
@@ -508,11 +430,11 @@
 (defn issue?
   "argument-graph statement -> boolean
    
-   An statement is an issue if it is undecided in the argument graph
-   An acceptable statement is still an issue, due to nonmonotonicity:
-   Additional arguments may make the statement unacceptable again."
+   An statement is an issue if it has not been accepted (assumed true) or rejected 
+   (assumed false) in the argument graph. An acceptable statement is still an issue, 
+   due to nonmonotonicity: Additional arguments may make the statement unacceptable again."
   [ag s]
-   (not (decided? ag s)))
+   (not (assumed? ag s)))
 
 (defn all-premises
   "all-premises: argument-graph statement -> (list-of premise)
@@ -702,7 +624,7 @@
                 (= (node-in? n1 false) (node-in? n2 false))
                 (= new-status old-status))
          ;; then the "in" status of the statement hasn't changed and there's no
-         ;; need to propogate further unless an assumption has been questioned
+         ;; need to propogate further
          ag2
          ;; else propogate the update to the arguments in which the statement
          ;; is a premise

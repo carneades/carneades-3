@@ -19,7 +19,7 @@
         [carneades.engine.abduction :only (*verum-clause*
                                            statement-in-label
                                            statement-out-label
-                                           assume-decided-statements
+                                           assume-assumed-statements
                                            make-minimal)])
   (:import carneades.editor.view.wizardsprotocol.StatementItem))
 
@@ -58,19 +58,19 @@
           out (get settings "out")
           mainissue (:main-issue ag)
           positions (cond (and positive in)
-                          (statement-in-label ag (assume-decided-statements ag)
+                          (statement-in-label ag (assume-assumed-statements ag)
                                               mainissue)
 
                           (and positive out)
-                          (statement-out-label ag (assume-decided-statements ag)
+                          (statement-out-label ag (assume-assumed-statements ag)
                                                mainissue)
 
                           (and negative in)
-                          (statement-in-label ag (assume-decided-statements ag)
+                          (statement-in-label ag (assume-assumed-statements ag)
                                               (statement-complement mainissue))
 
                           (and negative out)
-                          (statement-out-label ag (assume-decided-statements ag)
+                          (statement-out-label ag (assume-assumed-statements ag)
                                                (statement-complement mainissue)))
           positions  (apply vector (sort-by count positions))
           position (first positions)

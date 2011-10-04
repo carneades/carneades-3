@@ -2,7 +2,7 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.examples.rule-examples
-  (:use clojure.contrib.pprint
+  (:use clojure.pprint
         carneades.engine.argument-builtins
         carneades.engine.shell
         carneades.engine.rule
@@ -101,10 +101,9 @@
 
                    )))
 
-(defn engine [max-nodes max-turns critical-questions]
+(defn engine [max-nodes max-turns]
   (make-engine* max-nodes max-turns ag1
-                (list (generate-arguments-from-rules rb1 critical-questions)
-                      (builtins))))
+                (list (generate-arguments-from-rules rb1) (builtins))))
 
 (defn -main []
  (time

@@ -86,7 +86,7 @@
       0 ag,
       1 (unite-solutions (construct-arguments goal max-nodes ag generators)),
       (let [ag2 (prof :unite (unite-solutions (construct-arguments goal max-nodes ag generators))),
-            asmpts (abd/assume-decided-statements ag2),
+            asmpts (abd/assume-assumed-statements ag2),
             new-goals (prof :abduction
                         (apply union
                     (if (= viewpoint :con)

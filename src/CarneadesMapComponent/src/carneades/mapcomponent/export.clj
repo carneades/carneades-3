@@ -115,47 +115,14 @@
   [map p id argid params]
   (let [width 1.5]
    (if (ag/premise-neg? p)
-     (cond (ag/assumption? p)
            (add-edge map (geneid) id argid
                      :marker-start "url(#dot-marker-red)"
                      :marker-end nil
                      :style {:stroke-width width
-                             :stroke-dasharray "2, 2"
                              :stroke (-> params :arg-con-applicable-params :style :stroke)})
-          
-           (ag/exception? p)
-           (add-edge map (geneid) id argid
-                     :marker-start "url(#dot-marker-green)"
-                     :marker-end nil
-                     :style {:stroke-width width
-                             :stroke-dasharray "8, 2"
-                             :stroke (-> params :arg-pro-applicable-params :style :stroke)})
-          
-           :else
-           (add-edge map (geneid) id argid
-                     :marker-start "url(#dot-marker-red)"
-                     :marker-end nil
-                     :style {:stroke-width width
-                             :stroke (-> params :arg-con-applicable-params :style :stroke)}))
-    
-     (cond (ag/assumption? p)
-           (add-edge map (geneid) id argid
-                     :marker-end nil
-                     :style {:stroke-width width
-                             :stroke-dasharray "2, 2"
-                             :stroke (-> params :arg-pro-applicable-params :style :stroke)})
-          
-           (ag/exception? p)
-           (add-edge map (geneid) id argid
-                     :marker-end nil
-                     :style {:stroke-width width
-                             :stroke-dasharray "8, 2"
-                             :stroke (-> params :arg-con-applicable-params :style :stroke)})
-          
-           :else
            (add-edge map (geneid) id argid :marker-end nil
                      :style {:stroke-width width
-                             :stroke (-> params :arg-pro-applicable-params :style :stroke)})))))
+                             :stroke (-> params :arg-pro-applicable-params :style :stroke)}))))
 
 (defn add-premise
   [map ag arg argid pm mapinfo pms stmt-str params]

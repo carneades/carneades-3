@@ -2,12 +2,12 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.examples.hundeanmeldung
-  (:use clojure.contrib.pprint
-	carneades.engine.argument
+  (:use clojure.pprint
+        carneades.engine.argument
         carneades.engine.argument-builtins
         carneades.engine.shell
         carneades.engine.rule
-	carneades.mapcomponent.viewer))
+        carneades.mapcomponent.viewer))
 
 (def rb1 
   (rulebase
@@ -66,7 +66,7 @@
 	       (vor-mehr-als-drei-jahren d1))))
 	       
 (def engine (make-engine* 100 1 ag1
-                (list (generate-arguments-from-rules rb1 '()) (builtins))))
+                (list (generate-arguments-from-rules rb1) (builtins))))
 
 (defn -main []
   ;;(view (:arguments (first (solutions (engine '(hundeanmeldung ?ha))))))

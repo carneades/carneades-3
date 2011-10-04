@@ -362,31 +362,20 @@
 (defn lkif-premise->premise
   [lkif-premise stmt-map]
   (let* [polarity (attr lkif-premise :polarity),
-         pr_type (attr lkif-premise :type),
          role (attr lkif-premise :role),
          stmt-kw (keyword (attr lkif-premise :statement)),
-         stmt* (get stmt-map stmt-kw),
-         stmt (if (and (list? stmt*) (= (first stmt*) 'assuming))
-                (first (rest stmt*))
-                stmt*)]
-    (ordinary-premise
-      stmt              ; atom
-      (or               ; polarity
-        (not polarity)
-        (and (or (= pr_type "ordinary") 
-                 (= pr_type "assumption"))
-             (= polarity "positive"))
-        (and (= pr_type "exception")
-             (= polarity "negative")))
-      role              ; role
-      )))
+         stmt (get stmt-map stmt-kw)]
+        (struct premise
+                :atom stmt             
+                :polarity (or (not polarity) ; i.e. polarity unspecified in the LKIF file
+                              (= polarity "positive"))
+                :role role)))
 
 (defn lkif-premises->premises
   [lkif-premises stmt-map]
   (map
     (fn [lkif-pr] (lkif-premise->premise lkif-pr stmt-map))
-    (xml-> lkif-premises :premise))
-  )
+    (xml-> lkif-premises :premise)))
 
 (defn lkif-conclusion->sexpr
   [lkif-conclusion stmt-map]
@@ -449,11 +438,11 @@
            assumption (= (attr lkif-stmt :assumption) "true"),
            lkif-standard (attr lkif-stmt :standard)
            standard (if (and lkif-standard 
-                             (not (= lkif-standard "SE")))
+                             (not (= lkif-standard "SE")))  ; SE is deprecated
                       (keyword (.toLowerCase lkif-standard))
                       *default-proof-standard*),
            ; applying status
-           ag1 (if assumption
+           ag1 (if (not assumption)
                  (state ag (list atom))
                  (condp = value
                    "unknown" (question ag (list atom)),
@@ -462,7 +451,6 @@
            ; applying standard
            ag2 (assoc-standard ag1 standard (list atom))]
       (apply-status_standard ag2 (rest lkif-stmt*)))))
-
 
 (defn parse-arg-graph
   [lkif-arg-graph]

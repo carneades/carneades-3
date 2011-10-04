@@ -23,7 +23,7 @@
           [:id "int primary key not null"]
           [:value "tinyint default 2"]      ; 0=false, 1=true, 2=unknown
           [:assumption "boolean default false"]
-          [:standard "tinyint default 2"]   ; 0=se, 1=dv, 2=pe, 3=cce, 4=brd
+          [:standard "tinyint default 0"]   ; 0=pe, 1=cce, 2=brd, 3=dv 
           [:wff "varchar"]          
           [:content "int"]
           ["foreign key(content) references string(id)"])
@@ -46,7 +46,6 @@
           [:argument "int not null"]
           [:statement "int not null"]
           [:polarity "boolean default true"]    ; true=positive, false=negative
-          [:type "tinyint default 0"]           ; 0=ordinary, 1=exception, 2=assumption
           [:role "int"]
           ["foreign key(argument) argument(id)"]
           ["foreign key(statement) statement(id)"]

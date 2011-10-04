@@ -31,5 +31,5 @@
           pro-args (pro-arguments ag-as-kb proposition)]
       (map (fn [arg]
              ;; no new substitutions, since propositional
-             (response subs (assoc arg :id (gensym "a"))))
+             (response subs {} (assoc arg :id (gensym "a"))))
            pro-args))))

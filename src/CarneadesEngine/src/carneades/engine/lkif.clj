@@ -118,7 +118,7 @@
     (generate-arguments-from-lkif lkif type nil nil nil))
   ([lkif type ont]
     (generate-arguments-from-lkif lkif type nil nil ont))
-  ([lkif type cq opt ont]
+  ([lkif type opt ont]
     (let [imp-kbs (:import-kbs lkif),
           rb (:rb lkif)]
       (fn [subgoal state]
@@ -130,7 +130,7 @@
           (let [d-ont (or ont (get-imported-ont (:import-tree lkif) imp-kbs))]
             ;(println "domain ontology:" d-ont)
             ;(println "generating from rules" rb)
-            ((generate-arguments-from-rules rb cq d-ont) subgoal state)) ; direct rules
+            ((generate-arguments-from-rules rb d-ont) subgoal state)) ; direct rules
           (apply concat
             (map                                                      ; imported kbs
               (fn [kbe]
@@ -145,7 +145,7 @@
                     (let [d-ont (or ont (get-imported-ont (:import-tree lkif) imp-kbs name) (get-imported-ont (:import-tree lkif) imp-kbs))] ; todo : maybe other way around
                       ;(println "domain ontology:" d-ont)
                       ;(println "generating from rules" name)
-                      ((generate-arguments-from-rules kb cq d-ont) subgoal state)))))
+                      ((generate-arguments-from-rules kb d-ont) subgoal state)))))
               imp-kbs)))))))
 
 
