@@ -260,7 +260,7 @@
   ([]
     (get-clj-stack-trace [] ["clojure."])))
 
-(defn print-table
+(defn print-table2
   [width-vector title-vector many-value-vectors]
   (assert (= (type width-vector) (type title-vector) (type many-value-vectors)
             (type [])))
@@ -279,7 +279,7 @@
 
 (defn dump-stack
   ([stack-trace-vector]
-    (print-table [20 5 45 10] ["File" "Line#" "Class" "Method"]
+    (print-table2 [20 5 45 10] ["File" "Line#" "Class" "Method"]
       (into [] stack-trace-vector)))
   ([]
     (dump-stack (get-clj-stack-trace))))
