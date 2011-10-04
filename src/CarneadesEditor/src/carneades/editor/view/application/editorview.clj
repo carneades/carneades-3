@@ -383,9 +383,9 @@
             :previous-weight weight}))
     
   (statement-content-changed
-   [this path ag oldstmt newstmt]
+   [this path ag stmt-fmt oldstmt newstmt]
    (when-let [component (get-component path (:id ag))]
-     (change-statement-content component ag oldstmt newstmt)))
+     (change-statement-content component ag stmt-fmt oldstmt newstmt)))
 
   (statement-status-changed
    [this path ag stmt]

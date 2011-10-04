@@ -343,7 +343,7 @@
   
   (get-premise-being-edited-info
    [this]
-   (premise-being-edited-info))
+    (premise-being-edited-info))
 
   (get-lkif-being-edited-info
    [this]

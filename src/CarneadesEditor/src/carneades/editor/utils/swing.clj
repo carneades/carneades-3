@@ -96,6 +96,18 @@
     (doseq [listener listeners]
       (.removeActionListener component listener))))
 
+(defmacro without-action-listeners
+  "Temporarly detaches actions listeners on the component, executes
+   the body and reattaches them."
+  [component & body]
+  `(do
+     (let [component# ~component
+           listeners# (.getActionListeners component#)]
+       (remove-action-listeners component#)
+       ~@body
+       (doseq [x# listeners#]
+         (.addActionListener component# x#)))))
+
 (defn remove-listselection-listeners [component]
   (let [listeners (.getListSelectionListeners component)]
     (doseq [listener listeners]

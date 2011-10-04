@@ -344,7 +344,7 @@
     (do-display-statement-property view path id (:title ag)
                                    (stmt-str newcontent) statement-formatted status
                                    proofstandard acceptable complement-acceptable)
-    (statement-content-changed view path ag previous-content-as-obj newcontent)
+    (statement-content-changed view path ag statement-formatted previous-content-as-obj newcontent)
     (display-statement view path ag newcontent statement-formatted)))
 
 (defn on-edit-statement [view path id stmt-info retry-on-error]

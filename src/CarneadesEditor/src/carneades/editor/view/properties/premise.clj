@@ -5,7 +5,8 @@
   carneades.editor.view.properties.premise
   (:use clojure.contrib.def
         clojure.contrib.swing-utils
-        carneades.editor.utils.seq)
+        carneades.editor.utils.seq
+        carneades.editor.utils.swing)
   (:import carneades.editor.uicomponents.PremisePropertiesView))
 
 (defvar- *premiseProperties* (PremisePropertiesView.))
@@ -36,7 +37,8 @@
   (.setText *mapTitleText* maptitle)
   (.setText *roleText* role)
   (.setSelected *negatedCheckBox* (not polarity))
-  (.setSelectedItem *typeComboBox* (*type-to-str* type))
+  (without-action-listeners *typeComboBox*
+     (.setSelectedItem *typeComboBox* (*type-to-str* type)))
   *premiseProperties*)
 
 (defn premise-being-edited-info []

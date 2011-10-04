@@ -77,7 +77,7 @@
   ;; big graphs
   (graph-changed [this path ag stmt-fmt])
   (statement-content-changed
-   [this path ag oldstmt newstmt])
+   [this path ag stmt-fmt oldstmt newstmt])
   (statement-status-changed
    [this path ag stmt])
   (statement-proofstandard-changed

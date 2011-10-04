@@ -3,6 +3,7 @@
 
 (ns carneades.mapcomponent.map-edit
   (:use clojure.contrib.def
+        clojure.contrib.pprint
         carneades.mapcomponent.map
         carneades.mapcomponent.map-styles
         carneades.engine.argument
@@ -180,26 +181,6 @@
                              #(update-arg % arg) #(update-argument-style %1 %2 ag)
                              do-not-change-style))))
 
-(defn change-statement-content [graphcomponent ag oldstmt newstmt]
-  (let [component (:component graphcomponent)
-        graph (.getGraph component)
-        cell (find-statement-cell graph oldstmt)
-        stmt-str (:stmt-str (.getValue cell))
-        full (stmt-to-str ag newstmt stmt-str)
-        stmt (StatementCell. ag newstmt stmt-str
-                             (trunk full) full)
-        p (.getDefaultParent graph)
-        model (.getModel graph)]
-    (try
-      (.. model beginUpdate)
-      (.setValue model cell stmt)
-      (.setStyle model cell (get-statement-style ag newstmt))
-      ;; (.updateCellSize graph cell)
-      (adjust-size graph cell)
-      (do-layout graph p (get-vertices graph p))
-      (finally
-       (.. model endUpdate)))))
-
 (defn change-statement-status [graphcomponent ag stmt]
   (let [component (:component graphcomponent)]
     (with-transaction component
@@ -323,3 +304,22 @@
     (with-transaction component
       (.removeCells graph (into-array (get-vertices graph p)) true)
       (fill-graph graph p ag stmt-fmt))))
+
+(defn change-statement-content [graphcomponent ag stmt-fmt oldstmt newstmt]
+  (let [component (:component graphcomponent)
+        graph (.getGraph component)
+        cell (find-statement-cell graph oldstmt)
+        stmt-str (:stmt-str (.getValue cell))
+        full (stmt-to-str ag newstmt stmt-str)
+        stmt (StatementCell. ag newstmt stmt-str
+                             (trunk full) full)
+        p (.getDefaultParent graph)
+        model (.getModel graph)]
+    (with-transaction component
+      (.setValue model cell stmt)
+      (.setStyle model cell (get-statement-style ag newstmt))
+      (adjust-size graph cell)
+      ;; changing a statement means changing the premises
+      ;; of an argument. The cell of premises links has
+      ;; to be updated.
+      (replace-graph graphcomponent ag stmt-fmt))))
