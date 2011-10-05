@@ -20,7 +20,9 @@
                                            statement-in-label
                                            statement-out-label
                                            assume-decided-statements
-                                           make-minimal)])
+                                           make-minimal
+                                           assume-assumptions)])
+  (:require [clojure.set :as set])
   (:import carneades.editor.view.wizardsprotocol.StatementItem))
 
 (defn on-pre-goalwizard [view path id]
@@ -57,21 +59,19 @@
           in (get settings "in")
           out (get settings "out")
           mainissue (:main-issue ag)
+          assumed (set/union (assume-decided-statements ag)
+                             (assume-assumptions ag))
           positions (cond (and positive in)
-                          (statement-in-label ag (assume-decided-statements ag)
-                                              mainissue)
+                          (statement-in-label ag assumed mainissue)
 
                           (and positive out)
-                          (statement-out-label ag (assume-decided-statements ag)
-                                               mainissue)
+                          (statement-out-label ag assumed mainissue)
 
                           (and negative in)
-                          (statement-in-label ag (assume-decided-statements ag)
-                                              (statement-complement mainissue))
+                          (statement-in-label ag assumed (statement-complement mainissue))
 
                           (and negative out)
-                          (statement-out-label ag (assume-decided-statements ag)
-                                               (statement-complement mainissue)))
+                          (statement-out-label ag assumed (statement-complement mainissue)))
           positions  (apply vector (sort-by count positions))
           position (first positions)
           npos (count positions)]
