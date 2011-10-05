@@ -76,7 +76,7 @@
   {:id (gensym "s"),
    :value "unknown",
    :assumption "false",
-   :standard "BA",
+   :standard "PE",
    :atom s})
 
 (defn nodes->map
