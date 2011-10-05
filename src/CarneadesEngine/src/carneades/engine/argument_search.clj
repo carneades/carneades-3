@@ -60,7 +60,7 @@
   {:pre [(not (nil? pro-goals))
          (not (nil? con-goals))]}
   (struct state-struct topic viewpoint pro-goals con-goals
-          arguments substitutions candidates {}))
+          arguments substitutions candidates #{}))
 
 (defstruct- response-struct
   :substitutions ;; term -> term

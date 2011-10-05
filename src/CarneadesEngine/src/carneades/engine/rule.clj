@@ -219,7 +219,7 @@ The assumptions in a clause"
                   'assuming (union assumptions {stmt})
                   assumptions))
               (union assumptions {stmt})))
-          {}
+          #{}
           clause))
 
 (defn rename-rule-variables [r]
