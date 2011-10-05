@@ -4,6 +4,7 @@
 
 (ns carneades.engine.test-argument
   (:use clojure.test
+        clojure.contrib.pprint
         carneades.engine.statement
         carneades.engine.argument
         carneades.engine.argument-edit))
@@ -127,7 +128,7 @@
         foxes-are-wild "Foxes are wild animals."
         no-possession (str "Post did not have possession of the fox.")
         pursuit-not-sufficient (str "Pursuit is not sufficient"
-                                    "to acquire possession.")
+                                    " to acquire possession.")
         justinian "Justinian's Institutes"
         fleta "Fleta"
         bracton "Bracton"
@@ -174,12 +175,18 @@
                           (pm order)))
         args1 (argument-graph (list a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13
                                     a14))
-        facts1 (list foxes-are-wild possession-required certainty order)
+        facts1 (list foxes-are-wild possession-required certainty order
+                     ;; old assumptions expressed as now as premises
+                     ;; muss now be explicitly accepted to keep
+                     ;; the same semantic:
+                     justinian fleta bracton puffendorf bynkershoek grotius barbeyrac
+                     keeble)
         tompkins (accept args1 facts1)]
+    ;; (pprint (vals (:nodes tompkins)))
     (is (= (into #{} (vals (:nodes tompkins)))
            #{{"Bynkershoek"
               {:statement "Bynkershoek",
-               :status :stated,
+               :status :accepted,
                :standard :pe,
                :acceptable false,
                :complement-acceptable false,
@@ -204,7 +211,7 @@
                :conclusion-of #{'a7 'a12 'a14 'a9}}}
              {"Bracton"
               {:statement "Bracton",
-               :status :stated,
+               :status :accepted,
                :standard :pe,
                :acceptable false,
                :complement-acceptable false,
@@ -221,7 +228,7 @@
                :conclusion-of #{}}}
              {"Justinian's Institutes"
               {:statement "Justinian's Institutes",
-               :status :stated,
+               :status :accepted,
                :standard :pe,
                :acceptable false,
                :complement-acceptable false,
@@ -237,7 +244,7 @@
                :conclusion-of #{}}}
              {"Fleta"
               {:statement "Fleta",
-               :status :stated,
+               :status :accepted,
                :standard :pe,
                :acceptable false,
                :complement-acceptable false,
@@ -254,7 +261,7 @@
                :conclusion-of #{'a1}}}
              {"Grotius"
               {:statement "Grotius",
-               :status :stated,
+               :status :accepted,
                :standard :pe,
                :acceptable false,
                :complement-acceptable false,
@@ -270,7 +277,7 @@
                :conclusion-of #{}}}
              {"Keeble"
               {:statement "Keeble",
-               :status :stated,
+               :status :accepted,
                :standard :pe,
                :acceptable false,
                :complement-acceptable false,
@@ -287,7 +294,7 @@
                :conclusion-of #{'a13}}}
              {"Barbeyrac"
               {:statement "Barbeyrac",
-               :status :stated,
+               :status :accepted,
                :standard :pe,
                :acceptable false,
                :complement-acceptable false,
@@ -319,7 +326,7 @@
                :conclusion-of #{}}}
              {"Puffendorf"
               {:statement "Puffendorf",
-               :status :stated,
+               :status :accepted,
                :standard :pe,
                :acceptable true,
                :complement-acceptable false,
@@ -334,8 +341,8 @@
                :complement-acceptable false,
                :premise-of #{'a1},
                :conclusion-of #{}}}
-             {"Pursuit is not sufficientto acquire possession."
-              {:statement "Pursuit is not sufficientto acquire possession.",
+             {"Pursuit is not sufficient to acquire possession."
+              {:statement "Pursuit is not sufficient to acquire possession.",
                :status :stated,
                :standard :pe,
                :acceptable true,
