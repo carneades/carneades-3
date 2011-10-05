@@ -198,27 +198,15 @@
 (defn- clause-x [cl type]
   (map condition-statement (filter #(= (first %) type) cl)))
 
-(defn clause-exceptions [cl]
-  "clause -> (seq-of statement)
-
-The exceptions in a clause"
-  (clause-x cl 'unless))
-
-(defn clause-assumptions [cl]
-  "clause -> (list-of statement)
-
-The assumptions in a clause"
-  (clause-x cl 'assuming))
-
 (defn- clause-assumptions [clause]
   (reduce (fn [assumptions condition]
             (if (seq? condition)
               (let [[predicate stmt] condition]      
                 (condp = predicate
-                  'unless (union assumptions {(statement-complement stmt)})
-                  'assuming (union assumptions {stmt})
+                  'unless (union assumptions #{(statement-complement stmt)})
+                  'assuming (union assumptions #{stmt})
                   assumptions))
-              (union assumptions {stmt})))
+              assumptions))
           #{}
           clause))
 
@@ -368,7 +356,7 @@ The assumptions in a clause"
                                      premises (map condition->premise (:clause ic))
                                      scheme (str (:rule ic) (:id ic))]
                                  (as/response subs3
-                                              (clause-assumptions ic)
+                                              (clause-assumptions clause)
                                               (argument arg-id
                                                         false
                                                         *default-weight*

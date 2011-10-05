@@ -79,7 +79,7 @@
         query '(p9 a)]
     (is (succeed? query eng))))
 
-(deftest test-engine-07-unless
+(deftest test-engine-07-unless1
   (let [rb (rulebase
             (rule r1 
                   (if (and (movable ?c)
@@ -90,9 +90,22 @@
         ag (arg/accept arg/*empty-argument-graph*
                        '((coins item1)
                          (movable item1)))
-                         eng (engine rb ag 20 2)
+        eng (engine rb ag 20 2)
         query '(goods item1)]
     (is (fail? query eng))))
+
+(deftest test-engine-07-unless2
+  (let [rb (rulebase
+            (rule r1 
+                  (if (and (movable ?c)
+                           (unless (money ?c)))
+                    (goods ?c))))
+        ag (arg/accept arg/*empty-argument-graph*
+                       '((movable item1)))
+        ag2 (arg/reject ag '((money item1)))
+        eng (engine rb ag 20 2)
+        query '(goods item1)]
+    (is (succeed? query eng))))
 
 (deftest test-engine-08-negativeconclusion
   (let [rb (rulebase
@@ -183,15 +196,12 @@
 (deftest test-engine-13-applies
   (let [rb (rulebase
             (rule r1 (if (and (movable ?c)
-                      (unless (money ?c)))
+                              (unless (money ?c)))
                (goods ?c)))
             
             (rule r3 (if (coins ?x) (money ?x))))
         ag (arg/accept arg/*empty-argument-graph*
-                       '((coins item1)
-                         (money item1)
-                         (movable item2)
-                         (edible item2)))
+                       '((movable item1)))
         eng (engine rb ag 20 1)
         query '(applies ?r (goods ?x))]
     (is (succeed? query eng))))
