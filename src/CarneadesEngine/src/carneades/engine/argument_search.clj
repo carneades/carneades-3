@@ -147,19 +147,20 @@
 
 (defn- update-assumption 
   "state statement -> state"
-  [state assumption]
-  (let [ag (:argument state)
+  [state a1]
+  (let [ag (:arguments state)
         subs (:substitutions state)
-        cas (:candidate-assumptions)]
-    (if (ground? (apply-substitution subs assumption))
-      (let [ag2 (condp = (arg/status ag assumption)
-                  :stated (arg/accept ag [assumption])
+        cas (:candidate-assumptions state)
+        a2 (apply-substitution subs a1) ]
+    (if (ground? a2)
+      (let [ag2 (condp = (arg/status ag a2)
+                  :stated (arg/accept ag [a2])
                   :questioned ag
-                  :rejected (arg/question ag [assumption])
+                  :rejected (arg/question ag [a2])
                   :accepted ag)]
          (assoc state :arguments ag2
-                      :candidate-assumptions (difference cas {assumption})))
-      (assoc state :candidate-assumptions (union cas {assumption})))))
+                      :candidate-assumptions (difference cas #{a1})))
+      (assoc state :candidate-assumptions (union cas #{a1})))))
                 
 (defn- update-assumptions
   [state assumptions]
