@@ -27,7 +27,7 @@
     (if subs2
       (response
         subs2
-        {}
+        #{}
         (carneades.engine.argument/argument
           (gensym 'a)
           'pro
