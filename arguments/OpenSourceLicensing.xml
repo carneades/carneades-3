@@ -1,9 +1,4 @@
-
-<<<<<<< HEAD
 <?oxygen RNGSchema="../schemas/LKIF.rnc" type="compact"?>
-<lkif>
-=======
-<?oxygen RNGSchema="../schemas/LKIFv2.2.rnc" type="compact"?>
 <lkif>
    <!--
       <theory id="theory161035">
@@ -13,7 +8,6 @@
       </imports>
       </theory>
    -->
->>>>>>> Cleaned up the Open Source license example argument graph.
    <argument-graphs>
       <!-- <argument-graph id="ImpactLicensing" title="Impact Licensing" main-issue="s161038"> -->
       <!--    <statements> -->
