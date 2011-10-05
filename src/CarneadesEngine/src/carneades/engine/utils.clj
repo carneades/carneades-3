@@ -29,7 +29,7 @@
 (defn union-if
   "Returns the union of s1 and s2, (pred x y) is true for each
    (x y) couple in the union"
-  ([pred] {})
+  ([pred] #{})
   ([pred s1] s1)
   ([pred s1 s2]
      (if (< (count s1) (count s2))
