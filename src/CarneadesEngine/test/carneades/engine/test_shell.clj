@@ -1,4 +1,4 @@
-;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Copyright ? 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
 
@@ -49,7 +49,7 @@
                        '((enacted r1 d1)
                          (enacted r6 d2)
                          (later d2 d1)))
-                         eng (engine rb ag 20 1)
+        eng (engine rb ag 20 1)
         query '(prior ?r1 ?r2)]
     (is (succeed? query eng))))
 
@@ -86,10 +86,12 @@
                            (unless (money ?c)))
                     (goods ?c)))
    
-            (rule r3 (if (coins ?x) (money ?x))))
+            (rule r2 (if (coins ?x) 
+                       (and (movable ?x) 
+                            (money ?x)))))
+        
         ag (arg/accept arg/*empty-argument-graph*
-                       '((coins item1)
-                         (movable item1)))
+                       '((coins item1)))
         eng (engine rb ag 20 2)
         query '(goods item1)]
     (is (fail? query eng))))
@@ -102,7 +104,6 @@
                     (goods ?c))))
         ag (arg/accept arg/*empty-argument-graph*
                        '((movable item1)))
-        ag2 (arg/reject ag '((money item1)))
         eng (engine rb ag 20 2)
         query '(goods item1)]
     (is (succeed? query eng))))
@@ -129,30 +130,30 @@
 (deftest test-engine-10-lexposterior
   (let [rb (rulebase
             (rule r1 
-                  (if (and (movable ?c)
-                           (unless (money ?c))
-                           (unless (prior ?r2 r1)))
-                    (goods ?c)))
+                  (if (movable ?c)                           
+                      (goods ?c)))
 
-            (rule r6 
+            (rule r2 
                   (if (edible ?x) 
-                    (not (goods ?x))))
+                      (not (goods ?x))))
 
             (rule* lex-posterior
-                   (if (and (enacted ?r1 ?d1)
+                   (if (and (applies ?r1 ?g)
+                            (applies ?r2 (not ?g))
+                            (enacted ?r1 ?d1)
                             (enacted ?r2 ?d2)
                             (later ?d2 ?d1))
-                     (prior ?r2 ?r1))))
+                     (prior ?r2 ?r1 ?g))))
         
         ag (arg/accept arg/*empty-argument-graph*
-                       '((movable item2)
-                         (edible item2)
+                       '((movable item1)
+                         (edible item1)
                          (enacted r1 d1)
-                         (enacted r6 d2)
+                         (enacted r2 d2)
                          (later d2 d1)))
         eng (engine rb ag 20 1)
-        query '(goods item2)]
-    (is (fail? query eng))))
+        query '(prior r2 r1 (goods item1))]
+    (is (succeed? query eng))))
 
 (deftest test-engine-11-negativequery
   (let [rb (rulebase
@@ -196,10 +197,8 @@
 (deftest test-engine-13-applies
   (let [rb (rulebase
             (rule r1 (if (and (movable ?c)
-                              (unless (money ?c)))
-               (goods ?c)))
-            
-            (rule r3 (if (coins ?x) (money ?x))))
+                              (unless (foo ?c)))
+                         (goods ?c))))
         ag (arg/accept arg/*empty-argument-graph*
                        '((movable item1)))
         eng (engine rb ag 20 1)

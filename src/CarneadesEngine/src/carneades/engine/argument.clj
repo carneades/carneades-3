@@ -1,4 +1,4 @@
-;;; Copyright � 2010 Fraunhofer Gesellschaft 
+;;; Copyright ? 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
 
@@ -187,7 +187,7 @@
   "Builds a new node from a statement with no pro- or con-arguments"
   [s]
   (struct node-struct
-          s
+          (statement-atom s)
           :stated
           *default-proof-standard*
           false
