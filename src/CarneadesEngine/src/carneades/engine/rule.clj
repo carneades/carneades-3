@@ -1,4 +1,4 @@
-;;; Copyright © 2010 Fraunhofer Gesellschaft
+;;; Copyright ? 2010 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
 
@@ -201,7 +201,7 @@
 (defn- clause-assumptions [clause]
   (reduce (fn [assumptions condition]
             (if (seq? condition)
-              (let [[predicate stmt] condition]      
+              (let [[predicate stmt] condition]   
                 (condp = predicate
                   'unless (union assumptions #{(statement-complement stmt)})
                   'assuming (union assumptions #{stmt})
@@ -356,7 +356,7 @@
                                      premises (map condition->premise (:clause ic))
                                      scheme (str (:rule ic) (:id ic))]
                                  (as/response subs3
-                                              (clause-assumptions clause)
+                                              (clause-assumptions (:clause clause))
                                               (argument arg-id
                                                         false
                                                         *default-weight*
