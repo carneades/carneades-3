@@ -27,8 +27,6 @@
   (route/resources "/")
   (route/not-found "Page not found"))
 
-;; (wrap! main-routes :session)
-
 (def app
   (-> (handler/site main-routes)
       (wrap-base-url)))

@@ -176,7 +176,8 @@ h2 {
 #graph {
     height: 85%;
     /* min-height:100%; */
-    width: auto !important;
+    width: 90%;
+    /* width: 85%; */
     cursor: move;
 }
 
@@ -188,4 +189,13 @@ h2 {
 #tabs-3 {
     height: 100%;
     /* min-height:100%; */
+}
+
+div.column {
+    float: left;
+}
+
+#slider {
+    margin: 2%;
+    height: 25%;
 }

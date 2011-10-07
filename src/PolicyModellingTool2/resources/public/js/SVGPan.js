@@ -185,6 +185,24 @@ function setAttributes(element, attributes){
 		element.setAttributeNS(null, i, attributes[i]);
 }
 
+function doZoom(svgDoc, delta, p) {
+    var z = Math.pow(1 + zoomScale, delta);    
+    var g = getRoot(svgDoc);
+
+    p = p.matrixTransform(g.getCTM().inverse());
+    
+    // Compute new scale matrix in current mouse position
+    var k = getSVGRoot().createSVGMatrix().translate(p.x, p.y).scale(z).translate(-p.x, -p.y);
+
+    setCTM(g, g.getCTM().multiply(k));
+
+    if(typeof(stateTf) == "undefined")
+	stateTf = g.getCTM().inverse();
+
+    stateTf = stateTf.multiply(k.inverse());    
+}
+
+
 /**
  * Handle mouse wheel event.
  */
@@ -205,24 +223,10 @@ function handleMouseWheel(evt) {
 		delta = evt.wheelDelta / 360; // Chrome/Safari
 	else
 		delta = evt.detail / -9; // Mozilla
-
-	var z = Math.pow(1 + zoomScale, delta);
-
-    var g = getRoot(svgDoc);
 	
 	var p = getEventPoint(evt);
+    doZoom(svgDoc, delta, p);
 
-	p = p.matrixTransform(g.getCTM().inverse());
-
-	// Compute new scale matrix in current mouse position
-    var k = getSVGRoot().createSVGMatrix().translate(p.x, p.y).scale(z).translate(-p.x, -p.y);
-
-        setCTM(g, g.getCTM().multiply(k));
-
-	if(typeof(stateTf) == "undefined")
-		stateTf = g.getCTM().inverse();
-
-	stateTf = stateTf.multiply(k.inverse());
 }
 
 /**
