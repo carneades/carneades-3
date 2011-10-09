@@ -27,7 +27,7 @@
 
 (defargument a4 
   (pro "V"
-      (pm "X")))
+       (pm "X")))
 
 (defargument a5
   (pro "P"
@@ -44,7 +44,7 @@
 ;; (def ld (make-lkif-data '() (rulebase) (list ag1)))
 ;; (lkif-export '() ld "argument-map-tests2.xml")
 
-(defn -main []
+(defn main []
   ;; (jgraphx/view ag1)
   ;; (graphviz/view ag1)
   (export-ag ag1 statement-formatted "/tmp/maptest.svg" :layout :radial)

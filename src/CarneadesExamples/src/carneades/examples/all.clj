@@ -59,10 +59,10 @@
 (def ag1 (unite-solutions sols))
 (def ag2 (unite-solutions-with-candidates sols))
 
-(def engine (make-engine* 200
+(def e1 (make-engine 200
                           0
                           *empty-argument-graph*
                           (list (generate-arguments-from-rules rb)
                                 (builtins type-gens))))
 
-;(def sol2 (engine goal))
+(def sol2 (e1 goal))

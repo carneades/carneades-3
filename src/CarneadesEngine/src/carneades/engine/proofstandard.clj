@@ -10,7 +10,7 @@
 ;; dispatch on the proof standard
 (defmulti satisfies? (fn [_ ps _ _ _] ps))
 
-;; scintilla?
+;; scintilla? (deprecated) 
 (defmethod satisfies? :se [ag ps pro-args con-args all-premises-hold?]
   "argument-graph (seq-of argument) (seq-of argument) -> boolean"
   (not (nil? (some #(all-premises-hold? ag %) pro-args))))

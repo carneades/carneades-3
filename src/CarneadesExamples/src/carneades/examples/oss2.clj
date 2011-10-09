@@ -8,9 +8,10 @@
         carneades.engine.lkif.import
         carneades.mapcomponent.export))
 
-(defn -main []
+(defn main []
   (let [lkif (import-lkif "/home/pal/open_source_licensing_good/impact-full.xml" )
         ag (second (:ags lkif))]
-    (export-ag ag statement-formatted "/tmp/impact.svg" :layout :radial
+    (export-ag ag statement-formatted "/tmp/impact.svg" 
+               :layout :radial
                :radius 300
                :treeify true)))

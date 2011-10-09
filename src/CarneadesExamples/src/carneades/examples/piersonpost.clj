@@ -190,5 +190,5 @@ and noxious beast.")
 (def fig4-args (argument-graph [a9 a10 a11]))
 (def fig5-args (argument-graph [a12 a13]))
 
-(defn -main []
+(defn main []
   (view both))

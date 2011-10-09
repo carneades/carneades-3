@@ -78,7 +78,7 @@
   [topic ag]
   (state topic :pro (list (list topic)) '() ag *identity* '()))
 
-(defn next-goals
+(defn- next-goals
   "state -> (seq-of (seq-of statement)) 
 
    Returns a list representing a disjunction of a conjunction of 
@@ -94,7 +94,7 @@
   [assumptions ag]
   (filter (partial arg/questioned? ag) assumptions))
 
-(defn apply-candidates
+(defn- apply-candidates
   "substitutions argument-graph (list-of candidate)
    -> [ag candidate]"
   [subs ag candidates]
@@ -114,39 +114,53 @@
     [ag '()]
     candidates))
 
-(defn update-goals
+(defn- update-goals
   "(seq-of (seq-of statement)) (seq-of statement)  ->
-              (seq-of (seq-of statement))
-
-   replaces the first literal of the first clause in a list of clauses
+   (seq-of (seq-of statement)) 
+   Replaces the first literal of the first clause in a list of clauses
    with the given replacement statements. If the resulting clause is empty
    return the remaining clauses, otherwise return the result of
    replacing the first clause with the updated clause."
-  [dis-of-con replacements]
-  (let [clause (concat replacements (rest (first dis-of-con)))]
-    (if (empty? clause)
-      (rest dis-of-con)
-      (cons clause (rest dis-of-con)))))
+  ([dis-of-con replacements]
+    (let [clause (concat replacements (rest (first dis-of-con)))]
+      (if (empty? clause)
+        (rest dis-of-con)
+        (cons clause (rest dis-of-con)))))
+  ([dis-of-con]
+    (let [clause (rest (first dis-of-con))]
+      (if (empty? clause)
+        (rest dis-of-con)
+        (cons clause (rest dis-of-con))))))
 
-(defn- get-pro-goals [state premises assumptions conclusion goal-proc]
+(defn- get-pro-goals  
+  [state arg assumptions]
   {:post [(not (nil? %))]}
-  (condp = (:viewpoint state)
-    :pro (if (= goal-proc :update)
-           (update-goals (:pro-goals state) premises)
-           (:pro-goals state)),
-    :con  (concat (:pro-goals state)           
-                  (list (list (statement-complement conclusion)))
-                  (map list (map statement-complement assumptions)))))
-
-(defn- get-con-goals [state premises assumptions conclusion goal-proc]
+  (if arg
+    (condp = (:viewpoint state)
+      :pro (update-goals (:pro-goals state) 
+                         (map arg/premise-statement (:premises arg)))
+      :con  (concat (:pro-goals state)           
+                    (list (list (statement-complement (:conclusion arg))))
+                    (map list (map statement-complement assumptions))))
+    (condp = (:viewpoint state)
+      :pro (update-goals (:pro-goals state))
+      :con  (concat (:pro-goals state)           
+                    (map list (map statement-complement assumptions))))))
+    
+(defn- get-con-goals 
+  [state arg assumptions]
   {:post [(not (nil? %))]}
-  (condp = (:viewpoint state)
-    :pro (concat (:con-goals state)
-                 (list (list (statement-complement conclusion)))
-                 (map list (map statement-complement assumptions)))
-    :con (if (= goal-proc :update)
-           (update-goals (:con-goals state) premises)
-           (:con-goals state))))
+  (if arg
+    (condp = (:viewpoint state)
+      :pro (concat (:con-goals state)
+                   (list (list (statement-complement (:conclusion arg))))
+                   (map list (map statement-complement assumptions)))
+      :con (update-goals (:con-goals state) 
+                         (map arg/premise-statement (:premises arg))))
+    (condp = (:viewpoint state)
+      :pro (concat (:con-goals state)
+                   (map list (map statement-complement assumptions)))
+      :con (update-goals (:con-goals state)))))
 
 (defn- update-assumption 
   "state statement -> state"
@@ -168,62 +182,36 @@
       (assoc state :candidate-assumptions (union cas #{a1})))))
                 
 (defn- update-assumptions
-  [state assumptions]
-  ; (println "update assumptions: " (union assumptions (:candidate-assumptions state)))
-  (reduce update-assumption state (union assumptions (:candidate-assumptions state))))
+  [state]
+  ; (println "update assumptions: " (:candidate-assumptions state))
+  (reduce update-assumption state (:candidate-assumptions state)))
 
-(defn- make-successor-state-putforward 
-  ([stat newsubs assumptions arg]
-    (make-successor-state-putforward stat newsubs assumptions arg :update))
-  ([stat newsubs assumptions arg goal-proc]
-    (let [conclusion (:conclusion arg) ; maybe use complement regarding argument-dirction?
-          premises (map arg/premise-statement (arg/argument-premises arg))
-          [newag newcandidates]
-          (apply-candidates
-            newsubs
-            (:arguments stat)
-            (cons (struct candidate
-                          `(~'guard ~@(arg/argument-variables arg)) arg)
-                  (:candidates stat)))
-          pro-goals (get-pro-goals stat premises assumptions conclusion goal-proc)
-          con-goals (get-con-goals stat premises assumptions conclusion goal-proc)]
-      (assoc stat
-             :pro-goals pro-goals
-             :con-goals con-goals
-             :arguments newag
-             :substitutions newsubs
-             :candidates newcandidates))))
-
-(defn- make-successor-state-noforward
-  "Creates a successor state by modifying the substitutions of the state, 
-   but without putting forward a new argument."
-  [stat newsubs]
-  {:pre [(not (nil? newsubs))]}
-  (let [[newag newcandidates]
-        (apply-candidates newsubs (:arguments stat) (:candidates stat))]
-    (assoc stat 
-           :pro-goals (condp = (:viewpoint stat)
-                        :pro (update-goals (:pro-goals stat) '())
-                        :con (:pro-goals stat))
-           :con-goals (condp = (:viewpoint stat)
-                        :pro (:con-goals stat)
-                        :con (update-goals (:con-goals stat) '()))
-           :arguments newag
-           :substitutions newsubs
-           :candidates newcandidates)))
-
-(defn make-successor-state
+(defn- make-successor-state
   "state response -> state"
   [state response]
   {:post [(not (nil? %))]}
-  ; (println "make-successor state candidate assumptions: " (:candidate-assumptions state))
-  (let [newsubs (:substitutions response)
-        state2  (if-let [arg (:argument response)]
-                    (make-successor-state-putforward state newsubs (:assumptions response) arg)
-                    (make-successor-state-noforward state newsubs))]
-    (update-assumptions state2 (:assumptions response))))
+  (let [subs2 (:substitutions response)
+        assumptions (:assumptions response)
+        arg (:argument response)
+        premises (and arg (map arg/premise-statement (arg/argument-premises arg)))
+        [ag2 candidates2] (apply-candidates
+                            subs2
+                            (:arguments state)
+                            (if (not arg)
+                              (:candidates state)
+                              (cons (struct candidate
+                                            `(~'guard ~@(arg/argument-variables arg)) arg)
+                                    (:candidates state))))]
+    (update-assumptions 
+      (assoc state
+             :pro-goals (get-pro-goals state arg assumptions)
+             :con-goals (get-con-goals state arg assumptions)
+             :arguments ag2
+             :substitutions subs2
+             :candidates candidates2
+             :candidate-assumptions (union assumptions (:candidate-assumptions state))))))
 
-(defn apply-generator [generator node]
+(defn- apply-generator [generator node]
   (let [state1 (:state node)]
     (map (fn [state2]
            (struct search/node (inc (:depth node))
@@ -244,9 +232,9 @@
 ;; If the goal statement is negative, the arguments generated will be con the
 ;; complement of the goal statement. If the statement is #f
 ;; the generator should return an empty stream.
-;; 
+ 
 ;; Uses mapinterleave to interleave the application of the argument generators.
-(defn make-transitions
+(defn- make-transitions
   "(seq-of generator) -> (node -> (seq-of node))"
   [l]
   (fn [node]
@@ -260,17 +248,6 @@
         :pro in
         :con (not in))))
 
-(defn find-arguments
-  "strategy state (seq-of generator) -> (seq-of state)"
-  [strategy initial-state generators]
-  (let [root (search/make-root initial-state)
-        r (search/search (struct search/problem
-                                 root
-                                 (make-transitions generators)
-                                 goal-state?)
-                         strategy)]
-    (doall (map :state r))))
-
 (defn switch-viewpoint
   "state -> state"
   [s]
@@ -283,50 +260,99 @@
 
 (defn find-arguments
   "strategy state (seq-of generator) -> (seq-of state)"
-  [type strategy max-nodes initial-state generators]
-  (let [root (search/make-root initial-state)
-        r (type (struct search/problem
-                                 root
-                                 (make-transitions generators)
-                                 goal-state?)
-                         strategy
-                         max-nodes)]
-    (map :state r)))
+  [strategy max-nodes initial-state generators]
+  (map :state (search/search (struct search/problem
+                              (search/make-root initial-state)
+                              (make-transitions generators)
+                              goal-state?)
+                      strategy
+                      max-nodes)))
 
+;(defn searcharg [type strategy max-nodes turns arguments generators]
+;  (if (<= turns 0)
+;    arguments
+;    (mapinterleave (fn [state2]
+;                     (let [arg2 (find-arguments
+;                                 type
+;                                 strategy
+;                                 max-nodes
+;                                 (switch-viewpoint state2)
+;                                 generators)]
+;                       (if (empty? arg2)
+;                         (list state2)
+;                         (searcharg type
+;                                    strategy
+;                                    max-nodes
+;                                    (dec turns)
+;                                    arg2
+;                                    generators))))
+;                   arguments)))
 
-(defn searcharg [type strategy max-nodes turns arguments generators]
-  (if (<= turns 0)
-    arguments
-    (mapinterleave (fn [state2]
-                     (let [arg2 (find-arguments
-                                 type
-                                 strategy
-                                 max-nodes
-                                 (switch-viewpoint state2)
-                                 generators)]
-                       (if (empty? arg2)
-                         (list state2)
-                         (searcharg type
-                                    strategy
-                                    max-nodes
-                                    (dec turns)
-                                    arg2
-                                    generators))))
-                   arguments)))
+;(defn find-best-arguments
+;  "strategy int int state (seq-of generator) -> (seq-of state)
+;  Find the best arguments for *both* viewpoints, starting with the viewpoint of
+;  the initial state. An argument is 'best' if it survives all possible attacks
+;  from arguments which can be constructed using the provided argument
+;  generators, within the given search limits.  find-best-arguments allows
+;  some negative conclusions to be explained, since it includes successful
+;  counterarguments in its resulting stream of states."
+;  [type strategy max-nodes max-turns state1 generators]
+;    (if (neg? max-turns)
+;    '()
+;    (searcharg type strategy max-nodes (dec max-turns)
+;               (find-arguments type strategy max-nodes state1 generators)
+;               generators)))
+;
 
 (defn find-best-arguments
-  "strategy int state (seq-of generator) -> (seq-of state)
-  
-  find the best arguments for *both* viewpoints, starting with the viewpoint of
-  the initial state. An argument is \"best\" if it survives all possible attacks
-  from arguments which can be constructed using the provided argument
-  generators, within the given search limits.  find-best-arguments allows
-  negative conclusions to be explained, since it includes successful
-  counterarguments in its resulting stream of arguments."
-  [type strategy max-nodes max-turns state1 generators]
-    (if (neg? max-turns)
-    '()
-    (searcharg type strategy max-nodes (dec max-turns)
-               (find-arguments type strategy max-nodes state1 generators)
-               generators)))
+  "strategy int int state (seq-of generator) -> (seq-of state)
+   Find the best arguments for *both* viewpoints, starting with the viewpoint of
+   the initial state. An argument is 'best' if it survives all possible attacks
+   from arguments which can be constructed using the provided argument
+   generators, within the given search limits.  find-best-arguments allows
+   some negative conclusions to be explained, since it includes successful
+   counterarguments in its resulting stream of states."
+  [strategy max-nodes max-turns state1 generators]
+  (if (<= max-turns 0)
+    []
+    (mapinterleave 
+      (fn [state2]
+        (let [seq1 (find-arguments
+                     strategy
+                     max-nodes
+                     (switch-viewpoint state2)
+                     generators)]
+          (if (empty? seq1)
+            (list state2)
+            (flatten (map (fn [state3]
+                            (find-best-arguments
+                              strategy
+                              max-nodes
+                              (dec max-turns)
+                              state3
+                              generators))
+                          seq1)))))
+      (find-arguments strategy max-nodes state1 generators))))
+
+(defn construct-arguments
+  "state integer integer (seq-of generator) -> state
+   Construct arguments for both viewpoints and combine the arguments into
+   a single argument graph of a state.  All arguments found within the given
+   resource limits are included in the argument graph of the resulting state,
+   regardless of whether or not the goal of the input state was achieved."
+  [state1 max-nodes max-turns generators]
+  ; (println "construct-arguments: " (arg/arguments (:arguments state1)) "\n\n")
+  (if (<= max-turns 0)
+    state1 
+    (let [seq1 (map :state 
+                    (search/traverse 
+                      (struct search/problem
+                              (search/make-root state1)
+                              (make-transitions generators)
+                              (fn [s] true))
+                      search/depth-first
+                      max-nodes))
+          ag2 (arg/unite-argument-graphs (map :arguments (cons state1 seq1)))]
+      (construct-arguments (switch-viewpoint (assoc state1 :arguments ag2))
+                           max-nodes (dec max-turns) generators))))
 
