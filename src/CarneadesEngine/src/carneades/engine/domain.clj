@@ -30,7 +30,6 @@
 (defn inst-domain
   [domain subs ont]
   (let [type-states (as/find-best-arguments
-                      search
                       breadth-first
                       nil
                       0

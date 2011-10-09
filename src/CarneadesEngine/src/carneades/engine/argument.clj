@@ -77,21 +77,17 @@
      (struct argument-struct id applicable weight direction
              conclusion premises scheme title)))
 
-(defn argument-id [a]
-  (:id a))
+(defn argument-id [a] (:id a))
 
-(defn argument-scheme [a]
-  (:scheme a))
+(defn argument-scheme [a] (:scheme a))
 
 (defn argument-direction [a]
   {:post [(not (nil? %))]}
   (:direction a))
 
-(defn argument-conclusion [a]
-  (:conclusion a))
+(defn argument-conclusion [a] (:conclusion a))
 
-(defn argument-premises [a]
-  (:premises a))
+(defn argument-premises [a] (:premises a))
 
 (defn get-premise
   "Returns the premise of arg which has the :atom equals to atom"
@@ -667,20 +663,17 @@
         questioned-nodes (filter (fn [n] (= (:status n) :questioned)) all-nodes),
         stated-nodes (filter (fn [n] (= (:status n) :stated)) all-nodes),]
     ;(println " - " (count all-nodes))
-    (state
-      (question
-        (reject
-          (accept (reduce unite-args ag1 (arguments ag2)) (map :statement accepted-nodes))
-          (map :statement rejected-nodes))
-        (map :statement questioned-nodes))
-      (map :statement stated-nodes))))
-
+    (-> (reduce unite-args ag1 (arguments ag2))
+        (accept (map :statement accepted-nodes))
+        (reject (map :statement rejected-nodes))
+        (question (map :statement questioned-nodes))
+        (state (map :statement stated-nodes)))))
 
 (defn unite-argument-graphs
   [l]
-  ;(println "uniting argument-graphs:" (count l))
+  ; (println "uniting argument-graphs:" (count l))
   (let [r (assoc (reduce unite-graphs *empty-argument-graph* l) :id (gensym "a"))]
-    ;(println "finished" (count (:arguments r)))
+    ; (println "united graph:" r)
     r))
 
 (defn depth-in
@@ -694,7 +687,10 @@
 (defn height-in
   [ag n]
   (let [child-args (:conclusion-of n),
-        child-stmts (apply concat (map (fn [aid] (map :atom (:premises (get-argument ag aid)))) child-args))]
+        child-stmts (apply concat 
+                           (map (fn [aid] 
+                                  (map :atom (:premises (get-argument ag aid)))) 
+                                child-args))]
     ;(println "child-stmts" (:statement n) child-stmts)
     (if (empty? child-stmts)
       0
