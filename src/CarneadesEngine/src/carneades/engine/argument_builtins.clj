@@ -50,23 +50,20 @@
   (try
     (let [result (eval-expr (subs (statement-wff expr)))]
       (if-let [subs2 (unify term result subs)]
-        (list (as/response subs2 #{} (argument (gensym "a") :pro stmt '()
-                                   "builtin:eval")))
+        (list (as/response subs2 #{} (argument (gensym "a") :pro stmt '() "builtin:eval")))
         '()))
     (catch java.lang.SecurityException e '())
     (catch java.util.concurrent.TimeoutException e '())))
 
 (defn- dispatch-equal [subs stmt term1 term2]
   (if-let [subs2 (unify term1 term2 subs)]
-    (list (as/response subs2 #{} (argument (gensym "a") :pro stmt '()
-                               "builtin:=")))
+    (list (as/response subs2 #{} (argument (gensym "a") :pro stmt '() "builtin:=")))
     '()))
 
 (defn- dispatch-notequal [subs stmt term1 term2]
   (if-let [subs2 (unify term1 term2 subs)]
     '()
-    (list (as/response subs #{} (argument (gensym "a") :pro stmt '()
-                              "builtin:not=")))))
+    (list (as/response subs #{} (argument (gensym "a") :pro stmt '() "builtin:not=")))))
 
 (defn- dispatch-exists
   [state stmt wff generators]

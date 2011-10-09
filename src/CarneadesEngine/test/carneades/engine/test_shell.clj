@@ -13,7 +13,7 @@
 
 (defn engine
   ([rb ag max-nodes max-turns]
-     (make-engine* max-nodes max-turns ag
+     (make-engine max-nodes max-turns ag
                    (list (generate-arguments-from-rules rb) (builtins)))))
 
 (deftest test-engine-01-fact
@@ -39,7 +39,7 @@
         query '(money item1)]
     (is (succeed? query eng))))
 
-(deftest test-engine-04-prior
+(deftest test-engine-04-conjunction
   (let [rb (rulebase (rule* lex-posterior
                             (if (and (enacted ?r1 ?d1)
                                      (enacted ?r2 ?d2)
@@ -47,10 +47,10 @@
                               (prior ?r2 ?r1))))
         ag (arg/accept arg/*empty-argument-graph*
                        '((enacted r1 d1)
-                         (enacted r6 d2)
+                         (enacted r2 d2)
                          (later d2 d1)))
         eng (engine rb ag 20 1)
-        query '(prior ?r1 ?r2)]
+        query '(prior r2 r1)]
     (is (succeed? query eng))))
 
 (deftest test-engine-05-disjunction-01
@@ -73,30 +73,12 @@
                              (p9 ?x))))
         ag (arg/accept arg/*empty-argument-graph*
                        '((p6 a)
-                         (p7 a)
-                         (p8 a)))
+                         (p7 a)))
                          eng (engine rb ag 20 1)
         query '(p9 a)]
     (is (succeed? query eng))))
 
 (deftest test-engine-07-unless1
-  (let [rb (rulebase
-            (rule r1 
-                  (if (and (movable ?c)
-                           (unless (money ?c)))
-                    (goods ?c)))
-   
-            (rule r2 (if (coins ?x) 
-                       (and (movable ?x) 
-                            (money ?x)))))
-        
-        ag (arg/accept arg/*empty-argument-graph*
-                       '((coins item1)))
-        eng (engine rb ag 20 2)
-        query '(goods item1)]
-    (is (fail? query eng))))
-
-(deftest test-engine-07-unless2
   (let [rb (rulebase
             (rule r1 
                   (if (and (movable ?c)
@@ -108,7 +90,25 @@
         query '(goods item1)]
     (is (succeed? query eng))))
 
-(deftest test-engine-08-negativeconclusion
+(deftest test-engine-07-unless2
+  (let [rb (rulebase
+            (rule r1 
+                  (if (and (movable ?c)
+                           (unless (money ?c)))
+                    (goods ?c)))
+   
+            ; also test multiple conclusions
+            (rule r2 (if (coins ?x) 
+                       (and (movable ?x) 
+                            (money ?x)))))
+        
+        ag (arg/accept arg/*empty-argument-graph*
+                       '((coins item1)))
+        eng (engine rb ag 20 2)
+        query '(goods item1)]
+    (is (fail? query eng))))
+
+(deftest test-engine-08-rebuttal
   (let [rb (rulebase
             (rule r1 
                   (if (and (movable ?c)
@@ -123,11 +123,10 @@
                          (edible item2)))
         eng (engine rb ag 20 2)
         query '(goods item2)]
-    (is (fail? query eng))))
+    (is (succeed? '(not (goods item2)) eng)) 
+    (is (fail? '(goods item2) eng))))
 
-; test-engine-09-criticalquestion test deleted, since rule cqs no longer exist
-
-(deftest test-engine-10-lexposterior
+(deftest test-engine-10-applies
   (let [rb (rulebase
             (rule r1 
                   (if (movable ?c)                           
@@ -164,45 +163,13 @@
 
             (rule r6 
                   (if (edible ?x) 
-                    (not (goods ?x))))
-
-            (rule* lex-posterior
-                   (if (and (enacted ?r1 ?d1)
-                            (enacted ?r2 ?d2)
-                            (later ?d2 ?d1))
-                     (prior ?r2 ?r1))))
+                      (not (goods ?x)))))
+        
         ag (arg/accept arg/*empty-argument-graph*
-                       '((movable item2)
-                         (edible item2)
-                         (enacted r1 d1)
-                         (enacted r6 d2)
-                         (later d2 d1)))
+                       '((movable i1)
+                         (edible i1)))
         eng (engine rb ag 20 1)
-        query '(not (goods item2))]
-    (is (succeed? query eng))))
-
-(deftest test-engine-12-excluded
-  (let [rb (rulebase
-            (rule r14 (if (and (bird ?x) 
-                               (unless (excluded r14 (flies ?x))))
-                          (flies ?x)))
-            (rule* r15 (if (penguin ?x) (excluded r14 (flies ?x)))))
-        ag (arg/accept arg/*empty-argument-graph*
-                       '((bird Tweety)
-                         (penguin Tweety)))
-        eng (engine rb ag 20 2)
-        query '(flies Tweety)]
-    (is (fail? query eng))))
-
-(deftest test-engine-13-applies
-  (let [rb (rulebase
-            (rule r1 (if (and (movable ?c)
-                              (unless (foo ?c)))
-                         (goods ?c))))
-        ag (arg/accept arg/*empty-argument-graph*
-                       '((movable item1)))
-        eng (engine rb ag 20 1)
-        query '(applies ?r (goods ?x))]
+        query '(not (goods ?x))]
     (is (succeed? query eng))))
 
 (deftest test-engine-14-eval
@@ -213,7 +180,7 @@
         ag (arg/accept arg/*empty-argument-graph*
                        '((p10 '(a b c d e))))
         eng (engine rb ag 20 1)
-        query '(p11 ?x)]
+        query '(p11 '(e d c b a))]
     (is (succeed? query eng))))
 
 (deftest test-engine-14-eval-calculations
@@ -227,7 +194,7 @@
                        '((income Sam 60000)
                          (deductions Sam 7000)))
         eng (engine rb ag 20 1)
-        query '(taxable-income Sam ?x)]
+        query '(taxable-income Sam 53000)]
     (is (succeed? query eng))))
 
 (deftest test-engine-15-builtin-equal
@@ -256,6 +223,4 @@
         query2 '(Enrolled Joe)]
     (is (fail? query eng))
     (is (succeed? query2 eng))))
-
-;; (view (:arguments (first (solutions (eng query)))))
 

@@ -134,7 +134,7 @@ move is one of :up, :down, :right, or :left."
     moves
     goal?))
 
-(defn -main []
+(defn main []
   (show (search pr0 breadth-first 1000))
   (show (search pr5 breadth-first 1000)))
 
