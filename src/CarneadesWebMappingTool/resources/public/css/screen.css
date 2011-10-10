@@ -1,3 +1,7 @@
+html {
+    height: 100%;
+}
+
 
 body {
     margin: 0px;
@@ -5,7 +9,9 @@ body {
     font-family:verdana, arial, helvetica, sans-serif;
     color:#333;
     background-color:white;
+    height: 100%;
 }
+
 
 p {
     padding-left: 10px;
@@ -32,18 +38,22 @@ div#filechooser form {
     padding-left: 10px;
 }
 
+#container  {
+    height: 80%;
+}
+
 div#tabs {
     height : 100%;
     width : auto;
 }
 
 div#tabs-1 {
-    height : 600px;
+    height : 100%;
     width: auto;
 }
 
 div#tabs-2 {
-    height : 600px;
+    height : 100%;
     width: auto;
 }
 
@@ -58,16 +68,15 @@ div#toolbar{
     width: 200px;
 }
 
+#wrapper {
+    height: 100%;
+}
 
 div#graphbox{    
-    margin: 0 200px;
-    height: 600px;  
+    height: 90%;
+    width: 100%;
+    cursor: move;
 }
-
-div#graphbox svg{     
-    overflow: auto;
-}
-
 
 div#extra{
     float: left;
@@ -86,4 +95,8 @@ div#footer {
     clear: left;
     width: 100%;
     text-align: center;
+}
+
+#slider {
+
 }
