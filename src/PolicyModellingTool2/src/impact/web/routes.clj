@@ -1,7 +1,7 @@
 (ns impact.web.routes
   (:use compojure.core
         impact.web.views
-        ring.adapter.jetty ;; <- to remove when building WAR
+        ring.adapter.jetty ;; <- to comment when building WAR
         ring.middleware.params
         ring.middleware.session
         [hiccup.middleware :only (wrap-base-url)])
@@ -14,6 +14,7 @@
 
 (defroutes main-routes
   (GET "/" [] (simulation/init-page))
+  (GET "/viewsession" {session :session} (str session))
   (GET "/resetsession" [] (simulation/reset-session))
   (POST "/PolicySimulation"
         {session :session params :params}

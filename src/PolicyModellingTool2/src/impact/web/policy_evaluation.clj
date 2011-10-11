@@ -7,7 +7,11 @@
 (defmethod ajax-handler :policyrules
   [json session]
   (prn "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! policy-rules handler")
-  {:body "{\"policyrules\":[\"Policy_Aktionsbuendnis_Urheberrecht_fuer_Bildung_und_Wissenschaft\"]}"})
+  (prn "policyrules =")
+  (prn :policyrules json)
+  {:body ;; "{\"policyrules\":[\"Policy_Aktionsbuendnis_Urheberrecht_fuer_Bildung_und_Wissenschaft\"]}"
+   (json-str {:policyrules (map str (get-policies (:policyrules json)))})
+   })
 
 (defmethod ajax-handler :showgraph
   [json session]

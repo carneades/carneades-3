@@ -35,7 +35,6 @@ Array.prototype.copy = function () {
 
 // when the document is ready, executes this code:
 $(function(){ 
-
     // Slider for the graph SVG
     $('#slider').slider({orientation: 'vertical', value: 0, min: -50, max: 50, step: 1, change: onSliderMove});
     
@@ -518,7 +517,7 @@ function updateTopicList(topicName, topicID) {
  * @param {object} rules json array of policy rules
  */
 function showPolicyRules(rules) {
-    /*
+    
     var policyList = $("#policylist");
     policyrules = [];
     $.each(rules, function(ruleindex, r) {
@@ -526,7 +525,7 @@ function showPolicyRules(rules) {
        policyrules.push(r);
     });   
     $("#policyrules").append('<input type="button" class="ui-button evaluate" value="Evaluate" onclick="evaluateGraph()"/>');
-    */
+    
 }
 
 /**

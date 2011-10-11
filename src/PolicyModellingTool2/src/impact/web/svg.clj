@@ -8,7 +8,7 @@
   (:import java.io.File))
 
 (defn output-svg
-  [pathname ]
+  [pathname]
   (let [lkif (import-lkif pathname)
         ;; {:keys [layout treeify radius depth]} (keywordify params)
         layout :hierarchical
@@ -31,11 +31,7 @@
 
 (defn process-ajax-request
   [uri session params]
-  (prn "uri =")
-  (prn uri)
   (let [pathname (str "/tmp/" (.getName (File. uri)))]
-    (prn "path =")
-    (prn pathname)
     {:headers {"Content-Type" "text/xml;charset=UTF-8"}
      :body (output-svg pathname)}))
 

@@ -127,7 +127,7 @@
             <text id="selectpolicy">Select one or more policies to evaluate:</text>
             <ol id="policylist">
               <!-- <li><input type="checkbox" name="Policy_Aktionsbuendnis_Urheberrecht_fuer_Bildung_und_Wissenschaft" /> -->
-              <!--   Policy_Aktionsbuendnis_Urheberrecht_fuer_Bildung_und_Wissenschaft</li> -->
+              <!--   Policy_Aktionsbuendnis_Urheberrecht_fuer_Bildung_und_Wissenschaft</li -->
             </ol>
           </div>
         </div>
