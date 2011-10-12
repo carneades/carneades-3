@@ -1,8 +1,6 @@
 /**
  * This is the AJAX-Engine for the IMPACT web application.
  *
- * @author bbr stb
- * @version 0.50
  */
 
 /** Settings */
@@ -233,7 +231,7 @@ function showQuestion(item, qbox){
         $("input:last", qbox).parent().mouseover(function(){
             if (showhints) {
                 var hinton=$("#hints > p:not(:hidden)");
-                statusupdate(1,"Verstecke: "+((hinton.length > 0)?"#qID"+hinton.attr("id").substring(5):"-")+" | Zeige: "+"#qHINT"+$(this).children("input:first").attr("name").substring(3));
+                // statusupdate(1,"Verstecke: "+((hinton.length > 0)?"#qID"+hinton.attr("id").substring(5):"-")+" | Zeige: "+"#qHINT"+$(this).children("input:first").attr("name").substring(3));
                 if (hinton.length > 0) $("#qID"+hinton.attr("id").substring(5)).blur();
                 $("#qHINT"+$(this).children("input:first").attr("name").substring(3)).show();
             }
