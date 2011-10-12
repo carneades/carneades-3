@@ -567,6 +567,7 @@ function onSVGLoad(svgW) {
     var svgroot = document.getElementsByTagName('svg')[0];
     // SVGPan has a problem if there is already a viewBox, so we remove it
     svgroot.removeAttribute('viewBox');
+    resetSvgRoot();
     setupSVGHandlers(document.documentElement);
     
     $("#tabs-1").height($("#wrapper").height());

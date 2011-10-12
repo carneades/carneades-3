@@ -145,6 +145,10 @@ function getRoot(root) {
 	return svgRoot;
 }
 
+function resetSvgRoot() {
+    svgRoot = null;
+}
+
 /**
  * Instance an SVGPoint object with given event coordinates.
  */
