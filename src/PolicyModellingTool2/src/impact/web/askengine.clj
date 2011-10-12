@@ -15,20 +15,19 @@
   (let [goal (:goal service-data)
         ;; TODO: why two last?
         lastsol (last (last solutions))
-        _ (do (prn "lastsol =") (pprint lastsol))
+        ;; _ (do (prn "lastsol =") (pprint lastsol))
         lastsubs (:substitutions lastsol)
-        _ (do (prn "lastsubs =") (prn lastsubs))
+        ;; _ (do (prn "lastsubs =") (prn lastsubs))
         lastsolstmt (apply-substitution lastsubs goal)
-        _ (do (prn "lastsolstmt =") (prn lastsolstmt))
+        ;; _ (do (prn "lastsolstmt =") (prn lastsolstmt))
         solag (unite-solutions (last solutions))
-        _ (do (prn "solag =") (pprint solag))
+        ;; _ (do (prn "solag =") (pprint solag))
         solag (assoc solag :main-issue lastsolstmt)
-        pathname (.getPath (File/createTempFile "graph" ".lkif"))
+        pathname (store-ag solag)
         service-data (assoc service-data
                        :solution (str lastsolstmt) ;; TODO translate solution
                        :lkifsol-pathname pathname
                        :has-solution true)]
-    (export-lkif (assoc *empty-lkif* :ags [solag]) pathname)
     service-data))
 
 (def send-engine-msg)
