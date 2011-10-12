@@ -21,6 +21,7 @@
 
 (defn lkif?
   [url]
+  ;; TODO this test makes a whole new parsing!
   (= (:tag (xml/parse url)) :lkif))
 
 (defn source->list
@@ -97,7 +98,8 @@
             :c lkif-constant->sexpr
             :expr lkif-expression->sexpr
             :s lkif-atom->sexpr
-            (println "no term found" lkif-term))]
+            ;; (println "no term found" lkif-term)
+            )]
     ;(println "lkif-term->sexpr" lkif-term)
     (f lkif-term)))
 
@@ -293,6 +295,7 @@
               prepath (if is-url
                          nil
                          (.getParent (file resolved)))]
+          ;; (printf "is-url? %s, resolved  = %s, relative = %s, prepath = %s\n" is-url resolved relative prepath)
           (cond
            (not (exists? resolved))
            (throw (java.io.FileNotFoundException.
@@ -320,7 +323,9 @@
             :import-tree nil
             :import-kbs (assoc {} resolved (load-ontology
                                             resolved prepath))
-            :import-ags {}})))))
+            :import-ags {}}
+
+           :else (throw (Exception. (format "%s has invalid content" url))))))))
 
 (defn import-imports
   [theory filename files resolve-path]
