@@ -32,7 +32,9 @@ Array.prototype.copy = function () {
 
 
 // when the document is ready, executes this code:
-$(function(){ 
+$(function(){
+
+
     // Slider for the graph SVG
     $('#slider').slider({orientation: 'vertical', value: 0, min: -50, max: 50, step: 1, change: onSliderMove});
     
@@ -145,6 +147,11 @@ function doAJAX(jsondata) {
     });
 }
 
+function genId() {
+    var newDate = new Date;
+    return newDate.getTime();
+}
+
 /**
  * Displays a list of questions
  * @param {object} questionArray json object representing the questions
@@ -156,14 +163,27 @@ function showQuestions(questionArray) {
     var topicID = topicName.replace(/\s/,"_");
     var qlist = $("#questionlist");
     // add new div to questionlist with id = topic name
-    qlist.append('<div id="'+topicID+'"><h3>'+topicName+'</h3><div id="qcontent"></div></div>');    
+    qlist.append('<div id="'+topicID+'"><h3>'+topicName+'</h3><div id="qcontent"></div></div>');
     var qdiv = $("#"+topicID, qlist);
     var qbox = $("#qcontent", qdiv);
     // for each question
     $.each(questionArray, function(i, item) {
         showQuestion(item, qbox);
     });
-    qbox.append('<input type="button" class="ui-button next" value="next" onclick="sendAnswers(\''+topicID+'\')"/>');
+
+    // qbox.append('<input type="button" class="ui-button next" value="next" onclick="sendAnswers(\''+topicID+'\')"/>');
+    var buttonId = genId();
+    qbox.append('<input type="button" id="' + buttonId+ '" class="ui-button" value="next" />');
+
+    $('#' + buttonId).click(function () {
+        $('#questions').validate();
+        if($('#questions').valid()) {
+            sendAnswers(topicID);
+        } else {
+            showErrorStatus('Some fields are not filled');
+        }
+    });
+
     $('.datefield', qbox).datepicker();
     if(!langChange) {
         updateTopicList(topicName, topicID);
@@ -181,7 +201,7 @@ function showQuestion(item, qbox){
     var output = "<p><label for=\"qID"+item.id+"\">"+item.question+"</label>";
     // select
     if (item.type == "select") {
-        output += "<select id=\"qID"+item.id+"\" name=\"qID"+item.id+"\">";
+        output += "<select class=\"required\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\">";
         output += "<option value=\"\" selected=\"selected\">-- please choose --</option>";
         $.each(item.answers, function(answindex, answer) {
             output += "<option value=\""+answer+"\">"+answer+"</option>";
@@ -192,22 +212,23 @@ function showQuestion(item, qbox){
         newline = radioCheckNewLine(item.answers);
         $.each(item.answers, function(answindex, answer) {
             if (newline) output += "<br/>";
-            output += "<input name=\"qID"+item.id+"\" type=\""+item.type+"\" value=\""+answer+"\">";
+            output += "<input class=\"required\" name=\"qID"+item.id+"\" type=\""+item.type+"\" value=\""+answer+"\">";
             output += "<span onclick=\"$(this).prev().click()\">"+answer+"</span>";
         });
     }
     else if (item.type == "date") {
-        output += "<input type=\"text\" class=\"datefield\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
+        output += "<input type=\"text\" class=\"datefield required\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
     }
     else if (item.type == "int") {
-        output += "<input type=\"text\" class=\"integer\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
+        output += "<input type=\"text\" class=\"integer required\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
     }
     else if (item.type == "float") {
-        output += "<input type=\"text\" class=\"float\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
+        output += "<input type=\"text\" class=\"float required\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
     }
-    else output += "<input type=\""+item.type+"\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
+    else output += "<input class=\"required\" type=\""+item.type+"\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
     output += "</p>";
     qbox.append(output);
+
     if (item.hint) $("#hints").append("<p id=\"qHINT"+item.id+"\" class=\"hint\">"+item.hint+"</p>");
     // post append formatting
     if (item.optional) $("p:last :input:first", qbox).addClass("optional");
@@ -369,6 +390,15 @@ function radioCheckNewLine(answers) {
     return newline;
 }
 
+function showErrorStatus(text) {
+    $("#status").removeClass("ui-state-highlight");
+    $("#status").addClass("ui-state-error");
+    icon='<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> <strong>Alert:</strong> ';
+    $("#status").html(icon+text+"</p>");
+    $("#status").show();
+}
+
+
 
 /**
  * Updates the statusfield of the page.
@@ -383,15 +413,14 @@ function statusupdate(type, text) {
             icon='<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: 0.3em;"></span> <strong>Loading:</strong> ';
     }
     else if (type == 1) { // Alert
-            $("#status").removeClass("ui-state-highlight");
-            $("#status").addClass("ui-state-error");
-            icon='<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> <strong>Alert:</strong> ';
+        showErrorStatus(text);
     }
     else if (type == -1) {$("#status").hide();return false;}
     else {$("#status").hide();return false;}
     $("#status").html(icon+text+"</p>");
     $("#status").show();
 }
+
 
 /**
  * Collects the given answers and parse them as JSON before sending them to {@link doAJAX}.
@@ -478,7 +507,6 @@ function qwarn(obj,warning) {
         o.next().fadeIn(500);
     }
 }
-
 /**
  * Hides a {@link qwarn}-warning.
  * @param {object} obj triggering form field HTML object
