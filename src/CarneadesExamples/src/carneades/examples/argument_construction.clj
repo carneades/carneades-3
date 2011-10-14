@@ -45,6 +45,7 @@
                 (accept facts))]
     (matching-in-statements (construct-arguments ag1 query max-goals facts generators) 
                             query)))
+
                                                      
 (defn show [query]
  (let [ag (-> (argument-graph (gensym "ag") "" query)

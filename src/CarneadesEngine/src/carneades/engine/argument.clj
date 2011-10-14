@@ -516,7 +516,7 @@
   (filter identity (list (if (node-in? n true)
                            (:statement n))
                          (if (node-in? n false)
-                           (statement-complement (statement-atom n))))))
+                           (statement-complement (statement-atom (:statement n)))))))
 
 (defn in-statements
   "argument-graph [symbol] -> (list-of statement)
@@ -570,6 +570,7 @@
   [ag1 arg]
   (reduce (fn [ag p]
             (let [n (get-node ag (:atom p))]
+              ; (println "premise: " (:atom p))
               (add-node ag
                         (assoc n :premise-of
                                (union #{(:id arg)} 
@@ -599,7 +600,7 @@
           ;; update the node for the conclusion of the argument
           ;; :acceptable and :complement-acceptable are updated below
             (add-node (assoc n :conclusion-of (union #{(:id arg)} (:conclusion-of n))))
-            (question (:conclusion arg))
+            ; (question (list (:conclusion arg)))
             (update-or-create-premise-nodes arg)
             (update-argument (assoc arg :applicable false))))))
 
