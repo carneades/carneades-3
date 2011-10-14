@@ -1,4 +1,4 @@
-;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Copyright ï¿½ 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
 
@@ -37,7 +37,7 @@
 
 (defn- dispatch-eval [subs stmt term expr]
   (try
-    (let [result (eval-expr (subs (statement-wff expr)))]
+    (let [result (eval-expr (apply-substitution subs (statement-wff expr)))]
       (if-let [subs2 (unify term result subs)]
         (list (make-response subs2 #{} (argument (gensym "a") :pro stmt '() "builtin:eval")))
         '()))
