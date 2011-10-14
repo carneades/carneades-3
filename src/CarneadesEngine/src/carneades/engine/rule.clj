@@ -343,7 +343,7 @@
                     ;                           inst-clauses)))))
                     
                     
-                    (make-response subs2
+                    (list (make-response subs2
                                    (clause-assumptions (:clause clause))
                                    (argument (gensym "a")
                                              false
@@ -351,7 +351,7 @@
                                              (if (= (first subgoal) 'not) :con :pro)
                                              (statement-atom (condition-statement subgoal))
                                              (map condition->premise (:clause clause))
-                                             (str (:rule clause)))))))
+                                             (str (:rule clause))))))))
               
               (apply-clause [clause]
                             (apply concat (filter identity 
