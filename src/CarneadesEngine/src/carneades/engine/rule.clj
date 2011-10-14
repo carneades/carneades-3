@@ -67,18 +67,18 @@
   :head    ; rule-head
   :clause) ; the actual clause
 
-(defn instantiate-domains
-  [nc subs]
-  (map (fn [s]
-         {:clause (struct named-clause
-                          (gensym "c")
-                          (:rule nc)
-                          (:strict nc)
-                          (:domains nc)
-                          (map (fn [t] (apply-substitution s t)) (:head nc))
-                          (map (fn [t] (apply-substitution s t)) (:clause nc))),
-          :subs subs})
-       subs))
+;(defn instantiate-domains
+;  [nc subs]
+;  (map (fn [s]
+;         {:clause (struct named-clause
+;                          (gensym "c")
+;                          (:rule nc)
+;                          (:strict nc)
+;                          (:domains nc)
+;                          (map (fn [t] (apply-substitution s t)) (:head nc))
+;                          (map (fn [t] (apply-substitution s t)) (:clause nc))),
+;          :subs subs})
+;       subs))
 
 (defn condition-statement
   "condition -> statement
@@ -327,19 +327,32 @@
                                 (unify `(~'applies ~(:rule clause) ~c) subgoal subs))]
                   (if (not subs2)
                     false ; fail
-                    (let [inst-clauses (instantiate-domains clause subs2)]
-                      (map (fn [inst-clause-map]
-                             (let [ic (:clause inst-clause-map)]
-                               (make-response (:subs inst-clause-map)
-                                         (clause-assumptions (:clause clause))
-                                         (argument (gensym "a")
-                                                   false
-                                                   *default-weight*
-                                                   (if (= (first subgoal) 'not) :con :pro)
-                                                   (statement-atom (condition-statement subgoal))
-                                                   (map condition->premise (:clause ic))
-                                                   (:rule ic)))))
-                           inst-clauses)))))
+                    
+                    ;                    (let [inst-clauses (instantiate-domains clause subs2)]
+                    ;                      (map (fn [inst-clause-map]
+                    ;                             (let [ic (:clause inst-clause-map)]
+                    ;                               (make-response (:subs inst-clause-map)
+                    ;                                         (clause-assumptions (:clause clause))
+                    ;                                         (argument (gensym "a")
+                    ;                                                   false
+                    ;                                                   *default-weight*
+                    ;                                                   (if (= (first subgoal) 'not) :con :pro)
+                    ;                                                   (statement-atom (condition-statement subgoal))
+                    ;                                                   (map condition->premise (:clause ic))
+                    ;                                                   (str (:rule ic))))))
+                    ;                           inst-clauses)))))
+                    
+                    
+                    (make-response subs2
+                                   (clause-assumptions (:clause clause))
+                                   (argument (gensym "a")
+                                             false
+                                             *default-weight*
+                                             (if (= (first subgoal) 'not) :con :pro)
+                                             (statement-atom (condition-statement subgoal))
+                                             (map condition->premise (:clause clause))
+                                             (str (:rule clause)))))))
+              
               (apply-clause [clause]
                             (apply concat (filter identity 
                                                   (map #(apply-for-conclusion clause %) 

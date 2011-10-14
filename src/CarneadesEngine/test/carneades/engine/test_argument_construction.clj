@@ -1,4 +1,4 @@
-;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Copyright ? 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.engine.test-argument-construction
@@ -37,12 +37,14 @@
  
 (def max-goals 2000)
 
+(def generators (list (generate-arguments-from-rules rb1)))
+
 (defn ask [query]
   (let [ag1 (-> (argument-graph (gensym "ag") "" query)
-                (accept facts))
-        generators  (list (generate-arguments-from-rules rb1))]
+                (accept facts))]
     (matching-in-statements (construct-arguments ag1 query max-goals facts generators) 
                             query)))
+
                                                      
 ; (ask '(goods ?x))
 ; (ask '(not (goods ?x)))
