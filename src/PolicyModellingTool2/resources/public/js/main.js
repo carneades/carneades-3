@@ -33,8 +33,18 @@ Array.prototype.copy = function () {
 
 // when the document is ready, executes this code:
 $(function(){
-
-
+    // enforces the choice of a topic
+    $('#nextTopic').click(function () {
+        $('#chooseTopic').validate();
+        if($('#chooseTopic').valid()) {
+            loadTopic($('#topic').val());
+            return true;
+        } else {
+            showErrorStatus('Please select a topic');
+            return false;
+        }
+    });
+    
     // Slider for the graph SVG
     $('#slider').slider({orientation: 'vertical', value: 0, min: -50, max: 50, step: 1, change: onSliderMove});
     

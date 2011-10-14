@@ -86,18 +86,21 @@
           <option value="cy">Welsh</option>
           <option value="yi">Yiddish</option>
         </select>
-        <a href="#" onclick="resetSession()" id="ResetLink">Reset</a> </div>
+        <!-- <a href="#" onclick="resetSession()" id="ResetLink">Reset</a> --> </div>
       <div id="tabs-1">
         <h2>Topics</h2>
         <p style="font-size: 1.3em; line-height: 1.5; margin: 1em 0; width: 50%;">
           Please choose a topic. </p>
         <div>
-          <form onsubmit="loadTopic($('input[name=\'topic\']:checked').val());$('#tabs a[href=\'#tabs-2\']').click();"
+          <form id="chooseTopic" onsubmit="loadTopic($('input[name=\'topic\']:checked').val());$('#tabs a[href=\'#tabs-2\']').click();"
             class="ui-widget ui-widget-content ui-corner-all" action="">
-            <p> <input type="radio" value="topicXY" name="topic" /><span
+            <p> <input id="topic" class="required" type="radio" value="topicXY" name="topic" /><span
                 onclick="$(this).prev().click()">easy example</span> </p>
-            <p><input type="button" onclick="loadTopic($('input[name=\'topic\']:checked').val());"
-                value="next" class="ui-button next" /></p>
+            <p><!-- <input id="nextTopic" type="button" onclick="loadTopic($('input[name=\'topic\']:checked').val());" -->
+               <!--  value="next" class="ui-button next" /> -->
+               <input id="nextTopic" type="button" onclick=""
+                      value="next" class="ui-button next" />
+            </p>
           </form>
         </div>
       </div>
