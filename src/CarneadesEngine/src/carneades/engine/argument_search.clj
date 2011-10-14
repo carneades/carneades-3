@@ -105,13 +105,10 @@
       (let [[ag2 candidates2] acc]
         (if (ground? (apply-substitution subs (:guard c)))
           (let [arg (arg/instantiate-argument (:argument c)  subs)]
-            [(arg/assert-argument (arg/question
-                                   ag2
-                                   (list (arg/argument-conclusion arg)))
-                                  arg)
+            [(arg/assert-argument ag2 arg)
               candidates2])
           [ag2 (cons c candidates2)])))
-    [ag '()]
+    [ag nil]
     candidates))
 
 (defn- update-goals
@@ -171,16 +168,16 @@
         cas (:candidate-assumptions state)
         a2 (apply-substitution subs a1) ]
     ; (println "a2 of update assumption: " a2)
-    (if (ground? a2)
+    (if (not (ground? a2))
+      state
       (let [ag2 (condp = (arg/status ag a2)
                   :stated (arg/accept ag [a2])
                   :questioned ag
                   :rejected (arg/question ag [a2])
                   :accepted ag)]
-         (assoc state :arguments ag2
-                      :candidate-assumptions (difference cas #{a1})))
-      (assoc state :candidate-assumptions (union cas #{a1})))))
-                
+        (assoc state :arguments ag2
+               :candidate-assumptions (difference cas #{a1}))))))
+                 
 (defn- update-assumptions
   [state]
   ; (println "update assumptions: " (:candidate-assumptions state))
@@ -267,42 +264,6 @@
                               goal-state?)
                       strategy
                       max-nodes)))
-
-;(defn searcharg [type strategy max-nodes turns arguments generators]
-;  (if (<= turns 0)
-;    arguments
-;    (mapinterleave (fn [state2]
-;                     (let [arg2 (find-arguments
-;                                 type
-;                                 strategy
-;                                 max-nodes
-;                                 (switch-viewpoint state2)
-;                                 generators)]
-;                       (if (empty? arg2)
-;                         (list state2)
-;                         (searcharg type
-;                                    strategy
-;                                    max-nodes
-;                                    (dec turns)
-;                                    arg2
-;                                    generators))))
-;                   arguments)))
-
-;(defn find-best-arguments
-;  "strategy int int state (seq-of generator) -> (seq-of state)
-;  Find the best arguments for *both* viewpoints, starting with the viewpoint of
-;  the initial state. An argument is 'best' if it survives all possible attacks
-;  from arguments which can be constructed using the provided argument
-;  generators, within the given search limits.  find-best-arguments allows
-;  some negative conclusions to be explained, since it includes successful
-;  counterarguments in its resulting stream of states."
-;  [type strategy max-nodes max-turns state1 generators]
-;    (if (neg? max-turns)
-;    '()
-;    (searcharg type strategy max-nodes (dec max-turns)
-;               (find-arguments type strategy max-nodes state1 generators)
-;               generators)))
-;
 
 (defn find-best-arguments
   "strategy int int state (seq-of generator) -> (seq-of state)
