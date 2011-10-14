@@ -14,10 +14,8 @@
         carneades.engine.utils
         ;carneades.engine.shell
         [carneades.engine.search :only (breadth-first search)]
-        carneades.engine.unify)
-  (:require
-    [carneades.engine.argument-search :as as]
-    ))
+        carneades.engine.unify
+        carneades.engine.response))
 
 (declare builtins)
 
@@ -37,80 +35,71 @@
                    (prior ?r2 ?r1))
             (priority ?r2 ?r1 ?p1)))))
 
-(defn- try-unify [stmt args subs]
-  (mapinterleave (fn [stmt2]
-                   (if-let [subs2 (unify stmt stmt2 subs)]
-                     (list (as/response subs2 #{} nil))
-
-                     ;; fail:
-                     '()))
-    (in-statements args (statement-predicate stmt))))
-
 (defn- dispatch-eval [subs stmt term expr]
   (try
     (let [result (eval-expr (subs (statement-wff expr)))]
       (if-let [subs2 (unify term result subs)]
-        (list (as/response subs2 #{} (argument (gensym "a") :pro stmt '() "builtin:eval")))
+        (list (make-response subs2 #{} (argument (gensym "a") :pro stmt '() "builtin:eval")))
         '()))
     (catch java.lang.SecurityException e '())
     (catch java.util.concurrent.TimeoutException e '())))
 
 (defn- dispatch-equal [subs stmt term1 term2]
   (if-let [subs2 (unify term1 term2 subs)]
-    (list (as/response subs2 #{} (argument (gensym "a") :pro stmt '() "builtin:=")))
+    (list (make-response subs2 #{} (argument (gensym "a") :pro stmt '() "builtin:=")))
     '()))
 
 (defn- dispatch-notequal [subs stmt term1 term2]
   (if-let [subs2 (unify term1 term2 subs)]
     '()
-    (list (as/response subs #{} (argument (gensym "a") :pro stmt '() "builtin:not=")))))
+    (list (make-response subs #{} (argument (gensym "a") :pro stmt '() "builtin:not=")))))
 
-(defn- dispatch-exists
-  [state stmt wff generators]
-  (let [subs (:substitutions state),
-        [e v t p] (apply-substitution subs wff),
-        v2 (gensym "?"),
-        t2 (replace-var v v2 t),
-        p2 (replace-var v v2 p),
-        type-states (as/find-best-arguments
-                      search
-                      breadth-first
-                      nil
-                      0
-                      (as/state
-                        t2
-                        :pro 
-                        (list (list t2)) 
-                        '()
-                        (:arguments state)
-                        (:substitutions state)
-                        (:candidates state))
-                      (lazy-cat generators (lazy-seq (list (builtins generators))))),
-        ] 
-    ;    (println "exists dispatch:" (count type-states) "found")
-    ;    (println "generators" generators)
-    ;    (println "  v :" v)
-    ;    (println "  v2:" v2)
-    ;    (println "  t :" t)
-    ;    (println "  t2:" t2)
-    ;    (println "  p :" p)
-    ;    (println "  p2:" p2)
-    (map (fn [s]
-           (let [new-subs (:substitutions s)]
-             (as/response
-               new-subs
-               #{}
-               (cons
-                 (argument
-                   (gensym "exists")
-                   :pro 
-                   stmt
-                   (list
-                     (pm (apply-substitution new-subs p2))
-                     (pm (apply-substitution new-subs t2)))
-                   "exists")
-                 (arguments (:arguments s))))))
-      type-states)))
+;(defn- dispatch-exists
+;  [state stmt wff generators]
+;  (let [subs (:substitutions state),
+;        [e v t p] (apply-substitution subs wff),
+;        v2 (gensym "?"),
+;        t2 (replace-var v v2 t),
+;        p2 (replace-var v v2 p),
+;        type-states (as/find-best-arguments
+;                      search
+;                      breadth-first
+;                      nil
+;                      0
+;                      (as/state
+;                        t2
+;                        :pro 
+;                        (list (list t2)) 
+;                        '()
+;                        (:arguments state)
+;                        (:substitutions state)
+;                        (:candidates state))
+;                      (lazy-cat generators (lazy-seq (list (builtins generators))))),
+;        ] 
+;    ;    (println "exists dispatch:" (count type-states) "found")
+;    ;    (println "generators" generators)
+;    ;    (println "  v :" v)
+;    ;    (println "  v2:" v2)
+;    ;    (println "  t :" t)
+;    ;    (println "  t2:" t2)
+;    ;    (println "  p :" p)
+;    ;    (println "  p2:" p2)
+;    (map (fn [s]
+;           (let [new-subs (:substitutions s)]
+;             (make-response
+;               new-subs
+;               #{}
+;               (cons
+;                 (argument
+;                   (gensym "exists")
+;                   :pro 
+;                   stmt
+;                   (list
+;                     (pm (apply-substitution new-subs p2))
+;                     (pm (apply-substitution new-subs t2)))
+;                   "exists")
+;                 (arguments (:arguments s))))))
+;      type-states)))
 
 (defn state->premises
   [s t p]
@@ -119,74 +108,74 @@
       (pm (apply-substitution subs p))
       (pm (apply-substitution subs t)))))
 
-(defn- dispatch-all
-  [state stmt wff generators]
-  (println "dispatch-all" wff)
-  (let [subs (:substitutions state),
-        [e v t p] (apply-substitution subs wff),
-        v2 (gensym "?"),
-        t2 (replace-var v v2 t),
-        p2 (replace-var v v2 p),
-        type-states (as/find-best-arguments
-                      search
-                      breadth-first
-                      nil
-                      0
-                      (as/state
-                        t2
-                        :pro
-                        (list (list t2))
-                        '()
-                        (:arguments state)
-                        (:substitutions state)
-                        (:candidates state))
-                      (lazy-cat generators (lazy-seq (list (builtins generators))))),
-        premises (apply concat (map (fn [s] (state->premises s t2 p2)) type-states)),
-        arg (argument
-              (gensym "all")
-              :pro
-              stmt
-              premises
-              "all")
-        ]
-    (println "all dispatch:" (count type-states) "found")
-    (println "generators" generators)
-    (println "  v :" v)
-    (println "  v2:" v2)
-    (println "  t :" t)
-    (println "  t2:" t2)
-    (println "  p :" p)
-    (println "  p2:" p2)
-    (println "  a :" arg)
-    (list
-      (as/response
-        subs
-        #{}
-        (cons arg
-            (apply concat (map arguments (map :arguments type-states))))))))
+;(defn- dispatch-all
+;  [state stmt wff generators]
+;  (println "dispatch-all" wff)
+;  (let [subs (:substitutions state),
+;        [e v t p] (apply-substitution subs wff),
+;        v2 (gensym "?"),
+;        t2 (replace-var v v2 t),
+;        p2 (replace-var v v2 p),
+;        type-states (as/find-best-arguments
+;                      search
+;                      breadth-first
+;                      nil
+;                      0
+;                      (as/state
+;                        t2
+;                        :pro
+;                        (list (list t2))
+;                        '()
+;                        (:arguments state)
+;                        (:substitutions state)
+;                        (:candidates state))
+;                      (lazy-cat generators (lazy-seq (list (builtins generators))))),
+;        premises (apply concat (map (fn [s] (state->premises s t2 p2)) type-states)),
+;        arg (argument
+;              (gensym "all")
+;              :pro
+;              stmt
+;              premises
+;              "all")
+;        ]
+;    (println "all dispatch:" (count type-states) "found")
+;    (println "generators" generators)
+;    (println "  v :" v)
+;    (println "  v2:" v2)
+;    (println "  t :" t)
+;    (println "  t2:" t2)
+;    (println "  p :" p)
+;    (println "  p2:" p2)
+;    (println "  a :" arg)
+;    (list
+;      (make-response
+;        subs
+;        #{}
+;        (cons arg
+;            (apply concat (map arguments (map :arguments type-states))))))))
 
 (defn dispatch
-  "stmt state (list-of generator) -> (stream-of response)"
-  [stmt state generators]
+  "stmt substitutiosn (list-of generator) -> (stream-of response)"
+  [stmt subs generators]
   (let [wff (statement-wff stmt)]
     (if (seq? wff)
-      (let [args (:arguments state)
-            subs (:substitutions state)
-            [pre term1 term2] wff]
+      (let [[pre term1 term2] wff]
         (condp = pre
           'eval (dispatch-eval subs stmt term1 term2)
           '= (dispatch-equal subs stmt term1 term2)
           'not= (dispatch-notequal subs stmt term1 term2)
-          'exists (dispatch-exists state stmt wff generators)
-          'all (dispatch-all state stmt wff generators)
-          (try-unify stmt args subs)))
+          ; 'exists (dispatch-exists state stmt wff generators)
+          ; 'all (dispatch-all state stmt wff generators)
+          nil))
       nil)))
 
+; type generator : statement substitutions -> (seq-of response)
+
 (defn builtins
-  "(list-of generator) -> (statement state -> (seq-of response))"
+  "(list-of generator) -> generator"
   ([] (builtins '()))
   ([generators]
-    (fn [goal state]
+    (fn [goal subs]
       (interleaveall
-        ((generate-arguments-from-rules *builtin-rules*) goal state)
-        (dispatch goal state generators)))))
+        ((generate-arguments-from-rules *builtin-rules*) goal subs)
+        (dispatch goal subs generators)))))

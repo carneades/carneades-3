@@ -178,9 +178,10 @@
                   (if (and (p10 ?x) (eval ?z (reverse ?x))) 
                     (p11 ?z))))
         ag (arg/accept arg/*empty-argument-graph*
-                       '((p10 '(a b c d e))))
+                       '((p10 (a b c d e))))
         eng (engine rb ag 20 1)
-        query '(p11 '(e d c b a))]
+        query '(p11 (e d c b a))]
+    (println "test-engine-14-eval result: " (ask eng query))
     (is (succeed? query eng))))
 
 (deftest test-engine-14-eval-calculations
@@ -195,6 +196,7 @@
                          (deductions Sam 7000)))
         eng (engine rb ag 20 1)
         query '(taxable-income Sam 53000)]
+     (println "test-engine-14-eval-calculations result: " (ask eng query))
     (is (succeed? query eng))))
 
 (deftest test-engine-15-builtin-equal

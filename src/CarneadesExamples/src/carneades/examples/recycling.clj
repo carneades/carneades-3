@@ -4,13 +4,11 @@
 (ns carneades.examples.recycling
 (:use carneades.engine.argument
       carneades.engine.statement
-      carneades.engine.argument-from-arguments
       carneades.engine.shell
       carneades.engine.rule
       carneades.mapcomponent.viewer))
 
 ; The recycling example used by Adam Wyner 
-; Also illustrates the argument-from-arguments module.
 
 (def p1 "Every household should pay some tax for the household's garbage.")
 ; p2 is the complement of p1
