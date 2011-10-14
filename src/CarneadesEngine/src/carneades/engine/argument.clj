@@ -565,6 +565,18 @@
       ;; by updating the conclusion of the argument
       (update-statement ag2 (:conclusion arg)))))
 
+(defn- update-or-create-premise-nodes
+  "update or create nodes for each of the premises of the argument"
+  [ag1 arg]
+  (reduce (fn [ag p]
+            (let [n (get-node ag (:atom p))]
+              (add-node ag
+                        (assoc n :premise-of
+                               (union #{(:id arg)} 
+                                      (:premise-of n))))))
+          ag1 
+          (:premises arg)))
+
 (defn assert-argument
   "argument-graph argument -> argument-graph
 
@@ -582,20 +594,14 @@
   
   (if (not (cycle-free? ag arg))
     ag
-    (let [n (get-node ag (:conclusion arg))
+    (let [n (get-node ag (:conclusion arg))]
+          (-> ag
           ;; update the node for the conclusion of the argument
           ;; :acceptable and :complement-acceptable are updated below
-          ag1 (add-node ag (assoc n :conclusion-of (union #{(:id arg)}
-                                                          (:conclusion-of n))))
-          ;; update or create nodes for each of the premises of the argument
-          ag2 (reduce (fn [ag p]
-                        (let [n (get-node ag (:atom p))]
-                          (add-node ag
-                                    (assoc n :premise-of
-                                           (union #{(:id arg)} 
-                                                  (:premise-of n))))))
-                      ag1 (:premises arg))]
-      (update-argument ag2 (assoc arg :applicable false)))))
+            (add-node (assoc n :conclusion-of (union #{(:id arg)} (:conclusion-of n))))
+            (question (:conclusion arg))
+            (update-or-create-premise-nodes arg)
+            (update-argument (assoc arg :applicable false))))))
 
 (defn assert-arguments
   "argument-graph (collection-of argument) -> argument-graph
