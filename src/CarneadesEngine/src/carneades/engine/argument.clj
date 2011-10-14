@@ -4,7 +4,6 @@
 
 (ns ^{:doc "Function to create an argument graph."}
   carneades.engine.argument
-  (:refer-clojure :exclude [satisfies?])
   (:use clojure.test
         clojure.set
         clojure.contrib.def
@@ -87,6 +86,11 @@
 
 (defn argument-conclusion [a] (:conclusion a))
 
+(defn argument-head [a]
+   (if (= (:direction a) :pro)
+       (:conclusion a)
+       (statement-complement (:conclusion a))))
+
 (defn argument-premises [a] (:premises a))
 
 (defn get-premise
@@ -112,8 +116,8 @@
   (assoc arg :applicable applicability))
 
 (defmacro defargument
-  "Defines an argument with identifiant id and 
-   assign it to the variable named id with the def method
+  "Defines an argument with an given id and 
+   assigns it to the variable named id with the def method
 
    Example: (defargument b1 (pro not-property 
                               (pm possession-required)
@@ -147,16 +151,17 @@
 (defn argument-variables
   "argument -> (seq-of symbol)
 
-   Returns a sequence containing the variables of the argument arg"
+   Returns a seq containing the variables of the argument arg"
   [arg]
   (distinct (concat (mapcat #(variables (:atom %)) (:premises arg))
                     (variables (:conclusion arg)))))
 
 (defn instantiate-argument
   "argument substitutions -> argument
-   Instantiate the variable of an argument by applying substitions"
+   Instantiate the variables of an argument by applying substitions"
   [arg subs]
   (assoc arg
+    :id (gensym "a")
     :premises (map #(update-in % [:atom] (fn [a] (apply-substitution subs a))) (:premises arg))
     :conclusion (apply-substitution subs (:conclusion arg))))
 
@@ -445,7 +450,7 @@
   "argument-graph statement -> boolean"
   [ag s]
   (let [ps (proof-standard ag s)]
-    (satisfies? ag ps (pro-arguments ag s) (con-arguments ag s)
+    (satisfies-proof-standard? ag ps (pro-arguments ag s) (con-arguments ag s)
                 all-premises-hold?)))
 
 (defn acceptable?
@@ -526,6 +531,12 @@
  ([ag predicate]
     (mapcat #(in-node-statements ag %) (get-nodes ag predicate))))
 
+(defn matching-in-statements 
+  "argument-graph statement -> [statement]
+   Returns a sequence of all the *in* statements in the argument graph matching the query."
+  [ag query]
+  (filter (fn [s] (unify s query)) (in-statements ag)))
+ 
 (defn relevant-statements
   "argument-graph statement -> (seq-of statement)
 
@@ -701,4 +712,6 @@
   [ag]
   (let [main-issues (filter (fn [n] (empty? (:premise-of n))) (get-nodes ag))]
     (apply max (map (fn [n] (height-in ag n)) main-issues))))
+
+         
 

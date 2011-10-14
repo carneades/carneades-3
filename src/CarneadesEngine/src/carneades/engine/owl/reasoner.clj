@@ -3,15 +3,13 @@
 
 (ns ^{:doc "Functions to maanage and query an OWL reasoner"}
   ;;; TODO merge / replace with owl.clj ?
-    carneades.engine.owl.reasoner
-  (:require     
-    [carneades.engine.argument-search :as as] ; for testing only
-    )   
+    carneades.engine.owl.reasoner 
   (:use
     ;clojure.contrib.profile ; for testing
     clojure.contrib.def
     carneades.engine.statement
     carneades.engine.unify
+    carneades.engine.response]
     [carneades.engine.argument :as arg])
   (:import    
     (org.semanticweb.owlapi.apibinding OWLManager)        
@@ -38,7 +36,7 @@
     (map (fn [i]
            (let [c (list (first wff) (symbol (. i toStringID))),
                  subs2 (unify c wff subs)]
-             (as/response
+             (make-response
                (or subs2 subs)
                {(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))}
                (arg/argument
@@ -61,7 +59,7 @@
     (if (some #{iname} insts)
       (let []
         (if *debug* (println iname "is instance of" cname))
-        (list (as/response
+        (list (make-response
                 subs
                 {(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))}
                 (arg/argument
@@ -91,7 +89,7 @@
     (map (fn [i]
            (let [c (list (first wff) (second wff) (symbol i)),
                  subs2 (unify c wff subs)]
-             (as/response
+             (make-response
                subs2
                {(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))}
                (arg/argument
@@ -120,7 +118,7 @@
                 :object (map (memfn toStringID) (. (. reasoner getObjectPropertyValues ind prop) getFlattened)))]
     (if *debug* (println "# of instances found:" (count insts)))
     (if (some #{iname2} insts)
-      (list (as/response
+      (list (make-response
               subs
               {(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI))))}
               (arg/argument

@@ -3,14 +3,9 @@
 
 (ns ^{:doc "Allows an external entity to be asked for information during a search. Experimental."}
     carneades.engine.ask
-  ;(:require )
   (:use
     carneades.engine.unify
-    carneades.engine.argument-search
-    ;carneades.engine.argument
-    )
-  ;(:import )
-  )
+    carneades.engine.response))
 
 (defn ask-user
   [askable? get-answer]

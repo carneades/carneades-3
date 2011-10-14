@@ -45,7 +45,7 @@
   (empty? (solutions (engine query))))
 
 (defn ask
-  " ask: statement (statement -> (stream-of state)) -> (seq-of statement)
+  " ask: engine statement -> (seq-of statement)
     Returns the sequence of answers to a query found using the given inference engine.
     Always terminates, as only answers found given the resource limit of the
     inference engine will be displayed."
@@ -54,13 +54,15 @@
        (solutions (engine query))))
   
 (defn argue
-  "statement int int (set-of statement) (seq-of generator) -> argument-graph
+  "argument-graph statement int int (set-of statement) (seq-of generator) -> argument-graph
    Construct an argument graph for both sides of an issue."
-  [issue max-nodes max-turns assumptions generators]
-  (let [ag (-> (assoc (arg/argument-graph) :main-issue issue) 
-               (arg/accept assumptions))]
-       (:arguments (construct-arguments (initial-state issue ag) 
-                                        max-nodes max-turns generators)))) 
+  ([ag1 issue max-nodes max-turns assumptions generators]
+    (let [ag2 (arg/accept ag1 assumptions)]
+      (:arguments (construct-arguments (initial-state issue ag2) 
+                                       max-nodes max-turns generators))))
+  ([issue max-nodes max-turns assumptions generators]
+    (argue (assoc (arg/argument-graph) :main-issue issue) 
+           max-nodes max-turns assumptions generators)))
 
 
 ;;;;;;  Is the stuff below still needed or used anywhere?
