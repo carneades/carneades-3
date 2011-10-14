@@ -38,13 +38,17 @@
                :arg-templates {}
                :asm-templates [])))
 
+(defn- closed-issue?
+  [ac-state subs stmt1]
+  (some (fn [stmt2] (unify stmt1 stmt2 subs)) 
+        (:closed-issues ac-state)))
 
 (defn- add-subgoal
   "ac-state goal substitutions statement -> ac-state"
   [s g1 subs stmt]
-  (let [id (gensym "g")]
-    (if (contains? (:closed-issues s) stmt)
-      s
+  (if (closed-issue? s subs stmt)
+    (do (println "closed-issue: " stmt) s)
+    (let [id (gensym "g")]
       (assoc s
              :goals (assoc (:goals s) 
                            id 
@@ -59,9 +63,7 @@
    Add goals for the premises to the open goals, incrementing the depth."
   [state1 g1 subs premises]
   ; (pprint "process-premises")
-  (reduce (fn [s p]
-            (let [stmt (apply-substitution subs (premise-statement p))]
-                (add-subgoal s g1 subs stmt)))
+  (reduce (fn [s p] (add-subgoal s g1 subs (premise-statement p)))
           state1
           premises))  
 
@@ -74,8 +76,8 @@
    will get the same priority."
   [state1 g1 subs statement] 
   ; (pprint "process-conclusion")
-  (let [stmt (apply-substitution subs (statement-complement statement))]
-    (if (contains? (:closed-issues state1) stmt)
+  (let [stmt (statement-complement statement)]
+    (if (closed-issue? state1 subs stmt)
       state1
       (let [id (gensym "g")
             g2 (struct-map goal 
@@ -89,8 +91,8 @@
 (defn- process-argument
   "ac-state goal substitutions argument -> ac-state"
   [state1 goal subs arg]
-  (println "process-argument:") (pprint arg)
-  (println "subs:") (pprint subs)
+  ; (println "process-argument:") (pprint arg)
+  ; (println "subs:") (pprint subs)
   (if (not arg)
     state1
     (-> state1
@@ -124,6 +126,9 @@
   (reduce (fn [s k]
             (let [template (get (:arg-templates s) k)
                   trm (apply-substitution subs (:guard template))]
+              ; (println "template:")
+              ; (pprint template)
+              ; (println "template instances: " (:instances template))
               (if (or (not (ground? trm))
                       (contains? (:instances template) trm))
                 s
@@ -192,22 +197,21 @@
   [state1 id generators1]
   ; (pprint "reduce-goal")
   (let [goal (get (:goals state1) id)
-        ; add a generator to unify the goal with the in statements of the 
-        ; argument graph of the state
         generators2 (concat (list (generate-responses-from-in-statements (:graph state1)))
-                            generators1)
+                            generators1) 
         state2  (assoc state1    
                        :goals (dissoc (:goals state1) id)
                        :open-goals (disj (:open-goals state1) id)
                        :closed-issues (conj (:closed-issues state1) 
                                             (:issue goal)))]
-    (println "goal: " (:issue goal))
+    (println "goal: " goal)
     ; apply the generators to the selected goal
     (let [responses (apply concat 
                            (map (fn [g] 
                                   (g (:issue goal) (:substitutions goal))) 
-                                generators2))]
+                                generators2))]   
       (println "responses: " (count responses))
+      (pprint responses)
       (reduce (fn [s r] (apply-response s goal r))
               state2
               responses))))
@@ -232,10 +236,13 @@
   ([ag1 issue max-goals assumptions generators1]
     ; (pprint "argue")
     (let [ag2 (accept ag1 assumptions)
-          generators2 (concat (list (builtins))  generators1)]
-      (:graph (reduce-goals (initial-ac-state issue ag2) 
+          generators2 (concat (list (builtins))  generators1)
+          final-state (reduce-goals (initial-ac-state issue ag2) 
                             max-goals 
-                            generators2))))
+                            generators2)]
+      (pprint (:arg-templates final-state))
+      (println "closed issues: " (:closed-issues final-state))
+      (:graph final-state)))
   ([issue max-goals assumptions generators]
     (let [ag (assoc (argument-graph) :main-issue issue)]
       (construct-arguments ag max-goals assumptions generators))))

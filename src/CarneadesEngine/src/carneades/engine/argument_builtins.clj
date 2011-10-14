@@ -1,4 +1,4 @@
-;;; Copyright Â© 2010 Fraunhofer Gesellschaft 
+;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
 
@@ -155,7 +155,7 @@
 ;            (apply concat (map arguments (map :arguments type-states))))))))
 
 (defn dispatch
-  "stmt substitutiosn (list-of generator) -> (stream-of response)"
+  "stmt substitutions (list-of generator) -> (stream-of response)"
   [stmt subs generators]
   (let [wff (statement-wff stmt)]
     (if (seq? wff)
@@ -166,14 +166,14 @@
           'not= (dispatch-notequal subs stmt term1 term2)
           ; 'exists (dispatch-exists state stmt wff generators)
           ; 'all (dispatch-all state stmt wff generators)
-          nil))
-      nil)))
+          ()))
+      ())))
 
 ; type generator : statement substitutions -> (seq-of response)
 
 (defn builtins
   "(list-of generator) -> generator"
-  ([] (builtins '()))
+  ([] (builtins ()))
   ([generators]
     (fn [goal subs]
       (interleaveall

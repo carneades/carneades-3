@@ -1,4 +1,4 @@
-;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Copyright ? 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.examples.test-argument-construction
@@ -35,24 +35,24 @@
 (def facts '((movable i1)  ; thus goods, due to r1
              (coins i2)    ; thus not goods, due to r2
              (edible i3))) ; thus not goods, due to r3
+ 
+(def max-goals 2000)
 
-(def generators 
-        (list (generate-arguments-from-rules rb1) 
-              (builtins)))
+(def generators (list (generate-arguments-from-rules rb1)))
 
-(def max-goals 200)
-
-(defn ask 
-  [query]
-  (let [ag (-> (argument-graph (gensym "ag") "" query)
-               (accept facts))]
-    (matching-in-statements (construct-arguments ag query max-goals facts generators) 
+(defn ask [query]
+  (let [ag1 (-> (argument-graph (gensym "ag") "" query)
+                (accept facts))]
+    (matching-in-statements (construct-arguments ag1 query max-goals facts generators) 
                             query)))
                                                      
 (defn show [query]
  (let [ag (-> (argument-graph (gensym "ag") "" query)
                (accept facts))]
     (view (construct-arguments ag query max-goals facts generators))))
+   ; (construct-arguments ag query max-goals facts generators)))
+
+
   
 ; (ask '(goods ?x))
 ; (ask '(not (goods ?x)))
