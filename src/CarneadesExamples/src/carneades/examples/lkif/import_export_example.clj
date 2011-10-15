@@ -17,7 +17,7 @@
         goal '(p ?x)
         ag (unite-solutions (construct-arguments goal
                                                  50
-                                                 *empty-argument-graph*
+                                                 (argument-graph)
                                                  (list (generate-arguments-from-lkif lkif))))
         lkif2 (assoc lkif :ags (cons ag (:ags lkif)))]
     ;; (prn "lkif =")

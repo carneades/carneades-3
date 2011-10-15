@@ -47,7 +47,7 @@
 (def sols (construct-arguments goal
                                200
                                1
-                               *empty-argument-graph*
+                               (argument-graph)
                                depth-first
                                (list (generate-arguments-from-rules rb)
                                      (generate-arguments-from-rules type-rb)
@@ -61,7 +61,7 @@
 
 (def e1 (make-engine 200
                           0
-                          *empty-argument-graph*
+                          (argument-graph)
                           (list (generate-arguments-from-rules rb)
                                 (builtins type-gens))))
 

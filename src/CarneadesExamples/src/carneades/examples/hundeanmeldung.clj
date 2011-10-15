@@ -55,7 +55,7 @@
 
 ; accept some facts 
 (def ag1
-     (accept *empty-argument-graph*
+     (accept (argument-graph)
 	     '((vorname p1 "Christian")
 	       (name p1 "Breitenstrom")
 	       (rasse h1 "Australian Shepard")

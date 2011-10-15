@@ -25,4 +25,4 @@
 (def generators
   (list (owl/generate-arguments-from-reasoner owl)))
 
-(def e1 (make-engine 5000 1 *empty-argument-graph* generators))
+(def e1 (make-engine 5000 1 (argument-graph) generators))
