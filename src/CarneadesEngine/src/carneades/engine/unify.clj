@@ -18,17 +18,17 @@
                   (occurs? u (term-functor args))
                   (recur (term-args args)))))))
 
-(defn apply-substitution
+(defn apply-substitutions
   [s t]
   (let [t2 (cond
              (variable? t) (get s t t),
-             (nonemptyseq? t) (cons (first t) (map (fn [x] (apply-substitution s x)) (rest t))),
+             (nonemptyseq? t) (cons (first t) (map (fn [x] (apply-substitutions s x)) (rest t))),
              (fatom? t) (struct fatom (:form t)
                           (cons (first (:term t))
-                            (map (fn [x] (apply-substitution s x)) (rest (:term t))))),
+                            (map (fn [x] (apply-substitutions s x)) (rest (:term t))))),
              :else t)]
     (if (and (variable? t2) (contains? s t2))
-      (apply-substitution s t2)
+      (apply-substitutions s t2)
       t2)))
 
 (def *identity* (hash-map))
@@ -48,10 +48,10 @@
    full unification if (s u) is not a variable, and it may
    fail if it sees that u occurs in v."  
   [u v s ks kf occurs-check]
-  (let [u (apply-substitution s u)]
+  (let [u (apply-substitutions s u)]
     (if-not (variable? u)
       (unify u v s ks kf occurs-check)
-      (let [v (apply-substitution s v)]
+      (let [v (apply-substitutions s v)]
         (cond (= u v) (ks s)
               (and occurs-check (occurs? u v)) (kf :cycle)
               :else (ks (sigma u v s)))))))

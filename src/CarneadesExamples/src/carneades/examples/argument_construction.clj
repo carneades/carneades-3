@@ -4,12 +4,9 @@
 (ns carneades.examples.test-argument-construction
   (:use clojure.test
         clojure.pprint
-        carneades.engine.argument 
-        carneades.engine.argument-builtins
+        carneades.engine.shell
         carneades.engine.rule
-        carneades.engine.argument-construction
-        carneades.mapcomponent.viewer
-        ))
+        carneades.mapcomponent.viewer))
 
 (def rb1
   (rulebase
@@ -25,39 +22,48 @@
                  (and (movable ?x)
                       (money ?x))))
     
-    
     ; r3 is a rebutter of r1    
     (rule r3 
           (if (edible ?x)
             (and (movable ?x) 
-                 (not (goods ?x)))))))
+                 (not (goods ?x)))))
+    
+    (rule r4 (if (and (income ?x ?i)
+                      (deductions ?x ?d)
+                      (eval ?t (- ?i ?d)))
+                  (taxable-income ?x ?t)))
+    
+    (rule r5 (if (and (foo ?x ?y)
+                      (bar ?x ?z))
+                 (blah ?x ?z)))
+  
+    (rule lex-posterior
+          (if (and (enacted ?r1 ?d1)
+                   (enacted ?r2 ?d2)
+                   (later ?d2 ?d1))
+              (prior ?r2 ?r1)))))
+              
 
 (def facts '((movable i1)  ; thus goods, due to r1
              (coins i2)    ; thus not goods, due to r2
-             (edible i3))) ; thus not goods, due to r3
+             (edible i3)   ; thus not goods, due to r3
+             (income Sam 60000)
+             (deductions Sam 7000)
+             (enacted r1 d1)
+             (enacted r2 d2)
+             (later d2 d1)
+             (foo a b)
+             (bar a c))) 
  
 (def max-goals 2000)
 
 (def generators (list (generate-arguments-from-rules rb1)))
 
-(defn ask [query]
-  (let [ag1 (-> (argument-graph (gensym "ag") "" query)
-                (accept facts))]
-    (matching-in-statements (construct-arguments ag1 query max-goals facts generators) 
-                            query)))
-
+(def e1 (make-engine max-goals facts generators))
                                                      
-(defn show [query]
- (let [ag (-> (argument-graph (gensym "ag") "" query)
-               (accept facts))]
-    (view (construct-arguments ag query max-goals facts generators))))
-   ; (construct-arguments ag query max-goals facts generators)))
+; (ask e1 '(goods ?x))
+; (ask e1 '(not (goods ?x)))
 
+; (view (argue e1 '(goods ?x)))
 
-  
-; (ask '(goods ?x))
-; (ask '(not (goods ?x)))
-
-; (show '(goods ?x))
-
-
+(ask e1 '(blah ?x ?y))

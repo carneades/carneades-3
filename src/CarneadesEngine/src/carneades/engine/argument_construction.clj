@@ -60,7 +60,7 @@
   [state1 g1 subs premises]
   ; (pprint "process-premises")
   (reduce (fn [s p]
-            (let [stmt (apply-substitution subs (premise-statement p))]
+            (let [stmt (apply-substitutions subs (premise-statement p))]
                 (add-subgoal s g1 subs stmt)))
           state1
           premises))  
@@ -74,7 +74,7 @@
    will get the same priority."
   [state1 g1 subs statement] 
   ; (pprint "process-conclusion")
-  (let [stmt (apply-substitution subs (statement-complement statement))]
+  (let [stmt (apply-substitutions subs (statement-complement statement))]
     (if (contains? (:closed-issues state1) stmt)
       state1
       (let [id (gensym "g")
@@ -123,7 +123,7 @@
   ; (pprint "apply-arg-templates state: ")
   (reduce (fn [s k]
             (let [template (get (:arg-templates s) k)
-                  trm (apply-substitution subs (:guard template))]
+                  trm (apply-substitutions subs (:guard template))]
               ;  (println "template: " template)
               ;  (println "term: " trm)
               (if (or (not (ground? trm))
@@ -144,7 +144,7 @@
   ; (pprint (:asm-templates state1))
   (reduce (fn [state2 template] 
             (let [ag (:graph state2)
-                  asm (apply-substitution subs template)]
+                  asm (apply-substitutions subs template)]
               ; (println "asm: " asm)
               (if (not (ground? asm))
                 state2
@@ -166,13 +166,13 @@
   [state subs asms]
   (assoc state :asm-templates 
          (concat (:asm-templates state) 
-               (map (fn [asm] (apply-substitution subs asm))
+               (map (fn [asm] (apply-substitutions subs asm))
                     asms))))
          
 (defn- apply-response
   "ac-state goal response -> ac-state"
   [state1 goal response]
-  ; (pprint "apply-response")
+  (pprint {:response response})
   (-> state1
     (process-argument goal (:substitutions response) (:argument response))
     (process-assumptions (:substitutions response)  (:assumptions response)) 
@@ -196,20 +196,20 @@
   (let [goal (get (:goals state1) id)
         ; add a generator to unify the goal with the in statements of the 
         ; argument graph of the state
-        generators2 (concat (list (generate-responses-from-in-statements (:graph state1)))
+        generators2 (concat (list (generate-substitutions-from-assumptions (:graph state1)))
                             generators1)
         state2  (assoc state1    
                        :goals (dissoc (:goals state1) id)
                        :open-goals (disj (:open-goals state1) id)
                        :closed-issues (conj (:closed-issues state1) 
                                             (:issue goal)))]
-    ; (println "goal: " (:issue goal))
+    (println " goal: " (:issue goal))
     ; apply the generators to the selected goal
     (let [responses (apply concat 
                            (map (fn [g] 
                                   (g (:issue goal) (:substitutions goal))) 
                                 generators2))]
-      ; (println "responses: " (count responses))
+      (println "responses: " (count responses))
       (reduce (fn [s r] (apply-response s goal r))
               state2
               responses))))
