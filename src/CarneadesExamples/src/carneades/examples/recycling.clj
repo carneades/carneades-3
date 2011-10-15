@@ -3,9 +3,9 @@
 
 (ns carneades.examples.recycling
 (:use carneades.engine.argument
-      carneades.engine.statement
+      ; carneades.engine.statement
       carneades.engine.shell
-      carneades.engine.rule
+      ; carneades.engine.rule
       carneades.mapcomponent.viewer))
 
 ; The recycling example used by Adam Wyner 
@@ -57,9 +57,9 @@ reduces a need of a new dump which is for the garbage.")
 (defargument a8 (pro p15 (pm p14)))
 (defargument a9 (con p15 (pm p16)))
 
-(def args1
-     (assert-arguments *empty-argument-graph*
-                    [a1 a2 a3 a4 a5 a6 a7 a8 a9]))
+(def ag
+    (-> (argument-graph)
+        (assert-arguments [a1 a2 a3 a4 a5 a6 a7 a8 a9])
+        (accept [p14])))
 
-(defn main []
-  (view args1))
+(view ag)

@@ -56,7 +56,7 @@
     carneades.engine.statement
     carneades.engine.response
     [carneades.engine.dnf :only (to-dnf)]
-    [carneades.engine.unify :only (genvar unify rename-variables apply-substitution)])
+    [carneades.engine.unify :only (genvar unify rename-variables apply-substitutions)])
   (:require [clojure.string :as str]))
 
 (defstruct named-clause
@@ -75,8 +75,8 @@
 ;                          (:rule nc)
 ;                          (:strict nc)
 ;                          (:domains nc)
-;                          (map (fn [t] (apply-substitution s t)) (:head nc))
-;                          (map (fn [t] (apply-substitution s t)) (:clause nc))),
+;                          (map (fn [t] (apply-substitutions s t)) (:head nc))
+;                          (map (fn [t] (apply-substitutions s t)) (:clause nc))),
 ;          :subs subs})
 ;       subs))
 
@@ -307,7 +307,7 @@
            rule-clauses))))
 
 (defn get-clauses [rb goal subs]
-  (let [pred (predicate (apply-substitution subs goal))
+  (let [pred (predicate (apply-substitutions subs goal))
         applicable-rules ((:table rb) pred)]
     (mapinterleave rule->clauses applicable-rules)))
 

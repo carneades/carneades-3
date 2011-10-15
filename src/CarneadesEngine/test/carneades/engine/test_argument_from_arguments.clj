@@ -4,8 +4,7 @@
 
 (ns carneades.engine.test-argument-from-arguments
   (:use clojure.test
-        clojure.contrib.pprint
-        carneades.engine.utils
+        ; carneades.engine.utils
         carneades.engine.shell
         carneades.engine.argument-from-arguments
         carneades.engine.argument))
@@ -59,17 +58,10 @@ reduces a need of a new dump which is for the garbage.")
         a7 (make-arg a7 (con p1 (pm p15)))
         a8 (make-arg a8 (pro p15 (pm p14)))
         a9 (make-arg a9 (con p15 (pm p16)))
-        args1 (assert-arguments *empty-argument-graph*
+        ag (assert-arguments (argument-graph)
                                 [a1 a2 a3 a4 a5 a6 a7 a8 a9])
-        args2 (accept *empty-argument-graph* [p14])
-        e1 (make-engine 100 2 args2
-                         [(generate-responses-from-arguments args1)])
-        state (first (e1 p15))]
-    (is (not (nil? state)))
-    (let [ag (sget state :arguments)]
-      (is (some (fn [arg]
-                  (and (= (sget arg :conclusion) p15)
-                       (some (fn [premise]
-                               (= (sget premise :atom) p14))
-                             (sget arg :premises))))
-                (vals (sget ag :arguments)))))))
+        facts (list p14)
+        query (list 'not p1)
+        e1 (make-engine ag 100 facts
+               [(generate-arguments-from-arguments ag)])]
+    (is (succeed? e1 query #{query}))))

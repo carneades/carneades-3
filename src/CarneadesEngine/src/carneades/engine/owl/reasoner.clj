@@ -136,7 +136,7 @@
   (fn [subgoal state]    
     (let [manager (OWLManager/createOWLOntologyManager),          
           subs (:substitutions state),
-          wff (apply-substitution subs (statement-wff subgoal))]
+          wff (apply-substitutions subs (statement-wff subgoal))]
       (if *debug* (println "ontology" ontology "\nreasoner" reasoner))
       (cond
         (and

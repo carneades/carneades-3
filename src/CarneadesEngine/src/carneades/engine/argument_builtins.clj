@@ -37,10 +37,14 @@
 
 (defn- dispatch-eval [subs stmt term expr]
   (try
-    (let [result (eval-expr (apply-substitution subs (statement-wff expr)))]
-      (if-let [subs2 (unify term result subs)]
-        (list (make-response subs2 #{} (argument (gensym "a") :pro stmt '() "builtin:eval")))
-        '()))
+    (let [expr2 (apply-substitutions subs (statement-wff expr))]
+      (if (not (ground? expr2))
+        '()
+        (let [result (eval-expr expr2)]
+          (if-let [subs2 (unify term result subs)]
+            (list (make-response subs2 #{} 
+                                 (argument (gensym "a") :pro stmt '() "builtin:eval")))
+            '()))))
     (catch java.lang.SecurityException e '())
     (catch java.util.concurrent.TimeoutException e '())))
 
@@ -57,7 +61,7 @@
 ;(defn- dispatch-exists
 ;  [state stmt wff generators]
 ;  (let [subs (:substitutions state),
-;        [e v t p] (apply-substitution subs wff),
+;        [e v t p] (apply-substitutions subs wff),
 ;        v2 (gensym "?"),
 ;        t2 (replace-var v v2 t),
 ;        p2 (replace-var v v2 p),
@@ -95,8 +99,8 @@
 ;                   :pro 
 ;                   stmt
 ;                   (list
-;                     (pm (apply-substitution new-subs p2))
-;                     (pm (apply-substitution new-subs t2)))
+;                     (pm (apply-substitutions new-subs p2))
+;                     (pm (apply-substitutions new-subs t2)))
 ;                   "exists")
 ;                 (arguments (:arguments s))))))
 ;      type-states)))
@@ -105,14 +109,14 @@
   [s t p]
   (let [subs (:substitutions s)]
     (list
-      (pm (apply-substitution subs p))
-      (pm (apply-substitution subs t)))))
+      (pm (apply-substitutions subs p))
+      (pm (apply-substitutions subs t)))))
 
 ;(defn- dispatch-all
 ;  [state stmt wff generators]
 ;  (println "dispatch-all" wff)
 ;  (let [subs (:substitutions state),
-;        [e v t p] (apply-substitution subs wff),
+;        [e v t p] (apply-substitutions subs wff),
 ;        v2 (gensym "?"),
 ;        t2 (replace-var v v2 t),
 ;        p2 (replace-var v v2 p),

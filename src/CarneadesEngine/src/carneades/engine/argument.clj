@@ -162,8 +162,8 @@
   [arg subs]
   (assoc arg
     :id (gensym "a")
-    :premises (map #(update-in % [:atom] (fn [a] (apply-substitution subs a))) (:premises arg))
-    :conclusion (apply-substitution subs (:conclusion arg))))
+    :premises (map #(update-in % [:atom] (fn [a] (apply-substitutions subs a))) (:premises arg))
+    :conclusion (apply-substitutions subs (:conclusion arg))))
 
 ;; (defn add-premise [arg p]
 ;;   (assoc arg :applicable false :premises (cons p (:premises arg))))
@@ -234,7 +234,6 @@
   ([id title main-issue nodes arguments]
      (struct argument-graph-struct id title main-issue nodes arguments)))
 
-(defvar *empty-argument-graph* (argument-graph))
 
 (defn statement-node
   "Returns the node of s if it exists, nil otherwise"
@@ -507,6 +506,16 @@
      ;; predicate is the symbol used as a key for statements
      (vals (get-in ag [:nodes predicate]))))
 
+(defn statements
+  "argument-graph [symbol] -> (seq-of statements)
+   returns a sequence of the statements of all nodes in the 
+   argument graph with the given predicate, or all statements, if
+   no predicate is provided.. All the statements are positive literals."
+  ([ag pred]
+    (map :statement (get-nodes ag pred)))
+  ([ag]
+    (map :statement (get-nodes ag))))
+
 (defn in-node-statements
   "argument-graph node -> (seq-of statement)
 
@@ -517,9 +526,9 @@
                            (:statement n))
                          (if (node-in? n false)
                            (statement-complement (statement-atom (:statement n)))))))
-
+   
 (defn in-statements
-  "argument-graph [symbol] -> (list-of statement)
+  "argument-graph [symbol] -> (seq-of statement)
  
   returns the list of all the in statements (literals) in the argument graph,
   or all in statements with the given predicate, if one is provided.
@@ -546,6 +555,18 @@
   only if it has a node in the argument graph."
   [ag g]
  (filter #(relevant? ag % g) (map #(:statement %) (get-nodes ag))))
+
+(defn assumptions 
+  "argument-graph -> (seq-of statement)
+   Returns a sequence of literals for the statements which have been
+   accepted or rejected in the argument graph."
+  [ag]
+  (map (fn [n]
+         (if (= (:status n) :accepted)
+           (:statement n)
+           (statement-complement (:statement n))))
+       (filter (fn [n] (contains? #{:accepted :rejected} (:status n)))
+               (get-nodes ag))))      
 
 (defn update-argument
   "argument-graph argument -> argument-graph 
@@ -690,7 +711,7 @@
 (defn unite-argument-graphs
   [l]
   ; (println "uniting argument-graphs:" (count l))
-  (let [r (assoc (reduce unite-graphs *empty-argument-graph* l) :id (gensym "a"))]
+  (let [r (assoc (reduce unite-graphs (argument-graph) l) :id (gensym "a"))]
     ; (println "united graph:" r)
     r))
 

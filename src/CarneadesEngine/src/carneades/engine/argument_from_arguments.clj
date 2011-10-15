@@ -2,10 +2,7 @@
 ;;; Licensed under the EUPL V.1.1
 
 
-(ns ^{:doc "Generators for arguments from argument graphs.
-            Two argument generators are defined. The
-            first interprets arguments as propositional defeasible rules. The
-            second interprets the *in* statements as assumptions."}
+(ns ^{:doc "Generators for arguments from argument graphs."}
   carneades.engine.argument-from-arguments
   (:use carneades.engine.utils
         carneades.engine.argument
@@ -15,7 +12,7 @@
 
 ; type generator: statement substitutions  -> (seq-of response)
 
-(defn generate-responses-from-arguments
+(defn generate-arguments-from-arguments
   "argument-graph -> generator"
   [ag1]
   (fn [goal subs]
@@ -27,7 +24,8 @@
             []    
             (arguments ag1))))
 
-(defn generate-responses-from-in-statements
+
+(defn generate-assumptions-from-in-statements
   "argument-graph -> generator"
   [ag1]
   (fn [goal subs]
@@ -38,4 +36,16 @@
                   (conj l (make-response subs2 #{goal} nil)))))
             []
             (in-statements ag1))))
-  
+
+(defn generate-substitutions-from-assumptions
+  "argument-graph -> generator"
+  [ag1]
+  (fn [goal subs]
+    (reduce (fn [l stmt]
+              (let [subs2 (unify goal stmt subs)]
+                (if (not subs2)
+                  l
+                  (conj l (make-response subs2 #{} nil)))))
+            []
+            (assumptions ag1))))
+

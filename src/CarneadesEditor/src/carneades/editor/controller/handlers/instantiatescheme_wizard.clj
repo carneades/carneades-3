@@ -7,7 +7,7 @@
         carneades.editor.utils.state
         (carneades.engine statement argument lkif)
         carneades.editor.utils.core
-        [carneades.engine.unify :only (unify apply-substitution)]
+        [carneades.engine.unify :only (unify apply-substitutions)]
         carneades.editor.controller.handlers.messages
         clojure.contrib.pprint
         (carneades.editor.view wizardsprotocol viewprotocol swinguiprotocol)
@@ -255,7 +255,7 @@
     (cond invalid-vars
           *invalid-content*
 
-          (ground? (apply-substitution sub literal))
+          (ground? (apply-substitutions sub literal))
           nil
 
           :else *fillin-form*)))
@@ -347,7 +347,7 @@
         rule (get-rule (get settings "scheme") rules)
         clause-number (Integer/parseInt (get settings "clause-number"))
         clause (nth (:body rule) clause-number)
-        clause (map #(apply-substitution current-substitution %) clause)
+        clause (map #(apply-substitutions current-substitution %) clause)
         head (:head rule)
-        head (map #(apply-substitution current-substitution %) head)]
+        head (map #(apply-substitutions current-substitution %) head)]
     (instantiate-scheme view path id (str (:id rule)) (first head) clause)))

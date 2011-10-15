@@ -25,7 +25,7 @@
 ; argument graph
 (def ag (assoc-standard (assert-arguments
                           (reject
-                            (accept *empty-argument-graph* [s w])
+                            (accept (argument-graph) [s w])
                             [q v t])
                           [a1 a2 a3 a4 a5])
           :pe
