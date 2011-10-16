@@ -14,9 +14,9 @@
   :argument)  ; argument
 
 (defstruct goal
-  :issue          ; statement
+  :issues         ; (seq-of statement)
   :substitutions  ; (term -> term) map
-  :depth)         ; int
+  :depth)         ; int  
   
 (defstruct ac-state       
   :goals                  ; (symbol -> goal) map, where the symbols are goal ids
@@ -39,31 +39,30 @@
                :asm-templates [])))
 
 
-(defn- add-subgoal
-  "ac-state goal substitutions statement -> ac-state"
-  [s g1 subs stmt]
+(defn- add-goal
+  [state1 goal]
   (let [id (gensym "g")]
-    (if (contains? (:closed-issues s) stmt)
-      s
-      (assoc s
-             :goals (assoc (:goals s) 
-                           id 
-                           (struct-map goal 
-                                       :issue stmt
-                                       :substitutions subs
-                                       :depth (inc (:depth g1))))
-             :open-goals (conj (:open-goals s) id)))))
+    (assoc state1
+           :goals (assoc (:goals state1) id goal)
+           :open-goals (conj (:open-goals state1) id))))
   
 (defn- process-premises
   "ac-state goal substitutions (seq-of premise) -> ac-state
-   Add goals for the premises to the open goals, incrementing the depth."
+   Add a goal to the state for the premises of the argument. This new goal
+   is constructed from the parent goal, by removing its first issue, which was reduced by the 
+   generators producing the argument being processed, and adding issues for the statements 
+   of the premises. The depth of the parent goal is incremented in this new goal."
   [state1 g1 subs premises]
   ; (pprint "process-premises")
-  (reduce (fn [s p]
-            (let [stmt (apply-substitutions subs (premise-statement p))]
-                (add-subgoal s g1 subs stmt)))
-          state1
-          premises))  
+  (add-goal state1 
+            (struct-map goal 
+                        ; pop the first issue and add issues for the
+                        ; premises of the argument to the end for
+                        ; breadth-first search
+                        :issues (conj (rest (:issues g1))   
+                                      (map premise-statement premises))
+                        :substitutions subs
+                        :depth (inc (:depth g1)))))
 
 (defn- process-conclusion
   "ac-state goal substitutions statement -> ac-state
@@ -153,12 +152,13 @@
                             :questioned ag
                             :rejected (question ag [asm])
                             :accepted ag)]
-                  (add-subgoal (assoc state2 :graph ag2)
-                               g1 
-                               subs 
-                               (statement-complement asm))))))
-          state1
-          (:asm-templates state1)))          
+                  (add-goal (assoc state2 :graph ag2)
+                            (struct-map goal 
+                                        :issues [(statement-complement asm)]
+                                        :substitutions subs
+                                        :depth (inc (:depth g1)))))))
+            state1
+            (:asm-templates state1))))        
 
 (defn- process-assumptions
   "ac-state substitions (seq-of statement) -> ac-state
@@ -193,26 +193,30 @@
    reduce the goal with the given id remove it from from the goal lists"
   [state1 id generators1]
   ; (pprint "reduce-goal")
-  (let [goal (get (:goals state1) id)
-        ; add a generator to unify the goal with the in statements of the 
-        ; argument graph of the state
-        generators2 (concat (list (generate-substitutions-from-assumptions (:graph state1)))
-                            generators1)
-        state2  (assoc state1    
-                       :goals (dissoc (:goals state1) id)
-                       :open-goals (disj (:open-goals state1) id)
-                       :closed-issues (conj (:closed-issues state1) 
-                                            (:issue goal)))]
-    (println " goal: " (:issue goal))
-    ; apply the generators to the selected goal
-    (let [responses (apply concat 
-                           (map (fn [g] 
-                                  (g (:issue goal) (:substitutions goal))) 
-                                generators2))]
-      (println "responses: " (count responses))
-      (reduce (fn [s r] (apply-response s goal r))
-              state2
-              responses))))
+  (let [goal (get (:goals state1) id)  
+        ; remove the goal from the state
+        state2 (assoc state1    
+                      :goals (dissoc (:goals state1) id)
+                      :open-goals (disj (:open-goals state1) id))]               
+    
+    (if (empty? (:issues goal))
+      state2             
+      (let [issue (first (:issues goal))
+            ; close the issue
+            state3 (assoc state2 :closed-issues (conj (:closed-issues state2) issue))
+            generators2 (concat 
+                          (list (generate-substitutions-from-assumptions (:graph state3)))
+                          generators1)]
+        (println "issue: " issue)
+        ; apply the generators to the selected issue
+        (let [responses (apply concat 
+                               (map (fn [g] 
+                                      (g issue (:substitutions goal))) 
+                                    generators2))]
+          (println "responses: " (count responses))
+          (reduce (fn [s r] (apply-response s goal r))
+                  state3
+                  responses))))))
     
 (defn- reduce-goals
   "ac-state integer (seq-of generator) -> ac-state
