@@ -134,7 +134,7 @@
                facts '((edible i1))
                eng (engine rb facts max-goals)
                query '(not (goods ?x))]
-           (is (succeed? eng query #{'(not (goods item1))}))))
+           (is (succeed? eng query #{'(not (goods i1))}))))
 
 (deftest test-engine-eval1
          (let [rb (rulebase
