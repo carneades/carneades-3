@@ -33,9 +33,6 @@
                       (eval ?t (- ?i ?d)))
                   (taxable-income ?x ?t)))
     
-    (rule r5 (if (and (foo ?x ?y)
-                      (bar ?x ?z))
-                 (blah ?x ?z)))
   
     (rule lex-posterior
           (if (and (enacted ?r1 ?d1)
@@ -51,9 +48,7 @@
              (deductions Sam 7000)
              (enacted r1 d1)
              (enacted r2 d2)
-             (later d2 d1)
-             (foo a b)
-             (bar a c))) 
+             (later d2 d1))) 
  
 (def max-goals 2000)
 
@@ -63,7 +58,10 @@
                                                      
 ; (ask e1 '(goods ?x))
 ; (ask e1 '(not (goods ?x)))
+; (view (argue e1 '(money i2)))
 
 ; (view (argue e1 '(goods ?x)))
 
-(ask e1 '(blah ?x ?y))
+(view (argue e1 '(taxable-income Sam ?x)))
+
+; (ask e1 '(money ?x))
