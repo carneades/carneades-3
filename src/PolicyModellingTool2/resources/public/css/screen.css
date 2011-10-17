@@ -176,7 +176,11 @@ h2 {
     font-weight: bold;
 }
 
-#policyrules {
+#findpolicytext {
+    font-weight: bold;
+}
+
+#policyinteraction {
     margin: 5%;
     padding-top: 10%;
 }

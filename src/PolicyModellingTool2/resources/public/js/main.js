@@ -44,6 +44,10 @@ $(function(){
             return false;
         }
     });
+
+    $('#abductionButton').click(function () {
+        sendAbductionRequest();
+    });
     
     // Slider for the graph SVG
     $('#slider').slider({orientation: 'vertical', value: 0, min: -50, max: 50, step: 1, change: onSliderMove});
@@ -183,7 +187,7 @@ function showQuestions(questionArray) {
 
     // qbox.append('<input type="button" class="ui-button next" value="next" onclick="sendAnswers(\''+topicID+'\')"/>');
     var buttonId = genId();
-    qbox.append('<input type="button" id="' + buttonId+ '" class="ui-button" value="next" />');
+    qbox.append('<input type="button" id="' + buttonId+ '" class="ui-button ui-widget ui-state-default ui-corner-all" value="next" />');
 
     $('#' + buttonId).click(function () {
         $('#questions').validate();
@@ -487,6 +491,10 @@ function sendAnswers(topicID) {
     if (doRequest) doAJAX(jsonZ);
 }
 
+function sendAbductionRequest() {
+    doAJAX({"abduction" : "inin"});
+}
+
 /**
  * Displays a warning besides a form field when invalid data is used. To hide this use {@link qunwarn}
  * @param {object} obj triggering form field HTML object
@@ -560,7 +568,7 @@ function showPolicyRules(rules) {
        policyList.append('<li><input type="checkbox" name="'+r+'" />'+r+'</li>');       
        policyrules.push(r);
     });   
-    $("#policyrules").append('<input type="button" class="ui-button evaluate" value="Evaluate" onclick="evaluateGraph()"/>');
+    $("#policyrules").append('<input type="button" class="ui-state-hover ui-button ui-widget ui-state-default ui-corner-all ui-button ui-widget ui-state-hover evaluate" value="Evaluate" onclick="evaluateGraph()"/>');
     
 }
 

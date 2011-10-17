@@ -127,13 +127,24 @@
         <div class="ui-widget ui-widget-content ui-corner-all" id="graph" />
         <div id="toolbar" class="ui-widget ui-widget-content ui-corner-all" >
           <div id="slider" class="ui-widget ui-widget-content ui-corner-all"/>
-          <div id="policyrules">
-            <text id="selectpolicy">Select one or more policies to evaluate:</text>
-            <ol id="policylist">
-              <!-- <li><input type="checkbox" name="Policy_Aktionsbuendnis_Urheberrecht_fuer_Bildung_und_Wissenschaft" /> -->
-              <!--   Policy_Aktionsbuendnis_Urheberrecht_fuer_Bildung_und_Wissenschaft</li -->
-            </ol>
-          </div>
+          <div id="policyinteraction">
+            <div id="policyrules">
+              <text id="selectpolicy">Select one or more policies to evaluate:</text>
+              <ol id="policylist"></ol>
+            </div>
+            <br />
+            <div id="findpolicy">
+              <text id="findpolicytext">Highlight policies that could...</text>
+              <form>
+                <input type="radio" name="abduction" value="inin" />make this case acceptable<br/>
+                <input type="radio" name="abduction" value="inout" />make this case rejectable<br/>
+                <input type="radio" name="abduction" value="outin" />make the contrary of this case acceptable<br/>
+                <input type="radio" name="abduction" value="outout" />make the contrary of this case rejectable<br/>
+              </form>
+              <br/>
+              <input id="abductionButton" type="button" value="Highlight policies" class="ui-button">
+              </div>
+            </div>
         </div>
       </div>
     </div>
