@@ -117,8 +117,7 @@
 
 (defn display-lkif-src
   [content]
-  (html5
-   [:pre (escape-html content)]))
+  (format "<pre>%s</pre>" (escape-html content)))
 
 (defn upload-file
   [file session]
