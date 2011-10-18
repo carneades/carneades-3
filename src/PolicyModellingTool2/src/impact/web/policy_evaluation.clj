@@ -23,7 +23,8 @@
         policies (find-policies argGraph (keyword acceptability))]
     (prn "policies =")
     (prn policies)
-    {:body (json-str {:policies policies})}))
+    {:body (json-str {:policies policies
+                      :stmts-to-id (get-stmt-to-ids argGraph)})}))
 
 (defn process-ajax-request
   [session params]

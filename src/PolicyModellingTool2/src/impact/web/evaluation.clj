@@ -3,7 +3,8 @@
         carneades.engine.lkif
         carneades.engine.argument
         carneades.engine.statement
-        carneades.engine.abduction)
+        carneades.engine.abduction
+        carneades.mapcomponent.export)
   (:import java.io.File))
 
 (defn show-graph
@@ -59,3 +60,12 @@
 (defn find-policies
   [lkifpath acceptability]
   (filter-policies (find-position lkifpath acceptability)))
+
+(defn get-stmt-to-ids
+  [lkifpath]
+  (let [content (import-lkif lkifpath)
+        ag (first (:ags content))]
+    (reduce (fn [stmt-to-id stmt]
+              (assoc stmt-to-id stmt (gen-stmt-id stmt)))
+            {}
+            (map node-statement (get-nodes ag)))))
