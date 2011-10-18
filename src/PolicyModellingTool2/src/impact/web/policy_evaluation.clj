@@ -19,7 +19,11 @@
 
 (defmethod ajax-handler :abduction
   [json session]
-  (prn "TODO - abduction"))
+  (let [{:keys [argGraph acceptability]} (:abduction json)
+        policies (find-policies argGraph (keyword acceptability))]
+    (prn "policies =")
+    (prn policies)
+    {:body (json-str {:policies policies})}))
 
 (defn process-ajax-request
   [session params]

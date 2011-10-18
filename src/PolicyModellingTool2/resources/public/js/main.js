@@ -492,7 +492,7 @@ function sendAnswers(topicID) {
 }
 
 function sendAbductionRequest() {
-    doAJAX({"abduction" : "inin"});
+    doAJAX({abduction : {argGraph : argGraph, acceptability : $('input[name=abduction]').val()}});
 }
 
 /**
