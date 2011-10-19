@@ -129,7 +129,6 @@ function doAJAX(jsondata) {
             json : JSON.stringify(jsondata)
         },
         success : function(data) {
-            // alert("ajax success"+data);
             if (data == null || data == "") alert("Empty Server Answer!")
             // getting questions
             else if (data.questions && data.questions.length >= 1) {
@@ -152,6 +151,8 @@ function doAJAX(jsondata) {
                 showSVGGraph(data.graphpath)
             } else if (data.error) {
                 showError(data.error);
+            } else if(data.position) {
+                showPosition(data.position, data.stmts_ids);
             }
             else {    
                 // alert(data);
@@ -159,6 +160,27 @@ function doAJAX(jsondata) {
             }
         }
     });
+}
+
+function showPosition(position, stmts_ids) {
+    showPolicy(position[0], stmts_ids);
+}
+
+function showPolicy(policy, stmts_ids) {
+    var stmt = policy[1];
+    var policyid = stmts_ids["(valid " + stmt + ")"];
+    var g = $('g [id=' + policyid + ']');
+    var rect = $('g [id=' + policyid + '] rect');
+
+    var x = parseInt(rect.attr('x'), 10) - 4;
+    var y = parseInt(rect.attr('y'), 10) - 4;
+    var h = parseInt(rect.attr('height'), 10) + 8;
+    var w = parseInt(rect.attr('width'), 10) + 8;
+
+    $('svg').svg();
+    var svg = $('svg').svg('get');
+    var corner = 5;
+    svg.rect(g, x, y, w, h, corner, corner, {stroke : "red", fill : "transparent"});
 }
 
 function genId() {

@@ -63,12 +63,13 @@
 
 (defn gen-stmt-id
   [stmt]
-  (let [size 10
-        s (if (> (count stmt) size)
-            (subs stmt 0 size)
-            stmt)
+  (let [stmtstr (statement/statement-formatted stmt)
+        size 10
+        s (if (> (count stmtstr) size)
+            (subs stmtstr 0 size)
+            stmtstr)
         s (s/replace s " " "_")]
-   (keyword (str "s-" s "-" (str (gensym))))))
+   (keyword (str "s-" s "-" (str (Math/abs (hash s)))))))
 
 (defn pick-stmt-params
   [ag stmt params]
@@ -162,7 +163,7 @@
   (let [stmt (ag/premise-atom pm)
         stmtstr (oldmap/stmt-to-str ag stmt stmt-str)
         already-added (get-in mapinfo [:stmts-ids stmt])
-        id (gen-stmt-id stmtstr)
+        id (gen-stmt-id stmt)
         [map mapinfo pms] (cond
                    (and already-added (:treeify params) (not (:full-duplication params)))
                    [(-> map
@@ -264,7 +265,7 @@
 (defn add-statement
   [map ag stmt stmt-ids stmt-str params]
   (let [stmtstr (oldmap/stmt-to-str ag stmt stmt-str)
-        id (gen-stmt-id stmtstr)
+        id (gen-stmt-id stmt)
         stmt-params (merge (pick-stmt-params ag stmt params)
                            {:label "" :x 0 :y 0 :shape :rect})
         map (add-node-kv map id stmt-params)

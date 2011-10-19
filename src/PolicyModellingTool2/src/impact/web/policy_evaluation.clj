@@ -21,10 +21,10 @@
   [json session]
   (let [{:keys [argGraph acceptability]} (:abduction json)
         policies (find-policies argGraph (keyword acceptability))]
-    (prn "policies =")
+    (prn "position =")
     (prn policies)
-    {:body (json-str {:policies policies
-                      :stmts-to-id (get-stmt-to-ids argGraph)})}))
+    {:body (json-str {:position policies
+                      :stmts_ids (get-stmt-to-ids argGraph)})}))
 
 (defn process-ajax-request
   [session params]
