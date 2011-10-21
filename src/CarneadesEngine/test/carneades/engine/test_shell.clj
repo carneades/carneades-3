@@ -182,4 +182,18 @@
            (is (succeed? eng query #{'(enrolled Joe)}))))
 
 
+(deftest test-engine-cyclic-rules
+         ; To test whether the argument construction 
+         ; module terminates when rules are recursive
+         ; with no base cases.  
+         (let [rb (rulebase 
+                    (rule r1 (if (foo ?x) (bar ?x)))
+                    (rule r2 (if (bar ?x) (foo ?x))))
+               eng (engine rb () max-goals)
+               query '(foo ?x)]
+           (is (succeed? eng query #{}))))
+
+    
+    
+
 
