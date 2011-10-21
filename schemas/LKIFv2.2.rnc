@@ -220,7 +220,6 @@ grammar {
         # Note: The type attribute is deprecated. All premises will be ordinary.
         attribute role { xsd:anyURI | xsd:string }?,
         attribute statement { xsd:anyURI },
-        Title*   # alternative natural language expressions of the role 
      } 
                   
     Conclusion = element conclusion { attribute statement { xsd:anyURI }  }

@@ -60,8 +60,10 @@
 ; (ask e1 '(not (goods ?x)))
 ; (view (argue e1 '(money i2)))
 
-; (view (argue e1 '(goods ?x)))
-
 (view (argue e1 '(taxable-income Sam ?x)))
 
+(view (argue e1 '(goods ?x)))
+
 ; (ask e1 '(money ?x))
+
+(view (argue e1 '(foo a)))
