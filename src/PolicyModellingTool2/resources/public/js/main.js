@@ -164,13 +164,14 @@ function doAJAX(jsondata) {
 
 function showPosition(position, stmts_ids) {
     showPolicy(position[0], stmts_ids);
+    // TODO: show all policies
 }
 
 function showPolicy(policy, stmts_ids) {
     var stmt = policy[1];
     var policyid = stmts_ids["(valid " + stmt + ")"];
-    var g = $('g [id=' + policyid + ']');
-    var rect = $('g [id=' + policyid + '] rect');
+    var g = $('g [id="' + policyid + '"]');
+    var rect = $('g [id="' + policyid + '"] rect');
 
     var x = parseInt(rect.attr('x'), 10) - 4;
     var y = parseInt(rect.attr('y'), 10) - 4;
@@ -180,7 +181,7 @@ function showPolicy(policy, stmts_ids) {
     $('svg').svg();
     var svg = $('svg').svg('get');
     var corner = 5;
-    svg.rect(g, x, y, w, h, corner, corner, {stroke : "red", fill : "transparent"});
+    svg.rect(g, x, y, w, h, corner, corner, {"stroke-width" : 2, stroke : "purple", fill : "transparent"});
 }
 
 function genId() {
@@ -207,6 +208,7 @@ function showQuestions(questionArray) {
         showQuestion(item, qbox);
     });
 
+    
     // qbox.append('<input type="button" class="ui-button next" value="next" onclick="sendAnswers(\''+topicID+'\')"/>');
     var buttonId = genId();
     qbox.append('<input type="button" id="' + buttonId+ '" class="ui-button ui-widget ui-state-default ui-corner-all" value="next" />');
