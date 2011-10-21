@@ -42,7 +42,7 @@
               
 
 (def facts '((movable i1)  ; thus goods, due to r1
-             (coins i2)    ; thus not goods, due to r2
+             (coins i2)    ; thus out goods, due to r2
              (edible i3)   ; thus not goods, due to r3
              (income Sam 60000)
              (deductions Sam 7000)
@@ -50,7 +50,7 @@
              (enacted r2 d2)
              (later d2 d1))) 
  
-(def max-goals 2000)
+(def max-goals 10000)
 
 (def generators (list (generate-arguments-from-rules rb1)))
 
