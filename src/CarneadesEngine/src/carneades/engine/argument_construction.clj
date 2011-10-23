@@ -4,39 +4,71 @@
         clojure.pprint
         carneades.engine.statement
         carneades.engine.unify
-        carneades.engine.argument
+        carneades.engine.argument-graph
+        carneades.engine.atomic-argument
+        carneades.engine.argument-generator
         carneades.engine.argument-builtins
         carneades.engine.argument-from-arguments))
 
-(defstruct argument-template 
-  :guard      ; term with all unbound variables of the argument
-  :instances  ; set of ground terms matching the guard
-  :argument)  ; argument
+(defrecord ArgumentTemplate 
+  [guard       ; term with all unbound variables of the argument
+   instances   ; set of ground terms matching the guard
+   argument])  ; atomic argument
 
-(defstruct goal
-  :issues         ; (seq-of statement)
-  :substitutions  ; (term -> term) map
-  :depth)         ; int  
-  
-(defstruct ac-state       
-  :goals                  ; (symbol -> goal) map, where the symbols are goal ids
-  :open-goals             ; set of goal ids (todo: change to a priority queue)
-  :closed-issues          ; set of statements for goals already processed 
-  :graph                  ; argument-graph 
-  :arg-templates          ; (symbol -> argument template) map; symbols are template ids
-  :asm-templates)         ; vector of non-ground statements
+(defn make-argument-template
+   [& values]
+   (let [m (apply hash-map values)]
+   (merge (ArgumentTemplate. 
+             nil    ; guared
+             #{}    ; instances
+             nil)   ; atomic argument
+          m)))
 
-(defn initial-ac-state
+(defrecord Goal
+  [issues         ; (seq-of statement)
+   substitutions  ; (term -> term) map
+   depth])        ; int  
+
+(defn make-goal
+   [& values]
+   (let [m (apply hash-map values)]
+   (merge (Goal. 
+             ()     ; issues
+             {}     ; substitutions
+             0)     ; depth
+          m)))
+
+(defrecord ACState  
+  "argument construction state"     
+  [goals                  ; (symbol -> goal) map, where the symbols are goal ids
+   open-goals             ; set of goal ids (todo: change to a priority queue)
+   closed-issues          ; set of statements for goals already processed 
+   graph                  ; argument-graph 
+   arg-templates          ; (symbol -> argument template) map; symbols are template ids
+   asm-templates])        ; vector of non-ground statements
+
+(defn make-acstate
+  [& values]
+  (let [m (apply hash-map values)]
+    (merge (ACState. 
+             {}     ; goals
+             #{}    ; open goals
+             #{}    ; closed-issues
+             (make-argument-graph) 
+             {}     ; argument templates
+             [])    ; assumption templates
+           m)))
+
+(defn initial-acstate
   "statement argument-graph -> ac-state"
   [issue ag]
   (let [goal-id (gensym "g")]
-    (struct-map ac-state
-               :goals {goal-id (struct-map goal :issues (list issue) :substitutions {} :depth 0)}
-               :open-goals #{goal-id}
-               :closed-issues #{}
-               :graph ag
-               :arg-templates {}
-               :asm-templates [])))
+    (make-acstate
+      :goals {goal-id (make-goal :issues (list issue) 
+                                 :substitutions {} 
+                                 :depth 0)}
+      :open-goals #{goal-id}
+      :graph ag)))
 
 
 (defn- add-goal
@@ -56,15 +88,15 @@
   ; (println "process premises")
   ; (pprint (map premise-statement premises))
   (add-goal state1 
-            (struct-map goal 
-                        ; pop the first issue and add issues for the
-                        ; premises of the argument to the beginning for
-                        ; depth-first search
-                        :issues (concat (map premise-statement 
-                                             (:premises (:argument response)))
-                                        (rest (:issues g1)))
-                        :substitutions (:substitutions response)
-                        :depth (inc (:depth g1)))))
+            (make-goal 
+              ; pop the first issue and add issues for the
+              ; premises of the argument to the beginning for
+              ; depth-first search
+              :issues (concat (map premise-statement 
+                                   (:premises (:argument response)))
+                              (rest (:issues g1)))
+              :substitutions (:substitutions response)
+              :depth (inc (:depth g1)))))
 
 (defn- process-conclusion
   "ac-state goal substitutions statement -> ac-state
@@ -78,10 +110,10 @@
   (let [stmt (apply-substitutions subs (statement-complement statement))]
     (if (contains? (:closed-issues state1) stmt)
       state1
-      (add-goal state1 (struct-map goal 
-                           :issues (list stmt)
-                           :substitutions subs
-                           :depth (:depth g1))))))
+      (add-goal state1 (make-goal 
+                         :issues (list stmt)
+                         :substitutions subs
+                         :depth (:depth g1))))))
                 
   
 (defn- process-argument
@@ -99,10 +131,10 @@
           ; to do: add a goal for excluding the rule/scheme, for undercutters
           (assoc :arg-templates (assoc (:arg-templates state1) 
                                        (gensym "at") 
-                                       (struct-map argument-template
-                                                   :guard `(~'guard ~@(argument-variables arg))
-                                                   :instances #{}
-                                                   :argument arg)))))))
+                                       (make-argument-template
+                                         :guard `(~'guard ~@(argument-variables arg))
+                                         :instances #{}
+                                         :argument arg)))))))
 (defn- add-instance
   "map symbol term -> map"
   [arg-template-map key term]
@@ -155,10 +187,10 @@
                             :rejected (question ag [asm])
                             :accepted ag)]
                   (add-goal (assoc state2 :graph ag2)
-                            (struct-map goal 
-                                        :issues (list (statement-complement asm))
-                                        :substitutions subs
-                                        :depth (inc (:depth g1))))))))
+                            (make-goal 
+                              :issues (list (statement-complement asm))
+                              :substitutions subs
+                              :depth (inc (:depth g1))))))))
           state1
           (:asm-templates state1)))      
 
@@ -184,15 +216,26 @@
       (apply-arg-templates response)
       (apply-asm-templates goal (:substitutions response))))
 
-; type generator : statement substitutions -> (seq-of response)
-
 (defn select-random-member
   "set -> any
    Select and return a random member of a set"
   [set] 
   (let [sq (seq set)] 
     (nth sq (rand-int (count sq)))))
-       
+
+(defn- generate-substitutions-from-assumptions
+  "argument-graph -> argument-generator"
+  [ag1]
+  (reify ArgumentGenerator
+    (generate [goal subs]
+              (reduce (fn [l stmt]
+                        (let [subs2 (unify goal stmt subs)]
+                          (if (not subs2)
+                            l
+                            (conj l (make-response subs2 #{} nil)))))
+                      []
+                      (assumptions ag1)))))
+
 (defn- reduce-goal
   "ac-state symbol generators -> ac-state
    reduce the goal with the given id remove it from from the goal lists"
@@ -220,7 +263,7 @@
             ; apply the generators to the selected issue
             (let [responses (apply concat 
                                    (map (fn [g] 
-                                          (g issue (:substitutions goal))) 
+                                          (generate g issue (:substitutions goal))) 
                                         generators2))]
               ; (println "responses: " (count responses))
               (reduce (fn [s r] (apply-response s goal r))
@@ -248,10 +291,10 @@
     ; (pprint "argue")
     (let [ag2 (accept ag1 assumptions)
           generators2 (concat (list (builtins))  generators1)]
-      (:graph (reduce-goals (initial-ac-state issue ag2) 
+      (:graph (reduce-goals (initial-acstate issue ag2) 
                             max-goals 
                             generators2))))
   ([issue max-goals assumptions generators]
-    (let [ag (assoc (argument-graph) :main-issue issue)]
+    (let [ag (make-argument-graph :main-issue issue)]
       (construct-arguments ag max-goals assumptions generators))))
 

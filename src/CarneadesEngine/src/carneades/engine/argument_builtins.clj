@@ -1,4 +1,4 @@
-;;; Copyright � 2010 Fraunhofer Gesellschaft 
+;;; Copyright (c) 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
 
@@ -8,14 +8,12 @@
         clojure.contrib.pprint
         carneades.engine.utils
         carneades.engine.statement
-        carneades.engine.argument
         carneades.engine.sandbox        
         carneades.engine.rule
         carneades.engine.utils
-        ;carneades.engine.shell
-        [carneades.engine.search :only (breadth-first search)]
+        carneades.engine.argument-generator
         carneades.engine.unify
-        carneades.engine.response))
+        carneades.engine.atomic-argument))
 
 (declare builtins)
 
@@ -39,124 +37,35 @@
   (try
     (let [expr2 (apply-substitutions subs (statement-wff expr))]
       (if (not (ground? expr2))
-        '()
+        ()
         (let [result (eval-expr expr2)]
           (if-let [subs2 (unify term result subs)]
             (list (make-response subs2 #{} 
-                                 (argument (gensym "a") :pro stmt '() "builtin:eval")))
-            '()))))
-    (catch java.lang.SecurityException e '())
-    (catch java.util.concurrent.TimeoutException e '())))
+                                 (make-atomic-argument 
+                                   :id (gensym "a") 
+                                   :conclusion stmt 
+                                   :scheme "builtin:eval")))
+            ()))))
+    (catch java.lang.SecurityException e ())
+    (catch java.util.concurrent.TimeoutException e ())))
 
 (defn- dispatch-equal [subs stmt term1 term2]
   (if-let [subs2 (unify term1 term2 subs)]
-    (list (make-response subs2 #{} (argument (gensym "a") :pro stmt '() "builtin:=")))
-    '()))
+    (list (make-response subs2 #{} 
+                         (make-atomic-argument 
+                           :id (gensym "a") 
+                           :conclusion stmt 
+                           :scheme "builtin:=")))
+    ()))
 
 (defn- dispatch-notequal [subs stmt term1 term2]
   (if-let [subs2 (unify term1 term2 subs)]
-    '()
-    (list (make-response subs #{} (argument (gensym "a") :pro stmt '() "builtin:not=")))))
-
-;(defn- dispatch-exists
-;  [state stmt wff generators]
-;  (let [subs (:substitutions state),
-;        [e v t p] (apply-substitutions subs wff),
-;        v2 (gensym "?"),
-;        t2 (replace-var v v2 t),
-;        p2 (replace-var v v2 p),
-;        type-states (as/find-best-arguments
-;                      search
-;                      breadth-first
-;                      nil
-;                      0
-;                      (as/state
-;                        t2
-;                        :pro 
-;                        (list (list t2)) 
-;                        '()
-;                        (:arguments state)
-;                        (:substitutions state)
-;                        (:candidates state))
-;                      (lazy-cat generators (lazy-seq (list (builtins generators))))),
-;        ] 
-;    ;    (println "exists dispatch:" (count type-states) "found")
-;    ;    (println "generators" generators)
-;    ;    (println "  v :" v)
-;    ;    (println "  v2:" v2)
-;    ;    (println "  t :" t)
-;    ;    (println "  t2:" t2)
-;    ;    (println "  p :" p)
-;    ;    (println "  p2:" p2)
-;    (map (fn [s]
-;           (let [new-subs (:substitutions s)]
-;             (make-response
-;               new-subs
-;               #{}
-;               (cons
-;                 (argument
-;                   (gensym "exists")
-;                   :pro 
-;                   stmt
-;                   (list
-;                     (pm (apply-substitutions new-subs p2))
-;                     (pm (apply-substitutions new-subs t2)))
-;                   "exists")
-;                 (arguments (:arguments s))))))
-;      type-states)))
-
-(defn state->premises
-  [s t p]
-  (let [subs (:substitutions s)]
-    (list
-      (pm (apply-substitutions subs p))
-      (pm (apply-substitutions subs t)))))
-
-;(defn- dispatch-all
-;  [state stmt wff generators]
-;  (println "dispatch-all" wff)
-;  (let [subs (:substitutions state),
-;        [e v t p] (apply-substitutions subs wff),
-;        v2 (gensym "?"),
-;        t2 (replace-var v v2 t),
-;        p2 (replace-var v v2 p),
-;        type-states (as/find-best-arguments
-;                      search
-;                      breadth-first
-;                      nil
-;                      0
-;                      (as/state
-;                        t2
-;                        :pro
-;                        (list (list t2))
-;                        '()
-;                        (:arguments state)
-;                        (:substitutions state)
-;                        (:candidates state))
-;                      (lazy-cat generators (lazy-seq (list (builtins generators))))),
-;        premises (apply concat (map (fn [s] (state->premises s t2 p2)) type-states)),
-;        arg (argument
-;              (gensym "all")
-;              :pro
-;              stmt
-;              premises
-;              "all")
-;        ]
-;    (println "all dispatch:" (count type-states) "found")
-;    (println "generators" generators)
-;    (println "  v :" v)
-;    (println "  v2:" v2)
-;    (println "  t :" t)
-;    (println "  t2:" t2)
-;    (println "  p :" p)
-;    (println "  p2:" p2)
-;    (println "  a :" arg)
-;    (list
-;      (make-response
-;        subs
-;        #{}
-;        (cons arg
-;            (apply concat (map arguments (map :arguments type-states))))))))
+    ()
+    (list (make-response subs #{} 
+                         (make-atomic-argument 
+                           :id (gensym "a") 
+                           :conclusion stmt 
+                           :scheme "builtin:not=")))))
 
 (defn dispatch
   "stmt substitutions (list-of generator) -> (stream-of response)"
@@ -173,13 +82,15 @@
           ()))
       ())))
 
-; type generator : statement substitutions -> (seq-of response)
-
 (defn builtins
-  "(list-of generator) -> generator"
+  "(seq-of generator) -> argument-generator"
   ([] (builtins ()))
   ([generators]
-    (fn [goal subs]
-      (interleaveall
-        ((generate-arguments-from-rules *builtin-rules*) goal subs)
-        (dispatch goal subs generators)))))
+    (reify ArgumentGenerator
+      (generate [stmt subs]
+                (interleaveall
+                  (generate (generate-arguments-from-rules *builtin-rules*) 
+                            stmt subs)
+                  (dispatch stmt subs generators))))))
+
+

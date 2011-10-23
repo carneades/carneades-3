@@ -5,7 +5,7 @@
     carneades.engine.ask
   (:use
     carneades.engine.unify
-    carneades.engine.response))
+    carneades.engine.atomic-argument))
 
 (defn ask-user
   [askable? get-answer]
