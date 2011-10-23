@@ -9,7 +9,7 @@
     clojure.contrib.def
     carneades.engine.statement
     carneades.engine.unify
-    carneades.engine.response]
+    carneades.engine.atomic-argument]
     [carneades.engine.argument :as arg])
   (:import    
     (org.semanticweb.owlapi.apibinding OWLManager)        
