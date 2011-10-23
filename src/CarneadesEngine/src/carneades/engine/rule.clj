@@ -52,9 +52,10 @@
   (:use clojure.set
     clojure.contrib.def
     carneades.engine.utils
-    carneades.engine.argument
+    carneades.engine.argument-graph
     carneades.engine.statement
-    carneades.engine.response
+    carneades.engine.atomic-argument
+    carneades.engine.argument-generator
     [carneades.engine.dnf :only (to-dnf)]
     [carneades.engine.unify :only (genvar unify rename-variables apply-substitutions)])
   (:require [clojure.string :as str]))
@@ -98,10 +99,10 @@
   (if (seq? c)
     (let [[predicate stmt] c]
       (condp = predicate
-        'unless (pm (statement-complement stmt))
-        'assuming (pm stmt)
-        (pm c)))
-    (pm c)))
+        'unless (statement-complement stmt)
+        'assuming stmt
+        c))
+    c))
 
 ;; TO DO: represent the roles of conditions, e.g. "major", "minor"
 
@@ -314,50 +315,49 @@
 (defn generate-arguments-from-rules
   ([rb] (generate-arguments-from-rules rb nil))
   ([rb ont]
-    (fn [subgoal subs]
-      (letfn [(apply-for-conclusion
-                [clause c]
-                ;; apply the clause for conclusion
-                ;; in the head of the rule
-                (let [subs2 (or (unify c subgoal subs)
-                                (unify `(~'unless ~c)
-                                       subgoal subs)
-                                (unify `(~'assuming ~c)
-                                       subgoal subs)
-                                (unify `(~'applies ~(:rule clause) ~c) subgoal subs))]
-                  (if (not subs2)
-                    false ; fail
-                    
-                    ;                    (let [inst-clauses (instantiate-domains clause subs2)]
-                    ;                      (map (fn [inst-clause-map]
-                    ;                             (let [ic (:clause inst-clause-map)]
-                    ;                               (make-response (:subs inst-clause-map)
-                    ;                                         (clause-assumptions (:clause clause))
-                    ;                                         (argument (gensym "a")
-                    ;                                                   false
-                    ;                                                   *default-weight*
-                    ;                                                   (if (= (first subgoal) 'not) :con :pro)
-                    ;                                                   (statement-atom (condition-statement subgoal))
-                    ;                                                   (map condition->premise (:clause ic))
-                    ;                                                   (str (:rule ic))))))
-                    ;                           inst-clauses)))))
-                    
-                    
-                    (list (make-response subs2
-                                   (clause-assumptions (:clause clause))
-                                   (argument (gensym "a")
-                                             false
-                                             *default-weight*
-                                             (if (= (first subgoal) 'not) :con :pro)
-                                             (statement-atom (condition-statement subgoal))
-                                             (map condition->premise (:clause clause))
-                                             (str (:rule clause))))))))
-              
-              (apply-clause [clause]
-                            (apply concat (filter identity 
-                                                  (map #(apply-for-conclusion clause %) 
-                                                       (:head clause)))))]
-        (mapinterleave
-          (fn [c] (apply-clause c))
-          (map rename-clause-variables (get-clauses rb subgoal subs)))))))
+    (reify ArgumentGenerator
+      (generate [subgoal subs]
+                (letfn [(apply-for-conclusion
+                          [clause c]
+                          ;; apply the clause for conclusion
+                          ;; in the head of the rule
+                          (let [subs2 (or (unify c subgoal subs)
+                                          (unify `(~'unless ~c)
+                                                 subgoal subs)
+                                          (unify `(~'assuming ~c)
+                                                 subgoal subs)
+                                          (unify `(~'applies ~(:rule clause) ~c) subgoal subs))]
+                            (if (not subs2)
+                              false ; fail
+                              
+        ;  (let [inst-clauses (instantiate-domains clause subs2)]
+        ;                     (map (fn [inst-clause-map]
+        ;                             (let [ic (:clause inst-clause-map)]
+        ;                               (make-response (:subs inst-clause-map)
+        ;                                         (clause-assumptions (:clause clause))
+        ;                                         (argument (gensym "a")
+        ;                                                   false
+        ;                                                   *default-weight*
+        ;                                                   (if (= (first subgoal) 'not) :con :pro)
+        ;                                                   (statement-atom (condition-statement subgoal))
+        ;                                                   (map condition->premise (:clause ic))
+        ;                                                  (str (:rule ic))))))
+        ;                          inst-clauses)))))
+                              
+                              
+                              (list (make-response subs2
+                                                   (clause-assumptions (:clause clause))
+                                                   (make-atomic-argument 
+                                                     :id (gensym "a")
+                                                     :conclusion (condition-statement subgoal)
+                                                     :premises (map condition->premise (:clause clause))
+                                                     :scheme (str (:rule clause))))))))
+                        
+                        (apply-clause [clause]
+                                      (apply concat (filter identity 
+                                                            (map #(apply-for-conclusion clause %) 
+                                                                 (:head clause)))))]
+                  (mapinterleave
+                    (fn [c] (apply-clause c))
+                    (map rename-clause-variables (get-clauses rb subgoal subs))))))))
 
