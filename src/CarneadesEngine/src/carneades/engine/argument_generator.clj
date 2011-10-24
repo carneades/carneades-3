@@ -1,6 +1,6 @@
 (ns ^{:doc "Defines the protocol for argument generators."}
       carneades.engine.argument-generator
-   (:use carneades.engine.atomic-argument
+   (:use carneades.engine.inference
          carneades.engine.statement
          carneades.engine.unify))
 
@@ -8,7 +8,7 @@
 (defrecord Response
   [substitutions   ; (term -> term) map
    assumptions     ; set of statements
-   argument])      ; AtomicArgument | nil
+   argument])      ; inference | nil
 
 (defn make-response [subs asms arg] (Response. subs asms arg))
 

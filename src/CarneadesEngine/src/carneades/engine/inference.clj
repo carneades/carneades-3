@@ -1,15 +1,15 @@
 (ns 
-  ^{:doc "An atomic argument represents a single inference step.
-          The premises and conclusion of the argument are statements,
+  ^{:doc "Provides a data structure for representing a single inference step.
+          The premises and conclusion of an inference are statements,
           representing propositional or predicate logic literals.
-          The arguments need not be fully instantiated; the premises
-          and conclusion of the argument may contain free variables."}
+          An inference need not be fully instantiated; the premises
+          and conclusion of the inference may contain free variables."}
   
-  carneades.engine.atomic-argument
+  carneades.engine.inference
   (:use carneades.engine.statement
         carneades.engine.unify))
 
-(defrecord AtomicArgument
+(defrecord Inference
   [id               ; symbol
    title            ; string or hash table (for multiple languages)
    scheme           ; string
@@ -20,8 +20,8 @@
    sources])        ; vector of source texts
   
 
- (defn make-atomic-argument
-   "Makes an atomic argument. A vector of statements may be
+ (defn make-inference
+   "Makes an inference. A vector of statements may be
     supplied as the value of the :premises property, instead of 
     a map from role names to statements. In this case the premises
     are assigned integer roles names, based on the order of the
@@ -47,14 +47,14 @@
 
 (defn argument-variables
   "arg -> (seq-of symbol)
-   Returns a seq containing the variables of the atomic argument arg"
+   Returns a seq containing the variables of the inference"
   [arg]
   (distinct (concat (mapcat #(variables (:atom %)) (vals (:premises arg)))
                     (variables (:conclusion arg)))))
 
 (defn instantiate-argument
   "argument substitutions -> arg
-   Instantiate the variables of an atomic argument by applying substitions"
+   Instantiate the variables of an inference by applying substitions"
   [arg subs]
   (assoc arg
          :id (gensym "a")
