@@ -1,11 +1,11 @@
-;;; Copyright Â© 2010 Fraunhofer Gesellschaft 
+;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
 (ns ^{:doc "Allows an external entity to be asked for information during a search. Experimental."}
     carneades.engine.ask
   (:use
     carneades.engine.unify
-    carneades.engine.atomic-argument))
+    carneades.engine.inference))
 
 (defn ask-user
   [askable? get-answer]
