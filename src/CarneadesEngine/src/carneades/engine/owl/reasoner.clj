@@ -9,7 +9,7 @@
     clojure.contrib.def
     carneades.engine.statement
     carneades.engine.unify
-    carneades.engine.atomic-argument]
+    carneades.engine.inference]
     [carneades.engine.argument :as arg])
   (:import    
     (org.semanticweb.owlapi.apibinding OWLManager)        
@@ -39,12 +39,11 @@
              (make-response
                (or subs2 subs)
                {(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))}
-               (arg/argument
-                 (gensym "a")
-                 :pro
-                 c
-                 (list (arg/pm (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
-                 "HermiT"))))
+               (make-inference
+                 :id (gensym "a")
+                 :conclusion c
+                 :premises (list (arg/pm (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
+                 :scheme "HermiT"))))
       insts)))
 
 (defn single-class-instance-to-responses
@@ -62,12 +61,11 @@
         (list (make-response
                 subs
                 {(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))}
-                (arg/argument
-                  (gensym "a")
-                  :pro
-                  wff
-                  (list (arg/pm (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
-                  "HermiT"))))
+                (make-inference
+                  :id (gensym "a")
+                  :conclusion wff
+                  :premises (list (arg/pm (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
+                  :scheme "HermiT"))))
       nil)))
 
 (defn property-instances-to-responses
@@ -92,12 +90,11 @@
              (make-response
                subs2
                {(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))}
-               (arg/argument
-                 (gensym "a")
-                 :pro
-                 c
-                 (list (arg/pm (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
-                 "HermiT"))))
+               (make-inference
+                 :id (gensym "a")
+                 :conclusion c
+                 :premises (list (arg/pm (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
+                 :scheme "HermiT"))))
       insts)))
 
 (defn single-property-instance-to-responses
