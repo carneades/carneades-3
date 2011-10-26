@@ -21,8 +21,7 @@
   (jdbc/with-connection db
       (jdbc/create-table :statement 
           [:id "int primary key not null"]
-          [:value "tinyint default 2"]      ; 0=false, 1=true, 2=unknown
-          [:assumption "boolean default false"]
+          [:weight "double default 0.50"]
           [:standard "tinyint default 0"]   ; 0=pe, 1=cce, 2=brd, 3=dv 
           [:wff "varchar"]          
           [:content "int"]
@@ -32,7 +31,7 @@
           [:id "int primary key not null"]
           [:conclusion "int not null"]
           [:graph "int not null"]
-          [:weight "double default 0.00"]
+          [:weight "double default 0.50"]
           [:scheme "int"]
           [:direction "boolean default true"]  ; true=pro, false=con
           [:title "int"]
@@ -46,7 +45,7 @@
           [:argument "int not null"]
           [:statement "int not null"]
           [:polarity "boolean default true"]    ; true=positive, false=negative
-          [:role "int"]
+          [:role "varchar"]
           ["foreign key(argument) argument(id)"]
           ["foreign key(statement) statement(id)"]
           ["foreign key(role) string(id)"])                         
