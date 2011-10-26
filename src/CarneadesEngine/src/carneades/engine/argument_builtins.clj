@@ -13,7 +13,7 @@
         carneades.engine.utils
         carneades.engine.argument-generator
         carneades.engine.unify
-        carneades.engine.inference))
+        carneades.engine.argument))
 
 (declare builtins)
 
@@ -41,7 +41,7 @@
         (let [result (eval-expr expr2)]
           (if-let [subs2 (unify term result subs)]
             (list (make-response subs2 #{} 
-                                 (make-inference 
+                                 (make-argument 
                                    :id (gensym "a") 
                                    :conclusion stmt 
                                    :scheme "builtin:eval")))
@@ -52,7 +52,7 @@
 (defn- dispatch-equal [subs stmt term1 term2]
   (if-let [subs2 (unify term1 term2 subs)]
     (list (make-response subs2 #{} 
-                         (make-inference 
+                         (make-argument 
                            :id (gensym "a") 
                            :conclusion stmt 
                            :scheme "builtin:=")))
@@ -62,7 +62,7 @@
   (if-let [subs2 (unify term1 term2 subs)]
     ()
     (list (make-response subs #{} 
-                         (make-inference 
+                         (make-argument 
                            :id (gensym "a") 
                            :conclusion stmt 
                            :scheme "builtin:not=")))))
