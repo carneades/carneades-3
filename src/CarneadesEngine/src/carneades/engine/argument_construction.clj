@@ -19,7 +19,7 @@
    [& values]
    (let [m (apply hash-map values)]
    (merge (ArgumentTemplate. 
-             nil    ; guared
+             nil    ; guard
              #{}    ; instances
              nil)   ; inference
           m)))
