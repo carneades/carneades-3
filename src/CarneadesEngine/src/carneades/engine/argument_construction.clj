@@ -5,7 +5,7 @@
         carneades.engine.statement
         carneades.engine.unify
         carneades.engine.argument-graph
-        carneades.engine.inference
+        carneades.engine.argument
         carneades.engine.argument-generator
         carneades.engine.argument-builtins
         carneades.engine.argument-from-arguments))
@@ -13,7 +13,7 @@
 (defrecord ArgumentTemplate 
   [guard       ; term with all unbound variables of the argument
    instances   ; set of ground terms matching the guard
-   argument])  ; inference
+   argument])  ; argument
 
 (defn make-argument-template
    [& values]
@@ -21,7 +21,7 @@
    (merge (ArgumentTemplate. 
              nil    ; guard
              #{}    ; instances
-             nil)   ; inference
+             nil)   ; argument
           m)))
 
 (defrecord Goal

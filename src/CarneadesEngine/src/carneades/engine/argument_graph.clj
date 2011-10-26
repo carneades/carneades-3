@@ -1,7 +1,7 @@
 (ns carneades.engine.argument-graph
  (:use carneades.engine.statement
        carneades.engine.dublin-core
-       carneades.engine.inference))
+       carneades.engine.argument))
 
 
 ; A literal is a propositional letter, represented by a symbol, 
@@ -185,11 +185,11 @@
                sources)))
         
 (defn assert-argument
-  "argument-graph inference -> argument-graph
-   Converts an inference to an argument node and adds
+  "argument-graph argument -> argument-graph
+   Converts a one-step argument to an argument node and adds
    it to the argument graph. Precondition: statement nodes 
    have already been created in the argument graph for all 
-   the statements in the inference."
+   the statements in the argument."
   [ag1 arg]
   {:pre [(ground? (:conclusion arg)) 
          (every? ground? (vals (:premises arg)))]}
