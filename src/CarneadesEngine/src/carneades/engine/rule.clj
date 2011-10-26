@@ -40,7 +40,7 @@
     carneades.engine.utils
     carneades.engine.argument-graph
     carneades.engine.statement
-    carneades.engine.inference
+    carneades.engine.argument
     carneades.engine.argument-generator
     [carneades.engine.dnf :only (to-dnf)]
     [carneades.engine.unify :only (genvar unify rename-variables apply-substitutions)])
@@ -325,7 +325,7 @@
                               
                               (list (make-response subs2
                                                    (clause-assumptions (:clause clause))
-                                                   (make-inference 
+                                                   (make-argument 
                                                      :id (gensym "a")
                                                      :conclusion (condition-statement subgoal)
                                                      :premises (map condition->premise (:clause clause))

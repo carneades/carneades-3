@@ -9,7 +9,7 @@
     clojure.contrib.def
     carneades.engine.statement
     carneades.engine.unify
-    carneades.engine.inference]
+    carneades.engine.argument]
     [carneades.engine.argument :as arg])
   (:import    
     (org.semanticweb.owlapi.apibinding OWLManager)        
@@ -39,7 +39,7 @@
              (make-response
                (or subs2 subs)
                {(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))}
-               (make-inference
+               (make-argument
                  :id (gensym "a")
                  :conclusion c
                  :premises (list (arg/pm (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
@@ -61,7 +61,7 @@
         (list (make-response
                 subs
                 {(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))}
-                (make-inference
+                (make-argument
                   :id (gensym "a")
                   :conclusion wff
                   :premises (list (arg/pm (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
@@ -90,7 +90,7 @@
              (make-response
                subs2
                {(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))}
-               (make-inference
+               (make-argument
                  :id (gensym "a")
                  :conclusion c
                  :premises (list (arg/pm (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
