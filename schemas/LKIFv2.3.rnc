@@ -1,0 +1,229 @@
+# Copyright (C) 2008-2011 Fraunhofer Gesellschaft 
+# Licensed under the EUPL V.1.1
+
+# Version 2.3
+
+datatypes xsd = "http://www.w3.org/2001/XMLSchema-datatypes"
+
+grammar {
+    start = element lkif { 
+        attribute version { xsd:string }?,  # version of the LKIF schema
+        MetaData?, Sources?, Theory?, ArgumentGraphs? 
+    }
+    
+    # Simple Dublin Core Elements
+    # See: http://en.wikipedia.org/wiki/Dublin_Core
+    
+    Contributor = element contributor { text }
+    Coverage = element coverage { text }
+    Creator = element creator { text }
+    Date = element date { text }
+    
+    Description = element description {
+    	attribute lang { xsd:language },
+    	text
+    }
+    
+    Descriptions = element descriptions { Description+ }
+    
+    Format = element format { text }
+    Identifier = element identifier { text }
+    Language = element language { text }
+    Publisher = element publisher { text }
+    Relation = element relation { text }
+    Rights = element rights { text }
+    Subject = element subject { text }
+   
+    Title = element title { 
+        attribute lang { xsd:language },
+        text 
+    }
+    
+    Titles = element titles { Title+ }
+    
+    Type = element type { text }
+    
+    DublinElement = ( Contributor | Coverage | Creator |
+                      Date | Description | Format |
+                      Identifier | Language | Publisher |
+                      Relation | Rights | Subject | Title | Type )
+                      
+                       
+    MetaData = element metadata { MetaDatum+ }
+         
+    MetaDatum = element metadum { 
+    	attribute uri { xsd:anyURI }, # of a source
+    	DublinElement+
+    }
+    
+    Source = element source { 
+        attribute uri { xsd:anyURI },     # of a source
+    	attribute element { xsd:anyURI }  # of an element derived from the source 
+    } 
+    
+    Sources = element sources { Source+ }                                       
+    
+    # RDF, OWL and LKIF files can be imported.  See below. 
+    # The rules are strict or defeasible inference rules. 
+    
+    Theory = element theory { 
+        attribute id { xsd:ID },
+        Imports?, Axioms?, Rules?
+    }
+
+    Imports = element imports { Import+ }
+    Axioms = element axioms { Axiom+ }
+    Rules = element rules { Rule+ }
+    
+    # Import: the uri can refer to an RDF file, including OWL files in RDF format, 
+    # an LKIF theory, an LKIF argument graph, or an entire LKIF file, in which case both the 
+    # theory and the argument graph in the file are imported. 
+    # When importing OWL files, not only the axioms of the ontology  
+    # are imported but also any assertions about instances, the ABox. 
+
+    Import = element import { 
+      attribute url { xsd:anyURI } 
+    }
+    
+    Axiom = element axiom { 
+        attribute id { xsd:ID }, 
+        Wff
+    }
+    
+    ArgumentGraphs = element argument-graphs { ArgumentGraph+ }
+    
+    Rule = element rule { 
+        attribute id { xsd:ID }, 
+        attribute strict { xsd:boolean }?, # default: false
+        Head, Domains?, Body?
+    }
+    
+    Head = element head { Wff+ }
+    Domains = element domains { Domain+ }
+    Domain = (Class|Property)
+    Body = element body { Wff+ }
+    
+    Class = element class {
+    	   attribute pred { xsd:anyURI },
+	       Variable, text?
+    }
+
+    Property = element property {
+    	     attribute pred { xsd:anyURI },
+	         (Variable | Constant), text?, Variable, text?
+    }
+
+    # Atomic formulas. Propositional logic letters are represented by 
+    # omitting the (optional) predicate attribute.  The "s" tag
+    # is used for backwards compatibility and because it is probably
+    # more intuitive and mnemonic for most users.
+    
+    Atom = element s { 
+        attribute pred { xsd:anyURI }?,
+        attribute role { xsd:anyURI | xsd:string }?,
+        attribute assumable { xsd:boolean}?,  # default: false
+        ((text | Term)*) 
+    }
+    
+    # Wffs are well-formed formulas of predicate logic, extended with exceptions and assumptions
+    # Free variables are schema variables, i.e. inference rule variables; 
+    # bound variables, using Exists or All, are first-order logic variables.
+    # Wffs may also be variables, i.e. variables may range over Wffs, to
+    # allow inference rules such as modus ponens to be represented.
+    
+    Wff = Atom | Or | And | Not | If | Iff | All | Exists | Variable
+    Or = element or { attribute assumable { xsd:boolean }?,  #default: false
+                      Wff, Wff+ }
+    And = element and { attribute assumable { xsd:boolean }?,  #default: false
+                        Wff, Wff+ }
+    Not = element not { 
+        attribute exception { xsd:boolean }?,  # default: false
+        attribute assumable { xsd:boolean }?,  # default: false 
+        Wff 
+    }     
+        
+    If = element if { 
+        attribute assumable { xsd:boolean }?,  #default: false
+        Wff, Wff 
+     }
+                      
+    Iff = element iff { 
+        attribute assumable { xsd:boolean }?,  #default: false
+        Wff, Wff 
+    }
+                        
+    All = element all { 
+        attribute assumable { xsd:boolean }?,  #default: false
+        Variable, Atom, Wff 
+    }
+                        
+    Exists = element exists { 
+        attribute assumable { xsd:boolean }?,  #default: false,
+        Variable, Atom, Wff 
+     }
+    
+    # Terms include wffs, to support meta-level statements
+    
+    Term = Variable | Individual | Constant | Expression | Wff
+    
+    Variable = element v { xsd:Name }
+    
+    Individual = element i { 
+        attribute value { xsd:anyURI },
+        text
+    }
+    
+    Constant = element c { 
+        # attribute value { xsd:anySimpleType }
+        xsd:Name | xsd:anyURI | xsd:string | xsd:boolean | xsd:integer | xsd:float 
+     }
+    
+    # The functors and constants of expressions are represented by
+    # URIs. Thus libraries of functions and operators can be
+    # declared in OWL ontologies.  Standard LKIF functions and operators
+    # could be part of the ontology of basic legal concepts.
+    
+    Expression = element expr { 
+        attribute functor { xsd:anyURI },
+        Term*  
+    }
+        
+    ArgumentGraph = element argument-graph { 
+        attribute id { xsd:ID }?, 
+        attribute main-issue { xsd:anyURI }?, 
+        Titles?, Statements, Arguments
+    }
+    
+    Statements = element statements { Statement+ }
+    
+    Statement = element statement { 
+        attribute id { xsd:ID },
+        attribute weight { xsd:float }?,  # range 0.0 to 1.0, default 0.5
+        # weights can be interpreted as an ordinal scale, e.g.
+        # 0.0=false, 0.25=assumed falsed, 0.5=questioned, 0.75=assumed true, 1.00=true
+        attribute standard { "DV" | "PE" | "CCE" | "BRD" }?, # default: PE
+        Atom?, Descriptions
+    }
+             
+    Arguments = element arguments { Argument* }
+    Argument = element argument { 
+    	attribute id { xsd:ID },
+        attribute direction { "pro" | "con" }?,
+        attribute scheme { xsd:anyURI | xsd:string }?,
+        attribute weight { xsd:float }?,  # range: 0.0 to 1.0; default: 0.5
+        Titles?, Conclusion, Premises
+    }
+    
+    Premises = element premises { Premise* }
+    
+    Premise = element premise { 
+        attribute polarity { "positive" | "negative" }?, # default: positive
+        attribute role { xsd:anyURI | xsd:string }?,
+        attribute statement { xsd:anyURI },
+     } 
+                  
+    Conclusion = element conclusion { 
+        attribute statement { xsd:anyURI }, 
+	}
+	
+	
