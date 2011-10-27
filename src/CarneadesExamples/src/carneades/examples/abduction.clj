@@ -4,7 +4,6 @@
         carneades.engine.statement
         carneades.engine.abduction))
 
-
 ; key list of statements
 (def u "u")
 (def v "v")
@@ -16,28 +15,49 @@
 (def p "p")
 
 ; arguments
-(def a1 (argument :a1 false 0.6 :con p [(pm r)] nil))
-(def a2 (argument :a2 false 0.4 :pro p [(pm s) (pm q)] nil))
-(def a3 (argument :a3 false 0.6 :con r [(pm t)] nil))
-(def a4 (argument :a4 false 0.5 :pro r [(pm u) (pm (not v))] nil))
-(def a5 (argument :a5 false 0.4 :con r [(pm w)] nil))
+(def a1 (make-argument 
+          :id 'a1 
+          :weight 0.6 
+          :conclusion (¬ p) 
+          :premises [r]))
+
+(def a2 (argument 
+          :id 'a2 
+          :weight 0.4 
+          :conclusion p 
+          :premises [s, q]))
+
+(def a3 (argument 
+          :id 'a3 
+          :weight 0.6 
+          :conclusion (¬ r)
+          :premises [t]))
+
+(def a4 (argument 
+          :id 'a4 
+          :weight 0.5 
+          :conclusion r 
+          :premises [u, (¬ v)]))
+
+(def a5 (argument 
+          :id 'a5 
+          :weight 0.4 
+          :conclusion (¬ r)
+          :premises [w]))
 
 ; argument graph
-(def ag (assoc-standard (assert-arguments
-                          (reject
-                            (accept (argument-graph) [s w])
-                            [q v t])
-                          [a1 a2 a3 a4 a5])
-          :pe
-          [u v t w r s q p]))
+(def ag (-> (argument-graph)
+            (accept [s w])
+            (reject [q v t])
+            (assert-arguments [a1 a2 a3 a4 a5])))
 
 ; assumptions
-(def asm #{(statement-complement q)
-           (statement-complement v)
-           (statement-complement t)
-           w s})
+(def asm #{(¬ q) (¬ v) (¬ t) w s})
 
 (def in-label-p (statement-in-label ag asm p))
-(def in-label-not-p (statement-in-label ag asm (statement-complement p)))
+(def in-label-not-p (statement-in-label ag asm (¬ p)))
 (def out-label-p (statement-out-label ag asm p))
-(def out-label-not-p (statement-out-label ag asm (statement-complement p)))
+(def out-label-not-p (statement-out-label ag asm (¬ p)))
+
+
+
