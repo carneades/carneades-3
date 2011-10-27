@@ -20,29 +20,25 @@
    title            ; string or hash table (for multiple languages)
    scheme           ; string
    strict           ; boolean
-   weight           ; real number between 0.0 and 1.0, default 0.5
+   weight           ; 0.0-1.0, default 0.5
    conclusion       ; literal
    premises         ; (string -> literal) map, where the keys are role names
    sources])        ; vector of sources
 
  (defn make-argument-node
-   [& values]
-   (let [m (apply hash-map values)]
-     (merge (ArgumentNode. 
-              (gensym "a") ; id
-              ""           ; title
-              ""           ; scheme
-              false        ; strict
-              0.5          ; weight
-              nil          ; conclusion
-              {}           ; premises
-              [])          ; sources 
-            m)))
+   "key value ... -> argument-node"
+   [& key-values]
+   (merge (ArgumentNode. 
+            (gensym "a") ; id
+            ""           ; title
+            ""           ; scheme
+            false        ; strict
+            0.5          ; weight
+            nil          ; conclusion
+            {}           ; premises
+            [])          ; sources 
+          (apply hash-map key-values)))
   
-(defn status?
-  [k]
-  (contains? #{:stated, :questioned, :accepted, :rejected} k))
-
 (defn proof-standard?
   [k]
   (contains? #{:dv, :pe, :cce, :brd} k))
@@ -52,7 +48,7 @@
 (defrecord StatementNode
   [id               ; symbol, same as the propositional letter in the key list
    wff              ; positive statement
-   status           ; status
+   weight           ; nil or 0.0-1.0, default nil
    standard         ; proof-standard
    formulations     ; (language -> string) map, natural language formulations of the statement
    premise-of       ; (set-of symbol), argument node ids
@@ -60,7 +56,7 @@
 
 (defn- make-statement-node
   [stmt]
-  (StatementNode. (gensym "s") (statement-atom stmt) :stated :pe {} #{} #{}))
+  (StatementNode. (gensym "s") (statement-atom stmt) nil :pe {} #{} #{}))
    
 (defrecord ArgumentGraph 
   [id               ; symbol
@@ -72,17 +68,17 @@
    references])     ; (symbol -> Source) map
 
  (defn make-argument-graph
-   [& values]
-   (let [m (apply hash-map values)]
+   "key value ... -> argument-graph"
+   [& key-values]  
    (merge (ArgumentGraph. 
             (gensym "ag")    ; id
-             ""              ; title
-             nil             ; main-issue
-             {}              ; keys
-             {}              ; statement nodes
-             {}              ; argument nodes
-             {})             ; references to sources
-          m)))
+            ""              ; title
+            nil             ; main-issue
+            {}              ; keys
+            {}              ; statement nodes
+            {}              ; argument nodes
+            {})             ; references to sources
+          (apply hash-map key-values)))
 
 (defn get-statement-node
   "argument-graph statement -> [argument-graph statement-node]
@@ -106,14 +102,15 @@
         [ag2 n2]))))
 
 (defn- update-statement-node
-  "Updates the statement node with the given id with the values of the properties
-   in the given node, replacing the prior values of these properties but retaining
-   the values of other properties."
-  [ag id node]
+  "argument-graph symbol key value ... -> argument-graph
+   Updates the statement node with the given id with the values of the 
+   properties with the given keys, but retaining the values of other properties."
+  [ag id & key-values]
   (assoc ag 
          :statement-nodes (assoc (:statement-nodes ag)
                                  id
-                                 (merge (get (:statement-nodes ag) id) node))))
+                                 (merge (get (:statement-nodes ag) id) 
+                                        (apply hash-map key-values)))))
 
 (defn- statement->literal
   "argument-graph statement -> literal" 
@@ -222,56 +219,21 @@
   (reduce (fn [ag arg] (assert-argument ag arg)) ag args))
 
 (defn- update-argument-node
-  "Updates the argument node with the given id with the values of the properties
-   in the given node, replacing the prior values of these properties but retaining
-   the values of other properties."
-  [ag id node]
+  "argument-graph symbol key value ... -> argument-graph
+   Updates the argument node with the given id, replacing the properties with
+   the given keys values but retaining the values of other properties."
+  [ag id & key-values]
   (assoc ag 
          :argument-nodes (assoc (:argument-nodes ag)
                                  id
-                                 (merge (get (:argument-nodes ag) id) node))))
- 
-(defn- set-status
-  "argument-graph statement status -> argument-graph"
-  ([ag stmt]
-    (set-status ag stmt nil))
-  ([ag stmt status]
-    {:pre [(status? status)]}
-    (let [[ag2 n] (get-statement-node ag stmt)]
-      (assoc ag2 :statement-nodes 
-         (assoc (:statement-nodes ag2)
-                (:id n) 
-                (assoc n :status (or status :stated)))))))
-                         
-(defn state
-  "argument-graph (seq-of statement) -> argument-graph
-   Changes, non-destructively, the status of each statement in the list to 
-   stated in the argument graph.  Statement nodes are created for any statements
-   without nodes in the argument graph."
-  [ag statements]
-  (reduce #(set-status %1 %2 :stated) ag statements))
+                                 (merge (get (:argument-nodes ag) id) 
+                                        (map hash-map key-values)))))
 
-(defn question
-  "argument-graph (seq-of statement) -> argument-graph"
-  [ag statements]
-  (reduce #(set-status %1 %2 :questioned) ag statements))
-
-(defn accept
-  "argument-graph (collection-of statement) -> argument-graph"
-  [ag statements]
-  (reduce #(set-status %1 %2 (if (statement-pos? %2)
-                                     :accepted
-                                     :rejected)) ag statements))
-
-(defn reject [ag statements]
-  (reduce #(set-status %1 %2 (if (statement-pos? %2)
-                                     :rejected
-                                     :accepted)) ag statements))
 
 (defn assoc-standard
   "argument-graph  proof-standard (list-of statement) -> argument-graph
    Assigns the given proof standard to each statement in the list, creating
-   statment nodes for statements without nodes in the argument graph."
+   statement nodes for statements without nodes in the argument graph."
   [ag ps statements]
   (reduce (fn [ag stmt]
             (let [[ag2 n] (get-statement-node ag stmt)]
@@ -322,55 +284,83 @@
   [ag stmt]
   (map :scheme (arguments ag stmt)))
 
+(defn stated?
+  [ag s]
+  (nil? (:weight (get-statement-node ag s))))
+
+(defn accept 
+  "argument-graph statement -> argument-graph"
+  [ag s]
+  (update-statement-node 
+    ag 
+    (get-statement-node ag s)
+    :weight (if (statement-pos? s) 1.0 0.0)))
+   
 (defn accepted?
   "argument-graph statement -> boolean"
   [ag s]
   (let [n (get-statement-node ag s)]
     (if (statement-pos? s)
-      (= (:status n) :accepted)
-      (= (:status n) :rejected))))
+      (= (:weight n) 1.0)
+      (= (:weight n) 0.0))))
+
+(defn reject 
+  "argument-graph statement -> argument-graph"
+  [ag s]
+  (update-statement-node 
+    ag 
+    (get-statement-node ag s)
+    :weight (if (statement-pos? s) 0.0 1.0)))
 
 (defn rejected?
   "argument-graph statement -> boolean"
   [ag s]
   (let [n (get-statement-node ag s)]
     (if (statement-pos? s)
-      (= (:status n) :rejected)
-      (= (:status n) :accepted))))
+      (= (:status n) 0.0)
+      (= (:status n) 1.0))))
 
+(defn assume 
+  "argument-graph statement -> argument-graph"
+  [ag s]
+  (update-statement-node 
+    ag 
+    (get-statement-node ag s)
+    :weight (if (statement-pos? s) 0.75 0.25)))                             
+                              
 (defn assumed?
   "argument-graph statement -> boolean"
   [ag s]
-  (contains? #{:accepted :rejected} 
-            (:status (get-statement-node ag s))))
+  (let [x (:weight (get-statement-node ag s))]
+    (if (statement-pos? s)
+      (and (not (nil? x))
+           (>= x 0.5)
+           (<= x 1.0))
+      (and (not (nil? x))
+           (<= x 0.5)
+           (>= x 0.0)))))
 
-(defn questioned?
+(defn question
+  "argument-graph statement -> argument-graph"
+  [ag s]
+  (update-statement-node 
+    ag 
+    (get-statement-node ag s)
+    :weight 0.5))
+  
+(defn issue?
   "argument-graph statement -> boolean"
   [ag s]
-  (= :questioned (:status (get-statement-node ag s))))
+  (let [x (:weight (get-statement-node ag s))]
+    (and (<= x 0.75)
+         (>= x 0.25))))
 
-(defn stated? 
-  [ag s]
-  (= :stated (:status (get-statement-node ag s))))
-
-(defn issue?
-  "argument-graph statement -> boolean
-   An statement is an issue if it has not been accepted (assumed true) or rejected 
-   (assumed false) in the argument graph."
-  [ag s]
-  (not (assumed? ag s)))
-
-(defn assumptions 
+(defn atomic-statements 
   "argument-graph -> (seq-of statement)
-   Returns a sequence of positive and negative statements for the 
-   statements which have been accepted or rejected in the argument graph."
+   Returns a sequence of the atomic statements in the argument graph."
   [ag]
-  (map (fn [n]
-         (if (= (:status n) :accepted)
-           (:statement n)
-           (statement-complement (:statement n))))
-       (filter (fn [n] (contains? #{:accepted :rejected} (:status n)))
-               (vals (:statement-nodes ag)))))
+  (map (fn [n] (:statement n))
+       (vals (:statement-nodes ag))))
 
 
 
