@@ -181,11 +181,13 @@
               ; (println "asm: " asm)
               (if (not (ground? asm))
                 state2
-                (let [ag2 (condp = (status ag asm)
-                            :stated (accept ag [asm])
-                            :questioned ag
-                            :rejected (question ag [asm])
-                            :accepted ag)]
+                (let [ag2 (if (stated? ag asm)
+                            (accept ag asm)
+                            (if (or (questioned? ag asm)
+                                    (accepted? ag asm))
+                              ag
+                              (if (rejected? ag asm)
+                                (question ag asm))))]
                   (add-goal (assoc state2 :graph ag2)
                             (make-goal 
                               :issues (list (statement-complement asm))
@@ -223,7 +225,7 @@
   (let [sq (seq set)] 
     (nth sq (rand-int (count sq)))))
 
-(defn- generate-substitutions-from-assumptions
+(defn- generate-substitutions-from-statements
   "argument-graph -> argument-generator"
   [ag1]
   (reify ArgumentGenerator
@@ -234,7 +236,7 @@
                             l
                             (conj l (make-response subs2 #{} nil)))))
                       []
-                      (assumptions ag1)))))
+                      (atomic-statements ag1)))))
 
 (defn- reduce-goal
   "ac-state symbol generators -> ac-state
@@ -256,7 +258,8 @@
           state2
           (let [state3 (assoc state2 :closed-issues (conj (:closed-issues state2) issue))
                 generators2 (concat 
-                              (list (generate-substitutions-from-assumptions (:graph state3)))
+                              (list (generate-substitutions-from-statements 
+                                      (:graph state3)))
                               generators1)]
             ; (println "issue: " issue)
             ; (println "sissue: " (apply-substitutions (:substitutions goal) issue))
