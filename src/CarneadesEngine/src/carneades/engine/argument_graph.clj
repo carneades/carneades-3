@@ -25,7 +25,7 @@
    premises         ; (string -> literal) map, where the keys are role names
    sources])        ; vector of sources
 
- (defn make-argument-node
+(defn make-argument-node
    "key value ... -> argument-node"
    [& key-values]
    (merge (ArgumentNode. 
@@ -47,10 +47,10 @@
 
 (defrecord StatementNode
   [id               ; symbol, same as the propositional letter in the key list
-   wff              ; positive statement
+   wff              ; ground atomic formula or nil
    weight           ; nil or 0.0-1.0, default nil
    standard         ; proof-standard
-   formulations     ; (language -> string) map, natural language formulations of the statement
+   text             ; (language -> string) map, natural language formulations of the statement
    premise-of       ; (set-of symbol), argument node ids
    conclusion-of])  ; (set-of symbol), argument node ids
 
@@ -67,11 +67,11 @@
    argument-nodes   ; (symbol -> ArgumentNode) map
    references])     ; (symbol -> Source) map
 
- (defn make-argument-graph
+(defn make-argument-graph
    "key value ... -> argument-graph"
    [& key-values]  
    (merge (ArgumentGraph. 
-            (gensym "ag")    ; id
+            (gensym "ag")   ; id
             ""              ; title
             nil             ; main-issue
             {}              ; keys
@@ -247,15 +247,10 @@
   [ag id]
   ((:argument-nodes ag) id))
 
-(defn get-arguments
-  "argument-graph (seq-of symbol) -> (seq-of argument-node)"
-  [ag ids]
-  (filter identity (map #(get-argument ag %) ids)))
-
 (defn arguments 
   "argument-graph [statement] -> (seq-of argument-node)
    Returns all argument nodes in an argument graph pro and con some statement,
-   or all arguments in the argument graph, if no statement is provided."
+   or all argument nodes in the argument graph, if no statement is provided."
   ([ag stmt]
     (map (fn [arg-id] (get (:argument-nodes ag) arg-id))
          (:conclusion-of (get (:statement-nodes ag)
@@ -288,6 +283,8 @@
   [ag s]
   (nil? (:weight (get-statement-node ag s))))
 
+; TO DO: accept, reject, etc. should take a collection of statements, not single statements.
+
 (defn accept 
   "argument-graph statement -> argument-graph"
   [ag s]
@@ -304,6 +301,25 @@
       (= (:weight n) 1.0)
       (= (:weight n) 0.0))))
 
+(defn accepted-statements
+  "argument-graph -> (seq-of statement)
+   Returns a sequence of the accepted statements in the argument
+   graph. If a statement P is rejected in the graph, its complement
+   (not P) is accepted and included in the resulting sequence."
+  [ag]
+  (reduce (fn [s n] (cond (= (:weight n) 1.0) (conj s (:wff n))
+                          (= (:weight n) 0.0) (conj s (statement-complement (:wff n)))
+                          :else s))
+          ()
+          (:statement-nodes ag)))
+
+(defn facts
+  "argument-graph -> (seq-of statement)
+   Returns the accepted statements of the argument graph. A
+   synonym for the accepted-statements function."
+  [ag]
+  (accepted-statements ag))
+  
 (defn reject 
   "argument-graph statement -> argument-graph"
   [ag s]
@@ -320,6 +336,18 @@
       (= (:status n) 0.0)
       (= (:status n) 1.0))))
 
+(defn rejected-statements
+  "argument-graph -> (seq-of statement)
+   Returns a sequence of the rejected statements in the argument
+   graph. If a statement P is accepted in the graph, its complement
+   (not P) is rejected and included in the resulting sequence."
+  [ag]
+  (reduce (fn [s n] (cond (= (:weight n) 0.0) (conj s (:wff n))
+                          (= (:weight n) 1.0) (conj s (statement-complement (:wff n)))
+                          :else s))
+          ()
+          (:statement-nodes ag)))
+
 (defn assume 
   "argument-graph statement -> argument-graph"
   [ag s]
@@ -332,16 +360,26 @@
   "argument-graph statement -> boolean"
   [ag s]
   (let [x (:weight (get-statement-node ag s))]
-    (if (statement-pos? s)
-      (and (not (nil? x))
-           (>= x 0.5)
-           (<= x 1.0))
-      (and (not (nil? x))
-           (<= x 0.5)
-           (>= x 0.0)))))
+    (if (nil? x)
+      false
+      (if (statement-pos? s)
+        (< 0.5 x 1.0)
+        (< 0.0 x 0.5)))))
+
+(defn assumptions
+  "argument-graph -> (seq-of statement)
+   Returns a sequence of the assumptions in the argument
+   graph."
+  [ag]
+  (reduce (fn [s n] (cond (< 0.5 (:weight n) 1.0) (conj s (:wff n))
+                          (< 0.0 (:weight n) 0.5) (conj s (statement-complement (:wff n)))
+                          :else s))
+          ()
+          (:statement-nodes ag)))
 
 (defn question
-  "argument-graph statement -> argument-graph"
+  "argument-graph statement -> argument-graph
+   Questions a statement, making it an issue."
   [ag s]
   (update-statement-node 
     ag 
@@ -355,6 +393,16 @@
     (and (<= x 0.75)
          (>= x 0.25))))
 
+(defn issues
+  "argument-graph -> (seq-of statement)
+   Returns a sequence of the issues in the argument
+   graph. Only positive statements are returned. 
+   ¬P is an issue iff P is an issue."
+  [ag]
+  (reduce (fn [s n] (if (= (:weight n) 0.5) (conj s (:wff n)) s))
+          ()
+          (:statement-nodes ag)))
+
 (defn atomic-statements 
   "argument-graph -> (seq-of statement)
    Returns a sequence of the atomic statements in the argument graph."
@@ -362,5 +410,8 @@
   (map (fn [n] (:statement n))
        (vals (:statement-nodes ag))))
 
+
+  
+  
 
 

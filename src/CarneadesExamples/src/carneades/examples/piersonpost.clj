@@ -4,7 +4,9 @@
 (ns carneades.examples.piersonpost
   (:use carneades.engine.statement
         carneades.engine.argument
-        carneades.mapcomponent.viewer))
+        carneades.mapcomponent.viewer
+        carneades.mapcomponent.export
+        carneades.ui.diagram.graphvizviewer))
 
 ;; The Pierson vs. Post case.  Used to illustrate the use of
 ;;   a scheme for "practical reasoning" in legal argument.
@@ -89,44 +91,80 @@ peace and order.")
   "Peace and order is
 an important social value.")
 
-(defargument a1 (pro not-property 
-                         (pm possession-required)
-                         (pm no-possession)
-                         (pm foxes-are-wild)))
+(def a1 (make-argument 
+          :id 'a1 
+          :conclusion not-property 
+          :premises [possession-required, no-possession, foxes-are-wild]))
 
-(defargument a2 (pro no-possession (pm pursuit-not-sufficient)))
-(defargument a3 (pro pursuit-not-sufficient (pm justinian)))
-(defargument a4 (pro pursuit-not-sufficient (pm fleta)))
-(defargument a5 (pro pursuit-not-sufficient (pm bracton)))
-(defargument a6 (pro no-possession (pm actual-possession-required)))
+(def a2 (make-argument 
+          :id 'a2 
+          :conclusion no-possession 
+          :premises [pursuit-not-sufficient]))
 
-(defargument a7 (pro actual-possession-required (pm puffendorf)))
-(defargument a8 (pro puffendorf (pm bynkershoek)))
+(def a3 (make-argument
+          :id 'a3 
+          :conclusion pursuit-not-sufficient 
+          :premises [justinian]))
 
-(defargument a9
-  (con actual-possession-required 
-       (pm mortally-wounded-deemed-possessed)
-       (pm mortally-wounded)))
+(def a4 (make-argument 
+          :id 'a4
+          :conclusion pursuit-not-sufficient
+          :premises [fleta]))
 
-(defargument a10 (pro mortally-wounded-deemed-possessed (pm grotius)))
+(def a5 (make-argument
+          :id pursuit-not-sufficient
+          :premises [bracton]))
 
-(defargument a11 (pro mortally-wounded-deemed-possessed (pm barbeyrac)))
+(def a6 (make-argument 
+          :id 'a6
+          :conclusion no-possession 
+          :premise [actual-possession-required]))
 
-(defargument a12 
-  (con actual-possession-required
-       (pm land-owner-has-possession)
-       (pm livelihood-on-own-land)))
+(def a7 (make-argument 
+          :id 'a7
+          :conclusion actual-possession-required
+          :premises [puffendorf]))
 
-(defargument a13 (pro land-owner-has-possession (pm keeble)))
+(def a8 (make-argument 
+          :id 'a8 
+          :conclusion puffendorf 
+          :premises [bynkershoek]))
+
+(def a9 (make-argument 
+          :id 'a9
+          :conclusion (¬ actual-possession-required)
+          :premises [mortally-wounded-deemed-possessed, mortally-wounded]))
+
+(def a10 (make-argument 
+           :id 'a10
+           :conclusion mortally-wounded-deemed-possessed 
+           :premises [grotius]))
+
+(def a11 (make-argument 
+           :id 'a11 
+           :conclusion mortally-wounded-deemed-possessed 
+           :premises [barbeyrac]))
+
+(def a12 (make-argument
+           :id 'a12
+           :conclusion (¬ actual-possession-required)
+           :premises [land-owner-has-possession, livelihood-on-own-land]))
+
+(def a13 (make-argument 
+           :id 'a13
+           :conclusion land-owner-has-possession 
+           :premises [keeble]))
 
 ; teleological argument 
-(defargument a14  
-  (pro actual-possession-required 
-       (pm certainty)   ; policy/action
-       (pm order)))     ; value promoted
+(def a14 (make-argument 
+           :id 'a14
+           :conclusion actual-possession-required 
+           :premises [certainty,    ; policy/action
+                      order]))      ; value promoted
 
-(def args1
-     (argument-graph [a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14]))
+(def args1 
+  (-> (make-argument-graph)
+      (assert-arguments [a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14])))
 
 (def facts1 [foxes-are-wild possession-required certainty order])
 
@@ -134,8 +172,7 @@ an important social value.")
 
 ;(view tompkins)
 
-
-;; ; Judge Livingston's dissent.
+;; Judge Livingston's dissent.
 
 (def chased-by-big-dogs 
   "The fox was being 
@@ -164,31 +201,43 @@ the pleadings that
 a fox is a wild
 and noxious beast.")
 
-(defargument a15
-  (pro mortally-wounded
-       (pm deemed-mortally-wounded)
-       (pm chased-by-big-dogs)
-       (pm foxes-are-noxious)))
+(def a15 (make-argument 
+           :id 'a15
+           :conclusion mortally-wounded
+           :premises [deemed-mortally-wounded, chased-by-big-dogs, foxes-are-noxious]))
 
-(defargument a16
-  (pro deemed-mortally-wounded 
-       (pm protecting-farmers)
-       (pm encourage-hunting)))
+(def a16 (make-argument 
+           :id 'a16
+           :conclusion deemed-mortally-wounded 
+           :premises [protecting-farmers, encourage-hunting]))
 
-(defargument a17
-  (pro foxes-are-noxious (pm admitted-in-the-pleadings)))
+(def a17 (make-argument
+           :id 'a17
+           :conclusion foxes-are-noxious
+           :premises [admitted-in-the-pleadings]))
 
-(def args2 (argument-graph [a15 a16 a17]))
+(def args2 (-> (make-argument-graph) (assert-arguments [a15 a16 a17]))) 
 (def facts2 [chased-by-big-dogs])
 (def livingston (accept args2 facts2))
 
+(def both (-> tompkins 
+              (assert-arguments [a15 a16 a17])
+              (accept facts2)))
 
-(def both (accept (assert-arguments tompkins [a15 a16 a17])
-                     facts2))
 ; (view both)
 
-(def fig4-args (argument-graph [a9 a10 a11]))
-(def fig5-args (argument-graph [a12 a13]))
+(def fig4-args (-> (make-argument-graph) (assert-arguments [a9 a10 a11])))
+(def fig5-args (-> (make-argument-graph) (assert-arguments [a12 a13])))
 
-(defn main []
+(defn main1 []
   (view both))
+
+(defn main2 []
+  (spit "/tmp/piersonpost.dot" 
+        (gen-graphvizcontent both statement-formatted))
+  (export-ag both statement-formatted "/tmp/piersonpost.svg"
+             :layout :radial
+             :width 1280
+             :height 1024))
+
+

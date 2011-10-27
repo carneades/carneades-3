@@ -56,6 +56,7 @@
               (and occurs-check (occurs? u v)) (kf :cycle)
               :else (ks (sigma u v s)))))))
 
+; START HERE
 (defn unify
   "Attempts to unify u and v with a continuation-passing
    style that returns a substitution to the success argument
@@ -75,7 +76,9 @@
            (and (constant? u) (constant? v)) (if (= u v) (ks s) (kf :clash))
            (and (compound-term? u)
                 (compound-term? v)
-                (= (term-functor u) (term-functor v))
+                ; (if (and (list? u) (list? v))
+                ;  (= (term-functor u) (term-functor v))
+                ;  true)
                 (= (count (term-args u)) (count (term-args v))))
            (letfn [(unif [u v s]
                          (if (empty? u)
