@@ -183,11 +183,9 @@
                 state2
                 (let [ag2 (if (stated? ag asm)
                             (accept ag asm)
-                            (if (or (questioned? ag asm)
-                                    (accepted? ag asm))
-                              ag
-                              (if (rejected? ag asm)
-                                (question ag asm))))]
+                            (if (rejected? ag asm)
+                              (question ag asm)
+                              ag))]
                   (add-goal (assoc state2 :graph ag2)
                             (make-goal 
                               :issues (list (statement-complement asm))

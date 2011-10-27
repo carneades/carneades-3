@@ -7,6 +7,7 @@
   
   carneades.engine.argument
   (:use carneades.engine.statement
+        carneades.engine.dublin-core
         carneades.engine.unify))
 
 (defrecord Argument
@@ -36,7 +37,7 @@
                0.5          ; weight
                nil          ; conclusion
                {}           ; premises
-               [])       ; sources 
+               [])          ; sources 
         m)]
       (if (instance? clojure.lang.PersistentArrayMap (:premises arg))
         arg

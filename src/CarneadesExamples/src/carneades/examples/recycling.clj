@@ -47,15 +47,15 @@ garbage, then every household which recycles the household's garbage
 reduces a need of a new dump which is for the garbage.")
 
 
-(defargument a1 (pro p1 (pm p4) (pm p3)))
-(defargument a2 (pro p4 (pm p9) (pm p18) (pm p19)))
-(defargument a3 (pro p3 (pm p10)))
-(defargument a4 (con p18 (pm p12) (pm p13)))
-(defargument a5 (con p1 (pm p5)))
-(defargument a6 (pro p5 (pm p6) (pm p7) (pm p8)))
-(defargument a7 (con p1 (pm p15)))
-(defargument a8 (pro p15 (pm p14)))
-(defargument a9 (con p15 (pm p16)))
+(def a1 (make-argument :id 'a1 :conclusion p1 :premises [p4, p3]))
+(def a2 (make-argument :id 'a2 :conclusion p4 :premises [p9, p18, p19]))
+(def a3 (make-argument :id 'a3 :conclusion p3 :premises [p10]))
+(def a4 (make-argument :id 'a4 :conclusion (¬ p18) :premises [p12, p13]))
+(def a5 (make-argument :id 'a5 :conclusion (¬ p1) :premises [p5]))
+(def a6 (make-argument :id 'a6 :conclusion p5 :premises [p6, p7, p8]))
+(def a7 (make-argument :id 'a7 :conclusion (¬ p1) :premises [p15]))
+(def a8 (make-argument :id 'a8 :conclusion p15 :premises [p14]))
+(def a9 (make-argument :id 'a9 :conclusion (¬ p15) :premises [p16]))
 
 (def ag
     (-> (argument-graph)
