@@ -9,36 +9,37 @@
   (:require [carneades.mapcomponent.viewer :as jgraphx]
             [carneades.ui.diagram.viewer :as graphviz]))
 
-(defargument a1
-  (pro "P"
-       (pm "Q")
-       (pm "R")
-       (pm '(not "S"))))
+(def a1 (make-argument 
+          :id 'a1
+          :conclusion "P"
+          :premises ["Q", "R", (¬ "S")]))
 
-(defargument a2
-  (con "P"
-        (pm '(not "T"))
-        (pm '(not "U"))
-        (pm "V")))
+(def a2 (make-argument
+          :id 'a2
+          :conclusion (¬ "P")
+          :premises [(¬ "T"), (¬ "U"), "V"]))
 
-(defargument a3 
-  (pro "R" 
-       (pm "W")))
+(def a3 (make-argument 
+          :id 'a3
+          :conclusion "R"
+          :premises ["W"]))
 
-(defargument a4 
-  (pro "V"
-       (pm "X")))
+(def a4 (make-argument
+          :id 'a4
+          :conclusion "V"
+          :premises ["X"]))
 
-(defargument a5
-  (pro "P"
-       (pm "Y")))
+(def a5 (make-argument 
+          :id 'a5
+          :conclusion "P"
+          :premises ["Y"]))
 
-(def ag1 (argument-graph 'ag1 "argument graph test" "P"))
-(def ag1 (assert-arguments ag1 (list a1 a2 a3 a4 a5)))
-(def ag1 (accept ag1 (list "Q" '(not "S") "W" "X")))
-(def ag1 (reject ag1 (list "T"))) ; to check that reject is same as accepting the complement
-(def ag1 (question ag1 (list "R" "Y")))
-(def ag1 (assoc-standard ag1 :pe (list "P")))
+(def ag1 
+  (-> (make-argument-graph :id 'ag1 :title "test" :main-issue "P")
+      (assert-arguments [a1 a2 a3 a4 a5]))
+      (accept ["Q" (¬ "S") "W" "X"])
+      (reject ["T"]) ; to check that reject is same as accepting the complement
+      (question ["R" "Y"]))
 
 ; (define ld (make-lkif-data (lkif-data-sources kb1) (lkif-data-rulebase kb1) (list ag1)))
 ;; (def ld (make-lkif-data '() (rulebase) (list ag1)))

@@ -2,17 +2,46 @@
 ;;; Licensed under the EUPL V.1.1
 
 
-(ns ^{:doc "Functions for the statements in an argument graph."}
+(ns ^{:doc "Statements are a representation of literals, i.e. atomic formulas and
+            negations of atomic formulas of propositional and predicate logic."}
     carneades.engine.statement
   (:use clojure.contrib.def
         carneades.engine.utils)
   (:require [clojure.string :as str])
   (:import (java.net URI)))
 
+; language = :en, :de, :fr, etc.
+
+(defrecord Statement
+  [id               ; symbol, a propositional "letter"
+   wff              ; atomic formula or nil
+   positive         ; boolean
+   weight           ; nil or 0.0-1.0, default nil
+   standard         ; proof-standard
+   text])           ; (language -> string) map, natural language formulations of the statement
+
+(defn make-statement
+   "key value ... -> statement"
+   [& key-values]  
+   (merge (Statement. 
+            (gensym "s")   ; id
+            nil             ; wff
+            true            ; positive
+            nil             ; weight
+            :pe             ; proof standard
+            {})             ; text
+          (apply hash-map key-values)))
+
+(defn statement? [x] (instance? Statement x))
+
+; <constant> := <symbol> | <<number> | <boolean> | <string>
+; <term> := <variable> | <constant> | <compound-term> | <statement> 
+
+; Note: statements are terms to allow meta-level propositions about statements
+
 (defn variable?
   "object -> boolean
-  Returns true if x is a variable
-  A logic variable is represented as a symbol prefixed with a
+  A logical variable is represented as a symbol prefixed with a
   question mark.  For example: '?x "
   [x]
   (and (symbol? x)
@@ -22,152 +51,134 @@
 
 (defn constant?
   "object -> boolean
-   Returns true if x is a constant"
+   Returns true if the object is a constant term"
   [x]
   (or (and (symbol? x) (not (variable? x)))
     (number? x)
     (string? x)
     (boolean? x)))
 
-
-; <term> := <atom> |
-; <atom> := <symbol> | <list> | <string> | <fatom>
-; <statement> := <atom> | (not <atom>)   ;; i.e. literals
-
-;; formatted atomic formulas of predicate logic.
-;;   :form is a string, with %s, as in format, used to denote fields
-;;   Example: (struct fatom \"The mother of %s is %s.\" '(mother Tom Gloria))
-(defstruct fatom
-  :form
-  :term)
-
-(defn fatom? [s]
-  (and (map? s)
-    (let [f (get s :form 'notfound)
-          t (get s :term 'notfound)]
-      (and (not= f 'notfound)
-        (not= t 'notfound)))))
-
 (defn compound-term? [x]
-  (or (nonemptyseq? x)
-    (fatom? x)))
+  (or (list? x) 
+      (vector? x)
+      (map? x)))
 
 (defn term?
   "datum -> boolean"
   [x]
   (or (variable? x)
       (constant? x)
-      (compound-term? x)))
+      (termseq? x)
+      (compound-term? x)
+      (statement? x)))
 
 (defn term-functor
   "term -> symbol | nil "
-  [t]
-  (cond (nonemptyseq? t) (first t)
-    (fatom? t) (first (:term t))))
+  [term]
+  (cond 
+    (and (list? term) 
+         (not (empty? term))
+         (symbol? (first term))) (first term)
+    (statement? term) (term-functor (:wff term))
+    :else nil))
 
 (defn term-args
   "term -> (seq-of term)"
-  [t]
-  (cond (nonemptyseq? t) (rest t)
-    (fatom? t) (rest (:term t))
-    :else '()))
+  [term]
+  (cond 
+    (and (list? term) 
+         (not (empty? term))
+         (symbol? (first term))) (rest term)
+    (list? term) (seq term)
+    (vector? term) (seq term)
+    (statement? term) (term-args (:wff term))
+    (map? term) (seq term)
+    :else ()))
+  
+(declare term=)
 
-(defn statement= [t1 t2]
-  (cond (and (variable? t1) (variable? t2))
-    (= t1 t2)
-    (and (constant? t1) (constant? t2))
-    (= t1 t2)
-    (and (compound-term? t1) (compound-term? t2))
-    (and (= (term-functor t1) (term-functor t2))
-      (= (count (term-args t1)) (count (term-args t2)))
-      (every? (fn [p] (statement= (first p) (second p)))
-        (partition 2 (interleave (term-args t1) (term-args t2)))))
+(defn statement= 
+  [s1 s2]
+  (and (statement? s1) 
+       (statement? s2)
+       (or (= (:id s1) (:id s2))
+           (and (not (nil? (:wff s1)))
+                (not (nil? (:wff s2)))
+                (term= (:wff s1) (:wff s2))))))
+  
+(defn term=
+  [t1 t2]
+  (cond 
+    (and (variable? t1) (variable? t2)) (= t1 t2)
+    (and (constant? t1) (constant? t2)) (= t1 t2)
+    (and (compound-term? t1) 
+         (compound-term? t2)) (and (= (term-functor t1) 
+                                      (term-functor t2)) 
+                                   (= (count (term-args t1)) 
+                                      (count (term-args t2)))
+                                   (every? (fn [p] (term= (first p) (second p)))
+                                           (partition 2 (interleave (term-args t1) 
+                                                                    (term-args t2)))))
+    (and (statement? t1) (statement? t2)) (statement= t1 t2)
     :else false))
 
 (defn ground? [t]
   (cond (variable? t) false
-    (constant? t) true
-    (compound-term? t) (and (ground? (term-functor t))
-                         (ground? (term-args t)))
-    :else true))
+        (constant? t) true
+        (compound-term? t) (and (ground? (term-functor t))
+                                (ground? (term-args t)))
+        (statement? t) (ground? (:wff t))
+        :else true))
 
-;; could be rewritten (filter variable? (tree-seq seq? identity s)) ?
+;; could be rewritten (filter variable? (tree-seq seq? identity s)) 
 (defn variables
   "term -> (seq-of symbol)
    Returns a sequence of the variables in the term"
   [t]
   (letfn [(vars [t]
-            (cond (variable? t) (list t)
-              (constant? t) nil
-              (compound-term? t) (concat (vars (term-functor t))
-                                   (vars (term-args t)))))]
+                (cond (variable? t) (list t)
+                      (constant? t) nil
+                      (compound-term? t) (concat (vars (term-functor t))
+                                                 (vars (term-args t)))
+                      (statement? t) (vars (:wff t))))]
     (distinct (vars t))))
 
-(defn statement? [s]
-  (or (symbol? s)
-    (string? s)
-    (nonemptyseq? s)
-    (fatom? s)))
+(defn statement-pos? [s] (:positive s))
 
-(defn statement-pos? [s]
-  (not (and (nonemptyseq? s)
-         (= (first s) 'not))))
-
-(defn statement-neg? [s]
-  (not (statement-pos? s)))
+(defn statement-neg? [s] (not (:positive s)))
 
 (defn statement-complement [s]
-  (if (nonemptyseq? s)
-    (if (statement-pos? s)
-      (list 'not s)
-      (fnext s))
-    (list 'not s)))
+  (assoc s :positive (if (statement-pos? s) false true)))
+
+(defn ¬ [stmt] (statement-complement stmt))
 
 (defn statement-atom
   "statement -> statement
-   Returns the atom of the statement, i.e strips the negation operator if there
-   is one"
+   Returns a positive version of the statement."
   [s]
-  (if (statement-neg? s)
-    (fnext s)
-    s))
+  (assoc s :positive true))
 
-(defn statement-compare [s1 s2]
-  (cond (and (statement-pos? s1) (statement-pos? s2))
-    (cond (and (fatom? s1) (fatom? s2))
-      (compare (:term s1) (:term s2))
-      (and (nonemptyseq? s1) (fatom? s2))
-      (compare s1 (:term s2))
-      (and (fatom? s1) (nonemptyseq? s2))
-      (compare (:term s1) s2)
-      ;; no compare for lists!,
-      ;; see http://groups.google.com/group/clojure/msg/99fa7e6c6bf79330
-      :else (compare (vec s1) (vec s2)))
-    (and (statement-neg? s1) (statement-neg? s2))
-    (statement-compare (statement-atom s1) (statement-atom s2))
-    (and (statement-pos? s1) (statement-neg? s2))
-    1
-    (and (statement-neg? s1) (statement-pos? s2))
-    -1))
+(defn statement-predicate 
+  "statement -> symbol or nil"
+  [s]
+  (term-functor (:wff s)))
 
-(defn statement-predicate [s]
-  (let [atm (statement-atom s)]
-    (cond (nonemptyseq? atm) (first atm)
-      (fatom? atm) (first (:term atm)))))
-
-(defn statement-symbol [s]
-  (let [a (statement-atom s)]
-  (or (statement-predicate a)
-    (if (string? a)
-      (symbol a)
-      a))))
-
-(defn statement-wff [s]
+(defn statement-wff 
+  "Represents the statement as an s-expression.  Negative statements
+   are represented with the form (not P), where P is the wff of the
+   statement."
+  [s]  
   (if (statement-pos? s)
-    (if (fatom? s)
-      (:term s)
-      s)
-    (list 'not (statement-wff (statement-atom s)))))
+    (:wff s)
+    (list 'not (:wff s))))
+
+(defn sexp->statement
+  "s-expression -> statement or nil"
+  [sexp]
+  (if (compound-term? sexp)
+    (if (= 'not (first sexp))
+      (make-statement :positive false :wff (second sexp))
+      (make-statement :positive true :wff sexp))))
 
 (declare term-formatted)
 
@@ -182,32 +193,37 @@
     (str/join "\n " l)))
 
 (defn statement-formatted
-  ([s] (statement-formatted s false))
-  ([s parentheses?]
+  ([s] (statement-formatted s false :en))
+  ([s x] (if (keyword? x) 
+             (statement-formatted s true x)
+             (statement-formatted s true :en)))
+  ([s parentheses? lang]
     (cond
       (string? s) (short-str s),
       (symbol? s) (short-str (str s)),
-      (fatom? s) (apply format `(~(:form s)
-                                  ~@(map term-formatted (rest (:term s))))),
+      (statement? s) (cond (not (empty? (:text s))) (lang (:text s))
+                           (:wff s) (if parentheses? 
+                                      (str "(" (statement-formatted (statement-wff s)) ")")
+                                      (statement-formatted (statement-wff s)))
+                           :else (str (:id s)))
       (nonemptyseq? s) (if parentheses?
                          (str "(" (str/join " " (map term-formatted s)) ")")
                          (str/join " " (map term-formatted s))),
-      true s)))
+      :else s)))
 
 (defn term-formatted [t]
-  (cond (or (variable? t) (constant? t) ) (short-str (str t))
-    (nonemptyseq? t) (str "(" (str/join " " (map term-formatted t)) ")")
-    (fatom? t) (str \" (statement-formatted t true) \")
-    true t))
+  (cond 
+    (or (variable? t) (constant? t)) (short-str (str t)),
+    (nonemptyseq? t) (str "(" (str/join " " (map term-formatted t)) ")"),
+    (statement? t) (str \" (statement-formatted t true) \")
+    :else t))
 
 (defn replace-var
   [from to stmt]
   (cond
     (seq? stmt) (map (fn [t] (replace-var from to t)) stmt),
-    (fatom? stmt) (assoc stmt :term (replace-var from to (:term stmt))),
-    true (if (= stmt from)
-           to
-           stmt)))
+    (statement? stmt) (assoc stmt :wff (replace-var from to (:wff stmt))),
+    :else (if (= stmt from) to stmt)))
 
 (defn sentence?
   "Returns true if the string s contains at least two words and does
@@ -223,11 +239,8 @@
   [s]
   (try
     (if (sentence? s)
-      s
-      (let [stmt (read-string s)]
-        (if (statement? stmt)
-          stmt
-          nil)))
+      (make-statement :wff s)
+      (sexp->statement (read-string s)))
     (catch Exception e nil)))
 
 (defn stmt-str [stmt]
