@@ -1,4 +1,5 @@
-(ns impact.web.translate
+(ns ^{:doc "Translation from formal logic statements to human languages"}
+  impact.web.translate
   (:use carneades.engine.statement
         clojure.data.json)
   (:require [clojure.xml :as xml]
@@ -24,7 +25,8 @@
         optional false
         hint (zf/xml1-> loc :question :hint zf/text)
         type (zf/xml1-> loc :question (zf/attr :type))
-        answers (zf/xml-> loc :question :answers :text zf/text)
+        formalanswers (zf/xml-> loc :question :formalanswers :text zf/text)
+        answers (zf/xml-> loc :question :answers :text (zf/attr= :lang lang) zf/text)
         ;; TODO: arg positioning is irrelevant,
         ;; we should use %n$s in string formats to specify arg orders
         argnumbers (zf/xml-> loc :question :format (zf/attr= :lang lang) :args :arg (zf/attr :nr))
@@ -34,13 +36,13 @@
            :hint hint
            :type type
            :question (insert-args question stmt argnumbers)
-           :statement stmt}
-        ]
-    (if (seq answers)
-      (assoc q :answers answers)
+           :statement stmt}]
+    ;; TODO: this distinction should be done at the JavaScript level
+    (if (seq formalanswers)
+      (assoc q :formalanswers formalanswers :answers answers)
       q)))
 
-(defn- get-loc
+(defn get-loc
   [stmt translations]
   (zf/xml1-> translations :predicate (zf/attr= :pred stmt)))
 

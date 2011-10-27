@@ -35,11 +35,11 @@
     </statements>
     <question arg="0" type="text">
       <format lang="de">
-        <text>Wie heißen Sie?</text>
+        <text>Wie heißt der Rechtsinhaber?</text>
         <args />
       </format>
       <format lang="en">
-        <text>What is your name?</text>
+        <text>What is the name of the rights owner?</text>
         <args />
       </format>
       <hint>Please enter the name of rights owner.</hint>
@@ -99,9 +99,13 @@
       <hint>Please enter if you want to use the orphaned work for commercial purposes.</hint>
       <category>Purpose</category>
       <answers>
+        <text lang="en">commercial</text>
+        <text lang="en">non-commercial</text>
+      </answers>
+      <formalanswers>
         <text>commercial</text>
         <text>non_commercial</text>
-      </answers>
+      </formalanswers>
     </question>
   </predicate>
   <predicate pred="UrheberSuche" args="1">
@@ -124,10 +128,15 @@
       </format>
       <hint>Please enter if your documented search was a professional one.</hint>
       <category>Search</category>
-      <answers>
+      <formalanswers>
         <text>Standard</text>
         <text>Professional</text>
         <text>None</text>
+      </formalanswers>
+      <answers>
+        <text lang="en">Standardyyyy</text>
+        <text lang="en">Professional</text>
+        <text lang="en">None</text>
       </answers>
       <qrefs>
         <qref pred="Bekanntmachung" arg="0">
@@ -156,9 +165,13 @@
       </format>
       <hint>Please enter if a public announcement was carried out.</hint>
       <category>Bekanntmachung</category>
-      <answers>
+      <formalanswers>
         <text>No</text>
         <text>Public</text>
+      </formalanswers>
+      <answers>
+        <text lang="en">No</text>
+        <text lang="en">Public</text>
       </answers>
     </question>
   </predicate>
