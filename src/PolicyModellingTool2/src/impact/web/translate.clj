@@ -37,10 +37,7 @@
            :type type
            :question (insert-args question stmt argnumbers)
            :statement stmt}]
-    ;; TODO: this distinction should be done at the JavaScript level
-    (if (seq formalanswers)
-      (assoc q :formalanswers formalanswers :answers answers)
-      q)))
+    (assoc q :formalanswers formalanswers :answers answers)))
 
 (defn get-loc
   [stmt translations]

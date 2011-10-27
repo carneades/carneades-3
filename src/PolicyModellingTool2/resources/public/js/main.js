@@ -241,29 +241,31 @@ function showQuestion(item, qbox){
     if (item.type == "select") {
         output += "<select class=\"required\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\">";
         output += "<option value=\"\" selected=\"selected\">-- please choose --</option>";
+
         $.each(item.answers, function(answindex, answer) {
             output += "<option value=\""+answer+"\">"+answer+"</option>";
         });
         output += "</select>";
-    }
-    else if (item.type == "radio" || item.type == "checkbox") {
+    } else if (item.type == "radio" || item.type == "checkbox") {
         newline = radioCheckNewLine(item.answers);
-        $.each(item.answers, function(answindex, answer) {
+        for(var i = 0; i < item.answers.length; i++) {
             if (newline) output += "<br/>";
-            output += "<input class=\"required\" name=\"qID"+item.id+"\" type=\""+item.type+"\" value=\""+answer+"\">";
+            var answer = item.answers[i];
+            var formalanswer = item.formalanswers[i];
+            output += "<input class=\"required\" name=\"qID"+item.id+"\" type=\""+item.type+"\" value=\""+formalanswer+"\">";
             output += "<span onclick=\"$(this).prev().click()\">"+answer+"</span>";
-        });
-    }
-    else if (item.type == "date") {
+        }
+    } else if (item.type == "date") {
         output += "<input type=\"text\" class=\"datefield required\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
-    }
-    else if (item.type == "int") {
+    } else if (item.type == "int") {
         output += "<input type=\"text\" class=\"integer required\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
-    }
-    else if (item.type == "float") {
+    } else if (item.type == "float") {
         output += "<input type=\"text\" class=\"float required\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
+    } else {
+        output += "<input class=\"required\" type=\""+item.type+"\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+
+            ((item.answers && item.answers.length != 0) ? " value=\""+item.answers[0]+"\"" : "")+"/>";
     }
-    else output += "<input class=\"required\" type=\""+item.type+"\" id=\"qID"+item.id+"\" name=\"qID"+item.id+"\""+((item.answers && item.answers[0]!="") ? " value=\""+item.answers[0]+"\"" : "")+"/>";
+    
     output += "</p>";
     qbox.append(output);
 
