@@ -7,6 +7,8 @@
         [clojure.java.io :only (input-stream reader)])
   (:import java.io.File))
 
+(def *tmpdir* (System/getProperty "java.io.tmpdir"))
+
 (defn output-svg
   [pathname]
   (let [lkif (import-lkif pathname)
@@ -29,9 +31,10 @@
         svg (apply export-ag-os (first (:ags lkif)) statement-formatted (flatten (map identity pa)))]
     (apply str (line-seq (reader svg)))))
 
+
 (defn process-ajax-request
   [uri session params]
-  (let [pathname (str "/tmp/" (.getName (File. uri)))]
+  (let [pathname (str *tmpdir* "/" (.getName (File. uri)))]
     {:headers {"Content-Type" "text/xml;charset=UTF-8"}
      :body (output-svg pathname)}))
 
