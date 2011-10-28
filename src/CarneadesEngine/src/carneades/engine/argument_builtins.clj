@@ -42,7 +42,6 @@
           (if-let [subs2 (unify term result subs)]
             (list (make-response subs2 #{} 
                                  (make-argument 
-                                   :id (gensym "a") 
                                    :conclusion stmt 
                                    :scheme "builtin:eval")))
             ()))))
@@ -52,8 +51,7 @@
 (defn- dispatch-equal [subs stmt term1 term2]
   (if-let [subs2 (unify term1 term2 subs)]
     (list (make-response subs2 #{} 
-                         (make-argument 
-                           :id (gensym "a") 
+                         (make-argument  
                            :conclusion stmt 
                            :scheme "builtin:=")))
     ()))
@@ -62,8 +60,7 @@
   (if-let [subs2 (unify term1 term2 subs)]
     ()
     (list (make-response subs #{} 
-                         (make-argument 
-                           :id (gensym "a") 
+                         (make-argument  
                            :conclusion stmt 
                            :scheme "builtin:not=")))))
 
