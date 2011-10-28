@@ -20,37 +20,52 @@
    premises         ; (string -> statement) map, where strings are role names 
    sources])        ; vector of source texts
   
+(defn- assure-statement
+  [x]
+  (cond (statement? x) x
+        (vector? x) (recur (second x))
+        :else (make-statement :wff (wff-atom x) :positive (wff-pos? x))))
+  
+(defn- wffs->statements
+  [arg]
+  (assoc arg 
+         :conclusion (assure-statement (:conclusion arg)) 
+         :premises (zipmap (keys (:premises arg))
+                           (map assure-statement (vals (:premises arg))))))
+                           
+(defn- pvector->pmap
+  [arg]
+  (if (map? (:premises arg))
+    arg
+    (assoc arg :premises 
+           (zipmap (map str (range (count (:premises arg)))) 
+                   (:premises arg)))))
 
- (defn make-argument
-   "Makes a one-step argument. A vector of statements may be
-    supplied as the value of the :premises property, instead of 
-    a map from role names to statements. In this case the premises
-    are assigned integer roles names, based on the order of the
-    premises in the vector."
-    [& values]
-    (let [m (apply hash-map values)
-      arg (merge (Argument. 
-               (gensym "a") ; id
-               ""           ; title
-               ""           ; 
-               false        ; strict
-               0.5          ; weight
-               nil          ; conclusion
-               {}           ; premises
-               [])          ; sources 
-        m)]
-      (if (instance? clojure.lang.PersistentArrayMap (:premises arg))
-        arg
-        (assoc arg :premises 
-               (zipmap (map str (range (count (:premises arg)))) 
-                       (:premises arg))))))
-     
+(defn make-argument
+  "Makes a one-step argument. A vector of statements may be
+   supplied as the value of the :premises property, instead of 
+   a map from role names to statements. In this case the premises
+   are assigned integer roles names, based on the order of the
+   premises in the vector."
+  [& values]
+  (-> (Argument. 
+        (gensym "a") ; id
+        ""           ; title
+        ""           ; 
+        false        ; strict
+        0.5          ; weight
+        nil          ; conclusion
+        {}           ; premises
+        [])          ; sources  
+      (merge (apply hash-map values))
+      (pvector->pmap)
+      (wffs->statements)))
 
 (defn argument-variables
   "arg -> (seq-of symbol)
    Returns a seq containing the variables of the argument"
   [arg]
-  (distinct (concat (mapcat #(variables (:atom %)) (vals (:premises arg)))
+  (distinct (concat (mapcat #(variables %) (vals (:premises arg)))
                     (variables (:conclusion arg)))))
 
 (defn instantiate-argument

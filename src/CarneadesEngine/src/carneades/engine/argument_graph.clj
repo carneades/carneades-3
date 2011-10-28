@@ -9,7 +9,7 @@
 
 (defrecord Literal
   [positive         ; boolean
-   letter])         ; symbol
+   letter])         ; symbol, key into the statement-node table
 
 (defn make-literal
   [positive letter]
@@ -45,6 +45,9 @@
 
 ; type language = :en | :de | :nl | :fr ...
 
+; Note: the wff of a statement node must be kept in sync with the wff associated
+; with the id of the statement node in the language table, i.e. the key list.
+
 (defrecord StatementNode
   [id               ; symbol, same as the propositional letter in the key list
    wff              ; ground atomic formula or nil
@@ -56,13 +59,20 @@
 
 (defn- make-statement-node
   [stmt]
-  (StatementNode. (gensym "s") (statement-atom stmt) nil :pe {} #{} #{}))
+  (StatementNode. (gensym "s")       ; id
+                  (:wff stmt) 
+                  (:weight stmt)                         
+                  (:standard stmt)
+                  (:text stmt)
+                  #{}                ; premise-of
+                  #{}))              ; conclusion-of
    
 (defrecord ArgumentGraph 
   [id               ; symbol
    title            ; string or hash table (for multiple languages)
    main-issue       ; symbol, a key into the statement node map
-   language         ; (statement -> symbol) map, i.e. a "key list"
+   language         ; (sexp -> symbol) map, i.e. a "key list"; 
+                    ; where the sexp represents a ground atomic formula
    statement-nodes  ; (symbol -> StatementNode) map, 
    argument-nodes   ; (symbol -> ArgumentNode) map
    references])     ; (symbol -> Source) map
@@ -86,14 +96,14 @@
    creating one if one does not exist in the initial argument-graph."
   [ag stmt]
   (let [n (get (:statement-nodes ag) 
-               (get (:language ag) (statement-atom stmt)))]
+               (get (:language ag) (:wff stmt)))]
     (if n 
       [ag n]
       (let [n2 (make-statement-node stmt)
             ag2 (assoc ag 
                        :language 
                        (assoc (:language ag)
-                              (:wff n2)
+                              (:wff stmt)
                               (:id n2))
                        :statement-nodes 
                        (assoc (:statement-nodes ag)
@@ -104,7 +114,9 @@
 (defn- update-statement-node
   "argument-graph symbol key value ... -> argument-graph
    Updates the statement node with the given id with the values of the 
-   properties with the given keys, but retaining the values of other properties."
+   properties with the given keys, but retaining the values of other properties.
+   Warning: this is a low level function. It does not keep the wff of the statement
+   in sync with its key in the language table."
   [ag id & key-values]
   (assoc ag 
          :statement-nodes (assoc (:statement-nodes ag)
@@ -116,7 +128,7 @@
   "argument-graph statement -> literal" 
   [ag stmt]
   (make-literal (statement-pos? stmt)
-                (get (:language ag) stmt)))
+                (get (:language ag) (:wff stmt))))
 
 (defn- literal->statement
   "argument-graph literal -> statement"
@@ -283,15 +295,16 @@
   [ag s]
   (nil? (:weight (get-statement-node ag s))))
 
-; TO DO: accept, reject, etc. should take a collection of statements, not single statements.
-
 (defn accept 
-  "argument-graph statement -> argument-graph"
-  [ag s]
-  (update-statement-node 
-    ag 
-    (get-statement-node ag s)
-    :weight (if (statement-pos? s) 1.0 0.0)))
+  "argument-graph (seq-of statement) -> argument-graph"
+  [ag stmts]
+  (reduce (fn [ag2 stmt]
+            (update-statement-node 
+              ag2 
+              (get-statement-node ag2 stmt)
+              :weight (if (statement-pos? stmt) 1.0 0.0)))
+          ag 
+          stmts))
    
 (defn accepted?
   "argument-graph statement -> boolean"
@@ -321,12 +334,15 @@
   (accepted-statements ag))
   
 (defn reject 
-  "argument-graph statement -> argument-graph"
-  [ag s]
-  (update-statement-node 
-    ag 
-    (get-statement-node ag s)
-    :weight (if (statement-pos? s) 0.0 1.0)))
+  "argument-graph (seq-of statement) -> argument-graph"
+  [ag stmts]
+  (reduce (fn [ag2 stmt]
+            (update-statement-node 
+              ag2 
+              (get-statement-node ag2 stmt)
+              :weight (if (statement-pos? stmt) 0.0 1.0)))
+          ag 
+          stmts))
 
 (defn rejected?
   "argument-graph statement -> boolean"
@@ -349,12 +365,16 @@
           (:statement-nodes ag)))
 
 (defn assume 
-  "argument-graph statement -> argument-graph"
-  [ag s]
-  (update-statement-node 
-    ag 
-    (get-statement-node ag s)
-    :weight (if (statement-pos? s) 0.75 0.25)))                             
+  "argument-graph (seq-of statement) -> argument-graph"
+  [ag stmts]
+  (reduce (fn [ag2 stmt]
+            (update-statement-node 
+              ag2 
+              (get-statement-node ag2 stmt)
+              :weight (if (statement-pos? stmt) 0.75 0.25)))
+          ag 
+          stmts))
+                           
                               
 (defn assumed?
   "argument-graph statement -> boolean"
@@ -377,14 +397,16 @@
           ()
           (:statement-nodes ag)))
 
-(defn question
-  "argument-graph statement -> argument-graph
-   Questions a statement, making it an issue."
-  [ag s]
-  (update-statement-node 
-    ag 
-    (get-statement-node ag s)
-    :weight 0.5))
+(defn question 
+  "argument-graph (seq-of statement) -> argument-graph"
+  [ag stmts]
+  (reduce (fn [ag2 stmt]
+            (update-statement-node 
+              ag2 
+              (get-statement-node ag2 stmt)
+              :weight 0.5))
+          ag 
+          stmts))
   
 (defn issue?
   "argument-graph statement -> boolean"
