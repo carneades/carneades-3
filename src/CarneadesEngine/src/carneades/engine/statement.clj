@@ -5,16 +5,14 @@
 (ns ^{:doc "Statements are a representation of literals, i.e. atomic formulas and
             negations of atomic formulas of propositional and predicate logic."}
     carneades.engine.statement
-  (:use clojure.contrib.def
-        carneades.engine.utils)
+  (:use carneades.engine.utils)
   (:require [clojure.string :as str])
   (:import (java.net URI)))
 
 ; language = :en, :de, :fr, etc.
 
-(defrecord Statement
-  [id               ; symbol, a propositional "letter"
-   wff              ; atomic formula or nil
+(defrecord Statement  ; in logic, statements are called "literals"
+  [wff              ; atomic formula of propositional (symbol) or predicate logic (list)
    positive         ; boolean
    weight           ; nil or 0.0-1.0, default nil
    standard         ; proof-standard
@@ -24,8 +22,7 @@
    "key value ... -> statement"
    [& key-values]  
    (merge (Statement. 
-            (gensym "s")   ; id
-            nil             ; wff
+            (gensym "s")    ; wff
             true            ; positive
             nil             ; weight
             :pe             ; proof standard
@@ -33,6 +30,11 @@
           (apply hash-map key-values)))
 
 (defn statement? [x] (instance? Statement x))
+
+(defn propositional? 
+  [x] 
+  (and (instance? Statement x)
+       (symbol? (:wff x))))
 
 ; <constant> := <symbol> | <<number> | <boolean> | <string>
 ; <term> := <variable> | <constant> | <compound-term> | <statement> 
@@ -56,30 +58,44 @@
   (or (and (symbol? x) (not (variable? x)))
     (number? x)
     (string? x)
-    (boolean? x)))
+    (boolean? x)
+    (keyword? x)))
 
-(defn compound-term? [x]
-  (or (list? x) 
-      (vector? x)
-      (map? x)))
+(defn compound-term? [term]
+  (or (and (list? term) 
+         (not (empty? term))
+         (and (symbol? (first term))
+              (not (variable? (first term)))))
+      (and (statement? term)
+           (list? (:wff term)))))
+
+(defn termseq? [term]
+  (or (vector? term)
+      (and (list? term) (not (compound-term? term)))
+      (and (map? term) (not (statement? term)))))
 
 (defn term?
   "datum -> boolean"
   [x]
   (or (variable? x)
       (constant? x)
-      (termseq? x)
+      (statement? x)
       (compound-term? x)
-      (statement? x)))
+      (termseq? x)))
 
 (defn term-functor
   "term -> symbol | nil "
   [term]
   (cond 
     (and (list? term) 
-         (not (empty? term))
-         (symbol? (first term))) (first term)
-    (statement? term) (term-functor (:wff term))
+         (compound-term? term)
+         (not (empty? term))) (first term)
+    (and (statement? term)
+         (:positive term) 
+         (list? (:wff term))) (recur (:wff term))
+    (and (statement? term)
+         (not (:positive term))
+         (list? (:wff term))) 'not
     :else nil))
 
 (defn term-args
@@ -87,11 +103,15 @@
   [term]
   (cond 
     (and (list? term) 
-         (not (empty? term))
-         (symbol? (first term))) (rest term)
+         (compound-term? term)) (rest term)
     (list? term) (seq term)
     (vector? term) (seq term)
-    (statement? term) (term-args (:wff term))
+    (and (statement? term)
+         (:positive term) 
+         (list? (:wff term))) (recur (:wff term))
+    (and (statement? term)
+         (list? (:wff term))
+         (not (:positive term))) (:wff term)
     (map? term) (seq term)
     :else ()))
   
@@ -99,18 +119,13 @@
 
 (defn statement= 
   [s1 s2]
-  (and (statement? s1) 
-       (statement? s2)
-       (or (= (:id s1) (:id s2))
-           (and (not (nil? (:wff s1)))
-                (not (nil? (:wff s2)))
-                (term= (:wff s1) (:wff s2))))))
+  {:pre [(statement? s1) (statement? s2)]}
+  (and (= (:positive s1) (:positive s2))  ; must have same polarity
+       (term= (:wff s1) (:wff s2))))
   
 (defn term=
   [t1 t2]
   (cond 
-    (and (variable? t1) (variable? t2)) (= t1 t2)
-    (and (constant? t1) (constant? t2)) (= t1 t2)
     (and (compound-term? t1) 
          (compound-term? t2)) (and (= (term-functor t1) 
                                       (term-functor t2)) 
@@ -119,8 +134,8 @@
                                    (every? (fn [p] (term= (first p) (second p)))
                                            (partition 2 (interleave (term-args t1) 
                                                                     (term-args t2)))))
-    (and (statement? t1) (statement? t2)) (statement= t1 t2)
-    :else false))
+    (and (statement? t1) (statement? t2)) (statement= t1 t2) 
+    :else (= t1 t2)))
 
 (defn ground? [t]
   (cond (variable? t) false
@@ -136,16 +151,27 @@
    Returns a sequence of the variables in the term"
   [t]
   (letfn [(vars [t]
+                ; (println t)
                 (cond (variable? t) (list t)
-                      (constant? t) nil
-                      (compound-term? t) (concat (vars (term-functor t))
-                                                 (vars (term-args t)))
-                      (statement? t) (vars (:wff t))))]
+                      (constant? t) ()
+                      (compound-term? t) (recur (term-args t))
+                      (and (or (vector? t)
+                               (list? t)
+                               (map? t))
+                           (not (empty? t))) (concat (vars (first t))
+                                                     (vars (rest t)))
+                 
+                           (statement? t) (vars (:wff t))
+                      :else ()))]
     (distinct (vars t))))
 
 (defn statement-pos? [s] (:positive s))
+(defn wff-pos? [wff] (or (not (list? wff))
+                         (and (not (empty? wff))
+                              (not= (first wff) 'not))))
 
 (defn statement-neg? [s] (not (:positive s)))
+(defn wff-neg? [wff] (not (wff-pos? wff)))
 
 (defn statement-complement [s]
   (assoc s :positive (if (statement-pos? s) false true)))
@@ -158,8 +184,16 @@
   [s]
   (assoc s :positive true))
 
+(defn wff-atom
+  [wff]
+  (if (wff-pos? wff) 
+    wff
+    (second wff)))
+
 (defn statement-predicate 
-  "statement -> symbol or nil"
+  "statement -> symbol or nil
+   Returns the predicate of the wff of the statement, if it is a predicate
+   logic statement, or nil, if it is a propositional logic statement."
   [s]
   (term-functor (:wff s)))
 
@@ -196,16 +230,15 @@
   ([s] (statement-formatted s false :en))
   ([s x] (if (keyword? x) 
              (statement-formatted s true x)
-             (statement-formatted s true :en)))
+             (statement-formatted s x :en)))
   ([s parentheses? lang]
     (cond
       (string? s) (short-str s),
       (symbol? s) (short-str (str s)),
       (statement? s) (cond (not (empty? (:text s))) (lang (:text s))
-                           (:wff s) (if parentheses? 
+                           (:wff s) (if (and (list? (:wff s)) parentheses?) 
                                       (str "(" (statement-formatted (statement-wff s)) ")")
-                                      (statement-formatted (statement-wff s)))
-                           :else (str (:id s)))
+                                      (statement-formatted (statement-wff s))))
       (nonemptyseq? s) (if parentheses?
                          (str "(" (str/join " " (map term-formatted s)) ")")
                          (str/join " " (map term-formatted s))),
