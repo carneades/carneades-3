@@ -12,7 +12,7 @@
 ; language = :en, :de, :fr, etc.
 
 (defrecord Statement  ; in logic, statements are called "literals"
-  [wff              ; atomic formula of propositional (symbol) or predicate logic (list)
+  [atom              ; atomic formula of propositional (symbol) or predicate logic (list)
    positive         ; boolean
    weight           ; nil or 0.0-1.0, default nil
    standard         ; proof-standard
@@ -22,7 +22,7 @@
    "key value ... -> statement"
    [& key-values]  
    (merge (Statement. 
-            (gensym "s")    ; wff
+            (gensym "s")    ; atom
             true            ; positive
             nil             ; weight
             :pe             ; proof standard
@@ -34,7 +34,7 @@
 (defn propositional? 
   [x] 
   (and (instance? Statement x)
-       (symbol? (:wff x))))
+       (symbol? (:atom x))))
 
 ; <constant> := <symbol> | <<number> | <boolean> | <string>
 ; <term> := <variable> | <constant> | <compound-term> | <statement> 
@@ -67,7 +67,7 @@
          (and (symbol? (first term))
               (not (variable? (first term)))))
       (and (statement? term)
-           (list? (:wff term)))))
+           (list? (:atom term)))))
 
 (defn termseq? [term]
   (or (vector? term)
@@ -92,10 +92,10 @@
          (not (empty? term))) (first term)
     (and (statement? term)
          (:positive term) 
-         (list? (:wff term))) (recur (:wff term))
+         (list? (:atom term))) (recur (:atom term))
     (and (statement? term)
          (not (:positive term))
-         (list? (:wff term))) 'not
+         (list? (:atom term))) 'not
     :else nil))
 
 (defn term-args
@@ -108,14 +108,46 @@
     (vector? term) (seq term)
     (and (statement? term)
          (:positive term) 
-         (list? (:wff term))) (recur (:wff term))
+         (list? (:atom term))) (recur (:atom term))
     (and (statement? term)
-         (list? (:wff term))
-         (not (:positive term))) (:wff term)
+         (list? (:atom term))
+         (not (:positive term))) (:atom term)
     (map? term) (seq term)
     :else ()))
   
 (declare term=)
+
+(defn atom?
+  "An atom is an sexpression that is
+   either a symbol, representing a propositional letter,
+   or a non-empty list whose first element is a symbol,
+   representing an atomic formula of first-order predicate logic."
+  [sexp]
+  (or (symbol? sexp)
+      (and (list? sexp)
+           (not (empty? sexp))
+           (symbol? (first sexp)))))
+
+(defn literal? 
+  "A literal is an sexpression representing an atomic formula or
+   negated atomic formula." 
+  [sexp] 
+  (or (symbol? sexp)
+      (and (list? sexp)
+           (not (empty? sexp))
+           (symbol? (first sexp)))))
+
+(defn literal-pos? [wff] 
+  (or (not (list? wff))
+      (and (not (empty? wff))
+           (not= (first wff) 'not))))
+
+(defn literal-atom
+  [wff]
+  {:pre [(literal? wff)]}
+  (if (literal-pos? wff) 
+    wff
+    (second wff)))
 
 (defn statement= 
   [s1 s2]
@@ -166,12 +198,9 @@
     (distinct (vars t))))
 
 (defn statement-pos? [s] (:positive s))
-(defn wff-pos? [wff] (or (not (list? wff))
-                         (and (not (empty? wff))
-                              (not= (first wff) 'not))))
+
 
 (defn statement-neg? [s] (not (:positive s)))
-(defn wff-neg? [wff] (not (wff-pos? wff)))
 
 (defn statement-complement [s]
   (assoc s :positive (if (statement-pos? s) false true)))
@@ -184,11 +213,7 @@
   [s]
   (assoc s :positive true))
 
-(defn wff-atom
-  [wff]
-  (if (wff-pos? wff) 
-    wff
-    (second wff)))
+
 
 (defn statement-predicate 
   "statement -> symbol or nil
