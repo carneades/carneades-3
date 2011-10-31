@@ -23,22 +23,21 @@
  
 (defn make-source
   [& values]
-  (let [m (apply hash-map values)]
-    (merge 
-      (Source. 
-        []   ; contributor
-        []   ; coverage
-        []   ; creator 
-        []   ; date
-        []   ; description 
-        []   ; format
-        []   ; identifier
-        []   ; publisher 
-        []   ; relation
-        []   ; rights
-        []   ; source 
-        []   ; subject
-        []   ; title 
-        [])  ; type
-      m)))
+  (merge 
+    (Source. 
+      []   ; contributor
+      []   ; coverage
+      []   ; creator 
+      []   ; date
+      []   ; description 
+      []   ; format
+      []   ; identifier
+      []   ; publisher 
+      []   ; relation
+      []   ; rights
+      []   ; source 
+      []   ; subject
+      []   ; title 
+      [])  ; type
+    (apply hash-map values)))
 

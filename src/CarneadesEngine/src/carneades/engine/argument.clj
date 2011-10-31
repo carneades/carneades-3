@@ -19,14 +19,16 @@
    conclusion       ; statement
    premises         ; (string -> statement) map, where strings are role names 
    sources])        ; vector of source texts
-  
+
+
 (defn- assure-statement
   [x]
   (cond (statement? x) x
         (vector? x) (recur (second x))
-        :else (make-statement :wff (wff-atom x) :positive (wff-pos? x))))
+        :else (make-statement :atom (literal-atom x) :positive (literal-pos? x))))
+
   
-(defn- wffs->statements
+(defn- literals->statements
   [arg]
   (assoc arg 
          :conclusion (assure-statement (:conclusion arg)) 
@@ -38,7 +40,8 @@
   (if (map? (:premises arg))
     arg
     (assoc arg :premises 
-           (zipmap (map str (range (count (:premises arg)))) 
+           (zipmap (map (fn [i] (str "p" i))
+                        (range (count (:premises arg)))) 
                    (:premises arg)))))
 
 (defn make-argument
@@ -51,7 +54,7 @@
   (-> (Argument. 
         (gensym "a") ; id
         ""           ; title
-        ""           ; 
+        ""           ; scheme
         false        ; strict
         0.5          ; weight
         nil          ; conclusion
@@ -59,7 +62,7 @@
         [])          ; sources  
       (merge (apply hash-map values))
       (pvector->pmap)
-      (wffs->statements)))
+      (literals->statements)))
 
 (defn argument-variables
   "arg -> (seq-of symbol)

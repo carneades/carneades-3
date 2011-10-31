@@ -23,7 +23,7 @@
           [:id "int primary key not null"]
           [:weight "double default 0.50"]
           [:standard "tinyint default 0"]   ; 0=pe, 1=cce, 2=brd, 3=dv 
-          [:wff "varchar"]          
+          [:atom "varchar"]          
           [:content "int"]
           ["foreign key(content) references string(id)"])
                         
