@@ -5,13 +5,13 @@
         impact.web.translations.translator))
 
 
-(def *base-url* "http://api.microsofttranslator.com/V2/Ajax.svc/")
-(def *translate-url*
-  (str *base-url* "GetTranslations?appId=%s&text=%s&from=%s&to=%s&maxTranslations=1"))
-(def *available-languages-url*
-  (str *base-url* "GetLanguagesForTranslate?appId=%s"))
-(def *language-names-url*
-  (str *base-url* "GetLanguageNames?appId=%s&locale=%s&languageCodes=%s"))
+(def base-url "http://api.microsofttranslator.com/V2/Ajax.svc/")
+(def translate-url
+  (str base-url "GetTranslations?appId=%s&text=%s&from=%s&to=%s&maxTranslations=1"))
+(def available-languages-url
+  (str base-url "GetLanguagesForTranslate?appId=%s"))
+(def language-names-url
+  (str base-url "GetLanguageNames?appId=%s&locale=%s&languageCodes=%s"))
 
 (defrecord MsbingTranslator
     [key]
@@ -19,7 +19,7 @@
   (translate
     [this text from to]
     (try
-      (let [url (format *translate-url* key (url-encode text) from to)
+      (let [url (format translate-url key (url-encode text) from to)
             content (slurp url)
             ;; first character is junk?!
             json (read-json (subs content 1))]
@@ -29,7 +29,7 @@
   (available-languages
     [this]
     (try
-      (let [url (format *available-languages-url* key)
+      (let [url (format available-languages-url key)
             content (slurp url)
             ;; first character is junk?!
             json (read-json (subs content 1))]
@@ -40,7 +40,7 @@
     [this locale codes]
     (try
       (let [codes (json-str codes)
-            url (format *language-names-url* key locale codes)
+            url (format language-names-url key locale codes)
             content (slurp url)
             ;; first character is junk?!
             json (read-json (subs content 1))]

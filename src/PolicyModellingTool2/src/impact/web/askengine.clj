@@ -5,7 +5,7 @@
         carneades.engine.argument
         carneades.engine.shell
         carneades.engine.unify
-        impact.web.translate
+        impact.web.statement-translation
         impact.web.answers
         impact.web.core)
   (:import java.io.File))

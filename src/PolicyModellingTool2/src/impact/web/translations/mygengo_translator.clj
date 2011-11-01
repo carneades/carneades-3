@@ -6,7 +6,7 @@
            com.mygengo.client.enums.Tier
            com.mygengo.client.payloads.TranslationJob))
 
-(def *expected-response*
+(def expected-response
   "{\"opstat\" \"ok\",
     \"response\" 
     [{\"language\" \"English\", \"localized_name\" \"English\", \"lc\" \"en\", \"unit_type\" \"word\"},
@@ -37,7 +37,7 @@
     (try
       (let [;; This call fails. Bug in the API?
             ;; languages (.getServiceLanguages client)
-            languages *expected-response*]
+            languages expected-response]
         (map :lc (-> (read-json languages) :response)))
       (catch Exception e nil)))
 
@@ -50,7 +50,7 @@
             find-lang (fn [code languages]
                         (:language (first (filter #(= code (:lc %)) languages))))
             codes (set codes)
-            languages *expected-response*]
+            languages expected-response]
         (map #(find-lang % (-> (read-json languages) :response)) codes))
       (catch Exception e nil))))
 
