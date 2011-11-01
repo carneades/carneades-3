@@ -12,11 +12,11 @@
 ; language = :en, :de, :fr, etc.
 
 (defrecord Statement  ; in logic, statements are called "literals"
-  [atom              ; atomic formula of propositional (symbol) or predicate logic (list)
-   positive         ; boolean
-   weight           ; nil or 0.0-1.0, default nil
-   standard         ; proof-standard
-   text])           ; (language -> string) map, natural language formulations of the statement
+  [atom               ; atomic formula of propositional (symbol) or predicate logic (list)
+   positive           ; boolean
+   weight             ; nil or 0.0-1.0, default nil
+   standard           ; proof-standard
+   text])             ; (language -> string) map, natural language formulations of the statement
 
 (defn make-statement
    "key value ... -> statement"
@@ -130,7 +130,8 @@
 
 (defn literal? 
   "A literal is an sexpression representing an atomic formula or
-   negated atomic formula." 
+   negated atomic formula. Variables are also considered to 
+   be literals, to support some meta-level reasoning." 
   [sexp] 
   (or (symbol? sexp)
       (and (list? sexp)
@@ -153,7 +154,7 @@
   [s1 s2]
   {:pre [(statement? s1) (statement? s2)]}
   (and (= (:positive s1) (:positive s2))  ; must have same polarity
-       (term= (:wff s1) (:wff s2))))
+       (term= (:atom s1) (:atom s2))))
   
 (defn term=
   [t1 t2]
@@ -174,7 +175,7 @@
         (constant? t) true
         (compound-term? t) (and (ground? (term-functor t))
                                 (ground? (term-args t)))
-        (statement? t) (ground? (:wff t))
+        (statement? t) (ground? (:atom t))
         :else true))
 
 ;; could be rewritten (filter variable? (tree-seq seq? identity s)) 
@@ -193,7 +194,7 @@
                            (not (empty? t))) (concat (vars (first t))
                                                      (vars (rest t)))
                  
-                           (statement? t) (vars (:wff t))
+                           (statement? t) (vars (:atom t))
                       :else ()))]
     (distinct (vars t))))
 
@@ -213,14 +214,20 @@
   [s]
   (assoc s :positive true))
 
-
-
 (defn statement-predicate 
   "statement -> symbol or nil
    Returns the predicate of the wff of the statement, if it is a predicate
    logic statement, or nil, if it is a propositional logic statement."
   [s]
-  (term-functor (:wff s)))
+  (term-functor (:atom s)))
+
+(defn atom-predicate
+  "atom -> symbol or nil
+   Returns the predicate symbol of predicate logic atoms or nil
+   if the atom is propositional."
+  [atom]
+  {:pre [(atom? atom)]}
+  (term-functor atom))
 
 (defn statement-wff 
   "Represents the statement as an s-expression.  Negative statements
@@ -228,16 +235,16 @@
    statement."
   [s]  
   (if (statement-pos? s)
-    (:wff s)
-    (list 'not (:wff s))))
+    (:atom s)
+    (list 'not (:atom s))))
 
-(defn sexp->statement
-  "s-expression -> statement or nil"
+(defn literal->statement
+  "literal -> statement"
   [sexp]
-  (if (compound-term? sexp)
-    (if (= 'not (first sexp))
-      (make-statement :positive false :wff (second sexp))
-      (make-statement :positive true :wff sexp))))
+  {:pre [(literal? sexp)]}
+  (if (literal-pos? sexp)
+      (make-statement :positive true :atom sexp)
+      (make-statement :positive false :atom (literal-atom sexp))))
 
 (declare term-formatted)
 
@@ -261,7 +268,7 @@
       (string? s) (short-str s),
       (symbol? s) (short-str (str s)),
       (statement? s) (cond (not (empty? (:text s))) (lang (:text s))
-                           (:wff s) (if (and (list? (:wff s)) parentheses?) 
+                           (:atom s) (if (and (list? (:atom s)) parentheses?) 
                                       (str "(" (statement-formatted (statement-wff s)) ")")
                                       (statement-formatted (statement-wff s))))
       (nonemptyseq? s) (if parentheses?
@@ -280,7 +287,7 @@
   [from to stmt]
   (cond
     (seq? stmt) (map (fn [t] (replace-var from to t)) stmt),
-    (statement? stmt) (assoc stmt :wff (replace-var from to (:wff stmt))),
+    (statement? stmt) (assoc stmt :atom (replace-var from to (:atom stmt))),
     :else (if (= stmt from) to stmt)))
 
 (defn sentence?
@@ -297,8 +304,8 @@
   [s]
   (try
     (if (sentence? s)
-      (make-statement :wff s)
-      (sexp->statement (read-string s)))
+      (make-statement :atom s)
+      (literal->statement (read-string s)))
     (catch Exception e nil)))
 
 (defn stmt-str [stmt]
