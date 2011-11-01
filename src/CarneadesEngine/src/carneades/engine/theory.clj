@@ -9,7 +9,8 @@
     carneades.engine.unify
     carneades.engine.argument
     carneades.engine.argument-generator
-    carneades.engine.dublin-core))
+    carneades.engine.dublin-core
+    [carneades.engine.utils :only (mapinterleave)]))
 
 (defrecord Form
   [positive     ; string for the positive sentences
@@ -45,14 +46,14 @@
 
 (defrecord Individual
   [symbol   ; symbol
-   forms])  ; (lang -> form) map
+   text])   ; (lang -> string) map.
 
 (defn make-individual
   "key value ... -> predicate"
   [& key-values]  
   (merge (Individual. 
            (gensym "p")    ; symbol
-           {})             ; forms
+           {})             ; text map
          (apply hash-map key-values)))
 
 (defn individual? [x] (instance? Individual x))
@@ -68,12 +69,12 @@
    weight        ; nil or number in the range 0.0 to 1.0
    premises      ; (string -> wff) map, where the string is the role of each premise
    exceptions    ; sequence of wffs
-   assumptions]) ; sequence of wffs
+   assumptions   ; sequence of wffs
+   scheme])      ; the scheme to which this clause belongs; creates a cyclic structure when used.
 
 ; TO DO: allow premises to be a vector in calls to make-clause, as in make-argument
 
-; The scope of clause ids is the theory.  That is, the id of a clause must 
-; be unique within a theory.  The ids are used to reify clauses in undercutters
+; The scope of clause ids is local to their scheme. 
 
 (defn make-clause
   "key value ... -> clause"
@@ -85,7 +86,8 @@
            nil             ; weight
            {}              ; premises
            []              ; exceptions
-           [])             ; assumptions
+           []              ; assumptions
+           nil)            ; the scheme of this clause
          (apply hash-map key-values)))
 
 (defn axiom 
@@ -95,8 +97,11 @@
 
 (defn clause? [x] (instance? Clause x))
 
+; The scope of scheme ids is their theory
+
 (defrecord Scheme
-  [name        ; string
+  [id          ; symbol
+   name        ; string
    clauses     ; sequence of clauses
    source])    ; source or nil
 
@@ -104,6 +109,7 @@
   "key value ... -> scheme"
   [& key-values]  
   (merge (Scheme. 
+           (gensym "?")    ; id
            ""              ; name
            []              ; clauses
            nil)            ; source
@@ -127,9 +133,8 @@
    source    ; source
    language  ; (symbol -> individual or predicate) map
    schemes   ; (symbol -> scheme) map
-   index1    ; (symbol -> seq of clauses) map
-   index2])  ; (symbol -> scheme), from clause id to the scheme of the clause
-
+   index])   ; (symbol -> seq of clauses) map; see index-key 
+ 
 (defn make-theory
   "key value ... -> theory"
   [& key-values]  
@@ -138,8 +143,7 @@
            nil             ; source
            {}              ; language
            {}              ; schemes
-           {}              ; index1
-           {})             ; index2
+           {})             ; index1
          (apply hash-map key-values)))
 
 (defn theory? [x] (instance? Theory x))
@@ -155,40 +159,31 @@
         (compound-term? trm) (term-functor trm)
         (statement? trm) (statement-predicate trm)
         :else nil))
-  
-(defn- create-index
+ 
+(defn- create-indices
   "theory -> theory
    Create an index of the clauses in the theory, to enable more 
    efficient retrieval when constructing arguments."
   [theory1]
   {:pre [(theory? theory1)]}
   (reduce (fn [theory2 scheme]
-            (reduce (fn [theory3 clause])
-                    (reduce (fn [theory4 conclusion])
-                            (assoc theory4 
-                                   :index1
-                                   (assoc (:index1 theory4)
-                                          (clause-index-key conclusion)
-                                          (conj (get (:index1 theory4)
-                                                     (clause-index-key conclusion))
-                                                clause))
-                                   :index2
-                                   (assoc (:index2 theory4)
-                                          (:id clause)
-                                          scheme))
-                            theory3
-                            (:conclusions clause))
+            (reduce (fn [theory3 clause]
+                      (reduce (fn [theory4 conclusion]
+                                (assoc theory4 
+                                       :index
+                                       (assoc (:index theory4)
+                                              (clause-index-key conclusion)
+                                              (conj (get (:index theory4)
+                                                         (clause-index-key conclusion))
+                                                    (assoc clause :scheme scheme)))))
+                              theory3
+                              (:conclusions clause)))
                     theory2
-                    (:clauses scheme)))
-          theory1
-          (:schemes theory1)))
+                    (:clauses scheme))
+            theory1
+            (:schemes theory1))))
 
-(defn- get-clause-scheme
-  "theory clause -> scheme"
-  [theory clause]
-  (get (:index2 theory) (:id clause)))
-
-(defn get-clauses 
+(defn- get-clauses 
   "theory goal substititions -> sequence of clauses
    where the goal is a literal."
   [theory goal subs]
@@ -198,6 +193,15 @@
   (get (:index theory)
        (clause-index-key (apply-substitutions subs goal))))
 
+(defn- clause-theory-id
+  "Returns an id for a clause which has theory scope. 
+   The id is constructed by joining the id of the scheme of
+   the clause with the local id of the clause in the scheme.
+   The id is used to reify schemes in the theory for
+   use in, e.g., (applies ...) and (exlcuded ...) atoms."
+  [clause]
+  (symbol (str (:id (:scheme clause)) "." (:id clause)))) 
+
 ; Rebuttals are generated from the exceptions of clauses, 
 ; where the rebuttals have the form:
 ; (make-argument :conclusion (excluded <clause-id> <goal>) :premises [<exception>])
@@ -205,14 +209,14 @@
 (defn generate-arguments-from-theory
   "theory -> argument-generator"
   [theory1]
-  (let [theory2 (create-index theory1)]
+  (let [theory2 (create-indices theory1)]
     (reify ArgumentGenerator
-      (generate [goal subs]
+      (generate [this goal subs]
                 (letfn [(apply-for-conclusion
                           [clause c]
                           ;; apply the clause for conclusion c
                           (let [subs2 (or (unify c goal subs)
-                                          (unify `(~'applies ~(:rule clause) ~c) goal subs))]
+                                          (unify `(~'applies ~(clause-theory-id clause) ~c) goal subs))]
                             (if (not subs2)
                               false ; fail
                               (cons (make-response subs2
@@ -225,17 +229,17 @@
                                                      :premises (zipmap (keys (:premises clause))
                                                                        (map literal->statement 
                                                                             (vals (:premises clause))))
-                                                     :scheme (:name (get-clause-scheme theory2 clause))))
+                                                     :scheme (:name (:scheme clause))))
                                     (map (fn [e] (make-response subs2
                                                                 ()
                                                                 (make-argument 
-                                                                  :conclusion (literal->statment 
-                                                                                `(~'excluded ~(:id clause)
-                                                                                             ~goal))
+                                                                  :conclusion (literal->statement 
+                                                                                `(~'excluded ~(clause-theory-id clause)
+                                                                                             ~c))
                                                                   :strict false
                                                                   :weight (:weight clause)
                                                                   :premises [(literal->statement e)]
-                                                                  :scheme (:name (get-clause-scheme theory2 clause))))
+                                                                  :scheme (:name (:scheme clause))))
                                            (:exceptions clause)))))))
                         
                         (apply-clause [clause]
