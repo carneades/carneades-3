@@ -143,7 +143,7 @@
            nil             ; source
            {}              ; language
            {}              ; schemes
-           {})             ; index1
+           {})             ; index
          (apply hash-map key-values)))
 
 (defn theory? [x] (instance? Theory x))
