@@ -38,7 +38,7 @@
                  subs2 (unify c wff subs)]
              (make-response
                (or subs2 subs)
-               {(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))}
+               [(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))]
                (make-argument
                  :id (gensym "a")
                  :conclusion c
@@ -60,7 +60,7 @@
         (if *debug* (println iname "is instance of" cname))
         (list (make-response
                 subs
-                {(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))}
+                [(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))]
                 (make-argument
                   :id (gensym "a")
                   :conclusion wff
@@ -89,7 +89,7 @@
                  subs2 (unify c wff subs)]
              (make-response
                subs2
-               {(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))}
+               [(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))]
                (make-argument
                  :id (gensym "a")
                  :conclusion c
@@ -117,7 +117,7 @@
     (if (some #{iname2} insts)
       (list (make-response
               subs
-              {(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI))))}
+              [(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI))))]
               (arg/argument
                 (gensym "a")
                 :pro

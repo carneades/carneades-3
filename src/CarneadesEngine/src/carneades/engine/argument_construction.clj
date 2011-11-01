@@ -227,12 +227,12 @@
   "argument-graph -> argument-generator"
   [ag1]
   (reify ArgumentGenerator
-    (generate [goal subs]
+    (generate [this goal subs]
               (reduce (fn [l stmt]
                         (let [subs2 (unify goal stmt subs)]
                           (if (not subs2)
                             l
-                            (conj l (make-response subs2 #{} nil)))))
+                            (conj l (make-response subs2 () nil)))))
                       []
                       (atomic-statements ag1)))))
 
