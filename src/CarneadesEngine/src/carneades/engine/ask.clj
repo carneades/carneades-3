@@ -23,7 +23,7 @@
     (if subs
       (make-response 
         stmt2
-        #{}
+        ()
         (make-argument
           :conclusion answer
           :scheme "claim"))
@@ -32,12 +32,12 @@
 (defn repl
   [answer]
   (reify ArgumentGenerator
-    (generate [stmt sub]
+    (generate [this stmt sub]
               (let [subs2 (unify stmt answer subs)]
                 (if subs2
                   (list (make-response 
                           stmt2
-                          #{}
+                          ()
                           (make-argument
                             :conclusion answer
                             :scheme "ask")))
