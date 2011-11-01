@@ -7,7 +7,7 @@
 ; The record to be returned by argument generators.
 (defrecord Response
   [substitutions   ; (term -> term) map
-   assumptions     ; set of statements
+   assumptions     ; sequence of statements
    argument])      ; argument | nil
 
 (defn make-response [subs asms arg] (Response. subs asms arg))
