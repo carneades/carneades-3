@@ -1,4 +1,4 @@
-;;; Copyright © 2010 Fraunhofer Gesellschaft
+;;; Copyright ? 2010 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
 
@@ -67,11 +67,11 @@
          (and (symbol? (first term))
               (not (variable? (first term)))))
       (and (statement? term)
-           (list? (:atom term)))))
+           (seq? (:atom term)))))
 
 (defn termseq? [term]
   (or (vector? term)
-      (and (list? term) (not (compound-term? term)))
+      (and (seq? term) (not (compound-term? term)))
       (and (map? term) (not (statement? term)))))
 
 (defn term?
@@ -92,25 +92,25 @@
          (not (empty? term))) (first term)
     (and (statement? term)
          (:positive term) 
-         (list? (:atom term))) (recur (:atom term))
+         (seq? (:atom term))) (recur (:atom term))
     (and (statement? term)
          (not (:positive term))
-         (list? (:atom term))) 'not
+         (seq? (:atom term))) 'not
     :else nil))
 
 (defn term-args
   "term -> (seq-of term)"
   [term]
   (cond 
-    (and (list? term) 
+    (and (seq? term) 
          (compound-term? term)) (rest term)
-    (list? term) (seq term)
+    (seq? term) (seq term)
     (vector? term) (seq term)
     (and (statement? term)
          (:positive term) 
-         (list? (:atom term))) (recur (:atom term))
+         (seq? (:atom term))) (recur (:atom term))
     (and (statement? term)
-         (list? (:atom term))
+         (seq? (:atom term))
          (not (:positive term))) (:atom term)
     (map? term) (seq term)
     :else ()))
@@ -124,7 +124,7 @@
    representing an atomic formula of first-order predicate logic."
   [sexp]
   (or (symbol? sexp)
-      (and (list? sexp)
+      (and (seq? sexp)
            (not (empty? sexp))
            (symbol? (first sexp)))))
 
@@ -134,12 +134,12 @@
    be literals, to support some meta-level reasoning." 
   [sexp] 
   (or (symbol? sexp)
-      (and (list? sexp)
+      (and (seq? sexp)
            (not (empty? sexp))
            (symbol? (first sexp)))))
 
 (defn literal-pos? [wff] 
-  (or (not (list? wff))
+  (or (not (seq? wff))
       (and (not (empty? wff))
            (not= (first wff) 'not))))
 
@@ -189,7 +189,7 @@
                       (constant? t) ()
                       (compound-term? t) (recur (term-args t))
                       (and (or (vector? t)
-                               (list? t)
+                               (seq? t)
                                (map? t))
                            (not (empty? t))) (concat (vars (first t))
                                                      (vars (rest t)))
@@ -206,7 +206,7 @@
 (defn statement-complement [s]
   (assoc s :positive (if (statement-pos? s) false true)))
 
-(defn ¬ [stmt] (statement-complement stmt))
+(defn neg [stmt] (statement-complement stmt))
 
 (defn statement-atom
   "statement -> statement
@@ -268,7 +268,7 @@
       (string? s) (short-str s),
       (symbol? s) (short-str (str s)),
       (statement? s) (cond (not (empty? (:text s))) (lang (:text s))
-                           (:atom s) (if (and (list? (:atom s)) parentheses?) 
+                           (:atom s) (if (and (seq? (:atom s)) parentheses?) 
                                       (str "(" (statement-formatted (statement-wff s)) ")")
                                       (statement-formatted (statement-wff s))))
       (nonemptyseq? s) (if parentheses?
