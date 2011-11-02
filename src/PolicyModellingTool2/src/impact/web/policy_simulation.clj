@@ -19,6 +19,7 @@
 (defmethod ajax-handler :request
   [json session]
   (prn "======================================== request handler! ==============================")
+  (prn  (:lang (:service-data session)))
   ;; TODO: read that from a KB?
   (let [service-data (:service-data session)
         service-data (ask-engine service-data query kburl)
@@ -102,5 +103,6 @@
               :to-engine (promise)
               :from-engine (promise)
               :last-id 0
-              :goal query}}
+              :goal query
+              :lang "en"}}
    :body (index-page)})

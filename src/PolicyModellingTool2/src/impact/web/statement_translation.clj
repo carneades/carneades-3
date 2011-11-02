@@ -41,8 +41,7 @@
 
 (defn- get-question
   [id stmt loc lang translations]
-  (let [lang "fr"
-        question (get-question-text stmt loc lang)
+  (let [question (get-question-text stmt loc lang)
         category (zf/xml1-> loc :question :category zf/text)
         optional false
         hint (zf/xml1-> loc :question :hint zf/text)

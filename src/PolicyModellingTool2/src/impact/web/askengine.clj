@@ -39,7 +39,10 @@
 (defn- on-askuser
   [service-data]
   (let [translations (load-translations translation-url)
-        [questions last-id] (get-structured-questions (:last-question service-data) "en" (:last-id service-data) translations)]
+        [questions last-id] (get-structured-questions (:last-question service-data)
+                                                      (:lang service-data)
+                                                      (:last-id service-data)
+                                                      translations)]
     (assoc service-data :last-questions questions :last-id last-id
            :has-solution false)))
 

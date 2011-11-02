@@ -30,6 +30,17 @@ Array.prototype.copy = function () {
     return ((new Array()).concat(this));
 };
 
+function translation_url() {
+    return debug ? "/Translation" : "/PolicyModellingTool2/Translation"
+}
+
+function simulation_url() {
+    return debug ? "/PolicySimulation" : "/PolicyModellingTool2/PolicySimulation"
+}
+
+function evaluation_url() {
+    return debug ? "/PolicyEvaluation" : "/PolicyModellingTool2/PolicyEvaluation"
+}
 
 // when the document is ready, executes this code:
 $(function(){
@@ -49,7 +60,7 @@ $(function(){
         sendAbductionRequest();
     });
     
-    // Slider for the graph SVG
+    // Slider for the graphSVG
     $('#slider').slider({orientation: 'vertical', value: 0, min: -50, max: 50, step: 1, change: onSliderMove});
     
     // Tabs
@@ -66,12 +77,11 @@ $(function(){
 
     //button
      $(".ui-button").button();
-
+    
     // Land -> Datum
     $("#locate").change(function(){
-        alert("? "+$(this).val() );
-        doAJAX({"language" : $(this).val()});
-        langChange = true;        
+        doAJAX(translation_url(), {"language" : $(this).val()});
+        langChange = true;
     });
 
     // Fragen-Liste
@@ -85,7 +95,7 @@ $(function(){
     /** AJAX request config */
     $.ajaxSetup({
             //       url: "/PolicyModellingTool/PolicySimulation",
-        url: debug ? "/PolicySimulation" : "/PolicyModellingTool2/PolicySimulation",
+        url: simulation_url(),
        async: true,
        beforeSend: function() {
            statusupdate(0,"Please be patient.");
@@ -102,6 +112,7 @@ $(function(){
        type: "POST"
     });
 
+    doAJAX(translation_url(), {get_available_languages : null});
 });
 
 /**
@@ -110,7 +121,7 @@ $(function(){
  * @see doAJAX
  */
 function loadTopic(t) {
-    doAJAX( {"request" : t} );
+    doAJAX(simulation_url(), {"request" : t} );
 }
 
 /**
@@ -120,10 +131,11 @@ function loadTopic(t) {
  * @see statusupdate
  * @see radioCheckNewLine
  */
-function doAJAX(jsondata) {
+function doAJAX(url, jsondata) {
     if (typeof jsondata == "undefined") var jsondata = null;
     //else alert("sending = "+JSON.stringify(jsondata));
     $.ajax({
+        "url" : url,
         dataType : "json",
         data : {
             json : JSON.stringify(jsondata)
@@ -153,13 +165,24 @@ function doAJAX(jsondata) {
                 showError(data.error);
             } else if(data.position) {
                 showPosition(data.position, data.stmts_ids);
-            }
-            else {    
+            } else if (data.available_languages) {
+                showAvailableLanguages(data.available_languages);
+            } else {    
                 // alert(data);
                 return data;
             }
         }
     });
+}
+
+function showAvailableLanguages(languages) {
+    for(var name in languages) {
+        $('#locate').append('<option value="' + languages[name] + '">' + name + '</option>');
+    }
+            
+    // assumes English is always there and set it as default language
+    $('#locate').val('en');
+
 }
 
 function showPosition(position, stmts_ids) {
@@ -319,10 +342,9 @@ function showSolution(solution, path) {
     // display solution statement
     $("#solutionstatement").append(solution);
     // communicate with evaluation servlet
-    $.ajaxSetup({url: debug ? "/PolicyEvaluation" : "/PolicyModellingTool2/PolicyEvaluation"});
     // get policy rules
     var json = {"policyrules" : path}
-    doAJAX(json);
+    doAJAX(evaluation_url(), json);
     // display argument graph
     showArgGraph(path);
 }
@@ -514,11 +536,11 @@ function sendAnswers(topicID) {
     });
     var jsonZ = {"answers" : jsonA.copy()}
     langChange = false;
-    if (doRequest) doAJAX(jsonZ);
+    if (doRequest) doAJAX(simulation_url(), jsonZ);
 }
 
 function sendAbductionRequest() {
-    doAJAX({abduction : {argGraph : argGraph, acceptability : $('input[name=abduction]').val()}});
+    doAJAX(evaluation_url(), {abduction : {argGraph : argGraph, acceptability : $('input[name=abduction]').val()}});
 }
 
 /**
@@ -606,7 +628,7 @@ function showArgGraph(path) {
     // set global path to lkif argument graph
     argGraph = path;
     var json = {"showgraph" : path};
-    doAJAX(json);
+    doAJAX(evaluation_url(), json);
 }
 
 /**
@@ -663,18 +685,12 @@ function evaluateGraph() {
     
     // call engine
     var json = {evaluate : {argGraph : argGraph, accept : accArray, reject : rejArray}}
-    doAJAX(json);
+    doAJAX(evaluation_url(), json);
 }
 
 function showError(error) {
     // TODO : handle errors
     alert(error);
-}
-
-// calling server to reset JSSEIONID
-function resetSession() {
-    var j = {resetSession : true};
-    doAJAX(j);
 }
 
 // clean DOM after server response

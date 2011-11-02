@@ -10,11 +10,14 @@
             [compojure.response :as response]
             [impact.web.policy-simulation :as simulation]
             [impact.web.policy-evaluation :as evaluation]
-            [impact.web.svg :as svg]))
+            [impact.web.svg :as svg]
+            [impact.web.translation :as translation]))
 
 (defroutes main-routes
   (GET "/" [] (simulation/init-page))
-  (GET "/viewsession" {session :session} (str session))
+  (GET "/viewsession" {session :session} (str (dissoc (:service-data session)
+                                                      :to-engine
+                                                      :from-engine)))
   (GET "/resetsession" [] (simulation/reset-session))
   (POST "/PolicySimulation"
         {session :session params :params}
@@ -25,6 +28,9 @@
   (POST "/svg/*"
         {uri :uri session :session  params :params}
         (svg/process-ajax-request uri session params))
+  (POST "/Translation"
+        {session :session params :params}
+        (translation/process-ajax-request session params))
   (route/resources "/")
   (route/not-found "Page not found"))
 
