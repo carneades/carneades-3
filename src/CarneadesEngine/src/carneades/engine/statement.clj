@@ -62,7 +62,7 @@
     (keyword? x)))
 
 (defn compound-term? [term]
-  (or (and (list? term) 
+  (or (and (seq? term) 
          (not (empty? term))
          (and (symbol? (first term))
               (not (variable? (first term)))))
@@ -87,7 +87,7 @@
   "term -> symbol | nil "
   [term]
   (cond 
-    (and (list? term) 
+    (and (seq? term) 
          (compound-term? term)
          (not (empty? term))) (first term)
     (and (statement? term)
