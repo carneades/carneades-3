@@ -120,7 +120,7 @@
   "key value ... -> section"
   [& key-values]  
   (merge (Section. 
-           (gensym "§")    ; id
+           (gensym "?")    ; id
            ""              ; name
            []              ; schemes
            nil)            ; source
@@ -230,11 +230,13 @@
                 (letfn [(apply-for-conclusion
                           [scheme c]
                           ;; apply the scheme for conclusion c
-                          (println "(unify " c " " goal " " subs ") = " (unify c goal subs))
+                          (prn c)
+                          (prn goal)
+                          (prn subs)
                           (let [subs2 (or (unify c goal subs)
                                           (unify `(~'applies ~(scheme-theory-id scheme) ~c) goal subs))]
                             (if (not subs2)
-                              false ; fail
+                              (do (println "fail") false) ; fail
                               (cons (make-response subs2
                                                    (map literal->statement (:assumptions scheme))  
                                                    (make-argument 
