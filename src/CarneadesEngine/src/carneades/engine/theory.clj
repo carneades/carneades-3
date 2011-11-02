@@ -230,13 +230,10 @@
                 (letfn [(apply-for-conclusion
                           [scheme c]
                           ;; apply the scheme for conclusion c
-                          (prn c)
-                          (prn goal)
-                          (prn subs)
                           (let [subs2 (or (unify c goal subs)
                                           (unify `(~'applies ~(scheme-theory-id scheme) ~c) goal subs))]
                             (if (not subs2)
-                              (do (println "fail") false) ; fail
+                              false ; fail
                               (cons (make-response subs2
                                                    (map literal->statement (:assumptions scheme))  
                                                    (make-argument 
@@ -256,8 +253,8 @@
                                                                   :strict false
                                                                   :weight (:weight scheme)
                                                                   :premises [(literal->statement e)]
-                                                                  :scheme (:name scheme)))
-                                           (:exceptions scheme)))))))
+                                                                  :scheme (:name scheme))))
+                                         (:exceptions scheme))))))
                         
                         (apply-scheme [scheme]
                                       (apply concat (filter identity 
