@@ -10,5 +10,5 @@ various argumentation tasks. This is the software library (the engine)."
                  [org.clojure/clojure-contrib "1.2.0"]
                  [org.clojars.pallix/owlapi "3.0.0"]
                  [org.clojars.pallix/hermit "1.2.4"]]
-  :dev-dependencies [[swank-clojure "1.2.0"]
+  :dev-dependencies [[swank-clojure "1.4.0-SNAPSHOT"]
                      [org.clojars.rayne/autodoc "0.8.0-SNAPSHOT"]])
