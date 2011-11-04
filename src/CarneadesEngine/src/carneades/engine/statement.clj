@@ -2,7 +2,7 @@
 ;;; Licensed under the EUPL V.1.1
 
 
-(ns ^{:doc "Statements are a representation of literals, i.e. atomic formulas and
+(ns ^{:doc "Statements are annotated literals, i.e. atomic formulas and
             negations of atomic formulas of propositional and predicate logic."}
     carneades.engine.statement
   (:use carneades.engine.utils)
@@ -11,7 +11,7 @@
 
 ; language = :en, :de, :fr, etc.
 
-(defrecord Statement  ; in logic, statements are called "literals"
+(defrecord Statement  ; statements are annotated literals
   [atom               ; atomic formula of propositional (symbol) or predicate logic (list)
    positive           ; boolean
    weight             ; nil or 0.0-1.0, default nil
@@ -139,9 +139,14 @@
            (symbol? (first sexp)))))
 
 (defn literal-pos? [wff] 
+  {:pre [(literal? wff)]}
   (or (not (seq? wff))
       (and (not (empty? wff))
            (not= (first wff) 'not))))
+
+(def literal-neg? [wff]
+  {:pre [(literal? wff)]}
+  (not (literal-pos? wff)))
 
 (defn literal-atom
   [wff]
@@ -149,6 +154,13 @@
   (if (literal-pos? wff) 
     wff
     (second wff)))
+
+(defn literal-complement
+  [wff]
+  {:pre [(literal? wff)]}
+  (if (literal-pos? wff)
+    (list 'not wff)
+    (literal-atom wff)))
 
 (defn statement= 
   [s1 s2]
@@ -245,6 +257,14 @@
   (if (literal-pos? sexp)
       (make-statement :positive true :atom sexp)
       (make-statement :positive false :atom (literal-atom sexp))))
+
+(defn statement->literal
+  "statement -> literal"
+  [stmt]
+  {:pre [(statement? stmt)]}
+  (if (statement-pos? stmt)
+    (:atom stmt)
+    (list 'not (:atom stmt))))
 
 (declare term-formatted)
 
