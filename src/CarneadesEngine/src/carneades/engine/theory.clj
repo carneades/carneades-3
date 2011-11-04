@@ -217,7 +217,7 @@
   [scheme]
   (symbol (str (:id (:section scheme)) "." (:id scheme)))) 
 
-; Rebuttals are generated from the exceptions of schemes, 
+; Rebuttals below are generated from the exceptions of schemes, 
 ; where the rebuttals have the form:
 ; (make-argument :conclusion (excluded <scheme-id> <goal>) :premises [<exception>])
 
