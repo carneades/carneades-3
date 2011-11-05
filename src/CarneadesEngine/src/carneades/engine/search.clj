@@ -2,7 +2,8 @@
 ;;; Licensed under the EUPL V.1.1
 
 
-(ns ^{:doc "Generic search and explore functions: depth-first, breadth-first etc."}
+(ns ^{:doc "Defining and searching problem spaces using various strategies: 
+            depth-first, breadth-first etc."}
     carneades.engine.search
   (:use clojure.contrib.pprint))
 
