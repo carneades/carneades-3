@@ -7,7 +7,7 @@
   (:use carneades.engine.utils
         carneades.engine.statement
         carneades.engine.sandbox        
-        carneades.engine.rule
+        carneades.engine.theory
         carneades.engine.utils
         carneades.engine.argument-generator
         carneades.engine.unify
@@ -19,11 +19,12 @@
 ;;; An argument generator for "builtin" predicates: eval, etc.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(def- builtin-theory
-  (make-theory
+(def builtin-theory
+  (make-theory :sections
     (make-section
       :name "Priority"
-      (make-scheme 
+      :schemes
+      [(make-scheme 
         :name "Priority1"
         :conclusions ['(priority ?r2 ?r1 (not ?p1))]
         :premises ['(applies ?r2 ?p1)
@@ -32,7 +33,7 @@
         :name "Priority2"
         :conclusions ['(priority ?r2 ?r1 ?p1)]
         :premises ['(applies ?r2 (not ?p1)) 
-                   '(prior ?r2 ?r1)]))))
+                   '(prior ?r2 ?r1)])])))
 
 (defn- dispatch-eval [subs literal term expr]
   (try
@@ -43,7 +44,7 @@
           (if-let [subs2 (unify term result subs)]
             (list (make-response subs2 () 
                                  (make-argument 
-                                   :conclusion (literal-statement literal) 
+                                   :conclusion (literal->statement literal) 
                                    :scheme "builtin:eval")))
             ()))))
     (catch java.lang.SecurityException e ())

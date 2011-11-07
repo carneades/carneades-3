@@ -1,4 +1,4 @@
-;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Copyright (c) 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
 (ns ^{:doc "Utilities for interacting with the Carneades engine from a command line."}
@@ -8,20 +8,21 @@
         carneades.engine.argument-graph
         carneades.engine.argument-construction
         carneades.engine.argument-evaluation
-        carneades.engine.case))
+        carneades.engine.caes))
   
 (defn make-engine
-  "argument-graph integer (seq-of statement) (seq-of generator) -> 
-   statement -> argument-graph)"
+  "argument-graph integer (seq-of literal) (seq-of generator) -> 
+   literal -> argument-graph)"
   ([max-goals assumptions generators]
-    (make-engine (argument-graph) max-goals assumptions generators))
+    (make-engine (make-argument-graph) max-goals assumptions generators))
   ([argument-graph max-goals assumptions generators]
     (fn [issue]
       (construct-arguments argument-graph issue max-goals assumptions generators))))
   
 (defn argue
-  "engine statement -> argument-graph"
+  "engine literal  -> argument-graph"
   [engine issue]
+  {:pre [(literal? issue)]}
   (engine issue))  
 
 (defn ask 
@@ -37,19 +38,21 @@
                     (if (or (and (literal-pos? query) (in? sn)) 
                             (and (literal-neg? query) (out? sn)))
                         (apply-substitutions subs query)))))
-            (:statement-nodes (evaluate evaluator (engine query))))))
+            (:statement-nodes (evaluate evaluator (argue engine query))))))
 
 (defn succeed?
-  "engine evaluator statement (set-of literal) -> boolean
-   returns true iff the set returned by the engine equals the solution set"
-  ([engine query solutions]
-    (succeed? engine carneades-evaluator solutions))
-  ([engine evaluator query solutions]
-    (= (set (ask engine evaluator query)) solutions)))
+  "engine evaluator literal literal -> boolean
+   returns true iff the given literal is a member of the set returned by the engine"
+  ([engine query literal]
+    (succeed? engine carneades-evaluator query literal))
+  ([engine evaluator query literal]
+    (contains? (ask engine evaluator query) literal)))
   
 (defn fail?
-  ([engine query solutions]
-    (fail? engine carneades-evaluator solutions))
-  ([engine evaluator query solutions]
-    (not (succeed? engine evaluator query solutions))))
+   "engine evaluator literal literal -> boolean
+   returns true iff the given literal is not a member of the set returned by the engine"
+  ([engine query literal]
+    (fail? engine carneades-evaluator query literal))
+  ([engine evaluator query literal]
+    (not (succeed? engine evaluator query literal))))
 

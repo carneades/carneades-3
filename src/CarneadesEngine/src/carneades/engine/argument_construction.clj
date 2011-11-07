@@ -7,8 +7,7 @@
         carneades.engine.argument-graph
         carneades.engine.argument
         carneades.engine.argument-generator
-        carneades.engine.argument-builtins
-        carneades.engine.argument-from-arguments))
+        carneades.engine.argument-builtins))
 
 (defrecord ArgumentTemplate 
   [guard       ; term with all unbound variables of the argument
@@ -38,8 +37,7 @@
              0)     ; depth
           m)))
 
-(defrecord ACState  
-  "argument construction state"     
+(defrecord ACState        ; argument construction state    
   [goals                  ; (symbol -> goal) map, where the symbols are goal ids
    open-goals             ; set of goal ids (todo: change to a priority queue)
    closed-issues          ; set of literals for goals already processed 
@@ -64,9 +62,7 @@
   [issue ag]
   (let [goal-id (gensym "g")]
     (make-acstate
-      :goals {goal-id (make-goal :issues (list issue) 
-                                 :substitutions {} 
-                                 :depth 0)}
+      :goals {goal-id (make-goal :issues (list issue))}
       :open-goals #{goal-id}
       :graph ag)))
 
@@ -86,53 +82,23 @@
    with the given issues. The depth of the parent goal is incremented in this new goal."
   [state1 g1 response]
   ; (println "process premises")
-  (add-goal state1 
-            (make-goal 
-              ; pop the first issue and add issues for the
-              ; premises of the argument to the beginning for
-              ; depth-first search
-              :issues (concat (vals (:premises (:argument response)))
-                              (rest (:issues g1)))
-              :substitutions (:substitutions response)
-              :depth (inc (:depth g1)))))
-
-(defn- process-conclusion
-  "ac-state goal substitutions literal -> ac-state
-   To enable the construction of rebuttals, add the complement of the conclusion 
-   to the goals of the ac-state, unless it is a closed issue. Note: The depth of 
-   the goal for the rebuttal is the same as the depth of the goal being rebutted, 
-   not incremented, so that if goals are prioritized by depth complementary goals
-   will get the same priority."
-  [state1 g1 subs literal] 
-  ; (println "process-conclusion")
-  (let [stmt (apply-substitutions subs (literal-complement literal))]
-    (if (contains? (:closed-issues state1) stmt)
-      state1
-      (add-goal state1 (make-goal 
-                         :issues (list stmt)
-                         :substitutions subs
-                         :depth (:depth g1))))))
-                
+  (let [arg (:argument response),
+        conclusion (statement->literal (:conclusion arg)),
+        rebuttal (apply-substitutions subs (literal-complement conclusion)),
+        undercutter (apply-substitutions subs `(~'excluded ~(:id arg) ~conclusion))]
+    (add-goal state1 
+              (make-goal 
+                ; pop the first issue and add issues for the
+                ; premises of the argument to the beginning for
+                ; depth-first search
+                :issues (concat (map statement->literal 
+                                     (vals (:premises (:argument response))))
+                                (list rebuttal undercutter)                               
+                                (rest (:issues g1)))
+                :substitutions (:substitutions response)
+                :depth (inc (:depth g1))))))
   
-(defn- process-argument
-  "ac-state goal substitutions argument -> ac-state"
-  [state1 goal response]
-  ; (println "process-argument:") 
-  (let [subs (:substitutions response)
-        arg (:argument response)]
-    (if (not arg)
-      state1
-      (-> state1
-          ; (process-premises goal subs (:premises arg))
-          ; premises have already been processed by update-issues
-          (process-conclusion goal subs (:conclusion arg))
-          ; to do: add a goal for excluding the rule/scheme, for undercutters
-          (assoc :arg-templates (assoc (:arg-templates state1) 
-                                       (gensym "at") 
-                                       (make-argument-template
-                                         :guard `(~'guard ~@(argument-variables arg))
-                                         :instances #{}
-                                         :argument arg)))))))
+
 (defn- add-instance
   "map symbol term -> map"
   [arg-template-map key term]
@@ -207,12 +173,18 @@
   "ac-state goal response -> ac-state"
   [state1 goal response]
   ; (pprint {:response response})
-  (-> state1
-      (update-issues goal response)
-      (process-argument goal response)
-      (process-assumptions response) 
-      (apply-arg-templates response)
-      (apply-asm-templates goal (:substitutions response))))
+  (let [arg (:argument response)]
+    (-> state1
+        (update-issues goal response)
+        (assoc :arg-templates (assoc (:arg-templates state1) 
+                                     (gensym "at") 
+                                     (make-argument-template
+                                       :guard `(~'guard ~@(argument-variables arg))
+                                       :instances #{}
+                                       :argument arg)))
+        (process-assumptions response) 
+        (apply-arg-templates response)
+        (apply-asm-templates goal (:substitutions response)))))
 
 (defn select-random-member
   "set -> any
@@ -286,14 +258,14 @@
 (defn construct-arguments
   "argument-graph literal int (set-of literal) (seq-of generator) -> argument-graph
    Construct an argument graph for both sides of an issue."
-  ([ag1 issue max-goals assumptions generators1]
+  ([ag1 issue max-goals facts generators1]
     ; (pprint "argue")
-    (let [ag2 (accept ag1 assumptions)
+    (let [ag2 (accept ag1 (map literal->statement facts))
           generators2 (concat (list (builtins))  generators1)]
       (:graph (reduce-goals (initial-acstate issue ag2) 
                             max-goals 
                             generators2))))
-  ([issue max-goals assumptions generators]
+  ([issue max-goals facts generators]
     (let [ag (make-argument-graph :main-issue issue)]
-      (construct-arguments ag max-goals assumptions generators))))
+      (construct-arguments ag max-goals facts generators))))
 

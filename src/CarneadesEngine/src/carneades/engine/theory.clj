@@ -213,7 +213,7 @@
    The id is constructed by joining the id of the section of
    the scheme with the local id of the scheme in the section.
    The id is used to reify schemes in the theory for
-   use in, e.g., (applies ...) and (exlcuded ...) atoms."
+   use in, e.g., (applies ...) and (excluded ...) atoms."
   [scheme]
   (symbol (str (:id (:section scheme)) "." (:id scheme)))) 
 
