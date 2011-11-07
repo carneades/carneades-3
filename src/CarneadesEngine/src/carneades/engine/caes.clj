@@ -6,8 +6,7 @@
         carneades.engine.argument-graph
         carneades.engine.argument-evaluation))
 
-(defrecord CEState  
-  "Carneades Evaluation State"     
+(defrecord CEState      ; Carneades Evaluation State     
   [closed-statements    ; set of statement-node ids
    closed-arguments     ; set of argument-node ids
    graph])              ; argument-graph 
@@ -18,9 +17,9 @@
 
 (defn- cestate? [x] (instance? CEState x))
 
-(declare all-premises-holds satisfies-proof-standard?)
+(declare all-premises-hold? satisfies-proof-standard?)
 
-(defn- answer? #{:yes :no :unknown})
+(defn- answer? [x] (contains? #{:yes :no :unknown} x))
 
 (defn- applicable? 
   "argument-graph argument-node -> answer
@@ -29,6 +28,7 @@
    Returns nil if it is not known whether or not one
    of its premises hold."
   [ag an]
+  {:pre [(argument-graph? ag) (argument-node? an)]}
   (condp = (all-premises-hold? ag an)
     :yes (let [answers (map (fn [an2] (applicable? ag an2)) (undercutters ag an))]
            (cond (contains? answers :yes) :no,
@@ -40,7 +40,7 @@
 (defn- acceptable?
   "argument-graph statement-node -> answer"
   [ag sn]
-  (satisfies-proof-standard ag sn))
+  (satisfies-proof-standard? ag sn))
 
 (defn- statement-node-value
   "argument-graph statement-node -> nil or number in the range 0.0-1.0
@@ -106,7 +106,7 @@
                        :graph (update-argument-node 
                                 (:graph ces3)
                                 an
-                                :value (argument-node-value (:graph ces3) sn))))))            
+                                :value (argument-node-value (:graph ces3) an))))))            
 
 (defn- holds?
   "argument-graph literal -> answer
@@ -161,17 +161,17 @@
   (if (empty? args) 0.0 (apply max (map pe-weight args))))
 
 (defmethod satisfies-proof-standard? :dv [ag sn]
-  (let [app-pro (filter #(= :yes (applicable? ag %)) (:pro sn)),
-        not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (:pro sn)),
-        not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (:con sn))]
+  (let [app-pro (filter #(= :yes (applicable? ag %)) (pro-argument-nodes ag sn)),
+        not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (pro-argument-nodes ag sn)),
+        not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (con-argument-nodes ag sn))]
     (cond (> (max-dv-weight app-pro) (max-dv-weight not-inapp-con)) :yes,
           (> (max-dv-weight not-inapp-pro) (max-dv-weight not-inapp-con)) :unknown,
           :else :no)))
                                      
 (defmethod satisfies-proof-standard? :pe [ag sn]
   (let [app-pro (filter #(= :yes (applicable? ag %)) (:pro sn))
-        not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (:pro sn))
-        not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (:con sn))]
+        not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (pro-argument-nodes ag sn))
+        not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (con-argument-nodes ag sn))]
     (cond (> (max-pe-weight app-pro) (max-pe-weight not-inapp-con)) :yes,
           (> (max-pe-weight not-inapp-pro) (max-pe-weight not-inapp-con)) :unknown,
           :else :no)))
@@ -179,8 +179,8 @@
 ;; clear-and-convincing-evidence?
 (defmethod satisfies-proof-standard? :cce [ag sn]
   (let [app-pro (filter #(= :yes (applicable? ag %)) (:pro sn))
-        not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (:pro sn))
-        not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (:con sn))
+        not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (pro-argument-nodes ag sn))
+        not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (con-argument-nodes ag sn))
         max-app-pro (max-pe-weight app-pro),
         max-not-inapp-pro (max-pe-weight not-inapp-pro),
         max-not-inapp-con (max-pe-weight not-inapp-con),
@@ -197,9 +197,10 @@
 ;; beyond-reasonable-doubt?
 (defmethod satisfies-proof-standard? :brd [ag sn]
   (let [app-pro (filter #(= :yes (applicable? ag %)) (:pro sn)),
-        not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (:pro sn)),
-        not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (:con sn)),
-        max-app-pro (max-pe-weight app-pro),
+        not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (pro-argument-nodes ag sn)),
+        not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (con-argument-nodes ag sn)),
+        max-app-pro (max-pe-weight app-pro), 
+        max-not-inapp-pro (max-pe-weight not-inapp-pro),
         max-not-inapp-con (max-pe-weight not-inapp-con),
         alpha 0.5,
         beta 0.5,
@@ -216,7 +217,7 @@
 
 (defn- evaluate-argument-graph
   [ag]
-  (:graph (reduce (fn [ces sn] (evaluate-statement-node ces sn))
+  (:graph (reduce (fn [ces sn] (eval-statement-node ces sn))
                   (make-cestate :graph ag)
                   (vals (:statement-nodes ag)))))
 

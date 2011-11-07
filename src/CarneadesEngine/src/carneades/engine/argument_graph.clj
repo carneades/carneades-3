@@ -118,6 +118,23 @@
 
 (defn argument-graph? [x] (instance? ArgumentGraph x))
 
+(defn get-argument-node
+  "argument-graph symbol -> argument-node | nil"
+  [ag id]
+  (get (:argument-nodes ag) id))
+
+(defn pro-argument-nodes
+  "argument-graph statement-node -> (seq-of argument-node)"
+  [ag sn]
+  (map (fn [id] (get-argument-node ag id))
+       (:pro sn)))
+
+(defn con-argument-nodes
+  "argument-graph statement-node -> (seq-of argument-node)"
+  [ag sn]
+    (map (fn [id] (get-argument-node ag id))
+       (:con sn)))
+
 (defn get-statement-node  
   "argument-graph statement -> statement-node or nil
   Returns the statement node for a statement, or nil
@@ -251,9 +268,9 @@
   {:pre [(argument-graph? ag) (argument-node? node)]}
   (assoc ag 
          :argument-nodes (assoc (:argument-nodes ag)
-                                 (:id node)
-                                 (merge node 
-                                        (map hash-map key-values)))))
+                                (:id node)
+                                (merge node 
+                                       (apply hash-map key-values)))))
 
 
 (defn assert-argument
@@ -306,15 +323,6 @@
                                                  (assoc n :standard ps)))))
           ag statements))
 
-(defn get-statement
-  "argument-graph symbol -> statement-node | nil"
-  [ag id]
-  (get (:statement-nodes ag) id))
-
-(defn get-argument
-  "argument-graph symbol -> argument-node | nil"
-  [ag id]
-  (get (:argument-nodes ag) id))
 
 (defn arguments 
   "argument-graph [statement] -> (seq-of argument-node)
@@ -369,10 +377,9 @@
   {:pre [(argument-graph? ag) 
          (every? statement? stmts)]}
   (reduce (fn [ag2 stmt]
-            (update-statement-node 
-              ag2 
-              (get-statement-node ag2 stmt)
-              :weight (if (statement-pos? stmt) 1.0 0.0)))
+            (let [[ag3 sn] (create-statement-node ag2 stmt)]
+            (update-statement-node ag3 sn
+              :weight (if (statement-pos? stmt) 1.0 0.0))))
           ag 
           stmts))
    
