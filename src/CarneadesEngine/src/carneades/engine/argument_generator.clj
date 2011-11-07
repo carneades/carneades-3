@@ -14,5 +14,5 @@
 
 ;  Protocol for argument evaluation structures.
 (defprotocol ArgumentGenerator
-  (generate [this stmt subs])) ; "argument-generator statement substitutions -> (seq-of response)"
+  (generate [this literal subs])) ; "argument-generator literal substitutions -> (seq-of response)"
 

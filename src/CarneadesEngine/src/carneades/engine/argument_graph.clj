@@ -38,11 +38,26 @@
           (apply hash-map key-values)))
 
 (defn argument-node? [x] (instance? ArgumentNode x))
-
   
 (defn proof-standard?
   [k]
   (contains? #{:dv, :pe, :cce, :brd} k))
+
+(defrecord Poll
+  [agree        ; integer
+   disagree     ; integer
+   no-opinion]) ; integer
+
+(defn poll? [x] (instance? Poll x))
+
+(defn make-poll 
+  "key value ... -> poll"
+   [& key-values]  
+   (merge (Poll. 
+            0   ; id
+            0   ; title
+            0)  ; main-issue
+          (apply hash-map key-values)))
 
 ; type language = :en | :de | :nl | :fr ...
 
@@ -54,6 +69,7 @@
    atom             ; ground atomic formula or nil
    weight           ; nil or 0.0-1.0, default nil; input to argument evaluation
    value            ; nil or 0.0-1.0, default nil; outut from argument evaluation
+   poll             ; nil or poll
    standard         ; proof-standard
    text             ; (language -> string) map, natural language formulations of the statement
    premise-of       ; (set-of symbol), argument node ids
@@ -66,7 +82,8 @@
   (StatementNode. (gensym "s")       ; id
                   (:atom stmt)        
                   (:weight stmt)    
-                  nil                ; value                     
+                  nil                ; value   
+                  nil                ; poll                  
                   (:standard stmt)
                   (:text stmt)
                   #{}                ; premise-of
@@ -228,7 +245,7 @@
    Updates the argument node, replacing the properties with
    the given keys values but retaining the values of other properties.
    Warning: this is a low level function. It does not (yet) keep the premises
-   and conclusion of the argument in sync with the premise-of and conclusion-of
+   and conclusion of the argument in sync with the premise-of and pro or con
    properties of statements in the statement table of the argument graph."
   [ag node & key-values]
   {:pre [(argument-graph? ag) (argument-node? node)]}
@@ -304,10 +321,11 @@
    Returns all argument nodes in an argument graph pro and con some statement,
    or all argument nodes in the argument graph, if no statement is provided."
   ([ag stmt]
-    (map (fn [arg-id] (get (:argument-nodes ag) arg-id))
-         (:conclusion-of (get (:statement-nodes ag)
-                              (get (:language ag)
-                                   (statement-atom stmt))))))           
+    (let [sn (get-statement-node ag stmt)]  
+      (if (nil? sn)
+        ()
+        (map (fn [arg-id] (get (:argument-nodes ag) arg-id))
+             (concat (:pro sn) (:con sn))))))          
   ([ag]
     (if-let [args (vals (:argument-nodes ag))]
       args
@@ -322,10 +340,20 @@
           (arguments ag s)))
 
 (defn con-arguments
-  "argument-graph statement -> (seq-of argument)"
+  "argument-graph statement -> (seq-of argument-node)"
   [ag s]
   (pro-arguments ag (statement-complement s)))
 
+(defn undercutters
+  "argument-graph argument-node -> (seq-of argument-node)"
+  [ag an]
+  (let [literal `(~'excluded ~(:id an) ~(statement->literal (:conclusion an)))
+        sn (get-statement-node (make-statement :atom literal))]
+    (if (nil? sn)
+      ()
+      (map (fn [an-id] (get (:argument-nodes ag) an-id))
+           (:pro sn)))))
+   
 (defn schemes-applied
   "argument-graph statement -> (seq-of string)"
   [ag stmt]
