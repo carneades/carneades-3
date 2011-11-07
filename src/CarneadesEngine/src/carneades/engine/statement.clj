@@ -114,6 +114,12 @@
          (not (:positive term))) (:atom term)
     (map? term) (seq term)
     :else ()))
+
+(defn term-arity
+  "compound-term -> integer"
+  [term]
+  {:pre [(compound-term? term)]}
+  (dec (count term)))
   
 (declare term=)
 

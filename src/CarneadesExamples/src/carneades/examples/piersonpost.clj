@@ -117,7 +117,7 @@ peace and order."}))
           :premises [bynkershoek]))
 
 (def a9 (make-argument 
-          :conclusion (¬ actual-possession-required)
+          :conclusion (neg actual-possession-required)
           :premises [mortally-wounded-deemed-possessed, mortally-wounded]))
 
 (def a10 (make-argument 
@@ -129,7 +129,7 @@ peace and order."}))
            :premises [barbeyrac]))
 
 (def a12 (make-argument
-           :conclusion (¬ actual-possession-required)
+           :conclusion (neg actual-possession-required)
            :premises [land-owner-has-possession, livelihood-on-own-land]))
 
 (def a13 (make-argument 

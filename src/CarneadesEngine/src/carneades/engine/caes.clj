@@ -22,8 +22,6 @@
 
 (defn- answer? #{:yes :no :unknown})
 
-; TO DO: add undercutters to the argument-graph module
-
 (defn- applicable? 
   "argument-graph argument-node -> answer
    An argument is applicable if all of its premises hold
@@ -145,62 +143,76 @@
 ;; dispatch on the proof standard
 (defmulti satisfies-proof-standard? (fn [_ sn] (:standard sn)))
 
-;; dialectically-valid?
+(defn- dv-weight [arg]
+  "Dialetical validity weight. Strict arguments weigh more than defeasible arguments."
+  (if (:strict arg) 2.0 1.0))
+
+(defn- pe-weight [arg]
+  "Propondernce of the evidnence weight. Strict arguments all have the
+   same weight and weigh more than defeasible arguments. 
+   Defeasible arguments have the weight assigned to 
+   the by users, in the range 0.0 to 1.0"
+  (if (:strict arg) 2.0 (:weight arg)))
+  
+(defn- max-dv-weight [args]
+  (if (empty? args) 0.0 (apply max (map dv-weight args))))
+
+(defn- max-pe-weight [args]
+  (if (empty? args) 0.0 (apply max (map pe-weight args))))
+
 (defmethod satisfies-proof-standard? :dv [ag sn]
-  (let [pro (map (fn [an] (applicable? ag an)) (:pro sn))
-        con (map (fn [an] (applicable? ag an)) (:con sn))]
-    (cond (contains? pro :yes) (cond (contains? con :yes) :no,
-                                     (contains? con :unknown) :unknown,
-                                     :else :yes)
-          (contains? pro :unknown) (cond (contains? con :yes) :no,
-                                         (contains? con :unknown) :unknown,
-                                         :else :unknown)
+  (let [app-pro (filter #(= :yes (applicable? ag %)) (:pro sn)),
+        not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (:pro sn)),
+        not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (:con sn))]
+    (cond (> (max-dv-weight app-pro) (max-dv-weight not-inapp-con)) :yes,
+          (> (max-dv-weight not-inapp-pro) (max-dv-weight not-inapp-con)) :unknown,
           :else :no)))
                                      
-(defn- best-arg [ags]
-  (if (empty? ags) 0.0 (apply max (map :weight ags))))
-
 (defmethod satisfies-proof-standard? :pe [ag sn]
-  (let [pro (filter #(= :yes (applicable? ag %)) (:pro sn))
-        con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (:con sn))
-        best-pro (best-arg pro)
-        best-con (best-arg con)]
-    (cond (> best-pro best-con) :yes,
-          (contains? (map (fn [ag] (applicable? ag %)) (:pro sn)) :unknown) :unknown,
+  (let [app-pro (filter #(= :yes (applicable? ag %)) (:pro sn))
+        not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (:pro sn))
+        not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (:con sn))]
+    (cond (> (max-pe-weight app-pro) (max-pe-weight not-inapp-con)) :yes,
+          (> (max-pe-weight not-inapp-pro) (max-pe-weight not-inapp-con)) :unknown,
           :else :no)))
 
 ;; clear-and-convincing-evidence?
 (defmethod satisfies-proof-standard? :cce [ag sn]
-  (let [pro (filter #(= :yes (applicable? ag %)) (:pro sn))
-        con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (:con sn))
-        best-pro (best-arg pro)
-        best-con (best-arg con)
+  (let [app-pro (filter #(= :yes (applicable? ag %)) (:pro sn))
+        not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (:pro sn))
+        not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (:con sn))
+        max-app-pro (max-pe-weight app-pro),
+        max-not-inapp-pro (max-pe-weight not-inapp-pro),
+        max-not-inapp-con (max-pe-weight not-inapp-con),
         alpha 0.5
         beta 0.3]
-    (cond (and (> best-pro best-con) ; i.e. preponderance of the evidence test is met
-               (> best-pro alpha)
-               (> (- best-pro best-con) beta)) :yes,
-          (contains? (map (fn [ag] (applicable? ag %)) (:pro sn)) :unknown) :unknown,
+    (cond (and (> max-app-pro max-not-inapp-con)
+               (> max-app-pro alpha)
+               (> (- max-app-pro max-not-inapp-con) beta)) :yes,
+          (and (> max-not-inapp-pro max-not-inapp-con)
+               (> max-not-inapp-pro alpha)
+               (> (- max-not-inapp-pro max-not-inapp-con) beta)) :uknown,
           :else :no)))
-
-; START HERE
-
 
 ;; beyond-reasonable-doubt?
 (defmethod satisfies-proof-standard? :brd [ag sn]
-  (let [pro (filter #(applicable? ag %) (:pro sn))
-        con (filter #(applicable? ag %) (:con sn))
-        best-pro (best-arg pro)
-        best-con (best-arg con)
-        alpha 0.5
-        beta 0.5
+  (let [app-pro (filter #(= :yes (applicable? ag %)) (:pro sn)),
+        not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (:pro sn)),
+        not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (:con sn)),
+        max-app-pro (max-pe-weight app-pro),
+        max-not-inapp-con (max-pe-weight not-inapp-con),
+        alpha 0.5,
+        beta 0.5,
         gamma 0.2]
-    (and
-     ; clear and convincing evidence test is also met
-     (> best-pro best-con)
-     (> best-pro alpha)
-     (> (- best-pro best-con) beta)
-     (< best-con gamma))))
+    (cond (and (> max-app-pro max-not-inapp-con) 
+               (> max-app-pro alpha)
+               (> (- max-app-pro max-not-inapp-con) beta)
+               (< max-not-inapp-con gamma)) :yes,
+          (and (> max-not-inapp-pro max-not-inapp-con) 
+               (> max-not-inapp-pro alpha)
+               (> (- max-not-inapp-pro max-not-inapp-con) beta)
+               (< max-not-inapp-con gamma)) :unknown,
+          :else :no)))
 
 (defn- evaluate-argument-graph
   [ag]

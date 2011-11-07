@@ -13,7 +13,7 @@
 (def p1 
   (make-statement :text {:en "Every household should pay some tax for the household's garbage."}))
 
-(def p2 (¬ p1))
+(def p2 (neg p1))
 
 (def p3 
   (make-statement :text {:en "Every household which pays some tax for the household's garbage increases an amount of the household's garbage which the household recycles."}))
@@ -57,12 +57,12 @@ the council."}))
 (def p16 
   (make-statement :text {:en "Every tax which is for some garbage which the supermarket creates is passed by the supermarket onto a household."}))
 
-(def p17 (¬ p15))
+(def p17 (neg p15))
 
 (def p18 
   (make-statement :text {:en "Tom is an objective expert about recycling."}))
 
-(def p11 (¬ p18))
+(def p11 (neg p18))
 
 (def p19 
   (make-statement :text {:en "If an objective expert says every household which recycles the household's garbage reduces a need of a new dump which is for the 
@@ -72,12 +72,12 @@ reduces a need of a new dump which is for the garbage."}))
 (def a1 (make-argument :conclusion p1 :premises [p4, p3]))
 (def a2 (make-argument :conclusion p4 :premises [p9, p18, p19]))
 (def a3 (make-argument :conclusion p3 :premises [p10]))
-(def a4 (make-argument :conclusion (¬ p18) :premises [p12, p13]))
-(def a5 (make-argument :conclusion (¬ p1) :premises [p5]))
+(def a4 (make-argument :conclusion (neg p18) :premises [p12, p13]))
+(def a5 (make-argument :conclusion (neg p1) :premises [p5]))
 (def a6 (make-argument :conclusion p5 :premises [p6, p7, p8]))
-(def a7 (make-argument :conclusion (¬ p1) :premises [p15]))
+(def a7 (make-argument :conclusion (neg p1) :premises [p15]))
 (def a8 (make-argument :conclusion p15 :premises [p14]))
-(def a9 (make-argument :conclusion (¬ p15) :premises [p16]))
+(def a9 (make-argument :conclusion (neg p15) :premises [p16]))
 
 (def ag
     (-> (make-argument-graph)
