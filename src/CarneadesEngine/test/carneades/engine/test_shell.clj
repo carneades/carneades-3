@@ -4,196 +4,186 @@
 (ns carneades.engine.test-shell
   (:use clojure.test
         carneades.engine.shell
-        carneades.engine.rule))
+        carneades.engine.theory))
 
-(defn engine
-  ([rb facts max-goals]
-    (make-engine max-goals facts
-                 (list (generate-arguments-from-rules rb)))))
+(def theory1 
+  (make-theory
+    :sections [(make-section 
+                 :name "Birds"
+                 :schemes [(make-scheme                            
+                            :name "Birds Fly"
+                            :conclusions ['(flies ?x)]
+                            :premises ['(bird ?x)]
+                            :exceptions ['(penguin ?x)])])
+               
+               (make-section
+                 :name "Goods"
+                 :schemes [(make-scheme
+                             :name "Money"
+                             :conclusions ['(money ?x)]
+                             :premises ['(coins ?x)])
+                           (make-scheme
+                             :name "Goods"
+                             :conclusions ['(goods ?x)]
+                             :premises ['(movable ?x)]
+                             :exception ['(money ?x)])
+                           (make-scheme
+                             :name "Coins"
+                             :conclusions ['(movable ?x)
+                                           '(money ?x)]
+                             :premises ['(coins ?x)])
+                           (make-scheme
+                             :name "Edible Things Are Not Goods"
+                             :conclusions ['(not (goods ?x))]
+                             :premises ['(edible? x)])])
+                           
+               (make-section
+                 :name "Meta Rules"
+                 :schemes [(make-scheme
+                             :name "Lex Posterior"
+                             :conclusions ['(prior ?r2 ?r1)]
+                             :premises ['(enacted ?r1 ?d1)
+                                        '(enacted ?r2 ?d2)
+                                        '(later ?d2 ?d1)])])
+               
+               (make-section 
+                 :name "Eval"
+                 :schemes [(make-scheme 
+                             :name "Reverse"
+                             :conclusions ['(rev ?x ?y)]
+                             :premises ['(eval ?y (reverse ?x))])
+                           
+                           (make-scheme
+                             :name "Taxable Income"
+                             :conclusions ['(taxable-income ?x ?t)]
+                             :premises ['(income ?x ?i)
+                                        '(deductions ?x ?d)
+                                        '(eval ?t (- ?i ?d))])
+                           
+                           (make-scheme 
+                             :name "Phd"
+                             :conclusions ['(has-phd ?x)]
+                             :premises ['(title ?x ?y)
+                                        '(= ?y Dr)])
+                           
+                           (make-scheme
+                             :name "Enrolled"
+                             :conclusions ['(enrolled ?x)]
+                             :premises ['(status ?x ?y)
+                                        '(not= ?y exempted)])])
+               
+               (make-section
+                 :name "Cycles"
+                 :schemes [(make-scheme 
+                             :name "r1"
+                             :conclusions ['(not (bar ?x))]
+                             :premises ['(foo ?x)])
+                           
+                           (make-scheme
+                             :name "r2"
+                             :conclusions ['(not (foo ?x))]
+                             :premises ['(bar ?x)])])]))
+                             
 
-(def max-goals 50)
-
+(def max-goals 50)  
+(def generators (list (generate-arguments-from-theory theory1)))                  
+(defn engine [facts] (make-engine max-goals facts generators))
+                                   
 (deftest test-engine-fact
-         (let [rb (rulebase)
-               facts '((bird Tweety))
-               eng (engine rb facts max-goals)
+         (let [facts '((bird Tweety))
+               eng (engine facts)
                query '(bird Tweety)]
-           (is (succeed? eng query #{query}))))
+           (is (succeed? eng query query))))
 
 (deftest test-engine-variable
-         (let [rb (rulebase)
-               facts '((bird Tweety))
-               eng (engine rb facts max-goals)
+         (let [facts '((bird Tweety))
+               eng (engine facts)
                query '(bird ?x)]
-           (is (succeed? eng query #{'(bird Tweety)}))))
+           (is (succeed? eng query '(bird Tweety)))))
 
 (deftest test-engine-rule
-         (let [rb (rulebase (rule r1 (if (coins ?x) (money ?x))))
-               facts '((coins item1))
-               eng (engine rb facts max-goals)
+         (let [facts '((coins item1))
+               eng (engine facts)
                query '(money ?x)]
-           (is (succeed? eng query #{'(money item1)}))))
+           (is (succeed? eng query '(money item1)))))
 
 (deftest test-engine-conjunction
-         (let [rb (rulebase (rule lex-posterior
-                                   (if (and (enacted ?r1 ?d1)
-                                            (enacted ?r2 ?d2)
-                                            (later ?d2 ?d1))
-                                     (prior ?r2 ?r1))))
-               facts '((enacted r1 d1)
+         (let [facts '((enacted r1 d1)
                        (enacted r2 d2)
                        (later d2 d1))
-               eng (engine rb facts max-goals)
+               eng (engine facts)
                query '(prior ?x ?y)]
-           (is (succeed? eng query #{'(prior r2 r1)}))))
-
-(deftest test-engine-disjunction
-         (let [rb (rulebase  (rule r19 (if (or (p1 ?x) 
-                                               (p2 ?x)) 
-                                         (p3 ?x))))
-               facts '((p1 a))
-               eng (engine rb facts max-goals)
-               query '(p3 ?x)]
-           (is (succeed? eng query #{'(p3 a)}))))
-
-(deftest test-engine-dnf
-         (let [rb (rulebase (rule r20 
-                                  (if (or (and (p4 ?x) (p5 ?x))
-                                          (and (p6 ?x) (p7 ?x))
-                                          (p8 ?x))
-                                    (p9 ?x))))
-               facts '((p6 a) (p7 a))
-               eng (engine rb facts max-goals)
-               query '(p9 ?x)]
-           (is (succeed? eng query #{'(p9 a)}))))
+           (is (succeed? eng query '(prior r2 r1)))))
 
 (deftest test-engine-unless1
-         (let [rb (rulebase
-                    (rule r1 
-                          (if (and (movable ?c)
-                                   (unless (money ?c)))
-                            (goods ?c))))
-               facts '((movable item1))
-               eng (engine rb facts max-goals)
+         (let [facts '((movable item1))
+               eng (engine facts)
                query '(goods ?x)]
-           (is (succeed? eng query #{'(goods item1)}))))
+           (is (succeed? eng query '(goods item1)))))
 
 (deftest test-engine-unless2
-         (let [rb (rulebase
-                    (rule r1 
-                          (if (and (movable ?c)
-                                   (unless (money ?c)))
-                            (goods ?c)))
-                    ; also test multiple conclusions
-                    (rule r2 (if (coins ?x) 
-                               (and (movable ?x) 
-                                    (money ?x)))))
-               facts '((coins item1))
-               eng (engine rb facts max-goals)
+         (let [facts '((coins item1))
+               eng (engine facts)
                query '(goods ?x)]
-           (is (not (contains? (ask eng query) 
-                               '(goods item1))))))
+           (is (fail? (ask eng query) '(goods item1)))))
 
 (deftest test-engine-rebuttal
-         (let [rb (rulebase
-                    (rule r1 (if (movable ?c) (goods ?c)))
-                    (rule r2 (if (edible ?x) (not (goods ?x)))))
-               facts '((movable item1)
+         (let [facts '((movable item1)
                        (edible item1))
-               eng (engine rb facts max-goals)
+               eng (engine facts)
                query '(goods ?x)]
-           (is (not (contains? (ask eng query) 
-                               '(goods item1))))))
+           (is (fail? (ask eng query) '(goods item1)))))
 
 (deftest test-engine-applies
-         (let [rb (rulebase
-                    (rule r1 (if (movable ?c)  (goods ?c)))
-                    
-                    (rule r2 (if (edible ?x) (not (goods ?x))))
-                    
-                    (rule* lex-posterior
-                           (if (and (applies ?r1 ?g)
-                                    (applies ?r2 (not ?g))
-                                    (enacted ?r1 ?d1)
-                                    (enacted ?r2 ?d2)
-                                    (later ?d2 ?d1))
-                             (prior ?r2 ?r1 ?g))))
-               
-               facts '((movable item1)
+         (let [facts '((movable item1)
                        (edible item1)
                        (enacted r1 d1)
                        (enacted r2 d2)
                        (later d2 d1))
-               eng (engine rb facts max-goals)
+               eng (engine facts)
                query '(prior r2 r1 (goods item1))]
            (is (succeed? eng query #{query}))))
 
-(deftest test-engine-negative-query
-         (let [rb (rulebase
-                    (rule r1 (if (edible ?x) (not (goods ?x)))))
-               facts '((edible i1))
-               eng (engine rb facts max-goals)
-               query '(not (goods ?x))]
-           (is (succeed? eng query #{'(not (goods i1))}))))
+;(deftest test-engine-negative-query
+;         (let [facts '((edible i1))
+;               eng (engine facts)
+;               query '(not (goods ?x))]
+;           (is (succeed? eng query '(not (goods i1))))))
 
 (deftest test-engine-eval1
-         (let [rb (rulebase
-                    (rule r1 (if (eval ?y (reverse ?x)) 
-                                 (rev ?x ?y))))
-               facts ()
-               eng (engine rb facts max-goals)
+         (let [facts ()
+               eng (engine facts)
                query '(rev '(1 2 3 4) ?y)]
            ; to do: find some way to modify eval so that the list being
            ; reversed doesn't need to be quoted
-           (is (succeed? eng query #{'(rev '(1 2 3 4) (4 3 2 1))}))))
+           (is (succeed? eng query '(rev '(1 2 3 4) (4 3 2 1))))))
 
 (deftest test-engine-eval2
-         (let [rb (rulebase
-                    (rule r1 (if (and (income ?x ?i)
-                                      (deductions ?x ?d)
-                                      (eval ?t (- ?i ?d)))
-                                  (taxable-income ?x ?t))))
-               facts '((income Sam 60000)
+         (let [facts '((income Sam 60000)
                        (deductions Sam 7000))
-               eng (engine rb facts max-goals)
+               eng (engine facts)
                query '(taxable-income Sam ?r)]
-           (is (succeed? eng query #{'(taxable-income Sam 53000)}))))
+           (is (succeed? eng query '(taxable-income Sam 53000)))))
 
 (deftest test-engine-equal
-         (let [rb (rulebase
-                    (rule r1 (if (and (title ?x ?y)
-                                      (= ?y Dr))
-                                 (has-phd ?x))))
-               facts '((title Joe Dr))
-               eng (engine rb facts max-goals)
+         (let [facts '((title Joe Dr))
+               eng (engine facts)
                query '(has-phd ?x)]
-           (is (succeed? eng query #{'(has-phd Joe)}))))
+           (is (succeed? eng query '(has-phd Joe)))))
 
 (deftest test-engine-not-equal
-         (let [rb (rulebase
-                    (rule r1
-                          (if (and (status ?x ?y)
-                                   (not= ?y exempted))
-                            (enrolled ?x))))
-               facts '((status Lea exempted)
+         (let [facts '((status Lea exempted)
                        (status Joe active))
-               eng (engine rb facts max-goals)
+               eng (engine facts)
                query '(enrolled ?x)]
-           (is (succeed? eng query #{'(enrolled Joe)}))))
-
+           (is (succeed? eng query '(enrolled Joe)))))
 
 (deftest test-engine-cyclic-rules
-         ; To test whether the argument construction 
-         ; module terminates when rules are recursive
-         ; with no base cases.  
-         (let [rb (rulebase 
-                    (rule r1 (if (foo ?x) (bar ?x)))
-                    (rule r2 (if (bar ?x) (foo ?x))))
-               eng (engine rb () max-goals)
-               query '(foo ?x)]
-           (is (succeed? eng query #{}))))
+         (let [eng (engine ())
+               query '(foo a)]
+           (is (fail? eng query query))))
+
 
     
-    
-
+; (run-tests)
 

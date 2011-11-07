@@ -150,7 +150,7 @@
       (and (not (empty? wff))
            (not= (first wff) 'not))))
 
-(def literal-neg? [wff]
+(defn literal-neg? [wff]
   {:pre [(literal? wff)]}
   (not (literal-pos? wff)))
 
