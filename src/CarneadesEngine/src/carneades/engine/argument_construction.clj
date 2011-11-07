@@ -25,7 +25,7 @@
           m)))
 
 (defrecord Goal
-  [issues         ; (seq-of statement)
+  [issues         ; (seq-of literals)
    substitutions  ; (term -> term) map
    depth])        ; int  
 
@@ -42,10 +42,10 @@
   "argument construction state"     
   [goals                  ; (symbol -> goal) map, where the symbols are goal ids
    open-goals             ; set of goal ids (todo: change to a priority queue)
-   closed-issues          ; set of statements for goals already processed 
+   closed-issues          ; set of literals for goals already processed 
    graph                  ; argument-graph 
    arg-templates          ; (symbol -> argument template) map; symbols are template ids
-   asm-templates])        ; vector of non-ground statements
+   asm-templates])        ; vector of non-ground literals
 
 (defn make-acstate
   [& values]
@@ -60,7 +60,7 @@
            m)))
 
 (defn initial-acstate
-  "statement argument-graph -> ac-state"
+  "literal argument-graph -> ac-state"
   [issue ag]
   (let [goal-id (gensym "g")]
     (make-acstate
@@ -86,28 +86,26 @@
    with the given issues. The depth of the parent goal is incremented in this new goal."
   [state1 g1 response]
   ; (println "process premises")
-  ; (pprint (map premise-statement premises))
   (add-goal state1 
             (make-goal 
               ; pop the first issue and add issues for the
               ; premises of the argument to the beginning for
               ; depth-first search
-              :issues (concat (map premise-statement 
-                                   (:premises (:argument response)))
+              :issues (concat (vals (:premises (:argument response)))
                               (rest (:issues g1)))
               :substitutions (:substitutions response)
               :depth (inc (:depth g1)))))
 
 (defn- process-conclusion
-  "ac-state goal substitutions statement -> ac-state
+  "ac-state goal substitutions literal -> ac-state
    To enable the construction of rebuttals, add the complement of the conclusion 
    to the goals of the ac-state, unless it is a closed issue. Note: The depth of 
    the goal for the rebuttal is the same as the depth of the goal being rebutted, 
    not incremented, so that if goals are prioritized by depth complementary goals
    will get the same priority."
-  [state1 g1 subs statement] 
+  [state1 g1 subs literal] 
   ; (println "process-conclusion")
-  (let [stmt (apply-substitutions subs (statement-complement statement))]
+  (let [stmt (apply-substitutions subs (literal-complement literal))]
     (if (contains? (:closed-issues state1) stmt)
       state1
       (add-goal state1 (make-goal 
@@ -188,7 +186,7 @@
                               ag))]
                   (add-goal (assoc state2 :graph ag2)
                             (make-goal 
-                              :issues (list (statement-complement asm))
+                              :issues (list (literal-complement asm))
                               :substitutions subs
                               :depth (inc (:depth g1))))))))
           state1
@@ -223,18 +221,18 @@
   (let [sq (seq set)] 
     (nth sq (rand-int (count sq)))))
 
-(defn- generate-substitutions-from-statements
+(defn- generate-substitutions-from-statement-nodes
   "argument-graph -> argument-generator"
   [ag1]
   (reify ArgumentGenerator
     (generate [this goal subs]
-              (reduce (fn [l stmt]
-                        (let [subs2 (unify goal stmt subs)]
+              (reduce (fn [l sn]
+                        (let [subs2 (unify goal (:atom sn) subs)]
                           (if (not subs2)
                             l
                             (conj l (make-response subs2 () nil)))))
                       []
-                      (atomic-statements ag1)))))
+                      (:statement-nodes ag1)))))
 
 (defn- reduce-goal
   "ac-state symbol generators -> ac-state
@@ -256,7 +254,7 @@
           state2
           (let [state3 (assoc state2 :closed-issues (conj (:closed-issues state2) issue))
                 generators2 (concat 
-                              (list (generate-substitutions-from-statements 
+                              (list (generate-substitutions-from-statement-nodes 
                                       (:graph state3)))
                               generators1)]
             ; (println "issue: " issue)
@@ -286,7 +284,7 @@
              generators))))
 
 (defn construct-arguments
-  "argument-graph statement int (set-of statement) (seq-of generator) -> argument-graph
+  "argument-graph literal int (set-of literal) (seq-of generator) -> argument-graph
    Construct an argument graph for both sides of an issue."
   ([ag1 issue max-goals assumptions generators1]
     ; (pprint "argue")

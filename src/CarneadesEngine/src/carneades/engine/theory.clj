@@ -219,7 +219,9 @@
 
 ; Rebuttals below are generated from the exceptions of schemes, 
 ; where the rebuttals have the form:
-; (make-argument :conclusion (excluded <scheme-id> <goal>) :premises [<exception>])
+; (make-argument 
+;  :conclusion (literal->statement '(excluded <scheme-id> <goal>))
+;  :premises [(literal->statement <exception>)])
 
 (defn generate-arguments-from-theory
   "theory -> argument-generator"
@@ -234,27 +236,27 @@
                                           (unify `(~'applies ~(scheme-theory-id scheme) ~c) goal subs))]
                             (if (not subs2)
                               false ; fail
-                              (cons (make-response subs2
-                                                   (map literal->statement (:assumptions scheme))  
-                                                   (make-argument 
-                                                     :conclusion (literal->statement goal)
-                                                     :strict (:strict scheme)
-                                                     :weight (:weight scheme)
-                                                     :premises (zipmap (keys (:premises scheme))
-                                                                       (map literal->statement 
-                                                                            (vals (:premises scheme))))
-                                                     :scheme (:name scheme)))
-                                    (map (fn [e] (make-response subs2
-                                                                ()
-                                                                (make-argument 
-                                                                  :conclusion (literal->statement 
-                                                                                `(~'excluded ~(scheme-theory-id scheme)
-                                                                                             ~c))
-                                                                  :strict false
-                                                                  :weight (:weight scheme)
-                                                                  :premises [(literal->statement e)]
-                                                                  :scheme (:name scheme))))
-                                         (:exceptions scheme))))))
+                              (let [id (gensym "a")]
+                                (cons (make-response subs2
+                                                     (map literal->statement (:assumptions scheme))  
+                                                     (make-argument 
+                                                       :id id
+                                                       :conclusion (literal->statement goal)
+                                                       :strict (:strict scheme)
+                                                       :weight (:weight scheme)
+                                                       :premises (zipmap (keys (:premises scheme))
+                                                                         (map literal->statement 
+                                                                              (vals (:premises scheme))))
+                                                       :scheme (:name scheme)))
+                                      (map (fn [e] (make-response subs2
+                                                                  ()
+                                                                  (make-argument 
+                                                                    :conclusion (literal->statement  `(~'excluded ~id ~c))
+                                                                    :strict false
+                                                                    :weight (:weight scheme)
+                                                                    :premises [(literal->statement e)]
+                                                                    :scheme (:name scheme))))
+                                           (:exceptions scheme)))))))
                         
                         (apply-scheme [scheme]
                                       (apply concat (filter identity 

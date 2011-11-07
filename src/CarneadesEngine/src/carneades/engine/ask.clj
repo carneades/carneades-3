@@ -32,13 +32,13 @@
 (defn repl
   [answer]
   (reify ArgumentGenerator
-    (generate [this stmt sub]
-              (let [subs2 (unify stmt answer subs)]
+    (generate [this literal sub]
+              (let [subs2 (unify literal answer subs)]
                 (if subs2
                   (list (make-response 
-                          stmt2
+                          subs2
                           ()
                           (make-argument
-                            :conclusion answer
+                            :conclusion (literal->statement answer)
                             :scheme "ask")))
                   ())))))
