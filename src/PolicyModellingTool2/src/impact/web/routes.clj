@@ -1,6 +1,7 @@
 (ns impact.web.routes
   (:use compojure.core
-        impact.web.views
+        impact.web.views.pages
+        impact.web.logic.server-properties
         ring.adapter.jetty ;; <- to comment when building WAR
         ring.middleware.params
         ring.middleware.session
@@ -8,17 +9,21 @@
   (:require [compojure.route :as route]
             [compojure.handler :as handler]
             [compojure.response :as response]
-            [impact.web.policy-simulation :as simulation]
-            [impact.web.policy-evaluation :as evaluation]
-            [impact.web.svg :as svg]
-            [impact.web.translation :as translation]))
+            [impact.web.controllers.policy-simulation :as simulation]
+            [impact.web.controllers.policy-evaluation :as evaluation]
+            [impact.web.controllers.svg :as svg]
+            [impact.web.logic.translation :as translation]))
 
 (defroutes main-routes
-  (GET "/" [] (simulation/init-page))
+  ;; debugging
   (GET "/viewsession" {session :session} (str (dissoc (:service-data session)
                                                       :to-engine
                                                       :from-engine)))
   (GET "/resetsession" [] (simulation/reset-session))
+  ;; (GET "/info" [] (server-properties))
+
+  ;; production
+  (GET "/" [] (simulation/init-page))
   (POST "/PolicySimulation"
         {session :session params :params}
         (simulation/process-ajax-request session params))
@@ -40,5 +45,6 @@
 
 ;; to comment when building the JAR:
 (defonce server (run-jetty #'app {:join? false :port 8080}))
+
 
 
