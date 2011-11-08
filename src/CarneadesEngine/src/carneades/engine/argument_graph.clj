@@ -1,5 +1,6 @@
 (ns carneades.engine.argument-graph
- (:use carneades.engine.statement
+ (:use clojure.pprint
+       carneades.engine.statement
        carneades.engine.dublin-core
        carneades.engine.argument))
 
@@ -16,7 +17,7 @@
    title            ; string or hash table (for multiple languages)
    scheme           ; string
    strict           ; boolean
-   weight           ; nil or 0.0-1.0, default nil; input to argument evaluation
+   weight           ; 0.0-1.0, default 0.5; input to argument evaluation
    value            ; nil or 0.0-1.0, default nil; output from argument evaluation
    conclusion       ; literal
    premises         ; (string -> literal) map, where the keys are role names
@@ -30,7 +31,7 @@
             ""           ; title
             ""           ; scheme
             false        ; strict
-            nil          ; weight
+            0.5          ; weight
             nil          ; value
             nil          ; conclusion
             {}           ; premises
@@ -189,6 +190,8 @@
   {:pre [(not (nil? (get (:language ag) (:atom stmt))))]}
   (make-literal (statement-pos? stmt)
                 (get (:language ag) (:atom stmt))))
+
+
    
 (defn- link-conclusion
   [ag literal arg-id]
@@ -282,6 +285,7 @@
   [ag1 arg]
   {:pre [(ground? (:conclusion arg)) 
          (every? ground? (vals (:premises arg)))]}
+  (pprint {:arg arg})
   (let [ag2 (reduce (fn [ag stmt] (first (create-statement-node ag stmt)))
                     ag1
                     (conj (vals (:premises arg)) (:conclusion arg)))
@@ -355,8 +359,13 @@
 (defn undercutters
   "argument-graph argument-node -> (seq-of argument-node)"
   [ag an]
-  (let [literal `(~'excluded ~(:id an) ~(statement->literal (:conclusion an)))
-        sn (get-statement-node (make-statement :atom literal))]
+  (let [atom (:atom (get (:statement-nodes ag) 
+                          (literal-atom (:conclusion an))))
+        lit1 (if (literal-pos? (:conclusion an))
+                  atom
+                  (literal-complement atom))
+        lit2 `(~'excluded ~(:id an) ~lit1)
+        sn (get-statement-node ag (make-statement :atom lit2))]
     (if (nil? sn)
       ()
       (map (fn [an-id] (get (:argument-nodes ag) an-id))

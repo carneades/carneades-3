@@ -19,19 +19,17 @@
                (make-section
                  :name "Goods"
                  :schemes [(make-scheme
-                             :name "Money"
-                             :conclusions ['(money ?x)]
-                             :premises ['(coins ?x)])
-                           (make-scheme
-                             :name "Goods"
-                             :conclusions ['(goods ?x)]
-                             :premises ['(movable ?x)]
-                             :exception ['(money ?x)])
-                           (make-scheme
                              :name "Coins"
                              :conclusions ['(movable ?x)
                                            '(money ?x)]
                              :premises ['(coins ?x)])
+                           
+                           (make-scheme
+                             :name "Goods"
+                             :conclusions ['(goods ?x)]
+                             :premises ['(movable ?x)]
+                             :exceptions ['(money ?x)])
+                           
                            (make-scheme
                              :name "Edible Things Are Not Goods"
                              :conclusions ['(not (goods ?x))]
@@ -107,42 +105,42 @@
                query '(money ?x)]
            (is (succeed? eng query '(money item1)))))
 
-(deftest test-engine-conjunction
-         (let [facts '((enacted r1 d1)
-                       (enacted r2 d2)
-                       (later d2 d1))
-               eng (engine facts)
-               query '(prior ?x ?y)]
-           (is (succeed? eng query '(prior r2 r1)))))
+;(deftest test-engine-conjunction
+;         (let [facts '((enacted r1 d1)
+;                       (enacted r2 d2)
+;                       (later d2 d1))
+;               eng (engine facts)
+;               query '(prior ?x ?y)]
+;           (is (succeed? eng query '(prior r2 r1)))))
 
-(deftest test-engine-unless1
-         (let [facts '((movable item1))
-               eng (engine facts)
-               query '(goods ?x)]
-           (is (succeed? eng query '(goods item1)))))
-
-(deftest test-engine-unless2
-         (let [facts '((coins item1))
-               eng (engine facts)
-               query '(goods ?x)]
-           (is (fail? (ask eng query) '(goods item1)))))
-
-(deftest test-engine-rebuttal
-         (let [facts '((movable item1)
-                       (edible item1))
-               eng (engine facts)
-               query '(goods ?x)]
-           (is (fail? (ask eng query) '(goods item1)))))
-
-(deftest test-engine-applies
-         (let [facts '((movable item1)
-                       (edible item1)
-                       (enacted r1 d1)
-                       (enacted r2 d2)
-                       (later d2 d1))
-               eng (engine facts)
-               query '(prior r2 r1 (goods item1))]
-           (is (succeed? eng query #{query}))))
+;(deftest test-engine-unless1
+;         (let [facts '((movable item1))
+;               eng (engine facts)
+;               query '(goods ?x)]
+;           (is (succeed? eng query '(goods item1)))))
+;
+;(deftest test-engine-unless2
+;         (let [facts '((coins item1))
+;               eng (engine facts)
+;               query '(goods ?x)]
+;           (is (fail? (ask eng query) '(goods item1)))))
+;
+;(deftest test-engine-rebuttal
+;         (let [facts '((movable item1)
+;                       (edible item1))
+;               eng (engine facts)
+;               query '(goods ?x)]
+;           (is (fail? (ask eng query) '(goods item1)))))
+;
+;(deftest test-engine-applies
+;         (let [facts '((movable item1)
+;                       (edible item1)
+;                       (enacted r1 d1)
+;                       (enacted r2 d2)
+;                       (later d2 d1))
+;               eng (engine facts)
+;               query '(prior r2 r1 (goods item1))]
+;           (is (succeed? eng query #{query}))))
 
 ;(deftest test-engine-negative-query
 ;         (let [facts '((edible i1))
@@ -150,40 +148,38 @@
 ;               query '(not (goods ?x))]
 ;           (is (succeed? eng query '(not (goods i1))))))
 
-(deftest test-engine-eval1
-         (let [facts ()
-               eng (engine facts)
-               query '(rev '(1 2 3 4) ?y)]
-           ; to do: find some way to modify eval so that the list being
-           ; reversed doesn't need to be quoted
-           (is (succeed? eng query '(rev '(1 2 3 4) (4 3 2 1))))))
+;(deftest test-engine-eval1
+;         (let [facts ()
+;               eng (engine facts)
+;               query '(rev '(1 2 3 4) ?y)]
+;           ; to do: find some way to modify eval so that the list being
+;           ; reversed doesn't need to be quoted
+;           (is (succeed? eng query '(rev '(1 2 3 4) (4 3 2 1))))))
+;
+;(deftest test-engine-eval2
+;         (let [facts '((income Sam 60000)
+;                       (deductions Sam 7000))
+;               eng (engine facts)
+;               query '(taxable-income Sam ?r)]
+;           (is (succeed? eng query '(taxable-income Sam 53000)))))
+;
+;(deftest test-engine-equal
+;         (let [facts '((title Joe Dr))
+;               eng (engine facts)
+;               query '(has-phd ?x)]
+;           (is (succeed? eng query '(has-phd Joe)))))
+;
+;(deftest test-engine-not-equal
+;         (let [facts '((status Lea exempted)
+;                       (status Joe active))
+;               eng (engine facts)
+;               query '(enrolled ?x)]
+;           (is (succeed? eng query '(enrolled Joe)))))
+;
+;(deftest test-engine-cyclic-rules
+;         (let [eng (engine ())
+;               query '(foo a)]
+;           (is (fail? eng query query))))
 
-(deftest test-engine-eval2
-         (let [facts '((income Sam 60000)
-                       (deductions Sam 7000))
-               eng (engine facts)
-               query '(taxable-income Sam ?r)]
-           (is (succeed? eng query '(taxable-income Sam 53000)))))
-
-(deftest test-engine-equal
-         (let [facts '((title Joe Dr))
-               eng (engine facts)
-               query '(has-phd ?x)]
-           (is (succeed? eng query '(has-phd Joe)))))
-
-(deftest test-engine-not-equal
-         (let [facts '((status Lea exempted)
-                       (status Joe active))
-               eng (engine facts)
-               query '(enrolled ?x)]
-           (is (succeed? eng query '(enrolled Joe)))))
-
-(deftest test-engine-cyclic-rules
-         (let [eng (engine ())
-               query '(foo a)]
-           (is (fail? eng query query))))
-
-
-    
-; (run-tests)
+(run-tests)
 

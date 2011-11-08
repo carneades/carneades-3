@@ -189,12 +189,13 @@
     :else (= t1 t2)))
 
 (defn ground? [t]
-  (cond (variable? t) false
-        (constant? t) true
-        (compound-term? t) (and (ground? (term-functor t))
-                                (ground? (term-args t)))
-        (statement? t) (ground? (:atom t))
-        :else true))
+  (cond (nil? t) true,
+        (and (seq? t) (empty? t)) true,
+        (variable? t) false,
+        (constant? t) true,
+        (statement? t) (ground? (:atom t)),
+        (coll? t) (and (ground? (first t))
+                       (ground? (rest t)))))
 
 ;; could be rewritten (filter variable? (tree-seq seq? identity s)) 
 (defn variables

@@ -82,21 +82,28 @@
    with the given issues. The depth of the parent goal is incremented in this new goal."
   [state1 g1 response]
   ; (println "process premises")
-  (let [arg (:argument response),
-        conclusion (statement->literal (:conclusion arg)),
-        rebuttal (apply-substitutions subs (literal-complement conclusion)),
-        undercutter (apply-substitutions subs `(~'excluded ~(:id arg) ~conclusion))]
-    (add-goal state1 
-              (make-goal 
-                ; pop the first issue and add issues for the
-                ; premises of the argument to the beginning for
-                ; depth-first search
-                :issues (concat (map statement->literal 
-                                     (vals (:premises (:argument response))))
-                                (list rebuttal undercutter)                               
-                                (rest (:issues g1)))
-                :substitutions (:substitutions response)
-                :depth (inc (:depth g1))))))
+  (let [arg (:argument response)
+        subs (:substitutions response)]
+    (if (nil? arg)
+      (add-goal state1 
+                (make-goal 
+                  :issues (rest (:issues g1))
+                  :substitutions subs
+                  :depth (inc (:depth g1))))
+      (let [conclusion (statement->literal (:conclusion arg)),
+            rebuttal (apply-substitutions subs (literal-complement conclusion)),
+            undercutter (apply-substitutions subs `(~'excluded ~(:id arg) ~conclusion))]
+        (add-goal state1 
+                  (make-goal 
+                    ; pop the first issue and add issues for the
+                    ; premises of the argument to the beginning for
+                    ; depth-first search
+                    :issues (concat (map statement->literal 
+                                         (vals (:premises (:argument response))))
+                                    (list rebuttal undercutter)                              
+                                    (rest (:issues g1)))
+                    :substitutions subs
+                    :depth (inc (:depth g1))))))))
   
 
 (defn- add-instance
@@ -120,13 +127,12 @@
     (reduce (fn [s k]
               (let [template (get (:arg-templates s) k)
                     trm (apply-substitutions subs (:guard template))]
-                ;  (println "template: " template)
-                ;  (println "term: " trm)
+                (pprint {:template template
+                         :trm trm})
                 (if (or (not (ground? trm))
                         (contains? (:instances template) trm))
-                  s
+                  (do (println "ground = " (ground? trm)) s)
                   (let [arg (instantiate-argument (:argument template) subs)]
-                    ; (pprint arg)
                     (assoc s 
                            :graph (assert-argument (:graph s) arg)
                            :arg-templates (add-instance (:arg-templates s) k trm))))))
@@ -142,7 +148,7 @@
   (reduce (fn [state2 template] 
             (let [ag (:graph state2)
                   asm (apply-substitutions subs template)]
-              ; (println "asm: " asm)
+              (println "asm: " asm)
               (if (not (ground? asm))
                 state2
                 (let [ag2 (if (stated? ag asm)
@@ -168,23 +174,32 @@
            (concat (:asm-templates state) 
                    (map (fn [asm] (apply-substitutions subs asm))
                         asms)))))
+
+(defn- process-argument
+  "ac-state response -> ac-state"
+  [state1 response]
+  (let [arg (:argument response)]
+    (if (nil? arg)
+      state1
+      (assoc state1 
+             :arg-templates 
+             (assoc (:arg-templates state1) 
+                    (gensym "at") 
+                    (make-argument-template
+                      :guard `(~'guard ~@(argument-variables arg))
+                      :instances #{}
+                      :argument arg))))))
          
 (defn- apply-response
   "ac-state goal response -> ac-state"
   [state1 goal response]
-  ; (pprint {:response response})
-  (let [arg (:argument response)]
-    (-> state1
-        (update-issues goal response)
-        (assoc :arg-templates (assoc (:arg-templates state1) 
-                                     (gensym "at") 
-                                     (make-argument-template
-                                       :guard `(~'guard ~@(argument-variables arg))
-                                       :instances #{}
-                                       :argument arg)))
-        (process-assumptions response) 
-        (apply-arg-templates response)
-        (apply-asm-templates goal (:substitutions response)))))
+  (pprint {:response response})
+  (-> state1
+      (update-issues goal response)
+      (process-argument response)
+      (process-assumptions response) 
+      (apply-arg-templates response)
+      (apply-asm-templates goal (:substitutions response))))
 
 (defn select-random-member
   "set -> any
@@ -204,7 +219,7 @@
                             l
                             (conj l (make-response subs2 () nil)))))
                       []
-                      (:statement-nodes ag1)))))
+                      (vals (:statement-nodes ag1))))))
 
 (defn- reduce-goal
   "ac-state symbol generators -> ac-state
@@ -220,8 +235,8 @@
     (if (empty? (:issues goal))
       state2             
       (let [issue (first (:issues goal))]
-        ; (print "goal: ")
-        ; (pprint goal)
+        (print "goal: ")
+        (pprint goal)
         (if (contains? (:closed-issues state2) issue)
           state2
           (let [state3 (assoc state2 :closed-issues (conj (:closed-issues state2) issue))
@@ -236,7 +251,7 @@
                                    (map (fn [g] 
                                           (generate g issue (:substitutions goal))) 
                                         generators2))]
-              ; (println "responses: " (count responses))
+              (println "responses: " (count responses))
               (reduce (fn [s r] (apply-response s goal r))
                       state3
                       responses))))))))

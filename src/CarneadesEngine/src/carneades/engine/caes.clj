@@ -17,7 +17,7 @@
 
 (defn- cestate? [x] (instance? CEState x))
 
-(declare all-premises-hold? satisfies-proof-standard?)
+(declare all-premises-hold? satisfies-proof-standard? eval-argument-node)
 
 (defn- answer? [x] (contains? #{:yes :no :unknown} x))
 
@@ -48,10 +48,13 @@
    Assumes that (acceptable? ag P) implies (not (acceptable? ag (literal-complement P))).
    This assumption holds for all well-defined proof standards, by definition."
   [ag sn]
-  (condp = (acceptable? ag sn)
-    :unknown nil,
-    :yes 1.0,
-    :no 0.0))
+  {:pre [(argument-graph? ag) (statement-node? sn)]}
+  (let [status (acceptable? ag sn)]
+  (cond (= (:weight sn) 1.0) 1.0,  ; accepted  
+        (= (:weight sn) 0.0) 0.0,  ; rejected
+        (= status :yes) 1.0,       ; P acceptable
+        (= status :no) 0.0,        ; (not P) acceptable
+        (= status :unknown) nil))) ; neither P nor (not P) acceptable
 
 (defn- argument-node-value
   "argument-graph argument-node -> nil or number in the range 0.0-1.0"
@@ -75,7 +78,7 @@
                                  (assoc ces1 
                                         :closed-statements (conj (:closed-statements ces1) 
                                                                  (:id sn)))
-                                 (map (fn [id] (get-argument (:graph ces1) id))
+                                 (map (fn [id] (get-argument-node (:graph ces1) id))
                                       (:conclusion-of sn)))]
                 (assoc ces2 
                        :graph (update-statement-node 
@@ -97,7 +100,8 @@
                                  (assoc ces1 
                                         :closed-arguments (conj (:closed-arguments ces1) 
                                                                 (:id an)))
-                                 (map (fn [id] (get-statement (:graph ces1) id))
+                                 (map (fn [id] (get (:statement-nodes (:graph ces1))
+                                                     id))
                                       (literal-atom (vals (:premises an)))))
                     ces3 (reduce (fn [s an2] (eval-argument-node s an2))
                                  ces2
@@ -110,7 +114,7 @@
 
 (defn- holds?
   "argument-graph literal -> answer
-   Whether or not a literal holds depends on the value of its
+   Whether or not a literal holds depends on the weight and value of its
    statement node.  The value is not computed here, but only read
    from the argument graph. Returns nil if there is no
    statement node for the literal in the argument graph or
@@ -148,10 +152,10 @@
   (if (:strict arg) 2.0 1.0))
 
 (defn- pe-weight [arg]
-  "Propondernce of the evidnence weight. Strict arguments all have the
+  "Proponderence of the evidence weight. Strict arguments all have the
    same weight and weigh more than defeasible arguments. 
-   Defeasible arguments have the weight assigned to 
-   the by users, in the range 0.0 to 1.0"
+   Defeasible arguments have their default weight of 0.5 or the
+   weight assigned to the by users, in the range 0.0 to 1.0"
   (if (:strict arg) 2.0 (:weight arg)))
   
 (defn- max-dv-weight [args]
