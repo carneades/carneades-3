@@ -31,14 +31,14 @@
     (ask engine carneades-evaluator query))
   ([engine evaluator query] 
    {:pre [(literal? query)]}
-    (filter (fn [sn] 
+    (mapcat (fn [sn] 
               (let [subs (unify (:atom sn) (literal-atom query))]
                 (if (not subs) 
                     ()
                     (if (or (and (literal-pos? query) (in? sn)) 
                             (and (literal-neg? query) (out? sn)))
-                        (apply-substitutions subs query)))))
-            (:statement-nodes (evaluate evaluator (argue engine query))))))
+                        (list (apply-substitutions subs query))))))
+            (vals (:statement-nodes (evaluate evaluator (argue engine query)))))))
 
 (defn succeed?
   "engine evaluator literal literal -> boolean
@@ -46,7 +46,7 @@
   ([engine query literal]
     (succeed? engine carneades-evaluator query literal))
   ([engine evaluator query literal]
-    (contains? (ask engine evaluator query) literal)))
+    (contains? (set (ask engine evaluator query)) literal)))
   
 (defn fail?
    "engine evaluator literal literal -> boolean

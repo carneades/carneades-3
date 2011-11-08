@@ -44,6 +44,13 @@
                         (range (count (:premises arg)))) 
                    (:premises arg)))))
 
+(defn argument-variables
+  "arg -> (seq-of symbol)
+   Returns a seq containing the variables of the argument"
+  [arg]
+  (distinct (concat (mapcat #(variables %) (vals (:premises arg)))
+                    (variables (:conclusion arg)))))
+
 (defn make-argument
   "Makes a one-step argument. A vector of statements may be
    supplied as the value of the :premises property, instead of 
@@ -63,13 +70,6 @@
       (merge (apply hash-map values))
       (pvector->pmap)
       (literals->statements)))
-
-(defn argument-variables
-  "arg -> (seq-of symbol)
-   Returns a seq containing the variables of the argument"
-  [arg]
-  (distinct (concat (mapcat #(variables %) (vals (:premises arg)))
-                    (variables (:conclusion arg)))))
 
 (defn instantiate-argument
   "argument substitutions -> arg
