@@ -93,7 +93,7 @@
            ""              ; name
            []              ; conclusions
            false           ; strict
-           nil             ; weight
+           0.5             ; weight
            {}              ; premises
            []              ; exceptions
            []              ; assumptions
