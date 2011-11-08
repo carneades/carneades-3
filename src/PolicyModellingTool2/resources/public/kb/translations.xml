@@ -26,7 +26,7 @@
       <format lang="en">
         <text>What is the name of the rights owner?</text>
       </format>
-      <hint>Please enter the name of rights owner.</hint>
+      <hint lang="en">Please enter the name of rights owner.</hint>
       <category>Name</category>
       <qrefs>
         <qref pred="betrifftWerk" arg="0">
@@ -47,7 +47,7 @@
       <format lang="en">
         <text>What is the name of the concerned orphaned work?</text>
       </format>
-      <hint>Please enter a name for the orphaned work.</hint>
+      <hint lang="en">Please enter a name for the orphaned work.</hint>
       <category>Work</category>
     </question>
   </predicate>
@@ -64,7 +64,7 @@
       <format lang="en">
         <text>For which purpose would you like to use %s?</text>
       </format>
-      <hint>Please enter if you want to use the orphaned work for commercial purposes.</hint>
+      <hint lang="en">Please enter if you want to use the orphaned work for commercial purposes.</hint>
       <category>Purpose</category>
       <answers>
         <text lang="en">commercial</text>
@@ -89,7 +89,7 @@
       <format lang="en">
         <text>Is the search that has been carried out a professional one or a standard search?</text>
       </format>
-      <hint>Please enter if your documented search was a professional one.</hint>
+      <hint lang="en">Please enter if your documented search was a professional one.</hint>
       <category>Search</category>
       <formalanswers>
         <text>Standard</text>
@@ -120,7 +120,7 @@
       <format lang="en">
         <text>Did you announce the search?</text>
       </format>
-      <hint>Please enter if a public announcement was carried out.</hint>
+      <hint lang="en">Please enter if a public announcement was carried out.</hint>
       <category>Bekanntmachung</category>
       <formalanswers>
         <text>No</text>

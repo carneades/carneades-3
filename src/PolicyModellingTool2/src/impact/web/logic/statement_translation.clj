@@ -39,12 +39,18 @@
       (translate formated-question "en" lang)
       formated-question)))
 
+(defn- get-hint
+  [loc lang]
+  (or (zf/xml1-> loc :question :hint (zf/attr= :lang lang) zf/text)
+      (translate (zf/xml1-> loc :question :hint (zf/attr= :lang "en") zf/text)
+                 "en" lang)))
+
 (defn- get-question
   [id stmt loc lang translations]
   (let [question (get-question-text stmt loc lang)
         category (zf/xml1-> loc :question :category zf/text)
         optional false
-        hint (zf/xml1-> loc :question :hint zf/text)
+        hint (get-hint loc lang)
         type (zf/xml1-> loc :question (zf/attr :type))
         formalanswers (zf/xml-> loc :question :formalanswers :text zf/text)
         answers (get-answers loc lang)
