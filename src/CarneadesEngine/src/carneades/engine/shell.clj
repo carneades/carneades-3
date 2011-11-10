@@ -20,10 +20,14 @@
       (construct-arguments argument-graph issue max-goals assumptions generators))))
   
 (defn argue
-  "engine literal  -> argument-graph"
-  [engine issue]
-  {:pre [(literal? issue)]}
-  (engine issue))  
+  "engine argument-evaluator literal  -> argument-graph
+   The evaluator is optional. If none is provided the arguments 
+   are constructed but not evaluated."
+  ([engine evaluator issue]
+    {:pre [(literal? issue)]}
+    (evaluate evaluator (engine issue)))
+  ([engine issue]
+    (engine issue)))  
 
 (defn ask 
   "engine evaluator literal -> (seq-of literal)" 
@@ -35,24 +39,37 @@
               (let [subs (unify (:atom sn) (literal-atom query))]
                 (if (not subs) 
                     ()
-                    (if (or (and (literal-pos? query) (in? sn)) 
-                            (and (literal-neg? query) (out? sn)))
+                    (if (or (and (literal-pos? query) (in-node? sn)) 
+                            (and (literal-neg? query) (out-node? sn)))
                         (list (apply-substitutions subs query))))))
-            (vals (:statement-nodes (evaluate evaluator (argue engine query)))))))
+            (vals (:statement-nodes (argue engine evaluator query))))))
 
-(defn succeed?
-  "engine evaluator literal literal -> boolean
-   returns true iff the given literal is a member of the set returned by the engine"
-  ([engine query literal]
-    (succeed? engine carneades-evaluator query literal))
-  ([engine evaluator query literal]
-    (contains? (set (ask engine evaluator query)) literal)))
-  
-(defn fail?
-   "engine evaluator literal literal -> boolean
-   returns true iff the given literal is not a member of the set returned by the engine"
-  ([engine query literal]
-    (fail? engine carneades-evaluator query literal))
-  ([engine evaluator query literal]
-    (not (succeed? engine evaluator query literal))))
+(defn in? 
+  "argument-graph literal -> boolean"
+  [ag query]
+  (let [sn (get-statement-node ag (make-statement :atom (literal-atom query)))]
+    (if (nil? sn) 
+      false
+      (if (literal-pos? query)
+        (in-node? sn)
+        (out-node? sn)))))
+
+(defn out? 
+  "argument-graph literal -> boolean"
+  [ag query]
+  (let [sn (get-statement-node ag (make-statement :atom (literal-atom query)))]
+    (if (nil? sn)
+      false
+      (if (literal-pos? query)
+        (out-node? sn)
+        (in-node? sn)))))
+
+(defn undecided? 
+  "argument-graph literal -> boolean"
+  [ag query]
+  (let [sn (get-statement-node ag (make-statement :atom (literal-atom query)))]
+    (if (nil? sn)
+      false
+      (undecided-node? sn))))
+
 

@@ -2,7 +2,8 @@
   ^{:doc "An implementation of the argument evaluation protocol using the 
           semantics of Carneades Argument Evaluation Structures (CAES)."}
   carneades.engine.caes
-  (:use carneades.engine.statement
+  (:use clojure.pprint
+        carneades.engine.statement
         carneades.engine.argument-graph
         carneades.engine.argument-evaluation))
 
@@ -59,6 +60,7 @@
 (defn- argument-node-value
   "argument-graph argument-node -> nil or number in the range 0.0-1.0"
   [ag an]
+  {:pre [(argument-graph? ag) (argument-node? an)]}
   (condp = (applicable? ag an) 
     :unknown nil,
     :yes 1.0,
@@ -94,6 +96,7 @@
    the argument graph contained a cycle which prevent
    the argument node from being assigned a value."
   [ces1 an] 
+  {:pre [(cestate? ces1) (argument-node? an)]}
   (cond (contains? (:closed-arguments ces1) (:id an)) ces1,   ; cycle!
         (:value an) ces1,                                     ; value already assigned
         :else (let [ces2 (reduce (fn [s sn] (eval-statement-node s sn))
@@ -112,7 +115,7 @@
                                 an
                                 :value (argument-node-value (:graph ces3) an))))))            
 
-(defn- holds?
+(defn holds?
   "argument-graph literal -> answer
    Whether or not a literal holds depends on the weight and value of its
    statement node.  The value is not computed here, but only read
@@ -121,9 +124,9 @@
    if the value of the statement node is nil."
   [ag literal]
   {:pre [(argument-graph? ag) (literal? literal)]}
-  (let [sn (get (:statements ag) 
+  (let [sn (get (:statement-nodes ag) 
                 (get (:language ag) (literal-atom literal)))]
-    (cond (nil? sn) nil,
+    (cond (nil? sn) :unknown,
           (literal-pos? literal) 
             (cond (> (:weight sn) 0.5) :yes,  ; P assumed or accepted
                   (= (:value sn) 1.0) :yes,   ; P acceptable
@@ -173,7 +176,7 @@
           :else :no)))
                                      
 (defmethod satisfies-proof-standard? :pe [ag sn]
-  (let [app-pro (filter #(= :yes (applicable? ag %)) (:pro sn))
+  (let [app-pro (filter #(= :yes (applicable? ag %)) (pro-argument-nodes ag sn))
         not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (pro-argument-nodes ag sn))
         not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (con-argument-nodes ag sn))]
     (cond (> (max-pe-weight app-pro) (max-pe-weight not-inapp-con)) :yes,
@@ -182,7 +185,7 @@
 
 ;; clear-and-convincing-evidence?
 (defmethod satisfies-proof-standard? :cce [ag sn]
-  (let [app-pro (filter #(= :yes (applicable? ag %)) (:pro sn))
+  (let [app-pro (filter #(= :yes (applicable? ag %)) (pro-argument-nodes sn))
         not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (pro-argument-nodes ag sn))
         not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (con-argument-nodes ag sn))
         max-app-pro (max-pe-weight app-pro),
@@ -200,7 +203,7 @@
 
 ;; beyond-reasonable-doubt?
 (defmethod satisfies-proof-standard? :brd [ag sn]
-  (let [app-pro (filter #(= :yes (applicable? ag %)) (:pro sn)),
+  (let [app-pro (filter #(= :yes (applicable? ag %)) (pro-argument-nodes sn)),
         not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (pro-argument-nodes ag sn)),
         not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (con-argument-nodes ag sn)),
         max-app-pro (max-pe-weight app-pro), 
@@ -228,7 +231,7 @@
 (def carneades-evaluator 
   (reify ArgumentEvaluator
     (evaluate [this ag] (evaluate-argument-graph (reset-node-values ag)))
-    (label [this node] (standard-label node))))
+    (label [this node] (node-standard-label node))))
          
          
          
