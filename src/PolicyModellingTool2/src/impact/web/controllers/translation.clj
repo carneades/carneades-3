@@ -20,11 +20,23 @@
     {:session (assoc-in session [:service-data :lang] lang)
      :body (json-str {:language lang})}))
 
+(defmethod ajax-handler :translate
+  [json session]
+  (prn "translation")
+  (let [data (:translate json)
+        ;; TODO: get a translation from a file if available
+        ;; see i18n
+        translation (map #(translate % (:from data) (:to data)) (:text data))]
+    (prn "translation =")
+    (prn translation)
+    (prn "json =")
+    {:body (json-str {:translations translation})}))
+
 (defn process-ajax-request
   [session params]
   (let [json (get params :json)
         json (read-json json)]
-    (prn "json =")
+    (prn "json2 =")
     (prn json)
     (ajax-handler json session)))
 
