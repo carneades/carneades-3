@@ -68,38 +68,42 @@
    conclusions   ; sequence of literals or variables (ranging over literals)
    strict        ; boolean, defeasible if false
    weight        ; nil or number in the range 0.0 to 1.0
-   premises      ; (string -> wff) map, where the string is the role of each premise
-   exceptions    ; sequence of wffs
-   assumptions   ; sequence of wffs
+   premises      ; (keyword -> literal) map, where the keyword is the role of each premise
+   exceptions    ; (keyword -> literal) map
+   assumptions   ; (keyword -> literal) map
    section])     ; the section to which this scheme belongs
 
 (defn- pvector->pmap
-  "convert a vector of premises to a premise map"
-  [scheme]
-  (if (map? (:premises scheme))
-    scheme
-    (assoc scheme :premises 
-           (zipmap (map (fn [i] (str "p" i))
-                        (range (count (:premises scheme)))) 
-                   (:premises scheme)))))
-
+  "assures that a property is a map, by converting vectors to maps if necessary."
+  [scheme property-key]
+  (let [property (property-key scheme)]
+    (print "property " property)
+    (if (map? property)
+      scheme
+      (assoc scheme property-key 
+             (zipmap (map (fn [i] (gensym "p"))
+                          (range (count property)))
+                     property)))))
+    
 ; The scope of scheme ids is local to their section in the theory. 
 
 (defn make-scheme
   "key value ... -> scheme"
   [& key-values]  
   (-> (merge (Scheme. 
-           (gensym "c")    ; id 
-           ""              ; name
-           []              ; conclusions
-           false           ; strict
-           0.5             ; weight
-           {}              ; premises
-           []              ; exceptions
-           []              ; assumptions
-           nil)            ; the section of this scheme
-         (apply hash-map key-values))
-      (pvector->pmap)))
+               (gensym "c")    ; id 
+               ""              ; name
+               []              ; conclusions
+               false           ; strict
+               0.5             ; weight
+               {}              ; premises
+               {}              ; exceptions
+               {}              ; assumptions
+               nil)            ; the section of this scheme
+             (apply hash-map key-values))
+      (pvector->pmap :premises)
+      (pvector->pmap :exceptions)
+      (pvector->pmap :assumptions)))
 
 (defn axiom 
   "literal -> scheme"
@@ -131,13 +135,13 @@
 (defn rename-scheme-variables [c]
   (let [[m1 conclusions] (rename-variables {} (seq (:conclusions c))),
         [m2 premise-vals] (rename-variables m1 (vals (:premises c))),
-        [m3 exceptions] (rename-variables m2 (seq (:exceptions c))),
-        [m4 assumptions] (rename-variables m3 (seq (:assumptions c)))]
+        [m3 exception-vals] (rename-variables m2 (seq (vals (:exceptions c)))),
+        [m4 assumption-vals] (rename-variables m3 (seq (vals (:assumptions c))))]
     (assoc c 
            :conclusions conclusions
            :premises (zipmap (keys (:premises c)) premise-vals)
-           :exceptions exceptions
-           :assumptions assumptions)))
+           :exceptions (zipmap (keys (:premises c)) exception-vals)
+           :assumptions (zipmap (keys (:premises c)) assumption-vals))))
 
 (defrecord Theory
   [name      ; string
@@ -160,17 +164,17 @@
 (defn theory? [x] (instance? Theory x))
    
 (defn- scheme-index-key 
-  "term -> symbol | nil
+  "term -> symbol 
    Returns the symbol used to index a scheme by its conclusions 
-   for quicker retrieval. By default schemes are indexed under nil."
+   for quicker retrieval. By default schemes are indexed under :other."
   [trm]
   {:pre [(term? trm)]}
   ; (println "term: " trm)
   (cond (constant? trm) trm,
-        (variable? trm) nil,
+        (variable? trm) :other,
         (compound-term? trm) (term-functor trm)
         (statement? trm) (statement-predicate trm)
-        :else nil))
+        :else :other))
  
 (defn create-index
   "theory -> theory
@@ -205,8 +209,11 @@
   {:pre [(theory? theory) 
          (literal? goal)
          (map? subs)]}
-  (get (:index theory)
-       (scheme-index-key (apply-substitutions subs goal))))
+  (let [key (scheme-index-key (apply-substitutions subs goal))]
+    (if (= key :other)
+      (get (:index theory) :other)
+      (concat (get (:index theory) key)
+              (get (:index theory) :other)))))
 
 (defn- scheme-theory-id
   "Returns an id for a scheme which has theory scope. 
@@ -238,7 +245,7 @@
                               false ; fail
                               (let [id (gensym "a")]
                                 (cons (make-response subs2
-                                                     (map literal->statement (:assumptions scheme))  
+                                                     (map literal->statement (vals (:assumptions scheme)))
                                                      (make-argument 
                                                        :id id
                                                        :conclusion (literal->statement goal)
@@ -256,7 +263,7 @@
                                                                     :weight (:weight scheme)
                                                                     :premises [(literal->statement e)]
                                                                     :scheme (:name scheme))))
-                                           (:exceptions scheme)))))))
+                                           (vals (:exceptions scheme))))))))
                         
                         (apply-scheme [scheme]
                                       (apply concat (filter identity 

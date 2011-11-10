@@ -148,17 +148,17 @@
   (reduce (fn [state2 template] 
             (let [ag (:graph state2)
                   asm (apply-substitutions subs template)]
-              (println "asm: " asm)
+              ; (println "asm: " asm)
               (if (not (ground? asm))
                 state2
                 (let [ag2 (if (stated? ag asm)
-                            (accept ag asm)
+                            (assume ag [asm])
                             (if (rejected? ag asm)
-                              (question ag asm)
+                              (question ag [asm])
                               ag))]
                   (add-goal (assoc state2 :graph ag2)
                             (make-goal 
-                              :issues (list (literal-complement asm))
+                              :issues (list (literal-complement (statement->literal asm)))
                               :substitutions subs
                               :depth (inc (:depth g1))))))))
           state1
@@ -270,10 +270,9 @@
              generators))))
 
 (defn construct-arguments
-  "argument-graph literal int (set-of literal) (seq-of generator) -> argument-graph
+  "argument-graph literal int (coll-of literal) (seq-of generator) -> argument-graph
    Construct an argument graph for both sides of an issue."
   ([ag1 issue max-goals facts generators1]
-    ; (pprint "argue")
     (let [ag2 (accept ag1 (map literal->statement facts))
           generators2 (concat (list (builtins))  generators1)]
       (:graph (reduce-goals (initial-acstate issue ag2) 
