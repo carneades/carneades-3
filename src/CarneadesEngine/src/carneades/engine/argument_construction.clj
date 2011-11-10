@@ -127,11 +127,11 @@
     (reduce (fn [s k]
               (let [template (get (:arg-templates s) k)
                     trm (apply-substitutions subs (:guard template))]
-                (pprint {:template template
-                         :trm trm})
+;                (pprint {:template template
+;                         :trm trm})
                 (if (or (not (ground? trm))
                         (contains? (:instances template) trm))
-                  (do (println "ground = " (ground? trm)) s)
+                  s
                   (let [arg (instantiate-argument (:argument template) subs)]
                     (assoc s 
                            :graph (assert-argument (:graph s) arg)
@@ -193,7 +193,7 @@
 (defn- apply-response
   "ac-state goal response -> ac-state"
   [state1 goal response]
-  (pprint {:response response})
+  ; (pprint {:response response})
   (-> state1
       (update-issues goal response)
       (process-argument response)
@@ -235,8 +235,7 @@
     (if (empty? (:issues goal))
       state2             
       (let [issue (first (:issues goal))]
-        (print "goal: ")
-        (pprint goal)
+        ; (pprint {:goal goal})
         (if (contains? (:closed-issues state2) issue)
           state2
           (let [state3 (assoc state2 :closed-issues (conj (:closed-issues state2) issue))
@@ -251,7 +250,7 @@
                                    (map (fn [g] 
                                           (generate g issue (:substitutions goal))) 
                                         generators2))]
-              (println "responses: " (count responses))
+              ; (println "responses: " (count responses))
               (reduce (fn [s r] (apply-response s goal r))
                       state3
                       responses))))))))

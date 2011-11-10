@@ -1,8 +1,8 @@
-;;; Copyright Â© 2010 Fraunhofer Gesellschaft 
+;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
 (ns ^{:doc "Functions to load an ontology and query it."}
-    carneades.engine.owl
+    carneades.engine.owl.owl
   (:use clojure.contrib.def
         clojure.contrib.trace
         carneades.engine.owl.reasoner

@@ -198,14 +198,14 @@
   {:pre [(not (nil? (get (:statement-nodes ag) (literal-atom literal))))]}
   (let [n (get (:statement-nodes ag) (literal-atom literal))]
     (if (literal-pos? literal)  ; then conclusion of a pro argument
-    (update-statement-node 
-      ag 
-      n
-      :pro (conj (:pro n) arg-id)))
-    (update-statement-node
-      ag
-      n 
-      :con (conj (:con n) arg-id))))
+      (update-statement-node 
+        ag 
+        n
+        :pro (conj (:pro n) arg-id))
+      (update-statement-node
+        ag
+        n 
+        :con (conj (:con n) arg-id)))))
 
 (defn- link-premises
   [ag1 literals arg-id]
@@ -285,7 +285,7 @@
   [ag1 arg]
   {:pre [(ground? (:conclusion arg)) 
          (every? ground? (vals (:premises arg)))]}
-  (pprint {:arg arg})
+  ; (pprint {:arg arg})
   (let [ag2 (reduce (fn [ag stmt] (first (create-statement-node ag stmt)))
                     ag1
                     (conj (vals (:premises arg)) (:conclusion arg)))

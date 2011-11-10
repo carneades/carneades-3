@@ -1,9 +1,9 @@
-;;; Copyright Â© 2010 Fraunhofer Gesellschaft 
+;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "OBSOLETE. This is not used anymore but could be used for security reason
-            to sandbox the eval predicate of rules in the carneades engine
-            when used on a server with inputs from users"}
+(ns ^{:doc "This is not used yet but could be useful for the
+            eval predicate of rules in the carneades engine
+            when used on a server with inputs from users over the network."}
     carneades.engine.sandbox
   (:use clojure.contrib.def
         ;; net.licenser.sandbox
