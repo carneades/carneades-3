@@ -1,4 +1,4 @@
-(ns impact.web.logic.translation
+(ns impact.web.controllers.translation
   (:use clojure.data.json
         impact.web.logic.translate))
 

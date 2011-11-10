@@ -15,7 +15,6 @@ var svgScale = 1;
 var svgWrapper = null;
 var svgLayout = "hierarchical";
 var svgTreeify = "true";
-var translate = 'translate(0,0)';
 var debug = true;
 
 // adding JSON parser when browser is too old to have a build-in one (pre-IE8, pre-FF3.5, ...)
@@ -75,12 +74,25 @@ $(function(){
             showAnim: 'slideDown'
     });
 
-    //button
+     //button
      $(".ui-button").button();
-    
-    // Land -> Datum
+
     $("#locate").change(function(){
-        doAJAX(translation_url(), {"language" : $(this).val()});
+        var lang = $(this).val();
+        doAJAX(translation_url(), {"language" : lang});
+        var label = $('#chooseTopicLabel').text();
+        var topicLabel = $('#topicLabel').text();
+        
+        translate(["choose_topic", "topics", "hints", "questions", "solution"], lang,
+                  function(translations) {
+                      $('#chooseTopicLabel').text(translations[0]);
+                      $('#topicLabel').text(translations[1]);
+                      $('#topicTabLabel').text(translations[1]);
+                      $('#hintsLabel').text(translations[2]);
+                      $('#questionsTabLabel').text(translations[3]);
+                      $('#solutionTabLabel').text(translations[4]);
+                  });
+        
         langChange = true;
     });
 
@@ -113,6 +125,7 @@ $(function(){
     });
 
     doAJAX(translation_url(), {get_available_languages : null});
+
 });
 
 /**
@@ -124,13 +137,6 @@ function loadTopic(t) {
     doAJAX(simulation_url(), {"request" : t} );
 }
 
-/**
- * Sends a ajax request to the server and manage the output of the reply.
- * @param {JSON} jsondata expects a json object with the given answers
- * @see sendAnswers
- * @see statusupdate
- * @see radioCheckNewLine
- */
 function doAJAX(url, jsondata) {
     if (typeof jsondata == "undefined") var jsondata = null;
     //else alert("sending = "+JSON.stringify(jsondata));
@@ -167,12 +173,18 @@ function doAJAX(url, jsondata) {
                 showPosition(data.position, data.stmts_ids);
             } else if (data.available_languages) {
                 showAvailableLanguages(data.available_languages);
+            } else if (data.translation) {
+                showTranslation(data.translation);
             } else {    
                 // alert(data);
                 return data;
             }
         }
     });
+}
+
+function showTranslation(trans) {
+    // alert(trans);
 }
 
 function showAvailableLanguages(languages) {
@@ -654,7 +666,6 @@ function onSVGLoad(svgW) {
     
     // reset scale and translate
     svgScale = 1;
-    translate="translate(0, 0)";
 
     var svgroot = document.getElementsByTagName('svg')[0];
     // SVGPan has a problem if there is already a viewBox, so we remove it
@@ -705,3 +716,34 @@ function resetContent() {
     // go to first tab
     $("#tabs a[href='#tabs-1']").click(); 
 }
+
+function translate(keys, lang, callback) {
+    var translated = [];
+    var missing_translations = [];
+    
+    for (var i = 0; i < keys.length; i++) {
+        translated[i] = i18n[keys[i]][lang];
+        if(translated[i] == undefined) {
+            missing_translations.push(i18n[keys[i]]["en"]);
+        }
+    }
+
+    if (missing_translations.length == 0) {
+        callback(translated);
+    } else {
+        send_data(translation_url(), {"translate" : {"text" : missing_translations, "from" : "en", "to" : lang}},
+                  function(data) {
+                      var translations = data.translations;
+                      var idx = 0;
+                      // complete translated array with the translations from the service
+                      for(var i = 0; i < keys.length; i++) {
+                          if(translated[i] == undefined) {
+                              translated[i] = translations[idx];
+                              idx++;
+                          }
+                      }
+                      callback(translated);
+                  });
+    }
+}
+
