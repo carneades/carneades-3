@@ -9,10 +9,10 @@
             [clojure.zip :as zip]))
 
 (defn load-questions
+  "Dynamically loads the questions data written in Clojure"
   [url]
-  (prn "slurping " url)
   (load-string (slurp url))
-  (ns-resolve 'resources.public.kb.questions 'questions))
+  (deref (ns-resolve 'resources.public.kb.questions 'questions)))
 
 (defn insert-args
   [question stmt]
@@ -21,43 +21,56 @@
     (apply format question (map str (take argnumbers s)))))
 
 (defn- get-answers
-  [loc lang]
-  (let [answers (zf/xml-> loc :question :answers :text (zf/attr= :lang lang) zf/text)]
+  [questiondata lang]
+  (let [klang (keyword lang)
+        answers (-> questiondata :answers klang)]
     ;; if answers are available in the language take them, otherwise take the english answers
     ;; and translate them on the fly
     (if (seq answers)
       answers
-      (map #(translate % "en" lang) (zf/xml-> loc :question :answers :text (zf/attr= :lang "en") zf/text)))))
+      (map #(translate % "en" lang) (-> questiondata :answers :en)))))
 
 (defn- get-question-text
   [stmt questiondata lang]
-  (prn "questiondata =")
-  (pprint questiondata)
-  (prn "plop")
   (let [klang (keyword lang)
         question (-> questiondata :forms klang :question)
         notrans (nil? question)
         question (or question
-                     (-> questiondata :forms klang :question))
+                     (-> questiondata :forms :en :question))
         formated-question (insert-args question stmt)]
     (if notrans
       (translate formated-question "en" lang)
       formated-question)))
 
 (defn- get-hint
-  [loc lang]
-  "todo")
+  [questiondata lang]
+  (let [klang (keyword lang)
+        hint (-> questiondata :hint klang)
+        nohint (nil? hint)]
+    (if nohint
+      (translate (-> questiondata :hint :en) "en" lang)
+      hint)))
+
+(defn- get-category
+  [questiondata lang]
+  (let [klang (keyword lang)
+        cat (-> questiondata :category klang)
+        nocat (nil? cat)]
+    (if nocat
+      (translate (-> questiondata :category :en) "en" lang)
+      cat)))
 
 (defn- get-question
   [id stmt lang questions]
   (let [questiondata (questions (statement-predicate stmt))
         question (get-question-text stmt questiondata lang)
-        category "category"
+        category (get-category questiondata lang)
         optional false
-        hint (get-hint nil lang)
-        type "text"
-        formalanswers []
-        answers [] ;; (get-answers loc lang)
+        hint (get-hint questiondata lang)
+        type (-> questiondata :type)
+        ;; TODO rename formal answers into machine answers
+        formalanswers (-> questiondata :answers :machine)
+        answers (get-answers questiondata lang)
         ;; TODO: arg positioning is irrelevant,
         ;; we should use %n$s in string formats to specify arg orders
         q {:id id
@@ -69,20 +82,19 @@
            :statement stmt}]
     (assoc q :formalanswers formalanswers :answers answers)))
 
-(defn get-loc
-  [stmt translations]
-  (zf/xml1-> translations :predicate (zf/attr= :pred stmt)))
+(defn- get-followups
+  [id stmt lang questions]
+  (let [pred (statement-predicate stmt)
+        followups (-> questions pred :followups)]
+    (map (fn [id stmt]
+           (get-question id (list (symbol stmt) '?x) lang questions))
+         (iterate inc (inc id)) followups)))
 
 (defn get-structured-questions
   [stmt lang last-id questions]
-  ;; (prn "GET STRUCTURED QUESTION FOR =")
-  ;; (prn stmt)
   (let [id (inc last-id)
         pred (statement-predicate stmt)
         question (get-question id stmt lang questions)
-        ;; refs (zf/xml-> loc :question :qrefs :qref (zf/attr :pred))
-        ;; locs (map #(get-loc % translations) refs)
-        ;; ;; TODO: reference statements with more than one argument
-        refsquestions () ;; (map (fn [id loc stmt] (get-question id (list (symbol stmt) '?x) loc lang translations)) (iterate inc (inc id)) locs refs)
-        questions (apply list question refsquestions)]
-    [questions (+ last-id (count questions))]))
+        refsquestions (get-followups id stmt lang questions)
+        structured-questions (cons question refsquestions)]
+    [structured-questions (+ last-id (count structured-questions))]))

@@ -70,6 +70,7 @@
     :category {:en "Search"}
     :answers {:en ["Standard" "Professional" "None"]
               :machine ["Standard" "Professional" "None"]}
+    :type "select"
     :followups ['Bekanntmachung])
 
    'Bekanntmachung
