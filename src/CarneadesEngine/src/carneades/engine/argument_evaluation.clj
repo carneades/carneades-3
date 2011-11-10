@@ -23,31 +23,31 @@
 
 (defn standard-label? [sym] (contains? #{:in, :out, :undecided} sym))
 
-(defn in? 
+(defn in-node? 
   "A statement or argument node is in iff its value is 1.0."
   [node]
   {:pre [(or (statement-node? node) (argument-node? node))]}
   (= (:value node) 1.0))
 
-(defn out?
+(defn out-node?
   "A statement or argument node is out iff its value is 0.0."
   [node]
   {:pre [(or (statement-node? node) (argument-node? node))]}
   (= (:value node) 0.0))
 
-(defn undecided?
+(defn undecided-node?
   "A statement or argument node is undecided iff it is neither in nor out."
   [node]
   {:pre [(or (statement-node? node) (argument-node? node))]}
-  (not (or (in? node) (out? node))))
+  (not (or (in-node? node) (out-node? node))))
 
-(defn standard-label
+(defn node-standard-label
   "node -> symbol
    Returns the standard label of a statement or argument node."
   [node]
   {:pre [(or (statement-node? node) (argument-node? node))]}
-  (cond (in? node) :in
-        (out? node) :out
+  (cond (in-node? node) :in
+        (out-node? node) :out
         :else :undecided))
 
 

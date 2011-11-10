@@ -20,7 +20,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def builtin-theory
-  (make-theory :sections
+  (make-theory 
+    :name "Carneades Builtin Theory"
+    :sections
     (make-section
       :name "Priority"
       :schemes

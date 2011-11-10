@@ -1,4 +1,4 @@
-;;; Copyright © 2010 Fraunhofer Gesellschaft
+;;; Copyright ? 2010 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
 (ns ^{:doc "Abductive reasoning.
@@ -449,6 +449,26 @@ alltrue is true if coll is empty or if each value is equal to *verum*"
               ;(println "comparing positions" (map statement-formatted position) (map statement-formatted p) (= (union position p) p))
               (or (= position p) (not (subset? position p))))
                    label))))
+
+;;; confusion between depth and height meaning?
+;;; (see Mantis bug tracker and the position Assistant implementation)
+
+(defn position-depth "Returns the depth of a position in an argument graph"
+  [ag p]
+  (apply + (map (fn [s]
+                  (let [n (get-node ag s)]
+                    (depth-in ag n)))
+                p)))
+
+(defn position-height
+  "Returns the height of a position in an argument graph"
+  [ag p]
+  (apply + (map
+            (fn [s]
+              (let [n (get-node ag s)]
+                (height-in ag n)))
+            p)))
+
 
 ;(def path "C:\\Users\\stb\\Documents\\Carneades Project\\carneades\\src\\CarneadesExamples\\src\\carneades\\examples\\open_source_licensing\\impact-full.xml")
 ;;(def path "C:\\Users\\stb\\Desktop\\contract.xml")
