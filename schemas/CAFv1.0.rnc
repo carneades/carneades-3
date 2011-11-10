@@ -1,13 +1,15 @@
-# Copyright (C) 2008-2011 Fraunhofer Gesellschaft 
+# Copyright (C) 2011 Fraunhofer Gesellschaft 
 # Licensed under the EUPL V.1.1
 
-# Version 2.3
+# Carneades Argument Format (CAF), Version 1.0
+# CAF is based on and extends the argument graph part of 
+# the Legal Knowledge Interchange Format (LKIF)
 
 datatypes xsd = "http://www.w3.org/2001/XMLSchema-datatypes"
 
 grammar {
-    start = element lkif { 
-        attribute version { xsd:string }?,  # version of the LKIF schema
+    start = element caf { 
+        attribute version { xsd:string }?,  # version of the CAF schema
         MetaData?, Sources?, Theory?, ArgumentGraphs? 
     }
     
