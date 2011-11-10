@@ -32,17 +32,17 @@
 
 (def send-engine-msg)
 
-(def translation-url (if *debug*
-                       "http://localhost:8080/kb/translations.xml"
-                       "http://localhost:8080/PolicyModellingTool2/kb/translations.xml") )
+(def questionsdata-url (if *debug*
+                         "http://localhost:8080/kb/questions.clj"
+                         "http://localhost:8080/PolicyModellingTool2/kb/questions.clj") )
 
 (defn- on-askuser
   [service-data]
-  (let [translations (load-translations translation-url)
+  (let [questionsdata (load-questions questionsdata-url)
         [questions last-id] (get-structured-questions (:last-question service-data)
                                                       (:lang service-data)
                                                       (:last-id service-data)
-                                                      translations)]
+                                                      questionsdata)]
     (assoc service-data :last-questions questions :last-id last-id
            :has-solution false)))
 

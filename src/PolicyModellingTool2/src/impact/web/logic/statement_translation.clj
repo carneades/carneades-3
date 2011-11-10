@@ -1,17 +1,18 @@
 (ns ^{:doc "Translation from formal logic statements to human languages"}
   impact.web.logic.statement-translation
-  (:use carneades.engine.statement
-        impact.web.logic.translate
-        clojure.data.json)
+  (:use clojure.data.json
+        clojure.pprint
+        carneades.engine.statement
+        impact.web.logic.translate)
   (:require [clojure.xml :as xml]
             [clojure.contrib.zip-filter.xml :as zf]
             [clojure.zip :as zip]))
 
-(defn load-translations
+(defn load-questions
   [url]
-  (let [content (xml/parse url)
-        z (zip/xml-zip content)]
-    z))
+  (prn "slurping " url)
+  (load-string (slurp url))
+  (ns-resolve 'resources.public.kb.questions 'questions))
 
 (defn insert-args
   [question stmt]
@@ -29,11 +30,15 @@
       (map #(translate % "en" lang) (zf/xml-> loc :question :answers :text (zf/attr= :lang "en") zf/text)))))
 
 (defn- get-question-text
-  [stmt loc lang]
-  (let [question (zf/xml1-> loc :question :format (zf/attr= :lang lang) zf/text)
+  [stmt questiondata lang]
+  (prn "questiondata =")
+  (pprint questiondata)
+  (prn "plop")
+  (let [klang (keyword lang)
+        question (-> questiondata :forms klang :question)
         notrans (nil? question)
         question (or question
-                     (zf/xml1-> loc :question :format (zf/attr= :lang "en") zf/text))
+                     (-> questiondata :forms klang :question))
         formated-question (insert-args question stmt)]
     (if notrans
       (translate formated-question "en" lang)
@@ -41,19 +46,18 @@
 
 (defn- get-hint
   [loc lang]
-  (or (zf/xml1-> loc :question :hint (zf/attr= :lang lang) zf/text)
-      (translate (zf/xml1-> loc :question :hint (zf/attr= :lang "en") zf/text)
-                 "en" lang)))
+  "todo")
 
 (defn- get-question
-  [id stmt loc lang translations]
-  (let [question (get-question-text stmt loc lang)
-        category (zf/xml1-> loc :question :category zf/text)
+  [id stmt lang questions]
+  (let [questiondata (questions (statement-predicate stmt))
+        question (get-question-text stmt questiondata lang)
+        category "category"
         optional false
-        hint (get-hint loc lang)
-        type (zf/xml1-> loc :question (zf/attr :type))
-        formalanswers (zf/xml-> loc :question :formalanswers :text zf/text)
-        answers (get-answers loc lang)
+        hint (get-hint nil lang)
+        type "text"
+        formalanswers []
+        answers [] ;; (get-answers loc lang)
         ;; TODO: arg positioning is irrelevant,
         ;; we should use %n$s in string formats to specify arg orders
         q {:id id
@@ -70,15 +74,15 @@
   (zf/xml1-> translations :predicate (zf/attr= :pred stmt)))
 
 (defn get-structured-questions
-  [stmt lang last-id translations]
+  [stmt lang last-id questions]
   ;; (prn "GET STRUCTURED QUESTION FOR =")
   ;; (prn stmt)
   (let [id (inc last-id)
-        loc (get-loc (str (statement-predicate stmt)) translations) 
-        question (get-question id stmt loc lang translations)
-        refs (zf/xml-> loc :question :qrefs :qref (zf/attr :pred))
-        locs (map #(get-loc % translations) refs)
-        ;; TODO: reference statements with more than one argument
-        refsquestions (map (fn [id loc stmt] (get-question id (list (symbol stmt) '?x) loc lang translations)) (iterate inc (inc id)) locs refs)
+        pred (statement-predicate stmt)
+        question (get-question id stmt lang questions)
+        ;; refs (zf/xml-> loc :question :qrefs :qref (zf/attr :pred))
+        ;; locs (map #(get-loc % translations) refs)
+        ;; ;; TODO: reference statements with more than one argument
+        refsquestions () ;; (map (fn [id loc stmt] (get-question id (list (symbol stmt) '?x) loc lang translations)) (iterate inc (inc id)) locs refs)
         questions (apply list question refsquestions)]
     [questions (+ last-id (count questions))]))
