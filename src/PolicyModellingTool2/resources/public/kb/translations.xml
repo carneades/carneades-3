@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <translations>
+
   <predicate pred="hatAnspruchOeffentlicheZugaenglichmachung" args="2">
     <statements>
       <format lang="de">
@@ -10,6 +11,8 @@
       </format>
     </statements>
   </predicate>
+
+  
   <predicate pred="hatName" args="1">
     <statements>
       <format lang="de">
@@ -34,6 +37,8 @@
       </qrefs>
     </question>
   </predicate>
+
+  
   <predicate pred="betrifftWerk" args="1">
     <statements>
       <format lang="de">
@@ -51,12 +56,16 @@
       <category>Work</category>
     </question>
   </predicate>
+
+  
   <predicate pred="zumZweck" args="2">
+
     <statements>
       <format lang="de">
         <text>%s wird zum Zweck %s verwendet.</text>
       </format>
     </statements>
+    
     <question arg="1" type="radio">
       <format lang="de">
         <text>Zu welchem Zweck wollen sie das Werk %s verwenden?</text>
@@ -76,6 +85,8 @@
       </formalanswers>
     </question>
   </predicate>
+
+  
   <predicate pred="UrheberSuche" args="1">
     <statements>
       <format lang="de">
@@ -84,7 +95,7 @@
     </statements>
     <question arg="0" type="select">
       <format lang="de">
-        <text>Erfolgte eine Standard- oder eine professionelle Suche?</text>
+        <text>Erfolgte eine Standard oder eine professionelle Suche?</text>
       </format>
       <format lang="en">
         <text>Is the search that has been carried out a professional one or a standard search?</text>
@@ -107,6 +118,8 @@
       </qrefs>
     </question>
   </predicate>
+
+  
   <predicate pred="Bekanntmachung" args="1">
     <statements>
       <format lang="de">

@@ -21,3 +21,4 @@
          (apply hash-map kv)))
 
 (defn question? [x] (instance? Question x))
+
