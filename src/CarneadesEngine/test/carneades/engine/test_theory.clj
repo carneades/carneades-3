@@ -5,7 +5,7 @@
 (ns carneades.engine.test-theory
   (:use clojure.test
         carneades.engine.argument-generator
-        carneades.engine.theory))
+        carneades.engine.scheme))
 
 (def theory1 
   (make-theory
