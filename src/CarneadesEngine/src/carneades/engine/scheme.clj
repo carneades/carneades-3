@@ -2,7 +2,7 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns ^{:doc "Theories defined using argumentation schemes."}
-  carneades.engine.theory
+  carneades.engine.scheme
             
   (:use 
     carneades.engine.statement
