@@ -4,7 +4,7 @@
 (ns carneades.engine.test-shell
   (:use clojure.test
         carneades.engine.shell
-        carneades.engine.theory
+        carneades.engine.scheme
         carneades.engine.caes))
 
 (def theory1 
