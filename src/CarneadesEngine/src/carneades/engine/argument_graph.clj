@@ -177,6 +177,7 @@
    in sync with its key in the language table."
   [ag node & key-values]
   {:pre [(argument-graph? ag) (statement-node? node)]}
+  ; (println "node: " node)
   (assoc ag 
          :statement-nodes (assoc (:statement-nodes ag)
                                  (:id node)
@@ -385,10 +386,13 @@
   [ag stmts]
   {:pre [(argument-graph? ag) 
          (every? statement? stmts)]}
+  ; (println "stmts: " stmts)
   (reduce (fn [ag2 stmt]
             (let [[ag3 sn] (create-statement-node ag2 stmt)]
-            (update-statement-node ag3 sn
-              :weight (if (statement-pos? stmt) 1.0 0.0))))
+              (update-statement-node 
+                ag3 
+                sn
+                :weight (if (statement-pos? stmt) 1.0 0.0))))
           ag 
           stmts))
    
@@ -423,10 +427,11 @@
   "argument-graph (seq-of statement) -> argument-graph"
   [ag stmts]
   (reduce (fn [ag2 stmt]
-            (update-statement-node 
-              ag2 
-              (get-statement-node ag2 stmt)
-              :weight (if (statement-pos? stmt) 0.0 1.0)))
+            (let [[ag3 sn] (create-statement-node ag2 stmt)]
+              (update-statement-node 
+                ag3 
+                sn
+                :weight (if (statement-pos? stmt) 0.0 1.0))))
           ag 
           stmts))
 
@@ -453,11 +458,13 @@
 (defn assume 
   "argument-graph (seq-of statement) -> argument-graph"
   [ag stmts]
+  (println "assume stmts: " stmts)
   (reduce (fn [ag2 stmt]
-            (update-statement-node 
-              ag2 
-              (get-statement-node ag2 stmt)
-              :weight (if (statement-pos? stmt) 0.75 0.25)))
+            (let [[ag3 sn] (create-statement-node ag2 stmt)]
+              (update-statement-node 
+                ag3 
+                sn
+                :weight (if (statement-pos? stmt) 0.75 0.25))))
           ag 
           stmts))
                            
@@ -487,10 +494,11 @@
   "argument-graph (seq-of statement) -> argument-graph"
   [ag stmts]
   (reduce (fn [ag2 stmt]
-            (update-statement-node 
-              ag2 
-              (get-statement-node ag2 stmt)
-              :weight 0.5))
+            (let [[ag3 sn] (create-statement-node ag2 stmt)]
+              (update-statement-node 
+                ag3
+                sn
+                :weight 0.5)))
           ag 
           stmts))
   
