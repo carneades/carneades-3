@@ -83,7 +83,7 @@ $(function(){
         var label = $('#chooseTopicLabel').text();
         var topicLabel = $('#topicLabel').text();
         
-        translate(["choose_topic", "topics", "hints", "questions", "solution"], lang,
+        translate(["choose_topic", "topics", "hints", "questions", "solution", "next"], lang,
                   function(translations) {
                       $('#chooseTopicLabel').text(translations[0]);
                       $('#topicLabel').text(translations[1]);
@@ -91,6 +91,7 @@ $(function(){
                       $('#hintsLabel').text(translations[2]);
                       $('#questionsTabLabel').text(translations[3]);
                       $('#solutionTabLabel').text(translations[4]);
+                      $('#nextTopic').val(translations[5]);
                   });
         
         langChange = true;
@@ -247,6 +248,10 @@ function showQuestions(questionArray) {
     // qbox.append('<input type="button" class="ui-button next" value="next" onclick="sendAnswers(\''+topicID+'\')"/>');
     var buttonId = genId();
     qbox.append('<input type="button" id="' + buttonId+ '" class="ui-button ui-widget ui-state-default ui-corner-all" value="next" />');
+    translate(["next"], $('#locate').val(),
+              function(translations) {
+                  $('#' + buttonId).val(translations[0]);
+    });
 
     $('#' + buttonId).click(function () {
         $('#questions').validate();
@@ -721,14 +726,15 @@ function translate(keys, lang, callback) {
     var translated = [];
     var missing_translations = [];
     
-    for (var i = 0; i < keys.length; i++) {
-        translated[i] = i18n[keys[i]][lang];
-        if(translated[i] == undefined) {
+    for(var i = 0; i < keys.length; i++) {
+        if(i18n[keys[i]] == undefined || i18n[keys[i]][lang] == undefined) {
             missing_translations.push(i18n[keys[i]]["en"]);
+        } else {
+            translated[i] = i18n[keys[i]][lang];
         }
     }
 
-    if (missing_translations.length == 0) {
+    if(missing_translations.length == 0) {
         callback(translated);
     } else {
         send_data(translation_url(), {"translate" : {"text" : missing_translations, "from" : "en", "to" : lang}},

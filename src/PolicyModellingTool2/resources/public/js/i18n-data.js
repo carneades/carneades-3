@@ -17,5 +17,9 @@ var i18n = {
     },
     hints: {
         en: "Hints",
+    },
+    next: {
+        en: "Next",
+        fr: "Suivant",
     }
 }

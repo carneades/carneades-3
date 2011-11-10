@@ -107,10 +107,15 @@ h2 {
         display:none;
 }
 #hints {
-        float:right;
-        width:220px;
+     float:right;
+     width:20%;
 /*background-color:#dadada;*/
 }
+
+#questionlist {
+    width: 65%;
+}
+
 #hints h4 {
         font-size:1.1em;
         margin:0;
