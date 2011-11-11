@@ -92,7 +92,7 @@
                   :depth (inc (:depth g1))))
       (let [conclusion (statement->literal (:conclusion arg)),
             rebuttal (apply-substitutions subs (literal-complement conclusion)),
-            undercutter (apply-substitutions subs `(~'excluded ~(:id arg) ~conclusion))]
+            undercutter (apply-substitutions subs `(~'undercut ~(:id arg)))]
         (add-goal state1 
                   (make-goal 
                     ; pop the first issue and add issues for the
@@ -244,7 +244,6 @@
                                       (:graph state3)))
                               generators1)]
             ; (println "issue: " issue)
-            ; (println "sissue: " (apply-substitutions (:substitutions goal) issue))
             ; apply the generators to the selected issue
             (let [responses (apply concat 
                                    (map (fn [g] 
