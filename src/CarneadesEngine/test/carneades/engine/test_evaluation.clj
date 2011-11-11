@@ -33,12 +33,12 @@
 (def A1 (make-argument :conclusion bottom :premises [jt, mt, st]))   
 (def A5 (make-argument :conclusion jt :premises [jw]))
 (def A6 (make-argument :conclusion mt :premises [mw]))
-(def A7 (make-argument :conclusion st :premises [st]))
+(def A7 (make-argument :conclusion st :premises [sw]))
 
 (def ag1 
   (-> (make-argument-graph)
       (assert-arguments [A1, A5, A6, A7])
-      (assume [jw, mw, st])))
+      (assume [jw, mw, sw])))
 
 ; Using the CAES evaluator, bottom is in. Consistency
 ; can be restored by using abduction to find minimal
@@ -64,38 +64,58 @@
       (accept [frisian])))
 
 (deftest test-frisian-carneades
-   (is (in? (evaluate carneades-evaluator ag2) (:atom tall))))
+   (is (in? (evaluate carneades-evaluator ag2) 
+            (:atom tall))))
 
 ;; The next example shows how arguments can be constructed by instantiating schemes.
+;; The scheme is instantiated manually and then used to construct arguments.
+;; Schemes of this type, with a conclusion which is a schema variable ranging
+;; over arbitrary literals, cannot be used effectively with a backwards
+;; chaining, goal-directed strategy, since the conclusion matches every goal
+;; literal.  Thus, in this example, the scheme is first instantiated in a
+;; data-driven, forwards-chaining manner, to construct a custom version
+;; which can be used to construct arguments via backwards chaining.  In
+;; this example the scheme is fully instantiated, but this method can
+;; also be used to partially instantiate schemes, so long as the predicate
+;; of the conclusion of the scheme is instantiated before trying to use
+;; backwards chaining to construct arguments.
 
-(def theory1 
-  (make-theory 
-    :sections
-    [(make-section
-      :schemes
-        [(make-scheme 
-          :name "Expert Witness Testimony"
-          :conclusions ['?P]
-          :premises {:major '(expert ?E ?D), 
-                     :minor '(asserts ?E ?P)}
-          :exceptions {:reliable '(reliable-as-source ?E),
-                       :consistent '(consistent-with-other-witnesses ?P)}
-          :assumptions {:credible '(credible-expert ?E),
-                        :backup-evidence '(based-on-evidence ?E)})])]))
+(def expert-witness-scheme
+  (make-scheme 
+    :name "Expert Witness Testimony"
+    :conclusions ['?P]
+    :premises {:major '(expert ?E ?D), 
+               :minor '(asserts ?E ?P)}
+    :exceptions {:reliable '(not (reliable-as-source ?E)),
+                 :consistent '(not (consistent-with-other-witnesses ?P))}
+    :assumptions {:credible '(credible-expert ?E),
+                  :backup-evidence '(based-on-evidence ?E)}))
 
-(def expert (make-statement :atom '(expert Joe Dentistry)
-                            :text {:en "Joe is an expert dentist."}))
-(def assertion (make-statement :atom '(asserts Joe (has-cavities Susan))))
 
-(def max-goals 500)  
-(def generators (list (generate-arguments-from-theory theory1)))   
-(def assumptions2 (map statement->literal (list expert assertion)))   
-(def query '(has-cavities ?x))           
+(def expert-witness1
+  (instantiate-scheme 
+    expert-witness-scheme
+    {'?P '(has-cavities Susan)
+     '?E 'Joe
+     '?D 'dentistry}))            
 
-(def ag3 (construct-arguments (make-argument-graph) query max-goals assumptions2 generators))
+(def max-goals 10)
+
+(def generators 
+  (list (generate-arguments-from-scheme expert-witness1)))
+
+(def case1-facts 
+  '((expert Joe dentistry)
+    (asserts Joe (has-cavities Susan))))
+
+(def query '(has-cavities Susan))
+
+(def ag3
+  (construct-arguments query max-goals case1-facts generators))
 
 (deftest test-expert-witness-carneades
-   (is (in? (evaluate carneades-evaluator ag3) '(has-cavities Susan))))
+   (is (in? (evaluate carneades-evaluator ag3) 
+            '(has-cavities Susan))))
 
 
 
