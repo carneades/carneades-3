@@ -5,7 +5,7 @@
 ; A Source record describes a source using the Dublin Core Metadata Element Set.
 ; As each Dublin Core element may have multiple values, they are represented as vectors
 
-(defrecord Source
+(defrecord Metadata
   [contributor      ; vector of strings 
    coverage         ; vector of strings
    creator          ; vector of strings
@@ -21,10 +21,10 @@
    title            ; vector of strings
    type])           ; vector of strings
  
-(defn make-source
+(defn make-metadata
   [& values]
   (merge 
-    (Source. 
+    (Metadata. 
       []   ; contributor
       []   ; coverage
       []   ; creator 

@@ -65,9 +65,14 @@
 (def A3 (make-argument :strict true :conclusion (neg married) :premises [bachelor]))
 (def A4 (make-argument :strict true :conclusion (neg bachelor) :premises [married]))
 
+; A5 and A6 manually add the contrapostives of A3 and A4. These could
+; generated automatically when instantiating strict schemes.
+(def A5 (make-argument :strict true :conclusion married :premises [(neg bachelor)]))
+(def A6 (make-argument :strict true :conclusion bachelor :premises [(neg married)]))
+
 (def bachelor-graph
   (-> (make-argument-graph)
-      (assert-arguments [A1, A2, A3, A4])
+      (assert-arguments [A1, A2, A3, A4, A5, A6])
       (accept [party-animal, wears-ring])))
 
 ; The AIJ version of Carneades couldn't handle this example,
@@ -78,8 +83,14 @@
 
 (deftest test-bachelor-carneades
    (let [ag (evaluate carneades-evaluator bachelor-graph)]
-      (is (and (out? ag (:atom bachelor))
-               (out? ag (:atom married))))))
+      (is (and (undecided? ag (:atom bachelor))
+               (undecided? ag (:atom married))))))
+
+; TO DO: maybe bachelor and married should both be undecided, 
+; since out(P) should imply in(ÂP) and Âbachelor and Âmarried
+; intuitively should not both be in. Perhaps the problem
+; is underspecified, since Carneades is not strong enough to
+; derive an inconsistency from Âbachelor and Âmarried. 
 
 ; The Frisian example, ibid., page 11
 

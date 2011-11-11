@@ -139,16 +139,16 @@
 
 (defrecord Section
   [id          ; symbol
-   name        ; string
+   header      ; nil or a dublin core metadata structure about this model.
    schemes     ; sequence of schemes
-   source])    ; source or nil
+   source])    ; dublin core metadata or nil; about the text modeled
 
 (defn make-section
   "key value ... -> section"
   [& key-values]  
   (merge (Section. 
            (gensym "?")    ; id
-           ""              ; name
+           nil             ; header
            []              ; schemes
            nil)            ; source
          (apply hash-map key-values)))
@@ -167,8 +167,8 @@
            :assumptions (zipmap (keys (:premises c)) assumption-vals))))
 
 (defrecord Theory
-  [name      ; string
-   source    ; source
+  [header    ; nil or a dublin core metadata structure about the model.
+   sources   ; vector of dublin core metadata about texts modeled by the theory
    language  ; (symbol -> individual or predicate) map
    sections  ; section sequence
    index])   ; (symbol -> seq of scheme) map; see index-key 
@@ -177,8 +177,8 @@
   "key value ... -> theory"
   [& key-values]  
   (merge (Theory. 
-           ""              ; name
-           nil             ; source
+           nil             ; header
+           []              ; sources
            {}              ; language
            []              ; sections
            {})             ; index
