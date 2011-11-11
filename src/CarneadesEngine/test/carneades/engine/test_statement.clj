@@ -44,8 +44,4 @@
   (is (not (statement=
         '(mother Tom Garcia)
         (struct fatom "%s is the mother of %s" '(father Tom Garcia)))))
-  (is (statement= '(mother '?person '?mother) '(mother '?person '?mother)))
-  (is (statement= '(excluded BGB109 (obligated-to-support Joe Sam))
-                  `(~'excluded ~'BGB109
-                               ~(struct fatom "%s must support %s"
-                                        '(obligated-to-support Joe Sam))) )))
+  (is (statement= '(mother '?person '?mother) '(mother '?person '?mother))))

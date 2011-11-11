@@ -35,7 +35,7 @@
 (def A6 (make-argument :conclusion mt :premises [mw]))
 (def A7 (make-argument :conclusion st :premises [sw]))
 
-(def ag1 
+(def tandem-graph 
   (-> (make-argument-graph)
       (assert-arguments [A1, A5, A6, A7])
       (assume [jw, mw, sw])))
@@ -44,27 +44,59 @@
 ; can be restored by using abduction to find minimal
 ; changes to the argument graph which make bottom out.
 (deftest test-tandem-carneades
-   (is (in? (evaluate carneades-evaluator ag1) (:atom bottom))))
+   (is (in? (evaluate carneades-evaluator tandem-graph) (:atom bottom))))
 
 
 ; The following examples are from:
 ; Prakken, H. An abstract framework for argumentation with structured arguments. 
 ; Argument & Computation 1, (2010), 93-124.
 
+; The bachelor example, ibid., page 9
+; This example illusrates both the distinction between strict 
+; and defeasible rules and the problem of handling one kind of cycle
+; in argument graphs.
+
+(def bachelor (make-statement :text {:en "Fred is a bachelor."}))
+(def wears-ring (make-statement :text {:en "Fred wears a ring."}))
+(def party-animal (make-statement :text {:en "Fred is a party animal."}))
+(def married (make-statement :text {:en "Fred is married."}))
+(def A1 (make-argument :strict false :weight 0.8 :conclusion bachelor :premises [party-animal]))
+(def A2 (make-argument :strict false :weight 0.7 :conclusion married :premises [wears-ring]))
+(def A3 (make-argument :strict true :conclusion (neg married) :premises [bachelor]))
+(def A4 (make-argument :strict true :conclusion (neg bachelor) :premises [married]))
+
+(def bachelor-graph
+  (-> (make-argument-graph)
+      (assert-arguments [A1, A2, A3, A4])
+      (accept [party-animal, wears-ring])))
+
+; The AIJ version of Carneades couldn't handle this example,
+; because it couldn't handle cycles and didn't support strict arguments.
+; Notice how Carneades handles this example differently than ASPIC+, since
+; the greater weight of A2 over A1 does not change the result here.
+; See pp 17-18 of ibid for a discussion of this issue.
+
+(deftest test-bachelor-carneades
+   (let [ag (evaluate carneades-evaluator bachelor-graph)]
+      (is (and (out? ag (:atom bachelor))
+               (out? ag (:atom married))))))
+
+; The Frisian example, ibid., page 11
+
 (def frisian (make-statement :text {:en "Wiebe is Frisian."}))
 (def dutch (make-statement :text {:en "Wiebe is Dutch."}))
 (def tall (make-statement :text {:en "Wiebe is Tall."}))
 
-(def A1 (make-argument :strict true :conclusion frisian :premises [dutch]))
+(def A1 (make-argument :strict true :conclusion dutch :premises [frisian]))
 (def A2 (make-argument :conclusion tall :premises [dutch]))
 
-(def ag2 
+(def frisian-graph 
   (-> (make-argument-graph)
       (assert-arguments [A1, A2])
       (accept [frisian])))
 
 (deftest test-frisian-carneades
-   (is (in? (evaluate carneades-evaluator ag2) 
+   (is (in? (evaluate carneades-evaluator frisian-graph) 
             (:atom tall))))
 
 ;; The next example shows how arguments can be constructed by instantiating schemes.
@@ -110,17 +142,65 @@
 
 (def query '(has-cavities Susan))
 
-(def ag3
+(def expert-witness-graph
   (construct-arguments query max-goals case1-facts generators))
 
 (deftest test-expert-witness-carneades
-   (is (in? (evaluate carneades-evaluator ag3) 
+   (is (in? (evaluate carneades-evaluator expert-witness-graph) 
             '(has-cavities Susan))))
 
 
+; The library example, ibid., page 17
+
+(def snores (make-statement :text {:en "The person is snoring in the library."}))
+(def professor (make-statement :text {:en "The person is a professor."}))
+(def misbehaves (make-statement :text {:en "The person is misbehaving."}))
+(def access-denied (make-statement :text {:en "The person is denied access to the library."}))
+
+(def r1 (make-argument :weight 0.5 :conclusion misbehaves :premises [snores]))
+(def r2 (make-argument :weight 0.7 :conclusion access-denied :premises [misbehaves]))
+(def r3 (make-argument :weight 0.6 :conclusion '(not access-denied) :premises [professor]))
+
+(def library-graph 
+  (-> (make-argument-graph)
+      (assert-arguments [r1, r2, r3])
+      (accept [snores, professor])))
+
+; Carneades applies the "last link" principle to order arguments, as can
+; be seen below.
+
+(deftest test-frisian-carneades
+   (is (in? (evaluate carneades-evaluator library-graph) 
+            (:atom access-denied))))
+
+; Serial self defeat example, ibid., page 18
+
+(def P  (make-statement :text {:en "Witness John says that he is unreliable."}))
+(def Q  (make-statement :text {:en "Witness John is unreliable."}))
+
+; The next argument is manually assigned an id, which can be used as 
+; a constant term to refer to the argument in the undercutter, A3, below.
+(def A2 (make-argument :id 'A2 :conclusion Q :premises [P]))
+
+; The next argument illustrates how undercutters are now explicity 
+; represented in Carneades.  
+(def A3 (make-argument 
+          :conclusion (make-statement :atom '(undercut A2))
+          :premises [Q]))
+
+(def self-defeat-graph 
+  (-> (make-argument-graph)
+      (assert-arguments [A2,A3])
+      (accept [P])))
+
+(deftest test-self-defeat
+   (is (out? (evaluate carneades-evaluator self-defeat-graph) 
+            (:atom Q))))
+
+; TO DO: remaining examples in Henry's article, starting with the example
+; or parallel self-defeat on page 18.
 
 
-                    
     
   
   

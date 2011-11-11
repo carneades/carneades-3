@@ -31,7 +31,8 @@
   [ag an]
   {:pre [(argument-graph? ag) (argument-node? an)]}
   (condp = (all-premises-hold? ag an)
-    :yes (let [answers (map (fn [an2] (applicable? ag an2)) (undercutters ag an))]
+    :yes (let [answers (set (map (fn [an2] (applicable? ag an2)) (undercutters ag an)))]
+           ; (println "undercutter labels of " (:id an) ": " answers)
            (cond (contains? answers :yes) :no,
                  (contains? answers :unknown) :unknown,
                  :else :yes))
@@ -179,6 +180,9 @@
   (let [app-pro (filter #(= :yes (applicable? ag %)) (pro-argument-nodes ag sn))
         not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (pro-argument-nodes ag sn))
         not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (con-argument-nodes ag sn))]
+    ; (println "app-pro: " app-pro)
+    ; (println "not-inapp-pro: " not-inapp-pro)
+    ; (println "not-inapp-con: " not-inapp-con)
     (cond (> (max-pe-weight app-pro) (max-pe-weight not-inapp-con)) :yes,
           (> (max-pe-weight not-inapp-pro) (max-pe-weight not-inapp-con)) :unknown,
           :else :no)))

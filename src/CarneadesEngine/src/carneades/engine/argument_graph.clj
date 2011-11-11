@@ -360,13 +360,8 @@
 (defn undercutters
   "argument-graph argument-node -> (seq-of argument-node)"
   [ag an]
-  (let [atom (:atom (get (:statement-nodes ag) 
-                          (literal-atom (:conclusion an))))
-        lit1 (if (literal-pos? (:conclusion an))
-                  atom
-                  (literal-complement atom))
-        lit2 `(~'excluded ~(:id an) ~lit1)
-        sn (get-statement-node ag (make-statement :atom lit2))]
+  (let [atom `(~'undercut ~(:id an))
+        sn (get-statement-node ag (make-statement :atom atom))]
     (if (nil? sn)
       ()
       (map (fn [an-id] (get (:argument-nodes ag) an-id))

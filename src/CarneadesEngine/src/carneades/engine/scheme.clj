@@ -107,10 +107,10 @@
 
 (defn scheme? [x] (instance? Scheme x))
 
-; When applying schemes, rebuttals are generated from the exceptions of schemes, 
-; where the rebuttals have the form:
+; When applying schemes, undercutters are generated from the exceptions of schemes, 
+; where the undercutters are arguments with the form:
 ; (make-argument 
-;  :conclusion (literal->statement '(excluded <scheme-id> <goal>))
+;  :conclusion (literal->statement '(undercut <arg-id>))
 ;  :premises [(literal->statement <exception>)])
 
 
@@ -245,7 +245,7 @@
    The id is constructed by joining the id of the section of
    the scheme with the local id of the scheme in the section.
    The id is used to reify schemes in the theory for
-   use in, e.g., (applies ...) and (excluded ...) atoms."
+   use in, e.g., (applies ...) and (undercut ...) atoms."
   [scheme]
   (symbol (str (:id (:section scheme)) "." (:id scheme)))) 
 
@@ -275,7 +275,7 @@
                         (map (fn [e] (make-response subs2
                                                     ()
                                                     (make-argument 
-                                                      :conclusion (literal->statement  `(~'excluded ~id ~c))
+                                                      :conclusion (literal->statement  `(~'undercut ~id))
                                                       :strict false
                                                       :weight (:weight scheme)
                                                       :premises [(literal->statement e)]
