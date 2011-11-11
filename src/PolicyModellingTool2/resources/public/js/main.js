@@ -77,13 +77,17 @@ $(function(){
      //button
      $(".ui-button").button();
 
-    $("#locate").change(function(){
+    $("#locate").change(function() {
+        // if the language is changed
         var lang = $(this).val();
+
+        // informs the server
         send_data(translation_url(), {"language" : lang}, function(data) {});
         
         var label = $('#chooseTopicLabel').text();
         var topicLabel = $('#topicLabel').text();
-        
+
+        // translates labels
         translate(["choose_topic", "topics", "hints", "questions", "solution", "next"], lang,
                   function(translations) {
                       $('#chooseTopicLabel').text(translations[0]);
@@ -94,6 +98,12 @@ $(function(){
                       $('#solutionTabLabel').text(translations[4]);
                       $('#nextTopic').val(translations[5]);
                   });
+
+        // translates current question
+        send_data(simulation_url(),
+                  {retrieve_question : {id : current_question.id,
+                                                          statement : current_question.statement}},
+                 showQuestions);
         
         langChange = true;
     });
@@ -136,52 +146,6 @@ $(function(){
 function loadTopic(t) {
     send_data(simulation_url(), {"request" : t}, showQuestions);
 }
-
-// function doAJAX(url, jsondata) {
-//     if (typeof jsondata == "undefined") var jsondata = null;
-//     //else alert("sending = "+JSON.stringify(jsondata));
-//     $.ajax({
-//         "url" : url,
-//         dataType : "json",
-//         data : {
-//             json : JSON.stringify(jsondata)
-//         },
-//         success : function(data) {
-//             if (data == null || data == "") alert("Empty Server Answer!")
-//             // getting questions
-//             else if (data.questions && data.questions.length >= 1) {
-//                 showQuestions(data.questions);
-//             }
-//             // getting solution
-//             else if (data.solution) {
-//                 showSolution(data.solution, data.path);
-//             } else if (data.session) {
-//                 // alert(data.session);
-//                 resetContent();
-//             }
-//             else if (data.language) {
-//                 // alert("Language set to: "+data.language);
-//             } else if(data.policyrules) {
-//                 showPolicyRules(data.policyrules);
-//             } else if(data.evaluated) {
-//                 showArgGraph(data.evaluated);
-//             } else if(data.graphpath) {
-//                 showSVGGraph(data.graphpath)
-//             } else if (data.error) {
-//                 showError(data.error);
-//             } else if(data.position) {
-//                 showPosition(data.position, data.stmts_ids);
-//             } else if (data.available_languages) {
-//                 showAvailableLanguages(data.available_languages);
-//             } else if (data.translation) {
-//                 showTranslation(data.translation);
-//             } else {    
-//                 // alert(data);
-//                 return data;
-//             }
-//         }
-//     });
-// }
 
 function showAvailableLanguages(data) {
     var languages = data.available_languages;
@@ -226,17 +190,25 @@ function genId() {
     return newDate.getTime();
 }
 
+
+var current_question = {};
 /**
  * Displays a list of questions
  * @param {object} questionArray json object representing the questions
  */
 function showQuestions(data) {
+    // {"questions":[{"answers":[],"formalanswers":null,"id":1,"category":"Name","optional":false,"hint":"Please enter the name of the rights owner.","type":"text","question":"What is the name of the right owner?","statement":["hatName","?Person"]},{"answers":[],"formalanswers":null,"id":2,"category":"Work","optional":false,"hint":null,"type":"text","question":"What is the name of the concerned orphaned work?","statement":["betrifftWerk","?x"]}]}
+    
     var questionArray = data.questions;
+    current_question = questionArray[0];
     
     $("#tabs a[href='#tabs-2']").click();        
     var topicName = questionArray[0].category;
     var topicID = topicName.replace(/\s/,"_");
     var qlist = $("#questionlist");
+
+    // remove previous title if it exits (for instance after asking a change in the language)
+    $('#questionlist').empty();
     // add new div to questionlist with id = topic name
     qlist.append('<div id="'+topicID+'"><h3>'+topicName+'</h3><div id="qcontent"></div></div>');
     var qdiv = $("#"+topicID, qlist);

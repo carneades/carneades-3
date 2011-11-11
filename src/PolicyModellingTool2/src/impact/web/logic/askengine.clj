@@ -32,18 +32,13 @@
 
 (def send-engine-msg)
 
-(def questionsdata-url (if *debug*
-                         "http://localhost:8080/kb/questions.clj"
-                         "http://localhost:8080/PolicyModellingTool2/kb/questions.clj") )
-
 (defn- on-askuser
   [service-data]
   (prn "last question =" (:last-question service-data))
-  (let [questionsdata (load-questions questionsdata-url)
-        [questions last-id] (get-structured-questions (:last-question service-data)
+  (let [[questions last-id] (get-structured-questions (:last-question service-data)
                                                       (:lang service-data)
                                                       (:last-id service-data)
-                                                      questionsdata)]
+                                                      (:questionsdata service-data))]
     (assoc service-data :last-questions questions :last-id last-id
            :has-solution false)))
 

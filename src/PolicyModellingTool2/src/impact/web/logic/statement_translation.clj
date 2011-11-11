@@ -6,7 +6,8 @@
         impact.web.logic.translate)
   (:require [clojure.xml :as xml]
             [clojure.contrib.zip-filter.xml :as zf]
-            [clojure.zip :as zip]))
+            [clojure.zip :as zip]
+            [clojure.string :as s]))
 
 (defn load-questions
   "Dynamically loads the questions data written in Clojure"
@@ -16,6 +17,8 @@
 
 (defn insert-args
   [question stmt]
+  (prn "question =")
+  (prn question)
   (let [s (rest (statement-atom stmt))
         argnumbers (count (re-seq #"%s" question))]
     (apply format question (map str (take argnumbers s)))))
@@ -37,10 +40,13 @@
         notrans (nil? question)
         question (or question
                      (-> questiondata :forms :en :question))
-        formated-question (insert-args question stmt)]
-    (if notrans
-      (translate formated-question "en" lang)
-      formated-question)))
+        ;; formated-question (insert-args question stmt)
+        ]
+    (-> (if notrans
+          (s/replace (translate (s/replace question "%s" "_") "en" lang)
+                     "_" "%s")
+          question)
+        (insert-args stmt))))
 
 (defn- get-hint
   [questiondata lang]

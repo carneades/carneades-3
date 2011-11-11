@@ -3,6 +3,7 @@
          clojure.data.json
          impact.web.logic.askengine
          impact.web.logic.answers
+         impact.web.logic.statement-translation
          impact.web.views.pages
          impact.web.core
          [carneades.engine.statement :only (statement-predicate variable? statement-atom)]))
@@ -12,6 +13,10 @@
 (def kburl (if *debug*
              "http://localhost:8080/kb/impact.xml"
              "http://localhost:8080/PolicyModellingTool2/kb/impact.xml"))
+
+(def questionsdataurl (if *debug*
+                         "http://localhost:8080/kb/questions.clj"
+                         "http://localhost:8080/PolicyModellingTool2/kb/questions.clj") )
 
 ;; TODO: get from a kb
 (def query '(hatAnspruchOeffentlicheZugaenglichmachung ?Person ?Werk))
@@ -33,10 +38,8 @@
 (defmethod ajax-handler :answers
   [json session]
   (prn "======================================== answers handler! ==============================")
-  ;; (prn "json answers =")
-  ;; (prn (:answers json))
-  ;; (prn "last questions =")
-  ;; (pprint (:last-questions (:service-data session)))
+  ;; KO: {"answers":[{"id":"2","value":"Pierre"},{"id":"3","value":"K"}]}
+  ;; OK: {"answers":[{"id":"1","value":"Pierre"},{"id":"2","value":"K"}]}
   (let [service-data (:service-data session)
         last-questions (:last-questions service-data)
         answers (doall
@@ -44,11 +47,7 @@
                         ;; TODO: fix JavaScript to have id as integer and not as string!
                         (let [id (Integer/parseInt (:id answer))
                               question (first (filter #(= (:id %) id) last-questions))
-                              ;; _ (prn "======================================== QUESTION")
-                              ;; _ (prn question)
                               stmt (:statement question)
-                              ;; this is the statement extracted from the XML
-                              ;; stmt (if (seq? stmt) stmt (list stmt))
                               pred (statement-predicate stmt)
                               ans (cond (variable? (second (statement-atom stmt)))
                                         (list pred (symbol (:value answer)))
@@ -64,22 +63,39 @@
                                         :else
                                         (throw (Exception. (format "invalid question %s" question)))
                                         )]
-                          ;; (printf "%s ---------> %s\n" stmt ans)
-                          ans
-                         
-                          ))
+                          ans))
                       (:answers json)))
         service-data (add-answers service-data answers)
         service-data (ask-engine service-data query kburl)
         session (assoc session :service-data service-data)]
-    ;; (prn "======================> last questions =")
-    ;; (prn (:last-questions service-data))
     (if-not (:has-solution service-data)
       {:session session
        :body (json-str {:questions (:last-questions service-data)})}
       {:session session
        :body (json-str {:solution (:solution service-data)
                         :path (:lkifsol-pathname service-data)})})))
+
+(defn strs->stmt
+  "Converts a collection of a string representing a statement on the client side
+   to a formal statement."
+  [coll]
+  (map symbol (apply list coll)))
+
+(defmethod ajax-handler :retrieve_question
+  [json session]
+  (let [service-data (:service-data session)
+        data (:retrieve_question json)
+        id (dec (:id data))
+        stmt (strs->stmt (:statement data))
+        [questions _] (get-structured-questions
+                       stmt
+                       (:lang service-data)
+                       id
+                       (:questionsdata service-data))]
+    (prn "questions =")
+    (pprint questions)
+    (prn)
+    {:body (json-str {:questions questions})}))
 
 (defn process-ajax-request
   [session params]
@@ -104,5 +120,7 @@
               :from-engine (promise)
               :last-id 0
               :goal query
-              :lang "en"}}
+              :lang "en"
+              :questionsdata (load-questions questionsdataurl)
+              }}
    :body (index-page)})
