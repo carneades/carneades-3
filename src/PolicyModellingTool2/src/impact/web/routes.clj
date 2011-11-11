@@ -12,7 +12,7 @@
             [impact.web.controllers.policy-simulation :as simulation]
             [impact.web.controllers.policy-evaluation :as evaluation]
             [impact.web.controllers.svg :as svg]
-            [impact.web.logic.translation :as translation]))
+            [impact.web.controllers.translation :as translation]))
 
 (defroutes main-routes
   ;; debugging
@@ -45,6 +45,3 @@
 
 ;; to comment when building the JAR:
 (defonce server (run-jetty #'app {:join? false :port 8080}))
-
-
-

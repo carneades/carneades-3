@@ -38,6 +38,7 @@
 
 (defn- on-askuser
   [service-data]
+  (prn "last question =" (:last-question service-data))
   (let [questionsdata (load-questions questionsdata-url)
         [questions last-id] (get-structured-questions (:last-question service-data)
                                                       (:lang service-data)

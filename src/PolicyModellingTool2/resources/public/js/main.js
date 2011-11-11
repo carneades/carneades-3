@@ -79,7 +79,8 @@ $(function(){
 
     $("#locate").change(function(){
         var lang = $(this).val();
-        doAJAX(translation_url(), {"language" : lang});
+        send_data(translation_url(), {"language" : lang}, function(data) {});
+        
         var label = $('#chooseTopicLabel').text();
         var topicLabel = $('#topicLabel').text();
         
@@ -125,70 +126,66 @@ $(function(){
        type: "POST"
     });
 
-    doAJAX(translation_url(), {get_available_languages : null});
-
+    send_data(translation_url(), {get_available_languages : null}, showAvailableLanguages);
 });
 
 /**
  * loads questions for requested topic
  * @param {string} t name of the topic
- * @see doAJAX
  */
 function loadTopic(t) {
-    doAJAX(simulation_url(), {"request" : t} );
+    send_data(simulation_url(), {"request" : t}, showQuestions);
 }
 
-function doAJAX(url, jsondata) {
-    if (typeof jsondata == "undefined") var jsondata = null;
-    //else alert("sending = "+JSON.stringify(jsondata));
-    $.ajax({
-        "url" : url,
-        dataType : "json",
-        data : {
-            json : JSON.stringify(jsondata)
-        },
-        success : function(data) {
-            if (data == null || data == "") alert("Empty Server Answer!")
-            // getting questions
-            else if (data.questions && data.questions.length >= 1) {
-                showQuestions(data.questions);
-            }
-            // getting solution
-            else if (data.solution) {
-                showSolution(data.solution, data.path);
-            } else if (data.session) {
-                // alert(data.session);
-                resetContent();
-            }
-            else if (data.language) {
-                // alert("Language set to: "+data.language);
-            } else if(data.policyrules) {
-                showPolicyRules(data.policyrules);
-            } else if(data.evaluated) {
-                showArgGraph(data.evaluated);
-            } else if(data.graphpath) {
-                showSVGGraph(data.graphpath)
-            } else if (data.error) {
-                showError(data.error);
-            } else if(data.position) {
-                showPosition(data.position, data.stmts_ids);
-            } else if (data.available_languages) {
-                showAvailableLanguages(data.available_languages);
-            } else if (data.translation) {
-                showTranslation(data.translation);
-            } else {    
-                // alert(data);
-                return data;
-            }
-        }
-    });
-}
+// function doAJAX(url, jsondata) {
+//     if (typeof jsondata == "undefined") var jsondata = null;
+//     //else alert("sending = "+JSON.stringify(jsondata));
+//     $.ajax({
+//         "url" : url,
+//         dataType : "json",
+//         data : {
+//             json : JSON.stringify(jsondata)
+//         },
+//         success : function(data) {
+//             if (data == null || data == "") alert("Empty Server Answer!")
+//             // getting questions
+//             else if (data.questions && data.questions.length >= 1) {
+//                 showQuestions(data.questions);
+//             }
+//             // getting solution
+//             else if (data.solution) {
+//                 showSolution(data.solution, data.path);
+//             } else if (data.session) {
+//                 // alert(data.session);
+//                 resetContent();
+//             }
+//             else if (data.language) {
+//                 // alert("Language set to: "+data.language);
+//             } else if(data.policyrules) {
+//                 showPolicyRules(data.policyrules);
+//             } else if(data.evaluated) {
+//                 showArgGraph(data.evaluated);
+//             } else if(data.graphpath) {
+//                 showSVGGraph(data.graphpath)
+//             } else if (data.error) {
+//                 showError(data.error);
+//             } else if(data.position) {
+//                 showPosition(data.position, data.stmts_ids);
+//             } else if (data.available_languages) {
+//                 showAvailableLanguages(data.available_languages);
+//             } else if (data.translation) {
+//                 showTranslation(data.translation);
+//             } else {    
+//                 // alert(data);
+//                 return data;
+//             }
+//         }
+//     });
+// }
 
-function showTranslation(trans) {
-    // alert(trans);
-}
-
-function showAvailableLanguages(languages) {
+function showAvailableLanguages(data) {
+    var languages = data.available_languages;
+    
     for(var name in languages) {
         $('#locate').append('<option value="' + languages[name] + '">' + name + '</option>');
     }
@@ -198,12 +195,16 @@ function showAvailableLanguages(languages) {
 
 }
 
-function showPosition(position, stmts_ids) {
+function showPosition(data) {
+    var position = data.position;
+    var stmts_ids = data.stmts_ids;
+    
     showPolicy(position[0], stmts_ids);
     // TODO: show all policies
 }
 
 function showPolicy(policy, stmts_ids) {
+    
     var stmt = policy[1];
     var policyid = stmts_ids["(valid " + stmt + ")"];
     var g = $('g [id="' + policyid + '"]');
@@ -228,9 +229,10 @@ function genId() {
 /**
  * Displays a list of questions
  * @param {object} questionArray json object representing the questions
- * @see doAJAX
  */
-function showQuestions(questionArray) {
+function showQuestions(data) {
+    var questionArray = data.questions;
+    
     $("#tabs a[href='#tabs-2']").click();        
     var topicName = questionArray[0].category;
     var topicID = topicName.replace(/\s/,"_");
@@ -351,17 +353,17 @@ function showQuestion(item, qbox){
  * Displays the solution
  * @param {string} solution string representing the main issue
  * @param {string} path url pointing to solution lkif
- * @see doAJAX
  */
-function showSolution(solution, path) {
+function showSolution(data) {
+    var solution = data.solution;
+    var path = data.path;
+    
     // go to next tab
     $("#tabs a[href='#tabs-3']").click(); 
     // display solution statement
     $("#solutionstatement").append(solution);
-    // communicate with evaluation servlet
-    // get policy rules
-    var json = {"policyrules" : path}
-    doAJAX(evaluation_url(), json);
+
+    send_data(evaluation_url(), {"policyrules" : path}, showPolicyRules);
     // display argument graph
     showArgGraph(path);
 }
@@ -454,7 +456,6 @@ function validateField(obj) {
 /**
  * Checks if radio or checkbox input fields needs a new line to seperate them
  * @param {Array} answers Array that contains all possible answers
- * @see doAJAX
  * @returns true when a new line is required
  * @type Boolean
  */
@@ -502,9 +503,8 @@ function statusupdate(type, text) {
 
 
 /**
- * Collects the given answers and parse them as JSON before sending them to {@link doAJAX}.
+ * Collects the given answers and parse them as JSON before sending them to the server.
  * @param {string} topicID the ID of the question div
- * @see doAJAX
  * @see validateField
  */
 function sendAnswers(topicID) {
@@ -551,13 +551,24 @@ function sendAnswers(topicID) {
         }
         jsonA.push(jsonitem);
     });
-    var jsonZ = {"answers" : jsonA.copy()}
     langChange = false;
-    if (doRequest) doAJAX(simulation_url(), jsonZ);
+    if (doRequest) {
+        send_data(simulation_url(), {"answers" : jsonA.copy()}, show_questions_or_answer);
+    }
+}
+
+function show_questions_or_answer(data) {
+    if (data.questions) {
+        showQuestions(data);
+    } else if (data) {
+        showSolution(data);
+    }
 }
 
 function sendAbductionRequest() {
-    doAJAX(evaluation_url(), {abduction : {argGraph : argGraph, acceptability : $('input[name=abduction]').val()}});
+    send_data(evaluation_url(),
+              {abduction : {argGraph : argGraph, acceptability : $('input[name=abduction]').val()}},
+              showPosition);
 }
 
 /**
@@ -625,8 +636,8 @@ function updateTopicList(topicName, topicID) {
  * list policy rules derived from argument graph as checkboxes
  * @param {object} rules json array of policy rules
  */
-function showPolicyRules(rules) {
-    
+function showPolicyRules(data) {
+    var rules = data.policyrules;
     var policyList = $("#policylist");
     policyrules = [];
     $.each(rules, function(ruleindex, r) {
@@ -644,20 +655,18 @@ function showPolicyRules(rules) {
 function showArgGraph(path) {
     // set global path to lkif argument graph
     argGraph = path;
-    var json = {"showgraph" : path};
-    doAJAX(evaluation_url(), json);
+    send_data(evaluation_url(), {"showgraph" : path}, showSVGGraph);
 }
 
 /**
  * display svg representation of an argument graph
  * @param {string} path path to svg with argument graph
  */
-function showSVGGraph(path) {
+function showSVGGraph(data) {
+    var path = data.graphpath;
     var graphBox = $("#graph");
     graphBox.svg();    
     graphBox.svg('get').load(path, onSVGLoad);
-    
-
 }
 
 /**
@@ -699,9 +708,9 @@ function evaluateGraph() {
        }
     }); 
     
-    // call engine
-    var json = {evaluate : {argGraph : argGraph, accept : accArray, reject : rejArray}}
-    doAJAX(evaluation_url(), json);
+    send_data(evaluation_url(),
+              {evaluate : {argGraph : argGraph, accept : accArray, reject : rejArray}},
+              function (data) { showArgGraph(data.evaluated) });
 }
 
 function showError(error) {
