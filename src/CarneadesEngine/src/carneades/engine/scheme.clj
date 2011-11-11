@@ -105,12 +105,35 @@
       (pvector->pmap :exceptions)
       (pvector->pmap :assumptions)))
 
+(defn scheme? [x] (instance? Scheme x))
+
+; When applying schemes, rebuttals are generated from the exceptions of schemes, 
+; where the rebuttals have the form:
+; (make-argument 
+;  :conclusion (literal->statement '(excluded <scheme-id> <goal>))
+;  :premises [(literal->statement <exception>)])
+
+
+(defn instantiate-scheme
+  "scheme substitutions -> scheme
+   Instantiate or partially instantiate a scheme by substituting
+   variables in the scheme with their values in the map."
+  [scheme subs]
+  {:pre [(scheme? scheme) (map? subs)]}
+  (letfn [(apply-subs [literal] (apply-substitutions subs literal))]
+    (assoc scheme
+           :conclusions (vec (map apply-subs (:conclusions scheme))),
+           :premises (zipmap (keys (:premises scheme))
+                             (map apply-subs (vals (:premises scheme)))),
+           :exceptions (zipmap (keys (:exceptions scheme))
+                               (map apply-subs (vals (:exceptions scheme)))),        
+           :assumptions (zipmap (keys (:assumptions scheme))
+                                (map apply-subs (vals (:assumptions scheme)))))))
+  
 (defn axiom 
   "literal -> scheme"
   [literal]
   (make-scheme :strict true :conclusions [literal]))
-
-(defn scheme? [x] (instance? Scheme x))
 
 ; The scope of section ids is their theory
 
@@ -204,16 +227,18 @@
 
 (defn get-schemes 
   "theory goal substititions -> sequence of schemes
-   where the goal is a literal."
+   where the goal is a literal. Does not return
+   :other schemes, since they match every goal
+   and are not well controlled when using with backward 
+   chaining."
   [theory goal subs]
   {:pre [(theory? theory) 
          (literal? goal)
          (map? subs)]}
   (let [key (scheme-index-key (apply-substitutions subs goal))]
     (if (= key :other)
-      (get (:index theory) :other)
-      (concat (get (:index theory) key)
-              (get (:index theory) :other)))))
+      ()
+      (concat (get (:index theory) key)))))
 
 (defn- scheme-theory-id
   "Returns an id for a scheme which has theory scope. 
@@ -224,11 +249,51 @@
   [scheme]
   (symbol (str (:id (:section scheme)) "." (:id scheme)))) 
 
-; Rebuttals below are generated from the exceptions of schemes, 
-; where the rebuttals have the form:
-; (make-argument 
-;  :conclusion (literal->statement '(excluded <scheme-id> <goal>))
-;  :premises [(literal->statement <exception>)])
+(defn apply-scheme
+  "scheme literal substitutions -> seq-of response"
+  [scheme goal subs]
+  {:pre [(scheme? scheme) (literal? goal) (map? subs)]}
+  (letfn [(apply-for-conclusion
+            [scheme c]
+            ;; apply the scheme for conclusion c
+            (let [subs2 (or (unify c goal subs)
+                            (unify `(~'applies ~(scheme-theory-id scheme) ~c) goal subs))]
+              (if (not subs2)
+                false ; fail
+                (let [id (gensym "a")]
+                  (cons (make-response subs2
+                                       (map literal->statement (vals (:assumptions scheme)))
+                                       (make-argument 
+                                         :id id
+                                         :conclusion (literal->statement goal)
+                                         :strict (:strict scheme)
+                                         :weight (:weight scheme)
+                                         :premises (zipmap (keys (:premises scheme))
+                                                           (map literal->statement 
+                                                                (vals (:premises scheme))))
+                                         :scheme (:name scheme)))
+                        (map (fn [e] (make-response subs2
+                                                    ()
+                                                    (make-argument 
+                                                      :conclusion (literal->statement  `(~'excluded ~id ~c))
+                                                      :strict false
+                                                      :weight (:weight scheme)
+                                                      :premises [(literal->statement e)]
+                                                      :scheme (:name scheme))))
+                             (vals (:exceptions scheme))))))))]
+    (apply concat (filter identity 
+                          (map #(apply-for-conclusion scheme %) 
+                               (:conclusions scheme))))))
+
+
+;; Generators for arguments from schemes and theories:
+
+(defn generate-arguments-from-scheme
+  "scheme -> argument-generator"
+  [scheme]
+  (reify ArgumentGenerator
+    (generate [this goal subs]
+       (apply-scheme scheme goal subs))))
 
 (defn generate-arguments-from-theory
   "theory -> argument-generator"
@@ -236,40 +301,7 @@
   (let [theory2 (create-index theory1)]
     (reify ArgumentGenerator
       (generate [this goal subs]
-                (letfn [(apply-for-conclusion
-                          [scheme c]
-                          ;; apply the scheme for conclusion c
-                          (let [subs2 (or (unify c goal subs)
-                                          (unify `(~'applies ~(scheme-theory-id scheme) ~c) goal subs))]
-                            (if (not subs2)
-                              false ; fail
-                              (let [id (gensym "a")]
-                                (cons (make-response subs2
-                                                     (map literal->statement (vals (:assumptions scheme)))
-                                                     (make-argument 
-                                                       :id id
-                                                       :conclusion (literal->statement goal)
-                                                       :strict (:strict scheme)
-                                                       :weight (:weight scheme)
-                                                       :premises (zipmap (keys (:premises scheme))
-                                                                         (map literal->statement 
-                                                                              (vals (:premises scheme))))
-                                                       :scheme (:name scheme)))
-                                      (map (fn [e] (make-response subs2
-                                                                  ()
-                                                                  (make-argument 
-                                                                    :conclusion (literal->statement  `(~'excluded ~id ~c))
-                                                                    :strict false
-                                                                    :weight (:weight scheme)
-                                                                    :premises [(literal->statement e)]
-                                                                    :scheme (:name scheme))))
-                                           (vals (:exceptions scheme))))))))
-                        
-                        (apply-scheme [scheme]
-                                      (apply concat (filter identity 
-                                                            (map #(apply-for-conclusion scheme %) 
-                                                                 (:conclusions scheme)))))]
-                  (mapinterleave
-                    (fn [s] (apply-scheme s))
-                    (map rename-scheme-variables (get-schemes theory2 goal subs))))))))
+        (mapinterleave
+          (fn [s] (apply-scheme s goal subs))
+          (map rename-scheme-variables (get-schemes theory2 goal subs)))))))
 
