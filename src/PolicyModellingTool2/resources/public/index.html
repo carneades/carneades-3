@@ -49,8 +49,8 @@
         <div>
           <form id="chooseTopic" onsubmit="loadTopic($('input[name=\'topic\']:checked').val());$('#tabs a[href=\'#tabs-2\']').click();"
             class="ui-widget ui-widget-content ui-corner-all" action="">
-            <p> <input id="topic" class="required" type="radio" value="topicXY" name="topic" /><span
-                onclick="$(this).prev().click()">Orphan works</span> </p>
+            <input id="topic" class="required" type="radio" value="topicXY" name="topic" />
+            <span id="topicName" onclick="$(this).prev().click()">Orphan works</span>
             <p><!-- <input id="nextTopic" type="button" onclick="loadTopic($('input[name=\'topic\']:checked').val());" -->
                <!--  value="next" class="ui-button next" /> -->
                <input id="nextTopic" type="button" onclick=""

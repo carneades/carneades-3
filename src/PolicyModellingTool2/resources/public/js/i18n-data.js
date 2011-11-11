@@ -1,4 +1,7 @@
 var i18n = {
+    orphan_works: {
+        en: "Orphan works",
+    },
     choose_topic: {
         en: "Please choose a topic.",
         fr: "Veuillez choisir un sujet."

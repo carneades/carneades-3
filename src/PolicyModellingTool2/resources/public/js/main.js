@@ -88,7 +88,8 @@ $(function(){
         var topicLabel = $('#topicLabel').text();
 
         // translates labels
-        translate(["choose_topic", "topics", "hints", "questions", "solution", "next"], lang,
+        translate(["choose_topic", "topics", "hints", "questions", "solution", "next" ,
+                   "orphan_works"], lang,
                   function(translations) {
                       $('#chooseTopicLabel').text(translations[0]);
                       $('#topicLabel').text(translations[1]);
@@ -97,13 +98,16 @@ $(function(){
                       $('#questionsTabLabel').text(translations[3]);
                       $('#solutionTabLabel').text(translations[4]);
                       $('#nextTopic').val(translations[5]);
+                      $('#topicName').html(translations[6]);
                   });
 
         // translates current question
-        send_data(simulation_url(),
-                  {retrieve_question : {id : current_question.id,
-                                                          statement : current_question.statement}},
-                 showQuestions);
+        if(current_question != undefined) {
+            send_data(simulation_url(),
+                      {retrieve_question : {id : current_question.id,
+                                            statement : current_question.statement}},
+                      showQuestions);
+        }
         
         langChange = true;
     });
@@ -191,7 +195,7 @@ function genId() {
 }
 
 
-var current_question = {};
+var current_question = undefined;
 /**
  * Displays a list of questions
  * @param {object} questionArray json object representing the questions
