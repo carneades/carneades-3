@@ -21,7 +21,7 @@
    value            ; nil or 0.0-1.0, default nil; output from argument evaluation
    conclusion       ; literal
    premises         ; (string -> literal) map, where the keys are role names
-   sources])        ; vector of sources
+   sources])        ; vector of dublin-core metadata about the sources of the argument
 
 (defn- make-argument-node
    "key value ... -> argument-node"
@@ -102,7 +102,7 @@
                     ; where the sexp represents a ground atomic formula
    statement-nodes  ; (symbol -> StatementNode) map, 
    argument-nodes   ; (symbol -> ArgumentNode) map
-   references])     ; (symbol -> Source) map
+   references])     ; (symbol -> Metadata) map
 
 (defn make-argument-graph
    "key value ... -> argument-graph"

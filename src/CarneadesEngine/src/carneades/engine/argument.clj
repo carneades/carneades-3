@@ -18,7 +18,7 @@
    weight           ; real number between 0.0 and 1.0, default 0.5
    conclusion       ; statement
    premises         ; (string -> statement) map, where strings are role names 
-   sources])        ; vector of source texts
+   sources])        ; vector of dublin-core metadata structures
 
 
 (defn- assure-statement
