@@ -280,5 +280,5 @@
                             generators2))))
   ([issue max-goals facts generators]
     (let [ag (make-argument-graph :main-issue issue)]
-      (construct-arguments ag max-goals facts generators))))
+      (construct-arguments ag issue max-goals facts generators))))
 
