@@ -4,44 +4,59 @@
 
 (ns carneades.engine.test-theory
   (:use clojure.test
+        carneades.engine.dublin-core
+        carneades.engine.argument
         carneades.engine.argument-generator
-        carneades.engine.scheme))
+        carneades.engine.scheme
+        carneades.engine.shell
+        carneades.engine.caes))
 
 (def theory1 
   (make-theory
-    :name "Theory of Animals"
-    :language {'Tweety (make-individual :symbol 'Tweety :text {:en "Tweety"})
-               'bird (make-predicate 
-                       :symbol 'bird 
-                       :arity 1
-                       :forms {:en (make-form :positive "%s is a bird."
-                                              :negative "%s is not a bird."
-                                              :question "Is %s a bird?")}),
-               'flies (make-predicate 
-                        :symbol 'flies
-                        :arity 1
-                        :forms {:en (make-form :positive "%s flies."
-                                               :negative "%s does not fly."
-                                               :question "Does %s fly?")}),
-               'penguin (make-predicate 
-                          :symbol 'penguin
-                          :arity 1
-                          :forms {:en (make-form :positive "%s is a penguin."
-                                                 :negative "%s is not a penguin."
-                                                 :question "Is %s a penguin?")})}
+    :header 
+    (make-metadata :title ["Theory of Animals"])
     
-    :sections [(make-section 
-                 :name "Birds"
-                 :id 's1
-                 :schemes [(make-scheme                            
-                            :id 'a
-                            :name "Birds Fly"
-                            :conclusions ['(flies ?x)]
-                            :premises {"minor" '(bird ?x)}
-                            :exceptions ['(penguin ?x)])])]))
+    :language 
+    {'Tweety (make-individual :symbol 'Tweety :text {:en "Tweety"})
+     'bird (make-predicate 
+             :symbol 'bird 
+             :arity 1
+             :forms {:en (make-form :positive "%s is a bird."
+                                    :negative "%s is not a bird."
+                                    :question "Is %s a bird?")}),
+     'flies (make-predicate 
+              :symbol 'flies
+              :arity 1
+              :forms {:en (make-form :positive "%s flies."
+                                     :negative "%s does not fly."
+                                     :question "Does %s fly?")}),
+     'penguin (make-predicate 
+                :symbol 'penguin
+                :arity 1
+                :forms {:en (make-form :positive "%s is a penguin."
+                                       :negative "%s is not a penguin."
+                                       :question "Is %s a penguin?")})}
+    
+    :schemes 
+    [(make-scheme                            
+       :id 'a
+       :name "Birds Fly"
+       :conclusions ['(flies ?x)]
+       :premises [(make-premise :role "minor" :literal '(bird ?x))]
+       :exceptions [(pm '(penguin ?x))])]))
                                 
-(def g (generate-arguments-from-theory theory1))
-(generate g '(flies Tweety) {})
-                              
-  
-           
+(def max-goals 10)  
+(def generators (list (generate-arguments-from-theory theory1)))                  
+
+(defn ag [facts query]  ;
+  "(seq-of literal) literal -> argument-graph
+   construct and evaluate an argument graph"
+  (argue (make-engine max-goals facts generators)
+         carneades-evaluator
+         query))
+                                   
+(deftest test-theory
+         (let [facts '((bird Tweety))
+               query '(flies ?x)]
+           (is (in? (ag facts query) '(flies Tweety)))))
+

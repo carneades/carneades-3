@@ -21,8 +21,8 @@
   [s t]
   (let [t2 (cond
              (variable? t) (get s t t),
-             (nonemptyseq? t) (cons (first t) (map (fn [x] (apply-substitutions s x)) (rest t))),
              (statement? t) (assoc t :atom (apply-substitutions s (:atom t))),
+             (nonemptyseq? t) (cons (first t) (map (fn [x] (apply-substitutions s x)) (rest t))),
              :else t)]
     (if (and (variable? t2) (contains? s t2))
       (apply-substitutions s t2)
@@ -79,6 +79,8 @@
       (cond (variable? u) (try-subst u v s ks kf occurs-check)
             (variable? v) (try-subst v u s ks kf occurs-check),
             (and (constant? u) (constant? v)) (if (= u v) (ks s) (kf :clash)),
+            (statement? u) (unify (literal->sliteral u) v s),
+            (statement? v) (unify u (literal->sliteral v) s),
             (and (termseq? u) 
                  (termseq? v)
                  (= (count u) (count v))) (unif u v s)
@@ -87,9 +89,6 @@
                  (= (term-functor u) (term-functor v))
                  (= (count (term-args u)) 
                     (count (term-args v)))) (unif (term-args u) (term-args v) s),
-            (and (statement? u) (statement? v)) (if (= (:atom u) (:atom v)) 
-                                                  (ks s) 
-                                                  (kf :clash))
             :else (kf :clash))))
   ([u v s]
     (unify u v s identity (fn [state] nil) false))
