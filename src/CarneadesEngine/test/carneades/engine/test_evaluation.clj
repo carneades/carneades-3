@@ -30,10 +30,10 @@
 (def bottom (make-statement :text {:en "The claims are inconsistent."}))
 
 
-(def A1 (make-argument :conclusion bottom :premises [jt, mt, st]))   
-(def A5 (make-argument :conclusion jt :premises [jw]))
-(def A6 (make-argument :conclusion mt :premises [mw]))
-(def A7 (make-argument :conclusion st :premises [sw]))
+(def A1 (make-argument :conclusion bottom :premises [(pm jt), (pm mt), (pm st)]))   
+(def A5 (make-argument :conclusion jt :premises [(pm jw)]))
+(def A6 (make-argument :conclusion mt :premises [(pm mw)]))
+(def A7 (make-argument :conclusion st :premises [(pm sw)]))
 
 (def tandem-graph 
   (-> (make-argument-graph)
@@ -60,15 +60,15 @@
 (def wears-ring (make-statement :text {:en "Fred wears a ring."}))
 (def party-animal (make-statement :text {:en "Fred is a party animal."}))
 (def married (make-statement :text {:en "Fred is married."}))
-(def A1 (make-argument :strict false :weight 0.8 :conclusion bachelor :premises [party-animal]))
-(def A2 (make-argument :strict false :weight 0.7 :conclusion married :premises [wears-ring]))
-(def A3 (make-argument :strict true :conclusion (neg married) :premises [bachelor]))
-(def A4 (make-argument :strict true :conclusion (neg bachelor) :premises [married]))
+(def A1 (make-argument :strict false :weight 0.8 :conclusion bachelor :premises [(pm party-animal)]))
+(def A2 (make-argument :strict false :weight 0.7 :conclusion married :premises [(pm wears-ring)]))
+(def A3 (make-argument :strict true :conclusion (neg married) :premises [(pm bachelor)]))
+(def A4 (make-argument :strict true :conclusion (neg bachelor) :premises [(pm married)]))
 
 ; A5 and A6 manually add the contrapostives of A3 and A4. These could
 ; generated automatically when instantiating strict schemes.
-(def A5 (make-argument :strict true :conclusion married :premises [(neg bachelor)]))
-(def A6 (make-argument :strict true :conclusion bachelor :premises [(neg married)]))
+(def A5 (make-argument :strict true :conclusion married :premises [(pm (neg bachelor))]))
+(def A6 (make-argument :strict true :conclusion bachelor :premises [(pm (neg married))]))
 
 (def bachelor-graph
   (-> (make-argument-graph)
@@ -87,10 +87,10 @@
                (undecided? ag (:atom married))))))
 
 ; TO DO: maybe bachelor and married should both be undecided, 
-; since out(P) should imply in(ÂP) and Âbachelor and Âmarried
+; since out(P) should imply in(ï¿½P) and ï¿½bachelor and ï¿½married
 ; intuitively should not both be in. Perhaps the problem
 ; is underspecified, since Carneades is not strong enough to
-; derive an inconsistency from Âbachelor and Âmarried. 
+; derive an inconsistency from ï¿½bachelor and ï¿½married. 
 
 ; The Frisian example, ibid., page 11
 
@@ -98,8 +98,8 @@
 (def dutch (make-statement :text {:en "Wiebe is Dutch."}))
 (def tall (make-statement :text {:en "Wiebe is Tall."}))
 
-(def A1 (make-argument :strict true :conclusion dutch :premises [frisian]))
-(def A2 (make-argument :conclusion tall :premises [dutch]))
+(def A1 (make-argument :strict true :conclusion dutch :premises [(pm frisian)]))
+(def A2 (make-argument :conclusion tall :premises [(pm dutch)]))
 
 (def frisian-graph 
   (-> (make-argument-graph)
@@ -127,12 +127,20 @@
   (make-scheme 
     :name "Expert Witness Testimony"
     :conclusions ['?P]
-    :premises {:major '(expert ?E ?D), 
-               :minor '(asserts ?E ?P)}
-    :exceptions {:reliable '(not (reliable-as-source ?E)),
-                 :consistent '(not (consistent-with-other-witnesses ?P))}
-    :assumptions {:credible '(credible-expert ?E),
-                  :backup-evidence '(based-on-evidence ?E)}))
+    :premises [(make-premise :role "major" :literal '(expert ?E ?D)), 
+               (make-premise :role "minor" :literal '(asserts ?E ?P))]
+    :exceptions [(make-premise 
+                   :role "reliable" 
+                   :literal '(not (reliable-as-source ?E))),
+                 (make-premise 
+                   :role "consistent" 
+                   :literal '(not (consistent-with-other-witnesses ?P)))]
+    :assumptions [(make-premise 
+                    :role "credible"
+                    :literal '(credible-expert ?E)),
+                  (make-premise
+                    :role "backup-evidence"
+                    :literal '(based-on-evidence ?E))]))
 
 
 (def expert-witness1
@@ -168,9 +176,9 @@
 (def misbehaves (make-statement :text {:en "The person is misbehaving."}))
 (def access-denied (make-statement :text {:en "The person is denied access to the library."}))
 
-(def r1 (make-argument :weight 0.5 :conclusion misbehaves :premises [snores]))
-(def r2 (make-argument :weight 0.7 :conclusion access-denied :premises [misbehaves]))
-(def r3 (make-argument :weight 0.6 :conclusion '(not access-denied) :premises [professor]))
+(def r1 (make-argument :weight 0.5 :conclusion misbehaves :premises [(pm snores)]))
+(def r2 (make-argument :weight 0.7 :conclusion access-denied :premises [(pm misbehaves)]))
+(def r3 (make-argument :weight 0.6 :conclusion '(not access-denied) :premises [(pm professor)]))
 
 (def library-graph 
   (-> (make-argument-graph)
@@ -191,13 +199,15 @@
 
 ; The next argument is manually assigned an id, which can be used as 
 ; a constant term to refer to the argument in the undercutter, A3, below.
-(def A2 (make-argument :id 'A2 :conclusion Q :premises [P]))
+
+(def A2 (make-argument :id 'A2 :conclusion Q :premises [(pm P)]))
 
 ; The next argument illustrates how undercutters are now explicity 
 ; represented in Carneades.  
+
 (def A3 (make-argument 
-          :conclusion (make-statement :atom '(undercut A2))
-          :premises [Q]))
+          :conclusion '(undercut A2)
+          :premises [(pm Q)]))
 
 (def self-defeat-graph 
   (-> (make-argument-graph)

@@ -10,66 +10,60 @@
         carneades.engine.dublin-core
         carneades.engine.unify))
 
+(defrecord Premise
+  [literal     ; literal
+   role        ; string; the role of the premise in the scheme used to create this argument
+   implicit])  ; boolean; true if the premise was not explicit in the source document.
+
+(defn premise? [x] (instance? Premise x))
+
+(defn make-premise 
+  "key value ... -> premise"
+  [& key-values]  
+  (merge (Premise. 
+           nil           ; literal
+           ""            ; role
+           false)        ; implicit
+         (apply hash-map key-values)))
+
+(defn pm
+  "literal -> premise"
+  [literal]
+  (make-premise :literal literal))
+
 (defrecord Argument
   [id               ; symbol
    title            ; string or hash table (for multiple languages)
-   scheme           ; string
+   scheme           ; nil or symbol, scheme id
    strict           ; boolean
    weight           ; real number between 0.0 and 1.0, default 0.5
-   conclusion       ; statement
-   premises         ; (string -> statement) map, where strings are role names 
-   sources])        ; vector of dublin-core metadata structures
+   conclusion       ; nil or literal
+   premises         ; sequence of premises 
+   sources])        ; collection of dublin-core metadata structures
 
-
-(defn- assure-statement
-  [x]
-  (cond (statement? x) x
-        (vector? x) (recur (second x))
-        :else (make-statement :atom (literal-atom x) :positive (literal-pos? x))))
-
-  
-(defn- literals->statements
-  [arg]
-  (assoc arg 
-         :conclusion (assure-statement (:conclusion arg)) 
-         :premises (zipmap (keys (:premises arg))
-                           (map assure-statement (vals (:premises arg))))))
-                           
-(defn- pvector->pmap
-  [arg]
-  (if (map? (:premises arg))
-    arg
-    (assoc arg :premises 
-           (zipmap (map (fn [i] (str "p" i))
-                        (range (count (:premises arg)))) 
-                   (:premises arg)))))
+(defn argument? [x] (instance? Argument x))
 
 (defn argument-variables
   "arg -> (seq-of symbol)
    Returns a seq containing the variables of the argument"
   [arg]
-  (distinct (concat (mapcat #(variables %) (vals (:premises arg)))
+  (distinct (concat (mapcat (fn [p] (variables (:literal p)))
+                            (:premises arg))
                     (variables (:conclusion arg)))))
 
 (defn make-argument
-  "Makes a one-step argument. A vector of statements may be
-   supplied as the value of the :premises property, instead of 
-   a map from role names to statements. In this case the premises
-   are assigned integer roles names, based on the order of the
-   premises in the vector."
+  "Makes a one-step argument."
   [& values]
   (-> (Argument. 
         (gensym "a") ; id
         ""           ; title
-        ""           ; scheme
+        nil           ; scheme
         false        ; strict
         0.5          ; weight
         nil          ; conclusion
-        {}           ; premises
+        []           ; premises
         [])          ; sources  
-      (merge (apply hash-map values))
-      (pvector->pmap)
-      (literals->statements)))
+      (merge (apply hash-map values))))
 
 (defn instantiate-argument
   "argument substitutions -> arg
@@ -77,9 +71,10 @@
   [arg subs]
   (assoc arg
          :id (gensym "a")
-         :premises (zipmap (keys (:premises arg)) 
-                           (map (fn [a] (apply-substitutions subs a)) 
-                                (vals (:premises arg))))
+         :premises (map (fn [p] (assoc p 
+                                       :literal 
+                                       (apply-substitutions subs (:literal p)))) 
+                        (:premises arg))
          :conclusion (apply-substitutions subs (:conclusion arg))))
 
 
