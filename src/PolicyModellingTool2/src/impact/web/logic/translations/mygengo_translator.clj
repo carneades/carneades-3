@@ -34,25 +34,28 @@
   
   (available-languages
     [this]
-    (try
-      (let [;; This call fails. Bug in the API?
-            ;; languages (.getServiceLanguages client)
-            languages expected-response]
-        (map :lc (-> (read-json languages) :response)))
-      (catch Exception e nil)))
+    ;; try
+    (let [;; This call fails. Bug in the API?
+          ;; languages (.getServiceLanguages client)
+          languages expected-response
+          ]
+      (map :lc (-> (read-json languages) :response)))
+    ;; (catch Exception e nil)
+    )
 
   (language-names
     [this locale codes]
     ;; locale is ignored for this call and the english name will be returned
-    (try
-      (let [;; This call fails. Bug in the API?
-            ;; languages (.getServiceLanguages client)
-            find-lang (fn [code languages]
-                        (:language (first (filter #(= code (:lc %)) languages))))
-            codes (set codes)
-            languages expected-response]
-        (map #(find-lang % (-> (read-json languages) :response)) codes))
-      (catch Exception e nil))))
+    ;; try
+    (let [;; This call fails. Bug in the API?
+          languages (.getServiceLanguages client)
+          ;; languages expected-response
+          find-lang (fn [code languages]
+                      (:language (first (filter #(= code (:lc %)) languages))))
+          codes (set codes)]
+      (map #(find-lang % (-> (read-json languages) :response)) codes))
+    ;; (catch Exception e nil)
+    ))
 
 (defn make-mygengo-translator
   [public-key private-key]

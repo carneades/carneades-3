@@ -1,6 +1,5 @@
 (ns impact.web.logic.server-properties)
 
-
 (defn- format-values
   [vals]
   (apply str (map #(str % "\n") vals)))
@@ -12,3 +11,4 @@
    (format-values (System/getProperties))
    "\n\n\n========== ENVIRONMENT ==========\n\n\n"
    (format-values (System/getenv))))
+
