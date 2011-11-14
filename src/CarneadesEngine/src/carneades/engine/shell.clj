@@ -47,7 +47,7 @@
 (defn in? 
   "argument-graph literal -> boolean"
   [ag query]
-  (let [sn (get-statement-node ag (make-statement :atom (literal-atom query)))]
+  (let [sn (get-statement-node ag (literal-atom query))]
     (if (nil? sn) 
       false
       (if (literal-pos? query)
@@ -57,7 +57,7 @@
 (defn out? 
   "argument-graph literal -> boolean"
   [ag query]
-  (let [sn (get-statement-node ag (make-statement :atom (literal-atom query)))]
+  (let [sn (get-statement-node ag (literal-atom query))]
     (if (nil? sn)
       false
       (if (literal-pos? query)
@@ -67,7 +67,7 @@
 (defn undecided? 
   "argument-graph literal -> boolean"
   [ag query]
-  (let [sn (get-statement-node ag (make-statement :atom (literal-atom query)))]
+  (let [sn (get-statement-node ag (literal-atom query))]
     (if (nil? sn)
       false
       (undecided-node? sn))))

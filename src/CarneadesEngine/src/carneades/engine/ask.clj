@@ -39,6 +39,6 @@
                           subs2
                           ()
                           (make-argument
-                            :conclusion (literal->statement answer)
+                            :conclusion answer
                             :scheme "ask")))
                   ())))))

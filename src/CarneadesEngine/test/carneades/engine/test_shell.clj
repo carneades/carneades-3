@@ -4,6 +4,7 @@
 (ns carneades.engine.test-shell
   (:use clojure.test
         carneades.engine.shell
+        carneades.engine.argument
         carneades.engine.scheme
         carneades.engine.caes))
 
@@ -11,83 +12,78 @@
   (make-theory
     :sections 
     [(make-section 
-       :name "Birds"
        :schemes 
        [(make-scheme                            
           :name "Birds Fly"
           :conclusions ['(flies ?x)]
-          :premises ['(bird ?x)]
-          :exceptions ['(penguin ?x)])])
+          :premises [(pm '(bird ?x))]
+          :exceptions [(pm '(penguin ?x))])])
      
      (make-section
-       :name "Goods"
        :schemes 
        [(make-scheme
           :name "Coins"
           :conclusions ['(movable ?x)
                         '(money ?x)]
-          :premises ['(coins ?x)])
+          :premises [(pm '(coins ?x))])
         
         (make-scheme
           :name "Goods"
           :conclusions ['(goods ?x)]
-          :premises ['(movable ?x)]
-          :exceptions ['(money ?x)])
+          :premises [(pm '(movable ?x))]
+          :exceptions [(pm '(money ?x))])
         
         (make-scheme
           :name "Edible Things Are Not Goods"
           :conclusions ['(not (goods ?x))]
-          :premises ['(edible ?x)])])
+          :premises [(pm '(edible ?x))])])
      
      (make-section
-       :name "Meta Rules"
        :schemes 
        [(make-scheme
           :name "Lex Posterior"
           :conclusions ['(prior ?r2 ?r1)]
-          :premises ['(enacted ?r1 ?d1)
-                     '(enacted ?r2 ?d2)
-                     '(later ?d2 ?d1)])])
+          :premises [(pm '(enacted ?r1 ?d1))
+                     (pm '(enacted ?r2 ?d2))
+                     (pm '(later ?d2 ?d1))])])
      
      (make-section 
-       :name "Eval"
        :schemes 
        [(make-scheme 
           :name "Reverse"
           :conclusions ['(rev ?x ?y)]
-          :premises ['(eval ?y (reverse ?x))])
+          :premises [(pm '(eval ?y (reverse ?x)))])
         
         (make-scheme
           :name "Taxable Income"
           :conclusions ['(taxable-income ?x ?t)]
-          :premises ['(income ?x ?i)
-                     '(deductions ?x ?d)
-                     '(eval ?t (- ?i ?d))])
+          :premises [(pm '(income ?x ?i))
+                     (pm '(deductions ?x ?d))
+                     (pm '(eval ?t (- ?i ?d)))])
         
         (make-scheme 
           :name "Phd"
           :conclusions ['(has-phd ?x)]
-          :premises ['(title ?x ?y)
-                     '(= ?y Dr)])
+          :premises [(pm '(title ?x ?y))
+                     (pm '(= ?y Dr))])
         
         (make-scheme
           :name "Enrolled"
           :conclusions ['(enrolled ?x)]
-          :premises ['(status ?x ?y)
-                     '(not= ?y exempted)])])
+          :premises [(pm '(status ?x ?y))
+                     (pm '(not= ?y exempted))])])
      
      (make-section
-       :name "Cycles"
        :schemes 
        [(make-scheme 
           :name "r1"
           :conclusions ['(not (bar ?x))]
-          :premises ['(foo ?x)])
+          :premises [(pm '(foo ?x))])
         
         (make-scheme
           :name "r2"
           :conclusions ['(not (foo ?x))]
-          :premises ['(bar ?x)])])]))
+          :premises [(pm '(bar ?x))])])]))
                              
 
 (def max-goals 500)  

@@ -31,10 +31,20 @@
 
 (defn statement? [x] (instance? Statement x))
 
-(defn propositional? 
-  [x] 
-  (and (instance? Statement x)
-       (symbol? (:atom x))))
+(defn sliteral? 
+  "As sliteral is an sexpression representation of a literal. 
+   Variables are also considered to be literals, 
+   to support some meta-level reasoning." 
+  [sexp] 
+  (or (symbol? sexp)
+      (and (seq? sexp)
+           (not (empty? sexp))
+           (symbol? (first sexp)))))
+
+(defn literal? 
+  [x]
+  (or (statement? x)
+      (sliteral? x)))
 
 ; <constant> := <symbol> | <<number> | <boolean> | <string>
 ; <term> := <variable> | <constant> | <compound-term> | <statement> 
@@ -134,39 +144,44 @@
            (not (empty? sexp))
            (symbol? (first sexp)))))
 
-(defn literal? 
-  "A literal is an sexpression representing an atomic formula or
-   negated atomic formula. Variables are also considered to 
-   be literals, to support some meta-level reasoning." 
-  [sexp] 
-  (or (symbol? sexp)
-      (and (seq? sexp)
-           (not (empty? sexp))
-           (symbol? (first sexp)))))
+(defn literal-pos? [literal]
+  {:pre [(literal? literal)]}
+  (cond (sliteral? literal) 
+        (or (not (seq? literal))
+            (and (not (empty? literal))
+                 (not= (first literal) 'not))),
+        (statement? literal) (:positive literal)))
 
-(defn literal-pos? [wff] 
-  {:pre [(literal? wff)]}
-  (or (not (seq? wff))
-      (and (not (empty? wff))
-           (not= (first wff) 'not))))
+(defn literal-neg? [literal]
+  {:pre [(literal? literal)]}
+  (not (literal-pos? literal)))
 
-(defn literal-neg? [wff]
-  {:pre [(literal? wff)]}
-  (not (literal-pos? wff)))
+(declare literal-complement)
 
-(defn literal-atom
-  [wff]
-  {:pre [(literal? wff)]}
-  (if (literal-pos? wff) 
-    wff
-    (second wff)))
+(defn literal-atom 
+  [literal]
+  {:pre [(literal? literal)]}
+  (cond (sliteral? literal) (if (literal-pos? literal) 
+                              literal
+                              (second literal)),
+        (statement? literal) (:atom literal)))
 
+(defn propositional? 
+  [x] 
+  {:pre [(literal? x)]}
+ (symbol? (literal-atom x)))
+        
 (defn literal-complement
-  [wff]
-  {:pre [(literal? wff)]}
-  (if (literal-pos? wff)
-    (list 'not wff)
-    (literal-atom wff)))
+  [literal]
+  {:pre [(literal? literal)]}
+  (cond (sliteral? literal) 
+          (if (literal-pos? literal)
+            (list 'not literal)
+            (literal-atom literal)),
+        (statement? literal) 
+          (assoc literal 
+               :positive 
+               (if (literal-pos? literal) false true)))) 
 
 (defn statement= 
   [s1 s2]
@@ -212,33 +227,19 @@
                                (map? t))
                            (not (empty? t))) (concat (vars (first t))
                                                      (vars (rest t)))
-                 
-                           (statement? t) (vars (:atom t))
+                      
+                      (literal? t) (vars (literal-atom t))
                       :else ()))]
     (distinct (vars t))))
 
-(defn statement-pos? [s] (:positive s))
+(defn neg [literal] (literal-complement literal))
 
-
-(defn statement-neg? [s] (not (:positive s)))
-
-(defn statement-complement [s]
-  (assoc s :positive (if (statement-pos? s) false true)))
-
-(defn neg [stmt] (statement-complement stmt))
-
-(defn statement-atom
-  "statement -> statement
-   Returns a positive version of the statement."
-  [s]
-  (assoc s :positive true))
-
-(defn statement-predicate 
-  "statement -> symbol or nil
-   Returns the predicate of the wff of the statement, if it is a predicate
+(defn literal-predicate 
+  "literal -> symbol or nil
+   Returns the predicate of the literal of the statement, if it is a predicate
    logic statement, or nil, if it is a propositional logic statement."
   [s]
-  (term-functor (:atom s)))
+  (term-functor (literal-atom s)))
 
 (defn atom-predicate
   "atom -> symbol or nil
@@ -248,30 +249,25 @@
   {:pre [(atom? atom)]}
   (term-functor atom))
 
-(defn statement-wff 
-  "Represents the statement as an s-expression.  Negative statements
-   are represented with the form (not P), where P is the wff of the
-   statement."
-  [s]  
-  (if (statement-pos? s)
-    (:atom s)
-    (list 'not (:atom s))))
-
 (defn literal->statement
-  "literal -> statement"
-  [sexp]
-  {:pre [(literal? sexp)]}
-  (if (literal-pos? sexp)
-      (make-statement :positive true :atom sexp)
-      (make-statement :positive false :atom (literal-atom sexp))))
+  "literal -> statement
+   Assures that a literal is in the form of a statement."
+  [x]
+  {:pre [(literal? x)]}
+  (if (statement? x) x
+    (if (literal-pos? x)
+      (make-statement :positive true :atom x)
+      (make-statement :positive false :atom (literal-atom x)))))
 
-(defn statement->literal
-  "statement -> literal"
-  [stmt]
-  {:pre [(statement? stmt)]}
-  (if (statement-pos? stmt)
-    (:atom stmt)
-    (list 'not (:atom stmt))))
+(defn literal->sliteral
+  "literal -> sliteral
+   Assures that a literal is in the form of an sliteral."
+  [x]
+  {:pre [(literal? x)]}
+  (if (sliteral? x) x
+    (if (literal-pos? x)
+      (:atom x)
+      (list 'not (:atom x)))))
 
 (declare term-formatted)
 
@@ -288,16 +284,16 @@
 (defn statement-formatted
   ([s] (statement-formatted s false :en))
   ([s x] (if (keyword? x) 
-             (statement-formatted s true x)
-             (statement-formatted s x :en)))
+           (statement-formatted s true x)
+           (statement-formatted s x :en)))
   ([s parentheses? lang]
     (cond
       (string? s) (short-str s),
       (symbol? s) (short-str (str s)),
       (statement? s) (cond (not (empty? (:text s))) (lang (:text s))
                            (:atom s) (if (and (seq? (:atom s)) parentheses?) 
-                                      (str "(" (statement-formatted (statement-wff s)) ")")
-                                      (statement-formatted (statement-wff s))))
+                                       (str "(" (statement-formatted s) ")")
+                                       (statement-formatted s)))
       (nonemptyseq? s) (if parentheses?
                          (str "(" (str/join " " (map term-formatted s)) ")")
                          (str/join " " (map term-formatted s))),

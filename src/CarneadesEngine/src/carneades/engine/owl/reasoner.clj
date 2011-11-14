@@ -41,9 +41,9 @@
                [(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))]
                (make-argument
                  :id (gensym "a")
-                 :conclusion (literal->statement c)
-                 :premises (map literal->statement 
-                 (list (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
+                 :conclusion c
+                 :premises  
+                 (list (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString))))
                  :scheme "HermiT"))))
       insts)))
 
@@ -64,8 +64,8 @@
                 [(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))]
                 (make-argument
                   :id (gensym "a")
-                  :conclusion (literal->statement wff)
-                  :premises (map literal->statement (list (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
+                  :conclusion wff
+                  :premises (list (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString))))
                   :scheme "HermiT"))))
       nil)))
 
@@ -93,8 +93,8 @@
                [(list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))]
                (make-argument
                  :id (gensym "a")
-                 :conclusion (literal->statement c)
-                 :premises (map literal->statement (list (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString)))))
+                 :conclusion c
+                 :premises (list (list 'valid (symbol (. (. (. ontology getOntologyID) getOntologyIRI) toString))))
                  :scheme "HermiT"))))
       insts)))
 

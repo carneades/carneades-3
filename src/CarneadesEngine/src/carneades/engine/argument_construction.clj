@@ -90,7 +90,7 @@
                   :issues (rest (:issues g1))
                   :substitutions subs
                   :depth (inc (:depth g1))))
-      (let [conclusion (statement->literal (:conclusion arg)),
+      (let [conclusion (literal->sliteral (:conclusion arg)),
             rebuttal (apply-substitutions subs (literal-complement conclusion)),
             undercutter (apply-substitutions subs `(~'undercut ~(:id arg)))]
         (add-goal state1 
@@ -98,8 +98,8 @@
                     ; pop the first issue and add issues for the
                     ; premises of the argument to the beginning for
                     ; depth-first search
-                    :issues (concat (map statement->literal 
-                                         (vals (:premises (:argument response))))
+                    :issues (concat (map (fn [p] (literal->sliteral (:literal p)))
+                                         (:premises (:argument response)))
                                     (list rebuttal undercutter)                              
                                     (rest (:issues g1)))
                     :substitutions subs
@@ -158,7 +158,7 @@
                               ag))]
                   (add-goal (assoc state2 :graph ag2)
                             (make-goal 
-                              :issues (list (literal-complement (statement->literal asm)))
+                              :issues (list (literal-complement (literal->sliteral asm)))
                               :substitutions subs
                               :depth (inc (:depth g1))))))))
           state1
@@ -170,10 +170,12 @@
   [state response]
   (let [subs (:substitutions response)
         asms (:assumptions response)]
-    (assoc state :asm-templates 
-           (concat (:asm-templates state) 
-                   (map (fn [asm] (apply-substitutions subs asm))
-                        asms)))))
+    (if (or (nil? asms) (empty? asms))
+      state
+      (assoc state :asm-templates 
+             (concat (:asm-templates state) 
+                     (map (fn [asm] (apply-substitutions subs asm))
+                          asms))))))
 
 (defn- process-argument
   "ac-state response -> ac-state"
@@ -215,7 +217,7 @@
     (generate [this goal subs]
               (reduce (fn [l sn]
                         (let [subs2 (unify goal (:atom sn) subs)]
-                          (if (not subs2)
+                          (if (or (not subs2) (empty? subs2))
                             l
                             (conj l (make-response subs2 () nil)))))
                       []
@@ -272,7 +274,7 @@
   "argument-graph literal int (coll-of literal) (seq-of generator) -> argument-graph
    Construct an argument graph for both sides of an issue."
   ([ag1 issue max-goals facts generators1]
-    (let [ag2 (accept ag1 (map literal->statement facts))
+    (let [ag2 (accept ag1 facts)
           generators2 (concat (list (builtins))  generators1)]
       (:graph (reduce-goals (initial-acstate issue ag2) 
                             max-goals 

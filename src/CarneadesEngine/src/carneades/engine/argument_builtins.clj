@@ -29,13 +29,13 @@
       [(make-scheme 
         :name "Priority1"
         :conclusions ['(priority ?r2 ?r1 (not ?p1))]
-        :premises ['(applies ?r2 ?p1)
-                   '(prior ?r2 ?r1)])
+        :premises [(pm '(applies ?r2 ?p1))
+                   (pm '(prior ?r2 ?r1))])
       (make-scheme
         :name "Priority2"
         :conclusions ['(priority ?r2 ?r1 ?p1)]
-        :premises ['(applies ?r2 (not ?p1)) 
-                   '(prior ?r2 ?r1)])])))
+        :premises [(pm '(applies ?r2 (not ?p1))) 
+                   (pm '(prior ?r2 ?r1))])])))
 
 (defn- dispatch-eval [subs literal term expr]
   (try
@@ -46,7 +46,7 @@
           (if-let [subs2 (unify term result subs)]
             (list (make-response subs2 () 
                                  (make-argument 
-                                   :conclusion (literal->statement literal) 
+                                   :conclusion literal 
                                    :scheme "builtin:eval")))
             ()))))
     (catch java.lang.SecurityException e ())
@@ -56,7 +56,7 @@
   (if-let [subs2 (unify term1 term2 subs)]
     (list (make-response subs2 () 
                          (make-argument  
-                           :conclusion (literal->statement literal) 
+                           :conclusion literal 
                            :scheme "builtin:=")))
     ()))
 
@@ -65,7 +65,7 @@
     ()
     (list (make-response subs () 
                          (make-argument  
-                           :conclusion (literal->statement literal)
+                           :conclusion literal
                            :scheme "builtin:not=")))))
 
 (defn dispatch
