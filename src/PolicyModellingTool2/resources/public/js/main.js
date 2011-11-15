@@ -77,40 +77,46 @@ $(function(){
      //button
      $(".ui-button").button();
 
-    $("#locate").change(function() {
-        // if the language is changed
-        var lang = $(this).val();
+    $("#locate").change(
+        function() 
+        {
+            // if the language is changed
+            var lang = $(this).val();
 
-        // informs the server
-        send_data(translation_url(), {"language" : lang}, function(data) {});
-        
-        var label = $('#chooseTopicLabel').text();
-        var topicLabel = $('#topicLabel').text();
+            // informs the server
+            send_data(translation_url(), {"language" : lang}, function(data) {});
+            
+            var label = $('#chooseTopicLabel').text();
+            var topicLabel = $('#topicLabel').text();
 
-        // translates labels
-        translate(["choose_topic", "topics", "hints", "questions", "solution", "next" ,
-                   "orphan_works"], lang,
-                  function(translations) {
-                      $('#chooseTopicLabel').text(translations[0]);
-                      $('#topicLabel').text(translations[1]);
-                      $('#topicTabLabel').text(translations[1]);
-                      $('#hintsLabel').text(translations[2]);
-                      $('#questionsTabLabel').text(translations[3]);
-                      $('#solutionTabLabel').text(translations[4]);
-                      $('#nextTopic').val(translations[5]);
-                      $('#topicName').html(translations[6]);
-                  });
+            // translates labels
+            translate(["choose_topic", "topics", "hints", "questions", "solution", "next" ,
+                       "orphan_works"], lang,
+                      function(translations) {
+                          $('#chooseTopicLabel').text(translations[0]);
+                          $('#topicLabel').text(translations[1]);
+                          $('#topicTabLabel').text(translations[1]);
+                          $('#hintsLabel').text(translations[2]);
+                          $('#questionsTabLabel').text(translations[3]);
+                          $('#solutionTabLabel').text(translations[4]);
+                          $('#nextTopic').val(translations[5]);
+                          $('#topicName').html(translations[6]);
+                      });
+            
+            // translates all categories
+            $.each(displayed_categories, translate_category);
 
-        // translates current question
-        if(current_question != undefined) {
-            send_data(simulation_url(),
-                      {retrieve_question : {id : current_question.id,
-                                            statement : current_question.statement}},
-                      showQuestions);
-        }
-        
-        langChange = true;
-    });
+            // translates current question
+            if(displayed_categories.length != 0) {
+                current_category = displayed_categories[displayed_categories.length - 1];
+                send_data(simulation_url(),
+                          {retrieve_question : {id : current_category.first_question.id,
+                                                statement : current_category.first_question.statement}},
+                          function (data) { showQuestions(data, false, true); });
+            }
+
+            langChange = true;
+        });
 
     // Fragen-Liste
     $("li", $("#questionlist")).each(function(index){            
@@ -143,12 +149,25 @@ $(function(){
     send_data(translation_url(), {get_available_languages : null}, showAvailableLanguages);
 });
 
+
+function translate_category(index)
+{
+    var cat = displayed_categories[index];
+    send_data(simulation_url(),
+              {retrieve_question : {id : cat.first_question.id,
+                                    statement : cat.first_question.statement}},
+              function (data) { 
+                  var categoryName = data.questions[0].category_name;
+                  $('#categories :nth-child(' + (index+1) + ')').text(categoryName);
+              });
+}
+
 /**
  * loads questions for requested topic
  * @param {string} t name of the topic
  */
 function loadTopic(t) {
-    send_data(simulation_url(), {"request" : t}, showQuestions);
+    send_data(simulation_url(), {"request" : t}, function(data) { showQuestions(data, true); });
 }
 
 function showAvailableLanguages(data) {
@@ -195,21 +214,29 @@ function genId() {
     return newDate.getTime();
 }
 
+var displayed_categories = [];
 
-var current_question = undefined;
 /**
  * Displays a list of questions
  * @param {object} questionArray json object representing the questions
  */
-function showQuestions(data) {
-    // {"questions":[{"answers":[],"formalanswers":null,"id":1,"category":"Name","optional":false,"hint":"Please enter the name of the rights owner.","type":"text","question":"What is the name of the right owner?","statement":["hatName","?Person"]},{"answers":[],"formalanswers":null,"id":2,"category":"Work","optional":false,"hint":null,"type":"text","question":"What is the name of the concerned orphaned work?","statement":["betrifftWerk","?x"]}]}
+function showQuestions(data, is_first_display, lang_changed) {
+    // {"questions":[{"answers":[],"formalanswers":null,"id":1,"category":"Name","optional":false,"hint":"Please enter the name of the rights owner.","type":"text","question":"What is the name of the right owner?","statement":["hatName","?Person"]},
+                     // {"answers":[],"formalanswers":null,"id":2,"category":"Work","optional":false,"hint":null,"type":"text","question":"What is the name of the concerned orphaned work?","statement":["betrifftWerk","?x"]} ]}
     
     var questionArray = data.questions;
-    current_question = questionArray[0];
     
     $("#tabs a[href='#tabs-2']").click();        
     var category_name = questionArray[0].category_name;
     var category = questionArray[0].category;
+
+    var first_question_id = questionArray[0].id;
+
+    if(is_first_display) {
+        displayed_categories.push({category : category,
+                                   first_question : questionArray[0]});
+        
+    }
 
     var qlist = $("#questionlist");
 
@@ -243,7 +270,11 @@ function showQuestions(data) {
     });
 
     $('.datefield', qbox).datepicker();
-    updateTopicList(category_name, category);
+
+    if(!lang_changed) {
+        add_category(category_name, category, first_question_id);        
+    }
+
 }
 
 /**
@@ -535,9 +566,9 @@ function sendAnswers(category) {
 
 function show_questions_or_answer(data) {
     if (data.questions) {
-        showQuestions(data);
+        showQuestions(data, true);
     } else if (data) {
-        showSolution(data);
+        showSolution(data, true);
     }
 }
 
@@ -593,14 +624,16 @@ function qunwarn(obj) {
     $(".qwarn", obj.parentNode).fadeOut(500, function() {$(this).remove();});
 }
 
-/**
- * adding a new topic to the question-topic-list
- * @param {string} topic name of the topic (must equal the id of the DIV)
- */
-function updateTopicList(category_name, category) {
-    $("#questionlinklist")
-        .empty()
-        .append('<li id=\"' + category + '\" >' + category_name + '</li>');
+function add_category(category_name, category, first_question_id) {
+    var category_html_id = category + 'Category';
+    $("#categories")
+        .append('<li id="' + category_html_id + '">'  + category_name + '</li>');
+
+    $('#' + category_html_id).click(
+        function () {
+            alert(category);
+            alert(first_question_id);
+        }); 
 }
 
 /**
@@ -681,7 +714,7 @@ function evaluateGraph() {
     
     send_data(evaluation_url(),
               {evaluate : {argGraph : argGraph, accept : accArray, reject : rejArray}},
-              function (data) { showArgGraph(data.evaluated) });
+              function (data) { showArgGraph(data.evaluated); });
 }
 
 function showError(error) {
@@ -692,7 +725,7 @@ function showError(error) {
 // clean DOM after server response
 function resetContent() {
     // clear question nav
-    $('#questionlinklist').empty();
+    $('#categories').empty();
     // clear question forms
     $('#questionlist').empty();
     // clear question hints
