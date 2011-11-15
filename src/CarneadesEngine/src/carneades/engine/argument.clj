@@ -33,8 +33,8 @@
 
 (defrecord Argument
   [id               ; symbol
-   title            ; string or hash table (for multiple languages)
-   scheme           ; nil or symbol, scheme id
+   header           ; nil or dublin core metadata about the argument
+   scheme           ; nil or symbol, for the scheme id
    strict           ; boolean
    weight           ; real number between 0.0 and 1.0, default 0.5
    conclusion       ; nil or literal
@@ -56,8 +56,8 @@
   [& values]
   (-> (Argument. 
         (gensym "a") ; id
-        ""           ; title
-        nil           ; scheme
+        nil          ; header
+        nil          ; scheme
         false        ; strict
         0.5          ; weight
         nil          ; conclusion
