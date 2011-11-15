@@ -22,7 +22,6 @@
     <script src="js/ajax.js" type="text/javascript"></script>
     <script src="js/main.js" type="text/javascript"></script>
     <script src="js/slider.js" type="text/javascript"></script>
-    
     <style type="text/css">
       @import "css/jquery.svg.css";                    
     </style> <link rel="stylesheet" href="css/screen.css" type="text/css" />
@@ -38,19 +37,21 @@
       <!-- language -->
       <div id="locatebox">
         <select id="locate" name="locate">
-          <!-- this will be filled dynamically depending on the languages available for the
-               translation service ->
+          <!-- this will be filled dynamically depending with the languages available for the
+               translation service -->
+          <option value="en">English</option>
         </select>
         <!-- <a href="#" onclick="resetSession()" id="ResetLink">Reset</a> --> </div>
       <div id="tabs-1">
         <!-- <h2>Topics</h2> -->
-        <p style="font-size: 1.3em; line-height: 1.5; margin: 1em 0; width: 50%;">
-          <p id="chooseTopicLabel">Please choose a topic.</p> </p>
+        <p style="font-size: 1.3em; line-height: 1.5; margin: 1em 0; width: 50%;" id="chooseTopicLabel">Please choose a topic.</p>
         <div>
           <form id="chooseTopic" onsubmit="loadTopic($('input[name=\'topic\']:checked').val());$('#tabs a[href=\'#tabs-2\']').click();"
             class="ui-widget ui-widget-content ui-corner-all" action="">
+            <p>
             <input id="topic" class="required" type="radio" value="topicXY" name="topic" />
             <span id="topicName" onclick="$(this).prev().click()">Orphan works</span>
+            </p>
             <p><!-- <input id="nextTopic" type="button" onclick="loadTopic($('input[name=\'topic\']:checked').val());" -->
                <!--  value="next" class="ui-button next" /> -->
                <input id="nextTopic" type="button" onclick=""
@@ -67,7 +68,7 @@
             </ul>
           </div>
           <!-- Questions -->
-          <form class="ui-widget ui-widget-content ui-corner-all" id="questions" method="POST" action="">
+          <form class="ui-widget ui-widget-content ui-corner-all" id="questions" method="post" action="">
             <div id="hints">
               <h4 id="hintsLabel">Hints</h4>
             </div>
@@ -76,7 +77,7 @@
         </div>
       </div>
       <div id="tabs-3">
-        <div id="solutionstatement" hidden="true"/>
+        <div id="solutionstatement" />
         <div class="ui-widget ui-widget-content ui-corner-all" id="graph" />
         <div id="toolbar" class="ui-widget ui-widget-content ui-corner-all" >
           <div id="slider" class="ui-widget ui-widget-content ui-corner-all"/>
@@ -88,11 +89,13 @@
             <br />
             <div id="findpolicy">
               <p id="findpolicytext">Highlight policies that could...</p>
-              <form>
+              <form action="post">
+                <p>
                 <input type="radio" name="abduction" value="inin" />make this case acceptable<br/>
                 <input type="radio" name="abduction" value="inout" />make this case rejectable<br/>
                 <input type="radio" name="abduction" value="outin" />make the contrary of this case acceptable<br/>
                 <input type="radio" name="abduction" value="outout" />make the contrary of this case rejectable<br/>
+                </p>
               </form>
               <br/>
               <input id="abductionButton" type="button" value="Highlight policies" class="ui-button">

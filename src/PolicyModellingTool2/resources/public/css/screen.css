@@ -1,9 +1,5 @@
 /* 
-    Document   : screen
-    Created on : 01.12.2010, 16:50:47
-    Author     : bbr stb
-    Description:
-        Stylesheet for Screens
+  Stylesheet
 */
 
 /* general */
@@ -139,7 +135,7 @@ h2 {
 }
 .qwarn i { /*left site */
         margin: 0;
-        padding: 0 7px;
+        padding: 7px;
         height: 16px;
         line-height: 16px;
         font-size:13px;
@@ -156,9 +152,10 @@ h2 {
 }
 
 #solutionstatement {
-    margin: 1.5em 0 1em 0;
-    font-size:1.5em;
-    color: #5a5863;
+   margin: 1.5em 0 1em 0;
+   font-size:1.5em;
+   color: #5a5863;
+   visibility: hidden
 }
 
 #toolbar {

@@ -154,6 +154,7 @@ function loadTopic(t) {
 function showAvailableLanguages(data) {
     var languages = data.available_languages;
     
+    $('#locate').empty();
     for(var name in languages) {
         $('#locate').append('<option value="' + languages[name] + '">' + name + '</option>');
     }
