@@ -208,15 +208,16 @@ function showQuestions(data) {
     current_question = questionArray[0];
     
     $("#tabs a[href='#tabs-2']").click();        
-    var topicName = questionArray[0].category;
-    var topicID = topicName.replace(/\s/,"_");
+    var category_name = questionArray[0].category_name;
+    var category = questionArray[0].category;
+
     var qlist = $("#questionlist");
 
     // remove previous title if it exits (for instance after asking a change in the language)
     $('#questionlist').empty();
     // add new div to questionlist with id = topic name
-    qlist.append('<div id="'+topicID+'"><h3>'+topicName+'</h3><div id="qcontent"></div></div>');
-    var qdiv = $("#"+topicID, qlist);
+    qlist.append('<div id="'+category+'"><h3>'+category_name+'</h3><div id="qcontent"></div></div>');
+    var qdiv = $("#"+category, qlist);
     var qbox = $("#qcontent", qdiv);
     // for each question
     $.each(questionArray, function(i, item) {
@@ -224,7 +225,7 @@ function showQuestions(data) {
     });
 
     
-    // qbox.append('<input type="button" class="ui-button next" value="next" onclick="sendAnswers(\''+topicID+'\')"/>');
+    // qbox.append('<input type="button" class="ui-button next" value="next" onclick="sendAnswers(\''+category+'\')"/>');
     var buttonId = genId();
     qbox.append('<input type="button" id="' + buttonId+ '" class="ui-button ui-widget ui-state-default ui-corner-all" value="next" />');
     translate(["next"], $('#locate').val(),
@@ -235,16 +236,14 @@ function showQuestions(data) {
     $('#' + buttonId).click(function () {
         $('#questions').validate();
         if($('#questions').valid()) {
-            sendAnswers(topicID);
+            sendAnswers(category);
         } else {
             showErrorStatus('Some fields are not filled');
         }
     });
 
     $('.datefield', qbox).datepicker();
-    if(!langChange) {
-        updateTopicList(topicName, topicID);
-    }
+    updateTopicList(category_name, category);
 }
 
 /**
@@ -481,13 +480,13 @@ function statusupdate(type, text) {
 
 /**
  * Collects the given answers and parse them as JSON before sending them to the server.
- * @param {string} topicID the ID of the question div
+ * @param {string} category the ID of the question div
  * @see validateField
  */
-function sendAnswers(topicID) {
+function sendAnswers(category) {
     var doRequest = true;
     var jsonA = new Array();
-    var topicDiv = $("#"+topicID);
+    var topicDiv = $("#"+category);
     topicDiv.hide();
     $("input", topicDiv).each(function(i, itemobj){
         var item = $(itemobj);
@@ -598,15 +597,10 @@ function qunwarn(obj) {
  * adding a new topic to the question-topic-list
  * @param {string} topic name of the topic (must equal the id of the DIV)
  */
-function updateTopicList(topicName, topicID) {
-    $("#questionlinklist").append("<li>"+topicName+"</li>").click(function() {
-        // TODO : debug
-        $("#questionlist div").hide();
-        var d = $("#"+topicID);
-        d.show();
-        d.children().show();
-        // $("#hints").show();
-    });
+function updateTopicList(category_name, category) {
+    $("#questionlinklist")
+        .empty()
+        .append('<li id=\"' + category + '\" >' + category_name + '</li>');
 }
 
 /**

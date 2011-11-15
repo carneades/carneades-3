@@ -58,19 +58,21 @@
       hint)))
 
 (defn- get-category
+  "Returns the category and the category name"
   [questiondata lang]
   (let [klang (keyword lang)
-        cat (-> questiondata :category klang)
-        nocat (nil? cat)]
-    (if nocat
-      (translate (-> questiondata :category :en) "en" lang)
-      cat)))
+        category (-> questiondata :category :en)
+        category_name (-> questiondata :category klang)
+        nocatname (nil? category_name)]
+    (if nocatname
+      [category (translate category "en" lang)]
+      [category category_name])))
 
 (defn- get-question
   [id stmt lang questions]
   (let [questiondata (questions (statement-predicate stmt))
         question (get-question-text stmt questiondata lang)
-        category (get-category questiondata lang)
+        [category category-name] (get-category questiondata lang)
         optional false
         hint (get-hint questiondata lang)
         type (-> questiondata :type)
@@ -81,6 +83,7 @@
         ;; we should use %n$s in string formats to specify arg orders
         q {:id id
            :category category
+           :category_name category-name
            :optional optional
            :hint hint
            :type type

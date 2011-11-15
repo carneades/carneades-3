@@ -22,7 +22,9 @@
             :de (make-form :positive "Der Reichtsinhaber heißt %s."
                            :negative "Der Reichtsinhaber heißt nicht %s."
                            :question "Wie heißt der Rechtsinhaber?")}
-    :category {:en "Name"}
+    :category {:en "Name"
+               :machine "Name"
+               }
     :hint {:en "Please enter the name of the rights owner."}
     :type "text"
     :followups ['betrifftWerk])
@@ -38,7 +40,7 @@
                            :negative "The concerned orphaned work is not named %s"
                            :question "What is the name of the concerned orphaned work?")}
     :type "text"
-    :category {:en "Work"})
+    :category {:en "Work" :machine "Work"})
    
    'zumZweck
    (make-question
@@ -51,7 +53,7 @@
                            :negative "%s will not be used for a %s purpose"
                            :question "For which purpose would like to use %s?")}
     :hint {:en "Please enter if you want to use the orphaned work for commercial purposes."}
-    :category {:en "Purpose"}
+    :category {:en "Purpose" :machine "Purpose"}
     :answers {:en ["commercial" "non-commercial"]
               :machine ["commercial" "non_commercial"]}
     :type "radio")
@@ -67,7 +69,7 @@
                            :negative "The search for the right holder was not %s"
                            :question "Is the search that has been carried out a professional one or a standard search?")}
     :hint {:en "Please enter if your documented search was a professional one."}
-    :category {:en "Search"}
+    :category {:en "Search" :machine "Search"}
     :answers {:en ["Standard" "Professional" "None"]
               :machine ["Standard" "Professional" "None"]}
     :type "select"
@@ -82,7 +84,7 @@
                            :question "Did you announce the search?")
 
             :de (make-form :question "Erfolgte eine Bekanntmachung der Suche?")}
-    :category {:de "Bekanntmachung"}
+    :category {:de "Bekanntmachung" :machine "Bekanntmachung"}
     :answers {:en ["No" "Public"]
               :machine ["No" "Public"]}
     :type "radio")
