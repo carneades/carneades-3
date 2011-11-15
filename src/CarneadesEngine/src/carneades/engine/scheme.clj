@@ -64,7 +64,7 @@
 
 (defrecord Scheme
   [id            ; symbol
-   name          ; string
+   header        ; nil or dublin metadata
    conclusions   ; sequence of literals or variables (ranging over literals)
    strict        ; boolean, defeasible if false
    weight        ; nil or number in the range 0.0 to 1.0
@@ -79,7 +79,7 @@
   [& key-values]  
   (-> (merge (Scheme. 
                (gensym "s")    ; id 
-               ""              ; name
+               nil             ; header
                []              ; conclusions
                false           ; strict
                0.5             ; weight
@@ -122,8 +122,7 @@
 
 (defrecord Section
   [id          ; symbol
-   header      ; nil or a dublin core metadata structure about this model itself
-   sources     ; collection of dublin core metadata about the texts modeled
+   header      ; nil or a dublin core metadata structure about this model
    schemes     ; sequence of schemes
    sections])  ; sequence of sections; i.e. subsections    
 
@@ -133,7 +132,6 @@
   (merge (Section. 
            (gensym "?")    ; id
            nil             ; header
-           []              ; sources
            []              ; schemes
            [])             ; (sub)sections
          (apply hash-map key-values)))
@@ -170,8 +168,7 @@
            :assumptions assumptions)))
 
 (defrecord Theory
-  [header     ; nil or a dublin core metadata structure about the model itself.
-   sources    ; collection of dublin core metadata about the texts modeled by the theory
+  [header     ; nil or a dublin core metadata structure about the model.
    language   ; (symbol -> individual or predicate) map
    schemes    ; scheme sequence
    sections]) ; section sequence
@@ -181,10 +178,9 @@
   [& key-values]  
   (merge (Theory. 
            nil             ; header
-           []              ; sources
            {}              ; language
            []              ; schemes
-           [])              ; sections
+           [])             ; sections
          (apply hash-map key-values)))
 
 (defn theory? [x] (instance? Theory x))

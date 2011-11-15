@@ -14,8 +14,8 @@
 
 (defrecord ArgumentNode
   [id               ; symbol
-   title            ; string or hash table (for multiple languages)
-   scheme           ; string
+   header           ; nil or dublin core metadata about this model
+   scheme           ; string -- URI or name of the scheme applied
    strict           ; boolean
    weight           ; 0.0-1.0, default 0.5; input to argument evaluation
    value            ; nil or 0.0-1.0, default nil; output from argument evaluation
@@ -28,7 +28,7 @@
    [& key-values]
    (merge (ArgumentNode. 
             (gensym "a") ; id
-            ""           ; title
+            nil          ; header
             ""           ; scheme
             false        ; strict
             0.5          ; weight
@@ -67,6 +67,7 @@
 
 (defrecord StatementNode
   [id               ; symbol, same as the propositional letter in the key list
+   header           ; nil or dublin metadata about the model
    atom             ; ground atomic formula or nil
    weight           ; nil or 0.0-1.0, default nil; input to argument evaluation
    value            ; nil or 0.0-1.0, default nil; outut from argument evaluation
@@ -81,6 +82,7 @@
   [stmt]
   {:pre [(literal? stmt)]}
   (StatementNode. (gensym "s")       ; id
+                  nil                ; header
                   (literal-atom stmt)        
                   (:weight stmt)    
                   nil                ; value   
@@ -96,7 +98,7 @@
    
 (defrecord ArgumentGraph 
   [id               ; symbol
-   title            ; string or hash table (for multiple languages)
+   header           ; nil or Dublin metadata about the model
    main-issue       ; symbol, a key into the statement node map
    language         ; (sexp -> symbol) map, i.e. a "key list"; 
                     ; where the sexp represents a ground atomic formula
@@ -109,9 +111,9 @@
    [& key-values]  
    (merge (ArgumentGraph. 
             (gensym "ag")   ; id
-            ""              ; title
+            nil             ; header
             nil             ; main-issue
-            {}              ; keys
+            {}              ; language (key list)
             {}              ; statement nodes
             {}              ; argument nodes
             {})             ; references to sources
@@ -297,7 +299,7 @@
                     (:sources arg))
         node (make-argument-node 
                :id (:id arg)           
-               :title (:title arg)      
+               :header (:header arg)      
                :scheme (:scheme arg) 
                :strict (:strict arg)
                :weight (:weight arg)  
