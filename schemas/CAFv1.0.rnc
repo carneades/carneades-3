@@ -1,7 +1,7 @@
 # Copyright (C) 2011 Fraunhofer Gesellschaft 
 # Licensed under the EUPL V.1.1
 
-# Carneades Argument Format (CAF), Version 1.0
+# Carneades Argument Format (CAF), Version 1.1
 # CAF is based on the argument graph part of 
 # the Legal Knowledge Interchange Format (LKIF)
 
@@ -10,12 +10,25 @@ datatypes xsd = "http://www.w3.org/2001/XMLSchema-datatypes"
 grammar {
     start = element caf { 
         attribute version { xsd:string }?,  # version of the CAF schema
-        MetaData, Sources, ArgumentGraph 
+        References, ArgumentGraphs 
     }
+    
+    References = element references { MetaData+ }
+         
+    Metadata = element metadata { 
+        attribute id { xsd:ID }?,     # local identifier
+    	DublinElement+                
+    }   
     
     # Simple Dublin Core Elements
     # See: http://en.wikipedia.org/wiki/Dublin_Core
     
+    DublinElement = ( Contributor | Coverage | Creator |
+                      Date | Description | Format |
+                      Identifier | Language | Publisher |
+                      Relation | Rights | Source | Subject | Title | Type )
+                      
+  
     Contributor = element contributor { text }
     Coverage = element coverage { text }
     Creator = element creator { text }
@@ -26,14 +39,17 @@ grammar {
     	text
     }
     
-    Descriptions = element descriptions { Description+ }
-    
+    Descriptions = element descriptions {
+        Description+
+    }
+        
     Format = element format { text }
     Identifier = element identifier { text }
     Language = element language { text }
     Publisher = element publisher { text }
     Relation = element relation { text }
     Rights = element rights { text }
+    Source = element source { text }
     Subject = element subject { text }
    
     Title = element title { 
@@ -43,32 +59,17 @@ grammar {
     
     Titles = element titles { Title+ }
     
-    Type = element type { text }
+    Type = element type { text }                                                  
     
-    DublinElement = ( Contributor | Coverage | Creator |
-                      Date | Description | Format |
-                      Identifier | Language | Publisher |
-                      Relation | Rights | Subject | Title | Type )
-                      
-                       
-    MetaData = element metadata { MetaDatum+ }
-         
-    MetaDatum = element metadum { 
-    	attribute uri { xsd:anyURI }, # of a source
-    	DublinElement+
+    ArgumentGraphs = element argument-graphs {
+    	ArgumentGraph+
     }
     
-    Source = element source { 
-        attribute uri { xsd:anyURI },     # of a source
-    	attribute element { xsd:anyURI }  # of an element derived from the source 
-    } 
-    
-    Sources = element sources { Source+ }                                           
-        
     ArgumentGraph = element argument-graph { 
         attribute id { xsd:ID }?, 
-        attribute main-issue { xsd:anyURI }?, 
-        Titles?, Statements, Arguments
+        Metadata?,           # describing the model, not the sources
+        Statements, 
+        Arguments
     }
     
     Statements = element statements { Statement+ }
@@ -78,8 +79,12 @@ grammar {
         attribute weight { xsd:float }?,  # range 0.0 to 1.0, default 0.5
         # weights can be interpreted as an ordinal scale, e.g.
         # 0.0=false, 0.25=assumed falsed, 0.5=questioned, 0.75=assumed true, 1.00=true
+        attribute value { xsd:float }?,   # output of argument evaluation
         attribute standard { "DV" | "PE" | "CCE" | "BRD" }?, # default: PE
-        Atom?, Descriptions
+        attribute atom { xsd:string }  # formalization as Clojure s-expression
+        attribute main-issue { xsd:boolean }  # default: false
+        Metadata?,       # describing the model, not sources
+        Descriptions     # natural language expressions of the statement 
     }
              
     Arguments = element arguments { Argument* }
@@ -88,14 +93,17 @@ grammar {
         attribute direction { "pro" | "con" }?,
         attribute scheme { xsd:anyURI | xsd:string }?,
         attribute weight { xsd:float }?,  # range: 0.0 to 1.0; default: 0.5
-        Titles?, Conclusion, Premises
+        attribute value { xsd:float }?,   # output of argument evaluation
+        Metadata?,                        # describing the model
+        Conclusion, 
+        Premises
     }
     
     Premises = element premises { Premise* }
     
     Premise = element premise { 
         attribute polarity { "positive" | "negative" }?, # default: positive
-        attribute role { xsd:anyURI | xsd:string }?,
+        attribute role { xsd:string }?,
         attribute implicit { xsd:boolean}?,   # default: false
         attribute statement { xsd:anyURI },
      } 
