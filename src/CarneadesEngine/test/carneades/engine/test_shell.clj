@@ -73,6 +73,20 @@
           :premises [(pm '(status ?x ?y))
                      (pm '(not= ?y exempted))])])
      
+     (make-section    ; (part of) standard deontic logic
+       :schemes
+		 [(make-scheme 
+			:strict true
+			:conclusions ['(not (obligated (not ?P)))]
+			:premises    [(pm '(permitted ?P))])
+		  
+		  (make-scheme 
+			:strict true
+			:conclusions ['(not (permitted ?P))]
+			:premises    [(pm '(obligated (not ?P)))])
+		  
+		  (axiom '(permitted (drink-alcohol ?x)))])
+     
      (make-section
        :schemes 
        [(make-scheme 
@@ -165,6 +179,11 @@
          (let [facts '((title Joe Dr))
                query '(has-phd ?x)]
            (is (in? (ag facts query) '(has-phd Joe)))))
+
+(deftest test-deontic-logic
+         (let [facts ()
+               query '(not (obligated (not (drink-alcohol Tom))))]
+           (is (in? (ag facts query) '(not (obligated (not (drink-alcohol Tom))))))))
 
 (deftest test-engine-not-equal
          (let [facts '((status Lea exempted)
