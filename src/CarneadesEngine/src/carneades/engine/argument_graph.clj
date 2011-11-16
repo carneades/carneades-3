@@ -14,7 +14,7 @@
 
 (defrecord ArgumentNode
   [id               ; symbol
-   title            ; string or hash table (for multiple languages)
+   header           ; nil or dublin core metadata about the argument
    scheme           ; string
    strict           ; boolean
    weight           ; 0.0-1.0, default 0.5; input to argument evaluation
@@ -28,7 +28,7 @@
    [& key-values]
    (merge (ArgumentNode. 
             (gensym "a") ; id
-            ""           ; title
+            nil          ; header
             ""           ; scheme
             false        ; strict
             0.5          ; weight
@@ -52,9 +52,11 @@
 (defrecord StatementNode
   [id               ; symbol, same as the propositional letter in the key list
    atom             ; ground atomic formula or nil
+   header           ; nil or Dublin metadata structure about the statement
    weight           ; nil or 0.0-1.0, default nil; input to argument evaluation
    value            ; nil or 0.0-1.0, default nil; outut from argument evaluation
    standard         ; proof-standard
+   main             ; boolean, default false; true if the statement is a main issue
    text             ; (language -> string) map, natural language formulations of the statement
    premise-of       ; (set-of symbol), argument node ids
    pro              ; (set-of symbol), pro argument node ids
@@ -64,10 +66,12 @@
   [stmt]
   {:pre [(literal? stmt)]}
   (StatementNode. (gensym "s")       ; id
-                  (literal-atom stmt)        
+                  (literal-atom stmt)  
+                  nil                ; header      
                   (:weight stmt)    
                   nil                ; value   
                   (if (statement? stmt) (:standard stmt) :pe)
+                  false              ; main issue
                   (if (statement? stmt) (:text stmt) {})
                   #{}                ; premise-of
                   #{}                ; pro argument node ids
@@ -78,8 +82,7 @@
    
 (defrecord ArgumentGraph 
   [id               ; symbol
-   title            ; string or hash table (for multiple languages)
-   main-issue       ; symbol, a key into the statement node map
+   header           ; nil or Dublin meta-data description of the model
    language         ; (sexp -> symbol) map, i.e. a "key list"; 
                     ; where the sexp represents a ground atomic formula
    statement-nodes  ; (symbol -> StatementNode) map, 
@@ -91,8 +94,7 @@
    [& key-values]  
    (merge (ArgumentGraph. 
             (gensym "ag")   ; id
-            ""              ; title
-            nil             ; main-issue
+            nil             ; header
             {}              ; keys
             {}              ; statement nodes
             {}              ; argument nodes
