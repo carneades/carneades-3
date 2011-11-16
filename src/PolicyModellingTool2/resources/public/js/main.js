@@ -15,7 +15,7 @@ var IMPACT = {
 // adding JSON parser when browser is too old to have a build-in one (pre-IE8, pre-FF3.5, ...)
 if( typeof( window[ 'JSON' ] ) == "undefined" ) document.write('<script type="text/javascript" src="https://github.com/douglascrockford/JSON-js/raw/master/json2.js"/>');
 
-// JavaScript EPO!
+// Javascript EPO!
 Array.prototype.copy = function () {
     return ((new Array()).concat(this));
 };
@@ -114,7 +114,7 @@ $(function(){
                 send_data(simulation_url(),
                           {retrieve_question : {id : current_category.first_question.id,
                                                 statement : current_category.first_question.statement}},
-                          function (data) { showQuestions(data, false, true); });
+                          function (data) { show_questions(data, false, true); });
             }
 
             IMPACT.lang_changed = true;
@@ -169,7 +169,9 @@ function translate_category(index)
  * @param {string} t name of the topic
  */
 function loadTopic(t) {
-    send_data(simulation_url(), {"request" : t}, function(data) { showQuestions(data, true); });
+    send_data(simulation_url(), 
+              {"request" : t}, 
+              function(data) { show_questions(data, true, false); });
 }
 
 function showAvailableLanguages(data) {
@@ -218,25 +220,21 @@ function genId() {
 
 var displayed_categories = [];
 
-/**
- * Displays a list of questions
- * @param {object} questionArray json object representing the questions
- */
-function showQuestions(data, is_first_display, lang_changed) {
+function show_questions(data, is_first_display, lang_changed) {
     // {"questions":[{"answers":[],"formalanswers":null,"id":1,"category":"Name","optional":false,"hint":"Please enter the name of the rights owner.","type":"text","question":"What is the name of the right owner?","statement":["hatName","?Person"]},
                      // {"answers":[],"formalanswers":null,"id":2,"category":"Work","optional":false,"hint":null,"type":"text","question":"What is the name of the concerned orphaned work?","statement":["betrifftWerk","?x"]} ]}
     
-    var questionArray = data.questions;
+    var question_array = data.questions;
     
     $("#tabs a[href='#tabs-2']").click();        
-    var category_name = questionArray[0].category_name;
-    var category = questionArray[0].category;
+    var category_name = question_array[0].category_name;
+    var category = question_array[0].category;
 
-    var first_question_id = questionArray[0].id;
+    var first_question = question_array[0];
 
     if(is_first_display) {
         displayed_categories.push({category : category,
-                                   first_question : questionArray[0]});
+                                   first_question : question_array[0]});
         
     }
 
@@ -250,7 +248,7 @@ function showQuestions(data, is_first_display, lang_changed) {
     var qdiv = $("#"+category, qlist);
     var qbox = $("#qcontent", qdiv);
     // for each question
-    $.each(questionArray, function(i, item) {
+    $.each(question_array, function(i, item) {
         showQuestion(item, qbox);
     });
 
@@ -275,7 +273,7 @@ function showQuestions(data, is_first_display, lang_changed) {
     $('.datefield', qbox).datepicker();
 
     if(!lang_changed) {
-        add_category(category_name, category, first_question_id);        
+        add_category(category_name, category, first_question);        
     }
 
 }
@@ -572,7 +570,7 @@ function sendAnswers(category) {
 
 function show_questions_or_answer(data) {
     if (data.questions) {
-        showQuestions(data, true);
+        show_questions(data, true);
     } else if (data) {
         showSolution(data, true);
     }
@@ -630,15 +628,18 @@ function qunwarn(obj) {
     $(".qwarn", obj.parentNode).fadeOut(500, function() {$(this).remove();});
 }
 
-function add_category(category_name, category, first_question_id) {
+function add_category(category_name, category, first_question) {
     var category_html_id = category + 'Category';
     $("#categories")
         .append('<li id="' + category_html_id + '">'  + category_name + '</li>');
 
     $('#' + category_html_id).click(
         function () {
-            alert(category);
-            alert(first_question_id);
+            // retrieves question of the clicked category and displays them
+            send_data(simulation_url(),
+                      {retrieve_question : {id : first_question.id,
+                                            statement : first_question.statement}},
+                      function (data) { show_questions(data, false, true); });
         }); 
 }
 
@@ -733,6 +734,8 @@ function resetContent() {
     $("#tabs a[href='#tabs-1']").click(); 
 }
 
+// translate with the data from i18n-data.js, if the
+// data is not found it asks the translation service
 function translate(keys, lang, callback) {
     var translated = [];
     var missing_translations = [];
