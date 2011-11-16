@@ -1,44 +1,46 @@
 /**
- * This is the AJAX-Engine for the IMPACT web application.
+ * Client implementation for the IMPACT web application.
  *
  */
 
-/** Settings */
-var jsloadstarted = new Date();
-var showhints = true;
-
-/** global vars */
-var argGraph = "undefined";
-var policyrules = [];
-var langChange = false;
-var svgScale = 1;
-var svgWrapper = null;
-var svgLayout = "hierarchical";
-var svgTreeify = "true";
-var debug = true;
+var IMPACT = {
+    jsloadstarted :new Date(),
+    showhints : true,
+    arg_graph : "undefined",
+    policyrules : [],
+    lang_changed : false,
+    debug : true
+};
 
 // adding JSON parser when browser is too old to have a build-in one (pre-IE8, pre-FF3.5, ...)
 if( typeof( window[ 'JSON' ] ) == "undefined" ) document.write('<script type="text/javascript" src="https://github.com/douglascrockford/JSON-js/raw/master/json2.js"/>');
 
-/**
- * Fixes a javascript bug that makes copying of Arrays impossible
- * @returns returns a copy of the array
- * @type Array
- */
+// JavaScript EPO!
 Array.prototype.copy = function () {
     return ((new Array()).concat(this));
 };
 
+String.prototype.format = function() {
+  var args = arguments;
+  return this.replace(/{(\d+)}/g, function(match, number) { 
+    return typeof args[number] != 'undefined'
+      ? args[number]
+      : match
+    ;
+  });
+};
+
+
 function translation_url() {
-    return debug ? "/Translation" : "/PolicyModellingTool2/Translation"
+    return IMPACT.debug ? "/Translation" : "/PolicyModellingTool2/Translation";
 }
 
 function simulation_url() {
-    return debug ? "/PolicySimulation" : "/PolicyModellingTool2/PolicySimulation"
+    return IMPACT.debug ? "/PolicySimulation" : "/PolicyModellingTool2/PolicySimulation";
 }
 
 function evaluation_url() {
-    return debug ? "/PolicyEvaluation" : "/PolicyModellingTool2/PolicyEvaluation"
+    return IMPACT.debug ? "/PolicyEvaluation" : "/PolicyModellingTool2/PolicyEvaluation";
 }
 
 // when the document is ready, executes this code:
@@ -70,7 +72,7 @@ $(function(){
             inline: true,
             changeMonth: true,
             changeYear: true,
-            yearRange: (''+(jsloadstarted.getFullYear()-100)+':'+(jsloadstarted.getFullYear()+10)),
+            yearRange: (''+(IMPACT.jsloadstarted.getFullYear()-100)+':'+(IMPACT.jsloadstarted.getFullYear()+10)),
             showAnim: 'slideDown'
     });
 
@@ -115,7 +117,7 @@ $(function(){
                           function (data) { showQuestions(data, false, true); });
             }
 
-            langChange = true;
+            IMPACT.lang_changed = true;
         });
 
     // Fragen-Liste
@@ -127,29 +129,29 @@ $(function(){
     });
 
     /** AJAX request config */
-    $.ajaxSetup({
-            //       url: "/PolicyModellingTool/PolicySimulation",
-        url: simulation_url(),
-       async: true,
-       beforeSend: function() {
-           statusupdate(0,"Please be patient.");
-       },
-       complete: function(XMLHttpRequest, textStatus) {
-           if (textStatus == "success")
-               $("#status").fadeOut();
-           else if(textStatus == "error")
-               statusupdate(1,XMLHttpRequest.status+" "+textStatus);
-           else // "notmodified", "timeout", or "parsererror"
-               statusupdate(1,textStatus);
-       },
-       timeout : 600000,       
-       type: "POST"
-    });
+      $.ajaxSetup({url: simulation_url(),
+                   async: true,
+                   beforeSend: function() {
+                       statusupdate(0,"Please be patient.");
+                   },
+                   complete: function(XMLHttpRequest, textStatus) {
+                       if (textStatus == "success")
+                           $("#status").fadeOut();
+                       else if(textStatus == "error")
+                       statusupdate(1,XMLHttpRequest.status+" "+textStatus);
+                       else // "notmodified", "timeout", or "parsererror"
+                           statusupdate(1,textStatus);
+                   },
+                   timeout : 600000,       
+                   type: "POST"
+                  });
 
     send_data(translation_url(), {get_available_languages : null}, showAvailableLanguages);
 });
 
-
+/**
+ * Translate the category name under which are grouped a set of questions
+ */
 function translate_category(index)
 {
     var cat = displayed_categories[index];
@@ -158,7 +160,7 @@ function translate_category(index)
                                     statement : cat.first_question.statement}},
               function (data) { 
                   var categoryName = data.questions[0].category_name;
-                  $('#categories :nth-child(' + (index+1) + ')').text(categoryName);
+                  $('#categories :nth-child({0})'.format(index + 1)).text(categoryName);
               });
 }
 
@@ -175,9 +177,9 @@ function showAvailableLanguages(data) {
     
     $('#locate').empty();
     for(var name in languages) {
-        $('#locate').append('<option value="' + languages[name] + '">' + name + '</option>');
+        $('#locate').append('<option value="{0}">{1}</option>'.format(languages[name], name));
     }
-            
+
     // assumes English is always there and set it as default language
     $('#locate').val('en');
 
@@ -243,7 +245,8 @@ function showQuestions(data, is_first_display, lang_changed) {
     // remove previous title if it exits (for instance after asking a change in the language)
     $('#questionlist').empty();
     // add new div to questionlist with id = topic name
-    qlist.append('<div id="'+category+'"><h3>'+category_name+'</h3><div id="qcontent"></div></div>');
+    // TODO: what is this qcontent id use for?
+    qlist.append('<div id="{0}"><h3>{1}</h3><div id="qcontent"></div></div>'.format(category, category_name));
     var qdiv = $("#"+category, qlist);
     var qbox = $("#qcontent", qdiv);
     // for each question
@@ -324,7 +327,7 @@ function showQuestion(item, qbox){
     // focus and blur does not work on radio/checkbox
     if (item.type != "radio" && item.type != "checkbox") {
         $(":input:last", qbox).focus(function(){
-            if (showhints) {
+            if (IMPACT.showhints) {
                 $("#hints p").css('display','none');
                 $("#qHINT"+this.id.substring(3)).show();
             }
@@ -339,7 +342,7 @@ function showQuestion(item, qbox){
     }
     else { // radios & checkboxes
         $("input:last", qbox).parent().mouseover(function(){
-            if (showhints) {
+            if (IMPACT.showhints) {
                 var hinton=$("#hints > p:not(:hidden)");
                 // statusupdate(1,"Verstecke: "+((hinton.length > 0)?"#qID"+hinton.attr("id").substring(5):"-")+" | Zeige: "+"#qHINT"+$(this).children("input:first").attr("name").substring(3));
                 if (hinton.length > 0) $("#qID"+hinton.attr("id").substring(5)).blur();
@@ -528,7 +531,7 @@ function sendAnswers(category) {
             doRequest = false;
             return true;
         }
-        if (itemobj.type == "radio" || itemobj.type == "checkbox") {            
+        if (itemobj.type == "radio" || itemobj.type == "checkbox") {
             
             /*var valArray = new Array();
             $(":input:checked[name='"+itemobj.name+"']", itemobj.parentNode).each(function(i, valobj) {
@@ -538,7 +541,7 @@ function sendAnswers(category) {
                 var jsonitem = {
                     "id" : item.attr("name").substring(3),
                     "value" : item.val()
-                }
+                };
                 jsonA.push(jsonitem);
             }            
         }
@@ -546,19 +549,22 @@ function sendAnswers(category) {
             var jsonitem = {
                 "id" : item.attr("name").substring(3),
                 "value" : item.val()
-            }
+            };
             jsonA.push(jsonitem);
         }
+        // TODO: check what the return value if used for                                  
+        return undefined;
     });
+
     $("select", topicDiv).each(function(i, itemobj){
         var item = $(itemobj);
         var jsonitem = {
             "id" : item.attr("name").substring(3),
             "value" : item.val()
-        }
+        };
         jsonA.push(jsonitem);
     });
-    langChange = false;
+    IMPACT.lang_changed = false;
     if (doRequest) {
         send_data(simulation_url(), {"answers" : jsonA.copy()}, show_questions_or_answer);
     }
@@ -574,7 +580,7 @@ function show_questions_or_answer(data) {
 
 function sendAbductionRequest() {
     send_data(evaluation_url(),
-              {abduction : {argGraph : argGraph, acceptability : $('input[name=abduction]').val()}},
+              {abduction : {argGraph : IMPACT.arg_graph, acceptability : $('input[name=abduction]').val()}},
               showPosition);
 }
 
@@ -643,10 +649,10 @@ function add_category(category_name, category, first_question_id) {
 function showPolicyRules(data) {
     var rules = data.policyrules;
     var policyList = $("#policylist");
-    policyrules = [];
+    IMPACT.policyrules = [];
     $.each(rules, function(ruleindex, r) {
        policyList.append('<li><input type="checkbox" name="'+r+'" />'+r+'</li>');       
-       policyrules.push(r);
+       IMPACT.policyrules.push(r);
     });   
     $("#policyrules").append('<input type="button" class="ui-state-hover ui-button ui-widget ui-state-default ui-corner-all ui-button ui-widget ui-state-hover evaluate" value="Evaluate" onclick="evaluateGraph()"/>');
     
@@ -658,7 +664,7 @@ function showPolicyRules(data) {
  */
 function showArgGraph(path) {
     // set global path to lkif argument graph
-    argGraph = path;
+    IMPACT.arg_graph = path;
     send_data(evaluation_url(), {"showgraph" : path}, showSVGGraph);
 }
 
@@ -673,17 +679,9 @@ function showSVGGraph(data) {
     graphBox.svg('get').load(path, onSVGLoad);
 }
 
-/**
- * function called after svg is loaded; binds mousewheel and drag
- * events to svg for zoom and dragging
- * @param {svgWrapper} the svg wrapper
- */
 function onSVGLoad(svgW) {
            
     svgWrapper = svgW;
-    
-    // reset scale and translate
-    svgScale = 1;
 
     var svgroot = document.getElementsByTagName('svg')[0];
     // SVGPan has a problem if there is already a viewBox, so we remove it
@@ -704,7 +702,7 @@ function evaluateGraph() {
     // get selected checkboxes / policyrules
     var accArray = [];
     var rejArray = [];
-    $.each(policyrules, function(index, r) {
+    $.each(IMPACT.policyrules, function(index, r) {
        if($('input[name='+r+']').attr('checked')) {
            accArray.push(r);
        } else {
@@ -713,7 +711,7 @@ function evaluateGraph() {
     }); 
     
     send_data(evaluation_url(),
-              {evaluate : {argGraph : argGraph, accept : accArray, reject : rejArray}},
+              {evaluate : {argGraph : IMPACT.arg_graph, accept : accArray, reject : rejArray}},
               function (data) { showArgGraph(data.evaluated); });
 }
 
@@ -765,4 +763,5 @@ function translate(keys, lang, callback) {
                   });
     }
 }
+
 
