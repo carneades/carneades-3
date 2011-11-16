@@ -13,8 +13,10 @@
 
 (defrecord Statement  ; statements are annotated literals
   [atom               ; atomic formula of propositional (symbol) or predicate logic (list)
+   header             ; nil or dublin core metadata description of the model
    positive           ; boolean
    weight             ; nil or 0.0-1.0, default nil
+   main               ; true if the statement is a main issue
    standard           ; proof-standard
    text])             ; (language -> string) map, natural language formulations of the statement
 
@@ -23,8 +25,10 @@
    [& key-values]  
    (merge (Statement. 
             (gensym "s")    ; atom
+            nil             ; header
             true            ; positive
             nil             ; weight
+            false           ; main issue
             :pe             ; proof standard
             {})             ; text
           (apply hash-map key-values)))
