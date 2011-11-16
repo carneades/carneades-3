@@ -9,6 +9,8 @@ various argumentation tasks. This is the software library (the engine)."
   :dependencies [[org.clojure/clojure "1.2.0"]
                  [org.clojure/clojure-contrib "1.2.0"]
                  [org.clojars.pallix/owlapi "3.0.0"]
-                 [org.clojars.pallix/hermit "1.2.4"]]
+                 [org.clojars.pallix/hermit "1.2.4"]
+                 [com.h2database/h2 "1.3.160"]
+                 [korma "0.2.1"]]
   :dev-dependencies [[swank-clojure "1.4.0-SNAPSHOT"]
                      [org.clojars.rayne/autodoc "0.8.0-SNAPSHOT"]])
