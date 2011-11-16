@@ -10,7 +10,7 @@ datatypes xsd = "http://www.w3.org/2001/XMLSchema-datatypes"
 grammar {
     start = element caf { 
         attribute version { xsd:string }?,  # version of the CAF schema
-        References, ArgumentGraphs 
+        MetaData, Statements, Arguments, References
     }
     
     References = element references { MetaData+ }
@@ -60,17 +60,6 @@ grammar {
     Titles = element titles { Title+ }
     
     Type = element type { text }                                                  
-    
-    ArgumentGraphs = element argument-graphs {
-    	ArgumentGraph+
-    }
-    
-    ArgumentGraph = element argument-graph { 
-        attribute id { xsd:ID }?, 
-        Metadata?,           # describing the model, not the sources
-        Statements, 
-        Arguments
-    }
     
     Statements = element statements { Statement+ }
     
