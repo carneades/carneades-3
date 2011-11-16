@@ -35,36 +35,46 @@
       (throw (Exception. "NYI")))))
 
 
+(defn strs->stmt
+  "Converts a collection of a string representing a statement on the client side
+   to a formal statement."
+  [coll]
+  (map symbol (apply list coll)))
+
+(defn reconstruct-answers-from-json
+  [jsonanswers questions]
+  (map (fn [answer]
+         ;; TODO: fix JavaScript to have id as integer and not as string!
+         (let [id (Integer/parseInt (:id answer))
+               question (first (filter #(= (:id %) id) questions))
+               stmt (strs->stmt (:statement question))
+               pred (statement-predicate stmt)
+               ans (cond (variable? (second (statement-atom stmt)))
+                         (list pred (symbol (:value answer)))
+
+                         (= 2 (count (statement-atom stmt)))
+                         (list pred (symbol (:value answer)))
+                         
+                         (or
+                          (variable? (nth (statement-atom stmt) 2))
+                          (= 3 (count (statement-atom stmt))))
+                         (list pred (second (statement-atom stmt)) (symbol (:value answer)))
+                         
+                         :else
+                         (throw (Exception. (format "invalid question %s" question)))
+                         )]
+           ans))
+       jsonanswers))
+
+
 (defmethod ajax-handler :answers
   [json session]
   (prn "======================================== answers handler! ==============================")
-  ;; KO: {"answers":[{"id":"2","value":"Pierre"},{"id":"3","value":"K"}]}
-  ;; OK: {"answers":[{"id":"1","value":"Pierre"},{"id":"2","value":"K"}]}
+  (pprint json)
+  (prn "that's it")
   (let [service-data (:service-data session)
-        last-questions (:last-questions service-data)
-        answers (doall
-                 (map (fn [answer]
-                        ;; TODO: fix JavaScript to have id as integer and not as string!
-                        (let [id (Integer/parseInt (:id answer))
-                              question (first (filter #(= (:id %) id) last-questions))
-                              stmt (:statement question)
-                              pred (statement-predicate stmt)
-                              ans (cond (variable? (second (statement-atom stmt)))
-                                        (list pred (symbol (:value answer)))
-
-                                        (= 2 (count (statement-atom stmt)))
-                                        (list pred (symbol (:value answer)))
-                                       
-                                        (or
-                                         (variable? (nth (statement-atom stmt) 2))
-                                         (= 3 (count (statement-atom stmt))))
-                                        (list pred (second (statement-atom stmt)) (symbol (:value answer)))
-                                        
-                                        :else
-                                        (throw (Exception. (format "invalid question %s" question)))
-                                        )]
-                          ans))
-                      (:answers json)))
+        questions (:questions (:answers json))
+        answers (reconstruct-answers-from-json (-> json :answers :values) questions)
         service-data (add-answers service-data answers)
         service-data (ask-engine service-data query kburl)
         session (assoc session :service-data service-data)]
@@ -74,12 +84,6 @@
       {:session session
        :body (json-str {:solution (:solution service-data)
                         :path (:lkifsol-pathname service-data)})})))
-
-(defn strs->stmt
-  "Converts a collection of a string representing a statement on the client side
-   to a formal statement."
-  [coll]
-  (map symbol (apply list coll)))
 
 (defmethod ajax-handler :retrieve_question
   [json session]

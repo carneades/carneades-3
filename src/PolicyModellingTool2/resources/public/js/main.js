@@ -9,6 +9,8 @@ var IMPACT = {
     arg_graph : "undefined",
     policyrules : [],
     lang_changed : false,
+    current_questions : [],
+    displayed_categories : [],
     debug : true
 };
 
@@ -106,14 +108,16 @@ $(function(){
                       });
             
             // translates all categories
-            $.each(displayed_categories, translate_category);
+            $.each(IMPACT.displayed_categories, translate_category);
 
             // translates current question
-            if(displayed_categories.length != 0) {
-                current_category = displayed_categories[displayed_categories.length - 1];
+            if(IMPACT.current_questions.length > 0) {
+                var top_question = IMPACT.current_questions[0];
+                var current_category = top_question.category;
+
                 send_data(simulation_url(),
-                          {retrieve_question : {id : current_category.first_question.id,
-                                                statement : current_category.first_question.statement}},
+                          {retrieve_question : {id : top_question.id,
+                                                statement : top_question.statement}},
                           function (data) { show_questions(data, false, true); });
             }
 
@@ -154,7 +158,7 @@ $(function(){
  */
 function translate_category(index)
 {
-    var cat = displayed_categories[index];
+    var cat = IMPACT.displayed_categories[index];
     send_data(simulation_url(),
               {retrieve_question : {id : cat.first_question.id,
                                     statement : cat.first_question.statement}},
@@ -218,23 +222,19 @@ function genId() {
     return newDate.getTime();
 }
 
-var displayed_categories = [];
-
 function show_questions(data, is_first_display, lang_changed) {
     // {"questions":[{"answers":[],"formalanswers":null,"id":1,"category":"Name","optional":false,"hint":"Please enter the name of the rights owner.","type":"text","question":"What is the name of the right owner?","statement":["hatName","?Person"]},
                      // {"answers":[],"formalanswers":null,"id":2,"category":"Work","optional":false,"hint":null,"type":"text","question":"What is the name of the concerned orphaned work?","statement":["betrifftWerk","?x"]} ]}
     
-    var question_array = data.questions;
+    IMPACT.current_questions = data.questions;
     
     $("#tabs a[href='#tabs-2']").click();        
-    var category_name = question_array[0].category_name;
-    var category = question_array[0].category;
-
-    var first_question = question_array[0];
+    var category_name = IMPACT.current_questions[0].category_name;
+    var category = IMPACT.current_questions[0].category;
 
     if(is_first_display) {
-        displayed_categories.push({category : category,
-                                   first_question : question_array[0]});
+        IMPACT.displayed_categories.push({category : category,
+                                          first_question : IMPACT.current_questions[0]});
         
     }
 
@@ -248,12 +248,12 @@ function show_questions(data, is_first_display, lang_changed) {
     var qdiv = $("#"+category, qlist);
     var qbox = $("#qcontent", qdiv);
     // for each question
-    $.each(question_array, function(i, item) {
-        showQuestion(item, qbox);
+    $.each(IMPACT.current_questions, function(i, item) {
+        show_question(item, qbox);
     });
 
     
-    // qbox.append('<input type="button" class="ui-button next" value="next" onclick="sendAnswers(\''+category+'\')"/>');
+    // qbox.append('<input type="button" class="ui-button next" value="next" onclick="send_answers(\''+category+'\')"/>');
     var buttonId = genId();
     qbox.append('<input type="button" id="' + buttonId+ '" class="ui-button ui-widget ui-state-default ui-corner-all" value="next" />');
     translate(["next"], $('#locate').val(),
@@ -264,7 +264,7 @@ function show_questions(data, is_first_display, lang_changed) {
     $('#' + buttonId).click(function () {
         $('#questions').validate();
         if($('#questions').valid()) {
-            sendAnswers(category);
+            send_answers(category);
         } else {
             showErrorStatus('Some fields are not filled');
         }
@@ -273,7 +273,7 @@ function show_questions(data, is_first_display, lang_changed) {
     $('.datefield', qbox).datepicker();
 
     if(!lang_changed) {
-        add_category(category_name, category, first_question);        
+        add_category(category_name, category, IMPACT.current_questions[0]);        
     }
 
 }
@@ -283,7 +283,7 @@ function show_questions(data, is_first_display, lang_changed) {
  * @param {object} question json object representing the question
  * @param {object} qcontent div inside topic div
  */
-function showQuestion(item, qbox){
+function show_question(item, qbox){
     var newline = false;
     // pre append formatting
     var output = "<p><label for=\"qID"+item.id+"\">"+item.question+"</label>";
@@ -383,7 +383,7 @@ function showSolution(data) {
  * @type Boolean
  * @see qwarn
  * @see qunwarn
- * @see sendAnswers
+ * @see send_answers
  */
 function validateField(obj) {
     var result = true;
@@ -515,7 +515,7 @@ function statusupdate(type, text) {
  * @param {string} category the ID of the question div
  * @see validateField
  */
-function sendAnswers(category) {
+function send_answers(category) {
     var doRequest = true;
     var jsonA = new Array();
     var topicDiv = $("#"+category);
@@ -562,9 +562,13 @@ function sendAnswers(category) {
         };
         jsonA.push(jsonitem);
     });
+
     IMPACT.lang_changed = false;
+
     if (doRequest) {
-        send_data(simulation_url(), {"answers" : jsonA.copy()}, show_questions_or_answer);
+        send_data(simulation_url(), {"answers" : { values : jsonA,
+                                                   questions : IMPACT.current_questions}}, 
+                                     show_questions_or_answer);
     }
 }
 
