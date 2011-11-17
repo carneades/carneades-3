@@ -51,10 +51,10 @@ $(function(){
     $('#nextTopic').click(function () {
         $('#chooseTopic').validate();
         if($('#chooseTopic').valid()) {
-            loadTopic($('#topic').val());
+            load_topic($('#topic').val());
             return true;
         } else {
-            showErrorStatus('Please select a topic');
+            show_error_status('Please select a topic');
             return false;
         }
     });
@@ -136,21 +136,21 @@ $(function(){
       $.ajaxSetup({url: simulation_url(),
                    async: true,
                    beforeSend: function() {
-                       statusupdate(0,"Please be patient.");
+                       update_status(0,"Please be patient.");
                    },
                    complete: function(XMLHttpRequest, textStatus) {
                        if (textStatus == "success")
                            $("#status").fadeOut();
                        else if(textStatus == "error")
-                       statusupdate(1,XMLHttpRequest.status+" "+textStatus);
+                       update_status(1,XMLHttpRequest.status+" "+textStatus);
                        else // "notmodified", "timeout", or "parsererror"
-                           statusupdate(1,textStatus);
+                           update_status(1,textStatus);
                    },
                    timeout : 600000,       
                    type: "POST"
                   });
 
-    send_data(translation_url(), {get_available_languages : null}, showAvailableLanguages);
+    send_data(translation_url(), {get_available_languages : null}, show_available_languages);
 });
 
 /**
@@ -172,13 +172,13 @@ function translate_category(index)
  * loads questions for requested topic
  * @param {string} t name of the topic
  */
-function loadTopic(t) {
+function load_topic(t) {
     send_data(simulation_url(), 
               {"request" : t}, 
               function(data) { show_questions(data, true, false); });
 }
 
-function showAvailableLanguages(data) {
+function show_available_languages(data) {
     var languages = data.available_languages;
     
     $('#locate').empty();
@@ -191,7 +191,7 @@ function showAvailableLanguages(data) {
 
 }
 
-function showPosition(data) {
+function show_position(data) {
     var position = data.position;
     var stmts_ids = data.stmts_ids;
     
@@ -199,7 +199,7 @@ function showPosition(data) {
     // TODO: show all policies
 }
 
-function showPolicy(policy, stmts_ids) {
+function show_policy(policy, stmts_ids) {
     
     var stmt = policy[1];
     var policyid = stmts_ids["(valid " + stmt + ")"];
@@ -217,7 +217,7 @@ function showPolicy(policy, stmts_ids) {
     svg.rect(g, x, y, w, h, corner, corner, {"stroke-width" : 2, stroke : "purple", fill : "transparent"});
 }
 
-function genId() {
+function gen_id() {
     var newDate = new Date;
     return newDate.getTime();
 }
@@ -254,7 +254,7 @@ function show_questions(data, is_first_display, lang_changed) {
 
     
     // qbox.append('<input type="button" class="ui-button next" value="next" onclick="send_answers(\''+category+'\')"/>');
-    var buttonId = genId();
+    var buttonId = gen_id();
     qbox.append('<input type="button" id="' + buttonId+ '" class="ui-button ui-widget ui-state-default ui-corner-all" value="next" />');
     translate(["next"], $('#locate').val(),
               function(translations) {
@@ -266,7 +266,7 @@ function show_questions(data, is_first_display, lang_changed) {
         if($('#questions').valid()) {
             send_answers(category);
         } else {
-            showErrorStatus('Some fields are not filled');
+            show_status_error('Some fields are not filled');
         }
     });
 
@@ -297,7 +297,7 @@ function show_question(item, qbox){
         });
         output += "</select>";
     } else if (item.type == "radio" || item.type == "checkbox") {
-        newline = radioCheckNewLine(item.answers);
+        newline = radio_check_newline(item.answers);
         for(var i = 0; i < item.answers.length; i++) {
             if (newline) output += "<br/>";
             var answer = item.answers[i];
@@ -335,14 +335,14 @@ function show_question(item, qbox){
         });
         // validation
         $(":input:last", qbox).change(function(){
-            validateField(this);
+            validate_field(this);
         });
     }
     else { // radios & checkboxes
         $("input:last", qbox).parent().mouseover(function(){
             if (IMPACT.showhints) {
                 var hinton=$("#hints > p:not(:hidden)");
-                // statusupdate(1,"Verstecke: "+((hinton.length > 0)?"#qID"+hinton.attr("id").substring(5):"-")+" | Zeige: "+"#qHINT"+$(this).children("input:first").attr("name").substring(3));
+                // update_status(1,"Verstecke: "+((hinton.length > 0)?"#qID"+hinton.attr("id").substring(5):"-")+" | Zeige: "+"#qHINT"+$(this).children("input:first").attr("name").substring(3));
                 if (hinton.length > 0) $("#qID"+hinton.attr("id").substring(5)).blur();
                 $("#qHINT"+$(this).children("input:first").attr("name").substring(3)).show();
             }
@@ -352,7 +352,7 @@ function show_question(item, qbox){
         });
         // validation
         $("input[name='qID"+item.id+"']", qbox).change(function(){
-            validateField($("input:first", this.parentNoded)[0]);
+            validate_field($("input:first", this.parentNoded)[0]);
         });
     }
 }
@@ -362,7 +362,7 @@ function show_question(item, qbox){
  * @param {string} solution string representing the main issue
  * @param {string} path url pointing to solution lkif
  */
-function showSolution(data) {
+function show_solution(data) {
     var solution = data.solution;
     var path = data.path;
     
@@ -371,9 +371,9 @@ function showSolution(data) {
     // display solution statement
     $("#solutionstatement").append(solution);
 
-    send_data(evaluation_url(), {"policyrules" : path}, showPolicyRules);
+    send_data(evaluation_url(), {"policyrules" : path}, show_policyrules);
     // display argument graph
-    showArgGraph(path);
+    show_arg_graph(path);
 }
 
 /**
@@ -385,7 +385,7 @@ function showSolution(data) {
  * @see qunwarn
  * @see send_answers
  */
-function validateField(obj) {
+function validate_field(obj) {
     var result = true;
     // Array
     if ($.type(obj) == "array") {
@@ -400,7 +400,7 @@ function validateField(obj) {
     // DIV (qcontent)
     else if ($.type(obj) == "object" && obj.nodeName == "DIV") {
         $(":input", obj).each( function(i, elem) {
-            if ( !validateField(elem) ) {
+            if ( !validate_field(elem) ) {
                 result = false;
                 //return false;
             }
@@ -467,7 +467,7 @@ function validateField(obj) {
  * @returns true when a new line is required
  * @type Boolean
  */
-function radioCheckNewLine(answers) {
+function radio_check_newline(answers) {
     var newline=false;
     for (var i=0; i < answers.length; i++) {
         if (answers[i].length > 12 || i > 4) {
@@ -478,7 +478,7 @@ function radioCheckNewLine(answers) {
     return newline;
 }
 
-function showErrorStatus(text) {
+function show_status_error(text) {
     $("#status").removeClass("ui-state-highlight");
     $("#status").addClass("ui-state-error");
     icon='<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> <strong>Alert:</strong> ';
@@ -493,7 +493,7 @@ function showErrorStatus(text) {
  * @param {number} type Expect a integer with the value of the status. 0 means loading 1 an error and -1 that there is everthing allright so loaded.
  * @param {string} text Here goes the Text that will be displayed in the status.
  */
-function statusupdate(type, text) {
+function update_status(type, text) {
     var icon="";
     if (type == 0) { // Loading
             $("#status").removeClass("ui-state-error");
@@ -501,7 +501,7 @@ function statusupdate(type, text) {
             icon='<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: 0.3em;"></span> <strong>Loading:</strong> ';
     }
     else if (type == 1) { // Alert
-        showErrorStatus(text);
+        show_error_status(text);
     }
     else if (type == -1) {$("#status").hide();return false;}
     else {$("#status").hide();return false;}
@@ -513,7 +513,7 @@ function statusupdate(type, text) {
 /**
  * Collects the given answers and parse them as JSON before sending them to the server.
  * @param {string} category the ID of the question div
- * @see validateField
+ * @see validate_field
  */
 function send_answers(category) {
     var doRequest = true;
@@ -525,7 +525,7 @@ function send_answers(category) {
         // skip buttons
         if (item.hasClass("ui-button") || itemobj.type && (itemobj.type == "button" || itemobj.type == "submit" || itemobj.type == "reset") ) return true;
         
-        if (validateField(itemobj) == false) {
+        if (validate_field(itemobj) == false) {
             doRequest = false;
             return true;
         }
@@ -576,14 +576,14 @@ function show_questions_or_answer(data) {
     if (data.questions) {
         show_questions(data, true);
     } else if (data) {
-        showSolution(data, true);
+        show_solution(data, true);
     }
 }
 
-function sendAbductionRequest() {
+function send_abduction_request() {
     send_data(evaluation_url(),
               {abduction : {argGraph : IMPACT.arg_graph, acceptability : $('input[name=abduction]').val()}},
-              showPosition);
+              show_position);
 }
 
 /**
@@ -651,7 +651,7 @@ function add_category(category_name, category, first_question) {
  * list policy rules derived from argument graph as checkboxes
  * @param {object} rules json array of policy rules
  */
-function showPolicyRules(data) {
+function show_policyrules(data) {
     var rules = data.policyrules;
     var policyList = $("#policylist");
     IMPACT.policyrules = [];
@@ -659,7 +659,7 @@ function showPolicyRules(data) {
        policyList.append('<li><input type="checkbox" name="'+r+'" />'+r+'</li>');       
        IMPACT.policyrules.push(r);
     });   
-    $("#policyrules").append('<input type="button" class="ui-state-hover ui-button ui-widget ui-state-default ui-corner-all ui-button ui-widget ui-state-hover evaluate" value="Evaluate" onclick="evaluateGraph()"/>');
+    $("#policyrules").append('<input type="button" class="ui-state-hover ui-button ui-widget ui-state-default ui-corner-all ui-button ui-widget ui-state-hover evaluate" value="Evaluate" onclick="evaluate_graph()"/>');
     
 }
 
@@ -667,24 +667,24 @@ function showPolicyRules(data) {
  * creating svg representation of an argument graph
  * @param {string} path path to lkif with argument graph
  */
-function showArgGraph(path) {
+function show_arg_graph(path) {
     // set global path to lkif argument graph
     IMPACT.arg_graph = path;
-    send_data(evaluation_url(), {"showgraph" : path}, showSVGGraph);
+    send_data(evaluation_url(), {"showgraph" : path}, show_svg_graph);
 }
 
 /**
  * display svg representation of an argument graph
  * @param {string} path path to svg with argument graph
  */
-function showSVGGraph(data) {
+function show_svg_graph(data) {
     var path = data.graphpath;
     var graphBox = $("#graph");
     graphBox.svg();    
-    graphBox.svg('get').load(path, onSVGLoad);
+    graphBox.svg('get').load(path, on_svg_load);
 }
 
-function onSVGLoad(svgW) {
+function on_svg_load(svgW) {
            
     svgWrapper = svgW;
 
@@ -703,7 +703,7 @@ function onSVGLoad(svgW) {
 /**
  * evaluate argument graph with selected policy rules
  */
-function evaluateGraph() {
+function evaluate_graph() {
     // get selected checkboxes / policyrules
     var accArray = [];
     var rejArray = [];
@@ -717,16 +717,16 @@ function evaluateGraph() {
     
     send_data(evaluation_url(),
               {evaluate : {argGraph : IMPACT.arg_graph, accept : accArray, reject : rejArray}},
-              function (data) { showArgGraph(data.evaluated); });
+              function (data) { show_arg_graph(data.evaluated); });
 }
 
-function showError(error) {
+function show_error(error) {
     // TODO : handle errors
     alert(error);
 }
 
 // clean DOM after server response
-function resetContent() {
+function reset_content() {
     // clear question nav
     $('#categories').empty();
     // clear question forms
