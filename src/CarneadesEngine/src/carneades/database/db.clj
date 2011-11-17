@@ -31,7 +31,7 @@
     db
     
     (jdbc/create-table 
-      :string
+      :stringmap
       [:id "int identity"]
       [:en "varchar not null"]   ; English
       [:nl "varchar"]            ; Dutch          
@@ -59,7 +59,7 @@
       [:subject "varchar"]
       [:title "varchar"]
       [:type "varchar"]       ; see: http://dublincore.org/documents/dcmi-type-vocabulary/
-      ["foreign key(description) references string(id)"])
+      ["foreign key(description) references stringmap(id)"])
     
     (jdbc/create-table 
       :statement 
@@ -71,7 +71,7 @@
       [:text "int"]
       [:main "boolean default false"]   ; true if a main issue
       [:header "int"]
-      ["foreign key(text) references string(id)"]
+      ["foreign key(text) references stringmap(id)"]
       ["foreign key(header) references metadata(id)"])
     
     (jdbc/create-table 
@@ -115,17 +115,52 @@
       [:opinion "double default 0.5"]
       ["foreign key(argument) references argument(id)"])))
 
+;; To Do: function to delete a database.  Perhaps this should
+;; be private and called to clean up after exporting a database to CAF XML,
+;; to help avoid deleting data without first creating a backup.
+
 ;;; Strings
 
-(defn create-string 
-  "Creates a string record, with translations in several languages,
-   and inserts it into a database.  Returns the id of the new string."
-  [db & key-values]   
+(defn create-stringmap
+  "database map -> integer
+   Creates a stringmap record, with translations in several languages,
+   and inserts it into a database.  Returns the id of the new stringmap."
+  [db m]   
+  {:pre [(map? m)]}
   (jdbc/with-connection db
-     (let [result (jdbc/insert-record 
-                    :string
-                    (apply hash-map key-values))]
+     (let [result (jdbc/insert-record :stringmap m)]
        (first (vals result)))))
+
+(defn read-stringmap 
+  "database integer -> map or nil
+   Retrieves the string map with the given id from the database.
+   Returns nil if not stringmap with the given id exists in the
+   database."
+  [db id]
+  (jdbc/with-connection 
+    db
+    (jdbc/with-query-results 
+      res1 [(str "SELECT * FROM stringmap WHERE id='" id "'")]
+      (if (empty? res1) nil (dissoc (first res1) :id)))))
+  
+(defn update-stringmap 
+  "database integer map -> boolean
+   Updates the stringmap with the given id in the database
+   with the values in the map. Returns true if the update
+   succeeds."
+  [db id m]
+  {:pre [(integer? id) (map? m)]}
+  (jdbc/with-connection
+    db
+    (condp = (first (jdbc/update-values :stringmap ["id=?" id] m))
+      0 false
+      1 true)))
+
+(defn delete-stringmap 
+  "Deletes a stringmap entry with the given the id"
+  [db id]
+  (jdbc/with-connection db
+    (jdbc/delete-rows :stringmap ["id=?" id])))
 
 ;;; Metadata
 
@@ -136,13 +171,15 @@
   {:pre [(metadata? metadata)]}
   (jdbc/with-connection 
     db
-    (if (:description metadata)
-      (let [str-id (first (vals (jdbc/insert-record
-                                  :string
-                                  (:description metadata))))]
-        (first (vals (jdbc/insert-record 
-                       :metadata
-                       (assoc metadata :description str-id))))))))
+    (let [str-id (if (:description metadata)
+                   (first (vals (jdbc/insert-record
+                                  :stringmap
+                                  (:description metadata)))))]
+      (first (vals (jdbc/insert-record 
+                     :metadata
+                     (if str-id
+                       (assoc metadata :description str-id)
+                       metadata)))))))
 
 (defn read-metadata
   "Retrieves the metadata with the given id from the database, 
@@ -154,27 +191,51 @@
     (let [md (jdbc/with-query-results 
                res1 [(str "SELECT * FROM metadata WHERE id='" id "'")]
                (if (empty? res1) nil (dissoc (first res1) :id)))]
-      (println "md: " md)
       (if (:description md)
         (let [d (jdbc/with-query-results 
-                  res2 [(str "SELECT * FROM string WHERE id='" (:description md) "'")]
+                  res2 [(str "SELECT * FROM stringmap WHERE id='" (:description md) "'")]
                   (if (empty? res2) nil (dissoc (first res2) :id)))]
-          (println "d: " d)
           (if d
             (doall (merge (merge (make-metadata) md)
                           {:description d}))
             (doall (merge (make-metadata) md))))))))  
 
 (defn update-metadata
-  ; START HERE 
-  )    
-   
-(defn delete-metadata
-  ; TO DO -- Return false (or nil) without deleting if other 
-  ; records reference the metadata.  Return true
-  ; if the record was successfully deleted.
-  )
+  "database integer map -> boolean
+   Updates the metadata record with the given in in the database with the values
+   in the map.  Returns true if the update was successful." 
+  [db id md]
+  {:pre [(integer? id) (map? md)]}
+  (jdbc/with-connection 
+    db
+      (let [description-id1 (if (:description md)
+                              (jdbc/with-query-results 
+                              res [(str "SELECT description FROM metadata WHERE id='" id "'")]
+                              (if (empty? res) nil (:description (first res)))))
+            description-id2  (if description-id1 
+                               (do (update-stringmap db description-id1 (:description md))
+                                   description-id1)
+                               (if (:description md) (create-stringmap db (:description md))))]
+        (condp = (first (jdbc/update-values
+                          :metadata
+                          ["id=?" id]
+                          (merge md {:description description-id2})))
+          0 false,
+          1 true))))
 
+(defn delete-metadata
+  "Deletes a metadata entry with the given the id. Returns true."
+  [db id]
+  {:pre [(integer? id)]}
+  (jdbc/with-connection 
+    db 
+    (let [str-id (jdbc/with-query-results 
+                   res [(str "SELECT description FROM metadata WHERE id='" id "'")]
+                   (if (empty? res) nil (:description (first res))))]                   
+      (jdbc/delete-rows :metadata ["id=?" id])
+      (if str-id (jdbc/delete-rows :stringmap ["id=?" str-id]))))
+      true)
+  
 ;;; Statements
 
 (defn- standard->int 
@@ -190,29 +251,96 @@
    literal. Returns the id of the new statement record."
   [db literal]   
   {:pre [(literal? literal)]}
-  (jdbc/with-connection db
-     (cond (sliteral? literal) 
-              (first (vals (jdbc/insert-record
-                             :statement {:atom (literal-atom literal)})))
-           (statement? literal)
-              (if (and (not (nil? (:text literal)))
-                       (not (empty? (:text literal))))
-                (let [str-id (first (vals (jdbc/insert-record
-                                        :string
-                                        (:text literal))))]
+  (jdbc/with-connection 
+    db
+    (cond (sliteral? literal) 
+          (first (vals (jdbc/insert-record
+                         :statement {:atom (literal-atom literal)})))
+          (statement? literal)
+                (let [text-id (if (:text literal) (create-stringmap db (:text literal))),
+                      header-id (if (:header literal) (create-metadata db (:header literal)))]
                   (first (vals (jdbc/insert-record
                                  :statement {:atom (str (:atom literal)),
+                                             :header header-id,
                                              :weight (:weight literal),
+                                             :main (:main literal),
                                              :standard (standard->int (:standard literal)),
-                                             :text str-id}))))))))
+                                             :text text-id})))))))
+
 
 (defn read-statement
-  "database int -> statement
-   Retreives the statement with the give id from the database."
+  "database int -> statement or nil
+   Retreives the statement with the give id from the database.
+   Returns nil if there is not statement with this id."
+  [db id]
+  {:pre [(integer? id)]}
+    (jdbc/with-connection 
+      db
+      (let [s (jdbc/with-query-results 
+                   res [(str "SELECT * FROM statement WHERE id='" id "'")]
+                   (if (empty? res) nil (first res)))
+            h (if (:header s) (jdbc/with-query-results
+                      res [(str "SELECT * FROM metadata WHERE id='" (:header s) "'")]
+                   (if (empty? res) nil (first res))))
+            t (if (:text s) (jdbc/with-query-results
+                      res [(str "SELECT * FROM stringmap WHERE id='" (:text s) "'")]
+                   (if (empty? res) nil (first res))))]
+        (if s 
+          (-> (make-statement)
+              (merge (dissoc s :id))
+              (merge {:atom (read-string (:atom s))})
+              (merge {:header (dissoc h :id), 
+                      :text (dissoc t :id)}))))))
+ 
+(defn update-statement
+  "database integer map -> boolean
+   Updates the statement record with the given in in the database with the values
+   in the map.  Returns true if the update was successful." 
+  [db id m]
+  {:pre [(integer? id) (map? m)]}
+  (jdbc/with-connection 
+    db
+      (let [header-id1 (if (:header m)
+                              (jdbc/with-query-results 
+                              res [(str "SELECT header FROM statement WHERE id='" id "'")]
+                              (if (empty? res) nil (:header (first res)))))
+            header-id2  (if header-id1 
+                               (do (update-metadata db header-id1 (:header m))
+                                   header-id1)
+                               (if (:header m) (create-metadata db (merge (make-metadata) (:header m)))))
+            text-id1 (if (:text m)
+                              (jdbc/with-query-results 
+                              res [(str "SELECT text FROM statement WHERE id='" id "'")]
+                              (if (empty? res) nil (:text (first res)))))
+            text-id2  (if text-id1 
+                               (do (update-stringmap db text-id1 (:text m))
+                                   header-id1)
+                               (if (:text m) (create-stringmap db (:text m))))]
+        (condp = (first (jdbc/update-values
+                          :statement
+                          ["id=?" id]
+                          (merge m {:header header-id2
+                                    :text text-id2})))
+          0 false,
+          1 true))))
   
-  ; TO DO
-  )
-  
+
+; START HERE
+(defn delete-statement 
+  "Deletes a statement entry with the given the id. Returns true."
+  [db id]
+  {:pre [(integer? id)]}
+  (jdbc/with-connection 
+    db 
+    (let [text-id (jdbc/with-query-results 
+                   res [(str "SELECT text FROM statement WHERE id='" id "'")]
+                   (if (empty? res) nil (:text (first res))))
+          text-id (jdbc/with-query-results 
+                   res [(str "SELECT text FROM statement WHERE id='" id "'")]
+                   (if (empty? res) nil (:text (first res))))]                   
+      (jdbc/delete-rows :metadata ["id=?" id])
+      (if text-id (delete-statementmap db text-id)))
+      true)
                                          
 ;(defn create-argument 
 ;  "Creates a one-step argument and inserts it into a database.  Returns

@@ -70,8 +70,8 @@ grammar {
         # 0.0=false, 0.25=assumed falsed, 0.5=questioned, 0.75=assumed true, 1.00=true
         attribute value { xsd:float }?,   # output of argument evaluation
         attribute standard { "DV" | "PE" | "CCE" | "BRD" }?, # default: PE
-        attribute atom { xsd:string }  # formalization as Clojure s-expression
-        attribute main-issue { xsd:boolean }  # default: false
+        attribute atom { xsd:string }   # formalization as Clojure s-expression
+        attribute main { xsd:boolean }  # default: false, true if a main issue
         Metadata?,       # describing the model, not sources
         Descriptions     # natural language expressions of the statement 
     }
