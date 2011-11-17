@@ -1,5 +1,6 @@
 (ns carneades.database.db
   (:use clojure.pprint
+        carneades.engine.dublin-core
         carneades.engine.statement
         carneades.engine.argument)
   (:require
@@ -12,8 +13,9 @@
   "Returns a map describing a database with the given name and password."
   [db-name passwd]
   (let [db-protocol "file"             ; "file|mem|tcp"
-        db-host     "/Users/tgo/Test"] ; "path|host:port" 
-    ;;; TO DO ? remove path dependency above
+        db-host     "/Library/Application Support/Carneades/Databases"] ; "path|host:port" 
+    ;;; TO DO ? remove path and system dependency above
+    ;;; Use a properties file or parameters
     {:classname   "org.h2.Driver" 
      :subprotocol "h2"
      :subname (str db-protocol "://" db-host "/" db-name)
@@ -47,7 +49,7 @@
       [:creator "varchar"]
       [:date "varchar"]       ; http://www.w3.org/TR/NOTE-datetime                         
       [:description "int"]
-      [:format "varchar"]     ; A list of MIME types, comma separated
+      [:format "varchar"]     ; A list of MIME types, semicolon separated
       [:identifier "varchar"] 
       [:language "varchar"]
       [:publisher "varchar"]
@@ -128,14 +130,50 @@
 ;;; Metadata
 
 (defn create-metadata 
-  "Creates a metadata record and inserts it into a database.  
-   Returns the id of the new metadata record."
-  [db & key-values]   
-  (jdbc/with-connection db
-     (let [result (jdbc/insert-record 
-                    :metadata
-                    (apply hash-map key-values))]
-       (first (vals result)))))
+  "Inserts a metadata structure into a database.  
+   Returns the id of the record in the database."
+  [db metadata]
+  {:pre [(metadata? metadata)]}
+  (jdbc/with-connection 
+    db
+    (if (:description metadata)
+      (let [str-id (first (vals (jdbc/insert-record
+                                  :string
+                                  (:description metadata))))]
+        (first (vals (jdbc/insert-record 
+                       :metadata
+                       (assoc metadata :description str-id))))))))
+
+(defn read-metadata
+  "Retrieves the metadata with the given id from the database, 
+   and returns it as a metadata record. Returns nil if there
+   is no metadata record in the database with this id."
+  [db id]
+  (jdbc/with-connection 
+    db
+    (let [md (jdbc/with-query-results 
+               res1 [(str "SELECT * FROM metadata WHERE id='" id "'")]
+               (if (empty? res1) nil (dissoc (first res1) :id)))]
+      (println "md: " md)
+      (if (:description md)
+        (let [d (jdbc/with-query-results 
+                  res2 [(str "SELECT * FROM string WHERE id='" (:description md) "'")]
+                  (if (empty? res2) nil (dissoc (first res2) :id)))]
+          (println "d: " d)
+          (if d
+            (doall (merge (merge (make-metadata) md)
+                          {:description d}))
+            (doall (merge (make-metadata) md))))))))  
+
+(defn update-metadata
+  ; START HERE 
+  )    
+   
+(defn delete-metadata
+  ; TO DO -- Return false (or nil) without deleting if other 
+  ; records reference the metadata.  Return true
+  ; if the record was successfully deleted.
+  )
 
 ;;; Statements
 
@@ -172,7 +210,7 @@
   "database int -> statement
    Retreives the statement with the give id from the database."
   
-  ; START HERE
+  ; TO DO
   )
   
                                          
@@ -195,7 +233,7 @@
 
 ;;; Arguments
 
-(defn test-query
+(defn list-table
   [db table]
   (jdbc/with-connection 
     db
