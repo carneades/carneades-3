@@ -10,41 +10,41 @@
 ; a description in this language.
 
 (defrecord Metadata
-  [contributor      ; string 
-   coverage         ; string 
-   creator          ; string 
-   date             ; string 
-   description      ; (language -> string) map 
-   format           ; string 
-   identifier       ; string 
-   language         ; string 
-   publisher        ; string 
-   relation         ; string 
-   rights           ; string 
-   source           ; string 
-   subject          ; string 
-   title            ; string 
-   type])           ; string 
+  [contributor      ; string or nil 
+   coverage         ; string or nil 
+   creator          ; string or nil 
+   date             ; string or nil 
+   description      ; (language -> string) map or nil
+   format           ; string or nil 
+   identifier       ; string or nil 
+   language         ; string or nil 
+   publisher        ; string or nil 
+   relation         ; string or nil 
+   rights           ; string or nil 
+   source           ; string or nil 
+   subject          ; string or nil 
+   title            ; string or nil 
+   type])           ; string or nil 
  
 (defn make-metadata
   [& values]
   (merge 
     (Metadata. 
-      ""   ; contributor
-      ""   ; coverage
-      ""   ; creator 
-      ""   ; date
-      {}   ; description 
-      ""   ; format
-      ""   ; identifier
-      ""   ; language
-      ""   ; publisher 
-      ""   ; relation
-      ""   ; rights
-      ""   ; source 
-      ""   ; subject
-      ""   ; title 
-      "")  ; type
+      nil   ; contributor
+      nil   ; coverage
+      nil   ; creator 
+      nil   ; date
+      nil   ; description 
+      nil   ; format
+      nil   ; identifier
+      nil   ; language
+      nil   ; publisher 
+      nil   ; relation
+      nil   ; rights
+      nil   ; source 
+      nil   ; subject
+      nil   ; title 
+      nil)  ; type
     (apply hash-map values)))
 
 (defn metadata? [x] (instance? Metadata x))
