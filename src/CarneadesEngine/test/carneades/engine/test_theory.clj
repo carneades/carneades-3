@@ -14,7 +14,7 @@
 (def theory1 
   (make-theory
     :header 
-    (make-metadata :title ["Theory of Animals"])
+    (make-metadata :title "Theory of Animals")
     
     :language 
     {'Tweety (make-individual :symbol 'Tweety :text {:en "Tweety"})
