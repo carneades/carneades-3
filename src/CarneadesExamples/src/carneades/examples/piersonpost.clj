@@ -1,4 +1,4 @@
-;;; Copyright Â© 2010 Fraunhofer Gesellschaft 
+;;; Copyright © 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.examples.piersonpost
@@ -86,61 +86,65 @@ peace and order."}))
 
 (def a1 (make-argument 
           :conclusion not-property 
-          :premises [possession-required, no-possession, foxes-are-wild]))
+          :premises [(pm possession-required), 
+                     (pm no-possession),
+                     (pm foxes-are-wild)]))
 
 (def a2 (make-argument 
           :conclusion no-possession 
-          :premises [pursuit-not-sufficient]))
+          :premises [(pm pursuit-not-sufficient)]))
 
 (def a3 (make-argument
           :conclusion pursuit-not-sufficient 
-          :premises [justinian]))
+          :premises [(pm justinian)]))
 
 (def a4 (make-argument 
           :conclusion pursuit-not-sufficient
-          :premises [fleta]))
+          :premises [(pm fleta)]))
 
 (def a5 (make-argument
           :conclusion pursuit-not-sufficient
-          :premises [bracton]))
+          :premises [(pm bracton)]))
 
 (def a6 (make-argument 
           :conclusion no-possession 
-          :premise [actual-possession-required]))
+          :premise [(pm actual-possession-required)]))
 
 (def a7 (make-argument 
           :conclusion actual-possession-required
-          :premises [puffendorf]))
+          :premises [(pm puffendorf)]))
 
 (def a8 (make-argument 
           :conclusion puffendorf 
-          :premises [bynkershoek]))
+          :premises [(pm bynkershoek) ]))
 
 (def a9 (make-argument 
           :conclusion (neg actual-possession-required)
-          :premises [mortally-wounded-deemed-possessed, mortally-wounded]))
+          :premises [(pm mortally-wounded-deemed-possessed), 
+                     (pm mortally-wounded)]))
 
 (def a10 (make-argument 
            :conclusion mortally-wounded-deemed-possessed 
-           :premises [grotius]))
+           :premises [(pm grotius)]))
 
 (def a11 (make-argument 
            :conclusion mortally-wounded-deemed-possessed 
-           :premises [barbeyrac]))
+           :premises [(pm barbeyrac)]))
 
 (def a12 (make-argument
            :conclusion (neg actual-possession-required)
-           :premises [land-owner-has-possession, livelihood-on-own-land]))
+           :premises [(pm land-owner-has-possession), 
+                      (pm livelihood-on-own-land)]))
 
 (def a13 (make-argument 
            :conclusion land-owner-has-possession 
-           :premises [keeble]))
+           :premises [(pm keeble)]))
 
 ; teleological argument 
 (def a14 (make-argument 
            :conclusion actual-possession-required 
-           :premises [certainty,    ; policy/action
-                      order]))      ; value promoted
+           :premises [(pm certainty),    ; policy/action
+                      (pm order)]))      ; value promoted
 
 (def tompkins 
   (-> (make-argument-graph)
@@ -174,15 +178,18 @@ and noxious beast."}))
 
 (def a15 (make-argument 
            :conclusion mortally-wounded
-           :premises [deemed-mortally-wounded, chased-by-big-dogs, foxes-are-noxious]))
+           :premises [(pm deemed-mortally-wounded), 
+                      (pm chased-by-big-dogs),
+                      (pm foxes-are-noxious)]))
 
 (def a16 (make-argument 
            :conclusion deemed-mortally-wounded 
-           :premises [protecting-farmers, encourage-hunting]))
+           :premises [(pm protecting-farmers), 
+                      (pm encourage-hunting)]))
 
 (def a17 (make-argument
            :conclusion foxes-are-noxious
-           :premises [admitted-in-the-pleadings]))
+           :premises [(pm admitted-in-the-pleadings)]))
 
 (def livingston 
   (-> (make-argument-graph) 

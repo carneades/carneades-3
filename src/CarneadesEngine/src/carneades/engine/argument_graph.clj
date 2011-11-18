@@ -20,8 +20,7 @@
    weight           ; 0.0-1.0, default 0.5; input to argument evaluation
    value            ; nil or 0.0-1.0, default nil; output from argument evaluation
    conclusion       ; literal
-   premises         ; sequence of premises
-   sources])        ; vector of dublin-core metadata about the sources of the argument
+   premises])       ; sequence of premises
 
 (defn- make-argument-node
    "key value ... -> argument-node"
@@ -34,8 +33,7 @@
             0.5          ; weight
             nil          ; value
             nil          ; conclusion
-            []           ; premises
-            [])          ; sources 
+            [])          ; premises
           (apply hash-map key-values)))
 
 (defn argument-node? [x] (instance? ArgumentNode x))
@@ -276,20 +274,16 @@
                     ag1
                     (conj (map :literal (:premises arg)) 
                           (:conclusion arg)))
-        ag3 (reduce (fn [ag src] (update-references ag src))
-                    ag2
-                    (:sources arg))
         node (make-argument-node 
                :id (:id arg)           
-               :title (:title arg)      
+               :header (:header arg)      
                :scheme (:scheme arg) 
                :strict (:strict arg)
                :weight (:weight arg)  
-               :conclusion (get-statement-sliteral ag3 (:conclusion arg))
-               :premises (map (fn [p] (assoc p :literal (get-statement-sliteral ag3 (:literal p)))) 
-                              (:premises arg)) 
-               :sources (source-ids ag3 (:sources arg)))]
-    (-> ag3 
+               :conclusion (get-statement-sliteral ag2 (:conclusion arg))
+               :premises (map (fn [p] (assoc p :literal (get-statement-sliteral ag2 (:literal p)))) 
+                              (:premises arg)))]
+    (-> ag2 
         (add-argument-node node)
         (link-conclusion (:conclusion node) (:id arg))
         (link-premises (:premises node) (:id arg)))))
