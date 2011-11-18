@@ -34,12 +34,11 @@
 (defrecord Argument
   [id               ; symbol
    header           ; nil or dublin core metadata about the argument
-   scheme           ; nil or symbol, for the scheme id
+   scheme           ; nil, symbol or string, the URI of the scheme
    strict           ; boolean
    weight           ; real number between 0.0 and 1.0, default 0.5
-   conclusion       ; nil or literal
-   premises         ; sequence of premises 
-   sources])        ; collection of dublin-core metadata structures
+   conclusion       ; literal
+   premises])       ; sequence of premises 
 
 (defn argument? [x] (instance? Argument x))
 
@@ -61,8 +60,7 @@
         false        ; strict
         0.5          ; weight
         nil          ; conclusion
-        []           ; premises
-        [])          ; sources  
+        [])          ; premises 
       (merge (apply hash-map values))))
 
 (defn instantiate-argument
