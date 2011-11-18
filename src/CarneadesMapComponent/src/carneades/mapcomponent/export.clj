@@ -27,13 +27,13 @@
     (let [[centerx centery] (node-center view)
           width (node-width view)
           height (node-height view)
-          margin 6]
+          margin 2]
       (-> (svg/path [:M [centerx (double (+ (- centery (/ height 2)) margin))]
                      :L [centerx (double (- (+ centery (/ height 2)) margin))]
                      :M [(double (+ (- centerx (/ width 2)) margin)) centery]
                      :L [(double (- (+ centerx (/ width 2)) margin)) centery]
                      :Z []])
-          (svg/style :stroke-width 3 :stroke "black")))))
+          (svg/style :stroke-width 1.5 :stroke "black")))))
 
 (defrecord MinusDecorator
     []
@@ -44,10 +44,10 @@
     (let [[centerx centery] (node-center view)
           width (node-width view)
           height (node-height view)
-          margin 6]
+          margin 2]
       (-> (svg/line (double (+ (- centerx (/ width 2)) margin)) centery
                     (double (- (+ centerx (/ width 2)) margin)) centery)
-          (svg/style :stroke-width 3 :stroke "black")))))
+          (svg/style :stroke-width 1.5 :stroke "black")))))
 
 (defn trunk-line
   [s]
@@ -352,6 +352,13 @@
                                                    con-arg-color con-arg-color))
                      (xml/add-attrs :transform "scale (0.8)"))]])))
 
+(defn add-definitions
+  [map]
+  (add-def map [:drop-shadow [:filter {:filterUnits "userSpaceOnUse"}
+                              [:feGaussianBlur {:in "SourceAlpha" :stdDeviation "1" :result "blur-output"}]
+                              [:feOffset {:in "blur-output" :result "the-shadow" :dx "1.5" :dy "1.5"}]
+                              [:feBlend {:in "SourceGraphic" :in2 "the-shadow" :mode "normal"}]]]))
+
 (defn export-ag-helper
   [ag stmt-str & options]
   (let [pro-arg-color "#0e5200"
@@ -360,30 +367,30 @@
         width (get options-kv :width 1280)
         height (get options-kv :height 1024)
         map (create-graph :width width :height height)
+        map (add-definitions map)
         map (add-markers map pro-arg-color con-arg-color)
-        stmt-params {:style {:fill "white"} :width 260 :height 70}
-        arg-params {:style {:fill "white"} :shape :circle :r 16}
+        stmt-params {:style {:fill "white"} :width 230 :height 46}
+        arg-params {:style {:fill "white"} :shape :circle :r 10}
         tomato "#ff7e7e"
         lightgreen "#8ee888"
         params (merge {:stmt-params stmt-params
 
                        :stmt-inin-params
-                       (merge stmt-params {:style {:stroke-width 1.5
+                       (merge stmt-params {:style {:stroke-width 1
                                                    :fill "#ffe955"}})
 
                        :stmt-inout-params
-                       (merge stmt-params {:style {:stroke-width 1.5
+                       (merge stmt-params {:style {:stroke-width 1
                                                    :fill lightgreen}})
 
                        :stmt-outin-params
-                       (merge stmt-params {:style {:stroke-width 1.5
+                       (merge stmt-params {:style {:stroke-width 1
                                                    :fill tomato}})
 
                        :stmt-outout-params
                        stmt-params
                        
-                       :stmtlabel-params {:style {:stroke-width 1.5
-                                                  :font-size "14px"}}
+                       :stmtlabel-params {:style {:stroke-width 1}}
 
                        :arg-params arg-params
 
@@ -407,7 +414,7 @@
                                                   :fill "white"
                                                   :stroke-width 1.5}})
 
-                       :arglabel-params {:style {:font-size "20px"}}
+                       :arglabel-params {:style {}}
 
                        :depth Integer/MAX_VALUE
 
