@@ -497,18 +497,249 @@
             :conclusion conclusion
             :premises premises))))))
 
-; START HERE
+(defn update-argument
+  "database integer map -> boolean
+   Updates the argument with the given id in the database
+   with the values in the map. Returns true if the update
+   succeeds."
+  [db id m]
+  {:pre [(integer? id) (map? m)]}
+  (jdbc/with-connection
+    db
+    (let [header-id (if (:header m)
+                      (or (jdbc/with-query-results 
+                            res1 [(str "SELECT header FROM argument WHERE id='" id "'")]
+                            (:header (first res1)))
+                          (create-metadata db (make-metadata)))),         
+          conclusion-id (if (:conclusion m)
+                          (get-statement db (:conclusion m)))] 
+      (if (:premises m)    
+        (do 
+          ; first delete existing premises
+          (jdbc/with-query-results 
+            res1 [(str "SELECT id FROM premise WHERE argument='" id "'")]
+            (doseq [p res1] (delete-premise db (:id p))))   
+          ; then create and link the new premises 
+          (doseq [p (:premises m)]
+            (update-premise
+              db 
+              (create-premise db p)
+              {:argument id}))))                           
+      (condp = (first (jdbc/update-values 
+                        :argument 
+                        ["id=?" id] 
+                        (merge m (if (:conclusion m)
+                                   {:header header-id
+                                    :conclusion conclusion-id}
+                                   {:header header-id}))))
+        0 false
+        1 true))))          
 
-; update-argument
-; delete-argument
+(defn delete-argument 
+  "Deletes an argument with the given the id.  The statements
+   of the conclusion and premises of the argument are not 
+   deleted."
+  [db id]
+  (jdbc/with-connection 
+    db
+    ; first delete the premises of argument
+    (jdbc/with-query-results 
+      res1 [(str "SELECT id FROM premise WHERE argument='" id "'")]
+      (doseq [p res1] (delete-premise db (:id p))))
+    ; now delete the header of the argument, if it has one
+    (jdbc/with-query-results 
+      res1 [(str "SELECT header FROM argument WHERE id='" id "'")]
+      (if (:header (first res1))
+        (delete-metadata db (:header (first res1)))))
+    ; finally delete the argument itself
+    (jdbc/delete-rows :argument ["id=?" id])))
 
 ;;; Namespaces
   
-;;; Statement Polls
+(defn create-namespace
+  "database map -> integer
+   Creates a namespace record and inserts it into a database.  
+   Returns the id of the new translation."
+  [db m]   
+  {:pre [(map? m)]}
+  (jdbc/with-connection db
+     (let [result (jdbc/insert-record :namespace m)]
+       (first (vals result)))))
+
+(defn read-namespace 
+  "database integer -> map or nil
+   Retrieves the namespace with the given id from the database.
+   Returns nil if no namespace with the given id exists in the
+   database."
+  [db id]
+  (jdbc/with-connection 
+    db
+    (jdbc/with-query-results 
+      res1 [(str "SELECT * FROM namespace WHERE id='" id "'")]
+      (if (empty? res1) nil (dissoc (first res1) :id)))))
   
+(defn update-namespace 
+  "database integer map -> boolean
+   Updates the namespace with the given id in the database
+   with the values in the map. Returns true if the update
+   succeeds."
+  [db id m]
+  {:pre [(integer? id) (map? m)]}
+  (jdbc/with-connection
+    db
+    (condp = (first (jdbc/update-values :namespace ["id=?" id] m))
+      0 false
+      1 true)))
+
+(defn delete-namespace 
+  "Deletes a translation with the given the id"
+  [db id]
+  (jdbc/with-connection db
+    (jdbc/delete-rows :namespace ["id=?" id])))
+
+;;; Statement Polls
+
+(defn create-statement-poll
+  "Records votes for the given user, 
+   where the votes are a map from statement ids to real
+   numbers in the range 0.0 to 1.0. All other votes for 
+   this user, if any, are deleted."
+  [db userid votes]
+  {:pre [(string? userid) 
+         (map? votes)
+         (every? (fn [x] 
+                   (and (number? x)
+                        (<= 0.0 x 1.0)))
+                 (vals votes))]}
+  (jdbc/with-connection 
+    db
+    (doseq [vote votes]
+      (clojure.java.jdbc/insert-values
+        :stmtpoll
+        [:userid :statement :opinion]
+        [userid (first vote) (second vote)]))
+    true))
+
+(defn read-statement-poll
+  "database int -> {:count x, :value y}
+   Returns the results of a poll for the statement
+   with the given id.  The results are
+   returned as a map with a count of the number of
+   votes and the average value of the votes."
+  [db statement-id]
+  {:pre [(integer? statement-id)]}
+  (jdbc/with-connection 
+      db
+     {:count (jdbc/with-query-results 
+      res1 [(str "SELECT COUNT(statement) FROM stmtpoll WHERE statement='" statement-id "'")]
+       (second (first (first res1)))),
+      :value (jdbc/with-query-results 
+      res1 [(str "SELECT AVG(opinion) FROM stmtpoll WHERE statement='" statement-id "'")]
+       (second (first (first res1))))}))
+       
+(defn update-statement-poll
+  "database string map -> boolean
+   Updates the votes of a user.  The map is
+   from statement ids to numbers in the range of 0.0 to 1.0."
+  [db userid votes] 
+  {:pre [(string? userid) 
+         (map? votes)
+         (every? (fn [x] 
+                   (and (number? x)
+                        (<= 0.0 x 1.0)))
+                 (vals votes))]}
+  (jdbc/with-connection 
+    db
+    (doseq [vote votes]
+      (jdbc/update-or-insert-values 
+        :stmtpoll 
+        ["userid=? AND statement=?" userid (first vote)] 
+        {:userid userid,
+         :statement (first vote) 
+         :opinion (second vote)})))
+  true)
+
+(defn delete-statement-poll 
+  "Deletes all votes for the given statement id."
+  [db statement-id]
+  {:pre [(integer? statement-id)]}
+  (jdbc/with-connection db
+    (jdbc/delete-rows :stmtpoll ["statement=?" statement-id]))
+  true)
+
 ;;; Argument Polls
 
-(defn list-table
+(defn create-argument-poll
+  "Records votes for the given user, 
+   where the votes are a map from argument ids to real
+   numbers in the range 0.0 to 1.0. All other votes for 
+   this user, if any, are deleted."
+  [db userid votes]
+  {:pre [(string? userid) 
+         (map? votes)
+         (every? (fn [x] 
+                   (and (number? x)
+                        (<= 0.0 x 1.0)))
+                 (vals votes))]}
+  (jdbc/with-connection 
+    db
+    (doseq [vote votes]
+      (clojure.java.jdbc/insert-values
+        :argpoll
+        [:userid :argument :opinion]
+        [userid (first vote) (second vote)]))
+    true))
+
+(defn read-argument-poll
+  "database int -> {:count x, :value y}
+   Returns the results of a poll for the argument
+   with the given id.  The results are
+   returned as a map with a count of the number of
+   votes and the average value of the votes."
+  [db arg-id]
+  {:pre [(integer? arg-id)]}
+  (jdbc/with-connection 
+      db
+     {:count (jdbc/with-query-results 
+      res1 [(str "SELECT COUNT(argument) FROM argpoll WHERE argument='" arg-id "'")]
+       (second (first (first res1)))),
+      :value (jdbc/with-query-results 
+      res1 [(str "SELECT AVG(opinion) FROM argpoll WHERE argument='" arg-id "'")]
+       (second (first (first res1))))}))
+       
+(defn update-argument-poll
+  "database string map -> boolean
+   Updates the votes of a user.  The map is
+   from argument ids to numbers in the range of 0.0 to 1.0."
+  [db userid votes] 
+  {:pre [(string? userid) 
+         (map? votes)
+         (every? (fn [x] 
+                   (and (number? x)
+                        (<= 0.0 x 1.0)))
+                 (vals votes))]}
+  (jdbc/with-connection 
+    db
+    (doseq [vote votes]
+      (jdbc/update-or-insert-values 
+        :argpoll 
+        ["userid=? AND argument=?" userid (first vote)] 
+        {:userid userid,
+         :argument (first vote) 
+         :opinion (second vote)})))
+  true)
+
+(defn delete-argument-poll 
+  "Deletes all votes for the given argument id."
+  [db arg-id]
+  {:pre [(integer? arg-id)]}
+  (jdbc/with-connection db
+    (jdbc/delete-rows :argpoll ["argument=?" arg-id]))
+  true)
+
+;;; Test Utilities
+
+(defn- list-table
   [db table]
   (jdbc/with-connection 
     db
