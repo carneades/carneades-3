@@ -1,11 +1,13 @@
+;;; Copyright (c) 2011 Fraunhofer Gesellschaft
+;;; Licensed under the EUPL V.1.1
+
 (ns carneades.database.db
   (:use clojure.pprint
         carneades.engine.dublin-core
         carneades.engine.statement
         carneades.engine.argument)
   (:require
-        [clojure.java.jdbc :as jdbc]
-        [clojureql.core :as cql]))
+        [clojure.java.jdbc :as jdbc]))
 
 ;;; Databases
 
@@ -33,7 +35,7 @@
     (jdbc/create-table 
       :translation
       [:id "int identity"]
-      [:en "varchar not null"]   ; English
+      [:en "varchar"]            ; English
       [:nl "varchar"]            ; Dutch          
       [:fr "varchar"]            ; French
       [:de "varchar"]            ; German
@@ -143,7 +145,7 @@
     db
     (jdbc/with-query-results 
       res1 [(str "SELECT * FROM translation WHERE id='" id "'")]
-      (if (empty? res1) nil (dissoc (first res1) :id)))))
+      (if (empty? res1) nil (first res1)))))
   
 (defn update-translation 
   "database integer map -> boolean
@@ -190,11 +192,11 @@
     db
     (let [md (jdbc/with-query-results 
                res1 [(str "SELECT * FROM metadata WHERE id='" id "'")]
-               (if (empty? res1) nil (dissoc (first res1) :id)))]
+               (if (empty? res1) nil (first res1)))]
       (if (:description md)
         (let [d (jdbc/with-query-results 
                   res2 [(str "SELECT * FROM translation WHERE id='" (:description md) "'")]
-                  (if (empty? res2) nil (dissoc (first res2) :id)))]
+                  (if (empty? res2) nil (first res2)))]
           (if d
             (doall (merge (merge (make-metadata) md)
                           {:description d}))
@@ -246,6 +248,15 @@
     :cce 1,
     :brd 2,
     :dv 3))
+
+(defn integer->standard
+  [i]
+  {:pre [(integer? i)]}
+  (condp = i
+    0 :pe,
+    1 :cce,
+    2 :brd,
+    3 :dv))
               
   
 (defn create-statement 
@@ -289,10 +300,11 @@
                    (if (empty? res) nil (first res))))]
         (if s 
           (-> (make-statement)
-              (merge (dissoc s :id))
+              (merge s)
               (merge {:atom (read-string (:atom s))})
-              (merge {:header (dissoc h :id), 
-                      :text (dissoc t :id)}))))))
+              (merge {:standard (integer->standard (:standard s))})
+              (merge {:header h, 
+                      :text t}))))))
 
 (defn statements-for-atom
   "database atom -> sequence of integer
@@ -403,7 +415,7 @@
         (let [m (first res1)
               stmt (read-statement db (:statement m))]
           (-> (apply make-premise (flatten (seq m)))
-              (dissoc :id :argument)
+              (dissoc :argument)
               (assoc :literal (if (:positive m) 
                                 stmt 
                                 (literal-complement stmt)))))))))
@@ -490,6 +502,7 @@
                          (doall (map (fn [id] (read-premise db id))
                                      (map :id res1))))]
           (make-argument
+            :id (:id m)
             :header header
             :scheme (:scheme m)
             :strict (:strict m)
@@ -576,7 +589,7 @@
     db
     (jdbc/with-query-results 
       res1 [(str "SELECT * FROM namespace WHERE id='" id "'")]
-      (if (empty? res1) nil (dissoc (first res1) :id)))))
+      (if (empty? res1) nil (first res1)))))
   
 (defn update-namespace 
   "database integer map -> boolean
