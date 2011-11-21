@@ -6,7 +6,7 @@
             [compojure.handler :as handler]))
 
 
-(def db (make-db "db3" "pw1"))
+(def db (make-db "db1" "pw1"))
 
 (defn json-response [data & [status]]
   {:status (or status 200)
@@ -24,14 +24,18 @@
 
 (defn- pack-statement 
   [stmt]
-  (merge stmt {:atom (str (:atom stmt))}))
+  (if (nil? stmt) 
+    nil
+    (merge stmt {:atom (str (:atom stmt))})))
 
 (defn- pack-argument
   [arg]
-  (merge arg
-         {:conclusion (pack-statement (:conclusion arg)),
-          :premises (map (fn [p] (assoc p :literal  (pack-statement (:literal p))))
-                         (:premises arg))}))
+  (if (nil? arg)
+    nil
+    (merge arg
+           {:conclusion (pack-statement (:conclusion arg)),
+            :premises (map (fn [p] (assoc p :statement  (pack-statement (:statement p))))
+                           (:premises arg))})))
   
 (defroutes handlers
   ;; Metadata         

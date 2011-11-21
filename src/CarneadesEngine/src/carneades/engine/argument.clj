@@ -14,7 +14,8 @@
         carneades.engine.unify))
 
 (defrecord Premise
-  [literal     ; literal
+  [statement   ; atomic statement
+   positive    ; boolean
    role        ; string; the role of the premise in the scheme used to create this argument
    implicit])  ; boolean; true if the premise was not explicit in the source document.
 
@@ -24,7 +25,8 @@
   "key value ... -> premise"
   [& key-values]  
   (merge (Premise. 
-           nil           ; literal
+           nil           ; atomic statement
+           true          ; positive
            ""            ; role
            false)        ; implicit
          (apply hash-map key-values)))
@@ -32,7 +34,8 @@
 (defn pm
   "literal -> premise"
   [literal]
-  (make-premise :literal literal))
+  (make-premise :statement (literal-atom literal)
+                :positive (literal-pos? literal)))
 
 (defrecord Argument
   [id               ; symbol
@@ -41,6 +44,7 @@
    strict           ; boolean
    weight           ; real number between 0.0 and 1.0, default 0.5
    conclusion       ; literal
+   pro              ; boolean; con argument if false
    premises])       ; sequence of premises 
 
 (defn argument? [x] (instance? Argument x))
@@ -49,22 +53,24 @@
   "arg -> (seq-of symbol)
    Returns a seq containing the variables of the argument"
   [arg]
-  (distinct (concat (mapcat (fn [p] (variables (:literal p)))
+  (distinct (concat (mapcat (fn [p] (variables (:statement p)))
                             (:premises arg))
                     (variables (:conclusion arg)))))
 
 (defn make-argument
   "Makes a one-step argument."
   [& values]
-  (-> (Argument. 
-        (gensym "a") ; id
-        nil          ; header
-        nil          ; scheme
-        false        ; strict
-        0.5          ; weight
-        nil          ; conclusion
-        [])          ; premises 
-      (merge (apply hash-map values))))
+  (let [m (apply hash-map values)]
+    (-> (Argument. 
+          (gensym "a") ; id
+          nil          ; header
+          nil          ; scheme
+          false        ; strict
+          0.5          ; weight
+          nil          ; conclusion
+          true         ; pro
+          [])          ; premises 
+        (merge m))))
 
 (defn instantiate-argument
   "argument substitutions -> arg
@@ -73,8 +79,8 @@
   (assoc arg
          :id (gensym "a")
          :premises (map (fn [p] (assoc p 
-                                       :literal 
-                                       (apply-substitutions subs (:literal p)))) 
+                                       :statement 
+                                       (apply-substitutions subs (:statement p)))) 
                         (:premises arg))
          :conclusion (apply-substitutions subs (:conclusion arg))))
 

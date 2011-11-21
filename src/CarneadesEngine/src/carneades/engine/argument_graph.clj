@@ -23,6 +23,7 @@
    weight           ; 0.0-1.0, default 0.5; input to argument evaluation
    value            ; nil or 0.0-1.0, default nil; output from argument evaluation
    conclusion       ; literal
+   pro              ; boolean, default true; con argument if false
    premises])       ; sequence of premises
 
 (defn- make-argument-node
@@ -36,6 +37,7 @@
             0.5          ; weight
             nil          ; value
             nil          ; conclusion
+            true         ; pro
             [])          ; premises
           (apply hash-map key-values)))
 
@@ -180,28 +182,28 @@
 
    
 (defn- link-conclusion
-  [ag literal arg-id]
-  (let [sn (get (:statement-nodes ag) (literal-atom literal))]
-    (if (literal-pos? literal)  ; then conclusion of a pro argument
+  [ag an]
+  (let [sn (get (:statement-nodes ag) (literal-atom (:conclusion an)))]
+    (if (:pro an)  ; then conclusion of a pro argument
       (update-statement-node 
         ag 
         sn
-        :pro (conj (:pro sn) arg-id))
+        :pro (conj (:pro sn) (:id an)))
       (update-statement-node
         ag
         sn 
-        :con (conj (:con sn) arg-id)))))
+        :con (conj (:con sn) (:id an))))))
 
 (defn- link-premises
-  [ag1 premises arg-id]
+  [ag1 an]
   (reduce (fn [ag2 p]
-            (let [sn (get (:statement-nodes ag2) (literal-atom (:literal p)))]
+            (let [sn (get (:statement-nodes ag2) (:statement p))]
               (update-statement-node 
                 ag2 
                 sn
-                :premise-of (conj (:premise-of sn) arg-id))))
+                :premise-of (conj (:premise-of sn) (:id an)))))
           ag1
-          premises))
+          (:premises an)))
 
 (defn- find-sources
   "argument-graph (seq-of string) -> (seq-of source)
@@ -270,12 +272,12 @@
          (argument? arg)
          (ground? (:conclusion arg)) 
          (every? (fn [p] (and (premise? p)
-                              (ground? (:literal p))))
+                              (ground? (:statement p))))
                  (:premises arg))]}
   ; (pprint {:arg arg})
   (let [ag2 (reduce (fn [ag stmt] (first (create-statement-node ag stmt)))
                     ag1
-                    (conj (map :literal (:premises arg)) 
+                    (conj (map :statement (:premises arg)) 
                           (:conclusion arg)))
         node (make-argument-node 
                :id (:id arg)           
@@ -284,11 +286,14 @@
                :strict (:strict arg)
                :weight (:weight arg)  
                :conclusion (get-statement-sliteral ag2 (:conclusion arg))
-               :premises (map (fn [p] (assoc p :literal (get-statement-sliteral ag2 (:literal p)))) 
+               :pro (:pro arg)
+               :premises (map (fn [p] (assoc p 
+                                         :statement 
+                                        (get-statement-sliteral ag2 (:statement p)))) 
                               (:premises arg)))]
     (-> ag2 
         (add-argument-node node)
-        (link-conclusion (:conclusion node) (:id arg))
+        (link-conclusion node)
         (link-premises (:premises node) (:id arg)))))
 
 (defn assert-arguments
