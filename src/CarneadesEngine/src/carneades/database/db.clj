@@ -303,7 +303,10 @@
                    (map :id (doall res)))
             con (jdbc/with-query-results
                       res [(str "SELECT id FROM argument WHERE pro='false' AND conclusion='" id "'")]
-                   (map :id (doall res))) ]
+                   (map :id (doall res)))
+            premise-of (jdbc/with-query-results
+                      res [(str "SELECT argument FROM premise WHERE statement='" id "'")]
+                   (map :argument (doall res))) ]
         (if s 
           (-> (make-statement)
               (merge s)
@@ -312,7 +315,8 @@
               (merge {:header h, 
                       :text t,
                       :pro pro,
-                      :con con}))))))
+                      :con con
+                      :premise-of premise-of}))))))
 
 (defn statements-for-atom
   "database atom -> sequence of integer
@@ -446,7 +450,8 @@
   "Deletes a premise with the given the id"
   [db id]
   (jdbc/with-connection db
-    (jdbc/delete-rows :premise ["id=?" id])))
+    (jdbc/delete-rows :premise ["id=?" id]))
+  true)
                      
 ;;; Arguments
                            
