@@ -1,4 +1,4 @@
-;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Copyright ï¿½ 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
 
@@ -11,7 +11,6 @@ various argumentation tasks. This is the software library (the engine)."
                  [org.clojars.pallix/owlapi "3.0.0"]
                  [org.clojars.pallix/hermit "1.2.4"]
                  [com.h2database/h2 "1.3.160"]
-                 [org.clojure/java.jdbc "0.1.1"]
-                 [clojureql "1.0.0"]]
+                 [org.clojure/java.jdbc "0.1.1"]]
   :dev-dependencies [[swank-clojure "1.4.0-SNAPSHOT"]
                      [org.clojars.rayne/autodoc "0.8.0-SNAPSHOT"]])

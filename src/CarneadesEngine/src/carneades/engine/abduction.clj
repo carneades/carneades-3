@@ -1,4 +1,4 @@
-;;; Copyright ? 2010 Fraunhofer Gesellschaft
+;;; Copyright (c) 2010 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
 (ns ^{:doc "Abductive reasoning.

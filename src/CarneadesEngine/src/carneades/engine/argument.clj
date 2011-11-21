@@ -1,3 +1,6 @@
+;;; Copyright (c) 2011 Fraunhofer Gesellschaft
+;;; Licensed under the EUPL V.1.1
+
 (ns 
   ^{:doc "Provides a data structure for representing one-step arguments.
           The premises and conclusion of an argument are statements,
