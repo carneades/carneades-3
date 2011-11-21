@@ -1,3 +1,6 @@
+;;; Copyright (c) 2011 Fraunhofer Gesellschaft
+;;; Licensed under the EUPL V.1.1
+
 (ns ^{:doc "The protocol for argument evaluation structures.  An argument graph is evaluated
             by assigning values to its statement and argument nodes, where the values
             are real numbers in the range of 0.1 to 1.0. Argument evaluators also provide

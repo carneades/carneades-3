@@ -1,3 +1,6 @@
+;;; Copyright (c) 2011 Fraunhofer Gesellschaft
+;;; Licensed under the EUPL V.1.1
+
 (ns 
   ^{:doc "An implementation of the argument evaluation protocol using the 
           semantics of Carneades Argument Evaluation Structures (CAES)."}
