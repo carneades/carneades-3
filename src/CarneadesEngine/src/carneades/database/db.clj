@@ -297,14 +297,22 @@
                    (if (empty? res) nil (first res))))
             t (if (:text s) (jdbc/with-query-results
                       res [(str "SELECT * FROM translation WHERE id='" (:text s) "'")]
-                   (if (empty? res) nil (first res))))]
+                   (if (empty? res) nil (first res))))
+            pro (jdbc/with-query-results
+                      res [(str "SELECT id FROM argument WHERE pro='true' AND conclusion='" id "'")]
+                   (map :id (doall res)))
+            con (jdbc/with-query-results
+                      res [(str "SELECT id FROM argument WHERE pro='false' AND conclusion='" id "'")]
+                   (map :id (doall res))) ]
         (if s 
           (-> (make-statement)
               (merge s)
               (merge {:atom (read-string (:atom s))})
               (merge {:standard (integer->standard (:standard s))})
               (merge {:header h, 
-                      :text t}))))))
+                      :text t,
+                      :pro pro,
+                      :con con}))))))
 
 (defn statements-for-atom
   "database atom -> sequence of integer
