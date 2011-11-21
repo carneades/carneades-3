@@ -65,7 +65,8 @@
 (defrecord Scheme
   [id            ; symbol
    header        ; nil or dublin metadata
-   conclusions   ; sequence of literals or variables (ranging over literals)
+   conclusion    ; atom or variables (ranging over literals)
+   pro           ; boolean; generates con arguments if false
    strict        ; boolean, defeasible if false
    weight        ; nil or number in the range 0.0 to 1.0
    premises      ; premise sequence 
@@ -80,7 +81,8 @@
   (-> (merge (Scheme. 
                (gensym "s")    ; id 
                nil             ; header
-               []              ; conclusions
+               nil             ; conclusion
+               true            ; pro
                false           ; strict
                0.5             ; weight
                []              ; premises
@@ -105,18 +107,21 @@
   {:pre [(scheme? scheme) (map? subs)]}
   (letfn [(apply-subs [literal] (apply-substitutions subs literal))]
     (assoc scheme
-           :conclusions (map apply-subs (:conclusions scheme)),
-           :premises (map (fn [p] (assoc p :literal (apply-subs (:literal p))))
+           :conclusion (apply-subs (:conclusion scheme)),
+           :premises (map (fn [p] (assoc p :statement (apply-subs (:statement p))))
                           (:premises scheme)),
-           :exceptions (map (fn [p] (assoc p :literal (apply-subs (:literal p))))
+           :exceptions (map (fn [p] (assoc p :statement (apply-subs (:statement p))))
                             (:exceptions scheme)),        
-           :assumptions (map (fn [p] (assoc p :literal (apply-subs (:literal p))))
+           :assumptions (map (fn [p] (assoc p :statement (apply-subs (:statement p))))
                              (:assumptions scheme)))))
   
 (defn axiom 
   "literal -> scheme"
   [literal]
-  (make-scheme :strict true :conclusions [literal]))
+  (make-scheme 
+    :strict true 
+    :conclusion (literal-atom literal) 
+    :pro (literal-pos? literal)))
 
 ; The scope of section ids is their theory
 
@@ -138,31 +143,22 @@
 
 (defn section? [x] (instance? Section x))
 
-(defn- rename-variables-in-conclusions
-  "substitutions (seq-of literal) -> [substitutions (seq-of literal)]"
-  [subs literals]
-  (reduce (fn [pair literal]
-            (let [[subs1 literal2] (rename-variables (first pair) literal)]
-              [subs1 (conj (second pair) literal2)]))
-          [subs []]
-          literals))
-  
 (defn- rename-variables-in-premises
   "substitutions (seq-of premise) -> [substitutions (seq-of premise)]"
   [subs premises]
   (reduce (fn [pair p]
-            (let [[subs1 literal] (rename-variables (first pair) (:literal p))]
-              [subs1 (conj (second pair) (assoc p :literal literal))]))
+            (let [[subs1 atom] (rename-variables (first pair) (:statement p))]
+              [subs1 (conj (second pair) (assoc p :statement atom))]))
           [subs []]
           premises))
 
 (defn- rename-scheme-variables [scheme]
-  (let [[m1 conclusions] (rename-variables-in-conclusions {} (:conclusions scheme)),
+  (let [[m1 conclusion] (rename-variables {} (:conclusion scheme)),
         [m2 premises] (rename-variables-in-premises m1 (:premises scheme)),
         [m3 exceptions] (rename-variables-in-premises m2 (:exceptions scheme)),
         [m4 assumptions] (rename-variables-in-premises m3 (:assumptions scheme))]
     (assoc scheme 
-           :conclusions conclusions
+           :conclusion conclusion
            :premises premises
            :exceptions exceptions
            :assumptions assumptions)))
@@ -204,15 +200,11 @@
   ; (println "section: " section)
   (let [map2 (reduce (fn [map2 scheme]
                        ; (println "scheme: " scheme)
-                       (reduce (fn [map3 conclusion]
-                                 ; (println "conclusion: " conclusion)
-                                 (assoc map3
-                                        (scheme-index-key conclusion)
-                                        (conj (get map3
-                                                   (scheme-index-key conclusion))
-                                              scheme)))
-                               map2
-                               (:conclusions scheme)))
+                         (assoc map2
+                            (scheme-index-key (:conclusion scheme))
+                                (conj (get map3
+                                           (scheme-index-key (:conclusion scheme)))
+                                           scheme)))      
                      map1
                      (:schemes part))]
     (reduce (fn [map3 section]
@@ -248,7 +240,10 @@
                 false ; fail
                 (let [id (gensym "a")]
                   (cons (make-response subs2
-                                       (map :literal (:assumptions scheme))
+                                       (map (fn [a] (if (:positive p)
+                                                        (:statement p)
+                                                        (literal-complement (:statement p))))
+                                            (:assumptions scheme))
                                        (make-argument 
                                          :id id,
                                          :conclusion goal,
@@ -268,7 +263,7 @@
                              (:exceptions scheme)))))))]
     (apply concat (filter identity 
                           (map #(apply-for-conclusion scheme %) 
-                               (:conclusions scheme))))))
+                               (list (:conclusion scheme)))))))
 
 
 ;; Generators for arguments from schemes and theories:

@@ -392,13 +392,10 @@
   {:pre [(premise? premise)]}
   (jdbc/with-connection 
     db
-    (let [stmt-id (get-statement db (:literal premise))]    
+    (let [stmt-id (get-statement db (:statement premise))]    
       (first (vals (jdbc/insert-record 
                      :premise
-                     {:statement stmt-id,
-                      :positive (literal-pos? (:literal premise))
-                      :implicit (:implicit premise)
-                      :role (:role premise)}))))))
+                     (assoc premise :statement stmt-id)))))))
 
 (defn read-premise 
   "database integer -> premise or nil
@@ -415,10 +412,7 @@
         (let [m (first res1)
               stmt (read-statement db (:statement m))]
           (-> (apply make-premise (flatten (seq m)))
-              (dissoc :argument)
-              (assoc :literal (if (:positive m) 
-                                stmt 
-                                (literal-complement stmt)))))))))
+              (assoc :statement stmt)))))))
 
 (defn update-premise
   "database integer map -> boolean
@@ -447,16 +441,6 @@
     (jdbc/delete-rows :premise ["id=?" id])))
                      
 ;;; Arguments
-
-;(defrecord Argument
-;  [id               ; symbol
-;   header           ; nil or dublin core metadata about the argument
-;   scheme           ; nil, symbol or string
-;   strict           ; boolean
-;   weight           ; real number between 0.0 and 1.0, default 0.5
-;   conclusion       ; nil or literal
-;   premises])       ; sequence of premises
-
                            
 (defn create-argument 
   "Creates a one-step argument and inserts it into a database.  Returns
@@ -501,14 +485,12 @@
                          res1 [(str "SELECT id FROM premise WHERE argument='" id "'")]
                          (doall (map (fn [id] (read-premise db id))
                                      (map :id res1))))]
-          (make-argument
-            :id (:id m)
-            :header header
-            :scheme (:scheme m)
-            :strict (:strict m)
-            :weight (:weight m)
-            :conclusion conclusion
-            :premises premises))))))
+          (-> (make-argument)
+              (merge m)
+              (assoc :header header
+                     :conclusion conclusion
+                     :premises premises)))))))
+
 
 (defn update-argument
   "database integer map -> boolean
