@@ -42,7 +42,7 @@
        :id 'a
        :name "Birds Fly"
        :conclusions ['(flies ?x)]
-       :premises [(make-premise :role "minor" :literal '(bird ?x))]
+       :premises [(make-premise :role "minor" :statement '(bird ?x))]
        :exceptions [(pm '(penguin ?x))])]))
                                 
 (def max-goals 10)  

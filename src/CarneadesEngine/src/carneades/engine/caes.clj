@@ -109,7 +109,7 @@
                                                                 (:id an)))
                                  (map (fn [id] (get (:statement-nodes (:graph ces1))
                                                      id))
-                                      (map literal-atom (map :literal (:premises an)))))
+                                      (map :statement (:premises an))))
                     ces3 (reduce (fn [s an2] (eval-argument-node s an2))
                                  ces2
                                  (undercutters an))]
@@ -145,8 +145,11 @@
   "argument-graph argument-node -> answer"
   [ag an]
   {:pre [(argument-graph? ag) (argument-node? an)]}
-  (let [answers (map (fn [literal] (holds? ag literal)) 
-                     (map :literal (:premises an)))]
+  (let [answers (map (fn [p] (holds? ag
+                                (if (:positive p)
+                                    (:statement p)
+                                    (literal-complement (:statement p)))))
+                      (:premises an))]
     (cond (contains? answers :no) :no,
           (contains? answers :unknown) :unknown,
           :else :yes)))

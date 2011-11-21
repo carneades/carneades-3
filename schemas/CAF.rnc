@@ -79,7 +79,7 @@ grammar {
     Arguments = element arguments { Argument* }
     Argument = element argument { 
     	attribute id { xsd:ID },
-        attribute direction { "pro" | "con" }?,
+        attribute pro { xsd:boolean }?,   # default true; false if con
         attribute scheme { xsd:anyURI | xsd:string }?,
         attribute weight { xsd:float }?,  # range: 0.0 to 1.0; default: 0.5
         attribute value { xsd:float }?,   # output of argument evaluation
@@ -91,7 +91,7 @@ grammar {
     Premises = element premises { Premise* }
     
     Premise = element premise { 
-        attribute polarity { "positive" | "negative" }?, # default: positive
+        attribute positive { xsd:boolean }?, # default: true
         attribute role { xsd:string }?,
         attribute implicit { xsd:boolean}?,   # default: false
         attribute statement { xsd:anyURI },

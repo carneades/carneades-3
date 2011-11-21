@@ -62,8 +62,8 @@
 (def married (make-statement :text {:en "Fred is married."}))
 (def A1 (make-argument :strict false :weight 0.8 :conclusion bachelor :premises [(pm party-animal)]))
 (def A2 (make-argument :strict false :weight 0.7 :conclusion married :premises [(pm wears-ring)]))
-(def A3 (make-argument :strict true :conclusion (neg married) :premises [(pm bachelor)]))
-(def A4 (make-argument :strict true :conclusion (neg bachelor) :premises [(pm married)]))
+(def A3 (make-argument :strict true :pro false :conclusion married  :premises [(pm bachelor)]))
+(def A4 (make-argument :strict true :pro false :conclusion bachelor :premises [(pm married)]))
 
 ; A5 and A6 manually add the contrapostives of A3 and A4. These could
 ; generated automatically when instantiating strict schemes.
@@ -126,21 +126,23 @@
 (def expert-witness-scheme
   (make-scheme 
     :name "Expert Witness Testimony"
-    :conclusions ['?P]
-    :premises [(make-premise :role "major" :literal '(expert ?E ?D)), 
-               (make-premise :role "minor" :literal '(asserts ?E ?P))]
+    :conclusion '?P
+    :premises [(make-premise :role "major" :statement '(expert ?E ?D)), 
+               (make-premise :role "minor" :statement '(asserts ?E ?P))]
     :exceptions [(make-premise 
-                   :role "reliable" 
-                   :literal '(not (reliable-as-source ?E))),
+                   :role "reliable", 
+                   :positive false,
+                   :statement (reliable-as-source ?E)),
                  (make-premise 
                    :role "consistent" 
-                   :literal '(not (consistent-with-other-witnesses ?P)))]
+                   :positive false
+                   :statement '(consistent-with-other-witnesses ?P))]
     :assumptions [(make-premise 
                     :role "credible"
-                    :literal '(credible-expert ?E)),
+                    :statement '(credible-expert ?E)),
                   (make-premise
                     :role "backup-evidence"
-                    :literal '(based-on-evidence ?E))]))
+                    :statement '(based-on-evidence ?E))]))
 
 
 (def expert-witness1
@@ -178,7 +180,7 @@
 
 (def r1 (make-argument :weight 0.5 :conclusion misbehaves :premises [(pm snores)]))
 (def r2 (make-argument :weight 0.7 :conclusion access-denied :premises [(pm misbehaves)]))
-(def r3 (make-argument :weight 0.6 :conclusion '(not access-denied) :premises [(pm professor)]))
+(def r3 (make-argument :weight 0.6 :pro false :conclusion 'access-denied :premises [(pm professor)]))
 
 (def library-graph 
   (-> (make-argument-graph)

@@ -101,7 +101,10 @@
                     ; pop the first issue and add issues for the
                     ; premises of the argument to the beginning for
                     ; depth-first search
-                    :issues (concat (map (fn [p] (literal->sliteral (:literal p)))
+                    :issues (concat (map (fn [p] (literal->sliteral 
+                                                    (if (:positive p)
+                                                        (:statement p)
+                                                        (literal-complement (:statement p)))))
                                          (:premises (:argument response)))
                                     (list rebuttal undercutter)                              
                                     (rest (:issues g1)))
@@ -283,6 +286,5 @@
                             max-goals 
                             generators2))))
   ([issue max-goals facts generators]
-    (let [ag (make-argument-graph :main-issue issue)]
-      (construct-arguments ag issue max-goals facts generators))))
+      (construct-arguments (make-argument-graph) issue max-goals facts generators)))
 
