@@ -27,13 +27,13 @@
     (let [[centerx centery] (node-center view)
           width (node-width view)
           height (node-height view)
-          margin 2]
+          margin 6]
       (-> (svg/path [:M [centerx (double (+ (- centery (/ height 2)) margin))]
                      :L [centerx (double (- (+ centery (/ height 2)) margin))]
                      :M [(double (+ (- centerx (/ width 2)) margin)) centery]
                      :L [(double (- (+ centerx (/ width 2)) margin)) centery]
                      :Z []])
-          (svg/style :stroke-width 1.5 :stroke "black")))))
+          (svg/style :stroke-width 3 :stroke "black")))))
 
 (defrecord MinusDecorator
     []
@@ -44,10 +44,10 @@
     (let [[centerx centery] (node-center view)
           width (node-width view)
           height (node-height view)
-          margin 2]
+          margin 6]
       (-> (svg/line (double (+ (- centerx (/ width 2)) margin)) centery
                     (double (- (+ centerx (/ width 2)) margin)) centery)
-          (svg/style :stroke-width 1.5 :stroke "black")))))
+          (svg/style :stroke-width 3 :stroke "black")))))
 
 (defn trunk-line
   [s]
@@ -63,13 +63,12 @@
 
 (defn gen-stmt-id
   [stmt]
-  (let [stmtstr (statement/statement-formatted stmt)
-        size 10
-        s (if (> (count stmtstr) size)
-            (subs stmtstr 0 size)
-            stmtstr)
+  (let [size 10
+        s (if (> (count stmt) size)
+            (subs stmt 0 size)
+            stmt)
         s (s/replace s " " "_")]
-   (keyword (str "s-" s "-" (str (Math/abs (hash s)))))))
+   (keyword (str "s-" s "-" (str (gensym))))))
 
 (defn pick-stmt-params
   [ag stmt params]
@@ -116,54 +115,21 @@
   [map p id argid params]
   (let [width 1.5]
    (if (ag/premise-neg? p)
-     (cond (ag/assumption? p)
            (add-edge map (geneid) id argid
                      :marker-start "url(#dot-marker-red)"
                      :marker-end nil
                      :style {:stroke-width width
-                             :stroke-dasharray "2, 2"
                              :stroke (-> params :arg-con-applicable-params :style :stroke)})
-          
-           (ag/exception? p)
-           (add-edge map (geneid) id argid
-                     :marker-start "url(#dot-marker-green)"
-                     :marker-end nil
-                     :style {:stroke-width width
-                             :stroke-dasharray "8, 2"
-                             :stroke (-> params :arg-pro-applicable-params :style :stroke)})
-          
-           :else
-           (add-edge map (geneid) id argid
-                     :marker-start "url(#dot-marker-red)"
-                     :marker-end nil
-                     :style {:stroke-width width
-                             :stroke (-> params :arg-con-applicable-params :style :stroke)}))
-    
-     (cond (ag/assumption? p)
-           (add-edge map (geneid) id argid
-                     :marker-end nil
-                     :style {:stroke-width width
-                             :stroke-dasharray "2, 2"
-                             :stroke (-> params :arg-pro-applicable-params :style :stroke)})
-          
-           (ag/exception? p)
-           (add-edge map (geneid) id argid
-                     :marker-end nil
-                     :style {:stroke-width width
-                             :stroke-dasharray "8, 2"
-                             :stroke (-> params :arg-con-applicable-params :style :stroke)})
-          
-           :else
            (add-edge map (geneid) id argid :marker-end nil
                      :style {:stroke-width width
-                             :stroke (-> params :arg-pro-applicable-params :style :stroke)})))))
+                             :stroke (-> params :arg-pro-applicable-params :style :stroke)}))))
 
 (defn add-premise
   [map ag arg argid pm mapinfo pms stmt-str params]
   (let [stmt (ag/premise-atom pm)
         stmtstr (oldmap/stmt-to-str ag stmt stmt-str)
         already-added (get-in mapinfo [:stmts-ids stmt])
-        id (gen-stmt-id stmt)
+        id (gen-stmt-id stmtstr)
         [map mapinfo pms] (cond
                    (and already-added (:treeify params) (not (:full-duplication params)))
                    [(-> map
@@ -265,7 +231,7 @@
 (defn add-statement
   [map ag stmt stmt-ids stmt-str params]
   (let [stmtstr (oldmap/stmt-to-str ag stmt stmt-str)
-        id (gen-stmt-id stmt)
+        id (gen-stmt-id stmtstr)
         stmt-params (merge (pick-stmt-params ag stmt params)
                            {:label "" :x 0 :y 0 :shape :rect})
         map (add-node-kv map id stmt-params)
@@ -352,13 +318,6 @@
                                                    con-arg-color con-arg-color))
                      (xml/add-attrs :transform "scale (0.8)"))]])))
 
-(defn add-definitions
-  [map]
-  (add-def map [:drop-shadow [:filter {:filterUnits "userSpaceOnUse"}
-                              [:feGaussianBlur {:in "SourceAlpha" :stdDeviation "1" :result "blur-output"}]
-                              [:feOffset {:in "blur-output" :result "the-shadow" :dx "1.5" :dy "1.5"}]
-                              [:feBlend {:in "SourceGraphic" :in2 "the-shadow" :mode "normal"}]]]))
-
 (defn export-ag-helper
   [ag stmt-str & options]
   (let [pro-arg-color "#0e5200"
@@ -367,30 +326,30 @@
         width (get options-kv :width 1280)
         height (get options-kv :height 1024)
         map (create-graph :width width :height height)
-        map (add-definitions map)
         map (add-markers map pro-arg-color con-arg-color)
-        stmt-params {:style {:fill "white"} :width 230 :height 46}
-        arg-params {:style {:fill "white"} :shape :circle :r 10}
+        stmt-params {:style {:fill "white"} :width 260 :height 70}
+        arg-params {:style {:fill "white"} :shape :circle :r 16}
         tomato "#ff7e7e"
         lightgreen "#8ee888"
         params (merge {:stmt-params stmt-params
 
                        :stmt-inin-params
-                       (merge stmt-params {:style {:stroke-width 1
+                       (merge stmt-params {:style {:stroke-width 1.5
                                                    :fill "#ffe955"}})
 
                        :stmt-inout-params
-                       (merge stmt-params {:style {:stroke-width 1
+                       (merge stmt-params {:style {:stroke-width 1.5
                                                    :fill lightgreen}})
 
                        :stmt-outin-params
-                       (merge stmt-params {:style {:stroke-width 1
+                       (merge stmt-params {:style {:stroke-width 1.5
                                                    :fill tomato}})
 
                        :stmt-outout-params
                        stmt-params
                        
-                       :stmtlabel-params {:style {:stroke-width 1}}
+                       :stmtlabel-params {:style {:stroke-width 1.5
+                                                  :font-size "14px"}}
 
                        :arg-params arg-params
 
@@ -414,7 +373,7 @@
                                                   :fill "white"
                                                   :stroke-width 1.5}})
 
-                       :arglabel-params {:style {}}
+                       :arglabel-params {:style {:font-size "20px"}}
 
                        :depth Integer/MAX_VALUE
 
@@ -446,7 +405,6 @@
         os (ByteArrayOutputStream.)
         v (view map)]
     (dom/spit-xml os v :indent "yes")
-      (InputStreamReader.
-        (ByteArrayInputStream. (.toByteArray os))
-       "UTF8")))export
-
+    (InputStreamReader.
+     (ByteArrayInputStream. (.toByteArray os))
+     "UTF8")))
