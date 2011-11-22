@@ -182,6 +182,7 @@
 
    
 (defn- link-conclusion
+  "argument-graph argument-node -> argument-graph"
   [ag an]
   (let [sn (get (:statement-nodes ag) (literal-atom (:conclusion an)))]
     (if (:pro an)  ; then conclusion of a pro argument
@@ -294,7 +295,7 @@
     (-> ag2 
         (add-argument-node node)
         (link-conclusion node)
-        (link-premises (:premises node) (:id arg)))))
+        (link-premises node))))
 
 (defn assert-arguments
   "argument-graph (collection-of argument) -> argument-graph"

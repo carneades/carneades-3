@@ -202,8 +202,7 @@
                        ; (println "scheme: " scheme)
                          (assoc map2
                             (scheme-index-key (:conclusion scheme))
-                                (conj (get map3
-                                           (scheme-index-key (:conclusion scheme)))
+                                (conj (get (scheme-index-key (:conclusion scheme)))
                                            scheme)))      
                      map1
                      (:schemes part))]
@@ -240,7 +239,7 @@
                 false ; fail
                 (let [id (gensym "a")]
                   (cons (make-response subs2
-                                       (map (fn [a] (if (:positive p)
+                                       (map (fn [p] (if (:positive p)
                                                         (:statement p)
                                                         (literal-complement (:statement p))))
                                             (:assumptions scheme))
@@ -263,7 +262,7 @@
                              (:exceptions scheme)))))))]
     (apply concat (filter identity 
                           (map #(apply-for-conclusion scheme %) 
-                               (list (:conclusion scheme)))))))
+                               (list (conclusion-literal scheme)))))))
 
 
 ;; Generators for arguments from schemes and theories:
