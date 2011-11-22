@@ -78,19 +78,37 @@
 (defn make-scheme
   "key value ... -> scheme"
   [& key-values]  
-  (-> (merge (Scheme. 
-               (gensym "s")    ; id 
-               nil             ; header
-               nil             ; conclusion
-               true            ; pro
-               false           ; strict
-               0.5             ; weight
-               []              ; premises
-               []              ; exceptions
-               [])             ; assumptions
-             (apply hash-map key-values))))
+  (let [m  (-> (merge (Scheme. 
+                        (gensym "s")    ; id 
+                        nil             ; header
+                        nil             ; conclusion
+                        true            ; pro
+                        false           ; strict
+                        0.5             ; weight
+                        []              ; premises
+                        []              ; exceptions
+                        [])             ; assumptions
+                      (apply hash-map key-values)))]
+    ; normalize the conclusion and direction of the scheme
+    (assoc m :conclusion (literal-atom (:conclusion m))
+           :pro  (or (and (literal-pos? (:conclusion m))
+                          (:pro m))
+                     (and (literal-neg? (:conclusion m))
+                          (not (:pro m)))))))
 
 (defn scheme? [x] (instance? Scheme x))
+
+(defn scheme-conclusion-literal
+  "scheme -> literal
+   Returns the conclusion of the scheme as a positive 
+   literal, if the scheme is pro, or negative literal,
+   if the scheme gument is con."
+  [s]
+  {:pre [(scheme? s)]}
+  (if (:pro s) 
+    (:conclusion s) 
+    (literal-complement (:conclusion s))))
+
 
 ; When applying schemes, undercutters are generated from the exceptions of schemes, 
 ; where the undercutters are arguments with the form:
@@ -262,7 +280,7 @@
                              (:exceptions scheme)))))))]
     (apply concat (filter identity 
                           (map #(apply-for-conclusion scheme %) 
-                               (list (conclusion-literal scheme)))))))
+                               (list (scheme-conclusion-literal scheme)))))))
 
 
 ;; Generators for arguments from schemes and theories:
