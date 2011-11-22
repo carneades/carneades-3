@@ -24,18 +24,30 @@
 (defn make-premise 
   "key value ... -> premise"
   [& key-values]  
-  (merge (Premise. 
-           nil           ; atomic statement
-           true          ; positive
-           ""            ; role
-           false)        ; implicit
-         (apply hash-map key-values)))
+  (let [m (merge (Premise. 
+                   nil           ; atomic statement
+                   true          ; positive
+                   ""            ; role
+                   false)        ; implicit
+                 (apply hash-map key-values))]
+    ; normalize the statement of the premise:
+    (assoc m :statement (literal-atom (:statement m))
+           :positive  (or (and (literal-pos? (:statement m))
+                               (:positive m))
+                          (and (literal-neg? (:statement m))
+                               (not (:positive m)))))))
 
 (defn pm
   "literal -> premise"
   [literal]
-  (make-premise :statement (literal-atom literal)
-                :positive (literal-pos? literal)))
+  (make-premise :statement literal))
+
+(defn premise-literal
+  "premise -> literal"
+  [premise]
+  (if (:positive premise) 
+    (:statement premise)
+    (literal-complement (:statement premise))))
 
 (defrecord Argument
   [id               ; symbol
@@ -60,17 +72,34 @@
 (defn make-argument
   "Makes a one-step argument."
   [& values]
-  (let [m (apply hash-map values)]
-    (-> (Argument. 
-          (gensym "a") ; id
-          nil          ; header
-          nil          ; scheme
-          false        ; strict
-          0.5          ; weight
-          nil          ; conclusion
-          true         ; pro
-          [])          ; premises 
-        (merge m))))
+  (let [m (merge
+            (Argument. 
+              (gensym "a") ; id
+              nil          ; header
+              nil          ; scheme
+              false        ; strict
+              0.5          ; weight
+              nil          ; conclusion
+              true         ; pro
+              [])          ; premises 
+            (apply hash-map values))]
+    ; normalize the conclusion and direction of the argument:
+    (assoc m :conclusion (literal-atom (:conclusion m))
+            :pro  (or (and (literal-pos? (:conclusion m))
+                           (:pro m))
+                      (and (literal-neg? (:conclusion m))
+                           (not (:pro m)))))))
+
+(defn conclusion-literal
+  "argument -> literal
+   Returns the conclusion of the argument as a positive 
+   literal, if the argument is pro, or negative literal,
+   if the argument is con."
+  [arg]
+  {:pre [(argument? arg)]}
+  (if (:pro arg) 
+    (:conclusion arg) 
+    (literal-complement (:conclusion arg))))
 
 (defn instantiate-argument
   "argument substitutions -> arg
