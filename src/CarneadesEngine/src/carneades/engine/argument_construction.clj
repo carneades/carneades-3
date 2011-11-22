@@ -93,7 +93,7 @@
                   :issues (rest (:issues g1))
                   :substitutions subs
                   :depth (inc (:depth g1))))
-      (let [conclusion (literal->sliteral (:conclusion arg)),
+      (let [conclusion (literal->sliteral (conclusion-literal arg)),
             rebuttal (apply-substitutions subs (literal-complement conclusion)),
             undercutter (apply-substitutions subs `(~'undercut ~(:id arg)))]
         (add-goal state1 
@@ -101,10 +101,7 @@
                     ; pop the first issue and add issues for the
                     ; premises of the argument to the beginning for
                     ; depth-first search
-                    :issues (concat (map (fn [p] (literal->sliteral 
-                                                    (if (:positive p)
-                                                        (:statement p)
-                                                        (literal-complement (:statement p)))))
+                    :issues (concat (map (fn [p] (literal->sliteral (premise-literal p)))
                                          (:premises (:argument response)))
                                     (list rebuttal undercutter)                              
                                     (rest (:issues g1)))

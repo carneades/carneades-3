@@ -9,21 +9,12 @@
             [compojure.handler :as handler]))
 
 
-(def db (make-db "db1" "pw1"))
+(def db (make-db "db1" "pw1"))  ;; temporary, for development purposes
 
 (defn json-response [data & [status]]
   {:status (or status 200)
    :headers {"Content-Type" "application/json"}
    :body (json-str data)})
-
-(defrecord Statement  ; statements are annotated literals
-  [atom               ; atomic formula of propositional (symbol) or predicate logic (list)
-   header             ; nil or dublin core metadata description of the model
-   positive           ; boolean
-   weight             ; nil or 0.0-1.0, default nil
-   main               ; true if the statement is a main issue
-   standard           ; proof-standard
-   text])             ; (language -> string) map, natural language formulations of the statement
 
 (defn- pack-statement 
   [stmt]
@@ -39,6 +30,10 @@
            {:conclusion (pack-statement (:conclusion arg)),
             :premises (map (fn [p] (assoc p :statement  (pack-statement (:statement p))))
                            (:premises arg))})))
+
+;; To Do: wrap the delete and other destructive operations in transactions.
+;; To Do: commands for logging into and creating databases.
+;; To Do: support for retrieving undercutters
   
 (defroutes handlers
   ;; Metadata         

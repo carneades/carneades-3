@@ -87,10 +87,10 @@
                (undecided? ag (:atom married))))))
 
 ; TO DO: maybe bachelor and married should both be undecided, 
-; since out(P) should imply in(�P) and �bachelor and �married
+; since out(P) should imply in(?P) and ?bachelor and ?married
 ; intuitively should not both be in. Perhaps the problem
 ; is underspecified, since Carneades is not strong enough to
-; derive an inconsistency from �bachelor and �married. 
+; derive an inconsistency from ?bachelor and ?married. 
 
 ; The Frisian example, ibid., page 11
 
@@ -131,12 +131,10 @@
                (make-premise :role "minor" :statement '(asserts ?E ?P))]
     :exceptions [(make-premise 
                    :role "reliable", 
-                   :positive false,
-                   :statement (reliable-as-source ?E)),
+                   :statement '(not (reliable-as-source ?E))),
                  (make-premise 
                    :role "consistent" 
-                   :positive false
-                   :statement '(consistent-with-other-witnesses ?P))]
+                   :statement '(not (consistent-with-other-witnesses ?P)))]
     :assumptions [(make-premise 
                     :role "credible"
                     :statement '(credible-expert ?E)),
