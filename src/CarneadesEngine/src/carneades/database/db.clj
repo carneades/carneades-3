@@ -92,7 +92,7 @@
     (jdbc/create-table 
       :premise
       [:id "int identity"]
-      [:argument "int"]  ; may be null, to allow premises to be created before arugments
+      [:argument "int not null"]  
       [:statement "int not null"]
       [:positive "boolean default true"] 
       [:role "varchar"]
@@ -102,7 +102,7 @@
     
     (jdbc/create-table 
       :namespace
-      [:prefix "varchar not null"]
+      [:prefix "varchar primary key not null"]
       [:uri    "varchar not null"])
     
     (jdbc/create-table 
@@ -201,6 +201,17 @@
             (doall (merge (merge (make-metadata) md)
                           {:description d}))
             (doall (merge (make-metadata) md))))))))  
+
+(defn list-metadata
+  "database -> (seq-of metadata)
+   Returns a sequence of all the metadata records in the database"
+  [db]
+  (jdbc/with-connection 
+    db
+    (let [ids (jdbc/with-query-results 
+               res1 [(str "SELECT id FROM metadata")]
+               (doall (map :id res1)))]
+            (doall (map (fn [id] (read-metadata db id)) ids)))))
 
 (defn update-metadata
   "database integer map -> boolean
@@ -318,6 +329,17 @@
                       :con con
                       :premise-of premise-of}))))))
 
+(defn list-statements
+  "database -> (seq-of statement)
+   Returns a sequence of all the statement records in the database"
+  [db]
+  (jdbc/with-connection 
+    db
+    (let [ids (jdbc/with-query-results 
+               res1 [(str "SELECT id FROM statement")]
+               (doall (map :id res1)))]
+            (doall (map (fn [id] (read-statement db id)) ids)))))
+
 (defn statements-for-atom
   "database atom -> sequence of integer
    Queries the database to find statements with this
@@ -419,12 +441,22 @@
     db
     (jdbc/with-query-results 
       res1 [(str "SELECT * FROM premise WHERE id='" id "'")]
-      (if (empty? res1) 
+      (if (empty? (doall res1)) 
         nil 
         (let [m (first res1)
               stmt (read-statement db (:statement m))]
-          (-> (apply make-premise (flatten (seq m)))
-              (assoc :statement stmt)))))))
+          (apply make-premise (flatten (seq (assoc m :statement stmt)))))))))
+
+(defn list-premises
+  "database -> (seq-of premise)
+   Returns a sequence of all the premise records in the database"
+  [db]
+  (jdbc/with-connection 
+    db
+    (let [ids (jdbc/with-query-results 
+               res1 [(str "SELECT id FROM premise")]
+               (doall (map :id res1)))]
+            (doall (map (fn [id] (read-premise db id)) ids)))))
 
 (defn update-premise
   "database integer map -> boolean
@@ -498,12 +530,20 @@
                          res1 [(str "SELECT id FROM premise WHERE argument='" id "'")]
                          (doall (map (fn [id] (read-premise db id))
                                      (map :id res1))))]
-          (-> (make-argument)
-              (merge m)
+          (-> (apply make-argument (flatten (seq (assoc m :conclusion conclusion))))
               (assoc :header header
-                     :conclusion conclusion
                      :premises premises)))))))
-
+          
+(defn list-arguments
+  "database -> (seq-of argument)
+   Returns a sequence of all the argument records in the database"
+  [db]
+  (jdbc/with-connection 
+    db
+    (let [ids (jdbc/with-query-results 
+               res1 [(str "SELECT id FROM argument")]
+               (doall (map :id res1)))]
+            (doall (map (fn [id] (read-argument db id)) ids)))))
 
 (defn update-argument
   "database integer map -> boolean
@@ -546,7 +586,7 @@
 (defn delete-argument 
   "Deletes an argument with the given the id.  The statements
    of the conclusion and premises of the argument are not 
-   deleted."
+   deleted. Returns true if successful."
   [db id]
   (jdbc/with-connection 
     db
@@ -560,31 +600,43 @@
       (if (:header (first res1))
         (delete-metadata db (:header (first res1)))))
     ; finally delete the argument itself
-    (jdbc/delete-rows :argument ["id=?" id])))
+    (jdbc/delete-rows :argument ["id=?" id]))
+  true)
 
 ;;; Namespaces
   
 (defn create-namespace
-  "database map -> integer
+  "database map -> boolean
    Creates a namespace record and inserts it into a database.  
-   Returns the id of the new translation."
+   Returns the prefix of the namespace, which serves as its key."
   [db m]   
   {:pre [(map? m)]}
   (jdbc/with-connection db
      (let [result (jdbc/insert-record :namespace m)]
-       (first (vals result)))))
+       (first (vals result))))
+  (:prefix m))
 
 (defn read-namespace 
-  "database integer -> map or nil
-   Retrieves the namespace with the given id from the database.
-   Returns nil if no namespace with the given id exists in the
+  "database string -> map or nil
+   Retrieves the namespace with the given prefix from the database.
+   Returns nil if no namespace with the given prefix exists in the
    database."
-  [db id]
+  [db prefix]
   (jdbc/with-connection 
     db
     (jdbc/with-query-results 
-      res1 [(str "SELECT * FROM namespace WHERE id='" id "'")]
+      res1 [(str "SELECT * FROM namespace WHERE prefix='" prefix "'")]
       (if (empty? res1) nil (first res1)))))
+
+(defn list-namespaces
+  "database -> (seq-of map)
+   Returns a sequence of maps representing the namespaces in the database"
+  [db]
+  (jdbc/with-connection 
+    db
+    (jdbc/with-query-results 
+      res1 [(str "SELECT * FROM namespace")]
+      (doall res1))))
   
 (defn update-namespace 
   "database integer map -> boolean
@@ -600,10 +652,12 @@
       1 true)))
 
 (defn delete-namespace 
-  "Deletes a translation with the given the id"
-  [db id]
+  "Deletes a translation with the given the prefix.
+   Returns true if successful."
+  [db prefix]
   (jdbc/with-connection db
-    (jdbc/delete-rows :namespace ["id=?" id])))
+    (jdbc/delete-rows :namespace ["prefix=?" prefix]))
+  true)
 
 ;;; Statement Polls
 
@@ -644,6 +698,16 @@
       :value (jdbc/with-query-results 
       res1 [(str "SELECT AVG(opinion) FROM stmtpoll WHERE statement='" statement-id "'")]
        (second (first (first res1))))}))
+
+(defn list-statement-poll
+  "database -> (seq-of map)
+   Returns a sequence of maps representing the statement poll table in the database"
+  [db]
+  (jdbc/with-connection 
+    db
+    (jdbc/with-query-results 
+      res1 [(str "SELECT * FROM stmtpoll")]
+      (doall res1))))
        
 (defn update-statement-poll
   "database string map -> boolean
@@ -714,6 +778,16 @@
       :value (jdbc/with-query-results 
       res1 [(str "SELECT AVG(opinion) FROM argpoll WHERE argument='" arg-id "'")]
        (second (first (first res1))))}))
+
+(defn list-argument-poll
+  "database -> (seq-of map)
+   Returns a sequence of maps representing the argument poll table in the database"
+  [db]
+  (jdbc/with-connection 
+    db
+    (jdbc/with-query-results 
+      res1 [(str "SELECT * FROM argpoll")]
+      (doall res1))))
        
 (defn update-argument-poll
   "database string map -> boolean
@@ -744,15 +818,4 @@
   (jdbc/with-connection db
     (jdbc/delete-rows :argpoll ["argument=?" arg-id]))
   true)
-
-;;; Test Utilities
-
-(defn- list-table
-  [db table]
-  (jdbc/with-connection 
-    db
-    (jdbc/with-query-results 
-      res [(str "SELECT * FROM " table)]
-      (doall res))))
-
 
