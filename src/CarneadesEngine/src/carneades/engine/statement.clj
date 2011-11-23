@@ -20,9 +20,9 @@
    standard           ; proof-standard
    text])             ; (language -> string) map, natural language formulations of the statement
 
-(defn make-statement
-   "key value ... -> statement"
-   [& key-values]  
+
+(defn map->statement
+   [m]  
    (merge (Statement. 
             (gensym "s")    ; atom
             nil             ; header
@@ -31,7 +31,13 @@
             false           ; main issue
             :pe             ; proof standard
             {})             ; text
-          (apply hash-map key-values)))
+          m))
+
+(defn make-statement
+   "key value ... -> statement"
+   [& key-values]  
+   (map->statement (apply hash-map key-values)))
+
 
 (defn statement? [x] (instance? Statement x))
 
