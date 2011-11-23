@@ -84,11 +84,12 @@
               [])          ; premises 
             (apply hash-map values))]
     ; normalize the conclusion and direction of the argument:
-    (assoc m :conclusion (literal-atom (:conclusion m))
-            :pro  (or (and (literal-pos? (:conclusion m))
-                           (:pro m))
-                      (and (literal-neg? (:conclusion m))
-                           (not (:pro m)))))))
+    (assoc m 
+           :conclusion (literal-atom (:conclusion m))
+           :pro  (or (and (literal-pos? (:conclusion m))
+                          (:pro m))
+                     (and (literal-neg? (:conclusion m))
+                          (not (:pro m)))))))
 
 (defn conclusion-literal
   "argument -> literal
