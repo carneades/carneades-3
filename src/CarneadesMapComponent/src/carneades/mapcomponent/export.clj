@@ -27,13 +27,13 @@
     (let [[centerx centery] (node-center view)
           width (node-width view)
           height (node-height view)
-          margin 6]
+          margin 3]
       (-> (svg/path [:M [centerx (double (+ (- centery (/ height 2)) margin))]
                      :L [centerx (double (- (+ centery (/ height 2)) margin))]
                      :M [(double (+ (- centerx (/ width 2)) margin)) centery]
                      :L [(double (- (+ centerx (/ width 2)) margin)) centery]
                      :Z []])
-          (svg/style :stroke-width 3 :stroke "black")))))
+          (svg/style :stroke-width 1 :stroke "black")))))
 
 (defrecord MinusDecorator
     []
@@ -44,10 +44,10 @@
     (let [[centerx centery] (node-center view)
           width (node-width view)
           height (node-height view)
-          margin 6]
+          margin 3]
       (-> (svg/line (double (+ (- centerx (/ width 2)) margin)) centery
                     (double (- (+ centerx (/ width 2)) margin)) centery)
-          (svg/style :stroke-width 3 :stroke "black")))))
+          (svg/style :stroke-width 1 :stroke "black")))))
 
 (defn trunk-line
   [s]
@@ -61,26 +61,15 @@
   [arg]
   (keyword (str (gensym "a"))))
 
-;; this code cause serious problem:
 (defn gen-stmt-id
   [stmt]
   (let [stmtstr (statement/statement-formatted stmt)
-        ;; problem if two statements get the same label
-        size 100
+        size 50
         s (if (> (count stmtstr) size)
             (subs stmtstr 0 size)
             stmtstr)
         s (s/replace s " " "_")]
-    (keyword (str "s-" s "-" (str (Math/abs (hash s)))))))
-
-;; (defn gen-stmt-id
-;;   [stmt]
-;;   (let [size 10
-;;         s (if (> (count stmt) size)
-;;             (subs stmt 0 size)
-;;             stmt)
-;;         s (s/replace s " " "_")]
-;;    (keyword (str "s-" s "-" (str (gensym))))))
+    (keyword (str "s-" s "-" (str (Math/abs (hash stmt)))))))
 
 (defn pick-stmt-params
   [ag stmt params]
@@ -341,7 +330,7 @@
         map (add-markers map pro-arg-color con-arg-color)
         ;; stmt-params {:style {:fill "white"} :width 260 :height 70}
         ;; arg-params {:style {:fill "white"} :shape :circle :r 16}
-        stmt-params {:style {:fill "white"} :width 230 :height 46}
+        stmt-params {:style {:fill "white"} :width 255 :height 46}
         arg-params {:style {:fill "white"} :shape :circle :r 10}
         tomato "#ff7e7e"
         lightgreen "#8ee888"
