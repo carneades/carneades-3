@@ -13,15 +13,31 @@
             [compojure.handler :as handler]
             [clojure.java.jdbc :as jdbc]))
 
+;; To Do: 
+;; - commands for logging into and creating databases
+;; - retrieving user name and password from the request 
+;; - include the ids of undercutters and rebuttals in argument records
+;; - search operations, including full text search
+;; - LKIF import/export
+;; - OPML export
+;; - review security issues 
+;; - validate input
+  
+
+;(defmacro with-db [db & body]   
+;  `(try (jdbc/with-connection 
+;           ~db
+;           (jdbc/transaction ~@body))
+;        (catch Exception t# 
+;               {:status 500
+;                 :body "The server encountered an unexpected condition which prevented it from fulfilling the request."})))
+;
+
+
 (defmacro with-db [db & body]   
-  ; To Do: Exception Handling
-  `(try (jdbc/with-connection 
+  `(jdbc/with-connection 
            ~db
-           (jdbc/transaction ~@body))
-        (catch Exception e 
-               {:status 500
-                 :body "The server encountered an unexpected condition 
-                        which prevented it from fulfilling the request."})))
+           (jdbc/transaction ~@body)))
 
 (defn json-response [data & [status]]
   (if (nil? data)
@@ -59,179 +75,169 @@
          :premises (map (fn [p] (assoc p :statement (unpack-statement (:statement p))))
                         (:premises arg))))
 
-;; To Do (CRITICAL): handle database exceptions to avoid printing of database password
-;; To Do: commands for logging into and creating databases
-;; To Do: make all read operations public, without login, at least optionally
-;; To Do: retrieving passwords 
-;; To Do: include the ids of undercutters and rebuttals in argument records
-;; To Do: search operations, including full text search
-;; To Do: LKIF import/export
-;; To Do: OPML export
-;; To Do: review security issues 
-;; To Do: validate input
-  
+
 (defroutes handlers
 
   ;; Metadata         
 
   (GET "/metadata/:db" [db] 
-    (let [db2 (make-db db "pw1")]
+    (let [db2 (make-database-connection db "guest" "")]
       (with-db db2 (json-response (list-metadata db2)))))
            
   (GET "/metadata/:db/:id" [db id]
-    (let [db2 (make-db db "pw1")]
+    (let [db2 (make-database-connection db "guest" "")]
       (with-db db2 (json-response (read-metadata db2 (read-string id))))))
            
   (POST "/metadata" request
     (let [m (read-json (slurp (:body request)))
-          db (make-db (:db (:params request)) "pw1")]
+          db (make-database-connection (:db (:params request)) "root" "pw1")]
       (with-db db (json-response (create-metadata db (map->metadata db m)))))) 
             
   (PUT "/metadata" request   
     (let [m (read-json (slurp (:body request)))
-          db (make-db (:db (:params request)) "pw1")
+          db (make-database-connection (:db (:params request)) "root" "pw1")
           id (read-string (:id (:params request)))]
       (with-db db (json-response (update-metadata db id m))))) 
            
   (DELETE "/metadata/:db/:id" [db id] 
-    (let [db2 (make-db db "pw1")]
+    (let [db2 (make-database-connection db "root" "pw1")]
       (with-db db2 (json-response (delete-metadata db2 (read-string id))))))
                  
   ;; Statements
            
   (GET "/statement/:db" [db] 
-    (let [db2 (make-db db "pw1")]
+    (let [db2 (make-database-connection db "guest" "")]
       (with-db db2 (json-response (map pack-statement (list-statements db2))))))           
   
   (GET "/statement/:db/:id" [db id] 
-    (let [db2 (make-db db "pw1")]
+    (let [db2 (make-database-connection db "guest" "")]
        (with-db db2 
          (json-response (pack-statement (read-statement db2 (read-string id)))))))
            
   (POST "/statement/:db" request  
     (let [m (read-json (slurp (:body request)))
           s (unpack-statement m)
-          db (make-db (:db (:params request)) "pw1")]
+          db (make-database-connection (:db (:params request)) "root" "pw1")]
        (prn request)
        (with-db db (json-response (create-statement db (map->statement s))))))
            
   (PUT "/statement" request  
     (let [m (read-json (slurp (:body request)))
           s (unpack-statement m)
-          db (make-db (:db (:params request)) "pw1")
+          db (make-database-connection (:db (:params request)) "root" "pw1")
           id (read-string (:id (:params request)))]
        (with-db db (json-response (update-statement db id s)))))        
             
   (DELETE "/statement/:db/:id" [db id] 
-    (let [db2 (make-db db "pw1")]
+    (let [db2 (make-database-connection db "root" "pw1")]
       (with-db db2 (json-response (delete-statement db2 (read-string id))))))
                     
   ;; Arguments  
               
   (GET "/argument/:db" [db]
-    (let [db2 (make-db db "pw1")] 
+    (let [db2 (make-database-connection db "guest" "")] 
       (with-db db2 (json-response (map pack-argument (list-arguments db2))))))
        
   (GET "/argument/:db/:id" [db id]
-    (let [db2 (make-db db "pw1")]  
+    (let [db2 (make-database-connection db "guest" "")]  
       (with-db db2 (json-response (pack-argument (read-argument db2 (read-string id)))))))
            
   (POST "/argument" request  
     (let [m (read-json (slurp (:body request)))
           arg (unpack-argument m)
-          db (make-db (:db (:params request)) "pw1")]
+          db (make-database-connection (:db (:params request)) "root" "pw1")]
        (with-db db (json-response (create-argument db (map->argument arg))))))
            
   (PUT "/argument" request  
     (let [m (read-json (slurp (:body request)))
           arg (unpack-argument m)
-          db (make-db (:db (:params request)) "pw1")
+          db (make-database-connection (:db (:params request)) "root" "pw1")
           id (read-string (:id (:params request)))]
        (with-db db (json-response (update-argument db id arg)))))   
            
   (DELETE "/argument/:db/:id" [db id] 
-    (let [db2 (make-db db "pw1")]
+    (let [db2 (make-database-connection db "root" "pw1")]
       (with-db db2
         (json-response (delete-argument db2 (read-string id))))))
            
   ;; Namespaces
            
   (GET "/namespace/:db" [db]
-    (let [db2 (make-db db "pw1")] 
+    (let [db2 (make-database-connection db "guest" "")] 
       (with-db db2 (json-response (list-namespaces db2)))))
   
   (GET "/namespace/:db/:prefix" [db prefix]
-    (let [db2 (make-db db "pw1")]  
+    (let [db2 (make-database-connection db "guest" "")]  
       (with-db db2 (json-response (read-namespace db2 prefix)))))
 
   (POST "/namespace/" request  
     (let [prefix (:prefix (:params request)),
           uri (read-json (slurp (:body request))),
-          db (make-db (:db (:params request)) "pw1")]
+          db (make-database-connection (:db (:params request)) "root" "pw1")]
        (with-db db (json-response (create-namespace db prefix uri)))))
            
   (PUT "/namespace/" request  
     (let [prefix (:prefix (:params request)),
           uri (read-json (slurp (:body request))),
-          db (make-db (:db (:params request)) "pw1")]
+          db (make-database-connection (:db (:params request)) "root" "pw1")]
        (with-db db (json-response (update-namespace db prefix uri)))))
            
   (DELETE "/namespace/:db/:prefix" [db prefix] 
-    (let [db2 (make-db db "pw1")]
+    (let [db2 (make-database-connection db "root" "pw1")]
       (with-db db2
         (json-response (delete-namespace db2 prefix)))))
            
   ;; Statement Polls
            
   (GET "/statement-poll/:db" [db]
-    (let [db2 (make-db db "pw1")] 
+    (let [db2 (make-database-connection db "guest" "")] 
       (with-db db2 (json-response (list-statement-poll db2)))))
   
   (GET "/statement-poll/:db/:id" [db id]
-    (let [db2 (make-db db "pw1")]  
+    (let [db2 (make-database-connection db "guest" "")]  
       (with-db db2 (json-response (read-statement-poll db2 (read-string id))))))
 
   (POST "/statement-poll" request  
     (let [userid (:id (:params request)),
           votes (read-json (slurp (:body request))),
-          db (make-db (:db (:params request)) "pw1")]
+          db (make-database-connection (:db (:params request)) "root" "pw1")]
        (with-db db (json-response (create-statement-poll db userid votes)))))
            
   (PUT "/statement-poll" request  
     (let [userid (:id (:params request)),
           votes (read-json (slurp (:body request)))
-          db (make-db (:db (:params request)) "pw1")]
+          db (make-database-connection (:db (:params request)) "root" "pw1")]
        (with-db db (json-response (update-statement-poll db userid votes)))))
            
   (DELETE "/statement-poll/:db/:id" [db id] 
-    (let [db2 (make-db db "pw1")]
+    (let [db2 (make-database-connection db "root" "pw1")]
       (with-db db2
         (json-response (delete-statement-poll db2 (read-string id)))))) 
                      
   ;; Argument Polls
            
   (GET "/argument-poll/:db" [db]
-    (let [db2 (make-db db "pw1")] 
+    (let [db2 (make-database-connection db "guest" "")] 
       (with-db db2 (json-response (list-argument-poll db2)))))
   
   (GET "/argument-poll/:db/:id" [db id]
-    (let [db2 (make-db db "pw1")]  
+    (let [db2 (make-database-connection db "guest" "")]  
       (with-db db2 (json-response (read-argument-poll db2 (read-string id))))))
 
   (POST "/argument-poll" request  
     (let [userid (:id (:params request)),
           votes (read-json (slurp (:body request))),
-          db (make-db (:db (:params request)) "pw1")]
+          db (make-database-connection (:db (:params request)) "root" "pw1")]
        (with-db db (json-response (create-argument-poll db userid votes)))))
            
   (PUT "/argument-poll" request  
     (let [userid (:id (:params request)),
           votes (read-json (slurp (:body request)))
-          db (make-db (:db (:params request)) "pw1")]
+          db (make-database-connection (:db (:params request)) "root" "pw1")]
        (with-db db (json-response (update-argument-poll db userid votes)))))
            
   (DELETE "/argument-poll/:db/:id" [db id] 
-    (let [db2 (make-db db "pw1")]
+    (let [db2 (make-database-connection db "root" "pw1")]
       (with-db db2
         (json-response (delete-argument-poll db2 (read-string id)))))) 
            
