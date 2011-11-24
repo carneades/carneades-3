@@ -62,14 +62,20 @@
   (keyword (str (gensym "a"))))
 
 (defn gen-stmt-id
+  ;; Please think twice before making changes to this function!
+  ;; some ids with special characters could not be accepted by batik
+  ;; the generation of the layout would still works but with
+  ;; a strange output
   [stmt]
+  {:pre [(do (printf "%s -> " stmt) true)]
+   :post [(do (printf "%s\n" %) true)]}
   (let [stmtstr (statement/statement-formatted stmt)
         size 50
         s (if (> (count stmtstr) size)
             (subs stmtstr 0 size)
             stmtstr)
-        s (s/replace s " " "_")]
-    (keyword (str "s-" s "-" (str (Math/abs (hash stmt)))))))
+        s (s/replace s #"[\s\(\)/:-]" "_")]
+    (keyword (str "s_" s "_" (str (Math/abs (hash stmt)))))))
 
 (defn pick-stmt-params
   [ag stmt params]
@@ -380,7 +386,7 @@
 
                        :depth Integer/MAX_VALUE
 
-                       :treeify false
+                       :treeify true
 
                        :full-duplication false} options-kv)
         map (add-entities map ag stmt-str params)
