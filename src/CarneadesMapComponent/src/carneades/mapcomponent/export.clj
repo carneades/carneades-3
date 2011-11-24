@@ -61,20 +61,25 @@
   [arg]
   (keyword (str (gensym "a"))))
 
+;; (defn gen-arg-id
+;;   [ag arg]
+;;   (let [prem (map :atom (ag/argument-premises arg))]
+;;     (keyword (apply str "arg_" (map gen-stmt-id prem)))))
+
 (defn gen-stmt-id
   ;; Please think twice before making changes to this function!
   ;; some ids with special characters could not be accepted by batik
   ;; the generation of the layout would still works but with
   ;; a strange output
   [stmt]
-  {:pre [(do (printf "%s -> " stmt) true)]
-   :post [(do (printf "%s\n" %) true)]}
+  ;; {:pre [(do (printf "%s -> " stmt) true)]
+  ;;  :post [(do (printf "%s\n" %) true)]}
   (let [stmtstr (statement/statement-formatted stmt)
         size 50
         s (if (> (count stmtstr) size)
             (subs stmtstr 0 size)
             stmtstr)
-        s (s/replace s #"[\s\(\)/:-]" "_")]
+        s (s/replace s #"\W" "_")]
     (keyword (str "s_" s "_" (str (Math/abs (hash stmt)))))))
 
 (defn pick-stmt-params
