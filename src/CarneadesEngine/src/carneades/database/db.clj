@@ -11,8 +11,8 @@
 
 ;;; Databases
 
-(defn make-database-description  
-  "Returns a map describing a database with the given database name, username and password."
+(defn make-database-connection  
+  "Returns a map describing a database connection."
   [db-name username passwd]
   (let [db-protocol "file"             ; "file|mem|tcp"
         db-host     "/Library/Application Support/Carneades/Databases"] ; "path|host:port" 
@@ -26,102 +26,110 @@
      :user  username      ; use "root" for administration
      :password passwd}))
 
-(defn- init-db
-  "Initialize the database by creating the tables."
-  [db]
+(defn create-argument-database
+  "Initialize the database by creating the tables.
+   Returns true if the database is successul created
+   and initialized"
+  [db-name root-username root-password]
   (jdbc/with-connection 
-    db
+    (make-database-connection db-name root-username root-password)
     
-    (jdbc/create-table 
-      :translation
-      [:id "int identity"]
-      [:en "varchar"]            ; English
-      [:nl "varchar"]            ; Dutch          
-      [:fr "varchar"]            ; French
-      [:de "varchar"]            ; German
-      [:it "varchar"]            ; Italian
-      [:sp "varchar"])           ; Spanish
-    ; and so on for other langauges
-    
-    (jdbc/create-table 
-      :metadata
-      [:id "int identity"]
-      [:contributor "varchar"]
-      [:coverage "varchar"]
-      [:creator "varchar"]
-      [:date "varchar"]       ; http://www.w3.org/TR/NOTE-datetime                         
-      [:description "int"]
-      [:format "varchar"]     ; A list of MIME types, semicolon separated
-      [:identifier "varchar"] 
-      [:language "varchar"]
-      [:publisher "varchar"]
-      [:relation "varchar"]
-      [:rights "varchar"]
-      [:source "varchar"]
-      [:subject "varchar"]
-      [:title "varchar"]
-      [:type "varchar"]       ; see: http://dublincore.org/documents/dcmi-type-vocabulary/
-      ["foreign key(description) references translation(id)"])
-    
-    (jdbc/create-table 
-      :statement 
-      [:id "int identity"]
-      [:weight "double default 0.50"]
-      [:value "double default 0.50"]
-      [:standard "tinyint default 0"]   ; 0=pe, 1=cce, 2=brd, 3=dv 
-      [:atom "varchar"]                 ; Clojure s-expression
-      [:text "int"]
-      [:main "boolean default false"]   ; true if a main issue
-      [:header "int"]
-      ["foreign key(text) references translation(id)"]
-      ["foreign key(header) references metadata(id)"])
-    
-    (jdbc/create-table 
-      :argument
-      [:id "int identity"]
-      [:conclusion "int not null"]
-      [:strict "boolean default false"]
-      [:weight "double default 0.50"]
-      [:value "double"]                    ; null means not evaluated
-      [:scheme "varchar"]                  ; URI of the scheme
-      [:pro "boolean default true"]        ; con argument if false
-      [:header "int"]
-      ["foreign key(conclusion) references statement(id)"]
-      ["foreign key(header) references metadata(id)"])
-    
-    (jdbc/create-table 
-      :premise
-      [:id "int identity"]
-      [:argument "int"]  ; null allowed, so as to be able to create premises first
-      [:statement "int not null"]
-      [:positive "boolean default true"] 
-      [:role "varchar"]
-      [:implicit "boolean default false"]
-      ["foreign key(argument) references argument(id)"]
-      ["foreign key(statement) references statement(id)"])                         
-    
-    (jdbc/create-table 
-      :namespace
-      [:prefix "varchar primary key not null"]
-      [:uri    "varchar not null"])
-    
-    (jdbc/create-table 
-      :stmtpoll         ; statement poll
-      [:userid "varchar not null"]   
-      [:statement "int not null"]
-      [:opinion "double default 0.5"]
-      ["foreign key(statement) references statement(id)"])
-    
-    (jdbc/create-table 
-      :argpoll         ; argument poll
-      [:userid "varchar not null"]   
-      [:argument "int not null"]
-      [:opinion "double default 0.5"]
-      ["foreign key(argument) references argument(id)"])
-    
-    ;; Grant read access to the public
-    (jdbc/do-commands "grant select on translation, metadata, statement, argument,
-                       premise, namespace to public")))
+    (jdbc/transaction
+      
+      (jdbc/create-table 
+        :translation
+        [:id "int identity"]
+        [:en "varchar"]            ; English
+        [:nl "varchar"]            ; Dutch          
+        [:fr "varchar"]            ; French
+        [:de "varchar"]            ; German
+        [:it "varchar"]            ; Italian
+        [:sp "varchar"])           ; Spanish
+      ; and so on for other langauges
+      
+      (jdbc/create-table 
+        :metadata
+        [:id "int identity"]
+        [:contributor "varchar"]
+        [:coverage "varchar"]
+        [:creator "varchar"]
+        [:date "varchar"]       ; http://www.w3.org/TR/NOTE-datetime                         
+        [:description "int"]
+        [:format "varchar"]     ; A list of MIME types, semicolon separated
+        [:identifier "varchar"] 
+        [:language "varchar"]
+        [:publisher "varchar"]
+        [:relation "varchar"]
+        [:rights "varchar"]
+        [:source "varchar"]
+        [:subject "varchar"]
+        [:title "varchar"]
+        [:type "varchar"]       ; see: http://dublincore.org/documents/dcmi-type-vocabulary/
+        ["foreign key(description) references translation(id)"])
+      
+      (jdbc/create-table 
+        :statement 
+        [:id "int identity"]
+        [:weight "double default 0.50"]
+        [:value "double default 0.50"]
+        [:standard "tinyint default 0"]   ; 0=pe, 1=cce, 2=brd, 3=dv 
+        [:atom "varchar"]                 ; Clojure s-expression
+        [:text "int"]
+        [:main "boolean default false"]   ; true if a main issue
+        [:header "int"]
+        ["foreign key(text) references translation(id)"]
+        ["foreign key(header) references metadata(id)"])
+      
+      (jdbc/create-table 
+        :argument
+        [:id "int identity"]
+        [:conclusion "int not null"]
+        [:strict "boolean default false"]
+        [:weight "double default 0.50"]
+        [:value "double"]                    ; null means not evaluated
+        [:scheme "varchar"]                  ; URI of the scheme
+        [:pro "boolean default true"]        ; con argument if false
+        [:header "int"]
+        ["foreign key(conclusion) references statement(id)"]
+        ["foreign key(header) references metadata(id)"])
+      
+      (jdbc/create-table 
+        :premise
+        [:id "int identity"]
+        [:argument "int"]  ; null allowed, so as to be able to create premises first
+        [:statement "int not null"]
+        [:positive "boolean default true"] 
+        [:role "varchar"]
+        [:implicit "boolean default false"]
+        ["foreign key(argument) references argument(id)"]
+        ["foreign key(statement) references statement(id)"])                         
+      
+      (jdbc/create-table 
+        :namespace
+        [:prefix "varchar primary key not null"]
+        [:uri    "varchar not null"])
+      
+      (jdbc/create-table 
+        :stmtpoll         ; statement poll
+        [:userid "varchar not null"]   
+        [:statement "int not null"]
+        [:opinion "double default 0.5"]
+        ["foreign key(statement) references statement(id)"])
+      
+      (jdbc/create-table 
+        :argpoll         ; argument poll
+        [:userid "varchar not null"]   
+        [:argument "int not null"]
+        [:opinion "double default 0.5"]
+        ["foreign key(argument) references argument(id)"])
+      
+      ;; Grant read access to the public role
+      ;; and create a guest user account with this role.
+      (jdbc/do-commands "grant select on translation, metadata, statement, argument,
+                         premise, namespace to public"
+                        "create user guest password ''"
+                        "grant public to guest")
+      true)))
 
 ;; To Do: function to delete a database.  Perhaps this should
 ;; be private and called to clean up after exporting a database to CAF XML,
