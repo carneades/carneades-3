@@ -28,9 +28,8 @@
    subject          ; string or nil 
    title            ; string or nil 
    type])           ; string or nil 
- 
-(defn make-metadata
-  [& values]
+
+(defn map->metadata [m] 
   (merge 
     (Metadata. 
       nil   ; contributor
@@ -48,7 +47,11 @@
       nil   ; subject
       nil   ; title 
       nil)  ; type
-    (apply hash-map values)))
+    m))
+
+(defn make-metadata
+  [& values]
+  (map->metadata (apply hash-map values)))
 
 (defn metadata? [x] (instance? Metadata x))
 

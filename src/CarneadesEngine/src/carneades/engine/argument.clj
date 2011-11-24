@@ -69,27 +69,30 @@
                             (:premises arg))
                     (variables (:conclusion arg)))))
 
-(defn make-argument
+
+(defn map->argument 
   "Makes a one-step argument."
-  [& values]
-  (let [m (merge
-            (Argument. 
-              (gensym "a") ; id
-              nil          ; header
-              nil          ; scheme
-              false        ; strict
-              0.5          ; weight
-              nil          ; conclusion
-              true         ; pro
-              [])          ; premises 
-            (apply hash-map values))]
+  [m]
+  (let [m2 (merge  (Argument. 
+                     (gensym "a") ; id
+                     nil          ; header
+                     nil          ; scheme
+                     false        ; strict
+                     0.5          ; weight
+                     nil          ; conclusion
+                     true         ; pro
+                     [])          ; premises 
+                  m)]
     ; normalize the conclusion and direction of the argument:
-    (assoc m 
+    (assoc m2 
            :conclusion (literal-atom (:conclusion m))
            :pro  (or (and (literal-pos? (:conclusion m))
                           (:pro m))
                      (and (literal-neg? (:conclusion m))
                           (not (:pro m)))))))
+
+(defn make-argument [& values]
+  (map->argument (apply hash-map values)))
 
 (defn conclusion-literal
   "argument -> literal

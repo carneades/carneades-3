@@ -11,9 +11,9 @@
 
 ;;; Databases
 
-(defn make-db  
-  "Returns a map describing a database with the given name and password."
-  [db-name passwd]
+(defn make-database-description  
+  "Returns a map describing a database with the given database name, username and password."
+  [db-name username passwd]
   (let [db-protocol "file"             ; "file|mem|tcp"
         db-host     "/Library/Application Support/Carneades/Databases"] ; "path|host:port" 
     ;;; TO DO ? remove path and system dependency above
@@ -23,7 +23,7 @@
      :subname (str db-protocol "://" db-host "/" db-name)
      ; Any additional keys are passed to the driver
      ; as driver-specific properties.
-     :user     "root"
+     :user  username      ; use "root" for administration
      :password passwd}))
 
 (defn- init-db
@@ -92,7 +92,7 @@
     (jdbc/create-table 
       :premise
       [:id "int identity"]
-      [:argument "int not null"]  
+      [:argument "int"]  ; null allowed, so as to be able to create premises first
       [:statement "int not null"]
       [:positive "boolean default true"] 
       [:role "varchar"]
@@ -117,7 +117,11 @@
       [:userid "varchar not null"]   
       [:argument "int not null"]
       [:opinion "double default 0.5"]
-      ["foreign key(argument) references argument(id)"])))
+      ["foreign key(argument) references argument(id)"])
+    
+    ;; Grant read access to the public
+    (jdbc/do-commands "grant select on translation, metadata, statement, argument,
+                       premise, namespace to public")))
 
 ;; To Do: function to delete a database.  Perhaps this should
 ;; be private and called to clean up after exporting a database to CAF XML,
@@ -146,7 +150,17 @@
     (jdbc/with-query-results 
       res1 [(str "SELECT * FROM translation WHERE id='" id "'")]
       (if (empty? res1) nil (first res1)))))
-  
+
+(defn list-translations
+  "database -> (seq-of translation)
+   Returns a sequence of all the translation records in the database"
+  [db]
+  (jdbc/with-connection 
+    db
+    (let [ids (jdbc/with-query-results 
+               res1 [(str "SELECT * FROM translation")]
+               (doall res1))])))
+
 (defn update-translation 
   "database integer map -> boolean
    Updates the translation with the given id in the database
