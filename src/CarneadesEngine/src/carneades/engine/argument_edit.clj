@@ -1,7 +1,12 @@
 ;;; Copyright (c) 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Functions to modify an argument graph in a consistent way"}
+(ns ^{:doc "Functions to modify an argument graph in a consistent way.
+            
+            WARNING: This code is out of date and needs to be ported to
+            use the new argument-graph module.  It probably should be
+            integrated into argument-graph module instead of remaining
+            a separate module."}
     carneades.engine.argument-edit
   (:use clojure.contrib.pprint
         carneades.engine.argument

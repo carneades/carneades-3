@@ -2,7 +2,7 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns ^{:doc "Import LKIF functions"}
-    carneades.engine.lkif.import
+    carneades.xml.lkif.import
   (:use clojure.xml
         clojure.contrib.trace
         clojure.java.io

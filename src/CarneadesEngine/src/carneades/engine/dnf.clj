@@ -5,8 +5,16 @@
 (ns ^{:doc "This library is implemented to convert every logical formula into an
             equivalent 'disjunctive normalform' (DNF). A DNF is a disjunction of a
             conjunction of literals.
+            
+            WARNING:  This code is currently not used elsewhere in the Carneades engine.
+            The old rule module, which used this code, has been replaced by the new
+            scheme module.  Currently schemes are defined using Clojure records.  No
+            macros have been defined for a higher-level rule language.  Should the need
+            arise for a more user friendly, higher-level DSL, this DNF code could be useful.
+            
             You can find a more detailed, that is a more mathematic, description of
             logical formulas below.
+            
             DNF is the only way, the 'rule'-library can handle logical formulas.
             To support every valid formula, it is converted, before used.
             The algorithm used to convert the formulas to DNF runs through two main

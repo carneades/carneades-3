@@ -1,14 +1,14 @@
-;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Copyright ? 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
 
 (ns ^{:doc "Functions that convert an argument graph to the DOT (graphviz) 
             and PNG format by invoking the external 'dot' program.
             Graphviz needs to be installed http://www.graphviz.org/"}
-  carneades.ui.diagram.graphvizviewer
+  carneades.maps.graphvizviewer
   (:use clojure.contrib.def
         clojure.contrib.str-utils
-        carneades.ui.diagram.viewerdef
+        carneades.maps.viewerdef
         carneades.config.reader
         carneades.engine.argument
         [clojure.contrib.java-utils :only (delete-file)]
@@ -56,13 +56,13 @@
     (format "    %s [shape=box, label=\"%s\", style=filled fillcolor=\"%s\"];\n"
             id
             (cond (and (in? ag n) (in? ag (statement-complement n)))
-                  (str-escape "✓✗ " (stmt-str n))
+                  (str-escape "?? " (stmt-str n))
                   
                   (in? ag n) 
-                  (str-escape "✓ " (stmt-str n))
+                  (str-escape "? " (stmt-str n))
                   
                   (in? ag (statement-complement n))
-                  (str-escape "✗ " (stmt-str n))
+                  (str-escape "? " (stmt-str n))
                   
                   (questioned? ag n)
                   (str-escape "? " (stmt-str n))
@@ -149,7 +149,7 @@
   ^{:doc "argument-graph (statement -> string) -> nil
 
    Provides a convenient way to display an argument graph. 
-   Based on code contributed by András Förhécz <fandrew@mit.bme.hu> 
+   Based on code contributed by Andr?s F?rh?cz <fandrew@mit.bme.hu> 
    (in the original scheme version).
    To do: find a way to put the viewer process in the background,
    but still have the temporary files deleted after use."}
