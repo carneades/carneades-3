@@ -21,7 +21,7 @@
 ;; - LKIF import/export
 ;; - OPML export
 ;; - review security issues 
-;; - validate input
+;; - validate input?
   
 
 ;(defmacro with-db [db & body]   

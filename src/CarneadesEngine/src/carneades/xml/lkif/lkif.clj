@@ -3,7 +3,7 @@
 
 (ns ^{:doc "Import and export of argument graphs and rules 
             from/to the LKIF format"}
-  carneades.engine.lkif
+  carneades.xml.lkif.lkif
   (:use clojure.contrib.def
         clojure.pprint
         clojure.java.io
