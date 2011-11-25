@@ -1,18 +1,19 @@
-;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Copyright ? 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
 
 (ns ^{:doc "Definition for a view function that invokes a particular argument graph
             viewer base on the properties file of the carneades-engine project"}
-    carneades.ui.diagram.viewer
+    carneades.maps.viewer
   (:use clojure.contrib.def
         carneades.config.reader
-        carneades.ui.diagram.viewerdef
-        carneades.ui.diagram.graphvizviewer
+        carneades.maps.viewerdef
+        carneades.maps.graphvizviewer
         carneades.engine.statement))
 
-;;; this is also mostyl obsolete since viewers are packaged outside the carneades engine project
+;;; this is also mostly obsolete since viewers are packaged outside the carneades engine project
 ;;; now and the only implementation in the engine is the DOT viewer
+
 
 (defvar- *viewerlibrary* (configvalue "viewer.library"))
 

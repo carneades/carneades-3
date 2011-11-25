@@ -1,7 +1,10 @@
 ;;; Copyright (c) 2010 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Abductive reasoning.
+(ns ^{:doc "Abductive reasoning with argument graphs.
+            
+            WARNING: This code is out of date and needs to be ported to use the 
+            new argument-graph module.
 
             See:
             Ballnat, S. and Gordon, T.F. Goal Selection in Argumentation Processes 
