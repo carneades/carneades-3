@@ -220,8 +220,8 @@
                        ; (println "scheme: " scheme)
                          (assoc map2
                             (scheme-index-key (:conclusion scheme))
-                                (conj (get (scheme-index-key (:conclusion scheme)))
-                                           scheme)))      
+                                (conj (get map2 (scheme-index-key (:conclusion scheme)))
+                                      scheme)))      
                      map1
                      (:schemes part))]
     (reduce (fn [map3 section]

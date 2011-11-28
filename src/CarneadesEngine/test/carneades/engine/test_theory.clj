@@ -41,7 +41,7 @@
     [(make-scheme                            
        :id 'a
        :name "Birds Fly"
-       :conclusions ['(flies ?x)]
+       :conclusion '(flies ?x)
        :premises [(make-premise :role "minor" :statement '(bird ?x))]
        :exceptions [(pm '(penguin ?x))])]))
                                 
