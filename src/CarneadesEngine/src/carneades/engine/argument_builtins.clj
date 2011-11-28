@@ -28,12 +28,12 @@
       :schemes
       [(make-scheme 
         :name "Priority1"
-        :conclusions ['(priority ?r2 ?r1 (not ?p1))]
+        :conclusion '(priority ?r2 ?r1 (not ?p1))
         :premises [(pm '(applies ?r2 ?p1))
                    (pm '(prior ?r2 ?r1))])
       (make-scheme
         :name "Priority2"
-        :conclusions ['(priority ?r2 ?r1 ?p1)]
+        :conclusion '(priority ?r2 ?r1 ?p1)
         :premises [(pm '(applies ?r2 (not ?p1))) 
                    (pm '(prior ?r2 ?r1))])])))
 
