@@ -9,8 +9,7 @@
         lacij.view.core
         lacij.opt.annealing
         carneades.engine.statement
-        carneades.mapcomponent.export-params
-        carneades.mapcomponent.format-statement)
+        [carneades.mapcomponent export-params format-statement subset-ag])
   (:require [carneades.engine.argument :as arg]
             [analemma.xml :as xml]
             [analemma.svg :as svg]
@@ -154,6 +153,7 @@
         map (create-graph :width width :height height)
         map (add-markers map)
         params (merge default-params options-kv)
+        ag (apply subset-ag ag options)
         map (add-entities map ag stmt-str params)
         map (time (apply layout map (:layout options-kv) options))
         map (build map)]
