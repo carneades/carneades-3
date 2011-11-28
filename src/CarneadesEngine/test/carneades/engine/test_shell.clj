@@ -14,35 +14,33 @@
     [(make-section 
        :schemes 
        [(make-scheme                            
-          :name "Birds Fly"
-          :conclusions ['(flies ?x)]
+          :conclusion '(flies ?x)
           :premises [(pm '(bird ?x))]
           :exceptions [(pm '(penguin ?x))])])
      
      (make-section
        :schemes 
        [(make-scheme
-          :name "Coins"
-          :conclusions ['(movable ?x)
-                        '(money ?x)]
+          :conclusion '(movable ?x)
           :premises [(pm '(coins ?x))])
         
         (make-scheme
-          :name "Goods"
-          :conclusions ['(goods ?x)]
+          :conclusion '(money ?x)
+          :premises [(pm '(coins ?x))])
+        
+        (make-scheme
+          :conclusion '(goods ?x)
           :premises [(pm '(movable ?x))]
           :exceptions [(pm '(money ?x))])
         
         (make-scheme
-          :name "Edible Things Are Not Goods"
-          :conclusions ['(not (goods ?x))]
+          :conclusion '(not (goods ?x))
           :premises [(pm '(edible ?x))])])
      
      (make-section
        :schemes 
        [(make-scheme
-          :name "Lex Posterior"
-          :conclusions ['(prior ?r2 ?r1)]
+          :conclusion '(prior ?r2 ?r1)
           :premises [(pm '(enacted ?r1 ?d1))
                      (pm '(enacted ?r2 ?d2))
                      (pm '(later ?d2 ?d1))])])
@@ -51,25 +49,25 @@
        :schemes 
        [(make-scheme 
           :name "Reverse"
-          :conclusions ['(rev ?x ?y)]
+          :conclusion '(rev ?x ?y)
           :premises [(pm '(eval ?y (reverse ?x)))])
         
         (make-scheme
           :name "Taxable Income"
-          :conclusions ['(taxable-income ?x ?t)]
+          :conclusion '(taxable-income ?x ?t)
           :premises [(pm '(income ?x ?i))
                      (pm '(deductions ?x ?d))
                      (pm '(eval ?t (- ?i ?d)))])
         
         (make-scheme 
           :name "Phd"
-          :conclusions ['(has-phd ?x)]
+          :conclusion '(has-phd ?x)
           :premises [(pm '(title ?x ?y))
                      (pm '(= ?y Dr))])
         
         (make-scheme
           :name "Enrolled"
-          :conclusions ['(enrolled ?x)]
+          :conclusion '(enrolled ?x)
           :premises [(pm '(status ?x ?y))
                      (pm '(not= ?y exempted))])])
      
@@ -77,12 +75,12 @@
        :schemes
 		 [(make-scheme 
 			:strict true
-			:conclusions ['(not (obligated (not ?P)))]
+			:conclusion '(not (obligated (not ?P)))
 			:premises    [(pm '(permitted ?P))])
 		  
 		  (make-scheme 
 			:strict true
-			:conclusions ['(not (permitted ?P))]
+			:conclusion '(not (permitted ?P))
 			:premises    [(pm '(obligated (not ?P)))])
 		  
 		  (axiom '(permitted (drink-alcohol ?x)))])
@@ -91,12 +89,12 @@
        :schemes 
        [(make-scheme 
           :name "r1"
-          :conclusions ['(not (bar ?x))]
+          :conclusion '(not (bar ?x))
           :premises [(pm '(foo ?x))])
         
         (make-scheme
           :name "r2"
-          :conclusions ['(not (foo ?x))]
+          :conclusion '(not (foo ?x))
           :premises [(pm '(bar ?x))])])]))
                              
 
