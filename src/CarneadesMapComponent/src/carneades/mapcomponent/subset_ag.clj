@@ -32,10 +32,22 @@
           newborder (expand-border ag border)]
       (recur subset ag newborder (apply conj visited border) (dec depth) treeify))))
 
+(defn update-statuses
+  [subset ag]
+  (let [statements (map node-statement (get-nodes subset))]
+    (reduce (fn [subset stmt]
+              (cond (accepted? ag stmt) (accept subset [stmt])
+                    (rejected? ag stmt) (reject subset [stmt])
+                    (questioned? ag stmt) (question subset [stmt])
+                    :else subset))
+            subset
+            statements)))
+
 (defn subset-ag
   [ag & options]
   (let [options (apply hash-map options)
         {:keys [depth treeify] :or {treeify true depth Integer/MAX_VALUE}} options
         argroots (filter (fn [arg] (has-root? ag arg)) (arguments ag))
-        subset (walk-ag (argument-graph) ag argroots #{} depth treeify)]
+        subset (walk-ag (argument-graph) ag argroots #{} depth treeify)
+        subset (update-statuses subset ag)]
     subset))
