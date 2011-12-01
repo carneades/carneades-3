@@ -33,9 +33,7 @@
    (try
      (let [languages (str (.getServiceLanguages client))
            find-lang (fn [code languages]
-                       (:language (first (filter #(= code (:lc %)) languages))))
-           codes (set codes)]
-       (pprint languages)
+                       (:language (first (filter #(= code (:lc %)) languages))))]
        (map #(find-lang % (-> (read-json languages) :response)) codes))
      (catch Exception e nil))))
 
