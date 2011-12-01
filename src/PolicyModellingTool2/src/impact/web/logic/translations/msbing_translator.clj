@@ -33,7 +33,7 @@
             content (slurp url)
             ;; first character is junk?!
             json (read-json (subs content 1))]
-        json)
+        (seq json))
       (catch Exception e nil)))
 
   (language-names
@@ -45,8 +45,7 @@
             ;; first character is junk?!
             json (read-json (subs content 1))]
         json)
-      (catch Exception e nil))
-    ))
+      (catch Exception e nil))))
 
 (defn make-msbing-translator
   [key]
