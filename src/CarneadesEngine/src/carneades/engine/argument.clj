@@ -31,7 +31,9 @@
                    false)        ; implicit
                  (apply hash-map key-values))]
     ; normalize the statement of the premise:
-    (assoc m :statement (literal-atom (:statement m))
+    (assoc m :statement (if (literal-pos? (:statement m)) 
+                          (:statement m)  
+                          (literal-complement (:statement m)))
            :positive  (or (and (literal-pos? (:statement m))
                                (:positive m))
                           (and (literal-neg? (:statement m))
@@ -69,7 +71,6 @@
                             (:premises arg))
                     (variables (:conclusion arg)))))
 
-
 (defn map->argument 
   "Makes a one-step argument."
   [m]
@@ -85,7 +86,9 @@
                   m)]
     ; normalize the conclusion and direction of the argument:
     (assoc m2 
-           :conclusion (literal-atom (:conclusion m2))
+           :conclusion (if (literal-pos? (:conclusion m2)) 
+                          (:conclusion m2)  
+                          (literal-complement (:conclusion m2)))
            :pro  (or (and (literal-pos? (:conclusion m2))
                           (:pro m2))
                      (and (literal-neg? (:conclusion m2))

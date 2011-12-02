@@ -1,13 +1,15 @@
-;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Copyright ? 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.examples.piersonpost
   (:use carneades.engine.statement
         carneades.engine.argument
         carneades.engine.argument-graph
+        carneades.database.db
+        carneades.database.import
        ;  carneades.mapcomponent.viewer
        ;  carneades.mapcomponent.export
-       ; carneades.ui.diagram.graphvizviewer
+       ;  carneades.ui.diagram.graphvizviewer
         ))
 
 ;; The Pierson vs. Post case.  Used to illustrate the use of
@@ -200,9 +202,13 @@ and noxious beast."}))
               (assert-arguments [a15 a16 a17])
               (accept [chased-by-big-dogs])))
 
+; (def db (make-database-connection "pierson" "root" "pw1"))
+; (import-argument-graph db both false)
+
+           
 ; (view both)
 
-;(defn main []
+;(defn -main []
 ;  (spit "/tmp/piersonpost.dot" 
 ;        (gen-graphvizcontent both statement-formatted))
 ;  (export-ag both statement-formatted "/tmp/piersonpost.svg"
