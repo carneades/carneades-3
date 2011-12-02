@@ -1,7 +1,9 @@
 ;;; Copyright (c) 2011 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.database.db
+(ns ^{:doc  "A database schema and CRUD functions for storing arguments 
+             persistently in a relational database."}
+       carneades.database.db
   (:use clojure.pprint
         carneades.engine.dublin-core
         carneades.engine.statement
@@ -26,110 +28,116 @@
      :user  username      ; use "root" for administration
      :password passwd}))
 
+(declare create-metadata)
+
 (defn create-argument-database
-  "Initialize the database by creating the tables.
-   Returns true if the database is successul created
-   and initialized"
-  [db-name root-username root-password]
-  (jdbc/with-connection 
-    (make-database-connection db-name root-username root-password)
-    
-    (jdbc/transaction
-      
-      (jdbc/create-table 
-        :translation
-        [:id "int identity"]
-        [:en "varchar"]            ; English
-        [:nl "varchar"]            ; Dutch          
-        [:fr "varchar"]            ; French
-        [:de "varchar"]            ; German
-        [:it "varchar"]            ; Italian
-        [:sp "varchar"])           ; Spanish
-      ; and so on for other langauges
-      
-      (jdbc/create-table 
-        :metadata
-        [:id "int identity"]
-        [:contributor "varchar"]
-        [:coverage "varchar"]
-        [:creator "varchar"]
-        [:date "varchar"]       ; http://www.w3.org/TR/NOTE-datetime                         
-        [:description "int"]
-        [:format "varchar"]     ; A list of MIME types, semicolon separated
-        [:identifier "varchar"] 
-        [:language "varchar"]
-        [:publisher "varchar"]
-        [:relation "varchar"]
-        [:rights "varchar"]
-        [:source "varchar"]
-        [:subject "varchar"]
-        [:title "varchar"]
-        [:type "varchar"]       ; see: http://dublincore.org/documents/dcmi-type-vocabulary/
-        ["foreign key(description) references translation(id)"])
-      
-      (jdbc/create-table 
-        :statement 
-        [:id "int identity"]
-        [:weight "double default 0.50"]
-        [:value "double default 0.50"]
-        [:standard "tinyint default 0"]   ; 0=pe, 1=cce, 2=brd, 3=dv 
-        [:atom "varchar"]                 ; Clojure s-expression
-        [:text "int"]
-        [:main "boolean default false"]   ; true if a main issue
-        [:header "int"]
-        ["foreign key(text) references translation(id)"]
-        ["foreign key(header) references metadata(id)"])
-      
-      (jdbc/create-table 
-        :argument
-        [:id "int identity"]
-        [:conclusion "int not null"]
-        [:strict "boolean default false"]
-        [:weight "double default 0.50"]
-        [:value "double"]                    ; null means not evaluated
-        [:scheme "varchar"]                  ; URI of the scheme
-        [:pro "boolean default true"]        ; con argument if false
-        [:header "int"]
-        ["foreign key(conclusion) references statement(id)"]
-        ["foreign key(header) references metadata(id)"])
-      
-      (jdbc/create-table 
-        :premise
-        [:id "int identity"]
-        [:argument "int"]  ; null allowed, so as to be able to create premises first
-        [:statement "int not null"]
-        [:positive "boolean default true"] 
-        [:role "varchar"]
-        [:implicit "boolean default false"]
-        ["foreign key(argument) references argument(id)"]
-        ["foreign key(statement) references statement(id)"])                         
-      
-      (jdbc/create-table 
-        :namespace
-        [:prefix "varchar primary key not null"]
-        [:uri    "varchar not null"])
-      
-      (jdbc/create-table 
-        :stmtpoll         ; statement poll
-        [:userid "varchar not null"]   
-        [:statement "int not null"]
-        [:opinion "double default 0.5"]
-        ["foreign key(statement) references statement(id)"])
-      
-      (jdbc/create-table 
-        :argpoll         ; argument poll
-        [:userid "varchar not null"]   
-        [:argument "int not null"]
-        [:opinion "double default 0.5"]
-        ["foreign key(argument) references argument(id)"])
-      
-      ;; Grant read access to the public role
-      ;; and create a guest user account with this role.
-      (jdbc/do-commands "grant select on translation, metadata, statement, argument,
-                         premise, namespace to public"
-                        "create user guest password ''"
-                        "grant public to guest")
-      true)))
+  "Initialize the database by creating the tables. Metadata can be
+   provided to describe the debate being modeled in the database and
+   the creators of the model, among other information.
+   Returns true if the database is successul created and initialized"
+  [db-name root-username root-password metadata]
+  (let [db  (make-database-connection db-name root-username root-password)]
+    (jdbc/with-connection 
+      db
+      (jdbc/transaction
+        
+        (jdbc/create-table 
+          :translation
+          [:id "int identity"]
+          [:en "varchar"]            ; English
+          [:nl "varchar"]            ; Dutch          
+          [:fr "varchar"]            ; French
+          [:de "varchar"]            ; German
+          [:it "varchar"]            ; Italian
+          [:sp "varchar"])           ; Spanish
+        ; and so on for other langauges
+        
+        (jdbc/create-table 
+          :metadata
+          [:id "int identity"]
+          [:contributor "varchar"]
+          [:coverage "varchar"]
+          [:creator "varchar"]
+          [:date "varchar"]       ; http://www.w3.org/TR/NOTE-datetime                         
+          [:description "int"]
+          [:format "varchar"]     ; A list of MIME types, semicolon separated
+          [:identifier "varchar"] 
+          [:language "varchar"]
+          [:publisher "varchar"]
+          [:relation "varchar"]
+          [:rights "varchar"]
+          [:source "varchar"]
+          [:subject "varchar"]
+          [:title "varchar"]
+          [:type "varchar"]       ; see: http://dublincore.org/documents/dcmi-type-vocabulary/
+          ["foreign key(description) references translation(id)"])
+        
+        (jdbc/create-table 
+          :statement 
+          [:id "int identity"]
+          [:weight "double default 0.50"]
+          [:value "double default 0.50"]
+          [:standard "tinyint default 0"]   ; 0=pe, 1=cce, 2=brd, 3=dv 
+          [:atom "varchar"]                 ; Clojure s-expression
+          [:text "int"]
+          [:main "boolean default false"]   ; true if a main issue
+          [:header "int"]
+          ["foreign key(text) references translation(id)"]
+          ["foreign key(header) references metadata(id)"])
+        
+        (jdbc/create-table 
+          :argument
+          [:id "int identity"]
+          [:conclusion "int not null"]
+          [:strict "boolean default false"]
+          [:weight "double default 0.50"]
+          [:value "double"]                    ; null means not evaluated
+          [:scheme "varchar"]                  ; URI of the scheme
+          [:pro "boolean default true"]        ; con argument if false
+          [:header "int"]
+          ["foreign key(conclusion) references statement(id)"]
+          ["foreign key(header) references metadata(id)"])
+        
+        (jdbc/create-table 
+          :premise
+          [:id "int identity"]
+          [:argument "int"]  ; null allowed, so as to be able to create premises first
+          [:statement "int not null"]
+          [:positive "boolean default true"] 
+          [:role "varchar"]
+          [:implicit "boolean default false"]
+          ["foreign key(argument) references argument(id)"]
+          ["foreign key(statement) references statement(id)"])                         
+        
+        (jdbc/create-table 
+          :namespace
+          [:prefix "varchar primary key not null"]
+          [:uri    "varchar not null"])
+        
+        (jdbc/create-table 
+          :stmtpoll         ; statement poll
+          [:userid "varchar not null"]   
+          [:statement "int not null"]
+          [:opinion "double default 0.5"]
+          ["foreign key(statement) references statement(id)"])
+        
+        (jdbc/create-table 
+          :argpoll         ; argument poll
+          [:userid "varchar not null"]   
+          [:argument "int not null"]
+          [:opinion "double default 0.5"]
+          ["foreign key(argument) references argument(id)"])
+        
+        ;; Grant read access to the public role
+        ;; and create a guest user account with this role.
+        (jdbc/do-commands "grant select on translation, metadata, statement, argument,
+                           premise, namespace to public"
+                          "create user guest password ''"
+                          "grant public to guest")
+        
+        (create-metadata db metadata)
+        
+        true))))
 
 ;; To Do: function to delete a database.  Perhaps this should
 ;; be private and called to clean up after exporting a database to CAF XML,
@@ -189,6 +197,10 @@
     (jdbc/delete-rows :translation ["id=?" id])))
 
 ;;; Metadata
+
+;; Note: the first metadata record describes
+;; the database as whole. This record is created
+;; when the database is created and initialized.
 
 (defn create-metadata 
   "Inserts a metadata structure into a database.  
