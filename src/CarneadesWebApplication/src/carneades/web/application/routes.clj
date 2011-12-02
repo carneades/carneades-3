@@ -11,9 +11,7 @@
 
 (def carneades-application-routes
      [(GET "/" [] (index-page))
-      (route/resources "/")
-      ;; (route/not-found "Page not found")
-      ])
+      (route/resources "/")])
 
 (def allroutes (concat carneades-application-routes carneades-web-service-routes))
 (def app (handler/site (apply routes allroutes)))
