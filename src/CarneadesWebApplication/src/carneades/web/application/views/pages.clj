@@ -1,7 +1,7 @@
 (ns carneades.web.application.views.pages
   (:require [net.cgrand.enlive-html :as html]))
 
-(html/deftemplate index "public/index.xhtml" [])
+(html/deftemplate index "public/index.html" [])
 
 (defn render [t]
   (apply str t))

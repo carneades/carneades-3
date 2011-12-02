@@ -1,16 +1,14 @@
 var CARNEADES = {
-    dburl : "http://localhost:8080",
     lang : "en"
 };
 
-// this function will be exectued when the page is loaded
+// this code is executed when the page is loaded
 $(function() {
       $('#connect').click(on_connect);
 });
 
-
-function do_ajax_post(suburl, jsondata, callback) {
-    $.ajax({url: CARNEADES.dburl + suburl,
+function ajax_post(url, jsondata, callback) {
+    $.ajax({url: suburl,
             type: "POST",
             data : {
                 json : JSON.stringify(jsondata)
@@ -19,8 +17,8 @@ function do_ajax_post(suburl, jsondata, callback) {
         });
 }
 
-function do_ajax_get(suburl, callback) {
-    $.ajax({url: CARNEADES.dburl + suburl,
+function ajax_get(suburl, callback) {
+    $.ajax({url: suburl,
             type: 'GET',
             success : callback,
             dataType : "json"
