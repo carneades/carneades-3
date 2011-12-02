@@ -85,11 +85,11 @@
                   m)]
     ; normalize the conclusion and direction of the argument:
     (assoc m2 
-           :conclusion (literal-atom (:conclusion m))
-           :pro  (or (and (literal-pos? (:conclusion m))
-                          (:pro m))
-                     (and (literal-neg? (:conclusion m))
-                          (not (:pro m)))))))
+           :conclusion (literal-atom (:conclusion m2))
+           :pro  (or (and (literal-pos? (:conclusion m2))
+                          (:pro m2))
+                     (and (literal-neg? (:conclusion m2))
+                          (not (:pro m2)))))))
 
 (defn make-argument [& values]
   (map->argument (apply hash-map values)))
