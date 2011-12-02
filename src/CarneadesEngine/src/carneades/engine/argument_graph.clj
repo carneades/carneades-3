@@ -90,7 +90,8 @@
                     ; where the sexp represents a ground atomic formula
    statement-nodes  ; (symbol -> StatementNode) map, 
    argument-nodes   ; (symbol -> ArgumentNode) map
-   references])     ; (symbol -> Metadata) map
+   references       ; (symbol -> Metadata) map
+   namespaces])     ; (symbol -> string) map, from symbol to URI
 
 (defn make-argument-graph
    "key value ... -> argument-graph"
@@ -101,7 +102,8 @@
             {}              ; keys
             {}              ; statement nodes
             {}              ; argument nodes
-            {})             ; references to sources
+            {}              ; references to sources
+            {})             ; namespaces
           (apply hash-map key-values)))
 
 (defn argument-graph? [x] (instance? ArgumentGraph x))
@@ -233,7 +235,7 @@
 
 (defn- source-ids
   "argument-graph (seq-of source) -> (seq-of string)
-   Returns the identifiers used to identifty each source in the list 
+   Returns the identifiers used to identify each source in the list 
    of references of the argument map."
   [ag sources]
   (filter (fn [x] (not (nil? x)))
