@@ -137,7 +137,7 @@
                   s
                   (let [arg (instantiate-argument (:argument template) subs)]
                     (assoc s 
-                           :graph (assert-argument (:graph s) arg)
+                           :graph (enter-argument (:graph s) arg)
                            :arg-templates (add-instance (:arg-templates s) k trm))))))
             state1
             (keys (:arg-templates state1)))))

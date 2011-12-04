@@ -37,7 +37,7 @@
 
 (def tandem-graph 
   (-> (make-argument-graph)
-      (assert-arguments [A1, A5, A6, A7])
+      (enter-arguments [A1, A5, A6, A7])
       (assume [jw, mw, sw])))
 
 ; Using the CAES evaluator, bottom is in. Consistency
@@ -72,7 +72,7 @@
 
 (def bachelor-graph
   (-> (make-argument-graph)
-      (assert-arguments [A1, A2, A3, A4, A5, A6])
+      (enter-arguments [A1, A2, A3, A4, A5, A6])
       (accept [party-animal, wears-ring])))
 
 ; The AIJ version of Carneades couldn't handle this example,
@@ -103,7 +103,7 @@
 
 (def frisian-graph 
   (-> (make-argument-graph)
-      (assert-arguments [A1, A2])
+      (enter-arguments [A1, A2])
       (accept [frisian])))
 
 (deftest test-frisian-carneades
@@ -182,7 +182,7 @@
 
 (def library-graph 
   (-> (make-argument-graph)
-      (assert-arguments [r1, r2, r3])
+      (enter-arguments [r1, r2, r3])
       (accept [snores, professor])))
 
 ; Carneades applies the "last link" principle to order arguments, as can
@@ -211,7 +211,7 @@
 
 (def self-defeat-graph 
   (-> (make-argument-graph)
-      (assert-arguments [A2,A3])
+      (enter-arguments [A2,A3])
       (accept [P])))
 
 (deftest test-self-defeat
