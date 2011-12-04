@@ -6,7 +6,7 @@
 ; type language = :en | :de | :nl | :fr ...
 
 ; A Source record describes a source using the Dublin Core Metadata Element Set.
-; As each Dublin Core element may have multiple values.  In our
+; Each Dublin Core element may have multiple values.  In our
 ; encoding, all values of a property are in single string, separated by
 ; semicolons. The single exception is the description property, which
 ; is represented as a map from a keyword for some language (:en, :de, etc.) to 

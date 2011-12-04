@@ -90,7 +90,7 @@
                     ; where the sexp represents a ground atomic formula
    statement-nodes  ; (symbol -> StatementNode) map, 
    argument-nodes   ; (symbol -> ArgumentNode) map
-   references       ; (symbol -> Metadata) map
+   references       ; (string -> Metadata) map  ; URI to Metadata
    namespaces])     ; (symbol -> string) map, from symbol to URI
 
 (defn make-argument-graph
@@ -158,6 +158,19 @@
                               n2))]
         [ag2 n2]))))
 
+(defn enter-statement
+  "argument-graph statement -> argument-graph
+   Adds a statement to an argument graph."
+  [ag stmt]
+  {:pre [(not (nil? ag))]}
+  (first (create-statement-node ag stmt)))
+
+(defn enter-statements
+  "argument-graph (collection-of statement) -> argument-graph"
+  [ag stmts]
+  {:pre [(not (nil? ag))]}
+  (reduce (fn [ag stmt] (enter-statement ag stmt)) ag stmts))
+
 (defn update-statement-node
   "argument-graph statement-node key value ... -> argument-graph
    Updates the statement node with the values of the 
@@ -208,49 +221,67 @@
           ag1
           (:premises an)))
 
-(defn- find-sources
-  "argument-graph (seq-of string) -> (seq-of source)
-   Returns the sources with the given ids in the
-   reference list of the argument graph."
-  [ag ids]
-  (concat (map (fn [id] (get (:references ag) id)) ids)))
+(defn get-reference
+  "argument-graph string -> metadata or nil
+   Returns the reference with the given id (URI) in the
+   reference list of the argument graph, or nil
+   if there is no reference with this identifier."
+  [ag id]
+  (get (:references ag) id))
                           
-(defn- update-references
-  "argument-graph source -> argument-graph
-   Checks whether a source is in the list of references of the
-   argument graph and updates the list to add the source if it
-   is new. Does not overwrite or modify existing references."
-  [ag source]
-  {:pre (not (nil? (first (:identifier source))))}
-  (let [source2 (get (:references ag) 
-                     (first (find-sources (:identifier source))))]
-    (if source2
-      ; the source was already in the reference list
+(defn enter-reference
+  "argument-graph metadata -> argument-graph
+   Checks whether the metadata is in the list of references of the
+   argument graph and updates the list to add the metadata if it
+   is new. Does not overwrite or modify existing references.
+   Simplifying assumption: each metadata item has at most one Dublin Core 
+   identifier. If the identifier of the metadata is nil, it is
+   not added to the list and the argument graph is returned unchanged."
+  [ag md]
+  (let [md2 (get-reference (:identifier md))]
+    (if (or (nil? (:identifier md))
+             md2)
+      ; the metadata has no identifier or the
+      ; metadata was already in the reference list
       ag 
-      ; else add the new source to the reference list
+      ; else add the new reference to the list, using
+      ; its identifier as the key.
       (assoc ag :references
              (assoc (:references ag)
-                    (first (:identifier source))
-                    source)))))
+                    (:identifier md)
+                    md)))))
 
-(defn- source-ids
-  "argument-graph (seq-of source) -> (seq-of string)
-   Returns the identifiers used to identify each source in the list 
-   of references of the argument map."
-  [ag sources]
-  (filter (fn [x] (not (nil? x)))
-          (map (fn [src] 
-                 (first (map (fn [id] 
-                               (get (:references ag) id))
-                             (:identifier src))))
-               sources)))
+(defn enter-references
+  "argument-graph (collection-of metadata) -> argument-graph"
+  [ag metadata-collection]
+  (reduce enter-reference ag metadata-collection))
+
+(defn get-namespace-uri
+  "argument-graph string -> string or nil"
+  [ag prefix]
+  {:pre [(argument-graph? ag) (string? prefix)]}
+  (get (:namespaces ag) prefix))
+
+(defn enter-namespace
+  "argument-graph map -> argument-graph"
+  [ag m]
+  {:pre [(map? m)]}
+  (assoc ag :namespaces
+         (assoc (:namespaces ag)
+                (:prefix m) 
+                (:uri m))))
+
+(defn enter-namespaces
+  "argument-graph (collection-of maps) -> argument-graph"
+  [ag maps]
+  (reduce enter-namespace ag maps))
 
 (defn- add-argument-node
   "argument-graph argument-node -> argument-graph"
   [ag node]
   (assoc ag :argument-nodes (assoc (:argument-nodes ag) (:id node) node)))
 
-(defn  update-argument-node
+(defn update-argument-node
   "argument-graph argument-node key value ... -> argument-graph
    Updates the argument node, replacing the properties with
    the given keys values but retaining the values of other properties.
@@ -266,7 +297,7 @@
                                        (apply hash-map key-values)))))
 
 
-(defn assert-argument
+(defn enter-argument
   "argument-graph argument -> argument-graph
    Converts a one-step argument to an argument node and adds
    it to the argument graph."
@@ -299,11 +330,11 @@
         (link-conclusion node)
         (link-premises node))))
 
-(defn assert-arguments
+(defn enter-arguments
   "argument-graph (collection-of argument) -> argument-graph"
   [ag args]
   {:pre [(not (nil? ag))]}
-  (reduce (fn [ag arg] (assert-argument ag arg)) ag args))
+  (reduce (fn [ag arg] (enter-argument ag arg)) ag args))
 
 
 (defn assoc-standard

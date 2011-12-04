@@ -81,7 +81,7 @@ reduces a need of a new dump which is for the garbage."}))
 
 (def ag
     (-> (make-argument-graph)
-        (assert-arguments [a1 a2 a3 a4 a5 a6 a7 a8 a9])
+        (enter-arguments [a1 a2 a3 a4 a5 a6 a7 a8 a9])
         (accept [p14])))
 
 ; (view ag)

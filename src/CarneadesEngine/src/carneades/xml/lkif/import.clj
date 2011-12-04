@@ -464,7 +464,7 @@
          stmt-map (parse-statements lkif-stmts),
          main-issue (and lkif-main-issue ((keyword lkif-main-issue) stmt-map)),
          arguments (parse-arguments lkif-args stmt-map),
-         ag1 (assert-arguments (argument-graph id title main-issue) arguments),
+         ag1 (enter-arguments (argument-graph id title main-issue) arguments),
          ag2 (apply-status_standard ag1 (xml-> lkif-stmts :statement))]
     ag2))
 

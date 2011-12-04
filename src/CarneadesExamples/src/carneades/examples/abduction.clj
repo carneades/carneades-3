@@ -49,7 +49,7 @@
 (def ag (-> (argument-graph)
             (accept [s w])
             (reject [q v t])
-            (assert-arguments [a1 a2 a3 a4 a5])))
+            (enter-arguments [a1 a2 a3 a4 a5])))
 
 ; assumptions
 (def asm #{(neg q) (neg v) (neg t) w s})
