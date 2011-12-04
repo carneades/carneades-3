@@ -22,7 +22,7 @@
 ;; - OPML export
 ;; - review security issues 
 ;; - validate input?
-  
+ 
 
 ;(defmacro with-db [db & body]   
 ;  `(try (jdbc/with-connection 
@@ -33,11 +33,14 @@
 ;                 :body "The server encountered an unexpected condition which prevented it from fulfilling the request."})))
 ;
 
+; Use the following version of the macro for testing,
+; so that stack traces are printed in the browser:
 
 (defmacro with-db [db & body]   
   `(jdbc/with-connection 
            ~db
            (jdbc/transaction ~@body)))
+
 
 (defn json-response [data & [status]]
   (if (nil? data)
@@ -83,37 +86,38 @@
      [ 
       (GET "/metadata/:db" [db] 
            (let [db2 (make-database-connection db "guest" "")]
-             (with-db db2 (json-response (list-metadata db2)))))
+             (with-db db2 (json-response (list-metadata)))))
       
       (GET "/metadata/:db/:id" [db id]
            (let [db2 (make-database-connection db "guest" "")]
-             (with-db db2 (json-response (read-metadata db2 (read-string id))))))
+             (with-db db2 (json-response (read-metadata (read-string id))))))
       
       (POST "/metadata" request
             (let [m (read-json (slurp (:body request)))
                   db (make-database-connection (:db (:params request)) "root" "pw1")]
-              (with-db db (json-response (create-metadata db (map->metadata db m)))))) 
+              (with-db db (json-response (create-metadata (map->metadata m)))))) 
       
       (PUT "/metadata" request   
            (let [m (read-json (slurp (:body request)))
                  db (make-database-connection (:db (:params request)) "root" "pw1")
                  id (read-string (:id (:params request)))]
-             (with-db db (json-response (update-metadata db id m))))) 
+             (with-db db (json-response (update-metadata id m))))) 
       
       (DELETE "/metadata/:db/:id" [db id] 
               (let [db2 (make-database-connection db "root" "pw1")]
-                (with-db db2 (json-response (delete-metadata db2 (read-string id))))))
+                (with-db db2 (json-response (delete-metadata (read-string id))))))
       
       ;; Statements
       
       (GET "/statement/:db" [db] 
            (let [db2 (make-database-connection db "guest" "")]
-             (with-db db2 (json-response (map pack-statement (list-statements db2))))))           
+             (with-db db2 (json-response (map pack-statement (list-statements))))))           
       
       (GET "/statement/:db/:id" [db id] 
            (let [db2 (make-database-connection db "guest" "")]
              (with-db db2 
-               (let [res (json-response (pack-statement (read-statement db2 (read-string id))))]
+               (let [res (json-response (pack-statement 
+                                          (read-statement (read-string id))))]
                  (pprint res)
                  (prn " ressss ")
                  res
@@ -124,7 +128,7 @@
                   s (unpack-statement m)
                   db (make-database-connection (:db (:params request)) "root" "pw1")]
               (prn request)
-              (with-db db (json-response (create-statement db (map->statement s))))))
+              (with-db db (json-response (create-statement (map->statement s))))))
       
       (PUT "/statement" request  
            (let [m (read-json (slurp (:body request)))
@@ -135,45 +139,45 @@
       
       (DELETE "/statement/:db/:id" [db id] 
               (let [db2 (make-database-connection db "root" "pw1")]
-                (with-db db2 (json-response (delete-statement db2 (read-string id))))))
+                (with-db db2 (json-response (delete-statement (read-string id))))))
       
       ;; Arguments  
       
       (GET "/argument/:db" [db]
            (let [db2 (make-database-connection db "guest" "")] 
-             (with-db db2 (json-response (map pack-argument (list-arguments db2))))))
+             (with-db db2 (json-response (map pack-argument (list-arguments))))))
       
       (GET "/argument/:db/:id" [db id]
            (let [db2 (make-database-connection db "guest" "")]  
-             (with-db db2 (json-response (pack-argument (read-argument db2 (read-string id)))))))
+             (with-db db2 (json-response (pack-argument (read-argument (read-string id)))))))
       
       (POST "/argument" request  
             (let [m (read-json (slurp (:body request)))
                   arg (unpack-argument m)
                   db (make-database-connection (:db (:params request)) "root" "pw1")]
-              (with-db db (json-response (create-argument db (map->argument arg))))))
+              (with-db db (json-response (create-argument (map->argument arg))))))
       
       (PUT "/argument" request  
            (let [m (read-json (slurp (:body request)))
                  arg (unpack-argument m)
                  db (make-database-connection (:db (:params request)) "root" "pw1")
                  id (read-string (:id (:params request)))]
-             (with-db db (json-response (update-argument db id arg)))))   
+             (with-db db (json-response (update-argument id arg)))))   
       
       (DELETE "/argument/:db/:id" [db id] 
               (let [db2 (make-database-connection db "root" "pw1")]
                 (with-db db2
-                  (json-response (delete-argument db2 (read-string id))))))
+                  (json-response (delete-argument (read-string id))))))
       
       ;; Namespaces
       
       (GET "/namespace/:db" [db]
            (let [db2 (make-database-connection db "guest" "")] 
-             (with-db db2 (json-response (list-namespaces db2)))))
+             (with-db db2 (json-response (list-namespaces)))))
       
       (GET "/namespace/:db/:prefix" [db prefix]
            (let [db2 (make-database-connection db "guest" "")]  
-             (with-db db2 (json-response (read-namespace db2 prefix)))))
+             (with-db db2 (json-response (read-namespace prefix)))))
 
       (POST "/namespace/" request  
             (let [prefix (:prefix (:params request)),
@@ -185,66 +189,66 @@
            (let [prefix (:prefix (:params request)),
                  uri (read-json (slurp (:body request))),
                  db (make-database-connection (:db (:params request)) "root" "pw1")]
-             (with-db db (json-response (update-namespace db prefix uri)))))
+             (with-db db (json-response (update-namespace prefix uri)))))
       
       (DELETE "/namespace/:db/:prefix" [db prefix] 
               (let [db2 (make-database-connection db "root" "pw1")]
                 (with-db db2
-                  (json-response (delete-namespace db2 prefix)))))
+                  (json-response (delete-namespace prefix)))))
       
       ;; Statement Polls
       
       (GET "/statement-poll/:db" [db]
            (let [db2 (make-database-connection db "guest" "")] 
-             (with-db db2 (json-response (list-statement-poll db2)))))
+             (with-db db2 (json-response (list-statement-poll)))))
       
       (GET "/statement-poll/:db/:id" [db id]
            (let [db2 (make-database-connection db "guest" "")]  
-             (with-db db2 (json-response (read-statement-poll db2 (read-string id))))))
+             (with-db db2 (json-response (read-statement-poll (read-string id))))))
 
       (POST "/statement-poll" request  
             (let [userid (:id (:params request)),
                   votes (read-json (slurp (:body request))),
                   db (make-database-connection (:db (:params request)) "root" "pw1")]
-              (with-db db (json-response (create-statement-poll db userid votes)))))
+              (with-db db (json-response (create-statement-poll userid votes)))))
       
       (PUT "/statement-poll" request  
            (let [userid (:id (:params request)),
                  votes (read-json (slurp (:body request)))
                  db (make-database-connection (:db (:params request)) "root" "pw1")]
-             (with-db db (json-response (update-statement-poll db userid votes)))))
+             (with-db db (json-response (update-statement-poll userid votes)))))
       
       (DELETE "/statement-poll/:db/:id" [db id] 
               (let [db2 (make-database-connection db "root" "pw1")]
                 (with-db db2
-                  (json-response (delete-statement-poll db2 (read-string id)))))) 
+                  (json-response (delete-statement-poll (read-string id)))))) 
       
       ;; Argument Polls
       
       (GET "/argument-poll/:db" [db]
            (let [db2 (make-database-connection db "guest" "")] 
-             (with-db db2 (json-response (list-argument-poll db2)))))
+             (with-db db2 (json-response (list-argument-poll)))))
       
       (GET "/argument-poll/:db/:id" [db id]
            (let [db2 (make-database-connection db "guest" "")]  
-             (with-db db2 (json-response (read-argument-poll db2 (read-string id))))))
+             (with-db db2 (json-response (read-argument-poll (read-string id))))))
 
       (POST "/argument-poll" request  
             (let [userid (:id (:params request)),
                   votes (read-json (slurp (:body request))),
                   db (make-database-connection (:db (:params request)) "root" "pw1")]
-              (with-db db (json-response (create-argument-poll db userid votes)))))
+              (with-db db (json-response (create-argument-poll userid votes)))))
       
       (PUT "/argument-poll" request  
            (let [userid (:id (:params request)),
                  votes (read-json (slurp (:body request)))
                  db (make-database-connection (:db (:params request)) "root" "pw1")]
-             (with-db db (json-response (update-argument-poll db userid votes)))))
+             (with-db db (json-response (update-argument-poll userid votes)))))
       
       (DELETE "/argument-poll/:db/:id" [db id] 
               (let [db2 (make-database-connection db "root" "pw1")]
                 (with-db db2
-                  (json-response (delete-argument-poll db2 (read-string id)))))) 
+                  (json-response (delete-argument-poll (read-string id)))))) 
       
       ;; Other 
       
