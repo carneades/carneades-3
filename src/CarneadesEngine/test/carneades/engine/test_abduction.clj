@@ -26,7 +26,7 @@
         a5 (argument :a5 false 0.4 :con r [(pm w)] nil)
         a1 (argument :a1 false 0.6 :con p [(pm r)] nil)
         a2 (argument :a2 false 0.4 :pro p [(pm s) (pm q)] nil)
-        ag (assoc-standard (assert-arguments
+        ag (assoc-standard (enter-arguments
                             (reject
                              (accept (argument-graph) [s w])
                              [q v t])

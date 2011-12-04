@@ -150,7 +150,7 @@ peace and order."}))
 
 (def tompkins 
   (-> (make-argument-graph)
-      (assert-arguments [a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14])
+      (enter-arguments [a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14])
       (accept [foxes-are-wild possession-required certainty order])))
 
 ;(view tompkins)
@@ -195,11 +195,11 @@ and noxious beast."}))
 
 (def livingston 
   (-> (make-argument-graph) 
-      (assert-arguments [a15 a16 a17]) 
+      (enter-arguments [a15 a16 a17]) 
       (accept [chased-by-big-dogs])))
 
 (def both (-> tompkins 
-              (assert-arguments [a15 a16 a17])
+              (enter-arguments [a15 a16 a17])
               (accept [chased-by-big-dogs])))
 
 ; (def db (make-database-connection "pierson" "root" "pw1"))
