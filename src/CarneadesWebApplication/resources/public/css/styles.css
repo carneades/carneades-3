@@ -1,7 +1,12 @@
-body {
+h1 {
    text-align: center;
 }
 
-statement {
+#loginform {
+   width: 50%;
+   margin: auto ;
+}
+
+.statement {
    text-decoration: underline;
 }
