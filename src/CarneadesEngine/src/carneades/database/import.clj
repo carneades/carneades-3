@@ -24,12 +24,12 @@
       
       ; Statements
       (doseq [sn (vals (:statement-nodes arg-graph))]
-        (create-statement db (map->statement sn)))
+        (create-statement (map->statement sn)))
       
       ; Arguments
       (doseq [an (vals (:argument-nodes arg-graph))]
         (create-argument 
-          db 
+       
           (assoc (map->argument an)
                  :conclusion (:atom (get (:statement-nodes arg-graph)
                                          (literal-atom (:conclusion an))))
@@ -42,16 +42,16 @@
       
       ; References
       (doseq [md (vals (:references arg-graph))]
-        (create-metadata db md))
+        (create-metadata md))
       
       ; Namespaces
       (doseq [ns (:namespaces arg-graph)]
-        (create-namespace db {:prefix (first ns) :uri (second ns)}))
+        (create-namespace {:prefix (first ns) :uri (second ns)}))
         
       ; Header
       (if (and update-metadata 
                (:header arg-graph))
-        (update-metadata db 1 (:header arg-graph)))
+        (update-metadata  1 (:header arg-graph)))
       
       true)))
 
