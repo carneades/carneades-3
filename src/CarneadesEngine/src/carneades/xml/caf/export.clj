@@ -42,11 +42,13 @@
                                     (assoc :atom (pack-atom (:atom stmt))))
                      (metadata->xml (:header stmt))
                      (reduce (fn [v description]
-                               (conj v [:description 
-                                        {:lang (name (first description))} 
-                                        (second description)]))
+                               (if (empty? (second description)) 
+                                 v
+                                 (conj v [:description 
+                                          {:lang (name (first description))} 
+                                          (second description)])))
                              [:descriptions]
-                             (:text stmt))]))
+                             (dissoc (:text stmt) :id))]))
           [:statements]
           stmt-nodes))
 
@@ -59,7 +61,7 @@
                              (if (nil? (:value arg)) :value))
                      (metadata->xml (:header arg))
                      [:conclusion {:statement (literal-atom (:conclusion arg))}]
-                     (reduce (fn [v p] (conj v [:premise p]))
+                     (reduce (fn [v p] (conj v [:premise (dissoc p :id :argument)]))
                              [:premises]
                              (:premises arg))]))
           [:arguments]

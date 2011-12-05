@@ -238,7 +238,7 @@
    identifier. If the identifier of the metadata is nil, it is
    not added to the list and the argument graph is returned unchanged."
   [ag md]
-  (let [md2 (get-reference (:identifier md))]
+  (let [md2 (get-reference ag (:identifier md))]
     (if (or (nil? (:identifier md))
              md2)
       ; the metadata has no identifier or the
@@ -314,7 +314,7 @@
                     (conj (map :statement (:premises arg)) 
                           (:conclusion arg)))
         node (make-argument-node 
-               :id (:id arg)           
+               ; :id (:id arg)           
                :header (:header arg)      
                :scheme (:scheme arg) 
                :strict (:strict arg)
