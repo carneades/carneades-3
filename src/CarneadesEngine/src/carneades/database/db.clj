@@ -136,7 +136,7 @@
                           "create user guest password ''"
                           "grant public to guest")
         
-        (create-metadata db metadata)
+        (create-metadata metadata)
         
         true))))
 
