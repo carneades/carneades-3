@@ -9,7 +9,7 @@
         carneades.database.db)
   (:require [clojure.java.jdbc :as jdbc]))
 
-(defn import-argument-graph
+(defn import-from-argument-graph
   "database-connection argument-graph boolean -> boolean
    Imports all the statement nodes, argument nodes, references and namespaces of the 
    argument graph into the database. The statement nodes and argument

@@ -8,7 +8,7 @@
   (:require
         [clojure.java.jdbc :as jdbc]))
 
-(defn export-argument-graph
+(defn export-to-argument-graph
   "database-connection -> argument-graph
    Exports all the statement nodes, argument nodes, references and namespaces in 
    an argument database to an argument graph. The statement nodes and argument
@@ -23,6 +23,5 @@
           (ag/enter-arguments (db/list-arguments))
           (ag/enter-references (db/list-metadata))
           (ag/enter-namespaces (db/list-namespaces))
-          (assoc :header (db/read-metadata 1))
-          ))))
+          (assoc :header (db/read-metadata 1))))))
         
