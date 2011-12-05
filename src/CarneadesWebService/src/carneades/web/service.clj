@@ -116,12 +116,7 @@
       (GET "/statement/:db/:id" [db id] 
            (let [db2 (make-database-connection db "guest" "")]
              (with-db db2 
-               (let [res (json-response (pack-statement 
-                                          (read-statement (read-string id))))]
-                 (pprint res)
-                 (prn " ressss ")
-                 res
-                 ))))
+               (json-response (pack-statement (read-statement (read-string id)))))))
       
       (POST "/statement/:db" request  
             (let [m (read-json (slurp (:body request)))
