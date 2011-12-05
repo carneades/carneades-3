@@ -1,7 +1,7 @@
 ;;; Copyright (c) 2011 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc  "Functions for exporting rgument databases to argument graphs."}
+(ns ^{:doc  "Functions for exporting argument databases to argument graphs."}
   carneades.database.export
   (:use [carneades.engine.argument-graph :as ag]
         [carneades.database.db :as db])
