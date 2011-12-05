@@ -18,7 +18,7 @@
 ;; - retrieving user name and password from the request 
 ;; - include the ids of undercutters and rebuttals in argument records
 ;; - search operations, including full text search
-;; - LKIF import/export
+;; - CAF import/export
 ;; - OPML export
 ;; - review security issues 
 ;; - validate input?
