@@ -7,6 +7,7 @@
         carneades.engine.argument-graph
         carneades.database.db
         carneades.database.import
+        carneades.xml.caf.export
        ;  carneades.mapcomponent.viewer
        ;  carneades.mapcomponent.export
        ;  carneades.ui.diagram.graphvizviewer
@@ -204,6 +205,8 @@ and noxious beast."}))
 
 ; (def db (make-database-connection "pierson" "root" "pw1"))
 ; (import-argument-graph db both false)
+
+; (argument-graph->xml both)
 
            
 ; (view both)

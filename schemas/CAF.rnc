@@ -10,14 +10,14 @@ datatypes xsd = "http://www.w3.org/2001/XMLSchema-datatypes"
 grammar {
     start = element caf { 
         attribute version { xsd:string }?,  # version of the CAF schema
-        MetaData, Statements, Arguments, References
+        Metadata, Statements, Arguments, References
     }
     
-    References = element references { MetaData+ }
+    References = element references { Metadata* }
          
     Metadata = element metadata { 
         attribute id { xsd:ID }?,     # local identifier
-    	DublinElement+                
+    	DublinElement*                
     }   
     
     # Simple Dublin Core Elements
@@ -70,8 +70,8 @@ grammar {
         # 0.0=false, 0.25=assumed falsed, 0.5=questioned, 0.75=assumed true, 1.00=true
         attribute value { xsd:float }?,   # output of argument evaluation
         attribute standard { "DV" | "PE" | "CCE" | "BRD" }?, # default: PE
-        attribute atom { xsd:string }   # formalization as Clojure s-expression
-        attribute main { xsd:boolean }  # default: false, true if a main issue
+        attribute atom { xsd:string },   # formalization as Clojure s-expression
+        attribute main { xsd:boolean }?,  # default: false, true if a main issue
         Metadata?,       # describing the model, not sources
         Descriptions     # natural language expressions of the statement 
     }
@@ -79,7 +79,8 @@ grammar {
     Arguments = element arguments { Argument* }
     Argument = element argument { 
     	attribute id { xsd:ID },
-        attribute pro { xsd:boolean }?,   # default true; false if con
+    	attribute strict { xsd:boolean }?, # default false
+        attribute pro { xsd:boolean }?,    # default true; false if con
         attribute scheme { xsd:anyURI | xsd:string }?,
         attribute weight { xsd:float }?,  # range: 0.0 to 1.0; default: 0.5
         attribute value { xsd:float }?,   # output of argument evaluation
@@ -94,11 +95,10 @@ grammar {
         attribute positive { xsd:boolean }?, # default: true
         attribute role { xsd:string }?,
         attribute implicit { xsd:boolean}?,   # default: false
-        attribute statement { xsd:anyURI },
+        attribute statement { xsd:anyURI }
      } 
                   
     Conclusion = element conclusion { 
-        attribute statement { xsd:anyURI }, 
+        attribute statement { xsd:anyURI }
 	}
-	
-	
+	}
