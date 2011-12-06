@@ -226,8 +226,8 @@
    Returns the references with the given id (URI) in the
    reference list of the argument graph."
   [ag id]
-  (reduce (fn [v ref] (when (re-find (re-pattern id) ref) 
-                      (conj v ref)))
+  (reduce (fn [v ref] (when (re-find (re-pattern id) (:identifier ref))
+                            (conj v ref)))
           []
           (:references ag)))
                       
