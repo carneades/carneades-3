@@ -3,10 +3,11 @@
 
 (ns ^{:doc "Functions for exporting argument graphs to XML using the Carneades Argument Format (CAF)."}
     carneades.xml.caf.export
-  (:use clojure.string
-        carneades.engine.statement
-        carneades.engine.argument-graph
-        clojure.contrib.prxml))
+  (:use carneades.engine.statement
+        carneades.engine.argument-graph)
+  (:require
+        [clojure.string :as str]
+        [clojure.contrib.prxml :as prx]))
 
 ; TO DO: 
 ; - exporting namespaces. Should namespaces be encoded using XML entities, as we did with LKIF? Alternatively,
@@ -18,22 +19,22 @@
   [:metadata 
    (dissoc md 
            :description
-           (when (blank? (:contributor md)) :contributor)
-           (when (blank? (:coverage md)) :coverage)
-           (when (blank? (:creator md)) :creator)
-           (when (blank? (:date md)) :date)
-           (when (blank? (:format md)) :format)
-           (when (blank? (:identifier md)) :identifier)
-           (when (blank? (:language md)) :language)
-           (when (blank? (:publisher md)) :publisher)
-           (when (blank? (:relation md)) :relation)
-           (when (blank? (:rights md)) :rights)
-           (when (blank? (:source md)) :source)
-           (when (blank? (:subject md)) :subject)
-           (when (blank? (:title md)) :title)
-           (when (blank? (:type md)) :type))
+           (when (str/blank? (:contributor md)) :contributor)
+           (when (str/blank? (:coverage md)) :coverage)
+           (when (str/blank? (:creator md)) :creator)
+           (when (str/blank? (:date md)) :date)
+           (when (str/blank? (:format md)) :format)
+           (when (str/blank? (:identifier md)) :identifier)
+           (when (str/blank? (:language md)) :language)
+           (when (str/blank? (:publisher md)) :publisher)
+           (when (str/blank? (:relation md)) :relation)
+           (when (str/blank? (:rights md)) :rights)
+           (when (str/blank? (:source md)) :source)
+           (when (str/blank? (:subject md)) :subject)
+           (when (str/blank? (:title md)) :title)
+           (when (str/blank? (:type md)) :type))
    (reduce (fn [v description]
-             (if (blank? (second description)) 
+             (if (str/blank? (second description)) 
                v
                (conj v [:description 
                         {:lang (name (first description))} 
@@ -67,7 +68,7 @@
                                     (assoc :atom (pack-atom (:atom stmt))))
                      (if (nil? (:header stmt)) "" (metadata->xml (:header stmt)))
                      (reduce (fn [v description]
-                               (if (blank? (second description)) 
+                               (if (str/blank? (second description)) 
                                  v
                                  (conj v [:description 
                                           {:lang (name (first description))} 
@@ -100,7 +101,7 @@
    
 (defn argument-graph->xml
   [ag]
-  (prxml 
+  (prx/prxml 
     [:caf {:version "1.1"}
      (metadata->xml (:header ag))
      (statement-nodes->xml (vals (:statement-nodes ag)))
