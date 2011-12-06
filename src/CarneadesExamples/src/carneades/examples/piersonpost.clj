@@ -31,13 +31,23 @@
 
 (def pierson-post 
   (make-argument-graph 
-    :header (make-metadata :title "Pierson v. Post"
-                           :date "1805"
-                           :coverage "New York"
-                           :identifer "3 Cai. R. 175, 2 Am. Dec. 264" 
-                           :creator "Daniel Tompkins; Henry Brockholst Livingston"
-                           :publisher "Supreme Court of New York"
-                           :description {:en "Pierson v Post is an American legal case that is widely used in law schools for teaching property law."})))
+    :header (make-metata 
+              :title "Pierson vs. Post Revisted ? A Reconstruction using the Carneades Argumentation Framework"
+              :creator "Thomas F. Gordon; Douglas Walton"
+              :identifier "http://dl.acm.org/citation.cfm?id=1565233.1565257"
+              :publisher "IOS Press"
+              :format "pdf"
+              :date "2006")
+    
+    :references 
+    [(make-metadata 
+       :title "Pierson v. Post"
+       :date "1805"
+       :coverage "New York"
+       :identifier "3 Cai. R. 175, 2 Am. Dec. 264" 
+       :creator "Daniel Tompkins; Henry Brockholst Livingston"
+       :publisher "Supreme Court of New York"
+       :description {:en "Pierson v Post is an American legal case that is widely used in law schools for teaching property law."})]))
 
 ;;  Judge Tompkins Opinion, for the majority 
 
@@ -99,6 +109,9 @@ peace and order."}))
   (make-statement :text {:en "Peace and order is an important social value."}))
 
 (def a1 (make-argument 
+          :header (make-metadata :description {:en "The question ... is, whether ... Post, by the pursuit with his hounds ... acquired ...
+property in, the fox ... It is admitted that a fox is an animal ferae naturae, and that property in such animals
+is acquired by occupancy only. These admissions narrow the discussion to the simple question of what acts as occupancy .."})
           :conclusion not-property 
           :premises [(pm possession-required), 
                      (pm no-possession),
@@ -109,14 +122,20 @@ peace and order."}))
           :premises [(pm pursuit-not-sufficient)]))
 
 (def a3 (make-argument
+          :header (make-metadata :description {:en "Justinian’s Institutes, lib. 2, tit. 1, s.13, and Fleta, lib. 3, c.2, p. 175, adopt the principle, that pursuit alone vests no property or right in the huntsman; and that even
+pursuit, accompanied with wounding, is equally ineffectual for that purpose, unless the animal be actually taken."})
           :conclusion pursuit-not-sufficient 
           :premises [(pm justinian)]))
 
 (def a4 (make-argument 
+          :header (make-metadata :description {:en "Justinian’s Institutes, lib. 2, tit. 1, s.13, and Fleta, lib. 3, c.2, p. 175, adopt the principle, that pursuit alone vests no property or right in the huntsman; and that even
+pursuit, accompanied with wounding, is equally ineffectual for that purpose, unless the animal be actually taken."})
           :conclusion pursuit-not-sufficient
           :premises [(pm fleta)]))
 
 (def a5 (make-argument
+          :header (make-metadata :description {:en "The same principle is recognized by Bracton, lib. 2, c.1,
+p. 8."})
           :conclusion pursuit-not-sufficient
           :premises [(pm bracton)]))
 
@@ -125,14 +144,21 @@ peace and order."}))
           :premise [(pm actual-possession-required)]))
 
 (def a7 (make-argument 
+          :header (make-metadata :description {:en "Puffendorf, lib. 4, c.6, s.2, and 10, deﬁnes occupancy of beasts ferae naturae, to be
+the actual corporal possession of them, and Bynkershoek is cited as coinciding in this deﬁnition."})
           :conclusion actual-possession-required
           :premises [(pm puffendorf)]))
 
 (def a8 (make-argument 
+          :header (make-metadata :description {:en "Puffendorf, lib. 4, c.6, s.2, and 10, deﬁnes occupancy of beasts ferae naturae, to be
+the actual corporal possession of them, and Bynkershoek is cited as coinciding in this deﬁnition."})
           :conclusion puffendorf 
           :premises [(pm bynkershoek) ]))
 
 (def a9 (make-argument 
+          :header (make-metadata :description {:en "Barbeyrac, in his notes on Puffendorf ... afﬁrms, that actual bodily seizure is not, in
+all cases, necessary to constitute possession of wild animals. ... the mortal wounding of such beasts, ... may ... be deemed possession ... Barbeyrac seems to have adopted
+.... the more accurate opinion of Grotius .."})
           :conclusion (neg actual-possession-required)
           :premises [(pm mortally-wounded-deemed-possessed), 
                      (pm mortally-wounded)]))
