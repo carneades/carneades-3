@@ -62,7 +62,7 @@
           [:date "varchar"]       ; http://www.w3.org/TR/NOTE-datetime                         
           [:description "int"]
           [:format "varchar"]     ; A list of MIME types, semicolon separated
-          [:identifier "varchar"] ; A single URI; i.e. a global id
+          [:identifier "varchar"] 
           [:language "varchar"]
           [:publisher "varchar"]
           [:relation "varchar"]
@@ -214,15 +214,15 @@
   [id]
   (let [md (jdbc/with-query-results 
              res1 [(str "SELECT * FROM metadata WHERE id='" id "'")]
-             (if (empty? res1) nil (first res1)))]
-    (if (:description md)
-      (let [d (jdbc/with-query-results 
-                res2 [(str "SELECT * FROM translation WHERE id='" (:description md) "'")]
-                (if (empty? res2) nil (first res2)))]
-        (if d
-          (doall (merge (merge (make-metadata) md)
-                        {:description d}))
-          (doall (merge (make-metadata) md))))))) 
+             (if (empty? res1) nil (first res1)))
+        d (when (:description md) 
+            (jdbc/with-query-results 
+              res2 [(str "SELECT * FROM translation WHERE id='" (:description md) "'")]
+              (if (empty? res2) nil (first res2))))]
+    (if d
+      (doall (merge (merge (make-metadata) md)
+                    {:description d}))
+      (doall (merge (make-metadata) md)))))
 
 (defn list-metadata
   "Returns a sequence of all the metadata records in the database"
