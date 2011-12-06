@@ -17,7 +17,7 @@
    Optionally, the metadata record describing the database is updated with the
    information in the header of the argument graph.
    Returns true if the import is successful."
-  [db arg-graph update-metadata]
+  [db arg-graph update-header]
   (jdbc/with-connection 
     db
     (jdbc/transaction
@@ -29,7 +29,7 @@
       ; Arguments
       (doseq [an (vals (:argument-nodes arg-graph))]
         (create-argument 
-       
+          
           (assoc (map->argument an)
                  :conclusion (:atom (get (:statement-nodes arg-graph)
                                          (literal-atom (:conclusion an))))
@@ -47,12 +47,10 @@
       ; Namespaces
       (doseq [ns (:namespaces arg-graph)]
         (create-namespace {:prefix (first ns) :uri (second ns)}))
-        
-      ; Header
-      (if (and update-metadata 
-               (:header arg-graph))
-        (update-metadata  1 (:header arg-graph)))
       
-      true)))
+      ; Header
+      (when (and update-header (:header arg-graph))
+        (update-metadata 1 (:header arg-graph)))))
+  true)
 
 
