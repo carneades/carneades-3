@@ -31,7 +31,7 @@
 
 (def pierson-post 
   (make-argument-graph 
-    :header (make-metata 
+    :header (make-metadata 
               :title "Pierson vs. Post Revisted ? A Reconstruction using the Carneades Argumentation Framework"
               :creator "Thomas F. Gordon; Douglas Walton"
               :identifier "http://dl.acm.org/citation.cfm?id=1565233.1565257"
@@ -122,13 +122,13 @@ is acquired by occupancy only. These admissions narrow the discussion to the sim
           :premises [(pm pursuit-not-sufficient)]))
 
 (def a3 (make-argument
-          :header (make-metadata :description {:en "Justinian’s Institutes, lib. 2, tit. 1, s.13, and Fleta, lib. 3, c.2, p. 175, adopt the principle, that pursuit alone vests no property or right in the huntsman; and that even
+          :header (make-metadata :description {:en "Justinian?s Institutes, lib. 2, tit. 1, s.13, ... adopt[s] the principle, that pursuit alone vests no property or right in the huntsman; and that even
 pursuit, accompanied with wounding, is equally ineffectual for that purpose, unless the animal be actually taken."})
           :conclusion pursuit-not-sufficient 
           :premises [(pm justinian)]))
 
 (def a4 (make-argument 
-          :header (make-metadata :description {:en "Justinian’s Institutes, lib. 2, tit. 1, s.13, and Fleta, lib. 3, c.2, p. 175, adopt the principle, that pursuit alone vests no property or right in the huntsman; and that even
+          :header (make-metadata :description {:en "... and Fleta, lib. 3, c.2, p. 175, adopt[s] the principle, that pursuit alone vests no property or right in the huntsman; and that even
 pursuit, accompanied with wounding, is equally ineffectual for that purpose, unless the animal be actually taken."})
           :conclusion pursuit-not-sufficient
           :premises [(pm fleta)]))
@@ -144,19 +144,18 @@ p. 8."})
           :premise [(pm actual-possession-required)]))
 
 (def a7 (make-argument 
-          :header (make-metadata :description {:en "Puffendorf, lib. 4, c.6, s.2, and 10, deﬁnes occupancy of beasts ferae naturae, to be
-the actual corporal possession of them, and Bynkershoek is cited as coinciding in this deﬁnition."})
+          :header (make-metadata :description {:en "Puffendorf, lib. 4, c.6, s.2, and 10, de?nes occupancy of beasts ferae naturae, to be
+the actual corporal possession of them ..."})
           :conclusion actual-possession-required
           :premises [(pm puffendorf)]))
 
 (def a8 (make-argument 
-          :header (make-metadata :description {:en "Puffendorf, lib. 4, c.6, s.2, and 10, deﬁnes occupancy of beasts ferae naturae, to be
-the actual corporal possession of them, and Bynkershoek is cited as coinciding in this deﬁnition."})
+          :header (make-metadata :description {:en "... and Bynkershoek is cited as coinciding in this de?nition."})
           :conclusion puffendorf 
           :premises [(pm bynkershoek) ]))
 
 (def a9 (make-argument 
-          :header (make-metadata :description {:en "Barbeyrac, in his notes on Puffendorf ... afﬁrms, that actual bodily seizure is not, in
+          :header (make-metadata :description {:en "Barbeyrac, in his notes on Puffendorf ... af?rms, that actual bodily seizure is not, in
 all cases, necessary to constitute possession of wild animals. ... the mortal wounding of such beasts, ... may ... be deemed possession ... Barbeyrac seems to have adopted
 .... the more accurate opinion of Grotius .."})
           :conclusion (neg actual-possession-required)
@@ -164,6 +163,9 @@ all cases, necessary to constitute possession of wild animals. ... the mortal wo
                      (pm mortally-wounded)]))
 
 (def a10 (make-argument 
+           :header (make-metadata :description {:en "Barbeyrac, in his notes on Puffendorf ... af?rms, that actual bodily seizure is not, in
+all cases, necessary to constitute possession of wild animals. ... the mortal wounding of such beasts, ... may ... be deemed possession ... Barbeyrac seems to have adopted
+.... the more accurate opinion of Grotius .."})
            :conclusion mortally-wounded-deemed-possessed 
            :premises [(pm grotius)]))
 
@@ -172,6 +174,8 @@ all cases, necessary to constitute possession of wild animals. ... the mortal wo
            :premises [(pm barbeyrac)]))
 
 (def a12 (make-argument
+           :header (make-metadata :description {:en "The case cited from 11 Mod. 74-130, I think clearly distinguishable from the present; inasmuch as there the action was for maliciously hindering and disturbing the plaintiff in the exercise and enjoyment of a private franchise; and ... the ducks were in the
+plaintiff’s decoy pond, and so in his possession ..."})
            :conclusion (neg actual-possession-required)
            :premises [(pm land-owner-has-possession), 
                       (pm livelihood-on-own-land)]))
@@ -182,11 +186,15 @@ all cases, necessary to constitute possession of wild animals. ... the mortal wo
 
 ; teleological argument 
 (def a14 (make-argument 
+           :header (make-metadata :description {:en "We are the more readily inclined to conﬁne possession or occupancy of beasts ferae naturae, within the limits prescribed by the learned authors above cited, for the sake
+of certainty, and preserving peace and order in society. If the ﬁrst seeing, starting, or
+pursuing such animals, without having so wounded, circumvented or ensnared them,
+so as to deprive them of their natural liberty, and subject them to the control of their
+pursuer, should afford the basis of actions against others for intercepting and killing
+them, it would prove a fertile source of quarrels and litigation."})
            :conclusion actual-possession-required 
            :premises [(pm certainty),    ; policy/action
                       (pm order)]))      ; value promoted
-
-
 
 (def tompkins 
   (-> pierson-post
@@ -225,11 +233,27 @@ and noxious beast."}))
                       (pm foxes-are-noxious)]))
 
 (def a16 (make-argument 
+           :header (make-metadata :description {:en "By the pleadings it is admitted that a fox is a “wild and noxious beast.” His depredations on farmers and on barn yards have not been forgotten; and to put him to
+death wherever found, is allowed to be meritorious, and of public beneﬁt. Hence it
+follows, that our decision should have in view the greatest possible encouragement
+to the destruction of an animal ... But who would keep a pack of hounds; or what
+gentlemen, at the sound of the horn, and at peep of day, would mount his steed, and
+for hours together, “sub jove frigido” or a vertical sun, pursue the windings of this
+wily quadruped, if, just as night came on, and his stratagems and strength were nearly
+exhausted, a saucy intruder, who had not shared in the honours or labours of the
+chase, were permitted to come in at the death, and bear away in triumph the object of
+pursuit? ... After mature deliberation, I embrace that of Barbeyrac ... If at liberty, we might
+imitate the courtesy of a certain emperor, who ... ordained, that if a beast be followed
+with large dogs and hounds, he shall belong to the hunter, not to the chance occupant;
+and in like manner, if he be killed or wounded with a lance or sword; but if chased
+with beagles only, then he passed to the captor, not to the ﬁrst pursuer. ...
+...a pursuit like the present ... must inevitably ... terminate in corporal possession .."})
            :conclusion deemed-mortally-wounded 
            :premises [(pm protecting-farmers), 
                       (pm encourage-hunting)]))
 
 (def a17 (make-argument
+           :header (make-metadata :description {:en "... By the pleadings it is admitted that a fox is a “wild and noxious beast”. His depredations on farmers and on barn yards have not been forgotten ..."})
            :conclusion foxes-are-noxious
            :premises [(pm admitted-in-the-pleadings)]))
 
