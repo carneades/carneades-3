@@ -5,6 +5,7 @@
   (:use carneades.engine.statement
         carneades.engine.argument
         carneades.engine.argument-graph
+        carneades.engine.dublin-core
         carneades.database.db
         carneades.database.import
         carneades.database.export
@@ -28,8 +29,17 @@
 ;; support for representing statements in multiple natural languages
 ;; and references to source documents.
 
-;;  Judge Tompkins Opinion, for the majority 
+(def pierson-post 
+  (make-argument-graph 
+    :header (make-metadata :title "Pierson v. Post"
+                           :date "1805"
+                           :coverage "New York"
+                           :identifer "3 Cai. R. 175, 2 Am. Dec. 264" 
+                           :creator "Daniel Tompkins; Henry Brockholst Livingston"
+                           :publisher "Supreme Court of New York"
+                           :description {:en "Pierson v Post is an American legal case that is widely used in law schools for teaching property law."})))
 
+;;  Judge Tompkins Opinion, for the majority 
 
 (def not-property 
   (make-statement 
@@ -150,8 +160,10 @@ peace and order."}))
            :premises [(pm certainty),    ; policy/action
                       (pm order)]))      ; value promoted
 
+
+
 (def tompkins 
-  (-> (make-argument-graph)
+  (-> pierson-post
       (enter-arguments [a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14])
       (accept [foxes-are-wild possession-required certainty order])))
 

@@ -55,14 +55,14 @@
         
         (jdbc/create-table 
           :metadata
-          [:id "int identity"]
+          [:id "int identity"]    ; local id, see also identifier
           [:contributor "varchar"]
           [:coverage "varchar"]
           [:creator "varchar"]
           [:date "varchar"]       ; http://www.w3.org/TR/NOTE-datetime                         
           [:description "int"]
           [:format "varchar"]     ; A list of MIME types, semicolon separated
-          [:identifier "varchar"] 
+          [:identifier "varchar"] ; A single URI; i.e. a global id
           [:language "varchar"]
           [:publisher "varchar"]
           [:relation "varchar"]
