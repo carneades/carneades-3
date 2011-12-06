@@ -25,8 +25,8 @@ grammar {
         attribute creator { xsd:string }?,
         attribute date { xsd:string }?,
         attribute format { xsd:string }?,
-        attribute identifier { xsd:anyURI }?,
-        attribute language { xsd:language },
+        attribute identifier { xsd:string }?, # not limited to URIs
+        attribute language { xsd:language }?,
         attribute publisher { xsd:string }?,     
         attribute relation { xsd:string }?,
         attribute rights { xsd:string }?, 
