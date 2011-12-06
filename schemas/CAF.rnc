@@ -1,7 +1,7 @@
 # Copyright (C) 2011 Fraunhofer Gesellschaft 
 # Licensed under the EUPL V.1.1
 
-# Carneades Argument Format (CAF), Version 1.1
+# Carneades Argument Format (CAF), Version 1.3
 # CAF is based on the argument graph part of 
 # the Legal Knowledge Interchange Format (LKIF)
 
@@ -25,7 +25,7 @@ grammar {
         attribute creator { xsd:string }?,
         attribute date { xsd:string }?,
         attribute format { xsd:string }?,
-        attribute identifier { xsd:anyURI },
+        attribute identifier { xsd:anyURI }?,
         attribute language { xsd:language },
         attribute publisher { xsd:string }?,     
         attribute relation { xsd:string }?,
@@ -34,7 +34,7 @@ grammar {
         attribute subject { xsd:string }?, 
         attribute title { xsd:string }?, 
         attribute type { xsd:string }?,    
-    	Description*                
+    	Descriptions                
     }   
     
     Description = element description {
@@ -43,7 +43,7 @@ grammar {
     }
     
     Descriptions = element descriptions {
-        Description+
+        Description*
     }                                               
     
     Statements = element statements { Statement+ }
@@ -52,12 +52,12 @@ grammar {
         attribute id { xsd:ID },
         attribute weight { xsd:float }?,  # range 0.0 to 1.0, default 0.5
         # weights can be interpreted as an ordinal scale, e.g.
-        # 0.0=false, 0.25=assumed falsed, 0.5=questioned, 0.75=assumed true, 1.00=true
+        # 0.0=false, 0.25=assumed false, 0.5=questioned, 0.75=assumed true, 1.00=true
         attribute value { xsd:float }?,   # output of argument evaluation
         attribute standard { "DV" | "PE" | "CCE" | "BRD" }?, # default: PE
         attribute atom { xsd:string },   # formalization as Clojure s-expression
         attribute main { xsd:boolean }?,  # default: false, true if a main issue
-        Metadata?,       # describing the model, not sources
+        Metadata?,       # describing the model
         Descriptions     # natural language expressions of the statement 
     }
              
