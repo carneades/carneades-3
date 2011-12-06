@@ -13,26 +13,29 @@ grammar {
         Metadata, Statements, Arguments, References
     }
     
-    References = element references { Metadata* }
-         
-    Metadata = element metadata { 
-        attribute id { xsd:ID }?,     # local identifier
-    	DublinElement*                
-    }   
-    
     # Simple Dublin Core Elements
     # See: http://en.wikipedia.org/wiki/Dublin_Core
+    # Multiple values of all attributes except descriptions
+    # are represented in a single string with the values separated
+    # by semicolons.
     
-    DublinElement = ( Contributor | Coverage | Creator |
-                      Date | Description | Format |
-                      Identifier | Language | Publisher |
-                      Relation | Rights | Source | Subject | Title | Type )
-                      
-  
-    Contributor = element contributor { text }
-    Coverage = element coverage { text }
-    Creator = element creator { text }
-    Date = element date { text }
+    Metadata = element metadata { 
+        attribute contributor { xsd:string }?,
+        attribute coverage { xsd:string }?,
+        attribute creator { xsd:string }?,
+        attribute date { xsd:string }?,
+        attribute format { xsd:string }?,
+        attribute identifier { xsd:anyURI },
+        attribute language { xsd:language },
+        attribute publisher { xsd:string }?,     
+        attribute relation { xsd:string }?,
+        attribute rights { xsd:string }?, 
+        attribute source { xsd:string }?, 
+        attribute subject { xsd:string }?, 
+        attribute title { xsd:string }?, 
+        attribute type { xsd:string }?,    
+    	Description*                
+    }   
     
     Description = element description {
     	attribute lang { xsd:language },
@@ -41,25 +44,7 @@ grammar {
     
     Descriptions = element descriptions {
         Description+
-    }
-        
-    Format = element format { text }
-    Identifier = element identifier { text }
-    Language = element language { text }
-    Publisher = element publisher { text }
-    Relation = element relation { text }
-    Rights = element rights { text }
-    Source = element source { text }
-    Subject = element subject { text }
-   
-    Title = element title { 
-        attribute lang { xsd:language },
-        text 
-    }
-    
-    Titles = element titles { Title+ }
-    
-    Type = element type { text }                                                  
+    }                                               
     
     Statements = element statements { Statement+ }
     
@@ -101,4 +86,6 @@ grammar {
     Conclusion = element conclusion { 
         attribute statement { xsd:anyURI }
 	}
-	}
+	
+    References = element references { Metadata* }
+}
