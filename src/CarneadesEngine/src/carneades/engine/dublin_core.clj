@@ -13,7 +13,8 @@
 ; a description in this language.
 
 (defrecord Metadata
-  [contributor      ; string or nil 
+  [key              ; string or nil, the user-defined citation key
+   contributor      ; string or nil 
    coverage         ; string or nil 
    creator          ; string or nil 
    date             ; string or nil 
@@ -32,6 +33,7 @@
 (defn map->metadata [m] 
   (merge 
     (Metadata. 
+      nil   ; key
       nil   ; contributor
       nil   ; coverage
       nil   ; creator 

@@ -111,7 +111,11 @@
       
       (GET "/statement/:db" [db] 
            (let [db2 (make-database-connection db "guest" "")]
-             (with-db db2 (json-response (map pack-statement (list-statements))))))           
+             (with-db db2 (json-response (map pack-statement (list-statements))))))  
+      
+      (GET "/main-issues/:db" [db]
+          (let [db2 (make-database-connection db "guest" "")]
+             (with-db db2 (json-response (map pack-statement (main-issues))))))               
       
       (GET "/statement/:db/:id" [db id] 
            (let [db2 (make-database-connection db "guest" "")]
@@ -145,6 +149,22 @@
       (GET "/argument/:db/:id" [db id]
            (let [db2 (make-database-connection db "guest" "")]  
              (with-db db2 (json-response (pack-argument (read-argument (read-string id)))))))
+      
+      (GET "/pro-arguments/:db/:id" [db id]
+           (let [db2 (make-database-connection db "guest" "")]  
+             (with-db db2 (json-response (pro-arguments (read-string id))))))
+      
+      (GET "/con-arguments/:db/:id" [db id]
+           (let [db2 (make-database-connection db "guest" "")]  
+             (with-db db2 (json-response (con-arguments (read-string id))))))
+      
+      (GET "/rebuttals/:db/:id" [db id]
+           (let [db2 (make-database-connection db "guest" "")]  
+             (with-db db2 (json-response (rebuttals (read-string id))))))
+      
+      (GET "/undercutters/:db/:id" [db id]
+           (let [db2 (make-database-connection db "guest" "")]  
+             (with-db db2 (json-response (undercutters (read-string id))))))
       
       (POST "/argument" request  
             (let [m (read-json (slurp (:body request)))

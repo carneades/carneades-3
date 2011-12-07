@@ -90,7 +90,7 @@
                     ; where the sexp represents a ground atomic formula
    statement-nodes  ; (symbol -> StatementNode) map, 
    argument-nodes   ; (symbol -> ArgumentNode) map
-   references       ; Metadata vector  
+   references       ; (string -> Metadata) map, where the string is a citation key  
    namespaces])     ; (symbol -> string) map, from symbol to URI
 
 (defn make-argument-graph
@@ -102,7 +102,7 @@
             {}              ; keys
             {}              ; statement nodes
             {}              ; argument nodes
-            []              ; references to sources
+            {}              ; references
             {})             ; namespaces
           (apply hash-map key-values)))
 
@@ -221,34 +221,30 @@
           ag1
           (:premises an)))
 
-(defn get-references
-  "argument-graph string -> metadata sequence
-   Returns the references with the given id (URI) in the
+(defn get-reference
+  "argument-graph string -> metadata 
+   Returns the references with the given key in the
    reference list of the argument graph."
-  [ag id]
-  (reduce (fn [v ref] (when (re-find (re-pattern id) (:identifier ref))
-                            (conj v ref)))
-          []
-          (:references ag)))
+  [ag key]
+  (get (:references ag) key))
                       
 (defn enter-reference
   "argument-graph metadata -> argument-graph
    Checks whether the metadata is in the list of references of the
    argument graph and updates the list to add the metadata if it
    is new. Does not overwrite or modify existing references.
-   If the identifier of the metadata is nil, it is
-   not added to the list and the argument graph is returned unchanged."
+   If the key of the metadata is nil, it is not added to the list 
+   and the argument graph is returned unchanged."
   [ag md]
-  (let [mdl (get-references ag (:identifier md))]
-    (if (or (nil? (:identifier md))
-            (not (empty? mdl)))
-      ; the metadata has no identifier or the
-      ; metadata was already in the reference list
+  (let [md2 (get-reference ag (:key md))]
+    (if (or (nil? (:key md)) (not (nil? md2)))
+      ; the metadata has no key or metadata with the 
+      ; same key was already in the reference list, so
+      ; return the argument graph unchaneged
       ag 
-      ; else add the new reference to the list, using
-      ; its identifier as the key.
+      ; else add the new reference to the list
       (assoc ag :references
-             (conj (:references ag) md)))))
+             (assoc (:references ag) (:key md) md)))))
 
 (defn enter-references
   "argument-graph (collection-of metadata) -> argument-graph"
