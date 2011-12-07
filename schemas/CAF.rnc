@@ -4,6 +4,8 @@
 # Carneades Argument Format (CAF), Version 1.3
 # CAF is based on the argument graph part of 
 # the Legal Knowledge Interchange Format (LKIF)
+# and may be considered a "reification" of the 
+# Argument Interchange Format (AIF).
 
 datatypes xsd = "http://www.w3.org/2001/XMLSchema-datatypes"
 
