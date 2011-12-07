@@ -55,14 +55,15 @@
         
         (jdbc/create-table 
           :metadata
-          [:id "int identity"]    ; local id, see also identifier
+          [:id "int identity"]    ; local id, see also key and identifier
+          [:key "varchar unique"] ; citation key, optional
           [:contributor "varchar"]
           [:coverage "varchar"]
           [:creator "varchar"]
           [:date "varchar"]       ; http://www.w3.org/TR/NOTE-datetime                         
           [:description "int"]
           [:format "varchar"]     ; A list of MIME types, semicolon separated
-          [:identifier "varchar"] 
+          [:identifier "varchar"] ; URI, DOI or something similar
           [:language "varchar"]
           [:publisher "varchar"]
           [:relation "varchar"]
@@ -347,6 +348,14 @@
               (doall (map :id res1)))]
     (doall (map (fn [id] (read-statement id)) ids))))
 
+(defn main-issues
+  "Returns a sequence of statements that are main issues."
+  []
+  (let [ids (jdbc/with-query-results 
+              res1 [(str "SELECT id FROM statement WHERE main='true'")]
+              (doall (map :id res1)))]
+    (doall (map (fn [id] (read-statement id)) ids))))
+
 (defn statements-for-atom
   "atom -> sequence of integer
    Queries the database to find statements with this
@@ -428,19 +437,28 @@
                    :premise
                    (assoc premise :statement stmt-id))))))
 
+(declare pro-arguments con-arguments)
+
 (defn read-premise 
   "database integer -> premise or nil
    Retrieves the premise with the given id from the database.
    Returns nil if no premise with the given id exists in the
-   database."
+   database. The resulting premises has additional properties
+   listing the ids of the arguments pro and con the statement of
+   the premise."
   [id]
   (jdbc/with-query-results 
     res1 [(str "SELECT * FROM premise WHERE id='" id "'")]
     (if (empty? (doall res1)) 
       nil 
       (let [m (first res1)
-            stmt (read-statement (:statement m))]
-        (apply make-premise (flatten (seq (assoc m :statement stmt))))))))
+            stmt (read-statement (:statement m))
+            pro (pro-arguments (:statement m))
+            con (con-arguments (:statement m))]
+        (apply make-premise (flatten (seq (assoc m 
+                                                 :statement stmt
+                                                 :pro pro
+                                                 :con con))))))))
 
 (defn list-premises
   "Returns a sequence of all the premise records in the database"
@@ -497,11 +515,42 @@
         {:argument arg-id}))
     arg-id))
 
+(defn rebuttals 
+  "integer -> sequence of integer
+   Returns a sequence of ids of arguments which rebut
+   the argument with the given id."
+  [arg-id]
+  (jdbc/with-query-results 
+    res1 [(str "SELECT * FROM argument WHERE id='" arg-id "'")]  
+    (if (empty? res1) 
+      nil 
+      (let [m (first res1)]
+        (jdbc/with-query-results 
+          res2 [(str "SELECT id FROM argument WHERE 
+                      conclusion='" (:conclusion m) 
+                     "' AND pro='" (not (:pro m)) "'")]
+          (doall (map :id res2)))))))
+
+(defn undercutters 
+  "integer -> sequence of integer
+   Returns a sequence of ids of arguments which undercut
+   the argument with the given id."
+  [arg-id]
+  (jdbc/with-query-results 
+    res1 [(str "SELECT id FROM statement WHERE atom='(undercut " arg-id ")'")]  
+    (if (empty? res1) 
+      nil 
+      (let [stmt (first res1)]
+         (jdbc/with-query-results 
+                       res2 [(str "SELECT id FROM argument WHERE conclusion='" (:id stmt) "'")]
+                       (doall (map :id res2)))))))
+  
 (defn read-argument
   "integer -> argument or nil
    Retrieves the argument with the given id from the database.
    Returns nil if no argument with the given id exists in the
-   database."
+   database. The resulting argument has additional properties
+   listing the ids of the rebuttals and undercutters of the argument."
   [id]
   (jdbc/with-query-results 
     res1 [(str "SELECT * FROM argument WHERE id='" id "'")]
@@ -513,10 +562,14 @@
             premises (jdbc/with-query-results 
                        res1 [(str "SELECT id FROM premise WHERE argument='" id "'")]
                        (doall (map (fn [id] (read-premise id))
-                                   (map :id res1))))]
+                                   (map :id res1))))
+            rs (rebuttals id)
+            us (undercutters id)]
         (-> (apply make-argument (flatten (seq (assoc m :conclusion conclusion))))
             (assoc :header header
-                   :premises premises))))))
+                   :premises premises
+                   :rebuttals rs
+                   :undercutters us))))))
           
 (defn list-arguments
   "Returns a sequence of all the argument records in the database"
@@ -525,6 +578,22 @@
               res1 [(str "SELECT id FROM argument")]
               (doall (map :id res1)))]
     (doall (map (fn [id] (read-argument id)) ids))))
+
+(defn pro-arguments
+  "Returns a sequence of the ids of arguments pro
+   the statement with the given id."
+  [stmt-id]
+  (jdbc/with-query-results 
+              res1 [(str "SELECT id FROM argument WHERE pro='true' AND conclusion='" stmt-id "'")]
+              (doall (map :id res1))))
+
+(defn con-arguments
+  "Returns a sequence of the ids of arguments con
+   the statement with the given id."
+  [stmt-id]
+  (jdbc/with-query-results 
+              res1 [(str "SELECT id FROM argument WHERE pro='false' AND conclusion='" stmt-id "'")]
+              (doall (map :id res1))))
 
 (defn update-argument
   "integer map -> boolean

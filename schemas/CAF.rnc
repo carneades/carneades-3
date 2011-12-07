@@ -20,6 +20,7 @@ grammar {
     # by semicolons.
     
     Metadata = element metadata { 
+        attribute key { xsd:string }?,  # user defined citation key
         attribute contributor { xsd:string }?,
         attribute coverage { xsd:string }?,
         attribute creator { xsd:string }?,
