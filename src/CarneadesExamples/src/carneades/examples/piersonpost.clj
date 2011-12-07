@@ -5,16 +5,12 @@
   (:use carneades.engine.statement
         carneades.engine.argument
         carneades.engine.argument-graph
-        carneades.engine.dublin-core
-        carneades.database.db
-        carneades.database.import
-        carneades.database.export
-        carneades.xml.caf.export
-       ;  carneades.mapcomponent.viewer
-       ;  carneades.mapcomponent.export
-       ;  carneades.ui.diagram.graphvizviewer
-        )
-   (:require [clojure.java.jdbc :as jdbc]))
+        carneades.engine.dublin-core)
+  (:require [clojure.java.jdbc :as jdbc]
+            [carneades.database.db :as db]
+            [carneades.database.import :as dbi]
+            [carneades.database.export :as dbx]
+            [carneades.xml.caf.export :as cafx]))
 
 (defmacro with-db [db & body]   
   `(jdbc/with-connection 
@@ -194,7 +190,7 @@ peace and order."}))
            :header (make-metadata :description {:en "The case cited from 11 Mod. 74-130, 
            I think clearly distinguishable from the present; inasmuch as there the action 
            was for maliciously hindering and disturbing the plaintiff in the exercise and 
-           enjoyment of a private franchise; and ... the ducks were in the plaintiff’s 
+           enjoyment of a private franchise; and ... the ducks were in the plaintiff?s 
            decoy pond, and so in his possession ..."})
            :conclusion (neg actual-possession-required)
            :premises [(pm land-owner-has-possession), 
@@ -257,13 +253,13 @@ and noxious beast."}))
 
 (def a16 (make-argument 
            :header (make-metadata :description {:en "By the pleadings it is admitted that 
-           a fox is a “wild and noxious beast”. His depredations on farmers and on barn 
+           a fox is a ?wild and noxious beast?. His depredations on farmers and on barn 
            yards have not been forgotten; and to put him to death wherever found, 
            is allowed to be meritorious, and of public benefit. Hence it follows, that our 
            decision should have in view the greatest possible encouragement to the 
            destruction of an animal ... But who would keep a pack of hounds; or what 
            gentlemen, at the sound of the horn, and at peep of day, would mount his steed, 
-           and for hours together, “sub jove frigido” or a vertical sun, pursue the 
+           and for hours together, ?sub jove frigido? or a vertical sun, pursue the 
            windings of this wily quadruped, if, just as night came on, and his stratagems 
            and strength were nearly exhausted, a saucy intruder, who had not shared in 
            the honours or labours of the chase, were permitted to come in at the death, 
@@ -295,12 +291,11 @@ and noxious beast."}))
               (enter-arguments [a15 a16 a17])
               (accept [chased-by-big-dogs])))
 
-; (def db (make-database-connection "pierson-post" "root" "pw1"))
-; (import-from-argument-graph db both true)
-; (def exported-ag (export-to-argument-graph db))
-; (argument-graph->xml both)
-; (argument-graph->xml exported-ag)
-
+; (def db (db/make-database-connection "pierson-post" "root" "pw1"))
+; (dbi/import-from-argument-graph db both true)
+; (def exported-ag (dbx/export-to-argument-graph db))
+; (cafx/argument-graph->xml both)
+; (cafx/argument-graph->xml exported-ag)
            
 ; (view both)
 
@@ -314,6 +309,6 @@ and noxious beast."}))
 ;
 
 (defn -main []
-  (let [db (make-database-connection "pierson-post" "root" "pw1")]
-     (import-from-argument-graph db both true)))
+  (let [db (db/make-database-connection "pierson-post" "root" "pw1")]
+     (dbi/import-from-argument-graph db both true)))
 
