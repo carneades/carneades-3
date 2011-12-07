@@ -2,10 +2,11 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.engine.argument-graph
- (:use clojure.pprint
-       carneades.engine.statement
-       carneades.engine.dublin-core
-       carneades.engine.argument))
+  (:use clojure.pprint
+        carneades.engine.statement
+        carneades.engine.dublin-core
+        carneades.engine.argument)
+  (:import (com.eaio.uuid UUID)))
 
 
 ; A literal is a propositional letter, represented by a symbol, 
@@ -27,19 +28,20 @@
    premises])       ; sequence of premises
 
 (defn- make-argument-node
-   "key value ... -> argument-node"
-   [& key-values]
-   (merge (ArgumentNode. 
-            (gensym "a") ; id
-            nil          ; header
-            ""           ; scheme
-            false        ; strict
-            0.5          ; weight
-            nil          ; value
-            nil          ; conclusion
-            true         ; pro
-            [])          ; premises
-          (apply hash-map key-values)))
+  "key value ... -> argument-node"
+  [& key-values]
+  (let [m (merge (ArgumentNode. 
+                   nil          ; id
+                   nil          ; header
+                   ""           ; scheme
+                   false        ; strict
+                   0.5          ; weight
+                   nil          ; value
+                   nil          ; conclusion
+                   true         ; pro
+                   [])          ; premises
+                 (apply hash-map key-values))]
+    (assoc m :id (if (:id m) (:id m) (symbol (str "urn:uuid:" (UUID.)))))))
 
 (defn argument-node? [x] (instance? ArgumentNode x))
   
@@ -68,7 +70,8 @@
 (defn- make-statement-node
   [stmt]
   {:pre [(literal? stmt)]}
-  (StatementNode. (gensym "s")       ; id
+  (StatementNode. 
+                  (symbol (str "urn:uuid" (UUID.)))   ; id
                   (literal-atom stmt)  
                   nil                ; header      
                   (:weight stmt)    
@@ -84,8 +87,7 @@
 
    
 (defrecord ArgumentGraph 
-  [id               ; symbol
-   header           ; nil or Dublin meta-data description of the model
+  [header           ; nil or Dublin meta-data description of the model
    language         ; (sexp -> symbol) map, i.e. a "key list"; 
                     ; where the sexp represents a ground atomic formula
    statement-nodes  ; (symbol -> StatementNode) map, 
@@ -97,7 +99,6 @@
    "key value ... -> argument-graph"
    [& key-values]  
    (merge (ArgumentGraph. 
-            (gensym "ag")   ; id
             nil             ; header
             {}              ; keys
             {}              ; statement nodes
@@ -309,7 +310,7 @@
                     (conj (map :statement (:premises arg)) 
                           (:conclusion arg)))
         node (make-argument-node 
-               ; :id (:id arg)           
+               :id (:id arg)           
                :header (:header arg)      
                :scheme (:scheme arg) 
                :strict (:strict arg)
