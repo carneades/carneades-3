@@ -7,7 +7,8 @@
     carneades.engine.statement
   (:use carneades.engine.utils)
   (:require [clojure.string :as str])
-  (:import (java.net URI)))
+  (:import (java.net URI)
+           (com.eaio.uuid UUID)))
 
 ; language = :en, :de, :fr, etc.
 
@@ -22,16 +23,20 @@
 
 
 (defn map->statement
-   [m]  
-   (merge (Statement. 
-            (gensym "s")    ; atom
-            nil             ; header
-            true            ; positive
-            nil             ; weight
-            false           ; main issue
-            :pe             ; proof standard
-            {})             ; text
-          m))
+  [m]  
+  (let [m2 (merge (Statement. 
+                    nil             ; atom
+                    nil             ; header
+                    true            ; positive
+                    nil             ; weight
+                    false           ; main issue
+                    :pe             ; proof standard
+                    {})             ; text
+                  m)]
+    (assoc m2 
+           :atom (if (:atom m) 
+                   (:atom m)
+                   (symbol (str "urn:uuid:" (UUID.)))))))
 
 (defn make-statement
    "key value ... -> statement"

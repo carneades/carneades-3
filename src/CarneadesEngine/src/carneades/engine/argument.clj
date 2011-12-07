@@ -11,7 +11,8 @@
   carneades.engine.argument
   (:use carneades.engine.statement
         carneades.engine.dublin-core
-        carneades.engine.unify))
+        carneades.engine.unify)
+  (:import (com.eaio.uuid UUID)))
 
 (defrecord Premise
   [statement   ; atomic statement
@@ -52,7 +53,7 @@
     (literal-complement (:statement premise))))
 
 (defrecord Argument
-  [id               ; symbol
+  [id               ; symbol, a urn:uuid Uniform Resource Name (URN)
    header           ; nil or dublin core metadata about the argument
    scheme           ; nil, symbol or string, the URI of the scheme
    strict           ; boolean
@@ -75,7 +76,7 @@
   "Makes a one-step argument."
   [m]
   (let [m2 (merge  (Argument. 
-                     (gensym "a") ; id
+                     nil          ; id
                      nil          ; header
                      nil          ; scheme
                      false        ; strict
@@ -84,8 +85,10 @@
                      true         ; pro
                      [])          ; premises 
                   m)]
-    ; normalize the conclusion and direction of the argument:
+    ; normalize the conclusion and direction of the arguments
+    ; and assign the argument an id if needed
     (assoc m2 
+           :id (if (:id m) (:id m) (symbol (str "urn:uuid:" (UUID.))))
            :conclusion (if (literal-pos? (:conclusion m2)) 
                           (:conclusion m2)  
                           (literal-complement (:conclusion m2)))
