@@ -19,6 +19,7 @@
   [:metadata 
    (dissoc md 
            :description
+           (when (str/blank? (:key md)) :key)
            (when (str/blank? (:contributor md)) :contributor)
            (when (str/blank? (:coverage md)) :coverage)
            (when (str/blank? (:creator md)) :creator)
