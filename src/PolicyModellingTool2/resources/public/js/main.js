@@ -60,7 +60,7 @@ $(function(){
     });
 
     $('#abductionButton').click(function () {
-        sendAbductionRequest();
+        send_abduction_request();
     });
     
     // Slider for the graphSVG
@@ -195,7 +195,7 @@ function show_position(data) {
     var position = data.position;
     var stmts_ids = data.stmts_ids;
     
-    showPolicy(position[0], stmts_ids);
+    show_policy(position[0], stmts_ids);
     // TODO: show all policies
 }
 
@@ -206,8 +206,8 @@ function show_policy(policy, stmts_ids) {
     var g = $('g [id="' + policyid + '"]');
     var rect = $('g [id="' + policyid + '"] rect');
 
-    var x = parseInt(rect.attr('x'), 10) - 4;
-    var y = parseInt(rect.attr('y'), 10) - 4;
+    var x = - 4;
+    var y = - 4;
     var h = parseInt(rect.attr('height'), 10) + 8;
     var w = parseInt(rect.attr('width'), 10) + 8;
 
@@ -266,7 +266,7 @@ function show_questions(data, is_first_display, lang_changed) {
         if($('#questions').valid()) {
             send_answers(category);
         } else {
-            show_status_error('Some fields are not filled');
+            show_error_status('Some fields are not filled');
         }
     });
 
@@ -478,7 +478,7 @@ function radio_check_newline(answers) {
     return newline;
 }
 
-function show_status_error(text) {
+function show_error_status(text) {
     $("#status").removeClass("ui-state-highlight");
     $("#status").addClass("ui-state-error");
     icon='<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> <strong>Alert:</strong> ';
