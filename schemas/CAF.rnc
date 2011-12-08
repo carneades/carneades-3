@@ -52,7 +52,7 @@ grammar {
     Statements = element statements { Statement+ }
     
     Statement = element statement { 
-        attribute id { xsd:ID },
+        attribute id { xsd:ID },          # urn:uuid
         attribute weight { xsd:float }?,  # range 0.0 to 1.0, default 0.5
         # weights can be interpreted as an ordinal scale, e.g.
         # 0.0=false, 0.25=assumed false, 0.5=questioned, 0.75=assumed true, 1.00=true
@@ -66,7 +66,7 @@ grammar {
              
     Arguments = element arguments { Argument* }
     Argument = element argument { 
-    	attribute id { xsd:ID },
+    	attribute id { xsd:ID },           # urn:uuid
     	attribute strict { xsd:boolean }?, # default false
         attribute pro { xsd:boolean }?,    # default true; false if con
         attribute scheme { xsd:anyURI | xsd:string }?,
