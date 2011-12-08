@@ -72,7 +72,7 @@
   (StatementNode. ; if the statement is propositional, reuse its id
                   ; as the id of the statement node
                   (if (uid-symbol? (literal-atom stmt))
-                    (uuid-symbol->uuid (literal-atom stmt)
+                    (symbol->uuid (literal-atom stmt)
                     (make-uuid)))   ; id
                   (literal-atom stmt)  
                   nil                ; header      
