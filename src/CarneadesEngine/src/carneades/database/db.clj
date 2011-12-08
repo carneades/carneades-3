@@ -5,12 +5,12 @@
              persistently in a relational database."}
        carneades.database.db
   (:use clojure.pprint
+        carneades.engine.uuid
         carneades.engine.dublin-core
         carneades.engine.statement
         carneades.engine.argument)
   (:require
         [clojure.java.jdbc :as jdbc]))
-
 
 ;;; Databases
 
@@ -76,7 +76,7 @@
         
         (jdbc/create-table 
           :statement 
-          [:id "uuid identity"]
+          [:id "varchar primary key not null"] ; a URN in the UUID namespace
           [:weight "double default 0.50"]
           [:value "double default 0.50"]
           [:standard "tinyint default 0"]   ; 0=pe, 1=cce, 2=brd, 3=dv 
@@ -89,8 +89,8 @@
         
         (jdbc/create-table 
           :argument
-          [:id "uuid identity"]
-          [:conclusion "int not null"]
+          [:id "varchar primary key not null"] ; a URN in the UUID namespace
+          [:conclusion "varchar not null"]     ; URN of the conclusion
           [:strict "boolean default false"]
           [:weight "double default 0.50"]
           [:value "double"]                    ; null means not evaluated
@@ -103,8 +103,8 @@
         (jdbc/create-table 
           :premise
           [:id "int identity"]
-          [:argument "int"]  ; null allowed, so as to be able to create premises first
-          [:statement "int not null"]
+          [:argument "varchar"]              ; null allowed, so as to be able to create premises first
+          [:statement "varchar not null"]    ; URN 
           [:positive "boolean default true"] 
           [:role "varchar"]
           [:implicit "boolean default false"]
@@ -119,14 +119,14 @@
         (jdbc/create-table 
           :stmtpoll         ; statement poll
           [:userid "varchar not null"]   
-          [:statement "int not null"]
+          [:statement "varchar not null"]
           [:opinion "double default 0.5"]
           ["foreign key(statement) references statement(id)"])
         
         (jdbc/create-table 
           :argpoll         ; argument poll
           [:userid "varchar not null"]   
-          [:argument "int not null"]
+          [:argument "varchar not null"]
           [:opinion "double default 0.5"]
           ["foreign key(argument) references argument(id)"])
         
@@ -153,8 +153,7 @@
    Returns the id of the new translation."
   [m]   
   {:pre [(map? m)]}
-  (let [result (jdbc/insert-record :translation m)]
-    (first (vals result))))
+  (first (vals (jdbc/insert-record :translation m))))
 
 (defn read-translation 
   "integer -> map or nil
@@ -292,25 +291,33 @@
   [literal]   
   {:pre [(literal? literal)]}
   (cond (sliteral? literal) 
-        (first (vals (jdbc/insert-record
-                       :statement {:atom (str (literal-atom literal))})))
+        (let [id (make-urn)]
+          (jdbc/insert-record
+            :statement {:id (make-urn)
+                        :atom (str (literal-atom literal))})  
+          id)
         (statement? literal)
-        (let [text-id (if (:text literal) (create-translation (:text literal))),
+        (let [id (if (urn-symbol? (:atom literal)) 
+                   (str (:atom literal))
+                   (make-urn)),
+              text-id (if (:text literal) (create-translation (:text literal))),
               header-id (if (:header literal) (create-metadata (:header literal)))]
-          (first (vals (jdbc/insert-record
-                         :statement {:atom (str (:atom literal)),
-                                     :header header-id,
-                                     :weight (:weight literal),
-                                     :main (:main literal),
-                                     :standard (standard->integer (:standard literal)),
-                                     :text text-id}))))))
+          (jdbc/insert-record
+            :statement {:id id
+                        :atom (str (:atom literal)),
+                        :header header-id,
+                        :weight (:weight literal),
+                        :main (:main literal),
+                        :standard (standard->integer (:standard literal)),
+                        :text text-id})
+          id)))
 
 (defn read-statement
-  "int -> statement or nil
+  "string -> statement or nil
    Retreives the statement with the give id from the database.
    Returns nil if there is not statement with this id."
   [id]
-  {:pre [(integer? id)]}
+  {:pre [(string? id)]}
   (let [s (jdbc/with-query-results 
             res [(str "SELECT * FROM statement WHERE id='" id "'")]
             (if (empty? res) nil (first res)))
@@ -330,9 +337,9 @@
                      res [(str "SELECT argument FROM premise WHERE statement='" id "'")]
                      (map :argument (doall res))) ]
     (if s 
-      (-> (make-statement)
+      (-> (make-statement :id id)
           (merge s)
-          (merge {:atom (read-string (:atom s))})
+          (merge {:atom (binding [*read-eval* false] (read-string (:atom s)))})
           (merge {:standard (integer->standard (:standard s))})
           (merge {:header h, 
                   :text t,
@@ -357,17 +364,17 @@
     (doall (map (fn [id] (read-statement id)) ids))))
 
 (defn statements-for-atom
-  "atom -> sequence of integer
+  "atom -> sequence of strings
    Queries the database to find statements with this
    atom. Returns a sequence of the ids of the statements
    found."
   [atom]
   (jdbc/with-query-results 
-    res [(str "SELECT id FROM statement WHERE atom='" atom "'")]
+    res [(str "SELECT id FROM statement WHERE atom='" (str atom) "'")]
     (doall (map :id res))))
 
 (defn get-statement
-  "literal -> integer
+  "literal -> string
    If a statement for the atom of the literal exists in the database,
    the id of the first matching statement is returned, otherwise a new
    statement for the literal is first created and its id is
@@ -378,7 +385,7 @@
       (create-statement literal)))
  
 (defn update-statement
-  "integer map -> boolean
+  "string map -> boolean
    Updates the statement record with the given in in the database with the values
    in the map.  Returns true if the update was successful." 
   [id m]
@@ -411,7 +418,7 @@
 (defn delete-statement 
   "Deletes a statement entry with the given the id. Returns true."
   [id]
-  {:pre [(integer? id)]}
+  {:pre [(string? id)]}
   (let [text-id (jdbc/with-query-results 
                   res [(str "SELECT text FROM statement WHERE id='" id "'")]
                   (if (empty? res) nil (:text (first res))))
@@ -432,12 +439,12 @@
    does not already exist in the database."
   [premise]
   {:pre [(premise? premise)]}
-  (let [stmt-id (get-statement (:statement premise))]    
+  (let [stmt-id (get-statement (:statement premise))] 
     (first (vals (jdbc/insert-record 
-                   :premise
-                   (assoc premise :statement stmt-id))))))
+      :premise
+      (assoc premise :statement stmt-id))))))
 
-(declare pro-arguments con-arguments)
+(declare get-pro-arguments get-con-arguments)
 
 (defn read-premise 
   "database integer -> premise or nil
@@ -453,8 +460,8 @@
       nil 
       (let [m (first res1)
             stmt (read-statement (:statement m))
-            pro (pro-arguments (:statement m))
-            con (con-arguments (:statement m))]
+            pro (get-pro-arguments (:statement m))
+            con (get-con-arguments (:statement m))]
         (apply make-premise (flatten (seq (assoc m 
                                                  :statement stmt
                                                  :pro pro
@@ -499,24 +506,24 @@
    the id of the new argument."
   [arg]
   {:pre [(argument? arg)]}
-  (let [conclusion-id (get-statement (:conclusion arg))
-        header-id (if (:header arg) (create-metadata (:header arg)))
-        arg-id (first (vals (jdbc/insert-record 
-                              :argument
-                              {:conclusion conclusion-id,
-                               :pro (literal-pos? (:conclusion arg))
-                               :strict (:strict arg),
-                               :weight (:weight arg), 
-                               :scheme (:scheme arg),
-                               :header header-id})))]
+  (let [arg-id (str (:id arg)),
+        conclusion-id (get-statement (:conclusion arg)),
+        header-id (if (:header arg) (create-metadata (:header arg)))]
+    (prn "conclusion id:" conclusion-id)
+    (jdbc/insert-record :argument
+                        {:id arg-id,
+                         :conclusion conclusion-id,
+                         :pro (literal-pos? (:conclusion arg))
+                         :strict (:strict arg),
+                         :weight (:weight arg), 
+                         :scheme (:scheme arg),
+                         :header header-id})
     (doseq [p (:premises arg)]
-      (update-premise
-        (create-premise p)
-        {:argument arg-id}))
+        (create-premise (assoc p :argument arg-id)))
     arg-id))
 
-(defn rebuttals 
-  "integer -> sequence of integer
+(defn get-rebuttals 
+  "string -> sequence of string
    Returns a sequence of ids of arguments which rebut
    the argument with the given id."
   [arg-id]
@@ -531,8 +538,8 @@
                      "' AND pro='" (not (:pro m)) "'")]
           (doall (map :id res2)))))))
 
-(defn undercutters 
-  "integer -> sequence of integer
+(defn get-undercutters 
+  "string -> sequence of string
    Returns a sequence of ids of arguments which undercut
    the argument with the given id."
   [arg-id]
@@ -546,7 +553,7 @@
                        (doall (map :id res2)))))))
   
 (defn read-argument
-  "integer -> argument or nil
+  "string -> argument or nil
    Retrieves the argument with the given id from the database.
    Returns nil if no argument with the given id exists in the
    database. The resulting argument has additional properties
@@ -563,8 +570,8 @@
                        res1 [(str "SELECT id FROM premise WHERE argument='" id "'")]
                        (doall (map (fn [id] (read-premise id))
                                    (map :id res1))))
-            rs (rebuttals id)
-            us (undercutters id)]
+            rs (get-rebuttals id)
+            us (get-undercutters id)]
         (-> (apply make-argument (flatten (seq (assoc m :conclusion conclusion))))
             (assoc :header header
                    :premises premises
@@ -579,7 +586,7 @@
               (doall (map :id res1)))]
     (doall (map (fn [id] (read-argument id)) ids))))
 
-(defn pro-arguments
+(defn get-pro-arguments
   "Returns a sequence of the ids of arguments pro
    the statement with the given id."
   [stmt-id]
@@ -587,7 +594,7 @@
               res1 [(str "SELECT id FROM argument WHERE pro='true' AND conclusion='" stmt-id "'")]
               (doall (map :id res1))))
 
-(defn con-arguments
+(defn get-con-arguments
   "Returns a sequence of the ids of arguments con
    the statement with the given id."
   [stmt-id]
@@ -596,12 +603,12 @@
               (doall (map :id res1))))
 
 (defn update-argument
-  "integer map -> boolean
+  "string map -> boolean
    Updates the argument with the given id in the database
    with the values in the map. Returns true if the update
    succeeds."
   [id m]
-  {:pre [(integer? id) (map? m)]}
+  {:pre [(string? id) (map? m)]}
   (let [header-id (if (:header m)
                     (or (jdbc/with-query-results 
                           res1 [(str "SELECT header FROM argument WHERE id='" id "'")]

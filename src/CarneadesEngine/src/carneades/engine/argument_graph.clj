@@ -16,7 +16,7 @@
   (if positive letter (list 'not letter)))
 
 (defrecord ArgumentNode
-  [id               ; UUID
+  [id               ; URN symbol
    header           ; nil or dublin core metadata about the argument
    scheme           ; string
    strict           ; boolean
@@ -40,7 +40,7 @@
                    true         ; pro
                    [])          ; premises
                  (apply hash-map key-values))]
-    (assoc m :id (if (:id m) (:id m) (make-uuid)))))
+    (assoc m :id (if (:id m) (:id m) (make-urn-symbol)))))
 
 (defn argument-node? [x] (instance? ArgumentNode x))
   
@@ -54,7 +54,7 @@
 ; with the id of the statement node in the language table, i.e. the key list.
 
 (defrecord StatementNode
-  [id               ; UUID, same as the key the statement-nodes table
+  [id               ; URN symbol, same as the key the statement-nodes table
    atom             ; ground atomic formula or nil
    header           ; nil or Dublin metadata structure about the statement
    weight           ; nil or 0.0-1.0, default nil; input to argument evaluation
@@ -71,9 +71,9 @@
   {:pre [(literal? stmt)]}
   (StatementNode. ; if the statement is propositional, reuse its id
                   ; as the id of the statement node
-                  (if (uid-symbol? (literal-atom stmt))
-                    (symbol->uuid (literal-atom stmt)
-                    (make-uuid)))   ; id
+                  (if (urn-symbol? (literal-atom stmt))
+                    (literal-atom stmt)
+                    (make-urn-symbol))   ; id
                   (literal-atom stmt)  
                   nil                ; header      
                   (:weight stmt)    

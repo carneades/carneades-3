@@ -57,9 +57,9 @@
         :else nil))
 
 (defn- unpack-statement [s]
-   (cond (string? s) (read-string s),
+   (cond (string? s) (binding [*read-eval* false] (read-string s)),  
          (map? s) (assoc (map->statement s) 
-                    :atom (read-string (:atom s))),
+                    :atom (binding [*read-eval* false] (read-string (:atom s)))),
         :else nil))
 
 (defn- pack-argument
@@ -90,7 +90,7 @@
       
       (GET "/metadata/:db/:id" [db id]
            (let [db2 (make-database-connection db "guest" "")]
-             (with-db db2 (json-response (read-metadata (read-string id))))))
+             (with-db db2 (json-response (read-metadata (java.lang.Integer/parseInt id))))))
       
       (POST "/metadata" request
             (let [m (read-json (slurp (:body request)))
@@ -100,12 +100,12 @@
       (PUT "/metadata" request   
            (let [m (read-json (slurp (:body request)))
                  db (make-database-connection (:db (:params request)) "root" "pw1")
-                 id (read-string (:id (:params request)))]
+                 id (java.lang.Integer/parseInt (:id (:params request)))]
              (with-db db (json-response (update-metadata id m))))) 
       
       (DELETE "/metadata/:db/:id" [db id] 
               (let [db2 (make-database-connection db "root" "pw1")]
-                (with-db db2 (json-response (delete-metadata (read-string id))))))
+                (with-db db2 (json-response (delete-metadata (java.lang.Integer/parseInt id))))))
       
       ;; Statements
       
@@ -120,7 +120,7 @@
       (GET "/statement/:db/:id" [db id] 
            (let [db2 (make-database-connection db "guest" "")]
              (with-db db2 
-               (json-response (pack-statement (read-statement (read-string id)))))))
+               (json-response (pack-statement (read-statement id))))))
       
       (POST "/statement/:db" request  
             (let [m (read-json (slurp (:body request)))
@@ -133,12 +133,12 @@
            (let [m (read-json (slurp (:body request)))
                  s (unpack-statement m)
                  db (make-database-connection (:db (:params request)) "root" "pw1")
-                 id (read-string (:id (:params request)))]
+                 id (:id (:params request))]
              (with-db db (json-response (update-statement db id s)))))        
       
       (DELETE "/statement/:db/:id" [db id] 
               (let [db2 (make-database-connection db "root" "pw1")]
-                (with-db db2 (json-response (delete-statement (read-string id))))))
+                (with-db db2 (json-response (delete-statement id)))))
       
       ;; Arguments  
       
@@ -148,23 +148,23 @@
       
       (GET "/argument/:db/:id" [db id]
            (let [db2 (make-database-connection db "guest" "")]  
-             (with-db db2 (json-response (pack-argument (read-argument (read-string id)))))))
+             (with-db db2 (json-response (pack-argument (read-argument id))))))
       
       (GET "/pro-arguments/:db/:id" [db id]
            (let [db2 (make-database-connection db "guest" "")]  
-             (with-db db2 (json-response (pro-arguments (read-string id))))))
+             (with-db db2 (json-response (get-pro-arguments id)))))
       
       (GET "/con-arguments/:db/:id" [db id]
            (let [db2 (make-database-connection db "guest" "")]  
-             (with-db db2 (json-response (con-arguments (read-string id))))))
+             (with-db db2 (json-response (get-con-arguments id)))))
       
       (GET "/rebuttals/:db/:id" [db id]
            (let [db2 (make-database-connection db "guest" "")]  
-             (with-db db2 (json-response (rebuttals (read-string id))))))
+             (with-db db2 (json-response (get-rebuttals id)))))
       
       (GET "/undercutters/:db/:id" [db id]
            (let [db2 (make-database-connection db "guest" "")]  
-             (with-db db2 (json-response (undercutters (read-string id))))))
+             (with-db db2 (json-response (get-undercutters id)))))
       
       (POST "/argument" request  
             (let [m (read-json (slurp (:body request)))
@@ -176,13 +176,13 @@
            (let [m (read-json (slurp (:body request)))
                  arg (unpack-argument m)
                  db (make-database-connection (:db (:params request)) "root" "pw1")
-                 id (read-string (:id (:params request)))]
+                 id (:id (:params request))]
              (with-db db (json-response (update-argument id arg)))))   
       
       (DELETE "/argument/:db/:id" [db id] 
               (let [db2 (make-database-connection db "root" "pw1")]
                 (with-db db2
-                  (json-response (delete-argument (read-string id))))))
+                  (json-response (delete-argument id)))))
       
       ;; Namespaces
       
@@ -219,7 +219,7 @@
       
       (GET "/statement-poll/:db/:id" [db id]
            (let [db2 (make-database-connection db "guest" "")]  
-             (with-db db2 (json-response (read-statement-poll (read-string id))))))
+             (with-db db2 (json-response (read-statement-poll (java.lang.Integer/parseInt id))))))
 
       (POST "/statement-poll" request  
             (let [userid (:id (:params request)),
@@ -236,7 +236,7 @@
       (DELETE "/statement-poll/:db/:id" [db id] 
               (let [db2 (make-database-connection db "root" "pw1")]
                 (with-db db2
-                  (json-response (delete-statement-poll (read-string id)))))) 
+                  (json-response (delete-statement-poll (java.lang.Integer/parseInt id)))))) 
       
       ;; Argument Polls
       
@@ -246,7 +246,7 @@
       
       (GET "/argument-poll/:db/:id" [db id]
            (let [db2 (make-database-connection db "guest" "")]  
-             (with-db db2 (json-response (read-argument-poll (read-string id))))))
+             (with-db db2 (json-response (read-argument-poll (java.lang.Integer/parseInt id))))))
 
       (POST "/argument-poll" request  
             (let [userid (:id (:params request)),
@@ -263,14 +263,14 @@
       (DELETE "/argument-poll/:db/:id" [db id] 
               (let [db2 (make-database-connection db "root" "pw1")]
                 (with-db db2
-                  (json-response (delete-argument-poll (read-string id)))))) 
+                  (json-response (delete-argument-poll (java.lang.Integer/parseInt id)))))) 
       
       ;; Other 
       
       (GET "/" [] 
            "<h1>Carneades Web Service</h1>
-     <p>This web service is part of the <a href=\"http://carneades.github.com\">
-     Carneades Argumentation System</a></p>")                                                                      
+            <p>This web service is part of the <a href=\"http://carneades.github.com\">
+            Carneades Argumentation System</a></p>")                                                                
       (route/resources "/")
       (route/not-found "Page not found.")]) 
 
