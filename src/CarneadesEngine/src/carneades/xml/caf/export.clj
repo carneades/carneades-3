@@ -65,6 +65,7 @@
                                     (dissoc :text :header :premise-of :pro :con
                                             (when (nil? (:value stmt)) :value)
                                             (when (nil? (:weight stmt)) :weight))
+                                    (assoc :id (str "urn:uuid:" (:id stmt)))
                                     (assoc :standard (standard->string (:standard stmt)))
                                     (assoc :atom (pack-atom (:atom stmt))))
                      (if (nil? (:header stmt)) "" (metadata->xml (:header stmt)))
@@ -83,9 +84,11 @@
   [arg-nodes]
   (reduce (fn [v arg]
             (conj v [:argument 
-                     (dissoc arg :header :conclusion :premises 
-                             (when (nil? (:weight arg)) :weight)
-                             (when (nil? (:value arg)) :value))
+                     (-> arg
+                         (assoc :id (str "urn:uuid:" (:id arg)))
+                         (dissoc :header :conclusion :premises 
+                                 (when (nil? (:weight arg)) :weight)
+                                 (when (nil? (:value arg)) :value)))
                      (if (nil? (:header arg)) "" (metadata->xml (:header arg)))
                      [:conclusion {:statement (literal-atom (:conclusion arg))}]
                      (reduce (fn [v p] (conj v [:premise (dissoc p :id :argument)]))

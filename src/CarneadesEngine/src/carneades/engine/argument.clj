@@ -9,10 +9,10 @@
           and conclusion of the argument may contain free variables."}
   
   carneades.engine.argument
-  (:use carneades.engine.statement
+  (:use carneades.engine.uuid
+        carneades.engine.statement
         carneades.engine.dublin-core
-        carneades.engine.unify)
-  (:import (com.eaio.uuid UUID)))
+        carneades.engine.unify))
 
 (defrecord Premise
   [statement   ; atomic statement
@@ -53,7 +53,7 @@
     (literal-complement (:statement premise))))
 
 (defrecord Argument
-  [id               ; symbol, a urn:uuid Uniform Resource Name (URN)
+  [id               ; UUID
    header           ; nil or dublin core metadata about the argument
    scheme           ; nil, symbol or string, the URI of the scheme
    strict           ; boolean
@@ -88,7 +88,7 @@
     ; normalize the conclusion and direction of the arguments
     ; and assign the argument an id if needed
     (assoc m2 
-           :id (if (:id m) (:id m) (symbol (str "urn:uuid:" (UUID.))))
+           :id (if (:id m) (:id m) (make-uuid))
            :conclusion (if (literal-pos? (:conclusion m2)) 
                           (:conclusion m2)  
                           (literal-complement (:conclusion m2)))
@@ -116,7 +116,7 @@
    Instantiate the variables of an argument by applying substitions"
   [arg subs]
   (assoc arg
-         :id (gensym "a")
+         :id (make-uuid)
          :premises (map (fn [p] (assoc p 
                                        :statement 
                                        (apply-substitutions subs (:statement p)))) 

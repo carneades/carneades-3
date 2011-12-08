@@ -5,10 +5,10 @@
 (ns ^{:doc "Statements are annotated literals, i.e. atomic formulas and
             negations of atomic formulas of propositional and predicate logic."}
     carneades.engine.statement
-  (:use carneades.engine.utils)
+  (:use carneades.engine.utils
+        carneades.engine.uuid)
   (:require [clojure.string :as str])
-  (:import (java.net URI)
-           (com.eaio.uuid UUID)))
+  (:import (java.net URI)))
 
 ; language = :en, :de, :fr, etc.
 
@@ -20,7 +20,6 @@
    main               ; true if the statement is a main issue
    standard           ; proof-standard
    text])             ; (language -> string) map, natural language formulations of the statement
-
 
 (defn map->statement
   [m]  
@@ -36,7 +35,7 @@
     (assoc m2 
            :atom (if (:atom m) 
                    (:atom m)
-                   (symbol (str "urn:uuid:" (UUID.)))))))
+                   (make-uuid-symbol)))))
 
 (defn make-statement
    "key value ... -> statement"

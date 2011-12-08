@@ -3,11 +3,10 @@
 
 (ns carneades.engine.argument-graph
   (:use clojure.pprint
+        carneades.engine.uuid
         carneades.engine.statement
         carneades.engine.dublin-core
-        carneades.engine.argument)
-  (:import (com.eaio.uuid UUID)))
-
+        carneades.engine.argument))
 
 ; A literal is a propositional letter, represented by a symbol, 
 ; or the negation of a propositional letter.
@@ -17,7 +16,7 @@
   (if positive letter (list 'not letter)))
 
 (defrecord ArgumentNode
-  [id               ; symbol
+  [id               ; UUID
    header           ; nil or dublin core metadata about the argument
    scheme           ; string
    strict           ; boolean
@@ -41,7 +40,7 @@
                    true         ; pro
                    [])          ; premises
                  (apply hash-map key-values))]
-    (assoc m :id (if (:id m) (:id m) (symbol (str "urn:uuid:" (UUID.)))))))
+    (assoc m :id (if (:id m) (:id m) (make-uuid)))))
 
 (defn argument-node? [x] (instance? ArgumentNode x))
   
@@ -55,7 +54,7 @@
 ; with the id of the statement node in the language table, i.e. the key list.
 
 (defrecord StatementNode
-  [id               ; symbol, same as the propositional letter in the key list
+  [id               ; UUID, same as the key the statement-nodes table
    atom             ; ground atomic formula or nil
    header           ; nil or Dublin metadata structure about the statement
    weight           ; nil or 0.0-1.0, default nil; input to argument evaluation
@@ -70,8 +69,11 @@
 (defn- make-statement-node
   [stmt]
   {:pre [(literal? stmt)]}
-  (StatementNode. 
-                  (symbol (str "urn:uuid" (UUID.)))   ; id
+  (StatementNode. ; if the statement is propositional, reuse its id
+                  ; as the id of the statement node
+                  (if (uid-symbol? (literal-atom stmt))
+                    (uuid-symbol->uuid (literal-atom stmt)
+                    (make-uuid)))   ; id
                   (literal-atom stmt)  
                   nil                ; header      
                   (:weight stmt)    
