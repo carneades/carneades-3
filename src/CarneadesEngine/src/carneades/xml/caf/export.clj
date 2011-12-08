@@ -3,7 +3,8 @@
 
 (ns ^{:doc "Functions for exporting argument graphs to XML using the Carneades Argument Format (CAF)."}
     carneades.xml.caf.export
-  (:use carneades.engine.statement
+  (:use carneades.engine.uuid
+        carneades.engine.statement
         carneades.engine.argument-graph)
   (:require
         [clojure.string :as str]
@@ -85,7 +86,7 @@
   (reduce (fn [v arg]
             (conj v [:argument 
                      (-> arg
-                         (assoc :id (str "urn:uuid:" (:id arg)))
+                         (assoc :id (str (uuid->uuid-symbol (:id arg))))
                          (dissoc :header :conclusion :premises 
                                  (when (nil? (:weight arg)) :weight)
                                  (when (nil? (:value arg)) :value)))
