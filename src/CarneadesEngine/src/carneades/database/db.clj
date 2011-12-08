@@ -76,7 +76,7 @@
         
         (jdbc/create-table 
           :statement 
-          [:id "int identity"]
+          [:id "uuid identity"]
           [:weight "double default 0.50"]
           [:value "double default 0.50"]
           [:standard "tinyint default 0"]   ; 0=pe, 1=cce, 2=brd, 3=dv 
@@ -89,7 +89,7 @@
         
         (jdbc/create-table 
           :argument
-          [:id "int identity"]
+          [:id "uuid identity"]
           [:conclusion "int not null"]
           [:strict "boolean default false"]
           [:weight "double default 0.50"]
