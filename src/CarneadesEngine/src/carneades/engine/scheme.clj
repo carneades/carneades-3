@@ -5,6 +5,7 @@
   carneades.engine.scheme
             
   (:use 
+    carneades.engine.uuid
     carneades.engine.statement
     carneades.engine.unify
     carneades.engine.argument
@@ -255,7 +256,7 @@
                             (unify `(~'applies ~(:id scheme) ~c) goal subs))]
               (if (not subs2)
                 false ; fail
-                (let [id (gensym "a")]
+                (let [id (make-uuid)]
                   (cons (make-response subs2
                                        (map (fn [p] (if (:positive p)
                                                         (:statement p)
@@ -272,7 +273,7 @@
                         (map (fn [e] (make-response subs2
                                                     ()
                                                     (make-argument 
-                                                      :conclusion `(~'undercut ~id)
+                                                      :conclusion `(~'undercut ~(uuid->symbol id))
                                                       :strict false
                                                       :weight (:weight scheme)
                                                       :premises [e]

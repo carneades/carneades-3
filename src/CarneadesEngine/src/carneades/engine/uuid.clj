@@ -1,25 +1,25 @@
 (ns ^{:doc "Functions for making UUIDs and converting between UUIDs and symbols."}
   carneades.engine.uuid
-  (:import (com.eaio.uuid UUID)))
+  (:import (java.util UUID)))
 
-(defn make-uuid []  (UUID.))
+(defn make-uuid [] (java.util.UUID/randomUUID))
 
 (defn uuid? [s]
-  (instance? com.eaio.uuid.UUID s))
+  (instance? java.util.UUID s))
 
 (defn make-uuid-symbol []
-  (symbol (str "urn:uuid:" (UUID.))))
+  (symbol (str "urn:uuid:" (make-uuid))))
 
 (defn uuid-symbol? [sym]
   (.startsWith (str sym) "urn:uuid:")) 
 
-(defn uuid->uuid-symbol [uuid]
+(defn uuid->symbol [uuid]
   {:pre [(uuid? uuid)]}
   (symbol (str "urn:uuid:" uuid)))
 
-(defn uuid-symbol->uuid
+(defn symbol->uuid
   [sym]
   {:pre [(uuid-symbol? sym)]}
-  (UUID. (.substring (str sym) (count "urn:uuid:"))))
+  (java.util.UUID/fromString (.substring (str sym) (count "urn:uuid:"))))
 
 

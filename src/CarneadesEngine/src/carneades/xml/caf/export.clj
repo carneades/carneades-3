@@ -86,7 +86,7 @@
   (reduce (fn [v arg]
             (conj v [:argument 
                      (-> arg
-                         (assoc :id (str (uuid->uuid-symbol (:id arg))))
+                         (assoc :id (str (uuid->symbol (:id arg))))
                          (dissoc :header :conclusion :premises 
                                  (when (nil? (:weight arg)) :weight)
                                  (when (nil? (:value arg)) :value)))
