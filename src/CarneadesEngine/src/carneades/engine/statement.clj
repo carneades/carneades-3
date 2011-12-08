@@ -35,7 +35,7 @@
     (assoc m2 
            :atom (if (:atom m) 
                    (:atom m)
-                   (make-uuid-symbol)))))
+                   (make-urn-symbol)))))
 
 (defn make-statement
    "key value ... -> statement"

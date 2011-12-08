@@ -5,12 +5,12 @@
   (:use carneades.engine.statement
         carneades.engine.argument
         carneades.engine.argument-graph
-        carneades.engine.dublin-core)
+        carneades.engine.dublin-core
+        carneades.database.import
+        carneades.database.export 
+        carneades.xml.caf.export)
   (:require [clojure.java.jdbc :as jdbc]
-            [carneades.database.db :as db]
-            [carneades.database.import :as dbi]
-            [carneades.database.export :as dbx]
-            [carneades.xml.caf.export :as cafx]))
+            [carneades.database.db :as db]))
 
 (defmacro with-db [db & body]   
   `(jdbc/with-connection 
@@ -292,10 +292,10 @@ and noxious beast."}))
               (accept [chased-by-big-dogs])))
 
 ; (def db (db/make-database-connection "pierson-post" "root" "pw1"))
-; (dbi/import-from-argument-graph db both true)
-; (def exported-ag (dbx/export-to-argument-graph db))
-; (cafx/argument-graph->xml both)
-; (cafx/argument-graph->xml exported-ag)
+; (import-from-argument-graph db both true)
+; (exported-ag (export-to-argument-graph db))
+; (argument-graph->xml both)
+; (argument-graph->xml exported-ag)
            
 ; (view both)
 
@@ -308,7 +308,7 @@ and noxious beast."}))
 ;             :height 1024))
 ;
 
-(defn -main []
-  (let [db (db/make-database-connection "pierson-post" "root" "pw1")]
-     (dbi/import-from-argument-graph db both true)))
-
+;(defn -main []
+;  (let [db (db/make-database-connection "pierson-post" "root" "pw1")]
+;     (dbi/import-from-argument-graph db both true)))
+;

@@ -53,7 +53,7 @@
     (literal-complement (:statement premise))))
 
 (defrecord Argument
-  [id               ; UUID
+  [id               ; URN symbol
    header           ; nil or dublin core metadata about the argument
    scheme           ; nil, symbol or string, the URI of the scheme
    strict           ; boolean
@@ -88,7 +88,7 @@
     ; normalize the conclusion and direction of the arguments
     ; and assign the argument an id if needed
     (assoc m2 
-           :id (if (:id m) (:id m) (make-uuid))
+           :id (if (:id m) (:id m) (make-urn-symbol))
            :conclusion (if (literal-pos? (:conclusion m2)) 
                           (:conclusion m2)  
                           (literal-complement (:conclusion m2)))
