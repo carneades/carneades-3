@@ -1,7 +1,7 @@
 
 function on_connect()
 {
-    CARNEADES.database = "pierson-post3"; // $('input[name=database]').val();
+    CARNEADES.database = "pierson7"; // $('input[name=database]').val();
     CARNEADES.username = $('input[name=username]').val();
     CARNEADES.password = $('input[name=password]').val();
 

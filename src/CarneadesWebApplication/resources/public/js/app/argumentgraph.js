@@ -8,23 +8,28 @@ function argumentgraph_url(db)
     return '/argumentgraph/' + db;
 }
 
-// function fill_argumentgraph() 
-// {
-//     do_ajax_get("/statement/" + CARNEADES.database, 
-//                 function(statements) { 
-//                     var issues = statements.filter(function(stmt) { return item.main; });
-//                     for(var issue in issues) {
-//                         $('#main-issues').append(issue.atom);                        
-//                     }
-//                 });
-// }
-
 function display_argumentgraph(db)
 {
     ajax_get('/metadata/' + db + '/1',
             function(metadata) {
-                var metadata_string = format_metadata(metadata);
-                var argumentgraph_html = ich.argumentgraph({metadata_text : metadata_string});
-                $('body').html(argumentgraph_html.filter('#argumentgraph'));
+                ajax_get('/main-issues/' + db,
+                         function(mainissues) {
+                             var metadata_string = format_metadata(metadata);
+                             set_mainissues_text(mainissues);
+                             var argumentgraph_html = ich.argumentgraph({db : db,
+                                                                         metadata_text : metadata_string,
+                                                                         title : metadata.title,
+                                                                         mainissues : mainissues});
+                             $('body').html(argumentgraph_html.filter('#argumentgraph'));                    
+                         });
             });
+}
+
+function set_mainissues_text(mainissues)
+{
+    $.each(mainissues, 
+           function(index, issue) {
+               issue.statement_text = statement_text(issue);
+           });
+    return mainissues;
 }
