@@ -16,6 +16,7 @@ function display_argument(db, argid)
                 argument_data.direction = argument_data.pro ? "pro" : "con";
                 argument_data.db = db;
                 argument_data.header = {title : "One Title"};
+                argument_data.conclusion.pro_text = argument_data.conclusion.pro ? "pro" : "con";
                 argument_data.conclusion.statement_text = statement_text(argument_data.conclusion);
                 set_premises_text(argument_data);
                 var argument_html = ich.argument(argument_data);
@@ -30,3 +31,4 @@ function set_premises_text(argument_data)
                premise.statement.statement_text = statement_text(premise.statement);
            });
 }
+

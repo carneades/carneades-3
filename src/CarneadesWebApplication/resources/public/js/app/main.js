@@ -11,7 +11,7 @@ $(function() {
 
 function url_changed(url)
 {
-    var parse_url = /\/(\w+)\/([\w-]+)(\/(\w+))?/;
+    var parse_url = /\/([\w-:]+)\/([\w-]+)(\/([\w-:]+))?/;
     if(url.value == "/") {
          return;
     }
