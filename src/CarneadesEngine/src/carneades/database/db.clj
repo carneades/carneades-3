@@ -162,7 +162,7 @@
    database."
   [id]
   (jdbc/with-query-results 
-    res1 [(str "SELECT * FROM translation WHERE id='" id "'")]
+    res1 ["SELECT * FROM translation WHERE id=?" id]
     (if (empty? res1) nil (first res1))))
 
 (defn list-translations
