@@ -66,25 +66,30 @@
    pro              ; (set-of symbol), pro argument node ids
    con])            ; (set-of symbol), con argument node ids
  
+
 (defn- make-statement-node
   [stmt]
   {:pre [(literal? stmt)]}
-  (StatementNode. ; if the statement is propositional, reuse its id
-                  ; as the id of the statement node
-                  (if (urn-symbol? (literal-atom stmt))
+  (let [sn (merge (StatementNode.
+                    nil   ; id
+                    nil   ; atom
+                    nil   ; header
+                    nil   ; weight
+                    nil   ; value
+                    :pe   ; standard
+                    false ; main
+                    {}    ; text
+                    #{}   ; premise-of
+                    #{}   ; pro
+                    #{})  ; con
+                   (dissoc stmt :positive))]
+    (assoc sn
+           :id (if (urn-symbol? (literal-atom stmt))
                     (literal-atom stmt)
-                    (make-urn-symbol))   ; id
-                  (literal-atom stmt)  
-                  nil                ; header      
-                  (:weight stmt)    
-                  nil                ; value   
-                  (if (statement? stmt) (:standard stmt) :pe)
-                  false              ; main issue
-                  (if (statement? stmt) (:text stmt) {})
-                  #{}                ; premise-of
-                  #{}                ; pro argument node ids
-                  #{}))              ; con argument node ids
-
+                    (make-urn-symbol))
+           :atom (literal-atom stmt))))
+           
+  
 (defn statement-node? [x] (instance? StatementNode x))
 
    
