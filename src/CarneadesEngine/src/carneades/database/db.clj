@@ -293,7 +293,7 @@
   (cond (sliteral? literal) 
         (let [id (make-urn)]
           (jdbc/insert-record
-            :statement {:id (make-urn)
+            :statement {:id id
                         :atom (str (literal-atom literal))})  
           id)
         (statement? literal)
@@ -509,17 +509,14 @@
   (let [arg-id (str (:id arg)),
         conclusion-id (get-statement (:conclusion arg)),
         header-id (if (:header arg) (create-metadata (:header arg)))]
-    (prn "conclusion id:" conclusion-id)
-    (jdbc/insert-record :argument
-                        {:id arg-id,
-                         :conclusion conclusion-id,
-                         :pro (literal-pos? (:conclusion arg))
-                         :strict (:strict arg),
-                         :weight (:weight arg), 
-                         :scheme (:scheme arg),
-                         :header header-id})
+    (jdbc/insert-record 
+      :argument
+      (assoc (dissoc arg :premises)
+             :id arg-id
+             :conclusion conclusion-id
+             :header header-id))
     (doseq [p (:premises arg)]
-        (create-premise (assoc p :argument arg-id)))
+      (create-premise (assoc p :argument arg-id)))
     arg-id))
 
 (defn get-rebuttals 
@@ -534,8 +531,8 @@
       (let [m (first res1)]
         (jdbc/with-query-results 
           res2 ["SELECT id FROM argument WHERE conclusion=? AND pro=?" 
-                (not (:pro m)) 
-                (:conclusion m)]
+                (:conclusion m)
+                (not (:pro m))]
           (doall (map :id res2)))))))
 
 (defn get-undercutters 
@@ -561,7 +558,7 @@
   [id]
   (jdbc/with-query-results 
     res1 ["SELECT * FROM argument WHERE id=?" id]
-    (if (empty? res1) 
+    (if (empty? (doall res1))
       nil 
       (let [m (first res1)
             conclusion (read-statement (:conclusion m))
