@@ -168,9 +168,9 @@
 (defn list-translations
   "Returns a sequence of all the translation records in the database"
   []
-  (let [ids (jdbc/with-query-results 
-              res1 [(str "SELECT * FROM translation")]
-              (doall res1))]))
+  (jdbc/with-query-results 
+      res1 ["SELECT * FROM translation"]
+      (doall res1)))
 
 (defn update-translation 
   "integer map -> boolean
@@ -213,11 +213,11 @@
    is no metadata record in the database with this id."
   [id]
   (let [md (jdbc/with-query-results 
-             res1 [(str "SELECT * FROM metadata WHERE id='" id "'")]
+             res1 ["SELECT * FROM metadata WHERE id=?" id]
              (if (empty? res1) nil (first res1)))
         d (when (:description md) 
             (jdbc/with-query-results 
-              res2 [(str "SELECT * FROM translation WHERE id='" (:description md) "'")]
+              res2 ["SELECT * FROM translation WHERE id=?" (:description md)]
               (if (empty? res2) nil (first res2))))]
     (if d
       (doall (merge (merge (make-metadata) md)
@@ -228,7 +228,7 @@
   "Returns a sequence of all the metadata records in the database"
   []
   (let [ids (jdbc/with-query-results 
-              res1 [(str "SELECT id FROM metadata")]
+              res1 ["SELECT id FROM metadata"]
               (doall (map :id res1)))]
     (doall (map (fn [id] (read-metadata id)) ids))))
 
@@ -240,7 +240,7 @@
   {:pre [(integer? id) (map? md)]}
   (let [description-id1 (if (:description md)
                           (jdbc/with-query-results 
-                            res [(str "SELECT description FROM metadata WHERE id='" id "'")]
+                            res ["SELECT description FROM metadata WHERE id=?" id]
                             (if (empty? res) nil (:description (first res)))))
         description-id2  (if description-id1 
                            (do (update-translation description-id1 (:description md))
@@ -258,7 +258,7 @@
   [id]
   {:pre [(integer? id)]}
   (let [str-id (jdbc/with-query-results 
-                 res [(str "SELECT description FROM metadata WHERE id='" id "'")]
+                 res ["SELECT description FROM metadata WHERE id=?" id]
                  (if (empty? res) nil (:description (first res))))]                   
     (jdbc/delete-rows :metadata ["id=?" id])
     (if str-id (jdbc/delete-rows :translation ["id=?" str-id]))
@@ -319,22 +319,22 @@
   [id]
   {:pre [(string? id)]}
   (let [s (jdbc/with-query-results 
-            res [(str "SELECT * FROM statement WHERE id='" id "'")]
+            res ["SELECT * FROM statement WHERE id=?" id]
             (if (empty? res) nil (first res)))
         h (if (:header s) (jdbc/with-query-results
-                            res [(str "SELECT * FROM metadata WHERE id='" (:header s) "'")]
+                            res ["SELECT * FROM metadata WHERE id=?" (:header s)]
                             (if (empty? res) nil (first res))))
         t (if (:text s) (jdbc/with-query-results
-                          res [(str "SELECT * FROM translation WHERE id='" (:text s) "'")]
+                          res ["SELECT * FROM translation WHERE id=?" (:text s)]
                           (if (empty? res) nil (first res))))
         pro (jdbc/with-query-results
-              res [(str "SELECT id FROM argument WHERE pro='true' AND conclusion='" id "'")]
+              res ["SELECT id FROM argument WHERE pro='true' AND conclusion=?" id]
               (map :id (doall res)))
         con (jdbc/with-query-results
-              res [(str "SELECT id FROM argument WHERE pro='false' AND conclusion='" id "'")]
+              res ["SELECT id FROM argument WHERE pro='false' AND conclusion=?" id]
               (map :id (doall res)))
         premise-of (jdbc/with-query-results
-                     res [(str "SELECT argument FROM premise WHERE statement='" id "'")]
+                     res ["SELECT argument FROM premise WHERE statement=?" id]
                      (map :argument (doall res))) ]
     (if s 
       (-> (make-statement :id id)
@@ -351,7 +351,7 @@
   "Returns a sequence of all the statement records in the database"
   []
   (let [ids (jdbc/with-query-results 
-              res1 [(str "SELECT id FROM statement")]
+              res1 ["SELECT id FROM statement"]
               (doall (map :id res1)))]
     (doall (map (fn [id] (read-statement id)) ids))))
 
@@ -359,7 +359,7 @@
   "Returns a sequence of statements that are main issues."
   []
   (let [ids (jdbc/with-query-results 
-              res1 [(str "SELECT id FROM statement WHERE main='true'")]
+              res1 ["SELECT id FROM statement WHERE main='true'"]
               (doall (map :id res1)))]
     (doall (map (fn [id] (read-statement id)) ids))))
 
@@ -392,7 +392,7 @@
   {:pre [(integer? id) (map? m)]}
   (let [header-id1 (if (:header m)
                      (jdbc/with-query-results 
-                       res [(str "SELECT header FROM statement WHERE id='" id "'")]
+                       res ["SELECT header FROM statement WHERE id=?" id]
                        (if (empty? res) nil (:header (first res)))))
         header-id2  (if header-id1 
                       (do (update-metadata header-id1 (:header m))
@@ -400,7 +400,7 @@
                       (if (:header m) (create-metadata (merge (make-metadata) (:header m)))))
         text-id1 (if (:text m)
                    (jdbc/with-query-results 
-                     res [(str "SELECT text FROM statement WHERE id='" id "'")]
+                     res ["SELECT text FROM statement WHERE id=?" id]
                      (if (empty? res) nil (:text (first res)))))
         text-id2  (if text-id1 
                     (do (update-translation text-id1 (:text m))
@@ -420,10 +420,10 @@
   [id]
   {:pre [(string? id)]}
   (let [text-id (jdbc/with-query-results 
-                  res [(str "SELECT text FROM statement WHERE id='" id "'")]
+                  res ["SELECT text FROM statement WHERE id=?" id]
                   (if (empty? res) nil (:text (first res))))
         header-id (jdbc/with-query-results 
-                    res [(str "SELECT header FROM statement WHERE id='" id "'")]
+                    res ["SELECT header FROM statement WHERE id=?" id]
                     (if (empty? res) nil (:header (first res))))]                   
     (jdbc/delete-rows :statement ["id=?" id])
     (if text-id (delete-translation text-id))
@@ -455,7 +455,7 @@
    the premise."
   [id]
   (jdbc/with-query-results 
-    res1 [(str "SELECT * FROM premise WHERE id='" id "'")]
+    res1 ["SELECT * FROM premise WHERE id=?" id]
     (if (empty? (doall res1)) 
       nil 
       (let [m (first res1)
@@ -471,7 +471,7 @@
   "Returns a sequence of all the premise records in the database"
   []
   (let [ids (jdbc/with-query-results 
-              res1 [(str "SELECT id FROM premise")]
+              res1 ["SELECT id FROM premise"]
               (doall (map :id res1)))]
     (doall (map (fn [id] (read-premise id)) ids))))
 
@@ -528,14 +528,14 @@
    the argument with the given id."
   [arg-id]
   (jdbc/with-query-results 
-    res1 [(str "SELECT * FROM argument WHERE id='" arg-id "'")]  
+    res1 ["SELECT * FROM argument WHERE id=?" arg-id]  
     (if (empty? res1) 
       nil 
       (let [m (first res1)]
         (jdbc/with-query-results 
-          res2 [(str "SELECT id FROM argument WHERE 
-                      conclusion='" (:conclusion m) 
-                     "' AND pro='" (not (:pro m)) "'")]
+          res2 ["SELECT id FROM argument WHERE conclusion=? AND pro=?" 
+                (not (:pro m)) 
+                (:conclusion m)]
           (doall (map :id res2)))))))
 
 (defn get-undercutters 
@@ -544,12 +544,12 @@
    the argument with the given id."
   [arg-id]
   (jdbc/with-query-results 
-    res1 [(str "SELECT id FROM statement WHERE atom='(undercut " arg-id ")'")]  
+    res1 ["SELECT id FROM statement WHERE atom=?" (str `(~'undercut ~arg-id))]  
     (if (empty? res1) 
       nil 
       (let [stmt (first res1)]
          (jdbc/with-query-results 
-                       res2 [(str "SELECT id FROM argument WHERE conclusion='" (:id stmt) "'")]
+                       res2 ["SELECT id FROM argument WHERE conclusion=?" (:id stmt)]
                        (doall (map :id res2)))))))
   
 (defn read-argument
@@ -560,14 +560,14 @@
    listing the ids of the rebuttals and undercutters of the argument."
   [id]
   (jdbc/with-query-results 
-    res1 [(str "SELECT * FROM argument WHERE id='" id "'")]
+    res1 ["SELECT * FROM argument WHERE id=?" id]
     (if (empty? res1) 
       nil 
       (let [m (first res1)
             conclusion (read-statement (:conclusion m))
             header (if (:header m) (read-metadata (:header m)))
             premises (jdbc/with-query-results 
-                       res1 [(str "SELECT id FROM premise WHERE argument='" id "'")]
+                       res1 ["SELECT id FROM premise WHERE argument=?" id]
                        (doall (map (fn [id] (read-premise id))
                                    (map :id res1))))
             rs (get-rebuttals id)
@@ -582,7 +582,7 @@
   "Returns a sequence of all the argument records in the database"
   []
   (let [ids (jdbc/with-query-results 
-              res1 [(str "SELECT id FROM argument")]
+              res1 ["SELECT id FROM argument"]
               (doall (map :id res1)))]
     (doall (map (fn [id] (read-argument id)) ids))))
 
@@ -599,7 +599,7 @@
    the statement with the given id."
   [stmt-id]
   (jdbc/with-query-results 
-              res1 [(str "SELECT id FROM argument WHERE pro='false' AND conclusion='" stmt-id "'")]
+              res1 ["SELECT id FROM argument WHERE pro='false' AND conclusion=?" stmt-id]
               (doall (map :id res1))))
 
 (defn update-argument
@@ -611,7 +611,7 @@
   {:pre [(string? id) (map? m)]}
   (let [header-id (if (:header m)
                     (or (jdbc/with-query-results 
-                          res1 [(str "SELECT header FROM argument WHERE id='" id "'")]
+                          res1 ["SELECT header FROM argument WHERE id=?" id]
                           (:header (first res1)))
                         (create-metadata (make-metadata)))),         
         conclusion-id (if (:conclusion m)
@@ -620,7 +620,7 @@
       (do 
         ; first delete existing premises
         (jdbc/with-query-results 
-          res1 [(str "SELECT id FROM premise WHERE argument='" id "'")]
+          res1 ["SELECT id FROM premise WHERE argument=?" id]
           (doseq [p res1] (delete-premise (:id p))))   
         ; then create and link the new premises 
         (doseq [p (:premises m)]
@@ -644,11 +644,11 @@
   [id]
   ; first delete the premises of argument
   (jdbc/with-query-results 
-    res1 [(str "SELECT id FROM premise WHERE argument='" id "'")]
+    res1 ["SELECT id FROM premise WHERE argument=?" id]
     (doseq [p res1] (delete-premise (:id p))))
   ; now delete the header of the argument, if it has one
   (jdbc/with-query-results 
-    res1 [(str "SELECT header FROM argument WHERE id='" id "'")]
+    res1 ["SELECT header FROM argument WHERE id=?" id]
     (if (:header (first res1))
       (delete-metadata (:header (first res1)))))
   ; finally delete the argument itself
@@ -673,14 +673,14 @@
    database."
   [prefix]
   (jdbc/with-query-results 
-    res1 [(str "SELECT * FROM namespace WHERE prefix='" prefix "'")]
+    res1 ["SELECT * FROM namespace WHERE prefix=?" prefix]
     (if (empty? res1) nil (first res1))))
 
 (defn list-namespaces
   "Returns a sequence of maps representing the namespaces in the database"
   []
   (jdbc/with-query-results 
-    res1 [(str "SELECT * FROM namespace")]
+    res1 ["SELECT * FROM namespace"]
     (doall res1)))
   
 (defn update-namespace 
@@ -731,17 +731,17 @@
   [statement-id]
   {:pre [(integer? statement-id)]}
   {:count (jdbc/with-query-results 
-            res1 [(str "SELECT COUNT(statement) FROM stmtpoll WHERE statement='" statement-id "'")]
+            res1 ["SELECT COUNT(statement) FROM stmtpoll WHERE statement=?" statement-id]
             (second (first (first res1)))),
    :value (jdbc/with-query-results 
-            res1 [(str "SELECT AVG(opinion) FROM stmtpoll WHERE statement='" statement-id "'")]
+            res1 ["SELECT AVG(opinion) FROM stmtpoll WHERE statement=?" statement-id]
             (second (first (first res1))))})
 
 (defn list-statement-poll
   "Returns a sequence of maps representing the statement poll table in the database"
   []
   (jdbc/with-query-results 
-    res1 [(str "SELECT * FROM stmtpoll")]
+    res1 ["SELECT * FROM stmtpoll"]
     (doall res1)))
        
 (defn update-statement-poll
@@ -801,17 +801,17 @@
   [arg-id]
   {:pre [(integer? arg-id)]}
   {:count (jdbc/with-query-results 
-            res1 [(str "SELECT COUNT(argument) FROM argpoll WHERE argument='" arg-id "'")]
+            res1 ["SELECT COUNT(argument) FROM argpoll WHERE argument=?" arg-id]
             (second (first (first res1)))),
    :value (jdbc/with-query-results 
-            res1 [(str "SELECT AVG(opinion) FROM argpoll WHERE argument='" arg-id "'")]
+            res1 ["SELECT AVG(opinion) FROM argpoll WHERE argument=?" arg-id]
             (second (first (first res1))))})
 
 (defn list-argument-poll
   "Returns a sequence of maps representing the argument poll table in the database"
   []
   (jdbc/with-query-results 
-    res1 [(str "SELECT * FROM argpoll")]
+    res1 ["SELECT * FROM argpoll"]
     (doall res1)))
        
 (defn update-argument-poll
