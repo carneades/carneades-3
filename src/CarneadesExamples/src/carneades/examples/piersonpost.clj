@@ -302,7 +302,7 @@ and noxious beast."}))
 ;
 ; (import-from-argument-graph db both true)
 ; 
-; (exported-ag (export-to-argument-graph db))
+; (def exported-ag (export-to-argument-graph db))
 ; (argument-graph->xml both)
 ; (argument-graph->xml exported-ag)
 ;           
@@ -317,7 +317,9 @@ and noxious beast."}))
 ;             :height 1024))
 ;
 
-;(defn -main []
-;  (let [db (db/make-database-connection "pierson-post" "root" "pw1")]
-;     (dbi/import-from-argument-graph db both true)))
-;
+(defn -main []
+  (let [db (db/make-database-connection "pierson-post" "root" "pw1")]
+    ; (import-from-argument-graph db both true)))
+    (argument-graph->xml (export-to-argument-graph db ))))
+  
+
