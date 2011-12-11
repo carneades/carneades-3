@@ -109,11 +109,10 @@
   [ag]
   (prx/prxml 
     [:caf {:version "1.3"}
-     (prn "type header: " (type (:header ag)))
      (metadata->xml (:header ag))
      (statement-nodes->xml (vals (:statement-nodes ag)))
      (argument-nodes->xml (vals (:argument-nodes ag)))
-     (references->xml (:references ag))]))
+     (references->xml (vals (:references ag)))]))
 
 
   
