@@ -462,10 +462,10 @@
             stmt (read-statement (:statement m))
             pro (get-pro-arguments (:statement m))
             con (get-con-arguments (:statement m))]
-        (apply make-premise (flatten (seq (assoc m 
-                                                 :statement stmt
-                                                 :pro pro
-                                                 :con con))))))))
+        (map->premise (assoc m 
+                             :statement stmt
+                             :pro pro
+                             :con con))))))
 
 (defn list-premises
   "Returns a sequence of all the premise records in the database"
@@ -473,7 +473,7 @@
   (let [ids (jdbc/with-query-results 
               res1 ["SELECT id FROM premise"]
               (doall (map :id res1)))]
-    (doall (map (fn [id] (read-premise id)) ids))))
+    (doall (map (fn [id] (prn id) (read-premise id)) ids))))
 
 (defn update-premise
   "integer map -> boolean
@@ -569,11 +569,12 @@
                                    (map :id res1))))
             rs (get-rebuttals id)
             us (get-undercutters id)]
-        (-> (apply make-argument (flatten (seq (assoc m :conclusion conclusion))))
-            (assoc :header header
-                   :premises premises
-                   :rebuttals rs
-                   :undercutters us))))))
+        (map->argument (assoc m 
+                              :conclusion conclusion
+                              :header header
+                              :premises premises
+                              :rebuttals rs
+                              :undercutters us))))))
           
 (defn list-arguments
   "Returns a sequence of all the argument records in the database"
