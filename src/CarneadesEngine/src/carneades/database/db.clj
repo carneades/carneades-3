@@ -12,6 +12,15 @@
   (:require
         [clojure.java.jdbc :as jdbc]))
 
+
+(defmacro test-db 
+  "For testing and development.  Doesn't do any 
+   any error handling so don't use in production code."
+  [db & body]   
+  `(jdbc/with-connection 
+           ~db
+           (jdbc/transaction ~@body)))
+
 ;;; Databases
 
 (defn make-database-connection  
