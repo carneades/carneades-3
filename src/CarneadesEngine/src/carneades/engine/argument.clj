@@ -33,11 +33,11 @@
                   m)]
     ; normalize the premise
     (assoc m2
-           :statement (literal-atom (:statement m2))
+           :statement (positive-statement (:statement m))
            :positive (or (and (literal-pos? (:statement m))
                                (:positive m))
                           (and (literal-neg? (:statement m))
-                               (not (:positive m)))))))
+                                (not (:positive m)))))))
   
 (defn make-premise [& key-values]
   (map->premise (apply hash-map key-values)))

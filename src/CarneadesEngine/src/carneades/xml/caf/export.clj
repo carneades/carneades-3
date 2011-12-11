@@ -3,7 +3,8 @@
 
 (ns ^{:doc "Functions for exporting argument graphs to XML using the Carneades Argument Format (CAF)."}
     carneades.xml.caf.export
-  (:use carneades.engine.statement
+  (:use carneades.engine.dublin-core
+        carneades.engine.statement
         carneades.engine.argument-graph)
   (:require
         [clojure.string :as str]
@@ -16,9 +17,10 @@
 
 (defn- metadata->xml
   [md]
+  ; {:pre [(metadata? md)]}
   [:metadata 
    (dissoc md 
-           :description
+           :description 
            (when (str/blank? (:key md)) :key)
            (when (str/blank? (:contributor md)) :contributor)
            (when (str/blank? (:coverage md)) :coverage)
@@ -86,12 +88,12 @@
             (conj v [:argument 
                      (-> arg
                          (assoc :id (str (:id arg)))
-                         (dissoc :header :conclusion :premises 
+                         (dissoc :header :conclusion :premises :rebuttals :undercutters
                                  (when (nil? (:weight arg)) :weight)
                                  (when (nil? (:value arg)) :value)))
                      (if (nil? (:header arg)) "" (metadata->xml (:header arg)))
                      [:conclusion {:statement (literal-atom (:conclusion arg))}]
-                     (reduce (fn [v p] (conj v [:premise (dissoc p :id :argument)]))
+                     (reduce (fn [v p] (conj v [:premise (dissoc p :id :argument :pro :con)]))
                              [:premises]
                              (:premises arg))]))
           [:arguments]
@@ -107,10 +109,11 @@
   [ag]
   (prx/prxml 
     [:caf {:version "1.3"}
+     (prn "type header: " (type (:header ag)))
      (metadata->xml (:header ag))
      (statement-nodes->xml (vals (:statement-nodes ag)))
      (argument-nodes->xml (vals (:argument-nodes ag)))
-     (references->xml (vals (:references ag)))]))
+     (references->xml (:references ag))]))
 
 
   

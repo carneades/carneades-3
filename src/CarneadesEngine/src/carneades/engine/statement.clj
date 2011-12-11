@@ -180,6 +180,16 @@
                               (second literal)),
         (statement? literal) (:atom literal)))
 
+(defn positive-statement [literal]
+  "Returns the atom of the literal in the form
+   of a positive statement. If the literal is an sliteral,
+   a statement is constructed with the atom of the literal as its atom.
+   If the literal is a statement, its :positive attribute is set to true
+   and all of its other properties are preserved in the returned statement."
+  {:pre [(literal? literal)]}
+  (cond (sliteral? literal) (make-statement :atom (literal-atom literal))
+        (statement? literal) (assoc literal :positive true)))
+  
 (defn propositional? 
   [x] 
   {:pre [(literal? x)]}
