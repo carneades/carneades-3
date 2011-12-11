@@ -123,7 +123,7 @@
           :scheme "Argument from Practical Reasoning"
           :premises [(make-premise :role "CQ1. Better Alternatives" :statement better-ways)]))
 
-(def aston
+(def aston1
   (enter-arguments graph1 [a1 a2 a3]))
   
 ; (argument-graph->xml aston)
@@ -142,10 +142,12 @@
       "root" 
       "pw1" 
       (make-metadata))
-    (import-from-argument-graph db aston true)
-    (let [ag1 (export-to-argument-graph db)]
-      (prn "(= ag1 aston): " (= ag1 aston))
-      (argument-graph->xml ag1))))
+    (import-from-argument-graph db aston1 true)
+    (let [aston2 (export-to-argument-graph db)]
+      (println "(= aston1 aston2): " (= aston1 aston2))
+      (argument-graph->xml aston1)
+      (println "\n\n---------------------------\n\n")
+      (argument-graph->xml aston2))))
   
 
 
