@@ -37,7 +37,7 @@ grammar {
         attribute subject { xsd:string }?, 
         attribute title { xsd:string }?, 
         attribute type { xsd:string }?,    
-    	Descriptions                
+    	Descriptions?               
     }   
     
     Description = element description {

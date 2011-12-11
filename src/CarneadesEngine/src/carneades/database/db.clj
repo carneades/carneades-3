@@ -214,15 +214,20 @@
   [id]
   (let [md (jdbc/with-query-results 
              res1 ["SELECT * FROM metadata WHERE id=?" id]
-             (if (empty? res1) nil (first res1)))
+             (if (empty? res1) 
+               nil 
+               (dissoc (first res1) :id)))
         d (when (:description md) 
             (jdbc/with-query-results 
               res2 ["SELECT * FROM translation WHERE id=?" (:description md)]
-              (if (empty? res2) nil (first res2))))]
+              (if (empty? res2) 
+                nil 
+                (dissoc (first res2) :id))))]
     (if d
-      (doall (merge (merge (make-metadata) md)
-                    {:description d}))
-      (doall (merge (make-metadata) md)))))
+      (-> (map->metadata md) 
+          (assoc :description d))
+      (-> (map->metadata md)
+          (dissoc :description d)))))
 
 (defn list-metadata
   "Returns a sequence of all the metadata records in the database"
@@ -321,9 +326,7 @@
   (let [s (jdbc/with-query-results 
             res ["SELECT * FROM statement WHERE id=?" id]
             (if (empty? res) nil (first res)))
-        h (if (:header s) (jdbc/with-query-results
-                            res ["SELECT * FROM metadata WHERE id=?" (:header s)]
-                            (if (empty? res) nil (first res))))
+        h (if (:header s) (read-metadata (:header s)))
         t (if (:text s) (jdbc/with-query-results
                           res ["SELECT * FROM translation WHERE id=?" (:text s)]
                           (if (empty? res) nil (first res))))
@@ -458,14 +461,16 @@
     res1 ["SELECT * FROM premise WHERE id=?" id]
     (if (empty? (doall res1)) 
       nil 
-      (let [m (first res1)
+      (let [m (dissoc (first res1) :id)
             stmt (read-statement (:statement m))
             pro (get-pro-arguments (:statement m))
             con (get-con-arguments (:statement m))]
-        (map->premise (assoc m 
-                             :statement stmt
-                             :pro pro
-                             :con con))))))
+        (map->premise {:statement stmt
+                       :positive (:positive m)
+                       :role (:role m)
+                       :implicit (:implicit m)
+                       :pro pro
+                       :con con})))))
 
 (defn list-premises
   "Returns a sequence of all the premise records in the database"

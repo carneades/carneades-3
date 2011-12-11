@@ -41,7 +41,7 @@
                                 (:premises an)))))
       
       ; References
-      (doseq [md (:references arg-graph)]
+      (doseq [md (vals (:references arg-graph))]
         (create-metadata md))
       
       ; Namespaces

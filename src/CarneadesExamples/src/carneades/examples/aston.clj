@@ -7,7 +7,10 @@
         carneades.engine.argument
         carneades.engine.argument-graph
         carneades.engine.dublin-core
-        carneades.xml.caf.export))
+        carneades.database.import
+        carneades.database.export 
+        carneades.xml.caf.export)
+   (:require [carneades.database.db :as db]))
 
 ;; This example illustrates: 
 ;; - Metadata describing the map as a whole, as well as each statement and argument, using
@@ -22,7 +25,7 @@
 ;;   for statements and arguments
 
 
-(def aston-university 
+(def graph1 
   (make-argument-graph 
     :header (make-metadata 
               :title "Reconstruction of the Comments on the EU Green Paper ‘Copyright in the Knowledge Economy’ "
@@ -120,9 +123,30 @@
           :scheme "Argument from Practical Reasoning"
           :premises [(make-premise :role "CQ1. Better Alternatives" :statement better-ways)]))
 
-(def graph1 
-  (-> aston-university
-      (enter-arguments [a1 a2 a3])))
+(def aston
+  (enter-arguments graph1 [a1 a2 a3]))
   
-; (argument-graph->xml graph1)
+; (argument-graph->xml aston)
+
+; 
+;
+ 
+; (def db (db/make-database-connection "aston" "root" "pw1"))
+; (import-from-argument-graph db aston true)
+
+(defn -main []
+  (let [dbname (gensym "db")
+        db (db/make-database-connection dbname "root" "pw1")]
+    (db/create-argument-database 
+      dbname 
+      "root" 
+      "pw1" 
+      (make-metadata))
+    (import-from-argument-graph db aston true)
+    (let [ag1 (export-to-argument-graph db)]
+      (prn "(= ag1 aston): " (= ag1 aston))
+      (argument-graph->xml ag1))))
+  
+
+
   
