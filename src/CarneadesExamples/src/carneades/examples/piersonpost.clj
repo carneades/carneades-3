@@ -291,12 +291,21 @@ and noxious beast."}))
               (enter-arguments [a15 a16 a17])
               (accept [chased-by-big-dogs])))
 
+; (db/create-argument-database 
+;    "pierson-post" 
+;     "root" 
+;     "pw1" 
+;     (make-metadata :title "Pierson v Post"))
+;
+ 
 ; (def db (db/make-database-connection "pierson-post" "root" "pw1"))
+;
 ; (import-from-argument-graph db both true)
+; 
 ; (exported-ag (export-to-argument-graph db))
 ; (argument-graph->xml both)
 ; (argument-graph->xml exported-ag)
-           
+;           
 ; (view both)
 
 ;(defn -main []
