@@ -22,23 +22,44 @@
 
 (defn premise? [x] (instance? Premise x))
 
-(defn make-premise 
-  "key value ... -> premise"
-  [& key-values]  
-  (let [m (merge (Premise. 
-                   nil           ; atomic statement
-                   true          ; positive
-                   ""            ; role
-                   false)        ; implicit
-                 (apply hash-map key-values))]
-    ; normalize the statement of the premise:
-    (assoc m :statement (if (literal-pos? (:statement m)) 
-                          (:statement m)  
-                          (literal-complement (:statement m)))
-           :positive  (or (and (literal-pos? (:statement m))
+(defn map->premise
+  "Makes a premise"
+  [m]
+  (let [m2 (merge (Premise. 
+                    nil    ; statement
+                    true   ; positive
+                    ""     ; role
+                    false) ; implicit
+                  m)]
+    ; normalize the premise
+    (assoc m2
+           :statement (literal-atom (:statement m2))
+           :positive (or (and (literal-pos? (:statement m))
                                (:positive m))
                           (and (literal-neg? (:statement m))
                                (not (:positive m)))))))
+  
+(defn make-premise [& key-values]
+  (map->premise (apply hash-map key-values)))
+
+;(defn make-premise 
+;  "key value ... -> premise"
+;  [& key-values]  
+;  (let [m (merge (Premise. 
+;                   nil           ; atomic statement
+;                   true          ; positive
+;                   ""            ; role
+;                   false)        ; implicit
+;                 (apply hash-map key-values))]
+;    ; normalize the statement of the premise:
+;    (assoc m :statement (if (literal-pos? (:statement m)) 
+;                          (:statement m)  
+;                          (literal-complement (:statement m)))
+;           :positive  (or (and (literal-pos? (:statement m))
+;                               (:positive m))
+;                          (and (literal-neg? (:statement m))
+;                               (not (:positive m)))))))
+;
 
 (defn pm
   "literal -> premise"
@@ -97,8 +118,8 @@
                      (and (literal-neg? (:conclusion m2))
                           (not (:pro m2)))))))
 
-(defn make-argument [& values]
-  (map->argument (apply hash-map values)))
+(defn make-argument [& key-values]
+  (map->argument (apply hash-map key-values)))
 
 (defn conclusion-literal
   "argument -> literal
