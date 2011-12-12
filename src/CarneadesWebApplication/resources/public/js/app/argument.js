@@ -15,7 +15,8 @@ function display_argument(db, argid)
             function(argument_data) {
                 argument_data.direction = argument_data.pro ? "pro" : "con";
                 argument_data.db = db;
-                argument_data.header = {title : "One Title"};
+                set_description_text(argument_data);
+                set_argument_title_text(argument_data);
                 argument_data.conclusion.pro_text = argument_data.conclusion.pro ? "pro" : "con";
                 argument_data.conclusion.statement_text = statement_text(argument_data.conclusion);
                 set_premises_text(argument_data);
@@ -32,3 +33,13 @@ function set_premises_text(argument_data)
            });
 }
 
+
+function set_argument_title_text(info)
+{
+    var default_text = "Argument";
+    if(info.header) {
+        info.argument_title_text = info.header.title ? info.header.title['en'] : default_text;
+    } else {
+        info.argument_title_text = default_text;
+    }
+}
