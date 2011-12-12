@@ -28,15 +28,6 @@ function display_statement(db, stmtid)
              });
 }
 
-function set_description_text(info)
-{
-    if(info.header) {
-        info.description_text = info.header.description ? info.header.description['en'] : "";        
-    } else {
-        info.description_text = "";
-    }
-}
-
 function set_statement_title_text(info)
 {
     var default_text = "Statement";
