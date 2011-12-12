@@ -44,4 +44,4 @@
       (wrap-base-url)))
 
 ;; to comment when building the JAR:
-;;  (defonce server (run-jetty #'app {:join? false :port 8080}))
+(defonce server (run-jetty #'app {:join? false :port 8080}))
