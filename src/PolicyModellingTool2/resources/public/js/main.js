@@ -5,7 +5,7 @@
 
 var IMPACT = {
     jsloadstarted :new Date(),
-    showhints : true,
+    showhints : false,
     arg_graph : "undefined",
     policyrules : [],
     lang_changed : false,
