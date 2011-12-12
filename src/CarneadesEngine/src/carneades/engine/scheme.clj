@@ -8,8 +8,8 @@
     carneades.engine.statement
     carneades.engine.unify
     carneades.engine.argument
-    carneades.engine.argument-generator
-    carneades.engine.dublin-core
+    ;; carneades.engine.argument-generator
+    ;; carneades.engine.dublin-core
     [carneades.engine.utils :only (mapinterleave)]))
 
 (defrecord Form
@@ -228,46 +228,46 @@
 ;  :conclusion (literal->statement '(excluded <scheme-id> <goal>))
 ;  :premises [(literal->statement <exception>)])
 
-(defn generate-arguments-from-theory
-  "theory -> argument-generator"
-  [theory1]
-  (let [theory2 (create-index theory1)]
-    (reify ArgumentGenerator
-      (generate [this goal subs]
-                (letfn [(apply-for-conclusion
-                          [scheme c]
-                          ;; apply the scheme for conclusion c
-                          (let [subs2 (or (unify c goal subs)
-                                          (unify `(~'applies ~(scheme-theory-id scheme) ~c) goal subs))]
-                            (if (not subs2)
-                              false ; fail
-                              (let [id (gensym "a")]
-                                (cons (make-response subs2
-                                                     (map literal->statement (:assumptions scheme))  
-                                                     (make-argument 
-                                                       :id id
-                                                       :conclusion (literal->statement goal)
-                                                       :strict (:strict scheme)
-                                                       :weight (:weight scheme)
-                                                       :premises (zipmap (keys (:premises scheme))
-                                                                         (map literal->statement 
-                                                                              (vals (:premises scheme))))
-                                                       :scheme (:name scheme)))
-                                      (map (fn [e] (make-response subs2
-                                                                  ()
-                                                                  (make-argument 
-                                                                    :conclusion (literal->statement  `(~'excluded ~id ~c))
-                                                                    :strict false
-                                                                    :weight (:weight scheme)
-                                                                    :premises [(literal->statement e)]
-                                                                    :scheme (:name scheme))))
-                                           (:exceptions scheme)))))))
+;; (defn generate-arguments-from-theory
+;;   "theory -> argument-generator"
+;;   [theory1]
+;;   (let [theory2 (create-index theory1)]
+;;     (reify ArgumentGenerator
+;;       (generate [this goal subs]
+;;                 (letfn [(apply-for-conclusion
+;;                           [scheme c]
+;;                           ;; apply the scheme for conclusion c
+;;                           (let [subs2 (or (unify c goal subs)
+;;                                           (unify `(~'applies ~(scheme-theory-id scheme) ~c) goal subs))]
+;;                             (if (not subs2)
+;;                               false ; fail
+;;                               (let [id (gensym "a")]
+;;                                 (cons (make-response subs2
+;;                                                      (map literal->statement (:assumptions scheme))  
+;;                                                      (make-argument 
+;;                                                        :id id
+;;                                                        :conclusion (literal->statement goal)
+;;                                                        :strict (:strict scheme)
+;;                                                        :weight (:weight scheme)
+;;                                                        :premises (zipmap (keys (:premises scheme))
+;;                                                                          (map literal->statement 
+;;                                                                               (vals (:premises scheme))))
+;;                                                        :scheme (:name scheme)))
+;;                                       (map (fn [e] (make-response subs2
+;;                                                                   ()
+;;                                                                   (make-argument 
+;;                                                                     :conclusion (literal->statement  `(~'excluded ~id ~c))
+;;                                                                     :strict false
+;;                                                                     :weight (:weight scheme)
+;;                                                                     :premises [(literal->statement e)]
+;;                                                                     :scheme (:name scheme))))
+;;                                            (:exceptions scheme)))))))
                         
-                        (apply-scheme [scheme]
-                                      (apply concat (filter identity 
-                                                            (map #(apply-for-conclusion scheme %) 
-                                                                 (:conclusions scheme)))))]
-                  (mapinterleave
-                    (fn [s] (apply-scheme s))
-                    (map rename-scheme-variables (get-schemes theory2 goal subs))))))))
+;;                         (apply-scheme [scheme]
+;;                                       (apply concat (filter identity 
+;;                                                             (map #(apply-for-conclusion scheme %) 
+;;                                                                  (:conclusions scheme)))))]
+;;                   (mapinterleave
+;;                     (fn [s] (apply-scheme s))
+;;                     (map rename-scheme-variables (get-schemes theory2 goal subs))))))))
 

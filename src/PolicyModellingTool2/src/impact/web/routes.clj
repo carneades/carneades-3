@@ -2,7 +2,7 @@
   (:use compojure.core
         impact.web.views.pages
         impact.web.logic.server-properties
-        ring.adapter.jetty ;; <- to comment when building WAR
+ ring.adapter.jetty ;; <- to comment when building WAR
         ring.middleware.params
         ring.middleware.session
         [hiccup.middleware :only (wrap-base-url)])
@@ -44,4 +44,4 @@
       (wrap-base-url)))
 
 ;; to comment when building the JAR:
-(defonce server (run-jetty #'app {:join? false :port 8080}))
+ (defonce server (run-jetty #'app {:join? false :port 8080}))
