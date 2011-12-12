@@ -10,16 +10,20 @@ function argumentgraph_url(db)
 
 function display_argumentgraph(db)
 {
-    ajax_get('/metadata/' + db + '/1',
+    // TODO: make a special call in the service for that
+    ajax_get('/metadata/' + db,
             function(metadata) {
                 ajax_get('/main-issues/' + db,
                          function(mainissues) {
-                             var metadata_string = format_metadata(metadata);
+                             var metadata_string = format_metadata(metadata[0]);
                              set_mainissues_text(mainissues);
+                             var references = metadata.slice(1);
+                             set_references_text(references);
                              var argumentgraph_html = ich.argumentgraph({db : db,
                                                                          metadata_text : metadata_string,
-                                                                         title : metadata.title,
-                                                                         mainissues : mainissues});
+                                                                         title : metadata[0].title,
+                                                                         mainissues : mainissues,
+                                                                         references : references});
                              $('body').html(argumentgraph_html.filter('#argumentgraph'));                    
                          });
             });
@@ -32,4 +36,12 @@ function set_mainissues_text(mainissues)
                issue.statement_text = statement_text(issue);
            });
     return mainissues;
+}
+
+function set_references_text(metadata)
+{
+    $.each(metadata, 
+           function(index, md) {
+               md.metadata_text = format_metadata(md);
+           });
 }

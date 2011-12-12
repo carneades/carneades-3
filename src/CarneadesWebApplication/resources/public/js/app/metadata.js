@@ -8,6 +8,9 @@ function get_string(data, is_last, no_escape)
 
 function format_metadata(metadata)
 {
+    if(metadata == undefined) {
+        return "";    
+    }
     var creator = metadata.creator;
     var date = metadata.date;
     var title = metadata.title;
