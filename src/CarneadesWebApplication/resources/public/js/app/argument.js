@@ -33,7 +33,6 @@ function set_premises_text(argument_data)
            });
 }
 
-
 function set_argument_title_text(info)
 {
     var default_text = "Argument";
