@@ -90,7 +90,7 @@
       
       (GET "/metadata/:db/:id" [db id]
            (let [db2 (make-database-connection db "guest" "")]
-             (with-db db2 (json-response (read-metadata (java.lang.Integer/parseInt id))))))
+             (with-db db2 (json-response (read-metadata id)))))
       
       (POST "/metadata" request
             (let [m (read-json (slurp (:body request)))
@@ -263,7 +263,18 @@
       (DELETE "/argument-poll/:db/:id" [db id] 
               (let [db2 (make-database-connection db "root" "pw1")]
                 (with-db db2
-                  (json-response (delete-argument-poll (java.lang.Integer/parseInt id)))))) 
+                  (json-response (delete-argument-poll (java.lang.Integer/parseInt id))))))
+
+      ;; Aggregated information
+      (GET "/statement-info/:db/:id" [db id]
+           (let [dbconn (make-database-connection db "guest" "")]
+             (with-db dbconn
+               (let [stmt (pack-statement (read-statement id))
+                     arg-metadata (fn [id] (or (:header (pack-argument (read-argument id)))
+                                               {}))
+                     pro-metadata (map arg-metadata (:pro stmt))
+                     con-metadata (map arg-metadata (:con stmt))]
+                 (json-response (assoc stmt :pro_metadata pro-metadata :con_metadata con-metadata))))))
       
       ;; Other 
       
