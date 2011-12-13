@@ -27,7 +27,10 @@
   "Returns a map describing a database connection."
   [db-name username passwd]
   (let [db-protocol "file"             ; "file|mem|tcp"
-        db-host     "/Library/Application Support/Carneades/Databases"] ; "path|host:port" 
+        db-host (if (= (System/getProperty "os.name") "Linux")
+                  "/home/pal/local/tmp/databases/"
+                  "/Library/Application Support/Carneades/Databases")
+        ] ; "path|host:port" 
     ;;; TO DO ? remove path and system dependency above
     ;;; Use a properties file or parameters
     {:classname   "org.h2.Driver" 
@@ -555,7 +558,7 @@
    the argument with the given id."
   [arg-id]
   (jdbc/with-query-results 
-    res1 ["SELECT id FROM statement WHERE atom=?" (str `(~'undercut ~arg-id))]  
+    res1 ["SELECT id FROM statement WHERE atom=?" (format "(undercut %s)" arg-id)]
     (if (empty? res1) 
       nil 
       (let [stmt (first res1)]
