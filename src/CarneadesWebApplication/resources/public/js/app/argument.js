@@ -11,7 +11,7 @@ function set_argument_url(db, argid)
 
 function display_argument(db, argid)
 {
-    ajax_get(argument_url(db, argid),
+    ajax_get('argument-info/' + db + '/' + argid,
             function(argument_data) {
                 argument_data.direction = argument_data.pro ? "pro" : "con";
                 argument_data.db = db;
@@ -20,6 +20,7 @@ function display_argument(db, argid)
                 argument_data.conclusion.pro_text = argument_data.conclusion.pro ? "pro" : "con";
                 argument_data.conclusion.statement_text = statement_text(argument_data.conclusion);
                 set_premises_text(argument_data);
+                set_undercutters_text(argument_data);
                 var argument_html = ich.argument(argument_data);
                 $('body').html(argument_html.filter('#argument'));
             });
@@ -41,4 +42,20 @@ function set_argument_title_text(info)
     } else {
         info.argument_title_text = default_text;
     }
+}
+
+function set_undercutters_text(info)
+{
+    $.each(info.undercutters_metadata, 
+           function(index, metadata) {
+               metadata.argument_text = argument_text(metadata);
+               metadata.id = info.undercutters[index];
+           });  
+}
+
+function argument_text(metadata)
+{
+    var text = format_metadata(metadata);
+    text = text.length == 0 ? "Argument" : text;
+    return text;
 }
