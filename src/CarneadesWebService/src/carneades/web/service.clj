@@ -8,7 +8,9 @@
          carneades.engine.statement
          carneades.engine.argument
          carneades.engine.dublin-core
-         carneades.database.db)
+         carneades.database.db
+         carneades.database.export
+         carneades.xml.caf.export)
   (:require [compojure.route :as route]
             [compojure.handler :as handler]
             [clojure.java.jdbc :as jdbc]))
@@ -292,6 +294,20 @@
                                   :undercutters_metadata undercutters-metadata
                                   :rebuttals_metadata rebuttals-metadata))))))
       
+      ;; Argument Graphs
+      
+      (GET "/export/:db" [db]
+           (let [dbconn (make-database-connection db "guest" "")]
+             (with-db dbconn
+                      (let [arg-graph (export-to-argument-graph dbconn)
+                            xml (with-out-str (argument-graph->xml arg-graph))]
+                        (if (nil? xml)
+                          {:status 404,
+                           :body "Not found."}
+                          {:status 200            ; 200 is OK
+                           :headers {"Content-Type" "application/xml"}
+                           :body xml})))))
+       
       ;; Other 
       
       (GET "/" [] 
