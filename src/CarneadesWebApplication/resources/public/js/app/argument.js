@@ -21,6 +21,7 @@ function display_argument(db, argid)
                 argument_data.conclusion.statement_text = statement_text(argument_data.conclusion);
                 set_premises_text(argument_data);
                 set_undercutters_text(argument_data);
+                set_rebuttals_text(argument_data);
                 var argument_html = ich.argument(argument_data);
                 $('body').html(argument_html.filter('#argument'));
             });
@@ -51,6 +52,15 @@ function set_undercutters_text(info)
                metadata.argument_text = argument_text(metadata);
                metadata.id = info.undercutters[index];
            });  
+}
+
+function set_rebuttals_text(info)
+{
+    $.each(info.rebuttals_metadata,
+          function(index, metadata) {
+              metadata.argument_text = argument_text(metadata);
+              metadata.id = info.rebuttals[index];
+          });
 }
 
 function argument_text(metadata)
