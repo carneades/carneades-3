@@ -66,7 +66,7 @@
 (defrecord Scheme
   [id            ; symbol
    header        ; nil or dublin metadata
-   conclusion    ; atom or variables (ranging over literals)
+   conclusion    ; atom or variable (ranging over literals)
    pro           ; boolean; generates con arguments if false
    strict        ; boolean, defeasible if false
    weight        ; nil or number in the range 0.0 to 1.0
