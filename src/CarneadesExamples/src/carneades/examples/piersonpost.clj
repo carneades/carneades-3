@@ -8,7 +8,8 @@
         carneades.engine.dublin-core
         carneades.database.import
         carneades.database.export 
-        carneades.xml.caf.export)
+        carneades.xml.caf.export
+        carneades.maps.export)
   (:require [clojure.java.jdbc :as jdbc]
             [carneades.database.db :as db]))
 
@@ -321,7 +322,9 @@ and noxious beast."}))
 
 (defn -main []
   (let [db (db/make-database-connection "pierson-post" "root" "pw1")]
-    ; (import-from-argument-graph db both true)))
+                                        ; (import-from-argument-graph db both true)))
+    (clojure.pprint/pprint both)
+    (export-ag both statement-formatted "/tmp/pierson.svg")
     (argument-graph->xml (export-to-argument-graph db ))))
   
 
