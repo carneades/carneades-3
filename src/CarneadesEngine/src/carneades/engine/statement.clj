@@ -22,7 +22,8 @@
    text])             ; (language -> string) map, natural language formulations of the statement
 
 (defn map->statement
-  [m]  
+  [m]
+  {:pre [(map? m)]}
   (let [m2 (merge (Statement. 
                     nil             ; atom
                     nil             ; header
