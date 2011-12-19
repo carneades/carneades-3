@@ -150,9 +150,6 @@
         
         true))))
 
-;; To Do: function to delete a database.  Perhaps this should
-;; be private and called to clean up after exporting a database to CAF XML,
-;; to help avoid deleting data without first creating a backup.
 
 ;;; Translations
 
@@ -236,7 +233,7 @@
       (-> (map->metadata md) 
           (assoc :description d))
       (-> (map->metadata md)
-          (dissoc :description d)))))
+          (dissoc :description)))))
 
 (defn list-metadata
   "Returns a sequence of all the metadata records in the database"
@@ -248,7 +245,7 @@
 
 (defn update-metadata
   "integer map -> boolean
-   Updates the metadata record with the given in in the database with the values
+   Updates the metadata record with the given id in the database with the values
    in the map.  Returns true if the update was successful." 
   [id md]
   {:pre [(integer? id) (map? md)]}

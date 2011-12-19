@@ -16,11 +16,9 @@
 ;; To Do: 
 ;; - commands for logging into and creating databases
 ;; - retrieving user name and password from the request 
-;; - include the ids of undercutters and rebuttals in argument records
 ;; - search operations, including full text search
-;; - CAF import/export
+;; - CAF import
 ;; - OPML export
-;; - review security issues 
 ;; - validate input?
  
 
@@ -80,10 +78,35 @@
 
 ;; We don't use the defroutes macro.
 ;; This allow handlers to be reused in another project
+
 (def carneades-web-service-routes
      
-     ;; Metadata         
      [ 
+      
+      ;; Debates
+           
+      (GET "/debate" [] 
+           (let [db2 (make-database-connection "debates" "guest" "")]
+             (with-db db2 (json-response (list-debates)))))
+      
+      (GET "/debate/:id" [id]
+           (let [db2 (make-database-connection "debates" "guest" "")]
+             (with-db db2 (json-response (read-debate id)))))
+      
+      (POST "/debate" request
+            (let [m (read-json (slurp (:body request)))
+                  db (make-database-connection "debates" "root" "pw1")]
+              (with-db db (json-response (create-debate m))))) 
+      
+      (PUT "/debate" request   
+           (let [m (read-json (slurp (:body request)))
+                 db (make-database-connection "debates" "root" "pw1")
+                 id (:id (:params request))]
+             (with-db db (json-response (update-debate id m))))) 
+      
+      ; To Do: Deleting debates
+       
+      ;; Metadata        
       (GET "/metadata/:db" [db] 
            (let [db2 (make-database-connection db "guest" "")]
              (with-db db2 (json-response (list-metadata)))))
