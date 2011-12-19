@@ -43,7 +43,8 @@
               :date "2006")
     
     :references 
-    [(make-metadata 
+    {"pierson-post"
+     (make-metadata 
        :title "Pierson v. Post"
        :date "1805"
        :coverage "New York"
@@ -51,12 +52,13 @@
        :creator "Daniel Tompkins; Henry Brockholst Livingston"
        :publisher "Supreme Court of New York"
        :description {:en "Pierson v Post is an American legal case that is widely 
-                          used in law schools for teaching property law."})]))
+                          used in law schools for teaching property law."})}))
 
 ;;  Judge Tompkins Opinion, for the majority 
 
 (def not-property 
   (make-statement 
+    :main true
     :text {:en "Post, by pursuing the fox, did not acquire property in the fox."}))
 
 (def possession-required 

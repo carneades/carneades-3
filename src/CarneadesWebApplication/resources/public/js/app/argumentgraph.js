@@ -17,7 +17,7 @@ function display_argumentgraph(db)
                          function(mainissues) {
                              var metadata_string = format_metadata(metadata[0]);
                              set_mainissues_text(mainissues);
-                             var references = metadata.slice(1);
+                             var references = metadata.filter(function (ref) { return ref.key; });
                              set_references_text(references);
                              var argumentgraph_html = ich.argumentgraph({db : db,
                                                                          metadata_text : metadata_string,

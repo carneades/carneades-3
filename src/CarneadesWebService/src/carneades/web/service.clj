@@ -8,7 +8,9 @@
          carneades.engine.statement
          carneades.engine.argument
          carneades.engine.dublin-core
-         carneades.database.db)
+         carneades.database.db
+         carneades.database.export
+         carneades.xml.caf.export)
   (:require [compojure.route :as route]
             [compojure.handler :as handler]
             [clojure.java.jdbc :as jdbc]))
@@ -75,6 +77,13 @@
          :conclusion (unpack-statement (:conclusion arg))
          :premises (map (fn [p] (assoc p :statement (unpack-statement (:statement p))))
                         (:premises arg))))
+
+(defn- argument-metadata
+  "Returns the metadata of an argument in a map
+   or an empty map of if the argument has no metadata"
+  [id]
+  (or (:header (pack-argument (read-argument id)))
+      {}))
 
 ;; We don't use the defroutes macro.
 ;; This allow handlers to be reused in another project
@@ -184,7 +193,7 @@
       (GET "/rebuttals/:db/:id" [db id]
            (let [db2 (make-database-connection db "guest" "")]  
              (with-db db2 (json-response (get-rebuttals id)))))
-      
+
       (GET "/undercutters/:db/:id" [db id]
            (let [db2 (make-database-connection db "guest" "")]  
              (with-db db2 (json-response (get-undercutters id)))))
@@ -289,16 +298,39 @@
                   (json-response (delete-argument-poll (java.lang.Integer/parseInt id))))))
 
       ;; Aggregated information
+
       (GET "/statement-info/:db/:id" [db id]
            (let [dbconn (make-database-connection db "guest" "")]
              (with-db dbconn
                (let [stmt (pack-statement (read-statement id))
-                     arg-metadata (fn [id] (or (:header (pack-argument (read-argument id)))
-                                               {}))
-                     pro-metadata (map arg-metadata (:pro stmt))
-                     con-metadata (map arg-metadata (:con stmt))]
+                     pro-metadata (map argument-metadata (:pro stmt))
+                     con-metadata (map argument-metadata (:con stmt))]
                  (json-response (assoc stmt :pro_metadata pro-metadata :con_metadata con-metadata))))))
+
+      (GET "/argument-info/:db/:id" [db id]
+           (let [dbconn (make-database-connection db "guest" "")]
+             (with-db dbconn
+               (let [arg (pack-argument (read-argument id))
+                     undercutters-metadata (map argument-metadata (:undercutters arg))
+                     rebuttals-metadata (map argument-metadata (:rebuttals arg))]
+                 (json-response (assoc arg
+                                  :undercutters_metadata undercutters-metadata
+                                  :rebuttals_metadata rebuttals-metadata))))))
       
+      ;; Argument Graphs
+      
+      (GET "/export/:db" [db]
+           (let [dbconn (make-database-connection db "guest" "")]
+             (with-db dbconn
+                      (let [arg-graph (export-to-argument-graph dbconn)
+                            xml (with-out-str (argument-graph->xml arg-graph))]
+                        (if (nil? xml)
+                          {:status 404,
+                           :body "Not found."}
+                          {:status 200            ; 200 is OK
+                           :headers {"Content-Type" "application/xml"}
+                           :body xml})))))
+       
       ;; Other 
       
       (GET "/" [] 
