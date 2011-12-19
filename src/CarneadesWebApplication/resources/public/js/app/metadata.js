@@ -1,9 +1,9 @@
-function get_string(data, is_last, no_escape)
+function get_string(data, is_last, escape)
 {
     if(data == null) {
         return "";
     }
-    return (no_escape ? data : escape_html(data)) + "." + (is_last ? "" : " ");
+    return (escape ? escape_html(data) : data) + "." + (is_last ? "" : " ");
 }
 
 function format_metadata(metadata)
@@ -17,11 +17,11 @@ function format_metadata(metadata)
     var identifier = metadata.identifier;
     var is_identifier_url = is_url(identifier);
     
-    identifier = is_identifier_url ? '<a href="{0}">{0}</a>'.format(identifier) : identifier;
+     // makes a link if the identifier is an url
+    title = is_identifier_url ? '<a href="{0}">{1}</a>'.format(identifier, title) : title;
 
-    return get_string(creator, false, false) +
-        get_string(date, false, false) +
-        get_string(title, false, false) +
-        get_string(identifier, true, is_identifier_url);
+    return get_string(creator, false, true) +
+        get_string(date, false, true) +
+        get_string(title, is_identifier_url, !is_identifier_url) +
+        (is_identifier_url ? "" : get_string(identifier, true, true));
 }
-
