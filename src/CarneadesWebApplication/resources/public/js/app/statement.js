@@ -42,8 +42,7 @@ function set_arg_texts(info, direction)
 {
     $.each(info[direction], 
            function(index, metadata) {
-               var text = format_metadata(metadata);
-               text = text.length == 0 ? "Argument" : text;
+               var text = argument_text(metadata);
                info[direction][index].argument_text = text;
                info[direction][index].id = info.pro[index]; // used by the template to create the ahref
            });
