@@ -30,9 +30,7 @@
   ;; the generation of the layout would still works but with
   ;; a strange output
   [stmt]
-  ;; {:pre [(do (printf "%s -> " stmt) true)]
-  ;;  :post [(do (printf "%s\n" %) true)]}
-  (let [stmtstr (statement-formatted (map->statement stmt))
+  (let [stmtstr (literal->str (map->statement stmt))
         size 50
         s (if (> (count stmtstr) size)
             (subs stmtstr 0 size)
