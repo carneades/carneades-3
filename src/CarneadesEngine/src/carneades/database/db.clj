@@ -853,3 +853,25 @@
   (jdbc/delete-rows :argpoll ["argument=?" arg-id])
   true)
 
+(defn assume 
+  "Assumes the given statements to be true in the database, unless they have
+   been assumed to be false, in which case they are questioned, or
+   rejected or accepted, in which case their status is left unchanged."
+  [stmts]
+  {:pre [(every? literal? stmts)]}
+  (doseq [stmt stmts]
+    (let [id (get-statement (literal-atom stmt)),
+          s  (read-statement id)]
+      (cond 
+        (nil? (:weight s)) ; stated
+        (update-statement id {:weight (if (literal-pos? stmt) 0.75 0.25)}),
+        (and (literal-pos? stmt)
+             (> (:weight s) 0) 
+             (<= (:weight s) 0.25))   ; assumed false
+        (update-statement id {:weight 0.5}),  ; question
+        (and (literal-neg? stmt)
+             (> (:weight s) 0.5)
+             (<= (:weight s) 0.75))  ; assumed true
+        (update-statement id {:weight 0.5}))))) ; question
+  
+

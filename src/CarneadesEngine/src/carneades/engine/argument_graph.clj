@@ -473,41 +473,6 @@
           ()
           (:statement-nodes ag)))
 
-(defn assume 
-  "argument-graph (seq-of statement) -> argument-graph"
-  [ag stmts]
-  {:pre [(argument-graph? ag) (every? literal? stmts)]}
-  (reduce (fn [ag2 stmt]
-            (let [[ag3 sn] (create-statement-node ag2 stmt)]
-              (update-statement-node 
-                ag3 
-                sn
-                :weight (if (literal-pos? stmt) 0.75 0.25))))
-          ag 
-          stmts))
-                           
-                              
-(defn assumed?
-  "argument-graph statement -> boolean"
-  [ag s]
-  (let [x (:weight (get-statement-node ag s))]
-    (if (nil? x)
-      false
-      (if (literal-pos? s)
-        (< 0.5 x 1.0)
-        (< 0.0 x 0.5)))))
-
-(defn assumptions
-  "argument-graph -> (seq-of statement)
-   Returns a sequence of the assumptions in the argument
-   graph."
-  [ag]
-  (reduce (fn [s n] (cond (< 0.5 (:weight n) 1.0) (conj s (literal-atom n))
-                          (< 0.0 (:weight n) 0.5) (conj s (literal-complement (literal-atom n)))
-                          :else s))
-          ()
-          (:statement-nodes ag)))
-
 (defn question 
   "argument-graph (seq-of statement) -> argument-graph"
   [ag stmts]
@@ -534,6 +499,47 @@
    ?P is an issue iff P is an issue."
   [ag]
   (reduce (fn [s n] (if (= (:weight n) 0.5) (conj s (literal-atom n)) s))
+          ()
+          (:statement-nodes ag)))
+
+(defn assumed?
+  "argument-graph statement -> boolean"
+  [ag s]
+  (let [x (:weight (get-statement-node ag s))]
+    (if (nil? x)
+      false
+      (if (literal-pos? s)
+        (< 0.5 x 1.0)
+        (< 0.0 x 0.5)))))
+
+(defn assume 
+  "argument-graph (seq-of statement) -> argument-graph
+   Assumes the given statements to be true, unless they have
+   been assumed to be false, in which case they are questioned, or
+   rejected or accepted, in which case their status is left unchanged."
+  [ag stmts]
+  {:pre [(argument-graph? ag) (every? literal? stmts)]}
+  (reduce (fn [ag2 stmt]
+            (if (stated? ag stmt)
+              (let [[ag3 sn] (create-statement-node ag2 stmt)]
+                (update-statement-node 
+                  ag3 
+                  sn
+                  :weight (if (literal-pos? stmt) 0.75 0.25)))
+              (if (assumed? ag (literal-complement stmt))
+                (question ag [stmt])
+                ag2)))
+          ag 
+          stmts))                   
+                              
+(defn assumptions
+  "argument-graph -> (seq-of statement)
+   Returns a sequence of the assumptions in the argument
+   graph."
+  [ag]
+  (reduce (fn [s n] (cond (< 0.5 (:weight n) 1.0) (conj s (literal-atom n))
+                          (< 0.0 (:weight n) 0.5) (conj s (literal-complement (literal-atom n)))
+                          :else s))
           ()
           (:statement-nodes ag)))
 
