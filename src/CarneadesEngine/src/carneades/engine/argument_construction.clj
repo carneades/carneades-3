@@ -154,11 +154,7 @@
               ; (println "asm: " asm)
               (if (not (ground? asm))
                 state2
-                (let [ag2 (if (stated? ag asm)
-                            (assume ag [asm])
-                            (if (rejected? ag asm)
-                              (question ag [asm])
-                              ag))]
+                (let [ag2 (assume ag [asm])]
                   (add-goal (assoc state2 :graph ag2)
                             (make-goal 
                               :issues (list (literal-complement (literal->sliteral asm)))
