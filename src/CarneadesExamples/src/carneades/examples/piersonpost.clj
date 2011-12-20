@@ -9,7 +9,8 @@
         carneades.database.import
         carneades.database.export 
         carneades.xml.caf.export
-        carneades.maps.export)
+        ; carneades.maps.export
+        )
   (:require [clojure.java.jdbc :as jdbc]
             [carneades.database.db :as db]))
 
@@ -155,7 +156,7 @@ peace and order."}))
 
 (def a6 (make-argument 
           :conclusion no-possession 
-          :premise [(pm actual-possession-required)]))
+          :premises [(pm actual-possession-required)]))
 
 (def a7 (make-argument 
           :header (make-metadata :description {:en "Puffendorf, lib. 4, c.6, s.2, and 
@@ -294,22 +295,6 @@ and noxious beast."}))
               (enter-arguments [a15 a16 a17])
               (accept [chased-by-big-dogs])))
 
-; (db/create-argument-database 
-;    "pierson-post" 
-;     "root" 
-;     "pw1" 
-;     (make-metadata :title "Pierson v Post"))
-;
- 
-; (def db (db/make-database-connection "pierson-post" "root" "pw1"))
-;
-; (import-from-argument-graph db both true)
-; 
-; (def exported-ag (export-to-argument-graph db))
-; (argument-graph->xml both)
-; (argument-graph->xml exported-ag)
-;           
-; (view both)
 
 ;(defn -main []
 ;  (spit "/tmp/piersonpost.dot" 
@@ -320,11 +305,30 @@ and noxious beast."}))
 ;             :height 1024))
 ;
 
+;(defn -main []
+;  (let [db (db/make-database-connection "pierson-post" "root" "pw1")]
+;                                        ; (import-from-argument-graph db both true)))
+;    (clojure.pprint/pprint both)
+;    ; (export-ag both statement-formatted "/tmp/pierson.svg")
+;    (argument-graph->xml (export-to-argument-graph db ))))
+
 (defn -main []
+<<<<<<< HEAD
+  (let [dbname "pierson-post"  ; (str "db-" (make-uuid))
+        db (db/make-database-connection dbname "root" "pw1")]
+    (db/create-argument-database 
+      dbname 
+      "root" 
+      "pw1" 
+      (make-metadata :title "Pierson v Post"))
+    (import-from-argument-graph db both true)
+    (argument-graph->xml both)))
+=======
   (let [db (db/make-database-connection "pierson-post" "root" "pw1")]
                                         ; (import-from-argument-graph db both true)))
     ;; (clojure.pprint/pprint both)
     (export-ag both literal->str "/tmp/pierson.svg")
     (argument-graph->xml (export-to-argument-graph db ))))
+>>>>>>> ceae2631725ec80933cbb6864481d555da140567
   
 
