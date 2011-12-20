@@ -18,5 +18,5 @@
 (defvar- *viewerlibrary* (configvalue "viewer.library"))
 
 (defn view [ag]
-  (view-graph *viewerlibrary* ag #(statement-formatted %)))
+  (view-graph *viewerlibrary* ag #(literal->str %)))
 

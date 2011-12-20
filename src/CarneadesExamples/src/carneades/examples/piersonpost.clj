@@ -313,6 +313,7 @@ and noxious beast."}))
 ;    (argument-graph->xml (export-to-argument-graph db ))))
 
 (defn -main []
+<<<<<<< HEAD
   (let [dbname "pierson-post"  ; (str "db-" (make-uuid))
         db (db/make-database-connection dbname "root" "pw1")]
     (db/create-argument-database 
@@ -322,5 +323,12 @@ and noxious beast."}))
       (make-metadata :title "Pierson v Post"))
     (import-from-argument-graph db both true)
     (argument-graph->xml both)))
+=======
+  (let [db (db/make-database-connection "pierson-post" "root" "pw1")]
+                                        ; (import-from-argument-graph db both true)))
+    ;; (clojure.pprint/pprint both)
+    (export-ag both literal->str "/tmp/pierson.svg")
+    (argument-graph->xml (export-to-argument-graph db ))))
+>>>>>>> ceae2631725ec80933cbb6864481d555da140567
   
 

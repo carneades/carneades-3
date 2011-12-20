@@ -28,7 +28,7 @@
 
 (defn class-instances-to-responses
   [reasoner manager wff subs ontology]
-  (if *debug* (println "finding instances of class" (statement-formatted wff)))
+  (if *debug* (println "finding instances of class" (literal->str wff)))
   (let [cname (str (first wff)),
         clazz (. (. manager getOWLDataFactory) getOWLClass (IRI/create cname)),
         insts (. (. reasoner getInstances clazz false) getFlattened)]
@@ -49,7 +49,7 @@
 
 (defn single-class-instance-to-responses
   [reasoner manager wff subs ontology]
-  (if *debug* (println "finding instances of class" (statement-formatted wff)))
+  (if *debug* (println "finding instances of class" (literal->str wff)))
   (let [cname (str (first wff)),
         clazz (. (. manager getOWLDataFactory) getOWLClass (IRI/create cname)),
         iname (str (second wff)),
@@ -71,7 +71,7 @@
 
 (defn property-instances-to-responses
   [reasoner manager wff subs ontology]
-  (if *debug* (println "finding instances of property:" (statement-formatted wff)))
+  (if *debug* (println "finding instances of property:" (literal->str wff)))
   (let [pname (str (first wff)),
         prop-type (cond
                     (. ontology containsDataPropertyInSignature (IRI/create pname)) :data,
@@ -100,7 +100,7 @@
 
 (defn single-property-instance-to-responses
   [reasoner manager wff subs ontology]
-  (if *debug* (println "finding instances of property" (statement-formatted wff)))
+  (if *debug* (println "finding instances of property" (literal->str wff)))
   (let [pname (str (first wff)),
         prop-type (cond
                     (. ontology containsDataPropertyInSignature (IRI/create pname)) :data,

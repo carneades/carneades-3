@@ -20,7 +20,7 @@
 
 (defn format-label
   [l]
-  (map (fn [p] (map (fn [s] (statement-formatted s)) p)) l))
+  (map (fn [p] (map (fn [s] (literal->str s)) p)) l))
 
 (defvar *verum-clause* #{true})
 (defvar *verum* #{*verum-clause*})
@@ -135,7 +135,7 @@ alltrue is true if coll is empty or if each value is equal to *verum*"
               :else (set (map true-filter pr-labels)))]
 ;      (println "------------")
 ;      (println "out-goals for      :" (str (:scheme arg) "-" (:id arg)))
-;      (println "premises           :" (map statement-formatted (map :atom pr)))
+;      (println "premises           :" (map literal->str (map :atom pr)))
 ;      (println "pr-labels          :" pr-labels)
 ;      (println "pr-labels-true     :" pr-labels-true)
 ;      (println "label              :" (format-label l))
@@ -449,7 +449,7 @@ alltrue is true if coll is empty or if each value is equal to *verum*"
      (reduce make-minimal label label))
   ([label position]
      (doall (filter (fn [p]
-              ;(println "comparing positions" (map statement-formatted position) (map statement-formatted p) (= (union position p) p))
+              ;(println "comparing positions" (map literal->str position) (map literal->str p) (= (union position p) p))
               (or (= position p) (not (subset? position p))))
                    label))))
 
