@@ -317,8 +317,8 @@
       (symbol? s) (short-str (str s)),
       (statement? s) (cond (not (empty? (:text s))) (lang (:text s))
                            (:atom s) (if (and (seq? (:atom s)) parentheses?) 
-                                       (str "(" (statement-formatted s) ")")
-                                       (statement-formatted s)))
+                                       (str "(" (statement-formatted (:atom s)) ")")
+                                       (statement-formatted (:atom s))))
       (nonemptyseq? s) (if parentheses?
                          (str "(" (str/join " " (map term-formatted s)) ")")
                          (str/join " " (map term-formatted s))),
