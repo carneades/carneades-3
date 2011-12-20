@@ -12,8 +12,8 @@
             multiple extentions and labellings are possible, depending on the chosen
             semantics, the result can be mapped to a unique labelling by choosing a
             credulous or skeptical variation of the semantics.  For example, using 
-            skeptical semantics, an argument node would be labelled 'in, i.e. assigned the value 1.0, 
-            if and only if it is in all extensions."}
+            skeptical semantics, an argument node would be labelled 'in, i.e. 
+            assigned the value 1.0, if and only if it is in all extensions."}
   carneades.engine.argument-evaluation
   (:use carneades.engine.statement
         carneades.engine.argument-graph))
