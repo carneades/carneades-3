@@ -78,20 +78,9 @@
 
 (defn stmt-to-str [ag stmt stmt-str]
   (let [formatted (stmt-str (map->statement stmt))]
-    ;; TODO: how to get the evaluation of the complement of a literal?
-    ;; here stmt is a node, how to know if a StattementNode is positive?
-    (cond (and (in-node? stmt) ;; (in-node? (literal-complement stmt))
-               )
-          (str "✔✘ " formatted)
-           
-          (in-node? stmt)
-          (str "✔ " formatted)
-           
-          (in-node? stmt;; (literal-complement stmt)
-                    )
-          (str "✘ " formatted)
+    (cond (in-node? stmt) (str "✔ " formatted) 
+          (out-node? stmt) (str "✘ " formatted)
+          (undecided-node? stmt) (str "? " formatted)
+          :else (throw (Exception. "Invalid case")))))
 
-          (undecided-node? stmt)
-          (str "? " formatted)
-           
-          :else formatted)))
+
