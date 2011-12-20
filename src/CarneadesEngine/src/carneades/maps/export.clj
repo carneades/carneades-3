@@ -40,30 +40,19 @@
 
 (defn pick-stmt-params
   [ag stmt params]
-  ;; TODO get the complement and its evaluation
-  (let [comp stmt;; (literal-complement stmt)
-        ]
-    (cond (and (in-node? stmt) (out-node? comp))
-                (:stmt-inout-params params)
-          
-                (and (in-node? stmt) (in-node? comp))
-                (:stmt-inin-params params)
-          
-                (and (out-node? stmt) (in-node? comp))
-                (:stmt-outin-params params)
-          
-                :else
-                (:stmt-outout-params params))))
+  (cond  (in-node? stmt) (:stmt-in-params params)
+         (out-node? stmt) (:stmt-out-params params)
+         :else (:stmt-params params)))
 
 (defn pick-arg-params
   [ag arg params]
-  (cond (and (in-node? arg) (= (:direction arg) :pro))
+  (cond (and (in-node? arg) (:pro arg))
         (:arg-pro-applicable-params params)
         
-        (and (in-node? arg) (= (:direction arg) :con))
+        (and (in-node? arg) (:pro arg))
         (:arg-con-applicable-params params)
         
-        (= (:direction arg) :pro)
+        (:pro arg)
         (:arg-pro-notapplicable-params params)
         
         :else
