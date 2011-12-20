@@ -2,7 +2,9 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.web.liverpool-schemes
-  (:use carneades.engine.scheme))
+  (:use carneades.engine.dublin-core
+        carneades.engine.argument
+        carneades.engine.scheme))
 
 ;; To Do: Replace with Liverpool's argumentation schemes
 
@@ -43,4 +45,4 @@
   (create-scheme-predicate-index {} liverpool-schemes))
 
 (def liverpool-schemes-by-id
-  (create-scheme-id-index liverpool-schemes))
+  (create-scheme-id-index {} liverpool-schemes))

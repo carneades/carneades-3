@@ -10,6 +10,7 @@
          carneades.engine.scheme
          carneades.engine.dublin-core
          carneades.database.db
+         carneades.database.admin
          carneades.database.export
          carneades.xml.caf.export
          carneades.web.liverpool-schemes)
@@ -345,18 +346,18 @@
       (GET "/scheme/:id" [id]  ; return the scheme with the given id
           (json-response (get liverpool-schemes-by-id id)))
       
-      (GET "/matching-schemes/" [] ; return all schemes with conclusions matching a goal
+      (GET "/matching-schemes/" request ; return all schemes with conclusions matching a goal
        (let [goal (unpack-statement (read-json (slurp (:body request))))]
            (get-schemes liverpool-schemes goal {} true)))
       
-      (POST "/apply-scheme/:db/:id" [db id] 
+      (POST "/apply-scheme/:db/:id" request 
        ; apply the scheme with the given id to the substitutions in the body
        ; and add the resulting arguments, if they are ground, to the 
        ; database
        (let [subs (read-json (slurp (:body request))),
-             scheme (get liverpool-schemes-by-id id),
+             scheme (get liverpool-schemes-by-id (:id (:params request))),
              responses (instantiate-scheme scheme subs)]
-         (doseq [r reponses]
+         (doseq [r responses]
             ; START HERE
            )))
        
