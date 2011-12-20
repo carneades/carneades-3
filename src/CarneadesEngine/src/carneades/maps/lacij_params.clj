@@ -1,4 +1,4 @@
-(ns carneades.maps.export-params
+(ns carneades.maps.lacij-params
   (:use lacij.view.core)
   (:require [analemma.svg :as svg]
             [analemma.xml :as xml]))

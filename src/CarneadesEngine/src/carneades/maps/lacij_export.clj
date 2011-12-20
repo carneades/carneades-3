@@ -1,7 +1,7 @@
 ;;; Copyright © 2010-2011 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.maps.export
+(ns carneades.maps.lacij-export
   (:use clojure.pprint
         carneades.engine.argument-graph
         carneades.engine.argument-evaluation
@@ -12,7 +12,7 @@
         lacij.view.core
         lacij.opt.annealing
         carneades.engine.statement
-        [carneades.maps export-params format-statement subset-ag])
+        [carneades.maps lacij-params format-statement subset-ag])
   (:require [analemma.xml :as xml]
             [analemma.svg :as svg]
             [clojure.string :as s]
@@ -46,6 +46,7 @@
 
 (defn pick-arg-params
   [ag arg params]
+  (prn "value " (:value arg))
   (cond (and (in-node? arg) (:pro arg))
         (:arg-pro-applicable-params params)
         
@@ -141,17 +142,18 @@
           default-markers))
 
 (defn export-ag-helper
-  [ag stmt-str & options]
-  (let [options-kv (apply hash-map options)
-        width (get options-kv :width 1280)
-        height (get options-kv :height 1024)
-        layouttype (get options-kv :layout :hierarchical)
+  [ag stmt-str options]
+  (let [ag (evaluate carneades-evaluator ag)
+        width (get options :width 1280)
+        height (get options :height 1024)
+        layouttype (get options :layout :hierarchical)
         svgmap (create-graph :width width :height height)
         svgmap (add-markers svgmap)
-        params (merge default-params options-kv)
+        params (merge default-params options)
         ag (apply subset-ag ag options)
         svgmap (add-entities svgmap ag stmt-str params)
-        svgmap (time (apply layout svgmap layouttype options))
+        optionsseq (flatten (seq options))
+        svgmap (time (apply layout svgmap layouttype optionsseq))
         svgmap (build svgmap)]
     svgmap))
 
@@ -160,21 +162,21 @@
 
    Options are :treeify, :full-duplication, :depth,
    :layout and all options supported by the layout"
-  [ag stmt-str filename & options]
-  (let [ag (evaluate carneades-evaluator ag)
-        map (apply export-ag-helper ag stmt-str options)]
+  [ag stmt-str filename options]
+  (let [map (export-ag-helper ag stmt-str options)]
     (export map filename :indent "yes")))
 
-(defn export-ag-os
-  "Exports an argument graph to an InputStream.
+(defn export-ag-str
+  "Exports an argument graph to a string.
 
    Options are :treeify, :full-duplication, :depth,
    :layout and all options supported by the layout"
-  [ag stmt-str & options]
-  (let [map (apply export-ag-helper ag stmt-str options)
+  [ag stmt-str options]
+  (let [map (export-ag-helper ag stmt-str options)
         os (ByteArrayOutputStream.)
         v (view map)]
     (dom/spit-xml os v :indent "yes")
-    (InputStreamReader.
-     (ByteArrayInputStream. (.toByteArray os))
-     "UTF8")))
+    (slurp
+     (InputStreamReader.
+      (ByteArrayInputStream. (.toByteArray os))
+      "UTF8"))))

@@ -9,7 +9,7 @@
         carneades.database.import
         carneades.database.export 
         carneades.xml.caf.export
-        carneades.maps.export)
+        carneades.maps.lacij)
   (:require [clojure.java.jdbc :as jdbc]
             [carneades.database.db :as db]))
 
@@ -319,7 +319,7 @@ and noxious beast."}))
     ;;   "root" 
     ;;   "pw1" 
     ;;   (make-metadata :title "Pierson v Post"))
-    (export-ag both literal->str "/tmp/pierson.svg")
+    (export both "/tmp/pierson.svg")
     ;; (import-from-argument-graph db both true)
     ;; (argument-graph->xml both)))
     
