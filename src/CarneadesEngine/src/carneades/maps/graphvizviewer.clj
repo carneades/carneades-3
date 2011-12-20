@@ -12,7 +12,7 @@
         carneades.config.reader
         carneades.engine.argument
         [clojure.contrib.java-utils :only (delete-file)]
-        [carneades.engine.statement :only (statement-formatted
+        [carneades.engine.statement :only (literal->str
                                            statement-complement)])
   (:require [clojure.contrib.shell-out :as shell]))
 

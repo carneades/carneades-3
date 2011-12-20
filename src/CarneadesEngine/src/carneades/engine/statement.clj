@@ -294,42 +294,25 @@
       (:atom x)
       (list 'not (:atom x)))))
 
-(declare term-formatted)
+(defn- sliteral->str
+  [s]
+  (str s))
 
-(defn short-str [s]
-  (try (or
-        (.getFragment (new URI s))
-        s)
-    (catch Exception e s)))
+(defn- statement->str
+  [s lang]
+  (if-let [translated (get-in s [:text lang])]
+    translated
+    (sliteral->str (:atom s))))
 
-(defn break-str [s]
-  (let [l (.split s " ")]
-    (str/join "\n " l)))
-
-(defn statement-formatted
-  ([s] (statement-formatted s false :en))
-  ([s x] (if (keyword? x) 
-           (statement-formatted s true x)
-           (statement-formatted s x :en)))
-  ([s parentheses? lang]
-    (cond
-      (string? s) (short-str s),
-      (symbol? s) (short-str (str s)),
-      (statement? s) (cond (not (empty? (:text s))) (lang (:text s))
-                           (:atom s) (if (and (seq? (:atom s)) parentheses?) 
-                                       (str "(" (statement-formatted s) ")")
-                                       (statement-formatted s)))
-      (nonemptyseq? s) (if parentheses?
-                         (str "(" (str/join " " (map term-formatted s)) ")")
-                         (str/join " " (map term-formatted s))),
-      :else s)))
-
-(defn term-formatted [t]
-  (cond 
-    (or (variable? t) (constant? t)) (short-str (str t)),
-    (nonemptyseq? t) (str "(" (str/join " " (map term-formatted t)) ")"),
-    (statement? t) (str \" (statement-formatted t true) \")
-    :else t))
+(defn literal->str
+  "Returns the string representation of a literal."
+  ([l]
+     {:pre [(literal? l)]}
+     (literal->str l :en))
+  ([l lang]
+     {:pre [(literal? l)]}
+     (cond (sliteral? l) (sliteral->str l)
+           (statement? l) (statement->str l lang))))
 
 (defn replace-var
   [from to stmt]
