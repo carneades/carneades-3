@@ -1,4 +1,4 @@
-(ns carneades.maps.export-params
+(ns carneades.maps.lacij-params
   (:use lacij.view.core)
   (:require [analemma.svg :as svg]
             [analemma.xml :as xml]))
@@ -54,13 +54,10 @@
            tomato "#ff7e7e"
            lightgreen "#8ee888"]
        {:stmt-params stmt-params
-        :stmt-inin-params (merge stmt-params {:style {:stroke-width 1.5
-                                                      :fill "#ffe955"}})
-        :stmt-inout-params (merge stmt-params {:style {:stroke-width 1.5
+        :stmt-in-params (merge stmt-params {:style {:stroke-width 1.5
                                                        :fill lightgreen}})
-        :stmt-outin-params (merge stmt-params {:style {:stroke-width 1.5
+        :stmt-out-params (merge stmt-params {:style {:stroke-width 1.5
                                                        :fill tomato}})
-        :stmt-outout-params stmt-params
         :stmtlabel-params {:style {:stroke-width 1.5
                                    :font-size "14px"}}
         :arg-params arg-params
