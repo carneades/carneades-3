@@ -5,6 +5,7 @@
    (:use clojure.data.json
          clojure.pprint
          compojure.core
+         carneades.engine.unify
          carneades.engine.statement
          carneades.engine.argument
          carneades.engine.scheme
@@ -26,9 +27,6 @@
 ;; - CAF import
 ;; - OPML export
 ;; - validate input?
-;; - commands for using argumentation schemes
-;; - matching-statements command, for searching for statements which unify with some goal
-;;   should return a sequence of {:subs ..., :statement ...} maps
  
 
 ;(defmacro with-db [db & body]   
@@ -161,11 +159,23 @@
              (with-db db2 
                (json-response (pack-statement (read-statement id))))))
       
+      (GET "/matching-statements/" request
+        ; returns a vector of {:substitutions :statement} records for the statements
+        ; with atoms matching the query in the body of the request
+        (let [m (read-json (slurp (:body request)))
+              s1 (unpack-statement m)
+              db (make-database-connection (:db (:params request)) "guest" "")]
+              (with-db db (json-response (mapcat (fn [s2] 
+                                                   (let [subs (unify (:atom s1) (:atom s2))]
+                                                     (when subs 
+                                                       [{:substitutions subs
+                                                         :statement s2}])))
+                                                 (list-statements))))))
+      
       (POST "/statement/:db" request  
             (let [m (read-json (slurp (:body request)))
                   s (unpack-statement m)
                   db (make-database-connection (:db (:params request)) "root" "pw1")]
-              (prn request)
               (with-db db (json-response (create-statement (map->statement s))))))
       
       (PUT "/statement" request  
@@ -338,28 +348,35 @@
                            :headers {"Content-Type" "application/xml"}
                            :body xml})))))
       
-      ;; Liverpool Schemes
+      ;; Schemes
       
-      (GET "/scheme/" []  ; return all Liverpool schemes
+      (GET "/scheme" []  ; return all Liverpool schemes
           (json-response (vals liverpool-schemes-by-id)))
       
       (GET "/scheme/:id" [id]  ; return the scheme with the given id
-          (json-response (get liverpool-schemes-by-id id)))
+          (json-response (get liverpool-schemes-by-id (symbol id))))
       
-      (GET "/matching-schemes/" request ; return all schemes with conclusions matching a goal
+      (POST "/matching-schemes" request ; return all schemes with conclusions matching a goal
        (let [goal (unpack-statement (read-json (slurp (:body request))))]
-           (get-schemes liverpool-schemes goal {} true)))
+         (prn goal)
+         (get-schemes liverpool-schemes goal {} true)))
       
       (POST "/apply-scheme/:db/:id" request 
        ; apply the scheme with the given id to the substitutions in the body
        ; and add the resulting arguments, if they are ground, to the 
-       ; database
+       ; database. Returns a list of the ids of the new arguments.
        (let [subs (read-json (slurp (:body request))),
-             scheme (get liverpool-schemes-by-id (:id (:params request))),
+             scheme (get liverpool-schemes-by-id (symbol (:id (:params request)))),
              responses (instantiate-scheme scheme subs)]
-         (doseq [r responses]
-            ; START HERE
-           )))
+          (let [dbconn (make-database-connection (:db (:params request)) "root" "pw1")]
+             (with-db dbconn
+                 (json-response 
+                   (reduce (fn [l r]
+                              (assume (:assumptions r))
+                              (conj (create-argument (:argument r))
+                                    l))
+                           []
+                           responses))))))
        
       ;; Other 
       

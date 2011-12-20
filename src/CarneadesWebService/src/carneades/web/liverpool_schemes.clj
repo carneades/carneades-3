@@ -36,7 +36,7 @@
       
       :schemes 
       [(make-scheme                            
-         :id 'a
+         :id 'scheme1
          :conclusion '(flies ?x)
          :premises [(make-premise :role "minor" :statement '(bird ?x))]
          :exceptions [(pm '(penguin ?x))])]))

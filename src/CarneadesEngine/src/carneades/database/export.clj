@@ -3,9 +3,9 @@
 
 (ns ^{:doc  "Functions for exporting argument databases to argument graphs."}
   carneades.database.export
-  (:use [carneades.engine.argument-graph :as ag]
-        [carneades.database.db :as db])
   (:require
+        [carneades.engine.argument-graph :as ag]
+        [carneades.database.db :as db]
         [clojure.java.jdbc :as jdbc]))
 
 (defn export-to-argument-graph
