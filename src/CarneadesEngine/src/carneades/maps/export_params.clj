@@ -48,7 +48,7 @@
 (def con-arg-color "#e10005")
 
 (def default-params
-     (let [stmt-params {:style {:fill "white"} :width 270 :height 46}
+     (let [stmt-params {:style {:fill "white"} :width 275 :height 46}
            arg-params {:style {:fill "white"} :shape :circle :r 10}
 
            tomato "#ff7e7e"

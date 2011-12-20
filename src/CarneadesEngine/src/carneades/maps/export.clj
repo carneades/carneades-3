@@ -127,7 +127,7 @@
 
 (defn add-argument
   [svgmap arg ag params]
-  (let [conclusion (get-statement-node ag (:conclusion arg))
+  (let [conclusion ((:statement-nodes ag) (:conclusion arg))
         premises (map #(get-statement-node ag (:statement %)) (:premises arg))
         svgmap (add-argument-node svgmap arg ag params)
         svgmap (add-conclusion-edge svgmap conclusion arg)
