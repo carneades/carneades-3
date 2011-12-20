@@ -7,21 +7,27 @@
          compojure.core
          carneades.engine.statement
          carneades.engine.argument
+         carneades.engine.scheme
          carneades.engine.dublin-core
          carneades.database.db
          carneades.database.export
-         carneades.xml.caf.export)
+         carneades.xml.caf.export
+         carneades.web.liverpool-schemes)
   (:require [compojure.route :as route]
             [compojure.handler :as handler]
             [clojure.java.jdbc :as jdbc]))
 
 ;; To Do: 
-;; - commands for logging into and creating databases
+;; - portable way to locate files, including databases, with minimal configuration
+;; - way to bootstrap the debate database
 ;; - retrieving user name and password from the request 
 ;; - search operations, including full text search
 ;; - CAF import
 ;; - OPML export
 ;; - validate input?
+;; - commands for using argumentation schemes
+;; - matching-statements command, for searching for statements which unify with some goal
+;;   should return a sequence of {:subs ..., :statement ...} maps
  
 
 ;(defmacro with-db [db & body]   
@@ -330,6 +336,29 @@
                           {:status 200            ; 200 is OK
                            :headers {"Content-Type" "application/xml"}
                            :body xml})))))
+      
+      ;; Liverpool Schemes
+      
+      (GET "/scheme/" []  ; return all Liverpool schemes
+          (json-response (vals liverpool-schemes-by-id)))
+      
+      (GET "/scheme/:id" [id]  ; return the scheme with the given id
+          (json-response (get liverpool-schemes-by-id id)))
+      
+      (GET "/matching-schemes/" [] ; return all schemes with conclusions matching a goal
+       (let [goal (unpack-statement (read-json (slurp (:body request))))]
+           (get-schemes liverpool-schemes goal {} true)))
+      
+      (POST "/apply-scheme/:db/:id" [db id] 
+       ; apply the scheme with the given id to the substitutions in the body
+       ; and add the resulting arguments, if they are ground, to the 
+       ; database
+       (let [subs (read-json (slurp (:body request))),
+             scheme (get liverpool-schemes-by-id id),
+             responses (instantiate-scheme scheme subs)]
+         (doseq [r reponses]
+            ; START HERE
+           )))
        
       ;; Other 
       
