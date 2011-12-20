@@ -203,7 +203,6 @@
                 (get (:language ag) (literal-atom stmt))))
 
 
-   
 (defn- link-conclusion
   "argument-graph argument-node -> argument-graph"
   [ag an]
