@@ -323,8 +323,8 @@ and noxious beast."}))
 (defn -main []
   (let [db (db/make-database-connection "pierson-post" "root" "pw1")]
                                         ; (import-from-argument-graph db both true)))
-    (clojure.pprint/pprint both)
-    (export-ag both statement-formatted "/tmp/pierson.svg")
+    ;; (clojure.pprint/pprint both)
+    (export-ag both literal->str "/tmp/pierson.svg")
     (argument-graph->xml (export-to-argument-graph db ))))
   
 
