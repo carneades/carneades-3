@@ -1,8 +1,7 @@
 ;;; Copyright (c) 2011 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc  "A database schema and CRUD functions for storing arguments 
-             persistently in a relational database."}
+(ns ^{:doc  "A database schema and CRUD functions for managing debate databases."}
        carneades.database.admin
   (:use clojure.pprint
         carneades.engine.uuid
