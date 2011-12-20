@@ -144,7 +144,7 @@
 
 
 (def expert-witness1
-  (instantiate-scheme 
+  (specialize-scheme 
     expert-witness-scheme
     {'?P '(has-cavities Susan)
      '?E 'Joe

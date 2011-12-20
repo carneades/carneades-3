@@ -118,7 +118,7 @@
 ;  :premises [<exception>])
 
 
-(defn instantiate-scheme
+(defn specialize-scheme
   "scheme substitutions -> scheme
    Instantiate or partially instantiate a scheme by substituting
    variables in the scheme with their values in the map."
@@ -133,7 +133,43 @@
                             (:exceptions scheme)),        
            :assumptions (map (fn [p] (assoc p :statement (apply-subs (:statement p))))
                              (:assumptions scheme)))))
-  
+
+(defn instantiate-scheme 
+  "scheme map -> [response]
+   Constructs a sequence of grounds arguments, in responses, by 
+   substituting variables in the scheme with their values in a map of
+   substitutions. Only ground arguments are included in the result. It
+   is the responsibility of the caller to provide substitutions for all
+   variables in the argument."
+  [scheme subs]
+  (let [id (make-uuid)]
+    (filter (fn [arg] (empty? (argument-variables arg)))
+            (cons (make-response 
+                    subs
+                    (map (fn [p] (if (:positive p)
+                                   (:statement p)
+                                   (literal-complement (:statement p))))
+                         (:assumptions scheme))
+                    (make-argument 
+                      :id id,
+                      :conclusion (apply-substitutions subs (:conclusion scheme)),
+                      :strict (:strict scheme),
+                      :weight (:weight scheme),
+                      :premises (map (fn [p] (apply-substitutions subs p))
+                                     (concat (:premises scheme) (:assumptions scheme))),
+                      :scheme (:id scheme)))
+                  (map (fn [e] 
+                         (make-response 
+                           subs
+                           ()
+                           (make-argument 
+                             :conclusion `(~'undercut ~(uuid->symbol id))
+                             :strict false
+                             :weight (:weight scheme)
+                             :premises [(apply-substitutions subs e)]
+                             :scheme (:id scheme))))
+                       (:exceptions scheme))))))
+   
 (defn axiom 
   "literal -> scheme"
   [literal]
@@ -213,8 +249,9 @@
         (compound-term? trm) (term-functor trm)
         :else :other))
  
-(defn create-scheme-index
-  "map section-or-theory -> (symbol -> seq of schemes) map"
+(defn create-scheme-predicate-index
+  "map section-or-theory -> (symbol -> seq of schemes) map
+   map from predicate symbols to scheme sequences"
   [map1 part]
   ; (println "section: " section)
   (let [map2 (reduce (fn [map2 scheme]
@@ -226,24 +263,41 @@
                      map1
                      (:schemes part))]
     (reduce (fn [map3 section]
-              (create-scheme-index map3 section))
+              (create-scheme-predicate-index map3 section))
+            map2
+            (:sections part))))
+
+(defn create-scheme-id-index
+  "map section-or-theory -> (symbol -> scheme) map
+   map from scheme ids to schemes. Assumes that scheme ids are unique."
+  [map1 part]
+  ; (println "section: " section)
+  (let [map2 (reduce (fn [map2 scheme]
+                       ; (println "scheme: " scheme)
+                       (assoc map2 (:id scheme) scheme))      
+                     map1
+                     (:schemes part))]
+    (reduce (fn [map3 section]
+              (create-scheme-id-index map3 section))
             map2
             (:sections part))))
 
 (defn get-schemes 
-  "map goal substititions -> sequence of schemes
-   where the goal is a literal. Does not return
-   :other schemes, since they match every goal
+  "map goal substititions boolean -> sequence of schemes
+   where the goal is a literal. If 'other' is false,
+   does not return :other schemes, which match every goal
    and are not well controlled when using with backward 
    chaining."
-  [index goal subs]
-  {:pre [(map? index) 
-         (literal? goal)
-         (map? subs)]}
-  (let [key (scheme-index-key (apply-substitutions subs goal))]
-    (if (= key :other)
-      ()
-      (concat (get index key)))))
+  ([index goal subs]
+    (get-schemes index goal subs false))
+  ([index goal subs other]
+    {:pre [(map? index) 
+           (literal? goal)
+           (map? subs)]}
+    (let [key (scheme-index-key (apply-substitutions subs goal))]
+      (if (and (not other) (= key :other))
+        ()
+        (concat (get index key))))))
 
 (defn apply-scheme
   "scheme literal substitutions -> seq-of response"
@@ -296,7 +350,7 @@
 (defn generate-arguments-from-theory
   "theory -> argument-generator"
   [theory1]
-  (let [index (create-scheme-index {} theory1)]
+  (let [index (create-scheme-predicate-index {} theory1)]
     (reify ArgumentGenerator
       (generate [this goal subs]
         (mapinterleave
