@@ -334,7 +334,7 @@
                                   :undercutters_metadata undercutters-metadata
                                   :rebuttals_metadata rebuttals-metadata))))))
       
-      ;; Argument Graphs
+      ;; XML
       
       (GET "/export/:db" [db]
            (let [dbconn (make-database-connection db "guest" "")]
