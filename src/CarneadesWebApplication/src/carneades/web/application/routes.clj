@@ -19,6 +19,3 @@
 ;; to comment when building the WAR:
 (defonce server
   (run-jetty #'app {:join? false :port 8080}))
-
-;; (defonce carneades-service-server
-;;   (run-jetty #'carneades-web-service {:join? false :port 9000}))
