@@ -17,7 +17,8 @@
          carneades.web.liverpool-schemes)
   (:require [compojure.route :as route]
             [compojure.handler :as handler]
-            [clojure.java.jdbc :as jdbc]))
+            [clojure.java.jdbc :as jdbc]
+            [carneades.maps.lacij :as lacij]))
 
 ;; To Do: 
 ;; - portable way to locate files, including databases, with minimal configuration
@@ -72,13 +73,15 @@
   (if (nil? arg)
     nil
     (merge arg
-           {:conclusion (pack-statement (:conclusion arg)),
+           {:scheme (str (:scheme arg)),
+            :conclusion (pack-statement (:conclusion arg)),
             :premises (map (fn [p] (assoc p :statement 
                                           (pack-statement (:statement p))))
                            (:premises arg))})))
 
 (defn- unpack-argument [arg]
   (assoc arg
+         :scheme (symbol (:scheme arg))
          :conclusion (unpack-statement (:conclusion arg))
          :premises (map (fn [p] (assoc p :statement (unpack-statement (:statement p))))
                         (:premises arg))))
@@ -172,6 +175,15 @@
                                                          :statement s2}])))
                                                  (list-statements))))))
       
+      
+      (GET "/premise-of/:db/:id" [db id]
+        ; returns a vector of arguments in which the statement with the given id
+        ; is a premise
+        (let [db2 (make-database-connection db "guest" "")]  
+          (with-db db2 
+            (json-response (map (fn [arg-id] (pack-argument (read-argument arg-id)))
+                                (:premise-of (read-statement id)))))))
+            
       (POST "/statement/:db" request  
             (let [m (read-json (slurp (:body request)))
                   s (unpack-statement m)
@@ -214,6 +226,14 @@
       (GET "/undercutters/:db/:id" [db id]
            (let [db2 (make-database-connection db "guest" "")]  
              (with-db db2 (json-response (get-undercutters id)))))
+      
+      (GET "/dependents/:db/:id" [db id]
+        ; returns a vector of arguments in which the conclusion of the argument
+        ; with the given id is a premise
+        (let [db2 (make-database-connection db "guest" "")]  
+          (with-db db2 
+              (json-response (map (fn [arg-id] (pack-argument (read-argument arg-id))) 
+                                  (get-dependents id))))))
       
       (POST "/argument" request  
             (let [m (read-json (slurp (:body request)))
@@ -321,18 +341,24 @@
              (with-db dbconn
                (let [stmt (pack-statement (read-statement id))
                      pro-metadata (map argument-metadata (:pro stmt))
-                     con-metadata (map argument-metadata (:con stmt))]
-                 (json-response (assoc stmt :pro_metadata pro-metadata :con_metadata con-metadata))))))
+                     con-metadata (map argument-metadata (:con stmt))
+                     premise-of-metadata (map argument-metadata (:premise-of stmt))]
+                 (json-response (assoc stmt 
+                                       :pro_metadata pro-metadata 
+                                       :con_metadata con-metadata
+                                       :premise_of_metadata premise-of-metadata))))))
 
       (GET "/argument-info/:db/:id" [db id]
            (let [dbconn (make-database-connection db "guest" "")]
              (with-db dbconn
                (let [arg (pack-argument (read-argument id))
                      undercutters-metadata (map argument-metadata (:undercutters arg))
-                     rebuttals-metadata (map argument-metadata (:rebuttals arg))]
+                     rebuttals-metadata (map argument-metadata (:rebuttals arg))
+                     dependents-metadata (map argument-metadata (:dependents arg))]
                  (json-response (assoc arg
                                   :undercutters_metadata undercutters-metadata
-                                  :rebuttals_metadata rebuttals-metadata))))))
+                                  :rebuttals_metadata rebuttals-metadata
+                                  :dependents_metadata dependents-metadata))))))
       
       ;; XML
       
@@ -358,25 +384,42 @@
       
       (POST "/matching-schemes" request ; return all schemes with conclusions matching a goal
        (let [goal (unpack-statement (read-json (slurp (:body request))))]
-         (prn goal)
-         (get-schemes liverpool-schemes goal {} true)))
+         (json-response (get-schemes liverpool-schemes-by-predicate goal {} true))))
       
       (POST "/apply-scheme/:db/:id" request 
        ; apply the scheme with the given id to the substitutions in the body
        ; and add the resulting arguments, if they are ground, to the 
        ; database. Returns a list of the ids of the new arguments.
        (let [subs (read-json (slurp (:body request))),
-             scheme (get liverpool-schemes-by-id (symbol (:id (:params request)))),
-             responses (instantiate-scheme scheme subs)]
-          (let [dbconn (make-database-connection (:db (:params request)) "root" "pw1")]
+             scheme (get liverpool-schemes-by-id (symbol (:id (:params request))))]
+         (prn subs)
+         (prn scheme)
+          (let [responses (instantiate-scheme scheme subs)
+                dbconn (make-database-connection (:db (:params request)) "root" "pw1")]
              (with-db dbconn
                  (json-response 
                    (reduce (fn [l r]
                               (assume (:assumptions r))
-                              (conj (create-argument (:argument r))
-                                    l))
+                              (conj l (create-argument (:argument r))))
                            []
                            responses))))))
+      
+      ;; Maps
+      
+      ; To do: use parameters to pass in display options
+      ; To do: add URLs to the nodes of the map, linking to textual statement and argument views
+      (GET "/map/:db" [db]
+           (let [dbconn (make-database-connection db "guest" "")]
+             (with-db dbconn
+                      (let [arg-graph (export-to-argument-graph dbconn)
+                            svg (lacij/export-str arg-graph)]
+                        (if (nil? svg)
+                          {:status 404,
+                           :body "Not found."}
+                          {:status 200            ; 200 is OK
+                           :headers {"Content-Type" "image/svg+xml"}
+                           :body svg})))))
+      
        
       ;; Other 
       
