@@ -137,7 +137,7 @@
    Instantiate the variables of an argument by applying substitions"
   [arg subs]
   (assoc arg
-         :id (make-uuid)
+         :id (make-urn-symbol)
          :premises (map (fn [p] (assoc p 
                                        :statement 
                                        (apply-substitutions subs (:statement p)))) 

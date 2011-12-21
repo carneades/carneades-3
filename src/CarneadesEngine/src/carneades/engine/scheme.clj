@@ -143,31 +143,35 @@
    variables in the argument."
   [scheme subs]
   (let [id (make-urn)]
-    (filter (fn [arg] (empty? (argument-variables arg)))
+    (filter (fn [r] (empty? (argument-variables (:argument r))))
             (cons (make-response 
                     subs
                     (map (fn [p] (if (:positive p)
                                    (:statement p)
                                    (literal-complement (:statement p))))
                          (:assumptions scheme))
-                    (make-argument 
-                      :id id,
-                      :conclusion (apply-substitutions subs (:conclusion scheme)),
-                      :strict (:strict scheme),
-                      :weight (:weight scheme),
-                      :premises (map (fn [p] (apply-substitutions subs p))
-                                     (concat (:premises scheme) (:assumptions scheme))),
-                      :scheme (:id scheme)))
+                    (instantiate-argument 
+                      (make-argument 
+                        :id id,
+                        :conclusion (apply-substitutions subs (:conclusion scheme)),
+                        :strict (:strict scheme),
+                        :weight (:weight scheme),
+                        :premises (map (fn [p] (apply-substitutions subs p))
+                                       (concat (:premises scheme) (:assumptions scheme))),
+                        :scheme (:id scheme))
+                      subs))
                   (map (fn [e] 
                          (make-response 
                            subs
                            ()
-                           (make-argument 
-                             :conclusion `(~'undercut ~(uuid->symbol id))
-                             :strict false
-                             :weight (:weight scheme)
-                             :premises [(apply-substitutions subs e)]
-                             :scheme (:id scheme))))
+                           (instantiate-argument 
+                             (make-argument 
+                               :conclusion `(~'undercut ~(symbol id))
+                               :strict false
+                               :weight (:weight scheme)
+                               :premises [(apply-substitutions subs e)]
+                               :scheme (:id scheme))
+                             subs)))
                        (:exceptions scheme))))))
    
 (defn axiom 
@@ -327,7 +331,7 @@
                         (map (fn [e] (make-response subs2
                                                     ()
                                                     (make-argument 
-                                                      :conclusion `(~'undercut ~(uuid->symbol id))
+                                                      :conclusion `(~'undercut ~(symbol id))
                                                       :strict false
                                                       :weight (:weight scheme)
                                                       :premises [e]
