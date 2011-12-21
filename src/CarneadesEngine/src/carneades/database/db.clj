@@ -2,7 +2,10 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns ^{:doc  "A database schema and CRUD functions for storing arguments 
-             persistently in a relational database."}
+             persistently in a relational database.
+             
+             Naming convention: get-x operations return ids; read-x operations 
+             return a structure with properties of an object."}
        carneades.database.db
   (:use clojure.pprint
         carneades.engine.uuid
@@ -562,6 +565,20 @@
          (jdbc/with-query-results 
                        res2 ["SELECT id FROM argument WHERE conclusion=?" (:id stmt)]
                        (doall (map :id res2)))))))
+
+(defn get-dependents
+  "string -> sequence of string
+   returns a sequence of argument ids in which the conclusion of the argument
+   with the given id is a premise"
+  [arg-id]
+  (jdbc/with-query-results 
+    res1 ["SELECT conclusion FROM argument WHERE id=?" arg-id]
+    (if (empty? res1) 
+      nil 
+      (let [stmt (first res1)]
+        (jdbc/with-query-results 
+          res2 ["SELECT argument FROM premise WHERE statement=?" (:id stmt)]
+          (doall (map :id res2)))))))
   
 (defn read-argument
   "string -> argument or nil
@@ -582,13 +599,15 @@
                        (doall (map (fn [id] (read-premise id))
                                    (map :id res1))))
             rs (get-rebuttals id)
-            us (get-undercutters id)]
+            us (get-undercutters id)
+            ds (get-dependents id)]
         (map->argument (assoc m 
                               :conclusion conclusion
                               :header header
                               :premises premises
                               :rebuttals rs
-                              :undercutters us))))))
+                              :undercutters us
+                              :dependents ds))))))
           
 (defn list-arguments
   "Returns a sequence of all the argument records in the database"
