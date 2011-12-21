@@ -35,8 +35,9 @@
                                          :question "Is %s a penguin?")})}
       
       :schemes 
-      [(make-scheme                            
-         :id 'scheme1
+      [(make-scheme 
+         :id 'scheme1                           
+         :header (make-metadata :title "Birds Fly")
          :conclusion '(flies ?x)
          :premises [(make-premise :role "minor" :statement '(bird ?x))]
          :exceptions [(pm '(penguin ?x))])]))

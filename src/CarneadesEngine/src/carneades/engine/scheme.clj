@@ -142,7 +142,7 @@
    is the responsibility of the caller to provide substitutions for all
    variables in the argument."
   [scheme subs]
-  (let [id (make-uuid)]
+  (let [id (make-urn)]
     (filter (fn [arg] (empty? (argument-variables arg)))
             (cons (make-response 
                     subs
@@ -310,7 +310,7 @@
                             (unify `(~'applies ~(:id scheme) ~c) goal subs))]
               (if (not subs2)
                 false ; fail
-                (let [id (make-uuid)]
+                (let [id (make-urn)]
                   (cons (make-response subs2
                                        (map (fn [p] (if (:positive p)
                                                         (:statement p)
