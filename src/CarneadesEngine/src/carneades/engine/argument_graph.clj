@@ -140,7 +140,8 @@
   create-statement-node instead to create a statement
   node if one doesn't yet exist."
   [ag stmt]
-  {:pre [(argument-graph? ag) (literal? stmt)]}
+  {:pre [(argument-graph? ag)]} ;  (literal? stmt)]}
+  (print "statement: ") (prn stmt)
   (get (:statement-nodes ag) 
        (get (:language ag) (literal-atom stmt))))
   

@@ -86,6 +86,14 @@
          :premises (map (fn [p] (assoc p :statement (unpack-statement (:statement p))))
                         (:premises arg))))
 
+(defn- unpack-subs 
+  "Replace keywords by logical variables in the substitutions
+   received from Web clients."
+  [m]
+  (zipmap (map (fn [key] (symbol (name key)))
+               (keys m))
+          (vals m)))
+
 (defn- argument-metadata
   "Returns the metadata of an argument in a map
    or an empty map of if the argument has no metadata"
@@ -390,10 +398,9 @@
        ; apply the scheme with the given id to the substitutions in the body
        ; and add the resulting arguments, if they are ground, to the 
        ; database. Returns a list of the ids of the new arguments.
-       (let [subs (read-json (slurp (:body request))),
+       (let [subs (unpack-subs (read-json (slurp (:body request)))),
              scheme (get liverpool-schemes-by-id (symbol (:id (:params request))))]
          (prn subs)
-         (prn scheme)
           (let [responses (instantiate-scheme scheme subs)
                 dbconn (make-database-connection (:db (:params request)) "root" "pw1")]
              (with-db dbconn

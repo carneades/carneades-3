@@ -524,12 +524,14 @@
   [arg]
   {:pre [(argument? arg)]}
   (let [arg-id (str (:id arg)),
+        scheme-id (str (:scheme arg))
         conclusion-id (get-statement (:conclusion arg)),
         header-id (if (:header arg) (create-metadata (:header arg)))]
     (jdbc/insert-record 
       :argument
       (assoc (dissoc arg :premises)
              :id arg-id
+             :scheme scheme-id
              :conclusion conclusion-id
              :header header-id))
     (doseq [p (:premises arg)]
