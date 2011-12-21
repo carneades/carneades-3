@@ -17,7 +17,8 @@
          carneades.web.liverpool-schemes)
   (:require [compojure.route :as route]
             [compojure.handler :as handler]
-            [clojure.java.jdbc :as jdbc]))
+            [clojure.java.jdbc :as jdbc]
+            [carneades.maps.lacij :as lacij]))
 
 ;; To Do: 
 ;; - portable way to locate files, including databases, with minimal configuration
@@ -347,6 +348,26 @@
                           {:status 200            ; 200 is OK
                            :headers {"Content-Type" "application/xml"}
                            :body xml})))))
+
+      ;; SVG
+
+      (GET "/svg/:db" {params :params}
+           (prn "params" params)
+           (let [db (:db params)
+                 options (dissoc params :db)
+                 dbconn (make-database-connection db "guest" "")]
+             (with-db dbconn
+               (let [convert-option (fn [val]
+                                      (try
+                                        (Integer/parseInt val)
+                                        (catch Exception _
+                                          (keyword val))))
+                     ag (export-to-argument-graph dbconn)
+                     optionsseq (mapcat (fn [[k v]] [k (convert-option v)]) options)
+                     svg (apply lacij/export-str ag optionsseq)]
+                 {:status 200
+                  :headers {"Content-Type" "application/xml"}
+                  :body svg}))))
       
       ;; Schemes
       
