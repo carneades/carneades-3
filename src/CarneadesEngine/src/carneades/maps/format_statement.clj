@@ -76,10 +76,10 @@
       (first lines)
       lines)))
 
-(defn stmt-to-str [ag stmt stmt-str]
+(defn stmt-to-str [stmt stmt-str]
   (let [formatted (stmt-str (map->statement stmt))]
-    (cond (in-node? stmt) (str "✔ " formatted) 
-          (out-node? stmt) (str "✘ " formatted)
+    (cond (in-node? stmt) (str "? " formatted) 
+          (out-node? stmt) (str "? " formatted)
           (undecided-node? stmt) (str "? " formatted)
           :else (throw (Exception. "Invalid case")))))
 

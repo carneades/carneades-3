@@ -295,35 +295,9 @@ and noxious beast."}))
               (accept [chased-by-big-dogs])))
 
 
-;(defn -main []
-;  (spit "/tmp/piersonpost.dot" 
-;        (gen-graphvizcontent both statement-formatted))
-;  (export-ag both statement-formatted "/tmp/piersonpost.svg"
-;             :layout :radial
-;             :width 1280
-;             :height 1024))
-;
-
-;(defn -main []
-;  (let [db (db/make-database-connection "pierson-post" "root" "pw1")]
-;                                        ; (import-from-argument-graph db both true)))
-;    (clojure.pprint/pprint both)
-;    ; (export-ag both statement-formatted "/tmp/pierson.svg")
-;    (argument-graph->xml (export-to-argument-graph db ))))
-
 (defn -main []
-  (let [dbname "pierson-post"  ; (str "db-" (make-uuid))
-        db (db/make-database-connection dbname "root" "pw1")]
-    ;; (db/create-argument-database 
-    ;;   dbname 
-    ;;   "root" 
-    ;;   "pw1" 
-    ;;   (make-metadata :title "Pierson v Post"))
-    (export both "/tmp/pierson.svg")
-    ;; (import-from-argument-graph db both true)
-    ;; (argument-graph->xml both)))
-    
-    ;; (argument-graph->xml (export-to-argument-graph db ))
-    ))
-  
+  (let [db (db/make-database-connection "pierson-post" "root" "pw1")]
+    (import-from-argument-graph db both true)
+    (argument-graph->xml (export-to-argument-graph db))))
+
 

@@ -23,8 +23,8 @@
   (set (mapcat (fn [arg]
                  (mapcat (fn [premise]
                            (map (fn [argid] (get-argument-node ag argid))
-                                (concat (:pro (get-statement-node ag (:atom premise)))
-                                        (:con (get-statement-node ag (:atom premise))))))
+                                (concat (:pro (get-statement-node ag (literal-atom premise)))
+                                        (:con (get-statement-node ag (literal-atom premise))))))
                          (:premises arg)))
                border)))
 

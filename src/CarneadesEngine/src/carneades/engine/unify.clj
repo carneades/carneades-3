@@ -21,7 +21,7 @@
   [s t]
   (let [t2 (cond
              (variable? t) (get s t t),
-             (statement? t) (assoc t :atom (apply-substitutions s (:atom t))),
+             (statement? t) (assoc t :atom (apply-substitutions s (literal-atom t))),
              (nonemptyseq? t) (cons (first t) (map (fn [x] (apply-substitutions s x)) (rest t))),
              :else t)]
     (if (and (variable? t2) (contains? s t2))
@@ -114,8 +114,8 @@
         (nonemptyseq? trm) (let [[m2 trm2] (rename-variables m (first trm))
                                  [m3 trm3] (rename-variables m2 (next trm))]
                              [m3 (cons trm2 trm3)])
-        (statement? trm) (let [[m2 trm2] (rename-variables m (first (:atom trm)))
-                               [m3 trm3] (rename-variables m2 (next (:atom trm)))]
+        (statement? trm) (let [[m2 trm2] (rename-variables m (first (literal-atom trm)))
+                               [m3 trm3] (rename-variables m2 (next (literal-atom trm)))]
                            [m3 (assoc trm :atom
                                       (cons trm2 trm3))])
         :else [m trm]))

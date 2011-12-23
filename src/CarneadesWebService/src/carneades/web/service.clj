@@ -59,7 +59,7 @@
 (defn- pack-statement 
   [stmt]
   (cond (sliteral? stmt) (str stmt),
-        (statement? stmt) (merge stmt {:atom (str (:atom stmt))}),
+        (statement? stmt) (assoc stmt :atom (str (literal-atom stmt))),
         :else nil))
 
 (defn- unpack-statement [s]
@@ -291,7 +291,7 @@
       ;; Statement Polls
       
       (GET "/statement-poll/:db" [db]
-           (let [db2 (make-database-connection db "guest" "")] 
+           (let [db2 (make-database-connection db "root" "pw1")] 
              (with-db db2 (json-response (list-statement-poll)))))
       
       (GET "/statement-poll/:db/:id" [db id]
@@ -318,7 +318,7 @@
       ;; Argument Polls
       
       (GET "/argument-poll/:db" [db]
-           (let [db2 (make-database-connection db "guest" "")] 
+           (let [db2 (make-database-connection db "root" "pw1")] 
              (with-db db2 (json-response (list-argument-poll)))))
       
       (GET "/argument-poll/:db/:id" [db id]
@@ -382,9 +382,9 @@
                            :headers {"Content-Type" "application/xml"}
                            :body xml})))))
 
-      ;; SVG
+      ;; SVG Maps
 
-      (GET "/svg/:db" {params :params}
+      (GET "/map/:db" {params :params}
            (prn "params" params)
            (let [db (:db params)
                  options (dissoc params :db)
@@ -399,7 +399,7 @@
                      optionsseq (mapcat (fn [[k v]] [k (convert-option v)]) options)
                      svg (apply lacij/export-str ag optionsseq)]
                  {:status 200
-                  :headers {"Content-Type" "application/xml"}
+                  :headers {"Content-Type" "image/svg+xml"}
                   :body svg}))))
       
       ;; Schemes
@@ -423,6 +423,7 @@
          (prn subs)
           (let [responses (instantiate-scheme scheme subs)
                 dbconn (make-database-connection (:db (:params request)) "root" "pw1")]
+             (prn responses)
              (with-db dbconn
                  (json-response 
                    (reduce (fn [l r]
@@ -431,21 +432,7 @@
                            []
                            responses))))))
       
-      ;; Maps
-      
-      ; To do: use parameters to pass in display options
-      ; To do: add URLs to the nodes of the map, linking to textual statement and argument views
-      (GET "/map/:db" [db]
-           (let [dbconn (make-database-connection db "guest" "")]
-             (with-db dbconn
-                      (let [arg-graph (export-to-argument-graph dbconn)
-                            svg (lacij/export-str arg-graph)]
-                        (if (nil? svg)
-                          {:status 404,
-                           :body "Not found."}
-                          {:status 200            ; 200 is OK
-                           :headers {"Content-Type" "image/svg+xml"}
-                           :body svg})))))
+      ;; TO DO: command for retreiving the language of the theory
       
        
       ;; Other 

@@ -44,7 +44,7 @@
 ; can be restored by using abduction to find minimal
 ; changes to the argument graph which make bottom out.
 (deftest test-tandem-carneades
-   (is (in? (evaluate carneades-evaluator tandem-graph) (:atom bottom))))
+   (is (in? (evaluate carneades-evaluator tandem-graph) (literal-atom bottom))))
 
 
 ; The following examples are from:
@@ -83,8 +83,8 @@
 
 (deftest test-bachelor-carneades
    (let [ag (evaluate carneades-evaluator bachelor-graph)]
-      (is (and (undecided? ag (:atom bachelor))
-               (undecided? ag (:atom married))))))
+      (is (and (undecided? ag (literal-atom bachelor))
+               (undecided? ag (literal-atom married))))))
 
 ; TO DO: maybe bachelor and married should both be undecided, 
 ; since out(P) should imply in(?P) and ?bachelor and ?married
@@ -108,7 +108,7 @@
 
 (deftest test-frisian-carneades
    (is (in? (evaluate carneades-evaluator frisian-graph) 
-            (:atom tall))))
+            (literal-atom tall))))
 
 ;; The next example shows how arguments can be constructed by instantiating schemes.
 ;; The scheme is instantiated manually and then used to construct arguments.
@@ -190,7 +190,7 @@
 
 (deftest test-frisian-carneades
    (is (in? (evaluate carneades-evaluator library-graph) 
-            (:atom access-denied))))
+            (literal-atom access-denied))))
 
 ; Serial self defeat example, ibid., page 18
 
@@ -216,7 +216,7 @@
 
 (deftest test-self-defeat
    (is (out? (evaluate carneades-evaluator self-defeat-graph) 
-            (:atom Q))))
+            (literal-atom Q))))
 
 ; TO DO: remaining examples in Henry's article, starting with the example
 ; or parallel self-defeat on page 18.

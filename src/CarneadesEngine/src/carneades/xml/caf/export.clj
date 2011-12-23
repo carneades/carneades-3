@@ -48,7 +48,7 @@
 (defn- pack-atom
   [atom]
   (cond (sliteral? atom) (str atom),
-        (statement? atom) (str (:atom atom)),
+        (statement? atom) (str (literal-atom atom)),
         :else ""))
 
 (defn- standard->string
@@ -63,22 +63,23 @@
 (defn- statement-nodes->xml
   [stmt-nodes]
   (reduce (fn [v stmt] 
-            (conj v [:statement (-> stmt 
-                                    (dissoc :text :header :premise-of :pro :con
-                                            (when (nil? (:value stmt)) :value)
-                                            (when (nil? (:weight stmt)) :weight))
-                                    (assoc :id (str (:id stmt)))
-                                    (assoc :standard (standard->string (:standard stmt)))
-                                    (assoc :atom (pack-atom (:atom stmt))))
-                     (if (nil? (:header stmt)) "" (metadata->xml (:header stmt)))
-                     (reduce (fn [v description]
-                               (if (str/blank? (second description)) 
-                                 v
-                                 (conj v [:description 
-                                          {:lang (name (first description))} 
-                                          (second description)])))
-                             [:descriptions]
-                             (dissoc (:text stmt) :id))]))
+            (let [stmt1 (-> stmt 
+                            (dissoc :text :header :premise-of :pro :con
+                                    (when (nil? (:value stmt)) :value)
+                                    (when (nil? (:weight stmt)) :weight))
+                            (assoc :id (str (:id stmt)))
+                            (assoc :standard (standard->string (:standard stmt)))
+                            (assoc :atom (pack-atom (literal-atom stmt))))]
+              (conj v [:statement (dissoc stmt1 (when (empty? (:atom stmt1)) :atom))
+                       (if (nil? (:header stmt)) "" (metadata->xml (:header stmt)))
+                       (reduce (fn [v description]
+                                 (if (str/blank? (second description)) 
+                                   v
+                                   (conj v [:description 
+                                            {:lang (name (first description))} 
+                                            (second description)])))
+                               [:descriptions]
+                               (dissoc (:text stmt) :id))])))
           [:statements]
           stmt-nodes))
 
