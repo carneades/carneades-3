@@ -2,7 +2,7 @@
 ;;; Licensed under the EUPL V.1.1
 
 
-(ns ^{:doc "Statements are annotated literals, i.e. atomic formulas and
+(ns ^{:doc "Statements are annotated ground literals, i.e. ground atomic formulas and
             negations of atomic formulas of propositional and predicate logic."}
     carneades.engine.statement
   (:use carneades.engine.utils
@@ -13,7 +13,8 @@
 ; language = :en, :de, :fr, etc.
 
 (defrecord Statement  ; statements are annotated literals
-  [atom               ; atomic formula of propositional (symbol) or predicate logic (list)
+  [id                 ; URN symbol
+   atom               ; nil or atomic formula of propositional (symbol) or predicate logic (list)
    header             ; nil or dublin core metadata description of the model
    positive           ; boolean
    weight             ; nil or 0.0-1.0, default nil
@@ -25,6 +26,7 @@
   [m]
   {:pre [(map? m)]}
   (let [m2 (merge (Statement. 
+                    nil             ; id
                     nil             ; atom
                     nil             ; header
                     true            ; positive
@@ -34,9 +36,9 @@
                     {})             ; text
                   m)]
     (assoc m2 
-           :atom (if (:atom m) 
-                   (:atom m)
-                   (make-urn-symbol)))))
+           :id (if (urn-symbol? (:id m)) 
+                 (:id m) 
+                 (make-urn-symbol)))))
 
 (defn make-statement
    "key value ... -> statement"
@@ -179,7 +181,8 @@
   (cond (sliteral? literal) (if (literal-pos? literal) 
                               literal
                               (second literal)),
-        (statement? literal) (:atom literal)))
+        (statement? literal) (or (:atom literal) 
+                                 (:id literal))))
 
 (defn positive-statement [literal]
   "Returns the atom of the literal in the form
@@ -212,7 +215,7 @@
   [s1 s2]
   {:pre [(statement? s1) (statement? s2)]}
   (and (= (:positive s1) (:positive s2))  ; must have same polarity
-       (term= (:atom s1) (:atom s2))))
+       (term= (literal-atom s1) (literal-atom s2))))
   
 (defn term=
   [t1 t2]
@@ -233,7 +236,7 @@
         (and (seq? t) (empty? t)) true,
         (variable? t) false,
         (constant? t) true,
-        (statement? t) (ground? (:atom t)),
+        (statement? t) (ground? (literal-atom t)),
         (coll? t) (and (ground? (first t))
                        (ground? (rest t)))))
 
@@ -291,8 +294,8 @@
   {:pre [(literal? x)]}
   (if (sliteral? x) x
     (if (literal-pos? x)
-      (:atom x)
-      (list 'not (:atom x)))))
+      (literal-atom x)
+      (list 'not (literal-atom x)))))
 
 (defn- sliteral->str
   [s]
@@ -302,7 +305,7 @@
   [s lang]
   (if-let [translated (get-in s [:text lang])]
     translated
-    (sliteral->str (:atom s))))
+    (sliteral->str (literal-atom s))))
 
 (defn literal->str
   "Returns the string representation of a literal."
@@ -335,7 +338,7 @@
   [s]
   (try
     (if (sentence? s)
-      (make-statement :atom s)
+      (make-statement :text {:en s})
       (literal->statement (read-string s)))
     (catch Exception e nil)))
 

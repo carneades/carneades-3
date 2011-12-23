@@ -308,20 +308,24 @@
   [literal]   
   {:pre [(literal? literal)]}
   (cond (sliteral? literal) 
-        (let [id (make-urn)]
+        (let [id (if (urn-symbol? (literal-atom literal))
+                   (str (literal-atom literal))
+                   (make-urn))]
           (jdbc/insert-record
             :statement {:id id
                         :atom (str (literal-atom literal))})  
-          id)
+          id),
         (statement? literal)
-        (let [id (if (urn-symbol? (:atom literal)) 
-                   (str (:atom literal))
-                   (make-urn)),
+        (let [id (if (urn-symbol? (:id literal))
+                     (str (:id literal))
+                     (if (urn-symbol? (literal-atom literal))
+                         (str (literal-atom literal))
+                         (make-urn))),
               text-id (if (:text literal) (create-translation (:text literal))),
               header-id (if (:header literal) (create-metadata (:header literal)))]
           (jdbc/insert-record
             :statement {:id id
-                        :atom (str (:atom literal)),
+                        :atom (str (literal-atom literal)),
                         :header header-id,
                         :weight (:weight literal),
                         :main (:main literal),
@@ -352,8 +356,8 @@
                      res ["SELECT argument FROM premise WHERE statement=?" id]
                      (map :argument (doall res))) ]
     (if s 
-      (-> (make-statement :id id)
-          (merge s)
+      (-> (make-statement :id (symbol id))
+          (merge (dissoc s :id))
           (merge {:atom (binding [*read-eval* false] (read-string (:atom s)))})
           (merge {:standard (integer->standard (:standard s))})
           (merge {:header h, 
@@ -546,7 +550,7 @@
   (jdbc/with-query-results 
     res1 ["SELECT * FROM argument WHERE id=?" arg-id]  
     (if (empty? res1) 
-      nil 
+      [] 
       (let [m (first res1)]
         (jdbc/with-query-results 
           res2 ["SELECT id FROM argument WHERE conclusion=? AND pro=?" 
@@ -562,7 +566,7 @@
   (jdbc/with-query-results 
     res1 ["SELECT id FROM statement WHERE atom=?" (format "(undercut %s)" arg-id)]
     (if (empty? res1) 
-      nil 
+      [] 
       (let [stmt (first res1)]
          (jdbc/with-query-results 
                        res2 ["SELECT id FROM argument WHERE conclusion=?" (:id stmt)]
@@ -576,7 +580,7 @@
   (jdbc/with-query-results 
     res1 ["SELECT conclusion FROM argument WHERE id=?" arg-id]
     (if (empty? res1) 
-      nil 
+      [] 
       (let [stmt (first res1)]
         (jdbc/with-query-results 
           res2 ["SELECT argument FROM premise WHERE statement=?" (:id stmt)]
@@ -604,6 +608,7 @@
             us (get-undercutters id)
             ds (get-dependents id)]
         (map->argument (assoc m 
+                              :id (symbol id)
                               :conclusion conclusion
                               :header header
                               :premises premises

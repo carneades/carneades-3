@@ -215,7 +215,7 @@
   (reify ArgumentGenerator
     (generate [this goal subs]
               (reduce (fn [l sn]
-                        (let [subs2 (unify goal (:atom sn) subs)]
+                        (let [subs2 (unify goal (statement-node-atom sn) subs)]
                           (if (or (not subs2) (empty? subs2))
                             l
                             (conj l (make-response subs2 () nil)))))

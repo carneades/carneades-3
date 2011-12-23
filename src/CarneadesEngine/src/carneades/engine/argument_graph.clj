@@ -22,9 +22,10 @@
    strict           ; boolean
    weight           ; 0.0-1.0, default 0.5; input to argument evaluation
    value            ; nil or 0.0-1.0, default nil; output from argument evaluation
-   conclusion       ; literal
+   conclusion       ; URN symbol, id of a statement node
    pro              ; boolean, default true; con argument if false
-   premises])       ; sequence of premises
+   premises])       ; sequence of premises, where the :statement of each premise is the
+                    ; id (URN symbol) of a statement node.
 
 (defn- make-argument-node
   "key value ... -> argument-node"
@@ -70,35 +71,44 @@
 (defn- make-statement-node
   [stmt]
   {:pre [(literal? stmt)]}
-  (let [sn (merge (StatementNode.
-                    nil   ; id
-                    nil   ; atom
-                    nil   ; header
-                    nil   ; weight
-                    nil   ; value
-                    :pe   ; standard
-                    false ; main
-                    {}    ; text
-                    #{}   ; premise-of
-                    #{}   ; pro
-                    #{})  ; con
-                   (dissoc stmt :positive))]
-    (assoc sn
-           :id (if (urn-symbol? (literal-atom stmt))
-                    (literal-atom stmt)
-                    (make-urn-symbol))
-           :atom (literal-atom stmt))))
+  (let [sn (StatementNode.
+             nil   ; id
+             nil   ; atom
+             nil   ; header
+             nil   ; weight
+             nil   ; value
+             :pe   ; standard
+             false ; main
+             {}    ; text
+             #{}   ; premise-of
+             #{}   ; pro
+             #{})]  ; con            
+    (cond (statement? stmt) 
+          (-> sn 
+              (merge stmt)
+              (dissoc :positive)
+              (assoc :id  (or (:id stmt) 
+                              (if (urn-symbol? (literal-atom stmt))
+                                (literal-atom stmt)
+                                (make-urn-symbol))))),
+          (sliteral? stmt)
+          (assoc sn :id (if (urn-symbol? (literal-atom stmt))
+                       (literal-atom stmt)
+                       (make-urn-symbol))))))
+
            
-  
 (defn statement-node? [x] (instance? StatementNode x))
 
-   
+(defn statement-node-atom 
+  [sn]
+  (or (:atom sn) (:id sn)))
+
 (defrecord ArgumentGraph 
   [header           ; nil or Dublin meta-data description of the model
    language         ; (sexp -> symbol) map, i.e. a "key list"; 
                     ; where the sexp represents a ground atomic formula
-   statement-nodes  ; (symbol -> StatementNode) map, 
-   argument-nodes   ; (symbol -> ArgumentNode) map
+   statement-nodes  ; (symbol -> StatementNode) map, where the symbol is the node's id (URN symbol)
+   argument-nodes   ; (symbol -> ArgumentNode) map, where the symbol is the node's id (URN symbol)
    references       ; (string -> Metadata) map, where the string is a citation key  
    namespaces])     ; (symbol -> string) map, from symbol to URI
 
@@ -135,13 +145,12 @@
 
 (defn get-statement-node  
   "argument-graph statement -> statement-node or nil
-  Returns the statement node for a statement, or nil
-  if no statement node for the statement exists. Use
-  create-statement-node instead to create a statement
-  node if one doesn't yet exist."
+   Returns the statement node for a statement, or nil
+   if no statement node for the statement exists. Use
+   create-statement-node instead to create a statement
+   node if one doesn't yet exist."
   [ag stmt]
-  {:pre [(argument-graph? ag)]} ;  (literal? stmt)]}
-  (print "statement: ") (prn stmt)
+  {:pre [(argument-graph? ag)]} ; (literal? stmt)]}
   (get (:statement-nodes ag) 
        (get (:language ag) (literal-atom stmt))))
   

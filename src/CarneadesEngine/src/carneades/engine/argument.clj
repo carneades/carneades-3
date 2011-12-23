@@ -15,7 +15,7 @@
         carneades.engine.unify))
 
 (defrecord Premise
-  [statement   ; atomic statement
+  [statement   ; positive literal
    positive    ; boolean
    role        ; string; the role of the premise in the scheme used to create this argument
    implicit])  ; boolean; true if the premise was not explicit in the source document.
@@ -41,25 +41,6 @@
   
 (defn make-premise [& key-values]
   (map->premise (apply hash-map key-values)))
-
-;(defn make-premise 
-;  "key value ... -> premise"
-;  [& key-values]  
-;  (let [m (merge (Premise. 
-;                   nil           ; atomic statement
-;                   true          ; positive
-;                   ""            ; role
-;                   false)        ; implicit
-;                 (apply hash-map key-values))]
-;    ; normalize the statement of the premise:
-;    (assoc m :statement (if (literal-pos? (:statement m)) 
-;                          (:statement m)  
-;                          (literal-complement (:statement m)))
-;           :positive  (or (and (literal-pos? (:statement m))
-;                               (:positive m))
-;                          (and (literal-neg? (:statement m))
-;                               (not (:positive m)))))))
-;
 
 (defn pm
   "literal -> premise"

@@ -24,8 +24,8 @@
          (literal-complement '(not (mother Tom Garcia))))))
 
 (deftest test-statement-atom
-  (is (= '(x ?r1 ?r2) (:atom (make-statement :atom '(x ?r1 ?r2)))))
-  (is (= '(not (x ?r1 ?r2)) (:atom (make-statement :atom '(not (x ?r1 ?r2)))))))
+  (is (= '(x ?r1 ?r2) (literal-atom (make-statement :atom '(x ?r1 ?r2)))))
+  (is (= '(not (x ?r1 ?r2)) (literal-atom (make-statement :atom '(not (x ?r1 ?r2)))))))
 
 (deftest test-literal->str
   (is (= "(undercut urn:uuid:9149f01d-a538-4729-abfc-a5be3e724f85)"
