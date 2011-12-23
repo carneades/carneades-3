@@ -12,10 +12,8 @@
 (defn import-from-argument-graph
   "database-connection argument-graph boolean -> boolean
    Imports all the statement nodes, argument nodes, references and namespaces of the 
-   argument graph into the database. The statement nodes and argument
-   nodes of the argument graph may be assigned new ids in the database.
-   Optionally, the metadata record describing the database is updated with the
-   information in the header of the argument graph.
+   argument graph into the database. Optionally, the metadata record describing 
+   the database is updated with the information in the header of the argument graph.
    Returns true if the import is successful."
   [db arg-graph update-header]
   (jdbc/with-connection 

@@ -36,7 +36,7 @@
   ([engine evaluator query] 
    {:pre [(literal? query)]}
     (mapcat (fn [sn] 
-              (let [subs (unify (:atom sn) (literal-atom query))]
+              (let [subs (unify (statement-node-atom sn) (literal-atom query))]
                 (if (not subs) 
                     ()
                     (if (or (and (literal-pos? query) (in-node? sn)) 

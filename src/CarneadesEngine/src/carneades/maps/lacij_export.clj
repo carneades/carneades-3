@@ -1,4 +1,4 @@
-;;; Copyright © 2010-2011 Fraunhofer Gesellschaft
+;;; Copyright ? 2010-2011 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.maps.lacij-export
@@ -62,7 +62,7 @@
 (defn add-statement
   [svgmap stmt ag stmt-str params]
   ;; TODO take the lang as a parameter
-  (let [stmtstr (stmt-to-str ag stmt stmt-str)
+  (let [stmtstr (stmt-to-str stmt stmt-str)
         id (gen-stmt-id stmt)
         stmt-params (merge (pick-stmt-params ag stmt params)
                            {:label "" :x 0 :y 0 :shape :rect})
@@ -100,7 +100,8 @@
   [svgmap ag premise arg]
   (let [edgeid (geneid)
         argid (gen-arg-id arg)
-        stmtid (gen-stmt-id (get-statement-node ag (:atom premise)))]
+        ; stmtid (gen-stmt-id (get-statement-node ag (literal-atom premise)))
+        stmtid (gen-stmt-id (get (:statement-nodes ag) (:statement premise)))]
     (apply add-edge svgmap edgeid stmtid argid premise-params)
     ;; (if (arg/premise-neg? premise)
     ;;  (apply add-edge svgmap edgeid stmtid argid neg-premise-params)
@@ -115,8 +116,9 @@
 
 (defn add-argument
   [svgmap arg ag params]
-  (let [conclusion ((:statement-nodes ag) (:conclusion arg))
-        premises (map #(get-statement-node ag (:statement %)) (:premises arg))
+  (let [conclusion (get (:statement-nodes ag) (literal-atom (:conclusion arg)))
+        ; premises (map #(get (:statement-nodes ag) (:statement %)) (:premises arg))
+        premises (:premises arg)
         svgmap (add-argument-node svgmap arg ag params)
         svgmap (add-conclusion-edge svgmap conclusion arg)
         svgmap (add-premises-edges svgmap ag premises arg)]
@@ -143,7 +145,7 @@
 
 (defn export-ag-helper
   [ag stmt-str options]
-  (let [ag (evaluate carneades-evaluator ag)
+  (let [; ag (evaluate carneades-evaluator ag)
         width (get options :width 1280)
         height (get options :height 1024)
         layouttype (get options :layout :hierarchical)
