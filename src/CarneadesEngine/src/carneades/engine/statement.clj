@@ -18,6 +18,7 @@
    header             ; nil or dublin core metadata description of the model
    positive           ; boolean
    weight             ; nil or 0.0-1.0, default nil
+   value              ; nil or 0.0-1.0, default nil
    main               ; true if the statement is a main issue
    standard           ; proof-standard
    text])             ; (language -> string) map, natural language formulations of the statement
@@ -31,6 +32,7 @@
                     nil             ; header
                     true            ; positive
                     nil             ; weight
+                    nil             ; value
                     false           ; main issue
                     :pe             ; proof standard
                     {})             ; text
