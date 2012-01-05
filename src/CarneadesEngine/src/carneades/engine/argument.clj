@@ -33,11 +33,11 @@
                   m)]
     ; normalize the premise
     (assoc m2
-           :statement (positive-statement (:statement m))
-           :positive (or (and (literal-pos? (:statement m))
-                               (:positive m))
-                          (and (literal-neg? (:statement m))
-                                (not (:positive m)))))))
+           :statement (positive-statement (:statement m2))
+           :positive (or (and (literal-pos? (:statement m2))
+                               (:positive m2))
+                          (and (literal-neg? (:statement m2))
+                                (not (:positive m2)))))))
   
 (defn make-premise [& key-values]
   (map->premise (apply hash-map key-values)))
@@ -60,6 +60,7 @@
    scheme           ; nil, symbol or string, the URI of the scheme
    strict           ; boolean
    weight           ; real number between 0.0 and 1.0, default 0.5
+   value            ; nil or real number between 0.0 and 1.0, default nil
    conclusion       ; literal
    pro              ; boolean; con argument if false
    premises])       ; sequence of premises 
@@ -83,6 +84,7 @@
                      nil          ; scheme
                      false        ; strict
                      0.5          ; weight
+                     nil          ; value
                      nil          ; conclusion
                      true         ; pro
                      [])          ; premises 
