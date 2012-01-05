@@ -24,6 +24,7 @@ function display_statement(db, stmtid)
                  set_statement_title_text(info);
                  set_description_text(info);
                  set_procon_texts(info);                            
+                 set_premise_of_texts(info);
                  fill_statement_template(info);
              });
 }
@@ -46,6 +47,17 @@ function set_arg_texts(info, direction)
                info[direction][index].argument_text = text;
                info[direction][index].id = info.pro[index]; // used by the template to create the ahref
            });
+}
+
+function set_premise_of_texts(info)
+{
+    $.each(info.premise_of_metadata,
+           function(index, metadata) {
+               var text = argument_text(metadata);
+               metadata.argument_text = text;
+               metadata.id = info['premise-of'][index]; // used by the template to create the href
+           }
+          );
 }
 
 function set_procon_texts(info)
