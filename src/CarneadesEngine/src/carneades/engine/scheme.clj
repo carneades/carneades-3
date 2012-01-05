@@ -226,7 +226,8 @@
   [header     ; nil or a dublin core metadata structure about the model.
    language   ; (symbol -> individual or predicate) map
    schemes    ; scheme sequence
-   sections]) ; section sequence
+   sections   ; section sequence
+   references]) ; (string to metadata) map
  
 (defn make-theory
   "key value ... -> theory"
@@ -235,7 +236,8 @@
            nil             ; header
            {}              ; language
            []              ; schemes
-           [])             ; sections
+           []              ; sections
+           {})             ; references
          (apply hash-map key-values)))
 
 (defn theory? [x] (instance? Theory x))
