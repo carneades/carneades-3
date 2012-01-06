@@ -593,6 +593,7 @@
    database. The resulting argument has additional properties
    listing the ids of the rebuttals and undercutters of the argument."
   [id]
+  {:pre [(string? id)]}
   (jdbc/with-query-results 
     res1 ["SELECT * FROM argument WHERE id=?" id]
     (if (empty? (doall res1))
