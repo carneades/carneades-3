@@ -98,7 +98,8 @@
   "Returns the metadata of an argument in a map
    or an empty map of if the argument has no metadata"
   [id]
-  (or (:header (pack-argument (read-argument id)))
+  {:pre [(symbol? id)]}
+  (or (:header (pack-argument (read-argument (str id))))
       {}))
 
 ;; We don't use the defroutes macro.
