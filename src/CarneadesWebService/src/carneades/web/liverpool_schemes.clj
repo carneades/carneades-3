@@ -167,8 +167,8 @@
                                    :statement '(prevents ?Ag ?G))])
        
        (make-scheme
-         :id 'argument-from-unacceptable-side-effects
-         :header (make-metadata :title "Argument from Unacceptable Side Effects")
+         :id 'negative-practical-argument
+         :header (make-metadata :title "Negative Practical Argument")
          :conclusion '(unacceptable ?A ?E)
          :premises [(make-premise :role "consequences" 
                                   :statement '(consequence ?G ?A)),
