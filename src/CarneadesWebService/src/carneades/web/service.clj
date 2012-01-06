@@ -399,7 +399,7 @@
                      optionsseq (mapcat (fn [[k v]] [k (convert-option v)]) options)
                      svg (apply lacij/export-str ag optionsseq)]
                  {:status 200
-                  :headers {"Content-Type" "image/svg+xml"}
+                  :headers {"Content-Type" "image/svg+xml;charset=UTF-8"}
                   :body svg}))))
       
       ;; Schemes
