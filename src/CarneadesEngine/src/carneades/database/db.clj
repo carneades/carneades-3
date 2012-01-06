@@ -362,9 +362,9 @@
           (merge {:standard (integer->standard (:standard s))})
           (merge {:header h, 
                   :text t,
-                  :pro pro,
-                  :con con
-                  :premise-of premise-of})))))
+                  :pro (map symbol pro),
+                  :con (map symbol con)
+                  :premise-of (map symbol premise-of)})))))
 
 (defn list-statements
   "Returns a sequence of all the statement records in the database"
