@@ -20,6 +20,7 @@ function display_statement(db, stmtid)
 {
     ajax_get('/statement-info/' + db + '/' + stmtid,
              function(info) {
+                 info.normalize();
                  info.db = db;
                  set_statement_title_text(info);
                  set_description_text(info);
@@ -55,7 +56,7 @@ function set_premise_of_texts(info)
            function(index, metadata) {
                var text = argument_text(metadata);
                metadata.argument_text = text;
-               metadata.id = info['premise-of'][index]; // used by the template to create the href
+               metadata.id = info.premise_of[index]; // used by the template to create the href
            }
           );
 }

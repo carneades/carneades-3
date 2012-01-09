@@ -13,6 +13,7 @@ function display_argument(db, argid)
 {
     ajax_get('argument-info/' + db + '/' + argid,
             function(argument_data) {
+                argument_data.normalize();
                 argument_data.direction = argument_data.pro ? "pro" : "con";
                 argument_data.db = db;
                 set_description_text(argument_data);
