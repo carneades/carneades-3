@@ -94,13 +94,21 @@
                (keys m))
           (vals m)))
 
+(defn- argument-data
+  "Returns the argument content"
+  [id]
+  {:pre [(symbol? id)]}
+  (pack-argument (read-argument (str id))))
+
 (defn- argument-metadata
   "Returns the metadata of an argument in a map
    or an empty map of if the argument has no metadata"
   [id]
   {:pre [(symbol? id)]}
-  (or (:header (pack-argument (read-argument (str id))))
+  (or (:header (argument-data id))
       {}))
+
+
 
 ;; We don't use the defroutes macro.
 ;; This allow handlers to be reused in another project
@@ -349,25 +357,25 @@
            (let [dbconn (make-database-connection db "guest" "")]
              (with-db dbconn
                (let [stmt (pack-statement (read-statement id))
-                     pro-metadata (map argument-metadata (:pro stmt))
-                     con-metadata (map argument-metadata (:con stmt))
-                     premise-of-metadata (map argument-metadata (:premise-of stmt))]
+                     pro-data (map argument-data (:pro stmt))
+                     con-data (map argument-data (:con stmt))
+                     premise-of-data (map argument-data (:premise-of stmt))]
                  (json-response (assoc stmt 
-                                       :pro-metadata pro-metadata 
-                                       :con-metadata con-metadata
-                                       :premise-of-metadata premise-of-metadata))))))
+                                       :pro-data pro-data 
+                                       :con-data con-data
+                                       :premise-of-data premise-of-data))))))
 
       (GET "/argument-info/:db/:id" [db id]
            (let [dbconn (make-database-connection db "guest" "")]
              (with-db dbconn
                (let [arg (pack-argument (read-argument id))
-                     undercutters-metadata (map argument-metadata (:undercutters arg))
-                     rebuttals-metadata (map argument-metadata (:rebuttals arg))
-                     dependents-metadata (map argument-metadata (:dependents arg))]
+                     undercutters-data (map argument-data (:undercutters arg))
+                     rebuttals-data (map argument-data (:rebuttals arg))
+                     dependents-data (map argument-data (:dependents arg))]
                  (json-response (assoc arg
-                                  :undercutters-metadata undercutters-metadata
-                                  :rebuttals-metadata rebuttals-metadata
-                                  :dependents-metadata dependents-metadata))))))
+                                  :undercutters-data undercutters-data
+                                  :rebuttals-data rebuttals-data
+                                  :dependents-data dependents-data))))))
       
       ;; XML
       
