@@ -20,8 +20,10 @@ function format_metadata(metadata)
      // makes a link if the identifier is an url
     title = is_identifier_url ? '<a href="{0}">{1}</a>'.format(identifier, title) : title;
 
-    return get_string(creator, false, true) +
+    var formatted = get_string(creator, false, true) +
         get_string(date, false, true) +
         get_string(title, is_identifier_url, !is_identifier_url) +
         (is_identifier_url ? "" : get_string(identifier, true, true));
+    
+    return markdown_to_html(formatted);
 }

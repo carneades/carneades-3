@@ -71,7 +71,7 @@ function statement_text(statement)
 {
     if(statement.text) {
         // TODO: if atom is UUID, then returns the string "statement" ?
-        return statement.text[CARNEADES.lang] || statement.atom;
+        return markdown_to_html(statement.text[CARNEADES.lang]) || statement.atom;
     }
     return statement.atom;
 }
