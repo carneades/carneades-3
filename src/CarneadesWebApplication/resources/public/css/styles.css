@@ -11,3 +11,10 @@ h1 {
    color: black;
 }
 
+.argument {
+   color : black;
+}
+
+.argument ul {
+   padding-left : 10%;
+}
