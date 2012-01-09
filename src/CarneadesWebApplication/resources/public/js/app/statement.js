@@ -43,8 +43,8 @@ function set_statement_title_text(info)
 function set_arg_texts(info, direction)
 {
     $.each(info[direction], 
-           function(index, metadata) {
-               var text = argument_text(metadata);
+           function(index, data) {
+               var text = argument_text(data);
                info[direction][index].argument_text = text;
                info[direction][index].id = info.pro[index]; // used by the template to create the ahref
            });
@@ -52,20 +52,19 @@ function set_arg_texts(info, direction)
 
 function set_premise_of_texts(info)
 {
-    $.each(info.premise_of_metadata,
-           function(index, metadata) {
-               var text = argument_text(metadata);
-               metadata.argument_text = text;
-               metadata.id = info.premise_of[index]; // used by the template to create the href
+    $.each(info.premise_of_data,
+           function(index, data) {
+               var text = argument_text(data);
+               data.argument_text = text;
+               data.id = info.premise_of[index]; // used by the template to create the href
            }
           );
 }
 
 function set_procon_texts(info)
 {
-    set_arg_texts(info, 'pro_metadata');
-    set_arg_texts(info, 'con_metadata');
-
+    set_arg_texts(info, 'pro_data');
+    set_arg_texts(info, 'con_data');
 }
 
 function statement_text(statement)
