@@ -91,7 +91,7 @@ function argument_text(data)
 function argument_context(data)
 {
     var statement = statement_text(data.conclusion);
-    var context = '<div class="argument">{0}<br/><ul>'.format(statement);
+    var context = '<div class="argument">{0}<ul>'.format(statement);
 
     $.each(data.premises,
           function(index, premise) {

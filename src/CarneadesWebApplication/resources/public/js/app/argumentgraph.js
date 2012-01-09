@@ -19,9 +19,10 @@ function display_argumentgraph(db)
                              set_mainissues_text(mainissues);
                              var references = metadata.filter(function (ref) { return ref.key; });
                              set_references_text(references);
+                             var title = markdown_to_html(metadata[0].title);
                              var argumentgraph_html = ich.argumentgraph({db : db,
                                                                          metadata_text : metadata_string,
-                                                                         title : metadata[0].title,
+                                                                         title : title,
                                                                          mainissues : mainissues,
                                                                          references : references});
                              $('body').html(argumentgraph_html.filter('#argumentgraph'));                    
