@@ -609,13 +609,13 @@
             us (get-undercutters id)
             ds (get-dependents id)]
         (map->argument (assoc m 
-                              :id (symbol id)
-                              :conclusion conclusion
-                              :header header
-                              :premises premises
-                              :rebuttals rs
-                              :undercutters us
-                              :dependents ds))))))
+                         :id (symbol id)
+                         :conclusion conclusion
+                         :header header
+                         :premises premises
+                         :rebuttals (map symbol rs)
+                         :undercutters (map symbol us)
+                         :dependents (map symbol ds)))))))
           
 (defn list-arguments
   "Returns a sequence of all the argument records in the database"
