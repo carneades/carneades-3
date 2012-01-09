@@ -353,9 +353,9 @@
                      con-metadata (map argument-metadata (:con stmt))
                      premise-of-metadata (map argument-metadata (:premise-of stmt))]
                  (json-response (assoc stmt 
-                                       :pro_metadata pro-metadata 
-                                       :con_metadata con-metadata
-                                       :premise_of_metadata premise-of-metadata))))))
+                                       :pro-metadata pro-metadata 
+                                       :con-metadata con-metadata
+                                       :premise-of-metadata premise-of-metadata))))))
 
       (GET "/argument-info/:db/:id" [db id]
            (let [dbconn (make-database-connection db "guest" "")]
@@ -365,9 +365,9 @@
                      rebuttals-metadata (map argument-metadata (:rebuttals arg))
                      dependents-metadata (map argument-metadata (:dependents arg))]
                  (json-response (assoc arg
-                                  :undercutters_metadata undercutters-metadata
-                                  :rebuttals_metadata rebuttals-metadata
-                                  :dependents_metadata dependents-metadata))))))
+                                  :undercutters-metadata undercutters-metadata
+                                  :rebuttals-metadata rebuttals-metadata
+                                  :dependents-metadata dependents-metadata))))))
       
       ;; XML
       
