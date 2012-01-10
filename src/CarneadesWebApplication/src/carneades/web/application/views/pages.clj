@@ -7,5 +7,6 @@
   (apply str t))
 
 (defn index-page []
-  (render (index)))
+  {:body (render (index))
+   :headers {"Content-Type" "text/html; charset=utf-8"}})
 
