@@ -87,7 +87,7 @@ function argument_text(data, index)
         if(index == undefined) {
             text = 'Argument';
         } else {
-            text = 'Argument ' + index;            
+            text = 'Argument #' + index;            
         }
     }
     return text;
