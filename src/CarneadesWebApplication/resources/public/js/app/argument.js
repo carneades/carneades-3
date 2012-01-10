@@ -33,7 +33,7 @@ function set_premises_text(argument_data)
 {
     $.each(argument_data.premises, 
            function(index, premise) {
-               premise.statement.statement_text = statement_text(premise.statement);
+               premise.statement.statement_text = statement_text(premise.statement, index + 1);
            });
 }
 
@@ -51,8 +51,9 @@ function set_undercutters_text(info)
 {
     $.each(info.undercutters_data, 
            function(index, data) {
-               data.argument_text = argument_text(data);
+               data.argument_text = argument_text(data, index + 1);
                data.id = info.undercutters[index];
+               set_premises_text(data);
            });  
 }
 
@@ -60,8 +61,9 @@ function set_rebuttals_text(info)
 {
     $.each(info.rebuttals_data,
           function(index, data) {
-              data.argument_text = argument_text(data);
+              data.argument_text = argument_text(data, index + info.undercutters_data.length);
               data.id = info.rebuttals[index];
+              set_premises_text(data);
           });
 }
 
@@ -69,35 +71,24 @@ function set_dependents_text(info)
 {
     $.each(info.dependents_data,
           function(index, data) {
-              data.argument_text = argument_text(data);
+              data.argument_text = argument_text(data, index + 1);
               data.id = info.dependents[index];
           });
 }
 
-function argument_text(data)
+// returns a text representing the argument, ie., its title
+// or a default text if none
+function argument_text(data, index)
 {
     var text;
-    if(data.header == null) {
-        text = argument_context(data);
+    if(data.header && data.header.title) {
+        text = data.header.title;
     } else {
-        text = format_metadata(data.header);
+        if(index == undefined) {
+            text = 'Argument';
+        } else {
+            text = 'Argument ' + index;            
+        }
     }
-
     return text;
-}
-
-// returns a text representing the context of the argument, ie.
-// its conclusion and its premises
-function argument_context(data)
-{
-    var statement = statement_text(data.conclusion);
-    var context = '<div class="argument">{0}<ul>'.format(statement);
-
-    $.each(data.premises,
-          function(index, premise) {
-              var premise_text = statement_text(premise.statement);
-              context += '<li>{0}</li>'.format(premise_text);
-          });
-    context += '</ul></div>';
-    return context;
 }
