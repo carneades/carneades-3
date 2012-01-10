@@ -69,9 +69,9 @@ function set_procon_texts(info)
 
 function statement_text(statement)
 {
-    if(statement.text) {
-        // TODO: if atom is UUID, then returns the string "statement" ?
-        return markdown_to_html(statement.text[CARNEADES.lang]) || statement.atom;
+    if(statement.text && statement.text[CARNEADES.lang]) {
+        return markdown_to_html(statement.text[CARNEADES.lang]);
     }
+    // TODO: if atom is UUID, then returns the string "statement" ?
     return statement.atom;
 }
