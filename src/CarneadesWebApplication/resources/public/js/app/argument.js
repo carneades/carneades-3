@@ -18,7 +18,7 @@ function display_argument(db, argid)
                 argument_data.db = db;
                 set_description_text(argument_data);
                 set_argument_title_text(argument_data);
-                argument_data.conclusion.pro_text = argument_data.conclusion.pro ? "pro" : "con";
+                argument_data.conclusion.statement_prefix = argument_data.conclusion.pro ? "pro" : "con";
                 argument_data.conclusion.statement_text = statement_text(argument_data.conclusion);
                 set_premises_text(argument_data);
                 set_undercutters_text(argument_data);
