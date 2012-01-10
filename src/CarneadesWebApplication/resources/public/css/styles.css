@@ -11,6 +11,15 @@ h1 {
    color: black;
 }
 
+#conclusionprefix {
+   float: left;
+   margin-right: 1%;
+}
+
+#conclusioncontent {
+
+}
+
 .argument {
    color : black;
 }
@@ -18,3 +27,4 @@ h1 {
 .argument ul {
    padding-left : 10%;
 }
+
