@@ -71,7 +71,7 @@ function set_dependents_text(info)
 {
     $.each(info.dependents_data,
           function(index, data) {
-              data.argument_text = argument_text(data, index + 1);
+              data.statement_text = statement_text(data, index + 1);
               data.id = info.dependents[index];
           });
 }
