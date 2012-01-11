@@ -352,6 +352,14 @@
                   (json-response (delete-argument-poll (java.lang.Integer/parseInt id))))))
 
       ;; Aggregated information
+      
+      (GET "/argumentgraph-info/:db" [db]
+           (let [dbconn (make-database-connection db "guest" "")]
+             (with-db dbconn
+               (let [metadata (list-metadata)
+                     main-issues (map pack-statement (main-issues))]
+                 (json-response {:metadata metadata
+                                 :main-issues main-issues})))))
 
       (GET "/statement-info/:db/:id" [db id]
            (let [dbconn (make-database-connection db "guest" "")]
@@ -376,6 +384,7 @@
                                   :undercutters-data undercutters-data
                                   :rebuttals-data rebuttals-data
                                   :dependents-data dependents-data))))))
+      
       
       ;; XML
       
