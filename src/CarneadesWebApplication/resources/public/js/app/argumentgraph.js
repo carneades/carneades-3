@@ -13,18 +13,12 @@ function display_argumentgraph(db)
     ajax_get('/argumentgraph-info/' + db,
              function(data) {
                  data.normalize();
-                 var metadata = data.metadata;
-                 var mainissues = data.main_issues;
-                 var metadata_string = format_metadata(metadata[0]);
-                 set_mainissues_text(mainissues);
-                 var references = metadata.filter(function (ref) { return ref.key; });
-                 set_references_text(references);
-                 var title = markdown_to_html(metadata[0].title);
-                 var argumentgraph_html = ich.argumentgraph({db : db,
-                                                             metadata_text : metadata_string,
-                                                             title : title,
-                                                             mainissues : mainissues,
-                                                             references : references});
+                 data.metadata_text = format_metadata(data.metadata[0]);
+                 set_mainissues_text(data.main_issues);
+                 data.references = data.metadata.filter(function (ref) { return ref.key; });
+                 set_references_text(data.references);
+                 data.title = markdown_to_html(data.metadata[0].title);
+                 var argumentgraph_html = ich.argumentgraph(data);
                  $('body').html(argumentgraph_html.filter('#argumentgraph'));                    
              });
 }
