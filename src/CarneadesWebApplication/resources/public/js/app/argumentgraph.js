@@ -10,24 +10,23 @@ function argumentgraph_url(db)
 
 function display_argumentgraph(db)
 {
-    // TODO: make a special call in the service for that
-    ajax_get('/metadata/' + db,
-            function(metadata) {
-                ajax_get('/main-issues/' + db,
-                         function(mainissues) {
-                             var metadata_string = format_metadata(metadata[0]);
-                             set_mainissues_text(mainissues);
-                             var references = metadata.filter(function (ref) { return ref.key; });
-                             set_references_text(references);
-                             var title = markdown_to_html(metadata[0].title);
-                             var argumentgraph_html = ich.argumentgraph({db : db,
-                                                                         metadata_text : metadata_string,
-                                                                         title : title,
-                                                                         mainissues : mainissues,
-                                                                         references : references});
-                             $('body').html(argumentgraph_html.filter('#argumentgraph'));                    
-                         });
-            });
+    ajax_get('/argumentgraph-info/' + db,
+             function(data) {
+                 data.normalize();
+                 var metadata = data.metadata;
+                 var mainissues = data.main_issues;
+                 var metadata_string = format_metadata(metadata[0]);
+                 set_mainissues_text(mainissues);
+                 var references = metadata.filter(function (ref) { return ref.key; });
+                 set_references_text(references);
+                 var title = markdown_to_html(metadata[0].title);
+                 var argumentgraph_html = ich.argumentgraph({db : db,
+                                                             metadata_text : metadata_string,
+                                                             title : title,
+                                                             mainissues : mainissues,
+                                                             references : references});
+                 $('body').html(argumentgraph_html.filter('#argumentgraph'));                    
+             });
 }
 
 function set_mainissues_text(mainissues)
