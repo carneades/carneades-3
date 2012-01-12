@@ -94,7 +94,7 @@
                (keys m))
           (vals m)))
 
-(defn- argument-data
+(defn argument-data
   "Returns the argument content"
   [id]
   {:pre [(symbol? id)]}
@@ -108,7 +108,22 @@
   (or (:header (argument-data id))
       {}))
 
+(defn cut-ag-helper
+  [n depth]
+  (cond (= depth 1)
+        [(:id n) []]
 
+        (statement? n)
+        (let [procon (concat (map argument-data (:pro n)) (map argument-data (:con n)))]
+          [(:id n) (vec (map #(cut-ag-helper % (dec depth)) procon))])
+
+        (argument? n)
+        (let [premises (map :statement (:premises n))]
+          [(:id n) (vec (map #(cut-ag-helper % (dec depth)) premises))])))
+
+(defn cut-ag
+  [depth]
+  [:root (vec (map #(cut-ag-helper % depth) (main-issues)))])
 
 ;; We don't use the defroutes macro.
 ;; This allow handlers to be reused in another project
@@ -357,9 +372,14 @@
            (let [dbconn (make-database-connection db "guest" "")]
              (with-db dbconn
                (let [metadata (list-metadata)
-                     main-issues (map pack-statement (main-issues))]
+                     main-issues (map pack-statement (main-issues))
+                     outline (cut-ag 5)]
+                 (prn "outline")
+                 (pprint outline)
+                 (prn)
                  (json-response {:metadata metadata
-                                 :main-issues main-issues})))))
+                                 :main-issues main-issues
+                                 :outline outline})))))
 
       (GET "/statement-info/:db/:id" [db id]
            (let [dbconn (make-database-connection db "guest" "")]

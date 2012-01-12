@@ -92,3 +92,8 @@ function argument_text(data, index)
     }
     return text;
 }
+
+function argument_link(db, id, text)
+{
+    return '<a href="/argument/{0}/{1}" rel="address:/argument/{0}/{1}" class="argument" id="argument{1}">{2}</a>'.format(db, id, text);
+}
