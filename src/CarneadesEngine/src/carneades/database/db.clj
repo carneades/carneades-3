@@ -323,6 +323,7 @@
                          (make-urn))),
               text-id (if (:text literal) (create-translation (:text literal))),
               header-id (if (:header literal) (create-metadata (:header literal)))]
+          (prn "inserting statement with id " id)
           (jdbc/insert-record
             :statement {:id id
                         :atom (str (literal-atom literal)),
@@ -400,8 +401,10 @@
    returned."
   [literal]
   {:pre [(literal? literal)]}
-  (or (first (statements-for-atom (literal-atom literal)))
-      (create-statement literal)))
+  (if (urn-symbol? literal)
+    (str literal)
+    (or (first (statements-for-atom (literal-atom literal)))
+        (create-statement literal))))
  
 (defn update-statement
   "string map -> boolean
@@ -458,6 +461,7 @@
    does not already exist in the database."
   [premise]
   {:pre [(premise? premise)]}
+  (prn "premise =" premise)
   (let [stmt-id (get-statement (:statement premise))] 
     (first (vals (jdbc/insert-record 
       :premise
@@ -527,10 +531,12 @@
    the id of the new argument."
   [arg]
   {:pre [(argument? arg)]}
+  (prn "arg = " arg)
   (let [arg-id (str (:id arg)),
         scheme-id (str (:scheme arg))
         conclusion-id (get-statement (:conclusion arg)),
         header-id (if (:header arg) (create-metadata (:header arg)))]
+    (prn "conclusion-id" conclusion-id)
     (jdbc/insert-record 
       :argument
       (assoc (dissoc arg :premises)
