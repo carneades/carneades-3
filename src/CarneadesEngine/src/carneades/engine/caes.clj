@@ -29,13 +29,12 @@
   "argument-graph argument-node -> answer
    An argument is applicable if all of its premises hold
    and it hasn't been undercut by an applicable argument.
-   Returns nil if it is not known whether or not one
+   Returns :unknown if it is not known whether or not one
    of its premises hold."
   [ag an]
   {:pre [(argument-graph? ag) (argument-node? an)]}
   (condp = (all-premises-hold? ag an)
     :yes (let [answers (set (map (fn [an2] (applicable? ag an2)) (undercutters ag an)))]
-           ; (println "undercutter labels of " (:id an) ": " answers)
            (cond (contains? answers :yes) :no,
                  (contains? answers :unknown) :unknown,
                  :else :yes))
@@ -49,17 +48,15 @@
 
 (defn- statement-node-value
   "argument-graph statement-node -> nil or number in the range 0.0-1.0
-   Computes the value of a statement node.  Doesn't just return its current value.
-   Assumes that (acceptable? ag P) implies (not (acceptable? ag (literal-complement P))).
-   This assumption holds for all well-defined proof standards, by definition."
+   Computes the value of a statement node.  Doesn't just return its current value."
   [ag sn]
   {:pre [(argument-graph? ag) (statement-node? sn)]}
   (let [status (acceptable? ag sn)]
-  (cond (= (:weight sn) 1.0) 1.0,  ; accepted  
-        (= (:weight sn) 0.0) 0.0,  ; rejected
-        (= status :yes) 1.0,       ; P acceptable
-        (= status :no) 0.0,        ; (not P) acceptable
-        (= status :unknown) nil))) ; neither P nor (not P) acceptable
+    (cond (= (:weight sn) 1.0) 1.0,  ; accepted  
+          (= (:weight sn) 0.0) 0.0,  ; rejected
+          (= status :yes) 1.0,       ; P acceptable
+          (= status :no) 0.0,        ; (not P) acceptable
+          (= status :unknown) nil))) ; neither P nor (not P) acceptable
 
 (defn- argument-node-value
   "argument-graph argument-node -> nil or number in the range 0.0-1.0"
@@ -75,7 +72,7 @@
    Returns a state in which the statement node has been
    evaluated in the argument graph of the state. If the value
    of the statement node in the resulting graph is nil, then
-   the argument graph contained a cycle which prevent
+   the argument graph contained a cycle which prevents
    the statement node from being assigned a value."
   [ces1 sn] 
   (cond (contains? (:closed-statements ces1) (:id sn)) ces1,  ; cycle!
@@ -120,22 +117,22 @@
                                 :value (argument-node-value (:graph ces3) an))))))            
 
 (defn holds?
-  "argument-graph literal -> answer
+  "argument-graph premise -> answer
    Whether or not a literal holds depends on the weight and value of its
    statement node.  The value is not computed here, but only read
-   from the argument graph. Returns nil if there is no
+   from the argument graph. Returns :unknown if there is no
    statement node for the literal in the argument graph or
    if the value of the statement node is nil."
-  [ag literal]
-  {:pre [(argument-graph? ag) (literal? literal)]}
+  [ag p]
+  {:pre [(argument-graph? ag) (premise? p)]}
   (let [sn (get (:statement-nodes ag) 
-                (get (:language ag) (literal-atom literal)))]
+                (get (:language ag) (literal-atom (:statement p))))]
     (cond (nil? sn) :unknown,
-          (literal-pos? literal) 
+          (:positive p)    ; START HERE
             (cond (> (:weight sn) 0.5) :yes,  ; P assumed or accepted
                   (= (:value sn) 1.0) :yes,   ; P acceptable
                   :else :unknown),            ; unknown
-          (literal-neg? literal)
+          (not (:positive p))
             (cond (< (:weight sn) 0.5) :yes,  ; (not P) assumed or P rejected
                   (= (:value sn) 0.0) :yes,   ; (not P) acceptable
                   :else :unkown),             ; unknown
@@ -145,11 +142,7 @@
   "argument-graph argument-node -> answer"
   [ag an]
   {:pre [(argument-graph? ag) (argument-node? an)]}
-  (let [answers (map (fn [p] (holds? ag
-                                (if (:positive p)
-                                    (:statement p)
-                                    (literal-complement (:statement p)))))
-                      (:premises an))]
+  (let [answers (map (fn [p] (holds? ag p)) (:premises an))]
     (cond (contains? answers :no) :no,
           (contains? answers :unknown) :unknown,
           :else :yes)))
@@ -158,7 +151,8 @@
 (defmulti satisfies-proof-standard? (fn [_ sn] (:standard sn)))
 
 (defn- dv-weight [arg]
-  "Dialetical validity weight. Strict arguments weigh more than defeasible arguments."
+  "Dialetical validity weight. Strict arguments weigh more than defeasible arguments.
+   The assigned weights of arguments are irrelevant when using the DV standard."
   (if (:strict arg) 2.0 1.0))
 
 (defn- pe-weight [arg]
@@ -184,14 +178,12 @@
                                      
 (defmethod satisfies-proof-standard? :pe [ag sn]
   (let [app-pro (filter #(= :yes (applicable? ag %)) (pro-argument-nodes ag sn))
+        app-con (filter #(= :yes (applicable? ag %)) (con-argument-nodes ag sn))
         not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (pro-argument-nodes ag sn))
         not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (con-argument-nodes ag sn))]
-    ; (println "app-pro: " app-pro)
-    ; (println "not-inapp-pro: " not-inapp-pro)
-    ; (println "not-inapp-con: " not-inapp-con)
-    (cond (> (max-pe-weight app-pro) (max-pe-weight not-inapp-con)) :yes,
-          (> (max-pe-weight not-inapp-pro) (max-pe-weight not-inapp-con)) :unknown,
-          :else :no)))
+    (cond (> (max-pe-weight app-pro) (max-pe-weight not-inapp-con)) :yes,  ; P is in 
+          (> (max-pe-weight app-con) (max-pe-weight not-inapp-pro)) :no,   ; not P is in
+          :else :unknown)))
 
 ;; clear-and-convincing-evidence?
 (defmethod satisfies-proof-standard? :cce [ag sn]
