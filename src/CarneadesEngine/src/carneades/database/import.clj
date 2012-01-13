@@ -21,22 +21,23 @@
     (jdbc/transaction
       
       ; Statements
-      (doseq [sn (vals (:statement-nodes arg-graph))]
+     (doseq [sn (vals (:statement-nodes arg-graph))]
         (create-statement (map->statement sn)))
       
       ; Arguments
       (doseq [an (vals (:argument-nodes arg-graph))]
-        (create-argument 
-          
+        (let [premises (map (fn [p]
+                              (let [sn (get (:statement-nodes arg-graph)
+                                            (:statement p))]
+                                (assoc p 
+                                  :statement 
+                                  (:id sn))))
+                            (:premises an))]
+         (create-argument 
           (assoc (map->argument an)
-                 :conclusion (:atom (get (:statement-nodes arg-graph)
-                                         (literal-atom (:conclusion an))))
-                 :premises (map (fn [p] 
-                                  (assoc p 
-                                         :statement 
-                                         (:atom (get (:statement-nodes arg-graph)
-                                                     (:statement p)))))
-                                (:premises an)))))
+            :conclusion  (:id (get (:statement-nodes arg-graph)
+                                   (literal-atom (:conclusion an))))
+            :premises premises))))
       
       ; References
       (doseq [md (:references arg-graph)]
