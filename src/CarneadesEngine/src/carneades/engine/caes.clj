@@ -7,6 +7,7 @@
   carneades.engine.caes
   (:use clojure.pprint
         carneades.engine.statement
+        carneades.engine.argument
         carneades.engine.argument-graph
         carneades.engine.argument-evaluation))
 
@@ -23,50 +24,37 @@
 
 (declare all-premises-hold? satisfies-proof-standard? eval-argument-node)
 
-(defn- answer? [x] (contains? #{:yes :no :unknown} x))
+(defn boolean->number 
+  "boolean or nil -> number"
+  [x]
+  (cond
+    (= x true) 1.0,
+    (= x false) 0.0,
+    :else nil))
 
 (defn- applicable? 
-  "argument-graph argument-node -> answer
+  "argument-graph argument-node -> boolean or nil
    An argument is applicable if all of its premises hold
-   and it hasn't been undercut by an applicable argument.
-   Returns :unknown if it is not known whether or not one
-   of its premises hold."
+   and it hasn't been undercut by an applicable argument."
   [ag an]
   {:pre [(argument-graph? ag) (argument-node? an)]}
-  (condp = (all-premises-hold? ag an)
-    :yes (let [answers (set (map (fn [an2] (applicable? ag an2)) (undercutters ag an)))]
-           (cond (contains? answers :yes) :no,
-                 (contains? answers :unknown) :unknown,
-                 :else :yes))
-    :no :no
-    :unknown :unknown))
-       
+  (let [pv (all-premises-hold? ag an)
+        uv (map #(applicable? ag %) (undercutters ag an))]
+    (cond (or (= pv nil) (contains? uv nil)) nil,     ; unknown
+          (and pv (not (contains? uv true))) true,
+          :else false)))
+
 (defn- acceptable?
-  "argument-graph statement-node -> answer"
+  "argument-graph statement-node -> boolean or nil"
   [ag sn]
-  (satisfies-proof-standard? ag sn))
-
-(defn- statement-node-value
-  "argument-graph statement-node -> nil or number in the range 0.0-1.0
-   Computes the value of a statement node.  Doesn't just return its current value."
-  [ag sn]
-  {:pre [(argument-graph? ag) (statement-node? sn)]}
-  (let [status (acceptable? ag sn)]
-    (cond (= (:weight sn) 1.0) 1.0,  ; accepted  
-          (= (:weight sn) 0.0) 0.0,  ; rejected
-          (= status :yes) 1.0,       ; P acceptable
-          (= status :no) 0.0,        ; (not P) acceptable
-          (= status :unknown) nil))) ; neither P nor (not P) acceptable
-
-(defn- argument-node-value
-  "argument-graph argument-node -> nil or number in the range 0.0-1.0"
-  [ag an]
-  {:pre [(argument-graph? ag) (argument-node? an)]}
-  (condp = (applicable? ag an) 
-    :unknown nil,
-    :yes 1.0,
-    :no 0.0))
-  
+  (let [result
+  (cond (and (:weight sn)
+             (>= (:weight sn) 0.75)) true, ; P assumed or accepted
+        (and (:weight sn)
+             (<= (:weight sn) 0.25)) false, ; P assumed false or rejected 
+        :else (satisfies-proof-standard? ag sn))]
+    result))
+        
 (defn- eval-statement-node 
   "cestate statement-node -> cestate
    Returns a state in which the statement node has been
@@ -81,13 +69,12 @@
                                  (assoc ces1 
                                         :closed-statements (conj (:closed-statements ces1) 
                                                                  (:id sn)))
-                                 (map (fn [id] (get-argument-node (:graph ces1) id))
-                                      (:conclusion-of sn)))]
+                                 (statement-node-arguments (:graph ces1) sn))]
                 (assoc ces2 
                        :graph (update-statement-node 
                                 (:graph ces2) 
                                 sn 
-                                :value (statement-node-value (:graph ces2) sn))))))
+                                :value (boolean->number (acceptable? (:graph ces2) sn)))))))
 
 (defn- eval-argument-node 
   "cestate argument-node -> cestate
@@ -109,90 +96,68 @@
                                       (map :statement (:premises an))))
                     ces3 (reduce (fn [s an2] (eval-argument-node s an2))
                                  ces2
-                                 (undercutters an))]
+                                 (undercutters (:graph ces2) an))]
                 (assoc ces3 
                        :graph (update-argument-node 
                                 (:graph ces3)
                                 an
-                                :value (argument-node-value (:graph ces3) an))))))            
+                                :value (boolean->number (applicable? (:graph ces3) an)))))))
 
 (defn holds?
-  "argument-graph premise -> answer
-   Whether or not a literal holds depends on the weight and value of its
+  "argument-graph premise -> boolean or nil
+   Whether or not a premise holds depends on the weight and value of its
    statement node.  The value is not computed here, but only read
-   from the argument graph. Returns :unknown if there is no
-   statement node for the literal in the argument graph or
-   if the value of the statement node is nil."
+   from the argument graph."
   [ag p]
   {:pre [(argument-graph? ag) (premise? p)]}
   (let [sn (get (:statement-nodes ag) 
-                (get (:language ag) (literal-atom (:statement p))))]
-    (cond (nil? sn) :unknown,
-          (:positive p)    ; START HERE
-            (cond (> (:weight sn) 0.5) :yes,  ; P assumed or accepted
-                  (= (:value sn) 1.0) :yes,   ; P acceptable
-                  :else :unknown),            ; unknown
-          (not (:positive p))
-            (cond (< (:weight sn) 0.5) :yes,  ; (not P) assumed or P rejected
-                  (= (:value sn) 0.0) :yes,   ; (not P) acceptable
-                  :else :unkown),             ; unknown
-          :else :unknown)))
-
+                (get (:language ag) (literal-atom (:statement p))))
+        v (:value sn)]
+    (if (nil? v)
+      nil ; unknown
+      (if (:positive p) 
+        (= v 1.0)       
+        (= v 0.0))))) 
+      
 (defn- all-premises-hold?
-  "argument-graph argument-node -> answer"
+  "argument-graph argument-node -> boolean or nil"
   [ag an]
   {:pre [(argument-graph? ag) (argument-node? an)]}
-  (let [answers (map (fn [p] (holds? ag p)) (:premises an))]
-    (cond (contains? answers :no) :no,
-          (contains? answers :unknown) :unknown,
-          :else :yes)))
+  (let [pv (map #(holds? ag %) (:premises an))]
+    (cond (contains? (set pv) nil) nil,
+          (every? #(= true %) pv) true,
+          :else false)))
 
 ;; dispatch on the proof standard
 (defmulti satisfies-proof-standard? (fn [_ sn] (:standard sn)))
-
-(defn- dv-weight [arg]
-  "Dialetical validity weight. Strict arguments weigh more than defeasible arguments.
-   The assigned weights of arguments are irrelevant when using the DV standard."
-  (if (:strict arg) 2.0 1.0))
-
-(defn- pe-weight [arg]
-  "Proponderence of the evidence weight. Strict arguments all have the
-   same weight and weigh more than defeasible arguments. 
-   Defeasible arguments have their default weight of 0.5 or the
-   weight assigned to the by users, in the range 0.0 to 1.0"
-  (if (:strict arg) 2.0 (:weight arg)))
   
-(defn- max-dv-weight [args]
-  (if (empty? args) 0.0 (apply max (map dv-weight args))))
-
-(defn- max-pe-weight [args]
-  (if (empty? args) 0.0 (apply max (map pe-weight args))))
+(defn- max-weight [args]
+  (if (empty? args) 0.0 (apply max (map weight args))))
 
 (defmethod satisfies-proof-standard? :dv [ag sn]
   (let [app-pro (filter #(= :yes (applicable? ag %)) (pro-argument-nodes ag sn)),
         not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (pro-argument-nodes ag sn)),
         not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (con-argument-nodes ag sn))]
-    (cond (> (max-dv-weight app-pro) (max-dv-weight not-inapp-con)) :yes,
-          (> (max-dv-weight not-inapp-pro) (max-dv-weight not-inapp-con)) :unknown,
+    (cond (> (max-weight app-pro) (max-weight not-inapp-con)) :yes,
+          (> (max-weight not-inapp-pro) (max-weight not-inapp-con)) :unknown,
           :else :no)))
-                                     
+
+;; preponderance of the evidence                                     
 (defmethod satisfies-proof-standard? :pe [ag sn]
-  (let [app-pro (filter #(= :yes (applicable? ag %)) (pro-argument-nodes ag sn))
-        app-con (filter #(= :yes (applicable? ag %)) (con-argument-nodes ag sn))
-        not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (pro-argument-nodes ag sn))
-        not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (con-argument-nodes ag sn))]
-    (cond (> (max-pe-weight app-pro) (max-pe-weight not-inapp-con)) :yes,  ; P is in 
-          (> (max-pe-weight app-con) (max-pe-weight not-inapp-pro)) :no,   ; not P is in
-          :else :unknown)))
+  (let [app-pro (filter #(applicable? ag %) (pro-argument-nodes ag sn))
+        app-con (filter #(applicable? ag %) (con-argument-nodes ag sn))]
+    (cond (> (max-weight app-pro) (max-weight app-con)) true,
+          (> (max-weight app-con) (max-weight app-pro)) false,
+          :else nil)))
 
 ;; clear-and-convincing-evidence?
 (defmethod satisfies-proof-standard? :cce [ag sn]
   (let [app-pro (filter #(= :yes (applicable? ag %)) (pro-argument-nodes sn))
         not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (pro-argument-nodes ag sn))
         not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (con-argument-nodes ag sn))
-        max-app-pro (max-pe-weight app-pro),
-        max-not-inapp-pro (max-pe-weight not-inapp-pro),
-        max-not-inapp-con (max-pe-weight not-inapp-con),
+        max-app-pro (max-weight app-pro),
+        max-not-inapp-pro (max-weight not-inapp-pro),
+        max-not-inapp-con (max-weight not-inapp-con),
         alpha 0.5
         beta 0.3]
     (cond (and (> max-app-pro max-not-inapp-con)
@@ -208,9 +173,9 @@
   (let [app-pro (filter #(= :yes (applicable? ag %)) (pro-argument-nodes sn)),
         not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (pro-argument-nodes ag sn)),
         not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (con-argument-nodes ag sn)),
-        max-app-pro (max-pe-weight app-pro), 
-        max-not-inapp-pro (max-pe-weight not-inapp-pro),
-        max-not-inapp-con (max-pe-weight not-inapp-con),
+        max-app-pro (max-weight app-pro), 
+        max-not-inapp-pro (max-weight not-inapp-pro),
+        max-not-inapp-con (max-weight not-inapp-con),
         alpha 0.5,
         beta 0.5,
         gamma 0.2]
