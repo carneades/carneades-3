@@ -44,6 +44,11 @@
     (assoc m :id (if (:id m) (:id m) (make-urn-symbol)))))
 
 (defn argument-node? [x] (instance? ArgumentNode x))
+
+; The assigned weight of strict arguments is irrelevant.  Strict
+; arguments all have the same weight and weigh more than  
+; defeasible arguments.  
+(defn weight [arg] (if (:strict arg) 2.0 (:weight arg)))
   
 (defn proof-standard?
   [k]
@@ -307,8 +312,7 @@
                                 (:id node)
                                 (merge node 
                                        (apply hash-map key-values)))))
-
-
+    
 (defn enter-argument
   "argument-graph argument -> argument-graph
    Converts a one-step argument to an argument node and adds
@@ -363,7 +367,7 @@
 
 
 (defn arguments 
-  "argument-graph [statement] -> (seq-of argument-node)
+  "argument-graph statement -> (seq-of argument-node)
    Returns all argument nodes in an argument graph pro and con some statement,
    or all argument nodes in the argument graph, if no statement is provided."
   ([ag stmt]
@@ -377,18 +381,27 @@
       args
       ())))
 
+(defn statement-node-arguments
+  "argument-graph statement-node -> (seq-of argument-node)"
+  [ag sn]
+  (map (fn [arg-id] (get (:argument-nodes ag) arg-id))
+       (concat (:pro sn) (:con sn))))
+
 (defn pro-arguments
   "argument-graph statement -> (seq-of argument-node)"
-  [ag s]
-  (filter (fn [node]
-            (= (literal-pos? s) 
-               (literal-pos? (:conclusion node))))
-          (arguments ag s)))
+  [ag stmt]
+  (let [sn (get-statement-node ag stmt)]
+    (if (nil? sn) 
+      ()
+      (if (literal-pos? stmt)
+        (:pro sn)
+        (:con sn)))))
 
 (defn con-arguments
   "argument-graph statement -> (seq-of argument-node)"
   [ag s]
   (pro-arguments ag (literal-complement s)))
+
 
 (defn undercutters
   "argument-graph argument-node -> (seq-of argument-node)"
@@ -561,7 +574,7 @@
        (vals (:statement-nodes ag))))
 
 
- (defn reset-node-values
+(defn reset-node-values
    "argument-graph -> argument-graph
     Resets the values of argument and statement nodes to nil in 
     an argument graph, to assure that they are reevaluated."
