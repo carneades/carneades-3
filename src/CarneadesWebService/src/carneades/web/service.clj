@@ -374,9 +374,6 @@
                (let [metadata (list-metadata)
                      main-issues (map pack-statement (main-issues))
                      outline (cut-ag 5)]
-                 (prn "outline")
-                 (pprint outline)
-                 (prn)
                  (json-response {:metadata metadata
                                  :main-issues main-issues
                                  :outline outline})))))
@@ -423,7 +420,6 @@
       ;; SVG Maps
 
       (GET "/map/:db" {params :params}
-           (prn "params" params)
            (let [db (:db params)
                  options (dissoc params :db)
                  dbconn (make-database-connection db "guest" "")]
