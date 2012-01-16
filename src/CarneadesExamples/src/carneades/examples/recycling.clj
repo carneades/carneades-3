@@ -1,12 +1,14 @@
-;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Copyright ? 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.examples.recycling
   (:use carneades.engine.statement
         carneades.engine.argument
+        carneades.engine.argument-evaluation
+        carneades.engine.caes
         carneades.engine.argument-graph
-        ; carneades.mapcomponent.viewer
-        ))
+        carneades.maps.lacij
+        carneades.engine.uuid))
 
 ; The recycling example used by Adam Wyner 
 
@@ -81,7 +83,9 @@ reduces a need of a new dump which is for the garbage."}))
 
 (def ag
     (-> (make-argument-graph)
-        (enter-arguments [a1 a2 a3 a4 a5 a6 a7 a8 a9])
+        (enter-arguments [a1 a2 a3 a4 a5 a6 a7 a8]) ; a9
         (accept [p14])))
 
 ; (view ag)
+
+(defn -main [] (export ag (str "/tmp/" (make-urn) ".svg")))

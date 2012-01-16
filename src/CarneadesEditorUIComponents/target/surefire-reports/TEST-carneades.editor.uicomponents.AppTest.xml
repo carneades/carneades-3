@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="0.018" errors="0" skipped="0" tests="1" name="carneades.editor.uicomponents.AppTest">
+<testsuite failures="0" time="0.017" errors="0" skipped="0" tests="1" name="carneades.editor.uicomponents.AppTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Libraries"/>
@@ -22,7 +22,7 @@
     <property name="basedir" value="/Users/tfgordon/GIT/carneades/src/CarneadesEditorUIComponents"/>
     <property name="java.endorsed.dirs" value="/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/endorsed"/>
     <property name="os.arch" value="x86_64"/>
-    <property name="surefire.real.class.path" value="/Users/tfgordon/GIT/carneades/src/CarneadesEditorUIComponents/target/surefire/surefirebooter3550409481558573535.jar"/>
+    <property name="surefire.real.class.path" value="/Users/tfgordon/GIT/carneades/src/CarneadesEditorUIComponents/target/surefire/surefirebooter4598525917727633129.jar"/>
     <property name="java.io.tmpdir" value="/var/folders/bl/bfqn9hjc8xj2j8001s6784f00000gp/T/"/>
     <property name="line.separator" value="
 "/>
@@ -46,7 +46,7 @@
     <property name="java.vm.specification.version" value="1.0"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="java.home" value="/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home"/>
-    <property name="sun.java.command" value="/Users/tfgordon/GIT/carneades/src/CarneadesEditorUIComponents/target/surefire/surefirebooter3550409481558573535.jar /Users/tfgordon/GIT/carneades/src/CarneadesEditorUIComponents/target/surefire/surefire2044718904248557131tmp /Users/tfgordon/GIT/carneades/src/CarneadesEditorUIComponents/target/surefire/surefire8314887490224375931tmp"/>
+    <property name="sun.java.command" value="/Users/tfgordon/GIT/carneades/src/CarneadesEditorUIComponents/target/surefire/surefirebooter4598525917727633129.jar /Users/tfgordon/GIT/carneades/src/CarneadesEditorUIComponents/target/surefire/surefire4814095813833928499tmp /Users/tfgordon/GIT/carneades/src/CarneadesEditorUIComponents/target/surefire/surefire5382466262509458940tmp"/>
     <property name="java.specification.vendor" value="Sun Microsystems Inc."/>
     <property name="user.language" value="en"/>
     <property name="awt.toolkit" value="apple.awt.CToolkit"/>
@@ -65,5 +65,5 @@
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase time="0.005" classname="carneades.editor.uicomponents.AppTest" name="testApp"/>
+  <testcase time="0.001" classname="carneades.editor.uicomponents.AppTest" name="testApp"/>
 </testsuite>
