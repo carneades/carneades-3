@@ -101,3 +101,8 @@ function statement_text(statement)
     // TODO: if atom is UUID, then returns the string "statement" ?
     return statement.atom;
 }
+
+function statement_link(db, id, text)
+{
+    return '<a href="/statement/{0}/{1}" rel="address:/statement/{0}/{1}" class="statement" id="statement{1}">{2}</a>'.format(db, id, text);
+}
