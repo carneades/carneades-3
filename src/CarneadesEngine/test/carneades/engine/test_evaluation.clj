@@ -221,7 +221,6 @@
 ; TO DO: remaining examples in Henry's article, starting with the example
 ; or parallel self-defeat on page 18.
 
-
     
   
   
