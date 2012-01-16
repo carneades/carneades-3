@@ -88,4 +88,5 @@ reduces a need of a new dump which is for the garbage."}))
 
 ; (view ag)
 
-(defn -main [] (export ag (str "/tmp/" (make-urn) ".svg")))
+(defn -main []
+  (view ag))
