@@ -135,12 +135,11 @@
   (if (empty? args) 0.0 (apply max (map weight args))))
 
 (defmethod satisfies-proof-standard? :dv [ag sn]
-  (let [app-pro (filter #(= :yes (applicable? ag %)) (pro-argument-nodes ag sn)),
-        not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (pro-argument-nodes ag sn)),
-        not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (con-argument-nodes ag sn))]
-    (cond (> (max-weight app-pro) (max-weight not-inapp-con)) :yes,
-          (> (max-weight not-inapp-pro) (max-weight not-inapp-con)) :unknown,
-          :else :no)))
+  (let [app-pro (filter #(applicable? ag %) (pro-argument-nodes ag sn))
+        app-con (filter #(applicable? ag %) (con-argument-nodes ag sn))]
+    (cond (and (not (empty? app-pro) (empty? app-con))) true,
+          (and (not (empty? app-con) (empty? app-pro))) false, 
+          :else nil)))
 
 ;; preponderance of the evidence                                     
 (defmethod satisfies-proof-standard? :pe [ag sn]
@@ -152,42 +151,38 @@
 
 ;; clear-and-convincing-evidence?
 (defmethod satisfies-proof-standard? :cce [ag sn]
-  (let [app-pro (filter #(= :yes (applicable? ag %)) (pro-argument-nodes sn))
-        not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (pro-argument-nodes ag sn))
-        not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (con-argument-nodes ag sn))
+  (let [app-pro (filter #(applicable? ag %) (pro-argument-nodes ag sn)),
+        app-con (filter #(applicable? ag %) (con-argument-nodes ag sn)),
         max-app-pro (max-weight app-pro),
-        max-not-inapp-pro (max-weight not-inapp-pro),
-        max-not-inapp-con (max-weight not-inapp-con),
+        max-app-con (max-weight app-con),
         alpha 0.5
         beta 0.3]
-    (cond (and (> max-app-pro max-not-inapp-con)
+    (cond (and (> max-app-pro max-app-con)
                (> max-app-pro alpha)
-               (> (- max-app-pro max-not-inapp-con) beta)) :yes,
-          (and (> max-not-inapp-pro max-not-inapp-con)
-               (> max-not-inapp-pro alpha)
-               (> (- max-not-inapp-pro max-not-inapp-con) beta)) :uknown,
-          :else :no)))
+               (> (- max-app-pro max-app-con) beta)) true,
+          (and (> max-app-con max-app-pro)
+               (> max-app-con alpha)
+               (> (- max-app-con max-app-pro) beta)) false,
+          :else nil)))
 
 ;; beyond-reasonable-doubt?
 (defmethod satisfies-proof-standard? :brd [ag sn]
-  (let [app-pro (filter #(= :yes (applicable? ag %)) (pro-argument-nodes sn)),
-        not-inapp-pro (filter #(contains? #{:yes :unknown} (applicable? ag %)) (pro-argument-nodes ag sn)),
-        not-inapp-con (filter #(contains? #{:yes :unknown} (applicable? ag %)) (con-argument-nodes ag sn)),
-        max-app-pro (max-weight app-pro), 
-        max-not-inapp-pro (max-weight not-inapp-pro),
-        max-not-inapp-con (max-weight not-inapp-con),
-        alpha 0.5,
-        beta 0.5,
+   (let [app-pro (filter #(applicable? ag %) (pro-argument-nodes ag sn)),
+        app-con (filter #(applicable? ag %) (con-argument-nodes ag sn)),
+        max-app-pro (max-weight app-pro),
+        max-app-con (max-weight app-con),
+        alpha 0.5
+        beta 0.3
         gamma 0.2]
-    (cond (and (> max-app-pro max-not-inapp-con) 
+    (cond (and (> max-app-pro max-app-con)
                (> max-app-pro alpha)
-               (> (- max-app-pro max-not-inapp-con) beta)
-               (< max-not-inapp-con gamma)) :yes,
-          (and (> max-not-inapp-pro max-not-inapp-con) 
-               (> max-not-inapp-pro alpha)
-               (> (- max-not-inapp-pro max-not-inapp-con) beta)
-               (< max-not-inapp-con gamma)) :unknown,
-          :else :no)))
+               (> (- max-app-pro max-app-con) beta)
+               (< max-app-con gamma)) true,
+          (and (> max-app-con max-app-pro)
+               (> max-app-con alpha)
+               (> (- max-app-con max-app-pro) beta)
+               (< max-app-pro gamma)) false,
+          :else nil)))
 
 (defn- evaluate-argument-graph
   [ag]
