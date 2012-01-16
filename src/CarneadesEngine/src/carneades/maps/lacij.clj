@@ -3,7 +3,9 @@
 
 (ns carneades.maps.lacij
   (:use carneades.engine.statement
-        carneades.maps.lacij-export))
+        carneades.maps.lacij-export
+        clojure.java.browse)
+  (:import java.io.File))
 
 ;; We don't use a Protocol here since
 ;; they don't deal correctly with optional arguments
@@ -19,6 +21,10 @@
   (export-ag-str ag literal->str (apply hash-map options)))
 
 (defn view
-  [ag filename & options]
-  (throw (Exception. "NYI")))
+  [ag & options]
+  (let [tmpfile (File/createTempFile "carneadesmap" ".svg")
+        filename (.getPath tmpfile)]
+    (.deleteOnExit tmpfile)
+    (apply export ag filename options)
+    (browse-url (str (.toURI tmpfile)))))
 
