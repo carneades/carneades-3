@@ -111,15 +111,15 @@
 (defn cut-ag-helper
   [n depth]
   (cond (= depth 1)
-        [(:id n) []]
+        [n []]
 
         (statement? n)
         (let [procon (concat (map argument-data (:pro n)) (map argument-data (:con n)))]
-          [(:id n) (vec (map #(cut-ag-helper % (dec depth)) procon))])
+          [n (vec (map #(cut-ag-helper % (dec depth)) procon))])
 
         (argument? n)
         (let [premises (map :statement (:premises n))]
-          [(:id n) (vec (map #(cut-ag-helper % (dec depth)) premises))])))
+          [n (vec (map #(cut-ag-helper % (dec depth)) premises))])))
 
 (defn cut-ag
   [depth]

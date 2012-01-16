@@ -42,8 +42,7 @@ function set_references_text(metadata)
            });
 }
 
-
-function outline_text(tree, db)
+function outline_text(tree, db, index)
 {
     var text = "";
     var node = tree[0];
@@ -51,13 +50,16 @@ function outline_text(tree, db)
     
     if(node === "root") {
         text = "<ul>";
+    } else if (node.hasOwnProperty('premises')) {
+        text = "{0} <ul>".format(argument_link(db, node.id, argument_text(node, index)));
     } else {
-        text = "<ul>node-{0} {1}".format(node, argument_link(db, node, "arg"));
+        var stmt_text = statement_text(node, index);
+        text = "{0} <ul>".format(statement_link(db, node.id, stmt_text));
     }
 
     $.each(children,
            function(index, child) {
-               text += "<li>{0}</li>".format(outline_text(child, db));
+               text += "<li>{0}</li>".format(outline_text(child, db, index + 1));
            });
     text += "</ul>";
 
