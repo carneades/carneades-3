@@ -12,5 +12,5 @@
                      [org.clojars.rayne/autodoc "0.8.0-SNAPSHOT"]
                      [lein-ring "0.4.5"]]
   :ring {:handler carneades.web.application.routes/app}
-  :main ;; ^{:skip-aot true}
+  :main ^{:skip-aot true}
   carneades.web.application.routes)
