@@ -12,8 +12,9 @@
         carneades.engine.dublin-core
         carneades.engine.statement
         carneades.engine.argument)
-  (:require
-        [clojure.java.jdbc :as jdbc]))
+  (:require [clojure.java.jdbc :as jdbc]
+            [carneades.config.reader :as config])
+  (:import java.io.File))
 
 
 (defmacro test-db 
@@ -26,16 +27,23 @@
 
 ;;; Databases
 
+(def default-db-protocol (config/properties "database-protocol" "file"))
+(def default-db-host (config/properties "database-host"
+                                        (str (System/getProperty "user.dir")
+                                             File/separator
+                                             "data/databases")))
+
 (defn make-database-connection  
-  "Returns a map describing a database connection."
-  [db-name username passwd]
-  (let [db-protocol "file"             ; "file|mem|tcp"
-        db-host (if (= (System/getProperty "os.name") "Linux")
-                  "/home/pal/local/tmp/databases/"
-                  "/Library/Application Support/Carneades/Databases")
-        ] ; "path|host:port" 
-    ;;; TO DO ? remove path and system dependency above
-    ;;; Use a properties file or parameters
+  "Returns a map describing a database connection.
+   Available options are :host and :protocol.
+   If not specified they default to theirs values
+   in ~/.carneades.properties and if not specified there
+   to '$PWD/data/databases' and 'file' respectively."
+  [db-name username passwd & options]
+  (let [options (apply hash-map options)
+        db-protocol (:protocol options default-db-protocol) ;; "file|mem|tcp"
+        db-host (:host options default-db-host) ;; "path|host:port" 
+        ]
     {:classname   "org.h2.Driver" 
      :subprotocol "h2"
      :subname (str db-protocol "://" db-host "/" db-name)
