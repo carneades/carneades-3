@@ -12,7 +12,7 @@
 
 (def carneades-application-routes
      [(GET "/" [] (index-page))
-      (route/files "/" {:root (str (System/getProperty "user.dir") "/webdata/public")})
+      (route/files "/" {:root (str (System/getProperty "user.dir") "/data/public")})
       (route/resources "/")
       ])
 
