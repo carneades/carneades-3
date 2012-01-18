@@ -135,44 +135,35 @@
                              (:assumptions scheme)))))
 
 (defn instantiate-scheme 
-  "scheme map -> [response]
+  "scheme map -> (seq-of response)
    Constructs a sequence of grounds arguments, in responses, by 
    substituting variables in the scheme with their values in a map of
    substitutions. Only ground arguments are included in the result. It
    is the responsibility of the caller to provide substitutions for all
    variables in the argument."
   [scheme subs]
-  (let [id (make-urn)]
+  (let [id (make-urn)
+        conclusion (apply-substitutions subs (:conclusion scheme))]
     (filter (fn [r] (empty? (argument-variables (:argument r))))
-            (cons (make-response 
-                    subs
-                    (map (fn [p] (if (:positive p)
-                                   (:statement p)
-                                   (literal-complement (:statement p))))
-                         (:assumptions scheme))
-                    (instantiate-argument 
-                      (make-argument 
-                        :id id,
-                        :conclusion (apply-substitutions subs (:conclusion scheme)),
-                        :strict (:strict scheme),
-                        :weight (:weight scheme),
-                        :premises (map (fn [p] (apply-substitutions subs p))
-                                       (concat (:premises scheme) (:assumptions scheme))),
-                        :scheme (:id scheme))
-                      subs))
-                  (map (fn [e] 
-                         (make-response 
-                           subs
-                           ()
-                           (instantiate-argument 
-                             (make-argument 
-                               :conclusion `(~'undercut ~(symbol id))
-                               :strict false
-                               :weight (:weight scheme)
-                               :premises [(apply-substitutions subs e)]
-                               :scheme (:id scheme))
-                             subs)))
-                       (:exceptions scheme))))))
+            (list (make-response 
+                   subs
+                   (map (fn [p] (if (:positive p)
+                                  (:statement p)
+                                  (literal-complement (:statement p))))
+                        (:assumptions scheme))
+                   (instantiate-argument 
+                    (make-argument 
+                     :id id,
+                     :conclusion (literal-atom conclusion),
+                     :pro (literal-pos? conclusion)
+                     :strict (:strict scheme),
+                     :weight (:weight scheme),
+                     :premises (map (fn [p] (apply-substitutions subs p))
+                                    (concat (:premises scheme) (:assumptions scheme))),
+                     :exceptions (map (fn [p] (apply-substitutions subs p))
+                                    (:exceptions scheme)),
+                     :scheme (:id scheme))
+                    subs))))))
    
 (defn axiom 
   "literal -> scheme"
@@ -309,40 +300,27 @@
   "scheme literal substitutions -> seq-of response"
   [scheme goal subs]
   {:pre [(scheme? scheme) (literal? goal) (map? subs)]}
-  (letfn [(apply-for-conclusion
-            [scheme c]
-            ;; apply the scheme for conclusion c
-            (let [subs2 (or (unify c goal subs)
-                            (unify `(~'applies ~(:id scheme) ~c) goal subs))]
-              (if (not subs2)
-                false ; fail
-                (let [id (make-urn)]
-                  (cons (make-response subs2
-                                       (map (fn [p] (if (:positive p)
-                                                        (:statement p)
-                                                        (literal-complement (:statement p))))
-                                            (:assumptions scheme))
-                                       (make-argument 
-                                         :id id,
-                                         :conclusion goal,
-                                         :strict (:strict scheme),
-                                         :weight (:weight scheme),
-                                         :premises (concat (:premises scheme)
-                                                           (:assumptions scheme)),
-                                         :scheme (:id scheme)))
-                        (map (fn [e] (make-response subs2
-                                                    ()
-                                                    (make-argument 
-                                                      :conclusion `(~'undercut ~(symbol id))
-                                                      :strict false
-                                                      :weight (:weight scheme)
-                                                      :premises [e]
-                                                      :scheme (:id scheme))))
-                             (:exceptions scheme)))))))]
-    (apply concat (filter identity 
-                          (map #(apply-for-conclusion scheme %) 
-                               (list (scheme-conclusion-literal scheme)))))))
-
+  (let [c (scheme-conclusion-literal scheme)
+        subs2 (or (unify c goal subs)
+                  (unify `(~'applies ~(:id scheme) ~c) goal subs))]
+    (if (not subs2)
+      [] ; fail
+      (let [id (make-urn-symbol)]
+        [(make-response subs2
+                        (map (fn [p] (if (:positive p)
+                                       (:statement p)
+                                       (literal-complement (:statement p))))
+                             (:assumptions scheme))
+                        (make-argument
+                         :id id,
+                         :conclusion (literal-atom goal),
+                         :pro (literal-pos? goal),
+                         :strict (:strict scheme),
+                         :weight (:weight scheme),
+                         :premises (concat (:premises scheme)
+                                           (:assumptions scheme)),
+                         :exceptions (:exceptions scheme),
+                         :scheme (:id scheme)))]))))
 
 ;; Generators for arguments from schemes and theories:
 

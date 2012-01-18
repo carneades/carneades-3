@@ -45,10 +45,12 @@
 
 (defn argument-node? [x] (instance? ArgumentNode x))
 
-; The assigned weight of strict arguments is irrelevant.  Strict
-; arguments all have the same weight and weigh more than  
-; defeasible arguments.  
-(defn weight [arg] (if (:strict arg) 2.0 (:weight arg)))
+(defn weight
+  "The assigned weight of strict arguments is irrelevant.  Strict
+   arguments all have the same weight and weigh more than  
+   defeasible arguments."
+  [arg]
+  (if (:strict arg) 2.0 (:weight arg)))
   
 (defn proof-standard?
   [k]
@@ -97,7 +99,9 @@
                                 (literal-atom stmt)
                                 (make-urn-symbol))))),
           (sliteral? stmt)
-          (assoc sn :id (if (urn-symbol? (literal-atom stmt))
+          (assoc sn 
+                 :atom stmt
+                 :id (if (urn-symbol? (literal-atom stmt))
                        (literal-atom stmt)
                        (make-urn-symbol))))))
 
@@ -201,8 +205,8 @@
    Warning: this is a low level function. It does not (yet) keep the atom of the statement
    in sync with its key in the language table."
   [ag node & key-values]
-  {:pre [(argument-graph? ag) (statement-node? node)]}
-  ; (println "node: " node)
+  {:pre [(argument-graph? ag) 
+         (statement-node? node)]}
   (assoc ag 
          :statement-nodes (assoc (:statement-nodes ag)
                                  (:id node)
@@ -306,7 +310,8 @@
    and conclusion of the argument in sync with the premise-of and pro or con
    properties of statements in the statement table of the argument graph."
   [ag node & key-values]
-  {:pre [(argument-graph? ag) (argument-node? node)]}
+  {:pre [(argument-graph? ag) 
+         (argument-node? node)]}
   (assoc ag 
          :argument-nodes (assoc (:argument-nodes ag)
                                 (:id node)
@@ -406,7 +411,7 @@
 (defn undercutters
   "argument-graph argument-node -> (seq-of argument-node)"
   [ag an]
-  (let [atom `(~'undercut ~(:id an))
+  (let [atom `(~'undercut ~(:scheme an) ~(:atom (get (:statement-nodes ag) (:conclusion an))))
         sn (get-statement-node ag atom)]
     (if (nil? sn)
       ()

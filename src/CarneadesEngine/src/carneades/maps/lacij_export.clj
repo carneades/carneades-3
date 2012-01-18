@@ -144,7 +144,7 @@
 
 (defn export-ag-helper
   [ag stmt-str options]
-  (let [ag (evaluate carneades-evaluator ag)
+  (let [; ag (evaluate carneades-evaluator ag)
         width (get options :width 1280)
         height (get options :height 1024)
         layouttype (get options :layout :hierarchical)

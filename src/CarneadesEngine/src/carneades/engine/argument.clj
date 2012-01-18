@@ -57,13 +57,14 @@
 (defrecord Argument
   [id               ; URN symbol
    header           ; nil or dublin core metadata about the argument
-   scheme           ; nil, symbol or string, the URI of the scheme
+   scheme           ; nil or symbol, the URI of the scheme
    strict           ; boolean
    weight           ; real number between 0.0 and 1.0, default 0.5
    value            ; nil or real number between 0.0 and 1.0, default nil
    conclusion       ; literal
    pro              ; boolean; con argument if false
-   premises])       ; sequence of premises 
+   premises         ; sequence of premises
+   exceptions])     ; sequence of premises
 
 (defn argument? [x] (instance? Argument x))
 
@@ -72,7 +73,7 @@
    Returns a seq containing the variables of the argument"
   [arg]
   (distinct (concat (mapcat (fn [p] (variables (:statement p)))
-                            (:premises arg))
+                            (concat (:premises arg) (:exceptions arg)))
                     (variables (:conclusion arg)))))
 
 (defn map->argument 
@@ -87,7 +88,8 @@
                      nil          ; value
                      nil          ; conclusion
                      true         ; pro
-                     [])          ; premises 
+                     []           ; premises
+                     [])          ; exceptions
                   m)]
     ; normalize the conclusion and direction of the arguments
     ; and assign the argument an id if needed
@@ -120,11 +122,27 @@
    Instantiate the variables of an argument by applying substitions"
   [arg subs]
   (assoc arg
-         :id (make-urn-symbol)
-         :premises (map (fn [p] (assoc p 
-                                       :statement 
-                                       (apply-substitutions subs (:statement p)))) 
-                        (:premises arg))
-         :conclusion (apply-substitutions subs (:conclusion arg))))
+    :id (make-urn-symbol)
+    :premises (map (fn [p] (assoc p 
+                             :statement 
+                             (apply-substitutions subs (:statement p)))) 
+                   (:premises arg))
+    :exceptions (map (fn [p] (assoc p 
+                               :statement 
+                               (apply-substitutions subs (:statement p)))) 
+                     (:exceptions arg))
+    :conclusion (apply-substitutions subs (:conclusion arg))))
+
+(defn make-undercutters
+  "argument -> seq-of argument
+   Returns an undercutter for each exception of the argument"
+  [arg]
+  (map (fn [e] (make-argument
+                :id (make-urn-symbol)
+                :scheme (:scheme arg)
+                :conclusion `(~'undercut ~(:id arg))
+                :premises [e]))
+       (:exceptions arg)))
+  
 
 
