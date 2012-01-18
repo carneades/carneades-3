@@ -99,10 +99,11 @@
         (add-goal state1 
                   (make-goal 
                     ; pop the first issue and add issues for the
-                    ; premises of the argument to the beginning for
+                    ; premises and exceptions of the argument to the beginning for
                     ; depth-first search
                     :issues (concat (map (fn [p] (literal->sliteral (premise-literal p)))
-                                         (:premises (:argument response)))
+                                         (concat (:premises (:argument response))
+                                                 (:exceptions (:argument response))))
                                     (list rebuttal undercutter)                              
                                     (rest (:issues g1)))
                     :substitutions subs
@@ -125,20 +126,17 @@
    guards, if the instance is new.  Add the new instance to the set of instances 
    of the template."
   [state1 response]
-  ; (pprint "apply-arg-templates state: ")
   (let [subs (:substitutions response)]
     (reduce (fn [s k]
               (let [template (get (:arg-templates s) k)
                     trm (apply-substitutions subs (:guard template))]
-;                (pprint {:template template
-;                         :trm trm})
                 (if (or (not (ground? trm))
                         (contains? (:instances template) trm))
                   s
                   (let [arg (instantiate-argument (:argument template) subs)]
                     (assoc s 
-                           :graph (enter-argument (:graph s) arg)
-                           :arg-templates (add-instance (:arg-templates s) k trm))))))
+                      :graph (enter-arguments (:graph s) (cons arg (make-undercutters arg)))
+                      :arg-templates (add-instance (:arg-templates s) k trm))))))
             state1
             (keys (:arg-templates state1)))))
 
@@ -227,32 +225,34 @@
    reduce the goal with the given id remove it from from the goal lists"
   [state1 id generators1]
   ; (pprint "reduce-goal")
-  (let [goal (get (:goals state1) id)  
-        ; remove the goal from the state
-        state2 (assoc state1    
-                      :goals (dissoc (:goals state1) id)
-                      :open-goals (disj (:open-goals state1) id))]               
-    
+  (let [goal (get (:goals state1) id)]  
     (if (empty? (:issues goal))
-      state2             
+      ; remove the goal from the state
+      (assoc state1    
+             :goals (dissoc (:goals state1) id)
+             :open-goals (disj (:open-goals state1) id))            
       (let [issue (first (:issues goal))]
-        ; (pprint {:goal goal})
-        (if (contains? (:closed-issues state2) issue)
-          state2
-          (let [state3 (assoc state2 :closed-issues (conj (:closed-issues state2) issue))
+        (println "issues: " (:issues goal))
+        (if (contains? (:closed-issues state2) issue) 
+          ; the issue has already been handled
+          ; pop the issue from the goal
+          (assoc state1
+                 :goals (assoc (:goals state1) 
+                               id (assoc goal 
+                                         :issues (rest (:issues goal)))))
+          (let [state2 (assoc state1 :closed-issues (conj (:closed-issues state1) issue))
                 generators2 (concat 
                               (list (generate-substitutions-from-statement-nodes 
-                                      (:graph state3)))
+                                      (:graph state2)))
                               generators1)]
-            ; (println "issue: " issue)
             ; apply the generators to the selected issue
             (let [responses (apply concat 
                                    (map (fn [g] 
                                           (generate g issue (:substitutions goal))) 
                                         generators2))]
-              ; (println "responses: " (count responses))
+              (println "responses: " (count responses))
               (reduce (fn [s r] (apply-response s goal r))
-                      state3
+                      state2
                       responses))))))))
     
 (defn- reduce-goals

@@ -32,28 +32,57 @@
     (= x false) 0.0,
     :else nil))
 
-(defn- applicable? 
+(defn- applicable?
   "argument-graph argument-node -> boolean or nil
+   looks up the applicability status of the argument node.  
+   Precondition: the value has been previously computed and
+   stored in the :value field of the node."
+  [ag an]
+  {:pre [(argument-graph? ag) (argument-node? an)]}
+  (cond
+   (= (:value an) 1.0) true,
+   (= (:value an) 0.0) false,
+   :else nil))
+
+(defn- compute-argument-value
+  "argument-graph argument-node -> 0.0-1.0
    An argument is applicable if all of its premises hold
    and it hasn't been undercut by an applicable argument."
   [ag an]
-  {:pre [(argument-graph? ag) (argument-node? an)]}
+  {:pre [(argument-graph? ag) (argument-node? an)]
+   :post [(not (nil? %))]}
   (let [pv (all-premises-hold? ag an)
-        uv (map #(applicable? ag %) (undercutters ag an))]
-    (cond (or (= pv nil) (contains? uv nil)) nil,     ; unknown
-          (and pv (not (contains? uv true))) true,
-          :else false)))
+        uv (set (map #(applicable? ag %) (undercutters ag an)))]
+    (cond (or (= pv nil) (contains? uv nil)) 0.5,     ; unknown
+          (and pv (not (contains? uv true))) 1.0,
+          :else 0.0)))
 
 (defn- acceptable?
-  "argument-graph statement-node -> boolean or nil"
+  "argument-graph statement-node -> boolean or nil
+   looks up the acceptability status of the argument node.  
+   Precondition: the value has been previously computed and
+   stored in the :value field of the node."
   [ag sn]
-  (let [result
+  {:pre [(argument-graph? ag) (statement-node? sn)]}
+  (cond 
+    (= (:value sn) 1.0) true,
+    (= (:value sn) 0.0) false,
+    :else nil))
+       
+(defn- compute-statement-value
+  "argument-graph statement-node -> 0.0-1.0"
+  [ag sn]
+  {:pre [(argument-graph? ag) (statement-node? sn)]
+   :post [(not (nil? %))]}
   (cond (and (:weight sn)
-             (>= (:weight sn) 0.75)) true, ; P assumed or accepted
+             (>= (:weight sn) 0.75)) 1.0, ; P assumed or accepted
         (and (:weight sn)
-             (<= (:weight sn) 0.25)) false, ; P assumed false or rejected 
-        :else (satisfies-proof-standard? ag sn))]
-    result))
+             (<= (:weight sn) 0.25)) 0.0, ; P assumed false or rejected 
+        :else (let [v (satisfies-proof-standard? ag sn)]
+                (cond 
+                  (= v true) 1.0,
+                  (= v false) 0.0,
+                  :else 0.5))))
         
 (defn- eval-statement-node 
   "cestate statement-node -> cestate
@@ -63,6 +92,7 @@
    the argument graph contained a cycle which prevents
    the statement node from being assigned a value."
   [ces1 sn] 
+  {:pre [(cestate? ces1) (statement-node? sn)]}
   (cond (contains? (:closed-statements ces1) (:id sn)) ces1,  ; cycle!
         (:value sn) ces1,                                     ; value already assigned
         :else (let [ces2 (reduce (fn [s an] (eval-argument-node s an))
@@ -74,7 +104,7 @@
                        :graph (update-statement-node 
                                 (:graph ces2) 
                                 sn 
-                                :value (boolean->number (acceptable? (:graph ces2) sn)))))))
+                                :value (compute-statement-value  (:graph ces2) sn))))))
 
 (defn- eval-argument-node 
   "cestate argument-node -> cestate
@@ -92,7 +122,7 @@
                                         :closed-arguments (conj (:closed-arguments ces1) 
                                                                 (:id an)))
                                  (map (fn [id] (get (:statement-nodes (:graph ces1))
-                                                     id))
+                                                    id))
                                       (map :statement (:premises an))))
                     ces3 (reduce (fn [s an2] (eval-argument-node s an2))
                                  ces2
@@ -101,7 +131,7 @@
                        :graph (update-argument-node 
                                 (:graph ces3)
                                 an
-                                :value (boolean->number (applicable? (:graph ces3) an)))))))
+                                :value (compute-argument-value (:graph ces3) an))))))
 
 (defn holds?
   "argument-graph premise -> boolean or nil
@@ -110,21 +140,20 @@
    from the argument graph."
   [ag p]
   {:pre [(argument-graph? ag) (premise? p)]}
-  (let [sn (get (:statement-nodes ag) 
-                (get (:language ag) (literal-atom (:statement p))))
-        v (:value sn)]
+  (let [sn (get (:statement-nodes ag) (:statement p))
+        v (acceptable? ag sn)]
     (if (nil? v)
       nil ; unknown
       (if (:positive p) 
-        (= v 1.0)       
-        (= v 0.0))))) 
+        (= v true)       
+        (= v false))))) 
       
 (defn- all-premises-hold?
   "argument-graph argument-node -> boolean or nil"
   [ag an]
   {:pre [(argument-graph? ag) (argument-node? an)]}
-  (let [pv (map #(holds? ag %) (:premises an))]
-    (cond (contains? (set pv) nil) nil,
+  (let [pv (set (map #(holds? ag %) (:premises an)))]
+    (cond (contains? pv nil) nil,
           (every? #(= true %) pv) true,
           :else false)))
 
@@ -167,7 +196,7 @@
 
 ;; beyond-reasonable-doubt?
 (defmethod satisfies-proof-standard? :brd [ag sn]
-   (let [app-pro (filter #(applicable? ag %) (pro-argument-nodes ag sn)),
+  (let [app-pro (filter #(applicable? ag %) (pro-argument-nodes ag sn)),
         app-con (filter #(applicable? ag %) (con-argument-nodes ag sn)),
         max-app-pro (max-weight app-pro),
         max-app-con (max-weight app-con),
