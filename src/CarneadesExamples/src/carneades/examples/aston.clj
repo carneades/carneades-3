@@ -28,8 +28,8 @@
 (def graph1 
   (make-argument-graph 
     :header (make-metadata 
-              :title "Reconstruction of the Comments on the EU Green Paper ÔCopyright in the Knowledge EconomyÕ "
-              :creator "Martin Lšhe"
+              :title "Reconstruction of the Comments on the EU Green Paper â€˜Copyright in the Knowledge Economyâ€™ "
+              :creator "Martin LÃ¶he"
               :publisher "Fraunhofer FOKUS, Berlin"
               :date "2011")
     
@@ -44,7 +44,7 @@
      
      "Aston2008" 
      (make-metadata 
-       :title "Comment on the EU Green Paper ÔCopyright in the Knowledge EconomyÕ"
+       :title "Comment on the EU Green Paper â€˜Copyright in the Knowledge Economyâ€™"
        :creator "Dr. Nick Smith, Director of of Library and Information Services, Aston University"
        :date "2008"
        :identifier "https://circabc.europa.eu/d/d/workspace/SpacesStore/c2a76b48-fb92-4a63-aab4-4acbeb419dbf/aston_university.pdf" 
@@ -55,15 +55,15 @@
     :main true
     :header (make-metadata 
               :description {:en "(4) Should certain categories of exceptions be made mandatory to ensure more legal certainty and better protection of beneficiaries of exceptions? [@GreenPaper, p. 6]"
-                            :de "(4) Sollten bestimmte Ausnahmekategorien verbindlich ausgestaltet werden, um ein grš§eres Ma§ an Rechtssicherheit zu gewŠhrleisten und die Nutznie§er dieser Ausnahmen besser zu schŸtzen? [@GreenPaper, p. 6]"})
+                            :de "(4) Sollten bestimmte Ausnahmekategorien verbindlich ausgestaltet werden, um ein grÃ¶ÃŸeres MaÃŸ an Rechtssicherheit zu gewÃ¤hrleisten und die NutznieÃŸer dieser Ausnahmen besser zu schÃ¼tzen? [@GreenPaper, p. 6]"})
     :text {:en "Should certain categories of exceptions be made mandatory to ensure more legal 
                 certainty and better protection of beneficiaries of exceptions?"
-           :de "Sollten bestimmte Kategorien von Ausnahmen zur Pflicht gemacht werden, um sicherzustellen, mehr Rechtssicherheit und einen besseren Schutz der EmpfŠnger von Ausnahmen?"}))
+           :de "Sollten bestimmte Kategorien von Ausnahmen zur Pflicht gemacht werden, um sicherzustellen, mehr Rechtssicherheit und einen besseren Schutz der EmpfÃ¤nger von Ausnahmen?"}))
 
 (def permitted-exceptions-should-be-harmonized 
   (make-statement 
     :text {:en "The permitted exceptions should be harmonised so that they are available in all Member States."
-           :de "Die zulŠssigen Ausnahmen sollten harmonisiert, so dass sie in allen Mitgliedstaaten sein."}))
+           :de "Die zulÃ¤ssigen Ausnahmen sollten harmonisiert, so dass sie in allen Mitgliedstaaten sein."}))
 
 (def community-laws-should-override-contracts 
   (make-statement 
@@ -73,22 +73,22 @@
 (def easier-to-work-in-several-states
   (make-statement 
     :text {:en "Performing the action of harmonizing the exceptions and giving precedence to community law over contracts would  achieve a state in which it easier for researchers and students to work in more than one Member State."
-           :de "Performing the Aktion der Harmonisierung der Ausnahmen und den Vorrang zu geben Gemeinschaftsrechts Ÿber VertrŠge wŸrde ein Zustand, in dem es einfacher fŸr Forscher und Studenten in mehr als einem Mitgliedstaat zu arbeiten."}))
+           :de "Performing the Aktion der Harmonisierung der Ausnahmen und den Vorrang zu geben Gemeinschaftsrechts Ã¼ber VertrÃ¤ge wÃ¼rde ein Zustand, in dem es einfacher fÃ¼r Forscher und Studenten in mehr als einem Mitgliedstaat zu arbeiten."}))
 
 (def values-promoted
   (make-statement 
     :text {:en "Achieving the goal of making it easier for researchers and students to work in more than one Member State would promote the values of efficiency, legal certainty, scientific research and education."
-           :de "Die Erreichung des Ziels der Erleichterung fŸr Forscher und Studenten in mehr als einem Mitgliedstaat arbeiten wŸrden die Werte Effizienz, Rechtssicherheit, wissenschaftliche Forschung und Bildung."}))
+           :de "Die Erreichung des Ziels der Erleichterung fÃ¼r Forscher und Studenten in mehr als einem Mitgliedstaat arbeiten wÃ¼rden die Werte Effizienz, Rechtssicherheit, wissenschaftliche Forschung und Bildung."}))
 
 (def work-made-more-difficult
   (make-statement 
     :text {:en "In the circumstances: Researchers and students increasingly work in more than one Member State. The patchy availability of exceptions makes their work difficult, because what is lawful in one country is probably unlawful in another. The situation is made worse by the provision of most Member States that contracts, governing the use of digital material, automatically overrides statute law."  
-           :de "Unter diesen UmstŠnden: Forscher und Studenten zunehmend in mehr als einem Mitgliedstaat zu arbeiten Die lŸckenhafte VerfŸgbarkeit von Ausnahmen macht ihre Arbeit schwierig, weil das, was in einem Land rechtmŠ§ig ist wahrscheinlich rechtswidrig in einem anderen die Situation noch schlimmer wird durch die Bereitstellung der meisten gemacht.. Mitgliedstaaten, dass die VertrŠge, die die Verwendung von digitalem Material, automatisch au§er Kraft Gesetzesrecht."}))      
+           :de "Unter diesen UmstÃ¤nden: Forscher und Studenten zunehmend in mehr als einem Mitgliedstaat zu arbeiten Die lÃ¼ckenhafte VerfÃ¼gbarkeit von Ausnahmen macht ihre Arbeit schwierig, weil das, was in einem Land rechtmÃ¤ÃŸig ist wahrscheinlich rechtswidrig in einem anderen die Situation noch schlimmer wird durch die Bereitstellung der meisten gemacht.. Mitgliedstaaten, dass die VertrÃ¤ge, die die Verwendung von digitalem Material, automatisch auÃŸer Kraft Gesetzesrecht."}))      
 
 (def better-ways
   (make-statement  
     :text {:en "There are better ways to promote efficiency, legal certainty, research and education than making it easier for researchers and students to work in more than one Member State."
-           :de "Es gibt bessere Wege, um die Effizienz, Rechtssicherheit, Forschung und Bildung als erleichtert es Forschern und Studenten in mehr als einem Mitgliedstaat Arbeit zu fšrdern."}))
+           :de "Es gibt bessere Wege, um die Effizienz, Rechtssicherheit, Forschung und Bildung als erleichtert es Forschern und Studenten in mehr als einem Mitgliedstaat Arbeit zu fÃ¶rdern."}))
 
 (def a1 (make-argument
           :conclusion should-some-exceptions-be-mandatory?
@@ -99,8 +99,8 @@
 (def a2 (make-argument 
           :id a2-id
           :header (make-metadata 
-                    :description {:en "Researchers and students increasingly work in more than one Member State, successively or concurrently. The patchy availability of the exceptions makes their work difficult, because what is lawful in one country (for example copying a small portion of a work for critical illustration) is probably unlawful in another. This is particularly the case at Aston where there are opportunities for students to work in a variety of countries on placement and therefore could potentially experience a range of legislation. We also welcome students on exchange from various countries.The situation is made worse by the provision in most Member States that contracts, governing the use of digital material, automatically override statute law. The supremacy of contracts means that statutory exceptions are probably unavailable even in the State that enacted them. This is potentially confusing for users of copyright material as well as information professionals supporting them, where detailed knowledge of specific contracts is required. It is vital that the research and teaching community in Higher Education the right to use copyright material in the context of Ôfair dealingÕ to ensure that academics, librarians and other information professionals are not tied up with recording and monitoring activity within a regulatory framework which is already complex. This situation of legal uncertainty needs legislative action by the European institutions. [@Aston2008, p. 1]"
-                                  :de "Forscher und Studenten zunehmend in mehr als einem Mitgliedstaat zu arbeiten, nacheinander oder gleichzeitig. Die lŸckenhafte VerfŸgbarkeit der Ausnahmen macht ihre Arbeit schwierig, weil, was in einem Land rechtmŠ§ig (z. B. Kopieren von einem kleinen Teil eines Werkes fŸr kritische Grafik) wahrscheinlich rechtswidrig in ein anderes. Dies ist insbesondere der Fall bei Aston in denen es Mšglichkeiten fŸr Studenten, um in einer Vielzahl von LŠndern zur Platzierung der Arbeit und damit potenziell Erfahrung eine Reihe von Rechtsvorschriften. Wir begrŸ§en auch SchŸler zum Austausch aus verschiedenen LŠndern. Die Situation wird durch die Bereitstellung in den meisten Mitgliedstaaten, dass die VertrŠge, die die Verwendung von digitalem Material, automatisch Ÿberschreiben Gesetzesrecht gemacht. Die †berlegenheit der VertrŠge bedeutet, dass die gesetzlichen Ausnahmen wahrscheinlich nicht zur VerfŸgung stehen, auch in dem Staat, der sie erlassen. Das ist verwirrend fŸr die Nutzer von urheberrechtlich geschŸtztem Material sowie Informationen Profis unterstŸtzen sie, wo genaue Kenntnis der spezifischen VertrŸgen erforderlich ist. Es ist wichtig, dass die Forschung und Lehre Gemeinde in Higher Education das Recht vor, urheberrechtlich geschŸtztes Material im Rahmen der ÔFair DealingÕ verwenden, um die Wissenschaftler, Bibliothekare und andere Informationsspezialisten sicher nicht mit Aufzeichnung und †berwachung AktivitŠt in einem Rechtsrahmen gebunden, die ist schon komplex. Diese Situation der Rechtsunsicherheit muss legislative Ma?nahmen der europŠischen Institutionen. [@Aston2008, S. 1]" })
+                    :description {:en "Researchers and students increasingly work in more than one Member State, successively or concurrently. The patchy availability of the exceptions makes their work difficult, because what is lawful in one country (for example copying a small portion of a work for critical illustration) is probably unlawful in another. This is particularly the case at Aston where there are opportunities for students to work in a variety of countries on placement and therefore could potentially experience a range of legislation. We also welcome students on exchange from various countries.The situation is made worse by the provision in most Member States that contracts, governing the use of digital material, automatically override statute law. The supremacy of contracts means that statutory exceptions are probably unavailable even in the State that enacted them. This is potentially confusing for users of copyright material as well as information professionals supporting them, where detailed knowledge of specific contracts is required. It is vital that the research and teaching community in Higher Education the right to use copyright material in the context of â€˜fair dealingâ€™ to ensure that academics, librarians and other information professionals are not tied up with recording and monitoring activity within a regulatory framework which is already complex. This situation of legal uncertainty needs legislative action by the European institutions. [@Aston2008, p. 1]"
+                                  :de "Forscher und Studenten zunehmend in mehr als einem Mitgliedstaat zu arbeiten, nacheinander oder gleichzeitig. Die lÃ¼ckenhafte VerfÃ¼gbarkeit der Ausnahmen macht ihre Arbeit schwierig, weil, was in einem Land rechtmÃ¤ÃŸig (z. B. Kopieren von einem kleinen Teil eines Werkes fÃ¼r kritische Grafik) wahrscheinlich rechtswidrig in ein anderes. Dies ist insbesondere der Fall bei Aston in denen es MÃ¶glichkeiten fÃ¼r Studenten, um in einer Vielzahl von LÃ¤ndern zur Platzierung der Arbeit und damit potenziell Erfahrung eine Reihe von Rechtsvorschriften. Wir begrÃ¼ÃŸen auch SchÃ¼ler zum Austausch aus verschiedenen LÃ¤ndern. Die Situation wird durch die Bereitstellung in den meisten Mitgliedstaaten, dass die VertrÃ¤ge, die die Verwendung von digitalem Material, automatisch Ã¼berschreiben Gesetzesrecht gemacht. Die Ãœberlegenheit der VertrÃ¤ge bedeutet, dass die gesetzlichen Ausnahmen wahrscheinlich nicht zur VerfÃ¼gung stehen, auch in dem Staat, der sie erlassen. Das ist verwirrend fÃ¼r die Nutzer von urheberrechtlich geschÃ¼tztem Material sowie Informationen Profis unterstÃ¼tzen sie, wo genaue Kenntnis der spezifischen VertrÃ¼gen erforderlich ist. Es ist wichtig, dass die Forschung und Lehre Gemeinde in Higher Education das Recht vor, urheberrechtlich geschÃ¼tztes Material im Rahmen der â€˜Fair Dealingâ€™ verwenden, um die Wissenschaftler, Bibliothekare und andere Informationsspezialisten sicher nicht mit Aufzeichnung und Ãœberwachung AktivitÃ¤t in einem Rechtsrahmen gebunden, die ist schon komplex. Diese Situation der Rechtsunsicherheit muss legislative Ma?nahmen der europÃ¤ischen Institutionen. [@Aston2008, S. 1]" })
           :scheme "Argument from Practical Reasoning"
           :conclusion permitted-exceptions-should-be-harmonized 
           :premises [(make-premise :role "Goal" :statement easier-to-work-in-several-states), 
@@ -124,7 +124,7 @@
 ; (import-from-argument-graph db aston true)
 
 (defn -main []
-  (let [dbname "aston"  ; (str "db-" (make-uuid))
+  (let [dbname "aston2"  ; (str "db-" (make-uuid))
         db (db/make-database-connection dbname "root" "pw1")]
     (db/create-argument-database 
       dbname 
@@ -132,12 +132,12 @@
       "pw1" 
       (make-metadata))
     (import-from-argument-graph db aston1 true)
-    ;; (let [aston2 (export-to-argument-graph db)]
-    ;;   (println "(= aston1 aston2): " (= aston1 aston2))
-    ;;   (argument-graph->xml aston1)
-    ;;   (println "\n\n---------------------------\n\n")
-    ;;   (argument-graph->xml aston2))
-    ))
+    (let [aston2 (export-to-argument-graph db)]
+      (println "(= aston1 aston2): " (= aston1 aston2))
+      (argument-graph->xml aston1)
+      (println "\n\n---------------------------\n\n")
+      (argument-graph->xml aston2))))
   
 
-(-main)
+
+  
