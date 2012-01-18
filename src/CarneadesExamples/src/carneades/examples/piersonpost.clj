@@ -10,7 +10,9 @@
         carneades.database.export 
         carneades.xml.caf.export
         carneades.maps.lacij
-        carneades.engine.uuid)
+        carneades.engine.uuid
+        carneades.engine.argument-evaluation
+        carneades.engine.caes)
   (:require [clojure.java.jdbc :as jdbc]
             [carneades.database.db :as db]))
 

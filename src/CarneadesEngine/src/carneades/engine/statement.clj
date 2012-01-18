@@ -10,11 +10,34 @@
   (:require [clojure.string :as str])
   (:import (java.net URI)))
 
+(defn sliteral? 
+  "As sliteral is an sexpression representation of a literal. 
+   Variables are also considered to be literals, 
+   to support some meta-level reasoning." 
+  [sexp] 
+  (or (symbol? sexp)
+      (and (seq? sexp)
+           (not (empty? sexp))
+           (symbol? (first sexp)))))
+
+(defn sliteral-pos? [literal]
+  {:pre [(sliteral? literal)]}
+  (or (not (seq? literal))
+      (and (not (empty? literal))
+           (not= (first literal) 'not))))
+
+(defn sliteral-atom 
+  [literal]
+  {:pre [(sliteral? literal)]}
+  (if (sliteral-pos? literal) 
+    literal
+    (second literal)))
+
 ; language = :en, :de, :fr, etc.
 
 (defrecord Statement  ; statements are annotated literals
   [id                 ; URN symbol
-   atom               ; nil or atomic formula of propositional (symbol) or predicate logic (list)
+   atom               ; sliteral or nil
    header             ; nil or dublin core metadata description of the model
    positive           ; boolean
    weight             ; nil or 0.0-1.0, default nil
@@ -22,6 +45,7 @@
    main               ; true if the statement is a main issue
    standard           ; proof-standard
    text])             ; (language -> string) map, natural language formulations of the statement
+
 
 (defn map->statement
   [m]
@@ -36,12 +60,22 @@
                     false           ; main issue
                     :pe             ; proof standard
                     {})             ; text
-                  m)]
-    (assoc m2 
-           :id (if (urn-symbol? (:id m)) 
-                 (:id m) 
-                 (make-urn-symbol)))))
-
+                  m)
+        ; set the id 
+        m3 (assoc m2
+                  :id (if (urn-symbol? (:id m)) 
+                        (:id m) 
+                        (make-urn-symbol)))]
+    ; normalize the statment
+    (if (not (:atom m3))
+      m3
+      (assoc m3
+             :atom (and (:atom m3) (sliteral-atom (:atom m3)))
+             :positive (or (and (sliteral-pos? (:atom m3))
+                                (:positive m3))
+                           (and (not (sliteral-pos? (:atom m3)))
+                                (not (:positive m3))))))))
+ 
 (defn make-statement
    "key value ... -> statement"
    [& key-values]  
@@ -50,15 +84,6 @@
 
 (defn statement? [x] (instance? Statement x))
 
-(defn sliteral? 
-  "As sliteral is an sexpression representation of a literal. 
-   Variables are also considered to be literals, 
-   to support some meta-level reasoning." 
-  [sexp] 
-  (or (symbol? sexp)
-      (and (seq? sexp)
-           (not (empty? sexp))
-           (symbol? (first sexp)))))
 
 (defn literal? 
   [x]

@@ -11,8 +11,8 @@
         carneades.engine.argument-construction
         carneades.engine.argument-evaluation
         carneades.engine.caes
-        carneades.engine.shell))
-
+        carneades.engine.shell
+        carneades.maps.lacij))
 
 ; Example argument graphs to test whether arguments are being evaluated properly.
 
@@ -130,7 +130,7 @@
     :premises [(make-premise :role "major" :statement '(expert ?E ?D)), 
                (make-premise :role "minor" :statement '(asserts ?E ?P))]
     :exceptions [(make-premise 
-                   :role "reliable", 
+                   :role "reliable" 
                    :statement '(not (reliable-as-source ?E))),
                  (make-premise 
                    :role "consistent" 
@@ -140,7 +140,7 @@
                     :statement '(credible-expert ?E)),
                   (make-premise
                     :role "backup-evidence"
-                    :statement '(based-on-evidence ?E))]))
+                    :statement '(based-on-evidence ?P))]))
 
 
 (def expert-witness1
@@ -178,7 +178,7 @@
 
 (def r1 (make-argument :weight 0.5 :conclusion misbehaves :premises [(pm snores)]))
 (def r2 (make-argument :weight 0.7 :conclusion access-denied :premises [(pm misbehaves)]))
-(def r3 (make-argument :weight 0.6 :pro false :conclusion 'access-denied :premises [(pm professor)]))
+(def r3 (make-argument :weight 0.6 :pro false :conclusion access-denied :premises [(pm professor)]))
 
 (def library-graph 
   (-> (make-argument-graph)
@@ -188,7 +188,7 @@
 ; Carneades applies the "last link" principle to order arguments, as can
 ; be seen below.
 
-(deftest test-frisian-carneades
+(deftest test-library-graph
    (is (in? (evaluate carneades-evaluator library-graph) 
             (literal-atom access-denied))))
 

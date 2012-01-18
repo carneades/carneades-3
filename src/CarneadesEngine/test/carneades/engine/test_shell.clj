@@ -6,7 +6,9 @@
         carneades.engine.shell
         carneades.engine.argument
         carneades.engine.scheme
-        carneades.engine.caes))
+        carneades.engine.caes
+        carneades.engine.argument-evaluation
+        carneades.maps.lacij))
 
 (def theory1 
   (make-theory
@@ -138,13 +140,13 @@
 (deftest test-engine-unless2
          (let [facts '((coins item1))
                query '(goods ?x)]
-           (is (out? (ag facts query) '(goods item1)))))
+           (is (undecided? (ag facts query) '(goods item1)))))
 
 (deftest test-engine-rebuttal
          (let [facts '((movable item1)
                        (edible item1))
                query '(goods ?x)]
-           (is (out? (ag facts query) '(goods item1)))))
+           (is (undecided? (ag facts query) '(goods item1)))))
 
 (deftest test-engine-applies
          (let [facts '((movable item1)

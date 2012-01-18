@@ -7,8 +7,7 @@
         carneades.engine.argument-evaluation
         carneades.engine.caes
         carneades.engine.argument-graph
-        carneades.maps.lacij
-        carneades.engine.uuid))
+        carneades.maps.lacij))
 
 ; The recycling example used by Adam Wyner 
 
@@ -86,7 +85,7 @@ reduces a need of a new dump which is for the garbage."}))
         (enter-arguments [a1 a2 a3 a4 a5 a6 a7 a8]) ; a9
         (accept [p14])))
 
-; (view ag)
+; (view (evaluate carneades-evaluator ag))
 
 (defn -main []
-  (view ag))
+  (view (evaluate carneades-evaluator ag)))
