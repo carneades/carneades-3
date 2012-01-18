@@ -3,10 +3,13 @@
 
 (ns ^{:doc "Read and save properties from the properties file"}
     carneades.config.reader
-  (:use clojure.contrib.def
-        clojure.java.io))
+  (:use clojure.java.io)
+  (:import java.io.File))
 
-(def *configfilename* "carneades/carneades.properties")
+(def configfilename
+     (str (System/getProperty "user.home")
+          File/separator
+          ".carneades.properties"))
 
 (defn read-bundled-properties
   "Read properties from filename. Filename is searched in the classpath"
@@ -17,16 +20,8 @@
                (.getContextClassLoader)
                (.getResourceAsStream filename)))))
 
-(defvar- #^java.util.Properties *properties*
-  (read-bundled-properties *configfilename*))
-
-(defn configvalue
-  "Returns the value of the configuration property named s"
-  [s]
-  (.getProperty *properties* s))
-
 (defn read-properties
-  "Reads the properties contained in pathname and returns a hashmap.
+  "Reads the properties contained in pathname and returns a map.
    throws java.io.FileNotFoundException"
   [pathname]
   (into {}
@@ -35,6 +30,7 @@
          properties)))
 
 (defn save-properties
+  "Saves the map to a property file."
   ([h pathname]
      (save-properties h pathname "Carneades properties file"))
   ([h pathname comments]
@@ -42,3 +38,8 @@
        (doseq [[k v] h]
          (.setProperty properties k v))
        (.store properties (output-stream pathname ) comments))))
+
+(def properties
+     (try
+       (read-properties configfilename)
+       (catch Exception _ {})))
