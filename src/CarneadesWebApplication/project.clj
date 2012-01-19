@@ -6,7 +6,7 @@
                  [hiccup "0.3.6"]
                  [enlive "1.0.0"]
                  [compojure "0.6.4"]
-                 [lein-ring "0.4.5"] ;; for 'run-jetty' on self-executable JAR
+;; [lein-ring "0.4.5"] ;; for 'run-jetty' on self-executable JAR
                  ]
   :dev-dependencies [[swank-clojure "1.4.0-SNAPSHOT"]
                      [org.clojars.rayne/autodoc "0.8.0-SNAPSHOT"]
