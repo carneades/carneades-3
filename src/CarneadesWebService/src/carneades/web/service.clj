@@ -21,7 +21,6 @@
             [carneades.maps.lacij :as lacij]))
 
 ;; To Do: 
-;; - portable way to locate files, including databases, with minimal configuration
 ;; - way to bootstrap the debate database
 ;; - retrieving user name and password from the request 
 ;; - search operations, including full text search
