@@ -38,12 +38,17 @@ function dispatch_url(element, db, element_id)
 }
 
 
-function ajax_post(url, jsondata, callback) {
+function ajax_post(suburl, jsondata, username, password, callback) {
     $.ajax({url: suburl,
-            type: "POST",
-            data : {
-                json : JSON.stringify(jsondata)
+            type: 'POST',
+            'beforeSend' : function(xhr) {
+                var bytes = Crypto.charenc.Binary.stringToBytes(username + ":" + password);
+                var base64 = Crypto.util.bytesToBase64(bytes);
+                xhr.setRequestHeader("Authorization", "Basic " + base64);
             },
+            dataType : 'json',
+            data : JSON.stringify(jsondata),
+            contentType: "application/json; charset=utf-8",
             success: callback
         });
 }
@@ -52,6 +57,6 @@ function ajax_get(suburl, callback) {
     $.ajax({url: suburl,
             type: 'GET',
             success : callback,
-            dataType : "json"
+            dataType : 'json'
         });
 }
