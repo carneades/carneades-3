@@ -14,15 +14,16 @@
          carneades.database.admin
          carneades.database.export
          carneades.xml.caf.export
-         carneades.web.liverpool-schemes)
+         carneades.web.liverpool-schemes
+         ring.util.codec)
   (:require [compojure.route :as route]
             [compojure.handler :as handler]
             [clojure.java.jdbc :as jdbc]
+            [clojure.string :as str]
             [carneades.maps.lacij :as lacij]))
 
 ;; To Do: 
 ;; - way to bootstrap the debate database
-;; - retrieving user name and password from the request 
 ;; - search operations, including full text search
 ;; - CAF import
 ;; - OPML export
@@ -124,6 +125,12 @@
   [depth]
   [:root (vec (map #(cut-ag-helper % depth) (main-issues)))])
 
+(defn get-username-and-password
+  [request]
+  (let [authorization (second (str/split (get-in request [:headers "authorization"]) #" +"))
+        authdata (String. (base64-decode authorization))]
+    (str/split authdata #":")))
+
 ;; We don't use the defroutes macro.
 ;; This allow handlers to be reused in another project
 
@@ -143,12 +150,14 @@
       
       (POST "/debate" request
             (let [m (read-json (slurp (:body request)))
-                  db (make-database-connection "debates" "root" "pw1")]
+                  [username password] (get-username-and-password request)
+                  db (make-database-connection "debates" username password)]
               (with-db db (json-response (create-debate m))))) 
       
-      (PUT "/debate" request   
+      (PUT "/debate/:id" request   
            (let [m (read-json (slurp (:body request)))
-                 db (make-database-connection "debates" "root" "pw1")
+                 [username password] (get-username-and-password request)
+                 db (make-database-connection "debates" username password)
                  id (:id (:params request))]
              (with-db db (json-response (update-debate id m))))) 
       
@@ -163,19 +172,27 @@
            (let [db2 (make-database-connection db "guest" "")]
              (with-db db2 (json-response (read-metadata id)))))
       
-      (POST "/metadata" request
-            (let [m (read-json (slurp (:body request)))
-                  db (make-database-connection (:db (:params request)) "root" "pw1")]
-              (with-db db (json-response (create-metadata (map->metadata m)))))) 
-      
+      (POST "/metadata/:db" request
+            (prn "params " (:params request))
+            (let [db (:db (:params request))
+                  m (read-json (slurp (:body request)))
+                  [username password] (get-username-and-password request)
+                  dbconn (make-database-connection db username password)]
+              (with-db dbconn (json-response (create-metadata (map->metadata m))))))
+
       (PUT "/metadata" request   
            (let [m (read-json (slurp (:body request)))
-                 db (make-database-connection (:db (:params request)) "root" "pw1")
+                 [username password] (get-username-and-password request)
+                 db (make-database-connection (:db (:params request)) username password)
                  id (java.lang.Integer/parseInt (:id (:params request)))]
              (with-db db (json-response (update-metadata id m))))) 
       
-      (DELETE "/metadata/:db/:id" [db id] 
-              (let [db2 (make-database-connection db "root" "pw1")]
+      (DELETE "/metadata/:db/:id" request
+              (let [[username password] (get-username-and-password request)
+                    db (:db (:params request))
+                    db2 (make-database-connection db username password)
+                    db (:db (:params request))
+                    id (:id (:params request))]
                 (with-db db2 (json-response (delete-metadata (java.lang.Integer/parseInt id))))))
       
       ;; Statements
@@ -218,18 +235,23 @@
       (POST "/statement/:db" request  
             (let [m (read-json (slurp (:body request)))
                   s (unpack-statement m)
-                  db (make-database-connection (:db (:params request)) "root" "pw1")]
+                  [username password] (get-username-and-password request)
+                  db (make-database-connection (:db (:params request)) username password)]
               (with-db db (json-response (create-statement (map->statement s))))))
       
       (PUT "/statement" request  
            (let [m (read-json (slurp (:body request)))
                  s (unpack-statement m)
-                 db (make-database-connection (:db (:params request)) "root" "pw1")
+                 [username password] (get-username-and-password request)
+                 db (make-database-connection (:db (:params request)) username password)
                  id (:id (:params request))]
              (with-db db (json-response (update-statement db id s)))))        
       
-      (DELETE "/statement/:db/:id" [db id] 
-              (let [db2 (make-database-connection db "root" "pw1")]
+      (DELETE "/statement/:db/:id" request
+              (let [[username password] (get-username-and-password request)
+                    db (:db (:params request))
+                    id (:id (:params request))
+                    db2 (make-database-connection db username password)]
                 (with-db db2 (json-response (delete-statement id)))))
       
       ;; Arguments  
@@ -269,18 +291,23 @@
       (POST "/argument" request  
             (let [m (read-json (slurp (:body request)))
                   arg (unpack-argument m)
-                  db (make-database-connection (:db (:params request)) "root" "pw1")]
+                  [username password] (get-username-and-password request)
+                  db (make-database-connection (:db (:params request)) username password)]
               (with-db db (json-response (create-argument (map->argument arg))))))
       
       (PUT "/argument" request  
            (let [m (read-json (slurp (:body request)))
                  arg (unpack-argument m)
-                 db (make-database-connection (:db (:params request)) "root" "pw1")
+                 [username password] (get-username-and-password request)
+                 db (make-database-connection (:db (:params request)) username password)
                  id (:id (:params request))]
              (with-db db (json-response (update-argument id arg)))))   
       
-      (DELETE "/argument/:db/:id" [db id] 
-              (let [db2 (make-database-connection db "root" "pw1")]
+      (DELETE "/argument/:db/:id" request
+              (let [[username password] (get-username-and-password request)
+                    id (:id (:params request))
+                    db (:db (:params request))
+                    db2 (make-database-connection db username password)]
                 (with-db db2
                   (json-response (delete-argument id)))))
       
@@ -297,24 +324,31 @@
       (POST "/namespace/" request  
             (let [prefix (:prefix (:params request)),
                   uri (read-json (slurp (:body request))),
-                  db (make-database-connection (:db (:params request)) "root" "pw1")]
+                  [username password] (get-username-and-password request)
+                  db (make-database-connection (:db (:params request)) username password)]
               (with-db db (json-response (create-namespace db prefix uri)))))
       
       (PUT "/namespace/" request  
            (let [prefix (:prefix (:params request)),
                  uri (read-json (slurp (:body request))),
-                 db (make-database-connection (:db (:params request)) "root" "pw1")]
+                 [username password] (get-username-and-password request)
+                 db (make-database-connection (:db (:params request)) username password)]
              (with-db db (json-response (update-namespace prefix uri)))))
       
-      (DELETE "/namespace/:db/:prefix" [db prefix] 
-              (let [db2 (make-database-connection db "root" "pw1")]
+      (DELETE "/namespace/:db/:prefix" request
+              (let [[username password] (get-username-and-password request)
+                    db (:db (:params request))
+                    prefix (:prefix (:params request))
+                    db2 (make-database-connection db username password)]
                 (with-db db2
                   (json-response (delete-namespace prefix)))))
       
       ;; Statement Polls
       
-      (GET "/statement-poll/:db" [db]
-           (let [db2 (make-database-connection db "root" "pw1")] 
+      (GET "/statement-poll/:db" request
+           (let [[username password] (get-username-and-password request)
+                 db (:db (:params request))
+                 db2 (make-database-connection db username password)] 
              (with-db db2 (json-response (list-statement-poll)))))
       
       (GET "/statement-poll/:db/:id" [db id]
@@ -324,24 +358,31 @@
       (POST "/statement-poll" request  
             (let [userid (:id (:params request)),
                   votes (read-json (slurp (:body request))),
-                  db (make-database-connection (:db (:params request)) "root" "pw1")]
+                  [username password] (get-username-and-password request)
+                  db (make-database-connection (:db (:params request)) username password)]
               (with-db db (json-response (create-statement-poll userid votes)))))
       
       (PUT "/statement-poll" request  
            (let [userid (:id (:params request)),
                  votes (read-json (slurp (:body request)))
-                 db (make-database-connection (:db (:params request)) "root" "pw1")]
+                 [username password] (get-username-and-password request)
+                 db (make-database-connection (:db (:params request)) username password)]
              (with-db db (json-response (update-statement-poll userid votes)))))
       
-      (DELETE "/statement-poll/:db/:id" [db id] 
-              (let [db2 (make-database-connection db "root" "pw1")]
+      (DELETE "/statement-poll/:db/:id" request
+              (let [[username password] (get-username-and-password request)
+                    db (:db (:params request))
+                    id (:id (:params request))
+                    db2 (make-database-connection db username password)]
                 (with-db db2
                   (json-response (delete-statement-poll (java.lang.Integer/parseInt id)))))) 
       
       ;; Argument Polls
       
-      (GET "/argument-poll/:db" [db]
-           (let [db2 (make-database-connection db "root" "pw1")] 
+      (GET "/argument-poll/:db" request
+           (let [[username password] (get-username-and-password request)
+                 db (:db (:params request))
+                 db2 (make-database-connection db username password)] 
              (with-db db2 (json-response (list-argument-poll)))))
       
       (GET "/argument-poll/:db/:id" [db id]
@@ -351,17 +392,22 @@
       (POST "/argument-poll" request  
             (let [userid (:id (:params request)),
                   votes (read-json (slurp (:body request))),
-                  db (make-database-connection (:db (:params request)) "root" "pw1")]
+                  [username password] (get-username-and-password request)
+                  db (make-database-connection (:db (:params request)) username password)]
               (with-db db (json-response (create-argument-poll userid votes)))))
       
       (PUT "/argument-poll" request  
            (let [userid (:id (:params request)),
                  votes (read-json (slurp (:body request)))
-                 db (make-database-connection (:db (:params request)) "root" "pw1")]
+                  [username password] (get-username-and-password request)
+                 db (make-database-connection (:db (:params request)) username password)]
              (with-db db (json-response (update-argument-poll userid votes)))))
       
-      (DELETE "/argument-poll/:db/:id" [db id] 
-              (let [db2 (make-database-connection db "root" "pw1")]
+      (DELETE "/argument-poll/:db/:id" request
+              (let [[username password] (get-username-and-password request)
+                    db (:db (:params request))
+                    id (:id (:params request))
+                    db2 (make-database-connection db username password)]
                 (with-db db2
                   (json-response (delete-argument-poll (java.lang.Integer/parseInt id))))))
 
@@ -454,8 +500,9 @@
        (let [subs (unpack-subs (read-json (slurp (:body request)))),
              scheme (get liverpool-schemes-by-id (symbol (:id (:params request))))]
          (prn subs)
-          (let [responses (instantiate-scheme scheme subs)
-                dbconn (make-database-connection (:db (:params request)) "root" "pw1")]
+         (let [responses (instantiate-scheme scheme subs)
+               [username password] (get-username-and-password request)
+                dbconn (make-database-connection (:db (:params request)) username password)]
              (prn responses)
              (with-db dbconn
                  (json-response 
