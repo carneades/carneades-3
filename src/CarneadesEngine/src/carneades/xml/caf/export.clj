@@ -69,7 +69,7 @@
                                     (when (nil? (:weight stmt)) :weight))
                             (assoc :id (str (:id stmt)))
                             (assoc :standard (standard->string (:standard stmt)))
-                            (assoc :atom (pack-atom (literal-atom stmt))))]
+                            (assoc :atom (pack-atom (statement-node-atom stmt))))]
               (conj v [:statement (dissoc stmt1 (when (empty? (:atom stmt1)) :atom))
                        (if (nil? (:header stmt)) "" (metadata->xml (:header stmt)))
                        (reduce (fn [v description]
