@@ -6,7 +6,7 @@
         impact.web.logic.translations.mygengo-translator)
   (:require [impact.web.logic.translations.translator :as trans]))
 
-(def translations-properties (read-properties (resource "private/translations.keys")))
+(def translations-properties (read-bundled-properties "private/translations.keys"))
 
 (def msbing-key (get translations-properties "msbing_translation_key"))
 (def mygengo-public-key (get translations-properties "mygengo_translation_public_key"))
