@@ -3,30 +3,29 @@
 
 (ns carneades.engine.test-dnf
   (:use clojure.test
-        clojure.contrib.def
         carneades.engine.dnf))
 
-(defvar- f0 'a)
-(defvar- f1 '(not a))
-(defvar- f2 '(not a b))
-(defvar- f3 '(not (and a b)))
-(defvar- f4 '(and (not a) b))
-(defvar- f5 '(or a b))
-(defvar- f6 '(or a (and b c)))
-(defvar- f7 '(or a (and (not b) c)))
-(defvar- f8 '(and a (and b c)))
-(defvar- f9 '(or (not a) (and a b) (and c d)))
-(defvar- f10 '(or a b c (not d)))
-(defvar- f11 '(or a b c (not (and a b))))
-(defvar- f12 '(or (not (not a)) (not (and (not b) (not c))) (not (and a b))))
-(defvar- f13 '(not (and a (assuming b) (unless c) (or d (assuming e)))))
-(defvar- f14 '(and a b
+(def f0 'a)
+(def f1 '(not a))
+(def f2 '(not a b))
+(def f3 '(not (and a b)))
+(def f4 '(and (not a) b))
+(def f5 '(or a b))
+(def f6 '(or a (and b c)))
+(def f7 '(or a (and (not b) c)))
+(def f8 '(and a (and b c)))
+(def f9 '(or (not a) (and a b) (and c d)))
+(def f10 '(or a b c (not d)))
+(def f11 '(or a b c (not (and a b))))
+(def f12 '(or (not (not a)) (not (and (not b) (not c))) (not (and a b))))
+(def f13 '(not (and a (assuming b) (unless c) (or d (assuming e)))))
+(def f14 '(and a b
                    (and c (or d (or (assuming f) g)) h)
                    (or (not (and (unless i) j (and (not k) l))) m)))
-(defvar- f15 '(if (and a (or b (iff c d))) e))
-(defvar- f16 '(or (and a (if b (and c d))) e))
-(defvar- f17 '(or (and a (or b (and c d))) e))
-(defvar- f18 '(iff (and a (or b (if c d))) e))
+(def f15 '(if (and a (or b (iff c d))) e))
+(def f16 '(or (and a (if b (and c d))) e))
+(def f17 '(or (and a (or b (and c d))) e))
+(def f18 '(iff (and a (or b (if c d))) e))
 
 (deftest test-atom?
   (is (atom? f0))
