@@ -233,7 +233,7 @@
              :open-goals (disj (:open-goals state1) id))            
       (let [issue (first (:issues goal))]
         (println "issues: " (:issues goal))
-        (if (contains? (:closed-issues state2) issue) 
+        (if (contains? (:closed-issues state1) issue) 
           ; the issue has already been handled
           ; pop the issue from the goal
           (assoc state1
