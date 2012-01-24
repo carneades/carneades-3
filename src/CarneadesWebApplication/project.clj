@@ -5,7 +5,7 @@
                  [carneades-engine "1.0.0-SNAPSHOT"]
                  [hiccup "0.3.6"]
                  [enlive "1.0.0"]
-                 [compojure "0.6.4"]
+                 [compojure "1.0.1"]
 ;; [lein-ring "0.4.5"] ;; for 'run-jetty' on self-executable JAR
                  ]
   :dev-dependencies [[swank-clojure "1.4.0-SNAPSHOT"]
