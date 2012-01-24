@@ -547,7 +547,7 @@
     (prn "conclusion-id" conclusion-id)
     (jdbc/insert-record 
       :argument
-      (assoc (dissoc arg :premises)
+      (assoc (dissoc arg :premises :exceptions)
              :id arg-id
              :scheme scheme-id
              :conclusion conclusion-id
@@ -578,7 +578,7 @@
    the argument with the given id."
   [arg-id]
   (jdbc/with-query-results 
-    res1 ["SELECT id FROM statement WHERE atom=?" (format "(undercut %s)" arg-id)]
+    res1 ["SELECT id FROM statement WHERE atom regexp?" (format "(undercut %s .*)" arg-id)]
     (if (empty? res1) 
       [] 
       (let [stmt (first res1)]
