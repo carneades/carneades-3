@@ -18,7 +18,11 @@
       (route/resources "/")
       ])
 
-(def allroutes (concat carneades-application-routes carneades-web-service-routes))
+(def allroutes
+     carneades-application-routes
+     ;; use the following combination of routes to embed the Web Service within the WebApplication 
+     ;; (concat carneades-application-routes carneades-web-service-routes)
+     )
 (def app (handler/site (apply routes allroutes)))
 
 (defn start-server
