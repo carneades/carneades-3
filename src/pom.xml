@@ -197,6 +197,20 @@
                             <goal>exec</goal>
                         </goals>
                     </execution>
+                                         <execution>
+                        <id>lein-clean-CarneadesWebService</id>
+                        <phase>clean</phase>
+                        <configuration>
+                            <executable>lein</executable>
+                            <workingDirectory>${project.basedir}/CarneadesWebService</workingDirectory>
+                            <arguments>
+                                <argument>clean</argument>
+                            </arguments>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
                     <execution>
                         <id>mvn-clean-CarneadesEditorUIComponents</id>
                         <phase>clean</phase>
