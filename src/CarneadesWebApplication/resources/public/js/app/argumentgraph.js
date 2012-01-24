@@ -10,7 +10,7 @@ function argumentgraph_url(db)
 
 function display_argumentgraph(db)
 {
-    ajax_get('/argumentgraph-info/' + db,
+    ajax_get('argumentgraph-info/' + db,
              function(data) {
                  data.normalize();
                  data.db = db;
