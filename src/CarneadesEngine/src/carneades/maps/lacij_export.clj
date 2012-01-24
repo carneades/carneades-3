@@ -74,7 +74,7 @@
 (defn add-arg-decorator
   [svgmap arg argid]
   {:pre [(argument-node? arg)]}
-  (if (= (:pro arg))
+  (if (:pro arg)
     (add-decorator svgmap argid (make-plusdecorator))
     (add-decorator svgmap argid (make-minusdecorator))))
 
