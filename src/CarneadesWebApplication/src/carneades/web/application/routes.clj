@@ -1,6 +1,6 @@
 (ns carneades.web.application.routes
   (:use compojure.core
-        ring.adapter.jetty ;; <- to comment when building WAR
+;; ring.adapter.jetty ;; <- to comment when building WAR
         ring.middleware.params
         ring.middleware.session
         carneades.web.application.views.pages
@@ -8,7 +8,9 @@
   (:require [compojure.route :as route]
             [compojure.handler :as handler]
             [compojure.response :as response])
-  (:gen-class))
+  ;; comment this when building WAR:
+  ;; (:gen-class)
+  )
 
 (def carneades-application-routes
      [(GET "/" [] (index-page))
@@ -21,7 +23,9 @@
 
 (defn start-server
   []
-  (run-jetty #'app {:join? false :port 8080}))
+  ;; comment this when building WAR:
+  ;; (run-jetty #'app {:join? false :port 8080})
+  )
 
 (defn -main
   [& args]
