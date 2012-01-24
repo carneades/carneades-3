@@ -46,11 +46,10 @@
 
 (defn pick-arg-params
   [ag arg params]
-  (prn "value " (:value arg))
   (cond (and (in-node? arg) (:pro arg))
         (:arg-pro-applicable-params params)
         
-        (and (in-node? arg) (:pro arg))
+        (and (in-node? arg) (:con arg))
         (:arg-con-applicable-params params)
         
         (:pro arg)
