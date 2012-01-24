@@ -18,7 +18,7 @@ function fill_statement_template(statement_data)
 
 function display_statement(db, stmtid)
 {
-    ajax_get('/statement-info/' + db + '/' + stmtid,
+    ajax_get('statement-info/' + db + '/' + stmtid,
              function(info) {
                  info.normalize();
                  info.db = db;
