@@ -411,7 +411,7 @@
 (defn undercutters
   "argument-graph argument-node -> (seq-of argument-node)"
   [ag an]
-  (let [atom `(~'undercut ~(:scheme an) ~(:atom (get (:statement-nodes ag) (:conclusion an))))
+  (let [atom `(~'undercut ~(:scheme an))
         sn (get-statement-node ag atom)]
     (if (nil? sn)
       ()

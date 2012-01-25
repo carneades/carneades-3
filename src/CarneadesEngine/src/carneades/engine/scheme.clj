@@ -185,7 +185,7 @@
   "key value ... -> section"
   [& key-values]  
   (merge (Section. 
-           (gensym "?")    ; id
+           (gensym "sect-")    ; id
            nil             ; header
            []              ; schemes
            [])             ; (sub)sections
@@ -242,7 +242,10 @@
   ; (println "term: " trm)
   (cond (constant? trm) trm,
         (variable? trm) :other,
-        (literal? trm) (literal-predicate trm),
+        (literal? trm) (let [p (literal-predicate trm)]
+                         (if (and (= p 'applies) (= 3 (count trm)))
+                           (scheme-index-key (nth trm 2))
+                           p)),
         (compound-term? trm) (term-functor trm)
         :else :other))
  
@@ -294,17 +297,18 @@
     (let [key (scheme-index-key (apply-substitutions subs goal))]
       (if (and (not other) (= key :other))
         ()
-        (concat (get index key))))))
+        (or (get index key) [])))))
 
 (defn apply-scheme
   "scheme literal substitutions -> seq-of response"
   [scheme goal subs]
   {:pre [(scheme? scheme) (literal? goal) (map? subs)]}
+  ; (println "apply-scheme: " scheme)
   (let [c (scheme-conclusion-literal scheme)
         subs2 (or (unify c goal subs)
                   (unify `(~'applies ~(:id scheme) ~c) goal subs))]
     (if (not subs2)
-      [] ; fail
+        [] ; fail
       (let [id (make-urn-symbol)]
         [(make-response subs2
                         (map (fn [p] (if (:positive p)

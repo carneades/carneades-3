@@ -578,7 +578,7 @@
    the argument with the given id."
   [arg-id]
   (jdbc/with-query-results 
-    res1 ["SELECT id FROM statement WHERE atom regexp?" (format "(undercut %s .*)" arg-id)]
+    res1 ["SELECT id FROM statement WHERE atom=?" (format "(undercut %s)" arg-id)]
     (if (empty? res1) 
       [] 
       (let [stmt (first res1)]
