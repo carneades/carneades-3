@@ -7,6 +7,7 @@
         carneades.engine.argument
         carneades.engine.scheme
         carneades.engine.caes
+        carneades.engine.dublin-core
         carneades.engine.argument-evaluation
         carneades.maps.lacij))
 
@@ -31,6 +32,7 @@
           :premises [(pm '(coins ?x))])
         
         (make-scheme
+          :id 'r1
           :conclusion '(goods ?x)
           :premises [(pm '(movable ?x))]
           :exceptions [(pm '(money ?x))])
@@ -73,29 +75,30 @@
           :premises [(pm '(status ?x ?y))
                      (pm '(not= ?y exempted))])])
      
-     (make-section    ; (part of) standard deontic logic
+     (make-section  
        :schemes
-		 [(make-scheme 
-			:strict true
-			:conclusion '(not (obligated (not ?P)))
-			:premises    [(pm '(permitted ?P))])
-		  
-		  (make-scheme 
-			:strict true
-			:conclusion '(not (permitted ?P))
-			:premises    [(pm '(obligated (not ?P)))])
-		  
-		  (axiom '(permitted (drink-alcohol ?x)))])
+       [(make-scheme
+          :strict true
+          :pro false
+          :conclusion '(obligated (not ?P))
+          :premises    [(pm '(permitted ?P))])
+        
+        (make-scheme 
+          :strict true
+          :pro false
+          :conclusion '(permitted ?P)
+          :premises    [(pm '(obligated (not ?P)))])
+        		  (axiom '(permitted (drink-alcohol ?x)))])
      
      (make-section
        :schemes 
        [(make-scheme 
-          :name "r1"
+          :id 'r1
           :conclusion '(not (bar ?x))
           :premises [(pm '(foo ?x))])
         
         (make-scheme
-          :name "r2"
+          :id 'r2
           :conclusion '(not (foo ?x))
           :premises [(pm '(bar ?x))])])]))
                              
@@ -149,13 +152,9 @@
            (is (undecided? (ag facts query) '(goods item1)))))
 
 (deftest test-engine-applies
-         (let [facts '((movable item1)
-                       (edible item1)
-                       (enacted r1 d1)
-                       (enacted r2 d2)
-                       (later d2 d1))
-               query '(priority r2 r1 (goods item1))]
-           (is (in? (ag facts query) query))))
+         (let [facts '((movable item1))
+               query '(applies ?r (goods item1))]
+           (is (in? (ag facts query) '(applies r1 (goods item1))))))
 
 (deftest test-engine-negative-query
          (let [facts '((edible i1))
@@ -182,8 +181,8 @@
 
 (deftest test-deontic-logic
          (let [facts ()
-               query '(not (obligated (not (drink-alcohol Tom))))]
-           (is (in? (ag facts query) '(not (obligated (not (drink-alcohol Tom))))))))
+               query '(obligated (not (drink-alcohol Tom)))]
+           (is (out? (ag facts query) query))))
 
 (deftest test-engine-not-equal
          (let [facts '((status Lea exempted)
@@ -196,3 +195,11 @@
 
 ; (run-tests)
 
+(defn -main []
+    (let [facts '((movable item1)
+                       (edible item1)
+                       (enacted r1 d1)
+                       (enacted r2 d2)
+                       (later d2 d1))
+               query '(priority r2 r1 (goods item1))]
+      (ag facts query)))
