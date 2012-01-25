@@ -11,6 +11,7 @@
         carneades.engine.utils
         carneades.engine.argument-generator
         carneades.engine.unify
+        carneades.engine.dublin-core
         carneades.engine.argument))
 
 (declare builtins)
@@ -21,21 +22,19 @@
 
 (def builtin-theory
   (make-theory 
-    :name "Carneades Builtin Theory"
-    :sections
-    (make-section
-      :name "Priority"
-      :schemes
-      [(make-scheme 
-        :name "Priority1"
-        :conclusion '(priority ?r2 ?r1 (not ?p1))
-        :premises [(pm '(applies ?r2 ?p1))
-                   (pm '(prior ?r2 ?r1))])
-      (make-scheme
-        :name "Priority2"
-        :conclusion '(priority ?r2 ?r1 ?p1)
-        :premises [(pm '(applies ?r2 (not ?p1))) 
-                   (pm '(prior ?r2 ?r1))])])))
+    :header 
+    (make-metadata :title "Carneades Builtin Theory")
+    :schemes
+    [(make-scheme 
+       :id 'priority1
+       :conclusion '(priority ?r2 ?r1 (not ?p1))
+       :premises [(pm '(applies ?r2 ?p1))
+                  (pm '(prior ?r2 ?r1))])
+     (make-scheme
+       :id 'priority2
+       :conclusion '(priority ?r2 ?r1 ?p1)
+       :premises [(pm '(applies ?r2 (not ?p1))) 
+                  (pm '(prior ?r2 ?r1))])]))
 
 (defn- dispatch-eval [subs literal term expr]
   (try
@@ -88,9 +87,14 @@
   ([generators]
     (reify ArgumentGenerator
       (generate [this literal subs]
-                (interleaveall
-                  (generate (generate-arguments-from-theory builtin-theory) 
-                            literal subs)
-                  (dispatch literal subs generators))))))
+                 (dispatch literal subs generators)))))
+
+;; The Builtin theory is commented out for now, since it currently 
+;; only includes schemes for reasoning about rule priorities, and 
+;; this feature is hardly used and may need to be redesigned.
+;                (interleaveall
+;                  (generate (generate-arguments-from-theory builtin-theory) 
+;                            literal subs)
+;                  (dispatch literal subs generators))))))
 
 
