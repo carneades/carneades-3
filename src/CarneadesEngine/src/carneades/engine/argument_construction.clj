@@ -94,7 +94,6 @@
                   :substitutions subs
                   :depth (inc (:depth g1))))
       (let [conclusion (literal->sliteral (conclusion-literal arg)),
-            rebuttal (apply-substitutions subs (literal-complement conclusion)),
             undercutter (apply-substitutions subs `(~'undercut ~(:id arg)))]
         (add-goal state1 
                   (make-goal 
@@ -104,7 +103,7 @@
                     :issues (concat (map (fn [p] (literal->sliteral (premise-literal p)))
                                          (concat (:premises (:argument response))
                                                  (:exceptions (:argument response))))
-                                    (list rebuttal undercutter)                              
+                                    (list undercutter)                              
                                     (rest (:issues g1)))
                     :substitutions subs
                     :depth (inc (:depth g1))))))))
@@ -225,34 +224,32 @@
    reduce the goal with the given id remove it from from the goal lists"
   [state1 id generators1]
   ; (pprint "reduce-goal")
-  (let [goal (get (:goals state1) id)]  
+  (let [goal (get (:goals state1) id)  
+        ; remove the goal from the state
+        state2 (assoc state1    
+                      :goals (dissoc (:goals state1) id)
+                      :open-goals (disj (:open-goals state1) id))]               
+    
     (if (empty? (:issues goal))
-      ; remove the goal from the state
-      (assoc state1    
-             :goals (dissoc (:goals state1) id)
-             :open-goals (disj (:open-goals state1) id))            
+      state2             
       (let [issue (first (:issues goal))]
-        (println "issues: " (:issues goal))
-        (if (contains? (:closed-issues state1) issue) 
-          ; the issue has already been handled
-          ; pop the issue from the goal
-          (assoc state1
-                 :goals (assoc (:goals state1) 
-                               id (assoc goal 
-                                         :issues (rest (:issues goal)))))
-          (let [state2 (assoc state1 :closed-issues (conj (:closed-issues state1) issue))
+        ; (pprint {:goal goal})
+        (if (contains? (:closed-issues state2) issue)
+          state2
+          (let [state3 (assoc state2 :closed-issues (conj (:closed-issues state2) issue))
                 generators2 (concat 
                               (list (generate-substitutions-from-statement-nodes 
-                                      (:graph state2)))
+                                      (:graph state3)))
                               generators1)]
+            ; (println "issue: " issue)
             ; apply the generators to the selected issue
             (let [responses (apply concat 
                                    (map (fn [g] 
                                           (generate g issue (:substitutions goal))) 
                                         generators2))]
-              (println "responses: " (count responses))
+              ; (println "responses: " (count responses))
               (reduce (fn [s r] (apply-response s goal r))
-                      state2
+                      state3
                       responses))))))))
     
 (defn- reduce-goals
