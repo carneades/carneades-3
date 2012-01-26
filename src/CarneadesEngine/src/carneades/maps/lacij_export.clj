@@ -22,21 +22,11 @@
 
 (defn gen-arg-id
   [arg]
-  (keyword (str "a" (str (Math/abs (hash arg))))))
+  (str "a-" (:id arg)))
 
 (defn gen-stmt-id
-  ;; Please think twice before making changes to this function!
-  ;; some ids with special characters could not be accepted by batik
-  ;; the generation of the layout would still works but with
-  ;; a strange output
   [stmt]
-  (let [stmtstr (literal->str (map->statement stmt))
-        size 50
-        s (if (> (count stmtstr) size)
-            (subs stmtstr 0 size)
-            stmtstr)
-        s (s/replace s #"\W" "_")]
-    (keyword (str "s_" s "_" (str (Math/abs (hash stmt)))))))
+  (str "s-" (:id stmt)))
 
 (defn pick-stmt-params
   [ag stmt params]
@@ -113,7 +103,6 @@
 (defn add-argument
   [svgmap arg ag params]
   (let [conclusion (get (:statement-nodes ag) (literal-atom (:conclusion arg)))
-        ; premises (map #(get (:statement-nodes ag) (:statement %)) (:premises arg))
         premises (:premises arg)
         svgmap (add-argument-node svgmap arg ag params)
         svgmap (add-conclusion-edge svgmap conclusion arg)
