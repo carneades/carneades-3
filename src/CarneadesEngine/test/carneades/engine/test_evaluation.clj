@@ -60,19 +60,14 @@
 (def wears-ring (make-statement :text {:en "Fred wears a ring."}))
 (def party-animal (make-statement :text {:en "Fred is a party animal."}))
 (def married (make-statement :text {:en "Fred is married."}))
-(def A1 (make-argument :strict false :weight 0.8 :conclusion bachelor :premises [(pm party-animal)]))
-(def A2 (make-argument :strict false :weight 0.7 :conclusion married :premises [(pm wears-ring)]))
+(def A1 (make-argument :strict false :weight 0.7 :conclusion bachelor :premises [(pm party-animal)]))
+(def A2 (make-argument :strict false :weight 0.8 :conclusion married :premises [(pm wears-ring)]))
 (def A3 (make-argument :strict true :pro false :conclusion married  :premises [(pm bachelor)]))
 (def A4 (make-argument :strict true :pro false :conclusion bachelor :premises [(pm married)]))
 
-; A5 and A6 manually add the contrapostives of A3 and A4. These could
-; generated automatically when instantiating strict schemes.
-(def A5 (make-argument :strict true :conclusion married :premises [(pm (neg bachelor))]))
-(def A6 (make-argument :strict true :conclusion bachelor :premises [(pm (neg married))]))
-
 (def bachelor-graph
   (-> (make-argument-graph)
-      (enter-arguments [A1, A2, A3, A4, A5, A6])
+      (enter-arguments [A1, A2, A3, A4])
       (accept [party-animal, wears-ring])))
 
 ; The AIJ version of Carneades couldn't handle this example,
@@ -112,7 +107,7 @@
 
 ;; The next example shows how arguments can be constructed by instantiating schemes.
 ;; The scheme is instantiated manually and then used to construct arguments.
-;; Schemes of this type, with a conclusion which is a schema variable ranging
+;; Schemes of this type, with a conclusion which is a scheme variable ranging
 ;; over arbitrary literals, cannot be used effectively with a backwards
 ;; chaining, goal-directed strategy, since the conclusion matches every goal
 ;; literal.  Thus, in this example, the scheme is first instantiated in a
@@ -131,7 +126,8 @@
                (make-premise :role "minor" :statement '(asserts ?E ?P))]
     :exceptions [(make-premise 
                    :role "reliable" 
-                   :statement '(not (reliable-as-source ?E))),
+                   :positive false
+                   :statement '(reliable-as-source ?E)),
                  (make-premise 
                    :role "consistent" 
                    :statement '(not (consistent-with-other-witnesses ?P)))]
@@ -150,7 +146,7 @@
      '?E 'Joe
      '?D 'dentistry}))            
 
-(def max-goals 10)
+(def max-goals 100)
 
 (def generators 
   (list (generate-arguments-from-scheme expert-witness1)))
@@ -215,7 +211,7 @@
       (accept [P])))
 
 (deftest test-self-defeat
-   (is (out? (evaluate carneades-evaluator self-defeat-graph) 
+   (is (undecided? (evaluate carneades-evaluator self-defeat-graph) 
             (literal-atom Q))))
 
 ; TO DO: remaining examples in Henry's article, starting with the example
