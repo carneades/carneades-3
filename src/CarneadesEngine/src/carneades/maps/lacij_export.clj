@@ -100,11 +100,9 @@
   (let [edgeid (geneid)
         argid (gen-arg-id arg)
         stmtid (gen-stmt-id (get (:statement-nodes ag) (:statement premise)))]
-    (apply add-edge svgmap edgeid stmtid argid premise-params)
-    ;; (if (arg/premise-neg? premise)
-    ;;  (apply add-edge svgmap edgeid stmtid argid neg-premise-params)
-    ;;  (apply add-edge svgmap edgeid stmtid argid premise-params))
-    ))
+    (if (:positive premise)
+      (apply add-edge svgmap edgeid stmtid argid premise-params)
+      (apply add-edge svgmap edgeid stmtid argid neg-premise-params))))
 
 (defn add-premises-edges
   [svgmap ag premises arg]
