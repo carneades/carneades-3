@@ -224,46 +224,32 @@
    reduce the goal with the given id remove it from from the goal lists"
   [state1 id generators1]
   ; (pprint "reduce-goal")
-  (let [goal (get (:goals state1) id)]  
+  (let [goal (get (:goals state1) id)  
+        ; remove the goal from the state
+        state2 (assoc state1    
+                      :goals (dissoc (:goals state1) id)
+                      :open-goals (disj (:open-goals state1) id))]               
+    
     (if (empty? (:issues goal))
-      ; remove the goal from the state
-      (assoc state1    
-             :goals (dissoc (:goals state1) id)
-             :open-goals (disj (:open-goals state1) id))            
+      state2             
       (let [issue (first (:issues goal))]
-        ; (println "issue: " issue)
-        (if (contains? (:closed-issues state1) issue) 
-          ; the issue has already been handled
-          ; pop the issue from the goal
-          (assoc state1
-                 :goals (assoc (:goals state1) 
-                               id (assoc goal 
-                                         :issues (rest (:issues goal)))))
-          (let [state2 (assoc state1 
-                              :closed-issues (conj (:closed-issues state1) issue)
-                              :goals (assoc (:goals state1) 
-                                            id (assoc goal 
-                                                      :issues (rest (:issues goal)))))
+        ; (pprint {:goal goal})
+        (if (contains? (:closed-issues state2) issue)
+          state2
+          (let [state3 (assoc state2 :closed-issues (conj (:closed-issues state2) issue))
                 generators2 (concat 
                               (list (generate-substitutions-from-statement-nodes 
-                                      (:graph state2)))
+                                      (:graph state3)))
                               generators1)]
-            ; apply the generators to the selected issue and its complement (!)
-            ; new: rebuttals are constructed even if no pro arguments can be found
-            ; This has the advantage that the same argument graph is constructed for the
-            ; issue P as the issue (not P).  The positive or negative form of the issue or query is no longer
-            ; relevant for the purpose of argument construction.  But it is still important
-            ; for argument evaluation, where burden of proof continues to play a role.
-            (let [responses (apply concat (map (fn [g] 
-                                                 (concat (generate g issue 
-                                                                   (:substitutions goal))
-                                                         (generate g (literal-complement issue) 
-                                                                   (:substitutions goal)))) 
-                                               
-                                               generators2))]
+            ; (println "issue: " issue)
+            ; apply the generators to the selected issue
+            (let [responses (apply concat 
+                                   (map (fn [g] 
+                                          (generate g issue (:substitutions goal))) 
+                                        generators2))]
               ; (println "responses: " (count responses))
               (reduce (fn [s r] (apply-response s goal r))
-                      state2
+                      state3
                       responses))))))))
     
 (defn- reduce-goals

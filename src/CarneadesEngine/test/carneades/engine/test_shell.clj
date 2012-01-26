@@ -187,7 +187,7 @@
 (deftest test-engine-not-equal
          (let [facts '((status Lea exempted)
                        (status Joe active))
-               query '(enrolled ?x)]
+               query '(enrolled Joe)]
            (is (in? (ag facts query) '(enrolled Joe)))))
 
 (deftest test-engine-cyclic-rules
