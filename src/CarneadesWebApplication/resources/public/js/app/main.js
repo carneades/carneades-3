@@ -1,6 +1,6 @@
 var CARNEADES = {
     lang : "en",
-    carneadeswsurl : "/carneadesws/"
+    carneadeswsurl : ""
 };
 
 // this code is executed when the page is loaded
