@@ -297,10 +297,12 @@ and noxious beast."}))
               (enter-arguments [a15 a16 a17])
               (accept [chased-by-big-dogs])))
 
+(defn -main []
+  (let [dbname "pierson-post"
+        root "root"
+        passwd "pw1"
+        db (db/make-database-connection dbname root passwd)]
+     (db/create-argument-database dbname root passwd (make-metadata))
+     (import-from-argument-graph db both true)
+     (argument-graph->xml (export-to-argument-graph db))))
 
-;(defn -main []
-;  (let [db (db/make-database-connection "pierson-post" "root" "pw1")]
-;    (import-from-argument-graph db both true)
-;    (argument-graph->xml (export-to-argument-graph db))))
-
-(defn -main [] (export both (str "/tmp/" (make-urn) ".svg")))
