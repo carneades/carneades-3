@@ -60,8 +60,12 @@
     ()))
 
 (defn- dispatch-notequal [subs literal term1 term2]
+  (println "dispatch-notequal")
+  (println "subs: " subs)
+  (println "term1: " term1)
+  (println "term2: " term2)
   (if-let [subs2 (unify term1 term2 subs)]
-    ()
+    (do (println "subs2:" subs2) ())
     (list (make-response subs () 
                          (make-argument  
                            :conclusion literal
@@ -87,7 +91,7 @@
   ([generators]
     (reify ArgumentGenerator
       (generate [this literal subs]
-                 (dispatch literal subs generators)))))
+                (dispatch literal subs generators)))))
 
 ;; The Builtin theory is commented out for now, since it currently 
 ;; only includes schemes for reasoning about rule priorities, and 
