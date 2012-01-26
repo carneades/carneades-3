@@ -197,7 +197,8 @@
 
 (defn -main []
     (let [facts '((movable item1)
-                       (edible item1)
+                  (e
+                   dible item1)
                        (enacted r1 d1)
                        (enacted r2 d2)
                        (later d2 d1))

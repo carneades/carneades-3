@@ -124,7 +124,7 @@
 ; (import-from-argument-graph db aston true)
 
 (defn -main []
-  (let [dbname "aston2"  ; (str "db-" (make-uuid))
+  (let [dbname "aston"  ; (str "db-" (make-uuid))
         db (db/make-database-connection dbname "root" "pw1")]
     (db/create-argument-database 
       dbname 
