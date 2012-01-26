@@ -547,7 +547,7 @@
     (prn "conclusion-id" conclusion-id)
     (jdbc/insert-record 
       :argument
-      (assoc (dissoc arg :premises)
+      (assoc (dissoc arg :premises :exceptions)
              :id arg-id
              :scheme scheme-id
              :conclusion conclusion-id
