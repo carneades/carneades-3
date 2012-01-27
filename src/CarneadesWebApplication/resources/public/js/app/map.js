@@ -35,8 +35,8 @@ function traverse_map(visitor)
 
 function display_map(db)
 {
-    $('body').html('<div id="map"></div>');
-    add_map_to_div('#map');
+    $('#browser').html('<div id="map"></div>');
+    add_map_to_div(db, '#map');
 }
 
 function add_map_to_div(db, id)

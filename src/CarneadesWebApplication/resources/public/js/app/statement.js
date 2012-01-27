@@ -13,7 +13,7 @@ function fill_statement_template(statement_data)
 {
     statement_data.statement_text = statement_data.text[CARNEADES.lang]; // statement_text(statement_data);
     var statement_html = ich.statement(statement_data);
-    $('body').html(statement_html.filter('#statement'));
+    $('#browser').html(statement_html.filter('#statement'));
 }
 
 function display_statement(db, stmtid)
