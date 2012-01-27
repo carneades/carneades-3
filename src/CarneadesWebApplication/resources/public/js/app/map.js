@@ -36,11 +36,17 @@ function traverse_map(visitor)
 function display_map(db)
 {
     $('body').html('<div id="map"></div>');
-    $('#map').svg();
-    $('#map').load('/map/aston', function(svg, error) {
+    add_map_to_div('#map');
+}
+
+function add_map_to_div(db, id)
+{
+    $(id).svg();
+    $(id).load('/map/' + db, function(svg, error) {
                                        traverse_map(function(element) {
                                                         add_map_to_browser_listener(db, element);
                                                     });
                                  });
+    
 }
 
