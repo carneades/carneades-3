@@ -60,10 +60,6 @@
     ()))
 
 (defn- dispatch-notequal [subs literal term1 term2]
-  (println "dispatch-notequal")
-  (println "subs: " subs)
-  (println "term1: " term1)
-  (println "term2: " term2)
   (if-let [subs2 (unify term1 term2 subs)]
     (do (println "subs2:" subs2) ())
     (list (make-response subs () 
