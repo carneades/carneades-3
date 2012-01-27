@@ -15,7 +15,7 @@
 (defrecord ArgumentTemplate 
   [guard       ; term with all unbound variables of the argument
    instances   ; set of ground terms matching the guard
-   argument])  ; argument
+   argument])  ; partially instantiated argument
 
 (defn make-argument-template
    [& values]
@@ -82,7 +82,7 @@
 (defn- update-issues
   "ac-state goal response -> ac-state
    Add a goal to the state by replacing the first issue of the parent goal
-   with the given issues. The depth of the parent goal is incremented in this new goal."
+   with the issues of the response. The depth of the parent goal is incremented in this new goal."
   [state1 g1 response]
   ; (println "process premises")
   (let [arg (:argument response)
@@ -179,14 +179,15 @@
   (let [arg (:argument response)]
     (if (nil? arg)
       state1
-      (assoc state1 
+      (do ; (println "process-argument: " arg)
+        (assoc state1 
              :arg-templates 
              (assoc (:arg-templates state1) 
                     (gensym "at") 
                     (make-argument-template
                       :guard `(~'guard ~@(argument-variables arg))
                       :instances #{}
-                      :argument arg))))))
+                      :argument arg)))))))
          
 (defn- apply-response
   "ac-state goal response -> ac-state"
@@ -221,33 +222,31 @@
 
 (defn- reduce-goal
   "ac-state symbol generators -> ac-state
-   reduce the goal with the given id remove it from from the goal lists"
+   reduce the goal with the given id"
   [state1 id generators1]
   ; (pprint "reduce-goal")
-  (let [goal (get (:goals state1) id)  
-        ; remove the goal from the state
-        state2 (assoc state1    
-                      :goals (dissoc (:goals state1) id)
-                      :open-goals (disj (:open-goals state1) id))]               
-    
+  ; Remove the goal from the state. Every goal is reduced at most once. The remaining issues of the goal
+  ; are passed down to the children of the goal, so they are not lost by removing the goal.
+  (let [goal (get (:goals state1) id)
+        state2  (assoc state1 :open-goals (disj (:open-goals state1) id))] ; state1 with the goal removed
     (if (empty? (:issues goal))
-      state2             
-      (let [issue (first (:issues goal))]
-        ; (pprint {:goal goal})
+      state2 ; no issues left in the goal            
+      (let [issue (apply-substitutions (:substitutions goal) (first (:issues goal)))]
+        (println "issue: " issue)
         (if (contains? (:closed-issues state2) issue)
-          state2
-          (let [state3 (assoc state2 :closed-issues (conj (:closed-issues state2) issue))
-                generators2 (concat 
-                              (list (generate-substitutions-from-statement-nodes 
-                                      (:graph state3)))
-                              generators1)]
-            (println "issues: " (:issues goal))
-            ; apply the generators to the selected issue and its complement (!)
-            ; new: rebuttals are constructed even if no pro arguments can be found
-            ; This has the advantage that the same argument graph is constructed for the
-            ; issue P as the issue (not P).  The positive or negative form of the issue or query is no longer
-            ; relevant for the purpose of argument construction.  But it is still important
-            ; for argument evaluation, where burden of proof continues to play a role.
+           ; the issue has already been handled and closed
+           ; add a goal for the remaining issues and return
+          (add-goal state2 (assoc goal :issues (rest (:issues goal))))
+          ; close the selected issue in state3 and apply the generators to the issue and its complement
+          ; Rebuttals are constructed even if no pro arguments can be found
+          ; This has the advantage that the same argument graph is constructed for the
+          ; issue P as the issue (not P).  The positive or negative form of the issue or query is no longer
+          ; relevant for the purpose of argument construction.  But it is still important
+          ; for argument evaluation, where burden of proof continues to play a role.
+          (let [state3 (assoc state2 :closed-issues (conj (:closed-issues state1) issue))
+                generators2 (concat (list (generate-substitutions-from-statement-nodes 
+                                           (:graph state3)))
+                                    generators1)]
             (let [responses (apply concat (map (fn [g] 
                                                  (concat (generate g issue 
                                                                    (:substitutions goal))
@@ -255,7 +254,7 @@
                                                                    (:substitutions goal)))) 
                                                
                                                generators2))]
-              (println "responses: " (count responses))
+              ; (println "responses: " (count responses))
               (reduce (fn [s r] (apply-response s goal r))
                       state3
                       responses))))))))
