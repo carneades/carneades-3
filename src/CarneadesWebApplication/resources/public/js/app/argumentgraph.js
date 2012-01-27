@@ -21,7 +21,7 @@ function display_argumentgraph(db)
                  data.title = markdown_to_html(data.metadata[0].title);
                  data.outline_text = outline_text(data.outline, db);
                  var argumentgraph_html = ich.argumentgraph(data);
-                 $('body').html(argumentgraph_html.filter('#argumentgraph'));  
+                 $('#browser').html(argumentgraph_html.filter('#argumentgraph'));  
                  add_map_to_div(db, '#map');
              });
 }
