@@ -241,13 +241,21 @@
                               (list (generate-substitutions-from-statement-nodes 
                                       (:graph state3)))
                               generators1)]
-            ; (println "issue: " issue)
-            ; apply the generators to the selected issue
-            (let [responses (apply concat 
-                                   (map (fn [g] 
-                                          (generate g issue (:substitutions goal))) 
-                                        generators2))]
-              ; (println "responses: " (count responses))
+            (println "issues: " (:issues goal))
+            ; apply the generators to the selected issue and its complement (!)
+            ; new: rebuttals are constructed even if no pro arguments can be found
+            ; This has the advantage that the same argument graph is constructed for the
+            ; issue P as the issue (not P).  The positive or negative form of the issue or query is no longer
+            ; relevant for the purpose of argument construction.  But it is still important
+            ; for argument evaluation, where burden of proof continues to play a role.
+            (let [responses (apply concat (map (fn [g] 
+                                                 (concat (generate g issue 
+                                                                   (:substitutions goal))
+                                                         (generate g (literal-complement issue) 
+                                                                   (:substitutions goal)))) 
+                                               
+                                               generators2))]
+              (println "responses: " (count responses))
               (reduce (fn [s r] (apply-response s goal r))
                       state3
                       responses))))))))

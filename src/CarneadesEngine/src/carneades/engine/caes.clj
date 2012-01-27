@@ -53,7 +53,7 @@
    :post [(not (nil? %))]}
   (let [pv (all-premises-hold? ag an)
         uv (set (map #(applicable? ag %) (undercutters ag an)))]
-    (cond (or (= pv nil) (contains? uv nil)) 0.5,     ; unknown
+    (cond (= pv nil) 0.5,     ; unknown
           (and pv (not (contains? uv true))) 1.0,
           :else 0.0)))
 
