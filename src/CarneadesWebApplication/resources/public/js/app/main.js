@@ -12,12 +12,12 @@ $(function() {
 
 function url_changed(url)
 {
-    var parse_url = /\/([\w-:]+)\/([\w-]+)(\/([\w-:]+))?/;
+    var url_regex = /\/([\w-:]+)\/([\w-]+)(\/([\w-:]+))?/;
     if(url.value == "/") {
          return;
     }
 
-    var result = parse_url.exec(url.value);
+    var result = url_regex.exec(url.value);
     if(result != null) {
         var element = result[1];
         var db = result[2];
@@ -35,9 +35,10 @@ function dispatch_url(element, db, element_id)
         display_statement(db, element_id);
     } else if(element == "argumentgraph") {
         display_argumentgraph(db);
+    } else if(element == "map") {
+        display_map(db);
     }
 }
-
 
 function ajax_post(suburl, jsondata, username, password, callback) {
     $.ajax({url: CARNEADESWS.carneadeswsurl + suburl,
