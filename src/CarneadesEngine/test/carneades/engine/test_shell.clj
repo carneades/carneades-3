@@ -103,7 +103,7 @@
           :premises [(pm '(bar ?x))])])]))
                              
 
-(def max-goals 500)  
+(def max-goals 10000)  
 (def generators (list (generate-arguments-from-theory theory1)))                  
 
 (defn ag [facts query]  ;
@@ -113,13 +113,19 @@
          carneades-evaluator
          query))
                                    
-(deftest test-engine-fact
-         (let [facts '((bird Tweety))
+(deftest test-engine-facts
+         (let [facts '((bird Tweety)
+                       (bird Peppie)
+                       (bird Pilot)
+                       (bird Ozzie))
                query '(bird Tweety)]
            (is (in? (ag facts query) query))))
 
 (deftest test-engine-variable
-         (let [facts '((bird Tweety))
+         (let [facts '((bird Tweety)
+                       (bird Peppie)
+                       (bird Pilot)
+                       (bird Ozzie))
                query '(bird ?x)]
            (is (in? (ag facts query) '(bird Tweety)))))
 
