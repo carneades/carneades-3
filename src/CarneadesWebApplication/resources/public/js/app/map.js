@@ -5,16 +5,22 @@ function map_url(db)
 
 function add_map_to_browser_listener(db, domelement)
 {
-    var g = $("g[id='{0}']".format(domelement.id));
+    var g = $(domelement);
     if(domelement.id) {
         if(domelement.id[0] == 's') {
             g.click(function() {
                         set_statement_url(db, domelement.id.slice(2));
                     });
+            g.mouseover(function () {
+	                    $(this).css('cursor', 'hand');
+                        });
         } else if(domelement.id[0] == 'a') {
             g.click(function() {
                         set_argument_url(db, domelement.id.slice(2));
                     });
+            g.mouseover(function () {
+	                    $(this).css('cursor', 'hand');
+                        });
         }
     }
 }
@@ -25,11 +31,6 @@ function traverse_map(visitor)
            function(index, domelement) {
                visitor(domelement);
            });
-}
-
-function load_done(svg, error)
-{
-    console.log('svg loaded');
 }
 
 function display_map(db)
