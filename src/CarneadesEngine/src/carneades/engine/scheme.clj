@@ -317,7 +317,7 @@
                              (:assumptions scheme))
                         (make-argument
                          :id id,
-                         :conclusion (literal-atom goal),
+                         :conclusion (:conclusion scheme),
                          :pro (literal-pos? goal),
                          :strict (:strict scheme),
                          :weight (:weight scheme),
