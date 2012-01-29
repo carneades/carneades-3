@@ -78,17 +78,27 @@
      (make-section  
        :schemes
        [(make-scheme
-          :strict true
-          :pro false
-          :conclusion '(obligated (not ?P))
+          :id 'not-obligated
+          :conclusion '(not (obligated (not ?P)))
           :premises    [(pm '(permitted ?P))])
         
         (make-scheme 
-          :strict true
-          :pro false
-          :conclusion '(permitted ?P)
+          :conclusion '(not (permitted ?P))
           :premises    [(pm '(obligated (not ?P)))])
-        		  (axiom '(permitted (drink-alcohol ?x)))])
+        
+        (axiom '(permitted (drink-alcohol ?x)))])
+     
+     (make-section
+       :schemes
+       [(make-scheme
+          :conclusion '(ancestor ?x ?y)
+          :premises [(pm '(parent ?x ?y))])
+       
+       (make-scheme
+         :conclusion '(ancestor ?x ?y)  ; y is an ancestor of x
+         :premises [(pm '(parent ?x ?z)) ; z is a parent of x
+                    (pm '(ancestor ?z ?y))])])
+                
      
      (make-section
        :schemes 
@@ -157,11 +167,6 @@
                query '(goods ?x)]
            (is (undecided? (ag facts query) '(goods item1)))))
 
-(deftest test-engine-applies
-         (let [facts '((movable item1))
-               query '(applies ?r (goods item1))]
-           (is (in? (ag facts query) '(applies r1 (goods item1))))))
-
 (deftest test-engine-negative-query
          (let [facts '((edible i1))
                query '(not (goods ?x))]
@@ -199,14 +204,21 @@
 (deftest test-engine-cyclic-rules
            (is (out? (ag () '(foo a)) '(foo a))))
 
+(deftest test-transitivity
+         (let [facts '((parent Tom Gloria)
+                       (parent Tom Jack)
+                       (parent Gloria Ruth)
+                       (parent Gloria Harold)
+                       (parent Jack Frederick)
+                       (parent Jack Elsie)),
+               query '(ancestor ?x ?y)]
+           (is (in? (ag facts query) '(ancestor Tom Elsie)))))
+
 ; (run-tests)
 
 (defn -main []
-    (let [facts '((movable item1)
-                  (e
-                   dible item1)
-                       (enacted r1 d1)
-                       (enacted r2 d2)
-                       (later d2 d1))
-               query '(priority r2 r1 (goods item1))]
-      (ag facts query)))
+    (let [facts '((enacted r1 d1)
+                  (enacted r2 d2)
+                  (later d2 d1))
+          query '(prior ?x ?y)]
+       (in? (ag facts query) '(prior r2 r1))))
