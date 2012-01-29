@@ -419,9 +419,9 @@
            (:pro sn)))))
    
 (defn schemes-applied
-  "argument-graph statement -> (seq-of string)"
+  "argument-graph statement -> (set-of string)"
   [ag stmt]
-  (map :scheme (arguments ag stmt)))
+  (set (map :scheme (arguments ag stmt))))
 
 (defn stated?
   [ag s]
@@ -456,11 +456,11 @@
    graph. If a statement P is rejected in the graph, its complement
    (not P) is accepted and included in the resulting sequence."
   [ag]
-  (reduce (fn [s n] (cond (= (:weight n) 1.0) (conj s (literal-atom n))
-                          (= (:weight n) 0.0) (conj s (literal-complement (literal-atom n)))
+  (reduce (fn [s n] (cond (= (:weight n) 1.0) (conj s (statement-node-atom n))
+                          (= (:weight n) 0.0) (conj s (literal-complement (statement-node-atom n)))
                           :else s))
           ()
-          (:statement-nodes ag)))
+          (vals (:statement-nodes ag))))
 
 (defn facts
   "argument-graph -> (seq-of statement)
@@ -562,14 +562,20 @@
                               
 (defn assumptions
   "argument-graph -> (seq-of statement)
-   Returns a sequence of the assumptions in the argument
-   graph."
+   Returns a sequence of the assumptions in the argument graph."
   [ag]
-  (reduce (fn [s n] (cond (< 0.5 (:weight n) 1.0) (conj s (literal-atom n))
-                          (< 0.0 (:weight n) 0.5) (conj s (literal-complement (literal-atom n)))
+  (reduce (fn [s n] (cond (nil? (:weight n)) s
+                          (< 0.5 (:weight n) 1.0) (conj s (statement-node-atom n))
+                          (< 0.0 (:weight n) 0.5) (conj s (literal-complement (statement-node-atom n)))
                           :else s))
           ()
-          (:statement-nodes ag)))
+          (vals (:statement-nodes ag))))
+
+(defn basis
+  "argument-graph -> (seq-of statement)
+   Returns a sequence of the facts and assumptions in an argument graph"
+  [ag]
+  (concat (facts ag) (assumptions ag)))
 
 (defn atomic-statements 
   "argument-graph -> (seq-of statement)
