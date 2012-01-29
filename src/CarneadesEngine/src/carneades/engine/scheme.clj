@@ -242,10 +242,7 @@
   ; (println "term: " trm)
   (cond (constant? trm) trm,
         (variable? trm) :other,
-        (literal? trm) (let [p (literal-predicate trm)]
-                         (if (and (= p 'applies) (= 3 (count trm)))
-                           (scheme-index-key (nth trm 2))
-                           p)),
+        (literal? trm) (literal-predicate trm),
         (compound-term? trm) (term-functor trm)
         :else :other))
  
@@ -305,8 +302,7 @@
   {:pre [(scheme? scheme) (literal? goal) (map? subs)]}
   ; (println "apply-scheme: " scheme)
   (let [c (scheme-conclusion-literal scheme)
-        subs2 (or (unify c goal subs)
-                  (unify `(~'applies ~(:id scheme) ~c) goal subs))]
+        subs2 (unify c goal subs)]
     (if (not subs2)
         [] ; fail
       (let [id (make-urn-symbol)]
