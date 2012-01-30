@@ -3,23 +3,22 @@
 
 ;;
 ;;
-;; TODOport the code to the new engine / evaluation / colors
+;; TODO port the code to the new engine / evaluation / colors
 ;; and have the same interface as i n carneades.maps.lacij
 ;;
 
-(ns carneades.maps.graphviz "Functions that convert an argument graph to the DOT (graphviz) 
+(ns ^{:doc "Functions that convert an argument graph to the DOT (graphviz) 
             and PNG format by invoking the external 'dot' program.
             Graphviz needs to be installed http://www.graphviz.org/"}
-  carneades.maps.graphvizviewer
-  (:use clojure.contrib.def
-        clojure.contrib.str-utils
-        carneades.maps.viewerdef
-        carneades.config.reader
-        carneades.engine.argument
-        [clojure.contrib.java-utils :only (delete-file)]
-        [carneades.engine.statement :only (literal->str
-                                           statement-complement)])
-  (:require [clojure.contrib.shell-out :as shell]))
+  carneades.maps.graphviz
+  (:use carneades.maps.viewerdef
+      carneades.config.reader
+      carneades.engine.argument
+      ;; [clojure.contrib.java-utils :only (delete-file)]
+      [carneades.engine.statement :only (literal->str
+                                         statement-complement)])
+  ;; (:require [clojure.contrib.shell-out :as shell])
+  )
 
 (defvar- *viewer* (configvalue "viewer"))
 (defvar- *graphic-format* (configvalue "graphviz.format"))

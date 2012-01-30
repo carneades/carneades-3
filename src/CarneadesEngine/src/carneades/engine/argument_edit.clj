@@ -8,10 +8,11 @@
             integrated into argument-graph module instead of remaining
             a separate module."}
     carneades.engine.argument-edit
-  (:use clojure.contrib.pprint
+  (:use clojure.pprint
         carneades.engine.argument
         carneades.engine.statement
-        [clojure.contrib.core :only (dissoc-in)]))
+        ;; [clojure.contrib.core :only (dissoc-in)]
+        ))
 
 ;;; all functions to modify an existing argument graph
 

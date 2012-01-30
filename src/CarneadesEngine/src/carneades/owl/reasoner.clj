@@ -2,27 +2,15 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns ^{:doc "Functions to maanage and query an OWL reasoner"}
-  ;;; TODO merge / replace with owl.clj ?
     carneades.engine.owl.reasoner 
-  (:use
-    ;clojure.contrib.profile ; for testing
-    clojure.contrib.def
-    carneades.engine.statement
-    carneades.engine.unify
-    carneades.engine.argument]
-    [carneades.engine.argument :as arg])
-  (:import    
-    (org.semanticweb.owlapi.apibinding OWLManager)        
-    (java.net URI)
-    (java.io File)
-    (org.semanticweb.owlapi.model IRI)
-    ;(org.semanticweb.owlapi.vocab OWLRDFVocabulary)
-    ;(org.semanticweb.owlapi.reasoner OWLReasoner OWLReasonerFactory)
-    ;(org.semanticweb.owlapi.util SimpleIRIMapper)
-    ;(java.net URI)
-    ;(java.io File)
-    )
-  )
+    (:use carneades.engine.statement
+          carneades.engine.unify
+          carneades.engine.argument
+          [carneades.engine.argument :as arg])
+    (:import org.semanticweb.owlapi.apibinding OWLManager
+             java.net URI
+             java.io File
+             org.semanticweb.owlapi.model IRI))
 
 (defvar- *debug* false)
 

@@ -244,42 +244,41 @@
 
 (defn- reduce-goal
   "ac-state symbol generators -> ac-state
-   reduce the goal with the given id"
+reduce the goal with the given id"
   [state1 id generators1]
-  ; (pprint "reduce-goal")
-  ; Remove the goal from the state. Every goal is reduced at most once. The remaining issues of the goal
-  ; are passed down to the children of the goal, so they are not lost by removing the goal.
+  ;; (pprint "reduce-goal")
+  ;; Remove the goal from the state. Every goal is reduced at most once. The remaining issues of the goal
+  ;; are passed down to the children of the goal, so they are not lost by removing the goal.
   (let [goal (get (:goals state1) id),
-        state2  (remove-goal state1 id)] 
+        state2 (remove-goal state1 id)]
     (if (empty? (:issues goal))
-      state2 ; no issues left in the goal            
+      state2 ; no issues left in the goal
       (let [issue (apply-substitutions (:substitutions goal) (first (:issues goal)))]
         (if (contains? (:closed-issues state2) issue)
-           ; the issue has already been handled and closed
-           ; add a goal for the remaining issues and return
+          ;; the issue has already been handled and closed
+          ;; a goal for the remaining issues and return
           (add-goal state2 (assoc goal :issues (rest (:issues goal))))
-          ; close the selected issue in state3 and apply the generators to the issue and its complement
-          ; Rebuttals are constructed even if no pro arguments can be found
-          ; This has the advantage that the same argument graph is constructed for the
-          ; issue P as the issue (not P).  The positive or negative form of the issue or query is no longer
-          ; relevant for the purpose of argument construction.  But it is still important
-          ; for argument evaluation, where burden of proof continues to play a role.
+          ;; close the selected issue in state3 and apply the generators to the issue and its complement
+          ;; Rebuttals are constructed even if no pro arguments can be found
+          ;; This has the advantage that the same argument graph is constructed for the
+          ;; issue P as the issue (not P). The positive or negative form of the issue or query is no longer
+          ;; relevant for the purpose of argument construction. But it is still important
+          ;; for argument evaluation, where burden of proof continues to play a role.
           (let [state3 (assoc state2 :closed-issues (conj (:closed-issues state1) issue))
                 generators2 (concat (list (generate-subs-from-basis (:graph state3)))
                                     generators1)]
-            ; (println "issue: " issue)
-            (let [responses (apply concat (map (fn [g] 
-                                                 (concat (generate g issue 
+                                        ; (println "issue: " issue)
+            (let [responses (apply concat (map (fn [g]
+                                                 (concat (generate g issue
                                                                    (:substitutions goal))
-                                                         (generate g (literal-complement issue) 
-                                                                   (:substitutions goal)))) 
-                                               
+                                                         (generate g (literal-complement issue)
+                                                                   (:substitutions goal))))
                                                generators2))]
-              ; (println "responses: " (count responses))
+                                        ; (println "responses: " (count responses))
               (reduce (fn [s r] (apply-response s goal r))
                       state3
                       responses))))))))
-    
+
 (defn- reduce-goals
   "ac-state integer (seq-of generator) -> ac-state
    Construct arguments for both viewpoints and combine the arguments into

@@ -1,8 +1,8 @@
 (defproject carneades-web-application "1.0.0-SNAPSHOT"
   :description "Carneades Web Application"
-  :dependencies [[org.clojure/clojure "1.2.1"]
+  :dependencies [[org.clojure/clojure "1.3.0"]
                  [carneades-web-service "1.0.0-SNAPSHOT"]
-                 [carneades-engine "1.0.0-SNAPSHOT"]
+                 [carneades-engine "2.0.0-SNAPSHOT"]
                  [hiccup "0.3.6"]
                  [enlive "1.0.0"]
                  [compojure "1.0.1"]
