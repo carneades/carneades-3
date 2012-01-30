@@ -7,9 +7,10 @@
             implementing a version of eval predicate, in the argument-builtins module,
             when evaluating code from users over a network."}
     carneades.engine.sandbox
-  (:use clojure.contrib.def
-        ;; net.licenser.sandbox
-        ))
+  ;; (:use
+  ;;       ;; net.licenser.sandbox
+  ;;       )
+  )
 
 ;; (defvar- *sandbox* (new-sandbox))
 

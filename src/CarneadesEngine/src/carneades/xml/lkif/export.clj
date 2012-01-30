@@ -6,8 +6,8 @@
   (:use carneades.engine.statement
         carneades.engine.argument
         carneades.engine.utils)
-  (:require [clojure.contrib.io :as io]
-            [clojure.contrib.prxml :as prx]))
+  (:require [clojure.java.io :as io]
+            [clojure.prxml :as prx]))
 
 (declare text_term->sxml)
 
@@ -19,7 +19,6 @@
             (map text_term->sxml (rest term))
             (concat (map text_term->sxml (rest term)) [nil]))]
     (interleave s t)))
-
 
 (defn functor?
   [f]
@@ -253,9 +252,6 @@
 (defn lkif-export*
   ([export-data]
     (binding [prx/*prxml-indent* 3]
-      (with-out-str (prx/prxml (data->sxml export-data))))
-    )
+      (with-out-str (prx/prxml (data->sxml export-data)))))
   ([export-data pathname]
-    (io/write-lines (absolute pathname) (list (lkif-export* export-data)))
-    )
-  )
+    (io/write-lines (absolute pathname) (list (lkif-export* export-data)))))

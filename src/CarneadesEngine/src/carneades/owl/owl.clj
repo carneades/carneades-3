@@ -3,13 +3,11 @@
 
 (ns ^{:doc "Functions to load an ontology and query it."}
     carneades.engine.owl.owl
-  (:use clojure.contrib.def
-        clojure.contrib.trace
-        carneades.engine.owl.reasoner
+  (:use carneades.engine.owl.reasoner
         carneades.engine.owl.rule
         carneades.engine.rule
         carneades.engine.utils
-        clojure.contrib.combinatorics)
+        clojure.math.combinatorics)
   (:require [clojure.xml :as xml])
   (:import (java.net URI)
            (java.io File FileNotFoundException)

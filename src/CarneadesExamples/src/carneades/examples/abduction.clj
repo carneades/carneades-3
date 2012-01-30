@@ -1,4 +1,3 @@
-
 (ns carneades.examples.abduction
   (:use carneades.engine.argument
         carneades.engine.statement

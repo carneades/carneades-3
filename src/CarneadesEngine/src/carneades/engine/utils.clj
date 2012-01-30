@@ -4,11 +4,8 @@
 (ns ^{:doc "Utilities functions to manipulate sequences and files."}
   carneades.engine.utils
   (:use clojure.java.io
-        clojure.pprint
-        clojure.contrib.trace)
-  (:require [clojure.string :as str]
-            [clojure.contrib.string :as s]))
-
+        clojure.pprint)
+  (:require [clojure.string :as str]))
 
 (defn boolean? [x]
   (instance? Boolean x))
@@ -109,6 +106,15 @@
   (fn [& args]
     (or (apply f args) nil)))
 
+;; copied from old contrib
+(defn #^String str-drop
+  "Drops first n characters from s. Returns an empty string if n is
+greater than the length of s."
+  [n #^String s]
+  (if (< (count s) n)
+    ""
+    (.substring s n)))
+
 (defn split-str
   "Splits string s in strings of length n"
   [s n]
@@ -116,13 +122,13 @@
          sq []]
     (if (empty? r)
       sq
-      (let [f (s/take n r)]
-        (recur [f (s/drop n r)] (conj sq f))))))
+      (let [f (subs 0 n r)]
+        (recur [f (str-drop n r)] (conj sq f))))))
 
 ;;; files
 
 (def ^{:doc "the platform dependant file separator"}
-  *file-separator* java.io.File/separator)
+  file-separator java.io.File/separator)
 
 (defn same-directory?
   "Returns true when filename and filename2 have the same parent directory"
@@ -135,18 +141,18 @@
   (let [f (file path)
         f2 (file relative-to)
         dirsize (count (.getPath f2))
-        dirsize (+ dirsize (count *file-separator*))]
+        dirsize (+ dirsize (count file-separator))]
     (subs (.getPath f) dirsize)))
 
 (defn create-path
   "Creates a Path from the (string) segments"
   [& segments]
-  (.getPath (file (str/join *file-separator* segments))))
+  (.getPath (file (str/join file-separator segments))))
 
 (defn make-absolute
   "Makes relative path absolute to relative-to"
   [path relative-to]
-  (.getPath (file (str relative-to *file-separator* path))))
+  (.getPath (file (str relative-to file-separator path))))
 
 (defn in-directory?
   "Returns true if path is directly under or below directory dir"
@@ -195,7 +201,7 @@
 (defn last-segment
   "Returns the last segment of pathname"
   [pathname]
-  (last (str/split pathname (re-pattern *file-separator*))))
+  (last (str/split pathname (re-pattern file-separator))))
 
 (defn last-uri-segment
   "Returns the last segment of uri"
@@ -232,57 +238,6 @@
      ~@body
      (catch Exception e#
        (throw (first-cause e#)))))
-
-;; from
-;; http://bitumenframework.blogspot.com/2010/10/stack-traces-for-clojure-app.html
-
-(defn get-stack-trace
-  ([stack-trace]
-     (map #(let [class-name  (or (.getClassName  %) "")
-                 method-name (or (.getMethodName %) "")
-                 file-name   (or (.getFileName   %) "")
-                 line-number (.getLineNumber %)]
-             [file-name line-number class-name method-name])
-          (into [] stack-trace)))
-  ([]
-     (get-stack-trace (.getStackTrace (Thread/currentThread)))))
-
-(defn get-clj-stack-trace
-  ([classname-begin-tokens classname-not-begin-tokens]
-    (let [clj-stacktrace? (fn [[file-name line-number class-name method-name]]
-                            (and (.contains file-name ".clj")
-                              (or (empty? classname-begin-tokens)
-                                (some #(.startsWith class-name %)
-                                  classname-begin-tokens))
-                              (every? #(not (.startsWith class-name %))
-                                classname-not-begin-tokens)))]
-      (filter clj-stacktrace? (get-stack-trace))))
-  ([]
-    (get-clj-stack-trace [] ["clojure."])))
-
-(defn print-table
-  [width-vector title-vector many-value-vectors]
-  (assert (= (type width-vector) (type title-vector) (type many-value-vectors)
-            (type [])))
-  (let [col-count (count width-vector)]
-    (assert (every? #(= (count %) col-count) many-value-vectors)))
-  (assert (= (count width-vector) (count title-vector)))
-  (let [fix-width (fn [text width]
-                    (apply str
-                      (take width (apply str text (take width (repeat " "))))))
-        sep-vector (into [] (map #(apply str (repeat % "-")) width-vector))]
-    (doseq [each (into [title-vector sep-vector] many-value-vectors)]
-      (doseq [i (take (count width-vector) (iterate inc 0))]
-        (print (fix-width (each i) (width-vector i)))
-        (print " | "))
-      (println))))
-
-(defn dump-stack
-  ([stack-trace-vector]
-    (print-table [20 5 45 10] ["File" "Line#" "Class" "Method"]
-      (into [] stack-trace-vector)))
-  ([]
-    (dump-stack (get-clj-stack-trace))))
 
 ;; resources
 (defn get-resource

@@ -6,9 +6,8 @@
   (:use carneades.engine.dublin-core
         carneades.engine.statement
         carneades.engine.argument-graph)
-  (:require
-        [clojure.string :as str]
-        [clojure.contrib.prxml :as prx]))
+  (:require [clojure.prxml :as prx]
+            [clojure.string :as str]))
 
 ; TO DO: 
 ; - exporting namespaces. Should namespaces be encoded using XML entities, as we did with LKIF? Alternatively,

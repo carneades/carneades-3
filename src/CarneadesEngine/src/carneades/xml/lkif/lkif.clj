@@ -4,7 +4,7 @@
 (ns ^{:doc "Import and export of argument graphs and rules 
             from/to the LKIF format"}
   carneades.xml.lkif.lkif
-  (:use clojure.contrib.def
+  (:use ;; clojure.contrib.def
         clojure.pprint
         clojure.java.io
         carneades.engine.lkif.export
