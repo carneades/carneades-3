@@ -28,7 +28,7 @@
       (apply-substitutions s t2)
       t2)))
 
-(def *identity* (hash-map))
+(def identity-map (hash-map))
 
 (defn- sigma
   "Returns a new substitution table extending s by
@@ -93,7 +93,7 @@
   ([u v s]
     (unify u v s identity (fn [state] nil) false))
   ([u v]
-    (unify u v *identity* identity (fn [state] nil) false)))
+    (unify u v identity-map identity (fn [state] nil) false)))
 
 (defn genvar
   "Generate a fresh, unique variable"

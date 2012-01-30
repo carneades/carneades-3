@@ -10,7 +10,7 @@
             of argument graphs for graphs in which a goal statement is
             acceptable.  But we may have use for this again later."}
     carneades.engine.search
-  (:use clojure.contrib.pprint))
+  (:use clojure.pprint))
 
 (defstruct node :depth :label :parent :state)
 

@@ -4,16 +4,17 @@
 (ns ^{:doc "Import LKIF functions"}
     carneades.xml.lkif.import
   (:use clojure.xml
-        clojure.contrib.trace
+        clojure.trace
         clojure.java.io
-        clojure.contrib.pprint
-        clojure.contrib.def
-        clojure.contrib.zip-filter.xml
+        clojure.pprint
+        ;; clojure.contrib.def
+        ;; clojure.contrib.zip-filter.xml
         (carneades.engine statement argument rule owl utils))
   (:require [clojure.string :as str]
             [clojure.zip :as zip]
             [clojure.xml :as xml]
-            [clojure.contrib.zip-filter :as filter])
+            ;; [clojure.contrib.zip-filter :as filter]
+            )
   (:import (java.net MalformedURLException URL)
            java.io.File))
 

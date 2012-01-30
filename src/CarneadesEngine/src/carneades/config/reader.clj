@@ -13,7 +13,6 @@
 
 (defn read-bundled-properties
   "Read properties from filename. Filename is searched in the classpath"
-  ;; see also clojure.contrib.java-utils
   [filename]
   (doto (java.util.Properties.)
     (.load (-> (Thread/currentThread)
