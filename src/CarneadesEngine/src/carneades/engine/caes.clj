@@ -51,6 +51,7 @@
   [ag an]
   {:pre [(argument-graph? ag) (argument-node? an)]
    :post [(not (nil? %))]}
+  ; (println "compute-argument-value: " an)
   (let [pv (all-premises-hold? ag an)
         uv (set (map #(applicable? ag %) (undercutters ag an)))]
     (cond (= pv nil) 0.5,     ; unknown
@@ -74,6 +75,7 @@
   [ag sn]
   {:pre [(argument-graph? ag) (statement-node? sn)]
    :post [(not (nil? %))]}
+  ; (println "compute-statement-value: " sn)
   (cond (and (:weight sn)
              (>= (:weight sn) 0.75)) 1.0, ; P assumed or accepted
         (and (:weight sn)
