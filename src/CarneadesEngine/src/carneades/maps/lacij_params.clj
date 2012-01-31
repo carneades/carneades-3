@@ -10,14 +10,13 @@
 
   (decorate
     [this view context]
-    (let [[centerx centery] (node-center view)
-          width (node-width view)
+    (let [width (node-width view)
           height (node-height view)
           margin 3]
-      (-> (svg/path [:M [centerx (double (+ (- centery (/ height 2)) margin))]
-                     :L [centerx (double (- (+ centery (/ height 2)) margin))]
-                     :M [(double (+ (- centerx (/ width 2)) margin)) centery]
-                     :L [(double (- (+ centerx (/ width 2)) margin)) centery]
+      (-> (svg/path [:M [(double (/ width 2)) 0]
+                     :L [(double (/ width 2)) height]
+                     :M [0 (double (/ height 2))]
+                     :L [width (double (/ height 2))]
                      :Z []])
           (svg/style :stroke-width 1 :stroke "black")))))
 
@@ -27,12 +26,10 @@
 
   (decorate
     [this view context]
-    (let [[centerx centery] (node-center view)
-          width (node-width view)
+    (let [width (node-width view)
           height (node-height view)
           margin 3]
-      (-> (svg/line (double (+ (- centerx (/ width 2)) margin)) centery
-                    (double (- (+ centerx (/ width 2)) margin)) centery)
+      (-> (svg/line 0 (double (/ height 2)) width (double (/ height 2)))
           (svg/style :stroke-width 1 :stroke "black")))))
 
 (defn make-plusdecorator
