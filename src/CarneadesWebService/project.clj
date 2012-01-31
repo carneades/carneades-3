@@ -4,7 +4,7 @@
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [org.clojure/data.json "0.1.1"]
                  [carneades-engine "2.0.0-SNAPSHOT"]
-                 [compojure "0.6.4" :exclusion [clojure]]
+                 [compojure "1.0.1" :exclusion [clojure]]
                  [org.clojure/java.jdbc "0.1.1"]]
   :dev-dependencies [[lein-ring "0.4.5"]] 
   :ring {:handler carneades.web.service/carneades-web-service})
