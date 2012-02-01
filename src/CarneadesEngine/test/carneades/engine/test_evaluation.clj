@@ -60,20 +60,20 @@
 (def wears-ring (make-statement :text {:en "Fred wears a ring."}))
 (def party-animal (make-statement :text {:en "Fred is a party animal."}))
 (def married (make-statement :text {:en "Fred is married."}))
-(def A1 (make-argument :strict false :weight 0.7 :conclusion bachelor :premises [(pm party-animal)]))
-(def A2 (make-argument :strict false :weight 0.8 :conclusion married :premises [(pm wears-ring)]))
-(def A3 (make-argument :strict true :pro false :conclusion married  :premises [(pm bachelor)]))
-(def A4 (make-argument :strict true :pro false :conclusion bachelor :premises [(pm married)]))
+(def A1 (make-argument :id 'A1 :conclusion bachelor :premises [(pm party-animal)]))
+(def A2 (make-argument :id 'A2 :conclusion married :premises [(pm wears-ring)]))
+(def A3 (make-argument :id 'A3 :strict true :conclusion (neg married)  :premises [(pm bachelor)]))
+(def A4 (make-argument :id 'A4 :strict true :conclusion (neg bachelor) :premises [(pm married)]))
 
 (def bachelor-graph
   (-> (make-argument-graph)
-      (enter-arguments [A1, A2, A3, A4])
-      (accept [party-animal, wears-ring])))
+      (enter-arguments [A2, A1, A4, A3])
+      (accept [wears-ring, party-animal])))
 
 ; The AIJ version of Carneades couldn't handle this example,
 ; because it couldn't handle cycles and didn't support strict arguments.
 ; Notice how Carneades handles this example differently than ASPIC+, since
-; the greater weight of A2 over A1 does not change the result here.
+; giving A2 more weight than A1 would not change the result.
 ; See pp 17-18 of ibid for a discussion of this issue.
 
 (deftest test-bachelor-carneades
@@ -93,12 +93,12 @@
 (def dutch (make-statement :text {:en "Wiebe is Dutch."}))
 (def tall (make-statement :text {:en "Wiebe is Tall."}))
 
-(def A1 (make-argument :strict true :conclusion dutch :premises [(pm frisian)]))
-(def A2 (make-argument :conclusion tall :premises [(pm dutch)]))
+(def A5 (make-argument :strict true :conclusion dutch :premises [(pm frisian)]))
+(def A6 (make-argument :conclusion tall :premises [(pm dutch)]))
 
 (def frisian-graph 
   (-> (make-argument-graph)
-      (enter-arguments [A1, A2])
+      (enter-arguments [A5, A6])
       (accept [frisian])))
 
 (deftest test-frisian-carneades
@@ -196,19 +196,19 @@
 ; The next argument is manually assigned an id, which can be used as 
 ; a constant term to refer to the argument in the undercutter, A3, below.
 
-(def A2 (make-argument :id 'A2 :conclusion Q :premises [(pm P)]))
+(def A7 (make-argument :id 'A7 :conclusion Q :premises [(pm P)]))
 
 ; The next argument illustrates how undercutters are now explicity 
 ; represented in Carneades.  
 
-(def A3 (make-argument
-          :id 'A3
-          :conclusion '(undercut A2)
+(def A8 (make-argument
+          :id 'A8
+          :conclusion '(undercut A7)
           :premises [(pm Q)]))
 
 (def self-defeat-graph 
   (-> (make-argument-graph)
-      (enter-arguments [A2,A3])
+      (enter-arguments [A7,A8])
       (accept [P])))
  
 (deftest test-self-defeat-credulous
