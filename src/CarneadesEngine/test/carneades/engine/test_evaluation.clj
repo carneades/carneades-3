@@ -201,7 +201,8 @@
 ; The next argument illustrates how undercutters are now explicity 
 ; represented in Carneades.  
 
-(def A3 (make-argument 
+(def A3 (make-argument
+          :id 'A3
           :conclusion '(undercut A2)
           :premises [(pm Q)]))
 
@@ -209,15 +210,45 @@
   (-> (make-argument-graph)
       (enter-arguments [A2,A3])
       (accept [P])))
+ 
+(deftest test-self-defeat-credulous
+  (is (in? (evaluate carneades-evaluator self-defeat-graph) 
+           (literal-atom Q))))
 
-(deftest test-self-defeat
-   (is (undecided? (evaluate carneades-evaluator self-defeat-graph) 
-            (literal-atom Q))))
+(deftest test-self-defeat-skeptical
+  (is (undecided? (evaluate carneades-evaluator self-defeat-graph) 
+                  (literal-atom Q))))
 
-; TO DO: remaining examples in Henry's article, starting with the example
-; or parallel self-defeat on page 18.
+;; TO DO: remaining examples in Henry's article, starting with the example
+;; or parallel self-defeat on page 18.
 
-    
-  
+;; The next example is from "Relating Carneades with abstract argumentation via the ASPIC+ framework for
+;; structured argumentation", by Bas Gijzel and Henry Prakken.  It is the example they use to illustrate
+;; the inability of Carneades to handle cycles
+
+(def greece-arg (make-argument
+                 :id 'greece-arg
+                 :conclusion 'Greece
+                 :exceptions [(pm 'Italy)]))
+
+(def italy-arg (make-argument
+                :id 'italy-arg
+                :conclusion 'Italy
+                :exceptions [(pm 'Greece)]))
+
+(def vacation-graph 
+  (-> (make-argument-graph)
+      (enter-arguments [greece-arg, italy-arg])))
+
+(deftest test-vacation-credulous
+  (let [g  (evaluate carneades-evaluator vacation-graph)]
+    (and (is (in? g 'Italy))
+         (is (in? g 'Greece)))))
+
+(deftest test-vacation-skeptical
+  (let [g  (evaluate carneades-evaluator vacation-graph)]
+    (and (is (undecided? g 'Italy))
+         (is (undecided? g 'Greece)))))
+
   
 

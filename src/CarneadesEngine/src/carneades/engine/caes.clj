@@ -39,10 +39,11 @@
    stored in the :value field of the node."
   [ag an]
   {:pre [(argument-graph? ag) (argument-node? an)]}
+  (println "applicable? " (statement-node-atom (get (:statement-nodes ag) (:conclusion an))))
   (cond
-   (= (:value an) 1.0) true,
-   (= (:value an) 0.0) false,
-   :else nil))
+    (= (:value an) 1.0) true,
+    (= (:value an) 0.0) false,
+    :else nil))
 
 (defn- compute-argument-value
   "argument-graph argument-node -> 0.0-1.0
@@ -51,12 +52,12 @@
   [ag an]
   {:pre [(argument-graph? ag) (argument-node? an)]
    :post [(not (nil? %))]}
-  ; (println "compute-argument-value: " an)
+  (println "compute-argument-value: " (statement-node-atom (get (:statement-nodes ag) (:conclusion an))))
   (let [pv (all-premises-hold? ag an)
         uv (set (map #(applicable? ag %) (undercutters ag an)))]
     (cond (= pv nil) 0.5,     ; unknown
           (and pv (not (contains? uv true))) 1.0,
-          :else 0.0)))
+          :else 0.0)))         
 
 (defn- acceptable?
   "argument-graph statement-node -> boolean or nil
@@ -65,6 +66,7 @@
    stored in the :value field of the node."
   [ag sn]
   {:pre [(argument-graph? ag) (statement-node? sn)]}
+  (println "acceptable? " (statement-node-atom sn))
   (cond 
     (= (:value sn) 1.0) true,
     (= (:value sn) 0.0) false,
@@ -75,7 +77,7 @@
   [ag sn]
   {:pre [(argument-graph? ag) (statement-node? sn)]
    :post [(not (nil? %))]}
-  ; (println "compute-statement-value: " sn)
+  (println "compute-statement-value: " (statement-node-atom sn))
   (cond (and (:weight sn)
              (>= (:weight sn) 0.75)) 1.0, ; P assumed or accepted
         (and (:weight sn)
