@@ -168,29 +168,45 @@
   (if (empty? args) 0.0 (apply max (map weight args))))
 
 (defmethod satisfies-proof-standard? :dv [ag sn]
-  (let [app-pro (filter #(applicable? ag %) (pro-argument-nodes ag sn))
-        app-con (filter #(applicable? ag %) (con-argument-nodes ag sn))]
-    (cond (and (not (empty? app-pro) (empty? app-con))) true,
+  (let [pro (set (map (fn [arg] (if (applicable? ag arg) arg nil))
+                      (pro-argument-nodes ag sn)))
+        app-pro (filter #(not (nil? %)) pro),
+        con (set (map (fn [arg] (if (applicable? ag arg) arg nil))
+                      (con-argument-nodes ag sn))),
+        app-con (filter #(not (nil? %)) con)]
+    (cond (or (contains? pro nil) (contains? con nil)) nil,
+          (and (not (empty? app-pro) (empty? app-con))) true,
           (and (not (empty? app-con) (empty? app-pro))) false, 
           :else nil)))
 
-;; preponderance of the evidence                                     
+
 (defmethod satisfies-proof-standard? :pe [ag sn]
-  (let [app-pro (filter #(applicable? ag %) (pro-argument-nodes ag sn))
-        app-con (filter #(applicable? ag %) (con-argument-nodes ag sn))]
-    (cond (> (max-weight app-pro) (max-weight app-con)) true,
-          (> (max-weight app-con) (max-weight app-pro)) false,
-          :else nil)))
+  (let [pro (set (map (fn [arg] (if (applicable? ag arg) arg nil))
+                      (pro-argument-nodes ag sn)))
+        app-pro (filter #(not (nil? %)) pro),
+        con (set (map (fn [arg] (if (applicable? ag arg) arg nil))
+                      (con-argument-nodes ag sn))),
+        app-con (filter #(not (nil? %)) con)]
+    (cond 
+      (or (contains? pro nil) (contains? con nil)) nil,
+      (> (max-weight app-pro) (max-weight app-con)) true,
+      (> (max-weight app-con) (max-weight app-pro)) false,
+      :else nil)))
 
 ;; clear-and-convincing-evidence?
 (defmethod satisfies-proof-standard? :cce [ag sn]
-  (let [app-pro (filter #(applicable? ag %) (pro-argument-nodes ag sn)),
-        app-con (filter #(applicable? ag %) (con-argument-nodes ag sn)),
+  (let [pro (set (map (fn [arg] (if (applicable? ag arg) arg nil))
+                      (pro-argument-nodes ag sn)))
+        app-pro (filter #(not (nil? %)) pro),
+        con (set (map (fn [arg] (if (applicable? ag arg) arg nil))
+                      (con-argument-nodes ag sn))),
+        app-con (filter #(not (nil? %)) con),
         max-app-pro (max-weight app-pro),
         max-app-con (max-weight app-con),
         alpha 0.5
         beta 0.3]
-    (cond (and (> max-app-pro max-app-con)
+    (cond (or (contains? pro nil) (contains? con nil)) nil,
+          (and (> max-app-pro max-app-con)
                (> max-app-pro alpha)
                (> (- max-app-pro max-app-con) beta)) true,
           (and (> max-app-con max-app-pro)
@@ -200,14 +216,19 @@
 
 ;; beyond-reasonable-doubt?
 (defmethod satisfies-proof-standard? :brd [ag sn]
-  (let [app-pro (filter #(applicable? ag %) (pro-argument-nodes ag sn)),
-        app-con (filter #(applicable? ag %) (con-argument-nodes ag sn)),
+  (let [pro (set (map (fn [arg] (if (applicable? ag arg) arg nil))
+                      (pro-argument-nodes ag sn)))
+        app-pro (filter #(not (nil? %)) pro),
+        con (set (map (fn [arg] (if (applicable? ag arg) arg nil))
+                      (con-argument-nodes ag sn))),
+        app-con (filter #(not (nil? %)) con),,
         max-app-pro (max-weight app-pro),
         max-app-con (max-weight app-con),
         alpha 0.5
         beta 0.3
         gamma 0.2]
-    (cond (and (> max-app-pro max-app-con)
+    (cond (or (contains? pro nil) (contains? con nil)) nil,
+          (and (> max-app-pro max-app-con)
                (> max-app-pro alpha)
                (> (- max-app-pro max-app-con) beta)
                (< max-app-con gamma)) true,
