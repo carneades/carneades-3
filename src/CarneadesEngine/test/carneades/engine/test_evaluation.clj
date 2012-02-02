@@ -226,29 +226,59 @@
 ;; structured argumentation", by Bas Gijzel and Henry Prakken.  It is the example they use to illustrate
 ;; the inability of Carneades to handle cycles
 
-(def greece-arg (make-argument
-                 :id 'greece-arg
-                 :conclusion 'Greece
-                 :exceptions [(pm 'Italy)]))
+(def Italy (make-statement :text {:en "Let's go to Italy."}))
+(def Greece (make-statement :text {:en "Let's go to Greece."}))
 
-(def italy-arg (make-argument
-                :id 'italy-arg
-                :conclusion 'Italy
-                :exceptions [(pm 'Greece)]))
+(def greece-arg
+  (make-argument
+   :id 'greece-arg
+   :conclusion Greece))
+
+(def greece-undercutter
+  (make-argument
+   :id 'greece-undercutter
+   :conclusion '(undercut greece-arg)
+   :premises [(pm Italy)]))
+
+(def italy-arg
+  (make-argument
+   :id 'italy-arg
+   :conclusion Italy))
+
+(def italy-undercutter
+  (make-argument
+   :id 'italy-undercutter
+   :conclusion '(undercut italy-arg)
+   :premises [(pm Greece)]))
 
 (def vacation-graph 
   (-> (make-argument-graph)
-      (enter-arguments [greece-arg, italy-arg])))
+      (enter-arguments [greece-arg, greece-undercutter, italy-arg, italy-undercutter])))
 
 (deftest test-vacation-credulous
   (let [g  (evaluate carneades-evaluator vacation-graph)]
-    (and (is (in? g 'Italy))
-         (is (in? g 'Greece)))))
+    (and (is (in? g Italy))
+         (is (in? g Greece)))))
 
 (deftest test-vacation-skeptical
   (let [g  (evaluate carneades-evaluator vacation-graph)]
-    (and (is (undecided? g 'Italy))
-         (is (undecided? g 'Greece)))))
+    (and (is (undecided? g Italy))
+         (is (undecided? g Greece)))))
 
-  
+;; Now let's see what happens after a decision has been made
+;; to go to Italy.
+
+(def vacation-graph2 
+  (accept vacation-graph [Italy]))
+
+(deftest test-vacation-credulous2
+  (let [g  (evaluate carneades-evaluator vacation-graph2)]
+    (and (is (in? g Italy))
+         (is (out? g Greece)))))
+
+(deftest test-vacation-skeptical2
+  (let [g  (evaluate carneades-evaluator vacation-graph2)]
+    (and (is (in? g Italy))
+         (is (out? g Greece)))))
+
 

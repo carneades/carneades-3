@@ -1,7 +1,7 @@
 ;;; Copyright (c) 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.engine.test-shell
+(ns carneades.engine.test-scheme
   (:use clojure.test
         carneades.engine.shell
         carneades.engine.argument

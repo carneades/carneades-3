@@ -39,7 +39,8 @@
    stored in the :value field of the node."
   [ag an]
   {:pre [(argument-graph? ag) (argument-node? an)]}
-  (println "applicable? " (statement-node-atom (get (:statement-nodes ag) (:conclusion an))))
+  ;; (println "applicable? " (statement-node-atom (get (:statement-nodes ag) (:conclusion an))))
+  ;; (swank.core/break)
   (cond
     (= (:value an) 1.0) true,
     (= (:value an) 0.0) false,
@@ -52,10 +53,13 @@
   [ag an]
   {:pre [(argument-graph? ag) (argument-node? an)]
    :post [(not (nil? %))]}
-  (println "compute-argument-value: " (statement-node-atom (get (:statement-nodes ag) (:conclusion an))))
+  ;; (println "compute-argument-value: " (statement-node-atom (get (:statement-nodes ag) (:conclusion an))))
+  ;; (swank.core/break)
   (let [pv (all-premises-hold? ag an)
         uv (set (map #(applicable? ag %) (undercutters ag an)))]
-    (cond (= pv nil) 0.5,     ; unknown
+    (cond (:value an) (:value an)                     ; the value has already been computed
+          ;; (or (= pv nil) (contains? uv nil)) 0.5,     ; unknown
+          (= pv nil) 0.5,                             ; unknown
           (and pv (not (contains? uv true))) 1.0,
           :else 0.0)))         
 
@@ -66,7 +70,8 @@
    stored in the :value field of the node."
   [ag sn]
   {:pre [(argument-graph? ag) (statement-node? sn)]}
-  (println "acceptable? " (statement-node-atom sn))
+  ;; (println "acceptable? " (statement-node-atom sn))
+  ;; (swank.core/break)
   (cond 
     (= (:value sn) 1.0) true,
     (= (:value sn) 0.0) false,
@@ -77,16 +82,18 @@
   [ag sn]
   {:pre [(argument-graph? ag) (statement-node? sn)]
    :post [(not (nil? %))]}
-  (println "compute-statement-value: " (statement-node-atom sn))
-  (cond (and (:weight sn)
-             (>= (:weight sn) 0.75)) 1.0, ; P assumed or accepted
-        (and (:weight sn)
-             (<= (:weight sn) 0.25)) 0.0, ; P assumed false or rejected 
-        :else (let [v (satisfies-proof-standard? ag sn)]
-                (cond 
-                  (= v true) 1.0,
-                  (= v false) 0.0,
-                  :else 0.5))))
+  ;; (println "compute-statement-value: " (statement-node-atom sn))
+  ;; (swank.core/break)
+  (cond  (:value sn) (:value sn)          ; the value has already been computed
+         (and (:weight sn)
+              (>= (:weight sn) 0.75)) 1.0, ; P assumed or accepted
+         (and (:weight sn)
+              (<= (:weight sn) 0.25)) 0.0, ; P assumed false or rejected 
+         :else (let [v (satisfies-proof-standard? ag sn)]
+                 (cond 
+                   (= v true) 1.0,
+                   (= v false) 0.0,
+                   :else 0.5))))
         
 (defn- eval-statement-node 
   "cestate statement-node -> cestate
@@ -97,7 +104,8 @@
    the statement node from being assigned a value."
   [ces1 sn] 
   {:pre [(cestate? ces1) (statement-node? sn)]}
-  (cond (contains? (:closed-statements ces1) (:id sn)) ces1,  ; cycle!
+  ;; (swank.core/break)
+  (cond (contains? (:closed-statements ces1) (:id sn)) ces1,       ; cycle!
         (:value sn) ces1,                                     ; value already assigned
         :else (let [ces2 (reduce (fn [s an] (eval-argument-node s an))
                                  (assoc ces1 
@@ -119,7 +127,8 @@
    the argument node from being assigned a value."
   [ces1 an] 
   {:pre [(cestate? ces1) (argument-node? an)]}
-  (cond (contains? (:closed-arguments ces1) (:id an)) ces1,   ; cycle!
+  ;; (swank.core/break)
+  (cond (contains? (:closed-arguments ces1) (:id an)) ces1, ; cycle!  
         (:value an) ces1,                                     ; value already assigned
         :else (let [ces2 (reduce (fn [s sn] (eval-statement-node s sn))
                                  (assoc ces1 
