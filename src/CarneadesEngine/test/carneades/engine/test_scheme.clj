@@ -1,7 +1,7 @@
 ;;; Copyright (c) 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.engine.test-shell
+(ns carneades.engine.test-scheme
   (:use clojure.test
         carneades.engine.shell
         carneades.engine.argument
@@ -76,17 +76,17 @@
                      (pm '(not= ?y exempted))])])
      
      (make-section  
-       :schemes
-       [(make-scheme
-          :id 'not-obligated
-          :conclusion '(not (obligated (not ?P)))
-          :premises    [(pm '(permitted ?P))])
-        
-        (make-scheme 
-          :conclusion '(not (permitted ?P))
-          :premises    [(pm '(obligated (not ?P)))])
-        
-        (axiom '(permitted (drink-alcohol ?x)))])
+      :schemes
+      [(axiom '(permitted (drink-alcohol ?x)))
+       
+       (make-scheme
+        :id 'not-obligated
+        :conclusion '(not (obligated (not ?P)))
+        :premises    [(pm '(permitted ?P))])
+       
+       (make-scheme 
+        :conclusion '(not (permitted ?P))
+        :premises    [(pm '(obligated (not ?P)))])])
      
      (make-section
        :schemes
@@ -190,10 +190,22 @@
                query '(has-phd ?x)]
            (is (in? (ag facts query) '(has-phd Joe)))))
 
-(deftest test-deontic-logic
-         (let [facts ()
+(deftest test-deontic-logic1
+         (let [facts '((permitted (drink-alcohol Tom)))
                query '(obligated (not (drink-alcohol Tom)))]
            (is (out? (ag facts query) query))))
+
+;; To Do: confirm that the semantics are right in the following
+;; test.  Should the query by out instead of undecided?
+;; Notice the difference to the previous test, where the
+;; same query is out, when (permitted (dring-alcohol Tom)) is
+;; in becuase it is a fact, rather than because it can be
+;; derived from an axiom.
+
+(deftest test-deontic-logic2
+         (let [facts '()
+               query '(obligated (not (drink-alcohol Tom)))]
+           (is (undecided? (ag facts query) query))))
 
 (deftest test-engine-not-equal
          (let [facts '((status Lea exempted)
@@ -202,7 +214,7 @@
            (is (in? (ag facts query) '(enrolled Joe)))))
 
 (deftest test-engine-cyclic-rules
-           (is (out? (ag () '(foo a)) '(foo a))))
+           (is (undecided? (ag () '(foo a)) '(foo a))))
 
 (deftest test-transitivity
          (let [facts '((parent Tom Gloria)

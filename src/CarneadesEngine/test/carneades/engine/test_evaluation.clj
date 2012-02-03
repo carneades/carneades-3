@@ -60,20 +60,20 @@
 (def wears-ring (make-statement :text {:en "Fred wears a ring."}))
 (def party-animal (make-statement :text {:en "Fred is a party animal."}))
 (def married (make-statement :text {:en "Fred is married."}))
-(def A1 (make-argument :strict false :weight 0.7 :conclusion bachelor :premises [(pm party-animal)]))
-(def A2 (make-argument :strict false :weight 0.8 :conclusion married :premises [(pm wears-ring)]))
-(def A3 (make-argument :strict true :pro false :conclusion married  :premises [(pm bachelor)]))
-(def A4 (make-argument :strict true :pro false :conclusion bachelor :premises [(pm married)]))
+(def A1 (make-argument :id 'A1 :conclusion bachelor :premises [(pm party-animal)]))
+(def A2 (make-argument :id 'A2 :conclusion married :premises [(pm wears-ring)]))
+(def A3 (make-argument :id 'A3 :strict true :conclusion (neg married)  :premises [(pm bachelor)]))
+(def A4 (make-argument :id 'A4 :strict true :conclusion (neg bachelor) :premises [(pm married)]))
 
 (def bachelor-graph
   (-> (make-argument-graph)
-      (enter-arguments [A1, A2, A3, A4])
-      (accept [party-animal, wears-ring])))
+      (enter-arguments [A2, A1, A4, A3])
+      (accept [wears-ring, party-animal])))
 
 ; The AIJ version of Carneades couldn't handle this example,
 ; because it couldn't handle cycles and didn't support strict arguments.
 ; Notice how Carneades handles this example differently than ASPIC+, since
-; the greater weight of A2 over A1 does not change the result here.
+; giving A2 more weight than A1 would not change the result.
 ; See pp 17-18 of ibid for a discussion of this issue.
 
 (deftest test-bachelor-carneades
@@ -93,12 +93,12 @@
 (def dutch (make-statement :text {:en "Wiebe is Dutch."}))
 (def tall (make-statement :text {:en "Wiebe is Tall."}))
 
-(def A1 (make-argument :strict true :conclusion dutch :premises [(pm frisian)]))
-(def A2 (make-argument :conclusion tall :premises [(pm dutch)]))
+(def A5 (make-argument :strict true :conclusion dutch :premises [(pm frisian)]))
+(def A6 (make-argument :conclusion tall :premises [(pm dutch)]))
 
 (def frisian-graph 
   (-> (make-argument-graph)
-      (enter-arguments [A1, A2])
+      (enter-arguments [A5, A6])
       (accept [frisian])))
 
 (deftest test-frisian-carneades
@@ -196,28 +196,89 @@
 ; The next argument is manually assigned an id, which can be used as 
 ; a constant term to refer to the argument in the undercutter, A3, below.
 
-(def A2 (make-argument :id 'A2 :conclusion Q :premises [(pm P)]))
+(def A7 (make-argument :id 'A7 :conclusion Q :premises [(pm P)]))
 
 ; The next argument illustrates how undercutters are now explicity 
 ; represented in Carneades.  
 
-(def A3 (make-argument 
-          :conclusion '(undercut A2)
+(def A8 (make-argument
+          :id 'A8
+          :conclusion '(undercut A7)
           :premises [(pm Q)]))
 
 (def self-defeat-graph 
   (-> (make-argument-graph)
-      (enter-arguments [A2,A3])
+      (enter-arguments [A7,A8])
       (accept [P])))
+ 
+(deftest test-self-defeat-credulous
+  (is (in? (evaluate carneades-evaluator self-defeat-graph) 
+           (literal-atom Q))))
 
-(deftest test-self-defeat
-   (is (undecided? (evaluate carneades-evaluator self-defeat-graph) 
-            (literal-atom Q))))
+(deftest test-self-defeat-skeptical
+  (is (undecided? (evaluate carneades-evaluator self-defeat-graph) 
+                  (literal-atom Q))))
 
-; TO DO: remaining examples in Henry's article, starting with the example
-; or parallel self-defeat on page 18.
+;; TO DO: remaining examples in Henry's article, starting with the example
+;; or parallel self-defeat on page 18.
 
-    
-  
-  
+;; The next example is from "Relating Carneades with abstract argumentation via the ASPIC+ framework for
+;; structured argumentation", by Bas Gijzel and Henry Prakken.  It is the example they use to illustrate
+;; the inability of Carneades to handle cycles
+
+(def Italy (make-statement :text {:en "Let's go to Italy."}))
+(def Greece (make-statement :text {:en "Let's go to Greece."}))
+
+(def greece-arg
+  (make-argument
+   :id 'greece-arg
+   :conclusion Greece))
+
+(def greece-undercutter
+  (make-argument
+   :id 'greece-undercutter
+   :conclusion '(undercut greece-arg)
+   :premises [(pm Italy)]))
+
+(def italy-arg
+  (make-argument
+   :id 'italy-arg
+   :conclusion Italy))
+
+(def italy-undercutter
+  (make-argument
+   :id 'italy-undercutter
+   :conclusion '(undercut italy-arg)
+   :premises [(pm Greece)]))
+
+(def vacation-graph 
+  (-> (make-argument-graph)
+      (enter-arguments [greece-arg, greece-undercutter, italy-arg, italy-undercutter])))
+
+(deftest test-vacation-credulous
+  (let [g  (evaluate carneades-evaluator vacation-graph)]
+    (and (is (in? g Italy))
+         (is (in? g Greece)))))
+
+(deftest test-vacation-skeptical
+  (let [g  (evaluate carneades-evaluator vacation-graph)]
+    (and (is (undecided? g Italy))
+         (is (undecided? g Greece)))))
+
+;; Now let's see what happens after a decision has been made
+;; to go to Italy.
+
+(def vacation-graph2 
+  (accept vacation-graph [Italy]))
+
+(deftest test-vacation-credulous2
+  (let [g  (evaluate carneades-evaluator vacation-graph2)]
+    (and (is (in? g Italy))
+         (is (out? g Greece)))))
+
+(deftest test-vacation-skeptical2
+  (let [g  (evaluate carneades-evaluator vacation-graph2)]
+    (and (is (in? g Italy))
+         (is (out? g Greece)))))
+
 
