@@ -22,11 +22,11 @@
 
 (defn gen-arg-id
   [arg]
-  (str "a-" (:id arg)))
+  (keyword (str "a-" (:id arg))))
 
 (defn gen-stmt-id
   [stmt]
-  (str "s-" (:id stmt)))
+  (keyword (str "s-" (:id stmt))))
 
 (defn pick-stmt-params
   [ag stmt params]
@@ -68,13 +68,33 @@
     (add-decorator svgmap argid (make-plusdecorator))
     (add-decorator svgmap argid (make-minusdecorator))))
 
-(defn add-argument-node
+(defn undercutter?
+  [ag arg]
+  (let [stmtconclusion (map->statement ((:statement-nodes ag) (:conclusion arg)))]
+   (= 'undercut (literal-predicate stmtconclusion))))
+
+(defn add-undercutter-argument-node
+  [svgmap arg ag]
+  ;; (prn "arg " arg)
+  (let [scheme (:scheme arg)
+        label (if scheme
+                (str "<" scheme ">")
+                "")]
+   (add-node-kv svgmap (gen-arg-id arg) (merge {:label label} undercutter-params))))
+
+(defn add-normal-argument-node
   [svgmap arg ag params]
   (let [arg-params (pick-arg-params ag arg params)
         argid (gen-arg-id arg)
         svgmap (add-node-kv svgmap argid arg-params)
         svgmap (add-arg-decorator svgmap arg argid)]
     svgmap))
+
+(defn add-argument-node
+  [svgmap arg ag params]
+  (if (undercutter? ag arg)
+    (add-undercutter-argument-node svgmap arg ag)
+    (add-normal-argument-node svgmap arg ag params)))
 
 (defn add-conclusion-edge
   [svgmap conclusion arg]
@@ -102,16 +122,16 @@
 
 (defn add-argument
   [svgmap arg ag params]
-  (let [conclusion (get (:statement-nodes ag) (literal-atom (:conclusion arg)))
-        premises (:premises arg)
-        svgmap (add-argument-node svgmap arg ag params)
-        svgmap (add-conclusion-edge svgmap conclusion arg)
-        svgmap (add-premises-edges svgmap ag premises arg)]
-    svgmap))
+  (add-argument-node svgmap arg ag params))
+
+(defn filter-out-undercutters-conclusions
+  [statements]
+  (filter #(not= 'undercut (literal-predicate (map->statement %))) statements))
 
 (defn add-entities
   [svgmap ag stmt-str params]
-  (let [statements (vals (:statement-nodes ag))
+  (let [statements (filter-out-undercutters-conclusions
+                    (vals (:statement-nodes ag)))
         arguments (vals (:argument-nodes ag))]
     (let [svgmap (reduce (fn [svgmap stmt]
                            (add-statement svgmap stmt ag stmt-str params))
@@ -120,6 +140,37 @@
                            (add-argument svgmap arg ag params))
                          svgmap arguments)]
       svgmap)))
+
+(defn add-undercutter-edge
+  [svgmap ag undercutter arg]
+  (let [edgeid (geneid)
+        argid (gen-arg-id arg)
+        undercutterid (gen-arg-id undercutter)]
+    (add-edge svgmap edgeid undercutterid argid)
+    ))
+
+(defn add-undercutters-edges
+  [svgmap ag undercutters arg]
+  (reduce (fn [svgmap undercutter]
+            (add-undercutter-edge svgmap ag undercutter arg))
+          svgmap
+          undercutters))
+
+(defn link-argument
+  [svgmap arg ag params]
+  (let [conclusion (get (:statement-nodes ag) (literal-atom (:conclusion arg)))
+        svgmap (if (undercutter? ag arg)
+                 svgmap
+                 (add-conclusion-edge svgmap conclusion arg))
+        svgmap (add-premises-edges svgmap ag (:premises arg) arg)
+        svgmap (add-undercutters-edges svgmap ag (undercutters ag arg) arg)]
+    svgmap))
+
+(defn link-entities
+  [svgmap ag params]
+  (reduce (fn [svgmap arg]
+            (link-argument svgmap arg ag params))
+          svgmap (vals (:argument-nodes ag))))
 
 (defn add-markers
   [map]
@@ -130,8 +181,7 @@
 
 (defn export-ag-helper
   [ag stmt-str options]
-  (let [; ag (evaluate carneades-evaluator ag)
-        width (get options :width 1280)
+  (let [width (get options :width 1280)
         height (get options :height 1024)
         layouttype (get options :layout :hierarchical)
         svgmap (create-graph :width width :height height)
@@ -139,6 +189,7 @@
         params (merge default-params options)
         ag (apply subset-ag ag options)
         svgmap (add-entities svgmap ag stmt-str params)
+        svgmap (link-entities svgmap ag params)
         optionsseq (flatten (seq options))
         svgmap (time (apply layout svgmap layouttype optionsseq))
         svgmap (build svgmap)]
