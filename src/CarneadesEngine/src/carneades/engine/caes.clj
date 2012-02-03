@@ -39,10 +39,12 @@
    stored in the :value field of the node."
   [ag an]
   {:pre [(argument-graph? ag) (argument-node? an)]}
+  ;; (println "applicable? " (statement-node-atom (get (:statement-nodes ag) (:conclusion an))))
+  ;; (swank.core/break)
   (cond
-   (= (:value an) 1.0) true,
-   (= (:value an) 0.0) false,
-   :else nil))
+    (= (:value an) 1.0) true,
+    (= (:value an) 0.0) false,
+    :else nil))
 
 (defn- compute-argument-value
   "argument-graph argument-node -> 0.0-1.0
@@ -51,12 +53,15 @@
   [ag an]
   {:pre [(argument-graph? ag) (argument-node? an)]
    :post [(not (nil? %))]}
-  ; (println "compute-argument-value: " an)
+  ;; (println "compute-argument-value: " (statement-node-atom (get (:statement-nodes ag) (:conclusion an))))
+  ;; (swank.core/break)
   (let [pv (all-premises-hold? ag an)
         uv (set (map #(applicable? ag %) (undercutters ag an)))]
-    (cond (= pv nil) 0.5,     ; unknown
+    (cond (:value an) (:value an)                     ; the value has already been computed
+          ;; (or (= pv nil) (contains? uv nil)) 0.5,     ; unknown
+          (= pv nil) 0.5,                             ; unknown
           (and pv (not (contains? uv true))) 1.0,
-          :else 0.0)))
+          :else 0.0)))         
 
 (defn- acceptable?
   "argument-graph statement-node -> boolean or nil
@@ -65,6 +70,8 @@
    stored in the :value field of the node."
   [ag sn]
   {:pre [(argument-graph? ag) (statement-node? sn)]}
+  ;; (println "acceptable? " (statement-node-atom sn))
+  ;; (swank.core/break)
   (cond 
     (= (:value sn) 1.0) true,
     (= (:value sn) 0.0) false,
@@ -75,16 +82,18 @@
   [ag sn]
   {:pre [(argument-graph? ag) (statement-node? sn)]
    :post [(not (nil? %))]}
-  ; (println "compute-statement-value: " sn)
-  (cond (and (:weight sn)
-             (>= (:weight sn) 0.75)) 1.0, ; P assumed or accepted
-        (and (:weight sn)
-             (<= (:weight sn) 0.25)) 0.0, ; P assumed false or rejected 
-        :else (let [v (satisfies-proof-standard? ag sn)]
-                (cond 
-                  (= v true) 1.0,
-                  (= v false) 0.0,
-                  :else 0.5))))
+  ;; (println "compute-statement-value: " (statement-node-atom sn))
+  ;; (swank.core/break)
+  (cond  (:value sn) (:value sn)          ; the value has already been computed
+         (and (:weight sn)
+              (>= (:weight sn) 0.75)) 1.0, ; P assumed or accepted
+         (and (:weight sn)
+              (<= (:weight sn) 0.25)) 0.0, ; P assumed false or rejected 
+         :else (let [v (satisfies-proof-standard? ag sn)]
+                 (cond 
+                   (= v true) 1.0,
+                   (= v false) 0.0,
+                   :else 0.5))))
         
 (defn- eval-statement-node 
   "cestate statement-node -> cestate
@@ -95,7 +104,8 @@
    the statement node from being assigned a value."
   [ces1 sn] 
   {:pre [(cestate? ces1) (statement-node? sn)]}
-  (cond (contains? (:closed-statements ces1) (:id sn)) ces1,  ; cycle!
+  ;; (swank.core/break)
+  (cond (contains? (:closed-statements ces1) (:id sn)) ces1,       ; cycle!
         (:value sn) ces1,                                     ; value already assigned
         :else (let [ces2 (reduce (fn [s an] (eval-argument-node s an))
                                  (assoc ces1 
@@ -117,7 +127,8 @@
    the argument node from being assigned a value."
   [ces1 an] 
   {:pre [(cestate? ces1) (argument-node? an)]}
-  (cond (contains? (:closed-arguments ces1) (:id an)) ces1,   ; cycle!
+  ;; (swank.core/break)
+  (cond (contains? (:closed-arguments ces1) (:id an)) ces1, ; cycle!  
         (:value an) ces1,                                     ; value already assigned
         :else (let [ces2 (reduce (fn [s sn] (eval-statement-node s sn))
                                  (assoc ces1 
@@ -166,29 +177,45 @@
   (if (empty? args) 0.0 (apply max (map weight args))))
 
 (defmethod satisfies-proof-standard? :dv [ag sn]
-  (let [app-pro (filter #(applicable? ag %) (pro-argument-nodes ag sn))
-        app-con (filter #(applicable? ag %) (con-argument-nodes ag sn))]
-    (cond (and (not (empty? app-pro) (empty? app-con))) true,
+  (let [pro (set (map (fn [arg] (if (applicable? ag arg) arg nil))
+                      (pro-argument-nodes ag sn)))
+        app-pro (filter #(not (nil? %)) pro),
+        con (set (map (fn [arg] (if (applicable? ag arg) arg nil))
+                      (con-argument-nodes ag sn))),
+        app-con (filter #(not (nil? %)) con)]
+    (cond (or (contains? pro nil) (contains? con nil)) nil,
+          (and (not (empty? app-pro) (empty? app-con))) true,
           (and (not (empty? app-con) (empty? app-pro))) false, 
           :else nil)))
 
-;; preponderance of the evidence                                     
+
 (defmethod satisfies-proof-standard? :pe [ag sn]
-  (let [app-pro (filter #(applicable? ag %) (pro-argument-nodes ag sn))
-        app-con (filter #(applicable? ag %) (con-argument-nodes ag sn))]
-    (cond (> (max-weight app-pro) (max-weight app-con)) true,
-          (> (max-weight app-con) (max-weight app-pro)) false,
-          :else nil)))
+  (let [pro (set (map (fn [arg] (if (applicable? ag arg) arg nil))
+                      (pro-argument-nodes ag sn)))
+        app-pro (filter #(not (nil? %)) pro),
+        con (set (map (fn [arg] (if (applicable? ag arg) arg nil))
+                      (con-argument-nodes ag sn))),
+        app-con (filter #(not (nil? %)) con)]
+    (cond 
+      (or (contains? pro nil) (contains? con nil)) nil,
+      (> (max-weight app-pro) (max-weight app-con)) true,
+      (> (max-weight app-con) (max-weight app-pro)) false,
+      :else nil)))
 
 ;; clear-and-convincing-evidence?
 (defmethod satisfies-proof-standard? :cce [ag sn]
-  (let [app-pro (filter #(applicable? ag %) (pro-argument-nodes ag sn)),
-        app-con (filter #(applicable? ag %) (con-argument-nodes ag sn)),
+  (let [pro (set (map (fn [arg] (if (applicable? ag arg) arg nil))
+                      (pro-argument-nodes ag sn)))
+        app-pro (filter #(not (nil? %)) pro),
+        con (set (map (fn [arg] (if (applicable? ag arg) arg nil))
+                      (con-argument-nodes ag sn))),
+        app-con (filter #(not (nil? %)) con),
         max-app-pro (max-weight app-pro),
         max-app-con (max-weight app-con),
         alpha 0.5
         beta 0.3]
-    (cond (and (> max-app-pro max-app-con)
+    (cond (or (contains? pro nil) (contains? con nil)) nil,
+          (and (> max-app-pro max-app-con)
                (> max-app-pro alpha)
                (> (- max-app-pro max-app-con) beta)) true,
           (and (> max-app-con max-app-pro)
@@ -198,14 +225,19 @@
 
 ;; beyond-reasonable-doubt?
 (defmethod satisfies-proof-standard? :brd [ag sn]
-  (let [app-pro (filter #(applicable? ag %) (pro-argument-nodes ag sn)),
-        app-con (filter #(applicable? ag %) (con-argument-nodes ag sn)),
+  (let [pro (set (map (fn [arg] (if (applicable? ag arg) arg nil))
+                      (pro-argument-nodes ag sn)))
+        app-pro (filter #(not (nil? %)) pro),
+        con (set (map (fn [arg] (if (applicable? ag arg) arg nil))
+                      (con-argument-nodes ag sn))),
+        app-con (filter #(not (nil? %)) con),,
         max-app-pro (max-weight app-pro),
         max-app-con (max-weight app-con),
         alpha 0.5
         beta 0.3
         gamma 0.2]
-    (cond (and (> max-app-pro max-app-con)
+    (cond (or (contains? pro nil) (contains? con nil)) nil,
+          (and (> max-app-pro max-app-con)
                (> max-app-pro alpha)
                (> (- max-app-pro max-app-con) beta)
                (< max-app-con gamma)) true,
