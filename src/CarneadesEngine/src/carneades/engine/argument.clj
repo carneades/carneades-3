@@ -139,7 +139,7 @@
   [arg]
   (map (fn [e] (make-argument
                 :id (make-urn-symbol)
-                :scheme (:scheme arg)
+                :scheme (:role e)
                 :conclusion `(~'undercut ~(:id arg))
                 :premises [e]))
        (:exceptions arg)))
