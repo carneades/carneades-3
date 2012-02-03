@@ -9,7 +9,8 @@
         carneades.engine.dublin-core
         carneades.database.import
         carneades.database.export 
-        carneades.xml.caf.export)
+        carneades.xml.caf.export
+        carneades.maps.lacij)
    (:require [carneades.database.db :as db]))
 
 ;; This example illustrates: 
@@ -109,8 +110,8 @@
 
 (def a3 (make-argument 
           :conclusion (make-statement :atom `(~'undercut ~a2-id))
-          :scheme "Argument from Practical Reasoning"
-          :premises [(make-premise :role "CQ1. Better Alternatives" :statement better-ways)]))
+          :scheme "CQ1. Better Alternatives"
+          :premises [(make-premise :statement better-ways)]))
 
 (def aston1
   (enter-arguments graph1 [a1 a2 a3]))
@@ -124,19 +125,21 @@
 ; (import-from-argument-graph db aston true)
 
 (defn -main []
-  (let [dbname "aston"  ; (str "db-" (make-uuid))
-        db (db/make-database-connection dbname "root" "pw1")]
-    (db/create-argument-database 
-      dbname 
-      "root" 
-      "pw1" 
-      (make-metadata))
-    (import-from-argument-graph db aston1 true)
-    (let [aston2 (export-to-argument-graph db)]
-      (println "(= aston1 aston2): " (= aston1 aston2))
-      (argument-graph->xml aston1)
-      (println "\n\n---------------------------\n\n")
-      (argument-graph->xml aston2))))
+  (export aston1 "/tmp/aston.svg")
+  ;; (let [dbname "aston"  ; (str "db-" (make-uuid))
+  ;;       db (db/make-database-connection dbname "root" "pw1")]
+  ;;   (db/create-argument-database 
+  ;;     dbname 
+  ;;     "root" 
+  ;;     "pw1" 
+  ;;     (make-metadata))
+  ;;   (import-from-argument-graph db aston1 true)
+  ;;   (let [aston2 (export-to-argument-graph db)]
+  ;;     (println "(= aston1 aston2): " (= aston1 aston2))
+  ;;     (argument-graph->xml aston1)
+  ;;     (println "\n\n---------------------------\n\n")
+  ;;     (argument-graph->xml aston2)))
+  )
   
 
 
