@@ -6,5 +6,4 @@
 user interface, and a software library for building applications supporting 
 various argumentation tasks. These are some examples."
   :dependencies [[org.clojure/clojure "1.3.0"]
-                 [org.clojure/tools.trace "0.7.1" ]
                  [carneades-engine "2.0.0-SNAPSHOT"]])

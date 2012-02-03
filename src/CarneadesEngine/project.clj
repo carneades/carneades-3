@@ -13,4 +13,5 @@ various argumentation tasks. This is the software library (the engine)."
                  [weissjeffm/clojure.prxml "1.3.0-SNAPSHOT"]
                  [com.h2database/h2 "1.3.160"]
                  [org.clojure/java.jdbc "0.1.1"]
+                 [org.clojure/tools.trace "0.7.1" ]
                  [lacij "0.7.0-SNAPSHOT"]])
