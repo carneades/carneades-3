@@ -173,7 +173,6 @@
              (with-db db2 (json-response (read-metadata id)))))
       
       (POST "/metadata/:db" request
-            (prn "params " (:params request))
             (let [db (:db (:params request))
                   m (read-json (slurp (:body request)))
                   [username password] (get-username-and-password request)
@@ -184,7 +183,7 @@
            (let [m (read-json (slurp (:body request)))
                  [username password] (get-username-and-password request)
                  db (make-database-connection (:db (:params request)) username password)
-                 id (java.lang.Integer/parseInt (:id (:params request)))]
+                 id (Integer/parseInt (:id (:params request)))]
              (with-db db (json-response (update-metadata id m))))) 
       
       (DELETE "/metadata/:db/:id" request
@@ -193,7 +192,7 @@
                     db2 (make-database-connection db username password)
                     db (:db (:params request))
                     id (:id (:params request))]
-                (with-db db2 (json-response (delete-metadata (java.lang.Integer/parseInt id))))))
+                (with-db db2 (json-response (delete-metadata (Integer/parseInt id))))))
       
       ;; Statements
       
@@ -526,3 +525,12 @@
 
 (def carneades-web-service
   (handler/site (apply routes carneades-web-service-routes)))
+
+(defn request [resource web-app & params]
+  (web-app {:request-method :get :uri resource :params (first params)}))
+
+(defn post-request [resource web-app headers body & params]
+  (web-app {:request-method :post :uri resource :body (char-array body) :headers headers :params (first params)}))
+
+(defn put-request [resource web-app & params]
+  (web-app {:request-method :put :uri resource :params (first params)}))
