@@ -29,36 +29,36 @@
   (keyword (str "s-" (:id stmt))))
 
 (defn pick-stmt-params
-  [ag stmt params]
-  (cond  (in-node? stmt) (:stmt-in-params params)
-         (out-node? stmt) (:stmt-out-params params)
-         :else (:stmt-params params)))
+  [ag stmt]
+  (cond  (in-node? stmt) (:stmt-in-params default-params)
+         (out-node? stmt) (:stmt-out-params default-params)
+         :else (:stmt-params default-params)))
 
 (defn pick-arg-params
-  [ag arg params]
+  [ag arg]
   (cond (and (in-node? arg) (:pro arg))
-        (:arg-pro-applicable-params params)
+        (:arg-pro-applicable-params default-params)
         
         (and (in-node? arg) (:con arg))
-        (:arg-con-applicable-params params)
+        (:arg-con-applicable-params default-params)
         
         (:pro arg)
-        (:arg-pro-notapplicable-params params)
+        (:arg-pro-notapplicable-params default-params)
         
         :else
-        (:arg-con-notapplicable-params params)))
+        (:arg-con-notapplicable-params default-params)))
 
 (defn add-statement
-  [svgmap stmt ag stmt-str params]
+  [svgmap stmt ag stmt-str]
   ;; TODO take the lang as a parameter
   (let [stmtstr (stmt-to-str stmt stmt-str)
         id (gen-stmt-id stmt)
-        stmt-params (merge (pick-stmt-params ag stmt params)
+        stmt-params (merge (pick-stmt-params ag stmt)
                            {:label "" :x 0 :y 0 :shape :rect})
         svgmap (add-node-kv svgmap id stmt-params)
         svgmap (add-label-kv svgmap id
                           (trunk-line stmtstr)
-                          (:stmtlabel-params params))]
+                          (:stmtlabel-params default-params))]
     svgmap))
 
 (defn add-arg-decorator
@@ -83,18 +83,18 @@
    (add-node-kv svgmap (gen-arg-id arg) (merge {:label label} undercutter-params))))
 
 (defn add-normal-argument-node
-  [svgmap arg ag params]
-  (let [arg-params (pick-arg-params ag arg params)
+  [svgmap arg ag]
+  (let [arg-params (pick-arg-params ag arg)
         argid (gen-arg-id arg)
         svgmap (add-node-kv svgmap argid arg-params)
         svgmap (add-arg-decorator svgmap arg argid)]
     svgmap))
 
 (defn add-argument-node
-  [svgmap arg ag params]
+  [svgmap arg ag]
   (if (undercutter? ag arg)
     (add-undercutter-argument-node svgmap arg ag)
-    (add-normal-argument-node svgmap arg ag params)))
+    (add-normal-argument-node svgmap arg ag)))
 
 (defn add-conclusion-edge
   [svgmap conclusion arg]
@@ -121,23 +121,23 @@
           svgmap premises))
 
 (defn add-argument
-  [svgmap arg ag params]
-  (add-argument-node svgmap arg ag params))
+  [svgmap arg ag]
+  (add-argument-node svgmap arg ag))
 
 (defn filter-out-undercutters-conclusions
   [statements]
   (filter #(not= 'undercut (literal-predicate (map->statement %))) statements))
 
 (defn add-entities
-  [svgmap ag stmt-str params]
+  [svgmap ag stmt-str]
   (let [statements (filter-out-undercutters-conclusions
                     (vals (:statement-nodes ag)))
         arguments (vals (:argument-nodes ag))]
     (let [svgmap (reduce (fn [svgmap stmt]
-                           (add-statement svgmap stmt ag stmt-str params))
+                           (add-statement svgmap stmt ag stmt-str))
                          svgmap statements)
           svgmap (reduce (fn [svgmap arg]
-                           (add-argument svgmap arg ag params))
+                           (add-argument svgmap arg ag))
                          svgmap arguments)]
       svgmap)))
 
@@ -156,7 +156,7 @@
           undercutters))
 
 (defn link-argument
-  [svgmap arg ag params]
+  [svgmap arg ag]
   (let [conclusion (get (:statement-nodes ag) (literal-atom (:conclusion arg)))
         svgmap (if (undercutter? ag arg)
                  svgmap
@@ -166,9 +166,9 @@
     svgmap))
 
 (defn link-entities
-  [svgmap ag params]
+  [svgmap ag]
   (reduce (fn [svgmap arg]
-            (link-argument svgmap arg ag params))
+            (link-argument svgmap arg ag))
           svgmap (vals (:argument-nodes ag))))
 
 (defn add-markers
@@ -185,12 +185,11 @@
         layouttype (get options :layout :hierarchical)
         svgmap (create-graph :width width :height height)
         svgmap (add-markers svgmap)
-        params (merge default-params options)
         ag (apply subset-ag ag options)
-        svgmap (add-entities svgmap ag stmt-str params)
-        svgmap (link-entities svgmap ag params)
+        svgmap (add-entities svgmap ag stmt-str)
+        svgmap (link-entities svgmap ag)
         optionsseq (flatten (seq options))
-        svgmap (time (apply layout svgmap layouttype optionsseq))
+        svgmap (apply layout svgmap layouttype optionsseq)
         svgmap (build svgmap)]
     svgmap))
 
