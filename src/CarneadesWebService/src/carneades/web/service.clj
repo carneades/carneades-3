@@ -179,7 +179,7 @@
                   dbconn (make-database-connection db username password)]
               (with-db dbconn (json-response (create-metadata (map->metadata m))))))
 
-      (PUT "/metadata" request   
+      (PUT "/metadata/:db/:id" request   
            (let [m (read-json (slurp (:body request)))
                  [username password] (get-username-and-password request)
                  db (make-database-connection (:db (:params request)) username password)
@@ -526,11 +526,11 @@
 (def carneades-web-service
   (handler/site (apply routes carneades-web-service-routes)))
 
-(defn request [resource web-app & params]
+(defn get-request [resource web-app & params]
   (web-app {:request-method :get :uri resource :params (first params)}))
 
 (defn post-request [resource web-app headers body & params]
-  (web-app {:request-method :post :uri resource :body (char-array body) :headers headers :params (first params)}))
+  (web-app {:request-method :post :uri resource :headers headers :body (char-array body) :params (first params)}))
 
-(defn put-request [resource web-app & params]
-  (web-app {:request-method :put :uri resource :params (first params)}))
+(defn put-request [resource web-app headers body & params]
+  (web-app {:request-method :put :uri resource :headers headers :body (char-array body) :params (first params)}))
