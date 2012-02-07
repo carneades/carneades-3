@@ -135,19 +135,19 @@ Note: This example illustrates how descriptions can include paragraphs, hyperlin
 
 (defn -main []
   (export aston1 "/tmp/aston.svg")
-  ;; (let [dbname "aston"  ; (str "db-" (make-uuid))
-  ;;       db (db/make-database-connection dbname "root" "pw1")]
-  ;;   (db/create-argument-database 
-  ;;     dbname 
-  ;;     "root" 
-  ;;     "pw1" 
-  ;;     (make-metadata))
-  ;;   (import-from-argument-graph db aston1 true)
-  ;;   (let [aston2 (export-to-argument-graph db)]
-  ;;     (println "(= aston1 aston2): " (= aston1 aston2))
-  ;;     (argument-graph->xml aston1)
-  ;;     (println "\n\n---------------------------\n\n")
-  ;;     (argument-graph->xml aston2)))
+  (let [dbname "aston"  ; (str "db-" (make-uuid))
+        db (db/make-database-connection dbname "root" "pw1")]
+    (db/create-argument-database 
+      dbname 
+      "root" 
+      "pw1" 
+      (make-metadata))
+    (import-from-argument-graph db aston1 true)
+    (let [aston2 (export-to-argument-graph db)]
+      (println "(= aston1 aston2): " (= aston1 aston2))
+      (argument-graph->xml aston1)
+      (println "\n\n---------------------------\n\n")
+      (argument-graph->xml aston2)))
   )
   
 
