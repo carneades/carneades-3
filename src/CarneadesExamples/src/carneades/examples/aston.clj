@@ -11,7 +11,7 @@
         carneades.database.export 
         carneades.xml.caf.export
         carneades.maps.lacij)
-   (:require [carneades.database.db :as db]))
+  (:require [carneades.database.db :as db]))
 
 ;; This example illustrates: 
 ;; - Metadata describing the map as a whole, as well as each statement and argument, using
@@ -35,10 +35,10 @@
               :description {:en "The [Green Paper](http://ec.europa.eu/internal_market/copyright/docs/copyright-infso/greenpaper_en.pdf) focuses on the exceptions to  copyright which are most relevant for the 
 dissemination of knowledge, namely:
 
-– The exception for the benefit of libraries and archives;  
-– The exception allowing dissemination of works for teaching and research purposes;  
-– The exception for the benefit of people with a disability; 
-– A possible exception for user-created content
+- The exception for the benefit of libraries and archives;  
+- The exception allowing dissemination of works for teaching and research purposes;  
+- The exception for the benefit of people with a disability; 
+- A possible exception for user-created content
 
 Note: This example illustrates how descriptions can include paragraphs, hyperlinks, lists and other elements, using the Markdown wiki language."}
               :date "2011")
@@ -134,7 +134,6 @@ Note: This example illustrates how descriptions can include paragraphs, hyperlin
 ; (import-from-argument-graph db aston true)
 
 (defn -main []
-  (export aston1 "/tmp/aston.svg")
   (let [dbname "aston"  ; (str "db-" (make-uuid))
         db (db/make-database-connection dbname "root" "pw1")]
     (db/create-argument-database 
