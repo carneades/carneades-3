@@ -23,7 +23,7 @@ function display_statement(db, stmtid)
                  info.normalize();
                  info.db = db;
                  set_statement_title_text(info);
-                 set_description_text(info);
+                 info.description_text = description_text(info.header);
                  set_procon_texts(info);    
                  set_procon_premises_text(info);
                  set_premise_of_texts(info);
