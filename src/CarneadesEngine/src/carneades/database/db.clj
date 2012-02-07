@@ -243,6 +243,8 @@
               (if (empty? res2) 
                 nil 
                 (dissoc (first res2) :id))))]
+    (prn "md =" md)
+    (prn "d =" d)
     (if d
       (-> (map->metadata md) 
           (assoc :description d))
@@ -263,19 +265,20 @@
    in the map.  Returns true if the update was successful." 
   [id md]
   {:pre [(integer? id) (map? md)]}
-  (let [description-id1 (if (:description md)
-                          (jdbc/with-query-results 
-                            res ["SELECT description FROM metadata WHERE id=?" id]
-                            (if (empty? res) nil (:description (first res)))))
-        description-id2  (if description-id1 
-                           (do (update-translation description-id1 (:description md))
-                               description-id1)
-                           (if (:description md) (create-translation (:description md))))]
+  (let [existing-description-id (jdbc/with-query-results 
+                                  res ["SELECT description FROM metadata WHERE id=?" id]
+                                  (if (empty? res) nil (:description (first res))))
+        new-description-id (cond (and (:description md) existing-description-id)
+                                 (do (update-translation existing-description-id
+                                                         (:description md))
+                                     existing-description-id)
+                                 (:description md) (create-translation (:description md))
+                                 :else existing-description-id)]
     (condp = (first (jdbc/update-values
                       :metadata
                       ["id=?" id]
-                      (merge md {:description description-id2})))
-      0 false,
+                      (merge md {:description new-description-id})))
+      0 false
       1 true)))
 
 (defn delete-metadata
