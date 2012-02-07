@@ -146,7 +146,7 @@
   (let [edgeid (geneid)
         argid (gen-arg-id arg)
         undercutterid (gen-arg-id undercutter)]
-    (add-edge svgmap edgeid undercutterid argid :marker-end nil)))
+    (apply add-edge svgmap edgeid undercutterid argid undercutter-edge-params)))
 
 (defn add-undercutters-edges
   [svgmap ag undercutters arg]

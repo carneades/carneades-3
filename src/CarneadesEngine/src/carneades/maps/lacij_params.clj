@@ -154,3 +154,7 @@
               :marker-end "url(#end-arrow-red)"}])
 
 (def undercutter-params {:style {:fill "white"} :width 275 :height 46 :rx 15 :ry 15})
+
+(def undercutter-edge-params [:marker-end nil
+                              :style {:stroke (-> default-params :arg-pro-applicable-params :style :stroke)
+                                      :stroke-width 1}])
