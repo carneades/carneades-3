@@ -76,20 +76,21 @@ function set_dependents_text(info)
           });
 }
 
-// returns a text representing the argument, ie., its title
-// or a default text if none
+// Returns a text representing the argument, ie., its title
+// or then its scheme, or a default text if none of them is defined
 function argument_text(data, index)
 {
     var text;
     if(data.header && data.header.title) {
         text = data.header.title;
+    } else if (data.scheme && data.scheme.length > 0) {
+        text = data.scheme;   
+    } else if(index == undefined) {
+        text = 'Argument';
     } else {
-        if(index == undefined) {
-            text = 'Argument';
-        } else {
-            text = 'Argument #' + index;            
-        }
+        text = 'Argument #' + index;            
     }
+    
     return text;
 }
 
