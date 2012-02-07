@@ -1,5 +1,6 @@
 (ns carneades.web.test.service
   (:use clojure.test
+        carneades.engine.statement
         carneades.engine.uuid
         carneades.web.service
         carneades.engine.dublin-core
@@ -19,7 +20,8 @@
 
 (defn make-some-metadata
   []
-  {:contributor (make-some-string "contributor")
+  {:key (make-some-string "key")
+   :contributor (make-some-string "contributor")
    :creator (make-some-string "creator")
    :coverage (make-some-string "coverage")
    :date (make-some-string "date")
@@ -35,6 +37,12 @@
    :subject (make-some-string "subject")
    :title (make-some-string "title")
    :type (make-some-string "type")})
+
+(defn make-some-statement-data
+  []
+  {:header (make-some-metadata)
+   :text {:en (make-some-string "text-en")
+          :de (make-some-string "text-de")}})
 
 (defn create-tmp-db
   []
@@ -63,8 +71,10 @@
 (defn filter-out-nils
   [data keys]
   (-> data
-      (select-keys keys)
-      (update-in [:description] select-keys [:en :de])))
+      (update-in [:description] select-keys [:en :de])
+      (update-in [:header :description] select-keys [:en :de])
+      (update-in [:text] select-keys [:en :de])
+      (select-keys keys)))
 
 (deftest post-metadata-test
   (let [data (make-some-metadata)
@@ -94,3 +104,32 @@
         returned-data (filter-out-nils (read-json (:body res3)) (keys data))]
     (is (= "true" (:body res2)))
     (is (= expected returned-data))))
+
+(deftest delete-metadata-test
+  (let [data (make-some-metadata)
+        res (post-request (str "/metadata/" dbname) carneades-web-service
+                          {"authorization" auth-header}
+                          (json-str data))
+        id (:body res)
+        res2 (delete-request (format "/metadata/%s/%s" dbname id) carneades-web-service
+                             {"authorization" auth-header} "")
+        res3 (get-request (format "/metadata/%s/%s" dbname id) carneades-web-service)]
+    (is (= "true" (:body res2)))
+    (is (= 404 (:status res3)))))
+
+(deftest post-statement-test
+  (let [statement-data (make-some-statement-data)
+        statement (map->statement statement-data)
+        res (post-request (str "/statement/" dbname) carneades-web-service
+                          {"authorization" auth-header}
+                          (json-str statement))
+        id (read-json (:body res))
+        res2 (get-request (str "/statement/" dbname "/" id) carneades-web-service)
+        returned-data (filter-out-nils (read-json (:body res2)) (keys statement-data))]
+    ;; PROBLEMS:
+    ;; id is returned as string
+    ;; standard is returned as string
+    ;; value nil is set to 0.5
+    (prn "returned-data" returned-data)
+    (is (= statement-data returned-data)))
+  )
