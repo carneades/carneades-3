@@ -243,8 +243,6 @@
               (if (empty? res2) 
                 nil 
                 (dissoc (first res2) :id))))]
-    (prn "md =" md)
-    (prn "d =" d)
     (if d
       (-> (map->metadata md) 
           (assoc :description d))
