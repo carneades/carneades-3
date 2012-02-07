@@ -28,12 +28,11 @@ function format_metadata(metadata)
     return markdown_to_html(formatted);
 }
 
-function set_description_text(info)
+function description_text(header)
 {
-    if(info.header) {
-        info.description_text = info.header.description ? 
-            markdown_to_html(info.header.description[CARNEADES.lang]) : "";        
+    if(header) {
+        return header.description ? markdown_to_html(header.description[CARNEADES.lang]) : "";        
     } else {
-        info.description_text = "";
+        return "";
     }
 }

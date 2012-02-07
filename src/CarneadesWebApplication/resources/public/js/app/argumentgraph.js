@@ -15,6 +15,7 @@ function display_argumentgraph(db)
                  data.normalize();
                  data.db = db;
                  data.metadata_text = format_metadata(data.metadata[0]);
+                 data.description_text = description_text(data.metadata[0]);
                  set_mainissues_text(data.main_issues);
                  data.references = data.metadata.filter(function (ref) { return ref.key; });
                  set_references_text(data.references);
