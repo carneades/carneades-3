@@ -14,7 +14,14 @@
         carneades.engine.shell
         carneades.maps.lacij))
 
-; Example argument graphs to test whether arguments are being evaluated properly.
+;; Example argument graphs to test whether arguments are being evaluated properly.
+;; Henry Prakken suggested the following sources:
+
+;; - Henry's 2010 paper in Argument and Computation
+;; - Caminada & Amgoud's AIJ-2007 paper
+;; - V. Lifschitz, "Benchmark problems for formal nonmonotonic
+;;   reasoning," in Proceedings of the Second international Workshop
+;;   on Non-monotonic Reasoning, 1989, pp. 202-219.
 
 ; Benchmark 1. The Tandem example
 ; Source:
