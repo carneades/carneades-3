@@ -12,7 +12,7 @@
 (def dbname (str "testdb-" (uuid->string (make-uuid))))
 (def dbfilename (str db/default-db-host "/" dbname ".h2.db"))
 
-(def auth-header "Basic cm9vdDpwdzE=")
+(def auth-header "Basic cm9vdDpwdzE=") ;; encoded root:pw1
 
 (defn make-some-string [prefix]
   (str prefix "-" (gensym)))
@@ -47,6 +47,7 @@
 
 (defn delete-tmp-db
   []
+  (printf "Deleting %s\n" dbfilename)
   (.delete (File. dbfilename)))
 
 (defn db-fixture [x] (create-tmp-db) (x) (delete-tmp-db))
@@ -54,10 +55,16 @@
 (use-fixtures :once db-fixture) 
 
 (deftest root-route-test
-  (is (= 200 (:status (request "/" carneades-web-service)))))
+  (is (= 200 (:status (get-request "/" carneades-web-service)))))
 
 (deftest missing-route-test
-  (is (= 404 (:status (request "/thisservicedoesnotexist" carneades-web-service)))))
+  (is (= 404 (:status (get-request "/thisservicedoesnotexist" carneades-web-service)))))
+
+(defn filter-out-nils
+  [data keys]
+  (-> data
+      (select-keys keys)
+      (update-in [:description] select-keys [:en :de])))
 
 (deftest post-metadata-test
   (let [data (make-some-metadata)
@@ -65,9 +72,25 @@
                           {"authorization" auth-header}
                           (json-str data))
         id (:body res)
-        res2 (request (str "/metadata/" dbname "/" id) carneades-web-service)
-        returned-data (select-keys (read-json (:body res2)) (keys data))
-        ;; add here the other languages keys if you change the make-some-metadata function
-        returned-data (update-in returned-data [:description] select-keys [:en :de])]
-    (is (= returned-data data))))
+        res2 (get-request (str "/metadata/" dbname "/" id) carneades-web-service)
+        returned-data (filter-out-nils (read-json (:body res2)) (keys data))]
+    (is (= data returned-data))))
 
+(deftest put-metadata-test
+  (let [data (make-some-metadata)
+        res (post-request (str "/metadata/" dbname) carneades-web-service
+                          {"authorization" auth-header}
+                          (json-str data))
+        id (:body res)
+        newtitle (make-some-string "Title")
+        newcreator (make-some-string "Creator")
+        update {:title newtitle
+                :creator newcreator}
+        res2 (put-request (format "/metadata/%s/%s" dbname id) carneades-web-service
+                          {"authorization" auth-header}
+                          (json-str update))
+        res3 (get-request (format "/metadata/%s/%s" dbname id) carneades-web-service)
+        expected (assoc data :title newtitle :creator newcreator)
+        returned-data (filter-out-nils (read-json (:body res3)) (keys data))]
+    (is (= "true" (:body res2)))
+    (is (= expected returned-data))))
