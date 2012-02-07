@@ -64,8 +64,13 @@
 
 (defn- unpack-statement [s]
    (cond (string? s) (binding [*read-eval* false] (read-string s)),  
-         (map? s) (assoc (map->statement s) 
-                    :atom (binding [*read-eval* false] (read-string (:atom s)))),
+         (map? s) (let [atomval (if (nil? (:atom s))
+                                  nil
+                                  (binding [*read-eval* false] (read-string (:atom s))))]
+                    (assoc (map->statement s)
+                      :standard (keyword (:standard s))
+                      :atom atomval
+                      :header (map->metadata (:header s))))
         :else nil))
 
 (defn- pack-argument
@@ -188,11 +193,10 @@
       
       (DELETE "/metadata/:db/:id" request
               (let [[username password] (get-username-and-password request)
-                    db (:db (:params request))
-                    db2 (make-database-connection db username password)
-                    db (:db (:params request))
+                    dbname (:db (:params request))
+                    dbconn (make-database-connection dbname username password)
                     id (:id (:params request))]
-                (with-db db2 (json-response (delete-metadata (Integer/parseInt id))))))
+                (with-db dbconn (json-response (delete-metadata (Integer/parseInt id))))))
       
       ;; Statements
       
@@ -200,43 +204,17 @@
            (let [db2 (make-database-connection db "guest" "")]
              (with-db db2 (json-response (map pack-statement (list-statements))))))  
       
-      (GET "/main-issues/:db" [db]
-          (let [db2 (make-database-connection db "guest" "")]
-             (with-db db2 (json-response (map pack-statement (main-issues))))))               
-      
       (GET "/statement/:db/:id" [db id] 
            (let [db2 (make-database-connection db "guest" "")]
              (with-db db2 
                (json-response (pack-statement (read-statement id))))))
-      
-      (GET "/matching-statements/" request
-        ; returns a vector of {:substitutions :statement} records for the statements
-        ; with atoms matching the query in the body of the request
-        (let [m (read-json (slurp (:body request)))
-              s1 (unpack-statement m)
-              db (make-database-connection (:db (:params request)) "guest" "")]
-              (with-db db (json-response (mapcat (fn [s2] 
-                                                   (let [subs (unify (:atom s1) (:atom s2))]
-                                                     (when subs 
-                                                       [{:substitutions subs
-                                                         :statement s2}])))
-                                                 (list-statements))))))
-      
-      
-      (GET "/premise-of/:db/:id" [db id]
-        ; returns a vector of arguments in which the statement with the given id
-        ; is a premise
-        (let [db2 (make-database-connection db "guest" "")]  
-          (with-db db2 
-            (json-response (map (fn [arg-id] (pack-argument (read-argument arg-id)))
-                                (:premise-of (read-statement id)))))))
             
       (POST "/statement/:db" request  
             (let [m (read-json (slurp (:body request)))
                   s (unpack-statement m)
                   [username password] (get-username-and-password request)
                   db (make-database-connection (:db (:params request)) username password)]
-              (with-db db (json-response (create-statement (map->statement s))))))
+              (with-db db (json-response (create-statement s)))))
       
       (PUT "/statement" request  
            (let [m (read-json (slurp (:body request)))
@@ -252,6 +230,32 @@
                     id (:id (:params request))
                     db2 (make-database-connection db username password)]
                 (with-db db2 (json-response (delete-statement id)))))
+            
+      (GET "/main-issues/:db" [db]
+          (let [db2 (make-database-connection db "guest" "")]
+             (with-db db2 (json-response (map pack-statement (main-issues))))))               
+
+      (GET "/matching-statements/" request
+        ; returns a vector of {:substitutions :statement} records for the statements
+        ; with atoms matching the query in the body of the request
+        (let [m (read-json (slurp (:body request)))
+              s1 (unpack-statement m)
+              db (make-database-connection (:db (:params request)) "guest" "")]
+              (with-db db (json-response (mapcat (fn [s2] 
+                                                   (let [subs (unify (:atom s1) (:atom s2))]
+                                                     (when subs 
+                                                       [{:substitutions subs
+                                                         :statement s2}])))
+                                                 (list-statements))))))
+
+      (GET "/premise-of/:db/:id" [db id]
+        ; returns a vector of arguments in which the statement with the given id
+        ; is a premise
+        (let [db2 (make-database-connection db "guest" "")]  
+          (with-db db2 
+            (json-response (map (fn [arg-id] (pack-argument (read-argument arg-id)))
+                                (:premise-of (read-statement id)))))))
+
       
       ;; Arguments  
       
@@ -534,3 +538,7 @@
 
 (defn put-request [resource web-app headers body & params]
   (web-app {:request-method :put :uri resource :headers headers :body (char-array body) :params (first params)}))
+
+(defn delete-request [resource web-app headers body & params]
+  (web-app {:request-method :delete :uri resource :headers headers :body (char-array body) :params (first params)}))
+

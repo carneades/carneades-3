@@ -330,7 +330,6 @@
                          (make-urn))),
               text-id (if (:text literal) (create-translation (:text literal))),
               header-id (if (:header literal) (create-metadata (:header literal)))]
-          (prn "inserting statement with id " id)
           (jdbc/insert-record
             :statement {:id id
                         :atom (str (literal-atom literal)),
@@ -468,7 +467,6 @@
    does not already exist in the database."
   [premise]
   {:pre [(premise? premise)]}
-  (prn "premise =" premise)
   (let [stmt-id (get-statement (:statement premise))] 
     (first (vals (jdbc/insert-record 
       :premise
@@ -505,7 +503,7 @@
   (let [ids (jdbc/with-query-results 
               res1 ["SELECT id FROM premise"]
               (doall (map :id res1)))]
-    (doall (map (fn [id] (prn id) (read-premise id)) ids))))
+    (doall (map (fn [id] (read-premise id)) ids))))
 
 (defn update-premise
   "integer map -> boolean
