@@ -100,8 +100,8 @@
         (jdbc/create-table 
           :statement 
           [:id "varchar primary key not null"] ; a URN in the UUID namespace
-          [:weight "double default 0.50"]
-          [:value "double default 0.50"]
+          [:weight "double default null"]
+          [:value "double default null"]
           [:standard "tinyint default 0"]   ; 0=pe, 1=cce, 2=brd, 3=dv 
           [:atom "varchar"]                 ; Clojure s-expression
           [:text "int"]
@@ -417,7 +417,7 @@
    Updates the statement record with the given in in the database with the values
    in the map.  Returns true if the update was successful." 
   [id m]
-  {:pre [(integer? id) (map? m)]}
+  {:pre [(map? m)]}
   (let [header-id1 (if (:header m)
                      (jdbc/with-query-results 
                        res ["SELECT header FROM statement WHERE id=?" id]
@@ -536,12 +536,10 @@
    the id of the new argument."
   [arg]
   {:pre [(argument? arg)]}
-  (prn "arg = " arg)
   (let [arg-id (str (:id arg)),
         scheme-id (str (:scheme arg))
         conclusion-id (get-statement (:conclusion arg)),
         header-id (if (:header arg) (create-metadata (:header arg)))]
-    (prn "conclusion-id" conclusion-id)
     (jdbc/insert-record 
       :argument
       (assoc (dissoc arg :premises :exceptions)
