@@ -62,7 +62,7 @@
         (statement? stmt) (assoc stmt :atom (str (literal-atom stmt))),
         :else nil))
 
-(defn- unpack-statement [s]
+(defn unpack-statement [s]
    (cond (string? s) (binding [*read-eval* false] (read-string s)),  
          (map? s) (let [atomval (if (nil? (:atom s))
                                   nil
@@ -84,11 +84,12 @@
                                           (pack-statement (:statement p))))
                            (:premises arg))})))
 
-(defn- unpack-argument [arg]
+(defn unpack-argument [arg]
   (assoc arg
-         :scheme (symbol (:scheme arg))
+         :scheme (when (:scheme arg) (symbol (:scheme arg)))
          :conclusion (unpack-statement (:conclusion arg))
-         :premises (map (fn [p] (assoc p :statement (unpack-statement (:statement p))))
+         :premises (map (fn [p]
+                          (map->premise (assoc p :statement (unpack-statement (:statement p)))))
                         (:premises arg))))
 
 (defn- unpack-subs 
@@ -216,13 +217,13 @@
                   db (make-database-connection (:db (:params request)) username password)]
               (with-db db (json-response (create-statement s)))))
       
-      (PUT "/statement" request  
+      (PUT "/statement/:db/:id" request  
            (let [m (read-json (slurp (:body request)))
-                 s (unpack-statement m)
+                 ;; s (unpack-statement m)
                  [username password] (get-username-and-password request)
                  db (make-database-connection (:db (:params request)) username password)
                  id (:id (:params request))]
-             (with-db db (json-response (update-statement db id s)))))        
+             (with-db db (json-response (update-statement id m)))))
       
       (DELETE "/statement/:db/:id" request
               (let [[username password] (get-username-and-password request)
@@ -291,14 +292,15 @@
               (json-response (map (fn [arg-id] (pack-argument (read-argument arg-id))) 
                                   (get-dependents id))))))
       
-      (POST "/argument" request  
+      (POST "/argument/:db" request  
             (let [m (read-json (slurp (:body request)))
                   arg (unpack-argument m)
                   [username password] (get-username-and-password request)
-                  db (make-database-connection (:db (:params request)) username password)]
-              (with-db db (json-response (create-argument (map->argument arg))))))
+                  db (make-database-connection (:db (:params request)) username password)
+                  argument (map->argument arg)]
+              (with-db db (json-response (create-argument argument)))))
       
-      (PUT "/argument" request  
+      (PUT "/argument/:db/:id" request  
            (let [m (read-json (slurp (:body request)))
                  arg (unpack-argument m)
                  [username password] (get-username-and-password request)
@@ -331,7 +333,7 @@
                   db (make-database-connection (:db (:params request)) username password)]
               (with-db db (json-response (create-namespace db prefix uri)))))
       
-      (PUT "/namespace/" request  
+      (PUT "/namespace/:db" request  
            (let [prefix (:prefix (:params request)),
                  uri (read-json (slurp (:body request))),
                  [username password] (get-username-and-password request)
@@ -365,7 +367,7 @@
                   db (make-database-connection (:db (:params request)) username password)]
               (with-db db (json-response (create-statement-poll userid votes)))))
       
-      (PUT "/statement-poll" request  
+      (PUT "/statement-poll/:db/:id" request  
            (let [userid (:id (:params request)),
                  votes (read-json (slurp (:body request)))
                  [username password] (get-username-and-password request)
@@ -399,7 +401,7 @@
                   db (make-database-connection (:db (:params request)) username password)]
               (with-db db (json-response (create-argument-poll userid votes)))))
       
-      (PUT "/argument-poll" request  
+      (PUT "/argument-poll/:db/:id" request  
            (let [userid (:id (:params request)),
                  votes (read-json (slurp (:body request)))
                   [username password] (get-username-and-password request)

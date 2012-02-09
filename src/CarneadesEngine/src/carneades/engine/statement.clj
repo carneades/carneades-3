@@ -70,11 +70,11 @@
     (if (not (:atom m3))
       m3
       (assoc m3
-             :atom (and (:atom m3) (sliteral-atom (:atom m3)))
-             :positive (or (and (sliteral-pos? (:atom m3))
-                                (:positive m3))
-                           (and (not (sliteral-pos? (:atom m3)))
-                                (not (:positive m3))))))))
+        :atom (when (:atom m3) (sliteral-atom (:atom m3)))
+        :positive (or (and (sliteral-pos? (:atom m3))
+                           (:positive m3))
+                      (and (not (sliteral-pos? (:atom m3)))
+                           (not (:positive m3))))))))
  
 (defn make-statement
    "key value ... -> statement"
