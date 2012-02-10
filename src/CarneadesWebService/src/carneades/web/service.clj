@@ -360,7 +360,7 @@
            (let [db2 (make-database-connection db "guest" "")]  
              (with-db db2 (json-response (read-statement-poll (java.lang.Integer/parseInt id))))))
 
-      (POST "/statement-poll" request  
+      (POST "/statement-poll/:db/:id" request  
             (let [userid (:id (:params request)),
                   votes (read-json (slurp (:body request))),
                   [username password] (get-username-and-password request)
@@ -394,7 +394,7 @@
            (let [db2 (make-database-connection db "guest" "")]  
              (with-db db2 (json-response (read-argument-poll (java.lang.Integer/parseInt id))))))
 
-      (POST "/argument-poll" request  
+      (POST "/argument-poll/:db/:id" request  
             (let [userid (:id (:params request)),
                   votes (read-json (slurp (:body request))),
                   [username password] (get-username-and-password request)
