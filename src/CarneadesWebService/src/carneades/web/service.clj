@@ -59,7 +59,8 @@
 (defn- pack-statement 
   [stmt]
   (cond (sliteral? stmt) (str stmt),
-        (statement? stmt) (assoc stmt :atom (str (literal-atom stmt))),
+        (statement? stmt) (assoc stmt :atom (when (:atom stmt)
+                                              (str (literal-atom stmt)))),
         :else nil))
 
 (defn unpack-statement [s]
@@ -302,11 +303,10 @@
       
       (PUT "/argument/:db/:id" request  
            (let [m (read-json (slurp (:body request)))
-                 arg (unpack-argument m)
                  [username password] (get-username-and-password request)
                  db (make-database-connection (:db (:params request)) username password)
                  id (:id (:params request))]
-             (with-db db (json-response (update-argument id arg)))))   
+             (with-db db (json-response (update-argument id m)))))
       
       (DELETE "/argument/:db/:id" request
               (let [[username password] (get-username-and-password request)
