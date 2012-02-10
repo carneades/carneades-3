@@ -11,7 +11,7 @@
   (:import (java.net URI)))
 
 (defn sliteral? 
-  "As sliteral is an sexpression representation of a literal. 
+  "A sliteral is an sexpression representation of a literal.
    Variables are also considered to be literals, 
    to support some meta-level reasoning." 
   [sexp] 

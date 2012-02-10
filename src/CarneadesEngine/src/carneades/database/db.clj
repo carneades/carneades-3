@@ -332,7 +332,7 @@
               header-id (if (:header literal) (create-metadata (:header literal)))]
           (jdbc/insert-record
             :statement {:id id
-                        :atom (str (literal-atom literal)),
+                        :atom (:atom literal),
                         :header header-id,
                         :weight (:weight literal),
                         :main (:main literal),
@@ -362,10 +362,12 @@
         premise-of (jdbc/with-query-results
                      res ["SELECT argument FROM premise WHERE statement=?" id]
                      (map :argument (doall res))) ]
-    (if s 
+    (when s 
       (-> (make-statement :id (symbol id))
           (merge (dissoc s :id))
-          (merge {:atom (binding [*read-eval* false] (read-string (:atom s)))})
+          (merge {:atom (when (:atom s)
+                          (binding [*read-eval* false]
+                            (read-string (:atom s))))})
           (merge {:standard (integer->standard (:standard s))})
           (merge {:header h, 
                   :text t,
