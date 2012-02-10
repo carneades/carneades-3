@@ -1,5 +1,6 @@
 (ns carneades.web.test.service
   (:use clojure.test
+        clojure.pprint
         (carneades.engine statement uuid dublin-core argument)
         carneades.web.service
         clojure.data.json)
@@ -31,6 +32,11 @@
 (defn db-fixture [x] (create-tmp-db) (x) (delete-tmp-db))
 
 (use-fixtures :once db-fixture) 
+
+(defn unrecordify
+  "Converts a record to a hash-map"
+  [r]
+  (apply array-map (flatten (map identity r))))
 
 (defn make-some-string [prefix]
   (str prefix "-" (gensym)))
@@ -125,18 +131,12 @@
         id (read-json (:body res))
         res2 (get-request (str "/statement/" dbname "/" id) carneades-web-service)
         stmt (read-json (:body res2))
-        ;; _ (prn "stmt =" stmt)
-        returned-statement stmt;; (unpack-statement stmt)
-        returned-data (filter-out-nils returned-statement (keys statement-data))]
-    ;; QUESTIONS:
-    ;; should a string be a sliteral?
-    ;; PROBLEMS:
-    ;; id is returned as string => OK
-    ;; standard is returned as string  => unpack it?
-    ;; value nil is set to 0.5 => fixed
-    ;; (prn "returned-statement" returned-statement)
-    ;; (prn "returned-data" returned-data)
-    (is (= statement-data returned-data))))
+        returned-statement (unpack-statement stmt)
+        returned-statement (filter-out-nils returned-statement (keys statement-data))
+        returned-statement-data (unrecordify returned-statement)
+        returned-statement-data (update-in returned-statement-data [:header] unrecordify)]
+    (is (nil? (:atom returned-statement-data)))
+    (is (= statement-data returned-statement-data))))
 
 (deftest put-statement
   (let [statement-data (make-some-statement-data)
@@ -151,7 +151,7 @@
                           (json-str update))
         res3 (get-request (str "/statement/" dbname "/" id) carneades-web-service)
         stmt (read-json (:body res3))
-        returned-statement stmt ;; (unpack-statement stmt)
+        returned-statement (unpack-statement stmt)
         returned-data (filter-out-nils returned-statement (keys statement-data))]
     (is (= 200 (:status res3)))
     (is (= 0.314 (:value stmt)))))
@@ -206,10 +206,49 @@
         id (read-json (:body res))
         res2 (get-request (str "/argument/" dbname "/" id) carneades-web-service)
         returned-data (read-json (:body res2))
-        returned-arg returned-data;; (unpack-argument returned-data)
-        ]
-    ;; (prn "rarg = " (-> returned-arg :conclusion :atom))
+        returned-arg (unpack-argument returned-data)]
     (is (= 200 (:status res)))
     (is (= (-> conclusion :text :en) (-> returned-arg :conclusion :text :en)))
     (is (= (-> premise :text :en) (-> (first (-> returned-arg :premises))
                                       :text :en)))))
+
+(deftest put-argument
+  (let [statement-data (make-some-statement-data)
+        conclusion-data (make-some-statement-data)
+        conclusion (map->statement conclusion-data)
+        premise (pm (map->statement statement-data))
+        arg (map->argument {:premises [premise]
+                            :conclusion conclusion})
+        res (post-request (str "/argument/" dbname) carneades-web-service
+                          {"authorization" auth-header}
+                          (json-str arg))
+        id (read-json (:body res))
+        new-scheme "some-other-scheme"
+        update {:scheme new-scheme}
+        res2 (put-request (str "/argument/" dbname "/" id) carneades-web-service
+                          {"authorization" auth-header}
+                          (json-str update))
+        res3 (get-request (str "/argument/" dbname "/" id) carneades-web-service)
+        returned-data (read-json (:body res3))
+        returned-arg (unpack-argument returned-data)]
+    (is (= 200 (:status res)))
+    (is (= 200 (:status res2)))
+    (is (= new-scheme (str (:scheme returned-arg))))))
+
+(deftest delete-argument
+  (let [statement-data (make-some-statement-data)
+        conclusion-data (make-some-statement-data)
+        conclusion (map->statement conclusion-data)
+        premise (pm (map->statement statement-data))
+        arg (map->argument {:premises [premise]
+                            :conclusion conclusion})
+        res (post-request (str "/argument/" dbname) carneades-web-service
+                          {"authorization" auth-header}
+                          (json-str arg))
+        id (read-json (:body res))
+        res2 (delete-request (str "/argument/" dbname "/" id) carneades-web-service
+                             {"authorization" auth-header} "")
+        res3 (get-request (str "/argument/" dbname "/" id) carneades-web-service)]
+    (is (= 200 (:status res)))
+    (is (= 200 (:status res2)))
+    (is (= 404 (:status res3)))))
