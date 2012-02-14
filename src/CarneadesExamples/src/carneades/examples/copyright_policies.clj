@@ -105,9 +105,19 @@
                            :negative "Es gab keine öffentliche Bekanntmachung der Suche."
                            :question "Erfolgte eine öffentliche Bekanntmachung der Suche?")}
     :category 'announcement
-    :widget "checkbox")}  ; Shouldn't checkboxes, instead of radio buttons, be used to query boolean values of propositions?
+    :widget "checkbox")  ; Shouldn't checkboxes, instead of radio buttons, be used to query boolean values of propositions?
      
-    
+    'valid
+    (make-predicate
+     :symbol 'valid
+     :arity 1
+     :form {:en (make-form :positive "%s is valid law."
+                           :negative "%s is not valid law."
+                           :question "Is %s valid law?")
+            :de (make-form :positive "%s is gültiges Recht."
+                           :negative "%s ist nicht gültiges Recht."
+                           :question "Ist %s gültiges Recht?")})}
+
    :sections
    [(make-section
      :header (make-metadata :title "Orphaned Works"
@@ -161,7 +171,8 @@
        :premises [(make-premise :statement '(person ?P))
                   (make-premise :statement '(work ?W))
                   (make-premise :statement '(type-of-use ?P ?W non-commercial))
-                  (make-premise :statement '(search-type standard))])
+                  (make-premise :statement '(search-type standard))
+                  (make-premise :statement '(valid AB-52c-1-a)) ])
 
      
      (make-scheme
@@ -171,4 +182,5 @@
                   (make-premise :statement '(work ?W))
                   (make-premise :statement '(type-of-use ?P ?W commercial))
                   (make-premise :statement '(search-type professional))
-                  (make-premise :statement '(announcement))      ])])])]))
+                  (make-premise :statement '(announcement))
+                  (make-premise :statement '(valid AB-52c-2-c))])])])]))
