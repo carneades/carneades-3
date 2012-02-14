@@ -1,83 +1,82 @@
 ;;; Copyright ? 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.examples.orphaned-works.clj
+(ns carneades.examples.copyright-policies.clj
   (:use carneades.engine.dublin-core
         carneades.engine.scheme))
 
 ;; This example illustrates the use of schemes for policy modeling, using
-;; policies proposed in response to the EU Green Paper on Copyright in the Knowledge Economy,
-;; regarding the issue of how to handle orphaned works.
+;; policies proposed in response to the EU Green Paper on Copyright in the Knowledge Economy.
 
 (def copyright-policies 
   (make-theory
-    :header 
-    (make-metadata :title "Copyright Policies"
-                   :description {:en "TO DO"})
-    
-    :language
-    {'announcement (make-individual :symbol 'announcement :text {:en "Announcement" :de "Bekanntmachung"})
-     'commercial (make-individual :symbol 'commercial :text {:en "Commerical Use"})
-     'purpose (make-individual :symbol 'purpose :text {:en "Purpose"})
-     'name  (make-individual :symbol 'name :text {:en "Name"})
-     'non-commercial (make-individual :symbol 'non-commercial :text {:en "Non-commerical Use"})
-     'none (make-individual :symbol 'none :text {:en "None"})
-     'professional (make-individual :symbol 'professional :text {:en "Professional Documented Search"})
-     'search (make-individual :symbol 'search :text {:en "Search"})
-     'standard (make-individual :symbol 'standard :text {:en "Standard DocumentedSearch"})
-
-     'may-publish
-      (make-predicate
-       :symbol 'may-publish
-       :arity 2
-       :forms {:en (make-form :positive "%s may publish the work %s."
-                              :negative "%s may not publish the work %s."
-                              :question "May %s publish the work %s?")})
-
-      
-   'person
-   (make-predicate
-    :symbol 'person
-    :arity 1
-    :forms {:en (make-form :positive "%s is a person."
-                           :negative "%s is not a person."
-                           :question "Is %s a person?")
-            
-            :de (make-form :positive "%s ist ein Rechtsperson."
-                           :negative "% ist nicht ein Rechtsperson."
-                           :question "Ist %s ein Rechtsperson?")}
-    :category 'name  ; was a map !!
-    :hint {:en "Please provide an identifier for the person, such as P1."}
-    :widget "text"   ; was "type".  Should symbols be used to name the widget types, instead of strings?
-    :followups ['work-at-issue])   ; would "next" be a better name?
-
-   'work
-   (make-predicate
-    :symbol 'work
-    :arity 1
-    :forms {:de (make-form :positive "%s ist ein Werk."
-                           :negative "%s is nicht ein Werk."
-                           :question "Ist %s ein Werk?")
-            :en (make-form :positive "%s is a work."
-                           :negative "%s is not a work."
-                           :question "Is %s a work?")}
-    :widget "text"
-    :category 'work)
+   :header 
+   (make-metadata :title "Copyright Policies"
+                  :description {:en "TO DO"})
    
-   'type-of-use
-   (make-predicate
-    :symbol 'type-of-use
-    :arity 3
-    :forms {:de (make-form :positive "%s nutzt %s für folgender Zwecken: %S."
-                           :negative "%s nutzt %s nicht für folgender Zwecken: %s."
-                           :question "Nutzt %s den Werk %s für folgender Zwecken: %s?")
-            :en (make-form :positive "%s uses %s for the following purposes: %s."
-                           :negative "%s does not use %s for the following purposes: %s."
-                           :question "Does %s use %s for the following purposes: %s?")}
-    :hint {:en "Will the work be used for commercial or non-commercial purposes?"}
-    :answers ['commercial, 'non-commercial]
-    :category 'purpose
-    :widget "select")
+   :language
+   {'announcement (make-individual :symbol 'announcement :text {:en "Announcement" :de "Bekanntmachung"})
+    'commercial (make-individual :symbol 'commercial :text {:en "Commerical Use"})
+    'purpose (make-individual :symbol 'purpose :text {:en "Purpose"})
+    'name  (make-individual :symbol 'name :text {:en "Name"})
+    'non-commercial (make-individual :symbol 'non-commercial :text {:en "Non-commerical Use"})
+    'none (make-individual :symbol 'none :text {:en "None"})
+    'professional (make-individual :symbol 'professional :text {:en "Professional Documented Search"})
+    'search (make-individual :symbol 'search :text {:en "Search"})
+    'standard (make-individual :symbol 'standard :text {:en "Standard DocumentedSearch"})
+
+    'may-publish
+    (make-predicate
+     :symbol 'may-publish
+     :arity 2
+     :forms {:en (make-form :positive "%s may publish the work %s."
+                            :negative "%s may not publish the work %s."
+                            :question "May %s publish the work %s?")})
+
+    
+    'person
+    (make-predicate
+     :symbol 'person
+     :arity 1
+     :forms {:en (make-form :positive "%s is a person."
+                            :negative "%s is not a person."
+                            :question "Is %s a person?")
+             
+             :de (make-form :positive "%s ist ein Rechtsperson."
+                            :negative "% ist nicht ein Rechtsperson."
+                            :question "Ist %s ein Rechtsperson?")}
+     :category 'name  ; was a map !!
+     :hint {:en "Please provide an identifier for the person, such as P1."}
+     :widget "text"   ; was "type".  Should symbols be used to name the widget types, instead of strings?
+     :followups ['work-at-issue])   ; would "next" be a better name?
+
+    'work
+    (make-predicate
+     :symbol 'work
+     :arity 1
+     :forms {:de (make-form :positive "%s ist ein Werk."
+                            :negative "%s is nicht ein Werk."
+                            :question "Ist %s ein Werk?")
+             :en (make-form :positive "%s is a work."
+                            :negative "%s is not a work."
+                            :question "Is %s a work?")}
+     :widget "text"
+     :category 'work)
+    
+    'type-of-use
+    (make-predicate
+     :symbol 'type-of-use
+     :arity 3
+     :forms {:de (make-form :positive "%s nutzt %s für folgender Zwecken: %S."
+                            :negative "%s nutzt %s nicht für folgender Zwecken: %s."
+                            :question "Nutzt %s den Werk %s für folgender Zwecken: %s?")
+             :en (make-form :positive "%s uses %s for the following purposes: %s."
+                            :negative "%s does not use %s for the following purposes: %s."
+                            :question "Does %s use %s for the following purposes: %s?")}
+     :hint {:en "Will the work be used for commercial or non-commercial purposes?"}
+     :answers ['commercial, 'non-commercial]
+     :category 'purpose
+     :widget "select")
 
    'search-type
    (make-predicate
