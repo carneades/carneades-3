@@ -108,10 +108,10 @@
     :widget "checkbox")}  ; Shouldn't checkboxes, instead of radio buttons, be used to query boolean values of propositions?
      
     
-     :sections
-    [(make-section
-      :header (make-metadata :title "Orphaned Works"
-                             :description {:en "TO DO"})
+   :sections
+   [(make-section
+     :header (make-metadata :title "Orphaned Works"
+                            :description {:en "TO DO"})
 
      :sections   ; one section below for each policy proposed for handling orphaned works
      [(make-section
