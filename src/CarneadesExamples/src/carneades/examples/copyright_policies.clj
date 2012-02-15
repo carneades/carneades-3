@@ -1,7 +1,7 @@
 ;;; Copyright ? 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.examples.copyright-policies.clj
+(ns carneades.examples.copyright-policies
   (:use carneades.engine.dublin-core
         carneades.engine.scheme))
 
@@ -48,7 +48,7 @@
      :category 'name  ; was a map !!
      :hint {:en "Please provide an identifier for the person, such as P1."}
      :widget "text"   ; was "type".  Should symbols be used to name the widget types, instead of strings?
-     :followups ['work-at-issue])   ; would "next" be a better name?
+     :followups ['work])   ; would "next" be a better name?
 
     'work
     (make-predicate
@@ -61,7 +61,7 @@
                             :negative "%s is not a work."
                             :question "Is %s a work?")}
      :widget "text"
-     :category 'work)
+     :category 'work)  ;  should this be the "name" category?  See above.
     
     'type-of-use
     (make-predicate
@@ -120,67 +120,60 @@
 
    :sections
    [(make-section
-     :header (make-metadata :title "Orphaned Works"
-                            :description {:en "TO DO"})
+     :header (make-metadata :title "Question 12. Cross-Border Aspects of Orphaned Works"
+                            :description {:en "Question 12 of the Green Paper on Copyright in the Knowledge Economy [@GreenPaper, p. 12] asks:
 
-     :sections   ; one section below for each policy proposed for handling orphaned works
+> (12) How should the cross-border aspects of the orphan works issue be tackled to ensure EU-wide recognition of
+> the solutions adopted in different Member States?
+
+This arguments pro and con the policy proposals for this issue can be browsed in the [argument map]().
+
+    To do: add the URL to this issue in the map in the link above.
+"})
+
+
+     
+     ;; one section below for each policy proposed for this issue as well as for current polices on this issue.
+
+     :sections  
      [(make-section
        :header (make-metadata :title "Orphaned Works Policy Proposed by the Aktionsbündnisses ‟Urheberrecht für Bildung und Wissenschaft”"
-                              :description {:de "
-> Das Aktionsbündnis hat im Rahmen des zweiten Umsetzung der EU Richtlinie in Deutschland (im ‟Zweiten Korb„)
-> einen Normvorschlag für verwaisteWerke vorgelegt, der im Dritten Korb mit behandelt werden soll. Dieser
-> Vorschlag lautet wie folgt:
+                              :description {:en "The German “Action Alliance” on copyright for education and science proposes the following
+policies for handling orphaned works [@Aktionsbündnis, pp. 6-7]."})
 
-> § 52c Öffentliche Zugänglichmachung verwaister bzw. nicht mehr verwerteter Werke
 
+       :schemes
+       [(make-scheme                            
+         :id 'AB-52c-1-a
+         :header (make-metadata :title "§ 52c (1) (a)"
+                                :description {:de "
 > (1) Öffentliche Zugänglichmachung für nicht-gewerbliche und private Zwecke, insbesondere
 > durch Nutzer für Zwecke der Archivierung und für Forschung und Ausbildung 
 >     (a)  Zulässig  ist  die  öffentliche  Zugänglichmachung  von  Werken, deren Urheber oder Rechteinhaber 
 > nach einer dokumentierten Standardsuche [alternativ: einer zeitlich auf 30 Tage öffentlichen 
-> Bekanntmachung] nicht ermittelt werden können. 
->     (b) Zulässig ist die öffentliche  Zugänglichmachung von Werken,  deren ausschließliches 
-> Nutzungsrecht  länger  als  zwanzig  Jahre  nicht  ausgeübt  und  für  die  die  Urheber  nach  einer 
-> dokumentierten Standardsuche [alternativ: einer zeitlich auf 30 Tage öffentlichen Bekanntmachung] 
-> nicht ermittelt werden konnte. An die Stelle des Urhebers im § 41 tritt der Nutzer.
->
->
+> Bekanntmachung] nicht ermittelt werden können.
+"
+         :conclusion '(may-publish ?P ?W)
+         :premises [(make-premise :statement '(person ?P))
+                    (make-premise :statement '(work ?W))
+                    (make-premise :statement '(type-of-use ?P ?W non-commercial))
+                    (make-premise :statement '(search-type standard))
+                    (make-premise :statement '(valid AB-52c-1-a)) ])
+
+        
+        (make-scheme
+         :id 'AB-52c-2-a
+         :header (make-metadata :title "§ 52c (2) (a)"
+                                :description {:de "
 > (2) Öffentliche Zugänglichmachung für gewerbliche Zwecke 
 >    (a)  Zulässig  ist  die  öffentliche  Zugänglichmachung  von  Werken, deren Urheber oder Rechteinhaber 
 > nach einer angemessenen professionellen und dokumentierten Suche und einer öffentlichen 
-> Bekanntmachung nicht ermittelt werden können. 
->    (b) Einer öffentlichen Zugänglichmachung von Werken, deren ausschließliches Nutzungsrecht länger 
-> als zwanzig  Jahre  nicht  ausgeübt  und  für  die  die  Urheber  nach  einer angemessenen professionellen 
-> und  dokumentierten  Suche  und  einer  öffentlichen  Bekanntmachung nicht ermittelt werden können, 
-> für gewerbliche Zwecke Dritter kann von Seiten der bisherigen Rechteinhaber nicht widersprochen 
-> werden. 
->    (c) Für die öffentliche Zugänglichmachung nach dem Buchstaben (a) ist  mit  Blick  auf  einen 
-> nachträglich bekannt werdenden Urheber eine angemessene Vergütung vorzuhalten. Der Anspruch 
-> seitens des nachträglich bekannt gewordenen Urhebers kann nur durch eine 
-> Verwertungsgesellschaft geltend gemacht werden. Die Vergütung gegenüber dem ursprünglichen 
-> Rechteinhaber wird durch Lizenzverträge geregelt. 
->    (d) Dem Recht auf öffentliche Zugänglichmachung kann auch durch den nachträglich bekannt 
-> gewordenen Urheber oder Rechteinhaber nicht widersprochen werden, wenn die unter (a) und (b) 
-> angegebenen Bedingungen erfüllt sind.
-"})
-
-
-       :schemes
-    [(make-scheme                            
-      :id 'AB-52c-1-a
-       :conclusion '(may-publish ?P ?W)
-       :premises [(make-premise :statement '(person ?P))
-                  (make-premise :statement '(work ?W))
-                  (make-premise :statement '(type-of-use ?P ?W non-commercial))
-                  (make-premise :statement '(search-type standard))
-                  (make-premise :statement '(valid AB-52c-1-a)) ])
-
-     
-     (make-scheme
-      :id 'AB-52c-2-a
-      :conclusion '(may-publish ?P ?W)
-      :premises [(make-premise :statement '(person ?P))
-                  (make-premise :statement '(work ?W))
-                  (make-premise :statement '(type-of-use ?P ?W commercial))
-                  (make-premise :statement '(search-type professional))
-                  (make-premise :statement '(announcement))
-                  (make-premise :statement '(valid AB-52c-2-c))])])])]))
+> Bekanntmachung nicht ermittelt werden können.
+"
+         :conclusion '(may-publish ?P ?W)
+         :premises [(make-premise :statement '(person ?P))
+                    (make-premise :statement '(work ?W))
+                    (make-premise :statement '(type-of-use ?P ?W commercial))
+                    (make-premise :statement '(search-type professional))
+                    (make-premise :statement '(announcement))
+                    (make-premise :statement '(valid AB-52c-2-c))])])])]))
