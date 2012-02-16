@@ -43,16 +43,9 @@ Our aim is not to comprehensively model all the policies and arguments submitted
 representative arguments and policies for the purpose of illustrating features of the IMPACT argument toolbox.
 
 The Corpus Selection Working Group of the IMPACT project has chosen 4 of the 25 questions raised in the Green Paper, as well as
-11 of the 323 comments submitted, to be used for the research and development purposes of the project.  The four questions chosen are:
+12 of the 323 comments submitted, representing a wide range of stakeholders, to be used for the research and development purposes of the project.
 
-> (4) Should certain categories of exceptions be made mandatory to ensure more legal certainty and better protection of beneficiaries of exceptions? [@GreenPaper, p. 6]
-
-> (9) Should the law be clarified with respect to whether the scanning of works held in libraries for the purpose of making their content searchable on the Internet goes beyond the scope of current exceptions to copyright? [@GreenPaper, p. 12]
-
-> (12) How should the cross-border aspects of the orphan works issue be tackled to ensure EU-wide recognition of the solutions adopted in different Member States? [@GreenPaper, p. 12]
-
-> (24) Should there be more precise rules regarding what acts end users can or cannot do when making use of materials protected by copyright? [@GreenPaper, p. 20]
-"}
+The four questions covered by this model are listed below.  Click on an question for further information."}
             :date "2011")
    
    :references 
@@ -134,6 +127,13 @@ The Corpus Selection Working Group of the IMPACT project has chosen 4 of the 25 
      :date "November 28, 2008"
      :identifier "https://circabc.europa.eu/d/d/workspace/SpacesStore/96fb4b45-5ed9-400d-aa8f-bb618c6fd3d7/mediaset.pdf"),
 
+    "NationalArchives"
+    (make-metadata
+     :title "European Commission Green Paper: Copyright in the Knowledge Economy"
+     :creator "National Archives of the United Kingdom"
+     :date "September 12, 2008"
+     :identifier "https://circabc.europa.eu/d/d/workspace/SpacesStore/552bbafd-da1c-4c0e-9f37-f294b3e54acc/national_archives_of_the_united_kingdom.pdf")
+
     "SIIA"
     (make-metadata
      :title "Comments on the EC Green Paper on Copyright in the Knowledge Economy"
@@ -181,7 +181,7 @@ exceptions to copyright?"}))
    :header (make-metadata :description {:en "(12) How should the cross-border aspects of the orphan works issue be tackled to ensure EU-wide recognition of the solutions adopted in different Member States? [@GreenPaper, p. 12]"
                                         :de "(12) Wie sollten die grenzübergreifenden Aspekte, die sich im Zusammenhang mit verwaisten Werken stellen, in Angriff genommen werden, um die EU-weite Anerkennung der Regelungen der einzelnen Mitgliedstaaten zu gewährleisten?"})
    :text {:en "How should the cross-border aspects of the orphan works issue be tackled to 
-ensure EU-wide recognition of the solutions adopted in different Member States"}))
+ensure EU-wide recognition of the solutions adopted in different Member States?"}))
 
 (def Q24
   (make-statement
@@ -244,9 +244,10 @@ This policy has been modeled and can be simulated using the Policy Modeling tool
    :text {:en "The orphaned works policy proposed by the German Action Alliance."}))
 
 (def a1 (make-argument
-          :header (make-metadata :description {:en "In response to Question 4, yes, the permitted copyright exceptions should be harmonized."})
-          :conclusion Q4
-          :premises [(pm permitted-exceptions-should-be-harmonized)]))
+         :header (make-metadata :description {:en "In response to Question 4, yes, the permitted copyright exceptions should be harmonized."})
+         :scheme "Position"
+         :conclusion Q4
+         :premises [(pm permitted-exceptions-should-be-harmonized)]))
 
 (def a2-id (make-urn-symbol))
 
@@ -275,11 +276,13 @@ State than harmonizing copyright exceptions."})
 
 (def a4 (make-argument
          :header (make-metadata :description {:en "In response to Question 12, No. Further restrictions on the end users of copyrighted materials should not be enacted."})
+         :scheme "Position"
          :conclusion Q12
          :premises [(pm action-alliance-Q12-proposal)]))
 
 (def a5 (make-argument
-          :header (make-metadata :description {:en "In response to Question 9, Yes. The exceptions should be clarified to allow works held in libraries to be scanned for the purpose of making their content searchable on the Internet."})
+         :header (make-metadata :description {:en "In response to Question 9, Yes. The exceptions should be clarified to allow works held in libraries to be scanned for the purpose of making their content searchable on the Internet."})
+         :scheme "Position"
          :conclusion Q9
          :premises [(pm Q9-LIBER-Proposal)]))
 
@@ -294,7 +297,8 @@ State than harmonizing copyright exceptions."})
                     (make-premise :role "Goal" :statement (make-statement :text {:en "Realizing a transformative effect on research, learning and teaching is an important social goal."}))]))
 
 (def a7 (make-argument
-          :header (make-metadata :description {:en "In response to Question 24, No. Further restrictions on the end users of copyrighted materials should not be enacted."})
+         :header (make-metadata :description {:en "In response to Question 24, No. Further restrictions on the end users of copyrighted materials should not be enacted."})
+         :scheme "Position"
          :conclusion Q24
          :premises [(pm Q24-LIBER-Proposal)]))
 
