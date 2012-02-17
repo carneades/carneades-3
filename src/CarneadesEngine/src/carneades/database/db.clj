@@ -332,7 +332,7 @@
               header-id (if (:header literal) (create-metadata (:header literal)))]
           (jdbc/insert-record
             :statement {:id id
-                        :atom (:atom literal),
+                        :atom (str (:atom literal)),
                         :header header-id,
                         :weight (:weight literal),
                         :main (:main literal),
