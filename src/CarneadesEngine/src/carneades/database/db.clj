@@ -13,7 +13,8 @@
         carneades.engine.statement
         carneades.engine.argument)
   (:require [clojure.java.jdbc :as jdbc]
-            [carneades.config.reader :as config])
+            [carneades.config.reader :as config]
+            [clojure.string :as s])
   (:import java.io.File))
 
 
@@ -365,7 +366,7 @@
     (when s 
       (-> (make-statement :id (symbol id))
           (merge (dissoc s :id))
-          (merge {:atom (when (:atom s)
+          (merge {:atom (when (not (s/blank? (:atom s)))
                           (binding [*read-eval* false]
                             (read-string (:atom s))))})
           (merge {:standard (integer->standard (:standard s))})
