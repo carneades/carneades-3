@@ -1,6 +1,6 @@
 var CARNEADES = {
     lang : "en",
-    carneadeswsurl : "impactws/"
+    carneadeswsurl : "/impactws" // do not put a slash at the end
 };
 
 // this code is executed when the page is loaded
@@ -41,7 +41,7 @@ function dispatch_url(element, db, element_id)
 }
 
 function ajax_post(suburl, jsondata, username, password, callback) {
-    $.ajax({url: CARNEADESWS.carneadeswsurl + suburl,
+    $.ajax({url: CARNEADESWS.carneadeswsurl + '/' + suburl,
             type: 'POST',
             'beforeSend' : function(xhr) {
                 var bytes = Crypto.charenc.Binary.stringToBytes(username + ":" + password);
@@ -56,7 +56,7 @@ function ajax_post(suburl, jsondata, username, password, callback) {
 }
 
 function ajax_get(suburl, callback) {
-    $.ajax({url: CARNEADES.carneadeswsurl + suburl,
+    $.ajax({url: CARNEADES.carneadeswsurl + '/' + suburl,
             type: 'GET',
             success : callback,
             dataType : 'json'
