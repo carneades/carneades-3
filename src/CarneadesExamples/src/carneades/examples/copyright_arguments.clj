@@ -175,6 +175,12 @@ exceptions to copyright?"}))
   (make-statement
    :text {:en "Yes. The exceptions should be clarified to allow works held in libraries to be scanned for the purpose of making their content searchable on the Internet."}))
 
+(def Q9-is-irrelevant
+  (make-statement :text {:en "Question 9 is irrelevant"}))
+
+(def scanning-by-libraries-should-be-obligatory
+  (make-statement :text {:en "Public libraries have the right, indeed the responsibility, to publish digital copies of their collections for the purpose of preserving and distributing onlien the cultural heritage of Europe. [Atkionsbündnis, p. 6]"}))
+
 (def Q12
   (make-statement
    :main true
@@ -256,10 +262,19 @@ This policy has been modeled and can be simulated using the Policy Modeling tool
           :header (make-metadata 
                    :description {:en "Aston University argues that the permitted copyright exceptions should be harmonized:
 
-> Researchers and students increasingly work in more than one Member State, successively or concurrently. The patchy availability of the exceptions makes their work difficult, because what is lawful in one country (for example copying a small portion of a work for critical illustration) is probably unlawful in another. This is particularly the case at Aston where there are opportunities for students to work in a variety of countries on placement and therefore could potentially experience a range of legislation. We also welcome students on exchange from various countries.The situation is made worse by the provision in most Member States that contracts, governing the use of digital material, automatically override statute law. The supremacy of contracts means that statutory exceptions are probably unavailable even in the State that enacted them. This is potentially confusing for users of copyright material as well as information professionals supporting them, where detailed knowledge of specific contracts is required. It is vital that the research and teaching community in Higher Education the right to use copyright material in the context of ‘fair dealing’ to ensure that academics, librarians and other information professionals are not tied up with recording and monitoring activity within a regulatory framework which is already complex. This situation of legal uncertainty needs legislative action by the European institutions. [@Aston2008, p. 1]"
+> Researchers and students increasingly work in more than one Member State, successively or concurrently. The patchy availability of the exceptions makes their work difficult, because what is lawful in one country (for example copying a small portion of a work for critical illustration) is probably unlawful in another. This is particularly the case at Aston where there are opportunities for students to work in a variety of countries on placement and therefore could potentially experience a range of legislation. We also welcome students on exchange from various countries.The situation is made worse by the provision in most Member States that contracts, governing the use of digital material, automatically override statute law. The supremacy of contracts means that statutory exceptions are probably unavailable even in the State that enacted them. This is potentially confusing for users of copyright material as well as information professionals supporting them, where detailed knowledge of specific contracts is required. It is vital that the research and teaching community in Higher Education the right to use copyright material in the context of ‘fair dealing’ to ensure that academics, librarians and other information professionals are not tied up with recording and monitoring activity within a regulatory framework which is already complex. This situation of legal uncertainty needs legislative action by the European institutions. [@Aston2008, p. 1]
+
+The Action Alliance for Copyright in Education and Science formulated this argument as follows:
+
+> Different copyright exceptions have always been a hindrance for international, cross-border science and resarch. Binding harmoninzed copryight exceptions for all Member States are therefore desirable. [@Aktionsbündnis, p. 5]
+"
                                  :de "Aston Universität argumentiert wie folgt:
 
-> Forscher und Studenten zunehmend in mehr als einem Mitgliedstaat zu arbeiten, nacheinander oder gleichzeitig. Die lückenhafte Verfügbarkeit der Ausnahmen macht ihre Arbeit schwierig, weil, was in einem Land rechtmäßig (z. B. Kopieren von einem kleinen Teil eines Werkes für kritische Grafik) wahrscheinlich rechtswidrig in ein anderes. Dies ist insbesondere der Fall bei Aston in denen es Möglichkeiten für Studenten, um in einer Vielzahl von Ländern zur Platzierung der Arbeit und damit potenziell Erfahrung eine Reihe von Rechtsvorschriften. Wir begrüßen auch Schüler zum Austausch aus verschiedenen Ländern. Die Situation wird durch die Bereitstellung in den meisten Mitgliedstaaten, dass die Verträge, die die Verwendung von digitalem Material, automatisch überschreiben Gesetzesrecht gemacht. Die Überlegenheit der Verträge bedeutet, dass die gesetzlichen Ausnahmen wahrscheinlich nicht zur Verfügung stehen, auch in dem Staat, der sie erlassen. Das ist verwirrend für die Nutzer von urheberrechtlich geschütztem Material sowie Informationen Profis unterstützen sie, wo genaue Kenntnis der spezifischen Vertrügen erforderlich ist. Es ist wichtig, dass die Forschung und Lehre Gemeinde in Higher Education das Recht vor, urheberrechtlich geschütztes Material im Rahmen der ‘Fair Dealing’ verwenden, um die Wissenschaftler, Bibliothekare und andere Informationsspezialisten sicher nicht mit Aufzeichnung und Überwachung Aktivität in einem Rechtsrahmen gebunden, die ist schon komplex. Diese Situation der Rechtsunsicherheit muss legislative Maßnahmen der europäischen Institutionen. [@Aston2008, S. 1]" })
+> Forscher und Studenten zunehmend in mehr als einem Mitgliedstaat zu arbeiten, nacheinander oder gleichzeitig. Die lückenhafte Verfügbarkeit der Ausnahmen macht ihre Arbeit schwierig, weil, was in einem Land rechtmäßig (z. B. Kopieren von einem kleinen Teil eines Werkes für kritische Grafik) wahrscheinlich rechtswidrig in ein anderes. Dies ist insbesondere der Fall bei Aston in denen es Möglichkeiten für Studenten, um in einer Vielzahl von Ländern zur Platzierung der Arbeit und damit potenziell Erfahrung eine Reihe von Rechtsvorschriften. Wir begrüßen auch Schüler zum Austausch aus verschiedenen Ländern. Die Situation wird durch die Bereitstellung in den meisten Mitgliedstaaten, dass die Verträge, die die Verwendung von digitalem Material, automatisch überschreiben Gesetzesrecht gemacht. Die Überlegenheit der Verträge bedeutet, dass die gesetzlichen Ausnahmen wahrscheinlich nicht zur Verfügung stehen, auch in dem Staat, der sie erlassen. Das ist verwirrend für die Nutzer von urheberrechtlich geschütztem Material sowie Informationen Profis unterstützen sie, wo genaue Kenntnis der spezifischen Vertrügen erforderlich ist. Es ist wichtig, dass die Forschung und Lehre Gemeinde in Higher Education das Recht vor, urheberrechtlich geschütztes Material im Rahmen der ‘Fair Dealing’ verwenden, um die Wissenschaftler, Bibliothekare und andere Informationsspezialisten sicher nicht mit Aufzeichnung und Überwachung Aktivität in einem Rechtsrahmen gebunden, die ist schon komplex. Diese Situation der Rechtsunsicherheit muss legislative Maßnahmen der europäischen Institutionen. [@Aston2008, S. 1]
+
+Das Aktionsbündnis „Urheberrecht für Bildung und Wissenschaft“ in Deutschland hat die gleiche Argument so formuliert:
+
+>Es ist für die immer schon grenzüberschreitend international arbeitende Wissenschaft hinderlich, wenn Ausnahmen, z.B. für die Nutzung urheberrechtsgeschützten Materials in international verteilten Arbeitsgruppen, in verschiedenen Ländern unterschiedlich geregelt sind. Eine für alle Mitgliedsländer verbindliche Ausgestaltung zentraler Ausnahmekategorien ist daher erwünscht. [@Aktionsbündnis, p. 5]" })
           :scheme "Practical Reasoning"
           :conclusion permitted-exceptions-should-be-harmonized 
           :premises [(make-premise :role "Goal" :statement easier-to-work-in-several-states),
@@ -311,6 +326,18 @@ State than harmonizing copyright exceptions."})
          :premises [(make-premise :role "Circumstances" :statement (make-statement :text {:en "The essence of copyright legislation is the maintenance of a balance between the rights of the rights holders and the legitimate needs of users."}))
                     (make-premise :role "Action" :statement (make-statement :text {:en "The introduction of more restrictions on the end users would create an imbalance between the interests of copyright owners and end users and make it more difficult for users of copyright material in their legitimate pursuits in teaching, learning and research in the European Community."}))
                     (make-premise :role "Goal" :statement (make-statement :text {:en "Creating an imbalance between the interests of copyright owners and end users and making it more difficult for users of copyright material in their legitimate pursuits in teaching, learning and research in the European Community should be avoided."}))]))
+
+(def a9 (make-argument
+         :header (make-metadata :description {:en "Question 9 is irrelevant."})
+         :scheme "Position"
+         :conclusion Q9
+         :premises [(pm Q9-is-irrelevant)]))
+
+(def 10 (make-argument
+         :header (make-metadata :description {:en "Question 9 is irrelevant if, as proposed by the Action Alliance in Germany, public libraries have the right, indeed the responsibility, to publish digital copies of their collections for the purpose of preserving and distributing online the cultural heritage of Europe. [Atkionsbündnis, p. 6]"
+                                              :de "> Ein weiterer Klärungsbedarf, bei Sicherung der unter (6) und (7) generellen Forderung einer informationellen Grundversorgung mit den ursprünglichen Werken, wird nicht gesehen. Das Einscannen ganzer Bibliotheksbestände und deren öffentliche Bereitstellung sollten dann selbstverständlich sein. [Atkionsbündnis, p. 6]"})
+         :conclusion Q9-is-irrelevant
+         :premises [(pm scanning-by-libraries-should-be-obligatory)]))
 
 (def copyright1
   (enter-arguments graph1 [a1, a2, a3, a4, a5, a6, a7, a8]))
