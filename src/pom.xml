@@ -44,34 +44,6 @@
                          </goals>
                      </execution>
                      <execution>
-                         <id>lein-deps-CarneadesMapComponent</id>
-                         <phase>install</phase>
-                         <configuration>
-                             <executable>lein</executable>
-                             <workingDirectory>${project.basedir}/CarneadesMapComponent</workingDirectory>
-                             <arguments>
-                                 <argument>deps</argument>
-                             </arguments>
-                         </configuration>
-                         <goals>
-                             <goal>exec</goal>
-                         </goals>
-                     </execution>
-                     <execution>
-                         <id>lein-install-CarneadesMapComponent</id>
-                         <phase>install</phase>
-                         <configuration>
-                             <executable>lein</executable>
-                             <workingDirectory>${project.basedir}/CarneadesMapComponent</workingDirectory>
-                             <arguments>
-                                 <argument>install</argument>
-                             </arguments>
-                         </configuration>
-                         <goals>
-                             <goal>exec</goal>
-                         </goals>
-                     </execution>
-                     <execution>
                          <id>lein-deps-CarneadesExamples</id>
                          <phase>install</phase>
                          <configuration>
