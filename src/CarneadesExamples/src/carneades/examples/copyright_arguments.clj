@@ -31,7 +31,7 @@
    :header (make-metadata 
             :title "Reconstruction of Comments on the EU Green Paper “Copyright in the Knowledge Economy” "
             :creator "IMPACT Project"
-            :description {:en "The purpose of the [Green Paper](http://ec.europa.eu/internal_market/copyright/docs/copyright-infso/greenpaper_en.pdf) on “Copyright iin the Knowledge Economy” is to “foster a debate on how knowledge for research, science 
+            :description {:en "The purpose of the [Green Paper](http://ec.europa.eu/internal_market/copyright/docs/copyright-infso/greenpaper_en.pdf) on “Copyright in the Knowledge Economy” is to “foster a debate on how knowledge for research, science 
 and education can best be disseminated in the online environment.” [@GreenPaper, p. 3].
 
 The Green Paper has two parts.  The first deals with general issues and the second deals with “specific issues related to the exceptions
@@ -45,7 +45,7 @@ representative arguments and policies for the purpose of illustrating features o
 The Corpus Selection Working Group of the IMPACT project has chosen 4 of the 25 questions raised in the Green Paper, as well as
 12 of the 323 comments submitted, representing a wide range of stakeholders, to be used for the research and development purposes of the project.
 
-The four questions covered by this model are listed below.  Click on an question for further information."}
+The four questions covered by this model are listed below.  Click on a question for further information."}
             :date "2011")
    
    :references 
@@ -333,7 +333,7 @@ State than harmonizing copyright exceptions."})
          :conclusion Q9
          :premises [(pm Q9-is-irrelevant)]))
 
-(def 10 (make-argument
+(def a10 (make-argument
          :header (make-metadata :description {:en "Question 9 is irrelevant if, as proposed by the Action Alliance in Germany, public libraries have the right, indeed the responsibility, to publish digital copies of their collections for the purpose of preserving and distributing online the cultural heritage of Europe. [Atkionsbündnis, p. 6]"
                                               :de "> Ein weiterer Klärungsbedarf, bei Sicherung der unter (6) und (7) generellen Forderung einer informationellen Grundversorgung mit den ursprünglichen Werken, wird nicht gesehen. Das Einscannen ganzer Bibliotheksbestände und deren öffentliche Bereitstellung sollten dann selbstverständlich sein. [Atkionsbündnis, p. 6]"})
          :conclusion Q9-is-irrelevant
