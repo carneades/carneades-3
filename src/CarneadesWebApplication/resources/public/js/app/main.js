@@ -1,6 +1,6 @@
 var CARNEADES = {
     lang : "en",
-    carneadeswsurl : "/impactws" // do not put a slash at the end
+    carneadeswsurl :"" // "/impactws" // do not put a slash at the end
 };
 
 // this code is executed when the page is loaded
