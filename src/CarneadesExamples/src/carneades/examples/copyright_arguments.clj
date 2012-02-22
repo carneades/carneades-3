@@ -156,9 +156,9 @@ The four questions covered by this model are listed below.  Click on a question 
     :header (make-metadata 
               :description {:en "(4) Should certain categories of exceptions be made mandatory to ensure more legal certainty and better protection of beneficiaries of exceptions? [@GreenPaper, p. 6]"
                             :de "(4) Sollten bestimmte Ausnahmekategorien verbindlich ausgestaltet werden, um ein größeres Maß an Rechtssicherheit zu gewährleisten und die Nutznießer dieser Ausnahmen besser zu schützen? [@GreenPaper, p. 6]"})
-    :text {:en "Should certain categories of exceptions be made mandatory to ensure more legal 
+    :text {:en "Q4. Should certain categories of exceptions be made mandatory to ensure more legal 
                 certainty and better protection of beneficiaries of exceptions?"
-           :de "Sollten bestimmte Kategorien von Ausnahmen zur Pflicht gemacht werden, um sicherzustellen, mehr Rechtssicherheit und einen besseren Schutz der Empfänger von Ausnahmen?"}))
+           :de "Q4. Sollten bestimmte Kategorien von Ausnahmen zur Pflicht gemacht werden, um sicherzustellen, mehr Rechtssicherheit und einen besseren Schutz der Empfänger von Ausnahmen?"}))
 
 (def Q9
   (make-statement
@@ -167,7 +167,7 @@ The four questions covered by this model are listed below.  Click on a question 
             :description {:en "(9) Should the law be clarified with respect to whether the scanning of works held in 
 libraries for the purpose of making their content searchable on the Internet goes beyond the scope of current
 exceptions to copyright? [@GreenPaper, p. 12]"})
-   :text {:en "Should the law be clarified with respect to whether the scanning of works held in 
+   :text {:en "Q9. Should the law be clarified with respect to whether the scanning of works held in 
 libraries for the purpose of making their content searchable on the Internet goes beyond the scope of current
 exceptions to copyright?"}))
 
@@ -186,8 +186,33 @@ exceptions to copyright?"}))
    :main true
    :header (make-metadata :description {:en "(12) How should the cross-border aspects of the orphan works issue be tackled to ensure EU-wide recognition of the solutions adopted in different Member States? [@GreenPaper, p. 12]"
                                         :de "(12) Wie sollten die grenzübergreifenden Aspekte, die sich im Zusammenhang mit verwaisten Werken stellen, in Angriff genommen werden, um die EU-weite Anerkennung der Regelungen der einzelnen Mitgliedstaaten zu gewährleisten?"})
-   :text {:en "How should the cross-border aspects of the orphan works issue be tackled to 
+   :text {:en "Q12. How should the cross-border aspects of the orphan works issue be tackled to 
 ensure EU-wide recognition of the solutions adopted in different Member States?"}))
+
+(def Q12-action-alliance-proposal
+  (make-statement
+   :header (make-metadata :description {:en "The German Action Alliance for Copyright in Education and Science has proposed the following policy for orphaned works [@Aktionsbündnis, p. 6-7].  
+
+- Orphaned works may be published for noncommercial and private purposes, especially for archiving, research and educational purposes, if the copyright owner was not found after a documented standard search.
+
+- Orphaned works may be published for commercial purposes, if the copyright owner was not able to be found after a documented, professional search and a public announcement of the search.
+
+This policy has been modeled and can be simulated using the Policy Modeling tool of the IMPACT system.  (Click [here]() to view the model of this policy and simulate the effects of this policy in test cases.)
+
+    To do: add the URL pointing to the policy model in the above link."})
+   :text {:en "The policy proposed by the German Action Alliance should be adopted to address the cross-border aspects of orphaned works."}))
+
+(def Q12-UKPA-proposal
+  (make-statement
+   :header (make-metadata :description {:en "The cross-border aspects of the orphaned works issue are already provided for by the proposal of
+High Level Expert group, which recommends mutual recognition by Member States of each other's copryight exceptions. [@UKPA pg.12]"})
+   :text {:en "The cross-border aspects of the orphaned works issue are already provided for by the proposal of
+High Level Expert group, which recommends mutual recognition by Member States of each other's copryight exceptions."}))
+
+(def Q12-Google-proposal
+  (make-statement
+   :header (make-metadata :description {:en "The cross-border aspects of the orphaned works should be handled through an amendment to Directive 2011/29/EC [@Google, pg. 14]."})
+   :text "The cross-border aspects of the orphaned works should be handled through an amendment to Directive 2011/29/EC."))
 
 (def Q24
   (make-statement
@@ -195,7 +220,7 @@ ensure EU-wide recognition of the solutions adopted in different Member States?"
    :header (make-metadata :description {:en "(24) Should there be more precise rules regarding
 what acts end users can or cannot do when making use of materials protected by
 copyright? [@GreenPaper, p. 20]"})
-   :text {:en "Should there be more precise rules regarding what acts end users can or
+   :text {:en "Q24. Should there be more precise rules regarding what acts end users can or
 cannot do when making use of materials protected by copyright?"}))
 
 (def Q24-LIBER-Proposal
@@ -236,18 +261,6 @@ cannot do when making use of materials protected by copyright?"}))
   (make-statement
    :text {:en "Harmonizing the copyright exceptions would make it easier for researchers and students to work in more than one Member State."}))
 
-(def action-alliance-Q12-proposal
-  (make-statement
-   :header (make-metadata :description {:en "The German Action Alliance for Copyright in Education and Science has proposed the following policy for orphaned works [@Aktionsbündnis, p. 6-7].  
-
-- Orphaned works may be published for noncommercial and private purposes, especially for archiving, research and educational purposes, if the copyright owner was not found after a documented standard search.
-
-- Orphaned works may be published for commercial purposes, if the copyright owner was not able to be found after a documented, professional search and a public announcement of the search.
-
-This policy has been modeled and can be simulated using the Policy Modeling tool of the IMPACT system.  (Click [here]() to view the model of this policy and simulate the effects of this policy in test cases.)
-
-    To do: add the URL pointing to the policy model in the above link."})
-   :text {:en "The orphaned works policy proposed by the German Action Alliance."}))
 
 (def a1 (make-argument
          :header (make-metadata :description {:en "In response to Question 4, yes, the permitted copyright exceptions should be harmonized."})
@@ -290,10 +303,10 @@ State than harmonizing copyright exceptions."})
          :premises [(make-premise :statement better-ways)]))
 
 (def a4 (make-argument
-         :header (make-metadata :description {:en "In response to Question 12, No. Further restrictions on the end users of copyrighted materials should not be enacted."})
+         :header (make-metadata :description {:en "In response to Question 12, the policy proposed by the Action Alliance of Germany should be adopted to handle the the cross-border aspects of orphaned works.."})
          :scheme "Position"
          :conclusion Q12
-         :premises [(pm action-alliance-Q12-proposal)]))
+         :premises [(pm Q12-action-alliance-proposal)]))
 
 (def a5 (make-argument
          :header (make-metadata :description {:en "In response to Question 9, Yes. The exceptions should be clarified to allow works held in libraries to be scanned for the purpose of making their content searchable on the Internet."})
@@ -339,8 +352,20 @@ State than harmonizing copyright exceptions."})
          :conclusion Q9-is-irrelevant
          :premises [(pm scanning-by-libraries-should-be-obligatory)]))
 
+(def a11 (make-argument
+         :header (make-metadata :description {:en "In response to Question 12, the policy proposed by the High Level Exprt Group of Germany should be adopted to handle the the cross-border aspects of orphaned works."})
+         :scheme "Position"
+         :conclusion Q12
+         :premises [(pm Q12-UKPA-proposal)]))
+
+(def a12 (make-argument
+          :header (make-metadata :description {:en "In response to Question 12, the cross-border aspects of the orphaned works should be handled through an amendment to Directive 2011/29/EC."})
+          :scheme "Position"
+          :conclusion Q12
+          :premises [(pm Q12-Google-proposal)]))
+
 (def copyright1
-  (enter-arguments graph1 [a1, a2, a3, a4, a5, a6, a7, a8]))
+  (enter-arguments graph1 [a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11]))
 
 (defn -main []
   (let [dbname "copyright"  ; (str "db-" (make-uuid))
