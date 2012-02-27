@@ -1,14 +1,26 @@
 ;;; Copyright ? 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-;; m
-
 (ns carneades.examples.copyright-policies
   (:use carneades.engine.dublin-core
         carneades.engine.scheme))
 
 ;; This example illustrates the use of schemes for policy modeling, using
 ;; policies proposed in response to the EU Green Paper on Copyright in the Knowledge Economy.
+
+
+(def UrhG-31
+  (make-scheme                            
+   :id 'UrhG-31
+   :header (make-metadata :title "§ 31 UrhG de lege lata"
+                          :description {:de "> Einräumung von Nutzungsrechten. (1) Der Urheber kann einem anderen das Recht einräumen, das Werk auf einzelne oder alle Nutzungsarten zu nutzen (Nutzungsrecht) … (3) Das ausschließliche Nutzungsrecht berechtigt den Inhaber, das Werk unter Ausschluss aller anderen Personen auf die ihm erlaubte Art zu nutzen *und Nutzungsrechte einzuräumen* [§ 31 UrhG, Hervorhebung hinzugefügt] …"
+                                        :en "> Licensing copyrights. (1) The author can grant a simple or exclusive license to others to use the work … (3) Exclusive rights to use a work give the licensee the sole right to use the work in the ways stated by the license, *along with the right to grant licenses to third parties* [§ 31 UrhG, emphasis added] …"})
+   :conclusion '(may-publish ?P ?W)
+   :premises [(make-premise :statement '(person ?P))
+              (make-premise :statement '(work ?W))
+              (make-premise :statement '(license-to-publish ?P ?W))
+              (make-premise :statement '(valid UrhG-31)) ]))
+
 
 (def copyright-policies 
   (make-theory
@@ -27,6 +39,15 @@
     'search (make-individual :symbol 'search :text {:en "Search"})
     'standard (make-individual :symbol 'standard :text {:en "Standard DocumentedSearch"})
 
+    'license-to-publish
+    (make-predicate
+     :symbol 'license-to-publish
+     :arity 2
+     :forms {:en (make-form :positive "%s has a license to publish %s."
+                            :negative "%s does not have a license to publish %s."
+                            :question "Does %s have a license to publish %s.")})
+    
+    
     'may-publish
     (make-predicate
      :symbol 'may-publish
@@ -81,35 +102,35 @@
      :category 'purpose
      :widget "select")
 
-   'search-type
-   (make-predicate
-    :symbol 'search-type
-    :arity 1
-    :forms {:de (make-form :positive "Art der Suche nach dem Urheber: %s."
-                           :negative "Die Suche nach dem Urheber war nicht: %s."
-                           :question "Welche Art der Suche nachdem Urheber erfolgte?")
-            :en (make-form :positive "The type of search for the copyright owner was %s."
-                           :negative "The type of search for the copyright owner was not %s."
-                           :question "What type of search for the copyright owner was performed?")}
-    :hint {:en "What type of search was performed to try to find the copyright owner?"}
-    :category 'search
-    :answers ['standard, 'professional, 'none]
-    :widget "select"
-    :followups ['announcement])
+    'search-type
+    (make-predicate
+     :symbol 'search-type
+     :arity 1
+     :forms {:de (make-form :positive "Art der Suche nach dem Urheber: %s."
+                            :negative "Die Suche nach dem Urheber war nicht: %s."
+                            :question "Welche Art der Suche nachdem Urheber erfolgte?")
+             :en (make-form :positive "The type of search for the copyright owner was %s."
+                            :negative "The type of search for the copyright owner was not %s."
+                            :question "What type of search for the copyright owner was performed?")}
+     :hint {:en "What type of search was performed to try to find the copyright owner?"}
+     :category 'search
+     :answers ['standard, 'professional, 'none]
+     :widget "select"
+     :followups ['announcement])
 
-   'announcement
-   (make-predicate
-    :symbol 'announcement
-    :arity 0
-    :forms {:en (make-form :positive "The search was publically announced."
-                           :negative "The search was not publically announced."
-                           :question "Was the search publically announced?")
-            :de (make-form :positive "Es gab eine öffentliche Bekanntmachung der Suche."
-                           :negative "Es gab keine öffentliche Bekanntmachung der Suche."
-                           :question "Erfolgte eine öffentliche Bekanntmachung der Suche?")}
-    :category 'announcement
-    :widget "checkbox")  ; Shouldn't checkboxes, instead of radio buttons, be used to query boolean values of propositions?
-     
+    'announcement
+    (make-predicate
+     :symbol 'announcement
+     :arity 0
+     :forms {:en (make-form :positive "The search was publically announced."
+                            :negative "The search was not publically announced."
+                            :question "Was the search publically announced?")
+             :de (make-form :positive "Es gab eine öffentliche Bekanntmachung der Suche."
+                            :negative "Es gab keine öffentliche Bekanntmachung der Suche."
+                            :question "Erfolgte eine öffentliche Bekanntmachung der Suche?")}
+     :category 'announcement
+     :widget "checkbox")  ; Shouldn't checkboxes, instead of radio buttons, be used to query boolean values of propositions?
+    
     'valid
     (make-predicate
      :symbol 'valid
@@ -139,6 +160,14 @@ This arguments pro and con the policy proposals for this issue can be browsed in
 
      :sections  
      [(make-section
+       :id 'UrhG
+       :header (make-metadata :title "Urheberrechtsgesetz"
+                              :description {:de "Das deutsche Urheberrecht in der geltenden Fassung"
+                                            :en "The current German copyright law"})
+       :schemes
+       [UrhG-31])
+
+      (make-section
        :id 'Q12-Aktionsbündnis
        :header (make-metadata :title "Orphaned Works Policy Proposed by the Aktionsbündnisses ‟Urheberrecht für Bildung und Wissenschaft”"
                               :description {:en "The German “Action Alliance” on copyright for education and science proposes the following
@@ -146,13 +175,13 @@ policies for handling orphaned works [@Aktionsbündnis, pp. 6-7]."})
 
 
        :schemes
-       [(make-scheme                            
+       [UrhG-31,
+
+        (make-scheme                            
          :id 'AB-52c-1-a
          :header (make-metadata :title "§ 52c (1) (a)"
                                 :description {:de "
-(1) Öffentliche Zugänglichmachung für nicht-gewerbliche und private Zwecke, insbesondere
-durch Nutzer für Zwecke der Archivierung und für Forschung und Ausbildung 
-... (a)  Zulässig  ist  die  öffentliche  Zugänglichmachung  von  Werken, deren Urheber oder Rechteinhaber
+(1) Öffentliche Zugänglichmachung für nicht-gewerbliche und private Zwecke, insbesondere durch Nutzer für Zwecke der Archivierung und für Forschung und Ausbildung ... (a)  Zulässig  ist  die  öffentliche  Zugänglichmachung  von  Werken, deren Urheber oder Rechteinhaber
 nach einer dokumentierten Standardsuche [alternativ: einer zeitlich auf 30 Tage öffentlichen Bekanntmachung] nicht ermittelt werden können."})
          :conclusion '(may-publish ?P ?W)
          :premises [(make-premise :statement '(person ?P))
