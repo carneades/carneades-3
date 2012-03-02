@@ -35,7 +35,7 @@ Alternatively, you can install Carneades from the sources.
 
 - Build the Carneades components:
 
- $ mvn install
+ $ chmod +x build.sh ; ./build.sh --dev
 
 - If you want to use the swank server for Emacs and SLIME with Leiningen,
 go in the project directory in which you want to work and type:

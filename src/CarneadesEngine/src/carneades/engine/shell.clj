@@ -10,7 +10,7 @@
         carneades.engine.argument-evaluation
         carneades.engine.caes
         carneades.engine.ask))
-  
+
 (defn make-engine
   "argument-graph integer (seq-of literal) (seq-of generator) -> 
    literal -> argument-graph)"
@@ -44,24 +44,6 @@
                             (and (literal-neg? query) (out-node? sn)))
                         (list (apply-substitutions subs query))))))
             (vals (:statement-nodes (argue engine evaluator query))))))
-
-(defn background-argue
-  [to-engine from-engine]    
-  (println "background argue started...")
-  (future-call
-   (fn []
-     (println "background argue waiting for initial request...")
-     (let [to (atom to-engine)
-           from (atom from-engine)
-           [goal max-goals ag generators askable?] @@to
-           _ (prn "request received")
-           engine (make-engine ag max-goals #{} (cons (ask-user askable? to from) generators))
-           sol (argue engine carneades-evaluator goal)
-           ;; (doall (find-best-arguments traverse depth-first max-nodes turns
-           ;; (initial-state goal ag) (cons (ask-user askable? to from) generators)))
-           ]
-       (println "engine has found solution" sol)
-       (deliver @from (list 'solution sol))))))
 
 (defn in? 
   "argument-graph literal -> boolean"
