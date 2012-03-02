@@ -1,18 +1,16 @@
 var CARNEADES = {
     lang : "en",
-    carneadeswsurl :"" // "/impactws" // do not put a slash at the end
+    carneadeswsurl : "/impactws"
 };
 
 // this code is executed when the page is loaded
 $(function() {
-      $('#connect').click(on_connect);
-
       $.address.change(url_changed);
 });
 
 function url_changed(url)
 {
-    var url_regex = /\/([\w-:]+)\/([\w-]+)(\/([\w-:]+))?/;
+    var url_regex = /\/([\w-:]+)(\/([\w-]+))?(\/([\w-:]+))?/;
     if(url.value == "/") {
          return;
     }
@@ -20,8 +18,8 @@ function url_changed(url)
     var result = url_regex.exec(url.value);
     if(result != null) {
         var element = result[1];
-        var db = result[2];
-        var element_id = result[4];
+        var db = result[3];
+        var element_id = result[5];
 
         dispatch_url(element, db, element_id);
     }
@@ -37,6 +35,8 @@ function dispatch_url(element, db, element_id)
         display_argumentgraph(db);
     } else if(element == "map") {
         display_map(db);
+    } else if(element == "login") {
+        display_login();
     }
 }
 

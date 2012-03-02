@@ -2,7 +2,8 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.maps.lacij
-  (:use carneades.engine.statement
+  (:use clojure.pprint
+        carneades.engine.statement
         carneades.maps.lacij-export
         clojure.java.browse)
   (:import java.io.File))

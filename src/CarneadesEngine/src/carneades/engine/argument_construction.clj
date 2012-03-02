@@ -296,15 +296,25 @@ reduce the goal with the given id"
                (dec max-goals) 
                generators)))))
 
+(defn- notify-observers
+  "Informs generators satisfying the ArgumentConstructionObserver protocol that
+   the construction is finished."
+  [generators]
+  (doseq [generator generators]
+    (when (satisfies? ArgumentConstructionObserver generator)
+      (finish generator))))
+
 (defn construct-arguments
   "argument-graph literal int (coll-of literal) (seq-of generator) -> argument-graph
    Construct an argument graph for both sides of an issue."
   ([ag1 issue max-goals facts generators1]
     (let [ag2 (accept ag1 facts)
-          generators2 (concat (list (builtins))  generators1)]
-      (:graph (reduce-goals (initial-acstate issue ag2) 
-                            max-goals 
-                            generators2))))
+          generators2 (concat (list (builtins)) generators1)
+          graph (:graph (reduce-goals (initial-acstate issue ag2) 
+                                      max-goals 
+                                      generators2))]
+    (notify-observers generators2)
+    graph))
   ([issue max-goals facts generators]
       (construct-arguments (make-argument-graph) issue max-goals facts generators)))
 

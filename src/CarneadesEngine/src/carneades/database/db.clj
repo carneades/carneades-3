@@ -322,22 +322,23 @@
           (jdbc/insert-record
             :statement {:id id
                         :atom (str (literal-atom literal))})  
-          id),
+          id)
         (statement? literal)
         (let [id (if (urn-symbol? (:id literal))
                      (str (:id literal))
                      (if (urn-symbol? (literal-atom literal))
                          (str (literal-atom literal))
-                         (make-urn))),
+                         (make-urn)))
               text-id (if (:text literal) (create-translation (:text literal))),
               header-id (if (:header literal) (create-metadata (:header literal)))]
           (jdbc/insert-record
             :statement {:id id
-                        :atom (str (:atom literal)),
-                        :header header-id,
-                        :weight (:weight literal),
-                        :main (:main literal),
-                        :standard (standard->integer (:standard literal)),
+                        :atom (str (:atom literal))
+                        :header header-id
+                        :weight (:weight literal)
+                        :value (:value literal)
+                        :main (:main literal)
+                        :standard (standard->integer (:standard literal))
                         :text text-id})
           id)))
 
@@ -366,7 +367,7 @@
     (when s 
       (-> (make-statement :id (symbol id))
           (merge (dissoc s :id))
-          (merge {:atom (when (not (s/blank? (:atom s)))
+          (merge {:atom (when (and (:atom s) (not (empty? (:atom s))))
                           (binding [*read-eval* false]
                             (read-string (:atom s))))})
           (merge {:standard (integer->standard (:standard s))})

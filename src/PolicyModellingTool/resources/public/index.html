@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta content="text/html; charset=UTF-8" />
+
+    <title>IMPACT - Policy Modeling Tool</title>
+    
+    <link href="favicon.ico" type="image/x-icon" rel="shortcut icon" />
+    <link rel="stylesheet" href="css/site.css" type="text/css" />
+    
+    <link rel="stylesheet" href="css/custom-theme/jquery-ui-1.8.6.custom.css"
+          type="text/css" />
+
+    <script id="issues" src="site/issues.html" type="text/html"></script>
+    <script id="facts" src="site/facts.html" type="text/html"></script>
+    <script id="arguments" src="site/arguments.html" type="text/html"></script>
+    <script id="menu" class="partial" type="text/html">
+      <div id="mainmenu">
+      <a href="#/introduction">Introduction</a> | <a href="#/issues">Issues</a> | <a href="#/facts">Facts</a> | <a href="#/arguments">Arguments</a> | <a href="#/policies">Policies</a>
+      </div>
+    </script>
+      
+    <script id="introduction" type="text/html">
+      {{>menu}}
+        <div id="pmintroduction">
+        <p>This is the policy modeling tool of the IMPACT argumentation toolbox.  The policy modeling tool provides a way to simulate the legal effects of specific policy proposals on the facts of test cases.  The tool is useful for evaluating policies which formulate rules at a level of detail comparable to legislation or regulations.</p>
+
+        <p>The procedure for using the tool consists of the following steps:</p>
+
+        <ol>
+        <li> Select an issue from the Green Paper of interest, among the issues for which sufficiently concrete policies have been proposed.
+        <li> Answer a series of questions to enter the facts of a test case.  Only relevant questions will be asked.  To protect your privacy, no questions about real persons or events will be asked, but rather only about hypothetical test cases.  As the questions are answered, the policy modeling tool is applying the rules of the different polices to construct legal arguments about the effects of the policies, given the facts of the test case.
+        <li> Browse a map of the arguments constructed during the previous step, to see how inferences have been drawn by applying the rules of the various policies to the facts of the test case.
+        <li> Select a policy to simulate and highlight in the argument map its legal effects on the test case.  This will take you back to the argument map, with the effects highlighted.
+        <li> Repeat the last two steps to evaluate and visualize the effects of another policy. Or return to the "Facts" page to modify the facts of your test case or enter facts for another case.
+        </ol>
+
+        <p>The tool can now guide you, step by step, through this procedure, beginning when you click on the "start" button below.</p>
+
+        <form action="">
+        <p class="submit"><input id="start" type="submit" value="Start" /></p>
+        </form>
+        </div>
+    
+    </script>
+    
+    <script src="js/lib/jquery-1.6.1.js" type="text/javascript"></script>
+    <script src="js/lib/jquery.address-1.4.js" type="text/javascript"></script>
+    <!-- <script src="js/lib/jquery.validate.js" type="text/javascript"></script> -->
+    <!-- <script src="js/lib/jquery-ui-1.8.6.custom.min.js" type="text/javascript"></script> -->
+    <!-- <script src="js/lib/jquery.svg.js" type="text/javascript"></script> -->
+    <!-- <script src="js/lib/jquery.svgdom.js" type="text/javascript"></script> -->
+    <!-- <script src="js/lib/jquery.svganim.js" type="text/javascript"></script> -->
+    <!-- <script src="js/lib/jquery.mousewheel.js" type="text/javascript"></script> -->
+    <!-- <script src="js/lib/jquery.form.js" type="text/javascript"></script>  -->
+    <!-- <script src="js/lib/jquery.event.drag-2.0.js" type="text/javascript"></script> -->
+
+    <!-- <script src="js/lib/SVGPan.js" type="text/javascript"></script> -->
+    <script src="js/lib/underscore-min.js" type="text/javascript"></script>
+    <script src="js/lib/ICanHaz.js" type="text/javascript"></script>
+
+    <script src="js/app/config.js" type="text/javascript"></script>
+    <script src="js/app/main2.js" type="text/javascript"></script>
+    <script src="js/app/utils.js" type="text/javascript"></script>
+    <script src="js/app/introduction.js" type="text/javascript"></script>
+    <script src="js/app/issues.js" type="text/javascript"></script>
+    <script src="js/app/facts.js" type="text/javascript"></script>
+    <script src="js/app/arguments.js" type="text/javascript"></script>
+    
+    <script src="js/app/ajax2.js" type="text/javascript"></script>
+    <script src="js/app/questions2.js" type="text/javascript"></script>
+    <!-- <script src="js/app/i18n-data.js" type="text/javascript"></script> -->
+    <!-- <script src="js/app/main.js" type="text/javascript"></script> -->
+    <!-- <script src="js/app/slider.js" type="text/javascript"></script> -->
+    <style type="text/css"> @import "css/jquery.svg.css"; </style>
+
+  </head>
+  
+  <body>
+    <h1>Policy Modeling Tool</h1>
+    <div id="pm">
+    </div>
+  </body>
+</html>

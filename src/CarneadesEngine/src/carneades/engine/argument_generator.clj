@@ -2,10 +2,10 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns ^{:doc "Defines the protocol for argument generators."}
-      carneades.engine.argument-generator
-   (:use carneades.engine.argument
-         carneades.engine.statement
-         carneades.engine.unify))
+  carneades.engine.argument-generator
+  (:use carneades.engine.argument
+        carneades.engine.statement
+        carneades.engine.unify))
 
 ; The record to be returned by argument generators.
 (defrecord Response
@@ -19,3 +19,7 @@
 (defprotocol ArgumentGenerator
   (generate [this literal subs])) ; "argument-generator literal substitutions -> (seq-of response)"
 
+(defprotocol ArgumentConstructionObserver
+  "Argument generators can satisfy this additional protocol to be informed
+   when the construction is finished"
+  (finish [this]))

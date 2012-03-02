@@ -9,3 +9,11 @@ function on_connect()
     
     return false; // do not make a POST request
 }
+
+function display_login()
+{
+    var login_html = ich.login();
+    $('#browser').html(login_html.filter('#login'));
+    $('#connect').click(on_connect);
+}
+

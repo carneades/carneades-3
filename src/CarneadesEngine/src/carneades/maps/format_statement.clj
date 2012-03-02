@@ -80,7 +80,7 @@
   (let [formatted (stmt-str (map->statement stmt))]
     (cond (in-node? stmt) (str "✔ " formatted) 
           (out-node? stmt) (str "✘ " formatted)
-          (undecided-node? stmt) (str "? " formatted)
+          (undecided-node? stmt) formatted
           :else (throw (Exception. "Invalid case")))))
 
 
