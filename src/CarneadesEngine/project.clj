@@ -14,4 +14,5 @@ various argumentation tasks. This is the software library (the engine)."
                  [com.h2database/h2 "1.3.160"]
                  [org.clojure/java.jdbc "0.1.1"]
                  [org.clojure/tools.trace "0.7.1" ]
-                 [lacij "0.7.0-SNAPSHOT"]])
+                 [lacij "0.7.0-SNAPSHOT"]]
+  :aot [carneades.engine.argument-evaluation])

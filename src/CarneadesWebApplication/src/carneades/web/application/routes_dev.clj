@@ -1,5 +1,6 @@
 (ns carneades.web.application.routes-dev
   (:use compojure.core
+        carneades.web.application.jetty
         ring.adapter.jetty
         ring.middleware.params
         ring.middleware.session
@@ -9,16 +10,23 @@
             [compojure.handler :as handler]
             [compojure.response :as response]))
 
-(def carneades-application-routes
-     [(GET "/" [] (index-page))
-      (route/files "/" {:root (str (System/getProperty "user.dir") "/data/public")})
-      (route/resources "/")
-      ])
+(defroutes carneades-application-routes
+  (GET "/" [] (index-page))
+  ;; (route/files "/" {:root (str (System/getProperty "user.dir") "/data/public")})
+  (route/resources "/" )
+  )
 
-(def allroutes
-     ;; use the following combination of routes to embed the Web Service within the WebApplication 
-     (concat carneades-application-routes carneades-web-service-routes))
+(defroutes all-carneades-application-routes
+  (context "/impactws" [] carneades-web-service-routes)
+  (context "/argumentbrowser" [] carneades-application-routes))
 
-(def app (handler/site (apply routes allroutes)))
+(def app (handler/site all-carneades-application-routes))
 
-(defonce server (run-jetty #'app {:join? false :port 8080}))
+;; (defonce server
+;;   (run-jetty-with-wars #'app {:join? false :port 8080}
+;;     [{:context-path "/impactws"
+;;       :war-path "../CarneadesWebService/carneades-web-service-1.0.0-SNAPSHOT-standalone.war"}]
+;;     ))
+
+;; (defn -main [])
+

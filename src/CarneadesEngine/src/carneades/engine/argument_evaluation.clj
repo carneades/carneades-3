@@ -16,7 +16,8 @@
             assigned the value 1.0, if and only if it is in all extensions."}
   carneades.engine.argument-evaluation
   (:use carneades.engine.statement
-        carneades.engine.argument-graph))
+        carneades.engine.argument-graph)
+  (:gen-class))
 
 
 (defprotocol ArgumentEvaluator

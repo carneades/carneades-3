@@ -72,13 +72,13 @@
                          </goals>
                      </execution>
                      <execution>
-                         <id>lein-install-CarneadesWebService</id>
+                         <id>lein-uberwar-CarneadesWebService</id>
                          <phase>install</phase>
                          <configuration>
                              <executable>lein</executable>
                              <workingDirectory>${project.basedir}/CarneadesWebService</workingDirectory>
                              <arguments>
-                                 <argument>install</argument>
+                                 <argument>ring uberwar</argument>
                              </arguments>
                          </configuration>
                          <goals>
@@ -99,6 +99,35 @@
                              <goal>exec</goal>
                          </goals>
                      </execution>
+                     <execution>
+                         <id>lein-uberwar-CarneadesWebApplication</id>
+                         <phase>install</phase>
+                         <configuration>
+                             <executable>lein</executable>
+                             <workingDirectory>${project.basedir}/CarneadesWebApplication</workingDirectory>
+                             <arguments>
+                                 <argument>ring</argument>
+                                 <argument>uberwar</argument>
+                             </arguments>
+                         </configuration>
+                         <goals>
+                             <goal>exec</goal>
+                         </goals>
+                     </execution>
+                     <!-- <execution> -->
+                     <!--     <id>lein-uberwar-PolicyModellingTool</id> -->
+                     <!--     <phase>install</phase> -->
+                     <!--     <configuration> -->
+                     <!--         <executable>lein</executable> -->
+                     <!--         <workingDirectory>${project.basedir}/PolicyModellingTool</workingDirectory> -->
+                     <!--         <arguments> -->
+                     <!--             <argument>ring uberwar</argument> -->
+                     <!--         </arguments> -->
+                     <!--     </configuration> -->
+                     <!--     <goals> -->
+                     <!--         <goal>exec</goal> -->
+                     <!--     </goals> -->
+                     <!-- </execution> -->
                      <execution>
                          <id>mvn-install-CarneadesEditorUIComponents</id>
                          <phase>install</phase>
@@ -183,12 +212,26 @@
                             <goal>exec</goal>
                         </goals>
                     </execution>
-                                        <execution>
+                    <execution>
                         <id>lein-clean-CarneadesWebApplication</id>
                         <phase>clean</phase>
                         <configuration>
                             <executable>lein</executable>
                             <workingDirectory>${project.basedir}/CarneadesWebApplication</workingDirectory>
+                            <arguments>
+                                <argument>clean</argument>
+                            </arguments>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>lein-clean-PolicyModellingTool</id>
+                        <phase>clean</phase>
+                        <configuration>
+                            <executable>lein</executable>
+                            <workingDirectory>${project.basedir}/PolicyModellingTool</workingDirectory>
                             <arguments>
                                 <argument>clean</argument>
                             </arguments>

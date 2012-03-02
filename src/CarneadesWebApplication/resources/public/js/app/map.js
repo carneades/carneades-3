@@ -42,11 +42,11 @@ function display_map(db)
 function add_map_to_div(db, id)
 {
     $(id).svg();
-    $(id).load(CARNEADES.carneadeswsurl+ '/map/' + db, 
-               function(svg, error) {
-                   traverse_map(function(element) {
-                                    add_map_to_browser_listener(db, element);
-                                });
-               });
+    $(id).load(CARNEADES.carneadeswsurl + '/map/' + db, function(svg, error) {
+                                       traverse_map(function(element) {
+                                                        add_map_to_browser_listener(db, element);
+                                                    });
+                                 });
+    
 }
 

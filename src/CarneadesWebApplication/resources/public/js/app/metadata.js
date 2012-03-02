@@ -1,6 +1,6 @@
 function get_string(data, is_last, escape)
 {
-    if(data == null) {
+    if(data == null || data == undefined) {
         return "";
     }
     return (escape ? escape_html(data) : data) + "." + (is_last ? "" : " ");
@@ -8,7 +8,7 @@ function get_string(data, is_last, escape)
 
 function format_metadata(metadata)
 {
-    if(metadata == undefined) {
+    if(metadata == null || metadata == undefined) {
         return "";    
     }
     var creator = metadata.creator;

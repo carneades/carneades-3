@@ -28,19 +28,34 @@
          (apply hash-map key-values)))
 
 (defn form? [x] (instance? Form x))
+
+(defn format-statement
+  "Uses the formular to returns a user-readable sentence describing the literal.
+   Selector is :positive, :negative or :question"
+  [literal form selector]
+  (apply format (-> form selector) (rest (literal-atom literal))))
   
 (defrecord Predicate 
   [symbol   ; symbol
    arity    ; integer
-   forms])  ; (lang -> form) map, where lang is one of the keywords :en, :de, etc.
+   forms
+   category
+   hint
+   widget
+   followups])  ; (lang -> form) map, where lang is one of the keywords :en, :de, etc.
 
 (defn make-predicate
   "key value ... -> predicate"
   [& key-values]  
   (merge (Predicate. 
-           (gensym "p")    ; symbol
-           0               ; arity
-           {})             ; forms
+           (gensym "p")                 ; symbol
+           0                            ; arity
+           {}                           ; forms
+           ""                           ; category
+           ""                           ; hint
+           nil                          ; widget
+           []                           ; followups
+           )
          (apply hash-map key-values)))
 
 (defn predicate? [x] (instance? Predicate x))

@@ -1,0 +1,505 @@
+/**
+ * Client implementation for the IMPACT web application.
+ *
+ */
+
+var IMPACT = {
+    jsloadstarted :new Date(),
+    showhints : false,
+    arg_graph : "undefined",
+    policyrules : [],
+    lang_changed : false,
+    current_questions : [],
+    displayed_categories : [],
+    debug : true
+};
+
+String.prototype.format = function() {
+  var args = arguments;
+  return this.replace(/{(\d+)}/g, function(match, number) { 
+    return typeof args[number] != 'undefined'
+      ? args[number]
+      : match
+    ;
+  });
+};
+
+
+function translation_url() {
+    return "Translation";
+}
+
+function simulation_url() {
+    return "PolicySimulation";
+}
+
+function evaluation_url() {
+    return "PolicyEvaluation";
+}
+
+// when the document is ready, executes this code:
+$(function(){
+      
+    // enforces the choice of a topic
+    $('#nextTopic').click(function () {
+        $('#chooseTopic').validate();
+        if($('#chooseTopic').valid()) {
+            load_topic($('#topic').val());
+            return true;
+        } else {
+            show_error_status('Please select a topic');
+            return false;
+        }
+    });
+
+    $('#abductionButton').click(function () {
+        send_abduction_request();
+    });
+    
+    // Slider for the graphSVG
+    $('#slider').slider({orientation: 'vertical', value: 0, min: -50, max: 50, step: 1, change: onSliderMove});
+    
+    // Tabs
+    $('#tabs').tabs();
+
+    $.datepicker.setDefaults({
+            //regional: "de",
+            inline: true,
+            changeMonth: true,
+            changeYear: true,
+            yearRange: (''+(IMPACT.jsloadstarted.getFullYear()-100)+':'+(IMPACT.jsloadstarted.getFullYear()+10)),
+            showAnim: 'slideDown'
+    });
+
+     //button
+     $(".ui-button").button();
+
+    $("#locate").change(
+        function() 
+        {
+            // if the language is changed
+            var lang = $(this).val();
+
+            // informs the server
+            send_data(translation_url(), {"language" : lang}, function(data) {});
+            
+            var label = $('#chooseTopicLabel').text();
+            var topicLabel = $('#topicLabel').text();
+
+            // translates labels
+            translate(["choose_topic", "topics", "hints", "questions", "solution", "next" ,
+                       "orphan_works"], lang,
+                      function(translations) {
+                          $('#chooseTopicLabel').text(translations[0]);
+                          $('#topicLabel').text(translations[1]);
+                          $('#topicTabLabel').text(translations[1]);
+                          $('#hintsLabel').text(translations[2]);
+                          $('#questionsTabLabel').text(translations[3]);
+                          $('#solutionTabLabel').text(translations[4]);
+                          $('#nextTopic').val(translations[5]);
+                          $('#topicName').html(translations[6]);
+                      });
+            
+            // translates all categories
+            $.each(IMPACT.displayed_categories, translate_category);
+
+            // translates current question
+            if(IMPACT.current_questions.length > 0) {
+                var top_question = IMPACT.current_questions[0];
+                var current_category = top_question.category;
+
+                send_data(simulation_url(),
+                          {retrieve_question : {id : top_question.id,
+                                                statement : top_question.statement}},
+                          function (data) { // show_questions(data, false, true);
+                              impact_show_questions(data, '#questionslistbox');
+                                          });
+            }
+
+            IMPACT.lang_changed = true;
+        });
+
+    // Fragen-Liste
+    $("li", $("#questionlist")).each(function(index){            
+            var li_i = index;
+            $(this).click(function(){
+                    $(document.getElementsByTagName("h3")[li_i].firstChild).click();
+            });
+    });
+
+    /** AJAX request config */
+      $.ajaxSetup({url: simulation_url(),
+                   async: true,
+                   beforeSend: function() {
+                       update_status(0,"sending request...");
+                   },
+                   complete: function(XMLHttpRequest, textStatus) {
+                       if (textStatus == "success")
+                           $("#status").fadeOut();
+                       else if(textStatus == "error")
+                       update_status(1,XMLHttpRequest.status+" "+textStatus);
+                       else // "notmodified", "timeout", or "parsererror"
+                           update_status(1,textStatus);
+                   },
+                   timeout : 600000,       
+                   type: "POST"
+                  });
+
+    send_data(translation_url(), {get_available_languages : null}, show_available_languages);
+});
+
+/**
+ * loads questions for requested topic
+ * @param {string} t name of the topic
+ */
+function load_topic(t) {
+    send_data(simulation_url(), 
+              {"request" : t}, 
+              function(data) { // show_questions(data, true, false);
+                  impact_show_questions(data, '#questionslistbox');
+                             });
+}
+
+function show_available_languages(data) {
+    var languages = data.available_languages;
+    
+    $('#locate').empty();
+    for(var name in languages) {
+        $('#locate').append('<option value="{0}">{1}</option>'.format(languages[name], name));
+    }
+
+    // assumes English is always there and set it as default language
+    $('#locate').val('en');
+
+}
+
+function show_position(data) {
+    var position = data.position;
+    var stmts_ids = data.stmts_ids;
+    
+    show_policy(position[0], stmts_ids);
+    // TODO: show all policies
+}
+
+function show_policy(policy, stmts_ids) {
+    
+    var stmt = policy[1];
+    var policyid = stmts_ids["(valid " + stmt + ")"];
+    var g = $('g [id="' + policyid + '"]');
+    var rect = $('g [id="' + policyid + '"] rect');
+
+    var x = - 4;
+    var y = - 4;
+    var h = parseInt(rect.attr('height'), 10) + 8;
+    var w = parseInt(rect.attr('width'), 10) + 8;
+
+    $('svg').svg();
+    var svg = $('svg').svg('get');
+    var corner = 5;
+    svg.rect(g, x, y, w, h, corner, corner, {"stroke-width" : 2, stroke : "purple", fill : "transparent"});
+}
+
+function gen_id() {
+    var newDate = new Date;
+    return newDate.getTime();
+}
+
+
+/**
+ * Displays the solution
+ * @param {string} solution string representing the main issue
+ * @param {string} path url pointing to solution lkif
+ */
+function show_solution(data) {
+    var solution = data.solution;
+    var path = data.path;
+    
+    // go to next tab
+    $("#tabs a[href='#tabs-3']").click(); 
+    // display solution statement
+    $("#solutionstatement").append(solution);
+
+    // send_data(evaluation_url(), {"policyrules" : path}, show_policyrules);
+    // display argument graph
+    show_arg_graph(path);
+}
+
+function show_error_status(text) {
+    $("#status").removeClass("ui-state-highlight");
+    $("#status").addClass("ui-state-error");
+    icon='<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> <strong>Alert:</strong> ';
+    $("#status").html(icon+text+"</p>");
+    $("#status").show();
+}
+
+
+
+/**
+ * Updates the statusfield of the page.
+ * @param {number} type Expect a integer with the value of the status. 0 means loading 1 an error and -1 that there is everthing allright so loaded.
+ * @param {string} text Here goes the Text that will be displayed in the status.
+ */
+function update_status(type, text) {
+    var icon="";
+    if (type == 0) { // Loading
+            $("#status").removeClass("ui-state-error");
+            $("#status").addClass("ui-state-highlight");
+            icon='<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: 0.3em;"></span> <strong>Loading:</strong> ';
+    }
+    else if (type == 1) { // Alert
+        show_error_status(text);
+    }
+    else if (type == -1) {$("#status").hide();return false;}
+    else {$("#status").hide();return false;}
+    $("#status").html(icon+text+"</p>");
+    $("#status").show();
+}
+
+/**
+ * Collects the given answers and parse them as JSON before sending them to the server.
+ * @param {string} category the ID of the question div
+ * @see validate_field
+ */
+function send_answers(category) {
+    var doRequest = true;
+    var jsonA = new Array();
+    var topicDiv = $("#"+category);
+    topicDiv.hide();
+    $("input", topicDiv).each(function(i, itemobj){
+        var item = $(itemobj);
+        // skip buttons
+        if (item.hasClass("ui-button") || itemobj.type && (itemobj.type == "button" || itemobj.type == "submit" || itemobj.type == "reset") ) return true;
+        
+        if (validate_field(itemobj) == false) {
+            doRequest = false;
+            return true;
+        }
+                                  
+        if (itemobj.type == "radio" || itemobj.type == "checkbox") {
+            
+            /*var valArray = new Array();
+            $(":input:checked[name='"+itemobj.name+"']", itemobj.parentNode).each(function(i, valobj) {
+                valArray.push(valobj.value);
+            });*/
+            if(itemobj.checked) {
+                var jsonitem = {
+                    "id" : item.attr("name").substring(3),
+                    "value" : item.val()
+                };
+                jsonA.push(jsonitem);
+            }            
+        }
+        else {            
+            var jsonitem = {
+                "id" : item.attr("name").substring(3),
+                "value" : item.val()
+            };
+            jsonA.push(jsonitem);
+        }
+        // TODO: check what the return value if used for                                  
+        return undefined;
+    });
+
+    $("select", topicDiv).each(function(i, itemobj){
+        var item = $(itemobj);
+        var jsonitem = {
+            "id" : item.attr("name").substring(3),
+            "value" : item.val()
+        };
+        jsonA.push(jsonitem);
+    });
+
+    IMPACT.lang_changed = false;
+
+    if (doRequest) {
+        send_data(simulation_url(), {"answers" : { values : jsonA,
+                                                   questions : IMPACT.current_questions}}, 
+                                     show_questions_or_answer);
+    }
+}
+
+function show_questions_or_answer(data) {
+    if (data.questions) {
+        show_questions(data, true);
+    } else if (data) {
+        show_solution(data, true);
+    }
+}
+
+function send_abduction_request() {
+    send_data(evaluation_url(),
+              {abduction : {argGraph : IMPACT.arg_graph, acceptability : $('input[name=abduction]').val()}},
+              show_position);
+}
+
+/**
+ * Displays a warning besides a form field when invalid data is used. To hide this use {@link qunwarn}
+ * @param {object} obj triggering form field HTML object
+ * @param {string} warning text that appears right besides the field
+ * @see qunwarn
+ */
+function qwarn(obj,warning) {
+    var o = $(obj);
+    if ($(".qwarn", obj.parentNode).length > 0) {
+        $(".qwarn", obj.parentNode).html("<i></i>"+warning+"<b></b>");
+    }
+    else if (obj.type == "radio" || obj.type == "checkbox") {
+        $("span", obj.parentNode).css("backgroundColor","#F78181");
+        if ($("br", obj.parentNode).length > 0) { // newline checkbox/radio
+            o=$("br:first", obj.parentNode);
+            o.before("<span class=\"qwarn\"><i></i>"+warning+"<b></b></span>");
+            o.prev().fadeIn(500);
+        }
+        else {
+            o=$(":last-child", obj.parentNode);
+            o.after("<span class=\"qwarn\"><i></i>"+warning+"<b></b></span>");
+            o.next().fadeIn(500);
+        }
+    }
+    else {
+        o.css("backgroundColor","#F78181");
+        o.after("<span class=\"qwarn\"><i></i>"+warning+"<b></b></span>");
+        o.next().fadeIn(500);
+    }
+}
+/**
+ * Hides a {@link qwarn}-warning.
+ * @param {object} obj triggering form field HTML object
+ * @see qwarn
+ */
+function qunwarn(obj) {
+    var o = $(obj);
+    if (obj.type == "radio" || obj.type == "checkbox") {
+        $("span", obj.parentNode).css("backgroundColor","");
+    }
+    else {
+        o.css("backgroundColor","");
+    }
+    $(".qwarn", obj.parentNode).fadeOut(500, function() {$(this).remove();});
+}
+
+/**
+ * list policy rules derived from argument graph as checkboxes
+ * @param {object} rules json array of policy rules
+ */
+function show_policyrules(data) {
+    var rules = data.policyrules;
+    var policyList = $("#policylist");
+    IMPACT.policyrules = [];
+    $.each(rules, function(ruleindex, r) {
+       policyList.append('<li><input type="checkbox" name="'+r+'" />'+r+'</li>');       
+       IMPACT.policyrules.push(r);
+    });   
+    $("#policyrules").append('<input type="button" class="ui-state-hover ui-button ui-widget ui-state-default ui-corner-all ui-button ui-widget ui-state-hover evaluate" value="Evaluate" onclick="evaluate_graph()"/>');
+    
+}
+
+/**
+ * creating svg representation of an argument graph
+ * @param {string} path path to lkif with argument graph
+ */
+function show_arg_graph(path) {
+    // set global path to lkif argument graph
+    IMPACT.arg_graph = path;
+    send_data(evaluation_url(), {"showgraph" : path}, show_svg_graph);
+}
+
+/**
+ * display svg representation of an argument graph
+ * @param {string} path path to svg with argument graph
+ */
+function show_svg_graph(data) {
+    var path = data.graphpath;
+    var graphBox = $("#graph");
+    graphBox.svg();    
+    graphBox.svg('get').load(path, on_svg_load);
+}
+
+function on_svg_load(svgW) {
+           
+    svgWrapper = svgW;
+
+    var svgroot = document.getElementsByTagName('svg')[0];
+    // SVGPan has a problem if there is already a viewBox, so we remove it
+    svgroot.removeAttribute('viewBox');
+    resetSvgRoot();
+    setupSVGHandlers(document.documentElement);
+    
+    $("#tabs-1").height($("#wrapper").height());
+    
+   
+    
+}
+
+/**
+ * evaluate argument graph with selected policy rules
+ */
+function evaluate_graph() {
+    // get selected checkboxes / policyrules
+    var accArray = [];
+    var rejArray = [];
+    $.each(IMPACT.policyrules, function(index, r) {
+       if($('input[name='+r+']').attr('checked')) {
+           accArray.push(r);
+       } else {
+           rejArray.push(r);
+       }
+    }); 
+    
+    send_data(evaluation_url(),
+              {evaluate : {argGraph : IMPACT.arg_graph, accept : accArray, reject : rejArray}},
+              function (data) { show_arg_graph(data.evaluated); });
+}
+
+function show_error(error) {
+    // TODO : handle errors
+    alert(error);
+}
+
+// clean DOM after server response
+function reset_content() {
+    // clear question nav
+    $('#categories').empty();
+    // clear question forms
+    $('#questionlist').empty();
+    // clear question hints
+    $('#hints').empty();
+    $('#hints').append('<h4>hints</h4>');
+    // go to first tab
+    $("#tabs a[href='#tabs-1']").click(); 
+}
+
+// translate with the data from i18n-data.js, if the
+// data is not found it asks the translation service
+function translate(keys, lang, callback) {
+    var translated = [];
+    var missing_translations = [];
+    
+    for(var i = 0; i < keys.length; i++) {
+        if(i18n[keys[i]] == undefined || i18n[keys[i]][lang] == undefined) {
+            missing_translations.push(i18n[keys[i]]["en"]);
+        } else {
+            translated[i] = i18n[keys[i]][lang];
+        }
+    }
+
+    if(missing_translations.length == 0) {
+        callback(translated);
+    } else {
+        send_data(translation_url(), {"translate" : {"text" : missing_translations, "from" : "en", "to" : lang}},
+                  function(data) {
+                      var translations = data.translations;
+                      var idx = 0;
+                      // complete translated array with the translations from the service
+                      for(var i = 0; i < keys.length; i++) {
+                          if(translated[i] == undefined) {
+                              translated[i] = translations[idx];
+                              idx++;
+                          }
+                      }
+                      callback(translated);
+                  });
+    }
+}
+
+

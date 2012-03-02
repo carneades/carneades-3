@@ -141,16 +141,18 @@
   "term -> symbol | nil "
   [term]
   (cond 
-    (and (seq? term) 
-         (compound-term? term)
-         (not (empty? term))) (first term)
-    (and (statement? term)
-         (:positive term) 
-         (seq? (:atom term))) (recur (:atom term))
-    (and (statement? term)
-         (not (:positive term))
-         (seq? (:atom term))) 'not
-    :else nil))
+   (and (seq? term) 
+        (compound-term? term)
+        (not (empty? term))) (first term)
+        (and (statement? term)
+             (:positive term) 
+             (seq? (:atom term)))
+        (recur (:atom term))
+        (and (statement? term)
+                  (not (:positive term))
+                  (seq? (:atom term)))
+        'not
+        :else nil))
 
 (defn term-args
   "term -> (seq-of term)"
