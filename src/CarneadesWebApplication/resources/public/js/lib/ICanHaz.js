@@ -418,7 +418,7 @@ function ICanHaz() {
         remoteTemplates.each(function (a, b) {
             var script = $((typeof a === 'number') ? b : a);
             script.detach();
-            $.ajax({url: script.prop('src'), dataType: 'text',
+            $.ajax({async: false, url: script.prop('src'), dataType: 'text',
                 success: function (template) {
                     if (requestSequence === activeSequence) {
                         var text = (''.trim) ? template.trim() : $.trim(template);
