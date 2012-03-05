@@ -20,7 +20,7 @@ function display_argument(db, argid)
                 set_argument_title_text(argument_data);
                 argument_data.conclusion.statement_prefix = argument_data.conclusion.pro ? "pro" : "con";
                 argument_data.conclusion.statement_text = statement_text(argument_data.conclusion);
-                set_premises_properties(argument_data);
+                set_premises_text(argument_data);
                 set_undercutters_text(argument_data);
                 set_rebuttals_text(argument_data);
                 set_dependents_text(argument_data);
@@ -29,12 +29,11 @@ function display_argument(db, argid)
             });
 }
 
-function set_premises_properties(argument_data)
+function set_premises_text(argument_data)
 {
     $.each(argument_data.premises, 
            function(index, premise) {
                premise.statement.statement_text = statement_text(premise.statement, index + 1);
-               premise.statement.role = premise.role;
            });
 }
 
@@ -64,7 +63,7 @@ function set_rebuttals_text(info)
           function(index, data) {
               data.argument_text = argument_text(data, index + info.undercutters_data.length);
               data.id = info.rebuttals[index];
-              set_premises_properties(data);
+              set_premises_text(data);
           });
 }
 
