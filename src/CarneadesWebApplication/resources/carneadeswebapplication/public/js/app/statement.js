@@ -93,7 +93,13 @@ function slice_statement(statement_text)
 function statement_text(statement)
 {
     if(statement.text && statement.text[CARNEADES.lang]) {
-        return markdown_to_html(statement.text[CARNEADES.lang]);
+        var text = statement.text[CARNEADES.lang];
+        if(statement_in(statement)) {
+            text = "✔ " + text;
+        } else if(statement_out(statement)) {
+            text = "✘ " + text;
+        }
+        return markdown_to_html(text);
     }
     // if(statement.header && statement.header.description && statement.header.description[CARNEADES.lang]) {
     //     return markdown_to_html(slice_statement(statement.header.description[CARNEADES.lang]));
@@ -106,4 +112,14 @@ function statement_text(statement)
 function statement_link(db, id, text)
 {
     return '<a href="/statement/{0}/{1}" rel="address:/statement/{0}/{1}" class="statement" id="statement{1}">{2}</a>'.format(db, id, text);
+}
+
+function statement_in(statement)
+{
+    return (1.0 - statement.value) < 0.001;
+}
+
+function statement_out(statement)
+{
+    return statement.value < 0.001;
 }
