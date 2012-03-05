@@ -59,6 +59,8 @@ function show_instructions {
     echo -e "To run the Aston example:\n$ cd CarneadesExamples && lein run -m carneades.examples.aston\n"
     echo -e "To run the CarneadesWebApplication:\n$ cd CarneadesWebApplication && lein ring server"
     echo -e "Then point your browser at http://localhost:3000/argumentbrowser/#/login\n"
+    echo -e "To run the Policy Modelling tool:\n$ cd PolicyModellingTool && lein ring server 8080"
+    echo -e "Then point your browser at http://localhost:8080/policymodellingtool/"
 }
     
 function show_notification {
@@ -73,7 +75,7 @@ case $1 in
     *) show_usage; exit;;
 esac
 
-clean;
-build_install_jar_war;
+# clean;
+# build_install_jar_war;
 show_instructions;
 show_notification;
