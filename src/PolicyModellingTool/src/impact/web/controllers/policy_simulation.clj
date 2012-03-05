@@ -11,8 +11,8 @@
 (defmulti ajax-handler (fn [json _] (ffirst json)))
 
 (def theory-url (if *debug*
-                   "http://localhost:8080/policymodellingtool/kb/copyright_policies.clj"
-                   "http://localhost:8080/policymodellingtool/kb/copyright_policies.clj"))
+                   "http://localhost:8080/policymodellingtool/kb/copyright_policies2.clj"
+                   "http://localhost:8080/policymodellingtool/kb/copyright_policies2.clj"))
 
 ;; TODO: get from a kb
 
@@ -113,7 +113,7 @@
   "Dynamically loads a theory"
   [url]
   (load-string (slurp url))
-  (deref (ns-resolve 'carneades.resources.public.kb.copyright-policies 'copyright-policies)))
+  (deref (ns-resolve 'carneades.examples.copyright-policies 'copyright-policies)))
 
 (defn init-page
   []

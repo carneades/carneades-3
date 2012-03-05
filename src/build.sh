@@ -75,7 +75,7 @@ case $1 in
     *) show_usage; exit;;
 esac
 
-# clean;
-# build_install_jar_war;
+clean;
+build_install_jar_war;
 show_instructions;
 show_notification;

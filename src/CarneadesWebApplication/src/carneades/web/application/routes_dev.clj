@@ -1,20 +1,12 @@
 (ns carneades.web.application.routes-dev
   (:use compojure.core
+        carneades.web.application.routes
         carneades.web.application.jetty
         ring.adapter.jetty
-        ring.middleware.params
-        ring.middleware.session
-        carneades.web.application.views.pages
         carneades.web.service)
   (:require [compojure.route :as route]
             [compojure.handler :as handler]
             [compojure.response :as response]))
-
-(defroutes carneades-application-routes
-  (GET "/" [] (index-page))
-  ;; (route/files "/" {:root (str (System/getProperty "user.dir") "/data/public")})
-  (route/resources "/" )
-  )
 
 (defroutes all-carneades-application-routes
   (context "/impactws" [] carneades-web-service-routes)
