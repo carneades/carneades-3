@@ -3,7 +3,8 @@
 
 (ns carneades.examples.copyright-policies
   (:use carneades.engine.dublin-core
-        carneades.engine.scheme))
+        carneades.engine.scheme
+        carneades.engine.argument))
 
 ;; test
 
@@ -31,7 +32,7 @@
                   :description {:en "TO DO"})
    
    :language
-   {'announcement (make-individual :symbol 'announcement :text {:en "Announcement" :de "Bekanntmachung"})
+   {'announcement-category (make-individual :symbol 'announcement :text {:en "Announcement" :de "Bekanntmachung"})
     'commercial (make-individual :symbol 'commercial :text {:en "Commerical Use"})
     'purpose (make-individual :symbol 'purpose :text {:en "Purpose"})
     'identifiers  (make-individual :symbol 'identifiers :text {:en "Identifiers"})
@@ -118,7 +119,7 @@
      :category 'search
      :answers ['standard, 'professional, 'none]
      :widget "select"
-     :followups ['announcement])
+     :followups ['announcement-category])
 
     'announcement
     (make-predicate
