@@ -34,6 +34,7 @@ function set_premises_text(argument_data)
     $.each(argument_data.premises, 
            function(index, premise) {
                premise.statement.statement_text = statement_text(premise.statement, index + 1);
+               premise.positive_text = premise.positive ? "" : "neg.";
            });
 }
 
