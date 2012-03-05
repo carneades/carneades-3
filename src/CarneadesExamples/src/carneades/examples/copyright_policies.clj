@@ -119,7 +119,7 @@
      :category 'search
      :answers ['standard, 'professional, 'none]
      :widget "select"
-     :followups ['announcement-category])
+     :followups ['announcement])
 
     'announcement
     (make-predicate
@@ -131,7 +131,7 @@
              :de (make-form :positive "Es gab eine öffentliche Bekanntmachung der Suche."
                             :negative "Es gab keine öffentliche Bekanntmachung der Suche."
                             :question "Erfolgte eine öffentliche Bekanntmachung der Suche?")}
-     :category 'announcement
+     :category 'announcement-category
      :widget "checkbox")  ; Shouldn't checkboxes, instead of radio buttons, be used to query boolean values of propositions?
     
     'valid
