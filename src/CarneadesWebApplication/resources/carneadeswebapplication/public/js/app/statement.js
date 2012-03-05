@@ -93,7 +93,7 @@ function slice_statement(statement_text)
 function statement_text(statement)
 {
     if(statement.text && statement.text[CARNEADES.lang]) {
-        return markdown_to_html(slice_statement(statement.text[CARNEADES.lang]));
+        return markdown_to_html(statement.text[CARNEADES.lang]);
     }
     // if(statement.header && statement.header.description && statement.header.description[CARNEADES.lang]) {
     //     return markdown_to_html(slice_statement(statement.header.description[CARNEADES.lang]));
