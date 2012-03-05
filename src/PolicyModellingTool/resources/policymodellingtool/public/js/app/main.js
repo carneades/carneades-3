@@ -45,5 +45,9 @@ PM.dispatch_url = function(url, element) {
 $(function() {
      $.address.change(PM.url_changed);
       
-      PM.display_introduction();
+      initPM();
   });
+
+function initPM() {
+     PM.display_introduction();
+}
