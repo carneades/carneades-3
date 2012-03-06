@@ -74,9 +74,9 @@
     (println "goal = " goal)
     (println "constructing one answer from:" answer)
     (println "assumption = " answer)
-    (list (make-response subs2 [answer]
+    [subs2 (list (make-response subs2 [answer]
                          nil
                          ;; (make-argument :conclusion answer :scheme "ask")
-                         ))))
+                         ))]))
 
 
