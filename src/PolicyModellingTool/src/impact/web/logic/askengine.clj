@@ -10,8 +10,11 @@
   (prn "on-solution")
   (let [ag (deref (:future-ag session))
         goal (:goal session)
+        _ (prn "substitutions =" (:substitutions session))
         lastsolstmt (apply-substitutions (:substitutions session) (:query session))
+        _ (prn "lastsolstmt = " lastsolstmt)
         main-node (get-statement-node ag lastsolstmt)
+        _ (prn "main-node = " main-node)
         ag (update-statement-node ag main-node :main true)
         ag (accept ag (vals (:answers session))) ;; accept all answers from the user!
         ag (enter-language ag (-> session :theory :language))
@@ -79,8 +82,8 @@
        (continue-engine session)
        (ask-user session)))
     (do
-      (prn "Horray, argument construction is finished!")
-      (get-ag-or-next-question session))))
+      (prn "Argument construction is finished!")
+      (on-solution session))))
 
 (defn- get-ag-or-next-question
   [session]
@@ -117,11 +120,11 @@
   [session]
   (prn "continue engine")
   (let [{:keys [last-question send-answer questions future-ag]} session
-        ans (get-answer last-question session)]
+        [subs ans] (get-answer last-question session)]
     (prn "sending answer")
     (send-answer ans)
     (prn "send finished")
-    (get-ag-or-next-question session)))
+    (get-ag-or-next-question (assoc session :substitutions subs))))
 
 (defn- get-askables
   [theory]
