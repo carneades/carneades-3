@@ -53,7 +53,8 @@ function outline_text(tree, db, index)
     if(node === "root") {
         text = "<ul>";
     } else if (node.hasOwnProperty('premises')) {
-        text = "{0} <ul>".format(argument_link(db, node.id, argument_text(node, index)));
+        var direction_text = node.pro ? "pro" : "con";
+        text = "{0} {1} <ul>".format(direction_text, argument_link(db, node.id, argument_text(node, index)));
     } else {
         var stmt_text = statement_text(node, index);
         text = "{0} <ul>".format(statement_link(db, node.id, stmt_text));
