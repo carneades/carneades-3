@@ -33,7 +33,9 @@
         _ (prn "answers = " answers)
         pred (literal-predicate question)
         answer (get answers pred)
-        response (make-answer substitutions question answer)]
+        [subs response] (make-answer substitutions question answer)]
     (prn "RESPONSE =" response)
-    response))
+    [subs response]))
+
+
 
