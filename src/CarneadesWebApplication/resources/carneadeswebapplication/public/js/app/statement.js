@@ -116,10 +116,10 @@ function statement_link(db, id, text)
 
 function statement_in(statement)
 {
-    return (1.0 - statement.value) < 0.001;
+    return (statement.value != null) && ((1.0 - statement.value) < 0.001);
 }
 
 function statement_out(statement)
 {
-    return statement.value < 0.001;
+    return (statement.value != null) && (statement.value < 0.001);
 }
