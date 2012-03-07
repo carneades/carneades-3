@@ -247,7 +247,13 @@
          (apply hash-map key-values)))
 
 (defn theory? [x] (instance? Theory x))
-   
+
+(defn load-theory
+  "Dynamically loads a theory"
+  [url ns-sym theory-sym]
+  (load-string (slurp url))
+  (deref (ns-resolve ns-sym theory-sym)))
+
 (defn- scheme-index-key 
   "term -> symbol 
    Returns the symbol used to index a scheme by its conclusions 

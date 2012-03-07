@@ -100,10 +100,9 @@
          (iterate inc (inc id)) followups)))
 
 (defn get-structured-questions
-  [stmt substitutions lang last-id theory]
+  [stmt lang last-id theory]
   (prn "[get-structured-questions] stmt =" stmt)
-  (let [stmt stmt;; (apply-substitutions substitutions stmt)
-        id (inc last-id)
+  (let [id (inc last-id)
         pred (literal-predicate stmt)
         question (get-question id stmt lang theory)
         refsquestions (get-followups id stmt lang theory)
