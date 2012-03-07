@@ -41,6 +41,7 @@
     'professional (make-individual :symbol 'professional :text {:en "Professional Documented Search"})
     'search (make-individual :symbol 'search :text {:en "Search"})
     'standard (make-individual :symbol 'standard :text {:en "Standard DocumentedSearch"})
+    'license-category (make-individual :symbol 'license :text {:en "License"})
 
     'license-to-publish
     (make-predicate
@@ -48,7 +49,9 @@
      :arity 2
      :forms {:en (make-form :positive "%s has a license to publish %s."
                             :negative "%s does not have a license to publish %s."
-                            :question "Does %s have a license to publish %s.")})
+                            :question "Does %s have a license to publish %s.")}
+     :widget "text"
+     :category 'license-category)
     
     
     'may-publish

@@ -19,22 +19,19 @@
 (defn already-answered?
   "Returns true if the question has already been answered by the user."
   [question session]
-  {:post [(do (prn "=> " %) true)]}
-  (prn "already-answered? " question)
-  (prn "answers =" (:answers session))
+  (prn "[answers] answers =" (:answers session))
   (let [answers (:answers session)]
     (contains? answers (literal-predicate question))))
 
 (defn get-answer
   [question session]
-  (prn "GET ANSWER for " question)
+  (prn "[get-answer] question = " question)
   (let [{:keys [substitutions answers]} session
-        _ (prn "substitutions =" substitutions)
-        _ (prn "answers = " answers)
+        _ (prn "[get-answer] substitutions =" substitutions)
+        _ (prn "[get-answers] answers = " answers)
         pred (literal-predicate question)
         answer (get answers pred)
         [subs response] (make-answer substitutions question answer)]
-    (prn "RESPONSE =" response)
     [subs response]))
 
 

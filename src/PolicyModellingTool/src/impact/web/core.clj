@@ -27,3 +27,13 @@
     (db/create-argument-database dbname root passwd (make-metadata))
      (import-from-argument-graph db ag true)
      dbname))
+
+
+;; (defmacro with-timeout [millis & body]
+;;   `(let [future# (future ~@body)]
+;;      (try
+;;        (.get future# ~millis java.util.concurrent.TimeUnit/MILLISECONDS)
+;;        (catch Exception x# 
+;;          (do
+;;            (future-cancel future#)
+;;            nil)))))
