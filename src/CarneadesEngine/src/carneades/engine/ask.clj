@@ -38,19 +38,16 @@
    (reify ArgumentGenerator
      (generate [this goal s]
        (let [g (apply-substitutions s goal)]
-         (if (askable? g)
+         (when (askable? g)
            (do
-             (prn "SENDING ASK OF " g)
+             (prn "[arguments-from-user] subs = " s ", asking: " g)
              (send-question [g s])
              (let [answers-value (deref answers)
-                   _ (prn "WAITING FOR ANSWER")
+                   _ (prn "[arguments-from-user] waiting for answer")
                    answer (first answers-value)]
                (swap! answers rest)
-               (println "ANSWER RECEIVED FROM USER:" answer)
-               answer))
-           (do
-             (prn "not askable")
-             nil))))
+               (prn "[arguments-from-user] answer received:" answer)
+               answer)))))
      ArgumentConstructionObserver
      (finish [this]
        ;; argument construction is finished? then
@@ -71,12 +68,10 @@
   "Creates an answer suitable to send to the argument-from-user generator"
   [s goal answer]
   (when-let [subs2 (unify (literal-atom goal) (literal-atom answer) s)]
-    (println "goal = " goal)
-    (println "constructing one answer from:" answer)
-    (println "assumption = " answer)
+    (printf "[make-answer] s = %s subs2 = %s goal = %s answer = %s\n" s subs2 goal answer)
     [subs2 (list (make-response subs2 [answer]
-                         nil
-                         ;; (make-argument :conclusion answer :scheme "ask")
-                         ))]))
+                                nil
+                                ;; (make-argument :conclusion answer :scheme "ask")
+                                ))]))
 
 

@@ -4,7 +4,7 @@
         clojure.pprint
         impact.web.core
         carneades.engine.statement
-        [carneades.engine.unify :only (genvar)]
+        [carneades.engine.unify :only (genvar apply-substitutions)]
         impact.web.logic.translate)
   (:require [clojure.string :as s]))
 
@@ -100,10 +100,10 @@
          (iterate inc (inc id)) followups)))
 
 (defn get-structured-questions
-  [stmt lang last-id theory]
-  (prn "get-structured-questions, stmt =" stmt)
-  (prn "grounded? " )
-  (let [id (inc last-id)
+  [stmt substitutions lang last-id theory]
+  (prn "[get-structured-questions] stmt =" stmt)
+  (let [stmt stmt;; (apply-substitutions substitutions stmt)
+        id (inc last-id)
         pred (literal-predicate stmt)
         question (get-question id stmt lang theory)
         refsquestions (get-followups id stmt lang theory)

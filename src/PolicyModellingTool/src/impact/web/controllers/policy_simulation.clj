@@ -42,7 +42,6 @@
                question (questions id)
                arity (:arity question)
                stmt (strs->stmt (:statement question))
-               _ (prn "stmt =" stmt)
                pred (literal-predicate stmt)
                ;; TODO: makes that generic for all arities
                ans (cond (zero? arity)
@@ -62,8 +61,7 @@
                          
                          :else
                          (throw (Exception. (format "Invalid arity for question: %s" question)))
-                         )
-               _ (prn "ans = " ans)]
+                         )]
            ans))
        jsonanswers))
 
@@ -93,9 +91,6 @@
                        (:lang session)
                        id
                        (:questionsdata session))]
-    (prn "questions =")
-    (pprint questions)
-    (prn)
     {:body (json-str {:questions questions})}))
 
 (defn process-ajax-request
@@ -124,7 +119,7 @@
              :lang "en"
              :last-id 0
              :substitutions {}
-             :query '(may-publish ?Person ?Werk)  ; TODO: get it from the theory!
+             :query '(may-publish ?Person ?Work)  ; TODO: get it from the theory!
              :theory (load-theory theory-url)
              :engine-runs false}
    :body (index-page)})
