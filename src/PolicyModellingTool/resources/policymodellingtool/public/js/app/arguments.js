@@ -8,8 +8,7 @@ PM.set_arguments_url = function() {
 
 PM.display_arguments = function() {
     if(IMPACT.db == "") {
-        db = "policymodellingtool-e8e57144-1367-44c2-806a-cdc185339406";
-        console.log('setting default db as example');
+        console.log('No db. Please enter some facts first');
     }
     var arguments_html = ich.arguments();
     $('#pm').html(arguments_html.filter("#arguments"));

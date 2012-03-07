@@ -471,10 +471,12 @@
    does not already exist in the database."
   [premise]
   {:pre [(premise? premise)]}
-  (let [stmt-id (get-statement (:statement premise))] 
+  (let [stmt-id (get-statement (:statement premise))]
+    ;; we dissoc :pro or :con which are not in the Premise record
+    ;; but are added from read-premise!
     (first (vals (jdbc/insert-record 
       :premise
-      (assoc premise :statement stmt-id))))))
+      (dissoc (assoc premise :statement stmt-id) :pro :con))))))
 
 (declare get-pro-arguments get-con-arguments)
 
@@ -494,12 +496,11 @@
             stmt (read-statement (:statement m))
             pro (get-pro-arguments (:statement m))
             con (get-con-arguments (:statement m))]
-        (map->premise {:statement stmt
-                       :positive (:positive m)
-                       :role (:role m)
-                       :implicit (:implicit m)
-                       :pro pro
-                       :con con})))))
+        (merge (map->premise {:statement stmt
+                        :positive (:positive m)
+                        :role (:role m)
+                              :implicit (:implicit m)})
+               {:pro pro :con con})))))
 
 (defn list-premises
   "Returns a sequence of all the premise records in the database"
