@@ -1,76 +1,85 @@
 (ns impact.web.logic.evaluation
-  (:use impact.web.core
+  (:use clojure.pprint
+        impact.web.core
+        carneades.engine.statement
         carneades.database.export
-        carneades.engine.argument-graph)
-  (:import java.io.File))
-
-(defn show-graph-url
-  [pathname]
-  (if *debug*
-    (str "/map/" (.getName (File. pathname)))
-    (str "/argumentbrowser/#/map/" (.getName (File. pathname)))))
+        (carneades.engine caes argument-evaluation argument-graph statement scheme argument-graph))
+  (:require [carneades.database.db :as db]))
 
 (defn get-policies
-  [dbname]
-  (let [content (export-to-argument-graph dbname)]
-    (throw (Exception. "NYI (get-policies)"))
-    ;; (map (comp second :statement) (get-nodes (first (:ags content)) 'valid))
+  [questionid theory]
+  (:sections (first (filter #(= (:id %) questionid) (-> theory :sections )))))
+
+(defn get-policy
+  [id policies]
+  (first (filter #(= (:id %) id) policies)))
+
+(defn get-policy-premises
+  [policies]
+  )
+
+(defn get-policy-statements
+  [policy]
+  (filter #(= (term-functor %) 'valid)
+   (mapcat #(map (fn [p] (literal-atom (:statement p))) (:premises %)) (:schemes policy))))
+
+(defn evaluate-policy
+  [policyid session]
+  ;; 1) get the graph from the db
+  ;; 2) reject all valid statements not part of the policy
+  ;; 3) accept all valid statements that are part of the policy
+  ;; 4) save the graph
+  ;; 5) change the db field of the session
+  (prn "[evaluate-policy] policyid =" policyid)
+  (prn "[evaluate-policy] db = " (:db session))
+  (let [ag (load-ag (:db session))
+        theory (:theory session)
+        policies (get-policies 'Q12 theory) ;; TODO get the question id
+        policiesid (set (map :id policies))
+        policycontent (get-policy policyid policies)
+        statements-to-accept (get-policy-statements policycontent)
+        statements-to-reject (mapcat get-policy-statements (map #(get-policy % policies) (disj policiesid policyid)))
+        _ (prn "[evaluate-policy] to-accept =" statements-to-accept)
+        _ (prn "[evaluate-policy] to-reject = " statements-to-reject)
+        ag (reject ag statements-to-reject)
+        ag (accept ag statements-to-accept)
+        ag (enter-language ag (-> session :theory :language))
+        ag (evaluate carneades-evaluator ag)
+        _ (prn "[evaluate-policy] storing...")
+        ;; _ (pprint ag)
+        dbname (store-ag ag)
+        ]
+    (prn "[evaluate-policy] dbname = " dbname)
+    dbname
     ))
 
-(defn str-to-validstmt
-  [s]
-  (list 'valid (symbol s)))
+;; (defn str-to-validstmt
+;;   [s]
+;;   (list 'valid (symbol s)))
 
-(defn evaluate-graph
-  [dbname accepted-stmts rejected-stmts]
-  (prn "dnname =")
-  (prn dbname)
-  (throw (Exception. "NYI (evaluate-graph"))
-  ;; (let [ag (-> (first (:ags (export-to-argument-graph dbname)))
-  ;;              (accept (map str-to-validstmt accepted-stmts))
-  ;;              (reject (map str-to-validstmt rejected-stmts)))]
-  ;;   (store-ag ag))
-  )
+;; OLD:
+;; (defn- abduction-positions
+;;   [ag acceptability]
+;;   (throw (Exception. "NYI (abduction)"))
+;;   ;; (condp acceptability =
+;;   ;;   :inin (statement-in-label ag (assume-decided-statements ag)
+;;   ;;                             (:main-issue ag))
+;;   ;;   :inout (statement-out-label ag (assume-decided-statements ag)
+;;   ;;                               (:main-issue ag))
+;;   ;;   :outin (statement-in-label ag (assume-decided-statements ag)
+;;   ;;                              (statement-complement (:mainissue ag)))
+;;   ;;   :outout (statement-out-label ag (assume-decided-statements ag)
+;;   ;;                                (statement-complement (:main-issue ag))))
+;;   )
 
-(defn- abduction-positions
-  [ag acceptability]
-  (throw (Exception. "NYI (abduction)"))
-  ;; (condp acceptability =
-  ;;   :inin (statement-in-label ag (assume-decided-statements ag)
-  ;;                             (:main-issue ag))
-  ;;   :inout (statement-out-label ag (assume-decided-statements ag)
-  ;;                               (:main-issue ag))
-  ;;   :outin (statement-in-label ag (assume-decided-statements ag)
-  ;;                              (statement-complement (:mainissue ag)))
-  ;;   :outout (statement-out-label ag (assume-decided-statements ag)
-  ;;                                (statement-complement (:main-issue ag))))
-  )
 
-(defn filter-policies
-  [position]
-  (filter #(= (first %) 'valid) position))
-
-(defn- find-position
-  [dbname acceptability]
-  (let [content (export-to-argument-graph dbname)
-        ag (first (:ags content))
-        positions (abduction-positions ag acceptability)
-        pos (first (sort-by count positions))]
-    (prn "pos =")
-    (prn pos)
-    pos))
-
-(defn find-policies
-  [dbname acceptability]
-  (filter-policies (find-position dbname acceptability)))
-
-(defn get-stmt-to-ids
-  [dbname]
-  (let [content (export-to-argument-graph dbname)
-        ag (first (:ags content))]
-    (reduce (fn [stmt-to-id stmt]
-              (assoc stmt-to-id stmt (:id stmt)))
-            {}
-            (:statements-nodes ag)
-            ;; (map get-statement-node (get-nodes ag))
-            )))
+;; (defn get-stmt-to-ids
+;;   [dbname]
+;;   (let [content (export-to-argument-graph dbname)
+;;         ag (first (:ags content))]
+;;     (reduce (fn [stmt-to-id stmt]
+;;               (assoc stmt-to-id stmt (:id stmt)))
+;;             {}
+;;             (:statements-nodes ag)
+;;             ;; (map get-statement-node (get-nodes ag))
+;;             )))

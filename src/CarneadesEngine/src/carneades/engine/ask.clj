@@ -40,7 +40,7 @@
        (let [g (apply-substitutions s goal)]
          (when (askable? g)
            (do
-             (prn "[arguments-from-user] subs = " s ", asking: " g)
+             (prn "[arguments-from-user] subs = " s " asking: " g)
              (send-question [g s])
              (let [answers-value (deref answers)
                    _ (prn "[arguments-from-user] waiting for answer")

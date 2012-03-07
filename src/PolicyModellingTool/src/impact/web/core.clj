@@ -2,6 +2,7 @@
   (:use clojure.pprint
         carneades.engine.dublin-core
         carneades.database.import
+        carneades.database.export
         carneades.engine.uuid)
   (:import java.io.File)
   (:require [carneades.database.db :as db]))
@@ -27,6 +28,12 @@
     (db/create-argument-database dbname root passwd (make-metadata))
      (import-from-argument-graph db ag true)
      dbname))
+
+(defn load-ag
+  [dbname]
+  ;; TODO: changes the pass
+  (let [db (db/make-database-connection dbname "root" "pw1")]
+    (export-to-argument-graph db)))
 
 
 ;; (defmacro with-timeout [millis & body]

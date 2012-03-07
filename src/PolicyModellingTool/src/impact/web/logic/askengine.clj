@@ -35,7 +35,6 @@
 (defn- ask-user
   [session]
   (let [[last-questions last-id] (get-structured-questions (:last-question session)
-                                                           (:substitutions session)
                                                            (:lang session)
                                                            (:last-id session)
                                                            (:theory session))
@@ -101,8 +100,9 @@
 
 (defn- continue-engine
   [session]
-  (let [{:keys [last-question send-answer questions future-ag]} session
-        [subs ans] (get-answer last-question session)]
+  (let [{:keys [last-question send-answer questions future-ag substitutions]} session
+        [subs ans] (get-answer last-question session)
+        subs (if ans subs substitutions)]
     (send-answer ans)
     (get-ag-or-next-question (assoc session :substitutions subs))))
 

@@ -5,7 +5,8 @@ var IMPACT = {
     impactws_url: "/impactws",
     pmws_url: "",
     argumentbrowser_url: "/argumentbrowser",
-    simulation_url: "PolicySimulation"
+    simulation_url: "PolicySimulation",
+    evaluation_url: "PolicyEvaluation"
 };
 
 // This object contains the functions and acts as a kind of namespace.
@@ -38,6 +39,8 @@ PM.dispatch_url = function(url, element) {
         PM.display_facts();
     } else if(element == "arguments") {
         PM.display_arguments();
+    } else if(element == "policies") {
+        PM.display_policies();
     }
 };
 
