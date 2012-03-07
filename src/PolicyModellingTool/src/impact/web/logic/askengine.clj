@@ -14,18 +14,10 @@
         lastsolstmt (apply-substitutions (:substitutions session) (:query session))
         _ (prn "lastsolstmt = " lastsolstmt)
         main-node (get-statement-node ag lastsolstmt)
-        _ (prn "main-node = " main-node)
         ag (update-statement-node ag main-node :main true)
         ag (accept ag (vals (:answers session))) ;; accept all answers from the user!
         ag (enter-language ag (-> session :theory :language))
         ag (evaluate carneades-evaluator ag)
-        
-        ;; _ (prn "before acepting = " )
-        ;; _ (pprint ag)
-        ;; _ (prn "accepting " (vals (:answers session)))
-
-        ;; _ (prn "after accept")
-        ;; _ (pprint ag)
         dbname (store-ag ag)
         session (assoc session
                   :solution (str lastsolstmt) ;; TODO translate solution
@@ -43,6 +35,7 @@
 (defn- ask-user
   [session]
   (let [[last-questions last-id] (get-structured-questions (:last-question session)
+                                                           (:substitutions session)
                                                            (:lang session)
                                                            (:last-id session)
                                                            (:theory session))
@@ -54,15 +47,6 @@
       :user-questions questions)))
 
 (declare continue-engine get-ag-or-next-question)
-
-;; (defmacro with-timeout [millis & body]
-;;   `(let [future# (future ~@body)]
-;;      (try
-;;        (.get future# ~millis java.util.concurrent.TimeUnit/MILLISECONDS)
-;;        (catch Exception x# 
-;;          (do
-;;            (future-cancel future#)
-;;            nil)))))
 
 (defn receive-question
   [session]
@@ -82,17 +66,16 @@
        (continue-engine session)
        (ask-user session)))
     (do
-      (prn "Argument construction is finished!")
+      (prn "[askengine] argument construction is finished!")
       (on-solution session))))
 
 (defn- get-ag-or-next-question
   [session]
-  (prn "get-ag-or-next-question")
   (let [future-ag (:future-ag session)]
     (if (future-done? future-ag)
       (on-solution session)
       (do
-        (prn "waiting for the question...")
+        (prn "[askengine] waiting for the question...")
         (on-question session)))))
 
 (defn- start-engine
@@ -118,12 +101,9 @@
 
 (defn- continue-engine
   [session]
-  (prn "continue engine")
   (let [{:keys [last-question send-answer questions future-ag]} session
         [subs ans] (get-answer last-question session)]
-    (prn "sending answer")
     (send-answer ans)
-    (prn "send finished")
     (get-ag-or-next-question (assoc session :substitutions subs))))
 
 (defn- get-askables
@@ -137,7 +117,7 @@
   ;; TODO: changes this and get them from the questions.clj
   (let [;; askables '#{person work type-of-use search-type annoucement}
         askables (get-askables (:theory session))
-        _ (prn "askables =" askables)
+        _ (prn "[askengine] askables = " askables)
         query (:query session)]
     (if (:engine-runs session)
       (continue-engine session)
