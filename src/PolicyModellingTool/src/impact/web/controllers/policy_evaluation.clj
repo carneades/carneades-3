@@ -7,7 +7,8 @@
 (defmethod ajax-handler :evaluate
   [json session]
   (let [policy (-> json :evaluate :policy)
-        dbname (evaluate-policy (symbol policy) session)]
+        ;; TODO: get the question from the session
+        dbname (evaluate-policy 'Q12 (symbol policy) session)]
     {:session (assoc session :db dbname)
      :body (json-str {:db dbname})}))
 
