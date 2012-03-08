@@ -1,30 +1,12 @@
 (ns impact.web.logic.evaluation
   (:use clojure.pprint
         impact.web.core
-        carneades.engine.statement
         carneades.database.export
-        (carneades.engine caes argument-evaluation argument-graph statement scheme argument-graph))
+        (carneades.engine policies caes argument-evaluation argument-graph statement scheme argument-graph))
   (:require [carneades.database.db :as db]))
 
-(defn get-policies
-  [questionid theory]
-  (:sections (first (filter #(= (:id %) questionid) (-> theory :sections )))))
-
-(defn get-policy
-  [id policies]
-  (first (filter #(= (:id %) id) policies)))
-
-(defn get-policy-premises
-  [policies]
-  )
-
-(defn get-policy-statements
-  [policy]
-  (filter #(= (term-functor %) 'valid)
-   (mapcat #(map (fn [p] (literal-atom (:statement p))) (:premises %)) (:schemes policy))))
-
 (defn evaluate-policy
-  [policyid session]
+  [qid policyid session]
   ;; 1) get the graph from the db
   ;; 2) reject all valid statements not part of the policy
   ;; 3) accept all valid statements that are part of the policy
@@ -34,7 +16,7 @@
   (prn "[evaluate-policy] db = " (:db session))
   (let [ag (load-ag (:db session))
         theory (:theory session)
-        policies (get-policies 'Q12 theory) ;; TODO get the question id
+        policies (get-policies qid theory)
         policiesid (set (map :id policies))
         policycontent (get-policy policyid policies)
         statements-to-accept (get-policy-statements policycontent)
@@ -53,10 +35,6 @@
     dbname
     ))
 
-;; (defn str-to-validstmt
-;;   [s]
-;;   (list 'valid (symbol s)))
-
 ;; OLD:
 ;; (defn- abduction-positions
 ;;   [ag acceptability]
@@ -71,15 +49,3 @@
 ;;   ;;   :outout (statement-out-label ag (assume-decided-statements ag)
 ;;   ;;                                (statement-complement (:main-issue ag))))
 ;;   )
-
-
-;; (defn get-stmt-to-ids
-;;   [dbname]
-;;   (let [content (export-to-argument-graph dbname)
-;;         ag (first (:ags content))]
-;;     (reduce (fn [stmt-to-id stmt]
-;;               (assoc stmt-to-id stmt (:id stmt)))
-;;             {}
-;;             (:statements-nodes ag)
-;;             ;; (map get-statement-node (get-nodes ag))
-;;             )))
