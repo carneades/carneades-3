@@ -3,7 +3,8 @@
         impact.web.core
         carneades.database.export
         (carneades.engine policies caes argument-evaluation argument-graph statement scheme argument-graph))
-  (:require [carneades.database.db :as db]))
+  (:require [carneades.database.db :as db]
+            [carneades.engine.policy :as policy]))
 
 (defn evaluate-policy
   [qid policyid session]
@@ -16,24 +17,11 @@
   (prn "[evaluate-policy] db = " (:db session))
   (let [ag (load-ag (:db session))
         theory (:theory session)
-        policies (get-policies qid theory)
-        policiesid (set (map :id policies))
-        policycontent (get-policy policyid policies)
-        statements-to-accept (get-policy-statements policycontent)
-        statements-to-reject (mapcat get-policy-statements (map #(get-policy % policies) (disj policiesid policyid)))
-        _ (prn "[evaluate-policy] to-accept =" statements-to-accept)
-        _ (prn "[evaluate-policy] to-reject = " statements-to-reject)
-        ag (reject ag statements-to-reject)
-        ag (accept ag statements-to-accept)
-        ag (enter-language ag (-> session :theory :language))
-        ag (evaluate carneades-evaluator ag)
+        ag (policy/evaluate-policy qid policyid theory ag)
         _ (prn "[evaluate-policy] storing...")
-        ;; _ (pprint ag)
-        dbname (store-ag ag)
-        ]
+        dbname (store-ag ag)]
     (prn "[evaluate-policy] dbname = " dbname)
-    dbname
-    ))
+    dbname))
 
 ;; OLD:
 ;; (defn- abduction-positions
