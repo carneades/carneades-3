@@ -2,7 +2,7 @@
   (:use clojure.pprint
         impact.web.core
         carneades.database.export
-        (carneades.engine policies caes argument-evaluation argument-graph statement scheme argument-graph))
+        (carneades.engine caes argument-evaluation argument-graph statement scheme argument-graph))
   (:require [carneades.database.db :as db]
             [carneades.engine.policy :as policy]))
 
