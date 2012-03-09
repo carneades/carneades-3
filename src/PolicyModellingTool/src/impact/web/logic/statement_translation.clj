@@ -3,7 +3,6 @@
   (:use clojure.data.json
         clojure.pprint
         impact.web.core
-        carneades.engine.statement
         [carneades.engine.unify :only (genvar apply-substitutions)]
         impact.web.logic.translate)
   (:require [clojure.string :as s]))
@@ -18,10 +17,11 @@
 (defn- get-question-text
   [stmt questiondata lang]
   (let [klang (keyword lang)
-        question (-> questiondata :forms klang :question)
+        selector (if (ground? stmt) :question :positive)
+        question (-> questiondata :forms klang selector)
         notrans (nil? question)
         question (or question
-                     (-> questiondata :forms :en :question))]
+                     (-> questiondata :forms :en selector))]
     (-> (if notrans
           (s/replace (translate (s/replace question "%s" "_") "en" lang)
                      "_" "%s")
