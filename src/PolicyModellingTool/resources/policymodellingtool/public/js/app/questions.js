@@ -34,8 +34,20 @@ PM.show_question = function(question, questionlist) {
         }
     };
 
+    var question_widget = widget_to_html[question.widget](question.id, question.answers, question.formalanswers);
     questionlist.append('<p>{0}</p>'.format(question.hint == null ? "" : question.hint));
-    questionlist.append(question.question);
-    questionlist.append(widget_to_html[question.widget](question.id, question.answers, question.formalanswers));
+    var question_html = PM.get_html_question(question.question, question_widget);
+    questionlist.append(question_html);
     questionlist.append('<br/>');
 };
+
+PM.get_html_question = function(question, widget) {
+    var variable = /\?[a-zA-Z_0-9-]+/;
+    var parts = question.split(variable);
+    
+    if(parts.length == 2) {
+        return parts.join(widget);         
+    } else {
+        return question + widget;
+    } 
+}
