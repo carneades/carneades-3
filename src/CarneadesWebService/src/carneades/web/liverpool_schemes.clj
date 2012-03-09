@@ -184,8 +184,6 @@
                                                                                       
       ] ; end of schemes
       
-              
-      
       :references 
       {"Atkinson2007"
        (make-metadata :creator "Katie Atkinson, Trevor J.M. Bench-Capon"
