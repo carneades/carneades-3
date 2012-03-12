@@ -3,6 +3,7 @@
   (:use clojure.data.json
         clojure.pprint
         impact.web.core
+        carneades.engine.statement
         [carneades.engine.unify :only (genvar apply-substitutions)]
         impact.web.logic.translate)
   (:require [clojure.string :as s]))
