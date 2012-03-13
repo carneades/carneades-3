@@ -10,7 +10,7 @@
                  ;; [lein-ring "0.4.5"] ;; for 'run-jetty' on self-executable JAR
                  ]
   :dev-dependencies [[lein-ring "0.5.4"]]
-  :ring {:handler carneades.web.application.routes-war/app}
+  :ring {:handler carneades.web.application.routes-dev/app}
   ;; :main ^{:skip-aot true} ;; comment skip-aot to build a JAR
   ;; carneades.web.application.routes-selfexe
   )
