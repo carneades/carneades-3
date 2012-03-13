@@ -11,4 +11,4 @@
                  [carneades-web-application "1.0.0-SNAPSHOT"]
                  [org.clojars.pallix/mygengo "1.0.0"]]
   :dev-dependencies [[lein-ring "0.5.4"]]
-  :ring {:handler impact.web.routes-dev/impact-app})
+  :ring {:handler impact.web.routes-war/impact-app})
