@@ -17,7 +17,7 @@ PM.show_question = function(question, questionlist) {
         radio: function(id, proposed_answers, formal_answers) {
             var html = "";
             _.each(formal_answers, function(formal_answer, index) {
-                       html += '<input id="q{0}" class="inputfield radiofield" name="inputq{0}" value="{1}" type="radio" />{2} '
+                       html += '<input id="q{0}" class="inputfield radiofield radiobutton" name="inputq{0}" value="{1}" type="radio" />{2} '
                            .format(id, formal_answer, proposed_answers[index]);
                    });
             return html;
@@ -26,7 +26,7 @@ PM.show_question = function(question, questionlist) {
             var html = '<select>';
             
             _.each(formal_answers, function(formal_answer, index) {
-                       html += '<option id="q{0}" class="inputfield" value="{1}">{2}</option>'
+                       html += '<option id="q{0}" class="inputfield dropdown-menu" value="{1}">{2}</option>'
                            .format(id, formal_answer, proposed_answers[index]);
                    });
             html += '</select>';
@@ -36,12 +36,12 @@ PM.show_question = function(question, questionlist) {
 
     var question_widget = widget_to_html[question.widget](question.id, question.answers, question.formalanswers);
     questionlist.append('<p>{0}</p>'.format(question.hint == null ? "" : question.hint));
-    var question_html = PM.get_html_question(question.question, question_widget);
+    var question_html = PM.get_question_html(question.question, question_widget);
     questionlist.append(question_html);
     questionlist.append('<br/>');
 };
 
-PM.get_html_question = function(question, widget) {
+PM.get_question_html = function(question, widget) {
     var variable = /\?[a-zA-Z_0-9-]+/;
     var parts = question.split(variable);
     

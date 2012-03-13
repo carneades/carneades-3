@@ -31,6 +31,7 @@ function set_mainissues_text(mainissues)
 {
     $.each(mainissues, 
            function(index, issue) {
+               issue.statement_nb = index + 1;
                issue.statement_text = statement_text(issue);
            });
     return mainissues;
@@ -54,7 +55,7 @@ function outline_text(tree, db, index)
         text = "<ul>";
     } else if (node.hasOwnProperty('premises')) {
         var direction_text = node.pro ? "pro" : "con";
-        text = "{0} {1} <ul>".format(direction_text, argument_link(db, node.id, argument_text(node, index)));
+        text = '{0} <span class="content">{1}</span> <ul>'.format(direction_text, argument_link(db, node.id, argument_text(node, index)));
     } else {
         var stmt_text = statement_text(node, index);
         text = "{0} <ul>".format(statement_link(db, node.id, stmt_text));
