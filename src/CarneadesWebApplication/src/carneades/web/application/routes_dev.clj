@@ -1,7 +1,6 @@
 (ns carneades.web.application.routes-dev
   (:use compojure.core
         carneades.web.application.routes
-        carneades.web.application.jetty
         ring.adapter.jetty
         carneades.web.service)
   (:require [compojure.route :as route]
