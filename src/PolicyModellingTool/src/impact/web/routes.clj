@@ -8,7 +8,6 @@
 (defroutes impact-pm-tool-routes
   
   (GET "/viewsession" {session :session} (str session))
-  (GET "/resetsession" [] (simulation/reset-session))
   (GET "/" [] (simulation/init-page))
   (POST "/PolicySimulation"
         {session :session body :body params :params}
