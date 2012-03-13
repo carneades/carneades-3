@@ -92,6 +92,22 @@
                        (:questionsdata session))]
     {:body (json-str {:questions questions})}))
 
+(defn new-session
+  []
+  {:answers {}
+   :user-questions {}
+   :lang "en"
+   :last-id 0
+   :substitutions {}
+   :query '(may-publish ?Person ?Work)  ; TODO: get it from the theory!
+   :theory (load-theory theory-url 'carneades.examples.copyright-policies 'copyright-policies)
+   :engine-runs false})
+
+(defmethod ajax-handler :reset
+  [json session]
+  (prn "[policy-simulation] resetting session")
+  {:session (new-session)})
+
 (defn process-ajax-request
   [session body params]
   (let [json (read-json (slurp body))
@@ -99,20 +115,9 @@
     res))
 
 
-(defn reset-session
-  []
-  {:session {}})
-
 (defn init-page
   []
   (prn "init of session")
   {:headers {"Content-Type" "text/html;charset=UTF-8"}
-   :session {:answers {}
-             :user-questions {}
-             :lang "en"
-             :last-id 0
-             :substitutions {}
-             :query '(may-publish ?Person ?Work)  ; TODO: get it from the theory!
-             :theory (load-theory theory-url 'carneades.examples.copyright-policies 'copyright-policies)
-             :engine-runs false}
+   :session (new-session)
    :body (index-page)})
