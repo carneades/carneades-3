@@ -12,6 +12,8 @@ PM.display_arguments = function() {
     }
     var arguments_html = ich.arguments();
     $('#pm').html(arguments_html.filter("#arguments"));
+    PM.activate('#arguments-item');
+    
     // PROBLEM Jquery address iframe
     // TODO: link in iframe    http://stackoverflow.com/questions/740816/open-link-in-iframe
     // https://github.com/asual/jquery-address/issues/106
