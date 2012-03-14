@@ -10,6 +10,7 @@ PM.display_issues = function() {
     var issues_html = ich.issues();
     $('#pm').html(issues_html.filter("#issues"));
     $('#submit').click(PM.on_submit_issues);
+    PM.activate('#issues-item');
 };
 
 PM.on_submit_issues = function() {

@@ -9,6 +9,7 @@ PM.set_facts_url = function() {
 PM.display_facts = function() {
     var facts_html = ich.facts();
     $('#pm').html(facts_html.filter("#facts"));
+    PM.activate('#facts-item');
     PM.ajax_post(IMPACT.simulation_url, {request: 'Topic (NYI)'}, PM.show_questions_or_ag);
 };
 
