@@ -5,8 +5,8 @@ var IMPACT = {
     impactws_url: "/impactws",
     pmws_url: "",
     argumentbrowser_url: "/argumentbrowser",
-    simulation_url: "PolicySimulation",
-    evaluation_url: "PolicyEvaluation"
+    simulation_url: "/policymodellingtool/PolicySimulation",
+    evaluation_url: "/policymodellingtool/PolicyEvaluation"
 };
 
 // This object contains the functions and acts as a kind of namespace.
