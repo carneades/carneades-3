@@ -17,16 +17,16 @@ PM.show_question = function(question, questionlist) {
         radio: function(id, proposed_answers, formal_answers) {
             var html = "";
             _.each(formal_answers, function(formal_answer, index) {
-                       html += '<input id="q{0}" class="inputfield radiofield radiobutton" name="inputq{0}" value="{1}" type="radio" />{2} '
+                       html += '<input id="q{0}" class="radiobutton inputfield" name="inputq{0}" value="{1}" type="radio" />{2} '
                            .format(id, formal_answer, proposed_answers[index]);
                    });
             return html;
         },
         select: function(id, proposed_answers, formal_answers) {
-            var html = '<select>';
+            var html = '<select class="combobox">';
             
             _.each(formal_answers, function(formal_answer, index) {
-                       html += '<option id="q{0}" class="inputfield dropdown-menu" value="{1}">{2}</option>'
+                       html += '<option id="q{0}" class="dropdown-menu inputfield" value="{1}">{2}</option>'
                            .format(id, formal_answer, proposed_answers[index]);
                    });
             html += '</select>';
