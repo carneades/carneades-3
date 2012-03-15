@@ -21,14 +21,23 @@ PM.display_arguments = function() {
     // 
     var argumentbrowser_url = "{0}/#/argumentgraph/{1}".format(IMPACT.argumentbrowser_url, IMPACT.db);
     $('#argumentlink').attr('href', argumentbrowser_url);
-    // $('#argumentlink').click(_.bind(PM.on_load_arguments, PM, argumentbrowser_url));
+    $('#argumentlink').click(_.bind(PM.open_ag_browser, PM, IMPACT.db));
     // $('#innerargumentbrowser').append('<iframe name="agbrowser" src="{0}" />'.format(IMPACT.argumentbrowser_url + '/#/argumentgraph/' + db));
 
 };
 
-// PM.on_load_arguments = function(dburl) {
-//     PM.ajax_get(dburl, function(data) {
-//                     $('#innerargumentbrowser').html(data);
-//                 });
-//     return false;  
-// };
+PM.open_ag_browser = function(db) {
+    if(PM_CONFIG.debug) {
+        // just open URL
+        return true;
+    }
+    
+    // open the argument browser in the UID toolbox
+    $("#stage")[0].innerHTML = '<div id="browser" class=""></div>';
+    $("#stage").addClass("toInit");
+    $.address.change(url_changed);
+    $.address.path("/argumentgraph/" + db);
+    ich.grabTemplates();
+    init();
+    return false;
+};
