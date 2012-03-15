@@ -21,6 +21,14 @@ PM.display_arguments = function() {
     // 
     var argumentbrowser_url = "{0}/#/argumentgraph/{1}".format(IMPACT.argumentbrowser_url, IMPACT.db);
     $('#argumentlink').attr('href', argumentbrowser_url);
+    // $('#argumentlink').click(_.bind(PM.on_load_arguments, PM, argumentbrowser_url));
     // $('#innerargumentbrowser').append('<iframe name="agbrowser" src="{0}" />'.format(IMPACT.argumentbrowser_url + '/#/argumentgraph/' + db));
 
 };
+
+// PM.on_load_arguments = function(dburl) {
+//     PM.ajax_get(dburl, function(data) {
+//                     $('#innerargumentbrowser').html(data);
+//                 });
+//     return false;  
+// };
