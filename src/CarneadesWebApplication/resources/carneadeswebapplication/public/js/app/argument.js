@@ -26,6 +26,7 @@ function display_argument(db, argid)
                 set_dependents_text(argument_data);
                 var argument_html = ich.argument(argument_data);
                 $('#browser').html(argument_html.filter('#argument'));
+                $('#close').click(on_close);
             });
 }
 

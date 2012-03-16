@@ -23,6 +23,7 @@ function display_argumentgraph(db)
                  data.outline_text = outline_text(data.outline, db);
                  var argumentgraph_html = ich.argumentgraph(data);
                  $('#browser').html(argumentgraph_html.filter('#argumentgraph'));  
+                 $('#close').click(on_close);
                  // add_map_to_div(db, '#map');
              });
 }
