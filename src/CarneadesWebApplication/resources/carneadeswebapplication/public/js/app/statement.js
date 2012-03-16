@@ -28,6 +28,7 @@ function display_statement(db, stmtid)
                  set_procon_premises_text(info);
                  set_premise_of_texts(info);
                  fill_statement_template(info);
+                 $('#close').click(on_close);
              });
 }
 

@@ -62,3 +62,13 @@ function ajax_get(suburl, callback) {
             dataType : 'json'
         });
 }
+
+function on_close() {
+    $("#stage")[0].innerHTML = "<h1>Policy Modeling Tool</h1><div id='pm'></div>";
+    $("#stage").addClass("toInit");
+    $.address.change(PM.url_changed);
+    ich.grabTemplates();
+    $.address.path("/arguments");
+    init();
+    return false;
+}
