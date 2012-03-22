@@ -6,7 +6,7 @@
             [impact.web.controllers.translation :as translation]))
 
 (defroutes impact-pm-tool-routes
-  
+  (GET "/config" [] (simulation/dump-config))
   (GET "/viewsession" {session :session} (str session))
   (GET "/" [] (simulation/init-page))
   (POST "/PolicySimulation"
