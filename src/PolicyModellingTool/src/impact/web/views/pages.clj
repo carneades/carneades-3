@@ -1,6 +1,7 @@
 (ns impact.web.views.pages
   (:use [hiccup core page-helpers])
-  (:require [net.cgrand.enlive-html :as html]))
+  (:require [net.cgrand.enlive-html :as html]
+            [carneades.config.reader :as config]))
 
 (html/deftemplate index "policymodellingtool/public/index.html" [])
 
@@ -11,3 +12,11 @@
   (prn "impact index page")
   (render (index)))
 
+(defn config-page []
+  (html5
+   [:body
+    (str "<hr>configfilename =<br><br> " config/configfilename "<br><br>"
+         "<hr>properties = <br>"
+         (apply str (sort (map (fn [[k v]] (str "<br> " k "=" v)) config/properties)))
+         "<hr><br>java properties = <br>"
+         (apply str (sort (map (fn [[k v]] (str "<br><br> " k "=" v)) (System/getProperties)))))]))
