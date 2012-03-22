@@ -121,3 +121,7 @@
   {:headers {"Content-Type" "text/html;charset=UTF-8"}
    :session (new-session)
    :body (index-page)})
+
+(defn dump-config
+  []
+  (config-page))
