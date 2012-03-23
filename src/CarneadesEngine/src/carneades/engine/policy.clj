@@ -10,7 +10,7 @@
 ;;                                    (symbol default-policies-namespace)
 ;;                                    (symbol default-policies-name)))
 
-(printf "[policy] file = %s\n[policy] namespace = %s\n[policy] name = %s\n" default-policies-file default-policies-namespace default-policies-name)
+(printf "\n[policy] file = %s\n[policy] namespace = %s\n[policy] name = %s\n" default-policies-file default-policies-namespace default-policies-name)
 
 (defn get-policies
   [questionid theory]
