@@ -6,12 +6,10 @@
          impact.web.logic.statement-translation
          impact.web.views.pages
          impact.web.core
-         carneades.engine.scheme
+         (carneades.engine policy scheme)
          [carneades.engine.statement :only (neg literal-predicate variable? literal-atom)]))
 
 (defmulti ajax-handler (fn [json _] (ffirst json)))
-
-(def theory-url "http://localhost:8080/policymodellingtool/kb/copyright_policies2.clj")
 
 ;; TODO: get from a kb
 
@@ -100,7 +98,10 @@
    :last-id 0
    :substitutions {}
    :query '(may-publish ?Person ?Work)  ; TODO: get it from the theory!
-   :theory (load-theory theory-url 'carneades.examples.copyright-policies 'copyright-policies)
+   :theory (load-theory default-policies-file
+                        (symbol default-policies-namespace)
+                        (symbol default-policies-name))
+   
    :engine-runs false})
 
 (defmethod ajax-handler :reset
