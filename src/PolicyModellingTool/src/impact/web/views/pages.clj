@@ -9,7 +9,6 @@
       (apply str t))
 
 (defn index-page []
-  (prn "impact index page")
   (render (index)))
 
 (defn config-page []
