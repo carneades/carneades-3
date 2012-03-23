@@ -12,17 +12,22 @@ String.prototype.format = function() {
 };
 
 // // replaces the object properties names with minus (-) to properties names with underscore
-Object.prototype.normalize = function() {
-    for(name in this) {
-        if(typeof this[name] !== 'function') {
-            var normalized = name.replace(/-/g, '_');
-            if(normalized !== name) {
-                this[normalized] = this[name];
-                delete this[name];                            
-            }
-        }
-    }
-};
+Object.defineProperty(Object.prototype, "normalize", 
+                      { 
+                          value: function() {
+                              for(name in this) {
+                                  if(typeof this[name] !== 'function') {
+                                      var normalized = name.replace(/-/g, '_');
+                                      if(normalized !== name) {
+                                          this[normalized] = this[name];
+                                          delete this[name];                            
+                                      }
+                                  }
+                              }
+                          },
+                          enumerable: false
+});
+
 
 var UTILS = {
     

@@ -3,7 +3,6 @@ var IMPACT = {
     db: "",
     lang: "en",
     impactws_url: "/impactws",
-    pmws_url: "",
     argumentbrowser_url: "/argumentbrowser",
     simulation_url: "/policymodellingtool/PolicySimulation",
     evaluation_url: "/policymodellingtool/PolicyEvaluation"
@@ -21,16 +20,17 @@ PM.url_changed = function(url) {
          return;
     }
 
-    var url_regex = /\/([\w-:]+)/;
+    var url_regex = /\/([^ \/]+)(?:\/([^ \/]+))?/;
     var result = url_regex.exec(url.value);
     if(result != null) {
         var element = result[1];
-
-        PM.dispatch_url(url, element);
+        var section = result[2];
+        
+        PM.dispatch_url(element, section);
     }
 };
 
-PM.dispatch_url = function(url, element) {
+PM.dispatch_url = function(element, section) {
     if(element == "introduction") {
         PM.display_introduction();
     } else if(element == "issues") {
@@ -40,7 +40,7 @@ PM.dispatch_url = function(url, element) {
     } else if(element == "arguments") {
         PM.display_arguments();
     } else if(element == "policies") {
-        PM.display_policies();
+        PM.display_policies(section);
     }
 };
 
