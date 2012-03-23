@@ -1,6 +1,6 @@
 
-PM.ajax_post = function(suburl, jsondata, callback, username, password) {
-    $.ajax({url: IMPACT.pmws_url + suburl,
+PM.ajax_post = function(url, jsondata, callback, username, password) {
+    $.ajax({url: url,
             type: 'POST',
             // 'beforeSend' : function(xhr) {
             //     var bytes = Crypto.charenc.Binary.stringToBytes(username + ":" + password);
@@ -14,8 +14,8 @@ PM.ajax_post = function(suburl, jsondata, callback, username, password) {
         });
 };
 
-PM.ajax_get = function(suburl, callback) {
-    $.ajax({url: IMPACT.pmws_url + suburl,
+PM.ajax_get = function(url, callback) {
+    $.ajax({url: url,
             type: 'GET',
             success : callback,
             dataType : 'json'
