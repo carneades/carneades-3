@@ -5,6 +5,7 @@
    (:use clojure.data.json
          clojure.pprint
          compojure.core
+         carneades.engine.policy
          carneades.engine.unify
          carneades.engine.statement
          carneades.engine.argument
@@ -515,7 +516,10 @@
                        []
                        responses))))))
       
-  ;; TO DO: command for retreiving the language of the theory
+  (GET "/policies" []
+       (json-response (load-theory default-policies-file
+                                   (symbol default-policies-namespace)
+                                   (symbol default-policies-name))))
       
        
   ;; Other 
