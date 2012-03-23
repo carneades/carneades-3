@@ -1,5 +1,16 @@
 (ns carneades.engine.policy
-  (:use (carneades.engine statement argument-graph caes argument-evaluation)))
+  (:use (carneades.engine statement scheme argument-graph caes argument-evaluation))
+  (:require [carneades.config.reader :as config]))
+
+(def default-policies-file (config/properties "policies-file"))
+(def default-policies-namespace  (config/properties "policies-namespace"))
+(def default-policies-name  (config/properties "policies-name"))
+
+;; (def default-policies (load-theory default-policies-file
+;;                                    (symbol default-policies-namespace)
+;;                                    (symbol default-policies-name)))
+
+(printf "[policy] file = %s\n[policy] namespace = %s\n[policy] name = %s\n" default-policies-file default-policies-namespace default-policies-name)
 
 (defn get-policies
   [questionid theory]
