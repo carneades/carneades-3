@@ -16,7 +16,7 @@
   (make-scheme                            
    :id 'UrhG-31
    :header (make-metadata :title "§ 31 UrhG de lege lata"
-                          :description {:de "> Einräumung von Nutzungsrechten. (1) Der Urheber kann einem anderen das Recht einräumen, das Werk auf einzelne oder alle Nutzungsarten zu nutzen (Nutzungsrecht) … (3) Das ausschließliche Nutzungsrecht berechtigt den Inhaber, das Werk unter Ausschluss aller anderen Personen auf die ihm erlaubte Art zu nutzen *und Nutzungsrechte einzuräumen* [§ 31 UrhG, Hervorhebung hinzugefügt] …"
+                          :description {:de "> Einräumung von Nutzungsrechten. (1) Der Urheber kann einem anderen das Recht einräumen, das Werk auf einzelne oder alle Nutzungsarten zu nutzen (Nutzungsrecht) ... (3) Das ausschließliche Nutzungsrecht berechtigt den Inhaber, das Werk unter Ausschluss aller anderen Personen auf die ihm erlaubte Art zu nutzen *und Nutzungsrechte einzuräumen* [§ 31 UrhG, Hervorhebung hinzugefügt] ..."
                                         :en "> Licensing copyrights. (1) The author can grant a simple or exclusive license to others to use the work … (3) Exclusive rights to use a work give the licensee the sole right to use the work in the ways stated by the license, *along with the right to grant licenses to third parties* [§ 31 UrhG, emphasis added] …"})
    :conclusion '(may-publish ?P ?W)
    :premises [(make-premise :statement '(person ?P))
@@ -29,7 +29,7 @@
   (make-theory
    :header 
    (make-metadata :title "Copyright in the Knowledge Economy"
-                  :description {:en "TO DO"})
+                  :description {:en "TODO - Here some descriptions of the policies"})
    
    :language
    {'announcement-category (make-individual :symbol 'announcement :text {:en "Announcement" :de "Bekanntmachung"})
@@ -171,6 +171,18 @@ This arguments pro and con the policy proposals for this issue can be browsed in
        [UrhG-31])
 
       (make-section
+       :id 'QXX
+       :header (make-metadata :title "QXX's title"
+                              :description {:de "QXX Beschreibung auf Deutsch"
+                                            :en "QXX Description in English"})
+       :sections
+       [(make-section
+         :id 'QYY
+         :header (make-metadata :title "QYY's title"
+                              :description {:de "QYY Beschreibung auf Deutsch"
+                                            :en "QYY Description in English"}))])
+
+      (make-section
        :id 'Q12-Aktionsbündnis
        :header (make-metadata :title "Orphaned Works Policy Proposed by the Aktionsbündnisses ‟Urheberrecht für Bildung und Wissenschaft”"
                               :description {:en "The German “Action Alliance” on copyright for education and science proposes the following
@@ -178,13 +190,12 @@ policies for handling orphaned works [@Aktionsbündnis, pp. 6-7]."})
 
 
        :schemes
-       [UrhG-31,
+       [UrhG-31
 
         (make-scheme                            
          :id 'AB-52c-1-a
          :header (make-metadata :title "§ 52c (1) (a)"
-                                :description {:de "
-(1) Öffentliche Zugänglichmachung für nicht-gewerbliche und private Zwecke, insbesondere durch Nutzer für Zwecke der Archivierung und für Forschung und Ausbildung ... (a)  Zulässig  ist  die  öffentliche  Zugänglichmachung  von  Werken, deren Urheber oder Rechteinhaber
+                                :description {:de "(1) Öffentliche Zugänglichmachung für nicht-gewerbliche und private Zwecke, insbesondere durch Nutzer für Zwecke der Archivierung und für Forschung und Ausbildung ... (a)  Zulässig  ist  die  öffentliche  Zugänglichmachung  von  Werken, deren Urheber oder Rechteinhaber
 nach einer dokumentierten Standardsuche [alternativ: einer zeitlich auf 30 Tage öffentlichen Bekanntmachung] nicht ermittelt werden können."})
          :conclusion '(may-publish ?P ?W)
          :premises [(make-premise :statement '(person ?P))
@@ -197,8 +208,7 @@ nach einer dokumentierten Standardsuche [alternativ: einer zeitlich auf 30 Tage 
         (make-scheme
          :id 'AB-52c-2-a
          :header (make-metadata :title "§ 52c (2) (a)"
-                                :description {:de "
-(2) Öffentliche Zugänglichmachung für gewerbliche Zwecke ... (a)  Zulässig  ist  die  öffentliche
+                                :description {:de "(2) Öffentliche Zugänglichmachung für gewerbliche Zwecke ... (a)  Zulässig  ist  die  öffentliche
 Zugänglichmachung  von  Werken, deren Urheber oder Rechteinhaber 
 nach einer angemessenen professionellen und dokumentierten Suche und einer öffentlichen 
 Bekanntmachung nicht ermittelt werden können."})
