@@ -11,6 +11,16 @@ String.prototype.format = function() {
   });
 };
 
+// add a cformat method to all string
+// place holders are of the form %s
+String.prototype.cformat = function() {
+    var args = arguments;
+    var i = 0; 
+    return this.replace(/(%s)/g, function() {
+                            return args[i++];
+                        });
+};
+
 // // replaces the object properties names with minus (-) to properties names with underscore
 Object.defineProperty(Object.prototype, "normalize", 
                       { 
