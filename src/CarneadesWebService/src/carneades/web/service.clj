@@ -5,15 +5,11 @@
    (:use clojure.data.json
          clojure.pprint
          compojure.core
-         carneades.engine.policy
-         carneades.engine.unify
-         carneades.engine.statement
-         carneades.engine.argument
-         carneades.engine.scheme
-         carneades.engine.dublin-core
+         (carneades.engine uuid policy unify statement argument scheme dublin-core)
          carneades.database.db
          carneades.database.admin
          carneades.database.export
+         carneades.database.import
          carneades.xml.caf.export
          carneades.web.liverpool-schemes
          ring.util.codec)
@@ -515,13 +511,34 @@
                          (conj l (create-argument (:argument r))))
                        []
                        responses))))))
+
+  ;; Policies
       
   (GET "/policies" []
        (json-response (load-theory default-policies-file
                                    (symbol default-policies-namespace)
                                    (symbol default-policies-name))))
-      
-       
+
+  (GET "/evaluate-policy/:db/:qid/:policyid" [db qid policyid]
+       (let [dbconn (make-database-connection db "guest" "")]
+         (with-db dbconn
+           (let [ag (export-to-argument-graph dbconn)
+                 theory (load-theory default-policies-file
+                                   (symbol default-policies-namespace)
+                                   (symbol default-policies-name))
+                 ag (evaluate-policy (symbol qid) (symbol policyid) theory ag)
+                 root "root"
+                 passwd "pw1"
+                 dbname (str "policymodellingtool-" (make-uuid))
+                 dbconn2 (make-database-connection dbname root passwd)
+                 metadata (map map->metadata (list-metadata))]
+             (create-argument-database dbname root passwd (first metadata))
+             (import-from-argument-graph dbconn2 ag false)
+             (with-db dbconn2
+               (doseq [m (rest metadata)]
+                 (create-metadata m)))
+             (json-response {:db dbname})))))
+
   ;; Other 
       
   (GET "/" [] 
@@ -531,7 +548,7 @@
   (route/resources "/")
   (route/not-found "Page not found.")
 
-  ) 
+  )
 
 (def carneades-web-service
   (handler/site carneades-web-service-routes))
