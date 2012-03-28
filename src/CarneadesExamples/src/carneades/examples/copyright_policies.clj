@@ -183,7 +183,7 @@ This arguments pro and con the policy proposals for this issue can be browsed in
                                             :en "QYY Description in English"}))])
 
       (make-section
-       :id 'Q12-Aktionsbündnis
+       :id 'Q12-Aktionsbundnis
        :header (make-metadata :title "Orphaned Works Policy Proposed by the Aktionsbündnisses ‟Urheberrecht für Bildung und Wissenschaft”"
                               :description {:en "The German “Action Alliance” on copyright for education and science proposes the following
 policies for handling orphaned works [@Aktionsbündnis, pp. 6-7]."})
