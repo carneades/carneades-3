@@ -21,13 +21,13 @@
   [ag]
  (let [dbname (str "policymodellingtool-" (make-uuid))
         ;; TODO: changes the pass
-        root "root"
-        passwd "pw1"
-        db (db/make-database-connection dbname root passwd)]
+       root "root"
+       passwd "pw1"
+       db (db/make-database-connection dbname root passwd)]
     (prn "dbname =" dbname)
     (db/create-argument-database dbname root passwd (make-metadata))
-     (import-from-argument-graph db ag true)
-     dbname))
+    (import-from-argument-graph db ag true)
+    dbname))
 
 (defn load-ag
   [dbname]

@@ -14,7 +14,6 @@ PM.display_policies = function(sectionid) {
                     policies.description_text = policies.header.description[IMPACT.lang];
                     policies.policies_text = PM.policies_text(policies.language, policies.sections, 2,
                                                              function(policyid) {
-                                                                 console.log(policyid);
                                                                  ids.push(policyid);
                                                              });
                     
@@ -36,11 +35,14 @@ PM.display_policies = function(sectionid) {
 };
 
 PM.on_select_policy = function(id) {
-    PM.ajax_post(IMPACT.evaluation_url, {'evaluate': {policy: id}}, PM.on_evaluated_policy);
+    console.log('db before evaluate: ' + IMPACT.db);
+    PM.ajax_get(IMPACT.impactws_url + '/evaluate-policy/{0}/{1}/{2}'.format(IMPACT.db, IMPACT.question, id), 
+                 PM.on_evaluated_policy);
 };
 
 PM.on_evaluated_policy = function(data) {
     IMPACT.db = data.db;
+    console.log('db after evaluate: ' + IMPACT.db);
     PM.display_arguments();
 };
 
