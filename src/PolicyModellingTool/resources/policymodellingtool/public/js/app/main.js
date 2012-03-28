@@ -1,6 +1,7 @@
 // This object contains the global variables for the app
 var IMPACT = {
     db: "",
+    question: "Q12",
     lang: "en",
     impactws_url: "/impactws",
     argumentbrowser_url: "/argumentbrowser",
