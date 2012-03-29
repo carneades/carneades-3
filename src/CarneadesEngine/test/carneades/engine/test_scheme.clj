@@ -3,12 +3,8 @@
 
 (ns carneades.engine.test-scheme
   (:use clojure.test
-        carneades.engine.shell
-        carneades.engine.argument
-        carneades.engine.scheme
-        carneades.engine.caes
-        carneades.engine.dublin-core
-        carneades.engine.argument-evaluation
+        (carneades.engine argument argument-graph shell argument scheme caes
+                          dublin-core argument-evaluation policy)
         carneades.maps.lacij))
 
 (def theory1 
@@ -225,6 +221,20 @@
                        (parent Jack Elsie)),
                query '(ancestor ?x ?y)]
            (is (in? (ag facts query) '(ancestor Tom Elsie)))))
+
+(deftest test-argumentmissing
+  (let [copyright-theory (load-theory default-policies-file
+                                      (symbol default-policies-namespace)
+                                      (symbol default-policies-name))
+        ag (make-argument-graph)
+        ag (accept ag '((announcement) (search-type standard) (type-of-use p w commercial) (work w) (person p)
+                        (valid UrhG-31)))
+        engine (make-engine ag 50 #{} (list (generate-arguments-from-theory copyright-theory)))
+        query '(may-publish ?Person ?Work)
+        ag (argue engine query)
+        ag (evaluate carneades-evaluator ag)]
+    ;; (export ag "/tmp/argumentmissing.svg")
+    (is (= 2 (count (arguments ag))))))
 
 ; (run-tests)
 
