@@ -10,8 +10,9 @@
         carneades.engine.argument-evaluation))
 
 (defrecord ArgumentationFramework
-    [arguments     ; symbol -> argument-tree map, where the symbols are argument-tree URNs
-     defeats])     ; symbol -> set of symbols, where the symbols are argument-tree URNs
+    [arguments     ; (symbol -> argument-tree) map, where the symbols are argument-tree URNs
+     attacks])     ; set of pairs of strings, [URN1 URN2], where the strings are the URNs of arguments and
+                   ; the argument with the id URN1 attacks the argument with the id URN2
 
 (defrecord ArgumentTree
     [id            ; URN of a statement node, if there are no subtrees, otherwise of an argument node
@@ -39,10 +40,6 @@
   {:pre [(argument-tree? arg)]}
   
   
-          
-
-
-
 (defn supports
   "argument-graph argument-node -> set of URN symbols
    Returns the set of ids of all the argument nodes supporting an argument node,
