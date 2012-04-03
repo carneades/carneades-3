@@ -2,7 +2,7 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns 
-  ^{:doc "An implementation of the argument evaluation protocol using the 
+    ^{:doc "An implementation of the argument evaluation protocol using the 
           semantics of Henry Prakken's ASPIC+ system.  See:
           
           Prakken, Henry. An abstract framework for argumentation with structured arguments. 
@@ -32,8 +32,7 @@
                  ; the argument with the id URN1 defeats the argument with the id URN2
 
 (defrecord ArgumentTree
-  [subargs       ; set of argument node ids, for the proper subarguments of the argument, 
-                 ; not including the argument itself.
+  [subargs       ; set of argument node ids, for the subarguments of the argument, including the argument itself.
    assumptions]) ; set of statement node ids
   
 (defn- make-argument-tree
@@ -51,9 +50,10 @@
 (defn- subarguments
   "argument-graph argument-node argument-tree-map -> {:args :map}
    Returns an {:args :map} map, were :args is a set of argument node ids of the 
-   proper subarguments of the argument node and :map is the input argument-tree-map
+   subarguments of the argument node and :map is the input argument-tree-map
    extended with the argument-trees of these subarguments.
-   An argument a2 is a proper subargument of an argument a1 if 
+   An argument a2 is a subargument of an argument a1 if
+   0. a1 = a2.  
    1. a2 is an argument pro a positive premise of a1, 
    2. a2 is an argument con a negative premise of a1, or, 
    3. recursively, a2 is proper subargument of a proper subargument of a1.
@@ -80,7 +80,7 @@
                     
                     :else  ; negative premise
                     (reduce f m1 (map g (:con sn))))))
-          {:args #{} :map atm1}
+          {:args #{(:id an)} :map atm1}
           (:premises an)))
 
 (defn- direct-assumptions 
@@ -127,11 +127,47 @@
 
 (defn- undercuts
   "urn urn argument-graph argument-tree-map -> boolean
-   Returns true if the argument with id1 undercuts the argument with id2"
+   Returns true if the argument with id1 undercuts the argument with id2."
   [id1 id2 ag atm]
-  ; START HERE
-  )
-   
+  (let [an1 (get (:argument-nodes ag) id1),
+        c (:atom (get (:statement-nodes ag) (:conclusion an1)))]
+    (and (= (literal-predicate c) 'undercut)
+         (some (fn [subarg] (= c `(~'undercut ~subarg)))
+               (:subargs (get atm id2))))))
+
+(defn- weight
+  "urn argument-graph argument-tree-map -> number
+   Returns the minimum weight of all the subarguments of the
+   the argument with the given id, following the weakest link
+   principle."
+  [id ag atm]
+  (let [subargs (:subargs (get atm id)),
+        f (fn [subarg] (get (:argument-nodes ag) subarg))]
+    (apply min (map :weight (map f subargs)))))
+
+(defn- successfully-rebuts
+  "urn urn argument-graph argument-tree-map -> boolean
+   Returns true if the argument with id1 successfully rebuts the argument with id2."
+  [id1 id2 ag atm]
+  (let [an1 (get (:argument-nodes ag) id1),
+        c1 (:atom (get (:statement-nodes ag) (:conclusion an1)))]
+    (some (fn [subarg]
+            (let [an2 (get (:argument-nodes ag) subarg),
+                  c2 (:atom (get (:statement-nodes ag) (:conclusion an2)))]
+              (and (= c1 (literal-complement c2))                  ; an1 rebuts subarg an2, and
+                   (>= (weight id1 ag atm) (weight id2 ag atm))))) ; an1 is preferred to an2
+          (:subargs (get atm id2)))))
+
+(defn- undermines
+  "urn urn argument-graph argument-tree-map -> boolean
+   Returns true if the argument with id1 undermines an assumption of the
+   argument with id2."
+  [id1 id2 ag atm]
+  (let [an1 (get (:argument-nodes ag) id1),
+        c (:atom (get (:statement-nodes ag) (:conclusion an1)))]
+    (some (fn [assumption]
+            (= c (literal-complement assumption)))
+          (:assumptions (get atm id2)))))
 
 (defn- defeaters
   "argument-node-id argument-graph argument-tree map -> set of argument ids
@@ -146,7 +182,7 @@
           #{}
           (keys (:argument-nodes ag))))
 
-(defn make-argumentation-framework
+(defn- make-argumentation-framework
   "argument-graph -> argumentation-framework"
   [ag]
   (let [args (keys (:argument-nodes ag)),
@@ -158,6 +194,17 @@
     (ArgumentationFramework. args defeats)))
 
 
+(defn- evaluate-argument-graph
+  "argument-graph -> argument-graph"
+  [ag]
+  (let [af (make-argumentation-framework ag)]
+    
+ 
+
+(def aspic-evaluator 
+  (reify ArgumentEvaluator
+    (evaluate [this ag] (evaluate-argument-graph (reset-node-values ag)))
+    (label [this node] (node-standard-label node))))
 
 
 
