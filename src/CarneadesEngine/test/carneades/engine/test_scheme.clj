@@ -3,8 +3,8 @@
 
 (ns carneades.engine.test-scheme
   (:use clojure.test
-        (carneades.engine argument argument-graph shell argument scheme caes
-                          dublin-core argument-evaluation policy)
+        (carneades.engine argument argument-graph shell argument scheme caes 
+                          caes2 dublin-core argument-evaluation policy)
         carneades.maps.lacij))
 
 (def theory1 
@@ -116,7 +116,7 @@
   "(seq-of literal) literal -> argument-graph
    construct and evaluate an argument graph"
   (argue (make-engine max-goals facts generators)
-         carneades-evaluator
+         caes2-evaluator ; carneades-evaluator
          query))
                                    
 (deftest test-engine-facts
