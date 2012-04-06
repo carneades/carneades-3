@@ -3,7 +3,7 @@
 
 (ns 
     ^{:doc "A version of Carneades Argument Evaluation Structures which can handle cycles, via
-            a mapping to Dung Argumentation Frameworks."}
+          a mapping to Dung Argumentation Frameworks."}
   
   carneades.engine.caes2
   
@@ -11,32 +11,34 @@
         clojure.set
         carneades.engine.statement
         carneades.engine.argument
-        carnaades.engine.dung
+        carneades.engine.dung
         carneades.engine.argument-graph
         carneades.engine.argument-evaluation))
 
 (defn- applicable?
-  "argument-graph argument-node-id -> boolean
+  "argument-graph argument-node -> boolean
    Returns true if the premises of the argument have all been accepted or assumed true."
-  [ag arg]
-  (let [an (get (:argument-nodes ag) arg),
-        hold (fn [pr]
+  [ag an]
+  (let [hold (fn [pr]
                (let [sn (get (:statement-nodes ag) (:statement pr))]
-                 (or (and (:positive pr) (>= (:weight sn) 0.75))
-                     (and (not (:positive pr) (<= (:weight sn) 0.25))))))]
+                 (or (and (:positive pr) (:weight sn) (>= (:weight sn) 0.75))
+	           (and (not (:positive pr)) (:weight sn) (<= (:weight sn) 0.25)))))]
     (every? hold (:premises an))))
 
 (defn- undercuts?
   "argument-graph argument-node-id argument-node-id -> boolean
-   Returns true if arg1 undercuts arg2."
+   Returns true if arg1 undercuts arg2.
+   Strict arguments cannot be undercut."
   [ag arg1 arg2]
   (let [an1 (get (:argument-nodes ag) arg1),
-        c (:atom (get (:statement-nodes ag) (:conclusion an1)))]
-    (= c `(~'undercut ~arg2))))
+        an2 (get (:argument-nodes ag) arg2),
+        c1 (:atom (get (:statement-nodes ag) (:conclusion an1)))]
+    (and (not (:strict an2)) (= c1 `(~'undercut ~arg2)))))
 
 (defn- rebuts?
   "argument-graph argument-node-id argument-node-id -> boolean
-   Returns true if arg1 rebuts arg2."
+   Returns true if arg1 rebuts arg2.
+   Strict arguments cannot be rebutted."
   [ag arg1 arg2]
   (let [an1 (get (:argument-nodes ag) arg1),
         an2 (get (:argument-nodes ag) arg2),
@@ -44,20 +46,27 @@
         alpha 0.5
         beta 0.3
         gamma 0.2]
-    (and (= (:conclusion an1) (:conclusion an2))
+    (and (not (:strict an2))
+         (= (:conclusion an1) (:conclusion an2))
          (not (= (:pro an1)
                  (:pro an2))) ; one argument is pro and the other con
          (case (:standard sn)
 	       :dv true
-	       :pe (> (:weight an1) (:weight an2))
-	       :cce (and (> (:weight an1) (:weight an2))
-			 (> (:weight an1) alpha)
-			 (> (- (:weight an1) (:weight an2))
+	       :pe (and (:weight an1) 
+			(:weight an2)
+			(>= (:weight an1) (:weight an2)))
+	       :cce (and (:weight an1)
+			 (:weight an2)
+			 (>= (:weight an1) (:weight an2))
+			 (>= (:weight an1) alpha)
+			 (>= (- (:weight an1) (:weight an2))
 			    beta))
-	       :brd (and (> (:weight an1) (:weight an2))
-			 (> (:weight an1) alpha)
-			 (> (- (:weight an1) (:weight an2)) beta)
-			 (< (:weight an2) gamma))))))
+	       :brd (and (:weight an1)
+			 (:weight an2)
+			 (>= (:weight an1) (:weight an2))
+			 (>= (:weight an1) alpha)
+			 (>= (- (:weight an1) (:weight an2)) beta)
+			 (<= (:weight an2) gamma))))))
 
 (defn- undermines?
   "argument-graph argument-node-id argument-node-id -> boolean
@@ -71,10 +80,12 @@
               (and (= (:conclusion an1) (:statement pr))
                    (or (and (:pro an1)
                             (not (:positive pr))
+                            (:weight sn)
                             (> (:weight sn) 0) 
                             (<= (:weight sn) 0.25))
                        (and (not (:pro an1))
                             (:positive pr)
+                            (:weight sn)
                             (< (:weight sn) 1.0)
                             (>= (:weight sn) 0.75))))))
           (:premises an2))))
@@ -92,44 +103,62 @@
           #{}
 	  args))
 
-(defn- argument-graph-to-framework
+(defn argument-graph-to-framework
   "argument-graph -> argumentation-framework
    Constructs a Dung argumentation framework from an argument graph. 
    Only applicable arguments are included in the framework."
   [ag]
-  (let [args (filter (fn [arg] (applicable? ag arg)) (keys (:argument-nodes ag))),
+  (let [args (map :id (filter (fn [an] (applicable? ag an)) 
+                              (vals (:argument-nodes ag)))),
         attacks (reduce (fn [m arg] (assoc m arg (attackers ag arg args)))
 			{}
 			args)]
     (make-argumentation-framework args attacks)))
 
+(defn- evaluate-facts
+  "argument-graph -> argument-graph
+   Sets the value of accepted and rejected statements to 1.0 and 0.0 respectively."
+  [ag]
+  (reduce (fn [ag2 sn]
+            (update-statement-node 
+              ag2
+              sn 
+              :value 
+              (when (:weight sn) 
+                (case (:weight sn)
+                  1.0 1.0,
+                  0.0 0.0,
+                  nil)))) 
+          ag
+          (vals (:statement-nodes ag))))
+
 (defn- evaluate-argument-graph
   "argument-graph -> argument-graph"
   [ag]
   (let [af (argument-graph-to-framework ag)
-	l (grounded-labelling af)]
+         l (grounded-labelling af)]
     (reduce (fn [ag2 arg-id]
-	      (let [an (get (:argument-nodes ag) arg-id)  
-		    sn (get (:statement-nodes ag) (:conclusion an))]
+	      (let [an (get (:argument-nodes ag2) arg-id)  
+		  sn (get (:statement-nodes ag2) (:conclusion an))]
 		(-> ag2
 		    (update-argument-node an :value 
-					  (case (label l arg-id)
+				         (case (get l arg-id)
 						:in 1.0
 						:out 0.0
 						:else 0.5))
 		    (update-statement-node
 		     sn
 		     :value
-		     (if (= :in (label l arg-id))
+		     (if (= :in (get l arg-id))
 		       (if (:pro an) 1.0 0.0)
 		       (:value sn)))))) ; otherwise no change     
-	    ag
+	    (evaluate-facts ag)
 	    (keys l))))
 
 (def caes2-evaluator 
      (reify ArgumentEvaluator
-	    (evaluate [this ag] (evaluate-argument-graph (reset-node-values ag)))
-	    (label [this node] (node-standard-label node))))
+    	    (evaluate [this ag] (evaluate-argument-graph (reset-node-values ag)))
+    	    (label [this node] (node-standard-label node))))
 
 
 
