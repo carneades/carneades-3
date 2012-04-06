@@ -55,6 +55,14 @@
         (in-node? sn)
         (out-node? sn)))))
 
+(defn in-statements
+  "argument-graph -> set of statement ids"
+  [ag]
+  (set (map :id (filter (fn [sn] 
+                       (and (:value sn)
+                            (= 1.0 (:value sn)))) 
+                     (vals (:statement-nodes ag))))))
+
 (defn out? 
   "argument-graph literal -> boolean"
   [ag query]
@@ -65,6 +73,14 @@
         (out-node? sn)
         (in-node? sn)))))
 
+(defn out-statements
+  "argument-graph -> set of statement ids"
+  [ag]
+  (set (map :id (filter (fn [sn]
+                       (and (:value sn)
+                            (= 0.0 (:value sn))))
+                     (vals (:statement-nodes ag))))))
+
 (defn undecided? 
   "argument-graph literal -> boolean"
   [ag query]
@@ -72,5 +88,12 @@
     (if (nil? sn)
       false
       (undecided-node? sn))))
+
+(defn undecided-statements
+  "argument-graph -> set of statement ids"
+  [ag]
+  (set (map :id (filter (fn [sn]
+                       (not (contains? #{1.0 0.0} (:value sn)))) 
+                     (vals (:statement-nodes ag))))))
 
 

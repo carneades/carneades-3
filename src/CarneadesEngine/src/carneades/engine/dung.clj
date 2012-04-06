@@ -19,18 +19,10 @@
 
 (defn label? [x] (contains? #{:in :out :undecided} x))
 
-(defn label 
-  "map abstract-argument -> label"
-  [labelling arg]
-  (let [l (get labelling arg)]
-    (if (nil? l)
-      :undecided
-      l)))
-
 (defn grounded-labelling 
   "argumentation-framework -> map from argument ids to labels"
   [af]
-  (letfn [; label an argument :in if all attackers of the argumetn are labelled :out
+  (letfn [; label an argument :in if all attackers of the argument are labelled :out
 	  (in [l] (reduce (fn [l2 arg] 
 			    (if (nil? (get l2 arg))
 			      (if (every? (fn [attacker] (= (get l2 attacker) :out))
