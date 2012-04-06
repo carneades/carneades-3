@@ -25,7 +25,7 @@
   (evaluate [this ag] "evaluator argument-graph -> argument-graph")
   (label [this node] "evaluator node -> symbol"))
 
-(defn standard-label? [sym] (contains? #{:in, :out, :undecided} sym))
+(defn standard-label? [key] (contains? #{:in, :out, :undecided} key))
 
 (defn in-node? 
   "A statement or argument node is in iff its value is 1.0."
