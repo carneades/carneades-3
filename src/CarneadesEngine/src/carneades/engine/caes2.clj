@@ -11,13 +11,9 @@
         clojure.set
         carneades.engine.statement
         carneades.engine.argument
+        carnaades.engine.dung
         carneades.engine.argument-graph
         carneades.engine.argument-evaluation))
-
-(defrecord ArgumentationFramework
-  [arguments     ; set of strings, where each string is the URN of an argument node
-   attacks])     ; set of pairs of strings, [URN1 URN2], where the strings are the URNs of arguments and
-                 ; the argument with the id URN1 attacks the argument with the id URN2
 
 (defn- applicable?
   "argument-graph argument-node-id -> boolean
@@ -28,7 +24,7 @@
                (let [sn (get (:statement-nodes ag) (:statement pr))]
                  (or (and (:positive pr) (>= (:weight sn) 0.75))
                      (and (not (:positive pr) (<= (:weight sn) 0.25))))))]
-    (all hold (:premises an))))
+    (every? hold (:premises an))))
 
 (defn- undercuts?
   "argument-graph argument-node-id argument-node-id -> boolean
@@ -52,16 +48,16 @@
          (not (= (:pro an1)
                  (:pro an2))) ; one argument is pro and the other con
          (case (:standard sn)
-           :dv true
-           :pe (> (:weight an1) (:weight an2))
-           :cce (and (> (:weight an1) (:weight an2))
-                     (> (:weight an1) alpha)
-                     (> (- (:weight an1) (:weight an2))
-                        beta))
-           :brd (and (> (:weight an1) (:weight an2))
-                     (> (:weight an1) alpha)
-                     (> (- (:weight an1) (:weight an2)) beta)
-                     (< (:weight an2) gamma))))))
+	       :dv true
+	       :pe (> (:weight an1) (:weight an2))
+	       :cce (and (> (:weight an1) (:weight an2))
+			 (> (:weight an1) alpha)
+			 (> (- (:weight an1) (:weight an2))
+			    beta))
+	       :brd (and (> (:weight an1) (:weight an2))
+			 (> (:weight an1) alpha)
+			 (> (- (:weight an1) (:weight an2)) beta)
+			 (< (:weight an2) gamma))))))
 
 (defn- undermines?
   "argument-graph argument-node-id argument-node-id -> boolean
@@ -84,9 +80,9 @@
           (:premises an2))))
 
 (defn- attackers
-  "argument-node-id argument-graph -> set of argument ids
-   Returns the ids of the applicable arguments which attack the input argument."
-  [ag arg1]
+  "argument-graph argument-node-id (seq of argument-id) -> set of argument ids
+   Returns the subset of a set of arguments which attack a given argument."
+  [ag arg1 args]
   (reduce (fn [s arg2] 
             (if (or (undercuts? ag arg2 arg1)
                     (rebuts? ag arg2 arg1)
@@ -94,31 +90,48 @@
               (conj s arg2)
               s))
           #{}
-          (filter (fn [arg] (applicable? ag arg))
-                  (keys (:argument-nodes ag)))))
+	  args))
 
-(defn- make-argumentation-framework
-  "argument-graph -> argumentation-framework"
+(defn- argument-graph-to-framework
+  "argument-graph -> argumentation-framework
+   Constructs a Dung argumentation framework from an argument graph. 
+   Only applicable arguments are included in the framework."
   [ag]
-  (let [args (keys (:argument-nodes ag)),
-        attacks (apply union (map (fn [arg1]                                       ] 
-                                    (set (map (fn [arg2] [arg2 arg1])
-                                         (attackers ag arg1)))) 
-                                  args))]
-    (ArgumentationFramework. args attacks)))
+  (let [args (filter (fn [arg] (applicable? ag arg)) (keys (:argument-nodes ag))),
+        attacks (reduce (fn [m arg] (assoc m arg (attackers ag arg args)))
+			{}
+			args)]
+    (make-argumentation-framework args attacks)))
 
 (defn- evaluate-argument-graph
   "argument-graph -> argument-graph"
   [ag]
-  (let [af (make-argumentation-framework ag)]
-    
+  (let [af (argument-graph-to-framework ag)
+	l (grounded-labelling af)]
+    (reduce (fn [ag2 arg-id]
+	      (let [an (get (:argument-nodes ag) arg-id)  
+		    sn (get (:statement-nodes ag) (:conclusion an))]
+		(-> ag2
+		    (update-argument-node an :value 
+					  (case (label l arg-id)
+						:in 1.0
+						:out 0.0
+						:else 0.5))
+		    (update-statement-node
+		     sn
+		     :value
+		     (if (= :in (label l arg-id))
+		       (if (:pro an) 1.0 0.0)
+		       (:value sn)))))) ; otherwise no change     
+	    ag
+	    (keys l))))
+
 (def caes2-evaluator 
-  (reify ArgumentEvaluator
-    (evaluate [this ag] (evaluate-argument-graph (reset-node-values ag)))
-    (label [this node] (node-standard-label node))))
+     (reify ArgumentEvaluator
+	    (evaluate [this ag] (evaluate-argument-graph (reset-node-values ag)))
+	    (label [this node] (node-standard-label node))))
 
 
 
 
 
-  
