@@ -11,6 +11,7 @@
         carneades.engine.argument-construction
         carneades.engine.argument-evaluation
         carneades.engine.caes
+        carneades.engine.caes2
         carneades.engine.shell
         carneades.maps.lacij))
 
@@ -36,30 +37,29 @@
 (def st (make-statement :text {:en "Suzy is riding on the tandem."}))
 (def bottom (make-statement :text {:en "The claims are inconsistent."}))
 
-
-(def A1 (make-argument :conclusion bottom :premises [(pm jt), (pm mt), (pm st)]))   
 (def A5 (make-argument :conclusion jt :premises [(pm jw)]))
 (def A6 (make-argument :conclusion mt :premises [(pm mw)]))
 (def A7 (make-argument :conclusion st :premises [(pm sw)]))
+(def A8 (make-argument :strict true :conclusion (neg jt) :premises [(pm mt) (pm st)]))
+(def A9 (make-argument :strict true :conclusion (neg mt) :premises [(pm jt) (pm st)]))
+(def A10 (make-argument :strict true :conclusion (neg st) :premises [(pm mt) (pm jt)]))
 
 (def tandem-graph 
   (-> (make-argument-graph)
-      (enter-arguments [A1, A5, A6, A7])
-      (assume [jw, mw, sw])))
+      (enter-arguments [A5, A6, A7, A8, A9, A10])
+      (assume [jt, mt, st])
+      (accept [jw, mw, sw])))
 
-; Using the CAES evaluator, bottom is in. Consistency
-; can be restored by using abduction to find minimal
-; changes to the argument graph which make bottom out.
 (deftest test-tandem-carneades
-   (is (in? (evaluate carneades-evaluator tandem-graph) (literal-atom bottom))))
-
+   (is (= #{(:id jw) (:id mw) (:id sw)}
+          (in-statements (evaluate caes2-evaluator tandem-graph)))))
 
 ; The following examples are from:
 ; Prakken, H. An abstract framework for argumentation with structured arguments. 
 ; Argument & Computation 1, (2010), 93-124.
 
 ; The bachelor example, ibid., page 9
-; This example illusrates both the distinction between strict 
+; This example illustrates both the distinction between strict 
 ; and defeasible rules and the problem of handling one kind of cycle
 ; in argument graphs.
 
@@ -75,6 +75,7 @@
 (def bachelor-graph
   (-> (make-argument-graph)
       (enter-arguments [A2, A1, A4, A3])
+      (assume [bachelor, married])  ; note: inconsistent assumptions
       (accept [wears-ring, party-animal])))
 
 ; The AIJ version of Carneades couldn't handle this example,
@@ -84,15 +85,9 @@
 ; See pp 17-18 of ibid for a discussion of this issue.
 
 (deftest test-bachelor-carneades
-   (let [ag (evaluate carneades-evaluator bachelor-graph)]
+   (let [ag (evaluate caes2-evaluator bachelor-graph)]
       (is (and (undecided? ag (literal-atom bachelor))
                (undecided? ag (literal-atom married))))))
-
-; TO DO: maybe bachelor and married should both be undecided, 
-; since out(P) should imply in(?P) and ?bachelor and ?married
-; intuitively should not both be in. Perhaps the problem
-; is underspecified, since Carneades is not strong enough to
-; derive an inconsistency from ?bachelor and ?married. 
 
 ; The Frisian example, ibid., page 11
 
@@ -103,13 +98,19 @@
 (def A5 (make-argument :strict true :conclusion dutch :premises [(pm frisian)]))
 (def A6 (make-argument :conclusion tall :premises [(pm dutch)]))
 
+; A5 is irrelevant in this example, if the premise of A6, that the person is Dutch,
+; is assumed. The issue is whether all premises of arguments should be assumed true
+; until questioned or attacked.  A5 provides a supporting argument, but unnecessarily
+; since the premise hasn't been questioned.
+
 (def frisian-graph 
   (-> (make-argument-graph)
       (enter-arguments [A5, A6])
+      (assume [dutch])
       (accept [frisian])))
 
 (deftest test-frisian-carneades
-   (is (in? (evaluate carneades-evaluator frisian-graph) 
+   (is (in? (evaluate caes2-evaluator frisian-graph) 
             (literal-atom tall))))
 
 ;; The next example shows how arguments can be constructed by instantiating schemes.
@@ -153,7 +154,7 @@
      '?E 'Joe
      '?D 'dentistry}))            
 
-(def max-goals 100)
+(def max-goals 10)
 
 (def generators 
   (list (generate-arguments-from-scheme expert-witness1)))
@@ -168,9 +169,8 @@
   (construct-arguments query max-goals case1-facts generators))
 
 (deftest test-expert-witness-carneades
-   (is (in? (evaluate carneades-evaluator expert-witness-graph) 
+   (is (in? (evaluate caes2-evaluator expert-witness-graph) 
             '(has-cavities Susan))))
-
 
 ; The library example, ibid., page 17
 
@@ -179,13 +179,14 @@
 (def misbehaves (make-statement :text {:en "The person is misbehaving."}))
 (def access-denied (make-statement :text {:en "The person is denied access to the library."}))
 
-(def r1 (make-argument :weight 0.5 :conclusion misbehaves :premises [(pm snores)]))
-(def r2 (make-argument :weight 0.7 :conclusion access-denied :premises [(pm misbehaves)]))
-(def r3 (make-argument :weight 0.6 :pro false :conclusion access-denied :premises [(pm professor)]))
+(def A1 (make-argument :weight 0.5 :conclusion misbehaves :premises [(pm snores)]))
+(def A2 (make-argument :weight 0.7 :conclusion access-denied :premises [(pm misbehaves)]))
+(def A3 (make-argument :weight 0.6 :conclusion (neg access-denied) :premises [(pm professor)]))
 
 (def library-graph 
   (-> (make-argument-graph)
-      (enter-arguments [r1, r2, r3])
+      (enter-arguments [A1, A2, A3])
+      (assume [misbehaves])
       (accept [snores, professor])))
 
 ; Carneades applies the "last link" principle to order arguments, as can
@@ -216,15 +217,12 @@
 (def self-defeat-graph 
   (-> (make-argument-graph)
       (enter-arguments [A7,A8])
+      (assume [Q])
       (accept [P])))
  
-(deftest test-self-defeat-credulous
-  (is (in? (evaluate carneades-evaluator self-defeat-graph) 
-           (literal-atom Q))))
-
-(deftest test-self-defeat-skeptical
-  (is (undecided? (evaluate carneades-evaluator self-defeat-graph) 
-                  (literal-atom Q))))
+(deftest test-self-defeat
+         (is (undecided? (evaluate caes2-evaluator self-defeat-graph) 
+                         (literal-atom Q))))
 
 ;; TO DO: remaining examples in Henry's article, starting with the example
 ;; or parallel self-defeat on page 18.
@@ -241,34 +239,45 @@
    :id 'greece-arg
    :conclusion Greece))
 
-(def greece-undercutter
+;(def greece-undercutter
+;  (make-argument
+;   :id 'greece-undercutter
+;   :conclusion '(undercut greece-arg)
+;   :premises [(pm Italy)]))
+
+(def greece-rebuttal
   (make-argument
-   :id 'greece-undercutter
-   :conclusion '(undercut greece-arg)
-   :premises [(pm Italy)]))
+    :id 'greece-rebuttal
+    :strict true
+    :conclusion (neg Greece)
+    :premises [(pm Italy)]))
 
 (def italy-arg
   (make-argument
    :id 'italy-arg
    :conclusion Italy))
 
-(def italy-undercutter
+;(def italy-undercutter
+;  (make-argument
+;   :id 'italy-undercutter
+;   :conclusion '(undercut italy-arg)
+;   :premises [(pm Greece)]))
+
+(def italy-rebuttal
   (make-argument
-   :id 'italy-undercutter
-   :conclusion '(undercut italy-arg)
-   :premises [(pm Greece)]))
+    :id 'italy-rebuttal
+    :strict true
+    :conclusion (neg Italy)
+    :premises [(pm Greece)]))
 
 (def vacation-graph 
   (-> (make-argument-graph)
-      (enter-arguments [greece-arg, greece-undercutter, italy-arg, italy-undercutter])))
+      (assume [Italy, Greece])
+      (enter-arguments [greece-arg, greece-rebuttal, 
+                        italy-arg, italy-rebuttal])))
 
-(deftest test-vacation-credulous
-  (let [g  (evaluate carneades-evaluator vacation-graph)]
-    (and (is (in? g Italy))
-         (is (in? g Greece)))))
-
-(deftest test-vacation-skeptical
-  (let [g  (evaluate carneades-evaluator vacation-graph)]
+(deftest test-vacation
+  (let [g  (evaluate caes2-evaluator vacation-graph)]
     (and (is (undecided? g Italy))
          (is (undecided? g Greece)))))
 
@@ -278,14 +287,12 @@
 (def vacation-graph2 
   (accept vacation-graph [Italy]))
 
-(deftest test-vacation-credulous2
-  (let [g  (evaluate carneades-evaluator vacation-graph2)]
+(deftest test-vacation-2
+  (let [g  (evaluate caes2-evaluator vacation-graph2)]
     (and (is (in? g Italy))
          (is (out? g Greece)))))
 
-(deftest test-vacation-skeptical2
-  (let [g  (evaluate carneades-evaluator vacation-graph2)]
-    (and (is (in? g Italy))
-         (is (out? g Greece)))))
+; (argument-graph-to-framework vacation-graph2)
+
 
 
