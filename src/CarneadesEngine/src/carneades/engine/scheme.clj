@@ -331,7 +331,7 @@
                         (map (fn [p] (if (:positive p)
                                        (:statement p)
                                        (literal-complement (:statement p))))
-                             (:assumptions scheme))
+                                     (:assumptions scheme))
                         (make-argument
                          :id id,
                          :conclusion (:conclusion scheme),

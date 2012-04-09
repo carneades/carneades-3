@@ -63,7 +63,7 @@
                   m)
         ; set the id 
         m3 (assoc m2
-                  :id (if (urn-symbol? (:id m)) 
+                  :id (if (:id m) 
                         (:id m) 
                         (make-urn-symbol)))]
     ; normalize the statment
