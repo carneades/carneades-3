@@ -84,16 +84,20 @@
    :post [(not (nil? %))]}
   ;; (println "compute-statement-value: " (statement-node-atom sn))
   ;; (swank.core/break)
-  (cond  (:value sn) (:value sn)          ; the value has already been computed
-         (and (:weight sn)
-              (>= (:weight sn) 0.75)) 1.0, ; P assumed or accepted
-         (and (:weight sn)
-              (<= (:weight sn) 0.25)) 0.0, ; P assumed false or rejected 
-         :else (let [v (satisfies-proof-standard? ag sn)]
-                 (cond 
-                   (= v true) 1.0,
-                   (= v false) 0.0,
-                   :else 0.5))))
+  (cond  (:value sn) (:value sn)           ; the value has already been computed
+        (and (:weight sn)
+             (= (:weight sn) 1.0)) 1.0, ; P accepted
+        (and (:weight sn)
+             (= (:weight sn) 0.0)) 0.0, ; P rejected 
+        :else (let [v (satisfies-proof-standard? ag sn)]
+                (cond 
+                  (= v true) 1.0,
+                  (= v false) 0.0,
+                  (and (:weight sn)
+                       (>= (:weight sn) 0.75)) 1.0, ; P assumed true
+                  (and (:weight sn)
+                       (<= (:weight sn) 0.0)) 0.25, ; P asssumed false 
+                  :else 0.5))))
         
 (defn- eval-statement-node 
   "cestate statement-node -> cestate
