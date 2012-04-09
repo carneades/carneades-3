@@ -14,11 +14,11 @@
 (defn make-engine
   "argument-graph integer (seq-of literal) (seq-of generator) -> 
    literal -> argument-graph)"
-  ([max-goals assumptions generators]
-    (make-engine (make-argument-graph) max-goals assumptions generators))
-  ([argument-graph max-goals assumptions generators]
+  ([max-goals facts generators]
+    (make-engine (make-argument-graph) max-goals facts generators))
+  ([argument-graph max-goals facts generators]
      (fn [issue]
-       (construct-arguments argument-graph issue max-goals assumptions generators))))
+       (construct-arguments argument-graph issue max-goals facts generators))))
   
 (defn argue
   "engine argument-evaluator literal  -> argument-graph
