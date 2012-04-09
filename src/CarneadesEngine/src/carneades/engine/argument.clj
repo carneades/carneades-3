@@ -57,7 +57,7 @@
     (literal-complement (:statement premise))))
 
 (defrecord Argument
-  [id               ; URN symbol
+  [id               ; symbol
    header           ; nil or dublin core metadata about the argument
    scheme           ; nil or symbol, the URI of the scheme
    strict           ; boolean
