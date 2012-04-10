@@ -10,8 +10,7 @@
         carneades.engine.argument-graph
         carneades.engine.argument-construction
         carneades.engine.argument-evaluation
-        carneades.engine.caes
-        carneades.engine.caes2
+        carneades.engine.caes3
         carneades.engine.shell
         carneades.maps.lacij))
 
@@ -260,7 +259,7 @@
                A3 (make-argument :id 'A3 :conclusion (neg R) :premises [(pm S)])
                
                g (evaluate 
-                   caes-grounded  ; carneades-evaluator 
+                   caes-grounded 
                    (-> (make-argument-graph)
                        (assume [R])
                        (accept [S])
