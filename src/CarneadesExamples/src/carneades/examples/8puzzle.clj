@@ -131,8 +131,8 @@ move is one of :up, :down, :right, or :left."
 (def pr5  
   (struct problem 
           (make-root (struct state 2 8 3 1 6 4 7 0 5))
-    moves
-    goal?))
+          moves
+          goal?))
 
 (defn main []
   (show (search pr0 breadth-first 1000))
