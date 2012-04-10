@@ -51,7 +51,9 @@
   (let [an1 (get (:argument-nodes ag) arg1),
         an2 (get (:argument-nodes ag) arg2),
         c1 (:atom (get (:statement-nodes ag) (:conclusion an1)))]
-    (and (not (:strict an2)) (= c1 `(~'undercut ~arg2)))))
+    (and (not (:strict an2))
+         (:pro an1)
+         (= c1 `(~'undercut ~arg2)))))
 
 (defn- rebuts?
   "argument-graph argument-node-id argument-node-id -> boolean
