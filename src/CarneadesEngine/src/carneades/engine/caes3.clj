@@ -27,15 +27,15 @@
   [s]
   (empty? (:goals s)))
 
-(def- transitions
+(defn- transitions
   "argument-graph -> state -> seq of state"
   [ag]
   (fn [s]
     (if (empty? (:goals s))
       []
-      (let [goal (peek (:goals s))
+      (let [goal (first (:goals s))
             sn (get (:statement-nodes ag) (literal-atom goal))
-            pop-goal (fn [] [(assoc s :goals (pop (:goals s)))])
+            pop-goal (fn [] [(assoc s :goals (rest (:goals s)))])
             assume (fn [literal]
                      (if (contains? (:assumptions s) (literal-complement literal))
                        [] ; inconsistent set of assumptions, dead-end
@@ -49,7 +49,7 @@
               (pop-goal),
 
               (and (:weight sn)
-                   (if (literal-positive? goal)
+                   (if (literal-pos? goal)
                      (>= (:weight sn) 0.75)    ; positive premise is assumable
                      (<= (:weight sn) 0.25)))  ; negative premise is assumable
               (assume goal)
@@ -63,7 +63,7 @@
                                   (assoc s
                                     :arguments (conj (:arguments s) arg)
                                     :goals (concat (map premise-literal (:premises an))  ; depth-first
-                                                   (pop (:goals s))))))))
+                                                   (rest (:goals s))))))))
                       []
                       (if (literal-pos? goal) (:pro sn) (:con sn))))))))              
 
@@ -95,7 +95,7 @@
             (vals (:argument-nodes ag)))))
 
 (defn- undercuts?
-  "argument-graph position-id position-id -> boolean
+  "argument-graph position position -> boolean
    Returns true if position p1 undercuts some subargument of position p2.
    Strict arguments cannot be undercut."
   [ag p1 p2]
@@ -108,7 +108,7 @@
         (:subargs p2)))
 
 (defn- rebuts?
-  "argument-graph position-id position-id -> boolean
+  "argument-graph position position -> boolean
    Returns true if position p1 rebuts position p2.
    Only the last link arguments of the positions are compared.
    Strict arguments cannot be rebutted."
@@ -144,7 +144,7 @@
 			(>= (:weight an1) gamma))))))
 
 (defn- undermines?
-  "argument-graph position-id position-id -> boolean
+  "argument-graph position position -> boolean
    Returns true if position p1 undermines position p2."
   [ag p1 p2]
   (let [an1 (get (:argument-nodes ag) (:argument p1))
@@ -153,10 +153,8 @@
     (some (fn [lit] (= (literal-complement lit) c1))
           (:assumptions p2))))
 
-;; START HERE
-
 (defn- attackers
-  "argument-graph position-id (set-of position-ids) -> set of argument ids
+  "argument-graph position (set-of positions) -> set of positions
    Returns the subset of the positions which attack the given position."
   [ag p1 positions]
   (reduce (fn [s p2] 
@@ -172,12 +170,14 @@
   "argument-graph position-map -> argumentation-framework
    Constructs a Dung argumentation framework from a position map.
    Positions play the role of arguments in the framework."
-  [ag pm]
-  (let [args (map :id (filter (fn [an] (applicable? ag an)) 
-                              (vals (:argument-nodes ag)))),
-        attacks (reduce (fn [m arg] (assoc m arg (attackers ag arg args)))
+  [pm ag]
+  (let [positions (flatten (vals pm)),
+	args (set (map :id positions)),
+	attacks (reduce (fn [m p] 
+			  (assoc m (:id p)
+				 (map :id (attackers ag p positions))))
 			{}
-			args)]
+			positions)]
     (make-argumentation-framework args attacks)))
 
 (defn- initialize-statement-values
@@ -187,42 +187,55 @@
   [ag]
   (reduce (fn [ag2 sn]
             (update-statement-node 
-              	     ag2
-              	     sn 
-              	     :value 
-              	     (when (:weight sn) 
-                      	    (cond 
-                             	      (>= (:weight sn) 0.75) 1.0
-                             	      (<= (:weight sn) 0.25) 0.0
-                             	     :else nil)))) 
+	     ag2
+	     sn 
+	     :value 
+	     (when (:weight sn) 
+	       (cond 
+		(>= (:weight sn) 0.75) 1.0
+		(<= (:weight sn) 0.25) 0.0
+		:else nil)))) 
           ag
           (vals (:statement-nodes ag))))
 
 (defn- evaluate-grounded
   "argument-graph -> argument-graph"
   [ag]
-  (let [af (argument-graph-to-framework ag)
+  (let [pm (position-map ag)
+	af (position-map-to-argumentation-framework pm ag)
         l (grounded-labelling af)]
-    (reduce (fn [ag2 arg-id]
-	      (let [an (get (:argument-nodes ag2) arg-id)  
-		  sn (get (:statement-nodes ag2) (:conclusion an))
-                       update-conclusion (fn [ag sn] 
-                                           ; don't change value of facts
-                                           (cond (= (:weight sn) 0.0)  ag
-                                                 (= (:weight sn) 1.0)  ag
-                                                 (= :in (get l arg-id)) 
-                                                     (update-statement-node ag sn 
-                                                         :value (if (:pro an) 1.0 0.0))
-                                                 :else ag))]
+    (reduce (fn [ag2 an]
+	      (let [sn (get (:statement-nodes ag2) (:conclusion an))
+
+		 arg-value 
+		    (if (some (fn [position] (= (get l position) :in))
+			      (get pm (:id an)))
+		      1.0 
+		      0.0)
+
+		  update-conclusion 
+		    (fn [ag sn] 
+		      ;; don't change value of facts
+		      (cond (= (:weight sn) 0.0)  ag
+			    (= (:weight sn) 1.0)  ag
+			    (= arg-value 1.0) 
+			    (update-statement-node 
+			     ag sn 
+			     :value (cond (and (:pro an)
+					       (not= (:value sn) 0.0)) 
+					  1.0
+
+					  (and (:con an) 
+					       (not= (:value sn) 1.0))
+					  0.0
+					  
+					  :else 0.5))
+			    :else ag))]
 		(-> ag2
-		    (update-argument-node an 
-                            :value (case (get l arg-id)
-			       :in 1.0
-			       :out 0.0
-			       :else 0.5))
+		    (update-argument-node an :value arg-value)
 		    (update-conclusion sn))))	         
 	    (initialize-statement-values ag)
-	    (keys l))))
+	    (vals (:argument-nodes ag)))))
 
 ;; The caes-grounded evaluator uses grounded semantics
 (def caes-grounded 
