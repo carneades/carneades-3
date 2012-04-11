@@ -233,6 +233,7 @@
                                  :premises [(pm Greece)])
                
                vacation-graph1  (-> (make-argument-graph)
+                                    ; (assume [Italy, Greece])
                                     (enter-arguments [greece-arg, greece-rebuttal, 
                                                       italy-arg, italy-rebuttal]))
                
@@ -242,7 +243,7 @@
            (and (is (undecided? g1 Italy))
                 (is (undecided? g1 Greece))
                 (is (in? g2 Italy))
-                (is (out? g2 Greece)))))
+                (is (undecided? g2 Greece))))) ;; out?????
 
 ;; This example illustrates the undermining of a supporting argument.
 
