@@ -11,25 +11,22 @@
 
 (defmulti ajax-handler (fn [json _] (ffirst json)))
 
-;; TODO: get from a kb
-
-
-(defmethod ajax-handler :request
-  [json session]
-  (prn "======================================== request handler! ==============================")
-  (prn  (:lang session))
-  (let [session (ask-engine session)]
-    (if-not (:has-solution session)
-      {:session session
-       :body (json-str {:questions (:last-questions session)})}
-      (throw (Exception. "NYI")))))
-
-
 (defn strs->stmt
   "Converts a collection of a string representing a statement on the client side
    to a formal statement."
   [coll]
   (map symbol (apply list coll)))
+
+(defmethod ajax-handler :request
+  [json session]
+  (prn "======================================== request handler! ==============================")
+  (prn  (:lang session))
+  (let [session (assoc session :query (get-main-issue (:theory session) (symbol (:request json))))
+        session (ask-engine session)]
+    (if-not (:has-solution session)
+      {:session session
+       :body (json-str {:questions (:last-questions session)})}
+      (throw (Exception. "NYI")))))
 
 (defn reconstruct-answers-from-json
   [jsonanswers questions]
@@ -97,7 +94,7 @@
    :lang "en"
    :last-id 0
    :substitutions {}
-   :query '(may-publish ?Person ?Work)  ; TODO: get it from the theory!
+   :query nil
    :theory (load-theory default-policies-file
                         (symbol default-policies-namespace)
                         (symbol default-policies-name))
