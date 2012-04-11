@@ -40,3 +40,6 @@
         ag (enter-language ag (:language theory))
         ag (evaluate carneades-evaluator ag)]
     ag))
+
+(defn get-main-issue [theory qid]
+  (:main-issue (first (filter #(= (:id %) qid) (-> theory :sections)))))
