@@ -148,6 +148,7 @@
    :sections
    [(make-section
      :id 'Q12
+     :main-issue '(may-publish ?Person ?Work)
      :header (make-metadata :title "Q12. Cross-Border Aspects of Orphaned Works"
                             :description {:en "Question 12 of the Green Paper on Copyright in the Knowledge Economy [@GreenPaper, p. 12] asks:
 

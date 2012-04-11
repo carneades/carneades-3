@@ -38,6 +38,7 @@ PM.on_select_policy = function(id) {
     console.log('db before evaluate: ' + IMPACT.db);
     PM.ajax_get(IMPACT.impactws_url + '/evaluate-policy/{0}/{1}/{2}'.format(IMPACT.db, IMPACT.question, id), 
                  PM.on_evaluated_policy);
+    return false;
 };
 
 PM.on_evaluated_policy = function(data) {

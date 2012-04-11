@@ -6,23 +6,32 @@ var CARNEADES = {
 // this code is executed when the page is loaded
 $(function() {
       $.address.change(url_changed);
+//    display_argumentgraph("policymodellingtool-d139d8ba-60f2-4821-a168-0928926083ee");
+
 });
 
-function url_changed(url)
+function agb_parse_url(urlstring)
 {
     var url_regex = /\/([\w-:]+)(\/([\w-]+))?(\/([\w-:]+))?/;
-    if(url.value == "/") {
-         return;
-    }
+    var result = url_regex.exec(urlstring);
 
-    var result = url_regex.exec(url.value);
     if(result != null) {
         var element = result[1];
         var db = result[3];
         var element_id = result[5];
-
-        dispatch_url(element, db, element_id);
     }
+    return [element, db, element_id];
+}
+
+function url_changed(url)
+{
+    if(url.value == "/") {
+         return;
+    }
+    
+    var parsed = agb_parse_url(url.value);
+    dispatch_url(parsed[0], parsed[1], parsed[2]);
+    
 }
 
 function dispatch_url(element, db, element_id)

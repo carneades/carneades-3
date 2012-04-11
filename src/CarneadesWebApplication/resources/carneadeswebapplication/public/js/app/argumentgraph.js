@@ -8,21 +8,26 @@ function argumentgraph_url(db)
     return '/argumentgraph/' + db;
 }
 
+function argumentgraph_html(db, data) 
+{
+    data.normalize();
+    data.db = db;
+    data.metadata_text = format_metadata(data.metadata[0]);
+    data.description_text = description_text(data.metadata[0]);
+    set_mainissues_text(data.main_issues);
+    data.references = data.metadata.filter(function (ref) { return ref.key; });
+    set_references_text(data.references);
+    data.title = markdown_to_html(data.metadata[0].title);
+    data.outline_text = outline_text(data.outline, db);
+    var argumentgraph_html = ich.argumentgraph(data);
+    return argumentgraph_html.filter('#argumentgraph');
+}
+
 function display_argumentgraph(db)
 {
     ajax_get('argumentgraph-info/' + db,
              function(data) {
-                 data.normalize();
-                 data.db = db;
-                 data.metadata_text = format_metadata(data.metadata[0]);
-                 data.description_text = description_text(data.metadata[0]);
-                 set_mainissues_text(data.main_issues);
-                 data.references = data.metadata.filter(function (ref) { return ref.key; });
-                 set_references_text(data.references);
-                 data.title = markdown_to_html(data.metadata[0].title);
-                 data.outline_text = outline_text(data.outline, db);
-                 var argumentgraph_html = ich.argumentgraph(data);
-                 $('#browser').html(argumentgraph_html.filter('#argumentgraph'));  
+                 $('#browser').html(argumentgraph_html(db, data));
                  $('#close').click(on_close);
                  // add_map_to_div(db, '#map');
              });

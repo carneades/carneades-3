@@ -9,25 +9,25 @@ function set_statement_url(db, stmtid)
     $.address.value(statement_url(db, stmtid));
 }
 
-function fill_statement_template(statement_data)
+function statement_html(db, info, lang)
 {
-    statement_data.statement_text = statement_data.text[CARNEADES.lang]; // statement_text(statement_data);
-    var statement_html = ich.statement(statement_data);
-    $('#browser').html(statement_html.filter('#statement'));
+    info.normalize();
+    info.db = db;
+    set_statement_title_text(info);
+    info.description_text = description_text(info.header);
+    set_procon_texts(info);    
+    set_procon_premises_text(info);
+    set_premise_of_texts(info);
+    info.statement_text = info.text[lang]; // statement_text(statement_data);
+    var statement_html = ich.statement(info);
+    return statement_html.filter('#statement');
 }
 
 function display_statement(db, stmtid)
 {
     ajax_get('statement-info/' + db + '/' + stmtid,
              function(info) {
-                 info.normalize();
-                 info.db = db;
-                 set_statement_title_text(info);
-                 info.description_text = description_text(info.header);
-                 set_procon_texts(info);    
-                 set_procon_premises_text(info);
-                 set_premise_of_texts(info);
-                 fill_statement_template(info);
+                 $('#browser').html(statement_html(db, info, CARNEADES.lang));
                  $('#close').click(on_close);
              });
 }
