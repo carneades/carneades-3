@@ -1,5 +1,5 @@
 (ns carneades.engine.policy
-  (:use (carneades.engine statement scheme argument-graph caes argument-evaluation))
+  (:use (carneades.engine statement scheme argument-graph aspic argument-evaluation))
   (:require [carneades.config.reader :as config]))
 
 (def default-policies-file (config/properties "policies-file"))
@@ -38,7 +38,7 @@
         ag (reject ag statements-to-reject)
         ag (accept ag statements-to-accept)
         ag (enter-language ag (:language theory))
-        ag (evaluate carneades-evaluator ag)]
+        ag (evaluate aspic-grounded ag)]
     ag))
 
 (defn get-main-issue [theory qid]

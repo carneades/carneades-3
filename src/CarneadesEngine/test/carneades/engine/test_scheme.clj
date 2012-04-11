@@ -4,7 +4,7 @@
 (ns carneades.engine.test-scheme
   (:use clojure.test
         (carneades.engine argument argument-graph shell argument scheme 
-        caes3 dublin-core argument-evaluation policy)
+         aspic dublin-core argument-evaluation policy)
         
         carneades.maps.lacij))
 
@@ -117,7 +117,7 @@
   "(seq-of literal) literal -> argument-graph
    construct and evaluate an argument graph"
   (argue (make-engine max-goals facts generators)
-         caes-grounded      ;; carneades-evaluator 
+          aspic-grounded 
          query))
 
 (deftest test-engine-facts
@@ -166,7 +166,7 @@
 
 (deftest test-engine-negative-query
   (let [facts '((edible i1))
-	query '(not (goods ?x))]
+        query '(not (goods ?x))]
     (is (out? (ag facts query) '(goods i1)))))
 
 (deftest test-engine-eval1

@@ -257,7 +257,7 @@
                   (make-cestate :graph ag)
                   (vals (:statement-nodes ag)))))
 
-(def carneades-evaluator 
+(def caes 
   (reify ArgumentEvaluator
     (evaluate [this ag] (evaluate-argument-graph (reset-node-values ag)))
     (label [this node] (node-standard-label node))))
