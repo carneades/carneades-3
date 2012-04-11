@@ -14,30 +14,6 @@ PM.display_arguments = function() {
     $('#pm').html(arguments_html.filter("#arguments"));
     PM.activate('#arguments-item');
     
-    // PROBLEM Jquery address iframe
-    // TODO: link in iframe    http://stackoverflow.com/questions/740816/open-link-in-iframe
-    // https://github.com/asual/jquery-address/issues/106
-    // http://stackoverflow.com/questions/821359/reload-an-iframe-without-adding-to-the-history
-    // 
-    var argumentbrowser_url = "{0}/#/argumentgraph/{1}".format(IMPACT.argumentbrowser_url, IMPACT.db);
-    $('#argumentlink').attr('href', argumentbrowser_url);
-    $('#argumentlink').click(_.bind(PM.open_ag_browser, PM, IMPACT.db));
-    // $('#innerargumentbrowser').append('<iframe name="agbrowser" src="{0}" />'.format(IMPACT.argumentbrowser_url + '/#/argumentgraph/' + db));
-
-};
-
-PM.open_ag_browser = function(db) {
-    if(PM_CONFIG.debug) {
-        // just open URL
-        return true;
-    }
-    
-    // open the argument browser in the UID toolbox
-    $("#stage")[0].innerHTML = '<div id="browser" class=""></div>';
-    $("#stage").addClass("toInit");
-    $.address.change(url_changed);
-    $.address.path("/argumentgraph/" + db);
-    ich.grabTemplates();
-    init();
-    return false;
+    // IMPACT.db = "copyright"; // "policymodellingtool-d139d8ba-60f2-4821-a168-0928926083ee";
+    PM.append_agbrowser('#innerargumentbrowser');
 };
