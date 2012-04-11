@@ -35,7 +35,7 @@
       []
       (let [goal (first (:goals s))
             sn (get (:statement-nodes ag) (literal-atom goal))
-            pop-goal (fn [] [(assoc s :goals (rest (:goals s)))])
+            pop-goal (fn [] (assoc s :goals (rest (:goals s))))
             assume (fn [literal]
                      (if (contains? (:assumptions s) (literal-complement literal))
                        [] ; inconsistent set of assumptions, dead-end
@@ -46,7 +46,7 @@
                    (if (literal-pos? goal)
                      (= (:weight sn) 1.0)   ; positive premise is accepted
                      (= (:weight sn) 0.0))) ; negative premise is accepted
-              (pop-goal),
+              [(pop-goal)],
 
               (and (:weight sn)
                    (if (literal-pos? goal)
