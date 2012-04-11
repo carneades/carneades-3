@@ -1,7 +1,7 @@
 (ns impact.web.logic.askengine
   (:use clojure.pprint
         impact.web.core
-        (carneades.engine caes argument-evaluation argument-graph ask statement scheme argument argument-graph shell unify)
+        (carneades.engine aspic argument-evaluation argument-graph ask statement scheme argument argument-graph shell unify)
         (impact.web.logic statement-translation answers))
   (:import java.io.File))
 
@@ -17,7 +17,7 @@
         ag (update-statement-node ag main-node :main true)
         ag (accept ag (vals (:answers session))) ;; accept all answers from the user!
         ag (enter-language ag (-> session :theory :language))
-        ag (evaluate carneades-evaluator ag)
+        ag (evaluate aspic-grounded ag)
         dbname (store-ag ag)
         session (assoc session
                   :solution (str lastsolstmt) ;; TODO translate solution
