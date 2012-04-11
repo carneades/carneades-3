@@ -13,22 +13,26 @@ P.submit {text-align: left}
 {{>pmmenu}}  
 <p>Policies have been proposed for the following issues. To assess the different legal effects of the policies for some issue, select the issue in the list below and then click the submit button.  You will then be presented with a series of forms for entering the facts of some test case for assessing the effects of the different policies.</p> 
 
-<form>
-<p><input type="radio" name="issue" class="radiobutton" value=""/>Q4. Should certain categories of exceptions be made mandatory to ensure more legal 
-certainty and better protection of beneficiaries of
-exceptions?</p>
+{{#sections}}
+<p><input type="radio" name="issue" class="radiobutton" value="{{id}}"/>{{#header}}{{title}}{{/header}}</p>
+{{/sections}}
 
-<p><input type="radio" name="issue" class="radiobutton"/> Q9. Should the law be clarified with respect to whether the scanning of works held in 
-libraries for the purpose of making their content searchable on the Internet goes beyond the scope of current
-exceptions to copyright?</p>
+<!-- <form> -->
+<!-- <p><input type="radio" name="issue" class="radiobutton" value=""/>Q4. Should certain categories of exceptions be made mandatory to ensure more legal  -->
+<!-- certainty and better protection of beneficiaries of -->
+<!-- exceptions?</p> -->
 
-<p><input type="radio" name="issue" class="radiobutton"/> Q12. How should the cross-border aspects of the orphan works issue be tackled to 
-ensure EU-wide recognition of the solutions adopted in different
-Member States</p>
+<!-- <p><input type="radio" name="issue" class="radiobutton"/> Q9. Should the law be clarified with respect to whether the scanning of works held in  -->
+<!-- libraries for the purpose of making their content searchable on the Internet goes beyond the scope of current -->
+<!-- exceptions to copyright?</p> -->
 
-<p><input type="radio" name="issue" class="radiobutton"/> Q24. Should there be more precise rules regarding what acts end users can or
-cannot do when making use of materials protected by
-copyright?</p>
+<!-- <p><input type="radio" name="issue" class="radiobutton"/> Q12. How should the cross-border aspects of the orphan works issue be tackled to  -->
+<!-- ensure EU-wide recognition of the solutions adopted in different -->
+<!-- Member States</p> -->
+
+<!-- <p><input type="radio" name="issue" class="radiobutton"/> Q24. Should there be more precise rules regarding what acts end users can or -->
+<!-- cannot do when making use of materials protected by -->
+<!-- copyright?</p> -->
 
 <p class="submit"><input id="submit" type="submit" value="Submit" /></p>
 </form>
