@@ -10,7 +10,7 @@ PM.display_facts = function() {
     var facts_html = ich.facts();
     $('#pm').html(facts_html.filter("#facts"));
     PM.activate('#facts-item');
-    PM.ajax_post(IMPACT.simulation_url, {request: 'Topic (NYI)'}, PM.show_questions_or_ag);
+    PM.ajax_post(IMPACT.simulation_url, {request: IMPACT.question}, PM.show_questions_or_ag);
 };
 
 PM.show_questions_or_ag = function(data) {

@@ -9,23 +9,28 @@ function set_argument_url(db, argid)
     $.address.value(argument_url(db, argid));
 }
 
+function argument_html(db, argument_data)
+{
+    argument_data.normalize();
+    argument_data.direction = argument_data.pro ? "pro" : "con";
+    argument_data.db = db;
+    argument_data.description_text = description_text(argument_data.header);
+    set_argument_title_text(argument_data);
+    argument_data.direction_text = argument_data.pro ? "pro" : "con";
+    argument_data.conclusion.statement_text = statement_text(argument_data.conclusion);
+    set_premises_text(argument_data);
+    set_undercutters_text(argument_data);
+    set_rebuttals_text(argument_data);
+    set_dependents_text(argument_data);
+    var argument_html = ich.argument(argument_data);
+    return argument_html.filter('#argument');
+}
+
 function display_argument(db, argid)
 {
     ajax_get('argument-info/' + db + '/' + argid,
             function(argument_data) {
-                argument_data.normalize();
-                argument_data.direction = argument_data.pro ? "pro" : "con";
-                argument_data.db = db;
-                argument_data.description_text = description_text(argument_data.header);
-                set_argument_title_text(argument_data);
-                argument_data.direction_text = argument_data.pro ? "pro" : "con";
-                argument_data.conclusion.statement_text = statement_text(argument_data.conclusion);
-                set_premises_text(argument_data);
-                set_undercutters_text(argument_data);
-                set_rebuttals_text(argument_data);
-                set_dependents_text(argument_data);
-                var argument_html = ich.argument(argument_data);
-                $('#browser').html(argument_html.filter('#argument'));
+                $('#browser').html(argument_html(db, argument_data));
                 $('#close').click(on_close);
             });
 }
