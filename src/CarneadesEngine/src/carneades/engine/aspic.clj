@@ -72,7 +72,7 @@
      subargs         ; set of argument node ids, including the last link
      assumptions])   ; map from statement node id to boolean
 
-(defn- position-map
+(defn position-map
   "argument-graph ->  map from argument node ids to a vector of positions"
   [ag]
   (let [argument-node-positions
@@ -200,7 +200,7 @@
           ag
           (vals (:statement-nodes ag))))
 
-(defn- evaluate-grounded
+(defn evaluate-grounded
   "argument-graph -> argument-graph"
   [ag]
   (let [pm (position-map ag)
