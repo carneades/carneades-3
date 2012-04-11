@@ -10,7 +10,7 @@
         carneades.engine.argument-graph
         carneades.engine.argument-construction
         carneades.engine.argument-evaluation
-        carneades.engine.caes3
+        carneades.engine.aspic
         carneades.engine.shell
         carneades.maps.lacij))
 
@@ -49,7 +49,7 @@
                    (enter-arguments [A5, A6, A7, A8, A9, A10])
                    (accept [jw, mw, sw]))]
            (is (= #{(:id jw) (:id mw) (:id sw)}
-                  (in-statements (evaluate caes-grounded tandem-graph))))))
+                  (in-statements (evaluate aspic-grounded tandem-graph))))))
 
 ; The following examples are from:
 ; Prakken, H. An abstract framework for argumentation with structured arguments. 
@@ -80,7 +80,7 @@
                (-> (make-argument-graph)
                    (enter-arguments [A2, A1, A4, A3])
                    (accept [wears-ring, party-animal]))
-               ag (evaluate caes-grounded bachelor-graph)]
+               ag (evaluate aspic-grounded bachelor-graph)]
            (is (and (undecided? ag (literal-atom bachelor))
                     (undecided? ag (literal-atom married))))))
 
@@ -98,7 +98,7 @@
                    (enter-arguments [A5, A6])
                    (accept [frisian]))]
            
-           (is (in? (evaluate caes-grounded frisian-graph) 
+           (is (in? (evaluate aspic-grounded frisian-graph) 
                     (literal-atom tall)))))
 
 ;; The next example shows how arguments can be constructed by instantiating schemes.
@@ -155,7 +155,7 @@
                
                expert-witness-graph
                (construct-arguments query max-goals case1-facts generators)]
-           (is (in? (evaluate caes-grounded expert-witness-graph) 
+           (is (in? (evaluate aspic-grounded expert-witness-graph) 
                     '(has-cavities Susan)))))
 
 ; The library example, ibid., page 17
@@ -172,7 +172,7 @@
                library-graph   (-> (make-argument-graph)
                                    (enter-arguments [A1, A2, A3])
                                    (accept [snores, professor]))]
-           (is (in? (evaluate caes-grounded library-graph) 
+           (is (in? (evaluate aspic-grounded library-graph) 
                     (literal-atom access-denied)))))
 
 ; Serial self defeat example, ibid., page 18
@@ -198,7 +198,7 @@
                (-> (make-argument-graph)
                    (enter-arguments [A7,A8])
                    (accept [P]))]
-           (is (undecided? (evaluate caes-grounded self-defeat-graph) 
+           (is (undecided? (evaluate aspic-grounded self-defeat-graph) 
                            (literal-atom Q)))))
 
 ;; TO DO: remaining examples in Henry's article, starting with the example
@@ -238,8 +238,8 @@
                                                       italy-arg, italy-rebuttal]))
                
                vacation-graph2 (accept vacation-graph1 [Italy])
-               g1  (evaluate caes-grounded vacation-graph1)
-               g2  (evaluate caes-grounded vacation-graph2)]
+               g1  (evaluate aspic-grounded vacation-graph1)
+               g2  (evaluate aspic-grounded vacation-graph2)]
            (and (is (undecided? g1 Italy))
                 (is (undecided? g1 Greece))
                 (is (in? g2 Italy))
@@ -260,7 +260,7 @@
                A3 (make-argument :id 'A3 :conclusion (neg R) :premises [(pm S)])
                
                g (evaluate 
-                   caes-grounded 
+                   aspic-grounded 
                    (-> (make-argument-graph)
                        (assume [R])
                        (accept [S])

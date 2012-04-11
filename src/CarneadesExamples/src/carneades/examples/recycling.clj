@@ -5,6 +5,7 @@
   (:use carneades.engine.statement
         carneades.engine.argument
         carneades.engine.argument-evaluation
+        carneades.engine.aspic
         carneades.engine.caes
         carneades.engine.argument-graph
         carneades.maps.lacij))
@@ -85,7 +86,7 @@ reduces a need of a new dump which is for the garbage."}))
         (enter-arguments [a1 a2 a3 a4 a5 a6 a7 a8]) ; a9
         (accept [p14])))
 
-; (view (evaluate carneades-evaluator ag))
+; (view (evaluate aspic-grounded ag))
 
 (defn -main []
-  (view (evaluate carneades-evaluator ag)))
+  (view (evaluate aspic-grounded ag)))
