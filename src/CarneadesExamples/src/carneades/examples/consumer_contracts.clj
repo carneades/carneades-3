@@ -7,7 +7,7 @@
         carneades.engine.argument
         carneades.engine.dublin-core
         carneades.engine.scheme
-        carneades.engine.caes))
+        carneades.engine.aspic))
                   
 (def theory1
   (make-theory
@@ -142,7 +142,7 @@
   "(seq-of literal) literal -> argument-graph
    construct and evaluate an argument graph"
   (argue (make-engine max-goals facts generators)
-         carneades-evaluator
+         aspic-grounded
          query))
                                    
 (deftest test-engine-example1

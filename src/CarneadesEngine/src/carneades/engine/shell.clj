@@ -8,7 +8,7 @@
         carneades.engine.argument-graph
         carneades.engine.argument-construction
         carneades.engine.argument-evaluation
-        carneades.engine.caes
+        carneades.engine.aspic
         carneades.engine.ask))
 
 (defn make-engine
@@ -33,7 +33,7 @@
 (defn ask 
   "engine evaluator literal -> (seq-of literal)" 
   ([engine query]
-    (ask engine carneades-evaluator query))
+    (ask engine aspic-grounded query))
   ([engine evaluator query] 
    {:pre [(literal? query)]}
     (mapcat (fn [sn] 
