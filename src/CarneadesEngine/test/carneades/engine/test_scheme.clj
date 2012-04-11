@@ -4,7 +4,7 @@
 (ns carneades.engine.test-scheme
   (:use clojure.test
         (carneades.engine argument argument-graph shell argument scheme 
-        caes caes2 dublin-core argument-evaluation policy)
+        caes3 dublin-core argument-evaluation policy)
         
         carneades.maps.lacij))
 
@@ -230,7 +230,7 @@
         engine (make-engine ag 50 #{} (list (generate-arguments-from-theory copyright-theory)))
         query '(may-publish ?Person ?Work)
         ag (argue engine query)
-        ag (evaluate carneades-evaluator ag)]
+        ag (evaluate caes-grounded ag)]
     ;; (export ag "/tmp/argumentmissing.svg")
     (is (= 2 (count (arguments ag))))))
 
