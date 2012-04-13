@@ -1,0 +1,177 @@
+/* 
+  Stylesheet
+*/
+
+/* general */
+
+#dialog_link {padding: .4em 1em .4em 20px; text-decoration: none; position: relative;}
+#dialog_link span.ui-icon {margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
+#progressbar { clear:both; }
+#status {
+        padding: 0.7em;
+        position:absolute; right: 10px; top: 21px;
+        display:none;
+}
+#locatebox {
+        padding: 2px;
+        padding-left: 5px;
+        position:absolute; right: 10px; top: 8px;
+}
+/* questions */
+#questionslistbox {
+        min-height:200px;
+        clear:both;
+}
+#categories {
+        list-style:none;
+        margin:0;
+        padding:0;
+        max-height:490px;
+        overflow:auto;
+}
+#categories li {
+        margin:0;
+        padding:2px 10px;
+}
+#categories li:hover {
+        font-weight:bold;
+        cursor:pointer;
+        padding: 2px 10px;
+}
+
+#questions {
+        margin-left:201px;
+        width:auto !important;
+}
+#questions div {
+        padding:2px;
+}
+#questions div div {
+        padding:10px 0 2px 20px !important;
+}
+#questions p {
+        margin:7px 0;
+        min-height: 16px;
+}
+#questions h3 {
+        font-size:1.1em;
+        margin:0;
+        padding:3px 0 3px 20px !important;
+        background: url(../images/what.png) no-repeat center left;
+}
+#questions label {
+        font-size:1em;
+        margin:0; padding:0;
+}
+/* hints 
+.hint {
+        display:none;
+}*/
+#hints {
+     float:right;
+     width:20%;
+/*background-color:#dadada;*/
+}
+
+#questionlist {
+    width: 65%;
+}
+
+#hints h4 {
+        font-size:1.1em;
+        margin:0;
+        padding:3px 0 3px 20px !important;
+        background: url(../images/hints.png) no-repeat center left;
+}
+#hints p {
+        margin:20px 0 20px 0;
+}
+/* warning */
+.qwarn {
+        display:none;
+        background:transparent url(../images/qwarn_bg.png) repeat-x top right;
+        color:#444;
+        /*font-size: 16px;*/
+        /*margin-left: 2px;*/
+        height: 16px;
+        line-height: 12px;
+        font-size:11px;
+        padding:2px 3px 2px 0px;
+}
+.qwarn i { /*left site */
+        margin: 0;
+        padding: 7px;
+        height: 16px;
+        line-height: 16px;
+        font-size:13px;
+        background: transparent url(../images/qwarn.png) no-repeat;
+}
+.qwarn b { /* rigth site * /
+        margin: 0;
+        padding: 0 7px;
+        height: 16px;
+        line-height: 16px;
+        font-size:13px;
+        background: transparent url(../images/qinfo_r.png) no-repeat; */
+
+}
+
+#solutionstatement {
+   margin: 1.5em 0 1em 0;
+   font-size:1.5em;
+   color: #5a5863;
+   visibility: hidden
+}
+
+#toolbar {
+    position: relative;
+    float: left;
+    width: 20%;
+    height: 85%;
+    margin-left: 5px;
+}
+
+#policylist {
+    position: relative;
+    list-style-type:none;
+    list-style:none;
+    padding: 2%;
+    margin: 0%;
+}
+
+#selectpolicy {
+    font-weight: bold;
+}
+
+#findpolicytext {
+    font-weight: bold;
+}
+
+#policyinteraction {
+    margin: 5%;
+    padding-top: 10%;
+}
+
+#graph {
+    position: relative;
+    float: left;
+    height: 85%;
+    width: 76%; /* leaves place for the border */
+    cursor: move;
+    /* background-color: green; */
+}
+
+#tabs {
+    height: 100%;
+    /* min-height:100%; */
+}
+
+#tabs-3 {
+    height: 100%;
+    /* min-height:100%; */
+}
+
+#slider {
+    margin: 2%;
+    height: 25%;
+}
