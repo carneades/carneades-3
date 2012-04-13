@@ -12,7 +12,7 @@
         carneades.maps.lacij
         carneades.engine.uuid
         carneades.engine.argument-evaluation
-        carneades.engine.caes)
+        carneades.engine.aspic)
   (:require [clojure.java.jdbc :as jdbc]
             [carneades.database.db :as db]))
 
