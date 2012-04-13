@@ -1,0 +1,494 @@
+/* Basic declaration */
+html,body {
+	margin: 0;
+	padding: 0;
+}
+
+*,div,span,td,p,input {
+	font-family: Calibri;
+	font-size: 12px;
+}
+
+#login span {
+	color: #EEE;
+}
+
+h2 {
+	font-size: 1.7em;
+	line-height: 2em;
+}
+
+/* Main container */
+#container_outer {
+	background: #fff;
+	min-width: 800px;
+}
+
+#container_inner {
+	background-color: #615D5D;
+	padding-bottom: 5px;
+}
+
+#topgap {
+	background: #fff;
+	height: 15px;
+	width: 100%;
+}
+
+/* Header */
+#header {
+	position: relative;
+	height: 75px;
+	background-image: url(../images/frame/header_center.png);
+	overflow: hidden;
+	z-index: 1;
+}
+
+#header_left {
+	float: left;
+	width: 334px;
+	height: 75px;
+	background-image: url(../images/frame/header_left.png);
+}
+
+#header_right {
+	float: right;
+	width: 73px;
+	height: 75px;
+	background-image: url(../images/frame/header_right.png);
+}
+
+#header_navi_upper {
+	position: absolute;
+	top: 12px;
+	right: 15px;
+	color: #777;
+	white-space: nowrap;
+	text-align: right;
+	width: 660px;
+	padding-right: 23px;
+}
+
+#header_navi_lower {
+	position: relative;
+	top: 46px;
+	color: #ddd;
+	white-space: nowrap;
+}
+
+input.headerText {
+	border: 1px solid #555;
+	background: #888;
+	height: 14px;
+	width: 100px;
+	color: #ddd;
+}
+
+#header_navi_upper .headerText {
+	background: #ccc;
+}
+
+#rss {
+}
+
+#search {
+	height: 16px;
+	width: 130px;
+	role: "search"
+}
+
+#searchbutton {
+	height: 18px;
+	width: 18px;
+	margin-left: 1px;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	role: "button";
+	background-image:url("../images/buttons/icon_search.png");
+}
+
+.headerstyle {
+	border: 1px solid #606163 !important;
+	box-shadow: none !important;
+}
+
+input.headerButton {
+	position: relative;
+	top: 1px;
+	height: 18px;
+	color: #777;
+	font-size: 12px;
+	font-weight: bold;
+	border: 1px solid #555;
+	padding: 0 3px;
+}
+
+input.bright {
+	color: #FFF;
+}
+
+/* Navigation */
+#navi {
+	background-image: url(../images/frame/main_right.png);
+	width: 73px;
+	padding-bottom: 20px;
+	vertical-align: top;
+	float: right;
+	margin-top: -5px;
+}
+
+#navi_bottom {
+	position: absolute;
+	bottom: -10px;
+	right: 0px;
+	height: 98px;
+	width: 73px;
+	background-image: url(../images/frame/lower_right.png);
+	/* TODO Bild 15px (höhe) kleiner machen*/
+}
+
+#buttonbg {
+	background-image: url(../images/buttons/button_bg.png);
+	width: 61px;
+	height: 50px;
+	position: absolute;
+	right: 9px;
+}
+
+#buttonbg.nav0 {
+	top: 0px;
+}
+
+#buttonbg.nav1 {
+	top: 51px;
+}
+
+#buttonbg.nav2 {
+	top: 125px;
+}
+
+#buttonbg.nav3 {
+	top: 176px;
+}
+
+#buttonbg.nav4 {
+	top: 227px;
+}
+
+#buttonbg.nav5 {
+	top: 278px;
+}
+
+#buttonbg.nav6 {
+	top: 329px;
+}
+
+#navi .button {
+	position: relative;
+	width: 41px;
+	height: 41px;
+	background-image: url(../images/buttons/buttons.png);
+	margin-top: 10px;
+	margin-left: 19px;
+}
+
+.space {
+	height: 23px;
+}
+
+.button.nav0 {
+	background-position: 0 85px;
+}
+
+.button.nav1 {
+	background-position: -45px 85px;
+}
+
+.button.nav2 {
+	background-position: -90px 85px;
+}
+
+.button.nav3 {
+	background-position: -135px 85px;
+}
+
+.button.nav5 {
+	background-position: -180px 85px;
+}
+
+.button.nav4 {
+	background-position: -225px 85px;
+}
+
+.button.nav0.active, .button.nav0:hover {
+	background-position: 0 0px;
+}
+
+.button.nav1.active, .button.nav1:hover {
+	background-position: -45px 0px;
+}
+
+.button.nav2.active, .button.nav2:hover {
+	background-position: -90px 0px;
+}
+
+.button.nav3.active, .button.nav3:hover {
+	background-position: -135px 0px;
+}
+
+.button.nav5.active, .button.nav5:hover {
+	background-position: -180px 0px;
+}
+
+.button.nav4.active, .button.nav4:hover {
+	background-position: -225px 0px;
+}
+
+/* Content */
+#contenttable,#contenttable { /*font-size: 1px;*/
+	line-height: 1px;
+}
+
+#contenttable {
+	width: 100%;
+	background: #635f5f;
+}
+
+#content {
+	vertical-align: top;
+	position: relative;
+}
+
+/* Deprecated
+Webkit HACK to fix chrome overflow hidden bug
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+#stagebg{
+	margin: 5px 5px 5px 10px !important;
+}
+}
+*/
+#stagebg {
+	position: relative;
+	height: 500px;
+	background: #efeeee;
+	background: -webkit-gradient(linear, 0 0, 0 bottom, from(#ffffff),
+		to(#dddadb) );
+	background: -webkit-linear-gradient(#ffffff, #dddadb);
+	background: -moz-linear-gradient(#ffffff, #dddadb);
+	background: -ms-linear-gradient(#ffffff, #dddadb);
+	background: -o-linear-gradient(#ffffff, #dddadb);
+	background: linear-gradient(#ffffff, #dddadb);
+	/* this makes css3 border + gradient possible */
+	-pie-background: linear-gradient(#ffffff, #dddadb);
+	behavior: url(toolbox/css/PIE.htc);
+	box-shadow: 0px 0px 5px 4px #444;
+	margin: 5px 78px 5px 10px;
+	padding: 20px 20px 30px 20px;
+	border-radius: 5px;
+	border-bottom-right-radius: 160px 40px;
+}
+
+#stage {
+	overflow: hidden;
+	overflow-y: auto;
+}
+
+#toollogo {
+	position: absolute;
+	right: 100px;
+	bottom: 40px;
+}
+
+#innertable {
+	width: 100%;
+	height: 400px;
+	background: #efeeee;
+	background: -webkit-gradient(linear, 0 0, 0 bottom, from(#ffffff),
+		to(#dddadb) );
+	background: -webkit-linear-gradient(#ffffff, #dddadb);
+	background: -moz-linear-gradient(#ffffff, #dddadb);
+	background: -ms-linear-gradient(#ffffff, #dddadb);
+	background: -o-linear-gradient(#ffffff, #dddadb);
+	background: linear-gradient(#ffffff, #dddadb);
+	/* this makes css3 border + gradient possible */
+	-pie-background: linear-gradient(#ffffff, #dddadb);
+	behavior: url(toolbox/css/PIE.htc);
+}
+
+#innertable .innercontent {
+	vertical-align: top;
+	line-height: 14px;
+	/*font-size: 14px;*/
+}
+
+#innertable .topleft {
+	width: 9px;
+	height: 9px;
+	background: url(../images/container/c_cr_topleft.png);
+}
+
+#innertable .topright {
+	width: 9px;
+	background: url(../images/container/c_cr_topright.png);
+}
+
+#innertable .topcenter {
+	background: url(../images/container/c_top.png);
+	background-repeat: repeat-x;
+}
+
+#innertable .bottomleft {
+	width: 9px;
+	height: 9px;
+	background: url(../images/container/c_cr_bottomleft.png);
+}
+
+#innertable .bottomright {
+	width: 9px;
+	height: 9px;
+	background: #f90;
+}
+
+#innertable .bottomright #ending {
+	position: absolute;
+	right: 0px;
+	bottom: 0px;
+	width: 167px;
+	height: 57px;
+	background: url(../images/container/c_cr_bottomright.png);
+}
+
+#innertable .bottomcenter {
+	background: url(../images/container/c_bottom.png);
+	background-repeat: repeat-x;
+	background-position: bottom;
+}
+
+#innertable .left {
+	background: url(../images/container/c_left.png);
+	background-repeat: repeat-y;
+}
+
+#innertable .right {
+	background: url(../images/container/c_right.png);
+	background-repeat: repeat-y;
+	background-position: right;
+}
+
+/* ---- */
+#frame_pmt {
+	border: 0;
+	width: 100%;
+	height: 500px;
+}
+
+#login {
+	display: inline-block;
+}
+
+#loggedin {
+	display: none;
+}
+
+#user {
+	display: inline-block;
+	padding: 2px;
+	margin: 0px;
+	cursor: pointer;
+	margin-bottom: 0px;
+	padding-bottom: 1px;
+}
+
+#user:hover {
+	background-color: #888;
+}
+
+#username {
+	padding: 0px 5px;
+}
+
+#loggedin img {
+	height: 16px;
+	vertical-align: middle;
+	border: 1px solid #555;
+}
+
+#logout {
+	height: 18px;
+	margin-top: 0px;
+	margin-left: 15px;
+	border-radius: 2px;
+	background: #FAF9F7;
+	background: -webkit-gradient(linear, 0 0, 0 bottom, from(#FAF9F7),
+		to(#DAD6D7) );
+	background: -webkit-linear-gradient(#FAF9F7, #DAD6D7);
+	background: -moz-linear-gradient(#FAF9F7, #DAD6D7);
+	background: -ms-linear-gradient(#FAF9F7, #DAD6D7);
+	background: -o-linear-gradient(#FAF9F7, #DAD6D7);
+	background: linear-gradient(#FAF9F7, #DAD6D7);
+	/* this makes css3 border + gradient possible */
+	-pie-background: linear-gradient(#FAF9F7, #DAD6D7);
+	behavior: url(toolbox/css/PIE.htc);
+}
+
+.openedOptions {
+	background-color: #FDFDFD !important;
+	color: #555 !important;
+	border: solid 1px #777 !important;
+	border-bottom-width: 0px !important;
+	padding: 1px !important;
+}
+
+#useroptions {
+	position: absolute;
+	left: 334px;
+	top: 69px;
+	background-color: #FDFDFD;
+	width: 150px;
+	border: solid 1px #777;
+	border-top-width: 0px;
+	display: none;
+	text-align: right;
+	z-index: 1;
+}
+
+#useroptions ol li {
+	line-height: 20px;
+	margin: 2px 0px;
+	cursor: pointer;
+}
+
+#useroptions ol li a {
+	padding: 0 20px;
+	display: block;
+	color: #333;
+}
+
+#useroptions ol li:hover {
+	background-color: #D4E9B4;
+}
+
+::-webkit-scrollbar {
+	width: 12px;
+}
+
+::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
+	border-radius: 10px;
+	background-color: #888;
+}
+
+::-webkit-scrollbar-thumb {
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
+	background-color: #EEE;
+}
+
+ul > li > p{
+	display:inline;
+}
+
+ul > li > div.premiseproperties{
+	display:none;
+}

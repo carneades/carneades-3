@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
+<head>
+<title>IMPACT Toolbox</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<!-- BEGIN OF DESIGN AND STYLE SPECIFIC INCLUDS -->
+
+<link rel="icon" href="toolbox/images/impact_fav.ico" type="image/x-icon" />
+
+<!-- Load JQuery -->
+<script src="toolbox/js/jquery-1.7.js" type="text/javascript"></script>
+<script src="toolbox/js/jquery.rest.js" type="text/javascript"></script>
+<script src="toolbox/js/jquery.address-1.4.js" type="text/javascript"></script>
+
+<!-- IMPACT UI Controls -->
+<link type="text/css" href="toolbox/css/impact-ui/jquery-ui-1.8.11.custom.css" rel="stylesheet" />
+<script type="text/javascript" src="toolbox/js/impact-ui/jquery-ui-1.8.11.custom.min.js"></script>
+
+
+<!-- the impact UI specific jQuery initialization script -->
+<script type="text/javascript" src="toolbox/js/impact-ui/impact-init.js"></script>
+<!-- Include the green Impact theme, never change this file manually -->
+<link type="text/css" href="toolbox/css/impact-ui/impact-green.css" rel="stylesheet" />
+
+<!-- JQuery Plug-ins -->
+<!-- the jScrollPane script -->
+<script type="text/javascript"	src="toolbox/js/impact-ui/jquery.jscrollpane.min.js"></script>
+<!-- the mousewheel plug-in - to provide mouse wheel support in jScrollPane -->
+<script type="text/javascript" src="toolbox/js/impact-ui/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="toolbox/js/impact-ui/jquery.mwheelIntent.js"></script>
+
+<!-- the custom check box and radio buttons script -->
+<script type="text/javascript" src="toolbox/js/impact-ui/ui.checkbox.js"></script>
+<!-- the custom select box script (for drop down menus) -->
+<script type="text/javascript" src="toolbox/js/impact-ui/jquery.selectbox-0.5.js"></script>
+<!-- styles needed by the custom select box script -->
+<!--<link rel="stylesheet" type="text/css" media="all" href="toolbox/css/impact-ui/jquery.selectbox.css" />-->
+<!-- the progress indicator script -->
+<script type="text/javascript" src="toolbox/js/impact-ui/jquery.busy.min.js"></script>
+<!-- the time picker script -->
+<script type="text/javascript" src="toolbox/js/impact-ui/jquery.ui.timepicker.js"></script>
+<!-- styles needed by the time picker script -->
+<link rel="stylesheet" type="text/css" media="all" href="toolbox/css/impact-ui/plugins/jquery-ui-timepicker.css" />
+
+
+<!-- IMPACT Toolbox main design -->
+<link href="toolbox/css/main.css" rel="stylesheet" type="text/css" />
+
+<!-- END OF DESIGN AND STYLE SPECIFIC INCLUDS -->
+
+<!-- Initialize Toolbox stuff (no design styling) -->
+<script src="toolbox/js/main.js" type="text/javascript"></script>
+
+
+	<!-- PARTNER PLUGINS START -->
+
+	<!-- visualisation -->
+	<!-- load from cdc Server -->
+
+	<script src="http://localhost/policycommons/includes/d3_old/d3.js" type="text/javascript"></script>
+	<script src="http://localhost/policycommons/includes/d3_old/d3.geom.js" type="text/javascript"></script>
+	<script src="http://localhost/policycommons/includes/d3_old/d3.layout.js" type="text/javascript"></script>
+	<script src="http://localhost/policycommons/includes/textFlow/helper_functions.js" type="text/javascript"></script>
+	<script src="http://localhost/policycommons/includes/textFlow/textFlow.js" type="text/javascript"></script>
+	<script src="http://localhost/policycommons/visualize/conn-net-svg-old.js" type="text/javascript"></script>
+
+
+	<!-- Policy Modelling Tool -->
+    
+    
+    <script type="text/html" src="../policymodellingtool/site/pmmenu.html" class="partial" id="pmmenu"></script>
+    <script type="text/html" src="../policymodellingtool/site/issues.html" id="issues"></script>
+    <script type="text/html" src="../policymodellingtool/site/facts.html" id="facts"></script>
+    <script type="text/html" src="../policymodellingtool/site/arguments.html" id="arguments"></script>
+    <script type="text/html" src="../policymodellingtool/site/policies.html" id="policies"></script>
+    <script type="text/html" src="../policymodellingtool/site/introduction.html" id="introduction"></script>
+    
+    <script type="text/javascript" src="../policymodellingtool/js/lib/underscore-min.js"></script>
+    <script type="text/javascript" src="../policymodellingtool/js/lib/ICanHaz.js"></script>
+
+    <script type="text/javascript" src="../policymodellingtool/js/app/config.js"></script>
+    <script type="text/javascript" src="../policymodellingtool/js/app/main.js"></script>
+    <script type="text/javascript" src="../policymodellingtool/js/app/menu.js"></script>
+    <script type="text/javascript" src="../policymodellingtool/js/app/utils.js"></script>
+    <script type="text/javascript" src="../policymodellingtool/js/app/introduction.js"></script>
+    <script type="text/javascript" src="../policymodellingtool/js/app/issues.js"></script>
+    <script type="text/javascript" src="../policymodellingtool/js/app/facts.js"></script>
+    <script type="text/javascript" src="../policymodellingtool/js/app/arguments.js"></script>
+    <script type="text/javascript" src="../policymodellingtool/js/app/policies.js"></script>
+    
+    <script type="text/javascript" src="../policymodellingtool/js/app/ajax.js"></script>
+    <script type="text/javascript" src="../policymodellingtool/js/app/questions.js"></script>
+    
+    <link rel="stylesheet" href="toolbox/css/policymodelling/style.css" type="text/css" />
+ 
+
+	<!-- Argumentbrowser -->
+
+    <script type="text/html" class="partial" src="../argumentbrowser/site/metadata.html"></script>
+    <script type="text/html" class="partial" src="../argumentbrowser/site/statementlink.html"></script>
+    <script type="text/html" class="partial" src="../argumentbrowser/site/argumentlink.html"></script>
+    <script type="text/html" class="partial" src="../argumentbrowser/site/premise.html"></script>
+    <script type="text/html" class="partial" src="../argumentbrowser/site/menu.html"></script>
+    <script type="text/html" src="../argumentbrowser/site/argumentgraph.html"></script>
+    <script type="text/html" src="../argumentbrowser/site/argument.html"></script>
+    <script type="text/html" src="../argumentbrowser/site/statement.html"></script>
+    <script type="text/html" src="../argumentbrowser/site/login.html"></script>
+        
+    <script type="text/javascript" src="../argumentbrowser/js/lib/jquery.svg.js"></script>
+    <script type="text/javascript" src="../argumentbrowser/js/lib/Markdown.Converter.js"></script>
+    <script type="text/javascript" src="../argumentbrowser/js/lib/Markdown.Sanitizer.js"></script>
+    <script type="text/javascript" src="../argumentbrowser/js/lib/Markdown.Editor.js"></script>
+    <script type="text/javascript" src="../argumentbrowser/js/lib/crypto.js"></script>
+
+    <script type="text/javascript" src="../argumentbrowser/js/app/main.js"></script>
+    <script type="text/javascript" src="../argumentbrowser/js/app/agb-utils.js"></script>
+    <script type="text/javascript" src="../argumentbrowser/js/app/login.js"></script>
+    <script type="text/javascript" src="../argumentbrowser/js/app/metadata.js"></script>
+    <script type="text/javascript" src="../argumentbrowser/js/app/argumentgraph.js"></script>
+    <script type="text/javascript" src="../argumentbrowser/js/app/argument.js"></script>
+    <script type="text/javascript" src="../argumentbrowser/js/app/statement.js"></script>
+    <script type="text/javascript" src="../argumentbrowser/js/app/map.js"></script>
+    <script type="text/javascript" src="../argumentbrowser/js/app/login.js"></script>
+    <script type="text/javascript" src="../argumentbrowser/js/app/markdown.js"></script>
+
+	<!-- PARTNER PLUGINS END -->
+
+<!-- RSS Feed -->
+<!-- http://www.zazar.net/developers/jquery/zrssfeed/ -->
+<script src="toolbox/js/jquery.zrssfeed.min.js" type="text/javascript"></script>
+<link href="toolbox/css/jquery.zrssfeed.css" rel="stylesheet" type="text/css" />
+
+
+</head>
+<body class="toInit toolbox">
+
+	<div id="container_outer">
+		<div id="container_inner">
+			<div id="header">
+				<div id="header_left"></div>
+				<div id="header_right"></div>
+				<div id="header_center">
+
+					<div id="header_navi_upper">
+						Language&nbsp; <select>
+							<option>English</option>
+							<option>Deutsch</option>
+						</select>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						About | Imprint | Contact | Privacy
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						Help | Search &nbsp; <input type="text" id="search" />
+						<button id="searchbutton"></button>
+					</div>
+
+					<div id="header_navi_upper_block"></div>
+
+					<div id="header_navi_lower">
+						<div id="login">
+							<span>You are not logged in. Login with: </span> <input
+								type="button" value="Google" class="headerButton"
+								onclick="loginGoogle();"> <input type="button"
+								value="Facebook" class="headerButton" onclick="loginFacebook();">
+						</div>
+						<div id="loggedin" display="none">
+							<div id="user">
+								<img src=""></img> <span id="username">User Name</span>
+							</div>
+							<button id="logout" class="headerstyle" onclick="logout();">Logout</button>
+						</div>
+
+					</div>
+				</div>
+			</div>
+			<div id="content">
+				<div id="navi">
+					<div id="buttonbg" class="nav0"></div>
+					<div class="button nav0 active" onclick="setNavi(0)"></div>
+					<div class="button nav1" onclick="setNavi(1)"></div>
+					<div class="space"></div>
+					<div class="button nav2" onclick="setNavi(2)"></div>
+					<div class="button nav3" onclick="setNavi(3)"></div>
+					<div class="button nav4" onclick="setNavi(4)"></div>
+					<div class="button nav5" onclick="setNavi(5)"></div>
+					<!--  <div class="button nav6" onclick="setNavi(6)"></div> -->
+					<div id="navi_bottom"></div>
+				</div>
+				<div id="stagebg">
+					<img src="toolbox/css/impact-ui/images/toollogos/Icon_Home.png"
+						alt="toollogo" id="toollogo" />
+					<div id="stage"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="useroptions">
+		<ol>
+			<li><a>Option 1</a></li>
+			<li><a>Option 2</a></li>
+			<li><a href="javascript:logout();">Logout</a></li>
+			<li><hr></li>
+			<li><a href="javascript:deleteData();">Delete Userdata</a></li>
+		</ol>
+	</div>
+
+</body>
+</html>
+
