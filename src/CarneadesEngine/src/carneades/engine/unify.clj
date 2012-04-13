@@ -61,7 +61,7 @@
    variables to terms. The occurs-check flag determines whether
    the occurs check is performed.
    
-   unify: term term -> substitution | nil
+   unify: term term -> substitutions | nil
    (unify u v) is a simplified interface, where the initial
    substitution is the identity procedure, the initial success
    continuation returns the unified term, the initial failure
