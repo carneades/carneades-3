@@ -1,10 +1,11 @@
 PM.append_agbrowser = function(id) {
     var url = IMPACT.argumentbrowser_url + '/#/argumentgraph/' + IMPACT.db;
 
-    $(id).append('<div id="framemenu" class="navigation"><a class="first" id="previous" href="">Previous</a><a id="next" href=""">Next</a><a id="popup" href="">Popup</a></div>'
-                 + '</div><iframe id="browserframe" width="95%" height="100%"></iframe>');
+    var prevnextmenu = '<div id="framemenu" class="navigation"><a class="first" id="previous" href="">Previous</a><a id="next" href=""">Next</a><a id="popup" class="last" href="">Popup</a></div>';
+    $(id).append(prevnextmenu + '<iframe id="browserframe" width="95%" height="800px" class="scroll-pane"></iframe>');
 
     var text;
+    IMPACT.db = "copyright";
     if(IMPACT.db == "") {
         text = "No facts have been entered. Enter some facts to view the arguments.";
         $('#browserframe').contents().find('body').html('<center>{0}</center>'.format(text));
@@ -94,6 +95,9 @@ PM.show_argumentgraph_inframe = function() {
                 function(data) {
                     $('#browserframe').contents().find('#browser').html(argumentgraph_html(IMPACT.db, data));
                     PM.add_links_listeners();
+                    if(PM_CONFIG.debug) {
+                        $('#browserframe').contents().find('head').append('<link rel="stylesheet" href="/policymodellingtool/toolbox/css/policymodelling/style.css" type="text/css" />');
+                    } 
                 });
 
 };
