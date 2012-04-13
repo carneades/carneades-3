@@ -189,14 +189,12 @@
   [ag]
   (reduce (fn [ag2 sn]
             (update-statement-node 
-	     ag2
-	     sn 
-	     :value 
-	     (when (:weight sn) 
-	       (cond 
-		(= (:weight sn) 1.0) 1.0
-		(= (:weight sn) 0.0) 0.0
-		:else 0.5)))) 
+              	     ag2
+              	     sn 
+              	     :value 
+              	       (cond (= (:weight sn) 1.0) 1.0
+                                  (= (:weight sn) 0.0) 0.0
+                                  :else 0.5))) 
           ag
           (vals (:statement-nodes ag))))
 
@@ -219,17 +217,14 @@
                     (cond (= (:weight c) 0.0) (:value c) ;; arguments don't affect value of facts
                           (= (:weight c) 1.0) (:value c)
 
-                          (= arg-value 1.0) 
-                          (cond (and (:pro an)
-                                     (not= (:value c) 0.0)) 
-                                1.0
+                          (and (= arg-value 1.0)  (:pro an)) 
+                          1.0
 
-                                (and (not (:pro an))
-                                     (not= (:value c) 1.0))
-                                0.0
-                                
-                                :else 0.5)
-                          :else 0.5)]
+                          (and (= arg-value 1.0) (not (:pro an))) 
+                          0.0
+
+                          ;; otherwise don't change the value
+                          :else (:value c))]
                 (-> ag2
                     (update-argument-node an :value arg-value)
                     (update-statement-node c :value conclusion-value))))	         
