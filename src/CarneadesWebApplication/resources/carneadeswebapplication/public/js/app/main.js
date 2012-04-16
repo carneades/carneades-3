@@ -3,10 +3,13 @@ var CARNEADES = {
     carneadeswsurl : "/impactws"
 };
 
+var AGB = {
+};
+
 // this code is executed when the page is loaded
 $(function() {
       $.address.change(url_changed);
-//    display_argumentgraph("policymodellingtool-d139d8ba-60f2-4821-a168-0928926083ee");
+//      AGB.load_uid_styles();
 
 });
 
@@ -50,7 +53,7 @@ function dispatch_url(element, db, element_id)
 }
 
 function ajax_post(suburl, jsondata, username, password, callback) {
-    $.ajax({url: CARNEADESWS.carneadeswsurl + '/' + suburl,
+    $.ajax({url: CARNEADES.carneadeswsurl + '/' + suburl,
             type: 'POST',
             'beforeSend' : function(xhr) {
                 var bytes = Crypto.charenc.Binary.stringToBytes(username + ":" + password);
@@ -60,7 +63,8 @@ function ajax_post(suburl, jsondata, username, password, callback) {
             dataType : 'json',
             data : JSON.stringify(jsondata),
             contentType: "application/json; charset=utf-8",
-            success: callback
+            success: callback,
+            failure: function(error) { console.log('error: ' + error); }
         });
 }
 
@@ -81,3 +85,34 @@ function on_close() {
     init();
     return false;
 }
+
+AGB.load_uid_styles = function() {
+    var files = ['<link type="text/css" href="toolbox/css/impact-ui/jquery-ui-1.8.11.custom.css" rel="stylesheet" />',
+                 '<link type="text/css" href="toolbox/css/impact-ui/impact-green.css" rel="stylesheet" />',
+                 '<link rel="stylesheet" type="text/css" media="all" href="toolbox/css/impact-ui/plugins/jquery-ui-timepicker.css" />',
+                 '<link href="toolbox/css/main.css" rel="stylesheet" type="text/css" />',
+                 '<link rel="stylesheet" href="toolbox/css/policymodelling/style.css" type="text/css" />'
+                ];
+    
+    var scripts = ["toolbox/js/impact-ui/jquery-ui-1.8.11.custom.min.js",
+                   "toolbox/js/impact-ui/impact-init.js",
+                   "toolbox/js/impact-ui/jquery.jscrollpane.min.js",
+                   "toolbox/js/impact-ui/jquery.mousewheel.js",
+                   "toolbox/js/impact-ui/jquery.mwheelIntent.js",
+                   "toolbox/js/impact-ui/ui.checkbox.js",
+                   "toolbox/js/impact-ui/jquery.selectbox-0.5.js",
+                   "toolbox/js/impact-ui/jquery.busy.min.js",
+                   "toolbox/js/impact-ui/jquery.ui.timepicker.js"
+                   //                   "toolbox/js/main.js"
+                  ];
+
+    _.each(files, function(file) {
+               $('head').append(file);
+           });
+    
+    // http://stackoverflow.com/questions/6502943/resetting-document-ready-getscript
+    _.each(scripts, function(script) {
+               $.getScript(script);
+           });
+    
+};

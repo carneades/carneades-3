@@ -1,11 +1,10 @@
 PM.append_agbrowser = function(id) {
     var url = IMPACT.argumentbrowser_url + '/#/argumentgraph/' + IMPACT.db;
 
-    var prevnextmenu = '<div id="framemenu" class="navigation"><a class="first" id="previous" href="">Previous</a><a id="next" href=""">Next</a><a id="popup" class="last" href="">Popup</a></div>';
-    $(id).append(prevnextmenu + '<iframe id="browserframe" width="95%" height="800px" class="scroll-pane"></iframe>');
+    $(id).append('<iframe id="browserframe" width="95%" height="800px" class="scroll-pane"></iframe>');
 
     var text;
-    IMPACT.db = "copyright";
+    //    IMPACT.db = "copyright";
     if(IMPACT.db == "") {
         text = "No facts have been entered. Enter some facts to view the arguments.";
         $('#browserframe').contents().find('body').html('<center>{0}</center>'.format(text));
@@ -15,12 +14,6 @@ PM.append_agbrowser = function(id) {
         $('#browserframe').attr('src', url);
     
         PM.push_history('argumentgraph', IMPACT.db);
-        $('#previous').click(PM.prev_history);
-        $('#next').click(PM.next_history);
-    
-        var argumentbrowser_url = "{0}/#/argumentgraph/{1}".format(IMPACT.argumentbrowser_url, IMPACT.db);
-        $('#popup').attr('href', argumentbrowser_url);
-        $('#popup').click(_.bind(PM.open_ag_browser, PM, url));
     } 
 };
 
@@ -67,12 +60,27 @@ PM.add_map_to_browser_listener = function(domelement) {
     }
 };
 
+PM.add_prevnext_menu = function() {
+      var prevnextmenu = '<a class="first" id="previous" href="">Previous</a><a id="next" href=""">Next</a><a id="popup" class="last" href="">Popup</a>';
+    $('#browserframe').contents().find('#menu').append(prevnextmenu);
+    $('#browserframe').contents().find('#previous').click(PM.prev_history);
+    $('#browserframe').contents().find('#next').click(PM.next_history);
+    
+    var argumentbrowser_url = "{0}/#/argumentgraph/{1}".format(IMPACT.argumentbrowser_url, IMPACT.db);
+    $('#popup').attr('href', argumentbrowser_url);
+    
+    var url = IMPACT.argumentbrowser_url + '/#/argumentgraph/' + IMPACT.db;
+    $('#browserframe').contents().find('#popup').click(_.bind(PM.open_ag_browser, PM, url));
+    
+};
+
 PM.show_statement_inframe = function(uuid) {
     var statement_html = document.getElementById('browserframe').contentWindow.statement_html;
 
     PM.ajax_get(IMPACT.impactws_url + '/statement-info/' + IMPACT.db + '/' + uuid,
                 function(data) {
                     $('#browserframe').contents().find('#browser').html (statement_html(IMPACT.db, data, IMPACT.lang));
+                    PM.add_prevnext_menu();
                     PM.add_links_listeners();
                 });    
 };
@@ -83,6 +91,7 @@ PM.show_argument_inframe = function(uuid) {
     PM.ajax_get(IMPACT.impactws_url + '/argument-info/' + IMPACT.db + '/' + uuid,
                 function(data) {
                     $('#browserframe').contents().find('#browser').html (argument_html(IMPACT.db, data));
+                    PM.add_prevnext_menu();
                     PM.add_links_listeners();
                 });
 };
@@ -94,10 +103,11 @@ PM.show_argumentgraph_inframe = function() {
     PM.ajax_get(IMPACT.impactws_url + '/argumentgraph-info/' + IMPACT.db,
                 function(data) {
                     $('#browserframe').contents().find('#browser').html(argumentgraph_html(IMPACT.db, data));
+                    PM.add_prevnext_menu();
                     PM.add_links_listeners();
-                    if(PM_CONFIG.debug) {
-                        $('#browserframe').contents().find('head').append('<link rel="stylesheet" href="/policymodellingtool/toolbox/css/policymodelling/style.css" type="text/css" />');
-                    } 
+                    // if(PM_CONFIG.debug) {
+                    //     $('#browserframe').contents().find('head').append('<link rel="stylesheet" href="/policymodellingtool/toolbox/css/policymodelling/style.css" type="text/css" />');
+                    // } 
                 });
 
 };
@@ -123,6 +133,7 @@ PM.add_links_listeners = function() {
                var parsed = agb_parse_url(href);
                var type = parsed[0];
                var uuid = parsed[2];
+               var id = a.attr('id');
 
                // console.log('href =' + href);
                // console.log(parsed[0]);
@@ -152,7 +163,7 @@ PM.add_links_listeners = function() {
                                PM.show_argumentgraph_inframe();
                                return false;
                            });
-               } else {
+               } else if(id != 'popup' && id != 'next' && id != 'previous') {
                    // external link
                    a.click(function() {
                                window.open(href);
