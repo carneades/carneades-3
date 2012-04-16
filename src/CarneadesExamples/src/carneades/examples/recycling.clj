@@ -6,7 +6,6 @@
         carneades.engine.argument
         carneades.engine.argument-evaluation
         carneades.engine.aspic
-        carneades.engine.caes
         carneades.engine.argument-graph
         carneades.maps.lacij))
 
