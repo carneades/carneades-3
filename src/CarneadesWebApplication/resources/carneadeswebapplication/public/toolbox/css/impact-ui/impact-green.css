@@ -65,7 +65,7 @@ table {
 /*****************************************************************************/
 body {
 	font: 12pt Calibri, Arial, sans-serif;
-	overflow: hidden;
+	/* overflow: hidden; */
 }
 
 p {
@@ -628,7 +628,7 @@ label.ui-button.ui-state-disabled.ui-state-active.ui-button-focus:hover:active {
 /* Dual licensed under the MIT and GPL licenses.                             */
 /*****************************************************************************/
 .jspContainer {
-	overflow: hidden;
+	/* overflow: hidden; */
 	position: relative;
 }
 
