@@ -9,7 +9,7 @@ var AGB = {
 // this code is executed when the page is loaded
 $(function() {
       $.address.change(url_changed);
-//      AGB.load_uid_styles();
+      AGB.load_uid_styles();
 
 });
 
