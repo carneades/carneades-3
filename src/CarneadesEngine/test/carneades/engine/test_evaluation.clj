@@ -81,8 +81,8 @@
                    (enter-arguments [A2, A1, A4, A3])
                    (accept [wears-ring, party-animal]))
                ag (evaluate aspic-grounded bachelor-graph)]
-           (is (and (undecided? ag (literal-atom bachelor))
-                    (undecided? ag (literal-atom married))))))
+           (is (out? ag (literal-atom bachelor))
+           (is (out? ag (literal-atom married))))))
 
 ; The Frisian example, ibid., page 11
 
@@ -216,6 +216,11 @@
                              :id 'greece-arg
                              :conclusion Greece)
                
+               greece-undercutter (make-argument
+                                  :id 'greece-undercutter
+                                  :conclusion '(undercut greece-arg)
+                                  :premises [(pm Italy)])
+               
                greece-rebuttal  (make-argument
                                   :id 'greece-rebuttal
                                   :strict true
@@ -228,14 +233,18 @@
                
                italy-rebuttal  (make-argument
                                  :id 'italy-rebuttal
-                                 :strict true
                                  :conclusion (neg Italy)
                                  :premises [(pm Greece)])
                
+               italy-undercutter (make-argument
+                                  :id 'italy-undercutter
+                                  :conclusion '(undercut italy-arg)
+                                  :premises [(pm Greece)])
+               
                vacation-graph1  (-> (make-argument-graph)
                                     ; (assume [Italy, Greece])
-                                    (enter-arguments [greece-arg, greece-rebuttal, 
-                                                      italy-arg, italy-rebuttal]))
+                                    (enter-arguments [greece-arg, greece-undercutter, 
+                                                      italy-arg, italy-undercutter]))
                
                vacation-graph2 (accept vacation-graph1 [Italy])
                g1  (evaluate aspic-grounded vacation-graph1)
@@ -243,7 +252,7 @@
            (and (is (undecided? g1 Italy))
                 (is (undecided? g1 Greece))
                 (is (in? g2 Italy))
-                (is (undecided? g2 Greece))))) ;; out?????
+                (is (undecided? g2 Greece)))))
 
 ;; This example illustrates the undermining of a supporting argument.
 

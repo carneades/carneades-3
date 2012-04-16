@@ -225,14 +225,13 @@
                                       (symbol default-policies-namespace)
                                       (symbol default-policies-name))
         ag (make-argument-graph)
-        ag (accept ag '((announcement) (search-type standard) (type-of-use p w commercial) (work w) (person p)
-                        (valid UrhG-31)))
+        ag (accept ag '((work w) (person p)))
         engine (make-engine ag 50 #{} (list (generate-arguments-from-theory copyright-theory)))
         query '(may-publish ?Person ?Work)
         ag (argue engine query)
-        ag (evaluate caes-grounded ag)]
+        ag (evaluate aspic-grounded ag)]
     ;; (export ag "/tmp/argumentmissing.svg")
-    (is (= 2 (count (arguments ag))))))
+    (is (= 3 (count (arguments ag))))))
 
 ;; (run-tests)
 
