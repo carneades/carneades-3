@@ -40,7 +40,7 @@ h2 {
 	position: relative;
 	height: 75px;
 	background-image: url(../images/frame/header_center.png);
-	overflow: hidden;
+	/* overflow: hidden; */
 	z-index: 1;
 }
 
@@ -290,7 +290,7 @@ Webkit HACK to fix chrome overflow hidden bug
 }
 
 #stage {
-	overflow: hidden;
+	/* overflow: hidden; */
 	overflow-y: auto;
 }
 
