@@ -27,7 +27,8 @@
           m)))
 
 (defrecord Goal
-  [issues         ; (seq-of literals)
+  [issues         ; (seq-of literals)  ; open issues
+   closed-issues  ; set of literals
    substitutions  ; (term -> term) map
    depth])        ; int  
 
@@ -36,6 +37,7 @@
    (let [m (apply hash-map values)]
    (merge (Goal. 
              ()     ; issues
+            #{}     ; closed issues
              {}     ; substitutions
              0)     ; depth
           m)))
@@ -43,7 +45,6 @@
 (defrecord ACState        ; argument construction state    
   [goals                  ; (symbol -> goal) map, where the symbols are goal ids
    open-goals             ; set of goal ids (todo: change to a priority queue)
-   closed-issues          ; set of literals for goals already processed 
    graph                  ; argument-graph 
    arg-templates          ; (symbol -> argument template) map; symbols are template ids
    asm-templates])        ; vector of non-ground literals
@@ -54,7 +55,6 @@
     (merge (ACState. 
              {}     ; goals
              '()    ; open goals
-             #{}    ; closed-issues
              (make-argument-graph) 
              {}     ; argument templates
              [])    ; assumption templates
@@ -94,15 +94,18 @@
   [state1 g1 response]
   ; (println "process premises")
   (let [arg (:argument response)
-        subs (:substitutions response)]
+        subs (:substitutions response)
+        closed-issues (conj (:closed-issues g1) 
+                            (apply-substitutions subs (first (:issues g1))))]
     (if (nil? arg)
       (add-goal state1 
                 (make-goal 
                   :issues (rest (:issues g1))
+                  :closed-issues closed-issues
                   :substitutions subs
                   :depth (inc (:depth g1))))
       (let [conclusion (literal->sliteral (conclusion-literal arg))] 
-            ; undercutter `(~'undercut ~(:id arg))]
+        ;; undercutter `(~'undercut ~(:id arg))]
         (add-goal state1 
                   (make-goal 
                     ; pop the first issue and add issues for the
@@ -113,6 +116,7 @@
                                                  (:exceptions (:argument response))))
                                     ; (list undercutter)                              
                                     (rest (:issues g1)))
+                    :closed-issues closed-issues
                     :substitutions subs
                     :depth (inc (:depth g1))))))))
   
@@ -134,24 +138,31 @@
    of the template. Add an undercutter goal for each argument added to the graph."
   [state1 goal response]
   (let [subs (:substitutions response)]
+    ; (printf "subs: %s\n" subs)
     (reduce (fn [s k]
               (let [template (get (:arg-templates s) k)
+                    ; _ (printf "trying scheme: %s\n" (:scheme (:argument template)))
+                    ; _ (printf "guard: %s\n" (:guard template))
                     trm (apply-substitutions subs (:guard template))]
                 (if (or (not (ground? trm))
                         (contains? (:instances template) trm))
-                  s
+                  (do ; (printf "%s is a previous instance or not ground.\n" trm)
+                      s)
                   (let [arg (instantiate-argument (:argument template) subs)
                         schemes (schemes-applied (:graph state1) (:conclusion arg))]
                     (if (contains? schemes (:scheme arg)) 
                       ; the scheme has already been applied to this issue 
-                      s
-                      (-> s
+                      (do ; (printf "previous scheme: %s\n" (:scheme arg))
+                           s)
+                      (do 
+                        ; (printf "new instance %s of scheme %s .\n" trm (:scheme arg))
+                        (-> s
                           (assoc 
                             :graph (enter-arguments (:graph s) (cons arg (make-undercutters arg)))
                             :arg-templates (add-instance (:arg-templates s) k trm))
                           (add-goal (assoc goal 
                                            :issues (list `(~'undercut ~(:id arg)))
-                                           :depth (inc (:depth goal))))))))))
+                                           :depth (inc (:depth goal)))))))))))
             state1
             (keys (:arg-templates state1)))))
 
@@ -193,12 +204,8 @@
   "ac-state response -> ac-state"
   [state1 response]
   (let [arg (:argument response)]
-    (if (or (nil? arg)
-            ; create at most one template for each scheme
-            ; (and (:scheme arg)
-            ;     (get (:arg-templates state1) 
-            ;          (:scheme-arg arg)))
-            )
+    ; (printf "process-argument: %s\n" (:scheme arg))
+    (if (nil? arg)
       state1
       (assoc state1 
              :arg-templates 
@@ -213,7 +220,7 @@
 (defn- apply-response
   "ac-state goal response -> ac-state"
   [state1 goal response]
-  ; (pprint {:response response})
+  ; (printf "apply response ===============================\n")
   (-> state1
       (update-issues goal response)
       (process-argument response)
@@ -236,7 +243,7 @@
               (reduce (fn [l wff]
                         (let [subs2 (unify goal (literal-atom wff) subs)]
                           ; (println "atom: " (literal-atom wff))
-                          (if (or (not subs2) (empty? subs2))
+                          (if (empty? subs2)
                             l
                             (conj l (make-response subs2 () nil)))))
                       []
@@ -251,12 +258,14 @@ reduce the goal with the given id"
   ;; are passed down to the children of the goal, so they are not lost by removing the goal.
   (let [goal (get (:goals state1) id),
         state2 (remove-goal state1 id)]
+    ; (printf "issues: %s\n" (vec (:issues goal)))
+    ; (printf "closed issues: %s\n" (:closed-issues goal))
     (if (empty? (:issues goal))
       state2 ; no issues left in the goal
       (let [issue (apply-substitutions (:substitutions goal) (first (:issues goal)))]
-        (if (contains? (:closed-issues state2) issue)
-          ;; the issue has already been handled and closed
-          ;; a goal for the remaining issues and return
+        (if (contains? (:closed-issues goal) issue)
+          ;; the issue has already been handled for this goal and closed
+          ;; Add a goal for the remaining issues and return
           (add-goal state2 (assoc goal :issues (rest (:issues goal))))
           ;; close the selected issue in state3 and apply the generators to the issue and its complement
           ;; Rebuttals are constructed even if no pro arguments can be found
@@ -264,19 +273,18 @@ reduce the goal with the given id"
           ;; issue P as the issue (not P). The positive or negative form of the issue or query is no longer
           ;; relevant for the purpose of argument construction. But it is still important
           ;; for argument evaluation, where burden of proof continues to play a role.
-          (let [state3 (assoc state2 :closed-issues (conj (:closed-issues state1) issue))
-                generators2 (concat (list (generate-subs-from-basis (:graph state3)))
+          (let [generators2 (concat (list (generate-subs-from-basis (:graph state2)))
                                     generators1)]
-                                        ; (println "issue: " issue)
+            ; (println "issue: " issue)
             (let [responses (apply concat (map (fn [g]
                                                  (concat (generate g issue
                                                                    (:substitutions goal))
                                                          (generate g (literal-complement issue)
                                                                    (:substitutions goal))))
                                                generators2))]
-                                        ; (println "responses: " (count responses))
+             ;  (println "responses: " (count responses))
               (reduce (fn [s r] (apply-response s goal r))
-                      state3
+                      state2
                       responses))))))))
 
 (defn- reduce-goals
