@@ -232,18 +232,20 @@
        (let [db2 (make-database-connection db "guest" "")]
          (with-db db2 (json-response (map pack-statement (main-issues))))))               
 
-  (GET "/matching-statements/" request
-                                        ; returns a vector of {:substitutions :statement} records for the statements
-                                        ; with atoms matching the query in the body of the request
-       (let [m (read-json (slurp (:body request)))
-             s1 (unpack-statement m)
-             db (make-database-connection (:db (:params request)) "guest" "")]
-         (with-db db (json-response (mapcat (fn [s2] 
-                                              (let [subs (unify (:atom s1) (:atom s2))]
-                                                (when subs 
-                                                  [{:substitutions subs
-                                                    :statement s2}])))
-                                            (list-statements))))))
+  (POST "/matching-statements/:db" request
+        ;; returns a vector of {:substitutions :statement} records for the statements
+        ;; with atoms matching the query in the body of the request
+        (prn "matching-statements called!")
+        (let [m (read-json (slurp (:body request)))
+              db (:db (:params request))
+              s1 (unpack-statement m)
+              db (make-database-connection (:db (:params request)) "guest" "")]
+          (with-db db (json-response (mapcat (fn [s2] 
+                                               (let [subs (unify s1 (:atom s2))]
+                                                 (when subs 
+                                                   [{:substitutions subs
+                                                     :statement s2}])))
+                                             (list-statements))))))
 
   (GET "/premise-of/:db/:id" [db id]
                                         ; returns a vector of arguments in which the statement with the given id
