@@ -9,8 +9,9 @@ var AGB = {
 // this code is executed when the page is loaded
 $(function() {
       $.address.change(url_changed);
-      AGB.load_uid_styles();
-
+      if(AGB_CONFIG.debug) {
+          AGB.load_uid_styles();          
+      }
 });
 
 function agb_parse_url(urlstring)
