@@ -48,7 +48,7 @@
      :arity 2
      :forms {:en (make-form :positive "%s has a license to publish %s."
                             :negative "%s does not have a license to publish %s."
-                            :question "Does %s have a license to publish %s.")})
+                            :question "Does %s have a license to publish %s?")})
     
     
     'may-publish
