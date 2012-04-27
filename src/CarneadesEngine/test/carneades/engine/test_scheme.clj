@@ -255,7 +255,8 @@
                                             (generate-arguments-from-theory copyright-theory)))
         query '(may-publish ?Person ?Work)
         ag (argue engine query)
-        ag (evaluate aspic-grounded ag)]
+        ;; ag (evaluate aspic-grounded ag)
+        ]
     (is (= 3 (count (arguments ag))))))
 
 ;; (run-tests)
