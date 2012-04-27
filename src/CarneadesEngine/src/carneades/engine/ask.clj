@@ -67,9 +67,10 @@
 (defn make-answer
   "Creates an answer suitable to send to the argument-from-user generator"
   [s goal answer]
+  (prn "[make-answer]")
   (when-let [subs2 (unify (literal-atom goal) (literal-atom answer) s)]
     (printf "[make-answer] s = %s subs2 = %s goal = %s answer = %s\n" s subs2 goal answer)
-    [subs2 (list (make-response subs2 [answer]
+    [subs2 (list (make-response subs2 [(make-statement :atom answer)]
                                 nil
                                 ;; (make-argument :conclusion answer :scheme "ask")
                                 ))]))
