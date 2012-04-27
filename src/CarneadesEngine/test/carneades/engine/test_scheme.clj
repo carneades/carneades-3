@@ -3,9 +3,8 @@
 
 (ns carneades.engine.test-scheme
   (:use clojure.test
-        (carneades.engine argument argument-graph shell argument scheme 
-         aspic dublin-core argument-evaluation policy)
-        
+        (carneades.engine statement argument argument-graph shell argument scheme 
+         aspic dublin-core argument-evaluation policy ask  argument-generator)
         carneades.maps.lacij))
 
 (def theory1 
@@ -231,6 +230,32 @@
         ag (argue engine query)
         ag (evaluate aspic-grounded ag)]
     ;; (export ag "/tmp/argumentmissing.svg")
+    (is (= 3 (count (arguments ag))))))
+
+(deftest test-argumentconstruction-blocked
+  (let [copyright-theory (load-theory default-policies-file
+                                      (symbol default-policies-namespace)
+                                      (symbol default-policies-name))
+        ag (make-argument-graph)
+        ;; ag (accept ag '((work w) (person p)))
+        fake-argument-from-user
+        (reify ArgumentGenerator
+          (generate
+            [this goal s]
+            (prn "asking: " goal)
+            (let [p (literal-predicate goal)]
+              (cond (= p 'person)
+                    (second (make-answer s goal '(person pp)))
+
+                    (= p 'work)
+                    (second (make-answer s goal '(work ww)))
+
+                    :else ()))))
+        engine (make-engine ag 50 #{} (list fake-argument-from-user
+                                            (generate-arguments-from-theory copyright-theory)))
+        query '(may-publish ?Person ?Work)
+        ag (argue engine query)
+        ag (evaluate aspic-grounded ag)]
     (is (= 3 (count (arguments ag))))))
 
 ;; (run-tests)
