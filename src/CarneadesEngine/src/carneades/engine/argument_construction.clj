@@ -192,13 +192,16 @@
    add the assumptions of the response to the assumption templates"
   [state response]
   (let [subs (:substitutions response)
-        asms (:assumptions response)]
-    (if (or (nil? asms) (empty? asms))
+        asms (:assumptions response)
+        asms (map (fn [asm] (apply-substitutions subs asm)) asms)
+        state (assoc state :graph (assume (:graph state) (filter ground? asms)))
+        ;; state (update-in state [:graph] assume (map ground? asms))
+        ]
+    (if (empty? asms)
       state
       (assoc state :asm-templates 
              (concat (:asm-templates state) 
-                     (map (fn [asm] (apply-substitutions subs asm))
-                          asms))))))
+                     (filter (complement ground?) asms))))))
 
 (defn- process-argument
   "ac-state response -> ac-state"
@@ -282,7 +285,7 @@ reduce the goal with the given id"
                                                          (generate g (literal-complement issue)
                                                                    (:substitutions goal))))
                                                generators2))]
-             ;  (println "responses: " (count responses))
+             ;; (println "responses: " (count responses))
               (reduce (fn [s r] (apply-response s goal r))
                       state2
                       responses))))))))
@@ -293,7 +296,7 @@ reduce the goal with the given id"
    a single argument graph of a ac-state.  All arguments found within the given
    resource limits are included in the argument graph of the resulting ac-state."
   [state1 max-goals generators]
-  ; (pprint "reduce-goals")
+  ;; (pprint "reduce-goals")
   (if (or (empty? (:open-goals state1))
           (<= max-goals 0))
     state1
