@@ -28,7 +28,7 @@ function display_statement(db, stmtid)
     ajax_get('statement-info/' + db + '/' + stmtid,
              function(info) {
                  $('#browser').html(statement_html(db, info, CARNEADES.lang));
-                 $('#close').click(on_close);
+                 // $('#close').click(on_close);
              });
 }
 

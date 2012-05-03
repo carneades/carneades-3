@@ -31,7 +31,7 @@ function display_argument(db, argid)
     ajax_get('argument-info/' + db + '/' + argid,
             function(argument_data) {
                 $('#browser').html(argument_html(db, argument_data));
-                $('#close').click(on_close);
+                // $('#close').click(on_close);
             });
 }
 
