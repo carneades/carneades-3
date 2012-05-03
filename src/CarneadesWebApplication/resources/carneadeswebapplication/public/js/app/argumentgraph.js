@@ -28,7 +28,7 @@ function display_argumentgraph(db)
     ajax_get('argumentgraph-info/' + db,
              function(data) {
                  $('#browser').html(argumentgraph_html(db, data));
-                 $('#close').click(on_close);
+                 // $('#close').click(on_close);
                  // add_map_to_div(db, '#map');
              });
 }

@@ -61,16 +61,16 @@ PM.add_map_to_browser_listener = function(domelement) {
 };
 
 PM.add_prevnext_menu = function() {
-      var prevnextmenu = '<a class="first" id="previous" href="">Previous</a><a id="next" href=""">Next</a><a id="popup" class="last" href="">Popup</a>';
+      var prevnextmenu = '<a class="first" id="previous" href="">Previous</a><a id="next" href="" class="last">Next</a>';
     $('#browserframe').contents().find('#menu').append(prevnextmenu);
     $('#browserframe').contents().find('#previous').click(PM.prev_history);
     $('#browserframe').contents().find('#next').click(PM.next_history);
     
     var argumentbrowser_url = "{0}/#/argumentgraph/{1}".format(IMPACT.argumentbrowser_url, IMPACT.db);
-    $('#popup').attr('href', argumentbrowser_url);
+    // $('#popup').attr('href', argumentbrowser_url);
     
     var url = IMPACT.argumentbrowser_url + '/#/argumentgraph/' + IMPACT.db;
-    $('#browserframe').contents().find('#popup').click(_.bind(PM.open_ag_browser, PM, url));
+    // $('#browserframe').contents().find('#popup').click(_.bind(PM.open_ag_browser, PM, url));
     
 };
 
