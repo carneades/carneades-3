@@ -47,7 +47,7 @@ PM.send_answers = function(questions, on_response) {
     var answers_values = _.reduce(inputs,
                                   function(answers_values, html_input) {
                                     var input = $(html_input);
-                                    var id = input.attr('id').substr(1);
+                                    var id = input.attr('id').substr(2);
                                     var question = _.filter(questions, function(q) {return q.id = id;})[0];
                                     var value = widget_to_val[question.widget](input);
                                     answers_values.push({id: id, value: value});

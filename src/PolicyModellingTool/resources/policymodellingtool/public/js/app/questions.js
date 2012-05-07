@@ -1,6 +1,9 @@
 PM.show_questions = function(questions, questionlist, on_submit) {
     questionlist.append('<h2>{0}</h2>'.format(questions[0].category_name));
-    _.map(questions, function(q) { PM.show_question(q, questionlist); });
+    _.map(questions, function(q) { 
+              PM.show_question(q, questionlist); 
+              $('#q' + q.id + ' .plus').click(_.bind(PM.add_fields, PM, q));
+          });
     
     var button_id = UTILS.gen_id();
     questionlist.append('<input type="button" value="submit" id="submit{0}"/>'.format(button_id));
@@ -8,16 +11,27 @@ PM.show_questions = function(questions, questionlist, on_submit) {
     $('#submit' + button_id).click(on_submit);
 };
 
-PM.show_question = function(question, questionlist) {
-    // by convention the id of the input for the question N is qN
+PM.add_fields = function(question) {
+    console.log('+PLUS+');
+    console.log(question);
+    var question_html = PM.get_question_html(question);
+    $('#q' + question.id + ' .plus').last().remove();
+    $('#q' + question.id).append('<br>' + question_html);
+    $('#q' + question.id + ' .plus').click(_.bind(PM.add_fields, PM, question));
+
+    return false;
+};
+
+PM.get_question_widget = function(question) {
+    // by convention the id of the input for the question N is iqN
     var widget_to_html = {
         text: function(id, proposed_answers, formal_answers) {
-            return '<input class="inputfield" type="text" id="q{0}" />'.format(id);
+            return '<input class="inputfield" type="text" id="iq{0}" />'.format(id);
         },
         radio: function(id, proposed_answers, formal_answers) {
             var html = "";
             _.each(formal_answers, function(formal_answer, index) {
-                       html += '<input id="q{0}" class="radiobutton inputfield" name="inputq{0}" value="{1}" type="radio" />{2} '
+                       html += '<input id="iq{0}" class="radiobutton inputfield" name="inputq{0}" value="{1}" type="radio" />{2} '
                            .format(id, formal_answer, proposed_answers[index]);
                    });
             return html;
@@ -26,7 +40,7 @@ PM.show_question = function(question, questionlist) {
             var html = '<select class="combobox">';
             
             _.each(formal_answers, function(formal_answer, index) {
-                       html += '<option id="q{0}" class="dropdown-menu inputfield" value="{1}">{2}</option>'
+                       html += '<option id="iq{0}" class="dropdown-menu inputfield" value="{1}">{2}</option>'
                            .format(id, formal_answer, proposed_answers[index]);
                    });
             html += '</select>';
@@ -34,20 +48,30 @@ PM.show_question = function(question, questionlist) {
         }
     };
 
-    var question_widget = widget_to_html[question.widget](question.id, question.answers, question.formalanswers);
+    return widget_to_html[question.widget](question.id, question.answers, question.formalanswers);
+};
+
+PM.show_question = function(question, questionlist) {
     questionlist.append('<p>{0}</p>'.format(question.hint == null ? "" : question.hint));
-    var question_html = PM.get_question_html(question.question, question_widget);
-    questionlist.append(question_html);
+
+    var question_html = PM.get_question_html(question);
+    questionlist.append('<div id="q{0}">{1}</div>'.format(question.id, question_html));
     questionlist.append('<br/>');
 };
 
-PM.get_question_html = function(question, widget) {
+PM.get_question_html = function(question) {
+    var widget = PM.get_question_widget(question);
     var variable = /\?[a-zA-Z_0-9-]+/;
-    var parts = question.split(variable);
-    
+    var parts = question.question.split(variable);
+    var html = "";
+
     if(parts.length == 2) {
-        return parts.join(widget);         
+        html = parts.join(widget);         
     } else {
-        return question + widget;
+        html = question.question + widget;
     } 
-}
+    
+    html = '<div>{1}&nbsp;&nbsp;<img style="vertical-align: middle;" width="18" height="18" class="minus" src="images/minus.png">&nbsp;&nbsp;</img><img style="vertical-align: middle;" width="18" height="18" class="plus" src="images/plus.png"></img></div>'.format(question.id, html);
+    
+    return html;
+};
