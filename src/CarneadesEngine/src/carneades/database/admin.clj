@@ -44,7 +44,7 @@
    record and inserts it into the admin database.  
    Also creates an argument database for the debate,
    protected by the password. Returns the id (URN) of 
-   the new translation."
+   the new database."
   [m]   
   {:pre [(map? m)]}
   (let [id (make-urn)]
