@@ -64,15 +64,16 @@
                                                 (second questions-pipe))]
     [generator (first questions-pipe) (second answers-pipe)]))
 
-(defn make-answer
+(defn build-answer
   "Creates an answer suitable to send to the argument-from-user generator"
-  [s goal answer]
-  (prn "[make-answer]")
-  (when-let [subs2 (unify (literal-atom goal) (literal-atom answer) s)]
-    (printf "[make-answer] s = %s subs2 = %s goal = %s answer = %s\n" s subs2 goal answer)
-    [subs2 (list (make-response subs2 [(make-statement :atom answer)]
-                                nil
-                                ;; (make-argument :conclusion answer :scheme "ask")
-                                ))]))
+  [s goal answers]
+  (prn "[build-answer]")
+  (keep (fn [answer]
+          (when-let [subs (unify (literal-atom goal) (literal-atom answer) s)]
+            (make-response subs [(make-statement :atom answer)]
+                         nil
+                         ;; (make-argument :conclusion answer :scheme "ask")
+                         )))
+        answers))
 
 
