@@ -10,6 +10,10 @@
 
 (defmulti ajax-handler (fn [json _] (ffirst json)))
 
+(def impact-theory (load-theory impact-policies-file
+                        (symbol impact-policies-namespace)
+                        (symbol impact-policies-name)))
+
 (defn strs->stmt
   "Converts a collection of a string representing a statement on the client side
    to a formal statement."
@@ -95,10 +99,7 @@
    :last-id 0
    :substitutions {}
    :query nil
-   :theory (load-theory default-policies-file
-                        (symbol default-policies-namespace)
-                        (symbol default-policies-name))
-   
+   :theory impact-theory 
    :engine-runs false})
 
 (defmethod ajax-handler :reset

@@ -1,7 +1,8 @@
 (ns impact.web.logic.askengine
   (:use clojure.pprint
         impact.web.core
-        (carneades.engine aspic argument-evaluation argument-graph ask statement scheme argument argument-graph shell unify dialog)
+        (carneades.engine aspic argument-evaluation argument-graph ask statement scheme
+                          argument argument-graph shell unify dialog)
         (impact.web.logic statement-translation))
   (:import java.io.File))
 
