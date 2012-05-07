@@ -2,15 +2,11 @@
   (:use (carneades.engine statement scheme argument-graph aspic argument-evaluation))
   (:require [carneades.config.reader :as config]))
 
-(def default-policies-file (config/properties "policies-file"))
-(def default-policies-namespace  (config/properties "policies-namespace"))
-(def default-policies-name  (config/properties "policies-name"))
+(def impact-policies-file (config/properties "impact-policies-file"))
+(def impact-policies-namespace  (config/properties "impact-policies-namespace"))
+(def impact-policies-name  (config/properties "impact-policies-name"))
 
-;; (def default-policies (load-theory default-policies-file
-;;                                    (symbol default-policies-namespace)
-;;                                    (symbol default-policies-name)))
-
-(printf "\n[policy] file = %s\n[policy] namespace = %s\n[policy] name = %s\n" default-policies-file default-policies-namespace default-policies-name)
+(printf "\n[policy] file = %s\n[policy] namespace = %s\n[policy] name = %s\n" impact-policies-file impact-policies-namespace impact-policies-name)
 
 (defn get-policies
   [questionid theory]
