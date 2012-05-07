@@ -108,13 +108,10 @@
     'search-type
     (make-predicate
      :symbol 'search-type
-     :arity 1
-     :forms {:de (make-form :positive "Art der Suche nach dem Urheber: %s."
-                            :negative "Die Suche nach dem Urheber war nicht: %s."
-                            :question "Welche Art der Suche nachdem Urheber erfolgte?")
-             :en (make-form :positive "The type of search for the copyright owner was %s."
-                            :negative "The type of search for the copyright owner was not %s."
-                            :question "What type of search for the copyright owner was performed?")}
+     :arity 3
+     :forms {:en (make-form :positive "%s conducted a %s search for the copyright owner of %s."
+                            :negative "%s did not conduct a %s search for the copyright owner of %s."
+                            :question "Did %s conduct an %s search for the copyright owner of %s?")}
      :hint {:en "What type of search was performed to try to find the copyright owner?"}
      :category 'search
      :answers ['standard, 'professional, 'none]
@@ -202,7 +199,7 @@ nach einer dokumentierten Standardsuche [alternativ: einer zeitlich auf 30 Tage 
          :premises [(make-premise :statement '(person ?P))
                     (make-premise :statement '(work ?W))
                     (make-premise :statement '(type-of-use ?P ?W non-commercial))
-                    (make-premise :statement '(search-type standard))
+                    (make-premise :statement '(search-type ?P ?W standard))
                     (make-premise :statement '(valid AB-52c-1-a)) ])
 
         
@@ -217,6 +214,6 @@ Bekanntmachung nicht ermittelt werden können."})
          :premises [(make-premise :statement '(person ?P))
                     (make-premise :statement '(work ?W))
                     (make-premise :statement '(type-of-use ?P ?W commercial))
-                    (make-premise :statement '(search-type professional))
+                    (make-premise :statement '(search-type ?P ?W professional))
                     (make-premise :statement '(announcement))
                     (make-premise :statement '(valid AB-52c-2-a))])])])]))
