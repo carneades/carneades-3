@@ -1,8 +1,8 @@
 (ns impact.web.logic.askengine
   (:use clojure.pprint
         impact.web.core
-        (carneades.engine aspic argument-evaluation argument-graph ask statement scheme argument argument-graph shell unify)
-        (impact.web.logic statement-translation answers))
+        (carneades.engine aspic argument-evaluation argument-graph ask statement scheme argument argument-graph shell unify dialog)
+        (impact.web.logic statement-translation))
   (:import java.io.File))
 
 (defn- on-solution
@@ -15,7 +15,8 @@
         _ (prn "lastsolstmt = " lastsolstmt)
         main-node (get-statement-node ag lastsolstmt)
         ag (update-statement-node ag main-node :main true)
-        ag (accept ag (vals (:answers session))) ;; accept all answers from the user!
+         ;; accept all answers from the user!
+        ag (accept ag (apply concat (vals (get-in session [:dialog :answers]))))
         ag (enter-language ag (-> session :theory :language))
         ag (evaluate aspic-grounded ag)
         dbname (store-ag ag)
@@ -61,9 +62,9 @@
                     :substitutions substitutions
                     :last-question lastquestion
                     :questions questions)]
-     (if (already-answered? lastquestion session)
-       (continue-engine session)
-       (ask-user session)))
+      (if-let [answers (seq (get-answers (:dialog session) lastquestion))]
+        (continue-engine session answers)
+        (ask-user session)))
     (do
       (prn "[askengine] argument construction is finished!")
       (on-solution session))))
@@ -99,12 +100,12 @@
     (get-ag-or-next-question session)))
 
 (defn- continue-engine
-  [session]
-  (let [{:keys [last-question send-answer questions future-ag substitutions]} session
-        [subs ans] (get-answer last-question session)
-        subs (if ans subs substitutions)]
-    (send-answer ans)
-    (get-ag-or-next-question (assoc session :substitutions subs))))
+  [session answers]
+  (let [{:keys [send-answer questions]} session]
+    (send-answer (build-answer (:substitutions session)
+                               (:last-question session)
+                               answers))
+    (get-ag-or-next-question session)))
 
 (defn- get-askables
   [theory]
@@ -114,12 +115,13 @@
   "Returns the modified session."
   [session]
   {:pre [(not (nil? session))]}
-  ;; TODO: changes this and get them from the questions.clj
-  (let [;; askables '#{person work type-of-use search-type annoucement}
-        askables (get-askables (:theory session))
+  (let [askables (get-askables (:theory session))
         _ (prn "[askengine] askables = " askables)
         query (:query session)]
     (if (:engine-runs session)
-      (continue-engine session)
+      (let [answers (get-answers (:dialog session) (:last-question session))]
+        (when (empty? answers)
+          (throw (Exception. "Invalid state")))
+        (continue-engine session answers))
+      ;; else
       (start-engine session askables))))
-

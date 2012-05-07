@@ -2,11 +2,10 @@
   (:use  clojure.pprint
          clojure.data.json
          impact.web.logic.askengine
-         impact.web.logic.answers
          impact.web.logic.statement-translation
          impact.web.views.pages
          impact.web.core
-         (carneades.engine policy scheme)
+         (carneades.engine policy scheme dialog)
          [carneades.engine.statement :only (neg literal-predicate variable? literal-atom)]))
 
 (defmulti ajax-handler (fn [json _] (ffirst json)))
@@ -66,7 +65,7 @@
   (pprint json)
   (let [answers (reconstruct-answers-from-json (-> json :answers :values)
                                                (:user-questions session))
-        session (add-answers session answers)
+        session (update-in session [:dialog] add-answers answers)
         session (ask-engine session)]
     (if-not (:has-solution session)
       {:session session
@@ -75,21 +74,22 @@
        :body (json-str {:solution (:solution session)
                         :db (:db session)})})))
 
-(defmethod ajax-handler :retrieve_question
-  [json session]
-  (let [data (:retrieve_question json)
-        id (dec (:id data))
-        stmt (strs->stmt (:statement data))
-        [questions _] (get-structured-questions
-                       stmt
-                       (:lang session)
-                       id
-                       (:questionsdata session))]
-    {:body (json-str {:questions questions})}))
+;; this was used in the previous prototype
+;; (defmethod ajax-handler :retrieve_question
+;;   [json session]
+;;   (let [data (:retrieve_question json)
+;;         id (dec (:id data))
+;;         stmt (strs->stmt (:statement data))
+;;         [questions _] (get-structured-questions
+;;                        stmt
+;;                        (:lang session)
+;;                        id
+;;                        (:questionsdata session))]
+;;     {:body (json-str {:questions questions})}))
 
 (defn new-session
   []
-  {:answers {}
+  {:dialog (make-dialog)
    :user-questions {}
    :lang "en"
    :last-id 0
