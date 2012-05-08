@@ -123,17 +123,17 @@
   "argument substitutions -> arg
    Instantiate the variables of an argument by applying substitions"
   [arg subs]
-  (assoc arg
-    :id (make-urn-symbol)
-    :premises (map (fn [p] (assoc p 
-                             :statement 
-                             (apply-substitutions subs (:statement p)))) 
-                   (:premises arg))
-    :exceptions (map (fn [p] (assoc p 
-                               :statement 
-                               (apply-substitutions subs (:statement p)))) 
-                     (:exceptions arg))
-    :conclusion (apply-substitutions subs (:conclusion arg))))
+  (let [update-statement
+        (fn [p]
+          (let [statement (:statement p)
+                statement (apply-substitutions subs statement)
+                statement (assoc statement :id (make-urn-symbol))]
+            (assoc p :statement statement)))]
+   (assoc arg
+     :id (make-urn-symbol)
+     :premises (map update-statement (:premises arg))
+     :exceptions (map update-statement (:exceptions arg))
+     :conclusion (apply-substitutions subs (:conclusion arg)))))
 
 (defn make-undercutters
   "argument -> seq-of argument
