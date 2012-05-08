@@ -348,7 +348,7 @@
                               (ground? (:statement p))))
                  (:premises arg))]}
   ; (pprint {:arg arg})
-  (let [ag2 (reduce (fn [ag stmt] (first (create-statement-node ag stmt)))
+  (let [ag2 (reduce (fn [ag stmt] (enter-statement ag stmt))
                     ag1
                     (conj (map :statement (:premises arg)) 
                           (:conclusion arg)))
