@@ -4,9 +4,9 @@
 
 (defrecord Dialog [questions answers])
 
-(defn add-question
-  [dialog question]
-  (update-in dialog [:questions] conj question))
+(defn add-questions
+  [dialog questions]
+  (update-in dialog [:questions] concat questions))
 
 (defn add-answers
   [dialog answers]
@@ -21,6 +21,10 @@
   (when question
     (get-in dialog [:answers (literal-predicate question)])))
 
+(defn get-nthquestion
+  [dialog n]
+  (first (filter (fn [q] (= (:id q) n)) (:questions dialog))))
+
 (defn make-dialog
   []
-  (->Dialog [] {}))
+  (->Dialog () {}))
