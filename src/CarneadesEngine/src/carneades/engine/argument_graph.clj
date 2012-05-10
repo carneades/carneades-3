@@ -599,8 +599,7 @@
   "argument-graph -> (seq-of statement)
    Returns a sequence of the atomic statements in the argument graph."
   [ag]
-  (map (fn [n] (:statement n))
-       (vals (:statement-nodes ag))))
+  (map :atom (vals (:statement-nodes ag))))
 
 
 (defn reset-node-values

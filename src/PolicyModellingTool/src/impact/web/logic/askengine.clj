@@ -6,46 +6,91 @@
         (impact.web.logic statement-translation))
   (:import java.io.File))
 
-(defn- on-solution
+(defn askable?
+  [askables k]
+  (let [pred (literal-predicate k)
+        res (contains? askables pred)]
+    res))
+
+(defn get-remaining-questions
+  [ag session]
+  (let [{:keys [askables dialog last-id theory lang]} session
+        statements (filter (fn [stmt]
+                             (and
+                              (askable? askables stmt)
+                              (empty? (get-answers dialog stmt))))
+                           (atomic-statements ag))]
+    (reduce (fn [[questions id] stmt]
+              (let [[new-questions id] (get-structured-questions stmt lang id theory)
+                    new-questions (filter (fn [q]
+                                            (empty? (get-answers dialog (:statement q))))
+                                          new-questions)]
+                ;; we use a set to avoid duplicate questions
+                [(merge questions (apply hash-map
+                                         (interleave
+                                          (map (comp literal-predicate :statement) new-questions)
+                                          new-questions)))
+                 id]))
+            [{} last-id]
+            statements)))
+
+(defn- set-main-issues
+  [ag goal]
+  (let [main-nodes (filter
+                    (fn [s] (= (literal-predicate s) (literal-predicate goal)))
+                    (atomic-statements ag))]
+    (reduce (fn [ag atom] (update-statement-node ag (get-statement-node ag atom) :main true))
+            ag
+            main-nodes)))
+
+(defn- on-questions-answered
   [session]
-  (prn "on-solution")
-  (let [ag (deref (:future-ag session))
-        goal (:goal session)
-        _ (prn "substitutions =" (:substitutions session))
-        lastsolstmt (apply-substitutions (:substitutions session) (:query session))
-        _ (prn "lastsolstmt = " lastsolstmt)
-        main-node (get-statement-node ag lastsolstmt)
-        ag (update-statement-node ag main-node :main true)
+  (prn "[on-questions-answered]")
+  (let [ag (:ag session)
+        ag (set-main-issues ag (:query session))
          ;; accept all answers from the user!
         ag (accept ag (apply concat (vals (get-in session [:dialog :answers]))))
         ag (enter-language ag (-> session :theory :language))
         ag (evaluate aspic-grounded ag)
         dbname (store-ag ag)
         session (assoc session
-                  :solution (str lastsolstmt) ;; TODO translate solution
-                  :db dbname
-                  :has-solution true)] ;; could has-solution bu suppressed by testing nil? of :db
+                  :all-questions-answered true
+                  :db dbname)]
     session))
 
-(defn- add-questions
-  [existing-questions questions]
-  (reduce (fn [existing-questions question]
-            (assoc existing-questions (:id question) question)) 
-          existing-questions
-          questions))
+(defn- on-construction-finished
+  [session]
+  (prn "[on-construction-finished]")
+  (let [ag (deref (:future-ag session))
+        session (assoc session :ag ag)
+        [questions id] (get-remaining-questions ag session)
+        questions (vals questions)
+        dialog (add-questions (:dialog session) questions)]
+    (prn "remaining =" questions)
+    (assoc session
+      :last-questions questions
+      :last-id id
+      :dialog dialog)))
+
+;; (defn- add-questions
+;;   [existing-questions questions]
+;;   (reduce (fn [existing-questions question]
+;;             (assoc existing-questions (:id question) question)) 
+;;           existing-questions
+;;           questions))
 
 (defn- ask-user
   [session]
-  (let [[last-questions last-id] (get-structured-questions (:last-question session)
-                                                           (:lang session)
-                                                           (:last-id session)
-                                                           (:theory session))
-        questions (add-questions (:user-questions session) last-questions)]
+  (let [{:keys [last-question lang last-id theory]} session
+        [last-questions last-id] (get-structured-questions last-question
+                                                           lang
+                                                           last-id
+                                                           theory)
+        dialog (add-questions (:dialog session) last-questions)]
     (assoc session
       :last-questions last-questions
       :last-id last-id
-      :has-solution false
-      :user-questions questions)))
+      :dialog dialog)))
 
 (declare continue-engine get-ag-or-next-question)
 
@@ -66,30 +111,32 @@
       (if-let [answers (seq (get-answers (:dialog session) lastquestion))]
         (continue-engine session answers)
         (ask-user session)))
+    ;; else no more question == construction finished
     (do
       (prn "[askengine] argument construction is finished!")
-      (on-solution session))))
+      (on-construction-finished session))))
 
 (defn- get-ag-or-next-question
   [session]
-  (let [future-ag (:future-ag session)]
-    (if (future-done? future-ag)
-      (on-solution session)
-      (do
-        (prn "[askengine] waiting for the question...")
-        (on-question session)))))
+  (prn "[get-ag-or-next-question]")
+  (cond (:ag session)
+        (on-questions-answered session)
+
+        (future-done? (:future-ag session))
+        (on-construction-finished session)
+
+        :else
+        (do
+          (prn "[askengine] waiting for the question...")
+          (on-question session))))
 
 (defn- start-engine
-  [session askables]
+  [session]
   (let [theory (:theory session)
         query (:query session)
-        askablefn (fn [k]
-                    (let [pred (literal-predicate k)
-                          res (contains? askables pred)]
-                      res))
         ag (make-argument-graph)
         [argument-from-user-generator questions send-answer]
-        (make-argument-from-user-generator askablefn)
+        (make-argument-from-user-generator (fn [k] (askable? (:askables session) k)))
         engine (make-engine ag 50 #{} (list (generate-arguments-from-theory theory)
                                             argument-from-user-generator))
         future-ag (future (argue engine query))
@@ -116,13 +163,12 @@
   "Returns the modified session."
   [session]
   {:pre [(not (nil? session))]}
-  (let [askables (get-askables (:theory session))
-        _ (prn "[askengine] askables = " askables)
-        query (:query session)]
+  (let [askables (or (:askables session) (get-askables (:theory session)))
+        session (assoc session :askables askables)]
     (if (:engine-runs session)
       (let [answers (get-answers (:dialog session) (:last-question session))]
         (when (empty? answers)
           (throw (Exception. "Invalid state")))
         (continue-engine session answers))
       ;; else
-      (start-engine session askables))))
+      (start-engine session))))

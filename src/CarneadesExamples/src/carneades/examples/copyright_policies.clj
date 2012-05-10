@@ -33,10 +33,10 @@
    
    :language
    {'announcement-category (make-individual :symbol 'announcement :text {:en "Announcement" :de "Bekanntmachung"})
-    'commercial (make-individual :symbol 'commercial :text {:en "Commerical Use"})
+    'commercial (make-individual :symbol 'commercial :text {:en "Commercial Use"})
     'purpose (make-individual :symbol 'purpose :text {:en "Purpose"})
     'identifiers  (make-individual :symbol 'identifiers :text {:en "Identifiers"})
-    'non-commercial (make-individual :symbol 'non-commercial :text {:en "Non-commerical Use"})
+    'non-commercial (make-individual :symbol 'non-commercial :text {:en "Non-commercial Use"})
     'none (make-individual :symbol 'none :text {:en "None"})
     'professional (make-individual :symbol 'professional :text {:en "Professional Documented Search"})
     'search (make-individual :symbol 'search :text {:en "Search"})
@@ -86,7 +86,7 @@
              :en (make-form :positive "%s is a work."
                             :negative "%s is not a work."
                             :question "Is %s a work?")}
-     :hint {:en "Please provide an identifier for the orphaned work, W1."}
+     :hint {:en "Please provide an identifier for the orphaned work, such as W1."}
      :widget "text"
      :category 'identifiers)  
     

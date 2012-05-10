@@ -105,9 +105,8 @@ PM.show_argumentgraph_inframe = function() {
                     $('#browserframe').contents().find('#browser').html(argumentgraph_html(IMPACT.db, data));
                     PM.add_prevnext_menu();
                     PM.add_links_listeners();
-                    // if(PM_CONFIG.debug) {
-                    //     $('#browserframe').contents().find('head').append('<link rel="stylesheet" href="/policymodellingtool/toolbox/css/policymodelling/style.css" type="text/css" />');
-                    // } 
+                    $('#browserframe').contents().find('head').append('<link rel="stylesheet" href="/policymodellingtool/toolbox/css/policymodelling/style.css" type="text/css" />');
+                    
                 });
 
 };

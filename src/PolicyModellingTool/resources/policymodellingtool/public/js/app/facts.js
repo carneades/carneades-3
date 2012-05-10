@@ -47,16 +47,18 @@ PM.send_answers = function(questions, on_response) {
     var answers_values = _.reduce(inputs,
                                   function(answers_values, html_input) {
                                     var input = $(html_input);
-                                    var id = input.attr('id').substr(2);
+                                    var id = parseInt(input.attr('id').substr(2), 10);
                                     var question = _.filter(questions, function(q) {return q.id = id;})[0];
                                     var value = widget_to_val[question.widget](input);
-                                    answers_values.push({id: id, value: value});
+                                    answers_values.push({id: id, values: [value]});
                                     return answers_values;
                                 },
                                 []);
     
     // filter out non selected values
-    answers_values = _.filter(answers_values, function(x) { return x.value !== null; });
+    answers_values = _.filter(answers_values, function(x) {
+                                  return _.filter(x.values, function(e) { return e == null; }).length == 0;
+                              });
 
     PM.ajax_post(IMPACT.simulation_url, {answers:  {values: answers_values}}, on_response);
 };
