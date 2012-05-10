@@ -5,8 +5,8 @@
          impact.web.logic.statement-translation
          impact.web.views.pages
          impact.web.core
-         (carneades.engine policy scheme dialog)
-         [carneades.engine.statement :only (neg literal-predicate variable? literal-atom)]))
+         (carneades.engine policy scheme dialog unify)
+         [carneades.engine.statement :only (neg literal-predicate variable? literal-atom variables)]))
 
 (defmulti ajax-handler (fn [json _] (ffirst json)))
 
@@ -26,39 +26,25 @@
   (prn  (:lang session))
   (let [session (assoc session :query (get-main-issue (:theory session) (symbol (:request json))))
         session (ask-engine session)]
-    (if-not (:has-solution session)
-      {:session session
-       :body (json-str {:questions (:last-questions session)})}
-      (throw (Exception. "NYI")))))
+    {:session session
+     :body (json-str {:questions (:last-questions session)})}))
 
 (defn reconstruct-answers-from-json
-  [jsonanswers questions]
+  [jsonanswers dialog]
   (map (fn [answer]
-         ;; TODO: fix JavaScript to have id as integer and not as string!
-         (let [id (Integer/parseInt (:id answer))
-               question (questions id)
-               arity (:arity question)
-               stmt (strs->stmt (:statement question))
-               pred (literal-predicate stmt)
-               ;; TODO: makes that generic for all arities
-               ans (cond (zero? arity)
-                         (if (= (:value answer) "yes") stmt (neg stmt))
-
-                         (= 1 arity)
-                         (list pred (symbol (:value answer)))
-
-                         (= 2 arity)
-                         (list pred (second (literal-atom stmt)) (symbol (:value answer)))
-                         
-                         (= 3 arity)
-                         (list pred
-                               (second (literal-atom stmt))
-                               (nth (literal-atom stmt) 2)
-                               (symbol (:value answer)))
-                         
-                         :else
-                         (throw (Exception. (format "Invalid arity for question: %s" question)))
-                         )]
+         (let [id (:id answer)
+               question (get-nthquestion dialog id)
+               atomic-question (:statement question)
+               _ (prn "[reconstruct-answers-from-json]" answer)
+               vars (variables atomic-question)
+               values (map symbol (:values answer))
+               subs (apply hash-map (interleave vars values))
+               ans (if (zero? (:arity question))
+                         ;; TODO translation!
+                     (if (= (first (:values answer)) "yes") atomic-question (neg atomic-question))
+                     ;; else
+                     (apply-substitutions subs atomic-question))]
+           (prn "[reconstruct-answers-from-json]" ans)
            ans))
        jsonanswers))
 
@@ -68,38 +54,25 @@
   (prn "======================================== answers handler! ==============================")
   (pprint json)
   (let [answers (reconstruct-answers-from-json (-> json :answers :values)
-                                               (:user-questions session))
+                                               (:dialog session))
         session (update-in session [:dialog] add-answers answers)
         session (ask-engine session)]
-    (if-not (:has-solution session)
-      {:session session
-       :body (json-str {:questions (:last-questions session)})}
+    (if (:all-questions-answered session)
       {:session session
        :body (json-str {:solution (:solution session)
-                        :db (:db session)})})))
-
-;; this was used in the previous prototype
-;; (defmethod ajax-handler :retrieve_question
-;;   [json session]
-;;   (let [data (:retrieve_question json)
-;;         id (dec (:id data))
-;;         stmt (strs->stmt (:statement data))
-;;         [questions _] (get-structured-questions
-;;                        stmt
-;;                        (:lang session)
-;;                        id
-;;                        (:questionsdata session))]
-;;     {:body (json-str {:questions questions})}))
+                        :db (:db session)})}
+      {:session session
+       :body (json-str {:questions (:last-questions session)})})))
 
 (defn new-session
   []
   {:dialog (make-dialog)
-   :user-questions {}
    :lang "en"
    :last-id 0
    :substitutions {}
    :query nil
-   :theory impact-theory 
+   :theory impact-theory
+   :askables nil
    :engine-runs false})
 
 (defmethod ajax-handler :reset
