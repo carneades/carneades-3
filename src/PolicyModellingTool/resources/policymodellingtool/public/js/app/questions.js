@@ -1,10 +1,13 @@
 PM.show_questions = function(questions, questionlist, on_submit) {
-    questionlist.append('<h2>{0}</h2>'.format(questions[0].category_name));
-    _.map(questions, function(q) { 
-              PM.show_question(q, questionlist); 
-              $('#q' + q.id + ' .plus').click(_.bind(PM.add_fields, PM, q));
-          });
-    
+    var grouped_questions = _.groupBy(questions, function(q) { return q.category_name; });
+    _.each(grouped_questions, function(quests, category) {
+               questionlist.append('<h2>{0}</h2>'.format(category));
+               _.map(quests, function(q) { 
+                         PM.show_question(q, questionlist); 
+                         $('#q' + q.id + ' .plus').click(_.bind(PM.add_fields, PM, q));
+                     }); 
+           });
+
     var button_id = UTILS.gen_id();
     questionlist.append('<input type="button" value="submit" id="submit{0}"/>'.format(button_id));
     questionlist.append('<hr/>');
