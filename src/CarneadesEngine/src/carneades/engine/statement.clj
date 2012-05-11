@@ -213,6 +213,8 @@
         (statement? literal) (or (:atom literal) 
                                  (:id literal))))
 
+;; it's really unexpected to get a literal when given a sliteral
+;; maybe we should change the API?
 (defn positive-statement [literal]
   "Returns the atom of the literal in the form
    of a positive statement. If the literal is an sliteral,
