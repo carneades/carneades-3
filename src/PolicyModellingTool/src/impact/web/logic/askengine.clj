@@ -20,6 +20,8 @@
                               (askable? askables stmt)
                               (empty? (get-answers dialog stmt))))
                            (atomic-statements ag))]
+    (prn "dialog =")
+    (pprint dialog)
     (reduce (fn [[questions id] stmt]
               (let [[new-questions id] (get-structured-questions stmt lang id theory)
                     new-questions (filter (fn [q]
