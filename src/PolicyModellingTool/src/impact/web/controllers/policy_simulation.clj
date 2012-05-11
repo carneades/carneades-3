@@ -31,19 +31,20 @@
 
 (defn reconstruct-answers-from-json
   [jsonanswers dialog]
-  (map (fn [answer]
-         (let [id (:id answer)
-               question (get-nthquestion dialog id)
-               atomic-question (:statement question)
-               vars (variables atomic-question)
-               values (map symbol (:values answer))
-               subs (apply hash-map (interleave vars values))
-               ans (if (zero? (:arity question))
-                         ;; TODO translation!
-                     (if (= (first (:values answer)) "yes") atomic-question (neg atomic-question))
-                     ;; else
-                     (apply-substitutions subs atomic-question))]
-           ans))
+  (reduce (fn [questions-to-answers answer]
+            (let [id (:id answer)
+                  question (get-nthquestion dialog id)
+                  atomic-question (:statement question)
+                  vars (variables atomic-question)
+                  values (map symbol (:values answer))
+                  subs (apply hash-map (interleave vars values))
+                  ans (if (zero? (:arity question))
+                        ;; TODO translation!
+                        (if (= (first (:values answer)) "yes") atomic-question (neg atomic-question))
+                        ;; else
+                        (apply-substitutions subs atomic-question))]
+              (conj questions-to-answers [(:statement question) ans])))
+          ()
        jsonanswers))
 
 
@@ -52,11 +53,10 @@
   (prn "======================================== answers handler! ==============================")
   (pprint json)
   (let [{:keys [last-questions dialog]} session
-        answers (reconstruct-answers-from-json (-> json :answers :values)
-                                               dialog)
-        questions (map :statement last-questions)
-        _ (do (prn "[:answers] questions =" questions) (prn "[:answers] answers =" answers))
-        session (update-in session [:dialog] add-answers questions answers)
+        questions-to-answers (reconstruct-answers-from-json (-> json :answers :values)
+                                                            dialog)
+        _ (do (prn "[:answers] questions-to-answers =" questions-to-answers))
+        session (update-in session [:dialog] add-answers questions-to-answers)
         session (ask-engine session)]
     (if (:all-questions-answered session)
       {:session session
