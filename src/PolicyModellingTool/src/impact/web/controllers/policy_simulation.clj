@@ -35,7 +35,6 @@
          (let [id (:id answer)
                question (get-nthquestion dialog id)
                atomic-question (:statement question)
-               _ (prn "[reconstruct-answers-from-json]" answer)
                vars (variables atomic-question)
                values (map symbol (:values answer))
                subs (apply hash-map (interleave vars values))
@@ -44,7 +43,6 @@
                      (if (= (first (:values answer)) "yes") atomic-question (neg atomic-question))
                      ;; else
                      (apply-substitutions subs atomic-question))]
-           (prn "[reconstruct-answers-from-json]" ans)
            ans))
        jsonanswers))
 
@@ -53,9 +51,12 @@
   [json session]
   (prn "======================================== answers handler! ==============================")
   (pprint json)
-  (let [answers (reconstruct-answers-from-json (-> json :answers :values)
-                                               (:dialog session))
-        session (update-in session [:dialog] add-answers answers)
+  (let [{:keys [last-questions dialog]} session
+        answers (reconstruct-answers-from-json (-> json :answers :values)
+                                               dialog)
+        questions (map :statement last-questions)
+        _ (do (prn "[:answers] questions =" questions) (prn "[:answers] answers =" answers))
+        session (update-in session [:dialog] add-answers questions answers)
         session (ask-engine session)]
     (if (:all-questions-answered session)
       {:session session

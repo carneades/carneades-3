@@ -25,6 +25,9 @@ PM.show_questions_or_ag = function(data) {
 };
 
 PM.send_answers = function(questions, on_response) {
+    console.log('send_answers');
+    console.log(questions);
+    
         var widget_to_val = {
         text: function(input) {
             return input.val();
@@ -43,22 +46,19 @@ PM.send_answers = function(questions, on_response) {
         }
     };
 
-    var inputs = $(".inputfield");
-    var answers_values = _.reduce(inputs,
-                                  function(answers_values, html_input) {
-                                    var input = $(html_input);
-                                    var id = parseInt(input.attr('id').substr(2), 10);
-                                    var question = _.filter(questions, function(q) {return q.id = id;})[0];
-                                    var value = widget_to_val[question.widget](input);
-                                    answers_values.push({id: id, values: [value]});
-                                    return answers_values;
-                                },
-                                []);
-    
-    // filter out non selected values
-    answers_values = _.filter(answers_values, function(x) {
-                                  return _.filter(x.values, function(e) { return e == null; }).length == 0;
-                              });
+    var questions_html = _.map(questions, function(q) { return $('#q{0}'.format(q.id)); });
+    var answers_values = _.reduce(questions_html,
+                                 function(answers_values, question_html) {
+                                     var inputs = question_html.find('.inputfield');
+                                     var id = parseInt($(question_html).attr('id').substr(1), 10);
+                                     var question = _.filter(questions, function(q) { return q.id = id;})[0];
+                                     var values = _.map(inputs, function(input) { return widget_to_val[question.widget]($(input)); });
+                                     values = _.filter(values, function(e) { return e != null; });
+                                     console.log('input {0} has values {1}'.format(id, values));
+                                     answers_values.push({id: id, values: values});
+                                     return answers_values;
+                                 },
+                                  []);
 
     PM.ajax_post(IMPACT.simulation_url, {answers:  {values: answers_values}}, on_response);
 };
