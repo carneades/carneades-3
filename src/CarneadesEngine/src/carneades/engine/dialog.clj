@@ -25,26 +25,21 @@
 
 (defn add-answers
   "Add answers to the dialog for the given atomic questions"
-  [dialog questions answers]
-  {:pre [(>= (count answers) 1)
-         (seq? questions)]}
+  [dialog questions-to-answers]
+  {:pre [(seq? questions-to-answers)]}
   (reduce (fn [dialog [question answer]]
             (prn "question -> answer")
             (prn question)
             (prn answer)
             (update-in dialog [:answers (answer-key question)] conj answer))
           dialog
-          (partition 2 (interleave questions answers))))
+          questions-to-answers))
 
 (defn get-answers
   "Return a sequence of atomic answers for a given questions"
   [dialog question]
-  ;; (prn "[get-answers] dialog =")
-  ;; (pprint dialog)
   (let [question (:atom (positive-statement question))]
-    ;; (prn "[get-answers] question =" question)
     (when-let [key (first (filter (fn [k] (unify question k)) (keys (:answers dialog))))]
-      ;; (prn "key = " key)
       (get-in dialog [:answers key]))))
 
 (defn get-nthquestion
