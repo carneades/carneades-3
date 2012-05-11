@@ -46,16 +46,35 @@ PM.send_answers = function(questions, on_response) {
         }
     };
 
-    var questions_html = _.map(questions, function(q) { return $('#q{0}'.format(q.id)); });
-    var answers_values = _.reduce(questions_html,
-                                 function(answers_values, question_html) {
-                                     var inputs = question_html.find('.inputfield');
-                                     var id = parseInt($(question_html).attr('id').substr(1), 10);
-                                     var question = _.filter(questions, function(q) { return q.id = id;})[0];
-                                     var values = _.map(inputs, function(input) { return widget_to_val[question.widget]($(input)); });
-                                     values = _.filter(values, function(e) { return e != null; });
-                                     console.log('input {0} has values {1}'.format(id, values));
-                                     answers_values.push({id: id, values: values});
+    // for each question in the category
+    var answers_values = _.reduce(questions,
+                                 function(answers_values, question) {
+                                     var subquestions = $('#q{0} .question'.format(question.id));
+                                     
+                                     // for each subquestion
+                                     _.reduce(subquestions,
+                                              function(answers_values, subquestion) {
+                                                  subquestion = $(subquestion);
+                                                  var inputs = subquestion.find('.inputfield');
+                                                  
+                                                  // for each input field
+                                                  var vals = _.reduce(inputs,
+                                                                      function(subanswers, input) {
+                                                                          var val = widget_to_val[question.widget]($(input));
+                                                                          if(val != null) {
+                                                                              console.log('input {0} has value {1}'.format(question.id, val));
+                                                                              subanswers.push(val);
+                                                                          }
+                                                                          
+                                                                          return subanswers;
+                                                                      },
+                                                                      []);
+                                                  
+                                                  answers_values.push({id: question.id, values: vals});
+                                                  return answers_values;
+                                              },
+                                              answers_values);
+
                                      return answers_values;
                                  },
                                   []);
