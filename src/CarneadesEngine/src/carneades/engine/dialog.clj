@@ -31,12 +31,19 @@
             (prn "question -> answer")
             (prn question)
             (prn answer)
-            (update-in dialog [:answers (answer-key question)] conj answer))
+            (if (nil? answer)
+              (let [answers (get-in dialog [:answers (answer-key question)])]
+                (if (seq answers)
+                  dialog
+                  (assoc-in dialog [:answers (answer-key question)] ())))
+              (update-in dialog [:answers (answer-key question)] conj answer)))
           dialog
           questions-to-answers))
 
 (defn get-answers
-  "Return a sequence of atomic answers for a given questions"
+  "Return a sequence of atomic answers for a given questions or nil if no answers.
+   Note: an empty sequence can be returned, it does mean that there were answers
+   but they were answered with 'maybe'."
   [dialog question]
   (let [question (:atom (positive-statement question))]
     (when-let [key (first (filter (fn [k] (unify question k)) (keys (:answers dialog))))]
