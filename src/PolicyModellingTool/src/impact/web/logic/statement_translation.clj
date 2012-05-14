@@ -54,7 +54,7 @@
         questiondata (-> theory :language pred)
         arity (-> questiondata :arity)]
     (if (or (ground? stmt) (zero? arity))
-      [["Yes" "No"] ['yes 'no] true] ;; TODO: translations of these sentences?
+      [["Yes" "No" "Maybe"] ['yes 'no 'maybe] true] ;; TODO: translations of these sentences?
       (if-let [formalanswers (-> questiondata :answers)]
         (let [klang (keyword lang)
               answers (map (fn [sym] (-> theory :language sym :text klang)) formalanswers)]

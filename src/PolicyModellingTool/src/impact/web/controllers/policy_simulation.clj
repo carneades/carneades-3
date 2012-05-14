@@ -38,9 +38,10 @@
                   vars (variables atomic-question)
                   values (map symbol (:values answer))
                   subs (apply hash-map (interleave vars values))
-                  ans (if (zero? (:arity question))
-                        ;; TODO translation!
-                        (if (= (first (:values answer)) "yes") atomic-question (neg atomic-question))
+                  ans (if (:yesnoquestion question)
+                        (cond (= (first (:values answer)) "yes") atomic-question
+                              (= (first (:values answer)) "no") (neg atomic-question)
+                              :else nil)
                         ;; else
                         (apply-substitutions subs atomic-question))]
               (conj questions-to-answers [(:statement question) ans])))
@@ -57,6 +58,7 @@
                                                             dialog)
         _ (do (prn "[:answers] questions-to-answers =" questions-to-answers))
         session (update-in session [:dialog] add-answers questions-to-answers)
+        _ (do (prn "[:answers] dialog answers =" (:dialog session)))
         session (ask-engine session)]
     (if (:all-questions-answered session)
       {:session session
