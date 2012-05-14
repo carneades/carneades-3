@@ -25,7 +25,7 @@
     (reduce (fn [[questions id] stmt]
               (let [[new-questions id] (get-structured-questions stmt lang id theory)
                     new-questions (filter (fn [q]
-                                            (empty? (get-answers dialog (:statement q))))
+                                            (nil? (get-answers dialog (:statement q))))
                                           new-questions)]
                 ;; we use a set to avoid duplicate questions
                 [(merge questions (apply hash-map
@@ -110,7 +110,7 @@
                     :substitutions substitutions
                     :last-question lastquestion
                     :questions questions)]
-      (if-let [answers (seq (get-answers (:dialog session) lastquestion))]
+      (if-let [answers (get-answers (:dialog session) lastquestion)]
         (continue-engine session answers)
         (ask-user session)))
     ;; else no more question == construction finished
@@ -169,8 +169,6 @@
         session (assoc session :askables askables)]
     (if (:engine-runs session)
       (let [answers (get-answers (:dialog session) (:last-question session))]
-        (when (empty? answers)
-          (throw (Exception. "Invalid state")))
         (continue-engine session answers))
       ;; else
       (start-engine session))))
