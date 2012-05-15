@@ -2,7 +2,7 @@
   (:use  clojure.pprint
          clojure.data.json
          impact.web.logic.askengine
-         impact.web.logic.statement-translation
+         impact.web.logic.questions
          impact.web.views.pages
          impact.web.core
          (carneades.engine policy scheme dialog unify)
