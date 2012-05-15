@@ -58,17 +58,18 @@ PM.send_answers = function(questions, on_response) {
                                                   var inputs = subquestion.find('.inputfield');
                                                   
                                                   // for each input field
-                                                  var vals = _.reduce(inputs,
-                                                                      function(subanswers, input) {
-                                                                          var val = widget_to_val[question.widget]($(input));
-                                                                          if(val != null) {
-                                                                              console.log('input {0} has value {1}'.format(question.id, val));
-                                                                              subanswers.push(val);
-                                                                          }
-                                                                          
-                                                                          return subanswers;
-                                                                      },
-                                                                      []);
+                                                  var vals = [];
+                                                  _.reduce(inputs,
+                                                           function(index, input) {
+                                                               var val = widget_to_val[input.type]($(input));
+                                                               if(val != null) {
+                                                                   console.log('input {0} has value {1}'.format(question.id, val));
+                                                                   vals.push(val);
+                                                               }
+                                                               
+                                                               return index + 1;
+                                                           },
+                                                           0);
                                                   
                                                   answers_values.push({id: question.id, values: vals});
                                                   return answers_values;

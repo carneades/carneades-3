@@ -25,7 +25,7 @@ PM.add_fields = function(question) {
     return false;
 };
 
-PM.get_question_widget = function(question) {
+PM.get_question_widget = function(question, index) {
     // by convention the id of the input for the question N is iqN
     var widget_to_html = {
         text: function(id, proposed_answers, formal_answers) {
@@ -51,7 +51,7 @@ PM.get_question_widget = function(question) {
         }
     };
 
-    return widget_to_html[question.widget](question.id, question.answers, question.formalanswers);
+    return widget_to_html[question.widgets[index]](question.id, question.answers, question.formalanswers);
 };
 
 PM.show_question = function(question, questionlist) {
@@ -63,16 +63,19 @@ PM.show_question = function(question, questionlist) {
 };
 
 PM.get_question_html = function(question) {
-    var widget = PM.get_question_widget(question);
     var variable = /\?[a-zA-Z_0-9-]+/;
-    var parts = question.question.split(variable);
-    var html = "";
 
-    if(parts.length == 2) {
-        html = parts.join(widget);         
+    var html = "";
+    if(question.yesnoquestion) {
+        html = question.question + PM.get_question_widget(question, 0);
     } else {
-        html = question.question + widget;
-    } 
+        html = question.question.replace(variable,
+                                         function(match, index) {
+                                             console.log('get_question_html ' + index);
+                                             return PM.get_question_widget(question, index);
+                                         });
+        
+    }
     
     html = '<div class="question">{1}&nbsp;&nbsp;<img style="vertical-align: middle;" width="18" height="18" class="minus" src="images/minus.png">&nbsp;&nbsp;</img><img style="vertical-align: middle;" width="18" height="18" class="plus" src="images/plus.png"></img></div>'.format(question.id, html);
     
