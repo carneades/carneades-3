@@ -3,7 +3,7 @@
         impact.web.core
         (carneades.engine aspic argument-evaluation argument-graph ask statement scheme
                           argument argument-graph shell unify dialog)
-        (impact.web.logic statement-translation))
+        (impact.web.logic questions))
   (:import java.io.File))
 
 (defn askable?
@@ -159,7 +159,7 @@
 
 (defn- get-askables
   [theory]
-  (set (map :symbol (filter #(not (nil? (:widget %))) (vals (-> theory :language))))))
+  (set (map :symbol (filter #(not (nil? (:widgets %))) (vals (-> theory :language))))))
 
 (defn ask-engine
   "Returns the modified session."
