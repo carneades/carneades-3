@@ -16,7 +16,9 @@ PM.display_facts = function() {
 PM.show_questions_or_ag = function(data) {
         if (data.questions) {
             PM.show_questions(data.questions, $('#questions'), function() {
-                                  PM.send_answers(data.questions, PM.show_questions_or_ag);
+                                  if($('#questionsform').valid()) {
+                                      PM.send_answers(data.questions, PM.show_questions_or_ag);
+                                  } 
                               });
         } else {
             IMPACT.db = data.db;
