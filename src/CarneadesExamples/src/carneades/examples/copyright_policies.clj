@@ -71,10 +71,10 @@
              :de (make-form :positive "%s ist ein Rechtsperson."
                             :negative "% ist nicht ein Rechtsperson."
                             :question "Ist %s ein Rechtsperson?")}
-     :category 'identifiers  ; was a map !!
+     :category 'identifiers
      :hint {:en "Please provide an identifier for the person interested in publishing the work, such as P1."}
-     :widget "text"   ; was "type".  Should symbols be used to name the widget types, instead of strings?
-     :followups ['work])   ; would "next" be a better name?
+     :widgets '[text]
+     :followups '[work])
 
     'work
     (make-predicate
@@ -87,7 +87,7 @@
                             :negative "%s is not a work."
                             :question "Is %s a work?")}
      :hint {:en "Please provide an identifier for the orphaned work, such as W1."}
-     :widget "text"
+     :widgets '[text]
      :category 'identifiers)  
     
     'type-of-use
@@ -101,9 +101,9 @@
                             :negative "%s does not use %s for %s purposes."
                             :question "Does %s use %s for %s purposes?")}
      :hint {:en "Will the work be used for commercial or non-commercial purposes?"}
-     :answers ['commercial, 'non-commercial]
+     :answers '[[] [] [commercial non-commercial]]
      :category 'purpose
-     :widget "select")
+     :widgets '[text text select])
 
     'search-type
     (make-predicate
@@ -114,8 +114,8 @@
                             :question "Did %s conduct an %s search for the copyright owner of %s?")}
      :hint {:en "What type of search was performed to try to find the copyright owner?"}
      :category 'search
-     :answers ['standard, 'professional, 'none]
-     :widget "select"
+     :answers '[[] [] [standard professional none]]
+     :widgets '[text text select]
      :followups ['announcement])
 
     'announcement
@@ -129,7 +129,7 @@
                             :negative "Es gab keine öffentliche Bekanntmachung der Suche."
                             :question "Erfolgte eine öffentliche Bekanntmachung der Suche?")}
      :category 'announcement-category
-     :widget "checkbox")  ; Shouldn't checkboxes, instead of radio buttons, be used to query boolean values of propositions?
+     :widgets '[checkbox])
     
     'valid
     (make-predicate
