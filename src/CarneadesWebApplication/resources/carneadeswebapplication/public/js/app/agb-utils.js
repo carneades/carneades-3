@@ -21,14 +21,14 @@ Object.prototype.normalize = function() {
             }
         }
     }
-}
+};
 
-function escape_html(text)
+AGB.escape_html = function(text)
 {
     return $('<div/>').text(text).html();
-}
+};
 
-function is_url(url)
+AGB.is_url = function(url)
 {
     return /^(http|https|ftp)/.test(url);
-}
+};

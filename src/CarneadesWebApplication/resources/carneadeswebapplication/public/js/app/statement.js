@@ -1,87 +1,87 @@
 
-function statement_url(db, stmtid)
+AGB.statement_url = function(db, stmtid)
 {
     return 'statement/' + db + '/' + stmtid;
-}
+};
 
-function set_statement_url(db, stmtid)
+AGB.set_statement_url = function(db, stmtid)
 {
-    $.address.value(statement_url(db, stmtid));
-}
+    $.address.value(AGB.statement_url(db, stmtid));
+};
 
-function statement_html(db, info, lang)
+AGB.statement_html = function(db, info, lang)
 {
     info.normalize();
     info.db = db;
-    set_statement_title_text(info);
-    info.description_text = description_text(info.header);
-    set_procon_texts(info);    
-    set_procon_premises_text(info);
-    set_premise_of_texts(info);
+    AGB.set_statement_title_text(info);
+    info.description_text = AGB.description_text(info.header);
+    AGB.set_procon_texts(info);    
+    AGB.set_procon_premises_text(info);
+    AGB.set_premise_of_texts(info);
     info.statement_text = info.text[lang]; // statement_text(statement_data);
     var statement_html = ich.statement(info);
     return statement_html.filter('#statement');
-}
+};
 
-function display_statement(db, stmtid)
+AGB.display_statement = function(db, stmtid)
 {
-    ajax_get('statement-info/' + db + '/' + stmtid,
+    AGB.ajax_get('statement-info/' + db + '/' + stmtid,
              function(info) {
-                 $('#browser').html(statement_html(db, info, CARNEADES.lang));
+                 $('#browser').html(AGB.statement_html(db, info, CARNEADES.lang));
                  // $('#close').click(on_close);
-             });
+             });;
 }
 
-function set_statement_title_text(info)
+AGB.set_statement_title_text = function(info)
 {
     var default_text = "Statement";
     if(info.header) {
         info.statement_title_text = info.header.title ? info.header.title['en'] : default_text;
     } else {
         info.statement_title_text = default_text;
-    }
-}
+    };
+};
 
-function set_arg_texts(info, direction)
+AGB.set_arg_texts = function(info, direction)
 {
     $.each(info[direction], 
            function(index, data) {
-               var text = argument_text(data, index + 1);
+               var text = AGB.argument_text(data, index + 1);
                info[direction][index].argument_text = text;
                info[direction][index].id = info.pro[index]; // used by the template to create the ahref
            });
-}
+};
 
-function set_procon_premises_text(statement_data)
+AGB.set_procon_premises_text = function(statement_data)
 {
     $.each(statement_data.pro_data,
            function(index, pro) {
-               set_premises_text(pro);
+               AGB.set_premises_text(pro);
            });
     $.each(statement_data.con_data,
            function(index, con) {
-               set_premises_text(con);
+               AGB.set_premises_text(con);
            });
-}
+};
 
-function set_premise_of_texts(info)
+AGB.set_premise_of_texts = function(info)
 {
     $.each(info.premise_of_data,
            function(index, data) {
-               var text = argument_text(data, index + 1);
+               var text = AGB.argument_text(data, index + 1);
                data.argument_text = text;
                data.id = info.premise_of[index]; // used by the template to create the href
            }
           );
-}
+};
 
-function set_procon_texts(info)
+AGB.set_procon_texts = function(info)
 {
-    set_arg_texts(info, 'pro_data');
-    set_arg_texts(info, 'con_data');
-}
+    AGB.set_arg_texts(info, 'pro_data');
+    AGB.set_arg_texts(info, 'con_data');
+};
 
-function slice_statement(statement_text)
+AGB.slice_statement = function(statement_text)
 {
     var maxlen = 180;
     if(statement_text.length > maxlen) {
@@ -89,44 +89,44 @@ function slice_statement(statement_text)
     } else {
         return statement_text;
     }
-}
+};
 
-function statement_prefix(statement) {
-    if(statement_in(statement)) {
+AGB.statement_prefix = function(statement) {
+    if(AGB.statement_in(statement)) {
         return "✔ ";
-    } else if(statement_out(statement)) {
+    } else if(AGB.statement_out(statement)) {
         return "✘ ";
     } else {
         return "";
     }
-}
+};
 
-function statement_text(statement)
+AGB.statement_text = function(statement)
 {
     if(statement.text && statement.text[CARNEADES.lang]) {
         var text = statement.text[CARNEADES.lang];
     
-        return markdown_to_html(statement_prefix(statement) + text);
+        return AGB.markdown_to_html(AGB.statement_prefix(statement) + text);
     }
     // if(statement.header && statement.header.description && statement.header.description[CARNEADES.lang]) {
     //     return markdown_to_html(slice_statement(statement.header.description[CARNEADES.lang]));
     // }
 
     // TODO: if atom is UUID, then returns the string "statement" ?
-    return statement_prefix(statement) + statement.atom;
-}
+    return AGB.statement_prefix(statement) + statement.atom;
+};
 
-function statement_link(db, id, text)
+AGB.statement_link = function(db, id, text)
 {
     return '<a href="/statement/{0}/{1}" rel="address:/statement/{0}/{1}" class="statement" id="statement{1}">{2}</a>'.format(db, id, text);
-}
+};
 
-function statement_in(statement)
+AGB.statement_in = function(statement)
 {
     return (statement.value != null) && ((1.0 - statement.value) < 0.001);
-}
+};
 
-function statement_out(statement)
+AGB.statement_out = function(statement)
 {
     return (statement.value != null) && (statement.value < 0.001);
-}
+};

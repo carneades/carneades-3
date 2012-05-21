@@ -1,4 +1,4 @@
-function markdown_to_html(md_text)
+AGB.markdown_to_html = function(md_text)
 {
     if(md_text == null) {
         return "";
@@ -11,4 +11,4 @@ function markdown_to_html(md_text)
         html = html.slice(3, -4);
     }
     return html;
-}
+};

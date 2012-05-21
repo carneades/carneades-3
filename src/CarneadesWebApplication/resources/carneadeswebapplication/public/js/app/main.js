@@ -8,13 +8,13 @@ var AGB = {
 
 // this code is executed when the page is loaded
 $(function() {
-      $.address.change(url_changed);
+      $.address.change(AGB.url_changed);
       if(AGB_CONFIG.debug) {
           AGB.load_uid_styles();          
       }
 });
 
-function agb_parse_url(urlstring)
+AGB.agb_parse_url = function(urlstring)
 {
     var url_regex = /\/([\w-:]+)(\/([\w-]+))?(\/([\w-:]+))?/;
     var result = url_regex.exec(urlstring);
@@ -25,35 +25,35 @@ function agb_parse_url(urlstring)
         var element_id = result[5];
     }
     return [element, db, element_id];
-}
+};
 
-function url_changed(url)
+AGB.url_changed = function(url)
 {
     if(url.value == "/") {
          return;
     }
     
-    var parsed = agb_parse_url(url.value);
-    dispatch_url(parsed[0], parsed[1], parsed[2]);
+    var parsed = AGB.agb_parse_url(url.value);
+    AGB.dispatch_url(parsed[0], parsed[1], parsed[2]);
     
-}
+};
 
-function dispatch_url(element, db, element_id)
+AGB.dispatch_url = function(element, db, element_id)
 {
     if(element == "argument") {
-        display_argument(db, element_id);
+        AGB.display_argument(db, element_id);
     } else if(element == "statement") {
-        display_statement(db, element_id);
+        AGB.display_statement(db, element_id);
     } else if(element == "argumentgraph") {
-        display_argumentgraph(db);
+        AGB.display_argumentgraph(db);
     } else if(element == "map") {
-        display_map(db);
+        AGB.display_map(db);
     } else if(element == "login") {
-        display_login();
+        AGB.display_login();
     }
-}
+};
 
-function ajax_post(suburl, jsondata, username, password, callback) {
+AGB.ajax_post = function(suburl, jsondata, username, password, callback) {
     $.ajax({url: CARNEADES.carneadeswsurl + '/' + suburl,
             type: 'POST',
             'beforeSend' : function(xhr) {
@@ -67,17 +67,17 @@ function ajax_post(suburl, jsondata, username, password, callback) {
             success: callback,
             failure: function(error) { console.log('error: ' + error); }
         });
-}
+};
 
-function ajax_get(suburl, callback) {
+AGB.ajax_get = function(suburl, callback) {
     $.ajax({url: CARNEADES.carneadeswsurl + '/' + suburl,
             type: 'GET',
             success : callback,
             dataType : 'json'
         });
-}
+};
 
-function on_close() {
+AGB.on_close = function() {
     $("#stage")[0].innerHTML = "<h1>Policy Modeling Tool</h1><div id='pm'></div>";
     $("#stage").addClass("toInit");
     $.address.change(PM.url_changed);
@@ -85,7 +85,7 @@ function on_close() {
     $.address.path("/arguments");
     init();
     return false;
-}
+};
 
 AGB.load_uid_styles = function() {
     var files = ['<link type="text/css" href="toolbox/css/impact-ui/jquery-ui-1.8.11.custom.css" rel="stylesheet" />',
