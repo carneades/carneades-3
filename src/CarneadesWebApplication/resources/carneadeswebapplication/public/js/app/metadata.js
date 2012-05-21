@@ -1,12 +1,12 @@
-function get_string(data, is_last, escape)
+AGB.get_string = function(data, is_last, escape)
 {
     if(data == null || data == undefined) {
         return "";
     }
-    return (escape ? escape_html(data) : data) + "." + (is_last ? "" : " ");
-}
+    return (escape ? AGB.escape_html(data) : data) + "." + (is_last ? "" : " ");
+};
 
-function format_metadata(metadata)
+AGB.format_metadata = function(metadata)
 {
     if(metadata == null || metadata == undefined) {
         return "";    
@@ -15,24 +15,24 @@ function format_metadata(metadata)
     var date = metadata.date;
     var title = metadata.title;
     var identifier = metadata.identifier;
-    var is_identifier_url = is_url(identifier);
+    var is_identifier_url = AGB.is_url(identifier);
     
      // makes a link if the identifier is an url
     title = is_identifier_url ? '<a href="{0}">{1}</a>'.format(identifier, title) : title;
 
-    var formatted = get_string(creator, false, true) +
-        get_string(date, false, true) +
-        get_string(title, is_identifier_url, !is_identifier_url) +
-        (is_identifier_url ? "" : get_string(identifier, true, true));
+    var formatted = AGB.get_string(creator, false, true) +
+        AGB.get_string(date, false, true) +
+        AGB.get_string(title, is_identifier_url, !is_identifier_url) +
+        (is_identifier_url ? "" : AGB.get_string(identifier, true, true));
     
-    return markdown_to_html(formatted);
-}
+    return AGB.markdown_to_html(formatted);
+};
 
-function description_text(header)
+AGB.description_text = function(header)
 {
     if(header) {
-        return header.description ? markdown_to_html(header.description[CARNEADES.lang]) : "";        
+        return header.description ? AGB.markdown_to_html(header.description[CARNEADES.lang]) : "";        
     } else {
         return "";
     }
-}
+};
