@@ -14,7 +14,7 @@ $(function() {
       }
 });
 
-AGB.agb_parse_url = function(urlstring)
+AGB.parse_url = function(urlstring)
 {
     var url_regex = /\/([\w-:]+)(\/([\w-]+))?(\/([\w-:]+))?/;
     var result = url_regex.exec(urlstring);
@@ -33,7 +33,7 @@ AGB.url_changed = function(url)
          return;
     }
     
-    var parsed = AGB.agb_parse_url(url.value);
+    var parsed = AGB.parse_url(url.value);
     AGB.dispatch_url(parsed[0], parsed[1], parsed[2]);
     
 };

@@ -13,11 +13,5 @@
 
 (def app (handler/site all-carneades-application-routes))
 
-;; (defonce server
-;;   (run-jetty-with-wars #'app {:join? false :port 8080}
-;;     [{:context-path "/impactws"
-;;       :war-path "../CarneadesWebService/carneades-web-service-1.0.0-SNAPSHOT-standalone.war"}]
-;;     ))
-
-;; (defn -main [])
+;; (defonce agb-server (run-jetty #'app {:join? false :port 8080}))
 
