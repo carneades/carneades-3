@@ -1,50 +1,50 @@
 
-function argument_url(db, argid)
+AGB.argument_url = function(db, argid)
 {
     return '/argument/' + db + '/' + argid;
-}
+};
 
-function set_argument_url(db, argid)
+AGB.set_argument_url = function(db, argid)
 {
-    $.address.value(argument_url(db, argid));
-}
+    $.address.value(AGB.argument_url(db, argid));
+};
 
-function argument_html(db, argument_data)
+AGB.argument_html = function(db, argument_data)
 {
     argument_data.normalize();
     argument_data.direction = argument_data.pro ? "pro" : "con";
     argument_data.db = db;
-    argument_data.description_text = description_text(argument_data.header);
-    set_argument_title_text(argument_data);
+    argument_data.description_text = AGB.description_text(argument_data.header);
+    AGB.set_argument_title_text(argument_data);
     argument_data.direction_text = argument_data.pro ? "pro" : "con";
-    argument_data.conclusion.statement_text = statement_text(argument_data.conclusion);
-    set_premises_text(argument_data);
-    set_undercutters_text(argument_data);
-    set_rebuttals_text(argument_data);
-    set_dependents_text(argument_data);
+    argument_data.conclusion.statement_text = AGB.statement_text(argument_data.conclusion);
+    AGB.set_premises_text(argument_data);
+    AGB.set_undercutters_text(argument_data);
+    AGB.set_rebuttals_text(argument_data);
+    AGB.set_dependents_text(argument_data);
     var argument_html = ich.argument(argument_data);
     return argument_html.filter('#argument');
-}
+};
 
-function display_argument(db, argid)
+AGB.display_argument = function(db, argid)
 {
-    ajax_get('argument-info/' + db + '/' + argid,
+    AGB.ajax_get('argument-info/' + db + '/' + argid,
             function(argument_data) {
-                $('#browser').html(argument_html(db, argument_data));
+                $('#browser').html(AGB.argument_html(db, argument_data));
                 // $('#close').click(on_close);
             });
-}
+};
 
-function set_premises_text(argument_data)
+AGB.set_premises_text = function(argument_data)
 {
     $.each(argument_data.premises, 
            function(index, premise) {
-               premise.statement.statement_text = statement_text(premise.statement, index + 1);
+               premise.statement.statement_text = AGB.statement_text(premise.statement, index + 1);
                premise.positive_text = premise.positive ? "" : "neg.";
            });
-}
+};
 
-function set_argument_title_text(info)
+AGB.set_argument_title_text = function(info)
 {
     var default_text = "Argument";
     if(info.header) {
@@ -52,40 +52,40 @@ function set_argument_title_text(info)
     } else {
         info.argument_title_text = default_text;
     }
-}
+};
 
-function set_undercutters_text(info)
+AGB.set_undercutters_text = function(info)
 {
     $.each(info.undercutters_data, 
            function(index, data) {
-               data.argument_text = argument_text(data, index + 1);
+               data.argument_text = AGB.argument_text(data, index + 1);
                data.id = info.undercutters[index];
-               set_premises_text(data);
+               AGB.set_premises_text(data);
            });  
-}
+};
 
-function set_rebuttals_text(info)
+AGB.set_rebuttals_text = function(info)
 {
     $.each(info.rebuttals_data,
           function(index, data) {
-              data.argument_text = argument_text(data, index + info.undercutters_data.length);
+              data.argument_text = AGB.argument_text(data, index + info.undercutters_data.length);
               data.id = info.rebuttals[index];
-              set_premises_text(data);
+              AGB.set_premises_text(data);
           });
-}
+};
 
-function set_dependents_text(info)
+AGB.set_dependents_text = function(info)
 {
     $.each(info.dependents_data,
           function(index, data) {
-              data.statement_text = statement_text(data, index + 1);
+              data.statement_text = AGB.statement_text(data, index + 1);
               data.id = info.dependents[index];
           });
-}
+};
 
 // Returns a text representing the argument, ie., its title
 // or then its scheme, or a default text if none of them is defined
-function argument_text(data, index)
+AGB.argument_text = function(data, index)
 {
     var text;
     if(data.header && data.header.title) {
@@ -99,9 +99,9 @@ function argument_text(data, index)
     }
     
     return text;
-}
+};
 
-function argument_link(db, id, text)
+AGB.argument_link = function(db, id, text)
 {
     return '<a href="/argument/{0}/{1}" rel="address:/argument/{0}/{1}" class="argument" id="argument{1}">{2}</a>'.format(db, id, text);
-}
+};
