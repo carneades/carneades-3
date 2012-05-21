@@ -28,7 +28,7 @@ PM.open_ag_browser = function(url) {
     // open the argument browser in the UID toolbox
     $("#stage")[0].innerHTML = '<div id="browser" class=""></div>';
     $("#stage").addClass("toInit");
-    $.address.change(url_changed);
+    $.address.change(agb_url_changed);
     $.address.path("/argumentgraph/" + IMPACT.db);
     ich.grabTemplates();
     init();
@@ -75,7 +75,7 @@ PM.add_prevnext_menu = function() {
 };
 
 PM.show_statement_inframe = function(uuid) {
-    var statement_html = document.getElementById('browserframe').contentWindow.statement_html;
+    var statement_html = document.getElementById('browserframe').contentWindow.AGB.statement_html;
 
     PM.ajax_get(IMPACT.impactws_url + '/statement-info/' + IMPACT.db + '/' + uuid,
                 function(data) {
@@ -86,7 +86,7 @@ PM.show_statement_inframe = function(uuid) {
 };
 
 PM.show_argument_inframe = function(uuid) {
-    var argument_html = document.getElementById('browserframe').contentWindow.argument_html;
+    var argument_html = document.getElementById('browserframe').contentWindow.AGB.argument_html;
 
     PM.ajax_get(IMPACT.impactws_url + '/argument-info/' + IMPACT.db + '/' + uuid,
                 function(data) {
@@ -97,22 +97,19 @@ PM.show_argument_inframe = function(uuid) {
 };
 
 PM.show_argumentgraph_inframe = function() {
-    var argumentgraph_html = document.getElementById('browserframe').contentWindow.argumentgraph_html;
-
+    var argumentgraph_html = document.getElementById('browserframe').contentWindow.AGB.argumentgraph_html;
     
     PM.ajax_get(IMPACT.impactws_url + '/argumentgraph-info/' + IMPACT.db,
                 function(data) {
-                    $('#browserframe').contents().find('#browser').html(argumentgraph_html(IMPACT.db, data));
-                    PM.add_prevnext_menu();
-                    PM.add_links_listeners();
-                    $('#browserframe').contents().find('head').append('<link rel="stylesheet" href="/policymodellingtool/toolbox/css/policymodelling/style.css" type="text/css" />');
-                    
-                });
-
+                                   $('#browserframe').contents().find('#browser').html(argumentgraph_html(IMPACT.db, data));
+                                   PM.add_prevnext_menu();
+                                   PM.add_links_listeners();
+                                   $('#browserframe').contents().find('head').append('<link rel="stylesheet" href="/policymodellingtool/toolbox/css/policymodelling/style.css" type="text/css" />');
+                               }); 
 };
 
 PM.show_map_inframe = function() {
-    var traverse_map = document.getElementById('browserframe').contentWindow.traverse_map;
+    var traverse_map = document.getElementById('browserframe').contentWindow.AGB.traverse_map;
     
     $('#browserframe').contents().find('#browser').html('<div id="map"></div>');
     $('#browserframe').contents().find('#map').load(IMPACT.impactws_url + '/map/' + IMPACT.db,
@@ -123,7 +120,7 @@ PM.show_map_inframe = function() {
 };
 
 PM.add_links_listeners = function() {
-    var agb_parse_url = document.getElementById('browserframe').contentWindow.agb_parse_url;
+    var agb_parse_url = document.getElementById('browserframe').contentWindow.AGB.parse_url;
     
     _.each($('#browserframe').contents().find('a'),
            function(a) {
