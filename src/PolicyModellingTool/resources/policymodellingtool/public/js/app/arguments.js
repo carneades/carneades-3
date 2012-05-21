@@ -14,6 +14,6 @@ PM.display_arguments = function() {
     $('#pm').html(arguments_html.filter("#arguments"));
     PM.activate('#arguments-item');
     
-    // IMPACT.db = "copyright"; // "policymodellingtool-d139d8ba-60f2-4821-a168-0928926083ee";
+    // IMPACT.db = "copyright";
     PM.append_agbrowser('#innerargumentbrowser');
 };
