@@ -8,11 +8,95 @@ var AGB = {
 
 // this code is executed when the page is loaded
 $(function() {
-      $.address.change(AGB.url_changed);
-      if(AGB_CONFIG.debug) {
-          AGB.load_uid_styles();          
-      }
+      AGB.init();
 });
+
+AGB.init = function() {
+    var head = $('head');
+    
+    head.append('<script src="js/lib/jquery.address-1.4.js" type="text/javascript"></script>');
+    head.append('<script src="js/lib/underscore-min.js" type="text/javascript"></script>');
+    head.append('<script src="js/app/config.js" type="text/javascript"></script>');
+
+    $.address.change(AGB.url_changed);
+    
+    if(AGB_CONFIG.in_uid_toolbox) {
+        AGB.load_scripts();     
+    } else {
+        AGB.load_uid_styles();          
+    }
+    
+    AGB.load_templates(); 
+};
+
+AGB.start = function() {
+    
+};
+
+AGB.stop = function() {
+    
+};
+
+AGB.load_scripts = function() {
+    var head = $('head');
+    _.each(['js/app/agb-utils.js',
+            'js/app/login.js',
+            'js/app/metadata.js',
+            'js/app/argumentgraph.js',
+            'js/app/argument.js',
+            'js/app/statement.js',
+            'js/app/map.js',
+            'js/app/login.js',
+            'js/app/markdown.js',
+            'js/app/config.js',
+            'js/lib/jquery.svg.js',
+            'js/lib/ICanHaz.js',
+            'js/lib/Markdown.Converter.js',
+            'js/lib/Markdown.Sanitizer.js',
+            'js/lib/Markdown.Editor.js',
+            'js/lib/crypto.js'],
+           function(name) {
+               console.log('Loading script ' + name);
+               head.append('<script src="' + name + '" type="text/javascript"></script>');
+           });
+};
+
+AGB.syncget = function(url, callback) {
+    $.ajax({url: url,
+            type: 'GET',
+            success : callback,
+            error: function(jqXHR, textStatus) {
+              console.log('[ERROR] AJAX '+ textStatus);
+            },
+            dataType : 'html',
+            async: false
+        });
+};
+
+AGB.load_templates = function() {
+    _.each([{name: 'menu', url: 'site/menu.html'},
+            {name: 'metadata', url: 'site/metadata.html'},
+            {name: 'argumentlink', url: 'site/argumentlink.html'},
+            {name: 'statementlink', url: 'site/statementlink.html'},
+            {name: 'premise', url: 'site/premise.html'}],
+            function(template) {
+                AGB.syncget(template.url,
+                           function(content) {
+                               ich.addPartial(template.name, content);
+                           });
+           });
+    _.each(['argumentgraph',
+            'argument',
+            'statement',
+            'login'],
+           function(name) {
+               AGB.syncget('site/{0}.html'.format(name),
+                             function(content) {
+                                 console.log('Loading template ' + name);
+                                 ich.addTemplate(name, content);
+                             });
+          });
+};
 
 AGB.parse_url = function(urlstring)
 {
