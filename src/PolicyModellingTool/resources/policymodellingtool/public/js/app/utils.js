@@ -55,4 +55,3 @@ UTILS.gen_id = function() {
     var newDate = new Date;
     return newDate.getTime();
 };
-
