@@ -58,6 +58,7 @@ PM.dispatch_url = function(element, section) {
 };
 
 // This code is executed when the page is loaded
+// TODO: to disable when inside the uid toolbox??
 $(function() {
       PM.init();
   });
