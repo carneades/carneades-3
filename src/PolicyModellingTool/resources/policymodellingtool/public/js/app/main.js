@@ -16,6 +16,18 @@ var PM = {
    
 };
 
+PM.syncget = function(url, callback) {
+    $.ajax({url: url,
+            type: 'GET',
+            success : callback,
+            error: function(jqXHR, textStatus) {
+              console.log('[ERROR] AJAX '+ textStatus);
+            },
+            dataType : 'html',
+            async: false
+        });
+};
+
 PM.url_changed = function(url) {
     if(url.value == "/") {
          return;
@@ -47,17 +59,81 @@ PM.dispatch_url = function(element, section) {
 
 // This code is executed when the page is loaded
 $(function() {
-     $.address.change(PM.url_changed);
-      
-      initPM();
+      PM.init();
   });
 
-function initPM() {
-    PM.display_introduction();
-    if(PM_CONFIG.debug) {
-        PM.load_uid_styles();
+
+PM.init = function() {
+    var head = $('head');
+    
+    head.append('<script src="js/lib/jquery.address-1.4.js" type="text/javascript"></script>');
+    head.append('<script src="js/lib/underscore-min.js" type="text/javascript"></script>');
+    head.append('<script src="js/app/config.js" type="text/javascript"></script>');
+    
+    $.address.change(PM.url_changed);
+    
+    if(PM_CONFIG.in_uid_toolbox) {
+        PM.load_scripts();        
+    } else {
+        PM.load_uid_styles();        
     }
-}
+
+    PM.load_templates();
+    PM.display_introduction();
+};
+
+PM.start = function() {
+    
+};
+
+PM.stop = function() {
+    
+};
+
+PM.load_scripts = function() {
+    var head = $('head');
+  _.each(['js/app/utils.js',
+          'js/app/introduction.js',
+          'js/app/menu.js',
+          'js/app/issues.js',
+          'js/app/facts.js',
+          'js/app/arguments.js',
+          'js/app/policies.js',
+          'js/app/markdown.js',
+          'js/app/metadata.js',
+          'js/app/embedded-agbrowser.js',
+          'js/app/ajax.js',
+          'js/app/questions.js',
+          'js/lib/ICanHaz.js',
+          'js/lib/Markdown.Converter.js',
+          'js/lib/Markdown.Sanitizer.js',
+          'js/lib/Markdown.Editor.js',
+          'js/lib/jquery.scrollTo-1.4.2-min.js',
+          'js/lib/jquery.validate.js'],
+        function(name) {
+            console.log('Loading script ' + name);
+            head.append('<script src="' + name + '" type="text/javascript"></script>');
+        });
+};
+
+PM.load_templates = function() {
+    PM.syncget('site/pmmenu.html',
+                    function(content) {
+                        ich.addPartial('pmmenu', content);
+                    });
+    _.each(['issues',
+            'facts',
+            'arguments',
+            'policies',
+            'introduction'],
+           function(name) {
+               PM.syncget('site/{0}.html'.format(name),
+                             function(content) {
+                                 console.log('Loading template ' + name);
+                                 ich.addTemplate(name, content);
+                             });
+          });
+};
 
 PM.load_uid_styles = function() {
     var files = ['<link type="text/css" href="toolbox/css/impact-ui/jquery-ui-1.8.11.custom.css" rel="stylesheet" />',
