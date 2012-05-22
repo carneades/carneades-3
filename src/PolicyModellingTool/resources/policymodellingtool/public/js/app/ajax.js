@@ -10,7 +10,10 @@ PM.ajax_post = function(url, jsondata, callback, username, password) {
             dataType : 'json',
             data : JSON.stringify(jsondata),
             contentType: "application/json; charset=utf-8",
-            success: callback
+            success: callback,
+            error: function(jqXHR, textStatus) {
+              console.log('[ERROR] AJAX ' + textStatus);
+            }
         });
 };
 
@@ -18,6 +21,9 @@ PM.ajax_get = function(url, callback) {
     $.ajax({url: url,
             type: 'GET',
             success : callback,
-            dataType : 'json'
+            dataType : 'json',
+            error: function(jqXHR, textStatus) {
+              console.log('[ERROR] AJAX ' + textStatus);
+            }
         });
 };
