@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?oxygen RNGSchema="../schemas/LKIF.rnc" type="compact"?>
 <lkif version="2.0.4">
   <argument-graphs>
     <argument-graph id="NewGraph" title="New Graph" main-issue="s1">
