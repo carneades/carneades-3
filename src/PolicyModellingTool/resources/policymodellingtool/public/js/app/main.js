@@ -91,6 +91,10 @@ PM.stop = function() {
     
 };
 
+PM.language_changed = function(lang) {
+    
+};
+
 PM.load_scripts = function() {
     var head = $('head');
   _.each(['js/app/utils.js',
