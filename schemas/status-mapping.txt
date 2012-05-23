@@ -1,9 +1,0 @@
-
-   assumption | true      false 
-value         |
--------------------------------------
-unknown       | stated    questioned
-true          | stated    accepted
-false         | stated    rejected
-
-
