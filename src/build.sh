@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PROJECTS="CarneadesEngine CarneadesExamples CarneadesWebApplication CarneadesWebService PolicyModellingTool"
+PROJECTS="CarneadesEngine CarneadesExamples CarneadesWebService PolicyModellingTool"
 MAKE_RELEASE=false
 
 function show_usage {
@@ -33,14 +33,6 @@ function build_install_jar_war {
 
     echo -e "\n======================================== Building CarneadesWebService\n"
     cd CarneadesWebService
-    lein deps
-    lein install
-    lein ring uberwar
-    cd -
-
-    echo -e "\n======================================== Building CarneadesWebApplication\n"
-    cd CarneadesWebApplication
-    exec_confscripts;
     lein deps
     lein install
     lein ring uberwar
