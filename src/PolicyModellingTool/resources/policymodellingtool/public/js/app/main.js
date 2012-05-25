@@ -3,7 +3,7 @@ var IMPACT = {
     db: "",
     question: "Q12",
     lang: "en",
-    impactws_url: "/impactws",
+    wsurl: "/impactws",
     argumentbrowser_url: "/argumentbrowser",
     simulation_url: "/policymodellingtool/PolicySimulation",
     embedded_agbrowser_history: {index: -1, history: []}  
@@ -14,6 +14,10 @@ var IMPACT = {
 // is too often a bad idea
 var PM = {
    
+};
+
+// argument browser
+var AGB = {
 };
 
 PM.syncget = function(url, callback) {
@@ -33,27 +37,24 @@ PM.url_changed = function(url) {
          return;
     }
 
-    var url_regex = /\/([^ \/]+)(?:\/([^ \/]+))?/;
+    var url_regex = /\/([^ \/]+)(?:\/([^ \/]+))?(?:\/([^ \/]+))?(?:\/([^ \/]+))?/;
     var result = url_regex.exec(url.value);
     if(result != null) {
-        var element = result[1];
-        var section = result[2];
-        
-        PM.dispatch_url(element, section);
+        PM.dispatch_url(result);
     }
 };
 
-PM.dispatch_url = function(element, section) {
-    if(element == "introduction") {
+PM.dispatch_url = function(sections) {
+    if(sections[1] == "introduction") {
         PM.display_introduction();
-    } else if(element == "issues") {
+    } else if(sections[1] == "issues") {
         PM.display_issues();
-    } else if(element == "facts") {
+    } else if(sections[1] == "facts") {
         PM.display_facts();
-    } else if(element == "arguments") {
-        PM.display_arguments();
-    } else if(element == "policies") {
-        PM.display_policies(section);
+    } else if(sections[1] == "arguments") {
+        PM.display_arguments(sections[3], sections[2], sections[4]);
+    } else if(sections[1] == "policies") {
+        PM.display_policies(sections[2]);
     }
 };
 
@@ -70,6 +71,12 @@ PM.init = function() {
     head.append('<script src="js/lib/jquery.address-1.4.js" type="text/javascript"></script>');
     head.append('<script src="js/lib/underscore-min.js" type="text/javascript"></script>');
     head.append('<script src="js/app/config.js" type="text/javascript"></script>');
+
+    // adds a isNil method to underscore JS
+    _.mixin({isNil : function(o) {
+                 return _.isNull(o) || _.isUndefined(o);
+             }
+            });
     
     $.address.change(PM.url_changed);
     
@@ -109,12 +116,22 @@ PM.load_scripts = function() {
           'js/app/embedded-agbrowser.js',
           'js/app/ajax.js',
           'js/app/questions.js',
+          'js/app/agb/agb-utils.js',
+          'js/app/agb/login.js',
+          'js/app/agb/metadata.js',
+          'js/app/agb/argumentgraph.js',
+          'js/app/agb/argument.js',
+          'js/app/agb/statement.js',
+          'js/app/agb/map.js',
+          'js/app/agb/login.js',
+          'js/app/agb/markdown.js',
           'js/lib/ICanHaz.js',
           'js/lib/Markdown.Converter.js',
           'js/lib/Markdown.Sanitizer.js',
           'js/lib/Markdown.Editor.js',
           'js/lib/jquery.scrollTo-1.4.2-min.js',
-          'js/lib/jquery.validate.js'],
+          'js/lib/jquery.validate.js',
+          'js/lib/jquery.svg.js'],
         function(name) {
             console.log('Loading script ' + name);
             head.append('<script src="' + name + '" type="text/javascript"></script>');
@@ -122,15 +139,33 @@ PM.load_scripts = function() {
 };
 
 PM.load_templates = function() {
-    PM.syncget('site/pmmenu.html',
-                    function(content) {
-                        ich.addPartial('pmmenu', content);
-                    });
-    _.each(['issues',
-            'facts',
+    _.each([{name: 'menu', url: 'site/menu.html'},
+            {name: 'pmmenu', url: 'site/pmmenu.html'},
+            {name: 'metadata', url: 'site/metadata.html'},
+            {name: 'argumentlink', url: 'site/argumentlink.html'},
+            {name: 'statementlink', url: 'site/statementlink.html'},
+            {name: 'premise', url: 'site/premise.html'}],
+           function(template) {
+               PM.syncget(template.url,
+                           function(content) {
+                               ich.addPartial(template.name, content);
+                           });
+           });
+    _.each(['argumentgraph',
+            'argument',
+            'argumentlink',
             'arguments',
+            'facts',
+            'introduction',
+            'issues',
+            'login',
+            'menu',
+            'metadata',
+            'pmmenu',
             'policies',
-            'introduction'],
+            'premise',
+            'statement',
+            'statementlink'],
            function(name) {
                PM.syncget('site/{0}.html'.format(name),
                              function(content) {

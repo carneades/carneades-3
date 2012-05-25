@@ -22,7 +22,7 @@ PM.show_questions_or_ag = function(data) {
                               });
         } else {
             IMPACT.db = data.db;
-            PM.set_arguments_url();
+            PM.set_arguments_url(IMPACT.db);
         }
 };
 
