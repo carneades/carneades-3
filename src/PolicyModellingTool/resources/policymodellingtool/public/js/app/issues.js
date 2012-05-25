@@ -7,7 +7,7 @@ PM.set_issues_url = function() {
 };
 
 PM.display_issues = function() {
-    PM.ajax_get(IMPACT.impactws_url + '/policies',
+    PM.ajax_get(IMPACT.wsurl + '/policies',
                 function(policies) {
                     var issues_html = ich.issues(policies);
                     $('#pm').html(issues_html.filter("#issues"));
