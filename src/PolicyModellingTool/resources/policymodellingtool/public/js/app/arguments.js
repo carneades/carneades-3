@@ -1,19 +1,33 @@
-PM.arguments_url = function() {
-    return 'arguments';    
+PM.arguments_url = function(db) {
+    return 'arguments/argumentgraph/' + db;    
 };
 
-PM.set_arguments_url = function() {
-    $.address.value(PM.arguments_url());  
+PM.set_arguments_url = function(db) {
+    $.address.value(PM.arguments_url(db));  
 };
 
-PM.display_arguments = function() {
-    if(IMPACT.db == "") {
-        console.log('No db. Please enter some facts first');
+PM.display_arguments = function(db, type, id) {
+    if(_.isNil(db)) {
+        db = IMPACT.db;
     }
+    if(_.isNil(IMPACT.db)) {
+        console.log('No db. Please enter some facts first'); 
+    }
+
     var arguments_html = ich.arguments();
     $('#pm').html(arguments_html.filter("#arguments"));
     PM.activate('#arguments-item');
     
-    // IMPACT.db = "copyright";
-    PM.append_agbrowser('#innerargumentbrowser');
+    //    db = "copyright"; // to debug
+        
+    if (type == "statement")  {
+        AGB.display_statement(db, id);
+    } else if(type == "argument") {
+        AGB.display_argument(db, id);
+    } else if(type == "map") {
+        AGB.display_map(db);
+    } else {
+        AGB.display_argumentgraph(db);        
+    }
+
 };

@@ -77,7 +77,7 @@ PM.add_prevnext_menu = function() {
 PM.show_statement_inframe = function(uuid) {
     var statement_html = document.getElementById('browserframe').contentWindow.AGB.statement_html;
 
-    PM.ajax_get(IMPACT.impactws_url + '/statement-info/' + IMPACT.db + '/' + uuid,
+    PM.ajax_get(IMPACT.wsurl + '/statement-info/' + IMPACT.db + '/' + uuid,
                 function(data) {
                     $('#browserframe').contents().find('#browser').html (statement_html(IMPACT.db, data, IMPACT.lang));
                     PM.add_prevnext_menu();
@@ -88,7 +88,7 @@ PM.show_statement_inframe = function(uuid) {
 PM.show_argument_inframe = function(uuid) {
     var argument_html = document.getElementById('browserframe').contentWindow.AGB.argument_html;
 
-    PM.ajax_get(IMPACT.impactws_url + '/argument-info/' + IMPACT.db + '/' + uuid,
+    PM.ajax_get(IMPACT.wsurl + '/argument-info/' + IMPACT.db + '/' + uuid,
                 function(data) {
                     $('#browserframe').contents().find('#browser').html (argument_html(IMPACT.db, data));
                     PM.add_prevnext_menu();
@@ -99,7 +99,7 @@ PM.show_argument_inframe = function(uuid) {
 PM.show_argumentgraph_inframe = function() {
     var argumentgraph_html = document.getElementById('browserframe').contentWindow.AGB.argumentgraph_html;
     
-    PM.ajax_get(IMPACT.impactws_url + '/argumentgraph-info/' + IMPACT.db,
+    PM.ajax_get(IMPACT.wsurl + '/argumentgraph-info/' + IMPACT.db,
                 function(data) {
                                    $('#browserframe').contents().find('#browser').html(argumentgraph_html(IMPACT.db, data));
                                    PM.add_prevnext_menu();
@@ -112,7 +112,7 @@ PM.show_map_inframe = function() {
     var traverse_map = document.getElementById('browserframe').contentWindow.AGB.traverse_map;
     
     $('#browserframe').contents().find('#browser').html('<div id="map"></div>');
-    $('#browserframe').contents().find('#map').load(IMPACT.impactws_url + '/map/' + IMPACT.db,
+    $('#browserframe').contents().find('#map').load(IMPACT.wsurl + '/map/' + IMPACT.db,
                                                     function(svg, error) {
                                                         traverse_map(PM.add_map_to_browser_listener);
                                                         console.log('loaded');
