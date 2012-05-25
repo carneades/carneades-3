@@ -49,8 +49,6 @@ function build_install_jar_war {
 function show_instructions {
     echo -e "\nBuild is finished. \n"
     echo -e "To run the Aston example:\n$ cd CarneadesExamples && lein run -m carneades.examples.aston\n"
-    echo -e "To run the CarneadesWebApplication:\n$ cd CarneadesWebApplication && lein ring server"
-    echo -e "Then point your browser at http://localhost:3000/argumentbrowser/#/login\n"
     echo -e "To run the Policy Modelling tool:\n$ cd PolicyModellingTool && lein ring server 8080"
     echo -e "Then point your browser at http://localhost:8080/policymodellingtool/"
 }
