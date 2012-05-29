@@ -175,8 +175,7 @@ AGB.load_uid_styles = function() {
     var files = ['<link type="text/css" href="toolbox/css/impact-ui/jquery-ui-1.8.11.custom.css" rel="stylesheet" />',
                  '<link type="text/css" href="toolbox/css/impact-ui/impact-green.css" rel="stylesheet" />',
                  '<link rel="stylesheet" type="text/css" media="all" href="toolbox/css/impact-ui/plugins/jquery-ui-timepicker.css" />',
-                 '<link href="toolbox/css/main.css" rel="stylesheet" type="text/css" />',
-                 '<link rel="stylesheet" href="toolbox/css/policymodelling/style.css" type="text/css" />'
+                 '<link href="toolbox/css/main.css" rel="stylesheet" type="text/css" />'
                 ];
     
     var scripts = ["toolbox/js/impact-ui/jquery-ui-1.8.11.custom.min.js",

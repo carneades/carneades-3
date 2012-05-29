@@ -1,5 +1,6 @@
 html, body {
 	text-align: left;
+        margin-left: 1%;
 }
 
 * {
@@ -29,6 +30,13 @@ a, a:link, a:visited, a:hover, a:focus, a:active {
 	color: #1977D1;
 	outline: 0 none;
 	text-decoration: none;
+}
+
+a p, a:link p, a:visited p, a:hover p, a:focus p, a:active p {
+	color: #1977D1;
+	outline: 0 none;
+	text-decoration: none;
+        cursor: pointer;
 }
 
 a.active {
@@ -124,7 +132,7 @@ blockquote {
 }
 
 .issue .content a {
-	color: #58595B;
+	/* color: #58595B; */
 	text-decoration: none;
 }
 
