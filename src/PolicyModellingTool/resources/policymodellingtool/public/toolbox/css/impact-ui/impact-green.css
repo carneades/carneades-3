@@ -1308,6 +1308,13 @@ a,a:link,a:visited,a:hover,a:focus,a:active {
 	text-decoration: none;
 }
 
+// pierre:
+a p, a:link p, a:visited p, a:hover p, a:focus p, a:active p {
+	color: #1977D1;
+	outline: 0 none;
+	text-decoration: none;
+}
+
 a:hover,a:focus,a:hover:focus {
 	color: #004A91;
 	outline: 0 none;
