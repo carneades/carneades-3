@@ -56,6 +56,8 @@ PM.dispatch_url = function(sections) {
         PM.display_arguments(sections[3], sections[2], sections[4]);
     } else if(sections[1] == "policies") {
         PM.display_policies(sections[2]);
+    } else if(sections[1] == "admin") {
+        PM.display_admin();
     }
 };
 
@@ -114,6 +116,7 @@ PM.load_scripts = function() {
           'js/app/policies.js',
           'js/app/markdown.js',
           'js/app/metadata.js',
+          'js/app/admin.js',
           'js/app/embedded-agbrowser.js',
           'js/app/ajax.js',
           'js/app/questions.js',
@@ -152,7 +155,8 @@ PM.load_templates = function() {
                                ich.addPartial(template.name, content);
                            });
            });
-    _.each(['argumentgraph',
+    _.each(['admin',
+            'argumentgraph',
             'argument',
             'argumentlink',
             'arguments',
