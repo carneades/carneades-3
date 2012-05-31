@@ -16,6 +16,7 @@ PM.display_issues = function() {
                                      $('#pm').html(issues_html.filter("#issues"));
                                      $('input').first().attr('checked', true);
                                      $('#submit').click(PM.on_submit_issues);
+                                     
                                      PM.activate('#issues-item');
                                  });
                  });
