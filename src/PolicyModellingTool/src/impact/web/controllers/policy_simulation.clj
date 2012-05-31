@@ -10,15 +10,17 @@
 
 (defmulti ajax-handler (fn [json _] (ffirst json)))
 
-(def impact-theory (load-theory impact-policies-file
-                        (symbol impact-policies-namespace)
-                        (symbol impact-policies-name)))
+(def current-policy (ref 'copyright-policies))
 
 (defn strs->stmt
   "Converts a collection of a string representing a statement on the client side
    to a formal statement."
   [coll]
   (map symbol (apply list coll)))
+
+(defmethod ajax-handler :current-policy
+  [json session]
+  {:body (json-str (deref current-policy))})
 
 (defmethod ajax-handler :request
   [json session]
@@ -74,7 +76,7 @@
    :last-id 0
    :substitutions {}
    :query nil
-   :theory impact-theory
+   :theory (policies (deref current-policy))
    :askables nil
    :engine-runs false})
 

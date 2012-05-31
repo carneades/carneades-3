@@ -39,10 +39,6 @@
 ; Use the following version of the macro for testing,
                                         ; so that stack traces are printed in the browser:
 
-(def impact-theory (load-theory impact-policies-file
-                                (symbol impact-policies-namespace)
-                                (symbol impact-policies-name)))
-
 (defmacro with-db [db & body]   
   `(jdbc/with-connection 
            ~db
@@ -521,13 +517,14 @@
   ;; Policies
       
   (GET "/policies" []
-       (json-response impact-theory))
+       (json-response policies))
 
-  (GET "/evaluate-policy/:db/:qid/:policyid" [db qid policyid]
+  (GET "/evaluate-policy/:db/:policykey/:qid/:policyid" [db policykey  qid policyid]
        (let [dbconn (make-database-connection db "guest" "")]
          (with-db dbconn
            (let [ag (export-to-argument-graph dbconn)
-                 ag (evaluate-policy (symbol qid) (symbol policyid) impact-theory ag)
+                 ag (evaluate-policy (symbol qid) (symbol policyid)
+                                     (policies (symbol policykey)) ag)
                  root "root"
                  passwd "pw1"
                  dbname (str "policymodellingtool-" (make-uuid))

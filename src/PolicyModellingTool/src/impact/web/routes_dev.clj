@@ -16,4 +16,5 @@
   (-> (handler/site all-impact-pm-tool-routes)
       (wrap-base-url)))
 
-(defonce impact-server (run-jetty #'impact-app {:join? false :port 8080}))
+;; (defonce impact-server (run-jetty #'impact-app {:join? false :port 8080}))
+
