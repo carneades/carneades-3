@@ -37,7 +37,14 @@ Alternatively, you can install Carneades from the sources.
 
  $ chmod +x build.sh ; ./build.sh --dev
 
-4. Trying it out
+4. Configuring Carneades
+
+- Copy the file
+  CarneadesExamples/src/carneades/examples/carneades.properties into
+  your $HOME directory and rename it to .carneades.properties (with a
+  dot in front). Edit it and adapt the values to your configuration.
+
+5. Trying it out
 
 - Run the Carneades Editor:
 

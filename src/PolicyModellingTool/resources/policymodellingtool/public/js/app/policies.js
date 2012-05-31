@@ -10,15 +10,16 @@ PM.display_policies = function(sectionid) {
     PM.ajax_get(IMPACT.wsurl + '/policies', 
                 function(policies) {
                     var ids = [];
-                    policies.outline_text = PM.policies_outline_text(policies.sections);
-                    policies.description_text = policies.header.description[IMPACT.lang];
-                    policies.policies_text = PM.policies_text(policies.language, policies.sections, 2,
+                    var current_policy = policies[IMPACT.current_policy];
+                    current_policy.outline_text = PM.policies_outline_text(current_policy.sections);
+                    current_policy.description_text = current_policy.header.description[IMPACT.lang];
+                    current_policy.policies_text = PM.policies_text(current_policy.language, current_policy.sections, 2,
                                                              function(policyid) {
                                                                  ids.push(policyid);
                                                              });
                     
-                    var policies_html = ich.policies(policies);
-                    $('#pm').html(policies_html.filter("#policies"));
+                    var current_policy_html = ich.policies(current_policy);
+                    $('#pm').html(current_policy_html.filter("#policies"));
                     PM.activate('#policies-item');
                     
                     _.each(ids, function(policyid) {
@@ -36,7 +37,7 @@ PM.display_policies = function(sectionid) {
 
 PM.on_select_policy = function(id) {
     console.log('db before evaluate: ' + IMPACT.db);
-    PM.ajax_get(IMPACT.wsurl + '/evaluate-policy/{0}/{1}/{2}'.format(IMPACT.db, IMPACT.question, id), 
+    PM.ajax_get(IMPACT.wsurl + '/evaluate-policy/{0}/{1}/{2}/{3}'.format(IMPACT.db, IMPACT.current_policy, IMPACT.question, id), 
                  PM.on_evaluated_policy);
     return false;
 };

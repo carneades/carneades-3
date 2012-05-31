@@ -6,7 +6,8 @@ var IMPACT = {
     wsurl: "/impactws",
     argumentbrowser_url: "/argumentbrowser",
     simulation_url: "/policymodellingtool/PolicySimulation",
-    embedded_agbrowser_history: {index: -1, history: []}  
+    embedded_agbrowser_history: {index: -1, history: []},
+    current_policy: "copyright-policies" 
 };
 
 // This object contains the functions and acts as a kind of namespace.
