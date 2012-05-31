@@ -1,12 +1,22 @@
 (ns carneades.engine.policy
-  (:use (carneades.engine statement scheme argument-graph aspic argument-evaluation))
+  (:use (carneades.engine statement scheme argument-graph aspic argument-evaluation utils))
   (:require [carneades.config.reader :as config]))
 
-(def impact-policies-file (config/properties "impact-policies-file"))
-(def impact-policies-namespace  (config/properties "impact-policies-namespace"))
-(def impact-policies-name  (config/properties "impact-policies-name"))
+(def policies-directory (config/properties "policies-directory"))
+(def policies-metadata (read-string
+                        (slurp
+                         (str policies-directory file-separator "policies.clj"))))
 
-(printf "\n[policy] file = %s\n[policy] namespace = %s\n[policy] name = %s\n" impact-policies-file impact-policies-namespace impact-policies-name)
+(defn get-policy-filename
+  [filename]
+  (str policies-directory file-separator filename))
+
+(def policies (reduce (fn [policies metadata]
+                        (let [{:keys [filename namespace name]} metadata]
+                          (assoc policies name
+                                 (load-theory (get-policy-filename filename) namespace name))))
+                      {}
+                      policies-metadata))
 
 (defn get-policies
   [questionid theory]
