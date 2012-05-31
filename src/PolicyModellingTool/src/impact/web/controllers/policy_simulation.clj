@@ -10,7 +10,7 @@
 
 (defmulti ajax-handler (fn [json _] (ffirst json)))
 
-(def current-policy (ref 'copyright-policies))
+(def current-policy (atom 'copyright-policies))
 
 (defn strs->stmt
   "Converts a collection of a string representing a statement on the client side
@@ -21,6 +21,12 @@
 (defmethod ajax-handler :current-policy
   [json session]
   {:body (json-str (deref current-policy))})
+
+;; TODO: this should be access protected
+(defmethod ajax-handler :set-current-policy
+  [json session]
+  (reset! current-policy (symbol (:set-current-policy json)))
+  {:session session})
 
 (defmethod ajax-handler :request
   [json session]
