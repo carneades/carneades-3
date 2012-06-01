@@ -177,7 +177,7 @@ This arguments pro and con the policy proposals for this issue can be browsed in
        [(make-section
          :id 'QYY
          :header (make-metadata :title "QYY's title"
-                              :description {:de "QYY Beschreibung auf Deutsch"
+                                :description {:de "QYY Beschreibung auf Deutsch"
                                             :en "QYY Description in English"}))])
 
       (make-section
