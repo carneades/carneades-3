@@ -1,7 +1,7 @@
 ;;; Copyright (c) 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Utilities functions to manipulate sequences and files."}
+(ns ^{:doc "Utilities functions to manipulate sequences, files and more."}
   carneades.engine.utils
   (:use clojure.java.io
         clojure.pprint)
@@ -253,3 +253,7 @@ greater than the length of s."
   (-> (Thread/currentThread)
       (.getContextClassLoader)
       (.getResourceAsStream name)))
+
+(defn safe-read-string
+  [s]
+  (binding [*read-eval* false] (read-string s)))
