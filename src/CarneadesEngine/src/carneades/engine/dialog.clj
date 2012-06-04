@@ -2,7 +2,7 @@
   carneades.engine.dialog
   (:use clojure.pprint
         carneades.engine.statement
-        [carneades.engine.unify :only (unify apply-substitutions)]))
+        [carneades.engine.unify :only (unify genvar apply-substitutions)]))
 
 (defrecord Dialog [questions answers])
 
@@ -14,7 +14,7 @@
 (defn replace-map
   [question]
   (reduce (fn [m v]
-            (assoc m v '?_))
+            (assoc m v (genvar)))
           {}
           (variables question)))
 

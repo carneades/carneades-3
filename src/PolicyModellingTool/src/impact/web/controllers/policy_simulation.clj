@@ -5,7 +5,7 @@
          impact.web.logic.questions
          impact.web.views.pages
          impact.web.core
-         (carneades.engine policy scheme dialog unify)
+         (carneades.engine policy scheme dialog unify utils)
          [carneades.engine.statement :only (neg literal-predicate variable? literal-atom variables)]))
 
 (defmulti ajax-handler (fn [json _] (ffirst json)))
@@ -44,7 +44,7 @@
                   question (get-nthquestion dialog id)
                   atomic-question (:statement question)
                   vars (variables atomic-question)
-                  values (map symbol (:values answer))
+                  values (map safe-read-string (:values answer))
                   subs (apply hash-map (interleave vars values))
                   ans (if (:yesnoquestion question)
                         (cond (= (first (:values answer)) "yes") atomic-question
