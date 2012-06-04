@@ -65,14 +65,16 @@ PM.show_question = function(question, questionlist) {
 };
 
 PM.get_question_html = function(question) {
-    var variable = /\?[a-zA-Z_0-9-]+/;
+    var variable = /\?[a-zA-Z_0-9-]+/g;
 
     var html = "";
     if(question.yesnoquestion) {
         html = question.question + PM.get_question_widget(question, 0);
     } else {
+        var index = -1;
         html = question.question.replace(variable,
-                                         function(match, index) {
+                                         function() {
+                                             index++;
                                              console.log('get_question_html ' + index);
                                              return PM.get_question_widget(question, index);
                                          });

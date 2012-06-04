@@ -5,7 +5,7 @@
    (:use clojure.data.json
          clojure.pprint
          compojure.core
-         (carneades.engine uuid policy unify statement argument scheme dublin-core)
+         (carneades.engine uuid policy unify statement argument scheme dublin-core utils)
          carneades.database.db
          carneades.database.admin
          carneades.database.export
@@ -61,10 +61,10 @@
         :else nil))
 
 (defn unpack-statement [s]
-   (cond (string? s) (binding [*read-eval* false] (read-string s)),  
+   (cond (string? s) (safe-read-string s),  
          (map? s) (let [atomval (if (nil? (:atom s))
                                   nil
-                                  (binding [*read-eval* false] (read-string (:atom s))))]
+                                  (safe-read-string (:atom s)))]
                     (assoc (map->statement s)
                       :standard (keyword (:standard s))
                       :atom atomval
