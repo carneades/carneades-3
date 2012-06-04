@@ -65,21 +65,16 @@
   (prn "[on-construction-finished]")
   (let [ag (deref (:future-ag session))
         session (assoc session :ag ag)
-        [questions id] (get-remaining-questions ag session)
-        questions (vals questions)
-        dialog (add-questions (:dialog session) questions)]
-    (prn "remaining =" questions)
-    (assoc session
-      :last-questions questions
-      :last-id id
-      :dialog dialog)))
-
-;; (defn- add-questions
-;;   [existing-questions questions]
-;;   (reduce (fn [existing-questions question]
-;;             (assoc existing-questions (:id question) question)) 
-;;           existing-questions
-;;           questions))
+        [questions id] (get-remaining-questions ag session)]
+    (if (empty? questions)
+      (on-questions-answered session)
+      (let [questions (vals questions)
+            dialog (add-questions (:dialog session) questions)]
+        (prn "remaining =" questions)
+        (assoc session
+          :last-questions questions
+          :last-id id
+          :dialog dialog)))))
 
 (defn- ask-user
   [session]
@@ -121,16 +116,11 @@
 (defn- get-ag-or-next-question
   [session]
   (prn "[get-ag-or-next-question]")
-  (cond (:ag session)
-        (on-questions-answered session)
-
-        (future-done? (:future-ag session))
-        (on-construction-finished session)
-
-        :else
-        (do
-          (prn "[askengine] waiting for the question...")
-          (on-question session))))
+  (cond (:ag session) (on-questions-answered session)
+        (future-done? (:future-ag session)) (on-construction-finished session)
+        :else (do
+                (prn "[askengine] waiting for the question...")
+                (on-question session))))
 
 (defn- start-engine
   [session]
