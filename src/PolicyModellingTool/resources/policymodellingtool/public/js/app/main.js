@@ -90,7 +90,14 @@ PM.init = function() {
     }
 
     PM.load_templates();
-    PM.display_introduction();
+    
+    PM.ajax_post(IMPACT.simulation_url, {"current-policy": null},
+                 function(currentpolicy) {
+                     IMPACT.current_policy = currentpolicy; 
+                     console.log('Current policy: ' + IMPACT.current_policy);
+                     PM.display_introduction();
+                     });
+
 };
 
 PM.start = function() {
