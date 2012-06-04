@@ -14,12 +14,15 @@
 
 (defn get-remaining-questions
   [ag session]
+  (prn "[get-remaining-questions]")
   (let [{:keys [askables dialog last-id theory lang]} session
         statements (filter (fn [stmt]
                              (and
                               (askable? askables stmt)
                               (empty? (get-answers dialog stmt))))
                            (atomic-statements ag))]
+    (prn "statements =")
+    (prn statements)
     (prn "dialog =")
     (pprint dialog)
     (reduce (fn [[questions id] stmt]
@@ -50,6 +53,9 @@
   (prn "[on-questions-answered]")
   (let [ag (:ag session)
         ag (set-main-issues ag (:query session))
+        _ (prn "main issue?")
+        _ (prn (:query session))
+        _ (pprint ag)
          ;; accept all answers from the user!
         ag (accept ag (apply concat (vals (get-in session [:dialog :answers]))))
         ag (enter-language ag (-> session :theory :language))
@@ -129,7 +135,7 @@
         ag (make-argument-graph)
         [argument-from-user-generator questions send-answer]
         (make-argument-from-user-generator (fn [k] (askable? (:askables session) k)))
-        engine (make-engine ag 50 #{} (list (generate-arguments-from-theory theory)
+        engine (make-engine ag 500 #{} (list (generate-arguments-from-theory theory)
                                             argument-from-user-generator))
         future-ag (future (argue engine query))
         session (assoc session
@@ -161,4 +167,8 @@
       (let [answers (get-answers (:dialog session) (:last-question session))]
         (continue-engine session answers))
       ;; else
-      (start-engine session))))
+      (do
+        (prn "[ask-engine]")
+        (prn "askables = " askables)
+        (prn "query =" (:query session))
+        (start-engine session)))))
