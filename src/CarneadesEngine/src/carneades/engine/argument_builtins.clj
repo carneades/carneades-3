@@ -4,7 +4,8 @@
 
 (ns ^{:doc "Built-in predicates for the rules: eval, =, not= etc."}
   carneades.engine.argument-builtins
-  (:use carneades.engine.utils
+  (:use clojure.pprint
+        carneades.engine.utils
         carneades.engine.statement
         carneades.engine.sandbox        
         carneades.engine.scheme
@@ -37,19 +38,16 @@
                   (pm '(prior ?r2 ?r1))])]))
 
 (defn- dispatch-eval [subs literal term expr]
-  (try
-    (let [expr2 (apply-substitutions subs expr)]
-      (if (not (ground? expr2))
-        ()
-        (let [result (eval-expr expr2)]
-          (if-let [subs2 (unify term result subs)]
-            (list (make-response subs2 () 
-                                 (make-argument 
-                                   :conclusion literal 
-                                   :scheme "builtin:eval")))
-            ()))))
-    (catch java.lang.SecurityException e ())
-    (catch java.util.concurrent.TimeoutException e ())))
+  (let [expr2 (apply-substitutions subs expr)]
+    (if (not (ground? expr2))
+      ()
+      (let [result (eval-expr expr2)]
+        (if-let [subs2 (unify term result subs)]
+          (list (make-response subs2 () 
+                               (make-argument 
+                                :conclusion literal 
+                                :scheme "builtin:eval")))
+          ())))))
 
 (defn- dispatch-equal [subs literal term1 term2]
   (if-let [subs2 (unify term1 term2 subs)]
