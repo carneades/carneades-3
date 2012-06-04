@@ -299,7 +299,10 @@ reduce the goal with the given id"
   ;; (pprint "reduce-goals")
   (if (or (empty? (:open-goals state1))
           (<= max-goals 0))
-    state1
+    (do
+      (prn "open-goals: " (:open-goals state1))
+      (prn "max-goals: " max-goals)
+      state1)
     (let [id (first (:open-goals state1))]   
       (if (not id)
         state1 
