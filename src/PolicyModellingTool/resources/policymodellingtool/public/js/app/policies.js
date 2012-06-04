@@ -114,6 +114,10 @@ PM.varname = function(v) {
 // Formats an sexpr represented as an array of strings
 PM.format_sexpr = function(sexpr, language) {
     var terms = _.map(sexpr.slice(1), PM.varname);
-    var fstring = language[sexpr[0]].forms[IMPACT.lang].positive;
-    return String.prototype.cformat.apply(fstring, terms);
+    if(_.isNil(language[sexpr[0]])) {
+        return PM.markdown_to_html(sexpr.join(" "));
+    } else {
+        var fstring = language[sexpr[0]].forms[IMPACT.lang].positive;
+        return String.prototype.cformat.apply(fstring, terms);        
+    } 
 };

@@ -77,6 +77,8 @@
 
 (defn new-session
   []
+  (prn "[new-session]")
+  (prn "current-policy: " (deref current-policy))
   {:dialog (make-dialog)
    :lang "en"
    :last-id 0
