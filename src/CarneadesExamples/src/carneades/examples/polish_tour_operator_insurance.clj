@@ -78,7 +78,7 @@
 
     'minimum-guarantee
     (make-predicate
-     :symbol 'minimum-guaranteeo
+     :symbol 'minimum-guarantee
      :arity 2
      :forms {:en (make-form
                   :positive "The minimal guarantee sum for the tour operator, %s, is %s euros."
