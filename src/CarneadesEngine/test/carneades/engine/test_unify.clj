@@ -34,6 +34,8 @@
 
   ; to do: further tests, e.g. for compound terms and statements used as terms
   
-  
-         
-         
+(deftest test-rename-variables
+  (let [s '(a ?x ?y)
+        slet '(let [x (* ?I 0.04) min 6000] (if (< x min) min x))]
+    (is (not= (second (rename-variables {} s)) s))
+    (is (not= (second (rename-variables {} slet)) slet))))

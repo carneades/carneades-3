@@ -85,6 +85,7 @@
                   :negative "The minimal guarantee sum for the tour operator, %s, is not %s euros."
                   :question "Is the minimal guarantee sum for the tour operator, %s, %s euros?")})
 
+    ;; TODO: missing widgets definition?
     'low-or-early-advance-payment
     (make-predicate
      :symbol 'low-or-early-advance-payment
@@ -225,7 +226,8 @@ equivalent of 6,000 EUR.
                     (pm '(annual-income ?O ?I))
                     (pm '(eval ?G (let [x (* ?I 0.07) ; 7%
                                         min 7500] 
-                                    (if (< x min) min x))))])
+                                    (if (< x min) min x))))
+                    ])
 
         (make-scheme                            
          :id 'poz-1584-1-3

@@ -3,15 +3,14 @@
 
 (ns ^{:doc "Theories defined using argumentation schemes."}
   carneades.engine.scheme
-            
-  (:use 
-    carneades.engine.uuid
-    carneades.engine.statement
-    carneades.engine.unify
-    carneades.engine.argument
-    carneades.engine.argument-generator
-    carneades.engine.dublin-core
-    [carneades.engine.utils :only (mapinterleave)]))
+  (:use clojure.pprint
+        carneades.engine.uuid
+        carneades.engine.statement
+        carneades.engine.unify
+        carneades.engine.argument
+        carneades.engine.argument-generator
+        carneades.engine.dublin-core
+        [carneades.engine.utils :only (mapinterleave)]))
 
 (defrecord Form
   [positive     ; string for the positive sentences
@@ -217,7 +216,11 @@
           [subs []]
           premises))
 
-(defn- rename-scheme-variables [scheme]
+(defn- rename-scheme-variables
+  [scheme]
+  ;; {:post [(do (prn "=>") (pprint %) true)]}
+  ;; (prn "scheme =")
+  ;; (pprint scheme)
   (let [[m1 conclusion] (rename-variables {} (:conclusion scheme)),
         [m2 premises] (rename-variables-in-premises m1 (:premises scheme)),
         [m3 exceptions] (rename-variables-in-premises m2 (:exceptions scheme)),
