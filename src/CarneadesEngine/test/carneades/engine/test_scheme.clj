@@ -2,7 +2,8 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.engine.test-scheme
-  (:use clojure.test
+  (:use clojure.pprint
+        clojure.test
         (carneades.engine statement argument argument-graph shell argument scheme 
          aspic dublin-core argument-evaluation policy ask  argument-generator)
         carneades.maps.lacij))
@@ -220,24 +221,18 @@
     (is (in? (ag facts query) '(ancestor Tom Elsie)))))
 
 (deftest test-argumentmissing
-  (let [copyright-theory (load-theory default-policies-file
-                                      (symbol default-policies-namespace)
-                                      (symbol default-policies-name))
+  (let [copyright-theory (get policies 'copyright-policies)
         ag (make-argument-graph)
         ag (accept ag '((work w) (person p)))
         engine (make-engine ag 50 #{} (list (generate-arguments-from-theory copyright-theory)))
         query '(may-publish ?Person ?Work)
         ag (argue engine query)
         ag (evaluate aspic-grounded ag)]
-    ;; (export ag "/tmp/argumentmissing.svg")
     (is (= 3 (count (arguments ag))))))
 
 (deftest test-argumentconstruction-blocked
-  (let [copyright-theory (load-theory default-policies-file
-                                      (symbol default-policies-namespace)
-                                      (symbol default-policies-name))
+  (let [copyright-theory (get policies 'copyright-policies)
         ag (make-argument-graph)
-        ;; ag (accept ag '((work w) (person p)))
         fake-argument-from-user
         (reify ArgumentGenerator
           (generate
@@ -245,19 +240,33 @@
             (prn "asking: " goal)
             (let [p (literal-predicate goal)]
               (cond (= p 'person)
-                    (second (make-answer s goal '(person pp)))
+                    (build-answer s goal '[(person pp)])
 
                     (= p 'work)
-                    (second (make-answer s goal '(work ww)))
+                    (build-answer s goal '[(work ww)])
 
                     :else ()))))
         engine (make-engine ag 50 #{} (list fake-argument-from-user
                                             (generate-arguments-from-theory copyright-theory)))
         query '(may-publish ?Person ?Work)
-        ag (argue engine query)
-        ;; ag (evaluate aspic-grounded ag)
-        ]
+        ag (argue engine query)]
     (is (= 3 (count (arguments ag))))))
+
+(deftest test-goal-missing
+  (let [theory (get policies 'tour-operator-insurance)
+        ag (make-argument-graph)
+        ag (accept ag
+                   '[(annual-income agency 150000)
+                     (low-or-early-advance-payment agency)
+                     (scope-of-activities agency European)
+                     ])
+        engine (make-engine ag max-goals #{} (list (generate-arguments-from-theory theory)))
+        query '(minimum-guarantee ?O ?G)
+        ag (argue engine query)
+        minima (filter #(= (literal-predicate %) (literal-predicate query)) (atomic-statements ag))]
+    ;; (pprint ag)
+    ;; (prn "minima =" minima)
+    (is (not-empty minima))))
 
 ;; (run-tests)
 
