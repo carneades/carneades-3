@@ -243,26 +243,23 @@
   [ag1]
   (reify ArgumentGenerator
     (generate [this goal subs]
-              (reduce (fn [l wff]
-                        (let [subs2 (unify goal (literal-atom wff) subs)]
-                          ; (println "atom: " (literal-atom wff))
-                          (if (empty? subs2)
-                            l
-                            (conj l (make-response subs2 () nil)))))
-                      []
-                      (basis ag1)))))
+      (reduce (fn [l wff]
+                (let [subs2 (unify goal (literal-atom wff) subs)]
+                  (if (empty? subs2)
+                    l
+                    (conj l (make-response subs2 () nil)))))
+              []
+              (basis ag1)))))
 
 (defn- reduce-goal
   "ac-state symbol generators -> ac-state
 reduce the goal with the given id"
   [state1 id generators1]
-  ;; (pprint "reduce-goal")
   ;; Remove the goal from the state. Every goal is reduced at most once. The remaining issues of the goal
   ;; are passed down to the children of the goal, so they are not lost by removing the goal.
+  ;; (prn "[reduce-goal]")
   (let [goal (get (:goals state1) id),
         state2 (remove-goal state1 id)]
-    ; (printf "issues: %s\n" (vec (:issues goal)))
-    ; (printf "closed issues: %s\n" (:closed-issues goal))
     (if (empty? (:issues goal))
       state2 ; no issues left in the goal
       (let [issue (apply-substitutions (:substitutions goal) (first (:issues goal)))]
@@ -278,14 +275,16 @@ reduce the goal with the given id"
           ;; for argument evaluation, where burden of proof continues to play a role.
           (let [generators2 (concat (list (generate-subs-from-basis (:graph state2)))
                                     generators1)]
-            ; (println "issue: " issue)
+            ;; (prn "issue:" issue)
+            ;; (prn "subs: " (:substitutions goal))
             (let [responses (apply concat (map (fn [g]
                                                  (concat (generate g issue
                                                                    (:substitutions goal))
                                                          (generate g (literal-complement issue)
                                                                    (:substitutions goal))))
                                                generators2))]
-             ;; (println "responses: " (count responses))
+              ;; (println "responses: " (count responses))
+              ;; (pprint responses)
               (reduce (fn [s r] (apply-response s goal r))
                       state2
                       responses))))))))
@@ -300,8 +299,8 @@ reduce the goal with the given id"
   (if (or (empty? (:open-goals state1))
           (<= max-goals 0))
     (do
-      (prn "open-goals: " (:open-goals state1))
-      (prn "max-goals: " max-goals)
+      ;; (prn "open-goals: " (:open-goals state1))
+      ;; (prn "max-goals: " max-goals)
       state1)
     (let [id (first (:open-goals state1))]   
       (if (not id)
