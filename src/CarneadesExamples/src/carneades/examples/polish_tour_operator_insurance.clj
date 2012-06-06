@@ -91,7 +91,7 @@
      :symbol 'low-or-early-advance-payment
      :arity 1
      :forms {:en (make-form
-                  :positive "The tour operator, %s, recevies low or early advance payments."
+                  :positive "The tour operator, %s, receives low or early advance payments."
                   :negative "The tour operator, %s, does not receive early or low advance payments."
                   :question "Does the tour operator, %s, receive low or early advance payments?")})}
 
@@ -212,7 +212,7 @@ equivalent of 6,000 EUR.
          :premises [(pm '(low-or-early-advance-payment ?O))
                     (pm '(scope-of-activities ?O world-wide))
                     (pm '(annual-income ?O ?I))
-                    (pm '(eval ?G (let [x (* ?I 0.12) ; 12%
+                    (pm '(eval ?G (let [x (float (* ?I 0.12)) ; 12%
                                         min 40000] ; 12%
                                     (if (< x min) min x))))])
 
@@ -224,7 +224,7 @@ equivalent of 6,000 EUR.
          :premises [(pm '(low-or-early-advance-payment ?O))
                     (pm '(scope-of-activities ?O European))
                     (pm '(annual-income ?O ?I))
-                    (pm '(eval ?G (let [x (* ?I 0.07) ; 7%
+                    (pm '(eval ?G (let [x (float (* ?I 0.07)) ; 7%
                                         min 7500] 
                                     (if (< x min) min x))))
                     ])
@@ -237,7 +237,7 @@ equivalent of 6,000 EUR.
          :premises [(pm '(low-or-early-advance-payment ?O))
                     (pm '(scope-of-activities ?O Polish))
                     (pm '(annual-income ?O ?I))
-                    (pm '(eval ?G (let [x (* ?I 0.3) ; 3%
+                    (pm '(eval ?G (let [x (float (* ?I 0.3)) ; 3%
                                         min 4500] 
                                     (if (< x min) min x))))])
 
@@ -267,7 +267,7 @@ equivalent of 6,000 EUR.
                     (pm '(eval true (and (> ?T 30) (<= ?T 90))))
                     (pm '(scope-of-activities ?O European))
                     (pm '(annual-income ?O ?I))
-                    (pm '(eval ?G (let [x (* ?I 0.075) ; 7.5%
+                    (pm '(eval ?G (let [x (float (* ?I 0.075)) ; 7.5%
                                         min 8000] 
                                     (if (< x min) min x))))])
 
@@ -328,7 +328,7 @@ equivalent of 6,000 EUR.
                     (pm '(eval true (and (> ?T 90) (<= ?T 180))))
                     (pm '(scope-of-activities ?O Polish))
                     (pm '(annual-income ?O ?I))
-                    (pm '(eval ?G (let [x (* ?I 0.035) ; 3.5%
+                    (pm '(eval ?G (let [x (float (* ?I 0.035)) ; 3.5%
                                         min 5500] 
                                     (if (< x min) min x))))])
 
@@ -343,7 +343,7 @@ equivalent of 6,000 EUR.
                     (pm '(eval true (> ?T 180)))
                     (pm '(scope-of-activities ?O world-wide))
                     (pm '(annual-income ?O ?I))
-                    (pm '(eval ?G (let [x (* ?I 0.14) ; 14%
+                    (pm '(eval ?G (let [x (float (* ?I 0.14)) ; 14%
                                         min 47000] 
                                     (if (< x min) min x))))])
 
@@ -358,7 +358,7 @@ equivalent of 6,000 EUR.
                     (pm '(eval true (> ?T 180)))
                     (pm '(scope-of-activities ?O European))
                     (pm '(annual-income ?O ?I))
-                    (pm '(eval ?G (let [x (* ?I 0.09) ; 9%
+                    (pm '(eval ?G (let [x (float (* ?I 0.09)) ; 9%
                                         min 10000] 
                                     (if (< x min) min x))))])
 
@@ -373,7 +373,7 @@ equivalent of 6,000 EUR.
                     (pm '(eval true (> ?T 180)))
                     (pm '(scope-of-activities ?O Polish))
                     (pm '(annual-income ?O ?I))
-                    (pm '(eval ?G (let [x (* ?I 0.04) ; 4%
+                    (pm '(eval ?G (let [x (float (* ?I 0.04)) ; 4%
                                         min 6000] 
                                     (if (< x min) min x))))]) 
 
