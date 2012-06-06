@@ -5,6 +5,7 @@
         impact.web.jetty
         ring.adapter.jetty
         ring.middleware.session
+        ring.middleware.stacktrace
         [hiccup.middleware :only (wrap-base-url)])
   (:require [compojure.handler :as handler]))
 
@@ -14,7 +15,8 @@
 
 (def impact-app
   (-> (handler/site all-impact-pm-tool-routes)
-      (wrap-base-url)))
+      (wrap-base-url)
+      (wrap-stacktrace)))
 
 ;; (defonce impact-server (run-jetty #'impact-app {:join? false :port 8080}))
 
