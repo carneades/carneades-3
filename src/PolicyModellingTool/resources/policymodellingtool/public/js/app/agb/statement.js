@@ -28,7 +28,10 @@ AGB.display_statement = function(db, stmtid)
     PM.ajax_get(IMPACT.wsurl + '/statement-info/' + db + '/' + stmtid,
              function(info) {
                  $('#browser').html(AGB.statement_html(db, info, IMPACT.lang));
-                 // $('#close').click(on_close);
+                 $('#export').click(function (event){
+                                        window.open('/impactws/export/{0}'.format(db), 'CAF XML');
+                                        return false; 
+                                    });
              });;
 }
 
