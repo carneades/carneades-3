@@ -28,6 +28,10 @@ AGB.display_argumentgraph = function(db)
     PM.ajax_get(IMPACT.wsurl + '/argumentgraph-info/' + db,
              function(data) {
                  $('#browser').html(AGB.argumentgraph_html(db, data));
+                 $('#export').click(function (event){
+                                        window.open('/impactws/export/{0}'.format(db), 'CAF XML');
+                                        return false; 
+                                    });
              });
 };
 

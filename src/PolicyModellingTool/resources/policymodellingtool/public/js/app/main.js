@@ -53,7 +53,7 @@ PM.dispatch_url = function(sections) {
     } else if(sections[1] == "facts") {
         PM.display_facts();
     } else if(sections[1] == "arguments") {
-        PM.display_arguments(sections[3], sections[2], sections[4]);
+        PM.display_arguments(sections[3], sections[2], sections[4]); 
     } else if(sections[1] == "policies") {
         PM.display_policies(sections[2]);
     } else if(sections[1] == "admin") {
@@ -90,14 +90,6 @@ PM.init = function() {
     }
 
     PM.load_templates();
-    
-    PM.ajax_post(IMPACT.simulation_url, {"current-policy": null},
-                 function(currentpolicy) {
-                     IMPACT.current_policy = currentpolicy; 
-                     console.log('Current policy: ' + IMPACT.current_policy);
-                     PM.display_introduction();
-                     });
-
 };
 
 PM.start = function() {
