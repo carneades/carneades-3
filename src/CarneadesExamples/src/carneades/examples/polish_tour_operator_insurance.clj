@@ -91,7 +91,7 @@
      :symbol 'low-or-early-advance-payment
      :arity 1
      :forms {:en (make-form
-                  :positive "The tour operator, %s, recevies low or early advance payments."
+                  :positive "The tour operator, %s, receives low or early advance payments."
                   :negative "The tour operator, %s, does not receive early or low advance payments."
                   :question "Does the tour operator, %s, receive low or early advance payments?")})}
 
