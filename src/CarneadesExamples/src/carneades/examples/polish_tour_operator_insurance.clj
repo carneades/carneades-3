@@ -252,7 +252,7 @@ equivalent of 6,000 EUR.
                     (pm '(eval true (and (> ?T 30) (<= ?T 90))))
                     (pm '(scope-of-activities ?O world-wide))
                     (pm '(annual-income ?O ?I))
-                    (pm '(eval ?G (let [x (* ?I 0.125) ; 12.5%
+                    (pm '(eval ?G (let [x (float (* ?I 0.125)) ; 12.5%
                                         min 42000] 
                                     (if (< x min) min x))))])
 
@@ -282,7 +282,7 @@ equivalent of 6,000 EUR.
                     (pm '(eval true (and (> ?T 30) (<= ?T 90))))
                     (pm '(scope-of-activities ?O Polish))
                     (pm '(annual-income ?O ?I))
-                    (pm '(eval ?G (let [x (* ?I 0.035) ; 3.5%
+                    (pm '(eval ?G (let [x (float (* ?I 0.035)) ; 3.5%
                                         min 5500] 
                                     (if (< x min) min x))))])
 
@@ -297,7 +297,7 @@ equivalent of 6,000 EUR.
                     (pm '(eval true (and (> ?T 90) (<= ?T 180))))
                     (pm '(scope-of-activities ?O world-wide))
                     (pm '(annual-income ?O ?I))
-                    (pm '(eval ?G (let [x (* ?I 0.13) ; 13%
+                    (pm '(eval ?G (let [x (float (* ?I 0.13)) ; 13%
                                         min 44000] 
                                     (if (< x min) min x))))])
 
@@ -312,7 +312,7 @@ equivalent of 6,000 EUR.
                     (pm '(eval true (and (> ?T 90) (<= ?T 180))))
                     (pm '(scope-of-activities ?O European))
                     (pm '(annual-income ?O ?I))
-                    (pm '(eval ?G (let [x (* ?I 0.08) ; 8%
+                    (pm '(eval ?G (let [x (float (* ?I 0.08)) ; 8%
                                         min 8500] 
                                     (if (< x min) min x))))])
 
