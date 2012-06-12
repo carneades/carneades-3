@@ -93,7 +93,7 @@ PM.init = function() {
 };
 
 PM.start = function() {
-    
+    // TODO set address to #/introduction
 };
 
 PM.stop = function() {
