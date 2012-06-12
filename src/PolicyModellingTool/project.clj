@@ -11,5 +11,5 @@
                  [org.clojars.pallix/mygengo "1.0.0"]
                  [lein-ring "0.5.4"]]
   :dev-dependencies [[lein-ring "0.5.4"]]
-  :ring {:handler impact.web.routes-selfexe}
-  :jvm-opts ["-Xdebug" "-Xrunjdwp:transport=dt_socket,address=jdbconn,server=y,suspend=n"]) 
+  :ring {:handler impact.web.routes-war/impact-app}
+  :jvm-opts ["-Xdebug" "-Xrunjdwp:transport=dt_socket,address=jdbconn,server=y,suspend=n"])
