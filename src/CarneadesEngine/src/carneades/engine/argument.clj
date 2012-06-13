@@ -25,8 +25,8 @@
 (defn map->premise
   "Makes a premise"
   [m]
-  {:pre [(not (contains? m :pro))
-         (not (contains? m :con))]}
+  ;; {:pre [(not (contains? m :pro))
+  ;;        (not (contains? m :con))]}
   (let [m2 (merge (Premise. 
                     nil    ; statement
                     true   ; positive
