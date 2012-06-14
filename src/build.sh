@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 PROJECTS="CarneadesEngine CarneadesExamples CarneadesWebService PolicyModellingTool"
-MAKE_RELEASE=false
+RELEASE_CMD=""
 
 function show_usage {
-    echo "Usage: build.sh [--release|--dev]";
+    echo "Usage: build.sh [--release|--dev|--release-without-toolbox]";
 }
 
 function clean {
@@ -17,11 +17,7 @@ function clean {
 }
 
 function exec_confscripts {
-    if $MAKE_RELEASE; then
-        ./scripts/make-release.sh
-    else
-        ./scripts/make-dev.sh        
-    fi 
+    $RELEASE_CMD
 }
 
 function build_install_jar_war {
@@ -60,10 +56,12 @@ function show_notification {
 }
 
 case $1 in
-    "--release") MAKE_RELEASE=true;;
-    "--dev") MAKE_RELEASE=false;;
+    "--release-without-toolbox") RELEASE_CMD="./scripts/make-release-without-toolbox.sh";;
+    "--release") RELEASE_CMD="/scripts/make-release.sh";;
+    "--dev") RELEASE_CMD="./script/make-dev.sh";;
     *) show_usage; exit;;
 esac
+
 
 clean;
 build_install_jar_war;
