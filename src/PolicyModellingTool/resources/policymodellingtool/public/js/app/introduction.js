@@ -1,3 +1,11 @@
+PM.introduction_url = function() {
+    return 'introduction';    
+};
+
+PM.set_introduction_url = function() {
+    $.address.value(PM.introduction_url());  
+};
+
 PM.display_introduction = function() {
     PM.ajax_post(IMPACT.simulation_url, {"current-policy": null},
                  function(currentpolicy) {
