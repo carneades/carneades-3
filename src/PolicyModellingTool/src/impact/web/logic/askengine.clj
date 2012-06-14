@@ -55,7 +55,7 @@
         ag (set-main-issues ag (:query session))
         _ (prn "main issue?")
         _ (prn (:query session))
-        _ (pprint ag)
+        ;; _ (pprint ag)
          ;; accept all answers from the user!
         ag (accept ag (apply concat (vals (get-in session [:dialog :answers]))))
         ag (enter-language ag (-> session :theory :language))
