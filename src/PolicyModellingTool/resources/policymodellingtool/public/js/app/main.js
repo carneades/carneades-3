@@ -46,9 +46,7 @@ PM.url_changed = function(url) {
 };
 
 PM.dispatch_url = function(sections) {
-    if(sections[1] == "introduction") {
-        PM.display_introduction();
-    } else if(sections[1] == "issues") {
+    if(sections[1] == "issues") {
         PM.display_issues();
     } else if(sections[1] == "facts") {
         PM.display_facts();
@@ -58,6 +56,10 @@ PM.dispatch_url = function(sections) {
         PM.display_policies(sections[2]);
     } else if(sections[1] == "admin") {
         PM.display_admin();
+    } else if(sections[1] == "introduction") {
+        PM.display_introduction();
+    } else {
+        PM.set_introduction_url();
     }
 };
 
@@ -93,14 +95,14 @@ PM.init = function() {
 };
 
 PM.start = function() {
-    // TODO set address to #/introduction
+    PM.set_introduction_url();
 };
 
 PM.stop = function() {
     
 };
 
-PM.language_changed = function(lang) {
+PM.languageChanged = function(lang) {
     
 };
 
