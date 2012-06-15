@@ -29,7 +29,6 @@
 ; The Knowledge Engineering Review 00, 0 (2004), 1-24.
 
 
-
 (deftest test-tandem
          (let [jw (make-statement :text {:en "John wants to ride on the tandem."})
                mw (make-statement :text {:en "Mary wants to ride on the tandem."})
