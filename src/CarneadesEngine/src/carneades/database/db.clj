@@ -896,8 +896,7 @@
 
 (defn assume 
   "Assumes the given statements to be true in the database, unless they have
-   been assumed to be false, in which case they are questioned, or
-   rejected or accepted, in which case their status is left unchanged."
+   been assumed to be false, in which case their status is left unchanged."
   [stmts]
   {:pre [(every? literal? stmts)]}
   (doseq [stmt stmts]
