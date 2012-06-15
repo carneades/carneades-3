@@ -10,5 +10,7 @@
  {:filename polish_tour_operator_insurance.clj
   :namespace carneades.examples.polish-tour-operator-insurance
   :name tour-operator-insurance }
+ {:filename german_trade_regulations.clj
+  :namespace carneades.examples.german-trade-regulations
+  :name recognition-of-foreign-documents }
 ]
-
