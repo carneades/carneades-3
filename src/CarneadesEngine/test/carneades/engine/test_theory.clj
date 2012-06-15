@@ -46,6 +46,7 @@
                                 
 (def max-goals 10)  
 (def generators (list (generate-arguments-from-theory theory1)))                  
+(def case1 ['(bird Tweety)])
 
 (defn ag [facts query]  ;
   "(seq-of literal) literal -> argument-graph
@@ -55,7 +56,7 @@
          query))
                                    
 (deftest test-theory
-         (let [facts '((bird Tweety))
+         (let [facts case1
                query '(flies ?x)]
            (is (in? (ag facts query) '(flies Tweety)))))
 

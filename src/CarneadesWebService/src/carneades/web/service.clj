@@ -496,9 +496,9 @@
           (json-response (get-schemes liverpool-schemes-by-predicate goal {} true))))
       
   (POST "/apply-scheme/:db/:id" request 
-                                        ; apply the scheme with the given id to the substitutions in the body
-                                        ; and add the resulting arguments, if they are ground, to the 
-                                        ; database. Returns a list of the ids of the new arguments.
+	;; apply the scheme with the given id to the substitutions in the body
+	;; and add the resulting arguments, if they are ground, to the 
+	;; database. Returns a list of the ids of the new arguments.
         (let [subs (unpack-subs (read-json (slurp (:body request)))),
               scheme (get liverpool-schemes-by-id (symbol (:id (:params request))))]
           (prn subs)
