@@ -64,18 +64,19 @@ PM.dispatch_url = function(sections) {
 };
 
 // This code is executed when the page is loaded
-// TODO: to disable when inside the uid toolbox??
 $(function() {
-      PM.init();
+      var head = $('head');
+      head.append('<script src="js/app/config.js" type="text/javascript"></script>');
+
+      if(!PM_CONFIG.in_uid_toolbox) {
+          PM.init();
+      }
   });
 
 
 PM.init = function() {
     var head = $('head');
-    
-    head.append('<script src="js/lib/jquery.address-1.4.js" type="text/javascript"></script>');
     head.append('<script src="js/lib/underscore-min.js" type="text/javascript"></script>');
-    head.append('<script src="js/app/config.js" type="text/javascript"></script>');
 
     // adds a isNil method to underscore JS
     _.mixin({isNil : function(o) {
@@ -83,19 +84,20 @@ PM.init = function() {
              }
             });
     
-    $.address.change(PM.url_changed);
-    
     if(PM_CONFIG.in_uid_toolbox) {
-        PM.load_scripts();        
+        PM.load_scripts(PM.post_load);
     } else {
-        PM.load_uid_styles();        
+        PM.load_uid_styles(PM.post_load_and_start);        
     }
 
-    PM.load_templates();
 };
 
 PM.start = function() {
     PM.set_introduction_url();
+    // Forces update. The update is not done otherwise probably
+    // because the URL is the same as before, like /introduction, and
+    // the change is internal
+    $.address.update();
 };
 
 PM.stop = function() {
@@ -106,43 +108,103 @@ PM.languageChanged = function(lang) {
     
 };
 
-PM.load_scripts = function() {
-    var head = $('head');
-  _.each(['js/app/utils.js',
-          'js/app/introduction.js',
-          'js/app/menu.js',
-          'js/app/issues.js',
-          'js/app/facts.js',
-          'js/app/arguments.js',
-          'js/app/policies.js',
-          'js/app/markdown.js',
-          'js/app/metadata.js',
-          'js/app/admin.js',
-          'js/app/embedded-agbrowser.js',
-          'js/app/ajax.js',
-          'js/app/questions.js',
-          'js/app/agb/agb-utils.js',
-          'js/app/agb/login.js',
-          'js/app/agb/metadata.js',
-          'js/app/agb/argumentgraph.js',
-          'js/app/agb/argument.js',
-          'js/app/agb/statement.js',
-          'js/app/agb/map.js',
-          'js/app/agb/login.js',
-          'js/app/agb/markdown.js',
-          'js/lib/ICanHaz.js',
-          'js/lib/Markdown.Converter.js',
-          'js/lib/Markdown.Sanitizer.js',
-          'js/lib/Markdown.Editor.js',
-          'js/lib/jquery.scrollTo-1.4.2-min.js',
-          'js/lib/jquery.validate.js',
-          'js/lib/jquery.svg.js'],
-        function(name) {
-            console.log('Loading script ' + name);
-            head.append('<script src="' + name + '" type="text/javascript"></script>');
-        });
+PM.canBeStopped = function() {
+    return false;
 };
 
+PM.add_address_listener = function() {
+    $.address.change(PM.url_changed);
+};
+
+PM.post_load = function() {
+    PM.add_address_listener();
+    PM.load_templates();
+};
+
+PM.post_load_and_start = function() {
+    PM.post_load();
+    PM.start();
+};
+
+// http://www.lockencreations.com/2011/07/02/cant-debug-imported-js-files-when-using-jquery-getscript/
+// Replace the normal jQuery getScript function with one that supports
+// debugging and which references the script files as external resources
+// rather than inline.
+PM.get_script = function(url, callback) {
+    var head = document.getElementsByTagName("head")[0];
+    var script = document.createElement("script");
+    script.src = url;
+
+    // Handle Script loading
+    var done = false;
+
+    // Attach handlers for all browsers
+    script.onload = script.onreadystatechange = function(){
+	if (!done && (!this.readyState || this.readyState == "loaded" || this.readyState == "complete")) {
+	    done = true;
+	    if (callback){
+		callback();
+	    }
+	    // Handle memory leak in IE
+	    script.onload = script.onreadystatechange = null;
+	}
+    };
+    
+    console.log('Loading ' + url); 
+    head.appendChild(script);
+
+    // We handle everything using the script element injection
+    return undefined;
+};
+
+PM.load_scripts_helper = function(scripts, callback) {
+    if(scripts.length > 1) {
+        var script = scripts.pop();
+        PM.get_script(script, _.bind(PM.load_scripts_helper, PM, scripts, callback));
+    } else if(scripts.length == 1) {
+        var script = scripts.pop();
+        PM.get_script(script, callback);
+    }
+};
+
+PM.load_scripts = function(callback) {
+    var head = $('head');
+
+    var scripts = ['js/app/utils.js',
+                   'js/app/introduction.js',
+                   'js/app/menu.js',
+                   'js/app/issues.js',
+                   'js/app/facts.js',
+                   'js/app/arguments.js',
+                   'js/app/policies.js',
+                   'js/app/markdown.js',
+                   'js/app/metadata.js',
+                   'js/app/admin.js',
+                   'js/app/embedded-agbrowser.js',
+                   'js/app/ajax.js',
+                   'js/app/questions.js',
+                   'js/app/agb/agb-utils.js',
+                   'js/app/agb/login.js',
+                   'js/app/agb/metadata.js',
+                   'js/app/agb/argumentgraph.js',
+                   'js/app/agb/argument.js',
+                   'js/app/agb/statement.js',
+                   'js/app/agb/map.js',
+                   'js/app/agb/login.js',
+                   'js/app/agb/markdown.js',
+                   'js/lib/Markdown.Editor.js',
+                   'js/lib/Markdown.Sanitizer.js',
+                   'js/lib/Markdown.Converter.js',
+                   'js/lib/jquery.scrollTo-1.4.2-min.js',
+                   'js/lib/jquery.validate.js',
+                   'js/lib/jquery.svg.js',
+                   'js/lib/ICanHaz.js',
+                   'js/lib/jquery.address-1.4.js'];
+
+    PM.load_scripts_helper(scripts, callback);
+};
+
+// loads templates *synchronously*
 PM.load_templates = function() {
     _.each([{name: 'menu', url: 'site/menu.html'},
             {name: 'pmmenu', url: 'site/pmmenu.html'},
@@ -181,7 +243,7 @@ PM.load_templates = function() {
           });
 };
 
-PM.load_uid_styles = function() {
+PM.load_uid_styles = function(callback) {
     var files = ['<link type="text/css" href="toolbox/css/impact-ui/jquery-ui-1.8.11.custom.css" rel="stylesheet" />',
                  '<link type="text/css" href="toolbox/css/impact-ui/impact-green.css" rel="stylesheet" />',
                  '<link rel="stylesheet" type="text/css" media="all" href="toolbox/css/impact-ui/plugins/jquery-ui-timepicker.css" />',
@@ -190,14 +252,14 @@ PM.load_uid_styles = function() {
                 ];
     
     var scripts = ["toolbox/js/impact-ui/jquery-ui-1.8.11.custom.min.js",
-                   "toolbox/js/impact-ui/impact-init.js",
                    "toolbox/js/impact-ui/jquery.jscrollpane.min.js",
                    "toolbox/js/impact-ui/jquery.mousewheel.js",
                    "toolbox/js/impact-ui/jquery.mwheelIntent.js",
                    "toolbox/js/impact-ui/ui.checkbox.js",
                    "toolbox/js/impact-ui/jquery.selectbox-0.5.js",
                    "toolbox/js/impact-ui/jquery.busy.min.js",
-                   "toolbox/js/impact-ui/jquery.ui.timepicker.js"
+                   "toolbox/js/impact-ui/jquery.ui.timepicker.js",
+                   "toolbox/js/impact-ui/impact-init.js"
                    // "toolbox/js/main.js"
                   ];
 
@@ -206,8 +268,7 @@ PM.load_uid_styles = function() {
            });
     
     // http://stackoverflow.com/questions/6502943/resetting-document-ready-getscript
-    _.each(scripts, function(script) {
-               $.getScript(script);
-           });
+    scripts.reverse();
+    PM.load_scripts_helper(scripts, callback);
     
 };
