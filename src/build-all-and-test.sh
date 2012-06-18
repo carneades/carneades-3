@@ -6,6 +6,7 @@ sh -c "./build.sh --release" && \
     mv policymodellingtool-1.0.0-SNAPSHOT-standalone.war policymodellingtool-1.0.0-SNAPSHOT-toolbox.war && \
     sh -c "./scripts/make-dev.sh" && \
     lein ring uberwar && \
+    mv policymodellingtool-1.0.0-SNAPSHOT-standalone.war policymodellingtool-1.0.0-SNAPSHOT-css.war
     cd ../CarneadesEngine && lein test && \
     cd ../CarneadesWebService && \
     lein test
