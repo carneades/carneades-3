@@ -18,13 +18,13 @@
    argument])  ; partially instantiated argument
 
 (defn make-argument-template
-   [& values]
-   (let [m (apply hash-map values)]
-   (merge (ArgumentTemplate. 
-             nil    ; guard
-             #{}    ; instances
-             nil)   ; argument
-          m)))
+  [& values]
+  (let [m (apply hash-map values)]
+    (merge (ArgumentTemplate. 
+            nil    ; guard
+            #{}    ; instances
+            nil)   ; argument
+           m)))
 
 (defrecord Goal
   [issues         ; (seq-of literals)  ; open issues
@@ -122,7 +122,7 @@
   
 
 (defn- add-instance
-  "map symbol term -> map"
+  "argument-template symbol term -> argument-template"
   [arg-template-map key term]
   ; (pprint "add instance")
   (let [arg-template (get arg-template-map key)]
@@ -138,31 +138,41 @@
    of the template. Add an undercutter goal for each argument added to the graph."
   [state1 goal response]
   (let [subs (:substitutions response)]
-    ; (printf "subs: %s\n" subs)
+    ;; (printf "subs: %s\n" subs)
     (reduce (fn [s k]
               (let [template (get (:arg-templates s) k)
-                    ; _ (printf "trying scheme: %s\n" (:scheme (:argument template)))
-                    ; _ (printf "guard: %s\n" (:guard template))
+                   ;; _ (printf "trying scheme: %s\n" (:scheme (:argument template)))
+                   ;; _ (printf "guard: %s\n" (:guard template))
                     trm (apply-substitutions subs (:guard template))]
-                (if (or (not (ground? trm))
-                        (contains? (:instances template) trm))
-                  (do ; (printf "%s is a previous instance or not ground.\n" trm)
-                      s)
-                  (let [arg (instantiate-argument (:argument template) subs)
-                        schemes (schemes-applied (:graph state1) (:conclusion arg))]
-                    (if (contains? schemes (:scheme arg)) 
-                      ; the scheme has already been applied to this issue 
-                      (do ; (printf "previous scheme: %s\n" (:scheme arg))
-                           s)
-                      (do 
-                        ; (printf "new instance %s of scheme %s .\n" trm (:scheme arg))
-                        (-> s
-                          (assoc 
-                            :graph (enter-arguments (:graph s) (cons arg (make-undercutters arg)))
-                            :arg-templates (add-instance (:arg-templates s) k trm))
-                          (add-goal (assoc goal 
-                                           :issues (list `(~'undercut ~(:id arg)))
-                                           :depth (inc (:depth goal)))))))))))
+                (cond (not (ground? trm))
+                     ;; (do (printf "The guard %s is not ground.\n" trm)
+                      s
+                      ;;)
+                      
+                      (contains? (:instances template) trm)
+                      ;;(do (printf "The guard %s is a previous instance.\n" trm)
+                      s
+                      ;; )
+
+                      :else ;; guard is ground and a new instance
+                      (let [arg (instantiate-argument (:argument template) subs)
+                            schemes (schemes-applied (:graph state1) (:conclusion arg))]
+                        (if (contains? schemes (:scheme arg)) 
+                          ;; the scheme has already been applied to this issue 
+                          ;; (do (printf "previous instance %s of scheme: %s\n" trm (:scheme arg))
+                          s
+                          ;;)
+                          ;; (do (printf "new instance %s of scheme %s .\n" trm (:scheme arg))
+                              (-> s
+                                  (assoc 
+                                      :graph (enter-arguments (:graph s)
+                                                              (cons arg (make-undercutters arg)))
+                                      :arg-templates (add-instance (:arg-templates s) k trm))
+                                  (add-goal (assoc goal 
+                                              :issues (list `(~'undercut ~(:id arg)))
+                                              :depth (inc (:depth goal)))))
+                          ;;   )
+                        )))))
             state1
             (keys (:arg-templates state1)))))
 
