@@ -58,7 +58,7 @@ function show_notification {
 case $1 in
     "--release-without-toolbox") RELEASE_CMD="./scripts/make-release-without-toolbox.sh";;
     "--release") RELEASE_CMD="./scripts/make-release.sh";;
-    "--dev") RELEASE_CMD="./script/make-dev.sh";;
+    "--dev") RELEASE_CMD="./scripts/make-dev.sh";;
     *) show_usage; exit;;
 esac
 
