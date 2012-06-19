@@ -59,6 +59,18 @@
           :premises [(pm '(income ?x ?i))
                      (pm '(deductions ?x ?d))
                      (pm '(eval ?t (- ?i ?d)))])
+
+         (make-scheme                            
+          :id 'poz-1584-1-1
+          :header (make-metadata :title "Poz. 1584.1.1"
+                                 :description {:en ""})
+          :conclusion '(minimum-guarantee ?O ?G)
+          :premises [(pm '(low-or-early-advance-payment ?O))
+                     (pm '(scope-of-activities ?O world-wide))
+                     (pm '(annual-income ?O ?I))
+                     (pm '(eval ?G (let [x (float (* ?I 0.12)) ; 12%
+                                         min 40000] ; 12%
+                                     (if (< x min) min x))))])
 	 
 	 (make-scheme 
           :name "Phd"
@@ -182,6 +194,13 @@
 	query '(taxable-income Sam ?r)]
     (is (in? (ag facts query) '(taxable-income Sam 53000)))))
 
+(deftest test-engine-eval3
+  (let [facts '((low-or-early-advance-payment TO)
+                (scope-of-activities TO world-wide)
+                (annual-income TO 350000))
+        query '(minimum-guarantee ?O ?S)]
+    (is (in? (ag facts query) '(minimum-guarantee TO 42000.0)))))
+
 (deftest test-engine-equal
   (let [facts '((title Joe Dr))
 	query '(has-phd ?x)]
@@ -231,6 +250,35 @@
     (is (= 3 (count (arguments ag))))))
 
 (deftest test-argumentconstruction-blocked
+  (let [tour-operator-insurance (get policies 'tour-operator-insurance)
+        ag (make-argument-graph)
+        fake-argument-from-user
+        (reify ArgumentGenerator
+          (generate
+            [this goal s]
+            (prn "asking: " goal)
+            (case (literal-predicate goal)
+              scope-of-activities
+              (build-answer s goal '[(scope-of-activities TO world-wide)])
+              
+              advance-payment-percent
+              (build-answer s goal '[(advanced-payment-percent TO 20)])
+
+              advance-payment-time
+              (build-answer s goal '[(advance-payment-time TO 30)])
+
+              annual-income
+              (build-answer s goal '[(annual-income TO 350000)])
+
+              ())))
+        engine (make-engine ag 50 #{}
+                            (list fake-argument-from-user
+                                  (generate-arguments-from-theory tour-operator-insurance)))
+        query '(minimum-guarantee ?O ?G)
+        ag (argue engine query)]
+    (is (= 4 (count (arguments ag))))))
+
+(deftest test-argumentconstruction-blocked2
   (let [copyright-theory (get policies 'copyright-policies)
         ag (make-argument-graph)
         fake-argument-from-user
