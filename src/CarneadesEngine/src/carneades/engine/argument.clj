@@ -78,6 +78,11 @@
                             (concat (:premises arg) (:exceptions arg)))
                     (variables (:conclusion arg)))))
 
+(defn ground-argument? [arg]
+  {:pre [(argument? arg)]
+   :post [(instance? java.lang.Boolean %)]}
+  (-> arg (argument-variables) (empty?)))
+
 (defn map->argument 
   "Makes a one-step argument."
   [m]
