@@ -2,11 +2,11 @@
 PM.ajax_post = function(url, jsondata, callback, username, password) {
     $.ajax({url: url,
             type: 'POST',
-            // 'beforeSend' : function(xhr) {
-            //     var bytes = Crypto.charenc.Binary.stringToBytes(username + ":" + password);
-            //     var base64 = Crypto.util.bytesToBase64(bytes);
-            //     xhr.setRequestHeader("Authorization", "Basic " + base64);
-            // },
+            'beforeSend' : function(xhr) {
+                var bytes = Crypto.charenc.Binary.stringToBytes(username + ":" + password);
+                var base64 = Crypto.util.bytesToBase64(bytes);
+                xhr.setRequestHeader("Authorization", "Basic " + base64);
+            },
             dataType : 'json',
             data : JSON.stringify(jsondata),
             contentType: "application/json; charset=utf-8",

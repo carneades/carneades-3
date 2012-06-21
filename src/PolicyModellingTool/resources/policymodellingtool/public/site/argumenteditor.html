@@ -1,0 +1,41 @@
+<div id="argumenteditor-content" class="pm-editor">
+  <span class="editor-section-title">New Argument</span>
+
+<form>
+  <br/>Direction:<input id="direction" name="pro" type="radio" value="pro"/>Pro
+  <input name="pro" type="radio" value="con"/>Con
+  <br/>Scheme: <input type="hidden" id="editor-argument-scheme" />
+  <br/>
+  Conclusion: <input type="hidden" id="editor-conclusion" class="statement-select" />
+ <br/>Not found? <a href="" id="new-statement-for-conclusion">create a new statement</a>
+ <br/>
+ 
+ <br/>Premises:
+ <div id="argument-premises">
+   <!-- {{>premiseeditorpartial}} -->
+   <!-- {{>premiseeditorpartial}} -->
+   <!-- {{>premiseeditorpartial}} -->
+ </div>
+ <!-- <button type="button" id="add-more-premises">Add more...</button> -->
+   <br/>... or <a href="" id="new-statement-for-premise">create a new statement</a>
+   <br/>
+   
+ <!-- <br/>Exceptions: -->
+ <!-- <div id="argument-exceptions"> -->
+ <!--   {{>premiseeditorpartial}} -->
+ <!--   {{>premiseeditorpartial}} -->
+ <!-- </div> -->
+ <!-- <button type="button" id="add-more-exceptions">Add more...</button> -->
+ <!--   <br/>... or <a href="" id="new-statement-for-exception">create a new statement</a> -->
+ <!--   <br/> -->
+   
+  <br/>
+  <br/>
+  <br/>
+  <span class="editor-section-title">Header</span>
+  <br/><div id="argument-header"></div>
+  <br/>
+  <div class="navigation"><a id="cancel-argument" href="">Cancel</a>&nbsp<a id="save-argument" href="" >Save</a></div>
+</form>
+
+</div>
