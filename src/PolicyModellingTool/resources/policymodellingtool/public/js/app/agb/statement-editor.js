@@ -18,12 +18,13 @@ AGB.get_statement_data = function() {
             atom: $('#editor-statement-atom').val()};  
 };
 
-AGB.save_statement = function() {
+AGB.save_statement = function(config) {
     var stmt = AGB.get_statement_data();
     console.log('saving statement: ');
     console.log(stmt);
     PM.ajax_post(IMPACT.wsurl + '/statement/' + IMPACT.db, stmt,
-                 AGB.statement_created, IMPACT.user, IMPACT.password);    
+                 _.isNil(config.save_callback) ? AGB.statement_created : config.save_callback,
+                 IMPACT.user, IMPACT.password);    
     return false;
 };
 
@@ -37,6 +38,6 @@ AGB.create_statement_editor = function() {
 };
 
 AGB.remove_statement_editor = function() {
-    $('#statementeditorcontent').remove();
+    $('#statementeditor').empty();
     return false;
 };
