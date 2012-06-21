@@ -13,6 +13,8 @@ PM.display_arguments = function(db, type, id) {
     if(_.isNil(IMPACT.db)) {
         console.log('No db. Please enter some facts first'); 
     }
+    
+    IMPACT.db = db;
 
     var arguments_html = ich.arguments();
     $('#pm').html(arguments_html.filter("#arguments"));
