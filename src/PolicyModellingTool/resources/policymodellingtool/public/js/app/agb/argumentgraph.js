@@ -82,25 +82,30 @@ AGB.outline_text = function(tree, db, index)
 AGB.edit_argumentgraph = function() {
     $('#ageditormenu').remove();
     $('#menus').append(ich.ageditormenuon());
-    $('#newstatement').click(AGB.argumentgraph_newstatement);
+    $('#newstatement').click(_.bind(AGB.argumentgraph_newstatement, AGB, null));
     $('#newargument').click(AGB.argumentgraph_newargument);
     
     return false;
 };
 
-AGB.argumentgraph_newstatement = function() {
+AGB.argumentgraph_newstatement = function(config) {
     $('#statementeditor').html(AGB.create_statement_editor());
     $('#statement-header').html(AGB.create_metadata_editor());
-    $('#save-statement').click(AGB.save_statement_display_graph);
     $('#cancel-statement').click(AGB.remove_statement_editor);
     $('input:radio[name=main]:nth(0)').attr('checked',true);
+    
+    if(!_.isNil(config.atom)) {
+        $('#editor-statement-atom').val(config.atom);        
+    } 
+    
+    $('#save-statement').click(_.bind(AGB.save_statement_remove_editor, AGB, config));
     
     return false;
 };
 
-AGB.save_statement_display_graph = function() {
-    AGB.save_statement();
-    AGB.display_argumentgraph(IMPACT.db);
+AGB.save_statement_remove_editor = function(config) {
+    AGB.save_statement(config);
+    AGB.remove_statement_editor();
     return false;
 };
 
@@ -132,31 +137,6 @@ AGB.argumentgraph_newargument = function() {
     $('#argumenteditor').html(AGB.create_argument_editor());
     var search_term = "";
 
-    var statement_config = {formatResult: AGB.format_filtered_statement,
-                            formatSelection: AGB.format_selected_statement, 
-                            dataType: 'json',
-                            type: 'GET',
-                            error: function(jqXHR, textStatus) {
-                                console.log('[ERROR] AJAX ' + textStatus);
-                            },
-                            ajax: {
-                                url: IMPACT.wsurl + '/statement/' + IMPACT.db,
-                                data: function(term, page) {
-                                    console.log('term entered by the user: ' + term);
-                                    search_term = term;
-                                    return {};
-                                },
-                                results: function(statements) {
-                                    return {
-                                        results: _.filter(statements, function(statement) {
-                                                              return AGB.statement_text(statement).indexOf(search_term) != -1;
-                                                          })
-                                    };
-                                }
-                            }
-                           };
-    $('#editor-conclusion').select2(statement_config);
-
     var scheme_search_term = "";
     $('#editor-argument-scheme').select2({formatResult: AGB.format_filtered_scheme,
                                           formatSelection: AGB.format_selected_scheme, 
@@ -184,14 +164,7 @@ AGB.argumentgraph_newargument = function() {
     
     
     $('input:radio[name=pro]:nth(0)').attr('checked',true);
-    $('#new-statement-for-conclusion').click(AGB.argumentgraph_newstatement);
-    $('#new-statement-for-premise').click(AGB.argumentgraph_newstatement);
-    $('#new-statement-for-exception').click(AGB.argumentgraph_newstatement);
 
-    $('#argument-premises input[type=hidden]').select2(statement_config);
-    $('#argument-exceptions input[type=hidden]').select2(statement_config);
-    $('#add-more-premises').click(_.bind(AGB.add_more_premises, PM, statement_config));
-  //  $('#add-more-exceptions').click(_.bind(AGB.add_more_exceptions, PM, statement_config));
     $('#cancel-argument').click(AGB.remove_argument_editor);
     $('#save-argument').click(AGB.save_argument_display_graph);
     $('#editor-argument-scheme').change(AGB.scheme_changed);
@@ -199,11 +172,8 @@ AGB.argumentgraph_newargument = function() {
     return false;
 };
 
-AGB.scheme_changed = function() {
-    var id = $('#editor-argument-scheme').val();
-        PM.ajax_get(IMPACT.wsurl + '/scheme/' + id,
-             function(scheme) {
-                 PM.ajax_post(IMPACT.wsurl + '/matching-statements/' + IMPACT.db,
+AGB.fill_conclusion_select = function(scheme) {
+    PM.ajax_post(IMPACT.wsurl + '/matching-statements/' + IMPACT.db,
                              AGB.sexpr_to_str(scheme.conclusion),
                              function(conclusion_statements_results) {
                                  _.each(conclusion_statements_results, function(result) {
@@ -212,13 +182,68 @@ AGB.scheme_changed = function() {
                                             result.id = result.statement.id;
                                         });
                                  
+                                 $('#editor-conclusion').select2("destroy");
                                  $('#editor-conclusion').select2(
                                      {data: conclusion_statements_results,
+                                      // placeholder: conclusion_statements_results[0],
                                       formatResult: AGB.format_filtered_matching_result,
                                       formatSelection: AGB.format_selected_matching_result});
                              });
-             }
-                   );
+    
+    $('#new-statement-for-conclusion').click(_.bind(AGB.argumentgraph_newstatement, AGB, {atom: AGB.sexpr_to_str(scheme.conclusion),
+                                                                                          save_callback: _.bind(AGB.fill_conclusion_select, AGB, scheme)}));
+};
+
+AGB.fill_premise = function(premise) {
+    var p = $(_.filter($('#argument-premises input[type=hidden]'),
+                     function(p) {
+                         return $(p).data('role') == premise.role;
+                     })[0]);
+                                
+    PM.ajax_post(IMPACT.wsurl + '/matching-statements/' + IMPACT.db,
+                 AGB.sexpr_to_str(premise.statement.atom),
+                 function(premise_results) {
+                     p.select2("destroy");   
+                     p.select2({data: premise_results,
+                                //                                placeholder: premise_results[0],
+                                formatResult: AGB.format_filtered_matching_result,
+                                formatSelection: AGB.format_selected_matching_result});
+                     });
+    
+};
+
+AGB.fill_premises = function(scheme) {
+      _.each(scheme.premises,
+          function(premise) {
+              AGB.fill_premise(premise);
+          });
+};
+
+AGB.add_premises = function(scheme) {
+    _.each(scheme.premises,
+          function(premise) {
+              var premise_form = ich.premiseeditor();
+              $('#argument-premises').append(premise_form);
+              $('#argument-premises input[class=role-input]:last').val(premise.role);
+              $('#argument-premises input[class=role-input]:last').prop('disabled', true);
+              
+              $('#argument-premises input[type=hidden]:last').data('role', premise.role);
+              $('#argument-premises a:last').click(_.bind(AGB.argumentgraph_newstatement, AGB, {atom: AGB.sexpr_to_str(premise.statement.atom),
+                                                                                                save_callback: _.bind(AGB.fill_premise, AGB, premise)})); 
+              AGB.fill_premise(premise);
+          }); 
+};
+
+AGB.scheme_changed = function() {
+    var id = $('#editor-argument-scheme').val();
+    console.log('scheme changed: ' + id);
+    PM.ajax_get(IMPACT.wsurl + '/scheme/' + id,
+                function(scheme) {
+                    AGB.fill_conclusion_select(scheme);
+                    $('#argument-premises').empty();
+                    AGB.add_premises(scheme);
+                }
+               );
 };
 
 AGB.add_more_premises = function(statement_config) {
@@ -238,6 +263,7 @@ AGB.add_more_exceptions = function(statement_config) {
 
 AGB.save_argument_display_graph = function() {
     AGB.save_argument();
+    AGB.remove_argument_editor();
     AGB.display_argumentgraph(IMPACT.db);
     return false;
 };
