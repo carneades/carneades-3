@@ -81,6 +81,7 @@ PM.init = function() {
     head.append('<script src="js/lib/underscore-min.js" type="text/javascript"></script>');
     head.append('<script src="js/app/config.js" type="text/javascript"></script>');
     head.append('<link rel="stylesheet" href="js/lib/select2.css" type="text/css" />');
+
     // adds a isNil method to underscore JS
     _.mixin({isNil : function(o) {
                  return _.isNull(o) || _.isUndefined(o);
@@ -90,7 +91,7 @@ PM.init = function() {
     if(PM_CONFIG.in_uid_toolbox) {
         PM.load_scripts(PM.post_load);
     } else {
-        PM.load_uid_styles(PM.post_load_and_start);        
+        PM.load_uid_styles(PM.post_load);        
     }
 
 };
