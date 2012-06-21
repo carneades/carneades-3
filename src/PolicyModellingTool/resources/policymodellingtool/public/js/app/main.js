@@ -1,5 +1,7 @@
 // This object contains the global variables for the app
 var IMPACT = {
+    user: "root",
+    password: "pw1", // TODO real auth
     db: "",
     question: "Q12",
     lang: "en",
@@ -77,7 +79,8 @@ $(function() {
 PM.init = function() {
     var head = $('head');
     head.append('<script src="js/lib/underscore-min.js" type="text/javascript"></script>');
-
+    head.append('<script src="js/app/config.js" type="text/javascript"></script>');
+    head.append('<link rel="stylesheet" href="js/lib/select2.css" type="text/css" />');
     // adds a isNil method to underscore JS
     _.mixin({isNil : function(o) {
                  return _.isNull(o) || _.isUndefined(o);
@@ -169,37 +172,41 @@ PM.load_scripts_helper = function(scripts, callback) {
 
 PM.load_scripts = function(callback) {
     var head = $('head');
-
     var scripts = ['js/app/utils.js',
-                   'js/app/introduction.js',
-                   'js/app/menu.js',
-                   'js/app/issues.js',
-                   'js/app/facts.js',
-                   'js/app/arguments.js',
-                   'js/app/policies.js',
-                   'js/app/markdown.js',
-                   'js/app/metadata.js',
-                   'js/app/admin.js',
-                   'js/app/embedded-agbrowser.js',
-                   'js/app/ajax.js',
-                   'js/app/questions.js',
-                   'js/app/agb/agb-utils.js',
-                   'js/app/agb/login.js',
-                   'js/app/agb/metadata.js',
-                   'js/app/agb/argumentgraph.js',
-                   'js/app/agb/argument.js',
-                   'js/app/agb/statement.js',
-                   'js/app/agb/map.js',
-                   'js/app/agb/login.js',
-                   'js/app/agb/markdown.js',
-                   'js/lib/Markdown.Editor.js',
-                   'js/lib/Markdown.Sanitizer.js',
-                   'js/lib/Markdown.Converter.js',
-                   'js/lib/jquery.scrollTo-1.4.2-min.js',
-                   'js/lib/jquery.validate.js',
-                   'js/lib/jquery.svg.js',
-                   'js/lib/ICanHaz.js',
-                   'js/lib/jquery.address-1.4.js'];
+          'js/app/introduction.js',
+          'js/app/menu.js',
+          'js/app/issues.js',
+          'js/app/facts.js',
+          'js/app/arguments.js',
+          'js/app/policies.js',
+          'js/app/markdown.js',
+          'js/app/metadata.js',
+          'js/app/admin.js',
+          'js/app/embedded-agbrowser.js',
+          'js/app/ajax.js',
+          'js/app/questions.js',
+          'js/app/agb/agb-utils.js',
+          'js/app/agb/login.js',
+          'js/app/agb/metadata.js',
+          'js/app/agb/argumentgraph.js',
+          'js/app/agb/argument.js',
+          'js/app/agb/statement.js',
+          'js/app/agb/map.js',
+          'js/app/agb/login.js',
+          'js/app/agb/markdown.js',
+          'js/app/agb/statement-editor.js',
+          'js/app/agb/argument-editor.js',
+          'js/app/agb/metadata-editor.js',
+          'js/lib/ICanHaz.js',
+          'js/lib/Markdown.Converter.js',
+          'js/lib/Markdown.Sanitizer.js',
+          'js/lib/Markdown.Editor.js',
+          'js/lib/jquery.scrollTo-1.4.2-min.js',
+          'js/lib/jquery.validate.js',
+          'js/lib/jquery.svg.js',
+          'js/lib/jquery-ui-1.8.21.custom.min.js',
+          'js/lib/crypto.js',
+          'js/lib/select2.js'];
 
     PM.load_scripts_helper(scripts, callback);
 };
@@ -211,7 +218,9 @@ PM.load_templates = function() {
             {name: 'metadata', url: 'site/metadata.html'},
             {name: 'argumentlink', url: 'site/argumentlink.html'},
             {name: 'statementlink', url: 'site/statementlink.html'},
-            {name: 'premise', url: 'site/premise.html'}],
+            {name: 'premise', url: 'site/premise.html'},
+            {name: 'premiseeditorpartial', url: 'site/premiseeditorpartial.html'},
+            {name: 'ageditormenu', url: 'site/ag-editor-menu.html'}],
            function(template) {
                PM.syncget(template.url,
                            function(content) {
@@ -233,7 +242,12 @@ PM.load_templates = function() {
             'policies',
             'premise',
             'statement',
-            'statementlink'],
+            'statementlink',
+            'ageditormenuon',
+            'statementeditor',
+            'argumenteditor',
+            'metadataeditor',
+            'premiseeditor'],
            function(name) {
                PM.syncget('site/{0}.html'.format(name),
                              function(content) {

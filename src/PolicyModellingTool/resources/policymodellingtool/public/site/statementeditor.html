@@ -1,0 +1,34 @@
+<div id="statementeditorcontent" class="pm-editor">
+  <span class="editor-section-title">New Statement</span>
+
+<form>
+  Atom: <input id="editor-statement-atom" class="text-input" type="text"/>
+  <br/>Text:
+  <div id="texttabs">
+    <ul>
+      <li><a href="#en-tab">En</a></li>
+      <li><a href="#de-tab">De</a></li>
+    </ul>
+  </div>
+  <!-- <div class="navigation"><a id="entab" href="" >En</a><a id="detab" href="">De</a></div> -->
+  
+  <textarea id="statementtext" class="ui-textarea"></textarea>
+  Proof standard: <select id="standard" class="combobox required">
+  <option value="pe">Preponderance of Evidence</option>
+  <option value="dv">Dialectical Validity</option>
+  <option value="cce">Clear and Convincing Evidence</option>
+  <option value="brd">Beyond Reasonable Doubt</option>
+</select>
+
+  <br/>Main:<input id="main" name="main" type="radio" value="yes">Yes
+  <input name="main" type="radio" value="no">No
+  <br/>
+  <br/>
+  <br/>
+  <span class="editor-section-title">Header</span>
+  <br/><div id="statement-header"></div>
+  <br/>
+  <div class="navigation"><a id="cancel-statement" href="">Cancel</a>&nbsp<a id="save-statement" href="" >Save</a></div>
+</form>
+
+</div>

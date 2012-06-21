@@ -65,7 +65,7 @@
          (map? s) (let [atomval (if (nil? (:atom s))
                                   nil
                                   (safe-read-string (:atom s)))]
-                    (assoc (map->statement s)
+                    (assoc (map->statement (dissoc s :atom))
                       :standard (keyword (:standard s))
                       :atom atomval
                       :header (map->metadata (:header s))))
@@ -235,16 +235,16 @@
   (POST "/matching-statements/:db" request
         ;; returns a vector of {:substitutions :statement} records for the statements
         ;; with atoms matching the query in the body of the request
-        (prn "matching-statements called!")
         (let [m (read-json (slurp (:body request)))
               db (:db (:params request))
               s1 (unpack-statement m)
               db (make-database-connection (:db (:params request)) "guest" "")]
-          (with-db db (json-response (mapcat (fn [s2] 
+          (with-db db (json-response (mapcat (fn [s2]
+                                               ;; (prn "unifying s1 against s2: " s1 " " (:atom  s2))
                                                (let [subs (unify s1 (:atom s2))]
                                                  (when subs 
                                                    [{:substitutions subs
-                                                     :statement s2}])))
+                                                     :statement (pack-statement s2)}])))
                                              (list-statements))))))
 
   (GET "/premise-of/:db/:id" [db id]
