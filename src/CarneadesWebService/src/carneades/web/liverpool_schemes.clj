@@ -163,7 +163,7 @@
                                   :statement '(preconditions-satisfied ?A))
                     (make-premise :role "consequences" 
                                   :statement '(consequence ?G ?A))]
-         :exception [(make-premise :role "other agents" 
+         :exceptions [(make-premise :role "other agents" 
                                    :statement '(prevents ?Ag ?G))])
        
        (make-scheme
