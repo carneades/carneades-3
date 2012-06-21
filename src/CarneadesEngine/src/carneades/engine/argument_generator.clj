@@ -15,6 +15,8 @@
 
 (defn make-response [subs asms arg] (Response. subs asms arg))
 
+(defn response? [x] (instance? Response x))
+
 ;  Protocol for argument evaluation structures.
 (defprotocol ArgumentGenerator
   (generate [this literal subs])) ; "argument-generator literal substitutions -> (seq-of response)"
