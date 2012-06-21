@@ -111,7 +111,7 @@ AGB.sexpr_to_str = function(sexpr) {
               str += s + " ";
            });
     
-    str.slice(0, -1);
+    str = str.slice(0, -1);
     str += ")";
     
     return str;

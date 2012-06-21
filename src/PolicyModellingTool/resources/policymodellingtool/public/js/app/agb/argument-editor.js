@@ -38,6 +38,6 @@ AGB.create_argument_editor = function() {
 };
 
 AGB.remove_argument_editor = function() {
-    $('#argumenteditor-content').remove();
+    $('#argumenteditor-content').empty();
     return false;
 };
