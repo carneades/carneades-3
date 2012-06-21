@@ -1,0 +1,42 @@
+// (jdbc/create-table 
+//           :statement 
+//           [:id "varchar primary key not null"] ; a URN in the UUID namespace DONE
+//           [:weight "double default null"]
+//           [:value "double default null"]
+//           [:standard "tinyint default 0"]   ; 0=pe, 1=cce, 2=brd, 3=dv DONE
+//           [:atom "varchar"]                 ; Clojure s-expression DONE
+//           [:text "int"] ALMOST
+//           [:main "boolean default false"]   ; true if a main issue DONE
+//           [:header "int"] ALMOST
+// 
+
+AGB.get_statement_data = function() {
+    return {text: {en: $('#statementtext').val() },
+            standard: $('#standard').val(),
+            main: $('#main').val(),
+            header: AGB.get_metadata_data(),
+            atom: $('#editor-statement-atom').val()};  
+};
+
+AGB.save_statement = function() {
+    var stmt = AGB.get_statement_data();
+    console.log('saving statement: ');
+    console.log(stmt);
+    PM.ajax_post(IMPACT.wsurl + '/statement/' + IMPACT.db, stmt,
+                 AGB.statement_created, IMPACT.user, IMPACT.password);    
+    return false;
+};
+
+AGB.statement_created = function() {
+    console.log('statement created');
+};
+
+AGB.create_statement_editor = function() {
+    var html = ich.statementeditor();
+    return html;
+};
+
+AGB.remove_statement_editor = function() {
+    $('#statementeditorcontent').remove();
+    return false;
+};

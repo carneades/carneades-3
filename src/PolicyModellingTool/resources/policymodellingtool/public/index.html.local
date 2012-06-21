@@ -16,7 +16,10 @@
     <script src="js/lib/jquery.scrollTo-1.4.2-min.js" type="text/javascript"></script>
     <script src="js/lib/jquery.validate.js" type="text/javascript"></script>
     <script src="js/lib/jquery.svg.js" type="text/javascript"></script>
-
+    <script src="js/lib/jquery-ui-1.8.21.custom.min.js" type="text/javascript"></script>
+    <script src="js/lib/crypto.js" type="text/javascript"></script>
+    <script src="js/lib/select2.js" type="text/javascript"></script>
+            
     <script src="js/app/main.js" type="text/javascript"></script>
     <script src="js/app/menu.js" type="text/javascript"></script>
     <script src="js/app/utils.js" type="text/javascript"></script>
@@ -39,7 +42,10 @@
     <script src="js/app/agb/statement.js" type="text/javascript"></script>
     <script src="js/app/agb/map.js" type="text/javascript"></script>
     <script src="js/app/agb/markdown.js" type="text/javascript"></script>
-
+    <script src="js/app/agb/statement-editor.js" type="text/javascript"></script>
+    <script src="js/app/agb/argument-editor.js" type="text/javascript"></script>
+    <script src="js/app/agb/metadata-editor.js" type="text/javascript"></script>
+    
   </head>
   
   <body>

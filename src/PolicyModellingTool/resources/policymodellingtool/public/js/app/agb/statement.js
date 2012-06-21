@@ -104,19 +104,36 @@ AGB.statement_prefix = function(statement) {
     }
 };
 
-AGB.statement_text = function(statement)
-{
+AGB.sexpr_to_str = function(sexpr) {
+    var str = "(";
+    
+    _.each(sexpr, function(s) {
+              str += s + " ";
+           });
+    
+    str.slice(0, -1);
+    str += ")";
+    
+    return str;
+};
+
+AGB.statement_raw_text = function(statement) {
     if(statement.text && statement.text[IMPACT.lang]) {
         var text = statement.text[IMPACT.lang];
-    
-        return AGB.markdown_to_html(AGB.statement_prefix(statement) + text);
+        return text;
     }
     // if(statement.header && statement.header.description && statement.header.description[CARNEADES.lang]) {
     //     return markdown_to_html(slice_statement(statement.header.description[aCARNEADES.lang]));
     // }
 
     // TODO: if atom is UUID, then returns the string "statement" ?
-    return AGB.statement_prefix(statement) + statement.atom;
+    return AGB.statement_prefix(statement) + statement.atom;  
+};
+
+AGB.statement_text = function(statement)
+{
+    var text = AGB.statement_raw_text(statement);
+    return AGB.markdown_to_html(AGB.statement_prefix(statement) + text);
 };
 
 AGB.statement_link = function(db, id, text)
