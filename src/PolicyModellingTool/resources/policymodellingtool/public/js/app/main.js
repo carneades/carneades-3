@@ -72,6 +72,7 @@ $(function() {
 
       if(!PM_CONFIG.in_uid_toolbox) {
           PM.init();
+          PM.start();
       }
   });
 
