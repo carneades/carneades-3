@@ -82,11 +82,19 @@ AGB.outline_text = function(tree, db, index)
 AGB.edit_argumentgraph = function() {
     $('#ageditormenu').remove();
     $('#menus').append(ich.ageditormenuon());
-    $('#newstatement').click(_.bind(AGB.argumentgraph_newstatement, AGB, null));
+    $('#newstatement').click(_.bind(AGB.argumentgraph_newstatement, AGB,
+                                   {save_callback: function() {
+                                        AGB.display_argumentgraph(IMPACT.db);
+                                        return false;
+                                    }}));
     $('#newargument').click(AGB.argumentgraph_newargument);
     
     return false;
 };
+
+// config accepts the following values
+// atom: the default value of the atom field
+// save_callback: a callback called once the statement is created
 
 AGB.argumentgraph_newstatement = function(config) {
     if(_.isNil(config)) {
@@ -101,14 +109,14 @@ AGB.argumentgraph_newstatement = function(config) {
         $('#editor-statement-atom').val(config.atom);        
     } 
     
-    $('#save-statement').click(_.bind(AGB.save_statement_remove_editor, AGB, config));
+    $('#save-statement').click(
+        function() {
+            AGB.save_statement(config);
+            AGB.remove_statement_editor();
+            return false;
+        }
+    );
     
-    return false;
-};
-
-AGB.save_statement_remove_editor = function(config) {
-    AGB.save_statement(config);
-    AGB.remove_statement_editor();
     return false;
 };
 
@@ -197,8 +205,8 @@ AGB.fill_conclusion_select = function(scheme) {
                                                                                           save_callback: _.bind(AGB.fill_conclusion_select, AGB, scheme)}));
 };
 
-AGB.fill_premise = function(premise) {
-    var p = $(_.filter($('#argument-premises input[type=hidden]'),
+AGB.fill_premise = function(id, premise) {
+    var p = $(_.filter($(id + ' input[class=statement-select]'),
                      function(p) {
                          return $(p).data('role') == premise.role;
                      })[0]);
@@ -206,6 +214,11 @@ AGB.fill_premise = function(premise) {
     PM.ajax_post(IMPACT.wsurl + '/matching-statements/' + IMPACT.db,
                  AGB.sexpr_to_str(premise.statement.atom),
                  function(premise_results) {
+                     _.each(premise_results, function(result) {
+                                p.data(result.statement.id, result);
+                                result.id = result.statement.id;
+                            });
+                     
                      p.select2("destroy");   
                      p.select2({data: premise_results,
                                 //                                placeholder: premise_results[0],
@@ -215,25 +228,18 @@ AGB.fill_premise = function(premise) {
     
 };
 
-AGB.fill_premises = function(scheme) {
-      _.each(scheme.premises,
-          function(premise) {
-              AGB.fill_premise(premise);
-          });
-};
-
-AGB.add_premises = function(scheme) {
-    _.each(scheme.premises,
+AGB.add_premises = function(id, premises) {
+    _.each(premises,
           function(premise) {
               var premise_form = ich.premiseeditor();
-              $('#argument-premises').append(premise_form);
-              $('#argument-premises input[class=role-input]:last').val(premise.role);
-              $('#argument-premises input[class=role-input]:last').prop('disabled', true);
+              $(id).append(premise_form);
+              $(id + ' input[class=role-input]:last').val(premise.role);
+              $(id + ' input[class=role-input]:last').prop('disabled', true);
               
-              $('#argument-premises input[type=hidden]:last').data('role', premise.role);
-              $('#argument-premises a:last').click(_.bind(AGB.argumentgraph_newstatement, AGB, {atom: AGB.sexpr_to_str(premise.statement.atom),
-                                                                                                save_callback: _.bind(AGB.fill_premise, AGB, premise)})); 
-              AGB.fill_premise(premise);
+              $(id + ' input[class=statement-select]:last').data('role', premise.role);
+              $(id + ' a:last').click(_.bind(AGB.argumentgraph_newstatement, AGB, {atom: AGB.sexpr_to_str(premise.statement.atom),
+                                                                                                save_callback: _.bind(AGB.fill_premise, AGB, id, premise)})); 
+              AGB.fill_premise(id, premise);
           }); 
 };
 
@@ -244,7 +250,9 @@ AGB.scheme_changed = function() {
                 function(scheme) {
                     AGB.fill_conclusion_select(scheme);
                     $('#argument-premises').empty();
-                    AGB.add_premises(scheme);
+                    AGB.add_premises('#argument-premises', scheme.premises);
+                    AGB.add_premises('#argument-assumptions', scheme.assumptions);
+                    AGB.add_premises('#argument-exceptions', scheme.exceptions);
                 }
                );
 };
