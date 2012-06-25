@@ -60,8 +60,6 @@ PM.dispatch_url = function(sections) {
         PM.display_admin();
     } else if(sections[1] == "introduction") {
         PM.display_introduction();
-    } else {
-        PM.set_introduction_url();
     }
 };
 
@@ -69,10 +67,9 @@ PM.dispatch_url = function(sections) {
 $(function() {
       var head = $('head');
       head.append('<script src="js/app/config.js" type="text/javascript"></script>');
-
+      
       if(!PM_CONFIG.in_uid_toolbox) {
           PM.init();
-          PM.start();
       }
   });
 
@@ -83,26 +80,22 @@ PM.init = function() {
     head.append('<script src="js/app/config.js" type="text/javascript"></script>');
     head.append('<link rel="stylesheet" href="js/lib/select2.css" type="text/css" />');
 
-    // adds a isNil method to underscore JS
-    _.mixin({isNil : function(o) {
+    // adds some methods to underscore JS
+    _.mixin({isNil: function(o) {
                  return _.isNull(o) || _.isUndefined(o);
              }
             });
     
     if(PM_CONFIG.in_uid_toolbox) {
-        PM.load_scripts(PM.post_load);
+        PM.load_scripts(PM.post_load_uid);
     } else {
-        PM.load_uid_styles(PM.post_load);        
+        PM.load_scripts(PM.post_load);        
     }
 
 };
 
 PM.start = function() {
     PM.set_introduction_url();
-    // Forces update. The update is not done otherwise probably
-    // because the URL is the same as before, like /introduction, and
-    // the change is internal
-    $.address.update();
 };
 
 PM.stop = function() {
@@ -121,14 +114,22 @@ PM.add_address_listener = function() {
     $.address.change(PM.url_changed);
 };
 
-PM.post_load = function() {
-    PM.add_address_listener();
+PM.post_load_uid = function() {
     PM.load_templates();
+    PM.add_address_listener();
+
+    // Forces update.
+    $.address.update();
 };
 
-PM.post_load_and_start = function() {
-    PM.post_load();
-    PM.start();
+PM.post_load = function() {
+    PM.load_uid_styles();
+    PM.load_templates();
+    PM.add_address_listener();
+
+    // Forces update.
+    $.address.update();
+
 };
 
 // http://www.lockencreations.com/2011/07/02/cant-debug-imported-js-files-when-using-jquery-getscript/
@@ -174,42 +175,44 @@ PM.load_scripts_helper = function(scripts, callback) {
 
 PM.load_scripts = function(callback) {
     var head = $('head');
-    var scripts = ['js/app/utils.js',
-          'js/app/introduction.js',
-          'js/app/menu.js',
-          'js/app/issues.js',
-          'js/app/facts.js',
-          'js/app/arguments.js',
-          'js/app/policies.js',
-          'js/app/markdown.js',
-          'js/app/metadata.js',
-          'js/app/admin.js',
-          'js/app/embedded-agbrowser.js',
-          'js/app/ajax.js',
-          'js/app/questions.js',
-          'js/app/agb/agb-utils.js',
-          'js/app/agb/login.js',
-          'js/app/agb/metadata.js',
-          'js/app/agb/argumentgraph.js',
-          'js/app/agb/argument.js',
-          'js/app/agb/statement.js',
-          'js/app/agb/map.js',
-          'js/app/agb/login.js',
-          'js/app/agb/markdown.js',
-          'js/app/agb/statement-editor.js',
-          'js/app/agb/argument-editor.js',
-          'js/app/agb/metadata-editor.js',
-          'js/lib/ICanHaz.js',
-          'js/lib/Markdown.Converter.js',
-          'js/lib/Markdown.Sanitizer.js',
-          'js/lib/Markdown.Editor.js',
-          'js/lib/jquery.scrollTo-1.4.2-min.js',
-          'js/lib/jquery.validate.js',
-          'js/lib/jquery.svg.js',
-          'js/lib/jquery-ui-1.8.21.custom.min.js',
-          'js/lib/crypto.js',
-          'js/lib/select2.js'];
-
+    var scripts = ['js/app/introduction.js',
+                   'js/app/menu.js',
+                   'js/app/issues.js',
+                   'js/app/facts.js',
+                   'js/app/arguments.js',
+                   'js/app/policies.js',
+                   'js/app/markdown.js',
+                   'js/app/metadata.js',
+                   'js/app/admin.js',
+                   'js/app/embedded-agbrowser.js',
+                   'js/app/ajax.js',
+                   'js/app/questions.js',
+                   'js/app/agb/agb-utils.js',
+                   'js/app/agb/login.js',
+                   'js/app/agb/metadata.js',
+                   'js/app/agb/argumentgraph.js',
+                   'js/app/agb/argument.js',
+                   'js/app/agb/statement.js',
+                   'js/app/agb/map.js',
+                   'js/app/agb/login.js',
+                   'js/app/agb/markdown.js',
+                   'js/app/agb/statement-editor.js',
+                   'js/app/agb/argument-editor.js',
+                   'js/app/agb/metadata-editor.js',
+                   'js/lib/ICanHaz.js',
+                   'js/lib/Markdown.Converter.js',
+                   'js/lib/Markdown.Sanitizer.js',
+                   'js/lib/Markdown.Editor.js',
+                   'js/lib/jquery.scrollTo-1.4.2-min.js',
+                   'js/lib/jquery.validate.js',
+                   'js/lib/jquery.svg.js',
+                   'js/lib/jquery-ui-1.8.21.custom.min.js',
+                   'js/lib/crypto.js',
+                   'js/lib/select2.js',
+                   'js/lib/jquery.address-1.4.js',
+                   'js/app/utils.js'];
+    
+    scripts.reverse();
     PM.load_scripts_helper(scripts, callback);
 };
 

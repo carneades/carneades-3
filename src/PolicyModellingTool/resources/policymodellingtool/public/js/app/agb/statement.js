@@ -11,7 +11,7 @@ AGB.set_statement_url = function(db, stmtid)
 
 AGB.statement_html = function(db, info, lang)
 {
-    info.normalize();
+    AGB.normalize(info);
     info.db = db;
     AGB.set_statement_title_text(info);
     info.description_text = AGB.description_text(info.header);
