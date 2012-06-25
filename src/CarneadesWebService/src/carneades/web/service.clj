@@ -97,7 +97,7 @@
   [m]
   (zipmap (map (fn [key] (symbol (name key)))
                (keys m))
-          (vals m)))
+          (map safe-read-string (vals m))))
 
 (defn argument-data
   "Returns the argument content"
