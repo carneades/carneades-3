@@ -10,7 +10,7 @@ AGB.argumentgraph_url = function(db)
 
 AGB.argumentgraph_html = function(db, data) 
 {
-    data.normalize();
+    AGB.normalize(data);
     data.db = db;
     data.metadata_text = AGB.format_metadata(data.metadata[0]);
     data.description_text = AGB.description_text(data.metadata[0]);
