@@ -79,7 +79,7 @@ PM.init = function() {
     head.append('<script src="js/lib/underscore-min.js" type="text/javascript"></script>');
     head.append('<script src="js/app/config.js" type="text/javascript"></script>');
     head.append('<link rel="stylesheet" href="js/lib/select2.css" type="text/css" />');
-
+    
     // adds some methods to underscore JS
     _.mixin({isNil: function(o) {
                  return _.isNull(o) || _.isUndefined(o);
@@ -117,15 +117,18 @@ PM.add_address_listener = function() {
 PM.post_load_uid = function() {
     PM.load_templates();
     PM.add_address_listener();
+    $('head').append('<link rel="stylesheet" href="toolbox/css/policymodelling/style.css" type="text/css" />');
 
     // Forces update.
     $.address.update();
 };
 
 PM.post_load = function() {
-    PM.load_uid_styles();
+//    PM.load_uid_styles();
     PM.load_templates();
     PM.add_address_listener();
+    
+    $('head').append('<link rel="stylesheet" href="toolbox/css/policymodelling/style.css" type="text/css" />');
 
     // Forces update.
     $.address.update();
@@ -266,9 +269,7 @@ PM.load_uid_styles = function(callback) {
     var files = ['<link type="text/css" href="toolbox/css/impact-ui/jquery-ui-1.8.11.custom.css" rel="stylesheet" />',
                  '<link type="text/css" href="toolbox/css/impact-ui/impact-green.css" rel="stylesheet" />',
                  '<link rel="stylesheet" type="text/css" media="all" href="toolbox/css/impact-ui/plugins/jquery-ui-timepicker.css" />',
-                 '<link href="toolbox/css/main.css" rel="stylesheet" type="text/css" />',
-                 '<link rel="stylesheet" href="toolbox/css/policymodelling/style.css" type="text/css" />'
-                ];
+                 '<link href="toolbox/css/main.css" rel="stylesheet" type="text/css" />'];
     
     var scripts = ["toolbox/js/impact-ui/jquery-ui-1.8.11.custom.min.js",
                    "toolbox/js/impact-ui/jquery.jscrollpane.min.js",

@@ -1,30 +1,33 @@
 <div id="argumenteditor-content" class="pm-editor">
-  <span class="editor-section-title">New Argument</span>
+  <h2>New Argument</h2>
 
 <form>
   <br/>Direction:<input id="direction" name="pro" type="radio" value="pro"/>Pro
   <input name="pro" type="radio" value="con"/>Con
+  <br/>
   <br/>Scheme: <input type="hidden" id="editor-argument-scheme" />
+  <br/>
   <br/>
   Conclusion: <input type="hidden" id="editor-conclusion" class="statement-select" />
  <br/>Not found? <a href="" id="new-statement-for-conclusion">create a new statement</a>
  <br/>
  
- <br/>Premises:
+ <br/><h3>Premises</h3>
  <div id="argument-premises">
  </div>
+
+ <br/><h3>Assumptions</h3>
+ <div id="argument-assumptions">
+ </div>
+
+ <br/><h3>Exceptions</h3>
+ <div id="argument-exceptions">
+ </div>
    
- <!-- <br/>Exceptions: -->
- <!-- <div id="argument-exceptions"> -->
- <!--   {{>premiseeditorpartial}} -->
- <!-- </div> -->
-   
   <br/>
   <br/>
   <br/>
-  <span class="editor-section-title">Header</span>
-  <br/><div id="argument-header"></div>
-  <br/>
+
   <div class="navigation"><a id="cancel-argument" href="">Cancel</a>&nbsp<a id="save-argument" href="" >Save</a></div>
 </form>
 

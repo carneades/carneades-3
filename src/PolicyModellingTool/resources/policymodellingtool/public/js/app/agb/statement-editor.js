@@ -11,7 +11,7 @@
 // 
 
 AGB.get_statement_data = function() {
-    return {text: {en: $('#statementtext').val() },
+    return {text: {en: $('#statementtext').val() == "" ? null : $('#statementtext').val()},
             standard: $('#standard').val(),
             main: $('#main').val(),
             header: AGB.get_metadata_data(),

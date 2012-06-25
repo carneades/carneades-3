@@ -61,14 +61,15 @@
         :else nil))
 
 (defn unpack-statement [s]
-   (cond (string? s) (safe-read-string s),  
-         (map? s) (let [atomval (if (nil? (:atom s))
-                                  nil
-                                  (safe-read-string (:atom s)))]
-                    (assoc (map->statement (dissoc s :atom))
-                      :standard (keyword (:standard s))
-                      :atom atomval
-                      :header (map->metadata (:header s))))
+  (cond (string? s) (safe-read-string s),  
+        (map? s) (let [atomval (if (or (nil? (:atom s))
+                                       (empty? (:atom s)))
+                                 nil
+                                 (safe-read-string (:atom s)))]
+                   (assoc (map->statement (dissoc s :atom))
+                     :standard (keyword (:standard s))
+                     :atom atomval
+                     :header (map->metadata (:header s))))
         :else nil))
 
 (defn- pack-argument
@@ -242,6 +243,7 @@
           (with-db db (json-response (mapcat (fn [s2]
                                                ;; (prn "unifying s1 against s2: " s1 " " (:atom  s2))
                                                (let [subs (unify s1 (:atom s2))]
+                                                 ;; (prn "subs = " subs)
                                                  (when subs 
                                                    [{:substitutions subs
                                                      :statement (pack-statement s2)}])))
