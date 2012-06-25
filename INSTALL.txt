@@ -8,7 +8,7 @@ and the Carneades Editor, implemented in the Clojure programming language.
 1. Prerequisites
 
 - The Java Runtime Environment (JRE) 6 <http://java.sun.com/>
-- Leiningen 1.4.2 or superior <http://github.com/technomancy/leiningen>
+- Leiningen 1.4.2 or superior (but not lein 2.x) <http://github.com/technomancy/leiningen>
 - Apache Maven <http://maven.apache.org/>
 
 2. Downloading Carneades
