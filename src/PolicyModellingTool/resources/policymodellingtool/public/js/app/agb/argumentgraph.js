@@ -259,21 +259,6 @@ AGB.scheme_changed = function() {
                );
 };
 
-AGB.add_more_premises = function(statement_config) {
-    for(var i = 0; i < 3; i++) {
-//        $('#argument-premises').append('<input type="hidden" class="statement-select" /> <br/>');        
-    } 
-    $('#argument-premises input').select2(statement_config);
-};
-
-AGB.add_more_exceptions = function(statement_config) {
-    for(var i = 0; i < 2; i++) {
-//        $('#argument-exceptions').append('<input type="hidden" class="statement-select" /> <br/>');
-    }
-    $('#argument-exceptions input').select2(statement_config);
-};
-
-
 AGB.save_argument_display_graph = function() {
     AGB.save_argument();
     AGB.remove_argument_editor();
