@@ -11,7 +11,7 @@ AGB.set_argument_url = function(db, argid)
 
 AGB.argument_html = function(db, argument_data)
 {
-    argument_data.normalize();
+    AGB.normalize(argument_data);
     argument_data.direction = argument_data.pro ? "pro" : "con";
     argument_data.db = db;
     argument_data.description_text = AGB.description_text(argument_data.header);
