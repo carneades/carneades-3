@@ -250,6 +250,8 @@ AGB.scheme_changed = function() {
                 function(scheme) {
                     AGB.fill_conclusion_select(scheme);
                     $('#argument-premises').empty();
+                    $('#argument-exceptions').empty();
+                    $('#argument-assumptions').empty();
                     AGB.add_premises('#argument-premises', scheme.premises);
                     AGB.add_premises('#argument-assumptions', scheme.assumptions);
                     AGB.add_premises('#argument-exceptions', scheme.exceptions);
