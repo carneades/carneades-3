@@ -55,6 +55,9 @@
 
 (defn- pack-statement 
   [stmt]
+  {:post [(do (prn "% = "%) true)
+          (not (vector? (:atom %)))
+          (not (seq? (:atom %)))]}
   (cond (sliteral? stmt) (str stmt),
         (statement? stmt) (assoc stmt :atom (when (:atom stmt)
                                               (str (literal-atom stmt)))),
@@ -113,22 +116,22 @@
   (or (:header (argument-data id))
       {}))
 
-(defn cut-ag-helper
+(defn create-outline-helper
   [n depth]
   (cond (= depth 1)
         [n []]
 
         (statement? n)
         (let [procon (concat (map argument-data (:pro n)) (map argument-data (:con n)))]
-          [n (vec (map #(cut-ag-helper % (dec depth)) procon))])
+          [n (vec (map #(create-outline-helper % (dec depth)) procon))])
 
         (argument? n)
-        (let [premises (map :statement (:premises n))]
-          [n (vec (map #(cut-ag-helper % (dec depth)) premises))])))
+        (let [premises (map (comp pack-statement :statement) (:premises n))]
+          [n (vec (map #(create-outline-helper % (dec depth)) premises))])))
 
-(defn cut-ag
+(defn create-outline
   [depth]
-  [:root (vec (map #(cut-ag-helper % depth) (main-issues)))])
+  [:root (vec (map #(create-outline-helper % depth) (map pack-statement (main-issues))))])
 
 (defn get-username-and-password
   [request]
@@ -422,7 +425,7 @@
          (with-db dbconn
            (let [metadata (list-metadata)
                  main-issues (map pack-statement (main-issues))
-                 outline (cut-ag 5)]
+                 outline (create-outline 5)]
              (json-response {:metadata metadata
                              :main-issues main-issues
                              :outline outline})))))
