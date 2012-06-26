@@ -1,3 +1,13 @@
+AGB.get_all_premises = function() {
+    var premises = $('#argument-premises input.statement-select.required');
+    var assumptions = $('#argument-assumptions input.statement-select.required');
+    var exceptions = $('#argument-exceptions input.statement-select.required');
+
+    var all_premises = $.merge(premises, assumptions);
+    all_premises = $.merge(all_premises, exceptions);
+    return all_premises;    
+};
+
 AGB.save_argument = function() {
     var scheme_id = $('#editor-argument-scheme').val();
     var conclusion = $('#editor-conclusion').val();
@@ -5,14 +15,7 @@ AGB.save_argument = function() {
     console.log('saving argument: ');
     var subs = $('#editor-conclusion').data(conclusion).substitutions;
 
-    var premises = $('#argument-premises input[class=statement-select]');
-    var assumptions = $('#argument-assumptions input[class=statement-select]');
-    var exceptions = $('#argument-exceptions input[class=statement-select]');
-
-    var all_premises = $.merge(premises, assumptions);
-    all_premises = $.merge(all_premises, exceptions);
-    
-    _.each(all_premises,
+    _.each(AGB.get_all_premises(),
            function(premise) {
                premise = $(premise);
               $.extend(subs, premise.data(premise.val()).substitutions);
