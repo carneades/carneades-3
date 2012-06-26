@@ -206,7 +206,7 @@ AGB.fill_conclusion_select = function(scheme) {
 };
 
 AGB.fill_premise = function(id, premise) {
-    var p = $(_.filter($(id + ' input[class=statement-select]'),
+    var p = $(_.filter($(id + ' .statement-select'),
                      function(p) {
                          return $(p).data('role') == premise.role;
                      })[0]);
@@ -236,7 +236,7 @@ AGB.add_premises = function(id, premises) {
               $(id + ' input[class=role-input]:last').val(premise.role);
               $(id + ' input[class=role-input]:last').prop('disabled', true);
               
-              $(id + ' input[class=statement-select]:last').data('role', premise.role);
+              $(id + ' .statement-select').last().data('role', premise.role);
               $(id + ' a:last').click(_.bind(AGB.argumentgraph_newstatement, AGB, {atom: AGB.sexpr_to_str(premise.statement.atom),
                                                                                                 save_callback: _.bind(AGB.fill_premise, AGB, id, premise)})); 
               AGB.fill_premise(id, premise);
@@ -260,6 +260,21 @@ AGB.scheme_changed = function() {
 };
 
 AGB.save_argument_display_graph = function() {
+    if(!$('#editor-argument-scheme').valid()) {
+        return false;
+    }
+    
+    if(!$('#editor-conclusion').valid()) {
+        return false;
+    }    
+
+    if(_.filter(AGB.get_all_premises(),
+          function(premise) {
+              return $(premise).valid() == false;
+          }).length > 0) {
+        return false;
+    }
+
     AGB.save_argument();
     AGB.remove_argument_editor();
     AGB.display_argumentgraph(IMPACT.db);
