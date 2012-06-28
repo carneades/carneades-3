@@ -10,7 +10,10 @@ PM.display_introduction = function() {
     PM.ajax_post(IMPACT.simulation_url, {"current-policy": null},
                  function(currentpolicy) {
                      IMPACT.current_policy = currentpolicy; 
-                 });
+                 },
+                IMPACT.user,
+                IMPACT.password,
+                PM.on_error);
 
     var introduction_html = ich.introduction();
     $('#pm').html(introduction_html.filter("#introduction"));
@@ -21,8 +24,11 @@ PM.display_introduction = function() {
 PM.on_start_button = function() {
 
     // reset session
-    PM.ajax_post(IMPACT.simulation_url, {reset: null}, function() {});
+    PM.ajax_post(IMPACT.simulation_url, {reset: null}, function() {},
+                IMPACT.user,
+                IMPACT.password,
+                PM.on_error);
 
     PM.set_issues_url();
-    return false;  
+    return false;
 };

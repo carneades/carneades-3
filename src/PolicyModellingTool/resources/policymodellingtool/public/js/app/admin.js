@@ -20,13 +20,20 @@ PM.display_admin = function() {
                                      $('#policies').html(content);
                                      $('#policies').val(currentpolicy);
                                      $('#submit').click(PM.on_admin_save);
-                                 });
-                 });
+                                 },
+                                PM.on_error);
+                 },
+                 IMPACT.user,
+                 IMPACT.password,
+                 PM.on_error);
 };
 
 PM.on_admin_save = function() {
     var policy = $('#policies').val();
     PM.ajax_post(IMPACT.simulation_url, {"set-current-policy": policy},
-                 function(res) { console.log('setting current-policy: ' + policy); });
+                 function(res) { console.log('setting current-policy: ' + policy); },
+                 IMPACT.user,
+                 IMPACT.password,
+                 PM.on_error);
     return false;
 };

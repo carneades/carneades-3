@@ -10,7 +10,11 @@ PM.display_facts = function() {
     var facts_html = ich.facts();
     $('#pm').html(facts_html.filter("#facts"));
     PM.activate('#facts-item');
-    PM.ajax_post(IMPACT.simulation_url, {request: IMPACT.question}, PM.show_questions_or_ag);
+    PM.ajax_post(IMPACT.simulation_url, {request: IMPACT.question},
+                 PM.show_questions_or_ag,
+                 IMPACT.user,
+                 IMPACT.password,
+                 PM.on_error);
 };
 
 PM.show_questions_or_ag = function(data) {
@@ -82,5 +86,10 @@ PM.send_answers = function(questions, on_response) {
                                  },
                                   []);
 
-    PM.ajax_post(IMPACT.simulation_url, {answers:  {values: answers_values}}, on_response);
+    PM.ajax_post(IMPACT.simulation_url,
+                 {answers:  {values: answers_values}},
+                 on_response,
+                 IMPACT.user,
+                 IMPACT.password,
+                 PM.on_error);
 };
