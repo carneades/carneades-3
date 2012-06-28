@@ -1,5 +1,6 @@
 
-PM.ajax_post = function(url, jsondata, callback, username, password) {
+PM.ajax_post = function(url, jsondata, callback, username, password,
+                        callback_error) {
     $.ajax({url: url,
             type: 'POST',
             'beforeSend' : function(xhr) {
@@ -12,18 +13,24 @@ PM.ajax_post = function(url, jsondata, callback, username, password) {
             contentType: "application/json; charset=utf-8",
             success: callback,
             error: function(jqXHR, textStatus) {
-              console.log('[ERROR] AJAX ' + textStatus);
+                console.log('[ERROR] ' + textStatus);
+                if(!_.isNil(callback_error)) {
+                    callback_error(textStatus);
+                }
             }
         });
 };
 
-PM.ajax_get = function(url, callback) {
+PM.ajax_get = function(url, callback, callback_error) {
     $.ajax({url: url,
             type: 'GET',
             success : callback,
             dataType : 'json',
             error: function(jqXHR, textStatus) {
-              console.log('[ERROR] AJAX ' + textStatus);
+                console.log('[ERROR] AJAX ' + textStatus);
+                if(!_.isNil(callback_error)) {
+                    callback_error(textStatus);
+                }
             }
         });
 };

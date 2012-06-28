@@ -16,7 +16,7 @@ var IMPACT = {
 // We don't put variables in it since mixing data and functions with objects
 // is too often a bad idea
 var PM = {
-   
+
 };
 
 // argument browser
@@ -291,4 +291,11 @@ PM.load_uid_styles = function(callback) {
     scripts.reverse();
     PM.load_scripts_helper(scripts, callback);
     
+};
+
+PM.on_error = function(textstatus) {
+    $('#pm').prepend('<div style="background-color:  #FFCC33" class="error">Error: {0}</div>'.format(textstatus));
+    setTimeout(function() {
+                   $('#pm .error').remove();
+               }, 3000); 
 };

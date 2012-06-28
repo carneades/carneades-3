@@ -29,13 +29,14 @@ AGB.argument_html = function(db, argument_data)
 AGB.display_argument = function(db, argid)
 {
     PM.ajax_get(IMPACT.wsurl + '/argument-info/' + db + '/' + argid,
-            function(argument_data) {
-                $('#browser').html(AGB.argument_html(db, argument_data));
-                $('#export').click(function (event){
-                                       window.open('/impactws/export/{0}'.format(db), 'CAF XML');
-                                       return false; 
-                                   });
-            });
+                function(argument_data) {
+                    $('#browser').html(AGB.argument_html(db, argument_data));
+                    $('#export').click(function (event){
+                                           window.open('/impactws/export/{0}'.format(db), 'CAF XML');
+                                           return false; 
+                                       });
+                },
+                PM.on_error);
 };
 
 AGB.set_premises_text = function(argument_data)
