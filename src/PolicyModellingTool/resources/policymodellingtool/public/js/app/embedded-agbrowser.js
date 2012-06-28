@@ -82,7 +82,8 @@ PM.show_statement_inframe = function(uuid) {
                     $('#browserframe').contents().find('#browser').html (statement_html(IMPACT.db, data, IMPACT.lang));
                     PM.add_prevnext_menu();
                     PM.add_links_listeners();
-                });    
+                },
+                PM.on_error);
 };
 
 PM.show_argument_inframe = function(uuid) {
@@ -93,7 +94,8 @@ PM.show_argument_inframe = function(uuid) {
                     $('#browserframe').contents().find('#browser').html (argument_html(IMPACT.db, data));
                     PM.add_prevnext_menu();
                     PM.add_links_listeners();
-                });
+                },
+                PM.on_error);
 };
 
 PM.show_argumentgraph_inframe = function() {
@@ -105,7 +107,8 @@ PM.show_argumentgraph_inframe = function() {
                                    PM.add_prevnext_menu();
                                    PM.add_links_listeners();
                                    // $('#browserframe').contents().find('head').append('<link rel="stylesheet" href="/policymodellingtool/toolbox/css/policymodelling/style.css" type="text/css" />');
-                               }); 
+                               },
+               PM.on_error);
 };
 
 PM.show_map_inframe = function() {

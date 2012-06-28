@@ -26,13 +26,14 @@ AGB.statement_html = function(db, info, lang)
 AGB.display_statement = function(db, stmtid)
 {
     PM.ajax_get(IMPACT.wsurl + '/statement-info/' + db + '/' + stmtid,
-             function(info) {
-                 $('#browser').html(AGB.statement_html(db, info, IMPACT.lang));
-                 $('#export').click(function (event){
-                                        window.open('/impactws/export/{0}'.format(db), 'CAF XML');
-                                        return false; 
-                                    });
-             });;
+                function(info) {
+                    $('#browser').html(AGB.statement_html(db, info, IMPACT.lang));
+                    $('#export').click(function (event){
+                                           window.open('/impactws/export/{0}'.format(db), 'CAF XML');
+                                           return false; 
+                                       });
+                },
+                PM.on_error);;
 }
 
 AGB.set_statement_title_text = function(info)

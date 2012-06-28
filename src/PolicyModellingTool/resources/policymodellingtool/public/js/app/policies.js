@@ -30,15 +30,18 @@ PM.display_policies = function(sectionid) {
                         $.scrollTo($('#' + sectionid));                        
                     }
 
-                });
+                },
+               PM.on_error);
     
 
 };
 
 PM.on_select_policy = function(id) {
     console.log('db before evaluate: ' + IMPACT.db);
-    PM.ajax_get(IMPACT.wsurl + '/evaluate-policy/{0}/{1}/{2}/{3}'.format(IMPACT.db, IMPACT.current_policy, IMPACT.question, id), 
-                 PM.on_evaluated_policy);
+    PM.ajax_get(IMPACT.wsurl + '/evaluate-policy/{0}/{1}/{2}/{3}'.
+                format(IMPACT.db, IMPACT.current_policy, IMPACT.question, id),
+                PM.on_evaluated_policy,
+                PM.on_error);
     return false;
 };
 
