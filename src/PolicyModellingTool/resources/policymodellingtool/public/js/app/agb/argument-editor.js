@@ -1,25 +1,57 @@
+// Returns the JQuery premises object of the argument editor
+AGB.get_premises = function() {
+    return $('#argument-premises input.statement-select.required');
+};
+
+// Returns the JQuery premises object of the argument editor
+AGB.get_assumptions = function() {
+    return $('#argument-assumptions input.statement-select.required');
+};
+
+// Returns the JQuery premises object of the argument editor
+AGB.get_exceptions = function() {
+    return $('#argument-exceptions input.statement-select.required');
+};
+
+// Returns the premises, assumptions and exceptions of the argument
+// being edited
 AGB.get_all_premises = function() {
-    var premises = $('#argument-premises input.statement-select.required');
-    var assumptions = $('#argument-assumptions input.statement-select.required');
-    var exceptions = $('#argument-exceptions input.statement-select.required');
+    var premises = AGB.get_premises();
+    var assumptions = AGB.get_assumptions();
+    var exceptions = AGB.get_exceptions();
 
     var all_premises = $.merge(premises, assumptions);
     all_premises = $.merge(all_premises, exceptions);
     return all_premises;
 };
 
-AGB.save_argument = function() {
-    var scheme_id = $('#editor-argument-scheme').val();
+// Returns the current substitutions for the argument's
+// conclusions, premises, assumptions and exceptions
+AGB.get_argument_substitutions = function() {
     var conclusion = $('#editor-conclusion').val();
+    var subs = {};
 
-    console.log('saving argument: ');
-    var subs = $('#editor-conclusion').data(conclusion).substitutions;
+    if(conclusion) {
+        subs = $('#editor-conclusion').data(conclusion).substitutions;
+    }
 
     _.each(AGB.get_all_premises(),
            function(premise) {
                premise = $(premise);
-              $.extend(subs, premise.data(premise.val()).substitutions);
-          });
+               if(premise.val()) {
+                   $.extend(subs, premise.data(premise.val()).substitutions);
+               }
+
+           });
+
+    return subs;
+};
+
+AGB.save_argument = function() {
+    var scheme_id = $('#editor-argument-scheme').val();
+    console.log('saving argument: ');
+
+    var subs = AGB.get_argument_substitutions();
 
     console.log('Substitutions for apply-scheme:');
     console.log(subs);

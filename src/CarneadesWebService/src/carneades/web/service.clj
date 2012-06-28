@@ -519,6 +519,16 @@
                        []
                        responses))))))
 
+  (POST "/apply-substitutions" request
+	;; apply the given substitutions to the given statement
+        ;; and returns the result
+        (let [content (read-json (slurp (:body request)))
+              subs (unpack-subs (:substitutions content))
+              statement (unpack-statement (:statement content))]
+          (prn subs)
+          (prn statement)
+          (json-response (apply-substitutions subs statement))))
+
   ;; Policies
       
   (GET "/policies" []
