@@ -20,7 +20,7 @@
 		<apiRootPath>http://impact.uid.com/policymodellingtool/</apiRootPath>
 		
 		<!-- The URL of the JavaScript file with the tools API. -->
-		<mainJavaScript>/js/app/main.js</mainJavaScript>
+		<mainJavaScript>js/app/main.js</mainJavaScript>
 		
 	</impact-tool>
 	
