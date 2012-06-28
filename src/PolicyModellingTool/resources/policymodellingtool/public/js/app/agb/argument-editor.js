@@ -5,13 +5,13 @@ AGB.get_all_premises = function() {
 
     var all_premises = $.merge(premises, assumptions);
     all_premises = $.merge(all_premises, exceptions);
-    return all_premises;    
+    return all_premises;
 };
 
 AGB.save_argument = function() {
     var scheme_id = $('#editor-argument-scheme').val();
     var conclusion = $('#editor-conclusion').val();
-    
+
     console.log('saving argument: ');
     var subs = $('#editor-conclusion').data(conclusion).substitutions;
 
@@ -20,13 +20,12 @@ AGB.save_argument = function() {
                premise = $(premise);
               $.extend(subs, premise.data(premise.val()).substitutions);
           });
-    
+
     console.log('Substitutions for apply-scheme:');
     console.log(subs);
-    
-    PM.ajax_post(IMPACT.wsurl + '/apply-scheme/' + IMPACT.db + '/' + scheme_id, subs,
-                 AGB.argument_created, IMPACT.user, IMPACT.password);    
-    
+
+    PM.ajax_post(IMPACT.wsurl + '/apply-scheme/' + IMPACT.db + '/' + scheme_id,
+                 subs, AGB.argument_created, IMPACT.user, IMPACT.password);
     return false;
 };
 
