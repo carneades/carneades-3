@@ -26,14 +26,17 @@ AGB.argumentgraph_html = function(db, data)
 AGB.display_argumentgraph = function(db)
 {
     PM.ajax_get(IMPACT.wsurl + '/argumentgraph-info/' + db,
-             function(data) {
-                 $('#browser').html(AGB.argumentgraph_html(db, data));
-                 $('#export').click(function (event){
-                                        window.open('/impactws/export/{0}'.format(db), 'CAF XML');
-                                        return false; 
-                                    });
-                 $('#edit').click(AGB.edit_argumentgraph);
-             });
+                function(data) {
+                    $('#browser').html(AGB.argumentgraph_html(db, data));
+                    $('#export').click(
+                        function (event){
+                            window.open('/impactws/export/{0}'.format(db),
+                                        'CAF XML');
+                            return false; 
+                        });
+                    $('#edit').click(AGB.edit_argumentgraph);
+                },
+                PM.on_error);
 };
 
 AGB.set_mainissues_text = function(mainissues)
@@ -199,7 +202,10 @@ AGB.fill_conclusion_select = function(scheme) {
                                       // placeholder: conclusion_statements_results[0],
                                       formatResult: AGB.format_filtered_matching_result,
                                       formatSelection: AGB.format_selected_matching_result});
-                             });
+                             },
+                IMPACT.user,
+                IMPACT.password,
+                PM.on_error);
     
     $('#new-statement-for-conclusion').click(_.bind(AGB.argumentgraph_newstatement, AGB, {atom: AGB.sexpr_to_str(scheme.conclusion),
                                                                                           save_callback: _.bind(AGB.fill_conclusion_select, AGB, scheme)}));
@@ -224,7 +230,10 @@ AGB.fill_premise = function(id, premise) {
                                 //                                placeholder: premise_results[0],
                                 formatResult: AGB.format_filtered_matching_result,
                                 formatSelection: AGB.format_selected_matching_result});
-                     });
+                     },
+                IMPACT.user,
+                IMPACT.password,
+                PM.on_error);
     
 };
 
@@ -255,8 +264,8 @@ AGB.scheme_changed = function() {
                     AGB.add_premises('#argument-premises', scheme.premises);
                     AGB.add_premises('#argument-assumptions', scheme.assumptions);
                     AGB.add_premises('#argument-exceptions', scheme.exceptions);
-                }
-               );
+                },
+                PM.on_error);
 };
 
 AGB.save_argument_display_graph = function() {

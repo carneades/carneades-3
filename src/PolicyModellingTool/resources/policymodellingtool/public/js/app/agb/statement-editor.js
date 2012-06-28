@@ -26,7 +26,7 @@ AGB.save_statement = function(config) {
     console.log(stmt);
     PM.ajax_post(IMPACT.wsurl + '/statement/' + IMPACT.db, stmt,
                  _.isNil(config.save_callback) ? AGB.statement_created : config.save_callback,
-                 IMPACT.user, IMPACT.password);    
+                 IMPACT.user, IMPACT.password, PM.on_error);    
     return false;
 };
 
