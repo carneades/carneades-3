@@ -97,10 +97,10 @@ AGB.edit_argumentgraph = function() {
     return false;
 };
 
-// config accepts the following values
-// atom: the default value of the atom field
-// save_callback: a callback called once the statement is created
-
+// Creates a new statement editor
+// @config accepts the following values:
+// atom, the default value of the atom field
+// save_callback, a callback called once the statement is created
 AGB.argumentgraph_newstatement = function(config) {
     if(_.isNil(config)) {
         config = {}; 
@@ -158,6 +158,7 @@ AGB.format_selected_matching_result = function(result) {
     return AGB.format_selected_statement(result.statement);
 };
 
+// Creates a new argument editor
 AGB.argumentgraph_newargument = function() {
     $('#argumenteditor').html(AGB.create_argument_editor());
     var search_term = "";
@@ -174,7 +175,6 @@ AGB.argumentgraph_newargument = function() {
                                           ajax: {
                                               url: IMPACT.wsurl + '/scheme',
                                               data: function(term, page) {
-                                                  console.log('term entered by the user: ' + term);
                                                   scheme_search_term = term;
                                                   return {};
                                               },
@@ -198,6 +198,12 @@ AGB.argumentgraph_newargument = function() {
     return false;
 };
 
+// Returns true if the atom is grounded
+// (hack)
+AGB.is_grounded = function(atom) {
+    return atom.indexOf("?") == -1;
+};
+
 // Set the list of candidates for the conclusion
 AGB.set_conclusion_candidates = function(atom) {
     PM.ajax_post(IMPACT.wsurl + '/matching-statements/' + IMPACT.db,
@@ -205,8 +211,9 @@ AGB.set_conclusion_candidates = function(atom) {
                  function(conclusion_statements_results) {
                      var conclusion = $('#editor-conclusion');
                      _.each(conclusion_statements_results, function(result) {
-                                conclusion.data
-                                (result.statement.id, result);
+                                if(!AGB.is_grounded(atom)) {
+                                    conclusion.data(result.statement.id, result);
+                                }
                                 result.id = result.statement.id;
                             });
 
@@ -255,7 +262,9 @@ AGB.set_premise_candidates = function(id, premise, atom) {
                      console.log('premise result:');
                      console.log(premise_results);
                      _.each(premise_results, function(result) {
-                                p.data(result.statement.id, result);
+                                if(!AGB.is_grounded(atom)) {
+                                    p.data(result.statement.id, result);
+                                }
                                 result.id = result.statement.id;
                             });
                      p.select2("destroy");
