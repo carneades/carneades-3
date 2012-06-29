@@ -1,3 +1,5 @@
+// http://localhost:8080/policymodellingtool/#/arguments/argumentgraph/policymodellingtool-c4a3e5b2-89cf-4c4f-b653-e04ad22e38dd
+
 AGB.set_argumentgraph_url = function(db)
 {
     $.address.value(AGB.argumentgraph_url(db));    
@@ -86,10 +88,10 @@ AGB.edit_argumentgraph = function() {
     $('#ageditormenu').remove();
     $('#menus').append(ich.ageditormenuon());
     $('#newstatement').click(_.bind(AGB.argumentgraph_newstatement, AGB,
-                                   {save_callback: function() {
-                                        AGB.display_argumentgraph(IMPACT.db);
-                                        return false;
-                                    }}));
+                                    {save_callback: function() {
+                                         AGB.display_argumentgraph(IMPACT.db);
+                                         return false;
+                                     }}));
     $('#newargument').click(AGB.argumentgraph_newargument);
     
     return false;
@@ -103,6 +105,7 @@ AGB.argumentgraph_newstatement = function(config) {
     if(_.isNil(config)) {
         config = {}; 
     }
+
     $('#statementeditor').html(AGB.create_statement_editor());
     $('#statement-header').html(AGB.create_metadata_editor());
     $('#cancel-statement').click(AGB.remove_statement_editor);
@@ -186,15 +189,17 @@ AGB.argumentgraph_newargument = function() {
     return false;
 };
 
-AGB.fill_conclusion_select = function(scheme) {
+// Set the list of candidates for the conclusion
+AGB.set_conclusion_candidates = function(atom) {
     PM.ajax_post(IMPACT.wsurl + '/matching-statements/' + IMPACT.db,
-                 AGB.sexpr_to_str(scheme.conclusion),
+                 atom,
                  function(conclusion_statements_results) {
                      _.each(conclusion_statements_results, function(result) {
                                 $('#editor-conclusion').data
                                 (result.statement.id, result);
                                 result.id = result.statement.id;
                             });
+                     
                      $('#editor-conclusion').select2("destroy");
                      $('#editor-conclusion').select2(
                          {data: conclusion_statements_results,
@@ -207,26 +212,29 @@ AGB.fill_conclusion_select = function(scheme) {
                  IMPACT.password,
                  PM.on_error);
 
+    // new statement link
     $('#new-statement-for-conclusion').click(
         _.bind(AGB.argumentgraph_newstatement,
                AGB,
-               {atom: AGB.sexpr_to_str(scheme.conclusion),
-                save_callback:
-                _.bind(AGB.fill_conclusion_select, AGB, scheme)}));
+               {atom: atom,
+                save_callback: AGB.update_conclusion_premises_candidates})
+    );
 };
 
 // Set the list of candidates for an argument premise, assumption or
-// exception id is the id of section, either 'argument-premises',
-// 'argument-assumptions' or 'argument-exceptions' atom is the atom of
+// exception 
+// @id is the id of section, either 'argument-premises',
+// 'argument-assumptions' or 'argument-exceptions' 
+// @atom is the atom of
 // the premise on which the current substitutions of the argument
 // being edited have been applied
 AGB.set_premise_candidates = function(id, premise, atom) {
     console.log('set_premise_candidates atom:');
     console.log(atom);
     var p = $(_.filter($(id + ' .statement-select'),
-                     function(p) {
-                         return $(p).data('role') == premise.role;
-                     })[0]);
+                       function(p) {
+                           return $(p).data('role') == premise.role;
+                       })[0]);
 
     PM.ajax_post(IMPACT.wsurl + '/matching-statements/' + IMPACT.db,
                  atom,
@@ -238,7 +246,10 @@ AGB.set_premise_candidates = function(id, premise, atom) {
                                 result.id = result.statement.id;
                             });
 
-                     // update the candidates but only if the no selection
+                     // TODO: error here if we are just after inserting
+                     // a new statement in the db
+                     // 
+                     // update the candidates but only if no selection
                      // has been chosen previously
                      if(p.val() == "") {
                          p.select2("destroy");
@@ -247,41 +258,73 @@ AGB.set_premise_candidates = function(id, premise, atom) {
                                     formatSelection: AGB.format_selected_matching_result});
                      }
                  },
-                IMPACT.user,
-                IMPACT.password,
-                PM.on_error);
+                 IMPACT.user,
+                 IMPACT.password,
+                 PM.on_error);
 
 };
 
+// Add select premise inputs to the argument editor
+// @id is either '#argument-premises', '#assumptions-premises'
+// or '#exceptions-premises'
 AGB.add_premises = function(id, premises) {
     _.each(premises,
-          function(premise) {
-              var premise_form = ich.premiseeditor();
-              $(id).append(premise_form);
-              var role = $(id + ' input[class=role-input]:last');
-              role.val(premise.role);
-              role.prop('disabled', true);
+           function(premise) {
+               var premise_form = ich.premiseeditor();
+               $(id).append(premise_form);
+               var role = $(id + ' input[class=role-input]:last');
+               role.val(premise.role);
+               role.prop('disabled', true);
 
-              var p = $(id + ' .statement-select').last();
-              p.data('role', premise.role);
-              p.change(AGB.update_conclusion_premises_candidates);
+               var p = $(id + ' .statement-select').last();
+               p.data('role', premise.role);
+               p.change(AGB.update_conclusion_premises_candidates);
 
-              $(id + ' a:last').click(
-                  _.bind(AGB.argumentgraph_newstatement,
-                         AGB,
-                         {atom: AGB.sexpr_to_str(premise.statement.atom),
-                          save_callback:
-                          _.bind(AGB.set_premise_candidates, AGB, id, premise,
-                                AGB.sexpr_to_str(premise.statement.atom))}));
-              AGB.set_premise_candidates(id,
-                                         premise,
-                                         AGB.sexpr_to_str(premise.statement.atom));
-          });
+               // adds a 'create statement' link
+               $(id + ' a:last').click(
+                   _.bind(AGB.argumentgraph_newstatement,
+                          AGB,
+                          {atom: AGB.sexpr_to_str(premise.statement.atom),
+                           save_callback:
+                           AGB.update_conclusion_premises_candidates}));
+
+               AGB.set_premise_candidates(id,
+                                          premise,
+                                          AGB.sexpr_to_str(premise.statement.atom));
+           });
 };
 
 // Called when the argument conclusion has changed in the editor
 AGB.conclusion_changed = function() {
     AGB.update_conclusion_premises_candidates();
+};
+
+// Updates the candidates for a premise
+AGB.update_premises_candidates = function(id, subs, premise) {
+    PM.ajax_post(IMPACT.wsurl + '/apply-substitutions',
+                 {statement: AGB.sexpr_to_str(premise.statement.atom),
+                  substitutions: subs},
+                 function(atom) {
+                     AGB.set_premise_candidates(id,
+                                                premise,
+                                                AGB.sexpr_to_str(atom));
+                 },
+                 IMPACT.user,
+                 IMPACT.password,
+                 PM.on_error);
+};
+
+// Updates conclusion candidates
+AGB.update_conclusion_candidates = function(conclusion, subs) {
+  PM.ajax_post(IMPACT.wsurl + '/apply-substitutions',
+                 {statement: AGB.sexpr_to_str(conclusion),
+                  substitutions: subs},
+                 function(atom) {
+                     AGB.set_conclusion_candidates(AGB.sexpr_to_str(atom));
+                 },
+                 IMPACT.user,
+                 IMPACT.password,
+                 PM.on_error)  ;
 };
 
 // Updates candidates for the premises and conclusion to reflect the
@@ -290,24 +333,11 @@ AGB.update_conclusion_premises_candidates = function() {
     var subs = AGB.get_argument_substitutions();
     var scheme = AGB.current_scheme();
 
-    // TODO updates conclusion
+    AGB.update_conclusion_candidates(scheme.conclusion, subs);
+    _.each(scheme.premises, _.bind(AGB.update_premises_candidates, AGB, '#argument-premises', subs));
+    _.each(scheme.assumptions, _.bind(AGB.update_premises_candidates, AGB, '#argument-assumptions', subs));
+    _.each(scheme.exceptions, _.bind(AGB.update_premises_candidates, AGB, '#argument-exceptions', subs));
 
-    _.each(scheme.premises,
-           function(premise) {
-               PM.ajax_post(IMPACT.wsurl + '/apply-substitutions',
-                            {statement: AGB.sexpr_to_str(premise.statement.atom),
-                             substitutions: subs},
-                            function(atom) {
-                                AGB.set_premise_candidates('#argument-premises',
-                                                           premise,
-                                                           AGB.sexpr_to_str(atom));
-                            },
-                            IMPACT.user,
-                            IMPACT.password,
-                            PM.on_error);
-
-
-           });
 };
 
 // Returns the current selected scheme of the argument editor
@@ -323,7 +353,7 @@ AGB.scheme_changed = function() {
     PM.ajax_get(IMPACT.wsurl + '/scheme/' + id,
                 function(scheme) {
                     $('#editor-argument-scheme').data(id, scheme);
-                    AGB.fill_conclusion_select(scheme);
+                    AGB.set_conclusion_candidates(AGB.sexpr_to_str(scheme.conclusion));
                     $('#argument-premises').empty();
                     $('#argument-exceptions').empty();
                     $('#argument-assumptions').empty();
@@ -344,9 +374,9 @@ AGB.save_argument_display_graph = function() {
     }
 
     if(_.filter(AGB.get_all_premises(),
-          function(premise) {
-              return $(premise).valid() == false;
-          }).length > 0) {
+                function(premise) {
+                    return $(premise).valid() == false;
+                }).length > 0) {
         return false;
     }
 
