@@ -131,6 +131,10 @@ AGB.format_filtered_statement = function(statement) {
 };
 
 AGB.format_selected_statement = function(statement) {
+    if(_.isNil(statement)) {
+        // if called on an empty initial selection
+        return "";
+    }
     return "{0}".format(AGB.statement_raw_text(statement));
 };
 
@@ -147,6 +151,10 @@ AGB.format_filtered_matching_result = function(result) {
 };
 
 AGB.format_selected_matching_result = function(result) {
+    if(result.id == "") {
+        // if called on an empty initial selection
+        return "";
+    }
     return AGB.format_selected_statement(result.statement);
 };
 
@@ -157,6 +165,7 @@ AGB.argumentgraph_newargument = function() {
     var scheme_search_term = "";
     $('#editor-argument-scheme').select2({formatResult: AGB.format_filtered_scheme,
                                           formatSelection: AGB.format_selected_scheme, 
+                                          placeholder: "Select a scheme",
                                           dataType: 'json',
                                           type: 'GET',
                                           error: function(jqXHR, textStatus) {
@@ -194,19 +203,23 @@ AGB.set_conclusion_candidates = function(atom) {
     PM.ajax_post(IMPACT.wsurl + '/matching-statements/' + IMPACT.db,
                  atom,
                  function(conclusion_statements_results) {
+                     var conclusion = $('#editor-conclusion');
                      _.each(conclusion_statements_results, function(result) {
-                                $('#editor-conclusion').data
+                                conclusion.data
                                 (result.statement.id, result);
                                 result.id = result.statement.id;
                             });
-                     
-                     $('#editor-conclusion').select2("destroy");
-                     $('#editor-conclusion').select2(
+
+                     conclusion.select2("destroy");
+                     conclusion.select2(
                          {data: conclusion_statements_results,
-                          // placeholder: conclusion_statements_results[0],
+                          placeholder: "Select a conclusion",
                           formatResult: AGB.format_filtered_matching_result,
                           formatSelection:
-                          AGB.format_selected_matching_result});
+                          AGB.format_selected_matching_result,
+                         initSelection: function(element) {
+                             return element.data(element.val());
+                         }});
                  },
                  IMPACT.user,
                  IMPACT.password,
@@ -245,22 +258,21 @@ AGB.set_premise_candidates = function(id, premise, atom) {
                                 p.data(result.statement.id, result);
                                 result.id = result.statement.id;
                             });
+                     p.select2("destroy");
+                     p.select2({data: premise_results,
+                                placeholder: "Select a statement",
+                                formatResult: AGB.format_filtered_matching_result,
+                                formatSelection: AGB.format_selected_matching_result,
+                                initSelection: function(element) {
+                                    return element.data(element.val());
+                                }
+                               });
 
-                     // TODO: error here if we are just after inserting
-                     // a new statement in the db
-                     // 
-                     // update the candidates but only if no selection
-                     // has been chosen previously
-                     if(p.val() == "") {
-                         p.select2("destroy");
-                         p.select2({data: premise_results,
-                                    formatResult: AGB.format_filtered_matching_result,
-                                    formatSelection: AGB.format_selected_matching_result});
-                     }
                  },
                  IMPACT.user,
                  IMPACT.password,
                  PM.on_error);
+
 
 };
 
@@ -353,6 +365,7 @@ AGB.scheme_changed = function() {
     PM.ajax_get(IMPACT.wsurl + '/scheme/' + id,
                 function(scheme) {
                     $('#editor-argument-scheme').data(id, scheme);
+                    $('#editor-conclusion').select2('val', '');
                     AGB.set_conclusion_candidates(AGB.sexpr_to_str(scheme.conclusion));
                     $('#argument-premises').empty();
                     $('#argument-exceptions').empty();
