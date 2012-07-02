@@ -8,7 +8,7 @@ var IMPACT = {
     wsurl: "/impactws",
     argumentbrowser_url: "/argumentbrowser",
     simulation_url: "/policymodellingtool/PolicySimulation",
-    current_policy: "copyright-policies" 
+    current_policy: "copyright-policies"
 };
 
 // This object contains the functions and acts as a kind of namespace.
@@ -62,9 +62,9 @@ PM.dispatch_url = function(sections) {
     }
 };
 
-// ImpactToolbox = {
-//    
-// };
+ImpactToolbox = {
+   
+};
 
 PM.in_uid_toolbox = function() {
     return window.ImpactToolbox != undefined;
@@ -133,7 +133,7 @@ PM.add_address_listener = function() {
 };
 
 PM.post_load_uid = function(toolboxState) {
-    PM.load_templates();
+    PM.load_templates(toolboxState);
     PM.add_address_listener();
     $('head').append('<link rel="stylesheet" href="' + toolboxState.pmt.path +
                      + '/toolbox/css/policymodelling/style.css" type="text/css" />');
@@ -246,7 +246,7 @@ PM.load_scripts = function(rootpath, callback) {
 };
 
 // loads templates *synchronously*
-PM.load_templates = function() {
+PM.load_templates = function(toolboxState) {
     _.each([{name: 'menu', url: 'site/menu.html'},
             {name: 'pmmenu', url: 'site/pmmenu.html'},
             {name: 'metadata', url: 'site/metadata.html'},
@@ -256,10 +256,12 @@ PM.load_templates = function() {
             {name: 'premiseeditorpartial', url: 'site/premiseeditorpartial.html'},
             {name: 'ageditormenu', url: 'site/ag-editor-menu.html'}],
            function(template) {
-               PM.syncget(template.url,
-                           function(content) {
-                               ich.addPartial(template.name, content);
-                           });
+               var url = toolboxState == undefined ?
+                   template.url : toolboxState.pmt.path + '/' + template.url;
+               PM.syncget(url,
+                          function(content) {
+                              ich.addPartial(template.name, content);
+                          });
            });
     _.each(['admin',
             'argumentgraph',
@@ -283,11 +285,14 @@ PM.load_templates = function() {
             'metadataeditor',
             'premiseeditor'],
            function(name) {
-               PM.syncget('site/{0}.html'.format(name),
-                             function(content) {
-                                 console.log('Loading template ' + name);
-                                 ich.addTemplate(name, content);
-                             });
+               var url = toolboxState == undefined ?
+                   'site/{0}.html'.format(name) :
+                   toolboxState.pmt.path + '/' + 'site/{0}.html'.format(name);
+               PM.syncget(url,
+                          function(content) {
+                              console.log('Loading template ' + name);
+                              ich.addTemplate(name, content);
+                          });
           });
 };
 
