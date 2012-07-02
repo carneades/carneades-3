@@ -8,7 +8,6 @@ var IMPACT = {
     wsurl: "/impactws",
     argumentbrowser_url: "/argumentbrowser",
     simulation_url: "/policymodellingtool/PolicySimulation",
-    embedded_agbrowser_history: {index: -1, history: []},
     current_policy: "copyright-policies" 
 };
 
@@ -63,47 +62,66 @@ PM.dispatch_url = function(sections) {
     }
 };
 
+// ImpactToolbox = {
+//    
+// };
+
+PM.in_uid_toolbox = function() {
+    return window.ImpactToolbox != undefined;
+};
+
 // This code is executed when the page is loaded
 $(function() {
       var head = $('head');
-      head.append('<script src="js/app/config.js" type="text/javascript"></script>');
-      
-      if(!PM_CONFIG.in_uid_toolbox) {
+
+      if(!PM.in_uid_toolbox()) {
           PM.init();
       }
   });
 
 
-PM.init = function() {
+PM.init = function(toolboxState) {
     var head = $('head');
-    head.append('<script src="js/lib/underscore-min.js" type="text/javascript"></script>');
-    head.append('<script src="js/app/config.js" type="text/javascript"></script>');
-    head.append('<link rel="stylesheet" href="js/lib/select2.css" type="text/css" />');
-    
+
+    var rootpath = undefined;
+
+    // bootstrap
+    if(toolboxState == undefined) {
+        head.append('<script src="js/lib/underscore-min.js" type="text/javascript"></script>');
+        head.append('<link rel="stylesheet" href="js/lib/select2.css" type="text/css" />');
+    } else {
+        rootpath = toolboxState.pmt.path;
+        head.append('<script src="' + rootpath +
+                    '/js/lib/underscore-min.js" type="text/javascript"></script>');
+        head.append('<link rel="stylesheet" href="' + rootpath +
+                    '/js/lib/select2.css" type="text/css" />');
+    }
+
     // adds some methods to underscore JS
     _.mixin({isNil: function(o) {
                  return _.isNull(o) || _.isUndefined(o);
              }
             });
-    
-    if(PM_CONFIG.in_uid_toolbox) {
-        PM.load_scripts(PM.post_load_uid);
+
+
+    if(PM.in_uid_toolbox()) {
+        PM.load_scripts(rootpath, _.bind(PM.post_load_uid, PM, toolboxState));
     } else {
-        PM.load_scripts(PM.post_load);        
+        PM.load_scripts(rootpath, PM.post_load);
     }
 
 };
 
-PM.start = function() {
+PM.start = function(toolboxState) {
     PM.set_introduction_url();
 };
 
 PM.stop = function() {
-    
+
 };
 
 PM.languageChanged = function(lang) {
-    
+
 };
 
 PM.canBeStopped = function() {
@@ -114,10 +132,11 @@ PM.add_address_listener = function() {
     $.address.change(PM.url_changed);
 };
 
-PM.post_load_uid = function() {
+PM.post_load_uid = function(toolboxState) {
     PM.load_templates();
     PM.add_address_listener();
-    $('head').append('<link rel="stylesheet" href="toolbox/css/policymodelling/style.css" type="text/css" />');
+    $('head').append('<link rel="stylesheet" href="' + toolboxState.pmt.path +
+                     + '/toolbox/css/policymodelling/style.css" type="text/css" />');
 
     // Forces update.
     $.address.update();
@@ -127,7 +146,7 @@ PM.post_load = function() {
 //    PM.load_uid_styles();
     PM.load_templates();
     PM.add_address_listener();
-    
+
     $('head').append('<link rel="stylesheet" href="toolbox/css/policymodelling/style.css" type="text/css" />');
 
     // Forces update.
@@ -158,25 +177,33 @@ PM.get_script = function(url, callback) {
 	    script.onload = script.onreadystatechange = null;
 	}
     };
-    
-    console.log('Loading ' + url); 
+
+    console.log('Loading ' + url);
     head.appendChild(script);
 
     // We handle everything using the script element injection
     return undefined;
 };
 
-PM.load_scripts_helper = function(scripts, callback) {
+PM.load_scripts_helper = function(rootpath, scripts, callback) {
     if(scripts.length > 1) {
         var script = scripts.pop();
-        PM.get_script(script, _.bind(PM.load_scripts_helper, PM, scripts, callback));
+        if(rootpath == undefined) {
+            PM.get_script(script, _.bind(PM.load_scripts_helper, PM, rootpath, scripts, callback));    
+        } else {
+            PM.get_script(rootpath + '/' + script, _.bind(PM.load_scripts_helper, PM, rootpath, scripts, callback));    
+        }
     } else if(scripts.length == 1) {
         var script = scripts.pop();
-        PM.get_script(script, callback);
+        if(rootpath == undefined) {
+            PM.get_script(script, callback);
+        } else {
+            PM.get_script(rootpath + '/' + script, callback);
+        }
     }
 };
 
-PM.load_scripts = function(callback) {
+PM.load_scripts = function(rootpath, callback) {
     var head = $('head');
     var scripts = ['js/app/introduction.js',
                    'js/app/menu.js',
@@ -187,7 +214,6 @@ PM.load_scripts = function(callback) {
                    'js/app/markdown.js',
                    'js/app/metadata.js',
                    'js/app/admin.js',
-                   'js/app/embedded-agbrowser.js',
                    'js/app/ajax.js',
                    'js/app/questions.js',
                    'js/app/agb/agb-utils.js',
@@ -216,7 +242,7 @@ PM.load_scripts = function(callback) {
                    'js/app/utils.js'];
     
     scripts.reverse();
-    PM.load_scripts_helper(scripts, callback);
+    PM.load_scripts_helper(rootpath, scripts, callback);
 };
 
 // loads templates *synchronously*
