@@ -8,7 +8,8 @@ var IMPACT = {
     wsurl: "/impactws",
     argumentbrowser_url: "/argumentbrowser",
     simulation_url: "/policymodellingtool/PolicySimulation",
-    current_policy: "copyright-policies"
+    current_policy: "copyright-policies",
+    rootpath: null
 };
 
 // This object contains the functions and acts as a kind of namespace.
@@ -62,9 +63,9 @@ PM.dispatch_url = function(sections) {
     }
 };
 
-// ImpactToolbox = {
+ImpactToolbox = {
    
-// };
+};
 
 PM.in_uid_toolbox = function() {
     return window.ImpactToolbox != undefined;
@@ -83,6 +84,8 @@ $(function() {
 PM.init = function(toolboxState) {
     var head = $('head');
 
+    // TODO suppress rootpath local variables (in function)
+    // after the demo
     var rootpath = undefined;
 
     // bootstrap
@@ -103,7 +106,8 @@ PM.init = function(toolboxState) {
              }
             });
 
-
+    IMPACT.rootpath = rootpath;
+    
     if(PM.in_uid_toolbox()) {
         PM.load_scripts(rootpath, _.bind(PM.post_load_uid, PM, toolboxState));
     } else {
