@@ -81,7 +81,12 @@ PM.get_question_html = function(question) {
         
     }
     
-    html = '<div class="question">{1}&nbsp;&nbsp;<img style="vertical-align: middle;" width="18" height="18" class="minus" src="images/minus.png">&nbsp;&nbsp;</img><img style="vertical-align: middle;" width="18" height="18" class="plus" src="images/plus.png"></img></div>'.format(question.id, html);
+    if(_.isNil(IMPACT.rootpath)) {
+        html = '<div class="question">{0}&nbsp;&nbsp;<img style="vertical-align: middle;" width="18" height="18" class="minus" src="images/minus.png">&nbsp;&nbsp;</img><img style="vertical-align: middle;" width="18" height="18" class="plus" src="images/plus.png"></img></div>'.format(html);
+    } else {
+        html = '<div class="question">{0}&nbsp;&nbsp;<img style="vertical-align: middle;" width="18" height="18" class="minus" src="{1}/images/minus.png">&nbsp;&nbsp;</img><img style="vertical-align: middle;" width="18" height="18" class="plus" src="{1}/images/plus.png"></img></div>'.format(html, IMPACT.rootpath);
+    }
+    
     
     return html;
 };
