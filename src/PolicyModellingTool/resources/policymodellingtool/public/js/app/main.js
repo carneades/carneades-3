@@ -62,9 +62,9 @@ PM.dispatch_url = function(sections) {
     }
 };
 
-ImpactToolbox = {
+// ImpactToolbox = {
    
-};
+// };
 
 PM.in_uid_toolbox = function() {
     return window.ImpactToolbox != undefined;
