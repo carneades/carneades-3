@@ -329,10 +329,10 @@ PM.load_uid_styles = function(callback) {
 };
 
 PM.load_carneades_styles = function(callback) {
-    var files = ['<link type="text/css" href="css/start/jquery-ui-1.8.21.custom.css" rel="stylesheet" />',
-                '<link href="toolbox/css/policymodelling/style.css" rel="stylesheet" type="text/css" />'];
+    var files = ['<link href="toolbox/css/policymodelling/style.css" rel="stylesheet" type="text/css" />'];
 
-    var scripts = ['js/lib/jquery-ui-1.8.21.custom.min.js'];
+    var scripts = [// 'js/lib/jquery-ui-1.8.21.custom.min.js'
+                  ];
 
     _.each(files, function(file) {
                $('head').append(file);
