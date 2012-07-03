@@ -152,9 +152,8 @@
 > (12) How should the cross-border aspects of the orphan works issue be tackled to ensure EU-wide recognition of
 > the solutions adopted in different Member States?
 
-This arguments pro and con the policy proposals for this issue can be browsed in the [argument map]().
+This arguments pro and con the policy proposals for this issue can be browsed in the [argument map](http://localhost:8080/policymodellingtool/#/arguments/argumentgraph/copyright).
 
-    To do: add the URL to this issue in the map in the link above.
 "})
      
      ;; one section below for each policy proposed for this issue as well as for current polices on this issue.
