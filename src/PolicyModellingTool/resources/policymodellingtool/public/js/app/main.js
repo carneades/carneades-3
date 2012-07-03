@@ -147,7 +147,7 @@ PM.post_load_uid = function(toolboxState) {
 };
 
 PM.post_load = function() {
-//    PM.load_uid_styles();
+    PM.load_carneades_styles();
     PM.load_templates();
     PM.add_address_listener();
 
@@ -328,9 +328,22 @@ PM.load_uid_styles = function(callback) {
     
 };
 
+PM.load_carneades_styles = function(callback) {
+    var files = ['<link type="text/css" href="css/start/jquery-ui-1.8.21.custom.css" rel="stylesheet" />',
+                '<link href="toolbox/css/policymodelling/style.css" rel="stylesheet" type="text/css" />'];
+
+    var scripts = ['js/lib/jquery-ui-1.8.21.custom.min.js'];
+
+    _.each(files, function(file) {
+               $('head').append(file);
+           });
+
+    PM.load_scripts_helper(undefined, scripts, callback);
+};
+
 PM.on_error = function(textstatus) {
     $('#pm').prepend('<div style="background-color:  #FFCC33" class="error">Error: {0}</div>'.format(textstatus));
     setTimeout(function() {
                    $('#pm .error').remove();
-               }, 3000); 
+               }, 3000);
 };
