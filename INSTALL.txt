@@ -38,10 +38,9 @@ Alternatively, you can install Carneades from the sources.
 
 4. Configuring Carneades
 
-- Copy the file
-  CarneadesExamples/src/carneades/examples/carneades.properties into
-  your $HOME directory and rename it to .carneades.properties (with a
-  dot in front). Edit it and adapt the values to your configuration.
+- Copy the file config/carneades.properties into your $HOME directory
+  and rename it to .carneades.properties (with a dot in front). Edit
+  it and adapt the values to your configuration.
 
 5. Trying it out
 
