@@ -25,7 +25,7 @@ AGB.create_metadata_editor = function() {
 };
 
 AGB.get_metadata_data = function() {
-  return {key: $('#metadata-key').val() == "" ? null : $('#metadata-key').val(),
-          title: $('#metadata-title').val(),
+  return {// key: $('#metadata-key').val() == "" ? null : $('#metadata-key').val(),
+          // title: $('#metadata-title').val(),
           description: {en: $('#metadata-description').val() }};
 };
