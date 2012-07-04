@@ -1,0 +1,43 @@
+#menu {
+    float: left;
+}
+
+#ageditormenu {
+    margin-left: 30%;
+}
+
+#ageditormenuon {
+    margin-left: 20%;
+}
+
+.pm-editor {
+    border-style:solid;
+    border-width:2px;
+    border-color: purple;
+    width: 725px; 
+}
+
+#statementeditortitle {
+    font-weight: bold;
+}
+
+.ui-textarea {
+    height: 100px;
+    width: 95%;
+}
+
+#atom, #metadata-title, #metadata-key {
+    width: 95%;
+}
+
+.editor-section-title {
+    font-weight: bold;
+}
+
+.statement-select {
+    width: 600px;
+}
+
+#editor-argument-scheme {
+    width: 400px;
+}
