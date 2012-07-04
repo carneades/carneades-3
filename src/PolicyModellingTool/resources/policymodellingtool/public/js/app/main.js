@@ -63,6 +63,7 @@ PM.dispatch_url = function(sections) {
     }
 };
 
+
 // ImpactToolbox = {
    
 // };
@@ -139,8 +140,7 @@ PM.add_address_listener = function() {
 PM.post_load_uid = function(toolboxState) {
     PM.load_templates(toolboxState);
     PM.add_address_listener();
-    $('head').append('<link rel="stylesheet" href="' + toolboxState.pmt.path +
-                     + '/toolbox/css/policymodelling/style.css" type="text/css" />');
+    PM.load_app_styles(toolboxState.pmt.path);
 
     // Forces update.
     $.address.update();
@@ -148,11 +148,9 @@ PM.post_load_uid = function(toolboxState) {
 
 PM.post_load = function() {
     PM.load_carneades_styles();
+    PM.load_app_styles(null);
     PM.load_templates();
     PM.add_address_listener();
-
-    $('head').append('<link rel="stylesheet" href="toolbox/css/policymodelling/style.css" type="text/css" />');
-
     // Forces update.
     $.address.update();
 
@@ -300,47 +298,57 @@ PM.load_templates = function(toolboxState) {
           });
 };
 
-PM.load_uid_styles = function(callback) {
-    var files = ['<link type="text/css" href="toolbox/css/impact-ui/jquery-ui-1.8.11.custom.css" rel="stylesheet" />',
-                 '<link type="text/css" href="toolbox/css/impact-ui/impact-green.css" rel="stylesheet" />',
-                 '<link rel="stylesheet" type="text/css" media="all" href="toolbox/css/impact-ui/plugins/jquery-ui-timepicker.css" />',
-                 '<link href="toolbox/css/main.css" rel="stylesheet" type="text/css" />'];
+// PM.load_uid_styles = function(callback) {
+//     var files = ['<link type="text/css" href="toolbox/css/impact-ui/jquery-ui-1.8.11.custom.css" rel="stylesheet" />',
+//                  '<link type="text/css" href="toolbox/css/impact-ui/impact-green.css" rel="stylesheet" />',
+//                  '<link rel="stylesheet" type="text/css" media="all" href="toolbox/css/impact-ui/plugins/jquery-ui-timepicker.css" />',
+//                  '<link href="toolbox/css/main.css" rel="stylesheet" type="text/css" />'];
     
-    var scripts = ["toolbox/js/impact-ui/jquery-ui-1.8.11.custom.min.js",
-                   "toolbox/js/impact-ui/jquery.jscrollpane.min.js",
-                   "toolbox/js/impact-ui/jquery.mousewheel.js",
-                   "toolbox/js/impact-ui/jquery.mwheelIntent.js",
-                   "toolbox/js/impact-ui/ui.checkbox.js",
-                   "toolbox/js/impact-ui/jquery.selectbox-0.5.js",
-                   "toolbox/js/impact-ui/jquery.busy.min.js",
-                   "toolbox/js/impact-ui/jquery.ui.timepicker.js",
-                   "toolbox/js/impact-ui/impact-init.js"
-                   // "toolbox/js/main.js"
-                  ];
+//     var scripts = ["toolbox/js/impact-ui/jquery-ui-1.8.11.custom.min.js",
+//                    "toolbox/js/impact-ui/jquery.jscrollpane.min.js",
+//                    "toolbox/js/impact-ui/jquery.mousewheel.js",
+//                    "toolbox/js/impact-ui/jquery.mwheelIntent.js",
+//                    "toolbox/js/impact-ui/ui.checkbox.js",
+//                    "toolbox/js/impact-ui/jquery.selectbox-0.5.js",
+//                    "toolbox/js/impact-ui/jquery.busy.min.js",
+//                    "toolbox/js/impact-ui/jquery.ui.timepicker.js",
+//                    "toolbox/js/impact-ui/impact-init.js"
+//                    // "toolbox/js/main.js"
+//                   ];
 
-    _.each(files, function(file) {
-               $('head').append(file);
-           });
+//     _.each(files, function(file) {
+//                $('head').append(file);
+//            });
     
-    // http://stackoverflow.com/questions/6502943/resetting-document-ready-getscript
-    scripts.reverse();
-    PM.load_scripts_helper(scripts, callback);
+//     // http://stackoverflow.com/questions/6502943/resetting-document-ready-getscript
+//     scripts.reverse();
+//     PM.load_scripts_helper(scripts, callback);
     
+// };
+
+// Loads some generic styles when the app is used
+// outside of the UID toolbox
+PM.load_carneades_styles = function() {
+    PM.load_style(undefined, 'green-theme.css');
 };
 
-PM.load_carneades_styles = function(callback) {
-    var files = ['<link href="toolbox/css/policymodelling/style.css" rel="stylesheet" type="text/css" />'];
-
-    var scripts = [// 'js/lib/jquery-ui-1.8.21.custom.min.js'
-                  ];
-
-    _.each(files, function(file) {
-               $('head').append(file);
-           });
-
-    PM.load_scripts_helper(undefined, scripts, callback);
+// Loads some specific styles to the app
+// They are loaded even when used inside the UID toolbox
+PM.load_app_styles = function(rootpath) {
+    PM.load_style(rootpath, 'app.css');
 };
 
+// Load a style
+PM.load_style = function(rootpath, style) {
+    if(_.isNil(rootpath)) {
+        $('head').append('<link href="css/{0}" rel="stylesheet" type="text/css" />'.format(style));
+    } else {
+        $('head').append('<link href="' + rootpath
+                         + '/css/{0}" rel="stylesheet" type="text/css" />'.format(style));
+    }
+};
+
+// Called when an AJAX error occurs
 PM.on_error = function(textstatus) {
     $('#pm').prepend('<div style="background-color:  #FFCC33" class="error">Error: {0}</div>'.format(textstatus));
     setTimeout(function() {
