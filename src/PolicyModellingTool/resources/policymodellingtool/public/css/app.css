@@ -14,7 +14,7 @@
     border-style:solid;
     border-width:2px;
     border-color: purple;
-    width: 725px; 
+    width: 725px;
 }
 
 #statementeditortitle {
@@ -26,8 +26,8 @@
     width: 95%;
 }
 
-#atom, #metadata-title, #metadata-key {
-    width: 95%;
+#editor-statement-atom, #metadata-title, #metadata-key {
+    width: 600px;
 }
 
 .editor-section-title {
