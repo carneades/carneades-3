@@ -109,7 +109,7 @@ AGB.argumentgraph_newstatement = function(config) {
     $('#statementeditor').html(AGB.create_statement_editor());
     $('#statement-header').html(AGB.create_metadata_editor());
     $('#cancel-statement').click(AGB.remove_statement_editor);
-    $('input:radio[name=main]:nth(0)').attr('checked',true);
+    $('input:radio[name=main]:nth(1)').attr('checked',true);
     
     if(!_.isNil(config.atom)) {
         $('#editor-statement-atom').val(config.atom);        
