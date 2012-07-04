@@ -36,7 +36,7 @@ AGB.display_argumentgraph = function(db)
                                         'CAF XML');
                             return false; 
                         });
-                    $('#edit').click(AGB.edit_argumentgraph);
+                    AGB.enable_ag_edition();
                 },
                 PM.on_error);
 };
@@ -84,8 +84,8 @@ AGB.outline_text = function(tree, db, index)
     return text;
 };
 
-AGB.edit_argumentgraph = function() {
-    $('#ageditormenu').remove();
+AGB.enable_ag_edition = function() {
+    // $('#ageditormenu').remove();
     $('#menus').append(ich.ageditormenuon());
     $('#newstatement').click(_.bind(AGB.argumentgraph_newstatement, AGB,
                                     {save_callback: function() {
