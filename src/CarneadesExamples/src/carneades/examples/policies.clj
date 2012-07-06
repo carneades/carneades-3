@@ -13,4 +13,7 @@
  {:filename german_trade_regulations.clj
   :namespace carneades.examples.german-trade-regulations
   :name recognition-of-foreign-documents }
+ {:filename german_family_law.clj
+  :namespace carneades.examples.german-family-law
+  :name german-family-law }
 ]
