@@ -26,7 +26,7 @@
                   :question "Is %s an ancestor of %s?")}
      :hint {:en "An ancestor is a parent (mother or father) or an ancestor of a parent."}
      :widgets '[text text]
-     :answers '[[] []]
+     ;; :answers '[[] []]
      :category 'family-relationship
      :followups ['descendent])
 
@@ -40,7 +40,7 @@
                   :question "Is %s a descendent of %s?")}
      :hint {:en "A descendent is a child (daughter or son, including adopted children) or a descendent of a child."}
      :widgets '[text text]
-     :answers '[[] []]
+     ;; :answers '[[] []]
      :category 'family-relationship)
 
     'direct-lineage 
