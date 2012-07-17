@@ -33,15 +33,27 @@
    Selector is :positive, :negative or :question"
   [literal form selector]
   (apply format (-> form selector) (rest (literal-atom literal))))
+
+(defprotocol Functor
+  "A functor in the Prolog sense, meaning function and predicate symbols
+   used to construct terms and atomic formulas."
+  (get-symbol [this] "functor -> symbol")
+  (get-arity [this]"functor -> natural number (including 0)"))
   
 (defrecord Predicate 
-  [symbol   ; symbol
-   arity    ; integer
-   forms
-   category
-   hint
-   widget
-   followups])  ; (lang -> form) map, where lang is one of the keywords :en, :de, etc.
+    [symbol   ; symbol
+     arity    ; integer
+     forms
+     category
+     hint
+     widget
+     followups] ; (lang -> form) map, where lang is one of the keywords :en, :de, etc.
+  )
+
+(extend Predicate
+  Functor
+  {:get-symbol (fn [this] (:symbol this))
+   :get-arity (fn [this] (:arity this))})
 
 (defn make-predicate
   "key value ... -> predicate"
@@ -60,8 +72,14 @@
 (defn predicate? [x] (instance? Predicate x))
 
 (defrecord Individual
-  [symbol   ; symbol
-   text])   ; (lang -> string) map.
+    [symbol   ; symbol
+     text]    ; (lang -> string) map.
+  )
+
+(extend Individual
+  Functor
+  {:get-symbol (fn [this] (:symbol this))
+   :get-arity (fn [this] 0)})
 
 (defn make-individual
   "key value ... -> predicate"
@@ -72,6 +90,11 @@
          (apply hash-map key-values)))
 
 (defn individual? [x] (instance? Individual x))
+
+(defn make-language
+  "functor ... -> map"
+  [& functors]
+  (zipmap (map get-symbol functors) functors))
 
 ; variables are allowed as conclusions of schemes to enable them
 ; to represent argumentation schemes, such as arguments from 
@@ -256,6 +279,7 @@
   [url ns-sym theory-sym]
   (load-string (slurp url))
   (deref (ns-resolve ns-sym theory-sym)))
+
 
 (defn- scheme-index-key 
   "term -> symbol 
