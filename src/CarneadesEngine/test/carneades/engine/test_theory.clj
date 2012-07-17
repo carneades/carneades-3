@@ -16,26 +16,27 @@
     :header 
     (make-metadata :title "Theory of Animals")
     
-    :language 
-    {'Tweety (make-individual :symbol 'Tweety :text {:en "Tweety"})
-     'bird (make-predicate 
-             :symbol 'bird 
-             :arity 1
-             :forms {:en (make-form :positive "%s is a bird."
-                                    :negative "%s is not a bird."
-                                    :question "Is %s a bird?")}),
-     'flies (make-predicate 
-              :symbol 'flies
-              :arity 1
-              :forms {:en (make-form :positive "%s flies."
-                                     :negative "%s does not fly."
-                                     :question "Does %s fly?")}),
-     'penguin (make-predicate 
-                :symbol 'penguin
-                :arity 1
-                :forms {:en (make-form :positive "%s is a penguin."
-                                       :negative "%s is not a penguin."
-                                       :question "Is %s a penguin?")})}
+    :language
+    (make-language
+     (make-individual :symbol 'Tweety :text {:en "Tweety"})
+     (make-predicate 
+      :symbol 'bird 
+      :arity 1
+      :forms {:en (make-form :positive "%s is a bird."
+                             :negative "%s is not a bird."
+                             :question "Is %s a bird?")})
+     (make-predicate 
+      :symbol 'flies
+      :arity 1
+      :forms {:en (make-form :positive "%s flies."
+                             :negative "%s does not fly."
+                             :question "Does %s fly?")})
+     (make-predicate 
+      :symbol 'penguin
+      :arity 1
+      :forms {:en (make-form :positive "%s is a penguin."
+                             :negative "%s is not a penguin."
+                             :question "Is %s a penguin?")}))
     
     :schemes 
     [(make-scheme                            
