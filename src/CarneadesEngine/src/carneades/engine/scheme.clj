@@ -39,6 +39,9 @@
    used to construct terms and atomic formulas."
   (get-symbol [this] "functor -> symbol")
   (get-arity [this]"functor -> natural number (including 0)"))
+
+;; To Do: Remove the forms, category, hint, widget and followups fields of predicates.
+;; Use the new property record for asking for information from users. 
   
 (defrecord Predicate 
     [symbol   ; symbol
@@ -82,7 +85,7 @@
    :get-arity (fn [this] 0)})
 
 (defn make-individual
-  "key value ... -> predicate"
+  "key value ... -> individual"
   [& key-values]  
   (merge (Individual. 
            (gensym "p")    ; symbol
@@ -90,6 +93,57 @@
          (apply hash-map key-values)))
 
 (defn individual? [x] (instance? Individual x))
+
+;; Properties are binary relations, as in description logic and the
+;; semantic web.  That is, the represent triples of the form (predicate
+;; object value).  Use properties to ask users for information. The
+;; predicate and object fields of the triple must be instantiated. Only
+;; the values are asked for, or confirmed, in dialogues with users. By
+;; restricting data entry dialogues to properties, rather that arbitrary
+;; predicates, the dialogue can be structured in a more coherent and
+;; user-friendly way.
+
+(defrecord Property
+    [symbol        ; predicate symbol
+     min           ; minimum cardinality; whole number
+     max           ; maximum cardinality; whole number or nil, for unlimited
+     type          ; :symbol (object id), :boolean, :string, :uri, :date-time, :integer, :real,
+                   ; '(one-of string string ...), '(some-of string string ...)
+     default       ; element of the above type or nil
+     forms
+     category
+     hint
+     ; no widget, since the widget can be derived from the above type
+     followups])
+
+(extend Property
+  Functor
+  {:get-symbol (fn [this] (:symbol this))
+   :get-arity (fn [this] 2)})
+
+(defn make-property
+  "key value ... -> property"
+  [& key-values]
+   (merge (Predicate. 
+           (gensym "p")                 ; symbol
+           1                            ; min
+           1                            ; max
+           :string                      ; type
+           ""                           ; default
+           {}                           ; forms
+           ""                           ; category
+           ""                           ; hint
+           []                           ; followups
+           )
+         (apply hash-map key-values)))
+
+(defn property? [x] (instance? Property x))
+
+(defn functional-property?
+  [x]
+  {:pre [(property? x)]}
+  (and (= (:min x) 1)
+       (= (:max x) 1)))
 
 (defn make-language
   "functor ... -> map"
