@@ -20,7 +20,9 @@
 (defrecord ArgumentNode
   [id               ; URN symbol
    header           ; nil or dublin core metadata about the argument
-   scheme           ; string
+   scheme           ; nil or (symbol term ...) form, where the symbol
+   ;; is the URI of the scheme and the terms are variables or constants
+   ;; which instantiate the variables of the scheme
    strict           ; boolean
    weight           ; 0.0-1.0, default 0.5; input to argument evaluation
    value            ; nil or 0.0-1.0, default nil; output from argument evaluation

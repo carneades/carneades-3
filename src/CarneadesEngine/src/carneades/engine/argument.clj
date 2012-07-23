@@ -59,7 +59,9 @@
 (defrecord Argument
   [id               ; symbol
    header           ; nil or dublin core metadata about the argument
-   scheme           ; nil or symbol, the URI of the scheme
+   scheme           ; nil or (symbol term ...) form, where the symbol
+   ;; is the URI of the scheme and the terms are variables or constants
+   ;; which instantiate the variables of the scheme
    strict           ; boolean
    weight           ; real number between 0.0 and 1.0, default 0.5
    value            ; nil or real number between 0.0 and 1.0, default nil
@@ -136,6 +138,7 @@
             (assoc p :statement statement)))]
    (assoc arg
      :id (make-urn-symbol)
+     :scheme (apply-substitutions subs (:scheme arg))
      :premises (map update-statement (:premises arg))
      :exceptions (map update-statement (:exceptions arg))
      :conclusion (apply-substitutions subs (:conclusion arg)))))
