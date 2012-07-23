@@ -94,14 +94,14 @@
 
 (defn individual? [x] (instance? Individual x))
 
-Properties are binary relations, as in description logic and the
-semantic web.  That is, the represent triples of the form (predicate
-object value).  Use properties to ask users for information. The
-predicate and object fields of the triple must be instantiated. Only
-the values are asked for, or confirmed, in dialogues with users. By
-restricting data entry dialogues to properties, rather that arbitrary
-predicates, the dialogue can be structured in a more coherent and
-user-friendly way.
+;; Properties are binary relations, as in description logic and the
+;; semantic web.  That is, the represent triples of the form (predicate
+;; object value).  Use properties to ask users for information. The
+;; predicate and object fields of the triple must be instantiated. Only
+;; the values are asked for, or confirmed, in dialogues with users. By
+;; restricting data entry dialogues to properties, rather that arbitrary
+;; predicates, the dialogue can be structured in a more coherent and
+;; user-friendly way.
 
 (defrecord Property
     [symbol        ; predicate symbol
