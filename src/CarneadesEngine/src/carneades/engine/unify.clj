@@ -3,7 +3,7 @@
 
 (ns ^{:doc "Unification algorithm from the implementation of the book 
            'The Scheme Programming Language', by Kent Dybvig."}
-    carneades.engine.unify
+  carneades.engine.unify
   (:use carneades.engine.statement
         carneades.engine.utils))
 
@@ -102,7 +102,8 @@
   "Generate a fresh, unique variable"
   []
   (gensym "?"))
-
+        
+                         
 (defn rename-variables
   "hashmap term -> [hashmap term]
    
