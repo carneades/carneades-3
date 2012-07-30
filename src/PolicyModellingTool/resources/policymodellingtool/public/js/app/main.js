@@ -110,19 +110,21 @@ PM.init = function(toolboxState) {
     IMPACT.rootpath = rootpath;
     
     if(PM.in_uid_toolbox()) {
-        PM.load_scripts(rootpath, _.bind(PM.post_load_uid, PM, toolboxState));
+        PM.load_scripts(rootpath, true, _.bind(PM.post_load_uid, PM, toolboxState));
     } else {
-        PM.load_scripts(rootpath, PM.post_load);
+        PM.load_scripts(rootpath, false, PM.post_load);
     }
 
 };
 
 PM.start = function(toolboxState) {
     PM.set_introduction_url();
+
+    return toolboxState;
 };
 
-PM.stop = function() {
-
+PM.stop = function(toolboxState) {
+    return toolboxState;
 };
 
 PM.languageChanged = function(lang) {
@@ -205,7 +207,7 @@ PM.load_scripts_helper = function(rootpath, scripts, callback) {
     }
 };
 
-PM.load_scripts = function(rootpath, callback) {
+PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
     var head = $('head');
     var scripts = ['js/app/introduction.js',
                    'js/app/menu.js',
@@ -237,11 +239,14 @@ PM.load_scripts = function(rootpath, callback) {
                    'js/lib/jquery.scrollTo-1.4.2-min.js',
                    'js/lib/jquery.validate.js',
                    'js/lib/jquery.svg.js',
-                   'js/lib/jquery-ui-1.8.21.custom.min.js',
                    'js/lib/crypto.js',
                    'js/lib/select2.js',
-                   'js/lib/jquery.address-1.4.js',
                    'js/app/utils.js'];
+    
+    if(!is_in_toolbox) {
+      scripts = scripts.concat('js/lib/jquery.address-1.4.js', 
+                               'js/lib/jquery-ui-1.8.21.custom.min.js');
+    }
     
     scripts.reverse();
     PM.load_scripts_helper(rootpath, scripts, callback);
@@ -297,34 +302,6 @@ PM.load_templates = function(toolboxState) {
                           });
           });
 };
-
-// PM.load_uid_styles = function(callback) {
-//     var files = ['<link type="text/css" href="toolbox/css/impact-ui/jquery-ui-1.8.11.custom.css" rel="stylesheet" />',
-//                  '<link type="text/css" href="toolbox/css/impact-ui/impact-green.css" rel="stylesheet" />',
-//                  '<link rel="stylesheet" type="text/css" media="all" href="toolbox/css/impact-ui/plugins/jquery-ui-timepicker.css" />',
-//                  '<link href="toolbox/css/main.css" rel="stylesheet" type="text/css" />'];
-    
-//     var scripts = ["toolbox/js/impact-ui/jquery-ui-1.8.11.custom.min.js",
-//                    "toolbox/js/impact-ui/jquery.jscrollpane.min.js",
-//                    "toolbox/js/impact-ui/jquery.mousewheel.js",
-//                    "toolbox/js/impact-ui/jquery.mwheelIntent.js",
-//                    "toolbox/js/impact-ui/ui.checkbox.js",
-//                    "toolbox/js/impact-ui/jquery.selectbox-0.5.js",
-//                    "toolbox/js/impact-ui/jquery.busy.min.js",
-//                    "toolbox/js/impact-ui/jquery.ui.timepicker.js",
-//                    "toolbox/js/impact-ui/impact-init.js"
-//                    // "toolbox/js/main.js"
-//                   ];
-
-//     _.each(files, function(file) {
-//                $('head').append(file);
-//            });
-    
-//     // http://stackoverflow.com/questions/6502943/resetting-document-ready-getscript
-//     scripts.reverse();
-//     PM.load_scripts_helper(scripts, callback);
-    
-// };
 
 // Loads some generic styles when the app is used
 // outside of the UID toolbox
