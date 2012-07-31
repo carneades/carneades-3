@@ -13,12 +13,14 @@
 // 
 
 AGB.get_statement_data = function() {
-    return {text: {en: $('#statementtext').val() == "" ? null : $('#statementtext').val()},
-            standard: $('#standard').val(),
+    return {text: {en: $('#statement-editor-text').val() == "" ? 
+                   null : $('#statement-editor-text').val()},
+            standard: $('#statement-editor-standard').val(),
             main: $('input:radio[name=main]:checked').val(),
-            weight: $('#statement-editor-weight').val(),
+            weight: $('#statement-editor-weight').val() == "" ?
+            null : $('#statement-editor-weight').val(),
             header: AGB.get_metadata_data(),
-            atom: $('#editor-statement-atom').val()};  
+            atom: $('#statement-editor-atom').val()};  
 };
 
 AGB.save_statement = function(config) {
