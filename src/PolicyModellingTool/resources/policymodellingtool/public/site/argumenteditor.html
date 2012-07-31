@@ -2,28 +2,43 @@
   <h2>New Argument</h2>
 
 <form id="argument-form">
-  <br/>Direction:<input id="direction" name="pro" type="radio" value="pro"/>Pro
+  <p>Direction:<input id="direction" name="pro" type="radio" value="pro"/>Pro
   <input name="pro" type="radio" value="con"/>Con
-  <br/>
-  <br/>Scheme: <input class="required" type="hidden" id="editor-argument-scheme" />
-  <br/>
-  <br/>
+  <p/>
+
+  <p>Strict:
+    <input name="strict" type="radio" value="yes">Yes
+    <input name="strict" type="radio" value="no">No
+  </p>
+
+  <p>
+    Weight (optional):<input id="argument-editor-weight" type="text"/>
+  </p>
+
+  <p>
+  Scheme: <input class="required" type="hidden" id="editor-argument-scheme" />
+  </p>
+
+  <p>
   Conclusion: <input type="hidden" id="editor-conclusion" class="statement-select required" />
  <br/>Not found? <a href="" id="new-statement-for-conclusion">create a new statement</a>
- <br/>
+  </p>
  
- <br/><h3>Premises</h3>
+ <p><h3>Premises</h3>
  <div id="argument-premises">
  </div>
+ </p>
 
- <br/><h3>Assumptions</h3>
+ <p><h3>Assumptions</h3>
  <div id="argument-assumptions">
  </div>
-
- <br/><h3>Exceptions</h3>
+ </p>
+ 
+ <p><h3>Exceptions</h3>
  <div id="argument-exceptions">
  </div>
-   
+ </p>
+ 
   <br/>
   <br/>
   <br/>
