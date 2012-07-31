@@ -12,6 +12,7 @@
 //           [:header "int"] DONE
 // 
 
+// Returns the data of entered in the statement editor as an object
 AGB.get_statement_data = function() {
     return {text: {en: $('#statement-editor-text').val() == "" ? 
                    null : $('#statement-editor-text').val()},
@@ -23,6 +24,7 @@ AGB.get_statement_data = function() {
             atom: $('#statement-editor-atom').val()};  
 };
 
+// Saves the statement being edited into the database
 AGB.save_statement = function(config) {
     var stmt = AGB.get_statement_data();
     console.log('saving statement: ');
@@ -33,15 +35,18 @@ AGB.save_statement = function(config) {
     return false;
 };
 
+// Callback invoked upon statement creation
 AGB.statement_created = function() {
     console.log('statement created');
 };
 
+// Returns the HTML content of the statement editor
 AGB.create_statement_editor = function() {
     var html = ich.statementeditor();
     return html;
 };
 
+// Removes the statement editor from the page
 AGB.remove_statement_editor = function() {
     $('#statementeditor').empty();
     return false;
