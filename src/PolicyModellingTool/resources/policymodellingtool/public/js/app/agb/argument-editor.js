@@ -47,6 +47,7 @@ AGB.get_argument_substitutions = function() {
     return subs;
 };
 
+// Saves the argument being edited into the database
 AGB.save_argument = function() {
     var scheme_id = $('#editor-argument-scheme').val();
     console.log('saving argument: ');
@@ -61,16 +62,19 @@ AGB.save_argument = function() {
     return false;
 };
 
+// Callback invoked upon argument creation
 AGB.argument_created = function(data) {
     console.log('arguments created');
     console.log(data);
 };
 
+// Returns the HTML content of the argument editor
 AGB.create_argument_editor = function() {
     var html = ich.argumenteditor();
     return html;
 };
 
+// Removes the argument editor from the page
 AGB.remove_argument_editor = function() {
     $('#argumenteditor').empty();
     return false;
