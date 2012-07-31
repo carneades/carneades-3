@@ -112,7 +112,7 @@ AGB.argumentgraph_newstatement = function(config) {
     $('input:radio[name=main]:nth(1)').attr('checked',true);
     
     if(!_.isNil(config.atom)) {
-        $('#editor-statement-atom').val(config.atom);        
+        $('#statement-editor-atom').val(config.atom);        
     } 
     
     $('#save-statement').click(
@@ -189,6 +189,7 @@ AGB.argumentgraph_newargument = function() {
                                          });
 
     $('input:radio[name=pro]:nth(0)').attr('checked',true);
+    $('input:radio[name=strict]:nth(1)').attr('checked',true);
 
     $('#cancel-argument').click(AGB.remove_argument_editor);
     $('#save-argument').click(AGB.save_argument_display_graph);
