@@ -38,7 +38,7 @@ AGB.get_argument_substitutions = function() {
     _.each(AGB.get_all_premises(),
            function(premise) {
                premise = $(premise);
-               if(premise.val()) {
+               if(premise.val() && !_.isNil(premise.data(premise.val()))) {
                    $.extend(subs, premise.data(premise.val()).substitutions);
                }
 
