@@ -2,31 +2,41 @@
   <h2>New Statement</h2>
 
 <form>
-  Atom: <input id="editor-statement-atom" class="text-input" type="text"/>
-  <br/>Text:
-  <div id="texttabs">
-    <ul>
-      <li><a href="#en-tab">En</a></li>
-      <li><a href="#de-tab">De</a></li>
-    </ul>
-  </div>
-  <!-- <div class="navigation"><a id="entab" href="" >En</a><a id="detab" href="">De</a></div> -->
-  
+  <p>
+  Atom (optional): <input id="editor-statement-atom" class="text-input" type="text"/>
+  </p>
+
+  <p>Text:
+  <!-- <div id="texttabs"> -->
+  <!--   <ul> -->
+  <!--     <li><a href="#en-tab">En</a></li> -->
+  <!--     <li><a href="#de-tab">De</a></li> -->
+  <!--   </ul> -->
+  <!-- </div> -->
   <textarea id="statementtext" class="ui-textarea"></textarea>
+  </p>
+
+  <p>
   Proof standard: <select id="standard" class="combobox required">
   <option value="pe">Preponderance of Evidence</option>
   <option value="dv">Dialectical Validity</option>
   <option value="cce">Clear and Convincing Evidence</option>
-  <option value="brd">Beyond Reasonable Doubt</option>
-</select>
+  <option value="brd">Beyond Reasonable Doubt</option> </select>
+  </p>
 
-  <br/>Main:<input id="main" name="main" type="radio" value="yes">Yes
+  <p>Main:<input id="main" name="main" type="radio" value="yes">Yes
   <input name="main" type="radio" value="no">No
-  <br/>
-  <br/>
-  <br/>
+  <p/>
+
+  <p>
+  Weight (optional): <input id="statement-editor-weight" type="text"/>
+  </p>
+
+  <p>
   <h3>Header</h3>
   <div id="statement-header"></div>
+  </p>
+
   <br/><div class="navigation"><a id="cancel-statement" href="">Cancel</a>&nbsp<a id="save-statement" href="" >Save</a></div>
 </form>
 

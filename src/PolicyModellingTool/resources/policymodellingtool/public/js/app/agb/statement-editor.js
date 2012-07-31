@@ -3,19 +3,20 @@
 // (jdbc/create-table 
 //           :statement 
 //           [:id "varchar primary key not null"] ; a URN in the UUID namespace DONE
-//           [:weight "double default null"]
+//           [:weight "double default null"] ; DONE
 //           [:value "double default null"]
 //           [:standard "tinyint default 0"]   ; 0=pe, 1=cce, 2=brd, 3=dv DONE
 //           [:atom "varchar"]                 ; Clojure s-expression DONE
 //           [:text "int"] ALMOST
 //           [:main "boolean default false"]   ; true if a main issue DONE
-//           [:header "int"] ALMOST
+//           [:header "int"] DONE
 // 
 
 AGB.get_statement_data = function() {
     return {text: {en: $('#statementtext').val() == "" ? null : $('#statementtext').val()},
             standard: $('#standard').val(),
             main: $('#main').val(),
+            weight: $('#statement-editor-weight').val(),
             header: AGB.get_metadata_data(),
             atom: $('#editor-statement-atom').val()};  
 };
