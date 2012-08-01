@@ -1,49 +1,53 @@
 <div id="argumenteditor-content" class="pm-editor">
   <h2>New Argument</h2>
 
-<form id="argument-form">
-  <p>Direction:<input id="direction" name="pro" type="radio" value="pro"/>Pro
-  <input name="pro" type="radio" value="con"/>Con
-  <p/>
+  <form id="argument-form">
+    <p>Direction:<input id="direction" name="pro" type="radio" value="pro"/>Pro
+      <input name="pro" type="radio" value="con"/>Con
+    <p/>
 
-  <p>Strict:
-    <input name="strict" type="radio" value="yes">Yes
-    <input name="strict" type="radio" value="no">No
-  </p>
+    <p>Strict:
+      <input name="strict" type="radio" value="yes">Yes
+      <input name="strict" type="radio" value="no">No
+    </p>
 
-  <p>
-    Weight (optional):<input id="argument-editor-weight" type="text"/>
-  </p>
+    <p>
+      Weight (optional):<input id="argument-editor-weight" type="text"/>
+    </p>
 
-  <p>
-  Scheme: <input class="required" type="hidden" id="editor-argument-scheme" />
-  </p>
+    <p>
+      Scheme: <input class="required" type="hidden" id="editor-argument-scheme" />
+    </p>
 
-  <p>
-  Conclusion: <input type="hidden" id="editor-conclusion" class="statement-select required" />
- <br/>Not found? <a href="" id="new-statement-for-conclusion">create a new statement</a>
-  </p>
- 
- <p><h3>Premises</h3>
- <div id="argument-premises">
- </div>
- </p>
+    <div id="argument-editor-conclusion-and-premises">
 
- <p><h3>Assumptions</h3>
- <div id="argument-assumptions">
- </div>
- </p>
- 
- <p><h3>Exceptions</h3>
- <div id="argument-exceptions">
- </div>
- </p>
- 
-  <br/>
-  <br/>
-  <br/>
+      <p>
+        Conclusion: <input type="hidden" id="editor-conclusion" class="statement-select required" />
+        <br/>Not found? <a href="" id="new-statement-for-conclusion">create a new statement</a>
+      </p>
+      
+      <p><h3>Premises</h3>
+        <div id="argument-premises">
+        </div>
+      </p>
 
-  <div class="navigation"><a id="cancel-argument" href="">Cancel</a>&nbsp<a id="save-argument" href="" >Save</a></div>
-</form>
+      <p><h3>Assumptions</h3>
+        <div id="argument-assumptions">
+        </div>
+      </p>
+      
+      <p><h3>Exceptions</h3>
+        <div id="argument-exceptions">
+        </div>
+      </p>
+
+    </div>
+    
+    <br/>
+    <br/>
+    <br/>
+
+    <div class="navigation"><a id="cancel-argument" href="">Cancel</a>&nbsp<a id="save-argument" href="" >Save</a></div>
+  </form>
 
 </div>
