@@ -1,3 +1,4 @@
+// Adds the new questions to the end of the current page
 PM.show_questions = function(questions, questionlist, on_submit) {
     var grouped_questions = _.groupBy(questions, function(q) { return q.category_name; });
     _.each(grouped_questions, function(quests, category) {
@@ -13,8 +14,12 @@ PM.show_questions = function(questions, questionlist, on_submit) {
     questionlist.append('<hr/>');
     $('#submit' + button_id).click(on_submit);
     $('#questionsform').validate();
+
+     // scrolls at the end of the page
+    $.scrollTo('100%');
 };
 
+// Adds some input elements when the '+' button is clicked
 PM.add_fields = function(question) {
     console.log('+PLUS+');
     console.log(question);
@@ -26,6 +31,7 @@ PM.add_fields = function(question) {
     return false;
 };
 
+// Returns the HTML code of a widget used for responding to a question
 PM.get_question_widget = function(question, index) {
     // by convention the id of the input for the question N is iqN
     var widget_to_html = {
@@ -56,6 +62,7 @@ PM.get_question_widget = function(question, index) {
     return widget_to_html[question.widgets[index]](question.id, question.answers, question.formalanswers);
 };
 
+// Adds one question to current page
 PM.show_question = function(question, questionlist) {
     questionlist.append('<p>{0}</p>'.format(question.hint == null ? "" : question.hint));
 
@@ -64,6 +71,7 @@ PM.show_question = function(question, questionlist) {
     questionlist.append('<br/>');
 };
 
+// Returns the HTML code to answer a question
 PM.get_question_html = function(question) {
     var variable = /\?[a-zA-Z_0-9-]+/g;
 
