@@ -1,15 +1,17 @@
-// http://localhost:8080/policymodellingtool/#/arguments/argumentgraph/policymodellingtool-c4a3e5b2-89cf-4c4f-b653-e04ad22e38dd
-
+// Sets the argument graph url. This causes the argument graph to
+// displayed.
 AGB.set_argumentgraph_url = function(db)
 {
     $.address.value(AGB.argumentgraph_url(db));    
 };
 
+// Returns the relative URL of the argument graph page
 AGB.argumentgraph_url = function(db)
 {
-    return '/argumentgraph/' + db;
+    return '/arguments/argumentgraph/' + db;
 };
 
+// Returns the HTML content of the argument graph page
 AGB.argumentgraph_html = function(db, data) 
 {
     AGB.normalize(data);
@@ -25,8 +27,18 @@ AGB.argumentgraph_html = function(db, data)
     return argumentgraph_html.filter('#argumentgraph');
 };
 
+// Displays the argument graph page
 AGB.display_argumentgraph = function(db)
 {
+    if($.address.value() == "/arguments") {
+        // forces URL with specified argument graph without pushing
+        // a new value in the history
+        $.address.history(false);
+        AGB.set_argumentgraph_url(db);
+        $.address.history(true);
+        return;
+    }
+
     PM.ajax_get(IMPACT.wsurl + '/argumentgraph-info/' + db,
                 function(data) {
                     $('#browser').html(AGB.argumentgraph_html(db, data));
@@ -41,6 +53,7 @@ AGB.display_argumentgraph = function(db)
                 PM.on_error);
 };
 
+// Formats the text for the main issues
 AGB.set_mainissues_text = function(mainissues)
 {
     $.each(mainissues, 
@@ -51,6 +64,7 @@ AGB.set_mainissues_text = function(mainissues)
     return mainissues;
 };
 
+// Formats the text for the references
 AGB.set_references_text = function(metadata)
 {
     $.each(metadata, 
@@ -59,6 +73,7 @@ AGB.set_references_text = function(metadata)
            });
 };
 
+// Returns the text for the outline
 AGB.outline_text = function(tree, db, index)
 {
     var text = "";
@@ -84,6 +99,7 @@ AGB.outline_text = function(tree, db, index)
     return text;
 };
 
+// Activates the edition of the argument graph
 AGB.enable_ag_edition = function() {
     // $('#ageditormenu').remove();
     $('#menus').append(ich.ageditormenuon());
