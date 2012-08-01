@@ -41,3 +41,7 @@
 #editor-argument-scheme {
     width: 400px;
 }
+
+.error {
+    color: red;
+}
