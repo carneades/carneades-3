@@ -55,8 +55,7 @@
 
 (defn- pack-statement 
   [stmt]
-  {:post [(do (prn "% = "%) true)
-          (not (vector? (:atom %)))
+  {:post [(not (vector? (:atom %)))
           (not (seq? (:atom %)))]}
   (cond (sliteral? stmt) (str stmt),
         (statement? stmt) (assoc stmt :atom (when (:atom stmt)
@@ -506,6 +505,7 @@
 	;; database. Returns a list of the ids of the new arguments.
         (let [subs (unpack-subs (read-json (slurp (:body request)))),
               scheme (get liverpool-schemes-by-id (symbol (:id (:params request))))]
+          (prn "apply-scheme")
           (prn subs)
           (let [responses (instantiate-scheme scheme subs)
                 [username password] (get-username-and-password request)
