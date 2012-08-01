@@ -196,6 +196,9 @@ AGB.argumentgraph_newargument = function() {
     $('#editor-argument-scheme').change(AGB.scheme_changed);
     $('#editor-conclusion').change(AGB.conclusion_changed);
 
+
+    $('#argument-editor-conclusion-and-premises').hide();
+    
     return false;
 };
 
@@ -370,6 +373,8 @@ AGB.current_scheme = function() {
 
 // Called when the argument scheme is changed
 AGB.scheme_changed = function() {
+    $('#argument-editor-conclusion-and-premises').show();
+    
     var id = $('#editor-argument-scheme').val();
     console.log('scheme changed: ' + id);
     PM.ajax_get(IMPACT.wsurl + '/scheme/' + id,
