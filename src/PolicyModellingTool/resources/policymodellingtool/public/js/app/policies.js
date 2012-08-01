@@ -27,7 +27,7 @@ PM.display_policies = function(sectionid) {
                            });
                     
                     if(sectionid != undefined) {
-                        $.scrollTo($('#' + sectionid));                        
+                        $.scrollTo($('#' + sectionid));
                     }
 
                 },
