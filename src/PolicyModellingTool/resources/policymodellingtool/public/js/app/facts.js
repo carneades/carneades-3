@@ -1,11 +1,15 @@
+// Returns the relative url of the facts page
 PM.facts_url = function() {
     return 'facts';
 };
 
+// Sets the current URL to the facts URL.
+// This will cause the facts page to be displayed.
 PM.set_facts_url = function() {
   $.address.value(PM.facts_url());
 };
 
+// Displays the questions
 PM.display_facts = function() {
     var facts_html = ich.facts();
     $('#pm').html(facts_html.filter("#facts"));
@@ -17,19 +21,25 @@ PM.display_facts = function() {
                  PM.on_error);
 };
 
+// Shows the remaining questions to the user or the argument graph if
+// all questions have been answered.
 PM.show_questions_or_ag = function(data) {
-        if (data.questions) {
-            PM.show_questions(data.questions, $('#questions'), function() {
-                                  if($('#questionsform').valid()) {
-                                      PM.send_answers(data.questions, PM.show_questions_or_ag);
-                                  } 
-                              });
-        } else {
-            IMPACT.db = data.db;
-            PM.set_arguments_url(IMPACT.db);
-        }
+    if (data.questions) {
+        PM.show_questions(data.questions, 
+                          $('#questions'),
+                          function() {
+                              if($('#questionsform').valid()) {
+                                  PM.send_answers(data.questions,
+                                                  PM.show_questions_or_ag);
+                              } 
+                          });
+    } else {
+        IMPACT.db = data.db;
+        PM.set_arguments_url(IMPACT.db);
+    }
 };
 
+// Sends the answers to the server
 PM.send_answers = function(questions, on_response) {
     console.log('send_answers');
     console.log(questions);
