@@ -64,7 +64,7 @@ PM.get_question_widget = function(question, index) {
 
 // Adds one question to current page
 PM.show_question = function(question, questionlist) {
-    questionlist.append('<p>{0}</p>'.format(question.hint == null ? "" : question.hint));
+    questionlist.append('<p><i>{0}</i></p>'.format(question.hint == null ? "" : question.hint));
 
     var question_html = PM.get_question_html(question);
     questionlist.append('<div id="q{0}">{1}</div>'.format(question.id, question_html));
