@@ -112,7 +112,7 @@ AGB.argumentgraph_newstatement = function(config) {
     $('input:radio[name=main]:nth(1)').attr('checked',true);
     
     if(!_.isNil(config.atom)) {
-        $('#statement-editor-atom').val(config.atom);        
+        $('#statement-editor-atom').val(config.atom);
     } 
     
     $('#save-statement').click(
@@ -237,7 +237,7 @@ AGB.set_conclusion_candidates = function(atom) {
     $('#new-statement-for-conclusion').click(
         _.bind(AGB.argumentgraph_newstatement,
                AGB,
-               {atom: atom,
+               {atom: atom.replace(/\?/g, ''),
                 save_callback: AGB.update_conclusion_premises_candidates})
     );
 };
@@ -306,7 +306,7 @@ AGB.add_premises = function(id, premises) {
                $(id + ' a:last').click(
                    _.bind(AGB.argumentgraph_newstatement,
                           AGB,
-                          {atom: AGB.sexpr_to_str(premise.statement.atom),
+                          {atom: AGB.sexpr_to_str(premise.statement.atom).replace(/\?/g, ''),
                            save_callback:
                            AGB.update_conclusion_premises_candidates}));
 
