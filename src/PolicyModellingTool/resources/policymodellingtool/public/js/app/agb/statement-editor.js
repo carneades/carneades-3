@@ -1,16 +1,31 @@
-// http://localhost:8080/policymodellingtool/#/arguments/argumentgraph/policymodellingtool-6b0d1234-48c8-41c6-ae8a-a2e2df3cca6f
+// Creates a new statement editor
+// @config accepts the following values:
+// atom, the default value of the atom field
+// save_callback, a callback called once the statement is created
+AGB.argumentgraph_newstatement = function(config) {
+    if(_.isNil(config)) {
+        config = {}; 
+    }
 
-// (jdbc/create-table 
-//           :statement 
-//           [:id "varchar primary key not null"] ; a URN in the UUID namespace DONE
-//           [:weight "double default null"] ; DONE
-//           [:value "double default null"]
-//           [:standard "tinyint default 0"]   ; 0=pe, 1=cce, 2=brd, 3=dv DONE
-//           [:atom "varchar"]                 ; Clojure s-expression DONE
-//           [:text "int"] ALMOST
-//           [:main "boolean default false"]   ; true if a main issue DONE
-//           [:header "int"] DONE
-// 
+    $('#statementeditor').html(AGB.create_statement_editor());
+    $('#statement-header').html(AGB.create_metadata_editor());
+    $('#cancel-statement').click(AGB.remove_statement_editor);
+    $('input:radio[name=main]:nth(1)').attr('checked',true);
+    
+    if(!_.isNil(config.atom)) {
+        $('#statement-editor-atom').val(config.atom);
+    } 
+    
+    $('#save-statement').click(
+        function() {
+            AGB.save_statement(config);
+            AGB.remove_statement_editor();
+            return false;
+        }
+    );
+    
+    return false;
+};
 
 // Returns the data of entered in the statement editor as an object
 AGB.get_statement_data = function() {
