@@ -201,15 +201,14 @@
     (:conclusion s) 
     (literal-complement (:conclusion s))))
 
-(defn- scheme-variables
-  "scheme -> (seq-of symbol)"
+(defn scheme-variables
+  "scheme -> (set-of symbol)"
   [scheme]
-  (apply set/union
-         (map variables
-              (concat [(:conclusion scheme)]
-                      (:premises scheme)
-                      (:exceptions scheme)
-                      (:assumptions scheme)))))
+  (set (mapcat variables
+            (concat [(:conclusion scheme)]
+                    (:premises scheme)
+                    (:exceptions scheme)
+                    (:assumptions scheme)))))
 
 ;; When applying schemes, undercutters are generated from the exceptions of schemes, 
 ;; where the undercutters are arguments with the form:
@@ -244,43 +243,42 @@
    there is a further response with an undercutter for each exception of
    the scheme."
   [scheme subs]
-  (let [id (make-urn)
-        conclusion (apply-substitutions subs (:conclusion scheme))
+  (let [conclusion (apply-substitutions subs (:conclusion scheme))
         main-arg (instantiate-argument 
-                    (make-argument 
-                     :id id,
-                     :conclusion (literal-atom conclusion),
-                     :pro (literal-pos? conclusion)
-                     :strict (:strict scheme),
-                     :weight (:weight scheme),
-                     :premises (map (fn [p] (apply-substitutions subs p))
-                                    (concat (:premises scheme) (:assumptions scheme))),
-                     :exceptions (map (fn [p] (apply-substitutions subs p))
-                                      (:exceptions scheme)),
-                     :scheme `(~(:id scheme) ~@(scheme-variables scheme)))
-                    subs)]
-    (if (not (ground-argument? (:argument main-arg)))
+                  (make-argument 
+                   :conclusion (literal-atom conclusion),
+                   :pro (literal-pos? conclusion)
+                   :strict (:strict scheme),
+                   :weight (:weight scheme),
+                   :premises (map (fn [p] (apply-substitutions subs p))
+                                  (concat (:premises scheme) (:assumptions scheme))),
+                   :exceptions (map (fn [p] (apply-substitutions subs p))
+                                    (:exceptions scheme)),
+                   :scheme `(~(:id scheme) ~@(scheme-variables scheme)))
+                  subs)]
+    (if (not (ground-argument? main-arg))
       ()
       (cons
-            (make-response 
-                   subs
-                   (map (fn [p] (if (:positive p)
-                                  (:statement p)
-                                  (literal-complement (:statement p))))
-                        (:assumptions scheme))
-                   main-arg)
-            (map (fn [e] (make-response
-                          subs
-                          []
-                          (make-argument
-                           :id (make-urn)
-                           :conclusion `(~'undercut ~id)
-                           :pro true
-                           :strict false
-                           :weight 0.5
-                           :premises [e]
-                           :exceptions []
-                           :scheme (:scheme main-arg)))))))))
+       (make-response 
+        subs
+        (map (fn [p] (if (:positive p)
+                       (:statement p)
+                       (literal-complement (:statement p))))
+             (:assumptions scheme))
+        main-arg)
+       (map (fn [e] (make-response
+                     subs
+                     []
+                     (make-argument
+                      :id (make-urn-symbol)
+                      :conclusion `(~'undercut ~(:id main-arg))
+                      :pro true
+                      :strict false
+                      :weight 0.5
+                      :premises [e]
+                      :exceptions []
+                      :scheme (:scheme main-arg))))
+            (:exceptions main-arg))))))
                            
 
 (defn axiom 

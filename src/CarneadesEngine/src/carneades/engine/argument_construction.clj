@@ -181,7 +181,22 @@
   (let [subs (:substitutions response)]
     (reduce (fn [s k]
               (let [template (get (:arg-templates s) k)
-                    trm (apply-substitutions subs (:guard template))]
+                    trm (apply-substitutions subs (:guard template))
+                    add-undercutters (fn [s arg]
+                                       (reduce (fn [s e]
+                                                 (add-argument-to-graph
+                                                  s
+                                                  (make-argument
+                                                   :id (make-urn)
+                                                   :conclusion `(~'undercut ~(:id arg))
+                                                   :pro true
+                                                   :strict false
+                                                   :weight 0.5
+                                                   :premises [e]
+                                                   :exceptions []
+                                                   :scheme (:scheme arg))))
+                                               s
+                                               (:exceptions arg)))]
                 (if (or (not (ground? trm))
                         (contains? (:instances template) trm))
                   s
@@ -189,22 +204,7 @@
                     (-> s
                         (add-argument-to-graph arg)
                         (add-argument-instance-to-templates k trm)
-                        ((fn [s exceptions]
-                           (reduce (fn [s e]
-                                     (add-argument-to-graph
-                                      s
-                                      (make-argument
-                                       :id (make-urn)
-                                       :conclusion `(~'undercut ~(:id arg))
-                                       :pro true
-                                       :strict false
-                                       :weight 0.5
-                                       :premises [e]
-                                       :exceptions []
-                                       :scheme (:scheme arg))))
-                                   s
-                                   exceptions))
-                         (:exceptions arg)))))))
+                        (add-undercutters arg))))))
             state1
             (keys (:arg-templates state1)))))
 
