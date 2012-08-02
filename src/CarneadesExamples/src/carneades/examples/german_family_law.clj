@@ -40,6 +40,10 @@
                   :question "Is %s a descendent of %s?")}
      :hint {:en "A descendent is a child (daughter or son, including adopted children) or a descendent of a child."}
      :widgets '[text text]
+<<<<<<< HEAD
+=======
+     :followups ['ancestor]
+>>>>>>> reformatted (pretty-printed) a couple of files
      ;; :answers '[[] []]
      :category 'family-relationship)
 
@@ -67,13 +71,27 @@
        [
 	(make-scheme                            
          :id 'BGB-1589a
+	 :header (make-metadata :title "BGB-1589a" :description {:en "Foo"})
          :conclusion '(direct-lineage ?P1 ?P2)
          :premises [(pm '(ancestor ?P1 ?P2))])
 	
 	(make-scheme
 	 :id 'BGB-1289b
+	 :header (make-metadata :title "BGB-1589b" :description {:en "Bar"})
 	 :conclusion '(direct-lineage ?P1 ?P2)
-	 :premises [(pm '(descendant ?P1 ?P2))])
+	 :premises [(pm '(descendent ?P1 ?P2))])
+
+	;; (make-scheme
+	;;  :id 'ancestor-and-descendent-are-inverse-a
+	;;  :header (make-metadata :title "Inverse Relationship Between Ancestors and Descendents" :description {:en "The ancestor and descendent relations are inverse."})
+	;;  :conclusion '(ancestor ?P1 ?P2)
+	;;  :premises [(pm '(descendent ?P2 ?P1))])
+
+	;; (make-scheme
+	;;  :id 'ancestor-and-descendent-are-inverse-b
+	;;  :header (make-metadata :title "Inverse Relationship Between Ancestors and Descendents" :description {:en "The ancestor and descendent relations are inverse."})
+	;;  :conclusion '(descendent ?P1 ?P2)
+	;;  :premises [(pm '(ancestor ?P2 ?P1))])
 
 ])])]))
 
