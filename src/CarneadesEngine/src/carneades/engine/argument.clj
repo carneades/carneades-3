@@ -128,7 +128,8 @@
 
 (defn instantiate-argument
   "argument substitutions -> arg
-   Instantiate the variables of an argument by applying substitions"
+   Instantiate the variables of an argument by applying substitions.
+   The resulting argument need not be fully instantiated."
   [arg subs]
   (let [update-statement
         (fn [p]
