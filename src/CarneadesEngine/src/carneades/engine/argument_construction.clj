@@ -5,6 +5,7 @@
   carneades.engine.argument-construction
   (:use clojure.set
         clojure.pprint
+        carneades.engine.uuid
         carneades.engine.statement
         carneades.engine.unify
         carneades.engine.argument-graph
@@ -173,7 +174,7 @@
    Apply the argument templates to the substitutions of the response, adding
    arguments to the argument graph of the ac-state for all templates with ground
    guards, if the instance is new.  Add the new instance to the set of instances 
-   of the template. Add an undercutter goal for each argument added to the graph."
+   of the template. Also add an undercutter for each exception of the argument to the graph."
   [state1 goal response]
   {:pre [(acstate? state1) (response? response)]
    :post [(acstate? %)]}
@@ -188,9 +189,22 @@
                     (-> s
                         (add-argument-to-graph arg)
                         (add-argument-instance-to-templates k trm)
-                        (add-goal (assoc goal 
-                                    :issues (list `(~'undercut ~(:id arg)))
-                                    :depth (inc (:depth goal)))))))))
+                        ((fn [s exceptions]
+                           (reduce (fn [s e]
+                                     (add-argument-to-graph
+                                      s
+                                      (make-argument
+                                       :id (make-urn)
+                                       :conclusion `(~'undercut ~(:id arg))
+                                       :pro true
+                                       :strict false
+                                       :weight 0.5
+                                       :premises [e]
+                                       :exceptions []
+                                       :scheme (:scheme arg))))
+                                   s
+                                   exceptions))
+                         (:exceptions arg)))))))
             state1
             (keys (:arg-templates state1)))))
 
