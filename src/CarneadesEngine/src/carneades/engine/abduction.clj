@@ -11,37 +11,20 @@
             - A Formal Model of Abduction in Argument Evaluation Structures. Computational Models of Argument 
             - Proceedings of COMMA 2010, IOS Press (2010), 51-62."}
   carneades.engine.abduction
-<<<<<<< HEAD
-  ;; (:use clojure.contrib.def
-  ;;   clojure.contrib.pprint
-  ;;   clojure.set
-  ;;   carneades.engine.utils
-  ;;   carneades.engine.argument
-  ;;   carneades.engine.statement)
-  )
-=======
   (:use clojure.pprint
         clojure.set
         carneades.engine.utils
         carneades.engine.argument
         carneades.engine.statement))
->>>>>>> clojure-1.3
 
 ;; (defn format-label
 ;;   [l]
 ;;   (map (fn [p] (map (fn [s] (literal->str s)) p)) l))
 
-<<<<<<< HEAD
-;; (defvar *verum-clause* #{true})
-;; (defvar *verum* #{*verum-clause*})
-;; (defvar *falsum-clause* #{false})
-;; (defvar *falsum* #{*falsum-clause*})
-=======
 ;; (def *verum-clause* #{true})
 ;; (def *verum* #{*verum-clause*})
 ;; (def *falsum-clause* #{false})
 ;; (def *falsum* #{*falsum-clause*})
->>>>>>> clojure-1.3
 
 ;; (declare argument-in-label
 ;;   argument-out-label
