@@ -202,9 +202,9 @@
     (literal-complement (:conclusion s))))
 
 (defn scheme-variables
-  "scheme -> (set-of symbol)"
+  "scheme -> (seq-of symbol)"
   [scheme]
-  (set (mapcat variables
+  (distinct (mapcat variables
             (concat [(:conclusion scheme)]
                     (:premises scheme)
                     (:exceptions scheme)
