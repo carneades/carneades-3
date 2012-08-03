@@ -113,8 +113,7 @@
      default       ; element of the above type or nil
      forms
      category
-     hint
-                                        ; no widget, since the widget can be derived from the above type
+     hint           ; no widget, since the widget can be derived from the above type
      followups])
 
 (extend Property
@@ -151,9 +150,9 @@
   [& functors]
   (zipmap (map get-symbol functors) functors))
 
-                                        ; variables are allowed as conclusions of schemes to enable them
-                                        ; to represent argumentation schemes, such as arguments from 
-                                        ; expert witness testimony, whose conclusions can be any (literal) proposition.
+;; variables are allowed as conclusions of schemes to enable them
+;; to represent argumentation schemes, such as arguments from 
+;; expert witness testimony, whose conclusions can be any (literal) proposition.
 
 (defrecord Scheme
     [id            ; symbol
@@ -202,15 +201,14 @@
     (:conclusion s) 
     (literal-complement (:conclusion s))))
 
-(defn- scheme-variables
-  "scheme -> (seq-of symbol)"
+(defn scheme-variables
+  "scheme -> (set-of symbol)"
   [scheme]
-  (apply set/union
-         (map variables
-              (concat [(:conclusion scheme)]
-                      (:premises scheme)
-                      (:exceptions scheme)
-                      (:assumptions scheme)))))
+  (set (mapcat variables
+            (concat [(:conclusion scheme)]
+                    (:premises scheme)
+                    (:exceptions scheme)
+                    (:assumptions scheme)))))
 
 ;; When applying schemes, undercutters are generated from the exceptions of schemes, 
 ;; where the undercutters are arguments with the form:
@@ -241,30 +239,47 @@
    substituting variables in the scheme with their values in a map of
    substitutions. Only ground arguments are included in the result. It
    is the responsibility of the caller to provide substitutions for all
-   variables in the argument."
+   variables in the argument.  The first response has the main argument;
+   there is a further response with an undercutter for each exception of
+   the scheme."
   [scheme subs]
-  (let [id (make-urn)
-        conclusion (apply-substitutions subs (:conclusion scheme))]
-    (filter (fn [r] (empty? (argument-variables (:argument r))))
-            (list (make-response 
-                   subs
-                   (map (fn [p] (if (:positive p)
-                                  (:statement p)
-                                  (literal-complement (:statement p))))
-                        (:assumptions scheme))
-                   (instantiate-argument 
-                    (make-argument 
-                     :id id,
-                     :conclusion (literal-atom conclusion),
-                     :pro (literal-pos? conclusion)
-                     :strict (:strict scheme),
-                     :weight (:weight scheme),
-                     :premises (map (fn [p] (apply-substitutions subs p))
-                                    (concat (:premises scheme) (:assumptions scheme))),
-                     :exceptions (map (fn [p] (apply-substitutions subs p))
-                                      (:exceptions scheme)),
-                     :scheme `(~(:id scheme) ~@(scheme-variables scheme)))
-                    subs))))))
+  (let [conclusion (apply-substitutions subs (:conclusion scheme))
+        main-arg (instantiate-argument 
+                  (make-argument 
+                   :conclusion (literal-atom conclusion),
+                   :pro (literal-pos? conclusion)
+                   :strict (:strict scheme),
+                   :weight (:weight scheme),
+                   :premises (map (fn [p] (apply-substitutions subs p))
+                                  (concat (:premises scheme) (:assumptions scheme))),
+                   :exceptions (map (fn [p] (apply-substitutions subs p))
+                                    (:exceptions scheme)),
+                   :scheme `(~(:id scheme) ~@(scheme-variables scheme)))
+                  subs)]
+    (if (not (ground-argument? main-arg))
+      ()
+      (cons
+       (make-response 
+        subs
+        (map (fn [p] (if (:positive p)
+                       (:statement p)
+                       (literal-complement (:statement p))))
+             (:assumptions scheme))
+        main-arg)
+       (map (fn [e] (make-response
+                     subs
+                     []
+                     (make-argument
+                      :id (make-urn-symbol)
+                      :conclusion `(~'undercut ~(:id main-arg))
+                      :pro true
+                      :strict false
+                      :weight 0.5
+                      :premises [e]
+                      :exceptions []
+                      :scheme (:scheme main-arg))))
+            (:exceptions main-arg))))))
+                           
 
 (defn axiom 
   "literal -> scheme"
