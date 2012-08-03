@@ -49,7 +49,7 @@
      arity    ; integer
      forms
      category
-     hint
+     hint     ; lang -> string map
      widget
      followups] ; (lang -> form) map, where lang is one of the keywords :en, :de, etc.
   )
@@ -109,11 +109,11 @@
      min           ; minimum cardinality; whole number
      max           ; maximum cardinality; whole number or nil, for unlimited
      type          ; :symbol (object id), :boolean, :string, :uri, :date-time, :integer, :real,
-                                        ; '(one-of string string ...), '(some-of string string ...)
+                   ; '(enum object object ...)                                 
      default       ; element of the above type or nil
-     forms
+     forms         ; Do we need the negated and question forms, or just the positive?
      category
-     hint           ; no widget, since the widget can be derived from the above type
+     hint          ; lang -> string map
      followups])
 
 (extend Property
