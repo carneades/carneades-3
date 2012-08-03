@@ -49,7 +49,7 @@ AGB.get_argument_substitutions = function() {
 
 // Saves the argument being edited into the database
 AGB.save_argument = function() {
-    var scheme_id = $('#editor-argument-scheme').val();
+    var scheme_id = $('#argument-editor-scheme').val();
     console.log('saving argument: ');
 
     var subs = AGB.get_argument_substitutions();
@@ -119,7 +119,7 @@ AGB.argumentgraph_newargument = function() {
     var search_term = "";
 
     var scheme_search_term = "";
-    $('#editor-argument-scheme').select2({formatResult: AGB.format_filtered_scheme,
+    $('#argument-editor-scheme').select2({formatResult: AGB.format_filtered_scheme,
                                           formatSelection: AGB.format_selected_scheme, 
                                           placeholder: "Select a scheme",
                                           dataType: 'json',
@@ -149,7 +149,7 @@ AGB.argumentgraph_newargument = function() {
 
     $('#cancel-argument').click(AGB.remove_argument_editor);
     $('#save-argument').click(AGB.save_argument_display_graph);
-    $('#editor-argument-scheme').change(AGB.scheme_changed);
+    $('#argument-editor-scheme').change(AGB.scheme_changed);
     $('#editor-conclusion').change(AGB.conclusion_changed);
     $('input:radio[name=apply-scheme]').change(AGB.apply_scheme_changed);
 
@@ -162,10 +162,39 @@ AGB.argumentgraph_newargument = function() {
 AGB.apply_scheme_changed = function() {
     var apply_scheme = $('input:radio[name=apply-scheme]:checked').val();
     if(apply_scheme == "yes") {
-        AGB.prepare_edition_without_scheme();
+        AGB.prepare_argument_edition({pre_edition: AGB.pre_edition_with_scheme});
     } else {
-        $('#scheme-selection').hide();
+        AGB.prepare_argument_edition({pre_edition: AGB.pre_edition_without_scheme});
     }
+};
+
+AGB.pre_edition_with_scheme = function() {
+    $('#scheme-selection').show();
+    if($('#argument-editor-scheme').val() == "") {
+        $('#argument-editor-conclusion-and-premises').hide();
+    } else {
+        $('#argument-editor-conclusion-and-premises').show();
+    }
+};
+
+AGB.pre_edition_without_scheme = function() {
+    $('#scheme-selection').hide();
+    $('#argument-editor-conclusion-and-premises').hide();
+};
+
+// Prepares the argument editor for editing either in a mode where a
+// scheme is applied, or in a mode where no scheme is applied
+AGB.prepare_argument_edition = function(mode) {
+    mode.pre_edition();
+    $('#save-argument').unbind('click');
+    $('#save-argument').click(_.bind(AGB.post_argument_edition, AGB, mode.on_save));
+};
+
+AGB.post_argument_edition = function(post_edition) {
+    post_edition();
+    AGB.remove_argument_editor();
+    AGB.display_argumentgraph(IMPACT.db);
+    return false; 
 };
 
 // Enables the editor to allow an edition without being constrained by
@@ -340,19 +369,19 @@ AGB.update_conclusion_premises_candidates = function() {
 
 // Returns the current selected scheme of the argument editor
 AGB.current_scheme = function() {
-    var val = $('#editor-argument-scheme').val();
-    return $('#editor-argument-scheme').data(val);
+    var val = $('#argument-editor-scheme').val();
+    return $('#argument-editor-scheme').data(val);
 };
 
 // Called when the argument scheme is changed
 AGB.scheme_changed = function() {
     $('#argument-editor-conclusion-and-premises').show();
     
-    var id = $('#editor-argument-scheme').val();
+    var id = $('#argument-editor-scheme').val();
     console.log('scheme changed: ' + id);
     PM.ajax_get(IMPACT.wsurl + '/scheme/' + id,
                 function(scheme) {
-                    $('#editor-argument-scheme').data(id, scheme);
+                    $('#argument-editor-scheme').data(id, scheme);
                     $('#editor-conclusion').select2('val', '');
                     AGB.set_conclusion_candidates(AGB.sexpr_to_str(scheme.conclusion));
                     $('#argument-premises').empty();
@@ -368,7 +397,7 @@ AGB.scheme_changed = function() {
 
 
 AGB.save_argument_display_graph = function() {
-    if(!$('#editor-argument-scheme').valid()) {
+    if(!$('#argument-editor-scheme').valid()) {
         return false;
     }
 
@@ -384,7 +413,5 @@ AGB.save_argument_display_graph = function() {
     }
 
     AGB.save_argument();
-    AGB.remove_argument_editor();
-    AGB.display_argumentgraph(IMPACT.db);
-    return false;
+
 };
