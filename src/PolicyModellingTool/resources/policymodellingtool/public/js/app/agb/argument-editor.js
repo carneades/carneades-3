@@ -145,18 +145,37 @@ AGB.argumentgraph_newargument = function() {
 
     $('input:radio[name=pro]:nth(0)').attr('checked',true);
     $('input:radio[name=strict]:nth(1)').attr('checked',true);
+    $('input:radio[name=apply-scheme]:nth(0)').attr('checked',true);
 
     $('#cancel-argument').click(AGB.remove_argument_editor);
     $('#save-argument').click(AGB.save_argument_display_graph);
     $('#editor-argument-scheme').change(AGB.scheme_changed);
     $('#editor-conclusion').change(AGB.conclusion_changed);
-
+    $('input:radio[name=apply-scheme]').change(AGB.apply_scheme_changed);
 
     $('#argument-editor-conclusion-and-premises').hide();
     
     return false;
 };
 
+// Called when the apply scheme radio buttons are set to 'yes' or 'no'
+AGB.apply_scheme_changed = function() {
+    var apply_scheme = $('input:radio[name=apply-scheme]:checked').val();
+    if(apply_scheme == "yes") {
+        AGB.prepare_edition_without_scheme();
+    } else {
+        $('#scheme-selection').hide();
+    }
+};
+
+// Enables the editor to allow an edition without being constrained by
+// an argument scheme
+AGB.prepare_edition_without_scheme = function() {
+    $('#scheme-selection').show();
+    $('#argument-premises').empty();
+    $('#argument-exceptions').empty();
+    $('#argument-assumptions').empty();
+};
 
 
 // Set the list of candidates for the conclusion
