@@ -40,10 +40,7 @@
                   :question "Is %s a descendent of %s?")}
      :hint {:en "A descendent is a child (daughter or son, including adopted children) or a descendent of a child."}
      :widgets '[text text]
-<<<<<<< HEAD
-=======
      :followups ['ancestor]
->>>>>>> reformatted (pretty-printed) a couple of files
      ;; :answers '[[] []]
      :category 'family-relationship)
 
