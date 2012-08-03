@@ -46,7 +46,7 @@
           (list (make-response subs2 () 
                                (make-argument 
                                 :conclusion literal 
-                                :scheme `(~'builtin:eval ,result ,expr2))))
+                                :scheme `(~'builtin:eval ~result ~expr2))))
           ())))))
 
 (defn- dispatch-equal [subs literal term1 term2]
@@ -54,16 +54,16 @@
     (list (make-response subs2 () 
                          (make-argument  
                            :conclusion literal 
-                           :scheme `(~'builtin:= ,term1 ,term2))))
+                           :scheme `(~'builtin:= ~term1 ~term2))))
     ()))
 
 (defn- dispatch-notequal [subs literal term1 term2]
   (if-let [subs2 (unify term1 term2 subs)]
-    ;; (do (println "subs2:" subs2) ())
+    () ;; (println "dispatch-notequal subs2:" subs2) ())
     (list (make-response subs () 
                          (make-argument  
                            :conclusion literal
-                           :scheme `(~'builtin:not= ,term1 ,term2))))))
+                           :scheme `(~'builtin:not= ~term1 ~term2))))))
 
 (defn dispatch
   "literal substitutions (list-of generator) -> (stream-of response)"
