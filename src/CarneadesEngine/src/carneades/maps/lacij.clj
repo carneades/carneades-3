@@ -25,7 +25,7 @@
   [ag & options]
   (let [tmpfile (File/createTempFile "carneadesmap" ".svg")
         filename (.getPath tmpfile)]
-    (.deleteOnExit tmpfile)
+    ;; (.deleteOnExit tmpfile)
     (apply export ag filename options)
     (browse-url (str (.toURI tmpfile)))))
 
