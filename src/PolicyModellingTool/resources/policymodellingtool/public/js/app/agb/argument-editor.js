@@ -48,7 +48,7 @@ AGB.get_argument_substitutions = function() {
 };
 
 // Saves the argument being edited into the database
-AGB.save_argument = function() {
+AGB.save_argument_with_scheme = function() {
     var scheme_id = $('#argument-editor-scheme').val();
     console.log('saving argument: ');
 
@@ -148,12 +148,15 @@ AGB.argumentgraph_newargument = function() {
     $('input:radio[name=apply-scheme]:nth(0)').attr('checked',true);
 
     $('#cancel-argument').click(AGB.remove_argument_editor);
-    $('#save-argument').click(AGB.save_argument_display_graph);
+    
     $('#argument-editor-scheme').change(AGB.scheme_changed);
     $('#editor-conclusion').change(AGB.conclusion_changed);
     $('input:radio[name=apply-scheme]').change(AGB.apply_scheme_changed);
 
     $('#argument-editor-conclusion-and-premises').hide();
+
+    AGB.prepare_argument_edition({pre_edition: AGB.pre_edition_with_scheme,
+                                  on_save: AGB.save_argument_with_scheme});
     
     return false;
 };
@@ -162,7 +165,8 @@ AGB.argumentgraph_newargument = function() {
 AGB.apply_scheme_changed = function() {
     var apply_scheme = $('input:radio[name=apply-scheme]:checked').val();
     if(apply_scheme == "yes") {
-        AGB.prepare_argument_edition({pre_edition: AGB.pre_edition_with_scheme});
+        AGB.prepare_argument_edition({pre_edition: AGB.pre_edition_with_scheme,
+                                      on_save: AGB.save_argument_with_scheme});
     } else {
         AGB.prepare_argument_edition({pre_edition: AGB.pre_edition_without_scheme});
     }
