@@ -14,7 +14,8 @@
         carneades.engine.argument)
   (:require [clojure.java.jdbc :as jdbc]
             [carneades.config.reader :as config]
-            [clojure.string :as s])
+            [clojure.string :as s]
+            [carneades.engine.utils :refer [safe-read-string]])
   (:import java.io.File))
 
 
@@ -607,7 +608,8 @@
    database. The resulting argument has additional properties
    listing the ids of the rebuttals and undercutters of the argument."
   [id]
-  {:pre [(string? id)]}
+  {:pre [(string? id)]
+   :post [(not (string? (:scheme %)))]}
   (jdbc/with-query-results 
     res1 ["SELECT * FROM argument WHERE id=?" id]
     (if (empty? (doall res1))
@@ -621,9 +623,11 @@
                                    (map :id res1))))
             rs (get-rebuttals id)
             us (get-undercutters id)
-            ds (get-dependents id)]
+            ds (get-dependents id)
+            scheme (safe-read-string (:scheme m))]
         (map->argument (assoc m 
                          :id (symbol id)
+                         :scheme scheme
                          :conclusion conclusion
                          :header header
                          :premises premises
