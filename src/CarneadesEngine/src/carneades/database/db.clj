@@ -11,11 +11,13 @@
         carneades.engine.uuid
         carneades.engine.dublin-core
         carneades.engine.statement
-        carneades.engine.argument)
+        carneades.engine.argument
+        carneades.engine.utils)
   (:require [clojure.java.jdbc :as jdbc]
             [carneades.config.reader :as config]
             [clojure.string :as s]
-            [carneades.engine.utils :refer [safe-read-string]])
+            ;; [carneades.engine.utils :refer [safe-read-string]]
+            )
   (:import java.io.File))
 
 
