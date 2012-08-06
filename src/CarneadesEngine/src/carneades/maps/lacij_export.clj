@@ -75,10 +75,10 @@
 
 (defn add-undercutter-argument-node
   [svgmap arg ag]
-  ;; (prn "arg " arg)
+  {:pre [(not (string? (:scheme arg)))]}
   (let [scheme (:scheme arg)
         label (if scheme
-                (str "<" scheme ">")
+                (str "<" (term-functor scheme) ">")
                 "")]
    (add-node-kv svgmap (gen-arg-id arg) (merge {:label label} undercutter-params))))
 
