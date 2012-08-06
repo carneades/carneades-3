@@ -45,3 +45,11 @@
 .error {
     color: red;
 }
+
+.premiseproperties {
+    float: left;
+}
+
+#conclusionprefix {
+    float: left;
+}
