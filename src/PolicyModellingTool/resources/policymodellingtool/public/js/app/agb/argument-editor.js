@@ -94,11 +94,11 @@ AGB.format_selected_statement = function(statement) {
 };
 
 AGB.format_filtered_scheme = function(scheme) {
-    return "<div>{0}</div>".format(scheme.id);
+    return "<div>{0}</div>".format(scheme.header.title);
 };
 
 AGB.format_selected_scheme = function(scheme) {
-    return "{0}".format(scheme.id);
+    return "{0}".format(scheme.header.title);
 };
 
 AGB.format_filtered_matching_result = function(result) {
@@ -116,33 +116,22 @@ AGB.format_selected_matching_result = function(result) {
 // Creates a new argument editor
 AGB.argumentgraph_newargument = function() {
     $('#argumenteditor').html(AGB.create_argument_editor());
-    var search_term = "";
 
-    var scheme_search_term = "";
-    $('#argument-editor-scheme').select2({formatResult: AGB.format_filtered_scheme,
-                                          formatSelection: AGB.format_selected_scheme, 
-                                          placeholder: "Select a scheme",
-                                          dataType: 'json',
-                                          type: 'GET',
-                                          error: function(jqXHR, textStatus) {
-                                              console.log('[ERROR] AJAX ' + textStatus);
-                                          },
-                                          ajax: {
-                                              url: IMPACT.wsurl + '/scheme',
-                                              data: function(term, page) {
-                                                  scheme_search_term = term;
-                                                  return {};
-                                              },
-                                              results: function(schemes) {
-                                                  return {
-                                                      results: _.filter(schemes, function(scheme) {
-                                                                            return scheme.id.indexOf(scheme_search_term) != -1;
-                                                                        })
-                                                  };
-                                              }
-                                          }
-                                         });
-
+    PM.ajax_get(IMPACT.wsurl + '/scheme',
+               function(schemes) {
+                   $('#argument-editor-scheme').select2({formatResult: AGB.format_filtered_scheme,
+                                                         formatSelection: AGB.format_selected_scheme, 
+                                                         placeholder: "Select a scheme",
+                                                         data: {
+                                                             results: schemes,
+                                                             text: function(scheme) {
+                                                                 return scheme.header.title;
+                                                             }
+                                                         }
+                                                        });
+               
+               });
+    
     $('input:radio[name=pro]:nth(0)').attr('checked',true);
     $('input:radio[name=strict]:nth(1)').attr('checked',true);
     $('input:radio[name=apply-scheme]:nth(0)').attr('checked',true);
@@ -172,6 +161,7 @@ AGB.apply_scheme_changed = function() {
     }
 };
 
+// Prepares edition for editing with a scheme
 AGB.pre_edition_with_scheme = function() {
     $('#scheme-selection').show();
     if($('#argument-editor-scheme').val() == "") {
@@ -181,9 +171,39 @@ AGB.pre_edition_with_scheme = function() {
     }
 };
 
+// Prepares edition for editing without a scheme
 AGB.pre_edition_without_scheme = function() {
     $('#scheme-selection').hide();
-    $('#argument-editor-conclusion-and-premises').hide();
+    $('#argument-editor-conclusion-and-premises').show();
+    $('#argument-premises').empty();
+    $('#argument-assumptions').empty();
+    $('#argument-exceptions').empty();
+
+    AGB.add_premise_inputs('#argument-premises');
+};
+
+// Add some inputs for select premises when editing without a scheme
+AGB.add_premise_inputs = function(id) {
+    PM.ajax_get(IMPACT.wsurl + '/statement/' + IMPACT.db,
+                function(statements) {
+                    $(id).append(ich.premiseeditorwithoutscheme());
+                    $(id).append(ich.premiseeditorwithoutscheme());
+                    $(id).append(ich.premiseeditorwithoutscheme());
+
+                    _.each($('#argument-editor-conclusion-and-premises input[type=hidden]'),
+                          function(input) {
+                              $(input).select2('destroy');
+                              $(input).select2({data: {results: statements,
+                                                       text: function(statement) {
+                                                           return AGB.statement_text(statement);
+                                                       }
+                                                      },
+                                                placeholder: "Select a statement",
+                                                formatSelection: AGB.format_selected_statement,
+                                                formatResult: AGB.statement_text});
+                          });
+                },
+               PM.on_error);
 };
 
 // Prepares the argument editor for editing either in a mode where a
@@ -225,15 +245,18 @@ AGB.set_conclusion_candidates = function(atom) {
                             });
 
                      conclusion.select2("destroy");
-                     conclusion.select2(
-                         {data: conclusion_statements_results,
-                          placeholder: "Select a conclusion",
-                          formatResult: AGB.format_filtered_matching_result,
-                          formatSelection:
-                          AGB.format_selected_matching_result,
-                         initSelection: function(element) {
-                             return element.data(element.val());
-                         }});
+                     conclusion.select2({data: {results: conclusion_statements_results,
+                                                text: function(statement_result) {
+                                                    return AGB.statement_raw_text(statement_result.statement);
+                                                }
+                                               },
+                                         placeholder: "Select a conclusion",
+                                         formatResult: AGB.format_filtered_matching_result,
+                                         formatSelection:
+                                         AGB.format_selected_matching_result,
+                                         initSelection: function(element) {
+                                             return element.data(element.val());
+                                         }});
                  },
                  IMPACT.user,
                  IMPACT.password,
@@ -276,7 +299,11 @@ AGB.set_premise_candidates = function(id, premise, atom) {
                                 result.id = result.statement.id;
                             });
                      p.select2("destroy");
-                     p.select2({data: premise_results,
+                     p.select2({data: {results: premise_results,
+                                       text: function(statement_result) {
+                                           return AGB.statement_raw_text(statement_result.statement);
+                                       }
+                                    },
                                 placeholder: "Select a statement",
                                 formatResult: AGB.format_filtered_matching_result,
                                 formatSelection: AGB.format_selected_matching_result,
