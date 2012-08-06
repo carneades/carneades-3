@@ -168,18 +168,6 @@ This arguments pro and con the policy proposals for this issue can be browsed in
        [UrhG-31])
 
       (make-section
-       :id 'QXX
-       :header (make-metadata :title "QXX's title"
-                              :description {:de "QXX Beschreibung auf Deutsch"
-                                            :en "QXX Description in English"})
-       :sections
-       [(make-section
-         :id 'QYY
-         :header (make-metadata :title "QYY's title"
-                                :description {:de "QYY Beschreibung auf Deutsch"
-                                            :en "QYY Description in English"}))])
-
-      (make-section
        :id 'Q12-Aktionsbundnis
        :header (make-metadata :title "Orphaned Works Policy Proposed by the Aktionsbündnisses ‟Urheberrecht für Bildung und Wissenschaft”"
                               :description {:en "The German “Action Alliance” on copyright for education and science proposes the following
