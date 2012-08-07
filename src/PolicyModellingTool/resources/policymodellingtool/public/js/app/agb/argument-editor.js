@@ -62,6 +62,67 @@ AGB.save_argument_with_scheme = function() {
     return false;
 };
 
+AGB.get_premises_ids = function(premises) {
+    return _.reject(_.map(premises,
+                          function(premise) {
+                              return $(premise).val();
+                          }),
+                    function(id) {
+                        return id == "";
+                    });
+};
+
+AGB.get_statement_from_id = function(statements, id) {
+    return _.find(statements, function(statement) {
+                      return statement.id == id;
+                  });
+};
+
+AGB.statement_to_premise = function(statement, role) {
+    return {
+        statement: statement,
+        role: role
+    };
+};
+
+AGB.save_argument_without_scheme = function() {
+    if(!$('#editor-conclusion').valid()) {
+        return false;
+    }
+
+    var conclusion_id = $('#editor-conclusion').val();
+    var premises_id = AGB.get_premises_ids(AGB.get_premises());
+    var assumptions_id = AGB.get_premises_ids(AGB.get_assumptions());
+    var exceptions_id = AGB.get_premises_ids(AGB.get_exceptions());
+    
+    PM.ajax_get(IMPACT.wsurl + '/statement/' + IMPACT.db,
+                function(statements) {
+                    var conclusion = AGB.get_statement_from_id(statements, conclusion_id);
+                    var premises = _.map(premises_id, _.bind(AGB.get_statement_from_id, AGB, statements));
+                    var assumptions = _.map(assumptions_id, _.bind(AGB.get_statement_from_id, AGB, statements));
+                    var exceptions = _.map(exceptions_id, _.bind(AGB.get_statement_from_id, AGB, statements));
+                    
+                    // TODO get roles
+                    // TODO assumptions
+
+                    var argument = {
+                        conclusion: conclusion,
+                        premises: _.map(premises, function(premise) {
+                                            return AGB.statement_to_premise(premise, "");
+                                        }),
+                        exceptions: _.map(exceptions, function(exception) {
+                                            return AGB.statement_to_premise(exception, "");
+                                        })
+                    };
+                    
+                    PM.ajax_post(IMPACT.wsurl + '/argument/' + IMPACT.db,
+                                 argument, AGB.argument_created, IMPACT.user, IMPACT.password);
+    
+                });
+    
+    return true;
+};
+
 // Callback invoked upon argument creation
 AGB.argument_created = function(data) {
     console.log('arguments created');
@@ -151,7 +212,8 @@ AGB.apply_scheme_changed = function() {
         AGB.prepare_argument_edition({pre_edition: AGB.pre_edition_with_scheme,
                                       on_save: AGB.save_argument_with_scheme});
     } else {
-        AGB.prepare_argument_edition({pre_edition: AGB.pre_edition_without_scheme});
+        AGB.prepare_argument_edition({pre_edition: AGB.pre_edition_without_scheme,
+                                      on_save: AGB.save_argument_without_scheme});
     }
 };
 
@@ -169,10 +231,13 @@ AGB.pre_edition_with_scheme = function() {
 };
 
 // Add some inputs for select premises when editing without a scheme
-AGB.add_premises_inputs = function(id) {
-    $(id).append(ich.premiseeditorwithoutscheme());
-    $(id).append(ich.premiseeditorwithoutscheme());
-    $(id).append(ich.premiseeditorwithoutscheme());
+// @id is either '#argument-premises', '#argument-assumptions',
+// '#argument-exceptions'
+// @nb number of inputs to create
+AGB.add_premises_inputs = function(id, nb) {
+    for(var i = 0; i < nb; i++) {
+        $(id).append(ich.premiseeditorwithoutscheme());    
+    }
     
     $(id + '-extra').append(ich.addmore());
     $(id + '-extra').append(" or ");
@@ -195,7 +260,6 @@ AGB.add_premises_inputs = function(id) {
 AGB.add_more_premises_inputs = function(id) {
     $(id).append(ich.premiseeditorwithoutscheme());
     $(id).append(ich.premiseeditorwithoutscheme());
-    $(id).append(ich.premiseeditorwithoutscheme());
 
     AGB.update_conclusion_premises_candidates_without_scheme();
     
@@ -207,6 +271,7 @@ AGB.add_more_premises_inputs = function(id) {
 AGB.prepare_argument_edition = function(mode) {
     mode.pre_edition();
     $('#save-argument').unbind('click');
+    $('#editor-conclusion').unbind('change');
     $('#save-argument').click(_.bind(AGB.post_argument_edition, AGB, mode.on_save));
 };
 
@@ -214,7 +279,10 @@ AGB.prepare_argument_edition = function(mode) {
 // This call the specific post method and refreshes
 // the display of the argument graph
 AGB.post_argument_edition = function(post_edition) {
-    post_edition();
+    if(!post_edition()) {
+        // an error occurs
+        return false;
+    }
     AGB.remove_argument_editor();
     AGB.display_argumentgraph(IMPACT.db);
     return false; 
@@ -229,9 +297,9 @@ AGB.pre_edition_without_scheme = function() {
     $('#argument-assumptions').empty();
     $('#new-statement-for-conclusion').unbind('click');
     
-    AGB.add_premises_inputs('#argument-premises');
-    AGB.add_premises_inputs('#argument-assumptions');
-    AGB.add_premises_inputs('#argument-exceptions');
+    AGB.add_premises_inputs('#argument-premises', 3);
+    AGB.add_premises_inputs('#argument-assumptions', 1);
+    AGB.add_premises_inputs('#argument-exceptions', 1);
 
     AGB.update_conclusion_premises_candidates_without_scheme();
 
@@ -261,9 +329,7 @@ AGB.update_conclusion_premises_candidates_without_scheme = function() {
                                                  formatSelection: AGB.format_selected_statement,
                                                  formatResult: AGB.statement_text,
                                                  initSelection: function(element) {
-                                                     return _.find(statements, function(statement) {
-                                                                       return statement.id == element.val();
-                                                                   });
+                                                     return AGB.get_statement_from_id(statements, element.val());
                                                  }});
                            });
                 },
