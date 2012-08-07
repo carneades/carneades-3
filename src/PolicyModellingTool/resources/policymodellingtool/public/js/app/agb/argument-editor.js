@@ -137,12 +137,6 @@ AGB.argumentgraph_newargument = function() {
     $('input:radio[name=apply-scheme]:nth(0)').attr('checked',true);
 
     $('#cancel-argument').click(AGB.remove_argument_editor);
-    
-    $('#argument-editor-scheme').change(AGB.scheme_changed);
-    $('#editor-conclusion').change(AGB.conclusion_changed);
-    $('input:radio[name=apply-scheme]').change(AGB.apply_scheme_changed);
-
-    $('#argument-editor-conclusion-and-premises').hide();
 
     AGB.prepare_argument_edition({pre_edition: AGB.pre_edition_with_scheme,
                                   on_save: AGB.save_argument_with_scheme});
@@ -169,41 +163,43 @@ AGB.pre_edition_with_scheme = function() {
     } else {
         $('#argument-editor-conclusion-and-premises').show();
     }
-};
-
-// Prepares edition for editing without a scheme
-AGB.pre_edition_without_scheme = function() {
-    $('#scheme-selection').hide();
-    $('#argument-editor-conclusion-and-premises').show();
-    $('#argument-premises').empty();
-    $('#argument-assumptions').empty();
-    $('#argument-exceptions').empty();
-
-    AGB.add_premise_inputs('#argument-premises');
+    $('#editor-conclusion').change(AGB.conclusion_changed);
+    $('#argument-editor-scheme').change(AGB.scheme_changed);
+    $('input:radio[name=apply-scheme]').change(AGB.apply_scheme_changed);
 };
 
 // Add some inputs for select premises when editing without a scheme
-AGB.add_premise_inputs = function(id) {
-    PM.ajax_get(IMPACT.wsurl + '/statement/' + IMPACT.db,
-                function(statements) {
-                    $(id).append(ich.premiseeditorwithoutscheme());
-                    $(id).append(ich.premiseeditorwithoutscheme());
-                    $(id).append(ich.premiseeditorwithoutscheme());
+AGB.add_premises_inputs = function(id) {
+    $(id).append(ich.premiseeditorwithoutscheme());
+    $(id).append(ich.premiseeditorwithoutscheme());
+    $(id).append(ich.premiseeditorwithoutscheme());
+    
+    $(id + '-extra').append(ich.addmore());
+    $(id + '-extra').append(" or ");
+    $(id + '-extra').append(ich.newstatementlink());
+    
+    $(id + '-extra input[type=submit]').click(
+        _.bind(AGB.add_more_premises_inputs, AGB, id));
+    
+    // adds a 'create statement' link listener
+    $(id + '-extra a:last').click(
+        _.bind(AGB.argumentgraph_newstatement,
+               AGB,
+               {atom: "",
+                save_callback:
+                AGB.update_conclusion_premises_candidates_without_scheme}));
 
-                    _.each($('#argument-editor-conclusion-and-premises input[type=hidden]'),
-                          function(input) {
-                              $(input).select2('destroy');
-                              $(input).select2({data: {results: statements,
-                                                       text: function(statement) {
-                                                           return AGB.statement_text(statement);
-                                                       }
-                                                      },
-                                                placeholder: "Select a statement",
-                                                formatSelection: AGB.format_selected_statement,
-                                                formatResult: AGB.statement_text});
-                          });
-                },
-               PM.on_error);
+};
+
+// Add more premises input fields
+AGB.add_more_premises_inputs = function(id) {
+    $(id).append(ich.premiseeditorwithoutscheme());
+    $(id).append(ich.premiseeditorwithoutscheme());
+    $(id).append(ich.premiseeditorwithoutscheme());
+
+    AGB.update_conclusion_premises_candidates_without_scheme();
+    
+    return false;
 };
 
 // Prepares the argument editor for editing either in a mode where a
@@ -214,6 +210,9 @@ AGB.prepare_argument_edition = function(mode) {
     $('#save-argument').click(_.bind(AGB.post_argument_edition, AGB, mode.on_save));
 };
 
+// Called after creating an argument.
+// This call the specific post method and refreshes
+// the display of the argument graph
 AGB.post_argument_edition = function(post_edition) {
     post_edition();
     AGB.remove_argument_editor();
@@ -221,15 +220,57 @@ AGB.post_argument_edition = function(post_edition) {
     return false; 
 };
 
-// Enables the editor to allow an edition without being constrained by
-// an argument scheme
-AGB.prepare_edition_without_scheme = function() {
-    $('#scheme-selection').show();
+// Prepares edition for editing without a scheme
+AGB.pre_edition_without_scheme = function() {
+    $('#scheme-selection').hide();
+    $('#argument-editor-conclusion-and-premises').show();
     $('#argument-premises').empty();
     $('#argument-exceptions').empty();
     $('#argument-assumptions').empty();
+    $('#new-statement-for-conclusion').unbind('click');
+    
+    AGB.add_premises_inputs('#argument-premises');
+    AGB.add_premises_inputs('#argument-assumptions');
+    AGB.add_premises_inputs('#argument-exceptions');
+
+    AGB.update_conclusion_premises_candidates_without_scheme();
+
+    // new statement link
+    $('#new-statement-for-conclusion').click(
+        _.bind(AGB.argumentgraph_newstatement,
+               AGB,
+               {atom: "",
+                save_callback: 
+                AGB.update_conclusion_premises_candidates_without_scheme}));
 };
 
+// Updates the list of candidates in the input fields of the conclusion
+// and of the premises
+AGB.update_conclusion_premises_candidates_without_scheme = function() {
+    PM.ajax_get(IMPACT.wsurl + '/statement/' + IMPACT.db,
+                function(statements) {
+                    _.each($('#argument-editor-conclusion-and-premises input[type=hidden]'),
+                           function(input) {
+                               $(input).select2('destroy');
+                               $(input).select2({data: {results: statements,
+                                                        text: function(statement) {
+                                                            return AGB.statement_text(statement);
+                                                        }
+                                                       },
+                                                 placeholder: "Select a statement",
+                                                 formatSelection: AGB.format_selected_statement,
+                                                 formatResult: AGB.statement_text,
+                                                 initSelection: function(element) {
+                                                     return _.find(statements, function(statement) {
+                                                                       return statement.id == element.val();
+                                                                   });
+                                                 }});
+                           });
+                },
+                PM.on_error);
+    
+    return false;
+};
 
 // Set the list of candidates for the conclusion
 AGB.set_conclusion_candidates = function(atom) {
