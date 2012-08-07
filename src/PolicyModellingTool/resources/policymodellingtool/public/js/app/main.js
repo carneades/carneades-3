@@ -291,7 +291,9 @@ PM.load_templates = function(toolboxState) {
             'argumenteditor',
             'metadataeditor',
             'premiseeditor',
-            'premiseeditorwithoutscheme'],
+            'premiseeditorwithoutscheme',
+            'addmore',
+            'newstatementlink'],
            function(name) {
                var url = toolboxState == undefined ?
                    'site/{0}.html'.format(name) :
