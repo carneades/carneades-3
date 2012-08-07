@@ -12,7 +12,8 @@
   (:use carneades.engine.uuid
         carneades.engine.statement
         carneades.engine.dublin-core
-        carneades.engine.unify))
+        carneades.engine.unify
+        carneades.engine.utils))
 
 (defrecord Premise
   [statement   ; positive literal
@@ -149,11 +150,12 @@
   "argument -> seq-of argument
    Returns an undercutter for each exception of the argument"
   [arg]
-  (map (fn [e] (make-argument
-                :id (make-urn-symbol)
-                :scheme (:role e)
-                :conclusion `(~'undercut ~(:id arg))
-                :premises [e]))
+  (map (fn [e]
+         (make-argument
+          :id (make-urn-symbol)
+          :scheme (safe-read-string (:role e))
+          :conclusion `(~'undercut ~(:id arg))
+          :premises [e]))
        (:exceptions arg)))
   
 
