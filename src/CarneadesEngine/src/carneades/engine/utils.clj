@@ -256,4 +256,7 @@ greater than the length of s."
 
 (defn safe-read-string
   [s]
-  (binding [*read-eval* false] (read-string s)))
+  (if (empty? s)
+    nil
+    (binding [*read-eval* false]
+      (read-string s))))
