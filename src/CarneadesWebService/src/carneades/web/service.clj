@@ -91,7 +91,10 @@
          :conclusion (unpack-statement (:conclusion arg))
          :premises (map (fn [p]
                           (map->premise (assoc p :statement (unpack-statement (:statement p)))))
-                        (:premises arg))))
+                        (:premises arg))
+         :exceptions (map (fn [p]
+                          (map->premise (assoc p :statement (unpack-statement (:statement p)))))
+                        (:exceptions arg))))
 
 (defn- unpack-subs 
   "Replace keywords by logical variables in the substitutions
@@ -299,8 +302,13 @@
               arg (unpack-argument m)
               [username password] (get-username-and-password request)
               db (make-database-connection (:db (:params request)) username password)
-              argument (map->argument arg)]
-          (with-db db (json-response (create-argument argument)))))
+              argument (map->argument arg)
+              undercutters (make-undercutters argument)]
+          (prn "argument: " argument)
+          (with-db db (json-response (cons (create-argument argument)
+                                           (map (fn [undercutter]
+                                                  (create-argument undercutter))
+                                                undercutters))))))
       
   (PUT "/argument/:db/:id" request  
        (let [m (read-json (slurp (:body request)))
