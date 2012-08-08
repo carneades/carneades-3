@@ -324,12 +324,18 @@ AGB.pre_edition_without_scheme = function() {
                AGB,
                {atom: "",
                 save_callback: 
-                AGB.update_conclusion_premises_candidates_without_scheme}));
+                function(stmt_id) {
+                    AGB.update_conclusion_premises_candidates_without_scheme(
+                    function() {
+                        $('#editor-conclusion').val(stmt_id).trigger('change');
+                    });
+                }
+                }));
 };
 
 // Updates the list of candidates in the input fields of the conclusion
 // and of the premises
-AGB.update_conclusion_premises_candidates_without_scheme = function() {
+AGB.update_conclusion_premises_candidates_without_scheme = function(callback) {
     PM.ajax_get(IMPACT.wsurl + '/statement/' + IMPACT.db,
                 function(statements) {
                     _.each($('#argument-editor-conclusion-and-premises input[type=hidden]'),
@@ -347,6 +353,10 @@ AGB.update_conclusion_premises_candidates_without_scheme = function() {
                                                      return AGB.get_statement_from_id(statements, element.val());
                                                  }});
                            });
+                    
+                    if(!_.isNil(callback)) {
+                        callback();
+                    }
                 },
                 PM.on_error);
     
