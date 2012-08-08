@@ -203,9 +203,10 @@
         res (post-request (str "/argument/" dbname) carneades-web-service
                           {"authorization" auth-header}
                           (json-str arg))
-        id (read-json (:body res))
+        id (first (read-json (:body res)))
         res2 (get-request (str "/argument/" dbname "/" id) carneades-web-service)
         returned-data (read-json (:body res2))
+        
         returned-arg (unpack-argument returned-data)]
     (is (= 200 (:status res)))
     (is (= (-> conclusion :text :en) (-> returned-arg :conclusion :text :en)))
@@ -222,7 +223,7 @@
         res (post-request (str "/argument/" dbname) carneades-web-service
                           {"authorization" auth-header}
                           (json-str arg))
-        id (read-json (:body res))
+        id (first (read-json (:body res)))
         new-scheme "some-other-scheme"
         update {:scheme new-scheme}
         res2 (put-request (str "/argument/" dbname "/" id) carneades-web-service
