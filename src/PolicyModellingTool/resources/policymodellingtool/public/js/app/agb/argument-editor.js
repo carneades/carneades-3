@@ -280,7 +280,20 @@ AGB.add_premises_inputs = function(id, nb) {
                AGB,
                {atom: "",
                 save_callback:
-                AGB.update_conclusion_premises_candidates_without_scheme}));
+                function(stmt_id) {
+                    AGB.update_conclusion_premises_candidates_without_scheme(
+                        function() {
+                            // find an unfilled input to add the created statement
+                            var unfilled_input = _.find($(id + ' input[type=hidden]'),
+                                                        function(input) {
+                                                            return $(input).val() == "";
+                                                        });
+                            if(!_.isNil(unfilled_input)) {
+                                $(unfilled_input).val(stmt_id).trigger('change');
+                            }
+                    });
+                }
+               }));
 
 };
 
