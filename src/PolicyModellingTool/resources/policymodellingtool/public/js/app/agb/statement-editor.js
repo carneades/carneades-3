@@ -40,6 +40,9 @@ AGB.get_statement_data = function() {
 };
 
 // Saves the statement being edited into the database
+// @config 
+// config.save_callback: callback called with the statement's id
+// 
 AGB.save_statement = function(config) {
     var stmt = AGB.get_statement_data();
     console.log('saving statement: ');
