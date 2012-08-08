@@ -305,6 +305,7 @@
               argument (map->argument arg)
               undercutters (make-undercutters argument)]
           (prn "argument: " argument)
+          ;; TODO: assumptions?
           (with-db db (json-response (cons (create-argument argument)
                                            (map (fn [undercutter]
                                                   (create-argument undercutter))
