@@ -59,6 +59,10 @@ AGB.save_argument_with_scheme = function() {
 
     PM.ajax_post(IMPACT.wsurl + '/apply-scheme/' + IMPACT.db + '/' + scheme_id,
                  subs, AGB.argument_created, IMPACT.user, IMPACT.password);
+    
+    AGB.remove_argument_editor();
+    AGB.display_argumentgraph(IMPACT.db);
+
     return false;
 };
 
@@ -85,42 +89,66 @@ AGB.statement_to_premise = function(statement, role) {
     };
 };
 
+AGB.get_premises_content_helper = function(statements, selector, getterfn) {
+    var roles = _.map($(selector + ' .role-input'),
+                      function(r) { 
+                          return $(r).val(); 
+                      }
+                     );
+
+    var premises = getterfn();
+    
+    var premises_content = [];
+    
+    _.each(premises,
+           function(premise, index) {
+               premise = $(premise);
+               if(premise.val() != "") {
+                   var statement = AGB.get_statement_from_id(statements, premise.val());
+                   premises_content.push(AGB.statement_to_premise(statement, roles[index]));
+               }
+           });
+    
+    return premises_content;    
+};
+
+AGB.get_premises_content = function(statements) {
+    return AGB.get_premises_content_helper(statements, '#argument-premises', AGB.get_premises);
+};
+
+AGB.get_exceptions_content = function(statements) {
+    return AGB.get_premises_content_helper(statements, '#argument-exceptions', AGB.get_exceptions);
+};
+
 AGB.save_argument_without_scheme = function() {
     if(!$('#editor-conclusion').valid()) {
         return false;
     }
 
     var conclusion_id = $('#editor-conclusion').val();
-    var premises_id = AGB.get_premises_ids(AGB.get_premises());
-    var assumptions_id = AGB.get_premises_ids(AGB.get_assumptions());
+  
     var exceptions_id = AGB.get_premises_ids(AGB.get_exceptions());
     
     PM.ajax_get(IMPACT.wsurl + '/statement/' + IMPACT.db,
                 function(statements) {
                     var conclusion = AGB.get_statement_from_id(statements, conclusion_id);
-                    var premises = _.map(premises_id, _.bind(AGB.get_statement_from_id, AGB, statements));
-                    var assumptions = _.map(assumptions_id, _.bind(AGB.get_statement_from_id, AGB, statements));
-                    var exceptions = _.map(exceptions_id, _.bind(AGB.get_statement_from_id, AGB, statements));
-                    
-                    // TODO get roles
-                    // TODO assumptions
+                    var premises = AGB.get_premises_content(statements);
+                    var exceptions = AGB.get_exceptions_content(statements);
 
                     var argument = {
                         conclusion: conclusion,
-                        premises: _.map(premises, function(premise) {
-                                            return AGB.statement_to_premise(premise, "");
-                                        }),
-                        exceptions: _.map(exceptions, function(exception) {
-                                            return AGB.statement_to_premise(exception, "");
-                                        })
+                        premises: premises,
+                        exceptions: exceptions
                     };
                     
                     PM.ajax_post(IMPACT.wsurl + '/argument/' + IMPACT.db,
                                  argument, AGB.argument_created, IMPACT.user, IMPACT.password);
-    
+                    
+                    AGB.remove_argument_editor();
+                    AGB.display_argumentgraph(IMPACT.db);
                 });
     
-    return true;
+    return false;
 };
 
 // Callback invoked upon argument creation
@@ -272,20 +300,7 @@ AGB.prepare_argument_edition = function(mode) {
     mode.pre_edition();
     $('#save-argument').unbind('click');
     $('#editor-conclusion').unbind('change');
-    $('#save-argument').click(_.bind(AGB.post_argument_edition, AGB, mode.on_save));
-};
-
-// Called after creating an argument.
-// This call the specific post method and refreshes
-// the display of the argument graph
-AGB.post_argument_edition = function(post_edition) {
-    if(!post_edition()) {
-        // an error occurs
-        return false;
-    }
-    AGB.remove_argument_editor();
-    AGB.display_argumentgraph(IMPACT.db);
-    return false; 
+    $('#save-argument').click(mode.on_save);
 };
 
 // Prepares edition for editing without a scheme
@@ -298,7 +313,7 @@ AGB.pre_edition_without_scheme = function() {
     $('#new-statement-for-conclusion').unbind('click');
     
     AGB.add_premises_inputs('#argument-premises', 3);
-    AGB.add_premises_inputs('#argument-assumptions', 1);
+    // AGB.add_premises_inputs('#argument-assumptions', 1);
     AGB.add_premises_inputs('#argument-exceptions', 1);
 
     AGB.update_conclusion_premises_candidates_without_scheme();
