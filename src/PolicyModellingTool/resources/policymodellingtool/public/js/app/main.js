@@ -241,7 +241,8 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/lib/jquery.svg.js',
                    'js/lib/crypto.js',
                    'js/lib/select2.js',
-                   'js/app/utils.js'];
+                   'js/app/utils.js',
+                   'js/lib/parallel.js'];
     
     if(!is_in_toolbox) {
       scripts = scripts.concat('js/lib/jquery.address-1.4.js', 

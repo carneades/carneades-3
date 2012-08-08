@@ -354,7 +354,7 @@ AGB.update_conclusion_premises_candidates_without_scheme = function() {
 };
 
 // Set the list of candidates for the conclusion
-AGB.set_conclusion_candidates = function(atom) {
+AGB.set_conclusion_candidates = function(atom, callback) {
     PM.ajax_post(IMPACT.wsurl + '/matching-statements/' + IMPACT.db,
                  atom,
                  function(conclusion_statements_results) {
@@ -379,18 +379,28 @@ AGB.set_conclusion_candidates = function(atom) {
                                          initSelection: function(element) {
                                              return element.data(element.val());
                                          }});
+
+                     if(!_.isNil(callback)) {
+                         callback();   
+                     }
                  },
                  IMPACT.user,
                  IMPACT.password,
                  PM.on_error);
 
     // new statement link
+    $('#new-statement-for-conclusion').unbind('click');
     $('#new-statement-for-conclusion').click(
         _.bind(AGB.argumentgraph_newstatement,
                AGB,
                {atom: atom.replace(/\?/g, ''),
-                save_callback: AGB.update_conclusion_premises_candidates})
-    );
+                save_callback: function(stmt_id) {
+                    AGB.update_conclusion_premises_candidates(
+                        function() {
+                            console.log('statement id: ' + stmt_id);
+                            $('#editor-conclusion').val(stmt_id).trigger('change');
+                    }); 
+                }}));
 };
 
 
@@ -401,7 +411,7 @@ AGB.set_conclusion_candidates = function(atom) {
 // @atom is the atom of
 // the premise on which the current substitutions of the argument
 // being edited have been applied
-AGB.set_premise_candidates = function(id, premise, atom) {
+AGB.set_premise_candidates = function(id, premise, atom, callback) {
     console.log('set_premise_candidates atom:');
     console.log(atom);
     var p = $(_.filter($(id + ' .statement-select'),
@@ -433,7 +443,10 @@ AGB.set_premise_candidates = function(id, premise, atom) {
                                     return element.data(element.val());
                                 }
                                });
-
+                     
+                     if(!_.isNil(callback)) {
+                         callback();
+                     }
                  },
                  IMPACT.user,
                  IMPACT.password,
@@ -480,14 +493,15 @@ AGB.conclusion_changed = function() {
 };
 
 // Updates the candidates for a premise
-AGB.update_premises_candidates = function(id, subs, premise) {
+AGB.update_premises_candidates = function(id, subs, callback, premise) {
     PM.ajax_post(IMPACT.wsurl + '/apply-substitutions',
                  {statement: AGB.sexpr_to_str(premise.statement.atom),
                   substitutions: subs},
                  function(atom) {
                      AGB.set_premise_candidates(id,
                                                 premise,
-                                                AGB.sexpr_to_str(atom));
+                                                AGB.sexpr_to_str(atom),
+                                                callback);
                  },
                  IMPACT.user,
                  IMPACT.password,
@@ -495,28 +509,41 @@ AGB.update_premises_candidates = function(id, subs, premise) {
 };
 
 // Updates conclusion candidates
-AGB.update_conclusion_candidates = function(conclusion, subs) {
+AGB.update_conclusion_candidates = function(conclusion, subs, callback) {
   PM.ajax_post(IMPACT.wsurl + '/apply-substitutions',
                  {statement: AGB.sexpr_to_str(conclusion),
                   substitutions: subs},
                  function(atom) {
-                     AGB.set_conclusion_candidates(AGB.sexpr_to_str(atom));
+                     AGB.set_conclusion_candidates(AGB.sexpr_to_str(atom), callback);
                  },
                  IMPACT.user,
                  IMPACT.password,
-                 PM.on_error)  ;
+                 PM.on_error);
 };
 
 // Updates candidates for the premises and conclusion to reflect the
 // current substitutions
-AGB.update_conclusion_premises_candidates = function() {
+AGB.update_conclusion_premises_candidates = function(callback) {
     var subs = AGB.get_argument_substitutions();
     var scheme = AGB.current_scheme();
 
-    AGB.update_conclusion_candidates(scheme.conclusion, subs);
-    _.each(scheme.premises, _.bind(AGB.update_premises_candidates, AGB, '#argument-premises', subs));
-    _.each(scheme.assumptions, _.bind(AGB.update_premises_candidates, AGB, '#argument-assumptions', subs));
-    _.each(scheme.exceptions, _.bind(AGB.update_premises_candidates, AGB, '#argument-exceptions', subs));
+    var nb_calls_executed = 0;
+    var nb_calls = 1 /* conclusion */ + scheme.premises.length +
+        scheme.assumptions.length + scheme.exceptions.length;
+
+    var on_ajax_calls_finished = function() {
+        nb_calls_executed++;
+        if(nb_calls_executed == nb_calls) {
+            if(!_.isNil(callback)) {
+                callback();
+            }
+        }
+    }; 
+    
+    AGB.update_conclusion_candidates(scheme.conclusion, subs, on_ajax_calls_finished);
+    _.each(scheme.premises, _.bind(AGB.update_premises_candidates, AGB, '#argument-premises', subs, on_ajax_calls_finished));
+    _.each(scheme.assumptions, _.bind(AGB.update_premises_candidates, AGB, '#argument-assumptions', subs, on_ajax_calls_finished));  
+    _.each(scheme.exceptions, _.bind(AGB.update_premises_candidates, AGB, '#argument-exceptions', subs, on_ajax_calls_finished));
 
 };
 
