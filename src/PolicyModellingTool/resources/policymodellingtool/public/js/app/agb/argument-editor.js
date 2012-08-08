@@ -478,7 +478,13 @@ AGB.add_premises = function(id, premises) {
                           AGB,
                           {atom: AGB.sexpr_to_str(premise.statement.atom).replace(/\?/g, ''),
                            save_callback:
-                           AGB.update_conclusion_premises_candidates}));
+                           function(stmt_id) {
+                               AGB.update_conclusion_premises_candidates(
+                                   function() {
+                                       p.val(stmt_id).trigger('change');
+                                   });
+                           }
+                           }));
 
                AGB.set_premise_candidates(id,
                                           premise,
