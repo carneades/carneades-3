@@ -19,4 +19,3 @@
       (wrap-stacktrace)))
 
 ;; (defonce impact-server (run-jetty #'impact-app {:join? false :port 8080}))
-
