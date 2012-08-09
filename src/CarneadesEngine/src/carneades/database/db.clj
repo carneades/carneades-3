@@ -406,9 +406,17 @@
     res [(str "SELECT id FROM statement WHERE atom='" (str atom) "'")]
     (doall (map :id res))))
 
+(defn statement-created?
+  "Returns true if the statement has been created in the database"
+  [statement]
+  (jdbc/with-query-results 
+    res ["SELECT id FROM statement WHERE id=?" (:id statement)]
+    (seq res)))
+
 (defn get-statement
   "literal -> string
    If a statement for the atom of the literal exists in the database,
+   or a statement for the id of the statement,
    the id of the first matching statement is returned, otherwise a new
    statement for the literal is first created and its id is
    returned."
@@ -416,7 +424,10 @@
   {:pre [(literal? literal)]}
   (if (urn-symbol? literal)
     (str literal)
-    (or (first (statements-for-atom (literal-atom literal)))
+    (or (and (statement? literal)
+             (statement-created? literal)
+             (:id literal))
+        (first (statements-for-atom (literal-atom literal)))
         (create-statement literal))))
  
 (defn update-statement
