@@ -448,9 +448,9 @@ AGB.set_premise_candidates = function(id, premise, atom, callback) {
                      console.log('premise result:');
                      console.log(premise_results);
                      _.each(premise_results, function(result) {
-                                if(!AGB.is_grounded(atom)) {
+                                //                                if(!AGB.is_grounded(atom)) {
                                     p.data(result.statement.id, result);
-                                }
+                                // }
                                 result.id = result.statement.id;
                             });
                      p.select2("destroy");
@@ -563,7 +563,7 @@ AGB.update_conclusion_premises_candidates = function(callback) {
     var on_ajax_calls_finished = function() {
         nb_calls_executed++;
         if(nb_calls_executed == nb_calls) {
-            if(!_.isNil(callback)) {
+            if(_.isFunction(callback)) {
                 callback();
             }
         }
