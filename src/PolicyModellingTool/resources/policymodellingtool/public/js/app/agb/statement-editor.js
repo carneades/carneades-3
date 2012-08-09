@@ -29,8 +29,7 @@ AGB.argumentgraph_newstatement = function(config) {
 
 // Returns the data of entered in the statement editor as an object
 AGB.get_statement_data = function() {
-    return {text: {en: $('#statement-editor-text').val() == "" ? 
-                   null : $('#statement-editor-text').val()},
+    return {text: {en: $('#statement-editor-text').val()},
             standard: $('#statement-editor-standard').val(),
             main: $('input:radio[name=main]:checked').val(),
             weight: $('#statement-editor-weight').val() == "" ?
