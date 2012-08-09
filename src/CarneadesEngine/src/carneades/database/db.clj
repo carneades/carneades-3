@@ -410,7 +410,7 @@
   "Returns true if the statement has been created in the database"
   [statement]
   (jdbc/with-query-results 
-    res ["SELECT id FROM statement WHERE id=?" (:id statement)]
+    res ["SELECT id FROM statement WHERE id=?" (str (:id statement))]
     (seq res)))
 
 (defn get-statement
