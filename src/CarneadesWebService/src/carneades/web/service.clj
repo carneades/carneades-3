@@ -512,19 +512,25 @@
 	;; apply the scheme with the given id to the substitutions in the body
 	;; and add the resulting arguments, if they are ground, to the 
 	;; database. Returns a list of the ids of the new arguments.
-        (let [subs (unpack-subs (read-json (slurp (:body request)))),
+        (let [data (read-json (slurp (:body request)))
+              subs (unpack-subs (:subs data))
+              attributes (:attributes data)
               scheme (get liverpool-schemes-by-id (symbol (:id (:params request))))]
-          (prn "apply-scheme")
-          (prn subs)
           (let [responses (instantiate-scheme scheme subs)
                 [username password] (get-username-and-password request)
                 dbconn (make-database-connection (:db (:params request)) username password)]
             (prn responses)
             (with-db dbconn
               (json-response 
-               (reduce (fn [l r]
-                         (assume (:assumptions r))
-                         (conj l (create-argument (:argument r))))
+               (reduce (fn [ids response]
+                         (assume (:assumptions response))
+                         (if (seq ids)
+                           (conj ids (create-argument (:argument response)))
+                           ;; the first argument is the main one. It is
+                           ;; created with the attributes sent to the service
+                           (conj ids (create-argument (merge
+                                                       (:argument response)
+                                                       attributes)))))
                        []
                        responses))))))
 
