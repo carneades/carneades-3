@@ -66,7 +66,8 @@ AGB.save_argument_with_scheme = function() {
                                header: AGB.get_metadata_data()}},
                  AGB.argument_created,
                  IMPACT.user,
-                 IMPACT.password);
+                 IMPACT.password,
+                 PM.on_error);
 
     AGB.remove_argument_editor();
     AGB.display_argumentgraph(IMPACT.db);
@@ -165,7 +166,7 @@ AGB.save_argument_without_scheme = function() {
                     };
                     
                     PM.ajax_post(IMPACT.wsurl + '/argument/' + IMPACT.db,
-                                 argument, AGB.argument_created, IMPACT.user, IMPACT.password);
+                                 argument, AGB.argument_created, IMPACT.user, IMPACT.password, PM.on_error);
                     
                     AGB.remove_argument_editor();
                     AGB.display_argumentgraph(IMPACT.db);
