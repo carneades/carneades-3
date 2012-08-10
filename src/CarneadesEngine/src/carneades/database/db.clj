@@ -406,6 +406,14 @@
     res [(str "SELECT id FROM statement WHERE atom='" (str atom) "'")]
     (doall (map :id res))))
 
+(defn premises-for-statement
+  "Queries the database to find premises with this statement's id.
+   Returns a sequence of ids."
+  [id]
+  (jdbc/with-query-results 
+    res ["SELECT id FROM premise WHERE statement=?" id]
+    (doall (map :id res))))
+
 (defn statement-created?
   "Returns true if the statement has been created in the database"
   [statement]
@@ -716,13 +724,14 @@
   (jdbc/with-query-results 
     res1 ["SELECT id FROM premise WHERE argument=?" id]
     (doseq [p res1] (delete-premise (:id p))))
+  ; finally delete the argument itself
+  (jdbc/delete-rows :argument ["id=?" id])
   ; now delete the header of the argument, if it has one
   (jdbc/with-query-results 
     res1 ["SELECT header FROM argument WHERE id=?" id]
+    (prn "res1: " res1)
     (if (:header (first res1))
       (delete-metadata (:header (first res1)))))
-  ; finally delete the argument itself
-  (jdbc/delete-rows :argument ["id=?" id])
   true)
 
 ;;; Namespaces
