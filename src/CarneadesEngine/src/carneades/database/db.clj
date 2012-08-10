@@ -722,13 +722,13 @@
   [id]
   ; first delete the premises of argument
   (jdbc/with-query-results 
-    res1 ["SELECT id FROM premise WHERE argument=?" id]
+    res1 ["SELECT id FROM premise WHERE argument=?" (str id)]
     (doseq [p res1] (delete-premise (:id p))))
   ; finally delete the argument itself
-  (jdbc/delete-rows :argument ["id=?" id])
+  (jdbc/delete-rows :argument ["id=?" (str id)])
   ; now delete the header of the argument, if it has one
   (jdbc/with-query-results 
-    res1 ["SELECT header FROM argument WHERE id=?" id]
+    res1 ["SELECT header FROM argument WHERE id=?" (str id)]
     (prn "res1: " res1)
     (if (:header (first res1))
       (delete-metadata (:header (first res1)))))
