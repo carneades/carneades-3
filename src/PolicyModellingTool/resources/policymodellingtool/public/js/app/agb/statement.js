@@ -163,7 +163,7 @@ AGB.enable_statement_edition = function(db, stmtid) {
 };
 
 AGB.delete_statement = function(db, stmtid) {
-    if(confirm('Delete this statement and the arguments and premises to which it is linked to?')) {
+    if(confirm('Delete this statement and its linked arguments?')) {
         PM.ajax_delete(IMPACT.wsurl + '/statement/' + db + '/' + stmtid,
                        function(e) {
                            console.log('statement deleted');
