@@ -1,3 +1,5 @@
+"use strict";
+
 // Returns the JQuery premises object of the argument editor
 AGB.get_premises = function() {
     return $('#argument-premises input.statement-select.required');
@@ -58,8 +60,10 @@ AGB.save_argument_with_scheme = function() {
     console.log(subs);
 
     PM.ajax_post(IMPACT.wsurl + '/apply-scheme/' + IMPACT.db + '/' + scheme_id,
-                 {subs: subs, attributes: {strict: AGB.get_strict_attr(),
-                                           weight: AGB.get_weight_attr()}},
+                 {subs: subs,
+                  attributes: {strict: AGB.get_strict_attr(),
+                               weight: AGB.get_weight_attr(),
+                               header: AGB.get_metadata_data()}},
                  AGB.argument_created,
                  IMPACT.user,
                  IMPACT.password);
@@ -156,7 +160,8 @@ AGB.save_argument_without_scheme = function() {
                         premises: premises,
                         exceptions: exceptions,
                         strict: AGB.get_strict_attr(),
-                        weight: AGB.get_weight_attr()
+                        weight: AGB.get_weight_attr(),
+                        header: AGB.get_metadata_data()
                     };
                     
                     PM.ajax_post(IMPACT.wsurl + '/argument/' + IMPACT.db,
@@ -223,19 +228,21 @@ AGB.format_selected_matching_result = function(result) {
 // Creates a new argument editor
 AGB.argumentgraph_newargument = function() {
     $('#argumenteditor').html(AGB.create_argument_editor());
+    $('#argument-header').html(AGB.create_metadata_editor());
 
     PM.ajax_get(IMPACT.wsurl + '/scheme',
                function(schemes) {
-                   $('#argument-editor-scheme').select2({formatResult: AGB.format_filtered_scheme,
-                                                         formatSelection: AGB.format_selected_scheme, 
-                                                         placeholder: "Select a scheme",
-                                                         data: {
-                                                             results: schemes,
-                                                             text: function(scheme) {
-                                                                 return scheme.header.title;
-                                                             }
-                                                         }
-                                                        });
+                   $('#argument-editor-scheme').select2(
+                       {formatResult: AGB.format_filtered_scheme,
+                        formatSelection: AGB.format_selected_scheme, 
+                        placeholder: "Select a scheme",
+                        data: {
+                            results: schemes,
+                            text: function(scheme) {
+                                return scheme.header.title;
+                            }
+                        }
+                       });
                
                });
     
