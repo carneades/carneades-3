@@ -58,11 +58,12 @@ AGB.save_argument_with_scheme = function() {
     console.log(subs);
 
     PM.ajax_post(IMPACT.wsurl + '/apply-scheme/' + IMPACT.db + '/' + scheme_id,
-                 {subs: subs, attributes: {strict: AGB.get_strict_attribute()}},
+                 {subs: subs, attributes: {strict: AGB.get_strict_attr(),
+                                           weight: AGB.get_weight_attr()}},
                  AGB.argument_created,
-                 IMPACT.user, 
+                 IMPACT.user,
                  IMPACT.password);
-    
+
     AGB.remove_argument_editor();
     AGB.display_argumentgraph(IMPACT.db);
 
@@ -123,9 +124,17 @@ AGB.get_exceptions_content = function(statements) {
     return AGB.get_premises_content_helper(statements, '#argument-exceptions', AGB.get_exceptions);
 };
 
-AGB.get_strict_attribute = function() {
+AGB.get_strict_attr = function() {
     return $('input[name=strict]:checked').val() == "yes";
 };
+
+AGB.get_weight_attr = function() {
+    if($('#argument-editor-weight').val() == "") {
+        return 0.5;
+    }
+    return parseFloat($('#argument-editor-weight').val());
+};
+
 
 AGB.save_argument_without_scheme = function() {
     if(!$('#editor-conclusion').valid()) {
@@ -146,7 +155,8 @@ AGB.save_argument_without_scheme = function() {
                         conclusion: conclusion,
                         premises: premises,
                         exceptions: exceptions,
-                        strict: AGB.get_strict_attribute()
+                        strict: AGB.get_strict_attr(),
+                        weight: AGB.get_weight_attr()
                     };
                     
                     PM.ajax_post(IMPACT.wsurl + '/argument/' + IMPACT.db,
