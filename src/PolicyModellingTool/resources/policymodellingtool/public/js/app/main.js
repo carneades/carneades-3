@@ -255,6 +255,7 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
 
 // loads templates *synchronously*
 PM.load_templates = function(toolboxState) {
+    // loads partial templates
     _.each([{name: 'menu', url: 'site/menu.html'},
             {name: 'pmmenu', url: 'site/pmmenu.html'},
             {name: 'metadata', url: 'site/metadata.html'},
@@ -271,6 +272,8 @@ PM.load_templates = function(toolboxState) {
                               ich.addPartial(template.name, content);
                           });
            });
+
+    // loads templates
     _.each(['admin',
             'argumentgraph',
             'argument',
@@ -288,6 +291,7 @@ PM.load_templates = function(toolboxState) {
             'statement',
             'statementlink',
             'ageditormenuon',
+            'statementeditormenu',
             'statementeditor',
             'argumenteditor',
             'metadataeditor',
