@@ -94,7 +94,14 @@
                         (:premises arg))
          :exceptions (map (fn [p]
                           (map->premise (assoc p :statement (unpack-statement (:statement p)))))
-                        (:exceptions arg))))
+                          (:exceptions arg))
+         :header (map->metadata (:header arg))))
+
+(defn unpack-arg-attrs
+  [attrs]
+  (if (:header attrs)
+    (assoc attrs :header (map->metadata (:header attrs)))
+    attrs))
 
 (defn- unpack-subs 
   "Replace keywords by logical variables in the substitutions
@@ -514,12 +521,12 @@
 	;; database. Returns a list of the ids of the new arguments.
         (let [data (read-json (slurp (:body request)))
               subs (unpack-subs (:subs data))
-              attributes (:attributes data)
+              attributes (unpack-arg-attrs (:attributes data))
               scheme (get liverpool-schemes-by-id (symbol (:id (:params request))))]
           (let [responses (instantiate-scheme scheme subs)
                 [username password] (get-username-and-password request)
                 dbconn (make-database-connection (:db (:params request)) username password)]
-            (prn responses)
+            (prn "attributes: " attributes)
             (with-db dbconn
               (json-response 
                (reduce (fn [ids response]
