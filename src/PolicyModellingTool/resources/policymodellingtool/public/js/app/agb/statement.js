@@ -1,3 +1,4 @@
+"use strict";
 
 AGB.statement_url = function(db, stmtid)
 {
@@ -32,6 +33,7 @@ AGB.display_statement = function(db, stmtid)
                                            window.open('/impactws/export/{0}'.format(db), 'CAF XML');
                                            return false; 
                                        });
+                    AGB.enable_statement_edition(db, stmtid);
                 },
                 PM.on_error);;
 }
@@ -150,4 +152,27 @@ AGB.statement_in = function(statement)
 AGB.statement_out = function(statement)
 {
     return (statement.value != null) && (statement.value < 0.001);
+};
+
+AGB.enable_statement_edition = function(db, stmtid) {
+    $('#menus').append(ich.statementeditormenu());
+    $('#delete-statement').click(_.bind(AGB.delete_statement, AGB, db, stmtid));
+
+    
+    return false;
+};
+
+AGB.delete_statement = function(db, stmtid) {
+    PM.ajax_delete(IMPACT.wsurl + '/statement/' + db + '/' + stmtid,
+                   function(e) {
+                       console.log('statement deleted');
+                       console.log(e);
+                       
+                       AGB.set_argumentgraph_url(db);
+                   },
+                   IMPACT.user, 
+                   IMPACT.password,
+                   PM.on_error);
+
+    return false; 
 };

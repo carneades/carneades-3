@@ -34,3 +34,23 @@ PM.ajax_get = function(url, callback, callback_error) {
             }
         });
 };
+
+PM.ajax_delete  = function(url, callback, username, password,
+                        callback_error) {
+    $.ajax({url: url,
+            type: 'DELETE',
+            success : callback,
+            'beforeSend' : function(xhr) {
+                var bytes = Crypto.charenc.Binary.stringToBytes(username + ":" + password);
+                var base64 = Crypto.util.bytesToBase64(bytes);
+                xhr.setRequestHeader("Authorization", "Basic " + base64);
+            },
+            dataType : 'json',
+            error: function(jqXHR, textStatus) {
+                console.log('[ERROR] AJAX ' + textStatus);
+                if(!_.isNil(callback_error)) {
+                    callback_error(textStatus);
+                }
+            }
+           });
+};
