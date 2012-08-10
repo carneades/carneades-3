@@ -35,6 +35,7 @@ AGB.display_argument = function(db, argid)
                                            window.open('/impactws/export/{0}'.format(db), 'CAF XML');
                                            return false; 
                                        });
+                    AGB.enable_argument_edition(db, argid);
                 },
                 PM.on_error);
 };
@@ -108,4 +109,29 @@ AGB.argument_text = function(data, index)
 AGB.argument_link = function(db, id, text)
 {
     return '<a href="/arguments/argument/{0}/{1}" rel="address:/arguments/argument/{0}/{1}" class="argument" id="argument{1}">{2}</a>'.format(db, id, text);
+};
+
+
+AGB.enable_argument_edition = function(db, argid) {
+    $('#menus').append(ich.argumenteditormenu());
+    $('#delete-argument').click(_.bind(AGB.delete_argument, AGB, db, argid));
+    
+    return false;
+};
+
+AGB.delete_argument = function(db, argid) {
+    if(confirm('Delete this argument?')) {
+        PM.ajax_delete(IMPACT.wsurl + '/argument/' + db + '/' + argid,
+                       function(e) {
+                           console.log('argument deleted');
+                           console.log(e);
+                           
+                           AGB.set_argumentgraph_url(db);
+                       },
+                       IMPACT.user, 
+                       IMPACT.password,
+                       PM.on_error);    
+    }
+
+    return false; 
 };
