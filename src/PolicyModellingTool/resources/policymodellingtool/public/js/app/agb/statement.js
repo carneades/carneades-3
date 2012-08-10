@@ -163,16 +163,18 @@ AGB.enable_statement_edition = function(db, stmtid) {
 };
 
 AGB.delete_statement = function(db, stmtid) {
-    PM.ajax_delete(IMPACT.wsurl + '/statement/' + db + '/' + stmtid,
-                   function(e) {
-                       console.log('statement deleted');
-                       console.log(e);
-                       
-                       AGB.set_argumentgraph_url(db);
-                   },
-                   IMPACT.user, 
-                   IMPACT.password,
-                   PM.on_error);
+    if(confirm('Delete this statement and the arguments and premises to which it is linked to?')) {
+        PM.ajax_delete(IMPACT.wsurl + '/statement/' + db + '/' + stmtid,
+                       function(e) {
+                           console.log('statement deleted');
+                           console.log(e);
+                           
+                           AGB.set_argumentgraph_url(db);
+                       },
+                       IMPACT.user, 
+                       IMPACT.password,
+                       PM.on_error);    
+    }
 
     return false; 
 };

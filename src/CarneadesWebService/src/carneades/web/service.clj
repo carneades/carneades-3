@@ -239,7 +239,15 @@
                 db (:db (:params request))
                 id (:id (:params request))
                 db2 (make-database-connection db username password)]
-            (with-db db2 (json-response (delete-statement id)))))
+            (with-db db2 (json-response
+                          (let [stmt (read-statement id)]
+                           (doseq [id (premises-for-statement id)]
+                             (delete-premise id))
+                           (doseq [pro (:pro stmt)]
+                             (delete-argument pro))
+                           (doseq [con (:con stmt)]
+                             (delete-argument con))
+                           (delete-statement id))))))
             
   (GET "/main-issues/:db" [db]
        (let [db2 (make-database-connection db "guest" "")]
