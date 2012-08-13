@@ -103,7 +103,7 @@ AGB.outline_text = function(tree, db, index)
 AGB.enable_ag_edition = function() {
     // $('#ageditormenu').remove();
     $('#menus').append(ich.ageditormenuon());
-    $('#newstatement').click(_.bind(AGB.argumentgraph_newstatement, AGB,
+    $('#newstatement').click(_.bind(AGB.show_statement_editor, AGB,
                                     {save_callback: function() {
                                          AGB.display_argumentgraph(IMPACT.db);
                                          return false;
