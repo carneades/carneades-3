@@ -302,7 +302,7 @@ AGB.add_premises_inputs = function(id, nb) {
     
     // adds a 'create statement' link listener
     $(id + '-extra a:last').click(
-        _.bind(AGB.argumentgraph_newstatement,
+        _.bind(AGB.show_statement_editor,
                AGB,
                {atom: "",
                 save_callback:
@@ -359,7 +359,7 @@ AGB.pre_edition_without_scheme = function() {
 
     // new statement link
     $('#new-statement-for-conclusion').click(
-        _.bind(AGB.argumentgraph_newstatement,
+        _.bind(AGB.show_statement_editor,
                AGB,
                {atom: "",
                 save_callback: 
@@ -440,7 +440,7 @@ AGB.set_conclusion_candidates = function(atom, callback) {
     // new statement link
     $('#new-statement-for-conclusion').unbind('click');
     $('#new-statement-for-conclusion').click(
-        _.bind(AGB.argumentgraph_newstatement,
+        _.bind(AGB.show_statement_editor,
                AGB,
                {atom: atom.replace(/\?/g, ''),
                 save_callback: function(stmt_id) {
@@ -523,7 +523,7 @@ AGB.add_premises = function(id, premises) {
 
                // adds a 'create statement' link
                $(id + ' a:last').click(
-                   _.bind(AGB.argumentgraph_newstatement,
+                   _.bind(AGB.show_statement_editor,
                           AGB,
                           {atom: AGB.sexpr_to_str(premise.statement.atom).replace(/\?/g, ''),
                            save_callback:
