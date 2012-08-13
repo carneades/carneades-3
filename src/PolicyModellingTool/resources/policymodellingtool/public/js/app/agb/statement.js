@@ -33,7 +33,7 @@ AGB.display_statement = function(db, stmtid)
                                            window.open('/impactws/export/{0}'.format(db), 'CAF XML');
                                            return false; 
                                        });
-                    AGB.enable_statement_edition(db, stmtid);
+                    AGB.enable_statement_edition(db, info);
                 },
                 PM.on_error);;
 }
@@ -107,6 +107,26 @@ AGB.statement_prefix = function(statement) {
     }
 };
 
+AGB.statement_standard = function(statement) {
+    if(statement.standard == "pe") {
+        return "Preponderance of Evidence";
+    } 
+    
+    if(statement.standard == "dv") {
+        return "Dialectical Validity";
+    }
+    
+    if(statement.standard == "cce") {
+        return "Clear and Convincing Evidence";
+    }
+
+    if(statement.standard == "brd") {
+        return "Beyond Reasonable Doubt";
+    }
+    
+    return "";
+};
+
 AGB.sexpr_to_str = function(sexpr) {
     var str = "(";
     
@@ -154,9 +174,10 @@ AGB.statement_out = function(statement)
     return (statement.value != null) && (statement.value < 0.001);
 };
 
-AGB.enable_statement_edition = function(db, stmtid) {
+AGB.enable_statement_edition = function(db, info) {
     $('#menus').append(ich.statementeditormenu());
-    $('#delete-statement').click(_.bind(AGB.delete_statement, AGB, db, stmtid));
+    $('#delete-statement').click(_.bind(AGB.delete_statement, AGB, db, info.id));
+    $('#edit-statement').click(_.bind(AGB.edit_statement, AGB, db, info));
 
     
     return false;
@@ -177,4 +198,12 @@ AGB.delete_statement = function(db, stmtid) {
     }
 
     return false; 
+};
+
+AGB.edit_statement = function(db, info) {
+    AGB.show_statement_editor({update: true,
+                              statement: info,
+                              save_callback: _.bind(AGB.display_statement, AGB, db, info.id) 
+                              });
+    return false;
 };
