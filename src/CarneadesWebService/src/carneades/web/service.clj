@@ -232,6 +232,7 @@
              [username password] (get-username-and-password request)
              db (make-database-connection (:db (:params request)) username password)
              id (:id (:params request))]
+         (prn "update-statement: " m)
          (with-db db (json-response (update-statement id m)))))
       
   (DELETE "/statement/:db/:id" request

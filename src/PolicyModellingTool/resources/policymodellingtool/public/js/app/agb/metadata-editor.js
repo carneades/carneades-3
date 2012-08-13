@@ -29,3 +29,11 @@ AGB.get_metadata_data = function() {
           // title: $('#metadata-title').val(),
           description: {en: $('#metadata-description').val() }};
 };
+
+AGB.fillin_metadata_editor = function(header) {
+    if(_.isNil(header)) {
+        return;
+    }
+    
+    $('#metadata-description').val(header.description.en);
+};
