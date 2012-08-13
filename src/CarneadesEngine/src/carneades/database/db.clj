@@ -458,13 +458,17 @@
                      (if (empty? res) nil (:text (first res)))))
         text-id2  (if text-id1 
                     (do (update-translation text-id1 (:text m))
-                        header-id1)
-                    (if (:text m) (create-translation (:text m))))]
+                        text-id1)
+                    (if (:text m) (create-translation (:text m))))
+        standard (if (:standard m)
+                   (standard->integer (keyword (:standard m)))
+                   0)]
     (condp = (first (jdbc/update-values
                       :statement
                       ["id=?" id]
                       (merge m {:header header-id2
-                                :text text-id2})))
+                                :text text-id2
+                                :standard standard})))
       0 false,
       1 true)))
   
