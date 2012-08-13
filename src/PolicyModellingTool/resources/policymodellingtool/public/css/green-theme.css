@@ -48,9 +48,10 @@ p {
 	width: 725px;
 }
 
-li {
-	width: 725px;
-}
+/* the followning breaks MarkItUp! */
+/* li { */
+/* 	width: 725px; */
+/* } */
 
 .navigation {
 	margin-bottom: 18px;

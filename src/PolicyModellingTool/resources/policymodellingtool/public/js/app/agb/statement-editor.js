@@ -11,6 +11,7 @@ AGB.show_statement_editor = function(config) {
     $('#statementeditor').html(AGB.create_statement_editor());
     $('#statement-header').html(AGB.create_metadata_editor());
     $('#cancel-statement').click(AGB.remove_statement_editor);
+    
     AGB.set_statement_main(false);
     
     if(!_.isNil(config.atom)) {
@@ -33,6 +34,9 @@ AGB.show_statement_editor = function(config) {
             return false;
         }
     );
+    
+    // note: mySettings is defined in set.js
+    $('#metadata-description').markItUp(mySettings);
     
     return false;
 };
