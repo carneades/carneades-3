@@ -241,7 +241,9 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/lib/crypto.js',
                    'js/lib/select2.js',
                    'js/app/utils.js',
-                   'js/lib/parallel.js'];
+                   'js/lib/parallel.js',
+                   'js/lib/markitup/sets/markdown/set.js',
+                   'js/lib/markitup/jquery.markitup.js'];
     
     if(!is_in_toolbox) {
       scripts = scripts.concat('js/lib/jquery.address-1.4.js', 
@@ -321,15 +323,22 @@ PM.load_carneades_styles = function() {
 // They are loaded even when used inside the UID toolbox
 PM.load_app_styles = function(rootpath) {
     PM.load_style(rootpath, 'app.css');
+    PM.load_style(rootpath, 'style.css', 'js/lib/markitup/skins/markitup');
+    PM.load_style(rootpath, 'style.css', 'js/lib/markitup/sets/markdown');
 };
 
-// Load a style
-PM.load_style = function(rootpath, style) {
+// Loads a CSS style
+// @cssdir is optional and defaults to 'css'
+PM.load_style = function(rootpath, style, cssdir) {
+    if(_.isNil(cssdir)) {
+        cssdir = "css";
+    }
+
     if(_.isNil(rootpath)) {
-        $('head').append('<link href="css/{0}" rel="stylesheet" type="text/css" />'.format(style));
+        $('head').append('<link href="{0}/{1}" rel="stylesheet" type="text/css" />'.format(cssdir, style));
     } else {
         $('head').append('<link href="' + rootpath
-                         + '/css/{0}" rel="stylesheet" type="text/css" />'.format(style));
+                         + '/{0}/{1}" rel="stylesheet" type="text/css" />'.format(cssdir, style));
     }
 };
 
