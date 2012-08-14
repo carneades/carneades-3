@@ -37,7 +37,8 @@ AGB.show_statement_editor = function(config) {
     
     // note: mySettings is defined in set.js
     $('#metadata-description').markItUp(mySettings);
-    
+    $('#statement-editor-text').markItUp(mySettings);
+
     return false;
 };
 
