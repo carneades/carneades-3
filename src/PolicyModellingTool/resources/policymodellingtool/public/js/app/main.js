@@ -114,7 +114,6 @@ PM.init = function(toolboxState) {
     } else {
         PM.load_scripts(rootpath, false, PM.post_load);
     }
-
 };
 
 PM.start = function(toolboxState) {
@@ -143,7 +142,8 @@ PM.post_load_uid = function(toolboxState) {
     PM.load_templates(toolboxState);
     PM.add_address_listener();
     PM.load_app_styles(toolboxState.pmt.path);
-
+    $.ajaxSetup({beforeSend: PM.simple_auth});
+    
     // Forces update.
     $.address.update();
 };
@@ -153,6 +153,8 @@ PM.post_load = function() {
     PM.load_app_styles(null);
     PM.load_templates();
     PM.add_address_listener();
+    $.ajaxSetup({beforeSend: PM.simple_auth});
+    
     // Forces update.
     $.address.update();
 
@@ -243,7 +245,9 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/app/utils.js',
                    'js/lib/parallel.js',
                    'js/lib/markitup/sets/markdown/set.js',
-                   'js/lib/markitup/jquery.markitup.js'];
+                   'js/lib/markitup/jquery.markitup.js',
+                   'js/lib/backbone-min.js',
+                  'js/app/models/statement.js'];
     
     if(!is_in_toolbox) {
       scripts = scripts.concat('js/lib/jquery.address-1.4.js', 
