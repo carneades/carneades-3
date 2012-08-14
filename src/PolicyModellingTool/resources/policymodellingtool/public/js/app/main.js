@@ -247,7 +247,8 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/lib/markitup/sets/markdown/set.js',
                    'js/lib/markitup/jquery.markitup.js',
                    'js/lib/backbone-min.js',
-                  'js/app/models/statement.js'];
+                   'js/app/models/statement.js',
+                   'js/app/collections/statements.js'];
     
     if(!is_in_toolbox) {
       scripts = scripts.concat('js/lib/jquery.address-1.4.js', 
