@@ -224,16 +224,17 @@
               s (unpack-statement m)
               [username password] (get-username-and-password request)
               db (make-database-connection (:db (:params request)) username password)]
-          (with-db db (json-response (create-statement s)))))
+          (with-db db (json-response
+                       {:id (create-statement s)}))))
       
-  (PUT "/statement/:db/:id" request  
+  (PUT "/statement/:db" request  
        (let [m (read-json (slurp (:body request)))
              ;; s (unpack-statement m)
              [username password] (get-username-and-password request)
              db (make-database-connection (:db (:params request)) username password)
-             id (:id (:params request))]
+             id (:id m)]
          (prn "update-statement: " m)
-         (with-db db (json-response (update-statement id m)))))
+         (with-db db (json-response (update-statement id (dissoc m :id))))))
       
   (DELETE "/statement/:db/:id" request
           (let [[username password] (get-username-and-password request)
