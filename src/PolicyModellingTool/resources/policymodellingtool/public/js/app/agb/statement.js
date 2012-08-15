@@ -146,12 +146,9 @@ AGB.statement_raw_text = function(statement) {
         var text = statement.text[IMPACT.lang];
         return text;
     }
-    // if(statement.header && statement.header.description && statement.header.description[CARNEADES.lang]) {
-    //     return markdown_to_html(slice_statement(statement.header.description[aCARNEADES.lang]));
-    // }
 
     // TODO: if atom is UUID, then returns the string "statement" ?
-    return AGB.statement_prefix(statement) + statement.atom;  
+    return statement.atom;  
 };
 
 AGB.statement_text = function(statement)
