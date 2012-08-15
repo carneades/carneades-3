@@ -29,7 +29,7 @@
   (make-theory
    :header 
    (make-metadata :title "Copyright in the Knowledge Economy"
-                  :description {:en "TODO - Here some descriptions of the policies"})
+                  :description {:en ""}) ;; TODO add a description
    
    :language
    {'announcement-category (make-individual :symbol 'announcement :text {:en "Announcement" :de "Bekanntmachung"})
@@ -111,7 +111,7 @@
      :arity 3
      :forms {:en (make-form :positive "%s conducted a %s search for the copyright owner of %s."
                             :negative "%s did not conduct a %s search for the copyright owner of %s."
-                            :question "Did %s conduct an %s search for the copyright owner of %s?")}
+                            :question "Did %s conduct a %3$s search for the copyright owner of %2$s?")}
      :hint {:en "What type of search was performed to try to find the copyright owner?"}
      :category 'search
      :answers '[[] [] [standard professional none]]
