@@ -9,11 +9,10 @@
   (:require [clojure.string :as s]))
 
 (defn insert-args
-  [question stmt]
-  ;; we should use %n$s in string formats to specify arg orders?
-  (let [s (rest (literal-atom stmt))
-        argnumbers (count (re-seq #"%s" question))]
-    (apply format question (map str (take argnumbers s)))))
+  [question stmt arity]
+  ;; we use %n$s in string formats to specify arg orders
+  (let [s (rest (literal-atom stmt))]
+    (apply format question (map str (take arity s)))))
 
 (defn- get-question-text
   [stmt questiondata lang]
@@ -21,13 +20,14 @@
         selector (if (ground? stmt) :question :positive)
         question (-> questiondata :forms klang selector)
         notrans (nil? question)
+        arity (:arity questiondata)
         question (or question
                      (-> questiondata :forms :en selector))]
     (-> (if notrans
           (s/replace (translate (s/replace question "%s" "_") "en" lang)
                      "_" "%s")
           question)
-        (insert-args stmt))))
+        (insert-args stmt arity))))
 
 (defn- get-hint
   [questiondata lang]
