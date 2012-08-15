@@ -30,6 +30,14 @@ PM.display_policies = function(sectionid) {
                         $.scrollTo($('#' + sectionid));
                     }
 
+                    // hack
+                    $('a:contains(argument map)').click(
+                        function() {
+                            PM.set_arguments_url('copyright');       
+                            return false;    
+                        }
+                    );
+
                 },
                PM.on_error);
     
