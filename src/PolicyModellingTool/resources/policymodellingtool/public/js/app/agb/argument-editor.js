@@ -34,7 +34,9 @@ AGB.get_argument_substitutions = function() {
     var subs = {};
 
     if(conclusion) {
-        subs = $('#editor-conclusion').data(conclusion).substitutions;
+        if($('#editor-conclusion').data(conclusion)) {
+            subs = $('#editor-conclusion').data(conclusion).substitutions;
+        }
     }
 
     _.each(AGB.get_all_premises(),
@@ -306,7 +308,8 @@ AGB.add_premises_inputs = function(id, nb) {
                AGB,
                {atom: "",
                 save_callback:
-                function(stmt_id) {
+                function(res) {
+                    var stmt_id = res.id;
                     AGB.update_conclusion_premises_candidates_without_scheme(
                         function() {
                             // find an unfilled input to add the created statement
@@ -363,7 +366,8 @@ AGB.pre_edition_without_scheme = function() {
                AGB,
                {atom: "",
                 save_callback: 
-                function(stmt_id) {
+                function(res) {
+                    var stmt_id = res.id;
                     AGB.update_conclusion_premises_candidates_without_scheme(
                     function() {
                         $('#editor-conclusion').val(stmt_id).trigger('change');
@@ -409,9 +413,9 @@ AGB.set_conclusion_candidates = function(atom, callback) {
                  function(conclusion_statements_results) {
                      var conclusion = $('#editor-conclusion');
                      _.each(conclusion_statements_results, function(result) {
-                                if(!AGB.is_grounded(atom)) {
-                                    conclusion.data(result.statement.id, result);
-                                }
+                                //                                if(!AGB.is_grounded(atom)) {
+                                conclusion.data(result.statement.id, result);
+                                // }
                                 result.id = result.statement.id;
                             });
 
@@ -443,7 +447,8 @@ AGB.set_conclusion_candidates = function(atom, callback) {
         _.bind(AGB.show_statement_editor,
                AGB,
                {atom: atom.replace(/\?/g, ''),
-                save_callback: function(stmt_id) {
+                save_callback: function(res) {
+                    var stmt_id = res.id;
                     AGB.update_conclusion_premises_candidates(
                         function() {
                             console.log('statement id: ' + stmt_id);
@@ -527,7 +532,8 @@ AGB.add_premises = function(id, premises) {
                           AGB,
                           {atom: AGB.sexpr_to_str(premise.statement.atom).replace(/\?/g, ''),
                            save_callback:
-                           function(stmt_id) {
+                           function(res) {
+                               var stmt_id = res.id;
                                AGB.update_conclusion_premises_candidates(
                                    function() {
                                        p.val(stmt_id).trigger('change');
