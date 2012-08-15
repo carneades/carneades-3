@@ -95,7 +95,8 @@ AGB.save_statement = function(config) {
 AGB.update_statement = function(config) {
     console.log('update statement');
     var stmt = AGB.get_statement_data();
-    PM.ajax_put(IMPACT.wsurl + '/statement/' + IMPACT.db + '/' + config.statement.id, stmt,
+    stmt = _.extend(stmt, {id: config.statement.id});
+    PM.ajax_put(IMPACT.wsurl + '/statement/' + IMPACT.db, stmt,
                  _.isNil(config.save_callback) ? AGB.statement_created : config.save_callback,
                  IMPACT.user, IMPACT.password, PM.on_error);
     return false;
