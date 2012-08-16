@@ -34,6 +34,8 @@ AGB.fillin_metadata_editor = function(header) {
     if(_.isNil(header)) {
         return;
     }
-    
-    $('#metadata-description').val(header.description.en);
+  
+    if(!_.isNil(header.description) && !_.isNil(header.description.en)) {
+        $('#metadata-description').val(header.description.en);    
+    } 
 };
