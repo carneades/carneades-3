@@ -34,9 +34,8 @@ PM.PremiseCandidateView = Backbone.View.extend(
                                 return statements.get(element.val()).toJSON();
                             }});
 
-         var statement_model = this.model.get('statement');
-         if(statement_model) {
-             statement.val(statement_model.get('id')).trigger('change');    
+         if(data.statement) {
+             statement.val(data.statement.attributes.id).trigger('change');    
          } 
          
          return this;
