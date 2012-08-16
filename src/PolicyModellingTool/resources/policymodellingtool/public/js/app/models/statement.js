@@ -1,8 +1,9 @@
 PM.Statement = Backbone.Model.extend(
-    {defaults: {
-         text: {en: "" 
-         },
-         standard: "pe"
+    {defaults: function() {
+         return {
+             text: {en: ""},
+             standard: "pe"
+         };
      },
 
      url: function() {
@@ -10,7 +11,7 @@ PM.Statement = Backbone.Model.extend(
      },
 
      initialize: function(attrs) {
-         this.set(_.extend(this.defaults, attrs));
+         this.set(_.extend(this.defaults(), attrs));
      },
      
      validate: function(attrs) {
