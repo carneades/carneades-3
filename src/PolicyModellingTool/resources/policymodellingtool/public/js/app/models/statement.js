@@ -1,22 +1,28 @@
 PM.Statement = Backbone.Model.extend(
-    {url: function() {
+    {defaults: {
+         text: {en: "" 
+         },
+         standard: "pe"
+     },
+
+     url: function() {
          return IMPACT.wsurl + '/statement/' + IMPACT.db;
      },
 
-     initialize: function() {
-         
+     initialize: function(attrs) {
+         this.set(_.extend(this.defaults, attrs));
      },
      
-     validate: function(attributes) {
-         if(_.isNil(attributes.text)) {
+     validate: function(attrs) {
+         if(_.isNil(attrs.text)) {
              return "Text attribute is missing";
          }
          
-         if(_.isNil(attributes.text.en)) {
+         if(_.isNil(attrs.text.en)) {
              return "English text attribute is missing";
          }
          
-         if(_.isNil(attributes.standard)) {
+         if(_.isNil(attrs.standard)) {
              return "Standard attribute is missing";
          }
          
