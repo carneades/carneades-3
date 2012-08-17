@@ -16,7 +16,7 @@ PM.PremiseCandidateView = Backbone.View.extend(
          
          this.$el.html(ich.premisecandidate());
          
-         var role = this.$el.find('.role-input');
+         var role = this.$('.role-input');
          role.prop('disabled', !data.editableRole);
          role.val(data.role);
          
@@ -41,7 +41,7 @@ PM.PremiseCandidateView = Backbone.View.extend(
      },
      
      statement: function() {
-         return this.$el.find('input[type=hidden]');
+         return this.$('input[type=hidden]');
      },
      
      role_changed: function() {
