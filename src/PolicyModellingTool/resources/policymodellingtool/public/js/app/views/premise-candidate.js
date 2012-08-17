@@ -7,7 +7,7 @@ PM.PremiseCandidateView = Backbone.View.extend(
      },
      
      initialize: function() {
-         this.model.bind('change', this.render, this);
+         this.model.on('change', this.render, this);
          _.bindAll(this, 'role_changed', 'statement_changed', 'render');
      },
      
@@ -21,7 +21,6 @@ PM.PremiseCandidateView = Backbone.View.extend(
          role.val(data.role);
          
          var statement = this.statement();
-         
          statement.select2({data: {results: statements.toJSON(),
                                    text: function(statement) {
                                        return AGB.statement_text(statement);
@@ -50,7 +49,8 @@ PM.PremiseCandidateView = Backbone.View.extend(
      },
      
      statement_changed: function() {
-         this.model.set('statement', this.model.get('statements').get(this.statement().val()));
+         var statement = this.model.get('statements').get(this.statement().val());
+         this.model.set('statement', statement);
      }
     }
 );
