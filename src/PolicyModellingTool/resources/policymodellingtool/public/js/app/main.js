@@ -246,12 +246,15 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/lib/parallel.js',
                    'js/lib/markitup/sets/markdown/set.js',
                    'js/lib/markitup/jquery.markitup.js',
-                   'js/lib/backbone-min.js',
+                   'js/lib/backbone.js',
                    'js/app/models/statement.js',
+                   'js/app/models/argument.js',
                    'js/app/models/premise-candidate.js',
                    'js/app/collections/statements.js',
+                   'js/app/collections/arguments.js',
                    'js/app/views/argument-editor.js',
-                   'js/app/views/premise-candidate.js'];
+                   'js/app/views/premise-candidate.js'
+];
     
     if(!is_in_toolbox) {
       scripts = scripts.concat('js/lib/jquery.address-1.4.js', 
