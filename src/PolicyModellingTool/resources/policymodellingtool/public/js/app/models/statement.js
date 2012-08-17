@@ -1,17 +1,11 @@
 PM.Statement = Backbone.Model.extend(
-    {defaults: function() {
-         return {
-             text: {en: ""},
-             standard: "pe"
-         };
+    {defaults: {
+         text: {en: ""},
+         standard: "pe"
      },
 
      url: function() {
          return IMPACT.wsurl + '/statement/' + IMPACT.db;
-     },
-
-     initialize: function(attrs) {
-         this.set(_.extend(this.defaults(), attrs));
      },
      
      validate: function(attrs) {
