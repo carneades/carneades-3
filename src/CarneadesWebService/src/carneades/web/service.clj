@@ -323,10 +323,14 @@
               undercutters (make-undercutters argument)]
           (prn "argument: " argument)
           ;; TODO: assumptions?
-          (with-db db (json-response (cons (create-argument argument)
-                                           (map (fn [undercutter]
-                                                  (create-argument undercutter))
-                                                undercutters))))))
+          (with-db db
+            (let [id (create-argument argument)]
+              (json-response
+               {:id id
+                :arguments (cons id
+                                 (map (fn [undercutter]
+                                        (create-argument undercutter))
+                                      undercutters))})))))
       
   (PUT "/argument/:db/:id" request  
        (let [m (read-json (slurp (:body request)))
