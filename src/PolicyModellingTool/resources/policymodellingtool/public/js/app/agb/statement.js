@@ -144,11 +144,11 @@ AGB.sexpr_to_str = function(sexpr) {
 AGB.statement_raw_text = function(statement) {
     if(statement.text && statement.text[IMPACT.lang]) {
         var text = statement.text[IMPACT.lang];
-        return text;
+        return _.escape(text);
     }
 
     // TODO: if atom is UUID, then returns the string "statement" ?
-    return statement.atom;  
+    return _.escape(statement.atom);  
 };
 
 AGB.statement_text = function(statement)
