@@ -14,7 +14,9 @@ PM.ConclusionCandidateView = Backbone.View.extend(
      render: function() {
          var data = this.model.toJSON();
          
-         this.$el.html(ich.conclusioncandidate());
+         this.$el.html(ich.conclusioncandidate({conclusion_text: "Conclusion",
+                                                create_new_statement_text: 
+                                                "Create a new statement"}));
          
          var statement = this.statement();
          statement.select2({data: {results: data.statements.toJSON(),
@@ -46,11 +48,12 @@ PM.ConclusionCandidateView = Backbone.View.extend(
      },
      
      on_new_conclusion: function() {
+         var self = this;
          AGB.show_statement_editor({atom: "",
                                    save_callback: function() {
                                        // the statement editor is not yet implemented with backbone
                                        // so we refetch manually the statements
-                                       this.model.get('conclusion').get('statements').fetch();
+                                       self.model.get('statements').fetch();
                                    }
                                    });
          return false;
