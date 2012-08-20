@@ -29,8 +29,8 @@ PM.PremiseCandidateView = Backbone.View.extend(
                             placeholder: "Select a statement",
                             formatSelection: AGB.format_selected_statement,
                             formatResult: AGB.statement_text,
-                            initSelection: function(element) {
-                                return data.statements.get(element.val()).toJSON();
+                            initSelection: function(element, callback) {
+                                callback(data.statements.get(element.val()).toJSON());
                             }});
 
          if(data.statement) {
