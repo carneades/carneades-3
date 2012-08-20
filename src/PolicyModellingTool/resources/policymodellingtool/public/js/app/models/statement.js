@@ -13,10 +13,6 @@ PM.Statement = Backbone.Model.extend(
              return "Text attribute is missing";
          }
          
-         if(_.isNil(attrs.text.en)) {
-             return "English text attribute is missing";
-         }
-         
          if(_.isNil(attrs.standard)) {
              return "Standard attribute is missing";
          }
