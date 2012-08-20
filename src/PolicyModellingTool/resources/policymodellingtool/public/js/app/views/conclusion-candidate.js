@@ -1,24 +1,20 @@
-PM.PremiseCandidateView = Backbone.View.extend(
-    {className: "premise-candidate",
+PM.ConclusionCandidateView = Backbone.View.extend(
+    {className: "conclusion-candidate-view",
      
      events: {
-         "change input": "role_changed",
-         "change input[type=hidden]" : "statement_changed"
+         "change input[type=hidden]" : "statement_changed",
+         "click .new-statement-for-conclusion": "on_new_conclusion"
      },
      
      initialize: function() {
          this.model.on('change', this.render, this);
-         _.bindAll(this, 'role_changed', 'statement_changed', 'render');
+         _.bindAll(this, 'statement_changed', 'render');
      },
      
      render: function() {
          var data = this.model.toJSON();
          
-         this.$el.html(ich.premisecandidate());
-         
-         var role = this.$('.role-input');
-         role.prop('disabled', !data.editableRole);
-         role.val(data.role);
+         this.$el.html(ich.conclusioncandidate());
          
          var statement = this.statement();
          statement.select2({data: {results: data.statements.toJSON(),
@@ -43,16 +39,25 @@ PM.PremiseCandidateView = Backbone.View.extend(
      statement: function() {
          return this.$('input[type=hidden]');
      },
-     
-     role_changed: function() {
-         this.model.set('role', $('.role-input').val());
-     },
-     
+
      statement_changed: function() {
          var statement = this.model.get('statements').get(this.statement().val());
          this.model.set('statement', statement);
+     },
+     
+     on_new_conclusion: function() {
+         AGB.show_statement_editor({atom: "",
+                                   save_callback: function() {
+                                       // the statement editor is not yet implemented with backbone
+                                       // so we refetch manually the statements
+                                       this.model.get('conclusion').get('statements').fetch();
+                                   }
+                                   });
+         return false;
      }
+
     }
 );
+
 
 
