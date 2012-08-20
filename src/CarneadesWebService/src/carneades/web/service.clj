@@ -233,7 +233,6 @@
              [username password] (get-username-and-password request)
              db (make-database-connection (:db (:params request)) username password)
              id (:id m)]
-         (prn "update-statement: " m)
          (with-db db (json-response (update-statement id (dissoc m :id))))))
       
   (DELETE "/statement/:db/:id" request
@@ -243,13 +242,13 @@
                 db2 (make-database-connection db username password)]
             (with-db db2 (json-response
                           (let [stmt (read-statement id)]
-                           (doseq [id (premises-for-statement id)]
-                             (delete-premise id))
-                           (doseq [pro (:pro stmt)]
-                             (delete-argument pro))
-                           (doseq [con (:con stmt)]
-                             (delete-argument con))
-                           (delete-statement id))))))
+                            (doseq [id (premises-for-statement id)]
+                              (delete-premise id))
+                            (doseq [pro (:pro stmt)]
+                              (delete-argument pro))
+                            (doseq [con (:con stmt)]
+                              (delete-argument con))
+                            (delete-statement id))))))
             
   (GET "/main-issues/:db" [db]
        (let [db2 (make-database-connection db "guest" "")]
@@ -332,12 +331,15 @@
                                         (create-argument undercutter))
                                       undercutters))})))))
       
-  (PUT "/argument/:db/:id" request  
+  (PUT "/argument/:db" request  
        (let [m (read-json (slurp (:body request)))
              [username password] (get-username-and-password request)
              db (make-database-connection (:db (:params request)) username password)
-             id (:id (:params request))]
-         (with-db db (json-response (update-argument id m)))))
+             id (:id m)
+             arg (unpack-argument m)
+             arg (dissoc arg :id :undercutters :dependents
+                         :premises :exceptions :rebuttals)]
+         (with-db db (json-response (update-argument id arg)))))
       
   (DELETE "/argument/:db/:id" request
           (let [[username password] (get-username-and-password request)
