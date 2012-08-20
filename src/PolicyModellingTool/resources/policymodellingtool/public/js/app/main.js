@@ -248,6 +248,7 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/lib/backbone.js',
                    'js/app/models/statement.js',
                    'js/app/models/argument.js',
+                   'js/app/models/argument-candidate.js',
                    'js/app/models/premise-candidate.js',
                    'js/app/models/conclusion-candidate.js',
                    'js/app/collections/statements.js',
