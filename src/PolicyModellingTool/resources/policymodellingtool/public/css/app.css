@@ -42,6 +42,10 @@
     width: 600px;
 }
 
+.conclusion-candidate-view, .conclusion-candidate, .select2-container {
+    width: 600px;
+}
+
 #argument-editor-scheme {
     width: 400px;
 }
