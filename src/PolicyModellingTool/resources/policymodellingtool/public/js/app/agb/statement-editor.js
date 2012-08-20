@@ -85,9 +85,15 @@ AGB.save_statement = function(config) {
     var stmt = AGB.get_statement_data();
     console.log('saving statement: ');
     console.log(stmt);
-    PM.ajax_post(IMPACT.wsurl + '/statement/' + IMPACT.db, stmt,
-                 _.isNil(config.save_callback) ? AGB.statement_created : config.save_callback,
-                 IMPACT.user, IMPACT.password, PM.on_error);
+    var new_statement = new PM.Statement(stmt);
+    new_statement.save(null, {success: function(data) {
+                                  return _.isNil(config.save_callback) ? AGB.statement_created() : config.save_callback(data);
+                              },
+                              error: PM.on_error});
+    PM.statements.add(new_statement);
+    // PM.ajax_post(IMPACT.wsurl + '/statement/' + IMPACT.db, stmt,
+    //              _.isNil(config.save_callback) ? AGB.statement_created : config.save_callback,
+    //              IMPACT.user, IMPACT.password, PM.on_error);
     return false;
 };
 
