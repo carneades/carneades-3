@@ -1,3 +1,4 @@
+// A candidate for the conclusion of an argument
 PM.ConclusionCandidateView = Backbone.View.extend(
     {className: "conclusion-candidate-view",
      

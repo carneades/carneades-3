@@ -144,15 +144,12 @@ AGB.delete_argument = function(db, argid) {
 };
 
 AGB.edit_argument = function(db, argid) {
-    var argument = PM.arguments.get(argid);
+    var argument = PM.arguments.get(argid).clone();
     
-    // transforms the conclusion of the argument to a ConclusionCandidate
-    var conclusion = argument.get('conclusion');
-    _.extend(conclusion, {statements: PM.statements}); 
-    var conclusioncandidate = new PM.ConclusionCandidate(conclusion);
-    argument.set('conclusion', conclusioncandidate);
-    
-    var argumenteditorview = new PM.ArgumentEditorView({model: argument});
+    _.extend(argument.attributes, {statements: PM.statements});
+    var argumentcandidate = new PM.ArgumentCandidate(argument.attributes);
+
+    var argumenteditorview = new PM.ArgumentEditorView({model: argumentcandidate});
     argumenteditorview.render();
     
     $('#argumenteditor').html(argumenteditorview.$el);
