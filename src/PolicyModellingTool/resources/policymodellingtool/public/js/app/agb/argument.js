@@ -30,6 +30,12 @@ AGB.display_argument = function(db, argid)
 {
     PM.ajax_get(IMPACT.wsurl + '/argument-info/' + db + '/' + argid,
                 function(argument_data) {
+                    PM.arguments = new PM.Arguments;
+                    PM.arguments.fetch();
+                    
+                    PM.statements = new PM.Statements;
+                    PM.statements.fetch();
+                    
                     $('#browser').html(AGB.argument_html(db, argument_data));
                     $('#export').click(function (event){
                                            window.open('/impactws/export/{0}'.format(db), 'CAF XML');
@@ -115,6 +121,7 @@ AGB.argument_link = function(db, id, text)
 AGB.enable_argument_edition = function(db, argid) {
     $('#menus').append(ich.argumenteditormenu());
     $('#delete-argument').click(_.bind(AGB.delete_argument, AGB, db, argid));
+    $('#edit-argument').click(_.bind(AGB.edit_argument, AGB, db, argid));
     
     return false;
 };
@@ -134,4 +141,21 @@ AGB.delete_argument = function(db, argid) {
     }
 
     return false; 
+};
+
+AGB.edit_argument = function(db, argid) {
+    var argument = PM.arguments.get(argid);
+    
+    // transforms the conclusion of the argument to a ConclusionCandidate
+    var conclusion = argument.get('conclusion');
+    _.extend(conclusion, {statements: PM.statements}); 
+    var conclusioncandidate = new PM.ConclusionCandidate(conclusion);
+    argument.set('conclusion', conclusioncandidate);
+    
+    var argumenteditorview = new PM.ArgumentEditorView({model: argument});
+    argumenteditorview.render();
+    
+    $('#argumenteditor').html(argumenteditorview.$el);
+    
+    return false;
 };

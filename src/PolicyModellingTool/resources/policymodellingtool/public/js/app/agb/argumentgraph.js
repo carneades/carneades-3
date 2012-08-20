@@ -41,6 +41,12 @@ AGB.display_argumentgraph = function(db)
 
     PM.ajax_get(IMPACT.wsurl + '/argumentgraph-info/' + db,
                 function(data) {
+                    PM.arguments = new PM.Arguments;
+                    PM.arguments.fetch();
+                    
+                    PM.statements = new PM.Statements;
+                    PM.statements.fetch();
+
                     $('#browser').html(AGB.argumentgraph_html(db, data));
                     $('#export').click(
                         function (event){

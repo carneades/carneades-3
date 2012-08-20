@@ -16,7 +16,6 @@ var IMPACT = {
 // We don't put variables in it since mixing data and functions with objects
 // is too often a bad idea
 var PM = {
-
 };
 
 // argument browser
@@ -250,11 +249,13 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/app/models/statement.js',
                    'js/app/models/argument.js',
                    'js/app/models/premise-candidate.js',
+                   'js/app/models/conclusion-candidate.js',
                    'js/app/collections/statements.js',
                    'js/app/collections/arguments.js',
                    'js/app/views/argument-editor.js',
-                   'js/app/views/premise-candidate.js'
-];
+                   'js/app/views/premise-candidate.js',
+                   'js/app/views/argument-editor-free.js',
+                   'js/app/views/conclusion-candidate.js'];
     
     if(!is_in_toolbox) {
       scripts = scripts.concat('js/lib/jquery.address-1.4.js', 
@@ -307,12 +308,15 @@ PM.load_templates = function(toolboxState) {
             'argumenteditormenu',
             'statementeditor',
             'argumenteditor',
+            'argumenteditor2',
+            'argumenteditor2free',
             'metadataeditor',
             'premiseeditor',
             'premiseeditorwithoutscheme',
             'addmore',
             'newstatementlink',
-            'premisecandidate'],
+            'premisecandidate',
+            'conclusioncandidate'],
            function(name) {
                var url = toolboxState == undefined ?
                    'site/{0}.html'.format(name) :
