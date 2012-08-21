@@ -1,8 +1,7 @@
 PM.PremiseCandidate = Backbone.Model.extend(
     {defaults: {
-         role: "",
          editableRole: true,
-         statement: null, // the selected Statement
+         premise: null, //
          statements: null // a StatementsCollection
      },
      
