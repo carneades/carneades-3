@@ -145,13 +145,11 @@ AGB.delete_argument = function(db, argid) {
 
 AGB.edit_argument = function(db, argid) {
     var argument = PM.arguments.get(argid).clone();
-    
-    _.extend(argument.attributes, {statements: PM.statements});
-    var argumentcandidate = new PM.ArgumentCandidate(argument.attributes);
-
+    var argumentcandidate = new PM.ArgumentCandidate({argument: argument.attributes,
+                                                      statements: PM.statements});
     var argumenteditorview = new PM.ArgumentEditorView({model: argumentcandidate});
+
     argumenteditorview.render();
-    
     $('#argumenteditor').html(argumenteditorview.$el);
     
     return false;

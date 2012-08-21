@@ -3,12 +3,12 @@ PM.ArgumentEditorView = Backbone.View.extend(
     {className: "argument-editor",
      
      events: {
-         
+         "click .cancel-argument": "on_cancel"
      },
      
      initialize: function() {
          this.model.on('change', this.render, this);
-         _.bindAll(this, 'render');
+         _.bindAll(this, 'render', 'on_cancel');
      },
 
      render: function() {
@@ -51,7 +51,12 @@ PM.ArgumentEditorView = Backbone.View.extend(
      
      strict_no_el: function() {
          return this.$('input:radio[name=strict]').filter('[value=no]');
-     }
+     },
      
+     on_cancel: function() {
+         this.remove();
+         return false;
+     }
+
     }
 );
