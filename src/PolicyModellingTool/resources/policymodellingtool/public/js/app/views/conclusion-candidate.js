@@ -33,7 +33,7 @@ PM.ConclusionCandidateView = Backbone.View.extend(
                             }});
 
          if(data.statement) {
-             statement.val(data.statement.attributes.id).trigger('change');    
+             statement.val(data.statement.id).trigger('change');    
          } 
          
          return this;

@@ -5,14 +5,15 @@ PM.ArgumentCandidate = Backbone.Model.extend(
      
      initialize: function(attrs) {
          // transforms the conclusion of the argument to a ConclusionCandidate
-         var conclusion = attrs.conclusion;
-         _.extend(conclusion, {statements: attrs.statements}); 
-         var conclusioncandidate = new PM.ConclusionCandidate(conclusion);
+         var conclusioncandidate = new PM.ConclusionCandidate({statement: attrs.argument.conclusion, 
+                                                               statements: attrs.statements});
          this.set('conclusion', conclusioncandidate);
+         
+         // TODO transform the premises to premises candidates
      },
 
      validate: function(attrs) {
-         if(_.isNil(attrs.conclusion)) {
+         if(_.isNil(attrs.argument.conclusion)) {
              return "Conclusion attribute is missing";
          }
 
