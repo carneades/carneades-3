@@ -30,12 +30,6 @@ AGB.display_argument = function(db, argid)
 {
     PM.ajax_get(IMPACT.wsurl + '/argument-info/' + db + '/' + argid,
                 function(argument_data) {
-                    PM.arguments = new PM.Arguments;
-                    PM.arguments.fetch();
-                    
-                    PM.statements = new PM.Statements;
-                    PM.statements.fetch();
-                    
                     $('#browser').html(AGB.argument_html(db, argument_data));
                     $('#export').click(function (event){
                                            window.open('/impactws/export/{0}'.format(db), 'CAF XML');
