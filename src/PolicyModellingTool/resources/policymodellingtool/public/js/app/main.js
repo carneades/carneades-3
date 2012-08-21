@@ -253,6 +253,7 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/app/models/conclusion-candidate.js',
                    'js/app/collections/statements.js',
                    'js/app/collections/arguments.js',
+                   'js/app/collections/premises-candidates.js',
                    'js/app/views/argument-editor.js',
                    'js/app/views/premise-candidate.js',
                    'js/app/views/argument-editor-free.js',
