@@ -3,7 +3,8 @@ PM.ArgumentEditorView = Backbone.View.extend(
     {className: "argument-editor",
      
      events: {
-         "click .cancel-argument": "on_cancel"
+         "click .cancel-argument": "on_cancel",
+         "click .save-argument": "save"
      },
      
      initialize: function() {
@@ -59,6 +60,11 @@ PM.ArgumentEditorView = Backbone.View.extend(
      on_cancel: function() {
          this.argumenteditorfreeview.remove();
          this.remove();
+         return false;
+     },
+     
+     save: function() {
+         this.model.get('premises').toJSON();
          return false;
      }
 
