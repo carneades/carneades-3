@@ -8,19 +8,22 @@ PM.ArgumentEditorFreeView = Backbone.View.extend(
      },
 
      render: function() {
-         var data = this.model.toJSON();
-         
          this.$el.html(ich.argumenteditor2free());
          
          var conclusioncandidateview = new PM.ConclusionCandidateView({model: this.model.get('conclusion')});
          conclusioncandidateview.render();
          this.$('.conclusion-candidate').html(conclusioncandidateview.$el);
          
-         // TODO uses select2.js to display conclusion
-         // attaches a listener to the conclusion to reupdate the display
          // uses premiseview to display the existing premise of the statement
          // adds a button to add new premises
          // adds buttons to remove premises
+         var self = this;
+         this.model.get('premises').each(
+             function(premise) {
+                 var premisecandidateview = new PM.PremiseCandidateView({model: premise});
+                 premisecandidateview.render();
+                 self.$('.argument-premises').append(premisecandidateview.$el);
+             });
          
          return this;
      }
