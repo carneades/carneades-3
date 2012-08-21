@@ -1,18 +1,14 @@
 PM.ArgumentCandidate = Backbone.Model.extend(
-    {defaults: {
-         weight: 0.5
-     },
-     
-     initialize: function(attrs) {
+    {initialize: function(attrs) {
          // set the ConclusionCandidate for this ArgumentCandidate
-         var conclusioncandidate = new PM.ConclusionCandidate({statement: attrs.argument.conclusion, 
+         var conclusioncandidate = new PM.ConclusionCandidate({statement: attrs.argument.get('conclusion'), 
                                                                statements: attrs.statements});
          this.set('conclusion', conclusioncandidate);
          
          // set the PremisesCandidates for this ArgumentCandidate
          var premisescandidates = new PM.PremisesCandidates;
          this.set('premises', premisescandidates);
-         _.each(attrs.argument.premises,
+         _.each(attrs.argument.get('premises'),
                function(premise) {
                    premisescandidates.add({premise: premise,
                                            statements: attrs.statements});
@@ -20,10 +16,6 @@ PM.ArgumentCandidate = Backbone.Model.extend(
      },
 
      validate: function(attrs) {
-         if(_.isNil(attrs.argument.conclusion)) {
-             return "Conclusion attribute is missing";
-         }
-
          return undefined;
      }
      
