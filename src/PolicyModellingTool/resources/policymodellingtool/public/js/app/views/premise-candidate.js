@@ -50,7 +50,7 @@ PM.PremiseCandidateView = Backbone.View.extend(
      
      role_changed: function() {
          var premise = this.model.get('premise');
-         premise.role = $('.role-input').val();
+         premise.role = this.$('.role-input').val();
          this.model.set('premise', premise);
      },
      
