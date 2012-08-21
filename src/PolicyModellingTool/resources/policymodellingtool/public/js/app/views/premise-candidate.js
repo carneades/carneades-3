@@ -18,7 +18,7 @@ PM.PremiseCandidateView = Backbone.View.extend(
          
          var role = this.$('.role-input');
          role.prop('disabled', !data.editableRole);
-         role.val(data.role);
+         role.val(data.premise.role);
          
          var statement = this.statement();
          statement.select2({data: {results: data.statements.toJSON(),
@@ -33,8 +33,8 @@ PM.PremiseCandidateView = Backbone.View.extend(
                                 callback(data.statements.get(element.val()).toJSON());
                             }});
 
-         if(data.statement) {
-             statement.val(data.statement.attributes.id).trigger('change');    
+         if(data.premise) {
+             statement.val(data.premise.statement.id).trigger('change');    
          } 
          
          return this;
@@ -45,12 +45,17 @@ PM.PremiseCandidateView = Backbone.View.extend(
      },
      
      role_changed: function() {
-         this.model.set('role', $('.role-input').val());
+         var premise = this.model.get('premise');
+         premise.role = $('.role-input').val();
+         this.model.set('premise', premise);
      },
      
      statement_changed: function() {
          var statement = this.model.get('statements').get(this.statement().val());
-         this.model.set('statement', statement);
+         var premise = this.model.get('premise');
+         premise.statement = statement.attributes;
+         this.model.set('premise', premise);
+         // this.model.set('statement', statement.attributes);
      }
     }
 );
