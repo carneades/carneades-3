@@ -20,6 +20,7 @@ PM.ArgumentEditorFreeView = Backbone.View.extend(
          var self = this;
          this.model.get('premises').each(
              function(premise) {
+                 premise.set('container', self.model.get('premises'));
                  var premisecandidateview = new PM.PremiseCandidateView({model: premise});
                  premisecandidateview.render();
                  self.$('.argument-premises').append(premisecandidateview.$el);
