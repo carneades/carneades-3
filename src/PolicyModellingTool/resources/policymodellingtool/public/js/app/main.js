@@ -318,7 +318,8 @@ PM.load_templates = function(toolboxState) {
             'addmore',
             'newstatementlink',
             'premisecandidate',
-            'conclusioncandidate'],
+            'conclusioncandidate',
+            'button'],
            function(name) {
                var url = toolboxState == undefined ?
                    'site/{0}.html'.format(name) :
