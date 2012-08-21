@@ -30,9 +30,12 @@ PM.ArgumentEditorView = Backbone.View.extend(
 
          this.$('.weight-input').val(data.weight);
          
-         var argumenteditorfreeview = new PM.ArgumentEditorFreeView({model: this.model});
-         argumenteditorfreeview.render();
-         this.$('#argument-editor-conclusion-and-premises').html(argumenteditorfreeview.$el);
+         if(this.argumenteditorview) {
+             this.argumenteditorview.remove();
+         }
+         this.argumenteditorfreeview = new PM.ArgumentEditorFreeView({model: this.model});
+         this.argumenteditorfreeview.render();
+         this.$('#argument-editor-conclusion-and-premises').html(this.argumenteditorfreeview.$el);
 
          return this;
      },
@@ -54,6 +57,7 @@ PM.ArgumentEditorView = Backbone.View.extend(
      },
      
      on_cancel: function() {
+         this.argumenteditorfreeview.remove();
          this.remove();
          return false;
      }
