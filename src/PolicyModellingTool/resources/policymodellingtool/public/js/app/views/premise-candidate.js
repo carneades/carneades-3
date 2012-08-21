@@ -20,7 +20,9 @@ PM.PremiseCandidateView = Backbone.View.extend(
          
          var role = this.$('.role-input');
          role.prop('disabled', !data.editableRole);
-         role.val(data.premise.role);
+         if(data.premise.role) {
+             role.val(data.premise.role);    
+         } 
          
          var statement = this.statement();
          statement.select2({data: {results: data.statements.toJSON(),
@@ -35,7 +37,7 @@ PM.PremiseCandidateView = Backbone.View.extend(
                                 callback(data.statements.get(element.val()).toJSON());
                             }});
 
-         if(data.premise) {
+         if(data.premise.statement) {
              statement.val(data.premise.statement.id).trigger('change');    
          } 
          
