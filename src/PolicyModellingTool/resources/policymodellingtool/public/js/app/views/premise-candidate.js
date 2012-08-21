@@ -3,12 +3,14 @@ PM.PremiseCandidateView = Backbone.View.extend(
      
      events: {
          "change input": "role_changed",
-         "change input[type=hidden]" : "statement_changed"
+         "change input[type=hidden]": "statement_changed",
+         "click .remove-premise": "on_delete_premise"
      },
      
      initialize: function() {
          this.model.on('change', this.render, this);
-         _.bindAll(this, 'role_changed', 'statement_changed', 'render');
+         _.bindAll(this, 'role_changed', 'statement_changed', 
+                   'render', 'on_delete_premise');
      },
      
      render: function() {
@@ -55,7 +57,14 @@ PM.PremiseCandidateView = Backbone.View.extend(
          var premise = this.model.get('premise');
          premise.statement = statement.attributes;
          this.model.set('premise', premise);
-         // this.model.set('statement', statement.attributes);
+     },
+     
+     on_delete_premise: function() {
+         // removes the PremiseCandidate from the PremisesCandidates collection
+         this.model.get('container').remove(this.model);
+         // removes the view
+         this.remove();
+         return false;
      }
     }
 );
