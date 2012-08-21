@@ -5,7 +5,7 @@ PM.ArgumentCandidate = Backbone.Model.extend(
      
      initialize: function(attrs) {
          // set the ConclusionCandidate for this ArgumentCandidate
-         var conclusioncandidate = new PM.ConclusionCandidate({statement: attrs.argument.conclusion, 
+         var conclusioncandidate = new PM.ConclusionCandidate({statement: attrs.conclusion, 
                                                                statements: attrs.statements});
          this.set('conclusion', conclusioncandidate);
          
@@ -14,7 +14,7 @@ PM.ArgumentCandidate = Backbone.Model.extend(
          this.set('premises', premisescandidates);
          _.each(attrs.argument.premises,
                function(premise) {
-                   premisescandidates.add({statement: premise,
+                   premisescandidates.add({premise: premise,
                                            statements: attrs.statements});
                });
      },
