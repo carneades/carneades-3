@@ -703,7 +703,6 @@
       (jdbc/with-query-results 
         res1 ["SELECT id FROM premise WHERE argument=?" id]
         (doseq [p res1]
-          (prn "deleting premise " (:id p))
           (delete-premise (:id p))))   
       ;; then create and link the new premises 
       (doseq [p (:premises m)]
@@ -714,13 +713,14 @@
           m (merge m (if (:conclusion m)
                        {:header header-id
                         :conclusion conclusion-id}
-                       {:header header-id}))]
+                       {:header header-id}))
+          m (update-in m [:scheme] str)]
       (condp = (first (jdbc/update-values 
                        :argument 
                        ["id=?" id]
                        m))
         0 false
-        1 true))))          
+        1 true))))
 
 (defn delete-argument 
   "Deletes an argument with the given the id.  The statements
