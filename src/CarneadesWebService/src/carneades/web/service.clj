@@ -41,8 +41,8 @@
 
 (defmacro with-db [db & body]   
   `(jdbc/with-connection 
-           ~db
-           (jdbc/transaction ~@body)))
+     ~db
+     (jdbc/transaction ~@body)))
 
 
 (defn json-response [data & [status]]
@@ -474,9 +474,11 @@
                               :premise-of-data premise-of-data))))))
 
   (GET "/argument-info/:db/:id" [db id]
+       (prn "argument-info")
        (let [dbconn (make-database-connection db "guest" "")]
          (with-db dbconn
-           (let [arg (pack-argument (read-argument id))
+           (let [arg (read-argument id)
+                 arg (pack-argument arg)
                  undercutters-data (map argument-data (:undercutters arg))
                  rebuttals-data (map argument-data (:rebuttals arg))
                  dependents-data (map argument-data (:dependents arg))]
