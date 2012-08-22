@@ -56,14 +56,20 @@ PM.PremiseCandidateView = Backbone.View.extend(
      
      statement_changed: function() {
          var statement = this.model.get('statements').get(this.statement().val());
-         var premise = this.model.get('premise');
-         premise.statement = statement.attributes;
-         this.model.set('premise', premise);
+         
+         if(!_.isNil(statement)) {
+             var premise = this.model.get('premise');
+             premise.statement = statement.attributes;
+             this.model.set('premise', premise);    
+         } 
      },
      
      on_delete_premise: function() {
          // removes the PremiseCandidate from the PremisesCandidates collection
          this.model.get('container').remove(this.model);
+         
+         this.statement().val(undefined).trigger('change');
+         
          // removes the view
          this.remove();
          return false;

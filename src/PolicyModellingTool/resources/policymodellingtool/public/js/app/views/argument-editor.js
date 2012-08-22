@@ -104,6 +104,8 @@ PM.ArgumentEditorView = Backbone.View.extend(
          argument.set('conclusion', conclusion);
          if(argument.save(null, {error: PM.on_model_error,
                                  wait: true})) {
+             this.model = undefined;
+             this.argumenteditorfreeview.remove();
              this.remove();
 
              // manually redisplay argument page since it is not yet
