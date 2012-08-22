@@ -368,3 +368,11 @@ PM.on_error = function(textstatus) {
                    $('#pm .error').remove();
                }, 3000);
 };
+
+// Called when an AJAX error occurs
+PM.on_model_error = function(collection, response) {
+    $('#pm').prepend('<div style="background-color:  #FFCC33" class="error">Error: {0}</div>'.format(response.statusText));
+    setTimeout(function() {
+                   $('#pm .error').remove();
+               }, 3000);
+};
