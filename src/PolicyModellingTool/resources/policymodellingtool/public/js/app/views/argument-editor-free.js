@@ -19,10 +19,7 @@ PM.ArgumentEditorFreeView = Backbone.View.extend(
          var conclusioncandidateview = new PM.ConclusionCandidateView({model: this.model.get('conclusion')});
          conclusioncandidateview.render();
          this.$('.conclusion-candidate').html(conclusioncandidateview.$el);
-         
-         // uses premiseview to display the existing premise of the statement
-         // adds a button to add new premises
-         // adds buttons to remove premises
+
          var self = this;
          this.model.get('premises').each(
              function(premise) {

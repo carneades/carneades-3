@@ -8,10 +8,10 @@ PM.PremiseCandidate = Backbone.Model.extend(
      initialize: function(attrs) {
          // when one element of the collection changes
          // triggers a change on this model
-         attrs.statements.bind('all', this.triggerChange, this);
+         attrs.statements.bind('all', this.trigger_change, this);
      },
      
-     triggerChange: function() {
+     trigger_change: function() {
          this.trigger('change');
      }
         
