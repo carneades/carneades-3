@@ -233,7 +233,9 @@
              [username password] (get-username-and-password request)
              db (make-database-connection (:db (:params request)) username password)
              id (:id m)]
-         (with-db db (json-response (update-statement id (dissoc m :id))))))
+         (with-db db (json-response (do
+                                      (update-statement id (dissoc m :id))
+                                      (read-statement id))))))
       
   (DELETE "/statement/:db/:id" request
           (let [[username password] (get-username-and-password request)
@@ -339,7 +341,9 @@
              arg (unpack-argument m)
              arg (dissoc arg :id :undercutters :dependents
                          :exceptions :rebuttals)]
-         (with-db db (json-response (update-argument id arg)))))
+         (with-db db (json-response
+                      (do (update-argument id arg)
+                          (read-argument id))))))
       
   (DELETE "/argument/:db/:id" request
           (let [[username password] (get-username-and-password request)
