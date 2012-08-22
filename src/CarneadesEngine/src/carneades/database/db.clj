@@ -698,26 +698,30 @@
                         (create-metadata (make-metadata)))),         
         conclusion-id (if (:conclusion m)
                         (get-statement (:conclusion m)))] 
-    (if (:premises m)    
+    (when (:premises m)    
       (do 
-        ; first delete existing premises
+                                        ; first delete existing premises
         (jdbc/with-query-results 
           res1 ["SELECT id FROM premise WHERE argument=?" id]
-          (doseq [p res1] (delete-premise (:id p))))   
-        ; then create and link the new premises 
+          (doseq [p res1]
+            (prn "deleting premise " (:id p))
+            (delete-premise (:id p))))   
+                                        ; then create and link the new premises 
         (doseq [p (:premises m)]
           (update-premise 
-            (create-premise p)
-            {:argument id}))))                           
-    (condp = (first (jdbc/update-values 
-                      :argument 
-                      ["id=?" id] 
-                      (merge m (if (:conclusion m)
-                                 {:header header-id
-                                  :conclusion conclusion-id}
-                                 {:header header-id}))))
-      0 false
-      1 true)))          
+           (create-premise p)
+           {:argument id}))))
+    (let [m (dissoc m :premises)
+          m (merge m (if (:conclusion m)
+                       {:header header-id
+                        :conclusion conclusion-id}
+                       {:header header-id}))]
+      (condp = (first (jdbc/update-values 
+                       :argument 
+                       ["id=?" id]
+                       m))
+        0 false
+        1 true))))          
 
 (defn delete-argument 
   "Deletes an argument with the given the id.  The statements
