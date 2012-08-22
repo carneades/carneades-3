@@ -70,12 +70,6 @@ PM.ArgumentEditorView = Backbone.View.extend(
        return this.pro_el().is(':checked') && !this.con_el().is(':checked');  
      },
      
-     on_cancel: function() {
-         this.argumenteditorfreeview.remove();
-         this.remove();
-         return false;
-     },
-     
      direction_changed: function() {
          this.model.get('argument').set('pro', this.is_pro());
      },
@@ -94,6 +88,7 @@ PM.ArgumentEditorView = Backbone.View.extend(
      
      save: function() {
          var argument = this.model.get('argument');
+         
          var conclusion =  this.model.get('conclusion').get('statement');
 
          argument.set('premises', this.model.get('premises').map(
@@ -104,6 +99,7 @@ PM.ArgumentEditorView = Backbone.View.extend(
          argument.set('conclusion', conclusion);
          if(argument.save(null, 
                           {error: PM.on_model_error,
+                           wait: true,
                            success : function() {
                                // manually redisplay argument page since it is not yet
                                // a backbone view
@@ -115,7 +111,14 @@ PM.ArgumentEditorView = Backbone.View.extend(
          }
          
          return false;
-     }
+     },
+     
+     on_cancel: function() {
+         this.argumenteditorfreeview.remove();
+         this.remove();
+         return false;
+     } 
+
 
     }
 );
