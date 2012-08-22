@@ -338,7 +338,7 @@
              id (:id m)
              arg (unpack-argument m)
              arg (dissoc arg :id :undercutters :dependents
-                         :premises :exceptions :rebuttals)]
+                         :exceptions :rebuttals)]
          (with-db db (json-response (update-argument id arg)))))
       
   (DELETE "/argument/:db/:id" request
