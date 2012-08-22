@@ -331,7 +331,7 @@
                                         (create-argument undercutter))
                                       undercutters))})))))
       
-  (PUT "/argument/:db" request  
+  (PUT "/argument/:db" request
        (let [m (read-json (slurp (:body request)))
              [username password] (get-username-and-password request)
              db (make-database-connection (:db (:params request)) username password)
