@@ -698,19 +698,18 @@
                         (create-metadata (make-metadata)))),         
         conclusion-id (if (:conclusion m)
                         (get-statement (:conclusion m)))] 
-    (when (:premises m)    
-      (do 
-                                        ; first delete existing premises
-        (jdbc/with-query-results 
-          res1 ["SELECT id FROM premise WHERE argument=?" id]
-          (doseq [p res1]
-            (prn "deleting premise " (:id p))
-            (delete-premise (:id p))))   
-                                        ; then create and link the new premises 
-        (doseq [p (:premises m)]
-          (update-premise 
-           (create-premise p)
-           {:argument id}))))
+    (when (:premises m)
+      ;; first delete existing premises
+      (jdbc/with-query-results 
+        res1 ["SELECT id FROM premise WHERE argument=?" id]
+        (doseq [p res1]
+          (prn "deleting premise " (:id p))
+          (delete-premise (:id p))))   
+      ;; then create and link the new premises 
+      (doseq [p (:premises m)]
+        (update-premise 
+         (create-premise p)
+         {:argument id})))
     (let [m (dissoc m :premises)
           m (merge m (if (:conclusion m)
                        {:header header-id
