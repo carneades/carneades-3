@@ -495,14 +495,18 @@
    Returns the id of the premise record in the database.
    Creates a statement for the literal of the premise if one
    does not already exist in the database."
-  [premise]
+  [premise & [argid]]
   {:pre [(premise? premise)]}
-  (let [stmt-id (get-statement (:statement premise))]
-    ;; we dissoc :pro or :con which are not in the Premise record
-    ;; but are added from read-premise!
+  (let [stmt-id (get-statement (:statement premise))
+        ;; we dissoc :pro or :con which are not in the Premise record
+        ;; but are added from read-premise!
+        premise (dissoc premise :pro :con)
+        premise (assoc premise :statement stmt-id)
+        premise (if argid
+                  (assoc premise :argument argid)
+                  premise)]
     (first (vals (jdbc/insert-record 
-      :premise
-      (dissoc (assoc premise :statement stmt-id) :pro :con))))))
+                  :premise premise)))))
 
 (declare get-pro-arguments get-con-arguments)
 
@@ -644,7 +648,8 @@
             header (if (:header m) (read-metadata (:header m)))
             premises (jdbc/with-query-results 
                        res1 ["SELECT id FROM premise WHERE argument=?" id]
-                       (doall (map (fn [id] (read-premise id))
+                       (doall (map (fn [id]
+                                     (read-premise id))
                                    (map :id res1))))
             rs (get-rebuttals id)
             us (get-undercutters id)
@@ -706,9 +711,7 @@
           (delete-premise (:id p))))   
       ;; then create and link the new premises 
       (doseq [p (:premises m)]
-        (update-premise 
-         (create-premise p)
-         {:argument id})))
+        (create-premise p id)))
     (let [m (dissoc m :premises)
           m (merge m (if (:conclusion m)
                        {:header header-id
@@ -736,7 +739,6 @@
   ; now delete the header of the argument, if it has one
   (jdbc/with-query-results 
     res1 ["SELECT header FROM argument WHERE id=?" (str id)]
-    (prn "res1: " res1)
     (if (:header (first res1))
       (delete-metadata (:header (first res1)))))
   true)
