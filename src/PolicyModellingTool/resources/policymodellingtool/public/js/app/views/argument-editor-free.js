@@ -21,10 +21,12 @@ PM.ArgumentEditorFreeView = Backbone.View.extend(
          this.$('.conclusion-candidate').html(conclusioncandidateview.$el);
 
          var self = this;
+         self.premises_candidates_views = [];
          this.model.get('premises').each(
              function(premise) {
                  premise.set('container', self.model.get('premises'));
                  var premisecandidateview = new PM.PremiseCandidateView({model: premise});
+                 self.premises_candidates_views.push(premisecandidateview);
                  premisecandidateview.render();
                  self.$('.argument-premises').append(premisecandidateview.$el);
              });
@@ -41,6 +43,16 @@ PM.ArgumentEditorFreeView = Backbone.View.extend(
 
          this.model.get('premises').add(premisecandidate); 
          return false;
+     },
+     
+     remove: function() {
+         _.each(this.premises_candidates_views,
+                function(view) {
+                    view.remove();
+                });
+
+         // yep...
+         Backbone.View.prototype.remove.call(this);
      }
      
     }
