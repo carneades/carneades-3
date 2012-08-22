@@ -114,7 +114,8 @@
 (defn argument-data
   "Returns the argument content"
   [id]
-  {:pre [(symbol? id)]}
+  {:pre [(or (symbol? id)
+             (string? id))]}
   (pack-argument (read-argument (str id))))
 
 (defn- argument-metadata
@@ -235,7 +236,7 @@
              id (:id m)]
          (with-db db (json-response (do
                                       (update-statement id (dissoc m :id))
-                                      (read-statement id))))))
+                                      (pack-statement (read-statement id)))))))
       
   (DELETE "/statement/:db/:id" request
           (let [[username password] (get-username-and-password request)
@@ -343,7 +344,7 @@
                          :exceptions :rebuttals)]
          (with-db db (json-response
                       (do (update-argument id arg)
-                          (read-argument id))))))
+                          (argument-data id))))))
       
   (DELETE "/argument/:db/:id" request
           (let [[username password] (get-username-and-password request)
