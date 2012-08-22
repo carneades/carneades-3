@@ -102,15 +102,16 @@ PM.ArgumentEditorView = Backbone.View.extend(
                             }));
 
          argument.set('conclusion', conclusion);
-         if(argument.save(null, {error: PM.on_model_error,
-                                 wait: true})) {
+         if(argument.save(null, 
+                          {error: PM.on_model_error,
+                           success : function() {
+                               // manually redisplay argument page since it is not yet
+                               // a backbone view
+                               AGB.display_argument(IMPACT.db, argument.id);
+                           }})) {
              this.model = undefined;
              this.argumenteditorfreeview.remove();
              this.remove();
-
-             // manually redisplay argument page since it is not yet
-             // a backbone view
-             AGB.display_argument(IMPACT.db, argument.id);
          }
          
          return false;
