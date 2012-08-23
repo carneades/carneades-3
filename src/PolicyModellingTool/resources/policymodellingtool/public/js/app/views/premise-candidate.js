@@ -77,4 +77,3 @@ PM.PremiseCandidateView = Backbone.View.extend(
     }
 );
 
-
