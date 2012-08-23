@@ -10,7 +10,7 @@ PM.ArgumentCandidate = Backbone.Model.extend(
          
          var scheme_name = attrs.argument.get('scheme');
          var scheme_candidate = new PM.SchemeCandidate({schemes: attrs.schemes,
-                                                        scheme: attrs.schemes});
+                                                        scheme_name: scheme_name});
          this.set('scheme', scheme_candidate);
          
          // set the PremisesCandidates for this ArgumentCandidate
