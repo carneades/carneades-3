@@ -323,7 +323,6 @@
               db (make-database-connection (:db (:params request)) username password)
               argument (map->argument arg)
               undercutters (make-undercutters argument)]
-          (prn "argument: " argument)
           ;; TODO: assumptions?
           (with-db db
             (let [id (create-argument argument)]

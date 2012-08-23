@@ -444,7 +444,8 @@
    in the map.  Returns true if the update was successful." 
   [id m]
   {:pre [(map? m)]}
-  (let [header-id1 (if (:header m)
+  (let [m (dissoc m :positive)
+        header-id1 (if (:header m)
                      (jdbc/with-query-results 
                        res ["SELECT header FROM statement WHERE id=?" id]
                        (if (empty? res) nil (:header (first res)))))
