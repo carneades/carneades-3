@@ -181,6 +181,8 @@ AGB.save_argument_without_scheme = function() {
 AGB.argument_created = function(data) {
     console.log('arguments created');
     console.log(data);
+    PM.arguments.fetch();
+    PM.statements.fetch();
 };
 
 // Returns the HTML content of the argument editor
@@ -392,8 +394,8 @@ AGB.update_conclusion_premises_candidates_without_scheme = function(callback) {
                                                  placeholder: "Select a statement",
                                                  formatSelection: AGB.format_selected_statement,
                                                  formatResult: AGB.statement_text,
-                                                 initSelection: function(element) {
-                                                     return AGB.get_statement_from_id(statements, element.val());
+                                                 initSelection: function(element, callback) {
+                                                     callback(AGB.get_statement_from_id(statements, element.val()));
                                                  }});
                            });
                     
@@ -429,8 +431,8 @@ AGB.set_conclusion_candidates = function(atom, callback) {
                                          formatResult: AGB.format_filtered_matching_result,
                                          formatSelection:
                                          AGB.format_selected_matching_result,
-                                         initSelection: function(element) {
-                                             return element.data(element.val());
+                                         initSelection: function(element, callback) {
+                                             callback(element.data(element.val()));
                                          }});
 
                      if(!_.isNil(callback)) {
@@ -493,8 +495,8 @@ AGB.set_premise_candidates = function(id, premise, atom, callback) {
                                 placeholder: "Select a statement",
                                 formatResult: AGB.format_filtered_matching_result,
                                 formatSelection: AGB.format_selected_matching_result,
-                                initSelection: function(element) {
-                                    return element.data(element.val());
+                                initSelection: function(element, callback) {
+                                    callback(element.data(element.val()));
                                 }
                                });
                      
