@@ -40,9 +40,14 @@ PM.ArgumentEditorView = Backbone.View.extend(
 
          this.$('.weight-input').val(data.argument.attributes.weight);
          
-         if(this.argumenteditorview) {
-             this.argumenteditorview.remove();
-         }
+         var scheme_candidate_view = new PM.SchemeCandidateView({model: this.model.get('scheme')});
+         scheme_candidate_view.render();
+         this.$('.scheme-candidate').html(scheme_candidate_view.$el);
+         
+         //if(this.argumenteditorview) {
+             //this.argumenteditorview.remove();
+         //}
+         
          this.argumenteditorfreeview = new PM.ArgumentEditorFreeView({model: this.model});
          this.argumenteditorfreeview.render();
          this.$('#argument-editor-conclusion-and-premises').html(this.argumenteditorfreeview.$el);
