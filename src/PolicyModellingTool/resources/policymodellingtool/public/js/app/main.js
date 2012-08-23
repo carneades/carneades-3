@@ -249,16 +249,20 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/lib/backbone.memento.min.js',
                    'js/app/models/metadata.js',
                    'js/app/models/statement.js',
+                   'js/app/models/scheme.js',
                    'js/app/models/argument.js',
+                   'js/app/models/scheme-candidate.js',
                    'js/app/models/argument-candidate.js',
                    'js/app/models/premise-candidate.js',
                    'js/app/models/conclusion-candidate.js',
                    'js/app/collections/statements.js',
+                   'js/app/collections/schemes.js',
                    'js/app/collections/metadata-list.js',
                    'js/app/collections/arguments.js',
                    'js/app/collections/premises-candidates.js',
                    'js/app/views/argument-editor.js',
                    'js/app/views/premise-candidate.js',
+                   'js/app/views/scheme-candidate.js',
                    'js/app/views/argument-editor-free.js',
                    'js/app/views/conclusion-candidate.js'];
     
@@ -322,6 +326,7 @@ PM.load_templates = function(toolboxState) {
             'newstatementlink',
             'premisecandidate',
             'conclusioncandidate',
+            'schemecandidate',
             'button'],
            function(name) {
                var url = toolboxState == undefined ?

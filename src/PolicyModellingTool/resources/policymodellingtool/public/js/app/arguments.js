@@ -21,6 +21,9 @@ PM.display_arguments = function(db, type, id) {
                     
     PM.statements = new PM.Statements;
     PM.statements.fetch();
+    
+    PM.schemes = new PM.Schemes;
+    PM.schemes.fetch();
 
     var arguments_html = ich.arguments();
     $('#pm').html(arguments_html.filter("#arguments"));
