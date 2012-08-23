@@ -128,7 +128,7 @@
         res (post-request (str "/statement/" dbname) carneades-web-service
                           {"authorization" auth-header}
                           (json-str statement))
-        id (read-json (:body res))
+        id (:id (read-json (:body res)))
         res2 (get-request (str "/statement/" dbname "/" id) carneades-web-service)
         stmt (read-json (:body res2))
         returned-statement (unpack-statement stmt)
@@ -144,9 +144,9 @@
         res (post-request (str "/statement/" dbname) carneades-web-service
                           {"authorization" auth-header}
                           (json-str statement))
-        id (read-json (:body res))
-        update {:value 0.314}
-        res2 (put-request (str "/statement/" dbname "/" id) carneades-web-service
+        id (:id (read-json (:body res)))
+        update (merge statement {:value 0.314})
+        res2 (put-request (str "/statement/" dbname) carneades-web-service
                           {"authorization" auth-header}
                           (json-str update))
         res3 (get-request (str "/statement/" dbname "/" id) carneades-web-service)
@@ -162,9 +162,9 @@
         res (post-request (str "/statement/" dbname) carneades-web-service
                           {"authorization" auth-header}
                           (json-str statement))
-        id (read-json (:body res))
-        update {:header (make-some-metadata)}
-        res2 (put-request (str "/statement/" dbname "/" id) carneades-web-service
+        id (:id(read-json (:body res)))
+        update (merge statement {:header (make-some-metadata)})
+        res2 (put-request (str "/statement/" dbname) carneades-web-service
                           {"authorization" auth-header}
                           (json-str update))
         res3 (get-request (str "/statement/" dbname "/" id) carneades-web-service)
@@ -203,7 +203,7 @@
         res (post-request (str "/argument/" dbname) carneades-web-service
                           {"authorization" auth-header}
                           (json-str arg))
-        id (first (read-json (:body res)))
+        id (:id (read-json (:body res)))
         res2 (get-request (str "/argument/" dbname "/" id) carneades-web-service)
         returned-data (read-json (:body res2))
         
@@ -223,10 +223,10 @@
         res (post-request (str "/argument/" dbname) carneades-web-service
                           {"authorization" auth-header}
                           (json-str arg))
-        id (first (read-json (:body res)))
-        new-scheme "some-other-scheme"
-        update {:scheme new-scheme}
-        res2 (put-request (str "/argument/" dbname "/" id) carneades-web-service
+        id (:id (read-json (:body res)))
+        new-scheme "(some-other-scheme)"
+        update (merge arg {:scheme new-scheme})
+        res2 (put-request (str "/argument/" dbname) carneades-web-service
                           {"authorization" auth-header}
                           (json-str update))
         res3 (get-request (str "/argument/" dbname "/" id) carneades-web-service)
@@ -246,7 +246,7 @@
         res (post-request (str "/argument/" dbname) carneades-web-service
                           {"authorization" auth-header}
                           (json-str arg))
-        id (read-json (:body res))
+        id (:id (read-json (:body res)))
         res2 (delete-request (str "/argument/" dbname "/" id) carneades-web-service
                              {"authorization" auth-header} "")
         res3 (get-request (str "/argument/" dbname "/" id) carneades-web-service)]
