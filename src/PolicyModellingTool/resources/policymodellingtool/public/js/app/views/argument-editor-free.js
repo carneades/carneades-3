@@ -15,7 +15,7 @@ PM.ArgumentEditorFreeView = Backbone.View.extend(
 
      render: function() {
          this.$el.html(ich.argumenteditor2free());
-         
+
          var conclusioncandidateview = new PM.ConclusionCandidateView({model: this.model.get('conclusion')});
          conclusioncandidateview.render();
          this.$('.conclusion-candidate').html(conclusioncandidateview.$el);
