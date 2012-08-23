@@ -18,7 +18,7 @@ PM.SchemeCandidateView = Backbone.View.extend(
          
          this.scheme().select2({formatResult: AGB.format_filtered_scheme,
                                 formatSelection: AGB.format_selected_scheme, 
-                                placeholder: "Select a scheme",
+                                placeholder: data.scheme_name,
                                 data: {
                                     results: data.schemes.toJSON(),
                                     text: function(scheme) {
@@ -29,9 +29,9 @@ PM.SchemeCandidateView = Backbone.View.extend(
                                     callback(data.schemes.get(element.val()).toJSON());
                                 }});
          
-         if(data.scheme) {
-             this.scheme().val(data.scheme.id).trigger('change');    
-         }
+         // if(data.scheme) {
+         //     this.scheme().val(data.scheme.id).trigger('change');    
+         // }
          
          return this;
      },
