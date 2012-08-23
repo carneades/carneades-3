@@ -24,6 +24,7 @@ PM.ArgumentEditorFreeView = Backbone.View.extend(
          self.premises_candidates_views = [];
          this.model.get('premises').each(
              function(premise) {
+                 premise.store();
                  premise.set('container', self.model.get('premises'));
                  var premisecandidateview = new PM.PremiseCandidateView({model: premise});
                  self.premises_candidates_views.push(premisecandidateview);
@@ -53,6 +54,13 @@ PM.ArgumentEditorFreeView = Backbone.View.extend(
 
          // yep...
          Backbone.View.prototype.remove.call(this);
+     },
+     
+     cancel: function() {
+         this.model.get('premises').each(
+             function(premise) {
+                 premise.restore();
+             });
      }
      
     }
