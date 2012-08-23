@@ -49,8 +49,9 @@ PM.PremiseCandidateView = Backbone.View.extend(
      },
      
      role_changed: function() {
-         var premise = this.model.get('premise');
-         premise.role = this.$('.role-input').val();
+         var role = this.$('.role-input').val();
+         var premise = _.clone(this.model.get('premise'));
+         premise.role = role;
          this.model.set('premise', premise);
      },
      
@@ -60,7 +61,6 @@ PM.PremiseCandidateView = Backbone.View.extend(
          if(!_.isNil(statement)) {
              var premise = this.model.get('premise');
              premise.statement = statement.attributes;
-             this.model.set('premise', premise);    
          } 
      },
      

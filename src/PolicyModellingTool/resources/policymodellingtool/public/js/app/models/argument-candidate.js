@@ -1,5 +1,8 @@
 PM.ArgumentCandidate = Backbone.Model.extend(
     {initialize: function(attrs) {
+         var memento = new Backbone.Memento(this);
+         _.extend(this, memento);
+         
          // set the ConclusionCandidate for this ArgumentCandidate
          var conclusioncandidate = new PM.ConclusionCandidate({statement: attrs.argument.get('conclusion'), 
                                                                statements: attrs.statements});
