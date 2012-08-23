@@ -8,6 +8,9 @@ PM.PremiseCandidate = Backbone.Model.extend(
      },
      
      initialize: function(attrs) {
+         var memento = new Backbone.Memento(this);
+         _.extend(this, memento);
+         
          // when one element of the collection changes
          // triggers a change on this model
          attrs.statements.bind('all', this.trigger_change, this);

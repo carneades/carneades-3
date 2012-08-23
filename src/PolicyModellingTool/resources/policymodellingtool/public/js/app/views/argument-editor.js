@@ -3,7 +3,7 @@ PM.ArgumentEditorView = Backbone.View.extend(
     {className: "argument-editor",
      
      events: {
-         "click .cancel-argument": "on_cancel",
+         "click .cancel-argument": "cancel",
          "click .save-argument": "save",
          "change input:radio[name=pro][value=pro]": "direction_changed",
          "change input:radio[name=pro][value=con]": "direction_changed",
@@ -13,8 +13,12 @@ PM.ArgumentEditorView = Backbone.View.extend(
      },
      
      initialize: function() {
+         // saves state of the argument candidate
+         this.model.store(); 
+         this.model.get('argument').store();
+         
          this.model.on('change', this.render, this);
-         _.bindAll(this, 'render', 'on_cancel');
+         _.bindAll(this, 'render', 'cancel');
      },
 
      render: function() {
@@ -89,14 +93,16 @@ PM.ArgumentEditorView = Backbone.View.extend(
      save: function() {
          var argument = this.model.get('argument');
          
+         // some attributes are changed dynamically with events
+         // but the following are pulled from the view
          var conclusion =  this.model.get('conclusion').get('statement');
 
          argument.set('premises', this.model.get('premises').map(
                             function(premise_candidate) {
                                 return premise_candidate.get('premise');
                             }));
-
          argument.set('conclusion', conclusion);
+
          if(argument.save(null, 
                           {error: PM.on_model_error,
                            wait: true,
@@ -113,7 +119,13 @@ PM.ArgumentEditorView = Backbone.View.extend(
          return false;
      },
      
-     on_cancel: function() {
+     cancel: function() {
+         // restores state of the argument
+         this.model.restore(); 
+         this.model.get('argument').restore();
+         
+         this.argumenteditorfreeview.cancel();
+
          this.argumenteditorfreeview.remove();
          this.remove();
          return false;

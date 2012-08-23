@@ -7,7 +7,10 @@ PM.Argument = Backbone.Model.extend(
          return IMPACT.wsurl + '/argument/' + IMPACT.db;
      },
    
-     // TODO constructor taking an Argument
+     initialize: function() {
+         var memento = new Backbone.Memento(this);
+         _.extend(this, memento);
+     },
      
      validate: function(attrs) {
          if(_.isNil(attrs.conclusion)) {
