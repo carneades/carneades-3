@@ -255,6 +255,7 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/app/models/argument-candidate.js',
                    'js/app/models/premise-candidate.js',
                    'js/app/models/conclusion-candidate.js',
+                   'js/app/models/metadata-candidate.js',
                    'js/app/collections/statements.js',
                    'js/app/collections/schemes.js',
                    'js/app/collections/metadata-list.js',
@@ -264,7 +265,8 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/app/views/premise-candidate.js',
                    'js/app/views/scheme-candidate.js',
                    'js/app/views/argument-editor-free.js',
-                   'js/app/views/conclusion-candidate.js'];
+                   'js/app/views/conclusion-candidate.js',
+                   'js/app/views/metadata-editor.js'];
     
     if(!is_in_toolbox) {
       scripts = scripts.concat('js/lib/jquery.address-1.4.js', 
@@ -320,6 +322,7 @@ PM.load_templates = function(toolboxState) {
             'argumenteditor2',
             'argumenteditor2free',
             'metadataeditor',
+            'metadataeditor2',
             'premiseeditor',
             'premiseeditorwithoutscheme',
             'addmore',
