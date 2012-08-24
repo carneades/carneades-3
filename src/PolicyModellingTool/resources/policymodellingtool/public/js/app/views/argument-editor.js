@@ -44,13 +44,13 @@ PM.ArgumentEditorView = Backbone.View.extend(
          scheme_candidate_view.render();
          this.$('.scheme-candidate').html(scheme_candidate_view.$el);
          
-         //if(this.argumenteditorview) {
-             //this.argumenteditorview.remove();
-         //}
-         
          this.argumenteditorfreeview = new PM.ArgumentEditorFreeView({model: this.model});
          this.argumenteditorfreeview.render();
-         this.$('#argument-editor-conclusion-and-premises').html(this.argumenteditorfreeview.$el);
+         this.$('.argument-editor-conclusion-and-premises').html(this.argumenteditorfreeview.$el);
+         
+         this.metadata_editor_view = new PM.MetadataEditorView({model: this.model.get('metadata')});
+         this.metadata_editor_view.render();
+         this.$('.argument-metadata').html(this.metadata_editor_view.$el);
 
          return this;
      },
@@ -96,6 +96,10 @@ PM.ArgumentEditorView = Backbone.View.extend(
      },
      
      save: function() {
+         // forces the update of data for events
+         // swallowed by markItUp and not captured by the view
+         this.metadata_editor_view.update_data();
+             
          var argument = this.model.get('argument');
          
          // some attributes are changed dynamically with events
@@ -107,6 +111,11 @@ PM.ArgumentEditorView = Backbone.View.extend(
                                 return premise_candidate.get('premise');
                             }));
          argument.set('conclusion', conclusion);
+         
+         var metadata = argument.get('header');
+         // merge new metadata with the old one
+         _.extend(metadata, this.model.get('metadata').get('metadata'));
+         argument.set('header', metadata);
 
          if(argument.save(null, 
                           {error: PM.on_model_error,
@@ -133,6 +142,9 @@ PM.ArgumentEditorView = Backbone.View.extend(
 
          this.argumenteditorfreeview.remove();
          this.remove();
+         
+         this.metadata_editor_view.remove();
+         
          return false;
      } 
 

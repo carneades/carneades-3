@@ -13,6 +13,12 @@ PM.ArgumentCandidate = Backbone.Model.extend(
                                                         scheme_name: scheme_name});
          this.set('scheme', scheme_candidate);
          
+         var metadata_candidate = new PM.MetadataCandidate(
+             {metadata: attrs.argument.get('header'),
+              current_lang: attrs.current_lang});
+         this.set('metadata', metadata_candidate);
+         
+         
          // set the PremisesCandidates for this ArgumentCandidate
          var premisescandidates = new PM.PremisesCandidates;
          this.set('premises', premisescandidates);
