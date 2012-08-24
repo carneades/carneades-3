@@ -30,7 +30,8 @@
     width: 95%;
 }
 
-#editor-statement-atom, #metadata-title, #metadata-key {
+#editor-statement-atom, #metadata-title, #metadata-key,
+.metadata-description-input {
     width: 600px;
 }
 
