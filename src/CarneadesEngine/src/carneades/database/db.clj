@@ -437,7 +437,7 @@
              (:id literal))
         (first (statements-for-atom (literal-atom literal)))
         (create-statement literal))))
- 
+
 (defn update-statement
   "string map -> boolean
    Updates the statement record with the given in in the database with the values
@@ -697,11 +697,16 @@
    succeeds."
   [id m]
   {:pre [(string? id) (map? m)]}
-  (let [header-id (if (:header m)
+  (let [header-id1 (if (:header m)
                     (or (jdbc/with-query-results 
                           res1 ["SELECT header FROM argument WHERE id=?" id]
                           (:header (first res1)))
-                        (create-metadata (make-metadata)))),         
+                        (create-metadata (make-metadata))))
+        header-id2 (if header-id1 
+                     (do (update-metadata header-id1 (:header m))
+                         header-id1)
+                     (if (:header m)
+                       (create-metadata (merge (make-metadata) (:header m)))))
         conclusion-id (if (:conclusion m)
                         (get-statement (:conclusion m)))] 
     (when (:premises m)
@@ -715,9 +720,9 @@
         (create-premise p id)))
     (let [m (dissoc m :premises)
           m (merge m (if (:conclusion m)
-                       {:header header-id
+                       {:header header-id2
                         :conclusion conclusion-id}
-                       {:header header-id}))
+                       {:header header-id2}))
           m (update-in m [:scheme] str)]
       (condp = (first (jdbc/update-values 
                        :argument 
