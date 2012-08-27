@@ -1,6 +1,7 @@
 PM.Metadata = Backbone.Model.extend(
     {defaults: function(){
          return {
+             description: {}
          };
      },
      
