@@ -17,9 +17,9 @@ PM.MetadataEditorView = Backbone.View.extend(
 
          this.$el.html(ich.metadataeditor2());
          
-         if(data.metadata.description) {
+         if(data.metadata.attributes.description) {
              this.description().val(
-                 data.metadata.description[data.current_lang]); 
+                 data.metadata.attributes.description[data.current_lang]); 
          } 
 
          this.$('.metadata-description-input').markItUp(mySettings);
@@ -38,7 +38,8 @@ PM.MetadataEditorView = Backbone.View.extend(
 
      description_changed: function() {
          var metadata = _.clone(this.model.get('metadata'));
-         metadata.description[this.model.get('current_lang')] = this.description().val();
+         metadata.get('description')[this.model.get('current_lang')] 
+             = this.description().val();
          this.model.set('metadata', metadata);
          
      }// ,
