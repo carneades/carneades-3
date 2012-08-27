@@ -96,9 +96,9 @@ PM.ArgumentEditorView = Backbone.View.extend(
      },
      
      save: function() {
-         // forces the update of data for events
-         // swallowed by markItUp and not captured by the view
-         this.metadata_editor_view.update_data();
+         // // forces the update of data for events
+         // // swallowed by markItUp and not captured by the view
+         // this.metadata_editor_view.update_data();
              
          var argument = this.model.get('argument');
          
@@ -112,9 +112,9 @@ PM.ArgumentEditorView = Backbone.View.extend(
                             }));
          argument.set('conclusion', conclusion);
          
-         var metadata = argument.get('header');
+         var metadata = argument.get('header') || {};
          // merge new metadata with the old one
-         _.extend(metadata, this.model.get('metadata').get('metadata'));
+         _.extend(metadata, this.model.get('metadata').get('metadata').attributes);
          argument.set('header', metadata);
 
          if(argument.save(null, 
