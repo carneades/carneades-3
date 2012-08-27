@@ -3,7 +3,7 @@ PM.MetadataEditorView = Backbone.View.extend(
     {className: "metadata-editor-view",
      
      events: {
-         "keyup .metadata-description-input" : "description_changed"
+         "blur .metadata-description-input" : "description_changed"
      },
      
      initialize: function() {
@@ -16,9 +16,12 @@ PM.MetadataEditorView = Backbone.View.extend(
          var data = this.model.toJSON();
 
          this.$el.html(ich.metadataeditor2());
-         this.description().val
-         (data.metadata.description[data.current_lang]);
          
+         if(data.metadata.description) {
+             this.description().val(
+                 data.metadata.description[data.current_lang]); 
+         } 
+
          this.$('.metadata-description-input').markItUp(mySettings);
          
          return this;
@@ -38,12 +41,11 @@ PM.MetadataEditorView = Backbone.View.extend(
          metadata.description[this.model.get('current_lang')] = this.description().val();
          this.model.set('metadata', metadata);
          
-         return false;
-     },
+     }// ,
 
-     update_data: function() {
-         this.description_changed();
-     }
+     // update_data: function() {
+     //     this.description_changed();
+     // }
      
     }
 );
