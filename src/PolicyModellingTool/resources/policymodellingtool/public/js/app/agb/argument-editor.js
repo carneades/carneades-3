@@ -426,9 +426,9 @@ AGB.set_conclusion_candidates = function(atom, callback) {
                  function(conclusion_statements_results) {
                      var conclusion = $('#editor-conclusion');
                      _.each(conclusion_statements_results, function(result) {
-                                //                                if(!AGB.is_grounded(atom)) {
-                                conclusion.data(result.statement.id, result);
-                                // }
+                                if(!AGB.is_grounded(atom)) {
+                                    conclusion.data(result.statement.id, result);
+                                }
                                 result.id = result.statement.id;
                             });
 
