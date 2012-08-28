@@ -61,11 +61,14 @@ AGB.save_argument_with_scheme = function() {
     console.log('Substitutions for apply-scheme:');
     console.log(subs);
 
+    var metadata = $('#argument-header').data('view').
+        model.get('metadata').attributes;
+    
     PM.ajax_post(IMPACT.wsurl + '/apply-scheme/' + IMPACT.db + '/' + scheme_id,
                  {subs: subs,
                   attributes: {strict: AGB.get_strict_attr(),
                                weight: AGB.get_weight_attr(),
-                               header: AGB.get_metadata_data()}},
+                               header: metadata}},
                  AGB.argument_created,
                  IMPACT.user,
                  IMPACT.password,
@@ -157,6 +160,8 @@ AGB.save_argument_without_scheme = function() {
                     var conclusion = AGB.get_statement_from_id(statements, conclusion_id);
                     var premises = AGB.get_premises_content(statements);
                     var exceptions = AGB.get_exceptions_content(statements);
+                    var metadata = $('#argument-header').data('view').
+                        model.get('metadata').attributes;
 
                     var argument = {
                         conclusion: conclusion,
@@ -164,7 +169,7 @@ AGB.save_argument_without_scheme = function() {
                         exceptions: exceptions,
                         strict: AGB.get_strict_attr(),
                         weight: AGB.get_weight_attr(),
-                        header: AGB.get_metadata_data()
+                        header: metadata
                     };
                     
                     PM.ajax_post(IMPACT.wsurl + '/argument/' + IMPACT.db,
@@ -233,7 +238,13 @@ AGB.format_selected_matching_result = function(result) {
 // Creates a new argument editor
 AGB.argumentgraph_newargument = function() {
     $('#argumenteditor').html(AGB.create_argument_editor());
-    $('#argument-header').html(AGB.create_metadata_editor());
+
+    var metadata_editor_view = new PM.MetadataEditorView(
+                {model: new PM.MetadataCandidate({metadata: new PM.Metadata(),
+                                                  current_lang: IMPACT.lang}),
+             el: $('#argument-header')});
+    $('#argument-header').data('view', metadata_editor_view);
+    metadata_editor_view.render();
 
     PM.ajax_get(IMPACT.wsurl + '/scheme',
                function(schemes) {
