@@ -9,8 +9,6 @@ AGB.show_statement_editor = function(config) {
     }
 
     $('#statementeditor').html(AGB.create_statement_editor());
-//    $('#statement-header').html(AGB.create_metadata_editor());
-    
     $('#cancel-statement').click(AGB.remove_statement_editor);
     
     AGB.set_statement_main(false);
