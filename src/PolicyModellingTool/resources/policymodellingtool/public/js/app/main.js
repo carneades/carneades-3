@@ -231,7 +231,6 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/app/agb/markdown.js',
                    'js/app/agb/statement-editor.js',
                    'js/app/agb/argument-editor.js',
-                   'js/app/agb/metadata-editor.js',
                    'js/lib/ICanHaz.js',
                    'js/lib/Markdown.Converter.js',
                    'js/lib/Markdown.Sanitizer.js',
