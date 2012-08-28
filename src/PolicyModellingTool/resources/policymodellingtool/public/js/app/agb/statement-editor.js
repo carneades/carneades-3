@@ -9,7 +9,8 @@ AGB.show_statement_editor = function(config) {
     }
 
     $('#statementeditor').html(AGB.create_statement_editor());
-    $('#statement-header').html(AGB.create_metadata_editor());
+//    $('#statement-header').html(AGB.create_metadata_editor());
+    
     $('#cancel-statement').click(AGB.remove_statement_editor);
     
     AGB.set_statement_main(false);
@@ -20,7 +21,15 @@ AGB.show_statement_editor = function(config) {
 
     if(!_.isNil(config.statement)) {
         AGB.fillin_statement_editor(config.statement);
+    } else {
+        var metadata_editor_view = new PM.MetadataEditorView(
+            {model: new PM.MetadataCandidate({metadata: new PM.Metadata(),
+                                              current_lang: IMPACT.lang}),
+             el: $('#statement-header')});
+        $('#statement-header').data('view', metadata_editor_view);
     }
+    
+    $('#statement-header').data('view').render();
     
     $('#save-statement').click(
         function() {
@@ -34,10 +43,6 @@ AGB.show_statement_editor = function(config) {
             return false;
         }
     );
-    
-    // note: mySettings is defined in set.js
-    $('#metadata-description').markItUp(mySettings);
-    $('#statement-editor-text').markItUp(mySettings);
 
     return false;
 };
@@ -62,18 +67,27 @@ AGB.fillin_statement_editor = function(stmt) {
     AGB.set_statement_main(stmt.main);
     $('#statement-editor-weight').val(stmt.weight);
     $('#statement-editor-atom').val(stmt.atom);
-    AGB.fillin_metadata_editor(stmt.header);
+    // AGB.fillin_metadata_editor(stmt.header);
+    var metadata_editor_view = new PM.MetadataEditorView(
+        {model: new PM.MetadataCandidate({metadata: new PM.Metadata(stmt.header),
+                                          current_lang: IMPACT.lang}),
+         el: $('#statement-header')});
+    $('#statement-header').data('view', metadata_editor_view);
+    
 };
 
 // Returns the data of entered in the statement editor as an object
 AGB.get_statement_data = function() {
+    var metadata = $('#statement-header').data('view').
+        model.get('metadata').attributes;
+    
     return {text: {en: $('#statement-editor-text').val() == "" ? 
                    null : $('#statement-editor-text').val()},
             standard: $('#statement-editor-standard').val(),
             main: $('input:radio[name=main]:checked').val(),
             weight: $('#statement-editor-weight').val() == "" ?
             null : $('#statement-editor-weight').val(),
-            header: AGB.get_metadata_data(),
+            header: metadata,
             atom: $('#statement-editor-atom').val()};  
 };
 
