@@ -11,6 +11,8 @@ AGB.show_statement_editor = function(config) {
     $('#statementeditor').html(AGB.create_statement_editor());
     $('#cancel-statement').click(AGB.remove_statement_editor);
     
+    $('#statement-editor-text').markItUp(mySettings);
+    
     AGB.set_statement_main(false);
     
     if(!_.isNil(config.atom)) {
