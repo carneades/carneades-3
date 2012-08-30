@@ -265,6 +265,7 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/app/views/scheme-candidate.js',
                    'js/app/views/argument-editor-free.js',
                    'js/app/views/conclusion-candidate.js',
+                   'js/app/views/metadata-element-editor.js',
                    'js/app/views/metadata-editor.js'];
     
     if(!is_in_toolbox) {
@@ -329,6 +330,7 @@ PM.load_templates = function(toolboxState) {
             'premisecandidate',
             'conclusioncandidate',
             'schemecandidate',
+            'metadataelementeditor',
             'button'],
            function(name) {
                var url = toolboxState == undefined ?
