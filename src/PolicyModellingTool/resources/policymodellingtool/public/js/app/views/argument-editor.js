@@ -48,9 +48,9 @@ PM.ArgumentEditorView = Backbone.View.extend(
          this.argumenteditorfreeview.render();
          this.$('.argument-editor-conclusion-and-premises').html(this.argumenteditorfreeview.$el);
          
-         this.metadata_editor_view = new PM.MetadataEditorView({model: this.model.get('metadata')});
+         this.metadata_editor_view = new PM.MetadataEditorView({model: this.model.get('metadata'),
+                                                                el: this.$('.argument-metadata')});
          this.metadata_editor_view.render();
-         this.$('.argument-metadata').html(this.metadata_editor_view.$el);
 
          return this;
      },
