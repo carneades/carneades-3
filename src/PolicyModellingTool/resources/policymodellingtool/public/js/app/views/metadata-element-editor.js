@@ -28,14 +28,14 @@ PM.MetadataElementEditorView = Backbone.View.extend(
      
      content_changed: function() {
          var content = this.$('.metadata-element-input').val();
-         var metadata_candidate = this.model;
-         metadata_candidate.set_element_val(this.type, this.cid, content);
+         this.model.set_element_val(this.type, this.cid, content);
          
          return false;
      },
      
      delete_element: function () {
-         // TODO remove the element from the metadata
+         this.model.delete_element_val(this.type, this.cid);
+         
          this.remove();
          return false;
      }
