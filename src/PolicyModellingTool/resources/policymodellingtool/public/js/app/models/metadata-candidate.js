@@ -6,15 +6,10 @@
 // by key/id access
 // Each id corresponds to the cid of a MetadataElementEditorView
 // 
-// It also modify the Metadata element without indirection, thus
+// It also modify the Metadata elements without indirection, thus
 // preserving the store/restore semantic
 PM.MetadataCandidate = Backbone.Model.extend(
-    {defaults: function(){
-         return {
-         
-         };
-     },
-     
+    {
      // Expects a PM.Metadata and a current_lang field
      initialize: function(attrs) {
      },
