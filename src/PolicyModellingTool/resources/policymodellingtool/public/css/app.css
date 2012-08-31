@@ -51,6 +51,7 @@
 
 .metadata-element-editor .delete:hover {
     background-position: 0 -20px;
+    cursor: pointer;
 }
 
 .editor-section-title {

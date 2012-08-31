@@ -1,4 +1,10 @@
 // A candidate for replacing some Metadata
+// 
+// It references a Metadata
+// and allows the modification, the indexing,
+// and the references of Metadata elements
+// by key/id access
+// Each id corresponds to the cid of a MetadataElementEditorView
 PM.MetadataCandidate = Backbone.Model.extend(
     {defaults: function(){
          return {
@@ -6,29 +12,29 @@ PM.MetadataCandidate = Backbone.Model.extend(
          };
      },
      
-     // hash type -> id -> index
-     // the index is the index of the element
-     // in the array for the type
-     elements: {
-         
-     }, 
-     
      // Expects a PM.Metadata and a current_lang field
      initialize: function(attrs) {
          var memento = new Backbone.Memento(this);
          _.extend(this, memento);
+     },
+
+     // hash type -> id -> index
+     // the index is the index of the element
+     // in the array for the type
+     indexes: {
+         
      },
      
      // Indexes an existing metadata element in order
      // to reference it later with the set_element_val
      // function
      index_element: function(type, id, val) {
-         if(_.isNil(this.elements[type])) {
-             this.elements[type] = {};
+         if(_.isNil(this.indexes[type])) {
+             this.indexes[type] = {};
          }
 
          var index = this.get('metadata').get(type).indexOf(val);
-         this.elements[type][id] = index; 
+         this.indexes[type][id] = index; 
      },
      
      // Sets the metadata element of type @type
@@ -39,35 +45,67 @@ PM.MetadataCandidate = Backbone.Model.extend(
          var elements = metadata.get(type);
          var index = -1;
 
-         if(_.isNil(elements[type])) {
+         if(_.isNil(this.indexes[type])) {
              // first time we create an element of this type
              index = 0;
-             this.elements[type] = {};
-             this.elements[type][id] = index;
+             this.indexes[type] = {};
+             this.indexes[type][id] = index;
              metadata.set(type, [val]);
-         } else if(this.elements[type] && this.elements[type][id]) {
+         } else if(this.indexes[type] && this.indexes[type][id]) {
              // we already have an element for this id
-             index = this.elements[type][id];
+             index = this.indexes[type][id];
              elements[index] = val;
              metadata.set(type, elements);
          } else {
              // we already have element for this type
              // but no element with this id
              index = elements.length;
-             this.elements[type][id] = index;
+             this.indexes[type][id] = index;
              elements[index] = val;
              metadata.set(type, elements); 
          }
      },
      
      get_element_val: function(type, id) {
-         if(_.isNil(this.elements[type]) || _.isNil(this.elements[type][id])) {
+         if(_.isNil(this.indexes[type]) || _.isNil(this.indexes[type][id])) {
              return undefined;
          }
 
-         var index = this.elements[type][id];
+         var index = this.indexes[type][id];
          return this.get('metadata').get(type)[index];
+     },
+     
+     delete_element_val: function(type, id) {
+         var index = this.indexes[type][id];
+         delete this.indexes[type][id];
+         var metadata = this.get('metadata');
+         var elements = metadata.get(type);
+         elements.splice(index, 1);
+         metadata.set(type, elements);
+         // reindexes the consecuting elements
+         // of the array
+         var self = this;
+         _.each(this.indexes[type],
+                function(idx, id) {
+                    if(idx > index) {
+                        self.indexes[type][id] = index - 1;    
+                    }
+                });
+         
      }
      
     }
 );
+
+
+
+
+
+
+
+
+
+
+
+
+
