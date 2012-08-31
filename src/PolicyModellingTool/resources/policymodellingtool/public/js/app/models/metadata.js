@@ -10,6 +10,8 @@ PM.Metadata = Backbone.Model.extend(
      },
 
      initialize: function(attrs) {
+         var memento = new Backbone.Memento(this);
+         _.extend(this, memento); 
      }
         
     }

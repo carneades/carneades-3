@@ -5,6 +5,9 @@
 // and the references of Metadata elements
 // by key/id access
 // Each id corresponds to the cid of a MetadataElementEditorView
+// 
+// It also modify the Metadata element without indirection, thus
+// preserving the store/restore semantic
 PM.MetadataCandidate = Backbone.Model.extend(
     {defaults: function(){
          return {
@@ -14,8 +17,6 @@ PM.MetadataCandidate = Backbone.Model.extend(
      
      // Expects a PM.Metadata and a current_lang field
      initialize: function(attrs) {
-         var memento = new Backbone.Memento(this);
-         _.extend(this, memento);
      },
 
      // hash type -> id -> index
@@ -42,7 +43,8 @@ PM.MetadataCandidate = Backbone.Model.extend(
      // in the metadata
      set_element_val: function(type, id, val) {
          var metadata = this.get('metadata');
-         var elements = metadata.get(type);
+         // clone preserves the old array for the store/restore operations
+         var elements = _.clone(metadata.get(type));
          var index = -1;
 
          if(_.isNil(this.indexes[type])) {
@@ -79,7 +81,7 @@ PM.MetadataCandidate = Backbone.Model.extend(
          var index = this.indexes[type][id];
          delete this.indexes[type][id];
          var metadata = this.get('metadata');
-         var elements = metadata.get(type);
+         var elements = _.clone(metadata.get(type));
          elements.splice(index, 1);
          metadata.set(type, elements);
          // reindexes the consecuting elements

@@ -10,7 +10,7 @@ PM.MetadataEditorView = Backbone.View.extend(
      initialize: function() {
          this.model.on('change', this.render, this);
          _.bindAll(this, 'render', 'description_changed', 'on_add_metadata_element');
-         this.model.store();
+         this.model.get('metadata').store();
          this.elements = {key: "Key",
                          contributor: "Contributor",
                          coverage: "Coverage",
@@ -69,16 +69,15 @@ PM.MetadataEditorView = Backbone.View.extend(
      },
      
      remove: function() {
-         this.model.restore();
+         this.model.get('metadata').restore();
          Backbone.View.prototype.remove.call(this);
      },
 
      description_changed: function() {
-         var metadata = _.clone(this.model.get('metadata'));
-         metadata.get('description')[this.model.get('current_lang')] 
-             = this.description().val();
-         this.model.set('metadata', metadata);
-         
+         var metadata = this.model.get('metadata');
+         var description = _.clone(metadata.get('description'));
+         description[this.model.get('current_lang')] = this.description().val();
+         metadata.set('description', description);
      },
      
      add_metadata_element: function(type, val) {
