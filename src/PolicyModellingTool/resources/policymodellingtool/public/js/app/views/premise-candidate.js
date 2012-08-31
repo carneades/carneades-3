@@ -2,7 +2,7 @@ PM.PremiseCandidateView = Backbone.View.extend(
     {className: "premise-candidate",
      
      events: {
-         "change input": "role_changed",
+         "change .role-input": "role_changed",
          "change input[type=hidden]": "statement_changed",
          "click .remove-premise": "on_delete_premise"
      },
@@ -59,8 +59,9 @@ PM.PremiseCandidateView = Backbone.View.extend(
          var statement = this.model.get('statements').get(this.statement().val());
          
          if(!_.isNil(statement)) {
-             var premise = this.model.get('premise');
+             var premise = _.clone(this.model.get('premise'));
              premise.statement = statement.attributes;
+             this.model.set('premise', premise);
          } 
      },
      
