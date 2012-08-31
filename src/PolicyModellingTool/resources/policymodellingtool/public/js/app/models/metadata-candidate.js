@@ -73,6 +73,10 @@ PM.MetadataCandidate = Backbone.Model.extend(
      },
      
      delete_element_val: function(type, id) {
+         if(_.isNil(this.indexes[type]) || _.isNil(this.indexes[type][id])) {
+             return;
+         }
+         
          var index = this.indexes[type][id];
          delete this.indexes[type][id];
          var metadata = this.get('metadata');
@@ -93,16 +97,3 @@ PM.MetadataCandidate = Backbone.Model.extend(
      
     }
 );
-
-
-
-
-
-
-
-
-
-
-
-
-
