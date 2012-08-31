@@ -16,6 +16,7 @@ PM.MetadataEditorView = Backbone.View.extend(
                          coverage: "Coverage",
                          creator: "Creator",
                          date: "Date",
+                         format: "Format",
                          identifier: "Identifier",
                          language: "Language",
                          publisher: "Publisher",
