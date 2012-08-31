@@ -97,7 +97,37 @@ PM.ArgumentEditorView = Backbone.View.extend(
      },
      
      scheme_changed: function() {
-       console.log(this.model.get('scheme').get('scheme'));
+         var scheme = this.model.get('scheme').get('scheme');
+         var premises_candidates_views = this.argumenteditorfreeview.premises_candidates_views;
+         var nb_premises = scheme.get('premises').length;
+         
+         // removes excedent premises
+         for(var i = 0; i < premises_candidates_views.length; i++) {
+             if(i >= nb_premises) {
+                 premises_candidates_views[i].remove();
+             }
+         }
+
+         // add required premises
+         
+         // set the role of the premises
+         for(i = 0; i < scheme.get('premises').length; i++) {
+             var premise = scheme.get('premises')[i];
+             var current_premise = _.clone(premises_candidates_views[i].model.get('premise'));
+             current_premise.role = premise.role;
+             premises_candidates_views[i].model.set('premise', current_premise);
+         }
+
+             // set the filter to true?
+             // builds a substitutions and stores it
+
+         // TODO adjust the number of premises to the number of premises
+         // in the scheme
+         // then assign a 'role' for each premise, keep the previously selected statement
+         
+         // adjust or add the number of exceptions for the selected scheme
+         // set the 'role' exception
+         // keep the previously selected statements
      },
      
      save: function() {
@@ -122,9 +152,11 @@ PM.ArgumentEditorView = Backbone.View.extend(
          _.extend(metadata, this.model.get('metadata').get('metadata').attributes);
          argument.set('header', metadata);
 
-         var scheme = this.model.get('scheme').get('scheme').id;
-         argument.set('scheme', '(' + scheme  + ')');
-
+         if(this.model.get('scheme').get('scheme')) {
+             var scheme = this.model.get('scheme').get('scheme').id;
+             argument.set('scheme', '(' + scheme  + ')'); 
+         }
+         
          if(argument.save(null, 
                           {error: PM.on_model_error,
                            wait: true,
