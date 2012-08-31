@@ -18,7 +18,7 @@ PM.SchemeCandidateView = Backbone.View.extend(
          
          this.scheme().select2({formatResult: AGB.format_filtered_scheme,
                                 formatSelection: AGB.format_selected_scheme, 
-                                placeholder: data.scheme_name,
+                                placeholder: data.initial_scheme_name,
                                 data: {
                                     results: data.schemes.toJSON(),
                                     text: function(scheme) {
@@ -29,9 +29,9 @@ PM.SchemeCandidateView = Backbone.View.extend(
                                     callback(data.schemes.get(element.val()).toJSON());
                                 }});
          
-         // if(data.scheme) {
-         //     this.scheme().val(data.scheme.id).trigger('change');    
-         // }
+         if(data.scheme) {
+             this.scheme().val(data.scheme.id).trigger('change');    
+         }
          
          return this;
      },
@@ -41,7 +41,13 @@ PM.SchemeCandidateView = Backbone.View.extend(
      },
      
      scheme_changed: function() {
-         
+         this.model.set('scheme', this.get_scheme());
+     },
+     
+     get_scheme: function() {
+         var id = this.$('input[type=hidden]').val();
+         var scheme = this.model.get('schemes').get(id);
+         return scheme;
      }
      
     }
