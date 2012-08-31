@@ -34,7 +34,7 @@ PM.MetadataEditorView = Backbone.View.extend(
          this.$el.html(ich.metadataeditor2({description: "Description:",
                                             adda: "Add a",
                                             totheheader: "to the header",
-                                            go: "OK"}));
+                                            go: "Add"}));
          
          if(data.metadata.attributes.description) {
              this.description().val(
