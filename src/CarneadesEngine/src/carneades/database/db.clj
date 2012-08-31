@@ -218,6 +218,38 @@
 ;; the database as whole. This record is created
 ;; when the database is created and initialized.
 
+(defn pack-metadata-element
+  "Packs a metadata element vector as a string"
+  [element]
+  (if (empty? element)
+    nil
+    (s/join "¡" element)))
+
+(defn unpack-metadata-element
+  "Unpacks a metadata element vector as a string"
+  [s]
+  (if (empty? s)
+    nil
+    (s/split s #"¡")))
+
+(defn pack-metadata
+  [md]
+  (reduce (fn [md [k v]]
+            (if (= k :description)
+              md
+              (assoc md k (pack-metadata-element v))))
+          md
+          md))
+
+(defn unpack-metadata
+  [md]
+  (reduce (fn [md [k v]]
+            (if (= k :description)
+              md
+              (assoc md k (unpack-metadata-element v))))
+          md
+          md))
+
 (defn create-metadata 
   "Inserts a metadata structure into a database.  
    Returns the id of the record in the database."
@@ -258,38 +290,6 @@
               res1 ["SELECT id FROM metadata"]
               (doall (map :id res1)))]
     (doall (map (fn [id] (read-metadata id)) ids))))
-
-(defn pack-metadata-element
-  "Packs a metadata element vector as a string"
-  [element]
-  (if (empty? element)
-    element
-    (s/join "¡" element)))
-
-(defn unpack-metadata-element
-  "Unpacks a metadata element vector as a string"
-  [s]
-  (if (empty? s)
-    s
-    (s/split s #"¡")))
-
-(defn pack-metadata
-  [md]
-  (reduce (fn [md [k v]]
-            (if (= k :description)
-              md
-              (assoc md k (pack-metadata-element v))))
-          md
-          md))
-
-(defn unpack-metadata
-  [md]
-  (reduce (fn [md [k v]]
-            (if (= k :description)
-              md
-              (assoc md k (unpack-metadata-element v))))
-          md
-          md))
 
 (defn update-metadata
   "integer map -> boolean
