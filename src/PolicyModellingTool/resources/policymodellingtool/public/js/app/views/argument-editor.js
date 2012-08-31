@@ -9,7 +9,7 @@ PM.ArgumentEditorView = Backbone.View.extend(
          "change input:radio[name=pro][value=con]": "direction_changed",
          "change input:radio[name=strict][value=yes]": "strict_changed",
          "change input:radio[name=strict][value=no]": "strict_changed",
-         "change .weight-input": "weight_changed"
+         "change .weight-input": "weight_changed",
      },
      
      initialize: function() {
@@ -18,6 +18,7 @@ PM.ArgumentEditorView = Backbone.View.extend(
          this.model.get('argument').store();
          
          this.model.on('change', this.render, this);
+         this.model.get('scheme').on('change', this.scheme_changed, this);
          _.bindAll(this, 'render', 'cancel');
      },
 
@@ -40,9 +41,9 @@ PM.ArgumentEditorView = Backbone.View.extend(
 
          this.$('.weight-input').val(data.argument.attributes.weight);
          
-         var scheme_candidate_view = new PM.SchemeCandidateView({model: this.model.get('scheme')});
-         scheme_candidate_view.render();
-         this.$('.scheme-candidate').html(scheme_candidate_view.$el);
+         this.scheme_candidate_view = new PM.SchemeCandidateView({model: this.model.get('scheme'),
+                                                                  el: this.$('.scheme-candidate')});
+         this.scheme_candidate_view.render();
          
          this.argumenteditorfreeview = new PM.ArgumentEditorFreeView({model: this.model});
          this.argumenteditorfreeview.render();
@@ -95,6 +96,10 @@ PM.ArgumentEditorView = Backbone.View.extend(
          this.model.get('argument').set('weight', this.weight());
      },
      
+     scheme_changed: function() {
+       console.log(this.model.get('scheme').get('scheme'));
+     },
+     
      save: function() {
          // // forces the update of data for events
          // // swallowed by markItUp and not captured by the view
@@ -116,6 +121,9 @@ PM.ArgumentEditorView = Backbone.View.extend(
          // merge new metadata with the old one
          _.extend(metadata, this.model.get('metadata').get('metadata').attributes);
          argument.set('header', metadata);
+
+         var scheme = this.model.get('scheme').get('scheme').id;
+         argument.set('scheme', '(' + scheme  + ')');
 
          if(argument.save(null, 
                           {error: PM.on_model_error,
