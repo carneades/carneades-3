@@ -8,9 +8,11 @@ PM.ArgumentCandidate = Backbone.Model.extend(
                                                                statements: attrs.statements});
          this.set('conclusion', conclusioncandidate);
          
-         var scheme_name = attrs.argument.get('scheme');
+         var initial_scheme_name = attrs.argument.get('scheme');
+         var scheme = attrs.schemes.get(initial_scheme_name.slice(1, -1));
          var scheme_candidate = new PM.SchemeCandidate({schemes: attrs.schemes,
-                                                        scheme_name: scheme_name});
+                                                        initial_scheme_name: initial_scheme_name,
+                                                        scheme: scheme});
          this.set('scheme', scheme_candidate);
          
          var metadata_candidate = new PM.MetadataCandidate(
