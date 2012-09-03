@@ -9,16 +9,40 @@ AGB.set_argument_url = function(db, argid)
     $.address.value(AGB.argument_url(db, argid));
 };
 
+AGB.set_has_properties = function(argument_data) {
+    argument_data.hasdescription = argument_data.header.description[IMPACT.lang] ? true : false;
+    argument_data.hascounterarguments = argument_data.undercutters.length > 0 || argument_data.rebuttals.length > 0 
+        ? true : false;
+    argument_data.hasdependents = argument_data.dependents.length > 0 ? true : false;
+    argument_data.header.haskey = argument_data.header.key ? true : false;
+    argument_data.header.hascontributor = argument_data.header.contributor ? true : false;
+    argument_data.header.hascoverage = argument_data.header.coverage ? true : false;
+    argument_data.header.hascreator = argument_data.header.creator ? true : false;
+    argument_data.header.hasdate = argument_data.header.date ? true : false;
+    argument_data.header.hasformat = argument_data.header.format ? true : false;
+    argument_data.header.hasidentifier = argument_data.header.identifier ? true : false;
+    argument_data.header.haslanguage = argument_data.header.language ? true : false;
+    argument_data.header.haspublisher = argument_data.header.publisher ? true : false;
+    argument_data.header.hasrelation = argument_data.header.relation ? true : false;
+    argument_data.header.hasrights = argument_data.header.rights ? true : false;
+    argument_data.header.hassource = argument_data.header.source ? true : false;
+    argument_data.header.hassubject = argument_data.header.subject ? true : false;
+    argument_data.header.hastitle = argument_data.header.title ? true : false;
+    argument_data.header.hastype = argument_data.header.type ? true : false;
+    
+};
+
 AGB.argument_html = function(db, argument_data)
 {
     AGB.normalize(argument_data);
+    AGB.set_has_properties(argument_data);
     argument_data.direction = argument_data.pro ? "pro" : "con";
     argument_data.db = db;
     argument_data.description_text = AGB.description_text(argument_data.header);
     AGB.set_argument_title_text(argument_data);
     argument_data.direction_text = argument_data.pro ? "pro" : "con";
     argument_data.conclusion.statement_text = AGB.statement_text(argument_data.conclusion);
-    AGB.set_premises_text(argument_data);
+    AGB.set_premises_text(argument_data); 
     AGB.set_undercutters_text(argument_data);
     AGB.set_rebuttals_text(argument_data);
     AGB.set_dependents_text(argument_data);
