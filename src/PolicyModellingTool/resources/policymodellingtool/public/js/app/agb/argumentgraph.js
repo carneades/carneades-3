@@ -21,7 +21,7 @@ AGB.argumentgraph_html = function(db, data)
     AGB.set_mainissues_text(data.main_issues);
     data.references = data.metadata.filter(function (ref) { return ref.key; });
     AGB.set_references_text(data.references);
-    data.title = AGB.markdown_to_html(data.metadata[0].title);
+    data.title = AGB.markdown_to_html(data.metadata[0].title[0]);
     data.outline_text = AGB.outline_text(data.outline, db);
     var argumentgraph_html = ich.argumentgraph(data);
     return argumentgraph_html.filter('#argumentgraph');
