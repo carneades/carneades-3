@@ -45,9 +45,27 @@ PM.ArgumentEditorView = Backbone.View.extend(
                                                                   el: this.$('.scheme-candidate')});
          this.scheme_candidate_view.render();
          
-         this.argumenteditorfreeview = new PM.ArgumentEditorFreeView({model: this.model});
-         this.argumenteditorfreeview.render();
-         this.$('.argument-editor-conclusion-and-premises').html(this.argumenteditorfreeview.$el);
+         var conclusioncandidateview = new PM.ConclusionCandidateView({model: this.model.get('conclusion')});
+         conclusioncandidateview.render();
+         this.$('.conclusion-candidate').html(conclusioncandidateview.$el);
+
+         
+         this.premises_candidates_view = new PM.PremisesCandidatesView(
+             {model: this.model,
+              add_more_text: "Add a premise",
+              container: 'premises',
+              elements_name: 'Premises',
+              el: this.$('.argument-editor-premises')});
+         this.premises_candidates_view.render();
+
+         this.exceptions_candidates_view = new PM.PremisesCandidatesView(
+             {model: this.model,
+              add_more_text: "Add an exception",
+              container: 'exceptions',
+              elements_name: 'Exceptions',
+              el: this.$('.argument-editor-exceptions')});
+         this.exceptions_candidates_view.render();
+         
          
          this.metadata_editor_view = new PM.MetadataEditorView({model: this.model.get('metadata'),
                                                                 el: this.$('.argument-metadata')});
@@ -97,33 +115,46 @@ PM.ArgumentEditorView = Backbone.View.extend(
      },
      
      scheme_changed: function() {
+         var self = this;
          var scheme = this.model.get('scheme').get('scheme');
-         var premises_candidates_views = this.argumenteditorfreeview.premises_candidates_views;
+         var premises_candidates_views = this.premises_candidates_view.premises_candidates_views;
          var nb_premises = scheme.get('premises').length;
          
-         // removes excedent premises
-         for(var i = 0; i < premises_candidates_views.length; i++) {
-             if(i >= nb_premises) {
-                 premises_candidates_views[i].remove();
-             }
-         }
-
-         // add required premises
+         var premises_candidates = this.model.get('premises');
          
-         // set the role of the premises
-         for(i = 0; i < scheme.get('premises').length; i++) {
-             var premise = scheme.get('premises')[i];
-             var current_premise = _.clone(premises_candidates_views[i].model.get('premise'));
-             current_premise.role = premise.role;
-             premises_candidates_views[i].model.set('premise', current_premise);
+         // removes excedent premises, if needed
+         for(var i = 0; i < (premises_candidates.length - nb_premises); i++) {
+             premises_candidates.pop();
          }
 
-             // set the filter to true?
-             // builds a substitutions and stores it
+         // adds necessary premises, if needed
+         for(i = 0; i < (nb_premises - premises_candidates.length); i++) {
+             premises_candidates.push(
+                 new PM.PremiseCandidate({statements: this.model.get('statements')}));
+         }
+         
+         // set the exceptions candidate
+         var exceptions_candidates = this.model.get('exceptions');
+         exceptions_candidates.each(function(exception) {
+                                        exceptions_candidates.remove(exception);
+                                    });
+         _.each(scheme.get('exceptions'),
+               function(exception) {
+                   exceptions_candidates.add({premise: exception,
+                                              statements: self.model.get('statements')});
+               });
 
-         // TODO adjust the number of premises to the number of premises
-         // in the scheme
-         // then assign a 'role' for each premise, keep the previously selected statement
+         // set the role of the premises
+         for(i = 0; i < nb_premises; i++) {
+             var premise = scheme.get('premises')[i];
+             var premise_candidate = premises_candidates.at(i);
+             var current_premise = _.clone(premise_candidate.get('premise'));
+             current_premise.role = premise.role;
+             premise_candidate.set('premise', current_premise);
+         }
+
+         // set the filter to true?
+         // builds a substitutions and stores it
          
          // adjust or add the number of exceptions for the selected scheme
          // set the 'role' exception
@@ -166,7 +197,7 @@ PM.ArgumentEditorView = Backbone.View.extend(
                                AGB.display_argument(IMPACT.db, argument.id);
                            }})) {
              this.model = undefined;
-             this.argumenteditorfreeview.remove();
+             this.premises_candidates_view.remove();
              this.remove();
          }
          
@@ -178,9 +209,9 @@ PM.ArgumentEditorView = Backbone.View.extend(
          this.model.restore(); 
          this.model.get('argument').restore();
          
-         this.argumenteditorfreeview.cancel();
+         this.premises_candidates_view.cancel();
 
-         this.argumenteditorfreeview.remove();
+         this.premises_candidates_view.remove();
          this.remove();
          
          this.metadata_editor_view.remove();
