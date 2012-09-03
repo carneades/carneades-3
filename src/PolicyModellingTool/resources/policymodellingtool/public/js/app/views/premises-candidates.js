@@ -1,39 +1,42 @@
-// Subview for modifying an argument without a scheme
-PM.ArgumentEditorFreeView = Backbone.View.extend(
-    {className: "argument-editor-free",
+// Subview for displaying the premises or the exceptions candidates
+PM.PremisesCandidatesView = Backbone.View.extend(
+    {className: "premises-candidates-view",
      
      events: {
          "click .add-premise": "add_premise"
      },
 
-     initialize: function() {
+     initialize: function(attrs) {
+         this.container = attrs.container;
          this.model.on('change', this.render, this);
-         this.model.get('premises').on('add', this.render, this);
-         // this.model.get('premises').on('remove', this.render, this);
+         this.model.get(this.container).on('add', this.render, this);
+         this.model.get(this.container).on('remove', this.render, this);
+         this.add_more_text = attrs.add_more_text;
+         this.elements_name = attrs.elements_name;
          _.bindAll(this, 'render');
      },
 
      render: function() {
-         this.$el.html(ich.argumenteditor2free());
-
-         var conclusioncandidateview = new PM.ConclusionCandidateView({model: this.model.get('conclusion')});
-         conclusioncandidateview.render();
-         this.$('.conclusion-candidate').html(conclusioncandidateview.$el);
+         var haselements = this.model.get(this.container).length > 0;
+         this.$el.html(ich.premisescandidates({haselements: haselements,
+                                               elements_name: this.elements_name}));
 
          var self = this;
          self.premises_candidates_views = [];
-         this.model.get('premises').each(
+         this.model.get(this.container).each(
              function(premise) {
                  premise.store();
-                 premise.set('container', self.model.get('premises'));
+                 premise.set('container', self.model.get(self.container));
                  var premisecandidateview = new PM.PremiseCandidateView({model: premise});
                  self.premises_candidates_views.push(premisecandidateview);
                  premisecandidateview.render();
                  self.$('.argument-premises').append(premisecandidateview.$el);
              });
-
-         this.$el.append(ich.button({clazz: "add-premise",
-                                     value: "Add a premise"}));
+         
+         if(haselements) {
+             this.$el.append(ich.button({clazz: "add-premise",
+                                         value: this.add_more_text}));    
+         }
          
          return this;
      },
@@ -42,7 +45,7 @@ PM.ArgumentEditorFreeView = Backbone.View.extend(
          var premisecandidate = new PM.PremiseCandidate(
              {statements: this.model.get('statements')});
 
-         this.model.get('premises').add(premisecandidate); 
+         this.model.get(this.container).add(premisecandidate); 
          return false;
      },
      
@@ -57,7 +60,7 @@ PM.ArgumentEditorFreeView = Backbone.View.extend(
      },
      
      cancel: function() {
-         this.model.get('premises').each(
+         this.model.get(this.container).each(
              function(premise) {
                  premise.restore();
              });

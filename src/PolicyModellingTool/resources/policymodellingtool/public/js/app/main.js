@@ -263,7 +263,7 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/app/views/argument-editor.js',
                    'js/app/views/premise-candidate.js',
                    'js/app/views/scheme-candidate.js',
-                   'js/app/views/argument-editor-free.js',
+                   'js/app/views/premises-candidates.js',
                    'js/app/views/conclusion-candidate.js',
                    'js/app/views/metadata-element-editor.js',
                    'js/app/views/metadata-editor.js'];
@@ -320,7 +320,8 @@ PM.load_templates = function(toolboxState) {
             'statementeditor',
             'argumenteditor',
             'argumenteditor2',
-            'argumenteditor2free',
+            'premisescandidates',
+            'exceptionscandidates',
             'metadataeditor',
             'metadataeditor2',
             'premiseeditor',
