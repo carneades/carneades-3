@@ -8,13 +8,13 @@ AGB.get_string = function(data, is_last, escape)
 
 AGB.format_metadata = function(metadata)
 {
-    if(metadata == null || metadata == undefined) {
+    if(_.isNil(metadata)) {
         return "";    
     }
-    var creator = metadata.creator;
-    var date = metadata.date;
-    var title = metadata.title;
-    var identifier = metadata.identifier;
+    var creator = metadata.creator ? metadata.creator[0] : null;
+    var date = metadata.date ? metadata.date[0] : null;
+    var title = metadata.title ? metadata.title[0] : null;
+    var identifier = metadata.identifier ? metadata.identifier[0] : null;
     var is_identifier_url = AGB.is_url(identifier);
     
      // makes a link if the identifier is an url
