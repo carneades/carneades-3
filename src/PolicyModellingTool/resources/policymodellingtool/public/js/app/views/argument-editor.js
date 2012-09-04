@@ -49,7 +49,9 @@ PM.ArgumentEditorView = Backbone.View.extend(
          conclusioncandidateview.render();
          this.$('.conclusion-candidate').html(conclusioncandidateview.$el);
 
-         
+         if(this.premises_candidates_view) {
+             this.premises_candidates_view.remove();
+         }
          this.premises_candidates_view = new PM.PremisesCandidatesView(
              {model: this.model,
               add_more_text: "Add a premise",
@@ -58,6 +60,9 @@ PM.ArgumentEditorView = Backbone.View.extend(
               el: this.$('.argument-editor-premises')});
          this.premises_candidates_view.render();
 
+         if(this.exceptions_candidates_view) {
+             this.exceptions_candidates_view.remove();
+         }
          this.exceptions_candidates_view = new PM.PremisesCandidatesView(
              {model: this.model,
               add_more_text: "Add an exception",
@@ -133,32 +138,32 @@ PM.ArgumentEditorView = Backbone.View.extend(
                  new PM.PremiseCandidate({statements: this.model.get('statements')}));
          }
          
-         // set the exceptions candidate
+         // set the exceptions candidate and their expected atoms
          var exceptions_candidates = this.model.get('exceptions');
-         exceptions_candidates.each(function(exception) {
-                                        exceptions_candidates.remove(exception);
-                                    });
+
+         while(exceptions_candidates.length != 0) {
+             exceptions_candidates.pop();
+         } 
+
          _.each(scheme.get('exceptions'),
                function(exception) {
                    exceptions_candidates.add({premise: exception,
+                                              suggested_atom: AGB.sexpr_to_str(exception.statement.atom),
                                               statements: self.model.get('statements')});
                });
 
-         // set the role of the premises
+         // set the role of the premises and their expected atoms
          for(i = 0; i < nb_premises; i++) {
              var premise = scheme.get('premises')[i];
              var premise_candidate = premises_candidates.at(i);
              var current_premise = _.clone(premise_candidate.get('premise'));
              current_premise.role = premise.role;
              premise_candidate.set('premise', current_premise);
+             premise_candidate.set('suggested_atom', AGB.sexpr_to_str(premise.statement.atom));
          }
 
-         // set the filter to true?
-         // builds a substitutions and stores it
-         
-         // adjust or add the number of exceptions for the selected scheme
-         // set the 'role' exception
-         // keep the previously selected statements
+         this.render();
+
      },
      
      save: function() {
