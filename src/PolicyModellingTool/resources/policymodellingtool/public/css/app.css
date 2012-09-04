@@ -83,6 +83,47 @@
     float: left;
 }
 
+.premise-candidate {
+    position: relative;
+}
+
+.premise-candidate .delete {
+    position: absolute;
+    top: 0;
+    right: 0;
+    text-align: right;
+    display: none;
+}
+
+.premise-candidate:hover {
+    border: 1px dashed; 
+}
+
+.premise-candidate:hover .delete {
+    display: block;
+    background: transparent url('images/destroy.png');
+    width: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 3px;
+    margin-right: 3px;
+}
+
+.premise-candidate .delete:hover {
+    background-position: 0 -20px;
+    cursor: pointer;
+}
+
+.premise-candidate .create {
+    display: none;
+}
+
+.premise-candidate:hover .create {
+    display: block;
+    cursor: pointer;
+} 
+
 #conclusionprefix {
     float: left;
 }
