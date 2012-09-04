@@ -1,3 +1,4 @@
+// Displays a view to select a candidate for a premise or an exception
 PM.PremiseCandidateView = Backbone.View.extend(
     {className: "premise-candidate",
      
@@ -81,9 +82,9 @@ PM.PremiseCandidateView = Backbone.View.extend(
      },
      
      create_statement: function() {
-         // TODO if a scheme is selected, prefills the atom
          var self = this;
-         AGB.show_statement_editor({atom: "",
+         var atom = this.model.get('suggested_atom') ? this.model.get('suggested_atom').replace(/\?/g, '') : "";
+         AGB.show_statement_editor({atom: atom,
                                    save_callback: function(data) {
                                        var id = data.id;
                                        var statements = self.model.get('statements');
