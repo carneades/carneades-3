@@ -4,13 +4,14 @@ PM.PremiseCandidateView = Backbone.View.extend(
      events: {
          "change .role-input": "role_changed",
          "change input[type=hidden]": "statement_changed",
-         "click .remove-premise": "on_delete_premise"
+         "click .delete": "on_delete_premise",
+         "click .create": "create_statement"
      },
      
      initialize: function() {
          this.model.on('change', this.render, this);
          _.bindAll(this, 'role_changed', 'statement_changed', 
-                   'render', 'on_delete_premise');
+                   'render', 'on_delete_premise', 'create_statement');
      },
      
      render: function() {
@@ -77,7 +78,24 @@ PM.PremiseCandidateView = Backbone.View.extend(
          // removes the view
          this.remove();
          return false;
+     },
+     
+     create_statement: function() {
+         // TODO if a scheme is selected, prefills the atom
+         var self = this;
+         AGB.show_statement_editor({atom: "",
+                                   save_callback: function(data) {
+                                       var id = data.id;
+                                       var statements = self.model.get('statements');
+                                       var statement = statements.get(id);
+                                       
+                                       var premise = _.clone(self.model.get('premise'));
+                                       premise.statement = statement; 
+                                       self.model.set('premise', premise);
+                                   }
+                                   });
      }
+     
     }
 );
 
