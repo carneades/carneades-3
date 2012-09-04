@@ -12,21 +12,21 @@ PM.MetadataEditorView = Backbone.View.extend(
          _.bindAll(this, 'render', 'description_changed', 'on_add_metadata_element');
          this.model.get('metadata').store();
          this.elements = {key: "Key",
-                         contributor: "Contributor",
-                         coverage: "Coverage",
-                         creator: "Creator",
-                         date: "Date",
-                         format: "Format",
-                         identifier: "Identifier",
-                         language: "Language",
-                         publisher: "Publisher",
-                         relation: "Relation",
-                         rights: "Rights",
-                         source: "Source",
-                         subject: "Subject",
-                         title: "Title",
-                         type: "Type"             
-                        }; 
+                          contributor: "Contributor",
+                          coverage: "Coverage",
+                          creator: "Creator",
+                          date: "Date",
+                          format: "Format",
+                          identifier: "Identifier",
+                          language: "Language",
+                          publisher: "Publisher",
+                          relation: "Relation",
+                          rights: "Rights",
+                          source: "Source",
+                          subject: "Subject",
+                          title: "Title",
+                          type: "Type"             
+                         }; 
      },
      
      render: function() {
