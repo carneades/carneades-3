@@ -35,6 +35,11 @@
     width: 600px;
 }
 
+.metadata-element-name {
+    font-weight: bold;
+    width: 200px;
+}
+
 .metadata-element-input {
     width: 80%;
 }
