@@ -10,10 +10,16 @@ AGB.set_argument_url = function(db, argid)
 };
 
 AGB.set_has_properties = function(argument_data) {
-    argument_data.hasdescription = argument_data.header.description[IMPACT.lang] ? true : false;
     argument_data.hascounterarguments = argument_data.undercutters.length > 0 || argument_data.rebuttals.length > 0 
         ? true : false;
     argument_data.hasdependents = argument_data.dependents.length > 0 ? true : false;
+    
+    if(_.isNil(argument_data.header)) {
+        return;
+    }
+    
+    argument_data.hasdescription = argument_data.header.description &&
+        argument_data.header.description[IMPACT.lang] ? true : false;
     argument_data.header.haskey = argument_data.header.key ? true : false;
     argument_data.header.hascontributor = argument_data.header.contributor ? true : false;
     argument_data.header.hascoverage = argument_data.header.coverage ? true : false;
