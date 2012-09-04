@@ -45,9 +45,9 @@ PM.ArgumentEditorView = Backbone.View.extend(
                                                                   el: this.$('.scheme-candidate')});
          this.scheme_candidate_view.render();
          
-         var conclusioncandidateview = new PM.ConclusionCandidateView({model: this.model.get('conclusion')});
+         var conclusioncandidateview = new PM.ConclusionCandidateView({model: this.model.get('conclusion'),
+                                                                       el: this.$('.conclusion-candidate')});
          conclusioncandidateview.render();
-         this.$('.conclusion-candidate').html(conclusioncandidateview.$el);
 
          if(this.premises_candidates_view) {
              this.premises_candidates_view.remove();
