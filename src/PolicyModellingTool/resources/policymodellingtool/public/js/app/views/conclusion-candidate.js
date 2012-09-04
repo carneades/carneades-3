@@ -4,7 +4,7 @@ PM.ConclusionCandidateView = Backbone.View.extend(
      
      events: {
          "change input[type=hidden]" : "statement_changed",
-         "click .new-statement-for-conclusion": "on_new_conclusion"
+         "click .create": "on_new_conclusion"
      },
      
      initialize: function() {
