@@ -114,7 +114,7 @@ AGB.enable_ag_edition = function() {
                                          AGB.display_argumentgraph(IMPACT.db);
                                          return false;
                                      }}));
-    $('#newargument').click(AGB.argumentgraph_newargument);
+    $('#newargument').click(AGB.new_argument);
     
     return false;
 };
@@ -123,4 +123,21 @@ AGB.enable_ag_edition = function() {
 // (hack)
 AGB.is_grounded = function(atom) {
     return atom.indexOf("?") == -1;
+};
+
+AGB.new_argument = function() {
+    var argument = new PM.Argument();
+
+    var argument_candidate = new PM.ArgumentCandidate({argument: argument,
+                                                       statements: PM.statements,
+                                                       schemes: PM.schemes,
+                                                       current_lang: IMPACT.lang});
+
+    var argument_editor_view = new PM.ArgumentEditorView({model: argument_candidate,
+                                                          title: 'New Argument'});
+    
+    argument_editor_view.render();
+    $('#argumenteditor').html(argument_editor_view.$el);
+    
+    return false;
 };

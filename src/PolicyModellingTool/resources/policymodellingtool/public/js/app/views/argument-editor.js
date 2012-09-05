@@ -12,7 +12,9 @@ PM.ArgumentEditorView = Backbone.View.extend(
          "change .weight-input": "weight_changed",
      },
      
-     initialize: function() {
+     initialize: function(attrs) {
+         this.title = attrs.title;
+
          // saves state of the argument candidate
          this.model.store(); 
          this.model.get('argument').store();
@@ -25,7 +27,7 @@ PM.ArgumentEditorView = Backbone.View.extend(
      render: function() {
          var data = this.model.toJSON();
          
-         this.$el.html(ich.argumenteditor2());
+         this.$el.html(ich.argumenteditor2({title: this.title}));
 
          if(data.argument.attributes.pro) {
              this.pro_el().attr('checked',true);
@@ -128,12 +130,14 @@ PM.ArgumentEditorView = Backbone.View.extend(
          var premises_candidates = this.model.get('premises');
          
          // removes excedent premises, if needed
-         for(var i = 0; i < (premises_candidates.length - nb_premises); i++) {
+         var length = premises_candidates.length;
+         for(var i = 0; i < (length - nb_premises); i++) {
              premises_candidates.pop();
          }
 
          // adds necessary premises, if needed
-         for(i = 0; i < (nb_premises - premises_candidates.length); i++) {
+         length = premises_candidates.length;
+         for(i = 0; i < (nb_premises - length); i++) {
              premises_candidates.push(
                  new PM.PremiseCandidate({statements: this.model.get('statements')}));
          }
@@ -171,6 +175,18 @@ PM.ArgumentEditorView = Backbone.View.extend(
      },
      
      save: function() {
+         // TODO get rid of the id
+         if(!$('#editor-conclusion').valid()) {
+             return false;
+         }
+
+         if(_.filter(this.$('input.statement-select.required'),
+                     function(premise) {
+                         return $(premise).valid() == false;
+                     }).length > 0) {
+             return false;
+         }
+         
          // // forces the update of data for events
          // // swallowed by markItUp and not captured by the view
          // this.metadata_editor_view.update_data();
