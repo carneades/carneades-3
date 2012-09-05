@@ -339,11 +339,18 @@
              db (make-database-connection (:db (:params request)) username password)
              id (:id m)
              arg (unpack-argument m)
-             arg (dissoc arg :id :undercutters :dependents
+             arg2 (dissoc arg :id :undercutters :dependents
                          :exceptions :rebuttals)]
          (with-db db (json-response
-                      (do (update-argument id arg)
-                          (argument-data id))))))
+                      (let [responses (generate-exceptions arg)
+                            exceptions-ids (reduce (fn [ids response]
+                                                     (conj ids (create-argument (:argument response))))
+                                                   []
+                                                   responses)]
+                        ;; here we have the exceptions' ids but we can not pass them back
+                        ;; since backbone.js expects the argument record to be returned...
+                        (update-argument id arg2)
+                        (argument-data id))))))
       
   (DELETE "/argument/:db/:id" request
           (let [[username password] (get-username-and-password request)

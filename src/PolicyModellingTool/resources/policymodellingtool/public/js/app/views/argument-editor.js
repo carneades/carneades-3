@@ -181,11 +181,15 @@ PM.ArgumentEditorView = Backbone.View.extend(
          // but the following are pulled from the view
          var conclusion =  this.model.get('conclusion').get('statement');
 
+         argument.set('conclusion', conclusion);
          argument.set('premises', this.model.get('premises').map(
                             function(premise_candidate) {
                                 return premise_candidate.get('premise');
                             }));
-         argument.set('conclusion', conclusion);
+         argument.set('exceptions', this.model.get('exceptions').map(
+                          function(premise_candidate) {
+                              return premise_candidate.get('premise');
+                          }));
          
          var metadata = argument.get('header') || {};
          // merge new metadata with the old one

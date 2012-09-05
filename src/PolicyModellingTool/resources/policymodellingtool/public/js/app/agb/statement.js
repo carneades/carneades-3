@@ -19,7 +19,9 @@ AGB.statement_html = function(db, info, lang)
     AGB.set_procon_texts(info);    
     AGB.set_procon_premises_text(info);
     AGB.set_premise_of_texts(info);
-    info.statement_text = AGB.markdown_to_html(info.text[lang]);
+    if(info.text) {
+        info.statement_text = AGB.markdown_to_html(info.text[lang]);    
+    } 
 
     var statement_html = ich.statement(info);
     return statement_html.filter('#statement');
