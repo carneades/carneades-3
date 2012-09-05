@@ -230,7 +230,6 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/app/agb/map.js',
                    'js/app/agb/markdown.js',
                    'js/app/agb/statement-editor.js',
-                   'js/app/agb/argument-editor.js',
                    'js/lib/ICanHaz.js',
                    'js/lib/Markdown.Converter.js',
                    'js/lib/Markdown.Sanitizer.js',
@@ -266,6 +265,7 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/app/views/premises-candidates.js',
                    'js/app/views/conclusion-candidate.js',
                    'js/app/views/metadata-element-editor.js',
+                   'js/app/views/formatting-helper.js',
                    'js/app/views/metadata-editor.js'];
     
     if(!is_in_toolbox) {
@@ -319,7 +319,6 @@ PM.load_templates = function(toolboxState) {
             'argumenteditormenu',
             'statementeditor',
             'argumenteditor',
-            'argumenteditor2',
             'premisescandidates',
             'exceptionscandidates',
             'metadataeditor',
