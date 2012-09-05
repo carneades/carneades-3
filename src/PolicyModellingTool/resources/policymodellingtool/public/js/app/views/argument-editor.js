@@ -27,7 +27,7 @@ PM.ArgumentEditorView = Backbone.View.extend(
      render: function() {
          var data = this.model.toJSON();
          
-         this.$el.html(ich.argumenteditor2({title: this.title}));
+         this.$el.html(ich.argumenteditor({title: this.title}));
 
          if(data.argument.attributes.pro) {
              this.pro_el().attr('checked',true);
