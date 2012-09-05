@@ -161,6 +161,10 @@ PM.ArgumentEditorView = Backbone.View.extend(
              premise_candidate.set('premise', current_premise);
              premise_candidate.set('suggested_atom', AGB.sexpr_to_str(premise.statement.atom));
          }
+         
+         // set the suggested_atom for the conclusion candidate
+         var conclusion_candidate = this.model.get('conclusion');
+         conclusion_candidate.set('suggested_atom',  AGB.sexpr_to_str(scheme.get('conclusion')));
 
          this.render();
 
