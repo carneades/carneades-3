@@ -154,7 +154,7 @@
     (make-predicate
      :symbol 'horrible-costs
      :arity 2
-     :forms {:en (make-forms
+     :forms {:en (make-form
                   :positive "Event %s would entail horrible costs."
                   :negative "Event %s would not entail horrible costs."
                   :question "Would event %s entail horrible costs?")})
@@ -221,7 +221,7 @@
      :arity 2
      :forms {:en (make-form
                   :positive "%s is an instance of class %s."
-                  :positive "%s is not an instance of class %s."
+                  :negative "%s is not an instance of class %s."
                   :question "Is %s an instance of class %s?")})
 
     (make-predicate
@@ -314,6 +314,7 @@
                   :positive "Performing action %s would have positive consequences."
                   :negative "Performing action %s would not have positive consequences."
                   :question "Would performing action %s have positive consequences?")})
+
     (make-predicate
      :symbol 'relevant-differences
      :arity 1
@@ -322,7 +323,7 @@
                   :negative "There are no relevant differences between case %s and the current case."
                   :question "Are there relevant differences between case %s and the current case?")})
 
-    (make-premise
+    (make-predicate
      :symbol 'satisfies-definition
      :arity 2
      :forms {:en (make-form
@@ -490,7 +491,7 @@ Douglas Walton, Witness Testimony Evidence, unpublished book manuscript, to appe
                    :statement '(implausible ?A))]
      :assumptions [(make-premise
                     :role "CQ1"
-                    :statement (internally-consistent ?A))])
+                    :statement '(internally-consistent ?A))])
 
     (make-scheme
      :id 'expert-opinion
@@ -746,7 +747,7 @@ Douglas Walton, A Pragmatic Theory of Fallacy, The University of Alabama Press, 
                  :statement '(not (known ?S)))]
      :exceptions [(make-premise
                    :role "CQ1"
-                   :statement '(uninvestigated ?S))})
+                   :statement '(uninvestigated ?S))])
 
     (make-scheme
      :id 'abduction
@@ -763,7 +764,7 @@ Douglas Walton, A Pragmatic Theory of Fallacy, The University of Alabama Press, 
                  :statement '(member ?T1 ?H))]
      :exceptions [(make-premise
                    :role "CQ1"
-                   :statement (more-coherent-explanation ?T2 ?T1 ?S))])
+                   :statement '(more-coherent-explanation ?T2 ?T1 ?S))])
 
     (make-scheme
      :id 'ethotic
@@ -777,6 +778,8 @@ Douglas Walton, A Pragmatic Theory of Fallacy, The University of Alabama Press, 
                 (make-premise
                  :role "trustworthiness"
                  :statement '(trustworthy ?P))])
+
+    ;; to do: add negative version of ethotic arguments, for untrustworthy pesrons
 
     (make-scheme
      :id 'slippery-slope
@@ -819,7 +822,11 @@ Douglas Walton, Fundamentals of Critical Argumentation, Cambridge University Pre
     
     ])) ;; end of theory of Walton's schemes
 
+(def schemes-by-predicate
+  (create-scheme-predicate-index {} walton-schemes))
 
+(def schemes-by-id
+  (create-scheme-id-index {} walton-schemes))
 
 
 
