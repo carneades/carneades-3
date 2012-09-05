@@ -11,7 +11,7 @@
          carneades.database.export
          carneades.database.import
          carneades.xml.caf.export
-         carneades.web.liverpool-schemes
+         carneades.web.walton-schemes
          ring.util.codec)
   (:require [compojure.route :as route]
             [compojure.handler :as handler]
@@ -534,15 +534,15 @@
       
   ;; Schemes
       
-  (GET "/scheme" []                     ; return all Liverpool schemes
-       (json-response (vals liverpool-schemes-by-id)))
+  (GET "/scheme" []                     ; return all schemes
+       (json-response (vals schemes-by-id)))
       
-  (GET "/scheme/:id" [id]        ; return the scheme with the given id
-       (json-response (get liverpool-schemes-by-id (symbol id))))
+  (GET "/scheme/:id" [id]  ;; return the scheme with the given id
+       (json-response (get schemes-by-id (symbol id))))
       
   (POST "/matching-schemes" request ; return all schemes with conclusions matching a goal
         (let [goal (unpack-statement (read-json (slurp (:body request))))]
-          (json-response (get-schemes liverpool-schemes-by-predicate goal {} true))))
+          (json-response (get-schemes schemes-by-predicate goal {} true))))
       
   (POST "/apply-scheme/:db/:id" request 
 	;; apply the scheme with the given id to the substitutions in the body
@@ -551,7 +551,7 @@
         (let [data (read-json (slurp (:body request)))
               subs (unpack-subs (:subs data))
               attributes (unpack-arg-attrs (:attributes data))
-              scheme (get liverpool-schemes-by-id (symbol (:id (:params request))))]
+              scheme (get schemes-by-id (symbol (:id (:params request))))]
           (let [responses (instantiate-scheme scheme subs)
                 [username password] (get-username-and-password request)
                 dbconn (make-database-connection (:db (:params request)) username password)]
