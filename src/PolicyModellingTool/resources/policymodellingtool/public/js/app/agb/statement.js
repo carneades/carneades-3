@@ -131,6 +131,10 @@ AGB.statement_standard = function(statement) {
 };
 
 AGB.sexpr_to_str = function(sexpr) {
+    if(typeof sexpr == 'string') {
+        return sexpr;
+    }
+    
     var str = "(";
     
     _.each(sexpr, function(s) {
