@@ -34,11 +34,11 @@ PM.ArgumentCandidate = Backbone.Model.extend(
          // they are represented as PremisesCandidates stored in a different fields
          var exceptions_candidates = new PM.PremisesCandidates;
          this.set('exceptions', exceptions_candidates);
-         _.each(attrs.argument.get('exceptions'),
-               function(exception) {
-                   exceptions_candidates.add({premise: exception,
-                                              statements: attrs.statements});
-               });
+         // _.each(attrs.argument.get('exceptions'),
+         //       function(exception) {
+         //           exceptions_candidates.add({premise: exception,
+         //                                      statements: attrs.statements});
+         //       });
      },
 
      validate: function(attrs) {
