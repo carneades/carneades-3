@@ -33,10 +33,8 @@ PM.PremisesCandidatesView = Backbone.View.extend(
                  self.$('.argument-premises').append(premisecandidateview.$el);
              });
          
-         if(haselements) {
-             this.$el.append(ich.button({clazz: "add-premise",
-                                         value: this.add_more_text}));    
-         }
+         this.$el.append(ich.button({clazz: "add-premise",
+                                     value: this.add_more_text}));    
          
          return this;
      },
