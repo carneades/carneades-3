@@ -50,7 +50,8 @@ PM.ConclusionCandidateView = Backbone.View.extend(
      
      on_new_conclusion: function() {
          var self = this;
-         AGB.show_statement_editor({atom: "",
+         var atom = this.model.get('suggested_atom') ? this.model.get('suggested_atom').replace(/\?/g, '') : "";
+         AGB.show_statement_editor({atom: atom,
                                    save_callback: function(data) {
                                        var id = data.id;
                                        var statements = self.model.get('statements');
