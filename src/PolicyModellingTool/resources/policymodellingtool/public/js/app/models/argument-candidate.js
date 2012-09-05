@@ -9,7 +9,12 @@ PM.ArgumentCandidate = Backbone.Model.extend(
          this.set('conclusion', conclusioncandidate);
          
          var initial_scheme_name = attrs.argument.get('scheme');
-         var scheme = attrs.schemes.get(initial_scheme_name.slice(1, -1));
+         var scheme;
+         if(_.isNil(initial_scheme_name)) {
+             scheme = undefined;
+         } else {
+             scheme = attrs.schemes.get(initial_scheme_name.slice(1, -1));
+         } 
          var scheme_candidate = new PM.SchemeCandidate({schemes: attrs.schemes,
                                                         initial_scheme_name: initial_scheme_name,
                                                         scheme: scheme});

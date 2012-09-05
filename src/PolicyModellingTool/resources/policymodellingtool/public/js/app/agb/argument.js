@@ -173,7 +173,8 @@ AGB.edit_argument = function(db, argid) {
                                                       statements: PM.statements,
                                                       schemes: PM.schemes,
                                                       current_lang: IMPACT.lang});
-    var argumenteditorview = new PM.ArgumentEditorView({model: argumentcandidate});
+    var argumenteditorview = new PM.ArgumentEditorView({model: argumentcandidate,
+                                                        title: 'Edit Argument'});
 
     argumenteditorview.render();
     $('#argumenteditor').html(argumenteditorview.$el);
