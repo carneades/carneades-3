@@ -1,7 +1,13 @@
 <div id="argumenteditor-content" class="pm-editor">
-  <h2>New Argument</h2>
+  <h2>{{title}}</h2>
 
   <form id="argument-form">
+    <p>
+      <h3>Header</h3>
+      <div class="argument-metadata"></div>
+    </p>
+    <hr/>
+
     <p>Direction:<input id="direction" name="pro" type="radio" value="pro"/>Pro
       <input name="pro" type="radio" value="con"/>Con
     <p/>
@@ -12,61 +18,33 @@
     </p>
 
     <p>
-      Weight (optional):<input id="argument-editor-weight" type="text"/>
+      Weight: <input id="argument-editor-weight" class="weight-input" type="text"/>
     </p>
 
-    <p>
-      Apply a scheme:
-      <input name="apply-scheme" type="radio" value="yes">Yes
-      <input name="apply-scheme" type="radio" value="no">No
-    </p>
-
-    <div id="scheme-selection">
-      <p>
-        Scheme: <input class="required" type="hidden" id="argument-editor-scheme" />
-      </p>
+    <div class="scheme-candidate">
+    </div>
+    <!-- <div> -->
+    <!--   Filter for the statements:  -->
+    <!--   <select> -->
+    <!--     <option value="no-filter">no filter</option> -->
+    <!--     <option value="unification-filter">unification</option> -->
+    <!--   </select> -->
+    <!-- </div> -->
+    <br/>
+    <div class="conclusion-candidate">
     </div>
 
-    <div id="argument-editor-conclusion-and-premises">
-
-      <p>
-        Conclusion: <input type="hidden" id="editor-conclusion" class="statement-select required" />
-        <br/>Not found? <a href="" id="new-statement-for-conclusion">create a new statement</a>
-      </p>
-      
-      <p><h3>Premises</h3>
-        <div id="argument-premises">
-        </div>
-        <div id="argument-premises-extra">
-        </div>
-      </p>
-
-      <p><h3>Assumptions</h3>
-        <div id="argument-assumptions">
-        </div>
-        <div id="argument-assumptions-extra">
-        </div>
-      </p>
-      
-      <p><h3>Exceptions</h3>
-        <div id="argument-exceptions">
-        </div>
-        <div id="argument-exceptions-extra">
-        </div>
-      </p>
-
+    <div class="argument-editor-premises">
     </div>
 
-      <p>
-        <h3>Header</h3>
-        <div id="argument-header"></div>
-      </p>
+    <div class="argument-editor-exceptions">
+    </div>
       
     <br/>
     <br/>
     <br/>
 
-    <div class="navigation"><a id="cancel-argument" href="">Cancel</a>&nbsp<a id="save-argument" href="" >Save</a></div>
+    <div class="navigation"><a class="cancel-argument" href="">Cancel</a>&nbsp<a class="save-argument" href="" >Save</a></div>
   </form>
 
 </div>
