@@ -233,6 +233,23 @@
       :assumptions (map (fn [p] (assoc p :statement (apply-subs (:statement p))))
                         (:assumptions scheme)))))
 
+(defn generate-exceptions
+  "Generates the arguments representing the exceptions"
+  [arg]
+  (map (fn [e] (make-response
+                subs
+                []
+                (make-argument
+                 :id (make-urn-symbol)
+                 :conclusion (list 'undercut (symbol (:id arg)))
+                 :pro true
+                 :strict false
+                 :weight 0.5
+                 :premises [e]
+                 :exceptions []
+                 :scheme (:scheme arg))))
+       (:exceptions arg)))
+
 (defn instantiate-scheme 
   "scheme map -> (seq-of response)
    Constructs a sequence of grounds arguments, in responses, by 
@@ -266,19 +283,7 @@
                        (literal-complement (:statement p))))
              (:assumptions scheme))
         main-arg)
-       (map (fn [e] (make-response
-                     subs
-                     []
-                     (make-argument
-                      :id (make-urn-symbol)
-                      :conclusion `(~'undercut ~(:id main-arg))
-                      :pro true
-                      :strict false
-                      :weight 0.5
-                      :premises [e]
-                      :exceptions []
-                      :scheme (:scheme main-arg))))
-            (:exceptions main-arg))))))
+       (generate-exceptions main-arg)))))
                            
 
 (defn axiom 
