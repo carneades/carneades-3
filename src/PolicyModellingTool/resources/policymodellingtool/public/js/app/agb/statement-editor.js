@@ -62,7 +62,9 @@ AGB.set_statement_main = function(ismain) {
 
 // Fills in the inputs of the statement editor
 AGB.fillin_statement_editor = function(stmt) {
-    $('#statement-editor-text').val(stmt.text.en);
+    if(stmt.text && stmt.text.en) {
+        $('#statement-editor-text').val(stmt.text.en);    
+    } 
     $('#statement-editor-standard').val(stmt.standard);
     AGB.set_statement_main(stmt.main);
     $('#statement-editor-weight').val(stmt.weight);
