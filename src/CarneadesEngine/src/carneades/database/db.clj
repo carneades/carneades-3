@@ -218,38 +218,6 @@
 ;; the database as whole. This record is created
 ;; when the database is created and initialized.
 
-(defn pack-metadata-element
-  "Packs a metadata element vector as a string"
-  [element]
-  (if (empty? element)
-    nil
-    (s/join "¡" element)))
-
-(defn unpack-metadata-element
-  "Unpacks a metadata element vector as a string"
-  [s]
-  (if (empty? s)
-    nil
-    (s/split s #"¡")))
-
-(defn pack-metadata
-  [md]
-  (reduce (fn [md [k v]]
-            (if (= k :description)
-              md
-              (assoc md k (pack-metadata-element v))))
-          md
-          md))
-
-(defn unpack-metadata
-  [md]
-  (reduce (fn [md [k v]]
-            (if (= k :description)
-              md
-              (assoc md k (unpack-metadata-element v))))
-          md
-          md))
-
 (defn create-metadata 
   "Inserts a metadata structure into a database.  
    Returns the id of the record in the database."
@@ -260,8 +228,8 @@
     (first (vals (jdbc/insert-record 
                    :metadata
                    (if str-id
-                     (pack-metadata (assoc metadata :description str-id))
-                     (pack-metadata metadata)))))))
+                     (assoc metadata :description str-id)
+                     metadata))))))
 
 (defn read-metadata
   "Retrieves the metadata with the given id from the database, 
@@ -280,8 +248,8 @@
                 nil 
                 (dissoc (first res2) :id))))]
     (cond (nil? md) nil
-          d (unpack-metadata (assoc (map->metadata md) :description d))
-          :else (unpack-metadata (dissoc (map->metadata md) :description)))))
+          d (assoc (map->metadata md) :description d)
+          :else (dissoc (map->metadata md) :description))))
 
 (defn list-metadata
   "Returns a sequence of all the metadata records in the database"
@@ -305,8 +273,7 @@
                                                          (:description md))
                                      existing-description-id)
                                  (:description md) (create-translation (:description md))
-                                 :else existing-description-id)
-        md (pack-metadata md)]
+                                 :else existing-description-id)]
     (condp = (first (jdbc/update-values
                       :metadata
                       ["id=?" id]

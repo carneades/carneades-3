@@ -53,13 +53,47 @@
      :headers {"Content-Type" "application/json"}
      :body (json-str data)}))
 
+(defn zip-metadata-element
+  "Zips a metadata element vector as a string"
+  [element]
+  (if (empty? element)
+    nil
+    (str/join "¡" element)))
+
+(defn unzip-metadata-element
+  "Unzips a metadata element vector as a string"
+  [s]
+  (if (empty? s)
+    nil
+    (str/split s #"¡")))
+
+(defn zip-metadata
+  [md]
+  (reduce (fn [md [k v]]
+            (if (= k :description)
+              md
+              (assoc md k (zip-metadata-element v))))
+          md
+          md))
+
+(defn unzip-metadata
+  [md]
+  (reduce (fn [md [k v]]
+            (if (= k :description)
+              md
+              (assoc md k (unzip-metadata-element v))))
+          md
+          md))
+
 (defn- pack-statement 
   [stmt]
   {:post [(not (vector? (:atom %)))
           (not (seq? (:atom %)))]}
   (cond (sliteral? stmt) (str stmt),
-        (statement? stmt) (assoc stmt :atom (when (:atom stmt)
-                                              (str (literal-atom stmt)))),
+        (statement? stmt) (assoc stmt
+                            :atom (when (:atom stmt)
+                                    (str (literal-atom stmt)))
+                            :header (unzip-metadata (:header stmt)))
         :else nil))
 
 (defn unpack-statement [s]
@@ -71,7 +105,7 @@
                    (assoc (map->statement (dissoc s :atom))
                      :standard (keyword (:standard s))
                      :atom atomval
-                     :header (map->metadata (:header s))))
+                     :header (map->metadata (zip-metadata (:header s)))))
         :else nil))
 
 (defn- pack-argument
@@ -468,7 +502,7 @@
            (let [metadata (list-metadata)
                  main-issues (map pack-statement (main-issues))
                  outline (create-outline 5)]
-             (json-response {:metadata metadata
+             (json-response {:metadata (map unzip-metadata metadata)
                              :main-issues main-issues
                              :outline outline})))))
 
