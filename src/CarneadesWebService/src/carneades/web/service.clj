@@ -117,7 +117,8 @@
             :conclusion (pack-statement (:conclusion arg)),
             :premises (map (fn [p] (assoc p :statement 
                                           (pack-statement (:statement p))))
-                           (:premises arg))})))
+                           (:premises arg))
+            :header (unzip-metadata (:header arg))})))
 
 (defn unpack-argument [arg]
   (assoc arg
@@ -129,7 +130,7 @@
          :exceptions (map (fn [p]
                           (map->premise (assoc p :statement (unpack-statement (:statement p)))))
                           (:exceptions arg))
-         :header (map->metadata (:header arg))))
+         :header (map->metadata (zip-metadata (:header arg)))))
 
 (defn unpack-arg-attrs
   [attrs]
