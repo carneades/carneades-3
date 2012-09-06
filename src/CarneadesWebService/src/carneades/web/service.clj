@@ -56,16 +56,20 @@
 (defn zip-metadata-element
   "Zips a metadata element vector as a string"
   [element]
-  (if (empty? element)
-    nil
-    (str/join "¡" element)))
+  (if (or (vector? element) (seq? element))
+   (if (empty? element)
+     nil
+     (str/join "¡" element))
+   element))
 
 (defn unzip-metadata-element
   "Unzips a metadata element vector as a string"
   [s]
-  (if (empty? s)
-    nil
-    (str/split s #"¡")))
+  (if (string? s)
+    (if (empty? s)
+      nil
+      (str/split s #"¡"))
+    s))
 
 (defn zip-metadata
   [md]
