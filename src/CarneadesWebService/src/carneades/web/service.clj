@@ -268,7 +268,8 @@
              ;; s (unpack-statement m)
              [username password] (get-username-and-password request)
              db (make-database-connection (:db (:params request)) username password)
-             id (:id m)]
+             id (:id m)
+             m (assoc m :header (zip-metadata (:header m)))]
          (with-db db (json-response (do
                                       (update-statement id (dissoc m :id))
                                       (pack-statement (read-statement id)))))))
