@@ -440,8 +440,9 @@
 
 (defn update-statement
   "string map -> boolean
-   Updates the statement record with the given in in the database with the values
-   in the map.  Returns true if the update was successful." 
+   Updates the statement record with the given id in the
+   database with the values in the map. Returns true if
+   the update was successful." 
   [id m]
   {:pre [(map? m)]}
   (let [m (dissoc m :positive)
