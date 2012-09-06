@@ -10,9 +10,34 @@ AGB.set_statement_url = function(db, stmtid)
     $.address.value(AGB.statement_url(db, stmtid));
 };
 
+AGB.set_statement_has_properties = function(info) {
+  if(_.isNil(info.header)) {
+        return;
+    }
+    
+    info.hasdescription = info.header.description &&
+        info.header.description[IMPACT.lang] ? true : false;
+    info.header.haskey = info.header.key ? true : false;
+    info.header.hascontributor = info.header.contributor ? true : false;
+    info.header.hascoverage = info.header.coverage ? true : false;
+    info.header.hascreator = info.header.creator ? true : false;
+    info.header.hasdate = info.header.date ? true : false;
+    info.header.hasformat = info.header.format ? true : false;
+    info.header.hasidentifier = info.header.identifier ? true : false;
+    info.header.haslanguage = info.header.language ? true : false;
+    info.header.haspublisher = info.header.publisher ? true : false;
+    info.header.hasrelation = info.header.relation ? true : false;
+    info.header.hasrights = info.header.rights ? true : false;
+    info.header.hassource = info.header.source ? true : false;
+    info.header.hassubject = info.header.subject ? true : false;
+    info.header.hastitle = info.header.title ? true : false;
+    info.header.hastype = info.header.type ? true : false;
+};
+
 AGB.statement_html = function(db, info, lang)
 {
     AGB.normalize(info);
+    AGB.set_statement_has_properties(info);
     info.db = db;
     AGB.set_statement_title_text(info);
     info.description_text = AGB.description_text(info.header);
