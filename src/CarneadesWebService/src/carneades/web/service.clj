@@ -626,7 +626,7 @@
   (GET "/policies" []
        (json-response policies))
 
-  (GET "/evaluate-policy/:db/:policykey/:qid/:policyid" [db policykey  qid policyid]
+  (GET "/evaluate-policy/:db/:policykey/:qid/:policyid" [db policykey qid policyid]
        (let [dbconn (make-database-connection db "guest" "")]
          (with-db dbconn
            (let [ag (export-to-argument-graph dbconn)
@@ -646,9 +646,8 @@
 
   ;; Argument Evaluation
     
-  (PUT "/evaluate-argument-graph/:db/:id" request  
-       (let [userid (:id (:params request)),
-             [username password] (get-username-and-password request)
+  (POST "/evaluate-argument-graph/:db" request
+       (let [[username password] (get-username-and-password request)
              db (make-database-connection (:db (:params request)) username password)]
          (with-db db
            (let [ag1 (export-to-argument-graph db)
@@ -658,8 +657,8 @@
                                  {:value (:value sn)}))
              (doseq [an (vals (:argument-nodes ag2))]
                (update-argument (.toString (:id an))
-                                {:value (:value an)})
-               (json-response true))))))
+                                {:value (:value an)}))
+             (json-response true)))))
 
   ;; Other 
       
