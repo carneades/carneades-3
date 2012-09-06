@@ -5,7 +5,8 @@
    (:use clojure.data.json
          clojure.pprint
          compojure.core
-         (carneades.engine uuid policy unify statement argument scheme dublin-core utils)
+         (carneades.engine uuid policy unify statement argument scheme dublin-core utils
+                           argument-evaluation aspic)
          carneades.database.db
          carneades.database.admin
          carneades.database.export
@@ -642,6 +643,23 @@
                (doseq [m (rest metadata)]
                  (create-metadata m)))
              (json-response {:db dbname})))))
+
+  ;; Argument Evaluation
+    
+  (PUT "/evaluate-argument-graph/:db/:id" request  
+       (let [userid (:id (:params request)),
+             [username password] (get-username-and-password request)
+             db (make-database-connection (:db (:params request)) username password)]
+         (with-db db
+           (let [ag1 (export-to-argument-graph db)
+                 ag2 (evaluate aspic-grounded ag1)]
+             (doseq [sn (vals (:statement-nodes ag2))]
+               (update-statement (.toString (:id sn))
+                                 {:value (:value sn)}))
+             (doseq [an (vals (:argument-nodes ag2))]
+               (update-argument (.toString (:id an))
+                                {:value (:value an)})
+               (json-response true))))))
 
   ;; Other 
       
