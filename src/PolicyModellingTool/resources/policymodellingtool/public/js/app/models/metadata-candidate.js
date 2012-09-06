@@ -42,7 +42,7 @@ PM.MetadataCandidate = Backbone.Model.extend(
          var elements = _.clone(metadata.get(type));
          var index = -1;
 
-         if(_.isNil(this.indexes[type]) || _.isNil(metadata)) {
+         if(_.isNil(this.indexes[type]) || _.isNil(elements)) {
              // first time we create an element of this type
              index = 0;
              this.indexes[type] = {};
