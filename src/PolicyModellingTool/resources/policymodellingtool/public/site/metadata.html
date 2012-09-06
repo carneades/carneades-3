@@ -1,2 +1,18 @@
-Metadata
-Title: {{title}}, Data: {{data}}
+<table class="metadata-table">
+  {{#haskey}}<tr><td class="metadata-element-name">Key</td><td>{{key}}<td/></tr>{{/haskey}}
+  {{#hascontributor}}<tr><td class="metadata-element-name">Contributor</td><td>{{contributor}}<td/></tr>{{/hascontributor}}
+  {{#hascoverage}}<tr><td class="metadata-element-name">Coverage</td><td>{{coverage}}<td/></tr>{{/hascoverage}}
+  {{#hascreator}}<tr><td class="metadata-element-name">Creator</td><td>{{creator}}<td/></tr>{{/hascreator}}
+  {{#hasdate}}<tr><td class="metadata-element-name">Date</td><td>{{date}}<td/></tr>{{/hasdate}}
+  {{#hasformat}}<tr><td class="metadata-element-name">Format</td><td>{{format}}<td/></tr>{{/hasformat}}
+  {{#hasidentifier}}<tr><td class="metadata-element-name">Identifier</td><td>{{identifier}}<td/></tr>{{/hasidentifier}}
+  {{#haslanguage}}<tr><td class="metadata-element-name">Language</td><td>{{language}}<td/></tr>{{/haslanguage}}
+  {{#haspublisher}}<tr><td class="metadata-element-name">Publisher</td><td>{{publisher}}<td/></tr>{{/haspublisher}}
+  {{#hasrelation}}<tr><td class="metadata-element-name">Relation</td><td>{{relation}}<td/></tr>{{/hasrelation}}
+  {{#hasrights}}<tr><td class="metadata-element-name">Rights</td><td>{{rights}}<td/></tr>{{/hasrights}}
+  {{#hassource}}<tr><td class="metadata-element-name">Source</td><td>{{source}}<td/></tr>{{/hassource}}
+  {{#hassubject}}<tr><td class="metadata-element-name">Subject</td><td>{{subject}}<td/></tr>{{/hassubject}}
+  {{#hastitle}}<tr><td class="metadata-element-name">Title</td><td>{{title}}<td/></tr>{{/hastitle}}
+  {{#hastype}}<tr><td class="metadata-element-name">Type</td><td>{{type}}<td/></tr>{{/hastype}} 
+  
+</table>
