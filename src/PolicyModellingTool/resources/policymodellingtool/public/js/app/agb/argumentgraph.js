@@ -115,6 +115,7 @@ AGB.enable_ag_edition = function() {
                                          return false;
                                      }}));
     $('#newargument').click(AGB.new_argument);
+    $('.evaluate').click(AGB.evaluate);
     
     return false;
 };
@@ -140,4 +141,12 @@ AGB.new_argument = function() {
     $('#argumenteditor').html(argument_editor_view.$el);
     
     return false;
+};
+
+AGB.evaluate = function() {
+    PM.ajax_post(IMPACT.wsurl + '/evaluate-argument-graph/' + IMPACT.db, {},
+                function(data) {
+                    console.log('Evaluation finished');
+                },
+                IMPACT.user, IMPACT.password, PM.on_error);    
 };
