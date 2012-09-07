@@ -454,23 +454,28 @@
                       (do (update-metadata header-id1 (:header m))
                           header-id1)
                       (if (:header m) (create-metadata (merge (make-metadata) (:header m)))))
-        text-id1 (if (:text m)
+        text-id1 (when (:text m)
                    (jdbc/with-query-results 
                      res ["SELECT text FROM statement WHERE id=?" id]
                      (if (empty? res) nil (:text (first res)))))
         text-id2  (if text-id1 
                     (do (update-translation text-id1 (:text m))
                         text-id1)
-                    (if (:text m) (create-translation (:text m))))
+                    (when (:text m)
+                      (create-translation (:text m))))
         standard (if (:standard m)
                    (standard->integer (keyword (:standard m)))
-                   0)]
+                   0)
+        delta (if text-id2
+                {:header header-id2
+                 :text text-id2
+                 :standard standard}
+                {:header header-id2
+                 :standard standard})]
     (condp = (first (jdbc/update-values
                       :statement
                       ["id=?" id]
-                      (merge m {:header header-id2
-                                :text text-id2
-                                :standard standard})))
+                      (merge m delta)))
       0 false,
       1 true)))
   

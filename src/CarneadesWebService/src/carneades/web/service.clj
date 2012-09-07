@@ -653,10 +653,10 @@
            (let [ag1 (export-to-argument-graph db)
                  ag2 (evaluate aspic-grounded ag1)]
              (doseq [sn (vals (:statement-nodes ag2))]
-               (update-statement (.toString (:id sn))
+               (update-statement (str (:id sn))
                                  {:value (:value sn)}))
              (doseq [an (vals (:argument-nodes ag2))]
-               (update-argument (.toString (:id an))
+               (update-argument (str (:id an))
                                 {:value (:value an)}))
              (json-response true)))))
 
