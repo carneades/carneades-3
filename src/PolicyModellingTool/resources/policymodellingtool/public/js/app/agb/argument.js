@@ -146,6 +146,7 @@ AGB.enable_argument_edition = function(db, argid) {
     $('#menus').append(ich.argumenteditormenu());
     $('#delete-argument').click(_.bind(AGB.delete_argument, AGB, db, argid));
     $('#edit-argument').click(_.bind(AGB.edit_argument, AGB, db, argid));
+    $('.evaluate').click(AGB.evaluate);
     
     return false;
 };
