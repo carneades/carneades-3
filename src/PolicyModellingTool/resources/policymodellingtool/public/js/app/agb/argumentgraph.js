@@ -146,7 +146,7 @@ AGB.new_argument = function() {
 AGB.evaluate = function() {
     PM.ajax_post(IMPACT.wsurl + '/evaluate-argument-graph/' + IMPACT.db, {},
                 function(data) {
-                    console.log('Evaluation finished');
+                    PM.notify('Evaluation finished');
                 },
                 IMPACT.user, IMPACT.password, PM.on_error);    
 };
