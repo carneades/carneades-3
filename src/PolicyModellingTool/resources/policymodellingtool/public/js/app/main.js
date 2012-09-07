@@ -381,7 +381,14 @@ PM.on_error = function(textstatus) {
                }, 3000);
 };
 
-// Called when an AJAX error occurs
+PM.notify = function(text) {
+    $('#pm').prepend('<div style="background-color:  #99CCCC" class="notification">{0}</div>'.format(text));
+    setTimeout(function() {
+                   $('#pm .notification').remove();
+               }, 3000);
+};
+
+// Called when an AJAX error occurs for backbone
 PM.on_model_error = function(collection, response) {
     $('#pm').prepend('<div style="background-color:  #FFCC33" class="error">Error: {0}</div>'.format(response.statusText));
     setTimeout(function() {
