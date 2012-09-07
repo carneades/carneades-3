@@ -114,7 +114,7 @@
     (make-predicate
      :symbol 'search-type
      :arity 3
-     :forms {:en (make-form :positive "%s conducted a %s search for the copyright owner of %s."
+     :forms {:en (make-form :positive "%s conducted a %3$s search for the copyright owner of %2$s."
                             :negative "%s did not conduct a %s search for the copyright owner of %s."
                             :question "Did %s conduct a %3$s search for the copyright owner of %2$s?")}
      :hint {:en "What type of search was performed to try to find the copyright owner?"}
