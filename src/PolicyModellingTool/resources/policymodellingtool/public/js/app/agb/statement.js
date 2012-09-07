@@ -127,11 +127,11 @@ AGB.slice_statement = function(statement_text)
 
 AGB.statement_prefix = function(statement) {
     if(AGB.statement_in(statement)) {
-        return "✔ ";
+        return "☑ ";
     } else if(AGB.statement_out(statement)) {
-        return "✘ ";
+        return "☒ ";
     } else {
-        return "";
+        return "☐ ";
     }
 };
 
