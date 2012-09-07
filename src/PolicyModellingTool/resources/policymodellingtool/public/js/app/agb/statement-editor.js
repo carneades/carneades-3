@@ -8,7 +8,12 @@ AGB.show_statement_editor = function(config) {
         config = {}; 
     }
 
-    $('#statementeditor').html(AGB.create_statement_editor());
+    if(_.isNil(config.statement)) {
+        $('#statementeditor').html(AGB.create_statement_editor({title: 'New Statement'}));    
+    } else {
+        $('#statementeditor').html(AGB.create_statement_editor({title: 'Edit Statement'}));    
+    }
+    
     $('#cancel-statement').click(AGB.remove_statement_editor);
     
     $('#statement-editor-text').markItUp(mySettings);
@@ -130,8 +135,8 @@ AGB.statement_created = function() {
 };
 
 // Returns the HTML content of the statement editor
-AGB.create_statement_editor = function() {
-    var html = ich.statementeditor();
+AGB.create_statement_editor = function(data) {
+    var html = ich.statementeditor(data);
     return html;
 };
 
