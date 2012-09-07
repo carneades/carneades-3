@@ -20,21 +20,21 @@ AGB.set_has_properties = function(argument_data) {
     
     argument_data.hasdescription = argument_data.header.description &&
         argument_data.header.description[IMPACT.lang] ? true : false;
-    argument_data.header.haskey = argument_data.header.key ? true : false;
-    argument_data.header.hascontributor = argument_data.header.contributor ? true : false;
-    argument_data.header.hascoverage = argument_data.header.coverage ? true : false;
-    argument_data.header.hascreator = argument_data.header.creator ? true : false;
-    argument_data.header.hasdate = argument_data.header.date ? true : false;
-    argument_data.header.hasformat = argument_data.header.format ? true : false;
-    argument_data.header.hasidentifier = argument_data.header.identifier ? true : false;
-    argument_data.header.haslanguage = argument_data.header.language ? true : false;
-    argument_data.header.haspublisher = argument_data.header.publisher ? true : false;
-    argument_data.header.hasrelation = argument_data.header.relation ? true : false;
-    argument_data.header.hasrights = argument_data.header.rights ? true : false;
-    argument_data.header.hassource = argument_data.header.source ? true : false;
-    argument_data.header.hassubject = argument_data.header.subject ? true : false;
-    argument_data.header.hastitle = argument_data.header.title ? true : false;
-    argument_data.header.hastype = argument_data.header.type ? true : false;
+    argument_data.header_haskey = argument_data.header.key ? true : false;
+    argument_data.header_hascontributor = argument_data.header.contributor ? true : false;
+    argument_data.header_hascoverage = argument_data.header.coverage ? true : false;
+    argument_data.header_hascreator = argument_data.header.creator ? true : false;
+    argument_data.header_hasdate = argument_data.header.date ? true : false;
+    argument_data.header_hasformat = argument_data.header.format ? true : false;
+    argument_data.header_hasidentifier = argument_data.header.identifier ? true : false;
+    argument_data.header_haslanguage = argument_data.header.language ? true : false;
+    argument_data.header_haspublisher = argument_data.header.publisher ? true : false;
+    argument_data.header_hasrelation = argument_data.header.relation ? true : false;
+    argument_data.header_hasrights = argument_data.header.rights ? true : false;
+    argument_data.header_hassource = argument_data.header.source ? true : false;
+    argument_data.header_hassubject = argument_data.header.subject ? true : false;
+    argument_data.header_hastitle = argument_data.header.title ? true : false;
+    argument_data.header_hastype = argument_data.header.type ? true : false;
     
 };
 
