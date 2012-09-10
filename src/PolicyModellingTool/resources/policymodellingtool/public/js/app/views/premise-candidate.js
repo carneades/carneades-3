@@ -6,7 +6,9 @@ PM.PremiseCandidateView = Backbone.View.extend(
          "change .role-input": "role_changed",
          "change input[type=hidden]": "statement_changed",
          "click .delete": "on_delete_premise",
-         "click .create": "create_statement"
+         "click .create": "create_statement",
+         "change input[name=positive]": "positive_changed",
+         "change input[name=implicit]": "implicit_changed"
      },
      
      initialize: function() {
@@ -25,6 +27,9 @@ PM.PremiseCandidateView = Backbone.View.extend(
          if(data.premise.role) {
              role.val(data.premise.role);    
          } 
+         
+         this.$('input[name=positive]').attr('checked', data.premise.positive);
+         this.$('input[name=implicit]').attr('checked', data.premise.implicit);
          
          var statement = this.statement();
          statement.select2({data: {results: data.statements.toJSON(),
@@ -95,6 +100,20 @@ PM.PremiseCandidateView = Backbone.View.extend(
                                        self.model.set('premise', premise);
                                    }
                                    });
+     },
+     
+     positive_changed: function() {
+         var positive = this.$('input[name=positive]').is(':checked');
+         var premise = _.clone(this.model.get('premise'));
+         premise.positive = positive;
+         this.model.set('premise', premise);
+     },
+     
+     implicit_changed: function() {
+         var implicit = this.$('input[name=implicit]').is(':checked');
+         var premise = _.clone(this.model.get('premise'));
+         premise.implicit = implicit ;
+         this.model.set('premise', premise);
      }
      
     }
