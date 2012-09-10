@@ -245,6 +245,7 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/lib/markitup/jquery.markitup.js',
                    'js/lib/backbone.js',
                    'js/lib/backbone.memento.min.js',
+                   'js/lib/sprintf-0.7-beta1.js',
                    'js/app/models/metadata.js',
                    'js/app/models/statement.js',
                    'js/app/models/scheme.js',
