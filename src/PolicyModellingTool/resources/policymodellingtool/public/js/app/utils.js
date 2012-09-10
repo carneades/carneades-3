@@ -11,16 +11,6 @@ String.prototype.format = function() {
   });
 };
 
-// add a cformat method to all string
-// place holders are of the form %s
-String.prototype.cformat = function() {
-    var args = arguments;
-    var i = 0; 
-    return this.replace(/(%s)/g, function() {
-                            return args[i++];
-                        });
-};
-
 PM.normalize = function(o) {
     for(name in o) {
         if(typeof o[name] !== 'function') {
