@@ -129,6 +129,7 @@ PM.format_sexpr = function(sexpr, language) {
         return PM.markdown_to_html(sexpr.join(" "));
     } else {
         var fstring = language[sexpr[0]].forms[IMPACT.lang].positive;
-        return String.prototype.cformat.apply(fstring, terms);        
+        var args = [fstring].concat(terms);
+        return sprintf.apply(null, args);        
     } 
 };
