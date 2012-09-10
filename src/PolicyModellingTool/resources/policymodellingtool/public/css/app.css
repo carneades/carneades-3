@@ -132,6 +132,23 @@
 }
 
 
+.premise-positive-attr {
+    position: absolute;
+    top: 5px;
+    right: 55px;
+}
+
+.premise-implicit-attr {
+    position: absolute;
+    top: 5px;
+    right: 135px;
+    display: none;
+}
+
+.premise-candidate:hover .premise-implicit-attr {
+    display: block;
+}
+
 .conclusion-candidate {
     position: relative;
     width: 100%;
