@@ -223,7 +223,12 @@ PM.ArgumentEditorView = Backbone.View.extend(
                            success : function() {
                                // manually redisplay argument page since it is not yet
                                // a backbone view
-                               AGB.display_argument(IMPACT.db, argument.id);
+                               PM.arguments.fetch({success: function() {
+                                                       AGB.display_argument(IMPACT.db, argument.id);
+                                                   },
+                                                   error: PM.on_model_error
+                                                  });
+                               
                            }})) {
              this.model = undefined;
              this.premises_candidates_view.remove();
