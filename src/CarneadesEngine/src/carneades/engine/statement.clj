@@ -35,7 +35,7 @@
 
 ; language = :en, :de, :fr, etc.
 
-(defrecord Statement  ; statements are annotated literals
+(defrecord Statement  ;; statements are annotated literals
   [id                 ; URN symbol
    atom               ; sliteral or nil
    header             ; nil or dublin core metadata description of the model

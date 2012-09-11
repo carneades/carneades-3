@@ -271,7 +271,7 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
     
     if(!is_in_toolbox) {
       scripts = scripts.concat('js/lib/jquery.address-1.4.js', 
-                               'js/lib/jquery-ui-1.8.21.custom.min.js');
+                               'js/lib/jquery-ui-1.8.23.custom.min.js');
     }
     
     scripts.reverse();
@@ -322,7 +322,7 @@ PM.load_templates = function(toolboxState) {
             'argumenteditor',
             'premisescandidates',
             'exceptionscandidates',
-            'metadataeditor',
+            // 'metadataeditor',
             'metadataeditor2',
             'premiseeditor',
             'premiseeditorwithoutscheme',
@@ -349,6 +349,7 @@ PM.load_templates = function(toolboxState) {
 // outside of the UID toolbox
 PM.load_carneades_styles = function() {
     PM.load_style(undefined, 'green-theme.css');
+    PM.load_style(undefined, 'smoothness/jquery-ui-1.8.23.custom.css');
 };
 
 // Loads some specific styles to the app
