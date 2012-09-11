@@ -4,12 +4,13 @@ PM.MetadataEditorView = Backbone.View.extend(
      
      events: {
          "blur .metadata-description-input": "description_changed",
-         "click .add-metadata-element": "on_add_metadata_element"
+         "click .add-metadata-element": "on_add_metadata_element" 
      },
      
      initialize: function() {
          this.model.on('change', this.render, this);
-         _.bindAll(this, 'render', 'description_changed', 'on_add_metadata_element');
+         _.bindAll(this, 'render', 'description_changed', 'on_add_metadata_element',
+                  'change_lang');
          this.model.get('metadata').store();
          this.elements = {key: "Key",
                           contributor: "Contributor",
@@ -36,6 +37,11 @@ PM.MetadataEditorView = Backbone.View.extend(
                                             adda: "Add a",
                                             totheheader: "to the header",
                                             go: "Add"}));
+         
+         this.$('.language-chooser').tabs({select: this.change_lang,
+                                           selected: 0});
+         
+         this.select_tab(data.current_lang);
          
          if(data.metadata.attributes.description) {
              this.description().val(
@@ -95,6 +101,38 @@ PM.MetadataEditorView = Backbone.View.extend(
      on_add_metadata_element: function() {
          var type = this.$('.select-metadata-element').val();
          this.add_metadata_element(type);
+     },
+
+     get_lang: function(a) {
+         var href = $(a).attr('href');
+         var lang = href.substr(href.length - 2);
+
+         return lang;
+     },
+     
+     select_tab: function(lang) {
+         var self = this;
+         _.each(this.$('li'), 
+                function(li) { 
+                    if(self.get_lang($(li).find('a')) == lang) {
+                        $(li).addClass('ui-tabs-selected');
+                        $(li).addClass('ui-state-active');               
+                    } else {
+                        $(li).removeClass('ui-tabs-selected'); 
+                        $(li).removeClass('ui-state-active');     
+                    }
+                    
+                });
+
+         
+     },
+     
+     change_lang: function(event, ui) {
+         var lang = this.get_lang(ui.tab);
+         
+         this.model.set('current_lang', lang);
+
+         return false;
      }
 
     }
