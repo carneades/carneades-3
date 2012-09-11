@@ -181,3 +181,16 @@
 .button {
     cursor: pointer;
 }
+
+.language-chooser ul {
+    width: 699px;
+    height: 25px;
+}
+
+.language-chooser ul li {
+    height: 25px;
+}
+
+.language-chooser .lang {
+    padding-top: 1px;
+}
