@@ -28,7 +28,9 @@ PM.PremiseCandidateView = Backbone.View.extend(
              role.val(data.premise.role);    
          } 
          
-         this.$('input[name=positive]').attr('checked', data.premise.positive);
+         this.$('input[name=positive]').attr('checked', 
+                                             data.premise.positive == undefined ? 
+                                             true : data.premise.positive);
          this.$('input[name=implicit]').attr('checked', data.premise.implicit);
          
          var statement = this.statement();
