@@ -32,6 +32,16 @@ AGB.set_statement_has_properties = function(info) {
     info.header_hassubject = info.header.subject ? true : false;
     info.header_hastitle = info.header.title ? true : false;
     info.header_hastype = info.header.type ? true : false;
+    
+    info.hasheader = info.hasdescription || info.header_haskey
+        || info.header_hascontributor || info.header_hascoverage 
+        || info.header_hascreator || info.header_hasdate
+        || info.header_hasformat || info.header_hasidentifier
+        || info.header_haslanguage || info.header_haspublisher
+        || info.header_hasrelation || info.header_hasrights
+        || info.header_hassource || info.header_hassubject
+        || info.header_hastitle || info.header_hastype;
+        
 };
 
 AGB.statement_html = function(db, info, lang)
@@ -45,8 +55,14 @@ AGB.statement_html = function(db, info, lang)
     AGB.set_procon_premises_text(info);
     AGB.set_premise_of_texts(info);
     if(info.text) {
-        info.statement_text = AGB.markdown_to_html(info.text[lang]);    
+        info.statement_text = AGB.markdown_to_html(info.text[lang]);   
+        if(info.statement_text != "") {
+            info.hastext = true;    
+        } 
     } 
+    info.haspro = info.pro.length > 0;
+    info.hascon = info.con.length > 0;
+    info.haspremisesof = info.premise_of.length > 0;
 
     var statement_html = ich.statement(info);
     return statement_html.filter('#statement');
