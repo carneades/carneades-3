@@ -1,8 +1,6 @@
 // A candidate for the conclusion of an argument
 PM.ConclusionCandidateView = Backbone.View.extend(
-    {className: "conclusion-candidate-view",
-     
-     events: {
+    {events: {
          "change input[type=hidden]" : "statement_changed",
          "click .create": "on_new_conclusion"
      },
