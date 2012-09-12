@@ -49,6 +49,7 @@ AGB.argument_html = function(db, argument_data)
     argument_data.direction_text = argument_data.pro ? "pro" : "con";
     argument_data.conclusion.statement_text = AGB.statement_text(argument_data.conclusion);
     AGB.set_premises_text(argument_data); 
+    argument_data.haspremises = argument_data.premises.length > 0;
     AGB.set_undercutters_text(argument_data);
     AGB.set_rebuttals_text(argument_data);
     AGB.set_dependents_text(argument_data);
