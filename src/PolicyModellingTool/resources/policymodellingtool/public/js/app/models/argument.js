@@ -1,6 +1,7 @@
 PM.Argument = Backbone.Model.extend(
     {defaults: {
-         weight: 0.5
+         weight: 0.5,
+         pro: true
      },
    
      url: function() {
