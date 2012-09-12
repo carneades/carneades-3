@@ -19,7 +19,7 @@
 (defn store-ag
   "Stores ag into a LKIF and returns the dbname"
   [ag]
- (let [dbname (str "policymodellingtool-" (make-uuid))
+ (let [dbname (str "db-" (make-uuid))
         ;; TODO: changes the pass
        root "root"
        passwd "pw1"

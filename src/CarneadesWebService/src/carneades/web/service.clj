@@ -634,7 +634,7 @@
                                      (policies (symbol policykey)) ag)
                  root "root"
                  passwd "pw1"
-                 dbname (str "policymodellingtool-" (make-uuid))
+                 dbname (str "db-" (make-uuid))
                  dbconn2 (make-database-connection dbname root passwd)
                  metadata (map map->metadata (list-metadata))]
              (create-argument-database dbname root passwd (first metadata))
