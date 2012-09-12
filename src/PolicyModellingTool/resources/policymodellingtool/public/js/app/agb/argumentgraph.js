@@ -8,7 +8,7 @@ AGB.set_argumentgraph_url = function(db)
 // Returns the relative URL of the argument graph page
 AGB.argumentgraph_url = function(db)
 {
-    return '/arguments/argumentgraph/' + db;
+    return '/arguments/outline/' + db;
 };
 
 // Returns the HTML content of the argument graph page

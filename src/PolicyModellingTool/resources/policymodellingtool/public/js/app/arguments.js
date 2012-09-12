@@ -1,5 +1,5 @@
 PM.arguments_url = function(db) {
-    return 'arguments/argumentgraph/' + db;    
+    return 'arguments/outline/' + db;    
 };
 
 PM.set_arguments_url = function(db) {
