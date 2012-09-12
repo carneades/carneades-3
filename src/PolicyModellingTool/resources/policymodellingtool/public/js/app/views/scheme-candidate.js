@@ -1,8 +1,6 @@
 // A candidate for the conclusion of an argument
 PM.SchemeCandidateView = Backbone.View.extend(
-    {className: "scheme-candidate-view",
-     
-     events: {
+    {events: {
          "change input[type=hidden]" : "scheme_changed"
      },
      
