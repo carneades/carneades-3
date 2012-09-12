@@ -21,3 +21,7 @@ PM.set_metadata_has_properties = function(header) {
     header.header_hastitle = header.title ? true : false;
     header.header_hastype = header.type ? true : false;  
 };
+
+PM.has_description = function(header) {
+    return header.description && header.description[IMPACT.lang];
+};
