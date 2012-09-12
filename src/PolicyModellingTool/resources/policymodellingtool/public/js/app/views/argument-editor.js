@@ -46,6 +46,14 @@ PM.ArgumentEditorView = Backbone.View.extend(
          this.scheme_candidate_view = new PM.SchemeCandidateView({model: this.model.get('scheme'),
                                                                   el: this.$('.scheme-candidate')});
          this.scheme_candidate_view.render();
+         var scheme = this.model.get('scheme').get('scheme');
+         if(scheme) {
+             var scheme_metadata = _.clone(scheme.get('header'));
+             delete scheme_metadata.title;
+             PM.set_metadata_has_properties(scheme_metadata);
+             var scheme_metadata_html = ich.metadata(scheme_metadata);
+             this.$('.scheme-metadata').html(scheme_metadata_html);
+         } 
          
          var conclusioncandidateview = new PM.ConclusionCandidateView({model: this.model.get('conclusion'),
                                                                        el: this.$('.conclusion-candidate')});
