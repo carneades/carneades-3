@@ -56,7 +56,7 @@ AGB.display_argumentgraph = function(db)
                                         'CAF XML');
                             return false; 
                         });
-                    AGB.enable_ag_edition();
+                    AGB.enable_ag_edition(db);
                 },
                 PM.on_error);
 };
@@ -108,7 +108,7 @@ AGB.outline_text = function(tree, db, index)
 };
 
 // Activates the edition of the argument graph
-AGB.enable_ag_edition = function() {
+AGB.enable_ag_edition = function(db) {
     // $('#ageditormenu').remove();
     $('#menus').append(ich.ageditormenuon());
     $('#newstatement').click(_.bind(AGB.show_statement_editor, AGB,
@@ -117,7 +117,7 @@ AGB.enable_ag_edition = function() {
                                          return false;
                                      }}));
     $('#newargument').click(AGB.new_argument);
-    $('.evaluate').click(AGB.evaluate);
+    $('.evaluate').click(_.bind(AGB.evaluate, AGB, _.bind(AGB.display_argumentgraph, AGB, db)));
     
     return false;
 };
@@ -145,10 +145,13 @@ AGB.new_argument = function() {
     return false;
 };
 
-AGB.evaluate = function() {
+AGB.evaluate = function(callback) {
     PM.ajax_post(IMPACT.wsurl + '/evaluate-argument-graph/' + IMPACT.db, {},
                 function(data) {
                     PM.notify('Evaluation finished');
+                    if(_.isFunction(callback)) {
+                        callback(); 
+                    }
                 },
                 IMPACT.user, IMPACT.password, PM.on_error);    
 };
