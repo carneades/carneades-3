@@ -223,7 +223,7 @@ AGB.enable_statement_edition = function(db, info) {
     $('#menus').append(ich.statementeditormenu());
     $('#delete-statement').click(_.bind(AGB.delete_statement, AGB, db, info.id));
     $('#edit-statement').click(_.bind(AGB.edit_statement, AGB, db, info));
-    $('.evaluate').click(AGB.evaluate);
+    $('.evaluate').click(_.bind(AGB.evaluate, AGB, _.bind(AGB.display_statement, AGB, db, info.id)));
     
     return false;
 };
