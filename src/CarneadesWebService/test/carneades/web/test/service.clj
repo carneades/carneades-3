@@ -86,9 +86,10 @@
         res (post-request (str "/metadata/" dbname) carneades-web-service
                           {"authorization" auth-header}
                           (json-str data))
-        id (read-json (:body res))
+        id (:id (read-json (:body res)))
         res2 (get-request (str "/metadata/" dbname "/" id) carneades-web-service)
-        returned-data (filter-out-nils (read-json (:body res2)) (keys data))]
+        result (read-json (:body res2))
+        returned-data (filter-out-nils result (keys data))]
     (is (= data returned-data))))
 
 (deftest put-metadata
@@ -96,7 +97,7 @@
         res (post-request (str "/metadata/" dbname) carneades-web-service
                           {"authorization" auth-header}
                           (json-str data))
-        id (read-json (:body res))
+        id (:id (read-json (:body res)))
         newtitle (make-some-string "Title")
         newcreator (make-some-string "Creator")
         update {:title [newtitle]
@@ -104,10 +105,12 @@
         res2 (put-request (format "/metadata/%s/%s" dbname id) carneades-web-service
                           {"authorization" auth-header}
                           (json-str update))
-        res3 (get-request (format "/metadata/%s/%s" dbname id) carneades-web-service)
+        result (read-json (:body res2))
+        _ (prn "RESULT=" result)
         expected (assoc data :title [newtitle] :creator [newcreator])
-        returned-data (filter-out-nils (read-json (:body res3)) (keys data))]
-    (is (= "true" (:body res2)))
+        returned-data (filter-out-nils result (keys data))]
+    (prn "RETURNED=" returned-data)
+    (prn "EXPECTED=" expected)
     (is (= expected returned-data))))
 
 (deftest delete-metadata
@@ -115,11 +118,10 @@
         res (post-request (str "/metadata/" dbname) carneades-web-service
                           {"authorization" auth-header}
                           (json-str data))
-        id (:body res)
+        id (:id (:body res))
         res2 (delete-request (format "/metadata/%s/%s" dbname id) carneades-web-service
                              {"authorization" auth-header} "")
         res3 (get-request (format "/metadata/%s/%s" dbname id) carneades-web-service)]
-    (is (= "true" (:body res2)))
     (is (= 404 (:status res3)))))
 
 (deftest post-statement
@@ -180,7 +182,7 @@
         res (post-request (str "/statement/" dbname) carneades-web-service
                           {"authorization" auth-header}
                           (json-str statement))
-        id (read-json (:body res))
+        id (:id (read-json (:body res)))
         res (delete-request (format "/statement/%s/%s" dbname id) carneades-web-service
                              {"authorization" auth-header} "")
         res2 (get-request (str "/statement/" dbname "/" id) carneades-web-service)]
@@ -190,7 +192,7 @@
 (deftest get-scheme
   (let [res (get-request "/scheme" carneades-web-service)
         schemes (read-json (:body res))
-        scheme (first (filter (fn [s] (= (:id s) "negative-practical-argument")) schemes))]
+        scheme (first (filter (fn [s] (= (:id s) "negative-consequences")) schemes))]
     (is scheme)))
 
 (deftest post-argument
