@@ -36,6 +36,15 @@ AGB.set_has_properties = function(argument_data) {
     argument_data.header_hastitle = argument_data.header.title ? true : false;
     argument_data.header_hastype = argument_data.header.type ? true : false;
     
+    argument_data.hasheader = argument_data.hasdescription || argument_data.header_haskey
+        || argument_data.header_hascontributor || argument_data.header_hascoverage 
+        || argument_data.header_hascreator || argument_data.header_hasdate
+        || argument_data.header_hasformat || argument_data.header_hasidentifier
+        || argument_data.header_haslanguage || argument_data.header_haspublisher
+        || argument_data.header_hasrelation || argument_data.header_hasrights
+        || argument_data.header_hassource || argument_data.header_hassubject
+        || argument_data.header_hastitle || argument_data.header_hastype;
+    
 };
 
 AGB.argument_html = function(db, argument_data)
