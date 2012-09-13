@@ -64,7 +64,7 @@
    element))
 
 (defn unzip-metadata-element
-  "Unzips a metadata element vector as a string"
+  "Unzips a metadata element string as a vector"
   [s]
   (if (string? s)
     (if (empty? s)
@@ -73,6 +73,8 @@
     s))
 
 (defn zip-metadata
+  "Zips a map of metadata elements vector and converts it
+   to a map of metadata elements strings"
   [md]
   (reduce (fn [md [k v]]
             (if (= k :description)
@@ -82,6 +84,8 @@
           md))
 
 (defn unzip-metadata
+  "Unzips a map of metadata elements string and converts it
+   to a map of metadata elements vectors"
   [md]
   (reduce (fn [md [k v]]
             (if (= k :description)
@@ -226,21 +230,33 @@
       
   (GET "/metadata/:db/:id" [db id]
        (let [db2 (make-database-connection db "guest" "")]
-         (with-db db2 (json-response (read-metadata id)))))
+         (with-db db2 (json-response
+                       (unzip-metadata
+                        (read-metadata id))))))
       
   (POST "/metadata/:db" request
         (let [db (:db (:params request))
               m (read-json (slurp (:body request)))
               [username password] (get-username-and-password request)
               dbconn (make-database-connection db username password)]
-          (with-db dbconn (json-response (create-metadata (map->metadata m))))))
+          (with-db dbconn (json-response
+                           {:id (create-metadata
+                                 (zip-metadata
+                                  (map->metadata m)))}))))
 
   (PUT "/metadata/:db/:id" request   
        (let [m (read-json (slurp (:body request)))
+             m (zip-metadata m)
              [username password] (get-username-and-password request)
              db (make-database-connection (:db (:params request)) username password)
              id (Integer/parseInt (:id (:params request)))]
-         (with-db db (json-response (update-metadata id m))))) 
+         (with-db db (json-response (do
+                                      (update-metadata id m)
+                                      (let [data (read-metadata id)
+                                            x (unzip-metadata data)]
+                                        (prn "data: " data)
+                                        (prn "unzipped: " x)
+                                        x))))))
       
   (DELETE "/metadata/:db/:id" request
           (let [[username password] (get-username-and-password request)
