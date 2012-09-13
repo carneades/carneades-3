@@ -54,6 +54,7 @@ AGB.argument_html = function(db, argument_data)
     argument_data.direction = argument_data.pro ? "pro" : "con";
     argument_data.db = db;
     argument_data.description_text = AGB.description_text(argument_data.header);
+    argument_data.scheme_text = PM.scheme_text(argument_data.scheme);
     AGB.set_argument_title_text(argument_data);
     argument_data.direction_text = argument_data.pro ? "pro" : "con";
     argument_data.conclusion.statement_text = AGB.statement_text(argument_data.conclusion);
@@ -136,7 +137,7 @@ AGB.argument_text = function(data, index)
     if(data.header && data.header.title) {
         text = data.header.title;
     } else if (data.scheme && data.scheme.length > 0) {
-        text = data.scheme;   
+        text = PM.scheme_text(data.scheme);   
     } else if(index == undefined) {
         text = 'Argument';
     } else {
