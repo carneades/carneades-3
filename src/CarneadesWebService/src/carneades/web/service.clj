@@ -105,7 +105,9 @@
                             :header (unzip-metadata (:header stmt)))
         :else nil))
 
-(defn unpack-statement [s]
+(defn unpack-statement
+  "Converts a JSON string representing a statement to a statement object."
+  [s]
   (cond (string? s) (safe-read-string s),  
         (map? s) (let [atomval (if (or (nil? (:atom s))
                                        (empty? (:atom s)))
