@@ -268,6 +268,7 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/app/views/metadata-element-editor.js',
                    'js/app/views/formatting-helper.js',
                    'js/app/views/metadata-helper.js',
+                   'js/app/views/scheme-helper.js',
                    'js/app/views/metadata-editor.js'];
     
     if(!is_in_toolbox) {
