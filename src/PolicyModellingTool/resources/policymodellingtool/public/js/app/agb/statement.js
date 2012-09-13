@@ -62,7 +62,7 @@ AGB.statement_html = function(db, info, lang)
     } 
     info.haspro = info.pro.length > 0;
     info.hascon = info.con.length > 0;
-    info.haspremisesof = info.premise_of.length > 0;
+    info.haspremiseof = info.premise_of.length > 0;
 
     var statement_html = ich.statement(info);
     return statement_html.filter('#statement');
