@@ -592,7 +592,14 @@
               :body svg}))))
       
   ;; Schemes
-      
+  (GET "/theory" []
+       ;; TODO
+       (json-response [walton-schemes]))
+
+  (GET "/theory/:id" []
+       ;; TODO
+       (json-response walton-schemes))
+
   (GET "/scheme" []                     ; return all schemes
        (json-response (vals schemes-by-id)))
       
