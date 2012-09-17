@@ -55,6 +55,8 @@ PM.dispatch_url = function(sections) {
         PM.display_arguments(sections[3], sections[2], sections[4]); 
     } else if(sections[1] == "policies") {
         PM.display_policies(sections[2]);
+    } else if(sections[1] == "schemes") {
+        PM.display_schemes();
     } else if(sections[1] == "admin") {
         PM.display_admin();
     } else if(sections[1] == "introduction") {
@@ -141,7 +143,8 @@ PM.post_load_uid = function(toolboxState) {
     PM.load_templates(toolboxState);
     PM.add_address_listener();
     PM.load_app_styles(toolboxState.pmt.path);
-    $.ajaxSetup({beforeSend: PM.simple_auth});
+    
+    PM.common_post_load();
     
     // Forces update.
     $.address.update();
@@ -152,11 +155,23 @@ PM.post_load = function() {
     PM.load_app_styles(null);
     PM.load_templates();
     PM.add_address_listener();
-    $.ajaxSetup({beforeSend: PM.simple_auth});
+    
+    PM.common_post_load();
     
     // Forces update.
     $.address.update();
 
+};
+
+PM.common_post_load = function() {
+    $.ajaxSetup({beforeSend: PM.simple_auth});
+    
+    PM.schemes = new PM.Schemes;
+    PM.schemes.fetch();
+  
+    PM.current_theory = new PM.Theory({id: 'walton'});
+    PM.current_theory.fetch();
+    
 };
 
 // http://www.lockencreations.com/2011/07/02/cant-debug-imported-js-files-when-using-jquery-getscript/
@@ -249,6 +264,7 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/app/models/metadata.js',
                    'js/app/models/statement.js',
                    'js/app/models/scheme.js',
+                   'js/app/models/theory.js',
                    'js/app/models/argument.js',
                    'js/app/models/scheme-candidate.js',
                    'js/app/models/argument-candidate.js',
@@ -266,6 +282,7 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/app/views/premises-candidates.js',
                    'js/app/views/conclusion-candidate.js',
                    'js/app/views/metadata-element-editor.js',
+                   'js/app/views/theory.js',
                    'js/app/views/formatting-helper.js',
                    'js/app/views/metadata-helper.js',
                    'js/app/views/scheme-helper.js',
@@ -324,7 +341,7 @@ PM.load_templates = function(toolboxState) {
             'argumenteditor',
             'premisescandidates',
             'exceptionscandidates',
-            // 'metadataeditor',
+            'theory',
             'metadataeditor2',
             'premiseeditor',
             'premiseeditorwithoutscheme',
