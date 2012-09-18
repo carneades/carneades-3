@@ -10,8 +10,9 @@ PM.scheme_text = function(scheme) {
   
 };
 
-PM.display_schemes = function() {
-    var theory_view = new PM.TheoryView({model: PM.current_theory});
+PM.display_schemes = function(scheme_id) {
+    var theory_view = new PM.TheoryView({model: PM.current_theory, 
+                                         current_scheme: scheme_id});
     
     if(PM.current_theory.get('schemes') == undefined) {
         PM.current_theory.fetch({success: function() {
