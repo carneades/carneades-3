@@ -56,7 +56,7 @@ PM.dispatch_url = function(sections) {
     } else if(sections[1] == "policies") {
         PM.display_policies(sections[2]);
     } else if(sections[1] == "schemes") {
-        PM.display_schemes();
+        PM.display_schemes(sections[2]);
     } else if(sections[1] == "admin") {
         PM.display_admin();
     } else if(sections[1] == "introduction") {
