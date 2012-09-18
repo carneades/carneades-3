@@ -5,8 +5,9 @@ PM.TheoryView = Backbone.View.extend(
      events: {
      },
      
-     initialize: function() {
+     initialize: function(attrs) {
          this.model.on('change', this.render, this);
+         this.current_scheme = attrs.current_scheme;
 //         _.bindAll(this, 'render', 'funcname');
      },
      
@@ -22,6 +23,10 @@ PM.TheoryView = Backbone.View.extend(
          data.schemes_text = this.schemes_text();
          
          this.$el.html(ich.theory(data));
+         
+         if(this.current_scheme != undefined) {
+             $.scrollTo($('#' + this.current_scheme));
+         }
          
          return this;
      },
