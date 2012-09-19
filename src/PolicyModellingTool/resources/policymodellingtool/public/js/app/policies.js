@@ -92,8 +92,8 @@ PM.schemes_text = function(language, schemes) {
 PM.scheme_content_text = function(language, scheme) {
     var text = "";
     
-    text += '<p>{0}, {1}'.format(scheme.id, PM.format_sexpr(scheme.conclusion, language));
-    text += '<ul>';
+    text += '<p>§ {0} <br><b>conclusion</b><br>&nbsp;&nbsp;&nbsp;&nbsp;{1}'.format(scheme.id, PM.format_sexpr(scheme.conclusion, language));
+    text += '<br><b>conditions</b><ul>';
     _.each(scheme.premises, function(premise) {
                if(premise.statement.atom[0] != "valid") {
                    text += "<li>{0}</li>".format(PM.format_sexpr(premise.statement.atom, language));
