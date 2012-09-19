@@ -32,6 +32,9 @@ AGB.argumentgraph_html = function(db, data)
 // Displays the argument graph page
 AGB.display_argumentgraph = function(db)
 {
+    PM.arguments.fetch();
+    PM.statements.fetch();
+    
     if($.address.value() == "/arguments") {
         // forces URL with specified argument graph without pushing
         // a new value in the history
@@ -43,12 +46,6 @@ AGB.display_argumentgraph = function(db)
 
     PM.ajax_get(IMPACT.wsurl + '/argumentgraph-info/' + db,
                 function(data) {
-                    PM.arguments = new PM.Arguments;
-                    PM.arguments.fetch();
-                    
-                    PM.statements = new PM.Statements;
-                    PM.statements.fetch();
-
                     $('#browser').html(AGB.argumentgraph_html(db, data));
                     $('#export').click(
                         function (event){
@@ -128,8 +125,13 @@ AGB.is_grounded = function(atom) {
     return atom.indexOf("?") == -1;
 };
 
-AGB.new_argument = function() {
-    var argument = new PM.Argument();
+AGB.new_argument = function(conclusion) {
+    var argument = undefined;
+    if(conclusion) {
+        argument = new PM.Argument({conclusion: conclusion});
+    } else {
+        argument = new PM.Argument();
+    }
 
     var argument_candidate = new PM.ArgumentCandidate({argument: argument,
                                                        statements: PM.statements,
