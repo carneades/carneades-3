@@ -172,6 +172,9 @@ PM.common_post_load = function() {
     PM.current_theory = new PM.Theory({id: 'walton'});
     PM.current_theory.fetch();
     
+    PM.arguments = new PM.Arguments;
+    PM.statements = new PM.Statements;
+
 };
 
 // http://www.lockencreations.com/2011/07/02/cant-debug-imported-js-files-when-using-jquery-getscript/

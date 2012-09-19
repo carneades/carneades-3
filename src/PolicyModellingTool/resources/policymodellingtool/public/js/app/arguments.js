@@ -15,11 +15,8 @@ PM.display_arguments = function(db, type, id) {
     }
     
     IMPACT.db = db;
-    
-    PM.arguments = new PM.Arguments;
+
     PM.arguments.fetch();
-                    
-    PM.statements = new PM.Statements;
     PM.statements.fetch();
 
     var arguments_html = ich.arguments();

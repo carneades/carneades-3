@@ -225,11 +225,14 @@ AGB.enable_statement_edition = function(db, info) {
     $('#edit-statement').click(_.bind(AGB.edit_statement, AGB, db, info));
     $('.evaluate').click(_.bind(AGB.evaluate, AGB, _.bind(AGB.display_statement, AGB, db, info.id)));
     
+    var current_statement = PM.statements.get(info.id);
+    $('#new-argument').click(_.bind(AGB.new_argument, AGB, current_statement));
+    
     return false;
 };
 
 AGB.delete_statement = function(db, stmtid) {
-    if(confirm('Delete this statement and its linked arguments?')) {
+    if(confirm('Delete this statement?')) {
         PM.ajax_delete(IMPACT.wsurl + '/statement/' + db + '/' + stmtid,
                        function(e) {
                            console.log('statement deleted');
