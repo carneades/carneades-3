@@ -77,6 +77,10 @@ PM.schemes_text = function(language, schemes) {
     var text = "<ul>";
     
     _.each(schemes, function(scheme) {
+               if(scheme.header.description && scheme.header.description[IMPACT.lang]) {
+                   text += '<li>{0}'.format(PM.markdown_to_html(scheme.header.description[IMPACT.lang]));
+               }
+               
                text += PM.scheme_content_text(language, scheme);
            });
     
@@ -88,9 +92,6 @@ PM.schemes_text = function(language, schemes) {
 PM.scheme_content_text = function(language, scheme) {
     var text = "";
     
-    if(scheme.header.description && scheme.header.description[IMPACT.lang]) {
-        text += '<li>{0}'.format(PM.markdown_to_html(scheme.header.description[IMPACT.lang]));
-    }
     text += '<p>{0}, {1}'.format(scheme.id, PM.format_sexpr(scheme.conclusion, language));
     text += '<ul>';
     _.each(scheme.premises, function(premise) {
