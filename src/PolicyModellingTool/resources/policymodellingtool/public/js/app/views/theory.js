@@ -15,7 +15,7 @@ PM.TheoryView = Backbone.View.extend(
          var data = this.model.toJSON();
 
          if(data.header.description && data.header.description[IMPACT.lang]) {
-             data.description_text = data.header.description[IMPACT.lang];    
+             data.description_text = PM.markdown_to_html(data.header.description[IMPACT.lang]);
          }
          
          data.outline_text = PM.theory_outline_text(data.schemes, 'schemes');
@@ -39,7 +39,7 @@ PM.TheoryView = Backbone.View.extend(
                     text += '<div id="{0}">'.format(scheme.id);
                     text += '<h3>{0}</h3>'.format(scheme.header.title);
                     if(scheme.header.description && scheme.header.description[IMPACT.lang]) {
-                        text += '<p>{0}</p>'.format(PM.markdown_to_html(schemes.header.description[IMPACT.lang]));
+                        text += '<p>{0}</p>'.format(PM.markdown_to_html(scheme.header.description[IMPACT.lang]));
                     }
                     PM.set_metadata_has_properties(scheme.header);
                     scheme.header.header_hastitle = false;
