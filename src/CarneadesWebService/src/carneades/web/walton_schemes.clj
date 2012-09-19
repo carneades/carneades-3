@@ -811,7 +811,8 @@ Douglas Walton, Fundamentals of Critical Argumentation, Cambridge University Pre
      :header (make-metadata
               :title "Transitivity of Causality, Inductive Step"
               :source "Douglas Walton, Slippery Slope Arguments, Vale Press, Newport News, 1999, pp. 93, 95.
-Douglas Walton, Fundamentals of Critical Argumentation, Cambridge University Press, New York 2006, pp. 107, 110.")
+Douglas Walton, Fundamentals of Critical Argumentation, Cambridge University Press, New York 2006, pp. 107, 110."
+              :description {:en "__Here__ some description of the scheme will be written"})
      :conclusion '(causes ?E1 ?E2)
      :premises [(make-premise
                  :role "step 1"

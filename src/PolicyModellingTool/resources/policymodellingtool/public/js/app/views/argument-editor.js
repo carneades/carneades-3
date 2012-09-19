@@ -53,6 +53,12 @@ PM.ArgumentEditorView = Backbone.View.extend(
              PM.set_metadata_has_properties(scheme_metadata);
              var scheme_metadata_html = ich.metadata(scheme_metadata);
              this.$('.scheme-metadata').html(scheme_metadata_html);
+             
+             if(scheme_metadata.description && scheme_metadata.description[IMPACT.lang]) {
+                 var description_text = PM.markdown_to_html(scheme_metadata.description[IMPACT.lang]);
+                 this.$('.scheme-description').html(description_text);
+             }
+             
          } 
          
          var conclusioncandidateview = new PM.ConclusionCandidateView({model: this.model.get('conclusion'),
