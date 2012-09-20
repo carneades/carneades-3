@@ -24,7 +24,7 @@ PM.display_policies = function(sectionid) {
                     PM.activate('#policies-item');
                     
                     _.each(ids, function(policyid) {
-                               $('#' + policyid).click(_.bind(PM.on_select_policy, PM, policyid));
+                               $('#input' + policyid).click(_.bind(PM.on_select_policy, PM, policyid));
                            });
                     
                     if(sectionid != undefined) {
@@ -74,17 +74,17 @@ PM.theory_outline_text = function(sections, urlfragment) {
 };
 
 PM.schemes_text = function(language, schemes) {
-    var text = "<ul>";
+    var text = "<div>";
     
     _.each(schemes, function(scheme) {
                if(scheme.header.description && scheme.header.description[IMPACT.lang]) {
-                   text += '<li>{0}'.format(PM.markdown_to_html(scheme.header.description[IMPACT.lang]));
+                   text += '{0}'.format(PM.markdown_to_html(scheme.header.description[IMPACT.lang]));
                }
                
                text += PM.scheme_content_text(language, scheme);
            });
     
-    text += "</ul>";
+    text += "</div>";
     
     return text;
 };
@@ -92,16 +92,19 @@ PM.schemes_text = function(language, schemes) {
 PM.scheme_content_text = function(language, scheme) {
     var text = "";
     
-    text += '<p>§ {0} <br><b>conclusion</b><br>&nbsp;&nbsp;&nbsp;&nbsp;{1}'.format(scheme.id, PM.format_sexpr(scheme.conclusion, language));
-    text += '<br><b>conditions</b><ul>';
+    text += '<div class="scheme-content" >§ {0} <br><b>conclusion</b><div class="rule-conclusion">{1}</div>'
+        .format(scheme.id, PM.format_sexpr(scheme.conclusion, language));
+
+    text += '<b>conditions</b><div class="rule-body"> <ul>';
+
     _.each(scheme.premises, function(premise) {
                if(premise.statement.atom[0] != "valid") {
                    text += "<li>{0}</li>".format(PM.format_sexpr(premise.statement.atom, language));
                }
            });
-    text += '</ul>';
-    text += '</p>';
-    text += '</li>';
+
+    text += '</ul></div>';
+    text += '</div>';
     
     return text;
 };
@@ -114,11 +117,11 @@ PM.policies_text = function(language, sections, level, on_policy) {
                text += '<form action=""><h{0}>'.format(level + 1);
                if(section.schemes.length > 0) {
                    on_policy(section.id);
-                   text += '<input type="submit" value="Select" id="input{0}" />'.format();
+                   text += '<input type="submit" value="Select" id="input{0}" />'.format(section.id);
                }
                text += ' {1}</h{0}></form>'.format(level + 1, section.header.title);
                text += '<p>{0}</p>'.format(PM.markdown_to_html(section.header.description[IMPACT.lang]));
-               text += PM.markdown_to_html(PM.schemes_text(language, section.schemes));
+               text += PM.schemes_text(language, section.schemes);
                text += PM.policies_text(language, section.sections, level + 1, on_policy);
                text += '</div>';
            });
