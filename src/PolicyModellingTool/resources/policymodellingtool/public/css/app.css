@@ -203,3 +203,15 @@
 .metadata-table {
     width: 735px;
 }
+
+.rule-body ul {
+    margin-top: 0px;
+}
+
+.rule-conclusion {
+    margin-left: 50px;
+}
+
+.rule-body {
+    margin-left: 8px;
+}
