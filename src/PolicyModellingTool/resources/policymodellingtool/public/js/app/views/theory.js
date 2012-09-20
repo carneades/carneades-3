@@ -39,14 +39,14 @@ PM.TheoryView = Backbone.View.extend(
                     text += '<div id="{0}">'.format(scheme.id);
                     text += '<h3>{0}</h3>'.format(scheme.header.title);
                     if(scheme.header.description && scheme.header.description[IMPACT.lang]) {
-                        text += '<p>{0}</p>'.format(PM.markdown_to_html(scheme.header.description[IMPACT.lang]));
+                        text += '<p class="description">{0}</p>'.format(PM.markdown_to_html(scheme.header.description[IMPACT.lang]));
                     }
                     PM.set_metadata_has_properties(scheme.header);
                     scheme.header.header_hastitle = false;
                     // get the whole html, see http://jquery-howto.blogspot.de/2009/02/how-to-get-full-html-string-including.html
                     var md = ($('<div>').append(ich.metadata(scheme.header))).remove().html();
-                    text += '<p>{0}</p>'.format(md);
-                    text += PM.markdown_to_html(PM.scheme_content_text(data.language, scheme));
+                    text += md;
+                    text += PM.scheme_content_text(data.language, scheme);
                     text += '</div>';
                 });
 
