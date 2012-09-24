@@ -1,4 +1,4 @@
-;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Copyright © 2010-2012 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
 These installation instructions are for the Carneades inference engine
@@ -7,8 +7,8 @@ and the Carneades Editor, implemented in the Clojure programming language.
 
 1. Prerequisites
 
-- The Java Runtime Environment (JRE) 6 <http://java.sun.com/>
-- Leiningen 1.4.2 or superior (but not lein 2.x) <http://github.com/technomancy/leiningen>
+- The Java Runtime Environment (JRE) 7 <http://java.sun.com/>
+- Leiningen 2 <http://github.com/technomancy/leiningen>
 
 2. Downloading Carneades
 
@@ -16,7 +16,7 @@ The Carneades Editor is available for downloading from
      <https://github.com/carneades/carneades>
 
 To launch the Carneades Editor, you can double-click on the executable JAR
-or excutes the JAR from the command line:
+or executes the JAR from the command line:
 
   $ java -jar carneades-editor-<version>.jar
 
@@ -44,10 +44,12 @@ Alternatively, you can install Carneades from the sources.
 
 5. Trying it out
 
-- Run the Carneades Editor:
+- Run the Carneades Web Application:
 
-  $ cd CarneadesEditor
-  $ lein run
+  $ cd PolicyModellingTool
+  $ lein ring server 8080
+
+The  point your browser at http://localhost:8080/policymodellingtool/#/introduction  
 
 - Run the examples:
 
