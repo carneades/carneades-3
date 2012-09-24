@@ -46,8 +46,13 @@ AGB.show_statement_editor = function(config) {
             
             AGB.remove_statement_editor();
             return false;
-        }
-    );
+        });
+    
+    $('input[type=range]').
+        change(function() {
+                   var slider_val = $(this).val();
+                   $('#statement-editor-weight').val(slider_val);
+               });
 
     return false;
 };
