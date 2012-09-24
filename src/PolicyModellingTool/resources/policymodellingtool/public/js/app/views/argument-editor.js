@@ -10,6 +10,7 @@ PM.ArgumentEditorView = Backbone.View.extend(
          "change input:radio[name=strict][value=yes]": "strict_changed",
          "change input:radio[name=strict][value=no]": "strict_changed",
          "change .weight-input": "weight_changed",
+         "change input[type=range]": "weight_slided"
      },
      
      initialize: function(attrs) {
@@ -20,6 +21,7 @@ PM.ArgumentEditorView = Backbone.View.extend(
          this.model.get('argument').store();
          
          this.model.on('change', this.render, this);
+         // this.model.get('argument').on('change', this.render, this);
          this.model.get('scheme').on('change', this.scheme_changed, this);
          _.bindAll(this, 'render', 'cancel');
      },
@@ -42,6 +44,7 @@ PM.ArgumentEditorView = Backbone.View.extend(
          }
 
          this.$('.weight-input').val(data.argument.attributes.weight);
+         this.$('input[type=range]').val(data.argument.attributes.weight);
          
          this.scheme_candidate_view = new PM.SchemeCandidateView({model: this.model.get('scheme'),
                                                                   el: this.$('.scheme-candidate')});
@@ -133,6 +136,11 @@ PM.ArgumentEditorView = Backbone.View.extend(
      
      weight_changed: function() {
          this.model.get('argument').set('weight', this.weight());
+     },
+     
+     weight_slided: function() {
+         var slider_val = this.$('input[type=range]').val();
+         this.$('.weight-input').val(slider_val).trigger('change');
      },
      
      scheme_changed: function() {
