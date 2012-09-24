@@ -187,24 +187,24 @@ PM.ArgumentEditorView = Backbone.View.extend(
          this.render();
 
      },
+
+     premise_candidate_exists: function(premise_candidate) {
+         var premise = premise_candidate.get('premise');
+         if(_.isNil(premise) || _.isNil(premise.statement)) {
+             return false;
+         }
+         var atom = premise.statement.atom;
+         var is_grounded = AGB.is_grounded(AGB.sexpr_to_str(atom));
+         return is_grounded;
+                          
+     },
      
      save: function() {
          // TODO get rid of the id
          if(!$('#editor-conclusion').valid()) {
              return false;
          }
-
-         if(_.filter(this.$('input.statement-select.required'),
-                     function(premise) {
-                         return $(premise).valid() == false;
-                     }).length > 0) {
-             return false;
-         }
-         
-         // // forces the update of data for events
-         // // swallowed by markItUp and not captured by the view
-         // this.metadata_editor_view.update_data();
-             
+                      
          var argument = this.model.get('argument');
          
          // some attributes are changed dynamically with events
@@ -212,12 +212,17 @@ PM.ArgumentEditorView = Backbone.View.extend(
          var conclusion =  this.model.get('conclusion').get('statement');
 
          argument.set('conclusion', conclusion);
-         argument.set('premises', this.model.get('premises').map(
-                            function(premise_candidate) {
-                                return premise_candidate.get('premise');
-                            }));
-         argument.set('exceptions', this.model.get('exceptions').map(
-                          function(premise_candidate) {
+
+         var self = this;
+         argument.set('premises', this.model.get('premises').
+                      filter(self.premise_candidate_exists).
+                      map(function(premise_candidate) {
+                              return premise_candidate.get('premise');
+                          }));
+         
+         argument.set('exceptions', this.model.get('exceptions').
+                      filter(self.premise_candidate_exists).
+                      map(function(premise_candidate) {
                               return premise_candidate.get('premise');
                           }));
          

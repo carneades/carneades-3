@@ -119,7 +119,7 @@ AGB.enable_ag_edition = function(db) {
     return false;
 };
 
-// Returns true if the atom is grounded
+// Returns true if the atom represented as a string is grounded
 // (hack)
 AGB.is_grounded = function(atom) {
     return atom.indexOf("?") == -1;
