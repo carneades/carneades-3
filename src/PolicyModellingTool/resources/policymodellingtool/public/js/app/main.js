@@ -61,6 +61,10 @@ PM.dispatch_url = function(sections) {
         PM.display_admin();
     } else if(sections[1] == "introduction") {
         PM.display_introduction();
+    } else if(sections[1] == "sct") {
+        if(sections[2] == "intro") {
+            PM.display_sct_intro();
+        }
     }
 };
 
@@ -179,7 +183,11 @@ PM.common_post_load = function() {
         {name:'Messages',
          path:'site/',
          mode:'both',
-         language: IMPACT.lang});
+         language: IMPACT.lang, 
+         callback: function() {
+             // alert(jQuery.i18n.prop('msg_hello'));
+         }
+        });
 };
 
 // http://www.lockencreations.com/2011/07/02/cant-debug-imported-js-files-when-using-jquery-getscript/
@@ -295,6 +303,8 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/app/views/formatting-helper.js',
                    'js/app/views/metadata-helper.js',
                    'js/app/views/scheme-helper.js',
+                   'js/app/views/sct-intro.js',
+                   'js/app/views/sct-helper.js',
                    'js/app/views/metadata-editor.js'];
     
     if(!is_in_toolbox) {
@@ -360,7 +370,9 @@ PM.load_templates = function(toolboxState) {
             'conclusioncandidate',
             'schemecandidate',
             'metadataelementeditor',
-            'button'],
+            'button',
+            'sct-intro'
+           ],
            function(name) {
                var url = toolboxState == undefined ?
                    'site/{0}.html'.format(name) :
