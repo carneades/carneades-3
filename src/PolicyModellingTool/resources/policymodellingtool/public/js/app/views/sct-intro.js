@@ -3,18 +3,19 @@ PM.SctIntro = Backbone.View.extend(
     {className: "sct-intro",
      
      events: {
-         "click .start" : "start"
+         "click .start": "start",
+         "change .username": "username_changed"
      },
      
      initialize: function() {
-         // this.model.on('change', this.render, this);
+         this.model.on('change', this.render, this);
          _.bindAll(this, 'render', 'start');
      },
      
      render: function() {
-         // var data = this.model.toJSON();
-         
-         var content = ich["sct-intro"](
+         var data = this.model.toJSON();
+
+         var content = ich['sct-intro'](
              {sct_purpose_intro: $.i18n.prop('sct_purpose_intro'),
               sct_first_purpose: $.i18n.prop('sct_first_purpose'),
               sct_second_purpose: $.i18n.prop('sct_second_purpose'),
@@ -29,19 +30,24 @@ PM.SctIntro = Backbone.View.extend(
               sct_login_instruction: $.i18n.prop('sct_login_instruction'),
               sct_username: $.i18n.prop('sct_username'),
               sct_username_placeholder: $.i18n.prop('sct_username_placeholder'),
-              sct_start: $.i18n.prop('sct_start')
+              sct_start: $.i18n.prop('sct_start'),
+              sct_login: $.i18n.prop('sct_login')
              });
          
          this.$el.html(content);
+
+         this.$('.username').val(data.username);
          
          return this;
      },
      
      start: function() {
-         // goto next page
-         alert('start!');
-         
+         PM.set_sct_issues_url();
          return false;
+     },
+     
+     username_changed: function() {
+         this.model.set('username', this.$('.username').val());
      }
      
     }

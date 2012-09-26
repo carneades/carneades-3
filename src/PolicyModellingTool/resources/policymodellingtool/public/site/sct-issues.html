@@ -1,0 +1,18 @@
+<p>{{sct_choose_issue}}</p>
+
+<h2>{{sct_description}}</h2>
+
+<form id="issuesform">
+
+{{#policy}}
+
+<h2>{{sct_issues}}</h2>
+
+{{#sections}}
+<p><input type="radio" name="issue" class="radiobutton required" value="{{id}}"/>{{#header}}{{title}}{{/header}}</p>
+{{/sections}}
+
+{{/policy}}
+
+<p class="submit"><input id="submit" class="submit-issue" type="submit" value="Submit" /></p>
+</form>
