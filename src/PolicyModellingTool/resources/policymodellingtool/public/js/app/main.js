@@ -175,6 +175,11 @@ PM.common_post_load = function() {
     PM.arguments = new PM.Arguments;
     PM.statements = new PM.Statements;
 
+    jQuery.i18n.properties(
+        {name:'Messages',
+         path:'site/',
+         mode:'both',
+         language: IMPACT.lang});
 };
 
 // http://www.lockencreations.com/2011/07/02/cant-debug-imported-js-files-when-using-jquery-getscript/
@@ -257,6 +262,7 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/lib/jquery.svg.js',
                    'js/lib/crypto.js',
                    'js/lib/select2.js',
+                   'js/lib/jquery.i18n.properties-min-1.0.9.js',
                    'js/app/utils.js',
                    'js/lib/parallel.js',
                    'js/lib/markitup/sets/markdown/set.js',
