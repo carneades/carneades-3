@@ -64,6 +64,8 @@ PM.dispatch_url = function(sections) {
     } else if(sections[1] == "sct") {
         if(sections[2] == "intro") {
             PM.display_sct_intro();
+        } else if(sections[2] == "issues") {
+            PM.display_sct_issues();
         }
     }
 };
@@ -178,6 +180,11 @@ PM.common_post_load = function() {
     
     PM.arguments = new PM.Arguments;
     PM.statements = new PM.Statements;
+    
+    PM.sct = new PM.Sct;
+    
+    PM.policies = new PM.Policies;
+    PM.policies.fetch();
 
     jQuery.i18n.properties(
         {name:'Messages',
@@ -278,6 +285,8 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/lib/backbone.js',
                    'js/lib/backbone.memento.min.js',
                    'js/lib/sprintf-0.7-beta1.js',
+                   'js/app/models/policies.js',
+                   'js/app/models/sct.js',
                    'js/app/models/metadata.js',
                    'js/app/models/statement.js',
                    'js/app/models/scheme.js',
@@ -304,6 +313,7 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/app/views/metadata-helper.js',
                    'js/app/views/scheme-helper.js',
                    'js/app/views/sct-intro.js',
+                   'js/app/views/sct-issues.js',
                    'js/app/views/sct-helper.js',
                    'js/app/views/metadata-editor.js'];
     
@@ -371,7 +381,8 @@ PM.load_templates = function(toolboxState) {
             'schemecandidate',
             'metadataelementeditor',
             'button',
-            'sct-intro'
+            'sct-intro',
+            'sct-issues'
            ],
            function(name) {
                var url = toolboxState == undefined ?
