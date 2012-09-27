@@ -4,15 +4,13 @@
 
 <form id="issuesform">
 
-{{#policy}}
-
 <h2>{{sct_issues}}</h2>
 
-{{#sections}}
-<p><input type="radio" name="issue" class="radiobutton required" value="{{id}}"/>{{#header}}{{title}}{{/header}}</p>
-{{/sections}}
-
-{{/policy}}
-
-<p class="submit"><input id="submit" class="submit-issue" type="submit" value="Submit" /></p>
-</form>
+<table class="issue" cellspacing="0" cellpadding="0">
+  {{#main_issues}}
+  <tr>
+    <td class="label">{{statement_nb}}</td>
+    <td class="content"><a id="issue{{statement_nb}}">{{{ statement_text }}}</a></td>
+  </tr>
+  {{/main_issues}}
+</table>

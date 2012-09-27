@@ -2,7 +2,8 @@
 PM.Sct = Backbone.Model.extend(
     {defaults: function(){
          return {
-         username: ""
+             username: "",
+             issue: 'Q12'
          };
      },
      
