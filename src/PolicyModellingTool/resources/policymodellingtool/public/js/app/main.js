@@ -9,6 +9,7 @@ var IMPACT = {
     argumentbrowser_url: "/argumentbrowser",
     simulation_url: "/policymodellingtool/PolicySimulation",
     current_policy: "copyright-policies",
+    debate_db: "copyright",
     rootpath: null
 };
 
@@ -181,8 +182,6 @@ PM.common_post_load = function() {
     PM.arguments = new PM.Arguments;
     PM.statements = new PM.Statements;
     
-    PM.sct = new PM.Sct;
-    
     PM.policies = new PM.Policies;
     PM.policies.fetch();
 
@@ -195,6 +194,17 @@ PM.common_post_load = function() {
              // alert(jQuery.i18n.prop('msg_hello'));
          }
         });
+    
+    PM.debate_arguments = new PM.Arguments({db: IMPACT.debate_db});
+    PM.debate_statements = new PM.Statements({db: IMPACT.debate_db});
+    
+    PM.debate_arguments.fetch();
+    PM.debate_statements.fetch();
+    
+    PM.debate_info = new PM.AgInfo({db: IMPACT.debate_db});
+    PM.debate_info.fetch();
+    
+    PM.sct = new PM.Sct;
 };
 
 // http://www.lockencreations.com/2011/07/02/cant-debug-imported-js-files-when-using-jquery-getscript/
@@ -285,6 +295,7 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/lib/backbone.js',
                    'js/lib/backbone.memento.min.js',
                    'js/lib/sprintf-0.7-beta1.js',
+                   'js/app/models/ag-info.js',
                    'js/app/models/policies.js',
                    'js/app/models/sct.js',
                    'js/app/models/metadata.js',

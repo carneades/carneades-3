@@ -2,8 +2,16 @@ PM.Statements = Backbone.Collection.extend(
     {model: PM.Statement,
 
      url: function() {
-         return IMPACT.wsurl + '/statement/' + IMPACT.db;
-     }        
+         return IMPACT.wsurl + '/statement/' + this.db;
+     },
+     
+     initialize: function(attrs) {
+         if(attrs) {
+             this.db = attrs.db || IMPACT.db;    
+         } else {
+             attrs = IMPACT.db;
+         } 
+     }
                                                          
     }
     
