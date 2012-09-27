@@ -8,7 +8,9 @@ PM.SctIssues = Backbone.View.extend(
      
      initialize: function(attrs) {
          this.issues = attrs.issues;
-         this.model.on('change', this.render, this);
+         this.statements = attrs.statements;
+         this.arguments = attrs.arguments;
+         // this.model.on('change', this.render, this);
          _.bindAll(this, 'render', 'issue_selected');
      },
      
@@ -33,7 +35,30 @@ PM.SctIssues = Backbone.View.extend(
      issue_selected: function() {
          var index = $(event.target).parent().attr('id').substr(5) - 1;
          var issue = this.issues[index];
-         alert(issue);
+         
+         this.model.set('issue', issue);
+         
+         var pro_args = issue.pro;
+         var con_args = issue.con;
+         
+         var self = this;
+         var premises_from_pro = _.map(pro_args,
+                                       function(pro) {
+                                           return self.arguments.get(pro).get('premises');
+                                       });
+         var premises_from_con = _.map(con_args,
+                                       function(con) {
+                                           return self.arguments.get(con).get('premises');
+                                       });
+         var premises = _.flatten(premises_from_pro.concat(premises_from_con));
+         
+         _.each(premises,
+               function(premise) {
+                   self.model.push_question(premise, 'claim');
+               });
+         
+         PM.set_sct_claim_url();
+         
          return false;
      }
      

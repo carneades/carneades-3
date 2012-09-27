@@ -1,9 +1,9 @@
 // Data for the SCT
 PM.Sct = Backbone.Model.extend(
-    {defaults: function(){
+    {defaults: function() {
          return {
              username: "",
-             issue: 'Q12'
+             questions: []
          };
      },
      
@@ -13,6 +13,14 @@ PM.Sct = Backbone.Model.extend(
      
      initialize: function(attrs) {
          
+     },
+     
+     push_question: function(question, type) {
+         this.get('questions').push({question: question, type: type});
+     },
+     
+     current_question: function() {
+         return this.get('questions')[0];
      }
      
     }
