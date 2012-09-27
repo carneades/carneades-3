@@ -18,7 +18,9 @@ PM.display_sct_issues = function() {
         PM.debate_info.fetch({success: function() {
                                   sct_issues = new PM.SctIssues(
                                       {model: PM.sct,
-                                       issues: PM.debate_info.get('main-issues')});
+                                       issues: PM.debate_info.get('main-issues'),
+                                       statements: PM.debate_statements, 
+                                       arguments: PM.debate_arguments});
                                   sct_issues.render();
                                   $('#pm').html(sct_issues.$el);
                               }
@@ -30,4 +32,22 @@ PM.display_sct_issues = function() {
         sct_issues.render();
         $('#pm').html(sct_issues.$el);  
     } 
+};
+
+PM.sct_claim_url = function() {
+    return '/sct/claim';
+};
+
+PM.set_sct_claim_url = function() {
+  $.address.value(PM.sct_claim_url());
+};
+
+PM.display_sct_claim = function() {
+    var question = PM.sct.current_question();
+    
+    var sct_claim = new PM.SctClaim({model: question.question,
+                                     lang: IMPACT.lang});
+    sct_claim.render();
+    
+    $('#pm').html(sct_claim.$el);
 };
