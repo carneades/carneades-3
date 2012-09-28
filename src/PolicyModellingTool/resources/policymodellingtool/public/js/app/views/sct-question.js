@@ -13,6 +13,7 @@ PM.SctQuestion = Backbone.View.extend(
      },
      
      render: function() {
+         var self = this;
          var question_data = this.model.get('current-question');
          var question = question_data.question;
          var type = question_data.type;
@@ -23,12 +24,19 @@ PM.SctQuestion = Backbone.View.extend(
                                                el: this.el});
              claim_view.render();
          } else if(type == 'argument') {
+             self.$el.html(ich['sct-argument']
+                           ({'sct_argument': $.i18n.prop('sct_argument'),
+                             'sct_argument_text': AGB.description_text(question.get('header')),
+                             'sct_questions': $.i18n.prop('sct_questions')
+                            }));
              _.each(question.get('premises'),
-                   function(premise) {
-                       // content.add(
-                       //     ich['sct-claim']
-                       //     (_.extend(claim_properties, 
-                       //               {'claim_text': premise.statement.text[this.lang]})));
+                    function(premise) {
+                        var claim_view = 
+                            new PM.SctClaim({model: new PM.Statement(premise.statement),
+                                             lang: self.lang});
+                        
+                        claim_view.render();
+                        self.$el.append(claim_view.$el.html());
                    });
          }
          
