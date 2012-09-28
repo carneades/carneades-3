@@ -8,23 +8,33 @@ PM.SctQuestion = Backbone.View.extend(
      
      initialize: function(attrs) {
          this.lang = attrs.lang;
-         // this.model.on('change', this.render, this);
+         this.model.on('change', this.render, this);
          _.bindAll(this, 'render', 'on_next');
      },
      
      render: function() {
-
-         var content = ich['sct-claim'](
-         {'sct_claim': $.i18n.prop('sct_claim'),
-          'claim_text': this.model.statement.text[this.lang],
-          'sct_question': $.i18n.prop('sct_question'),
-          'sct_question_text': $.i18n.prop('sct_question_text'),
-          'sct_agree': $.i18n.prop('sct_agree'),
-          'sct_disagree': $.i18n.prop('sct_disagree'),
-          'sct_show_args': $.i18n.prop('sct_show_args'),
-          'sct_skip_question': $.i18n.prop('sct_skip_question'),
-          'sct_next': $.i18n.prop('sct_next')
-         });
+         var question_data = this.model.get('current-question');
+         var question = question_data.question;
+         var type = question_data.type;
+         
+         var content;
+         
+         if(type == 'claim') {
+             content = ich['sct-claim'](
+                 {'sct_claim': $.i18n.prop('sct_claim'),
+                  'claim_text': question.statement.text[this.lang],
+                  'sct_question': $.i18n.prop('sct_question'),
+                  'sct_question_text': $.i18n.prop('sct_question_text'),
+                  'sct_agree': $.i18n.prop('sct_agree'),
+                  'sct_disagree': $.i18n.prop('sct_disagree'),
+                  'sct_show_args': $.i18n.prop('sct_show_args'),
+                  'sct_skip_question': $.i18n.prop('sct_skip_question'),
+                  'sct_next': $.i18n.prop('sct_next')
+                 });
+         } else if(type == 'argument') {
+             alert('argument');
+             console.log(question);
+         }         
          
          this.$el.html(content);
          
@@ -33,14 +43,24 @@ PM.SctQuestion = Backbone.View.extend(
      
      on_next: function() {
          var val = this.$('input:checked').val();
-         
-         if(val == 'show-arguments') {
-             // TODO get pro / con arguments
-             // add them in front of the SCT queue
-             // display argument page
+
+         // TODO updates scores
+         if(val == 'agree') {
+             this.model.pop_question();
+         } else if(val == 'disagree') {
+             this.model.pop_question();
+         } else if(val == 'show-arguments') {
+             this.model.push_arguments();
+         } else if(val == 'skip-question') {
+             this.model.pop_question();
          }
          
-         
+         if(this.model.has_question()) {
+             this.model.update_current_question();
+         } else {
+             alert('finito!');
+         }
+
          return false;
      }
      
