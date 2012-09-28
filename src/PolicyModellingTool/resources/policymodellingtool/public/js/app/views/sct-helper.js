@@ -43,9 +43,7 @@ PM.set_sct_question_url = function() {
 };
 
 PM.display_sct_question = function() {
-    var question = PM.sct.current_question();
-    
-    var sct_question = new PM.SctQuestion({model: question.question,
+    var sct_question = new PM.SctQuestion({model: PM.sct,
                                            lang: IMPACT.lang});
     sct_question.render();
     
