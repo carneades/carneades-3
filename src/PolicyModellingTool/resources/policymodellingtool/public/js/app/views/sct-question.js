@@ -17,26 +17,22 @@ PM.SctQuestion = Backbone.View.extend(
          var question = question_data.question;
          var type = question_data.type;
          
-         var content;
-         
          if(type == 'claim') {
-             content = ich['sct-claim'](
-                 {'sct_claim': $.i18n.prop('sct_claim'),
-                  'claim_text': question.statement.text[this.lang],
-                  'sct_question': $.i18n.prop('sct_question'),
-                  'sct_question_text': $.i18n.prop('sct_question_text'),
-                  'sct_agree': $.i18n.prop('sct_agree'),
-                  'sct_disagree': $.i18n.prop('sct_disagree'),
-                  'sct_show_args': $.i18n.prop('sct_show_args'),
-                  'sct_skip_question': $.i18n.prop('sct_skip_question'),
-                  'sct_next': $.i18n.prop('sct_next')
-                 });
+             var claim_view = new PM.SctClaim({model: new PM.Statement(question.statement),
+                                               lang: this.lang,
+                                               el: this.el});
+             claim_view.render();
          } else if(type == 'argument') {
-             alert('argument');
-             console.log(question);
-         }         
+             _.each(question.get('premises'),
+                   function(premise) {
+                       // content.add(
+                       //     ich['sct-claim']
+                       //     (_.extend(claim_properties, 
+                       //               {'claim_text': premise.statement.text[this.lang]})));
+                   });
+         }
          
-         this.$el.html(content);
+         // this.$el.html(content);
          
          return this;
      },
