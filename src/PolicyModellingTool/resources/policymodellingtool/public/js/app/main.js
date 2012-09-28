@@ -330,6 +330,7 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/app/views/sct-intro.js',
                    'js/app/views/sct-issues.js',
                    'js/app/views/sct-helper.js',
+                   'js/app/views/sct-claim.js',
                    'js/app/views/metadata-editor.js'];
     
     if(!is_in_toolbox) {
@@ -398,7 +399,8 @@ PM.load_templates = function(toolboxState) {
             'button',
             'sct-intro',
             'sct-issues',
-            'sct-claim'
+            'sct-claim',
+            'sct-argument'
            ],
            function(name) {
                var url = toolboxState == undefined ?
