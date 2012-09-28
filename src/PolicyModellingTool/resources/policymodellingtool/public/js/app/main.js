@@ -67,8 +67,8 @@ PM.dispatch_url = function(sections) {
             PM.display_sct_intro();
         } else if(sections[2] == "issues") {
             PM.display_sct_issues();
-        } else if(sections[2] == "claim") {
-            PM.display_sct_claim();
+        } else if(sections[2] == "question") {
+            PM.display_sct_question();
         }
     }
 };
@@ -315,7 +315,7 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/app/collections/metadata-list.js',
                    'js/app/collections/arguments.js',
                    'js/app/collections/premises-candidates.js',
-                   'js/app/views/sct-claim.js',
+                   'js/app/views/sct-question.js',
                    'js/app/views/argument-editor.js',
                    'js/app/views/premise-candidate.js',
                    'js/app/views/scheme-candidate.js',

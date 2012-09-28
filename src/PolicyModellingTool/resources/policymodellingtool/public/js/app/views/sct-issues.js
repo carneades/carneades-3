@@ -57,7 +57,7 @@ PM.SctIssues = Backbone.View.extend(
                    self.model.push_question(premise, 'claim');
                });
          
-         PM.set_sct_claim_url();
+         PM.set_sct_question_url();
          
          return false;
      }
