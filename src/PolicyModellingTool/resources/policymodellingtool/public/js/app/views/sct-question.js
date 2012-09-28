@@ -1,6 +1,6 @@
 // Displays a claim and asks the user about it
-PM.SctClaim = Backbone.View.extend(
-    {className: "sct-claim",
+PM.SctQuestion = Backbone.View.extend(
+    {className: "sct-question",
      
      events: {
          "click button" : "on_next"
@@ -17,8 +17,8 @@ PM.SctClaim = Backbone.View.extend(
          var content = ich['sct-claim'](
          {'sct_claim': $.i18n.prop('sct_claim'),
           'claim_text': this.model.statement.text[this.lang],
-          'sct_questions': $.i18n.prop('sct_questions'),
-          'sct_questions_text': $.i18n.prop('sct_questions_text'),
+          'sct_question': $.i18n.prop('sct_question'),
+          'sct_question_text': $.i18n.prop('sct_question_text'),
           'sct_agree': $.i18n.prop('sct_agree'),
           'sct_disagree': $.i18n.prop('sct_disagree'),
           'sct_show_args': $.i18n.prop('sct_show_args'),
@@ -36,7 +36,7 @@ PM.SctClaim = Backbone.View.extend(
          
          if(val == 'show-arguments') {
              // TODO get pro / con arguments
-             // add them to the SCT queue
+             // add them in front of the SCT queue
              // display argument page
          }
          
