@@ -34,20 +34,20 @@ PM.display_sct_issues = function() {
     } 
 };
 
-PM.sct_claim_url = function() {
-    return '/sct/claim';
+PM.sct_question_url = function() {
+    return '/sct/question';
 };
 
-PM.set_sct_claim_url = function() {
-  $.address.value(PM.sct_claim_url());
+PM.set_sct_question_url = function() {
+  $.address.value(PM.sct_question_url());
 };
 
-PM.display_sct_claim = function() {
+PM.display_sct_question = function() {
     var question = PM.sct.current_question();
     
-    var sct_claim = new PM.SctClaim({model: question.question,
-                                     lang: IMPACT.lang});
-    sct_claim.render();
+    var sct_question = new PM.SctQuestion({model: question.question,
+                                           lang: IMPACT.lang});
+    sct_question.render();
     
-    $('#pm').html(sct_claim.$el);
+    $('#pm').html(sct_question.$el);
 };
