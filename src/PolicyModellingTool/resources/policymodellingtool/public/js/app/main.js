@@ -206,7 +206,8 @@ PM.common_post_load = function() {
     PM.debate_info = new PM.AgInfo({db: IMPACT.debate_db});
     PM.debate_info.fetch();
     
-    PM.sct = new PM.Sct;
+    PM.sct = new PM.Sct({arguments: PM.debate_arguments,
+                         statements: PM.debate_statements});
 };
 
 // http://www.lockencreations.com/2011/07/02/cant-debug-imported-js-files-when-using-jquery-getscript/
