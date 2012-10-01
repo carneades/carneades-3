@@ -17,10 +17,12 @@ PM.SctQuestion = Backbone.View.extend(
          var question_data = this.model.get('current-question');
          var question = question_data.question;
          var type = question_data.type;
+         var seen = question_data.seen;
          
          if(type == 'claim') {
              var claim_view = new PM.SctClaim({model: new PM.Statement(question.statement),
                                                lang: this.lang,
+                                               seen: seen,
                                                el: this.el});
              claim_view.render();
          } else if(type == 'argument') {

@@ -7,6 +7,7 @@ PM.SctClaim = Backbone.View.extend(
      },
 
      initialize: function(attrs) {
+         this.seen = attrs.seen,
          this.hide_title = attrs.hide_title;
          this.lang = attrs.lang;
          this.model.on('change', this.render, this);
@@ -25,6 +26,7 @@ PM.SctClaim = Backbone.View.extend(
               'sct_show_args': $.i18n.prop('sct_show_args'),
               'sct_skip_question': $.i18n.prop('sct_skip_question'),
               'sct_next': $.i18n.prop('sct_next'),
+              'sct_seen': $.i18n.prop('sct_seen'),
               'claim_text': data.text[this.lang],
               'id': this.cid
              };
@@ -38,6 +40,10 @@ PM.SctClaim = Backbone.View.extend(
          
          if(data.pro.length == 0 && data.con.length == 0) {
              this.$(".show-arguments").remove();
+         }
+         
+         if(!this.seen) {
+             this.$(".seen").attr('hidden', true);
          }
 
          this.$('input:last').attr('checked', true);
