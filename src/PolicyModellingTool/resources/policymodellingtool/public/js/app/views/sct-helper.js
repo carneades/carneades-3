@@ -28,7 +28,9 @@ PM.display_sct_issues = function() {
     } else {
         sct_issues = new PM.SctIssues(
             {model: PM.sct,
-             issues: PM.debate_info.get('main-issues')});
+             issues: PM.debate_info.get('main-issues'),
+             statements: PM.debate_statements, 
+             arguments: PM.debate_arguments});
         sct_issues.render();
         $('#pm').html(sct_issues.$el);  
     } 
