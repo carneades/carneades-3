@@ -192,8 +192,8 @@
 	     ag2
 	     sn 
 	     :value 
-	     (cond (= (:weight sn) 1.0) 1.0
-		   (= (:weight sn) 0.0) 0.0
+	     (cond (and (:weight sn) (>= (:weight sn) 0.75)) 1.0
+		   (and (:weight sn) (<= (:weight sn) 0.25)) 0.0
 		   :else 0.5))) 
           ag
           (vals (:statement-nodes ag))))
