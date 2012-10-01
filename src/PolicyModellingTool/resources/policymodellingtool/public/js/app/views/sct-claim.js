@@ -44,6 +44,8 @@ PM.SctClaim = Backbone.View.extend(
          
          if(!this.seen) {
              this.$(".seen").attr('hidden', true);
+         } else {
+             this.$(".show-arguments").remove();
          }
 
          this.$('input:last').attr('checked', true);
