@@ -81,7 +81,7 @@ PM.SctQuestion = Backbone.View.extend(
      },
      
      get_description: function(question) {
-         return AGB.description_text(question.get('header')).replace(/\[@.+\]/, "");    
+         return AGB.description_text(question.get('header')).replace(/\[.+\]/, "");    
      }
      
      
