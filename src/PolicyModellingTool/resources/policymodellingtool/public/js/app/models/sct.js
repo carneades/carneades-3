@@ -40,7 +40,10 @@ PM.Sct = Backbone.Model.extend(
      
      // Push the argument of the current question (statement)
      push_arguments: function() {
-         var current = this.current_question().question;
+         var question_data = this.current_question();
+         question_data.seen = true;
+         var current = question_data.question;
+         
          var args_id = [].concat(current.pro, current.con);
          
          var self = this;
