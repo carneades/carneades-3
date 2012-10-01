@@ -26,19 +26,29 @@ PM.SctQuestion = Backbone.View.extend(
          } else if(type == 'argument') {
              self.$el.html(ich['sct-argument']
                            ({'sct_argument': $.i18n.prop('sct_argument'),
-                             'sct_argument_text': AGB.description_text(question.get('header')),
-                             'sct_questions': $.i18n.prop('sct_questions')
+                             'sct_argument_text': this.get_description(question),
+                             'sct_premises': $.i18n.prop('sct_premises')
                             }));
+
+             // self.$el.append('<ol class="sct-premises">');
+
              _.each(question.get('premises'),
                     function(premise) {
                         var claim_view = 
                             new PM.SctClaim({model: new PM.Statement(premise.statement),
-                                             lang: self.lang});
+                                             lang: self.lang,
+                                             hide_title: true});
                         
                         claim_view.render();
+                        // self.$el.append('<li>');
                         self.$el.append(claim_view.$el.html());
+                        // self.$el.append('</li>');
                    });
+
+             // self.$el.append('</ol>');
          }
+         
+          this.$el.append(ich.button2({label: $.i18n.prop('sct_next')}));
          
          // this.$el.html(content);
          
@@ -66,7 +76,12 @@ PM.SctQuestion = Backbone.View.extend(
          }
 
          return false;
+     },
+     
+     get_description: function(question) {
+         return AGB.description_text(question.get('header')).replace(/\[@.+\]/, "");    
      }
+     
      
     }
 );
