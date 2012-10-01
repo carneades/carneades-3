@@ -397,6 +397,7 @@ PM.load_templates = function(toolboxState) {
             'schemecandidate',
             'metadataelementeditor',
             'button',
+            'button2',
             'sct-intro',
             'sct-issues',
             'sct-claim',
