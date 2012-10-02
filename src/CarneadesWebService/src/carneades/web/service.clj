@@ -94,7 +94,7 @@
           md
           md))
 
-(defn- pack-statement 
+(defn pack-statement 
   [stmt]
   {:post [(not (vector? (:atom %)))
           (not (seq? (:atom %)))]}
