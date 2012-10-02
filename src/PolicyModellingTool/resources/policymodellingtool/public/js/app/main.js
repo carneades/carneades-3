@@ -2,7 +2,7 @@
 var IMPACT = {
     user: "root",
     password: "pw1", // TODO real auth
-    db: "",
+    db: undefined,
     question: "Q12",
     lang: "en",
     wsurl: "/impactws",
