@@ -14,6 +14,10 @@ PM.set_sct_issues_url = function() {
 
 PM.display_sct_issues = function() {
     var sct_issues = undefined;
+    
+    // TODO use deferred instead, like here
+    // [[file:~/Documents/Projects/carneades/src/PolicyModellingTool/resources/policymodellingtool/public/js/app/arguments.js::deferreds.push(PM.arguments.fetch())%3B][deferreds]]
+    
     if(PM.debate_info.get('main-issues') == undefined) {
         PM.debate_info.fetch({success: function() {
                                   sct_issues = new PM.SctIssues(
