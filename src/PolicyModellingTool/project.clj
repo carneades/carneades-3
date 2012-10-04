@@ -10,6 +10,6 @@
                  [org.clojars.pallix/mygengo "1.0.0"]
                  [lein-ring "0.5.4"]]
   :plugins [[lein-ring "0.7.1"]]
-  :ring {:handler impact.web.routes-war/impact-app}
+  :ring {:handler impact.web.routes-dev/impact-app}
   :min-lein-version "2.0.0"
   :description "Policy Modelling Tool for the IMPACT Policy project")
