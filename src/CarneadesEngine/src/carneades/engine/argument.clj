@@ -114,7 +114,7 @@
                           (not (:pro m2)))))))
 
 (defn make-argument [& key-values]
-  {:post [(not (string? (:scheme %)))]}
+  ;; {:post [(not (string? (:scheme %)))]}
   (map->argument (apply hash-map key-values)))
 
 (defn conclusion-literal
