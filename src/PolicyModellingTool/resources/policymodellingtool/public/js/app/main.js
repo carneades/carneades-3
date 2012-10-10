@@ -290,6 +290,7 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/lib/jquery.svg.js',
                    'js/lib/crypto.js',
                    'js/lib/select2.js',
+                   'js/lib/html5slider.js',
                    'js/lib/jquery.i18n.properties-min-1.0.9.js',
                    'js/app/utils.js',
                    'js/lib/parallel.js',
