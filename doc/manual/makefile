@@ -2,10 +2,12 @@
 g = -U "<\#" ">" "\B" "|" ">" "<" ">" "\#" ""
 
 # bibtex bibliography
-bib =  /Volumes/WualaDrive/tfgordon/Documents/Library/tfgordon.bib
+bib =  manual.bib
 
 # directory in which to put output documents
 out = out
+
+all: manual.pdf manual.epub manual.docx manual.html
 
 manual.pdf: manual.md
 	gpp $(g) manual.md | \

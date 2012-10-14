@@ -1,3 +1,3 @@
 
-# Browsing, Viewing and Evaluating Arguments
+# Browsing, Visualizing and Evaluating Arguments
 
