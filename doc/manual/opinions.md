@@ -1,3 +1,3 @@
 
-# Formulating Opinions and Participating in Polls
+# Formulating, Polling and Comparing Opinions
 
