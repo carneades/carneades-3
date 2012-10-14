@@ -1,3 +1,3 @@
 
-# Constructing and Editing Argument Graphs
+# Editing Argument Graphs
 
