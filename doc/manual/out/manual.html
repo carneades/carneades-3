@@ -22,7 +22,14 @@
 <li><a href="#premise-properties"><span class="toc-section-number">2.4</span> Premise Properties</a></li>
 <li><a href="#metadata"><span class="toc-section-number">2.5</span> Metadata</a></li>
 </ul></li>
-<li><a href="#browsing-visualizing-and-evaluating-arguments"><span class="toc-section-number">3</span> Browsing, Visualizing and Evaluating Arguments</a></li>
+<li><a href="#browsing-visualizing-and-evaluating-arguments"><span class="toc-section-number">3</span> Browsing, Visualizing and Evaluating Arguments</a><ul>
+<li><a href="#the-argument-graph-home-page"><span class="toc-section-number">3.1</span> The Argument Graph Home Page</a></li>
+<li><a href="#using-hypertext-to-browse-an-argument-graph"><span class="toc-section-number">3.2</span> Using Hypertext to Browse an Argument Graph</a></li>
+<li><a href="#visualizing-argument-graphs-in-argument-maps"><span class="toc-section-number">3.3</span> Visualizing Argument Graphs in Argument Maps</a></li>
+<li><a href="#evaluating-arguments"><span class="toc-section-number">3.4</span> Evaluating Arguments</a></li>
+<li><a href="#exporting-argument-graphs-to-xml"><span class="toc-section-number">3.5</span> Exporting Argument Graphs to XML</a></li>
+<li><a href="#generating-outlines"><span class="toc-section-number">3.6</span> Generating Outlines</a></li>
+</ul></li>
 <li><a href="#formulating-polling-and-comparing-opinions"><span class="toc-section-number">4</span> Formulating, Polling and Comparing Opinions</a></li>
 <li><a href="#analysing-and-comparing-policies"><span class="toc-section-number">5</span> Analysing and Comparing Policies</a></li>
 <li><a href="#editing-argument-graphs"><span class="toc-section-number">6</span> Editing Argument Graphs</a></li>
@@ -79,9 +86,8 @@
 <p>All four of these texts, including the original formulation, express the <em>same</em> argument, but in different ways. In a large-scale debate, for example about European policy issues, the same argument might be expressed in <em>thousands</em> of different ways in many different languages. (The European Union has 23 official languages.)</p>
 <p>One of the purposes of argument graphs is to provide a way to summarize complex debates with exactly one node in the graph for each argument put forward in the debate. A single argument graph is used to represent all the arguments put forward in a debate, from all participants. The nodes can quote one or more source documents, and include links to these source documents, so no information need be lost and all voices can still be heard, inclusively. Grouping the different formulations of an argument together into a single node in the graph, abstracting away details, makes it possible to quickly obtain an overview of the arguments and to obtain a clearer picture of relationships among arguments. A hypertext or map of the source documents directly, without an argument graph, would make it difficult to &quot;see the forest for the trees&quot;.</p>
 <h2 id="data-model"><a href="#TOC"><span class="header-section-number">2.1</span> Data Model</a></h2>
-<div class="figure">
-<img src="figs/DataModel.png" alt="Entity-Relationship Diagram" /><p class="caption">Entity-Relationship Diagram</p>
-</div>
+<!-- ![Entity-Relationship Diagram](figs/DataModel.png) -->
+
 <p>The entity-relationship diagram above shows the elements of argument graphs and their connections. (The figure does not visualize a particular argument graph, but rather relationships between the elements of argument graphs in general.)</p>
 <p>The two main elements of argument graphs are statements and arguments. Statements represent propositions, claims and assertions. Arguments represent simple inferences from one or more premises to a single conclusion. Again, there should be only one statement or argument in the graph for each statement and argument in the source documents, no matter how many different ways the statement or argument has been expressed in source documents. Some or all formulations of the statement or argument can be quoted or referenced in the metadata of the statement or argument node. See the discussion of metadata below for further information.</p>
 <p>As can be seen in the entity-relationship diagram, arguments are linked to statements in two ways in argument graphs. Each argument has exactly one conclusion, which is a statement, and zero or more premises, where each premise has exactly one statement node. A statement may the conclusion or premise of more than one argument.</p>
@@ -92,6 +98,9 @@
 <dl>
 <dt>id</dt>
 <dd><p>A Uniform Resource Name (URN) serving as a unique identifier for the statement, world-wide.</p>
+</dd>
+<dt>text</dt>
+<dd><p>A concise formulation of the statement, written by the analyst who reconstructed the arguments from the source documents. Paraphrases the various formulations of the statement in the sources. Compare with the &quot;description&quot; property of the metadata of the statement, which can be used to quote some or all of the formulations of the statement in the sources and provide translations in several languages.</p>
 </dd>
 <dt>weight</dt>
 <dd><p>A real number in range of 0.0-1.0 representing the degree to which the statement is accepted as true by the users, where 0.0 means the statement is <em>rejected</em> (believed to be false by the users) and 1.0 means the statement is <em>accepted</em> (believed to be true). This information is collected via polls.</p>
@@ -165,6 +174,25 @@
 <p>In addition, Carneades allows each metadata record to be assigned an optional &quot;key&quot;, a string which can be used as a label to refer to the metadata record, such as &quot;BenchCapon:2008&quot;, similar to the way citation keys are used in bibliographic databases such as BibTeX.<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup> At most one key should be provided.</p>
 <p>Carneades provides special support for providing description elements of the Dublin Core in multiple languages (English, German, French, …) and for formatting these descriptions using the <a href="http://en.wikipedia.org/wiki/Markdown">Markdown</a> language. This feature can be used to include quotations from and links to source documents in the descriptions of both statements and arguments.</p>
 <h1 id="browsing-visualizing-and-evaluating-arguments"><a href="#TOC"><span class="header-section-number">3</span> Browsing, Visualizing and Evaluating Arguments</a></h1>
+<p>This chapter of the Carneades user manual explains how to:</p>
+<ul>
+<li><p>Access and use the <a href="#the-argument-graph-home-page">home page</a> of an argument graph on the World-Wide Web.</p></li>
+<li><p>Using hypertext to <a href="#using-hypertext-to-browse-an-argument-graph">browse an argument graph</a> on the World-Wide Web.</p></li>
+<li><p><a href="#visualizing-argument-graphs-in-argument-maps">Visualizing argument graphs</a> in diagrams, called &quot;argument maps&quot;, and using these maps to navigate to more detailed views of statements and arguments.</p></li>
+<li><p><a href="#evaluating-arguments">Evaluate arguments</a> to reveal missing premises, check the form of the argument, ask critical questions and assess the acceptability of statements.</p></li>
+<li><p><a href="#exporting-argument-graphs-to-xml">Export an argument graph to XML</a>, to archive the graph or process it using other software.</p></li>
+<li><p><a href="#generating-outlines">Generate outlines</a> of the arguments in a graph, for further editing using text editors or word processors.</p></li>
+</ul>
+<h2 id="the-argument-graph-home-page"><a href="#TOC"><span class="header-section-number">3.1</span> The Argument Graph Home Page</a></h2>
+<p>The user interface of Carneades is a web application. You access the pages and views of the user interface with web addresses, called Uniform Resource Locators (URL), just like you access any resource on the World-Wide Web. Most of the time you will access the application by clicking on a link embedded in some page on the Web, for example in a news article, blog entry or e-participation web site. If you are using Carneades as a stand-alone, desktop application, these URLs will be local addresses, from the &quot;localhost&quot; domain, pointing to web pages served by the application on your personal computer.</p>
+<div class="figure">
+<img src="figs/browser1.png" alt="Argument Graph Home Page" /><p class="caption">Argument Graph Home Page</p>
+</div>
+<h2 id="using-hypertext-to-browse-an-argument-graph"><a href="#TOC"><span class="header-section-number">3.2</span> Using Hypertext to Browse an Argument Graph</a></h2>
+<h2 id="visualizing-argument-graphs-in-argument-maps"><a href="#TOC"><span class="header-section-number">3.3</span> Visualizing Argument Graphs in Argument Maps</a></h2>
+<h2 id="evaluating-arguments"><a href="#TOC"><span class="header-section-number">3.4</span> Evaluating Arguments</a></h2>
+<h2 id="exporting-argument-graphs-to-xml"><a href="#TOC"><span class="header-section-number">3.5</span> Exporting Argument Graphs to XML</a></h2>
+<h2 id="generating-outlines"><a href="#TOC"><span class="header-section-number">3.6</span> Generating Outlines</a></h2>
 <h1 id="formulating-polling-and-comparing-opinions"><a href="#TOC"><span class="header-section-number">4</span> Formulating, Polling and Comparing Opinions</a></h1>
 <h1 id="analysing-and-comparing-policies"><a href="#TOC"><span class="header-section-number">5</span> Analysing and Comparing Policies</a></h1>
 <h1 id="editing-argument-graphs"><a href="#TOC"><span class="header-section-number">6</span> Editing Argument Graphs</a></h1>
