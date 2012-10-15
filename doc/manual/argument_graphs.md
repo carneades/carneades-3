@@ -18,7 +18,7 @@ One of the purposes of argument graphs is to provide a way to summarize complex 
 
 ## Data Model
 
-![Entity-Relationship Diagram](figs/DataModel.png)
+<!-- ![Entity-Relationship Diagram](figs/DataModel.png) -->
 
 The entity-relationship diagram above shows the elements of argument graphs and their connections. (The figure does not visualize a particular argument graph, but rather relationships between the elements of argument graphs in general.) 
 
@@ -36,6 +36,9 @@ Prior models of argument graphs do not distinguish pro and con arguments or posi
 
 id
 :   A Uniform Resource Name (URN) serving as a unique identifier for the statement, world-wide.
+
+text
+:   A concise formulation of the statement, written by the analyst who reconstructed the arguments from the source documents. Paraphrases the various formulations of the statement in the sources.  Compare with the "description" property of the metadata of the statement, which can be used to quote some or all of the formulations of the statement in the sources and provide translations in several languages.
 
 weight
 :   A real number in range of 0.0-1.0 representing the degree to which the statement is accepted as true by the users, where 0.0 means the statement is *rejected* (believed to be false by the users) and 1.0 means the statement is *accepted* (believed to be true). This information is collected via polls.
