@@ -29,9 +29,10 @@
 <li><a href="#argument-pages"><span class="toc-section-number">3.2.2</span> Argument Pages</a></li>
 </ul></li>
 <li><a href="#visualizing-argument-graphs-in-argument-maps"><span class="toc-section-number">3.3</span> Visualizing Argument Graphs in Argument Maps</a></li>
-<li><a href="#evaluating-arguments"><span class="toc-section-number">3.4</span> Evaluating Arguments</a></li>
-<li><a href="#exporting-argument-graphs-to-xml"><span class="toc-section-number">3.5</span> Exporting Argument Graphs to XML</a></li>
-<li><a href="#generating-outlines"><span class="toc-section-number">3.6</span> Generating Outlines</a></li>
+<li><a href="#searching-for-arguments"><span class="toc-section-number">3.4</span> Searching for Arguments</a></li>
+<li><a href="#evaluating-arguments"><span class="toc-section-number">3.5</span> Evaluating Arguments</a></li>
+<li><a href="#exporting-argument-graphs-to-xml"><span class="toc-section-number">3.6</span> Exporting Argument Graphs to XML</a></li>
+<li><a href="#generating-outlines"><span class="toc-section-number">3.7</span> Generating Outlines</a></li>
 </ul></li>
 <li><a href="#formulating-polling-and-comparing-opinions"><span class="toc-section-number">4</span> Formulating, Polling and Comparing Opinions</a></li>
 <li><a href="#analysing-and-comparing-policies"><span class="toc-section-number">5</span> Analysing and Comparing Policies</a></li>
@@ -214,7 +215,7 @@
 <div class="figure">
 <img src="figs/argument1.png" alt="An Argument Page" /><p class="caption">An Argument Page</p>
 </div>
-<p>Argument pages are quite similar to statement pages. The top of an argument page displays the properties of the argument: its id, the argumentation scheme applied (if any), whether it is a strict or defeasible argument, its weight and value.</p>
+<p>Argument pages are quite similar to statement pages. The top of an argument page displays the properties of the argument: its id, the argumentation scheme applied (if any), whether it is a strict or defeasible argument, its weight and value. The argumentation scheme contains a hyperlink (<em>not yet implemented</em>). Click on the link to view a description of the scheme.</p>
 <p>If metadata had been provided for the argument, it would be displayed next. Descriptions can include quotations of one or more source texts expressing the argument, along with hyperlinks to the sources on the Web. The description, if available, will be displayed using the language chosen by the user. If no description has been entered manually by analysts for the selected language of the user but a description is available in some other language, a translation service will be used to generate a description in the selected language (<em>not yet implemented</em>).</p>
 <p>Next, the premises of the argument are listed. If available, the role of each premise in the argumentation scheme applied is shown (e.g. &quot;major&quot; or &quot;minor&quot;). The check boxes to the left of each premise are used to indicate whether the statement is current <em>in</em> (checked box, meaning presumably true), <em>out</em> (crossed out box, meaning presumably false) or neither (empty box, not enough information to presume either truth or falsity), given the arguments in the graph and the opinions of users from polls about the acceptability of statements and relative weights of pro and con arguments.</p>
 <p>After the premises, the conclusion of the argument is shown, preceded by &quot;pro&quot; or &quot;con&quot;, showing the direction of the argument, and a check box showing the acceptability of the conclusion, as for the premises.</p>
@@ -231,9 +232,31 @@
 <p>When argument graphs have been evaluated, the status of the argument and statement nodes is visualized in argument maps using both color and icons. Nodes which are &quot;in&quot; are filled with a green background and contain a checked box. Nodes which are &quot;out&quot; are shown with a red background and contain a crossed box (a box filled with an X). Nodes which are neither in nor out are filled with white background color and contain an empty checkbox. The colors are redundant to accommodate black and white printing and color-blind users.</p>
 <p>Argument graphs may contain cycles. However, currently the algorithm used to layout the argument and statement nodes in the map is not able to handle cycles. <em>This limitation will be removed in a later version of the system.</em></p>
 <p>Argument graphs can be very large. Currently the <em>entire</em> argument graph is displayed in the argument maps. In the future only a partial view of the argument graph in maps will be shown, at least for larger graphs. The part of the graph shown will depend on the context. The map generated from the home page of the argument graph will show the arguments and statements near the main issues of the map. The maps generated from statement and argument pages will show the part of the argument graph near the selected statement or argument. A method for scrolling the maps, to bring other parts of the graph into view, will be provided.</p>
-<h2 id="evaluating-arguments"><a href="#TOC"><span class="header-section-number">3.4</span> Evaluating Arguments</a></h2>
-<h2 id="exporting-argument-graphs-to-xml"><a href="#TOC"><span class="header-section-number">3.5</span> Exporting Argument Graphs to XML</a></h2>
-<h2 id="generating-outlines"><a href="#TOC"><span class="header-section-number">3.6</span> Generating Outlines</a></h2>
+<h2 id="searching-for-arguments"><a href="#TOC"><span class="header-section-number">3.4</span> Searching for Arguments</a></h2>
+<p>The argument graph home page will provide access to a command for searching for arguments.</p>
+<p><strong>Not yet implemented</strong></p>
+<h2 id="evaluating-arguments"><a href="#TOC"><span class="header-section-number">3.5</span> Evaluating Arguments</a></h2>
+<p>By argument &quot;evaluation&quot; we mean the process of critically assessing arguments by</p>
+<ul>
+<li>revealing implicit premises</li>
+<li>validating whether the arguments are formally correct, by instantiating accepted argumentation schemes</li>
+<li>asking appropriate critical questions, depending on the schemes applied</li>
+<li>and determining which claims are acceptable, taking into consideration the assumptions of the users and their collective assessment of the relative weights of conflicting pro and con arguments.</li>
+</ul>
+<p>The first three of these tasks can be accomplished by comparing the argument with its argumentation scheme. On the argument page, click on the argumentation scheme to view a description of the scheme (<em>not yet implemented</em>). Most web browsers provide some way to open the link in a new tab, so that you can easily switch back and forth between the argument page and the description of the scheme. Now you can check whether any of the premises listed in the scheme are missing from the argument. The argument is formally valid if all the premises of the scheme are explicitly provided by matching premises of the argument and the conclusion of the argument matches the conclusion of the scheme.</p>
+<p>Argumentation schemes define exceptions and assumptions which can be used to ask critical questions. The exceptions provide reasons for not applying the argument, undercutting it. If an exception is true, this doesn't mean that the conclusion of the argument is false, but only that the argument does not provide a good reason to presume the conclusion to be true. The assumptions of the scheme are implicit premises which need to be proven only if they are called into question. So, if you think an assumption does not hold, you should consider making an issue of it using whatever channels are available for you for participating in the discussion. (The Carneades system does not provide this service. Its function is to provide a tool for summarising and understanding arguments, wherever they take place.)</p>
+<p>The assumptions of the users and their collective assessment of the relative weights of conflicting pro and con arguments are collected and aggregated using the opinion polling tool described in the <a href="#formulating-polling-and-comparing-opinions">opinion polling</a> chapter of this manual. At any time, an analyst can execute the &quot;evaluate&quot; command, shown in the menu bars of the argument graph home page, and the statement and argument pages, to compute the acceptability of the arguments and statements in the argument graph, on the basis of the information gathered from users via the polls. A statement is considered acceptable if the users <em>should</em> believe it to be true given only the arguments modelled in the argument graph and their own assumptions and assessment of the relative weights of these arguments.</p>
+<p>If you do not agree with the result of the evaluation, there are at least three reasons why you may be right and the system's evaluation wrong:</p>
+<ol style="list-style-type: decimal">
+<li><p>Not all relevant arguments have been included in the model, or put forward in the debate. If you are aware of some missing argument, consider contributing it to the discussion yourself.</p></li>
+<li><p>The collective, averaged opinion of the users who participated in the poll may be incorrect. Minority views can be correct. If you haven't yet participated in the poll, you may want to do so now.</p></li>
+<li><p>The formal model of argument we are we are using to compute acceptability, based on the state of the art of the field of computational models of argument, may be incorrect. Of course, specialist knowledge is required to assess the correctness of the model. If you, like most people, do not have this knowledge, then we recommend a skeptical but respectful attitude. If you agree with the results of the model, then the model gives you a reason to have more confidence in your opinion. If you do not agree with the results of the model, then you may want to take pause to reconsider your views, even if in the end you do not change your mind.</p></li>
+</ol>
+<h2 id="exporting-argument-graphs-to-xml"><a href="#TOC"><span class="header-section-number">3.6</span> Exporting Argument Graphs to XML</a></h2>
+<p>The menu bar of the argument graph home page and the statement and argument pages includes an &quot;export&quot; button. Click on this button to generate an XML file containing all the data and metadata in the argument graph, including quotations of and links to source documents.</p>
+<p>The XML files use a schema called the &quot;Carneades Argument Format&quot; (CAF), documented elsewhere. (* To do: write the CAF documentation*)</p>
+<p>These XML files can be used to transfer argument graphs from one installation of the Carneades system to another, to merge argument graphs from several sources, to archive argument graphs, or to translate argument graphs into other formats, such as the <a href="http://www.arg.dundee.ac.uk/aif">Argument Interchange Format</a> (AIF), or the generate reports or other kinds of visualisations..</p>
+<h2 id="generating-outlines"><a href="#TOC"><span class="header-section-number">3.7</span> Generating Outlines</a></h2>
 <p><strong>Not yet implemented</strong></p>
 <h1 id="formulating-polling-and-comparing-opinions"><a href="#TOC"><span class="header-section-number">4</span> Formulating, Polling and Comparing Opinions</a></h1>
 <h1 id="analysing-and-comparing-policies"><a href="#TOC"><span class="header-section-number">5</span> Analysing and Comparing Policies</a></h1>

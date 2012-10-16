@@ -55,7 +55,7 @@ Finally, the statement pages lists pro and con arguments about the statement, i.
 
 ![An Argument Page](figs/argument1.png)
 
-Argument pages are quite similar to statement pages. The top of an argument page displays the properties of the argument: its id, the argumentation scheme applied (if any), whether it is a strict or defeasible argument, its weight and value. 
+Argument pages are quite similar to statement pages. The top of an argument page displays the properties of the argument: its id, the argumentation scheme applied (if any), whether it is a strict or defeasible argument, its weight and value. The argumentation scheme contains a hyperlink (*not yet implemented*). Click on the link to view a description of the scheme.
 
 If metadata had been provided for the argument, it would be displayed next. Descriptions can include quotations of one or more source texts expressing the argument, along with hyperlinks to the sources on the Web. The description, if available, will be displayed using the language chosen by the user. If no description has been entered manually by analysts for the selected language of the user but a description is available in some other language, a translation service will be used to generate a description in the selected language (*not yet implemented*).  
 
@@ -87,11 +87,40 @@ Argument graphs can be very large. Currently the *entire* argument graph is disp
 
 ## Searching for Arguments
 
+The argument graph home page will provide access to a command for searching for arguments.
+
 **Not yet implemented**
 
 ## Evaluating Arguments
 
+By argument "evaluation" we mean the process of critically assessing arguments by 
+
+- revealing implicit premises
+- validating whether the arguments are formally correct, by instantiating accepted argumentation schemes
+- asking appropriate critical questions, depending on the schemes applied
+- and determining which claims are acceptable, taking into consideration the assumptions of the users and their collective assessment of the relative weights of conflicting pro and con arguments.
+
+The first three of these tasks can be accomplished by comparing the argument with its argumentation scheme. On the argument page, click on the argumentation scheme to view a description of the scheme (*not yet implemented*). Most web browsers provide some way to open the link in a new tab, so that you can easily switch back and forth between the argument page and the description of the scheme. Now you can check whether any of the premises listed in the scheme are missing from the argument.  The argument is formally valid if all the premises of the scheme are explicitly provided by matching premises of the argument and the conclusion of the argument matches the conclusion of the scheme. 
+
+Argumentation schemes define exceptions and assumptions which can be used to ask critical questions. The exceptions provide reasons for not applying the argument, undercutting it.  If an exception is true, this doesn't mean that the conclusion of the argument is false, but only that the argument does not provide a good reason to presume the conclusion to be true. The assumptions of the scheme are implicit premises which need to be proven only if they are called into question. So, if you think an assumption does not hold, you should consider making an issue of it using whatever channels are available for you for participating in the discussion. (The Carneades system does not provide this service. Its function is to provide a tool for summarising and understanding arguments, wherever they take place.)
+
+The assumptions of the users and their collective assessment of the relative weights of conflicting pro and con arguments are collected and aggregated using the opinion polling tool described in the [opinion polling](#formulating-polling-and-comparing-opinions) chapter of this manual. At any time, an analyst can execute the "evaluate" command, shown in the menu bars of the argument graph home page, and the statement and argument pages, to compute the acceptability of the arguments and statements in the argument graph, on the basis of the information gathered from users via the polls. A statement is  considered acceptable if the users *should* believe it to be true given only the arguments modelled in the argument graph and their own assumptions and assessment of the relative weights of these arguments. 
+
+If you do not agree with the result of the evaluation, there are at least three reasons why you may be right and the system's evaluation wrong:
+
+1. Not all relevant arguments have been included in the model, or put forward in the debate. If you are aware of some missing argument, consider contributing it to the discussion yourself.
+
+2. The collective, averaged opinion of the users who participated in the poll may be incorrect. Minority views can be correct. If you haven't yet participated in the poll, you may want to do so now.
+
+3. The formal model of argument we are we are using to compute acceptability, based on the state of the art of the field of computational models of argument, may be incorrect. Of course, specialist knowledge is required to assess the correctness of the model.  If you, like most people, do not have this knowledge, then we recommend a skeptical but respectful attitude. If you agree with the results of the model, then the model gives you a reason to have more confidence in your opinion. If you do not agree with the results of the model, then you may want to take pause to reconsider your views, even if in the end you do not change your mind.
+
 ## Exporting Argument Graphs to XML
+
+The menu bar of the argument graph home page and the statement and argument pages includes an "export" button. Click on this button to generate an XML file containing all the data and metadata in the argument graph, including quotations of and links to source documents.
+
+The XML files use a schema called the "Carneades Argument Format" (CAF), documented elsewhere.  (* To do: write the CAF documentation*)
+
+These XML files can be used to transfer argument graphs from one installation of the Carneades system to another, to merge argument graphs from several sources, to archive argument graphs, or to translate argument graphs into other formats, such as the [Argument Interchange Format](http://www.arg.dundee.ac.uk/aif) (AIF), or the generate reports or other kinds of visualisations..
 
 ## Generating Outlines
 
