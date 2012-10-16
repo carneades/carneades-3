@@ -85,6 +85,10 @@ Argument graphs may contain cycles. However, currently the algorithm used to lay
 
 Argument graphs can be very large. Currently the *entire* argument graph is displayed in the argument maps. In the future only a partial view of the argument graph in maps will be shown, at least for larger graphs. The part of the graph shown will depend on the context. The map generated from the home page of the argument graph will show the arguments and statements near the main issues of the map. The maps generated from statement and argument pages will show the part of the argument graph near the selected statement or argument. A method for scrolling the maps, to bring other parts of the graph into view, will be provided.
 
+## Searching for Arguments
+
+**Not yet implemented**
+
 ## Evaluating Arguments
 
 ## Exporting Argument Graphs to XML
