@@ -2,6 +2,7 @@
 % Tom Gordon
 
 <#include "introduction.md">
+<#include "home.md">
 <#include "argument_graphs.md">
 <#include "browsing.md">
 <#include "opinions.md">
