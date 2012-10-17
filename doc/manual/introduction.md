@@ -24,6 +24,7 @@ These are only roles. Some people may be able to use the system in more than one
 
 The rest of this manual is organized in the following chapters:
 
+- The Carneades Home Page
 - Argument Graphs
 - Browsing, Visualizing and Evaluating Arguments
 - Forming, Polling and Comparing Opinions
@@ -33,5 +34,5 @@ The rest of this manual is organized in the following chapters:
 - System Administration
 - Application Scenarios
 
-The chapter on argument graphs provides a concise and easy overview of the underlying data model used by all the tools and is recommended to be read first by all users. The next three chapters are for public users and explain how to use the tools for argument browsing, opinion polls and policy analysis, respectively. The chapters on editing argument graphs and modeling policies are for analysts with some prior knowledge of argument reconstruction methods and rule-based systems. The system administration chapter is recommended reading for anyone wishing to install, configure and administer the Carneades software. Finally, the chapter on application scenarios may be of interest to managers and public administrators looking for ways to improve the quality of decision-making processes in their organizations.
+The first two of these chapters, about the Carneades home page and  argument graphs, are recommended to be read first by all users. The home page chapter explains how to access and navigate among the various tools provided by the system. The argument graph chapter provides a concise overview of the underlying data model used by all the tools. The next three chapters are for public users and explain how to use the tools for argument browsing, opinion polls and policy analysis, respectively. The chapters on editing argument graphs and modeling policies are for analysts with some prior knowledge of argument reconstruction methods and rule-based systems. The system administration chapter is recommended reading for anyone wishing to install, configure and administer the Carneades software. Finally, the chapter on application scenarios may be of interest to managers and public administrators looking for ways to improve the quality of decision-making processes in their organizations.
 
