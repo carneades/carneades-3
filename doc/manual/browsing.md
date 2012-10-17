@@ -3,7 +3,7 @@
 
 This chapter of the Carneades user manual explains how to:
 
-- Access and use the [home page](#the-argument-graph-home-page) of an argument graph on the World-Wide Web.
+- Access the [argument graph page](#the-argument-graph-page) for viewing and editing argument graphs on the World-Wide Web.
 
 - Use hypertext in web pages to [browse an argument graph](#using-hypertext-to-browse-an-argument-graph).
 
@@ -15,13 +15,13 @@ This chapter of the Carneades user manual explains how to:
 
 - [Generate outlines](#generating-outlines) of the arguments in a graph, for further editing using text editors or word processors.
 
-## The Argument Graph Home Page
+## The Argument Graph Page
 
-The user interface of Carneades is a web application.  You access the pages and views of the user interface with web addresses, called Uniform Resource Locators (URL), just like you access any resource on the World-Wide Web. Most of the time you will access the application by clicking on a link embedded in some page on the Web, for example in a news article, blog entry or e-participation web site. If you are using Carneades as a stand-alone, desktop application, these URLs will be local addresses, from the "localhost" domain, pointing to web pages served by the application on your personal computer.   
+The user interface of Carneades is a web application. You access the pages and views of the user interface with web addresses, called Uniform Resource Locators (URL), just like you access any resource on the World-Wide Web. Most of the time you will access the application by clicking on a link embedded in some page on the Web, for example in a news article, blog entry or e-participation web site. If you are using Carneades as a stand-alone, desktop application, these URLs will be local addresses, from the "localhost" domain, pointing to web pages served by the application on your personal computer.   
 
-![An Argument Graph Home Page](figs/homepage1.png)
+![An Argument Graph Page](figs/graph1.png)
 
-The home page of an argument graph consists of the following parts:
+An argument graph page consists of the following parts:
 
 - The *title* of the argument graph.  This title usually includes the topic of the discussion or debate.
 
@@ -67,7 +67,7 @@ Finally, a list of counterarguments is shown.^[By counterarguments here we mean 
 
 ## Visualizing Argument Graphs in Argument Maps 
 
-The menus of the argument graph home page, statement pages and argument maps include a "map" button.  Clicking on the "map" button generates a diagram, called an "argument map", which visualizes the argument graph as a network (directed graph) of statement nodes and argument nodes connected by links. Statement nodes are shown as boxes; argument nodes with circles and boxes with rounded corners.
+The menus of the argument graph page, statement pages and argument maps include a "map" button.  Clicking on the "map" button generates a diagram, called an "argument map", which visualizes the argument graph as a network (directed graph) of statement nodes and argument nodes connected by links. Statement nodes are shown as boxes; argument nodes with circles and boxes with rounded corners.
 
 ![An Argument Map](figs/map1.png)
 
@@ -83,11 +83,11 @@ When argument graphs have been evaluated, the status of the argument and stateme
 
 Argument graphs may contain cycles. However, currently the algorithm used to layout the argument and statement nodes in the map is not able to handle cycles. *This limitation will be removed in a later version of the system.*
 
-Argument graphs can be very large. Currently the *entire* argument graph is displayed in the argument maps. In the future only a partial view of the argument graph in maps will be shown, at least for larger graphs. The part of the graph shown will depend on the context. The map generated from the home page of the argument graph will show the arguments and statements near the main issues of the map. The maps generated from statement and argument pages will show the part of the argument graph near the selected statement or argument. A method for scrolling the maps, to bring other parts of the graph into view, will be provided.
+Argument graphs can be very large. Currently the *entire* argument graph is displayed in the argument maps. In the future only a partial view of the argument graph in maps will be shown, at least for larger graphs. The part of the graph shown will depend on the context. The map generated from the argument graph page of the argument graph will show the arguments and statements near the main issues of the map. The maps generated from statement and argument pages will show the part of the argument graph near the selected statement or argument. A method for scrolling the maps, to bring other parts of the graph into view, will be provided.
 
 ## Searching for Arguments
 
-The argument graph home page will provide access to a command for searching for arguments.
+The argument graph page will provide access to a command for searching for arguments.
 
 **Not yet implemented**
 
@@ -104,7 +104,7 @@ The first three of these tasks can be accomplished by comparing the argument wit
 
 Argumentation schemes define exceptions and assumptions which can be used to ask critical questions. The exceptions provide reasons for not applying the argument, undercutting it.  If an exception is true, this doesn't mean that the conclusion of the argument is false, but only that the argument does not provide a good reason to presume the conclusion to be true. The assumptions of the scheme are implicit premises which need to be proven only if they are called into question. So, if you think an assumption does not hold, you should consider making an issue of it using whatever channels are available for you for participating in the discussion. (The Carneades system does not provide this service. Its function is to provide a tool for summarising and understanding arguments, wherever they take place.)
 
-The assumptions of the users and their collective assessment of the relative weights of conflicting pro and con arguments are collected and aggregated using the opinion polling tool described in the [opinion polling](#formulating-polling-and-comparing-opinions) chapter of this manual. At any time, an analyst can execute the "evaluate" command, shown in the menu bars of the argument graph home page, and the statement and argument pages, to compute the acceptability of the arguments and statements in the argument graph, on the basis of the information gathered from users via the polls. A statement is  considered acceptable if the users *should* believe it to be true given only the arguments modelled in the argument graph and their own assumptions and assessment of the relative weights of these arguments. 
+The assumptions of the users and their collective assessment of the relative weights of conflicting pro and con arguments are collected and aggregated using the opinion polling tool described in the [opinion polling](#formulating-polling-and-comparing-opinions) chapter of this manual. At any time, an analyst can execute the "evaluate" command, shown in the menu bars of the argument graph page, and the statement and argument pages, to compute the acceptability of the arguments and statements in the argument graph, on the basis of the information gathered from users via the polls. A statement is considered acceptable if it is *presumably true* given only the arguments modelled in the argument graph and their own assumptions and assessment of the relative weights of these arguments.^[A state-of-the-art computational model of argument is used to compute the acceptability of statements. This model maps argument graphs to a so-called "Dung abstract argumentation framework" [@Dung1995], using a method based on the ASPIC+ model of structured argument [@Prakken:2010a],  but adapted to preserve the features of the Carneades model of argument graphs [@GordonPrakkenWalton:2007]. This ASPIC+ verison of Carneades can handle cyclic argument graphs, removing the main limitation of the original version of Carneades. Several semantics are available for Dung Abtract Argumentation Frameworks. Carneades uses grounded semantics, which is the most cautious (skeptical) about accepting claims.] 
 
 If you do not agree with the result of the evaluation, there are at least three reasons why you may be right and the system's evaluation wrong:
 
@@ -116,9 +116,9 @@ If you do not agree with the result of the evaluation, there are at least three 
 
 ## Exporting Argument Graphs to XML
 
-The menu bar of the argument graph home page and the statement and argument pages includes an "export" button. Click on this button to generate an XML file containing all the data and metadata in the argument graph, including quotations of and links to source documents.
+The menu bar of the argument graph page and the statement and argument pages includes an "export" button. Click on this button to generate an XML file containing all the data and metadata in the argument graph, including quotations of and links to source documents.
 
-The XML files use a schema called the "Carneades Argument Format" (CAF), documented elsewhere.  (* To do: write the CAF documentation*)
+The XML files use a schema called the "Carneades Argument Format" (CAF), documented elsewhere.  *To do: write the CAF documentation*
 
 These XML files can be used to transfer argument graphs from one installation of the Carneades system to another, to merge argument graphs from several sources, to archive argument graphs, or to translate argument graphs into other formats, such as the [Argument Interchange Format](http://www.arg.dundee.ac.uk/aif) (AIF), or the generate reports or other kinds of visualisations..
 
