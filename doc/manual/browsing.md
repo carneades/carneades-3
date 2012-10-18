@@ -19,7 +19,7 @@ This chapter of the Carneades user manual explains how to:
 
 The user interface of Carneades is a web application. You access the pages and views of the user interface with web addresses, called Uniform Resource Locators (URL), just like you access any resource on the World-Wide Web. Most of the time you will access the application by clicking on a link embedded in some page on the Web, for example in a news article, blog entry or e-participation web site. If you are using Carneades as a stand-alone, desktop application, these URLs will be local addresses, from the "localhost" domain, pointing to web pages served by the application on your personal computer.   
 
-![An Argument Graph Page](figs/graph1.png)
+ ![An Argument Graph Page](figs/graph1.png)
 
 An argument graph page consists of the following parts:
 
