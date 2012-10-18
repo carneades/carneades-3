@@ -55,3 +55,20 @@ PM.display_sct_question = function() {
     
     $('#pm').html(sct_question.$el);
 };
+
+PM.sct_summary_url = function() {
+    return '/sct/summary';
+};
+
+PM.set_sct_summary_url = function() {
+  $.address.value(PM.sct_summary_url());
+};
+
+PM.display_sct_summary = function() {
+    var sct_summary = new catb.views.sct.summary.Summary(
+        {model: PM.sct});
+
+    sct_summary.render();
+    $('#pm').html(sct_summary.$el);
+    
+};

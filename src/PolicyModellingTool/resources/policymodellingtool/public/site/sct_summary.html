@@ -1,0 +1,18 @@
+<h2>{{sct_summary}}</h2>
+
+<p>{{sct_summary_text}}</p>
+
+<button>{{sct_compare}}</button>
+
+<h3>{{sct_responses}}</h3>
+<div>
+  <ul>
+    {{#claims}}
+    <li>
+      <!-- <p>{{id}}</p> -->
+      <div class="claim-to-edit"><p>{{statement_text}}&nbsp;&nbsp;<span class="agreement-status">{{agreement_text}}</span>.&nbsp;&nbsp;<a class="change-score">{{sct_change}}</a></p> 
+      </div>
+    </li>
+    {{/claims}}
+  </ul>
+</div>
