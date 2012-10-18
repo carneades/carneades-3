@@ -35,7 +35,7 @@
 
               // self.$el.append('<ol class="sct-premises">');
 
-              _.each(question.get('premises'),
+              _.each(question.premises,
                      function(premise) {
                          var claim_view = 
                              new PM.SctClaim({model: new PM.Statement(premise.statement),
@@ -58,9 +58,10 @@
           return this;
       },
 
-      // Updates the statement polls or argument polls votes
-      // to the REST service
-      update_votes: function() {
+      // Parse the answers, push arguments if 'show me the arguments' is
+      // selected and updates the statement polls or argument polls votes
+      // in the database
+      parse_answers: function() {
           var self = this;
 
           var question_data = this.model.get('current-question');
@@ -102,8 +103,9 @@
               // save the votes for the premises
               poll = this.model.get('statement-poll');
 
-              var premises = question.get('premises');
+              var premises = question.premises;
               var answers = this.$('input:checked');
+              var statements = this.model.get('statements');
 
               _.each(premises,
                     function(premise, index) {
@@ -112,6 +114,8 @@
                             self.set_score(poll, premise.statement.id, 1.0);
                         } else if(answer == 'disagree') {
                             self.set_score(poll, premise.statement.id, 0.0);
+                        } else if(answer == 'show-arguments') {
+                            self.model.push_arguments(statements.get(premise.statement.id).toJSON());
                         }
                     });
           }
@@ -132,16 +136,17 @@
 
           if(type == 'claim') {
               if(val == 'show-arguments') {
-                  this.model.push_arguments();
+                  this.model.push_arguments(
+                      this.model.current_question().question);
               } else if(val == 'skip-question') {
                   this.model.pop_question();
               } else {
-                  this.update_votes();
                   this.model.pop_question();
+                  this.parse_answers(); 
               }
           } else if(type == 'argument') {
-              this.update_votes();
               this.model.pop_question();
+              this.parse_answers();
           }
 
           if(this.model.has_question()) {
@@ -154,7 +159,7 @@
       },
 
       get_description: function(question) {
-          return AGB.description_text(question.get('header')).replace(/\[.+\]/, "");    
+          return AGB.description_text(question.header).replace(/\[.+\]/, "");    
       }
 
      }
