@@ -1,0 +1,38 @@
+{{#claim}}
+<p class="claim">{{statement_text}}</p>
+
+{{#has_pro_answered}}
+<h3>{{sct_pro_arguments}}</h3>
+<div class="pro">
+  {{#pro_answered}}
+  <div>
+    <!-- <p>{{id}}</p> -->
+    <p>{{{description_text}}}</p>
+    <p>{{sct_weak}}<input type="range" min="0" max="1" value="0.5" step="0.2"  id="input-{{id}}" />{{sct_strong}}</p>
+  </div>
+  {{/pro_answered}}
+</div>
+{{/has_pro_answered}}
+
+{{#has_con_answered}}
+<h3>{{sct_con_arguments}}</h3>
+<div class="con">
+  {{#con_answered}}
+  <div>
+    <!-- <p>{{id}}</p> -->
+    <p>{{{description_text}}}</p>
+    <p>{{sct_weak}}<input type="range" min="0" max="1" value="0.5" step="0.2" id="input-{{id}}" />{{sct_strong}}</p>
+  </div>
+  {{/con_answered}}
+</div>
+{{/has_con_answered}}
+
+<div>
+  <input type="radio" name="claim-response-{{id}}" class="radiobutton required" value="agree"/>{{sct_agree}}
+  <br/>
+  <input type="radio" name="claim-response-{{id}}" class="radiobutton required" value="disagree"/>{{sct_disagree}}
+</div>  
+
+<button class="save">{{sct_save}}</button>
+
+{{/claim}}

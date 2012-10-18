@@ -7,6 +7,15 @@ PM.SctIssues = Backbone.View.extend(
      },
      
      initialize: function(attrs) {
+         this.model.set('statement-poll', 
+                        new PM.StatementPoll(
+                            {id: this.model.get('username'),
+                             votes: {}}));
+         this.model.set('argument-poll', 
+                        new PM.ArgumentPoll(
+                            {id: this.model.get('username'),
+                             votes: {}}));
+
          this.issues = attrs.issues;
          this.statements = attrs.statements;
          this.arguments = attrs.arguments;
@@ -19,10 +28,15 @@ PM.SctIssues = Backbone.View.extend(
 
          AGB.set_mainissues_text(this.issues);
          
+         var info = PM.debate_info.get('metadata')[0];
+         var description = info.description[IMPACT.lang];
+         
          var issues_html = ich['sct-issues'](
              {'sct_choose_issue': $.i18n.prop('sct_choose_issue'),
               'sct_issues': $.i18n.prop('sct_issues'),
               'sct_description': $.i18n.prop('sct_description'),
+              'title': info.title,
+              'description': PM.markdown_to_html(description),
               'main_issues': this.issues
              });
          this.$el.html(issues_html);
@@ -37,7 +51,7 @@ PM.SctIssues = Backbone.View.extend(
          var issue = this.issues[index];
          
          this.model.set('issue', issue);
-         
+     
          var pro_args = issue.pro;
          var con_args = issue.con;
          
