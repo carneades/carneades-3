@@ -63,16 +63,23 @@ PM.dispatch_url = function(sections) {
     } else if(sections[1] == "introduction") {
         PM.display_introduction();
     } else if(sections[1] == "sct") {
-        if(sections[2] == "intro") {
-            PM.display_sct_intro();
-        } else if(sections[2] == "issues") {
-            PM.display_sct_issues();
-        } else if(sections[2] == "question") {
-            PM.display_sct_question();
-        }
+        PM.dispatch_sct_url(sections[2]);
+    } else if(sections[1] == "repl") {
+        catb.repl.connect();
     }
 };
 
+PM.dispatch_sct_url = function(section_name) {
+    if(section_name == "intro") {
+        PM.display_sct_intro();
+    } else if(section_name == "issues") {
+        PM.display_sct_issues();
+    } else if(section_name == "question") {
+        PM.display_sct_question();
+    } else if(section_name == "summary") {
+        PM.display_sct_summary();
+    }
+};
 
 // ImpactToolbox = {
    
@@ -206,7 +213,9 @@ PM.common_post_load = function() {
     PM.debate_info = new PM.AgInfo({db: IMPACT.debate_db});
     PM.debate_info.fetch();
     
-    PM.sct = new PM.Sct({arguments: PM.debate_arguments,
+    PM.sct = new PM.Sct({db: IMPACT.debate_db,
+                         lang: IMPACT.lang,
+                         arguments: PM.debate_arguments,
                          statements: PM.debate_statements});
 };
 
@@ -299,6 +308,8 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/lib/backbone.js',
                    'js/lib/backbone.memento.min.js',
                    'js/lib/sprintf-0.7-beta1.js',
+                   'js/app/models/argument-poll.js',
+                   'js/app/models/statement-poll.js',
                    'js/app/models/ag-info.js',
                    'js/app/models/policies.js',
                    'js/app/models/sct.js',
@@ -312,6 +323,8 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/app/models/premise-candidate.js',
                    'js/app/models/conclusion-candidate.js',
                    'js/app/models/metadata-candidate.js',
+                   'js/app/collections/argument-polls.js',
+                   'js/app/collections/statement-polls.js',
                    'js/app/collections/statements.js',
                    'js/app/collections/schemes.js',
                    'js/app/collections/metadata-list.js',
@@ -332,7 +345,9 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/app/views/sct-issues.js',
                    'js/app/views/sct-helper.js',
                    'js/app/views/sct-claim.js',
-                   'js/app/views/metadata-editor.js'];
+                   'js/app/views/metadata-editor.js',
+                   'js/compiled-app.js'
+                  ];
     
     if(!is_in_toolbox) {
       scripts = scripts.concat('js/lib/jquery.address-1.4.js', 
@@ -402,7 +417,9 @@ PM.load_templates = function(toolboxState) {
             'sct-intro',
             'sct-issues',
             'sct-claim',
-            'sct-argument'
+            'sct-argument',
+            'sct_summary',
+            'sct_claim_editor'
            ],
            function(name) {
                var url = toolboxState == undefined ?

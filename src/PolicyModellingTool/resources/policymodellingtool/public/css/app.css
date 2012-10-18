@@ -227,3 +227,20 @@
 .start {
     width: 100px;
 }
+
+.sct-question-text {
+    font-weight: bold;   
+}
+
+.change-score {
+    cursor: pointer;
+}
+
+.sct-claim-editor {
+    border-color: purple;
+}
+
+.agreement-status {
+    font-weight: bold;   
+}
+

@@ -32,3 +32,7 @@ PM.on_start_button = function() {
     PM.set_issues_url();
     return false;
 };
+
+PM.call_template = function(template_name, variables) {
+    return ich[template_name](variables);
+};
