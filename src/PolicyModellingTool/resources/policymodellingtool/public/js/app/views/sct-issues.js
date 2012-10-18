@@ -68,7 +68,7 @@ PM.SctIssues = Backbone.View.extend(
          
          _.each(premises,
                function(premise) {
-                   self.model.push_question(premise, 'claim');
+                   self.model.push_question(premise.statement, 'claim');
                });
          
          self.model.update_current_question();

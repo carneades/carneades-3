@@ -41,9 +41,9 @@ PM.Sct = Backbone.Model.extend(
          
      },
      
-     push_question: function(question, type) {
+     push_question: function(question, type, seen) {
          var questions = this.get('questions');
-         questions.push({question: question, type: type});
+         questions.push({question: question, type: type, seen: seen});
      },
 
      pop_question: function() {
