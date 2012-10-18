@@ -8,10 +8,10 @@
                  [carneades-engine "2.0.0-SNAPSHOT"]
                  [carneades-web-service "1.0.0-SNAPSHOT"]
                  [org.clojars.pallix/mygengo "1.0.0"]
-                 [jayq "0.1.0-alpha3"]
+                 [jayq "0.1.0-alpha4"]
                  [lein-ring "0.5.4"]]
   :plugins [[lein-ring "0.7.1"]
-            [lein-cljsbuild "0.2.7"]]
+            [lein-cljsbuild "0.2.8"]]
   ; Enable the lein hooks for: clean, compile, test, and jar.
   :hooks [leiningen.cljsbuild]
   :cljsbuild {

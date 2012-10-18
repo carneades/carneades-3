@@ -63,13 +63,9 @@ PM.Sct = Backbone.Model.extend(
          return this.get('questions').length != 0;
      },
      
-     // Push the argument of the current question (statement)
-     push_arguments: function() {
-         var question_data = this.current_question();
-         question_data.seen = true;
-         var current = question_data.question;
-         
-         var args_id = [].concat(current.pro, current.con);
+     // Push the argument of the statement in the question stack
+     push_arguments: function(statement) {
+         var args_id = [].concat(statement.pro, statement.con);
          
          var self = this;
          var args = _.map(args_id,
@@ -79,7 +75,7 @@ PM.Sct = Backbone.Model.extend(
 
          _.each(args,
                function(arg) {
-                   self.push_question(arg, 'argument');
+                   self.push_question(arg.toJSON(), 'argument');
                });
      }
      
