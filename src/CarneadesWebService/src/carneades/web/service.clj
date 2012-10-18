@@ -456,26 +456,37 @@
   (GET "/statement-poll/:db" request
        (let [[username password] (get-username-and-password request)
              db (:db (:params request))
-             db2 (make-database-connection db username password)] 
-         (with-db db2 (json-response (list-statement-poll)))))
+             db2 (make-database-connection db username password)]
+         (with-db db2
+           (let [ids (set (map :userid (list-statement-poll)))
+                 polls (map read-statement-poll ids)
+                 polls (if (nil? polls)
+                         ()
+                         polls)]
+             (json-response polls)))))
       
   (GET "/statement-poll/:db/:id" [db id]
        (let [db2 (make-database-connection db "guest" "")]  
-         (with-db db2 (json-response (read-statement-poll (java.lang.Integer/parseInt id))))))
+         (with-db db2 (json-response (read-statement-poll
+                                      (Integer/parseInt id))))))
 
-  (POST "/statement-poll/:db/:id" request  
-        (let [userid (:id (:params request)),
-              votes (read-json (slurp (:body request))),
+  (POST "/statement-poll/:db" request  
+        (let [poll (read-json (slurp (:body request))),
               [username password] (get-username-and-password request)
               db (make-database-connection (:db (:params request)) username password)]
-          (with-db db (json-response (create-statement-poll userid votes)))))
+          (with-db db
+            (do
+              (create-statement-poll poll)
+              (json-response (read-statement-poll (:id poll)))))))
       
-  (PUT "/statement-poll/:db/:id" request  
-       (let [userid (:id (:params request)),
-             votes (read-json (slurp (:body request)))
+  (PUT "/statement-poll/:db" request  
+       (let [poll (read-json (slurp (:body request)))
              [username password] (get-username-and-password request)
              db (make-database-connection (:db (:params request)) username password)]
-         (with-db db (json-response (update-statement-poll userid votes)))))
+         (with-db db
+           (do
+             (update-statement-poll poll)
+             (json-response (read-statement-poll (:id poll)))))))
       
   (DELETE "/statement-poll/:db/:id" request
           (let [[username password] (get-username-and-password request)
@@ -483,7 +494,7 @@
                 id (:id (:params request))
                 db2 (make-database-connection db username password)]
             (with-db db2
-              (json-response (delete-statement-poll (java.lang.Integer/parseInt id)))))) 
+              (json-response (delete-statement-poll (Integer/parseInt id)))))) 
       
   ;; Argument Polls
       
@@ -491,25 +502,36 @@
        (let [[username password] (get-username-and-password request)
              db (:db (:params request))
              db2 (make-database-connection db username password)] 
-         (with-db db2 (json-response (list-argument-poll)))))
+         (with-db db2 (let [ids (set (map :userid (list-argument-poll)))
+                            polls (map read-argument-poll ids)
+                            polls (if (nil? polls)
+                                    ()
+                                    polls)]
+                        (json-response polls)))))
       
-  (GET "/argument-poll/:db/:id" [db id]
-       (let [db2 (make-database-connection db "guest" "")]  
-         (with-db db2 (json-response (read-argument-poll (java.lang.Integer/parseInt id))))))
+  (GET "/argument-poll/:db/:id" request
+       (let [[username password] (get-username-and-password request)
+             db (:db (:params request))
+             id (:db (:params request))
+             dbconn (make-database-connection (:db (:params request)) username password)]  
+         (with-db dbconn
+           (json-response (read-argument-poll (Integer/parseInt id))))))
 
-  (POST "/argument-poll/:db/:id" request  
-        (let [userid (:id (:params request)),
-              votes (read-json (slurp (:body request))),
+  (POST "/argument-poll/:db" request  
+        (let [poll (read-json (slurp (:body request))),
               [username password] (get-username-and-password request)
               db (make-database-connection (:db (:params request)) username password)]
-          (with-db db (json-response (create-argument-poll userid votes)))))
+          (with-db db
+            (do (create-argument-poll poll)
+                (json-response (read-argument-poll (:id poll)))))))
       
-  (PUT "/argument-poll/:db/:id" request  
-       (let [userid (:id (:params request)),
-             votes (read-json (slurp (:body request)))
+  (PUT "/argument-poll/:db" request  
+       (let [poll (read-json (slurp (:body request)))
              [username password] (get-username-and-password request)
              db (make-database-connection (:db (:params request)) username password)]
-         (with-db db (json-response (update-argument-poll userid votes)))))
+         (with-db db
+           (do (update-argument-poll poll)
+               (json-response (read-argument-poll (:id poll)))))))
       
   (DELETE "/argument-poll/:db/:id" request
           (let [[username password] (get-username-and-password request)
@@ -517,7 +539,7 @@
                 id (:id (:params request))
                 db2 (make-database-connection db username password)]
             (with-db db2
-              (json-response (delete-argument-poll (java.lang.Integer/parseInt id))))))
+              (json-response (delete-argument-poll (Integer/parseInt id))))))
 
   ;; Aggregated information
       

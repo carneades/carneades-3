@@ -808,21 +808,31 @@
    where the votes are a map from statement ids to real
    numbers in the range 0.0 to 1.0. All other votes for 
    this user, if any, are deleted."
-  [userid votes]
-  {:pre [(string? userid) 
-         (map? votes)
+  [poll]
+  {:pre [(string? (:id poll)) 
+         (map? (:votes poll))
          (every? (fn [x] 
                    (and (number? x)
                         (<= 0.0 x 1.0)))
-                 (vals votes))]}
-  (doseq [vote votes]
-    (clojure.java.jdbc/insert-values
-      :stmtpoll
-      [:userid :statement :opinion]
-      [userid (first vote) (second vote)]))
-  true)
+                 (vals (:votes poll)))]}
+  (let [{:keys [id votes]} poll]
+    (doseq [[statement opinion] votes]
+      (clojure.java.jdbc/insert-record
+       :stmtpoll
+       {:userid id
+        :statement (name statement)
+        :opinion opinion}))
+    id))
 
 (defn read-statement-poll
+  "Retrieves the poll with the given id from the database"
+  [id]
+  (jdbc/with-query-results 
+    res1 ["SELECT * FROM stmtpoll WHERE userid=?" (str id)]
+    {:votes (zipmap (map :statement res1) (map :opinion res1))
+     :id id}))
+
+(defn read-poll-for-statement
   "int -> {:count x, :value y}
    Returns the results of a poll for the statement
    with the given id.  The results are
@@ -848,21 +858,22 @@
   "string map -> boolean
    Updates the votes of a user.  The map is
    from statement ids to numbers in the range of 0.0 to 1.0."
-  [userid votes] 
-  {:pre [(string? userid) 
-         (map? votes)
+  [poll] 
+  {:pre [(string? (:id poll)) 
+         (map? (:votes poll))
          (every? (fn [x] 
                    (and (number? x)
                         (<= 0.0 x 1.0)))
-                 (vals votes))]}
-  (doseq [vote votes]
-    (jdbc/update-or-insert-values 
+                 (vals (:votes poll)))]}
+  (let [{:keys [id votes]} poll]
+   (doseq [[statement opinion] votes]
+     (jdbc/update-or-insert-values 
       :stmtpoll 
-      ["userid=? AND statement=?" userid (first vote)] 
-      {:userid userid,
-       :statement (first vote) 
-       :opinion (second vote)}))
-  true)
+      ["userid=? AND statement=?" (str id) (name statement)] 
+      {:userid id,
+       :statement (name statement) 
+       :opinion opinion}))
+   id))
 
 (defn delete-statement-poll 
   "Deletes all votes for the given statement id."
@@ -878,21 +889,31 @@
    where the votes are a map from argument ids to real
    numbers in the range 0.0 to 1.0. All other votes for 
    this user, if any, are deleted."
-  [userid votes]
-  {:pre [(string? userid) 
-         (map? votes)
+  [arg]
+  {:pre [(string? (:id arg)) 
+         (map? (:votes arg))
          (every? (fn [x] 
                    (and (number? x)
                         (<= 0.0 x 1.0)))
-                 (vals votes))]}
-  (doseq [vote votes]
-    (clojure.java.jdbc/insert-values
+                 (vals (:votes arg)))]}
+  (let [{:keys [id votes]} arg]
+   (doseq [[argument opinion] votes]
+     (clojure.java.jdbc/insert-record
       :argpoll
-      [:userid :argument :opinion]
-      [userid (first vote) (second vote)]))
-  true)
+      {:userid id
+       :argument (name argument)
+       :opinion opinion}))
+   id))
 
 (defn read-argument-poll
+  "Retrieves the poll with the given id from the database"
+  [id]
+  (jdbc/with-query-results 
+    res1 ["SELECT * FROM argpoll WHERE userid=?" (str id)]
+    {:votes (zipmap (map :argument res1) (map :opinion res1))
+     :id id}))
+
+(defn read-poll-for-argument
   "int -> {:count x, :value y}
    Returns the results of a poll for the argument
    with the given id.  The results are
@@ -918,20 +939,21 @@
   "database string map -> boolean
    Updates the votes of a user.  The map is
    from argument ids to numbers in the range of 0.0 to 1.0."
-  [userid votes] 
-  {:pre [(string? userid) 
-         (map? votes)
+  [arg] 
+  {:pre [(string? (:id arg)) 
+         (map? (:votes arg))
          (every? (fn [x] 
                    (and (number? x)
                         (<= 0.0 x 1.0)))
-                 (vals votes))]}
-  (doseq [vote votes]
-    (jdbc/update-or-insert-values 
-      :argpoll 
-      ["userid=? AND argument=?" userid (first vote)] 
-      {:userid userid,
-       :argument (first vote) 
-       :opinion (second vote)}))
+                 (vals (:votes arg)))]}
+  (let [{:keys [votes id]} arg]
+    (doseq [[argument opinion] votes]
+      (jdbc/update-or-insert-values 
+       :argpoll 
+       ["userid=? AND argument=?" (str id) (name argument)] 
+       {:userid id,
+        :argument (name argument) 
+        :opinion opinion})))
   true)
 
 (defn delete-argument-poll 
