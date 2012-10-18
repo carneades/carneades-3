@@ -20,7 +20,7 @@
           var seen = question_data.seen;
 
           if(type == 'claim') {
-              var claim_view = new PM.SctClaim({model: new PM.Statement(question.statement),
+              var claim_view = new PM.SctClaim({model: new PM.Statement(question),
                                                 sct: this.model,
                                                 lang: this.lang,
                                                 seen: seen,
@@ -75,7 +75,7 @@
               var score = val == 'agree' ? 1.0 : 0.0;
 
               poll = this.model.get('statement-poll');
-              this.set_score(poll, question.statement.id, score);
+              this.set_score(poll, question.id, score);
 
               var arg_poll = this.model.get('argument-poll');
 
@@ -115,6 +115,7 @@
                         } else if(answer == 'disagree') {
                             self.set_score(poll, premise.statement.id, 0.0);
                         } else if(answer == 'show-arguments') {
+                            self.model.push_question(premise.statement, 'claim', true); 
                             self.model.push_arguments(statements.get(premise.statement.id).toJSON());
                         }
                     });
@@ -136,8 +137,9 @@
 
           if(type == 'claim') {
               if(val == 'show-arguments') {
+                  this.model.current_question().seen = true;
                   this.model.push_arguments(
-                      this.model.current_question().question);
+                      this.model.current_question().question); 
               } else if(val == 'skip-question') {
                   this.model.pop_question();
               } else {
