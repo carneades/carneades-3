@@ -94,7 +94,34 @@ You can now edit the facts of this copy during this session, and also share this
 
 ## Policy Opinion Polls
 
-## Evaluating Policies Over a Set of Cases
+(*Not yet implemented.*)
+
+Opinions can differ of course about what the correct or best result is for a particular case. The policy analysis tool provides a way to poll users to gather their opinions about the claims of the case (its main issues in the argument graph). Any user can take part in the poll, not just the user who entered the facts of the case.  
+
+To take part in the poll, click on the "vote" button in the menu bar of the policy analysis tool.  The main issues of the case will be displayed, for example "The work may be copied.", along with the following question for each claim:
+
+> Given the facts of this case, should claim "The work may be copied." be: 1) accepted, 2) rejected, or 3) undecided?
+
+It is not necessary to login to the system or provide a username to take part in the poll. 
+
+After answering the questions, the current tally of the poll results will be displayed in a table, like this:
+
+ Claim                      Accepted      Rejected     Undecided
+ -------                  ----------     ---------    ----------
+ The work may be copied.         55%           25%           20%
+
+Table: Results of the Case Poll
+    
+Notice that users are not asked to directly express their preferences regarding the polices under consideration, just what they think the correct result should be in particular cases. See the section of this manual entitled [Generating Policy Reports](#generating-policy-reports) for further information.
+
+## Generating Policy Reports
+
+(*Not yet implemented.*)
+
+The policy analysis tool can generate a report ranking the policy proposals by the degree to which they achieve the results preferred by the majority of the users who took part in the poll. 
+
+
+
 
 
 
