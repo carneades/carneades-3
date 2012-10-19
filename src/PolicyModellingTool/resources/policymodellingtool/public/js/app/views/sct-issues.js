@@ -46,7 +46,7 @@ PM.SctIssues = Backbone.View.extend(
          return this;
      },
      
-     issue_selected: function() {
+     issue_selected: function(event) {
          var index = $(event.target).parent().attr('id').substr(5) - 1;
          var issue = this.issues[index];
          
