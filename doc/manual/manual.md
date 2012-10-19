@@ -11,6 +11,7 @@
 <#include "modeling.md">
 <#include "administration.md">
 <#include "scenarios.md">
+<#include "schemes.md">
 
 # Credits
 

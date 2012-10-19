@@ -120,6 +120,20 @@ Notice that users are not asked to directly express their preferences regarding 
 
 The policy analysis tool can generate a report ranking the policy proposals by the degree to which they achieve the results preferred by the majority of the users who took part in the poll. 
 
+To generate the report, click on the "report" button in the menu bar of the policy analysis tool. This will cause the system to apply every modeled policy to all the cases and then compare the results with those preferred by the majority of the users who participated in the poll.
+
+The report will be presented in the form of a table, similar  to the following:
+
+ Policy                                 Agreement
+ -------                          ---------------
+ Org 1 Proposal                               55%
+ Org 2 Proposal                               35%
+ Org 3 Proposal                               15%
+
+The policy names, such as "Org 1 Proposal" in the example, will be linked to the descriptions and models of the policies. The policies are ranked by the percentage of issues in all the cases (there may be more than one issue per case) which have the result preferred by the majority of poll participants.  In the example report, the "Org 1 Proposal" obtains the results preferred by the majority for 55% of the issues.  
+
+
+
 
 
 
