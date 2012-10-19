@@ -1,7 +1,7 @@
 
 # Getting Started
 
-The Carneades Argumentation System is open source software, freely available for downloading at <http://carneades.github.com>.
+The Carneades argumentation system is open source software, freely available for downloading at <http://carneades.github.com>.
 
 Carneades provides web-based, collaborative software tools for:
 
