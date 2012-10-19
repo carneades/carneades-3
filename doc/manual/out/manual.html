@@ -46,6 +46,8 @@
 <li><a href="#modeling-policies-and-argumentation-schemes"><span class="toc-section-number">8</span> Modeling Policies and Argumentation Schemes</a></li>
 <li><a href="#system-administration"><span class="toc-section-number">9</span> System Administration</a></li>
 <li><a href="#applications-scenarios"><span class="toc-section-number">10</span> Applications Scenarios</a></li>
+<li><a href="#credits"><span class="toc-section-number">11</span> Credits</a></li>
+<li><a href="#references"><span class="toc-section-number">12</span> References</a></li>
 </ul>
 </div>
 <h1 id="getting-started"><a href="#TOC"><span class="header-section-number">1</span> Getting Started</a></h1>
@@ -293,9 +295,9 @@
 <ol style="list-style-type: decimal">
 <li><p>Log in using a pseudonym to protect your privacy. You can login again using this name to change your responses at any time. Choose a cryptic name, like a secure password, to make it difficult for others to access or change your answers.</p></li>
 <li><p>Read an introduction to the topic of the debate and select an issue of interest.</p></li>
-<li><p>Answer a series of survey questions about the selected issue. The system will inform you about your progress and estimate the remaining number of questions. The precise number of questions may vary, as the order and number of questions depends on your answers to prior questions. You decide how deep to delve into the issues and can control how much time to spend answering poll questions.</p></li>
+<li><p>Answer a series of survey multiple-choice questions about the selected issue, asking you whether you agree or disagree with claims made in arguments. To help you to formulate or reconsider your opinion, you have the option to first view quotations of formulations of the arguments from the source documents. No information about the authors of the quotations will be shown during this phase, to allow the arguments to speak for themselves and avoid prejudicing your answers. (The authors will be revealed at the end, when comparing your opinions to theirs.) The system will inform you about your progress and estimate the remaining number of questions. The precise number of questions may vary, as the order and number of questions depends on your answers to prior questions. You decide how deep to delve into the issues and can control how much time to spend answering poll questions.</p></li>
 <li><p>View a summary of the questions and your responses. You are provided with an opportunity to change your answers.</p></li>
-<li><p>Compare your opinions with those in the source documents used to create the argument graph. Rank the authors of the source documents, such as political parties, by how much they agree or disagree with your opinions.</p></li>
+<li><p>Compare your opinions with those of the authors of the source documents used to create the argument graph. Rank the authors of the source documents, such as political parties, by how much they agree or disagree with your opinions. You can click on the titles of the source documents to download and view their full text and check for yourself the extend to which your agree or disagree with the claims made.</p></li>
 </ol>
 <p>This procedure is flexible and you are in control. You are the moderator of the virtual debate. You can stop at any time, and continue later if you'd like, or jump backwards or forwards to any step in the procedure.</p>
 <h2 id="question-types"><a href="#TOC"><span class="header-section-number">5.2</span> Question Types</a></h2>
@@ -329,14 +331,38 @@
 </ul>
 <p>In each category, full references to the documents are provided (author, title, etc). The title includes a hyperlink to the source of the document on the Web. You can click on the title to download and read the original document, to judge for yourself how much you agree or disagree with the opinions expressed in the document.</p>
 <p>The rest of this section explains briefly how the comparison is computed.</p>
-<p>All of the arguments modeled in the argument graph are tagged with the keys of source documents in which the argument has been made, from the corpus of source documents used by the analysts to construct the graph.<sup><a href="#fn6" class="footnoteRef" id="fnref6">6</a></sup> These documents do not merely cite or quote the argument. They express agreement with the argument, by claiming that the premises and the conclusion of the argument are true. Since the arguments are linked to their conclusion and premises in the argument graph, it is easy to compute from the source metadata of arguments the set of claims, i.e. statements claimed to be true or false, in each source document. These claims are then compared to your opinions, based on your answers to the poll questions.<sup><a href="#fn7" class="footnoteRef" id="fnref7">7</a></sup></p>
+<p>All of the arguments modeled in the argument graph are tagged with the keys of source documents in which the argument has been made, from the corpus of source documents used by the analysts to construct the graph.<sup><a href="#fn6" class="footnoteRef" id="fnref6">6</a></sup> These documents do not merely cite or quote the argument. They express agreement with the argument, by claiming that the premises and the conclusion of the argument are true. Since the arguments are linked to their conclusion and premises in the argument graph, it is easy to compute from the source metadata of arguments the set of claims, i.e. statements claimed to be true or false, in each source document. These claims are then compared to your opinions, based on your answers to the poll questions.^[The similarity of opinions is calculated using the &quot;Euclidean distance&quot; metric <span class="citation">(Segaran 2007, 9–15)</span></p>
 <h1 id="analysing-and-comparing-policies"><a href="#TOC"><span class="header-section-number">6</span> Analysing and Comparing Policies</a></h1>
 <h1 id="editing-argument-graphs"><a href="#TOC"><span class="header-section-number">7</span> Editing Argument Graphs</a></h1>
 <h1 id="modeling-policies-and-argumentation-schemes"><a href="#TOC"><span class="header-section-number">8</span> Modeling Policies and Argumentation Schemes</a></h1>
 <h1 id="system-administration"><a href="#TOC"><span class="header-section-number">9</span> System Administration</a></h1>
 <h1 id="applications-scenarios"><a href="#TOC"><span class="header-section-number">10</span> Applications Scenarios</a></h1>
+<h1 id="credits"><a href="#TOC"><span class="header-section-number">11</span> Credits</a></h1>
+<ul>
+<li><p>Conception and Design</p>
+<ul>
+<li>Tom Gordon</li>
+<li>Douglas Walton</li>
+</ul></li>
+<li><p>Programming</p>
+<ul>
+<li>Pierre Allix</li>
+<li>Stefan Ballnat</li>
+<li>Tom Gordon</li>
+<li>Matthias Grabmair</li>
+</ul></li>
+<li><p>Funding (EU Projects)</p>
+<ul>
+<li>Standardized Transparent Representations in order to Extend Legal Accessibility (Estrella, FP6-IST-027655), 2006-2008.</li>
+<li>Quality Platform for Open Source Software (Qualipso, FP6-IST-034763), 2006-2010.</li>
+<li>Integrated Method for Policy making using Argument modelling and Computer assisted Text analysis (IMPACT, FP7-IST-247228), 2010-2012.</li>
+<li>The MARKet for Open Source – An Intelligent Virtual Open Source Marketplace (MARKOS, FP7-ICT-317743), 2012-2015.</li>
+</ul></li>
+</ul>
+<h1 id="references"><a href="#TOC"><span class="header-section-number">12</span> References</a></h1>
 <p>Dung, Phan Minh. 1995. “On The Acceptability Of Arguments And Its Fundamental Role In Nonmonotonic Reasoning , Logic Programming And N-Persons Games.” <em>Artificial Intelligence</em> 77: 321–357.</p>
 <p>Prakken, Henry. 2010. “An abstract framework for argumentation with structured arguments.” <em>Argument &amp; Computation</em> 1: 93–124.</p>
+<p>Segaran, Toby. 2007. <em>Programming Collective Intelligence</em>. O’Reilly.</p>
 <div class="footnotes">
 <hr />
 <ol>
@@ -346,7 +372,6 @@
 <li id="fn4"><p>Depth-first.<a href="#fnref4">↩</a></p></li>
 <li id="fn5"><p>The statements you skipped, without expressing an opinion are not listed. <em>Not yet implemented: some way for the user to review and answer the skipped questions, including taking a tour of the arguments about the skipped questions.</em><a href="#fnref5">↩</a></p></li>
 <li id="fn6"><p>These keys are stored in the &quot;source&quot; property of the metadata of arguments. The keys are the identifiers of the metadata records for documents in the references section of the argument graph.<a href="#fnref6">↩</a></p></li>
-<li id="fn7"><p>The similarity of opinions is calculated using the &quot;Euclidean distance&quot; metric described in the book &quot;Programming Collective Intelligence&quot; by Tony Segram, published by O'Reilly in 2007.<a href="#fnref7">↩</a></p></li>
 </ol>
 </div>
 </body>
