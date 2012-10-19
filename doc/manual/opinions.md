@@ -14,7 +14,7 @@ Every page of the Carneades system includes the main menu. Click on the "poll" b
 
 The first page of the opinion formation and polling tool provides an overview of the features of the tool and explains the following procedure for using the tool:
 
-1. Log in using a pseudonym to protect your privacy. You can login again using this name to change your responses at any time. Choose  a cryptic name, like a secure password, to make it difficult for others to access or change your answers. 
+1. Log in using a pseudonym to protect your privacy. You can login again using this name to change your responses at any time. Choose  a cryptic name, like a secure password, to make it difficult for others to access or change your answers. (The system will generate a username for you, which you can use or change, as you prefer.)
 	    
 2. Read an introduction to the topic of the debate and select an issue of interest.
 		
@@ -29,16 +29,24 @@ This procedure is flexible and you are in control. You are the moderator of the 
 
 ## Question Types
 
-Two types of questions are asked during the poll. The questions are generated automatically by traversing, in a systematic way^[depth-first], the nodes of the argument graph. The first time you are asked for your opinion about some statement, you will be asked whether you 
+Three types of questions are asked during the poll. The questions are generated automatically by traversing, in a systematic way^[depth-first], the nodes of the argument graph. The first time you are asked for your opinion about some statement, you will be asked whether you 
 
 - agree with the statement
 - disagree with the statement
 - want to first see the arguments pro and con the statement before expressing an opinion, or finally
 - want to skip this issue and go on the next.
 
-If you first want to see the arguments before answering, and thus choose the third alternative, then the question will be put aside.  After you have seen the arguments, to the depth and level of detail you choose, you will be asked again for your opinion of the statement. This second time, however, the question is formulated somewhat differently. You will first be asked to weigh the arguments pro and con the statement which you have agreed are good  arguments, that is arguments whose premises, in your opinion, are true. You can easily adjust the relative weights of these arguments, using sliders, as shown in the figure. 
+![First Time Question About a Claim](figs/ofpt1.png)
 
-After you have weighed the arguments, on the same page, you will be asked whether you
+If you first want to see the arguments before answering, and thus choose the third alternative, then the question will be put aside and you will be shown questions about the arguments pro an con this statement. This second type of question shows you the argument, quoting the formulations of the argument in the source texts, and asks you whether you agree or disagree with its premsies.
+
+![Questions About the Premises of an Argument](figs/ofpt2.png)
+
+After you have seen the arguments, to the depth and level of detail you choose, you will be asked again for your opinion of the statement. This second time, however, the question is formulated somewhat differently. You will first be asked to weigh the arguments pro and con the statement which you have agreed are good  arguments, that is arguments whose premises, in your opinion, are true. You can easily adjust the relative weights of these arguments, using sliders, as shown in the figure. 
+
+![Second Time Question About a Claim](figs/ofpt3.png)
+
+After you have weighed the arguments, you will be asked, at the bottom of the same page, whether you
 
 - agree with the statement
 - disagree with the statement, or
@@ -50,9 +58,13 @@ Please be careful to take your own assessment of the relative weights of the pro
 
 To check or change your answers go to the "summary" page, by clicking on the "summary" menu item of the menu bar. 
 
-The summary page lists all the statements with which you have agreed or disagreed, showing your opinion.^[The statements you skipped, without expressing an opinion are not listed. *Not yet implemented: some way for the user to review and answer the skipped questions, including taking a tour of the arguments about the skipped questions.*]  To change your opinion about some statement, click on the "change" button next to the statement.  This will take you to a page summarizing the pro and con arguments you agree with about the statement and giving you an opportunity to adjust the weights of these arguments and change your opinion of the statement. Try to take care to make sure that your new opinion remains consistent with the relative weights you assign to the pro and con arguments. 
+![A Summary Page](figs/ofpt4.png)
 
-After you have changed your opinion, or cancelled the dialog, you will be returned to the summary page, where you can continue checking your other answers.  
+The summary page lists all the statements with which you have agreed or disagreed, showing your opinion.^[The statements you skipped, without expressing an opinion are not listed. *Not yet implemented: some way for the user to review and answer the skipped questions, including taking a tour of the arguments about the skipped questions.*]  To change your opinion about some statement, click on the "change" button next to the statement.  This will reveal, inline on the same page, a summary of the pro and con arguments you agree with about the statement and give you an opportunity to adjust the weights of these arguments and change your opinion of the statement. Try to take care to make sure that your new opinion remains consistent with the relative weights you assign to the pro and con arguments. 
+
+![Changing Your Answer](figs/ofpt5.png)
+
+After you have changed your opinion, or cancelled the dialog, the arguments will be folded away, out of view, and you can continue checking your other answers where you left off.  
 
 ## Comparing Your Opinions with Others
 
@@ -63,6 +75,8 @@ To compare your opinions with those expressed in the source documents used by th
 - Some in Common
 - Little in Common
 - Very Little in Common 
+
+(*to do: add a screen shot*)
 
 In each category, full references to the documents are provided (author, title, etc).  The title includes a hyperlink to the source of the document on the Web. You can click on the title to download and read the original document, to judge for yourself how much you agree or disagree with the opinions expressed in the document.   
 
