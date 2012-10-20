@@ -29,7 +29,7 @@ The "facts" page asks a series of questions to gather the facts of the case. The
 
 Be careful not to enter any information which would enable you or or another person to be identified. Do not use real names, but rather pseudonyms or artificial identiers, such a P1, for persons and organizations.
 
-After sufficient facts have been entered to apply the rules of the policies, you will be taken to the "analysis" page of the tool. (You can return to the facts page at any time to check or modify the facts of the case. *Not yet implemented.*) The analysis page displays the argument graph constructed when applying the rules of the policies to the facts entered for the case. The user interface is exactly the same as the one described in the chapter entitled ["Browsing, Visualizing and Evaluating Arguments"](#browsing-visualizing-and-evaluating-arguments). The only difference is the content of the argument graph being displayed. Here we are viewing arguments constructed by an inference engine when applying policy models to the facts of a case, rather than manual reconstructions by analysts of arguments in source documents. 
+After sufficient facts have been entered to apply the rules of the policies, you will be taken to the "analysis" page of the tool. (You can return to the facts page at any time to check or modify the facts of the case. (*Note: Not yet implemented.*) The analysis page displays the argument graph constructed when applying the rules of the policies to the facts entered for the case. The user interface is exactly the same as the one described in the chapter entitled ["Browsing, Visualizing and Evaluating Arguments"](#browsing-visualizing-and-evaluating-arguments). The only difference is the content of the argument graph being displayed. Here we are viewing arguments constructed by an inference engine when applying policy models to the facts of a case, rather than manual reconstructions by analysts of arguments in source documents. 
 
 ## Viewing the Arguments Constructed from the Policies
 
@@ -43,7 +43,7 @@ The next step is to select one or more policies to evaluate. Click on the "Polic
 
 ![Viewing the Policy Models](figs/pmt5.png)
 
-All of the proposed policies which have been modeled are displayed. These can be alternative policies under consideration in a policy deliberation process. Alongside the model of each policy, using a rule language, there is a natural language description of the policy, possibly quoting and linking to the text of some document in which the policy was proposed. The descriptions will be shown in your preferred language, which can be selected on the home page of the Carneades system (*not yet implemented*). The rules of the model are shown in an easy-to-read format, generated automatically from the source code of the model, not the source code itself.
+All of the proposed policies which have been modeled are displayed. These can be alternative policies under consideration in a policy deliberation process. Alongside the model of each policy, using a rule language, there is a natural language description of the policy, possibly quoting and linking to the text of some document in which the policy was proposed. The descriptions will be shown in your preferred language, which can be selected on the home page of the Carneades system (*Note: not yet implemented*). The rules of the model are shown in an easy-to-read format, generated automatically from the source code of the model, not the source code itself.
 
 ## Evaluating and Comparing Policies
 
@@ -55,7 +55,7 @@ To analyze the effects of other policies, go back to the policies page, by click
 
 ## Finding Policies with Desired Effects
 
-(*Not yet implemented.*)
+(*Note: Not yet implemented.*)
 
 Rather than manually trying out a number of policies, one at a time, it is possible to automatically search for the policies with the desired result in your case, as follows:
 
@@ -76,12 +76,12 @@ The URL to use for sharing cases is the URL of the argument graph view of the ca
 
 To share the case, paste this URL into an email, a blog or discussion forum article, or indeed anywhere else text can be entered.
 
-*Not yet implemented:* The case will be read-only, not modifiable, by other users. (The case is editable only during the session in which it was created.)  However, an editable copy of the case, with its own URL, can be created, as described in the next session.
+(*Note: Not yet implemented:*) The case will be read-only, not modifiable, by other users. (The case is editable only during the session in which it was created.)  However, an editable copy of the case, with its own URL, can be created, as described in the next session.
 
 
 ## Making Editable Copies of Shared Cases
 
-(*not yet implemented*)
+(*Note: not yet implemented*)
 
 To make it easier to create variations of test cases, without having to reenter the facts they have in common, it is possible to creating a copy and then edit the facts of this copy.  The copy will have its own URL, which can be shared with others on the Web, just like the original. The facts of the copy can be modified during the session in which the copy was created. 
 
@@ -94,7 +94,7 @@ You can now edit the facts of this copy during this session, and also share this
 
 ## Policy Opinion Polls
 
-(*Not yet implemented.*)
+(*Note: Not yet implemented.*)
 
 Opinions can differ of course about what the correct or best result is for a particular case. The policy analysis tool provides a way to poll users to gather their opinions about the claims of the case (its main issues in the argument graph). Any user can take part in the poll, not just the user who entered the facts of the case.  
 
@@ -116,7 +116,7 @@ Notice that users are not asked to directly express their preferences regarding 
 
 ## Generating Policy Reports
 
-(*Not yet implemented.*)
+(*Note: Not yet implemented.*)
 
 The policy analysis tool can generate a report ranking the policy proposals by the degree to which they achieve the results preferred by the majority of the users who took part in the poll. 
 

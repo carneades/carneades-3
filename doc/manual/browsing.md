@@ -27,7 +27,7 @@ An argument graph page consists of the following parts:
 
 - A *menu bar* of commands.  The commands shown depend on the role of the user.  Public users, who need not login to the system, are shown the commands "export" and "map", for exporting the argument graph to XML and viewing an argument map visualization of the graph, respectively. Analysts, who must login to the system with a password, are also shown "new statement" and "new argument" commands. Only analysts may modify the argument graph.
 
-- A *description* of the topic of the discussion modeled in the argument graph. The description may be available in several languages. The user interface provides a way to select and change your preferred language during the session (*not yet implemented*). The description can be arbitrarily long and include multiple sections, paragraphs, images, hyperlinks, lists and other content. 
+- A *description* of the topic of the discussion modeled in the argument graph. The description may be available in several languages. The user interface provides a way to select and change your preferred language during the session (*Note: not yet implemented*). The description can be arbitrarily long and include multiple sections, paragraphs, images, hyperlinks, lists and other content. 
 
 - A list of the *main issues* of the discussion.  Each item in the list is linked to a page providing detailed information about the statement in the argument graph at issue.
 
@@ -47,7 +47,7 @@ The top of the statement page displays the properties of the statement: its id, 
 
 The next section displays the *text* of the statement. This formulation of the statement is written by the analyst or analysts who reconstructed the arguments to build the argument graph. 
 
-If metadata had been provided for the statement, it would be displayed next. Descriptions may be entered, by analysts, in multiple languages. The description, if available, will be displayed using the language chosen by the user. If no description has been entered manually by analysts for the selected language of the user but a description is available in some other language, a translation service will be used to generate a description in the selected language (*not yet implemented*).  
+If metadata had been provided for the statement, it would be displayed next. Descriptions may be entered, by analysts, in multiple languages. The description, if available, will be displayed using the language chosen by the user. If no description has been entered manually by analysts for the selected language of the user but a description is available in some other language, a translation service will be used to generate a description in the selected language (*Note: not yet implemented*).  
 
 Finally, the statement pages lists pro and con arguments about the statement, i.e. arguments having this statement, or its negation, as a conclusion, as well as arguments which have this statement, or its negation, as a premise.  The premises of the pro and con arguments are also listed. This makes it possible to navigate to nearby arguments and statements in the argument graph, by simply clicking on the links in these lists.  Use the back button of your web browser to return to this statement page.
 
@@ -55,9 +55,9 @@ Finally, the statement pages lists pro and con arguments about the statement, i.
 
 ![An Argument Page](figs/argument1.png)
 
-Argument pages are quite similar to statement pages. The top of an argument page displays the properties of the argument: its id, the argumentation scheme applied (if any), whether it is a strict or defeasible argument, its weight and value. The argumentation scheme contains a hyperlink (*not yet implemented*). Click on the link to view a description of the scheme.
+Argument pages are quite similar to statement pages. The top of an argument page displays the properties of the argument: its id, the argumentation scheme applied (if any), whether it is a strict or defeasible argument, its weight and value. The argumentation scheme contains a hyperlink (*Note: not yet implemented*). Click on the link to view a description of the scheme.
 
-If metadata had been provided for the argument, it would be displayed next. Descriptions can include quotations of one or more source texts expressing the argument, along with hyperlinks to the sources on the Web. The description, if available, will be displayed using the language chosen by the user. If no description has been entered manually by analysts for the selected language of the user but a description is available in some other language, a translation service will be used to generate a description in the selected language (*not yet implemented*).  
+If metadata had been provided for the argument, it would be displayed next. Descriptions can include quotations of one or more source texts expressing the argument, along with hyperlinks to the sources on the Web. The description, if available, will be displayed using the language chosen by the user. If no description has been entered manually by analysts for the selected language of the user but a description is available in some other language, a translation service will be used to generate a description in the selected language (*Note: not yet implemented*).  
 
 Next, the premises of the argument are listed.  If available, the role of each premise in the argumentation scheme applied is shown (e.g. "major" or "minor"). The check boxes to the left of each premise are used to indicate whether the statement is current *in* (checked box, meaning presumably true), *out* (crossed out box, meaning presumably false) or neither (empty box, not enough information to presume either truth or falsity), given the arguments in the graph and the opinions of users from polls about the acceptability of statements and relative weights of pro and con arguments. 
 
@@ -81,7 +81,7 @@ Argument maps are represented using structured vector graphics (SVG) not bitmaps
 
 When argument graphs have been evaluated, the status of the argument and statement nodes is visualized in argument maps using both color and icons. Nodes which are "in" are filled with a green background and contain a checked box.  Nodes which are "out" are shown with a red background and contain a crossed box (a box filled with an X). Nodes which are neither in nor out are filled with white background color and contain an empty checkbox. The colors are redundant to accommodate black and white printing and color-blind users.
 
-Argument graphs may contain cycles. However, currently the algorithm used to layout the argument and statement nodes in the map is not able to handle cycles. *This limitation will be removed in a later version of the system.*
+Argument graphs may contain cycles. However, currently the algorithm used to layout the argument and statement nodes in the map is not able to handle cycles. (*Note: This limitation will be removed in a later version of the system.*)
 
 Argument graphs can be very large. Currently the *entire* argument graph is displayed in the argument maps. In the future only a partial view of the argument graph in maps will be shown, at least for larger graphs. The part of the graph shown will depend on the context. The map generated from the argument graph page of the argument graph will show the arguments and statements near the main issues of the map. The maps generated from statement and argument pages will show the part of the argument graph near the selected statement or argument. A method for scrolling the maps, to bring other parts of the graph into view, will be provided.
 
@@ -89,7 +89,7 @@ Argument graphs can be very large. Currently the *entire* argument graph is disp
 
 The argument graph page will provide access to a command for searching for arguments.
 
-**Not yet implemented**
+(*Note: Not yet implemented*)
 
 ## Evaluating Arguments
 
@@ -100,7 +100,7 @@ By argument "evaluation" we mean the process of critically assessing arguments b
 - asking appropriate critical questions, depending on the schemes applied
 - and determining which claims are acceptable, taking into consideration the assumptions of the users and their collective assessment of the relative weights of conflicting pro and con arguments.
 
-The first three of these tasks can be accomplished by comparing the argument with its argumentation scheme. On the argument page, click on the argumentation scheme to view a description of the scheme (*not yet implemented*). Most web browsers provide some way to open the link in a new tab, so that you can easily switch back and forth between the argument page and the description of the scheme. Now you can check whether any of the premises listed in the scheme are missing from the argument.  The argument is formally valid if all the premises of the scheme are explicitly provided by matching premises of the argument and the conclusion of the argument matches the conclusion of the scheme. 
+The first three of these tasks can be accomplished by comparing the argument with its argumentation scheme. On the argument page, click on the argumentation scheme to view a description of the scheme (*Note: not yet implemented*). Most web browsers provide some way to open the link in a new tab, so that you can easily switch back and forth between the argument page and the description of the scheme. Now you can check whether any of the premises listed in the scheme are missing from the argument.  The argument is formally valid if all the premises of the scheme are explicitly provided by matching premises of the argument and the conclusion of the argument matches the conclusion of the scheme. 
 
 Argumentation schemes define exceptions and assumptions which can be used to ask critical questions. The exceptions provide reasons for not applying the argument, undercutting it.  If an exception is true, this doesn't mean that the conclusion of the argument is false, but only that the argument does not provide a good reason to presume the conclusion to be true. The assumptions of the scheme are implicit premises which need to be proven only if they are called into question. So, if you think an assumption does not hold, you should consider making an issue of it using whatever channels are available for you for participating in the discussion. (The Carneades system does not provide this service. Its function is to provide a tool for summarising and understanding arguments, wherever they take place.)
 
@@ -118,10 +118,10 @@ If you do not agree with the result of the evaluation, there are at least three 
 
 The menu bar of the argument graph page and the statement and argument pages includes an "export" button. Click on this button to generate an XML file containing all the data and metadata in the argument graph, including quotations of and links to source documents.
 
-The XML files use a schema called the "Carneades Argument Format" (CAF), documented elsewhere.  *To do: write the CAF documentation*
+The XML files use a schema called the "Carneades Argument Format" (CAF), documented elsewhere.  (*Note: write the CAF documentation*)
 
 These XML files can be used to transfer argument graphs from one installation of the Carneades system to another, to merge argument graphs from several sources, to archive argument graphs, or to translate argument graphs into other formats, such as the [Argument Interchange Format](http://www.arg.dundee.ac.uk/aif) (AIF), or the generate reports or other kinds of visualisations..
 
 ## Generating Outlines
 
-**Not yet implemented**
+(*Note: Not yet implemented*)
