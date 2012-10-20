@@ -24,7 +24,7 @@ These are only roles. Some people may be able to use the system in more than one
 
 The rest of this manual is organized in the following chapters:
 
-- The Carneades Home Page
+- The Home Page
 - Argument Graphs
 - Browsing, Visualizing and Evaluating Arguments
 - Forming, Polling and Comparing Opinions
