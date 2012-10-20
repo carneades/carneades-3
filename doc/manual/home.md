@@ -1,6 +1,6 @@
-# The Carneades Home Page
+# The Home Page
 
-The Carneades home page provides an overview of the features and tools of the system along with the main menu for accessing these tools.  The main menu is always available, on every page of the Carneades system, to make it easy to navigate directly from one tool to another at any time.
+The home page provides an overview of the features and tools of the system along with the main menu for accessing these tools.  The main menu is always available, on every page of the Carneades system, to make it easy to navigate directly from one tool to another at any time.
 
 The items in the main menu are:
 
