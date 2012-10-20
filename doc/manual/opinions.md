@@ -60,7 +60,7 @@ To check or change your answers go to the "summary" page, by clicking on the "su
 
 ![A Summary Page](figs/ofpt4.png)
 
-The summary page lists all the statements with which you have agreed or disagreed, showing your opinion.^[The statements you skipped, without expressing an opinion are not listed. *Not yet implemented: some way for the user to review and answer the skipped questions, including taking a tour of the arguments about the skipped questions.*]  To change your opinion about some statement, click on the "change" button next to the statement.  This will reveal, inline on the same page, a summary of the pro and con arguments you agree with about the statement and give you an opportunity to adjust the weights of these arguments and change your opinion of the statement. Try to take care to make sure that your new opinion remains consistent with the relative weights you assign to the pro and con arguments. 
+The summary page lists all the statements with which you have agreed or disagreed, showing your opinion.^[The statements you skipped, without expressing an opinion are not listed. (*Note: Not yet implemented: some way for the user to review and answer the skipped questions, including taking a tour of the arguments about the skipped questions.*)]  To change your opinion about some statement, click on the "change" button next to the statement.  This will reveal, inline on the same page, a summary of the pro and con arguments you agree with about the statement and give you an opportunity to adjust the weights of these arguments and change your opinion of the statement. Try to take care to make sure that your new opinion remains consistent with the relative weights you assign to the pro and con arguments. 
 
 ![Changing Your Answer](figs/ofpt5.png)
 
@@ -76,7 +76,7 @@ To compare your opinions with those expressed in the source documents used by th
 - Little in Common
 - Very Little in Common 
 
-(*to do: add a screen shot*)
+(*Note: add a screen shot*)
 
 In each category, full references to the documents are provided (author, title, etc).  The title includes a hyperlink to the source of the document on the Web. You can click on the title to download and read the original document, to judge for yourself how much you agree or disagree with the opinions expressed in the document.   
 
