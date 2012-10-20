@@ -4,7 +4,7 @@ This chapter presents the argumentation schemes included in the distribution of 
 
 ## Argument from Position to Know
 
-*Include both Doug's version and Liverpool's "argument from credible source".*
+(*Note: Include both Doug's version and Liverpool's "argument from credible source".*)
 
 ## Argument from Witness Testimony
 ## Argument from Expert Opinion
@@ -20,7 +20,7 @@ This chapter presents the argumentation schemes included in the distribution of 
 ## Argument from Negative Consequences
 ## Argument from Practical Reasoning
 
-*Include both Doug's and Liverpool's versions.*
+(*Note: Include both Doug's and Liverpool's versions.*)
 
 ## Argument from Cause to Effect.
 ## Argument from Correlation to Cause
