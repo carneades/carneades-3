@@ -38,13 +38,13 @@ id
 :   A Uniform Resource Name (URN) serving as a unique identifier for the statement, world-wide.
 
 text
-:   A concise formulation of the statement, written by the analyst who reconstructed the arguments from the source documents. Paraphrases the various formulations of the statement in the sources.  Compare with the "description" property of the metadata of the statement, which can be used to quote some or all of the formulations of the statement in the sources and provide translations in several languages.
+:   A concise formulation of the statement, written by the analyst who reconstructed the arguments from the source documents. Paraphrases the various formulations of the statement in the sources. Translations of the text in several languages may be  included in the model. Compare with the "description" property of the metadata of the statement, which can be used to quote some or all of the formulations of the statement in the sources and provide translations in several languages.
 
 weight
 :   A real number in range of 0.0-1.0 representing the degree to which the statement is accepted as true by the users, where 0.0 means the statement is *rejected* (believed to be false by the users) and 1.0 means the statement is *accepted* (believed to be true). This information is collected via polls.
 
 proof standard
-:   The method used to combine pro and con arguments. Several proof standards are supported by the system. For most purposes, the "preponderance of the evidence" standard should suffice.
+:   The method used to combine pro and con arguments. Several proof standards are supported by the system. For most purposes, the "preponderance of the evidence" standard should suffice. See the [Editing Argument Graphs](#editing-argument-graphs) Chapter for details.
 
 value
 :   A real number in the range 0.0-1.0, storing the output of the argument evaluation process, where 0.0 means the statement is *out* (presumably false), 1.0 means the statement is *in* (presumably true) and all other values mean the arguments are insufficient for making any presumptions about the truth or falsity of the statement.
