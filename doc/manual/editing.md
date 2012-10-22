@@ -37,7 +37,7 @@ The form for entering new statements is shown when you click on the "New Stateme
 
 ![New Statement Form](figs/editor1.png)
 
-A new statement should not be entered into the argument graph if the negation of the statement is already in the argument graph.  That is, for every proposition P, a single statement node should be entered into the graph to represent *both* P and ¬P. It doesn't matter whether the positive or negative form of the statement is included explictly in the argument graph. Typically the positive form is used, but in some cases you may prefer the negative form.  For example, you may prefer to include the sentence "The payment was illegal" explicitly in the argument graph and then represent arguments pro the legality of the payment as argument con the claim the payment was illegal. The best choice may depend on the procedural context of the debate. 
+A new statement should not be entered into the argument graph if the negation of the statement is already in the argument graph.  That is, for every proposition $P$, a single statement node should be entered into the graph to represent *both* $P$ and $\neg P$. It doesn't matter whether the positive or negative form of the statement is included explictly in the argument graph. Typically the positive form is used, but in some cases you may prefer the negative form.  For example, you may prefer to include the sentence "The payment was illegal" explicitly in the argument graph and then represent arguments pro the legality of the payment as argument con the claim the payment was illegal. The best choice may depend on the procedural context of the debate. 
 
 Only one form of the statement is required, since arguments pro the negation of the statement are equivalent to arguments con the statement. And premises of arguments can be explicitly negated in argument graphs, and in the forms for entering and editing arguments. This approach has the advantage of reducing the number of statements in the graph up to 50%.
 
@@ -129,13 +129,11 @@ Either way you will now be viewing the statement page.  Click of the "Edit" butt
 
 ## Deleting Statements
 
-To delete a statement from an argument graph, first navigate to the statement, using either the hypertext view of the graph, beginning on the argument graph page, or the argument map. In the map view, click on the box containing the statement you want to edit.
+To delete a statement from an argument graph, first navigate to the statement, using either the hypertext view of the graph, beginning on the argument graph page, or the argument map. In the map view, click on the box containing the statement you want to delete.
 
 Either way you will now be viewing the statement page.  Click of the "Delete" button in the menu bar of the page.  You will be asked to confirm or cancel the deletion.  
 
-**Warning**: The deletion cannot be undone after it has been confirmed.
-
-**Warning:** Deleting a statement also deletes all arguments pro or con this statement, i.e. with this statement as the conclusion of the argument. The statements for the premises of these arguments are not deleted.
+**Warning**: The deletion cannot be undone after it has been confirmed. Deleting a statement also deletes all arguments pro or con this statement, i.e. with this statement as the conclusion of the argument. The statements for the premises of these arguments are not deleted.
 
 ## Entering New Arguments
 
@@ -210,10 +208,45 @@ You can additional premises or exception by clicking on the "Add a  premise" and
 
 ## Editing Arguments
 
-START HERE
+To edit an existing argument in an argument graph, first navigate to the argument, using either the hypertext view of the graph, beginning on the argument graph page, or the argument map. In the map view, click on the circle or rounded box containing the argument you want to edit.
+
+Either way you will now be viewing the argument page.  Click of the "Edit" button in the menu bar of the page.  This will reveal, on the same page, a form for modifying the argument.  This is the same form used to enter new arguments, described in the [Entering New Arguments](#entering-new-arguments) section of this chapter, but with the fields of the form filled in with the current values of the properties of the argument. After making changes, click on the "Save Argument" button at the bottom of the form, to have the changes stored in the argument graph database, or the "Cancel" button to abort the editing process and retain the prior values of the properties of the statement.
+
+**Warning**: The changes cannot be undone after saving them.
 
 ## Validating Arguments
+
+(*Note: not yet implemented*)
+
+By argument "validation" here we mean checking whether an argument correctly instantiates the argumentation scheme it has been assigned, if any. (The validation process does *not* check whether the premises or conclusion of the argument are true or acceptable.) The argument passes this validity test if it matches its scheme.  If it does not match the scheme, a report is displayed showing how the argument fails to match the scheme.
+
+Arguments can be validated at your choice of different levels of granularity. From the least to the most fine-grained, these levels are:
+
+1. The argument matches the scheme if and only if it has the same number of premises as the scheme, and these premises also have the same "role" labels. 
+2. In addition to the above test, the text of the statements in the conclusion and premises of the argument match the statements in the conclusion and premises of the scheme, for each natural language representation of the text in the argument.  The natural language templates defined in the scheme are used to test the matches, by trying to replace variables in the templates with substrings in the text of the statements in the argument.
+3. In addition to the above test, the atoms (predicate logic formulas) of the conclusion and premises of the argument match the atoms of the scheme.
+
+Exceptions in argumentation schemes are represented as undercutting arguments in argument graphs and are validated a bit differently. Each exception of an argumentation scheme is used to construct a separate undercutter argument, with a single premise matching the exception in the scheme. Thus, an undercutter is valid if its premise matches one of the exceptions of the scheme.
+
+Undercutters are not validating automatically when validating the argument they undercut.
+
+To validate an argument, go to the argument page and click on the "Validate" button in the menu bar. You will be asked to select the level of granularity to check. The command will then generate and display a validation report either confirming that the argument is valid or listing all the mismatches so that you can repair them using the [argument editing](#editing-arguments) tool.
+
+You can also validate all of the arguments in the argument graph, in one step, by going to the argument graph page and clicking on the "validate" button of its menu bar.
+
+
 ## Deleting Arguments
+
+To delete an argument from an argument graph, first navigate to the argument, using either the hypertext view of the graph, beginning on the argument graph page, or the argument map. In the map view, click on the circle or rounded box containing the argument you want to delete.
+
+Either way you will now be viewing the argument page.  Click of the "Delete" button in the menu bar of the page.  You will be asked to confirm or cancel the deletion.  
+
+Deleting an the argument does not delete the statements used in its conclusion, premises or exceptions.
+
+Any arguments undercutting this argument will also be deleted, since the conclusion of such an undercutter refers to this argument specifically and can serve no function once the argument has been deleted. 
+
+
+**Warning**: The deletion cannot be undone after it has been confirmed. 
 
 ## Using Polls to Weigh Statements and Arguments
 
@@ -223,7 +256,31 @@ To compute the weights of statements and arguments from the poll results, go to 
 
 ##  Evaluating Argument Graphs
 
-Computing Acceptability and Labeling
+The term "argument evaluation" has two different but related meanings in this manual.  The broader meaning, described in the [Evaluating Arguments](#evaluating-arguments) section of this manual, concerns the process of critically assessing the validity of arguments, by
+
+1. revealing implicit premises
+2. validating whether the arguments are formally correct, by instantiating accepted argumentation schemes
+3. asking appropriate critical questions, depending on the schemes applied
+4. and determining which claims are acceptable, taking into consideration the assumptions of the users and their collective assessment of the relative weights of conflicting pro and con arguments.
+
+The final step of this process, determining which claims are acceptable, is what we mean by argument evaluation in this section. Perhaps a better term for this narrower conception of argument evaluation, to avoid confusion, would be "argument labeling", since the result of this kind of argument evaluation is to label the statement and argument nodes of an argument graph as being "in", "out" or "undecided", where:
+
+in
+:   means the statement is *acceptable* (presumably true) or the argument is *applicable*, because all of its premises are in and it has not been undercut by an in argument.
+out
+:   means the negation of the statement is acceptable (i.e. the statement itself is presumably false) or the argument is not applicable.
+undecided
+:   means the statement or argument is neither in nor out.
+
+The latest verison of the Carneades computational model of argument labels statement and argument nodes in an argument graph by mapping the argument graph to a Dung abstract argumentation framework [@Dung1995], using the ASPIC+ model  of structured argument [@Prakken:2010a] in a way which preserves the features of the original version of Carneades, in particular its support for proof standards [@GordonPrakkenWalton:2007a]. Carneades uses grounded semantics for the resulting Dung argumentation framework, which is the most cautious (skeptical) semantics with regard to the claims it finds acceptable. 
+
+To have all the statements and arguments in the argument graph automatically labelled, using the Carneades computational model of argument, go to the argument graph page and click on the "Evaluate" button in the menu bar.  This will cause the argument graph to be labelled using the weights currently assigned to the statement and argument nodes.
+
+The labels are not updated automatically when changes are made to the argument graph.  So you will need to manually re-evaluate the argument graph whenever any changes are made which might affect the acceptability of some statement.  This includes not only changes to the weights of the statements and arguments, but also changes to the assigned proof standards and, the addition or deletion of any arguments. (Additional arguments, not only deletions, can cause the labels to change, since acceptability is a *nonmonotonic* inference relation.)
+
+To evaluate the arguments using the (latest) poll results to weight the statements and arguments, first update the weights by clicking on the "Weigh" button in the menu bar of the argument graph page, before executing the "Evaluate" command.  See the [Using Polls to Weigh Statements and Arguments](#using-polls-to-weigh-statements-and-arguments) section for further information.
+
+
 
 ## Importing XML
 
