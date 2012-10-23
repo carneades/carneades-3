@@ -179,7 +179,7 @@ exceptions to copyright?"}))
   (make-statement :text {:en "Question 9 is irrelevant"}))
 
 (def scanning-by-libraries-should-be-obligatory
-  (make-statement :text {:en "Public libraries have the right, indeed the responsibility, to publish digital copies of their collections for the purpose of preserving and distributing online the cultural heritage of Europe. [Atkionsbündnis, p. 6]"}))
+  (make-statement :text {:en "Public libraries have the right, indeed the responsibility, to publish digital copies of their collections for the purpose of preserving and distributing online the cultural heritage of Europe. [Aktionsbündnis, p. 6]"}))
 
 (def Q12
   (make-statement
@@ -336,7 +336,8 @@ The Action Alliance for Copyright in Education and Science formulated this argum
 
 Das Aktionsbündnis „Urheberrecht für Bildung und Wissenschaft“ in Deutschland hat die gleiche Argument so formuliert:
 
->Es ist für die immer schon grenzüberschreitend international arbeitende Wissenschaft hinderlich, wenn Ausnahmen, z.B. für die Nutzung urheberrechtsgeschützten Materials in international verteilten Arbeitsgruppen, in verschiedenen Ländern unterschiedlich geregelt sind. Eine für alle Mitgliedsländer verbindliche Ausgestaltung zentraler Ausnahmekategorien ist daher erwünscht. [@Aktionsbündnis, p. 5]" })
+>Es ist für die immer schon grenzüberschreitend international arbeitende Wissenschaft hinderlich, wenn Ausnahmen, z.B. für die Nutzung urheberrechtsgeschützten Materials in international verteilten Arbeitsgruppen, in verschiedenen Ländern unterschiedlich geregelt sind. Eine für alle Mitgliedsländer verbindliche Ausgestaltung zentraler Ausnahmekategorien ist daher erwünscht. [@Aktionsbündnis, p. 5]" }
+                  :source "Aktionsbündnis;Aston2008")
          :scheme "Practical Reasoning"
          :conclusion permitted-exceptions-should-be-harmonized 
          :premises [(make-premise :role "Goal" :statement easier-to-work-in-several-states),
@@ -366,7 +367,8 @@ State than harmonizing copyright exceptions."})
 (def a6 (make-argument
          :header (make-metadata :description {:en "The Association of European Research Libraries (LIBER), in response to Question 9 of the Green Paper, argues that, yes, the law should the law be clarified with respect to whether the scanning of works held in libraries for the purpose of making their content searchable on the Internet goes beyond the scope of current exceptions to copyright, as follows:
 
-> Not all the material digitised by publishers is scanned with OCR (Optical Character Recognition) with the purpose of making the resulting content searchable. If the rights holders will not do this, libraries should be able to offer this service. It would have a transformative effect on research, learning and teaching by opening up a mass of content to users which can be searched using search engines. The interests of copyright holders will not be harmed, because the resulting output will act as marketing material for their materials. [@LIBER, p. 3]"})
+> Not all the material digitised by publishers is scanned with OCR (Optical Character Recognition) with the purpose of making the resulting content searchable. If the rights holders will not do this, libraries should be able to offer this service. It would have a transformative effect on research, learning and teaching by opening up a mass of content to users which can be searched using search engines. The interests of copyright holders will not be harmed, because the resulting output will act as marketing material for their materials. [@LIBER, p. 3]"}
+                                :source "LIBER")
          :conclusion Q9-LIBER-Proposal
          :scheme "Practical Reasoning"                                     
          :premises [(make-premise :role "Circumstances" :statement (make-statement :text {:en "Not all the material digitised by publishers is scanned with OCR (Optical Character Recognition) with the purpose of making the resulting content searchable."}))
@@ -382,7 +384,8 @@ State than harmonizing copyright exceptions."})
 (def a8 (make-argument
          :header (make-metadata :description {:en "The Association of European Research Libraries (LIBER), in response to Question 24 of the Green Paper, argues that, no, the rules regarding what acts end users can or cannot do when making use of materials protected by copyright should not be made more precise:
 
-> The essence of copyright legislation is the maintenance of a balance between the rights of the rights holders and the legitimate needs of users.The introduction of more restrictions will blur this distinction and make it more difficult for users of copyright material in their legitimate pursuits in teaching, learning and research in the European Community. [@LIBER, p. 5]"})
+> The essence of copyright legislation is the maintenance of a balance between the rights of the rights holders and the legitimate needs of users.The introduction of more restrictions will blur this distinction and make it more difficult for users of copyright material in their legitimate pursuits in teaching, learning and research in the European Community. [@LIBER, p. 5]"}
+                                :source "LIBER")
          :conclusion Q24-LIBER-Proposal
          :scheme "Practical Reasoning"
          :premises [(make-premise :role "Circumstances" :statement (make-statement :text {:en "The essence of copyright legislation is the maintenance of a balance between the rights of the rights holders and the legitimate needs of users."}))
@@ -396,8 +399,9 @@ State than harmonizing copyright exceptions."})
          :premises [(pm Q9-is-irrelevant)]))
 
 (def a10 (make-argument
-          :header (make-metadata :description {:en "Question 9 is irrelevant if, as proposed by the Action Alliance in Germany, public libraries have the right, indeed the responsibility, to publish digital copies of their collections for the purpose of preserving and distributing online the cultural heritage of Europe. [Atkionsbündnis, p. 6]"
-                                               :de "> Ein weiterer Klärungsbedarf, bei Sicherung der unter (6) und (7) generellen Forderung einer informationellen Grundversorgung mit den ursprünglichen Werken, wird nicht gesehen. Das Einscannen ganzer Bibliotheksbestände und deren öffentliche Bereitstellung sollten dann selbstverständlich sein. [Atkionsbündnis, p. 6]"})
+          :header (make-metadata :description {:en "Question 9 is irrelevant if, as proposed by the Action Alliance in Germany, public libraries have the right, indeed the responsibility, to publish digital copies of their collections for the purpose of preserving and distributing online the cultural heritage of Europe. [Aktionsbündnis, p. 6]"
+                                               :de "> Ein weiterer Klärungsbedarf, bei Sicherung der unter (6) und (7) generellen Forderung einer informationellen Grundversorgung mit den ursprünglichen Werken, wird nicht gesehen. Das Einscannen ganzer Bibliotheksbestände und deren öffentliche Bereitstellung sollten dann selbstverständlich sein. [Aktionsbündnis, p. 6]"}
+                                 :source "Aktionsbündnis")
           :conclusion Q9-is-irrelevant
           :premises [(pm scanning-by-libraries-should-be-obligatory)]))
 
@@ -416,8 +420,8 @@ State than harmonizing copyright exceptions."})
 (def a13 (make-argument
           :header (make-metadata :description {:en "The Software & Information Industry Association (SIIA) opposes making certain categories of copyright exceptions mandatory:
 
-> In sum, we are of the strong belief that government involvement in licensing, whether it be through guidelines or model agreements or through legislative mandates, would hinder innovation and dissemination.  Accordingly, we do not believe that such government involvement is not appropriate.
-[@SIIA, pp. 3-4]"})
+> In sum, we are of the strong belief that government involvement in licensing, whether it be through guidelines or model agreements or through legislative mandates, would hinder innovation and dissemination.  Accordingly, we do not believe that such government involvement is not appropriate. [@SIIA, pp. 3-4]"}
+                                 :source "SIIA")
           :scheme "Negative Practical Reasoning"
           :conclusion  (neg permitted-exceptions-should-be-harmonized)
           :premises [(make-premise :role "Goal" :statement preserving-freedom-of-contract),
@@ -439,7 +443,8 @@ the authorization of the copyright owner.  As a result, any public or private in
 entire collections of works must require that the copyright owner opt-in, rather than putting the 
 onus on the copyright owner to opt-out of the initiative.  We do not believe that there needs to be 
 any further clarification in the law in this area.  To the best of our knowledge no court has ever 
-held that such large-scale scanning activities are not prohibited under copyright law. [@SIIA, p. 7]"})
+held that such large-scale scanning activities are not prohibited under copyright law. [@SIIA, p. 7]"}
+                                 :source "SIIA")
           :scheme "Argument from Ignorance"
           :conclusion  (neg Q9-LIBER-Proposal)
           :premises [(pm we-would-know-if-the-scanning-rules-were-unclear)
@@ -456,7 +461,8 @@ the problem of orphan works should be a stand-alone instrument."})
           :header (make-metadata :description {:en "The Software and Information Industry Association expressed this argument as follows:
 
 > Because the 2001 Copyright Directive relates to rights and exceptions, but not remedies, it would be inappropriate for the 
-Directive to be amended to include a provision relating to orphan works. [@SIIA, p. 9]"})
+Directive to be amended to include a provision relating to orphan works. [@SIIA, p. 9]"}
+                                 :source "SIIA")
           :conclusion Q12-SIIA-Proposal
           :scheme "Practical Reasoning"
           :premises [(make-premise :role "Circumstances" :statement directive-relates-to-right-and-exceptions)
@@ -479,7 +485,8 @@ It’s easy and inexpensive.  While this presents great new possibilities, it al
 challenges and risks for copyright owners.  Governments and educators need to do a better job
 educating the public on what they can and cannot do with copyrighted works.  The public needs to better understand the purpose and goals of the copyright law and the sanctions for violating it.
 In short, the rules of the road do not need to be changed, the people who drive on the road
-need to better understand the rules. [@SIIA, pp. 15-16.]"})
+need to better understand the rules. [@SIIA, pp. 15-16.]"}
+                                :source "SIIA")
          :scheme "Position"
          :conclusion Q24
          :premises [(pm Q24-SIIA-Proposal)]))
@@ -496,8 +503,3 @@ need to better understand the rules. [@SIIA, pp. 15-16.]"})
      "pw1" 
      (make-metadata))
     (import-from-argument-graph db copyright1 true)))
-
-
-
-
-
