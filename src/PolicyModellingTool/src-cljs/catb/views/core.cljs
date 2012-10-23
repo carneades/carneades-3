@@ -21,8 +21,8 @@
 
 (defn get-arg
   "Returns the argument model."
-  [arguments id]
-  (.get arguments id))
+  [args id]
+  (.get args id))
 
 (defn agreed?
   "Returns true if the claim was agreed."
@@ -61,22 +61,22 @@
 
 (defn pro-answered
   "Returns the pro answered arguments"
-  [claim arguments argument-votes]
-  (map (comp json (partial get-arg arguments))
+  [claim args argument-votes]
+  (map (comp json (partial get-arg args))
        (filter (fn [id] (argument-votes id)) (.-pro claim))))
 
 (defn con-answered
-  "Returns the con answered arguments"
-  [claim arguments argument-votes]
-  (map (comp json (partial get-arg arguments))
+  "Returns the con answered args"
+  [claim args argument-votes]
+  (map (comp json (partial get-arg args))
        (filter (fn [id] (argument-votes id)) (.-con claim))))
 
 (defn prepare-arguments
   "Prepares the arguments of a claim being edited"
-  [claim arguments argument-votes]
-  (let [;; keep only arguments that have been answered
-        pro_answered (pro-answered claim arguments argument-votes)
-        con_answered (con-answered claim arguments argument-votes)]
+  [claim args argument-votes]
+  (let [;; keep only args that have been answered
+        pro_answered (pro-answered claim args argument-votes)
+        con_answered (con-answered claim args argument-votes)]
     (doseq [arg (concat pro_answered con_answered)]
       (prepare-argument arg))
     (aset claim "has_pro_answered" (pos? (count pro_answered)))

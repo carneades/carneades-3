@@ -17,8 +17,8 @@
 ;;     (coll? x) (apply array (map clj->js x))
 ;;     :else x))
 
-(defn log
-  [stuff & more]
-  (.log js/console stuff)
-  (doseq [x more]
-    (.log js/console x)))
+;; (defn log
+;;   [stuff & more]
+;;   (.log js/console stuff)
+;;   (doseq [x more]
+;;     (.log js/console x)))
