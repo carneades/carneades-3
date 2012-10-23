@@ -72,3 +72,21 @@ PM.display_sct_summary = function() {
     $('#pm').html(sct_summary.$el);
     
 };
+
+PM.sct_comparison_url = function() {
+    return '/sct/comparison';
+};
+
+PM.set_sct_comparison_url = function() {
+  $.address.value(PM.sct_comparison_url());
+};
+
+PM.display_sct_comparison = function() {
+    var sct_comparison = new catb.views.sct.comparison.Comparison(
+        {model: PM.sct});
+
+    sct_comparison.render();
+    $('#pm').html(sct_comparison.$el);
+    
+};
+

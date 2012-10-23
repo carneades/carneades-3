@@ -19,7 +19,8 @@
 
 (bb/defview Summary
   :className "sct-summary"
-  :events {"click .change-score" :edit-claim}
+  :events {"click .change-score" :edit-claim
+           "click .compare" :jump-to-comparison}
   :render
   ([]
      (bb/with-attrs [:statements]
@@ -30,6 +31,10 @@
              claims (map (partial prepare-claim votes) claims)]
          (template this :sct-summary {:claims claims})
          (assign-claim-ids this claims))))
+
+  :jump-to-comparison
+  ([]
+     (js/PM.set_sct_comparison_url))
   
   :edit-claim
   ([event]
