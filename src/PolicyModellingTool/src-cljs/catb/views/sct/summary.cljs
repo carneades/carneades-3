@@ -1,6 +1,6 @@
 (ns catb.views.sct.summary
-  (:use [catb.views.core :only [template json get-stmt get-arg
-                                prepare-claim]]
+  (:use [catb.views.core :only [template json prepare-claim]]
+        [catb.models.core :only [get-stmt]]
         [jayq.core :only [$ css inner attr val]]
         [jayq.util :only [log clj->js]])
   (:require [catb.backbone.core :as bb]

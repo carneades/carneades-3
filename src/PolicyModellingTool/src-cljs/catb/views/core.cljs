@@ -1,5 +1,6 @@
 (ns catb.views.core
-  (:use [jayq.util :only [log clj->js]])
+  (:use [jayq.util :only [log clj->js]]
+        [catb.models.core :only [get-stmt get-arg]])
   (:require [catb.backbone.core :as bb]
             [catb.template :as tp]))
 
@@ -13,16 +14,6 @@
   "Returns the JSON content of a model."
   [model]
   (.toJSON model))
-
-(defn get-stmt
-  "Returns the statement model."
-  [statements id]
-  (.get statements id))
-
-(defn get-arg
-  "Returns the argument model."
-  [args id]
-  (.get args id))
 
 (defn score-agreed?
   [score]
