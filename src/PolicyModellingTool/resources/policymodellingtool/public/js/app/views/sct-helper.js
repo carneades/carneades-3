@@ -83,7 +83,7 @@ PM.set_sct_comparison_url = function() {
 
 PM.display_sct_comparison = function() {
     var sct_comparison = new catb.views.sct.comparison.Comparison(
-        {model: PM.sct});
+        {model: PM.sct}); 
 
     sct_comparison.render();
     $('#pm').html(sct_comparison.$el);
