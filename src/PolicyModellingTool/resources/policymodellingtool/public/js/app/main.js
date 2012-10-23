@@ -208,9 +208,11 @@ PM.common_post_load = function() {
     
     PM.debate_arguments = new PM.Arguments({db: IMPACT.debate_db});
     PM.debate_statements = new PM.Statements({db: IMPACT.debate_db});
+    PM.debate_metadata = new PM.MetadataList({db: IMPACT.debate_db});
     
     PM.debate_arguments.fetch();
     PM.debate_statements.fetch();
+    PM.debate_metadata.fetch();
     
     PM.debate_info = new PM.AgInfo({db: IMPACT.debate_db});
     PM.debate_info.fetch();
