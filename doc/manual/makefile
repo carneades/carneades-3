@@ -12,7 +12,6 @@ all: manual.pdf manual.epub manual.docx manual.html
 manual.pdf: manual.md
 	gpp $(g) manual.md | \
         pandoc --bibliography $(bib) \
-               --latex-engine=lualatex \
                --toc -N -s -o $(out)/manual.pdf
 
 manual.epub: manual.md
