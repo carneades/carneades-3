@@ -78,6 +78,8 @@ PM.dispatch_sct_url = function(section_name) {
         PM.display_sct_question();
     } else if(section_name == "summary") {
         PM.display_sct_summary();
+    } else if(section_name == "comparison") {
+        PM.display_sct_comparison();
     }
 };
 
@@ -419,7 +421,8 @@ PM.load_templates = function(toolboxState) {
             'sct-claim',
             'sct-argument',
             'sct_summary',
-            'sct_claim_editor'
+            'sct_claim_editor',
+            'sct_comparison'
            ],
            function(name) {
                var url = toolboxState == undefined ?
