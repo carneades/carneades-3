@@ -24,12 +24,16 @@
   [args id]
   (.get args id))
 
+(defn score-agreed?
+  [score]
+  (> score 0.99))
+
 (defn agreed?
   "Returns true if the claim was agreed."
   [claim votes]
   (let [vote (votes (.-id claim))]
     (and (not (nil? vote))
-         (> vote 0.99))))
+         (score-agreed? vote))))
 
 (defn disagreed?
   "Returns true if the claim was disagreed."
