@@ -53,8 +53,10 @@
                  (js/alert \"hello\")))"
   [name & body]
   (let [hashed-body (apply hash-map body)
-        hashed-body (update-in hashed-body [:events]
-                               events-handlers-names->js)
+        hashed-body (if (contains? hashed-body :events)
+                      (update-in hashed-body [:events]
+                                 events-handlers-names->js)
+                      hashed-body)
         objectified (js-objectify hashed-body)
         fnified (add-fn-this-as objectified)]
    `(def ~name
