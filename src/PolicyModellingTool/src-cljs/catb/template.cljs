@@ -1,3 +1,4 @@
+;; TODO this should be moved the views directory
 (ns catb.template
   (:use [jayq.util :only [log clj->js]])
   (:require [catb.icanhaz.core :as ich])
