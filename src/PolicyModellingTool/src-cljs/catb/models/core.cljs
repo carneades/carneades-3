@@ -13,6 +13,13 @@
   [args id]
   (.get args id))
 
+(defn get-metadata
+  "Returns the metadata model for a given key"
+  [md k]
+  (first (filter (fn [m]
+                   (= (.-key m) k))
+                 (.toJSON md))))
+
 (defn- update-statements
   "Adds all the ids to the statements indexed by the sources."
   [m sources ids]
