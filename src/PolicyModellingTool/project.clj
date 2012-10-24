@@ -79,5 +79,7 @@
        :compiler {:output-to "resources/private/js/unit-test.js"
                   :optimizations :whitespace
                   :pretty-print true}}}}
-  :ring {:handler impact.web.routes-dev/impact-app})
+  :ring {:handler impact.web.routes-dev}
+  :main ;;^{:skip-aot true}
+  impact.web.routes-dev)
 
