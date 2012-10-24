@@ -3,7 +3,8 @@
 This chapter presents a number of application scenarios illustrating *some* ways the Carneades argumentation system can be used in practice to:
 
 - improve the quality, efficiency, inclusiveness and transparency of democratic public policy deliberations,
-- improve the efficiency and correctness of claims processing procedures both in public administration and the private sector, for example with regard to social benefits or insurance claims.
+- improve the efficiency and correctness of claims processing procedures both in public administration and the private sector, for example with regard to social benefits or insurance claims,
+- help companies to comply with regulations,
 - better manage complex legal cases in law firms, by creating maps of relationships between claims, legal arguments, case and statute citations, and testimonial and documentary evidence, and
 - facilitate the learning of critical thinking and analysis skills, particularly in law, philosophy, religion and other humanities fields, where competing theories are constructed by interpreting texts.
 
@@ -25,10 +26,16 @@ Imagine the following application scenario, which uses Carneades to support  wid
 8. After sufficient time has passed to allow for an in-depth discussion of the issues and the reconstruction of the arguments in an argument graph, the opinion formation and polling tool of Carneades is use to obtain informed feedback from citizens about their opinions of the claims and arguments. The questions asked in the poll are generated automatically from the argument graph. Several polls can be conducted, at regular intervals, depending on the duration of the offical EU procedure for the public deliberation of the Green Paper.
 9. At the end of the discussion period, the EU analysts use Carneades to generate an outline of the results of the deliberation which can be processed further using word processing software.
 
- 
-
 
 ## Claims Processing
+
+Every day, large public agencies and companies, for example in the banking and insurance industries, process thousands of transactions requiring the correct application of laws, regulations, court decisions, and internal policies to decide claims and justify these decisions. 
+
+The bureaucracy costs of processing these claims is enormous. When  decisions are incorrect or insufficiently transparent, further unnecessary and potentially high costs can be incurred due to long appeal processes and possibly court proceedings.
+
+START HERE
+
+## Regulatory Compliance
 
 ## Legal Case Management
 
