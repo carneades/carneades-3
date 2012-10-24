@@ -14,18 +14,13 @@
   (.get args id))
 
 (defn- update-statements
-  "Adds all the id of the premises to the statements
-indexed by the sources" ;; TODO: add conclusions
-  [m sources premises]
-  (let [ids (set (map (fn [p] (.-id (.-statement p))) premises))]
-    (reduce (fn [m source]
-              (if (contains? m source)
-                (update-in m [source]
-                           set/union
-                           ids)
-                (assoc m source ids)))
-            m
-            (js->clj sources))))
+  "Adds all the ids to the statements indexed by the sources."
+  [m sources ids]
+  (reduce (fn [m source]
+            (let [v (get m source #{})]
+             (assoc m source (set/union v ids))))
+          m
+          (js->clj sources)))
 
 (defn statements-by-sources
   "Index all the statements by their sources.
@@ -36,31 +31,26 @@ indexed by the sources" ;; TODO: add conclusions
   (reduce (fn [m arg]
             (if (and (.-header arg) (.-source (.-header arg)))
               (let [sources (.-source (.-header arg))
-                    premises (.-premises arg)]
-                (update-statements m sources premises))
+                    premises (.-premises arg)
+                    conclusion (.-conclusion arg)
+                    conclusion-id (.-id conclusion)
+                    premises-ids (set (map (fn [p] (.-id (.-statement p))) premises))
+                    ids (if (.-pro arg)
+                          (conj premises-ids conclusion-id)
+                          premises-ids)]
+                (update-statements m sources ids))
               m))
           {} args))
 
 (defn sources-by-similarity
-  "Index all sources by similarity.
+  "Indexes all sources by similarity.
 Returns a map similarity-score -> (set-of source)
 statements is map source -> (set-of statements-ids)
 accepted is the set of the accepted statements' ids"
   [statements accepted]
-  (reduce (fn [index [source ids]]
-            (log "ids")
-            (log (clj->js ids))
-            (log "accepted")
-            (log (clj->js accepted))
-            (let [v (similarity/value accepted ids)]
-              (log "value for")
-              (log source)
-              (log "is")
-              (log v)
-              (if (contains? index v)
-                (update-in index [v] conj source)
-                (assoc index v [source]))))
-             {} statements))
+  (group-by (fn [source]
+              (similarity/value accepted (statements source)))
+            (keys statements)))
 
 (defn arguments-for-statement
   "Returns all descendant arguments models for a given JSON statement
