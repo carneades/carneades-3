@@ -72,14 +72,6 @@
                              as instances of class %s?")})
 
     (make-predicate
-     :symbol 'has-conclusion
-     :arity 2
-     :forms {:en (make-form
-                  :positive "Rule %s has conclusion %s."
-                  :negative "Rule %s does not have conclusion %s."
-                  :question "Does rule %s have conclusion %s?")})
-
-    (make-predicate
      :symbol 'correlated
      :arity 2
      :forms {:en (make-form
@@ -87,13 +79,6 @@
                   :negative "Events %s and %s are not correlated."
                   :question "Are events %s and %s correlated?")})
 
-    (make-predicate
-     :symbol 'sunk-costs
-     :arity 2
-     :forms {:en (make-form
-                  :positive "The costs incurred performing %s thus far are %s."
-                  :negative "The costs incurred performing %s thus far are not %s."
-                  :question "Are the costs incurred performing %s thus far %s?")})
 
     (make-predicate
      :symbol 'defeasibly-implies
@@ -129,11 +114,11 @@
 
     (make-predicate
      :symbol 'explanatory-theory
-     :arity 3
+     :arity 2
      :forms {:en (make-form
-                  :positive "%s is a theory explaining how event %s causes event %s."
-                  :negative "%s is not a theory explaining how event %s causes event %s."
-                  :question "Is %s an explanatory theory explaining how event %s causes event %s?")})
+                  :positive "There exists a theory explaining how event %s causes event %s."
+                  :negative "There is no theory explaining how event %s causes event %s."
+                  :question "Is there a theory explaining how event %s causes event %s?")})
 
     (make-predicate
      :symbol 'feasible
@@ -142,6 +127,14 @@
                   :positive "It is feasible to perform the action %s."
                   :negative "It is not feasible to perform the action %s."
                   :question "Is it feasible to perform the action %s?")})
+
+     (make-predicate
+     :symbol 'has-conclusion
+     :arity 2
+     :forms {:en (make-form
+                  :positive "Rule %s has conclusion %s."
+                  :negative "Rule %s does not have conclusion %s."
+                  :question "Does rule %s have conclusion %s?")})
 
     (make-predicate
      :symbol 'has-occurred
@@ -174,6 +167,14 @@
                   :positive "%s is an inadequate definition of %s."
                   :negative "%s is not an inadequate definition of %s."
                   :question "Is %s an inadequate definition of %s?")})
+
+     (make-predicate
+     :symbol 'inapplicable-rule
+     :arity 1
+     :forms {:en (make-form
+                  :positive "Rule %s is inapplicable in this case."
+                  :negative "Rule %s is not an inapplicable in this case.."
+                  :question "Is rule %s inapplicable in this case?")})
     
     (make-predicate
      :symbol 'inconsistent-with-facts
@@ -324,12 +325,28 @@
                   :question "Are there relevant differences between case %s and the current case?")})
 
     (make-predicate
+     :symbol 'rule-of-case
+     :arity 2
+     :forms {:en (make-form
+                  :positive "Rule %s is the ratio decidendi of case %s."
+                  :negative "Rule %s is not the ratio decidendi of case %s."
+                  :question "Is rule %s the ratio decidendi of case %s?")})
+
+    (make-predicate
      :symbol 'satisfies-definition
      :arity 2
      :forms {:en (make-form
                   :positive "%s satisfies definition %s."
                   :negative "%s does not satisfy definition %s."
                   :question "Does %s satisfy definition %s?")})
+
+     (make-predicate
+     :symbol 'should-be-performed
+     :arity 1
+     :forms {:en (make-form
+                  :positive "Action %s should be performed."
+                  :negative "Action %s should not be performed."
+                  :question "Should action %s be performed?")})
     
     (make-predicate
      :symbol 'similar-case
@@ -346,6 +363,15 @@
                   :positive "%s is a subclass of %s."
                   :negative "%s is not a subclass of %s."
                   :question "Is %s a subclass of %s?")})
+
+    
+    (make-predicate
+     :symbol 'sunk-costs
+     :arity 2
+     :forms {:en (make-form
+                  :positive "The costs incurred performing %s thus far are %s."
+                  :negative "The costs incurred performing %s thus far are not %s."
+                  :question "Are the costs incurred performing %s thus far %s?")})
 
     (make-predicate
      :symbol 'too-high-to-waste
@@ -367,9 +393,9 @@
      :symbol 'uninvestigated
      :arity 1
      :forms {:en (make-form
-                  :positive "The truth of the statement %s has been investigated."
-                  :negative "The truth of the statement %s has not been investigated."
-                  :question "Has the truth of the statement %s been investigated?")})
+                  :positive "The truth of  %s has been investigated."
+                  :negative "The truth of %s has not been investigated."
+                  :question "Has the truth of %s been investigated?")})
     
     (make-predicate
      :symbol 'untrustworthy
@@ -386,6 +412,14 @@
                   :positive "Rule %s is valid."
                   :negative "Rule %s is not valid."
                   :question "Is rule %s valid?")})
+
+     (make-predicate
+     :symbol 'will-occur
+     :arity 1
+     :forms {:en (make-form
+                  :positive "An event %s will occur."
+                  :negative "An event %s will not occur."
+                  :question "Will the event %s occur?")})
 
     (make-predicate
      :symbol 'worthy-goal
@@ -477,6 +511,9 @@ Douglas Walton, Witness Testimony Evidence, unpublished book manuscript, to appe
                  :role "minor"
                  :statement '(asserts ?W ?A))]
      ;; Critical Questions
+     :assumptions [(make-premise
+                    :role "CQ1"
+                    :statement '(internally-consistent ?A))]
      :exceptions [(make-premise
                    :role "CQ2"
                    :statement '(inconsistent-with-facts ?A))
@@ -488,10 +525,7 @@ Douglas Walton, Witness Testimony Evidence, unpublished book manuscript, to appe
                    :statement '(biased ?W))
                   (make-premise
                    :role "CQ5"
-                   :statement '(implausible ?A))]
-     :assumptions [(make-premise
-                    :role "CQ1"
-                    :statement '(internally-consistent ?A))])
+                   :statement '(implausible ?A))])
 
     (make-scheme
      :id 'expert-opinion
@@ -511,13 +545,13 @@ Douglas Walton, Appeal to Expert Opinion, The Pennsylvania University Press, Uni
                  :statement '(asserts ?E ?A))]
      ;; Critical Questions
      :exceptions [(make-premise
-                   :role "CQ4"
+                   :role "CQ1"
                    :statement '(untrustworthy ?E))
                   (make-premise
-                   :role "CQ5"
+                   :role "CQ2"
                    :statement '(inconsistent-with-other-experts ?A))]
      :assumptions [(make-premise
-                    :role "CQ6"
+                    :role "CQ3"
                     :statement '(based-on-evidence ?A))])
 
     (make-scheme
@@ -554,16 +588,16 @@ Douglas Walton, Appeal to Expert Opinion, The Pennsylvania University Press, Uni
                  :statement '(similar-case ?C1))
                 (make-premise 
                  :role "ratio"
-                 :statement '(rule-of-case ?C1 ?R))
+                 :statement '(rule-of-case ?R ?C1))
                 (make-premise
                  :role "conclusion"
                  :statement '(has-conclusion ?R ?S))]
      ;; Critical Questions
      :exceptions [(make-premise
-                   :role "CQ2"
+                   :role "CQ1"
                    :statement '(relevant-differences ?C1))
                   (make-premise
-                   :role "CQ3"
+                   :role "CQ2"
                    :statement '(inapplicable-rule ?R))])
 
     (make-scheme
@@ -604,7 +638,7 @@ Douglas Walton, Appeal to Expert Opinion, The Pennsylvania University Press, Uni
                 (make-premise
                  :role "minor"
                  :statement '?A)])
-
+    
     (make-scheme
      :id 'established-rule
      :header (make-metadata
@@ -618,24 +652,24 @@ Douglas Walton, Appeal to Expert Opinion, The Pennsylvania University Press, Uni
                  :role "minor"
                  :statement '(applicable ?R))]
      :assumptions [(make-premise
-                    :role "validity"
+                    :role "CQ1"
                     :statement '(valid ?R))])
     
-    (make-scheme
-     :id 'value-promotion
-     :header (make-metadata :title "Argument from Value Promotion")
-     :conclusion '(worthy-goal ?G)
-     :premises [(make-premise
-                 :role "major"
-                 :statement '(would-promote-value ?G ?V))])
+    ;; (make-scheme
+    ;;  :id 'value-promotion
+    ;;  :header (make-metadata :title "Argument from Value Promotion")
+    ;;  :conclusion '(worthy-goal ?G)
+    ;;  :premises [(make-premise
+    ;;              :role "major"
+    ;;              :statement '(would-promote-value ?G ?V))])
 
-    (make-scheme
-     :id 'value-demotion
-     :header (make-metadata :title "Argument from Value Demotion")
-     :conclusion '(not (worthy-goal ?G))
-     :premises [(make-premise
-                 :role "major"
-                 :statement '(would-demote-value ?G ?V))])
+    ;; (make-scheme
+    ;;  :id 'value-demotion
+    ;;  :header (make-metadata :title "Argument from Value Demotion")
+    ;;  :conclusion '(not (worthy-goal ?G))
+    ;;  :premises [(make-premise
+    ;;              :role "major"
+    ;;              :statement '(would-demote-value ?G ?V))])
 
     (make-scheme
      :id 'positive-consequences
@@ -699,12 +733,12 @@ Douglas Walton, Fundamentals of Critical Argumentation, Cambridge University Pre
      :premises [(make-premise
                  :role "major"
                  :statement '(correlated ?E1 ?E2))]
-     :exceptions [(make-premise
-                   :role "CQ3"
-                   :statement '(causes ?E3 (and ?E1 E2)))]
      :assumptions [(make-premise
-                    :role "CQ2"
-                    :statement '(explanatory-theory ?T ?E1 ?E2))])
+                    :role "CQ1"
+                    :statement '(explanatory-theory ?T ?E1 ?E2))]
+     :exceptions [(make-premise
+                   :role "CQ2"
+                   :statement '(causes ?E3 (and ?E1 E2)))])
 
     (make-scheme
      :id 'sunk-costs 
@@ -782,44 +816,32 @@ Douglas Walton, A Pragmatic Theory of Fallacy, The University of Alabama Press, 
     ;; to do: add negative version of ethotic arguments, for untrustworthy pesrons
 
     (make-scheme
-     :id 'slippery-slope
+     :id 'slippery-slope-base-case
      :header (make-metadata
               :title "Slippery Slope Argument"
               :source "Douglas Walton, Slippery Slope Arguments, Vale Press, Newport News, 1999, pp. 93, 95.
 Douglas Walton, Fundamentals of Critical Argumentation, Cambridge University Press, New York 2006, pp. 107, 110.")
-     :conclusion '(not (should-be-performed ?A))
+     :conclusion '(negative-consequences ?A)
      :premises [(make-premise
                  :role "realization"
-                 :statement '(would-realize ?A ?E1))
+                 :statement '(would-realize ?A ?E))
                 (make-premise
-                 :role "causality"
+                 :role "horrible costs"
+                 :statement '(horrible-costs ?E))])
+
+    (make-scheme
+     :id 'slippery-slope-inductive-step
+     :header (make-metadata
+              :title "Slippery Slope Argument"
+              :source "Douglas Walton, Slippery Slope Arguments, Vale Press, Newport News, 1999, pp. 93, 95.
+Douglas Walton, Fundamentals of Critical Argumentation, Cambridge University Press, New York 2006, pp. 107, 110.")
+     :conclusion '(horrible-costs ?E1)
+     :premises [(make-premise
+                 :role "causation"
                  :statement '(causes ?E1 ?E2))
                 (make-premise
                  :role "horrible costs"
                  :statement '(horrible-costs ?E2))])
-
-    (make-scheme
-     :id 'transitivity-of-causality1
-     :header (make-metadata
-              :title "Transitivity of Causality, Base Case"
-              :source "Douglas Walton, Slippery Slope Arguments, Vale Press, Newport News, 1999, pp. 93, 95.
-Douglas Walton, Fundamentals of Critical Argumentation, Cambridge University Press, New York 2006, pp. 107, 110.")
-     :conclusion '(causes ?E1 ?E1))
-
-    (make-scheme
-     :id 'transitivity-of-causality
-     :header (make-metadata
-              :title "Transitivity of Causality, Inductive Step"
-              :source "Douglas Walton, Slippery Slope Arguments, Vale Press, Newport News, 1999, pp. 93, 95.
-Douglas Walton, Fundamentals of Critical Argumentation, Cambridge University Press, New York 2006, pp. 107, 110."
-              :description {:en "__Here__ some description of the scheme will be written"})
-     :conclusion '(causes ?E1 ?E2)
-     :premises [(make-premise
-                 :role "step 1"
-                 :statement '(causes ?E1 ?E3))
-                (make-premise
-                 :role "step 2"
-                 :statement '(causes ?E3 ?E2))])
     
     ])) ;; end of theory of Walton's schemes
 
