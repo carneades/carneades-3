@@ -22,6 +22,15 @@
               (assoc m k md_data)))
              {} sources))
 
+(defn add-has-metadata
+  "Adds has_ variables for the template"
+  [metadata]
+  (merge metadata {:has-very-little (contains? metadata :very-little)
+                   :has-little (contains? metadata :little)
+                   :has-some (contains? metadata :some)
+                   :has-much (contains? metadata :much)
+                   :has-very-much (contains? metadata :very-much)}))
+
 (bb/defview Comparison
   :className "sct-comparison"
   :render
@@ -35,9 +44,8 @@
              arguments-in-issue (model/arguments-for-statement issue arguments)
              statements (model/statements-by-sources (map json arguments-in-issue))
              sources (model/sources-by-similarity statements accepted-statements)
-             variables (build-metadata sources metadata)]
+             variables (build-metadata sources metadata)
+             variables (add-has-metadata variables)]
          (log "sources by similarity")
          (log (clj->js sources))
-         (log "variables")
-         (log (clj->js variables))
          (template this :sct-comparison variables)))))
