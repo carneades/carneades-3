@@ -3,13 +3,18 @@
 
 (ns ^{:doc "Read and save properties from the properties file"}
     carneades.config.reader
-  (:use clojure.java.io)
+  (:use clojure.java.io
+        [carneades.engine.utils :only [exists?]])
   (:import java.io.File))
 
 (def configfilename
-     (str (System/getProperty "user.home")
-          File/separator
-          ".carneades.properties"))
+  (if (exists? "config/carneades.properties")
+    ;; if there is property file in the current directory, we take it
+    ;; otherwise we go for the one in the user's HOME directory
+    "config/carneades.properties"
+    (str (System/getProperty "user.home")
+         File/separator
+         ".carneades.properties")))
 
 (defn read-bundled-properties
   "Read properties from filename. Filename is searched in the classpath"
