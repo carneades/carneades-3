@@ -14,4 +14,4 @@
 (defn -main
   [& args]
   (start-server)
-  (browse-url "http://localhost:8080/policymodellingtool/#/introduction"))
+  (browse-url "http://localhost:8080/policymodellingtool/home.html"))
