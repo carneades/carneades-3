@@ -213,13 +213,13 @@ conclusion: A1 should be performed.
 
 premises:
 	circumstances: S1 is currently the case.
-	action: Performing A1 in S1 will bring about S2.
+	action: Performing A1 in S1 would bring about S2.
 	goal: G would be realized in S2.
 	value: Achieving G would promote V.
 
 assumptions:
 	CQ1: V is indeed a legitimate value.
-	CQ2: Realizing G is a goal.
+	CQ2: G is a worthy goal.
 	CQ3: Action A1 is possible.
 
 exceptions:
