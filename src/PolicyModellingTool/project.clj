@@ -81,8 +81,8 @@
                   :pretty-print true}}}}
   :ring {:handler impact.web.routes-dev}
   :main
-  ;; uncomment the following line to build a self-executable JAR
+  ;; comment the following line to build a self-executable JAR
   ;; with an embedded JETTY server
-  ;; ^{:skip-aot true}
+  ^{:skip-aot true}
   impact.web.routes-selfexe)
 
