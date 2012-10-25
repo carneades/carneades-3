@@ -91,20 +91,47 @@ PM.schemes_text = function(language, schemes) {
 
 PM.scheme_content_text = function(language, scheme) {
     var text = "";
-    
-    text += '<div class="scheme-content" >§ {0} <br><b>conclusion</b><div class="rule-conclusion">{1}</div>'
-        .format(scheme.id, PM.format_sexpr(scheme.conclusion, language));
 
-    text += '<b>conditions</b><div class="rule-body"> <ul>';
+    // TODO: this formatting code should be in a template
+    text += '<div class="scheme-content" ><b>id:</b> {0}'.format(scheme.id);
+
+    text += '<br><b>strict:</b> {0}'.format(scheme.strict);
+    text += '<br><b>conclusion:</b> {0}'.format(PM.format_sexpr(scheme.conclusion, language));
+
+    text += '<br><b>premises:</b><div class="rule-body"> <ul>';
+     
 
     _.each(scheme.premises, function(premise) {
                if(premise.statement.atom[0] != "valid") {
                    text += "<li>{0}</li>".format(PM.format_sexpr(premise.statement.atom, language));
                }
            });
-
     text += '</ul></div>';
-    text += '</div>';
+
+    if(scheme.assumptions.length > 0) {
+        text += '<b>assumptions</b>:</b><div class="rule-body"> <ul>';
+
+        _.each(scheme.exceptions, function(premise) {
+                   text += "<li>{0}</li>".format(PM.format_sexpr(premise.statement.atom, language));
+               }); 
+
+        text += '</ul></div>';
+    }
+
+    if(scheme.exceptions.length > 0) {
+        text += '<b>exceptions:</b><div class="rule-body"> <ul>';
+
+        _.each(scheme.exceptions, function(premise) {
+                   text += "<li>{0}</li>".format(PM.format_sexpr(premise.statement.atom, language));
+               }); 
+        
+        text += '</ul></div>';
+    }
+
+    
+
+    
+    text += '</div>'; // end of scheme-content stuff
     
     return text;
 };
