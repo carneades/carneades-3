@@ -4,7 +4,7 @@
 (def walton-schemes
   (make-theory
    :header
-   (make-metadata :title "Essential Walton Argumentation Schemes")
+   (make-metadata :title "Basic Argumentation Schemes")
 
    :language
    (make-language
@@ -79,6 +79,22 @@
                   :negative "Events %s and %s are not correlated."
                   :question "Are events %s and %s correlated?")})
 
+    (make-predicate
+     :symbol 'credible-source
+     :arity 2
+     :forms {:en (make-form
+                  :positive "%s is a credible source about domain %s."
+                  :negative "%s is not a credible source about domain %s."
+                  :question "Is %s a credible source about domain %s?")})
+
+    (make-predicate
+     :symbol 'current-circumstances
+     :arity 1
+     :forms {:en (make-form
+                  :positive "%s is the case in the current circumstances."
+                  :negative "%s is not the case in the current circumstances."
+                  :question "Is %s the case in the current circumstances?")})
+    
 
     (make-predicate
      :symbol 'defeasibly-implies
@@ -249,6 +265,15 @@
                   :negative "%s is not known to be true."
                   :question "Is %s known to be true?")})
 
+
+    (make-predicate
+     :symbol 'legitimate-value
+     :arity 1
+     :forms {:en (make-form
+                  :positive "%s is a legitimate value."
+                  :negative "%s is not a legitimate value."
+                  :question "Is %s a legitimate value?")})
+
     (make-predicate
      :symbol 'looks-like
      :arity 2
@@ -301,6 +326,14 @@
                   :question "Has %s been observed?")})
 
     (make-predicate
+     :symbol 'other-credible-sources-disagree
+     :arity 1
+     :forms {:en (make-form
+                  :positive "Other credible source disagree with %s."
+                  :negative "No other credible sources disagree with %s."
+                  :question "Do other credible sources disagree with %s?")})
+
+    (make-predicate
      :symbol 'position-to-know
      :arity 2
      :forms {:en (make-form
@@ -315,6 +348,14 @@
                   :positive "Performing action %s would have positive consequences."
                   :negative "Performing action %s would not have positive consequences."
                   :question "Would performing action %s have positive consequences?")})
+
+    (make-predicate
+     :symbol 'possible
+     :arity 1
+     :forms {:en (make-form
+                  :positive "Action %s is possible."
+                  :negative "Action %s is impossible."
+                  :question "Is action %s possible?")})
 
     (make-predicate
      :symbol 'relevant-differences
@@ -438,14 +479,29 @@
                   :question "Would performing action %s achieve goal %s?")})
 
     (make-predicate
+     :symbol 'would-be-realized
+     :arity 2
+     :forms {:en (make-form
+                  :positive "%s would be realized in %s."
+                  :negative "%s would not be realized in %s."
+                  :question "Would %s be realized in %s?")})
+     
+    (make-predicate
      :symbol 'would-be-known
      :arity 1
      :forms {:en (make-form
                   :positive "%s would be known if it were true."
                   :negative "%s might not be known even if it is true."
                   :question "Would %s be known if it were true?")})
-    
-    
+
+    (make-predicate
+     :symbol 'would-bring-about
+     :arity 3
+     :forms {:en (make-form
+                  :positive "Performing %s in %s would bring about %s."
+                  :negative "Performing %s in %s would not bring about %s."
+                  :question "Would performing %s in %s bring about %s?")})
+
     (make-predicate
      :symbol 'would-demote-value
      :arity 2
@@ -493,6 +549,37 @@
      :exceptions [(make-premise
                    :role "CQ1"
                    :statement '(dishonest ?W))])
+
+    (make-scheme
+     :id 'credible-source
+     :header (make-metadata
+              :title "Argument from Credible Source"
+              :source "Wyner, A., Atkinson, K., and Bench-Capon, T. A
+              functional perspective on argumentation schemes. In
+              Proceedings of the 9th International Workshop on
+              Argumentation in Multi-Agent Systems (ArgMAS
+              2012) (2012), P. McBurney, S. Parsons, and I. Rahwan,
+              Eds., pp. 203–222.")
+     :conclusion '?S
+     :premises [(make-premise
+                 :role "source"
+                 :statement '(credible-source ?W ?D))
+                (make-premise
+                 :role "assertion"
+                 :statement '(asserts ?W ?S))
+                (make-premise
+                 :role "domain"
+                 :statement '(in-domain ?S ?D))]
+     ;; Critical Questions
+     :exceptions [(make-premise
+                   :role "CQ1"
+                   :statement '(biased ?W))
+                   (make-premise
+                   :role "CQ2"
+                   :statement '(dishonest ?W))
+                   (make-premise
+                    :role "CQ3"
+                    :statement '(other-credible-sources-disagree ?S))])
 
     (make-scheme
      :id 'witness-testimony
@@ -697,15 +784,46 @@ Douglas Walton, Scare Tactics, Kluwer Academic Publishers, Dordrecht, 2000, p.12
      :id 'practical-reasoning
      :header (make-metadata
               :title "Argument from Practical Reasoning"
-              :source "Atkinson, K., and Bench-Capon, T. J. M. Practical reasoning as presumptive argumentation
- using action based alternating transition systems. Artificial Intelligence 171, 10-15 (2007), 855–874.")
+              :source "Atkinson, K., and Bench-Capon,
+T. J. M. Practical reasoning as presumptive argumentation using action
+based alternating transition systems. Artificial Intelligence 171,
+10-15 (2007), 855–874.")
      :conclusion '(should-be-performed ?A)
      :premises [(make-premise
-                 :role "goal"
-                 :statement '(worthy-goal ?G))
+                 :role "circumstances"
+                 :statement '(current-circumstances ?S1))
                 (make-premise
                  :role "action"
-                 :statement '(would-achieve ?A ?G))])
+                 :statement '(would-bring-about ?A ?S1 ?S2))
+                (make-premise
+                 :role "goal"
+                 :statement '(would-be-realized ?G ?S2))
+                (make-premise
+                 :role "value"
+                 :statement '(would-promote-value ?G ?V))]
+     :assumptions [(make-premise
+                    :role "CQ1"
+                    :statement '(legitimate-value ?V))
+                   (make-premise
+                    :role "CQ2"
+                    :statement '(worthy-goal ?G))
+                   (make-premise
+                    :role "CQ3"
+                    :statement '(possible ?A))]
+
+     :exceptions [(make-premise
+                   :role "CQ4"
+                   :statement '(bring-about-more-effectively ?S1 ?A))
+                  (make-premise
+                   :role "CQ5"
+                   :statement '(realize-more-effectively ?G ?A))
+                  (make-premise
+                   :role "CQ6"
+                   :statement '(promote-more-effectively ?V ?A))
+                  (make-premise
+                   :role "CQ7"
+                   :statement '(side-effects ?A ?S1 ?V))])
+
 
     (make-scheme
      :id 'cause-to-effect
