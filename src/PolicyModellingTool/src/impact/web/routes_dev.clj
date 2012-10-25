@@ -18,4 +18,5 @@
       (wrap-base-url)
       (wrap-stacktrace)))
 
+;; (.stop impact-server)
 ;; (defonce impact-server (run-jetty #'impact-app {:join? false :port 8080}))
