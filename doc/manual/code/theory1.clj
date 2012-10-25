@@ -1,4 +1,4 @@
-(def liverpool-schemes 
+(def theory1 
   (make-theory
    :header 
    (make-metadata 
