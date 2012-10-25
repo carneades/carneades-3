@@ -244,3 +244,6 @@
     font-weight: bold;   
 }
 
+.rule-body ul {
+    margin-bottom: 0px;
+}
