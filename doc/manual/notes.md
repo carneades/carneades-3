@@ -1,5 +1,7 @@
 # Carneades Tasks and Notes .todo
 
+- Update the implementation of the argumentation schemes to use the version of the practical reasoning scheme from Liverpool described in the user manual, and also add the credible source scheme.
+
 - Fix or remove the Carneades examples on the web site.
 
 - Remove all the pages of the old carneades.berlios.de web site
