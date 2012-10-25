@@ -6,7 +6,7 @@ The argumentation schemes are shown here in pseudocode for readabililty. See the
 
 The schemes can be viewed online, using Carneades, by clicking on the "Schemes" button in the menu bar of the Carneades home page.
 
-Most of the schemes here are derived the 2008 book "Argumentation Schemes" by Douglas Walton, Chris Reed, and Fabrizio Macagno [@walton:2008]. The schemes for arguments from credible source and practical reasoning are based on (*Note: ask for the best publications to reference for these two schemes.*)
+Most of the schemes here are derived the book "Argumentation Schemes" [@Walton:2008]. The schemes for arguments from credible source and practical reasoning are based on [@Wyner:2012] and [@Atkinson:2007], respectively. 
 
 The schemes from these sources been modified to fit the Carneades computational model of argument. For example, generic critical questions which undermine premises, undercut the argument or rebut its conclusion, have been omitted, since these critical questions apply to all defeasible arguments in Carneades.
 
@@ -17,7 +17,7 @@ All the argumentation schemes presented here are defeasible *unless* they have b
 ~~~
 id: position-to-know  
 
-conclusion: A
+conclusion: S
 
 premises:
 	major: W is in a position to know about things in a certain
@@ -31,8 +31,21 @@ exceptions:
 
 ## Argument from Credible Source
 
-(*Note: ask for the latest version of this scheme.*)
+~~~
+id:  credible-source
 
+conclusion: S
+
+premises:
+	source: W is a credible source about domain D.
+	assertion: W asserts S.
+	domain: S is in domain D.
+
+exceptions:
+	CQ1: W is biased.
+	CQ2: W is dishonest.
+	CQ3: Other credible sources disagree with S.
+~~~
 
 ## Argument from Witness Testimony
 
@@ -193,22 +206,31 @@ premises:
 
 ## Argument from Practical Reasoning
 
-(*Note: Have this version of the scheme checked.*)
-
 ~~~
 id: practical-reasoning
 
-conclusion: A should be performed.
+conclusion: A1 should be performed.
 
 premises:
 	circumstances: S1 is currently the case.
-	action: Performing A in S1 will bring about S2.
-	goal: Goal G would be achieved in S2.
-	value: Achieving goal G would promote value V.
+	action: Performing A1 in S1 will bring about S2.
+	goal: G would be realized in S2.
+	value: Achieving G would promote V.
 
 assumptions:
-	CQ1: V is valued.
-	CQ2: G is a goal.
+	CQ1: V is indeed a legitimate value.
+	CQ2: Realizing G is a goal.
+	CQ3: Action A1 is possible.
+
+exceptions:
+	CQ4: There exists an action that, when performed in S1, would 
+		bring about S2 more effectively than A1.
+	CQ5: There exists an action that, when performed in S1,  would 
+		realize G more effectively than A1.
+	CQ6: There exists an action that, when performed in S1, would 
+		promote V more effectively than A1.
+	CQ7: Performing A1 in S1 would have side-effects 
+		which demote V or some other value.
 ~~~	
 
 ## Argument from Cause to Effect.
