@@ -2,7 +2,8 @@
   (:use impact.web.routes-dev
         compojure.core
         ring.adapter.jetty
-        [hiccup.middleware :only (wrap-base-url)])
+        [hiccup.middleware :only (wrap-base-url)]
+        [clojure.java.browse :only [browse-url]])
   (:require [compojure.handler :as handler])
   (:gen-class))
 
@@ -12,4 +13,5 @@
 
 (defn -main
   [& args]
-  (start-server))
+  (start-server)
+  (browse-url "http://localhost:8080/policymodellingtool/#/introduction"))
