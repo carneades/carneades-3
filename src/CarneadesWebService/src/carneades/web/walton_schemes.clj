@@ -479,7 +479,7 @@
      :header (make-metadata
               :title "Argument from Position to Know"
               :source "Douglas Walton, Legal Argumentation and Evidence, The Pennsylvania State University Press, University Park, 2002, p.46.")
-     :conclusion '?A
+     :conclusion '?S
      :premises [(make-premise
                  :role "major"
                  :statement '(position-to-know ?W ?D))
@@ -697,10 +697,8 @@ Douglas Walton, Scare Tactics, Kluwer Academic Publishers, Dordrecht, 2000, p.12
      :id 'practical-reasoning
      :header (make-metadata
               :title "Argument from Practical Reasoning"
-              :source "Trevor Bench-Capon, ‘Persuasion in Practical Argument Using Value-based Argumentation Frameworks’, Journal of Logic and Computation, 13, 2003, 429-448.
-Douglas Walton, Practical Reasoning, Rowman and Littlefield, Savage, Maryland, 1990.
-Douglas Walton, ‘Actions and Inconsistency: the Closure Problem of Practical Reasoning’, Contemporary Action Theory, ed. Ghita Holmstrom-Hintikka and Raimo Tuomela, Vol. 1, Dordrecht, Kluwer, 1997, p. 164.
-Douglas Walton, Slippery Slope Arguments, Vale Press, Newport News, 1999 pp.89-90.")
+              :source "Atkinson, K., and Bench-Capon, T. J. M. Practical reasoning as presumptive argumentation
+ using action based alternating transition systems. Artificial Intelligence 171, 10-15 (2007), 855–874.")
      :conclusion '(should-be-performed ?A)
      :premises [(make-premise
                  :role "goal"
