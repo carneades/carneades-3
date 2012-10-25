@@ -68,21 +68,15 @@ After you have changed your opinion, or cancelled the dialog, the arguments will
 
 ## Comparing Your Opinions with Others
 
-To compare your opinions with those expressed in the source documents used by the analysts to build the argument graph, click on the "compare" button in the menu bar of the opinion formation and polling tool. This will take you to a page showing how much you agree or disagree with the opinions expressed in these documents. The documents are grouped into five categories:
+To compare your opinions with those expressed in the source documents used by the analysts to build the argument graph, click on the "compare" button in the menu bar of the opinion formation and polling tool. This will take you to a page showing the source documents grouped into several categories, ordered by how much the  opinions expressed in the documents have in common with your opinions, based on your answers to the poll questions. 
 
-- Very Much in Common
-- Much in Common
-- Some in Common
-- Little in Common
-- Very Little in Common 
-
-(*Note: add a screen shot*)
+![Opinion Comparison Page](figs/ofpt6.png)
 
 In each category, full references to the documents are provided (author, title, etc).  The title includes a hyperlink to the source of the document on the Web. You can click on the title to download and read the original document, to judge for yourself how much you agree or disagree with the opinions expressed in the document.   
 
 The rest of this section explains briefly how the comparison is computed. 
 
-All of the arguments modeled in the argument graph are tagged with the keys of source documents in which the argument has been made, from the corpus of source documents used by the analysts to construct the graph.^[These keys are stored in the "source" property of the metadata of arguments. The keys are the identifiers of the metadata records for documents in the references section of the argument graph.] These documents do not merely cite or quote the argument. They express agreement with the argument, by claiming that the premises and the conclusion of the argument are true. Since the arguments are linked to their conclusion and premises in the argument graph, it is easy to compute from the source metadata of arguments the set of claims, i.e. statements claimed to be true or false, in each source document. These claims are then compared to your opinions, based on your answers to the poll questions.^[The similarity of opinions is calculated using the "Euclidean distance" metric [@Seagaran:2007, pp. 9-15]
+All of the arguments modeled in the argument graph are tagged with the keys of source documents in which the argument has been made, from the corpus of source documents used by the analysts to construct the graph.^[These keys are stored in the "source" property of the metadata of arguments. The keys are the identifiers of the metadata records for documents in the references section of the argument graph.] These documents do not merely cite or quote the argument. They express agreement with the argument, by claiming that the premises and the conclusion of the argument are true. Since the arguments are linked to their conclusion and premises in the argument graph, it is easy to compute from the source metadata of arguments the set of claims, i.e. statements claimed to be true or false, in each source document. These claims are then compared to your opinions, based on your answers to the poll questions.^[The similarity of opinions is measured by the percentage of claims in the document with which you have expressed agreement. We may replace this with some other  metric, such as "Euclidean distance" [@Seagaran:2007, pp. 9-15], in a future version of the system.]
 
 
 
