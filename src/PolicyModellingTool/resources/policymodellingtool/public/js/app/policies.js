@@ -96,6 +96,9 @@ PM.scheme_content_text = function(language, scheme) {
     text += '<div class="scheme-content" ><b>id:</b> {0}'.format(scheme.id);
 
     text += '<br><b>strict:</b> {0}'.format(scheme.strict);
+    
+    text += '<br><b>direction:</b> {0}'.format(scheme.pro ? "pro" : "con");
+
     text += '<br><b>conclusion:</b> {0}'.format(PM.format_sexpr(scheme.conclusion, language));
 
     text += '<br><b>premises:</b><div class="rule-body"> <ul>';
