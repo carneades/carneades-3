@@ -4,7 +4,7 @@ PROJECTS="CarneadesEngine CarneadesExamples CarneadesWebService PolicyModellingT
 RELEASE_CMD=""
 
 function show_usage {
-    echo "Usage: build.sh [--release|--dev|--release-without-toolbox]";
+    echo "Usage: build.sh";
 }
 
 function clean {
@@ -36,9 +36,8 @@ function build_install_jar_war {
 
     echo -e "\n======================================== Building PolicyModellingTool\n"
     cd PolicyModellingTool
-    exec_confscripts;
     lein deps
-    lein ring uberwar
+    lein with-profile war ring uberwar
     cd -
 }
 
@@ -54,14 +53,6 @@ function show_notification {
         notify-send "Build.sh" "Build is finished!"
     fi
 }
-
-case $1 in
-    "--release-without-toolbox") RELEASE_CMD="./scripts/make-release-without-toolbox.sh";;
-    "--release") RELEASE_CMD="./scripts/make-release.sh";;
-    "--dev") RELEASE_CMD="./scripts/make-dev.sh";;
-    *) show_usage; exit;;
-esac
-
 
 clean;
 build_install_jar_war;
