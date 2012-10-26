@@ -4,8 +4,7 @@
 bash -c "./build.sh --release" && \
     cd PolicyModellingTool && \
     mv target/policymodellingtool-1.0.0-SNAPSHOT-standalone.war target/policymodellingtool-1.0.0-SNAPSHOT-toolbox.war && \
-    sh -c "./scripts/make-release-without-toolbox.sh" && \
-    lein ring uberwar && \
+    lein with-profile war ring uberwar && \
     mv target/policymodellingtool-1.0.0-SNAPSHOT-standalone.war target/policymodellingtool-1.0.0-SNAPSHOT-css.war
     cd ../CarneadesEngine && lein test && \
     cd ../CarneadesWebService && \
