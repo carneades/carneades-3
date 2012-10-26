@@ -15,7 +15,7 @@
   :plugins [[lein-ring "0.7.1"]
             [lein-cljsbuild "0.2.8"]]
   ; Enable the lein hooks for: clean, compile, test, and jar.
-;;  :hooks [leiningen.cljsbuild]
+  :hooks [leiningen.cljsbuild]
   :cljsbuild {
     ; Configure the REPL support; see the README.md file for more details.
     :repl-listen-port 9000
@@ -80,5 +80,7 @@
                   :optimizations :whitespace
                   :pretty-print true}}}}
   :ring {:handler impact.web.routes-dev/impact-app}
+  :profiles {:standalone {:main impact.web.routes-selfexe}
+             :war {:handler impact.web.routes-war/impact-app}}
   )
 
