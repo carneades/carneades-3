@@ -1,4 +1,4 @@
-(ns carneades.web.walton-schemes
+ (ns carneades.web.walton-schemes
   (:use (carneades.engine statement argument scheme dublin-core)))
 
 (def walton-schemes
@@ -51,6 +51,17 @@
                   :negative "Witness %s is not biased."
                   :question "Is witness  %s biased?")})
 
+    (make-predicate
+     :symbol 'bring-about-more-effectively
+     :arity 2
+     :forms {:en (make-form
+                  :positive "There exists an action that would bring
+                       about %s more effectively than %s."
+                  :negative "There does not exist an action that would
+                       bring about %s more effectively than %s."
+                  :question "Does there exist an action that would
+                       bring about %s more effectively than %s?")})
+                    
     (make-predicate
      :symbol 'causes
      :arity 2
@@ -358,6 +369,29 @@
                   :question "Is action %s possible?")})
 
     (make-predicate
+     :symbol 'promote-more-effectively
+     :arity 2
+     :forms {:en (make-form
+                  :positive "There exists an action that would promote
+                       the value %s more effectively than %s."
+                  :negative "There does not exist an action that would promote
+                       the value  %s more effectively than %s."
+                  :question "Does there exist an action that would
+                       promote the value  %s more effectively than %s?")})
+
+     (make-predicate
+     :symbol 'realize-more-effectively
+     :arity 2
+     :forms {:en (make-form
+                  :positive "There exists an action that would realize
+                       the goal %s more effectively than %s."
+                  :negative "There does not exist an action that would realize
+                       the goal %s more effectively than %s."
+                  :question "Does there exist an action that would
+                       realize the goal  %s more effectively than %s?")})
+    
+
+    (make-predicate
      :symbol 'relevant-differences
      :arity 1
      :forms {:en (make-form
@@ -388,6 +422,17 @@
                   :positive "Action %s should be performed."
                   :negative "Action %s should not be performed."
                   :question "Should action %s be performed?")})
+
+     (make-predicate
+      :symbol 'side-effects
+      :arity 3
+      :forms {:en (make-form
+                   :positive "Performing %s in %s would have
+                      side-effects which demote %s or some other value."
+                   :negative "Performing %s in %s would not have
+                      side-effects which demote %s or some other value."
+                   :question "Would performing %s in %s have
+                      side-effects which demote %s or some other value?")})
     
     (make-predicate
      :symbol 'similar-case
