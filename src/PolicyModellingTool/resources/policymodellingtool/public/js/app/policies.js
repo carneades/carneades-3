@@ -111,7 +111,7 @@ PM.scheme_content_text = function(language, scheme) {
     if(scheme.assumptions.length > 0) {
         text += '<b>assumptions</b>:</b><div class="rule-body"> <ul>';
 
-        _.each(scheme.exceptions, function(premise) {
+        _.each(scheme.assumptions, function(premise) {
                    text += "<li>{0}</li>".format(PM.format_sexpr(premise.statement.atom, language));
                }); 
 
