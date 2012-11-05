@@ -54,8 +54,9 @@
       ; Test command for running the unit tests in "test-cljs" (see below).
       ;     $ lein cljsbuild test
       {"unit" ["casperjs"
-               "casper/unit-test.js"
-               "resources/private/html/unit-test.html"]}
+               "casper/run-unit-test.js"
+               "resources/policymodellingtool/private/html/unit-test.html"
+               ]}
     ;; :crossovers [example.crossover]
     ;; :crossover-jar true
     :builds {
@@ -75,11 +76,11 @@
                   :optimizations :advanced
                   :pretty-print false}}
       ; This build is for the ClojureScript unit tests that will
-      ; be run via CasperJS.  See the casper/unit-test.js file
+      ; be run via CasperJS.  See the casper/run-unit-test.js file
       ; for details on how it's run.
       :test
       {:source-path "test-cljs"
-       :compiler {:output-to "resources/carneades/private/js/unit-test.js"
+       :compiler {:output-to "resources/policymodellingtool/private/js/unit-test.js"
                   :optimizations :whitespace
                   :pretty-print true}}}}
   :ring {:handler impact.web.routes-dev/impact-app}
