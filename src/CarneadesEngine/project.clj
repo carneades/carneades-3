@@ -10,4 +10,5 @@
                  [org.clojure/tools.trace "0.7.1"]
                  [lacij "0.7.1"]]
   :aot [carneades.engine.argument-evaluation]
-  :description "Carneades is an argument mapping application, with a graphical \nuser interface, and a software library for building applications supporting \nvarious argumentation tasks. This is the software library (the engine).")
+  :description "Carneades is an argument mapping application, with a graphical \nuser interface, and a software library for building applications supporting \nvarious argumentation tasks. This is the software library (the engine)."
+  :cljsbuild {:builds []})
