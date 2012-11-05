@@ -13,7 +13,10 @@
                  [cc.qbits/jayq "0.1.0-alpha4-SNAPSHOT"]
                  [lein-ring "0.5.4"]]
   :plugins [[lein-ring "0.7.1"]
-            [lein-cljsbuild "0.2.8"]]
+            [lein-cljsbuild "0.2.8"]
+            [lein-sub "0.2.3"]]
+  ;; sub projects
+  :sub ["../CarneadesEngine" "../CarneadesWebService" "../CarneadesExamples"]
   ; Enable the lein hooks for: clean, compile, test, and jar.
   :hooks [leiningen.cljsbuild]
   :cljsbuild {
@@ -50,8 +53,8 @@
     :test-commands
       ; Test command for running the unit tests in "test-cljs" (see below).
       ;     $ lein cljsbuild test
-      {"unit" ["phantomjs"
-               "phantom/unit-test.js"
+      {"unit" ["casperjs"
+               "casper/unit-test.js"
                "resources/private/html/unit-test.html"]}
     ;; :crossovers [example.crossover]
     ;; :crossover-jar true
@@ -72,15 +75,16 @@
                   :optimizations :advanced
                   :pretty-print false}}
       ; This build is for the ClojureScript unit tests that will
-      ; be run via PhantomJS.  See the phantom/unit-test.js file
+      ; be run via CasperJS.  See the casper/unit-test.js file
       ; for details on how it's run.
       :test
       {:source-path "test-cljs"
-       :compiler {:output-to "resources/private/js/unit-test.js"
+       :compiler {:output-to "resources/carneades/private/js/unit-test.js"
                   :optimizations :whitespace
                   :pretty-print true}}}}
   :ring {:handler impact.web.routes-dev/impact-app}
   :profiles {:standalone {:main impact.web.routes-selfexe}
-             :war {:handler impact.web.routes-war/impact-app}}
+             :war {:ring {:handler impact.web.routes-war/impact-app}
+                   :sub ["../CarneadesWebService"]}}
   )
 
