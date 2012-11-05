@@ -18,7 +18,7 @@ One of the purposes of argument graphs is to provide a way to summarize complex 
 
 ## Data Model
 
-<!-- ![Entity-Relationship Diagram](figs/DataModel.png) -->
+![Entity-Relationship Diagram](figs/DataModel.png)
 
 The entity-relationship diagram above shows the elements of argument graphs and their connections. (The figure does not visualize a particular argument graph, but rather relationships between the elements of argument graphs in general.) 
 
