@@ -67,13 +67,13 @@ Depending on your operating system and how you started the server, the Carneades
 
   $ git clone git://github.com/carneades/carneades.git
 
-3. Change directory to the src subdirectory of the carneades project.
+3. Change directory to the PolicyModellingTool subdirectory.
 
- $ cd carneades/src
+ $ cd carneades/src/PolicyModellingTool
 
 4. Build the Carneades system:
 
- $ chmod +x build.sh ; ./build.sh --dev
+ $ lein sub install
  
 5. Configure Carneades
 
@@ -81,7 +81,6 @@ Depending on your operating system and how you started the server, the Carneades
 
 6. Starting the Carneades web application server
 
-  $ cd PolicyModellingTool
   $ lein ring server 8080
 
 (*Note: Change the name of the PolicyModellingTool package to CarneadesWebApp. *)
