@@ -13,4 +13,7 @@
  {:filename german_family_law.clj
   :namespace carneades.examples.german-family-law
   :name german-family-law }
+ {:filename travel_agent_luxembourg.clj
+  :namespace carneades.examples.travel-agent-luxembourg
+  :name tour-operator-business-permit }
 ]
