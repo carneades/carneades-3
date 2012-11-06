@@ -109,7 +109,7 @@
      min           ; minimum cardinality; whole number
      max           ; maximum cardinality; whole number or nil, for unlimited
      type          ; :symbol (object id), :boolean, :string, :uri, :date-time, :integer, :real,
-                   ; '(enum object object ...)                                 
+                   ; '(enum object object ...)                             
      default       ; element of the above type or nil
      forms         ; Do we need the negated and question forms, or just the positive?
      category
