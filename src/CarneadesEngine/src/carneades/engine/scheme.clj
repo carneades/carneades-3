@@ -89,11 +89,37 @@
   "key value ... -> individual"
   [& key-values]  
   (merge (Individual. 
-          (gensym "p")    ; symbol
+          (gensym "i")    ; symbol
           {})             ; text map
          (apply hash-map key-values)))
 
 (defn individual? [x] (instance? Individual x))
+
+;; Classes are unary relations, as in description logic and the
+;; semantic web.  That is, the represent atoms of the form (predicate
+;; object).
+
+(defrecord Class
+    [symbol       ; predicate symbol
+     category     ; symbol
+     hint         ; lang -> string map
+     followups])  ; vector of predicate symbols
+
+
+(extend Class
+  Functor
+  {:get-symbol (fn [this] (:symbol this))
+   :get-arity (fn [this] 1)})
+
+(defn make-class
+  "key value ... -> class"
+  [& key-values]  
+  (merge (Class. 
+          (gensym "c")    ; symbol
+          {})             ; text map
+         (apply hash-map key-values)))
+
+(defn class? [x] (instance? Class x))
 
 ;; Properties are binary relations, as in description logic and the
 ;; semantic web.  That is, the represent triples of the form (predicate
@@ -109,7 +135,7 @@
      min           ; minimum cardinality; whole number
      max           ; maximum cardinality; whole number or nil, for unlimited
      type          ; :symbol (object id), :boolean, :string, :uri, :date-time, :integer, :real,
-                   ; '(enum object object ...)                             
+                                        ; '(enum object object ...)                             
      default       ; element of the above type or nil
      forms         ; Do we need the negated and question forms, or just the positive?
      category
@@ -205,10 +231,10 @@
   "scheme -> (seq-of symbol)"
   [scheme]
   (distinct (mapcat variables
-            (concat [(:conclusion scheme)]
-                    (:premises scheme)
-                    (:exceptions scheme)
-                    (:assumptions scheme)))))
+                    (concat [(:conclusion scheme)]
+                            (:premises scheme)
+                            (:exceptions scheme)
+                            (:assumptions scheme)))))
 
 ;; When applying schemes, undercutters are generated from the exceptions of schemes, 
 ;; where the undercutters are arguments with the form:
@@ -284,7 +310,7 @@
              (:assumptions scheme))
         main-arg)
        (generate-exceptions main-arg)))))
-                           
+
 
 (defn axiom 
   "literal -> scheme"
