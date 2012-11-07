@@ -2,7 +2,6 @@
 
 set -e
 
-lein sub clean
 lein sub install
 
 echo -e "\nBuild is finished. \n"
