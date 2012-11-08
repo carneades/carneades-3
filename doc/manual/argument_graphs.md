@@ -89,7 +89,7 @@ implicit
 
 ## Metadata
 
-The argument graph as as whole, as well as each of its statements and arguments, can be annotated with metadata, using the [Dublin Core](http://dublincore.org/). There are 15 elements in the Dublin Core. Each element may zero or more values. Here is a list of the Dublin Core elements:
+The argument graph as as whole, as well as each of its statements and arguments, can be annotated with metadata, using the [Dublin Core](http://dublincore.org/). There are 15 elements in the Dublin Core. Each element may contain zero or more values. Here is a list of the Dublin Core elements:
 
 1. Title
 2. Creator
