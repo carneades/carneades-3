@@ -99,27 +99,27 @@
 ;; semantic web.  That is, the represent atoms of the form (predicate
 ;; object).
 
-(defrecord Class
-    [symbol       ; predicate symbol
-     category     ; symbol
-     hint         ; lang -> string map
-     followups])  ; vector of predicate symbols
+;; (defrecord Class
+;;     [symbol       ; predicate symbol
+;;      category     ; symbol
+;;      hint         ; lang -> string map
+;;      followups])  ; vector of predicate symbols
 
 
-(extend Class
-  Functor
-  {:get-symbol (fn [this] (:symbol this))
-   :get-arity (fn [this] 1)})
+;; (extend Class
+;;   Functor
+;;   {:get-symbol (fn [this] (:symbol this))
+;;    :get-arity (fn [this] 1)})
 
-(defn make-class
-  "key value ... -> class"
-  [& key-values]  
-  (merge (Class. 
-          (gensym "c")    ; symbol
-          {})             ; text map
-         (apply hash-map key-values)))
+;; (defn make-class
+;;   "key value ... -> class"
+;;   [& key-values]  
+;;   (merge (Class. 
+;;           (gensym "c")    ; symbol
+;;           {})             ; text map
+;;          (apply hash-map key-values)))
 
-(defn class? [x] (instance? Class x))
+;; (defn class? [x] (instance? Class x))
 
 ;; Properties are binary relations, as in description logic and the
 ;; semantic web.  That is, the represent triples of the form (predicate
