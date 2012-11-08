@@ -42,7 +42,7 @@
   (get-arity [this]"functor -> natural number (including 0)"))
 
 ;; To Do: Remove the forms, category, hint, widget and followups fields of predicates.
-;; Use the new property record for asking for information from users. 
+;; Use the new role record for asking for information from users. 
 
 (defrecord Predicate 
     [symbol   ; symbol
@@ -95,42 +95,45 @@
 
 (defn individual? [x] (instance? Individual x))
 
-;; Classes are unary relations, as in description logic and the
-;; semantic web.  That is, the represent atoms of the form (predicate
-;; object).
+;; Concepts are unary relations, as in description logic and the
+;; semantic web, where they are called "classes".  That is, the
+;; represent atoms of the form (predicate object).
 
-(defrecord Class
+(defrecord Concept
     [symbol       ; predicate symbol
      category     ; symbol
      hint         ; lang -> string map
      followups])  ; vector of predicate symbols
 
 
-(extend Class
+(extend Concept
   Functor
   {:get-symbol (fn [this] (:symbol this))
    :get-arity (fn [this] 1)})
 
-(defn make-class
+(defn make-concept
   "key value ... -> class"
   [& key-values]  
-  (merge (Class. 
+  (merge (Concept. 
           (gensym "c")    ; symbol
-          {})             ; text map
+          nil
+          {}
+          [])            
          (apply hash-map key-values)))
 
-(defn class? [x] (instance? Class x))
+(defn concept? [x] (instance? Concept x))
 
-;; Properties are binary relations, as in description logic and the
-;; semantic web.  That is, the represent triples of the form (predicate
-;; object value).  Use properties to ask users for information. The
-;; predicate and object fields of the triple must be instantiated. Only
-;; the values are asked for, or confirmed, in dialogues with users. By
-;; restricting data entry dialogues to properties, rather that arbitrary
+;; Roles are binary relations, as in description logic and the
+;; semantic web, where they are called "properties".  That is, the
+;; represent triples of the form (predicate object value).  Use
+;; roles to ask users for information. The predicate and object
+;; fields of the triple must be instantiated. Only the values are
+;; asked for, or confirmed, in dialogues with users. By restricting
+;; data entry dialogues to properties, rather that arbitrary
 ;; predicates, the dialogue can be structured in a more coherent and
 ;; user-friendly way.
 
-(defrecord Property
+(defrecord Role
     [symbol        ; predicate symbol
      min           ; minimum cardinality; whole number
      max           ; maximum cardinality; whole number or nil, for unlimited
@@ -142,13 +145,13 @@
      hint          ; lang -> string map
      followups])
 
-(extend Property
+(extend Role
   Functor
   {:get-symbol (fn [this] (:symbol this))
    :get-arity (fn [this] 2)})
 
-(defn make-property
-  "key value ... -> property"
+(defn make-role
+  "key value ... -> role"
   [& key-values]
   (merge (Predicate. 
           (gensym "p")                 ; symbol
@@ -163,11 +166,11 @@
           )
          (apply hash-map key-values)))
 
-(defn property? [x] (instance? Property x))
+(defn role? [x] (instance? Role x))
 
-(defn functional-property?
+(defn functional-role?
   [x]
-  {:pre [(property? x)]}
+  {:pre [(role? x)]}
   (and (= (:min x) 1)
        (= (:max x) 1)))
 
