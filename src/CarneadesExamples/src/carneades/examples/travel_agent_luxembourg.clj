@@ -149,7 +149,7 @@
                   :negative "Manager %s does not have a copy of a previously held business permit."
                   :question "Has manager %s a copy of a previously held business permit?")}
      :category 'qualifications
-     :forms '[text])
+     :widgets '[text])
 
     (make-predicate
      :symbol 'travel-agent-business-permit
