@@ -1,5 +1,11 @@
 PM.Metadata = Backbone.Model.extend(
-    {url: function() {
+    {defaults: function(){
+         return {
+             description: {}
+             };
+     },
+     
+     url: function() {
          return IMPACT.wsurl + '/metadata/' + IMPACT.db;
      },
 
