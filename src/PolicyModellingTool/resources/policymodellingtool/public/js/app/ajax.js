@@ -14,7 +14,7 @@ PM.ajax_post = function(url, jsondata, callback, username, password,
                         callback_error) {
     $.ajax({url: url,
             type: 'POST',
-            'beforeSend': _.bind(PM.send_authentification, PM, username, password),
+            // 'beforeSend': _.bind(PM.send_authentification, PM, username, password),
             dataType : 'json',
             data : JSON.stringify(jsondata),
             contentType: "application/json; charset=utf-8",
