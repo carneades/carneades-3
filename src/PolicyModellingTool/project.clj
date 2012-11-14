@@ -1,6 +1,6 @@
 (defproject policymodellingtool/policymodellingtool "1.0.0-SNAPSHOT"
   :description "Policy Modelling Tool for the IMPACT Policy project"
-  :dependencies [[org.clojure/clojure "[1.4.0,]"]
+  :dependencies [[org.clojure/clojure "1.4.0"]
                  [org.clojure/data.json "0.1.1"]
                  [compojure "1.0.4" :exclusion [clojure]]
                  [hiccup "0.3.6"]

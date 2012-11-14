@@ -1,14 +1,11 @@
 ;;; Copyright (c) 2012 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(ns 
-    ^{:doc "An argument evaluator inspired by Henry Prakken's ASPIC+ system.  It maps
+(ns ^{:doc "An argument evaluator inspired by Henry Prakken's ASPIC+ system.  It maps
             Carneades argument graphs to Dung argumentation frameworks."}
-  
   carneades.engine.aspic
-  
-  (:use clojure.pprint
-        clojure.set
+  (:use ;; clojure.pprint
+        ;; clojure.set
         carneades.engine.statement
         carneades.engine.argument
         carneades.engine.dung
