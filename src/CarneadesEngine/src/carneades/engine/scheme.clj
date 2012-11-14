@@ -47,17 +47,19 @@
 (defrecord Predicate 
     [symbol   ; symbol
      arity    ; integer
-     forms
+     askable  ; boolean
+     forms    ; (lang -> form) map, where lang is one of the keywords :en, :de, etc.
      category
      hint     ; lang -> string map
-     widget
-     followups] ; (lang -> form) map, where lang is one of the keywords :en, :de, etc.
+     widgets
+     followups] 
   )
 
 (extend Predicate
   Functor
   {:get-symbol (fn [this] (:symbol this))
-   :get-arity (fn [this] (:arity this))})
+   :get-arity (fn [this] (:arity this))
+   :get-askable (fn [this] (:askable this))})
 
 (defn make-predicate
   "key value ... -> predicate"
@@ -65,10 +67,11 @@
   (merge (Predicate. 
           (gensym "p")                 ; symbol
           0                            ; arity
+          false                        ; askable
           {}                           ; forms
-          ""                           ; category
-          ""                           ; hint
-          nil                          ; widget
+          nil                          ; category
+          {}                           ; hint
+          nil                          ; widgets
           []                           ; followups
           )
          (apply hash-map key-values)))
@@ -83,7 +86,8 @@
 (extend Individual
   Functor
   {:get-symbol (fn [this] (:symbol this))
-   :get-arity (fn [this] 0)})
+   :get-arity (fn [this] 0)
+   :get-askable (fn [this] (:askable this))})
 
 (defn make-individual
   "key value ... -> individual"
@@ -102,6 +106,7 @@
 (defrecord Concept
     [symbol       ; predicate symbol
      category     ; symbol
+     askable      ; boolean
      hint         ; lang -> string map
      followups])  ; vector of predicate symbols
 
@@ -109,16 +114,18 @@
 (extend Concept
   Functor
   {:get-symbol (fn [this] (:symbol this))
-   :get-arity (fn [this] 1)})
+   :get-arity (fn [this] 1)
+   :get-askable (fn [this] (:askable this))})
 
 (defn make-concept
   "key value ... -> class"
   [& key-values]  
   (merge (Concept. 
           (gensym "c")    ; symbol
-          nil
-          {}
-          [])            
+          nil             ; category
+          false           ; askable
+          {}              ; hint
+          [])             ; followups
          (apply hash-map key-values)))
 
 (defn concept? [x] (instance? Concept x))
@@ -135,10 +142,11 @@
 
 (defrecord Role
     [symbol        ; predicate symbol
-     min           ; minimum cardinality; whole number
+     min           ; minimum cardinality; whole numberp
      max           ; maximum cardinality; whole number or nil, for unlimited
      type          ; :symbol (object id), :boolean, :string, :uri, :date-time, :integer, :real,
-                                        ; '(enum object object ...)                             
+                                        ; '(enum object object ...)
+     askable       ; boolean
      default       ; element of the above type or nil
      forms         ; Do we need the negated and question forms, or just the positive?
      category
@@ -153,11 +161,12 @@
 (defn make-role
   "key value ... -> role"
   [& key-values]
-  (merge (Predicate. 
+  (merge (Role. 
           (gensym "p")                 ; symbol
           1                            ; min
           1                            ; max
           :string                      ; type
+          false                        ; askable
           ""                           ; default
           {}                           ; forms
           ""                           ; category
