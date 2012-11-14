@@ -1,7 +1,7 @@
 ;;; Copyright ? 2010 Fraunhofer Gesellschaft 
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.examples.copyright-policies
+(ns carneades.examples.copyright-policies2
   (:use carneades.engine.dublin-core
         carneades.engine.scheme
         carneades.engine.argument))
@@ -42,7 +42,7 @@
               (make-premise :statement '(valid UrhG-31)) ]))
 
 
-(def copyright-policies 
+(def copyright-policies2
   (make-theory
    :header 
    (make-metadata :title "Copyright in the Knowledge Economy"
