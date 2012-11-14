@@ -2,9 +2,8 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.web.service
-   (:use clojure.data.json
-         clojure.pprint
-         compojure.core
+   (:use clojure.pprint
+         [compojure.core]
          (carneades.engine uuid policy unify statement argument scheme dublin-core utils
                            argument-evaluation aspic)
          carneades.database.db
@@ -14,7 +13,8 @@
          carneades.xml.caf.export
          carneades.web.walton-schemes
          ring.util.codec)
-  (:require [compojure.route :as route]
+  (:require [clojure.data.json :as json]
+            [compojure.route :as route]
             [compojure.handler :as handler]
             [clojure.java.jdbc :as jdbc]
             [clojure.string :as str]
@@ -52,7 +52,7 @@
      :body "Not found."}
     {:status (or status 200)     ; 200 is OK
      :headers {"Content-Type" "application/json"}
-     :body (json-str data)}))
+     :body (json/json-str data)}))
 
 (defn zip-metadata-element
   "Zips a metadata element vector as a string"
@@ -211,13 +211,13 @@
          (with-db db2 (json-response (read-debate id)))))
       
   (POST "/debate" request
-        (let [m (read-json (slurp (:body request)))
+        (let [m (json/read-json (slurp (:body request)))
               [username password] (get-username-and-password request)
               db (make-database-connection "debates" username password)]
           (with-db db (json-response (create-debate m))))) 
       
   (PUT "/debate/:id" request   
-       (let [m (read-json (slurp (:body request)))
+       (let [m (json/read-json (slurp (:body request)))
              [username password] (get-username-and-password request)
              db (make-database-connection "debates" username password)
              id (:id (:params request))]
@@ -238,7 +238,7 @@
       
   (POST "/metadata/:db" request
         (let [db (:db (:params request))
-              m (read-json (slurp (:body request)))
+              m (json/read-json (slurp (:body request)))
               [username password] (get-username-and-password request)
               dbconn (make-database-connection db username password)]
           (with-db dbconn (json-response
@@ -247,7 +247,7 @@
                                   (map->metadata m)))}))))
 
   (PUT "/metadata/:db/:id" request   
-       (let [m (read-json (slurp (:body request)))
+       (let [m (json/read-json (slurp (:body request)))
              m (zip-metadata m)
              [username password] (get-username-and-password request)
              db (make-database-connection (:db (:params request)) username password)
@@ -279,7 +279,7 @@
            (json-response (pack-statement (read-statement id))))))
             
   (POST "/statement/:db" request  
-        (let [m (read-json (slurp (:body request)))
+        (let [m (json/read-json (slurp (:body request)))
               s (unpack-statement m)
               [username password] (get-username-and-password request)
               db (make-database-connection (:db (:params request)) username password)]
@@ -287,7 +287,7 @@
                        {:id (create-statement s)}))))
       
   (PUT "/statement/:db" request  
-       (let [m (read-json (slurp (:body request)))
+       (let [m (json/read-json (slurp (:body request)))
              ;; s (unpack-statement m)
              [username password] (get-username-and-password request)
              db (make-database-connection (:db (:params request)) username password)
@@ -319,7 +319,7 @@
   (POST "/matching-statements/:db" request
         ;; returns a vector of {:substitutions :statement} records for the statements
         ;; with atoms matching the query in the body of the request
-        (let [m (read-json (slurp (:body request)))
+        (let [m (json/read-json (slurp (:body request)))
               db (:db (:params request))
               s1 (unpack-statement m)
               db (make-database-connection (:db (:params request)) "guest" "")]
@@ -376,7 +376,7 @@
                                (get-dependents id))))))
       
   (POST "/argument/:db" request  
-        (let [m (read-json (slurp (:body request)))
+        (let [m (json/read-json (slurp (:body request)))
               arg (unpack-argument m)
               [username password] (get-username-and-password request)
               db (make-database-connection (:db (:params request)) username password)
@@ -393,7 +393,7 @@
                                       undercutters))})))))
       
   (PUT "/argument/:db" request
-       (let [m (read-json (slurp (:body request)))
+       (let [m (json/read-json (slurp (:body request)))
              [username password] (get-username-and-password request)
              db (make-database-connection (:db (:params request)) username password)
              id (:id m)
@@ -431,14 +431,14 @@
 
   (POST "/namespace/" request  
         (let [prefix (:prefix (:params request)),
-              uri (read-json (slurp (:body request))),
+              uri (json/read-json (slurp (:body request))),
               [username password] (get-username-and-password request)
               db (make-database-connection (:db (:params request)) username password)]
           (with-db db (json-response (create-namespace db prefix uri)))))
       
   (PUT "/namespace/:db" request  
        (let [prefix (:prefix (:params request)),
-             uri (read-json (slurp (:body request))),
+             uri (json/read-json (slurp (:body request))),
              [username password] (get-username-and-password request)
              db (make-database-connection (:db (:params request)) username password)]
          (with-db db (json-response (update-namespace prefix uri)))))
@@ -471,7 +471,7 @@
                                       (Integer/parseInt id))))))
 
   (POST "/statement-poll/:db" request  
-        (let [poll (read-json (slurp (:body request))),
+        (let [poll (json/read-json (slurp (:body request))),
               [username password] (get-username-and-password request)
               db (make-database-connection (:db (:params request)) username password)]
           (with-db db
@@ -480,7 +480,7 @@
               (json-response (read-statement-poll (:id poll)))))))
       
   (PUT "/statement-poll/:db" request  
-       (let [poll (read-json (slurp (:body request)))
+       (let [poll (json/read-json (slurp (:body request)))
              [username password] (get-username-and-password request)
              db (make-database-connection (:db (:params request)) username password)]
          (with-db db
@@ -518,7 +518,7 @@
            (json-response (read-argument-poll (Integer/parseInt id))))))
 
   (POST "/argument-poll/:db" request  
-        (let [poll (read-json (slurp (:body request))),
+        (let [poll (json/read-json (slurp (:body request))),
               [username password] (get-username-and-password request)
               db (make-database-connection (:db (:params request)) username password)]
           (with-db db
@@ -526,7 +526,7 @@
                 (json-response (read-argument-poll (:id poll)))))))
       
   (PUT "/argument-poll/:db" request  
-       (let [poll (read-json (slurp (:body request)))
+       (let [poll (json/read-json (slurp (:body request)))
              [username password] (get-username-and-password request)
              db (make-database-connection (:db (:params request)) username password)]
          (with-db db
@@ -629,14 +629,14 @@
        (json-response (get schemes-by-id (symbol id))))
       
   (POST "/matching-schemes" request ; return all schemes with conclusions matching a goal
-        (let [goal (unpack-statement (read-json (slurp (:body request))))]
+        (let [goal (unpack-statement (json/read-json (slurp (:body request))))]
           (json-response (get-schemes schemes-by-predicate goal {} true))))
       
   (POST "/apply-scheme/:db/:id" request 
 	;; apply the scheme with the given id to the substitutions in the body
 	;; and add the resulting arguments, if they are ground, to the 
 	;; database. Returns a list of the ids of the new arguments.
-        (let [data (read-json (slurp (:body request)))
+        (let [data (json/read-json (slurp (:body request)))
               subs (unpack-subs (:subs data))
               attributes (unpack-arg-attrs (:attributes data))
               scheme (get schemes-by-id (symbol (:id (:params request))))]
@@ -661,7 +661,7 @@
   (POST "/apply-substitutions" request
 	;; apply the given substitutions to the given statement
         ;; and returns the result
-        (let [content (read-json (slurp (:body request)))
+        (let [content (json/read-json (slurp (:body request)))
               subs (unpack-subs (:substitutions content))
               statement (unpack-statement (:statement content))]
           (prn subs)
