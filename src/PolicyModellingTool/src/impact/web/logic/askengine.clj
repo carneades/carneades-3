@@ -7,10 +7,13 @@
   (:import java.io.File))
 
 (defn askable?
-  [askables k]
-  (let [pred (literal-predicate k)
-        res (contains? askables pred)]
-    res))
+  [theory p]
+  (let [predicate (get-in theory [:language (literal-predicate p)])]
+    (and (or (:askable predicate) (:widgets predicate))
+         (or (predicate? predicate)
+             (concept? predicate)
+             (and (role? predicate)
+                  (ground? (first (term-args p))))))))
 
 (defn get-remaining-questions
   [ag session]
@@ -134,7 +137,7 @@
         query (:query session)
         ag (make-argument-graph)
         [argument-from-user-generator questions send-answer]
-        (make-argument-from-user-generator (fn [k] (askable? (:askables session) k)))
+        (make-argument-from-user-generator (fn [p] (askable? theory p)))
         engine (make-engine ag 500 #{} (list (generate-arguments-from-theory theory)
                                             argument-from-user-generator))
         future-ag (future (argue engine query))
@@ -153,22 +156,15 @@
                                answers))
     (get-ag-or-next-question session)))
 
-(defn- get-askables
-  [theory]
-  (set (map :symbol (filter #(not (nil? (:widgets %))) (vals (-> theory :language))))))
-
 (defn ask-engine
   "Returns the modified session."
   [session]
   {:pre [(not (nil? session))]}
-  (let [askables (or (:askables session) (get-askables (:theory session)))
-        session (assoc session :askables askables)]
-    (if (:engine-runs session)
-      (let [answers (get-answers (:dialog session) (:last-question session))]
-        (continue-engine session answers))
-      ;; else
-      (do
-        (prn "[ask-engine]")
-        (prn "askables = " askables)
-        (prn "query =" (:query session))
-        (start-engine session)))))
+  (if (:engine-runs session)
+    (let [answers (get-answers (:dialog session) (:last-question session))]
+      (continue-engine session answers))
+    ;; else
+    (do
+      (prn "[ask-engine]")
+      (prn "query =" (:query session))
+      (start-engine session))))

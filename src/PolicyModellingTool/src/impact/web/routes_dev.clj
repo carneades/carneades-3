@@ -15,8 +15,8 @@
 
 (def impact-app
   (-> (handler/site all-impact-pm-tool-routes)
-      (wrap-base-url)
-      (wrap-stacktrace)))
+      (wrap-base-url)))
 
+;; (.start impact-server)
 ;; (.stop impact-server)
 ;; (defonce impact-server (run-jetty #'impact-app {:join? false :port 8080}))
