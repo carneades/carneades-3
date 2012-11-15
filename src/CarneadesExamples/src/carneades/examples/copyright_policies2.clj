@@ -92,7 +92,7 @@
                             :question "Is %s a person?")
              
              :de (make-form :positive "%s ist ein Rechtsperson."
-                            :negative "% ist nicht ein Rechtsperson."
+                            :negative "%s ist nicht ein Rechtsperson."
                             :question "Ist %s ein Rechtsperson?")}
      :category 'identifiers
      :hint {:en "Please provide an identifier for the person interested in publishing the work, such as P1."}
@@ -141,9 +141,9 @@
     (make-role
      :symbol 'announcement
      :askable true
-     :forms {:en (make-form :positive "The search conducted by %s for the owner of %2$s was publically announced."
-                            :negative "The search conducted by %s for the owner of %2$s was not publically announced."
-                            :question "Was the search conducted by %s for the owner of %2$s publically announced?")}
+     :forms {:en (make-form :positive "The search conducted by %s for the owner of %s was publically announced."
+                            :negative "The search conducted by %s for the owner of %s was not publically announced."
+                            :question "Was the search conducted by %s for the owner of %s publically announced?")}
      :category 'announcement-category)
     
     (make-concept
@@ -216,7 +216,7 @@ Bekanntmachung nicht ermittelt werden können."})
                     (make-premise :statement '(work ?W))
                     (make-premise :statement '(type-of-use ?P ?W commercial))
                     (make-premise :statement '(search-type ?P ?W professional))
-                    (make-premise :statement '(announcement))
+                    (make-premise :statement '(announcement ?P ?W))
                     (make-premise :statement '(valid AB-52c-2-a))])])])]))
 
 (require '[clojure.data.json :as json])
