@@ -45,7 +45,7 @@
 (def copyright-policies2
   (make-theory
    :header 
-   (make-metadata :title "Copyright in the Knowledge Economy"
+   (make-metadata :title "Copyright in the Knowledge Economy - v2"
                   :description {:en ""}) ;; TODO add a description
    
    :language
@@ -78,7 +78,7 @@
      :symbol 'may-publish
      :min 0
      :max nil
-     :type symbol
+     :type :symbol
      :askable false
      :forms {:en (make-form :positive "%s may publish  %s."
                             :negative "%s may not publish %s."
@@ -218,3 +218,7 @@ Bekanntmachung nicht ermittelt werden können."})
                     (make-premise :statement '(search-type ?P ?W professional))
                     (make-premise :statement '(announcement))
                     (make-premise :statement '(valid AB-52c-2-a))])])])]))
+
+(require '[clojure.data.json :as json])
+
+(json/json-str copyright-policies2)
