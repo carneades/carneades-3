@@ -6,11 +6,14 @@
         carneades.engine.statement
         [carneades.engine.unify :only (genvar apply-substitutions)]
         impact.web.logic.translate)
-  (:require [clojure.string :as s]))
+  (:require [clojure.string :as s]
+            [carneades.engine.scheme :as scheme]))
 
 (defn insert-args
   [question stmt arity]
   ;; we use %n$s in string formats to specify arg orders
+  (prn "question =" question)
+  (prn "arity =" arity)
   (let [s (rest (literal-atom stmt))]
     (apply format question (map str (take arity s)))))
 
@@ -20,7 +23,7 @@
         selector (if (ground? stmt) :question :positive)
         question (-> questiondata :forms klang selector)
         notrans (nil? question)
-        arity (:arity questiondata)
+        arity (scheme/get-arity questiondata)
         question (or question
                      (-> questiondata :forms :en selector))]
     (-> (if notrans
@@ -48,15 +51,23 @@
       [category_key (translate category_name "en" lang)]
       [category_key category_name])))
 
+(defn- get-widgets
+  "Returns the appropriate widget. This is for backward compatibility.
+The type field is now used instead of the widget field, in the theory. On the client-side
+widget is still used. New Types of :string maps to :widgets 'text."
+  [predicate]
+  (or (:widgets predicate)
+      (replace {:string 'text} [(or (:type predicate) :string)])))
+
 (defn- get-answers-choices
   [theory stmt lang]
   (let [pred (literal-predicate stmt)
-        questiondata (-> theory :language pred)
-        arity (-> questiondata :arity)]
+        predicate (-> theory :language pred)
+        arity (scheme/get-arity predicate)]
     (if (or (ground? stmt) (zero? arity))
       ;; TODO: translations of these sentences.
       {:answers ["Yes" "No" "Maybe"] :formalanswers ['yes 'no 'maybe] :yesnoquestion true :widgets '[radio]}
-      (let [formalanswers (-> questiondata :answers)
+      (let [formalanswers (-> predicate :answers)
             klang (keyword lang)
             termargs (term-args stmt)
             ;; filter out answer for grounded variables (since they are not asked)
@@ -68,17 +79,20 @@
                       answers
                       (map #(translate % "en" lang)
                            (map (fn [sym] (-> theory :language :en :text lang)) formalanswers)))
-            widgets (-> questiondata :widgets)
+            widgets (get-widgets predicate)
+            _ (prn "widgets:" widgets)
             widgets (keep (fn [[term widget]] (when (variable? term) widget)) (partition 2 (interleave termargs widgets)))]
+        (prn "answer :")
+        (prn {:answer answers :formalanswers formalanswers :yesnoquestion false :widgets widgets})
         {:answer answers :formalanswers formalanswers :yesnoquestion false :widgets widgets}))))
 
-(defn- get-question
+(defn get-first-question
   [id stmt lang theory]
   (let [pred (literal-predicate stmt)
-        questiondata ((:language theory) pred)
-        question (get-question-text stmt questiondata lang)
+        predicate ((:language theory) pred)
+        question (get-question-text stmt predicate lang)
         [category category-name] (get-category theory pred lang)
-        hint (get-hint questiondata lang)
+        hint (get-hint predicate lang)
         answers-choices (get-answers-choices theory stmt lang)]
     (merge
      {:id id
@@ -89,23 +103,33 @@
       :statement stmt}
      answers-choices)))
 
-(defn- get-followups
+(declare get-other-questions)
+
+(defn- get-questions
   [id stmt lang theory]
   (let [pred (literal-predicate stmt)
-        arity (-> (:language theory) pred :arity)
-        followups (-> (:language theory) pred :followups)]
-    (map (fn [id pred-of-follow]
-           (let [arity (-> (:language theory) pred-of-follow :arity)
-                 stmtq (doall (cons (symbol pred-of-follow) (repeatedly arity genvar)))]
-            (get-question id stmtq lang theory)))
-         (iterate inc (inc id)) followups)))
+        first-question (get-first-question id stmt lang theory)
+        [category category-name] (get-category theory pred lang)
+        pred-by-categories (group-by (fn [[pred val]] (:category val)) (-> theory :language))
+        other-preds (disj (set (map first (pred-by-categories category))) pred)
+        other-questions (get-other-questions id other-preds lang theory)
+        ]
+    (cons first-question other-questions)))
+
+(defn get-other-questions
+  [id others lang theory]
+  (map (fn [id pred]
+         (prn "pred =" pred)
+         (let [predicate (get-in theory [:language pred])
+               arity (scheme/get-arity predicate)
+               stmtq (doall (cons (symbol pred) (repeatedly arity genvar)))]
+           (get-first-question id stmtq lang theory)))
+       (iterate inc (inc id)) others))
 
 (defn get-structured-questions
   [stmt lang last-id theory]
   (prn "[get-structured-questions] stmt =" stmt)
   (let [id (inc last-id)
         pred (literal-predicate stmt)
-        question (get-question id stmt lang theory)
-        refsquestions (get-followups id stmt lang theory)
-        structured-questions (cons question refsquestions)]
-    [structured-questions (+ last-id (count structured-questions))]))
+        questions (get-questions id stmt lang theory)]
+    [questions (+ last-id (count questions))]))

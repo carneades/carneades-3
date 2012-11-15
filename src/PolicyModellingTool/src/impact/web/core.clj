@@ -16,6 +16,13 @@
 ;;   `(binding [swank.core.connection/*current-connection* swank-con]
 ;;      (swank.core/break)))
 
+
+(let [repl-out *out*]
+  (defn log [msg & vals]
+    (binding [*out* repl-out]
+      (let [line (apply format msg vals)]
+        (println line)))))
+
 (defn store-ag
   "Stores ag into a LKIF and returns the dbname"
   [ag]
