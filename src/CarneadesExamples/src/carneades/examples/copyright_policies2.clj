@@ -61,6 +61,16 @@
     (make-individual :symbol 'standard :text {:en "Standard DocumentedSearch"})
     (make-individual :symbol 'license :text {:en "License"})
 
+    (make-function
+     :symbol 'the-search
+     :arity 2
+     :text {:en "the search by %s for the owner of %s"})
+
+    (make-function
+     :symbol 'the-use
+     :arity 2
+     :text {:en "the use by %s of %s"})
+     
     (make-role
      :category 'license
      :symbol 'license-to-publish
@@ -108,7 +118,7 @@
                             :negative "%s is not a work."
                             :question "Is %s a work?")}
      :hint {:en "Please provide an identifier for the orphaned work, such as W1."}
-     :category 'identifiers)  
+     :category 'identifiers)
     
     (make-predicate
      :symbol 'type-of-use
@@ -125,17 +135,17 @@
      :category 'purpose
      :widgets '[text text select])
 
-    (make-predicate
+    (make-role
      :symbol 'search-type
-     :arity 3
      :askable true
-     :forms {:en (make-form :positive "%s conducted a %3$s search for the copyright owner of %2$s."
-                            :negative "%s did not conduct a %s search for the copyright owner of %s."
-                            :question "Did %s conduct a %3$s search for the copyright owner of %2$s?")}
+     :min 1
+     :max 1
+     :type '(enum standard professional none)
+     :forms {:en (make-form :positive "The type of %s was %s."
+                            :negative "The type of %s was not %s."
+                            :question "Was the type of %s %s?")}
      :hint {:en "What type of search was performed to try to find the copyright owner?"}
      :category 'search
-     :answers '[[] [] [standard professional none]]
-     :widgets '[text text select]
      :followups ['announcement])
 
     (make-role
@@ -197,10 +207,9 @@ policies for handling orphaned works [@Aktionsbündnis, pp. 6-7]."})
                                 :description {:de "(1) Öffentliche Zugänglichmachung für nicht-gewerbliche und private Zwecke, insbesondere durch Nutzer für Zwecke der Archivierung und für Forschung und Ausbildung ... (a)  Zulässig  ist  die  öffentliche  Zugänglichmachung  von  Werken, deren Urheber oder Rechteinhaber
 nach einer dokumentierten Standardsuche [alternativ: einer zeitlich auf 30 Tage öffentlichen Bekanntmachung] nicht ermittelt werden können."})
          :conclusion '(may-publish ?P ?W)
-         :premises [(make-premise :statement '(type-of-use ?P ?W non-commercial))
-                    (make-premise :statement '(search-type ?P ?W standard))
+         :premises [(make-premise :statement '(type-of-use (the-use ?P ?W) non-commercial))
+                    (make-premise :statement '(search-type (the-search ?P ?W) standard))
                     (make-premise :statement '(valid AB-52c-1-a)) ])
-
         
         (make-scheme
          :id 'AB-52c-2-a
@@ -210,7 +219,7 @@ Zugänglichmachung  von  Werken, deren Urheber oder Rechteinhaber
 nach einer angemessenen professionellen und dokumentierten Suche und einer öffentlichen 
 Bekanntmachung nicht ermittelt werden können."})
          :conclusion '(may-publish ?P ?W)
-         :premises [(make-premise :statement '(type-of-use ?P ?W commercial))
-                    (make-premise :statement '(search-type ?P ?W professional))
+         :premises [(make-premise :statement '(type-of-use (the-use ?P ?W) commercial))
+                    (make-premise :statement '(search-type (the-search ?P ?W) professional))
                     (make-premise :statement '(announcement ?P ?W))
                     (make-premise :statement '(valid AB-52c-2-a))])])])]))
