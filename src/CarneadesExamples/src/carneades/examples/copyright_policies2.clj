@@ -36,9 +36,7 @@
                           third parties* [§ 31 UrhG, emphasis added]
                           …"})
    :conclusion '(may-publish ?P ?W)
-   :premises [(make-premise :statement '(person ?P))
-              (make-premise :statement '(work ?W))
-              (make-premise :statement '(license-to-publish ?P ?W))
+   :premises [(make-premise :statement '(license-to-publish ?P ?W))
               (make-premise :statement '(valid UrhG-31)) ]))
 
 
@@ -50,7 +48,9 @@
    
    :language
    (make-language 
-    (make-individual :symbol 'announcement-category :text {:en "Announcement" :de "Bekanntmachung"})
+    (make-individual :symbol 'the-person :text {:en "the person" :de "die Person"})
+    (make-individual :symbol 'the-work :text {:en "the work" :de "das Werk"})
+    (make-individual :symbol 'announcement-category :text {:en "Announcement" :de "Bekanntmachung"}) 
     (make-individual :symbol 'commercial :text {:en "Commercial Use"})
     (make-individual :symbol 'purpose :text {:en "Purpose"})
     (make-individual :symbol 'identifiers :text {:en "Identifiers"})
@@ -159,7 +159,7 @@
    :sections
    [(make-section
      :id 'Q12
-     :main-issue '(may-publish ?Person ?Work)
+     :main-issue '(may-publish the-person the-work)
      :header (make-metadata :title "Q12. Cross-Border Aspects of Orphaned Works"
                             :description {:en "Question 12 of the Green Paper on Copyright in the Knowledge Economy [@GreenPaper, p. 12] asks:
 
@@ -197,9 +197,7 @@ policies for handling orphaned works [@Aktionsbündnis, pp. 6-7]."})
                                 :description {:de "(1) Öffentliche Zugänglichmachung für nicht-gewerbliche und private Zwecke, insbesondere durch Nutzer für Zwecke der Archivierung und für Forschung und Ausbildung ... (a)  Zulässig  ist  die  öffentliche  Zugänglichmachung  von  Werken, deren Urheber oder Rechteinhaber
 nach einer dokumentierten Standardsuche [alternativ: einer zeitlich auf 30 Tage öffentlichen Bekanntmachung] nicht ermittelt werden können."})
          :conclusion '(may-publish ?P ?W)
-         :premises [(make-premise :statement '(person ?P))
-                    (make-premise :statement '(work ?W))
-                    (make-premise :statement '(type-of-use ?P ?W non-commercial))
+         :premises [(make-premise :statement '(type-of-use ?P ?W non-commercial))
                     (make-premise :statement '(search-type ?P ?W standard))
                     (make-premise :statement '(valid AB-52c-1-a)) ])
 
@@ -212,9 +210,7 @@ Zugänglichmachung  von  Werken, deren Urheber oder Rechteinhaber
 nach einer angemessenen professionellen und dokumentierten Suche und einer öffentlichen 
 Bekanntmachung nicht ermittelt werden können."})
          :conclusion '(may-publish ?P ?W)
-         :premises [(make-premise :statement '(person ?P))
-                    (make-premise :statement '(work ?W))
-                    (make-premise :statement '(type-of-use ?P ?W commercial))
+         :premises [(make-premise :statement '(type-of-use ?P ?W commercial))
                     (make-premise :statement '(search-type ?P ?W professional))
                     (make-premise :statement '(announcement ?P ?W))
                     (make-premise :statement '(valid AB-52c-2-a))])])])]))
