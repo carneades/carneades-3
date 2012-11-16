@@ -218,7 +218,3 @@ Bekanntmachung nicht ermittelt werden können."})
                     (make-premise :statement '(search-type ?P ?W professional))
                     (make-premise :statement '(announcement ?P ?W))
                     (make-premise :statement '(valid AB-52c-2-a))])])])]))
-
-(require '[clojure.data.json :as json])
-
-(json/json-str copyright-policies2)
