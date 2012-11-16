@@ -41,9 +41,47 @@
   (get-symbol [this] "functor -> symbol")
   (get-arity [this]"functor -> natural number (including 0)"))
 
-;; To Do: Remove the forms, category, hint, widget and followups fields of predicates.
-;; Use the new role record for asking for information from users. 
+(defrecord Individual
+    [symbol   ; symbol
+     text]    ; (lang -> string) map.
+  )
 
+(extend Individual
+  Functor
+  {:get-symbol (fn [this] (:symbol this))
+   :get-arity (fn [this] 0)})
+
+(defn make-individual
+  "key value ... -> individual"
+  [& key-values]  
+  (merge (Individual. 
+          (gensym "i")    ; symbol
+          {})             ; text map
+         (apply hash-map key-values)))
+
+(defn individual? [x] (instance? Individual x))
+
+(defrecord Function
+    [symbol   ; symbol
+     arity    ; integer
+     text])  ; (lang -> string) map
+
+(extend Function
+  Functor
+  {:get-symbol (fn [this] (:symbol this))
+   :get-arity (fn [this] (:arity this))})
+
+(defn make-function
+  "key value ... -> function"
+  [& key-values]  
+  (merge (Function. 
+          (gensym "f")    ; symbol
+          0               ; arity
+          {})             ; text map
+         (apply hash-map key-values)))
+
+(defn function? [x] (instance? Function x))
+     
 (defrecord Predicate 
     [symbol   ; symbol
      arity    ; integer
@@ -58,8 +96,7 @@
 (extend Predicate
   Functor
   {:get-symbol (fn [this] (:symbol this))
-   :get-arity (fn [this] (:arity this))
-   :get-askable (fn [this] (:askable this))})
+   :get-arity (fn [this] (:arity this))})
 
 (defn make-predicate
   "key value ... -> predicate"
@@ -78,27 +115,6 @@
 
 (defn predicate? [x] (instance? Predicate x))
 
-(defrecord Individual
-    [symbol   ; symbol
-     text]    ; (lang -> string) map.
-  )
-
-(extend Individual
-  Functor
-  {:get-symbol (fn [this] (:symbol this))
-   :get-arity (fn [this] 0)
-   :get-askable (fn [this] (:askable this))})
-
-(defn make-individual
-  "key value ... -> individual"
-  [& key-values]  
-  (merge (Individual. 
-          (gensym "i")    ; symbol
-          {})             ; text map
-         (apply hash-map key-values)))
-
-(defn individual? [x] (instance? Individual x))
-
 ;; Concepts are unary relations, as in description logic and the
 ;; semantic web, where they are called "classes".  That is, the
 ;; represent atoms of the form (predicate object).
@@ -114,8 +130,7 @@
 (extend Concept
   Functor
   {:get-symbol (fn [this] (:symbol this))
-   :get-arity (fn [this] 1)
-   :get-askable (fn [this] (:askable this))})
+   :get-arity (fn [this] 1)})
 
 (defn make-concept
   "key value ... -> class"
