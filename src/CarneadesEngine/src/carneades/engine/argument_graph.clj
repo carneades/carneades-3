@@ -220,7 +220,7 @@
   [ag language]
   (let [build-text (fn [stmt forms selector]
                      (reduce (fn [text lang]
-                               (assoc text lang (format-statement stmt (forms lang) selector)))
+                               (assoc text lang (format-statement stmt language lang selector)))
                              {}
                              (keys forms)))]
     (reduce (fn [ag stmt-node]

@@ -58,7 +58,7 @@
     (make-individual :symbol 'none :text {:en "None"})
     (make-individual :symbol 'professional :text {:en "Professional Documented Search"})
     (make-individual :symbol 'search :text {:en "Search"})
-    (make-individual :symbol 'standard :text {:en "Standard DocumentedSearch"})
+    (make-individual :symbol 'standard :text {:en "Standard Documented Search"})
     (make-individual :symbol 'license :text {:en "License"})
 
     (make-function
@@ -141,9 +141,9 @@
      :min 1
      :max 1
      :type '#{standard professional none}
-     :forms {:en (make-form :positive "The type of %s was %s."
-                            :negative "The type of %s was not %s."
-                            :question "Was the type of %s %s?")}
+     :forms {:en (make-form :positive "The type of %s was a %s."
+                            :negative "The type of %s was not a %s."
+                            :question "Was the type of %s a %s?")}
      :hint {:en "What type of search was performed to try to find the copyright owner?"}
      :category 'search
      :followups ['announcement])
