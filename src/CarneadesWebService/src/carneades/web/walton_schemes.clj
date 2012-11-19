@@ -24,6 +24,14 @@
                   :positive "%s asserts that %s is true."
                   :negative "%s does not assert that %s is true."
                   :question "Does %s assert that %s is true?")})
+
+    (make-predicate
+     :symbol 'bad
+     :arity 1
+     :forms {:en (make-form
+                  :positive "Bringing about %s would be bad."
+                  :negative "Bringing about %s would not be bad."
+                  :question "Would bringing about %s be bad?")})
     
 
     (make-predicate
@@ -50,6 +58,14 @@
                   :positive "Witness %s is biased."
                   :negative "Witness %s is not biased."
                   :question "Is witness  %s biased?")})
+
+    (make-predicate
+     :symbol 'bring-about
+     :arity 2
+     :forms {:en (make-form
+                  :positive "%s would bring about %s."        ;; Action A would bring about goal G.
+                  :negative "%s would not bring about %s"
+                  :question "")})
 
     (make-predicate
      :symbol 'bring-about-more-effectively
@@ -154,6 +170,14 @@
                   :positive "It is feasible to perform the action %s."
                   :negative "It is not feasible to perform the action %s."
                   :question "Is it feasible to perform the action %s?")})
+
+    (make-predicate
+     :symbol 'good
+     :arity 1
+     :forms {:en (make-form
+                  :positive "Bringing about %s would be good."
+                  :negative "Bringing about %s would not be good."
+                  :question "Would bringing about %s be good?")})
 
      (make-predicate
      :symbol 'has-conclusion
@@ -812,7 +836,10 @@ Douglas Walton, Scare Tactics, Kluwer Academic Publishers, Dordrecht, 2000, p.12
      :conclusion '(should-be-performed ?A)
      :premises [(make-premise
                  :role "major"
-                 :statement '(positive-consequences ?A))])
+                 :statement '(bring-about ?A ?G))
+                (make-premise
+                 :role "minor"
+                 :statement '(good ?G))])
     
     (make-scheme
      :id 'negative-consequences
@@ -823,7 +850,10 @@ Douglas Walton, Scare Tactics, Kluwer Academic Publishers, Dordrecht, 2000, p.12
      :conclusion '(not (should-be-performed ?A))
      :premises [(make-premise
                  :role "major"
-                 :statement '(negative-consequences ?A))])
+                 :statement '(bring-about ?A ?G))
+                (make-premise
+                 :role "minor"
+                 :statement '(bad ?G))])
 
     (make-scheme
      :id 'practical-reasoning
