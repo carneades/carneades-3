@@ -858,7 +858,7 @@ based alternating transition systems. Artificial Intelligence 171,
 
      :exceptions [(make-premise
                    :role "CQ4"
-                   :statement '(bring-about-more-effectively ?S1 ?A))
+                   :statement '(bring-about-more-effectively ?S2 ?A))
                   (make-premise
                    :role "CQ5"
                    :statement '(realize-more-effectively ?G ?A))
