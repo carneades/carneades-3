@@ -3,7 +3,7 @@
 
 (ns carneades.engine.test-scheme
   (:use clojure.pprint
-        clojure.test
+        [clojure.test :exclude [function?]]
         (carneades.engine statement argument argument-graph shell argument scheme 
          aspic dublin-core argument-evaluation policy ask  argument-generator)
         carneades.maps.lacij))

@@ -3,7 +3,7 @@
 
 
 (ns carneades.engine.test-theory
-  (:use clojure.test
+  (:use [clojure.test :exclude [function?]]
         carneades.engine.dublin-core
         carneades.engine.argument
         carneades.engine.argument-generator
