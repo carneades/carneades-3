@@ -29,9 +29,9 @@
      :symbol 'bad
      :arity 1
      :forms {:en (make-form
-                  :positive "Bringing about %s would be bad."
-                  :negative "Bringing about %s would not be bad."
-                  :question "Would bringing about %s be bad?")})
+                  :positive "%s is bad."
+                  :negative "%s is not bad."
+                  :question "Is %s bad?")})
     
 
     (make-predicate
@@ -60,12 +60,12 @@
                   :question "Is witness  %s biased?")})
 
     (make-predicate
-     :symbol 'bring-about
+     :symbol 'brings-about
      :arity 2
      :forms {:en (make-form
-                  :positive "%s would bring about %s."        ;; Action A would bring about goal G.
-                  :negative "%s would not bring about %s"
-                  :question "")})
+                  :positive "Action %s brings about %s."  
+                  :negative "Action %s does not bring about %s"
+                  :question "Does action %s bring about %s?")})
 
     (make-predicate
      :symbol 'bring-about-more-effectively
@@ -175,9 +175,9 @@
      :symbol 'good
      :arity 1
      :forms {:en (make-form
-                  :positive "Bringing about %s would be good."
-                  :negative "Bringing about %s would not be good."
-                  :question "Would bringing about %s be good?")})
+                  :positive "%s is good."
+                  :negative "%s is not good."
+                  :question "Is %s good?")})
 
      (make-predicate
      :symbol 'has-conclusion
@@ -836,7 +836,7 @@ Douglas Walton, Scare Tactics, Kluwer Academic Publishers, Dordrecht, 2000, p.12
      :conclusion '(should-be-performed ?A)
      :premises [(make-premise
                  :role "major"
-                 :statement '(bring-about ?A ?G))
+                 :statement '(brings-about ?A ?G))
                 (make-premise
                  :role "minor"
                  :statement '(good ?G))])
@@ -850,7 +850,7 @@ Douglas Walton, Scare Tactics, Kluwer Academic Publishers, Dordrecht, 2000, p.12
      :conclusion '(not (should-be-performed ?A))
      :premises [(make-premise
                  :role "major"
-                 :statement '(bring-about ?A ?G))
+                 :statement '(brings-about ?A ?G))
                 (make-premise
                  :role "minor"
                  :statement '(bad ?G))])
