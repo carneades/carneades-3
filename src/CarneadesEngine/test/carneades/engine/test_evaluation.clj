@@ -3,7 +3,7 @@
 
 
 (ns carneades.engine.test-evaluation
-  (:use clojure.test
+  (:use [clojure.test :exclude [function?]]
         carneades.engine.statement
         carneades.engine.argument
         carneades.engine.scheme
