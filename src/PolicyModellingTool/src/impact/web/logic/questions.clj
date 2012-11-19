@@ -10,13 +10,14 @@
             [carneades.engine.scheme :as scheme]))
 
 (defn- get-question-text
-  [stmt questiondata lang]
+  [stmt language lang]
   (let [klang (keyword lang)
         selector (if (ground? stmt) :question :positive)
+        questiondata (language (literal-predicate stmt))
         form (-> questiondata :forms klang)
         notranslation (nil? form)
         form (or form (-> questiondata :forms :en))
-        text (scheme/format-statement stmt form selector)
+        text (scheme/format-statement stmt language klang selector)
         text (if notranslation
                (translate text "en" lang)
                text)]
@@ -70,17 +71,14 @@ widget is still used. New Types of :string maps to :widgets 'text."
                       (map #(translate % "en" lang)
                            (map (fn [sym] (-> theory :language :en :text lang)) formalanswers)))
             widgets (get-widgets predicate)
-            _ (prn "widgets:" widgets)
             widgets (keep (fn [[term widget]] (when (variable? term) widget)) (partition 2 (interleave termargs widgets)))]
-        (prn "answer :")
-        (prn {:answer answers :formalanswers formalanswers :yesnoquestion false :widgets widgets})
         {:answer answers :formalanswers formalanswers :yesnoquestion false :widgets widgets}))))
 
 (defn get-first-question
   [id stmt lang theory]
   (let [pred (literal-predicate stmt)
         predicate ((:language theory) pred)
-        question (get-question-text stmt predicate lang)
+        question (get-question-text stmt (:language theory) lang)
         [category category-name] (get-category theory pred lang)
         hint (get-hint predicate lang)
         answers-choices (get-answers-choices theory stmt lang)]
