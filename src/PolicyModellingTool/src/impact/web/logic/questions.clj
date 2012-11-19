@@ -12,25 +12,13 @@
 (defn- get-question-text
   [stmt language lang]
   (let [klang (keyword lang)
-        selector (if (ground? stmt) :question :positive)
-        questiondata (language (literal-predicate stmt))
-        form (-> questiondata :forms klang)
-        notranslation (nil? form)
-        form (or form (-> questiondata :forms :en))
-        text (scheme/format-statement stmt language klang selector)
-        text (if notranslation
-               (translate text "en" lang)
-               text)]
-    text))
+        selector (if (ground? stmt) :question :positive)]
+    (scheme/format-statement stmt language klang selector)))
 
 (defn- get-hint
   [questiondata lang]
-  (let [klang (keyword lang)
-        hint (-> questiondata :hint klang)
-        nohint (nil? hint)]
-    (if nohint
-      (translate (-> questiondata :hint :en) "en" lang)
-      hint)))
+  (let [klang (keyword lang)]
+    (-> questiondata :hint klang)))
 
 (defn- get-category
   "Returns the category and the category name"
@@ -38,9 +26,7 @@
   (let [klang (keyword lang)
         category_key (-> theory :language pred :category)
         category_name (-> theory :language category_key :text klang)]
-    (if (nil? category_name)
-      [category_key (translate category_name "en" lang)]
-      [category_key category_name])))
+    [category_key category_name]))
 
 (defn- get-widgets
   "Returns the appropriate widget. This is for backward compatibility.
@@ -56,7 +42,6 @@ widget is still used. New Types of :string maps to :widgets 'text."
         predicate (-> theory :language pred)
         arity (scheme/get-arity predicate)]
     (if (or (ground? stmt) (zero? arity))
-      ;; TODO: translations of these sentences.
       {:answers ["Yes" "No" "Maybe"] :formalanswers ['yes 'no 'maybe] :yesnoquestion true :widgets '[radio]}
       (let [formalanswers (-> predicate :answers)
             klang (keyword lang)
@@ -64,12 +49,6 @@ widget is still used. New Types of :string maps to :widgets 'text."
             ;; filter out answer for grounded variables (since they are not asked)
             formalanswers (keep (fn [[term answer]] (when (variable? term) answer)) (partition 2 (interleave termargs formalanswers)))
             answers (map (fn [sym] (-> theory :language sym :text klang)) formalanswers)
-            ;; if answers are available in the language take them, otherwise take the english answers
-            ;; and translate them on the fly
-            answers (if (seq answers)
-                      answers
-                      (map #(translate % "en" lang)
-                           (map (fn [sym] (-> theory :language :en :text lang)) formalanswers)))
             widgets (get-widgets predicate)
             widgets (keep (fn [[term widget]] (when (variable? term) widget)) (partition 2 (interleave termargs widgets)))]
         {:answer answers :formalanswers formalanswers :yesnoquestion false :widgets widgets}))))
