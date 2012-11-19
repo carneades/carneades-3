@@ -32,8 +32,10 @@
 (defn format-statement
   "Uses the formular to returns a user-readable sentence describing the literal.
    Selector is :positive, :negative or :question"
-  [literal form selector]
-  (apply format (-> form selector) (rest (literal-atom literal))))
+  [literal language lang selector]
+  (let [pred (literal-predicate literal)
+        fstring (-> language pred :forms lang selector)]
+   (apply format fstring (rest (literal-atom literal)))))
 
 (defprotocol Functor
   "A functor in the Prolog sense, meaning function and predicate symbols
