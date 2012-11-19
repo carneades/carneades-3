@@ -120,27 +120,27 @@
      :hint {:en "Please provide an identifier for the orphaned work, such as W1."}
      :category 'identifiers)
     
-    (make-predicate
+    (make-role
      :symbol 'type-of-use
-     :arity 3
      :askable true
-     :forms {:de (make-form :positive "%s nutzt %s für folgender Zwecken: %s."
-                            :negative "%s nutzt %s nicht für folgender Zwecken: %s."
-                            :question "Nutzt %s den Werk %s für folgender Zwecken: %s?")
-             :en (make-form :positive "%s uses %s for %s purposes."
-                            :negative "%s does not use %s for %s purposes."
-                            :question "Does %s use %s for %s purposes?")}
+     :min 1
+     :max 1
+     :type '#{non-commercial commercial}
+     :forms {:de (make-form :positive "%s ist für folgender Zwecken: %s."
+                            :negative "%s ist nicht für folgender Zwecken: %s."
+                            :question "Ist %s für folgender Zwecken: %s?")
+             :en (make-form :positive "%s is for %s purposes."
+                            :negative "%s is not for %s purposes."
+                            :question "Is %s for %s purposes?")}
      :hint {:en "Will the work be used for commercial or non-commercial purposes?"}
-     :answers '[[] [] [commercial non-commercial]]
-     :category 'purpose
-     :widgets '[text text select])
+     :category 'purpose)
 
     (make-role
      :symbol 'search-type
      :askable true
      :min 1
      :max 1
-     :type '(enum standard professional none)
+     :type '#{standard professional none}
      :forms {:en (make-form :positive "The type of %s was %s."
                             :negative "The type of %s was not %s."
                             :question "Was the type of %s %s?")}
