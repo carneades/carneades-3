@@ -29,13 +29,34 @@
 
 (defn form? [x] (instance? Form x))
 
+(declare format-literal-args)
+
+(defn format-literal-arg
+  "Format the argument of a literal. The argument can be a carneades.engine.scheme.Function
+call or a symbol."
+  [arg language lang]
+  (cond (and (symbol? arg) (language arg))
+        (or (get-in language [arg :text lang])
+            (get-in language [arg :text :en]))
+        (and (literal? arg) (language (literal-predicate (literal-atom arg))))
+        (let [pred (literal-atom (literal-predicate arg))
+              fstring (or (get-in language [pred :text lang])
+                          (get-in language [pred :text :en]))]
+          (apply format fstring (format-literal-args arg language lang)))
+        :else (str arg)))
+
+(defn format-literal-args
+  "Format the arguments of a literal"
+  [literal language lang]
+  (map #(format-literal-arg % language lang) (rest (literal-atom literal))))
+
 (defn format-statement
   "Uses the formular to returns a user-readable sentence describing the literal.
    Selector is :positive, :negative or :question"
   [literal language lang selector]
   (let [pred (literal-predicate literal)
         fstring (-> language pred :forms lang selector)]
-   (apply format fstring (rest (literal-atom literal)))))
+   (apply format fstring (format-literal-args literal language lang))))
 
 (defprotocol Functor
   "A functor in the Prolog sense, meaning function and predicate symbols
