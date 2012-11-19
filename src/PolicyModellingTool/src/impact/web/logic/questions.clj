@@ -9,28 +9,18 @@
   (:require [clojure.string :as s]
             [carneades.engine.scheme :as scheme]))
 
-(defn insert-args
-  [question stmt arity]
-  ;; we use %n$s in string formats to specify arg orders
-  (prn "question =" question)
-  (prn "arity =" arity)
-  (let [s (rest (literal-atom stmt))]
-    (apply format question (map str (take arity s)))))
-
 (defn- get-question-text
   [stmt questiondata lang]
   (let [klang (keyword lang)
         selector (if (ground? stmt) :question :positive)
-        question (-> questiondata :forms klang selector)
-        notrans (nil? question)
-        arity (scheme/get-arity questiondata)
-        question (or question
-                     (-> questiondata :forms :en selector))]
-    (-> (if notrans
-          (s/replace (translate (s/replace question "%s" "_") "en" lang)
-                     "_" "%s")
-          question)
-        (insert-args stmt arity))))
+        form (-> questiondata :forms klang)
+        notranslation (nil? form)
+        form (or form (-> questiondata :forms :en))
+        text (scheme/format-statement stmt form selector)
+        text (if notranslation
+               (translate text "en" lang)
+               text)]
+    text))
 
 (defn- get-hint
   [questiondata lang]
