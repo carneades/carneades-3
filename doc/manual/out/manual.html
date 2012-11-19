@@ -210,7 +210,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ul>
 <p>The &quot;Home&quot; menu item takes you back the home page, described here.</p>
 <p>The &quot;Argument Graph&quot; menu item takes you a description of the debate and a hypertext outline of the argument graph model of the debate. The argument graph page includes a submenu of commands for generating argument maps, evaluating arguments, viewing argumentation schemes, exporting argument maps to XML and, if you are logged in as an analyst, for editing the argument graph.</p>
-<p>The &quot;Poll&quot; menu item takes you to the opinion formation, polling and comparison tool, where you can moderate a virtual debate of the issues. In return, you will receive a guided tour of the issues and arguments, to help you to formulate your own opinion. The tool also provides you with a way anonymously share your opinion with other users. The polling results are aggregated by the system and used to help you to evaluate the acceptability of claims. Finally, the tool compares your opinions with the opinions expressed in the published documents used to create the argument graph, for example the opinions of political parties, and ranks the authors by the degree to which their opinions agree with yours.</p>
+<p>The &quot;Poll&quot; menu item takes you to the opinion formation, polling and comparison tool, where you can moderate a virtual debate of the issues. In return, you will receive a guided tour of the issues and arguments, to help you to formulate your own opinion. The tool also provides you with a way to anonymously share your opinion with other users. The polling results are aggregated by the system and used to help you to evaluate the acceptability of claims. Finally, the tool compares your opinions with the opinions expressed in the published documents used to create the argument graph, for example the opinions of political parties, and ranks the authors by the degree to which their opinions agree with yours.</p>
 <p>The &quot;Policy Analysis&quot; menu item takes you to a tool for analyzing and comparing the effects of various policy proposals on example cases. In a dialog with the system, you will be asked a serious of questions to gather information about a real or hypothetical case. An argument graph will be generated, by applying the rules of the policy proposals to the facts of the case, showing how the various policies would work in the given case. The tool can help you to find the policies which best serve your interests. Here too your privacy is protected. Care is taken to not request or store information that could be used to reveal your identity.</p>
 <p>Finally, the &quot;System Adminstration&quot; menu item takes you to a page for managing and configuring the Carneades server. You will need to log in with a user name and password. Here you can create, edit, archive and delete projects, where each project consists of an argument graph, a set of argumentation schemes, models of proposed policies, the test cases and possibly local copies of source documents.</p>
 <p>The current project, the one being accessed and used from the user interface, is identified by a parameter in the Web address (URL) used to access the system. Only system administrators have access to the list of all projects served by a particular installation of the Carneades system.</p>
@@ -294,7 +294,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </dd>
 </dl>
 <h2 id="metadata"><a href="#TOC"><span class="header-section-number">3.5</span> Metadata</a></h2>
-<p>The argument graph as as whole, as well as each of its statements and arguments, can be annotated with metadata, using the <a href="http://dublincore.org/">Dublin Core</a>. There are 15 elements in the Dublin Core. Each element may zero or more values. Here is a list of the Dublin Core elements:</p>
+<p>The argument graph as as whole, as well as each of its statements and arguments, can be annotated with metadata, using the <a href="http://dublincore.org/">Dublin Core</a>. There are 15 elements in the Dublin Core. Each element may contain zero or more values. Here is a list of the Dublin Core elements:</p>
 <ol style="list-style-type: decimal">
 <li>Title</li>
 <li>Creator</li>
@@ -399,7 +399,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <h1 id="formulating-polling-and-comparing-opinions"><a href="#TOC"><span class="header-section-number">5</span> Formulating, Polling and Comparing Opinions</a></h1>
 <p>The opinion formation and polling tool of the Carneades system serves two purposes:</p>
 <ul>
-<li><p>It guides you step by step through the arguments on all sides of a complex policy debate, in a kind of simulated debate, providing you with an overview of the issues, positions and arguments in a systematic way. The tool can help you to form your own opinion, if you don't yet have one, or to critically evaluate and reconsider your current opinion, if you do. The tool also enables you to compare your responses with the published positions of some stakeholders, such political parties, helping you to find persons and organizations which best represent or share your views and interests.</p></li>
+<li><p>It guides you step by step through the arguments on all sides of a complex policy debate, in a kind of simulated debate, providing you with an overview of the issues, positions and arguments in a systematic way. The tool can help you to form your own opinion, if you don't yet have one, or to critically evaluate and reconsider your current opinion, if you do. The tool also enables you to compare your responses with the published positions of some stakeholders, such as political parties, helping you to find persons and organizations which best represent or share your views and interests.</p></li>
 <li><p>At the same time the tool conducts a poll to collect your views and opinions on the issues, taking care to protect your privacy. You will not be asked or required to enter any personal data, such as your name or email address, which could be used to identify you or associate your answers to poll questions. The anonymous and aggregated results of the survey can provide valuable feedback to you as well as policy makers, going beyond the information provided by traditional surveys. It enables users to discover not only how much support policies enjoy, but also to learn precisely why particular aspects of the policies, or their underlying assumptions, are supported or not.</p></li>
 </ul>
 <h2 id="accessing-the-opinion-formation-and-polling-tool"><a href="#TOC"><span class="header-section-number">5.1</span> Accessing the Opinion Formation and Polling Tool</a></h2>
@@ -1041,13 +1041,13 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ol>
 <p>$ git clone git://github.com/carneades/carneades.git</p>
 <ol start="3" style="list-style-type: decimal">
-<li>Change directory to the src subdirectory of the carneades project.</li>
+<li>Change directory to the PolicyModellingTool subdirectory.</li>
 </ol>
-<p>$ cd carneades/src</p>
+<p>$ cd carneades/src/PolicyModellingTool</p>
 <ol start="4" style="list-style-type: decimal">
 <li>Build the Carneades system:</li>
 </ol>
-<p>$ chmod +x build.sh ; ./build.sh --dev</p>
+<p>$ lein sub install</p>
 <ol start="5" style="list-style-type: decimal">
 <li>Configure Carneades</li>
 </ol>
@@ -1057,7 +1057,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <ol start="6" style="list-style-type: decimal">
 <li>Starting the Carneades web application server</li>
 </ol>
-<p>$ cd PolicyModellingTool $ lein ring server 8080</p>
+<p>$ lein ring server 8080</p>
 <p>(*Note: Change the name of the PolicyModellingTool package to CarneadesWebApp. *)</p>
 <ol style="list-style-type: decimal">
 <li>Using the Web client with your Web browser</li>
