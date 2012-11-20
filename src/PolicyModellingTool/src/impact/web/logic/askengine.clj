@@ -22,7 +22,7 @@
         statements (filter (fn [stmt]
                              (and
                               (askable? askables stmt)
-                              (empty? (get-answers dialog stmt))))
+                              (empty? (get-answers dialog theory stmt))))
                            (atomic-statements ag))]
     (prn "statements =")
     (prn statements)
@@ -31,7 +31,7 @@
     (reduce (fn [[questions id] stmt]
               (let [[new-questions id] (get-structured-questions stmt lang id theory)
                     new-questions (filter (fn [q]
-                                            (nil? (get-answers dialog (:statement q))))
+                                            (nil? (get-answers dialog theory (:statement q))))
                                           new-questions)]
                 ;; we use a set to avoid duplicate questions
                 [(merge questions (apply hash-map
@@ -114,7 +114,7 @@
                     :substitutions substitutions
                     :last-question lastquestion
                     :questions questions)]
-      (if-let [answers (get-answers (:dialog session) lastquestion)]
+      (if-let [answers (get-answers (:dialog session) (:theory session) lastquestion)]
         (continue-engine session answers)
         (ask-user session)))
     ;; else no more question == construction finished
@@ -161,7 +161,7 @@
   [session]
   {:pre [(not (nil? session))]}
   (if (:engine-runs session)
-    (let [answers (get-answers (:dialog session) (:last-question session))]
+    (let [answers (get-answers (:dialog session) (:theory session) (:last-question session))]
       (continue-engine session answers))
     ;; else
     (do
