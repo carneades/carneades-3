@@ -2,7 +2,8 @@
   carneades.engine.dialog
   (:use clojure.pprint
         carneades.engine.statement
-        [carneades.engine.unify :only (unify genvar apply-substitutions)]))
+        [carneades.engine.unify :only (unify genvar apply-substitutions)])
+  (:require [carneades.engine.scheme :as scheme]))
 
 (defrecord Dialog [questions answers])
 
@@ -40,14 +41,41 @@
           dialog
           questions-to-answers))
 
+(defn previous-answers
+  "Returns the previous answers for this question in the dialog"
+  [question dialog]
+  (filter (fn [k] (unify question k)) (keys (:answers dialog))))
+
+(defn replace-sliteral-value
+  "Replaces the value of a binary sliteral by another value"
+  [role value]
+  (let [[subject object _] role]
+    (list subject object value)))
+
 (defn get-answers
   "Return a sequence of atomic answers for a given questions or nil if no answers.
    Note: an empty sequence can be returned, it does mean that there were answers
    but they were answered with 'maybe'."
-  [dialog question]
+  [dialog theory question]
   (let [question (:atom (positive-statement question))]
-    (when-let [key (first (filter (fn [k] (unify question k)) (keys (:answers dialog))))]
-      (get-in dialog [:answers key]))))
+    (if-let [key (first (previous-answers question dialog))]
+      (get-in dialog [:answers key])
+      ;; if
+      ;; * we don't have an answer and
+      ;; * the question is grounded and
+      ;; * corresponds to a functional (min=1, max=1) role predicate in the theory and
+      ;; * the possible values (the type) are expressed in a set
+      ;; * and we have an answer for one of the other possible values in the dialog
+      ;; then the response is the negation of the question
+      (when (and (ground? question) (literal-predicate question))
+        (when-let [pred (get-in theory [:language (literal-predicate question)])]
+          (when (and (scheme/role? pred)
+                     (= (:max pred) 1)
+                     (= (:max pred) 1)
+                     (set? (:type pred)))
+            (when (seq (mapcat #(previous-answers (replace-sliteral-value question %) dialog)
+                               (disj (:type pred) (second (term-args question)))))
+              [(literal-complement question)])))))))
 
 (defn get-nthquestion
   "Returns the nth questions of the dialog history"
