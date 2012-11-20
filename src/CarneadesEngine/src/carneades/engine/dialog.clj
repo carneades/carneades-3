@@ -67,15 +67,15 @@
       ;; * the possible values (the type) are expressed in a set
       ;; * and we have an answer for one of the other possible values in the dialog
       ;; then the response is the negation of the question
-      (when (and (ground? question) (literal-predicate question))
-        (when-let [pred (get-in theory [:language (literal-predicate question)])]
-          (when (and (scheme/role? pred)
-                     (= (:max pred) 1)
-                     (= (:max pred) 1)
-                     (set? (:type pred)))
-            (when (seq (mapcat #(previous-answers (replace-sliteral-value question %) dialog)
-                               (disj (:type pred) (second (term-args question)))))
-              [(literal-complement question)])))))))
+      (when-let [pred (get-in theory [:language (literal-predicate question)])]
+        (when (and (ground? question)
+                   (scheme/role? pred)
+                   (= (:max pred) 1)
+                   (= (:max pred) 1)
+                   (set? (:type pred))
+                   (seq (mapcat #(previous-answers (replace-sliteral-value question %) dialog)
+                                (disj (:type pred) (second (term-args question))))))
+          [(literal-complement question)])))))
 
 (defn get-nthquestion
   "Returns the nth questions of the dialog history"
