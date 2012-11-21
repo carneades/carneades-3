@@ -62,7 +62,7 @@
   (prn "======================================== answers handler! ==============================")
   (pprint json)
   (let [{:keys [last-questions dialog]} session
-        questions-to-answers (reconstruct-answers-from-json (-> json :answers :values)
+        questions-to-answers (reconstruct-answers-from-json (-> json :answers)
                                                             dialog)
         _ (do (prn "[:answers] questions-to-answers =" questions-to-answers))
         session (update-in session [:dialog] add-answers questions-to-answers)

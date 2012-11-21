@@ -1,22 +1,23 @@
 // Adds the new questions to the end of the current page
 PM.show_questions = function(questions, questionlist, on_submit) {
-    var grouped_questions = _.groupBy(questions, function(q) { return q.category_name; });
-    _.each(grouped_questions, function(quests, category) {
-               questionlist.append('<h2>{0}</h2>'.format(category));
-               _.map(quests, function(q) { 
-                         PM.show_question(q, questionlist); 
-                         $('#q' + q.id + ' .plus').click(_.bind(PM.add_fields, PM, q));
-                     }); 
-           });
+    catb.views.pmt.questions.show_questions(questions, questionlist, on_submit);
+    // var grouped_questions = _.groupBy(questions, function(q) { return q.category_name; });
+    // _.each(grouped_questions, function(quests, category) {
+    //            questionlist.append('<h2>{0}</h2>'.format(category));
+    //            _.map(quests, function(q) { 
+    //                      PM.show_question(q, questionlist); 
+    //                      $('#q' + q.id + ' .plus').click(_.bind(PM.add_fields, PM, q));
+    //                  }); 
+    //        });
 
-    var button_id = UTILS.gen_id();
-    questionlist.append('<input type="button" value="submit" id="submit{0}"/>'.format(button_id));
-    questionlist.append('<hr/>');
-    $('#submit' + button_id).click(on_submit);
-    $('#questionsform').validate();
+    // var button_id = UTILS.gen_id();
+    // questionlist.append('<input type="button" value="submit" id="submit{0}"/>'.format(button_id));
+    // questionlist.append('<hr/>');
+    // $('#submit' + button_id).click(on_submit);
+    // $('#questionsform').validate();
 
-     // scrolls at the end of the page
-    $.scrollTo('100%');
+    //  // scrolls at the end of the page
+    // $.scrollTo('100%');
 };
 
 // Adds some input elements when the '+' button is clicked

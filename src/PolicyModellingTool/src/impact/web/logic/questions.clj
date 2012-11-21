@@ -66,7 +66,8 @@ widget is still used. New Types of :string maps to :widgets 'text."
       :category category
       :category_name category-name
       :hint hint
-      :question question
+      :question question ;; DEPRECATED
+      :text question
       :statement stmt}
      answers-choices)))
 
