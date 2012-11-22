@@ -1,6 +1,7 @@
 (ns catb.views.pmt.questions
   (:use [jayq.util :only [log clj->js]]
-        [jayq.core :only [$ append]])
+        [jayq.core :only [$ append]]
+        [catb.i18n :only [i18n]])
   (:require [clojure.string :as s]))
 
 (defn get-radio-widget-html
@@ -73,7 +74,7 @@
 
   (let [button-id (str (gensym "button"))]
     (append questionslist (format "<input type=\"button\" value=\"%s\" id=\"%s\"/> "
-                                  (js/jQuery.i18n.prop "pmt_submit")
+                                  (i18n "pmt_submit")
                                   button-id))
     (append questionslist "<hr/>")
     (.click ($ (str "#" button-id)) onsubmit)
