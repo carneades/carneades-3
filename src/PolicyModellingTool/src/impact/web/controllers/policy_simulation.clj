@@ -74,8 +74,8 @@
        :body (json-str {:solution (:solution session)
                         :db (:db session)})}
       (do
-        (prn "Sending question to the client")
-        (prn (:last-questions session))
+        (prn "==================== Sending question to the client ==================== ")
+        (prn (json-str {:questions (:last-questions session)}))
         {:session session
          :body (json-str {:questions (:last-questions session)})}))))
 

@@ -47,10 +47,12 @@
     (add-question-html q questionslist))
 
   (let [button-id (str (gensym "button"))]
-    (append questionslist (format "<button id=\"%s\">%s</button> "
-                                  button-id
-                                  (js/jQuery.i18n.prop "pmt_submit")))
+    (append questionslist (format "<input type=\"button\" value=\"%s\" id=\"%s\"/> "
+                                  (js/jQuery.i18n.prop "pmt_submit")
+                                  button-id))
     (append questionslist "<hr/>")
     (.click ($ (str "#" button-id)) onsubmit)
+    (.validate ($ "#questionsform"))
+    (.scrollTo js/jQuery "100%")
     false))
 
