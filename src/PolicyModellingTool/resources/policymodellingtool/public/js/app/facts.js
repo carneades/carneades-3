@@ -25,14 +25,15 @@ PM.display_facts = function() {
 // all questions have been answered.
 PM.show_questions_or_ag = function(data) {
     if (data.questions) {
-        PM.show_questions(data.questions, 
-                          $('#questions'),
-                          function() {
-                              if($('#questionsform').valid()) {
-                                  PM.send_answers(data.questions,
-                                                  PM.show_questions_or_ag);
-                              } 
-                          });
+        catb.views.pmt.questions.show_questions(
+            data.questions, 
+            $('#questions'),
+            function() {
+                if($('#questionsform').valid()) {
+                    PM.send_answers(data.questions,
+                                    PM.show_questions_or_ag);
+                } 
+            });
     } else {
         IMPACT.db = data.db;
         PM.set_arguments_url(IMPACT.db);

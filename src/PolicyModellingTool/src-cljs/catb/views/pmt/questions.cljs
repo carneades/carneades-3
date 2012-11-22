@@ -1,8 +1,10 @@
 (ns catb.views.pmt.questions
   (:use [jayq.util :only [log clj->js]]
-        [jayq.core :only [$ append]]))
+        [jayq.core :only [$ append]])
+  (:require [clojure.string :as s]))
 
 (defn get-radio-widget-html
+  "Generates a radio widget HTML code for a question"
   [question]
   (apply str 
          (map (fn [formalanswer answer]
@@ -12,27 +14,50 @@
               (.-answers question))))
 
 (defn get-answer-widget-html
+  "Returns the HTML code for the widget of a question"
+  [question widget-type]
+  (condp = widget-type
+    "radio" (get-radio-widget-html question)
+    "text" (format "<input class=\"inputfield required\" type=\"text\" name=\"%s\" /> "
+                   (gensym "text"))))
+
+(defn get-answer-widgets-html
+  "Returns the HTML code for the widgets of a question"
   [question]
-  (let [widget-type (aget (.-widgets question) 0)]
-    (condp = widget-type
-      "radio" (get-radio-widget-html question))))
+  (doall
+   (map (fn [widget-type]
+              (get-answer-widget-html question widget-type))
+        (.-widgets question))))
+
+(defn generate-ungrounded-question-html
+  "Generates the HTML for an ungrounded n-ary predicate"
+  [question]
+  (let [widgets (atom (get-answer-widgets-html question))
+        text-with-widgets 
+        (s/replace (.-text question)
+                   #"\?\w+"
+                   (fn [& _]
+                     (let [widget (first (deref widgets))]
+                       (swap! widgets next)
+                       widget)))]
+    (format "<div id=\"q%s\">%s</div> " (.-id question) text-with-widgets)))
 
 (defn generate-question-html
   "Generates the HTML for a question"
-  [question questionslist]
+  [question]
   (if (.-yesnoquestion question)
     (str (format "<div id=\"q%s\"> " (.-id question))
          (.-text question)
-         (get-answer-widget-html question)
+         (get-answer-widget-html question (aget (.-widgets question) 0))
          "</div>")
-    (log "failed question")))
+    (generate-ungrounded-question-html question)))
 
 (defn add-question-html
   "Adds one question to the list of questions"
   [question questionslist]
   (append questionslist (format "<p><i>%s</i></p>"
                                (or (.-hint question) "")))
-  (append questionslist (generate-question-html question questionslist))
+  (append questionslist (generate-question-html question))
   (append questionslist "<br/>"))
 
 (defn ^:export show-questions
