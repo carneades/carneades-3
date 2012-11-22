@@ -1,6 +1,7 @@
 // Adds the new questions to the end of the current page
 PM.show_questions = function(questions, questionlist, on_submit) {
     catb.views.pmt.questions.show_questions(questions, questionlist, on_submit);
+    return false;
     // var grouped_questions = _.groupBy(questions, function(q) { return q.category_name; });
     // _.each(grouped_questions, function(quests, category) {
     //            questionlist.append('<h2>{0}</h2>'.format(category));

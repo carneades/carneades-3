@@ -25,17 +25,15 @@
          (.-text question)
          (get-answer-widget-html question)
          "</div>")
-    (log "failed question"))
-  )
+    (log "failed question")))
 
 (defn add-question-html
   "Adds one question to the list of questions"
   [question questionslist]
   (append questionslist (format "<p><i>%s</i></p>"
-                               (.-hint question)))
+                               (or (.-hint question) "")))
   (append questionslist (generate-question-html question questionslist))
-  (append questionslist "<br/>")
-  )
+  (append questionslist "<br/>"))
 
 (defn ^:export show-questions
   "Adds the HTML for the questions to the list of questions div"
@@ -53,5 +51,6 @@
                                   button-id
                                   (js/jQuery.i18n.prop "pmt_submit")))
     (append questionslist "<hr/>")
-    (.click ($ (str "#" button-id)) onsubmit)))
+    (.click ($ (str "#" button-id)) onsubmit)
+    false))
 

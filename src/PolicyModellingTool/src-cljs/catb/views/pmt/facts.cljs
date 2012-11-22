@@ -14,11 +14,14 @@
                       on_response
                       js/IMPACT.user
                       js/IMPACT.password
-                      js/PM.on_error))
-    (js/PM.ajax_post js/IMPACT.simulation_url
-                     (clj->js {:answers [{:id 2
-                                          :values ["no"]}]})
-                     on_response
-                     js/IMPACT.user
-                     js/IMPACT.password
-                     js/PM.on_error)))
+                      js/PM.on_error)
+      false)
+    (do
+     (js/PM.ajax_post js/IMPACT.simulation_url
+                      (clj->js {:answers [{:id 2
+                                           :values ["no"]}]})
+                      on_response
+                      js/IMPACT.user
+                      js/IMPACT.password
+                      js/PM.on_error)
+     false)))

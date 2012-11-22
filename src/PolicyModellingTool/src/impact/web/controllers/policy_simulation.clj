@@ -37,7 +37,8 @@
     {:session session
      :body (json-str {:questions (:last-questions session)})}))
 
-(defn reconstruct-answers-from-json
+(defn reconstruct-answers
+  "Reconstructs the answer from the JSON"
   [jsonanswers dialog]
   (reduce (fn [questions-to-answers answer]
             (let [id (:id answer)
@@ -62,8 +63,8 @@
   (prn "======================================== answers handler! ==============================")
   (pprint json)
   (let [{:keys [last-questions dialog]} session
-        questions-to-answers (reconstruct-answers-from-json (-> json :answers)
-                                                            dialog)
+        questions-to-answers (reconstruct-answers (:answers json)
+                                                  dialog)
         _ (do (prn "[:answers] questions-to-answers =" questions-to-answers))
         session (update-in session [:dialog] add-answers questions-to-answers)
         _ (do (prn "[:answers] dialog answers =" (:dialog session)))
@@ -72,8 +73,11 @@
       {:session session
        :body (json-str {:solution (:solution session)
                         :db (:db session)})}
-      {:session session
-       :body (json-str {:questions (:last-questions session)})})))
+      (do
+        (prn "Sending question to the client")
+        (prn (:last-questions session))
+        {:session session
+         :body (json-str {:questions (:last-questions session)})}))))
 
 (defn new-session
   []
