@@ -33,16 +33,17 @@
 (defn replace-variables-by-widgets
   "Replaces the variables in the text by the HTML content of the widgets"
   [text widgets]
-  (s/replace text #"\?\w+"
-                   (fn [& _]
-                     (let [widget (first (deref widgets))]
-                       (swap! widgets next)
-                       widget))))
+  (let [wid (atom widgets)]
+    (s/replace text #"\?\w+"
+               (fn [& _]
+                 (let [w (first (deref wid))]
+                   (swap! wid next)
+                   w)))))
 
 (defn get-ungrounded-question-html
   "Generates the HTML for an ungrounded n-ary predicate"
   [question]
-  (let [widgets (atom (get-answer-widgets-html question))
+  (let [widgets (get-answer-widgets-html question)
         text-with-widgets (replace-variables-by-widgets
                            (:text question)
                            widgets)]
@@ -55,13 +56,13 @@
 (defn select-widget
   "Returns the code for a select widget"
   [values names]
-  (apply str
-         (format "<select class=\"combobox required\"> ")
-         (map (fn [value]
-                (format "<option class=\"dropdown-menu inputfield\" value=\"%s\">%s</option>"
-                        value name))
-              values names)
-         "</select>"))
+  (str (format "<select class=\"combobox required\"> ")
+       (apply str
+              (map (fn [value name]
+                     (format "<option class=\"dropdown-menu inputfield\" value=\"%s\">%s</option>"
+                             value name))
+                   values names))
+       "</select>"))
 
 (defn widget-for-role
   "Returns the widget for a role question"
@@ -73,20 +74,26 @@
 (defn get-role-question-html
   "Returns the HTML of the question for a role"
   [question]
-  (log "widget = " (widget-for-role question))
+  (log "get-role-question-html")
+  (log question)
+  (log "widget = ")
+  (log (widget-for-role question))
   (replace-variables-by-widgets
    (:text question)
-   (widget-for-role question)))
+   [(widget-for-role question)]))
+
+(defn get-yes-no-question-html
+  [question]
+  (str (format "<div id=\"q%s\"> " (:id question))
+       (:text question)
+       (get-answer-widget-html question (aget (:widgets question) 0))
+       "</div>"))
 
 (defn get-question-html
   "Generates the HTML for a question"
   [question]
   (cond (:role question) (get-role-question-html question)
-        (:yesnoquestion question)
-        (str (format "<div id=\"q%s\"> " (:id question))
-             (:text question)
-             (get-answer-widget-html question (aget (:widgets question) 0))
-             "</div>")
+        (:yesnoquestion question) (get-yes-no-question-html question)
         :else (get-ungrounded-question-html question)))
 
 (defn add-question-html
@@ -105,7 +112,7 @@
   (append questionslist (format "<h2>%s</h2>"
                                (.-category_name (first questions))))
   (doseq [q questions]
-    (add-question-html (js->clj q) questionslist))
+    (add-question-html (js->clj q :keywordize-keys true) questionslist))
 
   (let [button-id (str (gensym "button"))]
     (append questionslist (format "<input type=\"button\" value=\"%s\" id=\"%s\"/> "

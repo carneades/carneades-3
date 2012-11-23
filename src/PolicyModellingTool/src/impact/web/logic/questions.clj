@@ -11,9 +11,12 @@
 
 (defn- get-question-text
   [stmt theory lang]
-  (let [predicate (get-predicate stmt theory)
-        selector (if (and (ground? stmt) (not (scheme/role? predicate))) :question :positive)]
-    (scheme/format-statement stmt (:language theory) lang selector)))
+  (let [predicate (get-predicate stmt theory)]
+    (cond (scheme/role? predicate) (let [[s o v] stmt
+                                         stmt2 (list s o (genvar))]
+                                     (scheme/format-statement stmt2 (:language theory) lang :positive))
+          (ground? stmt) (scheme/format-statement stmt (:language theory) lang :positive)
+          :else (scheme/format-statement stmt (:language theory) lang :question))))
 
 (defn- get-hint
   [questiondata lang]
@@ -87,7 +90,7 @@ widget is still used. New Types of :string maps to :widgets 'text."
   [id stmt lang theory]
   (let [pred (literal-predicate stmt)
         predicate ((:language theory) pred)
-        question (get-question-text stmt theory lang)
+        text (get-question-text stmt theory lang)
         [category category-name] (get-category theory pred lang)
         hint (get-hint predicate lang)
         answers-choices (get-answers-choices theory stmt lang)]
@@ -96,11 +99,12 @@ widget is still used. New Types of :string maps to :widgets 'text."
       :category category
       :category_name category-name
       :hint hint
-      :question question ;; DEPRECATED
-      :text question
+      ;; :question question ;; DEPRECATED
+      :text text
       :statement stmt
       :role (scheme/role? predicate)
-      :predicate predicate}
+      ;; :predicate predicate
+      }
      answers-choices)))
 
 (declare get-other-questions)
