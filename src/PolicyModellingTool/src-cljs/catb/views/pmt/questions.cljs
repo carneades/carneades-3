@@ -81,30 +81,22 @@
        (get-answer-widget-html question (aget (:widgets question) 0))
        "</div>"))
 
-(defn yes-no-question-for-role-html
-  [question]
-  (str (format "<div id=\"q%s\"> " (:id question))
-       (s/capitalize (:text question))
-       (get-answer-widget-html question (:type question))
-       "</div>"))
-
 (defn widget-for-role
   "Returns the widget for a role question"
   [question]
   (cond (and (functional? question) (coll? (:type question)))
         (select-widget (:type question) (:typename question))
-        :else (yes-no-question-for-role-html question)))
+        :else (throw "NYI")))
 
 (defn get-role-question-html
   "Returns the HTML of the question for a role"
   [question]
   (let [capitalized-text (s/capitalize (:text question))
-        content (if (functional? question)
-                  (replace-variables-by-widgets
-                   capitalized-text
-                   [(widget-for-role question)])
+        content (if (:yesnoquestion question)
                   (str capitalized-text (radio-widget '[yes no maybe] ["Yes" "No" "Maybe"]))
-                  )]
+                  (replace-variables-by-widgets
+                  capitalized-text
+                  [(widget-for-role question)]))]
     (format "<div id=\"q%s\">%s</div>" (:id question) content)))
 
 (defn get-question-html

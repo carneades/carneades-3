@@ -17,7 +17,8 @@
   [stmt theory lang]
   (let [predicate (get-predicate stmt theory)]
     (cond (and (scheme/role? predicate)
-               (functional? predicate))
+               (functional? predicate)
+               (coll? (:type predicate)))
           (let [[s o v] stmt
                 stmt2 (list s o (genvar))]
             (scheme/format-statement stmt2 (:language theory) lang :positive))
@@ -83,7 +84,7 @@ widget is still used. New Types of :string maps to :widgets 'text."
      :max max
      :type type
      :typename typename
-     :yesnoquestion false}))
+     :yesnoquestion (and (not (coll? type)) (ground? stmt))}))
 
 (defn- get-answers-choices
   [theory stmt lang]
