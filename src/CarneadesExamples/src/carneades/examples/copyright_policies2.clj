@@ -51,14 +51,14 @@
     (make-individual :symbol 'the-person :text {:en "the person" :de "die Person"})
     (make-individual :symbol 'the-work :text {:en "the work" :de "das Werk"})
     (make-individual :symbol 'announcement-category :text {:en "Announcement" :de "Bekanntmachung"}) 
-    (make-individual :symbol 'commercial :text {:en "Commercial Use"})
+    (make-individual :symbol 'commercial :text {:en "commercial"})
     (make-individual :symbol 'purpose :text {:en "Purpose"})
     (make-individual :symbol 'identifiers :text {:en "Identifiers"})
-    (make-individual :symbol 'non-commercial :text {:en "Non-commercial Use"})
+    (make-individual :symbol 'non-commercial :text {:en "non-commercial"})
     (make-individual :symbol 'none :text {:en "None"})
-    (make-individual :symbol 'professional :text {:en "Professional Documented Search"})
+    (make-individual :symbol 'professional :text {:en "professional documented search"})
     (make-individual :symbol 'search :text {:en "Search"})
-    (make-individual :symbol 'standard :text {:en "Standard Documented Search"})
+    (make-individual :symbol 'standard :text {:en "standard documented search"})
     (make-individual :symbol 'license :text {:en "License"})
 
     (make-function

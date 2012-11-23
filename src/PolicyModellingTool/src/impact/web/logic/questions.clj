@@ -10,22 +10,20 @@
             [carneades.engine.scheme :as scheme]))
 
 (defn- get-question-text
-  [stmt language lang]
-  (let [klang (keyword lang)
-        selector (if (ground? stmt) :question :positive)]
-    (scheme/format-statement stmt language klang selector)))
+  [stmt theory lang]
+  (let [predicate (get-predicate stmt theory)
+        selector (if (and (ground? stmt) (not (scheme/role? predicate))) :question :positive)]
+    (scheme/format-statement stmt (:language theory) lang selector)))
 
 (defn- get-hint
   [questiondata lang]
-  (let [klang (keyword lang)]
-    (-> questiondata :hint klang)))
+  (-> questiondata :hint lang))
 
 (defn- get-category
   "Returns the category and the category name"
   [theory pred lang]
-  (let [klang (keyword lang)
-        category_key (-> theory :language pred :category)
-        category_name (-> theory :language category_key :text klang)]
+  (let [category_key (-> theory :language pred :category)
+        category_name (-> theory :language category_key :text lang)]
     [category_key category_name]))
 
 (defn- get-widgets
@@ -36,28 +34,60 @@ widget is still used. New Types of :string maps to :widgets 'text."
   (or (:widgets predicate)
       (replace {:string 'text} [(or (:type predicate) :string)])))
 
-(defn- get-answers-choices
+(defn get-predicate
+  [stmt theory]
+  (let [pred (literal-predicate stmt)]
+    (-> theory :language pred)))
+
+(defn- get-answers-choices-for-predicate
   [theory stmt lang]
-  (let [pred (literal-predicate stmt)
-        predicate (-> theory :language pred)
+  (prn "[get-answers-choices-for-predicate]")
+  (let [predicate (get-predicate stmt theory)
         arity (scheme/get-arity predicate)]
     (if (or (ground? stmt) (zero? arity))
       {:answers ["Yes" "No" "Maybe"] :formalanswers ['yes 'no 'maybe] :yesnoquestion true :widgets '[radio]}
       (let [formalanswers (-> predicate :answers)
-            klang (keyword lang)
             termargs (term-args stmt)
             ;; filter out answer for grounded variables (since they are not asked)
             formalanswers (keep (fn [[term answer]] (when (variable? term) answer)) (partition 2 (interleave termargs formalanswers)))
-            answers (map (fn [sym] (-> theory :language sym :text klang)) formalanswers)
+            answers (map (fn [sym] (-> theory :language sym :text lang)) formalanswers)
             widgets (get-widgets predicate)
             widgets (keep (fn [[term widget]] (when (variable? term) widget)) (partition 2 (interleave termargs widgets)))]
         {:answer answers :formalanswers formalanswers :yesnoquestion false :widgets widgets}))))
+
+(defn get-typename
+  [type theory lang]
+  (if (coll? type)
+    (map (fn [t]
+           (get-in theory [:language t :text lang]))
+         type)
+    (get-in theory [:language type :text lang])))
+
+(defn get-answers-choices-for-role
+  [theory stmt lang]
+  (prn "[get-answers-choices-for-role]")
+  (let [predicate (get-predicate stmt theory)
+        {:keys [min max type]} predicate
+        typename (get-typename type theory lang)]
+    ;; TODO: translation of the types
+    {:min min
+     :max max
+     :type type
+     :typename typename
+     :yesnoquestion false}))
+
+(defn- get-answers-choices
+  [theory stmt lang]
+  (let [predicate (get-predicate stmt theory)]
+    (cond (scheme/role? predicate) (get-answers-choices-for-role theory stmt lang)
+          (scheme/predicate? predicate) (get-answers-choices-for-predicate theory stmt lang)
+          :else (throw (Exception. (str "NYI:" predicate))))))
 
 (defn get-first-question
   [id stmt lang theory]
   (let [pred (literal-predicate stmt)
         predicate ((:language theory) pred)
-        question (get-question-text stmt (:language theory) lang)
+        question (get-question-text stmt theory lang)
         [category category-name] (get-category theory pred lang)
         hint (get-hint predicate lang)
         answers-choices (get-answers-choices theory stmt lang)]
@@ -68,7 +98,9 @@ widget is still used. New Types of :string maps to :widgets 'text."
       :hint hint
       :question question ;; DEPRECATED
       :text question
-      :statement stmt}
+      :statement stmt
+      :role (scheme/role? predicate)
+      :predicate predicate}
      answers-choices)))
 
 (declare get-other-questions)
@@ -99,5 +131,5 @@ widget is still used. New Types of :string maps to :widgets 'text."
   (prn "[get-structured-questions] stmt =" stmt)
   (let [id (inc last-id)
         pred (literal-predicate stmt)
-        questions (get-questions id stmt lang theory)]
+        questions (get-questions id stmt (keyword lang) theory)]
     [questions (+ last-id (count questions))]))
