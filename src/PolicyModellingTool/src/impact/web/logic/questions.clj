@@ -9,14 +9,20 @@
   (:require [clojure.string :as s]
             [carneades.engine.scheme :as scheme]))
 
+(defn functional?
+  [role]
+  (and (= (:min role) 1) (= (:max role) 1)))
+
 (defn- get-question-text
   [stmt theory lang]
   (let [predicate (get-predicate stmt theory)]
-    (cond (scheme/role? predicate) (let [[s o v] stmt
-                                         stmt2 (list s o (genvar))]
-                                     (scheme/format-statement stmt2 (:language theory) lang :positive))
-          (ground? stmt) (scheme/format-statement stmt (:language theory) lang :positive)
-          :else (scheme/format-statement stmt (:language theory) lang :question))))
+    (cond (and (scheme/role? predicate)
+               (functional? predicate))
+          (let [[s o v] stmt
+                stmt2 (list s o (genvar))]
+            (scheme/format-statement stmt2 (:language theory) lang :positive))
+          (ground? stmt) (scheme/format-statement stmt (:language theory) lang :question)
+          :else (scheme/format-statement stmt (:language theory) lang :positive))))
 
 (defn- get-hint
   [questiondata lang]

@@ -22,6 +22,27 @@
     "text" (format "<input class=\"inputfield required\" type=\"text\" name=\"%s\" /> "
                    (gensym "text"))))
 
+(defn select-widget
+  "Returns the code for a select widget"
+  [values names]
+  (str (format "<select type=\"select\" class=\"combobox required\"> ")
+       (apply str
+              (map (fn [value name]
+                     (format "<option class=\"dropdown-menu inputfield\" value=\"%s\">%s</option>"
+                             value name))
+                   values names))
+       "</select>"))
+
+(defn radio-widget
+  "Returns the code for a radio widget"
+  [values names]
+  (let [inputname (gensym "name")]
+    (apply str
+           (map (fn [value name]
+                  (format "<input class=\"radiobutton inputfield required\" name=\"%s\" value=\"%s\" type=\"radio\"/>%s  "
+                          inputname name value))
+                values names))))
+
 (defn get-answer-widgets-html
   "Returns the HTML code for the widgets of a question"
   [question]
@@ -53,41 +74,38 @@
   [question]
   (and (= (:min question) 1) (= (:max question) 1)))
 
-(defn select-widget
-  "Returns the code for a select widget"
-  [values names]
-  (str (format "<select class=\"combobox required\"> ")
-       (apply str
-              (map (fn [value name]
-                     (format "<option class=\"dropdown-menu inputfield\" value=\"%s\">%s</option>"
-                             value name))
-                   values names))
-       "</select>"))
+(defn get-yes-no-question-html
+  [question]
+  (str (format "<div id=\"q%s\"> " (:id question))
+       (s/capitalize (:text question))
+       (get-answer-widget-html question (aget (:widgets question) 0))
+       "</div>"))
+
+(defn yes-no-question-for-role-html
+  [question]
+  (str (format "<div id=\"q%s\"> " (:id question))
+       (s/capitalize (:text question))
+       (get-answer-widget-html question (:type question))
+       "</div>"))
 
 (defn widget-for-role
   "Returns the widget for a role question"
   [question]
   (cond (and (functional? question) (coll? (:type question)))
         (select-widget (:type question) (:typename question))
-        :else (throw (str "NYI: " question))))
+        :else (yes-no-question-for-role-html question)))
 
 (defn get-role-question-html
   "Returns the HTML of the question for a role"
   [question]
-  (log "get-role-question-html")
-  (log question)
-  (log "widget = ")
-  (log (widget-for-role question))
-  (replace-variables-by-widgets
-   (:text question)
-   [(widget-for-role question)]))
-
-(defn get-yes-no-question-html
-  [question]
-  (str (format "<div id=\"q%s\"> " (:id question))
-       (:text question)
-       (get-answer-widget-html question (aget (:widgets question) 0))
-       "</div>"))
+  (let [capitalized-text (s/capitalize (:text question))
+        content (if (functional? question)
+                  (replace-variables-by-widgets
+                   capitalized-text
+                   [(widget-for-role question)])
+                  (str capitalized-text (radio-widget '[yes no maybe] ["Yes" "No" "Maybe"]))
+                  )]
+    (format "<div id=\"q%s\">%s</div>" (:id question) content)))
 
 (defn get-question-html
   "Generates the HTML for a question"

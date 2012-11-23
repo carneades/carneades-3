@@ -80,7 +80,7 @@ PM.send_answers = function(questions, on_response) {
                                                   var vals = [];
                                                   _.reduce(inputs,
                                                            function(index, input) {
-                                                               var val = widget_to_val[input.type]($(input));
+                                                               var val = widget_to_val[input.type || 'select']($(input));
                                                                if(val != null) {
                                                                    console.log('input {0} has value {1}'.format(question.id, val));
                                                                    vals.push(val);
