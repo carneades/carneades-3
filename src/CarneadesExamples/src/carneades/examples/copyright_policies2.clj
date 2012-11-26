@@ -154,7 +154,7 @@
      :forms {:en (make-form :positive "The search conducted by %s for the owner of %s was publically announced."
                             :negative "The search conducted by %s for the owner of %s was not publically announced."
                             :question "Was the search conducted by %s for the owner of %s publically announced?")}
-     :category 'announcement-category)
+     :category 'search)
     
     (make-concept
      :symbol 'valid

@@ -68,7 +68,7 @@
                    question (get-nthquestion dialog id)
                    statement (:statement question)
                    ans (cond (:yesnoquestion question)
-                             (reconstruct-yesno-answer answer question)
+                             (reconstruct-yesno-answer answer statement)
                              (scheme/role? (get-predicate statement theory))
                              (reconstruct-role-answer answer statement)
                              :else
