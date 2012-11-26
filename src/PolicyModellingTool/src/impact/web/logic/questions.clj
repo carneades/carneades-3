@@ -13,6 +13,11 @@
   [role]
   (and (= (:min role) 1) (= (:max role) 1)))
 
+(defn get-predicate
+  [stmt theory]
+  (let [pred (literal-predicate stmt)]
+    (-> theory :language pred)))
+
 (defn- get-question-text
   [stmt theory lang]
   (let [predicate (get-predicate stmt theory)]
@@ -43,11 +48,6 @@ widget is still used. New Types of :string maps to :widgets 'text."
   [predicate]
   (or (:widgets predicate)
       (replace {:string 'text} [(or (:type predicate) :string)])))
-
-(defn get-predicate
-  [stmt theory]
-  (let [pred (literal-predicate stmt)]
-    (-> theory :language pred)))
 
 (defn- get-answers-choices-for-predicate
   [theory stmt lang]

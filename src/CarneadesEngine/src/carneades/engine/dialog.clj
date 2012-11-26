@@ -57,6 +57,8 @@
    Note: an empty sequence can be returned, it does mean that there were answers
    but they were answered with 'maybe'."
   [dialog theory question]
+  {:pre [(do (prn "                    [get-answers] " question) true)]
+   :post [(do (prn "                    ====> " %) true)]}
   (let [question (:atom (positive-statement question))]
     (if-let [key (first (previous-answers question dialog))]
       (get-in dialog [:answers key])

@@ -6,7 +6,8 @@
          impact.web.views.pages
          impact.web.core
          (carneades.engine policy scheme dialog unify utils)
-         [carneades.engine.statement :only (neg literal-predicate variable? literal-atom variables)]))
+         [carneades.engine.statement :only (neg literal-predicate variable? literal-atom variables)])
+  (:require [carneades.engine.scheme :as scheme]))
 
 (defmulti ajax-handler (fn [json _] (ffirst json)))
 
@@ -37,25 +38,44 @@
     {:session session
      :body (json-str {:questions (:last-questions session)})}))
 
+(defn reconstruct-yesno-answer
+  "Returns the statement representing the user's response for a yes/no question"
+  [answer statement]
+  (if (= (first (:values answer)) "yes")
+    statement
+    (neg statement)))
+
+(defn reconstruct-predicate-answer
+  "Returns the statement representing the user's response for a yes/no question"
+  [answer statement]
+  (let [vars (variables statement)
+        values (map safe-read-string (:values answer))
+        subs (apply hash-map (interleave vars values))]
+   (apply-substitutions subs statement)))
+
+(defn reconstruct-role-answer
+  [answer statement]
+  (let [[s o v] statement
+        values (map safe-read-string (:values answer))]
+    (list s o (first values))))
+
 (defn reconstruct-answers
   "Reconstructs the answer from the JSON"
   [jsonanswers dialog]
-  (reduce (fn [questions-to-answers answer]
-            (let [id (:id answer)
-                  question (get-nthquestion dialog id)
-                  atomic-question (:statement question)
-                  vars (variables atomic-question)
-                  values (map safe-read-string (:values answer))
-                  subs (apply hash-map (interleave vars values))
-                  ans (if (:yesnoquestion question)
-                        (cond (= (first (:values answer)) "yes") atomic-question
-                              (= (first (:values answer)) "no") (neg atomic-question)
-                              :else nil)
-                        ;; else
-                        (apply-substitutions subs atomic-question))]
-              (conj questions-to-answers [(:statement question) ans])))
-          ()
-       jsonanswers))
+  (let [theory (policies (deref current-policy))]
+   (reduce (fn [questions-to-answers answer]
+             (let [id (:id answer)
+                   question (get-nthquestion dialog id)
+                   statement (:statement question)
+                   ans (cond (:yesnoquestion question)
+                             (reconstruct-yesno-answer answer question)
+                             (scheme/role? (get-predicate statement theory))
+                             (reconstruct-role-answer answer statement)
+                             :else
+                             (reconstruct-predicate-answer answer statement))]
+               (conj questions-to-answers [(:statement question) ans])))
+           ()
+           jsonanswers)))
 
 
 (defmethod ajax-handler :answers
@@ -65,9 +85,9 @@
   (let [{:keys [last-questions dialog]} session
         questions-to-answers (reconstruct-answers (:answers json)
                                                   dialog)
-        _ (do (prn "[:answers] questions-to-answers =" questions-to-answers))
+        ;; _ (do (prn "[:answers] questions-to-answers =" questions-to-answers))
         session (update-in session [:dialog] add-answers questions-to-answers)
-        _ (do (prn "[:answers] dialog answers =" (:dialog session)))
+        ;; _ (do (prn "[:answers] dialog answers =" (:dialog session)))
         session (ask-engine session)]
     (if (:all-questions-answered session)
       {:session session
