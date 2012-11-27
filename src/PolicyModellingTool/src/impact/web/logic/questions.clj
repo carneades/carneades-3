@@ -90,7 +90,8 @@ widget is still used. New Types of :string maps to :widgets 'text."
   [theory stmt lang]
   (let [predicate (get-predicate stmt theory)]
     (cond (scheme/role? predicate) (get-answers-choices-for-role theory stmt lang)
-          (scheme/predicate? predicate) (get-answers-choices-for-predicate theory stmt lang)
+          (or (scheme/predicate? predicate)
+              (scheme/concept? predicate)) (get-answers-choices-for-predicate theory stmt lang)
           :else (throw (Exception. (str "NYI:" predicate))))))
 
 (defn get-first-question
@@ -110,6 +111,7 @@ widget is still used. New Types of :string maps to :widgets 'text."
       :text text
       :statement stmt
       :role (scheme/role? predicate)
+      :concept (scheme/concept? predicate)
       ;; :predicate predicate
       }
      answers-choices)))
@@ -123,17 +125,19 @@ widget is still used. New Types of :string maps to :widgets 'text."
         [category category-name] (get-category theory pred lang)
         pred-by-categories (group-by (fn [[pred val]] (:category val)) (-> theory :language))
         other-preds (disj (set (map first (pred-by-categories category))) pred)
-        other-questions (get-other-questions id other-preds lang theory)
+        other-questions (get-other-questions id stmt other-preds lang theory)
         ]
     (cons first-question other-questions)))
 
 (defn get-other-questions
-  [id others lang theory]
+  [id stmt others lang theory]
   (map (fn [id pred]
-         (prn "pred =" pred)
          (let [predicate (get-in theory [:language pred])
                arity (scheme/get-arity predicate)
-               stmtq (doall (cons (symbol pred) (repeatedly arity genvar)))]
+               [_ o _] stmt
+               stmtq (cond (scheme/role? predicate) (list (:symbol predicate) o (genvar))
+                           (scheme/concept? predicate) (list (:symbol predicate) o)
+                           :else (doall (cons (symbol pred) (repeatedly arity genvar))))]
            (get-first-question id stmtq lang theory)))
        (iterate inc (inc id)) others))
 

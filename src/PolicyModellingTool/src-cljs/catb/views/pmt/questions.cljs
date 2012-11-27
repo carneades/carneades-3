@@ -78,7 +78,7 @@
   [question]
   (str (format "<div id=\"q%s\"> " (:id question))
        (s/capitalize (:text question))
-       (get-answer-widget-html question (aget (:widgets question) 0))
+       (get-answer-widget-html question "radio")
        "</div>"))
 
 (defn widget-for-role
@@ -99,10 +99,23 @@
                   [(widget-for-role question)]))]
     (format "<div id=\"q%s\">%s</div>" (:id question) content)))
 
+(defn get-concept-question-html
+  "Returns the HTML of the question for a concept"
+  [question]
+  (let [capitalized-text (s/capitalize (:text question))
+        content (if (:yesnoquestion question)
+                  (str capitalized-text (radio-widget '[yes no maybe] ["Yes" "No" "Maybe"]))
+                  (replace-variables-by-widgets
+                   capitalized-text
+                   ;; TODO: check if widget-for-role is ok for concept
+                   [(widget-for-role question)]))]
+    (format "<div id=\"q%s\">%s</div>" (:id question) content)))
+
 (defn get-question-html
   "Generates the HTML for a question"
   [question]
   (cond (:role question) (get-role-question-html question)
+        (:concept question) (get-concept-question-html question)
         (:yesnoquestion question) (get-yes-no-question-html question)
         :else (get-ungrounded-question-html question)))
 
