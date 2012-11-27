@@ -40,7 +40,7 @@
     (apply str
            (map (fn [value name]
                   (format "<input class=\"radiobutton inputfield required\" name=\"%s\" value=\"%s\" type=\"radio\"/>%s  "
-                          inputname name value))
+                          inputname value name))
                 values names))))
 
 (defn get-answer-widgets-html
