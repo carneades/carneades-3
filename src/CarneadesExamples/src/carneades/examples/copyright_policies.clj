@@ -16,75 +16,100 @@
   (make-scheme                            
    :id 'UrhG-31
    :header (make-metadata :title "§ 31 UrhG de lege lata"
-                          :description {:de "> Einräumung von Nutzungsrechten. (1) Der Urheber kann einem anderen das Recht einräumen, das Werk auf einzelne oder alle Nutzungsarten zu nutzen (Nutzungsrecht) ... (3) Das ausschließliche Nutzungsrecht berechtigt den Inhaber, das Werk unter Ausschluss aller anderen Personen auf die ihm erlaubte Art zu nutzen *und Nutzungsrechte einzuräumen* [§ 31 UrhG, Hervorhebung hinzugefügt] ..."
-                                        :en "> Licensing copyrights. (1) The author can grant a simple or exclusive license to others to use the work … (3) Exclusive rights to use a work give the licensee the sole right to use the work in the ways stated by the license, *along with the right to grant licenses to third parties* [§ 31 UrhG, emphasis added] …"})
+                          :description {:de "> Einräumung von
+                          Nutzungsrechten. (1) Der Urheber kann einem
+                          anderen das Recht einräumen, das Werk auf
+                          einzelne oder alle Nutzungsarten zu
+                          nutzen (Nutzungsrecht) ... (3) Das
+                          ausschließliche Nutzungsrecht berechtigt den
+                          Inhaber, das Werk unter Ausschluss aller
+                          anderen Personen auf die ihm erlaubte Art zu
+                          nutzen *und Nutzungsrechte einzuräumen* [§
+                          31 UrhG, Hervorhebung hinzugefügt] ..."
+                                        :en "> Licensing
+                          copyrights. (1) The author can grant a
+                          simple or exclusive license to others to use
+                          the work … (3) Exclusive rights to use a
+                          work give the licensee the sole right to use
+                          the work in the ways stated by the license,
+                          *along with the right to grant licenses to
+                          third parties* [§ 31 UrhG, emphasis added]
+                          …"})
    :conclusion '(may-publish ?P ?W)
-   :premises [(make-premise :statement '(person ?P))
-              (make-premise :statement '(work ?W))
-              (make-premise :statement '(license-to-publish ?P ?W))
+   :premises [(make-premise :statement '(license-to-publish ?P ?W))
               (make-premise :statement '(valid UrhG-31)) ]))
 
 
-(def copyright-policies 
+(def copyright-policies
   (make-theory
    :header 
    (make-metadata :title "Copyright in the Knowledge Economy"
                   :description {:en ""}) ;; TODO add a description
    
    :language
-   {'announcement-category (make-individual :symbol 'announcement :text {:en "Announcement" :de "Bekanntmachung"})
-    'commercial (make-individual :symbol 'commercial :text {:en "Commercial Use"})
-    'purpose (make-individual :symbol 'purpose :text {:en "Purpose"})
-    'identifiers  (make-individual :symbol 'identifiers :text {:en "Identifiers"})
-    'non-commercial (make-individual :symbol 'non-commercial :text {:en "Non-commercial Use"})
-    'none (make-individual :symbol 'none :text {:en "None"})
-    'professional (make-individual :symbol 'professional :text {:en "Professional Documented Search"})
-    'search (make-individual :symbol 'search :text {:en "Search"})
-    'standard (make-individual :symbol 'standard :text {:en "Standard DocumentedSearch"})
-    'license (make-individual :symbol 'license :text {:en "License"})
+   (make-language 
+    (make-individual :symbol 'the-person :text {:en "the person" :de "die Person"})
+    (make-individual :symbol 'the-work :text {:en "the work" :de "das Werk"})
+    (make-individual :symbol 'commercial :text {:en "commercial"})
+    (make-individual :symbol 'purpose :text {:en "Purpose"})
+    (make-individual :symbol 'identifiers :text {:en "Identifiers"})
+    (make-individual :symbol 'non-commercial :text {:en "non-commercial"})
+    (make-individual :symbol 'none :text {:en "None"})
+    (make-individual :symbol 'professional :text {:en "professional documented search"})
+    (make-individual :symbol 'search :text {:en "Search"})
+    (make-individual :symbol 'standard :text {:en "standard documented search"})
+    (make-individual :symbol 'license :text {:en "License"})
 
-    'license-to-publish
-    (make-predicate
+    (make-function
+     :symbol 'the-search
+     :arity 2
+     :text {:en "the search by %s for the owner of %s"})
+
+    (make-function
+     :symbol 'the-use
+     :arity 2
+     :text {:en "the use by %s of %s"})
+     
+    (make-role
      :category 'license
      :symbol 'license-to-publish
-     :arity 2
+     :min 0
+     :max nil
+     :type :symbol
+     :askable true
      :forms {:en (make-form :positive "%s has a license to publish %s."
                             :negative "%s does not have a license to publish %s."
                             :question "Does %s have a license to publish %s?")}
      :hint {:en "Information about an existing license."}
-     :widgets '[text text]
      :followups '[])
     
-    
-    'may-publish
-    (make-predicate
+    (make-role
      :symbol 'may-publish
-     :arity 2
+     :min 0
+     :max nil
+     :type :symbol
+     :askable false
      :forms {:en (make-form :positive "%s may publish  %s."
                             :negative "%s may not publish %s."
                             :question "May %s publish %s?")})
 
-    
-    'person
-    (make-predicate
+    (make-concept
      :symbol 'person
-     :arity 1
+     :askable true
      :forms {:en (make-form :positive "%s is a person."
                             :negative "%s is not a person."
                             :question "Is %s a person?")
              
              :de (make-form :positive "%s ist ein Rechtsperson."
-                            :negative "% ist nicht ein Rechtsperson."
+                            :negative "%s ist nicht ein Rechtsperson."
                             :question "Ist %s ein Rechtsperson?")}
      :category 'identifiers
      :hint {:en "Please provide an identifier for the person interested in publishing the work, such as P1."}
-     :widgets '[text]
      :followups '[work])
 
-    'work
-    (make-predicate
+    (make-concept
      :symbol 'work
-     :arity 1
+     :askable true
      :forms {:de (make-form :positive "%s ist ein Werk."
                             :negative "%s is nicht ein Werk."
                             :question "Ist %s ein Werk?")
@@ -92,65 +117,59 @@
                             :negative "%s is not a work."
                             :question "Is %s a work?")}
      :hint {:en "Please provide an identifier for the orphaned work, such as W1."}
-     :widgets '[text]
-     :category 'identifiers)  
+     :category 'identifiers)
     
-    'type-of-use
-    (make-predicate
+    (make-role
      :symbol 'type-of-use
-     :arity 3
-     :forms {:de (make-form :positive "%s nutzt %s für folgender Zwecken: %S."
-                            :negative "%s nutzt %s nicht für folgender Zwecken: %s."
-                            :question "Nutzt %s den Werk %s für folgender Zwecken: %s?")
-             :en (make-form :positive "%s uses %s for %s purposes."
-                            :negative "%s does not use %s for %s purposes."
-                            :question "Does %s use %s for %s purposes?")}
+     :askable true
+     :min 1
+     :max 1
+     :type '#{non-commercial commercial}
+     :forms {:de (make-form :positive "%s ist für folgender Zwecken: %s."
+                            :negative "%s ist nicht für folgender Zwecken: %s."
+                            :question "Ist %s für folgender Zwecken: %s?")
+             :en (make-form :positive "%s is for %s purposes."
+                            :negative "%s is not for %s purposes."
+                            :question "Is %s for %s purposes?")}
      :hint {:en "Will the work be used for commercial or non-commercial purposes?"}
-     :answers '[[] [] [commercial non-commercial]]
-     :category 'purpose
-     :widgets '[text text select])
+     :category 'purpose)
 
-    'search-type
-    (make-predicate
+    (make-role
      :symbol 'search-type
-     :arity 3
-     :forms {:en (make-form :positive "%s conducted a %3$s search for the copyright owner of %2$s."
-                            :negative "%s did not conduct a %s search for the copyright owner of %s."
-                            :question "Did %s conduct a %3$s search for the copyright owner of %2$s?")}
+     :askable true
+     :min 1
+     :max 1
+     :type '#{standard professional none}
+     :forms {:en (make-form :positive "The type of %s was a %s."
+                            :negative "The type of %s was not a %s."
+                            :question "Was the type of %s a %s?")}
      :hint {:en "What type of search was performed to try to find the copyright owner?"}
      :category 'search
-     :answers '[[] [] [standard professional none]]
-     :widgets '[text text select]
-     :followups ['announcement])
+     :next ['announcement])
 
-    'announcement
-    (make-predicate
+    (make-concept
      :symbol 'announcement
-     :arity 0
-     :forms {:en (make-form :positive "The search was publically announced."
-                            :negative "The search was not publically announced."
-                            :question "Was the search publically announced?")
-             :de (make-form :positive "Es gab eine öffentliche Bekanntmachung der Suche."
-                            :negative "Es gab keine öffentliche Bekanntmachung der Suche."
-                            :question "Erfolgte eine öffentliche Bekanntmachung der Suche?")}
-     :category 'announcement-category
-     :widgets '[checkbox])
+     :askable true
+     :hint {:en "Information about an announcement."}
+     :forms {:en (make-form :positive "The %s was publically announced."
+                            :negative "The %s was not publically announced."
+                            :question "Was the %s publically announced?")}
+     :category 'search)
     
-    'valid
-    (make-predicate
+    (make-concept
      :symbol 'valid
-     :arity 1
+     :askable false
      :form {:en (make-form :positive "%s is valid law."
                            :negative "%s is not valid law."
                            :question "Is %s valid law?")
             :de (make-form :positive "%s is gültiges Recht."
                            :negative "%s ist nicht gültiges Recht."
-                           :question "Ist %s gültiges Recht?")})}
+                           :question "Ist %s gültiges Recht?")}))
 
    :sections
    [(make-section
      :id 'Q12
-     :main-issue '(may-publish ?Person ?Work)
+     :main-issue '(may-publish the-person the-work)
      :header (make-metadata :title "Q12. Cross-Border Aspects of Orphaned Works"
                             :description {:en "Question 12 of the Green Paper on Copyright in the Knowledge Economy [@GreenPaper, p. 12] asks:
 
@@ -188,12 +207,9 @@ policies for handling orphaned works [@Aktionsbündnis, pp. 6-7]."})
                                 :description {:de "(1) Öffentliche Zugänglichmachung für nicht-gewerbliche und private Zwecke, insbesondere durch Nutzer für Zwecke der Archivierung und für Forschung und Ausbildung ... (a)  Zulässig  ist  die  öffentliche  Zugänglichmachung  von  Werken, deren Urheber oder Rechteinhaber
 nach einer dokumentierten Standardsuche [alternativ: einer zeitlich auf 30 Tage öffentlichen Bekanntmachung] nicht ermittelt werden können."})
          :conclusion '(may-publish ?P ?W)
-         :premises [(make-premise :statement '(person ?P))
-                    (make-premise :statement '(work ?W))
-                    (make-premise :statement '(type-of-use ?P ?W non-commercial))
-                    (make-premise :statement '(search-type ?P ?W standard))
+         :premises [(make-premise :statement '(type-of-use (the-use ?P ?W) non-commercial))
+                    (make-premise :statement '(search-type (the-search ?P ?W) standard))
                     (make-premise :statement '(valid AB-52c-1-a)) ])
-
         
         (make-scheme
          :id 'AB-52c-2-a
@@ -203,9 +219,7 @@ Zugänglichmachung  von  Werken, deren Urheber oder Rechteinhaber
 nach einer angemessenen professionellen und dokumentierten Suche und einer öffentlichen 
 Bekanntmachung nicht ermittelt werden können."})
          :conclusion '(may-publish ?P ?W)
-         :premises [(make-premise :statement '(person ?P))
-                    (make-premise :statement '(work ?W))
-                    (make-premise :statement '(type-of-use ?P ?W commercial))
-                    (make-premise :statement '(search-type ?P ?W professional))
-                    (make-premise :statement '(announcement))
+         :premises [(make-premise :statement '(type-of-use (the-use ?P ?W) commercial))
+                    (make-premise :statement '(search-type (the-search ?P ?W) professional))
+                    (make-premise :statement '(announcement (the-search ?P ?W)))
                     (make-premise :statement '(valid AB-52c-2-a))])])])]))
