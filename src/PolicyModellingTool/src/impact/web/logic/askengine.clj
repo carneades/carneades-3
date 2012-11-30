@@ -8,8 +8,15 @@
 
 (defn askable?
   [theory p]
+  {:pre [(do
+           (prn "                ASKABLE:" p)
+           true)]
+   :post [(do
+            (prn "                ===>" %)
+            true)]}
   (let [predicate (get-in theory [:language (literal-predicate p)])]
-    (and (or (:askable predicate) (:widgets predicate))
+    (and (literal-pos? p)
+         (or (:askable predicate) (:widgets predicate))
          (or (predicate? predicate)
              (concept? predicate)
              (and (role? predicate)
