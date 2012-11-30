@@ -134,7 +134,7 @@ PM.scheme_content_text = function(language, scheme) {
     
 
     
-    text += '</div>'; // end of scheme-content stuff
+    text += '</div><br/>'; // end of scheme-content stuff
     
     return text;
 };
