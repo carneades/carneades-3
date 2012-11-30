@@ -11,7 +11,8 @@
                  [org.clojars.pallix/mygengo "1.0.0"]
                  ;; [jayq "0.1.0-alpha4"]
                  [cc.qbits/jayq "0.1.0-alpha4-SNAPSHOT"]
-                 [lein-ring "0.5.4"]]
+                 [lein-ring "0.5.4"]
+                 [org.clojure/tools.logging "0.2.3"]]
   :plugins [[lein-ring "0.7.1"]
             [lein-cljsbuild "0.2.8"]
             [lein-sub "0.2.3"]]
@@ -53,9 +54,10 @@
     :test-commands
       ; Test command for running the unit tests in "test-cljs" (see below).
       ;     $ lein cljsbuild test
-      {"unit" ["casperjs"
-               "casper/run-unit-test.js"
-               "resources/policymodellingtool/private/html/unit-test.html"
+      {"questions" ["casperjs"
+                    "--dir=resources/policymodellingtool/private/html/"
+                    "--url=test-questions.html"
+                    "casper/run-unit-test.js"
                ]}
     ;; :crossovers [example.crossover]
     ;; :crossover-jar true

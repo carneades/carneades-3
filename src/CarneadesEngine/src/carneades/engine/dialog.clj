@@ -57,25 +57,26 @@
    Note: an empty sequence can be returned, it does mean that there were answers
    but they were answered with 'maybe'."
   [dialog theory question]
-  (let [question (:atom (positive-statement question))]
-    (if-let [key (first (previous-answers question dialog))]
-      (get-in dialog [:answers key])
-      ;; if
-      ;; * we don't have an answer and
-      ;; * the question is grounded and
-      ;; * corresponds to a functional (min=1, max=1) role predicate in the theory and
-      ;; * the possible values (the type) are expressed in a set
-      ;; * and we have an answer for one of the other possible values in the dialog
-      ;; then the response is the negation of the question
-      (when-let [pred (get-in theory [:language (literal-predicate question)])]
-        (when (and (ground? question)
-                   (scheme/role? pred)
-                   (= (:max pred) 1)
-                   (= (:max pred) 1)
-                   (set? (:type pred))
-                   (seq (mapcat #(previous-answers (replace-sliteral-value question %) dialog)
-                                (disj (:type pred) (second (term-args question))))))
-          [(literal-complement question)])))))
+  {:pre [(do (prn "                    [get-answers] " question) true)]
+   :post [(do (prn "                    ====> " %) true)]}
+  (if-let [key (first (previous-answers question dialog))]
+    (get-in dialog [:answers key])
+    ;; if
+    ;; * we don't have an answer and
+    ;; * the question is grounded and
+    ;; * corresponds to a functional (min=1, max=1) role predicate in the theory and
+    ;; * the possible values (the type) are expressed in a set
+    ;; * and we have an answer for one of the other possible values in the dialog
+    ;; then the response is the negation of the question
+    (when-let [pred (get-in theory [:language (literal-predicate question)])]
+      (when (and (ground? question)
+                 (scheme/role? pred)
+                 (= (:max pred) 1)
+                 (= (:max pred) 1)
+                 (set? (:type pred))
+                 (seq (mapcat #(previous-answers (replace-sliteral-value question %) dialog)
+                              (disj (:type pred) (second (term-args question))))))
+        [(literal-complement question)]))))
 
 (defn get-nthquestion
   "Returns the nth questions of the dialog history"
