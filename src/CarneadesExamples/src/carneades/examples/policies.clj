@@ -4,9 +4,6 @@
  {:filename copyright_policies.clj
   :namespace carneades.examples.copyright-policies
   :name copyright-policies}
- {:filename copyright_policies2.clj
-  :namespace carneades.examples.copyright-policies2
-  :name copyright-policies2}
  {:filename polish_tour_operator_insurance.clj
   :namespace carneades.examples.polish-tour-operator-insurance
   :name tour-operator-insurance }
