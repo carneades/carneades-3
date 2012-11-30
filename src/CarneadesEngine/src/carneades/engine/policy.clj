@@ -11,7 +11,7 @@
   [filename]
   (str policies-directory file-separator filename))
 
-(def policies  (reduce (fn [policies metadata]
+(def policies (reduce (fn [policies metadata]
                         (let [{:keys [filename namespace name]} metadata]
                           (assoc policies name
                                  (load-theory (get-policy-filename filename) namespace name))))

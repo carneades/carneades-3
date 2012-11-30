@@ -285,7 +285,6 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/app/metadata.js',
                    'js/app/admin.js',
                    'js/app/ajax.js',
-                   'js/app/questions.js',
                    'js/app/agb/agb-utils.js',
                    'js/app/agb/login.js',
                    'js/app/agb/metadata.js',

@@ -50,15 +50,14 @@
    (make-language 
     (make-individual :symbol 'the-person :text {:en "the person" :de "die Person"})
     (make-individual :symbol 'the-work :text {:en "the work" :de "das Werk"})
-    (make-individual :symbol 'announcement-category :text {:en "Announcement" :de "Bekanntmachung"}) 
-    (make-individual :symbol 'commercial :text {:en "Commercial Use"})
+    (make-individual :symbol 'commercial :text {:en "commercial"})
     (make-individual :symbol 'purpose :text {:en "Purpose"})
     (make-individual :symbol 'identifiers :text {:en "Identifiers"})
-    (make-individual :symbol 'non-commercial :text {:en "Non-commercial Use"})
+    (make-individual :symbol 'non-commercial :text {:en "non-commercial"})
     (make-individual :symbol 'none :text {:en "None"})
-    (make-individual :symbol 'professional :text {:en "Professional Documented Search"})
+    (make-individual :symbol 'professional :text {:en "professional documented search"})
     (make-individual :symbol 'search :text {:en "Search"})
-    (make-individual :symbol 'standard :text {:en "Standard Documented Search"})
+    (make-individual :symbol 'standard :text {:en "standard documented search"})
     (make-individual :symbol 'license :text {:en "License"})
 
     (make-function
@@ -146,15 +145,16 @@
                             :question "Was the type of %s a %s?")}
      :hint {:en "What type of search was performed to try to find the copyright owner?"}
      :category 'search
-     :followups ['announcement])
+     :next ['announcement])
 
-    (make-role
+    (make-concept
      :symbol 'announcement
      :askable true
-     :forms {:en (make-form :positive "The search conducted by %s for the owner of %s was publically announced."
-                            :negative "The search conducted by %s for the owner of %s was not publically announced."
-                            :question "Was the search conducted by %s for the owner of %s publically announced?")}
-     :category 'announcement-category)
+     :hint {:en "Information about an announcement."}
+     :forms {:en (make-form :positive "The %s was publically announced."
+                            :negative "The %s was not publically announced."
+                            :question "Was the %s publically announced?")}
+     :category 'search)
     
     (make-concept
      :symbol 'valid
@@ -221,5 +221,5 @@ Bekanntmachung nicht ermittelt werden können."})
          :conclusion '(may-publish ?P ?W)
          :premises [(make-premise :statement '(type-of-use (the-use ?P ?W) commercial))
                     (make-premise :statement '(search-type (the-search ?P ?W) professional))
-                    (make-premise :statement '(announcement ?P ?W))
+                    (make-premise :statement '(announcement (the-search ?P ?W)))
                     (make-premise :statement '(valid AB-52c-2-a))])])])]))

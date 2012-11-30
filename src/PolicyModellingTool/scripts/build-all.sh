@@ -12,7 +12,3 @@ lein ring uberwar
 
 cd ../PolicyModellingTool
 lein with-profile war ring uberwar
-
-echo -e "\nRunning tests\n"
-
-lein sub test
