@@ -25,14 +25,15 @@ PM.display_facts = function() {
 // all questions have been answered.
 PM.show_questions_or_ag = function(data) {
     if (data.questions) {
-        PM.show_questions(data.questions, 
-                          $('#questions'),
-                          function() {
-                              if($('#questionsform').valid()) {
-                                  PM.send_answers(data.questions,
-                                                  PM.show_questions_or_ag);
-                              } 
-                          });
+        catb.views.pmt.questions.show_questions(
+            data.questions, 
+            $('#questions'),
+            function() {
+                if($('#questionsform').valid()) {
+                    PM.send_answers(data.questions,
+                                    PM.show_questions_or_ag);
+                } 
+            });
     } else {
         IMPACT.db = data.db;
         PM.set_arguments_url(IMPACT.db);
@@ -41,6 +42,8 @@ PM.show_questions_or_ag = function(data) {
 
 // Sends the answers to the server
 PM.send_answers = function(questions, on_response) {
+    // catb.views.pmt.facts.send_answers(questions, on_response);
+    // return false;
     console.log('send_answers');
     console.log(questions);
     
@@ -65,7 +68,7 @@ PM.send_answers = function(questions, on_response) {
     // for each question in the category
     var answers_values = _.reduce(questions,
                                  function(answers_values, question) {
-                                     var subquestions = $('#q{0} .question'.format(question.id));
+                                     var subquestions = $('#q{0}'.format(question.id));
                                      
                                      // for each subquestion
                                      _.reduce(subquestions,
@@ -77,7 +80,7 @@ PM.send_answers = function(questions, on_response) {
                                                   var vals = [];
                                                   _.reduce(inputs,
                                                            function(index, input) {
-                                                               var val = widget_to_val[input.type]($(input));
+                                                               var val = widget_to_val[input.type || 'select']($(input));
                                                                if(val != null) {
                                                                    console.log('input {0} has value {1}'.format(question.id, val));
                                                                    vals.push(val);
@@ -97,7 +100,7 @@ PM.send_answers = function(questions, on_response) {
                                   []);
 
     PM.ajax_post(IMPACT.simulation_url,
-                 {answers:  {values: answers_values}},
+                 {answers:  answers_values},
                  on_response,
                  IMPACT.user,
                  IMPACT.password,

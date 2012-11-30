@@ -59,24 +59,20 @@ call or a symbol."
    (apply format fstring (format-literal-args literal language lang))))
 
 (defprotocol Functor
-  "A functor in the Prolog sense, meaning function and predicate symbols
-   used to construct terms and atomic formulas."
-  (get-symbol [this] "functor -> symbol")
-  (get-arity [this]"functor -> natural number (including 0)"))
+  (get-symbol [this])
+  (get-arity [this]))
 
 (defrecord Individual
-    [symbol   ; symbol
-     text]    ; (lang -> string) map.
-  )
-
-(extend Individual
+    [symbol
+     text]
   Functor
-  {:get-symbol (fn [this] (:symbol this))
-   :get-arity (fn [this] 0)})
+  (get-arity [this] 0)
+  (get-symbol [this] (:symbol this)))
 
 (defn make-individual
   "key value ... -> individual"
-  [& key-values]  
+  [& key-values]
+  {:post [(instance? Individual %)]}
   (merge (Individual. 
           (gensym "i")    ; symbol
           {})             ; text map
@@ -85,14 +81,12 @@ call or a symbol."
 (defn individual? [x] (instance? Individual x))
 
 (defrecord Function
-    [symbol   ; symbol
-     arity    ; integer
-     text])  ; (lang -> string) map
-
-(extend Function
+    [symbol  ;; symbol
+     arity   ;; integer
+     text]   ;; (lang -> string) map
   Functor
-  {:get-symbol (fn [this] (:symbol this))
-   :get-arity (fn [this] (:arity this))})
+  (get-symbol [this] (:symbol this))
+  (get-arity [this] (:arity this)))
 
 (defn make-function
   "key value ... -> function"
@@ -113,13 +107,10 @@ call or a symbol."
      category
      hint     ; lang -> string map
      widgets
-     followups] 
-  )
-
-(extend Predicate
+     followups]
   Functor
-  {:get-symbol (fn [this] (:symbol this))
-   :get-arity (fn [this] (:arity this))})
+  (get-symbol [this] (:symbol this))
+  (get-arity [this] (:arity this)))
 
 (defn make-predicate
   "key value ... -> predicate"
@@ -147,13 +138,11 @@ call or a symbol."
      category     ; symbol
      askable      ; boolean
      hint         ; lang -> string map
-     followups])  ; vector of predicate symbols
-
-
-(extend Concept
+     followups]  ; vector of predicate symbols
   Functor
-  {:get-symbol (fn [this] (:symbol this))
-   :get-arity (fn [this] 1)})
+  (get-symbol [this] (:symbol this))
+  (get-arity [this] 1))
+
 
 (defn make-concept
   "key value ... -> class"
@@ -189,12 +178,11 @@ call or a symbol."
      forms         ; Do we need the negated and question forms, or just the positive?
      category
      hint          ; lang -> string map
-     followups])
-
-(extend Role
+     followups]
   Functor
-  {:get-symbol (fn [this] (:symbol this))
-   :get-arity (fn [this] 2)})
+  (get-symbol [this] (:symbol this))
+  (get-arity [this] 2))
+
 
 (defn make-role
   "key value ... -> role"

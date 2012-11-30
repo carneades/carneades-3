@@ -6,7 +6,9 @@
          impact.web.views.pages
          impact.web.core
          (carneades.engine policy scheme dialog unify utils)
-         [carneades.engine.statement :only (neg literal-predicate variable? literal-atom variables)]))
+         [carneades.engine.statement :only (neg literal-predicate variable? literal-atom variables)]
+         [clojure.tools.logging :only (info debug error)])
+  (:require [carneades.engine.scheme :as scheme]))
 
 (defmulti ajax-handler (fn [json _] (ffirst json)))
 
@@ -30,43 +32,62 @@
 
 (defmethod ajax-handler :request
   [json session]
-  (prn "======================================== request handler! ==============================")
-  (prn  (:lang session))
+  (debug "======================================== request handler! ==============================")
   (let [session (assoc session :query (get-main-issue (:theory session) (symbol (:request json))))
         session (ask-engine session)]
     {:session session
      :body (json-str {:questions (:last-questions session)})}))
 
-(defn reconstruct-answers-from-json
+(defn reconstruct-yesno-answer
+  "Returns the statement representing the user's response for a yes/no question"
+  [answer statement]
+  (if (= (first (:values answer)) "yes")
+    statement
+    (neg statement)))
+
+(defn reconstruct-predicate-answer
+  "Returns the statement representing the user's response for a yes/no question"
+  [answer statement]
+  (let [vars (variables statement)
+        values (map safe-read-string (:values answer))
+        subs (apply hash-map (interleave vars values))]
+   (apply-substitutions subs statement)))
+
+(defn reconstruct-role-answer
+  [answer statement]
+  (let [[s o v] statement
+        values (map safe-read-string (:values answer))]
+    (list s o (first values))))
+
+(defn reconstruct-answers
+  "Reconstructs the answer from the JSON"
   [jsonanswers dialog]
-  (reduce (fn [questions-to-answers answer]
-            (let [id (:id answer)
-                  question (get-nthquestion dialog id)
-                  atomic-question (:statement question)
-                  vars (variables atomic-question)
-                  values (map safe-read-string (:values answer))
-                  subs (apply hash-map (interleave vars values))
-                  ans (if (:yesnoquestion question)
-                        (cond (= (first (:values answer)) "yes") atomic-question
-                              (= (first (:values answer)) "no") (neg atomic-question)
-                              :else nil)
-                        ;; else
-                        (apply-substitutions subs atomic-question))]
-              (conj questions-to-answers [(:statement question) ans])))
-          ()
-       jsonanswers))
+  (let [theory (policies (deref current-policy))]
+   (reduce (fn [questions-to-answers answer]
+             (let [id (:id answer)
+                   question (get-nthquestion dialog id)
+                   statement (:statement question)
+                   ans (cond (:yesnoquestion question)
+                             (reconstruct-yesno-answer answer statement)
+                             (scheme/role? (get-predicate statement theory))
+                             (reconstruct-role-answer answer statement)
+                             :else
+                             (reconstruct-predicate-answer answer statement))]
+               (conj questions-to-answers [(:statement question) ans])))
+           ()
+           jsonanswers)))
 
 
 (defmethod ajax-handler :answers
   [json session]
-  (prn "======================================== answers handler! ==============================")
-  (pprint json)
+  (debug "======================================== answers handler! ==============================")
+  (debug json)
   (let [{:keys [last-questions dialog]} session
-        questions-to-answers (reconstruct-answers-from-json (-> json :answers :values)
-                                                            dialog)
-        _ (do (prn "[:answers] questions-to-answers =" questions-to-answers))
+        questions-to-answers (reconstruct-answers (:answers json)
+                                                  dialog)
+        ;; _ (do (prn "[:answers] questions-to-answers =" questions-to-answers))
         session (update-in session [:dialog] add-answers questions-to-answers)
-        _ (do (prn "[:answers] dialog answers =" (:dialog session)))
+        ;; _ (do (prn "[:answers] dialog answers =" (:dialog session)))
         session (ask-engine session)]
     (if (:all-questions-answered session)
       {:session session
@@ -77,8 +98,8 @@
 
 (defn new-session
   []
-  (prn "[new-session]")
-  (prn "current-policy: " (deref current-policy))
+  (info "[new-session]")
+  (info "current-policy: " (deref current-policy))
   {:dialog (make-dialog)
    :lang "en"
    :last-id 0
@@ -90,7 +111,6 @@
 
 (defmethod ajax-handler :reset
   [json session]
-  (prn "[policy-simulation] resetting session")
   {:session (new-session)})
 
 (defn process-ajax-request
@@ -102,7 +122,7 @@
 
 (defn init-page
   []
-  (prn "init of session")
+  (info "init of session")
   {:headers {"Content-Type" "text/html;charset=UTF-8"}
    :session (new-session)
    :body (index-page)})
