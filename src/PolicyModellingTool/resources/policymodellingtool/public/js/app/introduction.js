@@ -7,6 +7,8 @@ PM.set_introduction_url = function() {
 };
 
 PM.display_introduction = function() {
+    IMPACT.facts_state = 'waiting';
+
     PM.ajax_post(IMPACT.simulation_url, {"current-policy": null},
                  function(currentpolicy) {
                      IMPACT.current_policy = currentpolicy; 
@@ -22,7 +24,6 @@ PM.display_introduction = function() {
 };
 
 PM.on_start_button = function() {
-
     // reset session
     PM.ajax_post(IMPACT.simulation_url, {reset: null}, function() {},
                 IMPACT.user,

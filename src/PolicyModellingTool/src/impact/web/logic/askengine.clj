@@ -3,7 +3,8 @@
         impact.web.core
         (carneades.engine aspic argument-evaluation argument-graph ask statement scheme
                           argument argument-graph shell unify dialog)
-        (impact.web.logic questions))
+        (impact.web.logic questions)
+        [clojure.tools.logging :only (info debug error)])
   (:import java.io.File))
 
 (defn askable?
@@ -139,8 +140,9 @@
                 (prn "[askengine] waiting for the question...")
                 (on-question session))))
 
-(defn- start-engine
+(defn start-engine
   [session]
+  (info "Starting the query process")
   (let [theory (:theory session)
         query (:query session)
         ag (make-argument-graph)
@@ -153,7 +155,8 @@
                   :future-ag future-ag
                   :questions questions
                   :send-answer send-answer
-                  :engine-runs true)]
+                  :dialog (make-dialog)
+                  :last-id 0)]
     (get-ag-or-next-question session)))
 
 (defn- continue-engine
@@ -164,15 +167,10 @@
                                answers))
     (get-ag-or-next-question session)))
 
-(defn ask-engine
+(defn send-answers-to-engine
   "Returns the modified session."
   [session]
   {:pre [(not (nil? session))]}
-  (if (:engine-runs session)
-    (let [answers (get-answers (:dialog session) (:theory session) (:last-question session))]
-      (continue-engine session answers))
-    ;; else
-    (do
-      (prn "[ask-engine]")
-      (prn "query =" (:query session))
-      (start-engine session))))
+  (info "Sending answers back to the engine")
+  (let [answers (get-answers (:dialog session) (:theory session) (:last-question session))]
+    (continue-engine session answers)))
