@@ -11,14 +11,22 @@ PM.set_facts_url = function() {
 
 // Displays the questions
 PM.display_facts = function() {
-    var facts_html = ich.facts();
-    $('#pm').html(facts_html.filter("#facts"));
-    PM.activate('#facts-item');
-    PM.ajax_post(IMPACT.simulation_url, {request: IMPACT.question},
-                 PM.show_questions_or_ag,
-                 IMPACT.user,
-                 IMPACT.password,
-                 PM.on_error);
+    if(IMPACT.facts_state == 'waiting') {
+        IMPACT.facts_state = 'entering';
+        var facts_html = ich.facts();
+        $('#pm').html(facts_html.filter("#facts"));
+        PM.activate('#facts-item');
+        PM.ajax_post(IMPACT.simulation_url, {request: IMPACT.question},
+                     PM.show_questions_or_ag,
+                     IMPACT.user,
+                     IMPACT.password,
+                     PM.on_error);    
+    } else {
+        var facts_html = ich.facts();
+        $('#pm').html(facts_html.filter("#facts"));
+        $('#pm').append('<div>Facts have already been entered. Select an issue if you want to restart.</div>');
+        PM.activate('#facts-item');
+    }
 };
 
 // Shows the remaining questions to the user or the argument graph if
@@ -36,7 +44,9 @@ PM.show_questions_or_ag = function(data) {
             });
     } else {
         IMPACT.db = data.db;
+        IMPACT.facts_state = 'done';
         PM.set_arguments_url(IMPACT.db);
+
     }
 };
 
