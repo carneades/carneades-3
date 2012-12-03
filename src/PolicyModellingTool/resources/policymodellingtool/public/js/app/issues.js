@@ -9,6 +9,7 @@ PM.set_issues_url = function() {
 PM.display_issues = function() {
     PM.ajax_post(IMPACT.simulation_url, {"current-policy": null},
                  function(currentpolicy) {
+                     IMPACT.facts_state = 'waiting';
                      IMPACT.current_policy = currentpolicy;
                      PM.ajax_get(IMPACT.wsurl + "/policies",
                                  function(policies) {

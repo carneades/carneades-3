@@ -34,7 +34,7 @@
   [json session]
   (debug "======================================== request handler! ==============================")
   (let [session (assoc session :query (get-main-issue (:theory session) (symbol (:request json))))
-        session (ask-engine session)]
+        session (start-engine session)]
     {:session session
      :body (json-str {:questions (:last-questions session)})}))
 
@@ -94,7 +94,7 @@
         ;; _ (do (prn "[:answers] questions-to-answers =" questions-to-answers))
         session (update-in session [:dialog] add-answers questions-to-answers)
         ;; _ (do (prn "[:answers] dialog answers =" (:dialog session)))
-        session (ask-engine session)]
+        session (send-answers-to-engine session)]
     (if (:all-questions-answered session)
       {:session session
        :body (json-str {:solution (:solution session)
@@ -106,14 +106,9 @@
   []
   (info "[new-session]")
   (info "current-policy: " (deref current-policy))
-  {:dialog (make-dialog)
-   :lang "en"
-   :last-id 0
-   :substitutions {}
+  {:lang "en"
    :query nil
-   :theory (policies (deref current-policy))
-   :askables nil
-   :engine-runs false})
+   :theory (policies (deref current-policy))})
 
 (defmethod ajax-handler :reset
   [json session]
