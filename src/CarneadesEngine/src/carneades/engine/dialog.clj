@@ -1,5 +1,21 @@
-(ns ^{:doc "Save questions and answers of the dialog between the engine and the user (when using ask.clj)"}
-  carneades.engine.dialog
+(ns ^{:doc "Save questions and answers of the dialog between the
+  engine and the user (when using ask.clj). 
+
+  Essentially, the ask component provides a tool for the user to define
+  a table for each askable predicate. Each row in the table represents
+  a statement node, including its weight, where weight=1.0 if the
+  statement has been accepted as true, 0.0 if the statement has been
+  rejected as false, and 0.5 otherwise. Notice that negative
+  statements can be included in the table, by setting their weights to
+  0.0.
+
+  The ask component returns a sequence of responses, implementing the
+  ArgumentGenerator protocol. If the weight of the statement is 1.0 in
+  the table, a singelton response is returned, with the statement as a
+  positive assumption. The the weight of the statement in the table is
+  0.0, a singleton response is returned, with the negation of the
+  statement as an assumption. Otherwise the query fails by returning an
+  empty sequence. "} carneades.engine.dialog
   (:use clojure.pprint
         carneades.engine.statement
         [carneades.engine.unify :only (unify genvar apply-substitutions)])
@@ -13,6 +29,9 @@
   (update-in dialog [:questions] concat questions))
 
 (defn replace-map
+  "Builds a replacement map. This is used
+  to replace variable by fresh variables when indexing the statement.
+  This prevents unification errors when querying for an answer."
   [question]
   (reduce (fn [m v]
             (assoc m v (genvar)))
@@ -25,21 +44,13 @@
   (replace (replace-map question) (:atom (positive-statement question))))
 
 (defn add-answers
-  "Add answers to the dialog for the given atomic questions"
-  [dialog questions-to-answers]
-  {:pre [(seq? questions-to-answers)]}
-  (reduce (fn [dialog [question answer]]
-            (prn "question -> answer")
-            (prn question)
-            (prn answer)
-            (if (nil? answer)
-              (let [answers (get-in dialog [:answers (answer-key question)])]
-                (if (seq answers)
-                  dialog
-                  (assoc-in dialog [:answers (answer-key question)] ())))
-              (update-in dialog [:answers (answer-key question)] conj answer)))
+  "Add answers to the dialog for the given atomic questions."
+  [dialog questions-to-weight]
+  {:pre [(map? questions-to-weight)]}
+  (reduce (fn [dialog [question weight]]
+            (assoc-in dialog [:answers (answer-key question)] weight))
           dialog
-          questions-to-answers))
+          questions-to-weight))
 
 (defn previous-answers
   "Returns the previous answers for this question in the dialog"
@@ -60,7 +71,10 @@
   {:pre [(do (prn "                    [get-answers] " question) true)]
    :post [(do (prn "                    ====> " %) true)]}
   (if-let [key (first (previous-answers question dialog))]
-    (get-in dialog [:answers key])
+    (condp = (get-in dialog [:answers key])
+      0.0 (list (neg question)) 
+      1.0 (list question)
+      ())
     ;; if
     ;; * we don't have an answer and
     ;; * the question is grounded and

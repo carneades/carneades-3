@@ -2,7 +2,7 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns ^{:doc "Allows an external entity to be asked for information to construct arguments.  
-            Experimental."}
+            See also dialog.clj."}
   carneades.engine.ask
   (:use carneades.engine.unify
         carneades.engine.statement
