@@ -7,6 +7,8 @@ PM.set_policies_url = function() {
 };
 
 PM.display_policies = function(sectionid) {
+    IMPACT.facts_state = 'done';
+    
     PM.ajax_get(IMPACT.wsurl + '/policies', 
                 function(policies) {
                     var ids = [];

@@ -7,16 +7,24 @@ PM.set_arguments_url = function(db) {
 };
 
 PM.display_arguments = function(db, type, id) {
+    IMPACT.facts_state = 'done';
+    
+    var arguments_html = ich.arguments();
+    
     if(_.isNil(db)) {
         db = IMPACT.db;
     }
-    if(_.isNil(db)) {
-        alert('No database. Please enter some facts first'); 
+    if(_.isNil(db) || db == undefined || db == 'undefined') {
+        $('#pm').html(arguments_html.filter("#arguments"));
+        $('#pm').append('<div>Please enter some facts to see the arguments.</div>');
+        PM.activate('#arguments-item');
+        
+        return;
     }
     
     IMPACT.db = db;
 
-    var arguments_html = ich.arguments();
+    
     $('#pm').html(arguments_html.filter("#arguments"));
     PM.activate('#arguments-item');
 
