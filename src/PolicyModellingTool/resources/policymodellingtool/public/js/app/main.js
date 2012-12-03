@@ -195,10 +195,12 @@ PM.common_post_load = function() {
     
     PM.policies = new PM.Policies;
     PM.policies.fetch();
+    
+    var site_path = PM.in_uid_toolbox() ? '/policymodellingtool/site/' : 'site/';
 
     jQuery.i18n.properties(
         {name:'Messages',
-         path:'site/',
+         path: site_path,
          mode:'both',
          language: IMPACT.lang, 
          callback: function() {
