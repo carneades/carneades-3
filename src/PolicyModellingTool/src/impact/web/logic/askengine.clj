@@ -63,11 +63,12 @@
   (prn "[on-questions-answered]")
   (let [ag (:ag session)
         ag (set-main-issues ag (:query session))
-        _ (prn "main issue?")
-        _ (prn (:query session))
-        ;; _ (pprint ag)
-         ;; accept all answers from the user!
-        ag (accept ag (apply concat (vals (get-in session [:dialog :answers]))))
+        answers (get-in session [:dialog :answers])
+        answers-statements (vals answers)
+        ;; accepts answers with a weight of 1.0
+        ag (accept ag (filter (fn [s] (= (answers s) 1.0)) answers-statements))
+        ;; rejects answers with a weight of 0.0
+        ag (reject ag (filter (fn [s] (= (answers s) 0.0)) answers-statements))
         ag (enter-language ag (-> session :theory :language))
         ag (evaluate aspic-grounded ag)
         dbname (store-ag ag)
