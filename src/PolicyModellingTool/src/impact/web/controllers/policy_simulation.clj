@@ -41,9 +41,10 @@
 (defn reconstruct-yesno-answer
   "Returns the vector representing the user's response for a yes/no question"
   [answer statement]
-  (let [value (if (= (first (:values answer)) "yes")
-                1.0
-                0.0)]
+  (let [value (condp = (first (:values answer))
+                "yes" 1.0
+                "no" 0.0
+                "maybe" 0.5)]
    [statement value]))
 
 (defn reconstruct-predicate-answer
