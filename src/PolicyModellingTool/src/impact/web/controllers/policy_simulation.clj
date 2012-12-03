@@ -39,31 +39,35 @@
      :body (json-str {:questions (:last-questions session)})}))
 
 (defn reconstruct-yesno-answer
-  "Returns the statement representing the user's response for a yes/no question"
+  "Returns the vector representing the user's response for a yes/no question"
   [answer statement]
-  (if (= (first (:values answer)) "yes")
-    statement
-    (neg statement)))
+  (let [value (if (= (first (:values answer)) "yes")
+                1.0
+                0.0)]
+   [statement value]))
 
 (defn reconstruct-predicate-answer
-  "Returns the statement representing the user's response for a yes/no question"
+  "Returns the vector representing the user's response for a predicate"
   [answer statement]
   (let [vars (variables statement)
         values (map safe-read-string (:values answer))
         subs (apply hash-map (interleave vars values))]
-   (apply-substitutions subs statement)))
+   [(apply-substitutions subs statement) 1.0]))
 
 (defn reconstruct-role-answer
   [answer statement]
   (let [[s o v] statement
-        values (map safe-read-string (:values answer))]
-    (list s o (first values))))
+        values (map safe-read-string (:values answer))
+        value (first values)]
+    (if (= value 'None)
+      [statement 0.5]
+      [(list s o (first values)) 1.0])))
 
 (defn reconstruct-answers
   "Reconstructs the answer from the JSON"
   [jsonanswers dialog]
   (let [theory (policies (deref current-policy))]
-   (reduce (fn [questions-to-answers answer]
+   (reduce (fn [questions-to-weight answer]
              (let [id (:id answer)
                    question (get-nthquestion dialog id)
                    statement (:statement question)
@@ -72,9 +76,10 @@
                              (scheme/role? (get-predicate statement theory))
                              (reconstruct-role-answer answer statement)
                              :else
-                             (reconstruct-predicate-answer answer statement))]
-               (conj questions-to-answers [(:statement question) ans])))
-           ()
+                             (reconstruct-predicate-answer answer statement))
+                   [statement value] ans]
+               (assoc questions-to-weight statement value)))
+           {}
            jsonanswers)))
 
 
