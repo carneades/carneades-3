@@ -1,5 +1,6 @@
 (ns carneades.engine.policy
-  (:use (carneades.engine statement scheme argument-graph aspic argument-evaluation utils))
+  (:use (carneades.engine statement scheme argument-graph aspic argument-evaluation utils)
+        [clojure.tools.logging :only (info debug error)])
   (:require [carneades.config.reader :as config]))
 
 (def policies-directory (config/properties "policies-directory"))
@@ -20,7 +21,7 @@
 
 (defn get-policies
   [questionid theory]
-  (:sections (first (filter #(= (:id %) questionid) (-> theory :sections )))))
+  (:sections (first (filter #(= (:id %) questionid) (-> theory :sections)))))
 
 (defn get-policy
   [id policies]
@@ -39,8 +40,6 @@
         statements-to-accept (get-policy-statements policycontent)
         other-policies (map #(get-policy % policies) (disj policiesid policyid))
         statements-to-reject (mapcat get-policy-statements other-policies)
-        _ (prn "[evaluate-policy] to-accept =" statements-to-accept)
-        _ (prn "[evaluate-policy] to-reject = " statements-to-reject)
         ag (reject ag statements-to-reject)
         ag (accept ag statements-to-accept)
         ag (enter-language ag (:language theory))
@@ -49,3 +48,31 @@
 
 (defn get-main-issue [theory qid]
   (:main-issue (first (filter #(= (:id %) qid) (-> theory :sections)))))
+
+(defn give-acceptability?
+  "Returns true if the given policy would give the issueid this particular acceptability."
+  [ag issueid acceptability policy]
+  (let [policy-statements (get-policy-statements policy)
+        _ (debug "policy-statements =" policy-statements)
+        ag (accept ag policy-statements)
+        ag (evaluate aspic-grounded ag)
+        _ (debug "issueid:" issueid)
+        _ (debug "issue type:" (type issueid))
+        _ (debug "stmt keys:" (keys (:statement-nodes ag)))
+        _ (debug "type of second key:" (type (second (keys (:statement-nodes ag)))))
+        issue-stmt (get-in ag [:statement-nodes issueid])]
+    (debug "issue-stmt=" issue-stmt)
+    (condp = acceptability
+      :in (in-node? issue-stmt)
+      :out (out-node? issue-stmt)
+      :undecided (undecided-node? issue-stmt))))
+
+(defn find-policies
+  "Returns the policies in the theory that, if accepted, would give the issueid
+   the given acceptability. Acceptability is either :in :out or :undecided"
+  [ag theory qid issueid acceptability]
+  (debug "find-policies")
+  (let [policies (get-policies qid theory)
+        selected-policies
+        (filter (partial give-acceptability? ag issueid acceptability) policies)]
+    selected-policies))

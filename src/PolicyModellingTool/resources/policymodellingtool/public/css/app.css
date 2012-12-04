@@ -236,6 +236,10 @@
     cursor: pointer;
 }
 
+.clickable {
+    cursor: pointer;
+}
+
 .sct-claim-editor {
     border-color: purple;
 }
