@@ -24,7 +24,7 @@ PM.display_facts = function() {
     } else {
         var facts_html = ich.facts();
         $('#pm').html(facts_html.filter("#facts"));
-        $('#pm').append('<div>Facts have already been entered. Select an issue if you want to restart.</div>');
+        $('#pm').append('<div>' + $.i18n.prop('pmt_facts_not_available') + '</div>');
         PM.activate('#facts-item');
     }
 };

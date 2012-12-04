@@ -691,6 +691,19 @@
                  (create-metadata m)))
              (json-response {:db dbname})))))
 
+  (GET "/find-policies/:db/:policykey/:qid/:issueid/:acceptability"
+       [db policykey qid issueid acceptability]
+       (let [dbconn (make-database-connection db "guest" "")]
+         (with-db dbconn
+           (let [ag (export-to-argument-graph dbconn)
+                 theory (policies (symbol policykey))
+                 policies (find-policies ag theory (symbol qid) (symbol issueid)
+                                         (condp = acceptability
+                                           "in" :in
+                                           "out" :out
+                                           "undecided" :undecided))]
+             (json-response {:policies policies})))))
+
   ;; Argument Evaluation
     
   (POST "/evaluate-argument-graph/:db" request
