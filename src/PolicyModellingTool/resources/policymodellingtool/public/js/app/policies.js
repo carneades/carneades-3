@@ -34,9 +34,10 @@ PM.on_policy_filtering = function(event) {
                             IMPACT.question, 
                             PM.current_issue().id,
                             filter),
-                   function(policies) {
+                   function(data) {
                        console.log('find-policies returns:');
-                       console.log(policies);
+                       console.log(data.policies);
+                       PM.display_policies(undefined, data.policies);
                    });
     }
 };
@@ -52,9 +53,10 @@ PM.display_policies = function(sectionid, subset) {
                     var current_policy = policies[IMPACT.current_policy];
                     
                     current_policy.outline_text = PM.theory_outline_text(current_policy.sections,
-                                                                         'policies');
+                                                                         'policies',
+                                                                        subset);
                     current_policy.description_text = current_policy.header.description[IMPACT.lang];
-                    current_policy.policies_text = PM.policies_text(current_policy.language, current_policy.sections, 2,
+                    current_policy.policies_text = PM.policies_text(current_policy.language, current_policy.sections, 2, subset,
                                                              function(policyid) {
                                                                  ids.push(policyid);
                                                              });
@@ -112,12 +114,18 @@ PM.on_evaluated_policy = function(data) {
     PM.set_arguments_url(IMPACT.db);
 };
 
-PM.theory_outline_text = function(sections, urlfragment) {
+PM.should_be_displayed = function(section, subset) {
+    return section.id == IMPACT.question || subset == undefined || _.contains(subset, section.id);
+};
+
+PM.theory_outline_text = function(sections, urlfragment, subset) {
     var text = "<ul>";
     
     _.each(sections, function(section) {
-               text += '<li><a href="#/{0}/{1}">{2}</a></li>'.format(urlfragment, section.id, section.header.title);
-               text += PM.theory_outline_text(section.sections, urlfragment);
+               if(PM.should_be_displayed(section, subset)) {
+                   text += '<li><a href="#/{0}/{1}">{2}</a></li>'.format(urlfragment, section.id, section.header.title);
+                   text += PM.theory_outline_text(section.sections, urlfragment, subset);
+               }
            });
 
     text += "</ul>";
@@ -191,21 +199,25 @@ PM.scheme_content_text = function(language, scheme) {
     return text;
 };
 
-PM.policies_text = function(language, sections, level, on_policy) {
+// if subset is defined then it contains the id of the policies to display
+// if not defined all policies are displayed
+PM.policies_text = function(language, sections, level, subset, on_policy) {
     var text = "";
     
     _.each(sections, function(section) {
-               text += '<div id="{0}">'.format(section.id);
-               text += '<form action=""><h{0}>'.format(level + 1);
-               if(section.schemes.length > 0) {
-                   on_policy(section.id);
-                   text += '<input type="submit" value="Select" id="input{0}" />'.format(section.id);
+               if(PM.should_be_displayed(section, subset)) {
+                   text += '<div id="{0}">'.format(section.id);
+                   text += '<form action=""><h{0}>'.format(level + 1);
+                   if(section.schemes.length > 0) {
+                       on_policy(section.id);
+                       text += '<input type="submit" value="Select" id="input{0}" />'.format(section.id);
+                   }
+                   text += ' {1}</h{0}></form>'.format(level + 1, section.header.title);
+                   text += '<p>{0}</p>'.format(PM.markdown_to_html(section.header.description[IMPACT.lang]));
+                   text += PM.schemes_text(language, section.schemes);
+                   text += PM.policies_text(language, section.sections, level + 1, subset, on_policy);
+                   text += '</div>';
                }
-               text += ' {1}</h{0}></form>'.format(level + 1, section.header.title);
-               text += '<p>{0}</p>'.format(PM.markdown_to_html(section.header.description[IMPACT.lang]));
-               text += PM.schemes_text(language, section.schemes);
-               text += PM.policies_text(language, section.sections, level + 1, on_policy);
-               text += '</div>';
            });
     
     return text;

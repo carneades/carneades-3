@@ -51,15 +51,8 @@
 
 (defn give-acceptability?
   "Returns true if the given policy would give the issueid this particular acceptability."
-  [ag issueid acceptability policy]
-  (let [policy-statements (get-policy-statements policy)
-        _ (debug "policy-statements =" policy-statements)
-        ag (accept ag policy-statements)
-        ag (evaluate aspic-grounded ag)
-        _ (debug "issueid:" issueid)
-        _ (debug "issue type:" (type issueid))
-        _ (debug "stmt keys:" (keys (:statement-nodes ag)))
-        _ (debug "type of second key:" (type (second (keys (:statement-nodes ag)))))
+  [ag theory qid issueid acceptability policy]
+  (let [ag (evaluate-policy qid (:id policy) theory ag)
         issue-stmt (get-in ag [:statement-nodes issueid])]
     (debug "issue-stmt=" issue-stmt)
     (condp = acceptability
@@ -68,11 +61,11 @@
       :undecided (undecided-node? issue-stmt))))
 
 (defn find-policies
-  "Returns the policies in the theory that, if accepted, would give the issueid
+  "Returns the policies' ids in the theory that, if accepted, would give the issueid
    the given acceptability. Acceptability is either :in :out or :undecided"
   [ag theory qid issueid acceptability]
   (debug "find-policies")
   (let [policies (get-policies qid theory)
         selected-policies
-        (filter (partial give-acceptability? ag issueid acceptability) policies)]
-    selected-policies))
+        (filter (partial give-acceptability? ag theory qid issueid acceptability) policies)]
+    (map :id selected-policies)))
