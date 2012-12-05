@@ -19,7 +19,7 @@ PM.TheoryView = Backbone.View.extend(
          }
          
          data.outline_text = PM.theory_outline_text(data.schemes, 'schemes');
-         data.table_of_contents = "Table of contents";
+         data.table_of_contents = $.i18n.prop('pmt_table_of_contents');
          data.schemes_text = this.schemes_text();
          
          this.$el.html(ich.theory(data));
