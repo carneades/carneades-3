@@ -39,7 +39,7 @@ PM.PremiseCandidateView = Backbone.View.extend(
                                        return AGB.statement_text(statement);
                                    }
                                   },
-                            placeholder: "Select a statement",
+                            placeholder: $.i18n.prop('pmt_select_a_statement'),
                             formatSelection: AGB.format_selected_statement,
                             formatResult: AGB.statement_text,
                             initSelection: function(element, callback) {

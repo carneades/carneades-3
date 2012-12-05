@@ -84,7 +84,7 @@ AGB.display_statement = function(db, stmtid)
 
 AGB.set_statement_title_text = function(info)
 {
-    var default_text = "Statement";
+    var default_text = $.i18n.prop('pmt_statement');
     if(info.header) {
         info.statement_title_text = info.header.title ? info.header.title['en'] : default_text;
     } else {
