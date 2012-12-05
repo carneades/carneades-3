@@ -73,7 +73,7 @@ PM.ArgumentEditorView = Backbone.View.extend(
          }
          this.premises_candidates_view = new PM.PremisesCandidatesView(
              {model: this.model,
-              add_more_text: "Add a premise",
+              add_more_text: $.i18n.prop('pmt_add_premise'),
               container: 'premises',
               elements_name: 'Premises',
               el: this.$('.argument-editor-premises')});
@@ -84,7 +84,7 @@ PM.ArgumentEditorView = Backbone.View.extend(
          }
          this.exceptions_candidates_view = new PM.PremisesCandidatesView(
              {model: this.model,
-              add_more_text: "Add an exception",
+              add_more_text: $.i18n.prop('pmt_add_exception'),
               container: 'exceptions',
               elements_name: 'Exceptions',
               el: this.$('.argument-editor-exceptions')});

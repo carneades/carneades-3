@@ -12,31 +12,31 @@ PM.MetadataEditorView = Backbone.View.extend(
          _.bindAll(this, 'render', 'description_changed', 'on_add_metadata_element',
                   'change_lang');
          this.model.get('metadata').store();
-         this.elements = {key: "Key",
-                          contributor: "Contributor",
-                          coverage: "Coverage",
-                          creator: "Creator",
-                          date: "Date",
-                          format: "Format",
-                          identifier: "Identifier",
-                          language: "Language",
-                          publisher: "Publisher",
-                          relation: "Relation",
-                          rights: "Rights",
-                          source: "Source",
-                          subject: "Subject",
-                          title: "Title",
-                          type: "Type"             
+         this.elements = {key: $.i18n.prop('pmt_key'),
+                          contributor: $.i18n.prop('pmt_contributor'),
+                          coverage: $.i18n.prop('pmt_coverage'),
+                          creator: $.i18n.prop('pmt_creator'),
+                          date: $.i18n.prop('pmt_date'),
+                          format: $.i18n.prop('pmt_format'),
+                          identifier: $.i18n.prop('pmt_identifier'),
+                          language: $.i18n.prop('pmt_language'),
+                          publisher: $.i18n.prop('pmt_publisher'),
+                          relation: $.i18n.prop('pmt_relation'),
+                          rights: $.i18n.prop('pmt_rights'),
+                          source: $.i18n.prop('pmt_source'),
+                          subject: $.i18n.prop('pmt_subject'),
+                          title: $.i18n.prop('pmt_title'),
+                          type: $.i18n.prop('pmt_type')             
                          }; 
      },
      
      render: function() {
          var data = this.model.toJSON();
 
-         this.$el.html(ich.metadataeditor2({description: "Description:",
-                                            adda: "Add a",
-                                            totheheader: "to the header",
-                                            go: "Add"}));
+         this.$el.html(ich.metadataeditor2({description: $.i18n.prop('pmt_description'),
+                                            adda: $.i18n.prop('pmt_add_a'),
+                                            totheheader: $.i18n.prop('pmt_to_the_header'),
+                                            go: $.i18n.prop('pmt_add')}));
          
          this.$('.language-chooser').tabs({select: this.change_lang,
                                            selected: 0});

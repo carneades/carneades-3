@@ -92,7 +92,7 @@ AGB.set_premises_text = function(argument_data)
 
 AGB.set_argument_title_text = function(info)
 {
-    var default_text = "Argument";
+    var default_text = $.i18n.prop('pmt_argument');
     if(info.header) {
         info.argument_title_text = info.header.title ? info.header.title['en'] : default_text;
     } else {
