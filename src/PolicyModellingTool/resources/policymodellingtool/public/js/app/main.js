@@ -376,8 +376,7 @@ PM.load_templates = function(toolboxState) {
             {name: 'metadata', url: 'site/metadata.html'},
             {name: 'argumentlink', url: 'site/argumentlink.html'},
             {name: 'statementlink', url: 'site/statementlink.html'},
-            {name: 'premise', url: 'site/premise.html'},
-            {name: 'premiseeditorpartial', url: 'site/premiseeditorpartial.html'}],
+            {name: 'premise', url: 'site/premise.html'}],
            function(template) {
                var url = toolboxState == undefined ?
                    template.url : toolboxState.pmt.path + '/' + template.url;
@@ -413,10 +412,7 @@ PM.load_templates = function(toolboxState) {
             'exceptionscandidates',
             'theory',
             'metadataeditor2',
-            'premiseeditor',
-            'premiseeditorwithoutscheme',
             'addmore',
-            'newstatementlink',
             'premisecandidate',
             'conclusioncandidate',
             'schemecandidate',
