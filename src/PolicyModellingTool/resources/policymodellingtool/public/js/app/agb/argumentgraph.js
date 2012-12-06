@@ -28,6 +28,9 @@ AGB.argumentgraph_html = function(db, data)
     AGB.set_references_text(data.references);
     data.title = AGB.markdown_to_html(data.metadata[0].title ? data.metadata[0].title[0] : "");
     data.outline_text = AGB.outline_text(data.outline, db);
+    data.pmt_main_issues = $.i18n.prop('pmt_main_issues');
+    data.pmt_outline = $.i18n.prop('pmt_outline');
+    data.pmt_references = $.i18n.prop('pmt_references');
     var argumentgraph_html = ich.argumentgraph(data);
     return argumentgraph_html.filter('#argumentgraph');
 };
@@ -110,7 +113,9 @@ AGB.outline_text = function(tree, db, index)
 // Activates the edition of the argument graph
 AGB.enable_ag_edition = function(db) {
     // $('#ageditormenu').remove();
-    $('#menus').append(ich.ageditormenuon());
+    $('#menus').append(ich.ageditormenuon({'new_statement_text': $.i18n.prop('pmt_new_statement'),
+                                           'new_argument_text': $.i18n.prop('pmt_new_argument')
+                                          }));
     $('#newstatement').click(_.bind(AGB.show_statement_editor, AGB,
                                     {save_callback: function() {
                                          AGB.display_argumentgraph(IMPACT.db);

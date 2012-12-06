@@ -32,7 +32,18 @@ PM.ArgumentEditorView = Backbone.View.extend(
      render: function() {
          var data = this.model.toJSON();
          
-         this.$el.html(ich.argumenteditor({title: this.title}));
+         this.$el.html(ich.argumenteditor({title: this.title,
+                                           pmt_header: $.i18n.prop('pmt_header'),
+                                           pmt_direction: $.i18n.prop('pmt_direction'),
+                                           pmt_strict: $.i18n.prop('pmt_strict'),
+                                           pmt_weight: $.i18n.prop('pmt_weight'),
+                                           pmt_yes: $.i18n.prop('pmt_yes'),
+                                           pmt_no: $.i18n.prop('pmt_no'),
+                                           pmt_high: $.i18n.prop('pmt_high'),
+                                           pmt_low: $.i18n.prop('pmt_low'),
+                                           pmt_cancel: $.i18n.prop('pmt_cancel'),
+                                           pmt_save_argument: $.i18n.prop('pmt_save_argument') 
+                                          }));
 
          if(data.argument.attributes.pro) {
              this.pro_el().attr('checked',true);
