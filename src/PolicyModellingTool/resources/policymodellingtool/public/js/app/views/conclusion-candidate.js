@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Licensed under the EUPL V.1.1
+
 // A candidate for the conclusion of an argument
 PM.ConclusionCandidateView = Backbone.View.extend(
     {events: {

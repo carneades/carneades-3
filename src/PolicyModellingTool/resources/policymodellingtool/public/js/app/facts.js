@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Licensed under the EUPL V.1.1
+
 // Returns the relative url of the facts page
 PM.facts_url = function() {
     return 'facts';

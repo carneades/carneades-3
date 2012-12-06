@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Licensed under the EUPL V.1.1
+
 // Displays a view to select a candidate for a premise or an exception
 PM.PremiseCandidateView = Backbone.View.extend(
     {className: "premise-candidate",

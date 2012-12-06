@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Licensed under the EUPL V.1.1
+
 // A view for an element of a metadata (except description)
 PM.MetadataElementEditorView = Backbone.View.extend(
     {className: "metadata-element-editor-view",

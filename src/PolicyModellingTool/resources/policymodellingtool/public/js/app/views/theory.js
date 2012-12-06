@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Licensed under the EUPL V.1.1
+
 // A view to represent a theory
 PM.TheoryView = Backbone.View.extend(
     {className: "theory-view",

@@ -1,3 +1,6 @@
+;;; Copyright (c) 2012 Fraunhofer Gesellschaft
+;;; Licensed under the EUPL V.1.1
+
 (ns catb.views.core
   (:use [jayq.util :only [log clj->js]]
         [catb.models.core :only [get-stmt get-arg]])
