@@ -3,22 +3,22 @@
 
   <form id="argument-form">
     <p>
-      <h3>Header</h3>
+      <h3>{{pmt_header}}</h3>
       <div class="argument-metadata"></div>
     </p>
     <hr/>
 
-    <p>Direction:<input id="direction" name="pro" type="radio" value="pro"/>Pro
+    <p>{{pmt_direction}}<input id="direction" name="pro" type="radio" value="pro"/>Pro
       <input name="pro" type="radio" value="con"/>Con
     <p/>
 
-    <p>Strict:
-      <input name="strict" type="radio" value="yes">Yes
-      <input name="strict" type="radio" value="no">No
+    <p>{{pmt_strict}}
+      <input name="strict" type="radio" value="yes">{{pmt_yes}}
+      <input name="strict" type="radio" value="no">{{pmt_no}}
     </p>
 
     <p>
-      Weight: Low <input type="range" min="0" max="1" value="0.5" step="0.01"/> High&nbsp;&nbsp; <input id="argument-editor-weight" class="weight-input" type="text"/>
+      {{pmt_weight}} {{pmt_low}} <input type="range" min="0" max="1" value="0.5" step="0.01"/> {{pmt_high}}&nbsp;&nbsp; <input id="argument-editor-weight" class="weight-input" type="text"/>
     </p>
 
     <div class="scheme">
@@ -42,7 +42,7 @@
     <br/>
     <br/>
 
-    <div class="navigation"><a class="cancel-argument" href="">Cancel</a>&nbsp<a class="save-argument" href="" >Save argument</a></div>
+    <div class="navigation"><a class="cancel-argument" href="">{{pmt_cancel}}</a>&nbsp<a class="save-argument" href="" >{{pmt_save_argument}}</a></div>
   </form>
 
 </div>
