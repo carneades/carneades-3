@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Licensed under the EUPL V.1.1
+
 PM.scheme_text = function(scheme) {
     if(_.isNil(scheme)) {
         return "";

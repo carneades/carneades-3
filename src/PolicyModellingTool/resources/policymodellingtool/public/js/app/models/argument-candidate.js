@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Licensed under the EUPL V.1.1
+
 PM.ArgumentCandidate = Backbone.Model.extend(
     {initialize: function(attrs) {
          var memento = new Backbone.Memento(this);

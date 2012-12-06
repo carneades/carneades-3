@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Licensed under the EUPL V.1.1
+
 // This object contains the global variables for the app
 var IMPACT = {
     user: "root",

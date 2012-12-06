@@ -1,3 +1,6 @@
+;;; Copyright (c) 2012 Fraunhofer Gesellschaft
+;;; Licensed under the EUPL V.1.1
+
 (ns carneades.engine.policy
   (:use (carneades.engine statement scheme argument-graph aspic argument-evaluation utils)
         [clojure.tools.logging :only (info debug error)])

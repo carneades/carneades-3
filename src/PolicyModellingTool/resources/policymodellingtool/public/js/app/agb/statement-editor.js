@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Licensed under the EUPL V.1.1
+
 // Shows a new statement editor
 // @config accepts the following values:
 // atom, the default value of the atom field

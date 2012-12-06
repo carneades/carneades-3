@@ -1,3 +1,6 @@
+;;; Copyright (c) 2012 Fraunhofer Gesellschaft
+;;; Licensed under the EUPL V.1.1
+
 (ns impact.web.main
   (:use ring.adapter.jetty
         clojure.java.browse)

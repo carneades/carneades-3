@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Licensed under the EUPL V.1.1
+
 // View for editing an argument
 PM.ArgumentEditorView = Backbone.View.extend(
     {className: "argument-editor",

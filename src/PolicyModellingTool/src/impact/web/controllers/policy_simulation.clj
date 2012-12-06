@@ -1,3 +1,6 @@
+;;; Copyright (c) 2012 Fraunhofer Gesellschaft
+;;; Licensed under the EUPL V.1.1
+
 (ns impact.web.controllers.policy-simulation
   (:use  clojure.pprint
          clojure.data.json

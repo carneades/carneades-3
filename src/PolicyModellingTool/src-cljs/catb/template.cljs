@@ -1,3 +1,6 @@
+;;; Copyright (c) 2012 Fraunhofer Gesellschaft
+;;; Licensed under the EUPL V.1.1
+
 ;; TODO this should be moved the views directory
 (ns catb.template
   (:use [jayq.util :only [log clj->js]])
