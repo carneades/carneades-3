@@ -16,7 +16,7 @@ PM.set_facts_url = function() {
 PM.display_facts = function() {
     if(IMPACT.facts_state == 'waiting') {
         IMPACT.facts_state = 'entering';
-        var facts_html = ich.facts();
+        var facts_html = ich.facts({'pmt_pmt': $.i18n.prop('pmt_pmt')});
         $('#pm').html(facts_html.filter("#facts"));
         PM.activate('#facts-item');
         PM.ajax_post(IMPACT.simulation_url, {request: IMPACT.question},
