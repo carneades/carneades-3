@@ -1,3 +1,6 @@
+;;; Copyright (c) 2012 Fraunhofer Gesellschaft
+;;; Licensed under the EUPL V.1.1
+
 (ns catb.backbone.macros
   (:use [clojure.pprint :only [pprint]])
   (:require [clojure.string :as str]))

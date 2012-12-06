@@ -1,3 +1,6 @@
+;;; Copyright (c) 2012 Fraunhofer Gesellschaft
+;;; Licensed under the EUPL V.1.1
+
 (ns carneades.examples.abduction
   (:use carneades.engine.argument
         carneades.engine.statement

@@ -1,3 +1,6 @@
+;;; Copyright (c) 2012 Fraunhofer Gesellschaft
+;;; Licensed under the EUPL V.1.1
+
 (ns impact.web.views.pages
   (:use [hiccup core page-helpers])
   (:require [net.cgrand.enlive-html :as html]

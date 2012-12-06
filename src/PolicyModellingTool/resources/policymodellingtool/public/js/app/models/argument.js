@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Licensed under the EUPL V.1.1
+
 PM.Argument = Backbone.Model.extend(
     {defaults: {
          weight: 0.5,

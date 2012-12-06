@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Licensed under the EUPL V.1.1
+
 // Sets the argument graph url. This causes the argument graph to
 // displayed.
 AGB.set_argumentgraph_url = function(db)

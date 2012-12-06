@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Licensed under the EUPL V.1.1
+
 // Subview for displaying the premises or the exceptions candidates
 PM.PremisesCandidatesView = Backbone.View.extend(
     {className: "premises-candidates-view",

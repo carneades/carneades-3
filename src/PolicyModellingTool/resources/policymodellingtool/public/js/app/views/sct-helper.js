@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Licensed under the EUPL V.1.1
+
 PM.display_sct_intro = function() {
     var sct_intro = new PM.SctIntro({model: PM.sct});
     sct_intro.render();

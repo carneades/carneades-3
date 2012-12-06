@@ -1,3 +1,6 @@
+;;; Copyright (c) 2012 Fraunhofer Gesellschaft
+;;; Licensed under the EUPL V.1.1
+
 (ns catb.views.sct.comparison
   (:use [catb.views.core :only [template json score-agreed?]]
         [catb.models.core :only [get-metadata]]

@@ -1,3 +1,6 @@
+;;; Copyright (c) 2012 Fraunhofer Gesellschaft
+;;; Licensed under the EUPL V.1.1
+
 (ns ^{:doc "Implementation of the Translator protocol for the MyGengo API"}
   impact.web.logic.translations.mygengo-translator
   (:use clojure.pprint
