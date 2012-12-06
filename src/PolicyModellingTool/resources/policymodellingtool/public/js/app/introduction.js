@@ -22,6 +22,7 @@ PM.display_introduction = function() {
 
     var introduction_html = ich.introduction({pmt_pmt: $.i18n.prop('pmt_pmt'),
                                               pmt_intro: PM.markdown_to_html($.i18n.prop('pmt_intro')),
+                                              pmt_start: $.i18n.prop('pmt_start')
                                              });
     $('#pm').html(introduction_html.filter("#introduction"));
     $('#start').click(PM.on_start_button);

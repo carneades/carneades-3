@@ -67,6 +67,23 @@ AGB.statement_html = function(db, info, lang)
     info.hascon = info.con && info.con.length > 0;
     info.haspremiseof = info.premise_of && info.premise_of.length > 0;
 
+    info.pmt_key = $.i18n.prop('pmt_key');
+    info.pmt_coverage = $.i18n.prop('pmt_coverage');
+    info.pmt_creator = $.i18n.prop('pmt_creator');
+    info.pmt_date = $.i18n.prop('pmt_date');
+    info.pmt_date = $.i18n.prop('pmt_date');
+    info.pmt_format = $.i18n.prop('pmt_format');
+    info.pmt_identifier = $.i18n.prop('pmt_identifier');
+    info.pmt_language = $.i18n.prop('pmt_language');
+    info.pmt_publisher = $.i18n.prop('pmt_publisher');
+    info.pmt_relation = $.i18n.prop('pmt_relation');
+    info.pmt_rights = $.i18n.prop('pmt_rights');
+    info.pmt_source = $.i18n.prop('pmt_source');
+    info.pmt_subject = $.i18n.prop('pmt_subject');
+    info.pmt_title = $.i18n.prop('pmt_title');
+    info.pmt_type = $.i18n.prop('pmt_type');
+
+    
     var statement_html = ich.statement(info);
     return statement_html.filter('#statement');
 };
