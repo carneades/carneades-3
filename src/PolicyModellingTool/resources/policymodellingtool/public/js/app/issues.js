@@ -16,7 +16,9 @@ PM.display_issues = function() {
                      IMPACT.current_policy = currentpolicy;
                      PM.ajax_get(IMPACT.wsurl + "/policies",
                                  function(policies) {
-                                     var issues_html = ich.issues(policies[currentpolicy]);
+                                     var data = _.clone(policies[currentpolicy]);
+                                     data.pmt_issues_desc = $.i18n.prop('pmt_issues_desc');
+                                     var issues_html = ich.issues(data);
                                      $('#pm').html(issues_html.filter("#issues"));
                                      $('input').first().attr('checked', true);
                                      $('#submit').click(PM.on_submit_issues);

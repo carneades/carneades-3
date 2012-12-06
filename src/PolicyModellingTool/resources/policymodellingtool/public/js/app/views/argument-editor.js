@@ -68,7 +68,25 @@ PM.ArgumentEditorView = Backbone.View.extend(
              var scheme_metadata = _.clone(scheme.get('header'));
              delete scheme_metadata.title;
              PM.set_metadata_has_properties(scheme_metadata);
-             var scheme_metadata_html = ich.metadata(scheme_metadata);
+
+             var data = _.clone(scheme_metadata);
+             data.pmt_key = $.i18n.prop('pmt_key');
+             data.pmt_coverage = $.i18n.prop('pmt_coverage');
+             data.pmt_creator = $.i18n.prop('pmt_creator');
+             data.pmt_date = $.i18n.prop('pmt_date');
+             data.pmt_date = $.i18n.prop('pmt_date');
+             data.pmt_format = $.i18n.prop('pmt_format');
+             data.pmt_identifier = $.i18n.prop('pmt_identifier');
+             data.pmt_language = $.i18n.prop('pmt_language');
+             data.pmt_publisher = $.i18n.prop('pmt_publisher');
+             data.pmt_relation = $.i18n.prop('pmt_relation');
+             data.pmt_rights = $.i18n.prop('pmt_rights');
+             data.pmt_source = $.i18n.prop('pmt_source');
+             data.pmt_subject = $.i18n.prop('pmt_subject');
+             data.pmt_title = $.i18n.prop('pmt_title');
+             data.pmt_type = $.i18n.prop('pmt_type');
+
+             var scheme_metadata_html = ich.metadata(data);
              this.$('.scheme-metadata').html(scheme_metadata_html);
              
              if(scheme_metadata.description && scheme_metadata.description[IMPACT.lang]) {
