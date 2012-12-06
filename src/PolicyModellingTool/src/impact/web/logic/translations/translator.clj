@@ -1,3 +1,6 @@
+;;; Copyright (c) 2012 Fraunhofer Gesellschaft
+;;; Licensed under the EUPL V.1.1
+
 (ns ^{:doc "Protocol for text translators."}
   impact.web.logic.translations.translator)
 

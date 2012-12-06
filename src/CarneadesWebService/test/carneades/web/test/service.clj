@@ -1,3 +1,6 @@
+;;; Copyright (c) 2012 Fraunhofer Gesellschaft
+;;; Licensed under the EUPL V.1.1
+
 (ns carneades.web.test.service
   (:use clojure.test
         clojure.pprint

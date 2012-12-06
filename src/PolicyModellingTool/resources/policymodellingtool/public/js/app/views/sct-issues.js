@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Licensed under the EUPL V.1.1
+
 // Displays the list of issues
 PM.SctIssues = Backbone.View.extend(
     {className: "sct-issues",

@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Licensed under the EUPL V.1.1
+
  // Displays a claim or an argument and asks the user about it
  PM.SctQuestion = Backbone.View.extend(
      {className: "sct-question",
