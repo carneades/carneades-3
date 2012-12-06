@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Licensed under the EUPL V.1.1
+
 AGB.markdown_to_html = function(md_text)
 {
     if(md_text == null) {

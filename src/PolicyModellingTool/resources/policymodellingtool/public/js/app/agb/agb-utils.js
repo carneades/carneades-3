@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Licensed under the EUPL V.1.1
+
 // adds a format method to all string
 // place holders are of the form {0}, {1} etc
 String.prototype.format = function() {

@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Licensed under the EUPL V.1.1
+
 PM.simple_auth = function(xhr) {
     var bytes = Crypto.charenc.Binary.stringToBytes(IMPACT.user + ":" + IMPACT.password);
     var base64 = Crypto.util.bytesToBase64(bytes);

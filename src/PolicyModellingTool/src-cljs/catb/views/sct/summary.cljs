@@ -1,3 +1,6 @@
+;;; Copyright (c) 2012 Fraunhofer Gesellschaft
+;;; Licensed under the EUPL V.1.1
+
 (ns catb.views.sct.summary
   (:use [catb.views.core :only [template json prepare-claim]]
         [catb.models.core :only [get-stmt]]

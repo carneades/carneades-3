@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Licensed under the EUPL V.1.1
+
 AGB.get_string = function(data, is_last, escape)
 {
     if(data == null || data == undefined) {

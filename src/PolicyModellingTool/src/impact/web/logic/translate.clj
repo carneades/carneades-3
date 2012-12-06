@@ -1,3 +1,6 @@
+;;; Copyright (c) 2012 Fraunhofer Gesellschaft
+;;; Licensed under the EUPL V.1.1
+
 (ns ^{:doc "Translation of text using the translation protocol."}
     impact.web.logic.translate
   (:use clojure.java.io

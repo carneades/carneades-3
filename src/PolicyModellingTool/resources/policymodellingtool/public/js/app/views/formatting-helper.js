@@ -1,3 +1,6 @@
+// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Licensed under the EUPL V.1.1
+
 AGB.format_filtered_statement = function(statement) {
     return "<div>{0}</div>".format(AGB.statement_text(statement));
 };

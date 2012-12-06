@@ -1,3 +1,6 @@
+;;; Copyright (c) 2012 Fraunhofer Gesellschaft
+;;; Licensed under the EUPL V.1.1
+
 (defproject policymodellingtool/policymodellingtool "1.0.0-SNAPSHOT"
   :description "Policy Modelling Tool for the IMPACT Policy project"
   :dependencies [[org.clojure/clojure "1.4.0"]
