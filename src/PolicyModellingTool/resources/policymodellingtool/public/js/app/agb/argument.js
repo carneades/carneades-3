@@ -66,6 +66,17 @@ AGB.argument_html = function(db, argument_data)
     AGB.set_undercutters_text(argument_data);
     AGB.set_rebuttals_text(argument_data);
     AGB.set_dependents_text(argument_data);
+    argument_data.pmt_id = $.i18n.prop('pmt_id');
+    argument_data.pmt_scheme = $.i18n.prop('pmt_scheme');
+    argument_data.pmt_strict = $.i18n.prop('pmt_strict');
+    argument_data.pmt_weight = $.i18n.prop('pmt_weight');
+    argument_data.pmt_value = $.i18n.prop('pmt_value');
+    argument_data.pmt_premises = $.i18n.prop('pmt_premises');
+    argument_data.pmt_value = $.i18n.prop('pmt_value');
+    argument_data.pmt_conclusion = $.i18n.prop('pmt_conclusion');
+    argument_data.pmt_counterarguments = $.i18n.prop('pmt_counterarguments');
+    argument_data.pmt_used_by = $.i18n.prop('pmt_used_by');
+    
     var argument_html = ich.argument(argument_data);
     return argument_html.filter('#argument');
 };

@@ -3,23 +3,11 @@
 </head>
 
 <body>
-<h1 align="center">Policy Modeling Tool</h1>
+<h1 align="center">{{pmt_pmt}}</h1>
 
 <div id="introduction">
   {{>pmmenu}}
-<p>This is the policy modeling tool of the IMPACT argumentation toolbox.  The policy modeling tool provides a way to simulate the legal effects of specific policy proposals on the facts of test cases.  The tool is useful for evaluating policies which formulate rules at a level of detail comparable to legislation or regulations.</p>
-
-<p>The procedure for using the tool consists of the following steps:</p>
-
-<ol>
-<li> Select an issue from the Green Paper of interest, among the issues for which sufficiently concrete policies have been proposed.
-<li> Answer a series of questions to enter the facts of a test case.  Only relevant questions will be asked.  To protect your privacy, no questions about real persons or events will be asked, but rather only about hypothetical test cases.  As the questions are answered, the policy modeling tool is applying the rules of the different polices to construct legal arguments about the effects of the policies, given the facts of the test case.
-<li> Browse a map of the arguments constructed during the previous step, to see how inferences have been drawn by applying the rules of the various policies to the facts of the test case.
-<li> Select a policy to simulate and highlight in the argument map its legal effects on the test case.  This will take you back to the argument map, with the effects highlighted.
-<li> Repeat the last two steps to evaluate and visualize the effects of another policy. Or return to the "Facts" page to modify the facts of your test case or enter facts for another case.
-</ol>
-
-<p>The tool can now guide you, step by step, through this procedure, beginning when you click on the "start" button below.</p>
+  {{{pmt_intro}}}
 
 <form action="">
 <p class="submit"><input  id="start" type="submit" value="Start" /></p>

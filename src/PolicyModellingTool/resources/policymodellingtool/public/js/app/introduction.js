@@ -20,7 +20,9 @@ PM.display_introduction = function() {
                 IMPACT.password,
                 PM.on_error);
 
-    var introduction_html = ich.introduction();
+    var introduction_html = ich.introduction({pmt_pmt: $.i18n.prop('pmt_pmt'),
+                                              pmt_intro: PM.markdown_to_html($.i18n.prop('pmt_intro')),
+                                             });
     $('#pm').html(introduction_html.filter("#introduction"));
     $('#start').click(PM.on_start_button);
     PM.activate('#introduction-item');
