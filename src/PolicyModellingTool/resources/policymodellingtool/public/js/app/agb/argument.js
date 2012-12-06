@@ -76,7 +76,23 @@ AGB.argument_html = function(db, argument_data)
     argument_data.pmt_conclusion = $.i18n.prop('pmt_conclusion');
     argument_data.pmt_counterarguments = $.i18n.prop('pmt_counterarguments');
     argument_data.pmt_used_by = $.i18n.prop('pmt_used_by');
-    
+
+    argument_data.pmt_key = $.i18n.prop('pmt_key');
+    argument_data.pmt_coverage = $.i18n.prop('pmt_coverage');
+    argument_data.pmt_creator = $.i18n.prop('pmt_creator');
+    argument_data.pmt_date = $.i18n.prop('pmt_date');
+    argument_data.pmt_date = $.i18n.prop('pmt_date');
+    argument_data.pmt_format = $.i18n.prop('pmt_format');
+    argument_data.pmt_identifier = $.i18n.prop('pmt_identifier');
+    argument_data.pmt_language = $.i18n.prop('pmt_language');
+    argument_data.pmt_publisher = $.i18n.prop('pmt_publisher');
+    argument_data.pmt_relation = $.i18n.prop('pmt_relation');
+    argument_data.pmt_rights = $.i18n.prop('pmt_rights');
+    argument_data.pmt_source = $.i18n.prop('pmt_source');
+    argument_data.pmt_subject = $.i18n.prop('pmt_subject');
+    argument_data.pmt_title = $.i18n.prop('pmt_title');
+    argument_data.pmt_type = $.i18n.prop('pmt_type');
+
     var argument_html = ich.argument(argument_data);
     return argument_html.filter('#argument');
 };
