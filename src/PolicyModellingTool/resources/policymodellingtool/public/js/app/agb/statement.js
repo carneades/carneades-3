@@ -83,6 +83,17 @@ AGB.statement_html = function(db, info, lang)
     info.pmt_title = $.i18n.prop('pmt_title');
     info.pmt_type = $.i18n.prop('pmt_type');
 
+    info.pmt_header = $.i18n.prop('pmt_id');
+    info.pmt_atom = $.i18n.prop('pmt_atom');
+    info.pmt_main_issue = $.i18n.prop('pmt_main_issue');
+    info.pmt_header = $.i18n.prop('pmt_header');
+    info.pmt_standard = $.i18n.prop('pmt_standard');
+    info.pmt_weight = $.i18n.prop('pmt_weight');
+    info.pmt_value = $.i18n.prop('pmt_value');
+    info.pmt_text = $.i18n.prop('pmt_text');
+    info.pmt_pro_arguments = $.i18n.prop('pmt_pro_arguments');
+    info.pmt_con_arguments = $.i18n.prop('pmt_con_arguments');
+    info.pmt_premise_of = $.i18n.prop('pmt_premise_of');
     
     var statement_html = ich.statement(info);
     return statement_html.filter('#statement');
