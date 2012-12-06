@@ -377,8 +377,7 @@ PM.load_templates = function(toolboxState) {
             {name: 'argumentlink', url: 'site/argumentlink.html'},
             {name: 'statementlink', url: 'site/statementlink.html'},
             {name: 'premise', url: 'site/premise.html'},
-            {name: 'premiseeditorpartial', url: 'site/premiseeditorpartial.html'},
-            {name: 'ageditormenu', url: 'site/ag-editor-menu.html'}],
+            {name: 'premiseeditorpartial', url: 'site/premiseeditorpartial.html'}],
            function(template) {
                var url = toolboxState == undefined ?
                    template.url : toolboxState.pmt.path + '/' + template.url;
