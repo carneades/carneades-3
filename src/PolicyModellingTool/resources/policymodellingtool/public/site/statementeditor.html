@@ -4,15 +4,15 @@
 <form>
   
   <p>
-  <h3>Header</h3>
+  <h3>{{pmt_header}}</h3>
   <div id="statement-header"></div>
   </p>
   <hr/>
   <p>
-  Atom (optional): <input id="statement-editor-atom" class="text-input" type="text"/>
+  {{pmt_atom_optional}}: <input id="statement-editor-atom" class="text-input" type="text"/>
   </p>
 
-  <p>Text:
+  <p>{{pmt_text}}:
   <!-- <div id="texttabs"> -->
   <!--   <ul> -->
   <!--     <li><a href="#en-tab">En</a></li> -->
@@ -23,22 +23,22 @@
   </p>
 
   <p>
-  Proof standard: <select id="statement-editor-standard" class="combobox required">
-  <option value="pe">Preponderance of Evidence</option>
-  <option value="dv">Dialectical Validity</option>
-  <option value="cce">Clear and Convincing Evidence</option>
-  <option value="brd">Beyond Reasonable Doubt</option> </select>
+  {{pmt_proof_standard}}: <select id="statement-editor-standard" class="combobox required">
+  <option value="pe">{{pmt_pe}}</option>
+  <option value="dv">{{pmt_dv}}</option>
+  <option value="cce">{{pmt_cce}}</option>
+  <option value="brd">{{pmt_brd}}</option> </select>
   </p>
 
-  <p>Main:<input name="main" type="radio" value="yes">Yes
+  <p>{{pmt_main}}:<input name="main" type="radio" value="yes">Yes
   <input name="main" type="radio" value="no">No
   <p/>
 
   <p>
-  Weight (optional): Low <input type="range" min="0" max="1" value="0.5" step="0.01"/> High&nbsp;&nbsp; <input id="statement-editor-weight" type="text"/>
+  {{pmt_weight_optional}}: {{pmt_low}} <input type="range" min="0" max="1" value="0.5" step="0.01"/> {{pmt_high}}&nbsp;&nbsp; <input id="statement-editor-weight" type="text"/>
   </p>
 
-  <br/><div class="navigation"><a id="cancel-statement" href="">Cancel</a>&nbsp<a id="save-statement" href="" >Save statement</a></div>
+  <br/><div class="navigation"><a id="cancel-statement" href="">{{pmt_cancel}}</a>&nbsp<a id="save-statement" href="" >{{pmt_save_statement}}</a></div>
 </form>
 
 </div>
