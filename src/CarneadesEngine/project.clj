@@ -4,6 +4,7 @@
 (defproject carneades-engine/carneades-engine "2.0.0-SNAPSHOT" 
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.4.0"]
+                 [org.clojure/tools.logging "0.2.3"]
                  [org.clojars.pallix/owlapi "3.0.0"]
                  [org.clojars.pallix/hermit "1.2.4"]
                  [org.clojure/math.combinatorics "0.0.2"]
