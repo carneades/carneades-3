@@ -471,17 +471,19 @@ PM.load_style = function(rootpath, style, cssdir) {
 
 // Called when an AJAX error occurs
 PM.on_error = function(textstatus) {
-    $('#pm').prepend('<div style="background-color:  #FFCC33" class="error">Error: {0}</div>'.format(textstatus));
+    $('#pm').prepend('<ul class="warning pm-warning" ><li class="notification">Error: {0}</li></ul>'.format(textstatus));
     setTimeout(function() {
                    $('#pm .error').remove();
                }, 3000);
+    PM.scroll_to_top();
 };
 
 PM.notify = function(text) {
-    $('#pm').prepend('<div style="background-color:  #99CCCC" class="notification">{0}</div>'.format(text));
+     $('#pm').prepend('<ul class="thankyou pm-thankyou"><li class="notification">{0}</li></ul>'.format(text));
     setTimeout(function() {
                    $('#pm .notification').remove();
                }, 3000);
+    PM.scroll_to_top();
 };
 
 // Called when an AJAX error occurs for backbone
@@ -491,3 +493,20 @@ PM.on_model_error = function(collection, response) {
                    $('#pm .error').remove();
                }, 3000);
 };
+
+
+PM.scroll_to_bottom = function() {
+    if(PM.in_uid_toolbox()) {
+        $("#stage").animate({ scrollTop: 2000 }, "fast");
+     } else {
+         $('#pm').scrollTo("100%");
+     }
+}
+
+PM.scroll_to_top = function() {
+    if(PM.in_uid_toolbox()) {
+        $("#stage").animate({ scrollTop: 0 }, "fast");
+     } else {
+         $("#pm").animate({ scrollTop: 0 }, "fast");
+     }
+}

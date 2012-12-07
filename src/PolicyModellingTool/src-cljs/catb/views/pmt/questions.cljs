@@ -12,7 +12,7 @@
   [question]
   (apply str 
          (map (fn [formalanswer answer]
-                (format "<input id=\"iq%s\" class=\"radiobutton inputfield required\" name=\"inputq%s\" value=\"%s\" type=\"radio\"/>%s  "
+                (format "<span><input id=\"iq%s\" class=\"radiobutton inputfield required\" name=\"inputq%s\" value=\"%s\" type=\"radio\"/>%s</span>"
                         (:id question) (:id question) formalanswer answer))
               (:formalanswers question)
               (:answers question))))
@@ -147,6 +147,6 @@
     (append questionslist "<hr/>")
     (.click ($ (str "#" button-id)) onsubmit)
     (.validate ($ "#questionsform"))
-    (.scrollTo js/jQuery "100%")
+    (js/PM.scroll_to_bottom)
     false))
 

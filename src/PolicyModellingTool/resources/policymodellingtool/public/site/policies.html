@@ -1,47 +1,49 @@
 <html>
-<head>
-<style type="text/css">
-P.submit {text-align: left}
-</style>
-</head>
+  <head>
+    <style type="text/css">
+      P.submit {text-align: left}
+    </style>
+  </head>
 
-<body>
+  <body>
 
-<h1 align="center">Policy Modelling Tool</h1>
+    <h1 align="center">Policy Modelling Tool</h1>
 
-<div id="policies">
-  
-{{>pmmenu}}
+    <div id="policies">
+      
+      {{>pmmenu}}
 
-{{#header}}
-<h2>{{title}}</h2>
+      {{#header}}
+      <h2>{{title}}</h2>
 
-<p class="policies-filtering">{{current_issue}} {{issue}}
-  <br/>{{can_display}} <ul>
-    <li><a id="all" class="clickable policy-filtering">{{all_policies}}</a>,</li>
-    <li><a id="in" class="clickable policy-filtering">{{policies_making_in}}</a>,</li>
-    <li><a id="out" class="clickable policy-filtering">{{policies_making_out}}</a>,</li>
-    <li><a id="undecided" class="clickable policy-filtering">{{policies_making_undecided}}.</a></li>
-  </ul>
-</p>
+      <div class="policies-filtering">
+        <p>{{current_issue}} {{issue}}</p>
+      <p> {{can_display}}</p>
+      <ul>
+        <li><a id="all" class="clickable policy-filtering">{{all_policies}}</a></li>
+        <li><a id="in" class="clickable policy-filtering">{{policies_making_in}}</a></li>
+        <li><a id="out" class="clickable policy-filtering">{{policies_making_out}}</a></li>
+        <li><a id="undecided" class="clickable policy-filtering">{{policies_making_undecided}}</a></li>
+      </ul>
+      </div>
 
-<p>{{description_text}}</p>
+      <p>{{description_text}}</p>
 
-<p><i>Click on a "select" button below to view the
-legal effects of the given policy on the facts you have entered for
-the test case.</i><p>
+      <p><i>Click on a "select" button below to view the
+          legal effects of the given policy on the facts you have entered for
+          the test case.</i><p>
 
-{{/header}}
+        {{/header}}
 
-<h3>Table of Contents</h3>
+        <h3>Table of Contents</h3>
 
-<div id="outline">
-  {{{outline_text}}}
-</div>
+        <div id="outline">
+          {{{outline_text}}}
+        </div>
 
-{{{policies_text}}}
+        {{{policies_text}}}
 
-</div>
+    </div>
 
-</body>
+  </body>
 </html>
