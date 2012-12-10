@@ -12,7 +12,13 @@ PM.set_arguments_url = function(db) {
 PM.display_arguments = function(db, type, id) {
     IMPACT.facts_state = 'done';
     
-    var arguments_html = ich.arguments();
+    var arguments_html = ich.arguments({pmt_menu_intro: $.i18n.prop('pmt_menu_intro'),
+                                        pmt_menu_issues: $.i18n.prop('pmt_menu_issues'),
+                                        pmt_menu_facts: $.i18n.prop('pmt_menu_facts'),
+                                        pmt_menu_arguments: $.i18n.prop('pmt_menu_arguments'),
+                                        pmt_menu_schemes: $.i18n.prop('pmt_menu_schemes'),
+                                        pmt_menu_policies: $.i18n.prop('pmt_menu_policies') 
+                                       });
     
     if(_.isNil(db)) {
         db = IMPACT.db;

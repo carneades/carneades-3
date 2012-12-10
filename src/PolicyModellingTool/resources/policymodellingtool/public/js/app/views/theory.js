@@ -25,6 +25,13 @@ PM.TheoryView = Backbone.View.extend(
          data.table_of_contents = $.i18n.prop('pmt_table_of_contents');
          data.schemes_text = this.schemes_text();
          
+         data.pmt_menu_intro = $.i18n.prop('pmt_menu_intro');
+         data.pmt_menu_issues = $.i18n.prop('pmt_menu_issues');
+         data.pmt_menu_facts = $.i18n.prop('pmt_menu_facts');
+         data.pmt_menu_arguments = $.i18n.prop('pmt_menu_arguments');
+         data.pmt_menu_schemes = $.i18n.prop('pmt_menu_schemes');
+         data.pmt_menu_policies = $.i18n.prop('pmt_menu_policies');
+         
          this.$el.html(ich.theory(data));
          
          if(this.current_scheme != undefined) {
