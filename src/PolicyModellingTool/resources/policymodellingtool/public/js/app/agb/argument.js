@@ -93,6 +93,13 @@ AGB.argument_html = function(db, argument_data)
     argument_data.pmt_title = $.i18n.prop('pmt_title');
     argument_data.pmt_type = $.i18n.prop('pmt_type');
 
+    argument_data.pmt_menu_intro = $.i18n.prop('pmt_menu_intro');
+    argument_data.pmt_menu_issues = $.i18n.prop('pmt_menu_issues');
+    argument_data.pmt_menu_facts = $.i18n.prop('pmt_menu_facts');
+    argument_data.pmt_menu_arguments = $.i18n.prop('pmt_menu_arguments');
+    argument_data.pmt_menu_schemes = $.i18n.prop('pmt_menu_schemes');
+    argument_data.pmt_menu_policies = $.i18n.prop('pmt_menu_policies');
+    
     var argument_html = ich.argument(argument_data);
     return argument_html.filter('#argument');
 };
