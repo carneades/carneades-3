@@ -12,7 +12,7 @@
   [question]
   (apply str 
          (map (fn [formalanswer answer]
-                (format "<span><input id=\"iq%s\" class=\"radiobutton inputfield required\" name=\"inputq%s\" value=\"%s\" type=\"radio\"/>%s</span>"
+                (format "<input id=\"iq%s\" class=\"radiobutton inputfield required\" name=\"inputq%s\" value=\"%s\" type=\"radio\"/>%s"
                         (:id question) (:id question) formalanswer answer))
               (:formalanswers question)
               (:answers question))))
@@ -135,7 +135,7 @@
   [questions questionslist onsubmit]
   (log questions)
 
-  (append questionslist (format "<h2>%s</h2>"
+  (append questionslist (format "<h3>%s</h3>"
                                (.-category_name (first questions))))
   (doseq [q questions]
     (add-question-html (js->clj q :keywordize-keys true) questionslist))

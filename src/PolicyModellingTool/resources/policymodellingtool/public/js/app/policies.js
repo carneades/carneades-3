@@ -90,7 +90,7 @@ PM.display_policies = function(sectionid, subset) {
                            });
                     
                     if(sectionid != undefined) {
-                        $.scrollTo($('#' + sectionid));
+                        PM.scroll_to($('#' + sectionid));
                     }
                     
                     $('.policy-filtering').click(PM.on_policy_filtering);
@@ -182,7 +182,7 @@ PM.scheme_content_text = function(language, scheme) {
     text += '</ul></div>';
 
     if(scheme.assumptions.length > 0) {
-        text += '<b>assumptions</b>:</b><div class="rule-body"> <ul>';
+        text += '<b>assumptions:</b><div class="rule-body"> <ul>';
 
         _.each(scheme.assumptions, function(premise) {
                    text += "<li>{0}</li>".format(PM.format_sexpr(premise.statement.atom, language));
