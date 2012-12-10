@@ -16,7 +16,18 @@ PM.set_facts_url = function() {
 PM.display_facts = function() {
     if(IMPACT.facts_state == 'waiting') {
         IMPACT.facts_state = 'entering';
-        var facts_html = ich.facts({'pmt_pmt': $.i18n.prop('pmt_pmt')});
+        var facts_html = ich.facts({'pmt_pmt': $.i18n.prop('pmt_pmt'),
+                                    pmt_pmt: $.i18n.prop('pmt_pmt'),
+                                    pmt_intro: PM.markdown_to_html($.i18n.prop('pmt_intro')),
+                                    pmt_start: $.i18n.prop('pmt_start'),
+                                    pmt_intro_pmt: $.i18n.prop('pmt_intro_pmt'),
+                                    pmt_menu_intro: $.i18n.prop('pmt_menu_intro'),
+                                    pmt_menu_issues: $.i18n.prop('pmt_menu_issues'),
+                                    pmt_menu_facts: $.i18n.prop('pmt_menu_facts'),
+                                    pmt_menu_arguments: $.i18n.prop('pmt_menu_arguments'),
+                                    pmt_menu_schemes: $.i18n.prop('pmt_menu_schemes'),
+                                    pmt_menu_policies: $.i18n.prop('pmt_menu_policies'), 
+                                             });
         $('#pm').html(facts_html.filter("#facts"));
         PM.activate('#facts-item');
         PM.ajax_post(IMPACT.simulation_url, {request: IMPACT.question},
@@ -25,7 +36,14 @@ PM.display_facts = function() {
                      IMPACT.password,
                      PM.on_error);    
     } else {
-        var facts_html = ich.facts();
+        var facts_html = ich.facts({pmt_intro_pmt: $.i18n.prop('pmt_intro_pmt'),
+                                    pmt_menu_intro: $.i18n.prop('pmt_menu_intro'),
+                                    pmt_menu_issues: $.i18n.prop('pmt_menu_issues'),
+                                    pmt_menu_facts: $.i18n.prop('pmt_menu_facts'),
+                                    pmt_menu_arguments: $.i18n.prop('pmt_menu_arguments'),
+                                    pmt_menu_schemes: $.i18n.prop('pmt_menu_schemes'),
+                                    pmt_menu_policies: $.i18n.prop('pmt_menu_policies'), 
+                                   });
         $('#pm').html(facts_html.filter("#facts"));
         $('#pm').append('<div>' + $.i18n.prop('pmt_facts_not_available') + '</div>');
         PM.activate('#facts-item');

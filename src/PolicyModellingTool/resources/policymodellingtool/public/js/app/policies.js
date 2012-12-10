@@ -72,7 +72,14 @@ PM.display_policies = function(sectionid, subset) {
                               all_policies: $.i18n.prop('pmt_all_policies'),
                               policies_making_in: $.i18n.prop('pmt_policies_making_in'),
                               policies_making_out: $.i18n.prop('pmt_policies_making_out'),
-                              policies_making_undecided: $.i18n.prop('pmt_policies_making_undecided')
+                              policies_making_undecided: $.i18n.prop('pmt_policies_making_undecided'),
+                              pmt_intro_pmt: $.i18n.prop('pmt_intro_pmt'),
+                              pmt_menu_intro: $.i18n.prop('pmt_menu_intro'),
+                              pmt_menu_issues: $.i18n.prop('pmt_menu_issues'),
+                              pmt_menu_facts: $.i18n.prop('pmt_menu_facts'),
+                              pmt_menu_arguments: $.i18n.prop('pmt_menu_arguments'),
+                              pmt_menu_schemes: $.i18n.prop('pmt_menu_schemes'),
+                              pmt_menu_policies: $.i18n.prop('pmt_menu_policies'), 
                              });
                     var current_policy_html = ich.policies(template_variables);
                     $('#pm').html(current_policy_html.filter("#policies"));

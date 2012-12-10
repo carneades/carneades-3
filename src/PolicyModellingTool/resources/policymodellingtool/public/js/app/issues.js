@@ -18,6 +18,13 @@ PM.display_issues = function() {
                                  function(policies) {
                                      var data = _.clone(policies[currentpolicy]);
                                      data.pmt_issues_desc = $.i18n.prop('pmt_issues_desc');
+                                     data.pmt_menu_intro = $.i18n.prop('pmt_menu_intro');
+                                     data.pmt_menu_issues = $.i18n.prop('pmt_menu_issues');
+                                     data.pmt_menu_facts = $.i18n.prop('pmt_menu_facts');
+                                     data.pmt_menu_arguments = $.i18n.prop('pmt_menu_arguments');
+                                     data.pmt_menu_schemes = $.i18n.prop('pmt_menu_schemes');
+                                     data.pmt_menu_policies = $.i18n.prop('pmt_menu_policies');
+
                                      var issues_html = ich.issues(data);
                                      $('#pm').html(issues_html.filter("#issues"));
                                      $('input').first().attr('checked', true);
