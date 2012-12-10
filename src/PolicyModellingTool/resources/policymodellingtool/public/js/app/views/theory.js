@@ -35,7 +35,7 @@ PM.TheoryView = Backbone.View.extend(
          this.$el.html(ich.theory(data));
          
          if(this.current_scheme != undefined) {
-             $.scrollTo($('#' + this.current_scheme));
+             PM.scroll_to($('#' + this.current_scheme));
          }
          
          return this;

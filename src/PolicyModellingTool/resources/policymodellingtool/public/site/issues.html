@@ -10,13 +10,14 @@ P.submit {text-align: left}
 
 
 <div id="issues">
-{{>pmmenu}}  
+{{>pmmenu}}
+<h2>{{pmt_menu_issues}}</h2>
 <p>{{pmt_issues_desc}}</p> 
 
 <form id="issuesform">
 
 {{#sections}}
-<p><input type="radio" name="issue" class="radiobutton required" value="{{id}}"/>{{#header}}{{title}}{{/header}}</p>
+<p><input type="radio" name="issue" class="radiobutton required" value="{{id}}"/><label>{{#header}}{{title}}{{/header}}</label></p>
 {{/sections}}
 
 <p class="submit"><input id="submit" class="submit-issue" type="submit" value="Submit" /></p>

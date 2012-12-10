@@ -510,3 +510,11 @@ PM.scroll_to_top = function() {
          $("#pm").animate({ scrollTop: 0 }, "fast");
      }
 }
+
+PM.scroll_to = function(selector) {
+    if(PM.in_uid_toolbox()) {
+        $("#stage").scrollTo(selector);
+     } else {
+         $.scrollTo(selector);
+     }
+}
