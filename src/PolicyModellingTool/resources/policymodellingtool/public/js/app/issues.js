@@ -24,6 +24,7 @@ PM.display_issues = function() {
                                      data.pmt_menu_arguments = $.i18n.prop('pmt_menu_arguments');
                                      data.pmt_menu_schemes = $.i18n.prop('pmt_menu_schemes');
                                      data.pmt_menu_policies = $.i18n.prop('pmt_menu_policies');
+                                     data.pmt_submit = $.i18n.prop('pmt_submit');
 
                                      var issues_html = ich.issues(data);
                                      $('#pm').html(issues_html.filter("#issues"));
