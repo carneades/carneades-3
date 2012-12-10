@@ -12,9 +12,13 @@ AGB.show_statement_editor = function(config) {
     }
 
     if(_.isNil(config.statement)) {
-        $('#statementeditor').html(AGB.create_statement_editor({title: 'New Statement'}));    
+        $('#statementeditor').html(AGB.create_statement_editor(
+            {title: $.i18n.prop('pmt_new_statement')
+            }));    
     } else {
-        $('#statementeditor').html(AGB.create_statement_editor({title: 'Edit Statement'}));    
+        $('#statementeditor').html(AGB.create_statement_editor(
+            {title: $.i18n.prop('pmt_edit_statement')
+            }));
     }
     
     $('#cancel-statement').click(AGB.remove_statement_editor);

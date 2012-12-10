@@ -99,6 +99,11 @@ AGB.argument_html = function(db, argument_data)
     argument_data.pmt_menu_arguments = $.i18n.prop('pmt_menu_arguments');
     argument_data.pmt_menu_schemes = $.i18n.prop('pmt_menu_schemes');
     argument_data.pmt_menu_policies = $.i18n.prop('pmt_menu_policies');
+
+    argument_data.pmt_ag_menu_export = $.i18n.prop('pmt_ag_menu_export');
+    argument_data.pmt_ag_menu_evaluate = $.i18n.prop('pmt_ag_menu_evaluate');
+    argument_data.pmt_ag_menu_map = $.i18n.prop('pmt_ag_menu_map');
+    
     
     var argument_html = ich.argument(argument_data);
     return argument_html.filter('#argument');
@@ -191,7 +196,10 @@ AGB.argument_link = function(db, id, text)
 
 
 AGB.enable_argument_edition = function(db, argid) {
-    $('#menus').append(ich.argumenteditormenu());
+    $('#menus').append(ich.argumenteditormenu({
+        pmt_menu_edit: $.i18n.prop('pmt_menu_edit'),
+        pmt_menu_delete: $.i18n.prop('pmt_menu_delete'),
+    }));
     $('#delete-argument').click(_.bind(AGB.delete_argument, AGB, db, argid));
     $('#edit-argument').click(_.bind(AGB.edit_argument, AGB, db, argid));
     $('.evaluate').click(_.bind(AGB.evaluate, AGB, _.bind(AGB.display_argument, AGB, db, argid)));
@@ -223,7 +231,7 @@ AGB.edit_argument = function(db, argid) {
                                                       schemes: PM.schemes,
                                                       current_lang: IMPACT.lang});
     var argumenteditorview = new PM.ArgumentEditorView({model: argumentcandidate,
-                                                        title: 'Edit Argument'});
+                                                        title: $.i18n.prop('pmt_edit_argument')});
 
     argumenteditorview.render();
     $('#argumenteditor').html(argumenteditorview.$el);
