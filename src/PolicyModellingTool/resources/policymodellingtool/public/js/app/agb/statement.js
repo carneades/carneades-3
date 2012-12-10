@@ -83,7 +83,8 @@ AGB.statement_html = function(db, info, lang)
     info.pmt_title = $.i18n.prop('pmt_title');
     info.pmt_type = $.i18n.prop('pmt_type');
 
-    info.pmt_header = $.i18n.prop('pmt_id');
+    info.pmt_id = $.i18n.prop('pmt_id');
+    info.pmt_header = $.i18n.prop('pmt_header');
     info.pmt_atom = $.i18n.prop('pmt_atom');
     info.pmt_main_issue = $.i18n.prop('pmt_main_issue');
     info.pmt_header = $.i18n.prop('pmt_header');
@@ -95,6 +96,10 @@ AGB.statement_html = function(db, info, lang)
     info.pmt_con_arguments = $.i18n.prop('pmt_con_arguments');
     info.pmt_premise_of = $.i18n.prop('pmt_premise_of');
     
+    info.pmt_ag_menu_export = $.i18n.prop('pmt_ag_menu_export');
+    info.pmt_ag_menu_evaluate = $.i18n.prop('pmt_ag_menu_evaluate');
+    info.pmt_ag_menu_map = $.i18n.prop('pmt_ag_menu_map');
+
     var statement_html = ich.statement(info);
     return statement_html.filter('#statement');
 };
@@ -251,7 +256,12 @@ AGB.statement_out = function(statement)
 };
 
 AGB.enable_statement_edition = function(db, info) {
-    $('#menus').append(ich.statementeditormenu());
+    $('#menus').append(ich.statementeditormenu({
+        pmt_new_statement: $.i18n.prop('pmt_new_statement'),
+        pmt_menu_edit: $.i18n.prop('pmt_menu_edit'),
+        pmt_menu_delete: $.i18n.prop('pmt_menu_delete'),
+        pmt_new_argument: $.i18n.prop('pmt_new_argument'),    
+    }));
     $('#delete-statement').click(_.bind(AGB.delete_statement, AGB, db, info.id));
     $('#edit-statement').click(_.bind(AGB.edit_statement, AGB, db, info));
     $('.evaluate').click(_.bind(AGB.evaluate, AGB, _.bind(AGB.display_statement, AGB, db, info.id)));
