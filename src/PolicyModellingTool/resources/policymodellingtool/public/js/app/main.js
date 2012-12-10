@@ -7,7 +7,7 @@ var IMPACT = {
     password: "pw1", // TODO real auth
     db: undefined,
     question: "Q12",
-    lang: "de",
+    lang: "en",
     wsurl: "/impactws",
     argumentbrowser_url: "/argumentbrowser",
     simulation_url: "/policymodellingtool/PolicySimulation",
