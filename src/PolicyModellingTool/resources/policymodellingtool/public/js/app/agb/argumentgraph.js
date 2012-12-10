@@ -26,7 +26,7 @@ AGB.argumentgraph_html = function(db, data)
     data.references = data.metadata.filter(function (ref) { return ref.key; });
     data.hasreferences = data.references.length > 0;
     AGB.set_references_text(data.references);
-    data.title = AGB.markdown_to_html(data.metadata[0].title ? data.metadata[0].title[0] : "");
+    data.title = data.metadata[0].title ? data.metadata[0].title[0] : $.i18n.prop('pmt_menu_arguments');
     data.outline_text = AGB.outline_text(data.outline, db);
     data.pmt_main_issues = $.i18n.prop('pmt_main_issues');
     data.pmt_outline = $.i18n.prop('pmt_outline');
@@ -39,6 +39,9 @@ AGB.argumentgraph_html = function(db, data)
     data.pmt_menu_schemes = $.i18n.prop('pmt_menu_schemes');
     data.pmt_menu_policies = $.i18n.prop('pmt_menu_policies');
 
+    data.pmt_ag_menu_export = $.i18n.prop('pmt_ag_menu_export');
+    data.pmt_ag_menu_evaluate = $.i18n.prop('pmt_ag_menu_evaluate');
+    data.pmt_ag_menu_map = $.i18n.prop('pmt_ag_menu_map');
     
     var argumentgraph_html = ich.argumentgraph(data);
     return argumentgraph_html.filter('#argumentgraph');
