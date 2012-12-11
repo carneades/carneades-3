@@ -329,13 +329,19 @@ call or a symbol."
   "Uses the formular to returns a user-readable sentence describing the literal.
    Selector is \"positive\", \"negative\" or \"question\" "
   [literal language lang selector]
-  ;; (log "literal =")
-  ;; (log literal)
+  (log "literal =")
+  (log literal)
   (let [language (js->clj language :keywordize-keys true)
         literal (array->literal literal)
         pred (keyword (literal-predicate literal))
         lang (keyword lang)
         selector (keyword selector)
         ;; _ (log "1: " (get-in language [pred]))
-        fstring (get-in language [pred :forms lang selector])]
-    (apply format fstring (format-literal-args literal language lang))))
+        ]
+    (cond (string? literal)
+          literal
+          (get-in language [pred])
+          ;; statement's predicate is in the language
+          (let [fstring (get-in language [pred :forms lang selector])]
+            (apply format fstring (format-literal-args literal language lang)))
+          :else (str literal))))
