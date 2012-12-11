@@ -159,6 +159,10 @@ PM.schemes_text = function(language, schemes) {
     return text;
 };
 
+PM.capitalize = function(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
 PM.scheme_content_text = function(language, scheme) {
     var text = "";
 
@@ -176,7 +180,14 @@ PM.scheme_content_text = function(language, scheme) {
 
     _.each(scheme.premises, function(premise) {
                if(premise.statement.atom[0] != "valid") {
-                   text += "<li>{0}</li>".format(PM.format_sexpr(premise.statement.atom, language));
+                   var txt = catb.views.pmt.theory.format_statement(premise.statement.atom,
+                                                                    language,
+                                                                    IMPACT.lang,
+                                                                    "positive");
+                   txt = txt.replace(/\?/g, '');
+                   txt = PM.capitalize(txt);
+                   //text += "<li>{0}</li>".format(PM.format_sexpr(premise.statement.atom, language));
+                   text += "<li>{0}</li>".format(txt);
                }
            });
     text += '</ul></div>';
