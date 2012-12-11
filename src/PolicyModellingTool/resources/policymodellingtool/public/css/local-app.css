@@ -1,0 +1,6 @@
+/* this style is used when running the application outside of the UID toolbox */
+
+body {
+    overflow: auto;
+    margin-left: 25px;
+}
