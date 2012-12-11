@@ -65,7 +65,7 @@ table {
 /*****************************************************************************/
 body {
 	font: 12pt Calibri, Arial, sans-serif;
-	/* overflow: hidden; */
+	overflow: hidden;
 }
 
 p {
@@ -100,6 +100,7 @@ label {
 ul.list-no-bullets li {
 	list-style: none;
 	margin-top: 6px;
+	background: none;
 }
 
 ul.list-no-bullets li:first-child {
@@ -594,6 +595,11 @@ label.ui-button.ui-state-disabled.ui-state-active.ui-button-focus:hover:active {
 	box-shadow: none;
 }
 
+/* OK button in dialog */
+.toolbox .ui-button-text-only .ui-button-text {
+	padding: .2em 1em;
+}
+
 /*right bracket*/
 .button-group-wrap{
 	background: url("images/backgrounds.png") no-repeat scroll right -232px transparent;
@@ -628,7 +634,7 @@ label.ui-button.ui-state-disabled.ui-state-active.ui-button-focus:hover:active {
 /* Dual licensed under the MIT and GPL licenses.                             */
 /*****************************************************************************/
 .jspContainer {
-	/* overflow: hidden; */
+	overflow: hidden;
 	position: relative;
 }
 
@@ -1308,13 +1314,6 @@ a,a:link,a:visited,a:hover,a:focus,a:active {
 	text-decoration: none;
 }
 
-// pierre:
-a p, a:link p, a:visited p, a:hover p, a:focus p, a:active p {
-	color: #1977D1;
-	outline: 0 none;
-	text-decoration: none;
-}
-
 a:hover,a:focus,a:hover:focus {
 	color: #004A91;
 	outline: 0 none;
@@ -1425,11 +1424,17 @@ a:focus {
 }
 
 .breadcrumb ul {
+	padding: 0;
+	list-style: none;
+	margin-bottom: 0;
 }
 
-.breadcrumb ul li{
+.breadcrumb ul li {
 	display: inline-block;
-	color: #5275A8
+	color: #5275A8;
+	width: auto;
+	background: none;
+	padding: 0;
 }
 
 .breadcrumb ul li:first-child:before{
