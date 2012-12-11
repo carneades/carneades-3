@@ -151,9 +151,9 @@
      :symbol 'announcement
      :askable true
      :hint {:en "Information about an announcement."}
-     :forms {:en (make-form :positive "The %s was publically announced."
-                            :negative "The %s was not publically announced."
-                            :question "Was the %s publically announced?")}
+     :forms {:en (make-form :positive "%s was publically announced."
+                            :negative "%s was not publically announced."
+                            :question "Was %s publically announced?")}
      :category 'search)
     
     (make-concept
