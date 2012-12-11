@@ -1,3 +1,6 @@
+;;; Copyright (c) 2012 Fraunhofer Gesellschaft
+;;; Licensed under the EUPL V.1.1
+
 (ns ^{:doc "Some utilities to format a statement"}
   catb.views.pmt.theory
   (:use [jayq.util :only [log clj->js]])
