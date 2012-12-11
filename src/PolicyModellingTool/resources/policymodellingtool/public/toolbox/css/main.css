@@ -6,6 +6,10 @@ html,body {
 
 *,div,span,td,p,input {
 	font-family: Calibri;
+	font-size: 14px;
+}
+
+#header *, #header div, #header span, #header td, #header p, #header input {
 	font-size: 12px;
 }
 
@@ -21,7 +25,7 @@ h2 {
 /* Main container */
 #container_outer {
 	background: #fff;
-	min-width: 800px;
+	min-width: 960px;
 }
 
 #container_inner {
@@ -44,6 +48,15 @@ h2 {
 	z-index: 1;
 }
 
+#header_home {
+	position: absolute;
+	top: 10px;
+	left: 29px;
+	width: 120px;
+	height: 40px;
+	cursor: pointer;
+}
+
 #header_left {
 	float: left;
 	width: 334px;
@@ -61,7 +74,7 @@ h2 {
 #header_navi_upper {
 	position: absolute;
 	top: 12px;
-	right: 15px;
+	right: 20px;
 	color: #777;
 	white-space: nowrap;
 	text-align: right;
@@ -145,7 +158,7 @@ input.bright {
 	height: 98px;
 	width: 73px;
 	background-image: url(../images/frame/lower_right.png);
-	/* TODO Bild 15px (höhe) kleiner machen*/
+	/* TODO Bild 15px (hï¿½he) kleiner machen*/
 }
 
 #buttonbg {
@@ -165,26 +178,47 @@ input.bright {
 }
 
 #buttonbg.nav2 {
-	top: 125px;
-}
-
-#buttonbg.nav3 {
 	top: 176px;
 }
 
-#buttonbg.nav4 {
+#buttonbg.nav3 {
 	top: 227px;
 }
 
-#buttonbg.nav5 {
+#buttonbg.nav4 {
 	top: 278px;
 }
 
-#buttonbg.nav6 {
+#buttonbg.nav5 {
 	top: 329px;
 }
 
+#buttonbg.nav6 {
+	top: 380px;
+}
+
+#buttonbg.nav10 {
+	display: none;
+}
+#buttonbg.nav11 {
+	display: none;
+}
+#buttonbg.nav12 {
+	display: none;
+}
+#buttonbg.nav13 {
+	display: none;
+}
+#buttonbg.nav14 {
+	display: none;
+}
+
+
+
+
+
 #navi .button {
+	display: block;
 	position: relative;
 	width: 41px;
 	height: 41px;
@@ -194,7 +228,7 @@ input.bright {
 }
 
 .space {
-	height: 23px;
+	height: 74px;
 }
 
 .button.nav0 {
@@ -272,8 +306,7 @@ Webkit HACK to fix chrome overflow hidden bug
 	position: relative;
 	height: 500px;
 	background: #efeeee;
-	background: -webkit-gradient(linear, 0 0, 0 bottom, from(#ffffff),
-		to(#dddadb) );
+	background: -webkit-gradient(linear, 0 0, 0 bottom, from(#ffffff), to(#dddadb) );
 	background: -webkit-linear-gradient(#ffffff, #dddadb);
 	background: -moz-linear-gradient(#ffffff, #dddadb);
 	background: -ms-linear-gradient(#ffffff, #dddadb);
@@ -393,19 +426,16 @@ Webkit HACK to fix chrome overflow hidden bug
 
 #user {
 	display: inline-block;
-	padding: 2px;
+	padding: 4px;
 	margin: 0px;
 	cursor: pointer;
 	margin-bottom: 0px;
 	padding-bottom: 1px;
 }
 
-#user:hover {
-	background-color: #888;
-}
-
 #username {
 	padding: 0px 5px;
+	color: #EEE
 }
 
 #loggedin img {
@@ -485,10 +515,325 @@ Webkit HACK to fix chrome overflow hidden bug
 	background-color: #EEE;
 }
 
-ul > li > p{
-	display:inline;
+
+/* STYLE BEISPIELE */
+
+#stagebg {
+	overflow: auto;
+}
+#stage_STYLE h3 {
+	margin-top: 15px;
 }
 
-ul > li > div.premiseproperties{
-	display:none;
+p {
+	margin: 5px 0;
+}
+
+ul {
+	padding-left: 20px;
+	list-style: none;
+	margin-bottom: 15px;
+}
+
+ul li {
+	width: 700px;
+	padding-left: 12px;
+	background: url(../images/gedankenstrich.png) no-repeat 0px 7px;
+}
+
+ul ul {
+	padding-left: 13px;
+	margin-bottom: 0;
+}
+
+.rssBody li.odd {
+	background: none;
+	background-color: rgba(187, 189, 197, 0.3);
+}
+.rssBody li.even {
+	background: none;
+	background-color: rgba(187, 189, 197, 0.1);
+}
+
+
+ul.information {
+	background: url(../images/information.png) no-repeat 0px 0px;
+}
+ul.information li {
+	background: none;
+}
+ul.warning {
+	background: url(../images/warning.png) no-repeat 0px 0px;
+}
+ul.warning li {
+	background: none;
+}
+ul.answer {
+	background: url(../images/answer.png) no-repeat 0px 0px;
+}
+ul.answer li {
+	background: none;
+}
+ul.thankyou {
+	background: url(../images/thankyou.png) no-repeat 0px 0px;
+}
+ul.thankyou li {
+	background: none;
+}
+ul.marker {
+	background: url(../images/marker.png) no-repeat 0px 0px;
+}
+ul.marker li {
+	background: none;
+}
+ul.comment {
+	background: url(../images/comment.png) no-repeat 0px 0px;
+}
+ul.comment li {
+	background: none;
+}
+ul.question {
+	background: url(../images/question.png) no-repeat 0px 0px;
+}
+ul.question li {
+	background: none;
+}
+
+b {
+	font-weight: bold;
+}
+
+hr {
+	width: 725px;
+	color: #7AB817;
+	margin: 22px 0 20px 0;
+	border: 1px solid;
+	border-top: 0;
+}
+
+
+/* HOME */
+
+#hometiles {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+}
+
+/* main.js 305 */
+#home_top {
+	width: 750px;
+	height: 326px;
+}
+
+.home_sep {
+	background: url(../images/home_sep.png);
+	width: 100%;
+	height: 8px;
+}
+
+.home_vertsep {
+	background: url(../images/home_vertsep.png);
+	width: 8px;
+}
+
+#home_bottom .tile, #home_bottom .home_vertsep {
+	float: left;
+	height: 100%;
+}
+
+#hometiles .inside {
+	padding: 0 10px 0 15px;
+}
+
+#hometiles .inside div {
+	color: #7AB817;
+	font-size: 1.8em;
+	font-weight: bold;
+	line-height: 1.2em;
+	margin-bottom: 15px;
+	margin-top: 15px;
+}
+
+.tile_art {
+	background: url(impact-ui/images/toollogos/Icon_ArgumentReconstruction.png) no-repeat 90% 90%;
+}
+.tile_avt {
+	background: url(impact-ui/images/toollogos/Icon_ArgumentAnalysisTrackingVisual.png) no-repeat 90% 90%;
+}
+.tile_pmt {
+	background: url(impact-ui/images/toollogos/Icon_PolicyModelling.png) no-repeat 90% 90%;
+}
+.tile_sct {
+	background: url(impact-ui/images/toollogos/Icon_StructuredConsultation.png) no-repeat 90% 90%;
+}
+
+
+/* PMT */
+
+.markItUpHeader ul li {
+	width: 25px !important;
+}
+
+.pm-editor {
+	border: none !important;
+}
+
+#pm {
+	margin-top: 2px;
+}
+
+/* ART */
+#art #canvasleft
+{
+        background: transparent;
+}
+
+#art #canvasleft > .ui-tabs.ui-widget.ui-widget-content.ui-corner-all
+{
+        min-height: 592px;
+}
+
+#art #canvasright .ui-tabs .ui-tabs-panel
+{
+        height: 528px;
+        overflow: auto;
+}
+
+#art #canvasleft .ui-tabs .ui-tabs-panel
+{
+        height: 528px;
+        overflow: auto;
+}
+
+#art #canvasleft
+{
+        overflow:hidden;
+}
+
+
+#art #canvasright
+{
+        overflow:hidden;
+}
+
+/* SCT */
+
+#sct table td
+{
+	width: 400px
+}
+#sct table th
+{
+	width: 400px
+}
+#sct table tr
+{
+	width: 800px
+}
+#sct table
+{
+	width: 800px;
+	margin-left: -3px
+}
+
+/* Static content */
+#staticContentPage *,#staticContentPage p {
+	font-family: Calibri, Arial;
+	font-size: 14px;
+	width: 725px;
+}
+
+#staticContentPage a,#staticContentPage a:link,#staticContentPage a:visited,#staticContentPage a:hover,#staticContentPage a:focus,#staticContentPage a:active
+	{
+	color: #1977D1;
+	outline: 0 none;
+	text-decoration: none;
+}
+
+#staticContentPage h1 {
+	color: #7AB817;
+	font-size: 1.8em;
+	font-weight: bold;
+	line-height: 1.2em;
+	margin-bottom: 15px;
+	margin-top: 30px;
+	width: 725px;
+}
+
+#staticContentPage h2 {
+	font-size: 1.2em;
+	font-weight: bold;
+	margin-top: 30px;
+}
+
+
+
+
+/*Custom checkbox and radio buttons (webkit only)**/
+
+
+input[type=checkbox] {
+	-webkit-appearance: none;
+	position: relative;
+	display: inline-block;
+	line-height: 1em;
+	margin: 0 5px 0 0;
+	padding: 0;
+    height: 12px;
+    top:2px;
+    width: 12px;
+    background: url("impact-ui/images/backgrounds.png") no-repeat scroll -3px -501px transparent;
+}
+
+input[type=checkbox]:checked::after {
+	position: absolute;
+	content: '';
+	left: 0;
+	top: 0;
+	height: 12px;
+	width: 12px;
+    background: url("impact-ui/images/backgrounds.png") no-repeat scroll -3px -514px transparent;
+}
+
+input[type=checkbox]:hover {
+    background: url("impact-ui/images/backgrounds.png") no-repeat scroll -16px -501px transparent;
+}
+
+input[type=checkbox]:hover:checked::after {
+    background: url("impact-ui/images/backgrounds.png") no-repeat scroll -16px -514px transparent;
+}
+
+
+
+input[type=radio] {
+	-webkit-appearance: none;
+	position: relative;
+	display: inline-block;
+	line-height: 1em;
+	margin: 0 5px 0 0;
+	padding: 0;
+    height: 12px;
+    top:2px;
+    width: 12px;
+    background: url("impact-ui/images/backgrounds.png") no-repeat scroll -199px -462px transparent;
+}
+
+input[type=radio]:checked::after {
+	position: absolute;
+	content: '';
+	left: 0;
+	top: 0;
+	height: 12px;
+	width: 12px;
+    background: url("impact-ui/images/backgrounds.png") no-repeat scroll -210px -462px transparent;
+}
+
+input[type=radio]:hover {
+    background: url("impact-ui/images/backgrounds.png") no-repeat scroll -199px -473px transparent;
+}
+
+input[type=radio]:hover:checked::after {
+    background: url("impact-ui/images/backgrounds.png") no-repeat scroll -210px -473px transparent;
 }

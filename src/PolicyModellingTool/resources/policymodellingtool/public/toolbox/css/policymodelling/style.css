@@ -1,6 +1,5 @@
 html, body {
 	text-align: left;
-        margin-left: 1%;
 }
 
 * {
@@ -18,7 +17,7 @@ h1 {
 	line-height: 1.2em;
 	margin-bottom: 15px;
 	margin-top: 30px;
-	width: 725px;
+	width: 725px;	
 }
 
 h2 {
@@ -32,18 +31,11 @@ a, a:link, a:visited, a:hover, a:focus, a:active {
 	text-decoration: none;
 }
 
-a p, a:link p, a:visited p, a:hover p, a:focus p, a:active p {
-	color: #1977D1;
-	outline: 0 none;
-	text-decoration: none;
-        cursor: pointer;
-}
-
 a.active {
 	font-weight: bold;
 }
 
-p {
+#pm p {
 	margin: 10px 0;
 	width: 725px;
 }
@@ -54,7 +46,7 @@ li {
 
 .navigation {
 	margin-bottom: 18px;
-}
+}	
 
 .navigation a {
 	padding: 1px 8px;
@@ -132,7 +124,7 @@ blockquote {
 }
 
 .issue .content a {
-	/* color: #58595B; */
+	color: #58595B;
 	text-decoration: none;
 }
 
@@ -177,46 +169,416 @@ blockquote {
 	color: #58595B;
 }
 
-#menu {
-    float: left;
+#pm #introduction ol li
+{
+	margin: 5px 0;
 }
 
-#ageditormenu {
-    margin-left: 30%;
+#pm #introduction ul
+{
+	margin: 15px 0 0 0;
+	background: url(../../images/information.png) no-repeat 0px 0px;
 }
 
-#ageditormenuon {
-    margin-left: 20%;
+#pm #introduction ul li
+{
+	margin: 15px 0 0 0;
+	padding-top: 4px;
+	height: 26px;
+	background: none;
 }
 
-.pm-editor {
-    border-style:solid;
-    border-width:2px;
-    border-color: purple;
-    width: 725px; 
+#pm form p input
+{
+	position: relative;
+	top: 1px;
+	left: 1px;
 }
 
-#statementeditortitle {
-    font-weight: bold;
+#pm form p label
+{
+	margin: 0px 10px;
+	font-size: 14px;
 }
 
-.ui-textarea {
-    height: 100px;
-    width: 95%;
+#pm #questionsform #questions input[type="radio"]
+{
+	margin-left: 10px;
+	position: relative;
+	top: 1px;
+	left: 1px;
+	margin-right: 3px;
 }
 
-#atom, #metadata-title, #metadata-key {
-    width: 95%;
+#pm img.minus
+{
+	margin-left: 10px;
+	margin-right: 5px;	
 }
 
-.editor-section-title {
-    font-weight: bold;
+#pm .outline ul li,
+#pm #arguments ul li  
+{
+	background: none;
 }
 
-.statement-select {
-    width: 600px;
+#pm #arguments #argument ul 
+{
+	padding-left: 0;
+	margin-left: 0;
 }
 
-#editor-argument-scheme {
-    width: 400px;
+#pm #arguments #argument ul ul
+{
+        padding-left: 0;
+        margin-left: 0;
 }
+
+#pm .premiseproperties {
+	float: left;
+	font-weight: bold;
+}
+
+#pm #arguments #statement ul.dashed li  
+{
+	background: url(../../images/gedankenstrich.png) no-repeat 0px 7px;
+}
+
+#pm #arguments #statement ul li > span
+{
+	background: url(../../images/gedankenstrich.png) no-repeat 0px 7px;
+	padding: 0 0 0 15px;
+	margin: 0 0 0 -15px;
+}
+
+#pm #arguments #argument ul li
+{
+	padding-left: 0;
+}
+
+#pm #statement tr td,
+#pm #argument tr td  
+{
+	margin: 0;
+	padding: 3px 0;
+}
+
+#pm #statement tr th,
+#pm #argument tr th 
+{
+	text-decoration: none;
+	width: 120px;
+	padding: 3px 0;
+	margin: 0;
+}
+
+#pm #statement table tr,
+#pm #argument table tr 
+{
+	border-bottom: 1px solid #7AB817;
+	width: 300px;
+}
+
+#pm #statement table,
+#pm #argument table  
+{
+	width: 755px;
+	margin: 0 0 15px 0;
+}
+
+#pm a.statement p
+{
+	cursor: inherit;
+}
+
+#pm a.statement p:HOVER
+{
+	color: inherit;
+}
+
+#pm #ageditormenuon {
+	margin-left: 545px;
+}
+
+#pm .editormenu {
+	margin-left: 505px;
+	width: 250px;
+	text-align: right;
+}
+
+#pm ul.warning,
+#pm ul.thankyou
+{
+	margin: 15px 0 10px 0;
+}
+
+#pm ul.warning li,
+#pm ul.thankyou li
+{
+	margin: 15px 0 0 0;
+	padding-top: 4px;
+	height: 26px;
+}
+
+#pm .metadata-table
+{
+	margin-bottom: 5px
+}
+
+#pm .metadata-table td.metadata-element-name
+{
+	width: 85px
+}
+
+#pm .scheme-content b 
+{
+	font-weight: bold;
+	width: 99px;
+	display: inline-block;
+}
+
+#pm .rule-body ul{
+	margin-left: 74px;
+	margin-top: -16px;
+}
+
+#pm div.scheme-content {
+	margin-bottom: 15px;
+}
+
+#pm h2,
+#pm h2.maintitle p {
+	color: #7AB817;
+	font-weight: bold;
+	line-height: 1.2em;
+	margin-bottom: 15px;
+	margin-top: 30px;
+	width: 725px;
+}
+
+#pm h2.maintitle p {
+		font-size: 1em;
+}
+
+#pm h2 {
+	font-size: 1.8em;
+}
+
+#pm h3{
+	font-size: 1.2em;
+	font-weight: bold;
+	line-height: 2em;
+}
+
+#pm .abstract p {
+	font-size: 1.2em;
+	font-weight: bold;
+	line-height: 1.3em;
+	margin: 30px 0 0 0;
+}
+
+#pm .ui-tabs .ui-tabs-nav li
+{
+	width: auto;
+}
+
+#pm #tabs.language-chooser {
+	background-color: #615D5D;
+}
+
+#pm #tabs.language-chooser ul.ui-tabs-nav {
+	background: none;
+}
+
+#pm #tabs.language-chooser ul.ui-tabs-nav li {
+	margin-top: 3px;
+}
+
+#pm .ui-textarea.markItUpEditor {
+	height: 150px;
+	width: 670px;
+	background:none;
+	border: 1px solid #7AB817;
+	padding: 5px 20px;
+}
+
+#pm .ui-textarea.markItUpEditor:FOCUS,
+#pm .ui-textarea.markItUpEditor:ACTIVE {
+	border: 2px solid #7AB817;
+}
+
+#pm .markItUpContainer
+{
+	border: 1px solid #615D5D;	
+}
+
+#pm .markItUp
+{
+	width: 725px;
+	margin: 5px 0 5px 0;
+	padding: 0;
+	border: 0;
+}
+
+#pm #tabs.language-chooser.ui-tabs .ui-tabs-panel {
+	border:0;
+}
+
+input[type="range"] {
+	-webkit-appearance: none !important;
+	background: url("../impact-ui/images/backgrounds.png") no-repeat scroll right -656px transparent;
+	height: 5px;
+	width: 305px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    background: url("../impact-ui/images/backgrounds.png") no-repeat scroll -248px -464px transparent;
+	border: 0 none;
+	height: 10px;
+	margin: 1px 0 0 -5px;
+	width: 13px;
+	outline: 0 none;
+}
+
+input[type="range"]::-webkit-slider-thumb:HOVER {
+	background: url("../impact-ui/images/backgrounds.png") no-repeat scroll -248px -474px transparent;
+}
+
+
+#statementeditorcontent #cancel-statement,
+#statementeditorcontent #save-statement,
+#argumenteditor-content .cancel-argument,
+#argumenteditor-content .save-argument{
+	outline-offset: 0px;
+	border-radius: 1px;
+	border: 1px solid #97999A;
+	box-shadow: 0px 1px 1px 0px #D5D5D5 inset, 1px 0px 1px 0px #D5D5D5 inset,
+		1px 0px 1px 0px #DDDDDD;
+	outline-style: none;
+	margin-bottom: 2px;
+	margin-top: 2px;
+	height: 22px;
+	padding: 0px 7px;
+	background: #F4F3F3;
+	background: -webkit-gradient(linear, 0 0, 0 bottom, from(#F4F3F3), to(#DADADB));
+	background: -webkit-linear-gradient(#F4F3F3, #DADADB);
+	background: -moz-linear-gradient(#F4F3F3, #DADADB);
+	background: -ms-linear-gradient(#F4F3F3, #DADADB);
+	background: -o-linear-gradient(#F4F3F3, #DADADB);
+	background: linear-gradient(#F4F3F3, #DADADB);
+	/* IE fix for borders an gradients*/
+	-pie-background: linear-gradient(#F4F3F3, #DADADB);
+	behavior: url(toolbox/css/PIE.htc);
+	/* old way but with the round corner bug
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F9F9F9',
+		endColorstr='#ECECED' );*/
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+	color: #58595B;
+}
+
+
+#statementeditorcontent #cancel-statement:hover,
+#statementeditorcontent #save-statement:hover,
+#argumenteditor-content .cancel-argument:hover,
+#argumenteditor-content .save-argument:hover{
+	background: #ECF5E1;
+	background: -webkit-gradient(linear, 0 0, 0 bottom, from(#ECF5E1), to(#D4DDCA));
+	background: -webkit-linear-gradient(#ECF5E1, #D4DDCA);
+	background: -moz-linear-gradient(#ECF5E1, #D4DDCA);
+	background: -ms-linear-gradient(#ECF5E1, #D4DDCA);
+	background: -o-linear-gradient(#ECF5E1, #D4DDCA);
+	background: linear-gradient(#ECF5E1, #D4DDCA);
+	/* IE fix for borders an gradients*/
+	-pie-background: linear-gradient(#ECF5E1, #D4DDCA);
+	behavior: url(toolbox/css/PIE.htc);
+}
+
+#statementeditorcontent #cancel-statement:active,
+#statementeditorcontent #save-statement:active,
+#argumenteditor-content .cancel-argument:active,
+#argumenteditor-content .save-argument:active{
+	background: #D4DDCA;
+	background: -webkit-gradient(linear, 0 0, 0 bottom, from(#D4DDCA), to(#ECF5E1));
+	background: -webkit-linear-gradient(#D4DDCA, #ECF5E1);
+	background: -moz-linear-gradient(#D4DDCA, #ECF5E1);
+	background: -ms-linear-gradient(#D4DDCA, #ECF5E1);
+	background: -o-linear-gradient(#D4DDCA, #ECF5E1);
+	background: linear-gradient(#D4DDCA, #ECF5E1);
+	/* IE fix for borders and gradients*/
+	-pie-background: linear-gradient(#D4DDCA, #ECF5E1);
+	behavior: url(toolbox/css/PIE.htc);
+}
+
+#statementeditorcontent #cancel-statement:focus,
+#statementeditorcontent #save-statement:focus,
+#argumenteditor-content .cancel-argument:focus,
+#argumenteditor-content .save-argument:focus
+{
+	box-shadow: 0px 0px 1px 1px #7AB817 inset, 1px 0px 1px 0px #DDDDDD;
+}
+
+
+ul.select2-results li
+{
+	background: none;
+	margin:0;
+	padding:0;
+	width: auto;
+}
+
+#pm .conclusion-select, 
+#pm .select2-container
+{
+	width: 705px;
+}
+
+#pm .conclusion-select.scheme-input, 
+#pm .select2-container.scheme-input
+{
+	width: 725px;
+}
+
+#pm .conclusion-select,
+#pm .premise-candidate {
+    border: 1px solid #ccc;
+    padding:10px;
+    margin: 5px 0;
+}
+
+#pm .conclusion-select:hover,
+#pm .premise-candidate:hover {
+    border: 1px solid #7AB817;
+}
+
+#pm #argumenteditor {
+	border-bottom: 2px solid #7AB817;
+	width: 755px;
+	padding-bottom: 10px;
+}
+
+#pm .conclusion-select .create {
+	position: absolute;
+	top: 42px;
+	float: right;
+	right: 8px;
+}
+
+
+#pm .premise-candidate .create {
+	position: relative;
+	top: 82px;
+	right: -2px;
+	text-align: right;
+	float: right;
+}
+
+#pm .premise-candidate .delete {
+	margin-top: 5px;
+	margin-right: 9px;
+}
+
