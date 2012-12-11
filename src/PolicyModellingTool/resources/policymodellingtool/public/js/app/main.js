@@ -442,8 +442,13 @@ PM.load_templates = function(toolboxState) {
 // Loads some generic styles when the app is used
 // outside of the UID toolbox
 PM.load_carneades_styles = function() {
-    PM.load_style(undefined, 'green-theme.css');
-    PM.load_style(undefined, 'smoothness/jquery-ui-1.8.23.custom.css');
+    // PM.load_style(undefined, 'green-theme.css');
+    // PM.load_style(undefined, 'smoothness/jquery-ui-1.8.23.custom.css');
+    PM.load_style(undefined, 'impact-ui/jquery-ui-1.8.11.custom.css', 'toolbox/css');
+    PM.load_style(undefined, 'impact-ui/impact-green.css', 'toolbox/css');
+    PM.load_style(undefined, 'main.css', 'toolbox/css');
+    PM.load_style(undefined, 'policymodelling/style.css', 'toolbox/css');
+    
 };
 
 // Loads some specific styles to the app
@@ -473,7 +478,7 @@ PM.load_style = function(rootpath, style, cssdir) {
 PM.on_error = function(textstatus) {
     $('#pm').prepend('<ul class="warning pm-warning" ><li class="notification">Error: {0}</li></ul>'.format(textstatus));
     setTimeout(function() {
-                   $('#pm .error').remove();
+                   $('#pm .warning').remove();
                }, 3000);
     PM.scroll_to_top();
 };
@@ -481,7 +486,7 @@ PM.on_error = function(textstatus) {
 PM.notify = function(text) {
      $('#pm').prepend('<ul class="thankyou pm-thankyou"><li class="notification">{0}</li></ul>'.format(text));
     setTimeout(function() {
-                   $('#pm .notification').remove();
+                   $('#pm .thankyou').remove();
                }, 3000);
     PM.scroll_to_top();
 };
@@ -499,7 +504,7 @@ PM.scroll_to_bottom = function() {
     if(PM.in_uid_toolbox()) {
         $("#stage").animate({ scrollTop: 2000 }, "fast");
      } else {
-         $('#pm').scrollTo("100%");
+         $('body').animate({ scrollTop: 2000 }, "fast");
      }
 }
 
@@ -507,7 +512,7 @@ PM.scroll_to_top = function() {
     if(PM.in_uid_toolbox()) {
         $("#stage").animate({ scrollTop: 0 }, "fast");
      } else {
-         $("#pm").animate({ scrollTop: 0 }, "fast");
+         $('body').animate({ scrollTop: 0 }, "fast");
      }
 }
 
