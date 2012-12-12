@@ -356,7 +356,7 @@
                   :question "Would performing action %s have negative consequences?")})
 
     (make-predicate
-     :symbol 'observation
+     :symbol 'observed
      :arity 1
      :forms {:en (make-form
                   :positive "%s has been observed."
