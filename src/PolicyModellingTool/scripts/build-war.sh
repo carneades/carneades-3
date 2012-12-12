@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# build one standalone and one toolbox WAR and run tests
+# build one standalone and one toolbox WAR
 set -e
 
 bash ./scripts/build.sh
