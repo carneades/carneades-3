@@ -332,8 +332,8 @@ call or a symbol."
   "Uses the formular to returns a user-readable sentence describing the literal.
    Selector is \"positive\", \"negative\" or \"question\" "
   [literal language lang selector]
-  (log "literal =")
-  (log literal)
+  ;; (log "literal =")
+  ;; (log literal)
   (let [language (js->clj language :keywordize-keys true)
         literal (array->literal literal)
         pred (keyword (literal-predicate literal))
