@@ -40,29 +40,39 @@ PM.on_policy_filtering = function(event) {
                    function(data) {
                        console.log('find-policies returns:');
                        console.log(data.policies);
-                       PM.display_policies(undefined, data.policies);
+                       var lang = PM.find_available_lang(IMPACT.current_policy);
+                       PM.display_policies(undefined, data.policies, lang);
                    });
+    }
+};
+
+PM.find_available_lang = function(current_policy) {
+    if(!_.isNil(current_policy.header.description[IMPACT.lang])) {
+        return IMPACT.lang;
+    } else {
+        return "en";
     }
 };
 
 // sectionid, optional, is the section to jump to
 // subset, optional, is a subset of policies to show
-PM.display_policies = function(sectionid, subset) {
+PM.display_policies = function(sectionid, subset, lang) {
     IMPACT.facts_state = 'done';
     
     PM.ajax_get(IMPACT.wsurl + '/policies', 
                 function(policies) {
                     var ids = [];
                     var current_policy = policies[IMPACT.current_policy];
+                    var lang = PM.find_available_lang(current_policy);
                     
                     current_policy.outline_text = PM.theory_outline_text(current_policy.sections,
                                                                          'policies',
                                                                         subset);
-                    current_policy.description_text = current_policy.header.description[IMPACT.lang];
-                    current_policy.policies_text = PM.policies_text(current_policy.language, current_policy.sections, 2, subset,
-                                                             function(policyid) {
-                                                                 ids.push(policyid);
-                                                             });
+                    current_policy.description_text = current_policy.header.description[lang];
+                    current_policy.policies_text = PM.policies_text(current_policy.language, current_policy.sections, 2, subset, function(policyid) {
+                        ids.push(policyid);
+                    },
+                                                                   lang);
                     
                     var template_variables = _.clone(current_policy);
                     _.extend(template_variables, 
@@ -143,15 +153,15 @@ PM.theory_outline_text = function(sections, urlfragment, subset) {
     return text;
 };
 
-PM.schemes_text = function(language, schemes) {
+PM.schemes_text = function(language, schemes, lang) {
     var text = "<div>";
     
     _.each(schemes, function(scheme) {
-               if(scheme.header.description && scheme.header.description[IMPACT.lang]) {
-                   text += '{0}'.format(PM.markdown_to_html(scheme.header.description[IMPACT.lang]));
+               if(scheme.header.description && scheme.header.description[lang]) {
+                   text += '{0}'.format(PM.markdown_to_html(scheme.header.description[lang]));
                }
                
-               text += PM.scheme_content_text(language, scheme);
+               text += PM.scheme_content_text(language, scheme, lang);
            });
     
     text += "</div>";
@@ -163,7 +173,7 @@ PM.capitalize = function(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
-PM.scheme_content_text = function(language, scheme) {
+PM.scheme_content_text = function(language, scheme, lang) {
     var text = "";
 
     // TODO: this formatting code should be in a template
@@ -173,21 +183,14 @@ PM.scheme_content_text = function(language, scheme) {
     
     text += '<br><b>direction:</b> {0}'.format(scheme.pro ? "pro" : "con");
 
-    text += '<br><b>conclusion:</b> {0}'.format(PM.format_sexpr(scheme.conclusion, language));
+    text += '<br><b>conclusion:</b> {0}'.format(PM.format_sexpr(scheme.conclusion, language, lang));
 
     text += '<br><b>premises:</b><div class="rule-body"> <ul>';
      
 
     _.each(scheme.premises, function(premise) {
                if(premise.statement.atom[0] != "valid") {
-                   var txt = catb.views.pmt.theory.format_statement(premise.statement.atom,
-                                                                    language,
-                                                                    IMPACT.lang,
-                                                                    "positive");
-                   txt = txt.replace(/\?/g, '');
-                   txt = PM.capitalize(txt);
-                   //text += "<li>{0}</li>".format(PM.format_sexpr(premise.statement.atom, language));
-                   text += "<li>{0}</li>".format(txt);
+                   text += "<li>{0}</li>".format(PM.format_sexpr(premise.statement.atom, language, lang));
                }
            });
     text += '</ul></div>';
@@ -196,7 +199,7 @@ PM.scheme_content_text = function(language, scheme) {
         text += '<b>assumptions:</b><div class="rule-body"> <ul>';
 
         _.each(scheme.assumptions, function(premise) {
-                   text += "<li>{0}</li>".format(PM.format_sexpr(premise.statement.atom, language));
+                   text += "<li>{0}</li>".format(PM.format_sexpr(premise.statement.atom, language, lang));
                }); 
 
         text += '</ul></div>';
@@ -206,7 +209,7 @@ PM.scheme_content_text = function(language, scheme) {
         text += '<b>exceptions:</b><div class="rule-body"> <ul>';
 
         _.each(scheme.exceptions, function(premise) {
-                   text += "<li>{0}</li>".format(PM.format_sexpr(premise.statement.atom, language));
+                   text += "<li>{0}</li>".format(PM.format_sexpr(premise.statement.atom, language, lang));
                }); 
         
         text += '</ul></div>';
@@ -222,7 +225,7 @@ PM.scheme_content_text = function(language, scheme) {
 
 // if subset is defined then it contains the id of the policies to display
 // if not defined all policies are displayed
-PM.policies_text = function(language, sections, level, subset, on_policy) {
+PM.policies_text = function(language, sections, level, subset, on_policy, lang) {
     var text = "";
     
     _.each(sections, function(section) {
@@ -234,9 +237,9 @@ PM.policies_text = function(language, sections, level, subset, on_policy) {
                        text += '<input type="submit" value="Select" id="input{0}" />'.format(section.id);
                    }
                    text += ' {1}</h{0}></form>'.format(level + 1, section.header.title);
-                   text += '<p>{0}</p>'.format(PM.markdown_to_html(section.header.description[IMPACT.lang]));
-                   text += PM.schemes_text(language, section.schemes);
-                   text += PM.policies_text(language, section.sections, level + 1, subset, on_policy);
+                   text += '<p>{0}</p>'.format(PM.markdown_to_html(section.header.description[lang]));
+                   text += PM.schemes_text(language, section.schemes, lang);
+                   text += PM.policies_text(language, section.sections, level + 1, subset, on_policy, lang);
                    text += '</div>';
                }
            });
@@ -253,19 +256,14 @@ PM.varname = function(v) {
 };
 
 // Formats an sexpr represented as an array of strings
-// or a string. A single string represents an atom (NOT a sexpr).
-PM.format_sexpr = function(sexpr, language) {
-    if(typeof sexpr == 'string') {
-        // hack
-        return UTILS.escape_html(sexpr.substr(1));
-    }
-    
-    var terms = _.map(sexpr.slice(1), PM.varname);
-    if(_.isNil(language[sexpr[0]])) {
-        return UTILS.escape_html(sexpr.join(" "));
-    } else {
-        var fstring = language[sexpr[0]].forms[IMPACT.lang].positive;
-        var args = [fstring].concat(terms);
-        return sprintf.apply(null, args);        
-    } 
+// or a string.
+PM.format_sexpr = function(sexpr, language, lang) {
+    var txt = catb.views.pmt.theory.format_statement(sexpr,
+                                                     language,
+                                                     lang,
+                                                     "positive");
+    txt = txt.replace(/\?/g, '');
+    txt = PM.capitalize(txt);
+
+    return txt;
 };
