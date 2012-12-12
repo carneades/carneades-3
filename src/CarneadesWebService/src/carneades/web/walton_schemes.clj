@@ -7,7 +7,8 @@
 (def walton-schemes
   (make-theory
    :header
-   (make-metadata :title "Basic Argumentation Schemes")
+   (make-metadata :title "Basic Argumentation Schemes"
+                  :description {:en ""})
 
    :language
    (make-language
