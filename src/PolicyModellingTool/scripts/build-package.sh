@@ -37,6 +37,8 @@ cp ../policymodellingtool-1.0.0-SNAPSHOT-standalone.jar ./carneades-webapp.jar
 
 cp ../../packaging/README.txt ./
 
+cp ../../packaging/carneades.properties ./config
+
 echo "This build was created the: " >> ./doc/timestamp.txt
 date  >> ./doc/timestamp.txt
 echo "The Git Id of this release is: " >> ./doc/timestamp.txt
