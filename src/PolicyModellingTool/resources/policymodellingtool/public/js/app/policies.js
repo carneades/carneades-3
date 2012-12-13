@@ -40,8 +40,7 @@ PM.on_policy_filtering = function(event) {
                    function(data) {
                        console.log('find-policies returns:');
                        console.log(data.policies);
-                       var lang = PM.find_available_lang(IMPACT.current_policy);
-                       PM.display_policies(undefined, data.policies, lang);
+                       PM.display_policies(undefined, data.policies); 
                    });
     }
 };
@@ -56,7 +55,7 @@ PM.find_available_lang = function(current_policy) {
 
 // sectionid, optional, is the section to jump to
 // subset, optional, is a subset of policies to show
-PM.display_policies = function(sectionid, subset, lang) {
+PM.display_policies = function(sectionid, subset) {
     IMPACT.facts_state = 'done';
     
     PM.ajax_get(IMPACT.wsurl + '/policies', 
