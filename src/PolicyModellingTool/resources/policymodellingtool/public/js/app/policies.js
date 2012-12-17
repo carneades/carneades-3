@@ -93,6 +93,7 @@ PM.display_policies = function(sectionid, subset) {
                     var current_policy_html = ich.policies(template_variables);
                     $('#pm').html(current_policy_html.filter("#policies"));
                     PM.activate('#policies-item');
+                    PM.attach_lang_listener();
                     
                     _.each(ids, function(policyid) {
                                $('#input' + policyid).click(_.bind(PM.on_select_policy, PM, policyid));

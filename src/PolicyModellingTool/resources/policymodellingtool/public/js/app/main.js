@@ -137,7 +137,18 @@ PM.init = function(toolboxState) {
     } else {
         PM.load_scripts(rootpath, false, PM.post_load);
     }
+
+ 
 };
+
+// attachs a listener to the 'select' language
+// and sets the value of the 'select' to the one of IMPACT.lang
+PM.attach_lang_listener = function() {
+    $('#pm-select-lang').val(IMPACT.lang);
+    $('#pm-select-lang').change(function(event) {
+        PM.languageChanged(event.target.value);
+    });
+}
 
 PM.start = function(toolboxState) {
     PM.set_introduction_url();
@@ -150,7 +161,14 @@ PM.stop = function(toolboxState) {
 };
 
 PM.languageChanged = function(lang) {
+    // reloads page
 
+    IMPACT.lang = lang;
+    PM.init_i18n(function() {
+        // if we pass directly $.address.update then
+        // 'this' is incorrectly bind...
+        $.address.update();
+    });
 };
 
 PM.canBeStopped = function() {
@@ -185,6 +203,25 @@ PM.post_load = function() {
 
 };
 
+PM.init_i18n = function(callbackfn) {
+    var site_path = PM.in_uid_toolbox() ? '/policymodellingtool/site/' : 'site/';
+
+    jQuery.i18n.properties(
+        {name:'Messages',
+         path: site_path,
+         mode:'both',
+         language: IMPACT.lang, 
+         callback: function() {
+                 if(_.isFunction(callbackfn)) {
+                     callbackfn();
+                 }
+         }
+        });
+
+
+    
+};
+
 PM.common_post_load = function() {
     $.ajaxSetup({beforeSend: PM.simple_auth});
     
@@ -200,17 +237,7 @@ PM.common_post_load = function() {
     PM.policies = new PM.Policies;
     PM.policies.fetch();
     
-    var site_path = PM.in_uid_toolbox() ? '/policymodellingtool/site/' : 'site/';
-
-    jQuery.i18n.properties(
-        {name:'Messages',
-         path: site_path,
-         mode:'both',
-         language: IMPACT.lang, 
-         callback: function() {
-             // alert(jQuery.i18n.prop('msg_hello'));
-         }
-        });
+    PM.init_i18n();
     
     PM.debate_arguments = new PM.Arguments({db: IMPACT.debate_db});
     PM.debate_statements = new PM.Statements({db: IMPACT.debate_db});
