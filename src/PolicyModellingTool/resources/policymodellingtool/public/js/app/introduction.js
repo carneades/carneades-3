@@ -40,7 +40,7 @@ PM.display_introduction = function() {
 
 PM.on_start_button = function() {
     // reset session
-    PM.ajax_post(IMPACT.simulation_url, {reset: IMPACT.lang}, function() {},
+    PM.ajax_post(IMPACT.simulation_url, {reset: {lang: IMPACT.lang}}, function() {},
                 IMPACT.user,
                 IMPACT.password,
                 PM.on_error);
