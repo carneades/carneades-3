@@ -116,7 +116,8 @@
 
 (defmethod ajax-handler :reset
   [json session]
-  {:session (new-session (:lang json))})
+  (info "[reset] json=" json)
+  {:session (new-session (get-in json [:reset :lang]))})
 
 (defmethod ajax-handler :lang
   [json session]
@@ -126,8 +127,8 @@
 (defn process-ajax-request
   [session body params]
   (let [json (read-json (slurp body))
-        ;; _ (info "JSON =")
-        ;; _ (info json)
+        _ (info "JSON =")
+        _ (info json)
         ;; _ (info "session.lang" (:lang session))
         res (ajax-handler json session)]
     res))
