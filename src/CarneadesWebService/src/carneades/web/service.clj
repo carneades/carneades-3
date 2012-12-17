@@ -598,7 +598,9 @@
 
   (ANY "/map/:db" {params :params}
        (let [db (:db params)
-             options (dissoc params :db)
+             _ (prn "params =" params)
+             lang (keyword (:lang params))
+             options (dissoc params :db :lang)
              dbconn (make-database-connection db "guest" "")]
          (with-db dbconn
            (let [convert-option (fn [val]
@@ -608,7 +610,7 @@
                                       (keyword val))))
                  ag (export-to-argument-graph dbconn)
                  optionsseq (mapcat (fn [[k v]] [k (convert-option v)]) options)
-                 svg (apply lacij/export-str ag optionsseq)]
+                 svg (apply lacij/export-str ag lang optionsseq)]
              {:status 200
               :headers {"Content-Type" "image/svg+xml;charset=UTF-8"}
               :body svg}))))

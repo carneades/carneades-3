@@ -18,8 +18,8 @@
   (export-ag ag literal->str filename (apply hash-map options)))
 
 (defn export-str
-  [ag & options]
-  (export-ag-str ag literal->str (apply hash-map options)))
+  [ag lang & options]
+  (export-ag-str ag #(literal->str % lang) (apply hash-map options)))
 
 (defn view
   [ag & options]
