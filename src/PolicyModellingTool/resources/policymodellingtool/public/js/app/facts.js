@@ -30,6 +30,8 @@ PM.display_facts = function() {
                                              });
         $('#pm').html(facts_html.filter("#facts"));
         PM.activate('#facts-item');
+        PM.attach_lang_listener();
+        
         PM.ajax_post(IMPACT.simulation_url, {request: IMPACT.question},
                      PM.show_questions_or_ag,
                      IMPACT.user,
@@ -47,6 +49,7 @@ PM.display_facts = function() {
         $('#pm').html(facts_html.filter("#facts"));
         $('#pm').append('<div>' + $.i18n.prop('pmt_facts_not_available') + '</div>');
         PM.activate('#facts-item');
+        PM.attach_lang_listener();
     }
 };
 

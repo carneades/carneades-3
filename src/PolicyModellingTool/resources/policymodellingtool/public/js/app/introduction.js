@@ -35,6 +35,7 @@ PM.display_introduction = function() {
     $('#pm').html(introduction_html.filter("#introduction"));
     $('#start').click(PM.on_start_button);
     PM.activate('#introduction-item');
+    PM.attach_lang_listener();
 };
 
 PM.on_start_button = function() {
