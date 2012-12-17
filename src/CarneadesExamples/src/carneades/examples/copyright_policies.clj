@@ -47,7 +47,16 @@
                   :description {:en ""}) ;; TODO add a description
    
    :language
-   (make-language 
+   (make-language
+    (make-individual :symbol 'yes :text {:en "yes"
+                                         :de "ja"
+                                         :fr "Oui"})
+    (make-individual :symbol 'no :text {:en "no"
+                                        :de "nein"
+                                        :fr "non"})
+    (make-individual :symbol 'maybe :text {:en "maybe"
+                                           :de "vielleicht"
+                                           :fr "peut-être"})
     (make-individual :symbol 'the-person :text {:en "the person"
                                                 :de "die Person"
                                                 :fr "la personne"})
