@@ -44,7 +44,7 @@ PM.url_changed = function(url) {
          return;
     }
 
-    var url_regex = /\/([^ \/]+)(?:\/([^ \/]+))?(?:\/([^ \/]+))?(?:\/([^ \/]+))?/;
+    var url_regex = /\/([^ \/]+)(?:\/([^ \/]+))?(?:\/([^ ?\/]+))?(?:\/([^ \/]+))?/;
     var result = url_regex.exec(url.value);
     if(result != null) {
         PM.dispatch_url(result);
