@@ -252,3 +252,12 @@
 .rule-body ul {
     margin-bottom: 0px;
 }
+
+.menuleft {
+    float: left;
+}
+
+.menuright select {
+    margin-left: 250px;
+    margin-top: -2px;
+}
