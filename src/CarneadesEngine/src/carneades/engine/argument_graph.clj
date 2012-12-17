@@ -8,7 +8,8 @@
         carneades.engine.dublin-core
         carneades.engine.argument
         [carneades.engine.scheme :only (format-statement)] ;; for the enter-language function
-        ))
+        )
+  (:require [clojure.string :as s]))
 
 ; A literal is a propositional letter, represented by a symbol, 
 ; or the negation of a propositional letter.
@@ -220,7 +221,7 @@
   [ag language]
   (let [build-text (fn [stmt forms selector]
                      (reduce (fn [text lang]
-                               (assoc text lang (format-statement stmt language lang selector)))
+                               (assoc text lang (s/capitalize (format-statement stmt language lang selector))))
                              {}
                              (keys forms)))]
     (reduce (fn [ag stmt-node]
