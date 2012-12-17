@@ -165,9 +165,13 @@ PM.languageChanged = function(lang) {
 
     IMPACT.lang = lang;
     PM.init_i18n(function() {
-        // if we pass directly $.address.update then
-        // 'this' is incorrectly bind...
-        $.address.update();
+        PM.ajax_post(IMPACT.simulation_url, {lang: IMPACT.lang},
+                     function() {
+                         $.address.update();
+                     },
+                     IMPACT.user,
+                     IMPACT.password,
+                     PM.on_error);
     });
 };
 

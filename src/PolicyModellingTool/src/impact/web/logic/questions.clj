@@ -147,6 +147,7 @@ widget is still used. New Types of :string maps to :widgets 'text."
 (defn get-structured-questions
   [stmt lang last-id theory]
   (prn "[get-structured-questions] stmt =" stmt)
+  (prn "lang =" lang)
   (let [id (inc last-id)
         pred (literal-predicate stmt)
         questions (get-questions id stmt (keyword lang) theory)]
