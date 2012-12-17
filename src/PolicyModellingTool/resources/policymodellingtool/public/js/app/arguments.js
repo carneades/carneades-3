@@ -27,6 +27,7 @@ PM.display_arguments = function(db, type, id) {
         $('#pm').html(arguments_html.filter("#arguments"));
         $('#pm').append('<div>Please enter some facts to see the arguments.</div>');
         PM.activate('#arguments-item');
+        PM.attach_lang_listener();
         
         return;
     }
@@ -36,7 +37,8 @@ PM.display_arguments = function(db, type, id) {
     
     $('#pm').html(arguments_html.filter("#arguments"));
     PM.activate('#arguments-item');
-
+    PM.attach_lang_listener();
+    
     var deferreds = [];
 
     deferreds.push(PM.arguments.fetch());
