@@ -56,7 +56,6 @@ call or a symbol."
   [literal language lang selector]
   (let [pred (literal-predicate literal)
         fstring (-> language pred :forms lang selector)]
-    (prn "fstring =" fstring)
    (apply format fstring (format-literal-args literal language lang))))
 
 (defprotocol Functor
