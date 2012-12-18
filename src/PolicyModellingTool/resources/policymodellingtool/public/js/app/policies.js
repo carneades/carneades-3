@@ -88,7 +88,9 @@ PM.display_policies = function(sectionid, subset) {
                               pmt_menu_facts: $.i18n.prop('pmt_menu_facts'),
                               pmt_menu_arguments: $.i18n.prop('pmt_menu_arguments'),
                               pmt_menu_schemes: $.i18n.prop('pmt_menu_schemes'),
-                              pmt_menu_policies: $.i18n.prop('pmt_menu_policies'), 
+                              pmt_menu_policies: $.i18n.prop('pmt_menu_policies'),
+                              pmt_table_of_contents: $.i18n.prop('pmt_table_of_contents'),
+                              pmt_see_effects: $.i18n.prop('pmt_see_effects'),
                              });
                     var current_policy_html = ich.policies(template_variables);
                     $('#pm').html(current_policy_html.filter("#policies"));
@@ -234,7 +236,7 @@ PM.policies_text = function(language, sections, level, subset, on_policy, lang) 
                    text += '<form action=""><h{0}>'.format(level + 1);
                    if(section.schemes.length > 0) {
                        on_policy(section.id);
-                       text += '<input type="submit" value="Select" id="input{0}" />'.format(section.id);
+                       text += '<input type="submit" value="{1}" id="input{0}" />'.format(section.id, $.i18n.prop('pmt_select'));
                    }
                    text += ' {1}</h{0}></form>'.format(level + 1, section.header.title);
                    text += '<p>{0}</p>'.format(PM.markdown_to_html(section.header.description[lang]));
