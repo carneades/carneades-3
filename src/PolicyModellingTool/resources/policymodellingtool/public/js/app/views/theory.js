@@ -46,6 +46,7 @@ PM.TheoryView = Backbone.View.extend(
          var data = this.model.toJSON();
          var text = "";
          var lang = PM.find_available_lang(data);
+         var language_clj = catb.views.pmt.theory.convert_language(data.language);
          
          _.each(data.schemes, function(scheme) {
                     text += '<div id="{0}">'.format(scheme.id);
@@ -58,7 +59,7 @@ PM.TheoryView = Backbone.View.extend(
                     // get the whole html, see http://jquery-howto.blogspot.de/2009/02/how-to-get-full-html-string-including.html
                     var md = ($('<div>').append(ich.metadata(scheme.header))).remove().html();
                     text += md;
-                    text += PM.scheme_content_text(data.language, scheme, lang);
+                    text += PM.scheme_content_text(language_clj, scheme, lang);
                     text += '</div>';
                 });
 
