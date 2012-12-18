@@ -48,15 +48,15 @@
    
    :language
    (make-language
-    (make-individual :symbol 'yes :text {:en "yes"
-                                         :de "ja"
+    (make-individual :symbol 'yes :text {:en "Yes"
+                                         :de "Ja"
                                          :fr "Oui"})
-    (make-individual :symbol 'no :text {:en "no"
-                                        :de "nein"
-                                        :fr "non"})
-    (make-individual :symbol 'maybe :text {:en "maybe"
-                                           :de "vielleicht"
-                                           :fr "peut-être"})
+    (make-individual :symbol 'no :text {:en "No"
+                                        :de "Nein"
+                                        :fr "Non"})
+    (make-individual :symbol 'maybe :text {:en "Maybe"
+                                           :de "Vielleicht"
+                                           :fr "Peut-être"})
     (make-individual :symbol 'the-person :text {:en "the person"
                                                 :de "die Person"
                                                 :fr "la personne"})
