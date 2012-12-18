@@ -133,9 +133,15 @@ PM.send_answers = function(questions, on_response) {
                                  },
                                   []);
 
+    $("body").css("cursor", "progress");
+    $("input").css("cursor", "progress");
     PM.ajax_post(IMPACT.simulation_url,
                  {answers:  answers_values},
-                 on_response,
+                 function(data) {
+                     $("body").css("cursor", "default");
+                     $("input").css("cursor", "default");
+                     on_response(data);
+                 },
                  IMPACT.user,
                  IMPACT.password,
                  PM.on_error);
