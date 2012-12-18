@@ -72,7 +72,7 @@
     (make-individual :symbol 'non-commercial :text {:en "non-commercial"
                                                     :fr "non-commercial"})
     (make-individual :symbol 'none :text {:en "none"
-                                          :fr "aucun"})
+                                          :fr "aucune"})
     (make-individual :symbol 'professional :text {:en "professional documented search"
                                                   :fr "recherche professionnelle documentée"})
     (make-individual :symbol 'search :text {:en "Search"
@@ -104,7 +104,7 @@
      :forms {:en (make-form :positive "%s has a license to publish %s."
                             :negative "%s does not have a license to publish %s."
                             :question "Does %s have a license to publish %s?")
-             :fr (make-form :positive "%s a une license pour publier %s"
+             :fr (make-form :positive "%s a une licence pour publier %s"
                             :negative "%s n'a pas de license pour publier %s"
                             :question "%s a-t-elle une licence pour publier %s?")}
      :hint {:en "Information about an existing license."
@@ -189,7 +189,7 @@
                             :negative "Le type de %s n'était pas une %s."
                             :question "Est-ce que le type de %s était une %s")}
      :hint {:en "What type of search was performed to try to find the copyright owner?"
-            :fr "Quel type de recherche a été effectué pour trouver le propriétaire des droits d'auteur?"}
+            :fr "Quel type de recherche a été effectuée pour trouver le propriétaire des droits d'auteur?"}
      :category 'search
      :next ['announcement])
 
