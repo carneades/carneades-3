@@ -167,7 +167,16 @@ PM.languageChanged = function(lang) {
     PM.init_i18n(function() {
         PM.ajax_post(IMPACT.simulation_url, {lang: IMPACT.lang},
                      function() {
-                         $.address.update();
+                         if(!_.isNil($.address.parameter('lang'))) {
+                             // if the page has a lang parameter we change it
+                             $.address.parameter('lang', IMPACT.lang);
+                         } else {
+                             // otherwise we just reload the page
+                             // since the IMPACT.lang variable has change
+                             // the language display to the user will also
+                             // change
+                             $.address.update();
+                         }
                      },
                      IMPACT.user,
                      IMPACT.password,
