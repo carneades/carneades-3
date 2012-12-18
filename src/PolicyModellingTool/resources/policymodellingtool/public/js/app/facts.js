@@ -133,13 +133,11 @@ PM.send_answers = function(questions, on_response) {
                                  },
                                   []);
 
-    $("body").css("cursor", "progress");
-    $("input").css("cursor", "progress");
+    PM.busy_cursor_on();
     PM.ajax_post(IMPACT.simulation_url,
                  {answers:  answers_values},
                  function(data) {
-                     $("body").css("cursor", "default");
-                     $("input").css("cursor", "default");
+                     PM.busy_cursor_off();
                      on_response(data);
                  },
                  IMPACT.user,
