@@ -3,12 +3,7 @@
 
 
 (ns ^{:doc "Defining and searching problem spaces using various strategies: 
-            depth-first, breadth-first etc.
-            
-            This module is no longer used in the Carneades engine, now
-            that the argument construction module does not search a space
-            of argument graphs for graphs in which a goal statement is
-            acceptable.  But we may have use for this again later."}
+            depth-first, breadth-first etc."}
     carneades.engine.search
   (:use clojure.pprint))
 
