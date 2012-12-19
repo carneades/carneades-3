@@ -27,7 +27,7 @@ PM.display_facts = function() {
                                     pmt_menu_arguments: $.i18n.prop('pmt_menu_arguments'),
                                     pmt_menu_schemes: $.i18n.prop('pmt_menu_schemes'),
                                     pmt_menu_policies: $.i18n.prop('pmt_menu_policies'), 
-                                             });
+                                   });
         $('#pm').html(facts_html.filter("#facts"));
         PM.activate('#facts-item');
         PM.attach_lang_listener();
