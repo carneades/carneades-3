@@ -10,7 +10,11 @@ PM.set_policies_url = function() {
 };
 
 PM.current_issue = function() {
-    return PM.statements.filter(function(s) { return s.get('main'); })[0].toJSON();
+    if(PM.statements.length > 0) {
+        return PM.statements.filter(function(s) { return s.get('main'); })[0].toJSON();
+    }
+
+    return undefined;
 };
 
 PM.get_issue_text = function() {
@@ -96,11 +100,21 @@ PM.display_policies = function(sectionid, subset) {
                               pmt_menu_policies: $.i18n.prop('pmt_menu_policies'),
                               pmt_table_of_contents: $.i18n.prop('pmt_table_of_contents'),
                               pmt_see_effects: $.i18n.prop('pmt_see_effects'),
+                              pmt_policies_filtering_indication: $.i18n.prop('pmt_policies_filtering_indication'),
                              });
+
                     var current_policy_html = ich.policies(template_variables);
                     $('#pm').html(current_policy_html.filter("#policies"));
                     PM.activate('#policies-item');
                     PM.attach_lang_listener();
+                    
+                    if(PM.current_issue() == undefined) {
+                        $('.policies-filtering-indication').show();
+                        $('.policies-filtering').hide();
+                    } else {
+                        $('.policies-filtering-indication').hide();
+                        $('.policies-filtering').show();
+                    }
                     
                     _.each(ids, function(policyid) {
                                $('#input' + policyid).click(_.bind(PM.on_select_policy, PM, policyid));

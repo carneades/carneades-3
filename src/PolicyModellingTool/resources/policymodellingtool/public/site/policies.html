@@ -16,15 +16,18 @@
       {{#header}}
       <h2>{{title}}</h2>
 
+      <div class="policies-filtering-indication">
+        {{pmt_policies_filtering_indication}}
+      </div>
       <div class="policies-filtering">
         <p>{{current_issue}} {{{issue}}}</p>
-      <p> {{can_display}}</p>
-      <ul>
-        <li><a id="all" class="clickable policy-filtering">{{all_policies}}</a></li>
-        <li><a id="in" class="clickable policy-filtering">{{policies_making_in}}</a></li>
-        <li><a id="out" class="clickable policy-filtering">{{policies_making_out}}</a></li>
-        <li><a id="undecided" class="clickable policy-filtering">{{policies_making_undecided}}</a></li>
-      </ul>
+        <p> {{can_display}}</p>
+        <ul>
+          <li><a id="all" class="clickable policy-filtering">{{all_policies}}</a></li>
+          <li><a id="in" class="clickable policy-filtering">{{policies_making_in}}</a></li>
+          <li><a id="out" class="clickable policy-filtering">{{policies_making_out}}</a></li>
+          <li><a id="undecided" class="clickable policy-filtering">{{policies_making_undecided}}</a></li>
+        </ul>
       </div>
 
       <p>{{description_text}}</p>
