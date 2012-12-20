@@ -42,6 +42,7 @@ AGB.argumentgraph_html = function(db, data)
     data.pmt_ag_menu_export = $.i18n.prop('pmt_ag_menu_export');
     data.pmt_ag_menu_evaluate = $.i18n.prop('pmt_ag_menu_evaluate');
     data.pmt_ag_menu_map = $.i18n.prop('pmt_ag_menu_map');
+    data.lang = IMPACT.lang;
     
     var argumentgraph_html = ich.argumentgraph(data);
     return argumentgraph_html.filter('#argumentgraph');
