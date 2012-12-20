@@ -27,9 +27,11 @@ PM.display_facts = function() {
                                     pmt_menu_arguments: $.i18n.prop('pmt_menu_arguments'),
                                     pmt_menu_schemes: $.i18n.prop('pmt_menu_schemes'),
                                     pmt_menu_policies: $.i18n.prop('pmt_menu_policies'), 
-                                             });
+                                   });
         $('#pm').html(facts_html.filter("#facts"));
         PM.activate('#facts-item');
+        PM.attach_lang_listener();
+        
         PM.ajax_post(IMPACT.simulation_url, {request: IMPACT.question},
                      PM.show_questions_or_ag,
                      IMPACT.user,
@@ -47,6 +49,7 @@ PM.display_facts = function() {
         $('#pm').html(facts_html.filter("#facts"));
         $('#pm').append('<div>' + $.i18n.prop('pmt_facts_not_available') + '</div>');
         PM.activate('#facts-item');
+        PM.attach_lang_listener();
     }
 };
 
@@ -130,9 +133,13 @@ PM.send_answers = function(questions, on_response) {
                                  },
                                   []);
 
+    PM.busy_cursor_on();
     PM.ajax_post(IMPACT.simulation_url,
                  {answers:  answers_values},
-                 on_response,
+                 function(data) {
+                     PM.busy_cursor_off();
+                     on_response(data);
+                 },
                  IMPACT.user,
                  IMPACT.password,
                  PM.on_error);
