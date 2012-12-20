@@ -31,6 +31,7 @@ PM.display_issues = function() {
                                      $('input').first().attr('checked', true);
                                      $('#submit').click(PM.on_submit_issues);
                                      PM.activate('#issues-item');
+                                     PM.attach_lang_listener();
                                  },
                                  IMPACT.user,
                                  IMPACT.password,

@@ -74,6 +74,8 @@
         ;; rejects answers with a weight of 0.0
         ag (reject ag (filter (fn [s] (= (answers s) 0.0)) answers-statements))
         ag (enter-language ag (-> session :theory :language))
+        _ (info "[after enter-language]")
+        _ (info ag)
         ag (evaluate aspic-grounded ag)
         dbname (store-ag ag)
         session (assoc session

@@ -35,11 +35,12 @@ PM.display_introduction = function() {
     $('#pm').html(introduction_html.filter("#introduction"));
     $('#start').click(PM.on_start_button);
     PM.activate('#introduction-item');
+    PM.attach_lang_listener();
 };
 
 PM.on_start_button = function() {
     // reset session
-    PM.ajax_post(IMPACT.simulation_url, {reset: null}, function() {},
+    PM.ajax_post(IMPACT.simulation_url, {reset: {lang: IMPACT.lang}}, function() {},
                 IMPACT.user,
                 IMPACT.password,
                 PM.on_error);

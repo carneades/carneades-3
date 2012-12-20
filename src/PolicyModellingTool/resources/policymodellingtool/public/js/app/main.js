@@ -44,7 +44,7 @@ PM.url_changed = function(url) {
          return;
     }
 
-    var url_regex = /\/([^ \/]+)(?:\/([^ \/]+))?(?:\/([^ \/]+))?(?:\/([^ \/]+))?/;
+    var url_regex = /\/([^ \/]+)(?:\/([^ \/]+))?(?:\/([^ ?\/]+))?(?:\/([^ \/]+))?/;
     var result = url_regex.exec(url.value);
     if(result != null) {
         PM.dispatch_url(result);
@@ -137,7 +137,18 @@ PM.init = function(toolboxState) {
     } else {
         PM.load_scripts(rootpath, false, PM.post_load);
     }
+
+ 
 };
+
+// attachs a listener to the 'select' language
+// and sets the value of the 'select' to the one of IMPACT.lang
+PM.attach_lang_listener = function() {
+    $('#pm-select-lang').val(IMPACT.lang);
+    $('#pm-select-lang').change(function(event) {
+        PM.languageChanged(event.target.value);
+    });
+}
 
 PM.start = function(toolboxState) {
     PM.set_introduction_url();
@@ -150,7 +161,27 @@ PM.stop = function(toolboxState) {
 };
 
 PM.languageChanged = function(lang) {
+    // reloads page
 
+    IMPACT.lang = lang;
+    PM.init_i18n(function() {
+        PM.ajax_post(IMPACT.simulation_url, {lang: IMPACT.lang},
+                     function() {
+                         if(!_.isNil($.address.parameter('lang'))) {
+                             // if the page has a lang parameter we change it
+                             $.address.parameter('lang', IMPACT.lang);
+                         } else {
+                             // otherwise we just reload the page
+                             // since the IMPACT.lang variable has change
+                             // the language display to the user will also
+                             // change
+                             $.address.update();
+                         }
+                     },
+                     IMPACT.user,
+                     IMPACT.password,
+                     PM.on_error);
+    });
 };
 
 PM.canBeStopped = function() {
@@ -185,6 +216,25 @@ PM.post_load = function() {
 
 };
 
+PM.init_i18n = function(callbackfn) {
+    var site_path = PM.in_uid_toolbox() ? '/policymodellingtool/site/' : 'site/';
+
+    jQuery.i18n.properties(
+        {name:'Messages',
+         path: site_path,
+         mode:'both',
+         language: IMPACT.lang, 
+         callback: function() {
+                 if(_.isFunction(callbackfn)) {
+                     callbackfn();
+                 }
+         }
+        });
+
+
+    
+};
+
 PM.common_post_load = function() {
     $.ajaxSetup({beforeSend: PM.simple_auth});
     
@@ -200,17 +250,7 @@ PM.common_post_load = function() {
     PM.policies = new PM.Policies;
     PM.policies.fetch();
     
-    var site_path = PM.in_uid_toolbox() ? '/policymodellingtool/site/' : 'site/';
-
-    jQuery.i18n.properties(
-        {name:'Messages',
-         path: site_path,
-         mode:'both',
-         language: IMPACT.lang, 
-         callback: function() {
-             // alert(jQuery.i18n.prop('msg_hello'));
-         }
-        });
+    PM.init_i18n();
     
     PM.debate_arguments = new PM.Arguments({db: IMPACT.debate_db});
     PM.debate_statements = new PM.Statements({db: IMPACT.debate_db});
@@ -474,6 +514,7 @@ PM.load_style = function(rootpath, style, cssdir) {
 
 // Called when an AJAX error occurs
 PM.on_error = function(textstatus) {
+    PM.busy_cursor_off();
     $('#pm').prepend('<ul class="warning pm-warning" ><li class="notification">Error: {0}</li></ul>'.format(textstatus));
     setTimeout(function() {
                    $('#pm .warning').remove();
@@ -491,6 +532,7 @@ PM.notify = function(text) {
 
 // Called when an AJAX error occurs for backbone
 PM.on_model_error = function(collection, response) {
+    PM.busy_cursor_off();
     $('#pm').prepend('<div style="background-color:  #FFCC33" class="error">Error: {0}</div>'.format(response.statusText));
     setTimeout(function() {
                    $('#pm .error').remove();
@@ -521,3 +563,13 @@ PM.scroll_to = function(selector) {
          $.scrollTo(selector);
      }
 }
+
+PM.busy_cursor_on = function() {
+    $("body").css("cursor", "progress");
+    $("input").css("cursor", "progress");
+};
+
+PM.busy_cursor_off = function() {
+    $("body").css("cursor", "default");
+    $("input").css("cursor", "default");
+};
