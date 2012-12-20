@@ -10,7 +10,11 @@ PM.set_policies_url = function() {
 };
 
 PM.current_issue = function() {
-    return PM.statements.filter(function(s) { return s.get('main'); })[0].toJSON();
+    if(PM.statements.length > 0) {
+        return PM.statements.filter(function(s) { return s.get('main'); })[0].toJSON();
+    }
+
+    return undefined;
 };
 
 PM.get_issue_text = function() {
@@ -68,10 +72,15 @@ PM.display_policies = function(sectionid, subset) {
                                                                          'policies',
                                                                         subset);
                     current_policy.description_text = current_policy.header.description[lang];
-                    current_policy.policies_text = PM.policies_text(current_policy.language, current_policy.sections, 2, subset, function(policyid) {
-                        ids.push(policyid);
-                    },
-                                                                   lang);
+                    var language_clj = catb.views.pmt.theory.convert_language(current_policy.language);
+                    current_policy.policies_text = PM.policies_text(language_clj,
+                                                                    current_policy.sections,
+                                                                    2,
+                                                                    subset,
+                                                                    function(policyid) {
+                                                                        ids.push(policyid);
+                                                                    },
+                                                                    lang);
                     
                     var template_variables = _.clone(current_policy);
                     _.extend(template_variables, 
@@ -88,11 +97,24 @@ PM.display_policies = function(sectionid, subset) {
                               pmt_menu_facts: $.i18n.prop('pmt_menu_facts'),
                               pmt_menu_arguments: $.i18n.prop('pmt_menu_arguments'),
                               pmt_menu_schemes: $.i18n.prop('pmt_menu_schemes'),
-                              pmt_menu_policies: $.i18n.prop('pmt_menu_policies'), 
+                              pmt_menu_policies: $.i18n.prop('pmt_menu_policies'),
+                              pmt_table_of_contents: $.i18n.prop('pmt_table_of_contents'),
+                              pmt_see_effects: $.i18n.prop('pmt_see_effects'),
+                              pmt_policies_filtering_indication: $.i18n.prop('pmt_policies_filtering_indication'),
                              });
+
                     var current_policy_html = ich.policies(template_variables);
                     $('#pm').html(current_policy_html.filter("#policies"));
                     PM.activate('#policies-item');
+                    PM.attach_lang_listener();
+                    
+                    if(PM.current_issue() == undefined) {
+                        $('.policies-filtering-indication').show();
+                        $('.policies-filtering').hide();
+                    } else {
+                        $('.policies-filtering-indication').hide();
+                        $('.policies-filtering').show();
+                    }
                     
                     _.each(ids, function(policyid) {
                                $('#input' + policyid).click(_.bind(PM.on_select_policy, PM, policyid));
@@ -120,9 +142,13 @@ PM.display_policies = function(sectionid, subset) {
 
 PM.on_select_policy = function(id) {
     console.log('db before evaluate: ' + IMPACT.db);
+    PM.busy_cursor_on();
     PM.ajax_get(IMPACT.wsurl + '/evaluate-policy/{0}/{1}/{2}/{3}'.
                 format(IMPACT.db, IMPACT.current_policy, IMPACT.question, id),
-                PM.on_evaluated_policy,
+                function(data) {
+                    PM.busy_cursor_off();
+                    PM.on_evaluated_policy(data);
+                },
                 PM.on_error);
     return false;
 };
@@ -233,7 +259,7 @@ PM.policies_text = function(language, sections, level, subset, on_policy, lang) 
                    text += '<form action=""><h{0}>'.format(level + 1);
                    if(section.schemes.length > 0) {
                        on_policy(section.id);
-                       text += '<input type="submit" value="Select" id="input{0}" />'.format(section.id);
+                       text += '<input type="submit" value="{1}" id="input{0}" />'.format(section.id, $.i18n.prop('pmt_select'));
                    }
                    text += ' {1}</h{0}></form>'.format(level + 1, section.header.title);
                    text += '<p>{0}</p>'.format(PM.markdown_to_html(section.header.description[lang]));
@@ -256,9 +282,10 @@ PM.varname = function(v) {
 
 // Formats an sexpr represented as an array of strings
 // or a string.
-PM.format_sexpr = function(sexpr, language, lang) {
+// language_clj is the language translated to ClojureScript
+PM.format_sexpr = function(sexpr, language_clj, lang) {
     var txt = catb.views.pmt.theory.format_statement(sexpr,
-                                                     language,
+                                                     language_clj,
                                                      lang,
                                                      "positive");
     txt = txt.replace(/\?/g, '');

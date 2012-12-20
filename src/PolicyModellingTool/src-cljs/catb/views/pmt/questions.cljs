@@ -96,7 +96,10 @@
   [question]
   (let [capitalized-text (s/capitalize (:text question))
         content (if (:yesnoquestion question)
-                  (str capitalized-text (radio-widget '[yes no maybe] ["Yes" "No" "Maybe"]))
+                  (str capitalized-text (radio-widget '[yes no maybe]
+                                                      (:answers question)
+                                                      ;; ["Yes" "No" "Maybe"]
+                                                      ))
                   (replace-variables-by-widgets
                   capitalized-text
                   [(widget-for-role question)]))]
@@ -107,7 +110,9 @@
   [question]
   (let [capitalized-text (s/capitalize (:text question))
         content (if (:yesnoquestion question)
-                  (str capitalized-text (radio-widget '[yes no maybe] ["Yes" "No" "Maybe"]))
+                  (str capitalized-text (radio-widget '[yes no maybe] (:answers question)
+                                                      ;; ["Yes" "No" "Maybe"]
+                                                      ))
                   (replace-variables-by-widgets
                    capitalized-text
                    ;; TODO: check if widget-for-role is ok for concept

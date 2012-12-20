@@ -45,11 +45,12 @@ AGB.display_map = function(db)
 AGB.add_map_to_div = function(db, id)
 {
     $(id).svg();
-    $(id).load(IMPACT.wsurl + '/map/' + db, function(svg, error) {
-                                       AGB.traverse_map(function(element) {
-                                                        AGB.add_map_to_browser_listener(db, element);
-                                                    });
-                                 });
+    $(id).load(IMPACT.wsurl + '/map/' + db + '?lang=' + IMPACT.lang,
+               function(svg, error) {
+                   AGB.traverse_map(function(element) {
+                       AGB.add_map_to_browser_listener(db, element);
+                   });
+               });
     
 };
 
