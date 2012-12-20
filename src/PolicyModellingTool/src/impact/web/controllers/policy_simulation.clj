@@ -106,20 +106,30 @@
        :body (json-str {:questions (:last-questions session)})})))
 
 (defn new-session
-  []
-  (info "[new-session]")
+  [lang]
+  {:pre [(not (nil? lang))]}
+  (info "[new-session] lang =" lang)
   (info "current-policy: " (deref current-policy))
-  {:lang "en"
+  {:lang lang
    :query nil
    :theory (policies (deref current-policy))})
 
 (defmethod ajax-handler :reset
   [json session]
-  {:session (new-session)})
+  (info "[reset] json=" json)
+  {:session (new-session (get-in json [:reset :lang]))})
+
+(defmethod ajax-handler :lang
+  [json session]
+  (info "[lang] new language is" (:lang json))
+  {:session (assoc session :lang (:lang json))})
 
 (defn process-ajax-request
   [session body params]
   (let [json (read-json (slurp body))
+        _ (info "JSON =")
+        _ (info json)
+        ;; _ (info "session.lang" (:lang session))
         res (ajax-handler json session)]
     res))
 
@@ -128,7 +138,7 @@
   []
   (info "init of session")
   {:headers {"Content-Type" "text/html;charset=UTF-8"}
-   :session (new-session)
+   :session (new-session "en")
    :body (index-page)})
 
 (defn dump-config

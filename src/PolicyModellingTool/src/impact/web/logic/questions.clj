@@ -54,11 +54,14 @@ widget is still used. New Types of :string maps to :widgets 'text."
 
 (defn- get-answers-choices-for-predicate
   [theory stmt lang]
-  (prn "[get-answers-choices-for-predicate]")
+  (prn "[get-answers-choices-for-predicate] lang=" lang)
   (let [predicate (get-predicate stmt theory)
-        arity (scheme/get-arity predicate)]
+        arity (scheme/get-arity predicate)
+        yes (get-in theory [:language 'yes :text lang])
+        no (get-in theory [:language 'no :text lang])
+        maybe (get-in theory [:language 'maybe :text lang])]
     (if (or (ground? stmt) (zero? arity))
-      {:answers ["Yes" "No" "Maybe"] :formalanswers ['yes 'no 'maybe] :yesnoquestion true :widgets '[radio]}
+      {:answers [yes no maybe] :formalanswers ['yes 'no 'maybe] :yesnoquestion true :widgets '[radio]}
       (let [formalanswers (-> predicate :answers)
             termargs (term-args stmt)
             ;; filter out answer for grounded variables (since they are not asked)
@@ -81,12 +84,16 @@ widget is still used. New Types of :string maps to :widgets 'text."
   (prn "[get-answers-choices-for-role]")
   (let [predicate (get-predicate stmt theory)
         {:keys [min max type]} predicate
-        typename (get-typename type theory lang)]
+        typename (get-typename type theory lang)
+        yes (get-in theory [:language 'yes :text lang])
+        no (get-in theory [:language 'no :text lang])
+        maybe (get-in theory [:language 'maybe :text lang])]
     ;; TODO: translation of the types
     {:min min
      :max max
      :type type
      :typename typename
+     :answers [yes no maybe]
      :yesnoquestion (and (not (coll? type)) (ground? stmt))}))
 
 (defn- get-answers-choices
@@ -147,6 +154,7 @@ widget is still used. New Types of :string maps to :widgets 'text."
 (defn get-structured-questions
   [stmt lang last-id theory]
   (prn "[get-structured-questions] stmt =" stmt)
+  (prn "lang =" lang)
   (let [id (inc last-id)
         pred (literal-predicate stmt)
         questions (get-questions id stmt (keyword lang) theory)]
