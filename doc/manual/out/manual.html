@@ -102,9 +102,9 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#evaluating-argument-graphs"><span class="toc-section-number">7.11</span> Evaluating Argument Graphs</a></li>
 <li><a href="#importing-xml"><span class="toc-section-number">7.12</span> Importing XML</a></li>
 </ul></li>
-<li><a href="#modeling-policies-and-argumentation-schemes"><span class="toc-section-number">8</span> Modeling Policies and Argumentation Schemes</a><ul>
-<li><a href="#practical-reasoning-argumentation-scheme-example"><span class="toc-section-number">8.1</span> Practical Reasoning Argumentation Scheme Example</a></li>
-<li><a href="#copyright-policy-example"><span class="toc-section-number">8.2</span> Copyright Policy Example</a></li>
+<li><a href="#modeling-argumentation-schemes-and-policies"><span class="toc-section-number">8</span> Modeling Argumentation Schemes and Policies</a><ul>
+<li><a href="#modeling-argumentation-schemes"><span class="toc-section-number">8.1</span> Modeling Argumentation Schemes</a></li>
+<li><a href="#modeling-policies"><span class="toc-section-number">8.2</span> Modeling Policies</a></li>
 <li><a href="#installing-policy-models-and-argumentation-schemes"><span class="toc-section-number">8.3</span> Installing Policy Models and Argumentation Schemes</a></li>
 </ul></li>
 <li><a href="#system-administration"><span class="toc-section-number">9</span> System Administration</a><ul>
@@ -801,20 +801,20 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ul></li>
 </ol>
 <p>(<em>Note: Look for a simpler solution.</em>)</p>
-<h1 id="modeling-policies-and-argumentation-schemes"><a href="#TOC"><span class="header-section-number">8</span> Modeling Policies and Argumentation Schemes</a></h1>
-<p>Policies and argumentation schemes are both represented using the same high-level scheme (rule) language in Carneades. We use the term &quot;policy&quot; here very broadly, to cover any kind of rule, norm, law, or regulation, whether or not the policy is currently valid and in force or proposed and under discussion.</p>
-<p>Argumentation schemes generalize the notion of an inference rule to cover defeasible as well as strict reasoning patterns. We use the term &quot;scheme&quot; instead of &quot;rule&quot; in Carneades to emphasize that the rules are usually defeasible. The Carneades scheme language is expressive enough to represent axiomatizations (i.e. axioms and inferences rules) of theories in many domains, including laws, regulations and policies, in addition to argumentation schemes per se.</p>
+<h1 id="modeling-argumentation-schemes-and-policies"><a href="#TOC"><span class="header-section-number">8</span> Modeling Argumentation Schemes and Policies</a></h1>
+<p>Argumentation schemes and policies are both represented using the same high-level scheme (rule) language. We use the term &quot;policy&quot; here very broadly, to cover any kind of rule, norm, law, or regulation, whether or not the policy is currently valid and in force or proposed and under discussion.</p>
+<p>Argumentation schemes generalize the notion of an inference rule to cover defeasible as well as strict reasoning patterns. We use the term &quot;scheme&quot; instead of &quot;rule&quot; to emphasize that the rules are usually defeasible. The scheme language is expressive enough to represent axiomatizations (i.e. axioms and inferences rules) of theories in many domains, including laws, regulations and policies, in addition to argumentation schemes per se.</p>
 <p>Computational models of theories have been called many things in computer science, including &quot;knowledge bases&quot; and &quot;deep conceptual&quot; or &quot;semantic&quot; models. We prefer the term &quot;theory&quot; to &quot;knowledge-base&quot; because the latter may suggest that theory is true, while the theory may be controversial or contested.</p>
-<p>The Carneades scheme language is similar to logic programming languages such as Prolog. Any Prolog rule (&quot;clause&quot;) can be represented in Carneades in a straight-forward way. Carneades has some additional features for representing argumentation schemes, such as scheme variables ranging over atoms and a means to represent premise roles (e.g. &quot;major&quot;, &quot;minor&quot;). Moreover, Carneades provides a way to annotate schemes along with meta-data and documentation, in multiple natural languages.</p>
-<p>The Carneades inference engine is able to automatically construct arguments from theories represented using the scheme language. Using a high-level declarative language for representing theories, and generating arguments from these theories, makes it easier for domain experts to represent and maintain domain theories.</p>
+<p>The scheme language is similar to logic programming languages such as Prolog. Any Prolog rule (&quot;clause&quot;) can be represented in Carneades in a straight-forward way. The rule language has some additional features for representing argumentation schemes, such as scheme variables ranging over atoms and a means to represent premise roles (e.g. &quot;major&quot;, &quot;minor&quot;). Moreover, schemes can be annotated with meta-data and documentation, in multiple natural languages.</p>
+<p>The inference engine of the policy modeling tool is able to automatically construct arguments from theories represented using the scheme language. Using a high-level declarative language for representing theories, and generating arguments from these theories, makes it easier for domain experts to represent and maintain domain theories.</p>
 <p>Theories may organized in a hierarchical structure of sections and subsections, with schemes included at any level. Like schemes, the theory as a whole and each of its sections can be annotated with its own meta-data and natural language description. These features facilitate self-documenting and &quot;isomorphic&quot; modeling. The source text of the schemes, policies or legislation can be included within the model, in the same files, in such as way as to preserve the hierarchical structure of the sources. This makes it easier to maintain the model as the source documents are modified, since there can be a one-to-one correspondance between sections of the source text and sections of the model.</p>
 <p>Theories are represented in text files, using the scheme language. The scheme language is an executable knowledge-representation language, with its own well-defined semantics and an inference engine implementing this semantics. It is not intended to be used as an &quot;interchange format&quot; for exporting and importing theories among diverse formalisms with varied semantics.</p>
-<p>The semantics of argumentation schemes are formally defined by mapping instantiations of argumentation schemes to argument graphs and, in turn, mapping these graphs to Dung abstract argumentation frameworks <span class="citation">(Dung 1995)</span>, using Prakken's ASPIC+ model of structured argument <span class="citation">(Prakken 2010)</span> in a way which preserves the Carneades model of proof standards <span class="citation">(Gordon, Prakken, and Walton 2007)</span>. (<em>Note: Write and then cite here a technical report with the formal definitions.</em>)</p>
-<h2 id="practical-reasoning-argumentation-scheme-example"><a href="#TOC"><span class="header-section-number">8.1</span> Practical Reasoning Argumentation Scheme Example</a></h2>
+<p>The semantics of argumentation schemes are formally defined by mapping instantiations of argumentation schemes to argument graphs and, in turn, mapping these graphs to Dung abstract argumentation frameworks <span class="citation">(Dung 1995)</span>, inspired by Prakken's ASPIC+ model of structured argument <span class="citation">(Prakken 2010)</span>, in a way which preserves the Carneades model of proof standards <span class="citation">(Gordon, Prakken, and Walton 2007)</span>.</p>
+<h2 id="modeling-argumentation-schemes"><a href="#TOC"><span class="header-section-number">8.1</span> Modeling Argumentation Schemes</a></h2>
 <p>In this section we illustrate how to use the language to represent a version of the scheme for arguments from practical reasoning.</p>
 <p>A domain theory is represented by first defining a <em>language</em> (dictionary) of symbols, denoting predicates and terms, and then a set of inference rules, called <em>schemes</em>, using this language.</p>
 <p>The language is represented as a map from symbols to predicates and individuals, in the Clojure programming language. Each symbol of the language is mapped to a structure with fields for the symbol of the predicate (redundantly), the arity of the predicate (i.e. the number of columns in a tabular representation of the relation denoted by the predicate) and an optional number of forms for expressing statements and questions about this predicate in one or more natural languages.</p>
-<p>To illustrate, below are the definition of some of the predicates of the language used in the D5.2 version of the schemes for practical reasoning.</p>
+<p>To illustrate, below are the definition of some of the predicates of the language used a version of the schemes for practical reasoning.</p>
 <pre class="sourceCode clojure"><code class="sourceCode clojure">(<span class="kw">def</span><span class="fu"> L</span>
   {&#39;circumstances
     (make-predicate
@@ -960,7 +960,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <dd><p>A sequence of metadata structures, for providing bibliographic information about source documents.</p>
 </dd>
 </dl>
-<p>Next, we complete this section, and our illustration of how to implement argumentation schemes, by defining <code>theory1</code> to be the following theory:</p>
+<p>Next, we complete this illustration of how to implement argumentation schemes, by defining <code>theory1</code> to be the following theory:</p>
 <pre class="sourceCode clojure"><code class="sourceCode clojure">(<span class="kw">def</span><span class="fu"> theory1 </span>
   (make-theory
    <span class="kw">:header</span> 
@@ -983,7 +983,266 @@ code > span.er { color: #ff0000; font-weight: bold; }
      <span class="kw">:publisher</span> <span class="st">&quot;IMPACT&quot;</span>
      <span class="kw">:date</span> <span class="st">&quot;2012&quot;</span>)}))
 </code></pre>
-<h2 id="copyright-policy-example"><a href="#TOC"><span class="header-section-number">8.2</span> Copyright Policy Example</a></h2>
+<h2 id="modeling-policies"><a href="#TOC"><span class="header-section-number">8.2</span> Modeling Policies</a></h2>
+<p>Policies and argumentation schemes are modeled in the same way. This section illustrates how to use the language to model policies, with a copyright example.</p>
+<p>The policy issue in this example is whether so-called &quot;orphaned&quot; works may be published without a license for some purposes.</p>
+<p>We assume in this example that current copyright law in Germany requires a license, with no exceptions for orphaned works. This is the &quot;status quo&quot; policy. An alternative policy is proposed by a German non-profit organization, the Aktionsbündnisses &quot;Urheberrecht für Bildung und Wissenschaft&quot;, called the &quot;Action Alliance&quot; in the following. This policy would allow orphaned works to be published, with or without a license, under exceptional circumstances, for example when the work is published for non-commercial purposes and an effort has been made to search for the copyright owner.</p>
+<p>We begin by modeling the technical language (&quot;ontology&quot;) of the policies:</p>
+<pre class="sourceCode clojure"><code class="sourceCode clojure">(<span class="kw">def</span><span class="fu"> L</span>
+     (make-language 
+      (make-individual <span class="kw">:symbol</span> &#39;the-person 
+               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;the person&quot;</span> <span class="kw">:de</span> <span class="st">&quot;die Person&quot;</span>})
+      (make-individual <span class="kw">:symbol</span> &#39;the-work 
+               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;the work&quot;</span> <span class="kw">:de</span> <span class="st">&quot;das Werk&quot;</span>})
+      (make-individual <span class="kw">:symbol</span> &#39;commercial 
+               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;commercial&quot;</span>})
+      (make-individual <span class="kw">:symbol</span> &#39;purpose 
+               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;Purpose&quot;</span>})
+      (make-individual <span class="kw">:symbol</span> &#39;identifiers 
+               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;Identifiers&quot;</span>})
+      (make-individual <span class="kw">:symbol</span> &#39;non-commercial 
+               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;non-commercial&quot;</span>})
+      (make-individual <span class="kw">:symbol</span> &#39;none 
+               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;None&quot;</span>})
+      (make-individual <span class="kw">:symbol</span> &#39;professional 
+               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;professional documented search&quot;</span>})
+      (make-individual <span class="kw">:symbol</span> &#39;search 
+               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;Search&quot;</span>})
+      (make-individual <span class="kw">:symbol</span> &#39;standard 
+               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;standard documented search&quot;</span>})
+      (make-individual <span class="kw">:symbol</span> &#39;license 
+               <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;License&quot;</span>})
+
+      (make-function
+       <span class="kw">:symbol</span> &#39;the-search
+       <span class="kw">:arity</span> <span class="dv">2</span>
+       <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;the search by %s for the owner of %s&quot;</span>})
+
+      (make-function
+       <span class="kw">:symbol</span> &#39;the-use
+       <span class="kw">:arity</span> <span class="dv">2</span>
+       <span class="kw">:text</span> {<span class="kw">:en</span> <span class="st">&quot;the use by %s of %s&quot;</span>})
+      
+      (make-role
+       <span class="kw">:category</span> &#39;license
+       <span class="kw">:symbol</span> &#39;license-to-publish
+       <span class="kw">:min</span> <span class="dv">0</span>
+       <span class="kw">:max</span> nil
+       <span class="kw">:type</span> <span class="kw">:symbol</span>
+       <span class="kw">:askable</span> true
+       <span class="kw">:forms</span> {<span class="kw">:en</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;%s has a license to publish %s.&quot;</span>
+                  <span class="kw">:negative</span> <span class="st">&quot;%s does not have a license to publish %s.&quot;</span>
+                  <span class="kw">:question</span> <span class="st">&quot;Does %s have a license to publish %s?&quot;</span>)}
+       <span class="kw">:hint</span> {<span class="kw">:en</span> <span class="st">&quot;Information about an existing license.&quot;</span>}
+       <span class="kw">:followups</span> &#39;[])
+      
+      (make-role
+       <span class="kw">:symbol</span> &#39;may-publish
+       <span class="kw">:min</span> <span class="dv">0</span>
+       <span class="kw">:max</span> nil
+       <span class="kw">:type</span> <span class="kw">:symbol</span>
+       <span class="kw">:askable</span> false
+       <span class="kw">:forms</span> {<span class="kw">:en</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;%s may publish  %s.&quot;</span>
+                  <span class="kw">:negative</span> <span class="st">&quot;%s may not publish %s.&quot;</span>
+                  <span class="kw">:question</span> <span class="st">&quot;May %s publish %s?&quot;</span>)})
+
+      (make-concept
+       <span class="kw">:symbol</span> &#39;person
+       <span class="kw">:askable</span> true
+       <span class="kw">:forms</span> {<span class="kw">:en</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;%s is a person.&quot;</span>
+                  <span class="kw">:negative</span> <span class="st">&quot;%s is not a person.&quot;</span>
+                  <span class="kw">:question</span> <span class="st">&quot;Is %s a person?&quot;</span>)
+           
+           <span class="kw">:de</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;%s ist ein Rechtsperson.&quot;</span>
+                  <span class="kw">:negative</span> <span class="st">&quot;%s ist nicht ein Rechtsperson.&quot;</span>
+                  <span class="kw">:question</span> <span class="st">&quot;Ist %s ein Rechtsperson?&quot;</span>)}
+       <span class="kw">:category</span> &#39;identifiers
+       <span class="kw">:hint</span> {<span class="kw">:en</span> <span class="st">&quot;Please provide an identifier for the person </span>
+<span class="st">                   interested in publishing the work, such as P1.&quot;</span>}
+       <span class="kw">:followups</span> &#39;[work])
+
+      (make-concept
+       <span class="kw">:symbol</span> &#39;work
+       <span class="kw">:askable</span> true
+       <span class="kw">:forms</span> {<span class="kw">:de</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;%s ist ein Werk.&quot;</span>
+                  <span class="kw">:negative</span> <span class="st">&quot;%s is nicht ein Werk.&quot;</span>
+                  <span class="kw">:question</span> <span class="st">&quot;Ist %s ein Werk?&quot;</span>)
+           <span class="kw">:en</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;%s is a work.&quot;</span>
+                  <span class="kw">:negative</span> <span class="st">&quot;%s is not a work.&quot;</span>
+                  <span class="kw">:question</span> <span class="st">&quot;Is %s a work?&quot;</span>)}
+       <span class="kw">:hint</span> {<span class="kw">:en</span> <span class="st">&quot;Please provide an identifier for the </span>
+<span class="st">                   orphaned work, such as W1.&quot;</span>}
+       <span class="kw">:category</span> &#39;identifiers)
+      
+      (make-role
+       <span class="kw">:symbol</span> &#39;type-of-use
+       <span class="kw">:askable</span> true
+       <span class="kw">:min</span> <span class="dv">1</span>
+       <span class="kw">:max</span> <span class="dv">1</span>
+       <span class="kw">:type</span> &#39;#{non-commercial commercial}
+       <span class="kw">:forms</span> {<span class="kw">:de</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;%s ist für folgender Zwecken: %s.&quot;</span>
+                  <span class="kw">:negative</span> <span class="st">&quot;%s ist nicht für folgender Zwecken: %s.&quot;</span>
+                  <span class="kw">:question</span> <span class="st">&quot;Ist %s für folgender Zwecken: %s?&quot;</span>)
+           <span class="kw">:en</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;%s is for %s purposes.&quot;</span>
+                  <span class="kw">:negative</span> <span class="st">&quot;%s is not for %s purposes.&quot;</span>
+                  <span class="kw">:question</span> <span class="st">&quot;Is %s for %s purposes?&quot;</span>)}
+       <span class="kw">:hint</span> {<span class="kw">:en</span> <span class="st">&quot;Will the work be used for commercial or </span>
+<span class="st">                   non-commercial purposes?&quot;</span>}
+       <span class="kw">:category</span> &#39;purpose)
+
+      (make-role
+       <span class="kw">:symbol</span> &#39;search-type
+       <span class="kw">:askable</span> true
+       <span class="kw">:min</span> <span class="dv">1</span>
+       <span class="kw">:max</span> <span class="dv">1</span>
+       <span class="kw">:type</span> &#39;#{standard professional none}
+       <span class="kw">:forms</span> {<span class="kw">:en</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;The type of %s was a %s.&quot;</span>
+                  <span class="kw">:negative</span> <span class="st">&quot;The type of %s was not a %s.&quot;</span>
+                  <span class="kw">:question</span> <span class="st">&quot;Was the type of %s a %s?&quot;</span>)}
+       <span class="kw">:hint</span> {<span class="kw">:en</span> <span class="st">&quot;What type of search was performed to </span>
+<span class="st">                   try to find the copyright owner?&quot;</span>}
+       <span class="kw">:category</span> &#39;search
+       <span class="kw">:next</span> [&#39;announcement])
+
+      (make-concept
+       <span class="kw">:symbol</span> &#39;announcement
+       <span class="kw">:askable</span> true
+       <span class="kw">:hint</span> {<span class="kw">:en</span> <span class="st">&quot;Information about an announcement.&quot;</span>}
+       <span class="kw">:forms</span> {<span class="kw">:en</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;The %s was publically announced.&quot;</span>
+                  <span class="kw">:negative</span> <span class="st">&quot;The %s was not publically announced.&quot;</span>
+                  <span class="kw">:question</span> <span class="st">&quot;Was the %s publically announced?&quot;</span>)}
+       <span class="kw">:category</span> &#39;search)
+      
+      (make-concept
+       <span class="kw">:symbol</span> &#39;valid
+       <span class="kw">:askable</span> false
+       <span class="kw">:form</span> {<span class="kw">:en</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;%s is valid law.&quot;</span>
+                 <span class="kw">:negative</span> <span class="st">&quot;%s is not valid law.&quot;</span>
+                 <span class="kw">:question</span> <span class="st">&quot;Is %s valid law?&quot;</span>)
+          <span class="kw">:de</span> (make-form <span class="kw">:positive</span> <span class="st">&quot;%s is gültiges Recht.&quot;</span>
+                 <span class="kw">:negative</span> <span class="st">&quot;%s ist nicht gültiges Recht.&quot;</span>
+                 <span class="kw">:question</span> <span class="st">&quot;Ist %s gültiges Recht?&quot;</span>)})))</code></pre>
+<p>This policy consists of a single scheme, modeling Section 31 of German copyright law. The symbol <code>UrhG-31</code> has been defined to refer to this scheme, so as to allow the scheme to be used in multiple policies, since it used both by the current German law and the policy proposed by the Action Alliance.</p>
+<pre class="sourceCode clojure"><code class="sourceCode clojure">
+
+(<span class="kw">def</span><span class="fu"> UrhG-31</span>
+  (make-scheme                            
+   <span class="kw">:id</span> &#39;UrhG<span class="dv">-31</span>
+   <span class="kw">:header</span> (make-metadata <span class="kw">:title</span> <span class="st">&quot;§ 31 UrhG de lege lata&quot;</span>
+                          <span class="kw">:description</span> {<span class="kw">:de</span> <span class="st">&quot;&gt; Einräumung von</span>
+<span class="st">                          Nutzungsrechten. (1) Der Urheber kann einem</span>
+<span class="st">                          anderen das Recht einräumen, das Werk auf</span>
+<span class="st">                          einzelne oder alle Nutzungsarten zu</span>
+<span class="st">                          nutzen (Nutzungsrecht) ... (3) Das</span>
+<span class="st">                          ausschließliche Nutzungsrecht berechtigt den</span>
+<span class="st">                          Inhaber, das Werk unter Ausschluss aller</span>
+<span class="st">                          anderen Personen auf die ihm erlaubte Art zu</span>
+<span class="st">                          nutzen *und Nutzungsrechte einzuräumen* [§</span>
+<span class="st">                          31 UrhG, Hervorhebung hinzugefügt] ...&quot;</span>
+                                        <span class="kw">:en</span> <span class="st">&quot;&gt; Licensing</span>
+<span class="st">                          copyrights. (1) The author can grant a</span>
+<span class="st">                          simple or exclusive license to others to use</span>
+<span class="st">                          the work … (3) Exclusive rights to use a</span>
+<span class="st">                          work give the licensee the sole right to use</span>
+<span class="st">                          the work in the ways stated by the license,</span>
+<span class="st">                          *along with the right to grant licenses to</span>
+<span class="st">                          third parties* [§ 31 UrhG, emphasis added]</span>
+<span class="st">                          …&quot;</span>})
+   <span class="kw">:conclusion</span> &#39;(may-publish ?P ?W)
+   <span class="kw">:premises</span> [(make-premise <span class="kw">:statement</span> &#39;(license-to-publish ?P ?W))
+              (make-premise <span class="kw">:statement</span> &#39;(valid UrhG<span class="dv">-31</span>)) ]))
+
+(define german-copyright-law
+  (make-section
+   <span class="kw">:id</span> &#39;UrhG
+   <span class="kw">:header</span> (make-metadata 
+        <span class="kw">:title</span> <span class="st">&quot;Urheberrechtsgesetz&quot;</span>
+        <span class="kw">:description</span> {<span class="kw">:de</span> <span class="st">&quot;Das deutsche Urheberrecht in der geltenden Fassung&quot;</span>
+              <span class="kw">:en</span> <span class="st">&quot;The current German copyright law&quot;</span>})
+   <span class="kw">:schemes</span>
+   [UrhG<span class="dv">-31</span>]))</code></pre>
+<p>Next, here is the model of the alternative, more liberal policy proposed by the Action Alliance:</p>
+<pre class="sourceCode clojure"><code class="sourceCode clojure">(<span class="kw">def</span><span class="fu"> action-alliance-policy</span>
+     (make-section
+      <span class="kw">:id</span> &#39;Q12-Aktionsbundnis
+      <span class="kw">:header</span> (make-metadata <span class="kw">:title</span> <span class="st">&quot;Orphaned Works Policy Proposed by</span>
+<span class="st">the Aktionsbündnisses Urheberrecht für Bildung und Wissenschaft&quot;</span>
+                 <span class="kw">:description</span> {<span class="kw">:en</span> <span class="st">&quot;The German Action</span>
+<span class="st">Alliance on copyright for education and science proposes the</span>
+<span class="st">following policies for handling orphaned works [@Aktionsbündnis,</span>
+<span class="st">pp. 6-7].&quot;</span>})
+
+      <span class="kw">:schemes</span>
+      [UrhG<span class="dv">-31</span>
+
+       (make-scheme                            
+    <span class="kw">:id</span> &#39;AB-52c<span class="dv">-1</span>-a
+    <span class="kw">:header</span> (make-metadata <span class="kw">:title</span> <span class="st">&quot;§ 52c (1) (a)&quot;</span>
+                   <span class="kw">:description</span> {<span class="kw">:de</span> <span class="st">&quot;(1) Öffentliche</span>
+<span class="st">Zugänglichmachung für nicht-gewerbliche und private Zwecke,</span>
+<span class="st">insbesondere durch Nutzer für Zwecke der Archivierung und für</span>
+<span class="st">Forschung und Ausbildung ... (a) Zulässig ist die öffentliche</span>
+<span class="st">Zugänglichmachung von Werken, deren Urheber oder Rechteinhaber nach</span>
+<span class="st">einer dokumentierten Standardsuche [alternativ: einer zeitlich auf 30</span>
+<span class="st">Tage öffentlichen Bekanntmachung] nicht ermittelt werden können.&quot;</span>})
+    <span class="kw">:conclusion</span> &#39;(may-publish ?P ?W)
+    <span class="kw">:premises</span> 
+        [(make-premise <span class="kw">:statement</span> &#39;(type-of-use (the-use ?P ?W) non-commercial))
+     (make-premise <span class="kw">:statement</span> &#39;(search-type (the-search ?P ?W) standard))
+     (make-premise <span class="kw">:statement</span> &#39;(valid AB-52c<span class="dv">-1</span>-a)) ])
+       
+       (make-scheme
+    <span class="kw">:id</span> &#39;AB-52c<span class="dv">-2</span>-a
+    <span class="kw">:header</span> (make-metadata <span class="kw">:title</span> <span class="st">&quot;§ 52c (2) (a)&quot;</span>
+                   <span class="kw">:description</span> {<span class="kw">:de</span> <span class="st">&quot;(2) Öffentliche</span>
+<span class="st">Zugänglichmachung für gewerbliche Zwecke ... (a) Zulässig ist die</span>
+<span class="st">öffentliche Zugänglichmachung von Werken, deren Urheber oder</span>
+<span class="st">Rechteinhaber nach einer angemessenen professionellen und</span>
+<span class="st">dokumentierten Suche und einer öffentlichen Bekanntmachung nicht</span>
+<span class="st">ermittelt werden können.&quot;</span>})
+    <span class="kw">:conclusion</span> &#39;(may-publish ?P ?W)
+    <span class="kw">:premises</span> 
+        [(make-premise <span class="kw">:statement</span> &#39;(type-of-use (the-use ?P ?W) commercial))
+     (make-premise <span class="kw">:statement</span> &#39;(search-type (the-search ?P ?W) professional))
+     (make-premise <span class="kw">:statement</span> &#39;(announcement (the-search ?P ?W)))
+     (make-premise <span class="kw">:statement</span> &#39;(valid AB-52c<span class="dv">-2</span>-a))])]))
+</code></pre>
+<p>Notice how Section 31 of German copyright law is also a part of this policy proposal. The proposed policy extends German law with exceptions for orphaned works.</p>
+<p>Now, let's put this altogether is a &quot;theory&quot; containing both policies:</p>
+<pre class="sourceCode clojure"><code class="sourceCode clojure">(<span class="kw">ns</span> carneades.examples.copyright-policies
+  (<span class="kw">:use</span> carneades.engine.dublin-core
+        carneades.engine.scheme
+        carneades.engine.argument))
+
+(<span class="kw">def</span><span class="fu"> copyright-policies</span>
+     (make-theory
+      <span class="kw">:header</span> 
+      (make-metadata <span class="kw">:title</span> <span class="st">&quot;Copyright in the Knowledge Economy&quot;</span>
+             <span class="kw">:description</span> {<span class="kw">:en</span> <span class="st">&quot;&quot;</span>}) <span class="co">;; TODO add a description</span>
+      
+      <span class="kw">:language</span>
+      L
+
+      <span class="kw">:sections</span>
+      [(make-section
+    <span class="kw">:id</span> &#39;Q12
+    <span class="kw">:main-issue</span> &#39;(may-publish the-person the-work)
+    <span class="kw">:header</span> (make-metadata 
+         <span class="kw">:title</span> <span class="st">&quot;Q12. Cross-Border Aspects of Orphaned Works&quot;</span>
+         
+         <span class="kw">:description</span> 
+         {<span class="kw">:en</span> <span class="st">&quot;Question 12 of the Green Paper on Copyright in</span>
+<span class="st">         the Knowledge Economy [@GreenPaper, p. 12] asks:</span>
+
+<span class="st">                 &gt; (12) How should the cross-border aspects</span>
+<span class="st">                 &gt; of the orphan works issue be tackled to</span>
+<span class="st">                 &gt; ensure EU-wide recognition of the</span>
+<span class="st">                 &gt; solutions adopted in different Member</span>
+<span class="st">                 &gt; States?&quot;</span>})
+    
+    <span class="kw">:sections</span>  
+    [german-copyright-law,
+     action-alliance-policy])]))</code></pre>
 <h2 id="installing-policy-models-and-argumentation-schemes"><a href="#TOC"><span class="header-section-number">8.3</span> Installing Policy Models and Argumentation Schemes</a></h2>
 <h1 id="system-administration"><a href="#TOC"><span class="header-section-number">9</span> System Administration</a></h1>
 <h2 id="downloading-carneades"><a href="#TOC"><span class="header-section-number">9.1</span> Downloading Carneades</a></h2>
@@ -1422,7 +1681,7 @@ premises:
 <li>Tom Gordon</li>
 <li>Matthias Grabmair</li>
 </ul></li>
-<li><p>Funding (EU Projects)</p>
+<li><p>Funding (EU Projects) <!-- To do: add Google and Canadian projects --></p>
 <ul>
 <li>Standardized Transparent Representations in order to Extend Legal Accessibility (Estrella, FP6-IST-027655), 2006-2008.</li>
 <li>Quality Platform for Open Source Software (Qualipso, FP6-IST-034763), 2006-2010.</li>
