@@ -6,7 +6,11 @@ PM.StatementPolls = Backbone.Collection.extend(
     {model: PM.StatementPoll,
      
      url: function() {
-         return IMPACT.wsurl + '/statement-poll/' + IMPACT.debate_db;
+         return IMPACT.wsurl + '/statement-poll/' + this.db;
+     },
+
+     initialize: function(model, options) {
+         this.db = options.db || IMPACT.debate_db;
      }
      
     }
