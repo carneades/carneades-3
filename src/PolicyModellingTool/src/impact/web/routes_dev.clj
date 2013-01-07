@@ -9,17 +9,17 @@
         ring.adapter.jetty
         ring.middleware.session
         ring.middleware.stacktrace
-        [hiccup.middleware :only (wrap-base-url)])
+        [hiccup.middleware :only (wrap-base-url)]
+        [ring.middleware.format-response :only [wrap-restful-response]])
   (:require [compojure.handler :as handler]))
 
 (defroutes all-impact-pm-tool-routes
-  (context "/impactws" [] carneades-web-service-routes)
+  (context "/impactws" [] (wrap-restful-response carneades-web-service-routes))
   (context "/policymodellingtool" [] impact-pm-tool-routes))
 
 (def impact-app
   (-> (handler/site all-impact-pm-tool-routes)
-      (wrap-base-url)
-      (wrap-stacktrace)))
+      (wrap-base-url)))
 
 ;; (def impact-server nil)
 ;; (.start impact-server)

@@ -465,7 +465,10 @@ PM.load_templates = function(toolboxState) {
             'sct-argument',
             'sct_summary',
             'sct_claim_editor',
-            'sct_comparison'
+            'sct_comparison',
+            'vote',
+            'after_vote',
+            'vote_results' 
            ],
            function(name) {
                var url = toolboxState == undefined ?
@@ -565,11 +568,15 @@ PM.scroll_to = function(selector) {
 }
 
 PM.busy_cursor_on = function() {
-    $("body").css("cursor", "progress");
-    $("input").css("cursor", "progress");
+    $("*").css("cursor", "progress");
+    // $("input").css("cursor", "progress");
+    // $("a").css("cursor", "progress");
+    // $("p").css("cursor", "progress");
 };
 
 PM.busy_cursor_off = function() {
-    $("body").css("cursor", "default");
-    $("input").css("cursor", "default");
+    $("*").css("cursor", "default");
+    // $("input").css("cursor", "default");
+    // $("a").css("cursor", "default");
+    // $("p").css("cursor", "default");
 };

@@ -1,0 +1,15 @@
+<div id="vote">
+
+  {{>pmmenu}}
+
+  <h2>{{pmt_vote}}</h2>
+
+  <p>
+    {{pmt_given_the_facts}} "{{claim}}" {{pmt_be}}
+    <input class="radiobutton" type="radio" name="vote" value="accepted">{{pmt_accepted}}</input>
+    <input class="radiobutton" type="radio" name="vote" value="rejected">{{pmt_rejected}}</input>
+    <input class="radiobutton" type="radio" name="vote" value="undecided">{{pmt_undecided}}</input>&nbsp;?
+  </p>
+  <button class="vote-now">{{pmt_vote}}</button>
+
+</div>

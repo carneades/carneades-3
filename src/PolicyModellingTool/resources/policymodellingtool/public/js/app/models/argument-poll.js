@@ -1,14 +1,15 @@
 // Copyright (c) 2012 Fraunhofer Gesellschaft
 // Licensed under the EUPL V.1.1
 
-// Stores the result of the SCT
+// Stores the result of a poll
 PM.ArgumentPoll = Backbone.Model.extend(
     {url: function() {
-         return IMPACT.wsurl + '/argument-poll/' + IMPACT.debate_db;
+         return IMPACT.wsurl + '/argument-poll/' + this.db;
      },
      
-     initialize: function(attrs) {
+     initialize: function(attrs, db) {
          this.saved = false;
+         this.db = db || IMPACT.debate_db;
      },
      
      // normally backbone thinks the object is not new if it has an id
