@@ -1,0 +1,18 @@
+<div id="vote">
+
+  {{>pmmenu}}
+
+  <h2>{{pmt_vote}}</h2>
+
+  <table class="vote-table">
+    <tr>
+      <th>{{pmt_claim}}</th>
+      <th>{{pmt_accepted_header}}</th>
+      <th>{{pmt_rejected_header}}</th>
+      <th>{{pmt_undecided_header}}</th>
+    </tr>
+    <tbody>
+      <tr><td>{{claim}}</td><td>{{accepted_score}}%</td><td>{{rejected_score}}%</td><td>{{undecided_score}}%</td></tr>
+    </tbody>
+  </table>
+</div>
