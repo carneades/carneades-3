@@ -20,6 +20,10 @@
             )
   (:import java.io.File))
 
+(defmacro with-db [db & body]   
+  `(jdbc/with-connection 
+     ~db
+     (jdbc/transaction ~@body)))
 
 (defmacro test-db 
   "For testing and development.  Doesn't do any 
@@ -36,6 +40,13 @@
                                         (str (System/getProperty "user.dir")
                                              File/separator
                                              "data/databases")))
+
+(defn fetch-databases-names
+  "Looks on the disk to find all existing databases. Returns their names"
+  []
+  (keep #(second (re-find #"(.*)\.h2\.db$" %))
+        (map (memfn getName)
+             (file-seq (clojure.java.io/file default-db-host)))))
 
 (defn make-database-connection  
   "Returns a map describing a database connection.

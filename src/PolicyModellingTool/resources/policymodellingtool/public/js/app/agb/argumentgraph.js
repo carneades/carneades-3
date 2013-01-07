@@ -42,6 +42,7 @@ AGB.argumentgraph_html = function(db, data)
     data.pmt_ag_menu_export = $.i18n.prop('pmt_ag_menu_export');
     data.pmt_ag_menu_evaluate = $.i18n.prop('pmt_ag_menu_evaluate');
     data.pmt_ag_menu_map = $.i18n.prop('pmt_ag_menu_map');
+    data.pmt_ag_menu_vote = $.i18n.prop('pmt_ag_menu_vote');
     data.lang = IMPACT.lang;
     
     var argumentgraph_html = ich.argumentgraph(data);
@@ -136,6 +137,7 @@ AGB.enable_ag_edition = function(db) {
                                      }}));
     $('#newargument').click(AGB.new_argument);
     $('.evaluate').click(_.bind(AGB.evaluate, AGB, _.bind(AGB.display_argumentgraph, AGB, db)));
+    // $('.vote').click(catb.views.pmt.vote.vote);
     
     return false;
 };

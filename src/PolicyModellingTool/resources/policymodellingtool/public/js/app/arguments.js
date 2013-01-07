@@ -9,6 +9,8 @@ PM.set_arguments_url = function(db) {
     $.address.value(PM.arguments_url(db));  
 };
 
+// this is the main entry point to display
+// either the outline, the map, an argument or a statement
 PM.display_arguments = function(db, type, id) {
     IMPACT.facts_state = 'done';
     
@@ -38,23 +40,36 @@ PM.display_arguments = function(db, type, id) {
     $('#pm').html(arguments_html.filter("#arguments"));
     PM.activate('#arguments-item');
     PM.attach_lang_listener();
-    
-    var deferreds = [];
 
-    deferreds.push(PM.arguments.fetch());
-    deferreds.push(PM.statements.fetch());
+    if(PM.current_statement_polls == undefined) {
+        PM.current_statement_polls = new PM.StatementPolls([], {db: IMPACT.db});
+    }
     
-    $.when($, deferreds).done(
+    $.when(PM.arguments.fetch(),
+           PM.statements.fetch(),
+           PM.current_statement_polls.fetch()).then(
         function() {
+            PM.current_statement_poll = PM.current_statement_polls.get('vote-from-argument-page');
+            if(PM.current_statement_poll == undefined) {
+                PM.current_statement_poll = new PM.StatementPoll({votes: {}, id: 'vote-from-argument-page'}, IMPACT.db);
+            } else {
+                PM.current_statement_poll.db = IMPACT.db;
+            }
+
+            console.log('current_statement_poll=');
+            console.log(PM.current_statement_poll.toJSON());
+            
             if (type == "statement")  {
-                      AGB.display_statement(db, id);
-                  } else if(type == "argument") {
-                      AGB.display_argument(db, id);
-                  } else if(type == "map") {
-                      AGB.display_map(db);
-                  } else {
-                      AGB.display_argumentgraph(db);        
-                  }                                    
+                AGB.display_statement(db, id);
+            } else if(type == "argument") {
+                AGB.display_argument(db, id);
+            } else if(type == "map") {
+                AGB.display_map(db);
+            } else if (type == "vote") {
+                catb.views.pmt.vote.display_vote();
+            } else {
+                AGB.display_argumentgraph(db);        
+            }                                    
         });
 
 };
