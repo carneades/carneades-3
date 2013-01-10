@@ -101,6 +101,7 @@ AGB.argument_html = function(db, argument_data)
     argument_data.pmt_menu_policies = $.i18n.prop('pmt_menu_policies');
 
     argument_data.pmt_ag_menu_export = $.i18n.prop('pmt_ag_menu_export');
+    argument_data.pmt_ag_menu_vote = $.i18n.prop('pmt_vote');
     argument_data.pmt_ag_menu_evaluate = $.i18n.prop('pmt_ag_menu_evaluate');
     argument_data.pmt_ag_menu_map = $.i18n.prop('pmt_ag_menu_map');
     
