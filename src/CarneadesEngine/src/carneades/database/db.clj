@@ -286,7 +286,6 @@
                                  (:description md) (create-translation (:description md))
                                  :else existing-description-id)
         delta (merge md {:description new-description-id})]
-    (prn "update-metadata, delta=" delta)
     (condp = (first (jdbc/update-values
                       :metadata
                       ["id=?" id]
