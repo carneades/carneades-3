@@ -284,11 +284,13 @@
                                                          (:description md))
                                      existing-description-id)
                                  (:description md) (create-translation (:description md))
-                                 :else existing-description-id)]
+                                 :else existing-description-id)
+        delta (merge md {:description new-description-id})]
+    (prn "update-metadata, delta=" delta)
     (condp = (first (jdbc/update-values
                       :metadata
                       ["id=?" id]
-                      (merge md {:description new-description-id})))
+                      delta))
       0 false
       1 true)))
 
@@ -457,18 +459,21 @@
   [id m]
   {:pre [(map? m)]}
   (let [m (dissoc m :positive)
-        header-id1 (if (:header m)
-                     (jdbc/with-query-results 
-                       res ["SELECT header FROM statement WHERE id=?" id]
-                       (if (empty? res) nil (:header (first res)))))
-        header-id2  (if header-id1 
-                      (do (update-metadata header-id1 (:header m))
-                          header-id1)
-                      (if (:header m) (create-metadata (merge (make-metadata) (:header m)))))
+        existing-header-id (if (:header m)
+                             (jdbc/with-query-results 
+                               res ["SELECT header FROM statement WHERE id=?" id]
+                               (if (empty? res) nil (:header (first res)))))
+        updating-header (and (:header m) existing-header-id)
+        new-header (if existing-header-id 
+                     (do (update-metadata existing-header-id (:header m))
+                         existing-header-id)
+                     (when (:header m)
+                       (create-metadata (merge (make-metadata) (:header m)))))
         text-id1 (when (:text m)
                    (jdbc/with-query-results 
                      res ["SELECT text FROM statement WHERE id=?" id]
                      (if (empty? res) nil (:text (first res)))))
+        updating-text (and (:text m) text-id1)
         text-id2  (if text-id1 
                     (do (update-translation text-id1 (:text m))
                         text-id1)
@@ -477,12 +482,14 @@
         standard (if (:standard m)
                    (standard->integer (keyword (:standard m)))
                    0)
-        delta (if text-id2
-                {:header header-id2
-                 :text text-id2
-                 :standard standard}
-                {:header header-id2
-                 :standard standard})]
+        delta (cond (or (and updating-header updating-text)
+                        (and (:header m) text-id2)) {:header new-header
+                                                     :text text-id2
+                                                     :standard standard}
+                        (:header m) {:header new-header
+                                     :standard standard}
+                        text-id2 {:text text-id2
+                                  :standard standard})]
     (condp = (first (jdbc/update-values
                       :statement
                       ["id=?" id]
