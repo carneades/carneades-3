@@ -28,4 +28,5 @@ PM.display_schemes = function(scheme_id) {
     
     $('#pm').html(theory_view.$el);
     PM.activate('#schemes-item');
+    PM.attach_lang_listener();
 };
