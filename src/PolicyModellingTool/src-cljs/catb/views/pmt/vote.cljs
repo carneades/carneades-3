@@ -29,6 +29,11 @@
   [vote-model id]
   (aget (.get vote-model "votes") id))
 
+(defn round-score
+  "Rounds the voting score to two decimals"
+  [score]
+  (.toFixed (js/Number. score) 2))
+
 (bb/defview Vote
   :className "pmt-vote"
   :events {"click .vote-now" :vote
@@ -62,11 +67,12 @@
               (let [scores (js->clj result :keywordize-keys true)]
                 (js/PM.busy_cursor_off)
                 (menu/with-item "#arguments-item"
-                  (template this :vote-results {:db db
-                                                :claim claim-text
-                                                :accepted_score (* 100 (:accepted scores))
-                                                :rejected_score (* 100 (:rejected scores))
-                                                :undecided_score (* 100 (:undecided scores))}))))
+                  (template this :vote-results
+                            {:db db
+                             :claim claim-text
+                             :accepted_score (round-score (* 100 (:accepted scores)))
+                             :rejected_score (round-score (* 100 (:rejected scores)))
+                             :undecided_score (round-score (* 100 (:undecided scores)))}))))
             js/PM.on_error))))))
 
 (defn ^:export display-vote
