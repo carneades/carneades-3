@@ -7,7 +7,7 @@ bib =  manual.bib
 # directory in which to put output documents
 out = out
 
-all: manual.pdf manual.epub manual.docx manual.html
+all: manual.pdf manual.epub manual.html
 
 manual.pdf: manual.md
 	gpp $(g) manual.md | \
