@@ -6,9 +6,8 @@
   (:use clojure.pprint
         carneades.engine.uuid
         carneades.engine.dublin-core)
-  (:require
-        [carneades.database.db :as db]
-        [clojure.java.jdbc :as jdbc]))
+  (:require [carneades.database.db :as db]
+            [clojure.java.jdbc :as jdbc]))
 
 
 (defn create-debate-database
@@ -20,16 +19,45 @@
       db
       (jdbc/transaction
         
+        (jdbc/create-table
+         :poll
+         [:id "int auto_increment primary key not null"]
+         [:userid "varchar not null"]
+         [:casedb "varchar not null"]
+         [:mainissueatompredicate "varchar not null"]
+         [:opinion "double"]
+         ;; enforce that a user is voting only once for a case
+         ["UNIQUE KEY (userid, casedb)"]
+         )
+
         (jdbc/create-table 
           :debate
           [:id "varchar primary key not null"]  ; URN 
           [:created "varchar"]   ; date; http://www.w3.org/TR/NOTE-datetime     
           [:title "varchar"]                       
-          [:public "boolean not null"]) ; true if published
+          [:public "boolean not null"] ;; true if published
+          )
+
+        (jdbc/create-table
+         ;; links debate to their polls
+         :vote
+         [:debate "varchar not null"]
+         [:poll "varchar not null"]
+         ["foreign key(debate) references debate(id)"]
+         ["foreign key(poll) references poll(id)"])
+
+        (jdbc/create-table
+         ;; links poll to policies
+         :policy
+         [:id "int auto_increment primary key not null"]
+         [:poll "int not null"]
+         [:policy "varchar not null"]
+         ["foreign key(poll) references poll(id)"]
+         )
         
         ;; Grant read access to the public role
         ;; and create a guest user account with this role.
-        (jdbc/do-commands "grant select on debate to public"
+        (jdbc/do-commands "grant select on debate, poll, vote, policy to public"
                           "create user guest password ''"
                           "grant public to guest")
         
@@ -39,6 +67,17 @@
 ; Debates
 
 (defn create-debate
+  "map -> urn
+   Given a {:title ...} map, creates a debate 
+   record and inserts it into the admin database.  
+   "
+  [m]   
+  {:pre [(map? m)]}
+  (let [id (or (:id m) (make-urn))]
+    (jdbc/insert-record :debate (assoc m :id id))
+    id))
+
+(defn create-debate-with-database
   "map -> urn
    Given a {:title ..., :password ...} map, creates a debate 
    record and inserts it into the admin database.  
@@ -71,10 +110,9 @@
 (defn list-debates
   "Returns a sequence of all the debate records in the database"
   []
-  (let [ids (jdbc/with-query-results 
-              res1 ["SELECT id FROM debate"]
-              (doall (map :id res1)))]
-    (doall (map (fn [id] (read-debate id)) ids))))
+  (jdbc/with-query-results 
+    res1 ["SELECT * FROM debate"]
+    (doall res1)))
 
 (defn update-debate
   "urn map -> boolean
@@ -96,5 +134,66 @@
   {:pre [(urn? id)]}
   (jdbc/delete-rows :debate ["id=?" id])
   true)
+
+(defn list-polls
+  "Returns a sequence of all the polls in the database for the given debate."
+  [id]
+  (jdbc/with-query-results 
+    res [(str "SELECT id, userid, mainissueatompredicate, opinion FROM poll "
+              "INNER JOIN vote ON poll.id = vote.poll AND vote.debate = ?") id]
+    (or (doall res) ())))
+
+(defn create-poll
+  "Adds a poll for the debate table and returns its id."
+  [debateid poll policies]
+  (let [id (first (vals (jdbc/insert-record :poll poll)))]
+    (jdbc/insert-record :vote {:debate debateid
+                               :poll id})
+    (doseq [policy policies]
+      (jdbc/insert-record :policy {:poll id
+                                   :policy policy}))
+    id))
+
+(defn read-poll
+  "Retrieves the poll having the given id."
+  [pollid]
+  (jdbc/with-query-results
+    res ["SELECT * FROM poll WHERE id = ?" pollid]
+    (first res)))
+
+(defn get-opinions-for-case
+  "Retrieves all opinions for the given case."
+  [debateid casedb]
+  (jdbc/with-query-results
+    res [(str "SELECT opinion FROM poll "
+              "INNER JOIN vote ON poll.id = vote.poll AND vote.debate = ? "
+              "AND casedb = ?")
+         debateid casedb]
+    (doall (map :opinion res))))
+
+(defn get-policies-for-debate
+  "Retrieves all matched policies for the given debate."
+  [debateid]
+  (jdbc/with-query-results
+    res [(str "SELECT policy FROM policy "
+              "INNER JOIN vote, poll WHERE policy.poll = poll.id AND poll.id = vote.poll "
+              "AND vote.debate = ?")
+         debateid]
+    (doall (map :policy res))))
+
+(defn count-polls-for-debate
+  "Returns the number of vote for the debate"
+  [debateid]
+  (jdbc/with-query-results
+    res [(str "SELECT count(*) FROM poll "
+              "INNER JOIN vote WHERE poll.id = vote.poll AND vote.debate = ?")
+         debateid]
+    (first (vals (first res)))))
+
+(defn update-poll
+  "Updates a poll with the values of the m map.
+Returns true if the update was successful."
+  [pollid m]
+  (= (first (jdbc/update-values :poll ["id = ?" pollid] m)) 1))
 
 

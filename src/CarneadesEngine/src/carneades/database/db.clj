@@ -41,6 +41,12 @@
                                              File/separator
                                              "data/databases")))
 
+(defn dbfilename
+  "Returns the filename of a database."
+  [dbname]
+  (str default-db-host "/" dbname ".h2.db"))
+
+
 (defn fetch-databases-names
   "Looks on the disk to find all existing databases. Returns their names"
   []
@@ -359,7 +365,7 @@
 
 (defn read-statement
   "string -> statement or nil
-   Retreives the statement with the give id from the database.
+   Retrieves the statement with the give id from the database.
    Returns nil if there is not statement with this id."
   [id]
   {:pre [(string? id)]}

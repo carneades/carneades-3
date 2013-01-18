@@ -3,7 +3,7 @@
 
 (ns carneades.web.service
   (:use clojure.pprint
-         [compojure.core]
+        compojure.core
          (carneades.engine uuid policy unify statement argument scheme dublin-core utils
                            argument-evaluation aspic)
          (carneades.web pack outline)
@@ -14,7 +14,9 @@
          carneades.xml.caf.export
          carneades.web.walton-schemes
          ring.util.codec
-         [ring.middleware.format-response :only [wrap-restful-response]])
+         [carneades.engine.utils :only [sha256]]
+         [ring.middleware.format-response :only [wrap-restful-response]]
+         [ring.middleware.cookies :only [wrap-cookies]])
   (:require [clojure.data.json :as json]
             [compojure.route :as route]
             [compojure.handler :as handler]
@@ -36,36 +38,82 @@
         authdata (String. (base64-decode authorization))]
     (str/split authdata #":")))
 
-
-;; We don't use the defroutes macro.
-;; This allow handlers to be reused in another project
+(def ^{:dynamic true} *debatedb-name* "debates")
 
 (defroutes carneades-web-service-routes
       
   ;; Debates
            
   (GET "/debate" [] 
-       (let [db2 (make-database-connection "debates" "guest" "")]
+       (let [db2 (make-database-connection *debatedb-name* "guest" "")]
          (with-db db2 {:body (list-debates)})))
       
   (GET "/debate/:id" [id]
-       (let [db2 (make-database-connection "debates" "guest" "")]
+       (let [db2 (make-database-connection *debatedb-name* "guest" "")]
          (with-db db2 {:body (read-debate id)})))
       
   (POST "/debate" request
         (let [m (json/read-json (slurp (:body request)))
               [username password] (get-username-and-password request)
-              db (make-database-connection "debates" username password)]
-          (with-db db {:body (create-debate m)}))) 
+              db (make-database-connection *debatedb-name* username password)]
+          (with-db db {:body (create-debate m)})))
       
   (PUT "/debate/:id" request   
        (let [m (json/read-json (slurp (:body request)))
              [username password] (get-username-and-password request)
-             db (make-database-connection "debates" username password)
+             db (make-database-connection *debatedb-name* username password)
              id (:id (:params request))]
-         (with-db db {:body (update-debate id m)}))) 
+         (with-db db {:body (update-debate id m)})))
+
+  (GET "/debate-poll/:debateid" [debateid]
+       (with-db (make-database-connection *debatedb-name* "guest" "")
+         {:body (list-polls debateid)}))
+  
+  (GET "/debate-poll/:debateid/:id" request
+       (let [id (get-in request [:params :id])
+             dbconn (make-database-connection *debatedb-name* "guest" "")]
+         (with-db dbconn
+           {:body (read-poll id)})))
+
+  (POST "/debate-poll/:debateid" request
+        (let [m (json/read-json (slurp (:body request)))
+              cookies (:cookies request)
+              cookieid (get-in cookies ["ring-session" :value])
+              policies (map str (vote/find-policies-matching-vote m))
+              m (dissoc m :id :policykey :qid :issueid)
+              ;; the userid of the poll is a sha256 hash of the cookie id
+              ;; thus we are sure the user can vote only once for the session.
+              ;; The id is hashed to prevent other users of guessing the cookie
+              ;; number by calling the GET debate-poll API.
+              id (sha256 cookieid)
+              m (assoc m :userid id)
+              debateid (get-in request [:params :debateid])
+              [username password] (get-username-and-password request)
+              dbconn (make-database-connection *debatedb-name* username password)]
+          (with-db dbconn
+            (let [id (create-poll debateid m policies)]
+             {:body {:id id}}))))
+  
+  (PUT "/debate-poll/:debateid" request
+       ;; TODO: users can modify the vote of the others!
+       {:status 404}
+       ;; (let [m (json/read-json (slurp (:body request)))
+       ;;       debateid (get-in request [:params :debateid])
+       ;;       [username password] (get-username-and-password request)
+       ;;       dbconn (make-database-connection *debatedb-name* username password)]
+       ;;    (with-db dbconn
+       ;;      (when (update-poll (:id m) (dissoc m :id))
+       ;;        {:body (read-poll (:id m))})))
+       )
+
+  ;; poll results for the PMT (not for the SCT)
+  (GET "/poll-results/:debateid/:casedb" [debateid casedb]
+       {:body (vote/vote-stats debateid casedb)})
+  
+  (GET "/aggregated-poll-results/:debateid" [debateid]
+       {:body (vote/aggregated-vote-stats debateid)})
       
-                                        ; To Do: Deleting debates
+  ;; To Do: Deleting debates, poll-debate
        
   ;; Metadata        
   (GET "/metadata/:db" [db] 
@@ -384,11 +432,6 @@
             (with-db db2
               {:body              (delete-argument-poll (Integer/parseInt id))})))
 
-  ;; poll results for the PMT (not for the SCT)
-  (GET "/poll-results/:db" request
-       (let [db (:db (:params request))]
-         {:body         (vote/vote-stats db)}))
-
   ;; Aggregated information
       
   (GET "/argumentgraph-info/:db" [db]
@@ -581,7 +624,8 @@
 
 (def carneades-web-service
   (-> (handler/site carneades-web-service-routes)
-      (wrap-restful-response)))
+      (wrap-restful-response)
+      (wrap-cookies)))
 
 ;;; utilities functions to test the service 
 (defn get-request [resource web-app & params]

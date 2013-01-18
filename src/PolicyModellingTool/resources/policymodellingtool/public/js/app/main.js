@@ -70,6 +70,8 @@ PM.dispatch_url = function(sections) {
         PM.dispatch_sct_url(sections[2]);
     } else if(sections[1] == "repl") {
         catb.repl.connect();
+    } else if(sections[1] == "report") {
+        catb.views.pmt.report.display();
     }
 };
 
@@ -373,6 +375,7 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
                    'js/app/models/premise-candidate.js',
                    'js/app/models/conclusion-candidate.js',
                    'js/app/models/metadata-candidate.js',
+                   'js/app/models/debate-poll.js',
                    'js/app/collections/argument-polls.js',
                    'js/app/collections/statement-polls.js',
                    'js/app/collections/statements.js',
@@ -468,7 +471,8 @@ PM.load_templates = function(toolboxState) {
             'sct_comparison',
             'vote',
             'after_vote',
-            'vote_results' 
+            'vote_results',
+            'report'
            ],
            function(name) {
                var url = toolboxState == undefined ?
