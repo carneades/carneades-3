@@ -14,13 +14,7 @@ PM.set_arguments_url = function(db) {
 PM.display_arguments = function(db, type, id) {
     IMPACT.facts_state = 'done';
     
-    var arguments_html = ich.arguments({pmt_menu_intro: $.i18n.prop('pmt_menu_intro'),
-                                        pmt_menu_issues: $.i18n.prop('pmt_menu_issues'),
-                                        pmt_menu_facts: $.i18n.prop('pmt_menu_facts'),
-                                        pmt_menu_arguments: $.i18n.prop('pmt_menu_arguments'),
-                                        pmt_menu_schemes: $.i18n.prop('pmt_menu_schemes'),
-                                        pmt_menu_policies: $.i18n.prop('pmt_menu_policies') 
-                                       });
+    var arguments_html = ich.arguments(PM.merge_menu_props({}));
     
     if(_.isNil(db)) {
         db = IMPACT.db;
@@ -35,30 +29,14 @@ PM.display_arguments = function(db, type, id) {
     }
     
     IMPACT.db = db;
-
     
     $('#pm').html(arguments_html.filter("#arguments"));
     PM.activate('#arguments-item');
     PM.attach_lang_listener();
 
-    if(PM.current_statement_polls == undefined) {
-        PM.current_statement_polls = new PM.StatementPolls([], {db: IMPACT.db});
-    }
-    
     $.when(PM.arguments.fetch(),
-           PM.statements.fetch(),
-           PM.current_statement_polls.fetch()).then(
+           PM.statements.fetch()).then(
         function() {
-            PM.current_statement_poll = PM.current_statement_polls.get('vote-from-argument-page');
-            if(PM.current_statement_poll == undefined) {
-                PM.current_statement_poll = new PM.StatementPoll({votes: {}, id: 'vote-from-argument-page'}, IMPACT.db);
-            } else {
-                PM.current_statement_poll.db = IMPACT.db;
-            }
-
-            console.log('current_statement_poll=');
-            console.log(PM.current_statement_poll.toJSON());
-            
             if (type == "statement")  {
                 AGB.display_statement(db, id);
             } else if(type == "argument") {
@@ -66,10 +44,35 @@ PM.display_arguments = function(db, type, id) {
             } else if(type == "map") {
                 AGB.display_map(db);
             } else if (type == "vote") {
-                catb.views.pmt.vote.display_vote();
+                catb.views.pmt.vote.display();
             } else {
                 AGB.display_argumentgraph(db);        
             }                                    
         });
 
+};
+
+PM.current_mainissueatompredicate = function() {
+    var current_issue = PM.current_issue();
+    if(current_issue == undefined) {
+        return undefined;
+    }
+    var match = current_issue.atom.match(/\(([^ ]+) /);
+    var mainissueatompredicate = "";
+    if(match) {
+        mainissueatompredicate = match[1];
+    } else {
+        return undefined;
+    }
+
+    return mainissueatompredicate;
+};
+
+PM.current_case_pollid = function() {
+    var pollid = PM.get_cookies()['pollid-' + IMPACT.db];
+    if(!pollid) {
+        return undefined;
+    }
+
+    return parseInt(pollid, 10);
 };

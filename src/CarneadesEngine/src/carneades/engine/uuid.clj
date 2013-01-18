@@ -23,6 +23,11 @@
   [uuid]
   {:pre [(uuid? uuid)]}
   (.toString uuid))
+
+(defn make-uuid-str
+  "Makes a UUID and returns its standard string representation"
+  []
+  (uuid->string (make-uuid)))
  
 (defn uuid->urn 
   "Converts a UUID to a  Universal Resource Name (URN) in the UUID namespace."
