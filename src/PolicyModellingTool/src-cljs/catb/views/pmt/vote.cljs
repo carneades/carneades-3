@@ -40,8 +40,8 @@
            "click .show-vote-results" :show-vote-results}
   :render
   ([]
-     (bb/with-attrs [:claim :lang :current-statement-poll]
-       (if (vote-score current-statement-poll (.-id claim))
+     (bb/with-attrs [:claim :lang :current-case-pollid]
+       (if current-case-pollid
          (.show_vote_results this)
          (menu/with-item "#arguments-item"
            (let [claim-text (aget (.-text claim) lang)]
@@ -51,8 +51,22 @@
   :vote
   ([]
      (menu/with-item "#arguments-item"
-      (bb/with-attrs [:db :claim :current-statement-poll]
-        (send-vote current-statement-poll (.-id claim) (get-vote-score))
+      (bb/with-attrs [:db :claim]
+        (.save (js/PM.DebatePoll.
+                (clj->js {:opinion (get-vote-score)
+                          :mainissueatompredicate
+                          (js/PM.current_mainissueatompredicate)
+                          :casedb js/IMPACT.db
+                          :policykey js/IMPACT.current_policy
+                          :qid js/IMPACT.question
+                          :issueid (.-id (js/PM.current_issue))}))
+               nil
+               (clj->js {:success (fn [response]
+                                    (set! js/document.cookie
+                                          (str "pollid-" js/IMPACT.db
+                                               "="
+                                               (.-id response))))
+                         :error js/PM.on_model_error}))
         (template this :after-vote {:db db}))))
 
   :show-vote-results
@@ -62,7 +76,8 @@
          (let [claim-text (aget (.-text claim) lang)]
            (js/PM.busy_cursor_on)
            (js/PM.ajax_get
-            (str js/IMPACT.wsurl "/poll-results/" db)
+            (str js/IMPACT.wsurl "/poll-results/" js/IMPACT.debate_db "/"
+                 js/IMPACT.db)
             (fn [result]
               (let [scores (js->clj result :keywordize-keys true)]
                 (js/PM.busy_cursor_off)
@@ -75,7 +90,7 @@
                              :undecided_score (round-score (* 100 (:undecided scores)))}))))
             js/PM.on_error))))))
 
-(defn ^:export display-vote
+(defn ^:export display
   "Displays the vote page for an argument graph"
   []
   (let [vote-view (bb/new
@@ -84,7 +99,8 @@
                             {:claim (js/PM.current_issue)
                              :lang js/IMPACT.lang
                              :db js/IMPACT.db
-                             :current-statement-poll js/PM.current_statement_poll})})]
+                             :current-case-pollid
+                             (js/PM.current_case_pollid)})})]
     (inner ($ "#pm") (.-$el vote-view))
     (bb/render vote-view))
   false)

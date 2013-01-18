@@ -2,7 +2,7 @@
 // Licensed under the EUPL V.1.1
 
 PM.policies_url = function() {
-    return 'arguments';    
+    return 'policies';    
 };
 
 PM.set_policies_url = function() {
@@ -84,24 +84,18 @@ PM.display_policies = function(sectionid, subset) {
                     
                     var template_variables = _.clone(current_policy);
                     _.extend(template_variables, 
-                             {current_issue: $.i18n.prop('pmt_current_issue'),
-                              issue: PM.get_issue_text(),
-                              can_display: $.i18n.prop('pmt_can_display'),
-                              all_policies: $.i18n.prop('pmt_all_policies'),
-                              policies_making_in: $.i18n.prop('pmt_policies_making_in'),
-                              policies_making_out: $.i18n.prop('pmt_policies_making_out'),
-                              policies_making_undecided: $.i18n.prop('pmt_policies_making_undecided'),
-                              pmt_intro_pmt: $.i18n.prop('pmt_intro_pmt'),
-                              pmt_menu_intro: $.i18n.prop('pmt_menu_intro'),
-                              pmt_menu_issues: $.i18n.prop('pmt_menu_issues'),
-                              pmt_menu_facts: $.i18n.prop('pmt_menu_facts'),
-                              pmt_menu_arguments: $.i18n.prop('pmt_menu_arguments'),
-                              pmt_menu_schemes: $.i18n.prop('pmt_menu_schemes'),
-                              pmt_menu_policies: $.i18n.prop('pmt_menu_policies'),
-                              pmt_table_of_contents: $.i18n.prop('pmt_table_of_contents'),
-                              pmt_see_effects: $.i18n.prop('pmt_see_effects'),
-                              pmt_policies_filtering_indication: $.i18n.prop('pmt_policies_filtering_indication'),
-                             });
+                             PM.merge_menu_props({current_issue: $.i18n.prop('pmt_current_issue'),
+                                                  issue: PM.get_issue_text(),
+                                                  can_display: $.i18n.prop('pmt_can_display'),
+                                                  all_policies: $.i18n.prop('pmt_all_policies'),
+                                                  policies_making_in: $.i18n.prop('pmt_policies_making_in'),
+                                                  policies_making_out: $.i18n.prop('pmt_policies_making_out'),
+                                                  policies_making_undecided: $.i18n.prop('pmt_policies_making_undecided'),
+                                                  pmt_intro_pmt: $.i18n.prop('pmt_intro_pmt'),
+                                                  pmt_table_of_contents: $.i18n.prop('pmt_table_of_contents'),
+                                                  pmt_see_effects: $.i18n.prop('pmt_see_effects'),
+                                                  pmt_policies_filtering_indication: $.i18n.prop('pmt_policies_filtering_indication'),
+                                                 }));
 
                     var current_policy_html = ich.policies(template_variables);
                     $('#pm').html(current_policy_html.filter("#policies"));
@@ -292,4 +286,34 @@ PM.format_sexpr = function(sexpr, language_clj, lang) {
     txt = PM.capitalize(txt);
 
     return txt;
+};
+
+// Returns the header of the current policy
+PM.get_policy_header = function(policy_id) {
+    var global_policy = PM.policies.get(IMPACT.current_policy);
+    var sections = global_policy.sections;
+    for(var i = 0; i < sections.length; i++) {
+        var subsection = sections[i].sections;
+        for(var j = 0; j < subsection.length; j++) {
+            if(subsection[j].id == policy_id) {
+                return subsection[j].header;
+            }
+        }
+    }
+};
+
+// Returns the all the policies ids of the current policy
+PM.get_policies_ids = function() {
+    var global_policy = PM.policies.get(IMPACT.current_policy);
+    var sections = global_policy.sections;
+    var policies = [];
+    
+    for(var i = 0; i < sections.length; i++) {
+        var subsection = sections[i].sections;
+        for(var j = 0; j < subsection.length; j++) {
+            policies.push(subsection[j].id);
+        }
+    }
+
+    return policies;
 };
