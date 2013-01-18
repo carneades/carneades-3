@@ -7,21 +7,21 @@
         (carneades.engine statement uuid dublin-core argument)
         carneades.web.service
         clojure.data.json)
-  (:require [carneades.database.db :as db])
+  (:require [carneades.database.db :as db]
+            [carneades.database.admin :as admin])
   (:import java.io.File))
 
 ;; (def tmpdir (System/getProperty "java.io.tmpdir"))
 
-(def dbname (str "testdb-" (uuid->string (make-uuid))))
+(def dbname (str "testdb-" (make-uuid-str)))
 
-(def dbfilename (str db/default-db-host "/" dbname ".h2.db"))
+(def debatedb-name (str "testdb-debate-" (make-uuid-str)))
 
 (def auth-header "Basic cm9vdDpwdzE=") ;; encoded root:pw1
 
 (defn create-tmp-db
   []
-  ;; (printf "Creating %s\n" dbfilename)
-  (db/create-argument-database 
+ (db/create-argument-database 
    dbname 
    "root" 
    "pw1" 
@@ -29,10 +29,33 @@
 
 (defn delete-tmp-db
   []
-  ;; (printf "Deleting %s\n" dbfilename)
-  (.delete (File. dbfilename)))
+  (.delete (File. (db/dbfilename dbname))))
 
-(defn db-fixture [x] (create-tmp-db) (x) (delete-tmp-db))
+(defn create-tmp-debatedb
+  []
+  (admin/create-debate-database debatedb-name "root" "pw1"))
+
+(defn delete-tmp-debatedb
+  []
+  (.delete (File. (db/dbfilename debatedb-name))))
+
+(defn create-debate
+  []
+  (db/with-db (db/make-database-connection debatedb-name "root" "pw1")
+    (admin/create-debate {:public false :id dbname})))
+
+(defn create-tmp-dbs
+  []
+  (create-tmp-db)
+  (create-tmp-debatedb)
+  (create-debate))
+
+(defn delete-tmp-dbs
+  []
+  (delete-tmp-db)
+  (delete-tmp-debatedb))
+
+(defn db-fixture [x] (create-tmp-dbs) (x) (delete-tmp-dbs))
 
 (use-fixtures :once db-fixture) 
 
@@ -43,6 +66,43 @@
 
 (defn make-some-string [prefix]
   (str prefix "-" (gensym)))
+
+(deftest post-debate-poll
+  (binding [*debatedb-name* debatedb-name]
+    (let [poll {:mainissueatompredicate "may-publish"
+                :opinion 0.8}
+          cookieid (make-uuid-str)
+          res (post-request (str "/debate-poll/" dbname) carneades-web-service
+                            {"authorization" auth-header
+                             "cookie" (str "ring-session=" cookieid)}
+                            (json-str poll))
+          id (:id (read-json (slurp (:body res))))
+          poll (assoc poll :id id)
+          res2 (get-request (str "/debate-poll/" dbname "/" id) carneades-web-service)
+          created-poll (read-json (slurp (:body res2)))]
+      (is (= (:mainissueatompredicate poll) (:mainissueatompredicate created-poll)))
+      (is (= (:opinion poll) (:opinion created-poll))))))
+
+;; (deftest put-debate-poll
+;;   (binding [*debatedb-name* debatedb-name]
+;;     (let [poll {:mainissueatompredicate "may-publish"
+;;                 :opinion 0.8}
+;;           cookieid (make-uuid-str)
+;;           res (post-request (str "/debate-poll/" dbname) carneades-web-service
+;;                             {"authorization" auth-header
+;;                              "cookie" (str "ring-session=" cookieid)}
+;;                             (json-str poll))
+;;           poll (assoc poll :id (:id (read-json (slurp (:body res)))))
+;;           new-opinion 0.777
+;;           new-poll (assoc poll :opinion new-opinion)
+;;           update-res (put-request (str "/debate-poll/" dbname) carneades-web-service
+;;                             {"authorization" auth-header}
+;;                             (json-str new-poll))
+;;           res3 (get-request (str "/debate-poll/" dbname "/" (:id poll)) carneades-web-service)
+;;           result (read-json (slurp (:body res3)))]
+;;       (is (not= 404 (:status update-res)))
+;;       (is (= new-opinion (:opinion result))))))
+
 
 ;; (defn make-some-metadata
 ;;   []

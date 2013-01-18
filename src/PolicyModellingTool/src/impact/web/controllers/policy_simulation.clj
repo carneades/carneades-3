@@ -11,7 +11,9 @@
          (carneades.engine policy scheme dialog unify utils)
          [carneades.engine.statement :only (neg literal-predicate variable? literal-atom variables)]
          [clojure.tools.logging :only (info debug error)])
-  (:require [carneades.engine.scheme :as scheme]))
+  (:require [carneades.engine.scheme :as scheme]
+            [carneades.database.admin :as admin]
+            [carneades.database.db :as db]))
 
 (defmulti ajax-handler (fn [json _] (ffirst json)))
 
@@ -144,3 +146,14 @@
 (defn dump-config
   []
   (config-page))
+
+(defn init-debate-db
+  []
+  (when (not (exists? (db/dbfilename "debates")))
+    (admin/create-debate-database "debates" "root" "pw1")
+    (db/with-db (db/make-database-connection "debates" "root" "pw1")
+      (admin/create-debate {:title "Copyright in the Knowledge Economy"
+                            :public true
+                            :id "copyright"}))))
+
+(init-debate-db)
