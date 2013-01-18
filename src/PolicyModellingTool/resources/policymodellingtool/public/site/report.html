@@ -1,0 +1,21 @@
+<div id="report">
+
+  {{>pmmenu}}
+
+  <h2>{{pmt_report}}</h2>
+
+  <p>
+    <table class="vote-table">
+      <tr>
+        <th>{{pmt_policy}}</th>
+        <th>{{pmt_agreement}}</th>
+      </tr>
+      <tbody>
+        {{#policies}}
+        <tr><td><a href="{{url}}">{{name}}</a></td><td>{{agreement}}%</td></tr>
+        {{/policies}}
+      </tbody>
+    </table>
+  </p>
+
+</div>
