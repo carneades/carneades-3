@@ -25,6 +25,8 @@
        (let [questions (js->clj questions :keywordize-keys true)
              flat-questions (apply concat (vals questions))]
          (template this :submitted-facts {})
+         (js/PM.activate "#facts-item")
+         (js/PM.attach_lang_listener)
          (doseq [category (keys questions)]
            (show-questions (clj->js (questions category)) (.$ this ".questions")
                            (fn []
