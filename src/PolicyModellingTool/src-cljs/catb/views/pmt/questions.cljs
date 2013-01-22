@@ -127,12 +127,25 @@
         (:yesnoquestion question) (get-yes-no-question-html question)
         :else (get-ungrounded-question-html question)))
 
+(defn set-default-value
+  "Sets the default value for the question, if one is provided."
+  [question]
+  (when (:default question)
+    (if (:yesnoquestion question)
+      (let [el ($ (str "#q" (:id question)
+                       " input[value='"
+                       (:default question) "']"))]
+        (.attr el "checked" true))
+      (let [el ($ (str "#q" (:id question) " select"))]
+        (.val el (:default question))))))
+
 (defn add-question-html
   "Adds one question to the list of questions"
   [question questionslist]
   (append questionslist (format "<p><i>%s</i></p>"
                                (or (:hint question) "")))
   (append questionslist (get-question-html question))
+  (set-default-value question)
   (append questionslist "<br/>"))
 
 (defn ^:export show-questions
@@ -154,4 +167,3 @@
     (.validate ($ "#questionsform"))
     (js/PM.scroll_to_bottom)
     false))
-
