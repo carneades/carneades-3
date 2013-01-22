@@ -27,9 +27,11 @@ PM.display_facts = function() {
                      IMPACT.password,
                      PM.on_error);    
     } else {
-        var facts_html = ich.facts(PM.merge_menu_props({}));
+        var facts_html = ich.ask_modify_facts(PM.merge_menu_props(
+            {'pmt_facts_already_submitted': $.i18n.prop('pmt_facts_already_submitted'),
+             'pmt_modify_facts': $.i18n.prop('pmt_modify_facts')}));
+        
         $('#pm').html(facts_html.filter("#facts"));
-        $('#pm').append('<div>' + $.i18n.prop('pmt_facts_not_available') + '</div>');
         PM.activate('#facts-item');
         PM.attach_lang_listener();
     }
