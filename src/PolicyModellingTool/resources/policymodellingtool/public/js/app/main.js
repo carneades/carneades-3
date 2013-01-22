@@ -476,7 +476,8 @@ PM.load_templates = function(toolboxState) {
             'after_vote',
             'vote_results',
             'report',
-            'submitted_facts'
+            'submitted_facts',
+            'ask_modify_facts'
            ],
            function(name) {
                var url = toolboxState == undefined ?
