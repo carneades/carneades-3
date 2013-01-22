@@ -18,8 +18,6 @@ var IMPACT = {
 };
 
 // This object contains the functions and acts as a kind of namespace.
-// We don't put variables in it since mixing data and functions with objects
-// is too often a bad idea
 var PM = {
 };
 
@@ -55,7 +53,7 @@ PM.dispatch_url = function(sections) {
     if(sections[1] == "issues") {
         PM.display_issues();
     } else if(sections[1] == "facts") {
-        PM.display_facts();
+        PM.dispatch_facts_url(sections[2]);
     } else if(sections[1] == "arguments") {
         PM.display_arguments(sections[3], sections[2], sections[4]); 
     } else if(sections[1] == "policies") {
@@ -75,16 +73,24 @@ PM.dispatch_url = function(sections) {
     }
 };
 
-PM.dispatch_sct_url = function(section_name) {
-    if(section_name == "intro") {
+PM.dispatch_facts_url = function(section) {
+    if(section == "modify") {
+        catb.views.pmt.submitted_facts.display_facts();
+    } else {
+        PM.display_facts();
+    }
+};
+
+PM.dispatch_sct_url = function(section) {
+    if(section == "intro") {
         PM.display_sct_intro();
-    } else if(section_name == "issues") {
+    } else if(section == "issues") {
         PM.display_sct_issues();
-    } else if(section_name == "question") {
+    } else if(section == "question") {
         PM.display_sct_question();
-    } else if(section_name == "summary") {
+    } else if(section == "summary") {
         PM.display_sct_summary();
-    } else if(section_name == "comparison") {
+    } else if(section == "comparison") {
         PM.display_sct_comparison();
     }
 };
@@ -232,9 +238,6 @@ PM.init_i18n = function(callbackfn) {
                  }
          }
         });
-
-
-    
 };
 
 PM.common_post_load = function() {
@@ -472,7 +475,8 @@ PM.load_templates = function(toolboxState) {
             'vote',
             'after_vote',
             'vote_results',
-            'report'
+            'report',
+            'submitted_facts'
            ],
            function(name) {
                var url = toolboxState == undefined ?
@@ -573,14 +577,8 @@ PM.scroll_to = function(selector) {
 
 PM.busy_cursor_on = function() {
     $("*").css("cursor", "progress");
-    // $("input").css("cursor", "progress");
-    // $("a").css("cursor", "progress");
-    // $("p").css("cursor", "progress");
 };
 
 PM.busy_cursor_off = function() {
     $("*").css("cursor", "default");
-    // $("input").css("cursor", "default");
-    // $("a").css("cursor", "default");
-    // $("p").css("cursor", "default");
 };

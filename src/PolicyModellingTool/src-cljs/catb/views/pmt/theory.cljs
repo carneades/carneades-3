@@ -330,17 +330,14 @@ call or a symbol."
 
 (defn ^:export format-statement
   "Uses the formular to returns a user-readable sentence describing the literal.
-   Selector is \"positive\", \"negative\" or \"question\"
-Language is ClojureScript map
-(for efficiency reason the conversion is not done in this function)."
+   Selector is positive, negative or question
+Language is a ClojureScript map.
+ (for efficiency reason the conversion is not done in this function)."
   [literal language lang selector]
-  (let [;; language (js->clj language :keywordize-keys true)
-        literal (array->literal literal)
+  (let [literal (array->literal literal)
         pred (keyword (literal-predicate literal))
         lang (keyword lang)
-        selector (keyword selector)
-        ;; _ (log "1: " (get-in language [pred]))
-        ]
+        selector (keyword selector)]
     (cond (string? literal)
           literal
           (get-in language [pred])
