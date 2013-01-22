@@ -7,24 +7,8 @@
         (carneades.engine aspic argument-evaluation argument-graph ask statement scheme
                           argument argument-graph shell unify dialog)
         (impact.web.logic questions)
-        [clojure.tools.logging :only (info debug error)])
+        [clojure.tools.logging :only (info debug error)]) 
   (:import java.io.File))
-
-(defn askable?
-  [theory p]
-  {:pre [(do
-           (prn "                ASKABLE:" p)
-           true)]
-   :post [(do
-            (prn "                ===>" %)
-            true)]}
-  (let [predicate (get-in theory [:language (literal-predicate p)])]
-    (and (literal-pos? p)
-         (or (:askable predicate) (:widgets predicate))
-         (or (predicate? predicate)
-             (concept? predicate)
-             (and (role? predicate)
-                  (ground? (first (term-args p))))))))
 
 (defn get-remaining-questions
   [ag session]

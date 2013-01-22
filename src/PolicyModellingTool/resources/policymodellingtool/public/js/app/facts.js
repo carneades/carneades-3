@@ -56,14 +56,8 @@ PM.show_questions_or_ag = function(data) {
     }
 };
 
-// Sends the answers to the server
-PM.send_answers = function(questions, on_response) {
-    // catb.views.pmt.facts.send_answers(questions, on_response);
-    // return false;
-    console.log('send_answers');
-    console.log(questions);
-    
-        var widget_to_val = {
+PM.collect_answer = function(qid) {
+    var widget_to_val = {
         text: function(input) {
             return input.val();
         },
@@ -81,39 +75,44 @@ PM.send_answers = function(questions, on_response) {
         }
     };
 
-    // for each question in the category
-    var answers_values = _.reduce(questions,
-                                 function(answers_values, question) {
-                                     var subquestions = $('#q{0}'.format(question.id));
-                                     
-                                     // for each subquestion
-                                     _.reduce(subquestions,
-                                              function(answers_values, subquestion) {
-                                                  subquestion = $(subquestion);
-                                                  var inputs = subquestion.find('.inputfield');
-                                                  
-                                                  // for each input field
-                                                  var vals = [];
-                                                  _.reduce(inputs,
-                                                           function(index, input) {
-                                                               var val = widget_to_val[input.type || 'select']($(input));
-                                                               if(val != null) {
-                                                                   console.log('input {0} has value {1}'.format(question.id, val));
-                                                                   vals.push(val);
-                                                               }
-                                                               
-                                                               return index + 1;
-                                                           },
-                                                           0);
-                                                  
-                                                  answers_values.push({id: question.id, values: vals});
-                                                  return answers_values;
-                                              },
-                                              answers_values);
+    var inputs = $('#q{0} .inputfield'.format(qid));
+    
+    // for each input field
+    var vals = [];
+    _.reduce(inputs,
+             function(index, input) {
+                 var val = widget_to_val[input.type || 'select']($(input));
+                 if(val != null) {
+                     console.log('input {0} has value {1}'.format(qid, val));
+                     vals.push(val);
+                 }
+                 
+                 return index + 1;
+             },
+             0);
 
-                                     return answers_values;
-                                 },
-                                  []);
+    return vals;
+};
+
+PM.collect_answers = function(questions) {
+    return _.reduce(questions,
+                    function(answers_values, question) {
+                        var vals = PM.collect_answer(question.id);
+                        answers_values.push({id: question.id, values: vals});
+                        return answers_values;
+                    },
+                    []);
+};
+
+// Sends the answers to the server
+PM.send_answers = function(questions, on_response) {
+    // catb.views.pmt.facts.send_answers(questions, on_response);
+    // return false;
+    console.log('send_answers');
+    console.log(questions);
+    
+    // for each question in the category
+    var answers_values = PM.collect_answers(questions);
 
     PM.busy_cursor_on();
     PM.ajax_post(IMPACT.simulation_url,
