@@ -11,9 +11,7 @@
   (GET "/config" [] (simulation/dump-config))
   (GET "/viewsession" {session :session} (str session))
   (GET "/" [] (simulation/init-page))
-  (POST "/PolicySimulation"
-        {session :session body :body params :params}
-        (simulation/process-ajax-request session body params))
+  (POST "/PolicySimulation" request (simulation/process-ajax-request request))
   (POST "/Translation"
         {session :session  body :body params :params}
         (translation/process-ajax-request session body params))
