@@ -67,9 +67,7 @@
   [values statement]
   (let [[s o v] statement
         value (first values)]
-    (if (= value 'None)
-      [statement 0.5]
-      [(list s o (symbol (first values))) 1.0])))
+    [(list s o (symbol (first values))) 1.0]))
 
 (defn reconstruct-answer
   [question theory values]
