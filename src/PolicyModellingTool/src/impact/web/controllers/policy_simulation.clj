@@ -155,11 +155,8 @@
         theory (policies (deref current-policy))
         facts (reconstruct-statements facts)
         to-modify (map (fn [q] (reconstruct-answer q theory (:values q))) facts)
-        [username password] (get-username-and-password request)
-        ]
-    (prn "username="username)
-    (prn "password="password)
-    (modify-statements db "root" "pw1" to-modify)
+        [username password] (get-username-and-password request)]
+    (modify-statements db "root" "pw1" to-modify theory)
     {:body ""}))
 
 (defn new-session
