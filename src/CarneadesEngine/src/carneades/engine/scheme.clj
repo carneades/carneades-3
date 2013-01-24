@@ -209,6 +209,12 @@ call or a symbol."
   (and (= (:min x) 1)
        (= (:max x) 1)))
 
+(defn replace-role-obj
+  "Changes the object in the role by a new object."
+  [role newobj]
+  (let [[p s o] role]
+    (list p s newobj)))
+
 (defn make-language
   "functor ... -> map"
   [& functors]
