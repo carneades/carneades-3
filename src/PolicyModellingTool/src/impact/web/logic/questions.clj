@@ -273,24 +273,18 @@ default-fn is a function returning the default formalized answer for a question.
     ;; (prn)
     questions))
 
-(defn update-statements-values
+(defn update-statements-weights
   "Updates the value of the statements in the db."
   [db username password statements]
-  (let [dbconn (db/make-database-connection db username password)
-        ag (export-to-argument-graph dbconn)]
+  (let [dbconn (db/make-database-connection db username password)]
    (db/with-db dbconn
-     (doseq [s (db/list-statements)]
-       (db/update-statement (str (:id s))
-                            {:value 0.5}))
-     (doseq [[stmt val] statements]
-       (let [sn (ag/get-statement-node ag stmt)]
-         (db/update-statement (str (:id sn))
-                              {:value val}))))))
+     (doseq [[literal val] statements]
+       (let [id (db/get-statement literal)]
+         (db/update-statement id {:weight val}))))))
 
 (defn modify-statements
   "Updates the values of the given statements in the db.
 Statements are represented as a collection of [statement value] element."
   [db username password statements]
-  (update-statements-values db username password statements)
-  ;; (evaluate-graph db username password)
-  )
+  (update-statements-weights db username password statements)
+  (evaluate-graph db username password))
