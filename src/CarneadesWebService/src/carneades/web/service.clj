@@ -603,7 +603,7 @@
   (POST "/evaluate-argument-graph/:db" request
        (let [[username password] (get-username-and-password request)
              db (:db (:params request))]
-         (evalute-graph db username password)
+         (evaluate-graph db username password)
          {:body true}))
 
   ;; Other 
