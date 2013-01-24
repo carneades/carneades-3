@@ -453,7 +453,7 @@
   [ag stmts]
   {:pre [(argument-graph? ag) 
          (every? literal? stmts)]}
-  ;; (println "stmts: " stmts)
+  (println "stmts: " stmts)
   (reduce (fn [ag2 stmt]
             (let [[ag3 sn] (create-statement-node ag2 stmt)]
               (update-statement-node 
