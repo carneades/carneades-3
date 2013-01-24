@@ -293,14 +293,14 @@ of 0.0"
             (db/update-statement other-id {:weight 0.0}))))))))
 
 (defn update-statements-weights
-  "Updates the value of the statements in the db."
+  "Updates the weight of the statements in the db."
   [db username password statements theory]
   (let [dbconn (db/make-database-connection db username password)]
    (db/with-db dbconn
      (doseq [[literal weight] statements]
        (smart-update-statement literal weight theory)))))
 
-(defn modify-statements
+(defn modify-statements-weights
   "Updates the values of the given statements in the db.
 Statements are represented as a collection of [statement value] element."
   [db username password statements theory]

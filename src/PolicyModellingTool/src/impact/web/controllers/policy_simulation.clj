@@ -8,16 +8,15 @@
         [carneades.engine.utils :only [safe-read-string exists?]]
         [impact.web.logic.askengine :only [start-engine send-answers-to-engine]]
         [impact.web.logic.questions :only [get-predicate get-questions-for-answers-modification
-                                           modify-statements]]
+                                           modify-statements-weights]]
         [impact.web.views.pages :only [index-page config-page]]
-        [carneades.engine.statement :only [neg literal-predicate variable? literal-atom variables]]
         [carneades.engine.unify :only [apply-substitutions]]
         [carneades.engine.dialog :only [get-nthquestion add-answers]]
         [ring.util.codec :only [base64-decode]])
-  (:require [carneades.engine.scheme :as scheme]
-            [carneades.database.db :as db]
+  (:require [carneades.database.db :as db]
             [carneades.database.admin :as admin]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [impact.web.controllers.reconstruction :as recons]))
 
 (defmulti ajax-handler (fn [json _ _] (ffirst json)))
 
@@ -45,61 +44,17 @@
   (let [session (assoc session :query (get-main-issue (:theory session) (symbol (:request json))))
         session (start-engine session)]
     {:session session
-     :body (json-str {:questions (:last-questions session)})}))
-
-(defn reconstruct-yesno-answer
-  "Returns the vector representing the user's response for a yes/no question"
-  [values statement]
-  (let [value (condp = (first values)
-                "yes" 1.0
-                "no" 0.0
-                "maybe" 0.5)]
-   [statement value]))
-
-(defn reconstruct-predicate-answer
-  "Returns the vector representing the user's response for a predicate"
-  [values statement]
-  (let [vars (variables statement) 
-        subs (apply hash-map (interleave vars values))]
-   [(apply-substitutions subs statement) 1.0]))
-
-(defn reconstruct-role-answer
-  [values statement]
-  (let [[s o v] statement
-        value (first values)]
-    [(list s o (symbol (first values))) 1.0]))
-
-(defn reconstruct-answer
-  [question theory values]
-  (let [statement (:statement question)]
-   (cond (:yesnoquestion question)
-         (reconstruct-yesno-answer values statement)
-         (scheme/role? (get-predicate statement theory))
-         (reconstruct-role-answer values statement)
-         :else
-         (reconstruct-predicate-answer values statement))))
-
-(defn reconstruct-answers
-  "Reconstructs the answer from the JSON"
-  [jsonanswers dialog]
-  (let [theory (policies (deref current-policy))]
-   (reduce (fn [questions-to-weight answer]
-             (let [id (:id answer)
-                   values (:values answer)
-                   question (get-nthquestion dialog id)
-                   ans (reconstruct-answer question theory values)
-                   [statement value] ans]
-               (assoc questions-to-weight statement value)))
-           {}
-           jsonanswers)))
+     :body (json-str {:questions (:last-questions session)})})) 
 
 (defmethod ajax-handler :answers
   [json session request]
   (debug "======================================== answers handler! ==============================")
   (debug json)
   (let [{:keys [last-questions dialog]} session
-        questions-to-answers (reconstruct-answers (:answers json)
-                                                  dialog)
+        theory (policies (deref current-policy))
+        questions-to-answers (recons/reconstruct-answers (:answers json)
+                                                         dialog
+                                                         theory)
         ;; _ (do (prn "[:answers] questions-to-answers =" questions-to-answers))
         session (update-in session [:dialog] add-answers questions-to-answers)
         ;; _ (do (prn "[:answers] dialog answers =" (:dialog session)))
@@ -121,28 +76,8 @@
                       theory
                       (keyword (:lang session))))}))
 
-(defn array->stmt
-  ([a acc]
-     (if (coll? a)
-       (cons (array->stmt (first a)) (map array->stmt (rest a)))
-       (symbol a)))
-  ([a]
-     (array->stmt a ())))
-
-(defn reconstruct-statement
-  [fact]
-  (assoc fact
-    :statement (array->stmt (:statement fact))))
-
-(defn reconstruct-statements
-  [facts]
-  (map reconstruct-statement facts))
-
 (defn get-username-and-password
   [request]
-  (prn "REQUEST =")
-  (prn request)
-  (prn)
   (let [authorization (second (str/split (get-in request [:headers "authorization"]) #" +"))
         authdata (String. (base64-decode authorization))]
     (str/split authdata #":")))
@@ -153,10 +88,10 @@
         facts (:facts data)
         db (:db data)
         theory (policies (deref current-policy))
-        facts (reconstruct-statements facts)
-        to-modify (map (fn [q] (reconstruct-answer q theory (:values q))) facts)
+        facts (recons/reconstruct-statements facts)
+        to-modify (map (fn [q] (recons/reconstruct-answer q theory (:values q))) facts)
         [username password] (get-username-and-password request)]
-    (modify-statements db "root" "pw1" to-modify theory)
+    (modify-statements-weights db "root" "pw1" to-modify theory)
     {:body ""}))
 
 (defn new-session
