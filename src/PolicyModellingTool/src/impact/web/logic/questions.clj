@@ -273,18 +273,36 @@ default-fn is a function returning the default formalized answer for a question.
     ;; (prn)
     questions))
 
+(defn smart-update-statement
+  "Updates the literal in the db with a new weight.
+If the literal corresponds to a functional role in the theory, set
+all other roles having the same predicate but different objects to a weight
+of 0.0"
+  [literal weight theory]
+  (let [id (db/get-statement literal)]
+   (db/update-statement id {:weight weight})
+   (let [pred (get-in theory [:language (literal-predicate literal)])]
+     (when (and (scheme/role? pred)
+                (scheme/functional-role? pred)
+                (set? (:type pred)))
+       ;; exclude the other possible values
+       (let [[_ _ old-obj] literal]
+        (doseq [obj (disj (:type pred) old-obj)]
+          (let [other-role (scheme/replace-role-obj literal obj)
+                other-id (db/get-statement other-role)]
+            (db/update-statement other-id {:weight 0.0}))))))))
+
 (defn update-statements-weights
   "Updates the value of the statements in the db."
-  [db username password statements]
+  [db username password statements theory]
   (let [dbconn (db/make-database-connection db username password)]
    (db/with-db dbconn
-     (doseq [[literal val] statements]
-       (let [id (db/get-statement literal)]
-         (db/update-statement id {:weight val}))))))
+     (doseq [[literal weight] statements]
+       (smart-update-statement literal weight theory)))))
 
 (defn modify-statements
   "Updates the values of the given statements in the db.
 Statements are represented as a collection of [statement value] element."
-  [db username password statements]
-  (update-statements-weights db username password statements)
+  [db username password statements theory]
+  (update-statements-weights db username password statements theory)
   (evaluate-graph db username password))
