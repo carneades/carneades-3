@@ -10,7 +10,8 @@
         [carneades.engine.unify :only (genvar apply-substitutions)]
         impact.web.logic.translate
         [carneades.engine argument-evaluation aspic]
-        [carneades.database.export :only [export-to-argument-graph]])
+        [carneades.database.export :only [export-to-argument-graph]]
+        [carneades.database.evaluation :only [evaluate-graph]])
   (:require [clojure.string :as s]
             [carneades.engine.scheme :as scheme]
             [carneades.database.db :as db]
@@ -272,17 +273,24 @@ default-fn is a function returning the default formalized answer for a question.
     ;; (prn)
     questions))
 
+(defn update-statements-values
+  "Updates the value of the statements in the db."
+  [db username password statements]
+  (let [dbconn (db/make-database-connection db username password)
+        ag (export-to-argument-graph dbconn)]
+   (db/with-db dbconn
+     (doseq [s (db/list-statements)]
+       (db/update-statement (str (:id s))
+                            {:value 0.5}))
+     (doseq [[stmt val] statements]
+       (let [sn (ag/get-statement-node ag stmt)]
+         (db/update-statement (str (:id sn))
+                              {:value val}))))))
+
 (defn modify-statements
   "Updates the values of the given statements in the db.
 Statements are represented as a collection of [statement value] element."
   [db username password statements]
-  (let [dbconn (db/make-database-connection db username password)
-        ag (export-to-argument-graph dbconn)]
-    (db/with-db dbconn
-      (doseq [s (db/list-statements)]
-        (db/update-statement (str (:id s))
-                             {:value 0.5}))
-      (doseq [[stmt val] statements]
-        (let [sn (ag/get-statement-node ag stmt)]
-          (db/update-statement (str (:id sn))
-                               {:value val}))))))
+  (update-statements-values db username password statements)
+  ;; (evaluate-graph db username password)
+  )
