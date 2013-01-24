@@ -241,9 +241,8 @@ default-fn is a function returning the default formalized answer for a question.
         0.5 'maybe
         nil)
       (let [obj (second (term-args stmt))]
-       (if (= (:value n) 1.0)
-         obj
-         'none)))))
+       (when (= (:value n) 1.0)
+         obj)))))
 
 (defn put-atoms-being-accepted-in-the-front
   "Sorts the atoms and places those having a :value of 1.0 in the front."
