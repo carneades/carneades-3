@@ -15,6 +15,8 @@ cd target
 
 rm -rf carneades-webapp
 
+rm -f carneades-webapp.zip
+
 mkdir carneades-webapp
 
 cd carneades-webapp
