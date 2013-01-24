@@ -7,7 +7,7 @@
         (carneades.engine aspic argument-evaluation argument-graph ask statement scheme
                           argument argument-graph shell unify dialog)
         (impact.web.logic questions)
-        [clojure.tools.logging :only (info debug error)]) 
+        [clojure.tools.logging :only (info debug error)])
   (:import java.io.File))
 
 (defn get-remaining-questions
@@ -19,10 +19,10 @@
                               (askable? askables stmt)
                               (empty? (get-answers dialog theory stmt))))
                            (atomic-statements ag))]
-    (prn "statements =")
-    (prn statements)
-    (prn "dialog =")
-    (pprint dialog)
+    ;; (prn "statements =")
+    ;; (prn statements)
+    ;; (prn "dialog =")
+    ;; (pprint dialog)
     (reduce (fn [[questions id] stmt]
               (let [[new-questions id] (get-structured-questions stmt lang id theory)
                     new-questions (filter (fn [q]
@@ -53,8 +53,11 @@
         ag (set-main-issues ag (:query session))
         answers (get-in session [:dialog :answers])
         answers-statements (keys answers)
-        ;; _ (prn "answers =")
-        ;; _ (prn answers)
+        _ (prn "answers =")
+        _ (prn answers)
+        _ (prn "lazy-answers=")
+        _ (prn (filter (fn [a] (instance? clojure.lang.LazySeq a))
+                       (keys answers)))
         ;; accepts answers with a weight of 1.0
         ag (accept ag (filter (fn [s] (= (answers s) 1.0)) answers-statements))
         ;; rejects answers with a weight of 0.0
