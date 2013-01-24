@@ -43,8 +43,9 @@
 
 (defn answer-key
   [question]
-  {:pre [(sliteral? question)]}
-  (replace (replace-map question) (:atom (positive-statement question))))
+  {:pre [(sliteral? question)]
+   :post [(not (instance? clojure.lang.LazySeq %))]}
+  (apply list (replace (replace-map question) (:atom (positive-statement question)))))
 
 (defn add-answers
   "Add answers to the dialog for the given atomic questions."
