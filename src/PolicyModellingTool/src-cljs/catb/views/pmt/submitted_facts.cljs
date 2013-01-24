@@ -3,10 +3,10 @@
 
 (ns catb.views.pmt.submitted-facts
   (:use [jayq.util :only [log clj->js]]
-        [jayq.core :only [$ inner attr]]
+        [jayq.core :only [$ inner attr append]]
         [catb.views.core :only [template]]
         [cljs.reader :only [read-string]]
-        [catb.views.pmt.questions :only [show-questions]])
+        [catb.views.pmt.questions :only [add-questions-html add-submit-button]])
   (:require [catb.backbone.core :as bb])
   (:require-macros [catb.backbone.macros :as bb]
                    [catb.views.menu :as menu]))
@@ -17,6 +17,22 @@
   (map (fn [question]
          (assoc question :values (js/PM.collect_answer (:id question)))) questions))
 
+(defn send-answers
+  "Sends the new answers to the server."
+  [questions]
+  (js/PM.busy_cursor_on)
+  (js/PM.ajax_post
+   js/IMPACT.simulation_url
+   (clj->js {:modify-facts
+             {:facts (assoc-values-to-questions questions)
+              :db js/IMPACT.db}})
+   (fn []
+     (js/PM.busy_cursor_off)
+     (js/PM.set_arguments_url js/IMPACT.db))
+   js/IMPACT.user
+   js/IMPACT.password
+   js/PM.on_error))
+
 (bb/defview SubmittedFacts
   :className "pmt-submitted-facts"
   :render
@@ -25,23 +41,14 @@
        (let [questions (js->clj questions :keywordize-keys true)
              flat-questions (apply concat (vals questions))]
          (template this :submitted-facts {})
-         (js/PM.activate "#facts-item")
-         (js/PM.attach_lang_listener)
-         (doseq [category (keys questions)]
-           (show-questions (clj->js (questions category)) (.$ this ".questions")
-                           (fn []
-                             (js/PM.busy_cursor_on)
-                             (js/PM.ajax_post
-                              js/IMPACT.simulation_url
-                              (clj->js {:modify-facts
-                                        {:facts (assoc-values-to-questions flat-questions)
-                                         :db js/IMPACT.db}})
-                              (fn []
-                                (js/PM.busy_cursor_off)
-                                (js/PM.set_arguments_url js/IMPACT.db))
-                              js/IMPACT.user
-                              js/IMPACT.password
-                              js/PM.on_error))))))))
+         (let [questionslist (.$ this ".questions")]
+           (js/PM.activate "#facts-item")
+           (js/PM.attach_lang_listener)
+           (doseq [category (keys questions)]
+             (add-questions-html (clj->js (questions category)) questionslist))
+           (add-submit-button questionslist (partial send-answers flat-questions))
+           (.validate ($ "#questionsform"))
+           (js/PM.scroll_to_bottom))))))
 
 (defn current-language
   "Returns the language of the current policy as a CLJS object."
@@ -67,4 +74,5 @@
                    show-facts-views
                    js/IMPACT.user
                    js/IMPACT.password
-                   js/PM.on_error))
+                   js/PM.on_error)
+  false)
