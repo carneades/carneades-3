@@ -148,22 +148,30 @@
   (set-default-value question)
   (append questionslist "<br/>"))
 
-(defn ^:export show-questions
-  "Adds the HTML for the questions to the list of questions div"
-  [questions questionslist onsubmit]
+(defn add-questions-html
+  "Generates HTML for the questions and add them to the list."
+  [questions questionslist]
   (log questions)
 
   (append questionslist (format "<h3>%s</h3>"
                                (.-category_name (first questions))))
   (doseq [q questions]
-    (add-question-html (js->clj q :keywordize-keys true) questionslist))
+    (add-question-html (js->clj q :keywordize-keys true) questionslist)))
 
+(defn add-submit-button
+  [questionslist onsubmit]
   (let [button-id (str (gensym "button"))]
     (append questionslist (format "<input type=\"button\" value=\"%s\" id=\"%s\"/> "
                                   (i18n "pmt_submit")
                                   button-id))
     (append questionslist "<hr/>")
-    (.click ($ (str "#" button-id)) onsubmit)
-    (.validate ($ "#questionsform"))
-    (js/PM.scroll_to_bottom)
-    false))
+    (.click ($ (str "#" button-id)) onsubmit)))
+
+(defn ^:export show-questions
+  "Adds the HTML for the questions to the list of questions div."
+  [questions questionslist onsubmit]
+  (add-questions-html questions questionslist)
+  (add-submit-button questionslist onsubmit)
+  (.validate ($ "#questionsform"))
+  (js/PM.scroll_to_bottom)
+  false)
