@@ -15,6 +15,7 @@
          carneades.web.walton-schemes
          ring.util.codec
          [carneades.engine.utils :only [sha256]]
+         [carneades.database.evaluation :only [evaluate-graph]]
          [ring.middleware.format-response :only [wrap-restful-response]]
          [ring.middleware.cookies :only [wrap-cookies]])
   (:require [clojure.data.json :as json]
@@ -601,17 +602,9 @@
     
   (POST "/evaluate-argument-graph/:db" request
        (let [[username password] (get-username-and-password request)
-             db (make-database-connection (:db (:params request)) username password)]
-         (with-db db
-           (let [ag1 (export-to-argument-graph db)
-                 ag2 (evaluate aspic-grounded ag1)]
-             (doseq [sn (vals (:statement-nodes ag2))]
-               (update-statement (str (:id sn))
-                                 {:value (:value sn)}))
-             (doseq [an (vals (:argument-nodes ag2))]
-               (update-argument (str (:id an))
-                                {:value (:value an)}))
-             {:body             true}))))
+             db (:db (:params request))]
+         (evalute-graph db username password)
+         {:body true}))
 
   ;; Other 
       
