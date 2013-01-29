@@ -96,10 +96,8 @@ AGB.statement_html = function(db, info, lang)
     info.pmt_con_arguments = $.i18n.prop('pmt_con_arguments');
     info.pmt_premise_of = $.i18n.prop('pmt_premise_of');
     
-    info.pmt_ag_menu_export = $.i18n.prop('pmt_ag_menu_export');
-    info.pmt_ag_menu_vote = $.i18n.prop('pmt_vote');
-    info.pmt_ag_menu_evaluate = $.i18n.prop('pmt_ag_menu_evaluate');
-    info.pmt_ag_menu_map = $.i18n.prop('pmt_ag_menu_map');
+    info = PM.merge_menu_props(info);
+    info = PM.merge_ag_menu_props(info); 
 
     var statement_html = ich.statement(info);
     return statement_html.filter('#statement');
