@@ -10,8 +10,6 @@ PM.set_introduction_url = function() {
 };
 
 PM.display_introduction = function() {
-    IMPACT.facts_state = 'waiting';
-
     PM.ajax_post(IMPACT.simulation_url, {"current-policy": null},
                  function(currentpolicy) {
                      IMPACT.current_policy = currentpolicy; 
