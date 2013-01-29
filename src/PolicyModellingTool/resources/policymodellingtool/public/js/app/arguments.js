@@ -12,8 +12,6 @@ PM.set_arguments_url = function(db) {
 // this is the main entry point to display
 // either the outline, the map, an argument or a statement
 PM.display_arguments = function(db, type, id) {
-    IMPACT.facts_state = 'done';
-    
     var arguments_html = ich.arguments(PM.merge_menu_props({}));
     
     if(_.isNil(db)) {

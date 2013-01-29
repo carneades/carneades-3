@@ -14,7 +14,6 @@ var IMPACT = {
     current_policy: "copyright-policies",
     debate_db: "copyright",
     rootpath: null,
-    facts_state: 'waiting' // 'entering', 'done'
 };
 
 // This object contains the functions and acts as a kind of namespace.
