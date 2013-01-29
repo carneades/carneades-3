@@ -244,12 +244,17 @@
 (deftest test-argumentmissing
   (let [copyright-theory (get policies 'copyright-policies)
         ag (make-argument-graph)
-        ag (accept ag '((work w) (person p)))
+        ag (accept ag '((type-of-use (the-use P W) non-commercial)
+                        (search-type (the-search P W) standard)))
+        ag (reject ag '((type-of-use (the-use P W) commercial)
+                        (search-type (the-search P W) professional)
+                        (announcement (the-search P W))))
         engine (make-engine ag 50 #{} (list (generate-arguments-from-theory copyright-theory)))
         query '(may-publish ?Person ?Work)
         ag (argue engine query)
         ag (evaluate aspic-grounded ag)]
-    (is (= 3 (count (arguments ag))))))
+    (pprint ag)
+    (is (= 2 (count (arguments ag))))))
 
 (deftest test-argumentconstruction-blocked
   (let [tour-operator-insurance (get policies 'tour-operator-insurance)
