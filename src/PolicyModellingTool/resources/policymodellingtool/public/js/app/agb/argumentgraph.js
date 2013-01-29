@@ -32,17 +32,9 @@ AGB.argumentgraph_html = function(db, data)
     data.pmt_outline = $.i18n.prop('pmt_outline');
     data.pmt_references = $.i18n.prop('pmt_references');
 
-    data.pmt_menu_intro = $.i18n.prop('pmt_menu_intro');
-    data.pmt_menu_issues = $.i18n.prop('pmt_menu_issues');
-    data.pmt_menu_facts = $.i18n.prop('pmt_menu_facts');
-    data.pmt_menu_arguments = $.i18n.prop('pmt_menu_arguments');
-    data.pmt_menu_schemes = $.i18n.prop('pmt_menu_schemes');
-    data.pmt_menu_policies = $.i18n.prop('pmt_menu_policies');
+    data = PM.merge_menu_props(data);
+    data = PM.merge_ag_menu_props(data); 
 
-    data.pmt_ag_menu_export = $.i18n.prop('pmt_ag_menu_export');
-    data.pmt_ag_menu_evaluate = $.i18n.prop('pmt_ag_menu_evaluate');
-    data.pmt_ag_menu_map = $.i18n.prop('pmt_ag_menu_map');
-    data.pmt_ag_menu_vote = $.i18n.prop('pmt_ag_menu_vote');
     data.lang = IMPACT.lang;
     
     var argumentgraph_html = ich.argumentgraph(data);

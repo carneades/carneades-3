@@ -606,6 +606,11 @@
          (evaluate-graph db username password)
          {:body true}))
 
+  (POST "/copy-case/:db" request
+        (let [[username password] (get-username-and-password request)
+              dbname (-> request :params :db)]
+          {:body {:db (make-copy dbname username password)}}))
+
   ;; Other 
       
   (GET "/" [] 
