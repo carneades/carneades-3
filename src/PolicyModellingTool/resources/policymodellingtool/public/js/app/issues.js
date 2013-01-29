@@ -39,6 +39,7 @@ PM.display_issues = function() {
 PM.on_submit_issues = function() {
     if($('#issuesform').valid()) {
         IMPACT.question = $('input[name="issue"]:checked').val();
+        IMPACT.db = undefined;
         PM.set_facts_url();
     }
     return false;

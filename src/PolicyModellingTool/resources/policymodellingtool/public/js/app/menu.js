@@ -19,3 +19,14 @@ PM.merge_menu_props = function(obj) {
                      pmt_menu_policies: $.i18n.prop('pmt_menu_policies'),
                      pmt_menu_report: $.i18n.prop('pmt_menu_report')});
 };
+
+// merge the object obj with the ag menu properties
+PM.merge_ag_menu_props = function(obj) {
+    return $.extend(obj,
+                    {pmt_ag_menu_copy: $.i18n.prop('pmt_ag_menu_copy'),
+                     pmt_ag_menu_export: $.i18n.prop('pmt_ag_menu_export'),
+                     pmt_ag_menu_vote: $.i18n.prop('pmt_ag_menu_vote'),
+                     pmt_ag_menu_evaluate: $.i18n.prop('pmt_ag_menu_evaluate'),
+                     pmt_ag_menu_map: $.i18n.prop('pmt_ag_menu_map')
+                     });
+};

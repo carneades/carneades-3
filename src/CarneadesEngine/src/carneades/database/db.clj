@@ -16,6 +16,7 @@
   (:require [clojure.java.jdbc :as jdbc]
             [carneades.config.reader :as config]
             [clojure.string :as s]
+            [carneades.engine.uuid :as uuid]
             ;; [carneades.engine.utils :refer [safe-read-string]]
             )
   (:import java.io.File))
@@ -45,6 +46,17 @@
   "Returns the filename of a database."
   [dbname]
   (str default-db-host "/" dbname ".h2.db"))
+
+(defn make-copy
+  "Makes a copy of the database and returns the copy's name"
+  [dbname username password]
+  (let [script (with-db (make-database-connection dbname username password)
+                 (jdbc/with-query-results content ["script"] (doall (map :script content))))
+        newdbname (uuid/make-uuid-str)]
+    ;; TODO take new-username and new-password as arguments and remove old admin access
+    (with-db (make-database-connection newdbname username password)
+      (apply jdbc/do-commands script))
+    newdbname))
 
 
 (defn fetch-databases-names
