@@ -263,7 +263,6 @@
         (reify ArgumentGenerator
           (generate
             [this goal s]
-            (prn "asking: " goal)
             (case (literal-predicate goal)
               scope-of-activities
               (build-answer s goal '[(scope-of-activities TO world-wide)])
@@ -292,20 +291,19 @@
         (reify ArgumentGenerator
           (generate
             [this goal s]
-            (prn "asking: " goal)
             (let [p (literal-predicate goal)]
-              (cond (= p 'person)
-                    (build-answer s goal '[(person pp)])
+              (cond (= p 'type-of-use)
+                    (build-answer s goal '[(type-of-use (the-use P W) non-commercial)])
 
-                    (= p 'work)
-                    (build-answer s goal '[(work ww)])
+                    (= p 'search-type)
+                    (build-answer s goal '[(search-type (the-search P W) standard)])
 
                     :else ()))))
         engine (make-engine ag 50 #{} (list fake-argument-from-user
                                             (generate-arguments-from-theory copyright-theory)))
         query '(may-publish ?Person ?Work)
         ag (argue engine query)]
-    (is (= 3 (count (arguments ag))))))
+    (is (= 1 (count (arguments ag))))))
 
 (deftest test-goal-missing
   (let [theory (get policies 'tour-operator-insurance)
