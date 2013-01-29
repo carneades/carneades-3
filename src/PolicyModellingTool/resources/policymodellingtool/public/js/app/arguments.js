@@ -43,6 +43,8 @@ PM.display_arguments = function(db, type, id) {
                 AGB.display_map(db);
             } else if (type == "vote") {
                 catb.views.pmt.vote.display();
+            } else if (type == "copy-case") {
+                PM.copy_case(db);
             } else {
                 AGB.display_argumentgraph(db);        
             }                                    
@@ -73,4 +75,21 @@ PM.current_case_pollid = function() {
     }
 
     return parseInt(pollid, 10);
+};
+
+PM.copy_case = function(db) {
+    if(confirm($.i18n.prop('pmt_copy_current_case'))) {
+        PM.ajax_post(IMPACT.wsurl + '/copy-case/' + db,
+                     {},
+                     function(data) {
+                         PM.set_arguments_url(data.db);
+                         PM.notify($.i18n.prop('pmt_now_viewing_copy'));
+                     },
+                     IMPACT.user,
+                     IMPACT.password,
+                     PM.on_error
+                   );
+    } else {
+        PM.set_arguments_url(db);
+    }
 };
