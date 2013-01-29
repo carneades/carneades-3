@@ -14,8 +14,7 @@ PM.set_facts_url = function() {
 
 // Displays the questions
 PM.display_facts = function() {
-    if(IMPACT.facts_state == 'waiting') {
-        IMPACT.facts_state = 'entering';
+    if(IMPACT.db == undefined) {
         var facts_html = ich.facts(PM.merge_menu_props({}));
         $('#pm').html(facts_html.filter("#facts"));
         PM.activate('#facts-item');
@@ -52,7 +51,6 @@ PM.show_questions_or_ag = function(data) {
             });
     } else {
         IMPACT.db = data.db;
-        IMPACT.facts_state = 'done';
         PM.set_arguments_url(IMPACT.db);
 
     }
