@@ -60,8 +60,6 @@ PM.find_available_lang = function(current_policy) {
 // sectionid, optional, is the section to jump to
 // subset, optional, is a subset of policies to show
 PM.display_policies = function(sectionid, subset) {
-    IMPACT.facts_state = 'done';
-    
     PM.ajax_get(IMPACT.wsurl + '/policies', 
                 function(policies) {
                     var ids = [];
