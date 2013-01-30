@@ -47,18 +47,6 @@
   [dbname]
   (str default-db-host "/" dbname ".h2.db"))
 
-(defn make-copy
-  "Makes a copy of the database and returns the copy's name"
-  [dbname username password]
-  (let [script (with-db (make-database-connection dbname username password)
-                 (jdbc/with-query-results content ["script"] (doall (map :script content))))
-        newdbname (uuid/make-uuid-str)]
-    ;; TODO take new-username and new-password as arguments and remove old admin access
-    (with-db (make-database-connection newdbname username password)
-      (apply jdbc/do-commands script))
-    newdbname))
-
-
 (defn fetch-databases-names
   "Looks on the disk to find all existing databases. Returns their names"
   []
@@ -1017,5 +1005,15 @@
              (> (:weight s) 0.5)
              (<= (:weight s) 0.75))  ; assumed true
         (update-statement id {:weight 0.5}))))) ; question
-  
+
+(defn make-copy
+  "Makes a copy of the database and returns the copy's name"
+  [dbname username password]
+  (let [script (with-db (make-database-connection dbname username password)
+                 (jdbc/with-query-results content ["script"] (doall (map :script content))))
+        newdbname (uuid/make-uuid-str)]
+    ;; TODO take new-username and new-password as arguments and remove old admin access
+    (with-db (make-database-connection newdbname username password)
+      (apply jdbc/do-commands script))
+    newdbname))
 
