@@ -133,23 +133,24 @@
                 (on-question session))))
 
 (defn start-engine
-  [session]
-  (info "Starting the query process")
-  (let [theory (:theory session)
-        query (:query session)
-        ag (make-argument-graph)
-        [argument-from-user-generator questions send-answer]
-        (make-argument-from-user-generator (fn [p] (askable? theory p)))
-        engine (make-engine ag 500 #{} (list (generate-arguments-from-theory theory)
-                                            argument-from-user-generator))
-        future-ag (future (argue engine query))
-        session (assoc session
-                  :future-ag future-ag
-                  :questions questions
-                  :send-answer send-answer
-                  :dialog (make-dialog)
-                  :last-id 0)]
-    (get-ag-or-next-question session)))
+  ([session ag]
+     (info "Starting the query process")
+     (let [theory (:theory session)
+           query (:query session)
+           [argument-from-user-generator questions send-answer]
+           (make-argument-from-user-generator (fn [p] (askable? theory p)))
+           engine (make-engine ag 500 #{} (list (generate-arguments-from-theory theory)
+                                                argument-from-user-generator))
+           future-ag (future (argue engine query))
+           session (assoc session
+                     :future-ag future-ag
+                     :questions questions
+                     :send-answer send-answer
+                     :dialog (make-dialog)
+                     :last-id 0)]
+       (get-ag-or-next-question session)))
+  ([session]
+     (start-engine session (make-argument-graph))))
 
 (defn- continue-engine
   [session answers]
