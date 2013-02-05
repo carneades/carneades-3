@@ -12,7 +12,8 @@
         [impact.web.views.pages :only [index-page config-page]]
         [carneades.engine.unify :only [apply-substitutions]]
         [carneades.engine.dialog :only [get-nthquestion add-answers]]
-        [ring.util.codec :only [base64-decode]])
+        [ring.util.codec :only [base64-decode]]
+        [carneades.database.export :only [export-to-argument-graph]])
   (:require [carneades.database.db :as db]
             [carneades.database.admin :as admin]
             [clojure.string :as str]
@@ -44,7 +45,15 @@
   (let [session (assoc session :query (get-main-issue (:theory session) (symbol (:request json))))
         session (start-engine session)]
     {:session session
-     :body (json-str {:questions (:last-questions session)})})) 
+     :body (json-str {:questions (:last-questions session)})}))
+
+(defn questions-or-solution
+  [session]
+  (if (:all-questions-answered session)
+      {:session session
+       :body (json-str {:db (:db session)})}
+      {:session session
+       :body (json-str {:questions (:last-questions session)})}))
 
 (defmethod ajax-handler :answers
   [json session request]
@@ -59,12 +68,7 @@
         session (update-in session [:dialog] add-answers questions-to-answers)
         ;; _ (do (prn "[:answers] dialog answers =" (:dialog session)))
         session (send-answers-to-engine session)]
-    (if (:all-questions-answered session)
-      {:session session
-       :body (json-str {:solution (:solution session)
-                        :db (:db session)})}
-      {:session session
-       :body (json-str {:questions (:last-questions session)})})))
+    (questions-or-solution session)))
 
 (defmethod ajax-handler :modifiable-facts
   [json session request]
@@ -92,7 +96,12 @@
         to-modify (map (fn [q] (recons/reconstruct-answer q theory (:values q))) facts)
         [username password] (get-username-and-password request)]
     (modify-statements-weights db "root" "pw1" to-modify theory)
-    {:body ""}))
+    (let [dbconn (db/make-database-connection db username password)
+          ag (export-to-argument-graph dbconn)
+          ;; restarts the engine to expand new rules
+          ;; that could be now reachable with the new facts
+          session (start-engine session ag)] 
+      (questions-or-solution session))))
 
 (defn new-session
   [lang]
