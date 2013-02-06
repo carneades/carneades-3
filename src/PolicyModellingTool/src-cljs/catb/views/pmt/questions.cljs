@@ -3,9 +3,13 @@
 
 (ns catb.views.pmt.questions
   (:use [jayq.util :only [log clj->js]]
-        [jayq.core :only [$ append]]
-        [catb.i18n :only [i18n]])
-  (:require [clojure.string :as s]))
+        [jayq.core :only [$ append empty]]
+        [catb.i18n :only [i18n]]
+        [catb.views.core :only [template]])
+  (:require [clojure.string :as s]
+            [catb.backbone.core :as bb])
+  (:require-macros [catb.backbone.macros :as bb]
+                   [catb.views.menu :as menu]))
 
 (defn get-radio-widget-html
   "Generates a radio widget HTML code for a question"
@@ -77,12 +81,19 @@
   [question]
   (and (= (:min question) 1) (= (:max question) 1)))
 
+(defn add-facts-buttons
+  [question]
+  (if (not= (:max question) 1)
+    "&nbsp;&nbsp;<img class=\"remove-fact fact-button\" src=\"images/list-remove.png\"/>
+<img class=\"add-fact fact-button\" src=\"images/list-add.png\"/>"
+    ""))
+
 (defn get-yes-no-question-html
   [question]
-  (str (format "<div id=\"q%s\"> " (:id question))
+  (str (format "<div id=\"q%s\">" (:id question))
        (s/capitalize (:text question))
        (get-answer-widget-html question "radio")
-       "</div>"))
+       (format "%s</div>" (add-facts-buttons question))))
 
 (defn widget-for-role
   "Returns the widget for a role question"
@@ -103,7 +114,7 @@
                   (replace-variables-by-widgets
                   capitalized-text
                   [(widget-for-role question)]))]
-    (format "<div id=\"q%s\">%s</div>" (:id question) content)))
+    (format "<div id=\"q%s\"><div>%s %s</div></div>" (:id question) content (add-facts-buttons question))))
 
 (defn get-concept-question-html
   "Returns the HTML of the question for a concept"
@@ -117,7 +128,7 @@
                    capitalized-text
                    ;; TODO: check if widget-for-role is ok for concept
                    [(widget-for-role question)]))]
-    (format "<div id=\"q%s\">%s</div>" (:id question) content)))
+    (format "<div id=\"q%s\"><div>%s %s</div></div>" (:id question) content (add-facts-buttons question))))
 
 (defn get-question-html
   "Generates the HTML for a question"
@@ -139,24 +150,35 @@
       (let [el ($ (str "#q" (:id question) " select"))]
         (.val el (:default question))))))
 
+(defn get-question-el
+  [question]
+  ($ (str "#q" (:id question))))
+
+(defn add-fact
+  [question event]
+  (let [el (get-question-el question)
+        div (.find el "div:last")]
+   (append div (get-question-html question))))
+
+(defn add-facts-number-listener
+  "Adds listeners implementing the addition or the suppression of facts."
+  [question]
+  (when-let [el ($ (str "#q" (:id question) " .add-fact"))]
+    (.click el (partial add-fact question)))
+  (when-let [el ($ (str "#q" (:id question) " .remove-fact"))]
+    (.click el (fn [] (js/alert "remove")))))
+
 (defn add-question-html
   "Adds one question to the list of questions"
   [question questionslist]
+  (log "add-question-html")
+  (log (clj->js question))
   (append questionslist (format "<p><i>%s</i></p>"
                                (or (:hint question) "")))
   (append questionslist (get-question-html question))
+  (add-facts-number-listener question)
   (set-default-value question)
   (append questionslist "<br/>"))
-
-(defn add-questions-html
-  "Generates HTML for the questions and add them to the list."
-  [questions questionslist]
-  (log questions)
-
-  (append questionslist (format "<h3>%s</h3>"
-                               (.-category_name (first questions))))
-  (doseq [q questions]
-    (add-question-html (js->clj q :keywordize-keys true) questionslist)))
 
 (defn add-submit-button
   [questionslist onsubmit]
@@ -167,11 +189,79 @@
     (append questionslist "<hr/>")
     (.click ($ (str "#" button-id)) onsubmit)))
 
+(bb/defview QuestionFact
+  ;; a question's answered is composed of one or more facts
+  :className "question-fact"
+  :render
+  ([]
+     (bb/with-attrs [:question :nb-facts]
+       (log "adding fact for question")
+       (log question)
+       (add-question-html (js->clj question :keywordize-keys true) (.-$el this)))))
+
+(bb/defview Question
+  :className "question"
+  :render
+  ([]
+     (bb/with-attrs [:question]
+       (let [max (.-max question)
+             nb (cond (nil? max) 1
+                      (zero? max) 1
+                      (<= max 5) max
+                      :else 1)
+             nb-facts (atom nb)
+             qfacts-views (repeatedly nb
+                                      #(bb/new QuestionFact
+                                               {:model
+                                                (bb/new-model {:nb-facts nb-facts
+                                                               :question question})}))]
+         (doseq [qfact-view qfacts-views]
+           (append (.-$el this) (.-$el qfact-view))
+           (.render qfact-view))))))
+
+(defn category-name
+  [question]
+  (.-category_name question))
+
+(bb/defview QuestionsList
+  :className "questions-list"
+
+  :initialize
+  ([attrs]
+     (.on (.-model this) "change" (.-render this) this))
+
+  :render
+  ([]
+     (bb/with-attrs [:questions :onsubmit]
+       (let [el (.-$el this)
+             partitioned-questions (partition-by category-name questions)]
+         (empty el)
+         (doseq [part partitioned-questions]
+           (append el (format "<h3>%s</h3>"
+                              (category-name (first part))))
+           (let [qviews (map (fn [q]
+                               (bb/new Question
+                                       {:model (bb/new-model {:question q})}))
+                             part)]
+             (doseq [qview qviews]
+               (.append el (.-$el qview))
+               (.render qview))))
+         (add-submit-button el onsubmit)))))
+
+(def questions-list (atom nil))
+
+(def questions-list-model (bb/new-model {:questions []}))
+
 (defn ^:export show-questions
   "Adds the HTML for the questions to the list of questions div."
   [questions questionslist onsubmit]
-  (add-questions-html questions questionslist)
-  (add-submit-button questionslist onsubmit)
-  (.validate ($ "#questionsform"))
+  (when (nil? (deref questions-list))
+    (.set questions-list-model "onsubmit" onsubmit)
+    (reset! questions-list (bb/new QuestionsList
+                                   {:model questions-list-model
+                                    :el ($ "#questions")})))
+  (let [old-questions (.get questions-list-model "questions")]
+    (.set questions-list-model "questions" (.concat old-questions questions)))
+  ;; (.validate ($ "#questionsform"))
   (js/PM.scroll_to_bottom)
   false)
