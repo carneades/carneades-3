@@ -192,6 +192,13 @@
 (bb/defview QuestionFact
   ;; a question's answered is composed of one or more facts
   :className "question-fact"
+  :events {"change select" :on-change}
+  
+  :on-change
+  ([e]
+     (log e)
+     (js/alert "TODO: update 'values' variable"))
+  
   :render
   ([]
      (bb/with-attrs [:question :nb-facts]
