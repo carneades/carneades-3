@@ -7,7 +7,8 @@
         [catb.i18n :only [i18n]]
         [catb.views.core :only [template]])
   (:require [clojure.string :as s]
-            [catb.backbone.core :as bb])
+            [catb.backbone.core :as bb]
+            [catb.dispatch :as dispatch])
   (:require-macros [catb.backbone.macros :as bb]
                    [catb.views.menu :as menu]))
 
@@ -192,12 +193,17 @@
 (bb/defview QuestionFact
   ;; a question's answered is composed of one or more facts
   :className "question-fact"
-  :events {"change select" :on-change}
+  :events {"submit" :on-submit}
   
-  :on-change
+  :on-submit
   ([e]
      (log e)
      (js/alert "TODO: update 'values' variable"))
+
+  :calculate-answer
+  ([]
+     (log "calculate answer")
+     [1 42])
   
   :render
   ([]
@@ -208,6 +214,11 @@
 
 (bb/defview Question
   :className "question"
+  :calculate-answer
+  ([]
+     (let [qfacts-views (aget this "qfacts-views")]
+       (map (fn [v] (.-calculate-answer v)) qfacts-views)))
+  
   :render
   ([]
      (bb/with-attrs [:question]
@@ -222,6 +233,7 @@
                                                {:model
                                                 (bb/new-model {:nb-facts nb-facts
                                                                :question question})}))]
+         (aset this "qfacts-views" qfacts-views)
          (doseq [qfact-view qfacts-views]
            (append (.-$el this) (.-$el qfact-view))
            (.render qfact-view))))))
@@ -237,9 +249,18 @@
   ([attrs]
      (.on (.-model this) "change" (.-render this) this))
 
+  :on-submit
+  ([]
+     (bb/with-attrs [:onsubmit]
+       (js/alert "submit")
+       (doseq [qview (aget this "qviews")]
+         (let [ans (.calculate-answer qview)]
+           (log "ans =")
+           (log ans)))))
+
   :render
   ([]
-     (bb/with-attrs [:questions :onsubmit]
+     (bb/with-attrs [:questions]
        (let [el (.-$el this)
              partitioned-questions (partition-by category-name questions)]
          (empty el)
@@ -250,10 +271,11 @@
                                (bb/new Question
                                        {:model (bb/new-model {:question q})}))
                              part)]
+             (aset this "qviews" qviews)
              (doseq [qview qviews]
                (.append el (.-$el qview))
                (.render qview))))
-         (add-submit-button el onsubmit)))))
+         (add-submit-button el (.-on_submit this))))))
 
 (def questions-list (atom nil))
 
