@@ -108,10 +108,15 @@
                       :latest-questions [] ;; latests ids
                       }))
 
-(defn fetch-role-answers
+(defn create-role-answers-fetcher
   [question]
-  (let [el ($ (str "#" (:id question) " select"))]
-    (.val el)))
+  (fn []
+    (let [el ($ (str "#q" (:id question) " select"))]
+      (.val el))))
+
+(defn add-fetcher
+  [questions id fetcher]
+  (assoc-in questions [:questions-by-id id :fetch-answers] fetcher))
 
 (defn get-role-question-html
   "Returns the HTML of the question for a role"
@@ -124,8 +129,9 @@
                                                       ))
                   (replace-variables-by-widgets
                   capitalized-text
-                  [(widget-for-role question)]))]
-    (swap! questions [:questions (:id question) :fetch-answers] fetch-role-answers)
+                  [(widget-for-role question)]))
+        fetcher (create-role-answers-fetcher question)]
+    (swap! questions add-fetcher (:id question) fetcher)
     (format "<div id=\"q%s\"><div>%s %s</div></div>" (:id question) content (add-facts-buttons question))))
 
 (defn get-concept-question-html
@@ -183,8 +189,6 @@
 (defn add-question-html
   "Adds one question to the list of questions"
   [question el]
-  (log "add-question-html")
-  (log (clj->js question))
   (append el (format "<p><i>%s</i></p>"
                                (or (:hint question) "")))
   (append el (get-question-html question))
@@ -252,19 +256,22 @@
 
 (defn fetch-answers
   "Fetches the answer of a question."
-  [question]
-  ((:fetch-answers question)))
+  [qid]
+  (get-in (deref questions) [:questions-by-id qid :fetch-answers])
+  ((get-in (deref questions) [:questions-by-id qid :fetch-answers])))
 
 (defn fetch-latest-questions-answers
   "Fetches the answers of the latest questions."
   []
-  (let [latest-questions (:latest-questions (deref questions))]
-    (map fetch-answers latest-questions)))
+  (let [latest (:latest-questions (deref questions))]
+    (map fetch-answers latest)))
 
 (defn- send-answers
   [msg]
-  (fetch-latest-questions-answers)
-  (log "send answers"))
+  (let [answers (fetch-latest-questions-answers)]
+    (log "answers =")
+    (log (clj->js answers))
+    (log "send answers")))
 
 (dispatch/react-to #{:on-submit} send-answers)
 
