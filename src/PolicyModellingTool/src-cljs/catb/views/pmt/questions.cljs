@@ -108,11 +108,15 @@
                       :latest-questions [] ;; latests ids
                       }))
 
+(defn get-question-el
+  [question]
+  ($ (str "#q" (:id question))))
+
 (defn create-role-answers-fetcher
   "Creates a function that will returns the answers of the role question."
   [question]
   (fn []
-    (let [el ($ (str "#q" (:id question) " select"))]
+    (let [el (get-question-el question)]
       [(.val el)])))
 
 (defn add-fetcher
@@ -168,10 +172,6 @@
         (.attr el "checked" true))
       (let [el ($ (str "#q" (:id question) " select"))]
         (.val el (:default question))))))
-
-(defn get-question-el
-  [question]
-  ($ (str "#q" (:id question))))
 
 (defn add-fact
   [question event]
