@@ -109,10 +109,11 @@
                       }))
 
 (defn create-role-answers-fetcher
+  "Creates a function that will returns the answers of the role question."
   [question]
   (fn []
     (let [el ($ (str "#q" (:id question) " select"))]
-      (.val el))))
+      [(.val el)])))
 
 (defn add-fetcher
   [questions id fetcher]
@@ -225,6 +226,7 @@
   (let [el ($ "#questions")
         questions-to-ids (:questions-by-id (deref questions))
         ids (:questions (deref questions))]
+    (empty el)
     (doseq [ids-for-category ids]
       (display-questions-in-category (map questions-to-ids ids-for-category) el))))
 
@@ -255,23 +257,38 @@
       (update-in [:questions] concat (questions-ordered latest-questions-list))))
 
 (defn fetch-answers
-  "Fetches the answer of a question."
+  "Fetches the answer of a question and sets their value in the question map."
   [qid]
   (get-in (deref questions) [:questions-by-id qid :fetch-answers])
-  ((get-in (deref questions) [:questions-by-id qid :fetch-answers])))
+  (let [answers ((get-in (deref questions) [:questions-by-id qid :fetch-answers]))]
+    (swap! questions assoc-in [:questions-by-id qid :answers] answers)
+    answers))
 
 (defn fetch-latest-questions-answers
-  "Fetches the answers of the latest questions."
+  "Fetches the answers of the latest questions.
+Returns the answers indexed by question's id."
   []
-  (let [latest (:latest-questions (deref questions))]
-    (map fetch-answers latest)))
+  (let [latest (:latest-questions (deref questions))
+        answers (map fetch-answers latest)]
+    (map (fn [id ans] {:id id :values ans}) latest answers)))
+
+(declare show-questions-or-ag)
 
 (defn- send-answers
   [msg]
-  (let [answers (fetch-latest-questions-answers)]
-    (log "answers =")
-    (log (clj->js answers))
-    (log "send answers")))
+  (when (.valid ($ "#questionsform"))
+    (let [answers (fetch-latest-questions-answers)]
+      (log "sending answers...")
+      (log (clj->js answers)) 
+      (js/PM.busy_cursor_on)
+      (js/PM.ajax_post js/IMPACT.simulation_url
+                       (clj->js {:answers answers})
+                       (fn [data]
+                         (js/PM.busy_cursor_off)
+                         (show-questions-or-ag data))
+                       js/IMPACT.user
+                       js/IMPACT.password
+                       js/PM.on_error))))
 
 (dispatch/react-to #{:on-submit} send-answers)
 
