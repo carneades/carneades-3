@@ -3,7 +3,7 @@
 
 (ns catb.views.pmt.questions
   (:use [jayq.util :only [log clj->js]]
-        [jayq.core :only [$ append empty]]
+        [jayq.core :only [$ append empty inner]]
         [catb.i18n :only [i18n]]
         [catb.views.core :only [template]])
   (:require [clojure.string :as s]
@@ -103,6 +103,16 @@
         (select-widget (:type question) (:typename question))
         :else (throw "NYI")))
 
+(def questions (atom {:questions [] ;; ids, stored in the order of the categories
+                      :questions-by-id {} ;; by id, referencing a questions
+                      :latest-questions [] ;; latests ids
+                      }))
+
+(defn fetch-role-answers
+  [question]
+  (let [el ($ (str "#" (:id question) " select"))]
+    (.val el)))
+
 (defn get-role-question-html
   "Returns the HTML of the question for a role"
   [question]
@@ -115,6 +125,7 @@
                   (replace-variables-by-widgets
                   capitalized-text
                   [(widget-for-role question)]))]
+    (swap! questions [:questions (:id question) :fetch-answers] fetch-role-answers)
     (format "<div id=\"q%s\"><div>%s %s</div></div>" (:id question) content (add-facts-buttons question))))
 
 (defn get-concept-question-html
@@ -171,126 +182,109 @@
 
 (defn add-question-html
   "Adds one question to the list of questions"
-  [question questionslist]
+  [question el]
   (log "add-question-html")
   (log (clj->js question))
-  (append questionslist (format "<p><i>%s</i></p>"
+  (append el (format "<p><i>%s</i></p>"
                                (or (:hint question) "")))
-  (append questionslist (get-question-html question))
+  (append el (get-question-html question))
   (add-facts-number-listener question)
   (set-default-value question)
-  (append questionslist "<br/>"))
+  (append el "<br/>"))
+
+(defn add-questions-html
+  [questions el]
+  (doseq [question questions]
+    (add-question-html question el)))
 
 (defn add-submit-button
-  [questionslist onsubmit]
+  [questions-el]
   (let [button-id (str (gensym "button"))]
-    (append questionslist (format "<input type=\"button\" value=\"%s\" id=\"%s\"/> "
+    (append questions-el (format "<input type=\"button\" value=\"%s\" id=\"%s\"/> "
                                   (i18n "pmt_submit")
                                   button-id))
-    (append questionslist "<hr/>")
-    (.click ($ (str "#" button-id)) onsubmit)))
+    (append questions-el "<hr/>")
+    (.click ($ (str "#" button-id)) (fn [_]
+                                      (dispatch/fire :on-submit {})))))
 
-(bb/defview QuestionFact
-  ;; a question's answered is composed of one or more facts
-  :className "question-fact"
-  :events {"submit" :on-submit}
-  
-  :on-submit
-  ([e]
-     (log e)
-     (js/alert "TODO: update 'values' variable"))
+(defn display-questions-in-category
+  "Displays all the question of a category."
+  [questions el]
+  (let [category_name (:category_name (first questions))]
+    (append el (format "<h3>%s</h3>" category_name))
+    (add-questions-html questions el)
+    (add-submit-button el)))
 
-  :calculate-answer
-  ([]
-     (log "calculate answer")
-     [1 42])
-  
-  :render
-  ([]
-     (bb/with-attrs [:question :nb-facts]
-       (log "adding fact for question")
-       (log question)
-       (add-question-html (js->clj question :keywordize-keys true) (.-$el this)))))
+(defn display-questions
+  "Displays all the questions."
+  [msg]
+  (let [el ($ "#questions")
+        questions-to-ids (:questions-by-id (deref questions))
+        ids (:questions (deref questions))]
+    (doseq [ids-for-category ids]
+      (display-questions-in-category (map questions-to-ids ids-for-category) el))))
 
-(bb/defview Question
-  :className "question"
-  :calculate-answer
-  ([]
-     (let [qfacts-views (aget this "qfacts-views")]
-       (map (fn [v] (.-calculate-answer v)) qfacts-views)))
-  
-  :render
-  ([]
-     (bb/with-attrs [:question]
-       (let [max (.-max question)
-             nb (cond (nil? max) 1
-                      (zero? max) 1
-                      (<= max 5) max
-                      :else 1)
-             nb-facts (atom nb)
-             qfacts-views (repeatedly nb
-                                      #(bb/new QuestionFact
-                                               {:model
-                                                (bb/new-model {:nb-facts nb-facts
-                                                               :question question})}))]
-         (aset this "qfacts-views" qfacts-views)
-         (doseq [qfact-view qfacts-views]
-           (append (.-$el this) (.-$el qfact-view))
-           (.render qfact-view))))))
+(dispatch/react-to #{:questions-added}
+                   (fn [_ msg]
+                     (display-questions msg))) 
+ 
 
-(defn category-name
+(defn- questions-list->map
+  "Converts a list of questions to a map indexing them by id."
+  [questions-list]
+  (reduce (fn [m question]
+            (assoc m (:id question) question))
+          {}
+          questions-list))
+
+(defn- questions-ordered
+  "Returns an ordered list of questions' ids according to their category."
+  [questions-list]
+  (map #(map :id %) (partition-by :category questions-list)))
+
+(defn- add-questions
+  "Adds the list of new questions to the questions map."
+  [questions latest-questions-list]
+  (-> questions
+      (update-in [:questions-by-id] merge (questions-list->map latest-questions-list))
+      (assoc :latest-questions (map :id latest-questions-list))
+      (update-in [:questions] concat (questions-ordered latest-questions-list))))
+
+(defn fetch-answers
+  "Fetches the answer of a question."
   [question]
-  (.-category_name question))
+  ((:fetch-answers question)))
 
-(bb/defview QuestionsList
-  :className "questions-list"
+(defn fetch-latest-questions-answers
+  "Fetches the answers of the latest questions."
+  []
+  (let [latest-questions (:latest-questions (deref questions))]
+    (map fetch-answers latest-questions)))
 
-  :initialize
-  ([attrs]
-     (.on (.-model this) "change" (.-render this) this))
+(defn- send-answers
+  [msg]
+  (fetch-latest-questions-answers)
+  (log "send answers"))
 
-  :on-submit
-  ([]
-     (bb/with-attrs [:onsubmit]
-       (js/alert "submit")
-       (doseq [qview (aget this "qviews")]
-         (let [ans (.calculate-answer qview)]
-           (log "ans =")
-           (log ans)))))
-
-  :render
-  ([]
-     (bb/with-attrs [:questions]
-       (let [el (.-$el this)
-             partitioned-questions (partition-by category-name questions)]
-         (empty el)
-         (doseq [part partitioned-questions]
-           (append el (format "<h3>%s</h3>"
-                              (category-name (first part))))
-           (let [qviews (map (fn [q]
-                               (bb/new Question
-                                       {:model (bb/new-model {:question q})}))
-                             part)]
-             (aset this "qviews" qviews)
-             (doseq [qview qviews]
-               (.append el (.-$el qview))
-               (.render qview))))
-         (add-submit-button el (.-on_submit this))))))
-
-(def questions-list (atom nil))
-
-(def questions-list-model (bb/new-model {:questions []}))
+(dispatch/react-to #{:on-submit} send-answers)
 
 (defn ^:export show-questions
   "Adds the HTML for the questions to the list of questions div."
-  [questions questionslist onsubmit]
-  (when (nil? (deref questions-list))
-    (.set questions-list-model "onsubmit" onsubmit)
-    (reset! questions-list (bb/new QuestionsList
-                                   {:model questions-list-model
-                                    :el ($ "#questions")})))
-  (let [old-questions (.get questions-list-model "questions")]
-    (.set questions-list-model "questions" (.concat old-questions questions)))
-  ;; (.validate ($ "#questionsform"))
-  (js/PM.scroll_to_bottom)
+  [latest-questions-list]
+  (let [latest (js->clj latest-questions-list :keywordize-keys true)]
+    (swap! questions add-questions latest)
+    (dispatch/fire :questions-added {:latest-questions latest}))
   false)
+
+(defn show-ag
+  [db]
+  (set! js/IMPACT.db db)
+  (js/PM.set_arguments_url db))
+
+(defn ^:export show-questions-or-ag
+  "Shows the remaining questions to the user or the argument graph if
+all questions have been answered."
+  [data]
+  (if-let [questions-list (.-questions data)]
+    (show-questions questions-list)
+    (show-ag (.-db data))))
