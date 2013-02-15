@@ -16,4 +16,7 @@
  {:filename travel_agent_luxembourg.clj
   :namespace carneades.examples.travel-agent-luxembourg
   :name tour-operator-business-permit }
+ {:filename test_dialog.clj
+  :namespace carneades.examples.test-dialog
+  :name test-dialog }
 ]
