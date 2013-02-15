@@ -53,15 +53,15 @@
         ag (set-main-issues ag (:query session))
         answers (get-in session [:dialog :answers])
         answers-statements (keys answers)
-        _ (prn "answers =")
-        _ (prn answers)
-        _ (prn "lazy-answers=")
-        _ (prn (filter (fn [a] (instance? clojure.lang.LazySeq a))
-                       (keys answers)))
+        ;;;; adds all answers to the argument graph since some answers
+        ;;;; may have not been created by the rules
+        ;;;; ag (reduce enter-statement ag answers-statements)
         ;; accepts answers with a weight of 1.0
-        ag (accept ag (filter (fn [s] (= (answers s) 1.0)) answers-statements))
+        accepted-statements (filter (fn [s] ((answers s) 1.0)) answers-statements)
+        ag (accept ag accepted-statements)
         ;; rejects answers with a weight of 0.0
-        ag (reject ag (filter (fn [s] (= (answers s) 0.0)) answers-statements))
+        rejected-statements (filter (fn [s] ((answers s) 0.0)) answers-statements)
+        ag (reject ag rejected-statements)
         ag (enter-language ag (-> session :theory :language))
         ag (evaluate aspic-grounded ag)
         dbname (store-ag ag)

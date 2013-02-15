@@ -31,7 +31,6 @@
   [stmt theory lang]
   (let [predicate (get-predicate stmt theory)]
     (cond (and (scheme/role? predicate)
-               (functional? predicate)
                (coll? (:type predicate)))
           (let [[s o v] stmt
                 stmt2 (list s o (genvar))]
@@ -58,33 +57,43 @@ widget is still used. New Types of :string maps to :widgets 'text."
   (or (:widgets predicate)
       (replace {:string 'text} [(or (:type predicate) :string)])))
 
+(defn get-answers-choice-for-predicate-yesno
+  "Builds the data for a yes/no question of a predicate."
+  [theory stmt lang default-fn]
+  (let [yes (get-in theory [:language 'yes :text lang])
+        no (get-in theory [:language 'no :text lang])
+        maybe (get-in theory [:language 'maybe :text lang])]
+    (merge {:answers [yes no maybe]
+            :formalanswers ['yes 'no 'maybe]
+            :yesnoquestion true
+            :widgets '[radio]}
+           (default-fn stmt true))))
+
+(defn get-answers-choice-for-predicate-helper
+  "Builds the data for a generic question of a predicate."
+  [theory stmt lang default-fn]
+  (let [predicate (get-predicate stmt theory)
+        formalanswers (-> predicate :answers)
+        termargs (term-args stmt)
+        ;; filter out answer for grounded variables (since they are not asked)
+        formalanswers (keep (fn [[term answer]] (when (variable? term) answer)) (partition 2 (interleave termargs formalanswers)))
+        answers (map (fn [sym] (-> theory :language sym :text lang)) formalanswers)
+        widgets (get-widgets predicate)
+        widgets (keep (fn [[term widget]] (when (variable? term) widget)) (partition 2 (interleave termargs widgets)))]
+    (merge {:answer answers
+            :formalanswers formalanswers
+            :yesnoquestion false
+            :widgets widgets}
+           (default-fn stmt false))))
+
 (defn- get-answers-choices-for-predicate
   [theory stmt lang default-fn]
   (prn "[get-answers-choices-for-predicate] lang=" lang)
   (let [predicate (get-predicate stmt theory)
-        arity (scheme/get-arity predicate)
-        yes (get-in theory [:language 'yes :text lang])
-        no (get-in theory [:language 'no :text lang])
-        maybe (get-in theory [:language 'maybe :text lang])]
+        arity (scheme/get-arity predicate)]
     (if (or (ground? stmt) (zero? arity))
-      {:answers [yes no maybe]
-       :formalanswers ['yes 'no 'maybe]
-       :yesnoquestion true
-       :widgets '[radio]
-       :default (default-fn stmt true)
-       }
-      (let [formalanswers (-> predicate :answers)
-            termargs (term-args stmt)
-            ;; filter out answer for grounded variables (since they are not asked)
-            formalanswers (keep (fn [[term answer]] (when (variable? term) answer)) (partition 2 (interleave termargs formalanswers)))
-            answers (map (fn [sym] (-> theory :language sym :text lang)) formalanswers)
-            widgets (get-widgets predicate)
-            widgets (keep (fn [[term widget]] (when (variable? term) widget)) (partition 2 (interleave termargs widgets)))]
-        {:answer answers
-         :formalanswers formalanswers
-         :yesnoquestion false
-         :default (default-fn stmt false)
-         :widgets widgets}))))
+      (get-answers-choice-for-predicate-yesno theory stmt lang default-fn)
+      (get-answers-choice-for-predicate-helper theory stmt lang default-fn))))
 
 (defn get-typename
   [type theory lang]
@@ -108,17 +117,15 @@ widget is still used. New Types of :string maps to :widgets 'text."
         yes (get-in theory [:language 'yes :text lang])
         no (get-in theory [:language 'no :text lang])
         maybe (get-in theory [:language 'maybe :text lang])
-        yesno (and (not (coll? type)) (ground? stmt))
-        default (default-fn stmt yesno) 
-        ]
-    ;; TODO: translation of the types
-    {:min min
-     :max max
-     :type type
-     :typename typename
-     :answers [yes no maybe]
-     :default default
-     :yesnoquestion yesno}))
+        yesno (and (not (coll? type)) (ground? stmt))]
+    (merge {:min min
+            :max max
+            :type type
+            :typename typename
+            :answers [yes no maybe]
+            :formalanswers (when yesno '[yes no maybe])
+            :yesnoquestion yesno}
+           (default-fn stmt yesno))))
 
 (defn- get-answers-choices
   [theory stmt lang default-fn]
@@ -138,20 +145,16 @@ widget is still used. New Types of :string maps to :widgets 'text."
         [category category-name] (get-category theory pred lang)
         hint (get-hint predicate lang)
         answers-choices (get-answers-choices theory stmt lang default-fn)]
-    (merge
-     {:id id
-      :category category
-      :category_name category-name
-      :hint hint
-      ;; :question question ;; DEPRECATED
-      :text text
-      :statement stmt
-      :role (scheme/role? predicate)
-      :concept (scheme/concept? predicate)
-      :default (default-fn stmt (:yesnoquestion answers-choices))
-      ;; :predicate predicate
-      }
-     answers-choices)))
+    (merge {:id id
+            :category category
+            :category_name category-name
+            :hint hint
+            :text text
+            :statement stmt
+            :role (scheme/role? predicate)
+            :concept (scheme/concept? predicate)}
+           answers-choices
+           (default-fn stmt (:yesnoquestion answers-choices)))))
 
 (declare get-other-questions)
 
@@ -221,29 +224,57 @@ default-fn is a function returning the default formalized answer for a question.
               (if (seen p)
                 (if (or (scheme/concept? pred)
                         (and (scheme/role? pred)
-                             (= (:max pred) 1)))
+                             (or (= (:max pred) 1)
+                                 (coll? (:type pred)))))
                   [questions seen]
-                  (throw (Exception. "Not Yet Implemented")))
+                  [(cons question questions) (conj seen p)])
                 [(cons question questions) (conj seen p)])))
            [() #{}]
            questions)))
 
-(defn get-default-answer
-  [ag theory stmt yesno]
-  {:post [(do (prn "answser from default =") (prn %) true)]}
-  (let [n (ag/get-statement-node ag stmt)
-        predicate (get-predicate stmt theory)]
-    (prn "stmt =" stmt)
-    (prn "value =" (:value n))
-    (if yesno
-      (condp = (:value n)
-        0.0 'no
-        1.0 'yes
-        0.5 'maybe
-        nil)
-      (let [obj (second (term-args stmt))]
-       (when (= (:value n) 1.0)
-         obj)))))
+(defn get-default-values-for-x
+  [ag atoms-for-pred stmt value-fn]
+  (reduce (fn [m s]
+            (let [n (ag/get-statement-node ag s)
+                  val (value-fn s n)]
+              (if val
+                (-> m
+                    (update-in [:values] concat [val])
+                    (update-in [:facts-uuid] conj (:id n))
+                    (update-in [:nb-facts] inc))
+                m)))
+          {:nb-facts 0
+           :facts-uuid []}
+          atoms-for-pred))
+
+(defn get-default-values-for-yesno
+  [ag atoms-for-pred stmt]
+  (get-default-values-for-x ag atoms-for-pred stmt
+                            (fn [s n]
+                              (condp = (:value n)
+                                0.0 '[no]
+                                1.0 '[yes]
+                                0.5 '[maybe]
+                                nil))))
+
+(defn get-default-values-for-role
+  [ag atoms-for-pred stmt]
+  ;; {:pre [(do (prn "atoms-for-pred =") (pprint atoms-for-pred) (prn "---") true)]
+  ;;  :post [(do (prn "get-default-values-for-role") (pprint %) (prn "---") true)]}
+  (get-default-values-for-x ag atoms-for-pred stmt
+                            (fn [s n]
+                              (let [obj (second (term-args s))]
+                               (when (= (:value n) 1.0)
+                                 [obj])))))
+ 
+(defn get-default-values
+  [ag theory atoms-by-pred stmt yesno]
+  {:post [(do (prn "default values for " stmt " is ") (prn %) true)]}
+  (let [predicate (get-predicate stmt theory)
+        atoms-for-pred (atoms-by-pred (:symbol predicate))]
+   (if yesno
+     (get-default-values-for-yesno ag atoms-for-pred stmt)
+     (get-default-values-for-role ag atoms-for-pred stmt))))
 
 (defn put-atoms-being-accepted-in-the-front
   "Sorts the atoms and places those having a :value of 1.0 in the front."
@@ -259,18 +290,18 @@ default-fn is a function returning the default formalized answer for a question.
         ag (export-to-argument-graph (db/make-database-connection db "guest" ""))
         atoms (askable-statements-atoms db theory)
         atoms (put-atoms-being-accepted-in-the-front ag atoms)
+        atoms-by-pred (group-by first atoms)
+        ;; keep only one atom per predicate
+        atoms (map first (vals atoms-by-pred))
         questions (map-indexed (fn [idx atom]
                                  (get-first-question
                                   idx
                                   atom
                                   lang
                                   theory
-                                  (partial get-default-answer ag theory)))
+                                  (partial get-default-values ag theory atoms-by-pred)))
                                atoms)
-        questions (remove-superfluous-questions questions theory)
-        questions (group-by :category questions)]
-    ;; (pprint questions)
-    ;; (prn)
+        questions (remove-superfluous-questions questions theory)]
     questions))
 
 (defn smart-update-statement
@@ -306,3 +337,11 @@ Statements are represented as a collection of [statement value] element."
   [db username password statements theory]
   (update-statements-weights db username password statements theory)
   (evaluate-graph db username password))
+
+(defn pseudo-delete-statements
+  "Set the weight of the statements to 0.5 in the db."
+  [db username password ids]
+  (let [dbconn (db/make-database-connection db username password)]
+   (db/with-db dbconn
+     (doseq [id ids]
+       (db/update-statement id {:weight 0.5})))))

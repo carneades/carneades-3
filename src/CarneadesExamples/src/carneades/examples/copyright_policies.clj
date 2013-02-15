@@ -161,7 +161,7 @@
      :symbol 'type-of-use
      :askable true
      :min 1
-     :max 1
+     :max 2
      :type '#{non-commercial commercial}
      :forms {:de (make-form :positive "%s ist für folgender Zwecken: %s."
                             :negative "%s ist nicht für folgender Zwecken: %s."
