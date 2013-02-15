@@ -18,10 +18,12 @@
   positive assumption. The the weight of the statement in the table is
   0.0, a singleton response is returned, with the negation of the
   statement as an assumption. Otherwise the query fails by returning an
-  empty sequence. "} carneades.engine.dialog
+  empty sequence. "}
+  carneades.engine.dialog
   (:use clojure.pprint
         carneades.engine.statement
-        [carneades.engine.unify :only (unify genvar apply-substitutions)])
+        [carneades.engine.unify :only (unify genvar apply-substitutions)]
+        [clojure.tools.logging :only (info debug error)])
   (:require [carneades.engine.scheme :as scheme]))
 
 (defrecord Dialog [questions answers])
@@ -47,12 +49,20 @@
    :post [(not (instance? clojure.lang.LazySeq %))]}
   (apply list (replace (replace-map question) (:atom (positive-statement question)))))
 
+(defn xconj
+  "Like clojure.core/conj but creates a set if s is nil."
+  [s x]
+  (if (nil? s)
+    #{x}
+    (conj s x)))
+
 (defn add-answers
   "Add answers to the dialog for the given atomic questions."
   [dialog questions-to-weight]
-  {:pre [(map? questions-to-weight)]}
+  {:pre [(coll? questions-to-weight)]
+   :post [(do (info "add-answers =>") (pprint %) (prn "================================") true)]}
   (reduce (fn [dialog [question weight]]
-            (assoc-in dialog [:answers (answer-key question)] weight))
+            (update-in dialog [:answers (answer-key question)] xconj weight))
           dialog
           questions-to-weight))
 
@@ -75,22 +85,24 @@
   {:pre [(do (prn "                    [get-answers] " question) true)]
    :post [(do (prn "                    ====> " %) true)]}
   (if-let [key (first (previous-answers question dialog))]
-    (condp = (get-in dialog [:answers key])
-      0.0 (list (neg question)) 
-      1.0 (list question)
-      ())
+    (let [answers (get-in dialog [:answers key])]
+      (cond (answers 1.0) (list question)
+            (answers 0.0) (list (neg question))
+            :else ()))
     ;; if
     ;; * we don't have an answer and
     ;; * the question is grounded and
-    ;; * corresponds to a functional (min=1, max=1) role predicate in the theory and
+    ;;;; * corresponds to a functional (min=1, max=1) role predicate in the theory and
     ;; * the possible values (the type) are expressed in a set
     ;; * and we have an answer for one of the other possible values in the dialog
     ;; then the response is the negation of the question
+
+    ;; here we try a closed-world assumption
     (when-let [pred (get-in theory [:language (literal-predicate question)])]
       (when (and (ground? question)
                  (scheme/role? pred)
-                 (= (:max pred) 1)
-                 (= (:max pred) 1)
+                 ;; (= (:max pred) 1)
+                 ;; (= (:max pred) 1)
                  (set? (:type pred))
                  (seq (mapcat #(previous-answers (replace-sliteral-value question %) dialog)
                               (disj (:type pred) (second (term-args question))))))

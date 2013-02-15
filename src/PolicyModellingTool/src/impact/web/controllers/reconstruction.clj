@@ -12,13 +12,14 @@
    (:require [carneades.engine.scheme :as scheme]))
 
 (defn reconstruct-yesno-answer
-  "Returns the vector representing the user's response for a yes/no question"
-  [values statement]
-  (let [value (condp = (first values)
-                "yes" 1.0
-                "no" 0.0
-                "maybe" 0.5)]
-   [statement value]))
+  "Returns a collection of vector representing the user's responses for a yes/no question"
+  [coll-of-values statement]
+  (map (fn [values]
+         [statement (condp = (first values)
+                      "yes" 1.0
+                      "no" 0.0
+                      "maybe" 0.5)])
+       coll-of-values))
 
 (defn reconstruct-predicate-answer
   "Returns the vector representing the user's response for a predicate"
@@ -28,10 +29,12 @@
    [(apply-substitutions subs statement) 1.0]))
 
 (defn reconstruct-role-answer
-  [values statement]
-  (let [[s o v] statement
-        value (first values)]
-    [(list s o (symbol (first values))) 1.0]))
+  [coll-of-values statement]
+  (map (fn [values]
+         (let [[s o v] statement
+               value (first values)]
+           [(list s o (symbol value)) 1.0]))
+       coll-of-values))
 
 (defn reconstruct-answer
   [question theory values]
@@ -44,16 +47,14 @@
          (reconstruct-predicate-answer values statement))))
 
 (defn reconstruct-answers
-  "Reconstructs the answer from the JSON"
+  "Reconstructs the answer from the JSON.
+Returns a list of [statement weight]."
   [jsonanswers dialog theory]
-  (reduce (fn [questions-to-weight answer]
+  (mapcat (fn [answer]
             (let [id (:id answer)
                   values (:values answer)
-                  question (get-nthquestion dialog id)
-                  ans (reconstruct-answer question theory values)
-                  [statement value] ans]
-              (assoc questions-to-weight statement value)))
-          {}
+                  question (get-nthquestion dialog id)]
+              (reconstruct-answer question theory values)))
           jsonanswers))
 
 (defn array->stmt

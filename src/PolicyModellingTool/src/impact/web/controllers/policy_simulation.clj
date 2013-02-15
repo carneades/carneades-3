@@ -8,12 +8,14 @@
         [carneades.engine.utils :only [safe-read-string exists?]]
         [impact.web.logic.askengine :only [start-engine send-answers-to-engine]]
         [impact.web.logic.questions :only [get-predicate get-questions-for-answers-modification
-                                           modify-statements-weights]]
+                                           modify-statements-weights
+                                           pseudo-delete-statements]]
         [impact.web.views.pages :only [index-page config-page]]
         [carneades.engine.unify :only [apply-substitutions]]
         [carneades.engine.dialog :only [get-nthquestion add-answers]]
         [ring.util.codec :only [base64-decode]]
-        [carneades.database.export :only [export-to-argument-graph]])
+        [carneades.database.export :only [export-to-argument-graph]]
+        [clojure.pprint :only [pprint]])
   (:require [carneades.database.db :as db]
             [carneades.database.admin :as admin]
             [clojure.string :as str]
@@ -88,19 +90,25 @@
 
 (defmethod ajax-handler :modify-facts
   [json session request]
+  (prn "modify-facts=")
+  (pprint json)
+  (prn)
   (let [data (:modify-facts json)
         facts (:facts data)
         db (:db data)
         theory (policies (deref current-policy))
         facts (recons/reconstruct-statements facts)
-        to-modify (map (fn [q] (recons/reconstruct-answer q theory (:values q))) facts)
+        to-modify (mapcat (fn [q] (recons/reconstruct-answer q theory (:values q))) facts)
         [username password] (get-username-and-password request)]
-    (modify-statements-weights db "root" "pw1" to-modify theory)
+    (pseudo-delete-statements db username password (:deleted data))
+    (modify-statements-weights db username password to-modify theory)
     (let [dbconn (db/make-database-connection db username password)
           ag (export-to-argument-graph dbconn)
           ;; restarts the engine to expand new rules
           ;; that could be now reachable with the new facts
-          session (start-engine session ag)] 
+          ;; session (start-engine session ag)
+          session (assoc session :all-questions-answered true :db db)
+          ] 
       (questions-or-solution session))))
 
 (defn new-session
