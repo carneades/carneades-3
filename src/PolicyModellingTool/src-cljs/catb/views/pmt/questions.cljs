@@ -81,10 +81,11 @@
 
 (defn build-facts-buttons
   "Returns a HTML string representing the -/+ button that are used to
-  add/remove facts."
+  add/remove facts. Returns an empty string if no button should be created."
   [question]
   (if (and (not= (:max question) 1)
-           (not (:concept question)))
+           (not (:concept question))
+           (not (:yesnoquestion question)))
     "&nbsp;&nbsp;<img class=\"remove-fact fact-button\" src=\"images/list-remove.png\"/>
 <img class=\"add-fact fact-button\" src=\"images/list-add.png\"/>"
     ""))
