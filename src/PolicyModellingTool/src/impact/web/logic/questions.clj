@@ -57,7 +57,7 @@ widget is still used. New Types of :string maps to :widgets 'text."
   (or (:widgets predicate)
       (replace {:string 'text} [(or (:type predicate) :string)])))
 
-(defn get-answers-choice-for-predicate-yesno
+(defn get-answers-choice-for-grounded-predicate
   "Builds the data for a yes/no question of a predicate."
   [theory stmt lang default-fn]
   (let [yes (get-in theory [:language 'yes :text lang])
@@ -65,7 +65,7 @@ widget is still used. New Types of :string maps to :widgets 'text."
         maybe (get-in theory [:language 'maybe :text lang])]
     (merge {:answers [yes no maybe]
             :formalanswers ['yes 'no 'maybe]
-            :yesnoquestion true
+            :grounded true
             :widgets '[radio]}
            (default-fn stmt true))))
 
@@ -82,7 +82,7 @@ widget is still used. New Types of :string maps to :widgets 'text."
         widgets (keep (fn [[term widget]] (when (variable? term) widget)) (partition 2 (interleave termargs widgets)))]
     (merge {:answer answers
             :formalanswers formalanswers
-            :yesnoquestion false
+            :grounded false
             :widgets widgets}
            (default-fn stmt false))))
 
@@ -92,7 +92,7 @@ widget is still used. New Types of :string maps to :widgets 'text."
   (let [predicate (get-predicate stmt theory)
         arity (scheme/get-arity predicate)]
     (if (or (ground? stmt) (zero? arity))
-      (get-answers-choice-for-predicate-yesno theory stmt lang default-fn)
+      (get-answers-choice-for-grounded-predicate theory stmt lang default-fn)
       (get-answers-choice-for-predicate-helper theory stmt lang default-fn))))
 
 (defn get-typename
@@ -117,15 +117,15 @@ widget is still used. New Types of :string maps to :widgets 'text."
         yes (get-in theory [:language 'yes :text lang])
         no (get-in theory [:language 'no :text lang])
         maybe (get-in theory [:language 'maybe :text lang])
-        yesno (and (not (coll? type)) (ground? stmt))]
+        grounded (and (not (coll? type)) (ground? stmt))]
     (merge {:min min
             :max max
             :type type
             :typename typename
             :answers [yes no maybe]
-            :formalanswers (when yesno '[yes no maybe])
-            :yesnoquestion yesno}
-           (default-fn stmt yesno))))
+            :formalanswers (when grounded '[yes no maybe])
+            :grounded grounded}
+           (default-fn stmt grounded))))
 
 (defn- get-answers-choices
   [theory stmt lang default-fn]
@@ -154,7 +154,7 @@ widget is still used. New Types of :string maps to :widgets 'text."
             :role (scheme/role? predicate)
             :concept (scheme/concept? predicate)}
            answers-choices
-           (default-fn stmt (:yesnoquestion answers-choices)))))
+           (default-fn stmt (:grounded answers-choices)))))
 
 (declare get-other-questions)
 
@@ -247,7 +247,7 @@ default-fn is a function returning the default formalized answer for a question.
            :facts-uuid []}
           atoms-for-pred))
 
-(defn get-default-values-for-yesno
+(defn get-default-values-for-grounded
   [ag atoms-for-pred stmt]
   (get-default-values-for-x ag atoms-for-pred stmt
                             (fn [s n]
@@ -268,12 +268,12 @@ default-fn is a function returning the default formalized answer for a question.
                                  [obj])))))
  
 (defn get-default-values
-  [ag theory atoms-by-pred stmt yesno]
+  [ag theory atoms-by-pred stmt grounded]
   {:post [(do (prn "default values for " stmt " is ") (prn %) true)]}
   (let [predicate (get-predicate stmt theory)
         atoms-for-pred (atoms-by-pred (:symbol predicate))]
-   (if yesno
-     (get-default-values-for-yesno ag atoms-for-pred stmt)
+   (if grounded
+     (get-default-values-for-grounded ag atoms-for-pred stmt)
      (get-default-values-for-role ag atoms-for-pred stmt))))
 
 (defn put-atoms-being-accepted-in-the-front

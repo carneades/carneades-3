@@ -11,7 +11,7 @@
         [carneades.engine.dialog :only [get-nthquestion add-answers]])
    (:require [carneades.engine.scheme :as scheme]))
 
-(defn reconstruct-yesno-answer
+(defn reconstruct-grounded-answer
   "Returns a collection of vector representing the user's responses for a yes/no question"
   [coll-of-values statement]
   (map (fn [values]
@@ -39,8 +39,8 @@
 (defn reconstruct-answer
   [question theory values]
   (let [statement (:statement question)]
-   (cond (:yesnoquestion question)
-         (reconstruct-yesno-answer values statement)
+   (cond (:grounded question)
+         (reconstruct-grounded-answer values statement)
          (scheme/role? (get-predicate statement theory))
          (reconstruct-role-answer values statement)
          :else
