@@ -85,7 +85,7 @@
   [question]
   (if (and (not= (:max question) 1)
            (not (:concept question))
-           (not (:yesnoquestion question)))
+           (not (:grounded question)))
     "&nbsp;&nbsp;<img class=\"remove-fact fact-button\" src=\"images/list-remove.png\"/>
 <img class=\"add-fact fact-button\" src=\"images/list-add.png\"/>"
     ""))
@@ -240,14 +240,14 @@ This is used when deleting a fact during the modification phase."
 (defn build-role-question
   "Returns the HTML of the question for a role and its helper functions."
   [question]
-  {:pre [(not (:yesnoquestion question))]}
+  {:pre [(not (:grounded question))]}
   (let [el ($ (build-role-question-html question))]
     {:el el
      :fetcher (create-role-values-fetcher question)
      :fact-adder (create-role-fact-adder question el)
      :fact-remover (create-fact-remover question el)}))
 
-(defn build-yes-no-question-fact-html
+(defn build-grounded-question-fact-html
   "Returns a string representing a fact of a yes/no question."
   [question idx]
   (let [text (s/capitalize (:text question))]
@@ -256,21 +256,21 @@ This is used when deleting a fact during the modification phase."
         (build-facts-buttons question)
         "</div>")))
 
-(defn build-yes-no-question-facts-html
+(defn build-grounded-question-facts-html
   "Returns a string representing the facts of a yes/no questions."
   [question]
   (apply str
-         (map #(build-yes-no-question-fact-html question %)
+         (map #(build-grounded-question-fact-html question %)
               (range (:nb-facts question)))))
 
-(defn build-yes-no-question-html
+(defn build-grounded-question-html
   "Returns a string representing a yes/no question."
   [question]
   (str (format "<div id=\"q%s\">" (:id question))
-       (build-yes-no-question-facts-html question)
+       (build-grounded-question-facts-html question)
        "</div>"))
 
-(defn create-yes-no-question-fetcher
+(defn create-grounded-question-fetcher
   "Returns an anonymous function that will fetch the values of the
   user's answers to a yes/no question."
   [question]
@@ -279,7 +279,7 @@ This is used when deleting a fact during the modification phase."
           inputs (.find el "input:checked")]
       (map (fn [i] [(.val ($ i))]) inputs))))
 
-(defn create-yes-no-fact-adder
+(defn create-grounded-fact-adder
   "Creates an anonymous function which will be called when a fact of a
   yes/no question is added."
   [question el]
@@ -287,18 +287,18 @@ This is used when deleting a fact during the modification phase."
     (let [id (:id question)
           lquestion (get-in (deref questions) [:questions id])
           nb-facts (:nb-facts lquestion)]
-      (append el (build-yes-no-question-fact-html question (inc nb-facts)))
+      (append el (build-grounded-question-fact-html question (inc nb-facts)))
       (add-facts-number-listener question)
       (swap! questions update-in [:questions id :nb-facts] inc))))
 
-(defn build-yes-no-question
+(defn build-grounded-question
   "Returns the HTML of the question for a yes/no question and its
  helper functions."
   [question]
-  (let [el ($ (build-yes-no-question-html question))]
+  (let [el ($ (build-grounded-question-html question))]
    {:el el
-    :fetcher (create-yes-no-question-fetcher question)
-    :fact-adder (create-yes-no-fact-adder question el)
+    :fetcher (create-grounded-question-fetcher question)
+    :fact-adder (create-grounded-fact-adder question el)
     :fact-remover (create-fact-remover question el)}))
 
 (defn build-question
@@ -306,10 +306,10 @@ This is used when deleting a fact during the modification phase."
   [question]
   (log "Question")
   (log (clj->js question))
-  (cond (:yesnoquestion question) (build-yes-no-question question)
+  (cond (:grounded question) (build-grounded-question question)
         (:role question) (build-role-question question)
         ;; (:concept question) (get-concept-question-html question)
-        ;; (:yesnoquestion question) (get-yes-no-question-html question)
+        ;; (:grounded question) (get-grounded-question-html question)
         ;; :else (get-ungrounded-question-html question)
         ))
 
