@@ -19,7 +19,7 @@ PM.display_facts = function() {
         $('#pm').html(facts_html.filter("#facts"));
         PM.activate('#facts-item');
         PM.attach_lang_listener();
-        catb.views.pmt.questions.init_show_questions();
+        carneades.policy_analysis.web.views.pmt.questions.init_show_questions();
     } else {
         var facts_html = ich.ask_modify_facts(PM.merge_menu_props(
             {'pmt_facts_already_submitted': $.i18n.prop('pmt_facts_already_submitted'),

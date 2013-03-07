@@ -70,7 +70,7 @@ PM.display_policies = function(sectionid, subset) {
                                                                          'policies',
                                                                         subset);
                     current_policy.description_text = current_policy.header.description[lang];
-                    var language_clj = catb.views.pmt.theory.convert_language(current_policy.language);
+                    var language_clj = carneades.policy_analysis.web.views.pmt.theory.convert_language(current_policy.language);
                     current_policy.policies_text = PM.policies_text(language_clj,
                                                                     current_policy.sections,
                                                                     2,
@@ -276,7 +276,7 @@ PM.varname = function(v) {
 // or a string.
 // language_clj is the language translated to ClojureScript
 PM.format_sexpr = function(sexpr, language_clj, lang) {
-    var txt = catb.views.pmt.theory.format_statement(sexpr,
+    var txt = carneades.policy_analysis.web.views.pmt.theory.format_statement(sexpr,
                                                      language_clj,
                                                      lang,
                                                      "positive");
