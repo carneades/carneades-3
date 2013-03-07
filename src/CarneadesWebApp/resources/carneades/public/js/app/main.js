@@ -66,15 +66,15 @@ PM.dispatch_url = function(sections) {
     } else if(sections[1] == "sct") {
         PM.dispatch_sct_url(sections[2]);
     } else if(sections[1] == "repl") {
-        catb.repl.connect();
+        carneades.policy_analysis.web.repl.connect();
     } else if(sections[1] == "report") {
-        catb.views.pmt.report.display();
+        carneades.policy_analysis.web.views.pmt.report.display();
     }
 };
 
 PM.dispatch_facts_url = function(section) {
     if(section == "modify") {
-        catb.views.pmt.submitted_facts.display_facts();
+        carneades.policy_analysis.web.views.pmt.submitted_facts.display_facts();
     } else {
         PM.display_facts();
     }

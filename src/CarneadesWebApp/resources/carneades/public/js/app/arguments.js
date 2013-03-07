@@ -42,7 +42,7 @@ PM.display_arguments = function(db, type, id) {
             } else if(type == "map") {
                 AGB.display_map(db);
             } else if (type == "vote") {
-                catb.views.pmt.vote.display();
+                carneades.policy_analysis.web.views.pmt.vote.display();
             } else if (type == "copy-case") {
                 PM.copy_case(db);
             } else {

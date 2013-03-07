@@ -20881,29 +20881,29 @@ jayq.util.clj__GT_js = function clj__GT_js(x) {
     }
   }
 };
-goog.provide("catb.backbone.core");
+goog.provide("carneades.policy_analysis.web.backbone.core");
 goog.require("cljs.core");
 goog.require("jayq.util");
 goog.require("jayq.util");
-catb.backbone.core.IHtml = {};
-catb.backbone.core.html = function html(this$) {
+carneades.policy_analysis.web.backbone.core.IHtml = {};
+carneades.policy_analysis.web.backbone.core.html = function html(this$) {
   if(function() {
     var and__3822__auto____6230 = this$;
     if(and__3822__auto____6230) {
-      return this$.catb$backbone$core$IHtml$html$arity$1
+      return this$.carneades$policy_analysis$web$backbone$core$IHtml$html$arity$1
     }else {
       return and__3822__auto____6230
     }
   }()) {
-    return this$.catb$backbone$core$IHtml$html$arity$1(this$)
+    return this$.carneades$policy_analysis$web$backbone$core$IHtml$html$arity$1(this$)
   }else {
     var x__2431__auto____6231 = this$ == null ? null : this$;
     return function() {
-      var or__3824__auto____6232 = catb.backbone.core.html[goog.typeOf(x__2431__auto____6231)];
+      var or__3824__auto____6232 = carneades.policy_analysis.web.backbone.core.html[goog.typeOf(x__2431__auto____6231)];
       if(or__3824__auto____6232) {
         return or__3824__auto____6232
       }else {
-        var or__3824__auto____6233 = catb.backbone.core.html["_"];
+        var or__3824__auto____6233 = carneades.policy_analysis.web.backbone.core.html["_"];
         if(or__3824__auto____6233) {
           return or__3824__auto____6233
         }else {
@@ -20913,24 +20913,24 @@ catb.backbone.core.html = function html(this$) {
     }().call(null, this$)
   }
 };
-catb.backbone.core.html = function html(this$, content) {
+carneades.policy_analysis.web.backbone.core.html = function html(this$, content) {
   if(function() {
     var and__3822__auto____6238 = this$;
     if(and__3822__auto____6238) {
-      return this$.catb$backbone$core$IHtml$html$arity$2
+      return this$.carneades$policy_analysis$web$backbone$core$IHtml$html$arity$2
     }else {
       return and__3822__auto____6238
     }
   }()) {
-    return this$.catb$backbone$core$IHtml$html$arity$2(this$, content)
+    return this$.carneades$policy_analysis$web$backbone$core$IHtml$html$arity$2(this$, content)
   }else {
     var x__2431__auto____6239 = this$ == null ? null : this$;
     return function() {
-      var or__3824__auto____6240 = catb.backbone.core.html[goog.typeOf(x__2431__auto____6239)];
+      var or__3824__auto____6240 = carneades.policy_analysis.web.backbone.core.html[goog.typeOf(x__2431__auto____6239)];
       if(or__3824__auto____6240) {
         return or__3824__auto____6240
       }else {
-        var or__3824__auto____6241 = catb.backbone.core.html["_"];
+        var or__3824__auto____6241 = carneades.policy_analysis.web.backbone.core.html["_"];
         if(or__3824__auto____6241) {
           return or__3824__auto____6241
         }else {
@@ -20940,14 +20940,14 @@ catb.backbone.core.html = function html(this$, content) {
     }().call(null, this$, content)
   }
 };
-Backbone.View.prototype.catb$backbone$core$IHtml$ = true;
-Backbone.View.prototype.catb$backbone$core$IHtml$html$arity$1 = function(this$) {
+Backbone.View.prototype.carneades$policy_analysis$web$backbone$core$IHtml$ = true;
+Backbone.View.prototype.carneades$policy_analysis$web$backbone$core$IHtml$html$arity$1 = function(this$) {
   return this$.$el.html()
 };
-Backbone.View.prototype.catb$backbone$core$IHtml$html$arity$2 = function(this$, content) {
+Backbone.View.prototype.carneades$policy_analysis$web$backbone$core$IHtml$html$arity$2 = function(this$, content) {
   return this$.$el.html(content)
 };
-catb.backbone.core.get_in_STAR_ = function get_in_STAR_(model, properties) {
+carneades.policy_analysis.web.backbone.core.get_in_STAR_ = function get_in_STAR_(model, properties) {
   var current__6244 = model;
   var properties__6245 = properties;
   while(true) {
@@ -20963,19 +20963,19 @@ catb.backbone.core.get_in_STAR_ = function get_in_STAR_(model, properties) {
     break
   }
 };
-catb.backbone.core.get_in = function get_in(model, properties) {
-  return cljs.core.js__GT_clj.call(null, catb.backbone.core.get_in_STAR_.call(null, model, properties))
+carneades.policy_analysis.web.backbone.core.get_in = function get_in(model, properties) {
+  return cljs.core.js__GT_clj.call(null, carneades.policy_analysis.web.backbone.core.get_in_STAR_.call(null, model, properties))
 };
-catb.backbone.core.new$ = function new$(type, attributes) {
+carneades.policy_analysis.web.backbone.core.new$ = function new$(type, attributes) {
   return new type(jayq.util.clj__GT_js.call(null, attributes))
 };
-catb.backbone.core.new_model = function new_model(attributes) {
+carneades.policy_analysis.web.backbone.core.new_model = function new_model(attributes) {
   return new Backbone.Model(jayq.util.clj__GT_js.call(null, attributes))
 };
-catb.backbone.core.render = function render(view) {
+carneades.policy_analysis.web.backbone.core.render = function render(view) {
   return view.render()
 };
-catb.backbone.core.save = function save(model, attributes, options) {
+carneades.policy_analysis.web.backbone.core.save = function save(model, attributes, options) {
   return model.save(jayq.util.clj__GT_js.call(null, attributes), jayq.util.clj__GT_js.call(null, options))
 };
 goog.provide("clojure.string");
@@ -21151,27 +21151,27 @@ clojure.string.escape = function escape(s, cmap) {
     break
   }
 };
-goog.provide("catb.icanhaz.core");
+goog.provide("carneades.policy_analysis.web.icanhaz.core");
 goog.require("cljs.core");
 goog.require("jayq.util");
 goog.require("clojure.string");
 goog.require("jayq.util");
-catb.icanhaz.core.get = function get(template_key, variables) {
+carneades.policy_analysis.web.icanhaz.core.get = function get(template_key, variables) {
   var tname__6507 = clojure.string.replace.call(null, jayq.util.clj__GT_js.call(null, template_key), "-", "_");
   return ich[tname__6507].call(ich, jayq.util.clj__GT_js.call(null, variables))
 };
-goog.provide("catb.template");
+goog.provide("carneades.policy_analysis.web.template");
 goog.require("cljs.core");
 goog.require("jayq.util");
-goog.require("catb.icanhaz.core");
+goog.require("carneades.policy_analysis.web.icanhaz.core");
 goog.require("jayq.util");
-catb.template.get = function get(template, variables) {
+carneades.policy_analysis.web.template.get = function get(template, variables) {
   var entries__6223 = cljs.core.keys.call(null, cljs.core.js__GT_clj.call(null, jQuery.i18n.map));
   var texts__6224 = cljs.core.apply.call(null, cljs.core.hash_map, cljs.core.mapcat.call(null, function(e) {
     return cljs.core.PersistentVector.fromArray([cljs.core.keyword.call(null, e), jQuery.i18n.prop(e)], true)
   }, entries__6223));
   var augmented__6225 = cljs.core.merge.call(null, texts__6224, variables);
-  return catb.icanhaz.core.get.call(null, template, augmented__6225)
+  return carneades.policy_analysis.web.icanhaz.core.get.call(null, template, augmented__6225)
 };
 goog.provide("clojure.set");
 goog.require("cljs.core");
@@ -21500,14 +21500,14 @@ clojure.set.superset_QMARK_ = function superset_QMARK_(set1, set2) {
     return and__3822__auto____11858
   }
 };
-goog.provide("catb.models.similarity");
+goog.provide("carneades.policy_analysis.web.models.similarity");
 goog.require("cljs.core");
 goog.require("clojure.set");
-catb.models.similarity.score = function score(s1, s2) {
+carneades.policy_analysis.web.models.similarity.score = function score(s1, s2) {
   return cljs.core.count.call(null, clojure.set.intersection.call(null, s1, s2)) / cljs.core.count.call(null, s2)
 };
-catb.models.similarity.value = function value(s1, s2) {
-  var s__6620 = catb.models.similarity.score.call(null, s1, s2);
+carneades.policy_analysis.web.models.similarity.value = function value(s1, s2) {
+  var s__6620 = carneades.policy_analysis.web.models.similarity.score.call(null, s1, s2);
   if(function() {
     var and__3822__auto____6621 = s__6620 >= 0;
     if(and__3822__auto____6621) {
@@ -21565,30 +21565,30 @@ catb.models.similarity.value = function value(s1, s2) {
     }
   }
 };
-goog.provide("catb.models.core");
+goog.provide("carneades.policy_analysis.web.models.core");
 goog.require("cljs.core");
 goog.require("jayq.util");
-goog.require("catb.models.similarity");
+goog.require("carneades.policy_analysis.web.models.similarity");
 goog.require("clojure.set");
 goog.require("jayq.util");
-catb.models.core.get_stmt = function get_stmt(statements, id) {
+carneades.policy_analysis.web.models.core.get_stmt = function get_stmt(statements, id) {
   return statements.get(id)
 };
-catb.models.core.get_arg = function get_arg(args, id) {
+carneades.policy_analysis.web.models.core.get_arg = function get_arg(args, id) {
   return args.get(id)
 };
-catb.models.core.get_metadata = function get_metadata(md, k) {
+carneades.policy_analysis.web.models.core.get_metadata = function get_metadata(md, k) {
   return cljs.core.first.call(null, cljs.core.filter.call(null, function(m) {
     return cljs.core._EQ_.call(null, m.key, k)
   }, md.toJSON()))
 };
-catb.models.core.update_statements = function update_statements(m, sources, ids) {
+carneades.policy_analysis.web.models.core.update_statements = function update_statements(m, sources, ids) {
   return cljs.core.reduce.call(null, function(m, source) {
     var v__6595 = cljs.core._lookup.call(null, m, source, cljs.core.PersistentHashSet.EMPTY);
     return cljs.core.assoc.call(null, m, source, clojure.set.union.call(null, v__6595, ids))
   }, m, cljs.core.js__GT_clj.call(null, sources))
 };
-catb.models.core.statements_by_sources = function statements_by_sources(args) {
+carneades.policy_analysis.web.models.core.statements_by_sources = function statements_by_sources(args) {
   return cljs.core.reduce.call(null, function(m, arg) {
     if(cljs.core.truth_(function() {
       var and__3822__auto____6603 = arg.header;
@@ -21606,18 +21606,18 @@ catb.models.core.statements_by_sources = function statements_by_sources(args) {
         return p.statement.id
       }, premises__6605));
       var ids__6609 = cljs.core.truth_(arg.pro) ? cljs.core.conj.call(null, premises_ids__6608, conclusion_id__6607) : premises_ids__6608;
-      return catb.models.core.update_statements.call(null, m, sources__6604, ids__6609)
+      return carneades.policy_analysis.web.models.core.update_statements.call(null, m, sources__6604, ids__6609)
     }else {
       return m
     }
   }, cljs.core.ObjMap.EMPTY, args)
 };
-catb.models.core.sources_by_similarity = function sources_by_similarity(statements, accepted) {
+carneades.policy_analysis.web.models.core.sources_by_similarity = function sources_by_similarity(statements, accepted) {
   return cljs.core.group_by.call(null, function(source) {
-    return catb.models.similarity.value.call(null, accepted, statements.call(null, source))
+    return carneades.policy_analysis.web.models.similarity.value.call(null, accepted, statements.call(null, source))
   }, cljs.core.keys.call(null, statements))
 };
-catb.models.core.arguments_for_statement = function arguments_for_statement(issue, args) {
+carneades.policy_analysis.web.models.core.arguments_for_statement = function arguments_for_statement(issue, args) {
   var pro_statements__6612 = cljs.core.mapcat.call(null, function(proid) {
     return cljs.core.map.call(null, function(p) {
       return p.statement
@@ -21628,39 +21628,39 @@ catb.models.core.arguments_for_statement = function arguments_for_statement(issu
       return p.statement
     }, args.get(conid).get("premises"))
   }, issue.con);
-  return cljs.core.concat.call(null, cljs.core.map.call(null, cljs.core.partial.call(null, catb.models.core.get_arg, args), issue.pro), cljs.core.map.call(null, cljs.core.partial.call(null, catb.models.core.get_arg, args), issue.con), cljs.core.mapcat.call(null, function(s) {
+  return cljs.core.concat.call(null, cljs.core.map.call(null, cljs.core.partial.call(null, carneades.policy_analysis.web.models.core.get_arg, args), issue.pro), cljs.core.map.call(null, cljs.core.partial.call(null, carneades.policy_analysis.web.models.core.get_arg, args), issue.con), cljs.core.mapcat.call(null, function(s) {
     return arguments_for_statement.call(null, s, args)
   }, pro_statements__6612), cljs.core.mapcat.call(null, function(s) {
     return arguments_for_statement.call(null, s, args)
   }, con_statements__6613))
 };
-goog.provide("catb.views.core");
+goog.provide("carneades.policy_analysis.web.views.core");
 goog.require("cljs.core");
-goog.require("catb.models.core");
+goog.require("carneades.policy_analysis.web.models.core");
 goog.require("jayq.util");
-goog.require("catb.template");
-goog.require("catb.backbone.core");
-goog.require("catb.models.core");
+goog.require("carneades.policy_analysis.web.template");
+goog.require("carneades.policy_analysis.web.backbone.core");
+goog.require("carneades.policy_analysis.web.models.core");
 goog.require("jayq.util");
-catb.views.core.template = function template(view, template_key, variables) {
-  return catb.backbone.core.html.call(null, view, catb.template.get.call(null, template_key, variables))
+carneades.policy_analysis.web.views.core.template = function template(view, template_key, variables) {
+  return carneades.policy_analysis.web.backbone.core.html.call(null, view, carneades.policy_analysis.web.template.get.call(null, template_key, variables))
 };
-catb.views.core.json = function json(model) {
+carneades.policy_analysis.web.views.core.json = function json(model) {
   return model.toJSON()
 };
-catb.views.core.score_agreed_QMARK_ = function score_agreed_QMARK_(score) {
+carneades.policy_analysis.web.views.core.score_agreed_QMARK_ = function score_agreed_QMARK_(score) {
   return score > 0.99
 };
-catb.views.core.agreed_QMARK_ = function agreed_QMARK_(claim, votes) {
+carneades.policy_analysis.web.views.core.agreed_QMARK_ = function agreed_QMARK_(claim, votes) {
   var vote__6628 = votes.call(null, claim.id);
   var and__3822__auto____6629 = !(vote__6628 == null);
   if(and__3822__auto____6629) {
-    return catb.views.core.score_agreed_QMARK_.call(null, vote__6628)
+    return carneades.policy_analysis.web.views.core.score_agreed_QMARK_.call(null, vote__6628)
   }else {
     return and__3822__auto____6629
   }
 };
-catb.views.core.disagreed_QMARK_ = function disagreed_QMARK_(claim, votes) {
+carneades.policy_analysis.web.views.core.disagreed_QMARK_ = function disagreed_QMARK_(claim, votes) {
   var vote__6632 = votes.call(null, claim.id);
   var and__3822__auto____6633 = !(vote__6632 == null);
   if(and__3822__auto____6633) {
@@ -21669,36 +21669,36 @@ catb.views.core.disagreed_QMARK_ = function disagreed_QMARK_(claim, votes) {
     return and__3822__auto____6633
   }
 };
-catb.views.core.prepare_claim = function prepare_claim(statement_votes, stmt) {
+carneades.policy_analysis.web.views.core.prepare_claim = function prepare_claim(statement_votes, stmt) {
   var text__6637 = AGB.statement_raw_text(stmt);
   var desc__6638 = AGB.description_text(stmt.header);
-  var agreement_text__6639 = cljs.core.truth_(catb.views.core.agreed_QMARK_.call(null, stmt, statement_votes)) ? jQuery.i18n.prop("sct_agree") : cljs.core.truth_(catb.views.core.disagreed_QMARK_.call(null, stmt, statement_votes)) ? jQuery.i18n.prop("sct_disagree") : "\ufdd0'else" ? "" : null;
+  var agreement_text__6639 = cljs.core.truth_(carneades.policy_analysis.web.views.core.agreed_QMARK_.call(null, stmt, statement_votes)) ? jQuery.i18n.prop("sct_agree") : cljs.core.truth_(carneades.policy_analysis.web.views.core.disagreed_QMARK_.call(null, stmt, statement_votes)) ? jQuery.i18n.prop("sct_disagree") : "\ufdd0'else" ? "" : null;
   stmt["statement_text"] = text__6637;
   stmt["statement_description"] = desc__6638;
   stmt["agreement_text"] = agreement_text__6639;
   return stmt
 };
-catb.views.core.prepare_argument = function prepare_argument(arg) {
+carneades.policy_analysis.web.views.core.prepare_argument = function prepare_argument(arg) {
   return arg["description_text"] = AGB.description_text(arg.header)
 };
-catb.views.core.pro_answered = function pro_answered(claim, args, argument_votes) {
-  return cljs.core.map.call(null, cljs.core.comp.call(null, catb.views.core.json, cljs.core.partial.call(null, catb.models.core.get_arg, args)), cljs.core.filter.call(null, function(id) {
+carneades.policy_analysis.web.views.core.pro_answered = function pro_answered(claim, args, argument_votes) {
+  return cljs.core.map.call(null, cljs.core.comp.call(null, carneades.policy_analysis.web.views.core.json, cljs.core.partial.call(null, carneades.policy_analysis.web.models.core.get_arg, args)), cljs.core.filter.call(null, function(id) {
     return argument_votes.call(null, id)
   }, claim.pro))
 };
-catb.views.core.con_answered = function con_answered(claim, args, argument_votes) {
-  return cljs.core.map.call(null, cljs.core.comp.call(null, catb.views.core.json, cljs.core.partial.call(null, catb.models.core.get_arg, args)), cljs.core.filter.call(null, function(id) {
+carneades.policy_analysis.web.views.core.con_answered = function con_answered(claim, args, argument_votes) {
+  return cljs.core.map.call(null, cljs.core.comp.call(null, carneades.policy_analysis.web.views.core.json, cljs.core.partial.call(null, carneades.policy_analysis.web.models.core.get_arg, args)), cljs.core.filter.call(null, function(id) {
     return argument_votes.call(null, id)
   }, claim.con))
 };
-catb.views.core.prepare_arguments = function prepare_arguments(claim, args, argument_votes) {
-  var pro_answered__6645 = catb.views.core.pro_answered.call(null, claim, args, argument_votes);
-  var con_answered__6646 = catb.views.core.con_answered.call(null, claim, args, argument_votes);
+carneades.policy_analysis.web.views.core.prepare_arguments = function prepare_arguments(claim, args, argument_votes) {
+  var pro_answered__6645 = carneades.policy_analysis.web.views.core.pro_answered.call(null, claim, args, argument_votes);
+  var con_answered__6646 = carneades.policy_analysis.web.views.core.con_answered.call(null, claim, args, argument_votes);
   var G__6647__6648 = cljs.core.seq.call(null, cljs.core.concat.call(null, pro_answered__6645, con_answered__6646));
   while(true) {
     if(G__6647__6648) {
       var arg__6649 = cljs.core.first.call(null, G__6647__6648);
-      catb.views.core.prepare_argument.call(null, arg__6649);
+      carneades.policy_analysis.web.views.core.prepare_argument.call(null, arg__6649);
       var G__6650 = cljs.core.next.call(null, G__6647__6648);
       G__6647__6648 = G__6650;
       continue
@@ -23646,16 +23646,16 @@ jayq.core.off = function() {
 jayq.core.prevent = function prevent(e) {
   return e.preventDefault()
 };
-goog.provide("catb.views.pmt.vote");
+goog.provide("carneades.policy_analysis.web.views.pmt.vote");
 goog.require("cljs.core");
 goog.require("jayq.util");
-goog.require("catb.views.core");
+goog.require("carneades.policy_analysis.web.views.core");
 goog.require("jayq.core");
-goog.require("catb.backbone.core");
-goog.require("catb.views.core");
+goog.require("carneades.policy_analysis.web.backbone.core");
+goog.require("carneades.policy_analysis.web.views.core");
 goog.require("jayq.core");
 goog.require("jayq.util");
-catb.views.pmt.vote.get_vote_score = function get_vote_score() {
+carneades.policy_analysis.web.views.pmt.vote.get_vote_score = function get_vote_score() {
   var v__7417 = jayq.core.$.call(null, "input[type=radio]:checked").val();
   var pred__7418__7421 = cljs.core._EQ_;
   var expr__7419__7422 = v__7417;
@@ -23673,17 +23673,17 @@ catb.views.pmt.vote.get_vote_score = function get_vote_score() {
     }
   }
 };
-catb.views.pmt.vote.send_vote = function send_vote(vote_model, id, score) {
+carneades.policy_analysis.web.views.pmt.vote.send_vote = function send_vote(vote_model, id, score) {
   vote_model.set("votes", jayq.util.clj__GT_js.call(null, cljs.core.PersistentArrayMap.fromArrays([id], [score])));
   return vote_model.save()
 };
-catb.views.pmt.vote.vote_score = function vote_score(vote_model, id) {
+carneades.policy_analysis.web.views.pmt.vote.vote_score = function vote_score(vote_model, id) {
   return vote_model.get("votes")[id]
 };
-catb.views.pmt.vote.round_score = function round_score(score) {
+carneades.policy_analysis.web.views.pmt.vote.round_score = function round_score(score) {
   return(new Number(score)).toFixed(2)
 };
-catb.views.pmt.vote.Vote = Backbone.View.extend({"render":function() {
+carneades.policy_analysis.web.views.pmt.vote.Vote = Backbone.View.extend({"render":function() {
   var this__7423 = this;
   var model__7424 = this__7423["model"];
   var claim__7425 = model__7424.get("claim");
@@ -23694,7 +23694,7 @@ catb.views.pmt.vote.Vote = Backbone.View.extend({"render":function() {
   }else {
     var item_selector__7213__auto____7428 = "#arguments-item";
     var claim_text__7429 = claim__7425.text[lang__7426];
-    catb.views.core.template.call(null, this__7423, "\ufdd0'vote", cljs.core.ObjMap.fromObject(["\ufdd0'claim"], {"\ufdd0'claim":claim_text__7429}));
+    carneades.policy_analysis.web.views.core.template.call(null, this__7423, "\ufdd0'vote", cljs.core.ObjMap.fromObject(["\ufdd0'claim"], {"\ufdd0'claim":claim_text__7429}));
     jayq.core.attr.call(null, this__7423.$("input:radio:first"), "checked", true);
     PM.activate(item_selector__7213__auto____7428);
     PM.attach_lang_listener()
@@ -23713,8 +23713,8 @@ catb.views.pmt.vote.Vote = Backbone.View.extend({"render":function() {
     var scores__7437 = cljs.core.js__GT_clj.call(null, result, "\ufdd0'keywordize-keys", true);
     PM.busy_cursor_off();
     var item_selector__7213__auto____7438 = "#arguments-item";
-    catb.views.core.template.call(null, this__7430, "\ufdd0'vote-results", cljs.core.ObjMap.fromObject(["\ufdd0'db", "\ufdd0'claim", "\ufdd0'accepted_score", "\ufdd0'rejected_score", "\ufdd0'undecided_score"], {"\ufdd0'db":db__7433, "\ufdd0'claim":claim_text__7436, "\ufdd0'accepted_score":catb.views.pmt.vote.round_score.call(null, 100 * (new cljs.core.Keyword("\ufdd0'accepted")).call(null, scores__7437)), "\ufdd0'rejected_score":catb.views.pmt.vote.round_score.call(null, 100 * (new cljs.core.Keyword("\ufdd0'rejected")).call(null, 
-    scores__7437)), "\ufdd0'undecided_score":catb.views.pmt.vote.round_score.call(null, 100 * (new cljs.core.Keyword("\ufdd0'undecided")).call(null, scores__7437))}));
+    carneades.policy_analysis.web.views.core.template.call(null, this__7430, "\ufdd0'vote-results", cljs.core.ObjMap.fromObject(["\ufdd0'db", "\ufdd0'claim", "\ufdd0'accepted_score", "\ufdd0'rejected_score", "\ufdd0'undecided_score"], {"\ufdd0'db":db__7433, "\ufdd0'claim":claim_text__7436, "\ufdd0'accepted_score":carneades.policy_analysis.web.views.pmt.vote.round_score.call(null, 100 * (new cljs.core.Keyword("\ufdd0'accepted")).call(null, scores__7437)), "\ufdd0'rejected_score":carneades.policy_analysis.web.views.pmt.vote.round_score.call(null, 
+    100 * (new cljs.core.Keyword("\ufdd0'rejected")).call(null, scores__7437)), "\ufdd0'undecided_score":carneades.policy_analysis.web.views.pmt.vote.round_score.call(null, 100 * (new cljs.core.Keyword("\ufdd0'undecided")).call(null, scores__7437))}));
     PM.activate(item_selector__7213__auto____7438);
     return PM.attach_lang_listener()
   }, PM.on_error);
@@ -23727,34 +23727,34 @@ catb.views.pmt.vote.Vote = Backbone.View.extend({"render":function() {
   var model__7441 = this__7439["model"];
   var db__7442 = model__7441.get("db");
   var claim__7443 = model__7441.get("claim");
-  (new PM.DebatePoll(jayq.util.clj__GT_js.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'opinion", "\ufdd0'mainissueatompredicate", "\ufdd0'casedb", "\ufdd0'policykey", "\ufdd0'qid", "\ufdd0'issueid"], {"\ufdd0'opinion":catb.views.pmt.vote.get_vote_score.call(null), "\ufdd0'mainissueatompredicate":PM.current_mainissueatompredicate(), "\ufdd0'casedb":IMPACT.db, "\ufdd0'policykey":IMPACT.current_policy, "\ufdd0'qid":IMPACT.question, "\ufdd0'issueid":PM.current_issue().id})))).save(null, jayq.util.clj__GT_js.call(null, 
-  cljs.core.ObjMap.fromObject(["\ufdd0'success", "\ufdd0'error"], {"\ufdd0'success":function(response) {
+  (new PM.DebatePoll(jayq.util.clj__GT_js.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'opinion", "\ufdd0'mainissueatompredicate", "\ufdd0'casedb", "\ufdd0'policykey", "\ufdd0'qid", "\ufdd0'issueid"], {"\ufdd0'opinion":carneades.policy_analysis.web.views.pmt.vote.get_vote_score.call(null), "\ufdd0'mainissueatompredicate":PM.current_mainissueatompredicate(), "\ufdd0'casedb":IMPACT.db, "\ufdd0'policykey":IMPACT.current_policy, "\ufdd0'qid":IMPACT.question, "\ufdd0'issueid":PM.current_issue().id})))).save(null, 
+  jayq.util.clj__GT_js.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'success", "\ufdd0'error"], {"\ufdd0'success":function(response) {
     return document.cookie = [cljs.core.str("pollid-"), cljs.core.str(IMPACT.db), cljs.core.str("="), cljs.core.str(response.id)].join("")
   }, "\ufdd0'error":PM.on_model_error})));
-  catb.views.core.template.call(null, this__7439, "\ufdd0'after-vote", cljs.core.ObjMap.fromObject(["\ufdd0'db"], {"\ufdd0'db":db__7442}));
+  carneades.policy_analysis.web.views.core.template.call(null, this__7439, "\ufdd0'after-vote", cljs.core.ObjMap.fromObject(["\ufdd0'db"], {"\ufdd0'db":db__7442}));
   PM.activate(item_selector__7213__auto____7440);
   PM.attach_lang_listener();
   return this__7439
 }, "className":"pmt-vote", "events":{"click .show-vote-results":"show_vote_results", "click .vote-now":"vote"}});
-catb.views.pmt.vote.display = function display() {
-  var vote_view__7445 = catb.backbone.core.new$.call(null, catb.views.pmt.vote.Vote, cljs.core.ObjMap.fromObject(["\ufdd0'model"], {"\ufdd0'model":catb.backbone.core.new_model.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'claim", "\ufdd0'lang", "\ufdd0'db", "\ufdd0'current-case-pollid"], {"\ufdd0'claim":PM.current_issue(), "\ufdd0'lang":IMPACT.lang, "\ufdd0'db":IMPACT.db, "\ufdd0'current-case-pollid":PM.current_case_pollid()}))}));
+carneades.policy_analysis.web.views.pmt.vote.display = function display() {
+  var vote_view__7445 = carneades.policy_analysis.web.backbone.core.new$.call(null, carneades.policy_analysis.web.views.pmt.vote.Vote, cljs.core.ObjMap.fromObject(["\ufdd0'model"], {"\ufdd0'model":carneades.policy_analysis.web.backbone.core.new_model.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'claim", "\ufdd0'lang", "\ufdd0'db", "\ufdd0'current-case-pollid"], {"\ufdd0'claim":PM.current_issue(), "\ufdd0'lang":IMPACT.lang, "\ufdd0'db":IMPACT.db, "\ufdd0'current-case-pollid":PM.current_case_pollid()}))}));
   jayq.core.inner.call(null, jayq.core.$.call(null, "#pm"), vote_view__7445.$el);
-  catb.backbone.core.render.call(null, vote_view__7445);
+  carneades.policy_analysis.web.backbone.core.render.call(null, vote_view__7445);
   return false
 };
-goog.exportSymbol("catb.views.pmt.vote.display", catb.views.pmt.vote.display);
-goog.provide("catb.views.pmt.report");
+goog.exportSymbol("carneades.policy_analysis.web.views.pmt.vote.display", carneades.policy_analysis.web.views.pmt.vote.display);
+goog.provide("carneades.policy_analysis.web.views.pmt.report");
 goog.require("cljs.core");
-goog.require("catb.views.pmt.vote");
+goog.require("carneades.policy_analysis.web.views.pmt.vote");
 goog.require("jayq.util");
-goog.require("catb.views.core");
+goog.require("carneades.policy_analysis.web.views.core");
 goog.require("jayq.core");
-goog.require("catb.backbone.core");
-goog.require("catb.views.pmt.vote");
-goog.require("catb.views.core");
+goog.require("carneades.policy_analysis.web.backbone.core");
+goog.require("carneades.policy_analysis.web.views.pmt.vote");
+goog.require("carneades.policy_analysis.web.views.core");
 goog.require("jayq.core");
 goog.require("jayq.util");
-catb.views.pmt.report.Report = Backbone.View.extend({"render":function() {
+carneades.policy_analysis.web.views.pmt.report.Report = Backbone.View.extend({"render":function() {
   var this__7598 = this;
   PM.ajax_get([cljs.core.str(IMPACT.wsurl), cljs.core.str("/aggregated-poll-results/"), cljs.core.str(IMPACT.debate_db)].join(""), function(results) {
     var results__7599 = cljs.core.js__GT_clj.call(null, results);
@@ -23767,21 +23767,21 @@ catb.views.pmt.report.Report = Backbone.View.extend({"render":function() {
       var policy_id__7605 = cljs.core.nth.call(null, vec__7603__7604, 0, null);
       var agreement__7606 = cljs.core.nth.call(null, vec__7603__7604, 1, null);
       var name__7607 = PM.get_policy_header(policy_id__7605).title;
-      return cljs.core.cons.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'name", "\ufdd0'agreement", "\ufdd0'url"], {"\ufdd0'name":name__7607, "\ufdd0'agreement":catb.views.pmt.vote.round_score.call(null, 100 * agreement__7606), "\ufdd0'url":[cljs.core.str("#/"), cljs.core.str(PM.policies_url()), cljs.core.str("/"), cljs.core.str(policy_id__7605)].join("")}), policies)
+      return cljs.core.cons.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'name", "\ufdd0'agreement", "\ufdd0'url"], {"\ufdd0'name":name__7607, "\ufdd0'agreement":carneades.policy_analysis.web.views.pmt.vote.round_score.call(null, 100 * agreement__7606), "\ufdd0'url":[cljs.core.str("#/"), cljs.core.str(PM.policies_url()), cljs.core.str("/"), cljs.core.str(policy_id__7605)].join("")}), policies)
     }, cljs.core.PersistentVector.EMPTY, results__7601);
-    catb.views.core.template.call(null, this__7598, "\ufdd0'report", cljs.core.ObjMap.fromObject(["\ufdd0'policies"], {"\ufdd0'policies":jayq.util.clj__GT_js.call(null, policies__7608)}));
+    carneades.policy_analysis.web.views.core.template.call(null, this__7598, "\ufdd0'report", cljs.core.ObjMap.fromObject(["\ufdd0'policies"], {"\ufdd0'policies":jayq.util.clj__GT_js.call(null, policies__7608)}));
     PM.activate("#report-item");
     return PM.attach_lang_listener()
   });
   return this__7598
 }, "className":"pmt-report"});
-catb.views.pmt.report.display = function display() {
-  var report_view__7610 = catb.backbone.core.new$.call(null, catb.views.pmt.report.Report, cljs.core.ObjMap.fromObject(["\ufdd0'model"], {"\ufdd0'model":catb.backbone.core.new_model.call(null, cljs.core.ObjMap.EMPTY)}));
+carneades.policy_analysis.web.views.pmt.report.display = function display() {
+  var report_view__7610 = carneades.policy_analysis.web.backbone.core.new$.call(null, carneades.policy_analysis.web.views.pmt.report.Report, cljs.core.ObjMap.fromObject(["\ufdd0'model"], {"\ufdd0'model":carneades.policy_analysis.web.backbone.core.new_model.call(null, cljs.core.ObjMap.EMPTY)}));
   jayq.core.inner.call(null, jayq.core.$.call(null, "#pm"), report_view__7610.$el);
-  catb.backbone.core.render.call(null, report_view__7610);
+  carneades.policy_analysis.web.backbone.core.render.call(null, report_view__7610);
   return false
 };
-goog.exportSymbol("catb.views.pmt.report.display", catb.views.pmt.report.display);
+goog.exportSymbol("carneades.policy_analysis.web.views.pmt.report.display", carneades.policy_analysis.web.views.pmt.report.display);
 goog.provide("goog.disposable.IDisposable");
 goog.disposable.IDisposable = function() {
 };
@@ -27256,14 +27256,11 @@ goog.net.XhrIo.prototype.formatMsg_ = function(msg) {
 goog.debug.entryPointRegistry.register(function(transformer) {
   goog.net.XhrIo.prototype.onReadyStateChangeEntryPoint_ = transformer(goog.net.XhrIo.prototype.onReadyStateChangeEntryPoint_)
 });
-goog.provide("catb.i18n");
+goog.provide("carneades.policy_analysis.web.i18n");
 goog.require("cljs.core");
-catb.i18n.i18n = function i18n(k) {
+carneades.policy_analysis.web.i18n.i18n = function i18n(k) {
   return jQuery.i18n.prop(k)
 };
-goog.provide("catb.core");
-goog.require("cljs.core");
-goog.require("clojure.string");
 goog.provide("goog.net.xpc");
 goog.provide("goog.net.xpc.CfgFields");
 goog.provide("goog.net.xpc.ChannelStates");
@@ -27991,6 +27988,9 @@ goog.Uri.QueryData.prototype.extend = function(var_args) {
     }, this)
   }
 };
+goog.provide("carneades.policy_analysis.web.core");
+goog.require("cljs.core");
+goog.require("clojure.string");
 goog.provide("goog.dom.BrowserFeature");
 goog.require("goog.userAgent");
 goog.dom.BrowserFeature = {CAN_ADD_NAME_OR_TYPE_ATTRIBUTES:!goog.userAgent.IE || goog.userAgent.isDocumentMode(9), CAN_USE_CHILDREN_ATTRIBUTE:!goog.userAgent.GECKO && !goog.userAgent.IE || goog.userAgent.IE && goog.userAgent.isDocumentMode(9) || goog.userAgent.GECKO && goog.userAgent.isVersion("1.9.1"), CAN_USE_INNER_TEXT:goog.userAgent.IE && !goog.userAgent.isVersion("9"), INNER_HTML_NEEDS_SCOPED_ELEMENT:goog.userAgent.IE};
@@ -29184,94 +29184,6 @@ goog.messaging.AbstractChannel.prototype.disposeInternal = function() {
   delete this.services_;
   delete this.defaultService_
 };
-goog.provide("catb.views.sct.claim_editor");
-goog.require("cljs.core");
-goog.require("jayq.util");
-goog.require("catb.views.core");
-goog.require("jayq.core");
-goog.require("catb.backbone.core");
-goog.require("jayq.util");
-goog.require("jayq.core");
-goog.require("catb.views.core");
-catb.views.sct.claim_editor.init_radio_buttons = function init_radio_buttons(this$, claim, statement_votes) {
-  if(cljs.core.truth_(catb.views.core.agreed_QMARK_.call(null, claim, statement_votes))) {
-    return jayq.core.attr.call(null, this$.$("input:radio:first"), "checked", true)
-  }else {
-    if(cljs.core.truth_(catb.views.core.disagreed_QMARK_.call(null, claim, statement_votes))) {
-      return jayq.core.attr.call(null, this$.$("input:radio:nth(1)"), "checked", true)
-    }else {
-      return null
-    }
-  }
-};
-catb.views.sct.claim_editor.init_sliders = function init_sliders(this$, argument_votes, pro, con) {
-  return cljs.core.doall.call(null, cljs.core.map.call(null, function(arg, range) {
-    var score__7165 = argument_votes.call(null, arg.id);
-    return jayq.core.val.call(null, jayq.core.$.call(null, range), score__7165)
-  }, cljs.core.concat.call(null, pro, con), this$.$("input[type=range]")))
-};
-catb.views.sct.claim_editor.update_arguments_scores = function update_arguments_scores(this$, argument_poll, pro, con) {
-  cljs.core.doall.call(null, cljs.core.map.call(null, function(arg, range) {
-    var weight__7168 = parseFloat(jayq.core.val.call(null, jayq.core.$.call(null, range)));
-    var votes__7169 = argument_poll.get("votes");
-    votes__7169[arg.id] = weight__7168;
-    argument_poll.set("votes", votes__7169);
-    jayq.util.log.call(null, "setting new weight for argument");
-    return jayq.util.log.call(null, weight__7168)
-  }, cljs.core.concat.call(null, pro, con), this$.$("input[type=range]")));
-  return catb.backbone.core.save.call(null, argument_poll, null, cljs.core.ObjMap.fromObject(["\ufdd0'wait"], {"\ufdd0'wait":true}))
-};
-catb.views.sct.claim_editor.update_claim_score = function update_claim_score(this$, claimid, statement_poll) {
-  var votes__7176 = statement_poll.get("votes");
-  var pred__7177__7180 = cljs.core._EQ_;
-  var expr__7178__7181 = jayq.core.val.call(null, this$.$("input:radio:checked"));
-  if(pred__7177__7180.call(null, "agree", expr__7178__7181)) {
-    votes__7176[claimid] = 1
-  }else {
-    if(pred__7177__7180.call(null, "disagree", expr__7178__7181)) {
-      votes__7176[claimid] = 0
-    }else {
-    }
-  }
-  statement_poll.set("votes", votes__7176);
-  return catb.backbone.core.save.call(null, statement_poll, null, cljs.core.ObjMap.fromObject(["\ufdd0'wait"], {"\ufdd0'wait":true}))
-};
-catb.views.sct.claim_editor.ClaimEditor = Backbone.View.extend({"render":function() {
-  var this__7182 = this;
-  var model__7183 = this__7182["model"];
-  var claim__7184 = model__7183.get("claim");
-  var arguments__7185 = model__7183.get("arguments");
-  var statement_poll__7186 = model__7183.get("statement-poll");
-  var argument_poll__7187 = model__7183.get("argument-poll");
-  var argument_votes__7188 = catb.backbone.core.get_in.call(null, argument_poll__7187, cljs.core.PersistentVector.fromArray(["\ufdd0'votes"], true));
-  var statement_votes__7189 = catb.backbone.core.get_in.call(null, statement_poll__7186, cljs.core.PersistentVector.fromArray(["\ufdd0'votes"], true));
-  var claim__7190 = catb.views.core.json.call(null, claim__7184);
-  var claim__7191 = catb.views.core.prepare_claim.call(null, statement_votes__7189, claim__7190);
-  var pro__7192 = catb.views.core.pro_answered.call(null, claim__7191, arguments__7185, argument_votes__7188);
-  var con__7193 = catb.views.core.con_answered.call(null, claim__7191, arguments__7185, argument_votes__7188);
-  var claim__7194 = catb.views.core.prepare_arguments.call(null, claim__7191, arguments__7185, argument_votes__7188);
-  catb.views.core.template.call(null, this__7182, "\ufdd0'sct-claim-editor", cljs.core.ObjMap.fromObject(["\ufdd0'claim"], {"\ufdd0'claim":claim__7194}));
-  catb.views.sct.claim_editor.init_radio_buttons.call(null, this__7182, claim__7194, statement_votes__7189);
-  catb.views.sct.claim_editor.init_sliders.call(null, this__7182, argument_votes__7188, pro__7192, con__7193);
-  return this__7182
-}, "save_score":function() {
-  var this__7195 = this;
-  var model__7196 = this__7195["model"];
-  var claim__7197 = model__7196.get("claim");
-  var arguments__7198 = model__7196.get("arguments");
-  var statement_poll__7199 = model__7196.get("statement-poll");
-  var argument_poll__7200 = model__7196.get("argument-poll");
-  var parent__7201 = model__7196.get("parent");
-  var argument_votes__7202 = catb.backbone.core.get_in.call(null, argument_poll__7200, cljs.core.PersistentVector.fromArray(["\ufdd0'votes"], true));
-  var statement_votes__7203 = catb.backbone.core.get_in.call(null, statement_poll__7199, cljs.core.PersistentVector.fromArray(["\ufdd0'votes"], true));
-  var claim__7204 = catb.views.core.json.call(null, claim__7197);
-  var pro__7205 = catb.views.core.pro_answered.call(null, claim__7204, arguments__7198, argument_votes__7202);
-  var con__7206 = catb.views.core.con_answered.call(null, claim__7204, arguments__7198, argument_votes__7202);
-  catb.views.sct.claim_editor.update_arguments_scores.call(null, this__7195, argument_poll__7200, pro__7205, con__7206);
-  catb.views.sct.claim_editor.update_claim_score.call(null, this__7195, claim__7204.id, statement_poll__7199);
-  parent__7201.render();
-  return this__7195
-}, "className":"sct-claim-editor", "events":{"click .save":"save_score"}});
 goog.provide("clojure.browser.event");
 goog.require("cljs.core");
 goog.require("goog.events.EventType");
@@ -29416,6 +29328,94 @@ clojure.browser.event.has_listener = function has_listener(obj, opt_type, opt_ca
 clojure.browser.event.remove_all = function remove_all(opt_obj, opt_type, opt_capt) {
   return null
 };
+goog.provide("carneades.policy_analysis.web.views.sct.claim_editor");
+goog.require("cljs.core");
+goog.require("jayq.util");
+goog.require("carneades.policy_analysis.web.views.core");
+goog.require("jayq.core");
+goog.require("carneades.policy_analysis.web.backbone.core");
+goog.require("jayq.util");
+goog.require("jayq.core");
+goog.require("carneades.policy_analysis.web.views.core");
+carneades.policy_analysis.web.views.sct.claim_editor.init_radio_buttons = function init_radio_buttons(this$, claim, statement_votes) {
+  if(cljs.core.truth_(carneades.policy_analysis.web.views.core.agreed_QMARK_.call(null, claim, statement_votes))) {
+    return jayq.core.attr.call(null, this$.$("input:radio:first"), "checked", true)
+  }else {
+    if(cljs.core.truth_(carneades.policy_analysis.web.views.core.disagreed_QMARK_.call(null, claim, statement_votes))) {
+      return jayq.core.attr.call(null, this$.$("input:radio:nth(1)"), "checked", true)
+    }else {
+      return null
+    }
+  }
+};
+carneades.policy_analysis.web.views.sct.claim_editor.init_sliders = function init_sliders(this$, argument_votes, pro, con) {
+  return cljs.core.doall.call(null, cljs.core.map.call(null, function(arg, range) {
+    var score__7165 = argument_votes.call(null, arg.id);
+    return jayq.core.val.call(null, jayq.core.$.call(null, range), score__7165)
+  }, cljs.core.concat.call(null, pro, con), this$.$("input[type=range]")))
+};
+carneades.policy_analysis.web.views.sct.claim_editor.update_arguments_scores = function update_arguments_scores(this$, argument_poll, pro, con) {
+  cljs.core.doall.call(null, cljs.core.map.call(null, function(arg, range) {
+    var weight__7168 = parseFloat(jayq.core.val.call(null, jayq.core.$.call(null, range)));
+    var votes__7169 = argument_poll.get("votes");
+    votes__7169[arg.id] = weight__7168;
+    argument_poll.set("votes", votes__7169);
+    jayq.util.log.call(null, "setting new weight for argument");
+    return jayq.util.log.call(null, weight__7168)
+  }, cljs.core.concat.call(null, pro, con), this$.$("input[type=range]")));
+  return carneades.policy_analysis.web.backbone.core.save.call(null, argument_poll, null, cljs.core.ObjMap.fromObject(["\ufdd0'wait"], {"\ufdd0'wait":true}))
+};
+carneades.policy_analysis.web.views.sct.claim_editor.update_claim_score = function update_claim_score(this$, claimid, statement_poll) {
+  var votes__7176 = statement_poll.get("votes");
+  var pred__7177__7180 = cljs.core._EQ_;
+  var expr__7178__7181 = jayq.core.val.call(null, this$.$("input:radio:checked"));
+  if(pred__7177__7180.call(null, "agree", expr__7178__7181)) {
+    votes__7176[claimid] = 1
+  }else {
+    if(pred__7177__7180.call(null, "disagree", expr__7178__7181)) {
+      votes__7176[claimid] = 0
+    }else {
+    }
+  }
+  statement_poll.set("votes", votes__7176);
+  return carneades.policy_analysis.web.backbone.core.save.call(null, statement_poll, null, cljs.core.ObjMap.fromObject(["\ufdd0'wait"], {"\ufdd0'wait":true}))
+};
+carneades.policy_analysis.web.views.sct.claim_editor.ClaimEditor = Backbone.View.extend({"render":function() {
+  var this__7182 = this;
+  var model__7183 = this__7182["model"];
+  var claim__7184 = model__7183.get("claim");
+  var arguments__7185 = model__7183.get("arguments");
+  var statement_poll__7186 = model__7183.get("statement-poll");
+  var argument_poll__7187 = model__7183.get("argument-poll");
+  var argument_votes__7188 = carneades.policy_analysis.web.backbone.core.get_in.call(null, argument_poll__7187, cljs.core.PersistentVector.fromArray(["\ufdd0'votes"], true));
+  var statement_votes__7189 = carneades.policy_analysis.web.backbone.core.get_in.call(null, statement_poll__7186, cljs.core.PersistentVector.fromArray(["\ufdd0'votes"], true));
+  var claim__7190 = carneades.policy_analysis.web.views.core.json.call(null, claim__7184);
+  var claim__7191 = carneades.policy_analysis.web.views.core.prepare_claim.call(null, statement_votes__7189, claim__7190);
+  var pro__7192 = carneades.policy_analysis.web.views.core.pro_answered.call(null, claim__7191, arguments__7185, argument_votes__7188);
+  var con__7193 = carneades.policy_analysis.web.views.core.con_answered.call(null, claim__7191, arguments__7185, argument_votes__7188);
+  var claim__7194 = carneades.policy_analysis.web.views.core.prepare_arguments.call(null, claim__7191, arguments__7185, argument_votes__7188);
+  carneades.policy_analysis.web.views.core.template.call(null, this__7182, "\ufdd0'sct-claim-editor", cljs.core.ObjMap.fromObject(["\ufdd0'claim"], {"\ufdd0'claim":claim__7194}));
+  carneades.policy_analysis.web.views.sct.claim_editor.init_radio_buttons.call(null, this__7182, claim__7194, statement_votes__7189);
+  carneades.policy_analysis.web.views.sct.claim_editor.init_sliders.call(null, this__7182, argument_votes__7188, pro__7192, con__7193);
+  return this__7182
+}, "save_score":function() {
+  var this__7195 = this;
+  var model__7196 = this__7195["model"];
+  var claim__7197 = model__7196.get("claim");
+  var arguments__7198 = model__7196.get("arguments");
+  var statement_poll__7199 = model__7196.get("statement-poll");
+  var argument_poll__7200 = model__7196.get("argument-poll");
+  var parent__7201 = model__7196.get("parent");
+  var argument_votes__7202 = carneades.policy_analysis.web.backbone.core.get_in.call(null, argument_poll__7200, cljs.core.PersistentVector.fromArray(["\ufdd0'votes"], true));
+  var statement_votes__7203 = carneades.policy_analysis.web.backbone.core.get_in.call(null, statement_poll__7199, cljs.core.PersistentVector.fromArray(["\ufdd0'votes"], true));
+  var claim__7204 = carneades.policy_analysis.web.views.core.json.call(null, claim__7197);
+  var pro__7205 = carneades.policy_analysis.web.views.core.pro_answered.call(null, claim__7204, arguments__7198, argument_votes__7202);
+  var con__7206 = carneades.policy_analysis.web.views.core.con_answered.call(null, claim__7204, arguments__7198, argument_votes__7202);
+  carneades.policy_analysis.web.views.sct.claim_editor.update_arguments_scores.call(null, this__7195, argument_poll__7200, pro__7205, con__7206);
+  carneades.policy_analysis.web.views.sct.claim_editor.update_claim_score.call(null, this__7195, claim__7204.id, statement_poll__7199);
+  parent__7201.render();
+  return this__7195
+}, "className":"sct-claim-editor", "events":{"click .save":"save_score"}});
 goog.provide("goog.net.xpc.CrossPageChannelRole");
 goog.net.xpc.CrossPageChannelRole = {OUTER:0, INNER:1};
 goog.provide("goog.net.xpc.IframePollingTransport");
@@ -31130,24 +31130,24 @@ clojure.browser.repl.connect = function connect(repl_server_url) {
     return iframe.style.display = "none"
   })
 };
-goog.provide("catb.repl");
+goog.provide("carneades.policy_analysis.web.repl");
 goog.require("cljs.core");
 goog.require("clojure.browser.repl");
-catb.repl.connect = function connect() {
+carneades.policy_analysis.web.repl.connect = function connect() {
   return clojure.browser.repl.connect.call(null, "http://localhost:9000/repl")
 };
-goog.exportSymbol("catb.repl.connect", catb.repl.connect);
-goog.provide("catb.dispatch");
+goog.exportSymbol("carneades.policy_analysis.web.repl.connect", carneades.policy_analysis.web.repl.connect);
+goog.provide("carneades.policy_analysis.web.dispatch");
 goog.require("cljs.core");
-catb.dispatch.reactions = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
-catb.dispatch.react_to = function() {
+carneades.policy_analysis.web.dispatch.reactions = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
+carneades.policy_analysis.web.dispatch.react_to = function() {
   var react_to = null;
   var react_to__2 = function(event_pred, reactor) {
     return react_to.call(null, null, event_pred, reactor)
   };
   var react_to__3 = function(max_count, event_pred, reactor) {
     var reaction__6454 = cljs.core.ObjMap.fromObject(["\ufdd0'max-count", "\ufdd0'event-pred", "\ufdd0'reactor"], {"\ufdd0'max-count":max_count, "\ufdd0'event-pred":event_pred, "\ufdd0'reactor":reactor});
-    cljs.core.swap_BANG_.call(null, catb.dispatch.reactions, cljs.core.assoc, reaction__6454, 0);
+    cljs.core.swap_BANG_.call(null, carneades.policy_analysis.web.dispatch.reactions, cljs.core.assoc, reaction__6454, 0);
     return reaction__6454
   };
   react_to = function(max_count, event_pred, reactor) {
@@ -31163,10 +31163,10 @@ catb.dispatch.react_to = function() {
   react_to.cljs$lang$arity$3 = react_to__3;
   return react_to
 }();
-catb.dispatch.delete_reaction = function delete_reaction(reaction) {
-  return cljs.core.swap_BANG_.call(null, catb.dispatch.reactions, cljs.core.dissoc, reaction)
+carneades.policy_analysis.web.dispatch.delete_reaction = function delete_reaction(reaction) {
+  return cljs.core.swap_BANG_.call(null, carneades.policy_analysis.web.dispatch.reactions, cljs.core.dissoc, reaction)
 };
-catb.dispatch.fire = function() {
+carneades.policy_analysis.web.dispatch.fire = function() {
   var fire = null;
   var fire__1 = function(event_id) {
     return fire.call(null, event_id, null)
@@ -31179,7 +31179,7 @@ catb.dispatch.fire = function() {
       var event_pred__6489 = cljs.core._lookup.call(null, map__6485__6488, "\ufdd0'event-pred", null);
       var run_count__6490 = cljs.core.nth.call(null, vec__6484__6486, 1, null);
       return event_pred__6489.call(null, event_id)
-    }, cljs.core.deref.call(null, catb.dispatch.reactions));
+    }, cljs.core.deref.call(null, carneades.policy_analysis.web.dispatch.reactions));
     var G__6492__6493 = cljs.core.seq.call(null, matching_reactions__6491);
     while(true) {
       if(G__6492__6493) {
@@ -31200,9 +31200,9 @@ catb.dispatch.fire = function() {
             return and__3822__auto____6504
           }
         }())) {
-          catb.dispatch.delete_reaction.call(null, reaction__6496)
+          carneades.policy_analysis.web.dispatch.delete_reaction.call(null, reaction__6496)
         }else {
-          cljs.core.swap_BANG_.call(null, catb.dispatch.reactions, cljs.core.assoc, reaction__6496, run_count__6503)
+          cljs.core.swap_BANG_.call(null, carneades.policy_analysis.web.dispatch.reactions, cljs.core.assoc, reaction__6496, run_count__6503)
         }
         var G__6505 = cljs.core.next.call(null, G__6492__6493);
         G__6492__6493 = G__6505;
@@ -31226,40 +31226,40 @@ catb.dispatch.fire = function() {
   fire.cljs$lang$arity$2 = fire__2;
   return fire
 }();
-goog.provide("catb.views.pmt.questions");
+goog.provide("carneades.policy_analysis.web.views.pmt.questions");
 goog.require("cljs.core");
-goog.require("catb.i18n");
+goog.require("carneades.policy_analysis.web.i18n");
 goog.require("jayq.util");
-goog.require("catb.views.core");
+goog.require("carneades.policy_analysis.web.views.core");
 goog.require("jayq.core");
-goog.require("catb.dispatch");
-goog.require("catb.backbone.core");
+goog.require("carneades.policy_analysis.web.dispatch");
+goog.require("carneades.policy_analysis.web.backbone.core");
 goog.require("clojure.string");
-goog.require("catb.views.core");
-goog.require("catb.i18n");
+goog.require("carneades.policy_analysis.web.views.core");
+goog.require("carneades.policy_analysis.web.i18n");
 goog.require("jayq.core");
 goog.require("jayq.util");
-catb.views.pmt.questions.current_fact_value = function current_fact_value(question, fact_number) {
-  var col__7221 = cljs.core.nth.call(null, (new cljs.core.Keyword("\ufdd0'values")).call(null, question), fact_number, "\ufdd0'catb.views.pmt.questions/not-found");
+carneades.policy_analysis.web.views.pmt.questions.current_fact_value = function current_fact_value(question, fact_number) {
+  var col__7221 = cljs.core.nth.call(null, (new cljs.core.Keyword("\ufdd0'values")).call(null, question), fact_number, "\ufdd0'carneades.policy-analysis.web.views.pmt.questions/not-found");
   var v__7222 = cljs.core.coll_QMARK_.call(null, col__7221) ? cljs.core.first.call(null, col__7221) : null;
   return v__7222
 };
-catb.views.pmt.questions.get_radio_widget_html = function get_radio_widget_html(question, fact_number) {
+carneades.policy_analysis.web.views.pmt.questions.get_radio_widget_html = function get_radio_widget_html(question, fact_number) {
   var inputid__7225 = cljs.core.gensym.call(null, cljs.core.format.call(null, "input-q%s-", (new cljs.core.Keyword("\ufdd0'id")).call(null, question)));
   return cljs.core.apply.call(null, cljs.core.str, cljs.core.map.call(null, function(formalanswer, answer) {
-    var checked__7226 = cljs.core._EQ_.call(null, catb.views.pmt.questions.current_fact_value.call(null, question, fact_number), formalanswer) ? "checked" : "";
+    var checked__7226 = cljs.core._EQ_.call(null, carneades.policy_analysis.web.views.pmt.questions.current_fact_value.call(null, question, fact_number), formalanswer) ? "checked" : "";
     return cljs.core.format.call(null, '<input class="radiobutton inputfield required" name="%s" value="%s" type="radio" %s/>%s', inputid__7225, formalanswer, checked__7226, answer)
   }, (new cljs.core.Keyword("\ufdd0'formalanswers")).call(null, question), (new cljs.core.Keyword("\ufdd0'answers")).call(null, question)))
 };
-catb.views.pmt.questions.select_widget = function select_widget(question, fact_number) {
+carneades.policy_analysis.web.views.pmt.questions.select_widget = function select_widget(question, fact_number) {
   return[cljs.core.str(cljs.core.format.call(null, '<select type="select" class="combobox required"> ')), cljs.core.str(cljs.core.apply.call(null, cljs.core.str, cljs.core.map.call(null, function(value, name) {
-    var selected__7228 = cljs.core._EQ_.call(null, catb.views.pmt.questions.current_fact_value.call(null, question, fact_number), value) ? "selected" : "";
+    var selected__7228 = cljs.core._EQ_.call(null, carneades.policy_analysis.web.views.pmt.questions.current_fact_value.call(null, question, fact_number), value) ? "selected" : "";
     return cljs.core.format.call(null, '<option class="dropdown-menu inputfield" value="%s" %s>%s</option>', value, selected__7228, name)
   }, (new cljs.core.Keyword("\ufdd0'type")).call(null, question), (new cljs.core.Keyword("\ufdd0'typename")).call(null, question)))), cljs.core.str("</select>")].join("")
 };
-catb.views.pmt.questions.input_widget = function input_widget(question, fact_number) {
+carneades.policy_analysis.web.views.pmt.questions.input_widget = function input_widget(question, fact_number) {
   var value__7232 = function() {
-    var or__3824__auto____7231 = catb.views.pmt.questions.current_fact_value.call(null, question, fact_number);
+    var or__3824__auto____7231 = carneades.policy_analysis.web.views.pmt.questions.current_fact_value.call(null, question, fact_number);
     if(cljs.core.truth_(or__3824__auto____7231)) {
       return or__3824__auto____7231
     }else {
@@ -31268,13 +31268,13 @@ catb.views.pmt.questions.input_widget = function input_widget(question, fact_num
   }();
   return cljs.core.format.call(null, '<input class="inputfield required" type="text">%s</input>', value__7232)
 };
-catb.views.pmt.questions.radio_widget = function radio_widget(values, names) {
+carneades.policy_analysis.web.views.pmt.questions.radio_widget = function radio_widget(values, names) {
   var inputname__7234 = cljs.core.gensym.call(null, "name");
   return cljs.core.apply.call(null, cljs.core.str, cljs.core.map.call(null, function(value, name) {
     return cljs.core.format.call(null, '<input class="radiobutton inputfield required" name="%s" value="%s" type="radio"/>%s  ', inputname__7234, value, name)
   }, values, names))
 };
-catb.views.pmt.questions.replace_variables_by_widgets = function replace_variables_by_widgets(text, widgets) {
+carneades.policy_analysis.web.views.pmt.questions.replace_variables_by_widgets = function replace_variables_by_widgets(text, widgets) {
   var wid__7237 = cljs.core.atom.call(null, widgets);
   return clojure.string.replace.call(null, text, /\?\w+/, function() {
     var G__7239__delegate = function(_) {
@@ -31298,7 +31298,7 @@ catb.views.pmt.questions.replace_variables_by_widgets = function replace_variabl
     return G__7239
   }())
 };
-catb.views.pmt.questions.functional_QMARK_ = function functional_QMARK_(question) {
+carneades.policy_analysis.web.views.pmt.questions.functional_QMARK_ = function functional_QMARK_(question) {
   var and__3822__auto____7242 = cljs.core._EQ_.call(null, (new cljs.core.Keyword("\ufdd0'min")).call(null, question), 1);
   if(and__3822__auto____7242) {
     return cljs.core._EQ_.call(null, (new cljs.core.Keyword("\ufdd0'max")).call(null, question), 1)
@@ -31306,7 +31306,7 @@ catb.views.pmt.questions.functional_QMARK_ = function functional_QMARK_(question
     return and__3822__auto____7242
   }
 };
-catb.views.pmt.questions.build_facts_buttons = function build_facts_buttons(question) {
+carneades.policy_analysis.web.views.pmt.questions.build_facts_buttons = function build_facts_buttons(question) {
   if(function() {
     var and__3822__auto____7245 = cljs.core.not_EQ_.call(null, (new cljs.core.Keyword("\ufdd0'max")).call(null, question), 1);
     if(and__3822__auto____7245) {
@@ -31325,9 +31325,9 @@ catb.views.pmt.questions.build_facts_buttons = function build_facts_buttons(ques
     return""
   }
 };
-catb.views.pmt.questions.widget_for_role = function widget_for_role(question, fact_number) {
+carneades.policy_analysis.web.views.pmt.questions.widget_for_role = function widget_for_role(question, fact_number) {
   if(cljs.core.coll_QMARK_.call(null, (new cljs.core.Keyword("\ufdd0'type")).call(null, question))) {
-    return catb.views.pmt.questions.select_widget.call(null, question, fact_number)
+    return carneades.policy_analysis.web.views.pmt.questions.select_widget.call(null, question, fact_number)
   }else {
     if(function() {
       var or__3824__auto____7248 = cljs.core._EQ_.call(null, (new cljs.core.Keyword("\ufdd0'type")).call(null, question), "symbol");
@@ -31337,7 +31337,7 @@ catb.views.pmt.questions.widget_for_role = function widget_for_role(question, fa
         return cljs.core._EQ_.call(null, (new cljs.core.Keyword("\ufdd0'type")).call(null, question), "string")
       }
     }()) {
-      return catb.views.pmt.questions.input_widget.call(null, question, fact_number)
+      return carneades.policy_analysis.web.views.pmt.questions.input_widget.call(null, question, fact_number)
     }else {
       if("\ufdd0'else") {
         throw"NYI";
@@ -31347,15 +31347,15 @@ catb.views.pmt.questions.widget_for_role = function widget_for_role(question, fa
     }
   }
 };
-catb.views.pmt.questions.create_questions_map = function create_questions_map() {
+carneades.policy_analysis.web.views.pmt.questions.create_questions_map = function create_questions_map() {
   return cljs.core.ObjMap.fromObject(["\ufdd0'order", "\ufdd0'questions", "\ufdd0'latest-questions", "\ufdd0'deleted"], {"\ufdd0'order":cljs.core.PersistentVector.EMPTY, "\ufdd0'questions":cljs.core.ObjMap.EMPTY, "\ufdd0'latest-questions":cljs.core.PersistentVector.EMPTY, "\ufdd0'deleted":cljs.core.List.EMPTY})
 };
-catb.views.pmt.questions.questions = cljs.core.atom.call(null, catb.views.pmt.questions.create_questions_map.call(null));
-catb.views.pmt.questions.get_question_el = function get_question_el(question) {
+carneades.policy_analysis.web.views.pmt.questions.questions = cljs.core.atom.call(null, carneades.policy_analysis.web.views.pmt.questions.create_questions_map.call(null));
+carneades.policy_analysis.web.views.pmt.questions.get_question_el = function get_question_el(question) {
   return jayq.core.$.call(null, [cljs.core.str("#q"), cljs.core.str((new cljs.core.Keyword("\ufdd0'id")).call(null, question))].join(""))
 };
-catb.views.pmt.questions.add_facts_number_listener = function add_facts_number_listener(question) {
-  var el__7255 = catb.views.pmt.questions.get_question_el.call(null, question);
+carneades.policy_analysis.web.views.pmt.questions.add_facts_number_listener = function add_facts_number_listener(question) {
+  var el__7255 = carneades.policy_analysis.web.views.pmt.questions.get_question_el.call(null, question);
   var G__7256__7257 = cljs.core.seq.call(null, el__7255.find(".add-fact"));
   while(true) {
     if(G__7256__7257) {
@@ -31364,7 +31364,7 @@ catb.views.pmt.questions.add_facts_number_listener = function add_facts_number_l
       add_button__7259.off("click");
       add_button__7259.click(function(G__7256__7257, add_button__7259, add_button__7258) {
         return function(_) {
-          return catb.dispatch.fire.call(null, "\ufdd0'add-fact", cljs.core.ObjMap.fromObject(["\ufdd0'id"], {"\ufdd0'id":(new cljs.core.Keyword("\ufdd0'id")).call(null, question)}))
+          return carneades.policy_analysis.web.dispatch.fire.call(null, "\ufdd0'add-fact", cljs.core.ObjMap.fromObject(["\ufdd0'id"], {"\ufdd0'id":(new cljs.core.Keyword("\ufdd0'id")).call(null, question)}))
         }
       }(G__7256__7257, add_button__7259, add_button__7258));
       var G__7261 = cljs.core.next.call(null, G__7256__7257);
@@ -31378,28 +31378,28 @@ catb.views.pmt.questions.add_facts_number_listener = function add_facts_number_l
     var remove_button__7260 = jayq.core.$.call(null, remove_button);
     remove_button__7260.off("click");
     return remove_button__7260.click(function(event) {
-      return catb.dispatch.fire.call(null, "\ufdd0'remove-fact", cljs.core.ObjMap.fromObject(["\ufdd0'id", "\ufdd0'fact-nb", "\ufdd0'event"], {"\ufdd0'id":(new cljs.core.Keyword("\ufdd0'id")).call(null, question), "\ufdd0'fact-nb":idx, "\ufdd0'event":event}))
+      return carneades.policy_analysis.web.dispatch.fire.call(null, "\ufdd0'remove-fact", cljs.core.ObjMap.fromObject(["\ufdd0'id", "\ufdd0'fact-nb", "\ufdd0'event"], {"\ufdd0'id":(new cljs.core.Keyword("\ufdd0'id")).call(null, question), "\ufdd0'fact-nb":idx, "\ufdd0'event":event}))
     })
   }, el__7255.find(".remove-fact"), cljs.core.range.call(null)))
 };
-catb.views.pmt.questions.coll_fetcher = function coll_fetcher(question) {
-  var el__7264 = catb.views.pmt.questions.get_question_el.call(null, question);
+carneades.policy_analysis.web.views.pmt.questions.coll_fetcher = function coll_fetcher(question) {
+  var el__7264 = carneades.policy_analysis.web.views.pmt.questions.get_question_el.call(null, question);
   var selects__7265 = el__7264.find("select");
   return cljs.core.map.call(null, function(select) {
     return cljs.core.PersistentVector.fromArray([jayq.core.$.call(null, select).val()], true)
   }, selects__7265)
 };
-catb.views.pmt.questions.string_fetcher = function string_fetcher(question) {
-  var el__7268 = catb.views.pmt.questions.get_question_el.call(null, question);
+carneades.policy_analysis.web.views.pmt.questions.string_fetcher = function string_fetcher(question) {
+  var el__7268 = carneades.policy_analysis.web.views.pmt.questions.get_question_el.call(null, question);
   var fields__7269 = el__7268.find(".inputfield");
   return cljs.core.map.call(null, function(field) {
     return cljs.core.PersistentVector.fromArray([jayq.core.$.call(null, field).val()], true)
   }, fields__7269)
 };
-catb.views.pmt.questions.create_role_values_fetcher = function create_role_values_fetcher(question) {
+carneades.policy_analysis.web.views.pmt.questions.create_role_values_fetcher = function create_role_values_fetcher(question) {
   return function() {
     if(cljs.core.coll_QMARK_.call(null, (new cljs.core.Keyword("\ufdd0'type")).call(null, question))) {
-      return catb.views.pmt.questions.coll_fetcher.call(null, question)
+      return carneades.policy_analysis.web.views.pmt.questions.coll_fetcher.call(null, question)
     }else {
       if(function() {
         var or__3824__auto____7271 = cljs.core._EQ_.call(null, (new cljs.core.Keyword("\ufdd0'type")).call(null, question), "symbol");
@@ -31409,37 +31409,37 @@ catb.views.pmt.questions.create_role_values_fetcher = function create_role_value
           return cljs.core._EQ_.call(null, (new cljs.core.Keyword("\ufdd0'type")).call(null, question), "string")
         }
       }()) {
-        return catb.views.pmt.questions.string_fetcher.call(null, question)
+        return carneades.policy_analysis.web.views.pmt.questions.string_fetcher.call(null, question)
       }else {
         return null
       }
     }
   }
 };
-catb.views.pmt.questions.add_fetcher = function add_fetcher(questions, id, fetcher) {
+carneades.policy_analysis.web.views.pmt.questions.add_fetcher = function add_fetcher(questions, id, fetcher) {
   return cljs.core.assoc_in.call(null, questions, cljs.core.PersistentVector.fromArray(["\ufdd0'questions", id, "\ufdd0'fetch-values"], true), fetcher)
 };
-catb.views.pmt.questions.build_role_question_fact_html = function build_role_question_fact_html(question, idx) {
+carneades.policy_analysis.web.views.pmt.questions.build_role_question_fact_html = function build_role_question_fact_html(question, idx) {
   var capitalized_text__7275 = clojure.string.capitalize.call(null, (new cljs.core.Keyword("\ufdd0'text")).call(null, question));
-  var widget__7276 = catb.views.pmt.questions.widget_for_role.call(null, question, idx);
-  return[cljs.core.str("<div>"), cljs.core.str(catb.views.pmt.questions.replace_variables_by_widgets.call(null, capitalized_text__7275, cljs.core.PersistentVector.fromArray([widget__7276], true))), cljs.core.str(catb.views.pmt.questions.build_facts_buttons.call(null, question)), cljs.core.str("</div>")].join("")
+  var widget__7276 = carneades.policy_analysis.web.views.pmt.questions.widget_for_role.call(null, question, idx);
+  return[cljs.core.str("<div>"), cljs.core.str(carneades.policy_analysis.web.views.pmt.questions.replace_variables_by_widgets.call(null, capitalized_text__7275, cljs.core.PersistentVector.fromArray([widget__7276], true))), cljs.core.str(carneades.policy_analysis.web.views.pmt.questions.build_facts_buttons.call(null, question)), cljs.core.str("</div>")].join("")
 };
-catb.views.pmt.questions.build_role_question_facts_html = function build_role_question_facts_html(question) {
+carneades.policy_analysis.web.views.pmt.questions.build_role_question_facts_html = function build_role_question_facts_html(question) {
   return cljs.core.apply.call(null, cljs.core.str, cljs.core.map.call(null, function(p1__7272_SHARP_) {
-    return catb.views.pmt.questions.build_role_question_fact_html.call(null, question, p1__7272_SHARP_)
+    return carneades.policy_analysis.web.views.pmt.questions.build_role_question_fact_html.call(null, question, p1__7272_SHARP_)
   }, cljs.core.range.call(null, (new cljs.core.Keyword("\ufdd0'nb-facts")).call(null, question))))
 };
-catb.views.pmt.questions.create_role_fact_adder = function create_role_fact_adder(question, el) {
+carneades.policy_analysis.web.views.pmt.questions.create_role_fact_adder = function create_role_fact_adder(question, el) {
   return function() {
     var id__7280 = (new cljs.core.Keyword("\ufdd0'id")).call(null, question);
-    var lquestion__7281 = cljs.core.get_in.call(null, cljs.core.deref.call(null, catb.views.pmt.questions.questions), cljs.core.PersistentVector.fromArray(["\ufdd0'questions", id__7280], true));
+    var lquestion__7281 = cljs.core.get_in.call(null, cljs.core.deref.call(null, carneades.policy_analysis.web.views.pmt.questions.questions), cljs.core.PersistentVector.fromArray(["\ufdd0'questions", id__7280], true));
     var nb_facts__7282 = (new cljs.core.Keyword("\ufdd0'nb-facts")).call(null, lquestion__7281);
-    jayq.core.append.call(null, el, catb.views.pmt.questions.build_role_question_fact_html.call(null, question, nb_facts__7282 + 1));
-    catb.views.pmt.questions.add_facts_number_listener.call(null, question);
-    return cljs.core.swap_BANG_.call(null, catb.views.pmt.questions.questions, cljs.core.update_in, cljs.core.PersistentVector.fromArray(["\ufdd0'questions", id__7280, "\ufdd0'nb-facts"], true), cljs.core.inc)
+    jayq.core.append.call(null, el, carneades.policy_analysis.web.views.pmt.questions.build_role_question_fact_html.call(null, question, nb_facts__7282 + 1));
+    carneades.policy_analysis.web.views.pmt.questions.add_facts_number_listener.call(null, question);
+    return cljs.core.swap_BANG_.call(null, carneades.policy_analysis.web.views.pmt.questions.questions, cljs.core.update_in, cljs.core.PersistentVector.fromArray(["\ufdd0'questions", id__7280, "\ufdd0'nb-facts"], true), cljs.core.inc)
   }
 };
-catb.views.pmt.questions.fact_uuid = function fact_uuid(question, fact_nb) {
+carneades.policy_analysis.web.views.pmt.questions.fact_uuid = function fact_uuid(question, fact_nb) {
   jayq.util.log.call(null, "question =");
   jayq.util.log.call(null, jayq.util.clj__GT_js.call(null, question));
   var and__3822__auto____7284 = fact_nb < cljs.core.count.call(null, (new cljs.core.Keyword("\ufdd0'facts-uuid")).call(null, question));
@@ -31449,85 +31449,86 @@ catb.views.pmt.questions.fact_uuid = function fact_uuid(question, fact_nb) {
     return and__3822__auto____7284
   }
 };
-catb.views.pmt.questions.create_fact_remover = function create_fact_remover(question, el) {
+carneades.policy_analysis.web.views.pmt.questions.create_fact_remover = function create_fact_remover(question, el) {
   return function(event, idx) {
     var target__7291 = event.target;
     var parent__7292 = jayq.core.$.call(null, target__7291).parent();
     var id__7293 = (new cljs.core.Keyword("\ufdd0'id")).call(null, question);
-    var lquestion__7294 = cljs.core.get_in.call(null, cljs.core.deref.call(null, catb.views.pmt.questions.questions), cljs.core.PersistentVector.fromArray(["\ufdd0'questions", id__7293], true));
+    var lquestion__7294 = cljs.core.get_in.call(null, cljs.core.deref.call(null, carneades.policy_analysis.web.views.pmt.questions.questions), cljs.core.PersistentVector.fromArray(["\ufdd0'questions", id__7293], true));
     parent__7292.remove();
-    var temp__3974__auto____7295 = catb.views.pmt.questions.fact_uuid.call(null, lquestion__7294, idx);
+    var temp__3974__auto____7295 = carneades.policy_analysis.web.views.pmt.questions.fact_uuid.call(null, lquestion__7294, idx);
     if(cljs.core.truth_(temp__3974__auto____7295)) {
       var uuid__7296 = temp__3974__auto____7295;
-      cljs.core.swap_BANG_.call(null, catb.views.pmt.questions.questions, cljs.core.assoc_in, cljs.core.PersistentVector.fromArray(["\ufdd0'questions", (new cljs.core.Keyword("\ufdd0'id")).call(null, lquestion__7294), "\ufdd0'facts-uuid", idx], true), null);
-      cljs.core.swap_BANG_.call(null, catb.views.pmt.questions.questions, cljs.core.update_in, cljs.core.PersistentVector.fromArray(["\ufdd0'deleted"], true), cljs.core.conj, uuid__7296)
+      cljs.core.swap_BANG_.call(null, carneades.policy_analysis.web.views.pmt.questions.questions, cljs.core.assoc_in, cljs.core.PersistentVector.fromArray(["\ufdd0'questions", (new cljs.core.Keyword("\ufdd0'id")).call(null, lquestion__7294), "\ufdd0'facts-uuid", idx], true), null);
+      cljs.core.swap_BANG_.call(null, carneades.policy_analysis.web.views.pmt.questions.questions, cljs.core.update_in, cljs.core.PersistentVector.fromArray(["\ufdd0'deleted"], true), cljs.core.conj, uuid__7296)
     }else {
     }
-    return cljs.core.swap_BANG_.call(null, catb.views.pmt.questions.questions, cljs.core.update_in, cljs.core.PersistentVector.fromArray(["\ufdd0'questions", (new cljs.core.Keyword("\ufdd0'id")).call(null, lquestion__7294), "\ufdd0'nb-facts"], true), cljs.core.dec)
+    return cljs.core.swap_BANG_.call(null, carneades.policy_analysis.web.views.pmt.questions.questions, cljs.core.update_in, cljs.core.PersistentVector.fromArray(["\ufdd0'questions", (new cljs.core.Keyword("\ufdd0'id")).call(null, lquestion__7294), "\ufdd0'nb-facts"], true), cljs.core.dec)
   }
 };
-catb.views.pmt.questions.build_role_question_html = function build_role_question_html(question) {
-  return[cljs.core.str(cljs.core.format.call(null, '<div id="q%s">', (new cljs.core.Keyword("\ufdd0'id")).call(null, question))), cljs.core.str(catb.views.pmt.questions.build_role_question_facts_html.call(null, question)), cljs.core.str("</div>")].join("")
+carneades.policy_analysis.web.views.pmt.questions.build_role_question_html = function build_role_question_html(question) {
+  return[cljs.core.str(cljs.core.format.call(null, '<div id="q%s">', (new cljs.core.Keyword("\ufdd0'id")).call(null, question))), cljs.core.str(carneades.policy_analysis.web.views.pmt.questions.build_role_question_facts_html.call(null, question)), cljs.core.str("</div>")].join("")
 };
-catb.views.pmt.questions.build_role_question = function build_role_question(question) {
+carneades.policy_analysis.web.views.pmt.questions.build_role_question = function build_role_question(question) {
   if(cljs.core.not.call(null, (new cljs.core.Keyword("\ufdd0'grounded")).call(null, question))) {
   }else {
     throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'not", cljs.core.with_meta(cljs.core.list("\ufdd0'grounded", "\ufdd1'question"), cljs.core.hash_map("\ufdd0'line", 243))), cljs.core.hash_map("\ufdd0'line", 243))))].join(""));
   }
-  var el__7298 = jayq.core.$.call(null, catb.views.pmt.questions.build_role_question_html.call(null, question));
-  return cljs.core.ObjMap.fromObject(["\ufdd0'el", "\ufdd0'fetcher", "\ufdd0'fact-adder", "\ufdd0'fact-remover"], {"\ufdd0'el":el__7298, "\ufdd0'fetcher":catb.views.pmt.questions.create_role_values_fetcher.call(null, question), "\ufdd0'fact-adder":catb.views.pmt.questions.create_role_fact_adder.call(null, question, el__7298), "\ufdd0'fact-remover":catb.views.pmt.questions.create_fact_remover.call(null, question, el__7298)})
+  var el__7298 = jayq.core.$.call(null, carneades.policy_analysis.web.views.pmt.questions.build_role_question_html.call(null, question));
+  return cljs.core.ObjMap.fromObject(["\ufdd0'el", "\ufdd0'fetcher", "\ufdd0'fact-adder", "\ufdd0'fact-remover"], {"\ufdd0'el":el__7298, "\ufdd0'fetcher":carneades.policy_analysis.web.views.pmt.questions.create_role_values_fetcher.call(null, question), "\ufdd0'fact-adder":carneades.policy_analysis.web.views.pmt.questions.create_role_fact_adder.call(null, question, el__7298), "\ufdd0'fact-remover":carneades.policy_analysis.web.views.pmt.questions.create_fact_remover.call(null, question, el__7298)})
 };
-catb.views.pmt.questions.build_grounded_question_fact_html = function build_grounded_question_fact_html(question, idx) {
+carneades.policy_analysis.web.views.pmt.questions.build_grounded_question_fact_html = function build_grounded_question_fact_html(question, idx) {
   var text__7301 = clojure.string.capitalize.call(null, (new cljs.core.Keyword("\ufdd0'text")).call(null, question));
-  return[cljs.core.str(cljs.core.format.call(null, "<div>%s", text__7301)), cljs.core.str(catb.views.pmt.questions.get_radio_widget_html.call(null, question, idx)), cljs.core.str(catb.views.pmt.questions.build_facts_buttons.call(null, question)), cljs.core.str("</div>")].join("")
+  return[cljs.core.str(cljs.core.format.call(null, "<div>%s", text__7301)), cljs.core.str(carneades.policy_analysis.web.views.pmt.questions.get_radio_widget_html.call(null, question, idx)), cljs.core.str(carneades.policy_analysis.web.views.pmt.questions.build_facts_buttons.call(null, question)), cljs.core.str("</div>")].join("")
 };
-catb.views.pmt.questions.build_grounded_question_facts_html = function build_grounded_question_facts_html(question) {
+carneades.policy_analysis.web.views.pmt.questions.build_grounded_question_facts_html = function build_grounded_question_facts_html(question) {
   return cljs.core.apply.call(null, cljs.core.str, cljs.core.map.call(null, function(p1__7299_SHARP_) {
-    return catb.views.pmt.questions.build_grounded_question_fact_html.call(null, question, p1__7299_SHARP_)
+    return carneades.policy_analysis.web.views.pmt.questions.build_grounded_question_fact_html.call(null, question, p1__7299_SHARP_)
   }, cljs.core.range.call(null, (new cljs.core.Keyword("\ufdd0'nb-facts")).call(null, question))))
 };
-catb.views.pmt.questions.build_grounded_question_html = function build_grounded_question_html(question) {
-  return[cljs.core.str(cljs.core.format.call(null, '<div id="q%s">', (new cljs.core.Keyword("\ufdd0'id")).call(null, question))), cljs.core.str(catb.views.pmt.questions.build_grounded_question_facts_html.call(null, question)), cljs.core.str("</div>")].join("")
+carneades.policy_analysis.web.views.pmt.questions.build_grounded_question_html = function build_grounded_question_html(question) {
+  return[cljs.core.str(cljs.core.format.call(null, '<div id="q%s">', (new cljs.core.Keyword("\ufdd0'id")).call(null, question))), cljs.core.str(carneades.policy_analysis.web.views.pmt.questions.build_grounded_question_facts_html.call(null, question)), cljs.core.str("</div>")].join("")
 };
-catb.views.pmt.questions.create_grounded_question_fetcher = function create_grounded_question_fetcher(question) {
+carneades.policy_analysis.web.views.pmt.questions.create_grounded_question_fetcher = function create_grounded_question_fetcher(question) {
   return function() {
-    var el__7304 = catb.views.pmt.questions.get_question_el.call(null, question);
+    var el__7304 = carneades.policy_analysis.web.views.pmt.questions.get_question_el.call(null, question);
     var inputs__7305 = el__7304.find("input:checked");
     return cljs.core.map.call(null, function(i) {
       return cljs.core.PersistentVector.fromArray([jayq.core.$.call(null, i).val()], true)
     }, inputs__7305)
   }
 };
-catb.views.pmt.questions.create_grounded_fact_adder = function create_grounded_fact_adder(question, el) {
+carneades.policy_analysis.web.views.pmt.questions.create_grounded_fact_adder = function create_grounded_fact_adder(question, el) {
   return function() {
     var id__7309 = (new cljs.core.Keyword("\ufdd0'id")).call(null, question);
-    var lquestion__7310 = cljs.core.get_in.call(null, cljs.core.deref.call(null, catb.views.pmt.questions.questions), cljs.core.PersistentVector.fromArray(["\ufdd0'questions", id__7309], true));
+    var lquestion__7310 = cljs.core.get_in.call(null, cljs.core.deref.call(null, carneades.policy_analysis.web.views.pmt.questions.questions), cljs.core.PersistentVector.fromArray(["\ufdd0'questions", id__7309], true));
     var nb_facts__7311 = (new cljs.core.Keyword("\ufdd0'nb-facts")).call(null, lquestion__7310);
-    jayq.core.append.call(null, el, catb.views.pmt.questions.build_grounded_question_fact_html.call(null, question, nb_facts__7311 + 1));
-    catb.views.pmt.questions.add_facts_number_listener.call(null, question);
-    return cljs.core.swap_BANG_.call(null, catb.views.pmt.questions.questions, cljs.core.update_in, cljs.core.PersistentVector.fromArray(["\ufdd0'questions", id__7309, "\ufdd0'nb-facts"], true), cljs.core.inc)
+    jayq.core.append.call(null, el, carneades.policy_analysis.web.views.pmt.questions.build_grounded_question_fact_html.call(null, question, nb_facts__7311 + 1));
+    carneades.policy_analysis.web.views.pmt.questions.add_facts_number_listener.call(null, question);
+    return cljs.core.swap_BANG_.call(null, carneades.policy_analysis.web.views.pmt.questions.questions, cljs.core.update_in, cljs.core.PersistentVector.fromArray(["\ufdd0'questions", id__7309, "\ufdd0'nb-facts"], true), cljs.core.inc)
   }
 };
-catb.views.pmt.questions.build_grounded_question = function build_grounded_question(question) {
-  var el__7313 = jayq.core.$.call(null, catb.views.pmt.questions.build_grounded_question_html.call(null, question));
-  return cljs.core.ObjMap.fromObject(["\ufdd0'el", "\ufdd0'fetcher", "\ufdd0'fact-adder", "\ufdd0'fact-remover"], {"\ufdd0'el":el__7313, "\ufdd0'fetcher":catb.views.pmt.questions.create_grounded_question_fetcher.call(null, question), "\ufdd0'fact-adder":catb.views.pmt.questions.create_grounded_fact_adder.call(null, question, el__7313), "\ufdd0'fact-remover":catb.views.pmt.questions.create_fact_remover.call(null, question, el__7313)})
+carneades.policy_analysis.web.views.pmt.questions.build_grounded_question = function build_grounded_question(question) {
+  var el__7313 = jayq.core.$.call(null, carneades.policy_analysis.web.views.pmt.questions.build_grounded_question_html.call(null, question));
+  return cljs.core.ObjMap.fromObject(["\ufdd0'el", "\ufdd0'fetcher", "\ufdd0'fact-adder", "\ufdd0'fact-remover"], {"\ufdd0'el":el__7313, "\ufdd0'fetcher":carneades.policy_analysis.web.views.pmt.questions.create_grounded_question_fetcher.call(null, question), "\ufdd0'fact-adder":carneades.policy_analysis.web.views.pmt.questions.create_grounded_fact_adder.call(null, question, el__7313), "\ufdd0'fact-remover":carneades.policy_analysis.web.views.pmt.questions.create_fact_remover.call(null, question, 
+  el__7313)})
 };
-catb.views.pmt.questions.build_question = function build_question(question) {
+carneades.policy_analysis.web.views.pmt.questions.build_question = function build_question(question) {
   jayq.util.log.call(null, "Question");
   jayq.util.log.call(null, jayq.util.clj__GT_js.call(null, question));
   if(cljs.core.truth_((new cljs.core.Keyword("\ufdd0'grounded")).call(null, question))) {
-    return catb.views.pmt.questions.build_grounded_question.call(null, question)
+    return carneades.policy_analysis.web.views.pmt.questions.build_grounded_question.call(null, question)
   }else {
     if(cljs.core.truth_((new cljs.core.Keyword("\ufdd0'role")).call(null, question))) {
-      return catb.views.pmt.questions.build_role_question.call(null, question)
+      return carneades.policy_analysis.web.views.pmt.questions.build_role_question.call(null, question)
     }else {
       return null
     }
   }
 };
-catb.views.pmt.questions.add_fact = function add_fact(msg) {
+carneades.policy_analysis.web.views.pmt.questions.add_fact = function add_fact(msg) {
   var id__7318 = (new cljs.core.Keyword("\ufdd0'id")).call(null, msg);
-  var question__7319 = cljs.core.get_in.call(null, cljs.core.deref.call(null, catb.views.pmt.questions.questions), cljs.core.PersistentVector.fromArray(["\ufdd0'questions", id__7318], true));
+  var question__7319 = cljs.core.get_in.call(null, cljs.core.deref.call(null, carneades.policy_analysis.web.views.pmt.questions.questions), cljs.core.PersistentVector.fromArray(["\ufdd0'questions", id__7318], true));
   var nb_facts__7320 = (new cljs.core.Keyword("\ufdd0'nb-facts")).call(null, question__7319);
   if(cljs.core.truth_(function() {
     var and__3822__auto____7321 = (new cljs.core.Keyword("\ufdd0'max")).call(null, question__7319);
@@ -31537,18 +31538,18 @@ catb.views.pmt.questions.add_fact = function add_fact(msg) {
       return and__3822__auto____7321
     }
   }())) {
-    return PM.on_error(catb.i18n.i18n.call(null, "pmt_maximum_number_of_facts"))
+    return PM.on_error(carneades.policy_analysis.web.i18n.i18n.call(null, "pmt_maximum_number_of_facts"))
   }else {
     return(new cljs.core.Keyword("\ufdd0'fact-adder")).call(null, question__7319).call(null)
   }
 };
-catb.dispatch.react_to.call(null, cljs.core.PersistentHashSet.fromArray(["\ufdd0'add-fact"]), function(_, msg) {
-  return catb.views.pmt.questions.add_fact.call(null, msg)
+carneades.policy_analysis.web.dispatch.react_to.call(null, cljs.core.PersistentHashSet.fromArray(["\ufdd0'add-fact"]), function(_, msg) {
+  return carneades.policy_analysis.web.views.pmt.questions.add_fact.call(null, msg)
 });
-catb.views.pmt.questions.remove_fact = function remove_fact(msg) {
+carneades.policy_analysis.web.views.pmt.questions.remove_fact = function remove_fact(msg) {
   var id__7329 = (new cljs.core.Keyword("\ufdd0'id")).call(null, msg);
   var fact_nb__7330 = (new cljs.core.Keyword("\ufdd0'fact-nb")).call(null, msg);
-  var question__7331 = cljs.core.get_in.call(null, cljs.core.deref.call(null, catb.views.pmt.questions.questions), cljs.core.PersistentVector.fromArray(["\ufdd0'questions", id__7329], true));
+  var question__7331 = cljs.core.get_in.call(null, cljs.core.deref.call(null, carneades.policy_analysis.web.views.pmt.questions.questions), cljs.core.PersistentVector.fromArray(["\ufdd0'questions", id__7329], true));
   var nb_facts__7332 = (new cljs.core.Keyword("\ufdd0'nb-facts")).call(null, question__7331);
   var min__7334 = function() {
     var or__3824__auto____7333 = (new cljs.core.Keyword("\ufdd0'min")).call(null, question__7331);
@@ -31566,15 +31567,15 @@ catb.views.pmt.questions.remove_fact = function remove_fact(msg) {
       return nb_facts__7332 <= min__7334
     }
   }()) {
-    return PM.on_error(catb.i18n.i18n.call(null, "pmt_cannot_remove_fact"))
+    return PM.on_error(carneades.policy_analysis.web.i18n.i18n.call(null, "pmt_cannot_remove_fact"))
   }else {
     return(new cljs.core.Keyword("\ufdd0'fact-remover")).call(null, question__7331).call(null, (new cljs.core.Keyword("\ufdd0'event")).call(null, msg), (new cljs.core.Keyword("\ufdd0'fact-nb")).call(null, msg))
   }
 };
-catb.dispatch.react_to.call(null, cljs.core.PersistentHashSet.fromArray(["\ufdd0'remove-fact"]), function(_, msg) {
-  return catb.views.pmt.questions.remove_fact.call(null, msg)
+carneades.policy_analysis.web.dispatch.react_to.call(null, cljs.core.PersistentHashSet.fromArray(["\ufdd0'remove-fact"]), function(_, msg) {
+  return carneades.policy_analysis.web.views.pmt.questions.remove_fact.call(null, msg)
 });
-catb.views.pmt.questions.add_question_html = function add_question_html(question, el, e) {
+carneades.policy_analysis.web.views.pmt.questions.add_question_html = function add_question_html(question, el, e) {
   jayq.core.append.call(null, el, cljs.core.format.call(null, "<p><i>%s</i></p>", function() {
     var or__3824__auto____7337 = (new cljs.core.Keyword("\ufdd0'hint")).call(null, question);
     if(cljs.core.truth_(or__3824__auto____7337)) {
@@ -31586,25 +31587,25 @@ catb.views.pmt.questions.add_question_html = function add_question_html(question
   jayq.core.append.call(null, el, e);
   return jayq.core.append.call(null, el, "<br/>")
 };
-catb.views.pmt.questions.add_question = function add_question(question, htmlel) {
-  var map__7345__7346 = catb.views.pmt.questions.build_question.call(null, question);
+carneades.policy_analysis.web.views.pmt.questions.add_question = function add_question(question, htmlel) {
+  var map__7345__7346 = carneades.policy_analysis.web.views.pmt.questions.build_question.call(null, question);
   var map__7345__7347 = cljs.core.seq_QMARK_.call(null, map__7345__7346) ? cljs.core.apply.call(null, cljs.core.hash_map, map__7345__7346) : map__7345__7346;
   var fetcher__7348 = cljs.core._lookup.call(null, map__7345__7347, "\ufdd0'fetcher", null);
   var fact_remover__7349 = cljs.core._lookup.call(null, map__7345__7347, "\ufdd0'fact-remover", null);
   var fact_adder__7350 = cljs.core._lookup.call(null, map__7345__7347, "\ufdd0'fact-adder", null);
   var el__7351 = cljs.core._lookup.call(null, map__7345__7347, "\ufdd0'el", null);
-  catb.views.pmt.questions.add_question_html.call(null, question, htmlel, el__7351);
-  catb.views.pmt.questions.add_facts_number_listener.call(null, question);
-  cljs.core.swap_BANG_.call(null, catb.views.pmt.questions.questions, catb.views.pmt.questions.add_fetcher, (new cljs.core.Keyword("\ufdd0'id")).call(null, question), fetcher__7348);
-  cljs.core.swap_BANG_.call(null, catb.views.pmt.questions.questions, cljs.core.assoc_in, cljs.core.PersistentVector.fromArray(["\ufdd0'questions", (new cljs.core.Keyword("\ufdd0'id")).call(null, question), "\ufdd0'fact-adder"], true), fact_adder__7350);
-  return cljs.core.swap_BANG_.call(null, catb.views.pmt.questions.questions, cljs.core.assoc_in, cljs.core.PersistentVector.fromArray(["\ufdd0'questions", (new cljs.core.Keyword("\ufdd0'id")).call(null, question), "\ufdd0'fact-remover"], true), fact_remover__7349)
+  carneades.policy_analysis.web.views.pmt.questions.add_question_html.call(null, question, htmlel, el__7351);
+  carneades.policy_analysis.web.views.pmt.questions.add_facts_number_listener.call(null, question);
+  cljs.core.swap_BANG_.call(null, carneades.policy_analysis.web.views.pmt.questions.questions, carneades.policy_analysis.web.views.pmt.questions.add_fetcher, (new cljs.core.Keyword("\ufdd0'id")).call(null, question), fetcher__7348);
+  cljs.core.swap_BANG_.call(null, carneades.policy_analysis.web.views.pmt.questions.questions, cljs.core.assoc_in, cljs.core.PersistentVector.fromArray(["\ufdd0'questions", (new cljs.core.Keyword("\ufdd0'id")).call(null, question), "\ufdd0'fact-adder"], true), fact_adder__7350);
+  return cljs.core.swap_BANG_.call(null, carneades.policy_analysis.web.views.pmt.questions.questions, cljs.core.assoc_in, cljs.core.PersistentVector.fromArray(["\ufdd0'questions", (new cljs.core.Keyword("\ufdd0'id")).call(null, question), "\ufdd0'fact-remover"], true), fact_remover__7349)
 };
-catb.views.pmt.questions.add_questions = function add_questions(questions, el) {
+carneades.policy_analysis.web.views.pmt.questions.add_questions = function add_questions(questions, el) {
   var G__7355__7356 = cljs.core.seq.call(null, questions);
   while(true) {
     if(G__7355__7356) {
       var question__7357 = cljs.core.first.call(null, G__7355__7356);
-      catb.views.pmt.questions.add_question.call(null, question__7357, el);
+      carneades.policy_analysis.web.views.pmt.questions.add_question.call(null, question__7357, el);
       var G__7358 = cljs.core.next.call(null, G__7355__7356);
       G__7355__7356 = G__7358;
       continue
@@ -31614,30 +31615,30 @@ catb.views.pmt.questions.add_questions = function add_questions(questions, el) {
     break
   }
 };
-catb.views.pmt.questions.add_submit_button = function add_submit_button(questions_el) {
+carneades.policy_analysis.web.views.pmt.questions.add_submit_button = function add_submit_button(questions_el) {
   var button_id__7360 = [cljs.core.str(cljs.core.gensym.call(null, "button"))].join("");
-  jayq.core.append.call(null, questions_el, cljs.core.format.call(null, '<input type="button" value="%s" id="%s"/> ', catb.i18n.i18n.call(null, "pmt_submit"), button_id__7360));
+  jayq.core.append.call(null, questions_el, cljs.core.format.call(null, '<input type="button" value="%s" id="%s"/> ', carneades.policy_analysis.web.i18n.i18n.call(null, "pmt_submit"), button_id__7360));
   jayq.core.append.call(null, questions_el, "<hr/>");
   return jayq.core.$.call(null, [cljs.core.str("#"), cljs.core.str(button_id__7360)].join("")).click(function(_) {
-    return catb.dispatch.fire.call(null, "\ufdd0'on-submit", cljs.core.ObjMap.EMPTY)
+    return carneades.policy_analysis.web.dispatch.fire.call(null, "\ufdd0'on-submit", cljs.core.ObjMap.EMPTY)
   })
 };
-catb.views.pmt.questions.display_questions_in_category = function display_questions_in_category(questions, el) {
+carneades.policy_analysis.web.views.pmt.questions.display_questions_in_category = function display_questions_in_category(questions, el) {
   var category_name__7362 = (new cljs.core.Keyword("\ufdd0'category_name")).call(null, cljs.core.first.call(null, questions));
   jayq.core.append.call(null, el, cljs.core.format.call(null, "<h3>%s</h3>", category_name__7362));
-  return catb.views.pmt.questions.add_questions.call(null, questions, el)
+  return carneades.policy_analysis.web.views.pmt.questions.add_questions.call(null, questions, el)
 };
-catb.views.pmt.questions.display_questions = function display_questions(_, msg) {
+carneades.policy_analysis.web.views.pmt.questions.display_questions = function display_questions(_, msg) {
   jayq.util.log.call(null, "Display question");
   var el__7369 = jayq.core.$.call(null, "#questions");
-  var questions_to_ids__7370 = (new cljs.core.Keyword("\ufdd0'questions")).call(null, cljs.core.deref.call(null, catb.views.pmt.questions.questions));
-  var ids__7371 = (new cljs.core.Keyword("\ufdd0'order")).call(null, cljs.core.deref.call(null, catb.views.pmt.questions.questions));
+  var questions_to_ids__7370 = (new cljs.core.Keyword("\ufdd0'questions")).call(null, cljs.core.deref.call(null, carneades.policy_analysis.web.views.pmt.questions.questions));
+  var ids__7371 = (new cljs.core.Keyword("\ufdd0'order")).call(null, cljs.core.deref.call(null, carneades.policy_analysis.web.views.pmt.questions.questions));
   jayq.core.empty.call(null, el__7369);
   var G__7372__7373 = cljs.core.seq.call(null, ids__7371);
   while(true) {
     if(G__7372__7373) {
       var ids_for_category__7374 = cljs.core.first.call(null, G__7372__7373);
-      catb.views.pmt.questions.display_questions_in_category.call(null, cljs.core.map.call(null, questions_to_ids__7370, ids_for_category__7374), el__7369);
+      carneades.policy_analysis.web.views.pmt.questions.display_questions_in_category.call(null, cljs.core.map.call(null, questions_to_ids__7370, ids_for_category__7374), el__7369);
       var G__7375 = cljs.core.next.call(null, G__7372__7373);
       G__7372__7373 = G__7375;
       continue
@@ -31645,11 +31646,11 @@ catb.views.pmt.questions.display_questions = function display_questions(_, msg) 
     }
     break
   }
-  catb.views.pmt.questions.add_submit_button.call(null, el__7369);
+  carneades.policy_analysis.web.views.pmt.questions.add_submit_button.call(null, el__7369);
   return PM.scroll_to_bottom()
 };
-catb.dispatch.react_to.call(null, cljs.core.PersistentHashSet.fromArray(["\ufdd0'questions-added"]), catb.views.pmt.questions.display_questions);
-catb.views.pmt.questions.calc_nb_facts = function calc_nb_facts(question) {
+carneades.policy_analysis.web.dispatch.react_to.call(null, cljs.core.PersistentHashSet.fromArray(["\ufdd0'questions-added"]), carneades.policy_analysis.web.views.pmt.questions.display_questions);
+carneades.policy_analysis.web.views.pmt.questions.calc_nb_facts = function calc_nb_facts(question) {
   var or__3824__auto____7378 = (new cljs.core.Keyword("\ufdd0'nb-facts")).call(null, question);
   if(cljs.core.truth_(or__3824__auto____7378)) {
     return or__3824__auto____7378
@@ -31668,14 +31669,14 @@ catb.views.pmt.questions.calc_nb_facts = function calc_nb_facts(question) {
     }
   }
 };
-catb.views.pmt.questions.questions_list__GT_map = function questions_list__GT_map(questions_list) {
+carneades.policy_analysis.web.views.pmt.questions.questions_list__GT_map = function questions_list__GT_map(questions_list) {
   return cljs.core.reduce.call(null, function(m, question) {
-    var nb_facts__7383 = catb.views.pmt.questions.calc_nb_facts.call(null, question);
+    var nb_facts__7383 = carneades.policy_analysis.web.views.pmt.questions.calc_nb_facts.call(null, question);
     var question__7384 = cljs.core.assoc.call(null, question, "\ufdd0'nb-facts", nb_facts__7383);
     return cljs.core.assoc.call(null, m, (new cljs.core.Keyword("\ufdd0'id")).call(null, question__7384), question__7384)
   }, cljs.core.ObjMap.EMPTY, questions_list)
 };
-catb.views.pmt.questions.questions_ordered = function questions_ordered(questions_list) {
+carneades.policy_analysis.web.views.pmt.questions.questions_ordered = function questions_ordered(questions_list) {
   if(cljs.core.map_QMARK_.call(null, cljs.core.first.call(null, questions_list))) {
   }else {
     throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'map?", cljs.core.with_meta(cljs.core.list("\ufdd1'first", "\ufdd1'questions-list"), cljs.core.hash_map("\ufdd0'line", 422))), cljs.core.hash_map("\ufdd0'line", 422))))].join(""));
@@ -31684,105 +31685,106 @@ catb.views.pmt.questions.questions_ordered = function questions_ordered(question
     return cljs.core.map.call(null, "\ufdd0'id", p1__7380_SHARP_)
   }, cljs.core.vals.call(null, cljs.core.group_by.call(null, "\ufdd0'category", questions_list)))
 };
-catb.views.pmt.questions.index_questions = function index_questions(questions, latest_questions_list) {
-  return cljs.core.update_in.call(null, cljs.core.assoc.call(null, cljs.core.update_in.call(null, questions, cljs.core.PersistentVector.fromArray(["\ufdd0'questions"], true), cljs.core.merge, catb.views.pmt.questions.questions_list__GT_map.call(null, latest_questions_list)), "\ufdd0'latest-questions", cljs.core.map.call(null, "\ufdd0'id", latest_questions_list)), cljs.core.PersistentVector.fromArray(["\ufdd0'order"], true), cljs.core.concat, catb.views.pmt.questions.questions_ordered.call(null, latest_questions_list))
+carneades.policy_analysis.web.views.pmt.questions.index_questions = function index_questions(questions, latest_questions_list) {
+  return cljs.core.update_in.call(null, cljs.core.assoc.call(null, cljs.core.update_in.call(null, questions, cljs.core.PersistentVector.fromArray(["\ufdd0'questions"], true), cljs.core.merge, carneades.policy_analysis.web.views.pmt.questions.questions_list__GT_map.call(null, latest_questions_list)), "\ufdd0'latest-questions", cljs.core.map.call(null, "\ufdd0'id", latest_questions_list)), cljs.core.PersistentVector.fromArray(["\ufdd0'order"], true), cljs.core.concat, carneades.policy_analysis.web.views.pmt.questions.questions_ordered.call(null, 
+  latest_questions_list))
 };
-catb.views.pmt.questions.fetch_values = function fetch_values(qid) {
-  var values__7386 = cljs.core.get_in.call(null, cljs.core.deref.call(null, catb.views.pmt.questions.questions), cljs.core.PersistentVector.fromArray(["\ufdd0'questions", qid, "\ufdd0'fetch-values"], true)).call(null);
-  cljs.core.swap_BANG_.call(null, catb.views.pmt.questions.questions, cljs.core.assoc_in, cljs.core.PersistentVector.fromArray(["\ufdd0'questions", qid, "\ufdd0'values"], true), values__7386);
+carneades.policy_analysis.web.views.pmt.questions.fetch_values = function fetch_values(qid) {
+  var values__7386 = cljs.core.get_in.call(null, cljs.core.deref.call(null, carneades.policy_analysis.web.views.pmt.questions.questions), cljs.core.PersistentVector.fromArray(["\ufdd0'questions", qid, "\ufdd0'fetch-values"], true)).call(null);
+  cljs.core.swap_BANG_.call(null, carneades.policy_analysis.web.views.pmt.questions.questions, cljs.core.assoc_in, cljs.core.PersistentVector.fromArray(["\ufdd0'questions", qid, "\ufdd0'values"], true), values__7386);
   return values__7386
 };
-catb.views.pmt.questions.fetch_latest_questions_answers = function fetch_latest_questions_answers() {
-  var latest__7389 = (new cljs.core.Keyword("\ufdd0'latest-questions")).call(null, cljs.core.deref.call(null, catb.views.pmt.questions.questions));
-  var answers__7390 = cljs.core.map.call(null, catb.views.pmt.questions.fetch_values, latest__7389);
+carneades.policy_analysis.web.views.pmt.questions.fetch_latest_questions_answers = function fetch_latest_questions_answers() {
+  var latest__7389 = (new cljs.core.Keyword("\ufdd0'latest-questions")).call(null, cljs.core.deref.call(null, carneades.policy_analysis.web.views.pmt.questions.questions));
+  var answers__7390 = cljs.core.map.call(null, carneades.policy_analysis.web.views.pmt.questions.fetch_values, latest__7389);
   return cljs.core.map.call(null, function(id, ans) {
     return cljs.core.ObjMap.fromObject(["\ufdd0'id", "\ufdd0'values"], {"\ufdd0'id":id, "\ufdd0'values":ans})
   }, latest__7389, answers__7390)
 };
-catb.views.pmt.questions.send_answers = function send_answers(msg) {
+carneades.policy_analysis.web.views.pmt.questions.send_answers = function send_answers(msg) {
   if(cljs.core.truth_(jayq.core.$.call(null, "#questionsform").valid())) {
-    var answers__7392 = catb.views.pmt.questions.fetch_latest_questions_answers.call(null);
+    var answers__7392 = carneades.policy_analysis.web.views.pmt.questions.fetch_latest_questions_answers.call(null);
     jayq.util.log.call(null, "sending answers...");
     jayq.util.log.call(null, jayq.util.clj__GT_js.call(null, answers__7392));
     PM.busy_cursor_on();
     return PM.ajax_post(IMPACT.simulation_url, jayq.util.clj__GT_js.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'answers"], {"\ufdd0'answers":answers__7392})), function(data) {
       PM.busy_cursor_off();
-      return catb.views.pmt.questions.show_questions_or_ag.call(null, data)
+      return carneades.policy_analysis.web.views.pmt.questions.show_questions_or_ag.call(null, data)
     }, IMPACT.user, IMPACT.password, PM.on_error)
   }else {
     return null
   }
 };
-catb.dispatch.react_to.call(null, cljs.core.PersistentHashSet.fromArray(["\ufdd0'on-submit"]), function(msg) {
-  return(new cljs.core.Keyword("\ufdd0'submit-listener")).call(null, cljs.core.deref.call(null, catb.views.pmt.questions.questions)).call(null, msg)
+carneades.policy_analysis.web.dispatch.react_to.call(null, cljs.core.PersistentHashSet.fromArray(["\ufdd0'on-submit"]), function(msg) {
+  return(new cljs.core.Keyword("\ufdd0'submit-listener")).call(null, cljs.core.deref.call(null, carneades.policy_analysis.web.views.pmt.questions.questions)).call(null, msg)
 });
-catb.views.pmt.questions.send_answers_for_modification = function send_answers_for_modification() {
+carneades.policy_analysis.web.views.pmt.questions.send_answers_for_modification = function send_answers_for_modification() {
   if(cljs.core.truth_(jayq.core.$.call(null, "#questionsform").valid())) {
-    var answers__7399 = catb.views.pmt.questions.fetch_latest_questions_answers.call(null);
+    var answers__7399 = carneades.policy_analysis.web.views.pmt.questions.fetch_latest_questions_answers.call(null);
     jayq.util.log.call(null, "sending answers for modification...");
     jayq.util.log.call(null, jayq.util.clj__GT_js.call(null, answers__7399));
     PM.busy_cursor_on();
-    var map__7400__7401 = cljs.core.deref.call(null, catb.views.pmt.questions.questions);
+    var map__7400__7401 = cljs.core.deref.call(null, carneades.policy_analysis.web.views.pmt.questions.questions);
     var map__7400__7402 = cljs.core.seq_QMARK_.call(null, map__7400__7401) ? cljs.core.apply.call(null, cljs.core.hash_map, map__7400__7401) : map__7400__7401;
     var deleted__7403 = cljs.core._lookup.call(null, map__7400__7402, "\ufdd0'deleted", null);
     var questions__7404 = cljs.core._lookup.call(null, map__7400__7402, "\ufdd0'questions", null);
     return PM.ajax_post(IMPACT.simulation_url, jayq.util.clj__GT_js.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'modify-facts"], {"\ufdd0'modify-facts":cljs.core.ObjMap.fromObject(["\ufdd0'facts", "\ufdd0'deleted", "\ufdd0'db"], {"\ufdd0'facts":cljs.core.vals.call(null, questions__7404), "\ufdd0'deleted":deleted__7403, "\ufdd0'db":IMPACT.db})})), function(data) {
       PM.busy_cursor_off();
-      return catb.views.pmt.questions.show_ag.call(null, data.db)
+      return carneades.policy_analysis.web.views.pmt.questions.show_ag.call(null, data.db)
     }, IMPACT.user, IMPACT.password, PM.on_error)
   }else {
     return null
   }
 };
-catb.views.pmt.questions.show_questions = function show_questions(latest_questions_list) {
+carneades.policy_analysis.web.views.pmt.questions.show_questions = function show_questions(latest_questions_list) {
   var latest__7406 = cljs.core.js__GT_clj.call(null, latest_questions_list, "\ufdd0'keywordize-keys", true);
-  cljs.core.swap_BANG_.call(null, catb.views.pmt.questions.questions, catb.views.pmt.questions.index_questions, latest__7406);
-  return catb.dispatch.fire.call(null, "\ufdd0'questions-added", cljs.core.ObjMap.fromObject(["\ufdd0'latest-questions"], {"\ufdd0'latest-questions":latest__7406}))
+  cljs.core.swap_BANG_.call(null, carneades.policy_analysis.web.views.pmt.questions.questions, carneades.policy_analysis.web.views.pmt.questions.index_questions, latest__7406);
+  return carneades.policy_analysis.web.dispatch.fire.call(null, "\ufdd0'questions-added", cljs.core.ObjMap.fromObject(["\ufdd0'latest-questions"], {"\ufdd0'latest-questions":latest__7406}))
 };
-goog.exportSymbol("catb.views.pmt.questions.show_questions", catb.views.pmt.questions.show_questions);
-catb.views.pmt.questions.show_ag = function show_ag(db) {
+goog.exportSymbol("carneades.policy_analysis.web.views.pmt.questions.show_questions", carneades.policy_analysis.web.views.pmt.questions.show_questions);
+carneades.policy_analysis.web.views.pmt.questions.show_ag = function show_ag(db) {
   IMPACT.db = db;
-  cljs.core.reset_BANG_.call(null, catb.views.pmt.questions.questions, catb.views.pmt.questions.create_questions_map.call(null));
+  cljs.core.reset_BANG_.call(null, carneades.policy_analysis.web.views.pmt.questions.questions, carneades.policy_analysis.web.views.pmt.questions.create_questions_map.call(null));
   return PM.set_arguments_url(db)
 };
-catb.views.pmt.questions.show_facts = function show_facts(questions_list) {
-  cljs.core.reset_BANG_.call(null, catb.views.pmt.questions.questions, cljs.core.assoc.call(null, catb.views.pmt.questions.create_questions_map.call(null), "\ufdd0'submit-listener", catb.views.pmt.questions.send_answers_for_modification));
-  return catb.views.pmt.questions.show_questions.call(null, questions_list)
+carneades.policy_analysis.web.views.pmt.questions.show_facts = function show_facts(questions_list) {
+  cljs.core.reset_BANG_.call(null, carneades.policy_analysis.web.views.pmt.questions.questions, cljs.core.assoc.call(null, carneades.policy_analysis.web.views.pmt.questions.create_questions_map.call(null), "\ufdd0'submit-listener", carneades.policy_analysis.web.views.pmt.questions.send_answers_for_modification));
+  return carneades.policy_analysis.web.views.pmt.questions.show_questions.call(null, questions_list)
 };
-catb.views.pmt.questions.show_questions_or_ag = function show_questions_or_ag(data) {
+carneades.policy_analysis.web.views.pmt.questions.show_questions_or_ag = function show_questions_or_ag(data) {
   var temp__3971__auto____7409 = data.questions;
   if(cljs.core.truth_(temp__3971__auto____7409)) {
     var questions_list__7410 = temp__3971__auto____7409;
-    return catb.views.pmt.questions.show_questions.call(null, questions_list__7410)
+    return carneades.policy_analysis.web.views.pmt.questions.show_questions.call(null, questions_list__7410)
   }else {
-    return catb.views.pmt.questions.show_ag.call(null, data.db)
+    return carneades.policy_analysis.web.views.pmt.questions.show_ag.call(null, data.db)
   }
 };
-catb.views.pmt.questions.init_show_questions = function init_show_questions() {
-  cljs.core.swap_BANG_.call(null, catb.views.pmt.questions.questions, cljs.core.assoc, "\ufdd0'submit-listener", catb.views.pmt.questions.send_answers);
-  return PM.ajax_post(IMPACT.simulation_url, jayq.util.clj__GT_js.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'request"], {"\ufdd0'request":IMPACT.question})), catb.views.pmt.questions.show_questions_or_ag, IMPACT.user, IMPACT.password, PM.on_error)
+carneades.policy_analysis.web.views.pmt.questions.init_show_questions = function init_show_questions() {
+  cljs.core.swap_BANG_.call(null, carneades.policy_analysis.web.views.pmt.questions.questions, cljs.core.assoc, "\ufdd0'submit-listener", carneades.policy_analysis.web.views.pmt.questions.send_answers);
+  return PM.ajax_post(IMPACT.simulation_url, jayq.util.clj__GT_js.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'request"], {"\ufdd0'request":IMPACT.question})), carneades.policy_analysis.web.views.pmt.questions.show_questions_or_ag, IMPACT.user, IMPACT.password, PM.on_error)
 };
-goog.exportSymbol("catb.views.pmt.questions.init_show_questions", catb.views.pmt.questions.init_show_questions);
-goog.provide("catb.views.sct.comparison");
+goog.exportSymbol("carneades.policy_analysis.web.views.pmt.questions.init_show_questions", carneades.policy_analysis.web.views.pmt.questions.init_show_questions);
+goog.provide("carneades.policy_analysis.web.views.sct.comparison");
 goog.require("cljs.core");
 goog.require("jayq.util");
-goog.require("catb.models.core");
-goog.require("catb.views.core");
+goog.require("carneades.policy_analysis.web.models.core");
+goog.require("carneades.policy_analysis.web.views.core");
 goog.require("jayq.core");
-goog.require("catb.models.core");
-goog.require("catb.backbone.core");
+goog.require("carneades.policy_analysis.web.models.core");
+goog.require("carneades.policy_analysis.web.backbone.core");
 goog.require("jayq.util");
 goog.require("jayq.core");
-goog.require("catb.models.core");
-goog.require("catb.views.core");
-catb.views.sct.comparison.build_metadata = function build_metadata(sources, metadata) {
+goog.require("carneades.policy_analysis.web.models.core");
+goog.require("carneades.policy_analysis.web.views.core");
+carneades.policy_analysis.web.views.sct.comparison.build_metadata = function build_metadata(sources, metadata) {
   return cljs.core.reduce.call(null, function(m, p__7073) {
     var vec__7074__7075 = p__7073;
     var k__7076 = cljs.core.nth.call(null, vec__7074__7075, 0, null);
     var v__7077 = cljs.core.nth.call(null, vec__7074__7075, 1, null);
     jayq.util.log.call(null, "v =");
     jayq.util.log.call(null, v__7077);
-    var md__7078 = cljs.core.map.call(null, cljs.core.partial.call(null, catb.models.core.get_metadata, metadata), v__7077);
+    var md__7078 = cljs.core.map.call(null, cljs.core.partial.call(null, carneades.policy_analysis.web.models.core.get_metadata, metadata), v__7077);
     var ___7079 = jayq.util.log.call(null, "md");
     var ___7080 = jayq.util.log.call(null, jayq.util.clj__GT_js.call(null, md__7078));
     var md_data__7081 = cljs.core.map.call(null, function(m) {
@@ -31791,11 +31793,11 @@ catb.views.sct.comparison.build_metadata = function build_metadata(sources, meta
     return cljs.core.assoc.call(null, m, k__7076, md_data__7081)
   }, cljs.core.ObjMap.EMPTY, sources)
 };
-catb.views.sct.comparison.add_has_metadata = function add_has_metadata(metadata) {
+carneades.policy_analysis.web.views.sct.comparison.add_has_metadata = function add_has_metadata(metadata) {
   return cljs.core.merge.call(null, metadata, cljs.core.ObjMap.fromObject(["\ufdd0'has-very-little", "\ufdd0'has-little", "\ufdd0'has-some", "\ufdd0'has-much", "\ufdd0'has-very-much"], {"\ufdd0'has-very-little":cljs.core.contains_QMARK_.call(null, metadata, "\ufdd0'very-little"), "\ufdd0'has-little":cljs.core.contains_QMARK_.call(null, metadata, "\ufdd0'little"), "\ufdd0'has-some":cljs.core.contains_QMARK_.call(null, metadata, "\ufdd0'some"), "\ufdd0'has-much":cljs.core.contains_QMARK_.call(null, 
   metadata, "\ufdd0'much"), "\ufdd0'has-very-much":cljs.core.contains_QMARK_.call(null, metadata, "\ufdd0'very-much")}))
 };
-catb.views.sct.comparison.Comparison = Backbone.View.extend({"render":function() {
+carneades.policy_analysis.web.views.sct.comparison.Comparison = Backbone.View.extend({"render":function() {
   var this__7082 = this;
   var model__7083 = this__7082["model"];
   var statement_poll__7084 = model__7083.get("statement-poll");
@@ -31803,51 +31805,51 @@ catb.views.sct.comparison.Comparison = Backbone.View.extend({"render":function()
   var arguments__7086 = model__7083.get("arguments");
   var issue__7087 = model__7083.get("issue");
   var metadata__7088 = model__7083.get("metadata");
-  var votes__7089 = catb.backbone.core.get_in.call(null, statement_poll__7084, cljs.core.PersistentVector.fromArray(["\ufdd0'votes"], true));
+  var votes__7089 = carneades.policy_analysis.web.backbone.core.get_in.call(null, statement_poll__7084, cljs.core.PersistentVector.fromArray(["\ufdd0'votes"], true));
   var accepted_statements__7095 = cljs.core.set.call(null, cljs.core.map.call(null, cljs.core.first, cljs.core.filter.call(null, function(p__7090) {
     var vec__7091__7092 = p__7090;
     var id__7093 = cljs.core.nth.call(null, vec__7091__7092, 0, null);
     var score__7094 = cljs.core.nth.call(null, vec__7091__7092, 1, null);
-    return catb.views.core.score_agreed_QMARK_.call(null, score__7094)
+    return carneades.policy_analysis.web.views.core.score_agreed_QMARK_.call(null, score__7094)
   }, votes__7089)));
-  var arguments_in_issue__7096 = catb.models.core.arguments_for_statement.call(null, issue__7087, arguments__7086);
-  var statements__7097 = catb.models.core.statements_by_sources.call(null, cljs.core.map.call(null, catb.views.core.json, arguments_in_issue__7096));
-  var sources__7098 = catb.models.core.sources_by_similarity.call(null, statements__7097, accepted_statements__7095);
-  var variables__7099 = catb.views.sct.comparison.build_metadata.call(null, sources__7098, metadata__7088);
-  var variables__7100 = catb.views.sct.comparison.add_has_metadata.call(null, variables__7099);
+  var arguments_in_issue__7096 = carneades.policy_analysis.web.models.core.arguments_for_statement.call(null, issue__7087, arguments__7086);
+  var statements__7097 = carneades.policy_analysis.web.models.core.statements_by_sources.call(null, cljs.core.map.call(null, carneades.policy_analysis.web.views.core.json, arguments_in_issue__7096));
+  var sources__7098 = carneades.policy_analysis.web.models.core.sources_by_similarity.call(null, statements__7097, accepted_statements__7095);
+  var variables__7099 = carneades.policy_analysis.web.views.sct.comparison.build_metadata.call(null, sources__7098, metadata__7088);
+  var variables__7100 = carneades.policy_analysis.web.views.sct.comparison.add_has_metadata.call(null, variables__7099);
   jayq.util.log.call(null, "sources by similarity");
   jayq.util.log.call(null, jayq.util.clj__GT_js.call(null, sources__7098));
-  catb.views.core.template.call(null, this__7082, "\ufdd0'sct-comparison", variables__7100);
+  carneades.policy_analysis.web.views.core.template.call(null, this__7082, "\ufdd0'sct-comparison", variables__7100);
   return this__7082
 }, "className":"sct-comparison"});
-goog.provide("catb.views.sct.summary");
+goog.provide("carneades.policy_analysis.web.views.sct.summary");
 goog.require("cljs.core");
-goog.require("catb.models.core");
+goog.require("carneades.policy_analysis.web.models.core");
 goog.require("jayq.util");
-goog.require("catb.views.core");
+goog.require("carneades.policy_analysis.web.views.core");
 goog.require("jayq.core");
-goog.require("catb.views.sct.claim_editor");
-goog.require("catb.backbone.core");
+goog.require("carneades.policy_analysis.web.views.sct.claim_editor");
+goog.require("carneades.policy_analysis.web.backbone.core");
 goog.require("jayq.util");
 goog.require("jayq.core");
-goog.require("catb.models.core");
-goog.require("catb.views.core");
-catb.views.sct.summary.assign_claim_ids = function assign_claim_ids(this$, claims) {
+goog.require("carneades.policy_analysis.web.models.core");
+goog.require("carneades.policy_analysis.web.views.core");
+carneades.policy_analysis.web.views.sct.summary.assign_claim_ids = function assign_claim_ids(this$, claims) {
   return cljs.core.doall.call(null, cljs.core.map.call(null, function(claim, p) {
     return jayq.core.$.call(null, p).data("id", claim.id)
   }, claims, this$.$(".change-score")))
 };
-catb.views.sct.summary.Summary = Backbone.View.extend({"render":function() {
+carneades.policy_analysis.web.views.sct.summary.Summary = Backbone.View.extend({"render":function() {
   var this__7144 = this;
   var model__7145 = this__7144["model"];
   var statements__7146 = model__7145.get("statements");
-  var votes__7147 = catb.backbone.core.get_in.call(null, model__7145, cljs.core.PersistentVector.fromArray(["\ufdd0'statement-poll", "\ufdd0'votes"], true));
+  var votes__7147 = carneades.policy_analysis.web.backbone.core.get_in.call(null, model__7145, cljs.core.PersistentVector.fromArray(["\ufdd0'statement-poll", "\ufdd0'votes"], true));
   var votes__7148 = cljs.core.js__GT_clj.call(null, votes__7147);
   var claims_ids__7149 = cljs.core.keys.call(null, votes__7148);
-  var claims__7150 = cljs.core.map.call(null, cljs.core.comp.call(null, catb.views.core.json, cljs.core.partial.call(null, catb.models.core.get_stmt, statements__7146)), claims_ids__7149);
-  var claims__7151 = cljs.core.map.call(null, cljs.core.partial.call(null, catb.views.core.prepare_claim, votes__7148), claims__7150);
-  catb.views.core.template.call(null, this__7144, "\ufdd0'sct-summary", cljs.core.ObjMap.fromObject(["\ufdd0'claims"], {"\ufdd0'claims":claims__7151}));
-  catb.views.sct.summary.assign_claim_ids.call(null, this__7144, claims__7151);
+  var claims__7150 = cljs.core.map.call(null, cljs.core.comp.call(null, carneades.policy_analysis.web.views.core.json, cljs.core.partial.call(null, carneades.policy_analysis.web.models.core.get_stmt, statements__7146)), claims_ids__7149);
+  var claims__7151 = cljs.core.map.call(null, cljs.core.partial.call(null, carneades.policy_analysis.web.views.core.prepare_claim, votes__7148), claims__7150);
+  carneades.policy_analysis.web.views.core.template.call(null, this__7144, "\ufdd0'sct-summary", cljs.core.ObjMap.fromObject(["\ufdd0'claims"], {"\ufdd0'claims":claims__7151}));
+  carneades.policy_analysis.web.views.sct.summary.assign_claim_ids.call(null, this__7144, claims__7151);
   return this__7144
 }, "jump_to_comparison":function() {
   var this__7152 = this;
@@ -31863,60 +31865,61 @@ catb.views.sct.summary.Summary = Backbone.View.extend({"render":function() {
   var target__7159 = event.target;
   var parent__7160 = jayq.core.$.call(null, target__7159).parents("li");
   var id__7161 = jayq.core.$.call(null, target__7159).data("id");
-  var claim__7162 = catb.models.core.get_stmt.call(null, statements__7155, id__7161);
-  var claim_editor__7163 = catb.backbone.core.new$.call(null, catb.views.sct.claim_editor.ClaimEditor, cljs.core.ObjMap.fromObject(["\ufdd0'model"], {"\ufdd0'model":catb.backbone.core.new_model.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'claim", "\ufdd0'parent", "\ufdd0'arguments", "\ufdd0'argument-poll", "\ufdd0'statement-poll"], {"\ufdd0'claim":claim__7162, "\ufdd0'parent":this__7153, "\ufdd0'arguments":arguments__7156, "\ufdd0'argument-poll":argument_poll__7158, "\ufdd0'statement-poll":statement_poll__7157}))}));
+  var claim__7162 = carneades.policy_analysis.web.models.core.get_stmt.call(null, statements__7155, id__7161);
+  var claim_editor__7163 = carneades.policy_analysis.web.backbone.core.new$.call(null, carneades.policy_analysis.web.views.sct.claim_editor.ClaimEditor, cljs.core.ObjMap.fromObject(["\ufdd0'model"], {"\ufdd0'model":carneades.policy_analysis.web.backbone.core.new_model.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'claim", "\ufdd0'parent", "\ufdd0'arguments", "\ufdd0'argument-poll", "\ufdd0'statement-poll"], {"\ufdd0'claim":claim__7162, "\ufdd0'parent":this__7153, "\ufdd0'arguments":arguments__7156, 
+  "\ufdd0'argument-poll":argument_poll__7158, "\ufdd0'statement-poll":statement_poll__7157}))}));
   jayq.core.inner.call(null, parent__7160, claim_editor__7163.$el);
-  catb.backbone.core.render.call(null, claim_editor__7163);
+  carneades.policy_analysis.web.backbone.core.render.call(null, claim_editor__7163);
   return this__7153
 }, "className":"sct-summary", "events":{"click .compare":"jump_to_comparison", "click .change-score":"edit_claim"}});
-goog.provide("catb.views.pmt.submitted_facts");
+goog.provide("carneades.policy_analysis.web.views.pmt.submitted_facts");
 goog.require("cljs.core");
-goog.require("catb.views.pmt.questions");
+goog.require("carneades.policy_analysis.web.views.pmt.questions");
 goog.require("jayq.util");
-goog.require("catb.views.core");
+goog.require("carneades.policy_analysis.web.views.core");
 goog.require("cljs.reader");
 goog.require("jayq.core");
-goog.require("catb.template");
-goog.require("catb.backbone.core");
-goog.require("catb.views.pmt.questions");
+goog.require("carneades.policy_analysis.web.template");
+goog.require("carneades.policy_analysis.web.backbone.core");
+goog.require("carneades.policy_analysis.web.views.pmt.questions");
 goog.require("cljs.reader");
-goog.require("catb.views.core");
+goog.require("carneades.policy_analysis.web.views.core");
 goog.require("jayq.core");
 goog.require("jayq.util");
-catb.views.pmt.submitted_facts.show_facts_for_modification = function show_facts_for_modification(questions) {
-  jayq.core.inner.call(null, jayq.core.$.call(null, "#pm"), catb.template.get.call(null, "submitted_facts", cljs.core.ObjMap.EMPTY));
-  return catb.views.pmt.questions.show_facts.call(null, questions)
+carneades.policy_analysis.web.views.pmt.submitted_facts.show_facts_for_modification = function show_facts_for_modification(questions) {
+  jayq.core.inner.call(null, jayq.core.$.call(null, "#pm"), carneades.policy_analysis.web.template.get.call(null, "submitted_facts", cljs.core.ObjMap.EMPTY));
+  return carneades.policy_analysis.web.views.pmt.questions.show_facts.call(null, questions)
 };
-catb.views.pmt.submitted_facts.display_facts = function display_facts() {
-  PM.ajax_post(IMPACT.simulation_url, jayq.util.clj__GT_js.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'modifiable-facts"], {"\ufdd0'modifiable-facts":cljs.core.ObjMap.fromObject(["\ufdd0'theory", "\ufdd0'db"], {"\ufdd0'theory":IMPACT.current_policy, "\ufdd0'db":IMPACT.db})})), catb.views.pmt.submitted_facts.show_facts_for_modification, IMPACT.user, IMPACT.password, PM.on_error);
+carneades.policy_analysis.web.views.pmt.submitted_facts.display_facts = function display_facts() {
+  PM.ajax_post(IMPACT.simulation_url, jayq.util.clj__GT_js.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'modifiable-facts"], {"\ufdd0'modifiable-facts":cljs.core.ObjMap.fromObject(["\ufdd0'theory", "\ufdd0'db"], {"\ufdd0'theory":IMPACT.current_policy, "\ufdd0'db":IMPACT.db})})), carneades.policy_analysis.web.views.pmt.submitted_facts.show_facts_for_modification, IMPACT.user, IMPACT.password, PM.on_error);
   return false
 };
-goog.exportSymbol("catb.views.pmt.submitted_facts.display_facts", catb.views.pmt.submitted_facts.display_facts);
-goog.provide("catb.playground");
+goog.exportSymbol("carneades.policy_analysis.web.views.pmt.submitted_facts.display_facts", carneades.policy_analysis.web.views.pmt.submitted_facts.display_facts);
+goog.provide("carneades.policy_analysis.web.playground");
 goog.require("cljs.core");
-goog.require("catb.template");
-goog.require("catb.icanhaz.core");
-goog.require("catb.backbone.core");
-catb.playground.$ = $;
-catb.playground.SctSummary = Backbone.View.extend({"render":function() {
+goog.require("carneades.policy_analysis.web.template");
+goog.require("carneades.policy_analysis.web.icanhaz.core");
+goog.require("carneades.policy_analysis.web.backbone.core");
+carneades.policy_analysis.web.playground.$ = $;
+carneades.policy_analysis.web.playground.SctSummary = Backbone.View.extend({"render":function() {
   var this__6451 = this;
-  catb.backbone.core.html.call(null, this__6451, "<div>MY VIEW FROM CLOJURE</view>");
+  carneades.policy_analysis.web.backbone.core.html.call(null, this__6451, "<div>MY VIEW FROM CLOJURE</view>");
   return this__6451
 }, "do_stuff":function() {
   var this__6452 = this;
-  console.log(catb.backbone.core.get_html.call(null, this__6452));
+  console.log(carneades.policy_analysis.web.backbone.core.get_html.call(null, this__6452));
   alert("hello");
   return this__6452
 }, "className":"sct-summary", "events":{"click":"do_stuff"}});
-catb.playground.test_icanhaz = function test_icanhaz() {
-  return catb.template.get.call(null, "\ufdd0'sct_summary", cljs.core.ObjMap.fromObject(["\ufdd0'sct_summary_text"], {"\ufdd0'sct_summary_text":"Helloz"}))
+carneades.policy_analysis.web.playground.test_icanhaz = function test_icanhaz() {
+  return carneades.policy_analysis.web.template.get.call(null, "\ufdd0'sct_summary", cljs.core.ObjMap.fromObject(["\ufdd0'sct_summary_text"], {"\ufdd0'sct_summary_text":"Helloz"}))
 };
-goog.provide("catb.views.pmt.theory");
+goog.provide("carneades.policy_analysis.web.views.pmt.theory");
 goog.require("cljs.core");
 goog.require("jayq.util");
 goog.require("clojure.string");
 goog.require("jayq.util");
-catb.views.pmt.theory.sliteral_QMARK_ = function sliteral_QMARK_(sexp) {
+carneades.policy_analysis.web.views.pmt.theory.sliteral_QMARK_ = function sliteral_QMARK_(sexp) {
   var or__3824__auto____7449 = cljs.core.symbol_QMARK_.call(null, sexp);
   if(or__3824__auto____7449) {
     return or__3824__auto____7449
@@ -31934,8 +31937,8 @@ catb.views.pmt.theory.sliteral_QMARK_ = function sliteral_QMARK_(sexp) {
     }
   }
 };
-catb.views.pmt.theory.sliteral_pos_QMARK_ = function sliteral_pos_QMARK_(literal) {
-  if(cljs.core.truth_(catb.views.pmt.theory.sliteral_QMARK_.call(null, literal))) {
+carneades.policy_analysis.web.views.pmt.theory.sliteral_pos_QMARK_ = function sliteral_pos_QMARK_(literal) {
+  if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.sliteral_QMARK_.call(null, literal))) {
   }else {
     throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'sliteral?", "\ufdd1'literal"), cljs.core.hash_map("\ufdd0'line", 20))))].join(""));
   }
@@ -31951,29 +31954,29 @@ catb.views.pmt.theory.sliteral_pos_QMARK_ = function sliteral_pos_QMARK_(literal
     }
   }
 };
-catb.views.pmt.theory.sliteral_atom = function sliteral_atom(literal) {
-  if(cljs.core.truth_(catb.views.pmt.theory.sliteral_QMARK_.call(null, literal))) {
+carneades.policy_analysis.web.views.pmt.theory.sliteral_atom = function sliteral_atom(literal) {
+  if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.sliteral_QMARK_.call(null, literal))) {
   }else {
     throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'sliteral?", "\ufdd1'literal"), cljs.core.hash_map("\ufdd0'line", 27))))].join(""));
   }
-  if(cljs.core.truth_(catb.views.pmt.theory.sliteral_pos_QMARK_.call(null, literal))) {
+  if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.sliteral_pos_QMARK_.call(null, literal))) {
     return literal
   }else {
     return cljs.core.second.call(null, literal)
   }
 };
-catb.views.pmt.theory.statement_QMARK_ = function statement_QMARK_(x) {
+carneades.policy_analysis.web.views.pmt.theory.statement_QMARK_ = function statement_QMARK_(x) {
   return false
 };
-catb.views.pmt.theory.literal_QMARK_ = function literal_QMARK_(x) {
-  var or__3824__auto____7457 = catb.views.pmt.theory.statement_QMARK_.call(null, x);
+carneades.policy_analysis.web.views.pmt.theory.literal_QMARK_ = function literal_QMARK_(x) {
+  var or__3824__auto____7457 = carneades.policy_analysis.web.views.pmt.theory.statement_QMARK_.call(null, x);
   if(cljs.core.truth_(or__3824__auto____7457)) {
     return or__3824__auto____7457
   }else {
-    return catb.views.pmt.theory.sliteral_QMARK_.call(null, x)
+    return carneades.policy_analysis.web.views.pmt.theory.sliteral_QMARK_.call(null, x)
   }
 };
-catb.views.pmt.theory.variable_QMARK_ = function variable_QMARK_(x) {
+carneades.policy_analysis.web.views.pmt.theory.variable_QMARK_ = function variable_QMARK_(x) {
   var and__3822__auto____7461 = cljs.core.symbol_QMARK_.call(null, x);
   if(and__3822__auto____7461) {
     var s__7462 = [cljs.core.str(x)].join("");
@@ -31987,11 +31990,11 @@ catb.views.pmt.theory.variable_QMARK_ = function variable_QMARK_(x) {
     return and__3822__auto____7461
   }
 };
-catb.views.pmt.theory.constant_QMARK_ = function constant_QMARK_(x) {
+carneades.policy_analysis.web.views.pmt.theory.constant_QMARK_ = function constant_QMARK_(x) {
   var or__3824__auto____7469 = function() {
     var and__3822__auto____7468 = cljs.core.symbol_QMARK_.call(null, x);
     if(and__3822__auto____7468) {
-      return cljs.core.not.call(null, catb.views.pmt.theory.variable_QMARK_.call(null, x))
+      return cljs.core.not.call(null, carneades.policy_analysis.web.views.pmt.theory.variable_QMARK_.call(null, x))
     }else {
       return and__3822__auto____7468
     }
@@ -32012,7 +32015,7 @@ catb.views.pmt.theory.constant_QMARK_ = function constant_QMARK_(x) {
     }
   }
 };
-catb.views.pmt.theory.compound_term_QMARK_ = function compound_term_QMARK_(term) {
+carneades.policy_analysis.web.views.pmt.theory.compound_term_QMARK_ = function compound_term_QMARK_(term) {
   var or__3824__auto____7480 = function() {
     var and__3822__auto____7477 = cljs.core.seq_QMARK_.call(null, term);
     if(and__3822__auto____7477) {
@@ -32020,7 +32023,7 @@ catb.views.pmt.theory.compound_term_QMARK_ = function compound_term_QMARK_(term)
       if(and__3822__auto____7478) {
         var and__3822__auto____7479 = cljs.core.symbol_QMARK_.call(null, cljs.core.first.call(null, term));
         if(and__3822__auto____7479) {
-          return cljs.core.not.call(null, catb.views.pmt.theory.variable_QMARK_.call(null, cljs.core.first.call(null, term)))
+          return cljs.core.not.call(null, carneades.policy_analysis.web.views.pmt.theory.variable_QMARK_.call(null, cljs.core.first.call(null, term)))
         }else {
           return and__3822__auto____7479
         }
@@ -32034,7 +32037,7 @@ catb.views.pmt.theory.compound_term_QMARK_ = function compound_term_QMARK_(term)
   if(cljs.core.truth_(or__3824__auto____7480)) {
     return or__3824__auto____7480
   }else {
-    var and__3822__auto____7481 = catb.views.pmt.theory.statement_QMARK_.call(null, term);
+    var and__3822__auto____7481 = carneades.policy_analysis.web.views.pmt.theory.statement_QMARK_.call(null, term);
     if(cljs.core.truth_(and__3822__auto____7481)) {
       return cljs.core.seq_QMARK_.call(null, (new cljs.core.Keyword("\ufdd0'atom")).call(null, term))
     }else {
@@ -32042,7 +32045,7 @@ catb.views.pmt.theory.compound_term_QMARK_ = function compound_term_QMARK_(term)
     }
   }
 };
-catb.views.pmt.theory.termseq_QMARK_ = function termseq_QMARK_(term) {
+carneades.policy_analysis.web.views.pmt.theory.termseq_QMARK_ = function termseq_QMARK_(term) {
   var or__3824__auto____7486 = cljs.core.vector_QMARK_.call(null, term);
   if(or__3824__auto____7486) {
     return or__3824__auto____7486
@@ -32050,7 +32053,7 @@ catb.views.pmt.theory.termseq_QMARK_ = function termseq_QMARK_(term) {
     var or__3824__auto____7488 = function() {
       var and__3822__auto____7487 = cljs.core.seq_QMARK_.call(null, term);
       if(and__3822__auto____7487) {
-        return cljs.core.not.call(null, catb.views.pmt.theory.compound_term_QMARK_.call(null, term))
+        return cljs.core.not.call(null, carneades.policy_analysis.web.views.pmt.theory.compound_term_QMARK_.call(null, term))
       }else {
         return and__3822__auto____7487
       }
@@ -32060,42 +32063,42 @@ catb.views.pmt.theory.termseq_QMARK_ = function termseq_QMARK_(term) {
     }else {
       var and__3822__auto____7489 = cljs.core.map_QMARK_.call(null, term);
       if(and__3822__auto____7489) {
-        return cljs.core.not.call(null, catb.views.pmt.theory.statement_QMARK_.call(null, term))
+        return cljs.core.not.call(null, carneades.policy_analysis.web.views.pmt.theory.statement_QMARK_.call(null, term))
       }else {
         return and__3822__auto____7489
       }
     }
   }
 };
-catb.views.pmt.theory.term_QMARK_ = function term_QMARK_(x) {
-  var or__3824__auto____7494 = catb.views.pmt.theory.variable_QMARK_.call(null, x);
+carneades.policy_analysis.web.views.pmt.theory.term_QMARK_ = function term_QMARK_(x) {
+  var or__3824__auto____7494 = carneades.policy_analysis.web.views.pmt.theory.variable_QMARK_.call(null, x);
   if(cljs.core.truth_(or__3824__auto____7494)) {
     return or__3824__auto____7494
   }else {
-    var or__3824__auto____7495 = catb.views.pmt.theory.constant_QMARK_.call(null, x);
+    var or__3824__auto____7495 = carneades.policy_analysis.web.views.pmt.theory.constant_QMARK_.call(null, x);
     if(cljs.core.truth_(or__3824__auto____7495)) {
       return or__3824__auto____7495
     }else {
-      var or__3824__auto____7496 = catb.views.pmt.theory.statement_QMARK_.call(null, x);
+      var or__3824__auto____7496 = carneades.policy_analysis.web.views.pmt.theory.statement_QMARK_.call(null, x);
       if(cljs.core.truth_(or__3824__auto____7496)) {
         return or__3824__auto____7496
       }else {
-        var or__3824__auto____7497 = catb.views.pmt.theory.compound_term_QMARK_.call(null, x);
+        var or__3824__auto____7497 = carneades.policy_analysis.web.views.pmt.theory.compound_term_QMARK_.call(null, x);
         if(cljs.core.truth_(or__3824__auto____7497)) {
           return or__3824__auto____7497
         }else {
-          return catb.views.pmt.theory.termseq_QMARK_.call(null, x)
+          return carneades.policy_analysis.web.views.pmt.theory.termseq_QMARK_.call(null, x)
         }
       }
     }
   }
 };
-catb.views.pmt.theory.term_functor = function term_functor(term) {
+carneades.policy_analysis.web.views.pmt.theory.term_functor = function term_functor(term) {
   while(true) {
     if(cljs.core.truth_(function() {
       var and__3822__auto____7504 = cljs.core.seq_QMARK_.call(null, term);
       if(and__3822__auto____7504) {
-        var and__3822__auto____7505 = catb.views.pmt.theory.compound_term_QMARK_.call(null, term);
+        var and__3822__auto____7505 = carneades.policy_analysis.web.views.pmt.theory.compound_term_QMARK_.call(null, term);
         if(cljs.core.truth_(and__3822__auto____7505)) {
           return!cljs.core.empty_QMARK_.call(null, term)
         }else {
@@ -32108,7 +32111,7 @@ catb.views.pmt.theory.term_functor = function term_functor(term) {
       return cljs.core.first.call(null, term)
     }else {
       if(cljs.core.truth_(function() {
-        var and__3822__auto____7506 = catb.views.pmt.theory.statement_QMARK_.call(null, term);
+        var and__3822__auto____7506 = carneades.policy_analysis.web.views.pmt.theory.statement_QMARK_.call(null, term);
         if(cljs.core.truth_(and__3822__auto____7506)) {
           var and__3822__auto____7507 = (new cljs.core.Keyword("\ufdd0'positive")).call(null, term);
           if(cljs.core.truth_(and__3822__auto____7507)) {
@@ -32125,7 +32128,7 @@ catb.views.pmt.theory.term_functor = function term_functor(term) {
         continue
       }else {
         if(cljs.core.truth_(function() {
-          var and__3822__auto____7508 = catb.views.pmt.theory.statement_QMARK_.call(null, term);
+          var and__3822__auto____7508 = carneades.policy_analysis.web.views.pmt.theory.statement_QMARK_.call(null, term);
           if(cljs.core.truth_(and__3822__auto____7508)) {
             var and__3822__auto____7509 = cljs.core.not.call(null, (new cljs.core.Keyword("\ufdd0'positive")).call(null, term));
             if(and__3822__auto____7509) {
@@ -32150,12 +32153,12 @@ catb.views.pmt.theory.term_functor = function term_functor(term) {
     break
   }
 };
-catb.views.pmt.theory.term_args = function term_args(term) {
+carneades.policy_analysis.web.views.pmt.theory.term_args = function term_args(term) {
   while(true) {
     if(cljs.core.truth_(function() {
       var and__3822__auto____7516 = cljs.core.seq_QMARK_.call(null, term);
       if(and__3822__auto____7516) {
-        return catb.views.pmt.theory.compound_term_QMARK_.call(null, term)
+        return carneades.policy_analysis.web.views.pmt.theory.compound_term_QMARK_.call(null, term)
       }else {
         return and__3822__auto____7516
       }
@@ -32169,7 +32172,7 @@ catb.views.pmt.theory.term_args = function term_args(term) {
           return cljs.core.seq.call(null, term)
         }else {
           if(cljs.core.truth_(function() {
-            var and__3822__auto____7517 = catb.views.pmt.theory.statement_QMARK_.call(null, term);
+            var and__3822__auto____7517 = carneades.policy_analysis.web.views.pmt.theory.statement_QMARK_.call(null, term);
             if(cljs.core.truth_(and__3822__auto____7517)) {
               var and__3822__auto____7518 = (new cljs.core.Keyword("\ufdd0'positive")).call(null, term);
               if(cljs.core.truth_(and__3822__auto____7518)) {
@@ -32186,7 +32189,7 @@ catb.views.pmt.theory.term_args = function term_args(term) {
             continue
           }else {
             if(cljs.core.truth_(function() {
-              var and__3822__auto____7519 = catb.views.pmt.theory.statement_QMARK_.call(null, term);
+              var and__3822__auto____7519 = carneades.policy_analysis.web.views.pmt.theory.statement_QMARK_.call(null, term);
               if(cljs.core.truth_(and__3822__auto____7519)) {
                 var and__3822__auto____7520 = cljs.core.seq_QMARK_.call(null, (new cljs.core.Keyword("\ufdd0'atom")).call(null, term));
                 if(and__3822__auto____7520) {
@@ -32217,14 +32220,14 @@ catb.views.pmt.theory.term_args = function term_args(term) {
     break
   }
 };
-catb.views.pmt.theory.term_arity = function term_arity(term) {
-  if(cljs.core.truth_(catb.views.pmt.theory.compound_term_QMARK_.call(null, term))) {
+carneades.policy_analysis.web.views.pmt.theory.term_arity = function term_arity(term) {
+  if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.compound_term_QMARK_.call(null, term))) {
   }else {
     throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'compound-term?", "\ufdd1'term"), cljs.core.hash_map("\ufdd0'line", 122))))].join(""));
   }
   return cljs.core.count.call(null, term) - 1
 };
-catb.views.pmt.theory.atom_QMARK_ = function atom_QMARK_(sexp) {
+carneades.policy_analysis.web.views.pmt.theory.atom_QMARK_ = function atom_QMARK_(sexp) {
   var or__3824__auto____7525 = cljs.core.symbol_QMARK_.call(null, sexp);
   if(or__3824__auto____7525) {
     return or__3824__auto____7525
@@ -32242,12 +32245,12 @@ catb.views.pmt.theory.atom_QMARK_ = function atom_QMARK_(sexp) {
     }
   }
 };
-catb.views.pmt.theory.literal_pos_QMARK_ = function literal_pos_QMARK_(literal) {
-  if(cljs.core.truth_(catb.views.pmt.theory.literal_QMARK_.call(null, literal))) {
+carneades.policy_analysis.web.views.pmt.theory.literal_pos_QMARK_ = function literal_pos_QMARK_(literal) {
+  if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.literal_QMARK_.call(null, literal))) {
   }else {
     throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'literal?", "\ufdd1'literal"), cljs.core.hash_map("\ufdd0'line", 139))))].join(""));
   }
-  if(cljs.core.truth_(catb.views.pmt.theory.sliteral_QMARK_.call(null, literal))) {
+  if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.sliteral_QMARK_.call(null, literal))) {
     var or__3824__auto____7530 = !cljs.core.seq_QMARK_.call(null, literal);
     if(or__3824__auto____7530) {
       return or__3824__auto____7530
@@ -32260,33 +32263,33 @@ catb.views.pmt.theory.literal_pos_QMARK_ = function literal_pos_QMARK_(literal) 
       }
     }
   }else {
-    if(cljs.core.truth_(catb.views.pmt.theory.statement_QMARK_.call(null, literal))) {
+    if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.statement_QMARK_.call(null, literal))) {
       return(new cljs.core.Keyword("\ufdd0'positive")).call(null, literal)
     }else {
       return null
     }
   }
 };
-catb.views.pmt.theory.literal_neg_QMARK_ = function literal_neg_QMARK_(literal) {
-  if(cljs.core.truth_(catb.views.pmt.theory.literal_QMARK_.call(null, literal))) {
+carneades.policy_analysis.web.views.pmt.theory.literal_neg_QMARK_ = function literal_neg_QMARK_(literal) {
+  if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.literal_QMARK_.call(null, literal))) {
   }else {
     throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'literal?", "\ufdd1'literal"), cljs.core.hash_map("\ufdd0'line", 147))))].join(""));
   }
-  return cljs.core.not.call(null, catb.views.pmt.theory.literal_pos_QMARK_.call(null, literal))
+  return cljs.core.not.call(null, carneades.policy_analysis.web.views.pmt.theory.literal_pos_QMARK_.call(null, literal))
 };
-catb.views.pmt.theory.literal_atom = function literal_atom(literal) {
-  if(cljs.core.truth_(catb.views.pmt.theory.literal_QMARK_.call(null, literal))) {
+carneades.policy_analysis.web.views.pmt.theory.literal_atom = function literal_atom(literal) {
+  if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.literal_QMARK_.call(null, literal))) {
   }else {
     throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'literal?", "\ufdd1'literal"), cljs.core.hash_map("\ufdd0'line", 154))))].join(""));
   }
-  if(cljs.core.truth_(catb.views.pmt.theory.sliteral_QMARK_.call(null, literal))) {
-    if(cljs.core.truth_(catb.views.pmt.theory.literal_pos_QMARK_.call(null, literal))) {
+  if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.sliteral_QMARK_.call(null, literal))) {
+    if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.literal_pos_QMARK_.call(null, literal))) {
       return literal
     }else {
       return cljs.core.second.call(null, literal)
     }
   }else {
-    if(cljs.core.truth_(catb.views.pmt.theory.statement_QMARK_.call(null, literal))) {
+    if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.statement_QMARK_.call(null, literal))) {
       var or__3824__auto____7533 = (new cljs.core.Keyword("\ufdd0'atom")).call(null, literal);
       if(cljs.core.truth_(or__3824__auto____7533)) {
         return or__3824__auto____7533
@@ -32298,64 +32301,64 @@ catb.views.pmt.theory.literal_atom = function literal_atom(literal) {
     }
   }
 };
-catb.views.pmt.theory.propositional_QMARK_ = function propositional_QMARK_(x) {
-  if(cljs.core.truth_(catb.views.pmt.theory.literal_QMARK_.call(null, x))) {
+carneades.policy_analysis.web.views.pmt.theory.propositional_QMARK_ = function propositional_QMARK_(x) {
+  if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.literal_QMARK_.call(null, x))) {
   }else {
     throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'literal?", "\ufdd1'x"), cljs.core.hash_map("\ufdd0'line", 163))))].join(""));
   }
-  return cljs.core.symbol_QMARK_.call(null, catb.views.pmt.theory.literal_atom.call(null, x))
+  return cljs.core.symbol_QMARK_.call(null, carneades.policy_analysis.web.views.pmt.theory.literal_atom.call(null, x))
 };
-catb.views.pmt.theory.literal_complement = function literal_complement(literal) {
-  if(cljs.core.truth_(catb.views.pmt.theory.literal_QMARK_.call(null, literal))) {
+carneades.policy_analysis.web.views.pmt.theory.literal_complement = function literal_complement(literal) {
+  if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.literal_QMARK_.call(null, literal))) {
   }else {
     throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'literal?", "\ufdd1'literal"), cljs.core.hash_map("\ufdd0'line", 168))))].join(""));
   }
-  if(cljs.core.truth_(catb.views.pmt.theory.sliteral_QMARK_.call(null, literal))) {
-    if(cljs.core.truth_(catb.views.pmt.theory.literal_pos_QMARK_.call(null, literal))) {
+  if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.sliteral_QMARK_.call(null, literal))) {
+    if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.literal_pos_QMARK_.call(null, literal))) {
       return cljs.core.list.call(null, "\ufdd1'not", literal)
     }else {
-      return catb.views.pmt.theory.literal_atom.call(null, literal)
+      return carneades.policy_analysis.web.views.pmt.theory.literal_atom.call(null, literal)
     }
   }else {
-    if(cljs.core.truth_(catb.views.pmt.theory.statement_QMARK_.call(null, literal))) {
-      return cljs.core.assoc.call(null, literal, "\ufdd0'positive", cljs.core.truth_(catb.views.pmt.theory.literal_pos_QMARK_.call(null, literal)) ? false : true)
+    if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.statement_QMARK_.call(null, literal))) {
+      return cljs.core.assoc.call(null, literal, "\ufdd0'positive", cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.literal_pos_QMARK_.call(null, literal)) ? false : true)
     }else {
       return null
     }
   }
 };
-catb.views.pmt.theory.statement_EQ_ = function statement_EQ_(s1, s2) {
-  if(cljs.core.truth_(catb.views.pmt.theory.statement_QMARK_.call(null, s1))) {
+carneades.policy_analysis.web.views.pmt.theory.statement_EQ_ = function statement_EQ_(s1, s2) {
+  if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.statement_QMARK_.call(null, s1))) {
   }else {
     throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'statement?", "\ufdd1's1"), cljs.core.hash_map("\ufdd0'line", 180))))].join(""));
   }
-  if(cljs.core.truth_(catb.views.pmt.theory.statement_QMARK_.call(null, s2))) {
+  if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.statement_QMARK_.call(null, s2))) {
   }else {
     throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'statement?", "\ufdd1's2"), cljs.core.hash_map("\ufdd0'line", 180))))].join(""));
   }
   var and__3822__auto____7535 = cljs.core._EQ_.call(null, (new cljs.core.Keyword("\ufdd0'positive")).call(null, s1), (new cljs.core.Keyword("\ufdd0'positive")).call(null, s2));
   if(and__3822__auto____7535) {
-    return catb.views.pmt.theory.term_EQ_.call(null, catb.views.pmt.theory.literal_atom.call(null, s1), catb.views.pmt.theory.literal_atom.call(null, s2))
+    return carneades.policy_analysis.web.views.pmt.theory.term_EQ_.call(null, carneades.policy_analysis.web.views.pmt.theory.literal_atom.call(null, s1), carneades.policy_analysis.web.views.pmt.theory.literal_atom.call(null, s2))
   }else {
     return and__3822__auto____7535
   }
 };
-catb.views.pmt.theory.term_EQ_ = function term_EQ_(t1, t2) {
+carneades.policy_analysis.web.views.pmt.theory.term_EQ_ = function term_EQ_(t1, t2) {
   if(cljs.core.truth_(function() {
-    var and__3822__auto____7540 = catb.views.pmt.theory.compound_term_QMARK_.call(null, t1);
+    var and__3822__auto____7540 = carneades.policy_analysis.web.views.pmt.theory.compound_term_QMARK_.call(null, t1);
     if(cljs.core.truth_(and__3822__auto____7540)) {
-      return catb.views.pmt.theory.compound_term_QMARK_.call(null, t2)
+      return carneades.policy_analysis.web.views.pmt.theory.compound_term_QMARK_.call(null, t2)
     }else {
       return and__3822__auto____7540
     }
   }())) {
-    var and__3822__auto____7541 = cljs.core._EQ_.call(null, catb.views.pmt.theory.term_functor.call(null, t1), catb.views.pmt.theory.term_functor.call(null, t2));
+    var and__3822__auto____7541 = cljs.core._EQ_.call(null, carneades.policy_analysis.web.views.pmt.theory.term_functor.call(null, t1), carneades.policy_analysis.web.views.pmt.theory.term_functor.call(null, t2));
     if(and__3822__auto____7541) {
-      var and__3822__auto____7542 = cljs.core._EQ_.call(null, cljs.core.count.call(null, catb.views.pmt.theory.term_args.call(null, t1)), cljs.core.count.call(null, catb.views.pmt.theory.term_args.call(null, t2)));
+      var and__3822__auto____7542 = cljs.core._EQ_.call(null, cljs.core.count.call(null, carneades.policy_analysis.web.views.pmt.theory.term_args.call(null, t1)), cljs.core.count.call(null, carneades.policy_analysis.web.views.pmt.theory.term_args.call(null, t2)));
       if(and__3822__auto____7542) {
         return cljs.core.every_QMARK_.call(null, function(p) {
           return term_EQ_.call(null, cljs.core.first.call(null, p), cljs.core.second.call(null, p))
-        }, cljs.core.partition.call(null, 2, cljs.core.interleave.call(null, catb.views.pmt.theory.term_args.call(null, t1), catb.views.pmt.theory.term_args.call(null, t2))))
+        }, cljs.core.partition.call(null, 2, cljs.core.interleave.call(null, carneades.policy_analysis.web.views.pmt.theory.term_args.call(null, t1), carneades.policy_analysis.web.views.pmt.theory.term_args.call(null, t2))))
       }else {
         return and__3822__auto____7542
       }
@@ -32364,14 +32367,14 @@ catb.views.pmt.theory.term_EQ_ = function term_EQ_(t1, t2) {
     }
   }else {
     if(cljs.core.truth_(function() {
-      var and__3822__auto____7543 = catb.views.pmt.theory.statement_QMARK_.call(null, t1);
+      var and__3822__auto____7543 = carneades.policy_analysis.web.views.pmt.theory.statement_QMARK_.call(null, t1);
       if(cljs.core.truth_(and__3822__auto____7543)) {
-        return catb.views.pmt.theory.statement_QMARK_.call(null, t2)
+        return carneades.policy_analysis.web.views.pmt.theory.statement_QMARK_.call(null, t2)
       }else {
         return and__3822__auto____7543
       }
     }())) {
-      return catb.views.pmt.theory.statement_EQ_.call(null, t1, t2)
+      return carneades.policy_analysis.web.views.pmt.theory.statement_EQ_.call(null, t1, t2)
     }else {
       if("\ufdd0'else") {
         return cljs.core._EQ_.call(null, t1, t2)
@@ -32381,7 +32384,7 @@ catb.views.pmt.theory.term_EQ_ = function term_EQ_(t1, t2) {
     }
   }
 };
-catb.views.pmt.theory.ground_QMARK_ = function ground_QMARK_(t) {
+carneades.policy_analysis.web.views.pmt.theory.ground_QMARK_ = function ground_QMARK_(t) {
   if(t == null) {
     return true
   }else {
@@ -32395,14 +32398,14 @@ catb.views.pmt.theory.ground_QMARK_ = function ground_QMARK_(t) {
     }()) {
       return true
     }else {
-      if(cljs.core.truth_(catb.views.pmt.theory.variable_QMARK_.call(null, t))) {
+      if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.variable_QMARK_.call(null, t))) {
         return false
       }else {
-        if(cljs.core.truth_(catb.views.pmt.theory.constant_QMARK_.call(null, t))) {
+        if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.constant_QMARK_.call(null, t))) {
           return true
         }else {
-          if(cljs.core.truth_(catb.views.pmt.theory.statement_QMARK_.call(null, t))) {
-            return ground_QMARK_.call(null, catb.views.pmt.theory.literal_atom.call(null, t))
+          if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.statement_QMARK_.call(null, t))) {
+            return ground_QMARK_.call(null, carneades.policy_analysis.web.views.pmt.theory.literal_atom.call(null, t))
           }else {
             if(cljs.core.coll_QMARK_.call(null, t)) {
               var and__3822__auto____7547 = ground_QMARK_.call(null, cljs.core.first.call(null, t));
@@ -32420,17 +32423,17 @@ catb.views.pmt.theory.ground_QMARK_ = function ground_QMARK_(t) {
     }
   }
 };
-catb.views.pmt.theory.variables = function variables(t) {
+carneades.policy_analysis.web.views.pmt.theory.variables = function variables(t) {
   var vars__7555 = function vars(t) {
     while(true) {
-      if(cljs.core.truth_(catb.views.pmt.theory.variable_QMARK_.call(null, t))) {
+      if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.variable_QMARK_.call(null, t))) {
         return cljs.core.list.call(null, t)
       }else {
-        if(cljs.core.truth_(catb.views.pmt.theory.constant_QMARK_.call(null, t))) {
+        if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.constant_QMARK_.call(null, t))) {
           return cljs.core.List.EMPTY
         }else {
-          if(cljs.core.truth_(catb.views.pmt.theory.compound_term_QMARK_.call(null, t))) {
-            var G__7562 = catb.views.pmt.theory.term_args.call(null, t);
+          if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.compound_term_QMARK_.call(null, t))) {
+            var G__7562 = carneades.policy_analysis.web.views.pmt.theory.term_args.call(null, t);
             t = G__7562;
             continue
           }else {
@@ -32456,8 +32459,8 @@ catb.views.pmt.theory.variables = function variables(t) {
             }())) {
               return cljs.core.concat.call(null, vars.call(null, cljs.core.first.call(null, t)), vars.call(null, cljs.core.rest.call(null, t)))
             }else {
-              if(cljs.core.truth_(catb.views.pmt.theory.literal_QMARK_.call(null, t))) {
-                return vars.call(null, catb.views.pmt.theory.literal_atom.call(null, t))
+              if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.literal_QMARK_.call(null, t))) {
+                return vars.call(null, carneades.policy_analysis.web.views.pmt.theory.literal_atom.call(null, t))
               }else {
                 if("\ufdd0'else") {
                   return cljs.core.List.EMPTY
@@ -32474,65 +32477,65 @@ catb.views.pmt.theory.variables = function variables(t) {
   };
   return cljs.core.distinct.call(null, vars__7555.call(null, t))
 };
-catb.views.pmt.theory.neg = function neg(literal) {
-  return catb.views.pmt.theory.literal_complement.call(null, literal)
+carneades.policy_analysis.web.views.pmt.theory.neg = function neg(literal) {
+  return carneades.policy_analysis.web.views.pmt.theory.literal_complement.call(null, literal)
 };
-catb.views.pmt.theory.literal_predicate = function literal_predicate(s) {
-  return catb.views.pmt.theory.term_functor.call(null, catb.views.pmt.theory.literal_atom.call(null, s))
+carneades.policy_analysis.web.views.pmt.theory.literal_predicate = function literal_predicate(s) {
+  return carneades.policy_analysis.web.views.pmt.theory.term_functor.call(null, carneades.policy_analysis.web.views.pmt.theory.literal_atom.call(null, s))
 };
-catb.views.pmt.theory.atom_predicate = function atom_predicate(atom) {
-  if(cljs.core.truth_(catb.views.pmt.theory.atom_QMARK_.call(null, atom))) {
+carneades.policy_analysis.web.views.pmt.theory.atom_predicate = function atom_predicate(atom) {
+  if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.atom_QMARK_.call(null, atom))) {
   }else {
     throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'atom?", "\ufdd1'atom"), cljs.core.hash_map("\ufdd0'line", 241))))].join(""));
   }
-  return catb.views.pmt.theory.term_functor.call(null, atom)
+  return carneades.policy_analysis.web.views.pmt.theory.term_functor.call(null, atom)
 };
-catb.views.pmt.theory.literal__GT_sliteral = function literal__GT_sliteral(x) {
-  if(cljs.core.truth_(catb.views.pmt.theory.literal_QMARK_.call(null, x))) {
+carneades.policy_analysis.web.views.pmt.theory.literal__GT_sliteral = function literal__GT_sliteral(x) {
+  if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.literal_QMARK_.call(null, x))) {
   }else {
     throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'literal?", "\ufdd1'x"), cljs.core.hash_map("\ufdd0'line", 248))))].join(""));
   }
-  if(cljs.core.truth_(catb.views.pmt.theory.sliteral_QMARK_.call(null, x))) {
+  if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.sliteral_QMARK_.call(null, x))) {
     return x
   }else {
-    if(cljs.core.truth_(catb.views.pmt.theory.literal_pos_QMARK_.call(null, x))) {
-      return catb.views.pmt.theory.literal_atom.call(null, x)
+    if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.literal_pos_QMARK_.call(null, x))) {
+      return carneades.policy_analysis.web.views.pmt.theory.literal_atom.call(null, x)
     }else {
-      return cljs.core.list.call(null, "\ufdd1'not", catb.views.pmt.theory.literal_atom.call(null, x))
+      return cljs.core.list.call(null, "\ufdd1'not", carneades.policy_analysis.web.views.pmt.theory.literal_atom.call(null, x))
     }
   }
 };
-catb.views.pmt.theory.sliteral__GT_str = function sliteral__GT_str(s) {
+carneades.policy_analysis.web.views.pmt.theory.sliteral__GT_str = function sliteral__GT_str(s) {
   return[cljs.core.str(s)].join("")
 };
-catb.views.pmt.theory.statement__GT_str = function statement__GT_str(s, lang) {
+carneades.policy_analysis.web.views.pmt.theory.statement__GT_str = function statement__GT_str(s, lang) {
   var temp__3971__auto____7565 = cljs.core.get_in.call(null, s, cljs.core.PersistentVector.fromArray(["\ufdd0'text", lang], true));
   if(cljs.core.truth_(temp__3971__auto____7565)) {
     var translated__7566 = temp__3971__auto____7565;
     return translated__7566
   }else {
-    return catb.views.pmt.theory.sliteral__GT_str.call(null, catb.views.pmt.theory.literal_atom.call(null, s))
+    return carneades.policy_analysis.web.views.pmt.theory.sliteral__GT_str.call(null, carneades.policy_analysis.web.views.pmt.theory.literal_atom.call(null, s))
   }
 };
-catb.views.pmt.theory.literal__GT_str = function() {
+carneades.policy_analysis.web.views.pmt.theory.literal__GT_str = function() {
   var literal__GT_str = null;
   var literal__GT_str__1 = function(l) {
-    if(cljs.core.truth_(catb.views.pmt.theory.literal_QMARK_.call(null, l))) {
+    if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.literal_QMARK_.call(null, l))) {
     }else {
       throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'literal?", "\ufdd1'l"), cljs.core.hash_map("\ufdd0'line", 267))))].join(""));
     }
     return literal__GT_str.call(null, l, "\ufdd0'en")
   };
   var literal__GT_str__2 = function(l, lang) {
-    if(cljs.core.truth_(catb.views.pmt.theory.literal_QMARK_.call(null, l))) {
+    if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.literal_QMARK_.call(null, l))) {
     }else {
       throw new Error([cljs.core.str("Assert failed: "), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'literal?", "\ufdd1'l"), cljs.core.hash_map("\ufdd0'line", 270))))].join(""));
     }
-    if(cljs.core.truth_(catb.views.pmt.theory.sliteral_QMARK_.call(null, l))) {
-      return catb.views.pmt.theory.sliteral__GT_str.call(null, l)
+    if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.sliteral_QMARK_.call(null, l))) {
+      return carneades.policy_analysis.web.views.pmt.theory.sliteral__GT_str.call(null, l)
     }else {
-      if(cljs.core.truth_(catb.views.pmt.theory.statement_QMARK_.call(null, l))) {
-        return catb.views.pmt.theory.statement__GT_str.call(null, l, lang)
+      if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.statement_QMARK_.call(null, l))) {
+        return carneades.policy_analysis.web.views.pmt.theory.statement__GT_str.call(null, l, lang)
       }else {
         return null
       }
@@ -32551,13 +32554,13 @@ catb.views.pmt.theory.literal__GT_str = function() {
   literal__GT_str.cljs$lang$arity$2 = literal__GT_str__2;
   return literal__GT_str
 }();
-catb.views.pmt.theory.replace_var = function replace_var(from, to, stmt) {
+carneades.policy_analysis.web.views.pmt.theory.replace_var = function replace_var(from, to, stmt) {
   if(cljs.core.seq_QMARK_.call(null, stmt)) {
     return cljs.core.map.call(null, function(t) {
       return replace_var.call(null, from, to, t)
     }, stmt)
   }else {
-    if(cljs.core.truth_(catb.views.pmt.theory.statement_QMARK_.call(null, stmt))) {
+    if(cljs.core.truth_(carneades.policy_analysis.web.views.pmt.theory.statement_QMARK_.call(null, stmt))) {
       return cljs.core.assoc.call(null, stmt, "\ufdd0'atom", replace_var.call(null, from, to, (new cljs.core.Keyword("\ufdd0'atom")).call(null, stmt)))
     }else {
       if("\ufdd0'else") {
@@ -32572,7 +32575,7 @@ catb.views.pmt.theory.replace_var = function replace_var(from, to, stmt) {
     }
   }
 };
-catb.views.pmt.theory.sentence_QMARK_ = function sentence_QMARK_(s) {
+carneades.policy_analysis.web.views.pmt.theory.sentence_QMARK_ = function sentence_QMARK_(s) {
   var s__7570 = str.trim.call(null, s);
   var and__3822__auto____7571 = cljs.core.not_EQ_.call(null, cljs.core.first.call(null, s__7570), "(");
   if(and__3822__auto____7571) {
@@ -32586,13 +32589,13 @@ catb.views.pmt.theory.sentence_QMARK_ = function sentence_QMARK_(s) {
     return and__3822__auto____7571
   }
 };
-catb.views.pmt.theory.stmt_str = function stmt_str(stmt) {
+carneades.policy_analysis.web.views.pmt.theory.stmt_str = function stmt_str(stmt) {
   return cljs.core.pr_str.call(null, stmt)
 };
-catb.views.pmt.theory.term_str = function term_str(term) {
+carneades.policy_analysis.web.views.pmt.theory.term_str = function term_str(term) {
   return cljs.core.pr_str.call(null, term)
 };
-catb.views.pmt.theory.format_literal_arg = function format_literal_arg(arg, language, lang) {
+carneades.policy_analysis.web.views.pmt.theory.format_literal_arg = function format_literal_arg(arg, language, lang) {
   if(cljs.core.truth_(function() {
     var and__3822__auto____7580 = cljs.core.symbol_QMARK_.call(null, arg);
     if(and__3822__auto____7580) {
@@ -32609,14 +32612,14 @@ catb.views.pmt.theory.format_literal_arg = function format_literal_arg(arg, lang
     }
   }else {
     if(cljs.core.truth_(function() {
-      var and__3822__auto____7582 = catb.views.pmt.theory.literal_QMARK_.call(null, arg);
+      var and__3822__auto____7582 = carneades.policy_analysis.web.views.pmt.theory.literal_QMARK_.call(null, arg);
       if(cljs.core.truth_(and__3822__auto____7582)) {
-        return language.call(null, cljs.core.keyword.call(null, catb.views.pmt.theory.literal_predicate.call(null, catb.views.pmt.theory.literal_atom.call(null, arg))))
+        return language.call(null, cljs.core.keyword.call(null, carneades.policy_analysis.web.views.pmt.theory.literal_predicate.call(null, carneades.policy_analysis.web.views.pmt.theory.literal_atom.call(null, arg))))
       }else {
         return and__3822__auto____7582
       }
     }())) {
-      var pred__7583 = cljs.core.keyword.call(null, catb.views.pmt.theory.literal_atom.call(null, catb.views.pmt.theory.literal_predicate.call(null, arg)));
+      var pred__7583 = cljs.core.keyword.call(null, carneades.policy_analysis.web.views.pmt.theory.literal_atom.call(null, carneades.policy_analysis.web.views.pmt.theory.literal_predicate.call(null, arg)));
       var fstring__7585 = function() {
         var or__3824__auto____7584 = cljs.core.get_in.call(null, language, cljs.core.PersistentVector.fromArray([pred__7583, "\ufdd0'text", lang], true));
         if(cljs.core.truth_(or__3824__auto____7584)) {
@@ -32625,7 +32628,7 @@ catb.views.pmt.theory.format_literal_arg = function format_literal_arg(arg, lang
           return cljs.core.get_in.call(null, language, cljs.core.PersistentVector.fromArray([pred__7583, "\ufdd0'text", "\ufdd0'en"], true))
         }
       }();
-      return cljs.core.apply.call(null, cljs.core.format, fstring__7585, catb.views.pmt.theory.format_literal_args.call(null, arg, language, lang))
+      return cljs.core.apply.call(null, cljs.core.format, fstring__7585, carneades.policy_analysis.web.views.pmt.theory.format_literal_args.call(null, arg, language, lang))
     }else {
       if("\ufdd0'else") {
         return[cljs.core.str(arg)].join("")
@@ -32635,12 +32638,12 @@ catb.views.pmt.theory.format_literal_arg = function format_literal_arg(arg, lang
     }
   }
 };
-catb.views.pmt.theory.format_literal_args = function format_literal_args(literal, language, lang) {
+carneades.policy_analysis.web.views.pmt.theory.format_literal_args = function format_literal_args(literal, language, lang) {
   return cljs.core.map.call(null, function(p1__7573_SHARP_) {
-    return catb.views.pmt.theory.format_literal_arg.call(null, p1__7573_SHARP_, language, lang)
-  }, cljs.core.rest.call(null, catb.views.pmt.theory.literal_atom.call(null, literal)))
+    return carneades.policy_analysis.web.views.pmt.theory.format_literal_arg.call(null, p1__7573_SHARP_, language, lang)
+  }, cljs.core.rest.call(null, carneades.policy_analysis.web.views.pmt.theory.literal_atom.call(null, literal)))
 };
-catb.views.pmt.theory.array__GT_literal = function array__GT_literal(x) {
+carneades.policy_analysis.web.views.pmt.theory.array__GT_literal = function array__GT_literal(x) {
   var c__7587 = cljs.core.js__GT_clj.call(null, x);
   if(cljs.core.vector_QMARK_.call(null, c__7587)) {
     return cljs.core.apply.call(null, cljs.core.list, cljs.core.map.call(null, array__GT_literal, c__7587))
@@ -32656,9 +32659,9 @@ catb.views.pmt.theory.array__GT_literal = function array__GT_literal(x) {
     }
   }
 };
-catb.views.pmt.theory.format_statement = function format_statement(literal, language, lang, selector) {
-  var literal__7593 = catb.views.pmt.theory.array__GT_literal.call(null, literal);
-  var pred__7594 = cljs.core.keyword.call(null, catb.views.pmt.theory.literal_predicate.call(null, literal__7593));
+carneades.policy_analysis.web.views.pmt.theory.format_statement = function format_statement(literal, language, lang, selector) {
+  var literal__7593 = carneades.policy_analysis.web.views.pmt.theory.array__GT_literal.call(null, literal);
+  var pred__7594 = cljs.core.keyword.call(null, carneades.policy_analysis.web.views.pmt.theory.literal_predicate.call(null, literal__7593));
   var lang__7595 = cljs.core.keyword.call(null, lang);
   var selector__7596 = cljs.core.keyword.call(null, selector);
   if(cljs.core.string_QMARK_.call(null, literal__7593)) {
@@ -32666,7 +32669,7 @@ catb.views.pmt.theory.format_statement = function format_statement(literal, lang
   }else {
     if(cljs.core.truth_(cljs.core.get_in.call(null, language, cljs.core.PersistentVector.fromArray([pred__7594], true)))) {
       var fstring__7597 = cljs.core.get_in.call(null, language, cljs.core.PersistentVector.fromArray([pred__7594, "\ufdd0'forms", lang__7595, selector__7596], true));
-      return cljs.core.apply.call(null, cljs.core.format, fstring__7597, catb.views.pmt.theory.format_literal_args.call(null, literal__7593, language, lang__7595))
+      return cljs.core.apply.call(null, cljs.core.format, fstring__7597, carneades.policy_analysis.web.views.pmt.theory.format_literal_args.call(null, literal__7593, language, lang__7595))
     }else {
       if("\ufdd0'else") {
         return[cljs.core.str(literal__7593)].join("")
@@ -32676,8 +32679,8 @@ catb.views.pmt.theory.format_statement = function format_statement(literal, lang
     }
   }
 };
-goog.exportSymbol("catb.views.pmt.theory.format_statement", catb.views.pmt.theory.format_statement);
-catb.views.pmt.theory.convert_language = function convert_language(language) {
+goog.exportSymbol("carneades.policy_analysis.web.views.pmt.theory.format_statement", carneades.policy_analysis.web.views.pmt.theory.format_statement);
+carneades.policy_analysis.web.views.pmt.theory.convert_language = function convert_language(language) {
   return cljs.core.js__GT_clj.call(null, language, "\ufdd0'keywordize-keys", true)
 };
-goog.exportSymbol("catb.views.pmt.theory.convert_language", catb.views.pmt.theory.convert_language);
+goog.exportSymbol("carneades.policy_analysis.web.views.pmt.theory.convert_language", carneades.policy_analysis.web.views.pmt.theory.convert_language);
