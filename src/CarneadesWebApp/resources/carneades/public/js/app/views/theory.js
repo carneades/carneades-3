@@ -41,7 +41,7 @@ PM.TheoryView = Backbone.View.extend(
          var data = this.model.toJSON();
          var text = "";
          var lang = PM.find_available_lang(data);
-         var language_clj = catb.views.pmt.theory.convert_language(data.language);
+         var language_clj = carneades.policy_analysis.web.views.pmt.theory.convert_language(data.language);
          
          _.each(data.schemes, function(scheme) {
                     text += '<div id="{0}">'.format(scheme.id);

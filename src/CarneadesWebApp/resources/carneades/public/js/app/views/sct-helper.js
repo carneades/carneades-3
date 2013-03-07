@@ -68,7 +68,7 @@ PM.set_sct_summary_url = function() {
 };
 
 PM.display_sct_summary = function() {
-    var sct_summary = new catb.views.sct.summary.Summary(
+    var sct_summary = new carneades.policy_analysis.web.views.sct.summary.Summary(
         {model: PM.sct});
 
     sct_summary.render();
@@ -85,7 +85,7 @@ PM.set_sct_comparison_url = function() {
 };
 
 PM.display_sct_comparison = function() {
-    var sct_comparison = new catb.views.sct.comparison.Comparison(
+    var sct_comparison = new carneades.policy_analysis.web.views.sct.comparison.Comparison(
         {model: PM.sct}); 
 
     sct_comparison.render();
