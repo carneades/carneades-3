@@ -92,7 +92,7 @@ PM.display_policies = function(sectionid, subset) {
                                                   pmt_intro_pmt: $.i18n.prop('pmt_intro_pmt'),
                                                   pmt_table_of_contents: $.i18n.prop('pmt_table_of_contents'),
                                                   pmt_see_effects: $.i18n.prop('pmt_see_effects'),
-                                                  pmt_policies_filtering_indication: $.i18n.prop('pmt_policies_filtering_indication'),
+                                                  pmt_policies_filtering_indication: $.i18n.prop('pmt_policies_filtering_indication')
                                                  }));
 
                     var current_policy_html = ich.policies(template_variables);
