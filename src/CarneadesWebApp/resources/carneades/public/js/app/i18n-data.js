@@ -3,7 +3,7 @@
 
 var i18n = {
     orphan_works: {
-        en: "Orphan works",
+        en: "Orphan works"
     },
     choose_topic: {
         en: "Please choose a topic.",
@@ -22,10 +22,10 @@ var i18n = {
         fr: "Solution"
     },
     hints: {
-        en: "Hints",
+        en: "Hints"
     },
     next: {
         en: "Next",
-        fr: "Suivant",
+        fr: "Suivant"
     }
-}
+};
