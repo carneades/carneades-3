@@ -79,7 +79,7 @@
       :prod
       {:source-path "src-cljs"
        :compiler {:output-to "resources/carneades/public/js/compiled-app.js"
-                  :optimizations :advanced
+                  :optimizations :simple ;; :advanced
                   :pretty-print false}}
       ; This build is for the ClojureScript unit tests that will
       ; be run via CasperJS.  See the casper/run-unit-test.js file
