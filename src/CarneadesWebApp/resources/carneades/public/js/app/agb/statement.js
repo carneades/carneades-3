@@ -259,7 +259,7 @@ AGB.enable_statement_edition = function(db, info) {
         pmt_new_statement: $.i18n.prop('pmt_new_statement'),
         pmt_menu_edit: $.i18n.prop('pmt_menu_edit'),
         pmt_menu_delete: $.i18n.prop('pmt_menu_delete'),
-        pmt_new_argument: $.i18n.prop('pmt_new_argument'),    
+        pmt_new_argument: $.i18n.prop('pmt_new_argument')
     }));
     $('#delete-statement').click(_.bind(AGB.delete_statement, AGB, db, info.id));
     $('#edit-statement').click(_.bind(AGB.edit_statement, AGB, db, info));

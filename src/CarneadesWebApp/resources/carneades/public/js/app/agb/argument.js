@@ -189,7 +189,7 @@ AGB.argument_link = function(db, id, text)
 AGB.enable_argument_edition = function(db, argid) {
     $('#menus').append(ich.argumenteditormenu({
         pmt_menu_edit: $.i18n.prop('pmt_menu_edit'),
-        pmt_menu_delete: $.i18n.prop('pmt_menu_delete'),
+        pmt_menu_delete: $.i18n.prop('pmt_menu_delete')
     }));
     $('#delete-argument').click(_.bind(AGB.delete_argument, AGB, db, argid));
     $('#edit-argument').click(_.bind(AGB.edit_argument, AGB, db, argid));
