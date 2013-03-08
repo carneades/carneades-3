@@ -5,6 +5,6 @@
 PM.DebatePoll = Backbone.Model.extend(
     {url: function() {
         return IMPACT.wsurl + '/debate-poll/' + IMPACT.debate_db;
-     },
+     }
     }
 );
