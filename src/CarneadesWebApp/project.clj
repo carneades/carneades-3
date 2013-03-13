@@ -26,9 +26,10 @@
   :hooks [leiningen.cljsbuild]
   :cljsbuild {:builds
               [{:id "dev",
-                :source-paths ["src-cljs"],
+                :source-paths ["src-cljs" "src-js"],
                 :compiler
                 {:pretty-print true,
+                 :libs ["libs"]
                  :output-to "resources/carneades/public/js/compiled-app.js",
                  :optimizations :whitespace},
                 :jar true}
@@ -39,11 +40,12 @@
                  :output-to "resources/carneades/private/js/unit-test.js",
                  :optimizations :whitespace}}
                {:id "prod",
-                :source-paths ["src-cljs"]
+                :source-paths ["src-cljs" "src-js"]
                 :compiler
                 {:pretty-print false,
                  :output-to "resources/carneades/public/js/compiled-app.js",
-                 :optimizations :whitespace}}],
+                 :libs ["libs"]
+                 :optimizations :simple}}],
               :test-commands
               {"questions"
                ["casperjs"
