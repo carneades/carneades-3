@@ -45,6 +45,8 @@
                 {:pretty-print false,
                  :output-to "resources/carneades/public/js/compiled-app.js",
                  :libs ["libs"]
+                 ;; there are more work to do in the JS files
+                 ;; to get :advanced mode working...
                  :optimizations :simple}}],
               :test-commands
               {"questions"
