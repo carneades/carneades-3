@@ -8,7 +8,6 @@
         carneades.policy-analysis.web.core
         carneades.engine.statement
         [carneades.engine.unify :only (genvar apply-substitutions)]
-        carneades.policy-analysis.web.logic.translate
         [carneades.engine argument-evaluation aspic]
         [carneades.database.export :only [export-to-argument-graph]]
         [carneades.database.evaluation :only [evaluate-graph]])
