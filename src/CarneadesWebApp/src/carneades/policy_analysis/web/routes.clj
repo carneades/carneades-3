@@ -4,8 +4,7 @@
 (ns carneades.policy-analysis.web.routes
   (:use compojure.core)
   (:require [compojure.route :as route]
-            [carneades.policy-analysis.web.controllers.policy-simulation :as simulation]
-            [carneades.policy-analysis.web.controllers.translation :as translation]))
+            [carneades.policy-analysis.web.controllers.policy-simulation :as simulation]))
 
 (defroutes policy-analysis-routes
   (GET "/config" [] (simulation/dump-config))
