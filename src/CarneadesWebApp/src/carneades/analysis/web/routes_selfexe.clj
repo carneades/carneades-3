@@ -1,7 +1,7 @@
 ;;; Copyright (c) 2012 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.web.routes-selfexe
+(ns carneades.analysis.web.routes-selfexe
   (:use carneades.web.routes-dev
         compojure.core
         ring.adapter.jetty
