@@ -80,9 +80,10 @@
                 ".repl-phantom-naked-err"],
                "firefox"
                ["firefox" :stdout ".repl-firefox-out" :stderr ".repl-firefox-err"]}}
-  :ring {:handler carneades.web.routes-dev/carneades-webapp}
-  :profiles {:standalone {:main carneades.web.routes-selfexe}
-             :war {:ring {:handler carneades.web.routes-war/impact-app}
+  :ring {:handler carneades.analysis.web.routes-dev/carneades-webapp}
+  ;; to build a WAR, run ./scripts/build-war.sh
+  :profiles {:standalone {:main carneades.analysis.web.routes-selfexe}
+             :war {:ring {:handler carneades.analysis.web.routes-war/impact-app}
                    :sub ["../CarneadesWebService"]}}
   )
 
