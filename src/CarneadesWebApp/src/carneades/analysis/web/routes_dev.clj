@@ -1,7 +1,7 @@
 ;;; Copyright (c) 2012 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.web.routes-dev
+(ns carneades.analysis.web.routes-dev
   (:use carneades.policy-analysis.web.routes
         carneades.web.service
         compojure.core
