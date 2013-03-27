@@ -17,7 +17,7 @@
 (defroutes carneades-webapp-routes
   (context "/carneades/policy-analysis" [] policy-analysis-routes)
   ;; TODO: (context "/carneades/license-analysis" [] license-analysis-routes)
-  (context "/carneades" [] (wrap-restful-response carneades-web-service-routes)))
+  (context "/carneadesws" [] (wrap-restful-response carneades-web-service-routes)))
 
 (def carneades-webapp
   (-> (handler/site carneades-webapp-routes)
