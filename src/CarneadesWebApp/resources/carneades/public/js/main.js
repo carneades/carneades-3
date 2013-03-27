@@ -10,7 +10,7 @@ var IMPACT = {
     db: undefined,
     question: "Q12",
     lang: "en",
-    wsurl: "/carneades",
+    wsurl: "/carneadesws",
     argumentbrowser_url: "/argumentbrowser",
     simulation_url: "/carneades/policy-analysis/questions",
     current_policy: "copyright-policies",
