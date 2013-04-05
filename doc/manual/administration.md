@@ -83,11 +83,9 @@ Depending on your operating system and how you started the server, the Carneades
 
   $ lein ring server 8080
 
-(*Note: Change the name of the PolicyModellingTool package to CarneadesWebApp. *)
-
 1. Using the Web client with your Web browser
 
-- Point your browser to http://localhost:8080/policymodellingtool/#/introduction  
+- Point your browser to http://localhost:8080/carneades/#/introduction  
 
 (*Note: Change "policymodellingtool" to "carneades" in these URLs.*)
 
