@@ -49,7 +49,7 @@ Either way, after the server starts it will open up the "home page" of the Carne
 
 Depending on your operating system and how you started the server, the Carneades web application can be shut down by either quitting the Carneades application or, if you started the server from a command line, using a terminal application, by ending this process , typically by typing `control-c` in the terminal.
 
-(*Note: the Carneades process is currently named "main". This needs to be fixed.*)
+(*Note: the Carneades process is currently named "routes_selfexe". This needs to be fixed.*)
 
 ## Using the Web Application with Java Application Servers
 
