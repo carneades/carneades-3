@@ -355,7 +355,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <img src="figs/argument1.png" alt="An Argument Page" /><p class="caption">An Argument Page</p>
 </div>
 <p>Argument pages are quite similar to statement pages. The top of an argument page displays the properties of the argument: its id, the argumentation scheme applied (if any), whether it is a strict or defeasible argument, its weight and value. The argumentation scheme contains a hyperlink (<em>Note: not yet implemented</em>). Click on the link to view a description of the scheme.</p>
-<p>If metadata had been provided for the argument, it would be displayed next. Descriptions can include quotations of one or more source texts expressing the argument, along with hyperlinks to the sources on the Web. The description, if available, will be displayed using the language chosen by the user. If no description has been entered manually by analysts for the selected language of the user but a description is available in some other language, a translation service will be used to generate a description in the selected language (<em>Note: not yet implemented</em>).</p>
+<p>If metadata had been provided for the argument, it would be displayed next. Descriptions can include quotations of one or more source texts expressing the argument, along with hyperlinks to the sources on the Web. The description, if available, will be displayed using the language chosen by the user. If no description has been entered manually by analysts for the selected language of the user but a description is available in some other language, a translation service, such as Google Translate, can be used to generate a description in the user's preferred language.</p>
 <p>Next, the premises of the argument are listed. If available, the role of each premise in the argumentation scheme applied is shown (e.g. &quot;major&quot; or &quot;minor&quot;). The check boxes to the left of each premise are used to indicate whether the statement is current <em>in</em> (checked box, meaning presumably true), <em>out</em> (crossed out box, meaning presumably false) or neither (empty box, not enough information to presume either truth or falsity), given the arguments in the graph and the opinions of users from polls about the acceptability of statements and relative weights of pro and con arguments.</p>
 <p>After the premises, the conclusion of the argument is shown, preceded by &quot;pro&quot; or &quot;con&quot;, showing the direction of the argument, and a check box showing the acceptability of the conclusion, as for the premises.</p>
 <p>Finally, a list of counterarguments is shown.<sup><a href="#fn2" class="footnoteRef" id="fnref2">2</a></sup> The premises of the counterarguments arguments are also listed. This makes it possible to navigate to nearby arguments and statements in the argument graph, by simply clicking on the links in these lists. You can use the back button of your web browser to return to this argument page.</p>
@@ -1316,12 +1316,11 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li>Starting the Carneades web application server</li>
 </ol>
 <p>$ lein ring server 8080</p>
-<p>(*Note: Change the name of the PolicyModellingTool package to CarneadesWebApp. *)</p>
 <ol style="list-style-type: decimal">
 <li>Using the Web client with your Web browser</li>
 </ol>
 <ul>
-<li>Point your browser to http://localhost:8080/policymodellingtool/#/introduction</li>
+<li>Point your browser to http://localhost:8080/carneades/#/introduction</li>
 </ul>
 <p>(<em>Note: Change &quot;policymodellingtool&quot; to &quot;carneades&quot; in these URLs.</em>)</p>
 <h2 id="system-configuration"><a href="#system-configuration"><span class="header-section-number">9.8</span> System Configuration</a></h2>
