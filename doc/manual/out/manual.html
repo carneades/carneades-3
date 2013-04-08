@@ -335,7 +335,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <ul>
 <li><p>The <em>title</em> of the argument graph. This title usually includes the topic of the discussion or debate.</p></li>
 <li><p>A <em>menu bar</em> of commands. The commands shown depend on the role of the user. Public users, who need not login to the system, are shown the commands &quot;export&quot; and &quot;map&quot;, for exporting the argument graph to XML and viewing an argument map visualization of the graph, respectively. Analysts, who must login to the system with a password, are also shown &quot;new statement&quot; and &quot;new argument&quot; commands. Only analysts may modify the argument graph.</p></li>
-<li><p>A <em>description</em> of the topic of the discussion modeled in the argument graph. The description may be available in several languages. The user interface provides a way to select and change your preferred language during the session (<em>Note: not yet implemented</em>). The description can be arbitrarily long and include multiple sections, paragraphs, images, hyperlinks, lists and other content.</p></li>
+<li><p>A <em>description</em> of the topic of the discussion modeled in the argument graph. The description may be available in several languages. The user interface provides a way to select and change your preferred language during the session. The description can be arbitrarily long and include multiple sections, paragraphs, images, hyperlinks, lists and other content.</p></li>
 <li><p>A list of the <em>main issues</em> of the discussion. Each item in the list is linked to a page providing detailed information about the statement in the argument graph at issue.</p></li>
 <li><p>An <em>outline</em> of the top five levels of the arguments in the argument graph.The first level of the outline lists the main issues (again). The second level lists the arguments pro and con each issue. The third level lists the premises of each of these arguments. The fourth level lists the argument pro and con each premise. Finally, the fifth level lists the premises of these arguments. Deeper levels of the argument graph can be navigated to by first clicking on a statement or argument in the outline and then following the links on the next page. Since argument graphs may contain cycles and are not restricted to trees, some items may appear multiple times in the outline.</p></li>
 <li><p>A list of <em>references</em> to the source documents used to construct the argument graph. For documents available on the Web, the reference will include a hyperlink to the source document.</p></li>
@@ -348,14 +348,14 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </div>
 <p>The top of the statement page displays the properties of the statement: its id, atom, whether or not it is a main issue, its proof standard, usually &quot;pe&quot; (preponderance of the evidence), its weight and value. The other proof standards available are &quot;dv&quot; (dialectical validity), &quot;cce&quot; (clear and convincing evidence), and &quot;brd&quot; (beyond reasonable doubt). See the section on <a href="#evaluating-arguments">Evaluating Arguments</a> for further details about proof standards.</p>
 <p>The next section displays the <em>text</em> of the statement. This formulation of the statement is written by the analyst or analysts who reconstructed the arguments to build the argument graph.</p>
-<p>If metadata had been provided for the statement, it would be displayed next. Descriptions may be entered, by analysts, in multiple languages. The description, if available, will be displayed using the language chosen by the user. If no description has been entered manually by analysts for the selected language of the user but a description is available in some other language, a translation service will be used to generate a description in the selected language (<em>Note: not yet implemented</em>).</p>
+<p>If metadata had been provided for the statement, it would be displayed next. Descriptions may be entered, by analysts, in multiple languages. The description, if available, will be displayed using the language chosen by the user. If no description has been entered manually by analysts for the selected language of the user but a description is available in some other language, a translation service, such as Google Translate, can be used to generate descriptions in other languages.</p>
 <p>Finally, the statement pages lists pro and con arguments about the statement, i.e. arguments having this statement, or its negation, as a conclusion, as well as arguments which have this statement, or its negation, as a premise. The premises of the pro and con arguments are also listed. This makes it possible to navigate to nearby arguments and statements in the argument graph, by simply clicking on the links in these lists. Use the back button of your web browser to return to this statement page.</p>
 <h3 id="argument-pages"><a href="#argument-pages"><span class="header-section-number">4.2.2</span> Argument Pages</a></h3>
 <div class="figure">
 <img src="figs/argument1.png" alt="An Argument Page" /><p class="caption">An Argument Page</p>
 </div>
 <p>Argument pages are quite similar to statement pages. The top of an argument page displays the properties of the argument: its id, the argumentation scheme applied (if any), whether it is a strict or defeasible argument, its weight and value. The argumentation scheme contains a hyperlink (<em>Note: not yet implemented</em>). Click on the link to view a description of the scheme.</p>
-<p>If metadata had been provided for the argument, it would be displayed next. Descriptions can include quotations of one or more source texts expressing the argument, along with hyperlinks to the sources on the Web. The description, if available, will be displayed using the language chosen by the user. If no description has been entered manually by analysts for the selected language of the user but a description is available in some other language, a translation service will be used to generate a description in the selected language (<em>Note: not yet implemented</em>).</p>
+<p>If metadata had been provided for the argument, it would be displayed next. Descriptions can include quotations of one or more source texts expressing the argument, along with hyperlinks to the sources on the Web. The description, if available, will be displayed using the language chosen by the user. If no description has been entered manually by analysts for the selected language of the user but a description is available in some other language, a translation service, such as Google Translate, can be used to generate a description in the user's preferred language.</p>
 <p>Next, the premises of the argument are listed. If available, the role of each premise in the argumentation scheme applied is shown (e.g. &quot;major&quot; or &quot;minor&quot;). The check boxes to the left of each premise are used to indicate whether the statement is current <em>in</em> (checked box, meaning presumably true), <em>out</em> (crossed out box, meaning presumably false) or neither (empty box, not enough information to presume either truth or falsity), given the arguments in the graph and the opinions of users from polls about the acceptability of statements and relative weights of pro and con arguments.</p>
 <p>After the premises, the conclusion of the argument is shown, preceded by &quot;pro&quot; or &quot;con&quot;, showing the direction of the argument, and a check box showing the acceptability of the conclusion, as for the premises.</p>
 <p>Finally, a list of counterarguments is shown.<sup><a href="#fn2" class="footnoteRef" id="fnref2">2</a></sup> The premises of the counterarguments arguments are also listed. This makes it possible to navigate to nearby arguments and statements in the argument graph, by simply clicking on the links in these lists. You can use the back button of your web browser to return to this argument page.</p>
@@ -483,7 +483,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </div>
 <p>The &quot;facts&quot; page asks a series of questions to gather the facts of the case. The process of asking questions is driven, in a goal-directed way, by the process of applying the rules of the model of the various policies to try to construct pro and con arguments about the chosen issue, using an inference engine. Only relevant questions will be asked, depending on the rules and your prior answers. Related questions will be grouped together, to faciliate a more coherent dialogue.</p>
 <p>Be careful not to enter any information which would enable you or or another person to be identified. Do not use real names, but rather pseudonyms or artificial identiers, such a P1, for persons and organizations.</p>
-<p>After sufficient facts have been entered to apply the rules of the policies, you will be taken to the &quot;analysis&quot; page of the tool. (You can return to the facts page at any time to check or modify the facts of the case. (<em>Note: Not yet implemented.</em>) The analysis page displays the argument graph constructed when applying the rules of the policies to the facts entered for the case. The user interface is exactly the same as the one described in the chapter entitled <a href="#browsing-visualizing-and-evaluating-arguments">&quot;Browsing, Visualizing and Evaluating Arguments&quot;</a>. The only difference is the content of the argument graph being displayed. Here we are viewing arguments constructed by an inference engine when applying policy models to the facts of a case, rather than manual reconstructions by analysts of arguments in source documents.</p>
+<p>After sufficient facts have been entered to apply the rules of the policies, you will be taken to the &quot;analysis&quot; page of the tool. You can return to the facts page at any time to check or modify the facts of the case.<sup><a href="#fn8" class="footnoteRef" id="fnref8">8</a></sup> The analysis page displays the argument graph constructed when applying the rules of the policies to the facts entered for the case. The user interface is exactly the same as the one described in the chapter entitled <a href="#browsing-visualizing-and-evaluating-arguments">&quot;Browsing, Visualizing and Evaluating Arguments&quot;</a>. The only difference is the content of the argument graph being displayed. Here we are viewing arguments constructed by an inference engine when applying policy models to the facts of a case, rather than manual reconstructions by analysts of arguments in source documents.</p>
 <h2 id="viewing-the-arguments-constructed-from-the-policies"><a href="#viewing-the-arguments-constructed-from-the-policies"><span class="header-section-number">6.3</span> Viewing the Arguments Constructed from the Policies</a></h2>
 <div class="figure">
 <img src="figs/pmt4.png" alt="Arguments Constructed from the Policies" /><p class="caption">Arguments Constructed from the Policies</p>
@@ -494,7 +494,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div class="figure">
 <img src="figs/pmt5.png" alt="Viewing the Policy Models" /><p class="caption">Viewing the Policy Models</p>
 </div>
-<p>All of the proposed policies which have been modeled are displayed. These can be alternative policies under consideration in a policy deliberation process. Alongside the model of each policy, using a rule language, there is a natural language description of the policy, possibly quoting and linking to the text of some document in which the policy was proposed. The descriptions will be shown in your preferred language, which can be selected on the home page of the Carneades system (<em>Note: not yet implemented</em>). The rules of the model are shown in an easy-to-read format, generated automatically from the source code of the model, not the source code itself.</p>
+<p>All of the proposed policies which have been modeled are displayed. These can be alternative policies under consideration in a policy deliberation process. Alongside the model of each policy, using a rule language, there is a natural language description of the policy, possibly quoting and linking to the text of some document in which the policy was proposed. The descriptions will be shown in your preferred language, which can be selected on the home page of the Carneades system (<em>Note: The home page is not yet implemented</em>). The rules of the model are shown in an easy-to-read format, generated automatically from the source code of the model, not the source code itself.</p>
 <h2 id="evaluating-and-comparing-policies"><a href="#evaluating-and-comparing-policies"><span class="header-section-number">6.5</span> Evaluating and Comparing Policies</a></h2>
 <p>To evaluate a policy to see how it would work given the facts of the case you have entered, click on the &quot;select&quot; button to the left of the title of the policy. This will take you back to the &quot;analysis&quot; page, again showing the argument graph, but this time visualizing what the legal consequences of the selected policy would be in the given case, if the policy were enacted and put in force. You can also view the results of the chosen policy in an argument map, by clicking on the &quot;map&quot; button in the menu bar.</p>
 <div class="figure">
@@ -502,7 +502,6 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </div>
 <p>To analyze the effects of other policies, go back to the policies page, by clicking on the &quot;policies&quot; button in the menu bar, and select another policy. Repeat this process to compare several policies.</p>
 <h2 id="finding-policies-with-desired-effects"><a href="#finding-policies-with-desired-effects"><span class="header-section-number">6.6</span> Finding Policies with Desired Effects</a></h2>
-<p>(<em>Note: Not yet implemented.</em>)</p>
 <p>Rather than manually trying out a number of policies, one at a time, it is possible to automatically search for the policies with the desired result in your case, as follows:</p>
 <ol style="list-style-type: decimal">
 <li>In the menu bar of the &quot;policies&quot; page, click on the &quot;find&quot; button.<br /></li>
@@ -517,8 +516,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li>Click on the &quot;analysis&quot; button in the menu bar of the policy analysis tool.</li>
 <li>Copy the URL shown in the address bar of your Web browser, where you type in URLs to visit web sites.</li>
 </ol>
-<p>To share the case, paste this URL into an email, a blog or discussion forum article, or indeed anywhere else text can be entered.</p>
-<p>(<em>Note: Not yet implemented:</em>) The case will be read-only, not modifiable, by other users. (The case is editable only during the session in which it was created.) However, an editable copy of the case, with its own URL, can be created, as described in the next session.</p>
+<p>To share the case, paste this URL into an email, a blog or discussion forum article, or indeed anywhere else text can be entered. (<em>Note: Not yet implemented:</em>) The case will be read-only, not modifiable, by other users. (The case is editable only during the session in which it was created.) However, an editable copy of the case, with its own URL, can be created, as described in the next session.</p>
 <h2 id="making-editable-copies-of-shared-cases"><a href="#making-editable-copies-of-shared-cases"><span class="header-section-number">6.8</span> Making Editable Copies of Shared Cases</a></h2>
 <p>(<em>Note: not yet implemented</em>)</p>
 <p>To make it easier to create variations of test cases, without having to reenter the facts they have in common, it is possible to creating a copy and then edit the facts of this copy. The copy will have its own URL, which can be shared with others on the Web, just like the original. The facts of the copy can be modified during the session in which the copy was created.</p>
@@ -529,7 +527,6 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ol>
 <p>You can now edit the facts of this copy during this session, and also share this copy with others in the usual way, as described in the <a href="#sharing-cases">Sharing Cases</a> section of this manual.</p>
 <h2 id="policy-opinion-polls"><a href="#policy-opinion-polls"><span class="header-section-number">6.9</span> Policy Opinion Polls</a></h2>
-<p>(<em>Note: Not yet implemented.</em>)</p>
 <p>Opinions can differ of course about what the correct or best result is for a particular case. The policy analysis tool provides a way to poll users to gather their opinions about the claims of the case (its main issues in the argument graph). Any user can take part in the poll, not just the user who entered the facts of the case.</p>
 <p>To take part in the poll, click on the &quot;vote&quot; button in the menu bar of the policy analysis tool. The main issues of the case will be displayed, for example &quot;The work may be copied.&quot;, along with the following question for each claim:</p>
 <blockquote>
@@ -558,7 +555,6 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </table>
 <p>Notice that users are not asked to directly express their preferences regarding the polices under consideration, just what they think the correct result should be in particular cases. See the section of this manual entitled <a href="#generating-policy-reports">Generating Policy Reports</a> for further information.</p>
 <h2 id="generating-policy-reports"><a href="#generating-policy-reports"><span class="header-section-number">6.10</span> Generating Policy Reports</a></h2>
-<p>(<em>Note: Not yet implemented.</em>)</p>
 <p>The policy analysis tool can generate a report ranking the policy proposals by the degree to which they achieve the results preferred by the majority of the users who took part in the poll.</p>
 <p>To generate the report, click on the &quot;report&quot; button in the menu bar of the policy analysis tool. This will cause the system to apply every modeled policy to all the cases and then compare the results with those preferred by the majority of the users who participated in the poll.</p>
 <p>The report will be presented in the form of a table, similar to the following:</p>
@@ -616,7 +612,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>A new statement should not be entered into the argument graph if the negation of the statement is already in the argument graph. That is, for every proposition <span class="math"><em>P</em></span>, a single statement node should be entered into the graph to represent <em>both</em> <span class="math"><em>P</em></span> and <span class="math">¬ <em>P</em></span>. It doesn't matter whether the positive or negative form of the statement is included explictly in the argument graph. Typically the positive form is used, but in some cases you may prefer the negative form. For example, you may prefer to include the sentence &quot;The payment was illegal&quot; explicitly in the argument graph and then represent arguments pro the legality of the payment as argument con the claim the payment was illegal. The best choice may depend on the procedural context of the debate.</p>
 <p>Only one form of the statement is required, since arguments pro the negation of the statement are equivalent to arguments con the statement. And premises of arguments can be explicitly negated in argument graphs, and in the forms for entering and editing arguments. This approach has the advantage of reducing the number of statements in the graph up to 50%.</p>
 <h3 id="statement-description"><a href="#statement-description"><span class="header-section-number">7.3.1</span> Statement Description</a></h3>
-<p>You can use the <em>description</em> field to provide whatever background information you want about the statement. Unlike the mandatory &quot;text&quot; field (see below), this information is optional. You can structure and format the description, including headers, lists, quotations, hypertext links and other elements, using the <a href="http://daringfireball.net/projects/markdown/">Markdown</a> wiki language. The form includes a Markdown editor to make this easier for you. You can enter translations of the description. There is a tab of the description form for each available language. (The set of languages can be configured by system administrators when installing the system. <em>Note: not yet implemented.</em>) The system is preconfigured for the following languages:</p>
+<p>You can use the <em>description</em> field to provide whatever background information you want about the statement. Unlike the mandatory &quot;text&quot; field (see below), this information is optional. You can structure and format the description, including headers, lists, quotations, hypertext links and other elements, using the <a href="http://daringfireball.net/projects/markdown/">Markdown</a> wiki language. The form includes a Markdown editor to make this easier for you. You can enter translations of the description. There is a tab of the description form for each available language. (The set of languages can be configured by system administrators, on a project by project bases. <em>Note: not yet implemented.</em>) The system is preconfigured for the following languages:</p>
 <dl>
 <dt>En</dt>
 <dd>English
@@ -1219,7 +1215,9 @@ code > span.er { color: #ff0000; font-weight: bold; }
      (make-theory
       <span class="kw">:header</span> 
       (make-metadata <span class="kw">:title</span> <span class="st">&quot;Copyright in the Knowledge Economy&quot;</span>
-             <span class="kw">:description</span> {<span class="kw">:en</span> <span class="st">&quot;&quot;</span>}) <span class="co">;; TODO add a description</span>
+             <span class="kw">:description</span> {<span class="kw">:en</span> <span class="st">&quot;Current European copright policies </span>
+<span class="st">along with policy proposals submitted in comments on the European Green paper on</span>
+<span class="st">[Copyright in the Knowledge Economy](http://goo.gl/SjUXg).&quot;</span>}) 
       
       <span class="kw">:language</span>
       L
@@ -1285,7 +1283,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <pre><code>$ java -jar bin/carneades-webapp.jar</code></pre>
 <p>Either way, after the server starts it will open up the &quot;home page&quot; of the Carneades web application in your default web browser.</p>
 <p>Depending on your operating system and how you started the server, the Carneades web application can be shut down by either quitting the Carneades application or, if you started the server from a command line, using a terminal application, by ending this process , typically by typing <code>control-c</code> in the terminal.</p>
-<p>(<em>Note: the Carneades process is currently named &quot;main&quot;. This needs to be fixed.</em>)</p>
+<p>(<em>Note: the Carneades process is currently named &quot;routes_selfexe&quot;. This needs to be fixed.</em>)</p>
 <h2 id="using-the-web-application-with-java-application-servers"><a href="#using-the-web-application-with-java-application-servers"><span class="header-section-number">9.6</span> Using the Web Application with Java Application Servers</a></h2>
 <p>(<em>Note: to be written</em>)</p>
 <h2 id="source-code-installation"><a href="#source-code-installation"><span class="header-section-number">9.7</span> Source Code Installation</a></h2>
@@ -1318,12 +1316,11 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li>Starting the Carneades web application server</li>
 </ol>
 <p>$ lein ring server 8080</p>
-<p>(*Note: Change the name of the PolicyModellingTool package to CarneadesWebApp. *)</p>
 <ol style="list-style-type: decimal">
 <li>Using the Web client with your Web browser</li>
 </ol>
 <ul>
-<li>Point your browser to http://localhost:8080/policymodellingtool/#/introduction</li>
+<li>Point your browser to http://localhost:8080/carneades/#/introduction</li>
 </ul>
 <p>(<em>Note: Change &quot;policymodellingtool&quot; to &quot;carneades&quot; in these URLs.</em>)</p>
 <h2 id="system-configuration"><a href="#system-configuration"><span class="header-section-number">9.8</span> System Configuration</a></h2>
@@ -1708,6 +1705,7 @@ premises:
 <li id="fn5"><p>The statements you skipped, without expressing an opinion are not listed. (<em>Note: Not yet implemented: some way for the user to review and answer the skipped questions, including taking a tour of the arguments about the skipped questions.</em>).<a href="#fnref5">↩</a></p></li>
 <li id="fn6"><p>These keys are stored in the &quot;source&quot; property of the metadata of arguments. The keys are the identifiers of the metadata records for documents in the references section of the argument graph.<a href="#fnref6">↩</a></p></li>
 <li id="fn7"><p>The similarity of opinions is measured by the percentage of claims in the document with which you have expressed agreement. We may replace this with some other metric, such as &quot;Euclidean distance&quot; <span class="citation">(Segaran 2007, 9–15)</span>, in a future version of the system.<a href="#fnref7">↩</a></p></li>
+<li id="fn8"><p>Note: currently the modifications you can make are rather limited. You can change the status of the fact, from accepted to rejected or vice versa, but it is not possible to add further facts or to delete facts.<a href="#fnref8">↩</a></p></li>
 </ol>
 </div>
 </body>
