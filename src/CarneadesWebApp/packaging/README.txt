@@ -17,7 +17,7 @@ To install and run the Carneades Web Application:
 6. If the home page fails to open, enter this URL into the 
    address bar of your web browser: 
 
-   http://localhost:8080/policymodellingtool/home.html
+   http://localhost:8080/carneades/policy-analysis/home.html
 
 7. To shutdown the server you may need to end the Java task using your task manager,
    depending on your operating system.  If you started the server from the command line,
