@@ -7,7 +7,9 @@
      (make-theory
       :header 
       (make-metadata :title "Copyright in the Knowledge Economy"
-		     :description {:en ""}) ;; TODO add a description
+		     :description {:en "Current European copright policies 
+along with policy proposals submitted in comments on the European Green paper on
+[Copyright in the Knowledge Economy](http://goo.gl/SjUXg)."}) 
       
       :language
       L
