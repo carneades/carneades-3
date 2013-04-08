@@ -43,7 +43,7 @@ Only one form of the statement is required, since arguments pro the negation of 
 
 ### Statement Description
 
-You can use the *description* field to provide whatever background information you want about the statement. Unlike the mandatory "text" field (see below), this information is optional. You can structure and format the description, including headers, lists, quotations, hypertext links and other elements, using the [Markdown](http://daringfireball.net/projects/markdown/) wiki language. The form includes a Markdown editor to make this easier for you.  You can enter translations of the description. There is a tab of the description form for each available language. (The set of languages can be configured by system administrators when installing the system. *Note: not yet implemented.*) The system is preconfigured for the following languages:
+You can use the *description* field to provide whatever background information you want about the statement. Unlike the mandatory "text" field (see below), this information is optional. You can structure and format the description, including headers, lists, quotations, hypertext links and other elements, using the [Markdown](http://daringfireball.net/projects/markdown/) wiki language. The form includes a Markdown editor to make this easier for you.  You can enter translations of the description. There is a tab of the description form for each available language. (The set of languages can be configured by system administrators, on a project by project bases. *Note: not yet implemented.*) The system is preconfigured for the following languages:
 
 En
 :   English
