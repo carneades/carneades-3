@@ -2,7 +2,7 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.analysis.web.routes-selfexe
-  (:use carneades.web.routes-dev
+  (:use carneades.analysis.web.routes-dev
         compojure.core
         ring.adapter.jetty
         [hiccup.middleware :only (wrap-base-url)]
