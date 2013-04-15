@@ -36,7 +36,7 @@
             [carneades.policy_analysis.web.models.argument_poll]
             [carneades.policy_analysis.web.models.conclusion_candidate]
             [carneades.policy_analysis.web.models.ag_info]
-            [carneades.policy_analysis.web.premise_candidate]
+            [carneades.policy_analysis.web.models.premise_candidate]
             [carneades.policy_analysis.web.models.metadata]
             [carneades.policy_analysis.web.models.sct]
             [carneades.policy_analysis.web.models.scheme_candidate]
