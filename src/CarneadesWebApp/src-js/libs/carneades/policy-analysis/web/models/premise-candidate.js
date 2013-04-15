@@ -1,7 +1,7 @@
 // Copyright (c) 2012 Fraunhofer Gesellschaft
 // Licensed under the EUPL V.1.1
 
-goog.provide('carneades.policy_analysis.web.premise_candidate');
+goog.provide('carneades.policy_analysis.web.models.premise_candidate');
 
 PM.PremiseCandidate = Backbone.Model.extend(
     {defaults: function(){
