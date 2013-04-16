@@ -107,7 +107,7 @@ AGB.display_argument = function(db, argid)
                 function(argument_data) {
                     $('#browser').html(AGB.argument_html(db, argument_data));
                     $('#export').click(function (event){
-                                           window.open('/impactws/export/{0}'.format(db), 'CAF XML');
+                                           window.open('/carneadesws/export/{0}'.format(db), 'CAF XML');
                                            return false; 
                                        });
                     AGB.enable_argument_edition(db, argid);
