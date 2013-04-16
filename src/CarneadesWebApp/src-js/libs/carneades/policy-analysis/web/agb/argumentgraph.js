@@ -63,7 +63,7 @@ AGB.display_argumentgraph = function(db)
                     $('#browser').html(AGB.argumentgraph_html(db, data));
                     $('#export').click(
                         function (event){
-                            window.open('/impactws/export/{0}'.format(db),
+                            window.open('/carneadesws/export/{0}'.format(db),
                                         'CAF XML');
                             return false; 
                         });
