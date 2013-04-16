@@ -5,7 +5,9 @@
     carneades.database.evaluation
   (:use [carneades.database.export :only [export-to-argument-graph]]
         [carneades.engine.argument-evaluation :only [evaluate]]
-        [carneades.engine.aspic :only [aspic-grounded]])
+        ;; there is a problem with the aspic evaluation
+        ;; [carneades.engine.aspic :only [aspic-grounded]]
+        [carneades.engine.caes :only [caes]])
   (:require [carneades.database.db :as db]))
 
 (defn evaluate-graph
@@ -13,7 +15,7 @@
   [dbname username password]
   (let [dbconn (db/make-database-connection dbname username password)
         ag1 (export-to-argument-graph dbconn)
-        ag2 (evaluate aspic-grounded ag1)]
+        ag2 (evaluate caes ag1)]
     (db/with-db dbconn
       (doseq [sn (vals (:statement-nodes ag2))]
         (db/update-statement (str (:id sn))
