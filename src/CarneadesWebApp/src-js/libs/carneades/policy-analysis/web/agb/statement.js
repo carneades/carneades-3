@@ -109,7 +109,7 @@ AGB.display_statement = function(db, stmtid)
                 function(info) {
                     $('#browser').html(AGB.statement_html(db, info, IMPACT.lang));
                     $('#export').click(function (event){
-                                           window.open('/impactws/export/{0}'.format(db), 'CAF XML');
+                                           window.open('/carneadesws/export/{0}'.format(db), 'CAF XML');
                                            return false; 
                                        });
                     AGB.enable_statement_edition(db, info);
