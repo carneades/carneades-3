@@ -7,14 +7,14 @@
 var IMPACT = {
     user: "root",
     password: "pw1", // TODO real auth
+    project: "copyright",
     db: undefined,
     question: "Q12",
     lang: "en",
     wsurl: "/carneadesws",
     argumentbrowser_url: "/argumentbrowser",
     simulation_url: "/carneades/policy-analysis/questions",
-    current_policy: "copyright-policies",
-    debate_db: "copyright",
+    debate_db: "main",
     rootpath: null
 };
 
@@ -56,7 +56,7 @@ PM.url_changed = function(url) {
          return;
     }
 
-    var url_regex = /\/([^ \/]+)(?:\/([^ \/]+))?(?:\/([^ ?\/]+))?(?:\/([^ \/]+))?/;
+    var url_regex = /\/([^ \/]+)(?:\/([^ \/]+))?(?:\/([^ \/]+))?(?:\/([^ ?\/]+))?(?:\/([^ \/]+))?/;
     var result = url_regex.exec(url.value);
     if(result != null) {
         PM.dispatch_url(result);
@@ -69,7 +69,7 @@ PM.dispatch_url = function(sections) {
     } else if(sections[1] == "facts") {
         PM.dispatch_facts_url(sections[2]);
     } else if(sections[1] == "arguments") {
-        PM.display_arguments(sections[3], sections[2], sections[4]); 
+        PM.display_arguments(sections[3], sections[4], sections[2], sections[5]); 
     } else if(sections[1] == "policies") {
         PM.display_policies(sections[2]);
     } else if(sections[1] == "schemes") {
@@ -254,20 +254,38 @@ PM.init_i18n = function(callbackfn) {
         });
 };
 
+PM.normalized_theory_path = function(project, path) {
+    if(path.indexOf('/') != -1) {
+        return path; 
+    }
+
+    return project.id + '/' + path;
+};
+
 PM.common_post_load = function() {
     $.ajaxSetup({beforeSend: PM.simple_auth});
     
-    PM.schemes = new PM.Schemes;
-    PM.schemes.fetch();
-  
-    PM.current_theory = new PM.Theory({id: 'walton'});
+    PM.project = new PM.Project({id: "copyright"});
+
+    PM.project.fetch({async:false});
+
+    IMPACT.current_policy = PM.project.get('policy');
+      
+    var normalized_scheme_path = PM.normalized_theory_path(PM.project,
+                                                           PM.project.get('scheme'));
+    PM.current_theory = new PM.Theory({theory_path: normalized_scheme_path});
     PM.current_theory.fetch();
-    
+
+    PM.schemes = new PM.Schemes();
+    PM.schemes.fetch();
+
+    var normalized_policy_path = PM.normalized_theory_path(PM.project,
+                                                           PM.project.get('policy'));
+    PM.current_policy = new PM.Theory({theory_path: normalized_policy_path});
+    PM.current_policy.fetch({async: false});
+
     PM.arguments = new PM.Arguments;
     PM.statements = new PM.Statements;
-    
-    PM.policies = new PM.Policies;
-    PM.policies.fetch();
     
     PM.init_i18n();
     
@@ -287,6 +305,13 @@ PM.common_post_load = function() {
                          arguments: PM.debate_arguments,
                          statements: PM.debate_statements,
                          metadata: PM.debate_metadata});
+    
+    PM.markdown_add_hooks();
+};
+
+PM.markdown_add_hooks = function () {
+    var converter = Markdown.getSanitizingConverter(); 
+    converter.hooks.chain("preConversion", PM.citation_to_url); 
 };
 
 // http://www.lockencreations.com/2011/07/02/cant-debug-imported-js-files-when-using-jquery-getscript/
@@ -377,7 +402,6 @@ PM.load_templates = function(toolboxState) {
     _.each([{name: 'menu', url: 'site/menu.html'},
             {name: 'pmmenu', url: 'site/pmmenu.html'},
             {name: 'metadata', url: 'site/metadata.html'},
-            {name: 'argumentlink', url: 'site/argumentlink.html'},
             {name: 'statementlink', url: 'site/statementlink.html'},
             {name: 'premise', url: 'site/premise.html'}],
            function(template) {
@@ -393,7 +417,6 @@ PM.load_templates = function(toolboxState) {
     _.each(['admin',
             'argumentgraph',
             'argument',
-            'argumentlink',
             'arguments',
             'facts',
             'introduction',

@@ -5,7 +5,7 @@ goog.provide('carneades.policy_analysis.web.agb.statement');
 
 AGB.statement_url = function(db, stmtid)
 {
-    return '/arguments/statement/' + db + '/' + stmtid;
+    return '/arguments/statement/' + IMPACT.project + '/' + db + '/' + stmtid;
 };
 
 AGB.set_statement_url = function(db, stmtid)
@@ -105,13 +105,13 @@ AGB.statement_html = function(db, info, lang)
 
 AGB.display_statement = function(db, stmtid)
 {
-    PM.ajax_get(IMPACT.wsurl + '/statement-info/' + db + '/' + stmtid,
+    PM.ajax_get(IMPACT.wsurl + '/statement-info/' + IMPACT.project + '/' + db + '/' + stmtid,
                 function(info) {
                     $('#browser').html(AGB.statement_html(db, info, IMPACT.lang));
                     $('#export').click(function (event){
-                                           window.open('/carneadesws/export/{0}'.format(db), 'CAF XML');
-                                           return false; 
-                                       });
+                                           window.open('/carneadesws/export/{0}/{1}'.format(db, IMPACT.project), 'CAF XML');
+                        return false; 
+                    });
                     AGB.enable_statement_edition(db, info);
                 },
                 PM.on_error);;
@@ -241,7 +241,7 @@ AGB.statement_text = function(statement)
 
 AGB.statement_link = function(db, id, text)
 {
-    return '<a href="/arguments/statement/{0}/{1}" rel="address:/arguments/statement/{0}/{1}" class="statement" id="statement{1}">{2}</a>'.format(db, id, text);
+    return '<a href="/arguments/statement/{0}/{1}/{1}" rel="address:/arguments/statement/{0}/{1}/{2}" class="statement" id="statement{2}">{3}</a>'.format(IMPACT.project, db, id, text);
 };
 
 AGB.statement_in = function(statement)
@@ -273,7 +273,7 @@ AGB.enable_statement_edition = function(db, info) {
 
 AGB.delete_statement = function(db, stmtid) {
     if(confirm('Delete this statement?')) {
-        PM.ajax_delete(IMPACT.wsurl + '/statement/' + db + '/' + stmtid,
+        PM.ajax_delete(IMPACT.wsurl + '/statement/' + IMPACT.project + '/' + db + '/' + stmtid,
                        function(e) {
                            console.log('statement deleted');
                            console.log(e);

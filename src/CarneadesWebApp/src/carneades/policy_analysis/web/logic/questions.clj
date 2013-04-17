@@ -14,6 +14,8 @@
   (:require [clojure.string :as s]
             [carneades.engine.scheme :as scheme]
             [carneades.database.db :as db]
+            [carneades.database.argument-graph :as ag-db]
+            [carneades.project.admin :as project]
             [carneades.engine.policy :as policy]
             [carneades.engine.argument-graph :as ag]))
 
@@ -22,20 +24,20 @@
   (and (= (:min role) 1) (= (:max role) 1)))
 
 (defn get-predicate
-  [stmt theory]
+  [stmt policy]
   (let [pred (literal-predicate stmt)]
-    (-> theory :language pred)))
+    (-> policy :language pred)))
 
 (defn- get-question-text
-  [stmt theory lang]
-  (let [predicate (get-predicate stmt theory)]
+  [stmt policy lang]
+  (let [predicate (get-predicate stmt policy)]
     (cond (and (scheme/role? predicate)
                (coll? (:type predicate)))
           (let [[s o v] stmt
                 stmt2 (list s o (genvar))]
-            (scheme/format-statement stmt2 (:language theory) lang :positive))
-          (ground? stmt) (scheme/format-statement stmt (:language theory) lang :question)
-          :else (scheme/format-statement stmt (:language theory) lang :positive))))
+            (scheme/format-statement stmt2 (:language policy) lang :positive))
+          (ground? stmt) (scheme/format-statement stmt (:language policy) lang :question)
+          :else (scheme/format-statement stmt (:language policy) lang :positive))))
 
 (defn- get-hint
   [questiondata lang]
@@ -43,14 +45,14 @@
 
 (defn- get-category
   "Returns the category and the category name"
-  [theory pred lang]
-  (let [category_key (-> theory :language pred :category)
-        category_name (-> theory :language category_key :text lang)]
+  [policy pred lang]
+  (let [category_key (-> policy :language pred :category)
+        category_name (-> policy :language category_key :text lang)]
     [category_key category_name]))
 
 (defn- get-widgets
   "Returns the appropriate widget. This is for backward compatibility.
-The type field is now used instead of the widget field, in the theory. On the client-side
+The type field is now used instead of the widget field, in the policy. On the client-side
 widget is still used. New Types of :string maps to :widgets 'text."
   [predicate]
   (or (:widgets predicate)
@@ -58,10 +60,10 @@ widget is still used. New Types of :string maps to :widgets 'text."
 
 (defn get-answers-choice-for-grounded-predicate
   "Builds the data for a yes/no question of a predicate."
-  [theory stmt lang default-fn]
-  (let [yes (get-in theory [:language 'yes :text lang])
-        no (get-in theory [:language 'no :text lang])
-        maybe (get-in theory [:language 'maybe :text lang])]
+  [policy stmt lang default-fn]
+  (let [yes (get-in policy [:language 'yes :text lang])
+        no (get-in policy [:language 'no :text lang])
+        maybe (get-in policy [:language 'maybe :text lang])]
     (merge {:answers [yes no maybe]
             :formalanswers ['yes 'no 'maybe]
             :grounded true
@@ -70,13 +72,13 @@ widget is still used. New Types of :string maps to :widgets 'text."
 
 (defn get-answers-choice-for-predicate-helper
   "Builds the data for a generic question of a predicate."
-  [theory stmt lang default-fn]
-  (let [predicate (get-predicate stmt theory)
+  [policy stmt lang default-fn]
+  (let [predicate (get-predicate stmt policy)
         formalanswers (-> predicate :answers)
         termargs (term-args stmt)
         ;; filter out answer for grounded variables (since they are not asked)
         formalanswers (keep (fn [[term answer]] (when (variable? term) answer)) (partition 2 (interleave termargs formalanswers)))
-        answers (map (fn [sym] (-> theory :language sym :text lang)) formalanswers)
+        answers (map (fn [sym] (-> policy :language sym :text lang)) formalanswers)
         widgets (get-widgets predicate)
         widgets (keep (fn [[term widget]] (when (variable? term) widget)) (partition 2 (interleave termargs widgets)))]
     (merge {:answer answers
@@ -86,21 +88,21 @@ widget is still used. New Types of :string maps to :widgets 'text."
            (default-fn stmt false))))
 
 (defn- get-answers-choices-for-predicate
-  [theory stmt lang default-fn]
+  [policy stmt lang default-fn]
   (prn "[get-answers-choices-for-predicate] lang=" lang)
-  (let [predicate (get-predicate stmt theory)
+  (let [predicate (get-predicate stmt policy)
         arity (scheme/get-arity predicate)]
     (if (or (ground? stmt) (zero? arity))
-      (get-answers-choice-for-grounded-predicate theory stmt lang default-fn)
-      (get-answers-choice-for-predicate-helper theory stmt lang default-fn))))
+      (get-answers-choice-for-grounded-predicate policy stmt lang default-fn)
+      (get-answers-choice-for-predicate-helper policy stmt lang default-fn))))
 
 (defn get-typename
-  [type theory lang]
+  [type policy lang]
   (if (coll? type)
     (map (fn [t]
-           (get-in theory [:language t :text lang]))
+           (get-in policy [:language t :text lang]))
          type)
-    (get-in theory [:language type :text lang])))
+    (get-in policy [:language type :text lang])))
 
 (defn get-default-role-answer
   [stmt]
@@ -109,13 +111,13 @@ widget is still used. New Types of :string maps to :widgets 'text."
      obj)))
 
 (defn get-answers-choices-for-role
-  [theory stmt lang default-fn]
-  (let [predicate (get-predicate stmt theory)
+  [policy stmt lang default-fn]
+  (let [predicate (get-predicate stmt policy)
         {:keys [min max type]} predicate
-        typename (get-typename type theory lang)
-        yes (get-in theory [:language 'yes :text lang])
-        no (get-in theory [:language 'no :text lang])
-        maybe (get-in theory [:language 'maybe :text lang])
+        typename (get-typename type policy lang)
+        yes (get-in policy [:language 'yes :text lang])
+        no (get-in policy [:language 'no :text lang])
+        maybe (get-in policy [:language 'maybe :text lang])
         grounded (and (not (coll? type)) (ground? stmt))]
     (merge {:min min
             :max max
@@ -127,23 +129,23 @@ widget is still used. New Types of :string maps to :widgets 'text."
            (default-fn stmt grounded))))
 
 (defn- get-answers-choices
-  [theory stmt lang default-fn]
-  (let [predicate (get-predicate stmt theory)]
+  [policy stmt lang default-fn]
+  (let [predicate (get-predicate stmt policy)]
     (cond (scheme/role? predicate)
-          (get-answers-choices-for-role theory stmt lang default-fn)
+          (get-answers-choices-for-role policy stmt lang default-fn)
           (or (scheme/predicate? predicate)
               (scheme/concept? predicate))
-          (get-answers-choices-for-predicate theory stmt lang default-fn)
+          (get-answers-choices-for-predicate policy stmt lang default-fn)
           :else (throw (Exception. (str "NYI:" predicate))))))
 
 (defn get-first-question
-  [id stmt lang theory default-fn]
+  [id stmt lang policy default-fn]
   (let [pred (literal-predicate stmt)
-        predicate ((:language theory) pred)
-        text (get-question-text stmt theory lang)
-        [category category-name] (get-category theory pred lang)
+        predicate ((:language policy) pred)
+        text (get-question-text stmt policy lang)
+        [category category-name] (get-category policy pred lang)
         hint (get-hint predicate lang)
-        answers-choices (get-answers-choices theory stmt lang default-fn)]
+        answers-choices (get-answers-choices policy stmt lang default-fn)]
     (merge {:id id
             :category category
             :category_name category-name
@@ -158,48 +160,48 @@ widget is still used. New Types of :string maps to :widgets 'text."
 (declare get-other-questions)
 
 (defn get-questions
-  [id stmt lang theory default-fn]
+  [id stmt lang policy default-fn]
   (let [pred (literal-predicate stmt)
-        first-question (get-first-question id stmt lang theory default-fn)
-        [category category-name] (get-category theory pred lang)
-        pred-by-categories (group-by (fn [[pred val]] (:category val)) (-> theory :language))
+        first-question (get-first-question id stmt lang policy default-fn)
+        [category category-name] (get-category policy pred lang)
+        pred-by-categories (group-by (fn [[pred val]] (:category val)) (-> policy :language))
         other-preds (disj (set (map first (pred-by-categories category))) pred)
-        other-questions (get-other-questions id stmt other-preds lang theory default-fn)
+        other-questions (get-other-questions id stmt other-preds lang policy default-fn)
         ]
     (cons first-question other-questions)))
 
 (defn get-other-questions
-  [id stmt others lang theory default-fn]
+  [id stmt others lang policy default-fn]
   (map (fn [id pred]
-         (let [predicate (get-in theory [:language pred])
+         (let [predicate (get-in policy [:language pred])
                arity (scheme/get-arity predicate)
                [_ o _] stmt
                stmtq (cond (scheme/role? predicate) (list (:symbol predicate) o (genvar))
                            (scheme/concept? predicate) (list (:symbol predicate) o)
                            :else (doall (cons (symbol pred) (repeatedly arity genvar))))]
-           (get-first-question id stmtq lang theory default-fn)))
+           (get-first-question id stmtq lang policy default-fn)))
        (iterate inc (inc id)) others))
 
 (defn get-structured-questions
   "Returns the data necessary for the web client to build the questions.
 default-fn is a function returning the default formalized answer for a question."
-  ([stmt lang last-id theory]
-     (get-structured-questions stmt lang last-id theory (constantly nil)))
-  ([stmt lang last-id theory default-fn]
+  ([stmt lang last-id policy]
+     (get-structured-questions stmt lang last-id policy (constantly nil)))
+  ([stmt lang last-id policy default-fn]
      (let [id (inc last-id)
            pred (literal-predicate stmt)
-           questions (get-questions id stmt (keyword lang) theory default-fn)]
+           questions (get-questions id stmt (keyword lang) policy default-fn)]
        [questions (+ last-id (count questions))])))
 
 (defn askable?
-  [theory p]
+  [policy p]
   ;; {:pre [(do
   ;;          (prn "                ASKABLE:" p)
   ;;          true)]
   ;;  :post [(do
   ;;           (prn "                ===>" %)
   ;;           true)]}
-  (let [predicate (get-in theory [:language (literal-predicate p)])]
+  (let [predicate (get-in policy [:language (literal-predicate p)])]
     (and (literal-pos? p)
          (or (:askable predicate) (:widgets predicate))
          (or (scheme/predicate? predicate)
@@ -209,17 +211,21 @@ default-fn is a function returning the default formalized answer for a question.
 
 (defn askable-statements-atoms
   "Returns the list of askable statements in the ag stored in db"
-  [db theory]
-  (db/with-db (db/make-database-connection db "guest" "")
-    (let [statements (db/list-statements)]
-      (map :atom (filter (partial askable? theory) statements)))))
+  [project dbname policy]
+  (prn "[askable-statements-atoms]")
+  (prn "project=" project)
+  (prn "policy=")
+  (pprint policy)
+  (db/with-db (db/make-connection project dbname "guest" "")
+    (let [statements (ag-db/list-statements)]
+      (map :atom (filter (partial askable? policy) statements))))) 
 
 (defn remove-superfluous-questions
-  [questions theory]
+  [questions policy]
   (first
    (reduce (fn [[questions seen] question]
              (let [p (literal-predicate (:statement question))
-                   pred (get-predicate (:statement question) theory)]
+                   pred (get-predicate (:statement question) policy)]
               (if (seen p)
                 (if (or (scheme/concept? pred)
                         (and (scheme/role? pred)
@@ -267,9 +273,9 @@ default-fn is a function returning the default formalized answer for a question.
                                  [obj])))))
  
 (defn get-default-values
-  [ag theory atoms-by-pred stmt grounded]
+  [ag policy atoms-by-pred stmt grounded]
   {:post [(do (prn "default values for " stmt " is ") (prn %) true)]}
-  (let [predicate (get-predicate stmt theory)
+  (let [predicate (get-predicate stmt policy)
         atoms-for-pred (atoms-by-pred (:symbol predicate))]
    (if grounded
      (get-default-values-for-grounded ag atoms-for-pred stmt)
@@ -284,10 +290,10 @@ default-fn is a function returning the default formalized answer for a question.
 
 (defn get-questions-for-answers-modification
   "Returns a list of questions to modify the answer in the ag stored in db."
-  [db theory-name lang]
-  (let [theory (policy/policies (symbol theory-name))
-        ag (export-to-argument-graph (db/make-database-connection db "guest" ""))
-        atoms (askable-statements-atoms db theory)
+  [project db policy-name lang]
+  (let [policy (project/load-theory project policy-name)
+        ag (export-to-argument-graph (db/make-connection project db "guest" ""))
+        atoms (askable-statements-atoms project db policy)
         atoms (put-atoms-being-accepted-in-the-front ag atoms)
         atoms-by-pred (group-by first atoms)
         ;; keep only one atom per predicate
@@ -297,21 +303,21 @@ default-fn is a function returning the default formalized answer for a question.
                                   idx
                                   atom
                                   lang
-                                  theory
-                                  (partial get-default-values ag theory atoms-by-pred)))
+                                  policy
+                                  (partial get-default-values ag policy atoms-by-pred)))
                                atoms)
-        questions (remove-superfluous-questions questions theory)]
+        questions (remove-superfluous-questions questions policy)]
     questions))
 
 (defn smart-update-statement
   "Updates the literal in the db with a new weight.
-If the literal corresponds to a functional role in the theory, set
+If the literal corresponds to a functional role in the policy, set
 all other roles having the same predicate but different objects to a weight
 of 0.0"
-  [literal weight theory]
-  (let [id (db/get-statement literal)]
-   (db/update-statement id {:weight weight})
-   (let [pred (get-in theory [:language (literal-predicate literal)])]
+  [literal weight policy]
+  (let [id (ag-db/get-statement literal)]
+    (ag-db/update-statement id {:weight weight})
+   (let [pred (get-in policy [:language (literal-predicate literal)])]
      (when (and (scheme/role? pred)
                 (scheme/functional-role? pred)
                 (set? (:type pred)))
@@ -319,28 +325,28 @@ of 0.0"
        (let [[_ _ old-obj] literal]
         (doseq [obj (disj (:type pred) old-obj)]
           (let [other-role (scheme/replace-role-obj literal obj)
-                other-id (db/get-statement other-role)]
-            (db/update-statement other-id {:weight 0.0}))))))))
+                other-id (ag-db/get-statement other-role)]
+            (ag-db/update-statement other-id {:weight 0.0}))))))))
 
 (defn update-statements-weights
   "Updates the weight of the statements in the db."
-  [db username password statements theory]
-  (let [dbconn (db/make-database-connection db username password)]
+  [project db username password statements policy]
+  (let [dbconn (db/make-connection project db username password)]
    (db/with-db dbconn
      (doseq [[literal weight] statements]
-       (smart-update-statement literal weight theory)))))
+       (smart-update-statement literal weight policy)))))
 
 (defn modify-statements-weights
   "Updates the values of the given statements in the db.
 Statements are represented as a collection of [statement value] element."
-  [db username password statements theory]
-  (update-statements-weights db username password statements theory)
-  (evaluate-graph db username password))
+  [project db username password statements policy]
+  (update-statements-weights project db username password statements policy)
+  (evaluate-graph project db username password))
 
 (defn pseudo-delete-statements
   "Set the weight of the statements to 0.5 in the db."
-  [db username password ids]
-  (let [dbconn (db/make-database-connection db username password)]
+  [project db username password ids]
+  (let [dbconn (db/make-connection project db username password)]
    (db/with-db dbconn
      (doseq [id ids]
-       (db/update-statement id {:weight 0.5})))))
+       (ag-db/update-statement id {:weight 0.5})))))

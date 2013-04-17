@@ -10,7 +10,7 @@ PM.Statements = Backbone.Collection.extend(
     {model: PM.Statement,
 
      url: function() {
-         return IMPACT.wsurl + '/statement/' + (this.db || IMPACT.db);
+         return IMPACT.wsurl + '/statement/' + IMPACT.project + '/' + (this.db || IMPACT.db);
      },
      
      initialize: function(models, attrs) {

@@ -10,7 +10,7 @@ PM.StatementPolls = Backbone.Collection.extend(
     {model: PM.StatementPoll,
      
      url: function() {
-         return IMPACT.wsurl + '/statement-poll/' + this.db;
+         return IMPACT.wsurl + '/statement-poll/' + IMPACT.project + '/' + this.db;
      },
 
      initialize: function(model, options) {

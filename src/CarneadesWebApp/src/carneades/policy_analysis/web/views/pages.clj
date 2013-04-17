@@ -4,7 +4,7 @@
 (ns carneades.policy-analysis.web.views.pages
   (:use [hiccup core page-helpers])
   (:require [net.cgrand.enlive-html :as html]
-            [carneades.config.reader :as config]))
+            [carneades.config.config :as config]))
 
 (html/deftemplate index "carneades/public/index.html" [])
 

@@ -4,7 +4,7 @@
 goog.provide('carneades.policy_analysis.web.arguments');
 
 PM.arguments_url = function(db) {
-    return 'arguments/outline/' + db;    
+    return 'arguments/outline/' + IMPACT.project + '/' + db;    
 };
 
 PM.set_arguments_url = function(db) {
@@ -13,7 +13,7 @@ PM.set_arguments_url = function(db) {
 
 // this is the main entry point to display
 // either the outline, the map, an argument or a statement
-PM.display_arguments = function(db, type, id) {
+PM.display_arguments = function(project, db, type, id) {
     var arguments_html = ich.arguments(PM.merge_menu_props({}));
     
     if(_.isNil(db)) {
@@ -29,6 +29,10 @@ PM.display_arguments = function(db, type, id) {
     }
     
     IMPACT.db = db;
+    
+    if(!_.isNil(project)) {
+        IMPACT.project = project;
+    }
     
     $('#pm').html(arguments_html.filter("#arguments"));
     PM.activate('#arguments-item');
@@ -47,7 +51,7 @@ PM.display_arguments = function(db, type, id) {
                 carneades.policy_analysis.web.views.pmt.vote.display();
             } else if (type == "copy-case") {
                 PM.copy_case(db);
-            } else {
+            } else { // outline
                 AGB.display_argumentgraph(db);        
             }                                    
         });
@@ -81,7 +85,7 @@ PM.current_case_pollid = function() {
 
 PM.copy_case = function(db) {
     if(confirm($.i18n.prop('pmt_copy_current_case'))) {
-        PM.ajax_post(IMPACT.wsurl + '/copy-case/' + db,
+        PM.ajax_post(IMPACT.wsurl + '/copy-case/' + IMPACT.project + '/' + db,
                      {},
                      function(data) {
                          PM.set_arguments_url(data.db);

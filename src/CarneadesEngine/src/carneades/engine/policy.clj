@@ -4,23 +4,7 @@
 (ns carneades.engine.policy
   (:use (carneades.engine statement scheme argument-graph aspic argument-evaluation utils)
         [clojure.tools.logging :only (info debug error)])
-  (:require [carneades.config.reader :as config]))
-
-(def policies-directory (config/properties "policies-directory"))
-(def policies-metadata (read-string
-                        (slurp
-                         (str policies-directory file-separator "policies.clj"))))
-
-(defn get-policy-filename
-  [filename]
-  (str policies-directory file-separator filename))
-
-(def policies (reduce (fn [policies metadata]
-                        (let [{:keys [filename namespace name]} metadata]
-                          (assoc policies name
-                                 (load-theory (get-policy-filename filename) namespace name))))
-                      {}
-                      policies-metadata))
+  (:require [carneades.config.config :as config]))
 
 (defn get-policies
   [questionid theory]

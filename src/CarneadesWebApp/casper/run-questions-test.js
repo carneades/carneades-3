@@ -5,7 +5,8 @@ console.log('dir = ' + casper.cli.get('dir'));
 fs.changeWorkingDirectory(casper.cli.get('dir'));
 
 console.log('url = ' + casper.cli.get('url'));
-casper.start(casper.cli.get('url'), function() {
+
+var test_questions = function() {
                  this.test.assertEval(function() {
                                           return $('#qq-role-yn input[type=radio]').length == 3;
                                       },
@@ -31,7 +32,11 @@ casper.start(casper.cli.get('url'), function() {
                                       },
                                       'Text inputs for a predicate are displayed');
                  
-             });
+};
+
+casper.start(casper.cli.get('url'), function() {
+    test_questions.call(this);
+});
 
 casper.run(function() {
                this.test.renderResults(true);

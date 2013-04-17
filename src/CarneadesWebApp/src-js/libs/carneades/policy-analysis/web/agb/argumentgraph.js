@@ -13,7 +13,7 @@ AGB.set_argumentgraph_url = function(db)
 // Returns the relative URL of the argument graph page
 AGB.argumentgraph_url = function(db)
 {
-    return '/arguments/outline/' + db;
+    return '/arguments/outline/' + IMPACT.project + '/' + db;
 };
 
 // Returns the HTML content of the argument graph page
@@ -58,12 +58,12 @@ AGB.display_argumentgraph = function(db)
         return;
     }
 
-    PM.ajax_get(IMPACT.wsurl + '/argumentgraph-info/' + db,
+    PM.ajax_get(IMPACT.wsurl + '/argumentgraph-info/' + IMPACT.project + '/' + db,
                 function(data) {
                     $('#browser').html(AGB.argumentgraph_html(db, data));
                     $('#export').click(
                         function (event){
-                            window.open('/carneadesws/export/{0}'.format(db),
+                            window.open('/carneadesws/export/{0}/{1}'.format(IMPACT.project, db),
                                         'CAF XML');
                             return false; 
                         });
@@ -165,7 +165,7 @@ AGB.new_argument = function(conclusion) {
 };
 
 AGB.evaluate = function(callback) {
-    PM.ajax_post(IMPACT.wsurl + '/evaluate-argument-graph/' + IMPACT.db, {},
+    PM.ajax_post(IMPACT.wsurl + '/evaluate-argument-graph/' + IMPACT.project + '/' + IMPACT.db, {},
                 function(data) {
                     PM.notify('Evaluation finished');
                     if(_.isFunction(callback)) {

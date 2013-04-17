@@ -29,6 +29,7 @@ PM.merge_ag_menu_props = function(obj) {
                      pmt_ag_menu_export: $.i18n.prop('pmt_ag_menu_export'),
                      pmt_ag_menu_vote: $.i18n.prop('pmt_ag_menu_vote'),
                      pmt_ag_menu_evaluate: $.i18n.prop('pmt_ag_menu_evaluate'),
-                     pmt_ag_menu_map: $.i18n.prop('pmt_ag_menu_map')
+                     pmt_ag_menu_map: $.i18n.prop('pmt_ag_menu_map'),
+                     project: IMPACT.project
                      });
 };

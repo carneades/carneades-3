@@ -5,7 +5,8 @@
         carneades.engine.scheme
         carneades.engine.argument
         carneades.database.db) 
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [carneades.database.argument-graph :as ag]))
 
 (defn zip-metadata-element
   "Zips a metadata element vector as a string"
@@ -115,7 +116,7 @@
   [id]
   {:pre [(or (symbol? id)
              (string? id))]}
-  (pack-argument (read-argument (str id))))
+  (pack-argument (ag/read-argument (str id))))
 
 (defn- argument-metadata
   "Returns the metadata of an argument in a map
