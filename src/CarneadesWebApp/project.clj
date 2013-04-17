@@ -46,14 +46,20 @@
                  :output-to "resources/carneades/public/js/compiled-app.js",
                  :libs ["libs"]
                  ;; there are more work to do in the JS files
-                 ;; to get :advanced mode working...
+                 ;; to get :advanced mode working... There is a branch
+                 ;; in github for this work.
                  :optimizations :simple}}],
+              
               :test-commands
-              {"questions"
-               ["casperjs"
-                "--dir=resources/carneades/private/html/"
-                "--url=test-questions.html"
-                "casper/run-unit-test.js"]},
+              {;; lein cljsbuild test questions
+               ;; to fix:
+               ;; "questions" ["casperjs"
+               ;;              "--dir=resources/carneades/private/html/"
+               ;;              "--url=test-questions.html"
+               ;;              "casper/run-questions-test.js"]
+               
+               ;; lein cljsbuild test scenario
+               "scenario" ["./scripts/run-casper-test.sh"]},
               :repl-listen-port 9000,
               :repl-launch-commands
               {"firefox-naked"

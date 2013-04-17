@@ -7,7 +7,7 @@ set -e
 bash ./scripts/build.sh
 
 
-DATABASE_DIR=`grep database-host=  ~/.carneades.properties | cut -d = -f 2`
+PROJECTS_DIR=`grep projects-directory ~/.carneades.clj | cut -d " " -f 3 | sed 's/"//g;' `
 
 lein with-profile standalone uberjar
 
@@ -21,25 +21,23 @@ mkdir carneades-webapp
 
 cd carneades-webapp
 
-mkdir -p config data/databases doc policies
+cp -r ../../../../projects ./projects
 
-cp $DATABASE_DIR/copyright.h2.db ./data/databases
+rm -f projects/default/databases/*
+rm -f projects/copyright/databases/*
+
+cp $PROJECTS_DIR/copyright/databases/main.h2.db ./projects/copyright/databases/
+
+mkdir doc
+mkdir config
 
 cp ../../../../doc/manual/out/manual.pdf ./doc/
-
-cp ../../../CarneadesExamples/src/carneades/examples/policies.clj ./policies
-
-POLICIES=`grep ":filename " ../../../CarneadesExamples/src/carneades/examples/policies.clj | tr -s " " | cut -d " " -f 3 | sed s'/\}//g'`
-
-for policy in $POLICIES; do
-    cp ../../../CarneadesExamples/src/carneades/examples/$policy ./policies/$policy
-done
 
 cp ../carneades-webapp-1.0.0-SNAPSHOT-standalone.jar ./carneades-webapp.jar
 
 cp ../../packaging/README.txt ./
 
-cp ../../packaging/carneades.properties ./config
+cp ../../packaging/carneades.clj ./config/
 
 echo "This build was created the: " >> ./doc/timestamp.txt
 date  >> ./doc/timestamp.txt

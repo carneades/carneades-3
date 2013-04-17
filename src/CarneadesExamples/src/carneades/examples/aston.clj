@@ -11,7 +11,8 @@
         carneades.database.export 
         carneades.xml.caf.export
         carneades.maps.lacij)
-  (:require [carneades.database.db :as db]))
+  (:require [carneades.database.db :as db]
+            [carneades.database.argument-graph :as ag-db]))
 
 ;; This example illustrates: 
 ;; - Metadata describing the map as a whole, as well as each statement and argument, using
@@ -130,13 +131,14 @@ Note: This example illustrates how descriptions can include paragraphs, hyperlin
 ; 
 ;
  
-; (def db (db/make-database-connection "aston" "root" "pw1"))
+; (def db (db/make-connection "aston" "root" "pw1"))
 ; (import-from-argument-graph db aston true)
 
 (defn -main []
   (let [dbname "aston"  ; (str "db-" (make-uuid))
-        db (db/make-database-connection dbname "root" "pw1")]
-    (db/create-argument-database 
+        db (db/make-connection dbname "root" "pw1")]
+    (ag-db/create-argument-database
+     "examples"
       dbname 
       "root" 
       "pw1" 

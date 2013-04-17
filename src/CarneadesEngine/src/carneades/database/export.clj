@@ -6,6 +6,7 @@
   (:require
         [carneades.engine.argument-graph :as ag]
         [carneades.database.db :as db]
+        [carneades.database.argument-graph :as ag-db]
         [clojure.java.jdbc :as jdbc]))
 
 (defn export-to-argument-graph
@@ -19,9 +20,9 @@
     db
     (jdbc/transaction
       (-> (ag/make-argument-graph)
-          (ag/enter-statements (db/list-statements))
-          (ag/enter-arguments (db/list-arguments))
-          (ag/enter-references (db/list-metadata))
-          (ag/enter-namespaces (db/list-namespaces))
-          (assoc :header (db/read-metadata 1))))))
+          (ag/enter-statements (ag-db/list-statements))
+          (ag/enter-arguments (ag-db/list-arguments))
+          (ag/enter-references (ag-db/list-metadata))
+          (ag/enter-namespaces (ag-db/list-namespaces))
+          (assoc :header (ag-db/read-metadata 1))))))
         

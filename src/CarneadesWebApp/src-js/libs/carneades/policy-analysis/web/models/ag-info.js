@@ -12,7 +12,7 @@ PM.AgInfo = Backbone.Model.extend(
      },
      
      url: function() {
-         return IMPACT.wsurl + '/argumentgraph-info/' + this.db;
+         return IMPACT.wsurl + '/argumentgraph-info/' + IMPACT.project + '/' + this.db;
      },
      
      initialize: function(attrs) {
