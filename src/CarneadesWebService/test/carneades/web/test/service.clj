@@ -8,7 +8,8 @@
         carneades.web.service
         clojure.data.json)
   (:require [carneades.database.db :as db]
-            [carneades.database.admin :as admin])
+            [carneades.database.argument-graph :as ag-db]
+            [carneades.database.case :as case])
   (:import java.io.File))
 
 ;; (def tmpdir (System/getProperty "java.io.tmpdir"))
@@ -21,7 +22,7 @@
 
 (defn create-tmp-db
   []
- (db/create-argument-database 
+ (ag-db/create-argument-database 
    dbname 
    "root" 
    "pw1" 
@@ -33,7 +34,7 @@
 
 (defn create-tmp-debatedb
   []
-  (admin/create-debate-database debatedb-name "root" "pw1"))
+  (case/create-debate-database debatedb-name "root" "pw1"))
 
 (defn delete-tmp-debatedb
   []
@@ -41,8 +42,8 @@
 
 (defn create-debate
   []
-  (db/with-db (db/make-database-connection debatedb-name "root" "pw1")
-    (admin/create-debate {:public false :id dbname})))
+  (db/with-db (db/make-connection debatedb-name "root" "pw1")
+    (case/create-debate {:public false :id dbname})))
 
 (defn create-tmp-dbs
   []

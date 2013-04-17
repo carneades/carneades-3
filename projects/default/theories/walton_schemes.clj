@@ -4,6 +4,14 @@
  (ns carneades.web.walton-schemes
   (:use (carneades.engine statement argument scheme dublin-core)))
 
+(declare walton-schemes)
+
+(def schemes-by-predicate
+  (create-scheme-predicate-index {} walton-schemes))
+
+(def schemes-by-id
+  (create-scheme-id-index {} walton-schemes))
+
 (def walton-schemes
   (make-theory
    :header
@@ -1039,14 +1047,5 @@ Douglas Walton, Fundamentals of Critical Argumentation, Cambridge University Pre
                  :statement '(horrible-costs ?E2))])
     
     ])) ;; end of theory of Walton's schemes
-
-(def schemes-by-predicate
-  (create-scheme-predicate-index {} walton-schemes))
-
-(def schemes-by-id
-  (create-scheme-id-index {} walton-schemes))
-
-
-
 
 

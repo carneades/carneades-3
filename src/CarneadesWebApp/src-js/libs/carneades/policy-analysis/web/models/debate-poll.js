@@ -6,7 +6,7 @@ goog.provide('carneades.policy_analysis.web.models.debate_poll');
 // Stores the result of a poll
 PM.DebatePoll = Backbone.Model.extend(
     {url: function() {
-        return IMPACT.wsurl + '/debate-poll/' + IMPACT.debate_db;
+        return IMPACT.wsurl + '/debate-poll/' + IMPACT.project + '/' + IMPACT.debate_db;
      }
     }
 );

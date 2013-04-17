@@ -10,7 +10,7 @@ PM.Argument = Backbone.Model.extend(
      },
    
      url: function() {
-         return IMPACT.wsurl + '/argument/' + IMPACT.db;
+         return IMPACT.wsurl + '/argument/' + IMPACT.project + '/' + IMPACT.db;
      },
    
      initialize: function() {

@@ -10,7 +10,7 @@ PM.ArgumentPolls = Backbone.Collection.extend(
     {model: PM.ArgumentPoll,
      
      url: function() {
-         return IMPACT.wsurl + '/argument-poll/' + IMPACT.debate_db;
+         return IMPACT.wsurl + '/argument-poll/' + IMPACT.project + '/' + IMPACT.debate_db;
      }
      
     }

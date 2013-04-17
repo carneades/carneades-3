@@ -12,14 +12,6 @@ PM.set_introduction_url = function() {
 };
 
 PM.display_introduction = function() {
-    PM.ajax_post(IMPACT.simulation_url, {"current-policy": null},
-                 function(currentpolicy) {
-                     IMPACT.current_policy = currentpolicy; 
-                 },
-                IMPACT.user,
-                IMPACT.password,
-                PM.on_error);
-
     var introduction_html = ich.introduction(
         PM.merge_menu_props({pmt_pmt: $.i18n.prop('pmt_pmt'),
                              pmt_start: $.i18n.prop('pmt_start'),

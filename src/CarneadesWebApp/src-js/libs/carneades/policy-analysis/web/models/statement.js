@@ -10,7 +10,7 @@ PM.Statement = Backbone.Model.extend(
      },
 
      url: function() {
-         return IMPACT.wsurl + '/statement/' + IMPACT.db;
+         return IMPACT.wsurl + '/statement/' + IMPACT.project + '/' + IMPACT.db;
      },
      
      validate: function(attrs) {

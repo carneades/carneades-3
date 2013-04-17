@@ -6,7 +6,7 @@ goog.provide('carneades.policy_analysis.web.models.statement_poll');
 // Stores the result of a poll
 PM.StatementPoll = Backbone.Model.extend(
     {url: function() {
-        return IMPACT.wsurl + '/statement-poll/' + this.db;
+        return IMPACT.wsurl + '/statement-poll/' + IMPACT.project + '/' + this.db;
      },
 
      initialize: function(attrs, db) {
