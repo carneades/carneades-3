@@ -403,6 +403,7 @@ PM.load_templates = function(toolboxState) {
             {name: 'pmmenu', url: 'site/pmmenu.html'},
             {name: 'metadata', url: 'site/metadata.html'},
             {name: 'statementlink', url: 'site/statementlink.html'},
+            {name: 'argumentlink', url: 'site/argumentlink.html'},
             {name: 'premise', url: 'site/premise.html'}],
            function(template) {
                var url = toolboxState == undefined ?
@@ -417,6 +418,7 @@ PM.load_templates = function(toolboxState) {
     _.each(['admin',
             'argumentgraph',
             'argument',
+            'argumentlink',
             'arguments',
             'facts',
             'introduction',
