@@ -14,12 +14,8 @@
         carneades.engine.argument-evaluation
         carneades.engine.aspic)
   (:require [clojure.java.jdbc :as jdbc]
-            [carneades.database.db :as db]))
-
-(defmacro with-db [db & body]   
-  `(jdbc/with-connection 
-           ~db
-           (jdbc/transaction ~@body)))
+            [carneades.database.db :as db]
+            [carneades.database.argument-graph :as ag-db]))
 
 ;; The Pierson vs. Post case.  Used to illustrate the use of
 ;; a scheme for "practical reasoning" in legal argument.
@@ -301,8 +297,8 @@ and noxious beast."}))
   (let [dbname "pierson-post"
         root "root"
         passwd "pw1"
-        db (db/make-database-connection dbname root passwd)]
-     (db/create-argument-database dbname root passwd (make-metadata))
+        db (db/make-connection dbname root passwd)]
+     (ag-db/create-argument-database "examples" dbname root passwd (make-metadata))
      (import-from-argument-graph db both true)
      (argument-graph->xml (export-to-argument-graph db))))
 

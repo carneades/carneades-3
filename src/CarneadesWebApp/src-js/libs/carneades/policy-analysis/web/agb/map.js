@@ -5,7 +5,7 @@ goog.provide('carneades.policy_analysis.web.agb.map');
 
 AGB.map_url = function(db)
 {
-    return '/map/' + db;
+    return '/map/' + IMPACT.project + '/' + db;
 };
 
 AGB.add_map_to_browser_listener = function(db, domelement)
@@ -47,7 +47,7 @@ AGB.display_map = function(db)
 AGB.add_map_to_div = function(db, id)
 {
     $(id).svg();
-    $(id).load(IMPACT.wsurl + '/map/' + db + '?lang=' + IMPACT.lang,
+    $(id).load(IMPACT.wsurl + '/map/' + IMPACT.project + '/' + db + '?lang=' + IMPACT.lang,
                function(svg, error) {
                    AGB.traverse_map(function(element) {
                        AGB.add_map_to_browser_listener(db, element);

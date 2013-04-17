@@ -4,7 +4,7 @@
 (ns ^{:doc "Reconstructs statements and weights from users' answers."}
   carneades.policy-analysis.web.controllers.reconstruction
   (:use [carneades.engine.unify :only [apply-substitutions]]
-        [carneades.engine.policy :only [get-main-issue policies]]
+        [carneades.engine.policy :only [get-main-issue]]
         [carneades.engine.statement :only [neg literal-predicate variable? literal-atom variables]]
         [carneades.policy-analysis.web.logic.questions
          :only [get-predicate get-questions-for-answers-modification

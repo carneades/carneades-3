@@ -1,20 +1,29 @@
 ;;; Copyright (c) 2011 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc  "A database schema and CRUD functions for managing debate databases."}
-       carneades.database.admin
+(ns ^{:doc "A database schema and CRUD functions for managing case
+databases. A case database contains metadata about the cases in the
+project, including the results of the polls about what users think the
+right result should be in each case. "}
+  carneades.database.case
   (:use clojure.pprint
         carneades.engine.uuid
         carneades.engine.dublin-core)
   (:require [carneades.database.db :as db]
+            [carneades.database.argument-graph :as ag-db]
             [clojure.java.jdbc :as jdbc]))
 
 
 (defn create-debate-database
   "Initialize the debate database by creating the tables. 
    Returns true if the database is successul created and initialized"
-  [db-name root-username root-password]
-  (let [db  (db/make-database-connection db-name root-username root-password)]
+  [project db-name root-username root-password]
+  (let [db  (db/make-connection
+             project
+             db-name
+             root-username
+             root-password
+             :create true)]
     (jdbc/with-connection 
       db
       (jdbc/transaction
@@ -43,7 +52,7 @@
          :vote
          [:debate "varchar not null"]
          [:poll "varchar not null"]
-         ["foreign key(debate) references debate(id)"]
+         ;; ["foreign key(debate) references debate(id)"]
          ["foreign key(poll) references poll(id)"])
 
         (jdbc/create-table
@@ -86,14 +95,16 @@
    the new database."
   [m]   
   {:pre [(map? m)]}
-  (let [id (make-urn)]
-    (jdbc/insert-record :debate (assoc m :id id))
-    (db/create-argument-database 
-      id 
-      "root" 
-      (:password m) 
-      (make-metadata :title (:title m)))
-    id))
+  (throw (Exception. "NYI"))
+  ;; (let [id (make-urn)]
+  ;;   (jdbc/insert-record :debate (assoc m :id id))
+  ;;   (ag-db/create-argument-database 
+  ;;     id 
+  ;;     "root" 
+  ;;     (:password m) 
+  ;;     (make-metadata :title (:title m)))
+  ;;   id)
+  )
 
 (defn read-debate 
   "urn -> map or nil

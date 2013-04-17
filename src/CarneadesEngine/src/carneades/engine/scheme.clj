@@ -429,11 +429,12 @@ call or a symbol."
 (defn theory? [x] (instance? Theory x))
 
 (defn load-theory
-  "Dynamically loads a theory"
-  [url ns-sym theory-sym]
-  (load-string (slurp url))
-  (deref (ns-resolve ns-sym theory-sym)))
+  "Dynamically loads the theory at url and returns it."
+  [filepath]
+  (deref (load-file filepath)))
 
+;; ensure we don't load twice the same namespace
+(memoize load-theory)
 
 (defn- scheme-index-key 
   "term -> symbol 

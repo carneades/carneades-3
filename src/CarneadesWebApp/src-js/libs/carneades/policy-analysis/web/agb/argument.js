@@ -5,7 +5,7 @@ goog.provide('carneades.policy_analysis.web.agb.argument');
 
 AGB.argument_url = function(db, argid)
 {
-    return '/arguments/argument/' + db + '/' + argid;
+    return '/arguments/argument/' + IMPACT.project + '/' + db + '/' + argid;
 };
 
 AGB.set_argument_url = function(db, argid)
@@ -103,13 +103,13 @@ AGB.argument_html = function(db, argument_data)
 
 AGB.display_argument = function(db, argid)
 {
-    PM.ajax_get(IMPACT.wsurl + '/argument-info/' + db + '/' + argid,
+    PM.ajax_get(IMPACT.wsurl + '/argument-info/' + IMPACT.project + '/' + db + '/' + argid,
                 function(argument_data) {
                     $('#browser').html(AGB.argument_html(db, argument_data));
                     $('#export').click(function (event){
-                                           window.open('/carneadesws/export/{0}'.format(db), 'CAF XML');
-                                           return false; 
-                                       });
+                        window.open('/carneadesws/export/{0}/{1}'.format(db, IMPACT.project), 'CAF XML');
+                        return false; 
+                    });
                     AGB.enable_argument_edition(db, argid);
                 },
                 PM.on_error);
@@ -183,7 +183,7 @@ AGB.argument_text = function(data, index)
 
 AGB.argument_link = function(db, id, text)
 {
-    return '<a href="/arguments/argument/{0}/{1}" rel="address:/arguments/argument/{0}/{1}" class="argument" id="argument{1}">{2}</a>'.format(db, id, text);
+    return '<a href="/arguments/argument/{0}/{1}/{2}" rel="address:/arguments/argument/{0}/{1}/{2}" class="argument" id="argument{2}">{3}</a>'.format(IMPACT.project, db, id, text);
 };
 
 
@@ -201,7 +201,7 @@ AGB.enable_argument_edition = function(db, argid) {
 
 AGB.delete_argument = function(db, argid) {
     if(confirm('Delete this argument?')) {
-        PM.ajax_delete(IMPACT.wsurl + '/argument/' + db + '/' + argid,
+        PM.ajax_delete(IMPACT.wsurl + '/argument/' + IMPACT.project + '/' + db + '/' + argid,
                        function(e) {
                            console.log('argument deleted');
                            console.log(e);

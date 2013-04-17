@@ -7,7 +7,8 @@
         carneades.engine.statement
         carneades.engine.dublin-core
         carneades.database.db)
-  (:require [clojure.java.jdbc :as jdbc]))
+  (:require [clojure.java.jdbc :as jdbc]
+            [carneades.database.argument-graph :as ag]))
 
 (defn import-from-argument-graph
   "database-connection argument-graph boolean -> boolean
@@ -22,7 +23,7 @@
       
       ; Statements
      (doseq [sn (vals (:statement-nodes arg-graph))]
-        (create-statement (map->statement sn)))
+        (ag/create-statement (map->statement sn)))
       
       ; Arguments
       (doseq [an (vals (:argument-nodes arg-graph))]
@@ -33,7 +34,7 @@
                                   :statement 
                                   (:id sn))))
                             (:premises an))]
-         (create-argument 
+         (ag/create-argument 
           (assoc (map->argument an)
             :conclusion  (:id (get (:statement-nodes arg-graph)
                                    (literal-atom (:conclusion an))))
@@ -41,15 +42,15 @@
       
       ; References
       (doseq [md (:references arg-graph)]
-        (create-metadata (assoc (second md) :key (first md))))
+        (ag/create-metadata (assoc (second md) :key (first md))))
       
       ; Namespaces
       (doseq [ns (:namespaces arg-graph)]
-        (create-namespace {:prefix (first ns) :uri (second ns)}))
+        (ag/create-namespace {:prefix (first ns) :uri (second ns)}))
       
       ; Header
       (when (and update-header (:header arg-graph))
-        (update-metadata 1 (:header arg-graph)))))
+        (ag/update-metadata 1 (:header arg-graph)))))
   true)
 
 

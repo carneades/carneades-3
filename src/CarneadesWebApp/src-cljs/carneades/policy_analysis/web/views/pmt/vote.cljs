@@ -59,15 +59,18 @@
                           :casedb js/IMPACT.db
                           :policykey js/IMPACT.current_policy
                           :qid js/IMPACT.question
-                          :issueid (.-id (js/PM.current_issue))}))
+                          :issueid (.-id (js/PM.current_issue))
+                          :project js/IMPACT.project}))
                nil
                (clj->js {:success (fn [response]
                                     (set! js/document.cookie
                                           (str "pollid-" js/IMPACT.db
                                                "="
-                                               (.-id response))))
-                         :error js/PM.on_model_error}))
-        (template this :after-vote {:db db}))))
+                                               (.-id response)))
+                                    (template this :after-vote
+                                              {:db db
+                                               :project js/IMPACT.project}))
+                         :error js/PM.on_model_error})))))
 
   :show-vote-results
   ([]
@@ -76,7 +79,7 @@
          (let [claim-text (aget (.-text claim) lang)]
            (js/PM.busy_cursor_on)
            (js/PM.ajax_get
-            (str js/IMPACT.wsurl "/poll-results/" js/IMPACT.debate_db "/"
+            (str js/IMPACT.wsurl "/poll-results/" js/IMPACT.project "/" js/IMPACT.debate_db "/"
                  js/IMPACT.db)
             (fn [result]
               (let [scores (js->clj result :keywordize-keys true)]

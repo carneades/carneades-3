@@ -9,7 +9,7 @@ PM.MetadataList = Backbone.Collection.extend(
     {model: PM.Metadata,
 
      url: function() {
-         return IMPACT.wsurl + '/metadata/' + (this.db || IMPACT.db);
+         return IMPACT.wsurl + '/metadata/' + IMPACT.project + '/' + (this.db || IMPACT.db);
      },
      
      initialize: function(models, attrs) {
