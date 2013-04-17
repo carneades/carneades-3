@@ -11,7 +11,8 @@
         carneades.database.export 
         carneades.xml.caf.export
         carneades.maps.lacij)
-  (:require [carneades.database.db :as db]))
+  (:require [carneades.database.db :as db]
+            [carneades.database.argument-graph :as ag-db]))
 
 ;; This example illustrates: 
 ;; - Metadata describing the map as a whole, as well as each statement and argument, using
@@ -496,8 +497,9 @@ need to better understand the rules. [@SIIA, pp. 15-16.]"}
 
 (defn -main []
   (let [dbname "copyright"  ; (str "db-" (make-uuid))
-        db (db/make-database-connection dbname "root" "pw1")]
-    (db/create-argument-database 
+        db (db/make-connection dbname "root" "pw1")]
+    (ag-db/create-argument-database
+     "examples"
      dbname 
      "root" 
      "pw1" 

@@ -8,19 +8,20 @@
         ;; there is a problem with the aspic evaluation
         ;; [carneades.engine.aspic :only [aspic-grounded]]
         [carneades.engine.caes :only [caes]])
-  (:require [carneades.database.db :as db]))
+  (:require [carneades.database.db :as db]
+            [carneades.database.argument-graph :as ag-db]))
 
 (defn evaluate-graph
   "Evalutes a graph stored in the database."
-  [dbname username password]
-  (let [dbconn (db/make-database-connection dbname username password)
+  [project dbname username password]
+  (let [dbconn (db/make-connection project dbname username password)
         ag1 (export-to-argument-graph dbconn)
         ag2 (evaluate caes ag1)]
     (db/with-db dbconn
       (doseq [sn (vals (:statement-nodes ag2))]
-        (db/update-statement (str (:id sn))
-                             {:value (:value sn)}))
+        (ag-db/update-statement (str (:id sn))
+                                {:value (:value sn)}))
       (doseq [an (vals (:argument-nodes ag2))]
-        (db/update-argument (str (:id an))
-                            {:value (:value an)}))
+        (ag-db/update-argument (str (:id an))
+                               {:value (:value an)}))
       {:body             true})))

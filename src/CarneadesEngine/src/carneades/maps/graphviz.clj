@@ -7,12 +7,13 @@
 ;; and have the same interface as i n carneades.maps.lacij
 ;;
 
+
 (ns ^{:doc "Functions that convert an argument graph to the DOT (graphviz) 
             and PNG format by invoking the external 'dot' program.
             Graphviz needs to be installed http://www.graphviz.org/"}
   carneades.maps.graphviz
   (:use carneades.maps.viewerdef
-      carneades.config.reader
+      carneades.config.config
       carneades.engine.argument
       ;; [clojure.contrib.java-utils :only (delete-file)]
       [carneades.engine.statement :only (literal->str

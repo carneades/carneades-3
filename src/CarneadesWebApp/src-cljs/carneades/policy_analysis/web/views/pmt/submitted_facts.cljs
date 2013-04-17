@@ -22,7 +22,9 @@
   "Displays the facts submitted by the user for verification and correction."
   []
   (js/PM.ajax_post js/IMPACT.simulation_url
-                   (clj->js {:modifiable-facts {:theory js/IMPACT.current_policy
+                   (clj->js {:modifiable-facts {:policy
+                                                js/IMPACT.current_policy
+                                                :project js/IMPACT.project
                                                 :db js/IMPACT.db}})
                    show-facts-for-modification
                    js/IMPACT.user

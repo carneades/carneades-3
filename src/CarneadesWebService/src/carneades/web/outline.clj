@@ -1,7 +1,7 @@
 (ns carneades.web.outline
   (:use (carneades.engine statement argument)
         carneades.web.pack
-        carneades.database.db))
+        carneades.database.argument-graph))
 
 (defn create-outline-helper
   [n depth]

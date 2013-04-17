@@ -7,6 +7,6 @@
         [hiccup.middleware :only (wrap-base-url)])
   (:require [compojure.handler :as handler]))
 
-(def impact-app
+(def carneades-webpp
   (-> (handler/site policy-analysis-routes)
       (wrap-base-url)))

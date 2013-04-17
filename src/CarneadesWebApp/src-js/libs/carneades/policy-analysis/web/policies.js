@@ -37,8 +37,9 @@ PM.on_policy_filtering = function(event) {
     if(filter == 'all') {
         PM.display_policies(undefined, undefined);
     } else {
-        PM.ajax_get(IMPACT.wsurl + '/find-policies/{0}/{1}/{2}/{3}/{4}'
-                    .format(IMPACT.db, 
+        PM.ajax_get(IMPACT.wsurl + '/find-policies/{0}/{1}/{2}/{3}/{4}/{5}'
+                    .format(IMPACT.project,
+                            IMPACT.db, 
                             IMPACT.current_policy, 
                             IMPACT.question, 
                             PM.current_issue().id,
@@ -62,83 +63,82 @@ PM.find_available_lang = function(current_policy) {
 // sectionid, optional, is the section to jump to
 // subset, optional, is a subset of policies to show
 PM.display_policies = function(sectionid, subset) {
-    PM.ajax_get(IMPACT.wsurl + '/policies', 
-                function(policies) {
-                    var ids = [];
-                    var current_policy = policies[IMPACT.current_policy];
-                    var lang = PM.find_available_lang(current_policy);
-                    
-                    current_policy.outline_text = PM.theory_outline_text(current_policy.sections,
-                                                                         'policies',
-                                                                        subset);
-                    current_policy.description_text = current_policy.header.description[lang];
-                    var language_clj = carneades.policy_analysis.web.views.pmt.theory.convert_language(current_policy.language);
-                    current_policy.policies_text = PM.policies_text(language_clj,
-                                                                    current_policy.sections,
-                                                                    2,
-                                                                    subset,
-                                                                    function(policyid) {
-                                                                        ids.push(policyid);
-                                                                    },
-                                                                    lang);
-                    
-                    var template_variables = _.clone(current_policy);
-                    _.extend(template_variables, 
-                             PM.merge_menu_props({current_issue: $.i18n.prop('pmt_current_issue'),
-                                                  issue: PM.get_issue_text(),
-                                                  can_display: $.i18n.prop('pmt_can_display'),
-                                                  all_policies: $.i18n.prop('pmt_all_policies'),
-                                                  policies_making_in: $.i18n.prop('pmt_policies_making_in'),
-                                                  policies_making_out: $.i18n.prop('pmt_policies_making_out'),
-                                                  policies_making_undecided: $.i18n.prop('pmt_policies_making_undecided'),
-                                                  pmt_intro_pmt: $.i18n.prop('pmt_intro_pmt'),
-                                                  pmt_table_of_contents: $.i18n.prop('pmt_table_of_contents'),
-                                                  pmt_see_effects: $.i18n.prop('pmt_see_effects'),
-                                                  pmt_policies_filtering_indication: $.i18n.prop('pmt_policies_filtering_indication')
-                                                 }));
+    PM.current_policy.fetch({success: 
+                             function() {
+                                 var ids = [];
+                                 var current_policy = PM.current_policy.toJSON();
+                                 var lang = PM.find_available_lang(current_policy);
+                                 
+                                 current_policy.outline_text = PM.theory_outline_text(current_policy.sections,
+                                                                                      'policies',
+                                                                                      subset);
+                                 current_policy.description_text = current_policy.header.description[lang];
+                                 var language_clj = carneades.policy_analysis.web.views.pmt.theory.convert_language(current_policy.language);
+                                 current_policy.policies_text = PM.policies_text(language_clj,
+                                                                                 current_policy.sections,
+                                                                                 2,
+                                                                                 subset,
+                                                                                 function(policyid) {
+                                                                                     ids.push(policyid);
+                                                                                 },
+                                                                                 lang);
+                                 
+                                 var template_variables = _.clone(current_policy);
+                                 _.extend(template_variables, 
+                                          PM.merge_menu_props({current_issue: $.i18n.prop('pmt_current_issue'),
+                                                               issue: PM.get_issue_text(),
+                                                               can_display: $.i18n.prop('pmt_can_display'),
+                                                               all_policies: $.i18n.prop('pmt_all_policies'),
+                                                               policies_making_in: $.i18n.prop('pmt_policies_making_in'),
+                                                               policies_making_out: $.i18n.prop('pmt_policies_making_out'),
+                                                               policies_making_undecided: $.i18n.prop('pmt_policies_making_undecided'),
+                                                               pmt_intro_pmt: $.i18n.prop('pmt_intro_pmt'),
+                                                               pmt_table_of_contents: $.i18n.prop('pmt_table_of_contents'),
+                                                               pmt_see_effects: $.i18n.prop('pmt_see_effects'),
+                                                               pmt_policies_filtering_indication: $.i18n.prop('pmt_policies_filtering_indication')
+                                                              }));
 
-                    var current_policy_html = ich.policies(template_variables);
-                    $('#pm').html(current_policy_html.filter("#policies"));
-                    PM.activate('#policies-item');
-                    PM.attach_lang_listener();
-                    
-                    if(PM.current_issue() == undefined) {
-                        $('.policies-filtering-indication').show();
-                        $('.policies-filtering').hide();
-                    } else {
-                        $('.policies-filtering-indication').hide();
-                        $('.policies-filtering').show();
-                    }
-                    
-                    _.each(ids, function(policyid) {
-                               $('#input' + policyid).click(_.bind(PM.on_select_policy, PM, policyid));
-                           });
-                    
-                    if(sectionid != undefined) {
-                        PM.scroll_to($('#' + sectionid));
-                    }
-                    
-                    $('.policy-filtering').click(PM.on_policy_filtering);
+                                 var current_policy_html = ich.policies(template_variables);
+                                 $('#pm').html(current_policy_html.filter("#policies"));
+                                 PM.activate('#policies-item');
+                                 PM.attach_lang_listener();
+                                 
+                                 if(PM.current_issue() == undefined) {
+                                     $('.policies-filtering-indication').show();
+                                     $('.policies-filtering').hide();
+                                 } else {
+                                     $('.policies-filtering-indication').hide();
+                                     $('.policies-filtering').show();
+                                 }
+                                 
+                                 _.each(ids, function(policyid) {
+                                     $('#input' + policyid).click(_.bind(PM.on_select_policy, PM, policyid));
+                                 });
+                                 
+                                 if(sectionid != undefined) {
+                                     PM.scroll_to($('#' + sectionid));
+                                 }
+                                 
+                                 $('.policy-filtering').click(PM.on_policy_filtering);
 
-                    // hack
-                    $('a:contains(argument map)').click(
-                        function() {
-                            PM.set_arguments_url('copyright');       
-                            return false;    
-                        }
-                    );
+                                 // // hack for UID
+                                 // $('a:contains(argument map)').click(
+                                 //     function() {
+                                 //         PM.set_arguments_url('copyright');       
+                                 //         return false;    
+                                 //     }
+                                 // );
 
-                },
-               PM.on_error);
+                             }
+                            });
     
-
 };
 
 PM.on_select_policy = function(id) {
     console.log('db before evaluate: ' + IMPACT.db);
     PM.busy_cursor_on();
-    PM.ajax_get(IMPACT.wsurl + '/evaluate-policy/{0}/{1}/{2}/{3}'.
-                format(IMPACT.db, IMPACT.current_policy, IMPACT.question, id),
+    PM.ajax_get(IMPACT.wsurl + '/evaluate-policy/{0}/{1}/{2}/{3}/{4}'.
+                format(IMPACT.project, IMPACT.db, IMPACT.current_policy, IMPACT.question, id),
                 function(data) {
                     PM.busy_cursor_off();
                     PM.on_evaluated_policy(data);
@@ -290,7 +290,7 @@ PM.format_sexpr = function(sexpr, language_clj, lang) {
 
 // Returns the header of the current policy
 PM.get_policy_header = function(policy_id) {
-    var global_policy = PM.policies.get(IMPACT.current_policy);
+    var global_policy = PM.current_policy.toJSON();
     var sections = global_policy.sections;
     for(var i = 0; i < sections.length; i++) {
         var subsection = sections[i].sections;
@@ -304,7 +304,7 @@ PM.get_policy_header = function(policy_id) {
 
 // Returns the all the policies ids of the current policy
 PM.get_policies_ids = function() {
-    var global_policy = PM.policies.get(IMPACT.current_policy);
+    var global_policy = PM.current_policy.toJSON();
     var sections = global_policy.sections;
     var policies = [];
     

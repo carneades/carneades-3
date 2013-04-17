@@ -15,7 +15,8 @@
   :render
   ([]
      (js/PM.ajax_get
-      (str js/IMPACT.wsurl "/aggregated-poll-results/" js/IMPACT.debate_db)
+      (str js/IMPACT.wsurl "/aggregated-poll-results/"
+           js/IMPACT.project "/" js/IMPACT.debate_db)
       (fn [results]
         (let [results (js->clj results)
               default-values (reduce (fn [m id] (assoc m id 0.0)) {} (js/PM.get_policies_ids))
