@@ -9,10 +9,15 @@
         clojure.data.json)
   (:require [carneades.database.db :as db]
             [carneades.database.argument-graph :as ag-db]
-            [carneades.database.case :as case])
+            [carneades.database.case :as case]
+            [carneades.project.admin :as project]
+            [carneades.engine.utils :as utils]
+            [clojure.java.io :as io])
   (:import java.io.File))
 
 ;; (def tmpdir (System/getProperty "java.io.tmpdir"))
+
+(def project-name (str "testproject-" (make-uuid-str)))
 
 (def dbname (str "testdb-" (make-uuid-str)))
 
@@ -22,41 +27,58 @@
 
 (defn create-tmp-db
   []
- (ag-db/create-argument-database 
-   dbname 
-   "root" 
-   "pw1" 
-   (make-metadata)))
+ (ag-db/create-argument-database
+  project-name
+  dbname 
+  "root" 
+  "pw1" 
+  (make-metadata)))
 
-(defn delete-tmp-db
+(defn add-project-data
+  [state projectconf]
+  (-> state
+      (assoc-in [:projects-data project-name] projectconf)
+      (update-in [:projects] conj project-name)))
+
+(defn create-tmp-project
   []
-  (.delete (File. (db/dbfilename dbname))))
+  (let [projectdir (str project/projects-directory utils/file-separator
+                        utils/file-separator project-name)
+        properties-pathname (str projectdir utils/file-separator "properties.clj")
+        conf "{:policy \"copyright/copyright_policies\"}"]
+    (.mkdir (io/file projectdir))
+    (spit properties-pathname conf)
+    (let [projectconf (project/load-project project-name)]
+      (prn "projectconf = " projectconf)
+      (swap! state add-project-data projectconf)
+      (prn "state=" @state))))
+
+(defn delete-tmp-project
+  [])
 
 (defn create-tmp-debatedb
   []
-  (case/create-debate-database debatedb-name "root" "pw1"))
-
-(defn delete-tmp-debatedb
-  []
-  (.delete (File. (db/dbfilename debatedb-name))))
+  (case/create-debate-database project-name debatedb-name "root" "pw1"))
 
 (defn create-debate
   []
-  (db/with-db (db/make-connection debatedb-name "root" "pw1")
+  (db/with-db (db/make-connection project-name debatedb-name "root" "pw1")
     (case/create-debate {:public false :id dbname})))
 
 (defn create-tmp-dbs
   []
+  (create-tmp-project)
   (create-tmp-db)
   (create-tmp-debatedb)
   (create-debate))
 
 (defn delete-tmp-dbs
-  []
-  (delete-tmp-db)
-  (delete-tmp-debatedb))
+  [])
 
-(defn db-fixture [x] (create-tmp-dbs) (x) (delete-tmp-dbs))
+(defn db-fixture [x]
+  (create-tmp-dbs)
+  (x)
+  (delete-tmp-dbs))
 
 (use-fixtures :once db-fixture) 
 
@@ -68,22 +90,24 @@
 (defn make-some-string [prefix]
   (str prefix "-" (gensym)))
 
-(deftest post-debate-poll
-  (binding [*debatedb-name* debatedb-name]
-    (let [poll {:mainissueatompredicate "may-publish"
-                :opinion 0.8}
-          cookieid (make-uuid-str)
-          res (post-request (str "/debate-poll/" dbname) carneades-web-service
-                            {"authorization" auth-header
-                             "cookie" (str "ring-session=" cookieid)}
-                            (json-str poll))
-          id (:id (read-json (slurp (:body res))))
-          poll (assoc poll :id id)
-          res2 (get-request (str "/debate-poll/" dbname "/" id) carneades-web-service)
-          created-poll (read-json (slurp (:body res2)))]
-      (is (= (:mainissueatompredicate poll) (:mainissueatompredicate created-poll)))
-      (is (= (:opinion poll) (:opinion created-poll))))))
+;; (deftest post-debate-poll
+;;   (binding [*debatedb-name* debatedb-name]
+;;     (let [poll {:mainissueatompredicate "may-publish"
+;;                 :opinion 0.8}
+;;           cookieid (make-uuid-str)
+;;           res (post-request (str "/debate-poll/" project-name "/" dbname) carneades-web-service
+;;                             {"authorization" auth-header
+;;                              "cookie" (str "ring-session=" cookieid)}
+;;                             (json-str poll))
+;;           id (:id (read-json (slurp (:body res))))
+;;           poll (assoc poll :id id)
+;;           res2 (get-request (str "/debate-poll/" project-name "/" dbname "/" id) carneades-web-service)
+;;           created-poll (read-json (slurp (:body res2)))]
+;;       (is (= (:mainissueatompredicate poll) (:mainissueatompredicate created-poll)))
+;;       (is (= (:opinion poll) (:opinion created-poll))))))
 
+
+;; TODO update the other tests
 ;; (deftest put-debate-poll
 ;;   (binding [*debatedb-name* debatedb-name]
 ;;     (let [poll {:mainissueatompredicate "may-publish"
