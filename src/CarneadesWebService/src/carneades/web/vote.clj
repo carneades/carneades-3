@@ -25,6 +25,7 @@
   "Finds the policies that give to the main issue the same acceptability
 as the one from the user's vote."
   [project project-properties m]
+  {:pre [(not (nil? (:casedb m)))]}
   (let [{:keys [casedb policykey qid issueid opinion]} m
         dbconn (make-connection project casedb "guest" "")]
     (with-db dbconn
