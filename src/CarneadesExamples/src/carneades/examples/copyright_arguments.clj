@@ -496,12 +496,16 @@ need to better understand the rules. [@SIIA, pp. 15-16.]"}
   (enter-arguments graph1 [a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17]))
 
 (defn -main []
-  (let [dbname "copyright"  ; (str "db-" (make-uuid))
-        db (db/make-connection dbname "root" "pw1")]
+  (let [dbname "main"
+        project "copyright"
+        db (db/make-connection project dbname "root" "pw1")]
     (ag-db/create-argument-database
-     "examples"
+     project
      dbname 
      "root" 
      "pw1" 
      (make-metadata))
     (import-from-argument-graph db copyright1 true)))
+
+;; (-main)
+
