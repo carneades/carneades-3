@@ -273,7 +273,7 @@ PM.common_post_load = function() {
     IMPACT.current_policy = PM.project.get('policies');
       
     var normalized_scheme_path = PM.normalized_theory_path(PM.project,
-                                                           PM.project.get('scheme'));
+                                                           PM.project.get('schemes'));
     PM.current_theory = new PM.Theory({theory_path: normalized_scheme_path});
     PM.current_theory.fetch();
 
