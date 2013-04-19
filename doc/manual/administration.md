@@ -25,24 +25,28 @@ The source code of the Carneades system is licensed using the [European Public L
 2. Unzip the `carneades-webapp.x.x.x.zip` [Zip](http://en.wikipedia.org/wiki/Zip_%28file_format%29) archive file using some Zip tool. This will create a directory (folder) with the following hierarchical structure
 
 	- carneades
+        * carneades-webapp.jar
+        * config
+          ** carneades.clj
 		* doc
-		* bin
+          ** manual.pdf
 		* projects
-		* config
-		* schemes
+        * README.txt
+		
 		
 You can move this directory to some other location on your file system, at any time.
 
 This creates a standard installation, with the default configuration.  
 
-To start the Carneades web application server double click on the `carneades-webapp.jar` file in your file system browser, for example the "Finder" on Mac OS X or the "Windows Explorer" on Windows PCs.
 
 ## Using the Web Application Locally 
+
+To start the Carneades web application server double click on the `carneades-webapp.jar` file in your file system browser, for example the "Finder" on Mac OS X or the "Windows Explorer" on Windows PCs.
 
 To start the server to from a command line, for local use, type
 
 ~~~
-$ java -jar bin/carneades-webapp.jar
+$ java -jar carneades-webapp.jar
 ~~~
 
 Either way, after the server starts it will open up the "home page" of the Carneades web application in your default web browser.
@@ -67,9 +71,9 @@ Depending on your operating system and how you started the server, the Carneades
 
   $ git clone git://github.com/carneades/carneades.git
 
-3. Change directory to the PolicyModellingTool subdirectory.
+3. Change directory to the CarneadesWebApp subdirectory.
 
- $ cd carneades/src/PolicyModellingTool
+ $ cd carneades/src/CarneadesWebApp
 
 4. Build the Carneades system:
 
@@ -77,7 +81,7 @@ Depending on your operating system and how you started the server, the Carneades
  
 5. Configure Carneades
 
-- Copy the file config/carneades.properties into your $HOME directory and rename it to .carneades.properties (with a dot in front). Edit it and adapt the values to your configuration.
+- Copy the file config/carneades.clj into your $HOME directory and rename it to .carneades.clj (with a dot in front). Edit it and adapt the values to your configuration.
 
 6. Starting the Carneades web application server
 
@@ -91,7 +95,7 @@ Depending on your operating system and how you started the server, the Carneades
 
 ## System Configuration
 
-You can change the configuration of the system globally, for all users with accounts on your server. Alternatively, each user can have there own configuration.
+You can change the configuration of the system globally, for all users with accounts on your server. Alternatively, each user can have their own configuration.
 
 To modify the global configuration, edit the `config/carneades.clj` file in the installation directory.  To create a personal configuration for your own user account, copy the `config/carneades.clj` file to a file named `.carneades.clj` in your home (user) directory and then edit this copy.
 
@@ -130,7 +134,7 @@ theories/
 documents/
 ~~~
 
-The `properties.clj` file defines the attributes of the project, such as its title. The properties are represented as a Clojure map in the file.  Here is the contents of an example properties.clj file:
+The `properties.clj` file defines the attributes of the project. The properties are represented as a Clojure map in the file.  Here is the contents of an example properties.clj file:
 
 ~~~{.clojure}
 {
@@ -139,15 +143,15 @@ The `properties.clj` file defines the attributes of the project, such as its tit
 }
 ~~~
 
-The `:policies` and `:schemes` properties specificy which theory to use to automatically construct arguments using the rule-based inference engine and which theory to use to interactively reconstruct arguments, respectively. 
+The `:policies` and `:schemes` properties specify which theory to use to automatically construct arguments using the rule-based inference engine and which theory to use to interactively reconstruct arguments, respectively. 
 
-Theories are represented using Clojure data structures, in Clojure files with the usual ".clj" file name extension.  In the property map, the values of the `:policies` and `:schemes` properties should be the file names of the Clojure files containing the theories, without the ".clj" file name extension.  These names are resolves relative to the "theories" directory of the project.  In the example, the `:policies` property is "copyright_policies". This refers to the theory in the "theories/copyright_policies.clj" file of the project.  A theory in another project can be referenced, by prefixing the name of the other project to the name of the theory. This is illustrated here by the `:schemes` property, which has the value "default/walton_schemes".  This references the "theories/walton_schemes.clj" file of the "default" project.  
+Theories are represented using Clojure data structures, in Clojure files with the usual ".clj" filename extension.  In the property map, the values of the `:policies` and `:schemes` properties should be the file names of the Clojure files containing the theories, without the ".clj" file name extension.  These names are resolved relative to the "theories" directory of the project.  In the example, the `:policies` property is "copyright_policies". This refers to the theory in the "theories/copyright_policies.clj" file of the project.  A theory in another project can be referenced, by prefixing the name of the other project to the name of the theory. This is illustrated here by the `:schemes` property, which has the value "default/walton_schemes".  This references the "theories/walton_schemes.clj" file of the "default" project.  
 
 The `databases/` directory stores all the database files of the project, including a database for each argument graph of the project. (A project may have than one argument graph. For example, when using the policy analysis tool, an argument graph is created for each case.) 
 
-The `theories/` directory contains the Clojure source files of the theories of the project. Theories are rule-based models. They can be used to many purposes, including modeling argumentation schemes, policies, legislation and regulations.
+The `theories/` directory contains the Clojure source files of the theories of the project. Theories are rule-based models. They can be used for many purposes, including modeling argumentation schemes, policies, legislation and regulations.
 
-Finally, the `documents/` directory can be used to store copies of source documents used when reconstructing arguments, documentary evidence, or any other project files. These files can be referenced and linked to in the descriptions of statements and nodes of argument graphs using relative URLs.  For example, the URL "file://src/foo.pdf" would be resolved to the file `documents/src/foo.pdf` of the project.
+Finally, the `documents/` directory can be used to store copies of source documents, documentary evidence, or any other project files. These files can be referenced and linked to in the descriptions of statements and nodes of argument graphs using relative URLs.  For example, the URL "file://src/foo.pdf" would be resolved to the file `documents/src/foo.pdf` of the project.
 
 ## Listing Projects
 
