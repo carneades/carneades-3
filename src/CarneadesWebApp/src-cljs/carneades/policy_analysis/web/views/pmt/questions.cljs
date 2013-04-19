@@ -482,7 +482,7 @@ Returns the answers indexed by question's id."
                                                          questions)
                                                  :project
                                                  js/IMPACT.project
-                                                 :policy js/IMPACT.current_policy
+                                                 :policies js/IMPACT.current_policy
                                                  :deleted deleted
                                                  :db js/IMPACT.db}})
                         (fn [data]

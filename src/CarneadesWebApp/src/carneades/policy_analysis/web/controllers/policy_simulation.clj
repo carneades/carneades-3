@@ -35,11 +35,11 @@
   (debug "======================================== request handler! ==============================")
   (let [{:keys [question project]} (:request json)
         ;; _ (pprint "project=") _ (pprint project)
-        policy (project/load-theory (:id project) (:policy project))
+        policy (project/load-theory (:id project) (:policies project))
         ;; _ (pprint "policy=") _ (pprint policy)
         session (assoc session
                   :query (get-main-issue policy (symbol question))
-                  :policy policy)
+                  :policies policy)
         session (start-engine session)]
     {:session session
      :body (json-str {:questions (:last-questions session)})}))
@@ -57,7 +57,7 @@
   (debug "======================================== answers handler! ==============================")
   (debug json)
   (let [{:keys [last-questions dialog project]} session
-        policy (:policy session)
+        policy (:policies session)
         questions-to-answers (recons/reconstruct-answers (:answers json)
                                                          dialog
                                                          policy)
@@ -71,7 +71,7 @@
   [json session request]
   (let [jsondata (json :modifiable-facts)
         db (jsondata :db)
-        policy (jsondata :policy)
+        policy (jsondata :policies)
         project (jsondata :project)]
     {:body (json-str (get-questions-for-answers-modification
                       project
@@ -91,7 +91,7 @@
         facts (:facts data)
         db (:db data)
         project (:project data)
-        theory (project/load-theory project (:policy data))
+        theory (project/load-theory project (:policies data))
         facts (recons/reconstruct-statements facts)
         to-modify (mapcat (fn [q] (recons/reconstruct-answer q theory (:values q))) facts)
         [username password] (get-username-and-password request)]
