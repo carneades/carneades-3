@@ -569,7 +569,7 @@
                                       [:projects-data
                                        project
                                        :properties
-                                       :scheme])))})
+                                       :schemes])))})
   
   ;; (GET "/scheme/:id" [id]  ;; return the scheme with the given id
   ;;      {:body       (get schemes-by-id (symbol id))})
