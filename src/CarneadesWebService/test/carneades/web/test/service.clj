@@ -45,7 +45,7 @@
   (let [projectdir (str project/projects-directory utils/file-separator
                         utils/file-separator project-name)
         properties-pathname (str projectdir utils/file-separator "properties.clj")
-        conf "{:policy \"copyright/copyright_policies\"}"]
+        conf "{:policies \"copyright/copyright_policies\"}"]
     (.mkdir (io/file projectdir))
     (spit properties-pathname conf)
     (let [projectconf (project/load-project project-name)]

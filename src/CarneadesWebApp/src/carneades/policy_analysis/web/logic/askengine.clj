@@ -14,20 +14,20 @@
 (defn get-remaining-questions
   [ag session]
   (prn "[get-remaining-questions]")
-  (let [{:keys [askables dialog last-id policy lang]} session
+  (let [{:keys [askables dialog last-id policies lang]} session
         statements (filter (fn [stmt]
                              (and
                               (askable? askables stmt)
-                              (empty? (get-answers dialog policy stmt))))
+                              (empty? (get-answers dialog policies stmt))))
                            (atomic-statements ag))]
     ;; (prn "statements =")
     ;; (prn statements)
     ;; (prn "dialog =")
     ;; (pprint dialog)
     (reduce (fn [[questions id] stmt]
-              (let [[new-questions id] (get-structured-questions stmt lang id policy)
+              (let [[new-questions id] (get-structured-questions stmt lang id policies)
                     new-questions (filter (fn [q]
-                                            (nil? (get-answers dialog policy (:statement q))))
+                                            (nil? (get-answers dialog policies (:statement q))))
                                           new-questions)]
                 ;; we use a set to avoid duplicate questions
                 [(merge questions (apply hash-map
@@ -63,7 +63,7 @@
         ;; rejects answers with a weight of 0.0
         rejected-statements (filter (fn [s] ((answers s) 0.0)) answers-statements)
         ag (reject ag rejected-statements)
-        ag (enter-language ag (-> session :policy :language))
+        ag (enter-language ag (-> session :policies :language))
         ag (evaluate aspic-grounded ag)
         project (:project session)
         dbname (store-ag project ag)
@@ -90,12 +90,12 @@
 
 (defn- ask-user
   [session]
-  {:pre [(not (nil? (:policy session)))]}
-  (let [{:keys [last-question lang last-id policy]} session
+  {:pre [(not (nil? (:policies session)))]}
+  (let [{:keys [last-question lang last-id policies]} session
         [last-questions last-id] (get-structured-questions last-question
                                                            lang
                                                            last-id
-                                                           policy)
+                                                           policies)
         dialog (add-questions (:dialog session) last-questions)]
     (assoc session
       :last-questions last-questions
@@ -118,7 +118,7 @@
                     :substitutions substitutions
                     :last-question lastquestion
                     :questions questions)]
-      (if-let [answers (get-answers (:dialog session) (:policy session) lastquestion)]
+      (if-let [answers (get-answers (:dialog session) (:policies session) lastquestion)]
         (continue-engine session answers)
         (ask-user session)))
     ;; else no more question == construction finished
@@ -137,9 +137,9 @@
 
 (defn start-engine
   ([session ag]
-     {:pre [(not (nil? (:policy session)))]}
+     {:pre [(not (nil? (:policies session)))]}
      (info "Starting the query process")
-     (let [policy (:policy session)
+     (let [policy (:policies session)
            query (:query session)
            [argument-from-user-generator questions send-answer]
            (make-argument-from-user-generator (fn [p] (askable? policy p)))
@@ -169,5 +169,5 @@
   [session]
   {:pre [(not (nil? session))]}
   (info "Sending answers back to the engine")
-  (let [answers (get-answers (:dialog session) (:policy session) (:last-question session))]
+  (let [answers (get-answers (:dialog session) (:policies session) (:last-question session))]
     (continue-engine session answers)))

@@ -30,7 +30,7 @@ as the one from the user's vote."
         dbconn (make-connection project casedb "guest" "")]
     (with-db dbconn
       (let [ag (export-to-argument-graph dbconn)
-            policy (project/load-theory project (:policy project-properties))]
+            policy (project/load-theory project (:policies project-properties))]
         (find-policies ag policy (symbol qid) (symbol issueid)
                        (condp = opinion
                          1 :in

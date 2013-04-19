@@ -140,6 +140,7 @@ widget is still used. New Types of :string maps to :widgets 'text."
 
 (defn get-first-question
   [id stmt lang policy default-fn]
+  {:pre [(not (nil? policy))]}
   (let [pred (literal-predicate stmt)
         predicate ((:language policy) pred)
         text (get-question-text stmt policy lang)

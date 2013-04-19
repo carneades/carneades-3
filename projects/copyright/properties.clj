@@ -1,4 +1,4 @@
 {
- :policy "copyright_policies"
+ :policies "copyright_policies"
  :scheme  "default/walton_schemes"
 }

@@ -621,7 +621,7 @@
            (let [ag (export-to-argument-graph dbconn)
                  policy (project/load-theory
                          project
-                         (get-in (deref state) [:projects-data project :properties :policy]))
+                         (get-in (deref state) [:projects-data project :properties :policies]))
                  ag (evaluate-policy (symbol qid)
                                      (symbol policyid)
                                      policy
@@ -646,7 +646,7 @@
            (let [ag (export-to-argument-graph dbconn)
                  policy (project/load-theory
                          project
-                         (get-in (deref state) [:projects-data project :properties :policy]))
+                         (get-in (deref state) [:projects-data project :properties :policies]))
                  policies (find-policies ag policy (symbol qid) (symbol issueid)
                                          (condp = acceptability
                                            "in" :in
