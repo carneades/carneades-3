@@ -93,66 +93,61 @@ Depending on your operating system and how you started the server, the Carneades
 
 You can change the configuration of the system globally, for all users with accounts on your server. Alternatively, each user can have there own configuration.
 
-To modify the global configuration, edit the `config/carneades.properties` file in the installation directory.  To create a personal configuration for your own user account, copy the `config/carneades.properties` file to a file named `.carneades.properties` in your home (user) directory and then edit this copy.
+To modify the global configuration, edit the `config/carneades.clj` file in the installation directory.  To create a personal configuration for your own user account, copy the `config/carneades.clj` file to a file named `.carneades.clj` in your home (user) directory and then edit this copy.
 
-If a required property is not defined in the user's `.carneades.properties` file, then the value of the property defined in the `config/carneades.properties` file in the installation directory will be used.
+If a required property is not defined in the user's `.carneades.clj` file, then the value of the property defined in the `config/carneades.clj` file in the installation directory will be used.
 
-The configuration files files the format of a Java [".properties"](http://en.wikipedia.org/wiki/.properties) file.
+The configure files are Clojure source files, with the properties represented as a Clojure map.
 
-The following properties can be modified in the  `config/carneades.properties` file or overriden in `.carneades.properties` in your home directory. **Warning:** Be careful not to modify or delete any of the other propertie in the `config/carneades.properties` file. The properties which should not be modified are clearly marked. 
+The following properties can be modified in the  `config/carneades.clj` file or overriden in `.carneades.clj` in your home directory. **Warning:** Be careful not to modify or delete any of the other properties in the `config/carneades.clj` file. The properties which should not be modified are clearly marked. 
 
-`argumentation-schemes-file` 
+`:schemes` 
 
-:   The full path name of the file containing the argumentation schemes to be used in projects by default. The default may be overriden on a project by project basis. The argumentation schemes are defined using the scheme language described in [Modeling Policies and Argumentation Schemes](#modeling-policies-and-argumentation-schemes) chapter of this manual.
+: The full path name of the Clojure file containing the theory with the argumentation schemes to be used in projects by default. The default may be overriden on a project by project basis. (See the "Project File Structure" section of this manual for further information.) The argumentation schemes are defined using the scheme language described in [Modeling Policies and Argumentation Schemes](#modeling-policies-and-argumentation-schemes) chapter of this manual.
 
 	Example: 
 
-	`argumentation-schemes-file=/usr/local/carneades/schemes/walton-schemes.clj`
+	`:schemes "/usr/local/carneades/schemes/walton_schemes.clj"
 
-`projects-directory` 
+`:projects` 
 
 :   The full path name of the directory used to store Carneades projects.  The default directory is the `projects` directory of the installation directory.
 
 	Example:
 
-	`projects-directory=/usr/local/carneades/projects` 
+	`:projects "/usr/local/carneades/projects" 
 
 ## Managing Projects
 
 ## Project File Structure
 
-Carneades projects are stored in a directory with the following structure:
+Carneades projects are each stored in a directory with the following structure:
 
 ~~~
-project.properties
-cases/
-db/
-policies/
-schemes/
+properties.clj
+databases/
+theories/
 documents/
 ~~~
 
-The `project.properties` file defines the attributes of the project, such as its title. It has the format of a Java [".properties"](http://en.wikipedia.org/wiki/.properties) file.
+The `properties.clj` file defines the attributes of the project, such as its title. The properties are represented as a Clojure map in the file.  Here is the contents of an example properties.clj file:
 
-The `cases/` directory stores the database files of the argument graph of the cases created by users when simulating the effects of the policies, when using the [opinion formation and polling tool](#formulating-polling-and-comparing-opinions). 
-
-The `db/` directory contains the database files of the main argument graph of the project, containing the reconstructions of the argumetns in the source documents.
-
-The `schemes/` directory contains models of argumentation schemes. The file with the model of the schemes currently used by the project is specified by the `argumentation-schemes-file` property in the `project.properties` file. The value of the property may be a relative pathname and will resolved relative to the `schemes` directory of the project. For example, suppose the `project.properties` file contains the line:
-
-~~~
-argumentation-schemes-file=walton.clj
+~~~{.clojure}
+{
+ :policies "copyright_policies"
+ :schemes  "default/walton_schemes"
+}
 ~~~
 
-This will be resolved to the `schemes/walton.clj` file in the project directory.
+The `:policies` and `:schemes` properties specificy which theory to use to automatically construct arguments using the rule-based inference engine and which theory to use to interactively reconstruct arguments, respectively. 
 
-If no `argumentation-schemes-file` property is defined for the project the value of the property in the user's `.carneades.properties` file, in his or her home directory will be used, if it is defined there. Otherwise the value of the property in the `config/carneades.properties` in the installation directory will be used.
+Theories are represented using Clojure data structures, in Clojure files with the usual ".clj" file name extension.  In the property map, the values of the `:policies` and `:schemes` properties should be the file names of the Clojure files containing the theories, without the ".clj" file name extension.  These names are resolves relative to the "theories" directory of the project.  In the example, the `:policies` property is "copyright_policies". This refers to the theory in the "theories/copyright_policies.clj" file of the project.  A theory in another project can be referenced, by prefixing the name of the other project to the name of the theory. This is illustrated here by the `:schemes` property, which has the value "default/walton_schemes".  This references the "theories/walton_schemes.clj" file of the "default" project.  
 
-This general pattern applies to all properties. The value in the `project.properties` file overrides the value in the user's Carneades configuration file, which in turn overrides the default values in the `config` directory of the installation directory.
+The `databases/` directory stores all the database files of the project, including a database for each argument graph of the project. (A project may have than one argument graph. For example, when using the policy analysis tool, an argument graph is created for each case.) 
 
-Providing a directory for schemes allows multiple sets of argumentation schemes to be stored together with the project. But only set of schemes is active at any time.
+The `theories/` directory contains the Clojure source files of the theories of the project. Theories are rule-based models. They can be used to many purposes, including modeling argumentation schemes, policies, legislation and regulations.
 
-Finally, the `documents/` directory can be used to store copies of source documents used when reconstructing arguments, or any other projects files. These files can be referenced and linked to in the descriptions of statements and nodes using relative URLs.  For example, the URL "src/foo.pdf" would be resolved to the file `documents/src/foo.pdf` in the `documents` directory of the project.
+Finally, the `documents/` directory can be used to store copies of source documents used when reconstructing arguments, documentary evidence, or any other project files. These files can be referenced and linked to in the descriptions of statements and nodes of argument graphs using relative URLs.  For example, the URL "file://src/foo.pdf" would be resolved to the file `documents/src/foo.pdf` of the project.
 
 ## Listing Projects
 
