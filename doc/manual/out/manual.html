@@ -1325,41 +1325,39 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>(<em>Note: Change &quot;policymodellingtool&quot; to &quot;carneades&quot; in these URLs.</em>)</p>
 <h2 id="system-configuration"><a href="#system-configuration"><span class="header-section-number">9.8</span> System Configuration</a></h2>
 <p>You can change the configuration of the system globally, for all users with accounts on your server. Alternatively, each user can have there own configuration.</p>
-<p>To modify the global configuration, edit the <code>config/carneades.properties</code> file in the installation directory. To create a personal configuration for your own user account, copy the <code>config/carneades.properties</code> file to a file named <code>.carneades.properties</code> in your home (user) directory and then edit this copy.</p>
-<p>If a required property is not defined in the user's <code>.carneades.properties</code> file, then the value of the property defined in the <code>config/carneades.properties</code> file in the installation directory will be used.</p>
-<p>The configuration files files the format of a Java <a href="http://en.wikipedia.org/wiki/.properties">&quot;.properties&quot;</a> file.</p>
-<p>The following properties can be modified in the <code>config/carneades.properties</code> file or overriden in <code>.carneades.properties</code> in your home directory. <strong>Warning:</strong> Be careful not to modify or delete any of the other propertie in the <code>config/carneades.properties</code> file. The properties which should not be modified are clearly marked.</p>
+<p>To modify the global configuration, edit the <code>config/carneades.clj</code> file in the installation directory. To create a personal configuration for your own user account, copy the <code>config/carneades.clj</code> file to a file named <code>.carneades.clj</code> in your home (user) directory and then edit this copy.</p>
+<p>If a required property is not defined in the user's <code>.carneades.clj</code> file, then the value of the property defined in the <code>config/carneades.clj</code> file in the installation directory will be used.</p>
+<p>The configure files are Clojure source files, with the properties represented as a Clojure map.</p>
+<p>The following properties can be modified in the <code>config/carneades.clj</code> file or overriden in <code>.carneades.clj</code> in your home directory. <strong>Warning:</strong> Be careful not to modify or delete any of the other properties in the <code>config/carneades.clj</code> file. The properties which should not be modified are clearly marked.</p>
+<p><code>:schemes</code></p>
+<p>: The full path name of the Clojure file containing the theory with the argumentation schemes to be used in projects by default. The default may be overriden on a project by project basis. (See the &quot;Project File Structure&quot; section of this manual for further information.) The argumentation schemes are defined using the scheme language described in <a href="#modeling-policies-and-argumentation-schemes">Modeling Policies and Argumentation Schemes</a> chapter of this manual.</p>
+<pre><code>Example: 
+
+`:schemes &quot;/usr/local/carneades/schemes/walton_schemes.clj&quot;</code></pre>
 <dl>
-<dt><code>argumentation-schemes-file</code></dt>
-<dd><p>The full path name of the file containing the argumentation schemes to be used in projects by default. The default may be overriden on a project by project basis. The argumentation schemes are defined using the scheme language described in <a href="#modeling-policies-and-argumentation-schemes">Modeling Policies and Argumentation Schemes</a> chapter of this manual.</p>
-<p>Example:</p>
-<p><code>argumentation-schemes-file=/usr/local/carneades/schemes/walton-schemes.clj</code></p>
-</dd>
-<dt><code>projects-directory</code></dt>
+<dt><code>:projects</code></dt>
 <dd><p>The full path name of the directory used to store Carneades projects. The default directory is the <code>projects</code> directory of the installation directory.</p>
 <p>Example:</p>
-<p><code>projects-directory=/usr/local/carneades/projects</code></p>
+<p>`:projects &quot;/usr/local/carneades/projects&quot;</p>
 </dd>
 </dl>
 <h2 id="managing-projects"><a href="#managing-projects"><span class="header-section-number">9.9</span> Managing Projects</a></h2>
 <h2 id="project-file-structure"><a href="#project-file-structure"><span class="header-section-number">9.10</span> Project File Structure</a></h2>
-<p>Carneades projects are stored in a directory with the following structure:</p>
-<pre><code>project.properties
-cases/
-db/
-policies/
-schemes/
+<p>Carneades projects are each stored in a directory with the following structure:</p>
+<pre><code>properties.clj
+databases/
+theories/
 documents/</code></pre>
-<p>The <code>project.properties</code> file defines the attributes of the project, such as its title. It has the format of a Java <a href="http://en.wikipedia.org/wiki/.properties">&quot;.properties&quot;</a> file.</p>
-<p>The <code>cases/</code> directory stores the database files of the argument graph of the cases created by users when simulating the effects of the policies, when using the <a href="#formulating-polling-and-comparing-opinions">opinion formation and polling tool</a>.</p>
-<p>The <code>db/</code> directory contains the database files of the main argument graph of the project, containing the reconstructions of the argumetns in the source documents.</p>
-<p>The <code>schemes/</code> directory contains models of argumentation schemes. The file with the model of the schemes currently used by the project is specified by the <code>argumentation-schemes-file</code> property in the <code>project.properties</code> file. The value of the property may be a relative pathname and will resolved relative to the <code>schemes</code> directory of the project. For example, suppose the <code>project.properties</code> file contains the line:</p>
-<pre><code>argumentation-schemes-file=walton.clj</code></pre>
-<p>This will be resolved to the <code>schemes/walton.clj</code> file in the project directory.</p>
-<p>If no <code>argumentation-schemes-file</code> property is defined for the project the value of the property in the user's <code>.carneades.properties</code> file, in his or her home directory will be used, if it is defined there. Otherwise the value of the property in the <code>config/carneades.properties</code> in the installation directory will be used.</p>
-<p>This general pattern applies to all properties. The value in the <code>project.properties</code> file overrides the value in the user's Carneades configuration file, which in turn overrides the default values in the <code>config</code> directory of the installation directory.</p>
-<p>Providing a directory for schemes allows multiple sets of argumentation schemes to be stored together with the project. But only set of schemes is active at any time.</p>
-<p>Finally, the <code>documents/</code> directory can be used to store copies of source documents used when reconstructing arguments, or any other projects files. These files can be referenced and linked to in the descriptions of statements and nodes using relative URLs. For example, the URL &quot;src/foo.pdf&quot; would be resolved to the file <code>documents/src/foo.pdf</code> in the <code>documents</code> directory of the project.</p>
+<p>The <code>properties.clj</code> file defines the attributes of the project, such as its title. The properties are represented as a Clojure map in the file. Here is the contents of an example properties.clj file:</p>
+<pre class="sourceCode clojure"><code class="sourceCode clojure">{
+ <span class="kw">:policies</span> <span class="st">&quot;copyright_policies&quot;</span>
+ <span class="kw">:schemes</span>  <span class="st">&quot;default/walton_schemes&quot;</span>
+}</code></pre>
+<p>The <code>:policies</code> and <code>:schemes</code> properties specificy which theory to use to automatically construct arguments using the rule-based inference engine and which theory to use to interactively reconstruct arguments, respectively.</p>
+<p>Theories are represented using Clojure data structures, in Clojure files with the usual &quot;.clj&quot; file name extension. In the property map, the values of the <code>:policies</code> and <code>:schemes</code> properties should be the file names of the Clojure files containing the theories, without the &quot;.clj&quot; file name extension. These names are resolves relative to the &quot;theories&quot; directory of the project. In the example, the <code>:policies</code> property is &quot;copyright_policies&quot;. This refers to the theory in the &quot;theories/copyright_policies.clj&quot; file of the project. A theory in another project can be referenced, by prefixing the name of the other project to the name of the theory. This is illustrated here by the <code>:schemes</code> property, which has the value &quot;default/walton_schemes&quot;. This references the &quot;theories/walton_schemes.clj&quot; file of the &quot;default&quot; project.</p>
+<p>The <code>databases/</code> directory stores all the database files of the project, including a database for each argument graph of the project. (A project may have than one argument graph. For example, when using the policy analysis tool, an argument graph is created for each case.)</p>
+<p>The <code>theories/</code> directory contains the Clojure source files of the theories of the project. Theories are rule-based models. They can be used to many purposes, including modeling argumentation schemes, policies, legislation and regulations.</p>
+<p>Finally, the <code>documents/</code> directory can be used to store copies of source documents used when reconstructing arguments, documentary evidence, or any other project files. These files can be referenced and linked to in the descriptions of statements and nodes of argument graphs using relative URLs. For example, the URL &quot;file://src/foo.pdf&quot; would be resolved to the file <code>documents/src/foo.pdf</code> of the project.</p>
 <h2 id="listing-projects"><a href="#listing-projects"><span class="header-section-number">9.11</span> Listing Projects</a></h2>
 <h2 id="creating-a-new-project"><a href="#creating-a-new-project"><span class="header-section-number">9.12</span> Creating a New Project</a></h2>
 <h2 id="renaming-projects-and-editing-project-metadata"><a href="#renaming-projects-and-editing-project-metadata"><span class="header-section-number">9.13</span> Renaming Projects and Editing Project Metadata</a></h2>
@@ -1698,7 +1696,7 @@ premises:
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p><http://en.wikipedia.org/wiki/BibTeX><a href="#fnref1">↩</a></p></li>
+<li id="fn1"><p><a href="http://en.wikipedia.org/wiki/BibTeX">Http://en.wikipedia.org/wiki/BibTeX</a>.<a href="#fnref1">↩</a></p></li>
 <li id="fn2"><p>By counterarguments here we mean <em>rebuttals</em> (arguments with the opposite conclusion) and <em>undercutters</em> (arguments which deny the applicability of this argument). Arguments which attack a premise of this argument (&quot;undermining&quot; arguments), are not listed. To navigate to undermining arguments, click on the premise of the argument of interest. The undermining arguments will be listed on its statement page.<a href="#fnref2">↩</a></p></li>
 <li id="fn3"><p>A state-of-the-art computational model of argument is used to compute the acceptability of statements. This model maps argument graphs to a so-called &quot;Dung abstract argumentation framework&quot; <span class="citation">(Dung 1995)</span>, using a method based on the ASPIC+ model of structured argument <span class="citation">(Prakken 2010)</span>, but adapted to preserve the features of the Carneades model of argument graphs <span class="citation">(Gordon, Prakken, and Walton 2007)</span>. This ASPIC+ version of Carneades can handle cyclic argument graphs, removing the main limitation of the original version of Carneades. Several semantics are available for Dung Abtract Argumentation Frameworks. Carneades uses grounded semantics, which is the semantics most cautious (skeptical) semantics about accepting claims.<a href="#fnref3">↩</a></p></li>
 <li id="fn4"><p>Depth-first.<a href="#fnref4">↩</a></p></li>
