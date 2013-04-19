@@ -1,3 +1,4 @@
+
 // Copyright (c) 2012 Fraunhofer Gesellschaft
 // Licensed under the EUPL V.1.1
 
@@ -269,7 +270,7 @@ PM.common_post_load = function() {
 
     PM.project.fetch({async:false});
 
-    IMPACT.current_policy = PM.project.get('policy');
+    IMPACT.current_policy = PM.project.get('policies');
       
     var normalized_scheme_path = PM.normalized_theory_path(PM.project,
                                                            PM.project.get('scheme'));
@@ -280,7 +281,7 @@ PM.common_post_load = function() {
     PM.schemes.fetch();
 
     var normalized_policy_path = PM.normalized_theory_path(PM.project,
-                                                           PM.project.get('policy'));
+                                                           PM.project.get('policies'));
     PM.current_policy = new PM.Theory({theory_path: normalized_policy_path});
     PM.current_policy.fetch({async: false});
 
