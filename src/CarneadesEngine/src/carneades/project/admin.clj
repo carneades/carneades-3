@@ -68,7 +68,7 @@ can be of the form \"theory\" or \"project/theory\". The former refers
 (defn- load-policy
   "Loads the policy of a project"
   [project project-properties]
-  (when-let [policy (:policy project-properties)]
+  (when-let [policy (:policies project-properties)]
     (load-theory project policy)))
 
 (defn load-project
@@ -76,6 +76,6 @@ can be of the form \"theory\" or \"project/theory\". The former refers
 representing the project."
   [project]
   (let [project-properties (load-project-properties project)
-        policy-properties (:policy project-properties)
+        policy-properties (:policies project-properties)
         policy (load-policy project project-properties)]
     {:properties project-properties}))
