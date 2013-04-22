@@ -3,7 +3,7 @@
 
 (defproject carneades-webapp/carneades-webapp "1.0.0-SNAPSHOT"
   :description "The Carneades Web Application"
-  :dependencies [[org.clojure/clojure "1.4.0"]
+  :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/data.json "0.1.1"]
                  [compojure "1.0.4" :exclusion [clojure]]
                  [hiccup "0.3.6"]
