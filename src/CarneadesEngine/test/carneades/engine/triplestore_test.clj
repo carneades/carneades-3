@@ -2,7 +2,11 @@
   (:use carneades.engine.triplestore
         clojure.test
         clojure.pprint)
-  (:require [carneades.engine.argument-generator :as generator]))
+  (:require [carneades.engine.argument-generator :as generator]
+            [carneades.engine.shell :as shell]
+            [carneades.engine.caes :as caes]
+            [carneades.engine.argument-graph :as ag]
+            [carneades.maps.lacij :as lacij]))
 
 (deftest test-generate-arguments-from-triplestore-grounded
   (let [url "http://dbpedia.org/sparql"
@@ -21,9 +25,15 @@
         subs '{?a "a" ?b "b"}
         triplestore-generator (generate-arguments-from-triplestore url)
         responses (generator/generate triplestore-generator goal subs)]
-    (pprint responses)
     (is (not (empty? responses)))
     (is (>= (count responses) 10))
     (is (not= (:substitutions (first responses)) subs))))
 
-
+(deftest test-generate-arguments-from-triplestore-with-engine
+  (let [generators [(generate-arguments-from-triplestore "http://dbpedia.org/sparql")]
+        graph (shell/argue (shell/make-engine 50 [] generators)
+                           caes/caes
+                           '(dbpedia/Carneades rdf/type ?x))]
+    ;; (pprint graph)
+    ;; (lacij/export graph "/tmp/carneades.svg")
+    (is (>= (count (ag/arguments graph)) 10))))
