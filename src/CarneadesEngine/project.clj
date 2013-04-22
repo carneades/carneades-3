@@ -12,6 +12,7 @@
                  [com.h2database/h2 "1.3.160"]
                  [org.clojure/java.jdbc "0.1.1"]
                  [org.clojure/tools.trace "0.7.1"]
+                 [edu.ucdenver.ccp/kr-sesame-core "1.4.5"]
                  [lacij "0.7.1"]]
   :aot [carneades.engine.argument-evaluation]
   :description "Carneades is an argument mapping application, with a graphical \nuser interface, and a software library for building applications supporting \nvarious argumentation tasks. This is the software library (the engine)."
