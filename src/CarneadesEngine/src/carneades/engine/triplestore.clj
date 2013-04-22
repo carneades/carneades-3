@@ -1,7 +1,7 @@
 ;;; Copyright (c) 2013 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Argument generator with arguments generated from a triplestore."}
+(ns ^{:doc "Generation of arguments from a triplestore."}
   carneades.engine.triplestore
   (:require [clojure.walk :as w]
             edu.ucdenver.ccp.kr.sesame.kb
@@ -92,7 +92,7 @@ Do nothing if v is not a variable."
   (w/postwalk variable->sparqlvariable stmt))
 
 (defn sparqlvariable->variable
-  "Converts a Clojure/SPARQL variable to a Carneade variable"
+  "Converts a Clojure/SPARQL variable to a Carneades variable"
   [v]
   (if (and (symbol? v) (= (.charAt (str v) 1) \/))
     (symbol (str "?" (subs (str v) 2)))
