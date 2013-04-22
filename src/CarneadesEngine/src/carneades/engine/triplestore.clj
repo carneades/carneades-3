@@ -138,6 +138,8 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
      (let [kbconn (make-conn endpoint-url prefixes)]
        (reify generator/ArgumentGenerator
          (generate [this goal subs]
-           (responses-from-goal kbconn goal subs)))))
+           (prn "goal=" goal)
+           (when (stmt/literal-pos? goal)
+             (responses-from-goal kbconn goal subs))))))
   ([endpoint-url]
      (generate-arguments-from-triplestore endpoint-url [])))
