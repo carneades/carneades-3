@@ -6,10 +6,10 @@
         carneades.engine.argument-graph
         carneades.engine.argument-evaluation
         carneades.engine.caes
-        lacij.graph.svg.graph
-        lacij.graph.core
+        lacij.model.graph
+        lacij.edit.graph
         lacij.layouts.layout
-        lacij.view.core
+        lacij.view.graphview
         lacij.opt.annealing
         carneades.engine.statement
         [carneades.maps lacij-params format-statement subset-ag])
@@ -57,8 +57,8 @@
                            {:label "" :x 0 :y 0 :shape :rect})
         svgmap (add-node-kv svgmap id stmt-params)
         svgmap (add-label-kv svgmap id
-                          (trunk-line stmtstr)
-                          (:stmtlabel-params default-params))]
+                             (trunk-line stmtstr)
+                             (:stmtlabel-params default-params))]
     svgmap))
 
 (defn add-arg-decorator
@@ -73,13 +73,15 @@
   (let [stmtconclusion (map->statement ((:statement-nodes ag) (:conclusion arg)))]
    (= 'undercut (literal-predicate stmtconclusion))))
 
+(defn scheme->str
+  [scheme]
+  (cond (nil? scheme) ""
+        (string? scheme) scheme
+        :else (str "<" (term-functor scheme) ">")))
+
 (defn add-undercutter-argument-node
   [svgmap arg ag]
-  {:pre [(not (string? (:scheme arg)))]}
-  (let [scheme (:scheme arg)
-        label (if scheme
-                (str "<" (term-functor scheme) ">")
-                "")]
+  (let [label (scheme->str (:scheme arg))]
    (add-node-kv svgmap (gen-arg-id arg) (merge {:label label} undercutter-params))))
 
 (defn add-normal-argument-node
@@ -183,7 +185,7 @@
   (let [width (get options :width 1280)
         height (get options :height 1024)
         layouttype (get options :layout :hierarchical)
-        svgmap (create-graph :width width :height height)
+        svgmap (graph :width width :height height)
         svgmap (add-markers svgmap)
         ag (apply subset-ag ag options)
         svgmap (add-entities svgmap ag stmt-str)
@@ -208,11 +210,5 @@
    Options are :treeify, :full-duplication, :depth,
    :layout and all options supported by the layout"
   [ag stmt-str options]
-  (let [map (export-ag-helper ag stmt-str options)
-        os (ByteArrayOutputStream.)
-        v (view map)]
-    (dom/spit-xml os v :indent "yes")
-    (slurp
-     (InputStreamReader.
-      (ByteArrayInputStream. (.toByteArray os))
-      "UTF8"))))
+  (let [map (export-ag-helper ag stmt-str options)]
+    (dom/spit-str (:xmldoc map) :indent "yes")))

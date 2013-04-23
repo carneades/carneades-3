@@ -13,8 +13,8 @@
 
   (decorate
     [this view context]
-    (let [width (node-width view)
-          height (node-height view)
+    (let [width (:width view)
+          height (:height view)
           margin 3]
       (-> (svg/path [:M [(double (/ width 2)) 0]
                      :L [(double (/ width 2)) height]
@@ -29,8 +29,8 @@
 
   (decorate
     [this view context]
-    (let [width (node-width view)
-          height (node-height view)
+    (let [width (:width view)
+          height (:height view)
           margin 3]
       (-> (svg/line 0 (double (/ height 2)) width (double (/ height 2)))
           (svg/style :stroke-width 1 :stroke "black")))))
