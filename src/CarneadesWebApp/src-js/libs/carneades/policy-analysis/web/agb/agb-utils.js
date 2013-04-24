@@ -23,5 +23,5 @@ AGB.escape_html = function(text)
 
 AGB.is_url = function(url)
 {
-    return /^(http|https|ftp)/.test(url);
+    return /^(http|https|ftp|file)/.test(url);
 };
