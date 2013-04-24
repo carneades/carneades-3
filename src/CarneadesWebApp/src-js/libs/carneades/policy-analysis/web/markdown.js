@@ -8,13 +8,23 @@ PM.markdown_to_html = function(md_text) {
         return "";
     }
     var converter = Markdown.getSanitizingConverter(); 
+
     converter.hooks.chain("preConversion", PM.citation_to_url); 
+    converter.hooks.chain("preConversion", PM.localfile_to_url); 
     
     var html = converter.makeHtml(md_text);
     return html;  
 };
 
 AGB.markdown_to_html = PM.markdown_to_html;
+
+// Converts text in the form of file://project/doc.pdf to
+// /carneadesws/documents/project/doc.pdf
+PM.localfile_to_url = function (text) {
+    return text.replace(/file:\/\/(\w+)\/(\w+)/g, function(match, project, document) {
+        return IMPACT.wsurl + '/documents/' + project + '/' + document;
+    });
+};
 
 /// Preconvertion hook for the Markdown converter, converting
 /// citation of the type [@ref] or [@ref, p.13] to HTML links.
@@ -34,14 +44,15 @@ PM.citation_to_url = function(text) {
         
         if(metadata.length == 1) {
             if(metadata[0].get('source')) {
-                var url = IMPACT.wsurl + '/documents/' 
-                    + IMPACT.project + '/' 
-                    + metadata[0].get('source');
+                var url = metadata[0].get('source');
                 return '<a href="' + url + '" >' + match + '</a>';
             }
             
             if(metadata[0].get('identifier') &&
-               metadata[0].get('identifier').indexOf('http') == 0) {
+               (metadata[0].get('identifier').indexOf('http://') == 0
+                || metadata[0].get('identifier').indexOf('https://') == 0
+                || metadata[0].get('identifier').indexOf('ftp://') == 0
+                || metadata[0].get('identifier').indexOf('file://') == 0)) {
                 var url = metadata[0].get('identifier');
                 return '<a href="' + url + '" >' + match + '</a>';
             }
