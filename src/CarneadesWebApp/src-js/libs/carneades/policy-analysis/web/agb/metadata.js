@@ -20,10 +20,16 @@ AGB.format_metadata = function(metadata)
     var date = metadata.date ? metadata.date[0] : null;
     var title = metadata.title ? metadata.title[0] : null;
     var identifier = metadata.identifier ? metadata.identifier[0] : null;
+    var source = metadata.source ? metadata.source[0] : null;
+    var is_source_url = AGB.is_url(source);
     var is_identifier_url = AGB.is_url(identifier);
     
      // makes a link if the identifier is an url
-    title = is_identifier_url ? '<a href="{0}">{1}</a>'.format(identifier, title) : title;
+    if(is_source_url) {
+        title = '<a href="{0}">{1}</a>'.format(source, title)
+    } else if(is_identifier_url) {
+        title = is_identifier_url ? '<a href="{0}">{1}</a>'.format(identifier, title) : title;
+    }
 
     var formatted = AGB.get_string(creator, false, true) +
         AGB.get_string(date, false, true) +
