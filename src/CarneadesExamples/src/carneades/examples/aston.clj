@@ -9,7 +9,7 @@
         carneades.engine.dublin-core
         carneades.database.import
         carneades.database.export 
-        carneades.xml.caf.export
+        carneades.xml.graphml.export
         carneades.maps.lacij)
   (:require [carneades.database.db :as db]
             [carneades.database.argument-graph :as ag-db]))
@@ -25,6 +25,7 @@
 ;; - Labeling the scheme and premise roles of arguments
 ;; - The use of Universal Resource Names (URNs) in the UUID namespace as identifiers
 ;;   for statements and arguments
+;; - GraphML export
 
 
 (def graph1 
@@ -146,10 +147,10 @@ Note: This example illustrates how descriptions can include paragraphs, hyperlin
     (import-from-argument-graph db aston1 true)
     (let [aston2 (export-to-argument-graph db)]
       (println "(= aston1 aston2): " (= aston1 aston2))
-      (argument-graph->xml aston1)
+      (argument-graph->graphml aston1 :en)
       (println "\n\n---------------------------\n\n")
-      (argument-graph->xml aston2)))
-  )
+      ;; (argument-graph->graphml aston2 :en)))
+)
   
 
 
