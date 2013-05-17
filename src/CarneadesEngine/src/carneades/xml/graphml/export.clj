@@ -60,10 +60,13 @@
     :brd "BRD",
     :dv "DV"))
 
+(defn- clean [s]
+  (str/trim (str/replace s #"( |\t|\r)( |\t|\r)+" " ")))
+
 (defn- statement-nodes->graphml
   [stmt-nodes lang]
   (reduce (fn [v stmt] 
-	    (conj v [:node {:id (str/trim (str (:id stmt))) }
+	    (conj v [:node {:id (clean (str (:id stmt))) }
 		         ;; (if (nil? (:header stmt)) ""
                          ;;     [:data {:key "metadata"} (metadata->xml (:header stmt))])
                          ;; (if (nil? (:atom stmt)) ""
@@ -99,7 +102,7 @@
   (defn- argument-nodes->graphml
     [arg-nodes]
     (reduce (fn [v arg]
-              (-> (conj v [:node {:id (str/trim (str (:id arg))) }
+              (-> (conj v [:node {:id (clean (str (:id arg))) }
                            ;; (if (nil? (:header arg)) ""
                            ;;     [:data {:key "metadata"} (metadata->xml (:header arg))])
                            [:data {:key "d6"}
@@ -113,10 +116,10 @@
                                             :visible "true" :width "28.87890625"} 
                               (if (:pro arg) "+" "-")] 
                              [:y:Shape {:type "ellipse"}]]]]
-                        [:edge {:id (str/trim (str (gensym "e"))) 
+                        [:edge {:id (clean (str (gensym "e"))) 
                                 :directed "true"
-                                :source (str/trim (str (:id arg)))
-                                :target (str/trim (str (literal-atom (:conclusion arg))))}
+                                :source (clean (str (:id arg)))
+                                :target (clean (str (literal-atom (:conclusion arg))))}
                          [:data {:key "d10"}
                           [:y:PolyLineEdge 
                            [:y:LineStyle {:color "#000000" :type "line" :width "1.0"}]
@@ -126,8 +129,8 @@
                   ((fn [v s] (apply conj v s))
                    (reduce (fn [v p] 
                              (conj v [:edge {:id (str (gensym "e")) 
-                                             :source (str/trim (str (literal-atom (:statement p))))
-                                             :target (str/trim (str (:id arg)))}
+                                             :source (clean (str (literal-atom (:statement p))))
+                                             :target (clean (str (:id arg)))}
                                       [:data {:key "d10"}
                                        [:y:LineStyle {:color "#000000" :type "line" :width "1.0"}]
                                        [:y:BendStyle {:smoothed "false"}]
