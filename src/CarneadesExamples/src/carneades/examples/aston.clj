@@ -7,11 +7,11 @@
         carneades.engine.argument
         carneades.engine.argument-graph
         carneades.engine.dublin-core
-        carneades.database.import
-        carneades.database.export
+        ;; carneades.database.import
+        ;; carneades.database.export
         carneades.xml.graphml.export
         carneades.maps.lacij)
-  (:require [carneades.database.db :as db]
+  (:require ;; [carneades.database.db :as db]
             [carneades.database.argument-graph :as ag-db]))
 
 ;; This example illustrates:
@@ -106,7 +106,7 @@ Note: This example illustrates how descriptions can include paragraphs, hyperlin
          :conclusion should-some-exceptions-be-mandatory?
          :premises [(pm permitted-exceptions-should-be-harmonized)]))
 
-(def a2-id (make-urn-symbol))
+(def a2-id (make-urn-symbol)) 
 
 (def a2 (make-argument
          :id a2-id
@@ -127,19 +127,22 @@ Note: This example illustrates how descriptions can include paragraphs, hyperlin
 (def aston1
   (enter-arguments graph1 [a1 a2 a3]))
 
+;; (defn -main []
+;;   (let [dbname "aston"  ; (str "db-" (make-uuid))
+;;         db (db/make-connection dbname "root" "pw1")]
+;;     (ag-db/create-argument-database
+;;      "examples"
+;;      dbname
+;;      "root"
+;;      "pw1"
+;;      (make-metadata))
+;;     (import-from-argument-graph db aston1 true)
+;;     (let [aston2 (export-to-argument-graph db)]
+;;       (println "(= aston1 aston2): " (= aston1 aston2))
+;;       (argument-graph->graphml aston1 :en)
+;;       (println "\n\n---------------------------\n\n")
+;;       (argument-graph->graphml aston2 :en)))
+;;       )
+
 (defn -main []
-  (let [dbname "aston"  ; (str "db-" (make-uuid))
-        db (db/make-connection dbname "root" "pw1")]
-    (ag-db/create-argument-database
-     "examples"
-     dbname
-     "root"
-     "pw1"
-     (make-metadata))
-    (import-from-argument-graph db aston1 true)
-    (let [aston2 (export-to-argument-graph db)]
-      (println "(= aston1 aston2): " (= aston1 aston2))
-      (argument-graph->graphml aston1 :en)
-      (println "\n\n---------------------------\n\n")
-      (argument-graph->graphml aston2 :en)))
-      )
+  (argument-graph->graphml aston1 :en))
