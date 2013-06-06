@@ -21,7 +21,7 @@ The source code of the Carneades system is licensed using the [European Public L
 
 1. Prerequisites
  -  Version 7 or better of a [Java Runtime Environment (JRE 7)](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
-1. Download the latest version of the file with a name of the form `carneades-webapp.x.x.x.zip`, from the [downloads](https://github.com/carneades/carneades/downloads) page.
+1. Download the latest version of the file with a name of the form `carneades-webapp.x.x.x.zip`, from the [releases](https://www.dropbox.com/sh/dratrir8zh72ako/zSlrAC2K1D) page.
 2. Unzip the `carneades-webapp.x.x.x.zip` [Zip](http://en.wikipedia.org/wiki/Zip_%28file_format%29) archive file using some Zip tool. This will create a directory (folder) with the following hierarchical structure
 
 	- carneades
@@ -30,6 +30,7 @@ The source code of the Carneades system is licensed using the [European Public L
           ** carneades.clj
 		* doc
           ** manual.pdf
+		  ** timestamp.txt
 		* projects
         * README.txt
 		
