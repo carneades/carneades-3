@@ -2,7 +2,7 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns ^{:doc "Theories defined using argumentation schemes."}
-  carneades.engine.scheme
+  carneades.engine.theory
   (:use clojure.pprint
         [clojure.set :as set]
         carneades.engine.uuid
@@ -32,7 +32,7 @@
 (declare format-literal-args)
 
 (defn format-literal-arg
-  "Format the argument of a literal. The argument can be a carneades.engine.scheme.Function
+  "Format the argument of a literal. The argument can be a carneades.engine.theory.Function
 call or a symbol."
   [arg language lang]
   (cond (and (symbol? arg) (language arg))
@@ -410,6 +410,7 @@ call or a symbol."
 
 (defrecord Theory
     [header     ; nil or a dublin core metadata structure about the model.
+     namespaces ; (string -> string) map
      language   ; (symbol -> individual or predicate) map
      schemes    ; scheme sequence
      sections   ; section sequence
@@ -420,6 +421,7 @@ call or a symbol."
   [& key-values]  
   (merge (Theory. 
           nil             ; header
+          {}              ; namespaces
           {}              ; language
           []              ; schemes
           []              ; sections

@@ -24,7 +24,7 @@
         carneades.engine.statement
         [carneades.engine.unify :only (unify genvar apply-substitutions)]
         [clojure.tools.logging :only (info debug error)])
-  (:require [carneades.engine.scheme :as scheme]))
+  (:require [carneades.engine.theory :as scheme]))
 
 (defrecord Dialog [questions answers])
 

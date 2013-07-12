@@ -6,7 +6,7 @@
         carneades.engine.statement
         carneades.engine.argument
         carneades.engine.argument-generator
-        carneades.engine.scheme
+        carneades.engine.theory
         carneades.engine.argument-graph
         carneades.engine.argument-construction
         carneades.maps.lacij

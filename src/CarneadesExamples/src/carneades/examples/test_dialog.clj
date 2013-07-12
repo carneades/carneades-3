@@ -3,7 +3,7 @@
 
 (ns carneades.examples.test-dialog
   (:use carneades.engine.dublin-core
-        carneades.engine.scheme
+        carneades.engine.theory
         carneades.engine.argument))
 
 (def test-dialog
