@@ -4,7 +4,7 @@
 (ns carneades.web.liverpool-schemes
   (:use carneades.engine.dublin-core
         carneades.engine.argument
-        carneades.engine.scheme))
+        carneades.engine.theory))
 
 
 (def liverpool-schemes 

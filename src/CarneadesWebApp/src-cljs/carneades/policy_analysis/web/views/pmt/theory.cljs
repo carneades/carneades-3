@@ -296,7 +296,7 @@
 (declare format-literal-args)
 
 (defn format-literal-arg
-  "Format the argument of a literal. The argument can be a carneades.engine.scheme.Function
+  "Format the argument of a literal. The argument can be a carneades.engine.theory.Function
 call or a symbol."
   [arg language lang]
   ;; {:post [(do (log "arg =") (log arg) (log "result =>") (log %) true)]}

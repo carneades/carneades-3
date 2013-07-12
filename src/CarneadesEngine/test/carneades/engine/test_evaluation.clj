@@ -6,7 +6,7 @@
   (:use [clojure.test :exclude [function?]]
         carneades.engine.statement
         carneades.engine.argument
-        carneades.engine.scheme
+        carneades.engine.theory
         carneades.engine.argument-graph
         carneades.engine.argument-construction
         carneades.engine.argument-evaluation
