@@ -7,7 +7,7 @@
         carneades.engine.dublin-core
         carneades.engine.argument
         carneades.engine.argument-generator
-        carneades.engine.scheme
+        carneades.engine.theory
         carneades.engine.shell
         carneades.engine.aspic))
 

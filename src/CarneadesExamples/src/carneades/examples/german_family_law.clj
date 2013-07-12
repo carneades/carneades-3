@@ -3,7 +3,7 @@
 
 (ns carneades.examples.german-family-law
   (:use carneades.engine.dublin-core
-        carneades.engine.scheme
+        carneades.engine.theory
         carneades.engine.argument))
 
 (def german-family-law

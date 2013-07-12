@@ -3,7 +3,7 @@
 
 (ns carneades.examples.polish-tour-operator-insurance
   (:use carneades.engine.dublin-core
-        carneades.engine.scheme
+        carneades.engine.theory
         carneades.engine.argument))
 
 (def tour-operator-insurance

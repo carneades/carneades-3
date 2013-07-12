@@ -12,7 +12,7 @@
         [carneades.database.export :only [export-to-argument-graph]]
         [carneades.database.evaluation :only [evaluate-graph]])
   (:require [clojure.string :as s]
-            [carneades.engine.scheme :as scheme]
+            [carneades.engine.theory :as scheme]
             [carneades.database.db :as db]
             [carneades.database.argument-graph :as ag-db]
             [carneades.project.admin :as project]

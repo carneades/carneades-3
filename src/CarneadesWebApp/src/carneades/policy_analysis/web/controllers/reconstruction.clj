@@ -10,7 +10,7 @@
          :only [get-predicate get-questions-for-answers-modification
                 modify-statements-weights]]
         [carneades.engine.dialog :only [get-nthquestion add-answers]])
-   (:require [carneades.engine.scheme :as scheme]))
+   (:require [carneades.engine.theory :as scheme]))
 
 (defn reconstruct-grounded-answer
   "Returns a collection of vector representing the user's responses for a yes/no question"
