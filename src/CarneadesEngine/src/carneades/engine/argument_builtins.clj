@@ -8,7 +8,7 @@
         carneades.engine.utils
         carneades.engine.statement
         carneades.engine.sandbox        
-        carneades.engine.scheme
+        carneades.engine.theory
         carneades.engine.utils
         carneades.engine.argument-generator
         carneades.engine.unify

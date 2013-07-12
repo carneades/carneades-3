@@ -6,7 +6,7 @@
         carneades.engine.shell
         carneades.engine.argument
         carneades.engine.dublin-core
-        carneades.engine.scheme
+        carneades.engine.theory
         carneades.engine.aspic))
                   
 (def theory1

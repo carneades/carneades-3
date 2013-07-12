@@ -7,7 +7,7 @@
         carneades.engine.statement
         carneades.engine.dublin-core
         carneades.engine.argument
-        [carneades.engine.scheme :only (format-statement)] ;; for the enter-language function
+        [carneades.engine.theory :only (format-statement)] ;; for the enter-language function
         )
   (:require [clojure.string :as s]))
 
