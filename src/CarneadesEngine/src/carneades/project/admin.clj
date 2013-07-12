@@ -5,7 +5,7 @@
   carneades.project.admin
   (:use [carneades.engine.utils :only [file-separator exists? file-separator]])
   (:require [carneades.config.config :as config]
-            [carneades.engine.scheme :as theory]
+            [carneades.engine.theory :as theory]
             [clojure.string :as s]))
 
 (def projects-directory (config/properties :projects-directory

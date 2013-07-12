@@ -5,7 +5,7 @@
   ^{:doc "A model of §13b of the German Gewerbeordung (GeWo), which regulates the recognition of foreign certificates and documents when foreign companies apply for permission to conduct business in Germany."}
   
   (:use carneades.engine.dublin-core
-        carneades.engine.scheme
+        carneades.engine.theory
         carneades.engine.argument))
 
 (def recognition-of-foreign-documents

@@ -2,7 +2,7 @@
   (:use carneades.engine.statement
         carneades.engine.utils
         carneades.engine.dublin-core
-        carneades.engine.scheme
+        carneades.engine.theory
         carneades.engine.argument
         carneades.database.db) 
   (:require [clojure.string :as str]
