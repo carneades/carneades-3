@@ -1,25 +1,33 @@
-;;; Copyright (c) 2010 Fraunhofer Gesellschaft 
+;;; Copyright (c) 2010-2013 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
 (ns ^{:doc "Functions to load an ontology and query it."}
-    carneades.engine.owl.owl
-    ;; (:use carneades.engine.owl.reasoner
-    ;;     carneades.engine.owl.rule
-    ;;     carneades.engine.rule
-    ;;     carneades.engine.utils
-    ;;     clojure.math.combinatorics)
-  ;; (:require [clojure.xml :as xml])
-  ;; (:import (java.net URI)
-  ;;          (java.io File FileNotFoundException)
-  ;;          (org.semanticweb.owlapi.expression ParserException ShortFormEntityChecker)
-  ;;          org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxEditorParser
-  ;;          (org.semanticweb.owlapi.util ShortFormProvider SimpleShortFormProvider
-  ;;                                       BidirectionalShortFormProviderAdapter)
-  ;;          (org.semanticweb.owlapi.apibinding OWLManager)
-  ;;          org.semanticweb.owlapi.io.OWLOntologyCreationIOException
-  ;;          (org.semanticweb.owlapi.model IRI MissingImportListener OWLOntologyIRIMapper OWLClass)
-  ;;          (org.semanticweb.HermiT Reasoner$ReasonerFactory))
-  )
+  carneades.engine.owl.owl
+  (:require [clojure.java.io :as io])
+  (:import org.semanticweb.HermiT.Reasoner
+           org.semanticweb.owlapi.apibinding.OWLManager
+           org.semanticweb.owlapi.model.IRI
+           org.semanticweb.owlapi.model.OWLOntology
+           org.semanticweb.owlapi.model.OWLOntologyManager
+           org.semanticweb.owlapi.util.AutoIRIMapper))
+
+(defn load-ontology
+  "Loads an ontology.
+
+The first argument is an URL or a pathname. The
+second optional argument specifies the directory for resolving the
+ontology's imports. If not specified, it will be either the current
+directory if loading an URL or the directory of the file being
+loaded."
+  ([url]
+     (if (.exists (io/file url))
+       (load-ontology url (.getParent (io/file url)))
+       (load-ontology url ".")))
+  ([url importdir]
+     (let [manager (OWLManager/createOWLOntologyManager)
+           automapper (AutoIRIMapper. (io/file importdir) true)]
+       (.addIRIMapper manager automapper)
+       (.loadOntologyFromOntologyDocument manager (io/input-stream url)))))
 
 ;; (defn owl?
 ;;   [url]
@@ -36,56 +44,6 @@
 ;;                          (str prepath java.io.File/separator path))]
 ;;          (path->uri fullpath nil))
 ;;         (URI. path)))))
-
-;; (defn iri-to-file-mapper [path prepath]
-;;   (proxy [OWLOntologyIRIMapper] []
-;;     (getDocumentIRI
-;;      [ontIRI]
-;;      (if (= (.getScheme ontIRI) "file")
-;;        ontIRI
-;;        (let [uri (.toURI ontIRI)
-;;              rawfilename (last-uri-segment (str uri))
-;;              filename (add-extension rawfilename "owl")
-;;              parentdir (or (parent path) prepath)
-;;              localfile (if parentdir
-;;                          (create-path parentdir filename)
-;;                          filename)]
-;;          ;(printf "path = %s prepath = %s parentdir = %s uri = %s\nlocalfile = %s\n"
-;;          ;         path prepath parentdir uri localfile)
-;;          (if (exists? localfile)
-;;            ;; if the file exists locally to the currently imported file we use it
-;;            (IRI/create (path->uri localfile prepath))
-;;            ;; else we use the URI
-;;            (let [uripath (str uri)
-;;                  resolved (if (nil? (extension rawfilename))
-;;                             (add-extension uripath "owl")
-;;                             uripath)]
-;;              (IRI/create (path->uri resolved prepath)))))))))
-
-;; (defvar- missing-import-handler
-;;   (proxy [MissingImportListener] []
-;;     (importMissing [event]
-;;       (let [uri (.getImportedOntologyURI event)]
-;;         (throw (java.io.FileNotFoundException. (format "no such file %s" (str uri))))
-;;         ;(println "!!! could not load ontology " uri "!!!")
-;;         ))))
-
-;; (defn load-ontology
-;;   "Loads an ontology from a file or URL"
-;;   ([path] (load-ontology path nil))
-;;   ([path pre-path]
-;;      (try
-;;        (let [manager (OWLManager/createOWLOntologyManager)
-;;              se (. manager setSilentMissingImportsHandling true)
-;;              mih (. manager addMissingImportListener missing-import-handler)
-;;              iri-map (. manager addIRIMapper (iri-to-file-mapper path pre-path))
-;;              documentIRI (IRI/create (path->uri path pre-path))
-;;              ontology (. manager loadOntology documentIRI)
-;;              reasoner (. (new Reasoner$ReasonerFactory) createReasoner ontology)]
-;;          (. reasoner prepareReasoner)
-;;          {:ontology ontology, :reasoner reasoner})
-;;        (catch OWLOntologyCreationIOException e
-;;          (throw (FileNotFoundException. (.getMessage e)))))))
 
 ;; (defn generate-arguments-from-owl
 ;;   "Generates argument from an OWL ontology"
