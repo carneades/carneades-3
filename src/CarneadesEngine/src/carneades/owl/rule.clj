@@ -1,12 +1,13 @@
-;;; Copyright (c) 2010 Fraunhofer Gesellschaft 
+;;; Copyright (c) 2010 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
 (ns ^{:doc "Conversion from an ontology to rules."}
-  carneades.engine.owl.rule  
-  (:use 
+  carneades.engine.owl.rule
+  (:use
     carneades.engine.statement
     carneades.engine.argument
-    carneades.engine.rule)
+    ;; carneades.engine.rule
+    )
   (:import
    ;(org.semanticweb.owlapi.apibinding OWLManager)
     (org.semanticweb.owlapi.model OWLLogicalAxiom AxiomType ClassExpressionType)
@@ -315,7 +316,7 @@
             false
             (make-rule-head prop-sexpr)
             '()))))
-        
+
 
 
 ; ---------------------------
