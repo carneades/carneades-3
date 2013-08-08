@@ -2,7 +2,7 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns ^{:doc "Functions to load an ontology and query it."}
-  carneades.engine.owl.owl
+  carneades.owl.owl
   (:require [clojure.java.io :as io])
   (:import org.semanticweb.HermiT.Reasoner
            org.semanticweb.owlapi.apibinding.OWLManager
