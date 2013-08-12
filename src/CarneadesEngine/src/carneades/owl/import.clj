@@ -270,7 +270,7 @@
     (list (t/make-scheme
            :id (gensym "class-assertion-axiom")
            :conclusion class-sexpr
-           '()))))
+           ()))))
 
 (defn prop-assertion->schemes
   [axiom]
@@ -281,7 +281,7 @@
     (list (t/make-scheme
            :id (gensym "property-assertion-axiom")
            :conclusion prop-sexpr
-           '()))))
+           ()))))
 
 
 (defn axiom->schemes
@@ -310,7 +310,7 @@
 
     (do
       (println "unsupported axiom type            : " (.getAxiomType axiom))
-      '())))
+      ())))
 
 (defn ontology->schemes
   [ontology]
