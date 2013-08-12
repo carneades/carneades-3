@@ -3,8 +3,7 @@
 
 (ns ^{:doc "Get questions and translation from formal logic statements to human languages"}
   carneades.policy-analysis.web.logic.questions
-  (:use clojure.data.json
-        clojure.pprint
+  (:use clojure.pprint
         carneades.policy-analysis.web.core
         carneades.engine.statement
         [carneades.engine.unify :only (genvar apply-substitutions)]

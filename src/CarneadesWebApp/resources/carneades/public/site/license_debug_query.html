@@ -1,0 +1,78 @@
+<div class="query">
+
+  <div class="query-content">
+    <div class="sparql-namespaces">
+      Available namespaces:
+      <pre>
+        "top" "http://www.markosproject.eu/ontologies/top#"
+        "reif" "http://www.markosproject.eu/ontologies/reification#"
+        "soft" "http://www.markosproject.eu/ontologies/software#"
+        "lic" "http://www.markosproject.eu/ontologies/licenses#"
+        "kb" "http://markosproject.eu/kb/"
+        "package" "http://markosproject.eu/kb/Package/"
+        "directory" "http://markosproject.eu/kb/Directory/"
+        "api" "http://markosproject.eu/kb/API/"
+        "softwareproject" "http://markosproject.eu/kb/SoftwareProject/"
+        "softwarerelease" "http://markosproject.eu/kb/SoftwareRelease/"
+        "programminglanguage" "http://markosproject.eu/kb/ProgrammingLanguage/"
+      </pre>
+    </div>
+    <div>
+      Information and SPARQL queries: <a href="http://markos.man.poznan.pl/openrdf-workbench">Poznan Repository</a>
+    </div>
+    <div style="margin-top: 20px">
+      Limit:
+      <input type="text" class="limit" value="100"/>
+    </div>
+    <div style="margin-top: 20px">
+      SPARQL endpoint:
+      <input type="text" class="endpoint" value="http://markos.man.poznan.pl/openrdf-sesame" style="min-width:300px"/>
+    </div>
+    <div style="margin-top: 20px">
+      Repo-name:
+      <input type="text" class="repo-name" value="markos_test_sp2"/>
+    </div>
+
+    <div style="float:left; width: 60%">
+      <div style="margin-top: 10px">
+        Query:
+        <div>
+          <textarea class="sparql-query" style="min-width:600px; min-height: 300px">
+            ((?/x soft/name ("org.apache.log4j" xsd/string)))
+          </textarea>
+        </div>
+      </div>
+      <button class="submit" style="min-width: 600px; min-height: 50px">Submit</button>
+
+      <div class="query-result" style="margin-top:20px">
+        Result:
+        <div>
+          <textarea class="result" style="min-width:600px; min-height: 300px">
+          </textarea>
+          <div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div style="float:left; width:40%; margin-left; 40%">
+      <div style="margin-top: 10px">
+        Ask:
+        <div>
+          <textarea class="sparql-ask" style="min-width:600px; min-height: 15px">
+            ((package/_3 soft/name ("org.apache.log4j" xsd/string)))
+          </textarea>
+        </div>
+      </div>
+      <button class="submit-ask" style="min-width: 600px; min-height: 50px">Submit</button>
+
+      <div style="margin-top:20px">
+        Result:
+        <div>
+          <input type="text" class="ask-result" style="min-width:60px; min-height: 15px" />
+        </div>
+      </div>
+    </div>
+
+</div>

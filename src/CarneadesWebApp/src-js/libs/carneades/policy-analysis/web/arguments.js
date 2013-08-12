@@ -14,8 +14,8 @@ PM.set_arguments_url = function(db) {
 // this is the main entry point to display
 // either the outline, the map, an argument or a statement
 PM.display_arguments = function(project, db, type, id) {
-    var arguments_html = ich.arguments(PM.merge_menu_props({}));
-    
+    PM.load_project(project);
+
     if(_.isNil(db)) {
         db = IMPACT.db;
     }
@@ -28,6 +28,12 @@ PM.display_arguments = function(project, db, type, id) {
         return;
     }
     
+    // PM.show_menu({text: PM.project.get('title'),
+    //               link: "#/project/" + project},
+    //              PM.agb_menu(db));
+
+    var arguments_html = ich.arguments(PM.merge_menu_props({}));
+    
     IMPACT.db = db;
     
     if(!_.isNil(project)) {
@@ -38,24 +44,31 @@ PM.display_arguments = function(project, db, type, id) {
     PM.activate('#arguments-item');
     PM.attach_lang_listener();
 
-    $.when(PM.arguments.fetch(),
-           PM.statements.fetch()).then(
-        function() {
-            if (type == "statement")  {
-                AGB.display_statement(db, id);
-            } else if(type == "argument") {
-                AGB.display_argument(db, id);
-            } else if(type == "map") {
-                AGB.display_map(db);
-            } else if (type == "vote") {
-                carneades.policy_analysis.web.views.pmt.vote.display();
-            } else if (type == "copy-case") {
-                PM.copy_case(db);
-            } else { // outline
-                AGB.display_argumentgraph(db);        
-            }                                    
+    if (type == "statement")  {
+        AGB.display_statement(db, id);
+    } else if(type == "argument") {
+        AGB.display_argument(db, id);
+    } else if(type == "map") {
+        AGB.display_map(db);
+    } else if (type == "vote") {
+        carneades.policy_analysis.web.views.pmt.vote.display();
+    } else if(type == "export") { 
+        PM.export_ag(db);
+        AGB.display_argumentgraph(db);
+    } else if (type == "evaluate") {
+        AGB.evaluate(function () {
+            PM.set_arguments_url(db);
         });
+    } else if (type == "copy-case") {
+        PM.copy_case(db);
+    } else { // outline
+        AGB.display_argumentgraph(db);        
+    }  
 
+};
+
+PM.export_ag = function(db) {
+    window.open('/carneadesws/export/{0}/{1}'.format(IMPACT.project, db), 'CAF XML');
 };
 
 PM.current_mainissueatompredicate = function() {

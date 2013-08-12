@@ -284,14 +284,11 @@ PM.ArgumentEditorView = Backbone.View.extend(
                           {error: PM.on_model_error,
                            wait: true,
                            success : function() {
-                               // manually redisplay argument page since it is not yet
-                               // a backbone view
-                               PM.arguments.fetch({success: function() {
-                                                       AGB.display_argument(IMPACT.db, argument.id);
-                                                   },
-                                                   error: PM.on_model_error
-                                                  });
+                               var arg = PM.get_args().get(argument.id);
+                               PM.get_args().add([arg], {merge: true});
+                               PM.args_info[IMPACT.db].add([arg], {merge: true});
                                
+                               $.address.queryString('');
                            }})) {
              this.model = undefined;
              this.premises_candidates_view.remove();
@@ -312,6 +309,9 @@ PM.ArgumentEditorView = Backbone.View.extend(
          this.remove();
          
          this.metadata_editor_view.remove();
+         
+         // not really clean...
+         $.address.queryString('');
          
          return false;
      } 

@@ -25,3 +25,31 @@ AGB.is_url = function(url)
 {
     return /^(http|https|ftp|file)/.test(url);
 };
+
+PM.on_edit = function () {
+    return $.address.queryString().indexOf('edit=true') != -1;
+}
+
+PM.on_statement_entity = function () {
+    return $.address.queryString().indexOf('entity=statement') != -1;
+}
+
+PM.on_argument_entity = function () {
+    return $.address.queryString().indexOf('entity=argument') != -1;
+}
+
+PM.on_statement_edit = function () {
+    return PM.on_edit() && PM.on_statement_entity();
+}
+
+PM.on_argument_edit = function () {
+    return PM.on_edit() && PM.on_argument_entity();
+}
+
+PM.on_statement_delete = function () {
+    return $.address.queryString().indexOf('delete=true') != -1;
+}
+
+PM.on_argument_delete =  function () {
+    return $.address.queryString().indexOf('delete=true') != -1;
+}

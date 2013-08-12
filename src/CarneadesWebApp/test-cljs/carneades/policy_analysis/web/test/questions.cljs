@@ -3,7 +3,7 @@
 
 (ns carneades.policy_analysis.web.test.questions
   (:use [jayq.core :only [$]]
-        [jayq.util :only [log clj->js]]
+        [jayq.util :only [log]]
         [catb.views.pmt.questions :only [show-questions]]))
 
 (def q-role-yn {:id 'q-role-yn

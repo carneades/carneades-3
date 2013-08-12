@@ -1,8 +1,8 @@
 ;;; Copyright (c) 2012 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.policy-analysis.web.icanhaz.core
-  (:use [jayq.util :only [log clj->js]])
+(ns carneades.analysis.web.icanhaz.core
+  (:use [jayq.util :only [log]])
   (:require [clojure.string :as str])
   (:refer-clojure :exclude [get]))
 
