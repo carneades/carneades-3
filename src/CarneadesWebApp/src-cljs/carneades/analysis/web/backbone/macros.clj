@@ -1,7 +1,7 @@
 ;;; Copyright (c) 2012 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(ns carneades.policy-analysis.web.backbone.macros
+(ns carneades.analysis.web.backbone.macros
   (:use [clojure.pprint :only [pprint]])
   (:require [clojure.string :as str]))
 

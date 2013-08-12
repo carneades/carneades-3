@@ -33,3 +33,9 @@ PM.merge_ag_menu_props = function(obj) {
                      project: IMPACT.project
                      });
 };
+
+PM.show_menu = function (title_data, menu) {
+    var c_title_data = carneades.analysis.web.utils.convert(title_data);
+    var c_menu =  carneades.analysis.web.utils.convert(menu);
+    carneades.analysis.web.views.header.show(c_title_data, c_menu);
+};

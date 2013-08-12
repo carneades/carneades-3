@@ -2,21 +2,9 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.policy-analysis.web.views.core
-  (:use [jayq.util :only [log clj->js]]
-        [carneades.policy-analysis.web.models.core :only [get-stmt get-arg]])
-  (:require [carneades.policy-analysis.web.backbone.core :as bb]
-            [carneades.policy-analysis.web.template :as tp]))
-
-(defn template
-  "Replace the inner HTML of the View with the content of the template
-   fill in with the passed variables."
-  [view template_key variables]
-  (bb/html view (tp/get template_key variables)))
-
-(defn json
-  "Returns the JSON content of a model."
-  [model]
-  (.toJSON model))
+  (:use [jayq.util :only [log]]
+        [carneades.policy-analysis.web.models.core :only [get-stmt get-arg]]
+        [carneades.analysis.web.views.core :only [json]]))
 
 (defn score-agreed?
   [score]

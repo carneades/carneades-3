@@ -2,14 +2,15 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.policy-analysis.web.views.sct.claim-editor
-  (:use [carneades.policy-analysis.web.views.core :only [template json agreed? disagreed?
-                                prepare-claim prepare-arguments
-                                pro-answered con-answered
-                                get-arg]]
+  (:use [carneades.analysis.web.views.core :only [template json]]
+        [carneades.policy-analysis.web.views.core :only [agreed? disagreed?
+                                                         prepare-claim prepare-arguments
+                                                         pro-answered con-answered
+                                                         get-arg]]
         [jayq.core :only [$ css inner attr val]]
-        [jayq.util :only [log clj->js]])
-  (:require [carneades.policy-analysis.web.backbone.core :as bb])
-  (:require-macros [carneades.policy-analysis.web.backbone.macros :as bb])
+        [jayq.util :only [log]])
+  (:require [carneades.analysis.web.backbone.core :as bb])
+  (:require-macros [carneades.analysis.web.backbone.macros :as bbm])
   (:refer-clojure :exclude [val]))
 
 (defn init-radio-buttons
@@ -58,12 +59,12 @@
     (.set statement-poll "votes" votes)
     (bb/save statement-poll nil {:wait true})))
 
-(bb/defview ClaimEditor
+(bbm/defview ClaimEditor
   :className "sct-claim-editor"
   :events {"click .save" :save-score}
   :render
   ([]
-     (bb/with-attrs [:claim :arguments :statement-poll :argument-poll]
+     (bbm/with-attrs [:claim :arguments :statement-poll :argument-poll]
        (let [argument-votes (bb/get-in argument-poll [:votes])
              statement-votes (bb/get-in statement-poll [:votes])
              claim (json claim)
@@ -78,7 +79,7 @@
 
   :save-score
   ([]
-     (bb/with-attrs [:claim :arguments :statement-poll :argument-poll :parent]
+     (bbm/with-attrs [:claim :arguments :statement-poll :argument-poll :parent]
        (let [argument-votes (bb/get-in argument-poll [:votes])
              statement-votes (bb/get-in statement-poll [:votes])
              claim (json claim)

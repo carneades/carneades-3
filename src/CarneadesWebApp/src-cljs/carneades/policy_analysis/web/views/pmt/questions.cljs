@@ -3,14 +3,14 @@
 
 (ns ^{:doc "Displays questions to the user to collect facts."}
   carneades.policy-analysis.web.views.pmt.questions
-  (:use [jayq.util :only [log clj->js]]
+  (:use [jayq.util :only [log]]
         [jayq.core :only [$ append empty inner]]
-        [carneades.policy-analysis.web.i18n :only [i18n]]
-        [carneades.policy-analysis.web.views.core :only [template]])
+        [carneades.analysis.web.i18n :only [i18n]]
+        [carneades.analysis.web.views.core :only [template]])
   (:require [clojure.string :as s]
-            [carneades.policy-analysis.web.backbone.core :as bb]
-            [carneades.policy-analysis.web.dispatch :as dispatch])
-  (:require-macros [carneades.policy-analysis.web.backbone.macros :as bb]
+            [carneades.analysis.web.backbone.core :as bb]
+            [carneades.analysis.web.dispatch :as dispatch])
+  (:require-macros [carneades.analysis.web.backbone.macros :as bbm]
                    [carneades.policy-analysis.web.views.menu :as menu]))
 
 (defn current-fact-value
@@ -24,7 +24,7 @@
   "Generates a radio widget HTML code for a question"
   [question fact-number]
   (let [inputid (gensym (format "input-q%s-" (:id question)))]
-   (apply str 
+   (apply str
           (map (fn [formalanswer answer]
                  (let [checked (if (= (current-fact-value question fact-number) formalanswer)
                                  "checked"
@@ -95,10 +95,10 @@
   [question fact-number]
   (cond (coll? (:type question))
         (select-widget question fact-number)
-        
+
         (or (= (:type question ) "symbol") (= (:type question ) "string"))
         (input-widget question fact-number)
-        
+
         :else (throw "NYI")))
 
 (defn create-questions-map
@@ -364,14 +364,14 @@ This is used when deleting a fact during the modification phase."
     (add-question question el)))
 
 (defn add-submit-button
-  [questions-el]
+  [questions-el ctx]
   (let [button-id (str (gensym "button"))]
     (append questions-el (format "<input type=\"button\" value=\"%s\" id=\"%s\"/> "
                                   (i18n "pmt_submit")
                                   button-id))
     (append questions-el "<hr/>")
     (.click ($ (str "#" button-id)) (fn [_]
-                                      (dispatch/fire :on-submit {})))))
+                                      (dispatch/fire :on-submit {:ctx ctx})))))
 
 (defn display-questions-in-category
   "Displays all the question of a category."
@@ -390,7 +390,7 @@ This is used when deleting a fact during the modification phase."
     (empty el)
     (doseq [ids-for-category ids]
       (display-questions-in-category (map questions-to-ids ids-for-category) el))
-    (add-submit-button el)
+    (add-submit-button el (:ctx msg))
     (js/PM.scroll_to_bottom)))
 
 (dispatch/react-to #{:questions-added} display-questions)
@@ -453,82 +453,89 @@ Returns the answers indexed by question's id."
   (when (.valid ($ "#questionsform"))
     (let [answers (fetch-latest-questions-answers)]
       (log "sending answers...")
-      (log (clj->js answers)) 
+      (log (clj->js answers))
       (js/PM.busy_cursor_on)
-      (js/PM.ajax_post js/IMPACT.simulation_url
-                       (clj->js {:answers answers})
+      (js/PM.ajax_post (-> msg :ctx :wsurl)
+                       (clj->js {:answers answers
+                                 :uuid (-> msg :ctx :uuid)})
                        (fn [data]
                          (js/PM.busy_cursor_off)
-                         (show-questions-or-ag data))
+                         (show-questions-or-ag (:ctx msg) data))
                        js/IMPACT.user
                        js/IMPACT.password
                        js/PM.on_error))))
 
 (dispatch/react-to #{:on-submit}
-                   (fn [msg]
+                   (fn [_ msg]
                      ((:submit-listener (deref questions)) msg)))
 
 (defn send-answers-for-modification
   "Sends the answers to the server to modify them"
-  []
+  [msg]
   (when (.valid ($ "#questionsform"))
     (let [answers (fetch-latest-questions-answers)]
       (log "sending answers for modification...")
-      (log (clj->js answers)) 
+      (log (clj->js answers))
       (js/PM.busy_cursor_on)
       (let [{:keys [questions deleted]} (deref questions)]
-       (js/PM.ajax_post js/IMPACT.simulation_url
-                        (clj->js {:modify-facts {:facts (vals
-                                                         questions)
-                                                 :project
-                                                 js/IMPACT.project
-                                                 :policies js/IMPACT.current_policy
-                                                 :deleted deleted
-                                                 :db js/IMPACT.db}})
-                        (fn [data]
-                          (js/PM.busy_cursor_off)
-                          (show-ag (.-db data)))
-                        js/IMPACT.user
-                        js/IMPACT.password
-                        js/PM.on_error)))))
+        (js/PM.ajax_post (-> msg :ctx :wsurl)
+                         (clj->js {:modify-facts
+                                   {:facts (vals questions)
+                                    :project
+                                    js/IMPACT.project
+                                    :policies (.get js/PM.project "policies")
+                                    :deleted deleted
+                                    :db js/IMPACT.db}})
+                         (fn [data]
+                           (js/PM.busy_cursor_off)
+                           (show-ag (.-db data)))
+                         js/IMPACT.user
+                         js/IMPACT.password
+                         js/PM.on_error)))))
 
 (defn ^:export show-questions
   "Adds the HTML for the questions to the list of questions div."
-  [latest-questions-list]
+  [latest-questions-list ctx]
   (let [latest (js->clj latest-questions-list :keywordize-keys true)]
     (swap! questions index-questions latest)
-    (dispatch/fire :questions-added {:latest-questions latest})))
+    (dispatch/fire :questions-added {:latest-questions latest
+                                     :ctx ctx})))
 
 (defn show-ag
   "Shows the argument graph. Called once there is no more questions to ask."
   [db]
   (set! js/IMPACT.db db)
   (reset! questions (create-questions-map))
-  (js/PM.set_arguments_url db))
+  (js/PM.set_policies_url))
 
 (defn show-facts
   "Shows facts for modification."
-  [questions-list]
+  [questions-list ctx]
   (reset! questions (assoc (create-questions-map)
                            :submit-listener send-answers-for-modification))
-  (show-questions questions-list))
+  (show-questions questions-list ctx))
 
 (defn show-questions-or-ag
   "Shows the remaining questions to the user or the argument graph if
 all questions have been answered."
-  [data]
+  [ctx data]
   (if-let [questions-list (.-questions data)]
-    (show-questions questions-list)
+    (show-questions questions-list (assoc ctx :uuid (.-uuid data)))
     (show-ag (.-db data))))
+
+(defn init-listeners
+  []
+  (swap! questions assoc :submit-listener send-answers))
 
 (defn ^:export init-show-questions
   "Initialize the questions and begins the process of showing them."
-  []
-  (swap! questions assoc :submit-listener send-answers) 
-  (js/PM.ajax_post js/IMPACT.simulation_url
-                   (clj->js {:request {:question js/IMPACT.question
-                                       :project (.toJSON js/PM.project)}})
-                   show-questions-or-ag
-                   js/IMPACT.user
-                   js/IMPACT.password
-                   js/PM.on_error))
+  [jsctx]
+  (let [ctx (js->clj jsctx :keywordize-keys true)]
+    (init-listeners)
+    (js/PM.ajax_post (:wsurl ctx)
+                     (clj->js {:request {:question js/IMPACT.question
+                                         :project (.toJSON js/PM.project)}})
+                     (partial show-questions-or-ag ctx)
+                     js/IMPACT.user
+                     js/IMPACT.password
+                     js/PM.on_error)))

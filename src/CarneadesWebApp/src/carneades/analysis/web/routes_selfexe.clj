@@ -17,4 +17,4 @@
 (defn -main
   [& args]
   (start-server)
-  (browse-url "http://localhost:8080/carneades/policy-analysis/home.html"))
+  (browse-url "http://localhost:8080/carneades/#/home"))

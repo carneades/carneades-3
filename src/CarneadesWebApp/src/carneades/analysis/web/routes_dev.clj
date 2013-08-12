@@ -10,18 +10,26 @@
         ring.middleware.session
         ring.middleware.stacktrace
         [hiccup.middleware :only (wrap-base-url)]
-        [ring.middleware.format-response :only [wrap-restful-response]])
+        [ring.middleware.format-response :only [wrap-restful-response]]
+        [ring.middleware.format-params :only [wrap-json-params]]
+        [ring.middleware.keyword-params :only [wrap-keyword-params]]
+        [ring.middleware.stacktrace :only [wrap-stacktrace]]
+        [carneades.web.license-analysis.routes.service :only [license-analysis-routes]])
   (:require [compojure.route :as route]
             [compojure.handler :as handler]))
 
 (defroutes carneades-webapp-routes
-  (context "/carneades/policy-analysis" [] policy-analysis-routes)
-  ;; TODO: (context "/carneades/license-analysis" [] license-analysis-routes)
+  (context "/carneades" [] policy-analysis-routes)
+  (context "/carneadesws/license-analysis" [] (wrap-restful-response license-analysis-routes))
   (context "/carneadesws" [] (wrap-restful-response carneades-web-service-routes)))
 
 (def carneades-webapp
-  (-> (handler/site carneades-webapp-routes)
-      (wrap-base-url)))
+  (-> carneades-webapp-routes
+      (wrap-keyword-params)
+      (wrap-json-params)
+      (handler/site)
+      (wrap-base-url)
+      (wrap-stacktrace)))
 
 ;; (def impact-server nil)
 ;; (.start impact-server)
