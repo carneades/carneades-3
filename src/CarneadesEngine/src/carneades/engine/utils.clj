@@ -1,12 +1,23 @@
-;;; Copyright (c) 2010 Fraunhofer Gesellschaft 
+;;; Copyright (c) 2010 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
 (ns ^{:doc "Utilities functions to manipulate sequences, files and more."}
   carneades.engine.utils
   (:use clojure.java.io
         clojure.pprint)
-  (:require [clojure.string :as str])
-  (:import java.security.MessageDigest))
+  (:require [clojure.string :as str]
+            [clojure.java.io :as io]
+            [clojure.walk :as w])
+  (:import java.security.MessageDigest
+           java.util.zip.ZipOutputStream
+           java.util.zip.ZipInputStream
+           java.util.zip.ZipEntry
+           java.io.ByteArrayInputStream
+           java.io.ByteArrayOutputStream
+           java.io.ByteArrayInputStream
+           java.io.BufferedOutputStream
+           java.io.FileOutputStream
+           java.io.InputStreamReader))
 
 (defn boolean? [x]
   (instance? Boolean x))
@@ -34,20 +45,20 @@
        (reduce #(conj-ifnot pred %1 %2) s1 s2)
        (reduce #(conj-ifnot pred %1 %2) s2 s1))))
 
-(defn interleaveall 
+(defn interleaveall
   "Returns a lazy seq of the first item in each coll, then the second etc.
-   If the sequences do not have the same length, the remaining elements are 
+   If the sequences do not have the same length, the remaining elements are
    appended and interleaved at the end of the returned sequence. "
   ([c1] c1)
   ([c1 c2]
      (lazy-seq
       (let [s1 (seq c1) s2 (seq c2)]
         (cond (and s1 s2)
-              (cons (first s1) (cons (first s2) 
+              (cons (first s1) (cons (first s2)
                                      (interleaveall (rest s1) (rest s2))))
               :else (or s1 s2)))))
   ([c1 c2 & colls]
-     (lazy-seq 
+     (lazy-seq
       (let [ss (map seq (conj colls c2 c1))]
         (when (some identity ss)
           (concat (map first (filter not-empty ss))
@@ -68,7 +79,7 @@
 
 ;; safe get
 (defmacro sget
-  "Like get but if *assert* is true, throws an exception if the key is 
+  "Like get but if *assert* is true, throws an exception if the key is
    not present "
   [map key]
   (if *assert*
@@ -214,7 +225,7 @@ greater than the length of s."
   "Breaks line in chunk of line-length length."
   [s line-length]
   (let [len (count s)
-        lastpartstart (* (quot len line-length) line-length) 
+        lastpartstart (* (quot len line-length) line-length)
         sparts (if (<= len line-length)
                  [[0 len]]
                  (concat (partition 2 1 (range 0 len line-length))
@@ -272,9 +283,9 @@ Raise an exception if any deletion fails unless silently is true."
     (binding [*read-eval* false]
       (read-string s))))
 
-;; the sha functions are taken from https://gist.github.com/1698245 
+;; the sha functions are taken from https://gist.github.com/1698245
 (def ^{:dynamic true} *default-hash* "SHA-256")
- 
+
 ;; take from http://ideone.com/MoNJ14Z8 which was, in turn, gathered from
 ;; Tom Lee's post "Clojure and MessageDigest"
 ;;     (http://tomlee.co/2009/06/clojure-and-messagedigest/)
@@ -290,9 +301,94 @@ Raise an exception if any deletion fails unless silently is true."
        (do
          (println "Invalid input! Expected string, got" (type input))
          nil))))
- 
+
 (defn compare-sha256 [obj ref-hash]
   "Compare an object to a hash; true if (= (hash obj) ref-hash)."
   (= ref-hash (hexdigest obj "SHA-256")))
- 
+
 (def sha256 (fn [input] (hexdigest input "SHA-256")))
+
+(defn- zip-entry-path
+  [f fdir]
+  (let [rel (make-relative (.getPath f) (.getPath fdir))]
+   (if (.isDirectory f)
+     (str (.getName fdir) "/" rel "/")
+     (str (.getName fdir) "/" rel))))
+
+(defn zip-dir-helper
+  [dirpath stream]
+  (let [out (ZipOutputStream. stream)
+        fdir (io/file dirpath)]
+    (doseq [f (file-seq (io/file dirpath))]
+      (when (not (.equals f fdir))
+        (let [entry (ZipEntry. (zip-entry-path f fdir))]
+          (.putNextEntry out entry)
+          (when (.isFile f)
+            (let [buffer (.getBytes (slurp f))]
+              (.write out buffer))))))
+    (.close out)
+    out))
+
+(defn zip-dir
+  "Creates a zip archive from the content of a directory. If zippath
+is specified the zip archive is saved to a file, otherwise a
+ByteArrayInputStream is returned."
+  ([dirpath zippath]
+     (with-open [stream (io/output-stream zippath)]
+       (zip-dir-helper dirpath stream)))
+  ([dirpath]
+     (with-open [stream (ByteArrayOutputStream.)]
+       (zip-dir-helper dirpath stream)
+       (ByteArrayInputStream. (.toByteArray stream)))))
+
+(defn- pathify
+  [paths]
+  (str/join file-separator paths))
+
+(defn- write-zip-entry
+  [zip-stream entry out-file]
+  (let [out (BufferedOutputStream. (FileOutputStream. out-file) 1024)
+        data (byte-array 1024)]
+    (loop [len (.read zip-stream data 0 1024)]
+      (if (not (= -1 len))
+        (do (.write out data 0 len)
+            (recur (.read zip-stream data 0 1024)))))
+    (.flush out)
+    (.close out)))
+
+(defn- copy-zip-entry
+  [zip-stream entry destination]
+  (let [out-file (file (pathify [destination (.getName entry)]))]
+    (if (.isDirectory entry)
+      (.mkdirs out-file)
+      (write-zip-entry zip-stream entry out-file))
+    (.getNextEntry zip-stream)))
+
+(defn- unzip-stream
+  [zip-stream destination]
+  (loop [entry (.getNextEntry zip-stream)]
+    (if entry
+      (recur (copy-zip-entry zip-stream entry destination))))
+  (.close zip-stream))
+
+(defn unzip
+  [zippath destination]
+  (let [zip-stream (ZipInputStream. (io/input-stream zippath))]
+    (unzip-stream zip-stream destination)))
+
+(defn serialize-atom
+  [atom]
+  ;; this is a hack for the https://github.com/drlivingston/kr
+  ;; library which returns binding having symbol not readable
+  ;; by the Clojure reader, such as kb/ProgrammingLanguage/1
+  (str/replace (str atom) #"/([0-9]+)" "/_$1"))
+
+(defn restore-kr-symbol
+  [sexp]
+  (if (symbol? sexp)
+    (symbol (str/replace (str sexp) #"_([0-9]+)" "$1"))
+    sexp))
+
+(defn unserialize-atom
+  [s]
+  (w/postwalk restore-kr-symbol (safe-read-string s)))

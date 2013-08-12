@@ -27,13 +27,14 @@ rm -f projects/default/databases/*
 rm -f projects/copyright/databases/*
 
 cp $PROJECTS_DIR/copyright/databases/main.h2.db ./projects/copyright/databases/
+cp $PROJECTS_DIR/copyright/databases/main.h2.db ./projects/markos/databases/
 
 mkdir doc
 mkdir config
 
 cp ../../../../doc/manual/out/manual.pdf ./doc/
 
-cp ../carneades-webapp-1.0.0-SNAPSHOT-standalone.jar ./carneades-webapp.jar
+cp ../standalone+uberjar/carneades-webapp-1.0.0-SNAPSHOT-standalone.jar ./carneades-webapp.jar
 
 cp ../../packaging/README.txt ./
 

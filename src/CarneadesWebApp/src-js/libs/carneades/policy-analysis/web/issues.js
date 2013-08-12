@@ -4,14 +4,20 @@
 goog.provide('carneades.policy_analysis.web.issues');
 
 PM.issues_url = function() {
-    return 'issues';
+    return 'policies/issues/' + IMPACT.project;
 };
 
 PM.set_issues_url = function() {
     $.address.value(PM.issues_url());
 };
 
-PM.display_issues = function() {
+PM.display_issues = function(project) {
+    PM.load_project(project);
+    
+    PM.show_menu({text: PM.project.get('title'),
+                  link: "#/project/" + PM.project.id},
+                 PM.policies_menu(undefined));
+    
     var data = PM.current_policy.toJSON();
     data.pmt_issues_desc = $.i18n.prop('pmt_issues_desc');
     data = PM.merge_menu_props(data);

@@ -1,0 +1,13 @@
+<table class="projects">
+  <thead><tr>
+      <th>{{project}}</th>
+      <th>{{created}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#projects}}
+    <tr><td><a href="#/project/{{id}}">{{title}}</a></td><td>{{creation-date}}</td></tr>
+    {{/projects}}
+  </tbody>
+</table>
+

@@ -2,11 +2,11 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.policy-analysis.web.views.pmt.vote
-  (:use [jayq.util :only [log clj->js]]
+  (:use [jayq.util :only [log]]
         [jayq.core :only [$ inner attr]]
-        [carneades.policy-analysis.web.views.core :only [template]])
-  (:require [carneades.policy-analysis.web.backbone.core :as bb])
-  (:require-macros [carneades.policy-analysis.web.backbone.macros :as bb]
+        [carneades.analysis.web.views.core :only [template]])
+  (:require [carneades.analysis.web.backbone.core :as bb])
+  (:require-macros [carneades.analysis.web.backbone.macros :as bbm]
                    [carneades.policy-analysis.web.views.menu :as menu]))
 
 (defn get-vote-score
@@ -34,13 +34,13 @@
   [score]
   (.toFixed (js/Number. score) 2))
 
-(bb/defview Vote
+(bbm/defview Vote
   :className "pmt-vote"
   :events {"click .vote-now" :vote
            "click .show-vote-results" :show-vote-results}
   :render
   ([]
-     (bb/with-attrs [:claim :lang :current-case-pollid]
+     (bbm/with-attrs [:claim :lang :current-case-pollid]
        (if current-case-pollid
          (.show_vote_results this)
          (menu/with-item "#arguments-item"
@@ -51,7 +51,7 @@
   :vote
   ([]
      (menu/with-item "#arguments-item"
-      (bb/with-attrs [:db :claim]
+      (bbm/with-attrs [:db :claim]
         (.save (js/PM.DebatePoll.
                 (clj->js {:opinion (get-vote-score)
                           :mainissueatompredicate
@@ -75,7 +75,7 @@
   :show-vote-results
   ([]
      (menu/with-item "#arguments-item"
-       (bb/with-attrs [:db :claim :lang]
+       (bbm/with-attrs [:db :claim :lang]
          (let [claim-text (aget (.-text claim) lang)]
            (js/PM.busy_cursor_on)
            (js/PM.ajax_get

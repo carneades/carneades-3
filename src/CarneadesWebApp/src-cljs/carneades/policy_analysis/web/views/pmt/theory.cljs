@@ -3,7 +3,7 @@
 
 (ns ^{:doc "Some utilities to format a statement"}
   carneades.policy-analysis.web.views.pmt.theory
-  (:use [jayq.util :only [log clj->js]])
+  (:use [jayq.util :only [log]])
   (:require [clojure.string :as s]))
 
 (defn sliteral? 

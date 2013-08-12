@@ -17,5 +17,5 @@
           [n (vec (map #(create-outline-helper % (dec depth)) premises))])))
 
 (defn create-outline
-  [depth]
-  [:root (vec (map #(create-outline-helper % depth) (map pack-statement (main-issues))))])
+  [data depth]
+  [:root (vec (map #(create-outline-helper % depth) (map pack-statement data)))])
