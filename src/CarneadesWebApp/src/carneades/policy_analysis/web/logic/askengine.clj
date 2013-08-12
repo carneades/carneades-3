@@ -4,7 +4,7 @@
 (ns carneades.policy-analysis.web.logic.askengine
   (:use clojure.pprint
         carneades.policy-analysis.web.core
-        (carneades.engine aspic argument-evaluation argument-graph ask statement scheme
+        (carneades.engine aspic argument-evaluation argument-graph ask statement theory
                           argument shell unify dialog)
         (carneades.policy-analysis.web.logic questions)
         [clojure.tools.logging :only (info debug error)])
@@ -65,6 +65,8 @@
         ag (reject ag rejected-statements)
         ag (enter-language ag (-> session :policies :language))
         ag (evaluate aspic-grounded ag)
+        ;; _ (prn "ag")
+        ;; _ (pprint ag)
         project (:project session)
         dbname (store-ag project ag)
         session (assoc session
@@ -91,6 +93,7 @@
 (defn- ask-user
   [session]
   {:pre [(not (nil? (:policies session)))]}
+  (prn "[ask-user]")
   (let [{:keys [last-question lang last-id policies]} session
         [last-questions last-id] (get-structured-questions last-question
                                                            lang
@@ -126,7 +129,7 @@
       (prn "[askengine] argument construction is finished!")
       (on-construction-finished session))))
 
-(defn- get-ag-or-next-question
+(defn get-ag-or-next-question
   [session]
   (prn "[get-ag-or-next-question]")
   (cond (:ag session) (on-questions-answered session)

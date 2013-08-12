@@ -4,16 +4,16 @@
 goog.provide('carneades.policy_analysis.web.policies');
 
 PM.policies_url = function() {
-    return 'policies';    
+    return 'policies/policies/' + IMPACT.project;
 };
 
 PM.set_policies_url = function() {
-    $.address.value(PM.policies_url());  
+    $.address.value(PM.policies_url());
 };
 
 PM.current_issue = function() {
-    if(PM.statements.length > 0) {
-        return PM.statements.filter(function(s) { return s.get('main'); })[0].toJSON();
+    if(PM.get_stmts().length > 0) {
+        return PM.get_stmts().filter(function(s) { return s.get('main'); })[0].toJSON();
     }
 
     return undefined;
@@ -22,11 +22,11 @@ PM.current_issue = function() {
 PM.get_issue_text = function() {
     var issue_text = $.i18n.prop('pmt_issue_not_selected');
 
-    if(PM.statements.length > 0) {
+    if(PM.get_stmts().length > 0) {
         var issue = PM.current_issue();
         return AGB.statement_raw_text(issue);
     }
-    
+
     return issue_text;
 };
 
@@ -35,19 +35,19 @@ PM.on_policy_filtering = function(event) {
     console.log('filtering policy: ' + filter);
 
     if(filter == 'all') {
-        PM.display_policies(undefined, undefined);
+        PM.display_policies(PM.project.id, undefined, undefined);
     } else {
         PM.ajax_get(IMPACT.wsurl + '/find-policies/{0}/{1}/{2}/{3}/{4}/{5}'
                     .format(IMPACT.project,
-                            IMPACT.db, 
-                            IMPACT.current_policy, 
-                            IMPACT.question, 
+                            IMPACT.db,
+                            IMPACT.current_policy,
+                            IMPACT.question,
                             PM.current_issue().id,
                             filter),
                    function(data) {
                        console.log('find-policies returns:');
                        console.log(data.policies);
-                       PM.display_policies(undefined, data.policies); 
+                       PM.display_policies(PM.project.id, undefined, data.policies);
                    });
     }
 };
@@ -62,13 +62,19 @@ PM.find_available_lang = function(current_policy) {
 
 // sectionid, optional, is the section to jump to
 // subset, optional, is a subset of policies to show
-PM.display_policies = function(sectionid, subset) {
-    PM.current_policy.fetch({success: 
+PM.display_policies = function(project, sectionid, subset) {
+    PM.load_project(project);
+
+    PM.show_menu({text: PM.project.get('title'),
+                  link: "#/project/" + PM.project.id},
+                 PM.policies_menu(IMPACT.db));
+
+    PM.current_policy.fetch({success:
                              function() {
                                  var ids = [];
                                  var current_policy = PM.current_policy.toJSON();
                                  var lang = PM.find_available_lang(current_policy);
-                                 
+
                                  current_policy.outline_text = PM.theory_outline_text(current_policy.sections,
                                                                                       'policies',
                                                                                       subset);
@@ -82,9 +88,9 @@ PM.display_policies = function(sectionid, subset) {
                                                                                      ids.push(policyid);
                                                                                  },
                                                                                  lang);
-                                 
+
                                  var template_variables = _.clone(current_policy);
-                                 _.extend(template_variables, 
+                                 _.extend(template_variables,
                                           PM.merge_menu_props({current_issue: $.i18n.prop('pmt_current_issue'),
                                                                issue: PM.get_issue_text(),
                                                                can_display: $.i18n.prop('pmt_can_display'),
@@ -102,7 +108,7 @@ PM.display_policies = function(sectionid, subset) {
                                  $('#pm').html(current_policy_html.filter("#policies"));
                                  PM.activate('#policies-item');
                                  PM.attach_lang_listener();
-                                 
+
                                  if(PM.current_issue() == undefined) {
                                      $('.policies-filtering-indication').show();
                                      $('.policies-filtering').hide();
@@ -110,28 +116,28 @@ PM.display_policies = function(sectionid, subset) {
                                      $('.policies-filtering-indication').hide();
                                      $('.policies-filtering').show();
                                  }
-                                 
+
                                  _.each(ids, function(policyid) {
                                      $('#input' + policyid).click(_.bind(PM.on_select_policy, PM, policyid));
                                  });
-                                 
+
                                  if(sectionid != undefined) {
                                      PM.scroll_to($('#' + sectionid));
                                  }
-                                 
+
                                  $('.policy-filtering').click(PM.on_policy_filtering);
 
                                  // // hack for UID
                                  // $('a:contains(argument map)').click(
                                  //     function() {
-                                 //         PM.set_arguments_url('copyright');       
-                                 //         return false;    
+                                 //         PM.set_arguments_url('copyright');
+                                 //         return false;
                                  //     }
                                  // );
 
                              }
                             });
-    
+
 };
 
 PM.on_select_policy = function(id) {
@@ -159,7 +165,7 @@ PM.should_be_displayed = function(section, subset) {
 
 PM.theory_outline_text = function(sections, urlfragment, subset) {
     var text = "<ul>";
-    
+
     _.each(sections, function(section) {
                if(PM.should_be_displayed(section, subset)) {
                    text += '<li><a href="#/{0}/{1}">{2}</a></li>'.format(urlfragment, section.id, section.header.title);
@@ -168,23 +174,23 @@ PM.theory_outline_text = function(sections, urlfragment, subset) {
            });
 
     text += "</ul>";
-    
+
     return text;
 };
 
 PM.schemes_text = function(language, schemes, lang) {
     var text = "<div>";
-    
+
     _.each(schemes, function(scheme) {
                if(scheme.header.description && scheme.header.description[lang]) {
                    text += '{0}'.format(PM.markdown_to_html(scheme.header.description[lang]));
                }
-               
+
                text += PM.scheme_content_text(language, scheme, lang);
            });
-    
+
     text += "</div>";
-    
+
     return text;
 };
 
@@ -199,13 +205,13 @@ PM.scheme_content_text = function(language, scheme, lang) {
     text += '<div class="scheme-content" ><b>id:</b> {0}'.format(scheme.id);
 
     text += '<br><b>strict:</b> {0}'.format(scheme.strict);
-    
+
     text += '<br><b>direction:</b> {0}'.format(scheme.pro ? "pro" : "con");
 
     text += '<br><b>conclusion:</b> {0}'.format(PM.format_sexpr(scheme.conclusion, language, lang));
 
     text += '<br><b>premises:</b><div class="rule-body"> <ul>';
-     
+
 
     _.each(scheme.premises, function(premise) {
                if(premise.statement.atom[0] != "valid") {
@@ -219,7 +225,7 @@ PM.scheme_content_text = function(language, scheme, lang) {
 
         _.each(scheme.assumptions, function(premise) {
                    text += "<li>{0}</li>".format(PM.format_sexpr(premise.statement.atom, language, lang));
-               }); 
+               });
 
         text += '</ul></div>';
     }
@@ -229,16 +235,16 @@ PM.scheme_content_text = function(language, scheme, lang) {
 
         _.each(scheme.exceptions, function(premise) {
                    text += "<li>{0}</li>".format(PM.format_sexpr(premise.statement.atom, language, lang));
-               }); 
-        
+               });
+
         text += '</ul></div>';
     }
 
-    
 
-    
+
+
     text += '</div><br/>'; // end of scheme-content stuff
-    
+
     return text;
 };
 
@@ -246,7 +252,7 @@ PM.scheme_content_text = function(language, scheme, lang) {
 // if not defined all policies are displayed
 PM.policies_text = function(language, sections, level, subset, on_policy, lang) {
     var text = "";
-    
+
     _.each(sections, function(section) {
                if(PM.should_be_displayed(section, subset)) {
                    text += '<div id="{0}">'.format(section.id);
@@ -262,14 +268,14 @@ PM.policies_text = function(language, sections, level, subset, on_policy, lang) 
                    text += '</div>';
                }
            });
-    
+
     return text;
 };
 
 // Returns the varname of a var
 PM.varname = function(v) {
     if(v[0] == '?') {
-        return v.slice(1);        
+        return v.slice(1);
     }
     return v;
 };
@@ -307,7 +313,7 @@ PM.get_policies_ids = function() {
     var global_policy = PM.current_policy.toJSON();
     var sections = global_policy.sections;
     var policies = [];
-    
+
     for(var i = 0; i < sections.length; i++) {
         var subsection = sections[i].sections;
         for(var j = 0; j < subsection.length; j++) {

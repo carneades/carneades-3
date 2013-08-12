@@ -22,3 +22,16 @@
             (assoc m project (project/load-project project)))
           {}
    (project/list-projects)))
+
+(defn get-project-properties
+  [id state]
+  (merge (get-in (deref state) [:projects-data id :properties])
+         {:id id}))
+
+(defn get-project-theories
+  [id state]
+  (get-in (deref state) [:projects-data id :available-theories]))
+
+(defn get-project-documents
+  [id state]
+  (get-in (deref state) [:projects-data id :documents]))

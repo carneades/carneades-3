@@ -19,7 +19,7 @@
   Reactors are associated with events via `react-to`. When events are
   fired with an `event-id` and optional `event-data`, any reactors whose
   `event-pred` returns true for the `event-id` are invoked."}
-  carneades.policy-analysis.web.dispatch)
+  carneades.analysis.web.dispatch)
 
 (def ^{:doc "Stores the current reactions."}
   reactions (atom {}))

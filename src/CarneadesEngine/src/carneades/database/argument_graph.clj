@@ -6,7 +6,7 @@
 
              It includes the polls about whether users agree or disagree with
              statements and the weights of arguments.
-             
+
              Naming convention: get-x operations return ids; read-x
              operations return a structure with properties of an
              object."}
@@ -19,6 +19,7 @@
         carneades.engine.utils)
   (:require [clojure.java.jdbc :as jdbc]
             [clojure.string :as s]
+            [clojure.walk :as w]
             [carneades.engine.uuid :as uuid]))
 
 (declare create-metadata)
@@ -34,29 +35,29 @@
                              root-username
                              root-password
                              :create true)]
-    (jdbc/with-connection 
+    (jdbc/with-connection
       db
       (jdbc/transaction
-        
-        (jdbc/create-table 
+
+        (jdbc/create-table
           :translation
           [:id "int identity"]
           [:en "varchar"]            ; English
-          [:nl "varchar"]            ; Dutch          
+          [:nl "varchar"]            ; Dutch
           [:fr "varchar"]            ; French
           [:de "varchar"]            ; German
           [:it "varchar"]            ; Italian
           [:sp "varchar"])           ; Spanish
         ; and so on for other langauges
-        
-        (jdbc/create-table 
+
+        (jdbc/create-table
           :metadata
           [:id "int identity"]    ; local id, see also key and identifier
           [:key "varchar unique"] ; citation key, optional
           [:contributor "varchar"]
           [:coverage "varchar"]
           [:creator "varchar"]
-          [:date "varchar"]       ; http://www.w3.org/TR/NOTE-datetime                         
+          [:date "varchar"]       ; http://www.w3.org/TR/NOTE-datetime
           [:description "int"]
           [:format "varchar"]     ; A list of MIME types, semicolon separated
           [:identifier "varchar"] ; URI, DOI or something similar
@@ -69,21 +70,21 @@
           [:title "varchar"]
           [:type "varchar"]       ; see: http://dublincore.org/documents/dcmi-type-vocabulary/
           ["foreign key(description) references translation(id)"])
-        
-        (jdbc/create-table 
-          :statement 
+
+        (jdbc/create-table
+          :statement
           [:id "varchar primary key not null"] ; a URN in the UUID namespace
           [:weight "double default null"]
           [:value "double default null"]
-          [:standard "tinyint default 0"]   ; 0=pe, 1=cce, 2=brd, 3=dv 
+          [:standard "tinyint default 0"]   ; 0=pe, 1=cce, 2=brd, 3=dv
           [:atom "varchar"]                 ; Clojure s-expression
           [:text "int"]
           [:main "boolean default false"]   ; true if a main issue
           [:header "int"]
           ["foreign key(text) references translation(id)"]
           ["foreign key(header) references metadata(id)"])
-        
-        (jdbc/create-table 
+
+        (jdbc/create-table
           :argument
           [:id "varchar primary key not null"] ; a URN in the UUID namespace
           [:conclusion "varchar not null"]     ; URN of the conclusion
@@ -95,46 +96,46 @@
           [:header "int"]
           ["foreign key(conclusion) references statement(id)"]
           ["foreign key(header) references metadata(id)"])
-        
-        (jdbc/create-table 
+
+        (jdbc/create-table
           :premise
           [:id "int identity"]
           [:argument "varchar"]              ; null allowed, so as to be able to create premises first
-          [:statement "varchar not null"]    ; URN 
-          [:positive "boolean default true"] 
+          [:statement "varchar not null"]    ; URN
+          [:positive "boolean default true"]
           [:role "varchar"]
           [:implicit "boolean default false"]
           ["foreign key(argument) references argument(id)"]
-          ["foreign key(statement) references statement(id)"])                         
-        
-        (jdbc/create-table 
+          ["foreign key(statement) references statement(id)"])
+
+        (jdbc/create-table
           :namespace
           [:prefix "varchar primary key not null"]
           [:uri    "varchar not null"])
-        
-        (jdbc/create-table 
-          :stmtpoll         ; statement poll
-          [:userid "varchar not null"]   
+
+        (jdbc/create-table
+         :stmtpoll         ; statement poll
+          [:userid "varchar not null"]
           [:statement "varchar not null"]
           [:opinion "double default 0.5"]
           ["foreign key(statement) references statement(id)"])
-        
-        (jdbc/create-table 
+
+        (jdbc/create-table
           :argpoll         ; argument poll
-          [:userid "varchar not null"]   
+          [:userid "varchar not null"]
           [:argument "varchar not null"]
           [:opinion "double default 0.5"]
           ["foreign key(argument) references argument(id)"])
-        
+
         ;; Grant read access to the public role
         ;; and create a guest user account with this role.
         (jdbc/do-commands "grant select on translation, metadata, statement, argument,
                            premise, namespace to public"
                           "create user guest password ''"
                           "grant public to guest")
-        
+
         (create-metadata metadata)
-        
+
         true))))
 
 
@@ -142,30 +143,30 @@
 
 (defn create-translation
   "map -> integer
-   Creates a translation record and inserts it into a database.  
+   Creates a translation record and inserts it into a database.
    Returns the id of the new translation."
-  [m]   
+  [m]
   {:pre [(map? m)]}
   (first (vals (jdbc/insert-record :translation m))))
 
-(defn read-translation 
+(defn read-translation
   "integer -> map or nil
    Retrieves the translation with the given id from the database.
    Returns nil if no translation with the given id exists in the
    database."
   [id]
-  (jdbc/with-query-results 
+  (jdbc/with-query-results
     res1 ["SELECT * FROM translation WHERE id=?" id]
     (if (empty? res1) nil (first res1))))
 
 (defn list-translations
   "Returns a sequence of all the translation records in the database"
   []
-  (jdbc/with-query-results 
+  (jdbc/with-query-results
       res1 ["SELECT * FROM translation"]
       (doall res1)))
 
-(defn update-translation 
+(defn update-translation
   "integer map -> boolean
    Updates the translation with the given id in the database
    with the values in the map. Returns true if the update
@@ -176,7 +177,7 @@
     0 false
     1 true))
 
-(defn delete-translation 
+(defn delete-translation
   "Deletes a translation with the given the id"
   [id]
   (jdbc/delete-rows :translation ["id=?" id]))
@@ -187,34 +188,34 @@
 ;; the database as whole. This record is created
 ;; when the database is created and initialized.
 
-(defn create-metadata 
-  "Inserts a metadata structure into a database.  
+(defn create-metadata
+  "Inserts a metadata structure into a database.
    Returns the id of the record in the database."
   [metadata]
   {:pre [(metadata? metadata)]}
   (let [str-id (if (:description metadata)
                  (create-translation (:description metadata)))]
-    (first (vals (jdbc/insert-record 
+    (first (vals (jdbc/insert-record
                    :metadata
                    (if str-id
                      (assoc metadata :description str-id)
                      metadata))))))
 
 (defn read-metadata
-  "Retrieves the metadata with the given id from the database, 
+  "Retrieves the metadata with the given id from the database,
    and returns it as a metadata record. Returns nil if there
    is no metadata record in the database with this id."
   [id]
-  (let [md (jdbc/with-query-results 
+  (let [md (jdbc/with-query-results
              res1 ["SELECT * FROM metadata WHERE id=?" id]
-             (if (empty? res1) 
-               nil 
+             (if (empty? res1)
+               nil
                (dissoc (first res1) :id)))
-        d (when (:description md) 
-            (jdbc/with-query-results 
+        d (when (:description md)
+            (jdbc/with-query-results
               res2 ["SELECT * FROM translation WHERE id=?" (:description md)]
-              (if (empty? res2) 
-                nil 
+              (if (empty? res2)
+                nil
                 (dissoc (first res2) :id))))]
     (cond (nil? md) nil
           d (assoc (map->metadata md) :description d)
@@ -223,7 +224,7 @@
 (defn list-metadata
   "Returns a sequence of all the metadata records in the database"
   []
-  (let [ids (jdbc/with-query-results 
+  (let [ids (jdbc/with-query-results
               res1 ["SELECT id FROM metadata"]
               (doall (map :id res1)))]
     (doall (map (fn [id] (read-metadata id)) ids))))
@@ -231,10 +232,10 @@
 (defn update-metadata
   "integer map -> boolean
    Updates the metadata record with the given id in the database with the values
-   in the map.  Returns true if the update was successful." 
+   in the map.  Returns true if the update was successful."
   [id md]
   {:pre [(integer? id) (map? md)]}
-  (let [existing-description-id (jdbc/with-query-results 
+  (let [existing-description-id (jdbc/with-query-results
                                   res ["SELECT description FROM metadata WHERE id=?" id]
                                   (if (empty? res) nil (:description (first res))))
         new-description-id (cond (and (:description md) existing-description-id)
@@ -255,13 +256,13 @@
   "Deletes a metadata entry with the given the id. Returns true."
   [id]
   {:pre [(integer? id)]}
-  (let [str-id (jdbc/with-query-results 
+  (let [str-id (jdbc/with-query-results
                  res ["SELECT description FROM metadata WHERE id=?" id]
-                 (if (empty? res) nil (:description (first res))))]                   
+                 (if (empty? res) nil (:description (first res))))]
     (jdbc/delete-rows :metadata ["id=?" id])
     (if str-id (jdbc/delete-rows :translation ["id=?" str-id]))
     true))
-  
+
 ;;; Statements
 
 (defn standard->integer
@@ -281,20 +282,19 @@
     1 :cce,
     2 :brd,
     3 :dv))
-              
-  
-(defn create-statement 
+
+(defn create-statement
   "Creates and inserts a statement record in the database for the atom of the given
    literal. Returns the id of the new statement record."
-  [literal]   
+  [literal]
   {:pre [(literal? literal)]}
-  (cond (sliteral? literal) 
+  (cond (sliteral? literal)
         (let [id (if (uuid/urn-symbol? (literal-atom literal))
                    (str (literal-atom literal))
                    (uuid/make-urn))]
           (jdbc/insert-record
-            :statement {:id id
-                        :atom (str (literal-atom literal))})  
+           :statement {:id id
+                       :atom (serialize-atom (literal-atom literal))})
           id)
         (statement? literal)
         (let [id (if (uuid/urn-symbol? (:id literal))
@@ -305,8 +305,8 @@
               text-id (if (:text literal) (create-translation (:text literal))),
               header-id (if (:header literal) (create-metadata (:header literal)))]
           (jdbc/insert-record
-            :statement {:id id
-                        :atom (str (:atom literal))
+           :statement {:id id
+                        :atom (serialize-atom (:atom literal))
                         :header header-id
                         :weight (:weight literal)
                         :value (:value literal)
@@ -321,7 +321,7 @@
    Returns nil if there is not statement with this id."
   [id]
   {:pre [(string? id)]}
-  (let [s (jdbc/with-query-results 
+  (let [s (jdbc/with-query-results
             res ["SELECT * FROM statement WHERE id=?" id]
             (if (empty? res) nil (first res)))
         h (if (:header s) (read-metadata (:header s)))
@@ -337,14 +337,13 @@
         premise-of (jdbc/with-query-results
                      res ["SELECT argument FROM premise WHERE statement=?" id]
                      (map :argument (doall res))) ]
-    (when s 
+    (when s
       (-> (make-statement :id (symbol id))
           (merge (dissoc s :id))
           (merge {:atom (when (and (:atom s) (not (empty? (:atom s))))
-                          (binding [*read-eval* false]
-                            (read-string (:atom s))))})
+                          (unserialize-atom (:atom s)))})
           (merge {:standard (integer->standard (:standard s))})
-          (merge {:header h, 
+          (merge {:header h,
                   :text t,
                   :pro (map symbol pro),
                   :con (map symbol con)
@@ -353,7 +352,7 @@
 (defn list-statements
   "Returns a sequence of all the statement records in the database"
   []
-  (let [ids (jdbc/with-query-results 
+  (let [ids (jdbc/with-query-results
               res1 ["SELECT id FROM statement"]
               (doall (map :id res1)))]
     (doall (map (fn [id] (read-statement id)) ids))))
@@ -361,7 +360,7 @@
 (defn main-issues
   "Returns a sequence of statements that are main issues."
   []
-  (let [ids (jdbc/with-query-results 
+  (let [ids (jdbc/with-query-results
               res1 ["SELECT id FROM statement WHERE main='true'"]
               (doall (map :id res1)))]
     (doall (map (fn [id] (read-statement id)) ids))))
@@ -372,7 +371,7 @@
    atom. Returns a sequence of the ids of the statements
    found."
   [atom]
-  (jdbc/with-query-results 
+  (jdbc/with-query-results
     res [(str "SELECT id FROM statement WHERE atom='" (str atom) "'")]
     (doall (map :id res))))
 
@@ -380,14 +379,14 @@
   "Queries the database to find premises with this statement's id.
    Returns a sequence of ids."
   [id]
-  (jdbc/with-query-results 
+  (jdbc/with-query-results
     res ["SELECT id FROM premise WHERE statement=?" id]
     (doall (map :id res))))
 
 (defn statement-created?
   "Returns true if the statement has been created in the database"
   [statement]
-  (jdbc/with-query-results 
+  (jdbc/with-query-results
     res ["SELECT id FROM statement WHERE id=?" (str (:id statement))]
     (seq res)))
 
@@ -412,26 +411,26 @@
   "string map -> boolean
    Updates the statement record with the given id in the
    database with the values in the map. Returns true if
-   the update was successful." 
+   the update was successful."
   [id m]
   {:pre [(map? m)]}
   (let [m (dissoc m :positive)
         existing-header-id (if (:header m)
-                             (jdbc/with-query-results 
+                             (jdbc/with-query-results
                                res ["SELECT header FROM statement WHERE id=?" id]
                                (if (empty? res) nil (:header (first res)))))
         updating-header (and (:header m) existing-header-id)
-        new-header (if existing-header-id 
+        new-header (if existing-header-id
                      (do (update-metadata existing-header-id (:header m))
                          existing-header-id)
                      (when (:header m)
                        (create-metadata (merge (make-metadata) (:header m)))))
         text-id1 (when (:text m)
-                   (jdbc/with-query-results 
+                   (jdbc/with-query-results
                      res ["SELECT text FROM statement WHERE id=?" id]
                      (if (empty? res) nil (:text (first res)))))
         updating-text (and (:text m) text-id1)
-        text-id2  (if text-id1 
+        text-id2  (if text-id1
                     (do (update-translation text-id1 (:text m))
                         text-id1)
                     (when (:text m)
@@ -453,27 +452,27 @@
                       (merge m delta)))
       0 false,
       1 true)))
-  
 
-(defn delete-statement 
+
+(defn delete-statement
   "Deletes a statement entry with the given the id. Returns true."
   [id]
   {:pre [(string? id)]}
-  (let [text-id (jdbc/with-query-results 
+  (let [text-id (jdbc/with-query-results
                   res ["SELECT text FROM statement WHERE id=?" id]
                   (if (empty? res) nil (:text (first res))))
-        header-id (jdbc/with-query-results 
+        header-id (jdbc/with-query-results
                     res ["SELECT header FROM statement WHERE id=?" id]
-                    (if (empty? res) nil (:header (first res))))]                   
+                    (if (empty? res) nil (:header (first res))))]
     (jdbc/delete-rows :statement ["id=?" id])
     (if text-id (delete-translation text-id))
     (if header-id (delete-metadata header-id))
     true))
-  
+
 ;;; Premises
 
-(defn create-premise 
-  "Inserts a premise into a database.  
+(defn create-premise
+  "Inserts a premise into a database.
    Returns the id of the premise record in the database.
    Creates a statement for the literal of the premise if one
    does not already exist in the database."
@@ -487,12 +486,12 @@
         premise (if argid
                   (assoc premise :argument argid)
                   premise)]
-    (first (vals (jdbc/insert-record 
+    (first (vals (jdbc/insert-record
                   :premise premise)))))
 
 (declare get-pro-arguments get-con-arguments)
 
-(defn read-premise 
+(defn read-premise
   "database integer -> premise or nil
    Retrieves the premise with the given id from the database.
    Returns nil if no premise with the given id exists in the
@@ -500,10 +499,10 @@
    listing the ids of the arguments pro and con the statement of
    the premise."
   [id]
-  (jdbc/with-query-results 
+  (jdbc/with-query-results
     res1 ["SELECT * FROM premise WHERE id=?" id]
-    (if (empty? (doall res1)) 
-      nil 
+    (if (empty? (doall res1))
+      nil
       (let [m (dissoc (first res1) :id)
             stmt (read-statement (:statement m))
             pro (get-pro-arguments (:statement m))
@@ -517,7 +516,7 @@
 (defn list-premises
   "Returns a sequence of all the premise records in the database"
   []
-  (let [ids (jdbc/with-query-results 
+  (let [ids (jdbc/with-query-results
               res1 ["SELECT id FROM premise"]
               (doall (map :id res1)))]
     (doall (map (fn [id] (read-premise id)) ids))))
@@ -535,20 +534,20 @@
              m
              (-> m
                  (dissoc :literal)
-                 (assoc :statement stmt)))]                               
+                 (assoc :statement stmt)))]
     (condp = (first (jdbc/update-values :premise ["id=?" id] m2))
       0 false
-      1 true)))            
+      1 true)))
 
-(defn delete-premise 
+(defn delete-premise
   "Deletes a premise with the given the id"
   [id]
   (jdbc/delete-rows :premise ["id=?" id])
   true)
-                     
+
 ;;; Arguments
-                           
-(defn create-argument 
+
+(defn create-argument
   "Creates a one-step argument and inserts it into a database.  Returns
    the id of the new argument."
   [arg]
@@ -557,7 +556,7 @@
         scheme-id (str (:scheme arg))
         conclusion-id (get-statement (:conclusion arg)),
         header-id (if (:header arg) (create-metadata (:header arg)))]
-    (jdbc/insert-record 
+    (jdbc/insert-record
       :argument
       (assoc (dissoc arg :premises :exceptions)
              :id arg-id
@@ -568,33 +567,33 @@
       (create-premise (assoc p :argument arg-id)))
     arg-id))
 
-(defn get-rebuttals 
+(defn get-rebuttals
   "string -> sequence of string
    Returns a sequence of ids of arguments which rebut
    the argument with the given id."
   [arg-id]
-  (jdbc/with-query-results 
-    res1 ["SELECT * FROM argument WHERE id=?" arg-id]  
-    (if (empty? res1) 
-      [] 
+  (jdbc/with-query-results
+    res1 ["SELECT * FROM argument WHERE id=?" arg-id]
+    (if (empty? res1)
+      []
       (let [m (first res1)]
-        (jdbc/with-query-results 
-          res2 ["SELECT id FROM argument WHERE conclusion=? AND pro=?" 
+        (jdbc/with-query-results
+          res2 ["SELECT id FROM argument WHERE conclusion=? AND pro=?"
                 (:conclusion m)
                 (not (:pro m))]
           (doall (map :id res2)))))))
 
-(defn get-undercutters 
+(defn get-undercutters
   "string -> sequence of string
    Returns a sequence of ids of arguments which undercut
    the argument with the given id."
   [arg-id]
-  (jdbc/with-query-results 
+  (jdbc/with-query-results
     res1 ["SELECT id FROM statement WHERE atom=?" (format "(undercut %s)" arg-id)]
-    (if (empty? res1) 
-      [] 
+    (if (empty? res1)
+      []
       (let [stmt (first res1)]
-         (jdbc/with-query-results 
+         (jdbc/with-query-results
                        res2 ["SELECT id FROM argument WHERE conclusion=?" (:id stmt)]
                        (doall (map :id res2)))))))
 
@@ -603,15 +602,15 @@
    returns a sequence of argument ids in which the conclusion of the argument
    with the given id is a premise"
   [arg-id]
-  (jdbc/with-query-results 
+  (jdbc/with-query-results
     res1 ["SELECT conclusion FROM argument WHERE id=?" arg-id]
-    (if (empty? res1) 
-      [] 
+    (if (empty? res1)
+      []
       (let [stmt (first res1)]
-        (jdbc/with-query-results 
+        (jdbc/with-query-results
           res2 ["SELECT argument FROM premise WHERE statement=?" (:id stmt)]
           (doall (map :id res2)))))))
-  
+
 (defn read-argument
   "string -> argument or nil
    Retrieves the argument with the given id from the database.
@@ -621,14 +620,14 @@
   [id]
   {:pre [(string? id)]
    :post [(not (string? (:scheme %)))]}
-  (jdbc/with-query-results 
+  (jdbc/with-query-results
     res1 ["SELECT * FROM argument WHERE id=?" id]
     (if (empty? (doall res1))
-      nil 
+      nil
       (let [m (first res1)
             conclusion (read-statement (:conclusion m))
             header (if (:header m) (read-metadata (:header m)))
-            premises (jdbc/with-query-results 
+            premises (jdbc/with-query-results
                        res1 ["SELECT id FROM premise WHERE argument=?" id]
                        (doall (map (fn [id]
                                      (read-premise id))
@@ -637,7 +636,7 @@
             us (get-undercutters id)
             ds (get-dependents id)
             scheme (safe-read-string (:scheme m))]
-        (map->argument (assoc m 
+        (map->argument (assoc m
                          :id (symbol id)
                          :scheme scheme
                          :conclusion conclusion
@@ -646,11 +645,11 @@
                          :rebuttals (map symbol rs)
                          :undercutters (map symbol us)
                          :dependents (map symbol ds)))))))
-          
+
 (defn list-arguments
   "Returns a sequence of all the argument records in the database"
   []
-  (let [ids (jdbc/with-query-results 
+  (let [ids (jdbc/with-query-results
               res1 ["SELECT id FROM argument"]
               (doall (map :id res1)))]
     (doall (map (fn [id] (read-argument id)) ids))))
@@ -659,7 +658,7 @@
   "Returns a sequence of the ids of arguments pro
    the statement with the given id."
   [stmt-id]
-  (jdbc/with-query-results 
+  (jdbc/with-query-results
               res1 [(str "SELECT id FROM argument WHERE pro='true' AND conclusion='" stmt-id "'")]
               (doall (map :id res1))))
 
@@ -667,7 +666,7 @@
   "Returns a sequence of the ids of arguments con
    the statement with the given id."
   [stmt-id]
-  (jdbc/with-query-results 
+  (jdbc/with-query-results
               res1 ["SELECT id FROM argument WHERE pro='false' AND conclusion=?" stmt-id]
               (doall (map :id res1))))
 
@@ -679,24 +678,24 @@
   [id m]
   {:pre [(string? id) (map? m)]}
   (let [header-id1 (if (:header m)
-                    (or (jdbc/with-query-results 
+                    (or (jdbc/with-query-results
                           res1 ["SELECT header FROM argument WHERE id=?" id]
                           (:header (first res1)))
                         (create-metadata (make-metadata))))
-        header-id2 (if header-id1 
+        header-id2 (if header-id1
                      (do (update-metadata header-id1 (:header m))
                          header-id1)
                      (if (:header m)
                        (create-metadata (merge (make-metadata) (:header m)))))
         conclusion-id (if (:conclusion m)
-                        (get-statement (:conclusion m)))] 
+                        (get-statement (:conclusion m)))]
     (when (:premises m)
       ;; first delete existing premises
-      (jdbc/with-query-results 
+      (jdbc/with-query-results
         res1 ["SELECT id FROM premise WHERE argument=?" id]
         (doseq [p res1]
-          (delete-premise (:id p))))   
-      ;; then create and link the new premises 
+          (delete-premise (:id p))))
+      ;; then create and link the new premises
       (doseq [p (:premises m)]
         (create-premise p id)))
     (let [m (dissoc m :premises)
@@ -705,60 +704,60 @@
                         :conclusion conclusion-id}
                        {:header header-id2}))
           m (update-in m [:scheme] str)]
-      (condp = (first (jdbc/update-values 
-                       :argument 
+      (condp = (first (jdbc/update-values
+                       :argument
                        ["id=?" id]
                        m))
         0 false
         1 true))))
 
-(defn delete-argument 
+(defn delete-argument
   "Deletes an argument with the given the id.  The statements
-   of the conclusion and premises of the argument are not 
+   of the conclusion and premises of the argument are not
    deleted. Returns true if successful."
   [id]
   ; first delete the premises of argument
-  (jdbc/with-query-results 
+  (jdbc/with-query-results
     res1 ["SELECT id FROM premise WHERE argument=?" (str id)]
     (doseq [p res1] (delete-premise (:id p))))
   ; finally delete the argument itself
   (jdbc/delete-rows :argument ["id=?" (str id)])
   ; now delete the header of the argument, if it has one
-  (jdbc/with-query-results 
+  (jdbc/with-query-results
     res1 ["SELECT header FROM argument WHERE id=?" (str id)]
     (if (:header (first res1))
       (delete-metadata (:header (first res1)))))
   true)
 
 ;;; Namespaces
-  
+
 (defn create-namespace
   "map -> boolean
-   Creates a namespace record and inserts it into a database.  
+   Creates a namespace record and inserts it into a database.
    Returns the prefix of the namespace, which serves as its key."
-  [m]   
+  [m]
   {:pre [(map? m)]}
   (jdbc/insert-record :namespace m)
   (:prefix m))
 
-(defn read-namespace 
+(defn read-namespace
   "string -> map or nil
    Retrieves the namespace with the given prefix from the database.
    Returns nil if no namespace with the given prefix exists in the
    database."
   [prefix]
-  (jdbc/with-query-results 
+  (jdbc/with-query-results
     res1 ["SELECT * FROM namespace WHERE prefix=?" prefix]
     (if (empty? res1) nil (first res1))))
 
 (defn list-namespaces
   "Returns a sequence of maps representing the namespaces in the database"
   []
-  (jdbc/with-query-results 
+  (jdbc/with-query-results
     res1 ["SELECT * FROM namespace"]
     (doall res1)))
-  
-(defn update-namespace 
+
+(defn update-namespace
   "integer map -> boolean
    Updates the namespace with the given id in the database
    with the values in the map. Returns true if the update
@@ -769,7 +768,7 @@
     0 false
     1 true))
 
-(defn delete-namespace 
+(defn delete-namespace
   "Deletes a translation with the given the prefix.
    Returns true if successful."
   [prefix]
@@ -779,14 +778,14 @@
 ;;; Statement Polls
 
 (defn create-statement-poll
-  "Records votes for the given user, 
+  "Records votes for the given user,
    where the votes are a map from statement ids to real
-   numbers in the range 0.0 to 1.0. All other votes for 
+   numbers in the range 0.0 to 1.0. All other votes for
    this user, if any, are deleted."
   [poll]
-  {:pre [(string? (:id poll)) 
+  {:pre [(string? (:id poll))
          (map? (:votes poll))
-         (every? (fn [x] 
+         (every? (fn [x]
                    (and (number? x)
                         (<= 0.0 x 1.0)))
                  (vals (:votes poll)))]}
@@ -802,7 +801,7 @@
 (defn read-statement-poll
   "Retrieves the poll with the given id from the database"
   [id]
-  (jdbc/with-query-results 
+  (jdbc/with-query-results
     res1 ["SELECT * FROM stmtpoll WHERE userid=?" (str id)]
     {:votes (zipmap (map :statement res1) (map :opinion res1))
      :id id}))
@@ -815,42 +814,42 @@
    votes and the average value of the votes."
   [statement-id]
   {:pre [(integer? statement-id)]}
-  {:count (jdbc/with-query-results 
+  {:count (jdbc/with-query-results
             res1 ["SELECT COUNT(statement) FROM stmtpoll WHERE statement=?" statement-id]
             (second (first (first res1)))),
-   :value (jdbc/with-query-results 
+   :value (jdbc/with-query-results
             res1 ["SELECT AVG(opinion) FROM stmtpoll WHERE statement=?" statement-id]
             (second (first (first res1))))})
 
 (defn list-statement-poll
   "Returns a sequence of maps representing the statement poll table in the database"
   []
-  (jdbc/with-query-results 
+  (jdbc/with-query-results
     res1 ["SELECT * FROM stmtpoll"]
     (doall res1)))
-       
+
 (defn update-statement-poll
   "string map -> boolean
    Updates the votes of a user.  The map is
    from statement ids to numbers in the range of 0.0 to 1.0."
-  [poll] 
-  {:pre [(string? (:id poll)) 
+  [poll]
+  {:pre [(string? (:id poll))
          (map? (:votes poll))
-         (every? (fn [x] 
+         (every? (fn [x]
                    (and (number? x)
                         (<= 0.0 x 1.0)))
                  (vals (:votes poll)))]}
   (let [{:keys [id votes]} poll]
    (doseq [[statement opinion] votes]
-     (jdbc/update-or-insert-values 
-      :stmtpoll 
-      ["userid=? AND statement=?" (str id) (name statement)] 
+     (jdbc/update-or-insert-values
+      :stmtpoll
+      ["userid=? AND statement=?" (str id) (name statement)]
       {:userid id,
-       :statement (name statement) 
+       :statement (name statement)
        :opinion opinion}))
    id))
 
-(defn delete-statement-poll 
+(defn delete-statement-poll
   "Deletes all votes for the given statement id."
   [statement-id]
   {:pre [(integer? statement-id)]}
@@ -860,14 +859,14 @@
 ;;; Argument Polls
 
 (defn create-argument-poll
-  "Records votes for the given user, 
+  "Records votes for the given user,
    where the votes are a map from argument ids to real
-   numbers in the range 0.0 to 1.0. All other votes for 
+   numbers in the range 0.0 to 1.0. All other votes for
    this user, if any, are deleted."
   [arg]
-  {:pre [(string? (:id arg)) 
+  {:pre [(string? (:id arg))
          (map? (:votes arg))
-         (every? (fn [x] 
+         (every? (fn [x]
                    (and (number? x)
                         (<= 0.0 x 1.0)))
                  (vals (:votes arg)))]}
@@ -883,7 +882,7 @@
 (defn read-argument-poll
   "Retrieves the poll with the given id from the database"
   [id]
-  (jdbc/with-query-results 
+  (jdbc/with-query-results
     res1 ["SELECT * FROM argpoll WHERE userid=?" (str id)]
     {:votes (zipmap (map :argument res1) (map :opinion res1))
      :id id}))
@@ -896,49 +895,49 @@
    votes and the average value of the votes."
   [arg-id]
   {:pre [(integer? arg-id)]}
-  {:count (jdbc/with-query-results 
+  {:count (jdbc/with-query-results
             res1 ["SELECT COUNT(argument) FROM argpoll WHERE argument=?" arg-id]
             (second (first (first res1)))),
-   :value (jdbc/with-query-results 
+   :value (jdbc/with-query-results
             res1 ["SELECT AVG(opinion) FROM argpoll WHERE argument=?" arg-id]
             (second (first (first res1))))})
 
 (defn list-argument-poll
   "Returns a sequence of maps representing the argument poll table in the database"
   []
-  (jdbc/with-query-results 
+  (jdbc/with-query-results
     res1 ["SELECT * FROM argpoll"]
     (doall res1)))
-       
+
 (defn update-argument-poll
   "database string map -> boolean
    Updates the votes of a user.  The map is
    from argument ids to numbers in the range of 0.0 to 1.0."
-  [arg] 
-  {:pre [(string? (:id arg)) 
+  [arg]
+  {:pre [(string? (:id arg))
          (map? (:votes arg))
-         (every? (fn [x] 
+         (every? (fn [x]
                    (and (number? x)
                         (<= 0.0 x 1.0)))
                  (vals (:votes arg)))]}
   (let [{:keys [votes id]} arg]
     (doseq [[argument opinion] votes]
-      (jdbc/update-or-insert-values 
-       :argpoll 
-       ["userid=? AND argument=?" (str id) (name argument)] 
+      (jdbc/update-or-insert-values
+       :argpoll
+       ["userid=? AND argument=?" (str id) (name argument)]
        {:userid id,
-        :argument (name argument) 
+        :argument (name argument)
         :opinion opinion})))
   true)
 
-(defn delete-argument-poll 
+(defn delete-argument-poll
   "Deletes all votes for the given argument id."
   [arg-id]
   {:pre [(integer? arg-id)]}
   (jdbc/delete-rows :argpoll ["argument=?" arg-id])
   true)
 
-(defn assume 
+(defn assume
   "Assumes the given statements to be true in the database, unless they have
    been assumed to be false, in which case their status is left unchanged."
   [stmts]
@@ -946,17 +945,14 @@
   (doseq [stmt stmts]
     (let [id (get-statement (literal-atom stmt)),
           s  (read-statement id)]
-      (cond 
+      (cond
         (nil? (:weight s)) ; stated
         (update-statement id {:weight (if (literal-pos? stmt) 0.75 0.25)}),
         (and (literal-pos? stmt)
-             (> (:weight s) 0) 
+             (> (:weight s) 0)
              (<= (:weight s) 0.25))   ; assumed false
         (update-statement id {:weight 0.5}),  ; question
         (and (literal-neg? stmt)
              (> (:weight s) 0.5)
              (<= (:weight s) 0.75))  ; assumed true
         (update-statement id {:weight 0.5}))))) ; question
-
-
-

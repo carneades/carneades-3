@@ -1,10 +1,8 @@
-
-// Copyright (c) 2012 Fraunhofer Gesellschaft
+// Copyright (c) 2012-2013 Fraunhofer Gesellschaft
 // Licensed under the EUPL V.1.1
 
 // goog.provide('carneades.policy-analysis.web.main');
 
-// This object contains the global variables for the app
 var IMPACT = {
     user: "root",
     password: "pw1", // TODO real auth
@@ -13,14 +11,23 @@ var IMPACT = {
     question: "Q12",
     lang: "en",
     wsurl: "/carneadesws",
+    license_analysis_wsurl: "/carneadesws/license-analysis",
     argumentbrowser_url: "/argumentbrowser",
-    simulation_url: "/carneades/policy-analysis/questions",
+    simulation_url: "/carneades/questions",
     debate_db: "main",
     rootpath: null
 };
 
-// This object contains the functions and acts as a kind of namespace.
 var PM = {
+    project: undefined,
+    stmts_info: [],
+    args_info: [],
+    ag_info: [],
+    stmts: [],
+    args: [],
+    projects: [],
+    projects_theories: [],
+    projects_documents: []
 };
 
 // argument browser
@@ -57,7 +64,7 @@ PM.url_changed = function(url) {
          return;
     }
 
-    var url_regex = /\/([^ \/]+)(?:\/([^ \/]+))?(?:\/([^ \/]+))?(?:\/([^ ?\/]+))?(?:\/([^ \/]+))?/;
+    var url_regex = /\/([^ \/]+)(?:\/([^ \/]+))?(?:\/([^ \/]+))?(?:\/([^ ?\/]+))?(?:\/([^ ?\/]+))?(?:\/([^ \/&\?]+))?/;
     var result = url_regex.exec(url.value);
     if(result != null) {
         PM.dispatch_url(result);
@@ -65,26 +72,86 @@ PM.url_changed = function(url) {
 };
 
 PM.dispatch_url = function(sections) {
-    if(sections[1] == "issues") {
-        PM.display_issues();
-    } else if(sections[1] == "facts") {
-        PM.dispatch_facts_url(sections[2]);
+    if(sections[1] == "home") {
+        carneades.analysis.web.views.home.show();
+    } else if(sections[1] == "project") {
+        carneades.analysis.web.views.project.show(sections[2]);
+    } else if(sections[1] == "admin" &&
+              sections[2] == "project") {
+        carneades.analysis.web.views.admin.project.show();
+    } else if(sections[1] == "admin" &&
+              sections[2] == "import") {
+        carneades.analysis.web.views.admin.imports.show();
+    } else if(sections[1] == "admin" &&
+              sections[2] == "edit" &&
+              sections[4] == "properties") {
+        carneades.analysis.web.views.admin.properties.show(sections[3]);
+    } else if(sections[1] == "admin" &&
+              sections[2] == "edit" &&
+              sections[4] == "documents" &&
+              sections[5] == "upload") {
+        carneades.analysis.web.views.admin.documents.upload.show(sections[3]);
+    } else if(sections[1] == "admin" &&
+              sections[2] == "edit" &&
+              sections[4] == "documents") {
+        carneades.analysis.web.views.admin.documents.documents.show(sections[3]);
+    } else if(sections[1] == "admin" &&
+              sections[2] == "edit" &&
+              sections[4] == "theories" &&
+              sections[5] == "upload") {
+        carneades.analysis.web.views.admin.theories.upload.show(sections[3]);
+    } else if(sections[1] == "admin" &&
+              sections[2] == "edit" &&
+              sections[4] == "theories") {
+        carneades.analysis.web.views.admin.theories.theories.show(sections[3]);
     } else if(sections[1] == "arguments") {
-        PM.display_arguments(sections[3], sections[4], sections[2], sections[5]); 
-    } else if(sections[1] == "policies") {
-        PM.display_policies(sections[2]);
-    } else if(sections[1] == "schemes") {
-        PM.display_schemes(sections[2]);
-    } else if(sections[1] == "admin") {
-        PM.display_admin();
-    } else if(sections[1] == "introduction") {
-        PM.display_introduction();
-    } else if(sections[1] == "sct") {
-        PM.dispatch_sct_url(sections[2]);
-    } else if(sections[1] == "repl") {
-        carneades.policy_analysis.web.repl.connect();
-    } else if(sections[1] == "report") {
-        carneades.policy_analysis.web.views.pmt.report.display();
+        PM.display_arguments(sections[3], sections[4], sections[2], sections[5]);
+    } else if(sections[1] == "tour" &&
+              sections[2] == "intro") {
+        PM.display_sct_intro(sections[3]);
+    } else if(sections[1] == "tour" &&
+              sections[2] == "issues") {
+        PM.display_sct_issues();
+    } else if(sections[1] == "tour" &&
+              sections[2] == "question") {
+        PM.display_sct_question();
+    } else if(sections[1] == "tour" &&
+              sections[2] == "summary") {
+        PM.display_sct_summary();
+    } else if(sections[1] == "tour" &&
+              sections[2] == "comparison") {
+        PM.display_sct_comparison();
+    } else if(sections[1] == "policies" &&
+              sections[2] == "introduction") {
+        PM.display_introduction(sections[3]);
+    } else if(sections[1] == "policies" &&
+              sections[2] == "issues") {
+        PM.display_issues(sections[3]);
+    } else if (sections[1] == "policies" &&
+               sections[2] == "facts" &&
+               sections[3] == "modify") {
+        carneades.policy_analysis.web.views.pmt.submitted_facts.display();
+    } else if(sections[1] == "policies" &&
+              sections[2] == "facts") {
+        PM.display_facts(sections[3]);
+    } else if(sections[1] == "policies" &&
+              sections[2] == "policies") {
+        PM.display_policies(sections[3], undefined, undefined);
+    } else if(sections[1] == "policies" &&
+              sections[2] == "report") {
+        carneades.policy_analysis.web.views.pmt.report.display(sections[3]);
+    } else if(sections[1] = "license-analysis" &&
+              sections[2] == "debug" &&
+              sections[3] == "introduction") {
+        carneades.web.license_analysis.views.debug.introduction.show(sections[4]);
+    } else if(sections[1] = "license-analysis" &&
+              sections[2] == "debug" &&
+              sections[3] == "query") {
+        carneades.web.license_analysis.views.debug.query.show(sections[4]);
+    } else if(sections[1] = "license-analysis" &&
+              sections[2] == "debug" &&
+              sections[3] == "facts") {
+        carneades.web.license_analysis.views.debug.facts.show(sections[4]);
     }
 };
 
@@ -96,22 +163,8 @@ PM.dispatch_facts_url = function(section) {
     }
 };
 
-PM.dispatch_sct_url = function(section) {
-    if(section == "intro") {
-        PM.display_sct_intro();
-    } else if(section == "issues") {
-        PM.display_sct_issues();
-    } else if(section == "question") {
-        PM.display_sct_question();
-    } else if(section == "summary") {
-        PM.display_sct_summary();
-    } else if(section == "comparison") {
-        PM.display_sct_comparison();
-    }
-};
-
 // ImpactToolbox = {
-   
+
 // };
 
 PM.in_uid_toolbox = function() {
@@ -154,14 +207,14 @@ PM.init = function(toolboxState) {
             });
 
     IMPACT.rootpath = rootpath;
-    
+
     if(PM.in_uid_toolbox()) {
         PM.load_scripts(rootpath, true, _.bind(PM.post_load_uid, PM, toolboxState));
     } else {
         PM.load_scripts(rootpath, false, PM.post_load);
     }
 
- 
+
 };
 
 // attachs a listener to the 'select' language
@@ -219,9 +272,9 @@ PM.post_load_uid = function(toolboxState) {
     PM.load_templates(toolboxState);
     PM.add_address_listener();
     PM.load_app_styles(toolboxState.pmt.path);
-    
+
     PM.common_post_load();
-    
+
     // Forces update.
     $.address.update();
 };
@@ -231,9 +284,9 @@ PM.post_load = function() {
     PM.load_app_styles(null);
     PM.load_templates();
     PM.add_address_listener();
-    
+
     PM.common_post_load();
-    
+
     // Forces update.
     $.address.update();
 
@@ -246,7 +299,8 @@ PM.init_i18n = function(callbackfn) {
         {name:'Messages',
          path: site_path,
          mode:'both',
-         language: IMPACT.lang, 
+         language: IMPACT.lang,
+         async: false,
          callback: function() {
                  if(_.isFunction(callbackfn)) {
                      callbackfn();
@@ -257,62 +311,229 @@ PM.init_i18n = function(callbackfn) {
 
 PM.normalized_theory_path = function(project, path) {
     if(path.indexOf('/') != -1) {
-        return path; 
+        return path;
     }
 
     return project.id + '/' + path;
 };
 
+PM.load_project_theories = function (project) {
+    var project_theory = new PM.ProjectTheory();
+    project_theory.id = project.id;
+    PM.projects_theories[project.id] = project_theory;
+    project_theory.fetch({async: false});
+};
+
+PM.load_project_documents = function (project) {
+    var project_document = new PM.ProjectDocument();
+    project_document.id = project.id;
+    PM.projects_documents[project.id] = project_document;
+    project_document.fetch({async: false});
+};
+
 PM.common_post_load = function() {
+    Dropzone.autoDiscover = false;
+
     $.ajaxSetup({beforeSend: PM.simple_auth});
-    
-    PM.project = new PM.Project({id: "copyright"});
 
-    PM.project.fetch({async:false});
-
-    IMPACT.current_policy = PM.project.get('policies');
-      
-    var normalized_scheme_path = PM.normalized_theory_path(PM.project,
-                                                           PM.project.get('schemes'));
-    PM.current_theory = new PM.Theory({theory_path: normalized_scheme_path});
-    PM.current_theory.fetch();
-
-    PM.schemes = new PM.Schemes();
-    PM.schemes.fetch();
-
-    var normalized_policy_path = PM.normalized_theory_path(PM.project,
-                                                           PM.project.get('policies'));
-    PM.current_policy = new PM.Theory({theory_path: normalized_policy_path});
-    PM.current_policy.fetch({async: false});
-
-    PM.arguments = new PM.Arguments;
-    PM.statements = new PM.Statements;
-    
     PM.init_i18n();
-    
-    PM.debate_arguments = new PM.Arguments([], {db: IMPACT.debate_db});
-    PM.debate_statements = new PM.Statements([], {db: IMPACT.debate_db});
+
+    PM.projects = new PM.Projects;
+    PM.projects.fetch({async: false});
+
+    PM.projects.each(
+        function(project) {
+            PM.load_project_theories(project);
+            PM.load_project_documents(project);
+           });
+
+    PM.markdown_add_hooks();
+};
+
+
+// Loads the arguments, statements, schemes and policies of a project
+PM.load_project = function (id) {
+    IMPACT.project = id;
+
+    if(!_.isNil(PM.projects[id])) {
+        // already loaded
+        PM.project = PM.projects[id];
+        return;
+    }
+
+    PM.notify($.i18n.prop('loading_project'));
+
+    PM.project = new PM.Project({id: id});
+    PM.project.fetch({async:false});
+    PM.projects[id] = PM.project;
+
+    if(!_.isNil(PM.project.get('schemes'))) {
+        var normalized_scheme_path = PM.normalized_theory_path(PM.project,
+                                                               PM.project.get('schemes'));
+        PM.current_theory = new PM.Theory({theory_path: normalized_scheme_path});
+        PM.current_theory.fetch();
+
+        PM.schemes = new PM.Schemes();
+        PM.schemes.fetch();
+    }
+
+    if(!_.isNil(PM.project.get('policies'))) {
+        var normalized_policy_path = PM.normalized_theory_path(PM.project,
+                                                               PM.project.get('policies'));
+        PM.current_policy = new PM.Theory({theory_path: normalized_policy_path});
+        PM.current_policy.fetch({async: false});
+    }
+
+    // Reinitializes
+    PM.stmts_info = [];
+    PM.args_info = [];
+    PM.ag_info = [];
+    PM.stmts = [];
+    PM.args = [];
+
+    PM.load_project_theories(project);
+
+    PM.args_info[IMPACT.debate_db] = new PM.ArgumentsInfo([], {db: IMPACT.debate_db});
+    PM.stmts_info[IMPACT.debate_db] = new PM.StatementsInfo([], {db: IMPACT.debate_db});
+
+    PM.args_info[IMPACT.debate_db].fetch({async: false});
+    PM.stmts_info[IMPACT.debate_db].fetch({async: false});
+
+    PM.args[IMPACT.debate_db] = new PM.Arguments([], {db: IMPACT.debate_db});
+    PM.stmts[IMPACT.debate_db] = new PM.Statements([], {db: IMPACT.debate_db});
+
+    PM.args[IMPACT.debate_db].fetch({async: false});
+    PM.stmts[IMPACT.debate_db].fetch({async: false});
+
+    PM.debate_arguments = PM.args[IMPACT.debate_db];
+    PM.debate_statements = PM.stmts[IMPACT.debate_db];
     PM.debate_metadata = new PM.MetadataList([], {db: IMPACT.debate_db});
-    
-    PM.debate_arguments.fetch();
-    PM.debate_statements.fetch();
-    PM.debate_metadata.fetch();
-    
+
+    PM.debate_metadata.fetch({async: false});
+
     PM.debate_info = new PM.AgInfo({db: IMPACT.debate_db});
-    PM.debate_info.fetch();
-    
+    PM.debate_info.fetch({async: false});
+
+    PM.ag_info[IMPACT.debate_db] = PM.debate_info;
+
     PM.sct = new PM.Sct({db: IMPACT.debate_db,
                          lang: IMPACT.lang,
                          arguments: PM.debate_arguments,
                          statements: PM.debate_statements,
                          metadata: PM.debate_metadata});
-    
-    PM.markdown_add_hooks();
+
 };
 
+PM.get_arg_info = function (db, id) {
+    var args_info = PM.args_info[db];
+    if(_.isNil(args_info)) {
+        PM.args_info[db] =  new PM.ArgumentsInfo([], {db: db});
+        args_info = PM.args_info[db];
+    }
+
+    var arg = args_info.get(id);
+    if(_.isNil(arg)) {
+        args_info.fetch({async: false});
+        arg = args_info.get(id);
+    }
+
+    return arg.toJSON() || args_info.get(id).toJSON();
+};
+
+/// Returns the statement information
+PM.get_stmt_info = function (db, id) {
+    var stmts_info = PM.stmts_info[db];
+    if(_.isNil(stmts_info)) {
+        PM.stmts_info[db] =  new PM.StatementsInfo([], {db: db});
+        stmts_info = PM.stmts_info[db];
+    }
+
+    var stmt = stmts_info.get(id);
+    if(_.isNil(stmt)) {
+        stmts_info.fetch({async: false});
+        stmt = stmts_info.get(id);
+    }
+
+    return stmt.toJSON();
+};
+
+/// Returns the argument graph information
+PM.get_ag_info = function (db) {
+    var ag_info = PM.ag_info[db];
+    if(_.isNil(ag_info)) {
+        PM.ag_info[db] =  new PM.AgInfo({db: db});
+        ag_info = PM.ag_info[db];
+        ag_info.fetch({async: false});
+    }
+
+    return ag_info.toJSON();
+};
+
+/// Returns the statement object
+PM.get_stmt = function (db, id) {
+    var stmts = PM.stmts[db];
+    if(_.isNil(stmts)) {
+        PM.stmts[db] =  new PM.Statements([], {db: db});
+        stmts = PM.stmts[db];
+    }
+
+    var stmt = stmts.get(id);
+    if(_.isNil(stmt)) {
+        stmts.fetch({async: false});
+        stmt = stmts.get(id);
+    }
+
+    return stmt;
+};
+
+/// Returns the argument object
+PM.get_arg = function (db, id) {
+    var args = PM.args[db];
+    if(_.isNil(args)) {
+        PM.args[db] =  new PM.Arguments([], {db: db});
+        args = PM.args[db];
+    }
+
+    var arg = args.get(id);
+    if(_.isNil(arg)) {
+        args.fetch({async: false});
+        arg = args.get(id);
+    }
+
+    return arg;
+};
+
+/// Returns a collection of all the statements
+/// of the current database
+PM.get_stmts = function () {
+    var stmts = PM.stmts[IMPACT.db];
+
+    if(_.isNil(stmts)) {
+        PM.stmts[IMPACT.db] = new PM.Statements([], {db: IMPACT.db});
+        stmts = PM.stmts[IMPACT.db];
+        stmts.fetch({async: false});
+    }
+
+    return stmts;
+}
+
+/// Returns a collection of all the arguments
+/// of the current database
+PM.get_args = function () {
+    var args = PM.args[IMPACT.db];
+
+    if(_.isNil(args)) {
+        PM.args[IMPACT.db] = new PM.Arguments([], {db: IMPACT.db});
+        args = PM.args[IMPACT.db];
+        args.fetch({async: false});
+    }
+
+    return args;
+}
+
 PM.markdown_add_hooks = function () {
-    var converter = Markdown.getSanitizingConverter(); 
-    converter.hooks.chain("preConversion", PM.citation_to_url); 
+    var converter = Markdown.getSanitizingConverter();
+    converter.hooks.chain("preConversion", PM.citation_to_url);
 };
 
 // http://www.lockencreations.com/2011/07/02/cant-debug-imported-js-files-when-using-jquery-getscript/
@@ -339,7 +560,7 @@ PM.get_script = function(url, callback) {
 	}
     };
 
-    console.log('Loading ' + url);
+    /// console.log('Loading ' + url);
     head.appendChild(script);
 
     // We handle everything using the script element injection
@@ -350,9 +571,9 @@ PM.load_scripts_helper = function(rootpath, scripts, callback) {
     if(scripts.length > 1) {
         var script = scripts.pop();
         if(rootpath == undefined) {
-            PM.get_script(script, _.bind(PM.load_scripts_helper, PM, rootpath, scripts, callback));    
+            PM.get_script(script, _.bind(PM.load_scripts_helper, PM, rootpath, scripts, callback));
         } else {
-            PM.get_script(rootpath + '/' + script, _.bind(PM.load_scripts_helper, PM, rootpath, scripts, callback));    
+            PM.get_script(rootpath + '/' + script, _.bind(PM.load_scripts_helper, PM, rootpath, scripts, callback));
         }
     } else if(scripts.length == 1) {
         var script = scripts.pop();
@@ -366,33 +587,37 @@ PM.load_scripts_helper = function(rootpath, scripts, callback) {
 
 PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
     var head = $('head');
-    var scripts = [ // JS libraries must be listed here, JS carneades libraries are listed in project.clj
-                    // and compiled by the Google Closure Compiler
-                   'js/lib/ICanHaz.js',
-                   'js/lib/Markdown.Converter.js',
-                   'js/lib/Markdown.Editor.js',
-                   'js/lib/Markdown.Sanitizer.js',
-                   'js/lib/backbone.js',
-                   'js/lib/backbone.memento.min.js',
-                   'js/lib/crypto.js',
-                   'js/lib/html5slider.js',
-                   'js/lib/jquery.i18n.properties-min-1.0.9.js',
-                   'js/lib/jquery.scrollTo-1.4.2-min.js',
-                   'js/lib/jquery.svg.js',
-                   'js/lib/jquery.validate.js',
-                   'js/lib/markitup/jquery.markitup.js',
-                   'js/lib/markitup/sets/markdown/set.js',
-                   'js/lib/parallel.js',
-                   'js/lib/select2.js',
-                   'js/lib/sprintf-0.7-beta1.js',
-                   'js/compiled-app.js' 
+    var scripts = [
+        // JS libraries must be listed here, JS carneades libraries are listed in project.clj
+        // and compiled by the Google Closure Compiler
+        'js/lib/ICanHaz.js',
+        'js/lib/Markdown.Converter.js',
+        'js/lib/Markdown.Editor.js',
+        'js/lib/Markdown.Sanitizer.js',
+        'js/lib/backbone.js',
+        'js/lib/backbone.memento.min.js',
+        'js/lib/crypto.js',
+        'js/lib/html5slider.js',
+        'js/lib/dropzone.js',
+        'js/lib/jquery.i18n.properties-min-1.0.9.js',
+        'js/lib/jquery.scrollTo-1.4.2-min.js',
+        'js/lib/jquery.svg.js',
+        'js/lib/jquery.validate.js',
+        'js/lib/markitup/jquery.markitup.js',
+        'js/lib/parallel.js',
+        'js/lib/select2.js',
+        'js/lib/sprintf-0.7-beta1.js',
+        'js/compiled-app.js',
+        // sets must be loaded after compiled-app.js
+        // since it references the PM.markdown_to_html function
+        'js/lib/markitup/sets/markdown/set.js',
                   ];
-    
+
     if(!is_in_toolbox) {
-      scripts = scripts.concat('js/lib/jquery.address-1.4.js', 
+      scripts = scripts.concat('js/lib/jquery.address-1.4.js',
                                'js/lib/jquery-ui-1.8.23.custom.min.js');
     }
-    
+
     scripts.reverse();
     PM.load_scripts_helper(rootpath, scripts, callback);
 };
@@ -401,10 +626,12 @@ PM.load_scripts = function(rootpath, is_in_toolbox, callback) {
 PM.load_templates = function(toolboxState) {
     // loads partial templates
     _.each([{name: 'menu', url: 'site/menu.html'},
-            {name: 'pmmenu', url: 'site/pmmenu.html'},
+            // {name: 'pmmenu', url: 'site/pmmenu.html'}
+            // ,
             {name: 'metadata', url: 'site/metadata.html'},
             {name: 'statementlink', url: 'site/statementlink.html'},
             {name: 'argumentlink', url: 'site/argumentlink.html'},
+            {name: 'description_editor', url: 'site/description_editor.html'},
             {name: 'premise', url: 'site/premise.html'}],
            function(template) {
                var url = toolboxState == undefined ?
@@ -417,6 +644,16 @@ PM.load_templates = function(toolboxState) {
 
     // loads templates
     _.each(['admin',
+            'admin_project',
+            'admin_import',
+            'admin_properties',
+            'admin_theories',
+            'admin_theories_upload',
+            'admin_documents',
+            'admin_documents_upload',
+            'license_debug_query',
+            'license_debug_introduction',
+            'license_debug_facts',
             'argumentgraph',
             'argument',
             'argumentlink',
@@ -427,7 +664,7 @@ PM.load_templates = function(toolboxState) {
             'login',
             'menu',
             'metadata',
-            'pmmenu',
+            // 'pmmenu',
             'policies',
             'premise',
             'statement',
@@ -460,7 +697,10 @@ PM.load_templates = function(toolboxState) {
             'vote_results',
             'report',
             'submitted_facts',
-            'ask_modify_facts'
+            'ask_modify_facts',
+            'header',
+            'home',
+            'project'
            ],
            function(name) {
                var url = toolboxState == undefined ?
@@ -468,7 +708,7 @@ PM.load_templates = function(toolboxState) {
                    toolboxState.pmt.path + '/' + 'site/{0}.html'.format(name);
                PM.syncget(url,
                           function(content) {
-                              console.log('Loading template ' + name);
+                              /// console.log('Loading template ' + name);
                               ich.addTemplate(name, content);
                           });
           });
@@ -478,16 +718,17 @@ PM.load_templates = function(toolboxState) {
 // outside of the UID toolbox
 PM.load_carneades_styles = function() {
     PM.load_style(undefined, 'impact-ui/jquery-ui-1.8.11.custom.css', 'toolbox/css');
-    PM.load_style(undefined, 'impact-ui/impact-green.css', 'toolbox/css');
-    PM.load_style(undefined, 'main.css', 'toolbox/css');
-    PM.load_style(undefined, 'carneades/style.css', 'toolbox/css');
-    PM.load_style(undefined, 'local-app.css');
+    // PM.load_style(undefined, 'impact-ui/impact-green.css', 'toolbox/css');
+    // PM.load_style(undefined, 'main.css', 'toolbox/css');
+    // PM.load_style(undefined, 'carneades/style.css', 'toolbox/css');
+    // PM.load_style(undefined, 'local-app.css');
 };
 
 // Loads some specific styles to the app
 // They are loaded even when used inside the UID toolbox
 PM.load_app_styles = function(rootpath) {
     PM.load_style(rootpath, 'app.css');
+    PM.load_style(rootpath, 'dropzone.css');
     PM.load_style(rootpath, 'style.css', 'js/lib/markitup/skins/markitup');
     PM.load_style(rootpath, 'style.css', 'js/lib/markitup/sets/markdown');
 };
@@ -511,27 +752,27 @@ PM.load_style = function(rootpath, style, cssdir) {
 // Called when an AJAX error occurs
 PM.on_error = function(textstatus) {
     PM.busy_cursor_off();
-    $('#pm').prepend('<ul class="warning pm-warning" ><li class="notification">Error: {0}</li></ul>'.format(textstatus));
+    $('.notification-area').prepend('<ul class="warning pm-warning" ><li class="notification">{0}</li></ul>'.format(textstatus));
     setTimeout(function() {
-                   $('#pm .warning').remove();
+                   $('.notification-area .warning').remove();
                }, 3000);
     PM.scroll_to_top();
 };
 
 PM.notify = function(text) {
-     $('#pm').prepend('<ul class="thankyou pm-thankyou"><li class="notification">{0}</li></ul>'.format(text));
+     $('.notification-area').prepend('<ul class="thankyou pm-thankyou"><li class="notification">{0}</li></ul>'.format(text));
     setTimeout(function() {
-                   $('#pm .thankyou').remove();
-               }, 3000);
+                   $('.notification-area .thankyou').remove();
+               }, 4000);
     PM.scroll_to_top();
 };
 
 // Called when an AJAX error occurs for backbone
 PM.on_model_error = function(collection, response) {
     PM.busy_cursor_off();
-    $('#pm').prepend('<div style="background-color:  #FFCC33" class="error">Error: {0}</div>'.format(response.statusText));
+    $('.notification-area').prepend('<div style="background-color:  #FFCC33" class="error">{0}</div>'.format(response.statusText));
     setTimeout(function() {
-                   $('#pm .error').remove();
+                   $('.notification-area .error').remove();
                }, 3000);
 };
 

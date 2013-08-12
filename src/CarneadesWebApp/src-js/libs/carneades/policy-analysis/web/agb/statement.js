@@ -17,7 +17,7 @@ AGB.set_statement_has_properties = function(info) {
   if(_.isNil(info.header)) {
         return;
     }
-    
+
     info.hasdescription = info.header.description &&
         info.header.description[IMPACT.lang] ? true : false;
     info.header_haskey = info.header.key ? true : false;
@@ -35,16 +35,16 @@ AGB.set_statement_has_properties = function(info) {
     info.header_hassubject = info.header.subject ? true : false;
     info.header_hastitle = info.header.title ? true : false;
     info.header_hastype = info.header.type ? true : false;
-    
+
     info.hasheader = info.hasdescription || info.header_haskey
-        || info.header_hascontributor || info.header_hascoverage 
+        || info.header_hascontributor || info.header_hascoverage
         || info.header_hascreator || info.header_hasdate
         || info.header_hasformat || info.header_hasidentifier
         || info.header_haslanguage || info.header_haspublisher
         || info.header_hasrelation || info.header_hasrights
         || info.header_hassource || info.header_hassubject
         || info.header_hastitle || info.header_hastype;
-        
+
 };
 
 AGB.statement_html = function(db, info, lang)
@@ -54,15 +54,15 @@ AGB.statement_html = function(db, info, lang)
     info.db = db;
     AGB.set_statement_title_text(info);
     info.description_text = AGB.description_text(info.header);
-    AGB.set_procon_texts(info);    
+    AGB.set_procon_texts(info);
     AGB.set_procon_premises_text(info);
     AGB.set_premise_of_texts(info);
     if(info.text) {
-        info.statement_text = AGB.markdown_to_html(info.text[lang]);   
+        info.statement_text = AGB.markdown_to_html(info.text[lang]);
         if(info.statement_text != "") {
-            info.hastext = true;    
-        } 
-    } 
+            info.hastext = true;
+        }
+    }
     info.haspro = info.pro && info.pro.length > 0;
     info.hascon = info.con && info.con.length > 0;
     info.haspremiseof = info.premise_of && info.premise_of.length > 0;
@@ -95,26 +95,61 @@ AGB.statement_html = function(db, info, lang)
     info.pmt_pro_arguments = $.i18n.prop('pmt_pro_arguments');
     info.pmt_con_arguments = $.i18n.prop('pmt_con_arguments');
     info.pmt_premise_of = $.i18n.prop('pmt_premise_of');
-    
+
     info = PM.merge_menu_props(info);
-    info = PM.merge_ag_menu_props(info); 
+    info = PM.merge_ag_menu_props(info);
 
     var statement_html = ich.statement(info);
     return statement_html.filter('#statement');
 };
 
+PM.agb_statement_menu = function (db, stmtid) {
+    return [{text: 'pmt_ag_menu_map'
+             ,link: '#/arguments/map/' + PM.project.id + '/' + db},
+            {text: 'pmt_ag_menu_vote'
+             ,link: "#/arguments/vote/" + PM.project.id},
+            {text: 'pmt_ag_menu_copy'
+             ,link: "#/arguments/copy-case/" + PM.project.id},
+            {text: 'pmt_ag_menu_export'
+             ,link: "#/arguments/export/" + PM.project.id + '/' + db},
+            {text: 'pmt_ag_menu_evaluate'
+             ,link: "#/arguments/evaluate/" + PM.project.id + '/' + db},
+            {text: 'edit'
+             ,link: "#/arguments/statement/" + PM.project.id + '/' + db + '/' + stmtid + '?edit=true&entity=statement'},
+            {text: 'pmt_menu_delete'
+             ,link: "#/arguments/statement/" + PM.project.id + '/' + db + '/' + stmtid + '?delete=true&entity=statement'},
+            {text: 'pmt_new_argument'
+             ,link: "#/arguments/statement/" + PM.project.id + '/' + db + '/' + stmtid + '?edit=true&entity=argument'}
+           ];
+};
+
 AGB.display_statement = function(db, stmtid)
 {
-    PM.ajax_get(IMPACT.wsurl + '/statement-info/' + IMPACT.project + '/' + db + '/' + stmtid,
-                function(info) {
-                    $('#browser').html(AGB.statement_html(db, info, IMPACT.lang));
-                    $('#export').click(function (event){
-                                           window.open('/carneadesws/export/{0}/{1}'.format(db, IMPACT.project), 'CAF XML');
-                        return false; 
-                    });
-                    AGB.enable_statement_edition(db, info);
-                },
-                PM.on_error);;
+    console.log('Display statement...');
+    var info = PM.get_stmt_info(db, stmtid);
+
+    PM.show_menu({text: PM.project.get('title'),
+                  link: "#/project/" + PM.project.id},
+                 PM.agb_statement_menu(db, stmtid));
+
+    $('#browser').html(AGB.statement_html(db, info, IMPACT.lang));
+    $('#export').click(function (event){
+        window.open('/carneadesws/export/{0}/{1}'.format(db, IMPACT.project), 'CAF XML');
+        return false;
+    });
+    // AGB.enable_statement_edition(db, info);
+
+    if(PM.on_statement_edit()) {
+        AGB.edit_statement(db, info);
+    }
+
+    if(PM.on_argument_edit()) {
+        AGB.new_argument(PM.get_stmt(db, info.id).toJSON());
+    }
+
+    if(PM.on_statement_delete()) {
+        AGB.delete_statement(db, stmtid);
+    }
 }
 
 AGB.set_statement_title_text = function(info)
@@ -129,7 +164,7 @@ AGB.set_statement_title_text = function(info)
 
 AGB.set_arg_texts = function(info, direction)
 {
-    $.each(info[direction], 
+    $.each(info[direction],
            function(index, data) {
                var text = AGB.argument_text(data, index + 1);
                info[direction][index].argument_text = text;
@@ -189,12 +224,12 @@ AGB.statement_prefix = function(statement) {
 AGB.statement_standard = function(statement) {
     if(statement.standard == "pe") {
         return "Preponderance of Evidence";
-    } 
-    
+    }
+
     if(statement.standard == "dv") {
         return "Dialectical Validity";
     }
-    
+
     if(statement.standard == "cce") {
         return "Clear and Convincing Evidence";
     }
@@ -202,7 +237,7 @@ AGB.statement_standard = function(statement) {
     if(statement.standard == "brd") {
         return "Beyond Reasonable Doubt";
     }
-    
+
     return "";
 };
 
@@ -210,16 +245,16 @@ AGB.sexpr_to_str = function(sexpr) {
     if(typeof sexpr == 'string') {
         return sexpr;
     }
-    
+
     var str = "(";
-    
+
     _.each(sexpr, function(s) {
               str += s + " ";
            });
-    
+
     str = str.slice(0, -1);
     str += ")";
-    
+
     return str;
 };
 
@@ -230,7 +265,7 @@ AGB.statement_raw_text = function(statement) {
     }
 
     // TODO: if atom is UUID, then returns the string "statement" ?
-    return _.escape(statement.atom);  
+    return _.escape(statement.atom);
 };
 
 AGB.statement_text = function(statement)
@@ -241,7 +276,7 @@ AGB.statement_text = function(statement)
 
 AGB.statement_link = function(db, id, text)
 {
-    return '<a href="/arguments/statement/{0}/{1}/{1}" rel="address:/arguments/statement/{0}/{1}/{2}" class="statement" id="statement{2}">{3}</a>'.format(IMPACT.project, db, id, text);
+    return '<a href="/carneades/#/arguments/statement/{0}/{1}/{2}" rel="address:/arguments/statement/{0}/{1}/{2}" class="statement" id="statement{2}">{3}</a>'.format(IMPACT.project, db, id, text);
 };
 
 AGB.statement_in = function(statement)
@@ -254,44 +289,28 @@ AGB.statement_out = function(statement)
     return (statement.value != null) && (statement.value < 0.001);
 };
 
-AGB.enable_statement_edition = function(db, info) {
-    $('#menus').append(ich.statementeditormenu({
-        pmt_new_statement: $.i18n.prop('pmt_new_statement'),
-        pmt_menu_edit: $.i18n.prop('pmt_menu_edit'),
-        pmt_menu_delete: $.i18n.prop('pmt_menu_delete'),
-        pmt_new_argument: $.i18n.prop('pmt_new_argument')
-    }));
-    $('#delete-statement').click(_.bind(AGB.delete_statement, AGB, db, info.id));
-    $('#edit-statement').click(_.bind(AGB.edit_statement, AGB, db, info));
-    $('.evaluate').click(_.bind(AGB.evaluate, AGB, _.bind(AGB.display_statement, AGB, db, info.id)));
-    
-    var current_statement = PM.statements.get(info.id);
-    $('#new-argument').click(_.bind(AGB.new_argument, AGB, current_statement));
-    
-    return false;
-};
-
 AGB.delete_statement = function(db, stmtid) {
     if(confirm('Delete this statement?')) {
         PM.ajax_delete(IMPACT.wsurl + '/statement/' + IMPACT.project + '/' + db + '/' + stmtid,
                        function(e) {
-                           console.log('statement deleted');
-                           console.log(e);
-                           
+                           PM.ag_info[db].fetch({async: false});
                            AGB.set_argumentgraph_url(db);
                        },
-                       IMPACT.user, 
+                       IMPACT.user,
                        IMPACT.password,
-                       PM.on_error);    
+                       PM.on_error);
     }
 
-    return false; 
+    return false;
 };
 
 AGB.edit_statement = function(db, info) {
     AGB.show_statement_editor({update: true,
-                              statement: info,
-                              save_callback: _.bind(AGB.display_statement, AGB, db, info.id) 
+                               statement: PM.get_stmt(db, info.id).toJSON(),
+                               save_callback: function() {
+                                   $.address.queryString('');
+                                   $.address.update();
+                               }
                               });
     return false;
 };

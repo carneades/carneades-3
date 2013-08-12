@@ -2,13 +2,14 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.policy-analysis.web.views.sct.summary
-  (:use [carneades.policy-analysis.web.views.core :only [template json prepare-claim]]
+  (:use [carneades.analysis.web.views.core :only [template json]]
+        [carneades.policy-analysis.web.views.core :only [prepare-claim]]
         [carneades.policy-analysis.web.models.core :only [get-stmt]]
         [jayq.core :only [$ css inner attr val]]
-        [jayq.util :only [log clj->js]])
-  (:require [carneades.policy-analysis.web.backbone.core :as bb]
+        [jayq.util :only [log]])
+  (:require [carneades.analysis.web.backbone.core :as bb]
             [carneades.policy-analysis.web.views.sct.claim-editor :as claim])
-  (:require-macros [carneades.policy-analysis.web.backbone.macros :as bb])
+  (:require-macros [carneades.analysis.web.backbone.macros :as bbm])
   (:refer-clojure :exclude [val]))
 
 (defn assign-claim-ids
@@ -20,16 +21,16 @@
         claims
         (.$ this ".change-score"))))
 
-(bb/defview Summary
+(bbm/defview Summary
   :className "sct-summary"
   :events {"click .change-score" :edit-claim
            "click .compare" :jump-to-comparison}
   :render
   ([]
-     (bb/with-attrs [:statements]
+     (bbm/with-attrs [:statements]
        (let [votes (bb/get-in model [:statement-poll :votes])
              votes (js->clj votes)
-             claims-ids (keys votes) 
+             claims-ids (keys votes)
              claims (map (comp json (partial get-stmt statements)) claims-ids)
              claims (map (partial prepare-claim votes) claims)]
          (template this :sct-summary {:claims claims})
@@ -38,10 +39,10 @@
   :jump-to-comparison
   ([]
      (js/PM.set_sct_comparison_url))
-  
+
   :edit-claim
   ([event]
-     (bb/with-attrs [:statements :arguments :statement-poll :argument-poll]
+     (bbm/with-attrs [:statements :arguments :statement-poll :argument-poll]
       (let [target (.-target event)
             parent (.parents ($ target) "li")
             id (.data ($ target) "id")
