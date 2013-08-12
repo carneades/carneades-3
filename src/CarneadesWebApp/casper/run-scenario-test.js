@@ -46,7 +46,7 @@ var test_scenario_facts = function() {
     this.click('input[type=button]');
 
     casper.waitForSelector('h3:nth-of-type(1)', test_scenario_facts_license);
-    
+
 };
 
 var test_scenario_facts_license = function() {
@@ -81,32 +81,32 @@ var test_scenario_facts_search = function() {
 
     this.click('input[type=button]');
 
-    casper.waitForSelector('#argumentgraph', test_scenario_outline);
-};
-
-var test_scenario_outline = function() {
-    this.test.assertEval(function() {
-        return $('p:first').text() == "☐ The person may publish the work.";
-    }, 'The outline page shows that the main issue is not acceptable');
-
-    this.click('#schemes-item');
-
-    casper.waitForSelector('.theory-view', test_scenario_schemes);
-    // casper.then(function() {
-    //     this.click('#newstatement');
-    // });
-    // casper.waitForSelector('#save-statement', test_scenario_newstatement);
-};
-
-var test_scenario_schemes = function() {
-    this.test.assertEval(function() {
-        return $('#outline li:first a').text().match('Argument from') != null;
-    }, 'There is a least one scheme on the schemes page named Argument from..');
-
-    this.click('#policies-item');
-
     casper.waitForSelector('.policies-filtering', test_scenario_policies);
 };
+
+// var test_scenario_outline = function() {
+//     this.test.assertEval(function() {
+//         return $('p:first').text() == "☐ The person may publish the work.";
+//     }, 'The outline page shows that the main issue is not acceptable');
+
+//     this.click('#schemes-item');
+
+//     casper.waitForSelector('.theory-view', test_scenario_schemes);
+//     // casper.then(function() {
+//     //     this.click('#newstatement');
+//     // });
+//     // casper.waitForSelector('#save-statement', test_scenario_newstatement);
+// };
+
+// var test_scenario_schemes = function() {
+//     this.test.assertEval(function() {
+//         return $('#outline li:first a').text().match('Argument from') != null;
+//     }, 'There is a least one scheme on the schemes page named Argument from..');
+
+//     this.click('#policies-item');
+
+//     casper.waitForSelector('.policies-filtering', test_scenario_policies);
+// };
 
 var test_scenario_policies = function() {
     this.click('#in');
@@ -121,7 +121,7 @@ var test_scenario_policies_aktionbundnis = function() {
 
     this.click('#inputQ12-Aktionsbundnis');
 
-    casper.waitForSelector('#argumentgraph', 
+    casper.waitForSelector('#argumentgraph',
                            test_scenario_outline_after_eval,
                            function() {
                                this.fail('Selecting a policy does not work');
@@ -134,15 +134,15 @@ var test_scenario_outline_after_eval = function() {
         return $('p:first').text() == "☑ The person may publish the work.";
     }, 'The outline page shows that the main issue is now acceptable');
 
-    this.click('#facts-item');
-
-    casper.waitForText('Modify the facts.', test_scenario_change_facts);
-
+    casper.open('http://localhost:8080/carneades/#/policies/facts/copyright').then(function () {
+        console.log('page opened');
+        take_picture.call(this, '/tmp/pic3.png');
+        casper.waitForText('Modify the facts.', test_scenario_change_facts);
+    });
 };
 
 var test_scenario_change_facts = function() {
-    this.click('a[href="#/facts/modify"]');
-
+    this.click('a[href="#/policies/facts/modify"]');
     casper.waitForText('You can modify the answers below', test_scenario_change_facts_license);
 };
 
@@ -155,25 +155,19 @@ var test_scenario_change_facts_license = function() {
 
     this.click('input[type=button][value=Submit]');
 
-    casper.waitForSelector('#argumentgraph', 
+    casper.waitForSelector('.policies-filtering',
                            test_scenario_select_urhg,
                            function() {
+                               take_picture.call(this, '/tmp/pic5.png');
                                this.fail('Modifying the answer does not work');
                            },
                            10000);
 };
 
 var test_scenario_select_urhg = function() {
-    this.click('#policies-item');
-
-    casper.waitForSelector('.policies-filtering', test_scenario_select_urhg2);
-};
-
-
-var test_scenario_select_urhg2 = function() {
     this.click('#inputUrhG');
 
-    casper.waitForSelector('#argumentgraph', 
+    casper.waitForSelector('#argumentgraph',
                            test_scenario_copy,
                            function() {
                                this.fail('Applying UrhG policy does not work');
@@ -181,6 +175,11 @@ var test_scenario_select_urhg2 = function() {
                            10000)
 };
 
+
+////////////////////////////////////////////////////////////
+// The tests below need to be update once the worflow
+// is changed (regarding read-only graphs and 'copy')
+////////////////////////////////////////////////////////////
 var test_scenario_copy = function () {
     this.click('#copy');
 
@@ -188,7 +187,7 @@ var test_scenario_copy = function () {
         return msg === "Make a copy of the current case?" ? true : false;
     });
 
-    casper.waitForText('You are now viewing a copy of the case.', 
+    casper.waitForText('You are now viewing a copy of the case.',
                        function () {
                            casper.waitForText('may publish the work', test_scenario_vote);
                        });
@@ -236,46 +235,46 @@ var test_scenario_newstatement = function () {
     this.click('#newstatement');
 
     casper.waitForSelector('#save-statement', test_scenario_newstatement2);
-};    
+};
 
 var test_scenario_newstatement2 = function () {
     this.test.assertExist('input[name=main][value=yes]');
-    
+
     this.click('input[name=main][value=yes]');
-    
+
     casper.evaluate(function(term) {
         var text_en = "Here some text!";
         var metadata_en = "Here some metadata";
 
-        document.querySelector('#statement-editor-text').value = text_en;  
+        document.querySelector('#statement-editor-text').value = text_en;
         document.querySelector('.metadata-description-input').value = metadata_en;
     });
-    
-    
+
+
 
     this.test.assertEval(function() {
         return document.querySelector('input[name=main]:checked').getAttribute('value') == "yes";
     }, 'Main was set to true');
-    
-    this.click('#save-statement'); 
-    
+
+    this.click('#save-statement');
+
     casper.waitForText('Here some text!', test_scenario_newstatement3);
-    
+
 };
 
 var test_scenario_newstatement3 = function () {
     this.click('#newargument');
 
-    casper.waitForSelector('.save-argument', test_scenario_newargument);    
+    casper.waitForSelector('.save-argument', test_scenario_newargument);
 };
 
 var test_scenario_newargument = function () {
     casper.evaluate(function (term) {
         $('#argument-editor-weight').val(0.6).trigger('change');
-        
+
         $('#argument-editor-scheme').select2("val", "appearance").trigger('change');
     });
-    
+
     casper.waitForSelector('.premise-candidate', test_scenario_newargument2);
 
 };
@@ -283,40 +282,40 @@ var test_scenario_newargument = function () {
 var test_scenario_newargument2 = function () {
     this.test.assertEval(function () { return PM.statements.length > 5; }
                          , 'There are some statements in the case');
-    
+
     casper.evaluate(function () {
         var conclusion_id = PM.statements.at(2).id;
         console.log('conclusion_id = ' + conclusion_id);
         console.log('selected=');
-        
+
         console.log($('.conclusion-candidate .statement-select'));
         $('.conclusion-candidate .statement-select')
             .select2("val", conclusion_id)
             .trigger('change');
-        
-        
+
+
     });
-    
+
     casper.evaluate(function () {
         var premise_id = PM.statements.at(1).id;
         $('.premise-candidate:first .statement-select')
             .select2("val", premise_id)
             .trigger('change');
     });
-    
+
     casper.waitFor(function () {
         return this.evaluate(function () {
-            return $('.conclusion-candidate .statement-select').select2("val") != "" 
+            return $('.conclusion-candidate .statement-select').select2("val") != ""
                 &&  $('.premise-candidate:first .statement-select').select2("val") != "";
         });
     });
-    
-    this.click('.save-argument'); 
-    
+
+    this.click('.save-argument');
+
     casper.waitWhileSelector('.save-argument', function () {
         casper.waitForText('Premises', test_scenario_newargument3);
     });
-    
+
 };
 
 var test_scenario_newargument3 = function () {
@@ -339,7 +338,7 @@ var take_picture = function (filename) {
 };
 
 casper.start(casper.cli.get('url'), function() {
-    casper.waitForSelector('#mainmenu', function() {
+    casper.waitForSelector('.content', function() {
         test_scenario_entry.call(this);
     });
 });

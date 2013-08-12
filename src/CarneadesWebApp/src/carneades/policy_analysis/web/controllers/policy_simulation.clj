@@ -103,7 +103,7 @@
           ;; that could be now reachable with the new facts
           ;; session (start-engine session ag)
           session (assoc session :all-questions-answered true :db db)
-          ] 
+          ]
       (questions-or-solution session)))
   )
 
@@ -129,6 +129,7 @@
   [request]
   (let [{:keys [session body params]} request
         json (read-json (slurp body))
+        json (dissoc json :uuid)
         _ (info "JSON =")
         _ (info json)
         res (ajax-handler json session request)]

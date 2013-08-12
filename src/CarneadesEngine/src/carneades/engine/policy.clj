@@ -2,7 +2,7 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.engine.policy
-  (:use (carneades.engine statement scheme argument-graph aspic argument-evaluation utils)
+  (:use (carneades.engine statement theory argument-graph aspic argument-evaluation utils)
         [clojure.tools.logging :only (info debug error)])
   (:require [carneades.config.config :as config]))
 

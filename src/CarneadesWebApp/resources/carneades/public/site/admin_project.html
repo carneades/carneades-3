@@ -1,0 +1,17 @@
+<table class="projects">
+  <thead><tr>
+      <th>{{selected}}</th>
+      <th>{{project}}</th>
+      <th>{{created}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#projects}}
+    <tr>
+      <td><input type="radio" name="selection" id="{{id}}"/></td>
+      <td><a href="#/admin/edit/{{id}}/properties">{{title}}</a></td>
+      <td>{{creation-date}}</td>
+    </tr>
+    {{/projects}}
+  </tbody>
+</table>

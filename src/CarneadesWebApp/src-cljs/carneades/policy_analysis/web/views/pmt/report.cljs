@@ -2,15 +2,16 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.policy-analysis.web.views.pmt.report
-  (:use [jayq.util :only [log clj->js]]
+  (:use [jayq.util :only [log]]
         [jayq.core :only [$ inner attr]]
-        [carneades.policy-analysis.web.views.core :only [template]]
+        [carneades.analysis.web.views.core :only [template]]
         [carneades.policy-analysis.web.views.pmt.vote :only [round-score]])
-  (:require [carneades.policy-analysis.web.backbone.core :as bb])
-  (:require-macros [carneades.policy-analysis.web.backbone.macros :as bb]
+  (:require [carneades.analysis.web.backbone.core :as bb]
+            [carneades.analysis.web.views.header :as header])
+  (:require-macros [carneades.analysis.web.backbone.macros :as bbm]
                    [carneades.policy-analysis.web.views.menu :as menu]))
 
-(bb/defview Report
+(bbm/defview Report
   :className "pmt-report"
   :render
   ([]
@@ -34,7 +35,23 @@
           (js/PM.attach_lang_listener))))))
 
 (defn ^:export display
-  []
+  [project]
+  (js/PM.load_project project)
+  (header/show {:text (.get js/PM.project "title")
+                :link (str "#/project/" js/PM.project.id)}
+               [{:text :pmt_menu_intro
+                 :link (str "#/policies/introduction/" js/PM.project.id)}
+                {:text :pmt_menu_issues
+                 :link (str "#/policies/issues/" js/PM.project.id)}
+                {:text :pmt_menu_facts
+                 :link (str "#/policies/facts/" js/PM.project.id)}
+                {:text :pmt_menu_policies
+                 :link (str "#/policies/policies/" js/PM.project.id)}
+                {:text :pmt_menu_analysis
+                 :link (str "#/arguments/outline/" js/PM.project.id "/" js/IMPACT.db)}
+                {:text :pmt_menu_report
+                 :link (str "#/policies/report/" js/PM.project.id "/" js/IMPACT.db)}
+                ])
   (let [report-view (bb/new
                      Report
                      {:model (bb/new-model

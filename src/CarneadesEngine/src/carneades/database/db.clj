@@ -10,16 +10,16 @@
             [carneades.project.admin :as project])
   (:import java.io.File))
 
-(defmacro with-db [db & body]   
-  `(jdbc/with-connection 
+(defmacro with-db [db & body]
+  `(jdbc/with-connection
      ~db
      (jdbc/transaction ~@body)))
 
-(defmacro test-db 
-  "For testing and development.  Doesn't do any 
+(defmacro test-db
+  "For testing and development.  Doesn't do any
    any error handling so don't use in production code."
-  [db & body]   
-  `(jdbc/with-connection 
+  [db & body]
+  `(jdbc/with-connection
            ~db
            (jdbc/transaction ~@body)))
 
@@ -53,8 +53,7 @@ true option to create a new database."
                      ;; see http://www.h2database.com/html/features.html#database_only_if_exists
                      (str db-host ";IFEXISTS=TRUE"))
            ]
-       (prn "db-host " db-host)
-       {:classname   "org.h2.Driver" 
+       {:classname   "org.h2.Driver"
         :subprotocol "h2"
         :subname db-host
         :user  username
@@ -74,4 +73,3 @@ true option to create a new database."
                               :create true)
       (apply jdbc/do-commands script))
     newdbname))
-
