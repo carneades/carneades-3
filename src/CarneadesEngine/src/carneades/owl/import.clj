@@ -2,6 +2,7 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.owl.import
+  (:refer-clojure :exclude [import])
   (:require [carneades.engine.statement :refer [literal-complement]]
             [carneades.engine.theory :as t]
             [carneades.owl.owl :as o])
@@ -264,13 +265,12 @@
 
 (defn class-assertion->schemes
   [axiom]
-  (let [individual (symbol (.. atom getIndividual toStringID)),
+  (let [individual (symbol (.. axiom getIndividual toStringID)),
         class-expr (.getClassExpression axiom),
         class-sexpr (class-expression->sexpr class-expr individual)]
     (list (t/make-scheme
            :id (gensym "class-assertion-axiom")
-           :conclusion class-sexpr
-           ()))))
+           :conclusion class-sexpr))))
 
 (defn prop-assertion->schemes
   [axiom]
@@ -280,8 +280,7 @@
         prop-sexpr (property-expression->sexpr prop subject object)]
     (list (t/make-scheme
            :id (gensym "property-assertion-axiom")
-           :conclusion prop-sexpr
-           ()))))
+           :conclusion prop-sexpr))))
 
 
 (defn axiom->schemes
@@ -318,6 +317,9 @@
     schemes))
 
 (defn import
-  [url]
-  (let [ontology (o/load-ontology url)]
-    (ontology->schemes ontology)))
+  ([url]
+     (let [ontology (o/load-ontology url)]
+       (ontology->schemes ontology)))
+  ([url importdir]
+     (let [ontology (o/load-ontology url importdir)]
+       (ontology->schemes ontology))))
