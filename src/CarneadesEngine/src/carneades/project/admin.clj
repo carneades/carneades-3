@@ -70,6 +70,22 @@ can be of the form \"theory\" or \"project/theory\". The former refers
   (str projects-directory file-separator
        (relative-theory-path project theory)))
 
+(defn absolute-ontology-path
+  "Returns the absolute path of an ontology. Ontologies are saved in
+  the theories folder."
+  [project ontology]
+  (str projects-directory file-separator
+       project file-separator
+       theories-directory file-separator
+       ontology))
+
+(defn absolute-theory-dir-path
+  "Returns the path of the theory directory for a given a project."
+  [project]
+  (str projects-directory file-separator
+       project file-separator
+       theories-directory))
+
 (defn load-theory
   "Loads the theory of a project"
   [project theory]
