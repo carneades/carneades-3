@@ -5,7 +5,7 @@
   carneades.owl.import-language
   (:require [clojure.string :as s]
             [carneades.engine.utils :refer [safe-read-string]])
-  (:import [org.semanticweb.owlapi.model AxiomType]))
+  (:import [org.semanticweb.owlapi.model IRI AxiomType]))
 
 (def ontology-iri "http://www.carneades.github.io/ontologies/carneades-annotations")
 
@@ -25,20 +25,32 @@
   [value]
   (safe-read-string (.getLiteral value)))
 
+(defn owl-class->symbol
+  "Converts an OWL class to a Clojure symbol."
+  [class]
+  (symbol (s/replace (str class) #"[<>]" "")))
+
+(defn equivalent-classes-from-annotated-subject
+  "Returns all the equivalent classes for an annotated subject."
+  [ontology subject]
+  (let [sub (first (.getEntitiesInSignature ontology (IRI/create (str subject))))]
+   (into #{(owl-class->symbol sub)} (map owl-class->symbol (.getEquivalentClasses sub ontology)))))
+
 (defn axiom->language-element
   "Converts an OWL Annotation Assertion to a language element."
-  [language axiom]
+  [ontology language axiom]
   (if (= (.getAxiomType axiom) AxiomType/ANNOTATION_ASSERTION)
-    (let [subject (str (.getSubject axiom))
+    (let [subject (.getSubject axiom)
           ann (.getAnnotation axiom)
           prop (.getProperty ann)
           value (.getValue ann)]
       (if (carneades-annotation? ann)
-        (update-in language [(symbol subject)]
-                   assoc (ann-property->key prop) (ann-value->value value))
+        (update-in language [(symbol (str subject))]
+                   assoc (ann-property->key prop) (ann-value->value value)
+                   :type (equivalent-classes-from-annotated-subject ontology subject))
         language))
     language))
 
 (defn ontology->language
   [ontology]
-  (reduce axiom->language-element {} (.getAxioms ontology)))
+  (reduce (partial axiom->language-element ontology) {} (.getAxioms ontology)))
