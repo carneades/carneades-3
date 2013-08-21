@@ -6,6 +6,7 @@
   (:use [clojure.pprint :only [pprint write]]
         [carneades.engine.utils :only [unserialize-atom]])
   (:require [clojure.walk :as w]
+            [clojure.string :as s]
             edu.ucdenver.ccp.kr.sesame.kb
             [edu.ucdenver.ccp.kr.kb :as kb]
             [edu.ucdenver.ccp.kr.rdf :as rdf]
@@ -66,6 +67,12 @@
    (binding [sparql/*select-limit* 100]
      (sparql/query (:kb markos-conn) '((?/x soft/name ("org.apache.log4j" xsd/string))))))
 
+  (pprint
+   (binding [kb/*kb* (:kb markos-conn)]
+     (sparql/sparql-query-body '((?/x http://www.markosproject.eu/ontologies//software#name ("org.apache.log4j" xsd/string))))))
+
+  (pprint
+   (sparql/query (:kb markos-conn) '((?/x http://www.markosproject.eu/ontologies//software#name ("org.apache.log4j" xsd/string)))))
 
   (pprint
    (binding [sparql/*select-limit* 100]
@@ -88,13 +95,6 @@
   ;;       }
   (pprint
    (let [query (unserialize-atom "((package/_3 soft/name (\"org.apache.log4j\" xsd/string)))")]
-     (prn "query=" query)
-     (binding [sparql/*select-limit* 100]
-       (sparql/ask (:kb markos-conn) query))))
-
-  ;; this won't work :-( full URI not working in the SPARQL library?
-  (pprint
-   (let [query (unserialize-atom "((http://markosproject.eu/kb/Package/_3 soft/name (\"org.apache.log4j\" xsd/string)))")]
      (prn "query=" query)
      (binding [sparql/*select-limit* 100]
        (sparql/ask (:kb markos-conn) query))))
@@ -152,6 +152,19 @@ Do nothing if v is not a variable."
       (symbol (str "?/" (subs n 1))))
     v))
 
+(defn iri->owllib-iri
+  [sym]
+  "Converts the IRI to make itcompatible with the Clojure OWL library.
+The IRI is returned with its last slash doubled."
+  (if (symbol? sym)
+    (symbol (s/replace (str sym) #"(.+)://(.*)/(.*)" "$1://$2//$3"))
+    sym))
+
+(defn iris->owllib-iris
+  "Converts the IRIs in an atom by IRIs compatible with the Clojure OWL library."
+  [atom]
+  (w/postwalk iri->owllib-iri atom))
+
 (defn variables->sparqlvariables
   "Converts the Carneades variables in a statement Clojure/SPARQL variables."
   [stmt]
@@ -172,7 +185,8 @@ Do nothing if v is not a variable."
 (defn sexp->sparqlquery
   "Converts a Carneades sexpression encoding a query to a Clojure/SPARQL query."
   [sexp]
-  (let [[p s o] sexp]
+  (let [sexp (iris->owllib-iris sexp)
+        [p s o] sexp]
     (variables->sparqlvariables (list s p o))))
 
 (defn responses-from-ask
