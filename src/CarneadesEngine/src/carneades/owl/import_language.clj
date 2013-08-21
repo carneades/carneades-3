@@ -35,53 +35,101 @@
   "Returns all the equivalent classes for an annotated subject."
   [ontology subject]
   (let [sub (first (.getEntitiesInSignature ontology (IRI/create (str subject))))]
-   (into #{(owl-class->symbol sub)} (map owl-class->symbol (.getEquivalentClasses sub ontology)))))
-
-;; (defn axiom->language-element
-;;   "Converts an OWL Annotation Assertion to a language element."
-;;   [ontology language axiom]
-;;   (if (= (.getAxiomType axiom) AxiomType/ANNOTATION_ASSERTION)
-;;     (let [subject (.getSubject axiom)
-;;           ann (.getAnnotation axiom)
-;;           prop (.getProperty ann)
-;;           value (.getValue ann)]
-;;       (if (carneades-annotation? ann)
-;;         (update-in language [(symbol (str subject))]
-;;                    assoc (ann-property->key prop) (ann-value->value value)
-;;                    :type (equivalent-classes-from-annotated-subject ontology subject))
-;;         language))
-;;     language))
+    (into #{(owl-entity->symbol sub)} (map owl-entity->symbol (.getEquivalentClasses sub ontology)))))
 
 (defn add-ann-to-language-element
+  "Add the property and value of an annotation to sequence of key value."
   [element ann]
-  (concat element
-         [(ann-property->key (.getProperty ann))
-          (ann-value->value (.getValue ann))]))
+  (if (carneades-annotation? ann)
+    (concat element
+            [(ann-property->key (.getProperty ann))
+             (ann-value->value (.getValue ann))])
+    element))
 
 (defn anns->language-elements
-  "Converts OWL Annotations to a language element."
+  "Converts OWL Annotations to a sequence of key values."
   [annotations]
   (reduce add-ann-to-language-element () annotations))
 
 (defn add-individual
+  "Adds an individual to the language, if it is annotated."
   [ontology language individual]
   (let [anns (.getAnnotations individual ontology)]
-    (if (empty? anns)
-      language
+    (if (some carneades-annotation? anns)
       (let [idv (apply t/make-individual
                        :symbol (owl-entity->symbol individual)
-                       (anns->language-element anns))]
-        (assoc language (:symbol idv) idv)))))
+                       (anns->language-elements anns))]
+        (assoc language (:symbol idv) idv))
+      language)))
 
-(defn add-individuals
+(defn add-annotated-individuals
+  "Adds the annotated individuals contained in the ontology to the language."
   [ontology language]
   (reduce (partial add-individual ontology)
           language
           (.getIndividualsInSignature ontology)))
 
+(defn add-annotated-property
+  "Adds an annotated OWL property to the language.
+OWL properties are mapped to roles."
+  [ontology language property]
+  (let [anns (.getAnnotations property ontology)]
+    (if (some carneades-annotation? anns)
+      (let [role (apply t/make-role :symbol (owl-entity->symbol property)
+                           (anns->language-elements anns))]
+       (assoc language (:symbol role) role))
+      language)))
+
+(defn add-annotated-x-properties
+  "Adds OWL data or object properties to the language, depending of
+  the value of the f function."
+  [ontology language f]
+  (reduce (partial add-annotated-property ontology)
+          language
+          (f ontology)))
+
+(defn add-annotated-data-properties
+  "Adds OWL data properties to the language as roles."
+  [ontology language]
+  (add-annotated-x-properties ontology
+                              language
+                              (memfn getDataPropertiesInSignature)))
+
+(defn add-annotated-object-properties
+  "Adds OWL object properties to the language as roles."
+  [ontology language]
+  (add-annotated-x-properties ontology
+                              language
+                              (memfn getObjectPropertiesInSignature)))
+
+(defn add-annotated-properties
+  "Adds OWL properties to the language as roles."
+  [ontology language]
+  (->> language
+       (add-annotated-data-properties ontology ,,,)
+       (add-annotated-object-properties ontology ,,,)))
+
+(defn add-annotated-class
+  "Adds an OWL class to the language as a concept."
+  [ontology language class]
+  (let [anns (.getAnnotations class ontology)]
+    (if (some carneades-annotation? anns)
+      (let [concept (apply t/make-concept :symbol (owl-entity->symbol class)
+                           (anns->language-elements anns))]
+        (assoc language (:symbol concept) concept))
+      language)))
+
+(defn add-annotated-classes
+  "Adds OWL classes to the language as concepts."
+  [ontology language]
+  (reduce (partial add-annotated-class ontology)
+          language
+          (.getClassesInSignature ontology)))
+
 (defn ontology->language
+  "Converts the annotated individuals and properties into a language."
   [ontology]
-  ;; (reduce (partial axiom->language-element ontology) {} (.getAxioms ontology))
-  (prn (->> {}
-            (add-individuals ontology ,,,)))
-  )
+  (->> {}
+       (add-annotated-individuals ontology ,,,)
+       (add-annotated-properties ontology ,,,)
+       (add-annotated-classes ontology ,,,)))

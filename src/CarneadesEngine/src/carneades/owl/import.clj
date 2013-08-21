@@ -5,7 +5,8 @@
   (:refer-clojure :exclude [import])
   (:require [carneades.project.admin :as project]
             [carneades.owl.owl :as o]
-            [carneades.owl.import-axioms :as axioms]))
+            [carneades.owl.import-axioms :as axioms]
+            [carneades.owl.import-language :as language]))
 
 (defn import
   "Imports an OWL ontology serialized in RDF/XML. Returns a map with keys :axioms and :language."
@@ -13,7 +14,8 @@
      (import url "."))
   ([url importdir]
      (let [ontology (o/load-ontology url importdir)]
-       {:axioms (axioms/ontology->schemes ontology)})))
+       {:axioms (axioms/ontology->schemes ontology)
+        :language (language/ontology->language ontology)})))
 
 (defn import-from-project
   "Imports an ontology from a Carneades project."
