@@ -10,7 +10,20 @@
 
 (deftest test-generate-arguments-from-triplestore-grounded
   (let [url "http://dbpedia.org/sparql"
-        goal '(dbpedia/Carneades rdf/type dbpedia-owl/Philosopher)
+        goal '(rdf/type dbpedia/Carneades dbpedia-owl/Philosopher)
+        subs '{?a "a" ?b "b"}
+        triplestore-generator (generate-arguments-from-triplestore url)
+        responses (generator/generate triplestore-generator goal subs)]
+    (is (not (empty? responses)))
+    (is (= (count responses) 1))
+    (is (= (-> (first responses) :argument :conclusion) goal))
+    (is (= (-> (first responses) :substitutions) subs))))
+
+(deftest test-generate-arguments-from-triplestore-with-iri
+  (let [url "http://dbpedia.org/sparql"
+        goal '(rdf/type
+               http://dbpedia.org/resource/Carneades
+               http://dbpedia.org/ontology/Philosopher)
         subs '{?a "a" ?b "b"}
         triplestore-generator (generate-arguments-from-triplestore url)
         responses (generator/generate triplestore-generator goal subs)]
@@ -21,7 +34,7 @@
 
 (deftest test-generate-arguments-from-triplestore-notgrounded
   (let [url "http://dbpedia.org/sparql"
-        goal '(dbpedia/Carneades rdf/type ?x)
+        goal '(rdf/type dbpedia/Carneades ?x)
         subs '{?a "a" ?b "b"}
         triplestore-generator (generate-arguments-from-triplestore url)
         responses (generator/generate triplestore-generator goal subs)]
@@ -33,7 +46,7 @@
   (let [generators [(generate-arguments-from-triplestore "http://dbpedia.org/sparql")]
         graph (shell/argue (shell/make-engine 50 [] generators)
                            caes/caes
-                           '(dbpedia/Carneades rdf/type ?x))]
+                           '(rdf/type dbpedia/Carneades ?x))]
     ;; (pprint graph)
     ;; (lacij/export graph "/tmp/carneades.svg")
     (is (>= (count (ag/arguments graph)) 10))))
