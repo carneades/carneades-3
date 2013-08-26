@@ -392,3 +392,13 @@ ByteArrayInputStream is returned."
 (defn unserialize-atom
   [s]
   (w/postwalk restore-kr-symbol (safe-read-string s)))
+
+(defn unrecordify
+  "Recursively convert the records inside coll into plain maps."
+  [m]
+  (reduce-kv (fn [m k v]
+               (if (map? v)
+                 (assoc m k (into {} v))
+                 m))
+             m
+             m))
