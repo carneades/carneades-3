@@ -69,15 +69,27 @@
           language
           (.getIndividualsInSignature ontology)))
 
+(defn property-ranges->type
+  "Converts the ranges of a property to a language type"
+  [property ontology]
+  (let [ranges (.getRanges property ontology)]
+    (condp = (count ranges)
+      0 (throw (ex-info (str "Type is not defined for property " property)
+                        {:property property}))
+      1 (owl-entity->symbol (first ranges))
+      (map owl-entity->symbol ranges))))
+
 (defn add-annotated-property
   "Adds an annotated OWL property to the language.
 OWL properties are mapped to roles."
   [ontology language property]
   (let [anns (.getAnnotations property ontology)]
     (if (some carneades-annotation? anns)
-      (let [role (apply t/make-role :symbol (owl-entity->symbol property)
-                           (anns->language-elements anns))]
-       (assoc language (:symbol role) role))
+      (let [role (apply t/make-role
+                        :type (property-ranges->type property ontology)
+                        :symbol (owl-entity->symbol property)
+                        (anns->language-elements anns))]
+        (assoc language (:symbol role) role))
       language)))
 
 (defn add-annotated-x-properties
