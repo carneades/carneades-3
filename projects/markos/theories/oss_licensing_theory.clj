@@ -20,7 +20,7 @@
     :description {:en "A theory of open source licensing for the MARKOS
 project."})
 
-   :imports [c/copyright-law-theory] ;; to do: "imports" property of theories to be implemented
+   :imports [c/copyright-law-theory]
 
    :namespaces
    { ""   "http://www.markosproject.eu/ontologies/oss-licenses#",
