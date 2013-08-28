@@ -417,6 +417,17 @@ call or a symbol."
      sections   ; section sequence
      references]) ; (string to metadata) map
 
+(defn imports-import
+  [theory import]
+  (update-in theory [:sections] concat (:sections import)))
+
+(defn imports-imports
+  "Adds the imports of the theory to the theory."
+  [theory]
+  (let [theory (reduce imports-import theory (:imports theory))
+        theory (dissoc theory :imports)]
+    theory))
+
 (defn make-theory
   "key value ... -> theory"
   [& key-values]
@@ -428,7 +439,8 @@ call or a symbol."
        []                           ; sections
        {})
       (merge ,,, (apply hash-map key-values))
-      (namespace/to-absolute-theory ,,,)))
+      (namespace/to-absolute-theory ,,,)
+      (imports-imports ,,,)))
 
 (defn theory? [x] (instance? Theory x))
 
