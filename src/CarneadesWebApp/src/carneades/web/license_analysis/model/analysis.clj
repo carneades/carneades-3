@@ -4,7 +4,6 @@
 (ns ^{:doc ""}
   carneades.web.license-analysis.model.analysis
   (:use [clojure.tools.logging :only (info debug error)]
-        [carneades.engine.utils :only [unserialize-atom]]
         [carneades.engine.dialog :only [add-answers]]
         [carneades.database.export :only [export-to-argument-graph]])
   (:require [clojure.pprint :as pp]
@@ -21,7 +20,8 @@
             [edu.ucdenver.ccp.kr.sparql :as sparql]
             [carneades.policy-analysis.web.controllers.reconstruction :as recons]
             [carneades.engine.triplestore :as triplestore]
-            [carneades.database.db :as db]))
+            [carneades.database.db :as db]
+            [carneades.engine.utils :refer [unserialize-atom]]))
 
 (def markos-triplestore-endpoint "http://markos.man.poznan.pl/openrdf-sesame")
 (def markos-repo-name "markos_test_sp2")
@@ -63,7 +63,7 @@
           ag (export-to-argument-graph dbconn)]
       ag)))
 
-(defn- start-engine
+(defn start-engine
   [params]
   (let [{:keys [project theories entity query repo-name endpoint ag-name]} params
         sexp (unserialize-atom query)
@@ -95,12 +95,6 @@
     (swap! state index-analysis analysis)
     (build-response analysis)))
 
-(defn analyse
-  "Begins an analysis of a given software entity. The theories inside project is used.
-Returns a set of questions for the frontend."
-  [params]
-  (start-engine params))
-
 (defn process-answers
   "Process the answers send by the user and returns new questions or an ag."
   [answers uuid]
@@ -116,33 +110,3 @@ Returns a set of questions for the frontend."
           analysis (policy/send-answers-to-engine analysis)]
       (swap! state index-analysis analysis)
       (build-response analysis))))
-
-(defn debug-query
-  "Returns the result of query in the triplestore"
-  [endpoint repo-name query limit]
-  (let [conn (triplestore/make-conn endpoint
-                                    repo-name
-                                    markos-namespaces)
-        sexp (unserialize-atom query)]
-    (prn "sexp=" sexp)
-    (try
-      (binding [sparql/*select-limit* limit]
-        {:result (pp/write (sparql/query (:kb conn) sexp)
-                           :stream nil)})
-      (catch Exception e
-        {:result (.getMessage e)}))))
-
-(defn debug-ask
-  "Returns the ask result of query in the triplestore"
-  [endpoint repo-name query limit]
-  (let [conn (triplestore/make-conn endpoint
-                                    repo-name
-                                    markos-namespaces)
-        sexp (unserialize-atom query)]
-    (prn "sexp=" sexp)
-    (try
-      (binding [sparql/*select-limit* limit]
-        {:result (pp/write (sparql/ask (:kb conn) sexp)
-                           :stream nil)})
-      (catch Exception e
-        {:result (.getMessage e)}))))

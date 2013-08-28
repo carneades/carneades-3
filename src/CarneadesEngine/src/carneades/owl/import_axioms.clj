@@ -2,10 +2,12 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.owl.import-axioms
-  (:require [carneades.engine.statement :refer [literal-complement]]
+  (:require [carneades.engine.dublin-core :as dc]
+            [carneades.engine.statement :refer [literal-complement]]
             [carneades.engine.theory :as t]
             [carneades.project.admin :as project]
-            [carneades.owl.owl :as o])
+            [carneades.owl.owl :as o]
+            [carneades.engine.argument :as a])
   (:import [org.semanticweb.owlapi.model OWLLogicalAxiom AxiomType ClassExpressionType]))
 
 (declare class-expression->sexpr)
@@ -94,9 +96,10 @@
         superclass (.getSuperClass axiom),
         superexpr (class-expression->sexpr superclass varx)]
     (list (t/make-scheme
+           :header (dc/make-metadata)
            :id (gensym "subclass-axiom")
            :conclusion superexpr
-           :premises subexpr)))) ;; TODO : maybe do optional contrapositioning
+           :premises [(a/pm subexpr)])))) ;; TODO : maybe do optional contrapositioning
 
 
 (defn equivalent-class->schemes
@@ -108,13 +111,15 @@
         cl2 (second classes),
         cl-sexpr2 (class-expression->sexpr cl2 varx),
         scheme-< (t/make-scheme
+                  :header (dc/make-metadata)
                   :id (gensym "equivalent-classes-axiom")
                   :conclusion cl-sexpr1
-                  :premises [cl-sexpr2])
+                  :premises [(a/pm cl-sexpr2)])
         scheme-> (t/make-scheme
+                  :header (dc/make-metadata)
                   :id (gensym "equivalent-classes-axiom")
                   :conclusion cl-sexpr2
-                  :premises [cl-sexpr1])]
+                  :premises [(a/pm cl-sexpr1)])]
     (list scheme-< scheme->))) ;; TODO : do optional and some safety checks
 
 
@@ -128,13 +133,15 @@
         cl2 (second classes),
         cl-sexpr2 (class-expression->sexpr cl2 varx),
         scheme-< (t/make-scheme
+                  :header (dc/make-metadata)
                   :id (gensym "disjoint-classes-axiom")
                   :conclusion (literal-complement cl-sexpr1)
-                  :premises [cl-sexpr2]),
+                  :premises [(a/pm cl-sexpr2)]),
         scheme-> (t/make-scheme
+                  :header (dc/make-metadata)
                   :id (gensym "disjoint-classes-axiom")
                   :conclusion (literal-complement cl-sexpr2)
-                  :premises [cl-sexpr1])]
+                  :premises [(a/pm cl-sexpr1)])]
     (list scheme-< scheme->))) ;; TODO : do optional and some safety checks
 
 
@@ -151,9 +158,10 @@
         superprop (.getSuperProperty axiom),
         superprop-sexpr (property-expression->sexpr superprop varx vary)]
     (list (t/make-scheme
+           :header (dc/make-metadata)
            :id (gensym "subproperty-axiom")
            :conclusion superprop-sexpr
-           :premises [subprop-sexpr])))) ;; TODO : maybe do optional contrapositioning
+           :premises [(a/pm subprop-sexpr)])))) ;; TODO : maybe do optional contrapositioning
 
 
 (defn domain->schemes
@@ -165,9 +173,10 @@
         prop (.getProperty axiom),
         prop-sexpr (property-expression->sexpr prop varx vary)]
     (list (t/make-scheme
+           :header (dc/make-metadata)
            :id (gensym "domain-axiom")
            :conclusion domain-sexpr ;; TODO : check if head is valid
-           :premises [prop-sexpr])))) ;; TODO : maybe do optional contrapositioning
+           :premises [(a/pm prop-sexpr)])))) ;; TODO : maybe do optional contrapositioning
 
 (defn object-property-range->schemes
   [axiom]
@@ -178,9 +187,10 @@
         prop (.getProperty axiom),
         prop-sexpr (property-expression->sexpr prop varx vary)]
     (list (t/make-scheme
+           :header (dc/make-metadata)
            :id (gensym "range-axiom")
            :conclusion range-sexpr ;; TODO : check if head is valid
-           :premises [prop-sexpr])))) ;; TODO : maybe do optional contrapositioning
+           :premises [(a/pm prop-sexpr)])))) ;; TODO : maybe do optional contrapositioning
 
 (defn data-property-range->schemes
   [axiom]
@@ -191,9 +201,10 @@
         prop (.getProperty axiom),
         prop-sexpr (property-expression->sexpr prop varx vary)]
     (list (t/make-scheme
+           :header (dc/make-metadata)
            :id (gensym "range-axiom")
            :conclusion range-sexpr ;; TODO : check if head is valid
-           :premises [prop-sexpr])))) ;; TODO : maybe do optional contrapositioning
+           :premises [(a/pm prop-sexpr)])))) ;; TODO : maybe do optional contrapositioning
 
 (defn equivalent-property->schemes
   [axiom]
@@ -205,13 +216,15 @@
         prop2 (second props),
         prop-sexpr2 (property-expression->sexpr prop1 varx vary),
         scheme-< (t/make-scheme
+                  :header (dc/make-metadata)
                   :id (gensym "equivalent-properties-axiom")
                   :conclusion prop-sexpr1
-                  :premises [prop-sexpr2]),
+                  :premises [(a/pm prop-sexpr2)]),
         scheme-> (t/make-scheme
+                  :header (dc/make-metadata)
                   :id (gensym "equivalent-properties-axiom")
                   :conclusion prop-sexpr2
-                  :premises [prop-sexpr1])]
+                  :premises [(a/pm prop-sexpr1)])]
     (list scheme-< scheme->)))
 
 (defn inverse-property->schemes
@@ -223,13 +236,15 @@
         prop2 (.getSecondProperty axiom),
         prop-sexpr2 (property-expression->sexpr prop2 vary varx),
         scheme-< (t/make-scheme
+                  :header (dc/make-metadata)
                   :id (gensym "inverse-properties-axiom")
                   :conclusion prop-sexpr1
-                  :premises [prop-sexpr2]),
+                  :premises [(a/pm prop-sexpr2)]),
         scheme-> (t/make-scheme
+                  :header (dc/make-metadata)
                   :id (gensym "inverse-properties-axiom")
                   :conclusion prop-sexpr2
-                  :premises [prop-sexpr1])]
+                  :premises [(a/pm prop-sexpr1)])]
     (list scheme-< scheme->))) ;; TODO : check optionals
 
 (defn transitive-property->schemes
@@ -242,9 +257,10 @@
         prop-sexpr-body1 (property-expression->sexpr prop varx vary),
         prop-sexpr-body2 (property-expression->sexpr prop vary varz)]
     (list (t/make-scheme
+           :header (dc/make-metadata)
            :id (gensym "transitive-property-axiom")
            :conclusion prop-sexpr-head
-           :premises [(list 'and prop-sexpr-body1 prop-sexpr-body2)])))) ;; TODO : check optionals
+           :premises [(a/pm (list 'and prop-sexpr-body1 prop-sexpr-body2))])))) ;; TODO : check optionals
 
 (defn symmetric-property->schemes
   [axiom]
@@ -254,9 +270,10 @@
         prop-sexpr1 (property-expression->sexpr prop varx vary),
         prop-sexpr2 (property-expression->sexpr prop vary varx)]
     (list (t/make-scheme
+           :header (dc/make-metadata)
            :id (gensym "symmetric-property-axiom")
            :conclusion prop-sexpr1
-           :premises [prop-sexpr2])))) ;; TODO : check optionals
+           :premises [(a/pm prop-sexpr2)])))) ;; TODO : check optionals
 
 
 ;;;; ---------------------------
@@ -269,6 +286,7 @@
         class-expr (.getClassExpression axiom),
         class-sexpr (class-expression->sexpr class-expr individual)]
     (list (t/make-scheme
+           :header (dc/make-metadata)
            :id (gensym "class-assertion-axiom")
            :conclusion class-sexpr))))
 
@@ -279,6 +297,7 @@
         prop (.getProperty axiom),
         prop-sexpr (property-expression->sexpr prop subject object)]
     (list (t/make-scheme
+           :header (dc/make-metadata)
            :id (gensym "property-assertion-axiom")
            :conclusion prop-sexpr))))
 
