@@ -1,0 +1,186 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY ca "http://www.carneades.github.io/ontologies/carneades-annotations#" >
+]>
+
+
+<rdf:RDF xmlns="http://www.markosproject.eu/ontologies/licenses#"
+     xml:base="http://www.markosproject.eu/ontologies/licenses"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:ca="http://www.carneades.github.io/ontologies/carneades-annotations#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <owl:Ontology rdf:about="http://www.markosproject.eu/ontologies/licenses">
+        <owl:imports rdf:resource="http://www.carneades.github.io/ontologies/carneades-annotations"/>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.markosproject.eu/ontologies/licenses#assessment -->
+
+    <owl:ObjectProperty rdf:about="http://www.markosproject.eu/ontologies/licenses#assessment">
+        <rdfs:label xml:lang="en">Assessment</rdfs:label>
+        <rdfs:comment xml:lang="en">Assessment of the compliance of the subject license with respect to the licenses of the works used by the work associated to the subject license.</rdfs:comment>
+        <ca:hint>{:en &quot;some hint&quot;}</ca:hint>
+        <rdfs:domain rdf:resource="http://www.markosproject.eu/ontologies/licenses#CopyrightLicense"/>
+        <rdfs:range rdf:resource="http://www.markosproject.eu/ontologies/licenses#LicenseAssessment"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.markosproject.eu/ontologies/licenses#coveringLicense -->
+
+    <owl:ObjectProperty rdf:about="http://www.markosproject.eu/ontologies/licenses#coveringLicense">
+        <rdfs:label xml:lang="en">Covering license</rdfs:label>
+        <rdfs:comment xml:lang="en">The CopyrightLicense that regulate the usage of the subject Work.</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.markosproject.eu/ontologies/licenses#CopyrightLicense"/>
+        <rdfs:domain rdf:resource="http://www.markosproject.eu/ontologies/licenses#Work"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.markosproject.eu/ontologies/licenses#template -->
+
+    <owl:ObjectProperty rdf:about="http://www.markosproject.eu/ontologies/licenses#template">
+        <rdfs:label xml:lang="en">Template</rdfs:label>
+        <rdfs:comment xml:lang="en">The CopyrightLicenseTemplate the sucject CopyrightLicense conforms to. </rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.markosproject.eu/ontologies/licenses#CopyrightLicense"/>
+        <rdfs:range rdf:resource="http://www.markosproject.eu/ontologies/licenses#CopyrightLicenseTemplate"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.markosproject.eu/ontologies/licenses#argumentation -->
+
+    <owl:DatatypeProperty rdf:about="http://www.markosproject.eu/ontologies/licenses#argumentation">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <ca:text>{:en &quot;argumentation&quot;}</ca:text>
+        <rdfs:comment xml:lang="en">Argumentation</rdfs:comment>
+        <rdfs:comment xml:lang="en">Description of the reasoning supporting the assessment result (see Data Property :isLicenseCompliant).</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.markosproject.eu/ontologies/licenses#LicenseAssessment"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.markosproject.eu/ontologies/licenses#isLicenseCompliant -->
+
+    <owl:DatatypeProperty rdf:about="http://www.markosproject.eu/ontologies/licenses#isLicenseCompliant">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:label xml:lang="en">Is license compliant</rdfs:label>
+        <rdfs:comment xml:lang="en">The result of the license assessment: it is true if the assessed license is compliant with the other involved licenses, otherwise it is false.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.markosproject.eu/ontologies/licenses#LicenseAssessment"/>
+        <rdfs:range rdf:resource="&xsd;boolean"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.markosproject.eu/ontologies/licenses#CopyrightLicense -->
+
+    <owl:Class rdf:about="http://www.markosproject.eu/ontologies/licenses#CopyrightLicense">
+        <rdfs:label xml:lang="en">Copyright license</rdfs:label>
+        <rdfs:comment xml:lang="en">Any individual license, with which a particular legal entity, the licensor, grants rights to another legal entity, the licensee.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.markosproject.eu/ontologies/licenses#CopyrightLicenseTemplate -->
+
+    <owl:Class rdf:about="http://www.markosproject.eu/ontologies/licenses#CopyrightLicenseTemplate">
+        <rdfs:label xml:lang="en">Copyright license template</rdfs:label>
+        <rdfs:comment xml:lang="en">Any software license templates, such as GPL or BSD. A particular copyright  license can be an instance of such a template.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.markosproject.eu/ontologies/licenses#LicenseAssessment -->
+
+    <owl:Class rdf:about="http://www.markosproject.eu/ontologies/licenses#LicenseAssessment">
+        <rdfs:label xml:lang="en">License assessment</rdfs:label>
+        <ca:text>{:en &quot;assessment&quot;}</ca:text>
+        <rdfs:comment xml:lang="en">Assessment of the compliance of a licence (see Object Property :assessment).</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.markosproject.eu/ontologies/licenses#Work -->
+
+    <owl:Class rdf:about="http://www.markosproject.eu/ontologies/licenses#Work">
+        <rdfs:label xml:lang="en">Work</rdfs:label>
+        <owl:equivalentClass rdf:resource="http://www.markosproject.eu/ontologies/licenses#Work2"/>
+        <ca:text rdf:datatype="&xsd;string">{
+:en &quot;work&quot;
+}</ca:text>
+        <rdfs:comment xml:lang="en">Any work protectable by copyright.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.markosproject.eu/ontologies/licenses#Work2 -->
+
+    <owl:Class rdf:about="http://www.markosproject.eu/ontologies/licenses#Work2"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.markosproject.eu/ontologies/licenses#aWork -->
+
+    <owl:NamedIndividual rdf:about="http://www.markosproject.eu/ontologies/licenses#aWork">
+        <ca:text>{:en &quot;le travail&quot;}</ca:text>
+    </owl:NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->
+
