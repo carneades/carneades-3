@@ -53,7 +53,7 @@
      [(t/make-scheme
        :id 'permitted-1
        :conclusion '(Permitted ?A)
-       :exceptions ['(Prohibited ?A)])
+       :exceptions [(a/pm '(Prohibited ?A))])
 
       (t/make-scheme
        :id 'prohibited-1
@@ -83,7 +83,7 @@
        :conclusion '(ProtectedWork ?W)
        :premises [(a/pm '(OriginalWork ?W)) ;; check these conditions
                   (a/pm '(workFixed ?F ?W))]
-       :exceptions ['(Expired ...)]) ;;  To do
+       :exceptions [(a/pm '(Expired ...))]) ;;  To do
 
       ;; (t/make-scheme
       ;;  :id 'derivedFrom-1

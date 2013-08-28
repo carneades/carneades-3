@@ -2,7 +2,7 @@
 ;;; Licensed under the EUPL V.1.1
 
  (ns carneades.web.walton-schemes
-  (:use (carneades.engine statement argument scheme dublin-core)))
+  (:use (carneades.engine statement argument theory dublin-core)))
 
 (declare walton-schemes)
 
@@ -28,7 +28,7 @@
                   :positive "Rule %s is applicable."
                   :negative "Rule %s is not applicable."
                   :question "Is rule %s applicable?")})
-    
+
     (make-predicate
      :symbol 'asserts
      :arity 2
@@ -44,7 +44,7 @@
                   :positive "%s is bad."
                   :negative "%s is not bad."
                   :question "Is %s bad?")})
-    
+
 
     (make-predicate
      :symbol 'based-on-evidence
@@ -75,7 +75,7 @@
      :symbol 'brings-about
      :arity 2
      :forms {:en (make-form
-                  :positive "Action %s brings about %s."  
+                  :positive "Action %s brings about %s."
                   :negative "Action %s does not bring about %s"
                   :question "Does action %s bring about %s?")})
 
@@ -89,7 +89,7 @@
                        bring about %s more effectively than %s."
                   :question "Does there exist an action that would
                        bring about %s more effectively than %s?")})
-                    
+
     (make-predicate
      :symbol 'causes
      :arity 2
@@ -97,8 +97,8 @@
                   :positive "Event %s causes event %s."
                   :negative "Event %s does not cause event %s."
                   :question "Does event %s cause event %s?")})
-    
-    
+
+
     (make-predicate
      :symbol 'classified-as
      :arity 2
@@ -133,7 +133,7 @@
                   :positive "%s is the case in the current circumstances."
                   :negative "%s is not the case in the current circumstances."
                   :question "Is %s the case in the current circumstances?")})
-    
+
 
     (make-predicate
      :symbol 'defeasibly-implies
@@ -214,7 +214,7 @@
                   :positive "Event %s would entail horrible costs."
                   :negative "Event %s would not entail horrible costs."
                   :question "Would event %s entail horrible costs?")})
-    
+
     (make-predicate
      :symbol 'implausible
      :arity 1
@@ -238,7 +238,7 @@
                   :positive "Rule %s is inapplicable in this case."
                   :negative "Rule %s is not an inapplicable in this case.."
                   :question "Is rule %s inapplicable in this case?")})
-    
+
     (make-predicate
      :symbol 'inconsistent-with-facts
      :arity 1
@@ -425,7 +425,7 @@
                        the goal %s more effectively than %s."
                   :question "Does there exist an action that would
                        realize the goal  %s more effectively than %s?")})
-    
+
 
     (make-predicate
      :symbol 'relevant-differences
@@ -469,7 +469,7 @@
                       side-effects which demote %s or some other value."
                    :question "Would performing %s in %s have
                       side-effects which demote %s or some other value?")})
-    
+
     (make-predicate
      :symbol 'similar-case
      :arity 1
@@ -486,7 +486,7 @@
                   :negative "%s is not a subclass of %s."
                   :question "Is %s a subclass of %s?")})
 
-    
+
     (make-predicate
      :symbol 'sunk-costs
      :arity 2
@@ -518,7 +518,7 @@
                   :positive "The truth of  %s has been investigated."
                   :negative "The truth of %s has not been investigated."
                   :question "Has the truth of %s been investigated?")})
-    
+
     (make-predicate
      :symbol 'untrustworthy
      :arity 1
@@ -566,7 +566,7 @@
                   :positive "%s would be realized in %s."
                   :negative "%s would not be realized in %s."
                   :question "Would %s be realized in %s?")})
-     
+
     (make-predicate
      :symbol 'would-be-known
      :arity 1
@@ -591,7 +591,7 @@
                   :negative "Achieving the goal %s would note demote the value %s."
                   :question "Would achieving the goal %s demote the value %s")})
 
-    
+
     (make-predicate
      :symbol 'would-promote-value
      :arity 2
@@ -754,7 +754,7 @@ Douglas Walton, Appeal to Expert Opinion, The Pennsylvania University Press, Uni
      :premises [(make-premise
                  :role "major"
                  :statement '(similar-case ?C1))
-                (make-premise 
+                (make-premise
                  :role "ratio"
                  :statement '(rule-of-case ?R ?C1))
                 (make-premise
@@ -776,7 +776,7 @@ Douglas Walton, Appeal to Expert Opinion, The Pennsylvania University Press, Uni
      :premises [(make-premise
                  :role "individual"
                  :statement '(instance ?O ?F))
-                (make-premise 
+                (make-premise
                  :role "classification"
                  :statement '(subclass ?F ?G))])
 
@@ -806,7 +806,7 @@ Douglas Walton, Appeal to Expert Opinion, The Pennsylvania University Press, Uni
                 (make-premise
                  :role "minor"
                  :statement '?A)])
-    
+
     (make-scheme
      :id 'established-rule
      :header (make-metadata
@@ -822,7 +822,7 @@ Douglas Walton, Appeal to Expert Opinion, The Pennsylvania University Press, Uni
      :assumptions [(make-premise
                     :role "CQ1"
                     :statement '(valid ?R))])
-    
+
     ;; (make-scheme
     ;;  :id 'value-promotion
     ;;  :header (make-metadata :title "Argument from Value Promotion")
@@ -852,7 +852,7 @@ Douglas Walton, Scare Tactics, Kluwer Academic Publishers, Dordrecht, 2000, p.12
                 (make-premise
                  :role "minor"
                  :statement '(good ?G))])
-    
+
     (make-scheme
      :id 'negative-consequences
      :header (make-metadata
@@ -944,7 +944,7 @@ Douglas Walton, Fundamentals of Critical Argumentation, Cambridge University Pre
                    :statement '(causes ?E3 (and ?E1 E2)))])
 
     (make-scheme
-     :id 'sunk-costs 
+     :id 'sunk-costs
      :header (make-metadata
               :title "Argument from Sunk Costs"
               :source "Douglas Walton, ‘The Sunk Costs Fallacy or Argument from Waste’, Argumentation, 16, 2002, p. 489.")
@@ -1045,7 +1045,5 @@ Douglas Walton, Fundamentals of Critical Argumentation, Cambridge University Pre
                 (make-premise
                  :role "horrible costs"
                  :statement '(horrible-costs ?E2))])
-    
+
     ])) ;; end of theory of Walton's schemes
-
-
