@@ -168,7 +168,9 @@ PM.theory_outline_text = function(sections, urlfragment, subset) {
 
     _.each(sections, function(section) {
                if(PM.should_be_displayed(section, subset)) {
-                   text += '<li><a href="#/{0}/{1}">{2}</a></li>'.format(urlfragment, section.id, section.header.title);
+                   text += '<li><a href="#/{0}/{1}">{2}</a></li>'.format(urlfragment,
+                                                                         section.id,
+                                                                         PM.title_text(section.header));
                    text += PM.theory_outline_text(section.sections, urlfragment, subset);
                }
            });
@@ -182,12 +184,12 @@ PM.schemes_text = function(language, schemes, lang) {
     var text = "<div>";
 
     _.each(schemes, function(scheme) {
-               if(scheme.header.description && scheme.header.description[lang]) {
-                   text += '{0}'.format(PM.markdown_to_html(scheme.header.description[lang]));
-               }
+        if(scheme.header && scheme.header.description && scheme.header.description[lang]) {
+            text += '{0}'.format(PM.markdown_to_html(scheme.header.description[lang]));
+        }
 
-               text += PM.scheme_content_text(language, scheme, lang);
-           });
+        text += PM.scheme_content_text(language, scheme, lang);
+    });
 
     text += "</div>";
 
@@ -215,7 +217,7 @@ PM.scheme_content_text = function(language, scheme, lang) {
 
     _.each(scheme.premises, function(premise) {
                if(premise.statement.atom[0] != "valid") {
-                   text += "<li>{0}</li>".format(PM.format_sexpr(premise.statement.atom, language, lang));
+                    text += "<li>{0}</li>".format(PM.format_sexpr(premise.statement.atom, language, lang));
                }
            });
     text += '</ul></div>';
@@ -254,15 +256,15 @@ PM.policies_text = function(language, sections, level, subset, on_policy, lang) 
     var text = "";
 
     _.each(sections, function(section) {
-               if(PM.should_be_displayed(section, subset)) {
+        if(PM.should_be_displayed(section, subset)) {
                    text += '<div id="{0}">'.format(section.id);
                    text += '<form action=""><h{0}>'.format(level + 1);
                    if(section.schemes.length > 0) {
                        on_policy(section.id);
                        text += '<input type="submit" value="{1}" id="input{0}" />'.format(section.id, $.i18n.prop('pmt_select'));
                    }
-                   text += ' {1}</h{0}></form>'.format(level + 1, section.header.title);
-                   text += '<p>{0}</p>'.format(PM.markdown_to_html(section.header.description[lang]));
+                   text += ' {1}</h{0}></form>'.format(level + 1, section.header ? section.header.title : "");
+                   text += '<p>{0}</p>'.format(PM.description_text(section.header));
                    text += PM.schemes_text(language, section.schemes, lang);
                    text += PM.policies_text(language, section.sections, level + 1, subset, on_policy, lang);
                    text += '</div>';
