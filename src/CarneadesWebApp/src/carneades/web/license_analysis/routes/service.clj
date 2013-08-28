@@ -6,11 +6,12 @@
   (:use [clojure.pprint :as pprint]
         [compojure.core :only [defroutes GET POST]]
         [carneades.engine.utils :only [safe-read-string]])
-  (:require [carneades.web.license-analysis.model.analysis :as analysis]))
+  (:require [carneades.web.license-analysis.model.debug-analysis :as debug-analysis]
+            [carneades.web.license-analysis.model.analysis :as analysis]))
 
 (defroutes license-analysis-routes
   (POST "/debug/analyse" {params :params}
-        {:body (analysis/analyse params)})
+        {:body (debug-analysis/analyse params)})
 
   (POST "/send-answers" {{answers :answers
                           uuid :uuid} :params}
@@ -20,10 +21,10 @@
                          limit :limit
                          endpoint :endpoint
                          repo-name :repo-name} :params}
-        {:body (analysis/debug-query endpoint repo-name query limit)})
+        {:body (debug-analysis/query endpoint repo-name query limit)})
 
   (POST "/debug/ask" {{query :query
                        limit :limit
                        endpoint :endpoint
                        repo-name :repo-name} :params}
-        {:body (analysis/debug-ask endpoint repo-name query limit)}))
+        {:body (debug-analysis/ask endpoint repo-name query limit)}))
