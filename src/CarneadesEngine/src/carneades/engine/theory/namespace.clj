@@ -26,7 +26,7 @@
         match (re-seq #".+:(.+)" n)]
     (if match
       (second (first match))
-      atom)))
+      (str atom))))
 
 (defn to-absolute-atom
   "Converts this atom to an absolute atom. Throws an exception if a
@@ -36,11 +36,15 @@
         (symbol? atom) (let [ns (namespace atom)
                              n (name atom)
                              iri (namespaces ns)]
-                         (when (and (nil? iri) (not= ns ""))
-                           (throw (ex-info (str "Missing namespace '" ns "'") {})))
-                         (symbol (str iri n)))
+                         (cond (re-matches #"^.+://.+" n)
+                               atom
+
+                               (and (nil? iri) (not= ns ""))
+                               (throw (ex-info (str "Missing namespace '" ns "'") {}))
+
+                               :else (symbol (str iri n))))
         :else
-        (map #(to-absolute-atom % namespaces) atom)))
+        (doall (map #(to-absolute-atom % namespaces) atom))))
 
 (defn to-absolute-statement
   "Converts this statement to an absolute statement."
@@ -88,9 +92,11 @@
 (defn to-absolute-theory
   "Converts the atoms contained in the schemes of the theory to
   absolute atoms."
-  [theory namespaces]
-  (loop [loc (tz/theory-zip theory)]
-    (if (z/end? loc)
-      (z/root loc)
-      (let [loc (z/edit loc to-absolute-section namespaces)]
-        (recur (z/next loc))))))
+  ([theory]
+     (to-absolute-theory theory (:namespaces theory)))
+  ([theory namespaces]
+     (loop [loc (tz/theory-zip theory)]
+       (if (z/end? loc)
+         (z/root loc)
+         (let [loc (z/edit loc to-absolute-section namespaces)]
+           (recur (z/next loc)))))))
