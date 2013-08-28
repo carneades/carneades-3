@@ -58,6 +58,8 @@ project."})
        :header (dc/make-metadata
                 :description {:en "Presumably, a work may be licensed
                    using any license template."})
+       ;; ex:
+       ;; (http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing ?W http://www.markosproject.eu/ontologies/oss-licenses)
        :conclusion '(cr:mayBeLicensedUsing ?W ?T))
 
       (t/make-scheme

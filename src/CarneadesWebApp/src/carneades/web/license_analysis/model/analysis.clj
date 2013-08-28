@@ -21,7 +21,8 @@
             [carneades.policy-analysis.web.controllers.reconstruction :as recons]
             [carneades.engine.triplestore :as triplestore]
             [carneades.database.db :as db]
-            [carneades.engine.utils :refer [unserialize-atom]]))
+            [carneades.engine.utils :refer [unserialize-atom]]
+            [carneades.maps.lacij :as lacij]))
 
 (def markos-triplestore-endpoint "http://markos.man.poznan.pl/openrdf-sesame")
 (def markos-repo-name "markos_test_sp2")
@@ -72,7 +73,6 @@
         (ask/make-argument-from-user-generator (fn [p] (questions/askable? loaded-theories p)))
         ag (get-ag project ag-name)
         engine (shell/make-engine ag 500 #{}
-                                  ;; TODO: debug triplestore generator
                                   (list
                                    (triplestore/generate-arguments-from-triplestore endpoint
                                                                                     repo-name
@@ -110,3 +110,30 @@
           analysis (policy/send-answers-to-engine analysis)]
       (swap! state index-analysis analysis)
       (build-response analysis))))
+
+(defn scratch-start-engine
+  []
+  (let [query "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing
+               http://markosproject.eu/kb/Package/_3
+               http://www.markosproject.eu/ontologies/oss-licenses#GPL-2.0)"
+        sexp (unserialize-atom query)
+        _ (prn "sexp=" sexp)
+        project "markos"
+        theories "oss_licensing_theory"
+        endpoint "http://markos.man.poznan.pl/openrdf-sesame"
+        repo-name "markos_test_sp2"
+        loaded-theories (project/load-theory project theories)
+        [argument-from-user-generator questions send-answer]
+        (ask/make-argument-from-user-generator (fn [p] (questions/askable? loaded-theories p)))
+        ag (ag/make-argument-graph) ;; (get-ag project ag-name)
+        engine (shell/make-engine ag 500 #{}
+                                  (list
+                                   (triplestore/generate-arguments-from-triplestore endpoint
+                                                                                    repo-name
+                                                                                    markos-namespaces)
+                                   (theory/generate-arguments-from-theory loaded-theories)
+                                   argument-from-user-generator))
+        ag (shell/argue engine sexp)]
+    (lacij/export ag "/tmp/ag1.svg")
+    (prn "ag =")
+    (pp/pprint ag)))
