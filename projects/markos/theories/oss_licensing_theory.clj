@@ -31,7 +31,7 @@ project."})
      "xsd" "http://www.w3.org/2001/XMLSchema#"
      "foaf" "http://xmlns.com/foaf/0.1/"
      "ml" "http://www.markosproject.eu/ontologies/licenses#"
-     "ms" "http://www.markosproject.eu/ontologies/software#"
+     "soft" "http://www.markosproject.eu/ontologies/software#"
      "mt" "http://www.markosproject.eu/ontologies/top#"
      "dc" "http://purl.org/dc/terms/"
      "ec" "http://www.markosproject.eu/ontologies/markos-event-calculus#"}
@@ -78,7 +78,7 @@ project."})
        :id 'derivedFrom-1
        :header (dc/make-metadata :description {:en "W1 is derived from W2"})
        :conclusion '(derivedFrom ?W1 ?W2)
-       :premises [(a/pm '(ms:previousVersion ?W1 ?W2))])
+       :premises [(a/pm '(soft:previousVersion ?W1 ?W2))])
 
       ;; (t/make-scheme
       ;;  :id 'modify-1
@@ -89,16 +89,16 @@ project."})
       ;;              example of a subsumption rule mapping relations in
       ;;              the software ontology to a concept in the copyright
       ;;              ontology. " })
-      ;;  :conclusion '(cr:Modify (ms:previousVersion ?V2 ?V1))
-      ;;  :premises [(a/pm '(ms:previousVersion ?V2 ?V1))])
+      ;;  :conclusion '(cr:Modify (soft:previousVersion ?V2 ?V1))
+      ;;  :premises [(a/pm '(soft:previousVersion ?V2 ?V1))])
 
       ;; (t/make-scheme
       ;;  :id 'workUsed-1
-      ;;  :conclusion '(cr:workUsed (ms:previousVersion ?V2 ?V1) ?V1))
+      ;;  :conclusion '(cr:workUsed (soft:previousVersion ?V2 ?V1) ?V1))
 
       ;; (t/make-scheme
       ;;  :id 'adaptation-1
-      ;;  :conclusion '(cr:adaptation (ms:previousVersion ?V2 ?V1) ?V2))
+      ;;  :conclusion '(cr:adaptation (soft:previousVersion ?V2 ?V1) ?V2))
 
       ;; (t/make-scheme
       ;;  :id 'adapt-1
@@ -110,19 +110,19 @@ project."})
       ;;              and static linking. Some copyright experts claim
       ;;              that dynamic linking, unlike static linking, does
       ;;              not create a derivative work."})
-      ;;  :conclusion '(cr:Adapt (ms:linkedLibrary ?SE ?L))
-      ;;  :premises [(a/pm '(ms:linkedLibrary ?SE ?L))])
+      ;;  :conclusion '(cr:Adapt (soft:linkedLibrary ?SE ?L))
+      ;;  :premises [(a/pm '(soft:linkedLibrary ?SE ?L))])
 
       ;; (t/make-scheme
       ;;  :id 'workUsed-2
-      ;;  :conclusion '(cr:workUsed (ms:linkedLibrary ?SE ?L) ?L))
+      ;;  :conclusion '(cr:workUsed (soft:linkedLibrary ?SE ?L) ?L))
 
        (t/make-scheme
         :id 'fsf-theory-of-linking
         :header (dc/make-metadata :description {:en "The Free Software
        Foundation claims that linking creates derivative works."})
         :conclusion '(derivedFrom ?W1 ?W2)
-        :premises [(a/pm '(ms:linkedLibrary ?W1 ?W2))])
+        :premises [(a/pm '(soft:linkedLibrary ?W1 ?W2))])
 
        (t/make-scheme
         :id 'rose-theory-of-linking
@@ -130,6 +130,6 @@ project."})
         claims that linking does not create derivate works."})
         :pro false
         :conclusion '(derivedFrom ?W1 ?W2)
-        :premises [(a/pm '(ms:linkedLibrary ?W1 ?W2))])
+        :premises [(a/pm '(soft:linkedLibrary ?W1 ?W2))])
 
       ])]))
