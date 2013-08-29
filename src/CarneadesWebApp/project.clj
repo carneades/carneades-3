@@ -9,7 +9,7 @@
                  [hiccup "0.3.6"]
                  [enlive "1.0.0"]
                  [ring/ring-servlet "1.0.1"]
-                 ;; [ring-middleware-format "0.3.0"]
+                 [ring-middleware-format "0.3.0"]
                  [ring/ring-json "0.2.0"]
                  [carneades-engine "2.0.0-SNAPSHOT"]
                  [carneades-web-service "1.0.0-SNAPSHOT"]
