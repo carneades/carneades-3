@@ -66,6 +66,8 @@
 
 (defn start-engine
   [params]
+  (prn "params=")
+  (prn params)
   (let [{:keys [project theories entity query repo-name endpoint ag-name]} params
         sexp (unserialize-atom query)
         loaded-theories (project/load-theory project theories)

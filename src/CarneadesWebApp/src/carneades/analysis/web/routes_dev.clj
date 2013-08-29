@@ -20,7 +20,7 @@
 
 (defroutes carneades-webapp-routes
   (context "/carneades" [] policy-analysis-routes)
-  (context "/carneadesws/license-analysis" [] (wrap-restful-response license-analysis-routes))
+  (context "/carneades/license-analysis" [] (wrap-restful-response license-analysis-routes))
   (context "/carneadesws" [] (wrap-restful-response carneades-web-service-routes)))
 
 (def carneades-webapp
