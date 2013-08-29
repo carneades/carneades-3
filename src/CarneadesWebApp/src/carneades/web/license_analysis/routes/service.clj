@@ -3,10 +3,10 @@
 
 (ns ^{:doc "HTTP routes definitions for the license-analysis REST service."}
   carneades.web.license-analysis.routes.service
-  (:use [clojure.pprint :as pprint]
-        [compojure.core :only [defroutes GET POST]]
+  (:use [compojure.core :only [defroutes GET POST]]
         [carneades.engine.utils :only [safe-read-string]])
-  (:require [carneades.web.license-analysis.model.debug-analysis :as debug-analysis]
+  (:require [clojure.pprint :refer [pprint]]
+            [carneades.web.license-analysis.model.debug-analysis :as debug-analysis]
             [carneades.web.license-analysis.model.analysis :as analysis]))
 
 (defroutes license-analysis-routes
