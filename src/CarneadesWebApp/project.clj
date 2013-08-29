@@ -85,6 +85,6 @@
   :ring {:handler carneades.analysis.web.routes-dev/carneades-webapp}
   ;; to build a WAR, run ./scripts/build-war.sh
   :profiles {:standalone {:main carneades.analysis.web.routes-selfexe}
-             :war {:ring {:handler carneades.analysis.web.routes-war/impact-app}
+             :war {:ring {:handler carneades.analysis.web.routes-war/carneades-webapp}
                    :sub ["../CarneadesWebService"]}}
   )
