@@ -11,7 +11,7 @@
         ring.middleware.stacktrace
         [hiccup.middleware :only (wrap-base-url)]
         [ring.middleware.format-response :only [wrap-restful-response]]
-        [ring.middleware.format-params :only [wrap-json-params]]
+        [ring.middleware.json :only [wrap-json-params]]
         [ring.middleware.keyword-params :only [wrap-keyword-params]]
         [ring.middleware.stacktrace :only [wrap-stacktrace]]
         [carneades.web.license-analysis.routes.service :only [license-analysis-routes]])
