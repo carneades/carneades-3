@@ -194,14 +194,28 @@ The IRI is returned with its last slash doubled."
   [sexp]
   (w/postwalk string->xsd-string sexp))
 
+(defn transform-sexp
+  "Transforms an sexp in the form (p s o) into (s p o) or or an sexp
+  in the form (p s) into (s rdf/type p)"
+  [sexp]
+  (let [[p s o & args] sexp]
+    (cond (not (empty? args))
+          (throw (ex-info "Invalid query" {:sexp sexp}))
+
+          (nil? o)
+          (list s 'rdf/type p)
+
+          :else
+          (list s p o))))
+
 (defn sexp->sparqlquery
   "Converts a Carneades sexpression encoding a query to a Clojure/SPARQL query."
   [sexp]
-  (let [sexp (iris->owllib-iris sexp)
-        [p s o] sexp]
-    (-> (list s p o)
+  (let [sexp (iris->owllib-iris sexp)]
+    (-> sexp
         (variables->sparqlvariables ,,,)
-        (strings->xsd-strings ,,,))))
+        (strings->xsd-strings ,,,)
+        (transform-sexp ,,,))))
 
 (defn responses-from-ask
   "Generates responses for a grounded goal. Asks the triplestore if
