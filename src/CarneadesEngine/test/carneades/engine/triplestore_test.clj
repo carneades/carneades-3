@@ -42,6 +42,16 @@
     (is (>= (count responses) 10))
     (is (not= (:substitutions (first responses)) subs))))
 
+(deftest test-generate-arguments-from-triplestore-concept
+  (let [url "http://dbpedia.org/sparql"
+        goal '(http://dbpedia.org/class/yago/HellenisticEraPhilosophersInAthens ?x)
+        subs '{?a "a" ?b "b"}
+        triplestore-generator (generate-arguments-from-triplestore url)
+        responses (generator/generate triplestore-generator goal subs)]
+    (is (not (empty? responses)))
+    (is (>= (count responses) 10))
+    (is (not= (:substitutions (first responses)) subs))))
+
 (deftest test-generate-arguments-from-triplestore-xsdstring-convertion
   (let [url "http://markos.man.poznan.pl/openrdf-sesame"
         repo "markos_test_sp2"
