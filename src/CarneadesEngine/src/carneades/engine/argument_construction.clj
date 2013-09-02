@@ -11,7 +11,8 @@
         carneades.engine.argument-graph
         carneades.engine.argument
         carneades.engine.argument-generator
-        carneades.engine.argument-builtins))
+        carneades.engine.argument-builtins)
+  (:require [clojure.tools.logging :refer [info debug]]))
 
 (defrecord ArgumentTemplate
   [guard       ; term with all unbound variables of the argument
@@ -294,9 +295,8 @@
   ;; are passed down to the children of the goal, so they are not lost by removing the goal.
   (let [goal (get (:goals state1) id),
         state2 (remove-goal state1 id)]
-    (prn )
-    (prn "[reduce-goal]")
-    (prn "goal = " goal)
+    (debug "[reduce-goal]")
+    (debug "goal = " goal)
     (if (empty? (:issues goal))
       state2 ; no issues left in the goal
       (let [issue (apply-substitutions (:substitutions goal) (first (:issues goal)))]
@@ -318,9 +318,8 @@
                                                          (generate g (literal-complement issue)
                                                                    (:substitutions goal))))
                                                generators2))]
-              (prn "responses=" )
-              (pprint responses)
-              (prn)
+              (debug "responses=" )
+              (debug responses)
               (reduce (fn [s r] (apply-response s goal r))
                       state2
                       responses))))))))
