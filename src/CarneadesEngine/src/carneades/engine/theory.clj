@@ -518,8 +518,9 @@ call or a symbol."
 (defn apply-scheme
   "scheme literal substitutions -> seq-of response"
   [scheme goal subs]
-  {:pre [(scheme? scheme) (literal? goal) (map? subs)]}
-                                        ; (println "apply-scheme: " scheme)
+  {:pre [(scheme? scheme) (literal? goal) (map? subs)]
+   :post [(do (prn "[apply-scheme] res=" %) true)]}
+  (prn "[apply-scheme] goal=" goal)
   (let [c (scheme-conclusion-literal scheme)
         subs2 (unify c goal subs)]
     (if (not subs2)
