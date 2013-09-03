@@ -6,7 +6,7 @@
   (:use [clojure.tools.logging :only (info debug error)]
         [carneades.engine.dialog :only [add-answers]]
         [carneades.database.export :only [export-to-argument-graph]])
-  (:require [clojure.pprint :as pp]
+  (:require [clojure.pprint :refer [pprint]]
             [carneades.engine.shell :as shell]
             [carneades.engine.theory :as theory]
             [carneades.engine.argument-graph :as ag]
@@ -198,3 +198,14 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
     (prn "ag =")
     (pp/pprint ag)
     (prn "AG NUMBER = " agnumber)))
+
+(defn test-generate-arguments-from-triplestore-concept
+  []
+  (let [endpoint "http://markos.man.poznan.pl/openrdf-sesame"
+        repo-name "markos_test_26-07-2013"
+        goal '(http://www.markosproject.eu/ontologies/oss-licenses#ReciprocalLicenseTemplate ?x)
+        subs {}
+        triplestore-generator (triplestore/generate-arguments-from-triplestore
+                               endpoint repo-name markos-namespaces)
+        responses (generator/generate triplestore-generator goal subs)]
+    (pprint responses)))
