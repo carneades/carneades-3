@@ -43,7 +43,7 @@
   (require '[edu.ucdenver.ccp.kr.sparql :as sparql])
 
   (def markos-conn (make-conn "http://markos.man.poznan.pl/openrdf-sesame"
-                              "markos_test_sp2"
+                              "markos_test_26-07-2013"
                               [["top" "http://www.markosproject.eu/ontologies/top#"]
                                ["reif" "http://www.markosproject.eu/ontologies/reification#"]
                                ["soft" "http://www.markosproject.eu/ontologies/software#"]
