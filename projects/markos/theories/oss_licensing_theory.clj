@@ -59,7 +59,7 @@ project."})
                 :description {:en "Presumably, a work may be licensed
                    using any license template."})
        ;; ex:
-       ;; (http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing ?W http://www.markosproject.eu/ontologies/oss-licenses)
+       ;; (http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing ?W http://www.markosproject.eu/ontologies/oss-licenses#GPL-2.0)
        :conclusion '(cr:mayBeLicensedUsing ?W ?T))
 
       (t/make-scheme
@@ -71,15 +71,16 @@ project."})
                 unless T1 is compatible with T2."})
        :pro false
        :conclusion '(cr:mayBeLicensedUsing ?W1 ?T1)
-       :premises [(a/pm '(cr:derivedFrom ?W1 ?W2))
-                  (a/pm '(cr:licenseTemplate ?W2 ?T2))
-                  (a/pm '(ReciprocalLicenseTemplate ?T2))]
-       :exceptions [(a/pm '(cr:compatibleWith ?T1 ?T2))])
+       :premises [;; (a/pm '(cr:licenseTemplate W2 T2))
+                  (a/pm '(cr:derivedFrom ?W1 ?W2))
+                  ;; (a/pm '(ReciprocalLicenseTemplate T2))
+                  ]
+       :exceptions [(a/pm '(cr:compatibleWith ?T1 T2))])
 
       (t/make-scheme
        :id 'derivedFrom-1
        :header (dc/make-metadata :description {:en "W1 is derived from W2"})
-       :conclusion '(derivedFrom ?W1 ?W2)
+       :conclusion '(cr:derivedFrom ?W1 ?W2)
        :premises [(a/pm '(soft:previousVersion ?W1 ?W2))])
 
       ;; (t/make-scheme
@@ -123,7 +124,7 @@ project."})
         :id 'fsf-theory-of-linking
         :header (dc/make-metadata :description {:en "The Free Software
        Foundation claims that linking creates derivative works."})
-        :conclusion '(derivedFrom ?W1 ?W2)
+        :conclusion '(cr:derivedFrom ?W1 ?W2)
         :premises [(a/pm '(soft:linkedLibrary ?W1 ?W2))])
 
        (t/make-scheme
@@ -131,7 +132,7 @@ project."})
         :header (dc/make-metadata :description {:en "Lawrence Rosen
         claims that linking does not create derivate works."})
         :pro false
-        :conclusion '(derivedFrom ?W1 ?W2)
+        :conclusion '(cr:derivedFrom ?W1 ?W2)
         :premises [(a/pm '(soft:linkedLibrary ?W1 ?W2))])
 
       ])]))
