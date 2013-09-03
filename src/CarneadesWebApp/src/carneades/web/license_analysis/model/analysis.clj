@@ -28,7 +28,8 @@
             [carneades.engine.argument :as argument]
             [carneades.database.import :refer [import-from-argument-graph]]
             [carneades.engine.dublin-core :as dc]
-            [carneades.engine.argument-graph :as agr]))
+            [carneades.engine.argument-graph :as agr]
+            [carneades.engine.statement :as st]))
 
 (def markos-triplestore-endpoint "http://markos.man.poznan.pl/openrdf-sesame")
 (def markos-repo-name "markos_test_sp2")
@@ -124,19 +125,38 @@
 Prefixes is a list of prefixes in the form (prefix namespace),
 for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
   ([endpoint-url repo-name prefixes]
+     ;; TODO: check how to get all these information in the repository
      (reify generator/ArgumentGenerator
        (generate [this goal subs]
          (prn "[mock] goal=" goal)
          (let [[p s o] goal]
-           (if (= p 'http://www.markosproject.eu/ontologies/software#linkedLibrary)
-             (let [arg (argument/make-argument :conclusion goal
-                                               :scheme (str "mock-triplestore:x")
-                                               :strict true)
-                   subs (assoc subs o 'MockSofwareEntity)]
-               (prn "[mock] returning response")
-               [(generator/make-response subs [] arg)])
+           (cond (= p 'http://www.markosproject.eu/ontologies/software#linkedLibrary)
+                 (let [arg (argument/make-argument :conclusion goal
+                                                   :scheme (str "mock-triplestore:x")
+                                                   :strict true)
+                       subs (assoc subs o 'MockSofwareEntity)]
+                   (prn "[mock] returning response for linkedLibrary")
+                   [(generator/make-response subs [] arg)])
+
+                 (and (= p 'http://www.markosproject.eu/ontologies/oss-licenses#ReciprocalLicenseTemplate)
+                      (not (st/variable? s)))
+                 (let [arg (argument/make-argument :conclusion goal
+                                                   :scheme (str "mock-triplestore:x")
+                                                   :strict true)]
+                   (prn "[mock] returning response for ReciprocalLicenseTemplate")
+                   [(generator/make-response subs [] arg)])
+
+                 (and (= p 'http://www.markosproject.eu/ontologies/copyright#licenseTemplate)
+                      (not (st/variable? s)))
+                 (let [arg (argument/make-argument :conclusion goal
+                                                   :scheme (str "mock-triplestore:x")
+                                                   :strict true)
+                       subs (assoc subs o 'http://www.markosproject.eu/ontologies/oss-licenses#GPL-2.0)]
+                   (prn "[mock] returning response for LicenseTemplate")
+                   [(generator/make-response subs [] arg)])
+
              ;; else
-             ())))))
+             :else ())))))
   ([endpoint-url]
      (generate-arguments-from-mock-triplestore endpoint-url "" [])))
 
@@ -150,7 +170,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
   []
   (let [query "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing
                http://markosproject.eu/kb/Package/abc42_3
-               http://www.markosproject.eu/ontologies/oss-licenses#GPL-2.0)"
+               http://www.markosproject.eu/ontologies/oss-licenses#BSD-2.0-Clause)"
         sexp (unserialize-atom query)
         _ (prn "sexp=" sexp)
         project "markos"
