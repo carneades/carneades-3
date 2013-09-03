@@ -6,7 +6,7 @@
              [carneades.engine.theory :as t]
              [carneades.engine.argument :as a]
              [carneades.owl.import :as owl]
-             [eu.markosproject.licensing.copyright-theory :as c]))
+             [carneades.project.admin :as project]))
 
 (def oss-licensing-ontology
   (owl/import-from-project "markos" "ontologies/MARKOS/markos-licenses.owl"))
@@ -20,7 +20,7 @@
     :description {:en "A theory of open source licensing for the MARKOS
 project."})
 
-   :imports [c/copyright-law-theory]
+   :imports [(load-file (project/absolute-theory-path "markos" "copyright_theory"))]
 
    :namespaces
    { ""   "http://www.markosproject.eu/ontologies/oss-licenses#",
