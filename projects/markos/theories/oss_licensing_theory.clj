@@ -11,6 +11,10 @@
 (def oss-licensing-ontology
   (owl/import-from-project "markos" "ontologies/MARKOS/markos-licenses.owl"))
 
+(def copyright-theory
+  ;; require won't work here since the files are not in the CLASSPATH
+  (deref (load-file (project/absolute-theory-path "markos" "copyright_theory"))))
+
 (def oss-licensing-theory
   (t/make-theory
    :header
@@ -20,7 +24,7 @@
     :description {:en "A theory of open source licensing for the MARKOS
 project."})
 
-   :imports [(load-file (project/absolute-theory-path "markos" "copyright_theory"))]
+   :imports [copyright-theory]
 
    :namespaces
    { ""   "http://www.markosproject.eu/ontologies/oss-licenses#",
@@ -37,7 +41,12 @@ project."})
      "ec" "http://www.markosproject.eu/ontologies/markos-event-calculus#"}
 
    :language
-   (:language oss-licensing-ontology)
+   (into (t/make-language
+          (t/make-role :symbol 'http://www.markosproject.eu/ontologies/software#linkedLibrary
+                       :forms {:en (t/make-form :positive "%s is linked to %s"
+                                                :negative "%s is not linked to %s"
+                                                :question "Is %s linked to %s?")}))
+         (:language copyright-theory))
 
    :sections
    [(t/make-section
@@ -75,7 +84,8 @@ project."})
                   (a/pm '(cr:derivedFrom ?W1 ?W2))
                   ;; (a/pm '(ReciprocalLicenseTemplate T2))
                   ]
-       :exceptions [(a/pm '(cr:compatibleWith ?T1 T2))])
+       ;; :exceptions [(a/pm '(cr:compatibleWith ?T1 ?T2))]
+       )
 
       (t/make-scheme
        :id 'derivedFrom-1
@@ -127,12 +137,12 @@ project."})
         :conclusion '(cr:derivedFrom ?W1 ?W2)
         :premises [(a/pm '(soft:linkedLibrary ?W1 ?W2))])
 
-       (t/make-scheme
-        :id 'rose-theory-of-linking
-        :header (dc/make-metadata :description {:en "Lawrence Rosen
-        claims that linking does not create derivate works."})
-        :pro false
-        :conclusion '(cr:derivedFrom ?W1 ?W2)
-        :premises [(a/pm '(soft:linkedLibrary ?W1 ?W2))])
+       ;; (t/make-scheme
+       ;;  :id 'rose-theory-of-linking
+       ;;  :header (dc/make-metadata :description {:en "Lawrence Rosen
+       ;;  claims that linking does not create derivate works."})
+       ;;  :pro false
+       ;;  :conclusion '(cr:derivedFrom ?W1 ?W2)
+       ;;  :premises [(a/pm '(soft:linkedLibrary ?W1 ?W2))])
 
       ])]))
