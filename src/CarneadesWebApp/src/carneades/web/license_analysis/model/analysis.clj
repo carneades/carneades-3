@@ -21,10 +21,14 @@
             [carneades.policy-analysis.web.controllers.reconstruction :as recons]
             [carneades.engine.triplestore :as triplestore]
             [carneades.database.db :as db]
+            [carneades.database.argument-graph :as ag-db]
             [carneades.engine.utils :refer [unserialize-atom]]
             [carneades.maps.lacij :as lacij]
             [carneades.engine.argument-generator :as generator]
-            [carneades.engine.argument :as argument]))
+            [carneades.engine.argument :as argument]
+            [carneades.database.import :refer [import-from-argument-graph]]
+            [carneades.engine.dublin-core :as dc]
+            [carneades.engine.argument-graph :as agr]))
 
 (def markos-triplestore-endpoint "http://markos.man.poznan.pl/openrdf-sesame")
 (def markos-repo-name "markos_test_sp2")
@@ -126,9 +130,9 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
          (let [[p s o] goal]
            (if (= p 'http://www.markosproject.eu/ontologies/software#linkedLibrary)
              (let [arg (argument/make-argument :conclusion goal
-                                               :scheme (str "mock-triplestore:" )
+                                               :scheme (str "mock-triplestore:x")
                                                :strict true)
-                   subs (assoc subs o 'SomeStuff)]
+                   subs (assoc subs o 'MockSofwareEntity)]
                (prn "[mock] returning response")
                [(generator/make-response subs [] arg)])
              ;; else
@@ -136,10 +140,16 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
   ([endpoint-url]
      (generate-arguments-from-mock-triplestore endpoint-url "" [])))
 
+(defonce ag-nb (atom 12))
+
+(defn inc-ag-number!
+  []
+  (swap! ag-nb inc))
+
 (defn scratch-start-engine
   []
   (let [query "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing
-               http://markosproject.eu/kb/Package/_3
+               http://markosproject.eu/kb/Package/abc42_3
                http://www.markosproject.eu/ontologies/oss-licenses#GPL-2.0)"
         sexp (unserialize-atom query)
         _ (prn "sexp=" sexp)
@@ -158,7 +168,13 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
                                                                         markos-namespaces)
                                    (theory/generate-arguments-from-theory loaded-theories)
                                    argument-from-user-generator))
-        ag (shell/argue engine sexp)]
+        ag (shell/argue engine sexp)
+        ag (agr/enter-language ag (:language loaded-theories))
+        agnumber (inc-ag-number!)
+        dbname (str "ag" (str agnumber))]
+    (ag-db/create-argument-database "markos" dbname "root" "pw1" (dc/make-metadata))
+    (import-from-argument-graph (db/make-connection "markos" dbname "root" "pw1") ag true)
     (lacij/export ag "/tmp/ag1.svg")
     (prn "ag =")
-    (pp/pprint ag)))
+    (pp/pprint ag)
+    (prn "AG NUMBER = " agnumber)))
