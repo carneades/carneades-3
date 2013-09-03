@@ -45,7 +45,15 @@ project."})
           (t/make-role :symbol 'http://www.markosproject.eu/ontologies/software#linkedLibrary
                        :forms {:en (t/make-form :positive "%s is linked to %s"
                                                 :negative "%s is not linked to %s"
-                                                :question "Is %s linked to %s?")}))
+                                                :question "Is %s linked to %s?")})
+          (t/make-role :symbol 'http://www.markosproject.eu/ontologies/copyright#licenseTemplate
+                       :forms {:en (t/make-form :positive "%s is licensed using %s"
+                                                :negative "%s is not licensed using %s"
+                                                :question "Is %s licensed using %s?")})
+          (t/make-concept :symbol 'http://www.markosproject.eu/ontologies/oss-licenses#ReciprocalLicenseTemplate
+                       :forms {:en (t/make-form :positive "%s is a reciprocal license"
+                                                :negative "%s is not reciprocal license"
+                                                :question "Is %s a reciprocal license?")}))
          (:language copyright-theory))
 
    :sections
@@ -80,9 +88,9 @@ project."})
                 unless T1 is compatible with T2."})
        :pro false
        :conclusion '(cr:mayBeLicensedUsing ?W1 ?T1)
-       :premises [;; (a/pm '(cr:licenseTemplate W2 T2))
-                  (a/pm '(cr:derivedFrom ?W1 ?W2))
-                  ;; (a/pm '(ReciprocalLicenseTemplate T2))
+       :premises [(a/pm '(cr:derivedFrom ?W1 ?W2))
+                  (a/pm '(cr:licenseTemplate ?W2 ?T2))
+                  (a/pm '(ReciprocalLicenseTemplate ?T2))
                   ]
        ;; :exceptions [(a/pm '(cr:compatibleWith ?T1 ?T2))]
        )
