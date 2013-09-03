@@ -22,7 +22,9 @@
             [carneades.engine.triplestore :as triplestore]
             [carneades.database.db :as db]
             [carneades.engine.utils :refer [unserialize-atom]]
-            [carneades.maps.lacij :as lacij]))
+            [carneades.maps.lacij :as lacij]
+            [carneades.engine.argument-generator :as generator]
+            [carneades.engine.argument :as argument]))
 
 (def markos-triplestore-endpoint "http://markos.man.poznan.pl/openrdf-sesame")
 (def markos-repo-name "markos_test_sp2")
@@ -113,6 +115,27 @@
       (swap! state index-analysis analysis)
       (build-response analysis))))
 
+(defn generate-arguments-from-mock-triplestore
+  "Creates a generator generating arguments from facts in a triplestore.
+Prefixes is a list of prefixes in the form (prefix namespace),
+for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
+  ([endpoint-url repo-name prefixes]
+     (reify generator/ArgumentGenerator
+       (generate [this goal subs]
+         (prn "[mock] goal=" goal)
+         (let [[p s o] goal]
+           (if (= p 'http://www.markosproject.eu/ontologies/software#linkedLibrary)
+             (let [arg (argument/make-argument :conclusion goal
+                                               :scheme (str "mock-triplestore:" )
+                                               :strict true)
+                   subs (assoc subs o 'SomeStuff)]
+               (prn "[mock] returning response")
+               [(generator/make-response subs [] arg)])
+             ;; else
+             ())))))
+  ([endpoint-url]
+     (generate-arguments-from-mock-triplestore endpoint-url "" [])))
+
 (defn scratch-start-engine
   []
   (let [query "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing
@@ -130,9 +153,9 @@
         ag (ag/make-argument-graph) ;; (get-ag project ag-name)
         engine (shell/make-engine ag 500 #{}
                                   (list
-                                   (triplestore/generate-arguments-from-triplestore endpoint
-                                                                                    repo-name
-                                                                                    markos-namespaces)
+                                   (generate-arguments-from-mock-triplestore endpoint
+                                                                        repo-name
+                                                                        markos-namespaces)
                                    (theory/generate-arguments-from-theory loaded-theories)
                                    argument-from-user-generator))
         ag (shell/argue engine sexp)]
