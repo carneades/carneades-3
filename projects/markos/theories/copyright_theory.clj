@@ -37,7 +37,16 @@
      "ec" "http://www.markosproject.eu/ontologies/markos-event-calculus#"}
 
    :language
-   (:language copyright-ontology)
+   ;; (:language copyright-ontology)
+   (t/make-language
+    (t/make-role :symbol 'http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing
+                 :forms {:en (t/make-form :positive "%s may be license using %s"
+                                          :negative "%s may not be license using %s"
+                                          :question "May %s be license using %s?")})
+    (t/make-role :symbol 'http://www.markosproject.eu/ontologies/copyright#derivedFrom
+                 :forms {:en (t/make-form :positive "%s is derived from %s"
+                                          :negative "%s is not derived from %s"
+                                          :question "Is %s derived from %s?")}))
 
    :sections
    [(t/make-section
