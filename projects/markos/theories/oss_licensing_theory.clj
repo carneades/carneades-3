@@ -59,7 +59,8 @@ project."})
    :sections
    [(t/make-section
      :id 'ontology-axioms
-     :schemes (:axioms oss-licensing-ontology))
+     :schemes {};; (:axioms oss-licensing-ontology)
+     )
     ;; Should we import the axioms from the ontology, or will the
     ;; OWL reasoning be done entirely by the repository and queried
     ;; using SPARQL?
@@ -88,12 +89,20 @@ project."})
                 unless T1 is compatible with T2."})
        :pro false
        :conclusion '(copyright:mayBeLicensedUsing ?W1 ?T1)
-       :premises [(a/pm '(copyright:derivedFrom ?W1 ?W2))
+       :premises [;; (a/pm '(copyright:derivedFrom ?W1 ?W2))
                   (a/pm '(copyright:licenseTemplate ?W2 ?T2))
                   (a/pm '(ReciprocalLicenseTemplate ?T2))
                   ]
        ;; :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))]
        )
+
+      (t/make-scheme
+       :id 'mock-license-template-rule
+       :header (dc/make-metadata
+                :description {:en ""})
+       :conclusion '(copyright:licenseTemplate ?W1 ?TPL)
+       :premises [(a/pm '(lic:coveringLicense ?W1 ?L))
+                  (a/pm '(lic:template ?L ?TPL))])
 
       (t/make-scheme
        :id 'derivedFrom-1
