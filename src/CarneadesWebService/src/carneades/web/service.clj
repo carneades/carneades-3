@@ -277,9 +277,9 @@
             {:body {:id (ag-db/create-statement s)}})))
 
   (PUT "/statement/:project/:db" request
-       (let [m (json/read-json (slurp (:body request)))
+       (let [m (:params request)
              ;; s (unpack-statement m)
-             m (dissoc m :pro :con :premise-of)
+             m (dissoc m :pro :con :premise-of :project :db)
              [username password] (get-username-and-password request)
              {:keys [project db]} (:params request)
              dbconn (db/make-connection project db username password)
