@@ -4,7 +4,7 @@
         carneades.engine.dublin-core
         carneades.engine.theory
         carneades.engine.argument
-        carneades.database.db) 
+        carneades.database.db)
   (:require [clojure.string :as str]
             [carneades.database.argument-graph :as ag]))
 
@@ -48,25 +48,25 @@
           md
           md))
 
-(defn pack-statement 
+(defn pack-statement
   [stmt]
   {:post [(not (vector? (:atom %)))
           (not (seq? (:atom %)))]}
-  (cond (sliteral? stmt) (str stmt),
+  (cond (sliteral? stmt) (serialize-atom stmt),
         (statement? stmt) (assoc stmt
                             :atom (when (:atom stmt)
-                                    (str (literal-atom stmt)))
+                                    (serialize-atom (literal-atom stmt)))
                             :header (unzip-metadata (:header stmt)))
         :else nil))
 
 (defn unpack-statement
   "Converts a JSON string representing a statement to a statement object."
   [s]
-  (cond (string? s) (safe-read-string s),  
+  (cond (string? s) (safe-read-string s),
         (map? s) (let [atomval (if (or (nil? (:atom s))
                                        (empty? (:atom s)))
                                  nil
-                                 (safe-read-string (:atom s)))]
+                                 (unserialize-atom (:atom s)))]
                    (assoc (map->statement (dissoc s :atom))
                      :standard (keyword (:standard s))
                      :atom atomval
@@ -80,7 +80,7 @@
     (merge arg
            {:scheme (str (:scheme arg)),
             :conclusion (pack-statement (:conclusion arg)),
-            :premises (map (fn [p] (assoc p :statement 
+            :premises (map (fn [p] (assoc p :statement
                                           (pack-statement (:statement p))))
                            (:premises arg))
             :header (unzip-metadata (:header arg))})))
@@ -103,7 +103,7 @@
     (assoc attrs :header (map->metadata (:header attrs)))
     attrs))
 
-(defn unpack-subs 
+(defn unpack-subs
   "Replace keywords by logical variables in the substitutions
    received from Web clients."
   [m]
