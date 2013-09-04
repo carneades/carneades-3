@@ -640,7 +640,6 @@
   (ANY "/map/:project/:db" {params :params}
        (let [db (:db params)
              project (:project params)
-             _ (prn "params =" params)
              lang (keyword (:lang params))
              options (dissoc params :db :lang)
              dbconn (db/make-connection project db "guest" "")]
@@ -651,8 +650,6 @@
                                     (catch Exception _
                                       (keyword val))))
                  ag (export-to-argument-graph dbconn)
-                 _ (prn "ag=")
-                 _ (pprint ag)
                  optionsseq (mapcat (fn [[k v]] [k (convert-option v)]) options)
                  svg (apply lacij/export-str ag lang optionsseq)]
              {:status 200
