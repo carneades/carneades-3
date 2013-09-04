@@ -33,7 +33,8 @@
 
 (def markos-triplestore-endpoint "http://markos.man.poznan.pl/openrdf-sesame")
 (def markos-repo-name "markos_test_sp2")
-(def markos-namespaces [["top" "http://www.markosproject.eu/ontologies/top#"]
+(def markos-namespaces [["" "http://markosproject.eu/"]
+                        ["top" "http://www.markosproject.eu/ontologies/top#"]
                         ["reif" "http://www.markosproject.eu/ontologies/reification#"]
                         ["soft" "http://www.markosproject.eu/ontologies/software#"]
                         ["lic" "http://www.markosproject.eu/ontologies/licenses#"]
@@ -201,7 +202,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
   ([endpoint-url]
      (generate-arguments-from-mock-triplestore endpoint-url "" [])))
 
-(defonce ag-nb (atom 100))
+(defonce ag-nb (atom 200))
 
 (defn inc-ag-number!
   []
@@ -210,7 +211,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
 (defn scratch-start-engine-transition
   []
   (let [query "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing
-               http://markosproject.eu/kb/Package/abc42_3
+               http://markosproject.eu/kb/SoftwareRelease/_2
                http://www.markosproject.eu/ontologies/oss-licenses#BSD-2.0-Clause)"
         sexp (unserialize-atom query)
         _ (prn "sexp=" sexp)
@@ -222,7 +223,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
         [argument-from-user-generator questions send-answer]
         (ask/make-argument-from-user-generator (fn [p] (questions/askable? loaded-theories p)))
         ag (ag/make-argument-graph) ;; (get-ag project ag-name)
-        engine (shell/make-engine ag 500 #{}
+        engine (shell/make-engine ag 1500 #{}
                                   (list
                                    (generate-arguments-from-mock-triplestore-transition endpoint
                                                                                         repo-name
@@ -255,7 +256,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
         [argument-from-user-generator questions send-answer]
         (ask/make-argument-from-user-generator (fn [p] (questions/askable? loaded-theories p)))
         ag (ag/make-argument-graph) ;; (get-ag project ag-name)
-        engine (shell/make-engine ag 500 #{}
+        engine (shell/make-engine ag 1500 #{}
                                   (list
                                    (generate-arguments-from-mock-triplestore endpoint
                                                                         repo-name
