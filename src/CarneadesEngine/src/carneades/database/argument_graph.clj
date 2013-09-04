@@ -553,7 +553,7 @@
   [arg]
   {:pre [(argument? arg)]}
   (let [arg-id (str (:id arg)),
-        scheme-id (str (:scheme arg))
+        scheme-id (str (serialize-atom (:scheme arg)))
         conclusion-id (get-statement (:conclusion arg)),
         header-id (if (:header arg) (create-metadata (:header arg)))]
     (jdbc/insert-record
@@ -635,7 +635,7 @@
             rs (get-rebuttals id)
             us (get-undercutters id)
             ds (get-dependents id)
-            scheme (safe-read-string (:scheme m))]
+            scheme (unserialize-atom (:scheme m))]
         (map->argument (assoc m
                          :id (symbol id)
                          :scheme scheme
