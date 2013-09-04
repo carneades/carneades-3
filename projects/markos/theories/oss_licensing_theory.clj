@@ -28,13 +28,13 @@ project."})
 
    :namespaces
    { ""   "http://www.markosproject.eu/ontologies/oss-licenses#",
-     "cr" "http://www.markosproject.eu/ontologies/copyright#",
+     "copyright" "http://www.markosproject.eu/ontologies/copyright#",
      "owl" "http://www.w3.org/2002/07/owl#",
      "rdf" "http://www.w3.org/1999/02/22-rdr-syntax-ns#"
      "rdfs" "http://www.w3.org/2000/01/rdf-schema#"
      "xsd" "http://www.w3.org/2001/XMLSchema#"
      "foaf" "http://xmlns.com/foaf/0.1/"
-     "ml" "http://www.markosproject.eu/ontologies/licenses#"
+     "lic" "http://www.markosproject.eu/ontologies/licenses#"
      "soft" "http://www.markosproject.eu/ontologies/software#"
      "mt" "http://www.markosproject.eu/ontologies/top#"
      "dc" "http://purl.org/dc/terms/"
@@ -77,7 +77,7 @@ project."})
                    using any license template."})
        ;; ex:
        ;; (http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing ?W http://www.markosproject.eu/ontologies/oss-licenses#GPL-2.0)
-       :conclusion '(cr:mayBeLicensedUsing ?W ?T))
+       :conclusion '(copyright:mayBeLicensedUsing ?W ?T))
 
       (t/make-scheme
        :id 'reciprocity-rule
@@ -87,18 +87,18 @@ project."})
                 licensed using a reciprocal license template T2,
                 unless T1 is compatible with T2."})
        :pro false
-       :conclusion '(cr:mayBeLicensedUsing ?W1 ?T1)
-       :premises [(a/pm '(cr:derivedFrom ?W1 ?W2))
-                  (a/pm '(cr:licenseTemplate ?W2 ?T2))
+       :conclusion '(copyright:mayBeLicensedUsing ?W1 ?T1)
+       :premises [(a/pm '(copyright:derivedFrom ?W1 ?W2))
+                  (a/pm '(copyright:licenseTemplate ?W2 ?T2))
                   (a/pm '(ReciprocalLicenseTemplate ?T2))
                   ]
-       ;; :exceptions [(a/pm '(cr:compatibleWith ?T1 ?T2))]
+       ;; :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))]
        )
 
       (t/make-scheme
        :id 'derivedFrom-1
        :header (dc/make-metadata :description {:en "W1 is derived from W2"})
-       :conclusion '(cr:derivedFrom ?W1 ?W2)
+       :conclusion '(copyright:derivedFrom ?W1 ?W2)
        :premises [(a/pm '(soft:previousVersion ?W1 ?W2))])
 
       ;; (t/make-scheme
@@ -110,16 +110,16 @@ project."})
       ;;              example of a subsumption rule mapping relations in
       ;;              the software ontology to a concept in the copyright
       ;;              ontology. " })
-      ;;  :conclusion '(cr:Modify (soft:previousVersion ?V2 ?V1))
+      ;;  :conclusion '(copyright:Modify (soft:previousVersion ?V2 ?V1))
       ;;  :premises [(a/pm '(soft:previousVersion ?V2 ?V1))])
 
       ;; (t/make-scheme
       ;;  :id 'workUsed-1
-      ;;  :conclusion '(cr:workUsed (soft:previousVersion ?V2 ?V1) ?V1))
+      ;;  :conclusion '(copyright:workUsed (soft:previousVersion ?V2 ?V1) ?V1))
 
       ;; (t/make-scheme
       ;;  :id 'adaptation-1
-      ;;  :conclusion '(cr:adaptation (soft:previousVersion ?V2 ?V1) ?V2))
+      ;;  :conclusion '(copyright:adaptation (soft:previousVersion ?V2 ?V1) ?V2))
 
       ;; (t/make-scheme
       ;;  :id 'adapt-1
@@ -130,19 +130,19 @@ project."})
       ;;              library. It may be necessary to distinguish dynamic
       ;;              and static linking. Some copyright experts claim
       ;;              that dynamic linking, unlike static linking, does
-      ;;              not create a derivative work."})
-      ;;  :conclusion '(cr:Adapt (soft:linkedLibrary ?SE ?L))
+      ;;              not copyrighteate a derivative work."})
+      ;;  :conclusion '(copyright:Adapt (soft:linkedLibrary ?SE ?L))
       ;;  :premises [(a/pm '(soft:linkedLibrary ?SE ?L))])
 
       ;; (t/make-scheme
       ;;  :id 'workUsed-2
-      ;;  :conclusion '(cr:workUsed (soft:linkedLibrary ?SE ?L) ?L))
+      ;;  :conclusion '(copyright:workUsed (soft:linkedLibrary ?SE ?L) ?L))
 
        (t/make-scheme
         :id 'fsf-theory-of-linking
         :header (dc/make-metadata :description {:en "The Free Software
        Foundation claims that linking creates derivative works."})
-        :conclusion '(cr:derivedFrom ?W1 ?W2)
+        :conclusion '(copyright:derivedFrom ?W1 ?W2)
         :premises [(a/pm '(soft:linkedLibrary ?W1 ?W2))])
 
        ;; (t/make-scheme
@@ -150,7 +150,7 @@ project."})
        ;;  :header (dc/make-metadata :description {:en "Lawrence Rosen
        ;;  claims that linking does not create derivate works."})
        ;;  :pro false
-       ;;  :conclusion '(cr:derivedFrom ?W1 ?W2)
+       ;;  :conclusion '(copyright:derivedFrom ?W1 ?W2)
        ;;  :premises [(a/pm '(soft:linkedLibrary ?W1 ?W2))])
 
       ])]))
