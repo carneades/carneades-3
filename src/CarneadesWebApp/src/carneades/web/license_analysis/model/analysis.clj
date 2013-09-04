@@ -155,16 +155,90 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
                    (prn "[mock] returning response for LicenseTemplate")
                    [(generator/make-response subs [] arg)])
 
-             ;; else
+                 ;; else
              :else ())))))
   ([endpoint-url]
      (generate-arguments-from-mock-triplestore endpoint-url "" [])))
 
-(defonce ag-nb (atom 12))
+(defn generate-arguments-from-mock-triplestore-transition
+  "Creates a generator generating arguments from facts in a triplestore.
+Prefixes is a list of prefixes in the form (prefix namespace),
+for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
+  ([endpoint-url repo-name prefixes]
+     (let [triplestore-generator (triplestore/generate-arguments-from-triplestore
+                                  endpoint-url repo-name prefixes)]
+      (reify generator/ArgumentGenerator
+        (generate [this goal subs]
+          (prn "[mock] goal=" goal)
+          (let [[p s o] goal]
+            (cond ;; (= p 'http://www.markosproject.eu/ontologies/software#linkedLibrary)
+                  ;; (let [arg (argument/make-argument :conclusion goal
+                  ;;                                   :scheme (str "mock-triplestore:x")
+                  ;;                                   :strict true)
+                  ;;       subs (assoc subs o 'MockSofwareEntity)]
+                  ;;   (prn "[mock] returning response for linkedLibrary")
+                  ;;   [(generator/make-response subs [] arg)])
+
+                  ;; (and (= p 'http://www.markosproject.eu/ontologies/oss-licenses#ReciprocalLicenseTemplate)
+                  ;;      (not (st/variable? s)))
+                  ;; (let [arg (argument/make-argument :conclusion goal
+                  ;;                                   :scheme (str "mock-triplestore:x")
+                  ;;                                   :strict true)]
+                  ;;   (prn "[mock] returning response for ReciprocalLicenseTemplate")
+                  ;;   [(generator/make-response subs [] arg)])
+
+                  ;; (and (= p 'http://www.markosproject.eu/ontologies/copyright#licenseTemplate)
+                  ;;      (not (st/variable? s)))
+                  ;; (let [arg (argument/make-argument :conclusion goal
+                  ;;                                   :scheme (str "mock-triplestore:x")
+                  ;;                                   :strict true)
+                  ;;       subs (assoc subs o 'http://www.markosproject.eu/ontologies/oss-licenses#GPL-2.0)]
+                  ;;   (prn "[mock] returning response for LicenseTemplate")
+                  ;;   [(generator/make-response subs [] arg)])
+
+                  ;; else
+                  :else (generator/generate triplestore-generator goal subs)))))))
+  ([endpoint-url]
+     (generate-arguments-from-mock-triplestore endpoint-url "" [])))
+
+(defonce ag-nb (atom 100))
 
 (defn inc-ag-number!
   []
   (swap! ag-nb inc))
+
+(defn scratch-start-engine-transition
+  []
+  (let [query "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing
+               http://markosproject.eu/kb/Package/abc42_3
+               http://www.markosproject.eu/ontologies/oss-licenses#BSD-2.0-Clause)"
+        sexp (unserialize-atom query)
+        _ (prn "sexp=" sexp)
+        project "markos"
+        theories "oss_licensing_theory"
+        endpoint "http://markos.man.poznan.pl/openrdf-sesame"
+        repo-name "markos_test_26-07-2013"
+        loaded-theories (project/load-theory project theories)
+        [argument-from-user-generator questions send-answer]
+        (ask/make-argument-from-user-generator (fn [p] (questions/askable? loaded-theories p)))
+        ag (ag/make-argument-graph) ;; (get-ag project ag-name)
+        engine (shell/make-engine ag 500 #{}
+                                  (list
+                                   (generate-arguments-from-mock-triplestore-transition endpoint
+                                                                                        repo-name
+                                                                                        markos-namespaces)
+                                   (theory/generate-arguments-from-theory loaded-theories)
+                                   argument-from-user-generator))
+        ag (shell/argue engine sexp)
+        ag (agr/enter-language ag (:language loaded-theories))
+        agnumber (inc-ag-number!)
+        dbname (str "ag" (str agnumber))]
+    (ag-db/create-argument-database "markos" dbname "root" "pw1" (dc/make-metadata))
+    (import-from-argument-graph (db/make-connection "markos" dbname "root" "pw1") ag true)
+    ;; (lacij/export ag "/tmp/ag1.svg")
+    (prn "ag =")
+    (pprint ag)
+    (prn "AG NUMBER = " agnumber)))
 
 (defn scratch-start-engine
   []
@@ -196,7 +270,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
     (import-from-argument-graph (db/make-connection "markos" dbname "root" "pw1") ag true)
     (lacij/export ag "/tmp/ag1.svg")
     (prn "ag =")
-    (pp/pprint ag)
+    (pprint ag)
     (prn "AG NUMBER = " agnumber)))
 
 (defn test-generate-arguments-from-triplestore-concept
