@@ -366,7 +366,8 @@
                                       undercutters))}}))))
 
   (PUT "/argument/:project/:db" request
-       (let [m (json/read-json (slurp (:body request)))
+       (prn request)
+       (let [m (dissoc (:params request) :db :project)
              [username password] (get-username-and-password request)
              db (:db (:params request))
              project (:project (:params request))
