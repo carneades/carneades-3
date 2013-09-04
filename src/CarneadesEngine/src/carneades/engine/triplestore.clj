@@ -14,7 +14,8 @@
             [carneades.engine.statement :as stmt]
             [carneades.engine.argument-generator :as generator]
             [carneades.engine.argument :as argument]
-            [carneades.engine.unify :as unify])
+            [carneades.engine.unify :as unify]
+            [carneades.engine.theory.namespace :as namespace])
   (:import java.net.URL))
 
 (def select-limit 100)
@@ -242,24 +243,33 @@ argument if is the case."
              :strict true)]
    (generator/make-response new-subs [] arg)))
 
+(defn to-absolute-bindings
+  "Converts the values of bindings to absolute literals."
+  [bindings namespaces]
+  (reduce-kv (fn [bindings k v]
+               (assoc bindings k (namespace/to-absolute-literal v namespaces)))
+             {}
+             bindings))
+
 (defn responses-from-query
   "Generates responses from non-grounded goal. Asks the triplestore
   with the goal as a query, if some new bindings are returned we
   construct one argument for each binding."
-  [kbconn goal subs]
+  [kbconn goal subs namespaces]
   (let [query (sexp->sparqlquery goal)
         _ (prn "issuing query= " query)
         bindings (binding [sparql/*select-limit* select-limit]
-                   (sparql/query (:kb kbconn) [query]))]
+                   (sparql/query (:kb kbconn) [query]))
+        bindings (map #(to-absolute-bindings % namespaces) bindings)]
     (map #(make-response-from-binding kbconn goal subs %) bindings)))
 
 (defn responses-from-goal
   "Generates responses for a given goal."
-  [kbconn goal subs]
+  [kbconn goal subs namespaces]
   (try
     (if (stmt/ground? goal)
       (responses-from-ask kbconn goal subs)
-      (responses-from-query kbconn goal subs))
+      (responses-from-query kbconn goal subs namespaces))
     (catch Exception e
       (prn "Invalid query " goal)
       (prn "Error:")
@@ -275,8 +285,9 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
        (reify generator/ArgumentGenerator
          (generate [this goal subs]
            (when (stmt/literal-pos? goal)
-             (let [res
-                   (responses-from-goal kbconn goal subs)]
+             (let [namespaces (apply hash-map (flatten prefixes))
+                   res
+                   (responses-from-goal kbconn goal subs namespaces)]
                ;; (prn "responses from triplestore")
                ;; (pprint res)
                res))))))
