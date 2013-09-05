@@ -170,7 +170,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
                                   endpoint-url repo-name prefixes)]
       (reify generator/ArgumentGenerator
         (generate [this goal subs]
-          (prn "[mock] goal=" goal)
+          ;; (prn "[mock] goal=" goal)
           (let [[p s o] goal]
             (cond ;; (= p 'http://www.markosproject.eu/ontologies/software#linkedLibrary)
                   ;; (let [arg (argument/make-argument :conclusion goal
@@ -212,7 +212,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
   []
   ;; http://markosproject.eu/kb/SoftwareRelease/_2
   (let [query "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing
-               http://markosproject.eu/kb/SoftwareRelease/_365
+               http://markosproject.eu/kb/SoftwareRelease/_366
                http://www.markosproject.eu/ontologies/oss-licenses#BSD-2.0-Clause)"
         sexp (unserialize-atom query)
         _ (prn "sexp=" sexp)
@@ -237,7 +237,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
         dbname (str "ag" (str agnumber))]
     (ag-db/create-argument-database "markos" dbname "root" "pw1" (dc/make-metadata))
     (import-from-argument-graph (db/make-connection "markos" dbname "root" "pw1") ag true)
-    ;; (lacij/export ag "/tmp/ag1.svg")
+    (lacij/export ag "/tmp/ag1.svg")
 
     ;; (prn "ag =")
     ;; (pprint ag)

@@ -18,7 +18,7 @@
             [carneades.engine.theory.namespace :as namespace])
   (:import java.net.URL))
 
-(def select-limit 1000)
+(def select-limit 1500)
 
 (defn- add-namespaces [kb]
   (rdf/update-namespaces kb
@@ -257,10 +257,11 @@ argument if is the case."
   construct one argument for each binding."
   [kbconn goal subs namespaces]
   (let [query (sexp->sparqlquery goal)
-        _ (prn "issuing query= " query)
+        _ (prn "[triplestore] issuing query= " query)
         bindings (binding [sparql/*select-limit* select-limit]
                    (sparql/query (:kb kbconn) [query]))
         bindings (map #(to-absolute-bindings % namespaces) bindings)]
+    (prn "[triplestore] bindings size= " (count bindings))
     (map #(make-response-from-binding kbconn goal subs %) bindings)))
 
 (defn responses-from-goal
