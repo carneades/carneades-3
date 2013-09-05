@@ -22,16 +22,16 @@
 
 (defn- add-namespaces [kb]
   (rdf/update-namespaces kb
-                         '(("ex" "http://www.example.org/")
-                           ("rdf" "http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-                           ("rdfs" "http://www.w3.org/2000/01/rdf-schema#")
-                           ("owl" "http://www.w3.org/2002/07/owl#")
-                           ("foaf" "http://xmlns.com/foaf/0.1/")
-                           ("xsd" "http://www.w3.org/2001/XMLSchema#")
+                         (seq {"ex" "http://www.example.org/"
+                               "rdf" "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                               "rdfs" "http://www.w3.org/2000/01/rdf-schema#"
+                               "owl" "http://www.w3.org/2002/07/owl#"
+                               "foaf" "http://xmlns.com/foaf/0.1/"
+                               "xsd" "http://www.w3.org/2001/XMLSchema#"
 
-                           ("dbpedia-owl" "http://dbpedia.org/ontology/")
-                           ("dbpedia" "http://dbpedia.org/resource/")
-                           ("dbpedia2" "http://dbpedia.org/property/"))))
+                               "dbpedia-owl" "http://dbpedia.org/ontology/"
+                               "dbpedia" "http://dbpedia.org/resource/"
+                               "dbpedia2" "http://dbpedia.org/property/"})))
 ;;;; scratch
 
 
@@ -129,19 +129,19 @@
 ;;;;
 
 (defn- make-sesame-conn
-  [endpoint-url repo-name prefixes]
+  [endpoint-url repo-name namespaces]
   (let [kb (kb/open
             (edu.ucdenver.ccp.kr.sesame.kb/new-sesame-server
              :server endpoint-url
              :repo-name repo-name))
         kb (add-namespaces kb)
-        kb (rdf/update-namespaces kb prefixes)]
+        kb (rdf/update-namespaces kb (seq namespaces))]
     kb))
 
 (defn make-conn
   "Creates a connection map to a Sesame SPARQL Endpoint."
-  [endpoint-url repo-name prefixes]
-  {:kb (make-sesame-conn endpoint-url repo-name prefixes)
+  [endpoint-url repo-name namespaces]
+  {:kb (make-sesame-conn endpoint-url repo-name namespaces)
    :host (.getHost (URL. endpoint-url))})
 
 (defn variable->sparqlvariable
@@ -281,14 +281,12 @@ argument if is the case."
   "Creates a generator generating arguments from facts in a triplestore.
 Prefixes is a list of prefixes in the form (prefix namespace),
 for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
-  ([endpoint-url repo-name prefixes]
-     (let [kbconn (make-conn endpoint-url repo-name prefixes)]
+  ([endpoint-url repo-name namespaces]
+     (let [kbconn (make-conn endpoint-url repo-name namespaces)]
        (reify generator/ArgumentGenerator
          (generate [this goal subs]
            (when (stmt/literal-pos? goal)
-             (let [namespaces (apply hash-map (flatten prefixes))
-                   res
-                   (responses-from-goal kbconn goal subs namespaces)]
+             (let [res (responses-from-goal kbconn goal subs namespaces)]
                ;; (prn "responses from triplestore")
                ;; (pprint res)
                res))))))
