@@ -33,18 +33,18 @@
 
 (def markos-triplestore-endpoint "http://markos.man.poznan.pl/openrdf-sesame")
 (def markos-repo-name "markos_test_sp2")
-(def markos-namespaces [["" "http://markosproject.eu/"]
-                        ["top" "http://www.markosproject.eu/ontologies/top#"]
-                        ["reif" "http://www.markosproject.eu/ontologies/reification#"]
-                        ["soft" "http://www.markosproject.eu/ontologies/software#"]
-                        ["lic" "http://www.markosproject.eu/ontologies/licenses#"]
-                        ["kb" "http://markosproject.eu/kb/"]
-                        ["package" "http://markosproject.eu/kb/Package/"]
-                        ["directory" "http://markosproject.eu/kb/Directory/"]
-                        ["api" "http://markosproject.eu/kb/API/"]
-                        ["softwareproject" "http://markosproject.eu/kb/SoftwareProject/"]
-                        ["softwarerelease" "http://markosproject.eu/kb/SoftwareRelease/"]
-                        ["programminglanguage" "http://markosproject.eu/kb/ProgrammingLanguage/"]])
+(def markos-namespaces {"" "http://markosproject.eu/"
+                        "top" "http://www.markosproject.eu/ontologies/top#"
+                        "reif" "http://www.markosproject.eu/ontologies/reification#"
+                        "soft" "http://www.markosproject.eu/ontologies/software#"
+                        "lic" "http://www.markosproject.eu/ontologies/licenses#"
+                        "kb" "http://markosproject.eu/kb/"
+                        "package" "http://markosproject.eu/kb/Package/"
+                        "directory" "http://markosproject.eu/kb/Directory/"
+                        "api" "http://markosproject.eu/kb/API/"
+                        "softwareproject" "http://markosproject.eu/kb/SoftwareProject/"
+                        "softwarerelease" "http://markosproject.eu/kb/SoftwareRelease/"
+                        "programminglanguage" "http://markosproject.eu/kb/ProgrammingLanguage/"})
 
 (defn initial-state
   []
