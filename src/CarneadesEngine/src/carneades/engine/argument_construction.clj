@@ -152,7 +152,7 @@
   {:pre [(acstate? s) (argument? arg)]
    :post [(acstate? %)]}
   (let [schemes (schemes-applied (:graph s) (:conclusion arg))]
-    (printf "schemes: %s\n:" schemes)
+    ;; (printf "schemes: %s\n:" schemes)
     (if (contains? schemes (:scheme arg))
       ;; the scheme has already been applied to this issue
       ;; Todo: This seems too restrictive.  Consider two
@@ -296,9 +296,9 @@
   ;; are passed down to the children of the goal, so they are not lost by removing the goal.
   (let [goal (get (:goals state1) id),
         state2 (remove-goal state1 id)]
-    ;; (prn "[reduce-goal]")
-    ;; (prn "goal = ")
-    ;; (pprint goal)
+    (prn "[reduce-goal]")
+    (prn "goal = ")
+    (pprint goal)
     (if (empty? (:issues goal))
       state2 ; no issues left in the goal
       (let [issue (apply-substitutions (:substitutions goal) (first (:issues goal)))]
