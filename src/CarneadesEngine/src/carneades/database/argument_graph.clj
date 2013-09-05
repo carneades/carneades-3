@@ -703,7 +703,7 @@
                        {:header header-id2
                         :conclusion conclusion-id}
                        {:header header-id2}))
-          m (update-in m [:scheme] str)]
+          m (update-in m [:scheme] serialize-atom)]
       (condp = (first (jdbc/update-values
                        :argument
                        ["id=?" id]
