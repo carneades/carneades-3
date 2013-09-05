@@ -179,7 +179,7 @@
   [state1 goal response]
   {:pre [(acstate? state1) (response? response)]
    :post [(acstate? %)]}
-  (prn "[apply-arg-templates] =" goal)
+  ;; (prn "[apply-arg-templates] =" goal)
   (let [subs (:substitutions response)]
     (reduce (fn [s k]
               (let [template (get (:arg-templates s) k)
@@ -296,8 +296,9 @@
   ;; are passed down to the children of the goal, so they are not lost by removing the goal.
   (let [goal (get (:goals state1) id),
         state2 (remove-goal state1 id)]
-    (prn "[reduce-goal]")
-    (prn "goal = " goal)
+    ;; (prn "[reduce-goal]")
+    ;; (prn "goal = ")
+    ;; (pprint goal)
     (if (empty? (:issues goal))
       state2 ; no issues left in the goal
       (let [issue (apply-substitutions (:substitutions goal) (first (:issues goal)))]
@@ -319,8 +320,8 @@
                                                          (generate g (literal-complement issue)
                                                                    (:substitutions goal))))
                                                generators2))]
-              (prn "responses=" )
-              (pprint responses)
+              ;; (prn "responses=" )
+              ;; (pprint responses)
               (reduce (fn [s r] (apply-response s goal r))
                       state2
                       responses))))))))
@@ -333,7 +334,11 @@
   [state1 max-goals generators]
   (if (or (empty? (:open-goals state1))
           (<= max-goals 0))
-    state1
+    (do
+      (if (empty? (:open-goals state1))
+        (prn "EMPTY GOALS")
+        (prn "EXHAUSTED"))
+      state1)
     (let [id (first (:open-goals state1))]
       (if (not id)
         state1

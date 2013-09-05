@@ -100,8 +100,8 @@ project."})
        :id 'mock-license-template-rule
        :header (dc/make-metadata
                 :description {:en ""})
-       :conclusion '(copyright:licenseTemplate ?W1 ?TPL)
-       :premises [(a/pm '(lic:coveringLicense ?W1 ?L))
+       :conclusion '(copyright:licenseTemplate ?W2 ?TPL)
+       :premises [(a/pm '(lic:coveringLicense ?W2 ?L))
                   (a/pm '(lic:template ?L ?TPL))])
 
       (t/make-scheme
