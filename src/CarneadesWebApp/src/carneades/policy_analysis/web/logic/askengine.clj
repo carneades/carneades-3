@@ -38,15 +38,6 @@
             [{} last-id]
             statements)))
 
-(defn- set-main-issues
-  [ag goal]
-  (let [main-nodes (filter
-                    (fn [s] (= (literal-predicate s) (literal-predicate goal)))
-                    (atomic-statements ag))]
-    (reduce (fn [ag atom] (update-statement-node ag (get-statement-node ag atom) :main true))
-            ag
-            main-nodes)))
-
 (defn- on-questions-answered
   [session]
   (prn "[on-questions-answered]")
