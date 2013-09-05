@@ -5,6 +5,9 @@
   carneades.engine.theory.namespace
   (:require [clojure.walk :as w]
             [clojure.zip :as z]
+            [clojure.set :as set]
+            [clojure.string :as s]
+            [clojure.pprint :refer [pprint]]
             [carneades.engine.theory.zip :as tz]
             [carneades.engine.statement :as st]
             [carneades.engine.argument :as a])
@@ -46,10 +49,37 @@
         :else
         (doall (map #(to-absolute-atom % namespaces) atom))))
 
+(defn to-relative-atom
+  "Converts this atom to a relative atom."
+  [atom namespaces]
+  ;; (prn "[to-relative-atom] atom=" atom)
+  ;; (prn "namespaces=")
+  (pprint namespaces)
+  (let [rnamespaces (set/map-invert namespaces)]
+    (cond (st/variable? atom) atom
+          (symbol? atom) (let [n (str atom)]
+                           (if (re-matches #"^.+://.+" n)
+                             (symbol (reduce (fn [n [namespace prefix]]
+                                               ;; (prn "namespace=" namespace)
+                                               ;; (prn "prefix=" prefix)
+                                               (if (empty? prefix)
+                                                 (s/replace n namespace prefix)
+                                                 (s/replace n namespace (str prefix ":"))))
+                                             n
+                                             rnamespaces))
+                             atom))
+          :else
+          (doall (map #(to-relative-atom % namespaces) atom)))))
+
 (defn to-absolute-statement
   "Converts this statement to an absolute statement."
   [statement namespaces]
   (update-in statement [:atom] to-absolute-atom namespaces))
+
+(defn to-relative-statement
+  "Converts this statement to a relative statement."
+  [statement namespaces]
+  (update-in statement [:atom] to-relative-atom namespaces))
 
 (defn to-absolute-literal
   "Recursively convert each of the atom of the literal to an absolute atom."
@@ -57,6 +87,13 @@
   (cond (empty? namespaces) literal
         (st/sliteral? literal) (to-absolute-atom literal namespaces)
         :else (to-absolute-statement literal namespaces)))
+
+(defn to-relative-literal
+  "Recursively convert each of the atom of the literal to a relative atom."
+  [literal namespaces]
+  (cond (empty? namespaces) literal
+        (st/sliteral? literal) (to-relative-atom literal namespaces)
+        :else (to-relative-statement literal namespaces)))
 
 (defn to-absolute-premise
   "Converts a premise to an absolute premise"
