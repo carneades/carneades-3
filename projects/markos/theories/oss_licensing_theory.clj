@@ -102,7 +102,8 @@ project."})
                 :description {:en ""})
        :conclusion '(copyright:licenseTemplate-mock ?W2 ?TPL)
        :premises [(a/pm '(lic:coveringLicense ?W2 ?L))
-                  (a/pm '(lic:template ?L ?TPL))])
+                  (a/pm '(lic:template ?L ?TPL))
+                  ])
 
       (t/make-scheme
        :id 'derivedFrom-1
