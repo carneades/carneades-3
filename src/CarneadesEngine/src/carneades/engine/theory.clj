@@ -54,10 +54,13 @@ call or a symbol."
 (defn format-statement
   "Uses the formular to returns a user-readable sentence describing the literal.
    Selector is :positive, :negative or :question"
-  [literal language lang selector]
-  (let [pred (literal-predicate literal)
-        fstring (-> language pred :forms lang selector)]
-   (apply format fstring (format-literal-args literal language lang))))
+  ([literal language lang selector]
+     (format-statement literal language lang selector {}))
+  ([literal language lang selector namespaces]
+     (let [pred (literal-predicate literal)
+           literal (namespace/to-relative-literal literal namespaces)
+           fstring (-> language pred :forms lang selector)]
+       (apply format fstring (format-literal-args literal language lang)))))
 
 (defprotocol Functor
   (get-symbol [this])

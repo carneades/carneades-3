@@ -33,18 +33,31 @@
 
 (def markos-triplestore-endpoint "http://markos.man.poznan.pl/openrdf-sesame")
 (def markos-repo-name "markos_test_sp2")
-(def markos-namespaces {"" "http://markosproject.eu/"
-                        "top" "http://www.markosproject.eu/ontologies/top#"
-                        "reif" "http://www.markosproject.eu/ontologies/reification#"
-                        "soft" "http://www.markosproject.eu/ontologies/software#"
-                        "lic" "http://www.markosproject.eu/ontologies/licenses#"
-                        "kb" "http://markosproject.eu/kb/"
-                        "package" "http://markosproject.eu/kb/Package/"
-                        "directory" "http://markosproject.eu/kb/Directory/"
-                        "api" "http://markosproject.eu/kb/API/"
-                        "softwareproject" "http://markosproject.eu/kb/SoftwareProject/"
-                        "softwarerelease" "http://markosproject.eu/kb/SoftwareRelease/"
-                        "programminglanguage" "http://markosproject.eu/kb/ProgrammingLanguage/"})
+(def markos-namespaces (merge {"" "http://markosproject.eu/"
+                               "top" "http://www.markosproject.eu/ontologies/top#"
+                               "reif" "http://www.markosproject.eu/ontologies/reification#"
+                               "soft" "http://www.markosproject.eu/ontologies/software#"
+                               "lic" "http://www.markosproject.eu/ontologies/licenses#"
+                               "kb" "http://markosproject.eu/kb/"
+                               "package" "http://markosproject.eu/kb/Package/"
+                               "directory" "http://markosproject.eu/kb/Directory/"
+                               "api" "http://markosproject.eu/kb/API/"
+                               ;; "softwareproject" "http://markosproject.eu/kb/SoftwareProject/"
+                               ;; "softwareRelease" "http://markosproject.eu/kb/SoftwareRelease/"
+                               "programminglanguage" "http://markosproject.eu/kb/ProgrammingLanguage/"}
+                              { "oss"   "http://www.markosproject.eu/ontologies/oss-licenses#",
+                                "copyright" "http://www.markosproject.eu/ontologies/copyright#",
+                                "owl" "http://www.w3.org/2002/07/owl#",
+                                ;; "rdf" "http://www.w3.org/1999/02/22-rdr-syntax-ns#"
+                                "rdfs" "http://www.w3.org/2000/01/rdf-schema#"
+                                "xsd" "http://www.w3.org/2001/XMLSchema#"
+                                "foaf" "http://xmlns.com/foaf/0.1/"
+                                "lic" "http://www.markosproject.eu/ontologies/licenses#"
+                                "soft" "http://www.markosproject.eu/ontologies/software#"
+                                "top" "http://www.markosproject.eu/ontologies/top#"
+                                "dc" "http://purl.org/dc/terms/"
+                                "ec" "http://www.markosproject.eu/ontologies/markos-event-calculus#"
+                                }))
 
 (defn initial-state
   []
@@ -202,7 +215,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
   ([endpoint-url]
      (generate-arguments-from-mock-triplestore endpoint-url "" [])))
 
-(defonce ag-nb (atom 500))
+(defonce ag-nb (atom 600))
 
 (defn inc-ag-number!
   []
@@ -233,7 +246,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
                                    argument-from-user-generator))
         ag (shell/argue engine sexp)
         ag (ag/set-main-issues ag sexp)
-        ag (agr/enter-language ag (:language loaded-theories))
+        ag (agr/enter-language ag (:language loaded-theories) markos-namespaces)
         agnumber (inc-ag-number!)
         dbname (str "ag" (str agnumber))]
     (ag-db/create-argument-database "markos" dbname "root" "pw1" (dc/make-metadata))
@@ -245,39 +258,39 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
     (prn "nb statements=" (count (:statement-nodes ag)))
     (prn "AG NUMBER = " agnumber)))
 
-(defn scratch-start-engine
-  []
-  (let [query "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing
-               http://markosproject.eu/kb/Package/abc42_3
-               http://www.markosproject.eu/ontologies/oss-licenses#BSD-2.0-Clause)"
-        sexp (unserialize-atom query)
-        _ (prn "sexp=" sexp)
-        project "markos"
-        theories "oss_licensing_theory"
-        endpoint "http://markos.man.poznan.pl/openrdf-sesame"
-        repo-name "markos_test_sp2"
-        loaded-theories (project/load-theory project theories)
-        [argument-from-user-generator questions send-answer]
-        (ask/make-argument-from-user-generator (fn [p] (questions/askable? loaded-theories p)))
-        ag (ag/make-argument-graph) ;; (get-ag project ag-name)
-        engine (shell/make-engine ag 1500 #{}
-                                  (list
-                                   (generate-arguments-from-mock-triplestore endpoint
-                                                                        repo-name
-                                                                        markos-namespaces)
-                                   (theory/generate-arguments-from-theory loaded-theories)
-                                   argument-from-user-generator))
-        ag (shell/argue engine sexp)
-        ag (agr/enter-language ag (:language loaded-theories))
-        agnumber (inc-ag-number!)
-        dbname (str "ag" (str agnumber))]
-    (ag-db/create-argument-database "markos" dbname "root" "pw1" (dc/make-metadata))
-    (import-from-argument-graph (db/make-connection "markos" dbname "root" "pw1") ag true)
-    (lacij/export ag "/tmp/ag1.svg")
-    (prn "nb statements=" (count (:statement-nodes ag)))
-    ;; (prn "ag =")
-    ;; (pprint ag)
-    (prn "AG NUMBER = " agnumber)))
+;; (defn scratch-start-engine
+;;   []
+;;   (let [query "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing
+;;                http://markosproject.eu/kb/Package/abc42_3
+;;                http://www.markosproject.eu/ontologies/oss-licenses#BSD-2.0-Clause)"
+;;         sexp (unserialize-atom query)
+;;         _ (prn "sexp=" sexp)
+;;         project "markos"
+;;         theories "oss_licensing_theory"
+;;         endpoint "http://markos.man.poznan.pl/openrdf-sesame"
+;;         repo-name "markos_test_sp2"
+;;         loaded-theories (project/load-theory project theories)
+;;         [argument-from-user-generator questions send-answer]
+;;         (ask/make-argument-from-user-generator (fn [p] (questions/askable? loaded-theories p)))
+;;         ag (ag/make-argument-graph) ;; (get-ag project ag-name)
+;;         engine (shell/make-engine ag 1500 #{}
+;;                                   (list
+;;                                    (generate-arguments-from-mock-triplestore endpoint
+;;                                                                         repo-name
+;;                                                                         markos-namespaces)
+;;                                    (theory/generate-arguments-from-theory loaded-theories)
+;;                                    argument-from-user-generator))
+;;         ag (shell/argue engine sexp)
+;;         ag (agr/enter-language ag (:language loaded-theories) markos-namespaces)
+;;         agnumber (inc-ag-number!)
+;;         dbname (str "ag" (str agnumber))]
+;;     (ag-db/create-argument-database "markos" dbname "root" "pw1" (dc/make-metadata))
+;;     (import-from-argument-graph (db/make-connection "markos" dbname "root" "pw1") ag true)
+;;     (lacij/export ag "/tmp/ag1.svg")
+;;     (prn "nb statements=" (count (:statement-nodes ag)))
+;;     ;; (prn "ag =")
+;;     ;; (pprint ag)
+;;     (prn "AG NUMBER = " agnumber)))
 
 (defn test-generate-arguments-from-triplestore-concept
   []
