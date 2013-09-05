@@ -54,7 +54,7 @@
   [atom namespaces]
   ;; (prn "[to-relative-atom] atom=" atom)
   ;; (prn "namespaces=")
-  (pprint namespaces)
+  ;; (pprint namespaces)
   (let [rnamespaces (set/map-invert namespaces)]
     (cond (st/variable? atom) atom
           (symbol? atom) (let [n (str atom)]
