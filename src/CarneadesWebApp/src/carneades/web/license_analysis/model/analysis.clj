@@ -232,6 +232,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
                                    (theory/generate-arguments-from-theory loaded-theories)
                                    argument-from-user-generator))
         ag (shell/argue engine sexp)
+        ag (ag/set-main-issues ag sexp)
         ag (agr/enter-language ag (:language loaded-theories))
         agnumber (inc-ag-number!)
         dbname (str "ag" (str agnumber))]
