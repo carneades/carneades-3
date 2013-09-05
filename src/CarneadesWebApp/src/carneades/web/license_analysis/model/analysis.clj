@@ -29,7 +29,9 @@
             [carneades.database.import :refer [import-from-argument-graph]]
             [carneades.engine.dublin-core :as dc]
             [carneades.engine.argument-graph :as agr]
-            [carneades.engine.statement :as st]))
+            [carneades.engine.statement :as st]
+            [carneades.engine.argument-evaluation :as evaluation]
+            [carneades.engine.caes :refer [caes]]))
 
 (def markos-triplestore-endpoint "http://markos.man.poznan.pl/openrdf-sesame")
 (def markos-repo-name "markos_test_sp2")
@@ -245,6 +247,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
                                    (theory/generate-arguments-from-theory loaded-theories)
                                    argument-from-user-generator))
         ag (shell/argue engine sexp)
+        ag (evaluation/evaluate caes ag)
         ag (ag/set-main-issues ag sexp)
         ag (agr/enter-language ag (:language loaded-theories) markos-namespaces)
         agnumber (inc-ag-number!)
