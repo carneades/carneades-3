@@ -202,7 +202,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
   ([endpoint-url]
      (generate-arguments-from-mock-triplestore endpoint-url "" [])))
 
-(defonce ag-nb (atom 400))
+(defonce ag-nb (atom 500))
 
 (defn inc-ag-number!
   []
@@ -238,9 +238,10 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
     (ag-db/create-argument-database "markos" dbname "root" "pw1" (dc/make-metadata))
     (import-from-argument-graph (db/make-connection "markos" dbname "root" "pw1") ag true)
     ;; (lacij/export ag "/tmp/ag1.svg")
-    (prn "nb statements=" (count (:statement-nodes ag)))
+
     ;; (prn "ag =")
     ;; (pprint ag)
+    (prn "nb statements=" (count (:statement-nodes ag)))
     (prn "AG NUMBER = " agnumber)))
 
 (defn scratch-start-engine
