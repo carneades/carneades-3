@@ -18,7 +18,7 @@
             [carneades.engine.theory.namespace :as namespace])
   (:import java.net.URL))
 
-(def select-limit 100)
+(def select-limit 1000)
 
 (defn- add-namespaces [kb]
   (rdf/update-namespaces kb
