@@ -226,11 +226,15 @@ argument if is the case."
   (let [query (sexp->sparqlquery goal)]
     (prn "issuing ask= " query)
     (if (sparql/ask (:kb kbconn) [query])
-      (let [arg (argument/make-argument :conclusion goal
-                                        :scheme (str "triplestore:" (:host kbconn))
-                                        :strict true)]
-        [(generator/make-response subs [] arg)])
-      [])))
+      (do
+        (prn "positive answer")
+        (let [arg (argument/make-argument :conclusion goal
+                                          :scheme (str "triplestore:" (:host kbconn))
+                                          :strict true)]
+          [(generator/make-response subs [] arg)]))
+      (do
+        (prn "negative answer")
+        []))))
 
 (defn make-response-from-binding
   "Creates a response for a binding returned by the triplestore."
@@ -251,6 +255,17 @@ argument if is the case."
              {}
              bindings))
 
+(defn sparqlbindings->bindings
+  "Converts the Clojure/SPARQL bindings to bindings suitable for Carneades"
+  [bindings]
+  (reduce-kv (fn [bindings k v]
+               (let [n (str v)
+                     n (s/replace n #"([^/]+)/(.+)" "$1:$2")
+                     s (symbol n)]
+                (assoc bindings k s)))
+             {}
+             bindings))
+
 (defn responses-from-query
   "Generates responses from non-grounded goal. Asks the triplestore
   with the goal as a query, if some new bindings are returned we
@@ -260,8 +275,12 @@ argument if is the case."
         _ (prn "[triplestore] issuing query= " query)
         bindings (binding [sparql/*select-limit* select-limit]
                    (sparql/query (:kb kbconn) [query]))
+        bindings (map sparqlbindings->bindings bindings)
+        ;; _ (prn "[triplestore] relative bindings size= " (count bindings))
+        ;; _ (pprint bindings)
         bindings (map #(to-absolute-bindings % namespaces) bindings)]
-    (prn "[triplestore] bindings size= " (count bindings))
+    (prn "[triplestore] absolute bindings size= " (count bindings))
+    (pprint bindings)
     (map #(make-response-from-binding kbconn goal subs %) bindings)))
 
 (defn responses-from-goal
