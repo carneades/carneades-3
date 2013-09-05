@@ -53,7 +53,27 @@ project."})
           (t/make-concept :symbol 'http://www.markosproject.eu/ontologies/oss-licenses#ReciprocalLicenseTemplate
                        :forms {:en (t/make-form :positive "%s is a reciprocal license"
                                                 :negative "%s is not reciprocal license"
-                                                :question "Is %s a reciprocal license?")}))
+                                                :question "Is %s a reciprocal license?")})
+          (t/make-role :symbol 'http://www.markosproject.eu/ontologies/licenses#coveringLicense
+                          :forms {:en (t/make-form :positive "%s has a license: %s (coveringLicense)"
+                                                   :negative "%s has not a license: %s (coveringLicense)"
+                                                   :question "")})
+          (t/make-role :symbol 'http://www.markosproject.eu/ontologies/licenses#template
+                          :forms {:en (t/make-form :positive "The template license of %s is %s"
+                                                   :negative "The template license of %s is not %s"
+                                                   :question "")})
+          (t/make-role :symbol 'http://www.markosproject.eu/ontologies/top#containedEntity
+                          :forms {:en (t/make-form :positive "%s contains %s"
+                                                   :negative "%s does not contain %s"
+                                                   :question "")})
+          (t/make-concept :symbol 'http://www.markosproject.eu/ontologies/software#Library
+                          :forms {:en (t/make-form :positive "%s is a library"
+                                                   :negative "%s is not a library"
+                                                   :question "")})
+          (t/make-concept :symbol 'http://www.markosproject.eu/ontologies/software#SoftwareRelease
+                          :forms {:en (t/make-form :positive "%s is a Software Release"
+                                                   :negative "%s is not a Software Release"
+                                                   :question "")}))
          (:language copyright-theory))
 
    :sections
@@ -93,7 +113,7 @@ project."})
                   (a/pm '(copyright:licenseTemplate-mock ?W2 ?T2))
                   (a/pm '(ReciprocalLicenseTemplate ?T2))
                   ]
-       ;; :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))]
+       ;;:exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))]
        )
 
       (t/make-scheme
