@@ -202,7 +202,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
   ([endpoint-url]
      (generate-arguments-from-mock-triplestore endpoint-url "" [])))
 
-(defonce ag-nb (atom 200))
+(defonce ag-nb (atom 400))
 
 (defn inc-ag-number!
   []
@@ -210,8 +210,9 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
 
 (defn scratch-start-engine-transition
   []
+  ;; http://markosproject.eu/kb/SoftwareRelease/_2
   (let [query "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing
-               http://markosproject.eu/kb/SoftwareRelease/_2
+               http://markosproject.eu/kb/SoftwareRelease/_365
                http://www.markosproject.eu/ontologies/oss-licenses#BSD-2.0-Clause)"
         sexp (unserialize-atom query)
         _ (prn "sexp=" sexp)
@@ -223,7 +224,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
         [argument-from-user-generator questions send-answer]
         (ask/make-argument-from-user-generator (fn [p] (questions/askable? loaded-theories p)))
         ag (ag/make-argument-graph) ;; (get-ag project ag-name)
-        engine (shell/make-engine ag 1500 #{}
+        engine (shell/make-engine ag 3000 #{}
                                   (list
                                    (generate-arguments-from-mock-triplestore-transition endpoint
                                                                                         repo-name
@@ -237,8 +238,9 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
     (ag-db/create-argument-database "markos" dbname "root" "pw1" (dc/make-metadata))
     (import-from-argument-graph (db/make-connection "markos" dbname "root" "pw1") ag true)
     ;; (lacij/export ag "/tmp/ag1.svg")
-    (prn "ag =")
-    (pprint ag)
+    (prn "nb statements=" (count (:statement-nodes ag)))
+    ;; (prn "ag =")
+    ;; (pprint ag)
     (prn "AG NUMBER = " agnumber)))
 
 (defn scratch-start-engine
@@ -270,15 +272,17 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
     (ag-db/create-argument-database "markos" dbname "root" "pw1" (dc/make-metadata))
     (import-from-argument-graph (db/make-connection "markos" dbname "root" "pw1") ag true)
     (lacij/export ag "/tmp/ag1.svg")
-    (prn "ag =")
-    (pprint ag)
+    (prn "nb statements=" (count (:statement-nodes ag)))
+    ;; (prn "ag =")
+    ;; (pprint ag)
     (prn "AG NUMBER = " agnumber)))
 
 (defn test-generate-arguments-from-triplestore-concept
   []
   (let [endpoint "http://markos.man.poznan.pl/openrdf-sesame"
         repo-name "markos_test_26-07-2013"
-        goal '(http://www.markosproject.eu/ontologies/oss-licenses#ReciprocalLicenseTemplate ?x)
+        ;; goal2 '(http://www.markosproject.eu/ontologies/oss-licenses#ReciprocalLicenseTemplate ?x)
+        goal '(http://www.markosproject.eu/ontologies//oss-licenses#Apache-2.0 rdf/type http://www.markosproject.eu/ontologies//oss-licenses#ReciprocalLicenseTemplate)
         subs {}
         triplestore-generator (triplestore/generate-arguments-from-triplestore
                                endpoint repo-name markos-namespaces)
