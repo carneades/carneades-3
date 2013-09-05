@@ -218,20 +218,26 @@
   "argument-graph language -> argument-graph
    Replace each of the statement's text in the argument graph
    with the formatted text of the form contained in the language"
-  [ag language]
-  (let [build-text (fn [stmt forms selector]
-                     (reduce (fn [text lang]
-                               (assoc text lang (s/capitalize (format-statement stmt language lang selector))))
-                             {}
-                             (keys forms)))]
-    (reduce (fn [ag stmt-node]
-             (let [stmt (map->statement stmt-node)
-                   individual (language (term-functor stmt))
-                   selector (if (literal-pos? stmt) :positive :negative)
-                   text (build-text stmt (-> individual :forms) selector)]
-               (update-statement-node ag stmt-node :text text)))
-           ag
-           (vals (:statement-nodes ag)))))
+  ([ag language]
+     (enter-language ag language {}))
+  ([ag language namespaces]
+     (let [build-text (fn [stmt forms selector]
+                        (reduce (fn [text lang]
+                                  (assoc text lang (format-statement stmt
+                                                                     language
+                                                                     lang
+                                                                     selector
+                                                                     namespaces)))
+                                {}
+                                (keys forms)))]
+       (reduce (fn [ag stmt-node]
+                 (let [stmt (map->statement stmt-node)
+                       individual (language (term-functor stmt))
+                       selector (if (literal-pos? stmt) :positive :negative)
+                       text (build-text stmt (-> individual :forms) selector)]
+                   (update-statement-node ag stmt-node :text text)))
+               ag
+               (vals (:statement-nodes ag))))))
 
 (defn- get-statement-sliteral
   "argument-graph statement -> sliteral
