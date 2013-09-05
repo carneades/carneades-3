@@ -16,7 +16,7 @@
 (defn namespace
   "Returns a string describing the namespace of atom."
   [atom]
-  (let [n (clojure.core/name atom)
+  (let [n (str atom)
         match (re-seq #"(.+):.+" n)]
     (if match
       (second (first match))
@@ -25,7 +25,7 @@
 (defn name
   "Returns a string describing the name of atom."
   [atom]
-  (let [n (clojure.core/name atom)
+  (let [n (str atom)
         match (re-seq #".+:(.+)" n)]
     (if match
       (second (first match))
@@ -36,16 +36,14 @@
   namespace is missing but necessary for the transformation."
   [atom namespaces]
   (cond (st/variable? atom) atom
-        (symbol? atom) (let [ns (namespace atom)
-                             n (name atom)
-                             iri (namespaces ns)]
-                         (cond (re-matches #"^.+://.+" n)
-                               atom
-
-                               (and (nil? iri) (not= ns ""))
-                               (throw (ex-info (str "Missing namespace '" ns "'") {}))
-
-                               :else (symbol (str iri n))))
+        (symbol? atom) (if (re-matches #"^.+://.+" (str atom))
+                         atom
+                         (let [ns (namespace atom)
+                               n (name atom)
+                               iri (namespaces ns)]
+                           (if (and (nil? iri) (not= ns ""))
+                             (throw (ex-info (str "Missing namespace '" ns "'") {}))
+                             (symbol (str iri n)))))
         :else
         (doall (map #(to-absolute-atom % namespaces) atom))))
 
@@ -58,7 +56,7 @@
   (let [rnamespaces (set/map-invert namespaces)]
     (cond (st/variable? atom) atom
           (symbol? atom) (let [n (str atom)]
-                           (if (re-matches #"^.+://.+" n)
+                           (if (re-matches #"^.+://[^:]+" n)
                              (symbol (reduce (fn [n [namespace prefix]]
                                                ;; (prn "namespace=" namespace)
                                                ;; (prn "prefix=" prefix)
