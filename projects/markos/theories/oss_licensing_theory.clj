@@ -36,17 +36,17 @@ project."})
      "foaf" "http://xmlns.com/foaf/0.1/"
      "lic" "http://www.markosproject.eu/ontologies/licenses#"
      "soft" "http://www.markosproject.eu/ontologies/software#"
-     "mt" "http://www.markosproject.eu/ontologies/top#"
+     "top" "http://www.markosproject.eu/ontologies/top#"
      "dc" "http://purl.org/dc/terms/"
      "ec" "http://www.markosproject.eu/ontologies/markos-event-calculus#"}
 
    :language
    (into (t/make-language
-          (t/make-role :symbol 'http://www.markosproject.eu/ontologies/software#linkedLibrary
+          (t/make-role :symbol 'http://www.markosproject.eu/ontologies/software#linkedLibrary-mock
                        :forms {:en (t/make-form :positive "%s is linked to %s"
                                                 :negative "%s is not linked to %s"
                                                 :question "Is %s linked to %s?")})
-          (t/make-role :symbol 'http://www.markosproject.eu/ontologies/copyright#licenseTemplate
+          (t/make-role :symbol 'http://www.markosproject.eu/ontologies/copyright#licenseTemplate-mock
                        :forms {:en (t/make-form :positive "%s is licensed using %s"
                                                 :negative "%s is not licensed using %s"
                                                 :question "Is %s licensed using %s?")})
@@ -89,8 +89,8 @@ project."})
                 unless T1 is compatible with T2."})
        :pro false
        :conclusion '(copyright:mayBeLicensedUsing ?W1 ?T1)
-       :premises [;; (a/pm '(copyright:derivedFrom ?W1 ?W2))
-                  (a/pm '(copyright:licenseTemplate ?W2 ?T2))
+       :premises [(a/pm '(copyright:derivedFrom ?W1 ?W2))
+                  (a/pm '(copyright:licenseTemplate-mock ?W2 ?T2))
                   (a/pm '(ReciprocalLicenseTemplate ?T2))
                   ]
        ;; :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))]
@@ -100,7 +100,7 @@ project."})
        :id 'mock-license-template-rule
        :header (dc/make-metadata
                 :description {:en ""})
-       :conclusion '(copyright:licenseTemplate ?W2 ?TPL)
+       :conclusion '(copyright:licenseTemplate-mock ?W2 ?TPL)
        :premises [(a/pm '(lic:coveringLicense ?W2 ?L))
                   (a/pm '(lic:template ?L ?TPL))])
 
@@ -152,7 +152,19 @@ project."})
         :header (dc/make-metadata :description {:en "The Free Software
        Foundation claims that linking creates derivative works."})
         :conclusion '(copyright:derivedFrom ?W1 ?W2)
-        :premises [(a/pm '(soft:linkedLibrary ?W1 ?W2))])
+        :premises [(a/pm '(soft:linkedLibrary-mock ?W1 ?W2))])
+
+       (t/make-scheme
+        :id 'mock-linked-library
+        :header (dc/make-metadata :description {:en ""})
+        :conclusion '(soft:linkedLibrary-mock ?REL ?LIB)
+        :premises [(a/pm '(soft:SoftwareRelease ?REL))
+                   (a/pm '(top:containedEntity ?REL ?LIB))
+                   (a/pm '(soft:Library ?LIB))
+
+                   ;; pm '(lic:coveringLicense ?LIB ?LIC))
+                   ;; (a/pm '(lic:template ?LIC GPL-3.0))
+                   ])
 
        ;; (t/make-scheme
        ;;  :id 'rose-theory-of-linking
