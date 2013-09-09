@@ -64,7 +64,7 @@ PM.url_changed = function(url) {
          return;
     }
 
-    var url_regex = /\/([^ \/]+)(?:\/([^ \/]+))?(?:\/([^ \/]+))?(?:\/([^ ?\/]+))?(?:\/([^ ?\/]+))?(?:\/([^ \/&\?]+))?/;
+    var url_regex = /\/([^ \/&?]+)(?:\/([^ \/&?]+))?(?:\/([^ &?\/]+))?(?:\/([^ &?\/]+))?(?:\/([^ &?\/]+))?(?:\/([^ \/&\?]+))?/;
     var result = url_regex.exec(url.value);
     if(result != null) {
         PM.dispatch_url(result);
@@ -152,6 +152,9 @@ PM.dispatch_url = function(sections) {
               sections[2] == "debug" &&
               sections[3] == "facts") {
         carneades.web.license_analysis.views.debug.facts.show(sections[4]);
+    } else if(sections[1] = "license-analysis" &&
+              sections[2] == "introduction") {
+        carneades.web.license_analysis.views.introduction.show(sections[3]);
     }
 };
 
@@ -654,6 +657,7 @@ PM.load_templates = function(toolboxState) {
             'license_debug_query',
             'license_debug_introduction',
             'license_debug_facts',
+            'license_introduction',
             'argumentgraph',
             'argument',
             'argumentlink',
