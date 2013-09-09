@@ -29,7 +29,8 @@
       (wrap-json-params)
       (handler/site)
       (wrap-base-url)
-      (wrap-stacktrace)))
+      ;; (wrap-stacktrace)
+      ))
 
 ;; (def impact-server nil)
 ;; (.start impact-server)
