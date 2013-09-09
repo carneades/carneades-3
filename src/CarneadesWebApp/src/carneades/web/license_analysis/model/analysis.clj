@@ -217,7 +217,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
   ([endpoint-url]
      (generate-arguments-from-mock-triplestore endpoint-url "" [])))
 
-(defonce ag-nb (atom 600))
+(defonce ag-nb (atom 700))
 
 (defn inc-ag-number!
   []
