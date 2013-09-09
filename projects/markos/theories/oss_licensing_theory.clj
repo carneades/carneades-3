@@ -93,6 +93,7 @@ project."})
      :schemes
      [(t/make-scheme
        :id 'default-licensing-rule
+       :weight 0.25
        :header (dc/make-metadata
                 :description {:en "Presumably, a work may be licensed
                    using any license template."})
