@@ -182,11 +182,7 @@ project."})
         :conclusion '(soft:linkedLibrary-mock ?REL ?LIB)
         :premises [(a/pm '(soft:SoftwareRelease ?REL))
                    (a/pm '(top:containedEntity ?REL ?LIB))
-                   (a/pm '(soft:Library ?LIB))
-
-                   ;; pm '(lic:coveringLicense ?LIB ?LIC))
-                   ;; (a/pm '(lic:template ?LIC GPL-3.0))
-                   ])
+                   (a/pm '(soft:Library ?LIB))])
 
        ;; (t/make-scheme
        ;;  :id 'rose-theory-of-linking
@@ -195,5 +191,23 @@ project."})
        ;;  :pro false
        ;;  :conclusion '(copyright:derivedFrom ?W1 ?W2)
        ;;  :premises [(a/pm '(soft:linkedLibrary ?W1 ?W2))])
+
+
+       (t/make-scheme
+        :id 'compatible-software-work
+        :header (dc/make-metadata :description {:en ""})
+        :conclusion '(permissibleUse (use ?U ?W1 ?W2C ?W2))
+        :premises [(a/pm '(?W2C ?W2))
+                   (a/pm '(foo (?U ?W1 ?W2)))
+                   ])
+
+       (t/make-scheme
+        :id 'foo-id
+        :header (dc/make-metadata :description {:en ""})
+        :conclusion '(foo (?U ?W1 ?W2))
+        :assumptions [(a/pm '(?U ?W1 ?W2))] ;; U is a subclass of usedSoftwareEntity
+        :premises [(a/pm '(copyright:licenseTemplate-mock ?W1 ?T1))
+                   (a/pm '(copyright:mayBeLicensedUsing ?W1 ?T1))
+                   ])
 
       ])]))
