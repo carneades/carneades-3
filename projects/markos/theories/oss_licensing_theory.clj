@@ -97,9 +97,8 @@ project."})
        :header (dc/make-metadata
                 :description {:en "Presumably, a work may be licensed
                    using any license template."})
-       ;; ex:
-       ;; (http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing ?W http://www.markosproject.eu/ontologies/oss-licenses#GPL-2.0)
-       :conclusion '(copyright:mayBeLicensedUsing ?W ?T))
+       :conclusion '(copyright:mayBeLicensedUsing ?W ?T)
+       :premises [(a/pm '(OpenSourceLicenseTemplate ?T))])
 
       (t/make-scheme
        :id 'reciprocity-rule
@@ -110,11 +109,12 @@ project."})
                 unless T1 is compatible with T2."})
        :pro false
        :conclusion '(copyright:mayBeLicensedUsing ?W1 ?T1)
-       :premises [(a/pm '(copyright:derivedFrom ?W1 ?W2))
+       :premises [(a/pm '(OpenSourceLicenseTemplate ?T1))
+                  (a/pm '(copyright:derivedFrom ?W1 ?W2))
                   (a/pm '(copyright:licenseTemplate-mock ?W2 ?T2))
                   (a/pm '(ReciprocalLicenseTemplate ?T2))
                   ]
-       ;;:exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))]
+       :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))]
        )
 
       (t/make-scheme
