@@ -217,7 +217,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
   ([endpoint-url]
      (generate-arguments-from-mock-triplestore endpoint-url "" [])))
 
-(defonce ag-nb (atom 700))
+(defonce ag-nb (atom 800))
 
 (defn inc-ag-number!
   []
@@ -228,7 +228,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
   ;; http://markosproject.eu/kb/SoftwareRelease/_2
   (let [query "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing
                http://markosproject.eu/kb/SoftwareRelease/_366
-               http://www.markosproject.eu/ontologies/oss-licenses#BSD-2.0-Clause)"
+               ?x)"
         sexp (unserialize-atom query)
         _ (prn "sexp=" sexp)
         project "markos"
@@ -238,7 +238,9 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
         loaded-theories (project/load-theory project theories)
         [argument-from-user-generator questions send-answer]
         (ask/make-argument-from-user-generator (fn [p] (questions/askable? loaded-theories p)))
-        ag (ag/make-argument-graph) ;; (get-ag project ag-name)
+        ag (ag/make-argument-graph)
+        ;; (get-ag project ag-name)
+        ;;ag (get-ag "markos" "ag804")
         engine (shell/make-engine ag 3000 #{}
                                   (list
                                    (generate-arguments-from-mock-triplestore-transition endpoint
