@@ -77,6 +77,10 @@ project."})
           (t/make-concept :symbol 'http://www.markosproject.eu/ontologies/licenses#CopyrightLicenseTemplate
                           :forms {:en (t/make-form :positive "%s is a license template"
                                                    :negative "%s is not a license template"
+                                                   :question "")})
+          (t/make-role :symbol 'http://www.markosproject.eu/ontologies/copyright#isCompatibleWith
+                          :forms {:en (t/make-form :positive "%s is compatible with %s"
+                                                   :negative "%s is not compatible with %s"
                                                    :question "")}))
          (:language copyright-theory))
 
