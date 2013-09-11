@@ -17,7 +17,7 @@
             [carneades.policy-analysis.web.controllers.reconstruction :as recons]
             [carneades.engine.triplestore :as triplestore]
             [carneades.database.db :as db]
-            [carneades.web.license-analysis.model.analysis :refer :all]
+            [carneades.web.license-analysis.model.analysis :as analysis]
             [carneades.engine.utils :refer [unserialize-atom]]))
 
 
@@ -26,7 +26,7 @@
   [endpoint repo-name query limit]
   (let [conn (triplestore/make-conn endpoint
                                     repo-name
-                                    markos-namespaces)
+                                    analysis/markos-namespaces)
         sexp (unserialize-atom query)]
     (prn "sexp=" sexp)
     (try
@@ -41,7 +41,7 @@
   [endpoint repo-name query limit]
   (let [conn (triplestore/make-conn endpoint
                                     repo-name
-                                    markos-namespaces)
+                                    analysis/markos-namespaces)
         sexp (unserialize-atom query)]
     (prn "sexp=" sexp)
     (try
@@ -60,12 +60,12 @@
         loaded-theories (project/load-theory project theories)
         [argument-from-user-generator questions send-answer]
         (ask/make-argument-from-user-generator (fn [p] (questions/askable? loaded-theories p)))
-        ag (get-ag project ag-name)
+        ag (analysis/get-ag project ag-name)
         engine (shell/make-engine ag 500 #{}
                                   (list
                                    (triplestore/generate-arguments-from-triplestore endpoint
                                                                                     repo-name
-                                                                                    markos-namespaces)
+                                                                                    analysis/markos-namespaces)
                                    (theory/generate-arguments-from-theory loaded-theories)
                                    argument-from-user-generator))
         future-ag (future (shell/argue engine sexp))
@@ -81,8 +81,8 @@
                   :dialog (dialog/make-dialog)
                   :last-id 0}
         analysis (policy/get-ag-or-next-question analysis)]
-    (swap! state index-analysis analysis)
-    (build-response analysis)))
+    (swap! analysis/state analysis/index-analysis analysis)
+    (analysis/build-response analysis)))
 
 (defn analyse
   "Begins an analysis of a given software entity. The theories inside project is used.
