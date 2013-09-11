@@ -1,6 +1,6 @@
 {:title "MARKOS",
  :creation-date "June 2013",
- :policies "copyright/copyright_policies",
+ :policies "oss_licensing_theory",
  :schemes "default/walton_schemes",
  :tools ["arguments" "tour" "policies"],
  :description

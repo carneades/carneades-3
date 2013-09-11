@@ -10,17 +10,16 @@
 
 (defn start-facts-gathering
   [msg]
-  (let [entity (:entity msg)]
-    (js/PM.ajax_post (str js/IMPACT.license_analysis_wsurl "/debug/analyse")
-                     (clj->js msg)
-                     (fn [data]
-                       (js/PM.busy_cursor_off)
-                       (log "start-facts-gathering, received question")
-                       (log data)
-                       (facts/show data))
-                     js/IMPACT.user
-                     js/IMPACT.password
-                     js/PM.on_error)))
+  (js/PM.ajax_post (str js/IMPACT.license_analysis_wsurl "/analyse")
+                   (clj->js msg)
+                   (fn [data]
+                     (js/PM.busy_cursor_off)
+                     (log "start-facts-gathering, received question")
+                     (log data)
+                     (facts/show data))
+                   js/IMPACT.user
+                   js/IMPACT.password
+                   js/PM.on_error))
 
 (dispatch/react-to #{:license-analysis-start-facts-gathering}
                    (fn [_ msg] (start-facts-gathering msg)))
