@@ -635,3 +635,7 @@
     (reduce (fn [ag atom] (update-statement-node ag (get-statement-node ag atom) :main true))
             ag
             main-nodes)))
+
+(defn get-main-issues
+  [ag]
+  (filter #(:main %) (vals (:statement-nodes ag))))
