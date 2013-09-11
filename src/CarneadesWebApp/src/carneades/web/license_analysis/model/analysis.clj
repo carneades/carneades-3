@@ -313,10 +313,6 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
                   :namespaces markos-namespaces
                   }
         analysis (policy/get-ag-or-next-question analysis)]
-    (prn "analysis")
-    (prn (:ag analyse))
-    (prn "loaded:")
-    (prn (:load-theories analyse))
     (swap! state index-analysis analysis)
     (build-response analysis)))
 
