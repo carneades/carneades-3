@@ -283,9 +283,10 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
   (let [entity (:entity params)
         query (format "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing %s ?x)" entity)
         project "markos"
-        theories "oss_licensing_theory"
-        endpoint "http://markos.man.poznan.pl/openrdf-sesame"
-        repo-name "markos_test_26-07-2013"
+        properties (project/load-project-properties project)
+        theories (:policies properties)
+        triplestore (:triplestore properties)
+        repo-name (:repo-name properties)
         sexp (unserialize-atom query)
         loaded-theories (project/load-theory project theories)
         [argument-from-user-generator questions send-answer]
@@ -293,7 +294,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
         ag (get-ag project "")
         engine (shell/make-engine ag 500 #{}
                                   (list
-                                   (triplestore/generate-arguments-from-triplestore endpoint
+                                   (triplestore/generate-arguments-from-triplestore triplestore
                                                                                     repo-name
                                                                                     markos-namespaces)
                                    (theory/generate-arguments-from-theory loaded-theories)

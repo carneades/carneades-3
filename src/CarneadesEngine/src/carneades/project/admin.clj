@@ -42,7 +42,7 @@
         properties-path (str project-path file-separator "properties.clj")]
     properties-path))
 
-(defn- load-project-properties
+(defn load-project-properties
   "Returns the project properties as a map."
   [project]
   (let [properties-path (get-properties-path project)
