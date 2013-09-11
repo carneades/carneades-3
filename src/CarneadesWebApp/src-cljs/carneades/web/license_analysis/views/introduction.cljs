@@ -10,9 +10,11 @@
 
 (defn start-facts-gathering
   [msg]
+  (js/PM.busy_cursor_on)
   (js/PM.ajax_post (str js/IMPACT.license_analysis_wsurl "/analyse")
                    (clj->js msg)
                    (fn [data]
+                     (js/PM.busy_cursor_off)
                      (js/PM.busy_cursor_off)
                      (log "start-facts-gathering, received question")
                      (log data)
