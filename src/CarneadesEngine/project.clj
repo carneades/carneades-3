@@ -15,7 +15,8 @@
                  [lacij "0.8.1"]
                  [me.raynes/fs "1.4.0"]
                  [org.clojure/tools.logging "0.2.6"]
-                 [org.slf4j/slf4j-log4j12 "1.7.5"]]
+                 [org.slf4j/slf4j-log4j12 "1.7.5"]
+                 [org.clojure/tools.namespace "0.2.4"]]
   :aot [carneades.engine.argument-evaluation]
   :description "Carneades is an argument mapping application, with a graphical \nuser interface, and a software library for building applications supporting \nvarious argumentation tasks. This is the software library (the engine)."
   :cljsbuild {:builds []})

@@ -67,7 +67,7 @@
 
 (def state (atom (initial-state)))
 
-(defn- index-analysis
+(defn index-analysis
   [state analysis]
   (assoc-in state [:analyses (:uuid analysis)] analysis))
 
@@ -86,39 +86,6 @@
     (let [dbconn (db/make-connection project ag-name "guest" "")
           ag (export-to-argument-graph dbconn)]
       ag)))
-
-(defn start-engine
-  [params]
-  (prn "params=")
-  (prn params)
-  (let [{:keys [project theories entity query repo-name endpoint ag-name]} params
-        sexp (unserialize-atom query)
-        loaded-theories (project/load-theory project theories)
-        [argument-from-user-generator questions send-answer]
-        (ask/make-argument-from-user-generator (fn [p] (questions/askable? loaded-theories p)))
-        ag (get-ag project ag-name)
-        engine (shell/make-engine ag 500 #{}
-                                  (list
-                                   (triplestore/generate-arguments-from-triplestore endpoint
-                                                                                    repo-name
-                                                                                    markos-namespaces)
-                                   (theory/generate-arguments-from-theory loaded-theories)
-                                   argument-from-user-generator))
-        future-ag (future (shell/argue engine sexp))
-        analysis {:ag nil
-                  :project project
-                  :uuid (symbol (uuid/make-uuid-str))
-                  :lang :en
-                  :query sexp
-                  :policies loaded-theories
-                  :future-ag future-ag
-                  :questions questions
-                  :send-answer send-answer
-                  :dialog (dialog/make-dialog)
-                  :last-id 0}
-        analysis (policy/get-ag-or-next-question analysis)]
-    (swap! state index-analysis analysis)
-    (build-response analysis)))
 
 (defn process-answers
   "Process the answers send by the user and returns new questions or an ag."
@@ -308,3 +275,53 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
                                endpoint repo-name markos-namespaces)
         responses (generator/generate triplestore-generator goal subs)]
     (pprint responses)))
+
+(defn start-engine
+  [params]
+  (prn "params=")
+  (prn params)
+  (let [entity (:entity params)
+        query (format "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing %s ?x)" entity)
+        project "markos"
+        theories "oss_licensing_theory"
+        endpoint "http://markos.man.poznan.pl/openrdf-sesame"
+        repo-name "markos_test_26-07-2013"
+        sexp (unserialize-atom query)
+        loaded-theories (project/load-theory project theories)
+        [argument-from-user-generator questions send-answer]
+        (ask/make-argument-from-user-generator (fn [p] (questions/askable? loaded-theories p)))
+        ag (get-ag project "")
+        engine (shell/make-engine ag 500 #{}
+                                  (list
+                                   (triplestore/generate-arguments-from-triplestore endpoint
+                                                                                    repo-name
+                                                                                    markos-namespaces)
+                                   (theory/generate-arguments-from-theory loaded-theories)
+                                   argument-from-user-generator))
+        future-ag (future (shell/argue engine sexp))
+        analysis {:ag nil
+                  :project project
+                  :uuid (symbol (uuid/make-uuid-str))
+                  :lang :en
+                  :query sexp
+                  :policies loaded-theories
+                  :future-ag future-ag
+                  :questions questions
+                  :send-answer send-answer
+                  :dialog (dialog/make-dialog)
+                  :last-id 0
+                  :namespaces markos-namespaces
+                  }
+        analysis (policy/get-ag-or-next-question analysis)]
+    (prn "analysis")
+    (prn (:ag analyse))
+    (prn "loaded:")
+    (prn (:load-theories analyse))
+    (swap! state index-analysis analysis)
+    (build-response analysis)))
+
+(defn analyse
+  "Begins an analysis of a given software entity. The theories inside project is used.
+Returns a set of questions for the frontend."
+  [params]
+  (start-engine params))

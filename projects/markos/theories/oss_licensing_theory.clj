@@ -73,6 +73,10 @@ project."})
           (t/make-concept :symbol 'http://www.markosproject.eu/ontologies/software#SoftwareRelease
                           :forms {:en (t/make-form :positive "%s is a Software Release"
                                                    :negative "%s is not a Software Release"
+                                                   :question "")})
+          (t/make-concept :symbol 'http://www.markosproject.eu/ontologies/licenses#CopyrightLicenseTemplate
+                          :forms {:en (t/make-form :positive "%s is a license template"
+                                                   :negative "%s is not a license template"
                                                    :question "")}))
          (:language copyright-theory))
 
@@ -98,7 +102,7 @@ project."})
                 :description {:en "Presumably, a work may be licensed
                    using any license template."})
        :conclusion '(copyright:mayBeLicensedUsing ?W ?T)
-       :premises [(a/pm '(OpenSourceLicenseTemplate ?T))])
+       :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T))])
 
       (t/make-scheme
        :id 'reciprocity-rule
@@ -109,12 +113,12 @@ project."})
                 unless T1 is compatible with T2."})
        :pro false
        :conclusion '(copyright:mayBeLicensedUsing ?W1 ?T1)
-       :premises [(a/pm '(OpenSourceLicenseTemplate ?T1))
+       :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T1))
                   (a/pm '(copyright:derivedFrom ?W1 ?W2))
                   (a/pm '(copyright:licenseTemplate-mock ?W2 ?T2))
                   (a/pm '(ReciprocalLicenseTemplate ?T2))
                   ]
-       :exceptions [(a/pm '(copyright:compatibleWith ?T1 ?T2))]
+       :exceptions [(a/pm '(copyright:isCompatibleWith ?T1 ?T2))]
        )
 
       (t/make-scheme

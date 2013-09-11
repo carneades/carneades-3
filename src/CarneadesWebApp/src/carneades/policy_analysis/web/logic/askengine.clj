@@ -54,7 +54,7 @@
         ;; rejects answers with a weight of 0.0
         rejected-statements (filter (fn [s] ((answers s) 0.0)) answers-statements)
         ag (reject ag rejected-statements)
-        ag (enter-language ag (-> session :policies :language))
+        ag (enter-language ag (-> session :policies :language) (:namespaces session))
         ag (evaluate aspic-grounded ag)
         ;; _ (prn "ag")
         ;; _ (pprint ag)
