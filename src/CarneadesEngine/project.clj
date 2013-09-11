@@ -1,7 +1,7 @@
 ;;; Copyright (c) 2012 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(defproject carneades-engine/carneades-engine "2.0.0-SNAPSHOT"
+(defproject carneades/carneades-engine "2.0.0"
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojars.pallix/owlapi "3.0.0"]
