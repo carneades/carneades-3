@@ -376,12 +376,16 @@ ByteArrayInputStream is returned."
   (let [zip-stream (ZipInputStream. (io/input-stream zippath))]
     (unzip-stream zip-stream destination)))
 
+(defn escape-string
+  [s]
+  (str/replace s #"/([0-9]+)" "/_$1"))
+
 (defn serialize-atom
   [atom]
   ;; this is a hack for the https://github.com/drlivingston/kr
   ;; library which returns binding having symbol not readable
   ;; by the Clojure reader, such as kb/ProgrammingLanguage/1
-  (str/replace (str atom) #"/([0-9]+)" "/_$1"))
+  (escape-string (str atom)))
 
 (defn restore-kr-symbol
   [sexp]
@@ -391,7 +395,7 @@ ByteArrayInputStream is returned."
 
 (defn unserialize-atom
   [s]
-  (w/postwalk restore-kr-symbol (safe-read-string s)))
+  (w/postwalk restore-kr-symbol (safe-read-string (escape-string s))))
 
 (defn unrecordify
   "Recursively convert the records inside coll into plain maps."

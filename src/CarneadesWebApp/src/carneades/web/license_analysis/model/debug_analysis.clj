@@ -51,8 +51,41 @@
       (catch Exception e
         {:result (.getMessage e)}))))
 
+(defn debug-start-engine
+  [params]
+  (prn "params=")
+  (prn params)
+  (let [{:keys [project theories entity query repo-name endpoint ag-name]} params
+        sexp (unserialize-atom query)
+        loaded-theories (project/load-theory project theories)
+        [argument-from-user-generator questions send-answer]
+        (ask/make-argument-from-user-generator (fn [p] (questions/askable? loaded-theories p)))
+        ag (get-ag project ag-name)
+        engine (shell/make-engine ag 500 #{}
+                                  (list
+                                   (triplestore/generate-arguments-from-triplestore endpoint
+                                                                                    repo-name
+                                                                                    markos-namespaces)
+                                   (theory/generate-arguments-from-theory loaded-theories)
+                                   argument-from-user-generator))
+        future-ag (future (shell/argue engine sexp))
+        analysis {:ag nil
+                  :project project
+                  :uuid (symbol (uuid/make-uuid-str))
+                  :lang :en
+                  :query sexp
+                  :policies loaded-theories
+                  :future-ag future-ag
+                  :questions questions
+                  :send-answer send-answer
+                  :dialog (dialog/make-dialog)
+                  :last-id 0}
+        analysis (policy/get-ag-or-next-question analysis)]
+    (swap! state index-analysis analysis)
+    (build-response analysis)))
+
 (defn analyse
   "Begins an analysis of a given software entity. The theories inside project is used.
 Returns a set of questions for the frontend."
   [params]
-  (start-engine params))
+  (debug-start-engine params))
