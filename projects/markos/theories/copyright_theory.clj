@@ -51,7 +51,8 @@
    :sections
    [(t/make-section
      :id 'ontology-axioms
-     :schemes (:axioms copyright-ontology))
+     :schemes {} ;; (:axioms copyright-ontology)
+     )
 
     (t/make-section
      :id 'basic-copyright-rules
