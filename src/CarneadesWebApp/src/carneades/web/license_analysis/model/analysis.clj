@@ -44,8 +44,6 @@
                                "package" "http://markosproject.eu/kb/Package/"
                                "directory" "http://markosproject.eu/kb/Directory/"
                                "api" "http://markosproject.eu/kb/API/"
-                               ;; "softwareproject" "http://markosproject.eu/kb/SoftwareProject/"
-                               ;; "softwareRelease" "http://markosproject.eu/kb/SoftwareRelease/"
                                "programminglanguage" "http://markosproject.eu/kb/ProgrammingLanguage/"}
                               { "oss"   "http://www.markosproject.eu/ontologies/oss-licenses#",
                                 "copyright" "http://www.markosproject.eu/ontologies/copyright#",
