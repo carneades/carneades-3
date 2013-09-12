@@ -156,7 +156,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
   ([endpoint-url]
      (generate-arguments-from-mock-triplestore endpoint-url "" [])))
 
-(defonce ag-nb (atom 900))
+(defonce ag-nb (atom 1100))
 
 (defn inc-ag-number!
   []
@@ -232,7 +232,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
         triplestore (:triplestore properties)
         repo-name (:repo-name properties)
         markos-namespaces (:namespaces properties)
-        engine (shell/make-engine ag 50 #{}
+        engine (shell/make-engine ag 3000 #{}
                                   (list
                                    (generate-arguments-from-mock-triplestore-transition endpoint
                                                                                         repo-name
@@ -248,11 +248,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
     ;; (pprint ag)
     (ag-db/create-argument-database "markos" dbname "root" "pw1" (dc/make-metadata))
     (import-from-argument-graph (db/make-connection "markos" dbname "root" "pw1") ag true)
-    (prn "ag =")
-    (pprint ag)
     (lacij/export ag "/tmp/ag1.svg")
-
-
     (prn "nb statements=" (count (:statement-nodes ag)))
     (prn "AG NUMBER = " agnumber)))
 
