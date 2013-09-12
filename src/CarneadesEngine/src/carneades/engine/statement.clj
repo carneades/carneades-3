@@ -10,11 +10,11 @@
   (:require [clojure.string :as str])
   (:import (java.net URI)))
 
-(defn sliteral? 
+(defn sliteral?
   "A sliteral is an sexpression representation of a literal.
-   Variables are also considered to be literals, 
-   to support some meta-level reasoning." 
-  [sexp] 
+   Variables are also considered to be literals,
+   to support some meta-level reasoning."
+  [sexp]
   (or (symbol? sexp)
       (and (seq? sexp)
            (not (empty? sexp))
@@ -26,10 +26,10 @@
       (and (not (empty? literal))
            (not= (first literal) 'not))))
 
-(defn sliteral-atom 
+(defn sliteral-atom
   [literal]
   {:pre [(sliteral? literal)]}
-  (if (sliteral-pos? literal) 
+  (if (sliteral-pos? literal)
     literal
     (second literal)))
 
@@ -50,7 +50,7 @@
 (defn map->statement
   [m]
   {:pre [(map? m)]}
-  (let [m2 (merge (Statement. 
+  (let [m2 (merge (Statement.
                     nil             ; id
                     nil             ; atom
                     nil             ; header
@@ -61,10 +61,10 @@
                     :pe             ; proof standard
                     {})             ; text
                   m)
-        ; set the id 
+        ; set the id
         m3 (assoc m2
-                  :id (if (:id m) 
-                        (:id m) 
+                  :id (if (:id m)
+                        (:id m)
                         (make-urn-symbol)))]
     ; normalize the statment
     (if (not (:atom m3))
@@ -75,23 +75,23 @@
                            (:positive m3))
                       (and (not (sliteral-pos? (:atom m3)))
                            (not (:positive m3))))))))
- 
+
 (defn make-statement
    "key value ... -> statement"
-   [& key-values]  
+   [& key-values]
    (map->statement (apply hash-map key-values)))
 
 
 (defn statement? [x] (instance? Statement x))
 
 
-(defn literal? 
+(defn literal?
   [x]
   (or (statement? x)
       (sliteral? x)))
 
 ; <constant> := <symbol> | <<number> | <boolean> | <string>
-; <term> := <variable> | <constant> | <compound-term> | <statement> 
+; <term> := <variable> | <constant> | <compound-term> | <statement>
 
 ; Note: statements are terms to allow meta-level propositions about statements
 
@@ -116,10 +116,11 @@
     (keyword? x)))
 
 (defn compound-term? [term]
-  (or (and (seq? term) 
+  (or (and (seq? term)
          (not (empty? term))
          (and (symbol? (first term))
-              (not (variable? (first term)))))
+              ;; (not (variable? (first term)))
+              ))
       (and (statement? term)
            (seq? (:atom term)))))
 
@@ -140,12 +141,12 @@
 (defn term-functor
   "term -> symbol | nil "
   [term]
-  (cond 
-   (and (seq? term) 
+  (cond
+   (and (seq? term)
         (compound-term? term)
         (not (empty? term))) (first term)
         (and (statement? term)
-             (:positive term) 
+             (:positive term)
              (seq? (:atom term)))
         (recur (:atom term))
         (and (statement? term)
@@ -157,13 +158,13 @@
 (defn term-args
   "term -> (seq-of term)"
   [term]
-  (cond 
-    (and (seq? term) 
+  (cond
+    (and (seq? term)
          (compound-term? term)) (rest term)
     (seq? term) (seq term)
     (vector? term) (seq term)
     (and (statement? term)
-         (:positive term) 
+         (:positive term)
          (seq? (:atom term))) (recur (:atom term))
     (and (statement? term)
          (seq? (:atom term))
@@ -176,7 +177,7 @@
   [term]
   {:pre [(compound-term? term)]}
   (dec (count term)))
-  
+
 (declare term=)
 
 (defn atom?
@@ -192,7 +193,7 @@
 
 (defn literal-pos? [literal]
   {:pre [(literal? literal)]}
-  (cond (sliteral? literal) 
+  (cond (sliteral? literal)
         (or (not (seq? literal))
             (and (not (empty? literal))
                  (not= (first literal) 'not))),
@@ -204,13 +205,13 @@
 
 (declare literal-complement)
 
-(defn literal-atom 
+(defn literal-atom
   [literal]
   {:pre [(literal? literal)]}
-  (cond (sliteral? literal) (if (literal-pos? literal) 
+  (cond (sliteral? literal) (if (literal-pos? literal)
                               literal
                               (second literal)),
-        (statement? literal) (or (:atom literal) 
+        (statement? literal) (or (:atom literal)
                                  (:id literal))))
 
 ;; it's really unexpected to get a literal when given a sliteral
@@ -224,42 +225,42 @@
   {:pre [(literal? literal)]}
   (cond (sliteral? literal) (make-statement :atom (literal-atom literal))
         (statement? literal) (assoc literal :positive true)))
-  
-(defn propositional? 
-  [x] 
+
+(defn propositional?
+  [x]
   {:pre [(literal? x)]}
  (symbol? (literal-atom x)))
-        
+
 (defn literal-complement
   [literal]
   {:pre [(literal? literal)]}
-  (cond (sliteral? literal) 
+  (cond (sliteral? literal)
           (if (literal-pos? literal)
             (list 'not literal)
             (literal-atom literal)),
-        (statement? literal) 
-          (assoc literal 
-               :positive 
-               (if (literal-pos? literal) false true)))) 
+        (statement? literal)
+          (assoc literal
+               :positive
+               (if (literal-pos? literal) false true))))
 
-(defn statement= 
+(defn statement=
   [s1 s2]
   {:pre [(statement? s1) (statement? s2)]}
   (and (= (:positive s1) (:positive s2))  ; must have same polarity
        (term= (literal-atom s1) (literal-atom s2))))
-  
+
 (defn term=
   [t1 t2]
-  (cond 
-    (and (compound-term? t1) 
-         (compound-term? t2)) (and (= (term-functor t1) 
-                                      (term-functor t2)) 
-                                   (= (count (term-args t1)) 
+  (cond
+    (and (compound-term? t1)
+         (compound-term? t2)) (and (= (term-functor t1)
+                                      (term-functor t2))
+                                   (= (count (term-args t1))
                                       (count (term-args t2)))
                                    (every? (fn [p] (term= (first p) (second p)))
-                                           (partition 2 (interleave (term-args t1) 
+                                           (partition 2 (interleave (term-args t1)
                                                                     (term-args t2)))))
-    (and (statement? t1) (statement? t2)) (statement= t1 t2) 
+    (and (statement? t1) (statement? t2)) (statement= t1 t2)
     :else (= t1 t2)))
 
 (defn ground? [t]
@@ -271,29 +272,28 @@
         (coll? t) (and (ground? (first t))
                        (ground? (rest t)))))
 
-;; could be rewritten (filter variable? (tree-seq seq? identity s)) 
+;; could be rewritten (filter variable? (tree-seq seq? identity s))
 (defn variables
   "term -> (seq-of symbol)
    Returns a sequence of the variables in the term"
   [t]
   (letfn [(vars [t]
-                ; (println t)
-                (cond (variable? t) (list t)
+            (cond (variable? t) (list t)
                       (constant? t) ()
-                      (compound-term? t) (recur (term-args t))
+                      (compound-term? t) (concat (vars (term-functor t)) (vars (term-args t)))
                       (and (or (vector? t)
                                (seq? t)
                                (map? t))
                            (not (empty? t))) (concat (vars (first t))
                                                      (vars (rest t)))
-                      
-                      (literal? t) (vars (literal-atom t))
-                      :else ()))]
+
+                           (literal? t) (vars (literal-atom t))
+                           :else ()))]
     (distinct (vars t))))
 
 (defn neg [literal] (literal-complement literal))
 
-(defn literal-predicate 
+(defn literal-predicate
   "literal -> symbol or nil
    Returns the predicate of the literal of the statement, if it is a predicate
    logic statement, or nil, if it is a propositional logic statement."
