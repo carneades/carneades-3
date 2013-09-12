@@ -96,7 +96,7 @@
   ;;       }
   (pprint
    (let [query (unserialize-atom "((package/_3 soft/name (\"org.apache.log4j\" xsd/string)))")]
-     (prn "query=" query)
+     ;; (prn "query=" query)
      (binding [sparql/*select-limit* 100]
        (sparql/ask (:kb markos-conn) query))))
 
@@ -224,16 +224,16 @@ the goal exists and builds a list containing one response with an
 argument if is the case."
   [kbconn goal subs]
   (let [query (sexp->sparqlquery goal)]
-    (prn "issuing ask= " query)
+    ;; (prn "issuing ask= " query)
     (if (sparql/ask (:kb kbconn) [query])
       (do
-        (prn "positive answer")
+        ;; (prn "positive answer")
         (let [arg (argument/make-argument :conclusion goal
                                           :scheme (str "triplestore:" (:host kbconn))
                                           :strict true)]
           [(generator/make-response subs [] arg)]))
       (do
-        (prn "negative answer")
+        ;; (prn "negative answer")
         []))))
 
 (defn make-response-from-binding
@@ -272,15 +272,15 @@ argument if is the case."
   construct one argument for each binding."
   [kbconn goal subs namespaces]
   (let [query (sexp->sparqlquery goal)
-        _ (prn "[triplestore] issuing query= " query)
+        ;; _ (prn "[triplestore] issuing query= " query)
         bindings (binding [sparql/*select-limit* select-limit]
                    (sparql/query (:kb kbconn) [query]))
         bindings (map sparqlbindings->bindings bindings)
         ;; _ (prn "[triplestore] relative bindings size= " (count bindings))
         ;; _ (pprint bindings)
         bindings (map #(to-absolute-bindings % namespaces) bindings)]
-    (prn "[triplestore] absolute bindings size= " (count bindings))
-    (pprint bindings)
+    ;; (prn "[triplestore] absolute bindings size= " (count bindings))
+    ;; (pprint bindings)
     (map #(make-response-from-binding kbconn goal subs %) bindings)))
 
 (defn responses-from-goal
