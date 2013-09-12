@@ -204,15 +204,15 @@ project."})
        (t/make-scheme
         :id 'compatible-software-work
         :header (dc/make-metadata :description {:en ""})
-        :conclusion '(permissibleUse (use ?U ?W1 ?W2C ?W2))
+        :conclusion '(permissibleUse (use4 ?U ?W1 ?W2C ?W2))
         :premises [(a/pm '(?W2C ?W2))
-                   (a/pm '(foo (?U ?W1 ?W2)))
+                   (a/pm '(foo (use3 ?U ?W1 ?W2)))
                    ])
 
        (t/make-scheme
         :id 'foo-id
         :header (dc/make-metadata :description {:en ""})
-        :conclusion '(foo (?U ?W1 ?W2))
+        :conclusion '(foo (use3 ?U ?W1 ?W2))
         :assumptions [(a/pm '(?U ?W1 ?W2))] ;; U is a subclass of usedSoftwareEntity
         :premises [(a/pm '(copyright:licenseTemplate-mock ?W1 ?T1))
                    (a/pm '(copyright:mayBeLicensedUsing ?W1 ?T1))
