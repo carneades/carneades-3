@@ -1,7 +1,7 @@
-;;; Copyright (c) 2010-2011 Fraunhofer Gesellschaft 
+;;; Copyright (c) 2010-2011 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(ns ^{:doc "Unification algorithm from the implementation of the book 
+(ns ^{:doc "Unification algorithm from the implementation of the book
            'The Scheme Programming Language', by Kent Dybvig."}
   carneades.engine.unify
   (:use carneades.engine.statement
@@ -46,7 +46,7 @@
 (defn- try-subst
   "Tries to substitute u for v but may require a
    full unification if (s u) is not a variable, and it may
-   fail if it sees that u occurs in v."  
+   fail if it sees that u occurs in v."
   [u v s ks kf occurs-check]
   (let [u (apply-substitutions s u)]
     (if-not (variable? u)
@@ -63,7 +63,7 @@
    substitution itself is represented by a procedure from
    variables to terms. The occurs-check flag determines whether
    the occurs check is performed.
-   
+
    unify: term term -> substitutions | nil
    (unify u v) is a simplified interface, where the initial
    substitution is the identity procedure, the initial success
@@ -75,7 +75,7 @@
                     (ks s)
                     (unify (first u) (first v)
                            s
-                           #(unif (rest u) 
+                           #(unif (rest u)
                                   (rest v) %)
                            kf
                            occurs-check)))]
@@ -84,14 +84,16 @@
             (and (constant? u) (constant? v)) (if (= u v) (ks s) (kf :clash)),
             (statement? u) (unify (literal->sliteral u) v s),
             (statement? v) (unify u (literal->sliteral v) s),
-            (and (termseq? u) 
+            (and (termseq? u)
                  (termseq? v)
                  (= (count u) (count v))) (unif u v s)
             (and (compound-term? u)
                  (compound-term? v)
-                 (= (term-functor u) (term-functor v))
-                 (= (count (term-args u)) 
-                    (count (term-args v)))) (unif (term-args u) (term-args v) s),
+                 ;; (= (term-functor u) (term-functor v))
+                 (= (count (term-args u))
+                    (count (term-args v)))) (unif u v s)
+            ;; (unif (term-args u) (term-args v) s),
+
             :else (kf :clash))))
   ([u v s]
     (unify u v s identity (fn [state] nil) false))
@@ -102,15 +104,15 @@
   "Generate a fresh, unique variable"
   []
   (gensym "?"))
-        
-                         
+
+
 (defn rename-variables
   "hashmap term -> [hashmap term]
-   
-   Systematically rename the variables in term, keeping track of the 
+
+   Systematically rename the variables in term, keeping track of the
    replacements in the map"
   [m trm]
-  
+
   (cond (variable? trm) (if-let [v (m trm)]
                           [m v]
                           (let [v (genvar)]
@@ -126,5 +128,3 @@
                             [m3 trm3] (rename-variables m2 (next trm))]
                         [m3 (reduce conj [trm2] trm3)])
         :else [m trm]))
-
-
