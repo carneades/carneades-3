@@ -21,7 +21,7 @@
             [lein-cljsbuild "0.3.0"]
             [lein-sub "0.2.3"]]
   ;; sub projects
-  :sub ["../CarneadesEngine" "../CarneadesWebService" "../CarneadesExamples"]
+  :sub ["../CarneadesEngine" "../CarneadesWebService"]
   ; Enable the lein hooks for: clean, compile, test, and jar.
   :hooks [leiningen.cljsbuild]
   :cljsbuild {:builds
