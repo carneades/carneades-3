@@ -1,10 +1,10 @@
 ;;; Copyright (c) 2012 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(defproject carneades-web-service/carneades-web-service "1.0.0-SNAPSHOT" 
+(defproject carneades-web-service/carneades-web-service "1.0.0-SNAPSHOT"
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/data.json "0.1.1"]
-                 [carneades-engine "2.0.0-SNAPSHOT"]
+                 [carneades/carneades-engine "2.0.0"]
                  [compojure "1.0.1" :exclusion [clojure]]
                  [org.clojure/java.jdbc "0.1.2"]
                  [ring/ring-servlet "1.0.1"]
