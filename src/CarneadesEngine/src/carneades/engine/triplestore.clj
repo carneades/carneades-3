@@ -203,6 +203,9 @@ The IRI is returned with its last slash doubled."
     (cond (not (empty? args))
           (throw (ex-info "Invalid query" {:sexp sexp}))
 
+          (seq? p)
+          (map transform-sexp sexp)
+
           (nil? o)
           (list s 'rdf/type p)
 
