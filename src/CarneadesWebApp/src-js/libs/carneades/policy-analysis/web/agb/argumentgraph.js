@@ -24,7 +24,7 @@ AGB.argumentgraph_html = function(db, data)
     data.metadata_text = AGB.format_metadata(data.metadata[0]);
     data.hasdescription = PM.has_description(data.metadata[0]);
     data.description_text = AGB.description_text(data.metadata[0]);
-    AGB.set_mainissues_text(data.main_issues);
+    AGB.set_mainissues_info(data.main_issues);
     data.references = data.metadata.filter(function (ref) { return ref.key; });
     data.hasreferences = data.references.length > 0;
     AGB.set_references_text(data.references);
@@ -99,14 +99,29 @@ AGB.display_argumentgraph = function(db)
     }
 };
 
+AGB.statement_value_to_cssclass = function(statement) {
+    if(AGB.statement_in(statement)) {
+        return "in";
+    }
+
+    if(AGB.statement_out(statement)) {
+        return "out";
+    }
+
+    return "undecided";
+
+};
+
 // Formats the text for the main issues
-AGB.set_mainissues_text = function(mainissues)
+AGB.set_mainissues_info = function(mainissues)
 {
     $.each(mainissues,
            function(index, issue) {
                issue.statement_nb = index + 1;
                issue.statement_text = AGB.statement_text(issue);
+               issue.label_value = AGB.statement_value_to_cssclass(issue);
            });
+
     return mainissues;
 };
 
