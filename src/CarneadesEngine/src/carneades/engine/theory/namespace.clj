@@ -83,8 +83,8 @@
   "Recursively convert each of the atom of the literal to an absolute atom."
   [literal namespaces]
   (cond (empty? namespaces) literal
-        (st/sliteral? literal) (to-absolute-atom literal namespaces)
-        :else (to-absolute-statement literal namespaces)))
+        (st/statement? literal) (to-absolute-statement literal namespaces)
+        :else (to-absolute-atom literal namespaces)))
 
 (defn to-relative-literal
   "Recursively convert each of the atom of the literal to a relative atom."
