@@ -31,7 +31,8 @@
             [carneades.engine.argument-graph :as agr]
             [carneades.engine.statement :as st]
             [carneades.engine.argument-evaluation :as evaluation]
-            [carneades.engine.caes :refer [caes]]))
+            [carneades.engine.caes :refer [caes]]
+            [carneades.engine.theory.namespace :as namespace]))
 
 (defn initial-state
   []
@@ -156,7 +157,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
   ([endpoint-url]
      (generate-arguments-from-mock-triplestore endpoint-url "" [])))
 
-(defonce ag-nb (atom 1100))
+(defonce ag-nb (atom 100))
 
 (defn inc-ag-number!
   []
@@ -212,10 +213,10 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
   ;; http://markosproject.eu/kb/SoftwareRelease/_2
   (let [query "(http://www.markosproject.eu/ontologies/oss-licenses#permissibleUse
                (http://www.markosproject.eu/ontologies/oss-licenses#use4
-                    http://www.markosproject.eu/ontologies/software#linkedLibrary
-                    http://markosproject.eu/kb/SoftwareRelease/366
-                    http://www.markosproject.eu/ontologies/software#Library
-                    http://markosproject.eu/kb/Library/1)
+                http://www.markosproject.eu/ontologies/software#linkedLibrary
+                http://markosproject.eu/kb/SoftwareRelease/366
+                http://www.markosproject.eu/ontologies/software#Library
+                http://markosproject.eu/kb/Library/1)
                )"
         sexp (unserialize-atom query)
         _ (prn "sexp=" sexp)
@@ -252,6 +253,18 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
     (prn "nb statements=" (count (:statement-nodes ag)))
     (prn "AG NUMBER = " agnumber)))
 
+(defn get-licenses
+  "Returns the template licenses for a given entity"
+  [entity endpoint repo-name markos-namespaces]
+  (let [conn (triplestore/make-conn endpoint repo-name markos-namespaces)
+        query (list (list 'lic:coveringLicense entity '?lic)
+                    '(lic:template ?lic ?tpl))
+        query (namespace/to-absolute-literal query markos-namespaces)
+        query (triplestore/sexp->sparqlquery query)
+        bindings (sparql/query (:kb conn) query)
+        tpls (set (map #(get % '?/tpl) bindings))
+        tpls (map #(namespace/to-absolute-literal % markos-namespaces) tpls)]
+    tpls))
 
 (defn start-engine
   [params]
@@ -270,11 +283,17 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
         [argument-from-user-generator questions send-answer]
         (ask/make-argument-from-user-generator (fn [p] (questions/askable? loaded-theories p)))
         ag (get-ag project "")
+        triplestore-generator (triplestore/generate-arguments-from-triplestore triplestore
+                                                                               repo-name
+                                                                               markos-namespaces)
+        _ (prn "LICENSES=")
+        _ (prn (get-licenses (unserialize-atom entity)
+                             triplestore
+                             repo-name
+                             markos-namespaces))
         engine (shell/make-engine ag 500 #{}
                                   (list
-                                   (triplestore/generate-arguments-from-triplestore triplestore
-                                                                                    repo-name
-                                                                                    markos-namespaces)
+                                   triplestore-generator
                                    (theory/generate-arguments-from-theory loaded-theories)
                                    argument-from-user-generator))
         future-ag (future (shell/argue engine sexp))
