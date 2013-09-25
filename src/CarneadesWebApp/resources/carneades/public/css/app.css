@@ -482,7 +482,7 @@ a, a:link, a:visited, a:hover, a:focus, a:active {
 
 .issue .label {
 	width: 20px;
-	background: #7ab817;
+	/* background: #7ab817; */
 	color: #fff;
 	text-align: center;
 	padding: 2px;
@@ -490,6 +490,15 @@ a, a:link, a:visited, a:hover, a:focus, a:active {
 	border-bottom-left-radius: 11px;
 	-moz-border-radius-topleft: 11px;
 	border-top-left-radius: 11px;
+        background: lightyellow;
+}
+
+.issue .in {
+    background: #8ee888;
+}
+
+.issue .out {
+    background: #ff7e7e;
 }
 
 .issue .statement-content {
