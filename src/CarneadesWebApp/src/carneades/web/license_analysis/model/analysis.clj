@@ -260,8 +260,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
         query (list (list 'lic:coveringLicense entity '?lic)
                     '(lic:template ?lic ?tpl))
         query (namespace/to-absolute-literal query markos-namespaces)
-        query (triplestore/sexp->sparqlquery query)
-        bindings (sparql/query (:kb conn) query)
+        bindings (triplestore/sparql-query conn query markos-namespaces)
         tpls (set (map #(get % '?/tpl) bindings))
         tpls (map #(namespace/to-absolute-literal % markos-namespaces) tpls)]
     tpls))
@@ -271,13 +270,24 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
   (prn "params=")
   (prn params)
   (let [entity (:entity params)
-        query (format "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing %s ?x)" entity)
         project "markos"
         properties (project/load-project-properties project)
-        theories (:policies properties)
         triplestore (:triplestore properties)
         repo-name (:repo-name properties)
         markos-namespaces (:namespaces properties)
+        licenses (get-licenses (unserialize-atom entity)
+                               triplestore
+                               repo-name
+                               markos-namespaces)
+        query (format "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing %s %s)"
+                      entity
+                      (first licenses))
+        licenses-statements (map #(unserialize-atom
+                                   (format "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing %s %s)"
+                                           entity
+                                           %))
+                                 licenses)
+        theories (:policies properties)
         sexp (unserialize-atom query)
         loaded-theories (project/load-theory project theories)
         [argument-from-user-generator questions send-answer]
@@ -286,17 +296,12 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
         triplestore-generator (triplestore/generate-arguments-from-triplestore triplestore
                                                                                repo-name
                                                                                markos-namespaces)
-        _ (prn "LICENSES=")
-        _ (prn (get-licenses (unserialize-atom entity)
-                             triplestore
-                             repo-name
-                             markos-namespaces))
-        engine (shell/make-engine ag 500 #{}
-                                  (list
-                                   triplestore-generator
-                                   (theory/generate-arguments-from-theory loaded-theories)
-                                   argument-from-user-generator))
-        future-ag (future (shell/argue engine sexp))
+        engine (shell/make-engine+ ag 500 #{}
+                                   (list
+                                    triplestore-generator
+                                    (theory/generate-arguments-from-theory loaded-theories)
+                                    argument-from-user-generator))
+        future-ag (future (shell/argue+ engine licenses-statements))
         analysis {:ag nil
                   :project project
                   :uuid (symbol (uuid/make-uuid-str))
