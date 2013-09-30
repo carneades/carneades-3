@@ -212,6 +212,13 @@ The IRI is returned with its last slash doubled."
           :else
           (list s p o))))
 
+(defn envelop-sexp
+  "Transforms an sexp of the form (a b c) into ((a b c)."
+  [sexp]
+  (if (seq? (first sexp))
+    sexp
+    (list sexp)))
+
 (defn sexp->sparqlquery
   "Converts a Carneades sexpression encoding a query to a Clojure/SPARQL query."
   [sexp]
@@ -219,7 +226,8 @@ The IRI is returned with its last slash doubled."
     (-> sexp
         (variables->sparqlvariables ,,,)
         (strings->xsd-strings ,,,)
-        (transform-sexp ,,,))))
+        (transform-sexp ,,,)
+        (envelop-sexp ,,,))))
 
 (defn responses-from-ask
   "Generates responses for a grounded goal. Asks the triplestore if
@@ -228,7 +236,7 @@ argument if is the case."
   [kbconn goal subs]
   (let [query (sexp->sparqlquery goal)]
     ;; (prn "issuing ask= " query)
-    (if (sparql/ask (:kb kbconn) [query])
+    (if (sparql/ask (:kb kbconn) query)
       (do
         ;; (prn "positive answer")
         (let [arg (argument/make-argument :conclusion goal
@@ -269,21 +277,25 @@ argument if is the case."
              {}
              bindings))
 
-(defn responses-from-query
-  "Generates responses from non-grounded goal. Asks the triplestore
-  with the goal as a query, if some new bindings are returned we
-  construct one argument for each binding."
-  [kbconn goal subs namespaces]
-  (let [query (sexp->sparqlquery goal)
-        ;; _ (prn "[triplestore] issuing query= " query)
+(defn sparql-query
+  [kbconn sexp namespaces]
+  (let [query (sexp->sparqlquery sexp)
         bindings (binding [sparql/*select-limit* select-limit]
-                   (sparql/query (:kb kbconn) [query]))
+                   (sparql/query (:kb kbconn) query))
         bindings (map sparqlbindings->bindings bindings)
         ;; _ (prn "[triplestore] relative bindings size= " (count bindings))
         ;; _ (pprint bindings)
         bindings (map #(to-absolute-bindings % namespaces) bindings)]
     ;; (prn "[triplestore] absolute bindings size= " (count bindings))
     ;; (pprint bindings)
+    bindings))
+
+(defn responses-from-query
+  "Generates responses from non-grounded goal. Asks the triplestore
+  with the goal as a query, if some new bindings are returned we
+  construct one argument for each binding."
+  [kbconn goal subs namespaces]
+  (let [bindings (sparql-query kbconn goal namespaces)]
     (map #(make-response-from-binding kbconn goal subs %) bindings)))
 
 (defn responses-from-goal
