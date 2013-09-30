@@ -57,12 +57,14 @@ AGB.statement_html = function(db, info, lang)
     AGB.set_procon_texts(info);
     AGB.set_procon_premises_text(info);
     AGB.set_premise_of_texts(info);
+
     if(info.text) {
-        info.statement_text = AGB.markdown_to_html(info.text[lang]);
+        info.statement_text = AGB.statement_prefix(info) + AGB.markdown_to_html(info.text[lang]);
         if(info.statement_text != "") {
             info.hastext = true;
         }
     }
+
     info.haspro = info.pro && info.pro.length > 0;
     info.hascon = info.con && info.con.length > 0;
     info.haspremiseof = info.premise_of && info.premise_of.length > 0;
@@ -168,7 +170,7 @@ AGB.set_arg_texts = function(info, direction)
            function(index, data) {
                var text = AGB.argument_text(data, index + 1);
                info[direction][index].argument_text = text;
-               info[direction][index].id = info.pro[index]; // used by the template to create the ahref
+               /// info[direction][index].id = info.pro[index]; // used by the template to create the ahref
            });
 };
 
@@ -176,10 +178,14 @@ AGB.set_procon_premises_text = function(statement_data)
 {
     $.each(statement_data.pro_data,
            function(index, pro) {
+               console.log('pro =');
+               console.log(pro);
                AGB.set_premises_text(pro);
            });
     $.each(statement_data.con_data,
            function(index, con) {
+               console.log('con =');
+               console.log(con);
                AGB.set_premises_text(con);
            });
 };
