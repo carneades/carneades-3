@@ -265,6 +265,14 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
         tpls (map #(namespace/to-absolute-literal % markos-namespaces) tpls)]
     tpls))
 
+(defn on-ag-built
+  [nb-licenses ag]
+  (assoc ag :header (dc/make-metadata
+                     :title "Result of the analysis"
+                     :description {:en (if (> nb-licenses 1)
+                                         (format "The analysed sofware entity is using %s licenses templates. See below the analysis of the legal issues." nb-licenses)
+                                         "See below the analysis of the legal issue.")})))
+
 (defn start-engine
   [params]
   (prn "params=")
@@ -279,16 +287,13 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
                                triplestore
                                repo-name
                                markos-namespaces)
-        query (format "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing %s %s)"
-                      entity
-                      (first licenses))
         licenses-statements (map #(unserialize-atom
                                    (format "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing %s %s)"
                                            entity
                                            %))
                                  licenses)
         theories (:policies properties)
-        sexp (unserialize-atom query)
+        query (first licenses-statements)
         loaded-theories (project/load-theory project theories)
         [argument-from-user-generator questions send-answer]
         (ask/make-argument-from-user-generator (fn [p] (questions/askable? loaded-theories p)))
@@ -306,7 +311,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
                   :project project
                   :uuid (symbol (uuid/make-uuid-str))
                   :lang :en
-                  :query sexp
+                  :query query
                   :policies loaded-theories
                   :future-ag future-ag
                   :questions questions
@@ -314,6 +319,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
                   :dialog (dialog/make-dialog)
                   :last-id 0
                   :namespaces markos-namespaces
+                  :post-build (partial on-ag-built (count licenses-statements))
                   }
         analysis (policy/get-ag-or-next-question analysis)]
     (swap! state index-analysis analysis)

@@ -56,8 +56,9 @@
         ag (reject ag rejected-statements)
         ag (enter-language ag (-> session :policies :language) (:namespaces session))
         ag (evaluate aspic-grounded ag)
-        ;; _ (prn "ag")
-        ;; _ (pprint ag)
+        ag (if (fn? (:post-build session))
+             ((:post-build session) ag)
+             ag)
         project (:project session)
         dbname (store-ag project ag)
         session (assoc session
@@ -73,9 +74,9 @@
         [questions id] (get-remaining-questions ag session)]
     (if (empty? questions)
       (on-questions-answered session)
+      ;; some questions still need to be asked:
       (let [questions (vals questions)
             dialog (add-questions (:dialog session) questions)]
-        (prn "remaining =" questions)
         (assoc session
           :last-questions questions
           :last-id id
