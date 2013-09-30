@@ -502,11 +502,12 @@ Returns the answers indexed by question's id."
                                      :ctx ctx})))
 
 (defn show-ag
-  "Shows the argument graph. Called once there is no more questions to ask."
+  "Shows the argument graph. Called once there is no more questions to
+  ask."
   [db]
   (set! js/IMPACT.db db)
   (reset! questions (create-questions-map))
-  (js/PM.set_policies_url))
+  (js/AGB.set_argumentgraph_url db))
 
 (defn show-facts
   "Shows facts for modification."
