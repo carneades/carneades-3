@@ -126,6 +126,13 @@ project."})
        )
 
       (t/make-scheme
+       :id 'compatible-reflexive-rule
+       :header (dc/make-metadata
+                :description {:en "A license template is compatible with itself."})
+       :conclusion '(copyright:isCompatibleWith ?T1 ?T1)
+       :premises [(a/pm '(lic:CopyrightLicenseTemplate ?T1))])
+
+      (t/make-scheme
        :id 'mock-license-template-rule
        :header (dc/make-metadata
                 :description {:en ""})
