@@ -296,9 +296,9 @@
   ;; are passed down to the children of the goal, so they are not lost by removing the goal.
   (let [goal (get (:goals state1) id),
         state2 (remove-goal state1 id)]
-    ;; (prn "[reduce-goal]")
-    ;; (prn "goal = ")
-    ;; (pprint goal)
+     (prn "[reduce-goal]")
+     (prn "goal = ")
+     (pprint goal)
     (if (empty? (:issues goal))
       state2 ; no issues left in the goal
       (let [issue (apply-substitutions (:substitutions goal) (first (:issues goal)))]
@@ -358,15 +358,16 @@
   "argument-graph (coll-of literal) int (coll-of literal) (seq-of generator) -> argument-graph
    Construct an argument graph for both sides of a list of issues."
   ([ag1 issues max-goals facts generators1]
+     (prn "facts=" facts)
      (let [ag2 (accept ag1 facts)
-           generators2 (concat (list (builtins)) generators1)
+           generators2 (cons (builtins) generators1)
            graph (:graph (reduce-goals (initial-acstate issues ag2)
                                        max-goals
                                        generators2))]
        (notify-observers generators2)
        graph))
   ([issue max-goals facts generators]
-     (construct-arguments (make-argument-graph) issue max-goals facts generators)))
+     (construct-arguments+ (make-argument-graph) issue max-goals facts generators)))
 
 (defn construct-arguments
   "argument-graph literal int (coll-of literal) (seq-of generator) -> argument-graph
@@ -374,4 +375,4 @@
   ([ag1 issue max-goals facts generators1]
      (construct-arguments+ ag1 [issue] max-goals facts generators1))
   ([issue max-goals facts generators]
-     (construct-arguments (make-argument-graph) issue max-goals facts generators)))
+     (construct-arguments+ (make-argument-graph) [issue] max-goals facts generators)))
