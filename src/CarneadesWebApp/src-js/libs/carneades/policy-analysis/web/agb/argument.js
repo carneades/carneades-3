@@ -61,7 +61,7 @@ AGB.argument_html = function(db, argument_data)
     argument_data.scheme_text = PM.scheme_text(argument_data.scheme);
     AGB.set_argument_title_text(argument_data);
     argument_data.direction_text = argument_data.pro ? "pro" : "con";
-    argument_data.conclusion.statement_text = AGB.statement_raw_text(argument_data.conclusion);
+    argument_data.conclusion.statement_text = AGB.statement_text(argument_data.conclusion);
     AGB.set_premises_text(argument_data);
     argument_data.haspremises = argument_data.premises.length > 0;
     AGB.set_undercutters_text(argument_data);
@@ -154,7 +154,7 @@ AGB.set_premises_text = function(argument_data)
 {
     $.each(argument_data.premises,
            function(index, premise) {
-               premise.statement.statement_text = AGB.statement_raw_text(premise.statement, index + 1);
+               premise.statement.statement_text = AGB.statement_text(premise.statement, index + 1);
                premise.positive_text = premise.positive ? "" : "neg.";
            });
 };
@@ -198,6 +198,26 @@ AGB.set_dependents_text = function(info)
           });
 };
 
+AGB.argument_in = function(arg)
+{
+    return (arg.value != null) && ((1.0 - arg.value) < 0.001);
+};
+
+AGB.argument_out = function(arg)
+{
+    return (arg.value != null) && (arg.value < 0.001);
+};
+
+AGB.argument_prefix = function(arg) {
+    if(AGB.argument_in(arg)) {
+        return "☑ ";
+    } else if(AGB.argument_out(arg)) {
+        return "☒ ";
+    } else {
+        return "☐ ";
+    }
+};
+
 // Returns a text representing the argument, ie., its title
 // or then its scheme, or a default text if none of them is defined
 AGB.argument_text = function(data, index)
@@ -213,7 +233,7 @@ AGB.argument_text = function(data, index)
         text = 'Argument #' + index;
     }
 
-    return text;
+    return AGB.argument_prefix(data) + text;
 };
 
 AGB.argument_link = function(db, id, text)
