@@ -68,16 +68,6 @@
 
 (defn- acstate? [x] (instance? ACState x))
 
-(defn- initial-acstate
-  "literal argument-graph -> acstate"
-  [issue ag]
-  (let [goal-id (gensym "g")]
-    (make-acstate
-      :goals {goal-id (make-goal :issues (list issue))}
-      :open-goals (list goal-id)  ; #{goal-id}
-      :graph ag)))
-
-
 (defn- add-goal
   "acstate goal -> acstate"
   [state1 goal]
@@ -85,9 +75,29 @@
    :post [(acstate? %)]}
   (let [id (gensym "g")]
     (assoc state1
-           :goals (assoc (:goals state1) id goal)
-           :open-goals (concat (:open-goals state1) (list id))))) ; breadth-first
+      :goals (assoc (:goals state1) id goal)
+      :open-goals (concat (:open-goals state1) (list id)))))
 
+;; (defn- initial-acstate
+;;   "(coll-of literal) argument-graph -> acstate"
+;;   [issues ag]
+;;   (let [goal-id (gensym "g")]
+;;     (make-acstate
+;;      :goals {goal-id (make-goal :issues issues)}
+;;      :open-goals (list goal-id)  ; #{goal-id}
+;;      :graph ag)))
+
+(defn- initial-acstate
+  "(coll-of literal) argument-graph -> acstate"
+  [issues ag]
+  (reduce (fn [state issue]
+            (let [goal (make-goal :issues [issue])]
+             (add-goal state goal)))
+          (make-acstate :graph ag)
+          issues))
+
+
+;; breadth-first
 (defn- remove-goal
   "acstate symbol -> acstate"
   [state1 goal-id]
@@ -296,9 +306,9 @@
   ;; are passed down to the children of the goal, so they are not lost by removing the goal.
   (let [goal (get (:goals state1) id),
         state2 (remove-goal state1 id)]
-    ;; (prn "[reduce-goal]")
-    ;; (prn "goal = ")
-    ;; (pprint goal)
+    (prn "[reduce-goal]")
+    (prn "goal = ")
+    (pprint goal)
     (if (empty? (:issues goal))
       state2 ; no issues left in the goal
       (let [issue (apply-substitutions (:substitutions goal) (first (:issues goal)))]
@@ -354,16 +364,24 @@
     (when (satisfies? ArgumentConstructionObserver generator)
       (finish generator))))
 
+(defn construct-arguments+
+  "argument-graph (coll-of literal) int (coll-of literal) (seq-of generator) -> argument-graph
+   Construct an argument graph for both sides of a list of issues."
+  ([ag1 issues max-goals facts generators1]
+     (let [ag2 (accept ag1 facts)
+           generators2 (concat (list (builtins)) generators1)
+           graph (:graph (reduce-goals (initial-acstate issues ag2)
+                                       max-goals
+                                       generators2))]
+       (notify-observers generators2)
+       graph))
+  ([issue max-goals facts generators]
+     (construct-arguments (make-argument-graph) issue max-goals facts generators)))
+
 (defn construct-arguments
   "argument-graph literal int (coll-of literal) (seq-of generator) -> argument-graph
    Construct an argument graph for both sides of an issue."
   ([ag1 issue max-goals facts generators1]
-    (let [ag2 (accept ag1 facts)
-          generators2 (concat (list (builtins)) generators1)
-          graph (:graph (reduce-goals (initial-acstate issue ag2)
-                                      max-goals
-                                      generators2))]
-    (notify-observers generators2)
-    graph))
+     (construct-arguments+ ag1 [issue] max-goals facts generators1))
   ([issue max-goals facts generators]
-      (construct-arguments (make-argument-graph) issue max-goals facts generators)))
+     (construct-arguments (make-argument-graph) issue max-goals facts generators)))
