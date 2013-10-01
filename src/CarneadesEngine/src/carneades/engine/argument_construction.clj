@@ -112,7 +112,6 @@
                   :substitutions subs
                   :depth (inc (:depth g1))))
       (let [conclusion (literal->sliteral (conclusion-literal arg))]
-        ;; undercutter `(~'undercut ~(:id arg))]
         (add-goal state1
                   (make-goal
                     ; pop the first issue and add issues for the
