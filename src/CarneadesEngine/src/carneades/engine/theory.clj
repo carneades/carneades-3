@@ -284,13 +284,6 @@ call or a symbol."
                             (:exceptions scheme)
                             (:assumptions scheme)))))
 
-;; When applying schemes, undercutters are generated from the exceptions of schemes,
-;; where the undercutters are arguments with the form:
-;; (make-argument
-;;   :conclusion '(undercut <arg-id>)
-;;   :premises [<exception>])
-
-
 (defn specialize-scheme
   "scheme substitutions -> scheme
    Instantiate or partially instantiate a scheme by substituting
@@ -306,6 +299,23 @@ call or a symbol."
                        (:exceptions scheme)),
       :assumptions (map (fn [p] (assoc p :statement (apply-subs (:statement p))))
                         (:assumptions scheme)))))
+
+(defn generate-exceptions
+  "Generates the arguments representing the exceptions"
+  [arg]
+  (map (fn [e] (make-response
+                subs
+                []
+                (make-argument
+                 :id (make-urn-symbol)
+                 :conclusion (list 'undercut (symbol (:id arg)))
+                 :pro true
+                 :strict false
+                 :weight 0.5
+                 :premises [e]
+                 :exceptions []
+                 :scheme (:scheme arg))))
+       (:exceptions arg)))
 
 (defn instantiate-scheme
   "scheme map -> (seq-of response)
