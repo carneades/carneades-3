@@ -589,13 +589,15 @@
    the argument with the given id."
   [arg-id]
   (jdbc/with-query-results
-    res1 ["SELECT id FROM statement WHERE atom=?" (format "(undercut %s)" arg-id)]
+    res1 ["SELECT id FROM statement WHERE atom=?" (format "(valid %s)" arg-id)]
     (if (empty? res1)
       []
-      (let [stmt (first res1)]
-         (jdbc/with-query-results
-                       res2 ["SELECT id FROM argument WHERE conclusion=?" (:id stmt)]
-                       (doall (map :id res2)))))))
+      (let [stmt (first res1)
+            args
+            (jdbc/with-query-results
+              res2 ["SELECT id FROM argument WHERE conclusion=?" (:id stmt)]
+              (doall (map :id res2)))]
+        (filter #(not (:pro %)) args)))))
 
 (defn get-dependents
   "string -> sequence of string

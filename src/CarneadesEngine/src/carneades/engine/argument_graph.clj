@@ -445,6 +445,12 @@
       (map (fn [an-id] (get (:argument-nodes ag) an-id))
            (:con sn)))))
 
+(defn undercutter?
+  [ag arg]
+  (let [stmtconclusion (map->statement ((:statement-nodes ag) (:conclusion arg)))]
+    (and (= 'valid (literal-predicate stmtconclusion))
+         (not (:pro arg)))))
+
 (defn schemes-applied
   "argument-graph statement -> (set-of string)"
   [ag stmt]
