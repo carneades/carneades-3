@@ -307,23 +307,6 @@ call or a symbol."
       :assumptions (map (fn [p] (assoc p :statement (apply-subs (:statement p))))
                         (:assumptions scheme)))))
 
-(defn generate-exceptions
-  "Generates the arguments representing the exceptions"
-  [arg]
-  (map (fn [e] (make-response
-                subs
-                []
-                (make-argument
-                 :id (make-urn-symbol)
-                 :conclusion (list 'undercut (symbol (:id arg)))
-                 :pro true
-                 :strict false
-                 :weight 0.5
-                 :premises [e]
-                 :exceptions []
-                 :scheme (:scheme arg))))
-       (:exceptions arg)))
-
 (defn instantiate-scheme
   "scheme map -> (seq-of response)
    Constructs a sequence of grounds arguments, in responses, by
@@ -349,15 +332,14 @@ call or a symbol."
                   subs)]
     (if (not (ground-argument? main-arg))
       ()
-      (cons
-       (make-response
+      ;; cons
+      [(make-response
         subs
         (map (fn [p] (if (:positive p)
                        (:statement p)
                        (literal-complement (:statement p))))
              (:assumptions scheme))
-        main-arg)
-       (generate-exceptions main-arg)))))
+        main-arg)])))
 
 
 (defn axiom

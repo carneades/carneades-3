@@ -160,8 +160,7 @@
       ;; but from two different experts.
       s
       (assoc s
-        :graph (enter-arguments (:graph s)
-                                (cons arg (make-undercutters arg)))))))
+        :graph (enter-arguments (:graph s) [arg])))))
 
 (defn- add-argument-instance-to-templates
   "acstate symbol term -> acstate"
@@ -190,8 +189,8 @@
                                                   s
                                                   (make-argument
                                                    :id (make-urn)
-                                                   :conclusion `(~'undercut ~(:id arg))
-                                                   :pro true
+                                                   :conclusion `(~'valid ~(:id arg))
+                                                   :pro false
                                                    :strict false
                                                    :weight 0.5
                                                    :premises [e]
