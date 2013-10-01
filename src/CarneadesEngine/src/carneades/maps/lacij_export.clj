@@ -38,13 +38,13 @@
   [ag arg]
   (cond (and (in-node? arg) (:pro arg))
         (:arg-pro-applicable-params default-params)
-        
+
         (and (in-node? arg) (:con arg))
         (:arg-con-applicable-params default-params)
-        
+
         (:pro arg)
         (:arg-pro-notapplicable-params default-params)
-        
+
         :else
         (:arg-con-notapplicable-params default-params)))
 
@@ -71,7 +71,8 @@
 (defn undercutter?
   [ag arg]
   (let [stmtconclusion (map->statement ((:statement-nodes ag) (:conclusion arg)))]
-   (= 'undercut (literal-predicate stmtconclusion))))
+    (and (= 'valid (literal-predicate stmtconclusion))
+         (not (:pro arg)))))
 
 (defn scheme->str
   [scheme]
@@ -128,7 +129,7 @@
 
 (defn filter-out-undercutters-conclusions
   [statements]
-  (filter #(not= 'undercut (literal-predicate (map->statement %))) statements))
+  (filter #(not= 'valid (literal-predicate (map->statement %))) statements))
 
 (defn add-entities
   [svgmap ag stmt-str]

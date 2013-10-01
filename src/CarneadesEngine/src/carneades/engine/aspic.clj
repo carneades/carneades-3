@@ -35,7 +35,7 @@
             goal (first (:goals s))
             sn (get (:statement-nodes ag) (literal-atom goal))
             pop-goal (fn [] (assoc s :goals (rest (:goals s))))
-            make-node (fn [s] (struct node (inc (:depth n)) nil n s))]                     
+            make-node (fn [s] (struct node (inc (:depth n)) nil n s))]
 
         (cond (and (:weight sn)
                    (if (literal-pos? goal)
@@ -61,7 +61,7 @@
                                                :goals (concat (map premise-literal (:premises an))  ; depth-first
                                                               (rest (:goals s)))))))))
                       []
-                      (if (literal-pos? goal) (:pro sn) (:con sn))))))))              
+                      (if (literal-pos? goal) (:pro sn) (:con sn))))))))
 
 (defrecord Position
   [id              ; symbol
@@ -74,20 +74,20 @@
   [ag]
   (let [argument-node-positions
         (fn [pm an]
-          (let [p (struct problem 
+          (let [p (struct problem
                           (make-root (State. (map premise-literal (:premises an)) ; goal literals
-                                             #{(:id an)}                          ; argument node ids 
+                                             #{(:id an)}                          ; argument node ids
                                              #{}))                                 ; assumptions
                           (transitions ag)
                           goal-state?)]
             (assoc pm
               (:id an)
-              (map (fn [s] 
+              (map (fn [s]
                      (Position. (gensym "position-")
                                 (:id an) ; id of the last link argument node
                                 (:arguments s)
                                 (:assumptions s)))
-                   (map :state (search p depth-first))))))]                                        
+                   (map :state (search p depth-first))))))]
     (reduce argument-node-positions
             {}
             (vals (:argument-nodes ag)))))
@@ -101,8 +101,8 @@
           (let [an1 (get (:argument-nodes ag) (:argument p1))
                 c1 (:atom (get (:statement-nodes ag) (:conclusion an1)))]
             (and (not (:strict (get (:argument-nodes ag) arg)))
-                 (:pro an1)
-                 (= c1 `(~'undercut ~arg)))))
+                 (not (:pro an1))
+                 (= c1 `(~'valid ~arg)))))
         (:subargs p2)))
 
 (defn- rebuts?
@@ -124,7 +124,7 @@
 	       :dv true
 	       ;; with :pe the con argument need only be >= the pro arg to defeat it.
 	       ;; the pro argument is also defeated if either arg has no weight
-	       :pe (or (nil? (:weight an1)) 
+	       :pe (or (nil? (:weight an1))
 		       (nil? (:weight an2))
 		       (>= (:weight an1) (:weight an2)))
 	       ;; with :cce the con arg defeats the pro arg unless pro's weight
@@ -148,7 +148,7 @@
   (let [an1 (get (:argument-nodes ag) (:argument p1))
         sn1  (get (:statement-nodes ag) (:conclusion an1))
         c1 (if (:pro an1) (:id sn1) (literal-complement (:id sn1)))]
-    (some (fn [lit] 
+    (some (fn [lit]
             (= (literal-complement lit) c1))
           (:assumptions p2))))
 
@@ -156,7 +156,7 @@
   "argument-graph position (seq-of positions) -> set of positions
    Returns the subset of the positions which attack the given position."
   [ag p1 positions]
-  (reduce (fn [s p2] 
+  (reduce (fn [s p2]
             (if (or (undercuts? ag p2 p1)
                     (rebuts? ag p2 p1)
                     (undermines? ag p2 p1))
@@ -172,7 +172,7 @@
   [pm ag]
   (let [positions (flatten (vals pm)),
         args (set (map :id positions)),
-        attacks (reduce (fn [m p] 
+        attacks (reduce (fn [m p]
 			  (assoc m (:id p)
 				 (set (map :id (attackers ag p positions)))))
 			{}
@@ -185,13 +185,13 @@
    can be overridden when the arguments are evaluated."
   [ag]
   (reduce (fn [ag2 sn]
-            (update-statement-node 
+            (update-statement-node
 	     ag2
-	     sn 
-	     :value 
+	     sn
+	     :value
 	     (cond (and (:weight sn) (>= (:weight sn) 0.75)) 1.0
 		   (and (:weight sn) (<= (:weight sn) 0.25)) 0.0
-		   :else 0.5))) 
+		   :else 0.5)))
           ag
           (vals (:statement-nodes ag))))
 
@@ -205,38 +205,33 @@
 	      (let [c (get (:statement-nodes ag2) (:conclusion an))
                     positions (get pm (:id an))
 
-                    arg-value 
+                    arg-value
 		    (cond (some (fn [p] (= (get l (:id p)) :in)) positions) 1.0
-			  (some (fn [p] (= (get l (:id p)) :undecided)) 
+			  (some (fn [p] (= (get l (:id p)) :undecided))
 				positions) 0.5
                           :else 0.0)
-                    
-                    conclusion-value  
-                    (cond (= (:weight c) 0.0) (:value c) 
+
+                    conclusion-value
+                    (cond (= (:weight c) 0.0) (:value c)
 			  ;; arguments don't affect value of facts
                           (= (:weight c) 1.0) (:value c)
 
-                          (and (= arg-value 1.0)  (:pro an)) 
+                          (and (= arg-value 1.0)  (:pro an))
                           1.0
 
-                          (and (= arg-value 1.0) (not (:pro an))) 
+                          (and (= arg-value 1.0) (not (:pro an)))
                           0.0
 
                           ;; otherwise don't change the value
                           :else (:value c))]
                 (-> ag2
                     (update-argument-node an :value arg-value)
-                    (update-statement-node c :value conclusion-value))))	         
+                    (update-statement-node c :value conclusion-value))))
             (initialize-statement-values ag)
             (vals (:argument-nodes ag)))))
 
 ;; The aspic-grounded evaluator uses grounded semantics
-(def aspic-grounded 
+(def aspic-grounded
      (reify ArgumentEvaluator
 	    (evaluate [this ag] (evaluate-grounded (reset-node-values ag)))
 	    (label [this node] (node-standard-label node))))
-
-
-
-
-
