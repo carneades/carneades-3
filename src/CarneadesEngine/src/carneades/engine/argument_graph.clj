@@ -438,12 +438,12 @@
 (defn undercutters
   "argument-graph argument-node -> (seq-of argument-node)"
   [ag an]
-  (let [atom `(~'undercut ~(:id an))
+  (let [atom `(~'valid ~(:id an))
         sn (get-statement-node ag atom)]
     (if (nil? sn)
       ()
       (map (fn [an-id] (get (:argument-nodes ag) an-id))
-           (:pro sn)))))
+           (:con sn)))))
 
 (defn schemes-applied
   "argument-graph statement -> (set-of string)"

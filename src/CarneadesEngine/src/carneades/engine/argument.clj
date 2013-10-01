@@ -1,13 +1,13 @@
 ;;; Copyright (c) 2011 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(ns 
+(ns
   ^{:doc "Provides a data structure for representing one-step arguments.
           The premises and conclusion of an argument are statements,
           representing propositional or predicate logic literals.
           An argument need not be fully instantiated; the premises
           and conclusion of the argument may contain free variables."}
-  
+
   carneades.engine.argument
   (:use carneades.engine.uuid
         carneades.engine.statement
@@ -28,7 +28,7 @@
   [m]
   ;; {:pre [(not (contains? m :pro))
   ;;        (not (contains? m :con))]}
-  (let [m2 (merge (Premise. 
+  (let [m2 (merge (Premise.
                     nil    ; statement
                     true   ; positive
                     ""     ; role
@@ -41,7 +41,7 @@
                                (:positive m2))
                           (and (literal-neg? (:statement m2))
                                 (not (:positive m2)))))))
-  
+
 (defn make-premise [& key-values]
   (map->premise (apply hash-map key-values)))
 
@@ -53,7 +53,7 @@
 (defn premise-literal
   "premise -> literal"
   [premise]
-  (if (:positive premise) 
+  (if (:positive premise)
     (:statement premise)
     (literal-complement (:statement premise))))
 
@@ -86,10 +86,10 @@
    :post [(instance? java.lang.Boolean %)]}
   (-> arg (argument-variables) (empty?)))
 
-(defn map->argument 
+(defn map->argument
   "Makes a one-step argument."
   [m]
-  (let [m2 (merge  (Argument. 
+  (let [m2 (merge  (Argument.
                      nil          ; id
                      nil          ; header
                      nil          ; scheme
@@ -103,10 +103,10 @@
                   m)]
     ; normalize the conclusion and direction of the arguments
     ; and assign the argument an id if needed
-    (assoc m2 
+    (assoc m2
            :id (if (:id m) (:id m) (make-urn-symbol))
-           :conclusion (if (literal-pos? (:conclusion m2)) 
-                          (:conclusion m2)  
+           :conclusion (if (literal-pos? (:conclusion m2))
+                          (:conclusion m2)
                           (literal-complement (:conclusion m2)))
            :pro  (or (and (literal-pos? (:conclusion m2))
                           (:pro m2))
@@ -119,13 +119,13 @@
 
 (defn conclusion-literal
   "argument -> literal
-   Returns the conclusion of the argument as a positive 
+   Returns the conclusion of the argument as a positive
    literal, if the argument is pro, or negative literal,
    if the argument is con."
   [arg]
   {:pre [(argument? arg)]}
-  (if (:pro arg) 
-    (:conclusion arg) 
+  (if (:pro arg)
+    (:conclusion arg)
     (literal-complement (:conclusion arg))))
 
 (defn instantiate-argument
@@ -145,18 +145,3 @@
      :premises (map update-statement (:premises arg))
      :exceptions (map update-statement (:exceptions arg))
      :conclusion (apply-substitutions subs (:conclusion arg)))))
-
-(defn make-undercutters
-  "argument -> seq-of argument
-   Returns an undercutter for each exception of the argument"
-  [arg]
-  (map (fn [e]
-         (make-argument
-          :id (make-urn-symbol)
-          :scheme (safe-read-string (:role e))
-          :conclusion `(~'undercut ~(:id arg))
-          :premises [e]))
-       (:exceptions arg)))
-  
-
-
