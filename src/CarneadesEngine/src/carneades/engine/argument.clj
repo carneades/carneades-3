@@ -145,3 +145,15 @@
      :premises (map update-statement (:premises arg))
      :exceptions (map update-statement (:exceptions arg))
      :conclusion (apply-substitutions subs (:conclusion arg)))))
+
+(defn make-undercutters
+  "argument -> seq-of argument
+   Returns an undercutter for each exception of the argument"
+  [arg]
+  (map (fn [e]
+         (make-argument
+          :id (make-urn-symbol)
+          :scheme (safe-read-string (:role e))
+          :conclusion `(~'undercut ~(:id arg))
+          :premises [e]))
+       (:exceptions arg)))

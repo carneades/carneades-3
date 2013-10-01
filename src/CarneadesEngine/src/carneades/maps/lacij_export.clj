@@ -68,12 +68,6 @@
     (add-decorator svgmap argid (make-plusdecorator))
     (add-decorator svgmap argid (make-minusdecorator))))
 
-(defn undercutter?
-  [ag arg]
-  (let [stmtconclusion (map->statement ((:statement-nodes ag) (:conclusion arg)))]
-    (and (= 'valid (literal-predicate stmtconclusion))
-         (not (:pro arg)))))
-
 (defn scheme->str
   [scheme]
   (cond (nil? scheme) ""
