@@ -182,7 +182,6 @@
         layouttype (get options :layout :hierarchical)
         svgmap (graph :width width :height height)
         svgmap (add-markers svgmap)
-        ag (apply subset-ag ag options)
         svgmap (add-entities svgmap ag stmt-str)
         svgmap (link-entities svgmap ag)
         optionsseq (flatten (seq options))
