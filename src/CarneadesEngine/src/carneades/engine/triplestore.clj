@@ -213,7 +213,7 @@ The IRI is returned with its last slash doubled."
           (list s p o))))
 
 (defn envelop-sexp
-  "Transforms an sexp of the form (a b c) into ((a b c)."
+  "Transforms an sexp of the form (a b c) into ((a b c))."
   [sexp]
   (if (seq? (first sexp))
     sexp

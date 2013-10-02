@@ -13,6 +13,12 @@
             [carneades.engine.argument :as a])
   (:refer-clojure :exclude [name namespace]))
 
+(defn uri?
+  "Returns true if the sexp represents an uri."
+  [sexp]
+  ;; TODO: would match only URL for now
+  (re-matches #"^.+://.+" (pr-str sexp)))
+
 (defn namespace
   "Returns a string describing the namespace of atom."
   [atom]
@@ -50,22 +56,22 @@
 (defn to-relative-atom
   "Converts this atom to a relative atom."
   [atom namespaces]
-  ;; (prn "[to-relative-atom] atom=" atom)
-  ;; (prn "namespaces=")
-  ;; (pprint namespaces)
   (let [rnamespaces (set/map-invert namespaces)]
     (cond (st/variable? atom) atom
           (symbol? atom) (let [n (str atom)]
                            (if (re-matches #"^.+://[^:]+" n)
-                             (symbol (reduce (fn [n [namespace prefix]]
-                                               ;; (prn "namespace=" namespace)
-                                               ;; (prn "prefix=" prefix)
+                             (let [s (reduce (fn [n [namespace prefix]]
                                                (if (empty? prefix)
-                                                 (s/replace n namespace prefix)
+                                                 n
                                                  (s/replace n namespace (str prefix ":"))))
                                              n
-                                             rnamespaces))
+                                             rnamespaces)
+                                   s (if-let [namespace (get namespaces "")]
+                                       (s/replace s namespace "")
+                                       s)]
+                               (symbol s))
                              atom))
+          (string? atom) atom
           :else
           (doall (map #(to-relative-atom % namespaces) atom)))))
 
