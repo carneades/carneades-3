@@ -20,7 +20,9 @@
             [carneades.database.case :as case]
             [carneades.project.admin :as project]
             [clojure.string :as str]
-            [carneades.policy-analysis.web.controllers.reconstruction :as recons]))
+            [carneades.policy-analysis.web.controllers.reconstruction :as recons]
+            [carneades.engine.translation :as tr]
+            [carneades.engine.theory.translation :as ttr]))
 
 (defmulti ajax-handler (fn [json _ _] (ffirst json)))
 
@@ -34,12 +36,12 @@
   [json session request]
   (debug "======================================== request handler! ==============================")
   (let [{:keys [question project]} (:request json)
-        ;; _ (pprint "project=") _ (pprint project)
         policy (project/load-theory (:id project) (:policies project))
-        ;; _ (pprint "policy=") _ (pprint policy)
         session (assoc session
                   :query (get-main-issue policy (symbol question))
-                  :policies policy)
+                  :policies policy
+                  :translator (comp (tr/make-default-translator)
+                                    (ttr/make-language-translator (:language policy))))
         session (start-engine session)]
     {:session session
      :body (json-str {:questions (:last-questions session)})}))
@@ -113,7 +115,8 @@
   (info "[new-session] lang =" lang)
   ;; (info "current-policy: " (deref current-policy))
   {:lang lang
-   :project "copyright"})
+   :project "copyright"
+   })
 
 (defmethod ajax-handler :reset
   [json session request]
@@ -127,13 +130,8 @@
 
 (defn process-ajax-request
   [request]
-  (let [{:keys [session body params]} request
-        json (read-json (slurp body))
-        json (dissoc json :uuid)
-        _ (info "JSON =")
-        _ (info json)
-        res (ajax-handler json session request)]
-    res))
+  (let [{:keys [session body params]} request]
+    (ajax-handler params session request)))
 
 (defn init-page
   []
