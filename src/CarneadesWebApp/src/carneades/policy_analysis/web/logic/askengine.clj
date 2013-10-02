@@ -9,6 +9,7 @@
         (carneades.policy-analysis.web.logic questions)
         [clojure.tools.logging :only (info debug error)])
   ;; (:require [carneades.database.argument-graph :as ag-db])
+  (:require [carneades.engine.translation :as tr])
   (:import java.io.File))
 
 (defn get-remaining-questions
@@ -54,7 +55,7 @@
         ;; rejects answers with a weight of 0.0
         rejected-statements (filter (fn [s] ((answers s) 0.0)) answers-statements)
         ag (reject ag rejected-statements)
-        ag (enter-language ag (-> session :policies :language) (:namespaces session))
+        ag (tr/translate-ag ag (:translator session))
         ag (evaluate aspic-grounded ag)
         ag (if (fn? (:post-build session))
              ((:post-build session) ag)
