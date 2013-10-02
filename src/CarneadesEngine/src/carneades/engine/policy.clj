@@ -4,7 +4,9 @@
 (ns carneades.engine.policy
   (:use (carneades.engine statement theory argument-graph aspic argument-evaluation utils)
         [clojure.tools.logging :only (info debug error)])
-  (:require [carneades.config.config :as config]))
+  (:require [carneades.config.config :as config]
+            [carneades.engine.translation :as tr]
+            [carneades.engine.theory.translation :as ttr]))
 
 (defn get-policies
   [questionid theory]
@@ -16,7 +18,7 @@
 
 (defn get-policy-statements
   [policy]
-  (filter #(= (term-functor %) 'valid)
+  (filter #(= (term-functor %) 'is-valid)
    (mapcat #(map (fn [p] (literal-atom (:statement p))) (:premises %)) (:schemes policy))))
 
 (defn evaluate-policy
@@ -29,7 +31,8 @@
         statements-to-reject (mapcat get-policy-statements other-policies)
         ag (reject ag statements-to-reject)
         ag (accept ag statements-to-accept)
-        ag (enter-language ag (:language theory))
+        ag (tr/translate-ag ag (comp (tr/make-default-translator)
+                                     (ttr/make-language-translator (:language theory))))
         ag (evaluate aspic-grounded ag)]
     ag))
 
