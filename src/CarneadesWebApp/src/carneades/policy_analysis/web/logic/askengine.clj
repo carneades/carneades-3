@@ -85,8 +85,10 @@
 
 (defn- ask-user
   [session]
-  {:pre [(not (nil? (:policies session)))]}
+  {:pre [(not (nil? (:policies session)))
+         (not (nil? (:lang session)))]}
   (prn "[ask-user]")
+
   (let [{:keys [last-question lang last-id policies]} session
         [last-questions last-id] (get-structured-questions last-question
                                                            lang
