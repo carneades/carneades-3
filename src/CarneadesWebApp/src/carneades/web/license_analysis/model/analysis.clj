@@ -32,7 +32,10 @@
             [carneades.engine.statement :as st]
             [carneades.engine.argument-evaluation :as evaluation]
             [carneades.engine.caes :refer [caes]]
-            [carneades.engine.theory.namespace :as namespace]))
+            [carneades.engine.theory.namespace :as namespace]
+            [carneades.web.license-analysis.model.triplestore :as tp]
+            [carneades.engine.translation :as tr]
+            [carneades.engine.theory.translation :as ttr]))
 
 (defn initial-state
   []
@@ -253,18 +256,6 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
     (prn "nb statements=" (count (:statement-nodes ag)))
     (prn "AG NUMBER = " agnumber)))
 
-(defn get-licenses
-  "Returns the template licenses for a given entity"
-  [entity endpoint repo-name markos-namespaces]
-  (let [conn (triplestore/make-conn endpoint repo-name markos-namespaces)
-        query (list (list 'lic:coveringLicense entity '?lic)
-                    '(lic:template ?lic ?tpl))
-        query (namespace/to-absolute-literal query markos-namespaces)
-        bindings (triplestore/sparql-query conn query markos-namespaces)
-        tpls (set (map #(get % '?/tpl) bindings))
-        tpls (map #(namespace/to-absolute-literal % markos-namespaces) tpls)]
-    tpls))
-
 (defn on-ag-built
   [nb-licenses ag]
   (assoc ag :header (dc/make-metadata
@@ -283,10 +274,10 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
         triplestore (:triplestore properties)
         repo-name (:repo-name properties)
         markos-namespaces (:namespaces properties)
-        licenses (get-licenses (unserialize-atom entity)
-                               triplestore
-                               repo-name
-                               markos-namespaces)
+        licenses (tp/get-licenses (unserialize-atom entity)
+                                  triplestore
+                                  repo-name
+                                  markos-namespaces)
         licenses-statements (map #(unserialize-atom
                                    (format "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing %s %s)"
                                            entity
@@ -295,6 +286,10 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
         theories (:policies properties)
         query (first licenses-statements)
         loaded-theories (project/load-theory project theories)
+        translator (comp (tr/make-default-translator)
+                         (ttr/make-language-translator (:language loaded-theories))
+                         (ttr/make-uri-shortening-translator markos-namespaces)
+                         (tp/make-uri-translator triplestore repo-name markos-namespaces))
         [argument-from-user-generator questions send-answer]
         (ask/make-argument-from-user-generator (fn [p] (questions/askable? loaded-theories p)))
         ag (get-ag project "")
@@ -319,6 +314,7 @@ for instance (\"fn:\" \"http://www.w3.org/2005/xpath-functions#\") "
                   :dialog (dialog/make-dialog)
                   :last-id 0
                   :namespaces markos-namespaces
+                  :translator translator
                   :post-build (partial on-ag-built (count licenses-statements))
                   }
         analysis (policy/get-ag-or-next-question analysis)]

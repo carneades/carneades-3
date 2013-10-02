@@ -55,8 +55,8 @@ project."})
                                                 :negative "%s is not reciprocal license"
                                                 :question "Is %s a reciprocal license?")})
           (t/make-role :symbol 'http://www.markosproject.eu/ontologies/licenses#coveringLicense
-                          :forms {:en (t/make-form :positive "%s has a license: %s (coveringLicense)"
-                                                   :negative "%s has not a license: %s (coveringLicense)"
+                          :forms {:en (t/make-form :positive "%s has a license: %s"
+                                                   :negative "%s does not have a license: %s"
                                                    :question "")})
           (t/make-role :symbol 'http://www.markosproject.eu/ontologies/licenses#template
                           :forms {:en (t/make-form :positive "The template license of %s is %s"
