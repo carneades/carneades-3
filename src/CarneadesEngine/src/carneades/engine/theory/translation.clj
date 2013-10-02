@@ -43,7 +43,7 @@
           pred (st/literal-predicate (:literal context))
           lang (tr/get-lang context)]
       (if (has-translation? language pred lang)
-        (let [fstring (-> language pred :forms lang :positive)
+        (let [fstring (get-in language [pred :forms lang (context :direction :positive)])
               translation (apply format fstring (format-literal-args atom language lang))]
           (assoc context :translation translation))
         context))))
