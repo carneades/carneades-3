@@ -60,15 +60,7 @@ PM.find_available_lang = function(current_policy) {
     }
 };
 
-// sectionid, optional, is the section to jump to
-// subset, optional, is a subset of policies to show
-PM.display_policies = function(project, sectionid, subset) {
-    PM.load_project(project);
-
-    PM.show_menu({text: PM.project.get('title'),
-                  link: "#/project/" + PM.project.id},
-                 PM.policies_menu(IMPACT.db));
-
+PM.display_theory = function(project, sectionid, subset) {
     PM.current_policy.fetch({success:
                              function() {
                                  var ids = [];
@@ -117,8 +109,7 @@ PM.display_policies = function(project, sectionid, subset) {
                                      $('.policies-filtering').show();
                                  }
 
-                                 _.each(ids, function(policyid) {
-                                     $('#input' + policyid).click(_.bind(PM.on_select_policy, PM, policyid));
+                                 _.each(ids, function(policyid) {                                     $('#input' + policyid).click(_.bind(PM.on_select_policy, PM, policyid));
                                  });
 
                                  if(sectionid != undefined) {
@@ -137,7 +128,18 @@ PM.display_policies = function(project, sectionid, subset) {
 
                              }
                             });
+}
 
+// sectionid, optional, is the section to jump to
+// subset, optional, is a subset of policies to show
+PM.display_policies = function(project, sectionid, subset) {
+    PM.load_project(project);
+
+    PM.show_menu({text: PM.project.get('title'),
+                  link: "#/project/" + PM.project.id},
+                 PM.policies_menu(IMPACT.db));
+
+    PM.display_theory(project, sectionid, subset);
 };
 
 PM.on_select_policy = function(id) {

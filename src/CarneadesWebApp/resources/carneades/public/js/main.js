@@ -27,7 +27,8 @@ var PM = {
     args: [],
     projects: [],
     projects_theories: [],
-    projects_documents: []
+    projects_documents: [],
+    entity: undefined, // software entity analysed
 };
 
 // argument browser
@@ -155,6 +156,9 @@ PM.dispatch_url = function(sections) {
     } else if(sections[1] = "license-analysis" &&
               sections[2] == "introduction") {
         carneades.web.license_analysis.views.introduction.show(sections[3]);
+    } else if(sections[1] = "license-analysis" &&
+              sections[2] == "theory") {
+        carneades.web.license_analysis.views.theory.show(sections[3]);
     }
 };
 
