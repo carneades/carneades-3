@@ -10,13 +10,16 @@
             [ring.middleware.format-response :refer [wrap-restful-response]]
             [ring.middleware.stacktrace :refer [wrap-stacktrace]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
-            [carneades.web.license-analysis.routes.service :refer [license-analysis-routes]]))
+            [carneades.web.license-analysis.routes.service :refer [license-analysis-routes]]
+            [clj-logging-config.log4j :refer :all]))
 
 (defroutes carneades-webapp-routes
   policy-analysis-routes
   (context "/license-analysis" []
            (-> license-analysis-routes
                (wrap-restful-response))))
+
+(set-logger! :pattern "[%c]%n%m%n" :level :info)
 
 (def carneades-webapp
   (-> carneades-webapp-routes
