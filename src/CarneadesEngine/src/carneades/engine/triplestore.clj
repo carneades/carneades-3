@@ -7,6 +7,7 @@
         [carneades.engine.utils :only [unserialize-atom]])
   (:require [clojure.walk :as w]
             [clojure.string :as s]
+            [clojure.tools.logging :refer [info debug error]]
             edu.ucdenver.ccp.kr.sesame.kb
             [edu.ucdenver.ccp.kr.kb :as kb]
             [edu.ucdenver.ccp.kr.rdf :as rdf]
@@ -236,6 +237,7 @@ argument if is the case."
   [kbconn goal subs]
   (let [query (sexp->sparqlquery goal)]
     ;; (prn "issuing ask= " query)
+    (debug "query= " query)
     (if (sparql/ask (:kb kbconn) query)
       (do
         ;; (prn "positive answer")

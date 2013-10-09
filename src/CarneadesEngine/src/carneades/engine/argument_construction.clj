@@ -12,7 +12,7 @@
         carneades.engine.argument
         carneades.engine.argument-generator
         carneades.engine.argument-builtins)
-  (:require [clojure.tools.logging :refer [info debug]]))
+  (:require [clojure.tools.logging :refer [info debug spy]]))
 
 (defrecord ArgumentTemplate
   [guard       ; term with all unbound variables of the argument
@@ -295,8 +295,8 @@
   (let [goal (get (:goals state1) id),
         state2 (remove-goal state1 id)]
      ;; (prn "[reduce-goal]")
-     ;; (prn "goal = ")
-     ;; (pprint goal)
+    (debug "goal")
+    (spy goal)
     (if (empty? (:issues goal))
       state2 ; no issues left in the goal
       (let [issue (apply-substitutions (:substitutions goal) (first (:issues goal)))]
