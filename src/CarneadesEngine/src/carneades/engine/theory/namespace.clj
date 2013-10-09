@@ -139,5 +139,8 @@
      (loop [loc (tz/theory-zip theory)]
        (if (z/end? loc)
          (z/root loc)
-         (let [loc (z/edit loc to-absolute-section namespaces)]
-           (recur (z/next loc)))))))
+         (do
+           (prn "z/node=")
+           (prn (z/node loc))
+           (let [loc (z/edit loc to-absolute-section namespaces)]
+             (recur (z/next loc))))))))

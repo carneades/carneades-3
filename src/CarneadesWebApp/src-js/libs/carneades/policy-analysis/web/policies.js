@@ -166,16 +166,28 @@ PM.should_be_displayed = function(section, subset) {
 };
 
 PM.theory_outline_text = function(sections, urlfragment, subset) {
+    if(_.isNil(sections) || _.isEmpty(sections)) {
+        return "";
+    }
+
     var text = "<ul>";
 
     _.each(sections, function(section) {
-               if(PM.should_be_displayed(section, subset)) {
-                   text += '<li><a href="#/{0}/{1}">{2}</a></li>'.format(urlfragment,
-                                                                         section.id,
-                                                                         PM.title_text(section.header));
-                   text += PM.theory_outline_text(section.sections, urlfragment, subset);
-               }
-           });
+        console.log("section");
+        console.log(section);
+
+        if(PM.should_be_displayed(section, subset)) {
+            // TODO: the links need to be application dependent
+            // i.e. links should be different if generate for the policy or from the license
+
+            // tools
+            // text += '<li><a href="#/{0}/{1}">{2}</a></li>'.format(urlfragment,
+            //                                                       section.id,
+            //                                                       PM.title_text(section.header));
+            text += '<li>' + PM.title_text(section.header) + '</li>';
+            text += PM.theory_outline_text(section.sections, urlfragment, subset);
+        }
+    });
 
     text += "</ul>";
 
