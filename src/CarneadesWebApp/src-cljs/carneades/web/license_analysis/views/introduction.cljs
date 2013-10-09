@@ -4,7 +4,8 @@
             [carneades.analysis.web.template :as tp]
             [carneades.analysis.web.views.header :as header]
             [carneades.analysis.web.dispatch :as dispatch]
-            [carneades.web.license-analysis.views.debug.facts :as facts]))
+            [carneades.web.license-analysis.views.debug.facts :as facts]
+            [carneades.web.license-analysis.views.menu :refer [lic-menu]]))
 
 ;; http://<markos-server-domain>/markos/#/license-analysis/introduction?entity=<project-uri>
 
@@ -40,7 +41,10 @@
 (defn ^:export show
   [project]
   (js/PM.load_project project)
-  (header/show {:text :home
-                :link "#/home"})
-  (inner ($ ".content") (tp/get "license_introduction" {}))
-  (attach-listeners))
+  (let [entity (.parameter js/jQuery.address "entity")]
+    (aset js/PM "entity" entity)
+    (header/show {:text :home
+                  :link "#/home"}
+                 (lic-menu project entity))
+    (inner ($ ".content") (tp/get "license_introduction" {}))
+    (attach-listeners)))
