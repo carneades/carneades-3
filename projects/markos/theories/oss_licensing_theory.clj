@@ -87,6 +87,8 @@ project."})
    :sections
    [(t/make-section
      :id 'ontology-axioms
+     :header (dc/make-metadata :title "Open Source Software Ontology axioms"
+                               :description {:en ""})
      :schemes {};; (:axioms oss-licensing-ontology)
      )
     ;; Should we import the axioms from the ontology, or will the

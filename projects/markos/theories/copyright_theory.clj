@@ -52,6 +52,8 @@
    [(t/make-section
      :id 'ontology-axioms
      :schemes {} ;; (:axioms copyright-ontology)
+     :header (dc/make-metadata :title "Copyright Ontology axioms"
+                               :description {:en ""})
      )
 
     (t/make-section
@@ -105,3 +107,5 @@
       ;;             (a/pm '(usedWork ?U ?W2))])
 
       ] )]))
+
+;; (pprint copyright-law-theory)
