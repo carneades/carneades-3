@@ -328,7 +328,7 @@
    :conclusion (literal-atom literal)
    :pro (literal-pos? literal)))
 
-                                        ; The scope of section ids is their theory
+;; The scope of section ids is their theory
 
 (defrecord Section
     [id          ; symbol

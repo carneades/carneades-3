@@ -18,6 +18,6 @@
 through the sections of the theory."
   [theory]
   (z/zipper may-have-children?
-            :sections
+            (comp seq :sections)
             make-node
             theory))
