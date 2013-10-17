@@ -7,7 +7,8 @@
             [carneades.engine.theory :as t]
             [carneades.project.admin :as project]
             [carneades.owl.owl :as o]
-            [carneades.engine.argument :as a])
+            [carneades.engine.argument :as a]
+            [clojure.tools.logging :refer [info debug error spy]])
   (:import [org.semanticweb.owlapi.model OWLLogicalAxiom AxiomType ClassExpressionType]))
 
 (declare class-expression->sexpr)
@@ -186,6 +187,8 @@
         range-sexpr (class-expression->sexpr range vary),
         prop (.getProperty axiom),
         prop-sexpr (property-expression->sexpr prop varx vary)]
+    (spy range-sexpr)
+    (spy prop-sexpr)
     (list (t/make-scheme
            :header (dc/make-metadata)
            :id (gensym "range-axiom")
@@ -327,7 +330,7 @@
     AxiomType/DATA_PROPERTY_ASSERTION (prop-assertion->schemes axiom)
 
     (do
-      (println "unsupported axiom type            : " (.getAxiomType axiom))
+      (info "unsupported axiom type            : " (.getAxiomType axiom))
       ())))
 
 (defn ontology->schemes

@@ -7,7 +7,7 @@
         [carneades.engine.utils :only [unserialize-atom]])
   (:require [clojure.walk :as w]
             [clojure.string :as s]
-            [clojure.tools.logging :refer [info debug error]]
+            [clojure.tools.logging :refer [info debug error spy]]
             edu.ucdenver.ccp.kr.sesame.kb
             [edu.ucdenver.ccp.kr.kb :as kb]
             [edu.ucdenver.ccp.kr.rdf :as rdf]
@@ -237,7 +237,8 @@ argument if is the case."
   [kbconn goal subs]
   (let [query (sexp->sparqlquery goal)]
     ;; (prn "issuing ask= " query)
-    (debug "query= " query)
+    (debug "ask ")
+    (spy query)
     (if (sparql/ask (:kb kbconn) query)
       (do
         ;; (prn "positive answer")
@@ -297,6 +298,8 @@ argument if is the case."
   with the goal as a query, if some new bindings are returned we
   construct one argument for each binding."
   [kbconn goal subs namespaces]
+  (debug "query ")
+  (spy goal)
   (let [bindings (sparql-query kbconn goal namespaces)]
     (map #(make-response-from-binding kbconn goal subs %) bindings)))
 
