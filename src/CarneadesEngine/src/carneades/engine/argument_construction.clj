@@ -294,9 +294,8 @@
   ;; are passed down to the children of the goal, so they are not lost by removing the goal.
   (let [goal (get (:goals state1) id),
         state2 (remove-goal state1 id)]
-     ;; (prn "[reduce-goal]")
     (debug "goal")
-    (spy goal)
+    ;; (spy goal)
     (if (empty? (:issues goal))
       state2 ; no issues left in the goal
       (let [issue (apply-substitutions (:substitutions goal) (first (:issues goal)))]
@@ -318,8 +317,8 @@
                                                          (generate g (literal-complement issue)
                                                                    (:substitutions goal))))
                                                generators2))]
-              ;; (prn "responses=" )
-              ;; (pprint responses)
+              ;; (debug "responses")
+              ;; (spy responses)
               (reduce (fn [s r] (apply-response s goal r))
                       state2
                       responses))))))))
@@ -333,16 +332,24 @@
   (if (or (empty? (:open-goals state1))
           (<= max-goals 0))
     (do
-      (if (empty? (:open-goals state1))
-        (prn "EMPTY GOALS")
-        (prn "EXHAUSTED"))
+      (debug "EMPTY GOALS")
+      (debug "EXHAUSTED")
       state1)
     (let [id (first (:open-goals state1))]
       (if (not id)
         state1
-        (recur (reduce-goal state1 id generators)
-               (dec max-goals)
-               generators)))))
+        (let [res (reduce-goal state1 id generators)]
+          (debug "reduce-goal is finished")
+          (debug max-goals)
+          (spy (count res))
+          (spy (count (:goals res)))
+          (spy (count (:open-goals res)))
+          ;; (when (< max-goals 270)
+          ;;   (debug "result")
+          ;;   (spy res))
+         (recur res
+                (dec max-goals)
+                generators))))))
 
 (defn- notify-observers
   "Informs generators satisfying the ArgumentConstructionObserver protocol that
