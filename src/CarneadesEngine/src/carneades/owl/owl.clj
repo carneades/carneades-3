@@ -29,6 +29,12 @@ loaded."
        (.addIRIMapper manager automapper)
        (.loadOntologyFromOntologyDocument manager (io/input-stream url)))))
 
+(defn ranges-in-closure
+  "Returns the ranges of the property defined in the current ontology or in its
+  imports."
+  [property ontology]
+  (set (mapcat #(.getRanges property %) (conj (set (.getImports ontology)) ontology))))
+
 ;; (defn owl?
 ;;   [url]
 ;;   (= (:tag (xml/parse url)) :rdf:RDF))
