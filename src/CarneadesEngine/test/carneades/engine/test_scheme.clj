@@ -1,59 +1,59 @@
-;;; Copyright (c) 2010 Fraunhofer Gesellschaft 
+;;; Copyright (c) 2010 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.engine.test-scheme
   (:use clojure.pprint
         [clojure.test :exclude [function?]]
-        (carneades.engine statement argument argument-graph shell argument scheme 
+        (carneades.engine statement argument argument-graph shell argument theory
          aspic dublin-core argument-evaluation policy ask  argument-generator)
         carneades.maps.lacij)
   (:require [carneades.project.admin :as project]))
 
-(def theory1 
+(def theory1
      (make-theory
-      :sections 
-      [(make-section 
-	:schemes 
-	[(make-scheme                            
+      :sections
+      [(make-section
+	:schemes
+	[(make-scheme
           :conclusion '(flies ?x)
           :premises [(pm '(bird ?x))]
           :exceptions [(pm '(penguin ?x))])])
-       
+
        (make-section
-	:schemes 
+	:schemes
 	[(make-scheme
           :conclusion '(movable ?x)
           :premises [(pm '(coins ?x))])
-	 
+
 	 (make-scheme
           :conclusion '(money ?x)
           :premises [(pm '(coins ?x))])
-	 
+
 	 (make-scheme
           :id 'r1
           :conclusion '(goods ?x)
           :premises [(pm '(movable ?x))]
           :exceptions [(pm '(money ?x))])
-	 
+
 	 (make-scheme
           :conclusion '(not (goods ?x))
           :premises [(pm '(edible ?x))])])
-       
+
        (make-section
-	:schemes 
+	:schemes
 	[(make-scheme
           :conclusion '(prior ?r2 ?r1)
           :premises [(pm '(enacted ?r1 ?d1))
                      (pm '(enacted ?r2 ?d2))
                      (pm '(later ?d2 ?d1))])])
-       
-       (make-section 
-	:schemes 
-	[(make-scheme 
+
+       (make-section
+	:schemes
+	[(make-scheme
           :name "Reverse"
           :conclusion '(rev ?x ?y)
           :premises [(pm '(eval ?y (reverse ?x)))])
-	 
+
 	 (make-scheme
           :name "Taxable Income"
           :conclusion '(taxable-income ?x ?t)
@@ -61,7 +61,7 @@
                      (pm '(deductions ?x ?d))
                      (pm '(eval ?t (- ?i ?d)))])
 
-         (make-scheme                            
+         (make-scheme
           :id 'poz-1584-1-1
           :header (make-metadata :title "Poz. 1584.1.1"
                                  :description {:en ""})
@@ -72,65 +72,65 @@
                      (pm '(eval ?G (let [x (float (* ?I 0.12)) ; 12%
                                          min 40000] ; 12%
                                      (if (< x min) min x))))])
-	 
-	 (make-scheme 
+
+	 (make-scheme
           :name "Phd"
           :conclusion '(has-phd ?x)
           :premises [(pm '(title ?x ?y))
                      (pm '(= ?y Dr))])
-	 
+
 	 (make-scheme
           :name "Enrolled"
           :conclusion '(enrolled ?x)
           :premises [(pm '(status ?x ?y))
                      (pm '(not= ?y exempted))])])
-       
-       (make-section  
+
+       (make-section
 	:schemes
 	[(axiom '(permitted (drink-alcohol ?x)))
-	 
+
 	 (make-scheme
 	  :id 'not-obligated
 	  :conclusion '(not (obligated (not ?P)))
 	  :premises    [(pm '(permitted ?P))])
-	 
-	 (make-scheme 
+
+	 (make-scheme
 	  :conclusion '(not (permitted ?P))
 	  :premises    [(pm '(obligated (not ?P)))])])
-       
+
        (make-section
 	:schemes
 	[(make-scheme
           :conclusion '(ancestor ?x ?y)
           :premises [(pm '(parent ?x ?y))])
-	 
+
 	 (make-scheme
 	  :conclusion '(ancestor ?x ?y)  ; y is an ancestor of x
 	  :premises [(pm '(parent ?x ?z)) ; z is a parent of x
 		     (pm '(ancestor ?z ?y))])])
-       
-       
+
+
        (make-section  ; support cycle
-	:schemes 
-	[(make-scheme 
+	:schemes
+	[(make-scheme
           :id 'r1
           :conclusion '(bar ?x)
           :premises [(pm '(foo ?x))])
-	 
+
 	(make-scheme
           :id 'r2
           :conclusion '(foo ?x)
           :premises [(pm '(bar ?x))])])]))
 
 
-(def max-goals 10000)  
-(def generators (list (generate-arguments-from-theory theory1)))                  
+(def max-goals 10000)
+(def generators (list (generate-arguments-from-theory theory1)))
 
 (defn ag [facts query]  ;
   "(seq-of literal) literal -> argument-graph
    construct and evaluate an argument graph"
   (argue (make-engine max-goals facts generators)
-          aspic-grounded 
+          aspic-grounded
          query))
 
 (deftest test-engine-facts
@@ -254,7 +254,7 @@
         query '(may-publish ?Person ?Work)
         ag (argue engine query)
         ag (evaluate aspic-grounded ag)]
-    
+
     (is (= 2 (count (arguments ag))))))
 
 ;; TODO: adapt to the new project structure
@@ -268,7 +268,7 @@
 ;;             (case (literal-predicate goal)
 ;;               scope-of-activities
 ;;               (build-answer s goal '[(scope-of-activities TO world-wide)])
-              
+
 ;;               advance-payment-percent
 ;;               (build-answer s goal '[(advanced-payment-percent TO 20)])
 
