@@ -4,9 +4,12 @@
 (ns ^{:doc "Converter from an annotated ontology to a language."}
   carneades.owl.import-language
   (:require [clojure.string :as s]
+            [clojure.pprint :refer :all]
             [carneades.engine.utils :refer [safe-read-string]]
-            [carneades.engine.theory :as t])
-  (:import [org.semanticweb.owlapi.model IRI AxiomType]))
+            [carneades.engine.theory :as t]
+            [clojure.tools.logging :refer [info debug spy]]
+            [carneades.owl.owl :as o])
+  (:import [org.semanticweb.owlapi.model IRI AxiomType EntityType]))
 
 (def ontology-iri "http://www.carneades.github.io/ontologies/carneades-annotations")
 
@@ -62,86 +65,72 @@
         (assoc language (:symbol idv) idv))
       language)))
 
-(defn add-annotated-individuals
-  "Adds the annotated individuals contained in the ontology to the language."
-  [ontology language]
-  (reduce (partial add-individual ontology)
-          language
-          (.getIndividualsInSignature ontology)))
-
 (defn property-ranges->type
   "Converts the ranges of a property to a language type"
   [property ontology]
-  (let [ranges (.getRanges property ontology)]
+  (let [ranges (o/ranges-in-closure property ontology)]
     (condp = (count ranges)
-      0 (throw (ex-info (str "Type is not defined for property " property)
-                        {:property property}))
+      0 (throw (ex-info (str "Range is not defined for property " property)
+                        {:property property
+                         :id (.toStringID property)}))
       1 (owl-entity->symbol (first ranges))
       (map owl-entity->symbol ranges))))
 
-(defn add-annotated-property
-  "Adds an annotated OWL property to the language.
-OWL properties are mapped to roles."
-  [ontology language property]
-  (let [anns (.getAnnotations property ontology)]
-    (if (some carneades-annotation? anns)
-      (let [role (apply t/make-role
-                        :type (property-ranges->type property ontology)
-                        :symbol (owl-entity->symbol property)
-                        (anns->language-elements anns))]
-        (assoc language (:symbol role) role))
-      language)))
+(defn add-class-annotation
+  "Adds a class annotation to the language."
+  [ontology language annotation entity]
+  (let [concept (apply t/make-concept :symbol (owl-entity->symbol entity)
+                       (anns->language-elements [annotation]))]
+    (assoc language (:symbol concept) concept)))
 
-(defn add-annotated-x-properties
-  "Adds OWL data or object properties to the language, depending of
-  the value of the f function."
-  [ontology language f]
-  (reduce (partial add-annotated-property ontology)
-          language
-          (f ontology)))
+(defn add-x-property-annotation
+  "Adds an object annotation to the language."
+  [ontology language annotation entity]
+  (let [role (apply t/make-role
+                    :type (property-ranges->type entity ontology)
+                    :symbol (owl-entity->symbol entity)
+                    (anns->language-elements [annotation]))]
+   (assoc language (:symbol role) role)))
 
-(defn add-annotated-data-properties
-  "Adds OWL data properties to the language as roles."
+(defn add-named-individual-annotation
+  "Adds an object annotation to the language."
+  [ontology language annotation entity]
+  (let [individual (apply t/make-individual
+                          :symbol (owl-entity->symbol entity)
+                          (anns->language-elements [annotation]))]
+    (assoc language (:symbol individual) individual)))
+
+(defn add-annotation-assertion
+  "Adds an annotation to the language."
+  [ontology language annotation]
+  (let [subject-iri (.getSubject annotation)
+        entities (.getEntitiesInSignature ontology (.getSubject annotation) true)
+        entity (first entities)]
+    (assert (= 1 (count entities)))
+    (condp = (.getEntityType entity)
+      EntityType/CLASS
+      (add-class-annotation ontology language annotation entity)
+
+      EntityType/DATA_PROPERTY
+      (add-x-property-annotation ontology language annotation entity)
+
+      EntityType/OBJECT_PROPERTY
+      (add-x-property-annotation ontology language annotation entity)
+
+      EntityType/NAMED_INDIVIDUAL
+      (add-named-individual-annotation ontology language annotation entity))))
+
+(defn add-annotation-assertions
+  "Adds annotations assertions to the language."
   [ontology language]
-  (add-annotated-x-properties ontology
-                              language
-                              (memfn getDataPropertiesInSignature)))
-
-(defn add-annotated-object-properties
-  "Adds OWL object properties to the language as roles."
-  [ontology language]
-  (add-annotated-x-properties ontology
-                              language
-                              (memfn getObjectPropertiesInSignature)))
-
-(defn add-annotated-properties
-  "Adds OWL properties to the language as roles."
-  [ontology language]
-  (->> language
-       (add-annotated-data-properties ontology ,,,)
-       (add-annotated-object-properties ontology ,,,)))
-
-(defn add-annotated-class
-  "Adds an OWL class to the language as a concept."
-  [ontology language class]
-  (let [anns (.getAnnotations class ontology)]
-    (if (some carneades-annotation? anns)
-      (let [concept (apply t/make-concept :symbol (owl-entity->symbol class)
-                           (anns->language-elements anns))]
-        (assoc language (:symbol concept) concept))
-      language)))
-
-(defn add-annotated-classes
-  "Adds OWL classes to the language as concepts."
-  [ontology language]
-  (reduce (partial add-annotated-class ontology)
-          language
-          (.getClassesInSignature ontology)))
+  (let [annotations (filter (every-pred #(= (.getAxiomType %) AxiomType/ANNOTATION_ASSERTION)
+                                        carneades-annotation?)
+                            (.getAxioms ontology))]
+    (reduce (partial add-annotation-assertion ontology)
+            language
+            annotations)))
 
 (defn ontology->language
   "Converts the annotated individuals and properties into a language."
   [ontology]
-  (->> {}
-       (add-annotated-individuals ontology ,,,)
-       (add-annotated-properties ontology ,,,)
-       (add-annotated-classes ontology ,,,)))
+  (add-annotation-assertions ontology {}))

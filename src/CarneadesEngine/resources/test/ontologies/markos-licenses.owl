@@ -61,6 +61,7 @@
 
     <owl:ObjectProperty rdf:about="http://www.markosproject.eu/ontologies/licenses#template">
         <rdfs:label xml:lang="en">Template</rdfs:label>
+        <ca:hint>{:en &quot;Hint for template&quot;}</ca:hint>
         <rdfs:comment xml:lang="en">The CopyrightLicenseTemplate the sucject CopyrightLicense conforms to. </rdfs:comment>
         <rdfs:domain rdf:resource="http://www.markosproject.eu/ontologies/licenses#CopyrightLicense"/>
         <rdfs:range rdf:resource="http://www.markosproject.eu/ontologies/licenses#CopyrightLicenseTemplate"/>
