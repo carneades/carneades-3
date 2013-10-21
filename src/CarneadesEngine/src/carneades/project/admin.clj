@@ -35,10 +35,15 @@
         projects (filter project? dirs)]
     (map (memfn getName) projects)))
 
+(defn get-project-path
+  "Returns the absolute path of the project."
+  [project]
+  (str projects-directory file-separator project))
+
 (defn- get-properties-path
   "Returns the path of the project's properties"
   [project]
-  (let [project-path (str projects-directory file-separator project)
+  (let [project-path (get-project-path project)
         properties-path (str project-path file-separator "properties.clj")]
     properties-path))
 
@@ -90,7 +95,7 @@ can be of the form \"theory\" or \"project/theory\". The former refers
   "Loads the theory of a project"
   [project theory]
   {:pre [(not (nil? project))]}
-  (let [project-path (str projects-directory file-separator project)
+  (let [project-path (get-project-path project)
         theory-path (absolute-theory-path project theory)]
     (theory/load-theory theory-path)))
 
@@ -103,7 +108,7 @@ can be of the form \"theory\" or \"project/theory\". The former refers
 (defn list-theories-files
   "Returns a list of available theories files for the project."
   [project]
-  (let [project-path (str projects-directory file-separator project)
+  (let [project-path (get-project-path project)
         theories-dir (str project-path file-separator theories-directory)
         files (fs/find-files theories-dir #".*\.clj")
         names (map (memfn getName) files)]
