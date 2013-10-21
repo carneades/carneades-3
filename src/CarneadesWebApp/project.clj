@@ -11,7 +11,7 @@
                  [ring/ring-servlet "1.0.1"]
                  [ring-middleware-format "0.3.0"]
                  [ring/ring-json "0.2.0"]
-                 [carneades/carneades-engine "2.0.0"]
+                 [carneades/carneades-engine "2.0.1"]
                  [carneades-web-service "1.0.0-SNAPSHOT"]
                  [org.clojars.pallix/mygengo "1.0.0"]
                  [jayq "2.3.0"]
@@ -86,8 +86,16 @@
                "firefox"
                ["firefox" :stdout ".repl-firefox-out" :stderr ".repl-firefox-err"]}}
   :ring {:handler carneades.analysis.web.routes-dev/carneades-webapp}
-  ;; to build a WAR, run ./scripts/build-war.sh
-  :profiles {:standalone {:main carneades.analysis.web.routes-selfexe}
+  :repositories {"sonatype-oss-public"
+                 "https://oss.sonatype.org/content/groups/public/"}
+  :profiles {;; self executable JAR with embedded Jetty
+             :standalone {:main carneades.analysis.web.routes-selfexe}
+
+             ;; WAR archive for application server.
+             ;; To build a WAR, run ./scripts/build-war.sh
              :war {:ring {:handler carneades.analysis.web.routes-war/carneades-webapp}
-                   :sub ["../CarneadesWebService"]}}
-  )
+                   :sub ["../CarneadesWebService"]}
+
+             :dev {:source-paths ["dev"]
+                   :dependencies [[org.clojure/tools.namespace "0.2.5-SNAPSHOT"]
+                                  [org.clojure/java.classpath "0.2.0"]]}})

@@ -3,9 +3,9 @@
 
 (ns ^{:doc "Defines the protocol for argument generators."}
   carneades.engine.argument-generator
-  (:use carneades.engine.argument
-        carneades.engine.statement
-        carneades.engine.unify))
+  (:require  [carneades.engine.argument :refer :all]
+             [carneades.engine.statement :refer :all]
+             [carneades.engine.unify :refer :all]))
 
 ; The record to be returned by argument generators.
 (defrecord Response

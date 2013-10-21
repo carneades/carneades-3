@@ -1,7 +1,7 @@
 ;;; Copyright (c) 2012 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(defproject carneades/carneades-engine "2.0.0"
+(defproject carneades/carneades-engine "2.0.1"
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojars.pallix/owlapi "3.4.5"]
@@ -19,6 +19,6 @@
                  [clj-logging-config/clj-logging-config "1.9.10"]
                  [org.clojure/tools.namespace "0.2.4"]
                  [midje "1.5.1"]]
-  :aot [carneades.engine.argument-evaluation]
+  ;; :aot [carneades.engine.argument-evaluation]
   :description "Carneades is an argument mapping application, with a graphical \nuser interface, and a software library for building applications supporting \nvarious argumentation tasks. This is the software library (the engine)."
   :cljsbuild {:builds []})
