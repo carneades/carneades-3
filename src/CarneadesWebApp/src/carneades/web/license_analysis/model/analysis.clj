@@ -150,6 +150,7 @@
                                   triplestore
                                   repo-name
                                   markos-namespaces)
+        _ (prn "licenses retrieved")
         licenses-statements (map #(unserialize-atom
                                    (format "(http://www.markosproject.eu/ontologies/copyright#mayBeLicensedUsing %s %s)"
                                            entity
@@ -158,6 +159,7 @@
         theories (:policies properties)
         query (first licenses-statements)
         loaded-theories (project/load-theory project theories)
+        _ (prn "theory loaded")
         translator (comp (tr/make-default-translator)
                          (ttr/make-language-translator (:language loaded-theories))
                          (ttr/make-uri-shortening-translator markos-namespaces)
@@ -173,6 +175,7 @@
                                     triplestore-generator
                                     (theory/generate-arguments-from-theory loaded-theories)
                                     argument-from-user-generator))
+        _ (prn "engine constructed")
         future-ag (future (shell/argue+ engine licenses-statements))
         analysis {:ag nil
                   :project project

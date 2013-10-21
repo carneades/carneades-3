@@ -55,6 +55,13 @@
 
 (def ^{:dynamic true} *debatedb-name* "debates")
 
+(defn start
+  []
+  (reset! state (init-projects-data)))
+
+(defn stop
+  [])
+
 (defroutes carneades-web-service-routes
 
   ;; Projects
