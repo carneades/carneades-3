@@ -14,8 +14,7 @@
         [ring.middleware.json :only [wrap-json-params]]
         [ring.middleware.keyword-params :only [wrap-keyword-params]]
         [ring.middleware.stacktrace :only [wrap-stacktrace]]
-        [carneades.web.license-analysis.routes.service :only [license-analysis-routes]]
-        [clj-logging-config.log4j :refer :all])
+        [carneades.web.license-analysis.routes.service :only [license-analysis-routes]])
   (:require [compojure.route :as route]
             [compojure.handler :as handler]))
 
@@ -24,17 +23,6 @@
   (context "/carneades/license-analysis" [] (wrap-restful-response license-analysis-routes))
   (context "/carneadesws" [] (wrap-restful-response carneades-web-service-routes)))
 
-(set-logger! :pattern "[%c]%n%m%n" :level :debug)
-
-(set-loggers! "org.mortbay.log" {:level :info}
-              "httpclient.wire.header" {:level :info}
-              "org.apache.commons.httpclient.HttpMethodBase" {:level :info}
-              "org.apache.commons.httpclient.methods.EntityEnclosingMethod" {:level :info}
-              "org.openrdf.http.client.HTTPClient" {:level :info}
-              "org.apache.commons.httpclient.HttpConnection" {:level :info}
-              "org.apache.commons.httpclient.MultiThreadedHttpConnectionManager" {:level :info}
-              "org.apache.commons.httpclient.util.IdleConnectionHandler" {:level :info}
-              "org.xml.sax.XMLReader" {:level :info})
 
 (def carneades-webapp
   (-> carneades-webapp-routes
