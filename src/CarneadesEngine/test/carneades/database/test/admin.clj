@@ -2,8 +2,7 @@
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.database.test.admin
-  (:use [clojure.test :only [deftest is use-fixtures]]
-        [carneades.engine.uuid :only [make-uuid-str]])
+  (:use [carneades.engine.uuid :only [make-uuid-str]])
   (:require [carneades.database.case :as case]
             [carneades.database.db :as db]
             [carneades.engine.utils :as utils]
