@@ -238,7 +238,7 @@ greater than the length of s."
 Raise an exception if any deletion fails unless silently is true."
   [f & [silently]]
   (let [f (file f)]
-    (if (.isDirectory f)
+    (when (.isDirectory f)
       (doseq [child (.listFiles f)]
         (delete-file-recursively child silently)))
     (delete-file f silently)))

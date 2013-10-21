@@ -8,117 +8,123 @@
             [carneades.database.db :as db]
             [carneades.engine.utils :as utils]
             [clojure.java.jdbc :as jdbc]
-            [clojure.java.io :as io])
+            [clojure.java.io :as io]
+            [carneades.project.admin :as project]
+            [midje.sweet :refer :all])
   (:import java.io.File))
 
-(def project-name (str "testproject-" (make-uuid-str)))
+(def state (atom nil))
 
-(def dbname (str "testdb-debate-" (make-uuid-str)))
-
-(def debate1name (make-uuid-str))
-
-(defn create-tmp-db
+(defn initial-state-value
   []
-  (case/create-debate-database project-name dbname "root" "pw1")
-  (db/with-db (db/make-connection project-name dbname "root" "pw1")
-    (case/create-debate {:id debate1name :public false})))
+  {:project-name (str "testproject-" (make-uuid-str))
+   :dbname (str "testdb-debate-" (make-uuid-str))
+   :debate1name (make-uuid-str)})
 
-(defn delete-tmp-project
+(defn create-database
   []
-  (utils/delete-file-recursively project-name))
+  (reset! state (initial-state-value))
+  (let [{:keys [project-name dbname debate1name]} @state]
+    (case/create-debate-database project-name dbname  "root" "pw1")
+    (db/with-db (db/make-connection project-name dbname "root" "pw1")
+      (case/create-debate {:id debate1name :public false}))))
 
-(defn db-fixture [x]
-  (create-tmp-db)
-  (x)
-  ;; (delete-tmp-project)
-  )
+(defn delete-database
+  []
+  (utils/delete-file-recursively (project/get-project-path (:project-name @state))))
 
-(use-fixtures :once db-fixture) 
+(with-state-changes [(before :facts (create-database))
+                     (after :facts (delete-database))]
+  (fact "It is possible to create a poll."
+        (db/with-db (db/make-connection (:project-name @state)
+                                        (:dbname @state)
+                                        "root"
+                                        "pw1")
+         (let [userid (make-uuid-str)
+               casedb (make-uuid-str)
+               poll-to-create {:mainissueatompredicate "may-publish"
+                               :casedb casedb
+                               :opinion 0.1234
+                               :userid userid}
+               debate1name (:debate1name @state)
+               returned-pollid (case/create-poll debate1name poll-to-create [])
+               polls (case/list-polls debate1name)
+               poll (first (filter (fn [p] (= (:userid p) userid)) polls))]
+           (expect (:opinion poll) => (:opinion poll-to-create))
+           (expect (:mainissueatompredicate poll) => (:mainissueatompredicate poll-to-create)))))
 
-(deftest test-create-poll
-  (db/with-db (db/make-connection project-name dbname "root" "pw1")
-    (let [userid (make-uuid-str)
-          casedb (make-uuid-str)
-          poll-to-create {:mainissueatompredicate "may-publish"
-                          :casedb casedb
-                          :opinion 0.1234
-                          :userid userid}
-          returned-pollid (case/create-poll debate1name poll-to-create [])
-          polls (case/list-polls debate1name)
-          poll (first (filter (fn [p] (= (:userid p) userid)) polls))]
-      (is (not (nil? poll)))
-      (is (= (:opinion poll-to-create) (:opinion poll)))
-      (is (= (:mainissueatompredicate poll-to-create) (:mainissueatompredicate poll))))))
+  (fact "The reading of a poll is coherent."
+        (db/with-db (db/make-connection (:project-name @state) (:dbname @state) "root" "pw1")
+          (let [userid (make-uuid-str)
+                casedb (make-uuid-str)
+                poll-to-create {:mainissueatompredicate "may-publish"
+                                :casedb casedb
+                                :opinion 0.1234
+                                :userid userid}
+                debate1name (:debate1name @state)
+                pollid (case/create-poll debate1name poll-to-create [])
+                poll (case/read-poll pollid)]
+            (expect (:opinion poll) => (:opinion poll-to-create))
+            (expect (:mainissueatompredicate poll) => (:mainissueatompredicate poll-to-create))
+            (expect (:userid poll) => userid))))
 
-(deftest test-read-poll
-  (db/with-db (db/make-connection project-name dbname "root" "pw1")
-    (let [userid (make-uuid-str)
-          casedb (make-uuid-str)
-          poll-to-create {:mainissueatompredicate "may-publish"
-                          :casedb casedb
-                          :opinion 0.1234
-                          :userid userid}
-          pollid (case/create-poll debate1name poll-to-create [])
-          poll (case/read-poll pollid)]
-      (is (not (nil? poll)))
-      (is (= (:opinion poll-to-create) (:opinion poll)))
-      (is (= (:mainissueatompredicate poll-to-create) (:mainissueatompredicate poll)))
-      (is (= userid (:userid poll))))))
+  (fact "Updating a poll works."
+        (db/with-db (db/make-connection (:project-name @state) (:dbname @state) "root" "pw1")
+          (let [userid (make-uuid-str)
+                casedb (make-uuid-str)
+                poll-to-create {:mainissueatompredicate "may-publish"
+                                :casedb casedb
+                                :opinion 0.1234
+                                :userid userid}
+                debate1name (:debate1name @state)
+                pollid (case/create-poll debate1name poll-to-create [])
+                poll (case/read-poll pollid)
+                new-opinion 0.654
+                modification-success (case/update-poll pollid {:opinion new-opinion})
+                modified-poll (case/read-poll pollid)]
+            (expect modification-success => true)
+            (expect (:opinion modified-poll) => new-opinion))))
 
-(deftest test-update-poll
-  (db/with-db (db/make-connection project-name dbname "root" "pw1")
-    (let [userid (make-uuid-str)
-          casedb (make-uuid-str)
-          poll-to-create {:mainissueatompredicate "may-publish"
-                          :casedb casedb
-                          :opinion 0.1234
-                          :userid userid}
-          pollid (case/create-poll debate1name poll-to-create [])
-          poll (case/read-poll pollid)
-          new-opinion 0.654
-          modification-success (case/update-poll pollid {:opinion new-opinion})
-          modified-poll (case/read-poll pollid)]
-      (is modification-success)
-      (is (= new-opinion (:opinion modified-poll))))))
+  (fact "Counting the result of a poll works."
+        (db/with-db (db/make-connection (:project-name @state) (:dbname @state) "root" "pw1")
+          (jdbc/do-commands "DELETE FROM policy"
+                            "DELETE FROM vote"
+                            "DELETE FROM poll")
+          (let [userid (make-uuid-str)
+                casedb (make-uuid-str)
+                poll-to-create {:mainissueatompredicate "may-publish"
+                                :casedb casedb
+                                :opinion 0.1234
+                                :userid userid}
+                casedb (make-uuid-str)
+                poll-to-create2 {:mainissueatompredicate "may-publish"
+                                 :casedb casedb
+                                 :opinion 0.5
+                                 :userid userid}
+                debate1name (:debate1name @state)
+                pollid (case/create-poll debate1name poll-to-create [])
+                pollid2 (case/create-poll debate1name poll-to-create2 [])]
+            (expect (case/count-polls-for-debate debate1name) => 2))))
 
-(deftest test-count-polls-for-debate
-  (db/with-db (db/make-connection project-name dbname "root" "pw1")
-    (jdbc/do-commands "DELETE FROM policy"
-                      "DELETE FROM vote"
-                      "DELETE FROM poll")
-    (let [userid (make-uuid-str)
-          casedb (make-uuid-str)
-          poll-to-create {:mainissueatompredicate "may-publish"
-                          :casedb casedb
-                          :opinion 0.1234
-                          :userid userid}
-          casedb (make-uuid-str)
-          poll-to-create2 {:mainissueatompredicate "may-publish"
-                          :casedb casedb
-                          :opinion 0.5
-                          :userid userid}
-          pollid (case/create-poll debate1name poll-to-create [])
-          pollid2 (case/create-poll debate1name poll-to-create2 [])]
-      (is (= 2 (case/count-polls-for-debate debate1name))))))
-
-(deftest test-get-policies-for-debate
-  (db/with-db (db/make-connection project-name dbname "root" "pw1")
-    (jdbc/do-commands "DELETE FROM policy"
-                      "DELETE FROM vote"
-                      "DELETE FROM poll")
-    (let [userid (make-uuid-str)
-          casedb (make-uuid-str)
-          poll-to-create {:mainissueatompredicate "may-publish"
-                          :casedb casedb
-                          :opinion 0.1234
-                          :userid userid}
-          casedb (make-uuid-str)
-          poll-to-create2 {:mainissueatompredicate "may-publish"
-                          :casedb casedb
-                          :opinion 0.5
-                          :userid userid}
-          pollid (case/create-poll debate1name poll-to-create ["a" "b" "c"])
-          pollid2 (case/create-poll debate1name poll-to-create2 ["b" "c"])
-          policies (case/get-policies-for-debate debate1name)
-          fpolicies (frequencies policies)]
-      (is (= 5 (count policies))))))
+  (fact "Getting the preferred policies of a debate works."
+        (db/with-db (db/make-connection (:project-name @state) (:dbname @state) "root" "pw1")
+          (jdbc/do-commands "DELETE FROM policy"
+                            "DELETE FROM vote"
+                            "DELETE FROM poll")
+          (let [userid (make-uuid-str)
+                casedb (make-uuid-str)
+                poll-to-create {:mainissueatompredicate "may-publish"
+                                :casedb casedb
+                                :opinion 0.1234
+                                :userid userid}
+                casedb (make-uuid-str)
+                poll-to-create2 {:mainissueatompredicate "may-publish"
+                                 :casedb casedb
+                                 :opinion 0.5
+                                 :userid userid}
+                debate1name (:debate1name @state)
+                pollid (case/create-poll debate1name poll-to-create ["a" "b" "c"])
+                pollid2 (case/create-poll debate1name poll-to-create2 ["b" "c"])
+                policies (case/get-policies-for-debate debate1name)
+                fpolicies (frequencies policies)]
+            (expect (count policies) => 5)))))
