@@ -3,11 +3,11 @@
 
 (ns carneades.engine.test-scheme
   (:use clojure.pprint
-        [clojure.test :exclude [function?]]
         (carneades.engine statement argument argument-graph shell argument theory
          aspic dublin-core argument-evaluation policy ask  argument-generator)
         carneades.maps.lacij)
-  (:require [carneades.project.admin :as project]))
+  (:require [carneades.project.admin :as project]
+            [midje.sweet :refer :all :exclude [facts]]))
 
 (def theory1
      (make-theory
@@ -133,106 +133,106 @@
           aspic-grounded
          query))
 
-(deftest test-engine-facts
+(fact "Facts are in."
   (let [facts '((bird Tweety)
 		(bird Peppie)
 		(bird Pilot)
 		(bird Ozzie))
 	query '(bird Tweety)]
-    (is (in? (ag facts query) query))))
+    (expect (in? (ag facts query) query) => true)))
 
-(deftest test-engine-variable
+(fact  "Variables are unified"
   (let [facts '((bird Tweety)
 		(bird Peppie)
 		(bird Pilot)
 		(bird Ozzie))
 	query '(bird ?x)]
-    (is (in? (ag facts query) '(bird Tweety)))))
+    (expect (in? (ag facts query) '(bird Tweety)) => true)))
 
-(deftest test-engine-rule
+(fact "Rules works."
   (let [facts '((coins item1))
 	query '(money ?x)]
-    (is (in? (ag facts query) '(money item1)))))
+    (expect (in? (ag facts query) '(money item1)) => true)))
 
-(deftest test-engine-conjunction
+(fact "Conjunctions can be used"
   (let [facts '((enacted r1 d1)
 		(enacted r2 d2)
 		(later d2 d1))
 	query '(prior ?x ?y)]
-    (is (in? (ag facts query) '(prior r2 r1)))))
+    (expect (in? (ag facts query) '(prior r2 r1)) => true)))
 
-(deftest test-engine-unless1
+(fact "Rules with exception work."
   (let [facts '((movable item1))
 	query '(goods ?x)]
-    (is (in? (ag facts query) '(goods item1)))))
+    (expect (in? (ag facts query) '(goods item1)) => true)))
 
-(deftest test-engine-unless2
+(fact "Rules with exception work."
   (let [facts '((coins item1))
 	query '(goods ?x)]
-    (is (undecided? (ag facts query) '(goods item1)))))
+    (expect (undecided? (ag facts query) '(goods item1)) => true)))
 
-(deftest test-engine-rebuttal
+(fact "Rebuttals work."
   (let [facts '((movable item1)
 		(edible item1))
 	query '(goods ?x)]
-    (is (undecided? (ag facts query) '(goods item1)))))
+    (expect (undecided? (ag facts query) '(goods item1)) => true)))
 
-(deftest test-engine-negative-query
+(fact "Negative query works."
   (let [facts '((edible i1))
         query '(not (goods ?x))]
-    (is (out? (ag facts query) '(goods i1)))))
+    (expect (out? (ag facts query) '(goods i1)) => true)))
 
-(deftest test-engine-eval1
+(fact "Eval works."
   (let [facts ()
 	query '(rev '(1 2 3 4) ?y)]
     ;; to do: find some way to modify eval so that the list being
     ;; reversed doesn't need to be quoted
-    (is (in? (ag facts query) '(rev '(1 2 3 4) (4 3 2 1))))))
+    (expect (in? (ag facts query) '(rev '(1 2 3 4) (4 3 2 1))) => true)))
 
-(deftest test-engine-eval2
+(fact "Eval with some calculation works."
   (let [facts '((income Sam 60000)
 		(deductions Sam 7000))
 	query '(taxable-income Sam ?r)]
-    (is (in? (ag facts query) '(taxable-income Sam 53000)))))
+    (expect (in? (ag facts query) '(taxable-income Sam 53000)) => true)))
 
-(deftest test-engine-eval3
+(fact "Eval with calculation works."
   (let [facts '((low-or-early-advance-payment TO)
                 (scope-of-activities TO world-wide)
                 (annual-income TO 350000))
         query '(minimum-guarantee ?O ?S)]
-    (is (in? (ag facts query) '(minimum-guarantee TO 42000.0)))))
+    (expect (in? (ag facts query) '(minimum-guarantee TO 42000.0)) => true)))
 
-(deftest test-engine-equal
+(fact "Equals works."
   (let [facts '((title Joe Dr))
 	query '(has-phd ?x)]
-    (is (in? (ag facts query) '(has-phd Joe)))))
+    (expect (in? (ag facts query) '(has-phd Joe)) => true)))
 
-(deftest test-deontic-logic1
+(fact "Deontic logic example works."
   (let [facts '((permitted (drink-alcohol Tom)))
         query '(obligated (not (drink-alcohol Tom)))]
-    (is (out? (ag facts query) query))))
+    (expect (out? (ag facts query) query) => true)))
 
 ;; Notice the difference to the previous test, where the
 ;; (permitted (dring-alcohol Tom)) is accepted as a
 ;; fact, rather than derived from an axiom, i.e. strict rule.
 
-(deftest test-deontic-logic2
+(fact "The deontic logic example 2 works."
   (let [facts '()
         query '(obligated (not (drink-alcohol Tom)))]
-    (is (out? (ag facts query) query))))
+    (expect (out? (ag facts query) query) => true)))
 
-(deftest test-engine-not-equal
+(fact "The not equal predicate works."
   (let [facts '((status Lea exempted)
 		(status Joe active))
 	query '(enrolled Joe)
         ag1 (ag facts query)]
     ;; (view ag1)
-    (is (in? ag1 '(enrolled Joe)))))
+    (expect (in? ag1 '(enrolled Joe)) => true)))
 
-(deftest test-engine-cyclic-rules
-  (is (undecided? (ag () '(foo a)) '(foo a))))
+(fact "Cyclic rules are undecided"
+  (expect (undecided? (ag () '(foo a)) '(foo a)) => true))
 
-(deftest test-transitivity
+(fact "Transitivity works."
   (let [facts '((parent Tom Gloria)
 	      (parent Tom Jack)
 	      (parent Gloria Ruth)
@@ -240,9 +240,9 @@
 	      (parent Jack Frederick)
 	      (parent Jack Elsie)),
 	query '(ancestor ?x ?y)]
-    (is (in? (ag facts query) '(ancestor Tom Elsie)))))
+    (expect (in? (ag facts query) '(ancestor Tom Elsie)) => true)))
 
-(deftest test-argumentmissing
+(fact "There is no regression wrt. the construction of arguments"
   (let [copyright-theory (project/load-theory "copyright" "copyright_policies")
         ag (make-argument-graph)
         ag (accept ag '((type-of-use (the-use P W) non-commercial)
@@ -255,7 +255,7 @@
         ag (argue engine query)
         ag (evaluate aspic-grounded ag)]
 
-    (is (= 2 (count (arguments ag))))))
+    (expect (count (arguments ag)) => 2)))
 
 ;; TODO: adapt to the new project structure
 ;; (deftest test-argumentconstruction-blocked
@@ -286,7 +286,7 @@
 ;;         ag (argue engine query)]
 ;;     (is (= 4 (count (arguments ag))))))
 
-(deftest test-argumentconstruction-blocked2
+(fact "Construction argument from an ontology works."
   (let [copyright-theory (project/load-theory "copyright" "copyright_policies")
         ag (make-argument-graph)
         fake-argument-from-user
@@ -305,7 +305,7 @@
                                             (generate-arguments-from-theory copyright-theory)))
         query '(may-publish ?Person ?Work)
         ag (argue engine query)]
-    (is (= 1 (count (arguments ag))))))
+    (expect (count (arguments ag)) => 1)))
 
 ;; TODO: adapt to the new project structure
 ;; (deftest test-goal-missing
