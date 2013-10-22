@@ -1,41 +1,39 @@
-;;; Copyright © 2010 Fraunhofer Gesellschaft 
+;;; Copyright © 2010 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
 (ns carneades.engine.test-unify
-  (:use clojure.test
-        carneades.engine.statement
-        carneades.engine.unify))
+  (:require [carneades.engine.statement :refer :all]
+            [carneades.engine.unify :refer :all]
+            [midje.sweet :refer :all] ))
 
-(deftest test-unify
-  (is (= {'?x '?y} (unify '?x '?y)))
-  (is (= {'?x :a} (unify '?x :a)))
-  (is (= nil (unify :a :b)))
-  (is (= {} (unify :a :a)))
-  (is (= {} (unify 1 1)))
-  (is (= nil (unify 1 2)))
-  (is (= {} (unify "this" "this")))
-  (is (= nil (unify "this" "that")))
-  (is (= {} (unify 'a 'a)))
-  (is (= nil (unify 'a 'b)))
-  (is (= {} (unify true true)))
-  (is (= nil (unify true false)))
-  (is (= {'?x 3 '?y 2} (unify '(1 2 ?x 4) '(1 ?y 3 4))))
-  (is (= {'?x 3 '?y 2} (unify [1 2 '?x 4] [1 '?y 3 4])))
-  (is (= {'?x 1 '?y 2} (unify {:a '?x :b 2} {:a 1 :b '?y})))
-  (is (= {'?x 'a}) (unify (make-statement :atom '(p a b))
-                         (make-statement :atom '(p ?x b))))
-  (is (= {'?x 'a}) (unify (make-statement :atom '(p a b))
-                         '(p ?x b)))
-  (is (= nil (unify (make-statement) (make-statement))))
-  (is (= nil (unify (make-statement :id 's1 :positive true)
-                    (make-statement :id 's2 :positive false))))
-  (is (= {'?x 'b} (unify (make-statement :positive false :atom '(p a b c))
-                    '(not (p a ?x c))))))
+(fact "The unify function works."
+      (expect (unify '?x '?y) => {'?x '?y})
+      (expect (unify '?x :a) => {'?x :a})
+      (expect (unify :a :b) => nil)
+      (expect (unify :a :a) => {})
+      (expect (unify 1 1) => {})
+      (expect (unify 1 2) => nil)
+      (expect (unify "this" "this") => {})
+      (expect (unify "this" "that") => nil)
+      (expect (unify 'a 'a) => {})
+      (expect (unify 'a 'b) => nil)
+      (expect (unify true true) => {})
+      (expect (unify true false) => nil)
+      (expect (unify '(1 2 ?x 4) '(1 ?y 3 4)) => {'?x 3 '?y 2})
+      (expect (unify [1 2 '?x 4] [1 '?y 3 4]) => {'?x 3 '?y 2})
+      (expect (unify {:a '?x :b 2} {:a 1 :b '?y}) => {'?x 1 '?y 2})
+      (expect (unify (make-statement :atom '(p a b))
+                         (make-statement :atom '(p ?x b))) => {'?x 'a})
+      (expect (unify (make-statement :atom '(p a b))
+                         '(p ?x b)) => {'?x 'a})
+      (expect (unify (make-statement) (make-statement)) => nil)
+      (expect (unify (make-statement :id 's1 :positive true)
+                          (make-statement :id 's2 :positive false)) => nil)
+      (expect (unify (make-statement :positive false :atom '(p a b c))
+                               '(not (p a ?x c))) => {'?x 'b}))
 
-  ; to do: further tests, e.g. for compound terms and statements used as terms
-  
-(deftest test-rename-variables
+(fact "The renaming of the variables works."
   (let [s '(a ?x ?y)
         slet '(let [x (* ?I 0.04) min 6000] (if (< x min) min x))]
-    (is (not= (second (rename-variables {} s)) s))
-    (is (not= (second (rename-variables {} slet)) slet))))
+    (expect  (second (rename-variables {} s)) =not=> s)
+    (expect (second (rename-variables {} slet)) =not=> slet)))
