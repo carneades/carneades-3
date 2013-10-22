@@ -1,25 +1,25 @@
 (ns carneades.engine.triplestore-test
-  (:use carneades.engine.triplestore
-        clojure.test
-        clojure.pprint)
   (:require [carneades.engine.argument-generator :as generator]
             [carneades.engine.shell :as shell]
             [carneades.engine.caes :as caes]
             [carneades.engine.argument-graph :as ag]
-            [carneades.maps.lacij :as lacij]))
+            [carneades.maps.lacij :as lacij]
+            [midje.sweet :refer :all]
+            [clojure.pprint :refer :all]
+            [carneades.engine.triplestore :refer :all]))
 
-(deftest test-generate-arguments-from-triplestore-grounded
+(fact "Grounded goal are accepted by the trieplstore generator."
   (let [url "http://dbpedia.org/sparql"
         goal '(rdf/type dbpedia/Carneades dbpedia-owl/Philosopher)
         subs '{?a "a" ?b "b"}
         triplestore-generator (generate-arguments-from-triplestore url)
         responses (generator/generate triplestore-generator goal subs)]
-    (is (not (empty? responses)))
-    (is (= (count responses) 1))
-    (is (= (-> (first responses) :argument :conclusion) goal))
-    (is (= (-> (first responses) :substitutions) subs))))
+    (expect (not (empty? responses)) => true)
+    (expect (count responses) => 1)
+    (expect (-> (first responses) :argument :conclusion) => goal)
+    (expect (-> (first responses) :substitutions) => subs)))
 
-(deftest test-generate-arguments-from-triplestore-with-iri
+(fact "Goal containing IRI are accepted by the triplestore generator."
   (let [url "http://dbpedia.org/sparql"
         goal '(rdf/type
                http://dbpedia.org/resource/Carneades
@@ -27,32 +27,32 @@
         subs '{?a "a" ?b "b"}
         triplestore-generator (generate-arguments-from-triplestore url)
         responses (generator/generate triplestore-generator goal subs)]
-    (is (not (empty? responses)))
-    (is (= (count responses) 1))
-    (is (= (-> (first responses) :argument :conclusion) goal))
-    (is (= (-> (first responses) :substitutions) subs))))
+    (expect (not (empty? responses)) => true)
+    (expect (count responses) => 1)
+    (expect (-> (first responses) :argument :conclusion) => goal)
+    (expect (-> (first responses) :substitutions) => subs )))
 
-(deftest test-generate-arguments-from-triplestore-notgrounded
+(fact "Goal containg variables are accepted by the triplestore generator."
   (let [url "http://dbpedia.org/sparql"
         goal '(rdf/type dbpedia/Carneades ?x)
         subs '{?a "a" ?b "b"}
         triplestore-generator (generate-arguments-from-triplestore url)
         responses (generator/generate triplestore-generator goal subs)]
-    (is (not (empty? responses)))
-    (is (>= (count responses) 10))
-    (is (not= (:substitutions (first responses)) subs))))
+    (expect (not (empty? responses)) => true)
+    (expect (>= (count responses) 10) => true)
+    (expect (:substitutions (first responses)) =not=> subs)))
 
-(deftest test-generate-arguments-from-triplestore-concept
+(fact "Goal representing concept are accepted by the triplestore generator."
   (let [url "http://dbpedia.org/sparql"
         goal '(http://dbpedia.org/class/yago/HellenisticEraPhilosophersInAthens ?x)
         subs '{?a "a" ?b "b"}
         triplestore-generator (generate-arguments-from-triplestore url)
         responses (generator/generate triplestore-generator goal subs)]
-    (is (not (empty? responses)))
-    (is (>= (count responses) 10))
-    (is (not= (:substitutions (first responses)) subs))))
+    (expect (not (empty? responses)) => true)
+    (expect (>= (count responses) 10) => true)
+    (expect (:substitutions (first responses)) =not=> subs)))
 
-(deftest test-generate-arguments-from-triplestore-xsdstring-convertion
+(fact "Convertion from string to xsd:string are performed by the triplestore generator."
   (let [url "http://markos.man.poznan.pl/openrdf-sesame"
         repo "markos_test_sp2"
         goal '(http://www.markosproject.eu/ontologies/software#name ?x "org.apache.log4j")
@@ -60,15 +60,15 @@
         triplestore-generator (generate-arguments-from-triplestore url repo {})
         responses (generator/generate triplestore-generator goal subs)
         ]
-    (is (not (empty? responses)))
-    (is (>= (count responses) 5))
-    (is (not= (:substitutions (first responses)) subs))))
+    (expect (not (empty? responses)) => true)
+    (expect (>= (count responses) 5) => true)
+    (expect (:substitutions (first responses)) =not=> subs)))
 
-(deftest test-generate-arguments-from-triplestore-with-engine
+(fact "Arguments can be generated from a triplestore generator."
   (let [generators [(generate-arguments-from-triplestore "http://dbpedia.org/sparql")]
         graph (shell/argue (shell/make-engine 50 [] generators)
                            caes/caes
                            '(rdf/type dbpedia/Carneades ?x))]
     ;; (pprint graph)
     ;; (lacij/export graph "/tmp/carneades.svg")
-    (is (>= (count (ag/arguments graph)) 10))))
+    (expect (>= (count (ag/arguments graph)) 10) => true)))
