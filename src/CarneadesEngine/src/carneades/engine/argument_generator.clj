@@ -5,7 +5,8 @@
   carneades.engine.argument-generator
   (:require  [carneades.engine.argument :refer :all]
              [carneades.engine.statement :refer :all]
-             [carneades.engine.unify :refer :all]))
+             [carneades.engine.unify :refer :all])
+  (:gen-class))
 
 ; The record to be returned by argument generators.
 (defrecord Response
