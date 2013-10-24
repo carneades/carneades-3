@@ -39,8 +39,6 @@
 
 (defn render-introduction
   [entity]
-  (log "render! entity=" entity)
-  (log entity)
   (inner ($ ".content") (tp/get "license_introduction" {:entity (:name entity)}))
   (attach-listeners))
 

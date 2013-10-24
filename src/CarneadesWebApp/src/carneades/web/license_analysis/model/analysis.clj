@@ -3,7 +3,7 @@
 
 (ns ^{:doc "Analysis of licenses."}
   carneades.web.license-analysis.model.analysis
-  (:use [clojure.tools.logging :only (info debug error)]
+  (:use [clojure.tools.logging :only [info debug spy error]]
         [carneades.engine.dialog :only [add-answers]]
         [carneades.database.export :only [export-to-argument-graph]])
   (:require [clojure.pprint :refer [pprint]]
@@ -35,7 +35,8 @@
             [carneades.engine.theory.namespace :as namespace]
             [carneades.web.license-analysis.model.triplestore :as tp]
             [carneades.engine.translation :as tr]
-            [carneades.engine.theory.translation :as ttr]))
+            [carneades.engine.theory.translation :as ttr]
+            [carneades.web.license-analysis.model.entity :as entity]))
 
 (defn initial-state
   []
@@ -129,9 +130,9 @@
     (prn "AG NUMBER = " agnumber)))
 
 (defn on-ag-built
-  [nb-licenses ag]
+  [nb-licenses entity ag]
   (assoc ag :header (dc/make-metadata
-                     :title "Result of the analysis"
+                     :title (str "Result of the analysis of " (:name entity))
                      :description {:en (if (> nb-licenses 1)
                                          (format "The analysed sofware entity is using %s licenses templates. See below the analysis of the legal issues." nb-licenses)
                                          "See below the analysis of the legal issue.")})))
@@ -177,6 +178,7 @@
                                     argument-from-user-generator))
         _ (prn "engine constructed")
         future-ag (future (shell/argue+ engine licenses-statements))
+        entity (entity/get-software-entity project (unserialize-atom entity))
         analysis {:ag nil
                   :project project
                   :uuid (symbol (uuid/make-uuid-str))
@@ -190,7 +192,7 @@
                   :last-id 0
                   :namespaces markos-namespaces
                   :translator translator
-                  :post-build (partial on-ag-built (count licenses-statements))
+                  :post-build (partial on-ag-built (count licenses-statements) entity)
                   }
         analysis (policy/get-ag-or-next-question analysis)]
     (swap! state index-analysis analysis)
