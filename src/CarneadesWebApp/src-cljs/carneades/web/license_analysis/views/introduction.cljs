@@ -30,13 +30,22 @@
 (defn on-start-analysis
   []
   (let [entity (.parameter js/jQuery.address "entity")]
-    (log "entity=" entity)
     (dispatch/fire :license-analysis-start-facts-gathering {:entity entity}))
   false)
 
 (defn attach-listeners
   []
   (.click ($ "#start") on-start-analysis))
+
+(defn render-introduction
+  [entity]
+  (log "render! entity=" entity)
+  (log entity)
+  (inner ($ ".content") (tp/get "license_introduction" {:entity (:name entity)}))
+  (attach-listeners))
+
+(dispatch/react-to #{:license-analysis-entity-retrieved}
+                   (fn [_ msg] (render-introduction (:entity msg))))
 
 (defn ^:export show
   [project]
@@ -46,5 +55,9 @@
     (header/show {:text :home
                   :link "#/home"}
                  (lic-menu project entity))
-    (inner ($ ".content") (tp/get "license_introduction" {}))
-    (attach-listeners)))
+    (js/PM.ajax_get
+     (str js/IMPACT.license_analysis_wsurl "/software-entity/" project "/?id=" entity)
+     (fn [entity]
+       (dispatch/fire :license-analysis-entity-retrieved
+                      {:entity (js->clj entity :keywordize-keys true)}))
+     js/PM.on_error)))
