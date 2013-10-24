@@ -1,4 +1,5 @@
-(ns carneades.web.license-analysis.model.triplestore
+(ns ^{:doc "Information and URI translations from the triplestore."}
+  carneades.web.license-analysis.model.triplestore
   (:require [clojure.zip :as z]
             [clojure.pprint :refer [pprint]]
             [carneades.engine.statement :as st]

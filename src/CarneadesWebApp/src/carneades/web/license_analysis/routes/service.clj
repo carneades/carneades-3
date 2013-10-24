@@ -6,10 +6,20 @@
   (:use [compojure.core :only [defroutes GET POST]]
         [carneades.engine.utils :only [safe-read-string]])
   (:require [clojure.pprint :refer [pprint]]
+            [carneades.engine.utils :refer [unserialize-atom]]
             [carneades.web.license-analysis.model.debug-analysis :as debug-analysis]
-            [carneades.web.license-analysis.model.analysis :as analysis]))
+            [carneades.web.license-analysis.model.analysis :as analysis]
+            [carneades.web.license-analysis.model.entity :as entity]))
 
 (defroutes license-analysis-routes
+  (POST "/analyse" {params :params}
+        {:body (analysis/analyse params)})
+
+  (GET "/software-entity/:project/" {{id :id
+                                      project :project} :params}
+       {:body (entity/get-software-entity project (unserialize-atom id))})
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; debug ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   (POST "/debug/analyse" {params :params}
         {:body (debug-analysis/analyse params)})
 
@@ -27,8 +37,4 @@
                        limit :limit
                        endpoint :endpoint
                        repo-name :repo-name} :params}
-        {:body (debug-analysis/ask endpoint repo-name query limit)})
-
-  (POST "/analyse" {params :params}
-        {:body (analysis/analyse params)})
-  )
+        {:body (debug-analysis/ask endpoint repo-name query limit)}))
