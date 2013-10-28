@@ -34,7 +34,7 @@ mkdir config
 
 cp ../../../../doc/manual/out/manual.pdf ./doc/
 
-cp ../standalone+uberjar/carneades-webapp-1.0.0-SNAPSHOT-standalone.jar ./carneades-webapp.jar
+cp ../carneades-webapp-1.0.0-SNAPSHOT-standalone.jar ./carneades-webapp.jar
 
 cp ../../packaging/README.txt ./
 
