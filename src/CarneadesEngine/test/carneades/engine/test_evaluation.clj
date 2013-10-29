@@ -179,30 +179,30 @@
 ; Serial self defeat example, ibid., page 18
 
 ;; TODO:
-;; (fact "The self defeat example works."
-;;          (let [P  (make-statement :text {:en "Witness John says that he is unreliable."})
-;;                Q  (make-statement :text {:en "Witness John is unreliable."})
+(fact "The self defeat example works."
+         (let [P  (make-statement :text {:en "Witness John says that he is unreliable."})
+               Q  (make-statement :text {:en "Witness John is unreliable."})
 
-;;                ; The next argument is manually assigned an id, which can be used as
-;;                ; a constant term to refer to the argument in the undercutter, A3, below.
+               ; The next argument is manually assigned an id, which can be used as
+               ; a constant term to refer to the argument in the undercutter, A3, below.
 
-;;                A7 (make-argument :id 'A7 :conclusion Q :premises [(pm P)])
+               A7 (make-argument :id 'A7 :conclusion Q :premises [(pm P)])
 
-;;                ; The next argument illustrates how undercutters are now explicity
-;;                ; represented in Carneades.
+               ; The next argument illustrates how undercutters are now explicity
+               ; represented in Carneades.
 
-;;                A8 (make-argument
-;;                     :id 'A8
-;;                     :conclusion '(undercut A7)
-;;                     :premises [(pm Q)])
+               A8 (make-argument
+                    :id 'A8
+                    :conclusion '(undercut A7)
+                    :premises [(pm Q)])
 
-;;                self-defeat-graph
-;;                (-> (make-argument-graph)
-;;                    (enter-arguments [A7,A8])
-;;                    (accept [P]))]
-;;            (expect (undecided? (evaluate aspic-grounded self-defeat-graph)
-;;                                (literal-atom Q))
-;;                    => true)))
+               self-defeat-graph
+               (-> (make-argument-graph)
+                   (enter-arguments [A7,A8])
+                   (accept [P]))]
+           (expect (undecided? (evaluate aspic-grounded self-defeat-graph)
+                               (literal-atom Q))
+                   => true)))
 
 ;; TO DO: remaining examples in Henry's article, starting with the example
 ;; or parallel self-defeat on page 18.
@@ -213,51 +213,51 @@
 
 ;; This one won't work:
 
-;; (fact "The vacation example works."
-;;          (let [Italy (make-statement :text {:en "Let's go to Italy."})
-;;                Greece (make-statement :text {:en "Let's go to Greece."})
+(fact "The vacation example works."
+         (let [Italy (make-statement :text {:en "Let's go to Italy."})
+               Greece (make-statement :text {:en "Let's go to Greece."})
 
-;;                greece-arg  (make-argument
-;;                              :id 'greece-arg
-;;                              :conclusion Greece)
+               greece-arg  (make-argument
+                             :id 'greece-arg
+                             :conclusion Greece)
 
-;;                greece-undercutter (make-argument
-;;                                   :id 'greece-undercutter
-;;                                   :conclusion '(undercut greece-arg)
-;;                                   :premises [(pm Italy)])
+               greece-undercutter (make-argument
+                                  :id 'greece-undercutter
+                                  :conclusion '(undercut greece-arg)
+                                  :premises [(pm Italy)])
 
-;;                greece-rebuttal  (make-argument
-;;                                   :id 'greece-rebuttal
-;;                                   :strict true
-;;                                   :conclusion (neg Greece)
-;;                                   :premises [(pm Italy)])
+               greece-rebuttal  (make-argument
+                                  :id 'greece-rebuttal
+                                  :strict true
+                                  :conclusion (neg Greece)
+                                  :premises [(pm Italy)])
 
-;;                italy-arg  (make-argument
-;;                             :id 'italy-arg
-;;                             :conclusion Italy)
+               italy-arg  (make-argument
+                            :id 'italy-arg
+                            :conclusion Italy)
 
-;;                italy-rebuttal  (make-argument
-;;                                  :id 'italy-rebuttal
-;;                                  :conclusion (neg Italy)
-;;                                  :premises [(pm Greece)])
+               italy-rebuttal  (make-argument
+                                 :id 'italy-rebuttal
+                                 :conclusion (neg Italy)
+                                 :premises [(pm Greece)])
 
-;;                italy-undercutter (make-argument
-;;                                   :id 'italy-undercutter
-;;                                   :conclusion '(undercut italy-arg)
-;;                                   :premises [(pm Greece)])
+               italy-undercutter (make-argument
+                                  :id 'italy-undercutter
+                                  :conclusion '(undercut italy-arg)
+                                  :premises [(pm Greece)])
 
-;;                vacation-graph1  (-> (make-argument-graph)
-;;                                     ; (assume [Italy, Greece])
-;;                                     (enter-arguments [greece-arg, greece-undercutter,
-;;                                                       italy-arg, italy-undercutter]))
+               vacation-graph1  (-> (make-argument-graph)
+                                    ; (assume [Italy, Greece])
+                                    (enter-arguments [greece-arg, greece-undercutter,
+                                                      italy-arg, italy-undercutter]))
 
-;;                vacation-graph2 (accept vacation-graph1 [Italy])
-;;                g1  (evaluate aspic-grounded vacation-graph1)
-;;                g2  (evaluate aspic-grounded vacation-graph2)]
-;;            (expect (undecided? g1 Italy) => true)
-;;            (expect (undecided? g1 Greece) => true)
-;;            (expect (in? g2 Italy) => true)
-;;            (expect (undecided? g2 Greece) => true)))
+               vacation-graph2 (accept vacation-graph1 [Italy])
+               g1  (evaluate aspic-grounded vacation-graph1)
+               g2  (evaluate aspic-grounded vacation-graph2)]
+           (expect (undecided? g1 Italy) => true)
+           (expect (undecided? g1 Greece) => true)
+           (expect (in? g2 Italy) => true)
+           (expect (undecided? g2 Greece) => true)))
 
 ;; This example illustrates the undermining of a supporting argument.
 
