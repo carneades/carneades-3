@@ -294,7 +294,7 @@
   ;; are passed down to the children of the goal, so they are not lost by removing the goal.
   (let [goal (get (:goals state1) id),
         state2 (remove-goal state1 id)]
-    (debug "goal")
+    ;; (debug "goal")
     ;; (spy goal)
     (if (empty? (:issues goal))
       state2 ; no issues left in the goal
@@ -339,11 +339,11 @@
       (if (not id)
         state1
         (let [res (reduce-goal state1 id generators)]
-          (debug "reduce-goal is finished")
-          (debug max-goals)
-          (spy (count res))
-          (spy (count (:goals res)))
-          (spy (count (:open-goals res)))
+          ;; (debug "reduce-goal is finished")
+          ;; (debug max-goals)
+          ;; (spy (count res))
+          ;; (spy (count (:goals res)))
+          ;; (spy (count (:open-goals res)))
           ;; (when (< max-goals 270)
           ;;   (debug "result")
           ;;   (spy res))
