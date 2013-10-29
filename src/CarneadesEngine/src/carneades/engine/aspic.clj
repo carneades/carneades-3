@@ -4,7 +4,7 @@
 (ns ^{:doc "An argument evaluator inspired by Henry Prakken's ASPIC+ system.  It maps
             Carneades argument graphs to Dung argumentation frameworks."}
   carneades.engine.aspic
-  (:use ;; clojure.pprint
+  (:use clojure.pprint
         ;; clojure.set
         carneades.engine.statement
         carneades.engine.argument
@@ -45,8 +45,8 @@
 
               (and (:weight sn)
                    (if (literal-pos? goal)
-                     (>= (:weight sn) 0.75)    ; positive premise is assumable
-                     (<= (:weight sn) 0.25))  ; negative premise is assumable
+                     (>= (:weight sn) 0.75)               ; positive premise is assumable
+                     (<= (:weight sn) 0.25))              ; negative premise is assumable
                    (not (contains? (:assumptions s) (literal-complement goal))))
               [(make-node (assoc (pop-goal) :assumptions (conj (:assumptions s) goal)))]
 
@@ -58,6 +58,7 @@
                             (conj v
                                   (make-node (assoc s
                                                :arguments (conj (:arguments s) arg)
+                                               :assumptions (conj (:assumptions s) goal)
                                                :goals (concat (map premise-literal (:premises an))  ; depth-first
                                                               (rest (:goals s)))))))))
                       []
@@ -206,9 +207,12 @@
                     positions (get pm (:id an))
 
                     arg-value
-		    (cond (some (fn [p] (= (get l (:id p)) :in)) positions) 1.0
-			  (some (fn [p] (= (get l (:id p)) :undecided))
-				positions) 0.5
+                    (cond (some (fn [p] (= (get l (:id p)) :in)) positions) 1.0
+
+                          (some (fn [p] (= (get l (:id p)) :undecided))
+                                positions)
+                          0.5
+
                           :else 0.0)
 
                     conclusion-value
