@@ -9,7 +9,7 @@
              [carneades.project.admin :as project]))
 
 (def oss-licensing-theory
-  (deref (load-file (project/absolute-theory-path "markos" "oss_licensing_theory"))))
+  (project/load-theory "markos" "oss_licensing_theory"))
 
 (def oss-licensing-theory-interactive
   (t/make-theory
