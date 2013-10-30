@@ -32,7 +32,7 @@
             [carneades.maps.lacij :as lacij]
             [carneades.web.vote :as vote]
             [carneades.web.info :as info]
-            ))
+            [carneades.engine.system :as engine]))
 
 ;; To Do:
 ;; - search operations, including full text search
@@ -57,10 +57,13 @@
 
 (defn start
   []
+  (engine/start)
   (reset! state (init-projects-data)))
 
 (defn stop
   [])
+
+(start)
 
 (defroutes carneades-web-service-routes
 

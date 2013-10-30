@@ -187,8 +187,8 @@
         range-sexpr (class-expression->sexpr range vary),
         prop (.getProperty axiom),
         prop-sexpr (property-expression->sexpr prop varx vary)]
-    (spy range-sexpr)
-    (spy prop-sexpr)
+    ;; (spy range-sexpr)
+    ;; (spy prop-sexpr)
     (list (t/make-scheme
            :header (dc/make-metadata)
            :id (gensym "range-axiom")
