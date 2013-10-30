@@ -6,10 +6,17 @@
              [carneades.engine.theory :as t]
              [carneades.engine.argument :as a]
              [carneades.owl.import :as owl]
-             [carneades.project.admin :as project]))
+             [carneades.project.admin :as project]
+             [clojure.tools.logging :refer [error]]))
 
 (def oss-licensing-ontology
-  (owl/import-from-project "markos" "ontologies/MARKOS/markos-licenses.owl"))
+  (try
+    (owl/import-from-project "markos" "ontologies/MARKOS/markos-licenses.owl")
+    (catch Exception e
+      (error "Error loading markos-copyright.owl")
+      (error "If you don't use the MARKOS project, ignore this.")
+      (error "Error:" e)
+      {})))
 
 (def copyright-theory
   (project/load-theory "markos" "copyright_theory"))
