@@ -12,8 +12,7 @@
   (owl/import-from-project "markos" "ontologies/MARKOS/markos-licenses.owl"))
 
 (def copyright-theory
-  ;; require won't work here since the files are not in the CLASSPATH
-  (deref (load-file (project/absolute-theory-path "markos" "copyright_theory"))))
+  (project/load-theory "markos" "copyright_theory"))
 
 (def oss-licensing-theory
   (t/make-theory
