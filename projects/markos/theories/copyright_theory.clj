@@ -5,7 +5,8 @@
   (:require  [carneades.engine.dublin-core :as dc]
              [carneades.engine.theory :as t]
              [carneades.engine.argument :as a]
-             [carneades.owl.import :as owl]))
+             [carneades.owl.import :as owl]
+             [clojure.tools.logging :refer [error]]))
 
 
 ;; owl/import takes one or more pathnames or URLs of OWL files
@@ -13,7 +14,13 @@
 ;; 1. owl/language: a map; and 2. owl/axioms: a sequence of schemes
 
 (def copyright-ontology
-  (owl/import-from-project "markos" "ontologies/MARKOS/markos-copyright.owl"))
+  (try
+    (owl/import-from-project "markos" "ontologies/MARKOS/markos-copyright.owl")
+    (catch Exception e
+      (error "Error loading markos-copyright.owl")
+      (error "If you don't use the MARKOS project, ignore this.")
+      (error "Error:" e)
+      {})))
 
 (def copyright-law-theory
   (t/make-theory
