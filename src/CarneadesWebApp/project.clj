@@ -89,7 +89,8 @@
   :repositories {"sonatype-oss-public"
                  "https://oss.sonatype.org/content/groups/public/"}
   :profiles {;; self executable JAR with embedded Jetty
-             :standalone {:main carneades.analysis.web.routes-selfexe}
+             :standalone {:main carneades.analysis.web.routes-selfexe
+                          :aot carneades.analysis.web.routes-selfexe}
 
              ;; WAR archive for application server.
              ;; To build a WAR, run ./scripts/build-war.sh
