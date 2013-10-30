@@ -1,7 +1,7 @@
 ;;; Copyright (c) 2012 Fraunhofer Gesellschaft
 ;;; Licensed under the EUPL V.1.1
 
-(defproject carneades/carneades-engine "2.0.1"
+(defproject carneades/carneades-engine "2.0.2"
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojars.pallix/owlapi "3.4.5"]
@@ -12,7 +12,7 @@
                  [org.clojure/java.jdbc "0.1.1"]
                  [org.clojure/tools.trace "0.7.1"]
                  [edu.ucdenver.ccp/kr-sesame-core "1.4.5"]
-                 [lacij "0.8.1"]
+                 [lacij "0.8.2"]
                  [me.raynes/fs "1.4.0"]
                  [org.clojure/tools.logging "0.2.6"]
                  [org.slf4j/slf4j-log4j12 "1.7.5"]
