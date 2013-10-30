@@ -11,7 +11,7 @@
                  [ring/ring-servlet "1.1.0"]
                  [ring-middleware-format "0.3.1"]
                  [ring/ring-json "0.2.0"]
-                 [carneades/carneades-engine "2.0.1"]
+                 [carneades/carneades-engine "2.0.2"]
                  [carneades-web-service "1.0.0-SNAPSHOT"]
                  [org.clojars.pallix/mygengo "1.0.0"]
                  [jayq "2.3.0"]
