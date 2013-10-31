@@ -19,6 +19,7 @@
                  [clj-logging-config/clj-logging-config "1.9.10"]
                  [org.clojure/tools.namespace "0.2.4"]
                  [midje "1.5.1"]]
+  :plugins [[lein-midje "3.0.0"]]
   :aot [carneades.engine.argument-evaluation]
   :description "Carneades is an argument mapping application, with a graphical \nuser interface, and a software library for building applications supporting \nvarious argumentation tasks. This is the software library (the engine)."
   :cljsbuild {:builds []})
