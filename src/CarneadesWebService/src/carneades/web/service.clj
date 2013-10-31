@@ -32,7 +32,8 @@
             [carneades.maps.lacij :as lacij]
             [carneades.web.vote :as vote]
             [carneades.web.info :as info]
-            [carneades.engine.system :as engine]))
+            [carneades.engine.system :as engine]
+            [clojure.tools.logging :refer [info debug spy]]))
 
 ;; To Do:
 ;; - search operations, including full text search
@@ -51,19 +52,18 @@
   {:projects (project/list-projects)
    :projects-data (init-projects-data!)})
 
-(def state (atom (init-projects-data)))
+(def state (atom nil))
 
 (def ^{:dynamic true} *debatedb-name* "debates")
 
 (defn start
   []
+  (info "Starting the Carneades Web Service.")
   (engine/start)
   (reset! state (init-projects-data)))
 
 (defn stop
   [])
-
-(start)
 
 (defroutes carneades-web-service-routes
 
