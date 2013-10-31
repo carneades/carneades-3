@@ -10,6 +10,6 @@ lein deps
 
 cd ../CarneadesExamples
 
-lein run -m carneades.examples.copyright-arguments &> /dev/null
+lein run -m carneades.examples.copyright-arguments &> /dev/null && true
 
 cd -
