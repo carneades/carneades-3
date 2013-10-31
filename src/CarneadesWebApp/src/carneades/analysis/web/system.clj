@@ -3,11 +3,13 @@
             [carneades.analysis.web.routes-dev :as dev]
             [ring.adapter.jetty :as jetty]
             [carneades.web.service :as service]
-            [carneades.engine.system :as engine]))
+            [carneades.engine.system :as engine]
+            [carneades.analysis.web.routes-war]))
 
 (defn system
-  []
-  {:server nil})
+  [& {mode :mode}]
+  {:server nil
+   :mode (or mode :dev)})
 
 (defn set-loggers
   []
@@ -28,7 +30,19 @@
   (set-loggers)
   (engine/start)
   (service/start)
-  (assoc system :server (jetty/run-jetty #'dev/carneades-webapp {:join? false :port 8080})))
+  (let [server (condp = (:mode system)
+                 :standalone
+                 (jetty/run-jetty #'dev/carneades-webapp
+                                  {:join? false :port 8080})
+
+                 :dev
+                 (jetty/run-jetty #'dev/carneades-webapp
+                                  {:join? false :port 8080})
+
+                 :war
+                 (jetty/run-jetty #'carneades.analysis.web.routes-war/carneades-webapp
+                                  {:join? false :port 8080}))]
+   (assoc system :server server)))
 
 (defn stop
   [system]
