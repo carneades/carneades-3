@@ -25,6 +25,9 @@ cp -r ../../../../projects ./projects
 rm -f projects/default/databases/*
 rm -f projects/copyright/databases/*
 
+mkdir -p $PROJECTS_DIR/copyright/databases/
+mkdir -p $PROJECTS_DIR/markos/databases/
+
 cp $PROJECTS_DIR/copyright/databases/main.h2.db ./projects/copyright/databases/
 cp $PROJECTS_DIR/copyright/databases/main.h2.db ./projects/markos/databases/
 
