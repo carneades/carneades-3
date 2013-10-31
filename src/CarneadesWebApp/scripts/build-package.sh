@@ -4,8 +4,7 @@
 
 set -e
 
-bash ./scripts/build.sh
-
+source ./scripts/build.sh
 
 PROJECTS_DIR=`grep projects-directory ~/.carneades.clj | cut -d " " -f 3 | sed 's/"//g;' `
 
@@ -48,3 +47,7 @@ git log | head -1 >> ./doc/timestamp.txt
 cd ..
 
 zip -r carneades-webapp.zip carneades-webapp
+
+if [ -x /usr/bin/notify-send ]; then
+    notify-send "Build package" "Build package is finished"
+fi
