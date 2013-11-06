@@ -44,36 +44,50 @@
   (MinusDecorator.))
 
 
-(def pro-arg-color "#0e5200")
-(def con-arg-color "#e10005")
+(def pro-stroke-color "#0e5200")
+(def con-stroke-color "#e10005")
+
+(def in-fill-color "#8ee888") ;; light green
+(def out-fill-color "#ff7e7e") ;; tomato
+(def undecided-fill-color "white")
 
 (def default-params
-     (let [stmt-params {:style {:fill "white"} :width 275 :height 46}
-           arg-params {:style {:fill "white"} :shape :circle :r 10}
-
-           tomato "#ff7e7e"
-           lightgreen "#8ee888"]
+     (let [stmt-params {:style {:fill undecided-fill-color} :width 275 :height 46}
+           arg-params {:style {:fill undecided-fill-color} :shape :circle :r 10}]
        {:stmt-params stmt-params
         :stmt-in-params (merge stmt-params {:style {:stroke-width 1.5
-                                                       :fill lightgreen}})
+                                                    :fill in-fill-color}})
         :stmt-out-params (merge stmt-params {:style {:stroke-width 1.5
-                                                       :fill tomato}})
+                                                     :fill out-fill-color}})
         :stmtlabel-params {:style {:stroke-width 1.5
                                    :font-size "14px"}}
         :arg-params arg-params
-        :arg-pro-applicable-params
-        (merge arg-params {:style {:stroke pro-arg-color
-                                   :fill lightgreen
+
+        :arg-pro-in-params
+        (merge arg-params {:style {:stroke pro-stroke-color
+                                   :fill in-fill-color
                                    :stroke-width 1.5}})
-        :arg-con-applicable-params (merge arg-params {:style {:stroke con-arg-color
-                                                              :fill tomato
-                                                              :stroke-width 1.5}})
-        :arg-pro-notapplicable-params (merge arg-params {:style {:stroke pro-arg-color
-                                                                 :fill "white"
-                                                                 :stroke-width 1.5}})
-        :arg-con-notapplicable-params (merge arg-params {:style {:stroke con-arg-color
-                                                                 :fill "white"
-                                                                 :stroke-width 1.5}})
+
+        :arg-con-in-params (merge arg-params {:style {:stroke con-stroke-color
+                                                      :fill in-fill-color
+                                                      :stroke-width 1.5}})
+
+        :arg-pro-undecided-params (merge arg-params {:style {:stroke pro-stroke-color
+                                                             :fill undecided-fill-color
+                                                             :stroke-width 1.5}})
+
+        :arg-con-undecided-params (merge arg-params {:style {:stroke con-stroke-color
+                                                             :fill undecided-fill-color
+                                                             :stroke-width 1.5}})
+
+        :arg-pro-out-params (merge arg-params {:style {:stroke pro-stroke-color
+                                                       :fill out-fill-color
+                                                       :stroke-width 1.5}})
+
+        :arg-con-out-params (merge arg-params {:style {:stroke con-stroke-color
+                                                       :fill out-fill-color
+                                                       :stroke-width 1.5}})
+
         :arglabel-params {}
         :depth Integer/MAX_VALUE
         :treeify true
@@ -85,8 +99,8 @@
                           :refY 0
                           :orient "auto"
                           :style (format "overflow:visible; stroke-dasharray: 0,0 ; stroke:%s; fill:%s"
-                                         pro-arg-color
-                                         pro-arg-color)}
+                                         pro-stroke-color
+                                         pro-stroke-color)}
                  (-> (svg/path [:M [-2.5,-1.0]
                                 :C [-2.5,1.76 -4.74,4.0 -7.5,4.0]
                                 :C [-10.26,4.0 -12.5,1.76 -12.5,-1.0]
@@ -99,8 +113,8 @@
                           :refY 0
                           :orient "auto"
                           :style (format "overflow:visible; stroke-dasharray: 0,0; stroke:%s; fill:%s"
-                                         con-arg-color
-                                         con-arg-color)}
+                                         con-stroke-color
+                                         con-stroke-color)}
                  (-> (svg/path [:M [-2.5,-1.0]
                                 :C [-2.5,1.76 -4.74,4.0 -7.5,4.0]
                                 :C [-10.26,4.0 -12.5,1.76 -12.5,-1.0]
@@ -119,7 +133,7 @@
                                 :L [5.77 0.0]
                                 :Z []])
                      (xml/add-attrs :style (format "fill-rule:evenodd; fill:%s; stroke: %s"
-                                                   pro-arg-color pro-arg-color))
+                                                   pro-stroke-color pro-stroke-color))
                      (xml/add-attrs :transform "scale (0.8)"))]]
       [:end-arrow-red
                 [:marker {:refX 5
@@ -132,32 +146,32 @@
                                 :L [5.77 0.0]
                                 :Z []])
                      (xml/add-attrs :style (format "fill-rule:evenodd; fill: %s; stroke: %s"
-                                                   con-arg-color con-arg-color))
+                                                   con-stroke-color con-stroke-color))
                      (xml/add-attrs :transform "scale (0.8)"))]]])
 
 (def neg-premise-params
      [:marker-start "url(#dot-marker-red)"
       :marker-end nil
       :style  {:stroke-width 1
-               :stroke (-> default-params :arg-con-applicable-params :style :stroke)}])
+               :stroke con-stroke-color}])
 
 (def premise-params
      [:marker-end nil
       :style {:stroke-width 1
-              :stroke (-> default-params :arg-pro-applicable-params :style :stroke)}])
+              :stroke pro-stroke-color}])
 
 (def pro-argument-params
-     [:style {:stroke (-> default-params :arg-pro-applicable-params :style :stroke)
+     [:style {:stroke pro-stroke-color
               :stroke-width 1
               :marker-end "url(#end-arrow-green)"}])
 
 (def con-argument-params
-     [:style {:stroke (-> default-params :arg-con-applicable-params :style :stroke)
-              :stroke-width 1
-              :marker-end "url(#end-arrow-red)"}])
+  [:style {:stroke con-stroke-color
+           :stroke-width 1
+           :marker-end "url(#end-arrow-red)"}])
 
 (def undercutter-params {:style {:fill "white"} :width 275 :height 46 :rx 15 :ry 15})
 
 (def undercutter-edge-params [:marker-end nil
-                              :style {:stroke (-> default-params :arg-pro-applicable-params :style :stroke)
+                              :style {:stroke con-stroke-color
                                       :stroke-width 1}])
