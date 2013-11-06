@@ -37,16 +37,23 @@
 (defn pick-arg-params
   [ag arg]
   (cond (and (in-node? arg) (:pro arg))
-        (:arg-pro-applicable-params default-params)
+        (:arg-pro-in-params default-params)
 
-        (and (in-node? arg) (:con arg))
-        (:arg-con-applicable-params default-params)
+        (and (out-node? arg) (:pro arg))
+        (:arg-pro-out-params default-params)
 
-        (:pro arg)
-        (:arg-pro-notapplicable-params default-params)
+        (and (undecided-node? arg) (:pro arg))
+        (:arg-pro-undecided-params default-params)
 
-        :else
-        (:arg-con-notapplicable-params default-params)))
+        (and (in-node? arg) (not (:pro arg)))
+        (:arg-con-in-params default-params)
+
+        (and (out-node? arg) (not (:pro arg)))
+        (:arg-con-out-params default-params)
+
+        (and (undecided-node? arg) (not (:pro arg)))
+        (:arg-con-undecided-params default-params)
+        ))
 
 (defn add-statement
   [svgmap stmt ag stmt-str]
