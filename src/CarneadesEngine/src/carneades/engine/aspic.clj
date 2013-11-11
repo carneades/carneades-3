@@ -11,7 +11,8 @@
         carneades.engine.dung
         carneades.engine.argument-graph
         carneades.engine.argument-evaluation
-        carneades.engine.search))
+        carneades.engine.search)
+  (:require [clojure.tools.logging :refer [info spy debug error]]))
 
 
 (defrecord State
@@ -58,7 +59,7 @@
                             (conj v
                                   (make-node (assoc s
                                                :arguments (conj (:arguments s) arg)
-                                               :assumptions (conj (:assumptions s) goal)
+                                               ;; :assumptions (conj (:assumptions s) goal)
                                                :goals (concat (map premise-literal (:premises an))  ; depth-first
                                                               (rest (:goals s)))))))))
                       []
@@ -113,34 +114,36 @@
    Strict arguments cannot be rebutted."
   [ag p1 p2]
   (let [an1 (get (:argument-nodes ag) (:argument p1)),
-        an2 (get (:argument-nodes ag) (:argument p2)),
+        ;; an2 (get (:argument-nodes ag) (:argument p2)),
         sn  (get (:statement-nodes ag) (:conclusion an1))
         alpha 0.5 ; minimum weight of pro for :cce and :brd
         beta 0.3  ; minimum difference between pro and con for :cce
         gamma 0.2] ; maximum weight for con for :brd
-    (and (not (:strict an2))
-         (= (:conclusion an1) (:conclusion an2))
-         (not (= (:pro an1) (:pro an2))) ; one argument is pro and the other con
-         (case (:standard sn)
-	       :dv true
-	       ;; with :pe the con argument need only be >= the pro arg to defeat it.
-	       ;; the pro argument is also defeated if either arg has no weight
-	       :pe (or (nil? (:weight an1))
-		       (nil? (:weight an2))
-		       (>= (:weight an1) (:weight an2)))
-	       ;; with :cce the con arg defeats the pro arg unless pro's weight
-	       ;; is >= than alpha the difference between pro and con is >= gamma
-	       :cce (or (nil? (:weight an1))
-			(nil? (:weight an2))
-			(>= (:weight an1) (:weight an2))
-			(< (:weight an2) alpha)
-			(< (- (:weight an2) (:weight an1)) beta))
-	       :brd (or (nil? (:weight an1))
-			(nil? (:weight an2))
-			(>= (:weight an1) (:weight an2))
-			(< (:weight an2) alpha)
-			(< (- (:weight an2) (:weight an1)) beta)
-			(>= (:weight an1) gamma))))))
+    (some (fn [id]
+            (let [an2 (get (:argument-nodes ag) id)]
+              (and (not (:strict an2))
+                   (= (:conclusion an1) (:conclusion an2))
+                   (not (= (:pro an1) (:pro an2))) ; one argument is pro and the other con
+                   (case (:standard sn)
+                     :dv true
+                     ;; with :pe the con argument need only be >= the pro arg to defeat it.
+                     :pe (and (not (nil? (:weight an1)))
+                              (not (nil? (:weight an2)))
+                              (>= (:weight an1) (:weight an2)))
+                     ;; with :cce the con arg defeats the pro arg unless pro's weight
+                     ;; is >= than alpha the difference between pro and con is >= gamma
+                     :cce (and (not (nil? (:weight an1)))
+                               (not (nil? (:weight an2)))
+                               (>= (:weight an1) (:weight an2))
+                               (< (:weight an2) alpha)
+                               (< (- (:weight an2) (:weight an1)) beta))
+                     :brd (and (not (nil? (:weight an1)))
+                               (not (nil? (:weight an2)))
+                               (>= (:weight an1) (:weight an2))
+                               (< (:weight an2) alpha)
+                               (< (- (:weight an2) (:weight an1)) beta)
+                               (>= (:weight an1) gamma))))))
+          (:subargs p2))))
 
 (defn- undermines?
   "argument-graph position position -> boolean
@@ -196,43 +199,53 @@
           ag
           (vals (:statement-nodes ag))))
 
+(defn label-argument-nodes
+  [ag pm l]
+  (reduce (fn [ag2 an]
+            (let [positions (get pm (:id an))
+
+                  arg-value
+                  (cond (some (fn [p] (= (get l (:id p)) :in)) positions) 1.0
+
+                        (some (fn [p] (= (get l (:id p)) :undecided))
+                              positions)
+                        0.5
+
+                        :else 0.0)]
+              (update-argument-node ag2 an :value arg-value)))
+          ag
+          (vals (:argument-nodes ag))))
+
+(defn label-statement-nodes
+  [ag]
+  (reduce (fn [ag2 stmt]
+            (let [conclusion-value
+                  (cond (= (:weight stmt) 0.0) 0.0
+
+                        (= (:weight stmt) 1.0) 1.0
+
+                        (and (some in-node? (pro-argument-nodes ag2 stmt))
+                             (not-any? in-node? (con-argument-nodes ag2 stmt)))
+                        1.0
+
+                        (and (some in-node? (con-argument-nodes ag2 stmt))
+                             (not-any? in-node? (pro-argument-nodes ag2 stmt)))
+                        0.0
+
+                        :else 0.5)]
+              (update-statement-node ag2 stmt :value conclusion-value)))
+          (initialize-statement-values ag)
+          (vals (:statement-nodes ag))))
+
 (defn evaluate-grounded
   "argument-graph -> argument-graph"
   [ag]
   (let [pm (position-map ag)
         af (position-map-to-argumentation-framework pm ag)
-        l (grounded-labelling af)]
-    (reduce (fn [ag2 an]
-	      (let [c (get (:statement-nodes ag2) (:conclusion an))
-                    positions (get pm (:id an))
-
-                    arg-value
-                    (cond (some (fn [p] (= (get l (:id p)) :in)) positions) 1.0
-
-                          (some (fn [p] (= (get l (:id p)) :undecided))
-                                positions)
-                          0.5
-
-                          :else 0.0)
-
-                    conclusion-value
-                    (cond (= (:weight c) 0.0) (:value c)
-			  ;; arguments don't affect value of facts
-                          (= (:weight c) 1.0) (:value c)
-
-                          (and (= arg-value 1.0)  (:pro an))
-                          1.0
-
-                          (and (= arg-value 1.0) (not (:pro an)))
-                          0.0
-
-                          ;; otherwise don't change the value
-                          :else (:value c))]
-                (-> ag2
-                    (update-argument-node an :value arg-value)
-                    (update-statement-node c :value conclusion-value))))
-            (initialize-statement-values ag)
-            (vals (:argument-nodes ag)))))
+        l (grounded-labelling af)
+        ag (label-argument-nodes ag pm l)
+        ag (label-statement-nodes ag)]
+    ag))
 
 ;; The aspic-grounded evaluator uses grounded semantics
 (def aspic-grounded
