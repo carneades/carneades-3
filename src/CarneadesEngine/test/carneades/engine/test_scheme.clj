@@ -7,6 +7,10 @@
          aspic dublin-core argument-evaluation policy ask  argument-generator)
         carneades.maps.lacij)
   (:require [carneades.project.admin :as project]
+            [carneades.maps.lacij :refer [export]]
+            [carneades.database.db :as db]
+            [carneades.database.argument-graph :as ag-db]
+            [carneades.database.import :refer [import-from-argument-graph]]
             [midje.sweet :refer :all :exclude [facts]]))
 
 (def theory1
@@ -32,11 +36,14 @@
 	 (make-scheme
           :id 'r1
           :conclusion '(goods ?x)
+          :weight 0.6
           :premises [(pm '(movable ?x))]
           :exceptions [(pm '(money ?x))])
 
 	 (make-scheme
-          :conclusion '(not (goods ?x))
+          :conclusion '(goods ?x)
+          :weight 0.7
+          :pro false
           :premises [(pm '(edible ?x))])])
 
        (make-section
@@ -174,8 +181,9 @@
 (fact "Rebuttals work."
   (let [facts '((movable item1)
 		(edible item1))
-	query '(goods ?x)]
-    (expect (undecided? (ag facts query) '(goods item1)) => true)))
+	query '(goods ?x)
+        ag1 (ag facts query)]
+    (expect (out? ag1 '(goods item1)) => true)))
 
 (fact "Negative query works."
   (let [facts '((edible i1))
