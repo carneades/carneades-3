@@ -63,11 +63,11 @@
 ; in argument graphs.
 
 
-; The AIJ version of Carneades couldn't handle this example,
-; because it couldn't handle cycles and didn't support strict arguments.
-; Notice how Carneades handles this example differently than ASPIC+, since
-; giving A2 more weight than A1 would not change the result.
-; See pp 17-18 of ibid for a discussion of this issue.
+;; The AIJ version of Carneades couldn't handle this example, because it
+;; couldn't handle cycles and didn't support strict arguments.
+;;
+;; See pp 17-18 of ibid for a discussion of the effect of changing the weight of
+;; A2 to be greater than A1.
 
 (fact "The bachelor example works."
          (let [bachelor (make-statement :text {:en "Fred is a bachelor."})
@@ -226,7 +226,7 @@
                                   :premises [(pm Italy)])
 
                greece-rebuttal  (make-argument
-                                  :id 'greece-rebuttal
+                                 :id 'greece-rebuttal
                                   :strict true
                                   :conclusion (neg Greece)
                                   :premises [(pm Italy)])
