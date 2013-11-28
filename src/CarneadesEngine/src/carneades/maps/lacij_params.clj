@@ -63,11 +63,6 @@
                                    :font-size "14px"}}
         :arg-params arg-params
 
-        :arg-pro-in-params
-        (merge arg-params {:style {:stroke pro-stroke-color
-                                   :fill in-fill-color
-                                   :stroke-width 1.5}})
-
         :arg-con-in-params (merge arg-params {:style {:stroke con-stroke-color
                                                       :fill in-fill-color
                                                       :stroke-width 1.5}})
@@ -80,6 +75,11 @@
                                                              :fill undecided-fill-color
                                                              :stroke-width 1.5}})
 
+        :arg-pro-in-params
+        (merge arg-params {:style {:stroke pro-stroke-color
+                                   :fill in-fill-color
+                                   :stroke-width 1.5}})
+
         :arg-pro-out-params (merge arg-params {:style {:stroke pro-stroke-color
                                                        :fill out-fill-color
                                                        :stroke-width 1.5}})
@@ -88,10 +88,7 @@
                                                        :fill out-fill-color
                                                        :stroke-width 1.5}})
 
-        :arglabel-params {}
-        :depth Integer/MAX_VALUE
-        :treeify true
-        :full-duplication false}))
+        :arglabel-params {}}))
 
 (def default-markers
      [[:dot-marker-green
@@ -170,7 +167,7 @@
            :stroke-width 1
            :marker-end "url(#end-arrow-red)"}])
 
-(def undercutter-params {:style {:fill "white"} :width 275 :height 46 :rx 15 :ry 15})
+(def undercutter-params {:style {:fill "white"} :width 230 :height 46 :rx 35 :ry 35})
 
 (def undercutter-edge-params [:marker-end nil
                               :style {:stroke con-stroke-color
