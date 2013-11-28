@@ -338,6 +338,7 @@
                :id (:id arg)
                :header (:header arg)
                :scheme (:scheme arg)
+               :value (:value arg)
                :strict (:strict arg)
                :weight (:weight arg)
                :conclusion (get-statement-sliteral ag2 (:conclusion arg))
