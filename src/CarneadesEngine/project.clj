@@ -12,7 +12,7 @@
                  [org.clojure/java.jdbc "0.1.1"]
                  [org.clojure/tools.trace "0.7.1"]
                  [edu.ucdenver.ccp/kr-sesame-core "1.4.5"]
-                 [lacij "0.8.2"]
+                 [lacij "0.9.0"]
                  [me.raynes/fs "1.4.0"]
                  [org.clojure/tools.logging "0.2.6"]
                  [org.slf4j/slf4j-log4j12 "1.7.5"]
