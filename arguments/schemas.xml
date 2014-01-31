@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<locatingRules xmlns="http://thaiopensource.com/ns/locating-rules/1.0">
+  <uri resource="Tweety.xml" uri="../schemas/LKIF.rnc"/>
+  <uri resource="Toulmin.xml" uri="../schemas/LKIF.rnc"/>
+  <uri resource="SimonJones.xml" uri="../schemas/LKIF.rnc"/>
+  <uri resource="Prakken-Sartor-murder.xml" uri="../schemas/LKIF.rnc"/>
+  <uri resource="Pollock-red-light.xml" uri="../schemas/LKIF.rnc"/>
+  <uri resource="PiersonPost.xml" uri="../schemas/LKIF.rnc"/>
+  <uri resource="OpenSourceLicensing.xml" uri="../schemas/LKIF.rnc"/>
+  <uri resource="NixonTriangle.xml" uri="../schemas/LKIF.rnc"/>
+  <uri resource="IBIS-Porsche.xml" uri="../schemas/LKIF.rnc"/>
+  <uri resource="grevious-bodily-harm.xml" uri="../schemas/LKIF.rnc"/>
+  <uri resource="ExcusedFromWork.xml" uri="../schemas/LKIF.rnc"/>
+  <uri resource="contract.xml" uri="../schemas/LKIF.rnc"/>
+</locatingRules>
