@@ -1,0 +1,14 @@
+server/target
+server/lib
+server/classes
+server/checkouts
+server/pom.xml
+server/*.jar
+server/*.class
+server/.lein-*
+server/.env
+server/*.log
+server/.nrepl-port
+client/node_modules/
+.sass-cache
+client/src/app/*

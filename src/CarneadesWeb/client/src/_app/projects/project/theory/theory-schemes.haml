@@ -1,0 +1,27 @@
+%span
+%div{"ng-repeat" => "scheme in section.schemes"}
+  %div{id: "{{scheme.id}}"}
+    %h3 {{scheme.header.title}}
+    %span{{"ng-show" => "scheme.header.description[lang]"}}
+      %markdown{{"ng-model" => "scheme.header.description[lang]",
+                 extensions: "carneades"}}
+      %br
+    id: {{scheme.id}}
+    %br
+    strict: {{scheme.strict}}
+    %br
+    direction: {{scheme.pro}}
+    %br
+    conclusion: {{scheme['conclusion-translation']}}
+    %br
+    premises:
+    %ul
+      %li{"ng-repeat" => "premise in scheme.premises"}
+        {{premise['translation']}}
+
+    .table-responsive
+      %table.table.table-striped
+        %tr.block{"ng-repeat" => "(k,v) in scheme.header",
+                  "ng-show" => "showMetadatum(k, v)"}
+          %td.jsonObjectKey {{k}}
+          %td.jsonObjectValue {{v}}

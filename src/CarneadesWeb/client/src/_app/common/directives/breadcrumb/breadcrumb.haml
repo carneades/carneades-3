@@ -1,0 +1,12 @@
+.container-fluid{:style => "margin-left: -15px; margin-right: -15px;"}
+  .row
+    .col-lg-12
+      %nav.collapse.navbar-collapse{:role => "navigation"}
+        .row
+          .col-lg-12.breadcrumbs
+            %ul{"ng-transclude" => ""}
+
+        .row{"style" => "border-bottom: 2px solid #fff;"}
+          .col-lg-12
+            .panel-body
+              %breadcrumb-commands{:commands => "commands"}

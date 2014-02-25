@@ -1,0 +1,18 @@
+.container.node
+  .row
+    %h1 Argument
+    .table-responsive
+      %table.table.table-striped
+        %tr.block{"ng-repeat" => "t in table"}
+          %td.jsonObjectKey {{t.key}}
+          %td.jsonObjectValue {{t.value}}
+  .entry.row{"ng-repeat" => "(key, val) in entries"}
+    %h2 {{key}}
+    %div{"ng-switch" => "", on: "getType(val)"}
+      %div{"ng-switch-when" => "String"}
+        %markdown{extensions: "carneades", "ng-model" => "val", strip: "true"}
+      %div{"ng-switch-when" => "Array"}
+        %ol
+          %li{"ng-repeat" => "v in val"}
+            %a{"ui-sref" => "projects.project.statement({pid: pid, db: db, sid: v.id})"}
+              %markdown{extensions: "carneades", "ng-model" => "v.text", strip: "true"}
