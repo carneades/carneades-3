@@ -1,0 +1,76 @@
+// Global values
+// --------------------------------------------------
+
+// Grays
+// -------------------------
+
+$gray-darker:            lighten(#000, 13.5%) !default; // #222
+$gray-dark:              lighten(#000, 20%) !default;   // #333
+$gray:                   lighten(#000, 33.5%) !default; // #555
+$gray-light:             lighten(#000, 60%) !default;   // #999
+$gray-lighter:           lighten(#000, 93.5%) !default; // #eee
+
+// Inverted navbar
+//
+// Reset inverted navbar basics
+$navbar-inverse-color:                      $gray-light !default;
+$navbar-inverse-bg:                         #222 !default;
+$navbar-inverse-border:                     darken($navbar-inverse-bg, 10%) !default;
+
+$navbar-inverse-color-dark:                 darken($navbar-inverse-color, 10%) !default;
+
+// Inverted navbar links
+$navbar-inverse-link-color:                 $gray-light !default;
+$navbar-inverse-link-hover-color:           #fff !default;
+$navbar-inverse-link-hover-bg:              transparent !default;
+$navbar-inverse-link-active-color:          $navbar-inverse-link-hover-color !default;
+$navbar-inverse-link-active-bg:             darken($navbar-inverse-bg, 10%) !default;
+$navbar-inverse-link-disabled-color:        #444 !default;
+$navbar-inverse-link-disabled-bg:           transparent !default;
+
+// Inverted navbar brand label
+$navbar-inverse-brand-color:                $navbar-inverse-link-color !default;
+$navbar-inverse-brand-hover-color:          #fff !default;
+$navbar-inverse-brand-hover-bg:             transparent !default;
+
+
+// Breadcrumb
+//
+$breadcrumb-inverse-bg: $navbar-inverse-bg;
+$breadcrumb-inverse-border: $navbar-inverse-border;
+
+//levels
+$breadcrumb-inverse-bg-level1: lighten($breadcrumb-inverse-bg, 5%);
+$breadcrumb-inverse-border-level1: lighten($breadcrumb-inverse-border, 5%);
+
+$breadcrumb-inverse-bg-level2: lighten($breadcrumb-inverse-bg, 10%);
+$breadcrumb-inverse-border-level2: lighten($breadcrumb-inverse-border, 10%);
+
+$breadcrumb-inverse-bg-level3: lighten($breadcrumb-inverse-bg, 15%);
+$breadcrumb-inverse-border-level3: lighten($breadcrumb-inverse-border, 15%);
+
+$breadcrumb-inverse-bg-level4: lighten($breadcrumb-inverse-bg, 20%);
+$breadcrumb-inverse-border-level4: lighten($breadcrumb-inverse-border, 20%);
+
+$breadcrumb-inverse-bg-level5: lighten($breadcrumb-inverse-bg, 25%);
+$breadcrumb-inverse-border-level5: lighten($breadcrumb-inverse-border, 25%);
+
+$breadcrumb-inverse-bg-level6: lighten($breadcrumb-inverse-bg, 30%);
+$breadcrumb-inverse-border-level6: lighten($breadcrumb-inverse-border, 30%);
+
+$inactive: #f0f0f0;
+$inactive-dark: #d3d3d3;
+$inactive-text: #444;
+$inactive-sep: #999;
+
+$hover: #99e;
+$hover-dark: #66c;
+$hover-text: #fff;
+$hover-sep: #777;
+
+$active: desaturate(darken($hover, 10%), 10%);
+$active-dark: desaturate(darken($hover-dark, 10%), 10%);
+$active-text: #eee;
+$active-sep: $hover-sep;
+
+$current-text: #666;

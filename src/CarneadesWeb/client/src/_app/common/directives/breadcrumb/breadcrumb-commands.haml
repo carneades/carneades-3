@@ -1,0 +1,3 @@
+%ul.nav.nav-pills
+  %li{"ng-repeat" => "cmd in commands"}
+    %a{"href" => "{{cmd.state}}"} {{cmd.label}}

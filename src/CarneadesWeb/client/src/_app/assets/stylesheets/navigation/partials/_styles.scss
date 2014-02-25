@@ -1,0 +1,250 @@
+.projects {
+    padding-top: 100px !important;
+    position: relative;
+}
+
+a:hover {
+    color: #a0ce4e !important;
+    text-decoration: none;
+}
+
+h5.panel-title a {
+    cursor: pointer;
+    color: #333333 !important;
+}
+
+h5.panel-title:visited a, h5.panel-title:active a {
+    color: #333333 !important;
+}
+
+h5.panel-title:hover a {
+    color: #a0ce4e !important;
+}
+
+h5.panel-title a {
+    color: #333333 !important;
+    text-decoration: none;
+}
+
+.panel-group h5 {
+    color: #333333 !important;
+}
+
+.panel-group .panel-heading {
+  border-bottom: 0 solid #dddddd;
+}
+
+.panel-group .panel-heading + .panel-collapse .panel-body {
+    border-top: 0;
+    border-bottom: 0 solid #dddddd;
+    text-align: justify;
+}
+
+
+
+h5.panel-title:active span.arrow {
+    background: #a0ce4e url(../images/toggle_minus.png) no-repeat center center !important;
+}
+
+h5.panel-title span.arrow {
+    background: #333333 url(../images/toggle_plus.png) no-repeat center center;
+    display: block;
+    width: 22px;
+    height: 22px;
+    float: left;
+    margin-right: 18px;
+}
+
+.tooltip {
+    z-index: 1380;
+}
+
+#outline ul {
+    list-style-type: none;
+}
+
+
+
+
+.mainView {
+    margin: 30px auto;
+    width: 700px;
+}
+textarea {
+    width: 700px;
+    height: 400px;
+}
+
+ul.striped li {
+    background: #fff;
+    list-style:none;
+    padding: 10px 20px;
+}
+ul.striped li:nth-child(odd) {
+    background: #f3f6fa;
+}
+
+ul.striped li.selected {
+    background: -webkit-gradient(linear, left top, left bottom, from(#007ae3), to(#004cea));
+	background: -moz-linear-gradient(top, #007ae3, #004cea);
+    color: white;
+}
+
+
+/* JSON VIEW */
+
+/* striped background */
+.jsonView {
+    background-color: #f3f6fa;
+    background-image: -webkit-linear-gradient(rgba(255, 255, 255, 1) 50%, transparent 50%, transparent);
+    background-size: 60px 60px;
+    padding: 30px 0 0 5px;
+}
+
+/* inputs */
+.jsonView select {
+    margin: 0;
+    padding: 0;
+    width: 100px;
+}
+.jsonView input[type="text"] {
+    margin: -1px 5px 0 -5px;
+    border: 0;
+    box-shadow: none;
+    background: none;
+}
+.jsonView input.keyinput {
+    font-weight: bold;
+}
+.jsonView input[type="text"].addItemKeyInput, .jsonView input[type="text"].addItemValueInput {
+    border: 1px solid #ccc;
+    background: white;
+    margin-left: 0;
+}
+.jsonView .addItemKeyInput {
+    font-weight: bold;
+}
+
+/* chevrons */
+.jsonView .glyphicon-chevron-right, .jsonView .glyphicon-chevron-down {
+    float: left;
+    cursor: pointer;
+    position: relative;
+    top: 5px;
+    right: 20px;
+    margin-right: -15px;
+}
+.jsonView > .glyphicon-chevron-down {
+    display: none;
+}
+/* add and delete */
+.jsonView .addObjectItemBtn {
+    background-color: transparent;
+    border-color: transparent;
+    line-height: 10px;
+}
+.jsonView .deleteKeyBtn, .jsonView .moveArrayItemBtn {
+    float: right;
+    margin-right: 10px;
+    position: relative;
+    top: 7px;
+    z-index: 99999999999999;
+    cursor: pointer;
+}
+
+/* basic layout */
+.jsonObjectKey {
+    font-weight: bold;
+    cursor: select;
+}
+.jsonContents {
+    margin-left: 25px;
+}
+.jsonView .block {
+    display: block;
+    line-height: 30px;
+    min-height: 30px;
+}
+.jsonView .brace, .jsonItemDesc {
+    font-family: Georgia, serif;
+    color: grey;
+}
+.jsonItemDesc {
+    font-style: italic;
+    cursor: default;
+}
+.jsonView .objectDesc {
+    cursor: default;
+}
+/* first brace */
+.jsonView > .jsonItemDesc {
+    display: block;
+    float: left;
+    position: relative;
+    bottom: 25px;
+    height: 0;
+    width: 0;
+}
+
+/* array numbering */
+.jsonView ol.arrayOl {
+    margin: 0 0 0 25px;
+}
+.jsonView ol.arrayOl > li > span > span > .glyphicon-chevron-down,
+.jsonView ol.arrayOl > li > span > span > .glyphicon-chevron-right {
+    left: -40px;
+}
+.jsonView li {
+    color: grey;
+    font-style: italic;
+    font-family: Georgia, serif;
+    margin: 0;
+    line-height: 30px;
+    list-style-type: decimal;
+}
+.jsonView li li {
+    list-style-type: lower-roman;
+}
+.jsonView li li li {
+    list-style-type: upper-roman;
+}
+.jsonView li li li li {
+    list-style-type: lower-latin;
+}
+.jsonView li li li li li {
+    list-style-type: upper-latin;
+}
+.jsonView li li li li li li {
+    list-style-type: lower-greek;
+}
+.jsonView li li li li li li li {
+    list-style-type: decimal;
+}
+.sortable-placeholder {
+    height: 20px;
+    display: block;
+}
+
+#overlay {
+   position: fixed;
+   z-index:199;
+   top: 0px;
+   left: 0px;
+   height:100%;
+   width:100%;
+}
+
+* html #overlay { /* ie6 hack */
+   position: absolute;
+   height: expression(document.body.scrollHeight > document.body.
+    offsetHeight ? document.body.scrollHeight : document.body.
+    offsetHeight + 'px');
+}
+
+.overlayBG {
+   background-color:#000;
+   -ms-filter: "Alpha(Opacity=75)"; /* IE 8 */
+   filter:alpha(opacity=75); /* IE5-7 */
+   -moz-opacity: 0.75; /* Mozilla */
+   opacity: 0.75;
+}
