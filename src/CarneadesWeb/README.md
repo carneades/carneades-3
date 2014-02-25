@@ -25,7 +25,7 @@ gem install haml
 
 # Server
 
-Start the server with (development environment!): lein with-profile +dev repl
+Start the server with (development environment!): ```lein repl``` and type ```(go)```
 
 # Client
 
@@ -34,5 +34,5 @@ Compile the client with
 ```
 npm install
 bower install
-grunt package
+grunt build
 ```
