@@ -1,3 +1,8 @@
+;; Copyright (c) 2013 Fraunhofer Gesellschaft
+;; This Source Code Form is subject to the terms of the Mozilla Public
+;; License, v. 2.0. If a copy of the MPL was not distributed with this
+;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
 (ns carneades.web.pack
   (:use carneades.engine.statement
         carneades.engine.utils
