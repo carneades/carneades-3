@@ -115,7 +115,7 @@ module.exports = (grunt) ->
         base: "<%= comp.base %>/templates"
 
     dist:
-      base: "dist/carneades"
+      base: "dist/public"
 
     banner: "/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today(\"yyyy-mm-dd\") %>\n" + "<%= pkg.homepage ? \" * \" + pkg.homepage + \"\\n\" : \"\" %>" + " * Copyright (c) <%= grunt.template.today(\"yyyy-mm-dd\") %> <%= pkg.author %>;\n" + " * Licensed <%= _.pluck(pkg.licenses, \"type\").join(\", \") %>\n */\n"
     src:

@@ -15,8 +15,10 @@
             [sandbar.stateful-session :as session]))
 
 (defroutes app-routes
-  (route/files "/carneades" {:root "../client/dist"})
-  (route/resources "/carneades")
+  ;; (route/files "/carneades" {:root "../client/dist"})
+  (route/files "/" ;; {:root "carneades"}
+               )
+  (route/resources "/")
   (route/not-found "Not Found"))
 
 ;;append your application routes to the all-routes vector
