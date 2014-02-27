@@ -35,4 +35,5 @@
     (context "/projects" [] carneades-projects-api-routes)
     (context "/lican" [] carneades-lican-api-routes))
 
-  (GET "/" []  (response/redirect "/carneades/")))
+  ;; (GET "/" []  (response/redirect "/carneades/"))
+  )
