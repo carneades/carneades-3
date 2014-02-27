@@ -12,3 +12,4 @@ server/.nrepl-port
 client/node_modules/
 .sass-cache
 client/src/app/*
+client/dist
