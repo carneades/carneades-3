@@ -12,7 +12,8 @@
             [carneades.web.handler :as handler]
             [ring.middleware.format-params :as format-params]
             [ring.middleware.params :refer [wrap-params]]
-            [cheshire.core :as json]))
+            [cheshire.core :as json]
+            [carneades.web.service :as service]))
 
 (defn init
   "init will be called once when
@@ -82,12 +83,14 @@
 
 (defn start
   [system]
+  (service/start)
   (start-server system 3000)
   (info "system started :-)")
   system)
 
 (defn stop
   [system]
+  (service/stop)
   (stop-server system)
   (info "system stopped :-(")
   {:server (atom nil)})
