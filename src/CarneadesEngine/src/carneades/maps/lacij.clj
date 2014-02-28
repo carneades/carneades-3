@@ -8,12 +8,12 @@
         carneades.engine.statement
         carneades.maps.lacij-export
         clojure.java.browse)
-  (:import java.io.File))
+  (:import (java.io File)))
 
-;; We don't use a Protocol here since
-;; they don't deal correctly with optional arguments
-;; and overloading of functions definitions
-;;
+  ;; We don't use a Protocol here since
+  ;; they don't deal correctly with optional arguments
+  ;; and overloading of functions definitions
+  ;;
 
 (defn export
   [ag filename & options]
@@ -30,4 +30,3 @@
     ;; (.deleteOnExit tmpfile)
     (apply export ag filename options)
     (browse-url (str (.toURI tmpfile)))))
-
