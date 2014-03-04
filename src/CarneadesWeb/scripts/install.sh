@@ -95,7 +95,7 @@ ok_or_quit () {
 #################################################################################
 ####                                                                            #
 #### These are some dependency tests, don't touch them.                         #
-#### If you can't compile properly I'm not gonna let you try ;)            #
+#### If you can't compile properly I'm not gonna let you try ;)                 #
 ####                                                                            #
 #################################################################################
 
