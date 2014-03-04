@@ -38,7 +38,7 @@
   :ring {:handler carneades.web.handler/war-handler,
          :init carneades.web.handler/init,
          :destroy carneades.web.handler/destroy
-         :url-pattern ".."}
+         :url-pattern "/*"}
 
   :resource-paths ["../client/dist"]
 
