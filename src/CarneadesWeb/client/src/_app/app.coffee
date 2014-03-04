@@ -4,14 +4,29 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #global define
-define ["angular", "angular-bootstrap", "angular-ui-router", "projects/projectsModule", "lican/licanModule", "appStates", "appControllers", "angular-markdown", "common/misc/carneades", "common/directives/breadcrumb/breadcrumb", "templates/app", "templates/common"], (angular) ->
-  "use strict"
-  angular.module("app", ["ui.bootstrap", "ui.bootsrap.breadcrumb", "ui.router", "app.states", "app.controllers", "templates.app", "templates.common", "projects.module", "lican.module", "angular-markdown"])
+define ["angular", "angular-bootstrap", "angular-ui-router", "projects/projectsModule",
+ "lican/licanModule", "appStates", "appControllers", "angular-markdown",
+ "common/misc/carneades", "common/directives/breadcrumb/breadcrumb",
+ "templates/app", "templates/common", "angular-translate",
+ "angular-translate-loader-static-files"], (angular) ->
+  angular.module("app", ["ui.bootstrap", "ui.bootsrap.breadcrumb", "ui.router",
+  "app.states", "app.controllers", "templates.app", "templates.common",
+   "projects.module", "lican.module", "angular-markdown", "pascalprecht.translate"])
   .run(['$rootScope', '$state', '$stateParams', ($rootScope, $state, $stateParams) ->
     $rootScope.$state = $state
     $rootScope.$stateParams = $stateParams
   ])
-  .config(["$urlRouterProvider", "$stateProvider", "$httpProvider", "$provide", ($urlRouterProvider, $stateProvider, $httpProvider, $provide) ->
+  .config(["$urlRouterProvider", "$stateProvider", "$httpProvider", "$provide", "$translateProvider"
+  ($urlRouterProvider, $stateProvider, $httpProvider, $provide, $translateProvider) ->
+    
+    $translateProvider.useStaticFilesLoader(
+      prefix: '/languages/',
+      suffix: '.json'
+    )
+    
+    $translateProvider.preferredLanguage 'en'
+    # $translateProvider.useLocalStorage()
+      
     $urlRouterProvider.otherwise "/"
 
     $provide.factory "requestInterceptor", ($q, $injector) ->
@@ -100,17 +115,5 @@ define ["angular", "angular-bootstrap", "angular-ui-router", "projects/projectsM
       requestNotificationChannel.onRequestEnded scope, endRequestHandler
 
       undefined
-  ])
-
-  .constant("I18N.MESSAGES",
-    "errors.route.changeError": "Route change error"
-    "crud.user.save.error": "Something went wrong when saving a user..."
-    "crud.project.save.success": "A project with id '{{id}}' was saved successfully."
-    "crud.project.remove.success": "A project with id '{{id}}' was removed successfully."
-    "crud.project.save.error": "Something went wrong when saving a project..."
-    "login.reason.notAuthorized": "You do not have the necessary access permissions.  Do you want to login as someone else?"
-    "login.reason.notAuthenticated": "You must be logged in to access this part of the application."
-    "login.error.invalidCredentials": "Login failed.  Please check your credentials and try again."
-    "login.error.serverError": "There was a problem with authenticating: {{exception}}.")
-    .constant('_START_REQUEST_', '_START_REQUEST_')
+  ]).constant('_START_REQUEST_', '_START_REQUEST_')
     .constant('_END_REQUEST_', '_END_REQUEST_')

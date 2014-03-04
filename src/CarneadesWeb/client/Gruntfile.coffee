@@ -146,6 +146,14 @@ module.exports = (grunt) ->
           cwd: "<%= prep.assets %>/images"
         ]
 
+      languages:
+        files: [
+          dest: "<%= dist.base %>/languages"
+          src: "**"
+          expand: true
+          cwd: "<%= prep.assets %>/languages"
+        ]
+
       requirejs:
         files: [
           dest: "<%= dist.base %>"
@@ -354,7 +362,7 @@ module.exports = (grunt) ->
 
   # basic build tasks
   grunt.registerTask "compile", ["haml", "chtml2js", "coffee", "compass", "concat:bootstrap"]
-  grunt.registerTask "package", ["bower", "requirejs", "concat:index", "cssmin", "copy:requirejs", "copy:images", "copy:fonts"]
+  grunt.registerTask "package", ["bower", "requirejs", "concat:index", "cssmin", "copy:requirejs", "copy:images", "copy:fonts", "copy:languages"]
 
   # magic continues: test
   grunt.registerTask "test", ["karma"]

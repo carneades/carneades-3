@@ -21,6 +21,12 @@ require.config
     "angular-markdown":
       deps: ["angular", "components/showdown/compressed/showdown"]
 
+    "angular-translate":
+      deps: ["angular"]
+
+    "angular-translate-loader-static-files":
+      deps: ["angular-translate"]
+
     "angular-ui-bootstrap3-patched":
       deps: ["angular"]
 
