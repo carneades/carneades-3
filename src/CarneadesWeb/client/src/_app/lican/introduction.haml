@@ -1,7 +1,6 @@
 %div{"ui-view" => ""}
   %h1 {{title}}
-  %p.introduction
-    {{messages.intro_text}}
+  %p.introduction{translate: "lican.intro.text"}
 
   %form{"ng-submit" => "startAnalysis()"}
-    %input.btn-primary{value: "{{messages.intro_start}}", type: "submit"}
+    %button.btn.btn-default{translate: "lican.intro.start", type: "submit"}

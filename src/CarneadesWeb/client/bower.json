@@ -1,20 +1,23 @@
 {
-    "name": "carneades-app",
-    "version": "0.0.1",
-    "ignore": [
-        "**/.*",
-        "node_modules"
-    ],
-    "dependencies": {
-        "angular": "~1.2.5",
-        "angular-bootstrap": "~0.10.0",
-        "angular-route": "~1.2.5",
-        "angular-resource": "~1.2.5",
-        "angular-local-storage": "",
-        "showdown": "~0.3.1",
-        "angular-markdown": "0.0.1",
-        "requirejs": "~2.1.9",
-        "requirejs-domready": "~2.0.1",
-        "angular-ui-router": "0.2.8-bowratic-tedium"
-    }
+  "name": "carneades-app",
+  "version": "0.0.1",
+  "ignore": [
+    "**/.*",
+    "node_modules"
+  ],
+  "dependencies": {
+    "angular": "~1.2.5",
+    "angular-bootstrap": "~0.10.0",
+    "angular-route": "~1.2.5",
+    "angular-resource": "~1.2.5",
+    "angular-local-storage": "",
+    "showdown": "~0.3.1",
+    "angular-markdown": "0.0.1",
+    "requirejs": "~2.1.9",
+    "requirejs-domready": "~2.0.1",
+    "angular-ui-router": "0.2.8-bowratic-tedium",
+    "angular-translate": "~2.0.1",
+    "angular-translate-loader-static-files": "~2.0.0"
+      
+  }
 }
