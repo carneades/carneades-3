@@ -3,12 +3,12 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-define ["angular", "./localizedMessages", "./notifications"], (angular) ->
+define ["angular", "angular-translate", "./notifications"], (angular) ->
   "use strict"
-  angular.module("services.i18nNotifications", ["services.notifications", "services.localizedMessages"]).factory "i18nNotifications", ["localizedMessages", "notifications", (localizedMessages, notifications) ->
+  angular.module("services.i18nNotifications", ["services.notifications", "pascalprecht.translate"]).factory "i18nNotifications", ["$translate", "notifications", ($translate, notifications) ->
     prepareNotification = (msgKey, type, interpolateParams, otherProperties) ->
       angular.extend
-        message: localizedMessages.get(msgKey, interpolateParams)
+        message: $translate.instant msgKey, interpolateParams
         type: type
       , otherProperties
 
