@@ -25,7 +25,7 @@
 (def projects-lock (Object.))
 
 (defn- project?
-  "Returns true if the director is a project."
+  "Returns true if the directory is a project."
   [dir]
   (and (.isDirectory dir)
        (exists? (str dir file-separator "properties.clj"))))
