@@ -4,8 +4,7 @@
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 (ns carneades.web.modules.project.functions
-  ^{:author "Sebastian Kaiser"
-    :doc "Basic functions for serving project requests"}
+  ^{:doc "Basic functions for serving project requests"}
   (:require [clj-http.client :as client]
             [taoensso.timbre :as timbre :refer [trace debug info warn error fatal spy]]
             [compojure.route :as route]
@@ -19,7 +18,7 @@
             [carneades.project.admin :as project]
             [carneades.engine.translation :as tr]
             [carneades.engine.theory.translation :as ttr]
-            ))
+            [clojure.java.io :as io]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utility functions
@@ -59,6 +58,12 @@
   [host resource params]
   {:pre [(not (nil? resource))]}
   (params->resource [(str host "/carneadesws/" (name resource))] params))
+
+(defn get-raw-resource
+  [host resource params]
+  (let [url (apply str (into ["http://" host "/carneadesws/" (name resource) "/"]
+                             params))]
+    (io/input-stream (:body (client/get url {:as :byte-array})))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Helper functions for service calls
@@ -236,6 +241,9 @@
             svg (apply lacij/export-str ag lang optionsseq)]
         svg))))
 
+(defn get-project-archive
+  [& {:keys [project host]}]
+  (get-raw-resource host :export [(str project ".zip")]))
 
 ;; TODO: move to engine/theory.translation
 (defn add-premise-translation
@@ -303,7 +311,7 @@
 
 (defn get-theories
   [params]
-  (let [params (merge {:host "localhost:3000"
+  (let [params (merge {;; :host "localhost:3000"
                        :lang :en} params)
         params (update-in params [:lang] keyword)]
    (if (:tid params)
