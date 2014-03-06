@@ -4,8 +4,7 @@
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 (ns carneades.web.modules.project.routes
-  ^{:author "Sebastian Kaiser"
-    :doc "Definition of project routes."}
+  ^{:doc "Definition of project routes."}
   (:require [carneades.web.modules.session.logic :refer [session-put-language]]
             [carneades.web.modules.project.functions
              :refer [get-projects
@@ -16,14 +15,13 @@
                      get-arguments-dbg
                      get-nodes
                      get-argument-map
-                     get-theories]]
+                     get-theories
+                     get-project-archive]]
             [sandbar.stateful-session :refer :all]
             [ring.middleware.session.cookie :refer :all]
             [ring.middleware.json :refer [wrap-json-response]]
             [compojure.core :refer [defroutes context ANY GET]]
             [liberator.core :refer [defresource]]
-            ;; [carneades.web.modules.project.handlers :as handlers]
-            ;; [carneades.web.modules.project.logging :as logging
             [cheshire.core :refer :all]
             [clojure.set :as set]
             [clabango.parser :as parser]
@@ -97,6 +95,13 @@
   :handle-ok (fn [{{{host "host"} :headers} :request lang :language}]
                (get-projects :id id :lang (keyword lang) :host host)))
 
+(defresource entry-download-project-resource [id]
+  :available-media-types ["application/zip"]
+  :available-charsets ["utf-8"]
+  :allowed-methods [:get]
+  :handle-ok (fn [{{{host "host"} :headers} :request}]
+               (get-project-archive :project id :host host)))
+
 (defresource list-project-resource []
   :allowed-methods [:get :post]
   :available-charsets ["utf-8"]
@@ -134,10 +139,11 @@
   (context "/:pid" [pid]
 
     (ANY "/" [] (entry-project-resource pid))
+    (ANY "/download" [] (entry-download-project-resource pid))
 
     (context "/theories" []
-       (ANY "/" [] (list-theories-resource pid))
-       (ANY "/:tid" {params :params} (entry-theories-resource params)))
+      (ANY "/" [] (list-theories-resource pid))
+      (ANY "/:tid" {params :params} (entry-theories-resource params)))
 
     (context "/:db" [db]
 
@@ -161,3 +167,5 @@
 
       (context "/map" []
         (ANY "/" [] (entry-map-resource pid db))))))
+
+
