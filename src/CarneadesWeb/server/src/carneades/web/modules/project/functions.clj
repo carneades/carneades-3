@@ -55,7 +55,8 @@
 ;; Definition of resources
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn get-resource
-  [host resource & [params]]
+  "Returns a JSON resource from the old carneades REST api."
+  [host resource params]
   {:pre [(not (nil? resource))]}
   (params->resource [(str host "/carneadesws/" (name resource))] params))
 
