@@ -59,11 +59,21 @@
   {:pre [(not (nil? resource))]}
   (params->resource [(str host "/carneadesws/" (name resource))] params))
 
+(defn construct-url
+  [host resource params]
+  (let [base ["http://" host "/carneadesws/" (name resource)]]
+    (if (empty? params)
+      (apply str base)
+      (apply str (into base ["/"] params)))))
+
 (defn get-raw-resource
   [host resource params]
-  (let [url (apply str (into ["http://" host "/carneadesws/" (name resource) "/"]
-                             params))]
-    (io/input-stream (:body (client/get url {:as :byte-array})))))
+  (io/input-stream (:body (client/get (construct-url host resource params)
+                                      {:as :byte-array}))))
+
+(defn post-resource
+  [host resource params post-params]
+  (client/post (construct-url host resource params) post-params))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Helper functions for service calls
@@ -244,6 +254,15 @@
 (defn get-project-archive
   [& {:keys [project host]}]
   (get-raw-resource host :export [(str project ".zip")]))
+
+(defn post-project-archive
+  [& {:keys [file host]}]
+  ;; curl -F "file=@default2.zip;filename=nameinpost" http://localhost:3000/api/projects/upload
+  (post-resource host :import []
+                 {:multipart
+                  [{:name "Content/type" :content "application/zip"}
+                   {:name "file"
+                    :content (clojure.java.io/file (.getPath (:tempfile file)))}]}))
 
 ;; TODO: move to engine/theory.translation
 (defn add-premise-translation

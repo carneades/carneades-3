@@ -16,7 +16,8 @@
                      get-nodes
                      get-argument-map
                      get-theories
-                     get-project-archive]]
+                     get-project-archive
+                     post-project-archive]]
             [sandbar.stateful-session :refer :all]
             [ring.middleware.session.cookie :refer :all]
             [ring.middleware.json :refer [wrap-json-response]]
@@ -25,7 +26,8 @@
             [cheshire.core :refer :all]
             [clojure.set :as set]
             [clabango.parser :as parser]
-            [noir.request :refer :all]))
+            [noir.request :refer :all]
+            [taoensso.timbre :as timbre :refer [debug info warn error]]))
 
 (defresource list-metadata-resource [pid db k]
   :available-media-types ["application/json"]
@@ -102,6 +104,13 @@
   :handle-ok (fn [{{{host "host"} :headers} :request}]
                (get-project-archive :project id :host host)))
 
+(defresource entry-upload-project-resource [file]
+  :available-media-types ["application/octet-stream"]
+  :available-charsets ["utf-8"]
+  :allowed-methods [:post]
+  :post! (fn [{{{host "host"} :headers} :request}]
+           (post-project-archive :file file :host host)))
+
 (defresource list-project-resource []
   :allowed-methods [:get :post]
   :available-charsets ["utf-8"]
@@ -136,11 +145,13 @@
 (defroutes carneades-projects-api-routes
 
   (ANY "/" [] (list-project-resource))
+  (ANY "/upload" [file] (entry-upload-project-resource file))
+
   (context "/:pid" [pid]
 
     (ANY "/" [] (entry-project-resource pid))
     (ANY "/download" [] (entry-download-project-resource pid))
-
+    
     (context "/theories" []
       (ANY "/" [] (list-theories-resource pid))
       (ANY "/:tid" {params :params} (entry-theories-resource params)))
