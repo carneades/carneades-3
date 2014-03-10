@@ -4,15 +4,8 @@
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 (ns carneades.web.modules.project.routes
-<<<<<<< HEAD
-  ^{:author "Sebastian Kaiser"
-    :doc "Definition of project routes."}
-  (:require [taoensso.timbre :as timbre :refer (trace debug info warn error fatal spy)]
-            [carneades.web.modules.session.logic :refer [session-put-language]]
-=======
   ^{:doc "Definition of project routes."}
   (:require [carneades.web.modules.session.logic :refer [session-put-language]]
->>>>>>> ffc2238644bacec37ae2e66a21aa8f34b8bec20c
             [carneades.web.modules.project.functions
              :refer [get-projects
                      get-metadata
