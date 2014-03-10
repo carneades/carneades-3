@@ -9,88 +9,14 @@
   (:use ring.server.standalone [ring.middleware file-info file])
   (:require [taoensso.timbre :as timbre :refer (trace debug info warn error fatal spy)]
             [com.postspectacular.rotor :as rotor]
-            [carneades.web.handler :as handler]
             [ring.middleware.format-params :as format-params]
             [ring.middleware.params :refer [wrap-params]]
+            [ring.middleware.json :refer [wrap-json-response]]
             [cheshire.core :as json]
-            [carneades.web.service :as service]))
-
-(defn init
-  "init will be called once when
-   app is deployed as a servlet on
-   an app server such as Tomcat
-   put any initialization code here"
-  []
-  (timbre/merge-config!
-   {:appenders {:rotor {:min-level :info
-                        :enabled? true
-                        :async? false          ; should be always false for rotor
-                        :max-message-per-msecs nil
-                        :fn rotor/append}}})
-
-  (timbre/merge-config!
-   {:appenders {:standard-out {:min-level :debug
-                               :enabled? true
-                               :async? false
-                               :max-message-per-msecs nil}}})
-
-  (timbre/set-config!
-    [:shared-appender-config :rotor]
-    {:path "carneades.web.log" :max-size 10000 "backlog" 10})
-
-  (info "logging successfully initiated."))
-
-(defn get-handler []
-  ;; #'app expands to (var app) so that when we reload our code,
-  ;; the server is forced to re-resolve the symbol in the var
-  ;; rather than having its own copy. When the root binding
-  ;; changes, the server picks it up without having to restart.
-  (-> #'handler/app
-    ;; Makes static assets in $PROJECT_DIR/resources/public/ available.
-    (wrap-file "../client/dist")
-    ;; Content-Type, Content-Length, and Last Modified headers for files in body
-    (wrap-file-info)
-    ;; Support for JSON POST BODY as parameters
-    (format-params/wrap-format-params
-     :predicate format-params/json-request?
-     :decoder #(json/parse-string % true)
-     :charset format-params/get-or-guess-charset)
-    ))
-
-(defn start-server
-  "used for starting the server in development mode from REPL"
-  [system & [port]]
-  (let [port (if port
-               port
-               8080)
-        server (:server system)]
-    (reset! server
-            (serve (get-handler)
-                   {:port port
-                    :init init
-                    :auto-reload? true
-                    ;:destroy destroy
-                    :join true}))
-    (info (str "You can view the site at http://localhost:" port))))
-
-(defn stop-server [system]
-  (let [server (:server system)]
-    (.stop @server)
-    (reset! server nil)))
-
-
-(def system {:server (atom nil)})
-
-(defn start
-  [system]
-  (service/start)
-  (start-server system 3000)
-  (info "system started :-)")
-  system)
-
-(defn stop
-  [system]
-  (service/stop)
-  (stop-server system)
-  (info "system stopped :-(")
-  {:server (atom nil)})
+            [carneades.web.service :as service]
+            [compojure.core :refer :all]
+            [noir.util.middleware :as middleware]
+            [sandbar.stateful-session :refer :all]
+            [carneades.web.routes :refer [carneades-web-routes]]
+            [compojure.route :as route :refer [files resources not-found]]
+            [sandbar.stateful-session :as session]))

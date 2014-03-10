@@ -19,14 +19,22 @@
             [carneades.web.modules.lican.routes
              :refer [carneades-lican-api-routes]]))
 
-(def carneades-rest-routes (-> #'service/carneades-web-service-routes wrap-restful-response))
+(def carneades-rest-routes
+  (-> #'service/carneades-web-service-routes wrap-restful-response))
 
 (defroutes carneades-web-routes
-  ;(GET "/" [] (resp/redirect "/index.html"))
-  (GET "/" [] (resp/resource-response "index.html" {:root "public"}))
-  (context "/carneadesws" [] carneades-rest-routes)
+  (context "/carneades" []
+           (GET "/" [] (resp/resource-response "index.html" {:root "public/carneades"}))
+           (context "/carneadesws" [] carneades-rest-routes)
+           (context "/api" []
+                    (context "/session" [] carneades-session-api-routes)
+                    (context "/projects" [] carneades-projects-api-routes)
+                    (context "/lican" [] carneades-lican-api-routes))))
 
+(defroutes tomcat-carneades-web-routes
+  (GET "/" [] (resp/resource-response "index.html" {:root "public/carneades"}))
+  (context "/carneadesws" [] carneades-rest-routes)
   (context "/api" []
-    (context "/session" [] carneades-session-api-routes)
-    (context "/projects" [] carneades-projects-api-routes)
-    (context "/lican" [] carneades-lican-api-routes)))
+           (context "/session" [] carneades-session-api-routes)
+           (context "/projects" [] carneades-projects-api-routes)
+           (context "/lican" [] carneades-lican-api-routes)))
