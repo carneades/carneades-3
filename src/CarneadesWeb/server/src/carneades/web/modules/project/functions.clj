@@ -4,8 +4,7 @@
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 (ns carneades.web.modules.project.functions
-  ^{:author "Sebastian Kaiser"
-    :doc "Basic functions for serving project requests"}
+  ^{:doc "Basic functions for serving project requests"}
   (:require [clj-http.client :as client]
             [taoensso.timbre :as timbre :refer [trace debug info warn error fatal spy]]
             [compojure.route :as route]
@@ -19,7 +18,7 @@
             [carneades.project.admin :as project]
             [carneades.engine.translation :as tr]
             [carneades.engine.theory.translation :as ttr]
-            ))
+            [clojure.java.io :as io]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Utility functions
@@ -53,9 +52,26 @@
 ;; Definition of resources
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn get-resource
-  [host resource & [params]]
+  "Returns a JSON resource from the old carneades REST api."
+  [host resource params]
   {:pre [(not (nil? resource))]}
   (params->resource [(str host "/carneades/carneadesws/" (name resource))] params))
+
+(defn construct-url
+  [host resource params]
+  (let [base ["http://" host "/carneadesws/" (name resource)]]
+    (if (empty? params)
+      (apply str base)
+      (apply str (into base ["/"] params)))))
+
+(defn get-raw-resource
+  [host resource params]
+  (io/input-stream (:body (client/get (construct-url host resource params)
+                                      {:as :byte-array}))))
+
+(defn post-resource
+  [host resource params post-params]
+  (client/post (construct-url host resource params) post-params))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Helper functions for service calls
@@ -233,6 +249,18 @@
             svg (apply lacij/export-str ag lang optionsseq)]
         svg))))
 
+(defn get-project-archive
+  [& {:keys [project host]}]
+  (get-raw-resource host :export [(str project ".zip")]))
+
+(defn post-project-archive
+  [& {:keys [file host]}]
+  ;; curl -F "file=@default2.zip;filename=nameinpost" http://localhost:3000/api/projects/upload
+  (post-resource host :import []
+                 {:multipart
+                  [{:name "Content/type" :content "application/zip"}
+                   {:name "file"
+                    :content (clojure.java.io/file (.getPath (:tempfile file)))}]}))
 
 ;; TODO: move to engine/theory.translation
 (defn add-premise-translation
@@ -300,7 +328,7 @@
 
 (defn get-theories
   [params]
-  (let [params (merge {:host "localhost:3000"
+  (let [params (merge {;; :host "localhost:3000"
                        :lang :en} params)
         params (update-in params [:lang] keyword)]
    (if (:tid params)
