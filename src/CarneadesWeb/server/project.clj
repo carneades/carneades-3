@@ -27,6 +27,7 @@
                  [clj-http "0.7.2"]
                  [clj-json "0.5.3"]
                  [cheshire "5.2.0"]
+                 [http-kit "2.0.0"]
 
                  [liberator "0.10.0"]
                  [sandbar/sandbar "0.4.0-SNAPSHOT"]
@@ -35,16 +36,20 @@
 
   :plugins [[lein-ring "0.8.10"]]
 
-  :ring {:handler carneades.web.handler/war-handler,
-         :init carneades.web.handler/init,
+  :ring {:handler carneades.web.handler/war-handler
+         :init carneades.web.handler/init
          :destroy carneades.web.handler/destroy
-         :url-pattern "/*"}
+         :servlet-name "carneades"}
 
   :resource-paths ["../client/dist"]
 
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies [[org.clojure/tools.namespace "0.2.3"]
-                                  [org.clojure/java.classpath "0.2.0"]]}}
+                                  [org.clojure/java.classpath "0.2.0"]]}
+             :tomcat {:ring {:handler carneades.web.handler/tomcat-war-handler
+                             :init carneades.web.handler/init
+                             :destroy carneades.web.handler/destroy
+                             :servlet-name "carneades"}}}
 
   :repl-options {:timeout 120000}
 
