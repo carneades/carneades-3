@@ -619,13 +619,10 @@
   (POST "/import" [file]
         (let [tempfile (:tempfile file)
               content-type (:content-type file)]
-          (if (not= content-type "application/zip")
-            {:status 415
-             :body "Invalid format. Zip archive expected."}
-            (do
-              (unzip (.getPath tempfile) project/projects-directory)
-              (reset! state (init-projects-data))
-              {:status 200}))))
+          (do
+            (unzip (.getPath tempfile) project/projects-directory)
+            (reset! state (init-projects-data))
+            {:status 200})))
 
   ;; Zip
   (GET "/export/:project.zip" [project]
