@@ -4,10 +4,15 @@
 ;; file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 (ns carneades.web.modules.project.routes
+<<<<<<< HEAD
   ^{:author "Sebastian Kaiser"
     :doc "Definition of project routes."}
   (:require [taoensso.timbre :as timbre :refer (trace debug info warn error fatal spy)]
             [carneades.web.modules.session.logic :refer [session-put-language]]
+=======
+  ^{:doc "Definition of project routes."}
+  (:require [carneades.web.modules.session.logic :refer [session-put-language]]
+>>>>>>> ffc2238644bacec37ae2e66a21aa8f34b8bec20c
             [carneades.web.modules.project.functions
              :refer [get-projects
                      get-metadata
@@ -17,19 +22,20 @@
                      get-arguments-dbg
                      get-nodes
                      get-argument-map
-                     get-theories]]
+                     get-theories
+                     get-project-archive
+                     post-project-archive]]
             [sandbar.stateful-session :refer :all]
             [clojure.string :refer [split]]
             [ring.middleware.session.cookie :refer :all]
             [ring.middleware.json :refer [wrap-json-response]]
             [compojure.core :refer [defroutes context ANY GET]]
             [liberator.core :refer [defresource]]
-            ;; [carneades.web.modules.project.handlers :as handlers]
-            ;; [carneades.web.modules.project.logging :as logging
             [cheshire.core :refer :all]
             [clojure.set :as set]
             [clabango.parser :as parser]
-            [noir.request :refer :all]))
+            [noir.request :refer :all]
+            [taoensso.timbre :as timbre :refer [debug info warn error]]))
 
 (defresource list-metadata-resource [pid db k]
   :available-media-types ["application/json"]
@@ -100,6 +106,20 @@
   :handle-ok (fn [{{{host "host"} :headers} :request lang :language}]
                (get-projects :id id :lang (keyword lang) :host host)))
 
+(defresource entry-download-project-resource [id]
+  :available-media-types ["application/zip"]
+  :available-charsets ["utf-8"]
+  :allowed-methods [:get]
+  :handle-ok (fn [{{{host "host"} :headers} :request}]
+               (get-project-archive :project id :host host)))
+
+(defresource entry-upload-project-resource [file]
+  :available-media-types ["application/octet-stream"]
+  :available-charsets ["utf-8"]
+  :allowed-methods [:post]
+  :post! (fn [{{{host "host"} :headers} :request}]
+           (post-project-archive :file file :host host)))
+
 (defresource list-project-resource []
   :allowed-methods [:get :post]
   :available-charsets ["utf-8"]
@@ -141,12 +161,15 @@
 
 (defroutes carneades-projects-api-routes
   (ANY "/" [] (list-project-resource))
+  (ANY "/upload" [file] (entry-upload-project-resource file))
+
   (context "/:pid" [pid]
-           (ANY "/" [] (entry-project-resource pid))
+    (ANY "/" [] (entry-project-resource pid))
+    (ANY "/download" [] (entry-download-project-resource pid))
 
     (context "/theories" []
-             (ANY "/" [] (list-theories-resource pid))
-             (ANY "/:tid" {params :params} (entry-theories-resource params)))
+      (ANY "/" [] (list-theories-resource pid))
+      (ANY "/:tid" {params :params} (entry-theories-resource params)))
 
     (context "/:db" [db]
              (context "/metadata" []
