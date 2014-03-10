@@ -4,12 +4,12 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #global define
-define ["angular", "angular-bootstrap", "angular-ui-router", "projects/projectsModule", "lican/licanModule", "appStates", "appControllers", "angular-markdown", "common/misc/carneades", "common/directives/breadcrumb/breadcrumb", "templates/app", "templates/common"], (angular) ->
+define ["angular", "angular-bootstrap", "angular-ui-router", "projects/projectsModule", "lican/licanModule", "appStates", "appControllers", "angular-markdown", "common/directives/breadcrumb/breadcrumb", "templates/app", "templates/common"], (angular) ->
   "use strict"
   angular.module("app", ["ui.bootstrap", "ui.bootsrap.breadcrumb", "ui.router", "app.states", "app.controllers", "templates.app", "templates.common", "projects.module", "lican.module", "angular-markdown"])
-  .run(['$rootScope', '$state', '$stateParams', ($rootScope, $state, $stateParams) ->
-    $rootScope.$state = $state
-    $rootScope.$stateParams = $stateParams
+    .run(['$rootScope', '$state', '$stateParams', ($rootScope, $state, $stateParams) ->
+      $rootScope.$state = $state
+      $rootScope.$stateParams = $stateParams
   ])
   .config(["$urlRouterProvider", "$stateProvider", "$httpProvider", "$provide", ($urlRouterProvider, $stateProvider, $httpProvider, $provide) ->
     $urlRouterProvider.otherwise "/"

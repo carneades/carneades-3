@@ -7,8 +7,8 @@
 define ["angular", "angular-resource"], (angular) ->
   "use strict"
   services = angular.module("resources.projects", ["ngResource"])
-  services.factory "Project", ["$resource", ($resource) ->
-    $resource "../api/projects/:pid",
+  services.factory "Project", ["$resource", "$location", ($resource, $location) ->
+    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid",
       pid: "@pid"
 
   ]
