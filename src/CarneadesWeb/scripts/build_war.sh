@@ -11,25 +11,6 @@ TOMCAT_DEPLOY_PATH="/usr/local/Cellar/tomcat/7.0.52/libexec/webapps"
 ####                                                                            #
 ####                                                                            #
 #################################################################################
-set_warname () {
-    cont=true
-    while $cont
-    do
-        printf "Set name of war file (${WAR_NAME}): "
-        read line
-        case "$line" in
-            '')
-                cont=false
-                ;;
-            *)
-                WAR_NAME=$line
-                cont=false
-                ;;
-
-        esac
-    done
-}
-
 set_deploy_path () {
     cont=true
     while $cont
@@ -64,10 +45,9 @@ prepare_local_deps () {
     lein install
 }
 
-set_warname
 prepare_local_deps
 cd $SCRIPTPATH/../server
-lein ring uberwar $WAR_NAME.war
+lein with-profiles tomcat ring uberwar $WAR_NAME.war
 
 if [[ $* == *--deploy* ]]
 then

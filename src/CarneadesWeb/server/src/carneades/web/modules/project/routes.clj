@@ -6,7 +6,8 @@
 (ns carneades.web.modules.project.routes
   ^{:author "Sebastian Kaiser"
     :doc "Definition of project routes."}
-  (:require [carneades.web.modules.session.logic :refer [session-put-language]]
+  (:require [taoensso.timbre :as timbre :refer (trace debug info warn error fatal spy)]
+            [carneades.web.modules.session.logic :refer [session-put-language]]
             [carneades.web.modules.project.functions
              :refer [get-projects
                      get-metadata
@@ -18,6 +19,7 @@
                      get-argument-map
                      get-theories]]
             [sandbar.stateful-session :refer :all]
+            [clojure.string :refer [split]]
             [ring.middleware.session.cookie :refer :all]
             [ring.middleware.json :refer [wrap-json-response]]
             [compojure.core :refer [defroutes context ANY GET]]
@@ -33,7 +35,8 @@
   :available-media-types ["application/json"]
   :allowed-methods [:get]
   :available-charsets["utf-8"]
-  :handle-ok (fn [{{{host "host"} :headers} :request}] (get-metadata [pid db] :k k :host host)))
+  :handle-ok (fn [{{{host "host"} :headers} :request}]
+               (get-metadata [pid db] :k k :host host)))
 
 (defresource entry-metadata-resource [pid db id]
   :available-media-types ["application/json"]
@@ -128,36 +131,41 @@
   :handle-ok (fn [{{{host "host"} :headers} :request lang :language}]
                (get-argument-map pid db :lang (keyword lang) :host host)))
 
-(defroutes carneades-projects-api-routes
 
+(defresource test-resource [params]
+  :allowed-methods [:get]
+  :available-charsets ["utf-8"]
+  :available-media-types ["application/json"]
+  :handle-ok (fn [_] {::params (str params)
+                      ::key "Hello World!"}))
+
+(defroutes carneades-projects-api-routes
   (ANY "/" [] (list-project-resource))
   (context "/:pid" [pid]
-
-    (ANY "/" [] (entry-project-resource pid))
+           (ANY "/" [] (entry-project-resource pid))
 
     (context "/theories" []
-       (ANY "/" [] (list-theories-resource pid))
-       (ANY "/:tid" {params :params} (entry-theories-resource params)))
+             (ANY "/" [] (list-theories-resource pid))
+             (ANY "/:tid" {params :params} (entry-theories-resource params)))
 
     (context "/:db" [db]
-
-      (context "/metadata" []
-        (ANY "/" [k] (list-metadata-resource pid db k))
-        (ANY "/:mid" [mid] (entry-metadata-resource pid db mid)))
+             (context "/metadata" []
+                      (ANY "/" [k] (list-metadata-resource pid db k))
+                      (ANY "/:mid" [mid] (entry-metadata-resource pid db mid)))
 
       (context "/arguments" []
-        (ANY "/" [] (list-argument-resource pid db))
-        (ANY "/:aid" [aid] (entry-argument-resource pid db aid))
-        (ANY "/dbg/:aid" [aid] (entry-argument-dbg-resource pid db aid))
-        (ANY "/edit/:aid" [] (edit-argument-resource)))
+               (ANY "/" [] (list-argument-resource pid db))
+               (ANY "/:aid" [aid] (entry-argument-resource pid db aid))
+               (ANY "/dbg/:aid" [aid] (entry-argument-dbg-resource pid db aid))
+               (ANY "/edit/:aid" [] (edit-argument-resource)))
 
       (context "/statements" []
-        (ANY "/" [] (list-statement-resource pid db))
-        (ANY "/:sid" [sid] (entry-statement-resource pid db sid)))
+               (ANY "/" [] (list-statement-resource pid db))
+               (ANY "/:sid" [sid] (entry-statement-resource pid db sid)))
 
       (context "/nodes" []
-        (ANY "/" [] (list-node-resource pid db))
-        (ANY "/:nid" [nid] (entry-node-resource pid db nid)))
+               (ANY "/" [] (list-node-resource pid db))
+               (ANY "/:nid" [nid] (entry-node-resource pid db nid)))
 
       (context "/map" []
-        (ANY "/" [] (entry-map-resource pid db))))))
+               (ANY "/" [] (entry-map-resource pid db))))))

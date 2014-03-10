@@ -6,7 +6,7 @@
 (ns ^{:doc "See http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded"}
   user
   (:require [clojure.tools.namespace.repl :refer [refresh refresh-all]]
-            [carneades.web.system :as system]))
+            [carneades.web.repl :as repl]))
 
 
 (def system nil)
@@ -15,18 +15,18 @@
   "Constructs the current development system."
   []
   (alter-var-root #'system
-                  (constantly system/system)))
+                  (constantly repl/system)))
 
 (defn start
   "Starts the current development system."
   []
-  (alter-var-root #'system (system/start system)))
+  (alter-var-root #'system (repl/start-server system)))
 
 (defn stop
   "Shuts down and destroys the current development system."
   []
-  (alter-var-root #'system 
-                  (fn [s] (when s (system/stop s)))))
+  (alter-var-root #'system
+                  (fn [s] (when s (repl/stop-server s)))))
 
 (defn go
   "Initializes the current development system and starts it running."

@@ -49,15 +49,13 @@
                             (#(rename-keys %)))))
           data))
 
-;(defn- get-resource [] (partial params->resource))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definition of resources
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn get-resource
   [host resource & [params]]
   {:pre [(not (nil? resource))]}
-  (params->resource [(str host "/carneadesws/" (name resource))] params))
+  (params->resource [(str host "/carneades/carneadesws/" (name resource))] params))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Helper functions for service calls
@@ -135,7 +133,7 @@
 
   {:pre [(not (nil? project))
          (not (nil? db))]}
-
+  (info (str "METADATA-KEY:" k))
   (->> (get-resource host :metadata params)
        (#(if (nil? k)
            %
