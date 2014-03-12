@@ -280,13 +280,17 @@
   [ag1]
   (reify ArgumentGenerator
     (generate [this goal subs]
-      (reduce (fn [l wff]
-                (let [subs2 (unify goal (literal-atom wff) subs)]
-                  (if (empty? subs2)
-                    l
-                    (conj l (make-response subs2 () nil)))))
-              []
-              (basis ag1)))))
+      ;; (prn "generate-subs-from-basis")
+      ;; (prn "subs" subs)
+      (let [r (reduce (fn [l wff]
+                      (let [subs2 (unify goal (literal-atom wff) subs)]
+                        (if (empty? subs2)
+                          l
+                          (conj l (make-response subs2 () nil)))))
+                    []
+                    (basis ag1))]
+        ;; (prn "generate-subs-from-basis finished")
+        r))))
 
 (defn- reduce-goal
   "acstate symbol generators -> acstate
@@ -294,13 +298,17 @@
   [state1 id generators1]
   ;; Remove the goal from the state. Every goal is reduced at most once. The remaining issues of the goal
   ;; are passed down to the children of the goal, so they are not lost by removing the goal.
+  ;; (prn "reduce-goal")
   (let [goal (get (:goals state1) id),
+        ;; _ (prn "remove goal")
         state2 (remove-goal state1 id)]
-    ;; (debug "goal")
-    ;; (spy goal)
+    ;; (prn "goal")
+    ;; (prn goal)
+;;    (spy goal)
     (if (empty? (:issues goal))
       state2 ; no issues left in the goal
-      (let [issue (apply-substitutions (:substitutions goal) (first (:issues goal)))]
+      (let [;; _ (prn "apply-subs")
+            issue (apply-substitutions (:substitutions goal) (first (:issues goal)))]
         (if (contains? (:closed-issues goal) issue)
           ;; the issue has already been handled for this goal and closed
           ;; Add a goal for the remaining issues and return
@@ -313,17 +321,25 @@
           ;; for argument evaluation, where burden of proof continues to play a role.
           (let [generators2 (concat (list (generate-subs-from-basis (:graph state2)))
                                     generators1)]
-            (let [responses (apply concat (map (fn [g]
-                                                 (concat (generate g issue
-                                                                   (:substitutions goal))
-                                                         (generate g (literal-complement issue)
-                                                                   (:substitutions goal))))
-                                               generators2))]
-              ;; (debug "responses")
-              ;; (spy responses)
-              (reduce (fn [s r] (apply-response s goal r))
-                      state2
-                      responses))))))))
+            ;; (prn "concatening responses")
+            (let [responses (mapcat (fn [g]
+                                      (let [s1 (generate g issue
+                                                         (:substitutions goal))
+                                            s2 (generate g (literal-complement issue)
+                                                         (:substitutions goal))]
+                                        ;; (prn "generator=" generate)
+                                        ;; (prn (count s1))
+                                        ;; (prn (count s2))
+                                        (concat s1 s2)))
+                                 generators2)]
+              ;; (prn "responses")
+              ;; (prn (count responses))
+;;              (spy responses)
+              (let [r (reduce (fn [s r] (apply-response s goal r))
+                            state2
+                            responses)]
+                ;; (prn "reduce is finished")
+                r))))))))
 
 (defn- reduce-goals
   "acstate integer (seq-of generator) -> acstate
@@ -331,18 +347,17 @@
    a single argument graph of a acstate.  All arguments found within the given
    resource limits are included in the argument graph of the resulting acstate."
   [state1 max-goals generators]
-  (if (or (empty? (:open-goals state1))
-          (<= max-goals 0))
+  ;; (empty (:open-goals state1) leads to a StackOverflow ?!
+  (if (or (zero? (count (:open-goals state1)))
+       (<= max-goals 0))
     (do
-      (debug "EMPTY GOALS")
-      (debug "EXHAUSTED")
+      (prn "EMPTY GOALS")
+      (prn "EXHAUSTED")
       state1)
     (let [id (first (:open-goals state1))]
       (if (not id)
         state1
         (let [res (reduce-goal state1 id generators)]
-          ;; (debug "reduce-goal is finished")
-          ;; (debug max-goals)
           ;; (spy (count res))
           ;; (spy (count (:goals res)))
           ;; (spy (count (:open-goals res)))
@@ -365,12 +380,14 @@
   "argument-graph (coll-of literal) int (coll-of literal) (seq-of generator) -> argument-graph
    Construct an argument graph for both sides of a list of issues."
   ([ag1 issues max-goals facts generators1]
-     (prn "facts=" facts)
+     ;; (prn "facts=" facts)
      (let [ag2 (accept ag1 facts)
            generators2 (cons (builtins) generators1)
+           ;; _ (prn "reduce-goals")
            graph (:graph (reduce-goals (initial-acstate issues ag2)
                                        max-goals
                                        generators2))]
+       ;; (prn "graph construction finished, notifying observers")
        (notify-observers generators2)
        graph))
   ([issue max-goals facts generators]
