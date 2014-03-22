@@ -6,22 +6,23 @@
 #global define
 define ['angular', '../common/resources/projects'], (angular) ->
   "use strict"
-  angular.module('projects.states', ['resources.projects']).config ['$stateProvider', ($stateProvider) ->
+  angular.module('projects.states', ['resources.projects']).config ($stateProvider) ->
     states = [
-      name: 'projects'
+      name: 'home.projects'
       label: 'Projects'
-      url: '/projects'
-      templateUrl: 'list.tpl.html'
-      controller: ($scope, projects) ->
-        $scope.projects = projects
-        $scope.copyLink = (pid) ->
-          window.prompt("Copy to clipboard: Ctrl+C, Enter", $scope.$state.href 'projects.project', pid: pid)
-        undefined
+      url: 'projects'
+      views:
+        "@":
+          templateUrl: 'list.tpl.html'
+          controller: ($scope, projects) ->
+            $scope.projects = projects
+            $scope.copyLink = (pid) ->
+              window.prompt("Copy to clipboard: Ctrl+C, Enter", $scope.$state.href 'projects.project', pid: pid)
+            undefined
 
-      resolve:
-        projects: ['MultiProjectLoader', (MultiProjectLoader) ->
-          new MultiProjectLoader()
-        ]
+          resolve:
+            projects: (MultiProjectLoader) ->
+              new MultiProjectLoader()
     ]
 
     angular.forEach states, (state) ->
@@ -29,4 +30,3 @@ define ['angular', '../common/resources/projects'], (angular) ->
       undefined
 
     undefined
-  ]

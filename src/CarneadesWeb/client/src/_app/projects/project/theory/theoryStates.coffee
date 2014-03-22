@@ -6,7 +6,7 @@
 define ['angular', './theoryControllers'], (angular) ->
   angular.module('theory.states', ['theory.controllers']).config( ['$stateProvider', ($stateProvider) ->
     states = [{
-      name: "projects.project.theory"
+      name: "home.projects.project.theory"
       label: "Theory"
       url: "/theories/:tid?scrollTo"
       controller: 'TheoryCtrl'

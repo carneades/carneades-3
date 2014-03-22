@@ -6,7 +6,7 @@
 define ['angular', './argumentControllers', '../../../common/resources/arguments'], (angular) ->
   angular.module('argument.states', ['argument.controllers', 'resources.arguments']).config ['$stateProvider', ($stateProvider) ->
     states = [{
-      name: "projects.project.argument"
+      name: "home.projects.project.argument"
       label: "Argument"
       url: "/:db/arguments/:aid"
       views: {
@@ -23,7 +23,7 @@ define ['angular', './argumentControllers', '../../../common/resources/arguments
       }
       },
       {
-        name: "projects.project.argument.edit"
+        name: "home.projects.project.argument.edit"
         url: "/edit"
         views: {
           "@": {

@@ -14,7 +14,7 @@ define ["angular", "angular-bootstrap", "angular-ui-router", "projects/projectsM
   ($urlRouterProvider, $stateProvider, $httpProvider, $provide, $translateProvider) ->
 
     $translateProvider.useStaticFilesLoader(
-      prefix: '/languages/',
+      prefix: '/carneades/languages/',
       suffix: '.json'
     )
 
