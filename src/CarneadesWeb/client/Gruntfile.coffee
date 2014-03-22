@@ -175,6 +175,14 @@ module.exports = (grunt) ->
         options:
           sourceMap: false
 
+    ngmin:
+      scripts:
+        expand: true
+        cwd: "<%= comp.base %>"
+        src: ['./**/*.js'],
+        dest: "<%= comp.base %>"
+        ignores: ["components/*"]
+
     haml:
       scripts:
         files: [
@@ -347,7 +355,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-contrib-coffee"
   grunt.loadNpmTasks "grunt-contrib-haml"
   grunt.loadNpmTasks "grunt-karma"
-
+  grunt.loadNpmTasks "grunt-ngmin"
 
   grunt.registerTask 'chtml2js', 'Dynamically generate html2js sub tasks', (target) ->
     html2js = createHtml2JsConfig 'src/app'
@@ -361,7 +369,7 @@ module.exports = (grunt) ->
   grunt.registerTask "cleanup", ["clean:comp", "clean:dist"]
 
   # basic build tasks
-  grunt.registerTask "compile", ["haml", "chtml2js", "coffee", "compass", "concat:bootstrap"]
+  grunt.registerTask "compile", ["haml", "chtml2js", "coffee", "ngmin", "compass", "concat:bootstrap"]
   grunt.registerTask "package", ["bower", "requirejs", "concat:index", "cssmin", "copy:requirejs", "copy:images", "copy:fonts", "copy:languages"]
 
   # magic continues: test

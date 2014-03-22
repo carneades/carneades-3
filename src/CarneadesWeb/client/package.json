@@ -39,6 +39,7 @@
       "grunt-contrib-watch": "~0.5.3",
       "grunt-bower-requirejs": "~0.7.1",
       "grunt-contrib-haml": "~0.1.1",
+      "grunt-ngmin": "~0.0.3",
       "karma-phantomjs-launcher": "~0.1.1",
       "karma-jasmine": "~0.1.5",
       "karma-script-launcher": "~0.1.0",

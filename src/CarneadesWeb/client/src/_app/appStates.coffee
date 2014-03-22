@@ -17,50 +17,50 @@ define ["angular"], (angular) ->
         state: "home"
       ,
         label: "Projects"
-        state: "projects"
+        state: "home.projects"
       ,
         label: "About"
-        state: "about"
+        state: "home.about"
       ,
         label: "Privacy"
-        state: "privacy"
+        state: "home.privacy"
       ,
         label: "Help"
-        state: "help"
+        state: "home.help"
       ,
         label: "Admin"
-        state: "admin"
+        state: "home.admin"
       ,
         label: "Sign in"
-        state: "signin"
+        state: "home.signin"
       ]
     ,
-      name: "about"
+      name: "home.about"
       label: "About"
-      url: "/about"
-      template: "<h1>About</h1>"
+      url: "about"
+      template: "<h1>About2</h1>"
     ,
-      name: "privacy"
+      name: "home.privacy"
       label: "Privacy"
-      url: "/privacy"
+      url: "privacy"
       template: "<h1>Privacy</h1>"
     ,
-      name: "help"
+      name: "home.help"
       label: "Help"
-      url: "/help"
+      url: "help"
       template: "<h1>Help</h1>"
     ,
-      name: "admin"
+      name: "home.admin"
       label: "Admin"
-      url: "/admin"
+      url: "admin"
       template: "<h1>Admin</h1>"
     ,
-      name: "signin"
+      name: "home.signin"
       label: "Sign in"
-      url: "/signin"
+      url: "signin"
       template: "<h1>Sign in</h1>"
     ]
-    
+
     angular.forEach states, (state) ->
       $stateProvider.state state
       undefined

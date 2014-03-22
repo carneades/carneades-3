@@ -7,7 +7,7 @@ define ['angular', './statementControllers', '../../../common/resources/statemen
   angular.module('statement.states', ['statement.controllers', 'resources.statements'])
   .config ['$stateProvider', ($stateProvider) ->
     states = [
-      name: 'projects.project.statement'
+      name: 'home.projects.project.statement'
       label: 'Statement'
       url: '/:db/statements/:sid'
       views: {
