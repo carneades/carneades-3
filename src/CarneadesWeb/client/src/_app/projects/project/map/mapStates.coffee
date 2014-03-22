@@ -7,7 +7,7 @@
   angular.module('map.states', ["map.controllers"])
   .config(["$stateProvider", ($stateProvider) ->
     states = [
-      name: "projects.project.map"
+      name: "home.projects.project.map"
       label: "Map"
       url: "/:db/map"
       views:
