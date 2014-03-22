@@ -20,6 +20,8 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
   .provider("$breadcrumb", () ->
     options = {}
     storageService = {}
+    navigationStates = []
+    index = -1
 
     setStorageService = (service) ->
       storageService = service
@@ -30,17 +32,71 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
 
     storeVisitedStates = (states) -> storageService.set 'visited', states
 
+    getStateChain = (state) ->
+      chain = []
+      angular.forEach state.path, (s) ->
+        chain.push s.self
+      return chain
+
+    getPositionInVisited = (state, states) ->
+      for x, i in states
+        return i if x.name == state.name
+      return -1
+
+    push = (state) ->
+      navigationStates.push state
+
+    replace = (index, state, params) ->
+      navigationStates[index].state = state
+      navigationStates[index].params = params
+
+    setIndex = (value) ->
+      index = value
+
+    getIndex = () ->
+      return index
+
+    clear = () ->
+      navigationStates = []
+
+    getNavigationStates = () ->
+      return navigationStates
+
     $get: ['localStorageService', (localStorageService) ->
       getVisitedStates: ->
         setStorageService localStorageService
-        return  getVisitedStates()
+        return getVisitedStates()
 
       storeVisitedStates: (states) ->
         storeVisitedStates states
+
+      getStateChain: (state) ->
+        return getStateChain state
+
+      getPositionInVisited: (state, states) ->
+        return getPositionInVisited state, states
+
+      push: (state) ->
+        push state
+
+      replace: (index, state, params) ->
+        replace index, state, params
+
+      clear: () ->
+        clear()
+
+      getIndex: () ->
+        return getIndex()
+
+      setIndex: (value) ->
+        setIndex value
+
+      getNavigationStates: () ->
+        return getNavigationStates()
     ]
   )
 
-  .controller('BreadcrumbController', ['$scope', '$compile', '$attrs', 'breadcrumbConfig', ($scope, $compile, $attrs, breadcrumbConfig) ->
+  .controller('BreadcrumbController', ($scope, $compile, $attrs, breadcrumbConfig) ->
     @groups = []
 
     @closeOthers = (openGroup) ->
@@ -59,6 +115,9 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
 
       undefined
 
+    @setIndex = (groupScope) ->
+      $scope.index = groupScope.index
+
     @setCommands = (groupScope) ->
       $scope.commands = groupScope.commands
 
@@ -72,7 +131,7 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
       undefined
 
     undefined
-  ])
+  )
 
   .directive('breadcrumb', () ->
     restrict: 'EA'
@@ -82,7 +141,7 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
     templateUrl: 'directives/breadcrumb/breadcrumb.tpl.html'
   )
 
-  .directive('breadcrumbGroup', ['$parse', ($parse) ->
+  .directive('breadcrumbGroup', ($parse) ->
     require: '^breadcrumb'
     restrict: 'EA'
     transclude: true
@@ -91,6 +150,7 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
     scope:
       label: '@'
       commands: '='
+      index: '='
       isActive: '='
       isLast: '='
     controller: () ->
@@ -98,6 +158,8 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
         @label = element
       @setCommands = (element) ->
         @commands = element
+      @setIndex = (element) ->
+        @index = element
     link: (scope, element, attrs, breadcrumbCtrl) ->
       breadcrumbCtrl.addGroup scope
       scope.isOpen = scope.isActive
@@ -113,14 +175,29 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
           scope.isHover = !scope.isActive and scope.isOpen
           breadcrumbCtrl.closeOthers scope
           breadcrumbCtrl.setCommands scope
+          breadcrumbCtrl.setIndex scope
         else
           if !scope.isLast and !scope.isActive then angular.element(element).addClass(scope.cssClass)
-  ])
+  )
 
-  .directive('breadcrumbCommands', () ->
+  .directive('breadcrumbCommands', ($breadcrumb) ->
     restrict: 'E'
     replace: true
     templateUrl: 'directives/breadcrumb/breadcrumb-commands.tpl.html'
     scope:
       commands: '='
+      index: '='
+    controller: ($scope, $breadcrumb, $state, $stateParams) ->
+      $scope.append = (state, params) ->
+        # $breadcrumb.storeVisitedStates $breadcrumb.getStateChain($state.get state)
+        # state = $state.get state
+        $breadcrumb.setIndex $scope.index
+
+        # $navigationStates = $breadcrumb.getNavigationStates()
+        # if $scope.index + 1 == $navigationStates.length
+        #   $breadcrumb.push state, $stateParams
+        # else
+        #   $breadcrumb.replace $scope.index + 1, state, $stateParams
+
+        $state.go $state.get(state), params
   )

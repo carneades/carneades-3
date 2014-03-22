@@ -5,7 +5,7 @@
 
 define ['angular', 'common/services/i18nNotifications', 'common/services/httpRequestTracker'], (angular) ->
   "use strict"
-  angular.module('app.controllers', ['services.i18nNotifications', 'services.httpRequestTracker']).controller('AppCtrl', ['$scope', '$location', 'i18nNotifications', ($scope, $location, i18nNotifications) ->
+  angular.module('app.controllers', ['services.i18nNotifications', 'services.httpRequestTracker']).controller('AppCtrl', ($scope, $location, i18nNotifications) ->
     $scope.notifications = i18nNotifications
     $scope.removeNotification = (notification) ->
       i18nNotifications.remove(notification)
@@ -66,52 +66,58 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
         undefined
       )()
     undefined
-    ]
   )
-  .controller 'HeaderCtrl', ['$breadcrumb', '$scope', '$location', 'notifications', 'httpRequestTracker', ($breadcrumb, $scope, $location, notification, httpRequestTracker) ->
+  .controller 'HeaderCtrl', ($breadcrumb, $scope, $location, notifications, httpRequestTracker) ->
     $scope.hasPendingRequests = ->
       httpRequestTracker.hasPendingRequests()
 
-    $scope.oneAtATime = true;
+    cmdsToNavigation = (commands = []) ->
+      results = []
+      for c in commands
+        results.push {label: c.label, state: c.state, params: $scope.$stateParams}
+      return results
 
-    $scope.test = {state: 'home', label: 'Home'}
-    $scope.$watch (-> $scope.$state.current), ((value) ->
+    isActive = (state) ->
+      return $scope.$state.$current.name == state.name
 
-      convertCommands = (commands = []) ->
-        results = []
-        for c in commands
-          results.push {label: c.label, state: $scope.$state.href(c.state, $scope.$stateParams)}
-        return results
+    isLast = (state, length) ->
+      return
 
-      convertStates = (states) ->
-        results = []
-        for state in states
-          results.push {label: state.label, state: state.name, commands: convertCommands(state.commands)}
+    setNavigationState = () ->
+      currentState = $scope.$state.$current
+      upperBound = 0
+      depreciated = []
 
-        return results
+      if $breadcrumb.getIndex() + 1 == $breadcrumb.getNavigationStates().length
+        # replace it completely because the whole breadcrumb must be updated.
+        upperBound = currentState.path.length
+      # replace every entry til n and append all elements > n + 1
+      else
+        upperBound = $breadcrumb.getNavigationStates().length
+        depreciated = $breadcrumb.getNavigationStates().slice($breadcrumb.getIndex() + 1, $breadcrumb.getNavigationStates().length - 1)
 
-      getStatePosition = (state, states) ->
-        for x, i in states
-          return i if x.name == state.name
-        return -1
+      $breadcrumb.clear()
+      idx = 0
+      angular.forEach currentState.path, (state) ->
+        $breadcrumb.push {
+          label: state.self.label
+          name: state.self.name
+          params: $scope.$stateParams
+          commands: cmdsToNavigation state.self.commands
+          isActive: isActive state.self
+          isLast: idx++ == upperBound
+        }
 
-      position = -1
-      if value?.name
-        value.$stateParams = $scope.$stateParams
-        visited = $breadcrumb.getVisitedStates()
-        position = getStatePosition(value, visited)
-        if position < 0
-          visited.push value
-          position = visited.length - 1
-        else
-          visited[position] = value
+        angular.forEach depreciated, (s) ->
+          s.isActive = false
+          s.isLast = idx++ == upperBound
+          $breadcrumb.push s
 
-        $breadcrumb.storeVisitedStates visited
+      $scope.$navigationStates = $breadcrumb.getNavigationStates()
 
-        $scope.visitedStates = convertStates visited
-        $scope.visitedStates[position].isActive = true
-        $scope.visitedStates[$scope.visitedStates.length - 1].isLast = true
-    ), true
+    $scope.$on '$stateChangeSuccess', ->
+      setNavigationState()
+
+    setNavigationState()
 
     undefined
-  ]

@@ -8,15 +8,15 @@ define ['angular', '../../../common/resources/projects', '../../../common/resour
   angular.module('outline.states', ['resources.projects', 'resources.nodes', 'resources.metadata', 'outline.controllers']).config(['$stateProvider', ($stateProvider) ->
     states = [
       {
-        name: 'projects.project.outline'
+        name: 'home.projects.project.outline'
         label: 'Outline'
         url: '/:db/outline'
         commands: [
           label: "Map"
-          state: "projects.project.map"
+          state: "home.projects.project.map"
         ,
           label: "Theory"
-          state: "projects.project.theory"
+          state: "home.projects.project.theory"
         ]
         views: {
           "@": {
