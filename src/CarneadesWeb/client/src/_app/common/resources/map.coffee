@@ -6,16 +6,16 @@
 define ["angular", "angular-resource"], (angular) ->
   "use strict"
   services = angular.module("resources.map", ["ngResource"])
-  services.factory "Map", ["$resource", ($resource) ->
-    $resource "../api/projects/:pid/:db/map",
+  services.factory "Map", ($resource, $location) ->
+    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/:db/map",
       pid: "@pid"
       db: "@db"
     ,
       get:
         method: "GET"
         isArray: false
-  ]
-  services.factory "MapLoader", ["Map", "$q", (Map, $q) ->
+
+  services.factory "MapLoader", (Map, $q) ->
     (params) ->
       delay = $q.defer()
       Map.get params, ((args) ->
@@ -24,4 +24,3 @@ define ["angular", "angular-resource"], (angular) ->
         delay.reject "Unable to fetch nodes"
 
       delay.promise
-  ]

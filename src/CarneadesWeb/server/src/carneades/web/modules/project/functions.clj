@@ -139,8 +139,10 @@
               %))
        (#(if (= (count %) 1) (first %) %))))
 
-(defn get-outline [[project db id :as params]]
-  (->> (make-outline project db)
+(defn get-outline
+  [[project db id :as params]
+   & {:keys [lang host] :or {lang :en k nil host "localhost:3000"}}]
+  (->> (make-outline project db :host host :lang lang)
        (#(if-not (nil? id) (get-sub-outline % id) %))))
 
 (defn get-metadata
@@ -187,7 +189,9 @@
          (not (nil? db))]}
   (get-resource host :argument params))
 
-(defn arg-id->premises [aids p db]
+(defn arg-id->premises
+  [[aids p db :as params]
+   & {:keys [host lang] :or {host "localhost:3000" lang :en}}]
   "aids - vector of argument ids each represented as string value
    p    - project id
    db   - database id
@@ -199,7 +203,7 @@
    premises is a vector containing the text field data of the argument retrieved
             from (get-arguments [p db aid])"
   (reduce (fn [aggregate id]
-            (if-let [arg (get-arguments [p db id])]
+            (if-let [arg (get-arguments [p db id] :lang lang :host host)]
               (conj aggregate
                     {(:id arg)
                      (:premises arg)})))
@@ -212,7 +216,6 @@
   ""
   {:pre [(not (nil? project))
          (not (nil? db))]}
-
   (->> (get-resource host :statement params)
        ; explanation
        (#(-> (select-keys % [:id :atom :main-issue :standard :weight :value])
@@ -220,14 +223,13 @@
              (filter-by :pro %)
              (assoc :text (lang (:text %)))
              (assoc :header (lang (:description (:header %))))))
-
-       (#(update-in % [:pro] arg-id->premises project db))))
+       (#(update-in % [:pro] (fn [id] arg-id->premises [project db id] :lang lang :host host)))))
 
 (defn get-nodes [project db id & {:keys [lang host] :or {lang :en host "localhost:3000"}}]
   (let [[info outline refs]
-        [(get-metadata [project db id] :host host)
-         (get-outline [project db])
-         (get-metadata [project db] :host host)]]
+        [(get-metadata [project db id] :host host :lang lang)
+         (get-outline [project db] :host host :lang lang)
+         (get-metadata [project db] :host host :lang lang)]]
     (-> {}
         (assoc :description (-> info :description lang))
         (assoc :issues (make-issues outline))
