@@ -21,7 +21,7 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
     options = {}
     storageService = {}
     navigationStates = []
-    index = -1
+    position = 0
 
     setStorageService = (service) ->
       storageService = service
@@ -50,11 +50,11 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
       navigationStates[index].state = state
       navigationStates[index].params = params
 
-    setIndex = (value) ->
-      index = value
+    setEntryPositionClicked = (value) ->
+      position = value
 
-    getIndex = () ->
-      return index
+    getEntryPositionClicked = () ->
+      return position
 
     clear = () ->
       navigationStates = []
@@ -85,11 +85,11 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
       clear: () ->
         clear()
 
-      getIndex: () ->
-        return getIndex()
+      getEntryPositionClicked: () ->
+        return getEntryPositionClicked()
 
-      setIndex: (value) ->
-        setIndex value
+      setEntryPositionClicked: (value) ->
+        setEntryPositionClicked value
 
       getNavigationStates: () ->
         return getNavigationStates()
@@ -191,7 +191,7 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
       $scope.append = (state, params) ->
         # $breadcrumb.storeVisitedStates $breadcrumb.getStateChain($state.get state)
         # state = $state.get state
-        $breadcrumb.setIndex $scope.index
+        $breadcrumb.setEntryPositionClicked $scope.index + 1
 
         # $navigationStates = $breadcrumb.getNavigationStates()
         # if $scope.index + 1 == $navigationStates.length

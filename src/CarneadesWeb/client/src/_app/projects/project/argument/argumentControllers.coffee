@@ -16,10 +16,10 @@ define ['angular'], (angular) ->
         'Literal'
 
   angular.module('argument.controllers', [])
-    .controller('ArgumentCtrl', ['$scope', '$stateParams', 'argument', ($scope, $stateParams, argument) ->
+    .controller('ArgumentCtrl', ($scope, argument) ->
       $scope.argument = argument
-      $scope.pid = $stateParams.pid
-      $scope.db = $stateParams.db
+      $scope.pid = $scope.$stateParams.pid
+      $scope.db = $scope.$stateParams.db
 
       $scope.getType = (obj) ->
         getType(obj)
@@ -41,10 +41,10 @@ define ['angular'], (angular) ->
 
         undefined
       , true
-    ])
-    .controller('ArgumentEditCtrl', ['$scope', '$filter', '$stateParams', 'argument', ($scope, $filter, $stateParams, argument) ->
-      $scope.pid = $stateParams.pid
-      $scope.db = $stateParams.db
+    )
+    .controller('ArgumentEditCtrl', ($scope, $filter, argument) ->
+      $scope.pid = $scope.$stateParams.pid
+      $scope.db = $scope.$stateParams.db
       $scope.getType = (obj) ->
         getType(obj)
 
@@ -56,4 +56,4 @@ define ['angular'], (angular) ->
         }
 
       undefined
-    ])
+    )

@@ -5,7 +5,7 @@
 
 define ['angular', '../../../common/resources/projects', '../../../common/resources/nodes', '../../../common/resources/metadata'], (angular) ->
   "use strict"
-  angular.module('outline.states', ['resources.projects', 'resources.nodes', 'resources.metadata', 'outline.controllers']).config(['$stateProvider', ($stateProvider) ->
+  angular.module('outline.states', ['resources.projects', 'resources.nodes', 'resources.metadata', 'outline.controllers']).config(($stateProvider) ->
     states = [
       {
         name: 'home.projects.project.outline'
@@ -45,4 +45,4 @@ define ['angular', '../../../common/resources/projects', '../../../common/resour
       undefined
 
     undefined
-  ])
+  )

@@ -11,7 +11,7 @@
           %h1 Main Issues
         %ul.list-group
           %li.list-group-item{"ng-repeat" => "issue in args.issues"}
-            %a.statement{"ui-sref" => "projects.project.statement({pid: pid, db: db, sid: issue.id})", rel: "address:{{ issue.url }}", id: "statement{{ issue.id }}"}
+            %a.statement{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: issue.id})", rel: "address:{{ issue.url }}", id: "statement{{ issue.id }}"}
               %markdown{:strip => "true", "ng-model" => "issue.text"}
 
       .section{:id => "outline"}

@@ -16,8 +16,8 @@
           %div{"ng-repeat" => "v in val"}
             %ol{"ng-repeat" => "(k, vv) in v"}
               %li
-                %a{"ui-sref" => "projects.project.argument({pid: pid, db: db, aid: k})"} Argument
+                %a{"ui-sref" => "home.projects.project.argument({pid: pid, db: db, aid: k})"} Argument
                 %ol
                   %li{"ng-repeat" => "p in vv"}
-                    %a{"ui-sref" => "projects.project.statement({pid: pid, db: db, sid: p.id})"}
+                    %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: p.id})"}
                       %markdown{extensions: "carneades", "ng-model" => "p.text", strip: "true"}

@@ -5,7 +5,7 @@
 
 define ['angular', './statementControllers', '../../../common/resources/statements'], (angular) ->
   angular.module('statement.states', ['statement.controllers', 'resources.statements'])
-  .config ['$stateProvider', ($stateProvider) ->
+  .config ($stateProvider) ->
     states = [
       name: 'home.projects.project.statement'
       label: 'Statement'
@@ -15,10 +15,8 @@ define ['angular', './statementControllers', '../../../common/resources/statemen
           templateUrl: 'project/statement/view.tpl.html'
           controller: 'StatementCtrl'
           resolve: {
-            statement: [
-              "StatementLoader", "$stateParams", (StatementLoader, $stateParams) ->
-                new StatementLoader($stateParams)
-            ]
+            statement: (StatementLoader, $stateParams) ->
+              new StatementLoader($stateParams)
           }
         }
       }
@@ -29,4 +27,3 @@ define ['angular', './statementControllers', '../../../common/resources/statemen
       undefined
 
     undefined
-    ]
