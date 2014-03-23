@@ -20,8 +20,9 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
   .provider("$breadcrumb", () ->
     options = {}
     storageService = {}
-    navigationStates = []
+    _navigationStates = []
     position = 0
+
 
     setStorageService = (service) ->
       storageService = service
@@ -32,35 +33,74 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
 
     storeVisitedStates = (states) -> storageService.set 'visited', states
 
-    getStateChain = (state) ->
-      chain = []
-      angular.forEach state.path, (s) ->
-        chain.push s.self
-      return chain
-
-    getPositionInVisited = (state, states) ->
-      for x, i in states
-        return i if x.name == state.name
-      return -1
-
-    push = (state) ->
-      navigationStates.push state
-
-    replace = (index, state, params) ->
-      navigationStates[index].state = state
-      navigationStates[index].params = params
-
-    setEntryPositionClicked = (value) ->
+    setIndexOfItemClicked = (value) ->
       position = value
 
-    getEntryPositionClicked = () ->
+    getIndexOfItemClicked = () ->
       return position
 
-    clear = () ->
-      navigationStates = []
+    ##########################################################
+    render = (states, scope) ->
+      index = 0
+      bIsActiveFound = false
+      angular.forEach states, (s) ->
+        index++
+        bIsActive = (scope.$state.$current.name == s.name)
+        s.isActive = bIsActive
+        s.isLast = (index == states.length)
+        s.isDepreciated = bIsActiveFound
 
-    getNavigationStates = () ->
+        if bIsActive then bIsActiveFound = true
+
+    ##########################################################
+    cmdsToNavigation = (commands = [], stateParams) ->
+      results = []
+      for c in commands
+        results.push {label: c.label, state: c.state, params: stateParams}
+      return results
+
+    buildState = (state, stateParams) ->
+      label: state.label
+      name: state.name
+      params: stateParams
+      commands: cmdsToNavigation state.commands, stateParams
+
+    buildNavigationStates = (state, stateParams, _navStates) ->
+      navigationStates = []
+      getEvent = (index, length) ->
+        if (index == -1) then return 'BC_APPEND_ITEM'
+        if (index == 0) then return 'BC_ITEM_NOT_CLICKED'
+        if (index == length) then return 'BC_LAST_ITEM_CLICKED'
+        if (index > 0) then return 'BC_ITEM_CLICKED'
+        return 'EVENT_NOT_REGISTERED'
+
+      idxEntryClicked = getIndexOfItemClicked()
+      iSizeOfBreadcrumb = _navStates.length
+
+      switch getEvent idxEntryClicked, iSizeOfBreadcrumb
+        when 'BC_ITEM_NOT_CLICKED'
+          angular.forEach state.path, (s) ->
+            navigationStates.push buildState s.self, stateParams
+        when 'BC_LAST_ITEM_CLICKED' or 'BC_APPEND_ITEM'
+          navigationStates = _navStates
+          navigationStates.push buildState state.self, stateParams
+        when 'BC_ITEM_CLICKED'
+          temp = _navStates
+          navigationStates = temp.slice 0, idxEntryClicked
+          depreciated = temp.slice idxEntryClicked + 1, iSizeOfBreadcrumb
+          #bAppendDepreciated = currentState.self.name == $breadcrumb.getNavigationStates()[entryPositionClicked].name
+          navigationStates.push buildState state.self, stateParams
+          angular.forEach depreciated, (s) ->
+            navigationStates.push s
+
       return navigationStates
+
+    ##########################################################
+    ##########################################################
+
+    getNavigationStates = (state, stateParams) ->
+      _navigationStates = buildNavigationStates state, stateParams, _navigationStates
+      return _navigationStates
 
     $get: ['localStorageService', (localStorageService) ->
       getVisitedStates: ->
@@ -70,29 +110,14 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
       storeVisitedStates: (states) ->
         storeVisitedStates states
 
-      getStateChain: (state) ->
-        return getStateChain state
+      getIndexOfItemClicked: () ->
+        return getIndexOfItemClicked()
 
-      getPositionInVisited: (state, states) ->
-        return getPositionInVisited state, states
+      setIndexOfItemClicked: (value) ->
+        setIndexOfItemClicked value
 
-      push: (state) ->
-        push state
-
-      replace: (index, state, params) ->
-        replace index, state, params
-
-      clear: () ->
-        clear()
-
-      getEntryPositionClicked: () ->
-        return getEntryPositionClicked()
-
-      setEntryPositionClicked: (value) ->
-        setEntryPositionClicked value
-
-      getNavigationStates: () ->
-        return getNavigationStates()
+      getNavigationStates: (scope) ->
+        return render getNavigationStates(scope.$state.$current, scope.$stateParams), scope
     ]
   )
 
@@ -191,7 +216,7 @@ define ["angular", "angular-ui-router", "angular-local-storage", "angular-bootst
       $scope.append = (state, params) ->
         # $breadcrumb.storeVisitedStates $breadcrumb.getStateChain($state.get state)
         # state = $state.get state
-        $breadcrumb.setEntryPositionClicked $scope.index + 1
+        $breadcrumb.setIndexOfItemClicked $scope.index + 1
 
         # $navigationStates = $breadcrumb.getNavigationStates()
         # if $scope.index + 1 == $navigationStates.length

@@ -23,17 +23,16 @@ define ['angular', '../../../common/resources/projects', '../../../common/resour
             templateUrl: 'project/outline/outline.tpl.html',
             controller: 'OutlineCtrl',
             resolve: {
-              project: ['$stateParams', 'ProjectLoader', ($stateParams, ProjectLoader) ->
+              project: ($stateParams, ProjectLoader) ->
                 new ProjectLoader($stateParams)
-              ],
-              node: ['$stateParams', 'NodeLoader', ($stateParams, NodeLoader) ->
+              ,
+              node: ($stateParams, NodeLoader) ->
                 $stateParams.nid = 1;
                 new NodeLoader($stateParams)
-              ],
-              metadata: ['$stateParams', 'MetadataLoader', ($stateParams, MetadataLoader) ->
+              ,
+              metadata: ($stateParams, MetadataLoader) ->
                   $stateParams.mid = 1;
                   new MetadataLoader($stateParams)
-              ]
             }
           }
         }
