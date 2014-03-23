@@ -71,53 +71,8 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
     $scope.hasPendingRequests = ->
       httpRequestTracker.hasPendingRequests()
 
-    cmdsToNavigation = (commands = []) ->
-      results = []
-      for c in commands
-        results.push {label: c.label, state: c.state, params: $scope.$stateParams}
-      return results
-
-    isActive = (state) ->
-      return $scope.$state.$current.name == state.name
-
-    isLast = (state, length) ->
-      return
-
     setNavigationState = () ->
-      bAppendDepreciated = false
-      currentState = $scope.$state.$current
-      upperBound = 0
-      depreciated = []
-      entryPositionClicked = $breadcrumb.getEntryPositionClicked()
-
-      if entryPositionClicked == $breadcrumb.getNavigationStates().length
-        # replace it completely because the whole breadcrumb must be updated.
-        upperBound = currentState.path.length
-      # replace every entry til n and append all elements > n + 1
-      else
-        upperBound = $breadcrumb.getNavigationStates().length
-        depreciated = $breadcrumb.getNavigationStates().slice(entryPositionClicked + 1, $breadcrumb.getNavigationStates().length)
-        bAppendDepreciated = currentState.self.name == $breadcrumb.getNavigationStates()[entryPositionClicked].name
-
-      $breadcrumb.clear()
-      idx = 0
-      angular.forEach currentState.path, (state) ->
-        $breadcrumb.push {
-          label: state.self.label
-          name: state.self.name
-          params: $scope.$stateParams
-          commands: cmdsToNavigation state.self.commands
-          isActive: isActive state.self
-          isLast: idx++ == upperBound
-        }
-
-      if bAppendDepreciated
-        angular.forEach depreciated, (s) ->
-          s.isActive = false
-          s.isLast = idx++ == upperBound
-          $breadcrumb.push s
-
-      $scope.$navigationStates = $breadcrumb.getNavigationStates()
+      $scope.$navigationStates = $breadcrumb.getNavigationStates $scope
 
     $scope.$on '$stateChangeSuccess', ->
       setNavigationState()
