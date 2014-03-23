@@ -7,12 +7,12 @@
 define ["angular", "angular-resource"], (angular) ->
   "use strict"
   services = angular.module("resources.projects", ["ngResource"])
-  services.factory "Project", ["$resource", "$location", ($resource, $location) ->
+  services.factory "Project", ($resource, $location) ->
     $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid",
       pid: "@pid"
 
-  ]
-  services.factory "MultiProjectLoader", ["Project", "$q", (Project, $q) ->
+
+  services.factory "MultiProjectLoader", (Project, $q) ->
     ->
       delay = $q.defer()
       Project.query ((project) ->
@@ -21,8 +21,8 @@ define ["angular", "angular-resource"], (angular) ->
         delay.reject "Unable to fetch projects"
 
       delay.promise
-  ]
-  services.factory "ProjectLoader", ["Project", "$q", (Project, $q) ->
+
+  services.factory "ProjectLoader", (Project, $q) ->
     (params) ->
       delay = $q.defer()
       Project.get params, ((project) ->
@@ -31,5 +31,5 @@ define ["angular", "angular-resource"], (angular) ->
         delay.reject "Unable to fetch project " + params.id
 
       delay.promise
-  ]
+
   services

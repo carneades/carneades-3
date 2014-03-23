@@ -9,6 +9,7 @@ define ['angular', '../../common/resources/projects'], (angular) ->
     states = [
       name: "home.projects.project"
       url: "/:pid"
+      label: "Pid"
       views:
         "@":
           templateUrl: "project/outline/outline.tpl.html"

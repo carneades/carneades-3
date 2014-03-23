@@ -6,7 +6,7 @@
 define ["angular"], (angular) ->
   "use strict"
   angular.module("map.controllers", [])
-    .directive('bnMapClick', ['$document', '$parse', ($document, $parse) ->
+    .directive('bnMapClick', ($document, $parse) ->
       restrict: 'A'
       link: (scope, element, attrs) ->
         scopeExpression = attrs.bnMapClick
@@ -14,8 +14,8 @@ define ["angular"], (angular) ->
         $document.on("click", ( event ) ->
           scope.$apply(-> invoker(scope, { $event: event } ) )
           )
-      ])
-    .directive('map', ['$compile', ($compile) ->
+      )
+    .directive('map', ($compile) ->
       restrict: 'E'
       replace: true
       require: "?ngModel"
@@ -29,25 +29,25 @@ define ["angular"], (angular) ->
         if attrs['ngModel']
           scope.$watch(attrs['ngModel'], render)
 
-        ])
-    .controller('MapCtrl', ['$scope', "$stateParams", "$state", "map", ($scope, $stateParams, $state, map) ->
+        )
+    .controller('MapCtrl', ($scope, map) ->
       $scope.handleClick = (event) ->
         element = event.target
         nid = angular.element(element).parent().attr('id')
         if nid
           # rect (statement) or circle (argument)
           if nid[0] == 's'
-            $stateParams.sid = nid.substr(2)
-            $state.transitionTo("projects.project.statement", $stateParams)
+            $scope.$stateParams.sid = nid.substr(2)
+            $scope.$state.transitionTo("projects.project.statement", $scope.$stateParams)
           else
-            $stateParams.aid = nid.substr(2)
-            $state.transitionTo("projects.project.argument", $stateParams)
+            $scope.$stateParams.aid = nid.substr(2)
+            $scope.$state.transitionTo("projects.project.argument", $scope.$stateParams)
 
         else
           nid = angular.element(element).parent().parent().attr('id')
           if nid
-            $stateParams.sid = nid.substr(2)
-            $state.transitionTo("projects.project.statement", $stateParams)
+            $scope.$stateParams.sid = nid.substr(2)
+            $scope.$state.transitionTo("projects.project.statement", $scope.$stateParams)
 
       $scope.svg = map
-    ])
+    )

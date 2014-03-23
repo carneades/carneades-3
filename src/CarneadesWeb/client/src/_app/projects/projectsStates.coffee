@@ -14,12 +14,14 @@ define ['angular', '../common/resources/projects'], (angular) ->
       views:
         "@":
           templateUrl: 'list.tpl.html'
-          controller: ($scope, projects) ->
+          controller: ($scope, $location, projects) ->
             $scope.projects = projects
-            $scope.copyLink = (pid) ->
-              window.prompt("Copy to clipboard: Ctrl+C, Enter", $scope.$state.href 'projects.project', pid: pid)
-            undefined
 
+            $scope.copyLink = (pid) ->
+              window.prompt("Copy to clipboard: Ctrl+C, Enter", $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/" + $scope.$state.href 'home.projects.project', pid: pid)
+
+            $scope.open = (pid) ->
+              $scope.$state.go "home.projects.project", {pid: pid}
           resolve:
             projects: (MultiProjectLoader) ->
               new MultiProjectLoader()

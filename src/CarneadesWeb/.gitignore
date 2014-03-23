@@ -7,7 +7,7 @@ server/*.jar
 server/*.class
 server/.lein-*
 server/.env
-server/*.log
+server/*.log*
 server/.nrepl-port
 client/node_modules/
 .sass-cache
