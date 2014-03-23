@@ -5,23 +5,29 @@
 
   define ['angular'], (angular) ->
   angular.module('map.states', ["map.controllers"])
-  .config(["$stateProvider", ($stateProvider) ->
+  .config(($stateProvider) ->
     states = [
       name: "home.projects.project.map"
       label: "Map"
       url: "/:db/map"
+      commands: [
+        label: "Outline"
+        state: "home.projects.project.outline"
+      ,
+        label: "Theory"
+        state: "home.projects.project.theory"
+      ]
       views:
         "@":
           templateUrl: "project/map/map.tpl.html"
           controller: "MapCtrl"
           resolve:
-            map: ["$http", "$stateParams", ($http, $stateParams) ->
+            map: ($http, $stateParams, $location) ->
               $http(
                 method: 'GET'
-                url: "../api/projects/#{$stateParams.pid}/#{$stateParams.db}/map"
+                url: $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/#{$stateParams.pid}/#{$stateParams.db}/map"
               ).then (data) -> data.data
-            ]
     ]
 
     angular.forEach states, (state) -> $stateProvider.state state
-  ])
+  )

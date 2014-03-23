@@ -16,10 +16,10 @@ define ['angular'], (angular) ->
         'Literal'
 
   angular.module('statement.controllers', [])
-    .controller('StatementCtrl', ['$scope', '$stateParams', 'statement', ($scope, $stateParams, statement) ->
+    .controller('StatementCtrl', ($scope, statement) ->
       $scope.statement = statement
-      $scope.pid = $stateParams.pid
-      $scope.db = $stateParams.db
+      $scope.pid = $scope.$stateParams.pid
+      $scope.db = $scope.$stateParams.db
 
       $scope.getType = (obj) ->
         getType(obj);
@@ -46,4 +46,4 @@ define ['angular'], (angular) ->
       , true
 
       undefined
-    ])
+    )

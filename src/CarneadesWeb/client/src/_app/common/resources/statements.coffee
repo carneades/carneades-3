@@ -6,14 +6,13 @@
 define ["angular", "angular-resource"], (angular) ->
   "use strict"
   services = angular.module("resources.statements", ["ngResource"])
-  services.factory "Statement", ["$resource", ($resource) ->
-    $resource "../api/projects/:pid/:db/statements/:sid",
+  services.factory "Statement", ($resource, $location) ->
+    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/:db/statements/:sid",
       pid: "@pid"
       db: "@db"
       sid: "@sid"
 
-  ]
-  services.factory "MultiStatementLoader", ["Statement", "$q", (Statement, $q) ->
+  services.factory "MultiStatementLoader", (Statement, $q) ->
     ->
       delay = $q.defer()
       Statement.query ((statement) ->
@@ -22,8 +21,8 @@ define ["angular", "angular-resource"], (angular) ->
         delay.reject "Unable to fetch nodes"
 
       delay.promise
-  ]
-  services.factory "StatementLoader", ["Statement", "$q", (Statement, $q) ->
+
+  services.factory "StatementLoader", (Statement, $q) ->
     (params) ->
       delay = $q.defer()
       Statement.get params, ((statement) ->
@@ -32,5 +31,5 @@ define ["angular", "angular-resource"], (angular) ->
         delay.reject "Unable to fetch argument!"
 
       delay.promise
-  ]
+
   services

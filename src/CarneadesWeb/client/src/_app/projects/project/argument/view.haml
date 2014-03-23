@@ -14,5 +14,5 @@
       %div{"ng-switch-when" => "Array"}
         %ol
           %li{"ng-repeat" => "v in val"}
-            %a{"ui-sref" => "projects.project.statement({pid: pid, db: db, sid: v.id})"}
+            %a{"ui-sref" => "home.projects.project.statement({pid: pid, db: db, sid: v.id})"}
               %markdown{extensions: "carneades", "ng-model" => "v.text", strip: "true"}

@@ -14,8 +14,8 @@
             %section
               %button.btn.btn-default.btn-xs{:type => "button", "ng-click" => "copyLink(project.id)"}
                 %small copy link
-              %button.btn.btn-default.btn-xs{:type => "button", "ng-click" => "copyLink(project.id)"}
-                %small open in new window
+              %button.btn.btn-default.btn-xs{:type => "button", "ng-click" => "open(project.id)"}
+                %small open
 
             %p
 
@@ -24,4 +24,4 @@
             %section
               %ul.nav.nav-pills
                 %li{"ng-repeat" => "tool in project.tools"}
-                  %a{tooltip: "{{tool.description}}", "tooltip-append-to-body" => "true", "ui-sref" => "projects.project.outline({pid: project.id, db: 'main', nid: 1})"} {{tool.name}}
+                  %a{tooltip: "{{tool.description}}", "tooltip-append-to-body" => "true", "ui-sref" => "{{tool.link}}"} {{tool.name}}

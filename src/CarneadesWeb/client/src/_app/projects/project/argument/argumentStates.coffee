@@ -4,7 +4,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 define ['angular', './argumentControllers', '../../../common/resources/arguments'], (angular) ->
-  angular.module('argument.states', ['argument.controllers', 'resources.arguments']).config ['$stateProvider', ($stateProvider) ->
+  angular.module('argument.states', ['argument.controllers', 'resources.arguments']).config ($stateProvider) ->
     states = [{
       name: "home.projects.project.argument"
       label: "Argument"
@@ -14,10 +14,8 @@ define ['angular', './argumentControllers', '../../../common/resources/arguments
           templateUrl: "project/argument/view.tpl.html"
           controller: "ArgumentCtrl"
           resolve: {
-            argument: [
-              "ArgumentLoader", "$stateParams", (ArgumentLoader, $stateParams) ->
-                new ArgumentLoader($stateParams)
-              ]
+            argument: (ArgumentLoader, $stateParams) ->
+              new ArgumentLoader($stateParams)
           }
         }
       }
@@ -39,4 +37,3 @@ define ['angular', './argumentControllers', '../../../common/resources/arguments
       undefined
 
     undefined
-  ]

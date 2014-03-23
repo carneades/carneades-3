@@ -84,17 +84,20 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
       return
 
     setNavigationState = () ->
+      bAppendDepreciated = false
       currentState = $scope.$state.$current
       upperBound = 0
       depreciated = []
+      entryPositionClicked = $breadcrumb.getEntryPositionClicked()
 
-      if $breadcrumb.getIndex() + 1 == $breadcrumb.getNavigationStates().length
+      if entryPositionClicked == $breadcrumb.getNavigationStates().length
         # replace it completely because the whole breadcrumb must be updated.
         upperBound = currentState.path.length
       # replace every entry til n and append all elements > n + 1
       else
         upperBound = $breadcrumb.getNavigationStates().length
-        depreciated = $breadcrumb.getNavigationStates().slice($breadcrumb.getIndex() + 1, $breadcrumb.getNavigationStates().length - 1)
+        depreciated = $breadcrumb.getNavigationStates().slice(entryPositionClicked + 1, $breadcrumb.getNavigationStates().length)
+        bAppendDepreciated = currentState.self.name == $breadcrumb.getNavigationStates()[entryPositionClicked].name
 
       $breadcrumb.clear()
       idx = 0
@@ -108,6 +111,7 @@ define ['angular', 'common/services/i18nNotifications', 'common/services/httpReq
           isLast: idx++ == upperBound
         }
 
+      if bAppendDepreciated
         angular.forEach depreciated, (s) ->
           s.isActive = false
           s.isLast = idx++ == upperBound

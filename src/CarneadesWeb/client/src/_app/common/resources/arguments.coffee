@@ -6,14 +6,14 @@
 define ["angular", "angular-resource"], (angular) ->
   "use strict"
   services = angular.module("resources.arguments", ["ngResource"])
-  services.factory "Argument", ["$resource", ($resource) ->
-    $resource "../api/projects/:pid/:db/arguments/:aid",
+  services.factory "Argument", ($resource, $location) ->
+    $resource $location.protocol() + "://" + $location.host() + ":" + $location.port() + "/carneades/api/projects/:pid/:db/arguments/:aid",
       pid: "@pid"
       db: "@db"
       aid: "@aid"
 
-  ]
-  services.factory "MultiArgumentLoader", ["Argument", "$q", (Argument, $q) ->
+
+  services.factory "MultiArgumentLoader", (Argument, $q) ->
     ->
       delay = $q.defer()
       Argument.query ((args) ->
@@ -22,8 +22,8 @@ define ["angular", "angular-resource"], (angular) ->
         delay.reject "Unable to fetch nodes"
 
       delay.promise
-  ]
-  services.factory "ArgumentLoader", ["Argument", "$q", (Argument, $q) ->
+
+  services.factory "ArgumentLoader", (Argument, $q) ->
     (params) ->
       delay = $q.defer()
       Argument.get params, ((arg) ->
@@ -32,5 +32,5 @@ define ["angular", "angular-resource"], (angular) ->
         delay.reject "Unable to fetch argument!"
 
       delay.promise
-  ]
+
   services
